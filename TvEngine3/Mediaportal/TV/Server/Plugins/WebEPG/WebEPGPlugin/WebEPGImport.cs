@@ -231,8 +231,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
             }
             if (xmltvDirectory == string.Empty)
             {
-              // Do not use XmlTvImporter.DefaultOutputFolder to avoid reference to XmlTvImport
-              xmltvDirectory = SettingsManagement.GetValue("xmlTv", PathManager.GetDataPath + @"\xmltv");
+              xmltvDirectory = SettingsManagement.GetValue("xmlTvFolder", string.Empty);
             }
             this.LogInfo("Writing to tvguide.xml in {0}", xmltvDirectory);
             // Open XMLTV output file

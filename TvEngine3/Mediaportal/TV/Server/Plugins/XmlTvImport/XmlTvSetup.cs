@@ -23,37 +23,110 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml;
-using Mediaportal.TV.Server.Plugins.XmlTvImport.util;
+using Mediaportal.TV.Server.Plugins.XmlTvImport.Service;
+using Mediaportal.TV.Server.Plugins.XmlTvImport.Util;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 {
   public partial class XmlTvSetup : SectionSettings
   {
-    private const string _shortTimePattern24Hrs = "HH:mm";
-    private const string _shortTimePattern12Hrs = "hh:mm";
+    #region enums
 
-    private readonly IChannelGroupService _channelGroupServiceAgent = ServiceAgents.Instance.ChannelGroupServiceAgent;
+    private enum MatchType
+    {
+      [Description("already mapped")]
+      Mapped = 0,
+      [Description("exact match")]
+      Exact,
+      [Description("partial match")]
+      Partial,
+      [Description("no match")]
+      None
+    }
+
+    #endregion
+
+    #region constants
+
+    private const int ALL_TV_CHANNELS_GROUP_ID = -2;
+    private const int ALL_RADIO_CHANNELS_GROUP_ID = -1;
+
+    #endregion
+
+    private class ComboBoxChannelGroup
+    {
+      public string Name;
+      public int Id;
+
+      public ComboBoxChannelGroup(string groupName, int idGroup)
+      {
+        Name = groupName;
+        Id = idGroup;
+      }
+
+      public override string ToString()
+      {
+        return Name;
+      }
+    }
+
+    private class ComboBoxGuideChannel
+    {
+      public string DisplayName { get; set; }
+      public string Id { get; set; }
+
+      public ComboBoxGuideChannel(string displayName, string id)
+      {
+        DisplayName = displayName;
+        Id = id;
+      }
+
+      public ComboBoxGuideChannel ValueMember
+      {
+        get
+        {
+          return this;
+        }
+      }
+
+      public override string ToString()
+      {
+        return DisplayName;
+      }
+    }
+
+    #region variables
+
     private readonly ISettingService _settingServiceAgent = ServiceAgents.Instance.SettingServiceAgent;
-    private readonly IChannelService _channelServiceAgent = ServiceAgents.Instance.ChannelServiceAgent;
 
     private IList<ChannelGroup> _channelGroups = null;
+    private string _loadedGroupName = null;
+    private int _loadedGroupId = 0;
+    private Timer _statusUiUpdateTimer = null;
+
+    private DateTime _importStatusDateTime = DateTime.MinValue;
+    private string _importStatus = string.Empty;
+    private string _importStatusChannelCounts = string.Empty;
+    private string _importStatusProgramCounts = string.Empty;
+
+    private DateTime _scheduledActionsStatusDateTime = DateTime.MinValue;
+    private string _scheduledActionsStatus = string.Empty;
+
+    #endregion
 
     public XmlTvSetup()
       : this("XmlTv")
     {
-      ServiceAgents.Instance.AddGenericService<IXMLTVImportService>(); //XMLTVImportService
+      ServiceAgents.Instance.AddGenericService<IXmlTvImportService>();
     }
 
     public XmlTvSetup(string name)
@@ -62,754 +135,473 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       InitializeComponent();
     }
 
+    public override void OnSectionActivated()
+    {
+      this.LogDebug("XMLTV config: activating");
+      textBoxFolder.Text = _settingServiceAgent.GetValue("xmlTvFolder", string.Empty);
+      folderBrowserDialog.SelectedPath = textBoxFolder.Text;
+      checkBoxDeleteBeforeImport.Checked = _settingServiceAgent.GetValue("xmlTvDeleteBeforeImport", true);
+
+      checkBoxTimeCorrectionEnable.Checked = _settingServiceAgent.GetValue("xmlTvUseTimeCorrection", false);
+      numericTextBoxTimeCorrectionHours.Value = _settingServiceAgent.GetValue("xmlTvTimeCorrectionHours", 0);
+      numericTextBoxTimeCorrectionMinutes.Value = _settingServiceAgent.GetValue("xmlTvTimeCorrectionMins", 0);
+      checkBoxTimeCorrectionEnable_CheckedChanged(null, null);
+
+      checkBoxMappingsPartialMatch.Checked = _settingServiceAgent.GetValue("xmlTvUsePartialMatching", false);
+
+      checkBoxScheduledActionsDownload.Checked = _settingServiceAgent.GetValue("xmlTvScheduledActionsDownload", false);
+      textBoxScheduledActionsDownloadUrl.Text = _settingServiceAgent.GetValue("xmlTvScheduledActionsDownloadUrl", "http://www.mysite.com/tvguide.xml");
+      checkBoxScheduledActionsProgram.Checked = _settingServiceAgent.GetValue("xmlTvScheduledActionsProgram", false);
+      textBoxScheduledActionsProgramLocation.Text = _settingServiceAgent.GetValue("xmlTvScheduledActionsProgramLocation", @"c:\Program Files\My Program\MyProgram.exe");
+      if (string.IsNullOrWhiteSpace(textBoxScheduledActionsProgramLocation.Text) || !File.Exists(textBoxScheduledActionsProgramLocation.Text))
+      {
+        selectScheduledActionsProgramDialog.InitialDirectory = folderBrowserDialog.SelectedPath;
+      }
+      else
+      {
+        selectScheduledActionsProgramDialog.InitialDirectory = Path.GetDirectoryName(textBoxScheduledActionsProgramLocation.Text);
+        selectScheduledActionsProgramDialog.FileName = Path.GetFileName(textBoxScheduledActionsProgramLocation.Text);
+      }
+
+      dateTimePickerScheduledActionsTime.Value = _settingServiceAgent.GetValue("xmlTvScheduledActionsTime", DateTime.Now);
+      radioScheduledActionsTimeStartup.Checked = _settingServiceAgent.GetValue("xmlTvScheduledActionsOnStartup", false);
+      radioScheduledActionsTimeFixed.Checked = !radioScheduledActionsTimeStartup.Checked;
+
+      DebugSettings();
+
+      try
+      {
+        comboBoxMappingsChannelGroup.Items.Clear();
+        comboBoxMappingsChannelGroup.Items.Add(new ComboBoxChannelGroup("All TV Channels", ALL_TV_CHANNELS_GROUP_ID));
+        comboBoxMappingsChannelGroup.Items.Add(new ComboBoxChannelGroup("All Radio Channels", ALL_RADIO_CHANNELS_GROUP_ID));
+        comboBoxMappingsChannelGroup.Tag = "";
+
+        _channelGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
+        foreach (ChannelGroup group in _channelGroups)
+        {
+          comboBoxMappingsChannelGroup.Items.Add(new ComboBoxChannelGroup(string.Format("{0} - {1}", ((MediaTypeEnum)group.MediaType).GetDescription(), group.GroupName), group.IdGroup));
+        }
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "XMLTV config: failed to load channel groups");
+      }
+
+      labelImportStatusDateTimeValue.Text = string.Empty;
+      labelImportStatusValue.Text = string.Empty;
+      labelImportStatusChannelCountsValue.Text = string.Empty;
+      labelImportStatusProgramCountsValue.Text = string.Empty;
+      labelScheduledActionsStatusDateTimeValue.Text = string.Empty;
+      labelScheduledActionsStatusValue.Text = string.Empty;
+      UpdateImportAndScheduleStatusUi();
+      _statusUiUpdateTimer = new Timer();
+      _statusUiUpdateTimer.Interval = 10000;
+      _statusUiUpdateTimer.Tick += new EventHandler(OnStatusUiUpdateTimerTick);
+      _statusUiUpdateTimer.Enabled = true;
+      _statusUiUpdateTimer.Start();
+      base.OnSectionActivated();
+    }
+
     public override void OnSectionDeActivated()
     {
+      this.LogDebug("XMLTV config: deactivating");
       SaveSettings();
+      DebugSettings();
+      _statusUiUpdateTimer.Enabled = false;
+      _statusUiUpdateTimer.Stop();
+      _statusUiUpdateTimer.Dispose();
+      _statusUiUpdateTimer = null;
       base.OnSectionDeActivated();
     }
 
     public override void SaveSettings()
     {
-      _settingServiceAgent.SaveValue("xmlTv", textBoxFolder.Text);
-      _settingServiceAgent.SaveValue("xmlTvUseTimeZone", checkBox1.Checked);
-      _settingServiceAgent.SaveValue("xmlTvImportXML", cbImportXML.Checked);
-      _settingServiceAgent.SaveValue("xmlTvImportLST", cbImportLST.Checked);
-      _settingServiceAgent.SaveValue("xmlTvTimeZoneHours", textBoxHours.Text);
-      _settingServiceAgent.SaveValue("xmlTvTimeZoneMins", textBoxMinutes.Text);
+      this.LogDebug("XMLTV config: saving settings");
+      _settingServiceAgent.SaveValue("xmlTvFolder", textBoxFolder.Text);
       _settingServiceAgent.SaveValue("xmlTvDeleteBeforeImport", checkBoxDeleteBeforeImport.Checked);
-      _settingServiceAgent.SaveValue("xmlTvRemoteURL", txtRemoteURL.Text);
 
-      var DTFI = new DateTimeFormatInfo();
-      DTFI.ShortDatePattern = _shortTimePattern24Hrs;
-      DateTime xmlTvRemoteScheduleTime = dateTimePickerScheduler.Value;
-      _settingServiceAgent.SaveValue("xmlTvRemoteScheduleTime", xmlTvRemoteScheduleTime);
-      _settingServiceAgent.SaveValue("xmlTvRemoteSchedulerEnabled", chkScheduler.Checked);
-      _settingServiceAgent.SaveValue("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", radioDownloadOnWakeUp.Checked);
+      _settingServiceAgent.SaveValue("xmlTvUseTimeCorrection", checkBoxTimeCorrectionEnable.Checked);
+      _settingServiceAgent.SaveValue("xmlTvTimeCorrectionHours", numericTextBoxTimeCorrectionHours.Value);
+      _settingServiceAgent.SaveValue("xmlTvTimeCorrectionMins", numericTextBoxTimeCorrectionMinutes.Value);
+
+      _settingServiceAgent.SaveValue("xmlTvUsePartialMatching", checkBoxMappingsPartialMatch.Checked);
+
+      _settingServiceAgent.SaveValue("xmlTvScheduledActionsDownload", checkBoxScheduledActionsDownload.Checked);
+      _settingServiceAgent.SaveValue("xmlTvScheduledActionsDownloadUrl", textBoxScheduledActionsDownloadUrl.Text);
+      _settingServiceAgent.SaveValue("xmlTvScheduledActionsProgram", checkBoxScheduledActionsProgram.Checked);
+      _settingServiceAgent.SaveValue("xmlTvScheduledActionsProgramLocation", textBoxScheduledActionsProgramLocation.Text);
+
+      _settingServiceAgent.SaveValue("xmlTvScheduledActionsTime", dateTimePickerScheduledActionsTime.Value);
+      _settingServiceAgent.SaveValue("xmlTvScheduledActionsOnStartup", radioScheduledActionsTimeStartup.Checked);
+      base.SaveSettings();
     }
 
-    private class CBChannelGroup
+    private void DebugSettings()
     {
-      public string groupName;
-      public int idGroup;
+      this.LogDebug("XMLTV config: settings");
+      this.LogDebug("  folder                = {0}", textBoxFolder.Text);
+      this.LogDebug("  delete before import? = {0}", checkBoxDeleteBeforeImport.Checked);
+      this.LogDebug("  time correction...");
+      this.LogDebug("    enabled             = {0}", checkBoxTimeCorrectionEnable.Checked);
+      this.LogDebug("    hours               = {0}", numericTextBoxTimeCorrectionHours.Value);
+      this.LogDebug("    minutes             = {0}", numericTextBoxTimeCorrectionMinutes.Value);
+      this.LogDebug("  partial matching?     = {0}", checkBoxMappingsPartialMatch.Checked);
+      this.LogDebug("  scheduled actions...");
+      this.LogDebug("    download?           = {0}", checkBoxScheduledActionsDownload.Checked);
+      this.LogDebug("    download URL        = {0}", textBoxScheduledActionsDownloadUrl.Text);
+      this.LogDebug("    run program?        = {0}", checkBoxScheduledActionsProgram.Checked);
+      this.LogDebug("    program location    = {0}", textBoxScheduledActionsProgramLocation.Text);
+      this.LogDebug("    on startup/resume?  = {0}", radioScheduledActionsTimeStartup.Checked);
+      this.LogDebug("    time                = {0}", dateTimePickerScheduledActionsTime.Value.TimeOfDay);
+    }
 
-      public CBChannelGroup(string groupName, int idGroup)
+    private void OnStatusUiUpdateTimerTick(object sender, EventArgs e)
+    {
+      // Update the status UI. Take care to do it on the UI thread.
+      this.Invoke((MethodInvoker)delegate
       {
-        this.groupName = groupName;
-        this.idGroup = idGroup;
+        UpdateImportAndScheduleStatusUi();
+      });
+    }
+
+    private void UpdateImportAndScheduleStatusUi()
+    {
+      ServiceAgents.Instance.PluginService<IXmlTvImportService>().GetImportStatus(out _importStatusDateTime, out _importStatus, out _importStatusChannelCounts, out _importStatusProgramCounts);
+      if (_importStatusDateTime > DateTime.MinValue && (
+        !string.Equals(labelImportStatusDateTimeValue.Text, _importStatusDateTime.ToString()) ||
+        !string.Equals(labelImportStatusValue.Text, _importStatus) ||
+        !string.Equals(labelImportStatusChannelCountsValue.Text, _importStatusChannelCounts) ||
+        !string.Equals(labelImportStatusProgramCountsValue.Text, _importStatusProgramCounts)
+      ))
+      {
+        labelImportStatusDateTimeValue.Text = _importStatusDateTime.ToString();
+        labelImportStatusValue.Text = _importStatus;
+        labelImportStatusChannelCountsValue.Text = _importStatusChannelCounts;
+        labelImportStatusProgramCountsValue.Text = _importStatusProgramCounts;
+        this.LogDebug("XMLTV config: import status update...");
+        this.LogDebug("  date/time = {0}", _importStatusDateTime);
+        this.LogDebug("  status    = {0}", _importStatus);
+        this.LogDebug("  channels  = {0}", _importStatusChannelCounts);
+        this.LogDebug("  programs  = {0}", _importStatusProgramCounts);
       }
 
-      public override string ToString()
+      ServiceAgents.Instance.PluginService<IXmlTvImportService>().GetScheduledActionsStatus(out _scheduledActionsStatusDateTime, out _scheduledActionsStatus);
+      if (_scheduledActionsStatusDateTime > DateTime.MinValue && (
+        !string.Equals(labelScheduledActionsStatusDateTimeValue.Text, _scheduledActionsStatusDateTime.ToString()) ||
+        !string.Equals(labelScheduledActionsStatusValue.Text, _scheduledActionsStatus.ToString())
+      ))
       {
-        return groupName;
+        labelScheduledActionsStatusDateTimeValue.Text = _scheduledActionsStatusDateTime.ToString();
+        labelScheduledActionsStatusValue.Text = _scheduledActionsStatus.ToString();
+        this.LogDebug("XMLTV config: scheduled actions status update...");
+        this.LogDebug("  date/time = {0}", _scheduledActionsStatusDateTime);
+        this.LogDebug("  status    = {0}", _scheduledActionsStatus);
       }
     }
 
-    public override void OnSectionActivated()
+    private void buttonFolderBrowse_Click(object sender, EventArgs e)
     {
-      UpdateRadioButtonsState();
-      textBoxFolder.Text = _settingServiceAgent.GetValue("xmlTv", XmlTvImporter.DefaultOutputFolder);
-      checkBox1.Checked = _settingServiceAgent.GetValue("xmlTvUseTimeZone", false);
-      cbImportXML.Checked = _settingServiceAgent.GetValue("xmlTvImportXML", true);
-      cbImportLST.Checked = _settingServiceAgent.GetValue("xmlTvImportLST", false);
-      checkBoxDeleteBeforeImport.Checked = _settingServiceAgent.GetValue("xmlTvDeleteBeforeImport", true);
-      textBoxHours.Text = _settingServiceAgent.GetValue("xmlTvTimeZoneHours", 0).ToString();
-      textBoxMinutes.Text = _settingServiceAgent.GetValue("xmlTvTimeZoneMins", 0).ToString();
+      if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+      {
+        textBoxFolder.Text = folderBrowserDialog.SelectedPath;
+      }
+    }
 
-      UpdateLastImportUiDetails();
+    private void buttonImport_Click(object sender, EventArgs e)
+    {
+      this.LogDebug("XMLTV config: force-starting import");
+      SaveSettings();
+      ServiceAgents.Instance.PluginService<IXmlTvImportService>().ImportNow();
+    }
 
-      chkScheduler.Checked = (_settingServiceAgent.GetValue("xmlTvRemoteSchedulerEnabled", false));
-      radioDownloadOnWakeUp.Checked = (_settingServiceAgent.GetValue("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", false));
-      radioDownloadOnSchedule.Checked = !radioDownloadOnWakeUp.Checked;
+    private void checkBoxTimeCorrectionEnable_CheckedChanged(object sender, EventArgs e)
+    {
+      numericTextBoxTimeCorrectionHours.Enabled = checkBoxTimeCorrectionEnable.Checked;
+      numericTextBoxTimeCorrectionMinutes.Enabled = checkBoxTimeCorrectionEnable.Checked;
+    }
 
-      txtRemoteURL.Text = _settingServiceAgent.GetValue("xmlTvRemoteURL", "http://www.mysite.com/tvguide.xml");
-
-      DateTime dt = DateTime.Now;
-      DateTimeFormatInfo DTFI = new DateTimeFormatInfo();
-      DTFI.ShortDatePattern = _shortTimePattern24Hrs;
+    private void buttonMappingsLoad_Click(object sender, EventArgs e)
+    {
+      ComboBoxChannelGroup channelGroup = comboBoxMappingsChannelGroup.SelectedItem as ComboBoxChannelGroup;
+      if (channelGroup == null)
+      {
+        return;
+      }
 
       try
       {
-        dt = DateTime.Parse(_settingServiceAgent.GetValue("xmlTvRemoteScheduleTime", "06:30"), DTFI);
-      }
-      catch
-      {
-        // maybe 12 hr time (us) instead. lets re-parse it.
-        try
+        this.LogDebug("XMLTV config: loading mappings for channel group, ID = {0}, name = {1}, partial match = {2}", channelGroup.Id, channelGroup.Name, checkBoxMappingsPartialMatch.Checked);
+        textBoxMappingsAction.Text = "loading";
+        dataGridViewMappings.Rows.Clear();
+
+        // Load the database channels.
+        IList<Channel> databaseChannels;
+        if (channelGroup.Id == ALL_TV_CHANNELS_GROUP_ID)
         {
-          DTFI.ShortDatePattern = _shortTimePattern12Hrs;
-          dt = DateTime.Parse(_settingServiceAgent.GetValue("xmlTvRemoteScheduleTime", "06:30"), DTFI);
+          databaseChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByMediaType(MediaTypeEnum.TV, ChannelIncludeRelationEnum.None);
         }
-        catch
+        else if (channelGroup.Id == ALL_RADIO_CHANNELS_GROUP_ID)
         {
-          //ignore
-        }
-      }
-
-      dateTimePickerScheduler.Value = dt;
-      checkBoxLoadRadio_CheckedChanged(null, null);
-
-      UpdateLastTransferUiDetails();
-    }
-
-    private void buttonBrowse_Click(object sender, EventArgs e)
-    {
-      FolderBrowserDialog dlg = new FolderBrowserDialog();
-      dlg.SelectedPath = textBoxFolder.Text;
-      dlg.Description = "Specify xmltv folder";
-      dlg.ShowNewFolderButton = true;
-      if (dlg.ShowDialog() == DialogResult.OK)
-      {
-        textBoxFolder.Text = dlg.SelectedPath;
-      }
-    }
-
-    private void buttonRefresh_Click(object sender, EventArgs e)
-    {
-      String name = null;
-
-
-      try
-      {
-        textBoxAction.Text = "Loading";
-        Refresh();
-
-        this.LogDebug("Loading all channels from the tvguide[s]");
-        // used for partial matches
-        TstDictionary guideChannels = new TstDictionary();
-
-        Dictionary<string, Channel> guideChannelsExternald = new Dictionary<string, Channel>();
-
-        List<Channel> lstTvGuideChannels = readChannelsFromTVGuide();
-
-        if (lstTvGuideChannels == null)
-          return;
-
-        // convert to Dictionary
-        foreach (Channel ch in lstTvGuideChannels)
-        {
-          string tName = ch.DisplayName.Replace(" ", "").ToLowerInvariant();
-          if (!guideChannels.ContainsKey(tName))
-            guideChannels.Add(tName, ch);
-
-          // used to make sure that the available mapping is used by default
-          if (ch.ExternalId != null && !ch.ExternalId.Trim().Equals(""))
-          {
-            // need to check this because we can have channels with multiple display-names 
-            // and they're currently handles as one channel/display-name.
-            // only in the mapping procedure of course
-            if (!guideChannelsExternald.ContainsKey(ch.ExternalId))
-              guideChannelsExternald.Add(ch.ExternalId, ch);
-          }
-        }
-
-        this.LogDebug("Loading all channels from the database");
-
-        CBChannelGroup chGroup = (CBChannelGroup)comboBoxGroup.SelectedItem;
-
-        IList<Channel> channels;
-        if (chGroup == null || chGroup.idGroup == -1)
-        {
-          if (checkBoxLoadRadio.Checked)
-          {
-            channels = _channelServiceAgent.ListAllVisibleChannelsByMediaType(MediaTypeEnum.Radio, ChannelIncludeRelationEnum.None);
-          }
-          else
-          {
-            channels = _channelServiceAgent.ListAllVisibleChannelsByMediaType(MediaTypeEnum.TV, ChannelIncludeRelationEnum.None);
-          }
+          databaseChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByMediaType(MediaTypeEnum.Radio, ChannelIncludeRelationEnum.None);
         }
         else
         {
-          channels = _channelServiceAgent.ListAllVisibleChannelsByGroupId(chGroup.idGroup, ChannelIncludeRelationEnum.None);
+          databaseChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByGroupId(channelGroup.Id, ChannelIncludeRelationEnum.None);
         }
-        progressBar1.Minimum = 0;
-        progressBar1.Maximum = channels.Count;
-        progressBar1.Value = 0;
-
-        dataGridChannelMappings.Rows.Clear();
-
-        int row = 0;
-
-        if (channels.Count == 0)
+        if (databaseChannels.Count == 0)
         {
-          MessageBox.Show("No tv-channels available to map");
+          MessageBox.Show("There are no channels available to map.");
           return;
         }
-        // add as many rows in the datagrid as there are channels
-        dataGridChannelMappings.Rows.Add(channels.Count);
 
-        DataGridViewRowCollection rows = dataGridChannelMappings.Rows;
-
-        // go through each channel and try to find a matching channel
-        // 1: matching display-name (non case-sensitive)
-        // 2: partial search on the first word. The first match will be selected in the dropdown
-
-        foreach (Channel ch in channels)
+        // Load the guide channels from the server. The structure is:
+        //    file name -> ID -> [display names]
+        // Arrange the channels into 3 collections used for partial matching,
+        // fast ID lookups, and display.
+        IDictionary<string, IDictionary<string, IList<string>>> guideChannels = ServiceAgents.Instance.PluginService<IXmlTvImportService>().GetGuideChannelDetails();
+        HashSet<string> guideChannelIds = new HashSet<string>();
+        TstDictionary matchingDictionary = new TstDictionary();
+        IList<ComboBoxGuideChannel> guideChannelsForComboBox = new List<ComboBoxGuideChannel>(200);
+        IDictionary<string, ComboBoxGuideChannel> comboBoxValueLookup = new Dictionary<string, ComboBoxGuideChannel>(200);
+        ComboBoxGuideChannel gc = new ComboBoxGuideChannel(string.Empty, string.Empty);
+        guideChannelsForComboBox.Add(gc);
+        comboBoxValueLookup.Add(gc.Id, gc);
+        foreach (KeyValuePair<string, IDictionary<string, IList<string>>> fileChannels in guideChannels)
         {
-          Boolean alreadyMapped = false;
-          DataGridViewRow gridRow = rows[row++];
-
-          DataGridViewTextBoxCell idCell = (DataGridViewTextBoxCell)gridRow.Cells["Id"];
-          DataGridViewTextBoxCell channelCell = (DataGridViewTextBoxCell)gridRow.Cells["tuningChannel"];
-          DataGridViewTextBoxCell providerCell = (DataGridViewTextBoxCell)gridRow.Cells["tuningChannel"];
-          DataGridViewCheckBoxCell showInGuideCell = (DataGridViewCheckBoxCell)gridRow.Cells["ShowInGuide"];
-
-          channelCell.Value = ch.DisplayName;
-          idCell.Value = ch.IdChannel;
-          showInGuideCell.Value = ch.VisibleInGuide;
-          gridRow.Tag = ch;
-
-          DataGridViewComboBoxCell guideChannelComboBox = (DataGridViewComboBoxCell)gridRow.Cells["guideChannel"];
-
-          // always add a empty item as the first option
-          // these channels will not be updated when saving
-          guideChannelComboBox.Items.Add("");
-
-          // Start by checking if there's an available mapping for this channel
-          Channel matchingGuideChannel = null;
-
-          if (ch.ExternalId != null && guideChannelsExternald.ContainsKey(ch.ExternalId))
+          foreach (KeyValuePair<string, IList<string>> channel in fileChannels.Value)
           {
-            matchingGuideChannel = guideChannelsExternald[ch.ExternalId];
-            alreadyMapped = true;
-          }
-          // no externalId mapping available, try using the name
-          if (matchingGuideChannel == null)
-          {
-            string tName = ch.DisplayName.Replace(" ", "").ToLowerInvariant();
-            if (guideChannels.ContainsKey(tName))
-              matchingGuideChannel = (Channel)guideChannels[tName];
-          }
-
-          Boolean exactMatch = false;
-          Boolean partialMatch = false;
-
-          if (!alreadyMapped)
-          {
-            if (matchingGuideChannel != null)
+            string id = string.Format("xmltv|{0}|{1}", fileChannels.Key, channel.Key);
+            this.LogDebug("XMLTV config: guide channel, ID = {0}, name(s) = [{1}]", id, string.Join(", ", channel.Value));
+            if (!guideChannelIds.Add(id))
             {
-              exactMatch = true;
+              this.LogWarn("XMLTV config: found multiple channels with ID {0}, won't be able to distinguish which data to use", id);
             }
-            else
+            foreach (string displayName in channel.Value)
             {
-              // No name mapping found
-
-              // do a partial search, default off
-              if (checkBoxPartialMatch.Checked)
+              string matchKey = displayName.Replace(" ", "").ToLowerInvariant();
+              if (!matchingDictionary.ContainsKey(matchKey))
               {
-                // do a search using the first word(s) (skipping the last) of the channelname
-                name = ch.DisplayName.Trim();
-                int spaceIdx = name.LastIndexOf(" ");
-                if (spaceIdx > 0)
-                {
-                  name = name.Substring(0, spaceIdx).Trim();
-                }
-                else
-                {
-                  // only one word so we'll do a partial match on the first 3 letters
-                  if (name.Length > 3)
-                    name = name.Substring(0, 3);
-                }
-
-                try
-                {
-                  // Note: the partial match code doesn't work as described by the author
-                  // so we'll use PrefixMatch method (created by a codeproject user)
-                  ICollection partialMatches = guideChannels.PrefixMatch(name.Replace(" ", "").ToLowerInvariant());
-
-                  if (partialMatches != null && partialMatches.Count > 0)
-                  {
-                    IEnumerator pmE = partialMatches.GetEnumerator();
-                    pmE.MoveNext();
-                    matchingGuideChannel = (Channel)guideChannels[(string)pmE.Current];
-                    partialMatch = true;
-                  }
-                }
-                catch (Exception ex)
-                {
-                  this.LogError(ex, "Error while searching for matching guide channel");
-                }
-              }
-            }
-          }
-          // add the channels 
-          // set the first matching channel in the search above as the selected
-
-          Boolean gotMatch = false;
-
-          string ALREADY_MAPPED = "Already mapped (got external id)";
-          string EXACT_MATCH = "Exact match";
-          string PARTIAL_MATCH = "Partial match";
-          string NO_MATCH = "No match";
-
-          DataGridViewCell cell = gridRow.Cells["matchType"];
-
-          foreach (DictionaryEntry de in guideChannels)
-          {
-            Channel guideChannel = (Channel)de.Value;
-
-            String itemText = guideChannel.DisplayName + " (" + guideChannel.ExternalId + ")";
-
-            guideChannelComboBox.Items.Add(itemText);
-
-            if (!gotMatch && matchingGuideChannel != null)
-            {
-              if (guideChannel.DisplayName.ToLowerInvariant().Equals(matchingGuideChannel.DisplayName.ToLowerInvariant()))
-              {
-                // set the matchtype row color according to the type of match(already mapped,exact, partial, none)
-                if (alreadyMapped)
-                {
-                  cell.Style.BackColor = Color.White;
-                  cell.ToolTipText = ALREADY_MAPPED;
-                  // hack so that we can order the grid by mappingtype
-                  cell.Value = "";
-                }
-                else if (exactMatch)
-                {
-                  cell.Style.BackColor = Color.Green;
-                  cell.ToolTipText = EXACT_MATCH;
-                  cell.Value = "  ";
-                }
-                else if (partialMatch)
-                {
-                  cell.Style.BackColor = Color.Yellow;
-                  cell.ToolTipText = PARTIAL_MATCH;
-                  cell.Value = "   ";
-                }
-
-                guideChannelComboBox.Value = itemText;
-                guideChannelComboBox.Tag = ch.ExternalId;
-
-                gotMatch = true;
-              }
-            }
-          }
-          if (!gotMatch)
-          {
-            cell.Style.BackColor = Color.Red;
-            cell.ToolTipText = NO_MATCH;
-            cell.Value = "    ";
-          }
-          progressBar1.Value++;
-        }
-        textBoxAction.Text = "Finished";
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "Failed loading channels/mappings : channel {0}", name);        
-        textBoxAction.Text = "Error";
-      }
-    }
-
-    private List<Channel> readChannelsFromTVGuide()
-    {
-      var listChannels = new List<Channel>();
-      string folder = _settingServiceAgent.GetValue("xmlTv", XmlTvImporter.DefaultOutputFolder);
-      string selFolder = textBoxFolder.Text;
-
-      // use the folder set in the gui if it doesn't match the one set in the database
-      // these might be different since it isn't saved until the user clicks ok or
-      // moves to another part of the gui
-      if (!folder.Equals(selFolder))
-      {
-        folder = selFolder.Trim();
-      }
-      Boolean importXML = false;
-      Boolean importLST = false;
-
-      string fileName;
-
-      if (cbImportXML.Checked)
-      {
-        fileName = folder + @"\tvguide.xml";
-
-        if (System.IO.File.Exists(fileName))
-        {
-          importXML = true;
-        }
-        else
-        {
-          MessageBox.Show("tvguide.xml file not found at path [" + fileName + "]");
-          return null;
-        }
-      }
-
-      fileName = folder + @"\tvguide.lst";
-
-      if (cbImportLST.Checked)
-      {
-        if (System.IO.File.Exists(fileName))
-        {
-          importLST = true;
-        }
-        else
-        {
-          MessageBox.Show("tvguide.lst file not found at path [" + fileName + "]");
-          return null;
-        }
-      }
-
-      if (importXML || importLST)
-      {
-        if (importXML)
-        {
-          fileName = folder + @"\tvguide.xml";
-          /*
-          bool canRead = false;
-          bool canWrite = false;
-          IOUtil.CheckFileAccessRights(fileName, ref canRead, ref canWrite);
-
-          if (canRead)
-          {
-              // all ok, get channels
-              this.LogDebug(@"plugin:xmltv loading " + fileName);
-              listChannels.AddRange(readTVGuideChannelsFromFile(fileName));
-          }
-          else
-          {
-              MessageBox.Show("Can't open tvguide.xml for reading");
-              this.LogError(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "].");
-          }*/
-
-          try
-          {
-            //check if file can be opened for reading....
-            IOUtil.CheckFileAccessRights(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-
-            // all ok, get channels
-            this.LogDebug(@"plugin:xmltv loading " + fileName);
-
-            listChannels.AddRange(readTVGuideChannelsFromFile(fileName));
-          }
-          catch (Exception e)
-          {
-            MessageBox.Show("Can't open tvguide.xml for reading");
-            this.LogError(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "] : " + e.Message);
-          }
-        }
-
-        if (importLST)
-        {
-          fileName = folder + @"\tvguide.lst";
-
-          FileStream streamIn = null;
-          StreamReader fileIn = null;
-
-          try
-          {
-            // open file
-            Encoding fileEncoding = Encoding.Default;
-            streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-            fileIn = new StreamReader(streamIn, fileEncoding, true);
-
-            // ok, start reading
-            while (!fileIn.EndOfStream)
-            {
-              string tvguideFileName = fileIn.ReadLine();
-              if (tvguideFileName.Length == 0) continue;
-
-              if (!System.IO.Path.IsPathRooted(tvguideFileName))
-              {
-                // extend by directory
-                tvguideFileName = System.IO.Path.Combine(folder, tvguideFileName);
-              }
-
-              this.LogDebug(@"plugin:xmltv loading " + tvguideFileName);
-
-              // get channels
-              listChannels.AddRange(readTVGuideChannelsFromFile(tvguideFileName));
-            }
-            fileIn.Close();
-            streamIn.Close();
-          }
-          catch (Exception e)
-          {
-            MessageBox.Show("Can't read file(s) from the tvguide.lst");
-            this.LogError(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "] : " + e.Message);
-          }
-          finally
-          {
-            try
-            {
-              if (fileIn != null)
-                fileIn.Close();
-
-              if (streamIn != null)
-                streamIn.Close();
-            }
-            catch (Exception) {}
-          }
-        }
-      }
-      return listChannels;
-    }
-
-
-    /// <summary>
-    /// Reads all the channels from a tvguide.xml file
-    /// </summary>
-    /// <param name="filename"></param>
-    /// <returns></returns>
-    private List<Channel> readTVGuideChannelsFromFile(String tvguideFilename)
-    {
-      List<Channel> channels = new List<Channel>();
-      XmlTextReader xmlReader = new XmlTextReader(tvguideFilename);
-
-      int iChannel = 0;
-
-      try
-      {
-        if (xmlReader.ReadToDescendant("tv"))
-        {
-          // get the first channel
-          if (xmlReader.ReadToDescendant("channel"))
-          {
-            do
-            {
-              String id = xmlReader.GetAttribute("id");
-              if (string.IsNullOrEmpty(id))
-              {
-                this.LogError("  channel#{0} doesnt contain an id", iChannel);
+                matchingDictionary.Add(matchKey, id);
               }
               else
               {
-                // String displayName = null;
-
-                XmlReader xmlChannel = xmlReader.ReadSubtree();
-                xmlChannel.ReadStartElement(); // read channel
-                // now, xmlChannel is positioned on the first sub-element of <channel>
-                List<string> displayNames = new List<string>();
-
-                while (!xmlChannel.EOF)
-                {
-                  if (xmlChannel.NodeType == XmlNodeType.Element)
-                  {
-                    switch (xmlChannel.Name)
-                    {
-                      case "display-name":
-                      case "Display-Name":
-                        displayNames.Add(xmlChannel.ReadString());
-                        //else xmlChannel.Skip();
-                        break;
-                        // could read more stuff here, like icon...
-                      default:
-                        // unknown, skip entire node
-                        xmlChannel.Skip();
-                        break;
-                    }
-                  }
-                  else
-                    xmlChannel.Read();
-                }
-                foreach (string displayName in displayNames)
-                {
-                  if (displayName != null)
-                  {
-                    Channel channel = new Channel {ExternalId = id, DisplayName = displayName};
-                    channels.Add(channel);
-                  }
-                }
+                this.LogWarn("XMLTV config: found multiple channels named {0}, might match to wrong channel", displayName);
               }
-              iChannel++;
-            } while (xmlReader.ReadToNextSibling("channel"));
+
+              string itemName = displayName;
+              if (!string.Equals(displayName, channel.Key))
+              {
+                itemName = string.Format("{0} ({1})", displayName, channel.Key);
+              }
+              gc = new ComboBoxGuideChannel(itemName, id);
+              guideChannelsForComboBox.Add(gc);
+              comboBoxValueLookup.Add(gc.Id, gc);
+            }
           }
         }
-      }
-      catch {}
-      finally
-      {
-        if (xmlReader != null)
+
+        // Populate the grid.
+        progressBarMappingsProgress.Minimum = 0;
+        progressBarMappingsProgress.Maximum = databaseChannels.Count;
+        progressBarMappingsProgress.Value = 0;
+        dataGridViewMappings.Rows.Add(databaseChannels.Count);
+        int row = 0;
+        foreach (Channel channel in databaseChannels)
         {
-          xmlReader.Close();
-          xmlReader = null;
-        }
-      }
+          DataGridViewRow gridRow = dataGridViewMappings.Rows[row++];
 
-      return channels;
-    }
+          gridRow.Cells["dataGridViewColumnId"].Value = channel.IdChannel.ToString();
+          gridRow.Cells["dataGridViewColumnTuningChannel"].Value = channel.DisplayName;
+          gridRow.Tag = channel;
 
-    private void buttonSave_Click(object sender, EventArgs e)
-    {
-      try
-      {
-        IList<Channel> channels = new List<Channel>(dataGridChannelMappings.Rows.Count);
+          // Trust me - you don't want to mess with this! Data grid view combo
+          // boxes are fragile.
+          DataGridViewComboBoxCell guideChannelComboBox = (DataGridViewComboBoxCell)gridRow.Cells["dataGridViewColumnGuideChannel"];
+          guideChannelComboBox.DataSource = guideChannelsForComboBox;
+          guideChannelComboBox.ValueType = typeof(ComboBoxGuideChannel);
+          guideChannelComboBox.DisplayMember = "DisplayName";
+          guideChannelComboBox.ValueMember = "ValueMember";
+          guideChannelComboBox.Tag = channel.ExternalId ?? string.Empty;
 
-        progressBar1.Value = 0;
-        progressBar1.Minimum = 0;
-        progressBar1.Maximum = dataGridChannelMappings.Rows.Count;
-        textBoxAction.Text = "Saving mappings";
-
-        foreach (DataGridViewRow row in dataGridChannelMappings.Rows)
-        {
-          int id = (int)row.Cells["Id"].Value;
-          string guideChannelAndexternalId = (string)row.Cells["guideChannel"].Value;
-
-          string externalId = null;
-
-          if (guideChannelAndexternalId != null)
+          // Find the best match guide channel for this channel.
+          MatchType matchType = MatchType.None;
+          string bestMatchId = string.Empty;
+          if (channel.ExternalId != null && guideChannelIds.Contains(channel.ExternalId))
           {
-            int startIdx = guideChannelAndexternalId.LastIndexOf("(") + 1;
-            // the length is the same as the length - startingidex -1 (-1 -> remove trailing )) 
-            externalId = guideChannelAndexternalId.Substring(startIdx, guideChannelAndexternalId.Length - startIdx - 1);
+            bestMatchId = channel.ExternalId;
+            matchType = MatchType.Mapped;
           }
-
-          Channel channel = row.Tag as Channel;
-          channel.ExternalId = externalId == null ? "" : externalId;
-          channels.Add(channel);
-          progressBar1.Value++;
-        }
-        _channelServiceAgent.SaveChannels(channels);
-
-        textBoxAction.Text = "Mappings saved";
-      }
-      catch (Exception ex)
-      {
-        textBoxAction.Text = "Save failed";
-        this.LogError(ex, "Error while saving channelmappings");        
-      }
-    }
-
-    private void buttonManualImport_Click(object sender, EventArgs e)
-    {
-      SaveSettings();
-      ServiceAgents.Instance.PluginService<IXMLTVImportService>().ImportNow();
-      UpdateLastImportUiDetails();
-    }
-
-    private void UpdateLastImportUiDetails()
-    {
-      labelLastImport.Text = _settingServiceAgent.GetValue("xmlTvResultLastImport", string.Empty);
-      labelChannels.Text = _settingServiceAgent.GetValue("xmlTvResultChannels", string.Empty);
-      labelPrograms.Text = _settingServiceAgent.GetValue("xmlTvResultPrograms", string.Empty);
-      labelStatus.Text = _settingServiceAgent.GetValue("xmlTvResultStatus", string.Empty);
-    }
-
-    private void buttonExport_Click(object sender, EventArgs e)
-    {
-      string folder = _settingServiceAgent.GetValue("xmlTv", XmlTvImporter.DefaultOutputFolder);
-      string selFolder = textBoxFolder.Text;
-
-      // use the folder set in the gui if it doesn't match the one set in the database
-      // these might be different since it isn't saved until the user clicks ok or
-      // moves to another part of the gui
-      if (!folder.Equals(selFolder))
-      {
-        folder = selFolder.Trim();
-      }
-
-      if (System.IO.Directory.Exists(folder))
-        saveFileExport.InitialDirectory = folder;
-
-      saveFileExport.ShowDialog();
-    }
-
-    private void saveFileExport_FileOk(object sender, CancelEventArgs e)
-    {
-      try
-      {
-        Stream stream = saveFileExport.OpenFile();
-
-        Encoding fileEncoding = Encoding.Default;
-        StreamWriter fileOut = new StreamWriter(stream, fileEncoding);
-
-        foreach (DataGridViewRow row in dataGridChannelMappings.Rows)
-        {
-          string guideChannelAndexternalId = (string)row.Cells["guideChannel"].Value;
-          string externalId = null;
-
-          if (guideChannelAndexternalId != null)
+          else
           {
-            int startIdx = guideChannelAndexternalId.LastIndexOf("(") + 1;
-            // the length is the same as the length - startingidex -1 (-1 -> remove trailing )) 
-            externalId = guideChannelAndexternalId.Substring(startIdx, guideChannelAndexternalId.Length - startIdx - 1);
-            fileOut.WriteLine("channel=" + externalId);
+            string matchKey = channel.DisplayName.Replace(" ", "").ToLowerInvariant();
+            if (matchingDictionary.ContainsKey(matchKey))
+            {
+              bestMatchId = (string)matchingDictionary[matchKey];
+              matchType = MatchType.Exact;
+            }
           }
+
+          // Partial matching...
+          if (matchType == MatchType.None && checkBoxMappingsPartialMatch.Checked)
+          {
+            // Try to match using all except the last word in the channel
+            // name or the first three letters if there is only one word.
+            string name = channel.DisplayName.Trim();
+            int spaceIndex = name.LastIndexOf(" ");
+            if (spaceIndex > 0)
+            {
+              name = name.Substring(0, spaceIndex).Trim();
+            }
+            else if (name.Length > 3)
+            {
+              name = name.Substring(0, 3);
+            }
+
+            try
+            {
+              // Note: the partial match code doesn't work as described by the
+              // author so we'll use PrefixMatch (created by a codeproject
+              // user) instead.
+              ICollection partialMatches = matchingDictionary.PrefixMatch(name.Replace(" ", "").ToLowerInvariant());
+              if (partialMatches != null && partialMatches.Count > 0)
+              {
+                IEnumerator pme = partialMatches.GetEnumerator();
+                pme.MoveNext();
+                bestMatchId = (string)matchingDictionary[(string)pme.Current];
+                matchType = MatchType.Partial;
+              }
+            }
+            catch (Exception ex)
+            {
+              this.LogError(ex, "XMLTV config: failed to find partial matches for channel \"{0}\"", channel.DisplayName);
+            }
+          }
+          this.LogDebug("XMLTV config: DB channel, ID = {0}, name = {1}, match type = {2}, best match = {3}", channel.IdChannel, channel.DisplayName, matchType, bestMatchId);
+          guideChannelComboBox.Value = comboBoxValueLookup[bestMatchId];
+
+          // Note the mapping cell values are set so that the grid can be
+          // sorted by mapping state without actually showing text in the
+          // cells.
+          DataGridViewCell cell = gridRow.Cells["dataGridViewColumnMatchType"];
+          cell.ToolTipText = matchType.GetDescription();
+          cell.Value = string.Empty.PadRight((int)matchType, ' ');
+          if (matchType == MatchType.Mapped)
+          {
+            cell.Style.BackColor = Color.White;
+          }
+          else if (matchType == MatchType.Exact)
+          {
+            cell.Style.BackColor = Color.Green;
+          }
+          else if (matchType == MatchType.Partial)
+          {
+            cell.Style.BackColor = Color.Yellow;
+          }
+          else
+          {
+            cell.Style.BackColor = Color.Red;
+          }
+
+          progressBarMappingsProgress.Value++;
         }
-        try
-        {
-          fileOut.Flush();
-          fileOut.Close();
-        }
-        catch (Exception)
-        {
-          // ignore
-        }
-      }
-      catch (UnauthorizedAccessException ex)
-      {
-        MessageBox.Show("Can't open the file for writing");
-        this.LogError(ex, "Failed to export guidechannels");
+
+        _loadedGroupId = channelGroup.Id;
+        _loadedGroupName = channelGroup.Name;
+        textBoxMappingsAction.Text = "loaded";
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "Failed to export guidechannels");
+        textBoxMappingsAction.Text = "load failed";
+        this.LogError(ex, "XMLTV config: failed to load channel group mappings, ID = {0}, name = {1}", channelGroup.Id, channelGroup.Name);
       }
     }
 
-    private void buttonBrowse_Click_1(object sender, EventArgs e)
+    private void buttonMappingsSave_Click(object sender, EventArgs e)
     {
-      folderBrowserDialogTVGuide.ShowDialog();
-      textBoxFolder.Text = folderBrowserDialogTVGuide.SelectedPath;
-    }
-
-    private void btnGetNow_Click(object sender, EventArgs e)
-    {
-      SaveSettings();
-      ServiceAgents.Instance.PluginService<IXMLTVImportService>().RetrieveRemoteFileNow();
-      UpdateLastTransferUiDetails();
-    }
-
-    private void UpdateLastTransferUiDetails()
-    {
-      lblLastTransferAt.Text = _settingServiceAgent.GetValue("xmlTvRemoteScheduleLastTransfer", string.Empty);
-      lblTransferStatus.Text = _settingServiceAgent.GetValue("xmlTvRemoteScheduleTransferStatus", string.Empty);
-    }
-
-    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      //persist stuff when changing tabs in the plugin.
-      SaveSettings();
-
-      //load status
-      UpdateLastImportUiDetails();
-      UpdateLastTransferUiDetails();
-    }
-
-    private void chkScheduler_CheckedChanged(object sender, EventArgs e)
-    {
-      UpdateRadioButtonsState();
-    }
-
-    private void UpdateRadioButtonsState()
-    {
-      radioDownloadOnSchedule.Enabled = chkScheduler.Checked;
-      radioDownloadOnWakeUp.Enabled = chkScheduler.Checked;
-    }
-
-    private void checkBoxLoadRadio_CheckedChanged(object sender, EventArgs e)
-    {
-      // load all distinct groups
+      if (_loadedGroupName == null)
+      {
+        return;
+      }
+      this.LogDebug("XMLTV config: saving mappings for channel group, ID = {0}, name = {1}", _loadedGroupId, _loadedGroupName);
       try
       {
-        comboBoxGroup.Items.Clear();
-        comboBoxGroup.Items.Add(new CBChannelGroup("", -1));
-        comboBoxGroup.Tag = "";
+        IList<Channel> channels = new List<Channel>(dataGridViewMappings.Rows.Count);
 
-        MediaTypeEnum mediaType = MediaTypeEnum.TV;
-        if (checkBoxLoadRadio.Checked)
+        progressBarMappingsProgress.Value = 0;
+        progressBarMappingsProgress.Minimum = 0;
+        progressBarMappingsProgress.Maximum = dataGridViewMappings.Rows.Count;
+        textBoxMappingsAction.Text = "saving mappings";
+
+        foreach (DataGridViewRow row in dataGridViewMappings.Rows)
         {
-          mediaType = MediaTypeEnum.Radio;
+          DataGridViewComboBoxCell guideChannelCell = (DataGridViewComboBoxCell)row.Cells["dataGridViewColumnGuideChannel"];
+          ComboBoxGuideChannel guideChannel = guideChannelCell.Value as ComboBoxGuideChannel;
+          if (guideChannel == null)   // It seems the combobox value is null for the blank item.
+          {
+            guideChannel = new ComboBoxGuideChannel(string.Empty, string.Empty);
+          }
+          string previousExternalId = guideChannelCell.Tag as string;
+          if (!string.Equals(guideChannel.Id, previousExternalId))
+          {
+            Channel channel = row.Tag as Channel;
+            channel.ExternalId = guideChannel.Id;
+            channels.Add(channel);
+            this.LogDebug("XMLTV config: mapped channel change, ID = {0}, name = {1}, old external ID = {2}, new external ID = {3}, guide name = {4}", channel.IdChannel, channel.DisplayName, previousExternalId ?? "[null]", guideChannel.Id ?? "[null]", guideChannel.DisplayName);
+          }
+          progressBarMappingsProgress.Value++;
         }
-        _channelGroups = _channelGroupServiceAgent.ListAllChannelGroupsByMediaType(mediaType, ChannelGroupIncludeRelationEnum.None);
-        foreach (ChannelGroup cg in _channelGroups)
+        if (channels.Count > 0)
         {
-          comboBoxGroup.Items.Add(new CBChannelGroup(cg.GroupName, cg.IdGroup));
+          textBoxMappingsAction.Text = "mappings saved";
+          ServiceAgents.Instance.ChannelServiceAgent.SaveChannels(channels);
+        }
+        else
+        {
+          textBoxMappingsAction.Text = "no changes";
         }
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "Failed to load groups");
+        textBoxMappingsAction.Text = "save failed";
+        this.LogError(ex, "XMLTV config: failed to save channel group mappings, ID = {0}, name = {1}", _loadedGroupId, _loadedGroupName);
       }
+    }
+
+    private void buttonScheduledActionsTimeNow_Click(object sender, EventArgs e)
+    {
+      this.LogDebug("XMLTV config: force-starting scheduled actions");
+      SaveSettings();
+      ServiceAgents.Instance.PluginService<IXmlTvImportService>().PerformScheduledActionsNow();
+    }
+
+    private void checkBoxScheduledActionsDownload_CheckedChanged(object sender, EventArgs e)
+    {
+      textBoxScheduledActionsDownloadUrl.Enabled = checkBoxScheduledActionsDownload.Checked;
+      UpdateScheduledActionsTimeFields();
+    }
+
+    private void checkBoxScheduledActionsProgram_CheckedChanged(object sender, EventArgs e)
+    {
+      textBoxScheduledActionsProgramLocation.Enabled = checkBoxScheduledActionsProgram.Checked;
+      buttonScheduledActionsProgramBrowse.Enabled = checkBoxScheduledActionsProgram.Checked;
+      UpdateScheduledActionsTimeFields();
+    }
+
+    private void buttonScheduledActionsProgramBrowse_Click(object sender, EventArgs e)
+    {
+      if (selectScheduledActionsProgramDialog.ShowDialog() == DialogResult.OK)
+      {
+        textBoxScheduledActionsProgramLocation.Text = selectScheduledActionsProgramDialog.FileName;
+      }
+    }
+
+    private void UpdateScheduledActionsTimeFields()
+    {
+      bool enabled = checkBoxScheduledActionsDownload.Checked || checkBoxScheduledActionsProgram.Checked;
+      radioScheduledActionsTimeFixed.Enabled = enabled;
+      dateTimePickerScheduledActionsTime.Enabled = enabled && radioScheduledActionsTimeFixed.Checked;
+      radioScheduledActionsTimeStartup.Enabled = enabled;
+      buttonScheduledActionsTimeNow.Enabled = enabled;
     }
   }
 }

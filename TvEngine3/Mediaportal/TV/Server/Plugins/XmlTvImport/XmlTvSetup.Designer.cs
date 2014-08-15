@@ -33,115 +33,102 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
       System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
       System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabSettings = new System.Windows.Forms.TabPage();
-      this.panel1 = new System.Windows.Forms.Panel();
-      this.label1 = new System.Windows.Forms.Label();
-      this.checkBoxDeleteBeforeImport = new System.Windows.Forms.CheckBox();
-      this.label23 = new System.Windows.Forms.Label();
-      this.buttonManualImport = new System.Windows.Forms.Button();
-      this.cbImportLST = new System.Windows.Forms.CheckBox();
-      this.cbImportXML = new System.Windows.Forms.CheckBox();
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.labelStatus = new System.Windows.Forms.Label();
-      this.labelPrograms = new System.Windows.Forms.Label();
-      this.labelChannels = new System.Windows.Forms.Label();
-      this.labelLastImport = new System.Windows.Forms.Label();
-      this.label5 = new System.Windows.Forms.Label();
-      this.label10 = new System.Windows.Forms.Label();
-      this.label11 = new System.Windows.Forms.Label();
-      this.label12 = new System.Windows.Forms.Label();
-      this.label13 = new System.Windows.Forms.Label();
-      this.label14 = new System.Windows.Forms.Label();
-      this.label15 = new System.Windows.Forms.Label();
-      this.textBoxMinutes = new System.Windows.Forms.TextBox();
-      this.textBoxHours = new System.Windows.Forms.TextBox();
-      this.label16 = new System.Windows.Forms.Label();
-      this.label17 = new System.Windows.Forms.Label();
-      this.checkBox1 = new System.Windows.Forms.CheckBox();
-      this.buttonBrowse = new System.Windows.Forms.Button();
-      this.label18 = new System.Windows.Forms.Label();
-      this.textBoxFolder = new System.Windows.Forms.TextBox();
-      this.tabMappings = new System.Windows.Forms.TabPage();
-      this.panel2 = new System.Windows.Forms.Panel();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
-      this.checkBoxLoadRadio = new System.Windows.Forms.CheckBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.comboBoxGroup = new System.Windows.Forms.ComboBox();
-      this.buttonExport = new System.Windows.Forms.Button();
-      this.checkBoxPartialMatch = new System.Windows.Forms.CheckBox();
-      this.textBoxAction = new System.Windows.Forms.TextBox();
-      this.label22 = new System.Windows.Forms.Label();
-      this.label21 = new System.Windows.Forms.Label();
-      this.progressBar1 = new System.Windows.Forms.ProgressBar();
-      this.label19 = new System.Windows.Forms.Label();
-      this.buttonSave = new System.Windows.Forms.Button();
-      this.buttonRefresh = new System.Windows.Forms.Button();
-      this.dataGridChannelMappings = new System.Windows.Forms.DataGridView();
-      this.Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.tuningChannel = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.guideChannel = new System.Windows.Forms.DataGridViewComboBoxColumn();
-      this.matchType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.ShowInGuide = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-      this.tabRemote = new System.Windows.Forms.TabPage();
-      this.panel3 = new System.Windows.Forms.Panel();
-      this.groupBox4 = new System.Windows.Forms.GroupBox();
-      this.lblTransferStatus = new System.Windows.Forms.Label();
-      this.lblLastTransferAt = new System.Windows.Forms.Label();
-      this.label33 = new System.Windows.Forms.Label();
-      this.label36 = new System.Windows.Forms.Label();
-      this.groupBox3 = new System.Windows.Forms.GroupBox();
-      this.radioDownloadOnWakeUp = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
-      this.radioDownloadOnSchedule = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
-      this.chkScheduler = new System.Windows.Forms.CheckBox();
-      this.label27 = new System.Windows.Forms.Label();
-      this.dateTimePickerScheduler = new System.Windows.Forms.DateTimePicker();
-      this.label20 = new System.Windows.Forms.Label();
-      this.label24 = new System.Windows.Forms.Label();
-      this.label25 = new System.Windows.Forms.Label();
-      this.label26 = new System.Windows.Forms.Label();
-      this.label3 = new System.Windows.Forms.Label();
-      this.label32 = new System.Windows.Forms.Label();
-      this.btnGetNow = new System.Windows.Forms.Button();
-      this.label37 = new System.Windows.Forms.Label();
-      this.txtRemoteURL = new System.Windows.Forms.TextBox();
-      this.label9 = new System.Windows.Forms.Label();
-      this.label8 = new System.Windows.Forms.Label();
-      this.label7 = new System.Windows.Forms.Label();
-      this.label6 = new System.Windows.Forms.Label();
-      this.saveFileExport = new System.Windows.Forms.SaveFileDialog();
-      this.folderBrowserDialogTVGuide = new System.Windows.Forms.FolderBrowserDialog();
+      this.tabControl1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
+      this.tabSettings = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
+      this.groupBoxImport = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.labelImport = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.buttonImport = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.checkBoxDeleteBeforeImport = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.labelFolder = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.buttonBrowse = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.textBoxFolder = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.groupBoxTimeCorrection = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.numericTextBoxTimeCorrectionHours = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericTextBox();
+      this.numericTextBoxTimeCorrectionMinutes = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericTextBox();
+      this.labelTimeCorrectionList = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.checkBoxTimeCorrectionEnable = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.labelTimeCorrectionHours = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelTimeCorrectionMinutes = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBoxImportStatus = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.labelImportStatusValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelImportStatusProgramCountsValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelImportStatusChannelCountsValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelImportStatusDateTimeValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelImportStatusLabel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelImportStatusProgramCountsLabel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelImportStatusChannelCountsLabel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelImportStatusDateTimeLabel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.tabMappings = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
+      this.groupBoxMapping = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.labelMappingChannelGroup = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.comboBoxMappingsChannelGroup = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.checkBoxMappingsPartialMatch = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.textBoxMappingsAction = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.labelMappingProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelMappingAction = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.progressBarMappingsProgress = new System.Windows.Forms.ProgressBar();
+      this.buttonMappingsSave = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.buttonMappingsLoad = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.dataGridViewMappings = new System.Windows.Forms.DataGridView();
+      this.dataGridViewColumnId = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.dataGridViewColumnTuningChannel = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.dataGridViewColumnGuideChannel = new System.Windows.Forms.DataGridViewComboBoxColumn();
+      this.dataGridViewColumnMatchType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.tabSchedule = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
+      this.groupBoxScheduledActionsTime = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.radioScheduledActionsTimeStartup = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.buttonScheduledActionsTimeNow = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.radioScheduledActionsTimeFixed = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.dateTimePickerScheduledActionsTime = new System.Windows.Forms.DateTimePicker();
+      this.labelScheduledActionsTime = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBoxScheduledActionsStatus = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.labelScheduledActionsStatusValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelScheduledActionsStatusDateTimeValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelScheduledActionsStatusLabel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelScheduledActionsStatusDateTimeLabel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBoxScheduledActionsAction = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.checkBoxScheduledActionsProgram = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxScheduledActionsDownload = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.buttonScheduledActionsProgramBrowse = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.textBoxScheduledActionsProgramLocation = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.textBoxScheduledActionsDownloadUrl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.labelScheduledActionsProgram = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+      this.selectScheduledActionsProgramDialog = new System.Windows.Forms.OpenFileDialog();
       this.tabControl1.SuspendLayout();
       this.tabSettings.SuspendLayout();
-      this.panel1.SuspendLayout();
-      this.groupBox1.SuspendLayout();
+      this.groupBoxImport.SuspendLayout();
+      this.groupBoxTimeCorrection.SuspendLayout();
+      this.groupBoxImportStatus.SuspendLayout();
       this.tabMappings.SuspendLayout();
-      this.panel2.SuspendLayout();
-      this.groupBox2.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.dataGridChannelMappings)).BeginInit();
-      this.tabRemote.SuspendLayout();
-      this.panel3.SuspendLayout();
-      this.groupBox4.SuspendLayout();
-      this.groupBox3.SuspendLayout();
+      this.groupBoxMapping.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMappings)).BeginInit();
+      this.tabSchedule.SuspendLayout();
+      this.groupBoxScheduledActionsTime.SuspendLayout();
+      this.groupBoxScheduledActionsStatus.SuspendLayout();
+      this.groupBoxScheduledActionsAction.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControl1
       // 
+      this.tabControl1.AllowDrop = true;
+      this.tabControl1.AllowReorderTabs = false;
       this.tabControl1.Controls.Add(this.tabSettings);
       this.tabControl1.Controls.Add(this.tabMappings);
-      this.tabControl1.Controls.Add(this.tabRemote);
+      this.tabControl1.Controls.Add(this.tabSchedule);
       this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
       this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
       this.tabControl1.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.TabIndex = 0;
-      this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
       // tabSettings
       // 
       this.tabSettings.BackColor = System.Drawing.Color.Transparent;
-      this.tabSettings.Controls.Add(this.panel1);
+      this.tabSettings.Controls.Add(this.groupBoxImport);
+      this.tabSettings.Controls.Add(this.groupBoxTimeCorrection);
+      this.tabSettings.Controls.Add(this.groupBoxImportStatus);
       this.tabSettings.Location = new System.Drawing.Point(4, 22);
       this.tabSettings.Name = "tabSettings";
       this.tabSettings.Padding = new System.Windows.Forms.Padding(3);
@@ -150,274 +137,261 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.tabSettings.Text = "General";
       this.tabSettings.UseVisualStyleBackColor = true;
       // 
-      // panel1
+      // groupBoxImport
       // 
-      this.panel1.AutoSize = true;
-      this.panel1.Controls.Add(this.label1);
-      this.panel1.Controls.Add(this.checkBoxDeleteBeforeImport);
-      this.panel1.Controls.Add(this.label23);
-      this.panel1.Controls.Add(this.buttonManualImport);
-      this.panel1.Controls.Add(this.cbImportLST);
-      this.panel1.Controls.Add(this.cbImportXML);
-      this.panel1.Controls.Add(this.groupBox1);
-      this.panel1.Controls.Add(this.label13);
-      this.panel1.Controls.Add(this.label14);
-      this.panel1.Controls.Add(this.label15);
-      this.panel1.Controls.Add(this.textBoxMinutes);
-      this.panel1.Controls.Add(this.textBoxHours);
-      this.panel1.Controls.Add(this.label16);
-      this.panel1.Controls.Add(this.label17);
-      this.panel1.Controls.Add(this.checkBox1);
-      this.panel1.Controls.Add(this.buttonBrowse);
-      this.panel1.Controls.Add(this.label18);
-      this.panel1.Controls.Add(this.textBoxFolder);
-      this.panel1.Location = new System.Drawing.Point(3, 3);
-      this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(472, 418);
-      this.panel1.TabIndex = 0;
+      this.groupBoxImport.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxImport.Controls.Add(this.labelImport);
+      this.groupBoxImport.Controls.Add(this.buttonImport);
+      this.groupBoxImport.Controls.Add(this.checkBoxDeleteBeforeImport);
+      this.groupBoxImport.Controls.Add(this.labelFolder);
+      this.groupBoxImport.Controls.Add(this.buttonBrowse);
+      this.groupBoxImport.Controls.Add(this.textBoxFolder);
+      this.groupBoxImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxImport.Location = new System.Drawing.Point(6, 6);
+      this.groupBoxImport.Name = "groupBoxImport";
+      this.groupBoxImport.Size = new System.Drawing.Size(460, 158);
+      this.groupBoxImport.TabIndex = 0;
+      this.groupBoxImport.TabStop = false;
+      this.groupBoxImport.Text = "Import";
       // 
-      // label1
+      // labelImport
       // 
-      this.label1.Location = new System.Drawing.Point(161, 243);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(274, 32);
-      this.label1.TabIndex = 35;
-      this.label1.Text = "Note: Could take quite some time to execute depending on how many days forward yo" +
-          "u grab.";
+      this.labelImport.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelImport.Location = new System.Drawing.Point(3, 85);
+      this.labelImport.Name = "labelImport";
+      this.labelImport.Size = new System.Drawing.Size(448, 41);
+      this.labelImport.TabIndex = 4;
+      this.labelImport.Text = "TV Server automatically imports when any of the XMLTV data files change. You can " +
+          "also force an import using the button below. Importing can take several minutes " +
+          "to complete so please be patient.";
+      // 
+      // buttonImport
+      // 
+      this.buttonImport.Location = new System.Drawing.Point(151, 129);
+      this.buttonImport.Name = "buttonImport";
+      this.buttonImport.Size = new System.Drawing.Size(75, 23);
+      this.buttonImport.TabIndex = 5;
+      this.buttonImport.Text = "Import Now";
+      this.buttonImport.UseVisualStyleBackColor = true;
+      this.buttonImport.Click += new System.EventHandler(this.buttonImport_Click);
       // 
       // checkBoxDeleteBeforeImport
       // 
       this.checkBoxDeleteBeforeImport.AutoSize = true;
-      this.checkBoxDeleteBeforeImport.Location = new System.Drawing.Point(195, 98);
+      this.checkBoxDeleteBeforeImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxDeleteBeforeImport.Location = new System.Drawing.Point(6, 58);
       this.checkBoxDeleteBeforeImport.Name = "checkBoxDeleteBeforeImport";
-      this.checkBoxDeleteBeforeImport.Size = new System.Drawing.Size(268, 17);
-      this.checkBoxDeleteBeforeImport.TabIndex = 34;
-      this.checkBoxDeleteBeforeImport.Text = "Delete old programs before import (Recommended!)";
+      this.checkBoxDeleteBeforeImport.Size = new System.Drawing.Size(261, 17);
+      this.checkBoxDeleteBeforeImport.TabIndex = 3;
+      this.checkBoxDeleteBeforeImport.Text = "Delete old programs before import (recommended).";
       this.checkBoxDeleteBeforeImport.UseVisualStyleBackColor = true;
       // 
-      // label23
+      // labelFolder
       // 
-      this.label23.AutoSize = true;
-      this.label23.Location = new System.Drawing.Point(6, 243);
-      this.label23.Name = "label23";
-      this.label23.Size = new System.Drawing.Size(68, 13);
-      this.label23.TabIndex = 33;
-      this.label23.Text = "Force import:";
-      // 
-      // buttonManualImport
-      // 
-      this.buttonManualImport.Location = new System.Drawing.Point(80, 239);
-      this.buttonManualImport.Name = "buttonManualImport";
-      this.buttonManualImport.Size = new System.Drawing.Size(75, 20);
-      this.buttonManualImport.TabIndex = 25;
-      this.buttonManualImport.Text = "Import";
-      this.buttonManualImport.UseVisualStyleBackColor = true;
-      this.buttonManualImport.Click += new System.EventHandler(this.buttonManualImport_Click);
-      // 
-      // cbImportLST
-      // 
-      this.cbImportLST.AutoSize = true;
-      this.cbImportLST.Location = new System.Drawing.Point(9, 121);
-      this.cbImportLST.Name = "cbImportLST";
-      this.cbImportLST.Size = new System.Drawing.Size(161, 17);
-      this.cbImportLST.TabIndex = 32;
-      this.cbImportLST.Text = "Import files in new tvguide.lst";
-      this.cbImportLST.UseVisualStyleBackColor = true;
-      // 
-      // cbImportXML
-      // 
-      this.cbImportXML.AutoSize = true;
-      this.cbImportXML.Location = new System.Drawing.Point(9, 98);
-      this.cbImportXML.Name = "cbImportXML";
-      this.cbImportXML.Size = new System.Drawing.Size(134, 17);
-      this.cbImportXML.TabIndex = 31;
-      this.cbImportXML.Text = "Import new tvguide.xml";
-      this.cbImportXML.UseVisualStyleBackColor = true;
-      // 
-      // groupBox1
-      // 
-      this.groupBox1.Controls.Add(this.labelStatus);
-      this.groupBox1.Controls.Add(this.labelPrograms);
-      this.groupBox1.Controls.Add(this.labelChannels);
-      this.groupBox1.Controls.Add(this.labelLastImport);
-      this.groupBox1.Controls.Add(this.label5);
-      this.groupBox1.Controls.Add(this.label10);
-      this.groupBox1.Controls.Add(this.label11);
-      this.groupBox1.Controls.Add(this.label12);
-      this.groupBox1.Location = new System.Drawing.Point(9, 278);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(426, 112);
-      this.groupBox1.TabIndex = 30;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Import status report:";
-      // 
-      // labelStatus
-      // 
-      this.labelStatus.AutoSize = true;
-      this.labelStatus.Location = new System.Drawing.Point(163, 97);
-      this.labelStatus.Name = "labelStatus";
-      this.labelStatus.Size = new System.Drawing.Size(0, 13);
-      this.labelStatus.TabIndex = 24;
-      // 
-      // labelPrograms
-      // 
-      this.labelPrograms.AutoSize = true;
-      this.labelPrograms.Location = new System.Drawing.Point(163, 75);
-      this.labelPrograms.Name = "labelPrograms";
-      this.labelPrograms.Size = new System.Drawing.Size(0, 13);
-      this.labelPrograms.TabIndex = 23;
-      // 
-      // labelChannels
-      // 
-      this.labelChannels.AutoSize = true;
-      this.labelChannels.Location = new System.Drawing.Point(163, 52);
-      this.labelChannels.Name = "labelChannels";
-      this.labelChannels.Size = new System.Drawing.Size(0, 13);
-      this.labelChannels.TabIndex = 22;
-      // 
-      // labelLastImport
-      // 
-      this.labelLastImport.AutoSize = true;
-      this.labelLastImport.Location = new System.Drawing.Point(163, 28);
-      this.labelLastImport.Name = "labelLastImport";
-      this.labelLastImport.Size = new System.Drawing.Size(0, 13);
-      this.labelLastImport.TabIndex = 21;
-      // 
-      // label5
-      // 
-      this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(17, 89);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(70, 13);
-      this.label5.TabIndex = 20;
-      this.label5.Text = "Import status:";
-      // 
-      // label10
-      // 
-      this.label10.AutoSize = true;
-      this.label10.Location = new System.Drawing.Point(17, 67);
-      this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(123, 13);
-      this.label10.TabIndex = 19;
-      this.label10.Text = "Total programs imported:";
-      // 
-      // label11
-      // 
-      this.label11.AutoSize = true;
-      this.label11.Location = new System.Drawing.Point(17, 44);
-      this.label11.Name = "label11";
-      this.label11.Size = new System.Drawing.Size(123, 13);
-      this.label11.TabIndex = 18;
-      this.label11.Text = "Total channels imported:";
-      // 
-      // label12
-      // 
-      this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(17, 20);
-      this.label12.Name = "label12";
-      this.label12.Size = new System.Drawing.Size(91, 13);
-      this.label12.TabIndex = 17;
-      this.label12.Text = "Last import run at:";
-      // 
-      // label13
-      // 
-      this.label13.AutoSize = true;
-      this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label13.Location = new System.Drawing.Point(6, 35);
-      this.label13.Name = "label13";
-      this.label13.Size = new System.Drawing.Size(371, 13);
-      this.label13.TabIndex = 29;
-      this.label13.Text = "Please note that this folder should also include the xmltv.dtd file";
-      // 
-      // label14
-      // 
-      this.label14.AutoSize = true;
-      this.label14.Location = new System.Drawing.Point(6, 220);
-      this.label14.Name = "label14";
-      this.label14.Size = new System.Drawing.Size(283, 13);
-      this.label14.TabIndex = 28;
-      this.label14.Text = "When it detects a new file, it will be imported automatically.";
-      // 
-      // label15
-      // 
-      this.label15.AutoSize = true;
-      this.label15.Location = new System.Drawing.Point(6, 207);
-      this.label15.Name = "label15";
-      this.label15.Size = new System.Drawing.Size(360, 13);
-      this.label15.TabIndex = 27;
-      this.label15.Text = "The server will check every minute if there is a new tvguide.xml/tvguide.lst.";
-      // 
-      // textBoxMinutes
-      // 
-      this.textBoxMinutes.Location = new System.Drawing.Point(210, 184);
-      this.textBoxMinutes.Name = "textBoxMinutes";
-      this.textBoxMinutes.Size = new System.Drawing.Size(50, 20);
-      this.textBoxMinutes.TabIndex = 26;
-      // 
-      // textBoxHours
-      // 
-      this.textBoxHours.Location = new System.Drawing.Point(76, 184);
-      this.textBoxHours.Name = "textBoxHours";
-      this.textBoxHours.Size = new System.Drawing.Size(50, 20);
-      this.textBoxHours.TabIndex = 25;
-      // 
-      // label16
-      // 
-      this.label16.AutoSize = true;
-      this.label16.Location = new System.Drawing.Point(157, 187);
-      this.label16.Name = "label16";
-      this.label16.Size = new System.Drawing.Size(47, 13);
-      this.label16.TabIndex = 24;
-      this.label16.Text = "Minutes:";
-      // 
-      // label17
-      // 
-      this.label17.AutoSize = true;
-      this.label17.Location = new System.Drawing.Point(32, 187);
-      this.label17.Name = "label17";
-      this.label17.Size = new System.Drawing.Size(38, 13);
-      this.label17.TabIndex = 23;
-      this.label17.Text = "Hours:";
-      // 
-      // checkBox1
-      // 
-      this.checkBox1.AutoSize = true;
-      this.checkBox1.Location = new System.Drawing.Point(9, 158);
-      this.checkBox1.Name = "checkBox1";
-      this.checkBox1.Size = new System.Drawing.Size(265, 17);
-      this.checkBox1.TabIndex = 22;
-      this.checkBox1.Text = "Apply time compensation when loading tvguide.xml";
-      this.checkBox1.UseVisualStyleBackColor = true;
+      this.labelFolder.AutoSize = true;
+      this.labelFolder.Location = new System.Drawing.Point(3, 16);
+      this.labelFolder.Name = "labelFolder";
+      this.labelFolder.Size = new System.Drawing.Size(356, 13);
+      this.labelFolder.TabIndex = 0;
+      this.labelFolder.Text = "Folder where the XMLTV data (tvguide.xml) or list (tvguide.lst) file is stored:";
       // 
       // buttonBrowse
       // 
-      this.buttonBrowse.Location = new System.Drawing.Point(345, 51);
+      this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonBrowse.Location = new System.Drawing.Point(428, 30);
       this.buttonBrowse.Name = "buttonBrowse";
       this.buttonBrowse.Size = new System.Drawing.Size(23, 23);
-      this.buttonBrowse.TabIndex = 21;
+      this.buttonBrowse.TabIndex = 2;
       this.buttonBrowse.Text = "...";
       this.buttonBrowse.UseVisualStyleBackColor = true;
-      this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click_1);
-      // 
-      // label18
-      // 
-      this.label18.AutoSize = true;
-      this.label18.Location = new System.Drawing.Point(6, 18);
-      this.label18.Name = "label18";
-      this.label18.Size = new System.Drawing.Size(200, 13);
-      this.label18.TabIndex = 20;
-      this.label18.Text = "Folder where the tvguide.xml file is stored";
+      this.buttonBrowse.Click += new System.EventHandler(this.buttonFolderBrowse_Click);
       // 
       // textBoxFolder
       // 
-      this.textBoxFolder.Location = new System.Drawing.Point(9, 54);
+      this.textBoxFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxFolder.Location = new System.Drawing.Point(6, 32);
       this.textBoxFolder.Name = "textBoxFolder";
-      this.textBoxFolder.Size = new System.Drawing.Size(330, 20);
-      this.textBoxFolder.TabIndex = 19;
+      this.textBoxFolder.Size = new System.Drawing.Size(416, 20);
+      this.textBoxFolder.TabIndex = 1;
+      // 
+      // groupBoxTimeCorrection
+      // 
+      this.groupBoxTimeCorrection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxTimeCorrection.Controls.Add(this.numericTextBoxTimeCorrectionHours);
+      this.groupBoxTimeCorrection.Controls.Add(this.numericTextBoxTimeCorrectionMinutes);
+      this.groupBoxTimeCorrection.Controls.Add(this.labelTimeCorrectionList);
+      this.groupBoxTimeCorrection.Controls.Add(this.checkBoxTimeCorrectionEnable);
+      this.groupBoxTimeCorrection.Controls.Add(this.labelTimeCorrectionHours);
+      this.groupBoxTimeCorrection.Controls.Add(this.labelTimeCorrectionMinutes);
+      this.groupBoxTimeCorrection.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxTimeCorrection.Location = new System.Drawing.Point(6, 170);
+      this.groupBoxTimeCorrection.Name = "groupBoxTimeCorrection";
+      this.groupBoxTimeCorrection.Size = new System.Drawing.Size(460, 93);
+      this.groupBoxTimeCorrection.TabIndex = 1;
+      this.groupBoxTimeCorrection.TabStop = false;
+      this.groupBoxTimeCorrection.Text = "Time Correction";
+      // 
+      // numericTextBoxTimeCorrectionHours
+      // 
+      this.numericTextBoxTimeCorrectionHours.Location = new System.Drawing.Point(63, 42);
+      this.numericTextBoxTimeCorrectionHours.Name = "numericTextBoxTimeCorrectionHours";
+      this.numericTextBoxTimeCorrectionHours.Size = new System.Drawing.Size(50, 20);
+      this.numericTextBoxTimeCorrectionHours.TabIndex = 2;
+      this.numericTextBoxTimeCorrectionHours.Text = "0";
+      this.numericTextBoxTimeCorrectionHours.Value = 0;
+      // 
+      // numericTextBoxTimeCorrectionMinutes
+      // 
+      this.numericTextBoxTimeCorrectionMinutes.Location = new System.Drawing.Point(201, 42);
+      this.numericTextBoxTimeCorrectionMinutes.Name = "numericTextBoxTimeCorrectionMinutes";
+      this.numericTextBoxTimeCorrectionMinutes.Size = new System.Drawing.Size(50, 20);
+      this.numericTextBoxTimeCorrectionMinutes.TabIndex = 4;
+      this.numericTextBoxTimeCorrectionMinutes.Text = "0";
+      this.numericTextBoxTimeCorrectionMinutes.Value = 0;
+      // 
+      // labelTimeCorrectionList
+      // 
+      this.labelTimeCorrectionList.AutoSize = true;
+      this.labelTimeCorrectionList.Location = new System.Drawing.Point(19, 65);
+      this.labelTimeCorrectionList.Name = "labelTimeCorrectionList";
+      this.labelTimeCorrectionList.Size = new System.Drawing.Size(394, 13);
+      this.labelTimeCorrectionList.TabIndex = 5;
+      this.labelTimeCorrectionList.Text = "Note that tvguide.lst enables you to specify separate corrections for each data f" +
+          "ile.";
+      // 
+      // checkBoxTimeCorrectionEnable
+      // 
+      this.checkBoxTimeCorrectionEnable.AutoSize = true;
+      this.checkBoxTimeCorrectionEnable.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxTimeCorrectionEnable.Location = new System.Drawing.Point(6, 19);
+      this.checkBoxTimeCorrectionEnable.Name = "checkBoxTimeCorrectionEnable";
+      this.checkBoxTimeCorrectionEnable.Size = new System.Drawing.Size(218, 17);
+      this.checkBoxTimeCorrectionEnable.TabIndex = 0;
+      this.checkBoxTimeCorrectionEnable.Text = "Adjust the times contained in tvguide.xml.";
+      this.checkBoxTimeCorrectionEnable.UseVisualStyleBackColor = true;
+      this.checkBoxTimeCorrectionEnable.CheckedChanged += new System.EventHandler(this.checkBoxTimeCorrectionEnable_CheckedChanged);
+      // 
+      // labelTimeCorrectionHours
+      // 
+      this.labelTimeCorrectionHours.AutoSize = true;
+      this.labelTimeCorrectionHours.Location = new System.Drawing.Point(19, 45);
+      this.labelTimeCorrectionHours.Name = "labelTimeCorrectionHours";
+      this.labelTimeCorrectionHours.Size = new System.Drawing.Size(38, 13);
+      this.labelTimeCorrectionHours.TabIndex = 1;
+      this.labelTimeCorrectionHours.Text = "Hours:";
+      // 
+      // labelTimeCorrectionMinutes
+      // 
+      this.labelTimeCorrectionMinutes.AutoSize = true;
+      this.labelTimeCorrectionMinutes.Location = new System.Drawing.Point(148, 45);
+      this.labelTimeCorrectionMinutes.Name = "labelTimeCorrectionMinutes";
+      this.labelTimeCorrectionMinutes.Size = new System.Drawing.Size(47, 13);
+      this.labelTimeCorrectionMinutes.TabIndex = 3;
+      this.labelTimeCorrectionMinutes.Text = "Minutes:";
+      // 
+      // groupBoxImportStatus
+      // 
+      this.groupBoxImportStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxImportStatus.Controls.Add(this.labelImportStatusValue);
+      this.groupBoxImportStatus.Controls.Add(this.labelImportStatusProgramCountsValue);
+      this.groupBoxImportStatus.Controls.Add(this.labelImportStatusChannelCountsValue);
+      this.groupBoxImportStatus.Controls.Add(this.labelImportStatusDateTimeValue);
+      this.groupBoxImportStatus.Controls.Add(this.labelImportStatusLabel);
+      this.groupBoxImportStatus.Controls.Add(this.labelImportStatusProgramCountsLabel);
+      this.groupBoxImportStatus.Controls.Add(this.labelImportStatusChannelCountsLabel);
+      this.groupBoxImportStatus.Controls.Add(this.labelImportStatusDateTimeLabel);
+      this.groupBoxImportStatus.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxImportStatus.Location = new System.Drawing.Point(6, 269);
+      this.groupBoxImportStatus.Name = "groupBoxImportStatus";
+      this.groupBoxImportStatus.Size = new System.Drawing.Size(460, 119);
+      this.groupBoxImportStatus.TabIndex = 2;
+      this.groupBoxImportStatus.TabStop = false;
+      this.groupBoxImportStatus.Text = "Import Status";
+      // 
+      // labelImportStatusValue
+      // 
+      this.labelImportStatusValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelImportStatusValue.Location = new System.Drawing.Point(148, 48);
+      this.labelImportStatusValue.Name = "labelImportStatusValue";
+      this.labelImportStatusValue.Size = new System.Drawing.Size(303, 13);
+      this.labelImportStatusValue.TabIndex = 3;
+      this.labelImportStatusValue.Text = "(import status)";
+      // 
+      // labelImportStatusProgramCountsValue
+      // 
+      this.labelImportStatusProgramCountsValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelImportStatusProgramCountsValue.Location = new System.Drawing.Point(148, 93);
+      this.labelImportStatusProgramCountsValue.Name = "labelImportStatusProgramCountsValue";
+      this.labelImportStatusProgramCountsValue.Size = new System.Drawing.Size(303, 13);
+      this.labelImportStatusProgramCountsValue.TabIndex = 7;
+      this.labelImportStatusProgramCountsValue.Text = "(import program counts)";
+      // 
+      // labelImportStatusChannelCountsValue
+      // 
+      this.labelImportStatusChannelCountsValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelImportStatusChannelCountsValue.Location = new System.Drawing.Point(148, 70);
+      this.labelImportStatusChannelCountsValue.Name = "labelImportStatusChannelCountsValue";
+      this.labelImportStatusChannelCountsValue.Size = new System.Drawing.Size(303, 13);
+      this.labelImportStatusChannelCountsValue.TabIndex = 5;
+      this.labelImportStatusChannelCountsValue.Text = "(import channel counts)";
+      // 
+      // labelImportStatusDateTimeValue
+      // 
+      this.labelImportStatusDateTimeValue.AutoSize = true;
+      this.labelImportStatusDateTimeValue.Location = new System.Drawing.Point(148, 26);
+      this.labelImportStatusDateTimeValue.Name = "labelImportStatusDateTimeValue";
+      this.labelImportStatusDateTimeValue.Size = new System.Drawing.Size(89, 13);
+      this.labelImportStatusDateTimeValue.TabIndex = 1;
+      this.labelImportStatusDateTimeValue.Text = "(import date/time)";
+      // 
+      // labelImportStatusLabel
+      // 
+      this.labelImportStatusLabel.AutoSize = true;
+      this.labelImportStatusLabel.Location = new System.Drawing.Point(3, 48);
+      this.labelImportStatusLabel.Name = "labelImportStatusLabel";
+      this.labelImportStatusLabel.Size = new System.Drawing.Size(70, 13);
+      this.labelImportStatusLabel.TabIndex = 2;
+      this.labelImportStatusLabel.Text = "Status/result:";
+      // 
+      // labelImportStatusProgramCountsLabel
+      // 
+      this.labelImportStatusProgramCountsLabel.AutoSize = true;
+      this.labelImportStatusProgramCountsLabel.Location = new System.Drawing.Point(3, 93);
+      this.labelImportStatusProgramCountsLabel.Name = "labelImportStatusProgramCountsLabel";
+      this.labelImportStatusProgramCountsLabel.Size = new System.Drawing.Size(110, 13);
+      this.labelImportStatusProgramCountsLabel.TabIndex = 6;
+      this.labelImportStatusProgramCountsLabel.Text = "Total program counts:";
+      // 
+      // labelImportStatusChannelCountsLabel
+      // 
+      this.labelImportStatusChannelCountsLabel.AutoSize = true;
+      this.labelImportStatusChannelCountsLabel.Location = new System.Drawing.Point(3, 70);
+      this.labelImportStatusChannelCountsLabel.Name = "labelImportStatusChannelCountsLabel";
+      this.labelImportStatusChannelCountsLabel.Size = new System.Drawing.Size(110, 13);
+      this.labelImportStatusChannelCountsLabel.TabIndex = 4;
+      this.labelImportStatusChannelCountsLabel.Text = "Total channel counts:";
+      // 
+      // labelImportStatusDateTimeLabel
+      // 
+      this.labelImportStatusDateTimeLabel.AutoSize = true;
+      this.labelImportStatusDateTimeLabel.Location = new System.Drawing.Point(3, 26);
+      this.labelImportStatusDateTimeLabel.Name = "labelImportStatusDateTimeLabel";
+      this.labelImportStatusDateTimeLabel.Size = new System.Drawing.Size(57, 13);
+      this.labelImportStatusDateTimeLabel.TabIndex = 0;
+      this.labelImportStatusDateTimeLabel.Text = "Date/time:";
       // 
       // tabMappings
       // 
-      this.tabMappings.Controls.Add(this.panel2);
+      this.tabMappings.Controls.Add(this.groupBoxMapping);
+      this.tabMappings.Controls.Add(this.dataGridViewMappings);
       this.tabMappings.Location = new System.Drawing.Point(4, 22);
       this.tabMappings.Name = "tabMappings";
       this.tabMappings.Padding = new System.Windows.Forms.Padding(3);
@@ -426,167 +400,129 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.tabMappings.Text = "Mappings";
       this.tabMappings.UseVisualStyleBackColor = true;
       // 
-      // panel2
+      // groupBoxMapping
       // 
-      this.panel2.AutoSize = true;
-      this.panel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-      this.panel2.BackColor = System.Drawing.Color.Transparent;
-      this.panel2.Controls.Add(this.groupBox2);
-      this.panel2.Controls.Add(this.dataGridChannelMappings);
-      this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.panel2.Location = new System.Drawing.Point(3, 3);
-      this.panel2.Name = "panel2";
-      this.panel2.Size = new System.Drawing.Size(466, 388);
-      this.panel2.TabIndex = 0;
+      this.groupBoxMapping.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxMapping.Controls.Add(this.labelMappingChannelGroup);
+      this.groupBoxMapping.Controls.Add(this.comboBoxMappingsChannelGroup);
+      this.groupBoxMapping.Controls.Add(this.checkBoxMappingsPartialMatch);
+      this.groupBoxMapping.Controls.Add(this.textBoxMappingsAction);
+      this.groupBoxMapping.Controls.Add(this.labelMappingProgress);
+      this.groupBoxMapping.Controls.Add(this.labelMappingAction);
+      this.groupBoxMapping.Controls.Add(this.progressBarMappingsProgress);
+      this.groupBoxMapping.Controls.Add(this.buttonMappingsSave);
+      this.groupBoxMapping.Controls.Add(this.buttonMappingsLoad);
+      this.groupBoxMapping.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxMapping.Location = new System.Drawing.Point(6, 6);
+      this.groupBoxMapping.Name = "groupBoxMapping";
+      this.groupBoxMapping.Size = new System.Drawing.Size(460, 85);
+      this.groupBoxMapping.TabIndex = 0;
+      this.groupBoxMapping.TabStop = false;
       // 
-      // groupBox2
+      // labelMappingChannelGroup
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox2.Controls.Add(this.checkBoxLoadRadio);
-      this.groupBox2.Controls.Add(this.label2);
-      this.groupBox2.Controls.Add(this.comboBoxGroup);
-      this.groupBox2.Controls.Add(this.buttonExport);
-      this.groupBox2.Controls.Add(this.checkBoxPartialMatch);
-      this.groupBox2.Controls.Add(this.textBoxAction);
-      this.groupBox2.Controls.Add(this.label22);
-      this.groupBox2.Controls.Add(this.label21);
-      this.groupBox2.Controls.Add(this.progressBar1);
-      this.groupBox2.Controls.Add(this.label19);
-      this.groupBox2.Controls.Add(this.buttonSave);
-      this.groupBox2.Controls.Add(this.buttonRefresh);
-      this.groupBox2.Location = new System.Drawing.Point(3, 3);
-      this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(454, 85);
-      this.groupBox2.TabIndex = 5;
-      this.groupBox2.TabStop = false;
+      this.labelMappingChannelGroup.AutoSize = true;
+      this.labelMappingChannelGroup.Location = new System.Drawing.Point(10, 14);
+      this.labelMappingChannelGroup.Name = "labelMappingChannelGroup";
+      this.labelMappingChannelGroup.Size = new System.Drawing.Size(39, 13);
+      this.labelMappingChannelGroup.TabIndex = 0;
+      this.labelMappingChannelGroup.Text = "Group:";
       // 
-      // checkBoxLoadRadio
+      // comboBoxMappingsChannelGroup
       // 
-      this.checkBoxLoadRadio.AutoSize = true;
-      this.checkBoxLoadRadio.Location = new System.Drawing.Point(117, 32);
-      this.checkBoxLoadRadio.Name = "checkBoxLoadRadio";
-      this.checkBoxLoadRadio.Size = new System.Drawing.Size(122, 17);
-      this.checkBoxLoadRadio.TabIndex = 14;
-      this.checkBoxLoadRadio.Text = "Load radio channels";
-      this.checkBoxLoadRadio.UseVisualStyleBackColor = true;
-      this.checkBoxLoadRadio.CheckedChanged += new System.EventHandler(this.checkBoxLoadRadio_CheckedChanged);
+      this.comboBoxMappingsChannelGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxMappingsChannelGroup.FormattingEnabled = true;
+      this.comboBoxMappingsChannelGroup.Location = new System.Drawing.Point(55, 11);
+      this.comboBoxMappingsChannelGroup.Name = "comboBoxMappingsChannelGroup";
+      this.comboBoxMappingsChannelGroup.Size = new System.Drawing.Size(153, 21);
+      this.comboBoxMappingsChannelGroup.TabIndex = 1;
       // 
-      // label2
+      // checkBoxMappingsPartialMatch
       // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(18, 58);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(39, 13);
-      this.label2.TabIndex = 13;
-      this.label2.Text = "Group:";
+      this.checkBoxMappingsPartialMatch.AutoSize = true;
+      this.checkBoxMappingsPartialMatch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxMappingsPartialMatch.Location = new System.Drawing.Point(13, 38);
+      this.checkBoxMappingsPartialMatch.Name = "checkBoxMappingsPartialMatch";
+      this.checkBoxMappingsPartialMatch.Size = new System.Drawing.Size(137, 17);
+      this.checkBoxMappingsPartialMatch.TabIndex = 2;
+      this.checkBoxMappingsPartialMatch.Text = "Enable partial matching.";
+      this.checkBoxMappingsPartialMatch.UseVisualStyleBackColor = true;
       // 
-      // comboBoxGroup
+      // textBoxMappingsAction
       // 
-      this.comboBoxGroup.FormattingEnabled = true;
-      this.comboBoxGroup.Location = new System.Drawing.Point(63, 55);
-      this.comboBoxGroup.Name = "comboBoxGroup";
-      this.comboBoxGroup.Size = new System.Drawing.Size(141, 21);
-      this.comboBoxGroup.TabIndex = 12;
+      this.textBoxMappingsAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxMappingsAction.BackColor = System.Drawing.SystemColors.Control;
+      this.textBoxMappingsAction.Location = new System.Drawing.Point(334, 40);
+      this.textBoxMappingsAction.Name = "textBoxMappingsAction";
+      this.textBoxMappingsAction.Size = new System.Drawing.Size(105, 20);
+      this.textBoxMappingsAction.TabIndex = 6;
       // 
-      // buttonExport
+      // labelMappingProgress
       // 
-      this.buttonExport.Location = new System.Drawing.Point(300, 14);
-      this.buttonExport.Name = "buttonExport";
-      this.buttonExport.Size = new System.Drawing.Size(58, 23);
-      this.buttonExport.TabIndex = 11;
-      this.buttonExport.Text = "Export";
-      this.buttonExport.UseVisualStyleBackColor = true;
-      this.buttonExport.Click += new System.EventHandler(this.buttonExport_Click);
+      this.labelMappingProgress.AutoSize = true;
+      this.labelMappingProgress.Location = new System.Drawing.Point(277, 63);
+      this.labelMappingProgress.Name = "labelMappingProgress";
+      this.labelMappingProgress.Size = new System.Drawing.Size(51, 13);
+      this.labelMappingProgress.TabIndex = 7;
+      this.labelMappingProgress.Text = "Progress:";
       // 
-      // checkBoxPartialMatch
+      // labelMappingAction
       // 
-      this.checkBoxPartialMatch.AutoSize = true;
-      this.checkBoxPartialMatch.Location = new System.Drawing.Point(117, 14);
-      this.checkBoxPartialMatch.Name = "checkBoxPartialMatch";
-      this.checkBoxPartialMatch.Size = new System.Drawing.Size(87, 17);
-      this.checkBoxPartialMatch.TabIndex = 9;
-      this.checkBoxPartialMatch.Text = "Partial match";
-      this.checkBoxPartialMatch.UseVisualStyleBackColor = true;
+      this.labelMappingAction.AutoSize = true;
+      this.labelMappingAction.Location = new System.Drawing.Point(279, 43);
+      this.labelMappingAction.Name = "labelMappingAction";
+      this.labelMappingAction.Size = new System.Drawing.Size(40, 13);
+      this.labelMappingAction.TabIndex = 5;
+      this.labelMappingAction.Text = "Action:";
       // 
-      // textBoxAction
+      // progressBarMappingsProgress
       // 
-      this.textBoxAction.BackColor = System.Drawing.SystemColors.Control;
-      this.textBoxAction.Location = new System.Drawing.Point(334, 40);
-      this.textBoxAction.Name = "textBoxAction";
-      this.textBoxAction.Size = new System.Drawing.Size(105, 20);
-      this.textBoxAction.TabIndex = 8;
+      this.progressBarMappingsProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarMappingsProgress.Location = new System.Drawing.Point(334, 66);
+      this.progressBarMappingsProgress.Name = "progressBarMappingsProgress";
+      this.progressBarMappingsProgress.Size = new System.Drawing.Size(105, 10);
+      this.progressBarMappingsProgress.TabIndex = 8;
       // 
-      // label22
+      // buttonMappingsSave
       // 
-      this.label22.AutoSize = true;
-      this.label22.Location = new System.Drawing.Point(277, 63);
-      this.label22.Name = "label22";
-      this.label22.Size = new System.Drawing.Size(51, 13);
-      this.label22.TabIndex = 7;
-      this.label22.Text = "Progress:";
+      this.buttonMappingsSave.Location = new System.Drawing.Point(79, 56);
+      this.buttonMappingsSave.Name = "buttonMappingsSave";
+      this.buttonMappingsSave.Size = new System.Drawing.Size(60, 23);
+      this.buttonMappingsSave.TabIndex = 4;
+      this.buttonMappingsSave.Text = "Save";
+      this.buttonMappingsSave.UseVisualStyleBackColor = true;
+      this.buttonMappingsSave.Click += new System.EventHandler(this.buttonMappingsSave_Click);
       // 
-      // label21
+      // buttonMappingsLoad
       // 
-      this.label21.AutoSize = true;
-      this.label21.Location = new System.Drawing.Point(279, 43);
-      this.label21.Name = "label21";
-      this.label21.Size = new System.Drawing.Size(40, 13);
-      this.label21.TabIndex = 6;
-      this.label21.Text = "Action:";
+      this.buttonMappingsLoad.Location = new System.Drawing.Point(13, 56);
+      this.buttonMappingsLoad.Name = "buttonMappingsLoad";
+      this.buttonMappingsLoad.Size = new System.Drawing.Size(60, 23);
+      this.buttonMappingsLoad.TabIndex = 3;
+      this.buttonMappingsLoad.Text = "Load";
+      this.buttonMappingsLoad.UseVisualStyleBackColor = true;
+      this.buttonMappingsLoad.Click += new System.EventHandler(this.buttonMappingsLoad_Click);
       // 
-      // progressBar1
+      // dataGridViewMappings
       // 
-      this.progressBar1.Location = new System.Drawing.Point(334, 66);
-      this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(106, 10);
-      this.progressBar1.TabIndex = 5;
-      // 
-      // label19
-      // 
-      this.label19.AutoSize = true;
-      this.label19.Location = new System.Drawing.Point(13, 11);
-      this.label19.Name = "label19";
-      this.label19.Size = new System.Drawing.Size(0, 13);
-      this.label19.TabIndex = 1;
-      // 
-      // buttonSave
-      // 
-      this.buttonSave.Location = new System.Drawing.Point(379, 14);
-      this.buttonSave.Name = "buttonSave";
-      this.buttonSave.Size = new System.Drawing.Size(60, 23);
-      this.buttonSave.TabIndex = 4;
-      this.buttonSave.Text = "Save";
-      this.buttonSave.UseVisualStyleBackColor = true;
-      this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
-      // 
-      // buttonRefresh
-      // 
-      this.buttonRefresh.Location = new System.Drawing.Point(19, 14);
-      this.buttonRefresh.Name = "buttonRefresh";
-      this.buttonRefresh.Size = new System.Drawing.Size(87, 23);
-      this.buttonRefresh.TabIndex = 3;
-      this.buttonRefresh.Text = "Load/Refresh";
-      this.buttonRefresh.UseVisualStyleBackColor = true;
-      this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
-      // 
-      // dataGridChannelMappings
-      // 
-      this.dataGridChannelMappings.AllowUserToAddRows = false;
-      this.dataGridChannelMappings.AllowUserToDeleteRows = false;
-      this.dataGridChannelMappings.AllowUserToOrderColumns = true;
-      this.dataGridChannelMappings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.dataGridViewMappings.AllowUserToAddRows = false;
+      this.dataGridViewMappings.AllowUserToDeleteRows = false;
+      this.dataGridViewMappings.AllowUserToOrderColumns = true;
+      this.dataGridViewMappings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.dataGridChannelMappings.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-      this.dataGridChannelMappings.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Id,
-            this.tuningChannel,
-            this.guideChannel,
-            this.matchType,
-            this.ShowInGuide});
-      this.dataGridChannelMappings.Location = new System.Drawing.Point(6, 94);
-      this.dataGridChannelMappings.MultiSelect = false;
-      this.dataGridChannelMappings.Name = "dataGridChannelMappings";
+      this.dataGridViewMappings.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+      this.dataGridViewMappings.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewColumnId,
+            this.dataGridViewColumnTuningChannel,
+            this.dataGridViewColumnGuideChannel,
+            this.dataGridViewColumnMatchType});
+      this.dataGridViewMappings.Location = new System.Drawing.Point(6, 97);
+      this.dataGridViewMappings.MultiSelect = false;
+      this.dataGridViewMappings.Name = "dataGridViewMappings";
       dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
       dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
       dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -594,324 +530,273 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
       dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
       dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-      this.dataGridChannelMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-      this.dataGridChannelMappings.Size = new System.Drawing.Size(451, 287);
-      this.dataGridChannelMappings.TabIndex = 2;
+      this.dataGridViewMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+      this.dataGridViewMappings.Size = new System.Drawing.Size(460, 287);
+      this.dataGridViewMappings.TabIndex = 1;
       // 
-      // Id
+      // dataGridViewColumnId
       // 
-      this.Id.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-      this.Id.HeaderText = "Id";
-      this.Id.Name = "Id";
-      this.Id.Width = 41;
+      this.dataGridViewColumnId.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+      this.dataGridViewColumnId.HeaderText = "ID";
+      this.dataGridViewColumnId.Name = "dataGridViewColumnId";
+      this.dataGridViewColumnId.Width = 43;
       // 
-      // tuningChannel
+      // dataGridViewColumnTuningChannel
       // 
-      this.tuningChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+      this.dataGridViewColumnTuningChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
       dataGridViewCellStyle1.BackColor = System.Drawing.Color.White;
-      this.tuningChannel.DefaultCellStyle = dataGridViewCellStyle1;
-      this.tuningChannel.HeaderText = "Tuning Channel";
-      this.tuningChannel.Name = "tuningChannel";
-      this.tuningChannel.ReadOnly = true;
-      this.tuningChannel.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+      this.dataGridViewColumnTuningChannel.DefaultCellStyle = dataGridViewCellStyle1;
+      this.dataGridViewColumnTuningChannel.HeaderText = "Tuning Channel";
+      this.dataGridViewColumnTuningChannel.Name = "dataGridViewColumnTuningChannel";
+      this.dataGridViewColumnTuningChannel.ReadOnly = true;
+      this.dataGridViewColumnTuningChannel.Resizable = System.Windows.Forms.DataGridViewTriState.True;
       // 
-      // guideChannel
+      // dataGridViewColumnGuideChannel
       // 
-      this.guideChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+      this.dataGridViewColumnGuideChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
       dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
-      this.guideChannel.DefaultCellStyle = dataGridViewCellStyle2;
-      this.guideChannel.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
-      this.guideChannel.HeaderText = "Guide channel";
-      this.guideChannel.Name = "guideChannel";
-      this.guideChannel.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-      this.guideChannel.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+      this.dataGridViewColumnGuideChannel.DefaultCellStyle = dataGridViewCellStyle2;
+      this.dataGridViewColumnGuideChannel.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
+      this.dataGridViewColumnGuideChannel.HeaderText = "Guide Channel";
+      this.dataGridViewColumnGuideChannel.Name = "dataGridViewColumnGuideChannel";
+      this.dataGridViewColumnGuideChannel.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+      this.dataGridViewColumnGuideChannel.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
       // 
-      // matchType
+      // dataGridViewColumnMatchType
       // 
-      this.matchType.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-      this.matchType.HeaderText = "*";
-      this.matchType.Name = "matchType";
-      this.matchType.ReadOnly = true;
-      this.matchType.ToolTipText = "Type of match. White = already mapped, Green = exact, Yellow = partial, Red = non" +
+      this.dataGridViewColumnMatchType.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+      this.dataGridViewColumnMatchType.HeaderText = "*";
+      this.dataGridViewColumnMatchType.Name = "dataGridViewColumnMatchType";
+      this.dataGridViewColumnMatchType.ReadOnly = true;
+      this.dataGridViewColumnMatchType.ToolTipText = "Type of match. White = already mapped, Green = exact, Yellow = partial, Red = non" +
           "e";
-      this.matchType.Width = 36;
+      this.dataGridViewColumnMatchType.Width = 36;
       // 
-      // ShowInGuide
+      // tabSchedule
       // 
-      this.ShowInGuide.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-      this.ShowInGuide.HeaderText = "Visible in Guide";
-      this.ShowInGuide.Name = "ShowInGuide";
-      this.ShowInGuide.ReadOnly = true;
-      this.ShowInGuide.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-      this.ShowInGuide.Width = 104;
+      this.tabSchedule.Controls.Add(this.groupBoxScheduledActionsTime);
+      this.tabSchedule.Controls.Add(this.groupBoxScheduledActionsStatus);
+      this.tabSchedule.Controls.Add(this.groupBoxScheduledActionsAction);
+      this.tabSchedule.Location = new System.Drawing.Point(4, 22);
+      this.tabSchedule.Name = "tabSchedule";
+      this.tabSchedule.Padding = new System.Windows.Forms.Padding(3);
+      this.tabSchedule.Size = new System.Drawing.Size(472, 394);
+      this.tabSchedule.TabIndex = 2;
+      this.tabSchedule.Text = "Schedule";
+      this.tabSchedule.UseVisualStyleBackColor = true;
       // 
-      // tabRemote
+      // groupBoxScheduledActionsTime
       // 
-      this.tabRemote.Controls.Add(this.panel3);
-      this.tabRemote.Location = new System.Drawing.Point(4, 22);
-      this.tabRemote.Name = "tabRemote";
-      this.tabRemote.Padding = new System.Windows.Forms.Padding(3);
-      this.tabRemote.Size = new System.Drawing.Size(472, 394);
-      this.tabRemote.TabIndex = 2;
-      this.tabRemote.Text = "Remote";
-      this.tabRemote.UseVisualStyleBackColor = true;
+      this.groupBoxScheduledActionsTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxScheduledActionsTime.Controls.Add(this.radioScheduledActionsTimeStartup);
+      this.groupBoxScheduledActionsTime.Controls.Add(this.buttonScheduledActionsTimeNow);
+      this.groupBoxScheduledActionsTime.Controls.Add(this.radioScheduledActionsTimeFixed);
+      this.groupBoxScheduledActionsTime.Controls.Add(this.dateTimePickerScheduledActionsTime);
+      this.groupBoxScheduledActionsTime.Controls.Add(this.labelScheduledActionsTime);
+      this.groupBoxScheduledActionsTime.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxScheduledActionsTime.Location = new System.Drawing.Point(7, 173);
+      this.groupBoxScheduledActionsTime.Name = "groupBoxScheduledActionsTime";
+      this.groupBoxScheduledActionsTime.Size = new System.Drawing.Size(459, 120);
+      this.groupBoxScheduledActionsTime.TabIndex = 1;
+      this.groupBoxScheduledActionsTime.TabStop = false;
+      this.groupBoxScheduledActionsTime.Text = "Time";
       // 
-      // panel3
+      // radioScheduledActionsTimeStartup
       // 
-      this.panel3.AutoSize = true;
-      this.panel3.BackColor = System.Drawing.Color.Transparent;
-      this.panel3.Controls.Add(this.groupBox4);
-      this.panel3.Controls.Add(this.groupBox3);
-      this.panel3.Controls.Add(this.label3);
-      this.panel3.Controls.Add(this.label32);
-      this.panel3.Controls.Add(this.btnGetNow);
-      this.panel3.Controls.Add(this.label37);
-      this.panel3.Controls.Add(this.txtRemoteURL);
-      this.panel3.Location = new System.Drawing.Point(3, 3);
-      this.panel3.Name = "panel3";
-      this.panel3.Size = new System.Drawing.Size(469, 418);
-      this.panel3.TabIndex = 23;
+      this.radioScheduledActionsTimeStartup.AutoSize = true;
+      this.radioScheduledActionsTimeStartup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.radioScheduledActionsTimeStartup.Location = new System.Drawing.Point(8, 60);
+      this.radioScheduledActionsTimeStartup.Name = "radioScheduledActionsTimeStartup";
+      this.radioScheduledActionsTimeStartup.Size = new System.Drawing.Size(274, 17);
+      this.radioScheduledActionsTimeStartup.TabIndex = 3;
+      this.radioScheduledActionsTimeStartup.Text = "Once per day when the TV service starts or resumes.";
+      this.radioScheduledActionsTimeStartup.UseVisualStyleBackColor = true;
       // 
-      // groupBox4
+      // buttonScheduledActionsTimeNow
       // 
-      this.groupBox4.Controls.Add(this.lblTransferStatus);
-      this.groupBox4.Controls.Add(this.lblLastTransferAt);
-      this.groupBox4.Controls.Add(this.label33);
-      this.groupBox4.Controls.Add(this.label36);
-      this.groupBox4.Location = new System.Drawing.Point(9, 248);
-      this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(426, 92);
-      this.groupBox4.TabIndex = 34;
-      this.groupBox4.TabStop = false;
-      this.groupBox4.Text = "transfer status report:";
+      this.buttonScheduledActionsTimeNow.Location = new System.Drawing.Point(166, 83);
+      this.buttonScheduledActionsTimeNow.Name = "buttonScheduledActionsTimeNow";
+      this.buttonScheduledActionsTimeNow.Size = new System.Drawing.Size(80, 23);
+      this.buttonScheduledActionsTimeNow.TabIndex = 4;
+      this.buttonScheduledActionsTimeNow.Text = "Do It Now";
+      this.buttonScheduledActionsTimeNow.UseVisualStyleBackColor = true;
+      this.buttonScheduledActionsTimeNow.Click += new System.EventHandler(this.buttonScheduledActionsTimeNow_Click);
       // 
-      // lblTransferStatus
+      // radioScheduledActionsTimeFixed
       // 
-      this.lblTransferStatus.AutoSize = true;
-      this.lblTransferStatus.Location = new System.Drawing.Point(163, 52);
-      this.lblTransferStatus.Name = "lblTransferStatus";
-      this.lblTransferStatus.Size = new System.Drawing.Size(0, 13);
-      this.lblTransferStatus.TabIndex = 22;
+      this.radioScheduledActionsTimeFixed.AutoSize = true;
+      this.radioScheduledActionsTimeFixed.Checked = true;
+      this.radioScheduledActionsTimeFixed.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.radioScheduledActionsTimeFixed.Location = new System.Drawing.Point(8, 36);
+      this.radioScheduledActionsTimeFixed.Name = "radioScheduledActionsTimeFixed";
+      this.radioScheduledActionsTimeFixed.Size = new System.Drawing.Size(152, 17);
+      this.radioScheduledActionsTimeFixed.TabIndex = 1;
+      this.radioScheduledActionsTimeFixed.TabStop = true;
+      this.radioScheduledActionsTimeFixed.Text = "At a certain time every day:";
+      this.radioScheduledActionsTimeFixed.UseVisualStyleBackColor = true;
       // 
-      // lblLastTransferAt
+      // dateTimePickerScheduledActionsTime
       // 
-      this.lblLastTransferAt.AutoSize = true;
-      this.lblLastTransferAt.Location = new System.Drawing.Point(163, 28);
-      this.lblLastTransferAt.Name = "lblLastTransferAt";
-      this.lblLastTransferAt.Size = new System.Drawing.Size(0, 13);
-      this.lblLastTransferAt.TabIndex = 21;
+      this.dateTimePickerScheduledActionsTime.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+      this.dateTimePickerScheduledActionsTime.Location = new System.Drawing.Point(166, 34);
+      this.dateTimePickerScheduledActionsTime.Name = "dateTimePickerScheduledActionsTime";
+      this.dateTimePickerScheduledActionsTime.ShowUpDown = true;
+      this.dateTimePickerScheduledActionsTime.Size = new System.Drawing.Size(95, 20);
+      this.dateTimePickerScheduledActionsTime.TabIndex = 2;
       // 
-      // label33
+      // labelScheduledActionsTime
       // 
-      this.label33.AutoSize = true;
-      this.label33.Location = new System.Drawing.Point(17, 52);
-      this.label33.Name = "label33";
-      this.label33.Size = new System.Drawing.Size(80, 13);
-      this.label33.TabIndex = 20;
-      this.label33.Text = "Transfer status:";
+      this.labelScheduledActionsTime.AutoSize = true;
+      this.labelScheduledActionsTime.Location = new System.Drawing.Point(2, 16);
+      this.labelScheduledActionsTime.Name = "labelScheduledActionsTime";
+      this.labelScheduledActionsTime.Size = new System.Drawing.Size(146, 13);
+      this.labelScheduledActionsTime.TabIndex = 0;
+      this.labelScheduledActionsTime.Text = "Perform the above action(s)...";
       // 
-      // label36
+      // groupBoxScheduledActionsStatus
       // 
-      this.label36.AutoSize = true;
-      this.label36.Location = new System.Drawing.Point(17, 28);
-      this.label36.Name = "label36";
-      this.label36.Size = new System.Drawing.Size(80, 13);
-      this.label36.TabIndex = 17;
-      this.label36.Text = "Last transfer at:";
+      this.groupBoxScheduledActionsStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxScheduledActionsStatus.Controls.Add(this.labelScheduledActionsStatusValue);
+      this.groupBoxScheduledActionsStatus.Controls.Add(this.labelScheduledActionsStatusDateTimeValue);
+      this.groupBoxScheduledActionsStatus.Controls.Add(this.labelScheduledActionsStatusLabel);
+      this.groupBoxScheduledActionsStatus.Controls.Add(this.labelScheduledActionsStatusDateTimeLabel);
+      this.groupBoxScheduledActionsStatus.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxScheduledActionsStatus.Location = new System.Drawing.Point(6, 311);
+      this.groupBoxScheduledActionsStatus.Name = "groupBoxScheduledActionsStatus";
+      this.groupBoxScheduledActionsStatus.Size = new System.Drawing.Size(460, 77);
+      this.groupBoxScheduledActionsStatus.TabIndex = 2;
+      this.groupBoxScheduledActionsStatus.TabStop = false;
+      this.groupBoxScheduledActionsStatus.Text = "Status";
       // 
-      // groupBox3
+      // labelScheduledActionsStatusValue
       // 
-      this.groupBox3.Controls.Add(this.radioDownloadOnWakeUp);
-      this.groupBox3.Controls.Add(this.radioDownloadOnSchedule);
-      this.groupBox3.Controls.Add(this.chkScheduler);
-      this.groupBox3.Controls.Add(this.label27);
-      this.groupBox3.Controls.Add(this.dateTimePickerScheduler);
-      this.groupBox3.Controls.Add(this.label20);
-      this.groupBox3.Controls.Add(this.label24);
-      this.groupBox3.Controls.Add(this.label25);
-      this.groupBox3.Controls.Add(this.label26);
-      this.groupBox3.Location = new System.Drawing.Point(9, 116);
-      this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(426, 126);
-      this.groupBox3.TabIndex = 33;
-      this.groupBox3.TabStop = false;
-      this.groupBox3.Text = "Schedule:";
+      this.labelScheduledActionsStatusValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelScheduledActionsStatusValue.Location = new System.Drawing.Point(148, 48);
+      this.labelScheduledActionsStatusValue.Name = "labelScheduledActionsStatusValue";
+      this.labelScheduledActionsStatusValue.Size = new System.Drawing.Size(291, 13);
+      this.labelScheduledActionsStatusValue.TabIndex = 3;
+      this.labelScheduledActionsStatusValue.Text = "(transfer status)";
       // 
-      // radioDownloadOnWakeUp
+      // labelScheduledActionsStatusDateTimeValue
       // 
-      this.radioDownloadOnWakeUp.AutoSize = true;
-      this.radioDownloadOnWakeUp.Enabled = false;
-      this.radioDownloadOnWakeUp.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioDownloadOnWakeUp.Location = new System.Drawing.Point(20, 83);
-      this.radioDownloadOnWakeUp.Name = "radioDownloadOnWakeUp";
-      this.radioDownloadOnWakeUp.Size = new System.Drawing.Size(358, 17);
-      this.radioDownloadOnWakeUp.TabIndex = 39;
-      this.radioDownloadOnWakeUp.Text = "Force download when tvservice starts/resumes (but only once per day)";
-      this.radioDownloadOnWakeUp.UseVisualStyleBackColor = true;
+      this.labelScheduledActionsStatusDateTimeValue.AutoSize = true;
+      this.labelScheduledActionsStatusDateTimeValue.Location = new System.Drawing.Point(148, 26);
+      this.labelScheduledActionsStatusDateTimeValue.Name = "labelScheduledActionsStatusDateTimeValue";
+      this.labelScheduledActionsStatusDateTimeValue.Size = new System.Drawing.Size(96, 13);
+      this.labelScheduledActionsStatusDateTimeValue.TabIndex = 1;
+      this.labelScheduledActionsStatusDateTimeValue.Text = "(transfer date/time)";
       // 
-      // radioDownloadOnSchedule
+      // labelScheduledActionsStatusLabel
       // 
-      this.radioDownloadOnSchedule.AutoSize = true;
-      this.radioDownloadOnSchedule.Checked = true;
-      this.radioDownloadOnSchedule.Enabled = false;
-      this.radioDownloadOnSchedule.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioDownloadOnSchedule.Location = new System.Drawing.Point(20, 64);
-      this.radioDownloadOnSchedule.Name = "radioDownloadOnSchedule";
-      this.radioDownloadOnSchedule.Size = new System.Drawing.Size(112, 17);
-      this.radioDownloadOnSchedule.TabIndex = 38;
-      this.radioDownloadOnSchedule.TabStop = true;
-      this.radioDownloadOnSchedule.Text = "Scheduled at time:";
-      this.radioDownloadOnSchedule.UseVisualStyleBackColor = true;
+      this.labelScheduledActionsStatusLabel.AutoSize = true;
+      this.labelScheduledActionsStatusLabel.Location = new System.Drawing.Point(3, 48);
+      this.labelScheduledActionsStatusLabel.Name = "labelScheduledActionsStatusLabel";
+      this.labelScheduledActionsStatusLabel.Size = new System.Drawing.Size(70, 13);
+      this.labelScheduledActionsStatusLabel.TabIndex = 2;
+      this.labelScheduledActionsStatusLabel.Text = "Status/result:";
       // 
-      // chkScheduler
+      // labelScheduledActionsStatusDateTimeLabel
       // 
-      this.chkScheduler.AutoSize = true;
-      this.chkScheduler.Location = new System.Drawing.Point(9, 19);
-      this.chkScheduler.Name = "chkScheduler";
-      this.chkScheduler.Size = new System.Drawing.Size(65, 17);
-      this.chkScheduler.TabIndex = 36;
-      this.chkScheduler.Text = "Enabled";
-      this.chkScheduler.UseVisualStyleBackColor = true;
-      this.chkScheduler.CheckedChanged += new System.EventHandler(this.chkScheduler_CheckedChanged);
+      this.labelScheduledActionsStatusDateTimeLabel.AutoSize = true;
+      this.labelScheduledActionsStatusDateTimeLabel.Location = new System.Drawing.Point(3, 26);
+      this.labelScheduledActionsStatusDateTimeLabel.Name = "labelScheduledActionsStatusDateTimeLabel";
+      this.labelScheduledActionsStatusDateTimeLabel.Size = new System.Drawing.Size(57, 13);
+      this.labelScheduledActionsStatusDateTimeLabel.TabIndex = 0;
+      this.labelScheduledActionsStatusDateTimeLabel.Text = "Date/time:";
       // 
-      // label27
+      // groupBoxScheduledActionsAction
       // 
-      this.label27.AutoSize = true;
-      this.label27.Location = new System.Drawing.Point(17, 38);
-      this.label27.Name = "label27";
-      this.label27.Size = new System.Drawing.Size(399, 13);
-      this.label27.TabIndex = 35;
-      this.label27.Text = "The scheduler will download the remote tvguide.xml once a day at the time defined" +
-          ".";
+      this.groupBoxScheduledActionsAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxScheduledActionsAction.Controls.Add(this.checkBoxScheduledActionsProgram);
+      this.groupBoxScheduledActionsAction.Controls.Add(this.checkBoxScheduledActionsDownload);
+      this.groupBoxScheduledActionsAction.Controls.Add(this.buttonScheduledActionsProgramBrowse);
+      this.groupBoxScheduledActionsAction.Controls.Add(this.textBoxScheduledActionsProgramLocation);
+      this.groupBoxScheduledActionsAction.Controls.Add(this.textBoxScheduledActionsDownloadUrl);
+      this.groupBoxScheduledActionsAction.Controls.Add(this.labelScheduledActionsProgram);
+      this.groupBoxScheduledActionsAction.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxScheduledActionsAction.Location = new System.Drawing.Point(6, 6);
+      this.groupBoxScheduledActionsAction.Name = "groupBoxScheduledActionsAction";
+      this.groupBoxScheduledActionsAction.Size = new System.Drawing.Size(460, 161);
+      this.groupBoxScheduledActionsAction.TabIndex = 0;
+      this.groupBoxScheduledActionsAction.TabStop = false;
+      this.groupBoxScheduledActionsAction.Text = "Action";
       // 
-      // dateTimePickerScheduler
+      // checkBoxScheduledActionsProgram
       // 
-      this.dateTimePickerScheduler.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-      this.dateTimePickerScheduler.Location = new System.Drawing.Point(157, 60);
-      this.dateTimePickerScheduler.Name = "dateTimePickerScheduler";
-      this.dateTimePickerScheduler.ShowUpDown = true;
-      this.dateTimePickerScheduler.Size = new System.Drawing.Size(77, 20);
-      this.dateTimePickerScheduler.TabIndex = 34;
+      this.checkBoxScheduledActionsProgram.AutoSize = true;
+      this.checkBoxScheduledActionsProgram.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxScheduledActionsProgram.Location = new System.Drawing.Point(6, 74);
+      this.checkBoxScheduledActionsProgram.Name = "checkBoxScheduledActionsProgram";
+      this.checkBoxScheduledActionsProgram.Size = new System.Drawing.Size(177, 17);
+      this.checkBoxScheduledActionsProgram.TabIndex = 3;
+      this.checkBoxScheduledActionsProgram.Text = "Run this program or batch script:";
+      this.checkBoxScheduledActionsProgram.UseVisualStyleBackColor = true;
+      this.checkBoxScheduledActionsProgram.CheckedChanged += new System.EventHandler(this.checkBoxScheduledActionsProgram_CheckedChanged);
       // 
-      // label20
+      // checkBoxScheduledActionsDownload
       // 
-      this.label20.AutoSize = true;
-      this.label20.Location = new System.Drawing.Point(163, 97);
-      this.label20.Name = "label20";
-      this.label20.Size = new System.Drawing.Size(0, 13);
-      this.label20.TabIndex = 24;
+      this.checkBoxScheduledActionsDownload.AutoSize = true;
+      this.checkBoxScheduledActionsDownload.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxScheduledActionsDownload.Location = new System.Drawing.Point(6, 19);
+      this.checkBoxScheduledActionsDownload.Name = "checkBoxScheduledActionsDownload";
+      this.checkBoxScheduledActionsDownload.Size = new System.Drawing.Size(319, 17);
+      this.checkBoxScheduledActionsDownload.TabIndex = 1;
+      this.checkBoxScheduledActionsDownload.Text = "Download and unzip (optional) from this HTTP or FTP address:";
+      this.checkBoxScheduledActionsDownload.UseVisualStyleBackColor = true;
+      this.checkBoxScheduledActionsDownload.CheckedChanged += new System.EventHandler(this.checkBoxScheduledActionsDownload_CheckedChanged);
       // 
-      // label24
+      // buttonScheduledActionsProgramBrowse
       // 
-      this.label24.AutoSize = true;
-      this.label24.Location = new System.Drawing.Point(163, 75);
-      this.label24.Name = "label24";
-      this.label24.Size = new System.Drawing.Size(0, 13);
-      this.label24.TabIndex = 23;
+      this.buttonScheduledActionsProgramBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonScheduledActionsProgramBrowse.Location = new System.Drawing.Point(416, 95);
+      this.buttonScheduledActionsProgramBrowse.Name = "buttonScheduledActionsProgramBrowse";
+      this.buttonScheduledActionsProgramBrowse.Size = new System.Drawing.Size(23, 23);
+      this.buttonScheduledActionsProgramBrowse.TabIndex = 5;
+      this.buttonScheduledActionsProgramBrowse.Text = "...";
+      this.buttonScheduledActionsProgramBrowse.UseVisualStyleBackColor = true;
+      this.buttonScheduledActionsProgramBrowse.Click += new System.EventHandler(this.buttonScheduledActionsProgramBrowse_Click);
       // 
-      // label25
+      // textBoxScheduledActionsProgramLocation
       // 
-      this.label25.AutoSize = true;
-      this.label25.Location = new System.Drawing.Point(163, 52);
-      this.label25.Name = "label25";
-      this.label25.Size = new System.Drawing.Size(0, 13);
-      this.label25.TabIndex = 22;
+      this.textBoxScheduledActionsProgramLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxScheduledActionsProgramLocation.Location = new System.Drawing.Point(25, 97);
+      this.textBoxScheduledActionsProgramLocation.Name = "textBoxScheduledActionsProgramLocation";
+      this.textBoxScheduledActionsProgramLocation.Size = new System.Drawing.Size(385, 20);
+      this.textBoxScheduledActionsProgramLocation.TabIndex = 4;
+      this.textBoxScheduledActionsProgramLocation.Text = "c:\\Program Files\\My Program\\MyProgram.exe";
       // 
-      // label26
+      // textBoxScheduledActionsDownloadUrl
       // 
-      this.label26.AutoSize = true;
-      this.label26.Location = new System.Drawing.Point(163, 28);
-      this.label26.Name = "label26";
-      this.label26.Size = new System.Drawing.Size(0, 13);
-      this.label26.TabIndex = 21;
+      this.textBoxScheduledActionsDownloadUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxScheduledActionsDownloadUrl.Location = new System.Drawing.Point(25, 42);
+      this.textBoxScheduledActionsDownloadUrl.Name = "textBoxScheduledActionsDownloadUrl";
+      this.textBoxScheduledActionsDownloadUrl.Size = new System.Drawing.Size(414, 20);
+      this.textBoxScheduledActionsDownloadUrl.TabIndex = 2;
+      this.textBoxScheduledActionsDownloadUrl.Text = "http://www.mysite.com/tvguide.xml";
       // 
-      // label3
+      // labelScheduledActionsProgram
       // 
-      this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(6, 88);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(374, 13);
-      this.label3.TabIndex = 30;
-      this.label3.Text = "The retrieved file will be copied to the local folder specified in the \'Settings\'" +
-          " tab";
+      this.labelScheduledActionsProgram.Location = new System.Drawing.Point(22, 121);
+      this.labelScheduledActionsProgram.Name = "labelScheduledActionsProgram";
+      this.labelScheduledActionsProgram.Size = new System.Drawing.Size(417, 32);
+      this.labelScheduledActionsProgram.TabIndex = 6;
+      this.labelScheduledActionsProgram.Text = "Note that the program or batch script must save the XMLTV data file as tvguide.xm" +
+          "l in the folder specified on the \'General\' tab.";
       // 
-      // label32
+      // folderBrowserDialog
       // 
-      this.label32.AutoSize = true;
-      this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label32.Location = new System.Drawing.Point(6, 35);
-      this.label32.Name = "label32";
-      this.label32.Size = new System.Drawing.Size(186, 13);
-      this.label32.TabIndex = 29;
-      this.label32.Text = "Specify a valid FTP/HTTP URL";
+      this.folderBrowserDialog.Description = "Please select the folder where tvguide.xml or tvguide.lst are stored.";
       // 
-      // btnGetNow
+      // selectScheduledActionsProgramDialog
       // 
-      this.btnGetNow.Location = new System.Drawing.Point(345, 51);
-      this.btnGetNow.Name = "btnGetNow";
-      this.btnGetNow.Size = new System.Drawing.Size(62, 23);
-      this.btnGetNow.TabIndex = 21;
-      this.btnGetNow.Text = "Get Now!";
-      this.btnGetNow.UseVisualStyleBackColor = true;
-      this.btnGetNow.Click += new System.EventHandler(this.btnGetNow_Click);
-      // 
-      // label37
-      // 
-      this.label37.AutoSize = true;
-      this.label37.Location = new System.Drawing.Point(6, 18);
-      this.label37.Name = "label37";
-      this.label37.Size = new System.Drawing.Size(237, 13);
-      this.label37.TabIndex = 20;
-      this.label37.Text = "Remote folder where the tvguide.xml file is stored";
-      // 
-      // txtRemoteURL
-      // 
-      this.txtRemoteURL.Location = new System.Drawing.Point(55, 54);
-      this.txtRemoteURL.Name = "txtRemoteURL";
-      this.txtRemoteURL.Size = new System.Drawing.Size(284, 20);
-      this.txtRemoteURL.TabIndex = 19;
-      this.txtRemoteURL.Text = "http://www.mysite.com/TVguide.xml";
-      // 
-      // label9
-      // 
-      this.label9.AutoSize = true;
-      this.label9.Location = new System.Drawing.Point(17, 97);
-      this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(70, 13);
-      this.label9.TabIndex = 20;
-      this.label9.Text = "Import status:";
-      // 
-      // label8
-      // 
-      this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(17, 75);
-      this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(123, 13);
-      this.label8.TabIndex = 19;
-      this.label8.Text = "Total programs imported:";
-      // 
-      // label7
-      // 
-      this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(17, 52);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(123, 13);
-      this.label7.TabIndex = 18;
-      this.label7.Text = "Total channels imported:";
-      // 
-      // label6
-      // 
-      this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(17, 28);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(91, 13);
-      this.label6.TabIndex = 17;
-      this.label6.Text = "Last import run at:";
-      // 
-      // saveFileExport
-      // 
-      this.saveFileExport.Title = "Export the mapped guidechannels";
-      this.saveFileExport.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileExport_FileOk);
+      this.selectScheduledActionsProgramDialog.Filter = "Executables (*.exe, *.bat)|*.exe;*.bat|All Files|*.*";
+      this.selectScheduledActionsProgramDialog.Title = "Select A Program Or Batch Script.";
       // 
       // XmlTvSetup
       // 
@@ -922,109 +807,91 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.ResumeLayout(false);
       this.tabSettings.ResumeLayout(false);
-      this.tabSettings.PerformLayout();
-      this.panel1.ResumeLayout(false);
-      this.panel1.PerformLayout();
-      this.groupBox1.ResumeLayout(false);
-      this.groupBox1.PerformLayout();
+      this.groupBoxImport.ResumeLayout(false);
+      this.groupBoxImport.PerformLayout();
+      this.groupBoxTimeCorrection.ResumeLayout(false);
+      this.groupBoxTimeCorrection.PerformLayout();
+      this.groupBoxImportStatus.ResumeLayout(false);
+      this.groupBoxImportStatus.PerformLayout();
       this.tabMappings.ResumeLayout(false);
-      this.tabMappings.PerformLayout();
-      this.panel2.ResumeLayout(false);
-      this.groupBox2.ResumeLayout(false);
-      this.groupBox2.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.dataGridChannelMappings)).EndInit();
-      this.tabRemote.ResumeLayout(false);
-      this.tabRemote.PerformLayout();
-      this.panel3.ResumeLayout(false);
-      this.panel3.PerformLayout();
-      this.groupBox4.ResumeLayout(false);
-      this.groupBox4.PerformLayout();
-      this.groupBox3.ResumeLayout(false);
-      this.groupBox3.PerformLayout();
+      this.groupBoxMapping.ResumeLayout(false);
+      this.groupBoxMapping.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMappings)).EndInit();
+      this.tabSchedule.ResumeLayout(false);
+      this.groupBoxScheduledActionsTime.ResumeLayout(false);
+      this.groupBoxScheduledActionsTime.PerformLayout();
+      this.groupBoxScheduledActionsStatus.ResumeLayout(false);
+      this.groupBoxScheduledActionsStatus.PerformLayout();
+      this.groupBoxScheduledActionsAction.ResumeLayout(false);
+      this.groupBoxScheduledActionsAction.PerformLayout();
       this.ResumeLayout(false);
 
     }
 
     #endregion
 
-    private System.Windows.Forms.TabControl tabControl1;
-    private System.Windows.Forms.TabPage tabSettings;
-    private System.Windows.Forms.Panel panel1;
-    private System.Windows.Forms.CheckBox cbImportLST;
-    private System.Windows.Forms.CheckBox cbImportXML;
-    private System.Windows.Forms.GroupBox groupBox1;
-    private System.Windows.Forms.Label labelStatus;
-    private System.Windows.Forms.Label labelPrograms;
-    private System.Windows.Forms.Label labelChannels;
-    private System.Windows.Forms.Label labelLastImport;
-    private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.Label label10;
-    private System.Windows.Forms.Label label11;
-    private System.Windows.Forms.Label label12;
-    private System.Windows.Forms.Label label13;
-    private System.Windows.Forms.Label label14;
-    private System.Windows.Forms.Label label15;
-    private System.Windows.Forms.TextBox textBoxMinutes;
-    private System.Windows.Forms.TextBox textBoxHours;
-    private System.Windows.Forms.Label label16;
-    private System.Windows.Forms.Label label17;
-    private System.Windows.Forms.CheckBox checkBox1;
-    private System.Windows.Forms.Button buttonBrowse;
-    private System.Windows.Forms.Label label18;
-    private System.Windows.Forms.TextBox textBoxFolder;
-    private System.Windows.Forms.TabPage tabMappings;
-     private System.Windows.Forms.Label label9;
-    private System.Windows.Forms.Label label8;
-    private System.Windows.Forms.Label label7;
-    private System.Windows.Forms.Label label6;
-    private System.Windows.Forms.Panel panel2;
-    private System.Windows.Forms.Label label19;
-    private System.Windows.Forms.Button buttonSave;
-    private System.Windows.Forms.Button buttonRefresh;
-    private System.Windows.Forms.GroupBox groupBox2;
-    private System.Windows.Forms.ProgressBar progressBar1;
-    private System.Windows.Forms.Label label22;
-    private System.Windows.Forms.Label label21;
-    private System.Windows.Forms.TextBox textBoxAction;
-    private System.Windows.Forms.CheckBox checkBoxPartialMatch;
-    private System.Windows.Forms.Button buttonManualImport;
-    private System.Windows.Forms.Label label23;
-    private System.Windows.Forms.CheckBox checkBoxDeleteBeforeImport;
-    private System.Windows.Forms.Button buttonExport;
-    private System.Windows.Forms.SaveFileDialog saveFileExport;
-    private System.Windows.Forms.DataGridView dataGridChannelMappings;
-    private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogTVGuide;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.ComboBox comboBoxGroup;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.CheckBox checkBoxLoadRadio;
-    private System.Windows.Forms.DataGridViewTextBoxColumn Id;
-    private System.Windows.Forms.DataGridViewTextBoxColumn tuningChannel;
-    private System.Windows.Forms.DataGridViewComboBoxColumn guideChannel;
-    private System.Windows.Forms.DataGridViewTextBoxColumn matchType;
-    private System.Windows.Forms.DataGridViewCheckBoxColumn ShowInGuide;
-		private System.Windows.Forms.TabPage tabRemote;
-		private System.Windows.Forms.Panel panel3;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label32;
-		private System.Windows.Forms.Button btnGetNow;
-		private System.Windows.Forms.Label label37;
-		private System.Windows.Forms.TextBox txtRemoteURL;
-		private System.Windows.Forms.GroupBox groupBox3;
-		private System.Windows.Forms.DateTimePicker dateTimePickerScheduler;
-    private System.Windows.Forms.Label label20;
-		private System.Windows.Forms.Label label24;
-		private System.Windows.Forms.Label label25;
-		private System.Windows.Forms.Label label26;
-		private System.Windows.Forms.CheckBox chkScheduler;
-		private System.Windows.Forms.Label label27;
-		private System.Windows.Forms.GroupBox groupBox4;
-		private System.Windows.Forms.Label lblTransferStatus;
-		private System.Windows.Forms.Label lblLastTransferAt;
-		private System.Windows.Forms.Label label33;
-    private System.Windows.Forms.Label label36;
-    private MPRadioButton radioDownloadOnWakeUp;
-    private MPRadioButton radioDownloadOnSchedule;
+    private MPTabControl tabControl1;
+    private MPTabPage tabSettings;
+    private MPTabPage tabMappings;
+    private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+    private MPTabPage tabSchedule;
+    private MPCheckBox checkBoxDeleteBeforeImport;
+    private MPButton buttonImport;
+    private MPGroupBox groupBoxImportStatus;
+    private MPLabel labelImportStatusValue;
+    private MPLabel labelImportStatusProgramCountsValue;
+    private MPLabel labelImportStatusChannelCountsValue;
+    private MPLabel labelImportStatusDateTimeValue;
+    private MPLabel labelImportStatusLabel;
+    private MPLabel labelImportStatusProgramCountsLabel;
+    private MPLabel labelImportStatusChannelCountsLabel;
+    private MPLabel labelImportStatusDateTimeLabel;
+    private MPLabel labelImport;
+    private MPLabel labelTimeCorrectionMinutes;
+    private MPLabel labelTimeCorrectionHours;
+    private MPCheckBox checkBoxTimeCorrectionEnable;
+    private MPButton buttonBrowse;
+    private MPLabel labelFolder;
+    private MPTextBox textBoxFolder;
+    private MPGroupBox groupBoxMapping;
+    private MPLabel labelMappingChannelGroup;
+    private MPComboBox comboBoxMappingsChannelGroup;
+    private MPCheckBox checkBoxMappingsPartialMatch;
+    private MPTextBox textBoxMappingsAction;
+    private MPLabel labelMappingProgress;
+    private MPLabel labelMappingAction;
+    private System.Windows.Forms.ProgressBar progressBarMappingsProgress;
+    private MPButton buttonMappingsSave;
+    private MPButton buttonMappingsLoad;
+    private System.Windows.Forms.DataGridView dataGridViewMappings;
+    private MPGroupBox groupBoxTimeCorrection;
+    private MPNumericTextBox numericTextBoxTimeCorrectionMinutes;
+    private MPNumericTextBox numericTextBoxTimeCorrectionHours;
+    private MPGroupBox groupBoxScheduledActionsStatus;
+    private MPLabel labelScheduledActionsStatusValue;
+    private MPLabel labelScheduledActionsStatusDateTimeValue;
+    private MPLabel labelScheduledActionsStatusLabel;
+    private MPLabel labelScheduledActionsStatusDateTimeLabel;
+    private MPGroupBox groupBoxScheduledActionsAction;
+    private MPRadioButton radioScheduledActionsTimeStartup;
+    private MPRadioButton radioScheduledActionsTimeFixed;
+    private MPLabel labelScheduledActionsProgram;
+    private System.Windows.Forms.DateTimePicker dateTimePickerScheduledActionsTime;
+    private MPLabel labelScheduledActionsTime;
+    private MPButton buttonScheduledActionsTimeNow;
+    private MPTextBox textBoxScheduledActionsDownloadUrl;
+    private MPGroupBox groupBoxImport;
+    private MPGroupBox groupBoxScheduledActionsTime;
+    private MPButton buttonScheduledActionsProgramBrowse;
+    private MPTextBox textBoxScheduledActionsProgramLocation;
+    private MPCheckBox checkBoxScheduledActionsProgram;
+    private MPCheckBox checkBoxScheduledActionsDownload;
+    private MPLabel labelTimeCorrectionList;
+    private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewColumnId;
+    private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewColumnTuningChannel;
+    private System.Windows.Forms.DataGridViewComboBoxColumn dataGridViewColumnGuideChannel;
+    private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewColumnMatchType;
+    private System.Windows.Forms.OpenFileDialog selectScheduledActionsProgramDialog;
 
 
   }

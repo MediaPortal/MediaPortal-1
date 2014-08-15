@@ -21,7 +21,7 @@
 using System;
 using System.Collections;
 
-namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
+namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Util
 {
   /// <summary>
   /// Enumerates the elements of a <see cref="TstDictionary"/>.
