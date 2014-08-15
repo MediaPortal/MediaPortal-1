@@ -317,29 +317,28 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       try
       {
         TimeSpan timeSincePreviousFinishSuccess = DateTime.Now - SettingsManagement.GetValue("xmlTvScheduledActionsPreviousFinish", DateTime.MinValue);
-        if (SettingsManagement.GetValue("xmlTvScheduledActionsOnStartup", false))
+        if (SettingsManagement.GetValue("xmlTvScheduledActionsTimeOnStartup", false))
         {
           // If configured to run on startup/resume, don't run the scheduled
           // actions unless it has been at least a day since they last ran.
           if (timeSincePreviousFinishSuccess.TotalMinutes >= 1440)  // 1440 minutes = 1 day
           {
-            this.LogInfo("XMLTV: time to perform scheduled actions (start/resume), {0} minutes since last run", timeSincePreviousFinishSuccess.TotalMinutes);
+            this.LogInfo("XMLTV: time to perform scheduled actions (start/resume), {0} minutes since last run", (long)timeSincePreviousFinishSuccess.TotalMinutes);
             PerformScheduledActions();
           }
         }
         else
         {
-          // If configured to run at a fixed time each day, don't run the
-          // scheduled actions unless it is time to run them (10 minute window)
-          // and it has been at least half a day since they last ran.
-          DateTime scheduledTime = SettingsManagement.GetValue("xmlTvScheduledActionsTime", DateTime.Now);
-          DateTime scheduledTimeToday = DateTime.Today;
-          scheduledTimeToday.AddHours(scheduledTime.Hour);
-          scheduledTimeToday.AddMinutes(scheduledTime.Minute);
-          TimeSpan timeUntilRunToday = DateTime.Now - scheduledTimeToday;
-          if (timeSincePreviousFinishSuccess.TotalMinutes >= 720 && Math.Abs(timeUntilRunToday.TotalMinutes) <= 5)
+          // If configured to run between certain times each day, don't run the
+          // scheduled actions unless it is time to run them and it has been at
+          // least [distance between times] since they last ran.
+          TimeSpan scheduledTimeStart = SettingsManagement.GetValue("xmlTvScheduledActionsTimeBetweenStart", DateTime.Now).TimeOfDay;
+          TimeSpan scheduledTimeEnd = SettingsManagement.GetValue("xmlTvScheduledActionsTimeBetweenEnd", DateTime.Now).TimeOfDay;
+          if (DateTime.Now.TimeOfDay >= scheduledTimeStart &&
+            DateTime.Now.TimeOfDay <= scheduledTimeEnd &&
+            timeSincePreviousFinishSuccess.TotalMinutes >= (scheduledTimeEnd - scheduledTimeStart).TotalMinutes)
           {
-            this.LogInfo("XMLTV: time to perform scheduled actions (fixed time {0}), {1} minutes since last run", scheduledTime.TimeOfDay, timeSincePreviousFinishSuccess.TotalMinutes);
+            this.LogInfo("XMLTV: time to perform scheduled actions (between {0} and {1}), {2} minutes since last run", scheduledTimeStart, scheduledTimeEnd, (long)timeSincePreviousFinishSuccess.TotalMinutes);
             PerformScheduledActions();
           }
         }
@@ -461,18 +460,20 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           {
             lock (_lockScheduledActionsAndImport)
             {
-              if (!SettingsManagement.GetValue("xmlTvScheduledActionsOnStartup", false))
+              if (!SettingsManagement.GetValue("xmlTvScheduledActionsTimeOnStartup", false))
               {
-                this.LogDebug("XMLTV: actions configured for fixed time");
+                this.LogDebug("XMLTV: actions configured to run between certain times");
                 return;
               }
 
               TimeSpan ts = DateTime.Now - SettingsManagement.GetValue("xmlTvScheduledActionsPreviousFinish", DateTime.MinValue);
               if (ts.TotalMinutes < 1440) // 1440 minutes = 1 day
               {
-                this.LogDebug("XMLTV: not time to perform scheduled actions, {0} minutes since last run", ts.TotalMinutes);
+                this.LogDebug("XMLTV: not time to perform scheduled actions, {0} minutes since last run", (long)ts.TotalMinutes);
                 return;
               }
+
+              this.LogInfo("XMLTV: time to perform scheduled actions (start/resume), {0} minutes since last run", (long)ts.TotalMinutes);
               PerformScheduledActions();
             }
           }
@@ -486,7 +487,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
     internal void PerformScheduledActions()
     {
-      this.LogInfo("XMLTV: perform scheduled actions");
+      this.LogDebug("XMLTV: perform scheduled actions");
 
       try
       {
@@ -501,6 +502,12 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           {
             return;
           }
+
+          // Give a little time for files to be flushed etc. Avoids duplicate
+          // imports when file write timestamps are within the same second as
+          // the import timestamp.
+          Thread.Sleep(10000);
+
           SettingsManagement.SaveValue("xmlTvScheduledActionsPreviousFinish", DateTime.Now);
         }
       }
@@ -536,7 +543,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
     private bool PerformDownloadFile()
     {
-      this.LogInfo("XMLTV: perform download file");
+      this.LogDebug("XMLTV: perform download file");
 
       UpdateScheduledActionStatus("download pre-processing");
       string url = SettingsManagement.GetValue("xmlTvScheduledActionsDownloadUrl", "http://www.mysite.com/tvguide.xml");
@@ -601,7 +608,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
     private bool DownloadFile(Uri uri, string userName, string password, string outputFileName)
     {
-      this.LogDebug("XMLTV: starting download, output file name = {0}", outputFileName);
+      this.LogInfo("XMLTV: starting download, URL = {0}, output file name = {1}", uri, outputFileName);
       UpdateScheduledActionStatus("starting download");
       using (var downloader = new FileDownloader(TIMEOUT_SCHEDULED_ACTION_DOWNLOAD))
       {
@@ -680,7 +687,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
     private bool PerformExecuteProgram()
     {
-      this.LogInfo("XMLTV: perform execute program");
+      this.LogDebug("XMLTV: perform execute program");
 
       string programFile = SettingsManagement.GetValue("xmlTvScheduledActionsProgramLocation", @"c:\Program Files\My Program\MyProgram.exe");
       if (string.IsNullOrWhiteSpace(programFile) || !File.Exists(programFile))
@@ -690,7 +697,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         return false;
       }
 
-      this.LogDebug("XMLTV: starting execution, program = {0}", programFile);
+      this.LogInfo("XMLTV: starting execution, program = {0}", programFile);
       UpdateScheduledActionStatus("starting program");
       int retryNumber = 0;
       while (retryNumber < 10)
@@ -785,7 +792,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                               file.UseTimeCorrection, file.TimeCorrectionHours, file.TimeCorrectionMinutes,
                               ref stats);
 
-              this.LogDebug("XMLTV: finished importing \"{0}\", [file/unmapped/DB] channel count = {1}/{2}/{3}, program count = {4}/{5}/{6}", file.FileLocation,
+              this.LogInfo("XMLTV: finished importing \"{0}\", [file/unmapped/DB] channel count = {1}/{2}/{3}, program count = {4}/{5}/{6}", file.FileLocation,
                             stats.FileChannelCount, stats.FileChannelCountUnmapped, stats.FileChannelCountDb,
                             stats.FileProgramCount, stats.FileProgramCountUnmapped, stats.FileProgramCountDb);
               stats.ResetFileStats();
@@ -892,7 +899,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         settings.FileLocation = fileName;
         settings.UseTimeCorrection = SettingsManagement.GetValue("xmlTvUseTimeCorrection", false);
         settings.TimeCorrectionHours = SettingsManagement.GetValue("xmlTvTimeCorrectionHours", 0);
-        settings.TimeCorrectionMinutes = SettingsManagement.GetValue("xmlTvTimeCorrectionMins", 0);
+        settings.TimeCorrectionMinutes = SettingsManagement.GetValue("xmlTvTimeCorrectionMinutes", 0);
         return new List<XmlTvFileSettings> { settings };
       }
 
@@ -952,11 +959,14 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         {
           if (!CanReadFile(file.FileLocation))
           {
-            this.LogWarn("XMLTV: not able to read file \"{0}\", assuming update running now", file.FileLocation);
+            this.LogWarn("XMLTV: not able to read data file \"{0}\", assuming update running now", file.FileLocation);
             return false;
           }
-          if (File.GetLastWriteTime(file.FileLocation) > previousImportStarted)
+
+          DateTime previousFileChange = File.GetLastWriteTime(file.FileLocation);
+          if (previousFileChange > previousImportStarted)
           {
+            this.LogInfo("XMLTV: data file \"{0}\" has been updated, file change = {1}, previous import = {2}", file.FileLocation, previousFileChange, previousImportStarted);
             newData = true;
           }
         }
@@ -978,6 +988,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         listFile = Path.Combine(SettingsManagement.GetValue("xmlTvFolder", string.Empty), "tvguide.lst");
         if (File.Exists(listFile) && File.GetLastWriteTime(listFile) > previousImportStarted)
         {
+          this.LogInfo("XMLTV: list file \"{0}\" has been updated, file change = {1}, previous import = {2}", listFile, File.GetLastWriteTime(listFile), previousImportStarted);
           return true;
         }
       }

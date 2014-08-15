@@ -144,15 +144,18 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
       checkBoxTimeCorrectionEnable.Checked = _settingServiceAgent.GetValue("xmlTvUseTimeCorrection", false);
       numericTextBoxTimeCorrectionHours.Value = _settingServiceAgent.GetValue("xmlTvTimeCorrectionHours", 0);
-      numericTextBoxTimeCorrectionMinutes.Value = _settingServiceAgent.GetValue("xmlTvTimeCorrectionMins", 0);
+      numericTextBoxTimeCorrectionMinutes.Value = _settingServiceAgent.GetValue("xmlTvTimeCorrectionMinutes", 0);
       checkBoxTimeCorrectionEnable_CheckedChanged(null, null);
 
       checkBoxMappingsPartialMatch.Checked = _settingServiceAgent.GetValue("xmlTvUsePartialMatching", false);
 
       checkBoxScheduledActionsDownload.Checked = _settingServiceAgent.GetValue("xmlTvScheduledActionsDownload", false);
       textBoxScheduledActionsDownloadUrl.Text = _settingServiceAgent.GetValue("xmlTvScheduledActionsDownloadUrl", "http://www.mysite.com/tvguide.xml");
+      checkBoxScheduledActionsDownload_CheckedChanged(null, null);
+
       checkBoxScheduledActionsProgram.Checked = _settingServiceAgent.GetValue("xmlTvScheduledActionsProgram", false);
       textBoxScheduledActionsProgramLocation.Text = _settingServiceAgent.GetValue("xmlTvScheduledActionsProgramLocation", @"c:\Program Files\My Program\MyProgram.exe");
+      checkBoxScheduledActionsProgram_CheckedChanged(null, null);
       if (string.IsNullOrWhiteSpace(textBoxScheduledActionsProgramLocation.Text) || !File.Exists(textBoxScheduledActionsProgramLocation.Text))
       {
         selectScheduledActionsProgramDialog.InitialDirectory = folderBrowserDialog.SelectedPath;
@@ -163,9 +166,11 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         selectScheduledActionsProgramDialog.FileName = Path.GetFileName(textBoxScheduledActionsProgramLocation.Text);
       }
 
-      dateTimePickerScheduledActionsTime.Value = _settingServiceAgent.GetValue("xmlTvScheduledActionsTime", DateTime.Now);
-      radioScheduledActionsTimeStartup.Checked = _settingServiceAgent.GetValue("xmlTvScheduledActionsOnStartup", false);
-      radioScheduledActionsTimeFixed.Checked = !radioScheduledActionsTimeStartup.Checked;
+      dateTimePickerScheduledActionsTimeBetweenStart.Value = _settingServiceAgent.GetValue("xmlTvScheduledActionsTimeBetweenStart", DateTime.Now);
+      dateTimePickerScheduledActionsTimeBetweenEnd.Value = _settingServiceAgent.GetValue("xmlTvScheduledActionsTimeBetweenEnd", DateTime.Now);
+      radioScheduledActionsTimeStartup.Checked = _settingServiceAgent.GetValue("xmlTvScheduledActionsTimeOnStartup", false);
+      radioScheduledActionsTimeBetween.Checked = !radioScheduledActionsTimeStartup.Checked;
+      radioScheduledActionsTimeBetween_CheckedChanged(null, null);
 
       DebugSettings();
 
@@ -222,7 +227,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
       _settingServiceAgent.SaveValue("xmlTvUseTimeCorrection", checkBoxTimeCorrectionEnable.Checked);
       _settingServiceAgent.SaveValue("xmlTvTimeCorrectionHours", numericTextBoxTimeCorrectionHours.Value);
-      _settingServiceAgent.SaveValue("xmlTvTimeCorrectionMins", numericTextBoxTimeCorrectionMinutes.Value);
+      _settingServiceAgent.SaveValue("xmlTvTimeCorrectionMinutes", numericTextBoxTimeCorrectionMinutes.Value);
 
       _settingServiceAgent.SaveValue("xmlTvUsePartialMatching", checkBoxMappingsPartialMatch.Checked);
 
@@ -231,8 +236,9 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       _settingServiceAgent.SaveValue("xmlTvScheduledActionsProgram", checkBoxScheduledActionsProgram.Checked);
       _settingServiceAgent.SaveValue("xmlTvScheduledActionsProgramLocation", textBoxScheduledActionsProgramLocation.Text);
 
-      _settingServiceAgent.SaveValue("xmlTvScheduledActionsTime", dateTimePickerScheduledActionsTime.Value);
-      _settingServiceAgent.SaveValue("xmlTvScheduledActionsOnStartup", radioScheduledActionsTimeStartup.Checked);
+      _settingServiceAgent.SaveValue("xmlTvScheduledActionsTimeBetweenStart", dateTimePickerScheduledActionsTimeBetweenStart.Value);
+      _settingServiceAgent.SaveValue("xmlTvScheduledActionsTimeBetweenEnd", dateTimePickerScheduledActionsTimeBetweenEnd.Value);
+      _settingServiceAgent.SaveValue("xmlTvScheduledActionsTimeOnStartup", radioScheduledActionsTimeStartup.Checked);
       base.SaveSettings();
     }
 
@@ -252,7 +258,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.LogDebug("    run program?        = {0}", checkBoxScheduledActionsProgram.Checked);
       this.LogDebug("    program location    = {0}", textBoxScheduledActionsProgramLocation.Text);
       this.LogDebug("    on startup/resume?  = {0}", radioScheduledActionsTimeStartup.Checked);
-      this.LogDebug("    time                = {0}", dateTimePickerScheduledActionsTime.Value.TimeOfDay);
+      this.LogDebug("    between time start  = {0}", dateTimePickerScheduledActionsTimeBetweenStart.Value.TimeOfDay);
+      this.LogDebug("    between time end    = {0}", dateTimePickerScheduledActionsTimeBetweenEnd.Value.TimeOfDay);
     }
 
     private void OnStatusUiUpdateTimerTick(object sender, EventArgs e)
@@ -567,13 +574,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       }
     }
 
-    private void buttonScheduledActionsTimeNow_Click(object sender, EventArgs e)
-    {
-      this.LogDebug("XMLTV config: force-starting scheduled actions");
-      SaveSettings();
-      ServiceAgents.Instance.PluginService<IXmlTvImportService>().PerformScheduledActionsNow();
-    }
-
     private void checkBoxScheduledActionsDownload_CheckedChanged(object sender, EventArgs e)
     {
       textBoxScheduledActionsDownloadUrl.Enabled = checkBoxScheduledActionsDownload.Checked;
@@ -598,10 +598,37 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     private void UpdateScheduledActionsTimeFields()
     {
       bool enabled = checkBoxScheduledActionsDownload.Checked || checkBoxScheduledActionsProgram.Checked;
-      radioScheduledActionsTimeFixed.Enabled = enabled;
-      dateTimePickerScheduledActionsTime.Enabled = enabled && radioScheduledActionsTimeFixed.Checked;
-      radioScheduledActionsTimeStartup.Enabled = enabled;
-      buttonScheduledActionsTimeNow.Enabled = enabled;
+      radioScheduledActionsTimeBetween.Enabled = enabled;
+      groupBoxScheduledActionsTime.Enabled = enabled;
+    }
+
+    private void radioScheduledActionsTimeBetween_CheckedChanged(object sender, EventArgs e)
+    {
+      dateTimePickerScheduledActionsTimeBetweenStart.Enabled = radioScheduledActionsTimeBetween.Checked;
+      dateTimePickerScheduledActionsTimeBetweenEnd.Enabled = radioScheduledActionsTimeBetween.Checked;
+    }
+
+    private void dateTimePickerScheduledActionsTimeBetweenStart_ValueChanged(object sender, EventArgs e)
+    {
+      if (dateTimePickerScheduledActionsTimeBetweenStart.Value.TimeOfDay > dateTimePickerScheduledActionsTimeBetweenEnd.Value.TimeOfDay)
+      {
+        dateTimePickerScheduledActionsTimeBetweenStart.Value = dateTimePickerScheduledActionsTimeBetweenEnd.Value;
+      }
+    }
+
+    private void dateTimePickerScheduledActionsTimeBetweenEnd_ValueChanged(object sender, EventArgs e)
+    {
+      if (dateTimePickerScheduledActionsTimeBetweenStart.Value.TimeOfDay > dateTimePickerScheduledActionsTimeBetweenEnd.Value.TimeOfDay)
+      {
+        dateTimePickerScheduledActionsTimeBetweenEnd.Value = dateTimePickerScheduledActionsTimeBetweenStart.Value;
+      }
+    }
+
+    private void buttonScheduledActionsTimeNow_Click(object sender, EventArgs e)
+    {
+      this.LogDebug("XMLTV config: force-starting scheduled actions");
+      SaveSettings();
+      ServiceAgents.Instance.PluginService<IXmlTvImportService>().PerformScheduledActionsNow();
     }
   }
 }

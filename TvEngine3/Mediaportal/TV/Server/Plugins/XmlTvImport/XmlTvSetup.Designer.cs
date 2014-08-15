@@ -30,9 +30,9 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
       this.tabControl1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
       this.tabSettings = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.groupBoxImport = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
@@ -78,8 +78,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.groupBoxScheduledActionsTime = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.radioScheduledActionsTimeStartup = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
       this.buttonScheduledActionsTimeNow = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.radioScheduledActionsTimeFixed = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
-      this.dateTimePickerScheduledActionsTime = new System.Windows.Forms.DateTimePicker();
+      this.radioScheduledActionsTimeBetween = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.dateTimePickerScheduledActionsTimeBetweenStart = new System.Windows.Forms.DateTimePicker();
       this.labelScheduledActionsTime = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxScheduledActionsStatus = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.labelScheduledActionsStatusValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -95,6 +95,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.labelScheduledActionsProgram = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
       this.selectScheduledActionsProgramDialog = new System.Windows.Forms.OpenFileDialog();
+      this.dateTimePickerScheduledActionsTimeBetweenEnd = new System.Windows.Forms.DateTimePicker();
+      this.labelScheduledActionsTimeBetween = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.tabControl1.SuspendLayout();
       this.tabSettings.SuspendLayout();
       this.groupBoxImport.SuspendLayout();
@@ -523,14 +525,14 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.dataGridViewMappings.Location = new System.Drawing.Point(6, 97);
       this.dataGridViewMappings.MultiSelect = false;
       this.dataGridViewMappings.Name = "dataGridViewMappings";
-      dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-      this.dataGridViewMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+      dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle15.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle15.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle15.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle15.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+      this.dataGridViewMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle15;
       this.dataGridViewMappings.Size = new System.Drawing.Size(460, 287);
       this.dataGridViewMappings.TabIndex = 1;
       // 
@@ -544,8 +546,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       // dataGridViewColumnTuningChannel
       // 
       this.dataGridViewColumnTuningChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      dataGridViewCellStyle1.BackColor = System.Drawing.Color.White;
-      this.dataGridViewColumnTuningChannel.DefaultCellStyle = dataGridViewCellStyle1;
+      dataGridViewCellStyle13.BackColor = System.Drawing.Color.White;
+      this.dataGridViewColumnTuningChannel.DefaultCellStyle = dataGridViewCellStyle13;
       this.dataGridViewColumnTuningChannel.HeaderText = "Tuning Channel";
       this.dataGridViewColumnTuningChannel.Name = "dataGridViewColumnTuningChannel";
       this.dataGridViewColumnTuningChannel.ReadOnly = true;
@@ -554,8 +556,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       // dataGridViewColumnGuideChannel
       // 
       this.dataGridViewColumnGuideChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
-      this.dataGridViewColumnGuideChannel.DefaultCellStyle = dataGridViewCellStyle2;
+      dataGridViewCellStyle14.BackColor = System.Drawing.Color.White;
+      this.dataGridViewColumnGuideChannel.DefaultCellStyle = dataGridViewCellStyle14;
       this.dataGridViewColumnGuideChannel.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
       this.dataGridViewColumnGuideChannel.HeaderText = "Guide Channel";
       this.dataGridViewColumnGuideChannel.Name = "dataGridViewColumnGuideChannel";
@@ -589,10 +591,12 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       // 
       this.groupBoxScheduledActionsTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxScheduledActionsTime.Controls.Add(this.labelScheduledActionsTimeBetween);
+      this.groupBoxScheduledActionsTime.Controls.Add(this.dateTimePickerScheduledActionsTimeBetweenEnd);
       this.groupBoxScheduledActionsTime.Controls.Add(this.radioScheduledActionsTimeStartup);
       this.groupBoxScheduledActionsTime.Controls.Add(this.buttonScheduledActionsTimeNow);
-      this.groupBoxScheduledActionsTime.Controls.Add(this.radioScheduledActionsTimeFixed);
-      this.groupBoxScheduledActionsTime.Controls.Add(this.dateTimePickerScheduledActionsTime);
+      this.groupBoxScheduledActionsTime.Controls.Add(this.radioScheduledActionsTimeBetween);
+      this.groupBoxScheduledActionsTime.Controls.Add(this.dateTimePickerScheduledActionsTimeBetweenStart);
       this.groupBoxScheduledActionsTime.Controls.Add(this.labelScheduledActionsTime);
       this.groupBoxScheduledActionsTime.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxScheduledActionsTime.Location = new System.Drawing.Point(7, 173);
@@ -608,9 +612,9 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.radioScheduledActionsTimeStartup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioScheduledActionsTimeStartup.Location = new System.Drawing.Point(8, 60);
       this.radioScheduledActionsTimeStartup.Name = "radioScheduledActionsTimeStartup";
-      this.radioScheduledActionsTimeStartup.Size = new System.Drawing.Size(274, 17);
-      this.radioScheduledActionsTimeStartup.TabIndex = 3;
-      this.radioScheduledActionsTimeStartup.Text = "Once per day when the TV service starts or resumes.";
+      this.radioScheduledActionsTimeStartup.Size = new System.Drawing.Size(210, 17);
+      this.radioScheduledActionsTimeStartup.TabIndex = 5;
+      this.radioScheduledActionsTimeStartup.Text = "When the TV service starts or resumes.";
       this.radioScheduledActionsTimeStartup.UseVisualStyleBackColor = true;
       // 
       // buttonScheduledActionsTimeNow
@@ -618,41 +622,44 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.buttonScheduledActionsTimeNow.Location = new System.Drawing.Point(166, 83);
       this.buttonScheduledActionsTimeNow.Name = "buttonScheduledActionsTimeNow";
       this.buttonScheduledActionsTimeNow.Size = new System.Drawing.Size(80, 23);
-      this.buttonScheduledActionsTimeNow.TabIndex = 4;
+      this.buttonScheduledActionsTimeNow.TabIndex = 6;
       this.buttonScheduledActionsTimeNow.Text = "Do It Now";
       this.buttonScheduledActionsTimeNow.UseVisualStyleBackColor = true;
       this.buttonScheduledActionsTimeNow.Click += new System.EventHandler(this.buttonScheduledActionsTimeNow_Click);
       // 
-      // radioScheduledActionsTimeFixed
+      // radioScheduledActionsTimeBetween
       // 
-      this.radioScheduledActionsTimeFixed.AutoSize = true;
-      this.radioScheduledActionsTimeFixed.Checked = true;
-      this.radioScheduledActionsTimeFixed.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioScheduledActionsTimeFixed.Location = new System.Drawing.Point(8, 36);
-      this.radioScheduledActionsTimeFixed.Name = "radioScheduledActionsTimeFixed";
-      this.radioScheduledActionsTimeFixed.Size = new System.Drawing.Size(152, 17);
-      this.radioScheduledActionsTimeFixed.TabIndex = 1;
-      this.radioScheduledActionsTimeFixed.TabStop = true;
-      this.radioScheduledActionsTimeFixed.Text = "At a certain time every day:";
-      this.radioScheduledActionsTimeFixed.UseVisualStyleBackColor = true;
+      this.radioScheduledActionsTimeBetween.AutoSize = true;
+      this.radioScheduledActionsTimeBetween.Checked = true;
+      this.radioScheduledActionsTimeBetween.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.radioScheduledActionsTimeBetween.Location = new System.Drawing.Point(8, 36);
+      this.radioScheduledActionsTimeBetween.Name = "radioScheduledActionsTimeBetween";
+      this.radioScheduledActionsTimeBetween.Size = new System.Drawing.Size(66, 17);
+      this.radioScheduledActionsTimeBetween.TabIndex = 1;
+      this.radioScheduledActionsTimeBetween.TabStop = true;
+      this.radioScheduledActionsTimeBetween.Text = "Between";
+      this.radioScheduledActionsTimeBetween.UseVisualStyleBackColor = true;
+      this.radioScheduledActionsTimeBetween.CheckedChanged += new System.EventHandler(this.radioScheduledActionsTimeBetween_CheckedChanged);
       // 
-      // dateTimePickerScheduledActionsTime
+      // dateTimePickerScheduledActionsTimeBetweenStart
       // 
-      this.dateTimePickerScheduledActionsTime.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-      this.dateTimePickerScheduledActionsTime.Location = new System.Drawing.Point(166, 34);
-      this.dateTimePickerScheduledActionsTime.Name = "dateTimePickerScheduledActionsTime";
-      this.dateTimePickerScheduledActionsTime.ShowUpDown = true;
-      this.dateTimePickerScheduledActionsTime.Size = new System.Drawing.Size(95, 20);
-      this.dateTimePickerScheduledActionsTime.TabIndex = 2;
+      this.dateTimePickerScheduledActionsTimeBetweenStart.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+      this.dateTimePickerScheduledActionsTimeBetweenStart.Location = new System.Drawing.Point(75, 34);
+      this.dateTimePickerScheduledActionsTimeBetweenStart.Name = "dateTimePickerScheduledActionsTimeBetweenStart";
+      this.dateTimePickerScheduledActionsTimeBetweenStart.ShowUpDown = true;
+      this.dateTimePickerScheduledActionsTimeBetweenStart.Size = new System.Drawing.Size(95, 20);
+      this.dateTimePickerScheduledActionsTimeBetweenStart.TabIndex = 2;
+      this.dateTimePickerScheduledActionsTimeBetweenStart.Value = new System.DateTime(2014, 8, 15, 17, 0, 0, 0);
+      this.dateTimePickerScheduledActionsTimeBetweenStart.ValueChanged += new System.EventHandler(this.dateTimePickerScheduledActionsTimeBetweenStart_ValueChanged);
       // 
       // labelScheduledActionsTime
       // 
       this.labelScheduledActionsTime.AutoSize = true;
       this.labelScheduledActionsTime.Location = new System.Drawing.Point(2, 16);
       this.labelScheduledActionsTime.Name = "labelScheduledActionsTime";
-      this.labelScheduledActionsTime.Size = new System.Drawing.Size(146, 13);
+      this.labelScheduledActionsTime.Size = new System.Drawing.Size(211, 13);
       this.labelScheduledActionsTime.TabIndex = 0;
-      this.labelScheduledActionsTime.Text = "Perform the above action(s)...";
+      this.labelScheduledActionsTime.Text = "Perform the above action(s) once per day...";
       // 
       // groupBoxScheduledActionsStatus
       // 
@@ -732,7 +739,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.checkBoxScheduledActionsProgram.Location = new System.Drawing.Point(6, 74);
       this.checkBoxScheduledActionsProgram.Name = "checkBoxScheduledActionsProgram";
       this.checkBoxScheduledActionsProgram.Size = new System.Drawing.Size(177, 17);
-      this.checkBoxScheduledActionsProgram.TabIndex = 3;
+      this.checkBoxScheduledActionsProgram.TabIndex = 2;
       this.checkBoxScheduledActionsProgram.Text = "Run this program or batch script:";
       this.checkBoxScheduledActionsProgram.UseVisualStyleBackColor = true;
       this.checkBoxScheduledActionsProgram.CheckedChanged += new System.EventHandler(this.checkBoxScheduledActionsProgram_CheckedChanged);
@@ -744,7 +751,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.checkBoxScheduledActionsDownload.Location = new System.Drawing.Point(6, 19);
       this.checkBoxScheduledActionsDownload.Name = "checkBoxScheduledActionsDownload";
       this.checkBoxScheduledActionsDownload.Size = new System.Drawing.Size(319, 17);
-      this.checkBoxScheduledActionsDownload.TabIndex = 1;
+      this.checkBoxScheduledActionsDownload.TabIndex = 0;
       this.checkBoxScheduledActionsDownload.Text = "Download and unzip (optional) from this HTTP or FTP address:";
       this.checkBoxScheduledActionsDownload.UseVisualStyleBackColor = true;
       this.checkBoxScheduledActionsDownload.CheckedChanged += new System.EventHandler(this.checkBoxScheduledActionsDownload_CheckedChanged);
@@ -755,7 +762,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.buttonScheduledActionsProgramBrowse.Location = new System.Drawing.Point(416, 95);
       this.buttonScheduledActionsProgramBrowse.Name = "buttonScheduledActionsProgramBrowse";
       this.buttonScheduledActionsProgramBrowse.Size = new System.Drawing.Size(23, 23);
-      this.buttonScheduledActionsProgramBrowse.TabIndex = 5;
+      this.buttonScheduledActionsProgramBrowse.TabIndex = 4;
       this.buttonScheduledActionsProgramBrowse.Text = "...";
       this.buttonScheduledActionsProgramBrowse.UseVisualStyleBackColor = true;
       this.buttonScheduledActionsProgramBrowse.Click += new System.EventHandler(this.buttonScheduledActionsProgramBrowse_Click);
@@ -767,7 +774,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.textBoxScheduledActionsProgramLocation.Location = new System.Drawing.Point(25, 97);
       this.textBoxScheduledActionsProgramLocation.Name = "textBoxScheduledActionsProgramLocation";
       this.textBoxScheduledActionsProgramLocation.Size = new System.Drawing.Size(385, 20);
-      this.textBoxScheduledActionsProgramLocation.TabIndex = 4;
+      this.textBoxScheduledActionsProgramLocation.TabIndex = 3;
       this.textBoxScheduledActionsProgramLocation.Text = "c:\\Program Files\\My Program\\MyProgram.exe";
       // 
       // textBoxScheduledActionsDownloadUrl
@@ -777,7 +784,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.textBoxScheduledActionsDownloadUrl.Location = new System.Drawing.Point(25, 42);
       this.textBoxScheduledActionsDownloadUrl.Name = "textBoxScheduledActionsDownloadUrl";
       this.textBoxScheduledActionsDownloadUrl.Size = new System.Drawing.Size(414, 20);
-      this.textBoxScheduledActionsDownloadUrl.TabIndex = 2;
+      this.textBoxScheduledActionsDownloadUrl.TabIndex = 1;
       this.textBoxScheduledActionsDownloadUrl.Text = "http://www.mysite.com/tvguide.xml";
       // 
       // labelScheduledActionsProgram
@@ -785,7 +792,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.labelScheduledActionsProgram.Location = new System.Drawing.Point(22, 121);
       this.labelScheduledActionsProgram.Name = "labelScheduledActionsProgram";
       this.labelScheduledActionsProgram.Size = new System.Drawing.Size(417, 32);
-      this.labelScheduledActionsProgram.TabIndex = 6;
+      this.labelScheduledActionsProgram.TabIndex = 5;
       this.labelScheduledActionsProgram.Text = "Note that the program or batch script must save the XMLTV data file as tvguide.xm" +
           "l in the folder specified on the \'General\' tab.";
       // 
@@ -797,6 +804,26 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       // 
       this.selectScheduledActionsProgramDialog.Filter = "Executables (*.exe, *.bat)|*.exe;*.bat|All Files|*.*";
       this.selectScheduledActionsProgramDialog.Title = "Select A Program Or Batch Script.";
+      // 
+      // dateTimePickerScheduledActionsTimeBetweenEnd
+      // 
+      this.dateTimePickerScheduledActionsTimeBetweenEnd.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+      this.dateTimePickerScheduledActionsTimeBetweenEnd.Location = new System.Drawing.Point(198, 34);
+      this.dateTimePickerScheduledActionsTimeBetweenEnd.Name = "dateTimePickerScheduledActionsTimeBetweenEnd";
+      this.dateTimePickerScheduledActionsTimeBetweenEnd.ShowUpDown = true;
+      this.dateTimePickerScheduledActionsTimeBetweenEnd.Size = new System.Drawing.Size(95, 20);
+      this.dateTimePickerScheduledActionsTimeBetweenEnd.TabIndex = 4;
+      this.dateTimePickerScheduledActionsTimeBetweenEnd.Value = new System.DateTime(2014, 8, 16, 18, 0, 0, 0);
+      this.dateTimePickerScheduledActionsTimeBetweenEnd.ValueChanged += new System.EventHandler(this.dateTimePickerScheduledActionsTimeBetweenEnd_ValueChanged);
+      // 
+      // labelScheduledActionsTimeBetween
+      // 
+      this.labelScheduledActionsTimeBetween.AutoSize = true;
+      this.labelScheduledActionsTimeBetween.Location = new System.Drawing.Point(171, 38);
+      this.labelScheduledActionsTimeBetween.Name = "labelScheduledActionsTimeBetween";
+      this.labelScheduledActionsTimeBetween.Size = new System.Drawing.Size(25, 13);
+      this.labelScheduledActionsTimeBetween.TabIndex = 3;
+      this.labelScheduledActionsTimeBetween.Text = "and";
       // 
       // XmlTvSetup
       // 
@@ -874,9 +901,9 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     private MPLabel labelScheduledActionsStatusDateTimeLabel;
     private MPGroupBox groupBoxScheduledActionsAction;
     private MPRadioButton radioScheduledActionsTimeStartup;
-    private MPRadioButton radioScheduledActionsTimeFixed;
+    private MPRadioButton radioScheduledActionsTimeBetween;
     private MPLabel labelScheduledActionsProgram;
-    private System.Windows.Forms.DateTimePicker dateTimePickerScheduledActionsTime;
+    private System.Windows.Forms.DateTimePicker dateTimePickerScheduledActionsTimeBetweenStart;
     private MPLabel labelScheduledActionsTime;
     private MPButton buttonScheduledActionsTimeNow;
     private MPTextBox textBoxScheduledActionsDownloadUrl;
@@ -892,6 +919,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     private System.Windows.Forms.DataGridViewComboBoxColumn dataGridViewColumnGuideChannel;
     private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewColumnMatchType;
     private System.Windows.Forms.OpenFileDialog selectScheduledActionsProgramDialog;
+    private MPLabel labelScheduledActionsTimeBetween;
+    private System.Windows.Forms.DateTimePicker dateTimePickerScheduledActionsTimeBetweenEnd;
 
 
   }

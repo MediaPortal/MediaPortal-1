@@ -137,7 +137,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
     public bool Import(string fileName, bool deleteBeforeImport, ShowProgressHandler showProgress, bool useTimeCorrection, int timeCorrectionHours, int timeCorrectionMinutes, ref ImportStats stats)
     {
-      this.LogDebug("XMLTV: import file \"{0}\"", fileName);
+      this.LogInfo("XMLTV: import file \"{0}\"", fileName);
       //System.Diagnostics.Debugger.Launch();
       if (_isImporting == true)
       {
