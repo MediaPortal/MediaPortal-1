@@ -22,10 +22,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
-using Mediaportal.TV.Server.SetupTV.PlaylistSupport;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
@@ -41,9 +41,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class CardDvbIP : SectionSettings
   {
-
-
-
     private int _cardNumber;
     private bool _isScanning = false;
     private bool _stopScanning = false;
@@ -66,7 +63,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void Init()
     {
       mpComboBoxService.Items.Clear();
-      mpComboBoxService.Items.Add("SAP Announcements");
       String tuningFolder = String.Format(@"{0}\TuningParameters\dvbip", PathManager.GetDataPath);
       if (Directory.Exists(tuningFolder))
       {
@@ -139,6 +135,50 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
+    private IList<DVBIPChannel> ReadM3uPlaylist(string fileName)
+    {
+      IList<DVBIPChannel> channels = new List<DVBIPChannel>(50);
+
+      try
+      {
+        DVBIPChannel channel = new DVBIPChannel();
+        foreach (string line in File.ReadLines(fileName))
+        {
+          if (!string.IsNullOrWhiteSpace(line))
+          {
+            Match m = Regex.Match(line, @"^\s*#EXTINF\s*:\s*(\d+)\s*,\s*([^\s].*?)\s*$");
+            if (m.Success)
+            {
+              if (!string.IsNullOrEmpty(channel.Url))
+              {
+                channels.Add(channel);
+                channel = new DVBIPChannel();
+              }
+              channel.LogicalChannelNumber = int.Parse(m.Groups[1].Captures[0].Value);
+              channel.Name = m.Groups[2].Captures[0].Value;
+            }
+            else
+            {
+              string l = line.Trim();
+              if (!l.StartsWith("#"))
+              {
+                channel.Url = l;
+              }
+            }
+          }
+        }
+        if (!string.IsNullOrEmpty(channel.Url))
+        {
+          channels.Add(channel);
+        }
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "IPTV: failed to parse \"{0}\"", fileName);
+      }
+      return channels;
+    }
+
     private void DoScan()
     {
       int tvChannelsNew = 0;
@@ -158,21 +198,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
         listViewStatus.Items.Clear();
 
-        PlayList playlist = new PlayList();
-        if (mpComboBoxService.SelectedIndex == 0)
+        IList<DVBIPChannel> tuneChannels = ReadM3uPlaylist(string.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", PathManager.GetDataPath, mpComboBoxService.SelectedItem));
+        if (tuneChannels.Count == 0)
         {
-          //TODO read SAP announcements
+          return;
         }
-        else
-        {
-          IPlayListIO playlistIO =
-            PlayListFactory.CreateIO(String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", PathManager.GetDataPath,
-                                                   mpComboBoxService.SelectedItem));
-          playlistIO.Load(playlist,
-                          String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", PathManager.GetDataPath,
-                                        mpComboBoxService.SelectedItem));
-        }
-        if (playlist.Count == 0) return;
 
         mpComboBoxService.Enabled = false;
         checkBoxCreateGroups.Enabled = false;
@@ -181,23 +211,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
 
         int index = -1;
-        IEnumerator<PlayListItem> enumerator = playlist.GetEnumerator();
-
-        while (enumerator.MoveNext())
+        foreach (DVBIPChannel tuneChannel in tuneChannels)
         {
           if (_stopScanning) return;
           index++;
-          float percent = ((float)(index)) / playlist.Count;
+          float percent = ((float)(index)) / tuneChannels.Count;
           percent *= 100f;
           if (percent > 100f) percent = 100f;
           progressBar1.Value = (int)percent;
 
-          string url = enumerator.Current.FileName.Substring(enumerator.Current.FileName.LastIndexOf('\\') + 1);
-          string name = enumerator.Current.Description;
-
-          DVBIPChannel tuneChannel = new DVBIPChannel();
-          tuneChannel.Url = url;
-          tuneChannel.Name = name;
           string line = String.Format("{0}- {1} - {2}", 1 + index, tuneChannel.Name, tuneChannel.Url);
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
@@ -231,20 +253,25 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
           for (int i = 0; i < channels.Length; ++i)
           {
-            Channel dbChannel;
             DVBIPChannel channel = (DVBIPChannel)channels[i];
             if (channels.Length > 1)
             {
-              if (channel.Name.IndexOf("Unknown") == 0)
+              if (channel.Name.StartsWith("Unknown"))
               {
-                channel.Name = name + (i + 1);
+                channel.Name = string.Format("{0} {1}", tuneChannel.Name, i + 1);
               }
             }
             else
             {
-              channel.Name = name;
+              channel.Name = tuneChannel.Name;
             }
+            if (tuneChannel.LogicalChannelNumber > 0 && channel.LogicalChannelNumber == 10000)
+            {
+              channel.LogicalChannelNumber = tuneChannel.LogicalChannelNumber;
+            }
+
             bool exists;
+            Channel dbChannel;
             TuningDetail currentDetail;
             //Check if we already have this tuningdetail. According to DVB-IP specifications there are two ways to identify DVB-IP
             //services: one ONID + SID based, the other domain/URL based. At this time we don't fully and properly implement the DVB-IP
@@ -308,7 +335,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                 newChannels++;
               }
             }
-            if (channel.MediaType == MediaTypeEnum.Radio)
+            else if (channel.MediaType == MediaTypeEnum.Radio)
             {
               if (exists)
               {

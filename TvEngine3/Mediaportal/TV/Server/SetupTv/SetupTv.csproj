@@ -226,15 +226,6 @@
     <Compile Include="NotifyForm.Designer.cs">
       <DependentUpon>NotifyForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="PlaylistSupport\IPlayListIO.cs" />
-    <Compile Include="PlaylistSupport\PlayList.cs" />
-    <Compile Include="PlaylistSupport\PlayListB4sIO.cs" />
-    <Compile Include="PlaylistSupport\PlayListFactory.cs" />
-    <Compile Include="PlaylistSupport\PlayListItem.cs" />
-    <Compile Include="PlaylistSupport\PlayListM3uIO.cs" />
-    <Compile Include="PlaylistSupport\PlayListPLSIO.cs" />
-    <Compile Include="PlaylistSupport\PlayListType.cs" />
-    <Compile Include="PlaylistSupport\PlayListWPLIO.cs" />
     <Compile Include="PluginLoaderSetupTv.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Dialogs\FormEditSchedule.resx">
