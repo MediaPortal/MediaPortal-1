@@ -101,7 +101,7 @@ xcopy "%1..\..\..\..\DirectShowFilters\TsWriter\bin\%3\*.pdb" "%4" /Y/D
 
 
 rem --- other ---
-xcopy "%1\SetupControls\bin\%3\Mediaportal.TV.Server.SetupControls.*" "%4" /Y/D
+xcopy "%1SetupControls\bin\%3\Mediaportal.TV.Server.SetupControls.*" "%4" /Y/D
 xcopy "%1..\..\..\..\Common-MP-TVE3\PowerScheduler.Interfaces\bin\%3\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.*" "%4" /Y/D
 xcopy "%1RuleBasedScheduler\bin\%3\Mediaportal.TV.Server.RuleBasedScheduler.*" "%4" /Y/D
 
@@ -113,5 +113,4 @@ rem xcopy "%1TvLibrary.Integration.MP1\bin\%3\*.pdb" "%1..\..\..\..\mediaportal\
 
 rem should we really replace installed files?
 rem xcopy %1TVServer.Base\WebEPG\*.* %ConfigPath%\"Team MediaPortal\\MediaPortal TV Server\WebEPG\" /E /Y /D /Q
-rem xcopy %1TVServer.Base\xmltv\*.* %ConfigPath%\"Team MediaPortal\\MediaPortal TV Server\xmltv\" /E /Y /D /Q
 rem xcopy "%1..\..\..\..\DirectShowFilters\MPIPTVSource\MPIPTVSource\MPIPTVSource*.ini" %ConfigPath%\"Team MediaPortal\\MediaPortal TV Server\" /E /Y /D /Q

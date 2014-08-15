@@ -81,23 +81,22 @@
     <Compile Include="..\..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="IXMLTVImportService.cs" />
+    <Compile Include="Service\IXmlTvImportService.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="util\IOUtil.cs" />
-    <Compile Include="util\TstDictionary.cs" />
-    <Compile Include="util\TstDictionaryEntry.cs" />
-    <Compile Include="util\TstDictionaryEntryEventArgs.cs" />
-    <Compile Include="util\TstDictionaryEnumerator.cs" />
-    <Compile Include="util\TstSynchronizedDictionary.cs" />
-    <Compile Include="util\TstTraverser.cs" />
+    <Compile Include="Util\TstDictionary.cs" />
+    <Compile Include="Util\TstDictionaryEntry.cs" />
+    <Compile Include="Util\TstDictionaryEntryEventArgs.cs" />
+    <Compile Include="Util\TstDictionaryEnumerator.cs" />
+    <Compile Include="Util\TstSynchronizedDictionary.cs" />
+    <Compile Include="Util\TstTraverser.cs" />
     <Compile Include="XMLTVImport.cs" />
     <Compile Include="XmlTvImporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XMLTVImportService.cs" />
+    <Compile Include="Service\XmlTvImportService.cs" />
     <Compile Include="XmlTvSetup.cs">
       <SubType>UserControl</SubType>
     </Compile>

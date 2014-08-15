@@ -20,7 +20,7 @@
 
 using System;
 
-namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
+namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Util
 {
   /// <summary>
   /// Defines an event argument class that holds a <see cref="TstDictionaryEntry"/>.
