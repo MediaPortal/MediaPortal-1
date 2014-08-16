@@ -37,7 +37,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Service
     IDictionary<string, IDictionary<string, IList<string>>> GetGuideChannelDetails();
 
     [OperationContract]
-    void PerformScheduledActionsNow();
+    void ExecuteScheduledActionsNow();
 
     [OperationContract]
     void GetScheduledActionsStatus(out DateTime dateTime, out string status);

@@ -34,7 +34,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Service
       ThreadPool.QueueUserWorkItem(
         delegate
         {
-          _importer.PerformImport(false);
+          _importer.ImportData(false);
         }
       );
     }
@@ -52,14 +52,14 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Service
       return _importer.ReadChannelsFromAllDataFiles();
     }
 
-    public void PerformScheduledActionsNow()
+    public void ExecuteScheduledActionsNow()
     {
       // The function call can block and is a long running process, so execute
       // it in a thread.
       ThreadPool.QueueUserWorkItem(
         delegate
         {
-          _importer.PerformScheduledActions();
+          _importer.ExecuteScheduledActions(false);
         }
       );
     }

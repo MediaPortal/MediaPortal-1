@@ -143,8 +143,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       checkBoxDeleteBeforeImport.Checked = _settingServiceAgent.GetValue("xmlTvDeleteBeforeImport", true);
 
       checkBoxTimeCorrectionEnable.Checked = _settingServiceAgent.GetValue("xmlTvUseTimeCorrection", false);
-      numericTextBoxTimeCorrectionHours.Value = _settingServiceAgent.GetValue("xmlTvTimeCorrectionHours", 0);
-      numericTextBoxTimeCorrectionMinutes.Value = _settingServiceAgent.GetValue("xmlTvTimeCorrectionMinutes", 0);
+      numericUpDownTimeCorrectionHours.Value = _settingServiceAgent.GetValue("xmlTvTimeCorrectionHours", 0);
+      numericUpDownTimeCorrectionMinutes.Value = _settingServiceAgent.GetValue("xmlTvTimeCorrectionMinutes", 0);
       checkBoxTimeCorrectionEnable_CheckedChanged(null, null);
 
       checkBoxMappingsPartialMatch.Checked = _settingServiceAgent.GetValue("xmlTvUsePartialMatching", false);
@@ -166,6 +166,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         selectScheduledActionsProgramDialog.FileName = Path.GetFileName(textBoxScheduledActionsProgramLocation.Text);
       }
 
+      numericUpDownScheduledActionsTimeFrequency.Value = _settingServiceAgent.GetValue("xmlTvScheduledActionsTimeFrequency", 24);
       dateTimePickerScheduledActionsTimeBetweenStart.Value = _settingServiceAgent.GetValue("xmlTvScheduledActionsTimeBetweenStart", DateTime.Now);
       dateTimePickerScheduledActionsTimeBetweenEnd.Value = _settingServiceAgent.GetValue("xmlTvScheduledActionsTimeBetweenEnd", DateTime.Now);
       radioScheduledActionsTimeStartup.Checked = _settingServiceAgent.GetValue("xmlTvScheduledActionsTimeOnStartup", false);
@@ -226,8 +227,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       _settingServiceAgent.SaveValue("xmlTvDeleteBeforeImport", checkBoxDeleteBeforeImport.Checked);
 
       _settingServiceAgent.SaveValue("xmlTvUseTimeCorrection", checkBoxTimeCorrectionEnable.Checked);
-      _settingServiceAgent.SaveValue("xmlTvTimeCorrectionHours", numericTextBoxTimeCorrectionHours.Value);
-      _settingServiceAgent.SaveValue("xmlTvTimeCorrectionMinutes", numericTextBoxTimeCorrectionMinutes.Value);
+      _settingServiceAgent.SaveValue("xmlTvTimeCorrectionHours", (int)numericUpDownTimeCorrectionHours.Value);
+      _settingServiceAgent.SaveValue("xmlTvTimeCorrectionMinutes", (int)numericUpDownTimeCorrectionMinutes.Value);
 
       _settingServiceAgent.SaveValue("xmlTvUsePartialMatching", checkBoxMappingsPartialMatch.Checked);
 
@@ -236,6 +237,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       _settingServiceAgent.SaveValue("xmlTvScheduledActionsProgram", checkBoxScheduledActionsProgram.Checked);
       _settingServiceAgent.SaveValue("xmlTvScheduledActionsProgramLocation", textBoxScheduledActionsProgramLocation.Text);
 
+      _settingServiceAgent.SaveValue("xmlTvScheduledActionsTimeFrequency", (int)numericUpDownScheduledActionsTimeFrequency.Value);
       _settingServiceAgent.SaveValue("xmlTvScheduledActionsTimeBetweenStart", dateTimePickerScheduledActionsTimeBetweenStart.Value);
       _settingServiceAgent.SaveValue("xmlTvScheduledActionsTimeBetweenEnd", dateTimePickerScheduledActionsTimeBetweenEnd.Value);
       _settingServiceAgent.SaveValue("xmlTvScheduledActionsTimeOnStartup", radioScheduledActionsTimeStartup.Checked);
@@ -249,14 +251,15 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.LogDebug("  delete before import? = {0}", checkBoxDeleteBeforeImport.Checked);
       this.LogDebug("  time correction...");
       this.LogDebug("    enabled             = {0}", checkBoxTimeCorrectionEnable.Checked);
-      this.LogDebug("    hours               = {0}", numericTextBoxTimeCorrectionHours.Value);
-      this.LogDebug("    minutes             = {0}", numericTextBoxTimeCorrectionMinutes.Value);
+      this.LogDebug("    hours               = {0}", numericUpDownTimeCorrectionHours.Value);
+      this.LogDebug("    minutes             = {0}", numericUpDownTimeCorrectionMinutes.Value);
       this.LogDebug("  partial matching?     = {0}", checkBoxMappingsPartialMatch.Checked);
       this.LogDebug("  scheduled actions...");
       this.LogDebug("    download?           = {0}", checkBoxScheduledActionsDownload.Checked);
       this.LogDebug("    download URL        = {0}", textBoxScheduledActionsDownloadUrl.Text);
       this.LogDebug("    run program?        = {0}", checkBoxScheduledActionsProgram.Checked);
       this.LogDebug("    program location    = {0}", textBoxScheduledActionsProgramLocation.Text);
+      this.LogDebug("    frequency           = {0} hour(s)", numericUpDownScheduledActionsTimeFrequency.Value);
       this.LogDebug("    on startup/resume?  = {0}", radioScheduledActionsTimeStartup.Checked);
       this.LogDebug("    between time start  = {0}", dateTimePickerScheduledActionsTimeBetweenStart.Value.TimeOfDay);
       this.LogDebug("    between time end    = {0}", dateTimePickerScheduledActionsTimeBetweenEnd.Value.TimeOfDay);
@@ -323,8 +326,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
     private void checkBoxTimeCorrectionEnable_CheckedChanged(object sender, EventArgs e)
     {
-      numericTextBoxTimeCorrectionHours.Enabled = checkBoxTimeCorrectionEnable.Checked;
-      numericTextBoxTimeCorrectionMinutes.Enabled = checkBoxTimeCorrectionEnable.Checked;
+      numericUpDownTimeCorrectionHours.Enabled = checkBoxTimeCorrectionEnable.Checked;
+      numericUpDownTimeCorrectionMinutes.Enabled = checkBoxTimeCorrectionEnable.Checked;
     }
 
     private void buttonMappingsLoad_Click(object sender, EventArgs e)
@@ -628,7 +631,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     {
       this.LogDebug("XMLTV config: force-starting scheduled actions");
       SaveSettings();
-      ServiceAgents.Instance.PluginService<IXmlTvImportService>().PerformScheduledActionsNow();
+      ServiceAgents.Instance.PluginService<IXmlTvImportService>().ExecuteScheduledActionsNow();
     }
   }
 }

@@ -30,9 +30,9 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
       this.tabControl1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
       this.tabSettings = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.groupBoxImport = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
@@ -43,8 +43,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.buttonBrowse = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.textBoxFolder = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.groupBoxTimeCorrection = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.numericTextBoxTimeCorrectionHours = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericTextBox();
-      this.numericTextBoxTimeCorrectionMinutes = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericTextBox();
+      this.numericUpDownTimeCorrectionMinutes = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownTimeCorrectionHours = new System.Windows.Forms.NumericUpDown();
       this.labelTimeCorrectionList = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.checkBoxTimeCorrectionEnable = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.labelTimeCorrectionHours = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -76,6 +76,10 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.dataGridViewColumnMatchType = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.tabSchedule = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.groupBoxScheduledActionsTime = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.labelScheduledActionsTimeHours = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.numericUpDownScheduledActionsTimeFrequency = new System.Windows.Forms.NumericUpDown();
+      this.labelScheduledActionsTimeBetween = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.dateTimePickerScheduledActionsTimeBetweenEnd = new System.Windows.Forms.DateTimePicker();
       this.radioScheduledActionsTimeStartup = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
       this.buttonScheduledActionsTimeNow = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.radioScheduledActionsTimeBetween = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
@@ -95,18 +99,19 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.labelScheduledActionsProgram = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
       this.selectScheduledActionsProgramDialog = new System.Windows.Forms.OpenFileDialog();
-      this.dateTimePickerScheduledActionsTimeBetweenEnd = new System.Windows.Forms.DateTimePicker();
-      this.labelScheduledActionsTimeBetween = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.tabControl1.SuspendLayout();
       this.tabSettings.SuspendLayout();
       this.groupBoxImport.SuspendLayout();
       this.groupBoxTimeCorrection.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeCorrectionMinutes)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeCorrectionHours)).BeginInit();
       this.groupBoxImportStatus.SuspendLayout();
       this.tabMappings.SuspendLayout();
       this.groupBoxMapping.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMappings)).BeginInit();
       this.tabSchedule.SuspendLayout();
       this.groupBoxScheduledActionsTime.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScheduledActionsTimeFrequency)).BeginInit();
       this.groupBoxScheduledActionsStatus.SuspendLayout();
       this.groupBoxScheduledActionsAction.SuspendLayout();
       this.SuspendLayout();
@@ -223,8 +228,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       // 
       this.groupBoxTimeCorrection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxTimeCorrection.Controls.Add(this.numericTextBoxTimeCorrectionHours);
-      this.groupBoxTimeCorrection.Controls.Add(this.numericTextBoxTimeCorrectionMinutes);
+      this.groupBoxTimeCorrection.Controls.Add(this.numericUpDownTimeCorrectionMinutes);
+      this.groupBoxTimeCorrection.Controls.Add(this.numericUpDownTimeCorrectionHours);
       this.groupBoxTimeCorrection.Controls.Add(this.labelTimeCorrectionList);
       this.groupBoxTimeCorrection.Controls.Add(this.checkBoxTimeCorrectionEnable);
       this.groupBoxTimeCorrection.Controls.Add(this.labelTimeCorrectionHours);
@@ -237,28 +242,39 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.groupBoxTimeCorrection.TabStop = false;
       this.groupBoxTimeCorrection.Text = "Time Correction";
       // 
-      // numericTextBoxTimeCorrectionHours
+      // numericUpDownTimeCorrectionMinutes
       // 
-      this.numericTextBoxTimeCorrectionHours.Location = new System.Drawing.Point(63, 42);
-      this.numericTextBoxTimeCorrectionHours.Name = "numericTextBoxTimeCorrectionHours";
-      this.numericTextBoxTimeCorrectionHours.Size = new System.Drawing.Size(50, 20);
-      this.numericTextBoxTimeCorrectionHours.TabIndex = 2;
-      this.numericTextBoxTimeCorrectionHours.Text = "0";
-      this.numericTextBoxTimeCorrectionHours.Value = 0;
+      this.numericUpDownTimeCorrectionMinutes.Location = new System.Drawing.Point(183, 43);
+      this.numericUpDownTimeCorrectionMinutes.Maximum = new decimal(new int[] {
+            59,
+            0,
+            0,
+            0});
+      this.numericUpDownTimeCorrectionMinutes.Name = "numericUpDownTimeCorrectionMinutes";
+      this.numericUpDownTimeCorrectionMinutes.Size = new System.Drawing.Size(40, 20);
+      this.numericUpDownTimeCorrectionMinutes.TabIndex = 4;
       // 
-      // numericTextBoxTimeCorrectionMinutes
+      // numericUpDownTimeCorrectionHours
       // 
-      this.numericTextBoxTimeCorrectionMinutes.Location = new System.Drawing.Point(201, 42);
-      this.numericTextBoxTimeCorrectionMinutes.Name = "numericTextBoxTimeCorrectionMinutes";
-      this.numericTextBoxTimeCorrectionMinutes.Size = new System.Drawing.Size(50, 20);
-      this.numericTextBoxTimeCorrectionMinutes.TabIndex = 4;
-      this.numericTextBoxTimeCorrectionMinutes.Text = "0";
-      this.numericTextBoxTimeCorrectionMinutes.Value = 0;
+      this.numericUpDownTimeCorrectionHours.Location = new System.Drawing.Point(63, 43);
+      this.numericUpDownTimeCorrectionHours.Maximum = new decimal(new int[] {
+            48,
+            0,
+            0,
+            0});
+      this.numericUpDownTimeCorrectionHours.Minimum = new decimal(new int[] {
+            48,
+            0,
+            0,
+            -2147483648});
+      this.numericUpDownTimeCorrectionHours.Name = "numericUpDownTimeCorrectionHours";
+      this.numericUpDownTimeCorrectionHours.Size = new System.Drawing.Size(40, 20);
+      this.numericUpDownTimeCorrectionHours.TabIndex = 2;
       // 
       // labelTimeCorrectionList
       // 
       this.labelTimeCorrectionList.AutoSize = true;
-      this.labelTimeCorrectionList.Location = new System.Drawing.Point(19, 65);
+      this.labelTimeCorrectionList.Location = new System.Drawing.Point(19, 67);
       this.labelTimeCorrectionList.Name = "labelTimeCorrectionList";
       this.labelTimeCorrectionList.Size = new System.Drawing.Size(394, 13);
       this.labelTimeCorrectionList.TabIndex = 5;
@@ -289,7 +305,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       // labelTimeCorrectionMinutes
       // 
       this.labelTimeCorrectionMinutes.AutoSize = true;
-      this.labelTimeCorrectionMinutes.Location = new System.Drawing.Point(148, 45);
+      this.labelTimeCorrectionMinutes.Location = new System.Drawing.Point(130, 45);
       this.labelTimeCorrectionMinutes.Name = "labelTimeCorrectionMinutes";
       this.labelTimeCorrectionMinutes.Size = new System.Drawing.Size(47, 13);
       this.labelTimeCorrectionMinutes.TabIndex = 3;
@@ -525,14 +541,14 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.dataGridViewMappings.Location = new System.Drawing.Point(6, 97);
       this.dataGridViewMappings.MultiSelect = false;
       this.dataGridViewMappings.Name = "dataGridViewMappings";
-      dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle15.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle15.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle15.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle15.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-      this.dataGridViewMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle15;
+      dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+      this.dataGridViewMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
       this.dataGridViewMappings.Size = new System.Drawing.Size(460, 287);
       this.dataGridViewMappings.TabIndex = 1;
       // 
@@ -546,8 +562,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       // dataGridViewColumnTuningChannel
       // 
       this.dataGridViewColumnTuningChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      dataGridViewCellStyle13.BackColor = System.Drawing.Color.White;
-      this.dataGridViewColumnTuningChannel.DefaultCellStyle = dataGridViewCellStyle13;
+      dataGridViewCellStyle7.BackColor = System.Drawing.Color.White;
+      this.dataGridViewColumnTuningChannel.DefaultCellStyle = dataGridViewCellStyle7;
       this.dataGridViewColumnTuningChannel.HeaderText = "Tuning Channel";
       this.dataGridViewColumnTuningChannel.Name = "dataGridViewColumnTuningChannel";
       this.dataGridViewColumnTuningChannel.ReadOnly = true;
@@ -556,8 +572,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       // dataGridViewColumnGuideChannel
       // 
       this.dataGridViewColumnGuideChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      dataGridViewCellStyle14.BackColor = System.Drawing.Color.White;
-      this.dataGridViewColumnGuideChannel.DefaultCellStyle = dataGridViewCellStyle14;
+      dataGridViewCellStyle8.BackColor = System.Drawing.Color.White;
+      this.dataGridViewColumnGuideChannel.DefaultCellStyle = dataGridViewCellStyle8;
       this.dataGridViewColumnGuideChannel.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
       this.dataGridViewColumnGuideChannel.HeaderText = "Guide Channel";
       this.dataGridViewColumnGuideChannel.Name = "dataGridViewColumnGuideChannel";
@@ -591,6 +607,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       // 
       this.groupBoxScheduledActionsTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxScheduledActionsTime.Controls.Add(this.labelScheduledActionsTimeHours);
+      this.groupBoxScheduledActionsTime.Controls.Add(this.numericUpDownScheduledActionsTimeFrequency);
       this.groupBoxScheduledActionsTime.Controls.Add(this.labelScheduledActionsTimeBetween);
       this.groupBoxScheduledActionsTime.Controls.Add(this.dateTimePickerScheduledActionsTimeBetweenEnd);
       this.groupBoxScheduledActionsTime.Controls.Add(this.radioScheduledActionsTimeStartup);
@@ -601,28 +619,79 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.groupBoxScheduledActionsTime.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxScheduledActionsTime.Location = new System.Drawing.Point(7, 173);
       this.groupBoxScheduledActionsTime.Name = "groupBoxScheduledActionsTime";
-      this.groupBoxScheduledActionsTime.Size = new System.Drawing.Size(459, 120);
+      this.groupBoxScheduledActionsTime.Size = new System.Drawing.Size(459, 122);
       this.groupBoxScheduledActionsTime.TabIndex = 1;
       this.groupBoxScheduledActionsTime.TabStop = false;
       this.groupBoxScheduledActionsTime.Text = "Time";
+      // 
+      // labelScheduledActionsTimeHours
+      // 
+      this.labelScheduledActionsTimeHours.AutoSize = true;
+      this.labelScheduledActionsTimeHours.Location = new System.Drawing.Point(239, 16);
+      this.labelScheduledActionsTimeHours.Name = "labelScheduledActionsTimeHours";
+      this.labelScheduledActionsTimeHours.Size = new System.Drawing.Size(42, 13);
+      this.labelScheduledActionsTimeHours.TabIndex = 2;
+      this.labelScheduledActionsTimeHours.Text = "hour(s):";
+      // 
+      // numericUpDownScheduledActionsTimeFrequency
+      // 
+      this.numericUpDownScheduledActionsTimeFrequency.Location = new System.Drawing.Point(198, 14);
+      this.numericUpDownScheduledActionsTimeFrequency.Maximum = new decimal(new int[] {
+            336,
+            0,
+            0,
+            0});
+      this.numericUpDownScheduledActionsTimeFrequency.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownScheduledActionsTimeFrequency.Name = "numericUpDownScheduledActionsTimeFrequency";
+      this.numericUpDownScheduledActionsTimeFrequency.Size = new System.Drawing.Size(40, 20);
+      this.numericUpDownScheduledActionsTimeFrequency.TabIndex = 1;
+      this.numericUpDownScheduledActionsTimeFrequency.Value = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+      // 
+      // labelScheduledActionsTimeBetween
+      // 
+      this.labelScheduledActionsTimeBetween.AutoSize = true;
+      this.labelScheduledActionsTimeBetween.Location = new System.Drawing.Point(171, 46);
+      this.labelScheduledActionsTimeBetween.Name = "labelScheduledActionsTimeBetween";
+      this.labelScheduledActionsTimeBetween.Size = new System.Drawing.Size(25, 13);
+      this.labelScheduledActionsTimeBetween.TabIndex = 5;
+      this.labelScheduledActionsTimeBetween.Text = "and";
+      // 
+      // dateTimePickerScheduledActionsTimeBetweenEnd
+      // 
+      this.dateTimePickerScheduledActionsTimeBetweenEnd.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+      this.dateTimePickerScheduledActionsTimeBetweenEnd.Location = new System.Drawing.Point(198, 42);
+      this.dateTimePickerScheduledActionsTimeBetweenEnd.Name = "dateTimePickerScheduledActionsTimeBetweenEnd";
+      this.dateTimePickerScheduledActionsTimeBetweenEnd.ShowUpDown = true;
+      this.dateTimePickerScheduledActionsTimeBetweenEnd.Size = new System.Drawing.Size(95, 20);
+      this.dateTimePickerScheduledActionsTimeBetweenEnd.TabIndex = 6;
+      this.dateTimePickerScheduledActionsTimeBetweenEnd.Value = new System.DateTime(2014, 8, 16, 18, 0, 0, 0);
+      this.dateTimePickerScheduledActionsTimeBetweenEnd.ValueChanged += new System.EventHandler(this.dateTimePickerScheduledActionsTimeBetweenEnd_ValueChanged);
       // 
       // radioScheduledActionsTimeStartup
       // 
       this.radioScheduledActionsTimeStartup.AutoSize = true;
       this.radioScheduledActionsTimeStartup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioScheduledActionsTimeStartup.Location = new System.Drawing.Point(8, 60);
+      this.radioScheduledActionsTimeStartup.Location = new System.Drawing.Point(8, 68);
       this.radioScheduledActionsTimeStartup.Name = "radioScheduledActionsTimeStartup";
       this.radioScheduledActionsTimeStartup.Size = new System.Drawing.Size(210, 17);
-      this.radioScheduledActionsTimeStartup.TabIndex = 5;
+      this.radioScheduledActionsTimeStartup.TabIndex = 7;
       this.radioScheduledActionsTimeStartup.Text = "When the TV service starts or resumes.";
       this.radioScheduledActionsTimeStartup.UseVisualStyleBackColor = true;
       // 
       // buttonScheduledActionsTimeNow
       // 
-      this.buttonScheduledActionsTimeNow.Location = new System.Drawing.Point(166, 83);
+      this.buttonScheduledActionsTimeNow.Location = new System.Drawing.Point(150, 91);
       this.buttonScheduledActionsTimeNow.Name = "buttonScheduledActionsTimeNow";
       this.buttonScheduledActionsTimeNow.Size = new System.Drawing.Size(80, 23);
-      this.buttonScheduledActionsTimeNow.TabIndex = 6;
+      this.buttonScheduledActionsTimeNow.TabIndex = 8;
       this.buttonScheduledActionsTimeNow.Text = "Do It Now";
       this.buttonScheduledActionsTimeNow.UseVisualStyleBackColor = true;
       this.buttonScheduledActionsTimeNow.Click += new System.EventHandler(this.buttonScheduledActionsTimeNow_Click);
@@ -632,10 +701,10 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.radioScheduledActionsTimeBetween.AutoSize = true;
       this.radioScheduledActionsTimeBetween.Checked = true;
       this.radioScheduledActionsTimeBetween.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioScheduledActionsTimeBetween.Location = new System.Drawing.Point(8, 36);
+      this.radioScheduledActionsTimeBetween.Location = new System.Drawing.Point(8, 44);
       this.radioScheduledActionsTimeBetween.Name = "radioScheduledActionsTimeBetween";
       this.radioScheduledActionsTimeBetween.Size = new System.Drawing.Size(66, 17);
-      this.radioScheduledActionsTimeBetween.TabIndex = 1;
+      this.radioScheduledActionsTimeBetween.TabIndex = 3;
       this.radioScheduledActionsTimeBetween.TabStop = true;
       this.radioScheduledActionsTimeBetween.Text = "Between";
       this.radioScheduledActionsTimeBetween.UseVisualStyleBackColor = true;
@@ -644,11 +713,11 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       // dateTimePickerScheduledActionsTimeBetweenStart
       // 
       this.dateTimePickerScheduledActionsTimeBetweenStart.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-      this.dateTimePickerScheduledActionsTimeBetweenStart.Location = new System.Drawing.Point(75, 34);
+      this.dateTimePickerScheduledActionsTimeBetweenStart.Location = new System.Drawing.Point(75, 42);
       this.dateTimePickerScheduledActionsTimeBetweenStart.Name = "dateTimePickerScheduledActionsTimeBetweenStart";
       this.dateTimePickerScheduledActionsTimeBetweenStart.ShowUpDown = true;
       this.dateTimePickerScheduledActionsTimeBetweenStart.Size = new System.Drawing.Size(95, 20);
-      this.dateTimePickerScheduledActionsTimeBetweenStart.TabIndex = 2;
+      this.dateTimePickerScheduledActionsTimeBetweenStart.TabIndex = 4;
       this.dateTimePickerScheduledActionsTimeBetweenStart.Value = new System.DateTime(2014, 8, 15, 17, 0, 0, 0);
       this.dateTimePickerScheduledActionsTimeBetweenStart.ValueChanged += new System.EventHandler(this.dateTimePickerScheduledActionsTimeBetweenStart_ValueChanged);
       // 
@@ -657,9 +726,9 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.labelScheduledActionsTime.AutoSize = true;
       this.labelScheduledActionsTime.Location = new System.Drawing.Point(2, 16);
       this.labelScheduledActionsTime.Name = "labelScheduledActionsTime";
-      this.labelScheduledActionsTime.Size = new System.Drawing.Size(211, 13);
+      this.labelScheduledActionsTime.Size = new System.Drawing.Size(196, 13);
       this.labelScheduledActionsTime.TabIndex = 0;
-      this.labelScheduledActionsTime.Text = "Perform the above action(s) once per day...";
+      this.labelScheduledActionsTime.Text = "Execute the above action(s) once every";
       // 
       // groupBoxScheduledActionsStatus
       // 
@@ -805,26 +874,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.selectScheduledActionsProgramDialog.Filter = "Executables (*.exe, *.bat)|*.exe;*.bat|All Files|*.*";
       this.selectScheduledActionsProgramDialog.Title = "Select A Program Or Batch Script.";
       // 
-      // dateTimePickerScheduledActionsTimeBetweenEnd
-      // 
-      this.dateTimePickerScheduledActionsTimeBetweenEnd.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-      this.dateTimePickerScheduledActionsTimeBetweenEnd.Location = new System.Drawing.Point(198, 34);
-      this.dateTimePickerScheduledActionsTimeBetweenEnd.Name = "dateTimePickerScheduledActionsTimeBetweenEnd";
-      this.dateTimePickerScheduledActionsTimeBetweenEnd.ShowUpDown = true;
-      this.dateTimePickerScheduledActionsTimeBetweenEnd.Size = new System.Drawing.Size(95, 20);
-      this.dateTimePickerScheduledActionsTimeBetweenEnd.TabIndex = 4;
-      this.dateTimePickerScheduledActionsTimeBetweenEnd.Value = new System.DateTime(2014, 8, 16, 18, 0, 0, 0);
-      this.dateTimePickerScheduledActionsTimeBetweenEnd.ValueChanged += new System.EventHandler(this.dateTimePickerScheduledActionsTimeBetweenEnd_ValueChanged);
-      // 
-      // labelScheduledActionsTimeBetween
-      // 
-      this.labelScheduledActionsTimeBetween.AutoSize = true;
-      this.labelScheduledActionsTimeBetween.Location = new System.Drawing.Point(171, 38);
-      this.labelScheduledActionsTimeBetween.Name = "labelScheduledActionsTimeBetween";
-      this.labelScheduledActionsTimeBetween.Size = new System.Drawing.Size(25, 13);
-      this.labelScheduledActionsTimeBetween.TabIndex = 3;
-      this.labelScheduledActionsTimeBetween.Text = "and";
-      // 
       // XmlTvSetup
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -838,6 +887,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.groupBoxImport.PerformLayout();
       this.groupBoxTimeCorrection.ResumeLayout(false);
       this.groupBoxTimeCorrection.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeCorrectionMinutes)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeCorrectionHours)).EndInit();
       this.groupBoxImportStatus.ResumeLayout(false);
       this.groupBoxImportStatus.PerformLayout();
       this.tabMappings.ResumeLayout(false);
@@ -847,6 +898,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.tabSchedule.ResumeLayout(false);
       this.groupBoxScheduledActionsTime.ResumeLayout(false);
       this.groupBoxScheduledActionsTime.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScheduledActionsTimeFrequency)).EndInit();
       this.groupBoxScheduledActionsStatus.ResumeLayout(false);
       this.groupBoxScheduledActionsStatus.PerformLayout();
       this.groupBoxScheduledActionsAction.ResumeLayout(false);
@@ -892,8 +944,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     private MPButton buttonMappingsLoad;
     private System.Windows.Forms.DataGridView dataGridViewMappings;
     private MPGroupBox groupBoxTimeCorrection;
-    private MPNumericTextBox numericTextBoxTimeCorrectionMinutes;
-    private MPNumericTextBox numericTextBoxTimeCorrectionHours;
     private MPGroupBox groupBoxScheduledActionsStatus;
     private MPLabel labelScheduledActionsStatusValue;
     private MPLabel labelScheduledActionsStatusDateTimeValue;
@@ -921,6 +971,10 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     private System.Windows.Forms.OpenFileDialog selectScheduledActionsProgramDialog;
     private MPLabel labelScheduledActionsTimeBetween;
     private System.Windows.Forms.DateTimePicker dateTimePickerScheduledActionsTimeBetweenEnd;
+    private System.Windows.Forms.NumericUpDown numericUpDownTimeCorrectionMinutes;
+    private System.Windows.Forms.NumericUpDown numericUpDownTimeCorrectionHours;
+    private MPLabel labelScheduledActionsTimeHours;
+    private System.Windows.Forms.NumericUpDown numericUpDownScheduledActionsTimeFrequency;
 
 
   }
