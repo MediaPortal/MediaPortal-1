@@ -30,9 +30,9 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
       this.tabControl1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
       this.tabSettings = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.groupBoxImport = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
@@ -253,6 +253,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.numericUpDownTimeCorrectionMinutes.Name = "numericUpDownTimeCorrectionMinutes";
       this.numericUpDownTimeCorrectionMinutes.Size = new System.Drawing.Size(40, 20);
       this.numericUpDownTimeCorrectionMinutes.TabIndex = 4;
+      this.numericUpDownTimeCorrectionMinutes.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // numericUpDownTimeCorrectionHours
       // 
@@ -270,6 +271,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.numericUpDownTimeCorrectionHours.Name = "numericUpDownTimeCorrectionHours";
       this.numericUpDownTimeCorrectionHours.Size = new System.Drawing.Size(40, 20);
       this.numericUpDownTimeCorrectionHours.TabIndex = 2;
+      this.numericUpDownTimeCorrectionHours.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // labelTimeCorrectionList
       // 
@@ -541,14 +543,14 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.dataGridViewMappings.Location = new System.Drawing.Point(6, 97);
       this.dataGridViewMappings.MultiSelect = false;
       this.dataGridViewMappings.Name = "dataGridViewMappings";
-      dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-      this.dataGridViewMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
+      dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+      this.dataGridViewMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
       this.dataGridViewMappings.Size = new System.Drawing.Size(460, 287);
       this.dataGridViewMappings.TabIndex = 1;
       // 
@@ -562,8 +564,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       // dataGridViewColumnTuningChannel
       // 
       this.dataGridViewColumnTuningChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      dataGridViewCellStyle7.BackColor = System.Drawing.Color.White;
-      this.dataGridViewColumnTuningChannel.DefaultCellStyle = dataGridViewCellStyle7;
+      dataGridViewCellStyle10.BackColor = System.Drawing.Color.White;
+      this.dataGridViewColumnTuningChannel.DefaultCellStyle = dataGridViewCellStyle10;
       this.dataGridViewColumnTuningChannel.HeaderText = "Tuning Channel";
       this.dataGridViewColumnTuningChannel.Name = "dataGridViewColumnTuningChannel";
       this.dataGridViewColumnTuningChannel.ReadOnly = true;
@@ -572,8 +574,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       // dataGridViewColumnGuideChannel
       // 
       this.dataGridViewColumnGuideChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      dataGridViewCellStyle8.BackColor = System.Drawing.Color.White;
-      this.dataGridViewColumnGuideChannel.DefaultCellStyle = dataGridViewCellStyle8;
+      dataGridViewCellStyle11.BackColor = System.Drawing.Color.White;
+      this.dataGridViewColumnGuideChannel.DefaultCellStyle = dataGridViewCellStyle11;
       this.dataGridViewColumnGuideChannel.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
       this.dataGridViewColumnGuideChannel.HeaderText = "Guide Channel";
       this.dataGridViewColumnGuideChannel.Name = "dataGridViewColumnGuideChannel";
@@ -649,6 +651,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.numericUpDownScheduledActionsTimeFrequency.Name = "numericUpDownScheduledActionsTimeFrequency";
       this.numericUpDownScheduledActionsTimeFrequency.Size = new System.Drawing.Size(40, 20);
       this.numericUpDownScheduledActionsTimeFrequency.TabIndex = 1;
+      this.numericUpDownScheduledActionsTimeFrequency.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownScheduledActionsTimeFrequency.Value = new decimal(new int[] {
             24,
             0,
