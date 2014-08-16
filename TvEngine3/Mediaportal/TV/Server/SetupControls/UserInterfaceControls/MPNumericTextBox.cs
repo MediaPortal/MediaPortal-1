@@ -29,12 +29,13 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
   /// </summary>
   public class MPNumericTextBox : TextBox
   {
+    private bool _allowNegativeNumbers = false;
+
     protected override void OnKeyPress(KeyPressEventArgs e)
     {
       base.OnKeyPress(e);
-      if ((!e.Handled) && ("1234567890\b".IndexOf(e.KeyChar) < 0))
+      if (!e.Handled && "1234567890\b".IndexOf(e.KeyChar) < 0 && (!_allowNegativeNumbers || !e.KeyChar.ToString().Equals(CultureInfo.CurrentCulture.NumberFormat.NegativeSign)))
       {
-        // Yeti.Sys.Win32.MessageBeep(Yeti.Sys.BeepType.SimpleBeep);
         e.Handled = true;
       }
     }
@@ -72,6 +73,18 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
       base.OnTextChanged(e);
     }
 
+    public bool AllowNegativeNumbers
+    {
+      get
+      {
+        return _allowNegativeNumbers;
+      }
+      set
+      {
+        _allowNegativeNumbers = value;
+      }
+    }
+
     public int Value
     {
       get
@@ -80,7 +93,10 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
         int.TryParse(Text, out val);
         return val;
       }
-      set { Text = value.ToString(); }
+      set
+      {
+        Text = value.ToString();
+      }
     }
   }
 }
