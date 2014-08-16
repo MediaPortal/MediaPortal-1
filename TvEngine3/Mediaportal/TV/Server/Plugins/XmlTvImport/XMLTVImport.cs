@@ -96,45 +96,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       _backgroundDelay = backgroundDelay;
     }
 
-    private int ParseStarRating(string epgRating)
-    {
-      int Rating = -1;
-      try
-      {
-        // format = 5.2/10
-        // check if the epgRating is within a xml tag
-        epgRating = epgRating.Trim();
-        if (string.IsNullOrEmpty(epgRating))
-          return Rating;
-
-        if (epgRating.StartsWith("<"))
-        {
-          int endStartTagIdx = epgRating.IndexOf(">") + 1;
-          int length = epgRating.IndexOf("</", endStartTagIdx) - endStartTagIdx;
-          epgRating = epgRating.Substring(endStartTagIdx, length);
-        }
-        string strRating = epgRating;
-        int slashPos = strRating.IndexOf('/');
-        // Some EPG providers only supply the value without n/10
-        if (slashPos > 0)
-          strRating = strRating.Remove(slashPos);
-
-        decimal tmpRating = -1;
-        NumberFormatInfo NFO = NumberFormatInfo.InvariantInfo;
-        NumberStyles NStyle = NumberStyles.Float;
-
-        if (Decimal.TryParse(strRating, NStyle, NFO, out tmpRating))
-          Rating = Convert.ToInt16(tmpRating);
-        else
-          this.LogInfo("XMLTVImport: star-rating could not be used - {0},({1})", epgRating, strRating);
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "XMLTVImport: Error parsing star-rating - {0}", epgRating);
-      }
-      return Rating;
-    }
-
     public bool Import(string fileName, bool deleteBeforeImport, ShowProgressHandler showProgress, bool useTimeCorrection, int timeCorrectionHours, int timeCorrectionMinutes, ref ImportStats stats)
     {
       this.LogInfo("XMLTV: import file \"{0}\"", fileName);
@@ -382,7 +343,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                       break;
                     case "rating":
                       if (nodeClassification == null)
-                        nodeClassification = xmlProg.ReadInnerXml();
+                        nodeClassification = ExtractValueWithOptionalElement(xmlProg.ReadInnerXml(), "value");
                       else
                         xmlProg.Skip();
                       break;
@@ -676,7 +637,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       return false;
     }
 
-    private DateTime ConvertToLocalTime(DateTime dateTime, string timeZone)
+    private static DateTime ConvertToLocalTime(DateTime dateTime, string timeZone)
     {
       int off = GetTimeOffset(timeZone);
       int h = off / 100; // 220 -> 2,  -220 -> -2
@@ -717,13 +678,66 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       return programcredits;
     }
 
+    private static string ExtractValueWithOptionalElement(string xmlFragment, string optionalElementName)
+    {
+      xmlFragment = xmlFragment.Trim();
+      if (string.IsNullOrEmpty(xmlFragment))
+      {
+        return string.Empty;
+      }
+
+      if (xmlFragment.StartsWith("<"))
+      {
+        int endStartTagIdx = xmlFragment.IndexOf("<" + optionalElementName + ">") + optionalElementName.Length + 2;
+        int length = xmlFragment.IndexOf("</" + optionalElementName + ">", endStartTagIdx) - endStartTagIdx;
+        return xmlFragment.Substring(endStartTagIdx, length).Trim();
+      }
+      return xmlFragment;
+    }
+
+    private static int ParseStarRating(string epgRating)
+    {
+      int rating = -1;
+      try
+      {
+        // format = 5.2/10
+        // check if the epgRating is within a xml tag
+        epgRating = ExtractValueWithOptionalElement(epgRating, "value");
+        if (string.IsNullOrEmpty(epgRating))
+        {
+          return rating;
+        }
+        string strRating = epgRating;
+
+        // Some EPG providers only supply the value without n/10
+        // TODO XMLTV does not specify the "/10". It could be n/5, n/10 or n/42
+        // for all we know. We need to standardise this in the TVE database.
+        int slashPos = strRating.IndexOf('/');
+        if (slashPos > 0)
+        {
+          strRating = strRating.Remove(slashPos);
+        }
+
+        decimal tmpRating = -1;
+        if (Decimal.TryParse(strRating, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out tmpRating))
+          rating = Convert.ToInt16(tmpRating);
+        else
+          Log.Debug("XMLTV: star-rating \"{0}\" (originally \"{1}\") could not be used", strRating, epgRating);
+      }
+      catch (Exception ex)
+      {
+        Log.Error(ex, "XMLTV: failed to parse star-rating \"{0}\"", epgRating);
+      }
+      return rating;
+    }
+
     /// <summary>
     /// Parse and correct ep. # in the episode string
     /// </summary>
     /// <param name="episodenum"></param>
     /// <param name="nodeEpisodeNumSystemBase">int to add to the parsed episode num (depends on 0-based or not xmltv files)</param>
     /// <returns></returns>
-    private string CorrectEpisodeNum(string episodenum, int nodeEpisodeNumSystemBase)
+    private static string CorrectEpisodeNum(string episodenum, int nodeEpisodeNumSystemBase)
     {
       if (episodenum == "")
         return episodenum;
@@ -740,7 +754,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         }
         catch (Exception)
         {
-          this.LogDebug("XMLTVImport::CorrectEpisodeNum, could not parse '{0}' as plain number", episodenum);
+          Log.Debug("XMLTV: failed to convert plain episode number \"{0}\" to an integer", episodenum);
         }
       }
       else
@@ -754,13 +768,13 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         }
         catch (Exception)
         {
-          this.LogDebug("XMLTVImport::CorrectEpisodeNum, could not parse '{0}' as episode/episodes", episodenum);
+          Log.Debug("XMLTV: failed to interpret episode number \"{0}\"", episodenum);
         }
       }
       return "";
     }
 
-    private int GetTimeOffset(string timeZone)
+    private static int GetTimeOffset(string timeZone)
     {
       // timezone can b in format:
       // GMT +0100 or GMT -0500
@@ -790,7 +804,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       return 0;
     }
 
-    private long CorrectIllegalDateTime(long datetime)
+    private static long CorrectIllegalDateTime(long datetime)
     {
       //format : 20050710245500
       long sec = datetime % 100;
@@ -824,7 +838,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       return newDateTime;
     }
 
-    public long datetolong(DateTime dt)
+    public static long datetolong(DateTime dt)
     {
       try
       {
@@ -847,7 +861,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       return 0;
     }
 
-    public DateTime longtodate(long ldate)
+    public static DateTime longtodate(long ldate)
     {
       try
       {
