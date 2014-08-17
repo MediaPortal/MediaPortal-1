@@ -1,22 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- Freeview World TV -->
+  <DVBTTuning>
+    <Frequency>530000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>0</Offset>
+  </DVBTTuning>
+  <!-- Igloo (Sky) -->
+  <DVBTTuning>
+    <Frequency>546000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>0</Offset>
+  </DVBTTuning>
+  <!-- Freeview MediaWorks -->
   <DVBTTuning>
     <Frequency>562000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>0</Offset>
   </DVBTTuning>
+  <!-- Freeview TVNZ -->
   <DVBTTuning>
     <Frequency>578000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>0</Offset>
   </DVBTTuning>
+  <!-- Freeview Kordia -->
   <DVBTTuning>
     <Frequency>594000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>0</Offset>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>626000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>0</Offset>
   </DVBTTuning>

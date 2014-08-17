@@ -29,7 +29,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
   /// Logitech diNovo MediaPad LCD driver
   /// </summary>
   /// <author>JoeDalton</author>
-  public class MediaPad : BaseDisplay, IDisplay
+  public class MediaPad : BaseDisplay
   {
     private readonly double mediaPadId; //Unique ID of the Mediapad
     private readonly double mediaPadLcdId; //Unique ID of the Mediapad LCD display
@@ -56,19 +56,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     #region IDisplay Members
 
-    public bool IsDisabled
+    public override bool IsDisabled
     {
       get { return isDisabled; }
     }
 
-    public string ErrorMessage
+    public override string ErrorMessage
     {
       get { return errorMessage; }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters) {}
+    public override void SetCustomCharacters(int[][] customCharacters) { }
 
-    public void DrawImage(Bitmap bitmap) {}
+    public override void DrawImage(Bitmap bitmap) { }
 
 
     /// <summary>
@@ -76,7 +76,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// </summary>
     /// <param name="line">The line to display the message on</param>
     /// <param name="message">The message to display</param>
-    public void SetLine(int line, string message)
+    public override void SetLine(int line, string message)
     {
       if (mediaPadId == 0)
       {
@@ -92,7 +92,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Gets the driver name
     /// </summary>
-    public string Name
+    public override string Name
     {
       get { return "MediaPad"; }
     }
@@ -100,7 +100,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Gets the driver description
     /// </summary>
-    public string Description
+    public override string Description
     {
       get { return "Logitech diNovo MediaPad v1.0"; }
     }
@@ -108,7 +108,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Returns whether this driver supports text mode
     /// </summary>
-    public bool SupportsText
+    public override bool SupportsText
     {
       get { return true; }
     }
@@ -116,7 +116,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Returns whether this driver supports graphic mode
     /// </summary>
-    public bool SupportsGraphics
+    public override bool SupportsGraphics
     {
       get { return false; }
     }
@@ -124,7 +124,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Does nothing
     /// </summary>
-    public void Configure() {}
+    public override void Configure() { }
 
     /// <summary>
     /// Initializes the display
@@ -141,7 +141,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <param name="_contrast">Contrast on?</param>
     /// <param name="_contrastLevel">Contrast level</param>
     /// <param name="_blankOnExit">Blank on exit?</param>
-    public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
+    public override void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
                       bool _backLight, int _backLightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit)
     {
       Log.Info("MiniDisplay: Found Logitech diNovo Mediapad with ID {0} and LCD ID {1}", mediaPadId, mediaPadLcdId);
@@ -153,12 +153,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Clears the display
     /// </summary>
-    public void Initialize()
+    public override void Initialize()
     {
       Clear();
     }
 
-    public void CleanUp()
+    public override void CleanUp()
     {
       Clear();
     }
@@ -183,7 +183,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Cleanup
     /// </summary>
-    public void Dispose()
+    public override void Dispose()
     {
       if (mediaPadId == 0)
       {

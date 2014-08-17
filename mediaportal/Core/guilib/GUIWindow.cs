@@ -1507,12 +1507,52 @@ namespace MediaPortal.GUI.Library
       }
       if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
       {
-        OnShowContextMenu();
+        // send the action to the control which has the focus, if there is an override
+        int id;
+        GUIControl cntlFoc = GetControl(GetFocusControlId());
+        if (cntlFoc != null && cntlFoc.OnInfo.Length > 0)
+        {
+          id = GetFocusControlId();
+          if (id >= 0)
+          {
+            _previousFocusedControlId = id;
+          }
+          cntlFoc.OnAction(action);
+          id = GetFocusControlId();
+          if (id >= 0)
+          {
+            _previousFocusedControlId = id;
+          }
+        }
+        else
+        {
+          OnShowContextMenu();
+        }
         return;
       }
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
-        OnPreviousWindow();
+        // send the action to the control which has the focus, if there is an override
+        int id;
+        GUIControl cntlFoc = GetControl(GetFocusControlId());
+        if (cntlFoc != null && cntlFoc.OnESC.Length > 0)
+        {
+          id = GetFocusControlId();
+          if (id >= 0)
+          {
+            _previousFocusedControlId = id;
+          }
+          cntlFoc.OnAction(action);
+          id = GetFocusControlId();
+          if (id >= 0)
+          {
+            _previousFocusedControlId = id;
+          }
+        }
+        else
+        {
+          OnPreviousWindow();
+        }
         return;
       }
 

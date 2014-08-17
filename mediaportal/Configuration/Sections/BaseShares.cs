@@ -52,6 +52,7 @@ namespace MediaPortal.Configuration.Sections
       public bool CreateThumbs = true;
       public bool EachFolderIsMovie = false;
       public bool EnableWakeOnLan = false;
+      public bool DonotFolderJpgIfPin = true;
       
       public bool HasPinCode
       {
@@ -337,6 +338,7 @@ namespace MediaPortal.Configuration.Sections
         editShare.EachFolderIsMovie = false;
       }
 
+      editShare.DonotFolderJpgIfPin = true;
       DialogResult dialogResult = editShare.ShowDialog(this);
 
       if (dialogResult == DialogResult.OK)
@@ -351,6 +353,7 @@ namespace MediaPortal.Configuration.Sections
         shareData.RemoteFolder = editShare.RemoteFolder;
         shareData.DefaultLayout = ProperLayoutFromDefault(editShare.View);
         shareData.EnableWakeOnLan = editShare.EnableWakeOnLan;
+        shareData.DonotFolderJpgIfPin = editShare.DonotFolderJpgIfPin;
 
         //CreateThumbs
         if (selectedSection == "movies")
@@ -433,6 +436,7 @@ namespace MediaPortal.Configuration.Sections
           editShare.RemoteFolder = shareData.RemoteFolder;
           editShare.View = ProperDefaultFromLayout(shareData.DefaultLayout);
           editShare.EnableWakeOnLan = shareData.EnableWakeOnLan;
+          editShare.DonotFolderJpgIfPin = shareData.DonotFolderJpgIfPin;
 
           // CreateThumbs
           int drivetype = Util.Utils.getDriveType(shareData.Folder);
@@ -474,6 +478,7 @@ namespace MediaPortal.Configuration.Sections
             shareData.RemoteFolder = editShare.RemoteFolder;
             shareData.DefaultLayout = ProperLayoutFromDefault(editShare.View);
             shareData.EnableWakeOnLan = editShare.EnableWakeOnLan;
+            shareData.DonotFolderJpgIfPin = editShare.DonotFolderJpgIfPin;
 
             //CreateThumbs
             if (selectedSection == "movies")
@@ -722,10 +727,11 @@ namespace MediaPortal.Configuration.Sections
           string shareRemotePath = String.Format("shareremotepath{0}", index);
           string shareViewPath = String.Format("shareview{0}", index);
           string sharewakeonlan = String.Format("sharewakeonlan{0}", index);
-
+          string sharedonotfolderjpgifpin = String.Format("sharedonotfolderjpgifpin{0}", index);
+          
           string shareNameData = xmlreader.GetValueAsString(section, shareName, "");
           string sharePathData = xmlreader.GetValueAsString(section, sharePath, "");
-          string sharePinData = Util.Utils.DecryptPin(xmlreader.GetValueAsString(section, sharePin, ""));
+          string sharePinData = Util.Utils.DecryptPassword(xmlreader.GetValueAsString(section, sharePin, ""));
 
           // provide default shares
           if (index == 0 && shareNameData == string.Empty)
@@ -740,13 +746,14 @@ namespace MediaPortal.Configuration.Sections
           bool shareTypeData = xmlreader.GetValueAsBool(section, shareType, false);
           string shareServerData = xmlreader.GetValueAsString(section, shareServer, "");
           string shareLoginData = xmlreader.GetValueAsString(section, shareLogin, "");
-          string sharePwdData = xmlreader.GetValueAsString(section, sharePwd, "");
+          string sharePwdData = Util.Utils.DecryptPassword(xmlreader.GetValueAsString(section, sharePwd, ""));
           int sharePortData = xmlreader.GetValueAsInt(section, sharePort, 21);
           string shareRemotePathData = xmlreader.GetValueAsString(section, shareRemotePath, "/");
           int shareLayout = xmlreader.GetValueAsInt(section, shareViewPath,
                                                     (int)MediaPortal.GUI.Library.GUIFacadeControl.Layout.List);
 
           bool shareWakeOnLan = xmlreader.GetValueAsBool(section, sharewakeonlan, false);
+          bool sharedonotFolderJpgIfPin = xmlreader.GetValueAsBool(section, sharedonotfolderjpgifpin, true);
           
           // For Music Shares, we can indicate, if we want to scan them every time
           bool shareScanData = false;
@@ -778,6 +785,7 @@ namespace MediaPortal.Configuration.Sections
             newShare.RemoteFolder = shareRemotePathData;
             newShare.DefaultLayout = (Layout)shareLayout;
             newShare.EnableWakeOnLan = shareWakeOnLan;
+            newShare.DonotFolderJpgIfPin = sharedonotFolderJpgIfPin;
             
             if (section == "music" || section == "movies")
             {
@@ -836,6 +844,7 @@ namespace MediaPortal.Configuration.Sections
           string shareRemotePath = String.Format("shareremotepath{0}", index);
           string shareViewPath = String.Format("shareview{0}", index);
           string sharewakeonlan = String.Format("sharewakeonlan{0}", index);
+          string sharedonotfolderjpgifpin = String.Format("sharedonotfolderjpgifpin{0}", index);
           
           xmlwriter.RemoveEntry(section, shareName);
           xmlwriter.RemoveEntry(section, sharePath);
@@ -848,6 +857,7 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.RemoveEntry(section, shareRemotePath);
           xmlwriter.RemoveEntry(section, shareViewPath);
           xmlwriter.RemoveEntry(section, sharewakeonlan);
+          xmlwriter.RemoveEntry(section, sharedonotfolderjpgifpin);
           
           if (section == "music" || section == "movies")
           {
@@ -879,6 +889,7 @@ namespace MediaPortal.Configuration.Sections
           bool thumbsCreate = true;
           bool folderIsMovie = false;
           bool shareWakeOnLan = false;
+          bool sharedonotFolderJpgIfPin = true;
 
           if (CurrentShares != null && CurrentShares.Count > index)
           {
@@ -901,6 +912,7 @@ namespace MediaPortal.Configuration.Sections
               thumbsCreate = shareData.CreateThumbs;
               folderIsMovie = shareData.EachFolderIsMovie;
               shareWakeOnLan = shareData.EnableWakeOnLan;
+              sharedonotFolderJpgIfPin = shareData.DonotFolderJpgIfPin;
 
               if (CurrentShares[index] == DefaultShare)
               {
@@ -909,15 +921,16 @@ namespace MediaPortal.Configuration.Sections
 
               xmlwriter.SetValue(section, shareName, shareNameData);
               xmlwriter.SetValue(section, sharePath, sharePathData);
-              xmlwriter.SetValue(section, sharePin, Util.Utils.EncryptPin(sharePinData));
+              xmlwriter.SetValue(section, sharePin, Util.Utils.EncryptPassword(sharePinData));
               xmlwriter.SetValueAsBool(section, shareType, shareTypeData);
               xmlwriter.SetValue(section, shareServer, shareServerData);
               xmlwriter.SetValue(section, shareLogin, shareLoginData);
-              xmlwriter.SetValue(section, sharePwd, sharePwdData);
+              xmlwriter.SetValue(section, sharePwd, Util.Utils.EncryptPassword(sharePwdData));
               xmlwriter.SetValue(section, sharePort, sharePortData.ToString());
               xmlwriter.SetValue(section, shareRemotePath, shareRemotePathData);
               xmlwriter.SetValue(section, shareViewPath, shareLayout);
               xmlwriter.SetValueAsBool(section, sharewakeonlan, shareWakeOnLan);
+              xmlwriter.SetValueAsBool(section, sharedonotfolderjpgifpin, sharedonotFolderJpgIfPin);
 
               if (section == "music" || section == "movies")
               {

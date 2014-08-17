@@ -39,7 +39,7 @@ using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class MatrixGX : BaseDisplay, IDisplay
+  public class MatrixGX : BaseDisplay
   {
     private string _errorMessage = "";
     private int _Gcols;
@@ -75,7 +75,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.Initialize();
     }
 
-    public void CleanUp()
+    public override void CleanUp()
     {
       if (this.MOD.IsOpen)
       {
@@ -96,17 +96,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Configure()
+    public override void Configure()
     {
       new MatrixGX_AdvancedSetupForm().ShowDialog();
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
       Log.Debug("MatrixGX.Dispose() - called");
     }
 
-    public void DrawImage(Bitmap bitmap)
+    public override void DrawImage(Bitmap bitmap)
     {
       if (!this._isDisabled && this.MOD.IsOpen)
       {
@@ -151,7 +151,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Initialize()
+    public override void Initialize()
     {
       if (!this._isDisabled)
       {
@@ -186,9 +186,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.LastSettingsCheck = DateTime.Now;
     }
 
-    public void SetCustomCharacters(int[][] customCharacters) {}
+    public override void SetCustomCharacters(int[][] customCharacters) { }
 
-    public void SetLine(int line, string message)
+    public override void SetLine(int line, string message)
     {
       if (!this._isDisabled && this.MOD.IsOpen)
       {
@@ -203,7 +203,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
+    public override void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
                       bool _backLight, int _backLightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit)
     {
       this._IsConfiguring = Assembly.GetEntryAssembly().FullName.Contains("Configuration");
@@ -271,17 +271,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public string Description
+    public override string Description
     {
       get { return "Matrix Orbital GX Series LCD driver v03_09_2008b"; }
     }
 
-    public string ErrorMessage
+    public override string ErrorMessage
     {
       get { return this._errorMessage; }
     }
 
-    public bool IsDisabled
+    public override bool IsDisabled
     {
       get
       {
@@ -326,17 +326,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public string Name
+    public override string Name
     {
       get { return "MatrixGX"; }
     }
 
-    public bool SupportsGraphics
+    public override bool SupportsGraphics
     {
       get { return true; }
     }
 
-    public bool SupportsText
+    public override bool SupportsText
     {
       get { return true; }
     }

@@ -251,7 +251,6 @@ namespace MediaPortal.GUI.Video
       g_Player.PlayBackStarted += OnPlayBackStarted;
       g_Player.PlayBackChanged += OnPlayBackChanged;
       GUIWindowManager.Receivers += GUIWindowManager_OnNewMessage;
-
       LoadSettings();
     }
 
@@ -352,7 +351,7 @@ namespace MediaPortal.GUI.Video
         _markWatchedFiles = xmlreader.GetValueAsBool("movies", "markwatched", true);
         //_eachFolderIsMovie = xmlreader.GetValueAsBool("movies", "eachFolderIsMovie", false);
         _fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        _fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+        _fileMenuPinCode = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         _howToPlayAll = xmlreader.GetValueAsInt("movies", "playallinfolder", 3);
         _watchedPercentage = xmlreader.GetValueAsInt("movies", "playedpercentagewatched", 95);
         _videoInfoInShare = xmlreader.GetValueAsBool("moviedatabase", "movieinfoshareview", false);
@@ -627,6 +626,11 @@ namespace MediaPortal.GUI.Video
 
         case GUIMessage.MessageType.GUI_MSG_PLAY_DVD:
           OnPlayDVD(message.Label, GetID);
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_LAYOUT_CHANGED:
+          FolderSetting folderSetting = new FolderSetting();
+          folderSetting.UpdateFolders(-1, CurrentSortAsc, (int)CurrentLayout);
           break;
       }
       return base.OnMessage(message);
@@ -1341,6 +1345,11 @@ namespace MediaPortal.GUI.Video
         dlg.AddLocalizedString(1984); // Refresh thumb
       }
 
+      if (item.IsFolder && item.Label != "..")
+      {
+        dlg.AddLocalizedString(1995); // Create 4x4 folder.jpg
+      }
+
       dlg.DoModal(GetID);
 
       if (dlg.SelectedId == -1)
@@ -1613,7 +1622,7 @@ namespace MediaPortal.GUI.Video
           if (Util.Utils.FileExistsInCache(item.Path))
           {
             string strThumbPath = Util.Utils.GetVideosThumbPathname(item.Path);
-            Util.Utils.SetThumbnails(ref item);
+
             bool success = Util.VideoThumbCreator.CreateVideoThumb(item.Path, strThumbPath, true, true);
             if (success)
             {
@@ -1628,39 +1637,12 @@ namespace MediaPortal.GUI.Video
           }
 
           break;
+        case 1995: // Create 4x4 folder.jpg
+          Log.Debug("Create folder.jpg from context menu: {0}", item.Path);
+          CreateFolderThumb(item, true);
+          break;
         case 1264: // Get media info (refresh mediainfo and duration)
-          if (item != null)
-          {
-            string file = item.Path;
-            SelectDVDHandler sdh = new SelectDVDHandler();
-            SelectBDHandler bdh = new SelectBDHandler();
-
-            if (sdh.IsDvdDirectory(item.Path))
-            {
-              if (File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
-              {
-                file = file + @"\VIDEO_TS\VIDEO_TS.IFO";
-              }
-            }
-
-            if (bdh.IsBDDirectory(item.Path))
-            {
-              if (File.Exists(item.Path + @"\BDMV\INDEX.BDMV"))
-              {
-                file = file + @"\BDMV\INDEX.BDMV";
-              }
-            }
-
-            ArrayList files = new ArrayList();
-            files = AddFileToDatabase(file);
-            MovieDuration(files, true);
-            int movieId = VideoDatabase.GetMovieId(file);
-            IMDBMovie mInfo = new IMDBMovie();
-            mInfo.SetMediaInfoProperties(file, true);
-            mInfo.SetDurationProperty(movieId);
-            IMDBMovie.SetMovieData(item);
-            SelectCurrentItem();
-          }
+          RefreshMediaInfo(item);
           break;
       }
     }
@@ -2298,7 +2280,7 @@ namespace MediaPortal.GUI.Video
           return;
         }
 
-        int iPincodeCorrect;
+        string iPincodeCorrect;
         if (_virtualDirectory.IsProtectedShare(strDir, out iPincodeCorrect))
         {
           #region Pin protected
@@ -2310,15 +2292,8 @@ namespace MediaPortal.GUI.Video
               //no, then ask user to enter the pincode
               GUIMessage msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
               GUIWindowManager.SendMessage(msgGetPassword);
-              int iPincode = -1;
 
-              try
-              {
-                iPincode = Int32.Parse(msgGetPassword.Label);
-              }
-              catch (Exception) { }
-
-              if (iPincode != iPincodeCorrect)
+              if (msgGetPassword.Label != iPincodeCorrect)
               {
                 GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0,
                                                              0);
@@ -2822,7 +2797,7 @@ namespace MediaPortal.GUI.Video
 
       if (_virtualDirectory.DefaultShare != null)
       {
-        int pincode;
+        string pincode;
         bool folderPinProtected = _virtualDirectory.IsProtectedShare(_virtualDirectory.DefaultShare.Path, out pincode);
 
         if (folderPinProtected)
@@ -2844,6 +2819,42 @@ namespace MediaPortal.GUI.Video
     #endregion
 
     #region Private methods
+
+    private void RefreshMediaInfo(GUIListItem item)
+    {
+      if (item != null)
+      {
+        string file = item.Path;
+        SelectDVDHandler sdh = new SelectDVDHandler();
+        SelectBDHandler bdh = new SelectBDHandler();
+
+        if (sdh.IsDvdDirectory(item.Path))
+        {
+          if (File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
+          {
+            file = file + @"\VIDEO_TS\VIDEO_TS.IFO";
+          }
+        }
+
+        if (bdh.IsBDDirectory(item.Path))
+        {
+          if (File.Exists(item.Path + @"\BDMV\INDEX.BDMV"))
+          {
+            file = file + @"\BDMV\INDEX.BDMV";
+          }
+        }
+
+        ArrayList files = new ArrayList();
+        files = AddFileToDatabase(file);
+        MovieDuration(files, true);
+        int movieId = VideoDatabase.GetMovieId(file);
+        IMDBMovie mInfo = new IMDBMovie();
+        mInfo.SetMediaInfoProperties(file, true);
+        mInfo.SetDurationProperty(movieId);
+        IMDBMovie.SetMovieData(item);
+        SelectCurrentItem();
+      }
+    }
 
     private static bool WakeUpSrv(string newFolderName)
     {
@@ -3025,7 +3036,7 @@ namespace MediaPortal.GUI.Video
             if (movieId < 0 || movieId != -1 && item.Duration == 0)
             {
               itemlist2.Add(item);
-          }
+            }
           }
 
           //Do NOT add OnItemSelected event handler here, because its still there...
@@ -3301,7 +3312,7 @@ namespace MediaPortal.GUI.Video
       }
 
       // if have new item we close the previous thread and start a new one 
-      if (_addVideoFilesToDb && itemlist2.Count != 0)
+      if ((_addVideoFilesToDb || CurrentSortMethod == VideoSort.SortMethod.Name_With_Duration) && itemlist2.Count != 0)
       {
         try
         {
@@ -3333,7 +3344,8 @@ namespace MediaPortal.GUI.Video
     // main thread. It adds all file to database and refresh the ListLayout on the screen.
     private void GetMediaInfoThread(object i)
     {
-      List<GUIListItem> itemlist = (List<GUIListItem>) i;
+      List<GUIListItem> itemlist = (List<GUIListItem>)i;
+
       Log.Debug("GetMediaInfoThread: current folder: {0}, itemlist count: {1}", _currentFolder, itemlist.Count);
 
       foreach (GUIListItem item in itemlist)
@@ -3346,8 +3358,9 @@ namespace MediaPortal.GUI.Video
         try
         {
           Log.Debug("GetMediaInfoThread: Work on {0}", item.Path);
-          AddFileToDatabase(item.Path);
-             
+
+          RefreshMediaInfo(item);
+
           int newMovieId = VideoDatabase.GetMovieId(item.Path);
           item.Duration = VideoDatabase.GetMovieDuration(newMovieId);
           if (item.Duration > 0)
@@ -3370,7 +3383,6 @@ namespace MediaPortal.GUI.Video
         Thread.Sleep(100);
       }
       Log.Debug("GetMediaInfoThread: Finished.");
-      return;
     }
 
     private void LoadFolderSettings(string folderName)
@@ -4038,6 +4050,7 @@ namespace MediaPortal.GUI.Video
     {
       ISelectDVDHandler sDvd = GUIVideoFiles.GetSelectDvdHandler();
       ISelectBDHandler sBd = GUIVideoFiles.GetSelectBDHandler();
+
       string strSize1 = string.Empty, strDate = string.Empty;
 
       if (item.FileInfo != null && !item.IsFolder)
@@ -4070,6 +4083,21 @@ namespace MediaPortal.GUI.Video
           item.Label2 = strSize1;
         }
 
+      }
+
+      if (CurrentSortMethod == VideoSort.SortMethod.Name_With_Duration && !item.IsFolder && item.Label != "..")
+      {
+        int newMovieId = VideoDatabase.GetMovieId(item.Path);
+        item.Duration = VideoDatabase.GetMovieDuration(newMovieId);
+
+        if (item.Duration > 0)
+        {
+          item.Label2 = Util.Utils.SecondsToShortHMSString(item.Duration);
+        }
+        else
+        {
+          item.Label2 = string.Empty;
+        }
       }
       else if (CurrentSortMethod == VideoSort.SortMethod.Created || CurrentSortMethod == VideoSort.SortMethod.Date || CurrentSortMethod == VideoSort.SortMethod.Modified)
       {
@@ -4134,6 +4162,18 @@ namespace MediaPortal.GUI.Video
               LoadDirectory(_currentFolder);
             }
           }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_ONRESUME:
+          using (Settings xmlreader = new MPSettings())
+          {
+            if (!xmlreader.GetValueAsBool("general", "showlastactivemodule", false))
+            {
+              _currentFolder = string.Empty;
+            }
+          }
+
+          Log.Debug("{0}:{1}", SerializeName, message.Message);
           break;
       }
     }
@@ -4316,7 +4356,7 @@ namespace MediaPortal.GUI.Video
 
     private static bool IsFolderPinProtected(string folder)
     {
-      int pinCode = 0;
+      string pinCode = string.Empty;
       return _virtualDirectory.IsProtectedShare(folder, out pinCode);
     }
 
@@ -4477,6 +4517,87 @@ namespace MediaPortal.GUI.Video
       if (facadeLayout != null)
       {
         facadeLayout.Clear();
+      }
+    }
+
+    private void CreateFolderThumb(GUIListItem item, bool recreateAll)
+    {
+      // find first 4 jpegs in this subfolder
+
+      List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryUnProtectedExt(item.Path, true);
+
+      if (!recreateAll)
+      {
+        Filter(ref itemlist);
+      }
+
+      List<string> pictureList = new List<string>();
+      foreach (GUIListItem subitem in itemlist)
+      {
+        if (!subitem.IsFolder)
+        {
+          string[] thumbs = {
+                            Util.Utils.GetVideosLargeThumbPathname(subitem.Path),
+                            Path.ChangeExtension(subitem.Path, ".jpg"),
+                            Path.ChangeExtension(subitem.Path, ".tbn"),
+                            Path.ChangeExtension(subitem.Path, ".png")
+                          };
+
+          foreach (string s in thumbs)
+          {
+            string thumbStr = s;
+            if (Util.Utils.FileExistsInCache(thumbStr))
+            {
+              pictureList.Add(thumbStr);
+              break;
+            }
+          }
+        }
+        if (pictureList.Count >= 4)
+        {
+          break;
+        }
+      }
+      // combine 4 image files into one folder.jpg
+
+      string filePath = Path.Combine(item.Path, @"Folder.jpg");
+
+      if (pictureList.Count == 1)
+      {
+        try
+        {
+          File.Copy(pictureList[0], filePath, true);
+        }
+        catch
+        {
+          Log.Error("CreateFolderThumb:: unable to create {0}", filePath);
+        }
+      }
+      else if (pictureList.Count > 1)
+      {
+        Util.Utils.FileDelete(filePath);
+        Util.Utils.CreateFolderPreviewThumb(pictureList, filePath, false);
+      }
+
+      int selectedIndex = facadeLayout.SelectedListItemIndex;
+      LoadDirectory(_currentFolder, false);
+      facadeLayout.SelectedListItemIndex = selectedIndex;
+    }
+
+    private static void Filter(ref List<GUIListItem> itemlist)
+    {
+      itemlist.RemoveAll(ContainsFolderThumb);
+    }
+
+    private static bool ContainsFolderThumb(GUIListItem aItem)
+    {
+      if (!aItem.IsFolder && aItem.Path.Contains(@"folder.jpg"))
+      {
+        return true;
+      }
+      else
+      {
+        return false;
       }
     }
 
@@ -5063,5 +5184,10 @@ namespace MediaPortal.GUI.Video
     }
 
     #endregion
+
+    public static string GetCurrentFolder
+    {
+      get { return _currentFolder; }
+    }
   }
 }

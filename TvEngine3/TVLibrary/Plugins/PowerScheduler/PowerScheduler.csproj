@@ -72,6 +72,7 @@
     <Compile Include="Handlers\ActiveNetworkStandbyHandler.cs" />
     <Compile Include="Handlers\ActiveSharesStandbyHandler.cs" />
     <Compile Include="Handlers\ActiveStreamsStandbyHandler.cs" />
+    <Compile Include="Handlers\PingStandbyHandler.cs" />
     <Compile Include="Handlers\ControllerActiveStandbyHandler.cs" />
     <Compile Include="Handlers\ProcessActiveStandbyHandler.cs" />
     <Compile Include="Handlers\RebootWakeupHandler.cs" />

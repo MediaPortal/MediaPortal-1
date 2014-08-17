@@ -43,10 +43,12 @@
 #define FS_TIM_LIM (2000*10000) //2 seconds in hns units
 #define FS_ADDON_LIM (1000*10000) //1 second in hns units (must not be zero)
 #define INITIAL_BUFF_DELAY 0      // ms units
-#define AV_READY_DELAY 0     // ms units
-#define PRESENT_DELAY (300*10000) // hns units - timestamp compensation offset
-#define AUDIO_STALL_POINT 0.8     // in seconds
-#define VIDEO_STALL_POINT 2.5     // in seconds
+#define AUDIO_DELAY (0*10000)     //hns units - audio timestamp offset (delays audio relative to video)
+#define AV_READY_DELAY 200     // ms units - delay before asserting VFW_S_CANT_CUE
+#define PRESENT_DELAY (200*10000) // hns units - timestamp compensation offset
+#define AUDIO_READY_POINT (0.2f + ((float)PRESENT_DELAY/10000000.0f))    // in seconds
+#define AUDIO_STALL_POINT 1.1f     // in seconds
+#define VIDEO_STALL_POINT 2.5f     // in seconds
 
 //Vid/Aud/Sub buffer sizes and limits
 #define MAX_AUD_BUF_SIZE 1024
@@ -57,11 +59,22 @@
 #define AUD_BUF_SIZE_PREFETCH_LIM (MAX_AUD_BUF_SIZE - 50)
 #define VID_BUF_SIZE_PREFETCH_LIM (MAX_VID_BUF_SIZE - 30)
 
+//File read prefetch 'looping retry' timeout limit (in ms)
+#define MAX_PREFETCH_LOOP_TIME 5000
+#define PF_LOOP_DELAY_MIN 12
+#define PF_LOOP_DELAY_MAX 120
+
+////File/RTSP ReadFromFile() block sizes
+//#define READ_SIZE (65536)
+//#define MIN_READ_SIZE (READ_SIZE/8)
+//#define MIN_READ_SIZE_UNC (READ_SIZE/4)
+//#define INITIAL_READ_SIZE (READ_SIZE * 512)
+
 //File/RTSP ReadFromFile() block sizes
-#define READ_SIZE (65536)
-#define MIN_READ_SIZE (READ_SIZE/8)
-#define MIN_READ_SIZE_UNC (READ_SIZE/4)
-#define INITIAL_READ_SIZE (READ_SIZE * 512)
+#define READ_SIZE (131072)
+#define MIN_READ_SIZE (READ_SIZE/16)
+#define MIN_READ_SIZE_UNC (READ_SIZE/8)
+#define INITIAL_READ_SIZE (READ_SIZE * 256)
 
 
 using namespace std;
@@ -265,6 +278,7 @@ public:
   LONG            m_regInitialBuffDelay;
   bool            m_bEnableBufferLogging;
   bool            m_bSubPinConnectAlways;
+  REFERENCE_TIME  m_regAudioDelay;
 
   CLSID           GetCLSIDFromPin(IPin* pPin);
   HRESULT         GetSubInfoFromPin(IPin* pPin);
@@ -274,24 +288,26 @@ public:
   bool            CheckCallback();
   void            CheckForMPAR();
   bool            m_bMPARinGraph;
+  bool            m_audioReady;
   
   CLSID           m_subtitleCLSID;
   void            ReleaseSubtitleFilter();
   CCritSec        m_ReadAheadLock;
-  
+
+  CTsDuration     m_duration;
+    
 
 protected:
   void ThreadProc();
 
 private:
-  void    SetDuration();
   HRESULT AddGraphToRot(IUnknown *pUnkGraph);
   void    RemoveGraphFromRot();
   void    SetMediaPosnUpdate(REFERENCE_TIME MediaPos);
-  void    BufferingPause(bool longPause);
+  void    BufferingPause(bool longPause, long extraSleep);
   void    ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
   void    WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
-    
+     
   CAudioPin*	    m_pAudioPin;
   CVideoPin*	    m_pVideoPin;
   CSubtitlePin*	  m_pSubtitlePin;
@@ -303,7 +319,7 @@ private:
   CCritSec        m_DurationThreadLock;
   FileReader*     m_fileReader;
   FileReader*     m_fileDuration;
-  CTsDuration     m_duration;
+  CTsDuration     m_updateThreadDuration;
   CBaseReferenceClock* m_referenceClock;
   CDeMultiplexer  m_demultiplexer;
   DWORD           m_dwGraphRegister;
@@ -318,6 +334,8 @@ private:
   IDVBSubtitle*   m_pDVBSubtitle;
   ITSReaderCallback* m_pCallback;
   ITSReaderAudioChange* m_pRequestAudioCallback;
+
+  bool            m_bEVRhasConnected;
 
   bool            m_bAnalog;
   bool            m_bStoppedForUnexpectedSeek ;

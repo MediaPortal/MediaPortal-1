@@ -38,14 +38,15 @@ namespace MediaPortal.GUI.Video
     {
       Name = 0,
       NameAll = 1,
-      Date = 2,
-      Size = 3,
-      Watched = 4,
-      Year = 5,
-      Rating = 6,
-      Label = 7,
-      Modified = 8,
-      Created = 9,
+      Name_With_Duration = 2,
+      Date = 3,
+      Size = 4,
+      Watched = 5,
+      Year = 6,
+      Rating = 7,
+      Label = 8,
+      Modified = 9,
+      Created = 10,
     }
 
     protected SortMethod CurrentSortMethod;
@@ -180,6 +181,7 @@ namespace MediaPortal.GUI.Video
 
         case SortMethod.Name:
         case SortMethod.NameAll:
+        case SortMethod.Name_With_Duration:
 
           IMDBMovie movie1 = item1.AlbumInfoTag as IMDBMovie;
           IMDBMovie movie2 = item2.AlbumInfoTag as IMDBMovie;

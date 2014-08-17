@@ -33,7 +33,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
   /// FIC Spectra Futaba VFD driver
   /// </summary>
   /// <author>Andrea Tincani</author>
-  public class FICSpectra : BaseDisplay, IDisplay
+  public class FICSpectra : BaseDisplay
   {
     #region Static Fields
 
@@ -69,7 +69,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     #region IDisplay Members
 
-    public void CleanUp()
+    public override void CleanUp()
     {
       vfd.clearScreen();
     }
@@ -77,7 +77,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Shows the advanced configuration screen
     /// </summary>
-    public void Configure()
+    public override void Configure()
     {
       MessageBox.Show("No advanced configuration", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
@@ -85,12 +85,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Description of this display driver
     /// </summary>
-    public string Description
+    public override string Description
     {
       get { return "FIC Spectra Futaba VFD driver by Andrea Tincani (andreavb)"; }
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
       try
       {
@@ -105,9 +105,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void DrawImage(Bitmap bitmap) {}
+    public override void DrawImage(Bitmap bitmap) { }
 
-    public string ErrorMessage
+    public override string ErrorMessage
     {
       get { return errorMessage; }
     }
@@ -115,12 +115,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Clears the display
     /// </summary>
-    public void Initialize()
+    public override void Initialize()
     {
       vfd.clearScreen();
     }
 
-    public bool IsDisabled
+    public override bool IsDisabled
     {
       get { return isDisabled; }
     }
@@ -128,19 +128,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Short name of this display driver
     /// </summary>
-    public string Name
+    public override string Name
     {
       get { return "FICSpectra"; }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters) {}
+    public override void SetCustomCharacters(int[][] customCharacters) { }
 
     /// <summary>
     /// Displays the message on the indicated line
     /// </summary>
     /// <param name="line">The line to display the message on</param>
     /// <param name="message">The message to display</param>
-    public void SetLine(int line, string message)
+    public override void SetLine(int line, string message)
     {
       try
       {
@@ -332,7 +332,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <param name="_contrast">Contrast on?</param>
     /// <param name="_contrastLevel">Contrast level</param>
     /// <param name="_blankOnExit">Blank on exit?</param>
-    public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
+    public override void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
                       bool _backLight, int _backLightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit)
     {
       try
@@ -348,7 +348,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Does this driver support graphic mode?
     /// </summary>
-    public bool SupportsGraphics
+    public override bool SupportsGraphics
     {
       get { return false; }
     }
@@ -356,7 +356,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Does this display support text mode?
     /// </summary>
-    public bool SupportsText
+    public override bool SupportsText
     {
       get { return true; }
     }

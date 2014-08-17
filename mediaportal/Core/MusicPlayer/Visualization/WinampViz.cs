@@ -23,7 +23,6 @@ using System.Drawing;
 using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.MusicPlayer.BASS;
-using MediaPortal.Player;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
 using MediaPortal.Playlists;
@@ -46,7 +45,7 @@ namespace MediaPortal.Visualization
     private string _songTitle = "   "; // Title of the song played
     private string _OldCurrentFile = "   ";
     private int _playlistTitlePos;
-
+    private bool VizVisible = false;
     #endregion
 
     #region Constructors/Destructors
@@ -345,11 +344,15 @@ namespace MediaPortal.Visualization
       // Do a move of the Winamp Viz
       if (_visParam.VisHandle != 0)
       {
+        // Visible State hold
+        VizVisible = VisualizationWindow.Visible;
         // Hide the Viswindow, so that we don't see it, while moving
-        Win32API.ShowWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Hide);        
+        VisualizationWindow.Visible = false;
         _tmpVisParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_WINAMP);
         _tmpVisParam.VisGenWinHandle = VisualizationWindow.Handle;
         BassVis.BASSVIS_Resize(_tmpVisParam, 0, 0, newSize.Width, newSize.Height);
+        // reactivate old Visible state
+        VisualizationWindow.Visible = VizVisible;
       }
       return true;
     }

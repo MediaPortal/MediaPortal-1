@@ -617,6 +617,9 @@ namespace MediaPortal.Util
 
     public static void SetDefaultIcons(GUIListItem item)
     {
+      string filename = String.Empty;
+      string filenameBig = String.Empty;
+
       if (item == null)
       {
         return;
@@ -625,8 +628,28 @@ namespace MediaPortal.Util
       {
         if (IsPlayList(item.Path))
         {
-          item.IconImage = "DefaultPlaylist.png";
-          item.IconImageBig = "DefaultPlaylistBig.png";
+          switch (GUIWindowManager.ActiveWindow)
+          {
+            case (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST:
+              filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\DefaultPlaylistMusic.png");
+              filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\DefaultPlaylistBigMusic.png");
+              break;
+            case (int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST:
+              filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\DefaultPlaylistVideo.png");
+              filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\DefaultPlaylistBigVideo.png");
+              break;
+          }
+
+          if (File.Exists(filename) && File.Exists(filenameBig))
+          {
+            item.IconImage = filename;
+            item.IconImageBig = filenameBig;
+          }
+          else
+          {
+            item.IconImage = "DefaultPlaylist.png";
+            item.IconImageBig = "DefaultPlaylistBig.png";
+          }
         }
         else if (IsVideo(item.Path))
         {
@@ -663,43 +686,241 @@ namespace MediaPortal.Util
       {
         if (item.Label == "..")
         {
-          item.IconImage = "defaultFolderBack.png";
-          item.IconImageBig = "defaultFolderBackBig.png";
+          switch (GUIWindowManager.ActiveWindow)
+          {
+            case (int)GUIWindow.Window.WINDOW_MUSIC_FILES:
+              filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackMusic.png");
+              filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackBigMusic.png");
+              break;
+            case (int)GUIWindow.Window.WINDOW_VIDEOS:
+              filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackVideo.png");
+              filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackBigVideo.png");
+              break;
+            case (int)GUIWindow.Window.WINDOW_PICTURES:
+              filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackPictures.png");
+              filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackBigPictures.png");
+              break;
+            case (int)GUIWindow.Window.WINDOW_RADIO:
+              filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackRadio.png");
+              filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackBigRadio.png");
+              break;
+          }
+
+          if (File.Exists(filename) && File.Exists(filenameBig))
+          {
+
+            item.IconImage = filename;
+            item.IconImageBig = filenameBig;
+          }
+          else
+          {
+            item.IconImage = "defaultFolderBack.png";
+            item.IconImageBig = "defaultFolderBackBig.png";
+          }
         }
         else
         {
           if (IsNetwork(item.Path))
           {
-            item.IconImage = "defaultNetwork.png";
-            item.IconImageBig = "defaultNetworkBig.png";
+            switch (GUIWindowManager.ActiveWindow)
+            {
+              case (int)GUIWindow.Window.WINDOW_MUSIC_FILES:
+                filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultNetworkMusic.png");
+                filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultNetworkBigMusic.png");
+                break;
+              case (int)GUIWindow.Window.WINDOW_VIDEOS:
+                filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultNetworkVideo.png");
+                filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultNetworkBigVideo.png");
+                break;
+              case (int)GUIWindow.Window.WINDOW_PICTURES:
+                filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultNetworkPictures.png");
+                filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultNetworkBigPictures.png");
+                break;
+              case (int)GUIWindow.Window.WINDOW_RADIO:
+                filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultNetworkRadio.png");
+                filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultNetworkBigRadio.png");
+                break;
+            }
+
+            if (File.Exists(filename) && File.Exists(filenameBig))
+            {
+
+              item.IconImage = filename;
+              item.IconImageBig = filenameBig;
+            }
+            else
+            {
+              item.IconImage = "defaultNetwork.png";
+              item.IconImageBig = "defaultNetworkBig.png";
+            }
           }
           else if (item.Path.Length <= 3)
           {
             if (IsDVD(item.Path))
             {
-              item.IconImage = "defaultDVDRom.png";
-              item.IconImageBig = "defaultDVDRomBig.png";
+              switch (GUIWindowManager.ActiveWindow)
+              {
+                case (int)GUIWindow.Window.WINDOW_MUSIC_FILES:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultDVDRomMusic.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultDVDRomBigMusic.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_VIDEOS:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultDVDRomVideo.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultDVDRomBigVideo.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_PICTURES:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultDVDRomPictures.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultDVDRomBigPictures.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_RADIO:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultDVDRomRadio.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultDVDRomBigRadio.png");
+                  break;
+              }
+
+              if (File.Exists(filename) && File.Exists(filenameBig))
+              {
+                item.IconImage = filename;
+                item.IconImageBig = filenameBig;
+              }
+              else
+              {
+                item.IconImage = "defaultDVDRom.png";
+                item.IconImageBig = "defaultDVDRomBig.png";
+              }
             }
             else if (IsHD(item.Path))
             {
-              item.IconImage = "defaultHardDisk.png";
-              item.IconImageBig = "defaultHardDiskBig.png";
+              switch (GUIWindowManager.ActiveWindow)
+              {
+                case (int)GUIWindow.Window.WINDOW_MUSIC_FILES:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultHardDiskMusic.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultHardDiskBigMusic.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_VIDEOS:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultHardDiskVideo.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultHardDiskBigVideo.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_PICTURES:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultHardDiskPictures.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultHardDiskBigPictures.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_RADIO:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultHardDiskRadio.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultHardDiskBigRadio.png");
+                  break;
+              }
+
+              if (File.Exists(filename) && File.Exists(filenameBig))
+              {
+                item.IconImage = filename;
+                item.IconImageBig = filenameBig;
+              }
+              else
+              {
+                item.IconImage = "defaultHardDisk.png";
+                item.IconImageBig = "defaultHardDiskBig.png";
+              }
             }
             else if (IsRemovable(item.Path))
             {
-              item.IconImage = "defaultRemovable.png";
-              item.IconImageBig = "defaultRemovableBig.png";
+              switch (GUIWindowManager.ActiveWindow)
+              {
+                case (int)GUIWindow.Window.WINDOW_MUSIC_FILES:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultRemovableMusic.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultRemovableBigMusic.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_VIDEOS:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultRemovableVideo.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultRemovableBigVideo.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_PICTURES:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultRemovablePictures.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultRemovableBigPictures.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_RADIO:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultRemovableRadio.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultRemovableBigRadio.png");
+                  break;
+              }
+
+              if (File.Exists(filename) && File.Exists(filenameBig))
+              {
+                item.IconImage = filename;
+                item.IconImageBig = filenameBig;
+              }
+              else
+              {
+                item.IconImage = "defaultRemovable.png";
+                item.IconImageBig = "defaultRemovableBig.png";
+              }
+            }
+            else
+            {
+              switch (GUIWindowManager.ActiveWindow)
+              {
+                case (int)GUIWindow.Window.WINDOW_MUSIC_FILES:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderMusic.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBigMusic.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_VIDEOS:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderVideo.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBigVideo.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_PICTURES:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderPictures.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBigPictures.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_RADIO:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderRadio.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBigRadio.png");
+                  break;
+              }
+
+              if (File.Exists(filename) && File.Exists(filenameBig))
+              {
+                item.IconImage = filename;
+                item.IconImageBig = filenameBig;
+              }
+              else
+              {
+                item.IconImage = "defaultFolder.png";
+                item.IconImageBig = "defaultFolderBig.png";
+              }
+            }
+          }
+          else
+          {
+            switch (GUIWindowManager.ActiveWindow)
+            {
+              case (int)GUIWindow.Window.WINDOW_MUSIC_FILES:
+                filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderMusic.png");
+                filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBigMusic.png");
+                break;
+              case (int)GUIWindow.Window.WINDOW_VIDEOS:
+                filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderVideo.png");
+                filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBigVideo.png");
+                break;
+              case (int)GUIWindow.Window.WINDOW_PICTURES:
+                filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderPictures.png");
+                filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBigPictures.png");
+                break;
+              case (int)GUIWindow.Window.WINDOW_RADIO:
+                filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderRadio.png");
+                filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBigRadio.png");
+                break;
+            }
+
+            if (File.Exists(filename) && File.Exists(filenameBig))
+            {
+              item.IconImage = filename;
+              item.IconImageBig = filenameBig;
             }
             else
             {
               item.IconImage = "defaultFolder.png";
               item.IconImageBig = "defaultFolderBig.png";
             }
-          }
-          else
-          {
-            item.IconImage = "defaultFolder.png";
-            item.IconImageBig = "defaultFolderBig.png";
           }
         }
       }
@@ -2331,7 +2552,15 @@ namespace MediaPortal.Util
         {
           return false;
         }
+
         File.Delete(strFile);
+
+        if (File.Exists(strFile))
+        {
+          Log.Debug("Util: FileDelete {0} error. The file is in used.", strFile);
+          return false;
+        }
+
         Log.Debug("Util: FileDelete {0} successful.", strFile);
         return true;
       }
@@ -3906,9 +4135,20 @@ namespace MediaPortal.Util
 
     public static bool CreateFolderPreviewThumb(List<string> aPictureList, string aThumbPath)
     {
+      return CreateFolderPreviewThumb(aPictureList, aThumbPath, true);
+    }
+
+    public static bool CreateFolderPreviewThumb(List<string> aPictureList, string aThumbPath, bool needBorder)
+    {
       bool result = false;
       Stopwatch benchClock = new Stopwatch();
       benchClock.Start();
+      int border = 0;
+
+      if (needBorder)
+      {
+        border = 10;
+      }
 
       if (aPictureList.Count > 0)
       {
@@ -3939,18 +4179,18 @@ namespace MediaPortal.Util
               int width = imgFolder.Width;
               int height = imgFolder.Height;
 
-              int thumbnailWidth = 256;
-              int thumbnailHeight = 256;
+              int thumbnailWidth = (int)Thumbs.ThumbLargeResolution;
+              int thumbnailHeight = (int)Thumbs.ThumbLargeResolution;
               // draw a fullsize thumb if only 1 pic is available
               if (aPictureList.Count == 1)
               {
-                thumbnailWidth = (width - 20);
-                thumbnailHeight = (height - 20);
+                thumbnailWidth = (width - border * 2);
+                thumbnailHeight = (height - border * 2);
               }
               else
               {
-                thumbnailWidth = (width - 30) / 2;
-                thumbnailHeight = (height - 30) / 2;
+                thumbnailWidth = (width - border * 3) / 2;
+                thumbnailHeight = (height - border * 3) / 2;
               }
 
               using (Bitmap bmp = new Bitmap(width, height))
@@ -3970,24 +4210,24 @@ namespace MediaPortal.Util
                   //Load first of 4 images for the folder thumb.                  
                   try
                   {
-                    AddPicture(g, (string)aPictureList[0], x + 10, y + 10, w, h);
+                    AddPicture(g, (string)aPictureList[0], x + border, y + border, w, h);
 
                     //If exists load second of 4 images for the folder thumb.
                     if (aPictureList.Count > 1)
                     {
-                      AddPicture(g, (string)aPictureList[1], x + thumbnailWidth + 20, y + 10, w, h);
+                      AddPicture(g, (string)aPictureList[1], x + thumbnailWidth + border * 2, y + border, w, h);
                     }
 
                     //If exists load third of 4 images for the folder thumb.
                     if (aPictureList.Count > 2)
                     {
-                      AddPicture(g, (string)aPictureList[2], x + 10, y + thumbnailHeight + 20, w, h);
+                      AddPicture(g, (string)aPictureList[2], x + border, y + thumbnailHeight + border * 2, w, h);
                     }
 
                     //If exists load fourth of 4 images for the folder thumb.
                     if (aPictureList.Count > 3)
                     {
-                      AddPicture(g, (string)aPictureList[3], x + thumbnailWidth + 20, y + thumbnailHeight + 20, w, h);
+                      AddPicture(g, (string)aPictureList[3], x + thumbnailWidth + border * 2, y + thumbnailHeight + border * 2, w, h);
                     }
                   }
                   catch (Exception ex)
@@ -4715,6 +4955,30 @@ namespace MediaPortal.Util
       {
         Log.Error("Restarting - WaitForExit: {0}", ex.Message);
       }
+    }
+
+    public static string EncryptPassword(string code)
+    {
+      string result = string.Empty;
+      try
+      {
+        byte[] codeTextBytes = Encoding.UTF8.GetBytes(code);
+        result = Convert.ToBase64String(codeTextBytes);
+      }
+      catch { }
+      return result;
+    }
+
+    public static string DecryptPassword(string code)
+    {
+      string result = string.Empty;
+      try
+      {
+        byte[] codeTextBytes = Convert.FromBase64String(code);
+        result = Encoding.UTF8.GetString(codeTextBytes);
+      }
+      catch { }
+      return result;
     }
 
     public static string EncryptPin(string code)

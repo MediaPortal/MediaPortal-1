@@ -20,13 +20,10 @@
 
 using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.TagReader;
-using MediaPortal.Util;
-using MediaPortal.Player;
 using BassVis_Api;
 
 
@@ -41,7 +38,7 @@ namespace MediaPortal.Visualization
 
     private bool RenderStarted = false;
     private bool firstRun = true;
-
+    private bool VizVisible = false;
     private MusicTag trackTag = null;
     private string _OldCurrentFile = "   ";
     private string _songTitle = "   "; // Title of the song played
@@ -293,9 +290,13 @@ namespace MediaPortal.Visualization
       // Do a move of the Bassbox Viz
       if (_visParam.VisHandle != 0)
       {
+        // Visible State hold
+        VizVisible = VisualizationWindow.Visible;
         // Hide the Viswindow, so that we don't see it, while moving
-        Win32API.ShowWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Hide);
+        VisualizationWindow.Visible = false;
         BassVis.BASSVIS_Resize(_visParam, 0, 0, newSize.Width, newSize.Height);
+        // reactivate old Visible state
+        VisualizationWindow.Visible = VizVisible;   
       }
       return true;
     }
@@ -331,7 +332,6 @@ namespace MediaPortal.Visualization
 
         visExec = new BASSVIS_EXEC(vizPath);
         visExec.PluginFile = vizPath;
-        visExec.BB_Flags = BASSVISFlags.BASSVIS_DEFAULT;
         visExec.BB_ParentHandle = VisualizationWindow.Handle;
         visExec.BB_ShowFPS = true;
         // can not check IsRadio on first start
