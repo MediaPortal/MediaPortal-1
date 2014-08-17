@@ -30,9 +30,9 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
       this.tabControl1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
       this.tabSettings = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.groupBoxImport = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
@@ -543,14 +543,14 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.dataGridViewMappings.Location = new System.Drawing.Point(6, 97);
       this.dataGridViewMappings.MultiSelect = false;
       this.dataGridViewMappings.Name = "dataGridViewMappings";
-      dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-      this.dataGridViewMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
+      dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+      this.dataGridViewMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
       this.dataGridViewMappings.Size = new System.Drawing.Size(460, 287);
       this.dataGridViewMappings.TabIndex = 1;
       // 
@@ -564,8 +564,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       // dataGridViewColumnTuningChannel
       // 
       this.dataGridViewColumnTuningChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      dataGridViewCellStyle10.BackColor = System.Drawing.Color.White;
-      this.dataGridViewColumnTuningChannel.DefaultCellStyle = dataGridViewCellStyle10;
+      dataGridViewCellStyle1.BackColor = System.Drawing.Color.White;
+      this.dataGridViewColumnTuningChannel.DefaultCellStyle = dataGridViewCellStyle1;
       this.dataGridViewColumnTuningChannel.HeaderText = "Tuning Channel";
       this.dataGridViewColumnTuningChannel.Name = "dataGridViewColumnTuningChannel";
       this.dataGridViewColumnTuningChannel.ReadOnly = true;
@@ -574,8 +574,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       // dataGridViewColumnGuideChannel
       // 
       this.dataGridViewColumnGuideChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      dataGridViewCellStyle11.BackColor = System.Drawing.Color.White;
-      this.dataGridViewColumnGuideChannel.DefaultCellStyle = dataGridViewCellStyle11;
+      dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
+      this.dataGridViewColumnGuideChannel.DefaultCellStyle = dataGridViewCellStyle2;
       this.dataGridViewColumnGuideChannel.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
       this.dataGridViewColumnGuideChannel.HeaderText = "Guide Channel";
       this.dataGridViewColumnGuideChannel.Name = "dataGridViewColumnGuideChannel";
@@ -639,7 +639,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       // 
       this.numericUpDownScheduledActionsTimeFrequency.Location = new System.Drawing.Point(198, 14);
       this.numericUpDownScheduledActionsTimeFrequency.Maximum = new decimal(new int[] {
-            336,
+            672,
             0,
             0,
             0});
