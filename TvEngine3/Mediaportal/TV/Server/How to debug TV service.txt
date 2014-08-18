@@ -1,0 +1,8 @@
+How to debug TV service in Visual Studio.
+------------------------------------------
+
+1. If the TV service is installed, make sure the service is stopped.
+2. Open the MediaPortal.TV.Server solution in Visual Studio.
+3. Right click on the Service\TvService project and select "Set as StartUp project" (or right click on the solution and select "Properties", then select the TvService project under Common Properties -> Startup Project).
+4. Right click on the Service\TvService project and select "Properties". In the Debug section under Start Options add "/CONSOLE" as a command line argument.
+6. Press F5 to start debugging.
