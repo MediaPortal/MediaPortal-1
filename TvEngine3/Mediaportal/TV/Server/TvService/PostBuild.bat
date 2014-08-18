@@ -98,9 +98,10 @@ xcopy "%1..\..\..\..\DirectShowFilters\TsWriter\bin\%3\*.pdb" "%4" /Y/D
 
 
 rem --- other ---
-xcopy "%1SetupControls\bin\%3\Mediaportal.TV.Server.SetupControls.*" "%4" /Y/D
 xcopy "%1..\..\..\..\Common-MP-TVE3\PowerScheduler.Interfaces\bin\%3\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.*" "%4" /Y/D
+xcopy "%1TVDatabase\EntityModel\bin\%3\MySql.Data.*" "%4" /Y/D
 xcopy "%1RuleBasedScheduler\bin\%3\Mediaportal.TV.Server.RuleBasedScheduler.*" "%4" /Y/D
+xcopy "%1SetupControls\bin\%3\Mediaportal.TV.Server.SetupControls.*" "%4" /Y/D
 
 
 rem why are these needed?
