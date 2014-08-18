@@ -11,9 +11,6 @@ if exist %ProgramData%\nul (
 )
 
 
-rem --- external binaries ---
-xcopy "%1..\ExternalBinaries\*" "%4" /Y/D
-
 
 rem --- integration ---
 xcopy "%1TvLibrary.Integration.MP1\bin\%3\Mediaportal.TV.Server.TVLibrary.Integration*" "%4" /Y/D
