@@ -13,6 +13,7 @@ if exist %ProgramData%\nul (
 
 
 rem --- integration ---
+md "%4Integration"
 xcopy "%1TvLibrary.Integration.MP1\bin\%3\Mediaportal.TV.Server.TVLibrary.Integration*" "%4Integration" /Y/D
 xcopy "%1TvLibrary.Integration.MP1\bin\%3\Castle.Facilities.*" "%4" /Y/D
 xcopy "%1TvLibrary.Integration.MP1\bin\%3\Castle.Services.*" "%4" /Y/D
