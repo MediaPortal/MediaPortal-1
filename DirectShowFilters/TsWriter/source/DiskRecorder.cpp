@@ -553,7 +553,7 @@ void CDiskRecorder::GetBufferSize(__int64* bufferSize)
 {
   if (m_pTimeShiftFile != NULL)
   {
-	  m_pTimeShiftFile->GetFileSize(bufferSize);
+    m_pTimeShiftFile->GetFileSize(bufferSize);
   }
   else
   {

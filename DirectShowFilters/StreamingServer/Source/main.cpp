@@ -10,6 +10,7 @@
 #include "TsMPEG2TransportFileServerMediaSubsession.h" 
 #include "MPEG1or2FileServerDemux.hh" 
 #include "MPRTSPServer.h"
+#include "..\..\shared\FilterSettingsmanager.cpp"
 //#include "RTSPOverHTTPServer.hh"
 
 static char logbuffer[2000]; 
@@ -23,10 +24,8 @@ void LogDebug(const wchar_t *fmt, ...)
 	vswprintf_s(logbufferw, fmt, ap);
 	va_end(ap); 
 
-	wchar_t folder[MAX_PATH];
 	wchar_t fileName[MAX_PATH];
-	::SHGetSpecialFolderPathW(NULL, folder, CSIDL_COMMON_APPDATA, FALSE);
-	swprintf_s(fileName, L"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\streaming server.Log", folder);
+	swprintf_s(fileName, L"%s\\streaming server.Log", CFilterSettingsManager::GetLogPath());
 
 	FILE* fp = _wfopen(fileName,L"a+, ccs=UTF-8");
 	if (fp!=NULL)

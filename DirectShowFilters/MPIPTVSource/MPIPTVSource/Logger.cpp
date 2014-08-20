@@ -22,6 +22,7 @@
 
 #include "Logger.h"
 #include "Utilities.h"
+#include "FilterSettingsManager.h"
 
 #include <stdio.h>
 
@@ -99,7 +100,7 @@ void CLogger::Log(unsigned int level, const TCHAR *format, ...)
     {
       // now we have log row
       // get log file
-      TCHAR *fileName = GetTvServerFilePath(MPIPTVSOURCE_LOG_FILE);
+      TCHAR *fileName = FormatString("%s\\%s", CFilterSettingsManager::GetLogPath(), MPIPTVSOURCE_LOG_FILE);
 
       if (fileName != NULL)
       {

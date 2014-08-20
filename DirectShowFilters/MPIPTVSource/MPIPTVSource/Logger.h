@@ -34,8 +34,8 @@
 #define LOGGER_VERBOSE              4
 #define LOGGER_DATA                 5
 
-#define MPIPTVSOURCE_LOG_FILE       _T("log\\MPIPTVSource.log")
-#define MPIPTVSOURCE_LOG_FILE_BAK   _T("log\\MPIPTVSource.bak")
+#define MPIPTVSOURCE_LOG_FILE       _T("MPIPTVSource.log")
+#define MPIPTVSOURCE_LOG_FILE_BAK   _T("MPIPTVSource.bak")
 
 class MPIPTVSOURCE_API CLogger
 {
