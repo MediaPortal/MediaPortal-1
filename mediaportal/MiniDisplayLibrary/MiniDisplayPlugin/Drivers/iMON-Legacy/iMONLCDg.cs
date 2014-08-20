@@ -3235,7 +3235,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       progLevel = 0;
       volLevel = 0;
-      if ((MPStatus.MediaPlayer_Playing || MiniDisplayHelper.IsCaptureCardViewing()) &
+      if ((MPStatus.MediaPlayer_Playing || MiniDisplayHelper.MPStatus.Media_IsTV) &
           DisplayOptions.VolumeDisplay)
       {
         try
@@ -3456,8 +3456,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             if (DoDebug)
             {
               Log.Info("iMONLCDg.UpdateIcons(): Checking TV Card status: IsAnyCardRecording = {0}, IsViewing = {1}",
-                       MiniDisplayHelper.IsCaptureCardRecording().ToString(),
-                       MiniDisplayHelper.IsCaptureCardViewing().ToString());
+                       MiniDisplayHelper.MPStatus.Media_IsRecording.ToString(),
+                       MiniDisplayHelper.MPStatus.Media_IsTV.ToString());
             }
             MiniDisplayHelper.GetSystemStatus(ref MPStatus);
             Check_Idle_State();
@@ -3475,7 +3475,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               num8 = 1;
             }
-            if (MiniDisplayHelper.IsCaptureCardViewing() && !MPStatus.Media_IsTimeshifting)
+            if (MiniDisplayHelper.MPStatus.Media_IsTV && !MPStatus.Media_IsTimeshifting)
             {
               icon.On();
               icon.InvertOn();
@@ -3554,7 +3554,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 _iconThread.Priority = ThreadPriority.BelowNormal;
               }
             }
-            if ((!MiniDisplayHelper.Player_Playing() & !MiniDisplayHelper.IsCaptureCardViewing()) ||
+            if ((!MiniDisplayHelper.Player_Playing() & !MiniDisplayHelper.MPStatus.Media_IsTV) ||
                 (DisplayOptions.DiskIcon & !DisplayOptions.DiskMediaStatus))
             {
               int num9 = 0;
