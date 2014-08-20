@@ -1759,7 +1759,7 @@ namespace TvPlugin
 
             strTime = String.Format("{0} ", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             GUIPropertyManager.SetProperty("#TV.View.stop", strTime);
-            GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
+            GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.CalculateTimeRemaining()));
           }
           if (tbProgramDescription != null)
           {
@@ -1942,7 +1942,7 @@ namespace TvPlugin
                                          prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           GUIPropertyManager.SetProperty("#TV.View.stop",
                                          prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-          GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
+          GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.CalculateTimeRemaining()));
           GUIPropertyManager.SetProperty("#TV.View.genre", prog.Genre);
           GUIPropertyManager.SetProperty("#TV.View.title", prog.Title);
           GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(prog));
