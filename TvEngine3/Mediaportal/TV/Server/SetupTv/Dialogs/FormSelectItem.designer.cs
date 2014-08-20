@@ -75,6 +75,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.listBoxItems.Name = "listBoxItems";
       this.listBoxItems.Size = new System.Drawing.Size(241, 160);
       this.listBoxItems.TabIndex = 0;
+      this.listBoxItems.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxItems_MouseDoubleClick);
       // 
       // FormSelectItem
       // 

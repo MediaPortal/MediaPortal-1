@@ -33,7 +33,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       listBoxItems.DisplayMember = itemDisplayMember;
       listBoxItems.Items.AddRange(items);
-      listBoxItems.SelectedItem = preselectedItem;
+      if (preselectedItem != null)
+      {
+        listBoxItems.SelectedItem = preselectedItem;
+      }
+      else
+      {
+        listBoxItems.SelectedIndex = 0;
+      }
     }
 
     private void buttonOkay_Click(object sender, EventArgs e)
@@ -54,6 +61,11 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       {
         return listBoxItems.SelectedItem;
       }
+    }
+
+    private void listBoxItems_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+      buttonOkay_Click(null, null);
     }
   }
 }
