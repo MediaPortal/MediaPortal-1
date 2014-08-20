@@ -36,8 +36,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class TvCards : SectionSettings
   {
-    private IList<Card> _tuners = new List<Card>(20);
-    private IList<CardGroup> _tunerGroups = new List<CardGroup>(5);
     private Dictionary<int, CardType> _tunerTypes = new Dictionary<int, CardType>(20);
     private HashSet<int> _changedTuners = new HashSet<int>();
     private int _originalStreamTunerCount = -1;
@@ -93,8 +91,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         listViewTuners.BeginUpdate();
         listViewTuners.Items.Clear();
 
-        _tuners = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.CardGroupMaps).OrderByDescending(c => c.Priority).ToList();
-        foreach (Card tuner in _tuners)
+        IList<Card> tuners = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None).OrderByDescending(c => c.Priority).ToList();
+        foreach (Card tuner in tuners)
         {
           DebugTunerSettings(tuner);
           CardType tunerType = ServiceAgents.Instance.ControllerServiceAgent.Type(tuner.IdCard);
@@ -254,6 +252,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       buttonTunerEdit_Click(sender, e);
     }
 
+    private void listViewTuners_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Delete)
+      {
+        buttonTunerDelete_Click(null, null);
+        e.Handled = true;
+      }
+    }
+
     private void buttonTunerPriorityUp_Click(object sender, EventArgs e)
     {
       listViewTuners.BeginUpdate();
@@ -327,13 +334,51 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         CardType tunerType = _tunerTypes[tuner.IdCard];
         if (tunerType != CardType.Unknown)
         {
-          FormEditCard dlg = new FormEditCard(tuner, tunerType);
+          bool tunerIsInGroup = false;
+          foreach (TreeNode n in treeViewTunerGroups.Nodes)
+          {
+            foreach (TreeNode sn in n.Nodes)
+            {
+              Card t = sn.Tag as Card;
+              if (t != null && t.IdCard == tuner.IdCard)
+              {
+                tunerIsInGroup = true;
+                break;
+              }
+            }
+            if (tunerIsInGroup)
+            {
+              break;
+            }
+          }
+
+          FormEditCard dlg = new FormEditCard(tuner, tunerType, tunerIsInGroup);
           if (dlg.ShowDialog() == DialogResult.OK)
           {
+            tuner = dlg.Tuner;
             this.LogInfo("tuners: tuner {0} settings changed", tuner.IdCard);
             _changedTuners.Add(tuner.IdCard);
-            listViewTuners.Items.RemoveAt(item.Index);
-            listViewTuners.Items.Insert(item.Index, CreateItemForTuner(tuner, tunerType));
+            int index = item.Index;
+            listViewTuners.Items.RemoveAt(index);
+            listViewTuners.Items.Insert(index, CreateItemForTuner(tuner, tunerType));
+
+            // Update the name in the tuner group tree view.
+            if (tunerIsInGroup)
+            {
+              foreach (TreeNode n in treeViewTunerGroups.Nodes)
+              {
+                foreach (TreeNode sn in n.Nodes)
+                {
+                  Card t = sn.Tag as Card;
+                  if (t != null && t.IdCard == tuner.IdCard)
+                  {
+                    sn.Tag = tuner;
+                    sn.Text = tuner.Name;
+                    return;
+                  }
+                }
+              }
+            }
           }
         }
         else if (!shownExplanation)
@@ -366,9 +411,44 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           CardType tunerType = _tunerTypes[tuner.IdCard];
           if (tunerType == CardType.Unknown)
           {
-            this.LogInfo("tuners: tuner {0} deleted", tuner.IdCard);
-            ServiceAgents.Instance.ControllerServiceAgent.CardRemove(tuner.IdCard);
+            int id = tuner.IdCard;
+            this.LogInfo("tuners: tuner {0} deleted", id);
+            ServiceAgents.Instance.ControllerServiceAgent.CardRemove(id);
             listViewTuners.Items.Remove(item);
+
+            // Remove the tuner from the tuner group tree view, and delete the
+            // tuner group too if this leaves the tuner group empty.
+            for (int n = 0; n < treeViewTunerGroups.Nodes.Count; n++)
+            {
+              bool removedNode = false;
+              TreeNode groupNode = treeViewTunerGroups.Nodes[n];
+              for (int sn = 0; sn < groupNode.Nodes.Count; sn++)
+              {
+                TreeNode tunerNode = groupNode.Nodes[sn];
+                Card t = tunerNode.Tag as Card;
+                if (t != null && t.IdCard == id)
+                {
+                  groupNode.Nodes.RemoveAt(sn);
+                  removedNode = true;
+                  break;
+                }
+              }
+
+              if (removedNode)
+              {
+                if (groupNode.Nodes.Count == 0)
+                {
+                  CardGroup g = groupNode.Tag as CardGroup;
+                  if (g != null)
+                  {
+                    this.LogInfo("tuners: empty tuner group {0} deleted", g.IdCardGroup);
+                    ServiceAgents.Instance.CardServiceAgent.DeleteCardGroup(g.IdCardGroup);
+                    treeViewTunerGroups.Nodes.RemoveAt(n);
+                  }
+                }
+                break;
+              }
+            }
           }
           else if (!shownExplanation)
           {
@@ -389,8 +469,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         treeViewTunerGroups.BeginUpdate();
         treeViewTunerGroups.Nodes.Clear();
-        _tunerGroups = ServiceAgents.Instance.CardServiceAgent.ListAllCardGroups();
-        foreach (CardGroup group in _tunerGroups)
+        foreach (CardGroup group in ServiceAgents.Instance.CardServiceAgent.ListAllCardGroups())
         {
           DebugTunerGroupSettings(group);
           TreeNode node = treeViewTunerGroups.Nodes.Add(group.Name);
@@ -430,8 +509,42 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         return;
       }
+      buttonTunerInGroupRemove.Enabled = node.Tag is Card;
+    }
+
+    private void treeViewTunerGroups_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode != Keys.Delete && e.KeyCode != Keys.F2)
+      {
+        return;
+      }
+
+      TreeNode node = treeViewTunerGroups.SelectedNode;
+      if (node == null)
+      {
+        return;
+      }
+      CardGroup group = node.Tag as CardGroup;
+      if (group != null)
+      {
+        if (e.KeyCode == Keys.Delete)
+        {
+          buttonGroupDelete_Click(null, null);
+        }
+        else if (e.KeyCode == Keys.F2)
+        {
+          buttonGroupRename_Click(null, null);
+        }
+        e.Handled = true;
+        return;
+      }
+
       Card tuner = node.Tag as Card;
-      buttonTunerInGroupRemove.Enabled = tuner != null;
+      if (tuner != null && e.KeyCode == Keys.Delete)
+      {
+        buttonTunerInGroupRemove_Click(null, null);
+        e.Handled = true;
+      }
     }
 
     private string GetGroupName(string currentName = null)
@@ -453,9 +566,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
 
         bool found = false;
-        foreach (CardGroup group in _tunerGroups)
+        foreach (TreeNode node in treeViewTunerGroups.Nodes)
         {
-          if (string.Equals(group.Name, dlg.TextValue))
+          CardGroup group = node.Tag as CardGroup;
+          if (group != null && string.Equals(group.Name, dlg.TextValue))
           {
             found = true;
             MessageBox.Show(string.Format("There is already a group named {0}.", group.Name));
@@ -504,8 +618,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       this.LogInfo("tuners: tuner group {0} renamed, old name = {1}, new name = {2}", group.IdCardGroup, group.Name, name);
       group.Name = name;
-      group = ServiceAgents.Instance.CardServiceAgent.SaveCardGroup(group);
-      node.Tag = group;
+      node.Tag = ServiceAgents.Instance.CardServiceAgent.SaveCardGroup(group);
       node.Text = name;
     }
 
@@ -542,17 +655,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       // Tuners can only be in one group.
+      // TODO this limitation should be reflected in the DB structure - no need for CardGroupMap
       HashSet<int> groupedTuners = new HashSet<int>();
-      foreach (CardGroup g in _tunerGroups)
+      foreach (TreeNode n in treeViewTunerGroups.Nodes)
       {
-        foreach (CardGroupMap m in g.CardGroupMaps)
+        foreach (TreeNode sn in n.Nodes)
         {
-          groupedTuners.Add(m.IdCard);
+          Card t = sn.Tag as Card;
+          if (t != null)
+          {
+            groupedTuners.Add(t.IdCard);
+          }
         }
       }
-      List<Card> groupableTuners = new List<Card>(_tuners.Count);
-      foreach (Card t in _tuners)
+      List<Card> groupableTuners = new List<Card>(listViewTuners.Items.Count);
+      foreach (ListViewItem i in listViewTuners.Items)
       {
+        Card t = i.Tag as Card;
         if (!groupedTuners.Contains(t.IdCard))
         {
           groupableTuners.Add(t);
@@ -589,6 +708,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       mapping = ServiceAgents.Instance.CardServiceAgent.SaveCardGroupMap(mapping);
       group.CardGroupMaps.Add(mapping);
       group.AcceptChanges();
+      node.Tag = group;
 
       foreach (CardGroupMap m in group.CardGroupMaps)
       {
@@ -614,15 +734,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       CardGroup group = node.Parent.Tag as CardGroup;
       if (group != null)
       {
-        foreach (CardGroupMap mapping in group.CardGroupMaps)
+        for (int m = group.CardGroupMaps.Count - 1; m >= 0; m--)
         {
+          CardGroupMap mapping = group.CardGroupMaps[m];
           if (mapping.IdCard == tuner.IdCard)
           {
             this.LogInfo("tuners: tuner {0} removed from group {1}", tuner.IdCard, group.IdCardGroup);
             ServiceAgents.Instance.CardServiceAgent.DeleteGroupMap(mapping.IdMapping);
+            group.CardGroupMaps.RemoveAt(m);
           }
           _changedTuners.Add(tuner.IdCard);
         }
+        group.AcceptChanges();
         treeViewTunerGroups.Nodes.Remove(node);
       }
     }

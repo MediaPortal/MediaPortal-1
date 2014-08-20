@@ -126,40 +126,41 @@
         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAAe
         BgAAAk1TRnQBSQFMAwEBAAE0AQABNAEAARABAAEQAQAE/wEhAQAI/wFCAU0BNgcAATYDAAEoAwABQAMA
-        ARADAAEBAQABIAYAARAuAAGBAikB/wGBAikB/wGBAikB/wGBAikB/wGBAikB/wGBAikB/+gAAVwCmQH/
-        ASkCzAH/ASkCzAH/ASkCzAH/ASkCzAH/ASkCXAH/zAABmQIpAf8BmQIpAf8BmQIpAf8BmQIpAf8BmQIp
-        Af8BmQIpAf8BmQIpAf8BXALMAf8BKQP/ASkD/wEpA/8BKQP/ASkCXAH/AZkCKQH/AZkCKQH/xAADgQH/
+        ARADAAEBAQABIAYAARAuAAGBAi8B/wGBAi8B/wGBAi8B/wGBAi8B/wGBAi8B/wGBAi8B/+gAAWICmQH/
+        AS8CzAH/AS8CzAH/AS8CzAH/AS8CzAH/AS8CYgH/zAABmQIvAf8BmQIvAf8BmQIvAf8BmQIvAf8BmQIv
+        Af8BmQIvAf8BmQIvAf8BYgLMAf8BLwP/AS8D/wEvA/8BLwP/AS8CYgH/AZkCLwH/AZkCLwH/xAADgQH/
         A4EB/wOBAf8DgQH/A4EB/wOBAf8DgQH/A4YB/wGBApkB/wGBApkB/wGBApkB/wGBApkB/wOBAf8DgQH/
-        Az8B/8QAA4YB/wEpAYEBKQH/ASkBgQEpAf8BgQIpAf8BKQGBASkB/wJcASkB/wEpAYEBKQH/AYEBXAEp
-        Af8BKQGBASkB/wEpAlwB/wEpAYEBKQH/ASkBgQFcAf8BKQJcAf8BKQGBASkB/wMpAf/EAAOGAf8BKQGB
-        ASkB/wGBAikB/wNrAf8BXAGBASkB/wN+Af8BKQFcASkB/wGBAVwBKQH/ASkBgQEpAf8BKQFcASkB/wEp
-        AVwBKQH/ASkBXAEpAf8BKQFcASkB/wEpAYEBKQH/AykB/wFcAikB/8AAA4YB/wEpAYEBKQH/A90B/wGZ
-        AikB/wFcAZkBXAH/AcwCKQH/ASkBXAEpAf8BgQFcASkB/wEpAYEBKQH/AZkCXAH/A1wB/wGZAVwBKQH/
-        A4EB/wEpAYEBKQH/AykB/wMpAf/AAAOGAf8BKQGBASkB/wEpAVwBKQH/ASkBXAEpAf8BKQGBASkB/wEp
-        AVwBKQH/ASkBgQEpAf8BmQFcASkB/wGBAVwBKQH/AVwBgQEpAf8BXAGZASkB/wGBAVwBKQH/AVwBgQEp
-        Af8BKQGBASkB/wMpAf8DKQH/wAADhgH/AikBzAH/AcwCKQH/A4EB/wFcAYEBKQH/A4EB/wEpAVwBKQH/
-        AYEBXAEpAf8BKQGBASkB/wEpAYEBKQH/ASkBgQEpAf8BKQGBASkB/wEpAYEBKQH/AVwBgQEpAf8DKQH/
-        AykB/8AAA4YB/wEpAYEBKQH/AZkBzAGZAf8BgQFcASkB/wFcAZkBXAH/AZkBXAEpAf8BKQFcASkB/wGZ
-        AVwBKQH/AVwBgQEpAf8BKQGBASkB/wNSAf8DXAH/ASkBgQEpAf8BgQFcASkB/wMpAf8DKQH/wAADhgH/
-        ASkBXAHMAf8BKQFcASkB/wEpAVwBKQH/ASkBgQEpAf8BKQFcASkB/wEpAVwBKQH/AZkBXAEpAf8BgQFc
-        ASkB/wEpAYEBKQH/AZkCgQH/A4YB/wEpAYEBKQH/AVwBgQEpAf8DKQH/AykB/8AAA4YB/wEpAYEBKQH/
-        AcwCXAH/A4EB/wFcAYEBKQH/AZkCgQH/ASkBXAEpAf8BgQFcASkB/wGBAVwBKQH/ASkBgQEpAf8BzAKB
-        Af8BmQKBAf8BKQGBASkB/wGBAVwBKQH/AykB/wM/Af/AAAOGAf8BKQFcAZkB/wGBAZkBXAH/AVwBgQEp
-        Af8BKQGBASkB/wGZAVwBKQH/ASkBgQEpAf8BgQFcASkB/wGBAVwBKQH/ASkBgQEpAf8BmQJcAf8BXAGB
-        ASkB/wEpAYEBKQH/AYEBXAEpAf8DKQH/AZkCKQH/wAADhgH/AVwBgQEpAf8BXAGBASkB/wFcAYEBKQH/
-        AVwBgQEpAf8BmQFcASkB/wFcAYEBKQH/AZkBXAEpAf8CgQEpAf8BXAGZASkB/wGZAYEBKQH/AVwBgQEp
-        Af8BXAGBASkB/wFcAYEBKQH/AykB/8QAA4YB/wGZAlwB/wGZAlwB/wGZAlwB/wGZAlwB/wGZAlwB/wGZ
-        AlwB/wGZAlwB/wGZAlwB/wGZAlwB/wGZAlwB/wGZAlwB/wGZAlwB/wGZAlwB/wM/Af//AMUAAUIBTQE+
+        A0UB/8QAA4YB/wEvAYEBLwH/AS8BgQEvAf8BgQIvAf8BLwGBAS8B/wJiAS8B/wEvAYEBLwH/AYEBYgEv
+        Af8BLwGBAS8B/wEvAmIB/wEvAYEBLwH/AS8BgQFiAf8BLwJiAf8BLwGBAS8B/wMvAf/EAAOGAf8BLwGB
+        AS8B/wGBAi8B/wNxAf8BYgGBAS8B/wOBAf8BLwFiAS8B/wGBAWIBLwH/AS8BgQEvAf8BLwFiAS8B/wEv
+        AWIBLwH/AS8BYgEvAf8BLwFiAS8B/wEvAYEBLwH/Ay8B/wFiAi8B/8AAA4YB/wEvAYEBLwH/A90B/wGZ
+        Ai8B/wFiAZkBYgH/AcwCLwH/AS8BYgEvAf8BgQFiAS8B/wEvAYEBLwH/AZkCYgH/A2IB/wGZAWIBLwH/
+        A4EB/wEvAYEBLwH/Ay8B/wMvAf/AAAOGAf8BLwGBAS8B/wEvAWIBLwH/AS8BYgEvAf8BLwGBAS8B/wEv
+        AWIBLwH/AS8BgQEvAf8BmQFiAS8B/wGBAWIBLwH/AWIBgQEvAf8BYgGZAS8B/wGBAWIBLwH/AWIBgQEv
+        Af8BLwGBAS8B/wMvAf8DLwH/wAADhgH/Ai8BzAH/AcwCLwH/A4EB/wFiAYEBLwH/A4EB/wEvAWIBLwH/
+        AYEBYgEvAf8BLwGBAS8B/wEvAYEBLwH/AS8BgQEvAf8BLwGBAS8B/wEvAYEBLwH/AWIBgQEvAf8DLwH/
+        Ay8B/8AAA4YB/wEvAYEBLwH/AZkBzAGZAf8BgQFiAS8B/wFiAZkBYgH/AZkBYgEvAf8BLwFiAS8B/wGZ
+        AWIBLwH/AWIBgQEvAf8BLwGBAS8B/wNYAf8DYgH/AS8BgQEvAf8BgQFiAS8B/wMvAf8DLwH/wAADhgH/
+        AS8BYgHMAf8BLwFiAS8B/wEvAWIBLwH/AS8BgQEvAf8BLwFiAS8B/wEvAWIBLwH/AZkBYgEvAf8BgQFi
+        AS8B/wEvAYEBLwH/AZkCgQH/A4YB/wEvAYEBLwH/AWIBgQEvAf8DLwH/Ay8B/8AAA4YB/wEvAYEBLwH/
+        AcwCYgH/A4EB/wFiAYEBLwH/AZkCgQH/AS8BYgEvAf8BgQFiAS8B/wGBAWIBLwH/AS8BgQEvAf8BzAKB
+        Af8BmQKBAf8BLwGBAS8B/wGBAWIBLwH/Ay8B/wNFAf/AAAOGAf8BLwFiAZkB/wGBAZkBYgH/AWIBgQEv
+        Af8BLwGBAS8B/wGZAWIBLwH/AS8BgQEvAf8BgQFiAS8B/wGBAWIBLwH/AS8BgQEvAf8BmQJiAf8BYgGB
+        AS8B/wEvAYEBLwH/AYEBYgEvAf8DLwH/AZkCLwH/wAADhgH/AWIBgQEvAf8BYgGBAS8B/wFiAYEBLwH/
+        AWIBgQEvAf8BmQFiAS8B/wFiAYEBLwH/AZkBYgEvAf8CgQEvAf8BYgGZAS8B/wGZAYEBLwH/AWIBgQEv
+        Af8BYgGBAS8B/wFiAYEBLwH/Ay8B/8QAA4YB/wGZAmIB/wGZAmIB/wGZAmIB/wGZAmIB/wGZAmIB/wGZ
+        AmIB/wGZAmIB/wGZAmIB/wGZAmIB/wGZAmIB/wGZAmIB/wGZAmIB/wGZAmIB/wNFAf//AMUAAUIBTQE+
         BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcAA/8BAAH+AQcGAAH+AQcHAAEBBwABAQcAAQFHAAEB
         BwABAQYAAv8GAAs=
 </value>
   </data>
   <data name="labelTunerGroupExplanation.Text" xml:space="preserve">
-    <value>TV Server usually detects and groups related tuners automatically. If automatic detection fails, use this section to create, update or delete groups as necessary.
-When configured correctly there should be one group for each multi-mode tuner. A card may have more than one multi-mode tuner, so you may need to create more than one group for some cards.
+    <value>Tuner groups enable TV Server to fully support multi-mode tuners. TV Server usually detects and groups related tuners automatically. However, if automatic detection fails you can use this section to create, update or delete groups as necessary.
+
+When configured correctly there should be one group for each of your multi-mode tuners. Some cards such as the Hauppauge HVR-22*0 and Digital Devices Cine or DuoFlex C/C2/T/T2 have more than one multi-mode tuner. Ensure there is one group for each multi-mode tuner on those cards.
 
 Examples of multi-mode tuners:
-- DVB-C and DVB-T/T2 ("combo")
-- DVB-T and analog ("hybrid")</value>
+- DVB-C/C2 and DVB-T/T2, or ATSC and clear QAM ("combo")
+- ATSC, clear QAM and analog, or DVB-C/C2, DVB-T/T2 and analog ("hybrid)</value>
   </data>
 </root>

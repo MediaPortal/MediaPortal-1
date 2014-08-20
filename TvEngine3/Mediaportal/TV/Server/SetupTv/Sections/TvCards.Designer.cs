@@ -179,7 +179,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.labelTunerGroupExplanation.Location = new System.Drawing.Point(6, 5);
       this.labelTunerGroupExplanation.Name = "labelTunerGroupExplanation";
-      this.labelTunerGroupExplanation.Size = new System.Drawing.Size(460, 121);
+      this.labelTunerGroupExplanation.Size = new System.Drawing.Size(460, 158);
       this.labelTunerGroupExplanation.TabIndex = 0;
       this.labelTunerGroupExplanation.Text = resources.GetString("labelTunerGroupExplanation.Text");
       // 
@@ -190,12 +190,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.treeViewTunerGroups.ImageIndex = 0;
       this.treeViewTunerGroups.ImageList = this.imageList1;
-      this.treeViewTunerGroups.Location = new System.Drawing.Point(6, 136);
+      this.treeViewTunerGroups.Location = new System.Drawing.Point(6, 166);
       this.treeViewTunerGroups.Name = "treeViewTunerGroups";
       this.treeViewTunerGroups.SelectedImageIndex = 0;
-      this.treeViewTunerGroups.Size = new System.Drawing.Size(460, 196);
+      this.treeViewTunerGroups.Size = new System.Drawing.Size(460, 166);
       this.treeViewTunerGroups.TabIndex = 1;
       this.treeViewTunerGroups.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewTunerGroups_AfterSelect);
+      this.treeViewTunerGroups.KeyDown += new System.Windows.Forms.KeyEventHandler(this.treeViewTunerGroups_KeyDown);
       // 
       // tabPageTuners
       // 
@@ -293,8 +294,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // listViewTuners
       // 
+      this.listViewTuners.AllowColumnReorder = true;
       this.listViewTuners.AllowDrop = true;
-      this.listViewTuners.AllowRowReorder = false;
+      this.listViewTuners.AllowRowReorder = true;
       this.listViewTuners.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
@@ -320,6 +322,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.listViewTuners.View = System.Windows.Forms.View.Details;
       this.listViewTuners.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.listViewTuners_ItemChecked);
       this.listViewTuners.SelectedIndexChanged += new System.EventHandler(this.listViewTuners_SelectedIndexChanged);
+      this.listViewTuners.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listViewTuners_KeyDown);
       this.listViewTuners.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewTuners_MouseDoubleClick);
       // 
       // columnHeaderEnabled

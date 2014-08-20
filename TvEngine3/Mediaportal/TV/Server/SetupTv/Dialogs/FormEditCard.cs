@@ -34,74 +34,53 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
   {
     private Card _tuner;
     private CardType _tunerType;
+    private bool _tunerIsInGroup;
 
-    public FormEditCard(Card tuner, CardType tunerType)
+    public FormEditCard(Card tuner, CardType tunerType, bool tunerIsInGroup)
     {
       _tuner = tuner;
       _tunerType = tunerType;
+      _tunerIsInGroup = tunerIsInGroup;
       InitializeComponent();
+    }
+
+    public Card Tuner
+    {
+      get
+      {
+        return _tuner;
+      }
     }
 
     private void FormEditCard_Load(object sender, EventArgs e)
     {
       textBoxTunerName.Text = _tuner.Name;
-
-      // Analog tuners and capture devices don't have many of these settings.
-      bool isAnalogTuner = _tunerType == CardType.Analog;
-      checkBoxEpgGrabEnabled.Enabled = !isAnalogTuner;
+      checkBoxEpgGrabEnabled.Checked = _tuner.GrabEPG;
 
       // Tuners can't be preloaded if they're part of a tuner group.
-      if (_tuner.CardGroupMaps.Count != 0)
+      if (_tunerIsInGroup)
       {
         checkBoxPreloadTuner.Enabled = false;
         _tuner.PreloadCard = false;
       }
       checkBoxPreloadTuner.Checked = _tuner.PreloadCard;
 
-      checkBoxConditionalAccessEnabled.Enabled = !isAnalogTuner;
-      numericUpDownDecryptLimit.Enabled = !isAnalogTuner;
-      comboBoxMultiChannelDecryptMode.Enabled = !isAnalogTuner;
-      comboBoxCamType.Enabled = !isAnalogTuner;
-      if (_tunerType == CardType.DvbS)
-      {
-        checkBoxAlwaysSendDiseqcCommands.Enabled = true;
-        numericUpDownDiseqcCommandRepeatCount.Enabled = true;
-      }
-      else
-      {
-        checkBoxAlwaysSendDiseqcCommands.Enabled = false;
-        numericUpDownDiseqcCommandRepeatCount.Enabled = false;
-      }
-      comboBoxPidFilterMode.Enabled = !isAnalogTuner;
-      if (isAnalogTuner)
-      {
-        checkBoxEpgGrabEnabled.Checked = false;
-        checkBoxConditionalAccessEnabled.Checked = false;
-        numericUpDownDecryptLimit.Value = 0;
-        checkBoxAlwaysSendDiseqcCommands.Checked = false;
-        numericUpDownDiseqcCommandRepeatCount.Value = 0;
-      }
-      else
-      {
-        checkBoxEpgGrabEnabled.Checked = _tuner.GrabEPG;
-        checkBoxConditionalAccessEnabled.Checked = _tuner.UseConditionalAccess;
-        numericUpDownDecryptLimit.Value = _tuner.DecryptLimit;
-        comboBoxMultiChannelDecryptMode.Items.AddRange(typeof(MultiChannelDecryptMode).GetDescriptions());
-        comboBoxMultiChannelDecryptMode.SelectedItem = ((MultiChannelDecryptMode)_tuner.MultiChannelDecryptMode).GetDescription();
-        comboBoxCamType.Items.AddRange(typeof(CamType).GetDescriptions());
-        comboBoxCamType.SelectedItem = ((CamType)_tuner.CamType).GetDescription();
-        checkBoxAlwaysSendDiseqcCommands.Checked = _tuner.AlwaysSendDiseqcCommands;
-        numericUpDownDiseqcCommandRepeatCount.Value = _tuner.DiseqcCommandRepeatCount;
-        comboBoxPidFilterMode.Items.AddRange(typeof(PidFilterMode).GetDescriptions());
-        comboBoxPidFilterMode.SelectedItem = ((PidFilterMode)_tuner.PidFilterMode).GetDescription();
-      }
+      checkBoxAlwaysSendDiseqcCommands.Checked = _tuner.AlwaysSendDiseqcCommands;
+      numericUpDownDiseqcCommandRepeatCount.Value = _tuner.DiseqcCommandRepeatCount;
+      groupBoxDiseqcSettings.Enabled = _tunerType == CardType.DvbS;
+
+      checkBoxConditionalAccessEnabled.Checked = _tuner.UseConditionalAccess;
+      numericUpDownDecryptLimit.Value = _tuner.DecryptLimit;
+      comboBoxMultiChannelDecryptMode.Items.AddRange(typeof(MultiChannelDecryptMode).GetDescriptions());
+      comboBoxMultiChannelDecryptMode.SelectedItem = ((MultiChannelDecryptMode)_tuner.MultiChannelDecryptMode).GetDescription();
+      comboBoxCamType.Items.AddRange(typeof(CamType).GetDescriptions());
+      comboBoxCamType.SelectedItem = ((CamType)_tuner.CamType).GetDescription();
+      SetConditionalAccessFieldAvailability();
+
       comboBoxIdleMode.Items.AddRange(typeof(IdleMode).GetDescriptions());
       comboBoxIdleMode.SelectedItem = ((IdleMode)_tuner.IdleMode).GetDescription();
-      setConditionalAccessFieldVisibility();
 
-      checkBoxUseCustomTuning.Checked = _tuner.UseCustomTuning;
-
-      if (isAnalogTuner || _tunerType == CardType.DvbIP || _tuner.DevicePath.StartsWith("uuid"))
+      if (_tunerType == CardType.Analog || !_tuner.DevicePath.StartsWith("@device"))
       {
         comboBoxNetworkProvider.Enabled = false;
       }
@@ -120,6 +99,18 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         comboBoxNetworkProvider.Items.AddRange(typeof(DbNetworkProvider).GetDescriptions());
         comboBoxNetworkProvider.SelectedItem = ((DbNetworkProvider)_tuner.NetProvider).GetDescription();
       }
+
+      if (_tunerType == CardType.Analog)
+      {
+        comboBoxPidFilterMode.Enabled = false;
+      }
+      else
+      {
+        comboBoxPidFilterMode.Items.AddRange(typeof(PidFilterMode).GetDescriptions());
+        comboBoxPidFilterMode.SelectedItem = ((PidFilterMode)_tuner.PidFilterMode).GetDescription();
+      }
+
+      checkBoxUseCustomTuning.Checked = _tuner.UseCustomTuning;
     }
 
     private void buttonSave_Click(object sender, EventArgs e)
@@ -134,26 +125,27 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       _tuner.Name = textBoxTunerName.Text;
       _tuner.GrabEPG = checkBoxEpgGrabEnabled.Checked;
       _tuner.PreloadCard = checkBoxPreloadTuner.Checked;
+
       _tuner.UseConditionalAccess = checkBoxConditionalAccessEnabled.Checked;
       _tuner.DecryptLimit = (int)numericUpDownDecryptLimit.Value;
+      _tuner.MultiChannelDecryptMode = Convert.ToInt32(typeof(MultiChannelDecryptMode).GetEnumFromDescription((string)comboBoxMultiChannelDecryptMode.SelectedItem));
+      _tuner.CamType = Convert.ToInt32(typeof(CamType).GetEnumFromDescription((string)comboBoxCamType.SelectedItem));
+
       _tuner.AlwaysSendDiseqcCommands = checkBoxAlwaysSendDiseqcCommands.Checked;
       _tuner.DiseqcCommandRepeatCount = (int)numericUpDownDiseqcCommandRepeatCount.Value;
-      _tuner.IdleMode = Convert.ToInt32(typeof(IdleMode).GetEnumFromDescription((string)comboBoxIdleMode.SelectedItem));
 
-      // Careful here! The selected items will be null for certain tuner types.
-      if (_tunerType != CardType.Analog)
+      _tuner.IdleMode = Convert.ToInt32(typeof(IdleMode).GetEnumFromDescription((string)comboBoxIdleMode.SelectedItem));
+      if (comboBoxNetworkProvider.Enabled)
       {
-        _tuner.MultiChannelDecryptMode = Convert.ToInt32(typeof(MultiChannelDecryptMode).GetEnumFromDescription((string)comboBoxMultiChannelDecryptMode.SelectedItem));
-        _tuner.CamType = Convert.ToInt32(typeof(CamType).GetEnumFromDescription((string)comboBoxCamType.SelectedItem));
+        _tuner.NetProvider = Convert.ToInt32(typeof(DbNetworkProvider).GetEnumFromDescription((string)comboBoxNetworkProvider.SelectedItem));
+      }
+      if (comboBoxPidFilterMode.Enabled)
+      {
         _tuner.PidFilterMode = Convert.ToInt32(typeof(PidFilterMode).GetEnumFromDescription((string)comboBoxPidFilterMode.SelectedItem));
-        if (comboBoxNetworkProvider.Enabled)
-        {
-          _tuner.NetProvider = Convert.ToInt32(typeof(DbNetworkProvider).GetEnumFromDescription((string)comboBoxNetworkProvider.SelectedItem));
-        }
       }
       _tuner.UseCustomTuning = checkBoxUseCustomTuning.Checked;
 
-      ServiceAgents.Instance.CardServiceAgent.SaveCard(_tuner);
+      _tuner = ServiceAgents.Instance.CardServiceAgent.SaveCard(_tuner);
       Close();
     }
 
@@ -162,20 +154,20 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       Close();
     }
 
-    private void setConditionalAccessFieldVisibility()
+    private void SetConditionalAccessFieldAvailability()
     {
-      labelDecryptLimit1.Visible = checkBoxConditionalAccessEnabled.Checked;
-      numericUpDownDecryptLimit.Visible = checkBoxConditionalAccessEnabled.Checked;
-      labelDecryptLimit2.Visible = checkBoxConditionalAccessEnabled.Checked;
-      labelMultiChannelDecryptMode.Visible = checkBoxConditionalAccessEnabled.Checked;
-      comboBoxMultiChannelDecryptMode.Visible = checkBoxConditionalAccessEnabled.Checked;
-      labelCamType.Visible = checkBoxConditionalAccessEnabled.Checked;
-      comboBoxCamType.Visible = checkBoxConditionalAccessEnabled.Checked;
+      labelDecryptLimit1.Enabled = checkBoxConditionalAccessEnabled.Checked;
+      numericUpDownDecryptLimit.Enabled = checkBoxConditionalAccessEnabled.Checked;
+      labelDecryptLimit2.Enabled = checkBoxConditionalAccessEnabled.Checked;
+      labelMultiChannelDecryptMode.Enabled = checkBoxConditionalAccessEnabled.Checked;
+      comboBoxMultiChannelDecryptMode.Enabled = checkBoxConditionalAccessEnabled.Checked;
+      labelCamType.Enabled = checkBoxConditionalAccessEnabled.Checked;
+      comboBoxCamType.Enabled = checkBoxConditionalAccessEnabled.Checked;
     }
 
     private void checkBoxConditionalAccessEnabled_CheckedChanged(object sender, EventArgs e)
     {
-      setConditionalAccessFieldVisibility();
+      SetConditionalAccessFieldAvailability();
     }
   }
 }
