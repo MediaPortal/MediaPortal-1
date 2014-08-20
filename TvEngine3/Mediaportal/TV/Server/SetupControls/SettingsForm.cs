@@ -95,14 +95,9 @@ namespace Mediaportal.TV.Server.SetupControls
 
     public virtual void SaveSectionSettings(TreeNode currentNode) {}
 
-    public virtual void SaveAllSettings() {}
-
-
     public virtual void cancelButton_Click(object sender, EventArgs e) {}
 
     public virtual void okButton_Click(object sender, EventArgs e) {}
-
-    public virtual void applyButton_Click(object sender, EventArgs e) {}
 
     private void holderPanel_Paint(object sender, PaintEventArgs e) {}
 
@@ -118,7 +113,7 @@ namespace Mediaportal.TV.Server.SetupControls
     private void btnRestrictedMode_Click(object sender, EventArgs e)
     {
       MessageBox.Show("There are a few requirements that must be met in order for SetupTV to interact with the TV service when running in a multi-seat environment.\n\n" +
-        "Interacting with a remote windows service in a workgroup environment (not joined in a domain)\n" +
+        "Interacting with a remote Windows service in a workgroup environment (not joined in a domain)\n" +
         "requires that the user is logged on the machine hosting the TV service using an administrative user account that has a password.\n" +
         "Create an administrator user account on the TV service host and make sure you match both the username and password.\n\n" +
         "If these prerequisite cannot be met then the SetupTV application will run in a so called restricted mode.\n" +

@@ -211,7 +211,7 @@ namespace Mediaportal.TV.Server.SetupTV
             // remove all cards, add current ones back later
             RemoveAllChildSections(_sections[_sectionTuners.Text]);
 
-            // re-add cards to tree          
+            // re-add cards to tree
             AddServerTvCards(true);
           }
           finally
@@ -416,10 +416,10 @@ namespace Mediaportal.TV.Server.SetupTV
       {
         if (!ServiceHelper.IsAvailable)
         {
-          MessageBox.Show("TvService not started.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show("TV service not started.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
           e.Cancel = true;
-        } 
-      }        
+        }
+      }
     }
 
     public override bool ActivateSection(SectionSettings section)
@@ -560,18 +560,6 @@ namespace Mediaportal.TV.Server.SetupTV
       }
     }
 
-    public override void SaveAllSettings()
-    {
-      foreach (TreeNode treeNode in sectionTree.Nodes)
-      {
-        //
-        // Save settings for all sections
-        //
-        SaveSectionSettings(treeNode);
-      }
-    }
-
-
     public override void cancelButton_Click(object sender, EventArgs e)
     {
       if (null != _previousSection)
@@ -588,8 +576,6 @@ namespace Mediaportal.TV.Server.SetupTV
       {
         if (!ServiceHelper.IsStopped || ServiceHelper.IsRestrictedMode)
         {
-          applyButton_Click(sender, e);
-
           if (null != _previousSection)
           {
             _previousSection.OnSectionDeActivated();
@@ -602,11 +588,6 @@ namespace Mediaportal.TV.Server.SetupTV
       {
         this.LogError(ex);
       }
-    }
-
-    public override void applyButton_Click(object sender, EventArgs e)
-    {
-      SaveAllSettings();
     }
 
     public override void helpToolStripSplitButton_ButtonClick(object sender, EventArgs e)
