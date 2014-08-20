@@ -594,9 +594,12 @@ namespace Mediaportal.TV.Server.TVLibrary
         _epgGrabber = null;
 
         //clean up the tv cards
-        _tunerDetector.Stop();
-        _tunerDetector.Dispose();
-        _tunerDetector = null;
+        if (_tunerDetector != null)
+        {
+          _tunerDetector.Stop();
+          _tunerDetector.Dispose();
+          _tunerDetector = null;
+        }
         FreeCards();
 
         ////Gentle.Common.CacheManager.Clear();
