@@ -31,139 +31,111 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
   /// </summary>
   public class MPListView : ListView
   {
-    [DllImport("user32")]
-    private static extern int GetDoubleClickTime();
-
     private const string REORDER = "Reorder";
-    private bool allowRowReorder;
-    private bool isChannelListView;
-    private DateTime lastClick = DateTime.MinValue;
-    private ListViewItem lastItem = null;
+    private bool _allowRowReorder = false;
+    private bool _isChannelListView = false;
+    private ListViewItem _lastItem = null;
+    private bool _doubleClickEventPending = false;
 
     public bool AllowRowReorder
     {
-      get { return allowRowReorder; }
+      get
+      {
+        return _allowRowReorder;
+      }
       set
       {
-        allowRowReorder = value;
+        _allowRowReorder = value;
         base.AllowDrop = value;
       }
     }
 
     public bool IsChannelListView
     {
-      get { return isChannelListView; }
-      set { isChannelListView = value; }
-    }
-
-    public new SortOrder Sorting
-    {
-      get { return SortOrder.None; }
-      set { base.Sorting = SortOrder.None; }
+      get
+      {
+        return _isChannelListView;
+      }
+      set
+      {
+        _isChannelListView = value;
+      }
     }
 
     public MPListView()
     {
-      //  Activate double buffering
+      // Activate double buffering.
       SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
 
-      // Allows for catching the WM_ERASEBKGND message
+      // Enable catching the WM_ERASEBKGND message.
       SetStyle(ControlStyles.EnableNotifyMessage, true);
-      AllowRowReorder = true;
     }
 
-    //protected override void WndProc(ref System.Windows.Forms.Message m)
-    //{
-    //  const int WM_PAINT = 0xf ;
+    #region drag/drop row reordering support
 
-    //  switch(m.Msg)
-    //  {
-    //    case WM_PAINT:
-    //      if(this.View == System.Windows.Forms.View.Details && this.Columns.Count > 0)
-    //      {
-    //        this.Columns[this.Columns.Count - 1].Width = -2 ;
-    //      }
-    //      break ;
-    //  }
+    // Probably based on http://www.codeproject.com/Articles/4576/Drag-and-Drop-ListView-row-reordering
 
-    //  base.WndProc (ref m);
-    //}
+    private DragDropEffects GetDragDropEffect(DragEventArgs e, out MPListView listView)
+    {
+      listView = null;
+      if (!_isChannelListView)
+      {
+        if (string.Equals((e.Data.GetData(REORDER.GetType()) as string), REORDER))
+        {
+          return DragDropEffects.Move;
+        }
+      }
+      else
+      {
+        listView = e.Data.GetData(typeof(MPListView)) as MPListView;
+        if (listView != null)
+        {
+          if (listView == this)
+          {
+            return DragDropEffects.Move;
+          }
+          return DragDropEffects.Copy;
+        }
+      }
+      return DragDropEffects.None;
+    }
 
     protected override void OnItemDrag(ItemDragEventArgs e)
     {
+      base.OnItemDrag(e);
       if (!AllowRowReorder)
       {
         return;
       }
 
-      //ItemDragEventArgs args = null;
-
-      if (!isChannelListView)
+      if (!_isChannelListView)
       {
+        // Support simple reordering of rows.
         DoDragDrop(REORDER, DragDropEffects.Move);
-        //args = new ItemDragEventArgs(e.Button, e.Item);
       }
       else
       {
-        //we pass over the whole listview to be able to easily go through all selected items
-        //when the user drops the channel to another group
+        // Support copying items from one list view to another as well as reordering.
         DoDragDrop(this, DragDropEffects.Move | DragDropEffects.Copy);
-        //args = new ItemDragEventArgs(e.Button, this);
       }
-
-      base.OnItemDrag(e);
     }
 
     protected override void OnDragEnter(DragEventArgs e)
     {
+      base.OnDragEnter(e);
       if (!AllowRowReorder)
       {
         e.Effect = DragDropEffects.None;
         return;
       }
 
-      //if (!e.Data.GetDataPresent(DataFormats.Text))
-      //{
-      //  e.Effect = DragDropEffects.None;
-      //  return;
-      //}
-
-      //String text = (String)e.Data.GetData(REORDER.GetType());
-      //e.Effect = text.CompareTo(REORDER) == 0 ? DragDropEffects.Move : DragDropEffects.None;
-
-      if (!isChannelListView)
-      {
-        e.Effect = (e.Data.GetData(REORDER.GetType()) as string) == REORDER
-                     ? DragDropEffects.Move
-                     : DragDropEffects.None;
-      }
-      else
-      {
-        MPListView lv = e.Data.GetData(typeof (MPListView)) as MPListView;
-        if (lv != null)
-        {
-          if (lv == this)
-          {
-            e.Effect = DragDropEffects.Move;
-          }
-          else
-          {
-            e.Effect = DragDropEffects.Copy;
-          }
-        }
-        else
-        {
-          e.Effect = DragDropEffects.None;
-        }
-      }
-
-      base.OnDragEnter(e);
+      MPListView lv;
+      e.Effect = GetDragDropEffect(e, out lv);
     }
 
     protected override void OnDragLeave(EventArgs e)
     {
       Invalidate();
-
       base.OnDragLeave(e);
     }
 
@@ -175,49 +147,38 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
         return;
       }
 
-      bool isGroupMapping = false;
       MPListView sourceListView = null;
-
-      if (!isChannelListView)
+      e.Effect = GetDragDropEffect(e, out sourceListView);
+      if (e.Effect == DragDropEffects.None)
       {
-        if ((e.Data.GetData(REORDER.GetType()) as string) != REORDER)
-        {
-          e.Effect = DragDropEffects.None;
-          return;
-        }
+        return;
+      }
+      bool isGroupMapping = (sourceListView != null && sourceListView != this);
+
+      ListViewItem hoverItem = null;
+      if (Items.Count == 0)
+      {
+        Invalidate();
       }
       else
       {
-        //channel group assignment is going on
-        sourceListView = e.Data.GetData(typeof (MPListView)) as MPListView;
-        if (sourceListView == null)
-        {
-          e.Effect = DragDropEffects.None;
-          return;
-        }
-
-        isGroupMapping = (sourceListView != this);
-      }
-
-      ListViewItem hoverItem = null;
-
-      if (Items.Count > 0)
-      {
         Point cp = PointToClient(new Point(e.X, e.Y));
-
         hoverItem = GetItemAt(cp.X, cp.Y);
         if (hoverItem == null)
         {
+          // Dragging should be done over list view items. The only exception
+          // is when dragging from one list view to another and the target
+          // list view is empty.
+          Invalidate();
           if (!isGroupMapping)
           {
             e.Effect = DragDropEffects.None;
-            Invalidate();
             return;
           }
         }
-
-        if (hoverItem != null)
+        else
         {
+          // Can't drop onto one of the items that is selected for dragging.
           foreach (ListViewItem moveItem in SelectedItems)
           {
             if (moveItem.Index == hoverItem.Index)
@@ -229,15 +190,16 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
             }
           }
 
-          if (hoverItem != lastItem)
+          // We draw a line across the list view to show the insert position.
+          // Remove the old line.
+          if (hoverItem != _lastItem)
           {
             Invalidate();
           }
+          _lastItem = hoverItem;
 
-          lastItem = hoverItem;
-
+          // Draw the new line.
           Color lineColor = SystemColors.Highlight;
-
           if (View == View.Details || View == View.List)
           {
             using (Graphics g = CreateGraphics())
@@ -278,43 +240,12 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
                               });
             }
           }
-        } //if (hoverItem != null)
-        else
-        {
-          Invalidate();
         }
-      }
-      else
-      {
-        Invalidate();
       }
 
       base.OnDragOver(e);
 
-      if (!isChannelListView)
-      {
-        e.Effect = (e.Data.GetData(REORDER.GetType()) as string) == REORDER
-                     ? DragDropEffects.Move
-                     : DragDropEffects.None;
-      }
-      else
-      {
-        if (sourceListView != null)
-        {
-          if (sourceListView == this)
-          {
-            e.Effect = DragDropEffects.Move;
-          }
-          else
-          {
-            e.Effect = DragDropEffects.Copy;
-          }
-        }
-        else
-        {
-          e.Effect = DragDropEffects.None;
-        }
-      }
+      e.Effect = GetDragDropEffect(e, out sourceListView);
 
       if (hoverItem != null)
       {
@@ -329,29 +260,21 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
         return;
       }
 
-      MPListView sourceListView = e.Data.GetData(typeof (MPListView)) as MPListView;
-      bool isGroupMapping = (sourceListView != this);
-
-      if (SelectedItems.Count == 0 && !isChannelListView && !isGroupMapping)
+      MPListView sourceListView = e.Data.GetData(typeof(MPListView)) as MPListView;
+      bool isGroupMapping = (sourceListView != null && sourceListView != this);
+      if (SelectedItems.Count == 0 && !_isChannelListView && !isGroupMapping)
       {
         return;
       }
 
+      // Determine where we're going to insert the dragged item(s).
       int dropIndex = Items.Count;
-
       Point cp = PointToClient(new Point(e.X, e.Y));
       ListViewItem dragToItem = GetItemAt(cp.X, cp.Y);
-
-      //when dropping a channel to an empty channel group there can't be an item anywhere
-      if (dragToItem == null && !isGroupMapping)
+      if (dragToItem != null)
       {
-        return;
-      }
-      else if (dragToItem != null)
-      {
+        // Always drop below as there is no space to draw the insert line above the first item.
         dropIndex = dragToItem.Index;
-
-        //there is no space above the first item for drawing the the new line, which shows the user, where the item will be dropped
         dropIndex++;
       }
 
@@ -359,69 +282,32 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
       try
       {
         MPListView targetListView = null;
-
         if (!isGroupMapping)
         {
-          //must be reorder then
+          // Reorder.
           targetListView = this;
         }
         else
         {
-          //is group mapping so try to get the selected items from source listview
+          // Move/copy.
           targetListView = sourceListView;
         }
 
+        // Insert copies of the selected items in the drop position.
         ArrayList insertItems = new ArrayList(targetListView.SelectedItems.Count);
-
         foreach (ListViewItem item in targetListView.SelectedItems)
         {
           insertItems.Add(item.Clone());
         }
-
         for (int i = insertItems.Count - 1; i >= 0; i--)
         {
           ListViewItem insertItem = (ListViewItem)insertItems[i];
-
-          //delete old items first
-          for (int j = Items.Count - 1; j >= 0; j--)
-          {
-            int idChannelThis = 0;
-            int idChannelTarget = 0;
-
-            try
-            {
-              //we can have Channel and ChannelMap here, thats why we use late-binding here to be able to compare them without need for referencing the classes
-              idChannelThis =
-                (int)
-                Items[j].Tag.GetType().InvokeMember("IdChannel", System.Reflection.BindingFlags.GetProperty, null,
-                                                    Items[j].Tag, null);
-              idChannelTarget =
-                (int)
-                insertItem.Tag.GetType().InvokeMember("IdChannel", System.Reflection.BindingFlags.GetProperty, null,
-                                                      insertItem.Tag, null);
-            }
-            catch
-            {
-              continue;
-            }
-
-            if (idChannelThis == idChannelTarget)
-            {
-              Items.RemoveAt(j);
-
-              if (j < dropIndex)
-              {
-                dropIndex--;
-              }
-            }
-          }
-
           Items.Insert(dropIndex, insertItem);
         }
 
+        // Remove the original items if reordering.
         if (!isGroupMapping)
         {
-          //removing the source items is only needed when doing reordering...
           foreach (ListViewItem removeItem in SelectedItems)
           {
             Items.Remove(removeItem);
@@ -445,29 +331,40 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
       }
     }
 
-    protected override void OnMouseUp(MouseEventArgs e)
+    #endregion
+
+    #region double-click doesn't check the item
+
+    protected override void OnItemCheck(ItemCheckEventArgs e)
     {
-      if (SelectedItems.Count == 0)
+      if (_doubleClickEventPending)
       {
-        if (((DateTime.Now - lastClick)).TotalMilliseconds < GetDoubleClickTime())
-        {
-          OnDoubleClick(e);
-          lastClick = DateTime.MinValue;
-        }
-        else
-          lastClick = DateTime.Now;
+        e.NewValue = e.CurrentValue;
+        _doubleClickEventPending = false;
       }
       else
-        lastClick = DateTime.MinValue;
-
-      base.OnMouseUp(e);
+      {
+        base.OnItemCheck(e);
+      }
     }
 
-    protected override void OnDoubleClick(EventArgs e)
+    protected override void OnMouseDown(MouseEventArgs e)
     {
-      lastClick = DateTime.MinValue;
-      base.OnDoubleClick(e);
+      // Is this a double-click?
+      if ((e.Button == MouseButtons.Left) && (e.Clicks > 1))
+      {
+        _doubleClickEventPending = true;
+      }
+      base.OnMouseDown(e);
     }
+
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+      _doubleClickEventPending = false;
+      base.OnKeyDown(e);
+    }
+
+    #endregion
 
     protected override void OnPaintBackground(PaintEventArgs pevent) {}
 
