@@ -56,6 +56,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       throw new Exception("could not instantiate class");
     }
 
+    public static object GetProperty(DynaClassInfo ci, string MethodName, object[] args)
+    {
+        return ci.type.InvokeMember(MethodName, BindingFlags.GetProperty, null, ci.ClassObject, args);
+    }
+
+    public static object GetProperty(string AssemblyName, string ClassName, string MethodName, object[] args)
+    {
+        return GetProperty(GetClassReference(AssemblyName, ClassName), MethodName, args);
+    }
+
     public static object InvokeMethod(DynaClassInfo ci, string MethodName, object[] args)
     {
       return ci.type.InvokeMember(MethodName, BindingFlags.InvokeMethod, null, ci.ClassObject, args);

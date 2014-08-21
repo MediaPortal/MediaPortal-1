@@ -925,4 +925,17 @@ namespace TvPlugin
 
     #endregion
   }
+
+  public static class Extensions
+  {
+    public static TimeSpan CalculateTimeRemaining(this Program program)
+    {
+      TimeSpan ts = program.EndTime - DateTime.Now;
+      if (ts.TotalSeconds > 0)
+      {
+        return ts.Add(TimeSpan.FromSeconds(g_Player.Duration - g_Player.CurrentPosition));
+      }
+      return TimeSpan.FromSeconds(0);
+    }
+  }
 }

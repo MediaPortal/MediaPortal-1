@@ -961,7 +961,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 _vfd.SetSymbol(FutabaCOM.SymbolID.mute, FutabaCOM.SymbolState.off);
             //
             //show record symbol, depending on tv recording activity
-            if (MiniDisplayHelper.IsCaptureCardRecording())
+            if (MiniDisplayHelper.MPStatus.Media_IsRecording)
                 _vfd.SetSymbol(FutabaCOM.SymbolID.record, FutabaCOM.SymbolState.on_low);
             else
                 _vfd.SetSymbol(FutabaCOM.SymbolID.record, FutabaCOM.SymbolState.off);

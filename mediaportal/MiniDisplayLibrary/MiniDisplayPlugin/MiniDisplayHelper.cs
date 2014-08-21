@@ -36,6 +36,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     public static bool UseTVServer = false;
     protected static BassAudioEngine _bass = null;
 
+
     public static void DisablePropertyBrowser()
     {
       lock (PropertyBrowserMutex)
@@ -322,26 +323,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     public static bool IsCaptureCardRecording()
     {
-      if (UseTVServer)
-      {
-        return
-          (bool)
-          DynaInvoke.InvokeMethod(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll", "TvServer",
-                                  "IsAnyCardRecording", null);
-      }
-      return false;
+        if (!UseTVServer)
+        {
+            return false;
+        }
+
+        //Now see if we are recording
+        return (bool) DynaInvoke.InvokeMethod(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll", "TvServer", "IsAnyCardRecording", null);
     }
 
+    //This function is broken cause it simply calls IsAnyCardRecording
+    //We just left it here for compatibility.
     public static bool IsCaptureCardViewing()
     {
-      if (UseTVServer)
-      {
-        return
-          (bool)
-          DynaInvoke.InvokeMethod(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll", "TvServer",
-                                  "IsAnyCardRecording", null);
-      }
-      return false;
+        if (!UseTVServer)
+        {
+            return false;
+        }
+        //See if any card is timeshifting?
+        return (bool)DynaInvoke.InvokeMethod(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll", "TvServer", "IsAnyCardRecording", null);
     }
 
     public static bool Player_Playing()
@@ -838,19 +838,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       MPStatus.Media_IsRadio = false;
       MPStatus.Media_IsDVD = false;
       MPStatus.Media_IsMusic = false;
-      MPStatus.Media_IsRecording = false;
-      MPStatus.Media_IsTV = false;
       MPStatus.Media_IsTVRecording = false;
       MPStatus.Media_IsVideo = false;
-      if (IsCaptureCardRecording())
+
+      if (MPStatus.Media_IsRecording) //Should have been set by our status thread
       {
         num |= (ulong)0x400000000L;
-        MPStatus.Media_IsRecording = true;
       }
-      else if (IsCaptureCardViewing())
+      else if (MPStatus.Media_IsTV) //Should have been set by our status thread
       {
         num |= (ulong)8L;
-        MPStatus.Media_IsTV = true;
       }
       if (g_Player.Player == null)
       {
