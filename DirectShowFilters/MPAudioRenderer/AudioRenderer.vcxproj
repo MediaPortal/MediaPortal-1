@@ -134,6 +134,9 @@
     <ClCompile Include="AE_mixer\AEChannelInfo.cpp" />
     <ClCompile Include="AE_mixer\AERemap.cpp" />
     <ClCompile Include="SoundTouch\source\cpu_detect_x86.cpp" />
+    <ClCompile Include="SoundTouch\source\InterpolateCubic.cpp" />
+    <ClCompile Include="SoundTouch\source\InterpolateLinear.cpp" />
+    <ClCompile Include="SoundTouch\source\InterpolateShannon.cpp" />
     <ClCompile Include="source\AC3EncoderFilter.cpp" />
     <ClCompile Include="source\BaseAudioSink.cpp" />
     <ClCompile Include="source\BitDepthAdapter.cpp" />
@@ -172,6 +175,9 @@
     <None Include="source\MpAudioRenderer.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SoundTouch\source\InterpolateCubic.h" />
+    <ClInclude Include="SoundTouch\source\InterpolateLinear.h" />
+    <ClInclude Include="SoundTouch\source\InterpolateShannon.h" />
     <ClInclude Include="source\IMPAudioSettings.h" />
     <ClInclude Include="libresample\src\samplerate.h" />
     <ClInclude Include="AE_mixer\AEAudioFormat.h" />
