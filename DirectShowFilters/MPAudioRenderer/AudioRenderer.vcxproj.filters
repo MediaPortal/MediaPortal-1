@@ -79,6 +79,15 @@
     <ClCompile Include="SoundTouch\source\cpu_detect_x86.cpp">
       <Filter>SoundTouch</Filter>
     </ClCompile>
+    <ClCompile Include="SoundTouch\source\InterpolateLinear.cpp">
+      <Filter>SoundTouch</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundTouch\source\InterpolateShannon.cpp">
+      <Filter>SoundTouch</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundTouch\source\InterpolateCubic.cpp">
+      <Filter>SoundTouch</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AC3EncoderFilter.h" />
@@ -162,6 +171,15 @@
     </ClInclude>
     <ClInclude Include="source\SettingsProp.h" />
     <ClInclude Include="source\IMPAudioSettings.h" />
+    <ClInclude Include="SoundTouch\source\InterpolateCubic.h">
+      <Filter>SoundTouch</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundTouch\source\InterpolateLinear.h">
+      <Filter>SoundTouch</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundTouch\source\InterpolateShannon.h">
+      <Filter>SoundTouch</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="source\MpAudioRenderer.rc" />

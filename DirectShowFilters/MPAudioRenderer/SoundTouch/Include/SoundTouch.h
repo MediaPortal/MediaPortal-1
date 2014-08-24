@@ -41,10 +41,10 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Last changed  : $Date: 2012-12-28 21:32:59 +0200 (Fri, 28 Dec 2012) $
+// Last changed  : $Date: 2014-04-06 18:57:21 +0300 (su, 06 huhti 2014) $
 // File revision : $Revision: 4 $
 //
-// $Id: SoundTouch.h 163 2012-12-28 19:32:59Z oparviai $
+// $Id: SoundTouch.h 195 2014-04-06 15:57:21Z oparviai $
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -79,10 +79,10 @@ namespace soundtouch
 {
 
 /// Soundtouch library version string
-#define SOUNDTOUCH_VERSION          "1.7.1"
+#define SOUNDTOUCH_VERSION          "1.8.0"
 
 /// SoundTouch library version id
-#define SOUNDTOUCH_VERSION_ID       (10701)
+#define SOUNDTOUCH_VERSION_ID       (10800)
 
 //
 // Available setting IDs for the 'setSetting' & 'get_setting' functions:
@@ -160,7 +160,7 @@ private:
     float virtualPitch;
 
     /// Flag: Has sample rate been set?
-    BOOL  bSrateSet;
+    bool  bSrateSet;
 
     /// Calculates effective rate & tempo valuescfrom 'virtualRate', 'virtualTempo' and 
     /// 'virtualPitch' parameters.
@@ -250,8 +250,8 @@ public:
     /// Changes a setting controlling the processing system behaviour. See the
     /// 'SETTING_...' defines for available setting ID's.
     /// 
-    /// \return 'TRUE' if the setting was succesfully changed
-    BOOL setSetting(int settingId,   ///< Setting ID number. see SETTING_... defines.
+    /// \return 'true' if the setting was succesfully changed
+    bool setSetting(int settingId,   ///< Setting ID number. see SETTING_... defines.
                     int value        ///< New setting value.
                     );
 
