@@ -2402,7 +2402,9 @@ public class MediaPortalApp : D3D, IRender
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
     }
 
-    if (!_showLastActiveModule && !Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()))
+    if (!_showLastActiveModule && !Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow())
+      && GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_HOME
+      && GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_SECOND_HOME)
     {
       if (_startWithBasicHome && File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml")))
       {
