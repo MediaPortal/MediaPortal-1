@@ -342,10 +342,27 @@ namespace Databases.Folders
         results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
+          int pos = strPathFiltered.LastIndexOf(@"\");
+          if ((strPathFiltered.Substring(1, 1) == ":" && pos > 1) || (strPathFiltered.Substring(0, 1) == "\\" && pos > 5))
+          {
+            string folderName;
+            folderName = strPathFiltered.Substring(0, pos);
+
+            Log.Debug("GetFolderSetting: {1} not found, trying the parent {0}", folderName, strPathFiltered);
+            GetFolderSetting(folderName, Key, type, out Value);
+            return;
+          }
+          if (strPathFiltered != "root")
+          {
+            Log.Debug("GetFolderSetting: {0} parent not found. Trying the root.", strPathFiltered);
+            GetFolderSetting("root", Key, type, out Value);
+            return;
+          }
+          Log.Debug("GetFolderSetting: {0} parent not found. Will use the default share settings.", strPathFiltered);
           return;
         }
         string strValue = Get(results, 0, "tagValue");
-
+        Log.Debug("GetFolderSetting: {0} found.", strPathFiltered);
         //deserialize...
 
         using (MemoryStream strm = new MemoryStream())
