@@ -55,21 +55,6 @@ int64_t CRtspStreamFragment::GetFragmentStartPosition(void)
 
 /* set methods */
 
-void CRtspStreamFragment::SetDownloaded(bool downloaded)
-{
-  this->flags &= ~RTSP_STREAM_FRAGMENT_FLAG_DOWNLOADED;
-
-  if (downloaded)
-  {
-    this->flags |= RTSP_STREAM_FRAGMENT_FLAG_DOWNLOADED;
-    this->SetLoadedToMemoryTime(GetTickCount());
-  }
-  else
-  {
-    this->SetLoadedToMemoryTime(CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET);
-  }
-}
-
 void CRtspStreamFragment::SetFragmentRtpTimestamp(int64_t fragmentRtpTimestamp)
 {
   this->SetFragmentRtpTimestamp(fragmentRtpTimestamp, true);
@@ -87,23 +72,7 @@ void CRtspStreamFragment::SetFragmentStartPosition(int64_t fragmentStartPosition
   this->fragmentStartPosition = fragmentStartPosition;
 }
 
-void CRtspStreamFragment::SetDiscontinuity(bool discontinuity)
-{
-  this->flags &= ~RTSP_STREAM_FRAGMENT_FLAG_DISCONTINUITY;
-  this->flags |= discontinuity ? RTSP_STREAM_FRAGMENT_FLAG_DISCONTINUITY : RTSP_STREAM_FRAGMENT_FLAG_NONE;
-}
-
 /* other methods */
-
-bool CRtspStreamFragment::IsDiscontinuity(void)
-{
-  return this->IsSetFlags(RTSP_STREAM_FRAGMENT_FLAG_DISCONTINUITY);
-}
-
-bool CRtspStreamFragment::IsDownloaded(void)
-{
-  return this->IsSetFlags(RTSP_STREAM_FRAGMENT_FLAG_DOWNLOADED);
-}
 
 bool CRtspStreamFragment::IsSetFragmentRtpTimestamp(void)
 {

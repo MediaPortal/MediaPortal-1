@@ -28,11 +28,9 @@
 
 #define RTSP_STREAM_FRAGMENT_FLAG_NONE                                CACHE_FILE_ITEM_FLAG_NONE
 
-#define RTSP_STREAM_FRAGMENT_FLAG_DOWNLOADED                          (1 << (CACHE_FILE_ITEM_FLAG_LAST + 0))
-#define RTSP_STREAM_FRAGMENT_FLAG_SET_RTP_TIMESTAMP                   (1 << (CACHE_FILE_ITEM_FLAG_LAST + 1))
-#define RTSP_STREAM_FRAGMENT_FLAG_DISCONTINUITY                       (1 << (CACHE_FILE_ITEM_FLAG_LAST + 2))
+#define RTSP_STREAM_FRAGMENT_FLAG_SET_RTP_TIMESTAMP                   (1 << (CACHE_FILE_ITEM_FLAG_LAST + 0))
 
-#define RTSP_STREAM_FRAGMENT_FLAG_LAST                                (CACHE_FILE_ITEM_FLAG_LAST + 3)
+#define RTSP_STREAM_FRAGMENT_FLAG_LAST                                (CACHE_FILE_ITEM_FLAG_LAST + 1)
 
 #define RTSP_STREAM_FRAGMENT_START_POSITION_NOT_SET                   -1
 
@@ -58,10 +56,6 @@ public:
 
   /* set methods */
 
-  // sets if segment and fragment is downloaded
-  // @param downloaded : true if segment and fragment is downloaded
-  void SetDownloaded(bool downloaded);
-
   // sets fragment RTP timestamp
   // @param fragmentRtpTimestamp : the fragment RTP timestamp to set
   void SetFragmentRtpTimestamp(int64_t fragmentRtpTimestamp);
@@ -75,19 +69,7 @@ public:
   // @param fragmentStartPosition : fragment start position to set
   void SetFragmentStartPosition(int64_t fragmentStartPosition);
 
-  // set discontinuity
-  // @param discontinuity : true if discontinuity after data, false otherwise
-  void SetDiscontinuity(bool discontinuity);
-
   /* other methods */
-
-  // tests if discontinuity is set
-  // @return : true if discontinuity is set, false otherwise
-  bool IsDiscontinuity(void);
-
-  // tests if fragment is downloaded
-  // @return : true if downloaded, false otherwise
-  virtual bool IsDownloaded(void);
 
   // tests if fragment has set RTP timestamp
   // @return : true if fragment has set RTP timestamp, false otherwise

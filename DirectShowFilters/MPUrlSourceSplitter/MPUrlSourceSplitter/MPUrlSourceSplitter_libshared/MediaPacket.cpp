@@ -81,7 +81,7 @@ void CMediaPacket::SetPresentationTimestamp(int64_t presentationTimestamp, unsig
 
 /* protected methods */
 
-CCacheFileItem *CMediaPacket::CreateItem(void)
+CFastSearchItem *CMediaPacket::CreateItem(void)
 {
   HRESULT result = S_OK;
   CMediaPacket *item = new CMediaPacket(&result);
@@ -91,7 +91,7 @@ CCacheFileItem *CMediaPacket::CreateItem(void)
   return item;
 }
 
-bool CMediaPacket::InternalClone(CCacheFileItem *item)
+bool CMediaPacket::InternalClone(CFastSearchItem *item)
 {
   bool result = __super::InternalClone(item);
   

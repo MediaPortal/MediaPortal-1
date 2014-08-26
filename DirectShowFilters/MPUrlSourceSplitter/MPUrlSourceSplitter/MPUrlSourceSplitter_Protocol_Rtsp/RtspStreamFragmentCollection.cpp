@@ -41,22 +41,6 @@ CRtspStreamFragment *CRtspStreamFragmentCollection::GetItem(unsigned int index)
   return (CRtspStreamFragment *)__super::GetItem(index);
 }
 
-unsigned int CRtspStreamFragmentCollection::GetFirstNotDownloadedStreamFragment(unsigned int start)
-{
-  unsigned int result = UINT_MAX;
-
-  for (unsigned int i = start; i < this->itemCount; i++)
-  {
-    if (!this->GetItem(i)->IsDownloaded())
-    {
-      result = i;
-      break;
-    }
-  }
-
-  return result;
-}
-
 unsigned int CRtspStreamFragmentCollection::GetStreamFragmentIndexBetweenPositions(int64_t position)
 {
   unsigned int index = UINT_MAX;

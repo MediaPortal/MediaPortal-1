@@ -80,14 +80,14 @@ protected:
 
   /* methods */
 
-  // gets new instance of media packet
-  // @return : new media packet instance or NULL if error
-  virtual CCacheFileItem *CreateItem(void);
+  // gets new instance of cache file item
+  // @return : new cache file item instance or NULL if error
+  virtual CFastSearchItem *CreateItem(void);
 
   // deeply clones current instance
   // @param item : the cache file item instance to clone
   // @return : true if successful, false otherwise
-  virtual bool InternalClone(CCacheFileItem *item);
+  virtual bool InternalClone(CFastSearchItem *item);
 };
 
 #endif
