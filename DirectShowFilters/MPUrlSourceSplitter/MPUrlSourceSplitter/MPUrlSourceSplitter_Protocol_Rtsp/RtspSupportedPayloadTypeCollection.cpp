@@ -50,7 +50,7 @@ CRtspPayloadType *CRtspSupportedPayloadTypeCollection::Clone(CRtspPayloadType *i
   return (CRtspPayloadType *)item->Clone();
 }
 
-bool CRtspSupportedPayloadTypeCollection::AddPayloadType(unsigned int payloadType, const wchar_t *name, const wchar_t *streamInputFormat, uint64_t flags)
+bool CRtspSupportedPayloadTypeCollection::AddPayloadType(unsigned int payloadType, const wchar_t *name, const wchar_t *streamInputFormat, uint32_t flags)
 {
   HRESULT result = S_OK;
   CRtspPayloadType *payload = new CRtspPayloadType(&result);
