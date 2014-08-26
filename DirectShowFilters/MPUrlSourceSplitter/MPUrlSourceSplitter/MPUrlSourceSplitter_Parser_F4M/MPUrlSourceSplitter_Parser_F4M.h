@@ -25,7 +25,7 @@
 
 #include "ParserPlugin.h"
 
-#define PARSER_NAME                                               L"F4M"
+#define PARSER_NAME                                               L"PARSER_F4M"
 
 class CMPUrlSourceSplitter_Parser_F4M : public CParserPlugin
 {

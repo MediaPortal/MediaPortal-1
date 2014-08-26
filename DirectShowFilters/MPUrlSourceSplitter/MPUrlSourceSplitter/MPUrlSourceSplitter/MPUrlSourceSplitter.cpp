@@ -98,14 +98,6 @@ extern "C"
 extern "C" char *curl_easy_unescape(void *handle, const char *string, int length, int *olen);
 extern "C" void curl_free(void *p);
 
-// if ffmpegLogCallbackSet is true than ffmpeg log callback will not be set
-// in that case we don't receive messages from ffmpeg
-static volatile bool ffmpegLogCallbackSet = false;
-
-// specifies if FFmpeg was initialized or not
-static volatile bool ffmpegInitialized = false;
-
-extern "C++" CLogger *ffmpegLoggerInstance = NULL;
 extern "C++" CStaticLogger *staticLogger;
 
 #define SHOW_VERSION                                              2
@@ -189,6 +181,15 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
 
   if (SUCCEEDED(*phr))
   {
+#ifdef _DEBUG
+    // log file parameter doesn't exist, add default
+    wchar_t *logFile = (IsEqualGUID(GUID_MP_IPTV_SOURCE, clsid) != 0) ? GetTvServerFilePath(MP_IPTV_SOURCE_LOG_FILE) : GetMediaPortalFilePath(MP_URL_SOURCE_SPLITTER_LOG_FILE);
+    CHECK_POINTER_HRESULT(*phr, logFile, *phr, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_HRESULT(*phr, loggerParameters->Add(PARAMETER_NAME_LOG_FILE_NAME, logFile), *phr, E_OUTOFMEMORY);
+    FREE_MEM(logFile);
+#endif
+
     this->logger = new CLogger(phr, staticLogger, loggerParameters);
     CHECK_POINTER_HRESULT(*phr, this->logger, *phr, E_OUTOFMEMORY);
   }
@@ -286,33 +287,6 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
       CHECK_POINTER_HRESULT(*phr, this->demuxersMutex != NULL, *phr, E_OUTOFMEMORY);
 
       CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(*phr), this->parserHoster->LoadPlugins(), *phr);
-
-      // TO DO: initialization of FFmpeg have to be in global locked mutex
-      if (!ffmpegInitialized)
-      {
-        // initialize FFmpeg
-        av_register_all();
-        
-        ffmpegInitialized = true;
-      }
-
-      if (!ffmpegLogCallbackSet)
-      {
-        // callback for ffmpeg log is not set
-        av_log_set_callback(FFmpegLogCallback);
-        av_log_set_level(AV_LOG_DEBUG);
-
-        // for FFmpeg logger instance we assume that IPTV filter will be used with TvServer and splitter will be used with MediaPortal (different processes)
-        // if both will be used in one process than FFmpeg logger instance can write to another log file
-        // it depends on which filter will be created first
-
-        // create FFmpeg logger instance
-        // logger instance is cleared while unloading DLL (dllmain.cpp)
-        ffmpegLoggerInstance = new CLogger(phr, this->logger);
-        CHECK_POINTER_HRESULT(*phr, ffmpegLoggerInstance, *phr, E_OUTOFMEMORY);
-
-        ffmpegLogCallbackSet = true;
-      }
     }
 
     this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
@@ -1719,7 +1693,7 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
 
             if (pin->IsConnected())
             {
-              packet->SetLoadedToMemoryTime(GetTickCount());
+              packet->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
               CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = pin->QueuePacket(packet, 100));
             }
 
@@ -1938,89 +1912,6 @@ HRESULT CMPUrlSourceSplitter::GetNextPacket(COutputPinPacket *packet, unsigned i
   return result;
 }
 
-void InvalidParameterHandler(const wchar_t* expression, const wchar_t* function, const wchar_t* file, unsigned int line, uintptr_t pReserved)
-{
-  // in release it doesn't output any valuable information
-#ifdef _DEBUG
-  if (ffmpegLoggerInstance != NULL)
-  {
-    ffmpegLoggerInstance->Log(LOGGER_VERBOSE, L"%s: %s: invalid parameter detected in function '%s', file '%s', line %d.\nExpression: %s", MODULE_NAME, L"InvalidParameterHandler()", function, file, line, expression);
-  }
-#endif
-}
-
-void CMPUrlSourceSplitter::FFmpegLogCallback(void *ptr, int log_level, const char *format, va_list vl)
-{
-  // supress error messages while logging messages from ffmpeg
-  // error messages are written to log file in debug
-
-  bool isAvi = false;
-  bool isMpegTs = false;
-  AVFormatContext *formatContext = (AVFormatContext *)ptr;
-
-  CLogger *loggerInstance =  ffmpegLoggerInstance;
-  CMPUrlSourceSplitter *filter = NULL;
-  CDemuxer *demuxer = NULL;
-  if ((formatContext != NULL) && (formatContext->pb != NULL) && (formatContext->pb->opaque != NULL))
-  {
-    demuxer = (CDemuxer *)formatContext->pb->opaque;
-    filter = dynamic_cast<CMPUrlSourceSplitter *>(demuxer->GetDemuxerOwner());
-
-    if (filter != NULL)
-    {
-      loggerInstance = filter->logger;
-      isAvi = demuxer->IsAvi();
-      isMpegTs = demuxer->IsMpegTs();
-    }
-  }
-
-  if ((loggerInstance != NULL) && (!isAvi) && ((!isMpegTs) || (isMpegTs && (log_level < AV_LOG_WARNING))))
-  {
-    int warnReportMode = _CrtSetReportMode(_CRT_WARN, 0);
-    int errorReportMode = _CrtSetReportMode(_CRT_ERROR, 0);
-    int assertReportMode = _CrtSetReportMode(_CRT_ASSERT, 0);
-
-    _invalid_parameter_handler previousHandler = _set_invalid_parameter_handler(InvalidParameterHandler);
-
-    int length = _vscprintf(format, vl) + 1;
-    ALLOC_MEM_DEFINE_SET(buffer, char, length, 0);
-    if (buffer != NULL)
-    {
-      if (vsprintf_s(buffer, length, format, vl) != (-1))
-      {
-        char *trimmed = TrimA(buffer);
-        if (trimmed != NULL)
-        {
-          wchar_t *logLine = ConvertToUnicodeA(trimmed);
-          if (logLine != NULL)
-          {
-            if (demuxer != NULL)
-            {
-              loggerInstance->Log(LOGGER_VERBOSE, L"%s: %s: demuxer stream: %u, log level: %d, message: %s", MODULE_NAME, L"ffmpeg_log_callback()", demuxer->GetDemuxerId(), log_level, logLine);
-            }
-            else
-            {
-              loggerInstance->Log(LOGGER_VERBOSE, L"%s: %s: log level: %d, message: %s", MODULE_NAME, L"ffmpeg_log_callback()", log_level, logLine);
-            }
-          }
-
-          FREE_MEM(logLine);
-        }
-        FREE_MEM(trimmed);
-      }
-    }
-
-    FREE_MEM(buffer);
-
-    // set original values for error messages back
-    _set_invalid_parameter_handler(previousHandler);
-
-    _CrtSetReportMode(_CRT_WARN, warnReportMode);
-    _CrtSetReportMode(_CRT_ERROR, errorReportMode);
-    _CrtSetReportMode(_CRT_ASSERT, assertReportMode);
-  }
-}
-
 STDMETHODIMP CMPUrlSourceSplitter::Load()
 {
   HRESULT result = S_OK;
@@ -2030,7 +1921,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load()
   {
     result = E_INVALID_CONFIGURATION;
   }
-
+  
   if (SUCCEEDED(result))
   {
     // check log file parameter, if not set, add default

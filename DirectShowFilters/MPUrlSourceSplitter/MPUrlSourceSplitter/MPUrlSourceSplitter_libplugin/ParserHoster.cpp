@@ -245,6 +245,8 @@ HRESULT CParserHoster::StartReceivingData(CParameterCollection *parameters)
       }
       while ((newUrlSpecified) && SUCCEEDED(result));
     }
+
+    FREE_MEM_CLASS(urlConnection);
   }
 
   CHECK_POINTER_HRESULT(result, this->activeParser, result, E_NO_ACTIVE_PARSER);

@@ -20,13 +20,20 @@
 
 #include "StdAfx.h"
 
+#pragma warning(push)
+// disable warning: 'INT8_MIN' : macro redefinition
+// warning is caused by stdint.h and intsafe.h, which both define same macro
+#pragma warning(disable:4005)
+
 #include "AfhsDecryptionHoster.h"
 #include "ErrorCodes.h"
 #include "AfhsDecryptionPluginConfiguration.h"
 #include "AfhsDecryptionHosterPluginMetadata.h"
 
+#pragma warning(pop)
+
 CAfhsDecryptionHoster::CAfhsDecryptionHoster(HRESULT *result, CLogger *logger, CParameterCollection *configuration)
-  : CHoster(result, logger, configuration, L"ParserHoster", L"mpurlsourcesplitter_afhs_decryption_*.dll")
+  : CHoster(result, logger, configuration, L"AfhsDecryptionHoster", L"mpurlsourcesplitter_protocol_afhs_decryption_*.dll")
 {
   this->activeDecryptor = NULL;
 

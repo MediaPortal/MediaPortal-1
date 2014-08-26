@@ -26,8 +26,8 @@
 #include "Logger.h"
 #include "ProtocolPlugin.h"
 #include "HttpCurlInstance.h"
-#include "MediaPacketCollection.h"
 #include "CacheFile.h"
+#include "HttpStreamFragmentCollection.h"
 
 #define PROTOCOL_NAME                                                         L"HTTP"
 
@@ -42,7 +42,13 @@ wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { 
 #define MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_SEEKING_SUPPORT_DETECTION   (1 << (PROTOCOL_PLUGIN_FLAG_LAST + 1))
 #define MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_REPORTED_STATUS_CODE        (1 << (PROTOCOL_PLUGIN_FLAG_LAST + 2))
 
-#define MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_LAST                        (PROTOCOL_PLUGIN_FLAG_LAST + 3)
+// only closes curl instance (stop receive data in curl instance), but stays in memory
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_CLOSE_CURL_INSTANCE         (1 << (PROTOCOL_PLUGIN_FLAG_LAST + 3))
+// stop receiving data flag cannot be set without close curl instance flag
+// specifies that after closing curl instance is called StopReceivingData() method
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_STOP_RECEIVING_DATA         (1 << (PROTOCOL_PLUGIN_FLAG_LAST + 4))
+
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_LAST                        (PROTOCOL_PLUGIN_FLAG_LAST + 5)
 
 class CMPUrlSourceSplitter_Protocol_Http : public CProtocolPlugin
 {
@@ -162,13 +168,13 @@ protected:
   CHttpCurlInstance *mainCurlInstance;
   // holds current cookies of CURL instance
   CParameterCollection *currentCookies;
-  // holds media packets with received data
-  CMediaPacketCollection *mediaPackets;
+  // holds HTTP stream fragments with received data
+  CHttpStreamFragmentCollection *streamFragments;
   // holds cache file
   CCacheFile *cacheFile;
   // start, end and current stream position
-  int64_t startStreamPosition;
-  int64_t endStreamPosition;
+  //int64_t startStreamPosition;
+  //int64_t endStreamPosition;
   int64_t currentStreamPosition;
   // holds current stream length
   int64_t streamLength;
@@ -176,6 +182,17 @@ protected:
   unsigned int lastStoreTime;
   // holds last receive data time
   unsigned int lastReceiveDataTime;
+  // holds last processed size from last store time
+  unsigned int lastProcessedSize;
+  unsigned int currentProcessedSize;
+
+  // holds which fragment is currently downloading (UINT_MAX means none)
+  unsigned int streamFragmentDownloading;
+  // holds which fragment is currently processed
+  //unsigned int streamFragmentProcessing;
+  // holds which fragment have to be downloaded
+  // (UINT_MAX means next fragment, always reset after started download of fragment)
+  unsigned int streamFragmentToDownload;
 
   /* methods */
 

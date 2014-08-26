@@ -24,6 +24,7 @@
 #define __DEMUXER_DEFINED
 
 #include "Logger.h"
+#include "FFmpegContext.h"
 #include "StreamCollection.h"
 #include "IDemuxerOwner.h"
 #include "OutputPinPacketCollection.h"
@@ -99,7 +100,7 @@ static const AVRational AV_RATIONAL_TIMEBASE = {1, AV_TIME_BASE};
 
 //#define FLV_TIMESTAMP_MAX                                             1024
 
-class CDemuxer : public CFlags, public IPacketDemuxer
+class CDemuxer : public CFlags, public IPacketDemuxer, public IFFmpegLog
 {
 public:
   enum { CMD_EXIT, CMD_PAUSE, CMD_DEMUX, CMD_CREATE_DEMUXER };
@@ -112,7 +113,7 @@ public:
   CDemuxer(HRESULT *result, CLogger *logger, IDemuxerOwner *filter, CParameterCollection *configuration);
   ~CDemuxer(void);
 
-  // IPacketDemuxer methods
+  // IPacketDemuxer interface
 
   // gets next available media packet
   // @param mediaPacket : reference to variable to store to reference to media packet
@@ -130,6 +131,10 @@ public:
   // @param flags : the flags
   // @return : the length of read data, negative values are errors
   int StreamReadPosition(int64_t position, uint8_t *buffer, int length, uint64_t flags);
+
+  // IFFmpegLog interface
+
+  bool FFmpegLog(CFFmpegLogger *ffmpegLogger, CFFmpegContext *context, void *ffmpegPtr, int ffmpegLogLevel, const char *ffmpegFormat, va_list ffmpegList);
   
   /* get methods */
 
@@ -253,20 +258,19 @@ public:
 protected:
   // configuration passed from filter
   CParameterCollection *configuration;
-
   // holds logger for logging purposes
   // its only reference to logger instance, it is not destroyed in ~CDemuxer()
   CLogger *logger;
-
   // holds filter instance
   IDemuxerOwner *filter;
+  // holds FFMpeg context
+  CFFmpegContext *ffmpegContext;
 
   // each demuxer has its own ID
   unsigned int demuxerId;
 
   // holds stream input format (if specified)
   wchar_t *streamInputFormat;
-
   // holds special packet input format (only in case of DEMUXER_FLAG_STREAM_IN_PACKETS set flag)
   CPacketInputFormat *packetInputFormat;
 

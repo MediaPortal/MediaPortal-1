@@ -25,7 +25,7 @@
 
 #include "ParserPlugin.h"
 
-#define PARSER_NAME                                               L"DEFAULT"
+#define PARSER_NAME                                               L"PARSER_DEFAULT"
 
 class CMPUrlSourceSplitter_Parser_Default : public CParserPlugin
 {

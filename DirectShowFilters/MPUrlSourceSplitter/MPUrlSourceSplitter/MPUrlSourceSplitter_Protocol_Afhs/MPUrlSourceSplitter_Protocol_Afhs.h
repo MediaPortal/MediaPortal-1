@@ -169,9 +169,6 @@ protected:
   // hodls decryption hoster
   CAfhsDecryptionHoster *decryptionHoster;
 
-  // holds connection state
-  ProtocolConnectionState connectionState;
-
   // mutex for locking access to file, buffer, ...
   HANDLE lockMutex;
   // mutex for locking access to internal buffer of CURL instance

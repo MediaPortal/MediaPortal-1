@@ -31,6 +31,14 @@ CLoggerContextCollection::~CLoggerContextCollection(void)
 {
 }
 
+/* get methods */
+
+/* set methods */
+
+/* other methods */
+
+/* protected methods */
+
 CLoggerContext *CLoggerContextCollection::Clone(CLoggerContext *item)
 {
   return NULL;

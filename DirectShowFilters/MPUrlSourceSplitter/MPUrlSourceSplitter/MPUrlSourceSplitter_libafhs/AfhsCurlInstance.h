@@ -23,7 +23,7 @@
 #ifndef __AFHS_CURL_INSTANCE_DEFINED
 #define __AFHS_CURL_INSTANCE_DEFINED
 
-#include "MPUrlSourceSplitter_Protocol_Afhs_Parameters.h"
+#include "IProtocol.h"
 #include "HttpCurlInstance.h"
 #include "AfhsDownloadRequest.h"
 #include "AfhsDownloadResponse.h"
@@ -52,7 +52,15 @@ public:
   // @return : owner lock count of AFHS CURL instance, zero if not locked
   unsigned int GetOwnerLockCount(void);
 
+  // gets AFHS CURL instance connection state
+  // @return : connection state
+  ProtocolConnectionState GetConnectionState(void);
+
   /* set methods */
+
+  // sets AFHS CURL instance connection state
+  // @param connectionState : the connection state to set
+  void SetConnectionState(ProtocolConnectionState connectionState);
 
   /* other methods */
 
@@ -60,10 +68,6 @@ public:
   // @param downloadRequest : download request
   // @return : true if successful, false otherwise
   virtual HRESULT Initialize(CDownloadRequest *downloadRequest);
-
-  // stops receiving data
-  // @return : true if successful, false otherwise
-  //virtual HRESULT StopReceivingData(void);
 
   // lock AFHS CURL instance for specific owner
   // only owner can unlock instance for other use
@@ -100,18 +104,14 @@ protected:
   // holds owner lock count (zero if not locked, more than zero if locked)
   unsigned int ownerLockCount;
 
+  // holds connection state
+  ProtocolConnectionState connectionState;
+
   /* methods */
 
   // gets new instance of download response
   // @return : new download response or NULL if error
   virtual CDownloadResponse *CreateDownloadResponse(void);
-
-  // virtual CurlWorker() method is called from static CurlWorker() method
-  //virtual unsigned int CurlWorker(void);
-
-  // creates dump box for dump file
-  // @return : dump box or NULL if error
-  //virtual CDumpBox *CreateDumpBox(void);
 };
 
 #endif

@@ -294,6 +294,8 @@ void CHttpCurlInstance::CurlDebug(curl_infotype type, const wchar_t *data)
         }
       }
     }
+
+    FREE_MEM(lowerBuffer);
   }
 }
 

@@ -81,6 +81,8 @@
     <ClInclude Include="CacheFileItemCollection.h" />
     <ClInclude Include="FreeSpace.h" />
     <ClInclude Include="FreeSpaceCollection.h" />
+    <ClInclude Include="IndexedCacheFileItem.h" />
+    <ClInclude Include="IndexedCacheFileItemCollection.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -90,6 +92,8 @@
     <ClCompile Include="CacheFileItemCollection.cpp" />
     <ClCompile Include="FreeSpace.cpp" />
     <ClCompile Include="FreeSpaceCollection.cpp" />
+    <ClCompile Include="IndexedCacheFileItem.cpp" />
+    <ClCompile Include="IndexedCacheFileItemCollection.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

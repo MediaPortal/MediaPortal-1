@@ -92,7 +92,7 @@ CHoster::~CHoster(void)
 HRESULT CHoster::LoadPlugins(void)
 {
   HRESULT result = ((this->logger != NULL) && (this->configuration != NULL) && (this->hosterName != NULL) && (this->hosterSearchPattern != NULL) && (this->hosterPluginMetadataCollection != NULL)) ? S_OK : E_NOT_VALID_STATE;
-
+  
   if (SUCCEEDED(result))
   {
     this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, this->hosterName, METHOD_LOAD_PLUGINS_NAME);
@@ -144,6 +144,8 @@ HRESULT CHoster::LoadPlugins(void)
             CHosterPluginMetadata *hosterPluginMetadata = this->CreateHosterPluginMetadata(&result, this->logger, this->configuration, this->hosterName, pluginLibraryFileName);
             CHECK_POINTER_HRESULT(result, hosterPluginMetadata, result, E_OUTOFMEMORY);
 
+            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = hosterPluginMetadata->CheckPlugin());
+
             if (SUCCEEDED(result))
             {
               // initialize plugin
@@ -167,6 +169,15 @@ HRESULT CHoster::LoadPlugins(void)
                 this->logger->Log(LOGGER_INFO, L"%s: %s: plugin '%s' not initialized, error: 0x%08X", this->hosterName, METHOD_LOAD_PLUGINS_NAME, hosterPluginMetadata->GetPlugin()->GetName(), result);
                 FREE_MEM_CLASS(hosterPluginMetadata);
               }
+            }
+            else if (result == E_INVALID_PLUGIN_TYPE)
+            {
+              // plugin type is invalid for hoster, probably is valid for other hoster
+              // we can continue
+              this->logger->Log(LOGGER_WARNING, L"%s: %s: plugin '%s' has invalid type for hoster, ignoring plugin", this->hosterName, METHOD_LOAD_PLUGINS_NAME, hosterPluginMetadata->GetPlugin()->GetName());
+
+              FREE_MEM_CLASS(hosterPluginMetadata);
+              result = S_OK;
             }
 
             FREE_MEM(pluginLibraryFileName);

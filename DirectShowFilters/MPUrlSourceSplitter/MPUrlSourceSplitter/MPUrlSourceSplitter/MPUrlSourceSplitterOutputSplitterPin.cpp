@@ -161,7 +161,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
     if (packet->IsPacketParsed())
     {
       // add packet to output packet collection
-      packet->SetLoadedToMemoryTime(GetTickCount());
+      packet->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
       result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
     }
     else if (this->mediaTypeSubType == MEDIASUBTYPE_AVC1 &&
@@ -332,7 +332,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
             // error occured, clean this->h264PacketCollection to previous state
             while (this->h264PacketCollection->Count() != h264PacketCollectionCount)
             {
-              this->h264PacketCollection->Remove(this->h264PacketCollection->Count() - 1);
+              this->h264PacketCollection->CCollection::Remove(this->h264PacketCollection->Count() - 1);
             }
           }
         }
@@ -439,13 +439,13 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
             }
 
             // add packet to output collection
-            queuePacket->SetLoadedToMemoryTime(GetTickCount());
+            queuePacket->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
             CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaPackets->Add(queuePacket) ? result : E_OUTOFMEMORY);
 
             // delete processed H264 packets
             for (unsigned int i = 0; (SUCCEEDED(result) && (i < nextPacketIndex)); i++)
             {
-              this->h264PacketCollection->Remove(0);
+              this->h264PacketCollection->CCollection::Remove(0);
             }
 
             CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(queuePacket));
@@ -484,7 +484,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
           packet->SetFlags(packet->GetFlags() | OUTPUT_PIN_PACKET_FLAG_PACKET_PARSED);
 
           // add packet to output packet collection
-          packet->SetLoadedToMemoryTime(GetTickCount());
+          packet->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
           result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
         }
         else
@@ -562,7 +562,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
     else if (this->mediaTypeSubType == MEDIASUBTYPE_HDMV_LPCM_AUDIO)
     {
       // add packet to output packet collection, if successful, change it's data
-      packet->SetLoadedToMemoryTime(GetTickCount());
+      packet->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
       result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
 
       CHECK_CONDITION_EXECUTE(SUCCEEDED(result), packet->GetBuffer()->RemoveFromBuffer(4));
@@ -591,7 +591,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
             packet->SetFlags(packet->GetFlags() | OUTPUT_PIN_PACKET_FLAG_PACKET_PARSED);
 
             // add packet to output packet collection
-            packet->SetLoadedToMemoryTime(GetTickCount());
+            packet->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
             result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
           }
           else
@@ -637,13 +637,13 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
 
       FREE_MEM(buffer);
 
-      packet->SetLoadedToMemoryTime(GetTickCount());
+      packet->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
       CHECK_CONDITION_HRESULT(result, this->mediaPackets->Add(packet), result, E_OUTOFMEMORY);
     }
     else
     {
       // add packet to output packet collection
-      packet->SetLoadedToMemoryTime(GetTickCount());
+      packet->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
       result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
     }
   }

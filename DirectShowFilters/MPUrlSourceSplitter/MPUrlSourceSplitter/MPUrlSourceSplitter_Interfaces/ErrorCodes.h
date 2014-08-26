@@ -40,13 +40,14 @@
 #define E_CONVERT_STRING_ERROR                                                  -3
 #define E_CANNOT_LOAD_PLUGIN_LIBRARY                                            -4
 #define E_INVALID_PLUGIN                                                        -5
-#define E_CANNOT_CREATE_PLUGIN                                                  -6
-#define E_NOT_FOUND_INTERFACE_NAME                                              -7
-#define E_STREAM_COUNT_UNKNOWN                                                  -8
-#define E_INVALID_STREAM_PACKAGE_REQUEST                                        -9
-#define E_INVALID_STREAM_ID                                                     -10
-#define E_CANNOT_GET_MODULE_FILE_NAME                                           -11
-#define E_CONNECTION_LOST_TRYING_REOPEN                                         -12
+#define E_INVALID_PLUGIN_TYPE                                                   -6
+#define E_CANNOT_CREATE_PLUGIN                                                  -7
+#define E_NOT_FOUND_INTERFACE_NAME                                              -8
+#define E_STREAM_COUNT_UNKNOWN                                                  -9
+#define E_INVALID_STREAM_PACKAGE_REQUEST                                        -10
+#define E_INVALID_STREAM_ID                                                     -11
+#define E_CANNOT_GET_MODULE_FILE_NAME                                           -12
+#define E_CONNECTION_LOST_TRYING_REOPEN                                         -13
 
 // parser error codes
 

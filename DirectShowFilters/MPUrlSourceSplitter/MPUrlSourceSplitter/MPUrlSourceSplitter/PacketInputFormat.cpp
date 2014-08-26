@@ -186,7 +186,7 @@ int CPacketInputFormat::ReadPacket(AVFormatContext *formatContext, AVPacket *pac
     {
       mediaPacket->GetBuffer()->CopyFromBuffer(packet->data, mediaPacket->GetBuffer()->GetBufferOccupiedSpace());
 
-      packet->pts = (mediaPacket->GetPresentationTimestamp() != MEDIA_PACKET_PRESENTATION_TIMESTAMP_UNDEFINED) ? mediaPacket->GetPresentationTimestampInDirectShowTimeUnits() : AV_NOPTS_VALUE;
+      packet->pts = (mediaPacket->GetPresentationTimestamp() != MEDIA_PACKET_PRESENTATION_TIMESTAMP_UNDEFINED) ? mediaPacket->GetPresentationTimestamp() : AV_NOPTS_VALUE;
       packet->flags |= (mediaPacket->IsDiscontinuity() | caller->IsSetFlags(PACKET_INPUT_FORMAT_FLAG_DISCONTINUITY)) ? AV_PKT_FLAG_CORRUPT : 0;
 
       caller->internalFlags &= ~PACKET_INPUT_FORMAT_FLAG_DISCONTINUITY;

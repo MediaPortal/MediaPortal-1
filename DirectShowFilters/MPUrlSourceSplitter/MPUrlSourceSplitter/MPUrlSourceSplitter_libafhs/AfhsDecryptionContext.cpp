@@ -20,17 +20,23 @@
 
 #include "StdAfx.h"
 
+#pragma warning(push)
+// disable warning: 'INT8_MIN' : macro redefinition
+// warning is caused by stdint.h and intsafe.h, which both define same macro
+#pragma warning(disable:4005)
+
 #include "AfhsDecryptionContext.h"
 
-CAfhsDecryptionContext::CAfhsDecryptionContext(void)
+#pragma warning(pop)
+
+CAfhsDecryptionContext::CAfhsDecryptionContext(HRESULT *result)
 {
-  this->segmentsFragments = NULL;
+  this->curlInstance = NULL;
+  this->segmentFragments = NULL;
   this->segmentFragmentDownloading = UINT_MAX;
   this->segmentFragmentProcessing = UINT_MAX;
   this->segmentFragmentToDownload = UINT_MAX;
-  this->forceDownload = false;
-  this->manifestContent = NULL;
-  this->manifestUrl = NULL;
+  this->segmentFragmentDecrypting = UINT_MAX;
 }
 
 CAfhsDecryptionContext::~CAfhsDecryptionContext(void)
@@ -39,10 +45,14 @@ CAfhsDecryptionContext::~CAfhsDecryptionContext(void)
 
 /* get methods */
 
-// gets segments and fragments collection
-CSegmentFragmentCollection *CAfhsDecryptionContext::GetSegmentsFragments(void)
+CAfhsCurlInstance *CAfhsDecryptionContext::GetCurlInstance(void)
 {
-  return this->segmentsFragments;
+  return this->curlInstance;
+}
+
+CAfhsSegmentFragmentCollection *CAfhsDecryptionContext::GetSegmentsFragments(void)
+{
+  return this->segmentFragments;
 }
 
 unsigned int CAfhsDecryptionContext::GetSegmentFragmentDownloading(void)
@@ -60,26 +70,21 @@ unsigned int CAfhsDecryptionContext::GetSegmentFragmentToDownload(void)
   return this->segmentFragmentToDownload;
 }
 
-const wchar_t *CAfhsDecryptionContext::GetManifestUrl(void)
+unsigned int CAfhsDecryptionContext::GetSegmentFragmentDecrypting(void)
 {
-  return this->manifestUrl;
-}
-
-const wchar_t *CAfhsDecryptionContext::GetManifestContent(void)
-{
-  return this->manifestContent;
-}
-
-bool CAfhsDecryptionContext::GetForceDownload(void)
-{
-  return this->forceDownload;
+  return this->segmentFragmentDecrypting;
 }
 
 /* set methods */
 
-void CAfhsDecryptionContext::SetSegmentsFragments(CSegmentFragmentCollection *segmentsFragments)
+void CAfhsDecryptionContext::SetCurlInstance(CAfhsCurlInstance *curlInstance)
 {
-  this->segmentsFragments = segmentsFragments;
+  this->curlInstance = curlInstance;
+}
+
+void CAfhsDecryptionContext::SetSegmentsFragments(CAfhsSegmentFragmentCollection *segmentFragments)
+{
+  this->segmentFragments = segmentFragments;
 }
 
 void CAfhsDecryptionContext::SetSegmentFragmentDownloading(unsigned int segmentFragmentDownloading)
@@ -97,19 +102,88 @@ void CAfhsDecryptionContext::SetSegmentFragmentToDownload(unsigned int segmentFr
   this->segmentFragmentToDownload = segmentFragmentToDownload;
 }
 
-void CAfhsDecryptionContext::SetManifestUrl(const wchar_t *manifestUrl)
+void CAfhsDecryptionContext::SetSegmentFragmentDecrypting(unsigned int segmentFragmentDecrypting)
 {
-  this->manifestUrl = manifestUrl;
-}
-
-void CAfhsDecryptionContext::SetManifestContent(const wchar_t *manifestContent)
-{
-  this->manifestContent = manifestContent;
-}
-
-void CAfhsDecryptionContext::SetForceDownload(bool forceDownload)
-{
-  this->forceDownload = forceDownload;
+  this->segmentFragmentDecrypting = segmentFragmentDecrypting;
 }
 
 /* other methods */
+
+
+
+///* get methods */
+//
+//// gets segments and fragments collection
+//CSegmentFragmentCollection *CAfhsDecryptionContext::GetSegmentsFragments(void)
+//{
+//  return this->segmentsFragments;
+//}
+//
+//unsigned int CAfhsDecryptionContext::GetSegmentFragmentDownloading(void)
+//{
+//  return this->segmentFragmentDownloading;
+//}
+//
+//unsigned int CAfhsDecryptionContext::GetSegmentFragmentProcessing(void)
+//{
+//  return this->segmentFragmentProcessing;
+//}
+//
+//unsigned int CAfhsDecryptionContext::GetSegmentFragmentToDownload(void)
+//{
+//  return this->segmentFragmentToDownload;
+//}
+//
+//const wchar_t *CAfhsDecryptionContext::GetManifestUrl(void)
+//{
+//  return this->manifestUrl;
+//}
+//
+//const wchar_t *CAfhsDecryptionContext::GetManifestContent(void)
+//{
+//  return this->manifestContent;
+//}
+//
+//bool CAfhsDecryptionContext::GetForceDownload(void)
+//{
+//  return this->forceDownload;
+//}
+//
+///* set methods */
+//
+//void CAfhsDecryptionContext::SetSegmentsFragments(CSegmentFragmentCollection *segmentsFragments)
+//{
+//  this->segmentsFragments = segmentsFragments;
+//}
+//
+//void CAfhsDecryptionContext::SetSegmentFragmentDownloading(unsigned int segmentFragmentDownloading)
+//{
+//  this->segmentFragmentDownloading = segmentFragmentDownloading;
+//}
+//
+//void CAfhsDecryptionContext::SetSegmentFragmentProcessing(unsigned int segmentFragmentProcessing)
+//{
+//  this->segmentFragmentProcessing = segmentFragmentProcessing;
+//}
+//
+//void CAfhsDecryptionContext::SetSegmentFragmentToDownload(unsigned int segmentFragmentToDownload)
+//{
+//  this->segmentFragmentToDownload = segmentFragmentToDownload;
+//}
+//
+//void CAfhsDecryptionContext::SetManifestUrl(const wchar_t *manifestUrl)
+//{
+//  this->manifestUrl = manifestUrl;
+//}
+//
+//void CAfhsDecryptionContext::SetManifestContent(const wchar_t *manifestContent)
+//{
+//  this->manifestContent = manifestContent;
+//}
+//
+//void CAfhsDecryptionContext::SetForceDownload(bool forceDownload)
+//{
+//  this->forceDownload = forceDownload;
+//}
+//
+///* other methods */

@@ -32,15 +32,6 @@
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs_Parameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AfhsCurlInstance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AfhsDownloadRequest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AfhsDownloadResponse.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -50,15 +41,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AfhsCurlInstance.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AfhsDownloadRequest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AfhsDownloadResponse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

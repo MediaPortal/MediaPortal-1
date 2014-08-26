@@ -321,9 +321,6 @@ protected:
   // @return : S_OK if successful, S_FALSE if no output pin packet available, error code otherwise
   HRESULT GetNextPacket(COutputPinPacket *packet, unsigned int demuxerId);
 
-  // FFmpeg log callback
-  static void FFmpegLogCallback(void *ptr, int log_level, const char *format, va_list vl);
-
   // initializes input pin and loads url based on configuration
   // @result : S_OK if successful
   STDMETHODIMP Load();

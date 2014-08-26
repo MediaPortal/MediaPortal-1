@@ -24,20 +24,22 @@
 #define __CACHE_FILE_ITEM_DEFINED
 
 #include "LinearBuffer.h"
-#include "Flags.h"
+#include "FastSearchItem.h"
 
 #include <stdint.h>
 
-#define CACHE_FILE_ITEM_FLAG_NONE                                     FLAGS_NONE
+#define CACHE_FILE_ITEM_FLAG_NONE                                     FAST_SEARCH_ITEM_FLAG_NONE
 
-#define CACHE_FILE_ITEM_FLAG_NO_CLEAN_UP_FROM_MEMORY                  (1 << (FLAGS_LAST + 0))
+#define CACHE_FILE_ITEM_FLAG_NO_CLEAN_UP_FROM_MEMORY                  (1 << (FAST_SEARCH_ITEM_FLAG_LAST + 0))
+#define CACHE_FILE_ITEM_FLAG_DOWNLOADED                               (1 << (FAST_SEARCH_ITEM_FLAG_LAST + 1))
+#define CACHE_FILE_ITEM_FLAG_DISCONTINUITY                            (1 << (FAST_SEARCH_ITEM_FLAG_LAST + 2))
 
-#define CACHE_FILE_ITEM_FLAG_LAST                                     (FLAGS_LAST + 1)
+#define CACHE_FILE_ITEM_FLAG_LAST                                     (FAST_SEARCH_ITEM_FLAG_LAST + 3)
 
 #define CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET                      0
 #define CACHE_FILE_ITEM_POSITION_NOT_SET                              -1
 
-class CCacheFileItem : public CFlags
+class CCacheFileItem : public CFastSearchItem
 {
 public:
   CCacheFileItem(HRESULT *result);
@@ -67,15 +69,28 @@ public:
   // if item is stored than buffer is deleted
   // if cache file path is cleared (NULL) than buffer is created
   // @param position : the position of start of item within cache file or (-1) if item is in memory
-  virtual void SetCacheFilePosition(int64_t position);
+  // @param cacheFileItemIndex : the index of cache file item (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
+  virtual void SetCacheFilePosition(int64_t position, unsigned int cacheFileItemIndex);
 
   // sets loaded from memory time (in ms)
   // @param time : the time (in ms, GetTickCount()) to set or CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET to unset
-  virtual void SetLoadedToMemoryTime(unsigned int time);
+  // @param cacheFileItemIndex : the index of cache file item (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
+  virtual void SetLoadedToMemoryTime(unsigned int time, unsigned int cacheFileItemIndex);
 
   // sets no clean up from memory
   // @param noCleanUpFromMemory : true if no clean up from memory to set, false otherwise
-  virtual void SetNoCleanUpFromMemory(bool noCleanUpFromMemory);
+  // @param cacheFileItemIndex : the index of cache file item (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
+  virtual void SetNoCleanUpFromMemory(bool noCleanUpFromMemory, unsigned int cacheFileItemIndex);
+
+  // sets if cache file item is downloaded
+  // @param downloaded : true if cache file item is downloaded
+  // @param cacheFileItemIndex : the index of cache file item (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
+  virtual void SetDownloaded(bool downloaded, unsigned int cacheFileItemIndex);
+
+  // set discontinuity
+  // @param discontinuity : true if discontinuity after data, false otherwise
+  // @param cacheFileItemIndex : the index of cache file item (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
+  virtual void SetDiscontinuity(bool discontinuity, unsigned int cacheFileItemIndex);
 
   /* other methods */
 
@@ -91,20 +106,21 @@ public:
   // @return : true if no clean up from memory is set, false otherwise
   virtual bool IsNoCleanUpFromMemory(void);
 
-  // deeply clones current instance
-  // @return : deep clone of current instance or NULL if error
-  virtual CCacheFileItem *Clone(void);
+  // tests if discontinuity is set
+  // @return : true if discontinuity is set, false otherwise
+  virtual bool IsDiscontinuity(void);
+
+  // tests if fragment is downloaded
+  // @return : true if downloaded, false otherwise
+  virtual bool IsDownloaded(void);
 
 protected:
   // holds buffer data
   CLinearBuffer *buffer;
-
   // position in cache file
   int64_t cacheFilePosition;
-
   // load to memory time
   unsigned int loadedToMemoryTime;
-
   // holds length
   unsigned int length;
 
@@ -112,12 +128,12 @@ protected:
 
   // gets new instance of cache file item
   // @return : new cache file item instance or NULL if error
-  virtual CCacheFileItem *CreateItem(void) = 0;
+  virtual CFastSearchItem *CreateItem(void);
 
   // deeply clones current instance
   // @param item : the cache file item instance to clone
   // @return : true if successful, false otherwise
-  virtual bool InternalClone(CCacheFileItem *item);
+  virtual bool InternalClone(CFastSearchItem *item);
 };
 
 #endif

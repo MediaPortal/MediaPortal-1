@@ -35,6 +35,7 @@
 
 #include "MPUrlSourceSplitter.h"
 #include "StaticLogger.h"
+#include "FFmpegLogger.h"
 #include <curl/curl.h>
 
 #include <dbghelp.h>
@@ -50,7 +51,7 @@
 #define AVUTIL_MODULE_FILE_NAME                                       L"avutil-mpurlsourcesplitter-51.dll"
 #define LIBCULR_MODULE_FILE_NAME                                      L"MPUrlSourceSplitter_libcurl.dll"
 
-extern "C++" CLogger *ffmpegLoggerInstance;
+extern "C++" CFFmpegLogger *ffmpegLogger = NULL;
 extern "C++" CStaticLogger *staticLogger = NULL;
 
 // holds reference to exception handler returned in registration
@@ -178,6 +179,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
       }
 #endif
       staticLogger = new CStaticLogger(&result);
+      ffmpegLogger = new CFFmpegLogger(&result, staticLogger);
       curl_global_init(CURL_GLOBAL_ALL);
 
       CHECK_CONDITION_HRESULT(result, staticLogger, result, E_OUTOFMEMORY);
@@ -225,8 +227,8 @@ BOOL APIENTRY DllMain(HMODULE hModule,
         exceptionHandler = NULL;
       }
 #endif
-      // free FFmpeg logger instance
-      FREE_MEM_CLASS(ffmpegLoggerInstance);
+      // free FFmpeg logger instance and static logger instance
+      FREE_MEM_CLASS(ffmpegLogger);
       FREE_MEM_CLASS(staticLogger);
       curl_global_cleanup();
     }

@@ -880,17 +880,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CStreamPackage *streamPa
       {
         CStreamPackageDataResponse *dataResponse = dynamic_cast<CStreamPackageDataResponse *>(streamPackage->GetResponse());
 
-        // clear response buffer
-        dataResponse->GetBuffer()->ClearBuffer();
-
+        // don not clear response buffer, we don't have to copy data again from start position
         // first try to find starting stream fragment (stream fragment which have first data)
-        unsigned int fragmentIndex = UINT_MAX;
-        unsigned int foundDataLength = 0;
+        unsigned int foundDataLength = dataResponse->GetBuffer()->GetBufferOccupiedSpace();
 
-        int64_t startPosition = this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_SKIP_HEADER_AND_META) ? this->headerAndMetaPacketSize : 0;
-        startPosition += dataRequest->GetStart();
+        int64_t startPosition = ((foundDataLength == 0) && this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_SKIP_HEADER_AND_META)) ? this->headerAndMetaPacketSize : 0;
+        startPosition += dataRequest->GetStart() + foundDataLength;
         
-        fragmentIndex = this->streamFragments->GetStreamFragmentIndexBetweenPositions(startPosition);
+        unsigned int fragmentIndex = this->streamFragments->GetStreamFragmentIndexBetweenPositions(startPosition);
 
         while (fragmentIndex != UINT_MAX)
         {

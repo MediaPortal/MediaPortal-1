@@ -32,6 +32,17 @@ public:
   CMediaPacketCollection(HRESULT *result);
   virtual ~CMediaPacketCollection(void);
 
+  /* get methods */
+
+  // get the item from collection with specified index
+  // @param index : the index of item to find
+  // @return : the reference to item or NULL if not find
+  virtual CMediaPacket *GetItem(unsigned int index);
+
+  /* set methods */
+
+  /* other methods */
+
   // adds media packet to collection
   // @param item : the reference to media packet to add
   // @return : true if successful, false otherwise
@@ -53,20 +64,6 @@ public:
   // @return : true if successful, false otherwise
   bool GetItemInsertPosition(int64_t position, unsigned int *startIndex, unsigned int *endIndex);
 
-  // gets overlapped region between specified packet and consolidated space
-  // @param packet : packet to get overlapped region
-  // @return : media packet which holds overlapping region without data or NULL if error
-  //           if media packet start and end are zero then no overlapping region exists
-  CMediaPacket *GetOverlappedRegion(CMediaPacket *packet);
-
-  // clear collection of items
-  virtual void Clear(void);
-
-  // get the item from collection with specified index
-  // @param index : the index of item to find
-  // @return : the reference to item or NULL if not find
-  virtual CMediaPacket *GetItem(unsigned int index);
-
   // finds gap in media packets (if any), searching starts from specified position
   // @param position : the position to start searching, it MUST within any existing media packet in collection
   // @param startPosition : the reference to variable to gap start position
@@ -76,15 +73,13 @@ public:
 
 protected:
 
-  CMediaPacketCollection(HRESULT *result, bool consolidateSpace);
+  /* methods */
 
-  // holds consolidated media packets space
-  CMediaPacketCollection *consolidatedMediaPackets;
-
-  // adds media packet to consolidated media packets space
-  // @param packet : packet to add
-  // @return : true if successful, false otherwise
-  bool AddPacketToConsolidatedMediaPackets(CMediaPacket *packet);
+  // insert item to collection
+  // @param position : zero-based position to insert new item
+  // @param item : item to insert
+  // @result : true if successful, false otherwise
+  virtual bool Insert(unsigned int position, CMediaPacket *item);
 };
 
 #endif

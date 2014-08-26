@@ -25,7 +25,7 @@
 
 #include <stdint.h>
 
-#define FLAGS_NONE                                                    0x0000000000000000
+#define FLAGS_NONE                                                    0x00000000
 
 #define FLAGS_LAST                                                    0
 
@@ -39,24 +39,32 @@ public:
 
   // gets combination of set flags
   // @return : combination of set flags
-  virtual uint64_t GetFlags(void);
+  virtual uint32_t GetFlags(void);
 
   /* set methods */
 
   // sets combination of flags
   // @param flags : the combination of flags to set
-  virtual void SetFlags(uint64_t flags);
+  virtual void SetFlags(uint32_t flags);
 
   /* other methods */
 
   // tests if specific combination of flags is set
   // @param flags : the set of flags to test
   // @return : true if set of flags is set, false otherwise
-  virtual bool IsSetFlags(uint64_t flags);
+  virtual bool IsSetFlags(uint32_t flags);
+
+  /* static methods */
+
+  // tests if specific combination of flags is set
+  // @param flags : the set of flags to test
+  // @param combination : the combination of flags to test
+  // @return : true if combination of flags is set, false otherwise
+  static bool IsSetFlags(uint32_t flags, uint32_t combination);
 
 protected:
   // holds various flags
-  uint64_t flags;
+  uint32_t flags;
 
   /* methods */
 };

@@ -85,13 +85,20 @@
     <ClInclude Include="EndOfStreamReached.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="FastSearchItem.h" />
+    <ClInclude Include="FastSearchItemCollection.h" />
     <ClInclude Include="Flags.h" />
+    <ClInclude Include="IndexCollection.h" />
+    <ClInclude Include="IndexedFastSearchItem.h" />
+    <ClInclude Include="IndexedFastSearchItemCollection.h" />
     <ClInclude Include="inttypes.h" />
     <ClInclude Include="KeyedCollection.h" />
     <ClInclude Include="LinearBuffer.h" />
     <ClInclude Include="LockMutex.h" />
     <ClInclude Include="MediaPacket.h" />
-    <ClInclude Include="MediaPacketCollection.h" />
+    <ClInclude Include="MediaPacketCollection.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="MediaTypeCollection.h" />
     <ClInclude Include="moreuuids.h" />
     <ClInclude Include="Parameter.h" />
@@ -131,11 +138,18 @@
     <ClCompile Include="EndOfStreamReached.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="FastSearchItem.cpp" />
+    <ClCompile Include="FastSearchItemCollection.cpp" />
     <ClCompile Include="Flags.cpp" />
+    <ClCompile Include="IndexCollection.cpp" />
+    <ClCompile Include="IndexedFastSearchItem.cpp" />
+    <ClCompile Include="IndexedFastSearchItemCollection.cpp" />
     <ClCompile Include="LinearBuffer.cpp" />
     <ClCompile Include="LockMutex.cpp" />
     <ClCompile Include="MediaPacket.cpp" />
-    <ClCompile Include="MediaPacketCollection.cpp" />
+    <ClCompile Include="MediaPacketCollection.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="MediaTypeCollection.cpp" />
     <ClCompile Include="Parameter.cpp" />
     <ClCompile Include="ParameterCollection.cpp" />

@@ -39,7 +39,7 @@
 class CRtspStreamFragment : public CCacheFileItem
 {
 public:
-  // initializes a new instance of CSegmentFragment class
+  // initializes a new instance of CRtspStreamFragment class
   CRtspStreamFragment(HRESULT *result);
   CRtspStreamFragment(HRESULT *result, int64_t fragmentRtpTimestamp, bool setRtpTimestampFlag);
 

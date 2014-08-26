@@ -33,23 +33,30 @@ CFlags::~CFlags(void)
 
 /* get methods */
 
-uint64_t CFlags::GetFlags(void)
+uint32_t CFlags::GetFlags(void)
 {
   return this->flags;
 }
 
 /* set methods */
 
-void CFlags::SetFlags(uint64_t flags)
+void CFlags::SetFlags(uint32_t flags)
 {
   this->flags = flags;
 }
 
 /* other methods */
 
-bool CFlags::IsSetFlags(uint64_t flags)
+bool CFlags::IsSetFlags(uint32_t flags)
 {
   return ((this->flags & flags) == flags);
+}
+
+/* static methods */
+
+bool CFlags::IsSetFlags(uint32_t flags, uint32_t combination)
+{
+  return ((flags & combination) == combination);
 }
 
 /* protected methods */

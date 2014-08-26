@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7E821A12-B331-4E89-9E6A-C41C07E93065}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>MPUrlSourceSplitter_Protocol_Afhs</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)bin_$(PlatformName)d\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)bin_$(PlatformName)d\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_PROTOCOL_AFHS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libf4m;..\MPUrlSourceSplitter_libafhs;..\MPUrlSourceSplitter_libsocket;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libdumpfile;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ModuleDefinitionFile>mpurlsourcesplitter_protocol_afhs_decryption_default.def</ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)d\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;Shlwapi.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libibmff.lib;MPUrlSourceSplitter_libf4m.lib;MPUrlSourceSplitter_libf4v.lib;MPUrlSourceSplitter_libflv.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libtinyxml2.lib;MPUrlSourceSplitter_libafhs.lib;MPUrlSourceSplitter_libsocket.lib;MPUrlSourceSplitter_libplugin.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libdumpfile.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PreBuildEvent>
+      <Command>echo /* &gt; VersionInfo.h
+echo     Copyright (C) 2007-2010 Team MediaPortal &gt;&gt; VersionInfo.h
+echo     http://www.team-mediaportal.com &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo     This file is part of MediaPortal 2 &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo     MediaPortal 2 is free software: you can redistribute it and/or modify &gt;&gt; VersionInfo.h
+echo     it under the terms of the GNU General Public License as published by &gt;&gt; VersionInfo.h
+echo     the Free Software Foundation, either version 3 of the License, or &gt;&gt; VersionInfo.h
+echo     (at your option) any later version. &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo     MediaPortal 2 is distributed in the hope that it will be useful, &gt;&gt; VersionInfo.h
+echo     but WITHOUT ANY WARRANTY; without even the implied warranty of &gt;&gt; VersionInfo.h
+echo     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the &gt;&gt; VersionInfo.h
+echo     GNU General Public License for more details. &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo     You should have received a copy of the GNU General Public License &gt;&gt; VersionInfo.h
+echo     along with MediaPortal 2.  If not, see ^&lt;http://www.gnu.org/licenses/^&gt;. &gt;&gt; VersionInfo.h
+echo */ &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo #pragma once &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo #ifndef __VERSION_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_DEFAULT_DEFINED &gt;&gt; VersionInfo.h
+echo #define __VERSION_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_DEFAULT_DEFINED &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+(echo.|set /p=#define COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_DEFAULT                                    L^") &gt;&gt; VersionInfo.h
+git log -1 --pretty=format:"%%H" -- . &gt;&gt; VersionInfo.h
+echo ^" &gt;&gt; VersionInfo.h
+(echo.|set /p=#define DATE_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_DEFAULT                                      L^") &gt;&gt; VersionInfo.h
+git log -1 --pretty=format:"%%ci" -- . &gt;&gt; VersionInfo.h
+echo ^" &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo #endif &gt;&gt; VersionInfo.h</Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetName).lib" "$(SolutionDir)bin_$(PlatformName)d\lib\$(TargetName).lib"
+copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)d\$(TargetFileName)"
+copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(TargetName).pdb"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_PROTOCOL_AFHS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libf4m;..\MPUrlSourceSplitter_libafhs;..\MPUrlSourceSplitter_libsocket;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libdumpfile;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;Shlwapi.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libibmff.lib;MPUrlSourceSplitter_libf4m.lib;MPUrlSourceSplitter_libf4v.lib;MPUrlSourceSplitter_libflv.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libtinyxml2.lib;MPUrlSourceSplitter_libafhs.lib;MPUrlSourceSplitter_libsocket.lib;MPUrlSourceSplitter_libplugin.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libdumpfile.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>mpurlsourcesplitter_protocol_afhs_decryption_default.def</ModuleDefinitionFile>
+    </Link>
+    <PreBuildEvent>
+      <Command>echo /* &gt; VersionInfo.h
+echo     Copyright (C) 2007-2010 Team MediaPortal &gt;&gt; VersionInfo.h
+echo     http://www.team-mediaportal.com &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo     This file is part of MediaPortal 2 &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo     MediaPortal 2 is free software: you can redistribute it and/or modify &gt;&gt; VersionInfo.h
+echo     it under the terms of the GNU General Public License as published by &gt;&gt; VersionInfo.h
+echo     the Free Software Foundation, either version 3 of the License, or &gt;&gt; VersionInfo.h
+echo     (at your option) any later version. &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo     MediaPortal 2 is distributed in the hope that it will be useful, &gt;&gt; VersionInfo.h
+echo     but WITHOUT ANY WARRANTY; without even the implied warranty of &gt;&gt; VersionInfo.h
+echo     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the &gt;&gt; VersionInfo.h
+echo     GNU General Public License for more details. &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo     You should have received a copy of the GNU General Public License &gt;&gt; VersionInfo.h
+echo     along with MediaPortal 2.  If not, see ^&lt;http://www.gnu.org/licenses/^&gt;. &gt;&gt; VersionInfo.h
+echo */ &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo #pragma once &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo #ifndef __VERSION_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_DEFAULT_DEFINED &gt;&gt; VersionInfo.h
+echo #define __VERSION_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_DEFAULT_DEFINED &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+(echo.|set /p=#define COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_DEFAULT                                    L^") &gt;&gt; VersionInfo.h
+git log -1 --pretty=format:"%%H" -- . &gt;&gt; VersionInfo.h
+echo ^" &gt;&gt; VersionInfo.h
+(echo.|set /p=#define DATE_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_DEFAULT                                      L^") &gt;&gt; VersionInfo.h
+git log -1 --pretty=format:"%%ci" -- . &gt;&gt; VersionInfo.h
+echo ^" &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo #endif &gt;&gt; VersionInfo.h</Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetName).lib" "$(SolutionDir)bin_$(PlatformName)\lib\$(TargetName).lib"
+copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(TargetFileName)"
+copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(TargetName).pdb"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.h" />
+    <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default_Parameters.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</CompileAsManaged>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.def" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

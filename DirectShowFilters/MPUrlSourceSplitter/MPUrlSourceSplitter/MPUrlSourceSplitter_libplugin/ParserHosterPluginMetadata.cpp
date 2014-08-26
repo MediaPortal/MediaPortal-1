@@ -27,6 +27,7 @@
 
 #include "ParserHosterPluginMetadata.h"
 #include "ParserPlugin.h"
+#include "ErrorCodes.h"
 
 #pragma warning(pop)
 
@@ -64,6 +65,13 @@ unsigned int CParserHosterPluginMetadata::GetParserScore(void)
 /* set methods */
 
 /* other methods */
+
+HRESULT CParserHosterPluginMetadata::CheckPlugin(void)
+{
+  CParserPlugin *parserPlugin = dynamic_cast<CParserPlugin *>(this->plugin);
+
+  return (parserPlugin != NULL) ? S_OK : E_INVALID_PLUGIN_TYPE;
+}
 
 HRESULT CParserHosterPluginMetadata::ClearSession(void)
 {

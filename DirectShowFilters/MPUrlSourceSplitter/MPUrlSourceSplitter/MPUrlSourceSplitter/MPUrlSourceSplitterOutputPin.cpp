@@ -53,6 +53,7 @@ CMPUrlSourceSplitterOutputPin::CMPUrlSourceSplitterOutputPin(LPCWSTR pName, CBas
   this->lastStoreTime = 0;
   this->cacheFile = NULL;
   this->dumpFile = NULL;
+  this->mediaPacketProcessed = UINT_MAX;
 
   if ((phr != NULL) && (SUCCEEDED(*phr)))
   {
@@ -95,6 +96,7 @@ CMPUrlSourceSplitterOutputPin::~CMPUrlSourceSplitterOutputPin()
   FREE_MEM_CLASS(this->mediaPackets);
   FREE_MEM_CLASS(this->mediaTypes);
   FREE_MEM_CLASS(this->mediaTypeToSend);
+  FREE_MEM_CLASS(this->dumpFile);
 
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->m_pAllocator, this->m_pAllocator->Release());
 
@@ -522,6 +524,8 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
         CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->dumpFile->SetDumpFile(storeFilePath));
         FREE_MEM(storeFilePath);
       }
+
+      this->mediaPacketProcessed = UINT_MAX;
     }
 
     if (cmd == CMD_EXIT)
@@ -537,6 +541,8 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
 
     // sleep will be disabled in case of media packets ready to delivery
     bool sleepAllowed = true;
+    unsigned int currentMediaPacketProcessed = 0;
+
     while (!CheckRequest(&cmd))
     {
       sleepAllowed = true;
@@ -557,12 +563,12 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
             {
               if (this->mediaPackets->Count() > 0)
               {
-                if (this->cacheFile->LoadItems(this->mediaPackets, 0, true, false))
+                if (this->cacheFile->LoadItems(this->mediaPackets, 0, true, this->mediaPacketProcessed))
                 {
                   packet = this->mediaPackets->GetItem(0);
 
                   // we don't want to remove content of output pin packet from memory
-                  packet->SetNoCleanUpFromMemory(true);
+                  packet->SetNoCleanUpFromMemory(true, 0);
                 }
               }
             }
@@ -580,7 +586,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
 
                 // remove processed packet
                 this->cacheFile->RemoveItems(this->mediaPackets, 0, 1);
-                this->mediaPackets->Remove(0);
+                this->mediaPackets->CCollection::Remove(0);
               }
             }
             else
@@ -673,7 +679,9 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
 
                 // remove processed packet
                 this->cacheFile->RemoveItems(this->mediaPackets, 0, 1);
-                this->mediaPackets->Remove(0);
+                this->mediaPackets->CCollection::Remove(0);
+
+                currentMediaPacketProcessed++;
               }
 
               if (result == VFW_E_TIMEOUT)
@@ -699,6 +707,12 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
       if ((cmd == CMD_PLAY) && ((GetTickCount() - this->lastStoreTime) > CACHE_FILE_LOAD_TO_MEMORY_TIME_SPAN_DEFAULT))
       {
         this->lastStoreTime = GetTickCount();
+
+        if (currentMediaPacketProcessed != 0)
+        {
+          this->mediaPacketProcessed = currentMediaPacketProcessed;
+          currentMediaPacketProcessed = 0;
+        }
 
         if (this->cacheFile->GetCacheFile() == NULL)
         {

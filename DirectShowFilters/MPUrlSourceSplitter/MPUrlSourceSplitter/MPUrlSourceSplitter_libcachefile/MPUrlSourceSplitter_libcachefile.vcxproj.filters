@@ -36,6 +36,12 @@
     <ClInclude Include="FreeSpaceCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IndexedCacheFileItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexedCacheFileItemCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -54,6 +60,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FreeSpaceCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexedCacheFileItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexedCacheFileItemCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

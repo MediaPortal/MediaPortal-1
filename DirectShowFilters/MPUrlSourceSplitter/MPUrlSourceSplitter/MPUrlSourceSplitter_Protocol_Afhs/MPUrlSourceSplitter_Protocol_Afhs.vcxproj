@@ -167,18 +167,12 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <None Include="mpurlsourcesplitter_protocol_Afhs.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AfhsCurlInstance.h" />
-    <ClInclude Include="AfhsDownloadRequest.h" />
-    <ClInclude Include="AfhsDownloadResponse.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs_Parameters.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AfhsCurlInstance.cpp" />
-    <ClCompile Include="AfhsDownloadRequest.cpp" />
-    <ClCompile Include="AfhsDownloadResponse.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

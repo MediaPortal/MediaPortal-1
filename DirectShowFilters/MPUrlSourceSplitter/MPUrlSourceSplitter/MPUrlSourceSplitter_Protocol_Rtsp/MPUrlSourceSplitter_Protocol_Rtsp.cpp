@@ -913,15 +913,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
 
         CRtspStreamTrack *streamTrack = this->streamTracks->GetItem(dataRequest->GetStreamId());
 
-        // clear response buffer
-        dataResponse->GetBuffer()->ClearBuffer();
-
+        // don not clear response buffer, we don't have to copy data again from start position
         // first try to find starting stream fragment (stream fragment which have first data)
-        unsigned int fragmentIndex = UINT_MAX;
-        unsigned int foundDataLength = 0;
+        unsigned int foundDataLength = dataResponse->GetBuffer()->GetBufferOccupiedSpace();
 
-        int64_t startPosition = dataRequest->GetStart();
-        fragmentIndex = streamTrack->GetStreamFragments()->GetStreamFragmentIndexBetweenPositions(startPosition);
+        int64_t startPosition = dataRequest->GetStart() + foundDataLength;
+        unsigned int fragmentIndex = streamTrack->GetStreamFragments()->GetStreamFragmentIndexBetweenPositions(startPosition);
 
         while (fragmentIndex != UINT_MAX)
         {

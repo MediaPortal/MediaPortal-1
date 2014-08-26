@@ -21,6 +21,8 @@
 #include "StdAfx.h"
 
 #include "ProtocolHosterPluginMetadata.h"
+#include "ProtocolPlugin.h"
+#include "ErrorCodes.h"
 
 CProtocolHosterPluginMetadata::CProtocolHosterPluginMetadata(HRESULT *result, CLogger *logger, CParameterCollection *configuration, const wchar_t *hosterName, const wchar_t *pluginLibraryFileName)
   : CHosterPluginMetadata(result, logger, configuration, hosterName, pluginLibraryFileName)
@@ -42,6 +44,13 @@ void CProtocolHosterPluginMetadata::SetSupported(bool supported)
 }
 
 /* other methods */
+
+HRESULT CProtocolHosterPluginMetadata::CheckPlugin(void)
+{
+  CProtocolPlugin *protocolPlugin = dynamic_cast<CProtocolPlugin *>(this->plugin);
+
+  return (protocolPlugin != NULL) ? S_OK : E_INVALID_PLUGIN_TYPE;
+}
 
 bool CProtocolHosterPluginMetadata::IsSupported(void)
 {

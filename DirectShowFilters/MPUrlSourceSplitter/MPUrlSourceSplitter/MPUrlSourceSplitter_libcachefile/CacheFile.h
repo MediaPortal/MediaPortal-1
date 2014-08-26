@@ -63,9 +63,27 @@ public:
   // @param collection : the collection of items to load from cache file
   // @param index : the index of item to load from cache file
   // @param loadFromCacheFileAllowed : true if load from cache file is allowed, false otherwise
-  // @param cleanUpPreviousItems : true if items before index are released from memory (if they are stored to file)
   // @return : true if item successfully loaded (also in case if item is in memory), false otherwise
-  bool LoadItems(CCacheFileItemCollection *collection, unsigned int index, bool loadFromCacheFileAllowed, bool cleanUpPreviousItems);
+  bool LoadItems(CCacheFileItemCollection *collection, unsigned int index, bool loadFromCacheFileAllowed);
+
+  // loads item with specified index to memory from cache file (if needed)
+  // if item is loading from cache file, next items in collection are also loaded from cache file (until buffer size is reached)
+  // @param collection : the collection of items to load from cache file
+  // @param index : the index of item to load from cache file
+  // @param loadFromCacheFileAllowed : true if load from cache file is allowed, false otherwise
+  // @param maxItems : the maximum items to load from cache file
+  // @return : true if item successfully loaded (also in case if item is in memory), false otherwise
+  bool LoadItems(CCacheFileItemCollection *collection, unsigned int index, bool loadFromCacheFileAllowed, unsigned int maxItems);
+
+  // loads item with specified index to memory from cache file (if needed)
+  // if item is loading from cache file, next items in collection are also loaded from cache file (until buffer size is reached)
+  // @param collection : the collection of items to load from cache file
+  // @param index : the index of item to load from cache file
+  // @param loadFromCacheFileAllowed : true if load from cache file is allowed, false otherwise
+  // @param maxItems : the maximum items to load from cache file
+  // @param maxSize : the maximum size of data to load from cache file
+  // @return : true if item successfully loaded (also in case if item is in memory), false otherwise
+  bool LoadItems(CCacheFileItemCollection *collection, unsigned int index, bool loadFromCacheFileAllowed, unsigned int maxItems, unsigned int maxSize);
 
   // stores unstored items to cache file
   // it also release from memory items which are loaded to memory more than specified time span

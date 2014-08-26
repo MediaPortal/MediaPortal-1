@@ -47,6 +47,10 @@ public:
 
   /* other methods */
 
+  // checks plugin (basicly checks plugin type)
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT CheckPlugin(void);
+
   // tests if protocol plugin supports URL
   // @return : true if protocol plugin supports URL, false otherwise
   virtual bool IsSupported(void);

@@ -70,41 +70,38 @@ void CCacheFile::Clear()
   this->cacheFileSize = 0;
 }
 
-bool CCacheFile::LoadItems(CCacheFileItemCollection *collection, unsigned int index, bool loadFromCacheFileAllowed, bool cleanUpPreviousItems)
+bool CCacheFile::LoadItems(CCacheFileItemCollection *collection, unsigned int index, bool loadFromCacheFileAllowed)
 {
-  bool result = ((collection != NULL) && (index < collection->Count()));
+  return this->LoadItems(collection, index, loadFromCacheFileAllowed, UINT_MAX);
+}
 
-  if (result)
+bool CCacheFile::LoadItems(CCacheFileItemCollection *collection, unsigned int index, bool loadFromCacheFileAllowed, unsigned int maxItems)
+{
+  return this->LoadItems(collection, index, loadFromCacheFileAllowed, maxItems, CACHE_FILE_RELOAD_SIZE);
+}
+
+bool CCacheFile::LoadItems(CCacheFileItemCollection *collection, unsigned int index, bool loadFromCacheFileAllowed, unsigned int maxItems, unsigned int maxSize)
+{
+  HRESULT result = ((collection != NULL) && (index < collection->Count())) ? S_OK : E_NOT_VALID_STATE;
+
+  if (SUCCEEDED(result))
   {
     CCacheFileItem *item = collection->GetItem(index);
-    result &= (item->IsLoadedToMemory() || item->IsStoredToFile());
+    CHECK_CONDITION_HRESULT(result, item->IsLoadedToMemory() || item->IsStoredToFile(), result, E_NOT_VALID_STATE);
 
-    if (result && (!collection->GetItem(index)->IsLoadedToMemory()))
+    if (SUCCEEDED(result) && (!collection->GetItem(index)->IsLoadedToMemory()))
     {
-      result &= (loadFromCacheFileAllowed && (this->GetCacheFile() != NULL));
+      CHECK_CONDITION_HRESULT(result, loadFromCacheFileAllowed && (this->GetCacheFile() != NULL), result, E_NOT_VALID_STATE);
 
-      if (result)
+      if (SUCCEEDED(result))
       {
-        for (unsigned int i = 0; (SUCCEEDED(result) && (cleanUpPreviousItems) && (i < index)); i++)
-        {
-          CCacheFileItem *item = collection->GetItem(i);
-
-          if (item->IsStoredToFile() && item->IsLoadedToMemory())
-          {
-            // release memory
-            item->GetBuffer()->DeleteBuffer();
-            item->SetLoadedToMemoryTime(CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET);
-          }
-        }
-
         // load items which are not in memory
-        
         int64_t lastStoreFilePosition = item->GetCacheFilePosition() + (int64_t)item->GetLength();
 
         unsigned int totalItemsToReload = 1;
         unsigned int totalSizeToReload = item->GetLength();
 
-        while (((index + totalItemsToReload) < collection->Count()) && (totalSizeToReload < CACHE_FILE_RELOAD_SIZE))
+        while (((index + totalItemsToReload) < collection->Count()) && (((maxItems == UINT_MAX) && (totalSizeToReload < maxSize)) || (maxItems != UINT_MAX)) && (totalItemsToReload < maxItems))
         {
           CCacheFileItem *itemToReload = collection->GetItem(index + totalItemsToReload);
 
@@ -130,18 +127,18 @@ bool CCacheFile::LoadItems(CCacheFileItemCollection *collection, unsigned int in
         {
           // temporary buffer for data (from cache file)
           ALLOC_MEM_DEFINE_SET(buffer, unsigned char, totalSizeToReload, 0);
-          result &= (buffer != NULL);
+          CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
 
-          if (result)
+          if (SUCCEEDED(result))
           {
             LARGE_INTEGER size;
             size.QuadPart = 0;
 
             // open or create file
             HANDLE hCacheFile = CreateFile(this->GetCacheFile(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-            result &= (hCacheFile != INVALID_HANDLE_VALUE);
+            CHECK_CONDITION_HRESULT(result, hCacheFile != INVALID_HANDLE_VALUE, result, E_NOT_VALID_STATE);
 
-            if (result)
+            if (SUCCEEDED(result))
             {
               LONG distanceToMoveLow = (LONG)(item->GetCacheFilePosition());
               LONG distanceToMoveHigh = (LONG)(item->GetCacheFilePosition() >> 32);
@@ -149,22 +146,25 @@ bool CCacheFile::LoadItems(CCacheFileItemCollection *collection, unsigned int in
               DWORD setFileResult = SetFilePointer(hCacheFile, distanceToMoveLow, &distanceToMoveHighResult, FILE_BEGIN);
               if (setFileResult == INVALID_SET_FILE_POINTER)
               {
-                result &= (GetLastError() == NO_ERROR);
+                CHECK_CONDITION_HRESULT(result, GetLastError() == NO_ERROR, result, E_NOT_VALID_STATE);
               }
 
-              if (result)
+              if (SUCCEEDED(result))
               {
                 DWORD read = 0;
 
-                result &= (ReadFile(hCacheFile, buffer, totalSizeToReload, &read, NULL) != 0);
-                result &= (read == totalSizeToReload);
+                CHECK_CONDITION_HRESULT(result, ReadFile(hCacheFile, buffer, totalSizeToReload, &read, NULL) != 0, result, E_FAIL);
+                CHECK_CONDITION_HRESULT(result, read == totalSizeToReload, result, E_FAIL);
               }
 
               CloseHandle(hCacheFile);
               hCacheFile = INVALID_HANDLE_VALUE;
             }
 
-            if (result)
+
+            // mark all items as loaded to memory
+            // for updating indexes use bulk update
+            if (SUCCEEDED(result) && (totalItemsToReload != 0))
             {
               unsigned int position = 0;
               unsigned int loadedToMemoryTime = GetTickCount();
@@ -176,11 +176,13 @@ bool CCacheFile::LoadItems(CCacheFileItemCollection *collection, unsigned int in
                 if (itemToLoad->GetBuffer()->InitializeBuffer(itemToLoad->GetLength()))
                 {
                   itemToLoad->GetBuffer()->AddToBuffer(buffer + position, itemToLoad->GetLength());
-                  itemToLoad->SetLoadedToMemoryTime(loadedToMemoryTime);
+                  itemToLoad->SetLoadedToMemoryTime(loadedToMemoryTime, UINT_MAX);
                 }
 
                 position += itemToLoad->GetLength();
               }
+
+              CHECK_CONDITION_HRESULT(result, collection->UpdateIndexes(index, totalItemsToReload), result, E_FAIL);
             }
           }
 
@@ -191,7 +193,7 @@ bool CCacheFile::LoadItems(CCacheFileItemCollection *collection, unsigned int in
     }
   }
 
-  return result;
+  return SUCCEEDED(result);
 }
 
 bool CCacheFile::StoreItems(CCacheFileItemCollection *collection, unsigned int lastCheckTime)
@@ -201,70 +203,105 @@ bool CCacheFile::StoreItems(CCacheFileItemCollection *collection, unsigned int l
 
 bool CCacheFile::StoreItems(CCacheFileItemCollection *collection, unsigned int lastCheckTime, bool force)
 {
-  bool result = ((collection != NULL) && (this->GetCacheFile() != NULL));
+  HRESULT result = ((collection != NULL) && (this->GetCacheFile() != NULL)) ? S_OK : E_NOT_VALID_STATE;
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     if (collection->Count() > 0)
     {
       // open or create file
       HANDLE hCacheFile = CreateFile(this->GetCacheFile(), GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-      result &= (hCacheFile != INVALID_HANDLE_VALUE);
+      CHECK_CONDITION_HRESULT(result, hCacheFile != INVALID_HANDLE_VALUE, result, E_NOT_VALID_STATE); 
 
-      if (result)
+      if (SUCCEEDED(result))
       {
         unsigned int bufferPosition = 0;
         unsigned int bufferSize = CACHE_FILE_BUFFER_SIZE_DEFAULT;
 
         ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bufferSize, 0);
-        result &= (buffer != NULL);
+        CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
 
-        if (result)
+        if (SUCCEEDED(result))
         {
+          CIndexedCacheFileItemCollection *cleanUpFromMemoryStoredToFileLoadedToMemoryItems = new CIndexedCacheFileItemCollection(&result);
+          CIndexedCacheFileItemCollection *cleanUpFromMemoryNotStoredToFileLoadedToMemoryItems = new CIndexedCacheFileItemCollection(&result);
+
+          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = collection->GetCleanUpFromMemoryStoredToFileLoadedToMemoryItems(cleanUpFromMemoryStoredToFileLoadedToMemoryItems));
+          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = collection->GetCleanUpFromMemoryNotStoredToFileLoadedToMemoryItems(cleanUpFromMemoryNotStoredToFileLoadedToMemoryItems));
+
           unsigned int i = 0;
           unsigned int timeSpan = this->GetLoadToMemoryTimeSpan();
 
-          while (result && (i < collection->Count()))
+          // clean up all items, which are stored to cache file and loaded to memory
+          // for updating indexes use bulk update
+          unsigned int startIndex = UINT_MAX;
+          unsigned int count = 0;
+          unsigned int lastIndex = UINT_MAX;
+
+          for (unsigned int i = 0; (SUCCEEDED(result) && (i < cleanUpFromMemoryStoredToFileLoadedToMemoryItems->Count())); i++)
+          {
+            CIndexedCacheFileItem *indexedItem = cleanUpFromMemoryStoredToFileLoadedToMemoryItems->GetItem(i);
+            CCacheFileItem *item = indexedItem->GetItem();
+
+            if ((count != 0) && (lastIndex != UINT_MAX) && ((lastIndex + 1) != indexedItem->GetItemIndex()))
+            {
+              // force updating index, current indexed item is not exactly after last item
+              CHECK_CONDITION_HRESULT(result, collection->UpdateIndexes(startIndex, count), result, E_FAIL);
+
+              startIndex = UINT_MAX;
+              lastIndex = UINT_MAX;
+              count = 0;
+            }
+
+            if (force || ((lastCheckTime - item->GetLoadedToMemoryTime()) > timeSpan))
+            {
+              // release memory
+              item->GetBuffer()->DeleteBuffer();
+              item->SetLoadedToMemoryTime(CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET, UINT_MAX);
+
+              CHECK_CONDITION_EXECUTE(startIndex == UINT_MAX, startIndex = indexedItem->GetItemIndex());
+              count++;
+
+              lastIndex = indexedItem->GetItemIndex();
+            }
+          }
+
+          if (count != 0)
+          {
+            // we must update indexes
+            CHECK_CONDITION_HRESULT(result, collection->UpdateIndexes(startIndex, count), result, E_FAIL);
+          }
+
+          i = 0;
+          while (SUCCEEDED(result) && (i < cleanUpFromMemoryNotStoredToFileLoadedToMemoryItems->Count()))
           {
             unsigned int startPosition = i;
 
             // copy data to buffer
-            while (result && (i < collection->Count()))
+            while (SUCCEEDED(result) && (i < cleanUpFromMemoryNotStoredToFileLoadedToMemoryItems->Count()))
             {
-              CCacheFileItem *item = collection->GetItem(i);
+              CIndexedCacheFileItem *indexedItem = cleanUpFromMemoryNotStoredToFileLoadedToMemoryItems->GetItem(i);
+              CCacheFileItem *item = indexedItem->GetItem();
 
-              // skip items, which should not be removed from memory
-              if (!item->IsNoCleanUpFromMemory())
+              if (force || ((lastCheckTime - item->GetLoadedToMemoryTime()) > timeSpan))
               {
-                if (item->IsStoredToFile() && (item->IsLoadedToMemory()) && 
-                  (force || ((lastCheckTime - item->GetLoadedToMemoryTime()) > timeSpan)))
+                // if item is not stored to file, store it to file
+                if (item->GetLength() <= (bufferSize - bufferPosition))
                 {
-                  // release memory
-                  item->GetBuffer()->DeleteBuffer();
-                  item->SetLoadedToMemoryTime(CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET);
+                  item->GetBuffer()->CopyFromBuffer(buffer + bufferPosition, item->GetLength());
+                  bufferPosition += item->GetLength();
                 }
-
-                if ((!item->IsStoredToFile()) && (item->IsLoadedToMemory()) &&
-                  (force || ((lastCheckTime - item->GetLoadedToMemoryTime()) > timeSpan)))
+                else
                 {
-                  // if item is not stored to file, store it to file
-                  if (item->GetLength() <= (bufferSize - bufferPosition))
+                  // this item cannot fit in buffer
+                  if (bufferPosition == 0)
                   {
-                    item->GetBuffer()->CopyFromBuffer(buffer + bufferPosition, item->GetLength());
-                    bufferPosition += item->GetLength();
+                    // no data in buffer, buffer is too small
+                    bufferSize = item->GetLength();
+                    buffer = REALLOC_MEM(buffer, unsigned char, bufferSize);
+                    result &= (buffer != NULL);
                   }
-                  else
-                  {
-                    // this item cannot fit in buffer
-                    if (bufferPosition == 0)
-                    {
-                      // no data in buffer, buffer is too small
-                      bufferSize = item->GetLength();
-                      buffer = REALLOC_MEM(buffer, unsigned char, bufferSize);
-                      result &= (buffer != NULL);
-                    }
-                    break;
-                  }
+                  break;
                 }
               }
 
@@ -272,7 +309,7 @@ bool CCacheFile::StoreItems(CCacheFileItemCollection *collection, unsigned int l
             }
 
             // if buffer position is not zero, flush buffer to file and continue
-            if (bufferPosition > 0)
+            if (SUCCEEDED(result) && (bufferPosition > 0))
             {
               LARGE_INTEGER size;
               size.QuadPart = this->cacheFileSize;
@@ -287,7 +324,7 @@ bool CCacheFile::StoreItems(CCacheFileItemCollection *collection, unsigned int l
 
               result &= (size.QuadPart != (-1));
 
-              if (result)
+              if (SUCCEEDED(result))
               {
                 LONG distanceToMoveLow = (LONG)(size.QuadPart);
                 LONG distanceToMoveHigh = (LONG)(size.QuadPart >> 32);
@@ -295,36 +332,61 @@ bool CCacheFile::StoreItems(CCacheFileItemCollection *collection, unsigned int l
                 DWORD setFileResult = SetFilePointer(hCacheFile, distanceToMoveLow, &distanceToMoveHighResult, FILE_BEGIN);
                 if (setFileResult == INVALID_SET_FILE_POINTER)
                 {
-                  result &= (GetLastError() == NO_ERROR);
+                  CHECK_CONDITION_HRESULT(result, GetLastError() == NO_ERROR, result, E_FAIL);
                 }
               }
 
-              if (result)
+              if (SUCCEEDED(result))
               {
                 // write prepared buffer to file
                 DWORD written = 0;
-                result &= (WriteFile(hCacheFile, buffer, bufferPosition, &written, NULL) != 0);
-                result &= (bufferPosition == written);
+                CHECK_CONDITION_HRESULT(result, WriteFile(hCacheFile, buffer, bufferPosition, &written, NULL) != 0, result, E_FAIL);
+                CHECK_CONDITION_HRESULT(result, bufferPosition == written, result, E_FAIL);
 
-                CHECK_CONDITION_EXECUTE_RESULT(result && (this->freeSpaces != NULL) && (freeSpaceIndex != FREE_SPACE_NOT_FOUND), this->freeSpaces->RemoveFreeSpace(freeSpaceIndex, (int64_t)bufferPosition), result);
+                if (SUCCEEDED(result) && (this->freeSpaces != NULL) && (freeSpaceIndex != FREE_SPACE_NOT_FOUND))
+                {
+                  CHECK_CONDITION_HRESULT(result, this->freeSpaces->RemoveFreeSpace(freeSpaceIndex, (int64_t)bufferPosition), result, E_FAIL); 
+                }
 
-                if (result)
+                if (SUCCEEDED(result))
                 {
                   // mark all items as stored
-                  for (unsigned int j = startPosition; j < i; j++)
-                  {
-                    CCacheFileItem *item = collection->GetItem(j);
+                  // for updating indexes use bulk update
+                  startIndex = UINT_MAX;
+                  count = 0;
+                  lastIndex = UINT_MAX;
 
-                    // skip items, which should not be removed from memory
-                    if (!item->IsNoCleanUpFromMemory())
+                  for (unsigned int j = startPosition; (SUCCEEDED(result) && (j < i)); j++)
+                  {
+                    CIndexedCacheFileItem *indexedItem = cleanUpFromMemoryNotStoredToFileLoadedToMemoryItems->GetItem(j);
+                    CCacheFileItem *item = indexedItem->GetItem();
+
+                    if ((count != 0) && (lastIndex != UINT_MAX) && ((lastIndex + 1) != indexedItem->GetItemIndex()))
                     {
-                      if ((!item->IsStoredToFile()) && (item->IsLoadedToMemory()) &&
-                        (force || ((lastCheckTime - item->GetLoadedToMemoryTime()) > timeSpan)))
-                      {
-                        item->SetCacheFilePosition(size.QuadPart);
-                        size.QuadPart += item->GetLength();
-                      }
+                      // force updating index, current indexed item is not exactly after last item
+                      CHECK_CONDITION_HRESULT(result, collection->UpdateIndexes(startIndex, count), result, E_FAIL);
+
+                      startIndex = UINT_MAX;
+                      lastIndex = UINT_MAX;
+                      count = 0;
                     }
+
+                    if (force || ((lastCheckTime - item->GetLoadedToMemoryTime()) > timeSpan))
+                    {
+                      item->SetCacheFilePosition(size.QuadPart, UINT_MAX);
+                      size.QuadPart += item->GetLength();
+
+                      CHECK_CONDITION_EXECUTE(startIndex == UINT_MAX, startIndex = indexedItem->GetItemIndex());
+                      count++;
+
+                      lastIndex = indexedItem->GetItemIndex();
+                    }
+                  }
+
+                  if (count != 0)
+                  {
+                    // we must update indexes
+                    CHECK_CONDITION_HRESULT(result, collection->UpdateIndexes(startIndex, count), result, E_FAIL);
                   }
 
                   // update cache file size
@@ -335,17 +397,20 @@ bool CCacheFile::StoreItems(CCacheFileItemCollection *collection, unsigned int l
               }
             }
           }
+
+          FREE_MEM_CLASS(cleanUpFromMemoryStoredToFileLoadedToMemoryItems);
+          FREE_MEM_CLASS(cleanUpFromMemoryNotStoredToFileLoadedToMemoryItems);
         }
 
         FREE_MEM(buffer);
-      }
 
-      CloseHandle(hCacheFile);
-      hCacheFile = INVALID_HANDLE_VALUE;
+        CloseHandle(hCacheFile);
+        hCacheFile = INVALID_HANDLE_VALUE;
+      }
     }
   }
 
-  return result;
+  return SUCCEEDED(result);
 }
 
 bool CCacheFile::RemoveItems(CCacheFileItemCollection *collection, unsigned int index, unsigned int count)

@@ -25,6 +25,7 @@
 
 #include "Hoster.h"
 #include "AfhsDecryptionPlugin.h"
+#include "AfhsDecryptionContext.h"
 
 #define MODULE_AFHS_DECRYPTION_HOSTER_NAME                            L"AfhsDecryptionHoster"
 
@@ -47,6 +48,11 @@ public:
   // loads plugins from directory
   // @return : S_OK if successful, E_AFHS_NO_DECRYPTOR_LOADED if no decryptor loaded, error code otherwise
   virtual HRESULT LoadPlugins(void);
+
+  // decrypts encrypted segments fragments
+  // @param decryptionContext : AFHS decryption context
+  // @return : S_OK if some segment fragments are decrypted, S_FALSE if decryption is pending, error code otherwise
+  HRESULT DecryptSegmentFragments(CAfhsDecryptionContext *decryptionContext);
 
 protected:
   // reference to active decryptor

@@ -20,13 +20,21 @@
 
 #include "StdAfx.h"
 
+#pragma warning(push)
+// disable warning: 'INT8_MIN' : macro redefinition
+// warning is caused by stdint.h and intsafe.h, which both define same macro
+#pragma warning(disable:4005)
+
 #include "AfhsCurlInstance.h"
+
+#pragma warning(pop)
 
 CAfhsCurlInstance::CAfhsCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
   : CHttpCurlInstance(result, logger, mutex, protocolName, instanceName)
 {
   this->owner = NULL;
   this->ownerLockCount = 0;
+  this->connectionState = None;
 
   this->afhsDownloadRequest = dynamic_cast<CAfhsDownloadRequest *>(this->downloadRequest);
   this->afhsDownloadResponse = dynamic_cast<CAfhsDownloadResponse *>(this->downloadResponse);
@@ -60,7 +68,17 @@ unsigned int CAfhsCurlInstance::GetOwnerLockCount(void)
   return this->ownerLockCount;
 }
 
+ProtocolConnectionState CAfhsCurlInstance::GetConnectionState(void)
+{
+  return this->connectionState;
+}
+
 /* set methods */
+
+void CAfhsCurlInstance::SetConnectionState(ProtocolConnectionState connectionState)
+{
+  this->connectionState = connectionState;
+}
 
 /* other methods */
 

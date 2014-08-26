@@ -21,9 +21,10 @@
 #include "StdAfx.h"
 
 #include "CacheFileItem.h"
+#include "FastSearchItemCollection.h"
 
 CCacheFileItem::CCacheFileItem(HRESULT *result)
-  : CFlags()
+  : CFastSearchItem(result)
 {
   this->loadedToMemoryTime = CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET;
   this->cacheFilePosition = CACHE_FILE_ITEM_POSITION_NOT_SET;
@@ -66,7 +67,7 @@ unsigned int CCacheFileItem::GetLoadedToMemoryTime(void)
 
 /* set methods */
 
-void CCacheFileItem::SetCacheFilePosition(int64_t position)
+void CCacheFileItem::SetCacheFilePosition(int64_t position, unsigned int cacheFileItemIndex)
 {
   this->cacheFilePosition = position;
 
@@ -76,18 +77,55 @@ void CCacheFileItem::SetCacheFilePosition(int64_t position)
     this->buffer->DeleteBuffer();
     this->loadedToMemoryTime = CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET;
   }
+
+  if ((this->owner != NULL) && (cacheFileItemIndex != UINT_MAX))
+  {
+    this->owner->UpdateIndexes(cacheFileItemIndex);
+  }
 }
 
-void CCacheFileItem::SetLoadedToMemoryTime(unsigned int time)
+void CCacheFileItem::SetLoadedToMemoryTime(unsigned int time, unsigned int cacheFileItemIndex)
 {
   this->loadedToMemoryTime = time;
+
+  if ((this->owner != NULL) && (cacheFileItemIndex != UINT_MAX))
+  {
+    this->owner->UpdateIndexes(cacheFileItemIndex);
+  }
 }
 
 
-void CCacheFileItem::SetNoCleanUpFromMemory(bool noCleanUpFromMemory)
+void CCacheFileItem::SetNoCleanUpFromMemory(bool noCleanUpFromMemory, unsigned int cacheFileItemIndex)
 {
   this->flags &= ~CACHE_FILE_ITEM_FLAG_NO_CLEAN_UP_FROM_MEMORY;
   this->flags |= (noCleanUpFromMemory) ? CACHE_FILE_ITEM_FLAG_NO_CLEAN_UP_FROM_MEMORY : CACHE_FILE_ITEM_FLAG_NONE;
+
+  if ((this->owner != NULL) && (cacheFileItemIndex != UINT_MAX))
+  {
+    this->owner->UpdateIndexes(cacheFileItemIndex);
+  }
+}
+
+void CCacheFileItem::SetDownloaded(bool downloaded, unsigned int cacheFileItemIndex)
+{
+  this->flags &= ~CACHE_FILE_ITEM_FLAG_DOWNLOADED;
+  this->flags |= (downloaded) ? CACHE_FILE_ITEM_FLAG_DOWNLOADED : CACHE_FILE_ITEM_FLAG_NONE;
+
+  if ((this->owner != NULL) && (cacheFileItemIndex != UINT_MAX))
+  {
+    this->owner->UpdateIndexes(cacheFileItemIndex);
+  }
+}
+
+void CCacheFileItem::SetDiscontinuity(bool discontinuity, unsigned int cacheFileItemIndex)
+{
+  this->flags &= ~CACHE_FILE_ITEM_FLAG_DISCONTINUITY;
+  this->flags |= (discontinuity) ? CACHE_FILE_ITEM_FLAG_DISCONTINUITY : CACHE_FILE_ITEM_FLAG_NONE;
+
+  if ((this->owner != NULL) && (cacheFileItemIndex != UINT_MAX))
+  {
+    this->owner->UpdateIndexes(cacheFileItemIndex);
+  }
 }
 
 /* other methods */
@@ -107,40 +145,49 @@ bool CCacheFileItem::IsNoCleanUpFromMemory(void)
   return this->IsSetFlags(CACHE_FILE_ITEM_FLAG_NO_CLEAN_UP_FROM_MEMORY);
 }
 
-CCacheFileItem *CCacheFileItem::Clone(void)
+bool CCacheFileItem::IsDiscontinuity(void)
 {
-  CCacheFileItem *result = this->CreateItem();
+  return this->IsSetFlags(CACHE_FILE_ITEM_FLAG_DISCONTINUITY);
+}
 
-  if (result != NULL)
-  {
-    if (!this->InternalClone(result))
-    {
-      FREE_MEM_CLASS(result);
-    }
-  }
-
-  return result;
+bool CCacheFileItem::IsDownloaded(void)
+{
+  return this->IsSetFlags(CACHE_FILE_ITEM_FLAG_DOWNLOADED);
 }
 
 /* protected methods */
 
-
-bool CCacheFileItem::InternalClone(CCacheFileItem *item)
+CFastSearchItem *CCacheFileItem::CreateItem(void)
 {
-  bool result = (item != NULL);
+  HRESULT result = S_OK;
+  CCacheFileItem *item = new CCacheFileItem(&result);
+  CHECK_POINTER_HRESULT(result, item, result, E_OUTOFMEMORY);
 
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(item));
+  return item;
+}
+
+bool CCacheFileItem::InternalClone(CFastSearchItem *item)
+{
+  bool result = __super::InternalClone(item);
+  
   if (result)
   {
-    // free item buffer to avoid memory leak
-    FREE_MEM_CLASS(item->buffer);
+    CCacheFileItem *cacheFileItem = dynamic_cast<CCacheFileItem *>(item);
+    result &= (cacheFileItem != NULL);
 
-    item->flags = this->flags;
-    item->buffer = this->buffer->Clone();
-    item->loadedToMemoryTime = this->loadedToMemoryTime;
-    item->cacheFilePosition = this->cacheFilePosition;
-    item->length = this->length;
+    if (result)
+    {
+      // free item buffer to avoid memory leak
+      FREE_MEM_CLASS(cacheFileItem->buffer);
 
-    result &= (item->buffer != NULL);
+      cacheFileItem->buffer = this->buffer->Clone();
+      cacheFileItem->loadedToMemoryTime = this->loadedToMemoryTime;
+      cacheFileItem->cacheFilePosition = this->cacheFilePosition;
+      cacheFileItem->length = this->length;
+
+      result &= (cacheFileItem->buffer != NULL);
+    }
   }
 
   return result;

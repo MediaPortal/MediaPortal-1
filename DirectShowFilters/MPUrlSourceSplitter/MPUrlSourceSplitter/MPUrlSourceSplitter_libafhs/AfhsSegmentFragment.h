@@ -29,12 +29,13 @@
 
 #define AFHS_SEGMENT_FRAGMENT_FLAG_NONE                               CACHE_FILE_ITEM_FLAG_NONE
 
-#define AFHS_SEGMENT_FRAGMENT_FLAG_DOWNLOADED                         (1 << (CACHE_FILE_ITEM_FLAG_LAST + 0))
+#define AFHS_SEGMENT_FRAGMENT_FLAG_ENCRYPTED                          (1 << (CACHE_FILE_ITEM_FLAG_LAST + 0))
 #define AFHS_SEGMENT_FRAGMENT_FLAG_DECRYPTED                          (1 << (CACHE_FILE_ITEM_FLAG_LAST + 1))
-#define AFHS_SEGMENT_FRAGMENT_FLAG_DISCONTINUITY                      (1 << (CACHE_FILE_ITEM_FLAG_LAST + 2))
-#define AFHS_SEGMENT_FRAGMENT_FLAG_CONTAINS_HEADER_OR_META_PACKET     (1 << (CACHE_FILE_ITEM_FLAG_LAST + 3))
+#define AFHS_SEGMENT_FRAGMENT_FLAG_DOWNLOADED                         (1 << (CACHE_FILE_ITEM_FLAG_LAST + 2))
+#define AFHS_SEGMENT_FRAGMENT_FLAG_DISCONTINUITY                      (1 << (CACHE_FILE_ITEM_FLAG_LAST + 3))
+#define AFHS_SEGMENT_FRAGMENT_FLAG_CONTAINS_HEADER_OR_META_PACKET     (1 << (CACHE_FILE_ITEM_FLAG_LAST + 4))
 
-#define AFHS_SEGMENT_FRAGMENT_FLAG_LAST                               (CACHE_FILE_ITEM_FLAG_LAST + 4)
+#define AFHS_SEGMENT_FRAGMENT_FLAG_LAST                               (CACHE_FILE_ITEM_FLAG_LAST + 5)
 
 #define AFHS_SEGMENT_FRAGMENT_START_POSITION_NOT_SET                  -1
 
@@ -76,6 +77,10 @@ public:
   // @param decrypted : true if segment and fragment is decrypted, false otherwise
   void SetDecrypted(bool decrypted);
 
+  // sets if segment and fragment is encrypted
+  // @param encrypted : true if segment and fragment is encrypted, false otherwise
+  void SetEncrypted(bool encrypted);
+
   // sets fragment start position
   // @param fragmentStartPosition : fragment start position to set
   void SetFragmentStartPosition(int64_t fragmentStartPosition);
@@ -101,6 +106,10 @@ public:
   // tests if fragment is decrypted
   // @return : true if decrypted, false otherwise
   bool IsDecrypted(void);
+
+  // tests if fragment is encrypted
+  // @return : true if encrypted, false otherwise
+  bool IsEncrypted(void);
 
   // tests if fragment has set start position
   // @return : true if fragment has set start position, false otherwise

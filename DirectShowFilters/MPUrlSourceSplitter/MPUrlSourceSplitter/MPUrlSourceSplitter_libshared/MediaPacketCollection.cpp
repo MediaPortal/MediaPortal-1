@@ -25,31 +25,22 @@
 CMediaPacketCollection::CMediaPacketCollection(HRESULT *result)
   : CCacheFileItemCollection(result)
 {
-  this->consolidatedMediaPackets = NULL;
-
-  if ((result != NULL) && (SUCCEEDED(*result)))
-  {
-    this->consolidatedMediaPackets = new CMediaPacketCollection(result, false);
-    CHECK_POINTER_HRESULT(*result, this->consolidatedMediaPackets, *result, E_OUTOFMEMORY);
-  }
-}
-
-CMediaPacketCollection::CMediaPacketCollection(HRESULT *result, bool consolidateSpace)
-  : CCacheFileItemCollection(result)
-{
-  this->consolidatedMediaPackets = NULL;
-
-  if ((result != NULL) && (SUCCEEDED(*result)) && consolidateSpace)
-  {
-    this->consolidatedMediaPackets = new CMediaPacketCollection(result);
-    CHECK_POINTER_HRESULT(*result, this->consolidatedMediaPackets, *result, E_OUTOFMEMORY);
-  }
 }
 
 CMediaPacketCollection::~CMediaPacketCollection(void)
 {
-  FREE_MEM_CLASS(this->consolidatedMediaPackets);
 }
+
+/* get methods */
+
+CMediaPacket *CMediaPacketCollection::GetItem(unsigned int index)
+{
+  return (CMediaPacket *)__super::GetItem(index);
+}
+
+/* set methods */
+
+/* other methods */
 
 bool CMediaPacketCollection::Add(CMediaPacket *item)
 {
@@ -69,29 +60,7 @@ bool CMediaPacketCollection::Add(CMediaPacket *item)
 
       if (result)
       {
-        CMediaPacket *startPacket = (startIndex == UINT_MAX) ? NULL : this->GetItem(startIndex);
-        CMediaPacket *endPacket = (endIndex == UINT_MAX) ? NULL : this->GetItem(endIndex);
-
-        // everything after endIndex must be moved
-        if (this->itemCount > 0)
-        {
-          for (unsigned int i = this->itemCount; i > endIndex; i--)
-          {
-            *(this->items + i) = *(this->items + i - 1);
-          }
-        }
-
-        if (endIndex == UINT_MAX)
-        {
-          // the media packet have to be added after all media packets
-          endIndex = this->itemCount;
-        }
-
-        // add new item to collection and increase item count
-        *(this->items + endIndex) = item;
-        this->itemCount++;
-
-        result &= this->AddPacketToConsolidatedMediaPackets(item);
+        result &= __super::Insert(min(endIndex, this->Count()), item);
       }
     }
   }
@@ -113,9 +82,9 @@ unsigned int CMediaPacketCollection::GetMediaPacketIndexBetweenPositions(int64_t
       // if requested position is somewhere after start of media packets
       CMediaPacket *mediaPacket = this->GetItem(startIndex);
       int64_t positionStart = mediaPacket->GetStart();
-      int64_t positionEnd = mediaPacket->GetEnd();
+      int64_t positionEnd = positionStart + mediaPacket->GetLength();
 
-      if ((position >= positionStart) && (position <= positionEnd))
+      if ((position >= positionStart) && (position < positionEnd))
       {
         // we found media packet
         index = startIndex;
@@ -191,54 +160,6 @@ bool CMediaPacketCollection::GetItemInsertPosition(int64_t position, unsigned in
   return result;
 }
 
-CMediaPacket *CMediaPacketCollection::GetOverlappedRegion(CMediaPacket *packet)
-{
-  CMediaPacket *result = NULL;
-
-  if ((this->consolidatedMediaPackets != NULL) && (packet != NULL))
-  {
-    HRESULT res = S_OK;
-    result = new CMediaPacket(&res);
-    CHECK_POINTER_HRESULT(res, result, res, E_OUTOFMEMORY);
-
-    if (SUCCEEDED(res))
-    {
-      unsigned int count = this->consolidatedMediaPackets->Count();
-      for (unsigned int i = 0; i < count; i++)
-      {
-        CMediaPacket *consolidatedPacket = this->consolidatedMediaPackets->GetItem(i);
-
-        if ((packet->GetStart() <= consolidatedPacket->GetEnd()) &&
-          (packet->GetEnd() >= consolidatedPacket->GetStart()))
-        {
-          // overlapping region found, set values in result
-          result->SetStart(max(packet->GetStart(), consolidatedPacket->GetStart()));
-          result->SetEnd(min(packet->GetEnd(), consolidatedPacket->GetEnd()));
-        }
-      }
-    }
-
-    CHECK_CONDITION_EXECUTE(FAILED(res), FREE_MEM_CLASS(result));
-  }
-
-  return result;
-}
-
-void CMediaPacketCollection::Clear(void)
-{
-  __super::Clear();
-
-  if (this->consolidatedMediaPackets != NULL)
-  {
-    this->consolidatedMediaPackets->Clear();
-  }
-}
-
-CMediaPacket *CMediaPacketCollection::GetItem(unsigned int index)
-{
-  return (CMediaPacket *)__super::GetItem(index);
-}
-
 bool CMediaPacketCollection::FindGapInMediaPackets(int64_t position, int64_t *startPosition, int64_t *endPosition)
 {
   bool result = ((startPosition != NULL) && (endPosition != NULL));
@@ -256,7 +177,7 @@ bool CMediaPacketCollection::FindGapInMediaPackets(int64_t position, int64_t *st
     {
       CMediaPacket *mediaPacket = this->GetItem(mediaPacketIndex);
       tempStartPosition = mediaPacket->GetStart();
-      tempEndPosition = mediaPacket->GetEnd();
+      tempEndPosition = tempStartPosition + mediaPacket->GetLength() - 1;
     }
 
     // because collection is sorted
@@ -265,12 +186,11 @@ bool CMediaPacketCollection::FindGapInMediaPackets(int64_t position, int64_t *st
     {
       CMediaPacket *mediaPacket = this->GetItem(mediaPacketIndex);
       int64_t mediaPacketStart = mediaPacket->GetStart();
-      int64_t mediaPacketEnd = mediaPacket->GetEnd();
 
       if (tempStartPosition == mediaPacketStart)
       {
         // next start time is next to end of current media packet
-        tempStartPosition = mediaPacketEnd + 1;
+        tempStartPosition = mediaPacketStart + mediaPacket->GetLength();
         mediaPacketIndex++;
 
         if (mediaPacketIndex >= this->Count())
@@ -302,81 +222,7 @@ bool CMediaPacketCollection::FindGapInMediaPackets(int64_t position, int64_t *st
 
 /* protected methods */
 
-bool CMediaPacketCollection::AddPacketToConsolidatedMediaPackets(CMediaPacket *packet)
+bool CMediaPacketCollection::Insert(unsigned int position, CMediaPacket *item)
 {
-  HRESULT result = S_OK;
-
-  if ((this->consolidatedMediaPackets != NULL) && (packet != NULL))
-  {
-    bool merged = false;
-
-    unsigned int count = this->consolidatedMediaPackets->Count();
-
-    for (unsigned int i = 0; i < count; i++)
-    {
-      CMediaPacket *consolidatedPacket = this->consolidatedMediaPackets->GetItem(i);
-
-      if ((packet->GetEnd() + 1) == consolidatedPacket->GetStart())
-      {
-        consolidatedPacket->SetStart(packet->GetStart());
-        merged = true;
-        break;
-      }
-      else if (packet->GetStart() == (consolidatedPacket->GetEnd() + 1))
-      {
-        consolidatedPacket->SetEnd(packet->GetEnd());
-        merged = true;
-        break;
-      }
-    }
-
-    if (!merged)
-    {
-      // not merged media packet, just add to consolidated packets
-      CMediaPacket *consolidatedPacket = new CMediaPacket(&result);
-      CHECK_POINTER_HRESULT(result, consolidatedPacket, result, E_OUTOFMEMORY);
-
-      if (SUCCEEDED(result))
-      {
-        consolidatedPacket->SetStart(packet->GetStart());
-        consolidatedPacket->SetEnd(packet->GetEnd());
-
-        CHECK_CONDITION_HRESULT(result, this->consolidatedMediaPackets->Add(consolidatedPacket), result, E_OUTOFMEMORY);
-      }
-
-      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(consolidatedPacket));
-    }
-
-    while (merged)
-    {
-      merged = false;
-      count = this->consolidatedMediaPackets->Count();
-
-      for (unsigned int i = 0; (i < count) && (!merged); i++)
-      {
-        CMediaPacket *first = this->consolidatedMediaPackets->GetItem(i);
-        for (unsigned int j = (i + 1); (j < count) && (!merged); j++)
-        {
-          CMediaPacket *second = this->consolidatedMediaPackets->GetItem(j);
-
-          if ((second->GetEnd() + 1) == first->GetStart())
-          {
-            first->SetStart(second->GetStart());
-            this->consolidatedMediaPackets->Remove(j);
-            merged = true;
-            break;
-          }
-          else if (second->GetStart() == (first->GetEnd() + 1))
-          {
-            first->SetEnd(second->GetEnd());
-            this->consolidatedMediaPackets->Remove(j);
-            merged = true;
-            break;
-          }
-        }
-      }
-    }
-  }
-
-  return SUCCEEDED(result);
+  return __super::Insert(position, item);
 }

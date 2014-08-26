@@ -28,8 +28,18 @@ template <class TItem> class CCollection
 public:
   // create new instance of CCollection class
   CCollection(HRESULT *result);
-
   virtual ~CCollection(void);
+
+  /* get methods */
+
+  // get the item from collection with specified index
+  // @param index : the index of item to find
+  // @return : the reference to item or NULL if not find
+  virtual TItem *GetItem(unsigned int index);
+
+  /* set methods */
+
+  /* other methods */
 
   // add item to collection
   // @param item : the reference to item to add
@@ -49,11 +59,6 @@ public:
 
   // clear collection of items
   virtual void Clear(void);
-
-  // get the item from collection with specified index
-  // @param index : the index of item to find
-  // @return : the reference to item or NULL if not find
-  virtual TItem *GetItem(unsigned int index);
 
   // get count of items in collection
   // @return : count of items in collection
@@ -79,17 +84,28 @@ public:
 protected:
   // pointer to array of pointers to items
   TItem **items;
-
   // count of items in collection
   unsigned int itemCount;
-
   // maximum count of items to store in collection
   unsigned int itemMaximumCount;
+
+  /* methods */
 
   // clones specified item
   // @param item : the item to clone
   // @return : deep clone of item or NULL if not implemented
   virtual TItem *Clone(TItem *item) = 0;
+
+  // remove item with specified index from collection without destroying its instance
+  // @param index : the index of item to remove
+  // @return : true if removed, false otherwise
+  virtual bool RemoveWithoutDestroyInstance(unsigned int index);
+
+  // removes count of items from collection from specified index without destroying its instance
+  // @param index : the index of item to start removing
+  // @param count : the count of items to remove
+  // @return : true if removed, false otherwise
+  virtual bool RemoveWithoutDestroyInstance(unsigned int index, unsigned int count);
 };
 
 // implementation
@@ -99,7 +115,6 @@ template <class TItem> CCollection<TItem>::CCollection(HRESULT *result)
   this->itemCount = 0;
   this->itemMaximumCount = 16;
   this->items = NULL;
-
 
   if ((result != NULL) && SUCCEEDED(*result))
   {
@@ -115,36 +130,21 @@ template <class TItem> CCollection<TItem>::~CCollection(void)
   FREE_MEM(this->items);
 }
 
-template <class TItem> void CCollection<TItem>::Clear(void)
-{
-  // call destructors of all items
-  for(unsigned int i = 0; i < this->itemCount; i++)
-  {
-    FREE_MEM_CLASS((*(this->items + i)));
-  }
+/* get methods */
 
-  // set used items to 0
-  this->itemCount = 0;
+template <class TItem> TItem *CCollection<TItem>::GetItem(unsigned int index)
+{
+  TItem *result = NULL;
+  if (index < this->itemCount)
+  {
+    result = *(this->items + index);
+  }
+  return result;
 }
 
-template <class TItem> bool CCollection<TItem>::EnsureEnoughSpace(unsigned int requestedCount)
-{
-  if (requestedCount >= this->itemMaximumCount)
-  {
-    // there is need to enlarge array of items
-    TItem **itemArray = REALLOC_MEM(this->items, TItem *, requestedCount);
+/* set methods */
 
-    if (itemArray == NULL)
-    {
-      return false;
-    }
-
-    this->items = itemArray;
-    this->itemMaximumCount = requestedCount;
-  }
-
-  return true;
-}
+/* other methods */
 
 template <class TItem> bool CCollection<TItem>::Add(TItem *item)
 {
@@ -174,10 +174,13 @@ template <class TItem> bool CCollection<TItem>::Insert(unsigned int position, TI
     if (result)
     {
       // move everything after insert position
-
-      for (unsigned int i = position; i < this->itemCount; i++)
+      unsigned int size = (this->itemCount - position) * sizeof(unsigned int);
+      if (size > 0)
       {
-        *(this->items + this->itemCount - i + position) = *(this->items + this->itemCount - 1 - i + position);
+        void *source = (void *)(this->items + position);
+        void *destination = (void *)(this->items + position + 1);
+
+        memmove(destination, source, size);
       }
 
       *(this->items + position) = item;
@@ -208,19 +211,21 @@ template <class TItem> bool CCollection<TItem>::Append(CCollection<TItem> *colle
   return result;
 }
 
+template <class TItem> void CCollection<TItem>::Clear(void)
+{
+  // call destructors of all items
+  for(unsigned int i = 0; i < this->itemCount; i++)
+  {
+    FREE_MEM_CLASS((*(this->items + i)));
+  }
+
+  // set used items to 0
+  this->itemCount = 0;
+}
+
 template <class TItem> unsigned int CCollection<TItem>::Count(void)
 {
   return this->itemCount;
-}
-
-template <class TItem> TItem *CCollection<TItem>::GetItem(unsigned int index)
-{
-  TItem *result = NULL;
-  if (index < this->itemCount)
-  {
-    result = *(this->items + index);
-  }
-  return result;
 }
 
 template <class TItem> bool CCollection<TItem>::Remove(unsigned int index)
@@ -241,10 +246,62 @@ template <class TItem> bool CCollection<TItem>::Remove(unsigned int index, unsig
     }
 
     // move rest of items
-    for (unsigned int i = (index + count); i < this->itemCount; i++)
+    unsigned int size = (this->itemCount - index - count) * sizeof(unsigned int);
+    if (size > 0)
     {
-      *(this->items + i - count) = *(this->items + i);
-      *(this->items + i) = NULL;
+      void *source = (void *)(this->items + index + count);
+      void *destination = (void *)(this->items + index);
+
+      memmove(destination, source, size);
+    }
+
+    this->itemCount -= count;
+    result = true;
+  }
+
+  return result;
+}
+
+template <class TItem> bool CCollection<TItem>::EnsureEnoughSpace(unsigned int requestedCount)
+{
+  if (requestedCount > this->itemMaximumCount)
+  {
+    // there is need to enlarge array of items
+    TItem **itemArray = REALLOC_MEM(this->items, TItem *, requestedCount);
+
+    if (itemArray == NULL)
+    {
+      return false;
+    }
+
+    this->items = itemArray;
+    this->itemMaximumCount = requestedCount;
+  }
+
+  return true;
+}
+
+/* protected methods */
+
+template <class TItem> bool CCollection<TItem>::RemoveWithoutDestroyInstance(unsigned int index)
+{
+  return this->RemoveWithoutDestroyInstance(index, 1);
+}
+
+template <class TItem> bool CCollection<TItem>::RemoveWithoutDestroyInstance(unsigned int index, unsigned int count)
+{
+  bool result = false;
+
+  if ((count > 0) && ((index + count) <= this->itemCount))
+  {
+    // move rest of items
+    unsigned int size = (this->itemCount - index - count) * sizeof(unsigned int);
+    if (size > 0)
+    {
+      void *source = (void *)(this->items + index + count);
+      void *destination = (void *)(this->items + index);
+
+      memmove(destination, source, size);
     }
 
     this->itemCount -= count;

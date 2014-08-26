@@ -32,6 +32,9 @@
 #include "StreamPackageDataResponse.h"
 #include "StreamPackagePacketRequest.h"
 #include "StreamPackagePacketResponse.h"
+#include "FFmpegLogger.h"
+
+extern "C++" CFFmpegLogger *ffmpegLogger;
 
 #include "moreuuids.h"
 
@@ -276,6 +279,7 @@ CDemuxer::CDemuxer(HRESULT *result, CLogger *logger, IDemuxerOwner *filter, CPar
   this->packetInputFormat = NULL;
   this->createDemuxerError = S_OK;
   this->demuxerContextRequestId = 0;
+  this->ffmpegContext = NULL;
 
   for (unsigned int i = 0; i < CStream::Unknown; i++)
   {
@@ -315,6 +319,17 @@ CDemuxer::CDemuxer(HRESULT *result, CLogger *logger, IDemuxerOwner *filter, CPar
 
         this->activeStream[i] = ACTIVE_STREAM_NOT_SPECIFIED;
       }
+    }
+
+    if (SUCCEEDED(*result))
+    {
+      // FFMpeg context after registering (RegisterFFmpegContext() method) will be released from memory by calling UnregisterFFmpegContext() method
+      // explicit release is allowed only in case of failed registering
+      this->ffmpegContext = new CFFmpegContext(result, this);
+      CHECK_POINTER_HRESULT(*result, this->ffmpegContext, *result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_HRESULT(*result, ffmpegLogger->RegisterFFmpegContext(this->ffmpegContext), *result, E_OUTOFMEMORY);
+      CHECK_CONDITION_EXECUTE(FAILED(*result), FREE_MEM_CLASS(this->ffmpegContext));
     }
   }
 }
@@ -357,6 +372,41 @@ CDemuxer::~CDemuxer(void)
   //FREE_MEM(this->flvTimestamps);
   FREE_MEM_CLASS(this->configuration);
   FREE_MEM_CLASS(this->packetInputFormat);
+
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->ffmpegContext, ffmpegLogger->UnregisterFFmpegContext(this->ffmpegContext));
+}
+
+// IFFmpegLog interface
+
+bool CDemuxer::FFmpegLog(CFFmpegLogger *ffmpegLogger, CFFmpegContext *context, void *ffmpegPtr, int ffmpegLogLevel, const char *ffmpegFormat, va_list ffmpegList)
+{
+  bool result = false;
+  AVFormatContext *formatContext = (AVFormatContext *)ffmpegPtr;
+  CDemuxer *demuxer = NULL;
+
+  if ((formatContext != NULL) && (formatContext->pb != NULL) && (formatContext->pb->opaque != NULL))
+  {
+    demuxer = (CDemuxer *)(formatContext->pb->opaque);
+
+    if (demuxer != NULL)
+    {
+      result = true;
+
+      if ((!demuxer->IsAvi()) && ((!demuxer->IsMpegTs()) || (demuxer->IsMpegTs() && (ffmpegLogLevel < AV_LOG_WARNING))))
+      {
+        wchar_t *message = ffmpegLogger->GetFFmpegMessage(ffmpegFormat, ffmpegList);
+
+        if (message != NULL)
+        {
+          demuxer->logger->Log(LOGGER_VERBOSE, L"%s: %s: demuxer stream: %u, log level: %d, message: '%s'", MODULE_NAME, METHOD_FFMPEG_LOG_NAME, demuxer->GetDemuxerId(), ffmpegLogLevel, message);
+        }
+
+        FREE_MEM(message);
+      }
+    }
+  }
+
+  return result;
 }
 
 /* get methods */
@@ -426,7 +476,7 @@ HRESULT CDemuxer::GetOutputPinPacket(COutputPinPacket *packet)
 
       if (SUCCEEDED(result))
       {
-        this->outputPacketCollection->Remove(0);
+        this->outputPacketCollection->CCollection::Remove(0);
         result = S_OK;
       }
     }
@@ -2221,6 +2271,8 @@ HRESULT CDemuxer::DestroyCreateDemuxerWorker(void)
 
   this->createDemuxerWorkerShouldExit = true;
   this->filter->SetPauseSeekStopMode(PAUSE_SEEK_STOP_MODE_DISABLE_READING);
+  this->flags |= DEMUXER_FLAG_DISABLE_DEMUXING_WITH_RETURN_TO_DEMUXING_WORKER;
+  this->flags &= ~DEMUXER_FLAG_DISABLE_READING;
 
   // wait for the create demuxer worker thread to exit
   if (this->createDemuxerWorkerThread != NULL)
@@ -3411,7 +3463,7 @@ HRESULT CDemuxer::GetNextMediaPacket(CMediaPacket **mediaPacket, uint64_t flags)
       *mediaPacket = (CMediaPacket *)response->GetMediaPacket()->Clone();
       CHECK_POINTER_HRESULT(result, (*mediaPacket), result, E_OUTOFMEMORY);
 
-      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), (*mediaPacket)->SetDiscontinuity(response->IsDiscontinuity()));
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), (*mediaPacket)->SetDiscontinuity(response->IsDiscontinuity(), UINT_MAX));
 
       if (response->IsDiscontinuity())
       {

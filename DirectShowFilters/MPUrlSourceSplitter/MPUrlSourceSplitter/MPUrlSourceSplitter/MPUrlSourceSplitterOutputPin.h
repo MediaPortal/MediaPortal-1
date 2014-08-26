@@ -235,6 +235,9 @@ protected:
   // holds dump file
   CDumpFile *dumpFile;
 
+  // holds media packet processed from last store time
+  unsigned int mediaPacketProcessed;
+
   /* methods */
 
   virtual DWORD ThreadProc();

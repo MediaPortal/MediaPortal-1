@@ -36,17 +36,14 @@ CAfhsDecryptionPlugin::CAfhsDecryptionPlugin(HRESULT *result, CLogger *logger, C
   this->logger = NULL;
   this->configuration = NULL;
   this->decryptionResult = DECRYPTION_RESULT_PENDING;
-  this->connectionParameters = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->logger = new CLogger(result, logger);
     this->configuration = new CParameterCollection(result);
-    this->connectionParameters = new CParameterCollection(result);
 
     CHECK_POINTER_HRESULT(*result, this->logger, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->configuration, *result, E_OUTOFMEMORY);
-    CHECK_POINTER_HRESULT(*result, this->connectionParameters, *result, E_OUTOFMEMORY);
 
     CHECK_CONDITION_HRESULT(*result, this->configuration->Append(configuration), *result, E_OUTOFMEMORY);
   }
@@ -54,7 +51,6 @@ CAfhsDecryptionPlugin::CAfhsDecryptionPlugin(HRESULT *result, CLogger *logger, C
 
 CAfhsDecryptionPlugin::~CAfhsDecryptionPlugin(void)
 {
-  FREE_MEM_CLASS(this->connectionParameters);
   FREE_MEM_CLASS(this->configuration);
   FREE_MEM_CLASS(this->logger);
 }
@@ -84,27 +80,7 @@ HRESULT CAfhsDecryptionPlugin::GetDecryptionResult(void)
 
 /* get methods */
 
-HRESULT CAfhsDecryptionPlugin::GetConnectionParameters(CParameterCollection *parameters)
-{
-  HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, parameters);
-
-  CHECK_CONDITION_HRESULT(result, parameters->Append(this->connectionParameters), result, E_OUTOFMEMORY);
-
-  return result;
-}
-
 /* set methods */
-
-HRESULT CAfhsDecryptionPlugin::SetConnectionParameters(const CParameterCollection *parameters)
-{
-  HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, parameters);
-
-  CHECK_CONDITION_HRESULT(result, this->connectionParameters->Append((CParameterCollection *)parameters), result, E_OUTOFMEMORY);
-
-  return result;
-}
 
 /* other methods */
 
@@ -112,7 +88,6 @@ HRESULT CAfhsDecryptionPlugin::ClearSession(void)
 {
   this->flags = AFHS_DECRYPTION_PLUGIN_FLAG_NONE;
   this->decryptionResult = DECRYPTION_RESULT_PENDING;
-  this->connectionParameters->Clear();
 
   return S_OK;
 }

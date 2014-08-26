@@ -444,15 +444,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
       CStreamPackageDataRequest *request = dynamic_cast<CStreamPackageDataRequest *>(streamPackage->GetRequest());
       CStreamPackageDataResponse *response = dynamic_cast<CStreamPackageDataResponse *>(streamPackage->GetResponse());
 
-      // clear response buffer
-      response->GetBuffer()->ClearBuffer();
-
+      // don not clear response buffer, we don't have to copy data again from start position
       // first try to find starting media packet (packet which have first data)
-      unsigned int packetIndex = UINT_MAX;
-      unsigned int foundDataLength = 0;
+      unsigned int foundDataLength = response->GetBuffer()->GetBufferOccupiedSpace();
 
-      int64_t startPosition = request->GetStart();
-      packetIndex = this->mediaPackets->GetMediaPacketIndexBetweenPositions(startPosition);
+      int64_t startPosition = request->GetStart() + foundDataLength;
+      unsigned int packetIndex = this->mediaPackets->GetMediaPacketIndexBetweenPositions(startPosition);
 
       while (packetIndex != UINT_MAX)
       {

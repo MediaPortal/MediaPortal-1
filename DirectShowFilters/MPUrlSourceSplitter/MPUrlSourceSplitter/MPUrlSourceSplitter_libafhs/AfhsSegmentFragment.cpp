@@ -89,6 +89,12 @@ void CAfhsSegmentFragment::SetDecrypted(bool decrypted)
   this->flags |= decrypted ? AFHS_SEGMENT_FRAGMENT_FLAG_DECRYPTED : AFHS_SEGMENT_FRAGMENT_FLAG_NONE;
 }
 
+void CAfhsSegmentFragment::SetEncrypted(bool encrypted)
+{
+  this->flags &= ~AFHS_SEGMENT_FRAGMENT_FLAG_ENCRYPTED;
+  this->flags |= encrypted ? AFHS_SEGMENT_FRAGMENT_FLAG_ENCRYPTED : AFHS_SEGMENT_FRAGMENT_FLAG_NONE;
+}
+
 void CAfhsSegmentFragment::SetFragmentStartPosition(int64_t fragmentStartPosition)
 {
   this->fragmentStartPosition = fragmentStartPosition;
@@ -121,6 +127,11 @@ bool CAfhsSegmentFragment::IsDownloaded(void)
 bool CAfhsSegmentFragment::IsDecrypted(void)
 {
   return this->IsSetFlags(AFHS_SEGMENT_FRAGMENT_FLAG_DECRYPTED);
+}
+
+bool CAfhsSegmentFragment::IsEncrypted(void)
+{
+  return this->IsSetFlags(AFHS_SEGMENT_FRAGMENT_FLAG_ENCRYPTED);
 }
 
 bool CAfhsSegmentFragment::IsSetFragmentStartPosition(void)

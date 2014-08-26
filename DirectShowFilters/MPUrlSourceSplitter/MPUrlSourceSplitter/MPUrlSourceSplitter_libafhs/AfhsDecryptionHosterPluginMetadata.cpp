@@ -27,6 +27,7 @@
 
 #include "AfhsDecryptionHosterPluginMetadata.h"
 #include "AfhsDecryptionPlugin.h"
+#include "ErrorCodes.h"
 
 #pragma warning(pop)
 
@@ -64,6 +65,13 @@ unsigned int CAfhsDecryptionHosterPluginMetadata::GetDecryptionScore(void)
 /* set methods */
 
 /* other methods */
+
+HRESULT CAfhsDecryptionHosterPluginMetadata::CheckPlugin(void)
+{
+  CAfhsDecryptionPlugin *decryptionPlugin = dynamic_cast<CAfhsDecryptionPlugin *>(this->plugin);
+
+  return (decryptionPlugin != NULL) ? S_OK : E_INVALID_PLUGIN_TYPE;
+}
 
 HRESULT CAfhsDecryptionHosterPluginMetadata::ClearSession(void)
 {

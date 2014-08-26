@@ -117,8 +117,6 @@ protected:
 
   void LogMessage(unsigned int logLevel, const wchar_t *message);
   void Log(unsigned int logLevel, const wchar_t *format, va_list vl);
-
-private:
 };
 
 #endif

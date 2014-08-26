@@ -52,11 +52,6 @@ public:
 
   /* get methods */
 
-  // gets current connection parameters (can be different as supplied connection parameters)
-  // @param parameters : the reference to parameter collection to be filled with connection parameters
-  // @return : S_OK if successful, error code otherwise
-  virtual HRESULT GetConnectionParameters(CParameterCollection *parameters);
-
   // gets decryption result about current stream
   // @return : one of DECRYPTION_RESULT values
   virtual HRESULT GetDecryptionResult(void);
@@ -66,11 +61,6 @@ public:
   virtual unsigned int GetDecryptionScore(void) = 0;
 
   /* set methods */
-
-  // sets current connection url and parameters
-  // @param parameters : the collection of url and connection parameters
-  // @return : S_OK if successful
-  virtual HRESULT SetConnectionParameters(const CParameterCollection *parameters);
 
   /* other methods */
 
@@ -85,8 +75,6 @@ protected:
   CParameterCollection *configuration;
   // holds decryption result
   HRESULT decryptionResult;
-  // holds connection parameters
-  CParameterCollection *connectionParameters;
 
   /* methods */
 };

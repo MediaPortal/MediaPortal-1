@@ -34,8 +34,6 @@
 
 #define MEDIA_PACKET_FLAG_NONE                                        CACHE_FILE_ITEM_FLAG_NONE
 
-#define MEDIA_PACKET_FLAG_DISCONTINUITY                               (1 << (CACHE_FILE_ITEM_FLAG_LAST + 0))
-
 #define MEDIA_PACKET_FLAG_LAST                                        (CACHE_FILE_ITEM_FLAG_LAST + 1)
 
 // CMediaPacket class is wrapper for IMediaSample interface
@@ -52,21 +50,9 @@ public:
   // @return : the stream position where this packet starts
   int64_t GetStart(void);
 
-  // gets the stream position where this packet ends
-  // @return : the stream position where this packet ends
-  int64_t GetEnd(void);
-
-  // gets presentation timestamp
-  // @return : presentation timestamp in ticks per second or MEDIA_PACKET_PRESENTATION_TIMESTAMP_UNDEFINED if not defined
-  int64_t GetPresentationTimestamp(void);
-
   // gets presentation timestamp in 100ns (DSHOW_TIME_BASE ticks per second) units
-  // @return : presentation timestamp in 100ns units or MEDIA_PACKET_PRESENTATION_TIMESTAMP_UNDEFINED if not defined
-  int64_t GetPresentationTimestampInDirectShowTimeUnits(void);
-
-  // gets presentation timestamp ticks per second
-  // @return : presentation timestamp ticks per second
-  unsigned int GetPresentationTimestampTicksPerSecond(void);
+  // @return : presentation timestamp in in 100ns (DSHOW_TIME_BASE ticks per second) units or MEDIA_PACKET_PRESENTATION_TIMESTAMP_UNDEFINED if not defined
+  int64_t GetPresentationTimestamp(void);
 
   /* set methods */
 
@@ -74,44 +60,23 @@ public:
   // @param position : the stream position where this packet starts
   void SetStart(int64_t position);
 
-  // sets the stream position where this packet ends
-  // @param position : the stream position where this packet ends
-  void SetEnd(int64_t position);
-
-  // sets presentation timestamp
+  // sets presentation timestamp (in DSHOW_TIME_BASE units)
   // @param presentationTimestamp : the presentation timestamp in ticks per second to set or MEDIA_PACKET_PRESENTATION_TIMESTAMP_UNDEFINED if not defined
   void SetPresentationTimestamp(int64_t presentationTimestamp);
 
-  // sets presentation timestamp ticks per second
+  // sets presentation timestamp in specified timestamp units
+  // the presentation timestamp is converted to DSHOW_TIME_BASE units
+  // @param presentationTimestamp : the presentation timestamp in ticks per second to set or MEDIA_PACKET_PRESENTATION_TIMESTAMP_UNDEFINED if not defined
   // @param presentationTimestampTicksPerSecond : presentation timestamp ticks per second to set
-  void SetPresentationTimestampTicksPerSecond(unsigned int presentationTimestampTicksPerSecond);
-
-  // set discontinuity
-  // @param discontinuity : true if discontinuity after data, false otherwise
-  void SetDiscontinuity(bool discontinuity);
+  void SetPresentationTimestamp(int64_t presentationTimestamp, unsigned int presentationTimestampTicksPerSecond);
 
   /* other methods */
-
-  // tests if discontinuity is set
-  // @return : true if discontinuity is set, false otherwise
-  bool IsDiscontinuity(void);
-
-  // deeply clone current instance of media packet with specified position range to new media packet
-  // @param start : start position of new media packet
-  // @param end : end position of new media packet
-  // @return : new media packet or NULL if error or media packet is stored to file
-  CMediaPacket *CreateMediaPacketBasedOnPacket(int64_t start, int64_t end);
 
 protected:
   // start sample - byte position
   int64_t start;
-  // end sample - byte position
-  int64_t end;
-
   // holds presentation timestamp
   int64_t presentationTimestamp;
-  // holds presentation timestamp ticks per second
-  unsigned int presentationTimestampTicksPerSecond;
 
   /* methods */
 

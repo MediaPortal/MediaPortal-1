@@ -54,7 +54,7 @@ public:
   /* other methods */
 
   // logs message to specified logger context
-  // @param context : the context to log message
+  // @param context : the context to log message (LOGGER_CONTEXT_INVALID_HANDLE for all contexts)
   // @param logLevel : the level of message
   // @param message : the message to log to file
   void LogMessage(unsigned int context, unsigned int logLevel, const wchar_t *message);

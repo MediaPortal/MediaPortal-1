@@ -164,6 +164,8 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="HttpStreamFragment.h" />
+    <ClInclude Include="HttpStreamFragmentCollection.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Http.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Http_Parameters.h" />
     <ClInclude Include="stdafx.h" />
@@ -178,6 +180,8 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="HttpStreamFragment.cpp" />
+    <ClCompile Include="HttpStreamFragmentCollection.cpp" />
     <ClCompile Include="MPUrlSourceSplitter_Protocol_Http.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

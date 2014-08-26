@@ -47,7 +47,6 @@ CStaticLogger::CStaticLogger(HRESULT *result)
     CHECK_POINTER_HRESULT(*result, this->loggerFiles, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->mutex, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->registeredModules, *result, E_OUTOFMEMORY);
-    CHECK_CONDITION_EXECUTE(SUCCEEDED(*result), *result = this->CreateLoggerWorker());
   }
 }
 
@@ -78,6 +77,7 @@ unsigned int CStaticLogger::GetLoggerContext(GUID guid, unsigned int maxLogSize,
 {
   // we must be sure, that Flush() isn't working
   CLockMutex lock(this->mutex, INFINITE);
+
   HRESULT result = S_OK;
   CLoggerContext *context = NULL;
   CLoggerContext *firstFreeContext = NULL;
@@ -93,8 +93,8 @@ unsigned int CStaticLogger::GetLoggerContext(GUID guid, unsigned int maxLogSize,
       firstFreeContext = temp;
       firstFreeContextHandle = i;
     }
-
-    if (temp->GetLoggerGUID() == guid)
+    
+    if (IsEqualGUID(temp->GetLoggerGUID(), guid) != 0)
     {
       context = temp;
       contextHandle = i;
@@ -175,15 +175,29 @@ unsigned int CStaticLogger::GetLoggerContext(GUID guid, unsigned int maxLogSize,
 
 void CStaticLogger::LogMessage(unsigned int context, unsigned int logLevel, const wchar_t *message)
 {
-  CLoggerContext *cnt = this->loggerContexts->GetItem(context);
-
-  if (cnt != NULL)
+  if (context != LOGGER_CONTEXT_INVALID_HANDLE)
   {
-    if (cnt->IsAllowedLogVerbosity(logLevel))
+    CLoggerContext *cnt = this->loggerContexts->GetItem(context);
+
+    if ((cnt != NULL) && cnt->IsAllowedLogVerbosity(logLevel))
     {
       CLockMutex lock(cnt->GetMutex(), INFINITE);
 
       cnt->GetMessages()->Add(L"", message);
+    }
+  }
+  else
+  {
+    for (unsigned int i = 0; i < this->loggerContexts->Count(); i++)
+    {
+      CLoggerContext *cnt = this->loggerContexts->GetItem(i);
+
+      if ((!cnt->IsFree()) && cnt->IsAllowedLogVerbosity(logLevel))
+      {
+        CLockMutex lock(cnt->GetMutex(), INFINITE);
+
+        cnt->GetMessages()->Add(L"", message);
+      }
     }
   }
 }
@@ -216,8 +230,11 @@ bool CStaticLogger::AddLoggerContextReference(unsigned int context)
 
   if (cnt != NULL)
   {
-    cnt->AddReference();
-    return true;
+    if (SUCCEEDED(this->CreateLoggerWorker()))
+    {
+      cnt->AddReference();
+      return true;
+    }
   }
 
   return false;
@@ -231,9 +248,23 @@ bool CStaticLogger::RemoveLoggerContextReference(unsigned int context)
   {
     if (cnt->RemoveReference() == 0)
     {
+      // no logger has reference to this context
       this->FlushContext(context);
       cnt->Clear();
+
+      // check if there is any used context
+      // in another case, destroy logger worker
+      bool allContextFree = true;
+      for (unsigned int i = 0; i < this->loggerContexts->Count(); i++)
+      {
+        CLoggerContext *ctx = this->loggerContexts->GetItem(i);
+
+        allContextFree &= ctx->IsFree();
+      }
+
+      CHECK_CONDITION_EXECUTE(allContextFree, this->DestroyLoggerWorker());
     }
+
     return true;
   }
 
@@ -333,12 +364,7 @@ HRESULT CStaticLogger::DestroyLoggerWorker(void)
 
 void CStaticLogger::Flush(void)
 {
-  assert(this->mutex != NULL);
   CLockMutex lock(this->mutex, INFINITE);
-  assert(!lock.IsAbandoned());
-  assert(!lock.IsFailed());
-  assert(!lock.IsTimeout());
-  assert(lock.IsLocked());
 
   HRESULT result = S_OK;
   unsigned int contextCount = this->loggerContexts->Count();

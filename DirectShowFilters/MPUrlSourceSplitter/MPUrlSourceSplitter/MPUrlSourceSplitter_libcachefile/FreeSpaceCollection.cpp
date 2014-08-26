@@ -266,27 +266,7 @@ bool CFreeSpaceCollection::Add(CFreeSpace *item)
       return false;
     }
 
-    CFreeSpace *startFreeSpace = (startIndex == UINT_MAX) ? NULL : this->GetItem(startIndex);
-    CFreeSpace *endFreeSpace = (endIndex == UINT_MAX) ? NULL : this->GetItem(endIndex);
-
-    // everything after endIndex must be moved
-    if (this->itemCount > 0)
-    {
-      for (unsigned int i = this->itemCount; i > endIndex; i--)
-      {
-        *(this->items + i) = *(this->items + i - 1);
-      }
-    }
-
-    if (endIndex == UINT_MAX)
-    {
-      // the free space have to be added after all free spaces
-      endIndex = this->itemCount;
-    }
-
-    // add new item to collection and increase item count
-    *(this->items + endIndex) = item;
-    this->itemCount++;
+    return __super::Insert(min(endIndex, this->Count()), item);
   }
 
   return true;
