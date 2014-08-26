@@ -6,7 +6,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
   {
     public String DisplayName
     {
-      get { return System.IO.Path.GetFileNameWithoutExtension(this._localTranspoderFile); }
+      get { return System.IO.Path.GetFileNameWithoutExtension(this._localTransponderFile); }
     }
 
     public override string ToString()

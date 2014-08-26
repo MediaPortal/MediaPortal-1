@@ -91,17 +91,17 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         [DataMember]
         public string LocalTransponderFile
         {
-            get { return _localTranspoderFile; }
+            get { return _localTransponderFile; }
             set
             {
-                if (_localTranspoderFile != value)
+                if (_localTransponderFile != value)
                 {
-                    _localTranspoderFile = value;
-                    OnPropertyChanged("LocalTranspoderFile");
+                    _localTransponderFile = value;
+                    OnPropertyChanged("LocalTransponderFile");
                 }
             }
         }
-        private string _localTranspoderFile;
+        private string _localTransponderFile;
 
         #endregion
         #region Navigation Properties

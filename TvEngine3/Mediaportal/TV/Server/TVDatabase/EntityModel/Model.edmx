@@ -419,7 +419,7 @@
     <Property Name="Name" Type="varchar" Nullable="false" MaxLength="200" />    
     <Property Name="Position" Type="int" Nullable="false" />     
     <Property Name="TransponderListUrl" Type="varchar" Nullable="true" />     
-    <Property Name="LocalTranspoderFile" Type="varchar" Nullable="true" />     
+    <Property Name="LocalTransponderFile" Type="varchar" Nullable="true" />     
   </EntityType>
   <EntityType Name="Schedules">
     <Key>
@@ -1502,7 +1502,7 @@
           
           <NavigationProperty Name="TunerSatellites" Relationship="TVDatabaseModel.TunerSatelliteSatellite" FromRole="Satellite" ToRole="TunerSatellite" />
           <Property Type="String" Name="TransponderListUrl" Nullable="true" />
-          <Property Type="String" Name="LocalTranspoderFile" Nullable="true" />
+          <Property Type="String" Name="LocalTransponderFile" Nullable="true" />
           <NavigationProperty Name="TuningDetailSatellites" Relationship="TVDatabaseModel.TuningDetailSatelliteSatellite" FromRole="Satellite" ToRole="TuningDetailSatellite" />
           
         </EntityType>
@@ -2539,7 +2539,7 @@
           <ScalarProperty Name="Name" ColumnName="Name" />
           <ScalarProperty Name="Position" ColumnName="Position" />
           <ScalarProperty Name="TransponderListUrl" ColumnName="TransponderListUrl" />
-          <ScalarProperty Name="LocalTranspoderFile" ColumnName="LocalTranspoderFile" />
+          <ScalarProperty Name="LocalTransponderFile" ColumnName="LocalTransponderFile" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

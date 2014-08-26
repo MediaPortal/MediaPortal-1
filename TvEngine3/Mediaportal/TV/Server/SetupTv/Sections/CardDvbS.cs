@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
@@ -739,7 +740,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       int index = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbs" + _cardNumber + "selectedMotorSat", 0);
 
-      List<Satellite> satellites = LoadSatellites();
+      //todo MM diseq motor
+
+      /*List<Satellite> satellites = LoadSatellites();
 
       foreach (Satellite sat in satellites)
       {
@@ -749,7 +752,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         comboBoxSat.SelectedIndex = index;
       else
         comboBoxSat.SelectedIndex = 0;
-      LoadMotorTransponder();
+      LoadMotorTransponder();*/
       _enableEvents = true;
     }
 
@@ -802,7 +805,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       Satellite sat = (Satellite)comboBoxSat.Items[comboBoxSat.SelectedIndex];
 
       Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
-      IList<DisEqcMotor> motorSettings = card.DisEqcMotors;
+
+      //todo MM diseq motor
+      /*IList<DisEqcMotor> motorSettings = card.DisEqcMotors;
       foreach (DisEqcMotor motor in motorSettings)
       {
         if (motor.IdSatellite == sat.Satellite.IdSatellite)
@@ -815,7 +820,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
       }
       MessageBox.Show("No position stored for this satellite", "Warning", MessageBoxButtons.OK,
-                      MessageBoxIcon.Exclamation);
+                      MessageBoxIcon.Exclamation);*/
     }
 
     private void buttonStore_Click(object sender, EventArgs e)
@@ -824,10 +829,21 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return;
       if (checkBox1.Checked == false)
         return;
+
+      /*
+      //todo MM how does this work
+
       //store motor position..
       int index = -1;
       Satellite sat = (Satellite)comboBoxSat.SelectedItem;
       Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
+
+      foreach (TunerSatellite tunersat in sat.TunerSatellites)
+      {
+        tunersat.DiseqcMotorPosition = 
+      }
+      
+
       IList<DisEqcMotor> motorSettings = card.DisEqcMotors;
       foreach (DisEqcMotor motor in motorSettings)
       {
@@ -848,7 +864,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       }
       ServiceAgents.Instance.ControllerServiceAgent.DiSEqCStorePosition(_cardNumber, (byte)(index));
-      MessageBox.Show("Satellite position stored to:" + index, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+      MessageBox.Show("Satellite position stored to:" + index, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);*/
     }
 
     private void buttonMoveEast_Click(object sender, EventArgs e)
@@ -952,10 +968,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       tuneChannel.RollOff = transponder.Rolloff;
       tuneChannel.InnerFecRate = transponder.InnerFecRate;
       tuneChannel.Diseqc = DiseqcPort.None;
-      if (mpComboLnbType1.SelectedIndex >= 0)
+      /*if (mpComboLnbType1.SelectedIndex >= 0)
         tuneChannel.LnbType = (LnbType)mpComboLnbType1.SelectedItem;
       if (mpComboDiseqc1.SelectedIndex >= 0)
-        tuneChannel.Diseqc = (DiseqcPort)mpComboDiseqc1.SelectedIndex;
+        tuneChannel.Diseqc = (DiseqcPort)mpComboDiseqc1.SelectedIndex;*/
       _user.CardId = _cardNumber;
       ServiceAgents.Instance.ControllerServiceAgent.StopCard(_user.CardId);
       _user.CardId = _cardNumber;
@@ -1185,7 +1201,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       bool enableScanControls = scanState == ScanState.Initialized;
-      Control[] scanControls = new Control[]
+      /*Control[] scanControls = new Control[]
                                  {
                                    mpLNB1, mpLNB2, mpLNB3, mpLNB4,
                                    mpComboDiseqc1, mpComboDiseqc2, mpComboDiseqc3, mpComboDiseqc4,
@@ -1198,7 +1214,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       for (int ctlIndex = 0; ctlIndex < scanControls.Length; ctlIndex++)
       {
         scanControls[ctlIndex].Enabled = enableScanControls;
-      }
+      }*/
 
       bool enableNonPredef = scanState == ScanState.Initialized && ActiveScanType != ScanTypes.Predefined;
       Control[] nonPredefControls = new Control[]

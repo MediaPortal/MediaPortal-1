@@ -40,7 +40,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.label2 = new System.Windows.Forms.Label();
       this.txtPos = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
-      this.txtLocalTranspoderFile = new System.Windows.Forms.TextBox();
+      this.txtLocalTransponderFile = new System.Windows.Forms.TextBox();
       this.groupBoxGeneralSettings.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -90,7 +90,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxGeneralSettings.Controls.Add(this.label2);
       this.groupBoxGeneralSettings.Controls.Add(this.txtPos);
       this.groupBoxGeneralSettings.Controls.Add(this.label1);
-      this.groupBoxGeneralSettings.Controls.Add(this.txtLocalTranspoderFile);
+      this.groupBoxGeneralSettings.Controls.Add(this.txtLocalTransponderFile);
       this.groupBoxGeneralSettings.Controls.Add(this.label47);
       this.groupBoxGeneralSettings.Controls.Add(this.txtSatName);
       this.groupBoxGeneralSettings.Location = new System.Drawing.Point(12, 12);
@@ -142,14 +142,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(106, 13);
       this.label1.TabIndex = 123;
-      this.label1.Text = "LocalTranspoderFile:";
+      this.label1.Text = "LocalTransponderFile:";
       // 
       // txtLocalTranspoderFile
       // 
-      this.txtLocalTranspoderFile.Location = new System.Drawing.Point(127, 45);
-      this.txtLocalTranspoderFile.Name = "txtLocalTranspoderFile";
-      this.txtLocalTranspoderFile.Size = new System.Drawing.Size(123, 20);
-      this.txtLocalTranspoderFile.TabIndex = 122;
+      this.txtLocalTransponderFile.Location = new System.Drawing.Point(127, 45);
+      this.txtLocalTransponderFile.Name = "txtLocalTranspoderFile";
+      this.txtLocalTransponderFile.Size = new System.Drawing.Size(123, 20);
+      this.txtLocalTransponderFile.TabIndex = 122;
       // 
       // FormSatellite
       // 
@@ -182,7 +182,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private System.Windows.Forms.Label label47;
     private System.Windows.Forms.GroupBox groupBoxGeneralSettings;
     private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.TextBox txtLocalTranspoderFile;
+    private System.Windows.Forms.TextBox txtLocalTransponderFile;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.TextBox txtPos;
     private System.Windows.Forms.Label label3;

@@ -52,7 +52,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         Satellite = new Satellite();
       }
 
-      Satellite.LocalTransponderFile = txtLocalTranspoderFile.Text;
+      Satellite.LocalTransponderFile = txtLocalTransponderFile.Text;
 
       int pos;
       bool parsed = Int32.TryParse(txtPos.Text, out pos);
@@ -78,7 +78,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (Satellite != null)
       {
-        txtLocalTranspoderFile.Text = Satellite.LocalTransponderFile;
+        txtLocalTransponderFile.Text = Satellite.LocalTransponderFile;
         txtPos.Text = Satellite.Position.ToString(CultureInfo.InvariantCulture);
         txtSatName.Text = Satellite.Name;
         txtTransponderListUrl.Text = Satellite.TransponderListUrl;

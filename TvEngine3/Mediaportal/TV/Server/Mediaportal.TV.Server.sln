@@ -169,6 +169,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvLibrary.IntegrationProvid
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AVerMedia", "Plugins\CustomDevices\AVerMedia\AVerMedia.csproj", "{3CA0D0E7-B40D-489C-9BE2-AC27CB5D9F2A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseTests", "..\DatabaseTests\DatabaseTests.csproj", "{93D7C258-5541-4C94-966A-38AF00A8D690}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -779,6 +781,16 @@ Global
 		{3CA0D0E7-B40D-489C-9BE2-AC27CB5D9F2A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{3CA0D0E7-B40D-489C-9BE2-AC27CB5D9F2A}.Release|x86.ActiveCfg = Release|Any CPU
 		{3CA0D0E7-B40D-489C-9BE2-AC27CB5D9F2A}.Release|x86.Build.0 = Release|Any CPU
+		{93D7C258-5541-4C94-966A-38AF00A8D690}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93D7C258-5541-4C94-966A-38AF00A8D690}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93D7C258-5541-4C94-966A-38AF00A8D690}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{93D7C258-5541-4C94-966A-38AF00A8D690}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{93D7C258-5541-4C94-966A-38AF00A8D690}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{93D7C258-5541-4C94-966A-38AF00A8D690}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93D7C258-5541-4C94-966A-38AF00A8D690}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93D7C258-5541-4C94-966A-38AF00A8D690}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{93D7C258-5541-4C94-966A-38AF00A8D690}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{93D7C258-5541-4C94-966A-38AF00A8D690}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

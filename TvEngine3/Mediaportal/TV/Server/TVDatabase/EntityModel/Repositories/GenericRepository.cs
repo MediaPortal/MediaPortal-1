@@ -353,7 +353,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     private string GetEntityName<TEntity>() where TEntity : class
     {
-      return string.Format("{0}.{1}", ObjectContext.DefaultContainerName, _pluralizer.Pluralize(typeof(TEntity).Name));
+      string name = typeof(TEntity).Name;
+      return string.Format("{0}.{1}", ObjectContext.DefaultContainerName, _pluralizer.Pluralize(name));
     }
 
     public Expression<Func<TElement, bool>> BuildContainsExpression<TElement, TValue>(

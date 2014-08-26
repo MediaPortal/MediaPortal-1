@@ -285,20 +285,64 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       return GetServiceDetail(dvbChannel, tuningDetailSearchEnum);
     }
 
+
     public static ServiceDetail GetServiceDetail(DVBBaseChannel dvbChannel, TuningDetailSearchEnum tuningDetailSearchEnum)
-    {      
+    {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
         IQueryable<ServiceDetail> query = GetServiceDetailQueryBasedOnTunerType(dvbChannel, channelRepository, tuningDetailSearchEnum);
-        query = ApplyTuningDetailConstraintBasedOnTunerType(dvbChannel, query);      
-        query = channelRepository.IncludeAllRelations(query);
-        return query.FirstOrDefault();
+
+        if (query is IQueryable<ServiceDvb>)
+        {
+          IQueryable<ServiceDvb> queryDvb = ApplyTuningDetailConstraintBasedOnTunerType<ServiceDvb>(dvbChannel, query as IQueryable<ServiceDvb>);
+          query = channelRepository.IncludeAllRelations(queryDvb);
+        }        
+        else if (query is IQueryable<ServiceAtsc>)
+        {
+          IQueryable<ServiceAtsc> queryAtsc = ApplyTuningDetailConstraintBasedOnTunerType<ServiceAtsc>(dvbChannel, query as IQueryable<ServiceAtsc>);
+          query = channelRepository.IncludeAllRelations(queryAtsc);
+        }
+        return query.FirstOrDefault(); 
       }
     }
+    /*
+    public static ServiceDetail GetServiceDetailTestDeleteMe(DVBBaseChannel dvbChannel, TuningDetailSearchEnum tuningDetailSearchEnum)
+    {      
+
+      //works
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        IQueryable<ServiceDetail> query = channelRepository.GetQuery<ServiceDetail>();      
+        IQueryable<ServiceDvb> queryDvb = query.OfType<ServiceDvb>();
+                
+        if ((tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.NetworkId)))
+        {
+          queryDvb = queryDvb.Where(a => a.OriginalNetworkId == dvbChannel.NetworkId);
+        }
+        if ((tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.ServiceId)))
+        {
+          queryDvb = queryDvb.Where(b => b.ServiceId == dvbChannel.ServiceId);
+        }
+        if ((tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.TransportId)))
+        {
+          queryDvb = queryDvb.Where(c => c.TransportStreamId == dvbChannel.TransportId);
+        }
 
 
-    private static IQueryable<ServiceDetail> ApplyTuningDetailConstraintBasedOnTunerType(DVBBaseChannel dvbChannel,
-                                                             IQueryable<ServiceDetail> query)
+        query = queryDvb;
+
+        queryDvb = ApplyTuningDetailConstraintBasedOnTunerType(dvbChannel, queryDvb);      
+        //query = channelRepository.IncludeAllRelations(query); //TODO does not work currently
+
+        queryDvb = queryDvb.Include(c => c.TuningDetail).Include(c => c.Channel);//.Include(c => c.Channel.GroupMaps);
+
+        return queryDvb.FirstOrDefault();
+      }
+    }
+    */
+
+    private static IQueryable<T> ApplyTuningDetailConstraintBasedOnTunerType<T>(DVBBaseChannel dvbChannel,
+                                                             IQueryable<T> query) where T:ServiceDetail
     {      
       if (dvbChannel is DVBTChannel)
       {
@@ -320,7 +364,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         query = query.Where(s => s.TuningDetail is TuningDetailAtsc);                
       }
-      return query;
+      return (IQueryable<T>) query;
     }
     
 
@@ -328,6 +372,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
                                                               IChannelRepository channelRepository, TuningDetailSearchEnum tuningDetailSearchEnum)
     {
       IQueryable<ServiceDetail> query = channelRepository.GetQuery<ServiceDetail>();
+
       if (dvbChannel is DVBTChannel || dvbChannel is DVBSChannel || dvbChannel is DVBCChannel || dvbChannel is DVBIPChannel)
       {
         IQueryable<ServiceDvb> queryDvb = query.OfType<ServiceDvb>();
@@ -352,7 +397,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }      
       else // must be ATSCChannel
       {
-        var queryAtsc = query.OfType<ServiceAtsc>();        
+        IQueryable<ServiceAtsc> queryAtsc = query.OfType<ServiceAtsc>();        
         if ((tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.ServiceId)))
         {
           queryAtsc = queryAtsc.Where(b => b.ServiceId == dvbChannel.ServiceId);
