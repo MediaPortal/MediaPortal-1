@@ -172,9 +172,7 @@ protected:
   CHttpStreamFragmentCollection *streamFragments;
   // holds cache file
   CCacheFile *cacheFile;
-  // start, end and current stream position
-  //int64_t startStreamPosition;
-  //int64_t endStreamPosition;
+  // current stream position
   int64_t currentStreamPosition;
   // holds current stream length
   int64_t streamLength;
@@ -188,8 +186,6 @@ protected:
 
   // holds which fragment is currently downloading (UINT_MAX means none)
   unsigned int streamFragmentDownloading;
-  // holds which fragment is currently processed
-  //unsigned int streamFragmentProcessing;
   // holds which fragment have to be downloaded
   // (UINT_MAX means next fragment, always reset after started download of fragment)
   unsigned int streamFragmentToDownload;

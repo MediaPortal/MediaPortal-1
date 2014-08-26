@@ -27,7 +27,7 @@
 #include "Logger.h"
 #include "ProtocolPlugin.h"
 #include "UdpCurlInstance.h"
-#include "MediaPacketCollection.h"
+#include "UdpStreamFragmentCollection.h"
 #include "CacheFile.h"
 
 #define PROTOCOL_NAME                                                         L"UDP"
@@ -157,8 +157,8 @@ protected:
 
   // main instance of CURL
   CUdpCurlInstance *mainCurlInstance;
-  // holds media packets with received data
-  CMediaPacketCollection *mediaPackets;
+  // holds UDP stream fragments with received data
+  CUdpStreamFragmentCollection *streamFragments;
   // holds cache file
   CCacheFile *cacheFile;
   // holds current stream position

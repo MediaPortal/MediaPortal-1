@@ -20,20 +20,20 @@
 
 #pragma once
 
-#ifndef __HTTP_STREAM_FRAGMENT_DEFINED
-#define __HTTP_STREAM_FRAGMENT_DEFINED
+#ifndef __UDP_STREAM_FRAGMENT_DEFINED
+#define __UDP_STREAM_FRAGMENT_DEFINED
 
 #include "CacheFileItem.h"
 
-#define HTTP_STREAM_FRAGMENT_FLAG_NONE                                CACHE_FILE_ITEM_FLAG_NONE
+#define UDP_STREAM_FRAGMENT_FLAG_NONE                                 CACHE_FILE_ITEM_FLAG_NONE
 
-#define HTTP_STREAM_FRAGMENT_FLAG_LAST                                (CACHE_FILE_ITEM_FLAG_LAST + 0)
+#define UDP_STREAM_FRAGMENT_FLAG_LAST                                 (CACHE_FILE_ITEM_FLAG_LAST + 0)
 
-class CHttpStreamFragment : public CCacheFileItem
+class CUdpStreamFragment : public CCacheFileItem
 {
 public:
-  CHttpStreamFragment(HRESULT *result);
-  virtual ~CHttpStreamFragment(void);
+  CUdpStreamFragment(HRESULT *result);
+  virtual ~CUdpStreamFragment(void);
 
   /* get methods */
 

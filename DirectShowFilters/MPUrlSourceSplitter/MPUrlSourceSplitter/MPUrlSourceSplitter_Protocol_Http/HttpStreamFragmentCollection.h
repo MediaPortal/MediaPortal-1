@@ -69,13 +69,6 @@ public:
   // @return : true if successful, false otherwise
   bool GetItemInsertPosition(int64_t position, unsigned int *startIndex, unsigned int *endIndex);
 
-  // finds gap in media packets (if any), searching starts from specified position
-  // @param position : the position to start searching, it MUST within any existing media packet in collection
-  // @param startPosition : the reference to variable to gap start position
-  // @param endPosition : the reference to variable to gap end position
-  // @return : true if gap found, false otherwise
-  //virtual bool FindGapInMediaPackets(int64_t position, int64_t *startPosition, int64_t *endPosition);
-
 protected:
 
   /* methods */

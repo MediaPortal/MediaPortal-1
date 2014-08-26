@@ -36,6 +36,12 @@
     <ClInclude Include="UdpDownloadResponse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UdpStreamFragment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UdpStreamFragmentCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -54,6 +60,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UdpDownloadResponse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UdpStreamFragment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UdpStreamFragmentCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -74,8 +74,6 @@ CMPUrlSourceSplitter_Protocol_Http::CMPUrlSourceSplitter_Protocol_Http(HRESULT *
   this->connectionState = None;
   this->streamFragments = NULL;
   this->cacheFile = NULL;
-  //this->startStreamPosition = 0;
-  //this->endStreamPosition = 0;
   this->currentStreamPosition = 0;
   this->lastStoreTime = 0;
   this->flags |= PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
@@ -386,7 +384,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
           request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT, true, HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT));
           request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
 
-          //this->currentStreamPosition = this->startStreamPosition;
           this->currentStreamPosition = startStreamPosition;
 
           if (SUCCEEDED(this->mainCurlInstance->Initialize(request)))
@@ -701,7 +698,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
 
         if (fragment->IsDiscontinuity())
         {
-          //this->logger->Log(LOGGER_VERBOSE, L"%s: %s: discontinuity, completing request, request '%u', start '%lld', size '%u', found: '%u', current stream position: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, request->GetId(), request->GetStart(), request->GetLength(), foundDataLength, this->currentStreamPosition);
           this->logger->Log(LOGGER_VERBOSE, L"%s: %s: discontinuity, completing request, request '%u', start '%lld', size '%u', found: '%u'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, request->GetId(), request->GetStart(), request->GetLength(), foundDataLength);
 
           response->SetDiscontinuity(true);
@@ -772,8 +768,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
               // we are missing data without found data length
 
               int64_t requestStart = request->GetStart() + foundDataLength;
-              //int64_t requestEnd = requestStart;
-
               unsigned int startIndex = 0;
               unsigned int endIndex = 0;
 
@@ -927,17 +921,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
       {
         this->cacheFile->StoreItems(this->streamFragments, this->lastStoreTime, false);
       }
-
-      /*FILE *stream = fopen(FormatStringA("F:\\dump\\dump%08u.txt", aaa++), "w");
-
-      for (unsigned int i = 0; i < this->streamFragments->Count(); i++)
-      {
-        CHttpStreamFragment *fragment = this->streamFragments->GetItem(i);
-
-        fprintf(stream, "%04u %010lld %08u %u %u %u %u\n", i, fragment->GetStart(), fragment->GetLength(), fragment->IsDownloaded() ? 1 : 0, fragment->IsDiscontinuity() ? 1 : 0, fragment->IsLoadedToMemory(), fragment->IsStoredToFile() ? 1 : 0);
-      }
-
-      fclose(stream);*/
     }
   }
 
@@ -1068,8 +1051,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ClearSession(void)
   this->connectionState = None;
   this->cacheFile->Clear();
   this->streamFragments->Clear();
-  //this->startStreamPosition = 0;
-  //this->endStreamPosition = 0;
   this->currentStreamPosition = 0;
   this->lastStoreTime = 0;
   this->flags |= PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;

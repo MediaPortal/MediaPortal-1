@@ -32,7 +32,6 @@
 #define AFFECTED_INDEX_NOT_DOWNLOADED_ADD                                                   (1 << (FLAGS_LAST + 5))
 #define AFFECTED_INDEX_NOT_DOWNLOADED_INC                                                   (1 << (FLAGS_LAST + 6))
 
-
 CCacheFileItemCollection::CCacheFileItemCollection(HRESULT *result)
   : CFastSearchItemCollection(result)
 {
