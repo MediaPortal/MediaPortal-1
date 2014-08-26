@@ -44,7 +44,7 @@ public:
   // gets first not downloaded stream fragment
   // @param requested : start index for searching
   // @return : index of first not downloaded stream fragment or UINT_MAX if not exists
-  unsigned int GetFirstNotDownloadedStreamFragment(unsigned int start);
+  //unsigned int GetFirstNotDownloadedStreamFragment(unsigned int start);
 
   // gets index of stream fragment where position is between start position and end position
   // @param position : the position between start position and end position
@@ -94,6 +94,8 @@ protected:
   unsigned int startSearchingIndex;
   // holds stream fragments count to search for specific position
   unsigned int searchCount;
+
+  /* methods */
 };
 
 #endif

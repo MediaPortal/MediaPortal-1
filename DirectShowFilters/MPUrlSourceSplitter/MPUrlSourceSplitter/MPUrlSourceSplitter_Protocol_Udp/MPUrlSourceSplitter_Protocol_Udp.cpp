@@ -487,7 +487,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
         unsigned int copyDataLength = min(fragment->GetLength() - copyDataStart, request->GetLength() - foundDataLength);
 
         // copy data from stream fragment to response buffer
-        if (this->cacheFile->LoadItems(this->streamFragments, packetIndex, true, false))
+        if (this->cacheFile->LoadItems(this->streamFragments, packetIndex, true))
         {
           // memory is allocated while switching from Created to Waiting state, we can't have problem on next line
           response->GetBuffer()->AddToBufferWithResize(fragment->GetBuffer(), copyDataStart, copyDataLength);

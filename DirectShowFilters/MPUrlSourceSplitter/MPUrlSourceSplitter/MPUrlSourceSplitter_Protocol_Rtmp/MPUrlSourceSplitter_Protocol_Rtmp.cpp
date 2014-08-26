@@ -392,7 +392,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CStreamPackage *streamPa
                   // our FLV packet timestamp is greater than or equal to next fragment timestamp
                   // this means that we are receiving data, which we already have - in case if next fragment is downloaded
 
-                  currentDownloadingFragment->SetDownloaded(true);
+                  currentDownloadingFragment->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
+                  currentDownloadingFragment->SetDownloaded(true, UINT_MAX);
+
+                  this->streamFragments->UpdateIndexes(this->streamFragmentDownloading, 1);
 
                   // recalculate start position of all downloaded stream fragments until first not downloaded stream fragment
                   this->RecalculateStreamFragmentStartPosition(this->streamFragments, this->streamFragmentDownloading);
@@ -401,12 +404,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CStreamPackage *streamPa
                   {
                     this->logger->Log(LOGGER_VERBOSE, L"%s: %s: found next FLV stream fragment with lower timestamp as receiving stream fragment, stopping downloading fragment, current fragment timestamp: %lld, receiving fragment timestamp: %lld, next fragment timestamp: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, currentDownloadingFragment->GetFragmentStartTimestamp(), timestamp, nextFragment->GetFragmentStartTimestamp());
 
-                    currentDownloadingFragment->SetDiscontinuity(true);
+                    currentDownloadingFragment->SetDiscontinuity(true, this->streamFragmentDownloading);
                     currentDownloadingFragment = NULL;
 
                     // request to download first not downloaded stream fragment after current downloaded fragment
 
-                    this->streamFragmentToDownload = this->streamFragments->GetFirstNotDownloadedStreamFragment(this->streamFragmentDownloading);
+                    this->streamFragmentToDownload = this->streamFragments->GetFirstNotDownloadedItemIndex(this->streamFragmentDownloading);
                     this->streamFragmentDownloading = UINT_MAX;
 
                     this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_CLOSE_CURL_INSTANCE;
@@ -436,7 +439,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CStreamPackage *streamPa
 
                 if (SUCCEEDED(result))
                 {
-                  currentDownloadingFragment->SetDownloaded(true);
+                  currentDownloadingFragment->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
+                  currentDownloadingFragment->SetDownloaded(true, UINT_MAX);
+
+                  this->streamFragments->UpdateIndexes(this->streamFragmentDownloading, 1);
 
                   // recalculate start position of all downloaded stream fragments until first not downloaded stream fragment
                   this->RecalculateStreamFragmentStartPosition(this->streamFragments, this->streamFragmentDownloading);
@@ -492,9 +498,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CStreamPackage *streamPa
       if (!this->IsLiveStreamDetected())
       {
         // if not set fragment to download, then set fragment to download (get next not downloaded fragment after current processed fragment)
-        this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->streamFragments->GetFirstNotDownloadedStreamFragment(this->streamFragmentProcessing) : this->streamFragmentToDownload;
+        this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->streamFragments->GetFirstNotDownloadedItemIndex(this->streamFragmentProcessing) : this->streamFragmentToDownload;
         // if not set fragment to download, then set fragment to download (get next not downloaded fragment from first fragment)
-        this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->streamFragments->GetFirstNotDownloadedStreamFragment(0) : this->streamFragmentToDownload;
+        this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->streamFragments->GetFirstNotDownloadedItemIndex(0) : this->streamFragmentToDownload;
         // fragment to download still can be UINT_MAX = no fragment to download
 
         if (this->streamFragmentToDownload != UINT_MAX)
@@ -624,7 +630,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CStreamPackage *streamPa
                   // set start searching index to current processing stream fragment
                   this->streamFragments->SetStartSearchingIndex(this->streamFragmentProcessing);
                   // set count of fragments to search for specific position
-                  unsigned int firstNotDownloadedFragmentIndex = this->streamFragments->GetFirstNotDownloadedStreamFragment(this->streamFragmentProcessing);
+                  unsigned int firstNotDownloadedFragmentIndex = this->streamFragments->GetFirstNotDownloadedItemIndex(this->streamFragmentProcessing);
                   this->streamFragments->SetSearchCount(((firstNotDownloadedFragmentIndex == UINT_MAX) ? this->streamFragments->Count() : firstNotDownloadedFragmentIndex) - this->streamFragmentProcessing);
 
                   this->streamFragmentToDownload = 0;
@@ -676,7 +682,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CStreamPackage *streamPa
 
               if (fragment != NULL)
               {
-                fragment->SetDownloaded(true);
+                fragment->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
+                fragment->SetDownloaded(true, UINT_MAX);
+
+                this->streamFragments->UpdateIndexes(this->streamFragmentDownloading, 1);
 
                 // recalculate start position of all downloaded stream fragments until first not downloaded stream fragment
                 this->RecalculateStreamFragmentStartPosition(this->streamFragments, this->streamFragmentDownloading);
@@ -709,9 +718,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CStreamPackage *streamPa
                 unsigned int fragmentToDownload = UINT_MAX;
 
                 // if not set fragment to download, then set fragment to download (get next not downloaded fragment after current processed fragment)
-                fragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->streamFragments->GetFirstNotDownloadedStreamFragment(this->streamFragmentProcessing) : this->streamFragmentToDownload;
+                fragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->streamFragments->GetFirstNotDownloadedItemIndex(this->streamFragmentProcessing) : this->streamFragmentToDownload;
                 // if not set fragment to download, then set fragment to download (get next not downloaded fragment from first fragment)
-                fragmentToDownload = (fragmentToDownload == UINT_MAX) ? this->streamFragments->GetFirstNotDownloadedStreamFragment(0) : fragmentToDownload;
+                fragmentToDownload = (fragmentToDownload == UINT_MAX) ? this->streamFragments->GetFirstNotDownloadedItemIndex(0) : fragmentToDownload;
                 // fragment to download still can be UINT_MAX = no fragment to download
 
                 this->streamFragmentToDownload = fragmentToDownload;
@@ -747,15 +756,15 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CStreamPackage *streamPa
           // download stream fragment again or download scheduled stream fragment
           CRtmpStreamFragment *fragment = (this->streamFragmentDownloading > 0) ? this->streamFragments->GetItem(this->streamFragmentDownloading - 1) : NULL;
 
-          this->streamFragmentToDownload = this->streamFragmentDownloading;
-          this->streamFragmentDownloading = UINT_MAX;
-
           if (fragment != NULL)
           {
             // we report discontinuity (if possible)
-            fragment->SetDiscontinuity(true);
+            fragment->SetDiscontinuity(true, this->streamFragmentDownloading - 1);
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: discontinuity, timestamp: %llu, position: %lld, size: %u, current position: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, fragment->GetFragmentStartTimestamp(), fragment->GetFragmentStartPosition(), fragment->GetLength(), this->GetBytePosition());
           }
+
+          this->streamFragmentToDownload = this->streamFragmentDownloading;
+          this->streamFragmentDownloading = UINT_MAX;
 
           // error while receiving data, stop receiving data
           this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_STOP_RECEIVING_DATA;
@@ -767,7 +776,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CStreamPackage *streamPa
           // download stream fragment again or download scheduled stream fragment
           CRtmpStreamFragment *fragment = this->streamFragments->GetItem(this->streamFragmentDownloading);
 
-          fragment->SetDiscontinuity(true);
+          fragment->SetDiscontinuity(true, this->streamFragmentDownloading);
 
           this->streamFragmentToDownload = this->streamFragmentDownloading;
           this->streamFragmentDownloading = UINT_MAX;
@@ -904,7 +913,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CStreamPackage *streamPa
           unsigned int copyDataLength = min(streamFragment->GetLength() - copyDataStart, dataRequest->GetLength() - foundDataLength);
 
           // copy data from stream fragment to response buffer
-          if (this->cacheFile->LoadItems(this->streamFragments, fragmentIndex, true, false))
+          if (this->cacheFile->LoadItems(this->streamFragments, fragmentIndex, true))
           {
             // memory is allocated while switching from Created to Waiting state, we can't have problem on next line
             dataResponse->GetBuffer()->AddToBufferWithResize(streamFragment->GetBuffer(), copyDataStart, copyDataLength);
@@ -1308,6 +1317,7 @@ int64_t CMPUrlSourceSplitter_Protocol_Rtmp::SeekToTime(unsigned int streamId, in
       // stream fragment is not downloaded, it is gap
       // split stream fragment
 
+      CHECK_CONDITION_NOT_NULL_EXECUTE(previousFragment, previousFragment->SetDiscontinuity(true, this->streamFragmentProcessing - 1));
       result = time;
 
       // create new fragment within found fragment
@@ -1333,15 +1343,14 @@ int64_t CMPUrlSourceSplitter_Protocol_Rtmp::SeekToTime(unsigned int streamId, in
         // force to download missing fragment
         this->streamFragmentToDownload = this->streamFragmentProcessing;
       }
-
-      CHECK_CONDITION_NOT_NULL_EXECUTE(previousFragment, previousFragment->SetDiscontinuity(true));
+      
       this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_STOP_RECEIVING_DATA;
     }
 
     // set start searching index to current processing stream fragment
     this->streamFragments->SetStartSearchingIndex(this->streamFragmentProcessing);
     // set count of fragments to search for specific position
-    unsigned int firstNotDownloadedFragmentIndex = this->streamFragments->GetFirstNotDownloadedStreamFragment(this->streamFragmentProcessing);
+    unsigned int firstNotDownloadedFragmentIndex = this->streamFragments->GetFirstNotDownloadedItemIndex(this->streamFragmentProcessing);
 
     if (firstNotDownloadedFragmentIndex == UINT_MAX)
     {

@@ -55,21 +55,6 @@ int64_t CRtmpStreamFragment::GetFragmentStartPosition(void)
 
 /* set methods */
 
-void CRtmpStreamFragment::SetDownloaded(bool downloaded)
-{
-  this->flags &= ~RTMP_STREAM_FRAGMENT_FLAG_DOWNLOADED;
-
-  if (downloaded)
-  {
-    this->flags |= RTMP_STREAM_FRAGMENT_FLAG_DOWNLOADED;
-    this->SetLoadedToMemoryTime(GetTickCount());
-  }
-  else
-  {
-    this->SetLoadedToMemoryTime(CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET);
-  }
-}
-
 void CRtmpStreamFragment::SetFragmentStartTimestamp(int64_t fragmentStartTimestamp)
 {
   this->SetFragmentStartTimestamp(fragmentStartTimestamp, true);
@@ -87,12 +72,6 @@ void CRtmpStreamFragment::SetFragmentStartPosition(int64_t fragmentStartPosition
   this->fragmentStartPosition = fragmentStartPosition;
 }
 
-void CRtmpStreamFragment::SetDiscontinuity(bool discontinuity)
-{
-  this->flags &= ~RTMP_STREAM_FRAGMENT_FLAG_DISCONTINUITY;
-  this->flags |= discontinuity ? RTMP_STREAM_FRAGMENT_FLAG_DISCONTINUITY : RTMP_STREAM_FRAGMENT_FLAG_NONE;
-}
-
 void CRtmpStreamFragment::SetContainsHeaderOrMetaPacket(bool containsHeaderOrMetaPacket)
 {
   this->flags &= ~RTMP_STREAM_FRAGMENT_FLAG_CONTAINS_HEADER_OR_META_PACKET;
@@ -100,16 +79,6 @@ void CRtmpStreamFragment::SetContainsHeaderOrMetaPacket(bool containsHeaderOrMet
 }
 
 /* other methods */
-
-bool CRtmpStreamFragment::IsDiscontinuity(void)
-{
-  return this->IsSetFlags(RTMP_STREAM_FRAGMENT_FLAG_DISCONTINUITY);
-}
-
-bool CRtmpStreamFragment::IsDownloaded(void)
-{
-  return this->IsSetFlags(RTMP_STREAM_FRAGMENT_FLAG_DOWNLOADED);
-}
 
 bool CRtmpStreamFragment::IsSetFragmentStartTimestamp(void)
 {

@@ -40,21 +40,21 @@ CRtmpStreamFragment *CRtmpStreamFragmentCollection::GetItem(unsigned int index)
   return (CRtmpStreamFragment *)__super::GetItem(index);
 }
 
-unsigned int CRtmpStreamFragmentCollection::GetFirstNotDownloadedStreamFragment(unsigned int start)
-{
-  unsigned int result = UINT_MAX;
-
-  for (unsigned int i = start; i < this->itemCount; i++)
-  {
-    if (!this->GetItem(i)->IsDownloaded())
-    {
-      result = i;
-      break;
-    }
-  }
-
-  return result;
-}
+//unsigned int CRtmpStreamFragmentCollection::GetFirstNotDownloadedStreamFragment(unsigned int start)
+//{
+//  unsigned int result = UINT_MAX;
+//
+//  for (unsigned int i = start; i < this->itemCount; i++)
+//  {
+//    if (!this->GetItem(i)->IsDownloaded())
+//    {
+//      result = i;
+//      break;
+//    }
+//  }
+//
+//  return result;
+//}
 
 unsigned int CRtmpStreamFragmentCollection::GetStreamFragmentIndexBetweenPositions(int64_t position)
 {

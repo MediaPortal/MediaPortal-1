@@ -27,12 +27,10 @@
 
 #define RTMP_STREAM_FRAGMENT_FLAG_NONE                                CACHE_FILE_ITEM_FLAG_NONE
 
-#define RTMP_STREAM_FRAGMENT_FLAG_DOWNLOADED                          (1 << (CACHE_FILE_ITEM_FLAG_LAST + 0))
-#define RTMP_STREAM_FRAGMENT_FLAG_SET_TIMESTAMP                       (1 << (CACHE_FILE_ITEM_FLAG_LAST + 1))
-#define RTMP_STREAM_FRAGMENT_FLAG_DISCONTINUITY                       (1 << (CACHE_FILE_ITEM_FLAG_LAST + 2))
-#define RTMP_STREAM_FRAGMENT_FLAG_CONTAINS_HEADER_OR_META_PACKET      (1 << (CACHE_FILE_ITEM_FLAG_LAST + 3))
+#define RTMP_STREAM_FRAGMENT_FLAG_SET_TIMESTAMP                       (1 << (CACHE_FILE_ITEM_FLAG_LAST + 0))
+#define RTMP_STREAM_FRAGMENT_FLAG_CONTAINS_HEADER_OR_META_PACKET      (1 << (CACHE_FILE_ITEM_FLAG_LAST + 1))
 
-#define RTMP_STREAM_FRAGMENT_FLAG_LAST                                (CACHE_FILE_ITEM_FLAG_LAST + 4)
+#define RTMP_STREAM_FRAGMENT_FLAG_LAST                                (CACHE_FILE_ITEM_FLAG_LAST + 2)
 
 #define RTMP_STREAM_FRAGMENT_START_POSITION_NOT_SET                   -1
 
@@ -57,10 +55,6 @@ public:
 
   /* set methods */
 
-  // sets if segment and fragment is downloaded
-  // @param downloaded : true if segment and fragment is downloaded
-  void SetDownloaded(bool downloaded);
-
   // sets fragment start timestamp
   // @param fragmentStartTimestamp : the fragment start timestamp to set
   void SetFragmentStartTimestamp(int64_t fragmentStartTimestamp);
@@ -74,23 +68,11 @@ public:
   // @param fragmentStartPosition : fragment start position to set
   void SetFragmentStartPosition(int64_t fragmentStartPosition);
 
-  // sets discontinuity
-  // @param discontinuity : true if discontinuity after data, false otherwise
-  void SetDiscontinuity(bool discontinuity);
-
   // sets if fragment contains header or meta packet
   // @param containsHeaderOrMetaPacket : true if fragment contains header or meta packet, false otherwise
   void SetContainsHeaderOrMetaPacket(bool containsHeaderOrMetaPacket);
 
   /* other methods */
-
-  // tests if discontinuity is set
-  // @return : true if discontinuity is set, false otherwise
-  bool IsDiscontinuity(void);
-
-  // tests if fragment is downloaded
-  // @return : true if downloaded, false otherwise
-  bool IsDownloaded(void);
 
   // tests if fragment has set start timestamp
   // @return : true if fragment has set start timestamp, false otherwise
@@ -105,17 +87,15 @@ public:
   bool ContainsHeaderOrMetaPacket(void);
 
 private:
-
   // holds fragment start timestamp
   int64_t fragmentStartTimestamp;
-
   // holds fragment start position within stream
   int64_t fragmentStartPosition;
 
   /* methods */
 
-  // gets new instance of RTSP stream fragment
-  // @return : new RTSP stream fragment instance or NULL if error
+  // gets new instance of RTMP stream fragment
+  // @return : new RTMP stream fragment instance or NULL if error
   virtual CCacheFileItem *CreateItem(void);
 
   // deeply clones current instance
