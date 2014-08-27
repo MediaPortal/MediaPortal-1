@@ -30,7 +30,7 @@
 class CFlashInstance
 {
 public:
-  CFlashInstance(CLogger *logger, const wchar_t *instanceName, const wchar_t *swfFilePath);
+  CFlashInstance(HRESULT *result, CLogger *logger, const wchar_t *instanceName, const wchar_t *swfFilePath);
   virtual ~CFlashInstance(void);
 
   /* get methods */
@@ -46,7 +46,7 @@ public:
   // gets result from query to flash (make query shortest as possible, same for result)
   // @param query : query in flash format
   // @return : result or NULL if error
-  virtual wchar_t *GetResult(const wchar_t *query);
+  virtual const wchar_t *GetResult(const wchar_t *query);
 
   // clear session to default state
   virtual void ClearSession(void);
@@ -61,17 +61,8 @@ protected:
   wchar_t *swfFilePath;
 
   // worker thread 
-  HANDLE hFlashWorkerThread;
+  HANDLE flashWorkerThread;
   bool flashWorkerShouldExit;
-  static unsigned int WINAPI FlashWorker(LPVOID lpParam);
-
-  // creates flash worker
-  // @return : S_OK if successful
-  HRESULT CreateFlashWorker(void);
-
-  // destroys flash worker
-  // @return : S_OK if successful
-  HRESULT DestroyFlashWorker(void);
 
   // initalize related properties
   bool initializeRequest;
@@ -83,9 +74,21 @@ protected:
   bool resultRequestFinished;
 
   // holds query for worker (only reference to query - do not free memory)
-  wchar_t *query;
+  const wchar_t *query;
   // holds query result from worker (only reference to query result - do not free memory)
-  wchar_t *queryResult;
+  const wchar_t *queryResult;
+
+  /* methods */
+
+  static unsigned int WINAPI FlashWorker(LPVOID lpParam);
+
+  // creates flash worker
+  // @return : S_OK if successful
+  HRESULT CreateFlashWorker(void);
+
+  // destroys flash worker
+  // @return : S_OK if successful
+  HRESULT DestroyFlashWorker(void);
 };
 
 #endif

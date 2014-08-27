@@ -50,47 +50,9 @@ void DestroyPlugin(CPlugin *plugin)
 CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Default::CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Default(HRESULT *result, CLogger *logger, CParameterCollection *configuration)
   : CAfhsDecryptionPlugin(result, logger, configuration)
 {
-  //this->lockCurlMutex = NULL;
-  //this->lockMutex = NULL;
-  //this->mainCurlInstance = NULL;
-  //this->streamLength = 0;
-  //this->connectionState = None;
-  //this->segmentFragments = NULL;
-  //this->cacheFile = NULL;
-  //this->lastStoreTime = 0;
-  //this->flags |= PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
-  //this->segmentFragmentDownloading = UINT_MAX;
-  //this->segmentFragmentProcessing = UINT_MAX;
-  //this->segmentFragmentToDownload = UINT_MAX;
-  //this->segmentFragmentDecrypting = UINT_MAX;
-  //this->decryptionHoster = NULL;
-  //this->manifest = NULL;
-  //this->headerAndMetaPacketSize = 0;
-  //this->segmentFragmentZeroTimestamp = 0;
-  
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, DECRYPTION_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, this);
-
-  //  this->lockMutex = CreateMutex(NULL, FALSE, NULL);
-  //  this->lockCurlMutex = CreateMutex(NULL, FALSE, NULL);
-  //  this->cacheFile = new CCacheFile(result);
-  //  this->segmentFragments = new CAfhsSegmentFragmentCollection(result);
-  //  this->decryptionHoster = new CAfhsDecryptionHoster(result, logger, configuration);
-  //  this->manifest = new CF4MManifest(result);
-
-  //  CHECK_POINTER_HRESULT(*result, this->lockMutex, *result, E_OUTOFMEMORY);
-  //  CHECK_POINTER_HRESULT(*result, this->lockCurlMutex, *result, E_OUTOFMEMORY);
-  //  CHECK_POINTER_HRESULT(*result, this->cacheFile, *result, E_OUTOFMEMORY);
-  //  CHECK_POINTER_HRESULT(*result, this->segmentFragments, *result, E_OUTOFMEMORY);
-  //  CHECK_POINTER_HRESULT(*result, this->decryptionHoster, *result, E_OUTOFMEMORY);
-  //  CHECK_POINTER_HRESULT(*result, this->manifest, *result, E_OUTOFMEMORY);
-
-  //  //CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(*result), this->decryptionHoster->LoadPlugins(), *result);
-
-  //  // create CURL instance
-  //  this->mainCurlInstance = new CAfhsCurlInstance(result, this->logger, this->lockCurlMutex, DECRYPTION_IMPLEMENTATION_NAME, L"Main");
-  //  CHECK_POINTER_HRESULT(*result, this->mainCurlInstance, *result, E_OUTOFMEMORY);
 
     wchar_t *version = GetVersionInfo(COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_DEFAULT, DATE_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_DEFAULT);
     if (version != NULL)
@@ -114,27 +76,6 @@ CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Default::~CMPUrlSourceSplitter_Pro
 {
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, DECRYPTION_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME));
 
-  //// because segments and fragments can be changed in decryption hoster, collection of segments and fragments have to be released before decryption hoster
-  //// in other case it can lead to access violation exception, due to virtual function table is allocated in memory space of decryption hoster
-  //FREE_MEM_CLASS(this->segmentFragments);
-
-  //FREE_MEM_CLASS(this->decryptionHoster);
-  //FREE_MEM_CLASS(this->mainCurlInstance);
-  //FREE_MEM_CLASS(this->cacheFile);
-  //FREE_MEM_CLASS(this->manifest);
-
-  //if (this->lockMutex != NULL)
-  //{
-  //  CloseHandle(this->lockMutex);
-  //  this->lockMutex = NULL;
-  //}
-
-  //if (this->lockCurlMutex != NULL)
-  //{
-  //  CloseHandle(this->lockCurlMutex);
-  //  this->lockCurlMutex = NULL;
-  //}
-
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, DECRYPTION_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME));
 }
 
@@ -153,7 +94,6 @@ GUID CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Default::GetInstanceId(void)
 HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Default::Initialize(CPluginConfiguration *configuration)
 {
   CAfhsDecryptionPluginConfiguration *decryptionConfiguration = (CAfhsDecryptionPluginConfiguration *)configuration;
-  //HRESULT result = ((this->lockMutex != NULL) && (this->configuration != NULL) && (this->logger != NULL)) ? S_OK : E_NOT_VALID_STATE;
 
   HRESULT result = S_OK;
   CHECK_POINTER_HRESULT(result, decryptionConfiguration, result, E_INVALIDARG);

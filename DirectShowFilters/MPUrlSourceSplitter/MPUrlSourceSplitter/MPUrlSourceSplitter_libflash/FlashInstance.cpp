@@ -25,16 +25,14 @@
 
 #include <process.h>
 
-CFlashInstance::CFlashInstance(CLogger *logger, const wchar_t *instanceName, const wchar_t *swfFilePath)
+CFlashInstance::CFlashInstance(HRESULT *result, CLogger *logger, const wchar_t *instanceName, const wchar_t *swfFilePath)
 {
-  this->logger = logger;
-  this->instanceName = Duplicate(instanceName);
-  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, this->instanceName, METHOD_CONSTRUCTOR_NAME, this);
-
-  this->swfFilePath = Duplicate(swfFilePath);
+  this->logger = NULL;
+  this->instanceName = NULL;
+  this->swfFilePath = NULL;
 
   this->flashWorkerShouldExit = false;
-  this->hFlashWorkerThread = NULL;
+  this->flashWorkerThread = NULL;
 
   this->initializeRequest = false;
   this->initializeRequestFinished = false;
@@ -45,25 +43,45 @@ CFlashInstance::CFlashInstance(CLogger *logger, const wchar_t *instanceName, con
   this->resultRequested = false;
   this->resultRequestFinished = false;
 
-  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, this->instanceName, METHOD_CONSTRUCTOR_NAME);
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    CHECK_POINTER_DEFAULT_HRESULT(*result, logger);
+    CHECK_POINTER_DEFAULT_HRESULT(*result, instanceName);
+    CHECK_POINTER_DEFAULT_HRESULT(*result, swfFilePath);
+
+    if (SUCCEEDED(*result))
+    {
+      CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, this->instanceName, METHOD_CONSTRUCTOR_NAME, this));
+
+      this->logger = logger;
+      this->instanceName = Duplicate(instanceName);
+      this->swfFilePath = Duplicate(swfFilePath);
+
+      CHECK_CONDITION_HRESULT(*result, this->instanceName, *result, E_OUTOFMEMORY);
+      CHECK_CONDITION_HRESULT(*result, this->swfFilePath, *result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, this->instanceName, METHOD_CONSTRUCTOR_NAME));
+    }
+  }
 }
 
 CFlashInstance::~CFlashInstance(void)
 {
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, this->instanceName, METHOD_DESTRUCTOR_NAME);
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, this->instanceName, METHOD_DESTRUCTOR_NAME));
 
   this->DestroyFlashWorker();
-  FREE_MEM(this->swfFilePath);
 
-  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, this->instanceName, METHOD_DESTRUCTOR_NAME);
+  FREE_MEM(this->swfFilePath);
   FREE_MEM(this->instanceName);
+
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, this->instanceName, METHOD_DESTRUCTOR_NAME))
 }
 
 /* get methods */
 
-wchar_t *CFlashInstance::GetResult(const wchar_t *query)
+const wchar_t *CFlashInstance::GetResult(const wchar_t *query)
 {
-  this->query = (wchar_t *)query;
+  this->query = query;
   this->resultRequested = true;
 
   while (!this->resultRequestFinished)
@@ -71,9 +89,8 @@ wchar_t *CFlashInstance::GetResult(const wchar_t *query)
     Sleep(10);
   }
 
-  wchar_t *result = this->queryResult;
   this->resultRequestFinished = false;
-  return result;
+  return this->queryResult;
 }
 
 /* set methods */
@@ -83,7 +100,7 @@ wchar_t *CFlashInstance::GetResult(const wchar_t *query)
 HRESULT CFlashInstance::Initialize(void)
 {
   HRESULT result = S_OK;
-  if (this->hFlashWorkerThread == NULL)
+  if (this->flashWorkerThread == NULL)
   {
     result = this->CreateFlashWorker();
   }
@@ -108,7 +125,7 @@ void CFlashInstance::ClearSession(void)
   this->DestroyFlashWorker();
 
   this->flashWorkerShouldExit = false;
-  this->hFlashWorkerThread = NULL;
+  this->flashWorkerThread = NULL;
 
   this->initializeRequest = false;
   this->initializeRequestFinished = false;
@@ -127,9 +144,9 @@ HRESULT CFlashInstance::CreateFlashWorker(void)
   HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, this->instanceName, METHOD_CREATE_FLASH_WORKER_NAME);
 
-  this->hFlashWorkerThread = (HANDLE)_beginthreadex(NULL, 0, &CFlashInstance::FlashWorker, this, 0, NULL);
+  this->flashWorkerThread = (HANDLE)_beginthreadex(NULL, 0, &CFlashInstance::FlashWorker, this, 0, NULL);
 
-  if (this->hFlashWorkerThread == NULL)
+  if (this->flashWorkerThread == NULL)
   {
     // thread not created
     result = HRESULT_FROM_WIN32(GetLastError());
@@ -148,18 +165,18 @@ HRESULT CFlashInstance::DestroyFlashWorker(void)
   this->flashWorkerShouldExit = true;
 
   // wait for the flash worker thread to exit      
-  if (this->hFlashWorkerThread != NULL)
+  if (this->flashWorkerThread != NULL)
   {
-    if (WaitForSingleObject(this->hFlashWorkerThread, INFINITE) == WAIT_TIMEOUT)
+    if (WaitForSingleObject(this->flashWorkerThread, INFINITE) == WAIT_TIMEOUT)
     {
       // thread didn't exit, kill it now
       this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, this->instanceName, METHOD_DESTROY_FLASH_WORKER_NAME, L"thread didn't exit, terminating thread");
-      TerminateThread(this->hFlashWorkerThread, 0);
+      TerminateThread(this->flashWorkerThread, 0);
     }
-    CloseHandle(this->hFlashWorkerThread);
+    CloseHandle(this->flashWorkerThread);
   }
 
-  this->hFlashWorkerThread = NULL;
+  this->flashWorkerThread = NULL;
   this->flashWorkerShouldExit = false;
 
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, this->instanceName, METHOD_DESTROY_FLASH_WORKER_NAME, result);
@@ -242,10 +259,15 @@ unsigned int WINAPI CFlashInstance::FlashWorker(LPVOID lpParam)
 
       if (SUCCEEDED(caller->initializeResult) && (classNameGuid != GUID_NULL))
       {
-        flashWindow = new CFlashWindow(caller->swfFilePath);
-        caller->initializeResult = flashWindow->Create(ShockwaveFlashObjects::CLSID_ShockwaveFlash,
-          WS_EX_LAYERED | WS_EX_NOACTIVATE, WS_POPUP | WS_CLIPSIBLINGS,
-          NULL, NULL, className);
+        flashWindow = new CFlashWindow(&caller->initializeResult, caller->swfFilePath);
+        CHECK_CONDITION_HRESULT(caller->initializeResult, flashWindow, caller->initializeResult, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(caller->initializeResult))
+        {
+          caller->initializeResult = flashWindow->Create(ShockwaveFlashObjects::CLSID_ShockwaveFlash,
+            WS_EX_LAYERED | WS_EX_NOACTIVATE, WS_POPUP | WS_CLIPSIBLINGS,
+            NULL, NULL, className);
+        }
       }
       caller->initializeRequest = false;
       caller->initializeRequestFinished = true;

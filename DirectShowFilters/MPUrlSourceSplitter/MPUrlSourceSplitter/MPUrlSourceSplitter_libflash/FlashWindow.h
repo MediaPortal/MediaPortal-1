@@ -32,7 +32,7 @@ class CFlashWindow :
 	public ShockwaveFlashObjects::IServiceProvider
 {
 public:
-  CFlashWindow(const wchar_t *swfFilePath);
+  CFlashWindow(HRESULT *result, const wchar_t *swfFilePath);
   virtual ~CFlashWindow(void);
 
   virtual HRESULT Initialize(void);
@@ -42,7 +42,7 @@ public:
   // gets result from query to flash
   // @param query : query in flash format
   // @return : result or NULL if error
-  virtual wchar_t *GetResult(const wchar_t *query);
+  virtual const wchar_t *GetResult(const wchar_t *query);
 
   // IUnknown interface
 	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void ** ppvObject);
@@ -90,7 +90,6 @@ protected:
 
   // holds swf file path
   wchar_t *swfFilePath;
-
   // holds internal copy of query result
   // flash instance get only reference to this variable (can't free memory!)
   wchar_t *queryResultInternal;

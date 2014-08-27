@@ -39,7 +39,7 @@ OLECONTAINER_DEF class COleContainerWindow :
 	public IStorage
 {
 public:
-  COleContainerWindow(void);
+  COleContainerWindow(HRESULT *result);
   virtual ~COleContainerWindow(void);
 
   static LRESULT CALLBACK WndProcStatic(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -208,7 +208,7 @@ protected:
   wchar_t *classWindowName;
 };
 
-OLECONTAINER_CONSTRUCT::COleContainerWindow()
+OLECONTAINER_CONSTRUCT::COleContainerWindow(HRESULT *result)
 {
 	m_lpControl = NULL;
 	m_lpO = NULL;

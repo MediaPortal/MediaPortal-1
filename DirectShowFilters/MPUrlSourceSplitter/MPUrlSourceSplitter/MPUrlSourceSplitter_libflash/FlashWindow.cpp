@@ -30,12 +30,24 @@
 #define QUERY_RESULT_STRING_END                                               L"</string>"
 #define QUERY_RESULT_STRING_END_LENGTH                                        9
 
-CFlashWindow::CFlashWindow(const wchar_t *swfFilePath)
-  : COleContainerWindow()
+CFlashWindow::CFlashWindow(HRESULT *result, const wchar_t *swfFilePath)
+  : COleContainerWindow(result)
 {
   m_lVersion = 0;
-  this->swfFilePath = Duplicate(swfFilePath);
+  this->swfFilePath = NULL;
   this->queryResultInternal = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    CHECK_POINTER_DEFAULT_HRESULT(*result, swfFilePath);
+
+    if (SUCCEEDED(*result))
+    {
+      this->swfFilePath = Duplicate(swfFilePath);
+
+      CHECK_CONDITION_HRESULT(*result, this->swfFilePath, *result, E_OUTOFMEMORY);
+    }
+  }
 }
 
 CFlashWindow::~CFlashWindow(void)
@@ -49,7 +61,7 @@ HRESULT CFlashWindow::Initialize(void)
   return __super::Initialize();
 }
 
-wchar_t *CFlashWindow::GetResult(const wchar_t *query)
+const wchar_t *CFlashWindow::GetResult(const wchar_t *query)
 {
   wchar_t *result = NULL;
   if (this->m_lpControl != NULL)
