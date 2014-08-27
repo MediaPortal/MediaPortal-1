@@ -49,4 +49,9 @@ CPlugin::~CPlugin(void)
 
 /* other methods */
 
+void CPlugin::ClearSession(void)
+{
+  this->flags = PLUGIN_FLAG_NONE;
+}
+
 /* protected methods */

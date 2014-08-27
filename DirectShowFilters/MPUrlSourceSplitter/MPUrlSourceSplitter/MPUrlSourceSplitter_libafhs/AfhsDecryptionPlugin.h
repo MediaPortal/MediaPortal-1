@@ -24,6 +24,7 @@
 #define __AFHS_DECRYPTION_PLUGIN_DEFINED
 
 #include "Plugin.h"
+#include "AfhsDecryptionContext.h"
 
 #ifndef METHOD_CLEAR_SESSION_NAME
 #define METHOD_CLEAR_SESSION_NAME                                     L"ClearSession()"
@@ -53,8 +54,9 @@ public:
   /* get methods */
 
   // gets decryption result about current stream
+  // @param decryptionContext : AFHS decryption context
   // @return : one of DECRYPTION_RESULT values
-  virtual HRESULT GetDecryptionResult(void);
+  virtual HRESULT GetDecryptionResult(CAfhsDecryptionContext *decryptionContext);
 
   // gets decryption score if decryptor result is DECRYPTION_RESULT_KNOWN
   // @return : decryption score (decryptor with highest score is set as active decryptor)
@@ -64,9 +66,13 @@ public:
 
   /* other methods */
 
-  // clear current session
-  // @return : S_OK if successfull
-  virtual HRESULT ClearSession(void);
+  // clears current session
+  virtual void ClearSession(void);
+
+  // decrypts encrypted segment fragments
+  // @param decryptionContext : AFHS decryption context
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT DecryptSegmentFragments(CAfhsDecryptionContext *decryptionContext) = 0;
 
 protected:
   // holds logger instance

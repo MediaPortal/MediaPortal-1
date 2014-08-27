@@ -125,9 +125,8 @@ public:
   // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_INVALIDARG if stream ID is unknown, E_UNEXPECTED if unexpected error
   virtual HRESULT QueryStreamProgress(CStreamProgress *streamProgress);
   
-  // clear current session
-  // @return : S_OK if successfull
-  virtual HRESULT ClearSession(void);
+  // clears current session
+  virtual void ClearSession(void);
 
   // reports actual stream time to protocol
   // @param streamTime : the actual stream time in ms to report to protocol

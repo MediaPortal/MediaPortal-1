@@ -147,5 +147,6 @@
 #define E_AFHS_CANNOT_PARSE_MEDIA_DATA_BOX                                      -167
 #define E_AFHS_BOX_SIZE_ZERO                                                    -168
 #define E_AFHS_DECRYPTED_DATA_SIZE_ZERO                                         -169
+#define E_AFHS_NO_ACTIVE_DECRYPTOR                                              -170
 
 #endif

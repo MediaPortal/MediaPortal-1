@@ -277,26 +277,15 @@ HRESULT CParserHoster::QueryStreamProgress(CStreamProgress *streamProgress)
   return (this->activeParser != NULL) ? this->activeParser->QueryStreamProgress(streamProgress) : E_NOT_VALID_STATE;
 }
   
-HRESULT CParserHoster::ClearSession(void)
+void CParserHoster::ClearSession(void)
 {
   // stop receiving data
   this->StopReceivingData();
 
-  for (unsigned int i = 0; i < this->hosterPluginMetadataCollection->Count(); i++)
-  {
-    CParserHosterPluginMetadata *metadata = (CParserHosterPluginMetadata *)this->hosterPluginMetadataCollection->GetItem(i);
-    CParserPlugin *parser = (CParserPlugin *)metadata->GetPlugin();
-
-    this->logger->Log(LOGGER_INFO, L"%s: %s: reseting parser: %s", this->hosterName, METHOD_CLEAR_SESSION_NAME, parser->GetName());
-
-    metadata->ClearSession();
-    parser->ClearSession();
-  }
+  CHoster::ClearSession();
 
   // reset all protocol implementations
   this->protocolHoster->ClearSession();
-
-  return S_OK;
 }
 
 int64_t CParserHoster::GetDuration(void)

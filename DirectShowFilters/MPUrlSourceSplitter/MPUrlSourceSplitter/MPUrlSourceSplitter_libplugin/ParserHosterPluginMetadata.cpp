@@ -73,11 +73,11 @@ HRESULT CParserHosterPluginMetadata::CheckPlugin(void)
   return (parserPlugin != NULL) ? S_OK : E_INVALID_PLUGIN_TYPE;
 }
 
-HRESULT CParserHosterPluginMetadata::ClearSession(void)
+void CParserHosterPluginMetadata::ClearSession(void)
 {
-  this->parserResult = PARSER_RESULT_PENDING;
+  __super::ClearSession();
 
-  return S_OK;
+  this->parserResult = PARSER_RESULT_PENDING;
 }
 
 bool CParserHosterPluginMetadata::IsParserStillPending(void)

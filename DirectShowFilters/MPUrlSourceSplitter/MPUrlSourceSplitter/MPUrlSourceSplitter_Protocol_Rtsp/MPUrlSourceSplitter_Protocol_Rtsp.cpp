@@ -1311,13 +1311,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::QueryStreamProgress(CStreamProgress 
   return result;
 }
 
-HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ClearSession(void)
+void CMPUrlSourceSplitter_Protocol_Rtsp::ClearSession(void)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
 
   this->StopReceivingData();
 
-  HRESULT result = __super::ClearSession();
+  __super::ClearSession();
  
   this->connectionState = None;
   this->streamTracks->Clear();
@@ -1328,7 +1328,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ClearSession(void)
   FREE_MEM_CLASS(this->sessionDescription);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
-  return result;
 }
 
 int64_t CMPUrlSourceSplitter_Protocol_Rtsp::GetDuration(void)

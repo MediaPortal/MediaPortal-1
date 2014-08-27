@@ -25,6 +25,7 @@
 
 #include "HosterPluginMetadata.h"
 #include "AfhsDecryptionPlugin.h"
+#include "AfhsDecryptionContext.h"
 
 class CAfhsDecryptionHosterPluginMetadata : public CHosterPluginMetadata
 {
@@ -35,8 +36,9 @@ public:
   /* get methods */
 
   // gets decryption result about current stream
+  // @param decryptionContext : AFHS decryption context
   // @return : one of DECRYPTION_RESULT values
-  virtual HRESULT GetDecryptionResult(void);
+  virtual HRESULT GetDecryptionResult(CAfhsDecryptionContext *decryptionContext);
 
   // gets decryption score if decryptor result is DECRYPTION_RESULT_KNOWN
   // @return : decryption score (decryptor with highest score is set as active decryptor)
@@ -50,9 +52,8 @@ public:
   // @return : S_OK if successful, error code otherwise
   virtual HRESULT CheckPlugin(void);
 
-  // clear current session
-  // @return : S_OK if successfull
-  virtual HRESULT ClearSession(void);
+  // clears current session
+  virtual void ClearSession(void);
 
   // tests if last decryptor result is DECRYPTION_RESULT_PENDING
   // @return : true if last decryptor result is DECRYPTION_RESULT_PENDING, false otherwise

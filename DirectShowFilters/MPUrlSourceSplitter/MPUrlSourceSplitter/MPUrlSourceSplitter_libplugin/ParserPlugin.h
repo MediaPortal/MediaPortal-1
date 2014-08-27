@@ -78,9 +78,8 @@ public:
 
   // ISimpleProtocol interface
 
-  // clear current session
-  // @return : S_OK if successfull
-  virtual HRESULT ClearSession(void);
+  // clears current session
+  virtual void ClearSession(void);
 
   // ISeeking interface
 

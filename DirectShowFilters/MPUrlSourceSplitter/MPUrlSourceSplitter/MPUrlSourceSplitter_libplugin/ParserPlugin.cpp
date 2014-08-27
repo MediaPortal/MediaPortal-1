@@ -95,13 +95,12 @@ HRESULT CParserPlugin::GetConnectionParameters(CParameterCollection *parameters)
 
 // ISimpleProtocol interface
 
-HRESULT CParserPlugin::ClearSession(void)
+void CParserPlugin::ClearSession(void)
 {
-  this->flags = PARSER_PLUGIN_FLAG_NONE;
+  CPlugin::ClearSession();
+
   this->parserResult = PARSER_RESULT_PENDING;
   this->connectionParameters->Clear();
-
-  return S_OK;
 }
 
 // ISeeking interface

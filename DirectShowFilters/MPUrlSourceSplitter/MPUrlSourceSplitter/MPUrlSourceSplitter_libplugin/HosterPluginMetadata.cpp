@@ -138,4 +138,9 @@ CPlugin *CHosterPluginMetadata::GetPlugin(void)
 
 /* other methods */
 
+void CHosterPluginMetadata::ClearSession(void)
+{
+  this->flags = HOSTER_PLUGIN_METADATA_FLAG_NONE;
+}
+
 /* protected methods */

@@ -36,7 +36,6 @@ CAfhsDecryptionContext::CAfhsDecryptionContext(HRESULT *result)
   this->segmentFragmentDownloading = UINT_MAX;
   this->segmentFragmentProcessing = UINT_MAX;
   this->segmentFragmentToDownload = UINT_MAX;
-  this->segmentFragmentDecrypting = UINT_MAX;
 }
 
 CAfhsDecryptionContext::~CAfhsDecryptionContext(void)
@@ -70,11 +69,6 @@ unsigned int CAfhsDecryptionContext::GetSegmentFragmentToDownload(void)
   return this->segmentFragmentToDownload;
 }
 
-unsigned int CAfhsDecryptionContext::GetSegmentFragmentDecrypting(void)
-{
-  return this->segmentFragmentDecrypting;
-}
-
 /* set methods */
 
 void CAfhsDecryptionContext::SetCurlInstance(CAfhsCurlInstance *curlInstance)
@@ -100,11 +94,6 @@ void CAfhsDecryptionContext::SetSegmentFragmentProcessing(unsigned int segmentFr
 void CAfhsDecryptionContext::SetSegmentFragmentToDownload(unsigned int segmentFragmentToDownload)
 {
   this->segmentFragmentToDownload = segmentFragmentToDownload;
-}
-
-void CAfhsDecryptionContext::SetSegmentFragmentDecrypting(unsigned int segmentFragmentDecrypting)
-{
-  this->segmentFragmentDecrypting = segmentFragmentDecrypting;
 }
 
 /* other methods */

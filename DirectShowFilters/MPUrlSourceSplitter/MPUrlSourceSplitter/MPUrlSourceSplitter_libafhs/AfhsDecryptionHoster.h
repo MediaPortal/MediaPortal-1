@@ -29,6 +29,12 @@
 
 #define MODULE_AFHS_DECRYPTION_HOSTER_NAME                            L"AfhsDecryptionHoster"
 
+#define AFHS_DECRYPTION_HOSTER_FLAG_NONE                              HOSTER_FLAG_NONE
+
+#define AFHS_DECRYPTION_HOSTER_FLAG_PENDING_DECRYPTOR                 (1 << (HOSTER_FLAG_LAST + 0))
+
+#define AFHS_DECRYPTION_HOSTER_FLAG_LAST                              (HOSTER_FLAG_LAST + 1)
+
 class CAfhsDecryptionHoster : public CHoster
 {
 public:
@@ -41,9 +47,8 @@ public:
 
   /* other methods */
 
-  // clear current session
-  // @return : S_OK if successfull
-  HRESULT ClearSession(void);
+  // clears current session
+  virtual void ClearSession(void);
 
   // loads plugins from directory
   // @return : S_OK if successful, E_AFHS_NO_DECRYPTOR_LOADED if no decryptor loaded, error code otherwise
@@ -51,7 +56,7 @@ public:
 
   // decrypts encrypted segments fragments
   // @param decryptionContext : AFHS decryption context
-  // @return : S_OK if some segment fragments are decrypted, S_FALSE if decryption is pending, error code otherwise
+  // @return : S_OK if successful, error code otherwise
   HRESULT DecryptSegmentFragments(CAfhsDecryptionContext *decryptionContext);
 
 protected:

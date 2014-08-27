@@ -59,10 +59,6 @@ public:
   // @return : which segment and fragment have to be downloaded (UINT_MAX means next segment fragment, always reset after started download of segment and fragment)
   unsigned int GetSegmentFragmentToDownload(void);
 
-  // gets which segment and fragment have is ready to decrypting
-  // @return : which segment and fragment is ready to decrypting (UINT_MAX means none)
-  unsigned int GetSegmentFragmentDecrypting(void);
-
   /* set methods */
 
   // sets AFHS CURL instance (it's only reference to AFHS CURL instance in AFHS protocol)
@@ -84,10 +80,6 @@ public:
   // sets which segment and fragment have to be downloaded
   // @param segmentFragmentToDownload : which segment and fragment have to be downloaded (UINT_MAX means next segment fragment, always reset after started download of segment and fragment)
   void SetSegmentFragmentToDownload(unsigned int segmentFragmentToDownload);
-
-  // sets which segment and fragment have is ready to decrypting
-  // @param segmentFragmentDecrypting : which segment and fragment is ready to decrypting (UINT_MAX means none)
-  void SetSegmentFragmentDecrypting(unsigned int segmentFragmentDecrypting);
 
   /* other methods */
 
@@ -158,21 +150,14 @@ public:
 protected:
   // holds AFHS CURL instance (it's only reference to AFHS CURL instance in AFHS protocol)
   CAfhsCurlInstance *curlInstance;
-
   // holds segments and fragments collection (it's only reference to segment fragments in AFHS protocol)
   CAfhsSegmentFragmentCollection *segmentFragments;
-
   // holds which segment and fragment is currently downloading (UINT_MAX means none)
   unsigned int segmentFragmentDownloading;
-
   // holds which segment and fragment is currently processed
   unsigned int segmentFragmentProcessing;
-
   // holds which segment and fragment have to be downloaded
   unsigned int segmentFragmentToDownload;
-
-  // holds which segment and fragment have is ready to decrypting
-  unsigned int segmentFragmentDecrypting;
 
   /* methods */
 

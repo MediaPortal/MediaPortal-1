@@ -112,7 +112,7 @@ CMPUrlSourceSplitter_Protocol_Afhs::CMPUrlSourceSplitter_Protocol_Afhs(HRESULT *
     CHECK_POINTER_HRESULT(*result, this->decryptionHoster, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->manifest, *result, E_OUTOFMEMORY);
 
-    //CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(*result), this->decryptionHoster->LoadPlugins(), *result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(*result), this->decryptionHoster->LoadPlugins(), *result);
 
     // create CURL instance
     this->mainCurlInstance = new CAfhsCurlInstance(result, this->logger, this->lockCurlMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
@@ -284,22 +284,38 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
 
     if (SUCCEEDED(result) && (this->segmentFragments->HasEncryptedSegmentFragments()))
     {
-      // FAKE !!!
-      CIndexedAfhsSegmentFragmentCollection *indexedDecryptedSegmentFragments = new CIndexedAfhsSegmentFragmentCollection(&result);
-      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->segmentFragments->GetEncryptedStreamFragments(indexedDecryptedSegmentFragments));
+      //// FAKE !!!
+      //CIndexedAfhsSegmentFragmentCollection *indexedDecryptedSegmentFragments = new CIndexedAfhsSegmentFragmentCollection(&result);
+      //CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->segmentFragments->GetEncryptedStreamFragments(indexedDecryptedSegmentFragments));
 
-      for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedDecryptedSegmentFragments->Count())); i++)
+      //for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedDecryptedSegmentFragments->Count())); i++)
+      //{
+      //  CIndexedAfhsSegmentFragment *indexedDecryptedSegmentFragment = indexedDecryptedSegmentFragments->GetItem(i);
+      //  CAfhsSegmentFragment *currentDecryptingFragment = indexedDecryptedSegmentFragment->GetItem();
+
+      //  currentDecryptingFragment->SetEncrypted(false, UINT_MAX);
+      //  currentDecryptingFragment->SetDecrypted(true, UINT_MAX);
+
+      //  this->segmentFragments->UpdateIndexes(indexedDecryptedSegmentFragment->GetItemIndex(), 1);
+      //}
+
+      //FREE_MEM_CLASS(indexedDecryptedSegmentFragments);
+
+      CAfhsDecryptionContext *decryptionContext = new CAfhsDecryptionContext(&result);
+      CHECK_CONDITION_HRESULT(result, decryptionContext, result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(result))
       {
-        CIndexedAfhsSegmentFragment *indexedDecryptedSegmentFragment = indexedDecryptedSegmentFragments->GetItem(i);
-        CAfhsSegmentFragment *currentDecryptingFragment = indexedDecryptedSegmentFragment->GetItem();
-
-        currentDecryptingFragment->SetEncrypted(false, UINT_MAX);
-        currentDecryptingFragment->SetDecrypted(true, UINT_MAX);
-
-        this->segmentFragments->UpdateIndexes(indexedDecryptedSegmentFragment->GetItemIndex(), 1);
+        decryptionContext->SetCurlInstance(this->mainCurlInstance);
+        decryptionContext->SetSegmentFragmentDownloading(this->segmentFragmentDownloading);
+        decryptionContext->SetSegmentFragmentProcessing(this->segmentFragmentProcessing);
+        decryptionContext->SetSegmentFragmentToDownload(this->segmentFragmentToDownload);
+        decryptionContext->SetSegmentsFragments(this->segmentFragments);
       }
 
-      FREE_MEM_CLASS(indexedDecryptedSegmentFragments);
+      CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), this->decryptionHoster->DecryptSegmentFragments(decryptionContext), result);
+      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: decryption of segment fragments failed, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result));
+      FREE_MEM_CLASS(decryptionContext);
     }
 
     if (SUCCEEDED(result) && (this->segmentFragments->HasDecryptedSegmentFragments()))
@@ -1482,13 +1498,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::QueryStreamProgress(CStreamProgress 
   return result;
 }
 
-HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
+void CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
 
   this->StopReceivingData();
 
-  HRESULT result = __super::ClearSession();
+  __super::ClearSession();
  
   this->decryptionHoster->ClearSession();
   this->streamLength = 0;
@@ -1505,7 +1521,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
   this->segmentFragmentZeroTimestamp = 0;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
-  return result;
 }
 
 int64_t CMPUrlSourceSplitter_Protocol_Afhs::GetDuration(void)

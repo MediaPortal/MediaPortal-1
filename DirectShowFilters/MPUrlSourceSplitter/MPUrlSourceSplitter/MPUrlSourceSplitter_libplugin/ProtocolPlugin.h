@@ -45,7 +45,7 @@
 
 #define PROTOCOL_PLUGIN_FLAG_LAST                                     (PLUGIN_FLAG_LAST + 7)
 
-class CProtocolPlugin : public CPlugin, public IProtocol
+class CProtocolPlugin : public CPlugin, virtual public IProtocol
 {
 public:
   CProtocolPlugin(HRESULT *result, CLogger *logger, CParameterCollection *configuration);
@@ -55,9 +55,8 @@ public:
 
   // ISimpleProtocol interface
 
-  // clear current session
-  // @return : S_OK if successfull
-  virtual HRESULT ClearSession(void);
+  // clears current session
+  virtual void ClearSession(void);
 
   // reports actual stream time to protocol
   // @param streamTime : the actual stream time in ms to report to protocol

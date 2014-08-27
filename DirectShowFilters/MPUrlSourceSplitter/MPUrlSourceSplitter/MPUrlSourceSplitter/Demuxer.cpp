@@ -2172,7 +2172,7 @@ unsigned int WINAPI CDemuxer::CreateDemuxerWorker(LPVOID lpParam)
   caller->logger->Log(LOGGER_INFO, METHOD_DEMUXER_START_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_WORKER_NAME, caller->demuxerId);
 
   HRESULT result = S_OK;
-  while ((!caller->createDemuxerWorkerShouldExit) && (!caller->IsCreatedDemuxer()) && (!IS_OUR_ERROR(result)))
+  while (SUCCEEDED(result) && (!caller->createDemuxerWorkerShouldExit) && (!caller->IsCreatedDemuxer()))
   {
     if (!caller->IsCreatedDemuxer())
     {

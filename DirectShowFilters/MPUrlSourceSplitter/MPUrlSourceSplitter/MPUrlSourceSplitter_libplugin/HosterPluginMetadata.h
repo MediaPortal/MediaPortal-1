@@ -52,6 +52,9 @@ public:
   // @return : S_OK if successful, error code otherwise
   virtual HRESULT CheckPlugin(void) = 0;
 
+  // clears current session
+  virtual void ClearSession(void);
+
 protected:
   // holds logger
   CLogger *logger;

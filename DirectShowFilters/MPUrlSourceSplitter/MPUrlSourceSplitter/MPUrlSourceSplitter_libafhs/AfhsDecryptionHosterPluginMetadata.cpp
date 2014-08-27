@@ -43,13 +43,13 @@ CAfhsDecryptionHosterPluginMetadata::~CAfhsDecryptionHosterPluginMetadata(void)
 
 /* get methods */
 
-HRESULT CAfhsDecryptionHosterPluginMetadata::GetDecryptionResult(void)
+HRESULT CAfhsDecryptionHosterPluginMetadata::GetDecryptionResult(CAfhsDecryptionContext *decryptionContext)
 {
   if (this->decryptionResult == DECRYPTION_RESULT_PENDING)
   {
     CAfhsDecryptionPlugin *decryptor = dynamic_cast<CAfhsDecryptionPlugin *>(this->plugin);
 
-    this->decryptionResult = (decryptor != NULL) ? decryptor->GetDecryptionResult() : DECRYPTION_RESULT_PENDING;
+    this->decryptionResult = (decryptor != NULL) ? decryptor->GetDecryptionResult(decryptionContext) : DECRYPTION_RESULT_PENDING;
   }
 
   return this->decryptionResult;
@@ -73,11 +73,11 @@ HRESULT CAfhsDecryptionHosterPluginMetadata::CheckPlugin(void)
   return (decryptionPlugin != NULL) ? S_OK : E_INVALID_PLUGIN_TYPE;
 }
 
-HRESULT CAfhsDecryptionHosterPluginMetadata::ClearSession(void)
+void CAfhsDecryptionHosterPluginMetadata::ClearSession(void)
 {
-  this->decryptionResult = DECRYPTION_RESULT_PENDING;
+  __super::ClearSession();
 
-  return S_OK;
+  this->decryptionResult = DECRYPTION_RESULT_PENDING;
 }
 
 bool CAfhsDecryptionHosterPluginMetadata::IsDecryptorStillPending(void)

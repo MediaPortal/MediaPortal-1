@@ -53,14 +53,13 @@ CProtocolPlugin::~CProtocolPlugin(void)
 
 // ISimpleProtocol interface implementation
 
-HRESULT CProtocolPlugin::ClearSession(void)
+void CProtocolPlugin::ClearSession(void)
 {
-  this->flags = PROTOCOL_PLUGIN_FLAG_NONE;
+  CPlugin::ClearSession();
+
   this->reportedStreamTime = 0;
   this->reportedStreamPosition = 0;
   this->pauseSeekStopMode = PAUSE_SEEK_STOP_MODE_NONE;
-
-  return S_OK;
 }
 
 void CProtocolPlugin::ReportStreamTime(uint64_t streamTime, uint64_t streamPosition)

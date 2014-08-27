@@ -172,7 +172,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Default::Initialize(CPlugi
 
 // CAfhsDecryptionPlugin implementation
 
-HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Default::GetDecryptionResult(void)
+HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Default::GetDecryptionResult(CAfhsDecryptionContext *decryptionContext)
 {
   return DECRYPTION_RESULT_KNOWN;
 }
@@ -181,4 +181,32 @@ unsigned int CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Default::GetDecryptio
 {
   // return lowest possible score
   return 1;
+}
+
+HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Default::DecryptSegmentFragments(CAfhsDecryptionContext *decryptionContext)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, decryptionContext);
+  CHECK_POINTER_HRESULT(result, decryptionContext->GetSegmentsFragments(), result, E_INVALIDARG);
+
+  if (SUCCEEDED(result))
+  {
+    CIndexedAfhsSegmentFragmentCollection *indexedEncryptedSegmentFragments = new CIndexedAfhsSegmentFragmentCollection(&result);
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = decryptionContext->GetSegmentsFragments()->GetEncryptedStreamFragments(indexedEncryptedSegmentFragments));
+
+    for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedEncryptedSegmentFragments->Count())); i++)
+    {
+      CIndexedAfhsSegmentFragment *indexedEncryptedSegmentFragment = indexedEncryptedSegmentFragments->GetItem(i);
+      CAfhsSegmentFragment *currentEncryptedFragment = indexedEncryptedSegmentFragment->GetItem();
+
+      currentEncryptedFragment->SetEncrypted(false, UINT_MAX);
+      currentEncryptedFragment->SetDecrypted(true, UINT_MAX);
+
+      decryptionContext->GetSegmentsFragments()->UpdateIndexes(indexedEncryptedSegmentFragment->GetItemIndex(), 1);
+    }
+
+    FREE_MEM_CLASS(indexedEncryptedSegmentFragments);
+  }
+
+  return result;
 }

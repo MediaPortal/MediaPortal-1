@@ -50,9 +50,8 @@ public:
   // @return : S_OK if successful, error code otherwise
   virtual HRESULT CheckPlugin(void);
 
-  // clear current session
-  // @return : S_OK if successfull
-  virtual HRESULT ClearSession(void);
+  // clears current session
+  virtual void ClearSession(void);
 
   // tests if last parser result is Pending
   // @return : true if last parser result is Pending, false otherwise

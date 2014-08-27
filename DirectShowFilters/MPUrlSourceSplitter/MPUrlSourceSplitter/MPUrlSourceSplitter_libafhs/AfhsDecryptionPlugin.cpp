@@ -73,7 +73,7 @@ HRESULT CAfhsDecryptionPlugin::Initialize(CPluginConfiguration *configuration)
   return result;
 }
 
-HRESULT CAfhsDecryptionPlugin::GetDecryptionResult(void)
+HRESULT CAfhsDecryptionPlugin::GetDecryptionResult(CAfhsDecryptionContext *decryptionContext)
 {
   return this->decryptionResult;
 }
@@ -84,10 +84,8 @@ HRESULT CAfhsDecryptionPlugin::GetDecryptionResult(void)
 
 /* other methods */
 
-HRESULT CAfhsDecryptionPlugin::ClearSession(void)
+void CAfhsDecryptionPlugin::ClearSession(void)
 {
   this->flags = AFHS_DECRYPTION_PLUGIN_FLAG_NONE;
   this->decryptionResult = DECRYPTION_RESULT_PENDING;
-
-  return S_OK;
 }

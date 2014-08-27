@@ -60,6 +60,9 @@ public:
   // @return : S_OK if successfull, error code otherwise
   virtual HRESULT Initialize(CPluginConfiguration *configuration) = 0;
 
+  // clears current session
+  virtual void ClearSession(void);
+
 protected:
 
   /* methods */

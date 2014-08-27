@@ -31,6 +31,8 @@
 #define MODULE_HOSTER_NAME                                                    L"Hoster"
 
 #define METHOD_LOAD_PLUGINS_NAME                                              L"LoadPlugins()"
+#define METHOD_CLEAR_SESSION_NAME                                             L"ClearSession()"
+
 // maximum count of plugins
 #define MAX_PLUGINS_DEFAULT                                                   256
 
@@ -53,6 +55,9 @@ public:
   // loads plugins from directory
   // @return : S_OK if successful, error code otherwise
   virtual HRESULT LoadPlugins(void);
+
+  // clears current session
+  virtual void ClearSession(void);
 
 protected:
   // logger for logging purposes

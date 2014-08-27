@@ -64,12 +64,18 @@ public:
   // CAfhsDecryptionPlugin implementation
 
   // gets decryption result about current stream
+  // @param decryptionContext : AFHS decryption context
   // @return : one of DECRYPTION_RESULT values
-  virtual HRESULT GetDecryptionResult(void);
+  virtual HRESULT GetDecryptionResult(CAfhsDecryptionContext *decryptionContext);
 
   // gets decryption score if decryptor result is DECRYPTION_RESULT_KNOWN
   // @return : decryption score (decryptor with highest score is set as active decryptor)
   virtual unsigned int GetDecryptionScore(void);
+
+  // decrypts encrypted segment fragments
+  // @param decryptionContext : AFHS decryption context
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT DecryptSegmentFragments(CAfhsDecryptionContext *decryptionContext);
 
 //
 //  // IProtocol interface

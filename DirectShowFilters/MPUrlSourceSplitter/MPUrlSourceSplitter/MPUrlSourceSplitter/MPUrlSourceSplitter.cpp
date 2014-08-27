@@ -2201,9 +2201,10 @@ unsigned int WINAPI CMPUrlSourceSplitter::CreateAllDemuxersWorker(LPVOID lpParam
       result = demuxer->StartCreatingDemuxer();
     }
 
-    if (demuxer->IsCreatedDemuxer())
+    if (demuxer->IsCreatedDemuxer() || demuxer->IsCreateDemuxerWorkerFinished())
     {
       activeDemuxer++;
+      result = demuxer->GetCreateDemuxerError();
     }
 
     if (activeDemuxer >= caller->demuxers->Count())

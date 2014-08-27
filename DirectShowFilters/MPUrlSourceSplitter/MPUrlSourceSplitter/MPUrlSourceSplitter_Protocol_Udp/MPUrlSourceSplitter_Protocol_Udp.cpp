@@ -722,13 +722,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::QueryStreamProgress(CStreamProgress *
   return result;
 }
 
-HRESULT CMPUrlSourceSplitter_Protocol_Udp::ClearSession(void)
+void CMPUrlSourceSplitter_Protocol_Udp::ClearSession(void)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
 
   this->StopReceivingData();
 
-  HRESULT result = __super::ClearSession();
+  __super::ClearSession();
  
   this->streamLength = 0;
   this->connectionState = None;
@@ -740,7 +740,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ClearSession(void)
   this->lastReceiveDataTime = 0;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
-  return result;
 }
 
 int64_t CMPUrlSourceSplitter_Protocol_Udp::GetDuration(void)

@@ -28,11 +28,15 @@
 #include "StreamPackageCollection.h"
 #include "IDemuxerOwner.h"
 
-#define MODULE_PROTOCOL_HOSTER_NAME                                           L"ProtocolHoster"
+#define MODULE_PROTOCOL_HOSTER_NAME                                   L"ProtocolHoster"
 
-#define METHOD_RECEIVE_DATA_WORKER_NAME                                       L"ReceiveDataWorker()"
-#define METHOD_CREATE_RECEIVE_DATA_WORKER_NAME                                L"CreateReceiveDataWorker()"
-#define METHOD_DESTROY_RECEIVE_DATA_WORKER_NAME                               L"DestroyReceiveDataWorker()"
+#define METHOD_RECEIVE_DATA_WORKER_NAME                               L"ReceiveDataWorker()"
+#define METHOD_CREATE_RECEIVE_DATA_WORKER_NAME                        L"CreateReceiveDataWorker()"
+#define METHOD_DESTROY_RECEIVE_DATA_WORKER_NAME                       L"DestroyReceiveDataWorker()"
+
+#define PROTOCOL_HOSTER_FLAG_NONE                                     HOSTER_FLAG_NONE
+
+#define PROTOCOL_HOSTER_FLAG_LAST                                     (HOSTER_FLAG_LAST + 0)
 
 class CProtocolHoster : public CHoster, virtual public IProtocol, virtual public IDemuxerOwner
 {
@@ -97,9 +101,8 @@ public:
   // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_INVALIDARG if stream ID is unknown, E_UNEXPECTED if unexpected error
   HRESULT QueryStreamProgress(CStreamProgress *streamProgress);
   
-  // clear current session
-  // @return : S_OK if successfull
-  HRESULT ClearSession(void);
+  // clears current session
+  void ClearSession(void);
 
   // gets duration of stream in ms
   // @return : stream duration in ms or DURATION_LIVE_STREAM in case of live stream or DURATION_UNSPECIFIED if duration is unknown

@@ -181,13 +181,11 @@ HRESULT CMPUrlSourceSplitter_Parser_Default::QueryStreamProgress(CStreamProgress
   return this->protocolHoster->QueryStreamProgress(streamProgress);
 }
   
-HRESULT CMPUrlSourceSplitter_Parser_Default::ClearSession(void)
+void CMPUrlSourceSplitter_Parser_Default::ClearSession(void)
 {
-  HRESULT result = __super::ClearSession();
+  __super::ClearSession();
 
   this->parserResult = PARSER_RESULT_KNOWN;
-
-  return result;
 }
 
 void CMPUrlSourceSplitter_Parser_Default::ReportStreamTime(uint64_t streamTime, uint64_t streamPosition)

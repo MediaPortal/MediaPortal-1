@@ -683,9 +683,9 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::QueryStreamProgress(CStreamProgress *st
   return this->protocolHoster->QueryStreamProgress(streamProgress);
 }
   
-HRESULT CMPUrlSourceSplitter_Parser_F4M::ClearSession(void)
+void CMPUrlSourceSplitter_Parser_F4M::ClearSession(void)
 {
-  return __super::ClearSession();
+  __super::ClearSession();
 }
 
 void CMPUrlSourceSplitter_Parser_F4M::ReportStreamTime(uint64_t streamTime, uint64_t streamPosition)

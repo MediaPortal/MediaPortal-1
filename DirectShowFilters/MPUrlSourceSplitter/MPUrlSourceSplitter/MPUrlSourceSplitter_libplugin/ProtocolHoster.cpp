@@ -216,23 +216,14 @@ HRESULT CProtocolHoster::QueryStreamProgress(CStreamProgress *streamProgress)
   return (this->activeProtocol != NULL) ? this->activeProtocol->QueryStreamProgress(streamProgress) : E_NOT_VALID_STATE;
 }
   
-HRESULT CProtocolHoster::ClearSession(void)
+void CProtocolHoster::ClearSession(void)
 {
   // stop receiving data
   this->StopReceivingData();
 
-  for (unsigned int i = 0; i < this->hosterPluginMetadataCollection->Count(); i++)
-  {
-    CProtocolHosterPluginMetadata *metadata = (CProtocolHosterPluginMetadata *)this->hosterPluginMetadataCollection->GetItem(i);
-    CProtocolPlugin *protocol = (CProtocolPlugin *)metadata->GetPlugin();
-
-    this->logger->Log(LOGGER_INFO, L"%s: %s: reseting protocol: %s", this->hosterName, METHOD_CLEAR_SESSION_NAME, protocol->GetName());
-    protocol->ClearSession();
-  }
+  CHoster::ClearSession();
 
   this->activeProtocol = NULL;
-
-  return S_OK;
 }
 
 int64_t CProtocolHoster::GetDuration(void)

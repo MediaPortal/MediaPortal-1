@@ -113,9 +113,8 @@ public:
   // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_INVALIDARG if stream ID is unknown, E_UNEXPECTED if unexpected error
   HRESULT QueryStreamProgress(CStreamProgress *streamProgress);
   
-  // clear current session
-  // @return : S_OK if successfull
-  HRESULT ClearSession(void);
+  // clears current session
+  void ClearSession(void);
 
   // gets duration of stream in ms
   // @return : stream duration in ms or DURATION_LIVE_STREAM in case of live stream or DURATION_UNSPECIFIED if duration is unknown

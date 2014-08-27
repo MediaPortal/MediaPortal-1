@@ -203,4 +203,20 @@ HRESULT CHoster::LoadPlugins(void)
   return result;
 }
 
+void CHoster::ClearSession(void)
+{
+  this->flags = HOSTER_FLAG_NONE;
+
+  for (unsigned int i = 0; i < this->hosterPluginMetadataCollection->Count(); i++)
+  {
+    CHosterPluginMetadata *metadata = (CHosterPluginMetadata *)this->hosterPluginMetadataCollection->GetItem(i);
+    CPlugin *plugin = metadata->GetPlugin();
+
+    this->logger->Log(LOGGER_INFO, L"%s: %s: reseting plugin: %s", this->hosterName, METHOD_CLEAR_SESSION_NAME, plugin->GetName());
+
+    metadata->ClearSession();
+    plugin->ClearSession();
+  }
+}
+
 /* protected methods */

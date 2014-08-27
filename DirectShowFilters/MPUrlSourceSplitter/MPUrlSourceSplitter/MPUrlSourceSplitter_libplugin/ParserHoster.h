@@ -28,7 +28,11 @@
 #include "ParserPlugin.h"
 #include "IDemuxerOwner.h"
 
-#define MODULE_PARSER_HOSTER_NAME                                             L"ParserHoster"
+#define MODULE_PARSER_HOSTER_NAME                                     L"ParserHoster"
+
+#define PARSER_HOSTER_FLAG_NONE                                       HOSTER_FLAG_NONE
+
+#define PARSER_HOSTER_FLAG_LAST                                       (HOSTER_FLAG_LAST + 0)
 
 class CParserHoster : public CHoster, virtual public IDemuxerOwner, virtual public ISimpleProtocol
 {
@@ -86,7 +90,7 @@ public:
   
   // clear current session
   // @return : S_OK if successfull
-  HRESULT ClearSession(void);
+  void ClearSession(void);
 
   // gets duration of stream in ms
   // @return : stream duration in ms or DURATION_LIVE_STREAM in case of live stream or DURATION_UNSPECIFIED if duration is unknown

@@ -683,7 +683,9 @@ Global
 		{53E65326-8163-403D-82D1-2566D448FDB9}.Release|Win32.ActiveCfg = Release|Win32
 		{53E65326-8163-403D-82D1-2566D448FDB9}.Release|Win32.Build.0 = Release|Win32
 		{7E821A12-B331-4E89-9E6A-C41C07E93065}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7E821A12-B331-4E89-9E6A-C41C07E93065}.Debug|Win32.Build.0 = Debug|Win32
 		{7E821A12-B331-4E89-9E6A-C41C07E93065}.Release|Win32.ActiveCfg = Release|Win32
+		{7E821A12-B331-4E89-9E6A-C41C07E93065}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
