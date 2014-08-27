@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "AfhsSegmentFragment.h"
+#include "FastSearchItemCollection.h"
 
 CAfhsSegmentFragment::CAfhsSegmentFragment(HRESULT *result, unsigned int segment, unsigned int fragment)
   : CCacheFileItem(result)
@@ -68,42 +69,31 @@ unsigned int CAfhsSegmentFragment::GetFragment(void)
 
 /* set methods */
 
-void CAfhsSegmentFragment::SetDownloaded(bool downloaded)
-{
-  this->flags &= ~AFHS_SEGMENT_FRAGMENT_FLAG_DOWNLOADED;
-
-  if (downloaded)
-  {
-    this->flags |= AFHS_SEGMENT_FRAGMENT_FLAG_DOWNLOADED;
-    this->SetLoadedToMemoryTime(GetTickCount());
-  }
-  else
-  {
-    this->SetLoadedToMemoryTime(CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET);
-  }
-}
-
-void CAfhsSegmentFragment::SetDecrypted(bool decrypted)
+void CAfhsSegmentFragment::SetDecrypted(bool decrypted, unsigned int segmentFragmentItemIndex)
 {
   this->flags &= ~AFHS_SEGMENT_FRAGMENT_FLAG_DECRYPTED;
   this->flags |= decrypted ? AFHS_SEGMENT_FRAGMENT_FLAG_DECRYPTED : AFHS_SEGMENT_FRAGMENT_FLAG_NONE;
+
+  if ((this->owner != NULL) && (segmentFragmentItemIndex != UINT_MAX))
+  {
+    this->owner->UpdateIndexes(segmentFragmentItemIndex);
+  }
 }
 
-void CAfhsSegmentFragment::SetEncrypted(bool encrypted)
+void CAfhsSegmentFragment::SetEncrypted(bool encrypted, unsigned int segmentFragmentItemIndex)
 {
   this->flags &= ~AFHS_SEGMENT_FRAGMENT_FLAG_ENCRYPTED;
   this->flags |= encrypted ? AFHS_SEGMENT_FRAGMENT_FLAG_ENCRYPTED : AFHS_SEGMENT_FRAGMENT_FLAG_NONE;
+
+  if ((this->owner != NULL) && (segmentFragmentItemIndex != UINT_MAX))
+  {
+    this->owner->UpdateIndexes(segmentFragmentItemIndex);
+  }
 }
 
 void CAfhsSegmentFragment::SetFragmentStartPosition(int64_t fragmentStartPosition)
 {
   this->fragmentStartPosition = fragmentStartPosition;
-}
-
-void CAfhsSegmentFragment::SetDiscontinuity(bool discontinuity)
-{
-  this->flags &= ~AFHS_SEGMENT_FRAGMENT_FLAG_DISCONTINUITY;
-  this->flags |= discontinuity ? AFHS_SEGMENT_FRAGMENT_FLAG_DISCONTINUITY : AFHS_SEGMENT_FRAGMENT_FLAG_NONE;
 }
 
 void CAfhsSegmentFragment::SetContainsHeaderOrMetaPacket(bool containsHeaderOrMetaPacket)
@@ -113,16 +103,6 @@ void CAfhsSegmentFragment::SetContainsHeaderOrMetaPacket(bool containsHeaderOrMe
 }
 
 /* other methods */
-
-bool CAfhsSegmentFragment::IsDiscontinuity(void)
-{
-  return this->IsSetFlags(AFHS_SEGMENT_FRAGMENT_FLAG_DISCONTINUITY);
-}
-
-bool CAfhsSegmentFragment::IsDownloaded(void)
-{
-  return this->IsSetFlags(AFHS_SEGMENT_FRAGMENT_FLAG_DOWNLOADED);
-}
 
 bool CAfhsSegmentFragment::IsDecrypted(void)
 {
@@ -146,7 +126,7 @@ bool CAfhsSegmentFragment::ContainsHeaderOrMetaPacket(void)
 
 /* protected methods */
 
-CCacheFileItem *CAfhsSegmentFragment::CreateItem(void)
+CFastSearchItem *CAfhsSegmentFragment::CreateItem(void)
 {
   HRESULT result = S_OK;
   CAfhsSegmentFragment *fragment = new CAfhsSegmentFragment(&result, this->segment, this->fragment);
@@ -156,7 +136,7 @@ CCacheFileItem *CAfhsSegmentFragment::CreateItem(void)
   return fragment;
 }
 
-bool CAfhsSegmentFragment::InternalClone(CCacheFileItem *item)
+bool CAfhsSegmentFragment::InternalClone(CFastSearchItem *item)
 {
   bool result = __super::InternalClone(item);
   

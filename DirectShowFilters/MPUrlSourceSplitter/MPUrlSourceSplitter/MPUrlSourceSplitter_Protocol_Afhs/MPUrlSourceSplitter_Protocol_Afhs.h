@@ -190,8 +190,6 @@ protected:
   // holds which fragment have to be downloaded
   // (UINT_MAX means next fragment, always reset after started download of fragment)
   unsigned int segmentFragmentToDownload;
-  // holds which fragment is currently decrypting (UINT_MAX means none)
-  unsigned int segmentFragmentDecrypting;
 
   // holds segment fragment timestamp which is stream zero time
   int64_t segmentFragmentZeroTimestamp;

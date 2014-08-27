@@ -94,6 +94,8 @@
     </ClInclude>
     <ClInclude Include="AfhsSegmentFragment.h" />
     <ClInclude Include="AfhsSegmentFragmentCollection.h" />
+    <ClInclude Include="IndexedAfhsSegmentFragment.h" />
+    <ClInclude Include="IndexedAfhsSegmentFragmentCollection.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -108,6 +110,8 @@
     <ClCompile Include="AfhsSegmentFragment.cpp" />
     <ClCompile Include="AfhsSegmentFragmentCollection.cpp" />
     <ClCompile Include="AfhsDecryptionPluginConfiguration.cpp" />
+    <ClCompile Include="IndexedAfhsSegmentFragment.cpp" />
+    <ClCompile Include="IndexedAfhsSegmentFragmentCollection.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

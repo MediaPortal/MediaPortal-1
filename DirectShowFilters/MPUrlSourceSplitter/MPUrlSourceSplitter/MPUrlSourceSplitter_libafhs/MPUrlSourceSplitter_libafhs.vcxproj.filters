@@ -57,6 +57,12 @@
     <ClInclude Include="AfhsDownloadResponse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IndexedAfhsSegmentFragment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexedAfhsSegmentFragmentCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -90,6 +96,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AfhsDownloadResponse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexedAfhsSegmentFragment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexedAfhsSegmentFragmentCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -176,12 +176,12 @@ HRESULT CProtocolHoster::StartReceivingData(CParameterCollection *parameters)
   if (SUCCEEDED(result))
   {
     // wait for receiving data, timeout or exit
-    while ((this->activeProtocol->GetConnectionState() != Opened) && (GetTickCount() <= this->finishTime) && (!this->receiveDataWorkerShouldExit))
+    while ((this->activeProtocol->GetConnectionState() != Opened) && (!this->activeProtocol->IsWholeStreamDownloaded()) && (!this->activeProtocol->IsConnectionLostCannotReopen()) && (GetTickCount() <= this->finishTime) && (!this->receiveDataWorkerShouldExit))
     {
       Sleep(1);
     }
 
-    CHECK_CONDITION_HRESULT(result, this->activeProtocol->GetConnectionState() == Opened, result, E_CONNECTION_LOST_CANNOT_REOPEN);
+    CHECK_CONDITION_HRESULT(result, (!this->activeProtocol->IsConnectionLostCannotReopen()) && (GetTickCount() <= this->finishTime) && (!this->receiveDataWorkerShouldExit), result, E_CONNECTION_LOST_CANNOT_REOPEN);
   }
 
   this->startReceivingData = false;

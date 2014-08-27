@@ -25,6 +25,7 @@
 
 #include "CacheFileItemCollection.h"
 #include "AfhsSegmentFragment.h"
+#include "IndexedAfhsSegmentFragmentCollection.h"
 
 #define SEGMENT_FRAGMENT_INDEX_NOT_SET                                UINT_MAX
 
@@ -40,11 +41,6 @@ public:
   // @param index : the index of item to find
   // @return : the reference to item or NULL if not find
   virtual CAfhsSegmentFragment *GetItem(unsigned int index);
-
-  // gets first not downloaded segment fragment
-  // @param requested : start index for searching
-  // @return : index of first not downloaded segment fragment or UINT_MAX if not exists
-  unsigned int GetFirstNotDownloadedSegmentFragment(unsigned int start);
 
   // gets index of stream segment where position is between start position and end position
   // @param position : the position between start position and end position
@@ -83,6 +79,16 @@ public:
   // @return : extra parameters for all segments and fragments or NULL if error
   const wchar_t *GetSegmentFragmentUrlExtraParameters(void);
 
+  // gets collection of indexed segment fragments which are encrypted
+  // @param collection : the collection to fill in indexed segment fragment
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT GetEncryptedStreamFragments(CIndexedAfhsSegmentFragmentCollection *collection);
+
+  // gets collection of indexed segment fragments which are decrypted
+  // @param collection : the collection to fill in indexed segment fragment
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT GetDecryptedStreamFragments(CIndexedAfhsSegmentFragmentCollection *collection);
+
   /* set methods */
 
   // sets start index of segment fragment to start searching for specific position
@@ -111,6 +117,42 @@ public:
   // @result : true if successful, false otherwise
   virtual bool Insert(unsigned int position, CCacheFileItem *item);
 
+  // tests if in collection are some ecnrypted segment fragments
+  // @return : true if in collection are some encrypted segment fragments, false otherwise
+  bool HasEncryptedSegmentFragments(void);
+
+  // tests if in collection are some decrypted segment fragments
+  // @return : true if in collection are some decrypted segment fragments, false otherwise
+  bool HasDecryptedSegmentFragments(void);
+
+  /* index methods */
+
+  // insert item with specified item index to indexes
+  // @param itemIndex : the item index in collection to insert into indexes
+  // @return : true if successful, false otherwise
+  virtual bool InsertIndexes(unsigned int itemIndex);
+
+  // removes items from indexes
+  // @param startIndex : the start index of items to remove from indexes
+  // @param count : the count of items to remove from indexes
+  virtual void RemoveIndexes(unsigned int startIndex, unsigned int count);
+
+  // updates indexes by using specified item
+  // @param itemIndex : index of item to update indexes
+  // @param count : the count of items to updates indexes
+  // @retur : true if successful, false otherwise
+  virtual bool UpdateIndexes(unsigned int itemIndex, unsigned int count);
+
+  // ensures that in internal buffer of indexes is enough space
+  // each index must check against its count of items and add addingCount
+  // if in internal buffer of indexes is not enough space, method tries to allocate enough space in index
+  // @param addingCount : the count of added index items
+  // @return : true if in internal buffer of indexes is enough space, false otherwise
+  virtual bool EnsureEnoughSpaceIndexes(unsigned int addingCount);
+
+  // clears all indexes to default state
+  virtual void ClearIndexes(void);
+
 protected:
   // holds start index of segment fragment to start searching for specific position
   unsigned int startSearchingIndex;
@@ -120,6 +162,13 @@ protected:
   wchar_t *defaultBaseUrl;
   // holds extra parameters which are added to all segments and fragments
   wchar_t *segmentFragmentUrlExtraParameters;
+
+  // we need to maintain several indexes
+  // first index : item->IsEncrypted()
+  // second index : item->IsDecrypted()
+
+  CIndexCollection *indexEncrypted;
+  CIndexCollection *indexDecrypted;
 };
 
 #endif
