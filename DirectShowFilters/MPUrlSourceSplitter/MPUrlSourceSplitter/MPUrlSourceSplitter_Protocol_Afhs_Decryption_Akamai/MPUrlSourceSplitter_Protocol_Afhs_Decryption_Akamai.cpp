@@ -583,7 +583,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai::ParseMediaDataBox(
 
           if (SUCCEEDED(result) && (mediaDataBox->GetPayloadSize() != 0))
           {
-            CLinearBuffer *mediaDataBoxPayload = new CLinearBuffer(&result, mediaDataBox->GetPayloadSize());
+            CLinearBuffer *mediaDataBoxPayload = new CLinearBuffer(&result, (unsigned int)mediaDataBox->GetPayloadSize());
             CHECK_POINTER_HRESULT(result, mediaDataBoxPayload, result, E_OUTOFMEMORY);
 
             CHECK_CONDITION_EXECUTE(SUCCEEDED(result), mediaDataBoxPayload->AddToBuffer((unsigned char *)mediaDataBox->GetPayload(), (uint32_t)mediaDataBox->GetPayloadSize()));
