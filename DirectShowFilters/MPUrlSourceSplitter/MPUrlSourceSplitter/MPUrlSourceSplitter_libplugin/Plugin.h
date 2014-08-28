@@ -28,11 +28,15 @@
 #include "PluginConfiguration.h"
 #include "Flags.h"
 
-#define METHOD_INITIALIZE_NAME                                                L"Initialize()"
+#define METHOD_INITIALIZE_NAME                                        L"Initialize()"
 
-#define PLUGIN_FLAG_NONE                                                      FLAGS_NONE
+#ifndef METHOD_CLEAR_SESSION_NAME
+#define METHOD_CLEAR_SESSION_NAME                                     L"ClearSession()"
+#endif
 
-#define PLUGIN_FLAG_LAST                                                      (FLAGS_LAST + 0)
+#define PLUGIN_FLAG_NONE                                              FLAGS_NONE
+
+#define PLUGIN_FLAG_LAST                                              (FLAGS_LAST + 0)
 
 class CPlugin : public CFlags
 {

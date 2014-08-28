@@ -26,9 +26,8 @@
 #include "Plugin.h"
 #include "AfhsDecryptionContext.h"
 
-#ifndef METHOD_CLEAR_SESSION_NAME
-#define METHOD_CLEAR_SESSION_NAME                                     L"ClearSession()"
-#endif
+#define METHOD_GET_DECRYPTION_RESULT_NAME                             L"GetDecryptionResult()"
+#define METHOD_DECRYPT_SEGMENT_FRAGMENTS_NAME                         L"DecryptSegmentFragments()"
 
 #define AFHS_DECRYPTION_PLUGIN_FLAG_NONE                              PLUGIN_FLAG_NONE
 

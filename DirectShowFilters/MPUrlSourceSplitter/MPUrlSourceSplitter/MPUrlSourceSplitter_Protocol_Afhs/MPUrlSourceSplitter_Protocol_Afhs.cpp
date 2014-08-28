@@ -284,23 +284,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
 
     if (SUCCEEDED(result) && (this->segmentFragments->HasEncryptedSegmentFragments()))
     {
-      //// FAKE !!!
-      //CIndexedAfhsSegmentFragmentCollection *indexedDecryptedSegmentFragments = new CIndexedAfhsSegmentFragmentCollection(&result);
-      //CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->segmentFragments->GetEncryptedStreamFragments(indexedDecryptedSegmentFragments));
-
-      //for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedDecryptedSegmentFragments->Count())); i++)
-      //{
-      //  CIndexedAfhsSegmentFragment *indexedDecryptedSegmentFragment = indexedDecryptedSegmentFragments->GetItem(i);
-      //  CAfhsSegmentFragment *currentDecryptingFragment = indexedDecryptedSegmentFragment->GetItem();
-
-      //  currentDecryptingFragment->SetEncrypted(false, UINT_MAX);
-      //  currentDecryptingFragment->SetDecrypted(true, UINT_MAX);
-
-      //  this->segmentFragments->UpdateIndexes(indexedDecryptedSegmentFragment->GetItemIndex(), 1);
-      //}
-
-      //FREE_MEM_CLASS(indexedDecryptedSegmentFragments);
-
       CAfhsDecryptionContext *decryptionContext = new CAfhsDecryptionContext(&result);
       CHECK_CONDITION_HRESULT(result, decryptionContext, result, E_OUTOFMEMORY);
 
@@ -311,6 +294,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
         decryptionContext->SetSegmentFragmentProcessing(this->segmentFragmentProcessing);
         decryptionContext->SetSegmentFragmentToDownload(this->segmentFragmentToDownload);
         decryptionContext->SetSegmentsFragments(this->segmentFragments);
+        decryptionContext->SetManifestUrl(this->configuration->GetValue(PARAMETER_NAME_AFHS_MANIFEST_URL, true, NULL));
+        decryptionContext->SetConfiguration(this->configuration);
       }
 
       CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), this->decryptionHoster->DecryptSegmentFragments(decryptionContext), result);
@@ -493,187 +478,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
 
       FREE_MEM_CLASS(indexedDecryptedSegmentFragments);
     }
-
-    //if (SUCCEEDED(result) && (this->segmentFragmentDecrypting != UINT_MAX))
-    //{
-    //  // there is need to decrypt specifed segment fragment
-    //  //CAfhsSegmentFragment *currentDecryptingFragment = this->segmentFragments->GetItem(this->segmentFragmentDecrypting);
-
-    //  CAfhsDecryptionContext *decryptionContext = new CAfhsDecryptionContext(&result);
-    //  CHECK_CONDITION_HRESULT(result, decryptionContext, result, E_OUTOFMEMORY);
-
-    //  if (SUCCEEDED(result))
-    //  {
-    //    //HRESULT res = this->decryptionHoster->DecryptSegmentFragments(decryptionContext);
-    //    HRESULT res = E_NOTIMPL;
-
-    //    if (res == S_OK)
-    //    {
-    //      // some segment fragments were decrypted
-
-    //      //if (currentDecryptingFragment->IsDecrypted())
-    //      //{
-    //      //  // we can process segment and fragment
-    //      //  // after processing we mark fragment as downloaded = it is ready for filter
-
-    //      //  unsigned int bufferSize = currentDecryptingFragment->GetBuffer()->GetBufferOccupiedSpace();
-    //      //  unsigned int processed = 0;
-
-    //      //  CHECK_CONDITION_HRESULT(result, bufferSize != 0, result, E_AFHS_DECRYPTED_DATA_SIZE_ZERO);
-
-    //      //  if (SUCCEEDED(result))
-    //      //  {
-    //      //    ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bufferSize, 0);
-    //      //    CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
-
-    //      //    if (SUCCEEDED(result))
-    //      //    {
-    //      //      currentDecryptingFragment->GetBuffer()->CopyFromBuffer(buffer, bufferSize);
-    //      //      currentDecryptingFragment->GetBuffer()->ClearBuffer();
-
-    //      //      if (SUCCEEDED(result) && (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_FLAG_ADDED_HEADER_AND_META)))
-    //      //      {
-    //      //        // we must add FLV file header
-
-    //      //        CHECK_CONDITION_HRESULT(result, currentDecryptingFragment->GetBuffer()->AddToBufferWithResize(FLV_FILE_HEADER, FLV_FILE_HEADER_LENGTH) == FLV_FILE_HEADER_LENGTH, result, E_OUTOFMEMORY);
-
-    //      //        if (SUCCEEDED(result))
-    //      //        {
-    //      //          char *mediaMetadataBase64Encoded = ConvertToMultiByteW(this->configuration->GetValue(PARAMETER_NAME_AFHS_MEDIA_METADATA, true, NULL));
-    //      //          if (mediaMetadataBase64Encoded != NULL)
-    //      //          {
-    //      //            // metadata can be in connection parameters, but it is optional
-    //      //            // metadata is BASE64 encoded
-
-    //      //            unsigned char *metadata = NULL;
-    //      //            unsigned int metadataLength = 0;
-
-    //      //            CHECK_CONDITION_HRESULT(result, SUCCEEDED(base64_decode(mediaMetadataBase64Encoded, &metadata, &metadataLength)), result, E_AFHS_CANNOT_DECODE_METADATA);
-
-    //      //            if (SUCCEEDED(result))
-    //      //            {
-    //      //              // create FLV packet from metadata and add its content to buffer for processing
-    //      //              CFlvPacket *metadataFlvPacket = new CFlvPacket(&result);
-    //      //              CHECK_POINTER_HRESULT(result, metadataFlvPacket, result, E_OUTOFMEMORY);
-
-    //      //              CHECK_CONDITION_HRESULT(result, metadataFlvPacket->CreatePacket(FLV_PACKET_META, metadata, metadataLength, (unsigned int)currentDecryptingFragment->GetFragmentTimestamp(), false), result, E_AFHS_CANNOT_CREATE_METADATA_FLV_PACKET);
-    //      //              CHECK_CONDITION_HRESULT(result, currentDecryptingFragment->GetBuffer()->AddToBufferWithResize(metadataFlvPacket->GetData(), metadataFlvPacket->GetSize()) == metadataFlvPacket->GetSize(), result, E_OUTOFMEMORY);
-
-    //      //              if (SUCCEEDED(result))
-    //      //              {
-    //      //                this->headerAndMetaPacketSize = FLV_FILE_HEADER_LENGTH + metadataFlvPacket->GetSize();
-    //      //                currentDecryptingFragment->SetContainsHeaderOrMetaPacket(true);
-    //      //              }
-
-    //      //              FREE_MEM_CLASS(metadataFlvPacket);
-    //      //            }
-    //      //            FREE_MEM(metadata);
-    //      //          }
-    //      //          FREE_MEM(mediaMetadataBase64Encoded);
-    //      //        }
-
-    //      //        this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_FLAG_ADDED_HEADER_AND_META;
-    //      //      }
-
-    //      //      CBox *box = new CBox(&result);
-    //      //      CHECK_POINTER_HRESULT(result, box, result, E_OUTOFMEMORY);
-
-    //      //      while (SUCCEEDED(result) && (processed < bufferSize))
-    //      //      {
-    //      //        CHECK_CONDITION_HRESULT(result, box->Parse(buffer + processed, bufferSize - processed), result, E_AFHS_CANNOT_PARSE_BOX);
-    //      //        CHECK_CONDITION_HRESULT(result, box->GetSize() != 0, result, E_AFHS_BOX_SIZE_ZERO);
-
-    //      //        if (SUCCEEDED(result) && (wcscmp(box->GetType(), MEDIA_DATA_BOX_TYPE) == 0))
-    //      //        {
-    //      //          CMediaDataBox *mediaBox = new CMediaDataBox(&result);
-    //      //          CHECK_POINTER_HRESULT(result, mediaBox, result, E_OUTOFMEMORY);
-
-    //      //          CHECK_CONDITION_HRESULT(result, mediaBox->Parse(buffer + processed, bufferSize - processed), result, E_AFHS_CANNOT_PARSE_MEDIA_DATA_BOX);
-
-    //      //          if (SUCCEEDED(result))
-    //      //          {
-    //      //            currentDecryptingFragment->GetBuffer()->AddToBufferWithResize(mediaBox->GetPayload(), (unsigned int)mediaBox->GetPayloadSize());
-    //      //            processed += (unsigned int)box->GetSize();
-    //      //          }
-
-    //      //          FREE_MEM_CLASS(mediaBox);
-    //      //        }
-    //      //      }
-
-    //      //      FREE_MEM_CLASS(box);
-    //      //    }
-    //      //    FREE_MEM(buffer);
-    //      //  }
-
-    //      //  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), currentDecryptingFragment->SetDownloaded(true));
-
-    //      //  // recalculate start position of all downloaded segment fragments until first not downloaded stream fragment
-    //      //  this->RecalculateSegmentFragmentStartPosition(this->segmentFragments, this->segmentFragmentDecrypting);
-
-    //      //  if (!this->IsLiveStreamDetected())
-    //      //  {
-    //      //    // check if we downloaded last segment fragment - then we set end of stream reached - it doesn't mean that we have all data (no gaps)
-
-    //      //    if ((!this->IsSetFlags(PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED)) && (this->segmentFragments->Count() != 0))
-    //      //    {
-    //      //      // not set end of stream, at least one segment fragment
-    //      //      CAfhsSegmentFragment *lastFragment = this->segmentFragments->GetItem(this->segmentFragments->Count() - 1);
-
-    //      //      if (lastFragment->IsDownloaded())
-    //      //      {
-    //      //        this->logger->Log(LOGGER_INFO, L"%s: %s: end of stream reached", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-    //      //        this->flags |= PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
-
-    //      //        unsigned int fragmentToDownload = UINT_MAX;
-
-    //      //        // if not set fragment to download, then set fragment to download (get next not downloaded fragment after current processed fragment)
-    //      //        fragmentToDownload = (this->segmentFragmentToDownload == UINT_MAX) ? this->segmentFragments->GetFirstNotDownloadedSegmentFragment(this->segmentFragmentDecrypting) : this->segmentFragmentToDownload;
-    //      //        // if not set fragment to download, then set fragment to download (get next not downloaded fragment from first fragment)
-    //      //        fragmentToDownload = (fragmentToDownload == UINT_MAX) ? this->segmentFragments->GetFirstNotDownloadedSegmentFragment(0) : fragmentToDownload;
-    //      //        // fragment to download still can be UINT_MAX = no fragment to download
-
-    //      //        this->segmentFragmentToDownload = fragmentToDownload;
-
-    //      //        if (this->segmentFragmentToDownload == UINT_MAX)
-    //      //        {
-    //      //          // no segment fragment to download, we have all data
-    //      //          this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
-    //      //        }
-    //      //      }
-    //      //    }
-    //      //  }
-    //      //  else
-    //      //  {
-    //      //    // live stream, check if we downloaded last segment fragment
-    //      //    // if yes, then download bootstrap info and get new segment fragments
-
-    //      //    if (this->segmentFragments->Count() != 0)
-    //      //    {
-    //      //      // at least one segment fragment
-    //      //      CAfhsSegmentFragment *lastFragment = this->segmentFragments->GetItem(this->segmentFragments->Count() - 1);
-
-    //      //      if (lastFragment->IsDownloaded())
-    //      //      {
-    //      //        this->logger->Log(LOGGER_INFO, L"%s: %s: live stream, downloaded last segment fragment, requesting bootstrap info for update of segment fragments", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-    //      //        this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_UPDATE_SEGMENT_FRAGMENTS | MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_FLAG_STOP_RECEIVING_DATA;
-    //      //      }
-    //      //    }
-    //      //  }
-
-    //      //  this->segmentFragmentDecrypting = UINT_MAX;
-    //      //}
-    //    }
-    //    else if (FAILED(res))
-    //    {
-    //      // decryption failed
-    //      result = res;
-
-    //      this->logger->Log(LOGGER_ERROR, L"%s: %s: decryption of segment fragments failed, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
-    //    }
-    //  }
-
-    //  FREE_MEM_CLASS(decryptionContext);
-    //}
 
     if (SUCCEEDED(result) && (this->mainCurlInstance->GetConnectionState() == Initializing) && (!this->IsWholeStreamDownloaded()) && (!this->mainCurlInstance->IsLockedCurlInstance()) && (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_UPDATE_SEGMENT_FRAGMENTS)))
     {

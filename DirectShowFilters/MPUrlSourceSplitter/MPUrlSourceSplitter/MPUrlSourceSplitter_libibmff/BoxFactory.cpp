@@ -80,9 +80,9 @@ CBox *CBoxFactory::CreateBox(const uint8_t *buffer, uint32_t length)
     {
       /*CREATE_SPECIFIC_BOX(box, FILE_TYPE_BOX_TYPE, CFileTypeBox, buffer, length, continueParsing, result);
         CREATE_SPECIFIC_BOX(box, MOVIE_BOX_TYPE, CMovieBox, buffer, length, continueParsing, result);
-        CREATE_SPECIFIC_BOX(box, MOVIE_HEADER_BOX_TYPE, CMovieHeaderBox, buffer, length, continueParsing, result);
+        CREATE_SPECIFIC_BOX(box, MOVIE_HEADER_BOX_TYPE, CMovieHeaderBox, buffer, length, continueParsing, result);*/
         CREATE_SPECIFIC_BOX(box, MEDIA_DATA_BOX_TYPE, CMediaDataBox, buffer, length, continueParsing, result);
-        CREATE_SPECIFIC_BOX(box, USER_DATA_BOX_TYPE, CUserDataBox, buffer, length, continueParsing, result);
+      /*CREATE_SPECIFIC_BOX(box, USER_DATA_BOX_TYPE, CUserDataBox, buffer, length, continueParsing, result);
         CREATE_SPECIFIC_BOX(box, META_BOX_TYPE, CMetaBox, buffer, length, continueParsing, result);
         CREATE_SPECIFIC_BOX(box, TRACK_BOX_TYPE, CTrackBox, buffer, length, continueParsing, result);
         CREATE_SPECIFIC_BOX(box, TRACK_HEADER_BOX_TYPE, CTrackHeaderBox, buffer, length, continueParsing, result);

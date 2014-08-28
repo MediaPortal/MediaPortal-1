@@ -29,12 +29,22 @@
 #include "AfhsSegmentFragmentCollection.h"
 #include "AfhsDecryptionHoster.h"
 #include "AkamaiFlashInstance.h"
+#include "ParsedMediaDataBox.h"
+#include "MediaDataBox.h"
 
 #define AFHS_PROTOCOL_DECRYPTION_NAME                                                     L"AFHS_DECRYPTION_AKAMAI"
 
 #define MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_AKAMAI_FLAG_NONE                  AFHS_DECRYPTION_PLUGIN_FLAG_NONE
 
-#define MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_AKAMAI_FLAG_LAST                  (AFHS_DECRYPTION_PLUGIN_FLAG_LAST + 0)
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_AKAMAI_FLAG_DATA_ANALYSED         (1 << (AFHS_DECRYPTION_PLUGIN_FLAG_LAST + 0))
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_AKAMAI_FLAG_KEY_REQUEST_PENDING   (1 << (AFHS_DECRYPTION_PLUGIN_FLAG_LAST + 1))
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_AKAMAI_FLAG_DATA_CAN_BE_DECRYPTED (1 << (AFHS_DECRYPTION_PLUGIN_FLAG_LAST + 2))
+
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_AKAMAI_FLAG_LAST                  (AFHS_DECRYPTION_PLUGIN_FLAG_LAST + 3)
+
+#define AKAMAI_GUID_LENGTH                                                                12
+#define AKAMAI_GUID_URL_PART                                                              L"g="
+#define AKAMAI_GUID_URL_PART_LENGTH                                                       2
 
 class CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai : public CAfhsDecryptionPlugin
 {
@@ -79,9 +89,6 @@ public:
   virtual HRESULT DecryptSegmentFragments(CAfhsDecryptionContext *decryptionContext);
 
 protected:
-  // holds flash instance initialize result
-  // default E_NOT_VALID_STATE (not initialized)
-  HRESULT initializeAkamaiFlashInstanceResult;
   // holds akamain flash instance to decrypt received data
   CAkamaiFlashInstance *akamaiFlashInstance;
   // holds akamai GUID
@@ -94,8 +101,8 @@ protected:
   uint8_t *lastKey;
   unsigned int lastKeyLength;
 
-  // holds akamai swf file
-  wchar_t *akamaiSwfFile;
+  // holds akamai swf file name
+  wchar_t *akamaiSwfFileName;
   // holds last timestamp
   unsigned int lastTimestamp;
 
@@ -109,8 +116,39 @@ protected:
 
   // gets random akamai swf file name
   // @return : random akamai swf file name or NULL if error
-  wchar_t *GetAkamaiSwfFile(void);
+  wchar_t *GetAkamaiSwfFileName(void);
 
+  // gets parsed media data box
+  // @param parsedMediaDataBox : parsed media data box
+  // @param context : decryption context of AFHS protocol
+  // @param segmentFragment : segment and fragment to get media data box
+  // @return : S_OK if successful, error code otherwise
+  HRESULT ParseMediaDataBox(CParsedMediaDataBox *parsedMediaDataBox, CAfhsDecryptionContext *context, CAfhsSegmentFragment *segmentFragment);
+
+  // gets url for key from url from akamai FLV packet
+  // @param segmentFragmentUrl : url from segment and fragment
+  // @param packetUrl : url from akamai FLV packet
+  // @param akamaiGuid : akamai GUID
+  // @return : url for key or NULL if error
+  wchar_t *GetKeyUrlFromUrl(const wchar_t *segmentFragmentUrl, const wchar_t *packetUrl, const wchar_t *akamaiGuid);
+
+  // gets media data box from specified segment and fragment
+  // @param mediaDataBox : the media data box to be filled in (it will be created, caller is responsible for freeing memory)
+  // @param segmentFragment : segment and fragment to get media data box
+  // @result : S_OK if successful, error code otherwise
+  HRESULT GetMediaDataBox(CMediaDataBox **mediaDataBox, CAfhsSegmentFragment *segmentFragment);
+
+  // gets FLV packet from specified buffer
+  // @param akamaiFlvPacket : the akamai FLV packet to be filled in (it will be created, caller is responsible for freeing memory)
+  // @param buffer : buffer to get FLV packet
+  // @return : S_OK if successful, error code otherwise
+  HRESULT GetAkamaiFlvPacket(CAkamaiFlvPacket **akamaiFlvPacket, CLinearBuffer *buffer);
+
+  // gets all boxes in segment and fragment
+  // @param boxes : the box collection to be filled in (it will be created, caller is responsible for freeing memory)
+  // @param segmentFragment : segment and fragment to get boxes
+  // @return : S_OK if successful, error code otherwise
+  HRESULT GetBoxes(CBoxCollection **boxes, CAfhsSegmentFragment *segmentFragment);
 };
 
 #endif

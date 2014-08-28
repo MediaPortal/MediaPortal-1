@@ -26,6 +26,7 @@
 #include "AfhsSegmentFragmentCollection.h"
 #include "AfhsCurlInstance.h"
 #include "Flags.h"
+#include "ParameterCollection.h"
 
 #define AFHS_DECRYPTION_CONTEXT_FLAG_NONE                             FLAGS_NONE
 
@@ -59,6 +60,14 @@ public:
   // @return : which segment and fragment have to be downloaded (UINT_MAX means next segment fragment, always reset after started download of segment and fragment)
   unsigned int GetSegmentFragmentToDownload(void);
 
+  // gets manifest url
+  // @return : manifest url
+  const wchar_t *GetManifestUrl(void);
+
+  // gets actual configuration (only reference)
+  // @return : actual configuration
+  CParameterCollection *GetConfiguration(void);
+
   /* set methods */
 
   // sets AFHS CURL instance (it's only reference to AFHS CURL instance in AFHS protocol)
@@ -80,6 +89,14 @@ public:
   // sets which segment and fragment have to be downloaded
   // @param segmentFragmentToDownload : which segment and fragment have to be downloaded (UINT_MAX means next segment fragment, always reset after started download of segment and fragment)
   void SetSegmentFragmentToDownload(unsigned int segmentFragmentToDownload);
+
+  // sets manifest url
+  // @param manifestUrl : manifest url to set (only reference, not deep clone)
+  void SetManifestUrl(const wchar_t *manifestUrl);
+
+  // sets actual configuration (only reference)
+  // @param configuration : actual configuration
+  void SetConfiguration(CParameterCollection *configuration);
 
   /* other methods */
 
@@ -158,6 +175,10 @@ protected:
   unsigned int segmentFragmentProcessing;
   // holds which segment and fragment have to be downloaded
   unsigned int segmentFragmentToDownload;
+  // holds manifest url (only reference, not deep clone)
+  const wchar_t *manifestUrl;
+  // holds actual configuration (only reference)
+  CParameterCollection *configuration;
 
   /* methods */
 

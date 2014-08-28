@@ -149,4 +149,17 @@
 #define E_AFHS_DECRYPTED_DATA_SIZE_ZERO                                         -169
 #define E_AFHS_NO_ACTIVE_DECRYPTOR                                              -170
 
+// AFHS akamai decryptor error codes
+
+#define E_AFHS_AKAMAI_DECRYPTOR_CANNOT_LOAD_DECRYPTOR                           -171
+#define E_AFHS_AKAMAI_DECRYPTOR_NO_DECRYPTOR_FILE_NAME                          -172
+#define E_AFHS_AKAMAI_DECRYPTOR_CANNOT_SAVE_DECRYPTOR                           -173
+#define E_AFHS_AKAMAI_DECRYPTOR_GENERAL_ERROR                                   -174
+#define E_AFHS_AKAMAI_DECRYPTOR_INVALID_COUNT_OF_ENCRYPTED_SEGMENT_FRAGMENTS    -175
+#define E_AFHS_AKAMAI_DECRYPTOR_CANNOT_DOWNLOAD_KEY                             -176
+#define E_AFHS_AKAMAI_DECRYPTOR_NOT_FLV_PACKET                                  -177
+#define E_AFHS_AKAMAI_DECRYPTOR_NOT_AKAMAI_FLV_PACKET                           -178
+#define E_AFHS_AKAMAI_DECRYPTOR_NOT_FOUND_MEDIA_DATA_BOX                        -179
+#define E_AFHS_AKAMAI_DECRYPTOR_NOT_CREATED_BOX                                 -180
+
 #endif
