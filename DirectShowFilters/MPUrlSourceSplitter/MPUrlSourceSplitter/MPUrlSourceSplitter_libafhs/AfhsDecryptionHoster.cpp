@@ -29,6 +29,7 @@
 #include "ErrorCodes.h"
 #include "AfhsDecryptionPluginConfiguration.h"
 #include "AfhsDecryptionHosterPluginMetadata.h"
+#include "Parameters.h"
 
 #pragma warning(pop)
 
@@ -88,8 +89,7 @@ HRESULT CAfhsDecryptionHoster::DecryptSegmentFragments(CAfhsDecryptionContext *d
     if (this->IsSetFlags(AFHS_DECRYPTION_HOSTER_FLAG_PENDING_DECRYPTOR))
     {
       bool pendingDecryptor = true;
-      //unsigned int endTicks = GetTickCount() + this->protocolHoster->GetOpenConnectionSleepTime() + this->protocolHoster->GetOpenConnectionTimeout();
-      unsigned int endTicks = UINT_MAX;
+      unsigned int endTicks = decryptionContext->GetConfiguration()->GetValueUnsignedInt(PARAMETER_NAME_FINISH_TIME, true, UINT_MAX);
 
       while (SUCCEEDED(result) && pendingDecryptor && (GetTickCount() < endTicks))
       {
