@@ -204,6 +204,8 @@ protected:
 
   // holds header and meta packet size
   unsigned headerAndMetaPacketSize;
+  // holds last bootstrap info update time (in live case)
+  unsigned int lastBootstrapInfoUpdateTime;
 
   /* methods */
 

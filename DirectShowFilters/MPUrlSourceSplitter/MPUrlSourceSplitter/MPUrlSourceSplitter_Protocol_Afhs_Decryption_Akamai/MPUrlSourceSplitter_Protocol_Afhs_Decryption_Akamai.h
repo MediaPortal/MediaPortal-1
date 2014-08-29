@@ -36,11 +36,10 @@
 
 #define MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_AKAMAI_FLAG_NONE                  AFHS_DECRYPTION_PLUGIN_FLAG_NONE
 
-#define MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_AKAMAI_FLAG_DATA_ANALYSED         (1 << (AFHS_DECRYPTION_PLUGIN_FLAG_LAST + 0))
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_AKAMAI_FLAG_FLASH_INSTANCE_READY  (1 << (AFHS_DECRYPTION_PLUGIN_FLAG_LAST + 0))
 #define MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_AKAMAI_FLAG_KEY_REQUEST_PENDING   (1 << (AFHS_DECRYPTION_PLUGIN_FLAG_LAST + 1))
-#define MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_AKAMAI_FLAG_DATA_CAN_BE_DECRYPTED (1 << (AFHS_DECRYPTION_PLUGIN_FLAG_LAST + 2))
 
-#define MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_AKAMAI_FLAG_LAST                  (AFHS_DECRYPTION_PLUGIN_FLAG_LAST + 3)
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_AKAMAI_FLAG_LAST                  (AFHS_DECRYPTION_PLUGIN_FLAG_LAST + 2)
 
 #define AKAMAI_GUID_LENGTH                                                                12
 #define AKAMAI_GUID_URL_PART                                                              L"g="
@@ -115,8 +114,9 @@ protected:
   CLinearBuffer *GetResource(const wchar_t *name, const wchar_t *type);
 
   // gets random akamai swf file name
+  // @param context : decryption context of AFHS protocol
   // @return : random akamai swf file name or NULL if error
-  wchar_t *GetAkamaiSwfFileName(void);
+  wchar_t *GetAkamaiSwfFileName(CAfhsDecryptionContext *context);
 
   // gets parsed media data box
   // @param parsedMediaDataBox : parsed media data box

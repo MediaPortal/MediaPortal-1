@@ -454,8 +454,6 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::GetParserResult(void)
                                   CHECK_POINTER_HRESULT(this->parserResult, replacedUrl, this->parserResult, E_OUTOFMEMORY);
                                   CHECK_POINTER_HRESULT(this->parserResult, wcsstr(replacedUrl, L"afhs://"), this->parserResult, E_F4M_ONLY_HTTP_PROTOCOL_SUPPORTED_IN_BASE_URL);
 
-                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Update(PARAMETER_NAME_URL, true, replacedUrl), this->parserResult, E_OUTOFMEMORY);
-
                                   CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_COOKIE, true, PARAMETER_NAME_AFHS_COOKIE), this->parserResult, E_OUTOFMEMORY);
                                   CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH), this->parserResult, E_OUTOFMEMORY);
                                   CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT, true, PARAMETER_NAME_AFHS_OPEN_CONNECTION_TIMEOUT), this->parserResult, E_OUTOFMEMORY);
@@ -465,6 +463,8 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::GetParserResult(void)
                                   CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_USER_AGENT, true, PARAMETER_NAME_AFHS_USER_AGENT), this->parserResult, E_OUTOFMEMORY);
                                   CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_VERSION, true, PARAMETER_NAME_AFHS_VERSION), this->parserResult, E_OUTOFMEMORY);
                                   CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_URL, true, PARAMETER_NAME_AFHS_MANIFEST_URL), this->parserResult, E_OUTOFMEMORY);
+
+                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Update(PARAMETER_NAME_URL, true, replacedUrl), this->parserResult, E_OUTOFMEMORY);
 
                                   // copy current cookies parameters
                                   if (SUCCEEDED(this->parserResult) && (usedCookies != NULL) && (usedCookies->Count() != 0))

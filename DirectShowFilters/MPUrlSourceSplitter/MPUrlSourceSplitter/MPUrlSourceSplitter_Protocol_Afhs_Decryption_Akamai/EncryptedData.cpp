@@ -31,7 +31,6 @@ CEncryptedData::CEncryptedData(void)
 
 CEncryptedData::~CEncryptedData(void)
 {
-  FREE_MEM_CLASS(this->flvPacket);
 }
 
 /* get methods */

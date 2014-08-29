@@ -130,21 +130,21 @@ HRESULT CAfhsDecryptionHoster::DecryptSegmentFragments(CAfhsDecryptionContext *d
         }
       }
 
-      //if (SUCCEEDED(result) && pendingDecryptor)
-      //{
-      //  // timeout reached, some decryptor(s) is (are) still pending
-      //  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->hosterPluginMetadataCollection->Count())); i++)
-      //  {
-      //    CAfhsDecryptionHosterPluginMetadata *metadata = (CAfhsDecryptionHosterPluginMetadata *)this->hosterPluginMetadataCollection->GetItem(i);
+      if (SUCCEEDED(result) && pendingDecryptor)
+      {
+        // timeout reached, some decryptor(s) is (are) still pending
+        for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->hosterPluginMetadataCollection->Count())); i++)
+        {
+          CAfhsDecryptionHosterPluginMetadata *metadata = (CAfhsDecryptionHosterPluginMetadata *)this->hosterPluginMetadataCollection->GetItem(i);
 
-      //    if (metadata->IsDecryptorStillPending())
-      //    {
-      //      this->logger->Log(LOGGER_ERROR, L"%s: %s: decryptor '%s' still pending", MODULE_AFHS_DECRYPTION_HOSTER_NAME, METHOD_DECRYPT_SEGMENT_FRAGMENTS_NAME, metadata->GetPlugin()->GetName());
-      //    }
-      //  }
+          if (metadata->IsDecryptorStillPending())
+          {
+            this->logger->Log(LOGGER_ERROR, L"%s: %s: decryptor '%s' still pending", MODULE_AFHS_DECRYPTION_HOSTER_NAME, METHOD_DECRYPT_SEGMENT_FRAGMENTS_NAME, metadata->GetPlugin()->GetName());
+          }
+        }
 
-      //  result = E_DECRYPTOR_STILL_PENDING;
-      //}
+        result = E_AFHS_DECRYPTOR_STILL_PENDING;
+      }
 
       this->flags &= ~AFHS_DECRYPTION_HOSTER_FLAG_PENDING_DECRYPTOR;
       this->flags |= pendingDecryptor ? AFHS_DECRYPTION_HOSTER_FLAG_PENDING_DECRYPTOR : AFHS_DECRYPTION_HOSTER_FLAG_NONE;

@@ -55,7 +55,7 @@ public:
   // @param length : encrypted data length to set
   void SetEncryptedLength(unsigned int encryptedLength);
 
-  // sets akamai FLV packet (only reference, packet is freed in desctructor)
+  // sets akamai FLV packet (only reference)
   // @param flvPacket : akamai FLV packet to set
   void SetAkamaiFlvPacket(CAkamaiFlvPacket *flvPacket);
 
@@ -66,7 +66,7 @@ protected:
   uint8_t *encryptedData;
   // holds encrypted data length
   unsigned int encryptedLength;
-  // holds akamai FLV packet
+  // holds akamai FLV packet (only reference)
   CAkamaiFlvPacket *flvPacket;
 
   /* methods */
