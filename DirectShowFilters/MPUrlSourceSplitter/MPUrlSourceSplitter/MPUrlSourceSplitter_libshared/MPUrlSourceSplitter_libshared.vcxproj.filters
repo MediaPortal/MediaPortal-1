@@ -42,9 +42,6 @@
     <ClInclude Include="Utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Serializable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="EndOfStreamReached.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -102,9 +99,6 @@
     <ClInclude Include="ParameterCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SerializableCollection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="StreamPackageCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -159,9 +153,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Utilities.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Serializable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EndOfStreamReached.cpp">

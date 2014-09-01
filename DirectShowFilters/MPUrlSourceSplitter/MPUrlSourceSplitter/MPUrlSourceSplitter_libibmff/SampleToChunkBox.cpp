@@ -162,8 +162,6 @@ bool CSampleToChunkBox::ParseInternal(const unsigned char *buffer, uint32_t leng
 
             sampleToChunk->SetSampleDescriptionIndex(RBE32(buffer, position));
             position += 4;
-
-            continueParsing &= this->samplesToChunks->Add(sampleToChunk);
           }
 
           CHECK_CONDITION_HRESULT(continueParsing, this->samplesToChunks->Add(sampleToChunk), continueParsing, E_OUTOFMEMORY);
