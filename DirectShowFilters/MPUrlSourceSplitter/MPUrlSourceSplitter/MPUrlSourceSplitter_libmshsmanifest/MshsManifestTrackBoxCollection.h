@@ -18,39 +18,26 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "StdAfx.h"
+#pragma once
 
-#include "MSHSStreamFragmentCollection.h"
+#ifndef __MSHS_MANIFEST_TRACK_BOX_COLLECTION_DEFINED
+#define __MSHS_MANIFEST_TRACK_BOX_COLLECTION_DEFINED
 
-CMSHSStreamFragmentCollection::CMSHSStreamFragmentCollection(void)
-  : CSerializableCollection()
+#include "Collection.h"
+#include "MshsManifestTrackBox.h"
+
+class CMshsManifestTrackBoxCollection : public CCollection<CMshsManifestTrackBox>
 {
-}
+public:
+  CMshsManifestTrackBoxCollection(HRESULT *result);
+  virtual ~CMshsManifestTrackBoxCollection(void);
 
-CMSHSStreamFragmentCollection::~CMSHSStreamFragmentCollection(void)
-{
-}
+protected:
 
-int CMSHSStreamFragmentCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
-{
-  bool invariant = (*(bool *)context);
+  // clones specified item
+  // @param item : the item to clone
+  // @return : deep clone of item or NULL if not implemented
+  CMshsManifestTrackBox *Clone(CMshsManifestTrackBox *item);
+};
 
-  if (invariant)
-  {
-    return _wcsicmp(firstKey, secondKey);
-  }
-  else
-  {
-    return wcscmp(firstKey, secondKey);
-  }
-}
-
-const wchar_t *CMSHSStreamFragmentCollection::GetKey(CMSHSStreamFragment *item)
-{
-  return L"";
-}
-
-CMSHSStreamFragment *CMSHSStreamFragmentCollection::Clone(CMSHSStreamFragment *item)
-{
-  return NULL;
-}
+#endif

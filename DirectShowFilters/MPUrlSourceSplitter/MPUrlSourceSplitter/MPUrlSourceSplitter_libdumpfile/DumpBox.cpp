@@ -173,9 +173,9 @@ bool CDumpBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool 
     {
       // box is dump box, parse all values
       uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
 
-      if (continueParsing)
+      if (SUCCEEDED(continueParsing))
       {
         memcpy(&this->time, buffer + position, sizeof(SYSTEMTIME));
         position += sizeof(SYSTEMTIME);
@@ -183,22 +183,22 @@ bool CDumpBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool 
         RBE32INC(buffer, position, this->payloadSize);
 
         this->payload = ALLOC_MEM_SET(this->payload, uint8_t, this->payloadSize, 0);
-        continueParsing &= (this->payload != NULL);
+        CHECK_POINTER_HRESULT(continueParsing, this->payload, continueParsing, E_OUTOFMEMORY);
 
-        if (continueParsing)
+        if (SUCCEEDED(continueParsing))
         {
           memcpy(this->payload, buffer + position, this->payloadSize);
           position += this->payloadSize;
         }
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
       
       this->flags &= ~BOX_FLAG_PARSED;
-      this->flags |= continueParsing ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 

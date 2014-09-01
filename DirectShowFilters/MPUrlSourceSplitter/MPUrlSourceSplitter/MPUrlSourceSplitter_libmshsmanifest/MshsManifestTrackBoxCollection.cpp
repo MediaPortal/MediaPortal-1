@@ -20,37 +20,18 @@
 
 #include "StdAfx.h"
 
-#include "MSHSTrackCollection.h"
+#include "MshsManifestTrackBoxCollection.h"
 
-CMSHSTrackCollection::CMSHSTrackCollection(void)
-  : CSerializableCollection()
+CMshsManifestTrackBoxCollection::CMshsManifestTrackBoxCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 
-CMSHSTrackCollection::~CMSHSTrackCollection(void)
+CMshsManifestTrackBoxCollection::~CMshsManifestTrackBoxCollection(void)
 {
 }
 
-int CMSHSTrackCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
-{
-  bool invariant = (*(bool *)context);
-
-  if (invariant)
-  {
-    return _wcsicmp(firstKey, secondKey);
-  }
-  else
-  {
-    return wcscmp(firstKey, secondKey);
-  }
-}
-
-const wchar_t *CMSHSTrackCollection::GetKey(CMSHSTrack *item)
-{
-  return L"";
-}
-
-CMSHSTrack *CMSHSTrackCollection::Clone(CMSHSTrack *item)
+CMshsManifestTrackBox *CMshsManifestTrackBoxCollection::Clone(CMshsManifestTrackBox *item)
 {
   return NULL;
 }

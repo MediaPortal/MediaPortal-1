@@ -20,25 +20,30 @@
 
 #pragma once
 
-#ifndef __MSHS_STREAM_DEFINED
-#define __MSHS_STREAM_DEFINED
+#ifndef __MSHS_MANIFEST_STREAM_BOX_DEFINED
+#define __MSHS_MANIFEST_STREAM_BOX_DEFINED
 
-#include "MSHSTrackCollection.h"
-#include "MSHSStreamFragmentCollection.h"
-#include "Serializable.h"
+#include "MshsManifestTrackBoxCollection.h"
+#include "MshsManifestStreamFragmentBoxCollection.h"
+#include "Box.h"
 
-#define STREAM_TYPE_VIDEO                                                     L"video"
-#define STREAM_TYPE_AUDIO                                                     L"audio"
-#define STREAM_TYPE_TEXT                                                      L"text"
+#define MSHS_MANIFEST_STREAM_BOX_TYPE                                 L"mssr"
 
-class CMSHSStream : public CSerializable
+#define MSHS_MANIFEST_STREAM_BOX_FLAG_NONE                            BOX_FLAG_NONE
+
+#define MSHS_MANIFEST_STREAM_BOX_FLAG_LAST                            (BOX_FLAG_LAST + 0)
+
+#define STREAM_TYPE_VIDEO                                             L"video"
+#define STREAM_TYPE_AUDIO                                             L"audio"
+#define STREAM_TYPE_TEXT                                              L"text"
+
+class CMshsManifestStreamBox : public CBox
 {
 public:
-  // creats new instance of CMSHSStream class
-  CMSHSStream(void);
-
+  // creats new instance of CMshsManifestStreamBox class
+  CMshsManifestStreamBox(HRESULT *result);
   // desctructor
-  ~CMSHSStream(void);
+  virtual ~CMshsManifestStreamBox(void);
 
   /* get methods */
 
@@ -92,11 +97,17 @@ public:
 
   // gets tracks associated with stream
   // @return : stream tracks
-  CMSHSTrackCollection *GetTracks(void);
+  CMshsManifestTrackBoxCollection *GetTracks(void);
 
   // gets stream fragments
   // @return : stream fragments
-  CMSHSStreamFragmentCollection *GetStreamFragments(void);
+  CMshsManifestStreamFragmentBoxCollection *GetStreamFragments(void);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @return : true if all data were successfully stored into buffer, false otherwise
+  virtual bool GetBox(uint8_t *buffer, uint32_t length);
 
   /* set methods */
 
@@ -154,19 +165,16 @@ public:
   // @return : true if stream is text type stream, false otherwise
   bool IsText(void);
 
-  // gets necessary buffer length for serializing instance
-  // @return : necessary size for buffer
-  virtual uint32_t GetSerializeSize(void);
+  // parses data in buffer
+  // @param buffer : buffer with box data for parsing
+  // @param length : the length of data in buffer
+  // @return : true if parsed successfully, false otherwise
+  virtual bool Parse(const uint8_t *buffer, uint32_t length);
 
-  // serialize instance into buffer, buffer must be allocated before and must have necessary size
-  // @param buffer : buffer which stores serialized instance
-  // @return : true if successful, false otherwise
-  virtual bool Serialize(uint8_t *buffer);
-
-  // deserializes instance
-  // @param : buffer which stores serialized instance
-  // @return : true if successful, false otherwise
-  virtual bool Deserialize(const uint8_t *buffer);
+  // gets box data in human readable format
+  // @param indent : string to insert before each line
+  // @return : box data in human readable format or NULL if error
+  virtual wchar_t *GetParsedHumanReadable(const wchar_t *indent);
 
 private:
 
@@ -209,9 +217,30 @@ private:
   // the suggested display height of a video Sample, in pixels
   uint32_t displayHeight;
 
-  CMSHSTrackCollection *tracks;
+  CMshsManifestTrackBoxCollection *tracks;
 
-  CMSHSStreamFragmentCollection *streamFragments;
+  CMshsManifestStreamFragmentBoxCollection *streamFragments;
+
+  /* methods */
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
+
+  // parses data in buffer
+  // @param buffer : buffer with box data for parsing
+  // @param length : the length of data in buffer
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed
+  // @return : true if parsed successfully, false otherwise
+  virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
+  // @return : number of bytes stored into buffer, 0 if error
+  virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

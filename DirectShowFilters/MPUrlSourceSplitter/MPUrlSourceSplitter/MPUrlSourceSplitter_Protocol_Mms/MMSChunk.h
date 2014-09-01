@@ -36,11 +36,11 @@ class MMSChunk
 public:
   // constructor
   // create instance of MMSChunk class
-  MMSChunk(void);
+  MMSChunk(HRESULT *result);
 
   // create instance of MMSChunk class as deep clone
   // @param chunk : reference to MMS chunk (can be NULL)
-  MMSChunk(MMSChunk *chunk);
+  MMSChunk(HRESULT *result, MMSChunk *chunk);
 
   // destructor
   ~MMSChunk(void);

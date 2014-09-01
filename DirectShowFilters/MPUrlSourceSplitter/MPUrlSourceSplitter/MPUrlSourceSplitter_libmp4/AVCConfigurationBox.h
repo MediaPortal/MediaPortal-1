@@ -26,14 +26,18 @@
 #include "Box.h"
 #include "AVCDecoderConfiguration.h"
 
-#define AVC_CONFIGURATION_BOX_TYPE                                            L"avcC"
+#define AVC_CONFIGURATION_BOX_TYPE                                    L"avcC"
+
+#define AVC_CONFIGURATION_BOX_FLAG_NONE                               BOX_FLAG_NONE
+
+#define AVC_CONFIGURATION_BOX_FLAG_LAST                               (BOX_FLAG_LAST + 0)
 
 class CAVCConfigurationBox :
   public CBox
 {
 public:
   // initializes a new instance of CAVCConfigurationBox class
-  CAVCConfigurationBox(void);
+  CAVCConfigurationBox(HRESULT *result);
 
   // destructor
   virtual ~CAVCConfigurationBox(void);

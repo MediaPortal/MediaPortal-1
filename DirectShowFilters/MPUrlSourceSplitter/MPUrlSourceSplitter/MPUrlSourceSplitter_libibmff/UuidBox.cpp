@@ -23,10 +23,10 @@
 #include "UuidBox.h"
 #include "BoxCollection.h"
 
-CUuidBox::CUuidBox(void)
-  : CBox()
+CUuidBox::CUuidBox(HRESULT *result)
+  : CBox(result)
 {
-  this->type = Duplicate(UUID_BOX_TYPE);
+  this->type = NULL;
   this->guid.Data1 = 0;
   this->guid.Data2 = 0;
   this->guid.Data3 = 0;
@@ -38,6 +38,13 @@ CUuidBox::CUuidBox(void)
   this->guid.Data4[5] = 0;
   this->guid.Data4[6] = 0;
   this->guid.Data4[7] = 0;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(UUID_BOX_TYPE);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+  }
 }
 
 CUuidBox::~CUuidBox(void)
@@ -111,34 +118,18 @@ uint64_t CUuidBox::GetBoxSize(void)
 
 bool CUuidBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  this->guid.Data1 = 0;
-  this->guid.Data2 = 0;
-  this->guid.Data3 = 0;
-  this->guid.Data4[0] = 0;
-  this->guid.Data4[1] = 0;
-  this->guid.Data4[2] = 0;
-  this->guid.Data4[3] = 0;
-  this->guid.Data4[4] = 0;
-  this->guid.Data4[5] = 0;
-  this->guid.Data4[6] = 0;
-  this->guid.Data4[7] = 0;
-
-  bool result = __super::ParseInternal(buffer, length, false);
-
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    if (wcscmp(this->type, UUID_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, UUID_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-      if (continueParsing)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
+    {
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
+
+      if (SUCCEEDED(continueParsing))
       {
         RBE32INC(buffer, position, this->guid.Data1);
         RBE16INC(buffer, position, this->guid.Data2);
@@ -153,13 +144,17 @@ bool CUuidBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool 
         RBE8INC(buffer, position, this->guid.Data4[7]);
       }
 
-      this->parsed = continueParsing;
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
+      {
+        this->ProcessAdditionalBoxes(buffer, length, position);
+      }
+
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CUuidBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

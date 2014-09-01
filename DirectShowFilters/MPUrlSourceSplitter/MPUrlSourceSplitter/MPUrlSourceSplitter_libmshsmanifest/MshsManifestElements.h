@@ -20,8 +20,8 @@
 
 #pragma once
 
-#ifndef __MSHS_ELEMENTS_DEFINED
-#define __MSHS_ELEMENTS_DEFINED
+#ifndef __MSHS_MANIFEST_ELEMENTS_DEFINED
+#define __MSHS_MANIFEST_ELEMENTS_DEFINED
 
 // The root element in the document is <SmoothStreamingMedia>.
 #define MSHS_ELEMENT_MANIFEST                                                 "SmoothStreamingMedia"

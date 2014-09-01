@@ -372,23 +372,29 @@ uint32_t CBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAddi
 
   if (((buffer != NULL) && (!this->IsBigSize())))
   {
-    WBE32INC(buffer, position, (uint32_t)this->GetSize());
+    // check box size against buffer length
+    unsigned int size = (uint32_t)this->GetSize();
 
-    char *type = ConvertToMultiByteW(this->GetType());
-    position = (type != NULL) ? position : 0;
-
-    if (position != 0)
+    if (size <= length)
     {
-      memcpy(buffer + position, type, 4);
-      position += 4;
-    }
+      WBE32INC(buffer, position, (uint32_t)this->GetSize());
 
-    FREE_MEM(type);
+      char *type = ConvertToMultiByteW(this->GetType());
+      position = (type != NULL) ? position : 0;
 
-    if ((position != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
-    {
-      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + position, length - position);
-      position = (boxSizes != 0) ? (position + boxSizes) : 0;
+      if (position != 0)
+      {
+        memcpy(buffer + position, type, 4);
+        position += 4;
+      }
+
+      FREE_MEM(type);
+
+      if ((position != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+      {
+        uint32_t boxSizes = this->GetAdditionalBoxes(buffer + position, length - position);
+        position = (boxSizes != 0) ? (position + boxSizes) : 0;
+      }
     }
   }
 

@@ -23,11 +23,20 @@
 #include "AVCConfigurationBox.h"
 #include "BoxCollection.h"
 
-CAVCConfigurationBox::CAVCConfigurationBox(void)
-  : CBox()
+CAVCConfigurationBox::CAVCConfigurationBox(HRESULT *result)
+  : CBox(result)
 {
-  this->type = Duplicate(AVC_CONFIGURATION_BOX_TYPE);
-  this->avcDecoderConfiguration = new CAVCDecoderConfiguration();
+  this->type = NULL;
+  this->avcDecoderConfiguration = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(AVC_CONFIGURATION_BOX_TYPE);
+    this->avcDecoderConfiguration = new CAVCDecoderConfiguration(result);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->avcDecoderConfiguration, *result, E_OUTOFMEMORY);
+  }
 }
 
 CAVCConfigurationBox::~CAVCConfigurationBox(void)
@@ -103,26 +112,106 @@ uint64_t CAVCConfigurationBox::GetBoxSize(void)
 
 bool CAVCConfigurationBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  FREE_MEM_CLASS(this->avcDecoderConfiguration);
-  this->avcDecoderConfiguration = new CAVCDecoderConfiguration();
+  //FREE_MEM_CLASS(this->avcDecoderConfiguration);
+  //this->avcDecoderConfiguration = new CAVCDecoderConfiguration();
 
-  bool result = (this->avcDecoderConfiguration != NULL);
-  result &= __super::ParseInternal(buffer, length, false);
+  //bool result = (this->avcDecoderConfiguration != NULL);
+  //result &= __super::ParseInternal(buffer, length, false);
 
-  if (result)
+  //if (result)
+  //{
+  //  if (wcscmp(this->type, AVC_CONFIGURATION_BOX_TYPE) != 0)
+  //  {
+  //    // incorect box type
+  //    this->parsed = false;
+  //  }
+  //  else
+  //  {
+  //    // box is AVC configuration type box, parse all values
+  //    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+  //    bool continueParsing = (this->GetSize() <= (uint64_t)length);
+
+  //    if (continueParsing)
+  //    {
+  //      this->GetAVCDecoderConfiguration()->SetConfigurationVersion(RBE8(buffer, position));
+  //      position++;
+
+  //      this->GetAVCDecoderConfiguration()->SetAvcProfileIndication(RBE8(buffer, position));
+  //      position++;
+
+  //      this->GetAVCDecoderConfiguration()->SetProfileCompatibility(RBE8(buffer, position));
+  //      position++;
+
+  //      this->GetAVCDecoderConfiguration()->SetAvcLevelIndication(RBE8(buffer, position));
+  //      position++;
+
+  //      this->GetAVCDecoderConfiguration()->SetLengthSizeMinusOne(RBE8(buffer, position) & 0x03);
+  //      position++;
+
+  //      RBE8INC_DEFINE(buffer, position, sequenceParameterSetNALUnitCount, uint8_t);
+  //      sequenceParameterSetNALUnitCount &= 0x1F;
+
+  //      for (unsigned int i = 0; (continueParsing && (i < sequenceParameterSetNALUnitCount)); i++)
+  //      {
+  //        CSequenceParameterSetNALUnit *unit = new CSequenceParameterSetNALUnit();
+  //        RBE16INC_DEFINE(buffer, position, length, uint16_t);
+
+  //        continueParsing &= unit->SetBuffer(buffer + position, length);
+  //        position += length;
+
+  //        if (continueParsing)
+  //        {
+  //          continueParsing &= this->GetAVCDecoderConfiguration()->GetSequenceParameterSetNALUnits()->Add(unit);
+  //        }
+  //      }
+
+  //      RBE8INC_DEFINE(buffer, position, pictureParameterSetNALUnitCount, uint8_t);
+
+  //      for (unsigned int i = 0; (continueParsing && (i < pictureParameterSetNALUnitCount)); i++)
+  //      {
+  //        CPictureParameterSetNALUnit *unit = new CPictureParameterSetNALUnit();
+  //        RBE16INC_DEFINE(buffer, position, length, uint16_t);
+
+  //        continueParsing &= unit->SetBuffer(buffer + position, length);
+  //        position += length;
+
+  //        if (continueParsing)
+  //        {
+  //          continueParsing &= this->GetAVCDecoderConfiguration()->GetPictureParameterSetNALUnits()->Add(unit);
+  //        }
+  //      }
+  //    }
+
+  //    if (continueParsing && processAdditionalBoxes)
+  //    {
+  //      this->ProcessAdditionalBoxes(buffer, length, position);
+  //    }
+
+  //    this->parsed = continueParsing;
+  //  }
+  //}
+
+  //result = this->parsed;
+
+  //return result;
+
+
+  if (__super::ParseInternal(buffer, length, false))
   {
-    if (wcscmp(this->type, AVC_CONFIGURATION_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is AVC configuration type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, AVC_CONFIGURATION_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-      if (continueParsing)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
+    {
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
+
+      FREE_MEM_CLASS(this->avcDecoderConfiguration);
+      this->avcDecoderConfiguration = new CAVCDecoderConfiguration(&continueParsing);
+      CHECK_POINTER_HRESULT(continueParsing, this->avcDecoderConfiguration, continueParsing, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(continueParsing))
       {
         this->GetAVCDecoderConfiguration()->SetConfigurationVersion(RBE8(buffer, position));
         position++;
@@ -142,49 +231,57 @@ bool CAVCConfigurationBox::ParseInternal(const unsigned char *buffer, uint32_t l
         RBE8INC_DEFINE(buffer, position, sequenceParameterSetNALUnitCount, uint8_t);
         sequenceParameterSetNALUnitCount &= 0x1F;
 
-        for (unsigned int i = 0; (continueParsing && (i < sequenceParameterSetNALUnitCount)); i++)
+        for (unsigned int i = 0; (SUCCEEDED(continueParsing) && (i < sequenceParameterSetNALUnitCount)); i++)
         {
-          CSequenceParameterSetNALUnit *unit = new CSequenceParameterSetNALUnit();
-          RBE16INC_DEFINE(buffer, position, length, uint16_t);
+          CSequenceParameterSetNALUnit *unit = new CSequenceParameterSetNALUnit(&continueParsing);
+          CHECK_POINTER_HRESULT(continueParsing, unit, continueParsing, E_OUTOFMEMORY);
 
-          continueParsing &= unit->SetBuffer(buffer + position, length);
-          position += length;
-
-          if (continueParsing)
+          if (SUCCEEDED(continueParsing))
           {
-            continueParsing &= this->GetAVCDecoderConfiguration()->GetSequenceParameterSetNALUnits()->Add(unit);
+            RBE16INC_DEFINE(buffer, position, length, uint16_t);
+
+            CHECK_CONDITION_HRESULT(continueParsing, unit->SetBuffer(buffer + position, length), continueParsing, E_OUTOFMEMORY);
+            position += length;
           }
+
+          CHECK_CONDITION_HRESULT(continueParsing, this->GetAVCDecoderConfiguration()->GetSequenceParameterSetNALUnits()->Add(unit), continueParsing, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(unit));
         }
 
-        RBE8INC_DEFINE(buffer, position, pictureParameterSetNALUnitCount, uint8_t);
-
-        for (unsigned int i = 0; (continueParsing && (i < pictureParameterSetNALUnitCount)); i++)
+        if (SUCCEEDED(continueParsing))
         {
-          CPictureParameterSetNALUnit *unit = new CPictureParameterSetNALUnit();
-          RBE16INC_DEFINE(buffer, position, length, uint16_t);
+          RBE8INC_DEFINE(buffer, position, pictureParameterSetNALUnitCount, uint8_t);
 
-          continueParsing &= unit->SetBuffer(buffer + position, length);
-          position += length;
-
-          if (continueParsing)
+          for (unsigned int i = 0; (SUCCEEDED(continueParsing) && (i < pictureParameterSetNALUnitCount)); i++)
           {
-            continueParsing &= this->GetAVCDecoderConfiguration()->GetPictureParameterSetNALUnits()->Add(unit);
+            CPictureParameterSetNALUnit *unit = new CPictureParameterSetNALUnit(&continueParsing);
+            CHECK_POINTER_HRESULT(continueParsing, unit, continueParsing, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(continueParsing))
+            {
+              RBE16INC_DEFINE(buffer, position, length, uint16_t);
+
+              CHECK_CONDITION_HRESULT(continueParsing, unit->SetBuffer(buffer + position, length), continueParsing, E_OUTOFMEMORY);
+              position += length;
+            }
+
+            CHECK_CONDITION_HRESULT(continueParsing, this->GetAVCDecoderConfiguration()->GetPictureParameterSetNALUnits()->Add(unit), continueParsing, E_OUTOFMEMORY);
+            CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(unit));
           }
         }
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CAVCConfigurationBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

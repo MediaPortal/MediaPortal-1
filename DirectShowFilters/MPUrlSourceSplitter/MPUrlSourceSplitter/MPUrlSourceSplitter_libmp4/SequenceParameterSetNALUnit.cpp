@@ -22,7 +22,7 @@
 
 #include "SequenceParameterSetNALUnit.h"
 
-CSequenceParameterSetNALUnit::CSequenceParameterSetNALUnit(void)
+CSequenceParameterSetNALUnit::CSequenceParameterSetNALUnit(HRESULT *result)
 {
   this->length = 0;
   this->buffer = NULL;

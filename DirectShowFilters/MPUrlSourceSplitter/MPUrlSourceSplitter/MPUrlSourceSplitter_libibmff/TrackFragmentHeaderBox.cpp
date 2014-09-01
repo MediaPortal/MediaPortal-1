@@ -23,16 +23,23 @@
 #include "TrackFragmentHeaderBox.h"
 #include "BoxCollection.h"
 
-CTrackFragmentHeaderBox::CTrackFragmentHeaderBox(void)
-  : CFullBox()
+CTrackFragmentHeaderBox::CTrackFragmentHeaderBox(HRESULT *result)
+  : CFullBox(result)
 {
-  this->type = Duplicate(TRACK_FRAGMENT_HEADER_BOX_TYPE);
+  this->type = NULL;
   this->trackId = 0;
   this->baseDataOffset = 0;
   this->sampleDescriptionIndex = 0;
   this->defaultSampleDuration = 0;
   this->defaultSampleFlags = 0;
   this->defaultSampleSize = 0;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(TRACK_FRAGMENT_HEADER_BOX_TYPE);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+  }
 }
 
 CTrackFragmentHeaderBox::~CTrackFragmentHeaderBox(void)
@@ -191,24 +198,21 @@ bool CTrackFragmentHeaderBox::ParseInternal(const unsigned char *buffer, uint32_
   this->defaultSampleFlags = 0;
   this->defaultSampleSize = 0;
 
-  bool result = __super::ParseInternal(buffer, length, false);
-
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    if (wcscmp(this->type, TRACK_FRAGMENT_HEADER_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, TRACK_FRAGMENT_HEADER_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-      if (continueParsing)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
+    {
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
+
+      if (SUCCEEDED(continueParsing))
       {
         RBE32INC(buffer, position, this->trackId);
+
         if (this->IsBaseDataOffsetPresent())
         {
           RBE64INC(buffer, position, this->baseDataOffset);
@@ -231,18 +235,17 @@ bool CTrackFragmentHeaderBox::ParseInternal(const unsigned char *buffer, uint32_
         }
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 bool CTrackFragmentHeaderBox::IsBaseDataOffsetPresent(void)

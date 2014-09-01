@@ -26,14 +26,19 @@
 #include "FullBox.h"
 #include "SampleToChunkCollection.h"
 
-#define SAMPLE_TO_CHUNK_BOX_TYPE                                              L"stsc"
+#define SAMPLE_TO_CHUNK_BOX_TYPE                                      L"stsc"
+
+#define SAMPLE_TO_CHUNK_BOX_FLAG_NONE                                 FULL_BOX_FLAG_NONE
+
+#define SAMPLE_TO_CHUNK_BOX_FLAG_LAST                                 (FULL_BOX_FLAG_LAST + 0)
+
 
 class CSampleToChunkBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CSampleToChunkBox class
-  CSampleToChunkBox(void);
+  CSampleToChunkBox(HRESULT *result);
 
   // destructor
   virtual ~CSampleToChunkBox(void);

@@ -29,7 +29,7 @@
 class CChunkOffsetCollection : public CCollection<CChunkOffset>
 {
 public:
-  CChunkOffsetCollection(void);
+  CChunkOffsetCollection(HRESULT *result);
   ~CChunkOffsetCollection(void);
 
 protected:

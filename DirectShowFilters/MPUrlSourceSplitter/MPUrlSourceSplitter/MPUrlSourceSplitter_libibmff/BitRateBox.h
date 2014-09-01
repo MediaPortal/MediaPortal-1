@@ -25,14 +25,18 @@
 
 #include "Box.h"
 
-#define BITRATE_BOX_TYPE                                                      L"btrt"
+#define BITRATE_BOX_TYPE                                              L"btrt"
+
+#define BITRATE_BOX_FLAG_NONE                                         BOX_FLAG_NONE
+
+#define BITRATE_BOX_FLAG_LAST                                         (BOX_FLAG_LAST + 0)
 
 class CBitrateBox :
   public CBox
 {
 public:
   // initializes a new instance of CBitrateBox class
-  CBitrateBox(void);
+  CBitrateBox(HRESULT *result);
 
   // destructor
   virtual ~CBitrateBox(void);

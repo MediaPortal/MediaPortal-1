@@ -76,35 +76,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="MSHSCustomAttribute.h" />
-    <ClInclude Include="MSHSCustomAttributeCollection.h" />
-    <ClInclude Include="MSHSManifest.h" />
-    <ClInclude Include="MSHSProtection.h" />
-    <ClInclude Include="MSHSProtectionCollection.h" />
-    <ClInclude Include="MSHSSmoothStreamingMedia.h" />
-    <ClInclude Include="MSHSStream.h" />
-    <ClInclude Include="MSHSStreamCollection.h" />
-    <ClInclude Include="MSHSStreamFragment.h" />
-    <ClInclude Include="MSHSStreamFragmentCollection.h" />
-    <ClInclude Include="MSHSTrack.h" />
-    <ClInclude Include="MSHSTrackCollection.h" />
-    <ClInclude Include="MSHS_Elements.h" />
+    <ClInclude Include="MshsManifestCustomAttributeBox.h" />
+    <ClInclude Include="MshsManifestCustomAttributeBoxCollection.h" />
+    <ClInclude Include="MshsManifest.h" />
+    <ClInclude Include="MshsManifestProtectionBox.h" />
+    <ClInclude Include="MshsManifestProtectionBoxCollection.h" />
+    <ClInclude Include="MshsManifestSmoothStreamingMediaBox.h" />
+    <ClInclude Include="MshsManifestStreamBox.h" />
+    <ClInclude Include="MshsManifestStreamBoxCollection.h" />
+    <ClInclude Include="MshsManifestStreamFragmentBox.h" />
+    <ClInclude Include="MshsManifestStreamFragmentBoxCollection.h" />
+    <ClInclude Include="MshsManifestTrackBox.h" />
+    <ClInclude Include="MshsManifestTrackBoxCollection.h" />
+    <ClInclude Include="MshsManifestElements.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MSHSCustomAttribute.cpp" />
-    <ClCompile Include="MSHSCustomAttributeCollection.cpp" />
-    <ClCompile Include="MSHSManifest.cpp" />
-    <ClCompile Include="MSHSProtection.cpp" />
-    <ClCompile Include="MSHSProtectionCollection.cpp" />
-    <ClCompile Include="MSHSSmoothStreamingMedia.cpp" />
-    <ClCompile Include="MSHSStream.cpp" />
-    <ClCompile Include="MSHSStreamCollection.cpp" />
-    <ClCompile Include="MSHSStreamFragment.cpp" />
-    <ClCompile Include="MSHSStreamFragmentCollection.cpp" />
-    <ClCompile Include="MSHSTrack.cpp" />
-    <ClCompile Include="MSHSTrackCollection.cpp" />
+    <ClCompile Include="MshsManifestCustomAttributeBox.cpp" />
+    <ClCompile Include="MshsManifestCustomAttributeBoxCollection.cpp" />
+    <ClCompile Include="MshsManifest.cpp" />
+    <ClCompile Include="MshsManifestProtectionBox.cpp" />
+    <ClCompile Include="MshsManifestProtectionBoxCollection.cpp" />
+    <ClCompile Include="MshsManifestSmoothStreamingMediaBox.cpp" />
+    <ClCompile Include="MshsManifestStreamBox.cpp" />
+    <ClCompile Include="MshsManifestStreamBoxCollection.cpp" />
+    <ClCompile Include="MshsManifestStreamFragmentBox.cpp" />
+    <ClCompile Include="MshsManifestStreamFragmentBoxCollection.cpp" />
+    <ClCompile Include="MshsManifestTrackBox.cpp" />
+    <ClCompile Include="MshsManifestTrackBoxCollection.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

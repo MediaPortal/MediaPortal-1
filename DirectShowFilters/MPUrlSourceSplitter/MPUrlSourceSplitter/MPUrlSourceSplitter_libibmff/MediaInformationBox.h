@@ -25,7 +25,11 @@
 
 #include "Box.h"
 
-#define MEDIA_INFORMATION_BOX_TYPE                                            L"minf"
+#define MEDIA_INFORMATION_BOX_TYPE                                    L"minf"
+
+#define MEDIA_INFORMATION_BOX_FLAG_NONE                               BOX_FLAG_NONE
+
+#define MEDIA_INFORMATION_BOX_FLAG_LAST                               (BOX_FLAG_LAST + 0)
 
 class CMediaInformationBox :
   public CBox
@@ -33,7 +37,7 @@ class CMediaInformationBox :
 public:
   // initializes a new instance of CMediaInformationBox class
   // @param handlerType : the handler type from handler box
-  CMediaInformationBox(uint32_t handlerType);
+  CMediaInformationBox(HRESULT *result, uint32_t handlerType);
 
   // destructor
   virtual ~CMediaInformationBox(void);

@@ -23,39 +23,39 @@
 #ifndef __STREAM_FRAGMENT_COLLECTION_DEFINED
 #define __STREAM_FRAGMENT_COLLECTION_DEFINED
 
-#include "KeyedCollection.h"
-#include "StreamFragment.h"
-
-class CStreamFragmentCollection : public CKeyedCollection<CStreamFragment, const wchar_t *>
-{
-public:
-  CStreamFragmentCollection(void);
-  ~CStreamFragmentCollection(void);
-
-  // get the stream fragment from collection with specified url
-  // @param name : the URL of stream fragment to find
-  // @param invariant : specifies if stream fragment URL shoud be find with invariant casing
-  // @return : the reference to stream fragment or NULL if not find
-  CStreamFragment *GetStreamFragment(const wchar_t *url, bool invariant);
-
-protected:
-
-  // compare two item keys
-  // @param firstKey : the first item key to compare
-  // @param secondKey : the second item key to compare
-  // @param context : the reference to user defined context
-  // @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
-  int CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context);
-
-  // gets key for item
-  // @param item : the item to get key
-  // @return : the key of item
-  const wchar_t *GetKey(CStreamFragment *item);
-
-  // clones specified item
-  // @param item : the item to clone
-  // @return : deep clone of item or NULL if not implemented
-  CStreamFragment *Clone(CStreamFragment *item);
-};
+//#include "KeyedCollection.h"
+//#include "StreamFragment.h"
+//
+//class CStreamFragmentCollection : public CKeyedCollection<CStreamFragment, const wchar_t *>
+//{
+//public:
+//  CStreamFragmentCollection(void);
+//  ~CStreamFragmentCollection(void);
+//
+//  // get the stream fragment from collection with specified url
+//  // @param name : the URL of stream fragment to find
+//  // @param invariant : specifies if stream fragment URL shoud be find with invariant casing
+//  // @return : the reference to stream fragment or NULL if not find
+//  CStreamFragment *GetStreamFragment(const wchar_t *url, bool invariant);
+//
+//protected:
+//
+//  // compare two item keys
+//  // @param firstKey : the first item key to compare
+//  // @param secondKey : the second item key to compare
+//  // @param context : the reference to user defined context
+//  // @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
+//  int CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context);
+//
+//  // gets key for item
+//  // @param item : the item to get key
+//  // @return : the key of item
+//  const wchar_t *GetKey(CStreamFragment *item);
+//
+//  // clones specified item
+//  // @param item : the item to clone
+//  // @return : deep clone of item or NULL if not implemented
+//  CStreamFragment *Clone(CStreamFragment *item);
+//};
 
 #endif

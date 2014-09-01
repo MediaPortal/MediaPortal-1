@@ -22,7 +22,7 @@
 
 #include "Sample.h"
 
-CSample::CSample(void)
+CSample::CSample(HRESULT *result)
 {
   this->sampleCompositionTimeOffset = 0;
   this->sampleDuration = 0;

@@ -23,11 +23,20 @@
 #include "SampleToChunkBox.h"
 #include "BoxCollection.h"
 
-CSampleToChunkBox::CSampleToChunkBox(void)
-  : CFullBox()
+CSampleToChunkBox::CSampleToChunkBox(HRESULT *result)
+  : CFullBox(result)
 {
-  this->type = Duplicate(SAMPLE_TO_CHUNK_BOX_TYPE);
-  this->samplesToChunks = new CSampleToChunkCollection();
+  this->type = NULL;
+  this->samplesToChunks = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(SAMPLE_TO_CHUNK_BOX_TYPE);
+    this->samplesToChunks = new CSampleToChunkCollection(result);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->samplesToChunks, *result, E_OUTOFMEMORY);
+  }
 }
 
 CSampleToChunkBox::~CSampleToChunkBox(void)
@@ -119,37 +128,31 @@ uint64_t CSampleToChunkBox::GetBoxSize(void)
 
 bool CSampleToChunkBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  if (this->samplesToChunks != NULL)
+  this->samplesToChunks->Clear();
+
+  if (__super::ParseInternal(buffer, length, false))
   {
-    this->samplesToChunks->Clear();
-  }
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, SAMPLE_TO_CHUNK_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-  bool result (this->samplesToChunks != NULL);
-  result &= __super::ParseInternal(buffer, length, false);
-
-  if (result)
-  {
-    if (wcscmp(this->type, SAMPLE_TO_CHUNK_BOX_TYPE) != 0)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
     {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
 
-      if (continueParsing)
+      if (SUCCEEDED(continueParsing))
       {
         RBE32INC_DEFINE(buffer, position, entryCount, uint32_t);
 
-        for (uint32_t i = 0; (continueParsing && (i < entryCount)); i++)
-        {
-          CSampleToChunk *sampleToChunk = new CSampleToChunk();
-          continueParsing &= (sampleToChunk != NULL);
+        CHECK_CONDITION_HRESULT(continueParsing, this->samplesToChunks->EnsureEnoughSpace(entryCount), continueParsing, E_OUTOFMEMORY);
 
-          if (continueParsing)
+        for (uint32_t i = 0; (SUCCEEDED(continueParsing) && (i < entryCount)); i++)
+        {
+          CSampleToChunk *sampleToChunk = new CSampleToChunk(&continueParsing);
+          CHECK_POINTER_HRESULT(continueParsing, sampleToChunk, continueParsing, E_OUTOFMEMORY);
+
+          if (SUCCEEDED(continueParsing))
           {
             sampleToChunk->SetFirstChunk(RBE32(buffer, position));
             position += 4;
@@ -163,25 +166,22 @@ bool CSampleToChunkBox::ParseInternal(const unsigned char *buffer, uint32_t leng
             continueParsing &= this->samplesToChunks->Add(sampleToChunk);
           }
 
-          if (!continueParsing)
-          {
-            FREE_MEM_CLASS(sampleToChunk);
-          }
+          CHECK_CONDITION_HRESULT(continueParsing, this->samplesToChunks->Add(sampleToChunk), continueParsing, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(sampleToChunk));
         }
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CSampleToChunkBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

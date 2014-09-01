@@ -154,7 +154,7 @@ class MMSContext
 public:
   // constructor
   // create instance of MMSContext class
-  MMSContext(void);
+  MMSContext(HRESULT *result);
 
   // destructor
   ~MMSContext(void);

@@ -29,7 +29,7 @@
 class CSequenceParameterSetNALUnitCollection : public CCollection<CSequenceParameterSetNALUnit>
 {
 public:
-  CSequenceParameterSetNALUnitCollection(void);
+  CSequenceParameterSetNALUnitCollection(HRESULT *result);
   ~CSequenceParameterSetNALUnitCollection(void);
 
 protected:

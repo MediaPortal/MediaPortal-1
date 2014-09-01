@@ -26,7 +26,11 @@
 #include "FullBox.h"
 #include "SampleEntryBoxCollection.h"
 
-#define SAMPLE_DESCRIPTION_BOX_TYPE                                           L"stsd"
+#define SAMPLE_DESCRIPTION_BOX_TYPE                                   L"stsd"
+
+#define SAMPLE_DESCRIPTION_BOX_FLAG_NONE                              FULL_BOX_FLAG_NONE
+
+#define SAMPLE_DESCRIPTION_BOX_FLAG_LAST                              (FULL_BOX_FLAG_LAST + 0)
 
 class CSampleDescriptionBox :
   public CFullBox
@@ -34,7 +38,7 @@ class CSampleDescriptionBox :
 public:
   // initializes a new instance of CSampleDescriptionBox class
   // @param handlerType : the handler type from handler box
-  CSampleDescriptionBox(uint32_t handlerType);
+  CSampleDescriptionBox(HRESULT *result, uint32_t handlerType);
 
   // destructor
   virtual ~CSampleDescriptionBox(void);

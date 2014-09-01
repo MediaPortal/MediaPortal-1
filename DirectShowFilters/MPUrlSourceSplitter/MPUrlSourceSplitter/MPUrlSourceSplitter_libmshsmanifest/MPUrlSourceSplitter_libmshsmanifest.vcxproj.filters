@@ -21,43 +21,43 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MSHS_Elements.h">
+    <ClInclude Include="MshsManifestElements.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MSHSManifest.h">
+    <ClInclude Include="MshsManifest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MSHSSmoothStreamingMedia.h">
+    <ClInclude Include="MshsManifestProtectionBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MSHSProtection.h">
+    <ClInclude Include="MshsManifestProtectionBoxCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MSHSProtectionCollection.h">
+    <ClInclude Include="MshsManifestCustomAttributeBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MSHSStream.h">
+    <ClInclude Include="MshsManifestCustomAttributeBoxCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MSHSStreamCollection.h">
+    <ClInclude Include="MshsManifestTrackBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MSHSTrack.h">
+    <ClInclude Include="MshsManifestTrackBoxCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MSHSTrackCollection.h">
+    <ClInclude Include="MshsManifestStreamFragmentBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MSHSCustomAttribute.h">
+    <ClInclude Include="MshsManifestStreamFragmentBoxCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MSHSCustomAttributeCollection.h">
+    <ClInclude Include="MshsManifestStreamBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MSHSStreamFragment.h">
+    <ClInclude Include="MshsManifestStreamBoxCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MSHSStreamFragmentCollection.h">
+    <ClInclude Include="MshsManifestSmoothStreamingMediaBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -65,40 +65,40 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MSHSManifest.cpp">
+    <ClCompile Include="MshsManifest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MSHSSmoothStreamingMedia.cpp">
+    <ClCompile Include="MshsManifestProtectionBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MSHSProtection.cpp">
+    <ClCompile Include="MshsManifestProtectionBoxCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MSHSProtectionCollection.cpp">
+    <ClCompile Include="MshsManifestCustomAttributeBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MSHSStream.cpp">
+    <ClCompile Include="MshsManifestCustomAttributeBoxCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MSHSStreamCollection.cpp">
+    <ClCompile Include="MshsManifestTrackBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MSHSTrack.cpp">
+    <ClCompile Include="MshsManifestTrackBoxCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MSHSTrackCollection.cpp">
+    <ClCompile Include="MshsManifestStreamFragmentBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MSHSCustomAttribute.cpp">
+    <ClCompile Include="MshsManifestStreamFragmentBoxCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MSHSCustomAttributeCollection.cpp">
+    <ClCompile Include="MshsManifestStreamBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MSHSStreamFragment.cpp">
+    <ClCompile Include="MshsManifestStreamBoxCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MSHSStreamFragmentCollection.cpp">
+    <ClCompile Include="MshsManifestSmoothStreamingMediaBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

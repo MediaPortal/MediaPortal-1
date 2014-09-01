@@ -29,7 +29,7 @@
 class CPictureParameterSetNALUnitCollection : public CCollection<CPictureParameterSetNALUnit>
 {
 public:
-  CPictureParameterSetNALUnitCollection(void);
+  CPictureParameterSetNALUnitCollection(HRESULT *result);
   ~CPictureParameterSetNALUnitCollection(void);
 
 protected:

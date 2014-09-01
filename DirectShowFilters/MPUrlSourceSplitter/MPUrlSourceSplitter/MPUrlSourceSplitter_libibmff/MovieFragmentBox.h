@@ -25,14 +25,18 @@
 
 #include "Box.h"
 
-#define MOVIE_FRAGMENT_BOX_TYPE                                               L"moof"
+#define MOVIE_FRAGMENT_BOX_TYPE                                       L"moof"
+
+#define MOVIE_FRAGMENT_BOX_FLAG_NONE                                  BOX_FLAG_NONE
+
+#define MOVIE_FRAGMENT_BOX_FLAG_LAST                                  (BOX_FLAG_LAST + 0)
 
 class CMovieFragmentBox :
   public CBox
 {
 public:
   // initializes a new instance of CMovieFragmentBox class
-  CMovieFragmentBox(void);
+  CMovieFragmentBox(HRESULT *result);
 
   // destructor
   virtual ~CMovieFragmentBox(void);

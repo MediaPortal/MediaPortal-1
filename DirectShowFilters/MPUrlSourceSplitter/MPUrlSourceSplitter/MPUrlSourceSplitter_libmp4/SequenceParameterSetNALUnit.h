@@ -29,7 +29,7 @@ class CSequenceParameterSetNALUnit
 {
 public:
   // creates a new instance of CSequenceParameterSetNALUnit class
-  CSequenceParameterSetNALUnit(void);
+  CSequenceParameterSetNALUnit(HRESULT *result);
 
   // destructor
   ~CSequenceParameterSetNALUnit(void);

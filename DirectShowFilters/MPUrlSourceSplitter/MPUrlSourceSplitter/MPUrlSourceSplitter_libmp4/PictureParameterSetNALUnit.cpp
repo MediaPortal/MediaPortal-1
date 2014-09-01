@@ -22,7 +22,7 @@
 
 #include "PictureParameterSetNALUnit.h"
 
-CPictureParameterSetNALUnit::CPictureParameterSetNALUnit(void)
+CPictureParameterSetNALUnit::CPictureParameterSetNALUnit(HRESULT *result)
 {
   this->length = 0;
   this->buffer = NULL;

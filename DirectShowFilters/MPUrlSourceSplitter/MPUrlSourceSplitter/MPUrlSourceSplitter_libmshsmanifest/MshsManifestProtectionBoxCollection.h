@@ -20,48 +20,46 @@
 
 #pragma once
 
-#ifndef __MSHS_PROTECTION_COLLECTION_DEFINED
-#define __MSHS_PROTECTION_COLLECTION_DEFINED
+#ifndef __MSHS_MANIFEST_PROTECTION_BOX_COLLECTION_DEFINED
+#define __MSHS_MANIFEST_PROTECTION_BOX_COLLECTION_DEFINED
 
-#include "SerializableCollection.h"
-#include "MSHSProtection.h"
+#include "Collection.h"
+#include "MshsManifestProtectionBox.h"
 
-#include <stdint.h>
-
-class CMSHSProtectionCollection : public CSerializableCollection<CMSHSProtection, GUID>
+class CMshsManifestProtectionBoxCollection : public CCollection<CMshsManifestProtectionBox>
 {
 public:
-  CMSHSProtectionCollection(void);
-  ~CMSHSProtectionCollection(void);
+  CMshsManifestProtectionBoxCollection(HRESULT *result);
+  virtual ~CMshsManifestProtectionBoxCollection(void);
 
   // test if protection exists in collection
   // @param systemId : the system ID of protection to find
   // @return : true if protection exists, false otherwise
-  bool Contains(GUID systemId);
+  //bool Contains(GUID systemId);
 
   // gets protection from collection with specified system ID
   // @param systemId : the system id of protection to find
   // @return : the reference to protection or NULL if not find
-  CMSHSProtection *GetBootstrapInfo(GUID systemId);
+  CMshsManifestProtectionBox *GetBootstrapInfo(GUID systemId);
 
 protected:
 
-  // compare two item keys
-  // @param firstKey : the first item key to compare
-  // @param secondKey : the second item key to compare
-  // @param context : the reference to user defined context
-  // @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
-  int CompareItemKeys(GUID firstKey, GUID secondKey, void *context);
+  //// compare two item keys
+  //// @param firstKey : the first item key to compare
+  //// @param secondKey : the second item key to compare
+  //// @param context : the reference to user defined context
+  //// @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
+  //int CompareItemKeys(GUID firstKey, GUID secondKey, void *context);
 
-  // gets key for item
-  // @param item : the item to get key
-  // @return : the key of item
-  GUID GetKey(CMSHSProtection *item);
+  //// gets key for item
+  //// @param item : the item to get key
+  //// @return : the key of item
+  //GUID GetKey(CMSHSProtection *item);
 
   // clones specified item
   // @param item : the item to clone
   // @return : deep clone of item or NULL if not implemented
-  CMSHSProtection *Clone(CMSHSProtection *item);
+  CMshsManifestProtectionBox *Clone(CMshsManifestProtectionBox *item);
 };
 
 #endif

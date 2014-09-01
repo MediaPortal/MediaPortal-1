@@ -29,7 +29,7 @@
 class CTimeToSampleCollection : public CCollection<CTimeToSample>
 {
 public:
-  CTimeToSampleCollection(void);
+  CTimeToSampleCollection(HRESULT *result);
   ~CTimeToSampleCollection(void);
 
 protected:

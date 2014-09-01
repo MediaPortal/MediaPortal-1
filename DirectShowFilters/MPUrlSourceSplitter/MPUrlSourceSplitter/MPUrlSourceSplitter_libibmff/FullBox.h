@@ -30,6 +30,10 @@
 #define FULL_BOX_HEADER_LENGTH                                                BOX_HEADER_LENGTH + FULL_BOX_DATA_SIZE
 #define FULL_BOX_HEADER_LENGTH_SIZE64                                         BOX_HEADER_LENGTH_SIZE64 + FULL_BOX_DATA_SIZE
 
+#define FULL_BOX_FLAG_NONE                                                    BOX_FLAG_NONE
+
+#define FULL_BOX_FLAG_LAST                                                    (BOX_FLAG_LAST + 0)
+
 class CFullBox : public CBox
 {
 public:

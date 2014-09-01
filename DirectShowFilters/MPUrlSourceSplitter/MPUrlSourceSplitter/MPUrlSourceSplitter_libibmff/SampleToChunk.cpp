@@ -22,7 +22,7 @@
 
 #include "SampleToChunk.h"
 
-CSampleToChunk::CSampleToChunk(void)
+CSampleToChunk::CSampleToChunk(HRESULT *result)
 {
   this->firstChunk = 0;
   this->samplesPerChunk = 0;

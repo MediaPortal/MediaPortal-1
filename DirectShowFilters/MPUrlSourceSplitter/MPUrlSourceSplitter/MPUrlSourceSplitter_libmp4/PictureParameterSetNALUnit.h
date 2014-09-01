@@ -29,7 +29,7 @@ class CPictureParameterSetNALUnit
 {
 public:
   // creates a new instance of CPictureParameterSetNALUnit class
-  CPictureParameterSetNALUnit(void);
+  CPictureParameterSetNALUnit(HRESULT *result);
 
   // destructor
   ~CPictureParameterSetNALUnit(void);

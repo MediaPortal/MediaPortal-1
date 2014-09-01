@@ -20,36 +20,24 @@
 
 #pragma once
 
-#ifndef __MSHS_TRACK_COLLECTION_DEFINED
-#define __MSHS_TRACK_COLLECTION_DEFINED
+#ifndef __MSHS_MANIFEST_STREAM_FRAGMENT_BOX_COLLECTION_DEFINED
+#define __MSHS_MANIFEST_STREAM_FRAGMENT_BOX_COLLECTION_DEFINED
 
-#include "SerializableCollection.h"
-#include "MSHSTrack.h"
+#include "Collection.h"
+#include "MshsManifestStreamFragmentBox.h"
 
-class CMSHSTrackCollection : public CSerializableCollection<CMSHSTrack, const wchar_t *>
+class CMshsManifestStreamFragmentBoxCollection : public CCollection<CMshsManifestStreamFragmentBox>
 {
 public:
-  CMSHSTrackCollection(void);
-  ~CMSHSTrackCollection(void);
+  CMshsManifestStreamFragmentBoxCollection(HRESULT *result);
+  virtual ~CMshsManifestStreamFragmentBoxCollection(void);
 
 protected:
-
-  // compare two item keys
-  // @param firstKey : the first item key to compare
-  // @param secondKey : the second item key to compare
-  // @param context : the reference to user defined context
-  // @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
-  int CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context);
-
-  // gets key for item
-  // @param item : the item to get key
-  // @return : the key of item
-  const wchar_t * GetKey(CMSHSTrack *item);
 
   // clones specified item
   // @param item : the item to clone
   // @return : deep clone of item or NULL if not implemented
-  CMSHSTrack *Clone(CMSHSTrack *item);
+  CMshsManifestStreamFragmentBox *Clone(CMshsManifestStreamFragmentBox *item);
 };
 
 #endif

@@ -25,7 +25,8 @@
 #include "SampleTableBox.h"
 #include "SampleDescriptionBox.h"
 
-CMediaInformationBoxFactory::CMediaInformationBoxFactory(void)
+CMediaInformationBoxFactory::CMediaInformationBoxFactory(HRESULT *result)
+  : CBoxFactory(result)
 {
 }
 
@@ -36,38 +37,36 @@ CMediaInformationBoxFactory::~CMediaInformationBoxFactory(void)
 CBox *CMediaInformationBoxFactory::CreateBox(const uint8_t *buffer, uint32_t length, uint32_t handlerType)
 {
   CBox *result = NULL;
-  bool continueParsing = ((buffer != NULL) && (length > 0));
+  HRESULT continueParsing = ((buffer != NULL) && (length > 0)) ? S_OK : E_NOT_VALID_STATE;
 
-  if (continueParsing)
+  if (SUCCEEDED(continueParsing))
   {
-    CBox *box = new CBox();
-    continueParsing &= (box != NULL);
+    CBox *box = new CBox(&continueParsing);
+    CHECK_POINTER_HRESULT(continueParsing, box, continueParsing, E_OUTOFMEMORY);
 
-    if (continueParsing)
+    if (SUCCEEDED(continueParsing))
     {
-      continueParsing &= box->Parse(buffer, length);
-      if (continueParsing)
+      CHECK_CONDITION_HRESULT(continueParsing, box->Parse(buffer, length), continueParsing, E_FAIL);
+
+      if (SUCCEEDED(continueParsing))
       {
         CREATE_SPECIFIC_BOX_HANDLER_TYPE(box, MEDIA_INFORMATION_BOX_TYPE, CMediaInformationBox, buffer, length, continueParsing, result, handlerType);
         CREATE_SPECIFIC_BOX_HANDLER_TYPE(box, SAMPLE_TABLE_BOX_TYPE, CSampleTableBox, buffer, length, continueParsing, result, handlerType);
         CREATE_SPECIFIC_BOX_HANDLER_TYPE(box, SAMPLE_DESCRIPTION_BOX_TYPE, CSampleDescriptionBox, buffer, length, continueParsing, result, handlerType);
 
-        if (continueParsing && (result == NULL))
+        if (SUCCEEDED(continueParsing) && (result == NULL))
         {
           result = __super::CreateBox(buffer, length);
         }
       }
     }
 
-    if (continueParsing && (result == NULL))
+    if (SUCCEEDED(continueParsing) && (result == NULL))
     {
       result = box;
     }
 
-    if (!continueParsing)
-    {
-      FREE_MEM_CLASS(box);
-    }
+    CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(box));
   }
 
   return result;

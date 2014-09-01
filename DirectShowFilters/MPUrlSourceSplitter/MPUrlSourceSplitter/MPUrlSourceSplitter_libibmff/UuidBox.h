@@ -25,14 +25,18 @@
 
 #include "Box.h"
 
-#define UUID_BOX_TYPE                                                         L"uuid"
+#define UUID_BOX_TYPE                                                 L"uuid"
+
+#define UUID_BOX_FLAG_NONE                                            BOX_FLAG_NONE
+
+#define UUID_BOX_FLAG_LAST                                            (BOX_FLAG_LAST + 0)
 
 class CUuidBox :
   public CBox
 {
 public:
   // initializes a new instance of CUuidBox class
-  CUuidBox(void);
+  CUuidBox(HRESULT *result);
 
   // destructor
   virtual ~CUuidBox(void);

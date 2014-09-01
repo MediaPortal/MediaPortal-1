@@ -26,12 +26,16 @@
 #include "SampleEntryBox.h"
 #include "FixedPointNumber.h"
 
+#define VISUAL_SAMPLE_ENTRY_BOX_FLAG_NONE                             SAMPLE_ENTRY_BOX_FLAG_NONE
+
+#define VISUAL_SAMPLE_ENTRY_BOX_FLAG_LAST                             (SAMPLE_ENTRY_BOX_FLAG_LAST + 0)
+
 class CVisualSampleEntryBox :
   public CSampleEntryBox
 {
 public:
   // initializes a new instance of CVisualSampleEntryBox class
-  CVisualSampleEntryBox(void);
+  CVisualSampleEntryBox(HRESULT *result);
 
   // destructor
   virtual ~CVisualSampleEntryBox(void);

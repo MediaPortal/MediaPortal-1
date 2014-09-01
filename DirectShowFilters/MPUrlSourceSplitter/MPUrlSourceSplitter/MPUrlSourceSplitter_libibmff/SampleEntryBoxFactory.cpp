@@ -25,7 +25,8 @@
 #include "AudioSampleEntryBox.h"
 #include "VisualSampleEntryBox.h"
 
-CSampleEntryBoxFactory::CSampleEntryBoxFactory(void)
+CSampleEntryBoxFactory::CSampleEntryBoxFactory(HRESULT *result)
+  : CBoxFactory(result)
 {
 }
 
@@ -36,17 +37,18 @@ CSampleEntryBoxFactory::~CSampleEntryBoxFactory(void)
 CBox *CSampleEntryBoxFactory::CreateBox(const uint8_t *buffer, uint32_t length, uint32_t handlerType)
 {
   CBox *result = NULL;
-  bool continueParsing = ((buffer != NULL) && (length > 0));
+  HRESULT continueParsing = ((buffer != NULL) && (length > 0));
 
-  if (continueParsing)
+  if (SUCCEEDED(continueParsing))
   {
-    CBox *box = new CBox();
-    continueParsing &= (box != NULL);
+    CBox *box = new CBox(&continueParsing);
+    CHECK_POINTER_HRESULT(continueParsing, box, continueParsing, E_OUTOFMEMORY);
 
-    if (continueParsing)
+    if (SUCCEEDED(continueParsing))
     {
-      continueParsing &= box->Parse(buffer, length);
-      if (continueParsing)
+      CHECK_CONDITION_HRESULT(continueParsing, box->Parse(buffer, length), continueParsing, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(continueParsing))
       {
         switch (handlerType)
         {
@@ -60,22 +62,19 @@ CBox *CSampleEntryBoxFactory::CreateBox(const uint8_t *buffer, uint32_t length, 
           break;
         }
 
-        if (continueParsing && (result == NULL))
+        if (SUCCEEDED(continueParsing) && (result == NULL))
         {
           result = __super::CreateBox(buffer, length);
         }
       }
     }
 
-    if (continueParsing && (result == NULL))
+    if (SUCCEEDED(continueParsing) && (result == NULL))
     {
       result = box;
     }
 
-    if (!continueParsing)
-    {
-      FREE_MEM_CLASS(box);
-    }
+    CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(box));
   }
 
   return result;

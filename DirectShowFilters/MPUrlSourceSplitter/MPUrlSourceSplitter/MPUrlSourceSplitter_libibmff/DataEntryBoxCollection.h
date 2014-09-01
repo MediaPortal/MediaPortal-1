@@ -29,7 +29,7 @@
 class CDataEntryBoxCollection : public CKeyedCollection<CDataEntryBox, const wchar_t *>
 {
 public:
-  CDataEntryBoxCollection(void);
+  CDataEntryBoxCollection(HRESULT *result);
   virtual ~CDataEntryBoxCollection(void);
 
 protected:

@@ -25,14 +25,18 @@
 
 #include "FullBox.h"
 
-#define TRACK_EXTENDS_BOX_TYPE                                                L"trex"
+#define TRACK_EXTENDS_BOX_TYPE                                        L"trex"
+
+#define TRACK_EXTENDS_BOX_FLAG_NONE                                   FULL_BOX_FLAG_NONE
+
+#define TRACK_EXTENDS_BOX_FLAG_LAST                                   (FULL_BOX_FLAG_LAST + 0)
 
 class CTrackExtendsBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CTrackExtendsBox class
-  CTrackExtendsBox(void);
+  CTrackExtendsBox(HRESULT *result);
 
   // destructor
   virtual ~CTrackExtendsBox(void);

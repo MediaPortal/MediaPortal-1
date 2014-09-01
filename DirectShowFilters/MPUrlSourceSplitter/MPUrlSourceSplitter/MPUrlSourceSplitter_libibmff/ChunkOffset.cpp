@@ -22,7 +22,7 @@
 
 #include "ChunkOffset.h"
 
-CChunkOffset::CChunkOffset(void)
+CChunkOffset::CChunkOffset(HRESULT *result)
 {
   this->chunkOffset = 0;
 }

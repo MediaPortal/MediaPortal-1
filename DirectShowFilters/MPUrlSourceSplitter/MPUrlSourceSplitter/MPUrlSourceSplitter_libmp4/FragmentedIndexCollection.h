@@ -29,7 +29,7 @@
 class CFragmentedIndexCollection : public CCollection<CFragmentedIndex>
 {
 public:
-  CFragmentedIndexCollection(void);
+  CFragmentedIndexCollection(HRESULT *result);
   ~CFragmentedIndexCollection(void);
 
 protected:

@@ -166,5 +166,9 @@
 #define E_AFHS_AKAMAI_DECRYPTOR_DECRYPTED_DATA_NOT_EQUAL_TO_ENCRYPTED_DATA      -186
 #define E_AFHS_AKAMAI_DECRYPTOR_CANNOT_CREATE_DECRYPTED_FLV_PACKET              -187
 
+// MSHS parser error code
+
+#define E_MSHS_NO_VIDEO_OR_AUDIO_STREAM_PRESENT                                 -190
+#define E_MSHS_ONLY_HTTP_PROTOCOL_SUPPORTED_IN_URL                              -191
 
 #endif

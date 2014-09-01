@@ -26,14 +26,18 @@
 #include "Box.h"
 #include "BrandCollection.h"
 
-#define FILE_TYPE_BOX_TYPE                                                    L"ftyp"
+#define FILE_TYPE_BOX_TYPE                                            L"ftyp"
+
+#define FILE_TYPE_BOX_FLAG_NONE                                       BOX_FLAG_NONE
+
+#define FILE_TYPE_BOX_FLAG_LAST                                       (BOX_FLAG_LAST + 0)
 
 class CFileTypeBox :
   public CBox
 {
 public:
   // initializes a new instance of CFileTypeBox class
-  CFileTypeBox(void);
+  CFileTypeBox(HRESULT *result);
 
   // destructor
   virtual ~CFileTypeBox(void);

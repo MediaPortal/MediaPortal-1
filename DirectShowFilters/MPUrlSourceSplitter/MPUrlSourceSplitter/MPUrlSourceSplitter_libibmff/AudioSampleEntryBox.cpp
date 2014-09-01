@@ -23,12 +23,19 @@
 #include "AudioSampleEntryBox.h"
 #include "BoxCollection.h"
 
-CAudioSampleEntryBox::CAudioSampleEntryBox(void)
-  : CSampleEntryBox()
+CAudioSampleEntryBox::CAudioSampleEntryBox(HRESULT *result)
+  : CSampleEntryBox(result)
 {
   this->channelCount = 0;
   this->sampleSize = 0;
-  this->sampleRate = new CFixedPointNumber(16, 16);
+  this->sampleRate = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->sampleRate = new CFixedPointNumber(result, 16, 16);
+
+    CHECK_POINTER_HRESULT(*result, this->sampleRate, *result, E_OUTOFMEMORY);
+  }
 }
 
 CAudioSampleEntryBox::~CAudioSampleEntryBox(void)
@@ -136,17 +143,13 @@ uint64_t CAudioSampleEntryBox::GetBoxSize(void)
 
 bool CAudioSampleEntryBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  this->dataReferenceIndex = 0;
-
-  bool result = __super::ParseInternal(buffer, length, false);
-
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    // box is file type box, parse all values
-    uint32_t position = this->HasExtendedHeader() ? SAMPLE_ENTRY_BOX_HEADER_LENGTH_SIZE64 : SAMPLE_ENTRY_BOX_HEADER_LENGTH;
-    bool continueParsing = (this->GetSize() <= (uint64_t)length);
+    // box is media data box, parse all values
+    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+    HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
 
-    if (continueParsing)
+    if (SUCCEEDED(continueParsing))
     {
       // skip 2 x uint(32) reserved
       position += 8;
@@ -157,21 +160,20 @@ bool CAudioSampleEntryBox::ParseInternal(const unsigned char *buffer, uint32_t l
       // skip 1 x uint(16) pre-defined and 1 x uint(16) reserved
       position += 4;
 
-      continueParsing &= this->sampleRate->SetNumber(RBE32(buffer, position));
+      CHECK_CONDITION_HRESULT(continueParsing, this->sampleRate->SetNumber(RBE32(buffer, position)), continueParsing, E_OUTOFMEMORY);
       position += 4;
     }
 
-    if (continueParsing && processAdditionalBoxes)
+    if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
     {
       this->ProcessAdditionalBoxes(buffer, length, position);
     }
 
-    this->parsed = continueParsing;
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CAudioSampleEntryBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

@@ -25,14 +25,18 @@
 
 #include "Box.h"
 
-#define TRACK_FRAGMENT_BOX_TYPE                                               L"traf"
+#define TRACK_FRAGMENT_BOX_TYPE                                       L"traf"
+
+#define TRACK_FRAGMENT_BOX_FLAG_NONE                                  BOX_FLAG_NONE
+
+#define TRACK_FRAGMENT_BOX_FLAG_LAST                                  (BOX_FLAG_LAST + 0)
 
 class CTrackFragmentBox :
   public CBox
 {
 public:
   // initializes a new instance of CTrackFragmentBox class
-  CTrackFragmentBox(void);
+  CTrackFragmentBox(HRESULT *result);
 
   // destructor
   virtual ~CTrackFragmentBox(void);

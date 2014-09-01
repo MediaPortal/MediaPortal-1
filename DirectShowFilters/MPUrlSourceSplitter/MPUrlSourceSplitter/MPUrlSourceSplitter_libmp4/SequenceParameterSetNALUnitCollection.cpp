@@ -22,8 +22,8 @@
 
 #include "SequenceParameterSetNALUnitCollection.h"
 
-CSequenceParameterSetNALUnitCollection::CSequenceParameterSetNALUnitCollection(void)
-  : CCollection()
+CSequenceParameterSetNALUnitCollection::CSequenceParameterSetNALUnitCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

@@ -22,8 +22,8 @@
 
 #include "FragmentedIndexCollection.h"
 
-CFragmentedIndexCollection::CFragmentedIndexCollection(void)
-  : CCollection()
+CFragmentedIndexCollection::CFragmentedIndexCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

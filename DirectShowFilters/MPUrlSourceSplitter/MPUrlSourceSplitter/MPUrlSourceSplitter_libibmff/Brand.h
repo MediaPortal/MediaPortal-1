@@ -29,7 +29,7 @@ class CBrand
 {
 public:
   // initializes a new instance of CBrand class
-  CBrand(void);
+  CBrand(HRESULT *result);
 
   // destructor
   ~CBrand(void);

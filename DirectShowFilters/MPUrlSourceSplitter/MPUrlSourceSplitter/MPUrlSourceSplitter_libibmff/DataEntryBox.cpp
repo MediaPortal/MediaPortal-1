@@ -23,8 +23,8 @@
 #include "DataEntryBox.h"
 #include "BoxCollection.h"
 
-CDataEntryBox::CDataEntryBox(void)
-  : CFullBox()
+CDataEntryBox::CDataEntryBox(HRESULT *result)
+  : CFullBox(result)
 {
 }
 

@@ -22,8 +22,8 @@
 
 #include "ChunkOffsetCollection.h"
 
-CChunkOffsetCollection::CChunkOffsetCollection(void)
-  : CCollection()
+CChunkOffsetCollection::CChunkOffsetCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

@@ -28,7 +28,7 @@ class MMSStream
 public:
   // constructor
   // create instance of MMSStream class
-  MMSStream(void);
+  MMSStream(HRESULT *result);
 
   // destructor
   ~MMSStream(void);

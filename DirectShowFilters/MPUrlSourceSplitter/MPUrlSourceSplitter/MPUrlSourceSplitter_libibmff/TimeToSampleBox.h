@@ -26,14 +26,18 @@
 #include "FullBox.h"
 #include "TimeToSampleCollection.h"
 
-#define TIME_TO_SAMPLE_BOX_TYPE                                               L"stts"
+#define TIME_TO_SAMPLE_BOX_TYPE                                       L"stts"
+
+#define TIME_TO_SAMPLE_BOX_FLAG_NONE                                  FULL_BOX_FLAG_NONE
+
+#define TIME_TO_SAMPLE_BOX_FLAG_LAST                                  (FULL_BOX_FLAG_LAST + 0)
 
 class CTimeToSampleBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CTimeToSampleBox class
-  CTimeToSampleBox(void);
+  CTimeToSampleBox(HRESULT *result);
 
   // destructor
   virtual ~CTimeToSampleBox(void);

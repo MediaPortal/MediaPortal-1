@@ -29,14 +29,18 @@
 #include "DataEntryUrnBox.h"
 #include "DataEntryUrlBox.h"
 
-#define DATA_REFERENCE_BOX_TYPE                                               L"dref"
+#define DATA_REFERENCE_BOX_TYPE                                       L"dref"
+
+#define DATA_REFERENCE_BOX_FLAG_NONE                                  FULL_BOX_FLAG_NONE
+
+#define DATA_REFERENCE_BOX_FLAG_LAST                                  (FULL_BOX_FLAG_LAST + 0)
 
 class CDataReferenceBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CDataReferenceBox class
-  CDataReferenceBox(void);
+  CDataReferenceBox(HRESULT *result);
 
   // destructor
   virtual ~CDataReferenceBox(void);

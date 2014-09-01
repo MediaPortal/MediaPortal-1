@@ -22,8 +22,8 @@
 
 #include "PictureParameterSetNALUnitCollection.h"
 
-CPictureParameterSetNALUnitCollection::CPictureParameterSetNALUnitCollection(void)
-  : CCollection()
+CPictureParameterSetNALUnitCollection::CPictureParameterSetNALUnitCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

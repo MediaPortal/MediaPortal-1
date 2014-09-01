@@ -32,7 +32,7 @@ class CAVCDecoderConfiguration
 {
 public:
   // creates a new instance of CAVCDecoderConfiguration class
-  CAVCDecoderConfiguration(void);
+  CAVCDecoderConfiguration(HRESULT *result);
 
   // destructor
   ~CAVCDecoderConfiguration(void);

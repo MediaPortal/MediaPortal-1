@@ -22,7 +22,7 @@
 
 #include "MMSStream.h"
 
-MMSStream::MMSStream()
+MMSStream::MMSStream(HRESULT *result)
 {
   this->id = 0;
 }

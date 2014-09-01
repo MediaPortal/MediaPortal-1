@@ -22,8 +22,8 @@
 
 #include "MMSStreamCollection.h"
 
-MMSStreamCollection::MMSStreamCollection(void)
-  : CKeyedCollection()
+MMSStreamCollection::MMSStreamCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 
@@ -31,26 +31,26 @@ MMSStreamCollection::~MMSStreamCollection(void)
 {
 }
 
-int MMSStreamCollection::CompareItemKeys(int firstKey, int secondKey, void *context)
-{
-  if (firstKey < secondKey)
-  {
-    return (-1);
-  }
-  else if (firstKey == secondKey)
-  {
-    return 0;
-  }
-  else
-  {
-    return 1;
-  }
-}
-
-int MMSStreamCollection::GetKey(MMSStream *item)
-{
-  return item->GetId();
-}
+//int MMSStreamCollection::CompareItemKeys(int firstKey, int secondKey, void *context)
+//{
+//  if (firstKey < secondKey)
+//  {
+//    return (-1);
+//  }
+//  else if (firstKey == secondKey)
+//  {
+//    return 0;
+//  }
+//  else
+//  {
+//    return 1;
+//  }
+//}
+//
+//int MMSStreamCollection::GetKey(MMSStream *item)
+//{
+//  return item->GetId();
+//}
 
 MMSStream *MMSStreamCollection::Clone(MMSStream *item)
 {

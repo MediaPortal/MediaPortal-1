@@ -25,15 +25,19 @@
 
 #include "FullBox.h"
 
-#define MEDIA_HEADER_BOX_TYPE                                                 L"mdhd"
-#define MEDIA_HEADER_LANGUAGE_UNDEFINED                                       L"und"
+#define MEDIA_HEADER_BOX_TYPE                                         L"mdhd"
+#define MEDIA_HEADER_LANGUAGE_UNDEFINED                               L"und"
+
+#define MEDIA_HEADER_BOX_FLAG_NONE                                    FULL_BOX_FLAG_NONE
+
+#define MEDIA_HEADER_BOX_FLAG_LAST                                    (FULL_BOX_FLAG_LAST + 0)
 
 class CMediaHeaderBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CMediaHeaderBox class
-  CMediaHeaderBox(void);
+  CMediaHeaderBox(HRESULT *result);
 
   // destructor
   virtual ~CMediaHeaderBox(void);

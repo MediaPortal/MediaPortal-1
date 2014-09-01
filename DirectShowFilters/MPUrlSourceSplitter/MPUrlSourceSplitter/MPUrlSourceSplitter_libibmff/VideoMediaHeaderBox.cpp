@@ -23,14 +23,21 @@
 #include "VideoMediaHeaderBox.h"
 #include "BoxCollection.h"
 
-CVideoMediaHeaderBox::CVideoMediaHeaderBox(void)
-  : CFullBox()
+CVideoMediaHeaderBox::CVideoMediaHeaderBox(HRESULT *result)
+  : CFullBox(result)
 {
-  this->type = Duplicate(VIDEO_MEDIA_HEADER_BOX_TYPE);
+  this->type = NULL;
   this->graphicsMode = 0;
   this->colorRed = 0;
   this->colorGreen = 0;
   this->colorBlue = 0;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(VIDEO_MEDIA_HEADER_BOX_TYPE);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+  }
 }
 
 CVideoMediaHeaderBox::~CVideoMediaHeaderBox(void)
@@ -138,27 +145,18 @@ uint64_t CVideoMediaHeaderBox::GetBoxSize(void)
 
 bool CVideoMediaHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  this->graphicsMode = 0;
-  this->colorRed = 0;
-  this->colorGreen = 0;
-  this->colorBlue = 0;
-
-  bool result = __super::ParseInternal(buffer, length, false);
-
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    if (wcscmp(this->type, VIDEO_MEDIA_HEADER_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, VIDEO_MEDIA_HEADER_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-      if (continueParsing)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
+    {
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
+
+      if (SUCCEEDED(continueParsing))
       {
         RBE16INC(buffer, position, this->graphicsMode);
         RBE16INC(buffer, position, this->colorRed);
@@ -166,18 +164,17 @@ bool CVideoMediaHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t l
         RBE16INC(buffer, position, this->colorBlue);
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CVideoMediaHeaderBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

@@ -24,11 +24,18 @@
 #include "MediaInformationBoxFactory.h"
 #include "BoxCollection.h"
 
-CSampleTableBox::CSampleTableBox(uint32_t handlerType)
-  : CBox()
+CSampleTableBox::CSampleTableBox(HRESULT *result, uint32_t handlerType)
+  : CBox(result)
 {
-  this->type = Duplicate(SAMPLE_TABLE_BOX_TYPE);
+  this->type = NULL;
   this->handlerType = handlerType;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(SAMPLE_TABLE_BOX_TYPE);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+  }
 }
 
 CSampleTableBox::~CSampleTableBox(void)
@@ -86,55 +93,50 @@ uint64_t CSampleTableBox::GetBoxSize(void)
 
 bool CSampleTableBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  bool result = __super::ParseInternal(buffer, length, false);
-
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    if (wcscmp(this->type, SAMPLE_TABLE_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, SAMPLE_TABLE_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-      if (continueParsing)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
+    {
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
+
+      if (SUCCEEDED(continueParsing))
       {
         uint64_t processedSize = 0;
         uint64_t sizeToProcess = this->GetSize() - position;
-        CMediaInformationBoxFactory *factory = new CMediaInformationBoxFactory();
-        continueParsing &= (factory != NULL);
 
-        while (continueParsing && (processedSize < sizeToProcess))
+        CMediaInformationBoxFactory *factory = new CMediaInformationBoxFactory(&continueParsing);
+        CHECK_POINTER_HRESULT(continueParsing, factory, continueParsing, E_OUTOFMEMORY);
+
+        while (SUCCEEDED(continueParsing) && (processedSize < sizeToProcess))
         {
           CBox *box = factory->CreateBox(buffer + position + processedSize, (uint32_t)(sizeToProcess - processedSize), this->GetHandlerType());
-          continueParsing &= (box != NULL);
+          CHECK_POINTER_HRESULT(continueParsing, box, continueParsing, E_OUTOFMEMORY);
 
-          if (continueParsing)
-          {
-            continueParsing &= this->GetBoxes()->Add(box);
-            processedSize += (uint32_t)box->GetSize();
-          }
+          CHECK_CONDITION_HRESULT(continueParsing, this->GetBoxes()->Add(box), continueParsing, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(SUCCEEDED(continueParsing), processedSize += (uint32_t)box->GetSize());
 
-          if (!continueParsing)
-          {
-            FREE_MEM_CLASS(box);
-          }
+          CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(box));
         }
 
         FREE_MEM_CLASS(factory);
       }
 
-      this->parsed = continueParsing;
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
+      {
+        this->ProcessAdditionalBoxes(buffer, length, position);
+      }
+
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CSampleTableBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

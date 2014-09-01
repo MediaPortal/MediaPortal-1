@@ -22,7 +22,7 @@
 
 #include "Brand.h"
 
-CBrand::CBrand(void)
+CBrand::CBrand(HRESULT *result)
 {
   this->brand = 0;
   this->brandString = NULL;

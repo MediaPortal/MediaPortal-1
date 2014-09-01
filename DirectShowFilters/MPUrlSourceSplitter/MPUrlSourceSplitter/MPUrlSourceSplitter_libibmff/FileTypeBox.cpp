@@ -23,12 +23,23 @@
 #include "FileTypeBox.h"
 #include "BoxCollection.h"
 
-CFileTypeBox::CFileTypeBox(void)
-  : CBox()
+CFileTypeBox::CFileTypeBox(HRESULT *result)
+  : CBox(result)
 {
-  this->majorBrand = new CBrand();
-  this->compatibleBrands = new CBrandCollection();
-  this->type = Duplicate(FILE_TYPE_BOX_TYPE);
+  this->majorBrand = NULL;
+  this->compatibleBrands = NULL;
+  this->type = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(FILE_TYPE_BOX_TYPE);
+    this->majorBrand = new CBrand(result);
+    this->compatibleBrands = new CBrandCollection(result);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->majorBrand, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->compatibleBrands, *result, E_OUTOFMEMORY);
+  }
 }
 
 CFileTypeBox::~CFileTypeBox(void)
@@ -139,75 +150,62 @@ uint64_t CFileTypeBox::GetBoxSize(void)
 bool CFileTypeBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
   FREE_MEM_CLASS(this->majorBrand);
-  FREE_MEM_CLASS(this->compatibleBrands);
+  this->compatibleBrands->Clear();
 
-  this->majorBrand = new CBrand();
-  this->compatibleBrands = new CBrandCollection();
-
-  bool result = ((this->majorBrand != NULL) && (this->compatibleBrands != NULL));
-  // in bad case we don't have objects, but still it can be valid box
-  result &= __super::ParseInternal(buffer, length, false);
-
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    if (wcscmp(this->type, FILE_TYPE_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-      bool continueParsing = (((position + 8) <= length) && (this->GetSize() <= (uint64_t)length));
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, FILE_TYPE_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-      if (continueParsing)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
+    {
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
+
+      if (SUCCEEDED(continueParsing))
+      {
+        this->majorBrand = new CBrand(&continueParsing);
+        CHECK_POINTER_HRESULT(continueParsing, this->majorBrand, continueParsing, E_OUTOFMEMORY);
+      }
+
+      if (SUCCEEDED(continueParsing))
       {
         // major brand + minor version = 8 bytes
-        continueParsing &= this->majorBrand->SetBrand(RBE32(buffer, position));
+        CHECK_CONDITION_HRESULT(continueParsing, this->majorBrand->SetBrand(RBE32(buffer, position)), continueParsing, E_OUTOFMEMORY);
         position += 4;
 
         RBE32INC(buffer, position, this->minorVersion);
       }
 
-      if (continueParsing)
+      if (SUCCEEDED(continueParsing))
       {
         // the last bytes in file type box are compatible brands (each 4 characters)
-        while (continueParsing && ((position + 3) < (uint32_t)this->GetSize()))
+        while (SUCCEEDED(continueParsing) && ((position + 3) < (uint32_t)this->GetSize()))
         {
-          CBrand *brand = new CBrand();
-          continueParsing &= (brand != NULL);
+          CBrand *brand = new CBrand(&continueParsing);
+          CHECK_POINTER_HRESULT(continueParsing, brand, continueParsing, E_OUTOFMEMORY);
+          
+          CHECK_CONDITION_HRESULT(continueParsing, brand->SetBrand(RBE32(buffer, position)), continueParsing, E_OUTOFMEMORY);
 
-          if (continueParsing)
-          {
-            continueParsing &= brand->SetBrand(RBE32(buffer, position));
-            if (continueParsing)
-            {
-              continueParsing &= this->compatibleBrands->Add(brand);
-            }
-          }
-
-          if (!continueParsing)
-          {
-            FREE_MEM_CLASS(brand);
-          }
+          CHECK_CONDITION_HRESULT(continueParsing, this->compatibleBrands->Add(brand), continueParsing, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(brand));
 
           position += 4;
         }
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
-      
-      this->parsed = continueParsing;
+
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CFileTypeBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

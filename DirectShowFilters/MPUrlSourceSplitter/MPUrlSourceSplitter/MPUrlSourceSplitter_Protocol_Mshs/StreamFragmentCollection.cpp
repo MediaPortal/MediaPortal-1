@@ -20,42 +20,42 @@
 
 #include "StdAfx.h"
 
-#include "StreamFragmentCollection.h"
-
-CStreamFragmentCollection::CStreamFragmentCollection(void)
-  : CKeyedCollection()
-{
-}
-
-CStreamFragmentCollection::~CStreamFragmentCollection(void)
-{
-}
-
-int CStreamFragmentCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
-{
-  bool invariant = (*(bool *)context);
-
-  if (invariant)
-  {
-    return _wcsicmp(firstKey, secondKey);
-  }
-  else
-  {
-    return wcscmp(firstKey, secondKey);
-  }
-}
-
-const wchar_t *CStreamFragmentCollection::GetKey(CStreamFragment *item)
-{
-  return item->GetUrl();
-}
-
-CStreamFragment *CStreamFragmentCollection::Clone(CStreamFragment *item)
-{
-  return NULL;
-}
-
-CStreamFragment *CStreamFragmentCollection::GetStreamFragment(const wchar_t *url, bool invariant)
-{
-  return this->GetItem(url, (void *)&invariant);
-}
+//#include "StreamFragmentCollection.h"
+//
+//CStreamFragmentCollection::CStreamFragmentCollection(void)
+//  : CKeyedCollection()
+//{
+//}
+//
+//CStreamFragmentCollection::~CStreamFragmentCollection(void)
+//{
+//}
+//
+//int CStreamFragmentCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
+//{
+//  bool invariant = (*(bool *)context);
+//
+//  if (invariant)
+//  {
+//    return _wcsicmp(firstKey, secondKey);
+//  }
+//  else
+//  {
+//    return wcscmp(firstKey, secondKey);
+//  }
+//}
+//
+//const wchar_t *CStreamFragmentCollection::GetKey(CStreamFragment *item)
+//{
+//  return item->GetUrl();
+//}
+//
+//CStreamFragment *CStreamFragmentCollection::Clone(CStreamFragment *item)
+//{
+//  return NULL;
+//}
+//
+//CStreamFragment *CStreamFragmentCollection::GetStreamFragment(const wchar_t *url, bool invariant)
+//{
+//  return this->GetItem(url, (void *)&invariant);
+//}

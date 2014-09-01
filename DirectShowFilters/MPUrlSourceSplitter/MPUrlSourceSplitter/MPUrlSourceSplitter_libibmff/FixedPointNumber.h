@@ -34,7 +34,7 @@ public:
   // initializes a new instance of CBox class
   // @param integerPartSize : size of integer part in bits (maximum allowed is INTEGER_PART_SIZE_MAX)
   // @param fractionPartSize : size of fraction part in bits (maximum allowed is FRACTION_PART_SIZE_MAX)
-  CFixedPointNumber(uint8_t integerPartSize, uint8_t fractionPartSize);
+  CFixedPointNumber(HRESULT *result, uint8_t integerPartSize, uint8_t fractionPartSize);
 
   // destructor
   ~CFixedPointNumber(void);

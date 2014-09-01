@@ -23,13 +23,20 @@
 #include "BitRateBox.h"
 #include "BoxCollection.h"
 
-CBitrateBox::CBitrateBox(void)
-  : CBox()
+CBitrateBox::CBitrateBox(HRESULT *result)
+  : CBox(result)
 {
-  this->type = Duplicate(BITRATE_BOX_TYPE);
+  this->type = NULL;
   this->bufferSize = 0;
   this->maximumBitrate = 0;
   this->averageBitrate = 0;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(BITRATE_BOX_TYPE);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+  }
 }
 
 CBitrateBox::~CBitrateBox(void)
@@ -124,44 +131,35 @@ uint64_t CBitrateBox::GetBoxSize(void)
 
 bool CBitrateBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  this->bufferSize = 0;
-  this->maximumBitrate = 0;
-  this->averageBitrate = 0;
-
-  bool result = __super::ParseInternal(buffer, length, false);
-
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    if (wcscmp(this->type, BITRATE_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, BITRATE_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-      if (continueParsing)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
+    {
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
+
+      if (SUCCEEDED(continueParsing))
       {
         RBE32INC(buffer, position, this->bufferSize);
         RBE32INC(buffer, position, this->maximumBitrate);
         RBE32INC(buffer, position, this->averageBitrate);
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CBitrateBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

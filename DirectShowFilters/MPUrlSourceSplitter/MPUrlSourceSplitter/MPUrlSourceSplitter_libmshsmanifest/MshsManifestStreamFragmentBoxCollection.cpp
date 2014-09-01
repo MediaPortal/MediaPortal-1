@@ -20,39 +20,18 @@
 
 #include "StdAfx.h"
 
-#include "MSHSProtectionCollection.h"
-#include "BufferHelper.h"
+#include "MshsManifestStreamFragmentBoxCollection.h"
 
-CMSHSProtectionCollection::CMSHSProtectionCollection(void)
-  : CSerializableCollection()
+CMshsManifestStreamFragmentBoxCollection::CMshsManifestStreamFragmentBoxCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 
-CMSHSProtectionCollection::~CMSHSProtectionCollection(void)
+CMshsManifestStreamFragmentBoxCollection::~CMshsManifestStreamFragmentBoxCollection(void)
 {
 }
 
-int CMSHSProtectionCollection::CompareItemKeys(GUID firstKey, GUID secondKey, void *context)
-{
-  return (memcmp(&firstKey, &secondKey, sizeof(GUID)));
-}
-
-GUID CMSHSProtectionCollection::GetKey(CMSHSProtection *item)
-{
-  return item->GetSystemId();
-}
-
-CMSHSProtection *CMSHSProtectionCollection::Clone(CMSHSProtection *item)
+CMshsManifestStreamFragmentBox *CMshsManifestStreamFragmentBoxCollection::Clone(CMshsManifestStreamFragmentBox *item)
 {
   return NULL;
-}
-
-bool CMSHSProtectionCollection::Contains(GUID systemId)
-{
-  return __super::Contains(systemId, NULL);
-}
-
-CMSHSProtection *CMSHSProtectionCollection::GetBootstrapInfo(GUID systemId)
-{
-  return this->GetItem(systemId, NULL);
 }

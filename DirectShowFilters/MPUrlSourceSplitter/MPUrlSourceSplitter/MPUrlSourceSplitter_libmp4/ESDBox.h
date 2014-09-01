@@ -25,16 +25,20 @@
 
 #include "FullBox.h"
 
-#define ESD_BOX_TYPE                                                          L"esds"
+#define ESD_BOX_TYPE                                                  L"esds"
 
-#define CODEC_TAG_AAC                                                         0x40
+#define ESD_BOX_FLAG_NONE                                             FULL_BOX_FLAG_NONE
+
+#define ESD_BOX_FLAG_LAST                                             (FULL_BOX_FLAG_LAST + 0)
+
+#define CODEC_TAG_AAC                                                 0x40
 
 class CESDBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CESDBox class
-  CESDBox(void);
+  CESDBox(HRESULT *result);
 
   // destructor
   virtual ~CESDBox(void);

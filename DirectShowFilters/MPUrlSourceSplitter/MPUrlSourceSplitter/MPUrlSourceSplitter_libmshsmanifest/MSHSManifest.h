@@ -23,22 +23,21 @@
 #ifndef __MSHS_MANIFEST_DEFINED
 #define __MSHS_MANIFEST_DEFINED
 
-#include "MSHSSmoothStreamingMedia.h"
+#include "MshsManifestSmoothStreamingMediaBox.h"
 
-class CMSHSManifest
+class CMshsManifest
 {
 public:
-  // initializes a new instance of CMSHSManifest class
-  CMSHSManifest(void);
-
+  // initializes a new instance of CMshsManifest class
+  CMshsManifest(HRESULT *result);
   // destructor
-  ~CMSHSManifest(void);
+  ~CMshsManifest(void);
 
   /* get methods */
 
   // gets smooth streaming media
   // @return : smooth streaming media
-  CMSHSSmoothStreamingMedia *GetSmoothStreamingMedia(void);
+  CMshsManifestSmoothStreamingMediaBox *GetSmoothStreamingMedia(void);
 
   // gets last parse error
   // @return : last parse error
@@ -63,7 +62,7 @@ private:
   // stores last parse error
   int parseError;
 
-  CMSHSSmoothStreamingMedia *smoothStreamingMedia;
+  CMshsManifestSmoothStreamingMediaBox *smoothStreamingMedia;
 };
 
 #endif

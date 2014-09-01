@@ -29,7 +29,7 @@
 class CSampleEntryBoxCollection : public CKeyedCollection<CSampleEntryBox, const wchar_t *>
 {
 public:
-  CSampleEntryBoxCollection(void);
+  CSampleEntryBoxCollection(HRESULT *result);
   virtual ~CSampleEntryBoxCollection(void);
 
 protected:

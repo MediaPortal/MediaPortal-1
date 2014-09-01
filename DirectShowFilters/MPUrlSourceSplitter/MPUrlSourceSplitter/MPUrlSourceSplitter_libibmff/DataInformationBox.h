@@ -25,14 +25,18 @@
 
 #include "Box.h"
 
-#define DATA_INFORMATION_BOX_TYPE                                             L"dinf"
+#define DATA_INFORMATION_BOX_TYPE                                     L"dinf"
+
+#define DATA_INFORMATION_BOX_FLAG_NONE                                BOX_FLAG_NONE
+
+#define DATA_INFORMATION_BOX_FLAG_LAST                                (BOX_FLAG_LAST + 0)
 
 class CDataInformationBox :
   public CBox
 {
 public:
   // initializes a new instance of CDataInformationBox class
-  CDataInformationBox(void);
+  CDataInformationBox(HRESULT *result);
 
   // destructor
   virtual ~CDataInformationBox(void);

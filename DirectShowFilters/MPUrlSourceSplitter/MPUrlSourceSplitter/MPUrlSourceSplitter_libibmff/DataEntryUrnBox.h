@@ -25,14 +25,18 @@
 
 #include "DataEntryBox.h"
 
-#define DATA_ENTRY_URN_BOX_TYPE                                               L"urn "
+#define DATA_ENTRY_URN_BOX_TYPE                                       L"urn "
+
+#define DATA_ENTRY_URN_BOX_FLAG_NONE                                  DATA_ENTRY_BOX_FLAG_NONE
+
+#define DATA_ENTRY_URN_BOX_FLAG_LAST                                  (DATA_ENTRY_BOX_FLAG_LAST + 0)
 
 class CDataEntryUrnBox :
   public CDataEntryBox
 {
 public:
   // initializes a new instance of CDataEntryUrnBox class
-  CDataEntryUrnBox(void);
+  CDataEntryUrnBox(HRESULT *result);
 
   // destructor
   virtual ~CDataEntryUrnBox(void);

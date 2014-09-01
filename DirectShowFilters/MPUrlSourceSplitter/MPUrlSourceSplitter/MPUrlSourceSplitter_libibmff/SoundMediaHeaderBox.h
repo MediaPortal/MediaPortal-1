@@ -26,14 +26,18 @@
 #include "FullBox.h"
 #include "FixedPointNumber.h"
 
-#define SOUND_MEDIA_HEADER_BOX_TYPE                                           L"smhd"
+#define SOUND_MEDIA_HEADER_BOX_TYPE                                   L"smhd"
+
+#define SOUND_MEDIA_HEADER_BOX_FLAG_NONE                              FULL_BOX_FLAG_NONE
+
+#define SOUND_MEDIA_HEADER_BOX_FLAG_LAST                              (FULL_BOX_FLAG_LAST + 0)
 
 class CSoundMediaHeaderBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CSoundMediaHeaderBox class
-  CSoundMediaHeaderBox(void);
+  CSoundMediaHeaderBox(HRESULT *result);
 
   // destructor
   virtual ~CSoundMediaHeaderBox(void);

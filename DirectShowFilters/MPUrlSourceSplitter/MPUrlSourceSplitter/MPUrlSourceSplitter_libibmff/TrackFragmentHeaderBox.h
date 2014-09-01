@@ -25,21 +25,25 @@
 
 #include "FullBox.h"
 
-#define TRACK_FRAGMENT_HEADER_BOX_TYPE                                        L"tfhd"
+#define TRACK_FRAGMENT_HEADER_BOX_TYPE                                L"tfhd"
 
-#define FLAGS_BASE_DATA_OFFSET_PRESENT                                        0x00000001
-#define FLAGS_SAMPLE_DESCRIPTION_INDEX_PRESENT                                0x00000002
-#define FLAGS_DEFAULT_SAMPLE_DURATION_PRESENT                                 0x00000008
-#define FLAGS_DEFAULT_SAMPLE_SIZE_PRESENT                                     0x00000010
-#define FLAGS_DEFAULT_SAMPLE_FLAGS_PRESENT                                    0x00000020
-#define FLAGS_DURATION_IS_EMPTY                                               0x00010000
+#define FLAGS_BASE_DATA_OFFSET_PRESENT                                0x00000001
+#define FLAGS_SAMPLE_DESCRIPTION_INDEX_PRESENT                        0x00000002
+#define FLAGS_DEFAULT_SAMPLE_DURATION_PRESENT                         0x00000008
+#define FLAGS_DEFAULT_SAMPLE_SIZE_PRESENT                             0x00000010
+#define FLAGS_DEFAULT_SAMPLE_FLAGS_PRESENT                            0x00000020
+#define FLAGS_DURATION_IS_EMPTY                                       0x00010000
+
+#define TRACK_FRAGMENT_HEADER_BOX_FLAG_NONE                           FULL_BOX_FLAG_NONE
+
+#define TRACK_FRAGMENT_HEADER_BOX_FLAG_LAST                           (FULL_BOX_FLAG_LAST + 0)
 
 class CTrackFragmentHeaderBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CTrackFragmentHeaderBox class
-  CTrackFragmentHeaderBox(void);
+  CTrackFragmentHeaderBox(HRESULT *result);
 
   // destructor
   virtual ~CTrackFragmentHeaderBox(void);

@@ -26,24 +26,25 @@
 #include "KeyedCollection.h"
 #include "MMSStream.h"
 
-class MMSStreamCollection : public CKeyedCollection<MMSStream, int>
+//class MMSStreamCollection : public CKeyedCollection<MMSStream, int>
+class MMSStreamCollection : public CCollection<MMSStream>
 {
 public:
-  MMSStreamCollection(void);
+  MMSStreamCollection(HRESULT *result);
   ~MMSStreamCollection(void);
 
 protected:
-  // compare two item keys
-  // @param firstKey : the first item key to compare
-  // @param secondKey : the second item key to compare
-  // @param context : the reference to user defined context
-  // @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
-  int CompareItemKeys(int firstKey, int secondKey, void *context);
+  //// compare two item keys
+  //// @param firstKey : the first item key to compare
+  //// @param secondKey : the second item key to compare
+  //// @param context : the reference to user defined context
+  //// @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
+  //int CompareItemKeys(int firstKey, int secondKey, void *context);
 
-  // gets key for item
-  // @param item : the item to get key
-  // @return : the key of item
-  int GetKey(MMSStream *item);
+  //// gets key for item
+  //// @param item : the item to get key
+  //// @return : the key of item
+  //int GetKey(MMSStream *item);
 
   // clones specified item
   // @param item : the item to clone

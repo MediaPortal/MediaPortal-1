@@ -23,13 +23,22 @@
 #include "TrackRunBox.h"
 #include "BoxCollection.h"
 
-CTrackRunBox::CTrackRunBox(void)
-  : CFullBox()
+CTrackRunBox::CTrackRunBox(HRESULT *result)
+  : CFullBox(result)
 {
-  this->type = Duplicate(TRACK_RUN_BOX_TYPE);
-  this->samples = new CSampleCollection();
+  this->type = NULL;
+  this->samples = NULL;
   this->dataOffset = 0;
   this->firstSampleFlags = 0;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(TRACK_RUN_BOX_TYPE);
+    this->samples = new CSampleCollection(result);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->samples, *result, E_OUTOFMEMORY);
+  }
 }
 
 CTrackRunBox::~CTrackRunBox(void)
@@ -175,28 +184,20 @@ uint64_t CTrackRunBox::GetBoxSize(void)
 
 bool CTrackRunBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  if (this->samples != NULL)
+  this->samples->Clear();
+
+  if (__super::ParseInternal(buffer, length, false))
   {
-    this->samples->Clear();
-  }
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, TRACK_RUN_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-  bool result = (this->samples != NULL);
-  result &= __super::ParseInternal(buffer, length, false);
-
-  if (result)
-  {
-    if (wcscmp(this->type, TRACK_RUN_BOX_TYPE) != 0)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
     {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
 
-      if (continueParsing)
+      if (SUCCEEDED(continueParsing))
       {
         RBE32INC_DEFINE(buffer, position, sampleCount, uint32_t);
         if (this->IsDataOffsetPresent())
@@ -208,12 +209,14 @@ bool CTrackRunBox::ParseInternal(const unsigned char *buffer, uint32_t length, b
           RBE32INC(buffer, position, this->firstSampleFlags);
         }
 
-        for (uint32_t i = 0; (continueParsing && (i < sampleCount)); i++)
-        {
-          CSample *sample = new CSample();
-          continueParsing &= (sample != NULL);
+        CHECK_CONDITION_HRESULT(continueParsing, this->samples->EnsureEnoughSpace(sampleCount), continueParsing, E_OUTOFMEMORY);
 
-          if (continueParsing)
+        for (uint32_t i = 0; (SUCCEEDED(continueParsing) && (i < sampleCount)); i++)
+        {
+          CSample *sample = new CSample(&continueParsing);
+          CHECK_POINTER_HRESULT(continueParsing, sample, continueParsing, E_OUTOFMEMORY);
+
+          if (SUCCEEDED(continueParsing))
           {
             // fill sample data
 
@@ -240,29 +243,25 @@ bool CTrackRunBox::ParseInternal(const unsigned char *buffer, uint32_t length, b
               sample->SetSampleCompositionTimeOffset(RBE32(buffer, position));
               position += 4;
             }
-
-            continueParsing &= this->samples->Add(sample);
           }
 
-          if (!continueParsing)
-          {
-            FREE_MEM_CLASS(sample);
-          }
+          CHECK_CONDITION_HRESULT(continueParsing, this->samples->Add(sample), continueParsing, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(sample));
         }
+
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 bool CTrackRunBox::IsDataOffsetPresent(void)

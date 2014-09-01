@@ -29,7 +29,7 @@ class CFragmentedIndex
 {
 public:
   // creates a new instance of CFragmentedIndex class
-  CFragmentedIndex(void);
+  CFragmentedIndex(HRESULT *result);
 
   // destructor
   ~CFragmentedIndex(void);

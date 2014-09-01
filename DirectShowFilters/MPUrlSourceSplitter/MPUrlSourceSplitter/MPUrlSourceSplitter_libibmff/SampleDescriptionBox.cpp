@@ -24,12 +24,21 @@
 #include "SampleEntryBoxFactory.h"
 #include "BoxCollection.h"
 
-CSampleDescriptionBox::CSampleDescriptionBox(uint32_t handlerType)
-  : CFullBox()
+CSampleDescriptionBox::CSampleDescriptionBox(HRESULT *result, uint32_t handlerType)
+  : CFullBox(result)
 {
-  this->type = Duplicate(SAMPLE_DESCRIPTION_BOX_TYPE);
-  this->sampleEntries = new CSampleEntryBoxCollection();
+  this->type = NULL;
+  this->sampleEntries = NULL;
   this->handlerType = handlerType;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(SAMPLE_DESCRIPTION_BOX_TYPE);
+    this->sampleEntries = new CSampleEntryBoxCollection(result);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->sampleEntries, *result, E_OUTOFMEMORY);
+  }
 }
 
 CSampleDescriptionBox::~CSampleDescriptionBox(void)
@@ -132,65 +141,51 @@ uint64_t CSampleDescriptionBox::GetBoxSize(void)
 
 bool CSampleDescriptionBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  if (this->sampleEntries != NULL)
+  this->sampleEntries->Clear();
+
+  if (__super::ParseInternal(buffer, length, false))
   {
-    this->sampleEntries->Clear();
-  }
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, SAMPLE_DESCRIPTION_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-  bool result = (this->sampleEntries != NULL);
-  // in bad case we don't have objects, but still it can be valid box
-  result &= __super::ParseInternal(buffer, length, false);
-
-  if (result)
-  {
-    if (wcscmp(this->type, SAMPLE_DESCRIPTION_BOX_TYPE) != 0)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
     {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
 
-      if (continueParsing)
+      if (SUCCEEDED(continueParsing))
       {
         RBE32INC_DEFINE(buffer, position, sampleEntriesCount, uint32_t);
 
-        CSampleEntryBoxFactory *factory = new CSampleEntryBoxFactory();
-        continueParsing &= (factory != NULL);
+        CSampleEntryBoxFactory *factory = new CSampleEntryBoxFactory(&continueParsing);
+        CHECK_POINTER_HRESULT(continueParsing, factory, continueParsing, E_OUTOFMEMORY);
 
-        for (uint32_t i = 0; (continueParsing && (i < sampleEntriesCount)); i++)
+        for (uint32_t i = 0; (SUCCEEDED(continueParsing) && (i < sampleEntriesCount)); i++)
         {
           CBox *box = factory->CreateBox(buffer + position, length - position, this->GetHandlerType());
-          continueParsing &= (box != NULL);
+          CHECK_POINTER_HRESULT(continueParsing, box, continueParsing, E_OUTOFMEMORY);
 
-          if (continueParsing)
-          {
-            continueParsing &= this->sampleEntries->Add((CSampleEntryBox *)box);
-            position += (uint32_t)box->GetSize();
-          }
+          CHECK_CONDITION_HRESULT(continueParsing, this->sampleEntries->Add((CSampleEntryBox *)box), continueParsing, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(SUCCEEDED(continueParsing), position += (uint32_t)box->GetSize());
 
-          if (!continueParsing)
-          {
-            FREE_MEM_CLASS(box);
-          }
+          CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(box));
         }
+
+        FREE_MEM_CLASS(factory);
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CSampleDescriptionBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

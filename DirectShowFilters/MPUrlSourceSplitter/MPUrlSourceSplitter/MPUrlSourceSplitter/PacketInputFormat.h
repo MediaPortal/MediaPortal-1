@@ -50,7 +50,7 @@ public:
   // tests if specific combination of flags is set
   // @param flags : the set of flags to test
   // @return : true if set of flags is set, false otherwise
-  bool IsSetFlags(uint64_t flags);
+  bool IsSetFlags(uint32_t flags);
 
 protected:
 
@@ -62,7 +62,7 @@ protected:
 
   int64_t streamIoContextBufferPosition;
 
-  uint64_t internalFlags;
+  uint32_t internalFlags;
 
   /* static methods */
 

@@ -23,15 +23,24 @@
 #include "MediaHeaderBox.h"
 #include "BoxCollection.h"
 
-CMediaHeaderBox::CMediaHeaderBox(void)
-  : CFullBox()
+CMediaHeaderBox::CMediaHeaderBox(HRESULT *result)
+  : CFullBox(result)
 {
   this->creationTime = 0;
   this->modificationTime = 0;
   this->timeScale = 0;
   this->duration = 0;
-  this->type = Duplicate(MEDIA_HEADER_BOX_TYPE);
-  this->language = Duplicate(MEDIA_HEADER_LANGUAGE_UNDEFINED);
+  this->type = NULL;
+  this->language = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(MEDIA_HEADER_BOX_TYPE);
+    this->language = Duplicate(MEDIA_HEADER_LANGUAGE_UNDEFINED);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->language, *result, E_OUTOFMEMORY);
+  }
 }
 
 CMediaHeaderBox::~CMediaHeaderBox(void)
@@ -165,22 +174,19 @@ uint64_t CMediaHeaderBox::GetBoxSize(void)
 bool CMediaHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
   FREE_MEM(this->language);
-  bool result = __super::ParseInternal(buffer, length, false);
 
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    if (wcscmp(this->type, MEDIA_HEADER_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, MEDIA_HEADER_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-      if (continueParsing)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
+    {
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
+
+      if (SUCCEEDED(continueParsing))
       {
         switch (this->GetVersion())
         {
@@ -197,12 +203,12 @@ bool CMediaHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length
           RBE64INC(buffer, position, this->duration);
           break;
         default:
-          continueParsing = false;
+          continueParsing = E_FAIL;
           break;
         }
       }
 
-      if (continueParsing)
+      if (SUCCEEDED(continueParsing))
       {
         // each character is packed as the difference between its ASCII value and 0x60
         // since the code is confined to being three lower-case letters, these values are strictly positive
@@ -213,16 +219,16 @@ bool CMediaHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length
         // unsigned int(5)[3] language; // ISO-639-2/T language code
 
         ALLOC_MEM_DEFINE_SET(languageCodeAscii, char, 4, 0);
-        continueParsing &= (languageCodeAscii != NULL);
+        CHECK_POINTER_HRESULT(continueParsing, languageCodeAscii, continueParsing, E_OUTOFMEMORY);
 
-        if (continueParsing)
+        if (SUCCEEDED(continueParsing))
         {
           languageCodeAscii[0] = ((languageCode & 0x7C00) >> 10) + 0x60;
           languageCodeAscii[1] = ((languageCode & 0x03E0) >> 5) + 0x60;
           languageCodeAscii[2] = (languageCode & 0x001F) + 0x60;
 
           this->language = ConvertToUnicodeA(languageCodeAscii);
-          continueParsing &= (this->language != NULL);
+          CHECK_POINTER_HRESULT(continueParsing, this->language, continueParsing, E_OUTOFMEMORY);
         }
 
         FREE_MEM(languageCodeAscii);
@@ -231,18 +237,17 @@ bool CMediaHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length
         position += 2;
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CMediaHeaderBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

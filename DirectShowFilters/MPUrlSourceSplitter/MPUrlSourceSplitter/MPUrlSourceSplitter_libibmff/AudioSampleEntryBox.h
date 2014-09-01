@@ -26,12 +26,16 @@
 #include "SampleEntryBox.h"
 #include "FixedPointNumber.h"
 
+#define AUDIO_SAMPLE_ENTRY_BOX_FLAG_NONE                              SAMPLE_ENTRY_BOX_FLAG_NONE
+
+#define AUDIO_SAMPLE_ENTRY_BOX_FLAG_LAST                              (SAMPLE_ENTRY_BOX_FLAG_LAST + 0)
+
 class CAudioSampleEntryBox :
   public CSampleEntryBox
 {
 public:
   // initializes a new instance of CAudioSampleEntryBox class
-  CAudioSampleEntryBox(void);
+  CAudioSampleEntryBox(HRESULT *result);
 
   // destructor
   virtual ~CAudioSampleEntryBox(void);

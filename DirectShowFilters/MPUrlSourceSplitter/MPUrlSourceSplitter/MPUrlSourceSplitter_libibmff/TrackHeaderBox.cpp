@@ -23,25 +23,43 @@
 #include "TrackHeaderBox.h"
 #include "BoxCollection.h"
 
-CTrackHeaderBox::CTrackHeaderBox(void)
-  : CFullBox()
+CTrackHeaderBox::CTrackHeaderBox(HRESULT *result)
+  : CFullBox(result)
 {
-  this->type = Duplicate(TRACK_HEADER_BOX_TYPE);
+  this->type = NULL;
   this->creationTime = 0;
   this->modificationTime = 0;
   this->trackId = 0;
   this->duration = 0;
   this->layer = 0;
   this->alternateGroup = 0;
-  this->volume = new CFixedPointNumber(8, 8);
-  this->matrix = new CMatrix();
-  this->width = new CFixedPointNumber(16, 16);
-  this->height = new CFixedPointNumber(16, 16);
+  this->volume = NULL;
+  this->matrix = NULL;
+  this->width = NULL;
+  this->height = NULL;
 
-  // set unity matrix
-  this->matrix->GetItem(0)->SetIntegerPart(1);
-  this->matrix->GetItem(4)->SetIntegerPart(1);
-  this->matrix->GetItem(8)->SetIntegerPart(1);
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(TRACK_HEADER_BOX_TYPE);
+    this->volume = new CFixedPointNumber(result, 8, 8);
+    this->matrix = new CMatrix(result);
+    this->width = new CFixedPointNumber(result, 16, 16);
+    this->height = new CFixedPointNumber(result, 16, 16);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->volume, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->matrix, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->height, *result, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(*result))
+    {
+      // set unity matrix
+      this->matrix->GetItem(0)->SetIntegerPart(1);
+      this->matrix->GetItem(4)->SetIntegerPart(1);
+      this->matrix->GetItem(8)->SetIntegerPart(1);
+    }
+  }
 }
 
 CTrackHeaderBox::~CTrackHeaderBox(void)
@@ -260,29 +278,32 @@ bool CTrackHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length
   this->duration = 0;
   this->layer = 0;
   this->alternateGroup = 0;
-  this->volume = new CFixedPointNumber(8, 8);
-  this->matrix = new CMatrix();
-  this->width = new CFixedPointNumber(16, 16);
-  this->height = new CFixedPointNumber(16, 16);
 
-  bool result = ((this->volume != NULL) && (this->matrix != NULL) && (this->width != NULL) && (this->height != NULL));
-  // in bad case we don't have objects, but still it can be valid box
-  result &= __super::ParseInternal(buffer, length, false);
-
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    if (wcscmp(this->type, TRACK_HEADER_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, TRACK_HEADER_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-      if (continueParsing)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
+    {
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
+
+      if (SUCCEEDED(continueParsing))
+      {
+        this->volume = new CFixedPointNumber(&continueParsing, 8, 8);
+        this->matrix = new CMatrix(&continueParsing);
+        this->width = new CFixedPointNumber(&continueParsing, 16, 16);
+        this->height = new CFixedPointNumber(&continueParsing, 16, 16);
+
+        CHECK_POINTER_HRESULT(continueParsing, this->volume, continueParsing, E_OUTOFMEMORY);
+        CHECK_POINTER_HRESULT(continueParsing, this->matrix, continueParsing, E_OUTOFMEMORY);
+        CHECK_POINTER_HRESULT(continueParsing, this->width, continueParsing, E_OUTOFMEMORY);
+        CHECK_POINTER_HRESULT(continueParsing, this->height, continueParsing, E_OUTOFMEMORY);
+      }
+
+      if (SUCCEEDED(continueParsing))
       {
         switch (this->GetVersion())
         {
@@ -303,54 +324,57 @@ bool CTrackHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length
           RBE64INC(buffer, position, this->duration);
           break;
         default:
-          continueParsing = false;
+          continueParsing = E_FAIL;
           break;
         }
       }
 
-      if (continueParsing)
+      if (SUCCEEDED(continueParsing))
       {
         // skip 2 x int(32) reserved field
         position += 8;
         RBE16INC(buffer, position, this->layer);
         RBE16INC(buffer, position, this->alternateGroup);
-        continueParsing &= this->volume->SetIntegerPart(RBE8(buffer, position));
+
+        CHECK_CONDITION_HRESULT(continueParsing, this->volume->SetIntegerPart(RBE8(buffer, position)), continueParsing, E_OUTOFMEMORY);
         position++;
-        continueParsing &= this->volume->SetFractionPart(RBE8(buffer, position));
+        CHECK_CONDITION_HRESULT(continueParsing, this->volume->SetFractionPart(RBE8(buffer, position)), continueParsing, E_OUTOFMEMORY);
         position++;
+
         // skip int(16) reserved field
         position += 2;
 
         // read matrix
-        for (unsigned int i = 0; (continueParsing && (i < this->matrix->Count())); i++)
+        for (unsigned int i = 0; (SUCCEEDED(continueParsing) && (i < this->matrix->Count())); i++)
         {
-          continueParsing &= this->matrix->GetItem(i)->SetNumber(RBE32(buffer, position));
+          CHECK_CONDITION_HRESULT(continueParsing, this->matrix->GetItem(i)->SetNumber(RBE32(buffer, position)), continueParsing, E_OUTOFMEMORY);
           position += 4;
         }
 
-        continueParsing &= this->width->SetIntegerPart(RBE16(buffer, position));
-        position += 2;
-        continueParsing &= this->width->SetFractionPart(RBE16(buffer, position));
+        CHECK_CONDITION_HRESULT(continueParsing, this->width->SetIntegerPart(RBE16(buffer, position)), continueParsing, E_OUTOFMEMORY);
         position += 2;
 
-        continueParsing &= this->height->SetIntegerPart(RBE16(buffer, position));
+        CHECK_CONDITION_HRESULT(continueParsing, this->width->SetFractionPart(RBE16(buffer, position)), continueParsing, E_OUTOFMEMORY);
         position += 2;
-        continueParsing &= this->height->SetFractionPart(RBE16(buffer, position));
+
+        CHECK_CONDITION_HRESULT(continueParsing, this->height->SetIntegerPart(RBE16(buffer, position)), continueParsing, E_OUTOFMEMORY);
+        position += 2;
+
+        CHECK_CONDITION_HRESULT(continueParsing, this->height->SetFractionPart(RBE16(buffer, position)), continueParsing, E_OUTOFMEMORY);
         position += 2;
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CTrackHeaderBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

@@ -73,10 +73,11 @@ void DestroyPlugin(CPlugin *plugin)
 CMPUrlSourceSplitter_Parser_F4M::CMPUrlSourceSplitter_Parser_F4M(HRESULT *result, CLogger *logger, CParameterCollection *configuration)
   : CParserPlugin(result, logger, configuration)
 {
+  this->lastReceivedLength = 0;
+
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, this);
-    this->parserResult = PARSER_RESULT_PENDING;
 
     wchar_t *version = GetVersionInfo(COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PARSER_F4M, DATE_INFO_MP_URL_SOURCE_SPLITTER_PARSER_F4M);
     if (version != NULL)
@@ -115,7 +116,6 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::GetParserResult(void)
       if (SUCCEEDED(this->parserResult))
       {
         unsigned int requestLength = MP_URL_SOURCE_SPLITTER_PARSER_F4M_DATA_LENGTH_DEFAULT;
-        uint64_t lastReceivedLength = 0;
         bool receivedSameLength = false;
         this->parserResult = PARSER_RESULT_PENDING;
 
@@ -152,7 +152,7 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::GetParserResult(void)
 
             if (response != NULL)
             {
-              receivedSameLength = (response->GetBuffer()->GetBufferOccupiedSpace() == lastReceivedLength);
+              receivedSameLength = (response->GetBuffer()->GetBufferOccupiedSpace() == this->lastReceivedLength);
               if (!receivedSameLength)
               {
                 // try parse data
@@ -563,7 +563,7 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::GetParserResult(void)
                 requestLength *= 2;
               }
 
-              lastReceivedLength = response->GetBuffer()->GetBufferOccupiedSpace();
+              this->lastReceivedLength = response->GetBuffer()->GetBufferOccupiedSpace();
             }
           }
         }
@@ -686,6 +686,8 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::QueryStreamProgress(CStreamProgress *st
 void CMPUrlSourceSplitter_Parser_F4M::ClearSession(void)
 {
   __super::ClearSession();
+
+  this->lastReceivedLength = 0;
 }
 
 void CMPUrlSourceSplitter_Parser_F4M::ReportStreamTime(uint64_t streamTime, uint64_t streamPosition)

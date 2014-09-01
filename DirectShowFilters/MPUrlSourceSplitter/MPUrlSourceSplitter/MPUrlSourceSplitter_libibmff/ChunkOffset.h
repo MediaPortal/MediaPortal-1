@@ -29,7 +29,7 @@ class CChunkOffset
 {
 public:
   // initializes a new instance of CChunkOffset class
-  CChunkOffset(void);
+  CChunkOffset(HRESULT *result);
 
   // destructor
   ~CChunkOffset(void);

@@ -25,7 +25,11 @@
 
 #include "Box.h"
 
-#define SAMPLE_TABLE_BOX_TYPE                                                 L"stbl"
+#define SAMPLE_TABLE_BOX_TYPE                                         L"stbl"
+
+#define SAMPLE_TABLE_BOX_FLAG_NONE                                    BOX_FLAG_NONE
+
+#define SAMPLE_TABLE_BOX_FLAG_LAST                                    (BOX_FLAG_LAST + 0)
 
 class CSampleTableBox :
   public CBox
@@ -33,7 +37,7 @@ class CSampleTableBox :
 public:
   // initializes a new instance of CSampleTableBox class
   // @param handlerType : the handler type from handler box
-  CSampleTableBox(uint32_t handlerType);
+  CSampleTableBox(HRESULT *result, uint32_t handlerType);
 
   // destructor
   virtual ~CSampleTableBox(void);

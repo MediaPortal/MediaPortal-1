@@ -23,11 +23,20 @@
 #include "DataEntryUrlBox.h"
 #include "BoxCollection.h"
 
-CDataEntryUrlBox::CDataEntryUrlBox(void)
-  : CDataEntryBox()
+CDataEntryUrlBox::CDataEntryUrlBox(HRESULT *result)
+  : CDataEntryBox(result)
 {
-  this->type = Duplicate(DATA_ENTRY_URL_BOX_TYPE);
-  this->location = Duplicate(L"");
+  this->type = NULL;
+  this->location = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(DATA_ENTRY_URL_BOX_TYPE);
+    this->location = Duplicate(L"");
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->location, *result, E_OUTOFMEMORY);
+  }
 }
 
 CDataEntryUrlBox::~CDataEntryUrlBox(void)
@@ -102,47 +111,36 @@ bool CDataEntryUrlBox::ParseInternal(const unsigned char *buffer, uint32_t lengt
 {
   FREE_MEM(this->location);
 
-  bool result = __super::ParseInternal(buffer, length, false);
-
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    if (wcscmp(this->type, DATA_ENTRY_URL_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, DATA_ENTRY_URL_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-      if (!this->IsSelfContained())
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
+    {
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
+
+      if (SUCCEEDED(continueParsing) && (!this->IsSelfContained()))
       {
-        if (continueParsing)
-        {
-          uint32_t positionAfter = position;
-          continueParsing &= SUCCEEDED(this->GetString(buffer, length, position, &this->location, &positionAfter));
+        uint32_t positionAfter = position;
+        continueParsing = this->GetString(buffer, length, position, &this->location, &positionAfter);
 
-          if (continueParsing)
-          {
-            position = positionAfter;
-          }
-        }
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(continueParsing), position = positionAfter);
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CDataEntryUrlBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

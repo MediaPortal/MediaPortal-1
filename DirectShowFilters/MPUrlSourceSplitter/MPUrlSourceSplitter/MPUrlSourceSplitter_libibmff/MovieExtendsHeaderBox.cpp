@@ -23,11 +23,18 @@
 #include "MovieExtendsHeaderBox.h"
 #include "BoxCollection.h"
 
-CMovieExtendsHeaderBox::CMovieExtendsHeaderBox(void)
-  : CFullBox()
+CMovieExtendsHeaderBox::CMovieExtendsHeaderBox(HRESULT *result)
+  : CFullBox(result)
 {
-  this->type = Duplicate(MOVIE_EXTENDS_HEADER_BOX_TYPE);
+  this->type = NULL;
   this->fragmentDuration = 0;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(MOVIE_EXTENDS_HEADER_BOX_TYPE);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+  }
 }
 
 CMovieExtendsHeaderBox::~CMovieExtendsHeaderBox(void)
@@ -111,24 +118,18 @@ uint64_t CMovieExtendsHeaderBox::GetBoxSize(void)
 
 bool CMovieExtendsHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  this->fragmentDuration = 0;
-
-  bool result = __super::ParseInternal(buffer, length, false);
-
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    if (wcscmp(this->type, MOVIE_EXTENDS_HEADER_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, MOVIE_EXTENDS_HEADER_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-      if (continueParsing)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
+    {
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
+
+      if (SUCCEEDED(continueParsing))
       {
         switch (this->GetVersion())
         {
@@ -139,23 +140,22 @@ bool CMovieExtendsHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t
           RBE64INC(buffer, position, this->fragmentDuration);
           break;
         default:
-          continueParsing = false;
+          continueParsing = E_FAIL;
           break;
         }
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CMovieExtendsHeaderBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

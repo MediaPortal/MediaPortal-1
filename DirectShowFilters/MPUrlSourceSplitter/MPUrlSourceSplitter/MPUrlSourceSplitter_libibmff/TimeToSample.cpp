@@ -22,7 +22,7 @@
 
 #include "TimeToSample.h"
 
-CTimeToSample::CTimeToSample(void)
+CTimeToSample::CTimeToSample(HRESULT *result)
 {
   this->sampleCount = 0;
   this->sampleDelta = 0;

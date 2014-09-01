@@ -26,21 +26,25 @@
 #include "FullBox.h"
 #include "SampleCollection.h"
 
-#define TRACK_RUN_BOX_TYPE                                                    L"trun"
+#define TRACK_RUN_BOX_TYPE                                            L"trun"
 
-#define FLAGS_DATA_OFFSET_PRESENT                                             0x00000001
-#define FLAGS_FIRST_SAMPLE_FLAGS_PRESENT                                      0x00000004
-#define FLAGS_SAMPLE_DURATION_PRESENT                                         0x00000100
-#define FLAGS_SAMPLE_SIZE_PRESENT                                             0x00000200
-#define FLAGS_SAMPLE_FLAGS_PRESENT                                            0x00000400
-#define FLAGS_SAMPLE_COMPOSITION_TIME_OFFSETS_PRESENT                         0x00000800
+#define FLAGS_DATA_OFFSET_PRESENT                                     0x00000001
+#define FLAGS_FIRST_SAMPLE_FLAGS_PRESENT                              0x00000004
+#define FLAGS_SAMPLE_DURATION_PRESENT                                 0x00000100
+#define FLAGS_SAMPLE_SIZE_PRESENT                                     0x00000200
+#define FLAGS_SAMPLE_FLAGS_PRESENT                                    0x00000400
+#define FLAGS_SAMPLE_COMPOSITION_TIME_OFFSETS_PRESENT                 0x00000800
+
+#define TRACK_RUN_BOX_FLAG_NONE                                       FULL_BOX_FLAG_NONE
+
+#define TRACK_RUN_BOX_FLAG_LAST                                       (FULL_BOX_FLAG_LAST + 0)
 
 class CTrackRunBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CTrackRunBox class
-  CTrackRunBox(void);
+  CTrackRunBox(HRESULT *result);
 
   // destructor
   virtual ~CTrackRunBox(void);

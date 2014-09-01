@@ -82,7 +82,7 @@ CPacketInputFormat::~CPacketInputFormat(void)
 
 /* other methods */
 
-bool CPacketInputFormat::IsSetFlags(uint64_t flags)
+bool CPacketInputFormat::IsSetFlags(uint32_t flags)
 {
   return ((this->internalFlags & flags) == flags);
 }

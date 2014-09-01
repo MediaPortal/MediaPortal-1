@@ -22,23 +22,27 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "MMSContext.h"
 
-MMSContext::MMSContext()
+MMSContext::MMSContext(HRESULT *result)
 {
-  this->buffer = new CLinearBuffer();
-  this->streams = new MMSStreamCollection();
+  this->buffer = NULL;
+  this->streams = NULL;
   this->headerParsed = false;
   this->requestSequenceNumber = 1;
   this->chunkSequence = 0;
   this->finishTime = 0;
 
-  if (this->buffer != NULL)
-  {
-    this->buffer->InitializeBuffer(HEADER_BUFFER_SIZE);
-  }
-
   this->asfHeader = NULL;
   this->asfHeaderLength = 0;
   this->asfPacketLength = 0;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->buffer = new CLinearBuffer(result, HEADER_BUFFER_SIZE);
+    this->streams = new MMSStreamCollection(result);
+
+    CHECK_POINTER_HRESULT(*result, this->buffer, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->streams, *result, E_OUTOFMEMORY);
+  }
 }
 
 MMSContext::~MMSContext()

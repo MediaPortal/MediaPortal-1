@@ -570,21 +570,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
       this->segmentFragmentToDownload = (this->segmentFragmentToDownload == UINT_MAX) ? this->segmentFragments->GetFirstNotDownloadedItemIndex(0) : this->segmentFragmentToDownload;
       // fragment to download still can be UINT_MAX = no fragment to download
 
-      //// clear all not downloaded segment fragments
-      //CIndexedCacheFileItemCollection *notDownloadedIndexedItems = new CIndexedCacheFileItemCollection(&result);
-      //CHECK_CONDITION_HRESULT(result, notDownloadedIndexedItems, result, E_OUTOFMEMORY);
-
-      //CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->segmentFragments->GetNotDownloadedItems(notDownloadedIndexedItems));
-
-      //for (unsigned int i = 0; (SUCCEEDED(result) && (i < notDownloadedIndexedItems->Count())); i++)
-      //{
-      //  CCacheFileItem *notDownloadedItem = notDownloadedIndexedItems->GetItem(i)->GetItem();
-
-      //  notDownloadedItem->GetBuffer()->ClearBuffer();
-      //}
-
-      //FREE_MEM_CLASS(notDownloadedIndexedItems);
-
       unsigned int finishTime = UINT_MAX;
       if (SUCCEEDED(result))
       {

@@ -20,36 +20,41 @@
 
 #pragma once
 
-#ifndef __MSHS_TRACK_DEFINED
-#define __MSHS_TRACK_DEFINED
+#ifndef __MSHS_MANIFEST_TRACK_BOX_DEFINED
+#define __MSHS_MANIFEST_TRACK_BOX_DEFINED
 
-#include "Serializable.h"
-#include "MSHSCustomAttributeCollection.h"
+#include "MshsManifestCustomAttributeBoxCollection.h"
+#include "Box.h"
 
 #include <stdint.h>
 
-#define MSHS_NAL_UNIT_LENGTH_DEFAULT                                          4
+#define MSHS_MANIFEST_TRACK_BOX_TYPE                                  L"mstr"
 
-#define MSHS_AUDIO_TAG_LINEAR_PCM                                             0x00000001
-#define MSHS_AUDIO_TAG_WMA_V7_V8_V9                                           0x00000161
-#define MSHS_AUDIO_TAG_WMA_V10                                                0x00000161
-#define MSHS_AUDIO_TAG_ISO_MPEG_1_LAYER_3                                     0x00000055
-#define MSHS_AUDIO_TAG_ISO_AAC                                                0x000000FF
-#define MSHS_AUDIO_TAG_VENDOR_EXTENSIBLE                                      0x0000FFFE
+#define MSHS_MANIFEST_TRACK_BOX_FLAG_NONE                             BOX_FLAG_NONE
 
-#define MSHS_FOURCC_H264                                                      L"H264"
-#define MSHS_FOURCC_WVC1                                                      L"WVC1"
-#define MSHS_FOURCC_AACL                                                      L"AACL"
-#define MSHS_FOURCC_WMAP                                                      L"WMAP"
+#define MSHS_MANIFEST_TRACK_BOX_FLAG_LAST                             (BOX_FLAG_LAST + 0)
 
-class CMSHSTrack : public CSerializable
+#define MSHS_NAL_UNIT_LENGTH_DEFAULT                                  4
+
+#define MSHS_AUDIO_TAG_LINEAR_PCM                                     0x00000001
+#define MSHS_AUDIO_TAG_WMA_V7_V8_V9                                   0x00000161
+#define MSHS_AUDIO_TAG_WMA_V10                                        0x00000161
+#define MSHS_AUDIO_TAG_ISO_MPEG_1_LAYER_3                             0x00000055
+#define MSHS_AUDIO_TAG_ISO_AAC                                        0x000000FF
+#define MSHS_AUDIO_TAG_VENDOR_EXTENSIBLE                              0x0000FFFE
+
+#define MSHS_FOURCC_H264                                              L"H264"
+#define MSHS_FOURCC_WVC1                                              L"WVC1"
+#define MSHS_FOURCC_AACL                                              L"AACL"
+#define MSHS_FOURCC_WMAP                                              L"WMAP"
+
+class CMshsManifestTrackBox : public CBox
 {
 public:
-  // creats new instance of CMSHSTrack class
-  CMSHSTrack(void);
-
+  // creats new instance of CMshsManifestTrackBox class
+  CMshsManifestTrackBox(HRESULT *result);
   // desctructor
-  ~CMSHSTrack(void);
+  virtual ~CMshsManifestTrackBox(void);
 
   /* get methods */
 
@@ -120,7 +125,13 @@ public:
 
   // gets custom attributes associated with track
   // @return : custom attributes associated with track
-  CMSHSCustomAttributeCollection *GetCustomAttributes(void);
+  CMshsManifestCustomAttributeBoxCollection *GetCustomAttributes(void);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @return : true if all data were successfully stored into buffer, false otherwise
+  virtual bool GetBox(uint8_t *buffer, uint32_t length);
 
   /* set methods */
 
@@ -191,19 +202,16 @@ public:
 
   /* other methods */
 
-  // gets necessary buffer length for serializing instance
-  // @return : necessary size for buffer
-  virtual uint32_t GetSerializeSize(void);
+  // parses data in buffer
+  // @param buffer : buffer with box data for parsing
+  // @param length : the length of data in buffer
+  // @return : true if parsed successfully, false otherwise
+  virtual bool Parse(const uint8_t *buffer, uint32_t length);
 
-  // serialize instance into buffer, buffer must be allocated before and must have necessary size
-  // @param buffer : buffer which stores serialized instance
-  // @return : true if successful, false otherwise
-  virtual bool Serialize(uint8_t *buffer);
-
-  // deserializes instance
-  // @param : buffer which stores serialized instance
-  // @return : true if successful, false otherwise
-  virtual bool Deserialize(const uint8_t *buffer);
+  // gets box data in human readable format
+  // @param indent : string to insert before each line
+  // @return : box data in human readable format or NULL if error
+  virtual wchar_t *GetParsedHumanReadable(const wchar_t *indent);
 
 private:
 
@@ -272,7 +280,28 @@ private:
   // the default value is NAL_UNIT_LENGTH_DEFAULT
   uint16_t nalUnitLengthField;
 
-  CMSHSCustomAttributeCollection *customAttributes;
+  CMshsManifestCustomAttributeBoxCollection *customAttributes;
+
+  /* methods */
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
+
+  // parses data in buffer
+  // @param buffer : buffer with box data for parsing
+  // @param length : the length of data in buffer
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed
+  // @return : true if parsed successfully, false otherwise
+  virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
+  // @return : number of bytes stored into buffer, 0 if error
+  virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

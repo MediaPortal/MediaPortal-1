@@ -22,15 +22,24 @@
 
 #include "AVCDecoderConfiguration.h"
 
-CAVCDecoderConfiguration::CAVCDecoderConfiguration(void)
+CAVCDecoderConfiguration::CAVCDecoderConfiguration(HRESULT *result)
 {
   this->configurationVersion = 1;
   this->avcProfileIndication = 0;
   this->profileCompatibility = 0;
   this->avcLevelIndication = 0;
   this->lengthSizeMinusOne = 0;
-  this->sequenceParameterSetNALUnits = new CSequenceParameterSetNALUnitCollection();
-  this->pictureParameterSetNALUnits = new CPictureParameterSetNALUnitCollection();
+  this->sequenceParameterSetNALUnits = NULL;
+  this->pictureParameterSetNALUnits = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->sequenceParameterSetNALUnits = new CSequenceParameterSetNALUnitCollection(result);
+    this->pictureParameterSetNALUnits = new CPictureParameterSetNALUnitCollection(result);
+
+    CHECK_POINTER_HRESULT(*result, this->sequenceParameterSetNALUnits, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->pictureParameterSetNALUnits, *result, E_OUTOFMEMORY);
+  }
 }
 
 CAVCDecoderConfiguration::~CAVCDecoderConfiguration(void)

@@ -25,14 +25,18 @@
 
 #include "FullBox.h"
 
-#define VIDEO_MEDIA_HEADER_BOX_TYPE                                           L"vmhd"
+#define VIDEO_MEDIA_HEADER_BOX_TYPE                                   L"vmhd"
+
+#define VIDEO_MEDIA_HEADER_BOX_FLAG_NONE                              FULL_BOX_FLAG_NONE
+
+#define VIDEO_MEDIA_HEADER_BOX_FLAG_LAST                              (FULL_BOX_FLAG_LAST + 0)
 
 class CVideoMediaHeaderBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CVideoMediaHeaderBox class
-  CVideoMediaHeaderBox(void);
+  CVideoMediaHeaderBox(HRESULT *result);
 
   // destructor
   virtual ~CVideoMediaHeaderBox(void);

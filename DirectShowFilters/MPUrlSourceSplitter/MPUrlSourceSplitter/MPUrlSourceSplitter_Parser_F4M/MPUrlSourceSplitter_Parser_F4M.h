@@ -157,6 +157,8 @@ public:
   virtual HRESULT ReceiveData(CStreamPackage *streamPackage);
 
 protected:
+  // holds last received length
+  unsigned int lastReceivedLength;
 };
 
 #endif

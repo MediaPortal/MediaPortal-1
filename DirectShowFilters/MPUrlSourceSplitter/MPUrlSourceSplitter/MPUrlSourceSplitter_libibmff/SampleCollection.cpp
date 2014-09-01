@@ -22,8 +22,8 @@
 
 #include "SampleCollection.h"
 
-CSampleCollection::CSampleCollection(void)
-  : CCollection()
+CSampleCollection::CSampleCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

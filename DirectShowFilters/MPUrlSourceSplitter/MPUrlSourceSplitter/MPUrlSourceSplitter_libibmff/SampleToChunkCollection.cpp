@@ -22,8 +22,8 @@
 
 #include "SampleToChunkCollection.h"
 
-CSampleToChunkCollection::CSampleToChunkCollection(void)
-  : CCollection()
+CSampleToChunkCollection::CSampleToChunkCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

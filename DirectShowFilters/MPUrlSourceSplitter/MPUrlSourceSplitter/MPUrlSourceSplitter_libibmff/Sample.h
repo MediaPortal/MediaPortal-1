@@ -29,7 +29,7 @@ class CSample
 {
 public:
   // initializes a new instance of CSample class
-  CSample(void);
+  CSample(HRESULT *result);
 
   // destructor
   ~CSample(void);

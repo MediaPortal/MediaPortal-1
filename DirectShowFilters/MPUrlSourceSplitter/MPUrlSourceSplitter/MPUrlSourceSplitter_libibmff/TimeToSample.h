@@ -29,7 +29,7 @@ class CTimeToSample
 {
 public:
   // initializes a new instance of CTimeToSample class
-  CTimeToSample(void);
+  CTimeToSample(HRESULT *result);
 
   // destructor
   ~CTimeToSample(void);

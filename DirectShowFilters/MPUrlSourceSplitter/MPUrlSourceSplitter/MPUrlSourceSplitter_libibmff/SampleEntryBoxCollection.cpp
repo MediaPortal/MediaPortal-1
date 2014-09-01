@@ -22,8 +22,8 @@
 
 #include "SampleEntryBoxCollection.h"
 
-CSampleEntryBoxCollection::CSampleEntryBoxCollection(void)
-  : CKeyedCollection()
+CSampleEntryBoxCollection::CSampleEntryBoxCollection(HRESULT *result)
+  : CKeyedCollection(result)
 {
 }
 

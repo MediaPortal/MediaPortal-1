@@ -29,7 +29,7 @@
 class CBrandCollection : public CKeyedCollection<CBrand, const wchar_t *>
 {
 public:
-  CBrandCollection(void);
+  CBrandCollection(HRESULT *result);
   ~CBrandCollection(void);
 
 protected:

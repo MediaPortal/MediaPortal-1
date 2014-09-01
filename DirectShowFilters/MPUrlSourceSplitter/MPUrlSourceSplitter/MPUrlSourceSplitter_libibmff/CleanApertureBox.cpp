@@ -23,10 +23,10 @@
 #include "CleanApertureBox.h"
 #include "BoxCollection.h"
 
-CCleanApertureBox::CCleanApertureBox(void)
-  : CBox()
+CCleanApertureBox::CCleanApertureBox(HRESULT *result)
+  : CBox(result)
 {
-  this->type = Duplicate(CLEAN_APERTURE_BOX_TYPE);
+  this->type = NULL;
   this->cleanApertureWidthN = 0;
   this->cleanApertureWidthD = 0;
   this->cleanApertureHeightN = 0;
@@ -35,6 +35,13 @@ CCleanApertureBox::CCleanApertureBox(void)
   this->horizOffD = 0;
   this->vertOffN = 0;
   this->vertOffD = 0;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(CLEAN_APERTURE_BOX_TYPE);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+  }
 }
 
 CCleanApertureBox::~CCleanApertureBox(void)
@@ -142,31 +149,18 @@ uint64_t CCleanApertureBox::GetBoxSize(void)
 
 bool CCleanApertureBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  this->cleanApertureWidthN = 0;
-  this->cleanApertureWidthD = 0;
-  this->cleanApertureHeightN = 0;
-  this->cleanApertureHeightD = 0;
-  this->horizOffN = 0;
-  this->horizOffD = 0;
-  this->vertOffN = 0;
-  this->vertOffD = 0;
-
-  bool result = __super::ParseInternal(buffer, length, false);
-
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    if (wcscmp(this->type, CLEAN_APERTURE_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, CLEAN_APERTURE_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-      if (continueParsing)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
+    {
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
+
+      if (SUCCEEDED(continueParsing))
       {
         RBE32INC(buffer, position, this->cleanApertureWidthN);
         RBE32INC(buffer, position, this->cleanApertureWidthD);
@@ -178,18 +172,17 @@ bool CCleanApertureBox::ParseInternal(const unsigned char *buffer, uint32_t leng
         RBE32INC(buffer, position, this->vertOffD);
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CCleanApertureBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

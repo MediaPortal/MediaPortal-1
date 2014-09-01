@@ -24,11 +24,20 @@
 #include "BoxFactory.h"
 #include "BoxCollection.h"
 
-CDataReferenceBox::CDataReferenceBox(void)
-  : CFullBox()
+CDataReferenceBox::CDataReferenceBox(HRESULT *result)
+  : CFullBox(result)
 {
-  this->type = Duplicate(DATA_REFERENCE_BOX_TYPE);
-  this->dataEntryBoxCollection = new CDataEntryBoxCollection();
+  this->type = NULL;
+  this->dataEntryBoxCollection = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(DATA_REFERENCE_BOX_TYPE);
+    this->dataEntryBoxCollection = new CDataEntryBoxCollection(result);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->dataEntryBoxCollection, *result, E_OUTOFMEMORY);
+  }
 }
 
 CDataReferenceBox::~CDataReferenceBox(void)
@@ -130,73 +139,62 @@ uint64_t CDataReferenceBox::GetBoxSize(void)
 
 bool CDataReferenceBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  if (this->dataEntryBoxCollection != NULL)
+  this->dataEntryBoxCollection->Clear();
+
+  if (__super::ParseInternal(buffer, length, false))
   {
-    this->dataEntryBoxCollection->Clear();
-  }
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, DATA_REFERENCE_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-  bool result = (this->dataEntryBoxCollection != NULL);
-  result &= __super::ParseInternal(buffer, length, false);
-
-  if (result)
-  {
-    if (wcscmp(this->type, DATA_REFERENCE_BOX_TYPE) != 0)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
     {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
 
-      if (continueParsing)
+      if (SUCCEEDED(continueParsing))
       {
-        CBoxFactory *factory = new CBoxFactory();
-        continueParsing &= (factory != NULL);
+        CBoxFactory *factory = new CBoxFactory(&continueParsing);
+        CHECK_POINTER_HRESULT(continueParsing, factory, continueParsing, E_OUTOFMEMORY);
 
-        if (continueParsing)
+        if (SUCCEEDED(continueParsing))
         {
           RBE32INC_DEFINE(buffer, position, dataEntryBoxCount, uint32_t);
 
-          for (uint32_t i = 0; (continueParsing && (i < dataEntryBoxCount)); i++)
+          CHECK_CONDITION_HRESULT(continueParsing, this->dataEntryBoxCollection->EnsureEnoughSpace(dataEntryBoxCount), continueParsing, E_OUTOFMEMORY);
+
+          for (uint32_t i = 0; (SUCCEEDED(continueParsing) && (i < dataEntryBoxCount)); i++)
           {
             CBox *box = factory->CreateBox(buffer + position, length - position);
-            continueParsing &= (box != NULL);
+            CHECK_POINTER_HRESULT(continueParsing, box, continueParsing, E_OUTOFMEMORY);
 
-            if (continueParsing)
+            if (SUCCEEDED(continueParsing))
             {
-              continueParsing &= ((dynamic_cast<CDataEntryBox *>(box)) != NULL);
-              if (continueParsing)
-              {
-                continueParsing &= this->dataEntryBoxCollection->Add(dynamic_cast<CDataEntryBox *>(box));
-                position += (uint32_t)box->GetSize();
-              }
+              CDataEntryBox *dataEntryBox = dynamic_cast<CDataEntryBox *>(box);
+              CHECK_POINTER_HRESULT(continueParsing, dataEntryBox, continueParsing, E_FAIL);
+
+              CHECK_CONDITION_HRESULT(continueParsing, this->dataEntryBoxCollection->Add(dataEntryBox), continueParsing, E_OUTOFMEMORY);
+              CHECK_CONDITION_EXECUTE(SUCCEEDED(continueParsing), position += (uint32_t)box->GetSize());
             }
 
-            if (!continueParsing)
-            {
-              FREE_MEM_CLASS(box);
-            }
+            CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(box));
           }
         }
 
         FREE_MEM_CLASS(factory);
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CDataReferenceBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

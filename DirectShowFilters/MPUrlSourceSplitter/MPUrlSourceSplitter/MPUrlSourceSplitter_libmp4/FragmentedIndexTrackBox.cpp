@@ -23,12 +23,21 @@
 #include "FragmentedIndexTrackBox.h"
 #include "BoxCollection.h"
 
-CFragmentedIndexTrackBox::CFragmentedIndexTrackBox(void)
-  : CFullBox()
+CFragmentedIndexTrackBox::CFragmentedIndexTrackBox(HRESULT *result)
+  : CFullBox(result)
 {
-  this->type = Duplicate(FRAGMENTED_INDEX_TRACK_BOX_TYPE);
+  this->type = NULL;
   this->trackId = 0;
-  this->fragmentedIndexes = new CFragmentedIndexCollection();
+  this->fragmentedIndexes = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(FRAGMENTED_INDEX_TRACK_BOX_TYPE);
+    this->fragmentedIndexes = new CFragmentedIndexCollection(result);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->fragmentedIndexes, *result, E_OUTOFMEMORY);
+  }
 }
 
 CFragmentedIndexTrackBox::~CFragmentedIndexTrackBox(void)
@@ -103,63 +112,55 @@ uint64_t CFragmentedIndexTrackBox::GetBoxSize(void)
 
 bool CFragmentedIndexTrackBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  FREE_MEM_CLASS(this->fragmentedIndexes);
-  this->fragmentedIndexes = new CFragmentedIndexCollection();
+  this->fragmentedIndexes->Clear();
 
-  // in bad case we don't have objects, but still it can be valid box
-  bool result = ((this->fragmentedIndexes != NULL) && __super::ParseInternal(buffer, length, false));
-
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    if (wcscmp(this->type, FRAGMENTED_INDEX_TRACK_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, FRAGMENTED_INDEX_TRACK_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-      if (continueParsing)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
+    {
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
+
+      if (SUCCEEDED(continueParsing))
       {
         RBE32INC(buffer, position, this->trackId);
         RBE32INC_DEFINE(buffer, position, fragmentIndexCount, uint32_t);
 
-        for (uint32_t i = 0; (continueParsing && (i < fragmentIndexCount)); i++)
-        {
-          CFragmentedIndex *index = new CFragmentedIndex();
+        CHECK_CONDITION_HRESULT(continueParsing, this->fragmentedIndexes->EnsureEnoughSpace(fragmentIndexCount), continueParsing, E_OUTOFMEMORY);
 
-          if (continueParsing)
+        for (uint32_t i = 0; (SUCCEEDED(continueParsing) && (i < fragmentIndexCount)); i++)
+        {
+          CFragmentedIndex *index = new CFragmentedIndex(&continueParsing);
+          CHECK_POINTER_HRESULT(continueParsing, index, continueParsing, E_OUTOFMEMORY);
+
+          if (SUCCEEDED(continueParsing))
           {
             index->SetTimestamp(RBE64(buffer, position));
             position += 8;
             index->SetDuration(RBE64(buffer, position));
             position += 8;
-
-            continueParsing &= this->fragmentedIndexes->Add(index);
           }
 
-          if (!continueParsing)
-          {
-            FREE_MEM_CLASS(index);
-          }
+          CHECK_CONDITION_HRESULT(continueParsing, this->fragmentedIndexes->Add(index), continueParsing, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(index));
         }
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CFragmentedIndexTrackBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -168,7 +169,6 @@ uint32_t CFragmentedIndexTrackBox::GetBoxInternal(uint8_t *buffer, uint32_t leng
 
   if (result != 0)
   {
-
     WBE32INC(buffer, result, this->GetTrackId());
     WBE32INC(buffer, result, this->GetFragmentedIndexes()->Count());
 

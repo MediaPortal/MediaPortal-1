@@ -22,7 +22,7 @@
 
 #include "FixedPointNumber.h"
 
-CFixedPointNumber::CFixedPointNumber(uint8_t integerPartSize, uint8_t fractionPartSize)
+CFixedPointNumber::CFixedPointNumber(HRESULT *result, uint8_t integerPartSize, uint8_t fractionPartSize)
 {
   this->integerPartSize = (integerPartSize <= INTEGER_PART_SIZE_MAX) ? integerPartSize : 0;
   this->fractionPartSize = (fractionPartSize <= FRACTION_PART_SIZE_MAX) ? fractionPartSize : 0;

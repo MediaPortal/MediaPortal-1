@@ -25,19 +25,23 @@
 
 #include "FullBox.h"
 
-#define HANDLER_BOX_TYPE                                                      L"hdlr"
+#define HANDLER_BOX_TYPE                                              L"hdlr"
 
-#define HANDLER_TYPE_VIDEO                                                    0x76696465
-#define HANDLER_TYPE_AUDIO                                                    0x736F756E
-#define HANDLER_TYPE_HINT                                                     0x68696E74
-#define HANDLER_TYPE_METADATA                                                 0x6D657461
+#define HANDLER_TYPE_VIDEO                                            0x76696465
+#define HANDLER_TYPE_AUDIO                                            0x736F756E
+#define HANDLER_TYPE_HINT                                             0x68696E74
+#define HANDLER_TYPE_METADATA                                         0x6D657461
+
+#define HANDLER_BOX_FLAG_NONE                                         FULL_BOX_FLAG_NONE
+
+#define HANDLER_BOX_FLAG_LAST                                         (FULL_BOX_FLAG_LAST + 0)
 
 class CHandlerBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CHandlerBox class
-  CHandlerBox(void);
+  CHandlerBox(HRESULT *result);
 
   // destructor
   virtual ~CHandlerBox(void);

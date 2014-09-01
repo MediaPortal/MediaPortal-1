@@ -25,14 +25,18 @@
 
 #include "FullBox.h"
 
-#define MOVIE_FRAGMENT_HEADER_BOX_TYPE                                        L"mfhd"
+#define MOVIE_FRAGMENT_HEADER_BOX_TYPE                                L"mfhd"
+
+#define MOVIE_FRAGMENT_HEADER_BOX_FLAG_NONE                           FULL_BOX_FLAG_NONE
+
+#define MOVIE_FRAGMENT_HEADER_BOX_FLAG_LAST                           (BOX_FLAG_LAST + 0)
 
 class CMovieFragmentHeaderBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CMovieFragmentHeaderBox class
-  CMovieFragmentHeaderBox(void);
+  CMovieFragmentHeaderBox(HRESULT *result);
 
   // destructor
   virtual ~CMovieFragmentHeaderBox(void);

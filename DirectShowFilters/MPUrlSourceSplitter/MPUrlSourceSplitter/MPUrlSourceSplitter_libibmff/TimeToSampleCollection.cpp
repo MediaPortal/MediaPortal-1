@@ -22,8 +22,8 @@
 
 #include "TimeToSampleCollection.h"
 
-CTimeToSampleCollection::CTimeToSampleCollection(void)
-  : CCollection()
+CTimeToSampleCollection::CTimeToSampleCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

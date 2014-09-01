@@ -25,17 +25,21 @@
 
 #include "Box.h"
 
-#define SAMPLE_ENTRY_BOX_DATA_SIZE                                            8
+#define SAMPLE_ENTRY_BOX_DATA_SIZE                                    8
 
-#define SAMPLE_ENTRY_BOX_HEADER_LENGTH                                        BOX_HEADER_LENGTH + SAMPLE_ENTRY_BOX_DATA_SIZE
-#define SAMPLE_ENTRY_BOX_HEADER_LENGTH_SIZE64                                 BOX_HEADER_LENGTH_SIZE64 + SAMPLE_ENTRY_BOX_DATA_SIZE
+#define SAMPLE_ENTRY_BOX_HEADER_LENGTH                                BOX_HEADER_LENGTH + SAMPLE_ENTRY_BOX_DATA_SIZE
+#define SAMPLE_ENTRY_BOX_HEADER_LENGTH_SIZE64                         BOX_HEADER_LENGTH_SIZE64 + SAMPLE_ENTRY_BOX_DATA_SIZE
+
+#define SAMPLE_ENTRY_BOX_FLAG_NONE                                    BOX_FLAG_NONE
+
+#define SAMPLE_ENTRY_BOX_FLAG_LAST                                    (BOX_FLAG_LAST + 0)
 
 class CSampleEntryBox :
   public CBox
 {
 public:
   // initializes a new instance of CSampleEntryBox class
-  CSampleEntryBox(void);
+  CSampleEntryBox(HRESULT *result);
 
   // destructor
   virtual ~CSampleEntryBox(void);

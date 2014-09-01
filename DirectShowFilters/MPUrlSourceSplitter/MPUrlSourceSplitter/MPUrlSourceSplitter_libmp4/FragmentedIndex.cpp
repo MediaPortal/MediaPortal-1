@@ -22,7 +22,7 @@
 
 #include "FragmentedIndex.h"
 
-CFragmentedIndex::CFragmentedIndex(void)
+CFragmentedIndex::CFragmentedIndex(HRESULT *result)
 {
   this->timestamp = 0;
   this->duration = 0;

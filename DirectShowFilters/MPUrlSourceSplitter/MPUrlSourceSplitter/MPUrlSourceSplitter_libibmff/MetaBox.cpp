@@ -23,11 +23,20 @@
 #include "MetaBox.h"
 #include "BoxCollection.h"
 
-CMetaBox::CMetaBox(void)
-  : CFullBox()
+CMetaBox::CMetaBox(HRESULT *result)
+  : CFullBox(result)
 {
-  this->type = Duplicate(META_BOX_TYPE);
-  this->handlerBox = new CHandlerBox();
+  this->type = NULL;
+  this->handlerBox = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(META_BOX_TYPE);
+    this->handlerBox = new CHandlerBox(result);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->handlerBox, *result, E_OUTOFMEMORY);
+  }
 }
 
 CMetaBox::~CMetaBox(void)
@@ -101,53 +110,40 @@ uint64_t CMetaBox::GetBoxSize(void)
 bool CMetaBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
   FREE_MEM_CLASS(this->handlerBox);
-  bool result = __super::ParseInternal(buffer, length, false);
 
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    if (wcscmp(this->type, META_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, META_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-      if (continueParsing)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
+    {
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
+
+      if (SUCCEEDED(continueParsing))
       {
-        this->handlerBox = new CHandlerBox();
-        continueParsing &= (this->handlerBox != NULL);
+        this->handlerBox = new CHandlerBox(&continueParsing);
+        CHECK_POINTER_HRESULT(continueParsing, this->handlerBox, continueParsing, E_OUTOFMEMORY);
 
-        if (continueParsing)
-        {
-          continueParsing &= this->handlerBox->Parse(buffer + position, (uint32_t)this->GetSize() - position);
-          if (continueParsing)
-          {
-            position += (uint32_t)this->handlerBox->GetSize();
-          }
-        }
+        CHECK_CONDITION_HRESULT(continueParsing, this->handlerBox->Parse(buffer + position, (uint32_t)this->GetSize() - position), continueParsing, E_FAIL);
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(continueParsing), position += (uint32_t)this->handlerBox->GetSize());
 
-        if (!continueParsing)
-        {
-          FREE_MEM_CLASS(this->handlerBox);
-        }
+        CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(this->handlerBox));
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CMetaBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

@@ -23,8 +23,8 @@
 #include "SampleEntryBox.h"
 #include "BoxCollection.h"
 
-CSampleEntryBox::CSampleEntryBox(void)
-  : CBox()
+CSampleEntryBox::CSampleEntryBox(HRESULT *result)
+  : CBox(result)
 {
   this->dataReferenceIndex = 0;
 }
@@ -89,17 +89,12 @@ uint64_t CSampleEntryBox::GetBoxSize(void)
 
 bool CSampleEntryBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  this->dataReferenceIndex = 0;
-
-  bool result = __super::ParseInternal(buffer, length, false);
-
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    // box is file type box, parse all values
     uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-    bool continueParsing = ((position + SAMPLE_ENTRY_BOX_DATA_SIZE) <= min(length, (uint32_t)this->GetSize()));
+    HRESULT continueParsing = ((position + SAMPLE_ENTRY_BOX_DATA_SIZE) <= min(length, (uint32_t)this->GetSize())) ? S_OK : E_NOT_VALID_STATE;
 
-    if (continueParsing)
+    if (SUCCEEDED(continueParsing))
     {
       // skip 6 x uint(8) reserved
       position += 6;
@@ -107,17 +102,16 @@ bool CSampleEntryBox::ParseInternal(const unsigned char *buffer, uint32_t length
       RBE16INC(buffer, position, this->dataReferenceIndex);
     }
 
-    if (continueParsing && processAdditionalBoxes)
+    if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
     {
       this->ProcessAdditionalBoxes(buffer, length, position);
     }
 
-    this->parsed = continueParsing;
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CSampleEntryBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

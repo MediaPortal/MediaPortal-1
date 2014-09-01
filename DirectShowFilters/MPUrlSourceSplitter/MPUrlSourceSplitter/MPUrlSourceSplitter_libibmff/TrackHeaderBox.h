@@ -27,21 +27,25 @@
 #include "FixedPointNumber.h"
 #include "Matrix.h"
 
-#define TRACK_HEADER_BOX_TYPE                                                 L"tkhd"
+#define TRACK_HEADER_BOX_TYPE                                         L"tkhd"
 
 // indicates that the track is enabled
-#define FLAGS_TRACK_ENABLED                                                   0x00000001
+#define FLAGS_TRACK_ENABLED                                           0x00000001
 // indicates that the track is used in the presentation
-#define FLAGS_TRACK_IN_MOVIE                                                  0x00000002
+#define FLAGS_TRACK_IN_MOVIE                                          0x00000002
 // indicates that the track is used when previewing the presentation
-#define FLAGS_TRACK_IN_PREVIEW                                                0x00000004
+#define FLAGS_TRACK_IN_PREVIEW                                        0x00000004
+
+#define TRACK_HEADER_BOX_FLAG_NONE                                    FULL_BOX_FLAG_NONE
+
+#define TRACK_HEADER_BOX_FLAG_LAST                                    (FULL_BOX_FLAG_LAST + 0)
 
 class CTrackHeaderBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CTrackHeaderBox class
-  CTrackHeaderBox(void);
+  CTrackHeaderBox(HRESULT *result);
 
   // destructor
   virtual ~CTrackHeaderBox(void);

@@ -23,11 +23,20 @@
 #include "TimeToSampleBox.h"
 #include "BoxCollection.h"
 
-CTimeToSampleBox::CTimeToSampleBox(void)
-  : CFullBox()
+CTimeToSampleBox::CTimeToSampleBox(HRESULT *result)
+  : CFullBox(result)
 {
-  this->type = Duplicate(TIME_TO_SAMPLE_BOX_TYPE);
-  this->timesToSamples = new CTimeToSampleCollection();
+  this->type = NULL;
+  this->timesToSamples = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(TIME_TO_SAMPLE_BOX_TYPE);
+    this->timesToSamples = new CTimeToSampleCollection(result);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->timesToSamples, *result, E_OUTOFMEMORY);
+  }
 }
 
 CTimeToSampleBox::~CTimeToSampleBox(void)
@@ -118,66 +127,55 @@ uint64_t CTimeToSampleBox::GetBoxSize(void)
 
 bool CTimeToSampleBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  if (this->timesToSamples != NULL)
+  this->timesToSamples->Clear();
+
+  if (__super::ParseInternal(buffer, length, false))
   {
-    this->timesToSamples->Clear();
-  }
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, TIME_TO_SAMPLE_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-  bool result (this->timesToSamples != NULL);
-  result &= __super::ParseInternal(buffer, length, false);
-
-  if (result)
-  {
-    if (wcscmp(this->type, TIME_TO_SAMPLE_BOX_TYPE) != 0)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
     {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
 
-      if (continueParsing)
+      if (SUCCEEDED(continueParsing))
       {
         RBE32INC_DEFINE(buffer, position, entryCount, uint32_t);
 
-        for (uint32_t i = 0; (continueParsing && (i < entryCount)); i++)
-        {
-          CTimeToSample *timeToSample = new CTimeToSample();
-          continueParsing &= (timeToSample != NULL);
+        CHECK_CONDITION_HRESULT(continueParsing, this->timesToSamples->EnsureEnoughSpace(entryCount), continueParsing, E_OUTOFMEMORY);
 
-          if (continueParsing)
+        for (uint32_t i = 0; (SUCCEEDED(continueParsing) && (i < entryCount)); i++)
+        {
+          CTimeToSample *timeToSample = new CTimeToSample(&continueParsing);
+          CHECK_POINTER_HRESULT(continueParsing, timeToSample, continueParsing, E_OUTOFMEMORY);
+
+          if (SUCCEEDED(continueParsing))
           {
             timeToSample->SetSampleCount(RBE32(buffer, position));
             position += 4;
 
             timeToSample->SetSampleDelta(RBE32(buffer, position));
             position += 4;
-
-            continueParsing &= this->timesToSamples->Add(timeToSample);
           }
 
-          if (!continueParsing)
-          {
-            FREE_MEM_CLASS(timeToSample);
-          }
+          CHECK_CONDITION_HRESULT(continueParsing, this->timesToSamples->Add(timeToSample), continueParsing, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(timeToSample));
         }
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CTimeToSampleBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

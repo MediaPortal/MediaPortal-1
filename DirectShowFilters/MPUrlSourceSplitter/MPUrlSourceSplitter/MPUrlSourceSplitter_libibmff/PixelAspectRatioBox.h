@@ -25,14 +25,19 @@
 
 #include "Box.h"
 
-#define PIXEL_ASPECT_RATIO_BOX_TYPE                                           L"pasp"
+#define PIXEL_ASPECT_RATIO_BOX_TYPE                                   L"pasp"
+
+#define PIXEL_ASPECT_RATIO_BOX_FLAG_NONE                              BOX_FLAG_NONE
+
+#define PIXEL_ASPECT_RATIO_BOX_FLAG_LAST                              (BOX_FLAG_LAST + 0)
+
 
 class CPixelAspectRatioBox :
   public CBox
 {
 public:
   // initializes a new instance of CPixelAspectRatioBox class
-  CPixelAspectRatioBox(void);
+  CPixelAspectRatioBox(HRESULT *result);
 
   // destructor
   virtual ~CPixelAspectRatioBox(void);

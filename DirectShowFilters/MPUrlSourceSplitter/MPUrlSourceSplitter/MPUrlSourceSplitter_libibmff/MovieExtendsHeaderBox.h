@@ -25,14 +25,18 @@
 
 #include "FullBox.h"
 
-#define MOVIE_EXTENDS_HEADER_BOX_TYPE                                         L"mehd"
+#define MOVIE_EXTENDS_HEADER_BOX_TYPE                                 L"mehd"
+
+#define MOVIE_EXTENDS_HEADER_BOX_FLAG_NONE                            FULL_BOX_FLAG_NONE
+
+#define MOVIE_EXTENDS_HEADER_BOX_FLAG_LAST                            (FULL_BOX_FLAG_LAST + 0)
 
 class CMovieExtendsHeaderBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CMovieExtendsHeaderBox class
-  CMovieExtendsHeaderBox(void);
+  CMovieExtendsHeaderBox(HRESULT *result);
 
   // destructor
   virtual ~CMovieExtendsHeaderBox(void);

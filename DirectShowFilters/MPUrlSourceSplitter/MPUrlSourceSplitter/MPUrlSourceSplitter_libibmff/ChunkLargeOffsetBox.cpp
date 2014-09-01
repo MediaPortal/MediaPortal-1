@@ -23,11 +23,20 @@
 #include "ChunkLargeOffsetBox.h"
 #include "BoxCollection.h"
 
-CChunkLargeOffsetBox::CChunkLargeOffsetBox(void)
-  : CFullBox()
+CChunkLargeOffsetBox::CChunkLargeOffsetBox(HRESULT *result)
+  : CFullBox(result)
 {
-  this->type = Duplicate(CHUNK_LARGE_OFFSET_BOX_TYPE);
-  this->chunkOffsets = new CChunkOffsetCollection();
+  this->type = NULL;
+  this->chunkOffsets = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(CHUNK_LARGE_OFFSET_BOX_TYPE);
+    this->chunkOffsets = new CChunkOffsetCollection(result);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->chunkOffsets, *result, E_OUTOFMEMORY);
+  }
 }
 
 CChunkLargeOffsetBox::~CChunkLargeOffsetBox(void)
@@ -117,63 +126,52 @@ uint64_t CChunkLargeOffsetBox::GetBoxSize(void)
 
 bool CChunkLargeOffsetBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  if (this->chunkOffsets != NULL)
+  this->chunkOffsets->Clear();
+
+  if (__super::ParseInternal(buffer, length, false))
   {
-    this->chunkOffsets->Clear();
-  }
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, CHUNK_LARGE_OFFSET_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-  bool result (this->chunkOffsets != NULL);
-  result &= __super::ParseInternal(buffer, length, false);
-
-  if (result)
-  {
-    if (wcscmp(this->type, CHUNK_LARGE_OFFSET_BOX_TYPE) != 0)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
     {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
 
-      if (continueParsing)
+      if (SUCCEEDED(continueParsing))
       {
         RBE32INC_DEFINE(buffer, position, chunkOffsetCount, uint32_t);
 
-        for (uint32_t i = 0; (continueParsing && (i < chunkOffsetCount)); i++)
-        {
-          CChunkOffset *chunkOffset = new CChunkOffset();
-          continueParsing &= (chunkOffset != NULL);
+        CHECK_CONDITION_HRESULT(continueParsing, this->chunkOffsets->EnsureEnoughSpace(chunkOffsetCount), continueParsing, E_OUTOFMEMORY);
 
-          if (continueParsing)
+        for (uint32_t i = 0; (SUCCEEDED(continueParsing) && (i < chunkOffsetCount)); i++)
+        {
+          CChunkOffset *chunkOffset = new CChunkOffset(&continueParsing);
+          CHECK_POINTER_HRESULT(continueParsing, chunkOffset, continueParsing, E_OUTOFMEMORY);
+
+          if (SUCCEEDED(continueParsing))
           {
             chunkOffset->SetChunkOffset(RBE64(buffer, position));
             position += 8;
-
-            continueParsing &= this->chunkOffsets->Add(chunkOffset);
           }
 
-          if (!continueParsing)
-          {
-            FREE_MEM_CLASS(chunkOffset);
-          }
+          CHECK_CONDITION_HRESULT(continueParsing, this->chunkOffsets->Add(chunkOffset), continueParsing, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(chunkOffset));
         }
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CChunkLargeOffsetBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

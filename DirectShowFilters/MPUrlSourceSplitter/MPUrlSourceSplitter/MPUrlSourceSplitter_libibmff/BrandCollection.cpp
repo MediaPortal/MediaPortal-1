@@ -22,8 +22,8 @@
 
 #include "BrandCollection.h"
 
-CBrandCollection::CBrandCollection(void)
-  : CKeyedCollection()
+CBrandCollection::CBrandCollection(HRESULT *result)
+  : CKeyedCollection(result)
 {
 }
 

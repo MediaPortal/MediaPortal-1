@@ -29,7 +29,7 @@
 class CSampleToChunkCollection : public CCollection<CSampleToChunk>
 {
 public:
-  CSampleToChunkCollection(void);
+  CSampleToChunkCollection(HRESULT *result);
   ~CSampleToChunkCollection(void);
 
 protected:

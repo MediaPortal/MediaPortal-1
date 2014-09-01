@@ -26,14 +26,18 @@
 #include "FullBox.h"
 #include "FragmentedIndexCollection.h"
 
-#define FRAGMENTED_INDEX_TRACK_BOX_TYPE                                       L"ftix"
+#define FRAGMENTED_INDEX_TRACK_BOX_TYPE                               L"ftix"
+
+#define FRAGMENTED_INDEX_TRACK_BOX_FLAG_NONE                          FULL_BOX_FLAG_NONE
+
+#define FRAGMENTED_INDEX_TRACK_BOX_FLAG_LAST                          (FULL_BOX_FLAG_LAST + 0)
 
 class CFragmentedIndexTrackBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CFragmentedIndexTrackBox class
-  CFragmentedIndexTrackBox(void);
+  CFragmentedIndexTrackBox(HRESULT *result);
 
   // destructor
   virtual ~CFragmentedIndexTrackBox(void);

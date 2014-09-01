@@ -23,10 +23,10 @@
 #include "ESDBox.h"
 #include "BoxCollection.h"
 
-CESDBox::CESDBox(void)
-  : CFullBox()
+CESDBox::CESDBox(HRESULT *result)
+  : CFullBox(result)
 {
-  this->type = Duplicate(ESD_BOX_TYPE);
+  this->type = NULL;
   this->trackId = 0;
   this->codecTag = 0;
   this->bufferSize = 0;
@@ -34,6 +34,13 @@ CESDBox::CESDBox(void)
   this->averageBitrate = 0;
   this->codecPrivateData = NULL;
   this->codecPrivateDataLength = 0;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(ESD_BOX_TYPE);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+  }
 }
 
 CESDBox::~CESDBox(void)
@@ -177,34 +184,28 @@ uint64_t CESDBox::GetBoxSize(void)
 
 bool CESDBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  //// in bad case we don't have objects, but still it can be valid box
-  //bool result = __super::ParseInternal(buffer, length, false);
-
-  //if (result)
+  //if (__super::ParseInternal(buffer, length, false))
   //{
-  //  if (wcscmp(this->type, ESD_BOX_TYPE) != 0)
+  //  this->flags &= ~BOX_FLAG_PARSED;
+  //  this->flags |= (wcscmp(this->type, ESD_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
+
+  //  if (this->IsSetFlags(BOX_FLAG_PARSED))
   //  {
-  //    // incorect box type
-  //    this->parsed = false;
-  //  }
-  //  else
-  //  {
-  //    // box is file type box, parse all values
-  //    uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
-  //    bool continueParsing = (this->GetSize() <= (uint64_t)length);
-  //    
-  //    if (continueParsing && processAdditionalBoxes)
+  //    // box is media data box, parse all values
+  //    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+  //    HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
+
+  //    if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
   //    {
   //      this->ProcessAdditionalBoxes(buffer, length, position);
   //    }
 
-  //    this->parsed = continueParsing;
+  //    this->flags &= ~BOX_FLAG_PARSED;
+  //    this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
   //  }
   //}
 
-  //result = this->parsed;
-
-  //return result;
+  //return this->IsSetFlags(BOX_FLAG_PARSED);
 
   return false;
 }

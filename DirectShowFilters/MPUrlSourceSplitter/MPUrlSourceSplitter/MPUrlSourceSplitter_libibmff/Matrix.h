@@ -29,7 +29,7 @@
 class CMatrix : public CCollection<CFixedPointNumber>
 {
 public:
-  CMatrix(void);
+  CMatrix(HRESULT *result);
   ~CMatrix(void);
 
   // gets number identified by character (a, b, c, d, u, v, w, x, y, z)

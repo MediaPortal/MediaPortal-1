@@ -23,7 +23,7 @@
 #include "MMSChunk.h"
 
 
-MMSChunk::MMSChunk(void)
+MMSChunk::MMSChunk(HRESULT *result)
 {
   this->chunkData = NULL;
   this->extraHeaderData = NULL;
@@ -31,29 +31,30 @@ MMSChunk::MMSChunk(void)
   this->Clear();
 }
 
-MMSChunk::MMSChunk(MMSChunk *mmsChunk)
+MMSChunk::MMSChunk(HRESULT *result, MMSChunk *mmsChunk)
 {
   this->chunkData = NULL;
   this->extraHeaderData = NULL;
 
   this->Clear();
 
-  if (mmsChunk != NULL)
+  if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    bool result = true;
-
-    result &= this->SetChunkDataLength(mmsChunk->GetChunkDataLength());
-    result &= this->SetExtraHeaderDataLength(mmsChunk->GetExtraHeaderDataLength());
-
-    if (result)
+    if (mmsChunk != NULL)
     {
-      this->SetChunkType(mmsChunk->GetChunkType());
-      memcpy(this->chunkData, mmsChunk->GetChunkData(), this->chunkDataLength);
-      memcpy(this->extraHeaderData, mmsChunk->GetExtraHeaderData(), this->extraHeaderLength);
-    }
-    else
-    {
-      this->Clear();
+      CHECK_CONDITION_HRESULT(*result, this->SetChunkDataLength(mmsChunk->GetChunkDataLength()), *result, E_OUTOFMEMORY);
+      CHECK_CONDITION_HRESULT(*result, this->SetExtraHeaderDataLength(mmsChunk->GetExtraHeaderDataLength()), *result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(*result))
+      {
+        this->SetChunkType(mmsChunk->GetChunkType());
+        memcpy(this->chunkData, mmsChunk->GetChunkData(), this->chunkDataLength);
+        memcpy(this->extraHeaderData, mmsChunk->GetExtraHeaderData(), this->extraHeaderLength);
+      }
+      else
+      {
+        this->Clear();
+      }
     }
   }
 }

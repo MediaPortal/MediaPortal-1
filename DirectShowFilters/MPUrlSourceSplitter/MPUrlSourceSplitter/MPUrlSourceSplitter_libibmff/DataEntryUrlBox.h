@@ -25,14 +25,18 @@
 
 #include "DataEntryBox.h"
 
-#define DATA_ENTRY_URL_BOX_TYPE                                               L"url "
+#define DATA_ENTRY_URL_BOX_TYPE                                       L"url "
+
+#define DATA_ENTRY_URL_BOX_FLAG_NONE                                  DATA_ENTRY_BOX_FLAG_NONE
+
+#define DATA_ENTRY_URL_BOX_FLAG_LAST                                  (DATA_ENTRY_BOX_FLAG_LAST + 0)
 
 class CDataEntryUrlBox :
   public CDataEntryBox
 {
 public:
   // initializes a new instance of CDataEntryUrlBox class
-  CDataEntryUrlBox(void);
+  CDataEntryUrlBox(HRESULT *result);
 
   // destructor
   virtual ~CDataEntryUrlBox(void);

@@ -29,7 +29,7 @@
 class CSampleCollection : public CCollection<CSample>
 {
 public:
-  CSampleCollection(void);
+  CSampleCollection(HRESULT *result);
   ~CSampleCollection(void);
 
 protected:

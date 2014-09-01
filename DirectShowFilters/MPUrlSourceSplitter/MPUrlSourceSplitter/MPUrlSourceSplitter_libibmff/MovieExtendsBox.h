@@ -25,14 +25,19 @@
 
 #include "Box.h"
 
-#define MOVIE_EXTENDS_BOX_TYPE                                                L"mvex"
+#define MOVIE_EXTENDS_BOX_TYPE                                        L"mvex"
+
+#define MOVIE_EXTENDS_BOX_FLAG_NONE                                   BOX_FLAG_NONE
+
+#define MOVIE_EXTENDS_BOX_FLAG_LAST                                   (BOX_FLAG_LAST + 0)
+
 
 class CMovieExtendsBox :
   public CBox
 {
 public:
   // initializes a new instance of CMovieExtendsBox class
-  CMovieExtendsBox(void);
+  CMovieExtendsBox(HRESULT *result);
 
   // destructor
   virtual ~CMovieExtendsBox(void);

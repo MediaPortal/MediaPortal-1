@@ -25,14 +25,18 @@
 
 #include "Box.h"
 
-#define USER_DATA_BOX_TYPE                                                    L"udta"
+#define USER_DATA_BOX_TYPE                                            L"udta"
+
+#define USER_DATA_BOX_FLAG_NONE                                       BOX_FLAG_NONE
+
+#define USER_DATA_BOX_FLAG_LAST                                       (BOX_FLAG_LAST + 0)
 
 class CUserDataBox :
   public CBox
 {
 public:
   // initializes a new instance of CMovieBox class
-  CUserDataBox(void);
+  CUserDataBox(HRESULT *result);
 
   // destructor
   virtual ~CUserDataBox(void);

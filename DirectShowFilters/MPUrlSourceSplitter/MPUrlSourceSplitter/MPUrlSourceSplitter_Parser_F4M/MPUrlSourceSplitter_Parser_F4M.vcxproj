@@ -53,7 +53,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_PARSER_F4M_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libf4m;..\MPUrlSourceSplitter_libtinyxml2;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libcurlinstance;..\..\libcurl\include;..\..\libcurl\include\curl;..\MPUrlSourceSplitter_Protocol_Afhs;..\MPUrlSourceSplitter_Protocol_Http;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libf4m;..\MPUrlSourceSplitter_libtinyxml2;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_Protocol_Afhs;..\MPUrlSourceSplitter_Protocol_Http;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -111,7 +111,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_PARSER_F4M_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libf4m;..\MPUrlSourceSplitter_libtinyxml2;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libcurlinstance;..\..\libcurl\include;..\..\libcurl\include\curl;..\MPUrlSourceSplitter_Protocol_Afhs;..\MPUrlSourceSplitter_Protocol_Http;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libf4m;..\MPUrlSourceSplitter_libtinyxml2;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_Protocol_Afhs;..\MPUrlSourceSplitter_Protocol_Http;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>

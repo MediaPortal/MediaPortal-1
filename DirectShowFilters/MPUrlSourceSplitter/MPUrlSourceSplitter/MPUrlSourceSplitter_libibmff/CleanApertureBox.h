@@ -25,14 +25,18 @@
 
 #include "Box.h"
 
-#define CLEAN_APERTURE_BOX_TYPE                                               L"clap"
+#define CLEAN_APERTURE_BOX_TYPE                                       L"clap"
+
+#define CLEAN_APERTURE_BOX_FLAG_NONE                                  BOX_FLAG_NONE
+
+#define CLEAN_APERTURE_BOX_FLAG_LAST                                  (BOX_FLAG_LAST + 0)
 
 class CCleanApertureBox :
   public CBox
 {
 public:
   // initializes a new instance of CCleanApertureBox class
-  CCleanApertureBox(void);
+  CCleanApertureBox(HRESULT *result);
 
   // destructor
   virtual ~CCleanApertureBox(void);

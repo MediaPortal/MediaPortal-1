@@ -27,17 +27,21 @@
 #include "FixedPointNumber.h"
 #include "Matrix.h"
 
-#define MOVIE_HEADER_BOX_TYPE                                                 L"mvhd"
+#define MOVIE_HEADER_BOX_TYPE                                         L"mvhd"
 
-#define MOVIE_HEADER_DATA_VERSION_0_SIZE                                      96
-#define MOVIE_HEADER_DATA_VERSION_1_SIZE                                      MOVIE_HEADER_DATA_VERSION_0_SIZE + 12
+#define MOVIE_HEADER_DATA_VERSION_0_SIZE                              96
+#define MOVIE_HEADER_DATA_VERSION_1_SIZE                              MOVIE_HEADER_DATA_VERSION_0_SIZE + 12
+
+#define MOVIE_HEADER_BOX_FLAG_NONE                                    FULL_BOX_FLAG_NONE
+
+#define MOVIE_HEADER_BOX_FLAG_LAST                                    (FULL_BOX_FLAG_LAST + 0)
 
 class CMovieHeaderBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CMovieHeaderBox class
-  CMovieHeaderBox(void);
+  CMovieHeaderBox(HRESULT *result);
 
   // destructor
   virtual ~CMovieHeaderBox(void);

@@ -25,14 +25,18 @@
 
 #include "FullBox.h"
 
-#define FRAGMENTED_INDEX_BOX_TYPE                                             L"fmix"
+#define FRAGMENTED_INDEX_BOX_TYPE                                     L"fmix"
+
+#define FRAGMENTED_INDEX_BOX_FLAG_NONE                                FULL_BOX_FLAG_NONE
+
+#define FRAGMENTED_INDEX_BOX_FLAG_LAST                                (FULL_BOX_FLAG_LAST + 0)
 
 class CFragmentedIndexBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CFragmentedIndexBox class
-  CFragmentedIndexBox(void);
+  CFragmentedIndexBox(HRESULT *result);
 
   // destructor
   virtual ~CFragmentedIndexBox(void);

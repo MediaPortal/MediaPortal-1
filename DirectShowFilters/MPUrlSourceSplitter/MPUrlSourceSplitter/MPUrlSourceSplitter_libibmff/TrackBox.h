@@ -25,14 +25,18 @@
 
 #include "Box.h"
 
-#define TRACK_BOX_TYPE                                                        L"trak"
+#define TRACK_BOX_TYPE                                                L"trak"
+
+#define TRACK_BOX_FLAG_NONE                                           BOX_FLAG_NONE
+
+#define TRACK_BOX_FLAG_LAST                                           (BOX_FLAG_LAST + 0)
 
 class CTrackBox :
   public CBox
 {
 public:
   // initializes a new instance of CTrackBox class
-  CTrackBox(void);
+  CTrackBox(HRESULT *result);
 
   // destructor
   virtual ~CTrackBox(void);

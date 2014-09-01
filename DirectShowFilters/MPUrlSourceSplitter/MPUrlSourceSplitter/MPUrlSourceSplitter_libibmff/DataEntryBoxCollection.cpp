@@ -22,8 +22,8 @@
 
 #include "DataEntryBoxCollection.h"
 
-CDataEntryBoxCollection::CDataEntryBoxCollection(void)
-  : CKeyedCollection()
+CDataEntryBoxCollection::CDataEntryBoxCollection(HRESULT *result)
+  : CKeyedCollection(result)
 {
 }
 

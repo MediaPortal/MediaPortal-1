@@ -23,10 +23,17 @@
 #include "FragmentedIndexBox.h"
 #include "BoxCollection.h"
 
-CFragmentedIndexBox::CFragmentedIndexBox(void)
-  : CFullBox()
+CFragmentedIndexBox::CFragmentedIndexBox(HRESULT *result)
+  : CFullBox(result)
 {
-  this->type = Duplicate(FRAGMENTED_INDEX_BOX_TYPE);
+  this->type = NULL;
+
+  if ((result != NULL) && SUCCEEDED(*result))
+  {
+    this->type = Duplicate(FRAGMENTED_INDEX_BOX_TYPE);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+  }
 }
 
 CFragmentedIndexBox::~CFragmentedIndexBox(void)
@@ -77,34 +84,28 @@ uint64_t CFragmentedIndexBox::GetBoxSize(void)
 
 bool CFragmentedIndexBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  // in bad case we don't have objects, but still it can be valid box
-  bool result = __super::ParseInternal(buffer, length, false);
-
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    if (wcscmp(this->type, FRAGMENTED_INDEX_BOX_TYPE) != 0)
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, FRAGMENTED_INDEX_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
+
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
     {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
-      
-      if (continueParsing && processAdditionalBoxes)
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
+
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CFragmentedIndexBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

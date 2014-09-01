@@ -25,14 +25,19 @@
 
 #include "Box.h"
 
-#define MOVIE_BOX_TYPE                                                        L"moov"
+#define MOVIE_BOX_TYPE                                                L"moov"
+
+#define MOVIE_BOX_FLAG_NONE                                           BOX_FLAG_NONE
+
+#define MOVIE_BOX_FLAG_LAST                                           (BOX_FLAG_LAST + 0)
+
 
 class CMovieBox :
   public CBox
 {
 public:
   // initializes a new instance of CMovieBox class
-  CMovieBox(void);
+  CMovieBox(HRESULT *result);
 
   // destructor
   virtual ~CMovieBox(void);

@@ -26,14 +26,18 @@
 #include "FullBox.h"
 #include "HandlerBox.h"
 
-#define META_BOX_TYPE                                                         L"meta"
+#define META_BOX_TYPE                                                 L"meta"
+
+#define META_BOX_FLAG_NONE                                            FULL_BOX_FLAG_NONE
+
+#define META_BOX_FLAG_LAST                                            (FULL_BOX_FLAG_LAST + 0)
 
 class CMetaBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CMetaBox class
-  CMetaBox(void);
+  CMetaBox(HRESULT *result);
 
   // destructor
   virtual ~CMetaBox(void);

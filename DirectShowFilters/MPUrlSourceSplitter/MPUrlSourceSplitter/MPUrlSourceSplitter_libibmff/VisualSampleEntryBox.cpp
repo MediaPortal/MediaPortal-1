@@ -23,16 +23,25 @@
 #include "VisualSampleEntryBox.h"
 #include "BoxCollection.h"
 
-CVisualSampleEntryBox::CVisualSampleEntryBox(void)
-  : CSampleEntryBox()
+CVisualSampleEntryBox::CVisualSampleEntryBox(HRESULT *result)
+  : CSampleEntryBox(result)
 {
   this->width = 0;
   this->height = 0;
-  this->horizontalResolution = new CFixedPointNumber(16, 16);
-  this->verticalResolution = new CFixedPointNumber(16, 16);
+  this->horizontalResolution = NULL;
+  this->verticalResolution = NULL;
   this->frameCount = 0;
   this->compressorName = NULL;
   this->depth = 0;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->horizontalResolution = new CFixedPointNumber(result, 16, 16);
+    this->verticalResolution = new CFixedPointNumber(result, 16, 16);
+
+    CHECK_POINTER_HRESULT(*result, this->horizontalResolution, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->verticalResolution, *result, E_OUTOFMEMORY);
+  }
 }
 
 CVisualSampleEntryBox::~CVisualSampleEntryBox(void)
@@ -195,24 +204,21 @@ bool CVisualSampleEntryBox::ParseInternal(const unsigned char *buffer, uint32_t 
   FREE_MEM_CLASS(this->verticalResolution);
   FREE_MEM(this->compressorName);
 
-  this->width = 0;
-  this->height = 0;
-  this->horizontalResolution = new CFixedPointNumber(16, 16);
-  this->verticalResolution = new CFixedPointNumber(16, 16);
-  this->frameCount = 0;
-  this->compressorName = NULL;
-  this->depth = 0;
-
-  bool result = ((this->horizontalResolution != NULL) && (this->verticalResolution != NULL));
-  result &= __super::ParseInternal(buffer, length, false);
-
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    // box is file type box, parse all values
-    uint32_t position = this->HasExtendedHeader() ? SAMPLE_ENTRY_BOX_HEADER_LENGTH_SIZE64 : SAMPLE_ENTRY_BOX_HEADER_LENGTH;
-    bool continueParsing = (this->GetSize() <= (uint64_t)length);
+    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+    HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
 
-    if (continueParsing)
+    if (SUCCEEDED(continueParsing))
+    {
+      this->horizontalResolution = new CFixedPointNumber(&continueParsing, 16, 16);
+      this->verticalResolution = new CFixedPointNumber(&continueParsing, 16, 16);
+
+      CHECK_POINTER_HRESULT(continueParsing, this->horizontalResolution, continueParsing, E_OUTOFMEMORY);
+      CHECK_POINTER_HRESULT(continueParsing, this->verticalResolution, continueParsing, E_OUTOFMEMORY);
+    }
+
+    if (SUCCEEDED(continueParsing))
     {
       // skip 16 reserved and pre-defined bytes
       position += 16;
@@ -220,10 +226,10 @@ bool CVisualSampleEntryBox::ParseInternal(const unsigned char *buffer, uint32_t 
       RBE16INC(buffer, position, this->width);
       RBE16INC(buffer, position, this->height);
 
-      continueParsing &= this->horizontalResolution->SetNumber(RBE32(buffer, position));
+      CHECK_CONDITION_HRESULT(continueParsing, this->horizontalResolution->SetNumber(RBE32(buffer, position)), continueParsing, E_OUTOFMEMORY);
       position += 4;
 
-      continueParsing &= this->verticalResolution->SetNumber(RBE32(buffer, position));
+      CHECK_CONDITION_HRESULT(continueParsing, this->verticalResolution->SetNumber(RBE32(buffer, position)), continueParsing, E_OUTOFMEMORY);
       position += 4;
 
       // skip 4 reserved bytes
@@ -232,33 +238,34 @@ bool CVisualSampleEntryBox::ParseInternal(const unsigned char *buffer, uint32_t 
       RBE16INC(buffer, position, this->frameCount);
 
       RBE8INC_DEFINE(buffer, position, compressorNameLength, uint8_t);
-      
+
       uint32_t positionAfterString = 0;
-      continueParsing &= SUCCEEDED(this->GetString(buffer, length, position, &this->compressorName, &positionAfterString));
+      continueParsing = this->GetString(buffer, length, position, &this->compressorName, &positionAfterString);
       position += 31;
 
-      RBE16INC(buffer, position, this->depth);
+      if (SUCCEEDED(continueParsing))
+      {
+        RBE16INC(buffer, position, this->depth);
 
-      // skip 2 pre-defined bytes
-      position += 2;
+        // skip 2 pre-defined bytes
+        position += 2;
 
-      // optional clean aperture box
+        // optional clean aperture box
 
-      // optional pixel aspect ratio box
-
+        // optional pixel aspect ratio box
+      }
     }
 
-    if (continueParsing && processAdditionalBoxes)
+    if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
     {
       this->ProcessAdditionalBoxes(buffer, length, position);
     }
 
-    this->parsed = continueParsing;
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CVisualSampleEntryBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

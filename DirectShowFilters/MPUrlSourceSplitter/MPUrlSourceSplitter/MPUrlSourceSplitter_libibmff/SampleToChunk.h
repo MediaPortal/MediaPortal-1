@@ -29,7 +29,7 @@ class CSampleToChunk
 {
 public:
   // initializes a new instance of CSampleToChunk class
-  CSampleToChunk(void);
+  CSampleToChunk(HRESULT *result);
 
   // destructor
   ~CSampleToChunk(void);

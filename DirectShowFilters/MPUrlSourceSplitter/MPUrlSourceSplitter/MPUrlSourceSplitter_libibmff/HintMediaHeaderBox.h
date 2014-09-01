@@ -25,14 +25,18 @@
 
 #include "FullBox.h"
 
-#define HINT_MEDIA_HEADER_BOX_TYPE                                            L"hmhd"
+#define HINT_MEDIA_HEADER_BOX_TYPE                                    L"hmhd"
+
+#define HINT_MEDIA_HEADER_BOX_FLAG_NONE                               FULL_BOX_FLAG_NONE
+
+#define HINT_MEDIA_HEADER_BOX_FLAG_LAST                               (FULL_BOX_FLAG_LAST + 0)
 
 class CHintMediaHeaderBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CHintMediaHeaderBox class
-  CHintMediaHeaderBox(void);
+  CHintMediaHeaderBox(HRESULT *result);
 
   // destructor
   virtual ~CHintMediaHeaderBox(void);

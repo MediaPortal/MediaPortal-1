@@ -22,46 +22,67 @@
 
 #include "Matrix.h"
 
-CMatrix::CMatrix(void)
-  : CCollection()
+CMatrix::CMatrix(HRESULT *result)
+  : CCollection(result)
 {
   CFixedPointNumber *number = NULL;
 
-  // a
-  number = new CFixedPointNumber(17, 16);
-  __super::Add(number);
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    // a
+    number = new CFixedPointNumber(result, 17, 16);
+    CHECK_POINTER_HRESULT(*result, number, *result, E_OUTOFMEMORY);
 
-  // b
-  number = new CFixedPointNumber(17, 16);
-  __super::Add(number);
+    CHECK_CONDITION_HRESULT(*result, __super::Add(number), *result, E_OUTOFMEMORY);
 
-  // u
-  number = new CFixedPointNumber(3, 30);
-  __super::Add(number);
+    // b
+    number = new CFixedPointNumber(result, 17, 16);
+    CHECK_POINTER_HRESULT(*result, number, *result, E_OUTOFMEMORY);
 
-  // c
-  number = new CFixedPointNumber(17, 16);
-  __super::Add(number);
+    CHECK_CONDITION_HRESULT(*result, __super::Add(number), *result, E_OUTOFMEMORY);
 
-  // d
-  number = new CFixedPointNumber(17, 16);
-  __super::Add(number);
+    // u
+    number = new CFixedPointNumber(result, 3, 30);
+    CHECK_POINTER_HRESULT(*result, number, *result, E_OUTOFMEMORY);
 
-  // v
-  number = new CFixedPointNumber(3, 30);
-  __super::Add(number);
+    CHECK_CONDITION_HRESULT(*result, __super::Add(number), *result, E_OUTOFMEMORY);
 
-  // x
-  number = new CFixedPointNumber(17, 16);
-  __super::Add(number);
+    // c
+    number = new CFixedPointNumber(result, 17, 16);
+    CHECK_POINTER_HRESULT(*result, number, *result, E_OUTOFMEMORY);
 
-  // y
-  number = new CFixedPointNumber(17, 16);
-  __super::Add(number);
+    CHECK_CONDITION_HRESULT(*result, __super::Add(number), *result, E_OUTOFMEMORY);
 
-  // w
-  number = new CFixedPointNumber(3, 30);
-  __super::Add(number);
+    // d
+    number = new CFixedPointNumber(result, 17, 16);
+    CHECK_POINTER_HRESULT(*result, number, *result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_HRESULT(*result, __super::Add(number), *result, E_OUTOFMEMORY);
+
+    // v
+    number = new CFixedPointNumber(result, 3, 30);
+    CHECK_POINTER_HRESULT(*result, number, *result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_HRESULT(*result, __super::Add(number), *result, E_OUTOFMEMORY);
+
+    // x
+    number = new CFixedPointNumber(result, 17, 16);
+    CHECK_POINTER_HRESULT(*result, number, *result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_HRESULT(*result, __super::Add(number), *result, E_OUTOFMEMORY);
+
+    // y
+    number = new CFixedPointNumber(result, 17, 16);
+    CHECK_POINTER_HRESULT(*result, number, *result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_HRESULT(*result, __super::Add(number), *result, E_OUTOFMEMORY);
+
+    // w
+    number = new CFixedPointNumber(result, 3, 30);
+    CHECK_POINTER_HRESULT(*result, number, *result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_HRESULT(*result, __super::Add(number), *result, E_OUTOFMEMORY);
+  }
 }
 
 CMatrix::~CMatrix(void)

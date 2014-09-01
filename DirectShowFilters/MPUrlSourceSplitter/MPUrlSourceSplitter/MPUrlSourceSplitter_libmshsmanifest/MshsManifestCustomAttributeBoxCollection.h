@@ -20,17 +20,17 @@
 
 #pragma once
 
-#ifndef __MSHS_CUSTOM_ATTRIBUTE_COLLECTION_DEFINED
-#define __MSHS_CUSTOM_ATTRIBUTE_COLLECTION_DEFINED
+#ifndef __MSHS_MANIFEST_CUSTOM_ATTRIBUTE_BOX_COLLECTION_DEFINED
+#define __MSHS_MANIFEST_CUSTOM_ATTRIBUTE_BOX_COLLECTION_DEFINED
 
-#include "SerializableCollection.h"
-#include "MSHSCustomAttribute.h"
+#include "Collection.h"
+#include "MshsManifestCustomAttributeBox.h"
 
-class CMSHSCustomAttributeCollection : public CSerializableCollection<CMSHSCustomAttribute, const wchar_t *>
+class CMshsManifestCustomAttributeBoxCollection : public CCollection<CMshsManifestCustomAttributeBox>
 {
 public:
-  CMSHSCustomAttributeCollection(void);
-  ~CMSHSCustomAttributeCollection(void);
+  CMshsManifestCustomAttributeBoxCollection(HRESULT *result);
+  virtual ~CMshsManifestCustomAttributeBoxCollection(void);
 
   // test if custom attribute exists in collection
   // @param name : the custom attribute name to find
@@ -42,26 +42,26 @@ public:
   // @param name : the name of custom attribute to find
   // @param invariant : specifies if custom attribute name shoud be find with invariant casing
   // @return : the reference to custom attribute or NULL if not find
-  CMSHSCustomAttribute *GetCustomAttribute(const wchar_t *name, bool invariant);
+  CMshsManifestCustomAttributeBox *GetCustomAttribute(const wchar_t *name, bool invariant);
 
 protected:
 
-  // compare two item keys
-  // @param firstKey : the first item key to compare
-  // @param secondKey : the second item key to compare
-  // @param context : the reference to user defined context
-  // @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
-  int CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context);
+  //// compare two item keys
+  //// @param firstKey : the first item key to compare
+  //// @param secondKey : the second item key to compare
+  //// @param context : the reference to user defined context
+  //// @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
+  //int CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context);
 
-  // gets key for item
-  // @param item : the item to get key
-  // @return : the key of item
-  const wchar_t * GetKey(CMSHSCustomAttribute *item);
+  //// gets key for item
+  //// @param item : the item to get key
+  //// @return : the key of item
+  //const wchar_t * GetKey(CMSHSCustomAttribute *item);
 
   // clones specified item
   // @param item : the item to clone
   // @return : deep clone of item or NULL if not implemented
-  CMSHSCustomAttribute *Clone(CMSHSCustomAttribute *item);
+  CMshsManifestCustomAttributeBox *Clone(CMshsManifestCustomAttributeBox *item);
 };
 
 #endif

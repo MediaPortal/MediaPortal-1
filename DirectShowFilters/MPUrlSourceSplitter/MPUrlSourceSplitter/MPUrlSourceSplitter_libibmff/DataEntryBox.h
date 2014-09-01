@@ -26,14 +26,18 @@
 #include "FullBox.h"
 
 // means that the media data is in the same file as the Movie Box containing this data reference
-#define FLAGS_SELF_CONTAINED                                                  0x00000001
+#define FLAGS_SELF_CONTAINED                                          0x00000001
+
+#define DATA_ENTRY_BOX_FLAG_NONE                                      FULL_BOX_FLAG_NONE
+
+#define DATA_ENTRY_BOX_FLAG_LAST                                      (FULL_BOX_FLAG_LAST + 0)
 
 class CDataEntryBox :
   public CFullBox
 {
 public:
   // initializes a new instance of CDataEntryBox class
-  CDataEntryBox(void);
+  CDataEntryBox(HRESULT *result);
 
   // destructor
   virtual ~CDataEntryBox(void);

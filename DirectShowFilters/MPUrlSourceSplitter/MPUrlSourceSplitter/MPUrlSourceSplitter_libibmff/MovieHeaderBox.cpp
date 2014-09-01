@@ -23,23 +23,39 @@
 #include "MovieHeaderBox.h"
 #include "BoxCollection.h"
 
-CMovieHeaderBox::CMovieHeaderBox(void)
-  : CFullBox()
+CMovieHeaderBox::CMovieHeaderBox(HRESULT *result)
+  : CFullBox(result)
 {
   this->creationTime = 0;
   this->modificationTime = 0;
   this->timeScale = 0;
   this->duration = 0;
-  this->type = Duplicate(MOVIE_HEADER_BOX_TYPE);
-  this->rate = new CFixedPointNumber(16, 16);
-  this->volume = new CFixedPointNumber(8, 8);
-  this->matrix = new CMatrix();
+  this->type = NULL;
+  this->rate = NULL;
+  this->volume = NULL;
+  this->matrix = NULL;
   this->nextTrackId = 0;
 
-  // set unity matrix
-  this->matrix->GetItem(0)->SetIntegerPart(1);
-  this->matrix->GetItem(4)->SetIntegerPart(1);
-  this->matrix->GetItem(8)->SetIntegerPart(1);
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(MOVIE_HEADER_BOX_TYPE);
+    this->rate = new CFixedPointNumber(result, 16, 16);
+    this->volume = new CFixedPointNumber(result, 8, 8);
+    this->matrix = new CMatrix(result);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->rate, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->volume, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->matrix, *result, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(*result))
+    {
+      // set unity matrix
+      this->matrix->GetItem(0)->SetIntegerPart(1);
+      this->matrix->GetItem(4)->SetIntegerPart(1);
+      this->matrix->GetItem(8)->SetIntegerPart(1);
+    }
+  }
 }
 
 CMovieHeaderBox::~CMovieHeaderBox(void)
@@ -230,28 +246,31 @@ bool CMovieHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length
   this->modificationTime = 0;
   this->timeScale = 0;
   this->duration = 0;
-  this->rate = new CFixedPointNumber(16, 16);
-  this->volume = new CFixedPointNumber(8, 8);
-  this->matrix = new CMatrix();
   this->nextTrackId = 0;
 
-  bool result = ((this->rate != NULL) && (this->volume != NULL) && (this->matrix != NULL));
-  result &= __super::ParseInternal(buffer, length, false);
-
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    if (wcscmp(this->type, MOVIE_HEADER_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is file type box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
-      bool continueParsing = (this->GetSize() <= (uint64_t)length);
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, MOVIE_HEADER_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-      if (continueParsing)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
+    {
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
+
+      if (SUCCEEDED(continueParsing))
+      {
+        this->rate = new CFixedPointNumber(&continueParsing, 16, 16);
+        this->volume = new CFixedPointNumber(&continueParsing, 8, 8);
+        this->matrix = new CMatrix(&continueParsing);
+
+        CHECK_POINTER_HRESULT(continueParsing, this->rate, continueParsing, E_OUTOFMEMORY);
+        CHECK_POINTER_HRESULT(continueParsing, this->volume, continueParsing, E_OUTOFMEMORY);
+        CHECK_POINTER_HRESULT(continueParsing, this->matrix, continueParsing, E_OUTOFMEMORY);
+      }
+
+      if (SUCCEEDED(continueParsing))
       {
         switch (this->GetVersion())
         {
@@ -268,56 +287,46 @@ bool CMovieHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length
           RBE64INC(buffer, position, this->duration);
           break;
         default:
-          continueParsing = false;
+          continueParsing = E_FAIL;
           break;
         }
       }
 
-      if (continueParsing)
-      {
-        continueParsing &= this->rate->SetNumber(RBE32(buffer, position));
-        position += 4;
-      }
-
-      if (continueParsing)
-      {
-        continueParsing &= this->volume->SetNumber(RBE16(buffer, position));
-        position += 2;
-      }
+      CHECK_CONDITION_HRESULT(continueParsing, this->rate->SetNumber(RBE32(buffer, position)), continueParsing, E_OUTOFMEMORY);
+      position += 4;
+      
+      CHECK_CONDITION_HRESULT(continueParsing, this->volume->SetNumber(RBE16(buffer, position)), continueParsing, E_OUTOFMEMORY);
+      position += 2;
 
       // skip 10 reserved bytes
       position += 10;
 
-      if (continueParsing)
+      // read matrix
+      for (unsigned int i = 0; (SUCCEEDED(continueParsing) && (i < this->matrix->Count())); i++)
       {
-        // read matrix
-        for (unsigned int i = 0; (continueParsing && (i < this->matrix->Count())); i++)
-        {
-          continueParsing &= this->matrix->GetItem(i)->SetNumber(RBE32(buffer, position));
-          position += 4;
-        }
+        CHECK_CONDITION_HRESULT(continueParsing, this->matrix->GetItem(i)->SetNumber(RBE32(buffer, position)), continueParsing, E_OUTOFMEMORY);
+        position += 4;
       }
 
       // skip 6 * bit(32)
       position += 24;
 
-      if (continueParsing)
+      if (SUCCEEDED(continueParsing))
       {
         RBE32INC(buffer, position, this->nextTrackId);
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CMovieHeaderBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
