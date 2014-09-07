@@ -900,18 +900,29 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
           {
             CHttpStreamFragment *fragment = this->streamFragments->GetItem(fragmentRemoveCount);
 
-            if ((int64_t)this->reportedStreamPosition < (fragment->GetStart() + (int64_t)fragment->GetLength()))
+            if (fragment->IsDownloaded() && ((fragment->GetStart() + (int64_t)fragment->GetLength()) < (int64_t)this->reportedStreamPosition))
             {
-              // reported stream position is before stream fragment end = not whole stream fragment is processed
+              fragmentRemoveCount++;
+            }
+            else
+            {
               break;
             }
-
-            fragmentRemoveCount++;
           }
 
           if ((fragmentRemoveCount > 0) && (this->cacheFile->RemoveItems(this->streamFragments, 0, fragmentRemoveCount)))
           {
             this->streamFragments->Remove(0, fragmentRemoveCount);
+
+            if (this->streamFragmentDownloading != UINT_MAX)
+            {
+              this->streamFragmentDownloading -= fragmentRemoveCount;
+            }
+
+            if (this->streamFragmentToDownload != UINT_MAX)
+            {
+              this->streamFragmentToDownload -= fragmentRemoveCount;
+            }
           }
         }
       }
