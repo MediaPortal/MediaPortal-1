@@ -34,6 +34,7 @@
 #include "Parameters.h"
 #include "VersionInfo.h"
 #include "ErrorCodes.h"
+#include "TsPacket.h"
 
 #pragma warning(pop)
 
@@ -95,419 +96,100 @@ CMPUrlSourceSplitter_Parser_Mpeg2TS::~CMPUrlSourceSplitter_Parser_Mpeg2TS()
 
 HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::GetParserResult(void)
 {
-  this->parserResult = PARSER_RESULT_NOT_KNOWN;
-
-  //if (this->parserResult == PARSER_RESULT_PENDING)
-  //{
-  //  CStreamInformationCollection *streams = new CStreamInformationCollection(&this->parserResult);
-  //  CHECK_POINTER_HRESULT(this->parserResult, streams, this->parserResult, E_OUTOFMEMORY);
-
-  //  CHECK_HRESULT_EXECUTE(this->parserResult, this->protocolHoster->GetStreamInformation(streams));
-
-  //  if (SUCCEEDED(this->parserResult) && (streams->Count() == 1))
-  //  {
-  //    CStreamPackage *package = new CStreamPackage(&this->parserResult);
-  //    CHECK_POINTER_HRESULT(this->parserResult, package, this->parserResult, E_OUTOFMEMORY);
-
-  //    if (SUCCEEDED(this->parserResult))
-  //    {
-  //      unsigned int requestLength = MP_URL_SOURCE_SPLITTER_PARSER_MSHS_DATA_LENGTH_DEFAULT;
-  //      bool receivedSameLength = false;
-  //      this->parserResult = PARSER_RESULT_PENDING;
-
-  //      while ((this->parserResult == PARSER_RESULT_PENDING) && (!receivedSameLength))
-  //      {
-  //        package->Clear();
-
-  //        CStreamPackageDataRequest *request = new CStreamPackageDataRequest(&this->parserResult);
-  //        CHECK_POINTER_HRESULT(this->parserResult, request, this->parserResult, E_OUTOFMEMORY);
-
-  //        if (SUCCEEDED(this->parserResult))
-  //        {
-  //          request->SetStart(0);
-  //          request->SetLength(requestLength);
-  //          request->SetAnyDataLength(true);
-
-  //          package->SetRequest(request);
-  //        }
-
-  //        CHECK_CONDITION_EXECUTE(FAILED(this->parserResult), FREE_MEM_CLASS(request));
-  //        CHECK_HRESULT_EXECUTE(this->parserResult, this->protocolHoster->ProcessStreamPackage(package));
-
-  //        if (SUCCEEDED(this->parserResult))
-  //        {
-  //          this->parserResult = PARSER_RESULT_PENDING;
-  //          CStreamPackageDataResponse *response = dynamic_cast<CStreamPackageDataResponse *>(package->GetResponse());
-
-  //          if (package->IsError())
-  //          {
-  //            // TO DO: check type of error
-
-  //            this->parserResult = PARSER_RESULT_NOT_KNOWN;
-  //          }
-
-  //          if (response != NULL)
-  //          {
-  //            receivedSameLength = (response->GetBuffer()->GetBufferOccupiedSpace() == this->lastReceivedLength);
-  //            if (!receivedSameLength)
-  //            {
-  //              // try parse data
-  //              unsigned int length = response->GetBuffer()->GetBufferOccupiedSpace() + 2;
-  //              ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-  //              CHECK_POINTER_HRESULT(this->parserResult, buffer, this->parserResult, E_OUTOFMEMORY);
-
-  //              if (SUCCEEDED(this->parserResult))
-  //              {
-  //                response->GetBuffer()->CopyFromBuffer(buffer, length - 2);
-
-  //                if (((buffer[0] == 0xFF) && (buffer[1] == 0xFE)) ||
-  //                  ((buffer[1] == 0xFF) && (buffer[0] == 0xFE)))
-  //                {
-  //                  // input is probably in UTF-16 (Unicode)
-  //                  char *temp = ConvertUnicodeToUtf8((wchar_t *)(buffer + 2));
-  //                  FREE_MEM(buffer);
-  //                  buffer = (unsigned char *)temp;
-
-  //                  length = (buffer != NULL) ? strlen(temp) : 0;
-  //                }
-
-  //                CMshsManifest *manifest = new CMshsManifest(&this->parserResult);
-  //                CHECK_POINTER_HRESULT(this->parserResult, manifest, this->parserResult, E_OUTOFMEMORY);
-
-  //                if (SUCCEEDED(this->parserResult))
-  //                {
-  //                  if (manifest->Parse((char *)buffer))
-  //                  {
-  //                    this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_GET_PARSER_RESULT_NAME, L"MSHS manifest");
-  //                    this->parserResult = PARSER_RESULT_KNOWN;
-
-  //                    wchar_t *mshsBuffer = ConvertUtf8ToUnicode((char *)buffer);
-  //                    if (mshsBuffer != NULL)
-  //                    {
-  //                      this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_GET_PARSER_RESULT_NAME, mshsBuffer);
-  //                    }
-  //                    FREE_MEM(mshsBuffer);
-
-  //                    // pass also protected stream
-  //                    // maybe protocol will sometime decrypt stream
-
-  //                    // check for appropriate audio and video streams
-  //                    CMshsManifestStreamBox *video = NULL;
-  //                    CMshsManifestStreamBox *audio = NULL;
-
-  //                    for (unsigned int i = 0; i < manifest->GetSmoothStreamingMedia()->GetStreams()->Count(); i++)
-  //                    {
-  //                      CMshsManifestStreamBox *stream = manifest->GetSmoothStreamingMedia()->GetStreams()->GetItem(i);
-
-  //                      if (stream->IsVideo() && (video == NULL))
-  //                      {
-  //                        video = stream;
-  //                      }
-
-  //                      if (stream->IsAudio() && (audio == NULL))
-  //                      {
-  //                        audio = stream;
-  //                      }
-  //                    }
-
-  //                    CHECK_CONDITION_HRESULT(this->parserResult, ((video != NULL) || (audio != NULL)), this->parserResult, E_MSHS_NO_VIDEO_OR_AUDIO_STREAM_PRESENT);
-
-  //                    if (SUCCEEDED(this->parserResult))
-  //                    {
-  //                      // add base url parameter
-  //                      wchar_t *baseUrl = GetBaseUrl(this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL));
-  //                      CHECK_CONDITION_HRESULT(this->parserResult, baseUrl, this->parserResult, E_OUTOFMEMORY);
-
-  //                      CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Add(PARAMETER_NAME_MSHS_BASE_URL, baseUrl), this->parserResult, E_OUTOFMEMORY);
-  //                      FREE_MEM(baseUrl);
-  //                    }
-
-  //                    if (SUCCEEDED(this->parserResult))
-  //                    {
-  //                      // check tracks for supported video and audio tracks
-  //                      unsigned int i = 0;
-
-  //                      while (SUCCEEDED(this->parserResult) && (i < manifest->GetSmoothStreamingMedia()->GetStreams()->Count()))
-  //                      {
-  //                        CMshsManifestStreamBox *stream = manifest->GetSmoothStreamingMedia()->GetStreams()->GetItem(i);
-
-  //                        if (stream->IsVideo())
-  //                        {
-  //                          unsigned int j = 0;
-  //                          while (SUCCEEDED(this->parserResult) && (j < stream->GetTracks()->Count()))
-  //                          {
-  //                            bool supportedTrack = false;
-  //                            CMshsManifestTrackBox *track = stream->GetTracks()->GetItem(j);
-
-  //                            for (int k = 0; k < TOTAL_SUPPORTED_VIDEO_TRACKS; k++)
-  //                            {
-  //                              if (!IsNullOrEmptyOrWhitespace(track->GetFourCC()))
-  //                              {
-  //                                if (wcscmp(track->GetFourCC(), SUPPORTED_VIDEO_TRACKS[k]) == 0)
-  //                                {
-  //                                  supportedTrack = true;
-  //                                  break;
-  //                                }
-  //                              }
-  //                            }
-
-  //                            if (!supportedTrack)
-  //                            {
-  //                              stream->GetTracks()->Remove(j);
-  //                            }
-  //                            else
-  //                            {
-  //                              j++;
-  //                            }
-  //                          }
-
-  //                          if (stream->GetTracks()->Count() == 0)
-  //                          {
-  //                            // remove stream which doesn't have any track
-  //                            manifest->GetSmoothStreamingMedia()->GetStreams()->Remove(i);
-  //                          }
-  //                          else
-  //                          {
-  //                            i++;
-  //                          }
-  //                        }
-  //                        else if (stream->IsAudio())
-  //                        {
-  //                          unsigned int j = 0;
-  //                          while (SUCCEEDED(this->parserResult) && (j < stream->GetTracks()->Count()))
-  //                          {
-  //                            bool supportedTrack = false;
-  //                            CMshsManifestTrackBox *track = stream->GetTracks()->GetItem(j);
-
-  //                            for (int k = 0; k < TOTAL_SUPPORTED_AUDIO_TRACKS; k++)
-  //                            {
-  //                              if (!IsNullOrEmptyOrWhitespace(track->GetFourCC()))
-  //                              {
-  //                                if (wcscmp(track->GetFourCC(), SUPPORTED_AUDIO_TRACKS[k]) == 0)
-  //                                {
-  //                                  supportedTrack = true;
-  //                                  break;
-  //                                }
-  //                              }
-  //                            }
-
-  //                            if (!supportedTrack)
-  //                            {
-  //                              stream->GetTracks()->Remove(j);
-  //                            }
-  //                            else
-  //                            {
-  //                              j++;
-  //                            }
-  //                          }
-
-  //                          if (stream->GetTracks()->Count() == 0)
-  //                          {
-  //                            // remove stream which doesn't have any track
-  //                            manifest->GetSmoothStreamingMedia()->GetStreams()->Remove(i);
-  //                          }
-  //                          else
-  //                          {
-  //                            i++;
-  //                          }
-  //                        }
-  //                        else
-  //                        {
-  //                          // not needed stream
-  //                          manifest->GetSmoothStreamingMedia()->GetStreams()->Remove(i);
-  //                        }
-  //                      }
-
-  //                      if (SUCCEEDED(this->parserResult))
-  //                      {
-  //                        // leave only video and audio tracks with highest bitrate
-  //                        for (unsigned int i = 0; (SUCCEEDED(this->parserResult) && (i < manifest->GetSmoothStreamingMedia()->GetStreams()->Count())); i++)
-  //                        {
-  //                          CMshsManifestStreamBox *stream = manifest->GetSmoothStreamingMedia()->GetStreams()->GetItem(i);
-
-  //                          uint32_t maxBitrate = 0;
-  //                          unsigned int maxBitrateIndex = 0;
-  //                          for (unsigned int j = 0; (SUCCEEDED(this->parserResult) && (j < stream->GetTracks()->Count())); j++)
-  //                          {
-  //                            CMshsManifestTrackBox *track = stream->GetTracks()->GetItem(j);
-  //                            if (track->GetBitrate() > maxBitrate)
-  //                            {
-  //                              maxBitrate = track->GetBitrate();
-  //                              maxBitrateIndex = j;
-  //                            }
-  //                          }
-
-  //                          // remove everything except track with max bitrate
-  //                          for (unsigned int j = 0; (SUCCEEDED(this->parserResult) && ((maxBitrateIndex + 1) < stream->GetTracks()->Count())); j++)
-  //                          {
-  //                            stream->GetTracks()->Remove(maxBitrateIndex + 1);
-  //                          }
-  //                          for (unsigned int j = 0; (SUCCEEDED(this->parserResult) && (j < maxBitrateIndex)); j++)
-  //                          {
-  //                            stream->GetTracks()->Remove(0);
-  //                          }
-  //                        }
-  //                      }
-
-  //                      bool containsVideoStream = false;
-  //                      bool containsAudioStream = false;
-  //                      for (unsigned int i = 0; i < manifest->GetSmoothStreamingMedia()->GetStreams()->Count(); i++)
-  //                      {
-  //                        CMshsManifestStreamBox *stream = manifest->GetSmoothStreamingMedia()->GetStreams()->GetItem(i);
-
-  //                        containsVideoStream |= stream->IsVideo();
-  //                        containsAudioStream |= stream->IsAudio();
-  //                      }
-
-  //                      CHECK_CONDITION_HRESULT(this->parserResult, (containsVideoStream && containsAudioStream), this->parserResult, E_MSHS_NO_VIDEO_OR_AUDIO_STREAM_PRESENT);
-  //                    }
-
-  //                    if (SUCCEEDED(this->parserResult))
-  //                    {
-  //                      unsigned int smoothStreamingMediaBoxSize = (unsigned int)manifest->GetSmoothStreamingMedia()->GetSize();
-  //                      ALLOC_MEM_DEFINE_SET(smoothStreamingMediaBox, uint8_t, smoothStreamingMediaBoxSize, 0);
-  //                      CHECK_POINTER_HRESULT(this->parserResult, smoothStreamingMediaBox, this->parserResult, E_OUTOFMEMORY);
-
-  //                      CHECK_CONDITION_HRESULT(this->parserResult, manifest->GetSmoothStreamingMedia()->GetBox(smoothStreamingMediaBox, smoothStreamingMediaBoxSize), this->parserResult, E_OUTOFMEMORY);
-
-  //                      if (SUCCEEDED(this->parserResult))
-  //                      {
-  //                        // compress
-  //                        uint8_t *compressedSmoothStreamingMediaBox = NULL;
-  //                        uint32_t compressedSize = 0;
-
-  //                        this->parserResult = compress_zlib(smoothStreamingMediaBox, smoothStreamingMediaBoxSize, &compressedSmoothStreamingMediaBox, &compressedSize, -1);
-  //                        CHECK_CONDITION_EXECUTE(SUCCEEDED(this->parserResult), this->parserResult = PARSER_RESULT_KNOWN);
-
-  //                        if (SUCCEEDED(this->parserResult))
-  //                        {
-  //                          char *compressedSmoothStreamingMediaBoxBase64Encoded = NULL;
-  //                          this->parserResult = base64_encode(compressedSmoothStreamingMediaBox, compressedSize, &compressedSmoothStreamingMediaBoxBase64Encoded);
-  //                          CHECK_CONDITION_EXECUTE(SUCCEEDED(this->parserResult), this->parserResult = PARSER_RESULT_KNOWN);
-
-  //                          if (SUCCEEDED(this->parserResult))
-  //                          {
-  //                            wchar_t *encoded = ConvertToUnicodeA(compressedSmoothStreamingMediaBoxBase64Encoded);
-  //                            CHECK_POINTER_HRESULT(this->parserResult, encoded, this->parserResult, E_OUTOFMEMORY);
-
-  //                            CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Add(PARAMETER_NAME_MSHS_MANIFEST, encoded), this->parserResult, E_OUTOFMEMORY);
-
-  //                            FREE_MEM(encoded);
-  //                          }
-
-  //                          FREE_MEM(compressedSmoothStreamingMediaBoxBase64Encoded);
-  //                        }
-  //                      }
-
-  //                      FREE_MEM(smoothStreamingMediaBox);
-  //                    }
-
-  //                    if (SUCCEEDED(this->parserResult))
-  //                    {
-  //                      wchar_t *replacedUrl = ReplaceString(this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL), L"http://", L"mshs://");
-  //                      CHECK_POINTER_HRESULT(this->parserResult, replacedUrl, this->parserResult, E_OUTOFMEMORY);
-  //                      CHECK_POINTER_HRESULT(this->parserResult, wcsstr(replacedUrl, L"mshs://"), this->parserResult, E_MSHS_ONLY_HTTP_PROTOCOL_SUPPORTED_IN_URL);
-
-
-  //                      CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_COOKIE, true, PARAMETER_NAME_MSHS_COOKIE), this->parserResult, E_OUTOFMEMORY);
-  //                      CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH), this->parserResult, E_OUTOFMEMORY);
-  //                      CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT, true, PARAMETER_NAME_MSHS_OPEN_CONNECTION_TIMEOUT), this->parserResult, E_OUTOFMEMORY);
-  //                      CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_OPEN_CONNECTION_SLEEP_TIME, true, PARAMETER_NAME_MSHS_OPEN_CONNECTION_SLEEP_TIME), this->parserResult, E_OUTOFMEMORY);
-  //                      CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT, true, PARAMETER_NAME_MSHS_TOTAL_REOPEN_CONNECTION_TIMEOUT), this->parserResult, E_OUTOFMEMORY);
-  //                      CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_REFERER, true, PARAMETER_NAME_MSHS_REFERER), this->parserResult, E_OUTOFMEMORY);
-  //                      CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_USER_AGENT, true, PARAMETER_NAME_MSHS_USER_AGENT), this->parserResult, E_OUTOFMEMORY);
-  //                      CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_VERSION, true, PARAMETER_NAME_MSHS_VERSION), this->parserResult, E_OUTOFMEMORY);
-
-  //                      CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Update(PARAMETER_NAME_URL, true, replacedUrl), this->parserResult, E_OUTOFMEMORY);
-
-  //                      if (SUCCEEDED(this->parserResult))
-  //                      {
-  //                        // extract cookies from connection parameters
-  //                        CParameterCollection *usedCookies = new CParameterCollection(&this->parserResult);
-  //                        CHECK_POINTER_HRESULT(this->parserResult, usedCookies, this->parserResult, E_OUTOFMEMORY);
-
-  //                        if (SUCCEEDED(this->parserResult))
-  //                        {
-  //                          unsigned int currentCookiesCount = connectionParameters->GetValueUnsignedInt(PARAMETER_NAME_HTTP_COOKIES_COUNT, true, 0);
-
-  //                          for (unsigned int i = 0; (SUCCEEDED(this->parserResult) && (i < currentCookiesCount)); i++)
-  //                          {
-  //                            wchar_t *httpCookieName = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
-  //                            CHECK_POINTER_HRESULT(this->parserResult, httpCookieName, this->parserResult, E_OUTOFMEMORY);
-
-  //                            if (SUCCEEDED(this->parserResult))
-  //                            {
-  //                              const wchar_t *cookieValue = connectionParameters->GetValue(httpCookieName, true, NULL);
-  //                              CHECK_POINTER_HRESULT(this->parserResult, cookieValue, this->parserResult, E_OUTOFMEMORY);
-
-  //                              CHECK_CONDITION_HRESULT(this->parserResult, usedCookies->Add(L"", cookieValue), this->parserResult, E_OUTOFMEMORY);
-  //                              CHECK_CONDITION_EXECUTE(FAILED(this->parserResult), FREE_MEM_CLASS(cookieValue));
-  //                            }
-
-  //                            FREE_MEM(httpCookieName);
-  //                          }
-  //                        }
-
-  //                        // copy current cookies parameters
-  //                        if (SUCCEEDED(this->parserResult) && (usedCookies != NULL) && (usedCookies->Count() != 0))
-  //                        {
-  //                          // first add count of cookies
-  //                          wchar_t *cookiesCountValue = FormatString(L"%u", usedCookies->Count());
-  //                          CHECK_POINTER_HRESULT(this->parserResult, cookiesCountValue, this->parserResult, E_OUTOFMEMORY);
-
-  //                          CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Update(PARAMETER_NAME_MSHS_COOKIES_COUNT, true, cookiesCountValue), this->parserResult, E_OUTOFMEMORY);
-  //                          for (unsigned int i = 0; (SUCCEEDED(this->parserResult) && (i < usedCookies->Count())); i++)
-  //                          {
-  //                            CParameter *cookie = usedCookies->GetItem(i);
-
-  //                            wchar_t *name = FormatString(MSHS_COOKIE_FORMAT_PARAMETER_NAME, i);
-  //                            CHECK_POINTER_HRESULT(this->parserResult, name, this->parserResult, E_OUTOFMEMORY);
-
-  //                            CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Update(name, true, cookie->GetValue()), this->parserResult, E_OUTOFMEMORY);
-  //                            FREE_MEM(name);
-  //                          }
-
-  //                          FREE_MEM(cookiesCountValue);
-  //                        }
-
-  //                        FREE_MEM_CLASS(usedCookies);
-  //                      }
-  //                    }
-  //                  }
-  //                  else if (manifest->IsXml() && (manifest->GetParseError() != 0))
-  //                  {
-  //                    // we have XML declaration, it is valid XML file, just not complete
-  //                    this->logger->Log(LOGGER_WARNING, L"%s: %s: XML file probably not complete, XML parse error: %d", PARSER_IMPLEMENTATION_NAME, METHOD_GET_PARSER_RESULT_NAME, manifest->GetParseError());
-  //                  }
-  //                  else
-  //                  {
-  //                    // not MSHS manifest or XML file
-  //                    this->parserResult = PARSER_RESULT_NOT_KNOWN;
-  //                  }
-  //                }
-
-  //                FREE_MEM_CLASS(manifest);
-  //              }
-
-  //              FREE_MEM(buffer);
-  //              requestLength *= 2;
-  //            }
-
-  //            this->lastReceivedLength = response->GetBuffer()->GetBufferOccupiedSpace();
-  //          }
-  //        }
-  //      }
-  //    }
-
-  //    FREE_MEM_CLASS(package);
-  //    FREE_MEM_CLASS(streams);
-  //  }
-  //  else
-  //  {
-  //    // MSHS parser doesn't support multiple stream
-  //    this->parserResult = PARSER_RESULT_NOT_KNOWN;
-  //  }
-  //}
+  if (this->parserResult == PARSER_RESULT_PENDING)
+  {
+    CStreamInformationCollection *streams = new CStreamInformationCollection(&this->parserResult);
+    CHECK_POINTER_HRESULT(this->parserResult, streams, this->parserResult, E_OUTOFMEMORY);
+
+    CHECK_HRESULT_EXECUTE(this->parserResult, this->protocolHoster->GetStreamInformation(streams));
+
+    if (SUCCEEDED(this->parserResult) && (streams->Count() == 1))
+    {
+      CStreamPackage *package = new CStreamPackage(&this->parserResult);
+      CHECK_POINTER_HRESULT(this->parserResult, package, this->parserResult, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(this->parserResult))
+      {
+        unsigned int requestLength = MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_DATA_LENGTH_DEFAULT;
+        bool receivedSameLength = false;
+        this->parserResult = PARSER_RESULT_PENDING;
+
+        while ((this->parserResult == PARSER_RESULT_PENDING) && (!receivedSameLength))
+        {
+          package->Clear();
+
+          CStreamPackageDataRequest *request = new CStreamPackageDataRequest(&this->parserResult);
+          CHECK_POINTER_HRESULT(this->parserResult, request, this->parserResult, E_OUTOFMEMORY);
+
+          if (SUCCEEDED(this->parserResult))
+          {
+            request->SetStart(0);
+            request->SetLength(requestLength);
+            request->SetAnyDataLength(true);
+
+            package->SetRequest(request);
+          }
+
+          CHECK_CONDITION_EXECUTE(FAILED(this->parserResult), FREE_MEM_CLASS(request));
+          CHECK_HRESULT_EXECUTE(this->parserResult, this->protocolHoster->ProcessStreamPackage(package));
+
+          if (SUCCEEDED(this->parserResult))
+          {
+            this->parserResult = PARSER_RESULT_PENDING;
+            CStreamPackageDataResponse *response = dynamic_cast<CStreamPackageDataResponse *>(package->GetResponse());
+
+            if (package->IsError())
+            {
+              // TO DO: check type of error
+
+              this->parserResult = PARSER_RESULT_NOT_KNOWN;
+            }
+
+            if (response != NULL)
+            {
+              receivedSameLength = (response->GetBuffer()->GetBufferOccupiedSpace() == this->lastReceivedLength);
+              if (!receivedSameLength)
+              {
+                // try parse data
+                int res = CTsPacket::FindPacket(response->GetBuffer(), TS_PACKET_MINIMUM_CHECKED_UNSPECIFIED);
+
+                switch (res)
+                {
+                case TS_PACKET_FIND_RESULT_NOT_FOUND:
+                  this->parserResult = PARSER_RESULT_NOT_KNOWN;
+                  break;
+                case TS_PACKET_FIND_RESULT_NOT_ENOUGH_DATA_FOR_HEADER:
+                case TS_PACKET_FIND_RESULT_NOT_FOUND_MINIMUM_PACKETS:
+                  this->parserResult = PARSER_RESULT_PENDING;
+                  break;
+                case TS_PACKET_FIND_RESULT_NOT_ENOUGH_MEMORY:
+                  this->parserResult = E_OUTOFMEMORY;
+                  break;
+                default:
+                  // we found at least TS_PACKET_MINIMUM_CHECKED MPEG2 TS packets
+                  this->parserResult = PARSER_RESULT_KNOWN;
+                  break;
+                }
+
+                requestLength *= 2;
+              }
+
+              this->lastReceivedLength = response->GetBuffer()->GetBufferOccupiedSpace();
+            }
+          }
+        }
+      }
+
+      FREE_MEM_CLASS(package);
+    }
+    else
+    {
+      // MPEG2 TS parser doesn't support multiple streams
+      this->parserResult = PARSER_RESULT_NOT_KNOWN;
+    }
+
+    FREE_MEM_CLASS(streams);
+  }
 
   return this->parserResult;
 }
@@ -578,6 +260,11 @@ int64_t CMPUrlSourceSplitter_Parser_Mpeg2TS::GetDuration(void)
 
 HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::ProcessStreamPackage(CStreamPackage *streamPackage)
 {
+  // in rare cases (e.g. HTTP protocol) are MPEG2 TS streams not aligned to MPEG2 TS packet boundary (sync byte)
+  // in that case is FFmpeg (and maybe also TvService) confused
+  // we must align MPEG2 TS stream to MPEG2 TS packet boundary (sync byte)
+
+
   return this->protocolHoster->ProcessStreamPackage(streamPackage);
 }
 

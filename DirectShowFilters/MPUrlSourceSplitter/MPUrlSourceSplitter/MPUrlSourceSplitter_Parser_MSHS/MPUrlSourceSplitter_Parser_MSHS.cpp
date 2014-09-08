@@ -503,13 +503,14 @@ HRESULT CMPUrlSourceSplitter_Parser_Mshs::GetParserResult(void)
       }
 
       FREE_MEM_CLASS(package);
-      FREE_MEM_CLASS(streams);
     }
     else
     {
       // MSHS parser doesn't support multiple stream
       this->parserResult = PARSER_RESULT_NOT_KNOWN;
     }
+
+    FREE_MEM_CLASS(streams);
   }
 
   return this->parserResult;

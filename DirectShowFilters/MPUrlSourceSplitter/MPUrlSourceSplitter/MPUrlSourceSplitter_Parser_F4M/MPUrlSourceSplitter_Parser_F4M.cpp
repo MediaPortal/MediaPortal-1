@@ -570,13 +570,14 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::GetParserResult(void)
       }
 
       FREE_MEM_CLASS(package);
-      FREE_MEM_CLASS(streams);
     }
     else
     {
       // F4M parser doesn't support multiple stream
       this->parserResult = PARSER_RESULT_NOT_KNOWN;
     }
+
+    FREE_MEM_CLASS(streams);
   }
 
   return this->parserResult;
