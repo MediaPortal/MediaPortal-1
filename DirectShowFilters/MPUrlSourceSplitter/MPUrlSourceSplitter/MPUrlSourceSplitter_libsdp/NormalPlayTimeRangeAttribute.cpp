@@ -106,18 +106,18 @@ unsigned int CNormalPlayTimeRangeAttribute::Parse(const wchar_t *buffer, unsigne
             if (decimalIndex == (-1))
             {
               // number without decimal part
-              this->startTime = GetValueUnsignedInt64(startTimeString, 0) * 1000;
+              this->startTime = GetValueUint64(startTimeString, 0) * 1000;
               this->flags |= NORMAL_PLAY_TIME_RANGE_ATTRIBUTE_FLAG_START_TIME;
             }
             else
             {
               // number with decimal part
-              this->endTime = GetValueUnsignedInt64(startTimeString + decimalIndex + NORMAL_PLAY_TIME_DECIMAL_SEPARATOR_LENGTH, 0);
+              this->endTime = GetValueUint64(startTimeString + decimalIndex + NORMAL_PLAY_TIME_DECIMAL_SEPARATOR_LENGTH, 0);
               for (unsigned int i = 0; i < (max(startTimeStringLength - decimalIndex - NORMAL_PLAY_TIME_DECIMAL_SEPARATOR_LENGTH, 3) - 3); i++)
               {
                 this->endTime /= 10;
               }
-              this->endTime += GetValueUnsignedInt64(startTimeString, 0) * 1000;
+              this->endTime += GetValueUint64(startTimeString, 0) * 1000;
               this->flags |= NORMAL_PLAY_TIME_RANGE_ATTRIBUTE_FLAG_START_TIME;
             }
 
@@ -128,18 +128,18 @@ unsigned int CNormalPlayTimeRangeAttribute::Parse(const wchar_t *buffer, unsigne
               if (decimalIndex == (-1))
               {
                 // number without decimal part
-                this->endTime = GetValueUnsignedInt64(endTimeString, 0) * 1000;
+                this->endTime = GetValueUint64(endTimeString, 0) * 1000;
                 this->flags |= NORMAL_PLAY_TIME_RANGE_ATTRIBUTE_FLAG_END_TIME;
               }
               else
               {
                 // number with decimal part
-                this->endTime = GetValueUnsignedInt64(endTimeString + decimalIndex + NORMAL_PLAY_TIME_DECIMAL_SEPARATOR_LENGTH, 0);
+                this->endTime = GetValueUint64(endTimeString + decimalIndex + NORMAL_PLAY_TIME_DECIMAL_SEPARATOR_LENGTH, 0);
                 for (unsigned int i = 0; i < (max(endTimeStringLength - decimalIndex - NORMAL_PLAY_TIME_DECIMAL_SEPARATOR_LENGTH, 3) - 3); i++)
                 {
                   this->endTime /= 10;
                 }
-                this->endTime += GetValueUnsignedInt64(endTimeString, 0) * 1000;
+                this->endTime += GetValueUint64(endTimeString, 0) * 1000;
                 this->flags |= NORMAL_PLAY_TIME_RANGE_ATTRIBUTE_FLAG_END_TIME;
               }
             }

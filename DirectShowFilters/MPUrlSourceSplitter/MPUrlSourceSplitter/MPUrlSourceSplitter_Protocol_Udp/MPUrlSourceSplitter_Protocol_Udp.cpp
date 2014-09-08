@@ -597,7 +597,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
       }
 
       // in case of live stream remove all downloaded and processed stream fragments
-      // processed stream fragment means that all data from stream fragment were requested
+      // processed stream fragments means that all data from stream fragment were requested
       if (this->IsLiveStream() && (this->reportedStreamTime > 0) && (this->reportedStreamPosition > 0) && (this->pauseSeekStopMode == PAUSE_SEEK_STOP_MODE_NONE))
       {
         // remove used stream fragments
@@ -612,13 +612,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
           {
             CUdpStreamFragment *fragment = this->streamFragments->GetItem(fragmentRemoveCount);
 
-            if ((int64_t)this->reportedStreamPosition < (fragment->GetStart() + (int64_t)fragment->GetLength()))
+            if (fragment->IsDownloaded() && ((fragment->GetStart() + (int64_t)fragment->GetLength()) < (int64_t)this->reportedStreamPosition))
             {
-              // reported stream position is before stream fragment end = not whole stream fragment is processed
+              fragmentRemoveCount++;
+            }
+            else
+            {
               break;
             }
-
-            fragmentRemoveCount++;
           }
 
           if ((fragmentRemoveCount > 0) && (this->cacheFile->RemoveItems(this->streamFragments, 0, fragmentRemoveCount)))

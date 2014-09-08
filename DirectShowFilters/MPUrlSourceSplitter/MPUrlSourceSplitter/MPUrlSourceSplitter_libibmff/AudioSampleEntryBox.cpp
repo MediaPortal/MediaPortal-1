@@ -145,7 +145,6 @@ bool CAudioSampleEntryBox::ParseInternal(const unsigned char *buffer, uint32_t l
 {
   if (__super::ParseInternal(buffer, length, false))
   {
-    // box is media data box, parse all values
     uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
     HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
 

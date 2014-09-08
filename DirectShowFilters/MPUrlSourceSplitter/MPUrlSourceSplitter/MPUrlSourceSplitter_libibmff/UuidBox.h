@@ -43,21 +43,35 @@ public:
 
   /* get methods */
 
+  // gets GUID
+  // @return : GUID
+  virtual GUID GetGuid(void);
+
+  // gets payload data of media data box
+  // @return : payload data or NULL if error
+  virtual const uint8_t *GetPayload(void);
+
+  // gets payload size
+  // @return : payload size
+  virtual uint64_t GetPayloadSize(void);
+
   // gets whole box into buffer (buffer must be allocated before)
   // @param buffer : the buffer for box data
   // @param length : the length of buffer for data
   // @return : true if all data were successfully stored into buffer, false otherwise
   virtual bool GetBox(uint8_t *buffer, uint32_t length);
 
-  // gets GUID
-  // @return : GUID
-  virtual GUID GetGuid(void);
-
   /* set methods */
 
   // sets GUID
   // @param guid : GUID to set
   virtual void SetGuid(GUID guid);
+
+  // sets payload data of media data box
+  // @param buffer : buffer with payload data
+  // @param length : buffer size (payload data size)
+  // @return : true if successfull, false otherwise
+  virtual bool SetPayload(const uint8_t *buffer, uint32_t length);
 
   /* other methods */
 
@@ -73,8 +87,12 @@ public:
   virtual wchar_t *GetParsedHumanReadable(const wchar_t *indent);
 
 protected:
-
+  // stores GUID
   GUID guid;
+  // stores playload
+  uint8_t *payload;
+  // stores payload size
+  uint64_t payloadSize;
 
   // gets whole box size
   // method is called to determine whole box size for storing box into buffer

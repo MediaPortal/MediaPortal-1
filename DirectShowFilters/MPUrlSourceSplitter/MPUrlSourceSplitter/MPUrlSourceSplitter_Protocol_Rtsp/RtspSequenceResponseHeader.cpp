@@ -54,7 +54,7 @@ bool CRtspSequenceResponseHeader::Parse(const wchar_t *header, unsigned int leng
 
     if (result)
     {
-      this->sequenceNumber = GetValueUnsignedInt(this->value, RTSP_SEQUENCE_NUMBER_UNSPECIFIED);
+      this->sequenceNumber = GetValueUint(this->value, RTSP_SEQUENCE_NUMBER_UNSPECIFIED);
       result &= (this->sequenceNumber != RTSP_SEQUENCE_NUMBER_UNSPECIFIED);
     }
   }

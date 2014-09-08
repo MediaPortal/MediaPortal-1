@@ -41,14 +41,14 @@ bool CDataEntryBox::GetBox(uint8_t *buffer, uint32_t length)
 
 bool CDataEntryBox::IsSelfContained(void)
 {
-  return ((this->flags & FLAGS_SELF_CONTAINED) != 0);
+  return ((this->boxFlags & FLAGS_SELF_CONTAINED) != 0);
 }
 
 /* set methods */
 
 void CDataEntryBox::SetSelfContained(bool selfContained)
 {
-  this->flags = (selfContained) ? (this->flags | FLAGS_SELF_CONTAINED) : (this->flags & (~FLAGS_SELF_CONTAINED));
+  this->boxFlags = (selfContained) ? (this->boxFlags | FLAGS_SELF_CONTAINED) : (this->boxFlags & (~FLAGS_SELF_CONTAINED));
 }
 
 /* other methods */

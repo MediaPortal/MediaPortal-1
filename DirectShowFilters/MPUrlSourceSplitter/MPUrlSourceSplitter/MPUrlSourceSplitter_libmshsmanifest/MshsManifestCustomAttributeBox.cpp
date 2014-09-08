@@ -120,7 +120,7 @@ bool CMshsManifestCustomAttributeBox::ParseInternal(const unsigned char *buffer,
         RBE32INC_DEFINE(buffer, position, nameLength, uint32_t);
 
         // check if we have enough data in buffer for name
-        CHECK_CONDITION_HRESULT(continueParsing, (this->GetSize() + nameLength * sizeof(wchar_t)) <= length, continueParsing, E_OUTOFMEMORY);
+        CHECK_CONDITION_HRESULT(continueParsing, (position + nameLength * sizeof(wchar_t)) <= length, continueParsing, E_OUTOFMEMORY);
 
         if (SUCCEEDED(continueParsing) && (nameLength != 0))
         {
@@ -137,7 +137,7 @@ bool CMshsManifestCustomAttributeBox::ParseInternal(const unsigned char *buffer,
         RBE32INC_DEFINE(buffer, position, valueLength, uint32_t);
 
         // check if we have enough data in buffer for name
-        CHECK_CONDITION_HRESULT(continueParsing, (this->GetSize() + valueLength * sizeof(wchar_t)) <= length, continueParsing, E_OUTOFMEMORY);
+        CHECK_CONDITION_HRESULT(continueParsing, (position + valueLength * sizeof(wchar_t)) <= length, continueParsing, E_OUTOFMEMORY);
 
         if (SUCCEEDED(continueParsing) && (valueLength != 0))
         {

@@ -114,7 +114,7 @@ bool CFullBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool 
 
   if (__super::ParseInternal(buffer, length, false))
   {
-    // box is file type box, parse all values
+    // box is full box, parse all values
     uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
     bool continueParsing = ((position + FULL_BOX_DATA_SIZE) <= min(length, (uint32_t)this->GetSize()));
 

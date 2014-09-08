@@ -1113,12 +1113,14 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
   //    in that case is assumed that there is only one stream in all groups (video, audio, subtitle)
 
   int streamId = -1;
-  for (unsigned int i = 0; i < CStream::Unknown; i++)
+
+  for (unsigned int i = 0; ((streamId == (-1)) && (i < CStream::Unknown)); i++)
   {
     // stream groups are in order: video, audio, subtitle = in our preference
     if (this->GetStreams((CStream::StreamType)i)->Count() > 0)
     {
-      streamId = this->GetStreams((CStream::StreamType)i)->GetItem((this->activeStream[(CStream::StreamType)i] == ACTIVE_STREAM_NOT_SPECIFIED) ? 0 : this->activeStream[(CStream::StreamType)i])->GetPid();
+      CStream *activeStream = this->GetStreams((CStream::StreamType)i)->GetItem((this->activeStream[(CStream::StreamType)i] == ACTIVE_STREAM_NOT_SPECIFIED) ? 0 : this->activeStream[(CStream::StreamType)i]);
+      streamId = activeStream->GetPid();
     }
   }
 

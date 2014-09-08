@@ -205,8 +205,8 @@ bool CTrackFragmentHeaderBox::ParseInternal(const unsigned char *buffer, uint32_
 
     if (this->IsSetFlags(BOX_FLAG_PARSED))
     {
-      // box is media data box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      // box is track fragment header box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
       HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
 
       if (SUCCEEDED(continueParsing))
@@ -250,32 +250,32 @@ bool CTrackFragmentHeaderBox::ParseInternal(const unsigned char *buffer, uint32_
 
 bool CTrackFragmentHeaderBox::IsBaseDataOffsetPresent(void)
 {
-  return ((this->GetFlags() & FLAGS_BASE_DATA_OFFSET_PRESENT) != 0);
+  return ((this->GetBoxFlags() & FLAGS_BASE_DATA_OFFSET_PRESENT) != 0);
 }
 
 bool CTrackFragmentHeaderBox::IsSampleDescriptionIndexPresent(void)
 {
-  return ((this->GetFlags() & FLAGS_SAMPLE_DESCRIPTION_INDEX_PRESENT) != 0);
+  return ((this->GetBoxFlags() & FLAGS_SAMPLE_DESCRIPTION_INDEX_PRESENT) != 0);
 }
 
 bool CTrackFragmentHeaderBox::IsDefaultSampleDurationPresent(void)
 {
-  return ((this->GetFlags() & FLAGS_DEFAULT_SAMPLE_DURATION_PRESENT) != 0);
+  return ((this->GetBoxFlags() & FLAGS_DEFAULT_SAMPLE_DURATION_PRESENT) != 0);
 }
 
 bool CTrackFragmentHeaderBox::IsDefaultSampleSizePresent(void)
 {
-  return ((this->GetFlags() & FLAGS_DEFAULT_SAMPLE_SIZE_PRESENT) != 0);
+  return ((this->GetBoxFlags() & FLAGS_DEFAULT_SAMPLE_SIZE_PRESENT) != 0);
 }
 
 bool CTrackFragmentHeaderBox::IsDefaultSampleFlagsPresent(void)
 {
-  return ((this->GetFlags() & FLAGS_DEFAULT_SAMPLE_FLAGS_PRESENT) != 0);
+  return ((this->GetBoxFlags() & FLAGS_DEFAULT_SAMPLE_FLAGS_PRESENT) != 0);
 }
 
 bool CTrackFragmentHeaderBox::IsDurationIsEmpty(void)
 {
-  return ((this->GetFlags() & FLAGS_DURATION_IS_EMPTY) != 0);
+  return ((this->GetBoxFlags() & FLAGS_DURATION_IS_EMPTY) != 0);
 }
 
 uint32_t CTrackFragmentHeaderBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

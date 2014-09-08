@@ -21,12 +21,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IAfhsDecryptionPlugin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IAfhsSimpleDecryptionPlugin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AfhsDecryptionContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>

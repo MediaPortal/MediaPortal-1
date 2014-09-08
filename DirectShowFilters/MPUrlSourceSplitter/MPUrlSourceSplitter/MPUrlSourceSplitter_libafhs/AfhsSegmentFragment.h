@@ -20,8 +20,8 @@
 
 #pragma once
 
-#ifndef __SEGMENT_FRAGMENT_DEFINED
-#define __SEGMENT_FRAGMENT_DEFINED
+#ifndef __AFHS_SEGMENT_FRAGMENT_DEFINED
+#define __AFHS_SEGMENT_FRAGMENT_DEFINED
 
 #include "HttpDownloadRequest.h"
 #include "HttpDownloadResponse.h"

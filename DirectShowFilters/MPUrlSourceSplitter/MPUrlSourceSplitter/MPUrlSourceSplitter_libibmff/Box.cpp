@@ -304,7 +304,7 @@ bool CBox::ProcessAdditionalBoxes(const uint8_t *buffer, uint32_t length, uint32
       CHECK_POINTER_HRESULT(continueParsing, box, continueParsing, E_OUTOFMEMORY);
 
       CHECK_CONDITION_HRESULT(continueParsing, this->boxes->Add(box), continueParsing, E_OUTOFMEMORY);
-      processed += (uint32_t)box->GetSize();
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(continueParsing), processed += (uint32_t)box->GetSize());
 
       CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(box));
     }

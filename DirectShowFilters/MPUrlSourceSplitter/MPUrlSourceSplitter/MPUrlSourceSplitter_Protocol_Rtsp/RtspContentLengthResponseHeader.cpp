@@ -54,7 +54,7 @@ bool CRtspContentLengthResponseHeader::Parse(const wchar_t *header, unsigned int
 
     if (result)
     {
-      this->contentLength = GetValueUnsignedInt(this->value, RTSP_CONTENT_LENGTH_UNSPECIFIED);
+      this->contentLength = GetValueUint(this->value, RTSP_CONTENT_LENGTH_UNSPECIFIED);
       result &= (this->contentLength != RTSP_CONTENT_LENGTH_UNSPECIFIED);
     }
   }

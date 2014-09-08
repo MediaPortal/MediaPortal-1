@@ -364,7 +364,6 @@ bool CAfhsSegmentFragmentCollection::InsertIndexes(unsigned int itemIndex)
     CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_BASE), __super::RemoveIndexes(itemIndex, 1));
   }
 
-
   return result;
 }
 
@@ -476,6 +475,8 @@ bool CAfhsSegmentFragmentCollection::EnsureEnoughSpaceIndexes(unsigned int addin
 
 void CAfhsSegmentFragmentCollection::ClearIndexes(void)
 {
+  __super::ClearIndexes();
+
   this->indexEncrypted->Clear();
   this->indexDecrypted->Clear();
 }

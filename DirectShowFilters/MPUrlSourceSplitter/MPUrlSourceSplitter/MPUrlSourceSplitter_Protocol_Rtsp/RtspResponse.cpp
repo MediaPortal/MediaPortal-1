@@ -190,7 +190,7 @@ HRESULT CRtspResponse::Parse(const unsigned char *buffer, unsigned int length)
 
                   if (SUCCEEDED(result))
                   {
-                    this->statusCode = GetValueUnsignedInt(header->GetValue() + beforeStatusCode, RTSP_STATUS_CODE_UNSPECIFIED);
+                    this->statusCode = GetValueUint(header->GetValue() + beforeStatusCode, RTSP_STATUS_CODE_UNSPECIFIED);
                     this->statusReason = Substring(header->GetValue(), beforeStatusCode + spaceIndex + 1, headerValueLength - beforeStatusCode - spaceIndex - 1);
                   }
                 }

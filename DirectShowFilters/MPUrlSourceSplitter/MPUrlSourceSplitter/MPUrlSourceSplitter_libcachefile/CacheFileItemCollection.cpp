@@ -409,6 +409,8 @@ bool CCacheFileItemCollection::EnsureEnoughSpaceIndexes(unsigned int addingCount
 
 void CCacheFileItemCollection::ClearIndexes(void)
 {
+  __super::ClearIndexes();
+
   this->indexCleanUpFromMemoryStoredToFileLoadedToMemory->Clear();
   this->indexCleanUpFromMemoryNotStoredToFileLoadedToMemory->Clear();
   this->indexNotDownloaded->Clear();

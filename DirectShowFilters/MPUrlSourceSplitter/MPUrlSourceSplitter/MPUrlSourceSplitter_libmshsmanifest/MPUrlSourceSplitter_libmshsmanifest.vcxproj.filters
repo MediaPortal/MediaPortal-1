@@ -24,9 +24,6 @@
     <ClInclude Include="MshsManifestElements.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MshsManifest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MshsManifestProtectionBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -60,12 +57,12 @@
     <ClInclude Include="MshsManifestSmoothStreamingMediaBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MshsManifest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MshsManifest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MshsManifestProtectionBox.cpp">
@@ -99,6 +96,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MshsManifestSmoothStreamingMediaBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MshsManifest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -84,14 +84,6 @@
     <ClInclude Include="AfhsDecryptionPluginConfiguration.h" />
     <ClInclude Include="AfhsDownloadRequest.h" />
     <ClInclude Include="AfhsDownloadResponse.h" />
-    <ClInclude Include="IAfhsDecryptionPlugin.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="IAfhsSimpleDecryptionPlugin.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="AfhsSegmentFragment.h" />
     <ClInclude Include="AfhsSegmentFragmentCollection.h" />
     <ClInclude Include="IndexedAfhsSegmentFragment.h" />

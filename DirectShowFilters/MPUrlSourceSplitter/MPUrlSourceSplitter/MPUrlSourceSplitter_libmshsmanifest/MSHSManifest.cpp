@@ -176,12 +176,12 @@ bool CMshsManifest::Parse(const char *buffer)
 
                     if (SUCCEEDED(result))
                     {
-                      stream->SetTimeScale(GetValueUnsignedInt64(timeScale, this->smoothStreamingMedia->GetTimeScale()));
-                      stream->SetMaxWidth(GetValueUnsignedInt(maxWidth, 0));
-                      stream->SetMaxHeight(GetValueUnsignedInt(maxHeight, 0));
-                      stream->SetDisplayWidth(GetValueUnsignedInt(displayWidth, 0));
-                      stream->SetDisplayHeight(GetValueUnsignedInt(displayHeight, 0));
-                      CHECK_CONDITION_HRESULT(result, stream->SetType(type), result, E_OUTOFMEMORY);
+                      stream->SetTimeScale(GetValueUint64(timeScale, this->smoothStreamingMedia->GetTimeScale()));
+                      stream->SetMaxWidth(GetValueUint(maxWidth, 0));
+                      stream->SetMaxHeight(GetValueUint(maxHeight, 0));
+                      stream->SetDisplayWidth(GetValueUint(displayWidth, 0));
+                      stream->SetDisplayHeight(GetValueUint(displayHeight, 0));
+                      CHECK_CONDITION_HRESULT(result, stream->SetStreamBoxType(type), result, E_OUTOFMEMORY);
                       CHECK_CONDITION_HRESULT(result, stream->SetSubType(subType), result, E_OUTOFMEMORY);
                       CHECK_CONDITION_HRESULT(result, stream->SetUrl(url), result, E_OUTOFMEMORY);
                       CHECK_CONDITION_HRESULT(result, stream->SetName(name), result, E_OUTOFMEMORY);
@@ -231,16 +231,16 @@ bool CMshsManifest::Parse(const char *buffer)
 
                           if (SUCCEEDED(result))
                           {
-                            track->SetIndex(GetValueUnsignedInt(index, trackIndex++));
-                            track->SetBitrate(GetValueUnsignedInt(bitrate, 0));
-                            track->SetMaxWidth(GetValueUnsignedInt(maxWidth, 0));
-                            track->SetMaxHeight(GetValueUnsignedInt(maxHeight, 0));
-                            track->SetSamplingRate(GetValueUnsignedInt(samplingRate, 0));
-                            track->SetChannels(GetValueUnsignedInt(channels, 0));
-                            track->SetBitsPerSample(GetValueUnsignedInt(bitsPerSample, 0));
-                            track->SetPacketSize(GetValueUnsignedInt(packetSize, 0));
-                            track->SetAudioTag(GetValueUnsignedInt(audioTag, 0));
-                            track->SetNalUnitLengthField(GetValueUnsignedInt(nalUnitLengthField, MSHS_NAL_UNIT_LENGTH_DEFAULT));
+                            track->SetIndex(GetValueUint(index, trackIndex++));
+                            track->SetBitrate(GetValueUint(bitrate, 0));
+                            track->SetMaxWidth(GetValueUint(maxWidth, 0));
+                            track->SetMaxHeight(GetValueUint(maxHeight, 0));
+                            track->SetSamplingRate(GetValueUint(samplingRate, 0));
+                            track->SetChannels(GetValueUint(channels, 0));
+                            track->SetBitsPerSample(GetValueUint(bitsPerSample, 0));
+                            track->SetPacketSize(GetValueUint(packetSize, 0));
+                            track->SetAudioTag(GetValueUint(audioTag, 0));
+                            track->SetNalUnitLengthField(GetValueUint(nalUnitLengthField, MSHS_NAL_UNIT_LENGTH_DEFAULT));
                             CHECK_CONDITION_HRESULT(result, track->SetCodecPrivateData(codecPrivateData), result, E_OUTOFMEMORY);
                             CHECK_CONDITION_HRESULT(result, track->SetFourCC(fourCC), result, E_OUTOFMEMORY);
                           }
@@ -311,9 +311,9 @@ bool CMshsManifest::Parse(const char *buffer)
 
                           if (SUCCEEDED(result))
                           {
-                            streamFragment->SetFragmentNumber(GetValueUnsignedInt(fragmentNumber, streamFragmentNumber++));
-                            streamFragment->SetFragmentDuration(GetValueUnsignedInt64(fragmentDuration, 0));
-                            streamFragment->SetFragmentTime(GetValueUnsignedInt64(fragmentTime, streamFragmentTime));
+                            streamFragment->SetFragmentNumber(GetValueUint(fragmentNumber, streamFragmentNumber++));
+                            streamFragment->SetFragmentDuration(GetValueUint64(fragmentDuration, 0));
+                            streamFragment->SetFragmentTime(GetValueUint64(fragmentTime, streamFragmentTime));
 
                             streamFragmentTime = streamFragment->GetFragmentTime() + streamFragment->GetFragmentDuration();
                           }

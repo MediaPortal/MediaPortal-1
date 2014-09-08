@@ -166,9 +166,27 @@
 #define E_AFHS_AKAMAI_DECRYPTOR_DECRYPTED_DATA_NOT_EQUAL_TO_ENCRYPTED_DATA      -186
 #define E_AFHS_AKAMAI_DECRYPTOR_CANNOT_CREATE_DECRYPTED_FLV_PACKET              -187
 
-// MSHS parser error code
+// MSHS parser error codes
 
 #define E_MSHS_NO_VIDEO_OR_AUDIO_STREAM_PRESENT                                 -190
 #define E_MSHS_ONLY_HTTP_PROTOCOL_SUPPORTED_IN_URL                              -191
+
+// MSHS protocol error codes
+
+#define E_MSHS_NO_VIDEO_OR_AUDIO_FRAGMENT                                       -192
+#define E_MSHS_NO_FRAGMENT_URL                                                  -193
+#define E_MSHS_CANNOT_PARSE_STREAMING_MEDIA_BOX                                 -194
+#define E_MSHS_CANNOT_PARSE_MOVIE_FRAGMENT_BOX                                  -195
+#define E_MSHS_CANNOT_GET_TRACK_HEADER_FRAGMENT_BOX_FROM_MOVIE_FRAGMENT_BOX     -196
+#define E_MSHS_CANNOT_PARSE_TRACK_FRAGMENT_HEADER_BOX                           -197
+#define E_MSHS_NOT_FOUND_SPS_START                                              -198
+#define E_MSHS_NOT_FOUND_PPS_START                                              -199
+#define E_MSHS_CANNOT_CONVERT_SPS                                               -200
+#define E_MSHS_CANNOT_CONVERT_PPS                                               -201
+#define E_MSHS_INVALID_FRAGMENT_SIZE                                            -202
+#define E_MSHS_INVALID_BOX                                                      -203
+#define E_MSHS_INVALID_MOVIE_FRAGMENT_BOX                                       -204
+#define E_MSHS_CANNOT_GET_VIDEO_FRAGMENT_INDEX                                  -205
+#define E_MSHS_CANNOT_GET_AUDIO_FRAGMENT_INDEX                                  -206
 
 #endif

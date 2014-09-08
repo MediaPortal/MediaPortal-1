@@ -174,7 +174,6 @@ bool CMshsManifestSmoothStreamingMediaBox::ParseInternal(const unsigned char *bu
         RBE64INC(buffer, position, this->timeScale);
         RBE64INC(buffer, position, this->duration);
 
-
         RBE32INC_DEFINE(buffer, position, protectionCount, uint32_t);
 
         for (uint32_t i = 0; (SUCCEEDED(continueParsing) && (i < protectionCount)); i++)

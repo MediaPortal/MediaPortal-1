@@ -193,8 +193,8 @@ bool CTrackRunBox::ParseInternal(const unsigned char *buffer, uint32_t length, b
 
     if (this->IsSetFlags(BOX_FLAG_PARSED))
     {
-      // box is media data box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      // box is track run box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
       HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
 
       if (SUCCEEDED(continueParsing))
@@ -266,32 +266,32 @@ bool CTrackRunBox::ParseInternal(const unsigned char *buffer, uint32_t length, b
 
 bool CTrackRunBox::IsDataOffsetPresent(void)
 {
-  return ((this->GetFlags() & FLAGS_DATA_OFFSET_PRESENT) != 0);
+  return ((this->GetBoxFlags() & FLAGS_DATA_OFFSET_PRESENT) != 0);
 }
 
 bool CTrackRunBox::IsFirstDataSampleFlagsPresent(void)
 {
-  return ((this->GetFlags() & FLAGS_FIRST_SAMPLE_FLAGS_PRESENT) != 0);
+  return ((this->GetBoxFlags() & FLAGS_FIRST_SAMPLE_FLAGS_PRESENT) != 0);
 }
 
 bool CTrackRunBox::IsSampleDurationPresent(void)
 {
-  return ((this->GetFlags() & FLAGS_SAMPLE_DURATION_PRESENT) != 0);
+  return ((this->GetBoxFlags() & FLAGS_SAMPLE_DURATION_PRESENT) != 0);
 }
 
 bool CTrackRunBox::IsSampleSizePresent(void)
 {
-  return ((this->GetFlags() & FLAGS_SAMPLE_SIZE_PRESENT) != 0);
+  return ((this->GetBoxFlags() & FLAGS_SAMPLE_SIZE_PRESENT) != 0);
 }
 
 bool CTrackRunBox::IsSampleFlagsPresent(void)
 {
-  return ((this->GetFlags() & FLAGS_SAMPLE_FLAGS_PRESENT) != 0);
+  return ((this->GetBoxFlags() & FLAGS_SAMPLE_FLAGS_PRESENT) != 0);
 }
 
 bool CTrackRunBox::IsSampleCompositionTimeOffsetsPresent(void)
 {
-  return ((this->GetFlags() & FLAGS_SAMPLE_COMPOSITION_TIME_OFFSETS_PRESENT) != 0);
+  return ((this->GetBoxFlags() & FLAGS_SAMPLE_COMPOSITION_TIME_OFFSETS_PRESENT) != 0);
 }
 
 uint32_t CTrackRunBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

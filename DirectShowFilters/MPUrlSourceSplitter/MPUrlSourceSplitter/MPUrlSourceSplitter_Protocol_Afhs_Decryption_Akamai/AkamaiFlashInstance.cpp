@@ -360,7 +360,7 @@ CDecryptedDataCollection *CAkamaiFlashInstance::GetDecryptedData(const uint8_t *
                 {
                   wmemcpy(decodedDataCountStr, queryResult + position, (length - 1));
 
-                  decodedDataCount = GetValueUnsignedInt(decodedDataCountStr, 0);
+                  decodedDataCount = GetValueUint(decodedDataCountStr, 0);
                 }
 
                 FREE_MEM(decodedDataCountStr);
@@ -387,7 +387,7 @@ CDecryptedDataCollection *CAkamaiFlashInstance::GetDecryptedData(const uint8_t *
                 {
                   wmemcpy(decodedDataRawLengthStr, queryResult + position, (length - 1));
 
-                  decodedDataRawLength = GetValueUnsignedInt(decodedDataRawLengthStr, 0);
+                  decodedDataRawLength = GetValueUint(decodedDataRawLengthStr, 0);
                 }
 
                 FREE_MEM(decodedDataRawLengthStr);

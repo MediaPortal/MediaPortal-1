@@ -219,9 +219,9 @@ bool CF4MManifest::Parse(const char *buffer)
                         FREE_MEM(convertedMetadata);
                       }
 
-                      unsigned int bitrateValue = GetValueUnsignedInt(bitrate, UINT_MAX);
-                      unsigned int widthValue = GetValueUnsignedInt(width, UINT_MAX);
-                      unsigned int heightValue = GetValueUnsignedInt(height, UINT_MAX);
+                      unsigned int bitrateValue = GetValueUint(bitrate, UINT_MAX);
+                      unsigned int widthValue = GetValueUint(width, UINT_MAX);
+                      unsigned int heightValue = GetValueUint(height, UINT_MAX);
 
                       CF4MMedia *media = new CF4MMedia();
                       CHECK_POINTER_HRESULT(result, media, result, E_OUTOFMEMORY);

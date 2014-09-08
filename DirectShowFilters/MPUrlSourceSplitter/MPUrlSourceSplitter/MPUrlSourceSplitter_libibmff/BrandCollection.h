@@ -32,7 +32,20 @@ public:
   CBrandCollection(HRESULT *result);
   ~CBrandCollection(void);
 
+  /* get methods */
+
+  /* set methods */
+
+  /* other methods */
+
+  // add brand as string
+  // @param brandString : brand as string to add
+  // @return : true if successful, false otherwise
+  virtual bool AddBrand(const wchar_t *brandString);
+
 protected:
+
+  /* methods */
 
   // compare two item keys
   // @param firstKey : the first item key to compare

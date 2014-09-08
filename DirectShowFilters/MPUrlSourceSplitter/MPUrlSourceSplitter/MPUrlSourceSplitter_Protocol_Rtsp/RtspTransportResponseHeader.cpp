@@ -332,15 +332,15 @@ bool CRtspTransportResponseHeader::Parse(const wchar_t *header, unsigned int len
             if (index3 == (-1))
             {
               // without range, set min and max interleaved values to same value
-              this->minInterleaved = this->maxInterleaved = GetValueUnsignedInt(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
+              this->minInterleaved = this->maxInterleaved = GetValueUint(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
 
               this->flags |= RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_INTERLEAVED;
             }
             else
             {
               // range specified
-              this->minInterleaved = GetValueUnsignedInt(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
-              this->maxInterleaved = GetValueUnsignedInt(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH + index3 + RTSP_TRANSPORT_RESPONSE_HEADER_RANGE_SEPARATOR_LENGTH, 0);
+              this->minInterleaved = GetValueUint(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
+              this->maxInterleaved = GetValueUint(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH + index3 + RTSP_TRANSPORT_RESPONSE_HEADER_RANGE_SEPARATOR_LENGTH, 0);
 
               this->flags |= RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_INTERLEAVED;
             }
@@ -357,7 +357,7 @@ bool CRtspTransportResponseHeader::Parse(const wchar_t *header, unsigned int len
 
           if (result)
           {
-            this->timeToLive = GetValueUnsignedInt(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
+            this->timeToLive = GetValueUint(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
 
             this->flags |= RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_TIME_TO_LIVE;
           }
@@ -369,7 +369,7 @@ bool CRtspTransportResponseHeader::Parse(const wchar_t *header, unsigned int len
 
           if (result)
           {
-            this->layers = GetValueUnsignedInt(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
+            this->layers = GetValueUint(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
 
             this->flags |= RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_LAYERS;
           }
@@ -387,15 +387,15 @@ bool CRtspTransportResponseHeader::Parse(const wchar_t *header, unsigned int len
             if (index3 == (-1))
             {
               // without range, set min and max port values to same value
-              this->minPort = this->maxPort = GetValueUnsignedInt(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
+              this->minPort = this->maxPort = GetValueUint(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
 
               this->flags |= RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_PORT;
             }
             else
             {
               // range specified
-              this->minPort = GetValueUnsignedInt(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
-              this->maxPort = GetValueUnsignedInt(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH + index3 + RTSP_TRANSPORT_RESPONSE_HEADER_RANGE_SEPARATOR_LENGTH, 0);
+              this->minPort = GetValueUint(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
+              this->maxPort = GetValueUint(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH + index3 + RTSP_TRANSPORT_RESPONSE_HEADER_RANGE_SEPARATOR_LENGTH, 0);
 
               this->flags |= RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_PORT;
             }
@@ -414,15 +414,15 @@ bool CRtspTransportResponseHeader::Parse(const wchar_t *header, unsigned int len
             if (index3 == (-1))
             {
               // without range, set min and max client port values to same value
-              this->minClientPort = this->maxClientPort = GetValueUnsignedInt(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
+              this->minClientPort = this->maxClientPort = GetValueUint(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
 
               this->flags |= RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_CLIENT_PORT;
             }
             else
             {
               // range specified
-              this->minClientPort = GetValueUnsignedInt(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
-              this->maxClientPort = GetValueUnsignedInt(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH + index3 + RTSP_TRANSPORT_RESPONSE_HEADER_RANGE_SEPARATOR_LENGTH, 0);
+              this->minClientPort = GetValueUint(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
+              this->maxClientPort = GetValueUint(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH + index3 + RTSP_TRANSPORT_RESPONSE_HEADER_RANGE_SEPARATOR_LENGTH, 0);
 
               this->flags |= RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_CLIENT_PORT;
             }
@@ -441,15 +441,15 @@ bool CRtspTransportResponseHeader::Parse(const wchar_t *header, unsigned int len
             if (index3 == (-1))
             {
               // without range, set min and max server port values to same value
-              this->minServerPort = this->maxServerPort = GetValueUnsignedInt(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
+              this->minServerPort = this->maxServerPort = GetValueUint(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
 
               this->flags |= RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_SERVER_PORT;
             }
             else
             {
               // range specified
-              this->minServerPort = GetValueUnsignedInt(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
-              this->maxServerPort = GetValueUnsignedInt(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH + index3 + RTSP_TRANSPORT_RESPONSE_HEADER_RANGE_SEPARATOR_LENGTH, 0);
+              this->minServerPort = GetValueUint(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
+              this->maxServerPort = GetValueUint(this->value + position + index2 + RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH + index3 + RTSP_TRANSPORT_RESPONSE_HEADER_RANGE_SEPARATOR_LENGTH, 0);
 
               this->flags |= RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_SERVER_PORT;
             }

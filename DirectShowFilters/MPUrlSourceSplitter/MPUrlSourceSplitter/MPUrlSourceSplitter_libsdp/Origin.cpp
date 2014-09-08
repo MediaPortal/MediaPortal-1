@@ -166,7 +166,7 @@ unsigned int COrigin::Parse(const wchar_t *buffer, unsigned int length)
 
     if (result != 0)
     {
-      this->version = GetValueUnsignedInt(this->tagContent + position, ORIGIN_VERSION_DEFAULT);
+      this->version = GetValueUint(this->tagContent + position, ORIGIN_VERSION_DEFAULT);
     }
 
     if (result != 0)

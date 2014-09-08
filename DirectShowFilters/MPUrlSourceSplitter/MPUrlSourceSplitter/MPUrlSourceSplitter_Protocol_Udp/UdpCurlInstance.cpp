@@ -104,7 +104,7 @@ HRESULT CUdpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         if (urlComponents->dwPasswordLength > 0)
         {
           // its port for source address
-          this->sourcePort = GetValueUnsignedInt(urlComponents->lpszPassword, PORT_UNSPECIFIED);
+          this->sourcePort = GetValueUint(urlComponents->lpszPassword, PORT_UNSPECIFIED);
         }
 
         if (SUCCEEDED(result))

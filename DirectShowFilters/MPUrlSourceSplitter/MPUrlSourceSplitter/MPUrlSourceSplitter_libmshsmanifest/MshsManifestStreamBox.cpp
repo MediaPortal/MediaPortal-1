@@ -36,7 +36,7 @@ CMshsManifestStreamBox::CMshsManifestStreamBox(HRESULT *result)
   this->name = NULL;
   this->subType = NULL;
   this->timeScale = 0;
-  this->type = NULL;
+  this->streamBoxType = NULL;
   this->url = NULL;
   this->tracks = NULL;
   this->streamFragments = NULL;
@@ -58,7 +58,7 @@ CMshsManifestStreamBox::~CMshsManifestStreamBox(void)
 {
   FREE_MEM(this->name);
   FREE_MEM(this->subType);
-  FREE_MEM(this->type);
+  FREE_MEM(this->streamBoxType);
   FREE_MEM(this->url);
   FREE_MEM_CLASS(this->tracks);
   FREE_MEM_CLASS(this->streamFragments);
@@ -66,9 +66,9 @@ CMshsManifestStreamBox::~CMshsManifestStreamBox(void)
 
 /* get methods */
 
-const wchar_t *CMshsManifestStreamBox::GetType(void)
+const wchar_t *CMshsManifestStreamBox::GetStreamBoxType(void)
 {
-  return this->type;
+  return this->streamBoxType;
 }
 
 const wchar_t *CMshsManifestStreamBox::GetSubType(void)
@@ -128,9 +128,9 @@ bool CMshsManifestStreamBox::GetBox(uint8_t *buffer, uint32_t length)
 
 /* set methods */
 
-bool CMshsManifestStreamBox::SetType(const wchar_t *type)
+bool CMshsManifestStreamBox::SetStreamBoxType(const wchar_t *streamBoxType)
 {
-  SET_STRING_RETURN_WITH_NULL(this->type, type);
+  SET_STRING_RETURN_WITH_NULL(this->streamBoxType, streamBoxType);
 }
 
 bool CMshsManifestStreamBox::SetSubType(const wchar_t *subType)
@@ -177,17 +177,17 @@ void CMshsManifestStreamBox::SetDisplayHeight(uint32_t displayHeight)
 
 bool CMshsManifestStreamBox::IsVideo(void)
 {
-  return (wcscmp(this->GetType(), STREAM_TYPE_VIDEO) == 0);
+  return (wcscmp(this->GetStreamBoxType(), STREAM_TYPE_VIDEO) == 0);
 }
 
 bool CMshsManifestStreamBox::IsAudio(void)
 {
-  return (wcscmp(this->GetType(), STREAM_TYPE_AUDIO) == 0);
+  return (wcscmp(this->GetStreamBoxType(), STREAM_TYPE_AUDIO) == 0);
 }
 
 bool CMshsManifestStreamBox::IsText(void)
 {
-  return (wcscmp(this->GetType(), STREAM_TYPE_TEXT) == 0);
+  return (wcscmp(this->GetStreamBoxType(), STREAM_TYPE_TEXT) == 0);
 }
 
 bool CMshsManifestStreamBox::Parse(const uint8_t *buffer, uint32_t length)
@@ -206,7 +206,7 @@ uint64_t CMshsManifestStreamBox::GetBoxSize(void)
 {
   uint64_t result = 48;
 
-  result += (this->type != NULL) ? (wcslen(this->type) * sizeof(wchar_t)) : 0;
+  result += (this->streamBoxType != NULL) ? (wcslen(this->streamBoxType) * sizeof(wchar_t)) : 0;
   result += (this->subType != NULL) ? (wcslen(this->subType) * sizeof(wchar_t)) : 0;
   result += (this->url != NULL) ? (wcslen(this->url) * sizeof(wchar_t)) : 0;
   result += (this->name != NULL) ? (wcslen(this->name) * sizeof(wchar_t)) : 0;
@@ -257,23 +257,23 @@ bool CMshsManifestStreamBox::ParseInternal(const unsigned char *buffer, uint32_t
 
         RBE32INC_DEFINE(buffer, position, typeLength, uint32_t);
         // check if we have enough data in buffer for type
-        CHECK_CONDITION_HRESULT(continueParsing, (this->GetSize() + typeLength * sizeof(wchar_t)) <= length, continueParsing, E_OUTOFMEMORY);
+        CHECK_CONDITION_HRESULT(continueParsing, (position + typeLength * sizeof(wchar_t)) <= length, continueParsing, E_OUTOFMEMORY);
 
         if (SUCCEEDED(continueParsing) && (typeLength != 0))
         {
-          this->type = ALLOC_MEM_SET(this->type, wchar_t, (typeLength + 1), 0);
-          CHECK_POINTER_HRESULT(continueParsing, this->type, continueParsing, E_OUTOFMEMORY);
+          this->streamBoxType = ALLOC_MEM_SET(this->streamBoxType, wchar_t, (typeLength + 1), 0);
+          CHECK_POINTER_HRESULT(continueParsing, this->streamBoxType, continueParsing, E_OUTOFMEMORY);
 
           if (SUCCEEDED(continueParsing))
           {
-            memcpy(this->type, buffer + position, typeLength * sizeof(wchar_t));
+            memcpy(this->streamBoxType, buffer + position, typeLength * sizeof(wchar_t));
             position += typeLength * sizeof(wchar_t);
           }
         }
 
         RBE32INC_DEFINE(buffer, position, subTypeLength, uint32_t);
         // check if we have enough data in buffer for sub type
-        CHECK_CONDITION_HRESULT(continueParsing, (this->GetSize() + subTypeLength * sizeof(wchar_t)) <= length, continueParsing, E_OUTOFMEMORY);
+        CHECK_CONDITION_HRESULT(continueParsing, (position + subTypeLength * sizeof(wchar_t)) <= length, continueParsing, E_OUTOFMEMORY);
 
         if (SUCCEEDED(continueParsing) && (subTypeLength != 0))
         {
@@ -289,7 +289,7 @@ bool CMshsManifestStreamBox::ParseInternal(const unsigned char *buffer, uint32_t
 
         RBE32INC_DEFINE(buffer, position, urlLength, uint32_t);
         // check if we have enough data in buffer for url
-        CHECK_CONDITION_HRESULT(continueParsing, (this->GetSize() + urlLength * sizeof(wchar_t)) <= length, continueParsing, E_OUTOFMEMORY);
+        CHECK_CONDITION_HRESULT(continueParsing, (position + urlLength * sizeof(wchar_t)) <= length, continueParsing, E_OUTOFMEMORY);
 
         if (SUCCEEDED(continueParsing) && (urlLength != 0))
         {
@@ -305,7 +305,7 @@ bool CMshsManifestStreamBox::ParseInternal(const unsigned char *buffer, uint32_t
 
         RBE32INC_DEFINE(buffer, position, nameLength, uint32_t);
         // check if we have enough data in buffer for name
-        CHECK_CONDITION_HRESULT(continueParsing, (this->GetSize() + nameLength * sizeof(wchar_t)) <= length, continueParsing, E_OUTOFMEMORY);
+        CHECK_CONDITION_HRESULT(continueParsing, (position + nameLength * sizeof(wchar_t)) <= length, continueParsing, E_OUTOFMEMORY);
 
         if (SUCCEEDED(continueParsing) && (nameLength != 0))
         {
@@ -373,12 +373,12 @@ uint32_t CMshsManifestStreamBox::GetBoxInternal(uint8_t *buffer, uint32_t length
     WBE32INC(buffer, result, this->displayWidth);
     WBE32INC(buffer, result, this->displayHeight);
 
-    unsigned int typeLength = (this->type != NULL) ? wcslen(this->type) : 0;
+    unsigned int typeLength = (this->streamBoxType != NULL) ? wcslen(this->streamBoxType) : 0;
     WBE32INC(buffer, result, typeLength);
 
     if (typeLength > 0)
     {
-      memcpy(buffer + result, this->type, typeLength * sizeof(wchar_t));
+      memcpy(buffer + result, this->streamBoxType, typeLength * sizeof(wchar_t));
       result += typeLength * sizeof(wchar_t);
     }
 

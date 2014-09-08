@@ -41,11 +41,14 @@ CMshsManifestTrackBox::CMshsManifestTrackBox(HRESULT *result)
   this->fourCC = NULL;
   this->nalUnitLengthField = MSHS_NAL_UNIT_LENGTH_DEFAULT;
   this->customAttributes = NULL;
+  this->type = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
+    this->type = Duplicate(MSHS_MANIFEST_TRACK_BOX_TYPE);
     this->customAttributes = new CMshsManifestCustomAttributeBoxCollection(result);
 
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->customAttributes, *result, E_OUTOFMEMORY);
   }
 }
@@ -255,7 +258,7 @@ bool CMshsManifestTrackBox::ParseInternal(const unsigned char *buffer, uint32_t 
         RBE32INC_DEFINE(buffer, position, codecPrivateDataLength, uint32_t);
 
         // check if we have enough data in buffer for codec private data
-        CHECK_CONDITION_HRESULT(continueParsing, (this->GetSize() + codecPrivateDataLength * sizeof(wchar_t)) <= length, continueParsing, E_OUTOFMEMORY);
+        CHECK_CONDITION_HRESULT(continueParsing, (position + codecPrivateDataLength * sizeof(wchar_t)) <= length, continueParsing, E_OUTOFMEMORY);
 
         if (SUCCEEDED(continueParsing) && (codecPrivateDataLength != 0))
         {
@@ -272,7 +275,7 @@ bool CMshsManifestTrackBox::ParseInternal(const unsigned char *buffer, uint32_t 
         RBE32INC_DEFINE(buffer, position, fourCCLength, uint32_t);
 
         // check if we have enough data in buffer for name
-        CHECK_CONDITION_HRESULT(continueParsing, (this->GetSize() + fourCCLength * sizeof(wchar_t)) <= length, continueParsing, E_OUTOFMEMORY);
+        CHECK_CONDITION_HRESULT(continueParsing, (position + fourCCLength * sizeof(wchar_t)) <= length, continueParsing, E_OUTOFMEMORY);
 
         if (SUCCEEDED(continueParsing) && (fourCCLength != 0))
         {

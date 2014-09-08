@@ -52,7 +52,7 @@ public:
   // unless the type specified is video, the following fields MUST NOT appear in StreamAttributes:
   // StreamMaxWidthAttribute, StreamMaxHeightAttribute, DisplayWidthAttribute, DisplayHeightAttribute
   // @return : the type of the Stream: video, audio, or text
-  const wchar_t *GetType(void);
+  const wchar_t *GetStreamBoxType(void);
 
   // gets a four-character code that identifies the intended use category for each Sample in a text Track
   // however, the FourCC field, specified in section 2.2.2.5 , is used to identify the Media Format for each Sample
@@ -112,9 +112,9 @@ public:
   /* set methods */
 
   // sets the type of the Stream: video, audio, or text
-  // @param type : the type of the Stream: video, audio, or text to set
+  // @param streamBoxType : the type of the Stream: video, audio, or text to set
   // @return : true if successful, false otherwise
-  bool SetType(const wchar_t *type);
+  bool SetStreamBoxType(const wchar_t *streamBoxType);
 
   // sets a four-character code that identifies the intended use category for each Sample in a text Track
   // @param subType : a four-character code that identifies the intended use category for each Sample in a text Track to set
@@ -182,7 +182,7 @@ private:
   // if the type specified is text, the following field is required and MUST appear in StreamAttributes: SubtypeAttribute
   // unless the type specified is video, the following fields MUST NOT appear in StreamAttributes:
   // StreamMaxWidthAttribute, StreamMaxHeightAttribute, DisplayWidthAttribute, DisplayHeightAttribute
-  wchar_t *type;
+  wchar_t *streamBoxType;
 
   // a four-character code that identifies the intended use category for each Sample in a text Track
   // however, the FourCC field, specified in section 2.2.2.5 , is used to identify the Media Format for each Sample

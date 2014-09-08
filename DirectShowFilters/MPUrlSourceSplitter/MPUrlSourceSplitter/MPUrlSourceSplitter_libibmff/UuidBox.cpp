@@ -38,6 +38,8 @@ CUuidBox::CUuidBox(HRESULT *result)
   this->guid.Data4[5] = 0;
   this->guid.Data4[6] = 0;
   this->guid.Data4[7] = 0;
+  this->payload = NULL;
+  this->payloadSize = 0;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -49,18 +51,30 @@ CUuidBox::CUuidBox(HRESULT *result)
 
 CUuidBox::~CUuidBox(void)
 {
+  FREE_MEM(this->payload);
 }
 
 /* get methods */
 
-bool CUuidBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 GUID CUuidBox::GetGuid(void)
 {
   return this->guid;
+}
+
+
+const uint8_t *CUuidBox::GetPayload(void)
+{
+  return this->payload;
+}
+
+uint64_t CUuidBox::GetPayloadSize(void)
+{
+  return this->payloadSize;
+}
+
+bool CUuidBox::GetBox(uint8_t *buffer, uint32_t length)
+{
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 /* set methods */
@@ -68,6 +82,30 @@ GUID CUuidBox::GetGuid(void)
 void CUuidBox::SetGuid(GUID guid)
 {
   this->guid = guid;
+}
+
+bool CUuidBox::SetPayload(const uint8_t *buffer, uint32_t length)
+{
+  bool result = (buffer != NULL) || (length == 0);
+  FREE_MEM(this->payload);
+  this->payloadSize = 0;
+
+  if (result)
+  {
+    if (length > 0)
+    {
+      this->payload = ALLOC_MEM_SET(this->payload, uint8_t, length, 0);
+      result &= (this->payload != NULL);
+
+      if (result)
+      {
+        memcpy(this->payload, buffer, length);
+        this->payloadSize = length;
+      }
+    }
+  }
+
+  return result;
 }
 
 /* other methods */
@@ -88,11 +126,13 @@ wchar_t *CUuidBox::GetParsedHumanReadable(const wchar_t *indent)
     // prepare finally human readable representation
     result = FormatString(
       L"%s\n" \
-      L"%sGUID: %s"
+      L"%sGUID: %s\n",
+      L"%sPayload size: %llu"
       ,
       
       previousResult,
-      indent, guid
+      indent, guid,
+      indent, this->GetPayloadSize()
       );
 
     FREE_MEM(guid);
@@ -105,7 +145,7 @@ wchar_t *CUuidBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CUuidBox::GetBoxSize(void)
 {
-  uint64_t result = 16;
+  uint64_t result = 16 + this->GetPayloadSize();
 
   if (result != 0)
   {
@@ -118,6 +158,9 @@ uint64_t CUuidBox::GetBoxSize(void)
 
 bool CUuidBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
+  FREE_MEM(this->payload);
+  this->payloadSize = 0;
+
   if (__super::ParseInternal(buffer, length, false))
   {
     this->flags &= ~BOX_FLAG_PARSED;
@@ -125,7 +168,7 @@ bool CUuidBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool 
 
     if (this->IsSetFlags(BOX_FLAG_PARSED))
     {
-      // box is media data box, parse all values
+      // box is UUID box, parse all values
       uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
       HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
 
@@ -144,10 +187,25 @@ bool CUuidBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool 
         RBE8INC(buffer, position, this->guid.Data4[7]);
       }
 
-      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
+      // UUID box can be larger than minimum required size, but content is not clear
+      // we don't know if in box are other boxes or it is custom data
+
+      this->payloadSize = this->GetSize() - position;
+      CHECK_CONDITION_HRESULT(continueParsing, (position + this->payloadSize) <= length, continueParsing, E_NOT_VALID_STATE);
+
+      if (SUCCEEDED(continueParsing))
+      {
+        this->payload = ALLOC_MEM_SET(this->payload, uint8_t, (uint32_t)this->payloadSize, 0);
+        CHECK_POINTER_HRESULT(continueParsing, this->payload, continueParsing, E_OUTOFMEMORY);
+
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(continueParsing), memcpy(this->payload, buffer + position, (uint32_t)this->payloadSize));
+        position += (uint32_t)this->payloadSize;
+      }
+
+      /*if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
-      }
+      }*/
 
       this->flags &= ~BOX_FLAG_PARSED;
       this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
@@ -174,6 +232,12 @@ uint32_t CUuidBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool process
     WBE8INC(buffer, result, this->GetGuid().Data4[5]);
     WBE8INC(buffer, result, this->GetGuid().Data4[6]);
     WBE8INC(buffer, result, this->GetGuid().Data4[7]);
+
+    if (this->GetPayloadSize() > 0)
+    {
+      memcpy(buffer + result, this->GetPayload(), (uint32_t)this->GetPayloadSize());
+      result += (uint32_t)this->GetPayloadSize();
+    }
 
     if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
     {

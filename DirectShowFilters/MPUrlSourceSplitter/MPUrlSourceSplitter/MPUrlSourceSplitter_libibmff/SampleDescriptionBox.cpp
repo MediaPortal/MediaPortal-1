@@ -150,8 +150,8 @@ bool CSampleDescriptionBox::ParseInternal(const unsigned char *buffer, uint32_t 
 
     if (this->IsSetFlags(BOX_FLAG_PARSED))
     {
-      // box is media data box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      // box is sample description box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? FULL_BOX_HEADER_LENGTH_SIZE64 : FULL_BOX_HEADER_LENGTH;
       HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
 
       if (SUCCEEDED(continueParsing))

@@ -178,7 +178,7 @@ unsigned int CMediaDescription::Parse(const wchar_t *buffer, unsigned int length
 
     if (result != 0)
     {
-      this->port = GetValueUnsignedInt(this->tagContent + position, MEDIA_DESCRIPTION_PORT_DEFAULT);
+      this->port = GetValueUint(this->tagContent + position, MEDIA_DESCRIPTION_PORT_DEFAULT);
     }
 
     if (result != 0)
@@ -205,7 +205,7 @@ unsigned int CMediaDescription::Parse(const wchar_t *buffer, unsigned int length
     while ((result != 0) && (position < tagContentLength))
     {
       index = IndexOf(this->tagContent + position, tagContentLength, L" ", 1);
-      unsigned int payloadType = GetValueUnsignedInt(this->tagContent + position, MEDIA_FORMAT_PAYLOAD_TYPE_UNSPECIFIED);
+      unsigned int payloadType = GetValueUint(this->tagContent + position, MEDIA_FORMAT_PAYLOAD_TYPE_UNSPECIFIED);
 
       if (index == (-1))
       {
@@ -364,7 +364,7 @@ unsigned int CMediaDescription::Parse(const wchar_t *buffer, unsigned int length
 
                   if (this->IsAudio())
                   {
-                    mediaFormat->SetChannels(GetValueUnsignedInt(rtpMap->GetEncodingParameters(), MEDIA_FORMAT_CHANNELS_UNSPECIFIED));
+                    mediaFormat->SetChannels(GetValueUint(rtpMap->GetEncodingParameters(), MEDIA_FORMAT_CHANNELS_UNSPECIFIED));
                   }
 
                   // go to next media format

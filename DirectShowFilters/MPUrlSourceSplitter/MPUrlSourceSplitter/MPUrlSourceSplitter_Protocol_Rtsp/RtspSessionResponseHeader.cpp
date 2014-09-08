@@ -87,7 +87,7 @@ bool CRtspSessionResponseHeader::Parse(const wchar_t *header, unsigned int lengt
 
             if (result)
             {
-              this->timeout = GetValueUnsignedInt(this->value + position + index2 + RTSP_SESSION_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
+              this->timeout = GetValueUint(this->value + position + index2 + RTSP_SESSION_RESPONSE_HEADER_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
             }
           }
           else

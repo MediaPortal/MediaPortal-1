@@ -110,7 +110,7 @@ unsigned int CRtpMapAttribute::Parse(const wchar_t *buffer, unsigned int length)
 
         if (result != 0)
         {
-          this->payloadType = GetValueUnsignedInt(this->value, UINT_MAX);
+          this->payloadType = GetValueUint(this->value, UINT_MAX);
           result = (this->payloadType != UINT_MAX) ? result : 0;
 
           position += index + 1;
@@ -136,7 +136,7 @@ unsigned int CRtpMapAttribute::Parse(const wchar_t *buffer, unsigned int length)
         {
           index = IndexOf(this->value + position, valueLength - position, L"/", 1);
 
-          this->clockRate = GetValueUnsignedInt(this->value + position, UINT_MAX);
+          this->clockRate = GetValueUint(this->value + position, UINT_MAX);
           result = (this->clockRate != UINT_MAX) ? result : 0;
 
           if ((result != 0) && (index != (-1)))

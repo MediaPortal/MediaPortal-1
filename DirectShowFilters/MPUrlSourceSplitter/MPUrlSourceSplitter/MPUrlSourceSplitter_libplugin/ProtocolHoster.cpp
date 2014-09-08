@@ -40,6 +40,7 @@ CProtocolHoster::CProtocolHoster(HRESULT *result, CLogger *logger, CParameterCol
   this->pauseSeekStopMode = PAUSE_SEEK_STOP_MODE_NONE;
   this->finishTime = 0;
   this->startReceivingData = false;
+  this->protocolError = S_OK;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -176,11 +177,12 @@ HRESULT CProtocolHoster::StartReceivingData(CParameterCollection *parameters)
   if (SUCCEEDED(result))
   {
     // wait for receiving data, timeout or exit
-    while ((this->activeProtocol->GetConnectionState() != Opened) && (!this->activeProtocol->IsWholeStreamDownloaded()) && (!this->activeProtocol->IsConnectionLostCannotReopen()) && (GetTickCount() <= this->finishTime) && (!this->receiveDataWorkerShouldExit))
+    while (SUCCEEDED(this->protocolError) && (this->activeProtocol->GetConnectionState() != Opened) && (!this->activeProtocol->IsWholeStreamDownloaded()) && (!this->activeProtocol->IsConnectionLostCannotReopen()) && (GetTickCount() <= this->finishTime) && (!this->receiveDataWorkerShouldExit))
     {
       Sleep(1);
     }
 
+    CHECK_CONDITION_EXECUTE(FAILED(this->protocolError), result = this->protocolError);
     CHECK_CONDITION_HRESULT(result, (!this->activeProtocol->IsConnectionLostCannotReopen()) && (GetTickCount() <= this->finishTime) && (!this->receiveDataWorkerShouldExit), result, E_CONNECTION_LOST_CANNOT_REOPEN);
   }
 
@@ -224,6 +226,7 @@ void CProtocolHoster::ClearSession(void)
   CHoster::ClearSession();
 
   this->activeProtocol = NULL;
+  this->protocolError = S_OK;
 }
 
 int64_t CProtocolHoster::GetDuration(void)
@@ -620,6 +623,7 @@ unsigned int WINAPI CProtocolHoster::ReceiveDataWorker(LPVOID lpParam)
 
           if (FAILED(result))
           {
+            caller->protocolError = result;
             caller->logger->Log(LOGGER_ERROR, L"%s: %s: protocol returned error: 0x%08X", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME, result);
           }
         }

@@ -129,7 +129,7 @@ bool CRtpInfoTrack::Parse(const wchar_t *rtpInfoTrack, unsigned int length)
 
         if (result)
         {
-          this->sequenceNumber = GetValueUnsignedInt(rtpInfoTrack + position + index2 + RTP_INFO_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
+          this->sequenceNumber = GetValueUint(rtpInfoTrack + position + index2 + RTP_INFO_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
 
           this->flags |= RTP_INFO_TRACK_FLAG_SEQUENCE_NUMBER;
         }
@@ -141,7 +141,7 @@ bool CRtpInfoTrack::Parse(const wchar_t *rtpInfoTrack, unsigned int length)
 
         if (result)
         {
-          this->rtpTimestamp = GetValueUnsignedInt(rtpInfoTrack + position + index2 + RTP_INFO_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
+          this->rtpTimestamp = GetValueUint(rtpInfoTrack + position + index2 + RTP_INFO_PARAMETER_VALUE_SEPARATOR_LENGTH, 0);
 
           this->flags |= RTP_INFO_TRACK_FLAG_RTP_TIMESTAMP;
         }

@@ -20,8 +20,8 @@
 
 #pragma once
 
-#ifndef __SEGMENT_FRAGMENT_COLLECTION_DEFINED
-#define __SEGMENT_FRAGMENT_COLLECTION_DEFINED
+#ifndef __AFHS_SEGMENT_FRAGMENT_COLLECTION_DEFINED
+#define __AFHS_SEGMENT_FRAGMENT_COLLECTION_DEFINED
 
 #include "CacheFileItemCollection.h"
 #include "AfhsSegmentFragment.h"

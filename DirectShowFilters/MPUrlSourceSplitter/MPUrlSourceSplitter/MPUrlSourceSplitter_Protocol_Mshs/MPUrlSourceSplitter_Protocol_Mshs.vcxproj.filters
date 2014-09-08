@@ -27,10 +27,25 @@
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Mshs_Parameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StreamFragment.h">
+    <ClInclude Include="MshsStreamFragment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StreamFragmentCollection.h">
+    <ClInclude Include="MshsStreamFragmentCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MshsCurlInstance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MshsDownloadRequest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MshsDownloadResponse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexedMshsStreamFragment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexedMshsStreamFragmentCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,10 +59,25 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StreamFragment.cpp">
+    <ClCompile Include="MshsStreamFragment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StreamFragmentCollection.cpp">
+    <ClCompile Include="MshsCurlInstance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MshsDownloadRequest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MshsDownloadResponse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MshsStreamFragmentCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexedMshsStreamFragment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexedMshsStreamFragmentCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

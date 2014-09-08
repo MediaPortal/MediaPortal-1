@@ -31,6 +31,33 @@ CBrandCollection::~CBrandCollection(void)
 {
 }
 
+/* get methods */
+
+/* set methods */
+
+/* other methods */
+
+bool CBrandCollection::AddBrand(const wchar_t *brandString)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, brandString);
+
+  if (SUCCEEDED(result))
+  {
+    CBrand *brand = new CBrand(&result);
+    CHECK_POINTER_HRESULT(result, brand, result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_HRESULT(result, brand->SetBrandString(brandString), result, E_OUTOFMEMORY);
+    CHECK_CONDITION_HRESULT(result, this->Add(brand), result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(brand));
+  }
+
+  return SUCCEEDED(result);
+}
+
+/* protected methods */
+
 int CBrandCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
 {
   bool invariant = (*(bool *)context);

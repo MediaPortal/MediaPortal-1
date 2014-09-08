@@ -38,9 +38,9 @@ unsigned int GetValueUnsignedIntA(const char *input, unsigned int defaultValue);
 unsigned int GetValueUnsignedIntW(const wchar_t *input, unsigned int defaultValue);
 
 #ifdef _MBCS
-#define GetValueUnsignedInt GetValueUnsignedIntA
+#define GetValueUint GetValueUnsignedIntA
 #else
-#define GetValueUnsignedInt GetValueUnsignedIntW
+#define GetValueUint GetValueUnsignedIntW
 #endif
 
 // converts string to unsigned int64
@@ -56,9 +56,9 @@ uint64_t GetValueUnsignedInt64A(const char *input, uint64_t defaultValue);
 uint64_t GetValueUnsignedInt64W(const wchar_t *input, uint64_t defaultValue);
 
 #ifdef _MBCS
-#define GetValueUnsignedInt64 GetValueUnsignedInt64A
+#define GetValueUint64 GetValueUnsignedInt64A
 #else
-#define GetValueUnsignedInt64 GetValueUnsignedInt64W
+#define GetValueUint64 GetValueUnsignedInt64W
 #endif
 
 uint8_t HexToDecA(const char c);

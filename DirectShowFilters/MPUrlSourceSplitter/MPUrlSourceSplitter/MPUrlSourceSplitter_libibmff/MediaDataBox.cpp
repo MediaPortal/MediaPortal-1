@@ -149,7 +149,7 @@ bool CMediaDataBox::ParseInternal(const unsigned char *buffer, uint32_t length, 
         CHECK_POINTER_HRESULT(continueParsing, this->payload, continueParsing, E_OUTOFMEMORY);
 
         CHECK_CONDITION_EXECUTE(SUCCEEDED(continueParsing), memcpy(this->payload, buffer + position, (uint32_t)this->payloadSize));
-
+        position += (uint32_t)this->payloadSize;
       }
 
       if (SUCCEEDED(continueParsing) && processAdditionalBoxes)

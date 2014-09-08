@@ -121,7 +121,7 @@ bool CMshsManifestProtectionBox::ParseInternal(const unsigned char *buffer, uint
 
         RBE32INC_DEFINE(buffer, position, contentLength, uint32_t);
         // check if we have enough data in buffer for content
-        CHECK_CONDITION_HRESULT(continueParsing, (this->GetSize() + contentLength * sizeof(wchar_t)) <= length, continueParsing, E_OUTOFMEMORY);
+        CHECK_CONDITION_HRESULT(continueParsing, (position + contentLength * sizeof(wchar_t)) <= length, continueParsing, E_OUTOFMEMORY);
 
         if (SUCCEEDED(continueParsing) && (contentLength != 0))
         {

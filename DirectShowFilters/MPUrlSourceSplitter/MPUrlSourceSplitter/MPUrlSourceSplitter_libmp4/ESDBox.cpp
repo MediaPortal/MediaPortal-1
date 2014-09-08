@@ -243,6 +243,7 @@ uint32_t CESDBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processA
     }
 
     this->PutDescriptor(buffer + result, 0x06, 1);
+    result += 5;
     WBE8INC(buffer, result, 0x02);
 
     if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))

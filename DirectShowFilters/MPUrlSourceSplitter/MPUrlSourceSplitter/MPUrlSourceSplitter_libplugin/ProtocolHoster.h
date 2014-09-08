@@ -163,6 +163,9 @@ protected:
   // mutex for locking access to file, buffer, ...
   HANDLE mutex;
 
+  // holds protocol error
+  HRESULT protocolError;
+
   /* received data worker */
 
   HANDLE receiveDataWorkerThread;
