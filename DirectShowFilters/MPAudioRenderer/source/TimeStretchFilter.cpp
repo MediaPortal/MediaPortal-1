@@ -80,6 +80,25 @@ HRESULT CTimeStretchFilter::Init()
 
 HRESULT CTimeStretchFilter::PutSample(IMediaSample* pSample)
 {
+  AM_MEDIA_TYPE* pmt = NULL;
+  bool bFormatChanged = false;
+
+  if (pSample && SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt)
+  {
+    WAVEFORMATEXTENSIBLE* pwfx = (WAVEFORMATEXTENSIBLE*)pmt->pbFormat;
+    bFormatChanged = !FormatsEqual(pwfx, m_pInputFormat);
+
+    bool wasBitstreaming = m_bBitstreaming;
+
+    if (bFormatChanged && CanBitstream(pwfx))
+      m_bBitstreaming = true;
+    else
+      m_bBitstreaming = false;
+
+    if (wasBitstreaming != m_bBitstreaming)
+      Log("CTimeStretchFilter::PutSample - wasBitstreaming: %d bitstreaming: %d", wasBitstreaming, m_bBitstreaming);
+  }
+
   if (m_pSettings->GetUseTimeStretching() && !m_bBitstreaming)
     CQueuedAudioSink::PutSample(pSample);
   else if (m_pNextSink)
@@ -100,9 +119,7 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
     return S_OK;
   }
 
-  m_bBitstreaming = CanBitstream(pwfx);
-
-  if (m_bBitstreaming && m_pSettings->GetAllowBitStreaming())
+  if (m_pSettings->GetAllowBitStreaming() && CanBitstream(pwfx))
   {
     HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
     if (SUCCEEDED(hr))
@@ -196,8 +213,11 @@ HRESULT CTimeStretchFilter::CheckSample(IMediaSample* pSample, REFERENCE_TIME* r
 
     // Apply format change
     ChannelOrder chOrder;
-    hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1, &chOrder);
+    WAVEFORMATEXTENSIBLE* pwfx = (WAVEFORMATEXTENSIBLE*)pmt->pbFormat;
+
+    hr = NegotiateFormat(pwfx, 1, &chOrder);
     pSample->SetDiscontinuity(false);
+    m_bBitstreaming = CanBitstream(pwfx);
 
     if (FAILED(hr))
     {
@@ -673,10 +693,15 @@ uint CTimeStretchFilter::flushEx()
   return minZeros;
 }
 
-void CTimeStretchFilter::setTempo(float newTempo, float newAdjustment)
+bool CTimeStretchFilter::setTempo(float newTempo, float newAdjustment)
 {
+  if (m_bBitstreaming)
+    return false;
+
   m_fNewTempo = newTempo;
   m_fNewAdjustment = newAdjustment;
+
+  return true;
 }
 
 void CTimeStretchFilter::setTempoInternal(float newTempo, float newAdjustment)
