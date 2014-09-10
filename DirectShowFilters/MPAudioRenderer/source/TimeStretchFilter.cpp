@@ -403,6 +403,9 @@ void CTimeStretchFilter::CheckStreamContinuity(IMediaSample* pSample, REFERENCE_
 
 REFERENCE_TIME CTimeStretchFilter::DrainBuffers(IMediaSample* pSample, REFERENCE_TIME rtNewStart)
 {
+  if (!m_pOutputFormat)
+    return 0;
+
   Log("TS - DrainBuffers - rtNewStart: %6.3f", rtNewStart / 10000000.0);
 
   uint unprocessedSamplesBefore = numUnprocessedSamples();
