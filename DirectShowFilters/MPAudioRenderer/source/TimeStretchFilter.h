@@ -48,7 +48,7 @@ public:
 
   /// Sets new tempo control value. Normal tempo = 1.0, smaller values
   /// represent slower tempo, larger faster tempo.
-  void setTempo(float newTempo, float newAdjustment);
+  bool setTempo(float newTempo, float newAdjustment);
 
   /// Sets new rate control value as a difference in percents compared
   /// to the original rate (-50 .. +100 %)
