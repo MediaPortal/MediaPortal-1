@@ -24,7 +24,7 @@
 #include "Utilities.h"
 
 CMediaPacket::CMediaPacket(HRESULT *result)
-  : CCacheFileItem(result)
+  : CStreamFragment(result)
 {
   this->start = 0;
   this->presentationTimestamp = MEDIA_PACKET_PRESENTATION_TIMESTAMP_UNDEFINED;

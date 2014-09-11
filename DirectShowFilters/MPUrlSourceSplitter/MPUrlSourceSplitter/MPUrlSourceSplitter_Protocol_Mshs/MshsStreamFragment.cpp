@@ -24,18 +24,16 @@
 #include "FastSearchItemCollection.h"
 
 CMshsStreamFragment::CMshsStreamFragment(HRESULT *result, int64_t fragmentTimestamp)
-  : CCacheFileItem(result)
+  : CStreamFragment(result)
 {
   this->fragmentTimestamp = fragmentTimestamp;
-  this->fragmentStartPosition = MSHS_STREAM_FRAGMENT_START_POSITION_NOT_SET;
   this->url = NULL;
 }
 
 CMshsStreamFragment::CMshsStreamFragment(HRESULT *result, int64_t fragmentTimestamp, const wchar_t *url, unsigned int flags)
-  : CCacheFileItem(result)
+  : CStreamFragment(result)
 {
   this->fragmentTimestamp = fragmentTimestamp;
-  this->fragmentStartPosition = MSHS_STREAM_FRAGMENT_START_POSITION_NOT_SET;
   this->flags |= flags;
   this->url = NULL;
   
@@ -64,11 +62,6 @@ int64_t CMshsStreamFragment::GetFragmentTimestamp(void)
   return this->fragmentTimestamp;
 }
 
-int64_t CMshsStreamFragment::GetFragmentStartPosition(void)
-{
-  return this->fragmentStartPosition;
-}
-
 const wchar_t *CMshsStreamFragment::GetUrl(void)
 {
   return this->url;
@@ -76,33 +69,7 @@ const wchar_t *CMshsStreamFragment::GetUrl(void)
 
 /* set methods */
 
-void CMshsStreamFragment::SetFragmentStartPosition(int64_t fragmentStartPosition)
-{
-  this->fragmentStartPosition = fragmentStartPosition;
-}
-
-void CMshsStreamFragment::SetReadyForProcessing(bool readyForProcessing, unsigned int streamFragmentItemIndex)
-{
-  this->flags &= ~MSHS_STREAM_FRAGMENT_FLAG_READY_FOR_PROCESSING;
-  this->flags |= (readyForProcessing) ? MSHS_STREAM_FRAGMENT_FLAG_READY_FOR_PROCESSING : MSHS_STREAM_FRAGMENT_FLAG_NONE;
-
-  if ((this->owner != NULL) && (streamFragmentItemIndex != UINT_MAX))
-  {
-    this->owner->UpdateIndexes(streamFragmentItemIndex);
-  }
-}
-
 /* other methods */
-
-bool CMshsStreamFragment::IsSetFragmentStartPosition(void)
-{
-  return (this->fragmentStartPosition != MSHS_STREAM_FRAGMENT_START_POSITION_NOT_SET);
-}
-
-bool CMshsStreamFragment::IsReadyForProcessing(void)
-{
-  return this->IsSetFlags(MSHS_STREAM_FRAGMENT_FLAG_READY_FOR_PROCESSING);
-}
 
 bool CMshsStreamFragment::IsVideo(void)
 {
@@ -137,13 +104,12 @@ bool CMshsStreamFragment::InternalClone(CFastSearchItem *item)
   
   if (result)
   {
-    CMshsStreamFragment *fragment = dynamic_cast<CMshsStreamFragment *>(item);
+    /*CMshsStreamFragment *fragment = dynamic_cast<CMshsStreamFragment *>(item);
     result &= (fragment != NULL);
 
     if (result)
     {
-      fragment->fragmentStartPosition = this->fragmentStartPosition;
-    }
+    }*/
   }
 
   return result;

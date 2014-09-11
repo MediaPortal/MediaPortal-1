@@ -205,4 +205,128 @@ int CTsPacket::FindPacket(CLinearBuffer *buffer, unsigned int minimumPacketsToCh
   return result;
 }
 
+HRESULT CTsPacket::FindPacketSequence(const unsigned char *buffer, unsigned int length, unsigned int *firstPacketPosition, unsigned int *packetSequenceLength)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, buffer);
+  CHECK_POINTER_DEFAULT_HRESULT(result, firstPacketPosition);
+  CHECK_POINTER_DEFAULT_HRESULT(result, packetSequenceLength);
+
+  if (SUCCEEDED(result))
+  {
+    *firstPacketPosition = UINT_MAX;
+    *packetSequenceLength = 0;
+
+    if (length >= TS_PACKET_HEADER_LENGTH)
+    {
+      unsigned int packetsChecked  = 0;                 // checked MPEG2 TS packets count
+      unsigned int processedBytes = 0;                  // processed bytes for correct seek position value
+
+      while ((processedBytes < length) && (*firstPacketPosition == UINT_MAX))
+      {
+        // try to find TS packets in buffer
+
+        unsigned int i = 0;
+        while (i < length)
+        {
+          // we have to check bytes in whole buffer
+
+          if ((buffer[i] == TS_PACKET_SYNC_BYTE) && (*firstPacketPosition == UINT_MAX))
+          {
+            // possible TS packet
+
+            if ((i + TS_PACKET_SIZE) <= length)
+            {
+              // in buffer we have whole TS packet
+              // remeber first TS packet position and skip to possible next packet
+
+              *firstPacketPosition = i;
+              i += TS_PACKET_SIZE;
+              continue;
+            }
+            else
+            {
+              // clear first TS packet position and go to next byte in buffer
+              *firstPacketPosition = UINT_MAX;
+              packetsChecked = 0;
+              i++;
+              continue;
+            }
+          }
+          else if ((buffer[i] == TS_PACKET_SYNC_BYTE) && (*firstPacketPosition != UINT_MAX))
+          {
+            // possible next packet, continue
+            packetsChecked++;
+            i += TS_PACKET_SIZE;
+            continue;
+          }
+          else if (*firstPacketPosition != UINT_MAX)
+          {
+            // TS packet after first possible TS packet not found
+            // first possible TS packet is not TS packet
+            i = *firstPacketPosition + 1;
+            *firstPacketPosition = UINT_MAX;
+            packetsChecked = 0;
+            continue;
+          }
+
+          // go to next byte in buffer
+          i++;
+        }
+
+        if (i == length)
+        {
+          // we are exactly on position of next MPEG2 TS packet, which starts exactly after buffer
+          packetsChecked++;
+        }
+
+        if (*firstPacketPosition == UINT_MAX)
+        {
+          // not found any possible TS packet
+          processedBytes += length;
+        }
+        else
+        {
+          // found possible TS packet, checked packets count is in packetsChecked
+          processedBytes += length;
+        }
+      }
+
+      if (*firstPacketPosition != UINT_MAX)
+      {
+        *packetSequenceLength = packetsChecked * TS_PACKET_SIZE;
+      }
+    }
+  }
+
+  return result;
+}
+
+HRESULT CTsPacket::FindPacketSequence(CLinearBuffer *buffer, unsigned int *firstPacketPosition, unsigned int *packetSequenceLength)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, buffer);
+  CHECK_POINTER_DEFAULT_HRESULT(result, firstPacketPosition);
+  CHECK_POINTER_DEFAULT_HRESULT(result, packetSequenceLength);
+
+  if (SUCCEEDED(result))
+  {
+    if (buffer->GetBufferOccupiedSpace() >= TS_PACKET_HEADER_LENGTH)
+    {
+      // at least size for MPEG2 TS packet header
+      ALLOC_MEM_DEFINE_SET(buf, unsigned char, buffer->GetBufferOccupiedSpace(), 0);
+      result = (buf != NULL) ? result : TS_PACKET_FIND_RESULT_NOT_ENOUGH_MEMORY;
+
+      if (buf != NULL)
+      {
+        buffer->CopyFromBuffer(buf, buffer->GetBufferOccupiedSpace());
+        result = CTsPacket::FindPacketSequence(buf, buffer->GetBufferOccupiedSpace(), firstPacketPosition, packetSequenceLength);
+      }
+      FREE_MEM(buf);
+    }
+  }
+
+  return result;
+}
+
 /* protected methods */

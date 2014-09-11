@@ -23,18 +23,16 @@
 #include "RtmpStreamFragment.h"
 
 CRtmpStreamFragment::CRtmpStreamFragment(HRESULT *result)
-  : CCacheFileItem(result)
+  : CStreamFragment(result)
 {
   this->fragmentStartTimestamp = 0;
-  this->fragmentStartPosition = RTMP_STREAM_FRAGMENT_START_POSITION_NOT_SET;
 }
 
 CRtmpStreamFragment::CRtmpStreamFragment(HRESULT *result, int64_t fragmentStartTimestamp, bool setStartTimestampFlag)
-  : CCacheFileItem(result)
+  : CStreamFragment(result)
 {
   this->flags = (setStartTimestampFlag) ? RTMP_STREAM_FRAGMENT_FLAG_SET_TIMESTAMP : RTMP_STREAM_FRAGMENT_FLAG_NONE;
   this->fragmentStartTimestamp = fragmentStartTimestamp;
-  this->fragmentStartPosition = RTMP_STREAM_FRAGMENT_START_POSITION_NOT_SET;
 }
 
 CRtmpStreamFragment::~CRtmpStreamFragment(void)
@@ -46,11 +44,6 @@ CRtmpStreamFragment::~CRtmpStreamFragment(void)
 int64_t CRtmpStreamFragment::GetFragmentStartTimestamp(void)
 {
   return this->fragmentStartTimestamp;
-}
-
-int64_t CRtmpStreamFragment::GetFragmentStartPosition(void)
-{
-  return this->fragmentStartPosition;
 }
 
 /* set methods */
@@ -67,11 +60,6 @@ void CRtmpStreamFragment::SetFragmentStartTimestamp(int64_t fragmentStartTimesta
   this->flags |= setStartTimestampFlag ? RTMP_STREAM_FRAGMENT_FLAG_SET_TIMESTAMP : RTMP_STREAM_FRAGMENT_FLAG_NONE;
 }
 
-void CRtmpStreamFragment::SetFragmentStartPosition(int64_t fragmentStartPosition)
-{
-  this->fragmentStartPosition = fragmentStartPosition;
-}
-
 void CRtmpStreamFragment::SetContainsHeaderOrMetaPacket(bool containsHeaderOrMetaPacket)
 {
   this->flags &= ~RTMP_STREAM_FRAGMENT_FLAG_CONTAINS_HEADER_OR_META_PACKET;
@@ -85,11 +73,6 @@ bool CRtmpStreamFragment::IsSetFragmentStartTimestamp(void)
   return this->IsSetFlags(RTMP_STREAM_FRAGMENT_FLAG_SET_TIMESTAMP);
 }
 
-bool CRtmpStreamFragment::IsSetFragmentStartPosition(void)
-{
-  return (this->fragmentStartPosition != RTMP_STREAM_FRAGMENT_START_POSITION_NOT_SET);
-}
-
 bool CRtmpStreamFragment::ContainsHeaderOrMetaPacket(void)
 {
   return this->IsSetFlags(RTMP_STREAM_FRAGMENT_FLAG_CONTAINS_HEADER_OR_META_PACKET);
@@ -97,7 +80,7 @@ bool CRtmpStreamFragment::ContainsHeaderOrMetaPacket(void)
 
 /* protected methods */
 
-CCacheFileItem *CRtmpStreamFragment::CreateItem(void)
+CFastSearchItem *CRtmpStreamFragment::CreateItem(void)
 {
   HRESULT result = S_OK;
   CRtmpStreamFragment *fragment = new CRtmpStreamFragment(&result);
@@ -107,7 +90,7 @@ CCacheFileItem *CRtmpStreamFragment::CreateItem(void)
   return fragment;
 }
 
-bool CRtmpStreamFragment::InternalClone(CCacheFileItem *item)
+bool CRtmpStreamFragment::InternalClone(CFastSearchItem *item)
 {
   bool result = __super::InternalClone(item);
   
@@ -118,7 +101,6 @@ bool CRtmpStreamFragment::InternalClone(CCacheFileItem *item)
 
     if (result)
     {
-      fragment->fragmentStartTimestamp = this->fragmentStartTimestamp;
       fragment->fragmentStartPosition = this->fragmentStartPosition;
     }
   }

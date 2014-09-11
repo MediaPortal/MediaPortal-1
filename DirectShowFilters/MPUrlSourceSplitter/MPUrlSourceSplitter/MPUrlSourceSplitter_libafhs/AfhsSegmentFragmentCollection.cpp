@@ -31,11 +31,8 @@
 #define AFFECTED_INDEX_DECRYPTED_INC                                                        (1 << (FLAGS_LAST + 4))
 
 CAfhsSegmentFragmentCollection::CAfhsSegmentFragmentCollection(HRESULT *result)
-  : CCacheFileItemCollection(result)
+  : CStreamFragmentCollection(result)
 {
-  this->startSearchingIndex = 0;
-  this->searchCount = 0;
-
   this->defaultBaseUrl = NULL;
   this->segmentFragmentUrlExtraParameters = NULL;
   this->indexEncrypted = NULL;
@@ -64,115 +61,6 @@ CAfhsSegmentFragmentCollection::~CAfhsSegmentFragmentCollection(void)
 CAfhsSegmentFragment *CAfhsSegmentFragmentCollection::GetItem(unsigned int index)
 {
   return (CAfhsSegmentFragment *)__super::GetItem(index);
-}
-
-unsigned int CAfhsSegmentFragmentCollection::GetSegmentFragmentIndexBetweenPositions(int64_t position)
-{
-  unsigned int index = UINT_MAX;
-
-  unsigned int startIndex = 0;
-  unsigned int endIndex = 0;
-
-  CAfhsSegmentFragment *zeroPositionFragment = this->GetItem(this->startSearchingIndex);
-
-  if (zeroPositionFragment != NULL)
-  {
-    position += zeroPositionFragment->GetFragmentStartPosition();
-
-    if (this->GetSegmentFragmentInsertPosition(position, &startIndex, &endIndex))
-    {
-      if (startIndex != UINT_MAX)
-      {
-        // if requested position is somewhere after start of segment fragments
-        CAfhsSegmentFragment *segmentFragment = this->GetItem(startIndex);
-        int64_t positionStart = segmentFragment->GetFragmentStartPosition();
-        int64_t positionEnd = positionStart + segmentFragment->GetLength();
-
-        if ((position >= positionStart) && (position < positionEnd))
-        {
-          // we found segment fragment
-          index = startIndex;
-        }
-      }
-    }
-  }
-
-  return index;
-}
-
-bool CAfhsSegmentFragmentCollection::GetSegmentFragmentInsertPosition(int64_t position, unsigned int *startIndex, unsigned int *endIndex)
-{
-  bool result = ((startIndex != NULL) && (endIndex != NULL));
-
-  if (result)
-  {
-    result = ((this->startSearchingIndex != SEGMENT_FRAGMENT_INDEX_NOT_SET) && (this->searchCount > 0));
-
-    if (result)
-    {
-      unsigned int first = this->startSearchingIndex;
-      unsigned int last = this->startSearchingIndex + this->searchCount - 1;
-      result = false;
-
-      while ((first <= last) && (first != UINT_MAX) && (last != UINT_MAX))
-      {
-        // compute middle index
-        unsigned int middle = (first + last) / 2;
-
-        // get segment fragment at middle index
-        CAfhsSegmentFragment *segmentFragment = this->GetItem(middle);
-
-        // compare segment fragment start to position
-        if (position > segmentFragment->GetFragmentStartPosition())
-        {
-          // position is bigger than segment fragment start time
-          // search in top half
-          first = middle + 1;
-        }
-        else if (position < segmentFragment->GetFragmentStartPosition()) 
-        {
-          // position is lower than segment fragment start time
-          // search in bottom half
-          last = middle - 1;
-        }
-        else
-        {
-          // we found segment fragment with same starting time as position
-          *startIndex = middle;
-          *endIndex = middle;
-          result = true;
-          break;
-        }
-      }
-
-      if (!result)
-      {
-        // we don't found segment fragment
-        // it means that segment fragment with 'position' belongs between first and last
-        *startIndex = last;
-        *endIndex = (first >= (this->startSearchingIndex + this->searchCount)) ? UINT_MAX : first;
-        result = true;
-      }
-    }
-    else
-    {
-      *startIndex = UINT_MAX;
-      *endIndex = 0;
-      result = true;
-    }
-  }
-
-  return result;
-}
-
-unsigned int CAfhsSegmentFragmentCollection::GetStartSearchingIndex(void)
-{
-  return this->startSearchingIndex;
-}
-
-unsigned int CAfhsSegmentFragmentCollection::GetSearchCount(void)
-{
-  return this->searchCount;
 }
 
 wchar_t *CAfhsSegmentFragmentCollection::GetSegmentFragmentUrl(CAfhsSegmentFragment *segmentFragment)
@@ -234,16 +122,6 @@ HRESULT CAfhsSegmentFragmentCollection::GetDecryptedStreamFragments(CIndexedAfhs
 
 /* set methods */
 
-void CAfhsSegmentFragmentCollection::SetStartSearchingIndex(unsigned int startSearchingIndex)
-{
-  this->startSearchingIndex = startSearchingIndex;
-}
-
-void CAfhsSegmentFragmentCollection::SetSearchCount(unsigned int searchCount)
-{
-  this->searchCount = searchCount;
-}
-
 bool CAfhsSegmentFragmentCollection::SetBaseUrl(const wchar_t *baseUrl)
 {
   SET_STRING_RETURN_WITH_NULL(this->defaultBaseUrl, baseUrl);
@@ -256,21 +134,6 @@ bool CAfhsSegmentFragmentCollection::SetSegmentFragmentUrlExtraParameters(const 
 
 /* other methods */
 
-bool CAfhsSegmentFragmentCollection::Insert(unsigned int position, CCacheFileItem *item)
-{
-  bool result = __super::Insert(position, item);
-
-  if (result)
-  {
-    if (position <= this->startSearchingIndex)
-    {
-      this->startSearchingIndex++;
-    }
-  }
-
-  return result;
-}
-
 bool CAfhsSegmentFragmentCollection::HasEncryptedSegmentFragments(void)
 {
   return (this->indexEncrypted->Count() != 0);
@@ -280,6 +143,33 @@ bool CAfhsSegmentFragmentCollection::HasDecryptedSegmentFragments(void)
 {
   return (this->indexDecrypted->Count() != 0);
 }
+
+//void CAfhsSegmentFragmentCollection::RecalculateDecryptedSegmentFragmentStartPosition(unsigned int startIndex)
+//{
+//  for (unsigned int i = startIndex; i < this->Count(); i++)
+//  {
+//    CAfhsSegmentFragment *fragment = this->GetItem(i);
+//    CAfhsSegmentFragment *previousFragment = (i > 0) ? this->GetItem(i - 1) : NULL;
+//
+//    if (fragment->IsDecrypted())
+//    {
+//      if ((previousFragment != NULL) && (previousFragment->IsDecrypted()))
+//      {
+//        fragment->SetFragmentStartPosition(previousFragment->GetFragmentStartPosition() + previousFragment->GetLength());
+//      }
+//
+//      if (i == (this->GetStartSearchingIndex() + this->GetSearchCount()))
+//      {
+//        this->SetSearchCount(this->GetSearchCount() + 1);
+//      }
+//    }
+//    else
+//    {
+//      // we found not downloaded stream fragment, stop recalculating start positions
+//      break;
+//    }
+//  }
+//}
 
 /* index methods */
 

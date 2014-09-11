@@ -20,24 +20,27 @@
 
 #pragma once
 
-#ifndef __INDEXED_MSHS_STREAM_FRAGMENT_COLLECTION_DEFINED
-#define __INDEXED_MSHS_STREAM_FRAGMENT_COLLECTION_DEFINED
+#ifndef __INDEXED_STREAM_FRAGMENT_DEFINED
+#define __INDEXED_STREAM_FRAGMENT_DEFINED
 
-#include "IndexedStreamFragmentCollection.h"
-#include "IndexedMshsStreamFragment.h"
+#include "IndexedCacheFileItem.h"
+#include "StreamFragment.h"
 
-class CIndexedMshsStreamFragmentCollection : public CIndexedStreamFragmentCollection
+#define INDEXED_STREAM_FRAGMENT_FLAG_NONE                             INDEXED_CACHE_FILE_ITEM_FLAG_NONE
+
+#define INDEXED_STREAM_FRAGMENT_FLAG_LAST                             (INDEXED_CACHE_FILE_ITEM_FLAG_LAST + 0)
+
+class CIndexedStreamFragment : public CIndexedCacheFileItem
 {
 public:
-  CIndexedMshsStreamFragmentCollection(HRESULT *result);
-  virtual ~CIndexedMshsStreamFragmentCollection(void);
+  CIndexedStreamFragment(HRESULT *result, CStreamFragment *item, unsigned int index);
+  virtual ~CIndexedStreamFragment(void);
 
   /* get methods */
 
-  // get the item from collection with specified index
-  // @param index : the index of item to find
-  // @return : the reference to item or NULL if not find
-  virtual CIndexedMshsStreamFragment *GetItem(unsigned int index);
+  // gets stream fragment
+  // @return : stream fragment
+  virtual CStreamFragment *GetItem(void);
 
   /* set methods */
 

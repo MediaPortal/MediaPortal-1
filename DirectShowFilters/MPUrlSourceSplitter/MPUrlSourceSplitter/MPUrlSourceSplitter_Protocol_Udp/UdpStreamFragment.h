@@ -23,13 +23,13 @@
 #ifndef __UDP_STREAM_FRAGMENT_DEFINED
 #define __UDP_STREAM_FRAGMENT_DEFINED
 
-#include "CacheFileItem.h"
+#include "StreamFragment.h"
 
-#define UDP_STREAM_FRAGMENT_FLAG_NONE                                 CACHE_FILE_ITEM_FLAG_NONE
+#define UDP_STREAM_FRAGMENT_FLAG_NONE                                 STREAM_FRAGMENT_FLAG_NONE
 
-#define UDP_STREAM_FRAGMENT_FLAG_LAST                                 (CACHE_FILE_ITEM_FLAG_LAST + 0)
+#define UDP_STREAM_FRAGMENT_FLAG_LAST                                 (STREAM_FRAGMENT_FLAG_LAST + 0)
 
-class CUdpStreamFragment : public CCacheFileItem
+class CUdpStreamFragment : public CStreamFragment
 {
 public:
   CUdpStreamFragment(HRESULT *result);
@@ -37,21 +37,11 @@ public:
 
   /* get methods */
 
-  // gets the stream position where this stream fragment starts
-  // @return : the stream position where this stream fragment starts
-  int64_t GetStart(void);
-
   /* set methods */
-
-  // sets the stream position where this stream fragment starts
-  // @param position : the stream position where this stream fragment starts
-  void SetStart(int64_t position);
 
   /* other methods */
 
 protected:
-  // start sample - byte position
-  int64_t start;
 
   /* methods */
 

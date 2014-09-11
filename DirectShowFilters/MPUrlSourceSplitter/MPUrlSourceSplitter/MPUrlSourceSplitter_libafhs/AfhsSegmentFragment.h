@@ -25,19 +25,17 @@
 
 #include "HttpDownloadRequest.h"
 #include "HttpDownloadResponse.h"
-#include "CacheFileItem.h"
+#include "StreamFragment.h"
 
-#define AFHS_SEGMENT_FRAGMENT_FLAG_NONE                               CACHE_FILE_ITEM_FLAG_NONE
+#define AFHS_SEGMENT_FRAGMENT_FLAG_NONE                               STREAM_FRAGMENT_FLAG_NONE
 
-#define AFHS_SEGMENT_FRAGMENT_FLAG_ENCRYPTED                          (1 << (CACHE_FILE_ITEM_FLAG_LAST + 0))
-#define AFHS_SEGMENT_FRAGMENT_FLAG_DECRYPTED                          (1 << (CACHE_FILE_ITEM_FLAG_LAST + 1))
-#define AFHS_SEGMENT_FRAGMENT_FLAG_CONTAINS_HEADER_OR_META_PACKET     (1 << (CACHE_FILE_ITEM_FLAG_LAST + 2))
+#define AFHS_SEGMENT_FRAGMENT_FLAG_ENCRYPTED                          (1 << (STREAM_FRAGMENT_FLAG_LAST + 0))
+#define AFHS_SEGMENT_FRAGMENT_FLAG_DECRYPTED                          (1 << (STREAM_FRAGMENT_FLAG_LAST + 1))
+#define AFHS_SEGMENT_FRAGMENT_FLAG_CONTAINS_HEADER_OR_META_PACKET     (1 << (STREAM_FRAGMENT_FLAG_LAST + 2))
 
-#define AFHS_SEGMENT_FRAGMENT_FLAG_LAST                               (CACHE_FILE_ITEM_FLAG_LAST + 3)
+#define AFHS_SEGMENT_FRAGMENT_FLAG_LAST                               (STREAM_FRAGMENT_LAST + 3)
 
-#define AFHS_SEGMENT_FRAGMENT_START_POSITION_NOT_SET                  -1
-
-class CAfhsSegmentFragment : public CCacheFileItem
+class CAfhsSegmentFragment : public CStreamFragment
 {
 public:
   // initializes a new instance of CAfhsSegmentFragment class
@@ -52,10 +50,6 @@ public:
   // gets fragment timestamp
   // @return : fragment timestamp
   int64_t GetFragmentTimestamp(void);
-
-  // gets fragment start position within stream
-  // @return : fragment start position within stream or AFHS_SEGMENT_FRAGMENT_START_POSITION_NOT_SET if not set
-  int64_t GetFragmentStartPosition(void);
 
   // gets segment ID
   // @return : segment ID
@@ -77,10 +71,6 @@ public:
   // @param segmentFragmentItemIndex : the index of segment fragment (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
   void SetEncrypted(bool encrypted, unsigned int segmentFragmentItemIndex);
 
-  // sets fragment start position
-  // @param fragmentStartPosition : fragment start position to set
-  void SetFragmentStartPosition(int64_t fragmentStartPosition);
-
   // sets if fragment contains header or meta packet
   // @param containsHeaderOrMetaPacket : true if fragment contains header or meta packet, false otherwise
   void SetContainsHeaderOrMetaPacket(bool containsHeaderOrMetaPacket);
@@ -95,10 +85,6 @@ public:
   // @return : true if encrypted, false otherwise
   bool IsEncrypted(void);
 
-  // tests if fragment has set start position
-  // @return : true if fragment has set start position, false otherwise
-  bool IsSetFragmentStartPosition(void);
-
   // tests if fragment contains header or meta packet
   // @return : true if fragment contains header or meta packet, false otherwise
   bool ContainsHeaderOrMetaPacket(void);
@@ -110,8 +96,6 @@ private:
   unsigned int fragment;
   // holds fragment timestamp
   int64_t fragmentTimestamp;
-  // holds fragment start position within stream
-  int64_t fragmentStartPosition;
 
   /* methods */
 

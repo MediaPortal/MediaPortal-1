@@ -132,6 +132,18 @@
     <ClInclude Include="IndexedFastSearchItemCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StreamFragment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamFragmentCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexedStreamFragment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexedStreamFragmentCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -228,6 +240,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IndexedFastSearchItemCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamFragment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamFragmentCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexedStreamFragment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexedStreamFragmentCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

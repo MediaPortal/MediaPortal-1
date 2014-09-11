@@ -179,11 +179,6 @@ protected:
   // @param extension : the extension of store file
   // @return : store file or NULL if error
   wchar_t *GetStoreFile(unsigned int trackId, const wchar_t *extension);
-
-  // recalculate stream fragments start positions based on previous stream fragments
-  // @param streamFragments : the collection of stream fragments to recalculate
-  // @param startIndex : the index of first stream fragment to recalculate start position
-  void RecalculateStreamFragmentStartPosition(CRtspStreamFragmentCollection *streamFragments, unsigned int startIndex);
 };
 
 #endif

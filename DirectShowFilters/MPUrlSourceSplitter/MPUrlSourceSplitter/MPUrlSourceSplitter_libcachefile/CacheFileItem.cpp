@@ -106,28 +106,6 @@ void CCacheFileItem::SetNoCleanUpFromMemory(bool noCleanUpFromMemory, unsigned i
   }
 }
 
-void CCacheFileItem::SetDownloaded(bool downloaded, unsigned int cacheFileItemIndex)
-{
-  this->flags &= ~CACHE_FILE_ITEM_FLAG_DOWNLOADED;
-  this->flags |= (downloaded) ? CACHE_FILE_ITEM_FLAG_DOWNLOADED : CACHE_FILE_ITEM_FLAG_NONE;
-
-  if ((this->owner != NULL) && (cacheFileItemIndex != UINT_MAX))
-  {
-    this->owner->UpdateIndexes(cacheFileItemIndex);
-  }
-}
-
-void CCacheFileItem::SetDiscontinuity(bool discontinuity, unsigned int cacheFileItemIndex)
-{
-  this->flags &= ~CACHE_FILE_ITEM_FLAG_DISCONTINUITY;
-  this->flags |= (discontinuity) ? CACHE_FILE_ITEM_FLAG_DISCONTINUITY : CACHE_FILE_ITEM_FLAG_NONE;
-
-  if ((this->owner != NULL) && (cacheFileItemIndex != UINT_MAX))
-  {
-    this->owner->UpdateIndexes(cacheFileItemIndex);
-  }
-}
-
 /* other methods */
 
 bool CCacheFileItem::IsStoredToFile(void)
@@ -143,16 +121,6 @@ bool CCacheFileItem::IsLoadedToMemory(void)
 bool CCacheFileItem::IsNoCleanUpFromMemory(void)
 {
   return this->IsSetFlags(CACHE_FILE_ITEM_FLAG_NO_CLEAN_UP_FROM_MEMORY);
-}
-
-bool CCacheFileItem::IsDiscontinuity(void)
-{
-  return this->IsSetFlags(CACHE_FILE_ITEM_FLAG_DISCONTINUITY);
-}
-
-bool CCacheFileItem::IsDownloaded(void)
-{
-  return this->IsSetFlags(CACHE_FILE_ITEM_FLAG_DOWNLOADED);
 }
 
 /* protected methods */

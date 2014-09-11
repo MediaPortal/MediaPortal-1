@@ -45,9 +45,10 @@
 #define E_NOT_FOUND_INTERFACE_NAME                                              -8
 #define E_STREAM_COUNT_UNKNOWN                                                  -9
 #define E_INVALID_STREAM_PACKAGE_REQUEST                                        -10
-#define E_INVALID_STREAM_ID                                                     -11
-#define E_CANNOT_GET_MODULE_FILE_NAME                                           -12
-#define E_CONNECTION_LOST_TRYING_REOPEN                                         -13
+#define E_INVALID_STREAM_PACKAGE_RESPONSE                                       -11
+#define E_INVALID_STREAM_ID                                                     -12
+#define E_CANNOT_GET_MODULE_FILE_NAME                                           -13
+#define E_CONNECTION_LOST_TRYING_REOPEN                                         -14
 
 // parser error codes
 

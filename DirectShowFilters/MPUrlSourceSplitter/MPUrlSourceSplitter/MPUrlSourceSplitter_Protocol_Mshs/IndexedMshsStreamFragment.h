@@ -23,14 +23,14 @@
 #ifndef __INDEXED_MSHS_STREAM_FRAGMENT_DEFINED
 #define __INDEXED_MSHS_STREAM_FRAGMENT_DEFINED
 
-#include "IndexedCacheFileItem.h"
+#include "IndexedStreamFragment.h"
 #include "MshsStreamFragment.h"
 
-#define INDEXED_MSHS_STREAM_FRAGMENT_FLAG_NONE                        INDEXED_CACHE_FILE_ITEM_FLAG_NONE
+#define INDEXED_MSHS_STREAM_FRAGMENT_FLAG_NONE                        INDEXED_STREAM_FRAGMENT_FLAG_NONE
 
-#define INDEXED_MSHS_STREAM_FRAGMENT_FLAG_LAST                        (INDEXED_CACHE_FILE_ITEM_FLAG_LAST + 0)
+#define INDEXED_MSHS_STREAM_FRAGMENT_FLAG_LAST                        (INDEXED_STREAM_FRAGMENT_FLAG_LAST + 0)
 
-class CIndexedMshsStreamFragment : public CIndexedCacheFileItem
+class CIndexedMshsStreamFragment : public CIndexedStreamFragment
 {
 public:
   CIndexedMshsStreamFragment(HRESULT *result, CMshsStreamFragment *item, unsigned int index);

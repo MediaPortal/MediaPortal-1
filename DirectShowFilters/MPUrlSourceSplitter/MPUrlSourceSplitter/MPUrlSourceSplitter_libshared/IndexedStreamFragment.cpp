@@ -18,34 +18,28 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "StdAfx.h"
 
-#ifndef __INDEXED_MSHS_STREAM_FRAGMENT_COLLECTION_DEFINED
-#define __INDEXED_MSHS_STREAM_FRAGMENT_COLLECTION_DEFINED
+#include "IndexedStreamFragment.h"
 
-#include "IndexedStreamFragmentCollection.h"
-#include "IndexedMshsStreamFragment.h"
-
-class CIndexedMshsStreamFragmentCollection : public CIndexedStreamFragmentCollection
+CIndexedStreamFragment::CIndexedStreamFragment(HRESULT *result, CStreamFragment *item, unsigned int index)
+  : CIndexedCacheFileItem(result, item, index)
 {
-public:
-  CIndexedMshsStreamFragmentCollection(HRESULT *result);
-  virtual ~CIndexedMshsStreamFragmentCollection(void);
+}
 
-  /* get methods */
+CIndexedStreamFragment::~CIndexedStreamFragment(void)
+{
+}
 
-  // get the item from collection with specified index
-  // @param index : the index of item to find
-  // @return : the reference to item or NULL if not find
-  virtual CIndexedMshsStreamFragment *GetItem(unsigned int index);
+/* get methods */
 
-  /* set methods */
+CStreamFragment *CIndexedStreamFragment::GetItem(void)
+{
+  return (CStreamFragment *)__super::GetItem();
+}
 
-  /* other methods */
+/* set methods */
 
-protected:
+/* other methods */
 
-  /* methods */
-};
-
-#endif
+/* protected methods */

@@ -23,7 +23,7 @@
 #include "IndexedAfhsSegmentFragmentCollection.h"
 
 CIndexedAfhsSegmentFragmentCollection::CIndexedAfhsSegmentFragmentCollection(HRESULT *result)
-  : CIndexedCacheFileItemCollection(result)
+  : CIndexedStreamFragmentCollection(result)
 {
 }
 

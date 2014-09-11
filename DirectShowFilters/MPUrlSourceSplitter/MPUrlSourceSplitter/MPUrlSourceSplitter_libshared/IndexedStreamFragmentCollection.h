@@ -20,24 +20,24 @@
 
 #pragma once
 
-#ifndef __INDEXED_MSHS_STREAM_FRAGMENT_COLLECTION_DEFINED
-#define __INDEXED_MSHS_STREAM_FRAGMENT_COLLECTION_DEFINED
+#ifndef __INDEXED_STREAM_FRAGMENT_COLLECTION_DEFINED
+#define __INDEXED_STREAM_FRAGMENT_COLLECTION_DEFINED
 
-#include "IndexedStreamFragmentCollection.h"
-#include "IndexedMshsStreamFragment.h"
+#include "IndexedCacheFileItemCollection.h"
+#include "IndexedStreamFragment.h"
 
-class CIndexedMshsStreamFragmentCollection : public CIndexedStreamFragmentCollection
+class CIndexedStreamFragmentCollection : public CIndexedCacheFileItemCollection
 {
 public:
-  CIndexedMshsStreamFragmentCollection(HRESULT *result);
-  virtual ~CIndexedMshsStreamFragmentCollection(void);
+  CIndexedStreamFragmentCollection(HRESULT *result);
+  virtual ~CIndexedStreamFragmentCollection(void);
 
   /* get methods */
 
   // get the item from collection with specified index
   // @param index : the index of item to find
   // @return : the reference to item or NULL if not find
-  virtual CIndexedMshsStreamFragment *GetItem(unsigned int index);
+  virtual CIndexedStreamFragment *GetItem(unsigned int index);
 
   /* set methods */
 
@@ -46,6 +46,11 @@ public:
 protected:
 
   /* methods */
+
+  // clones specified item
+  // @param item : the item to clone
+  // @return : deep clone of item or NULL if not implemented
+  virtual CIndexedFastSearchItem *Clone(CIndexedFastSearchItem *item);
 };
 
 #endif

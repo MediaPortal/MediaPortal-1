@@ -23,7 +23,7 @@
 #include "IndexedMshsStreamFragment.h"
 
 CIndexedMshsStreamFragment::CIndexedMshsStreamFragment(HRESULT *result, CMshsStreamFragment *item, unsigned int index)
-  : CIndexedCacheFileItem(result, item, index)
+  : CIndexedStreamFragment(result, item, index)
 {
 }
 

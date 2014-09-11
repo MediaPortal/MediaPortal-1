@@ -23,13 +23,11 @@
 #ifndef __AFHS_SEGMENT_FRAGMENT_COLLECTION_DEFINED
 #define __AFHS_SEGMENT_FRAGMENT_COLLECTION_DEFINED
 
-#include "CacheFileItemCollection.h"
+#include "StreamFragmentCollection.h"
 #include "AfhsSegmentFragment.h"
 #include "IndexedAfhsSegmentFragmentCollection.h"
 
-#define SEGMENT_FRAGMENT_INDEX_NOT_SET                                UINT_MAX
-
-class CAfhsSegmentFragmentCollection : public CCacheFileItemCollection
+class CAfhsSegmentFragmentCollection : public CStreamFragmentCollection
 {
 public:
   CAfhsSegmentFragmentCollection(HRESULT *result);
@@ -41,30 +39,6 @@ public:
   // @param index : the index of item to find
   // @return : the reference to item or NULL if not find
   virtual CAfhsSegmentFragment *GetItem(unsigned int index);
-
-  // gets index of stream segment where position is between start position and end position
-  // @param position : the position between start position and end position
-  // @return : index of segment fragment or UINT_MAX if not exists
-  unsigned int GetSegmentFragmentIndexBetweenPositions(int64_t position);
-
-  // returns indexes where segment fragment have to be placed
-  // startIndex == UINT_MAX && endIndex == 0 => segment fragment have to be placed on beginning
-  // startIndex == Count() - 1 && endIndex == UINT_MAX => segment fragment have to be placed on end
-  // startIndex == endIndex => segment fragment with same start position exists in collection (index of segment fragment is startIndex)
-  // segment fragment have to be placed between startIndex and endIndex
-  // @param position : the start position to compare
-  // @param startIndex : reference to variable which holds start index where segment fragment have to be placed
-  // @param endIndex : reference to variable which holds end index where segment fragment have to be placed
-  // @return : true if successful, false otherwise
-  bool GetSegmentFragmentInsertPosition(int64_t position, unsigned int *startIndex, unsigned int *endIndex);
-
-  // gets start index of segment fragment to start searching for specific position
-  // @return : start index of segment fragment to start searching for specific position or SEGMENT_FRAGMENT_INDEX_NOT_SET if not set
-  unsigned int GetStartSearchingIndex(void);
-
-  // gets count of segment fragments to search for specific position
-  // @return : count of segment fragments to search for specific position
-  unsigned int GetSearchCount(void);
 
   // gets default url for segment and fragment
   // @param segmentFragment : the segment and fragment to get default url
@@ -91,14 +65,6 @@ public:
 
   /* set methods */
 
-  // sets start index of segment fragment to start searching for specific position
-  // @param startSearchingIndex : start index of segment fragment to start searching for specific position or SEGMENT_FRAGMENT_INDEX_NOT_SET if not set
-  void SetStartSearchingIndex(unsigned int startSearchingIndex);
-
-  // sets count of segment fragments to search for specific position
-  // @param searchCount : count of segment fragments to search for specific position
-  void SetSearchCount(unsigned int searchCount);
-
   // sets default base url for all segments and fragments
   // @param baseUrl : default base url to set
   // @return : true if successful, false otherwise
@@ -111,12 +77,6 @@ public:
 
   /* other methods */
 
-  // insert item to collection
-  // @param position : zero-based position to insert new item
-  // @param item : item to insert
-  // @result : true if successful, false otherwise
-  virtual bool Insert(unsigned int position, CCacheFileItem *item);
-
   // tests if in collection are some ecnrypted segment fragments
   // @return : true if in collection are some encrypted segment fragments, false otherwise
   bool HasEncryptedSegmentFragments(void);
@@ -124,6 +84,10 @@ public:
   // tests if in collection are some decrypted segment fragments
   // @return : true if in collection are some decrypted segment fragments, false otherwise
   bool HasDecryptedSegmentFragments(void);
+
+  // recalculate decrypted segment fragments start positions based on previous stream fragments
+  // @param startIndex : the index of first stream fragment to recalculate start position
+  //void RecalculateDecryptedSegmentFragmentStartPosition(unsigned int startIndex);
 
   /* index methods */
 
@@ -154,10 +118,6 @@ public:
   virtual void ClearIndexes(void);
 
 protected:
-  // holds start index of segment fragment to start searching for specific position
-  unsigned int startSearchingIndex;
-  // holds segment fragments count to search for specific position
-  unsigned int searchCount;
   // holds default base url for all segments and fragments
   wchar_t *defaultBaseUrl;
   // holds extra parameters which are added to all segments and fragments

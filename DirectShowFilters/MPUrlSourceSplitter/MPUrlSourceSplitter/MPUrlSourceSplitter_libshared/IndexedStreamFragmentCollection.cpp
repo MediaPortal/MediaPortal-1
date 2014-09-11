@@ -18,34 +18,33 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
-
-#ifndef __INDEXED_MSHS_STREAM_FRAGMENT_COLLECTION_DEFINED
-#define __INDEXED_MSHS_STREAM_FRAGMENT_COLLECTION_DEFINED
+#include "StdAfx.h"
 
 #include "IndexedStreamFragmentCollection.h"
-#include "IndexedMshsStreamFragment.h"
 
-class CIndexedMshsStreamFragmentCollection : public CIndexedStreamFragmentCollection
+CIndexedStreamFragmentCollection::CIndexedStreamFragmentCollection(HRESULT *result)
+  : CIndexedCacheFileItemCollection(result)
 {
-public:
-  CIndexedMshsStreamFragmentCollection(HRESULT *result);
-  virtual ~CIndexedMshsStreamFragmentCollection(void);
+}
 
-  /* get methods */
+CIndexedStreamFragmentCollection::~CIndexedStreamFragmentCollection(void)
+{
+}
 
-  // get the item from collection with specified index
-  // @param index : the index of item to find
-  // @return : the reference to item or NULL if not find
-  virtual CIndexedMshsStreamFragment *GetItem(unsigned int index);
+/* get methods */
 
-  /* set methods */
+CIndexedStreamFragment *CIndexedStreamFragmentCollection::GetItem(unsigned int index)
+{
+  return (CIndexedStreamFragment *)__super::GetItem(index);
+}
 
-  /* other methods */
+/* set methods */
 
-protected:
+/* other methods */
 
-  /* methods */
-};
+/* protected methods */
 
-#endif
+CIndexedFastSearchItem *CIndexedStreamFragmentCollection::Clone(CIndexedFastSearchItem *item)
+{
+  return NULL;
+}

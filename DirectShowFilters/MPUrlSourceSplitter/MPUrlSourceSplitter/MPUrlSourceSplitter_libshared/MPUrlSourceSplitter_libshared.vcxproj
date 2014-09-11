@@ -91,6 +91,8 @@
     <ClInclude Include="IndexCollection.h" />
     <ClInclude Include="IndexedFastSearchItem.h" />
     <ClInclude Include="IndexedFastSearchItemCollection.h" />
+    <ClInclude Include="IndexedStreamFragment.h" />
+    <ClInclude Include="IndexedStreamFragmentCollection.h" />
     <ClInclude Include="inttypes.h" />
     <ClInclude Include="KeyedCollection.h" />
     <ClInclude Include="LinearBuffer.h" />
@@ -114,6 +116,8 @@
     <ClInclude Include="StreamAvailableLength.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="StreamFragment.h" />
+    <ClInclude Include="StreamFragmentCollection.h" />
     <ClInclude Include="StreamInformation.h" />
     <ClInclude Include="StreamInformationCollection.h" />
     <ClInclude Include="StreamPackage.h" />
@@ -142,6 +146,8 @@
     <ClCompile Include="IndexCollection.cpp" />
     <ClCompile Include="IndexedFastSearchItem.cpp" />
     <ClCompile Include="IndexedFastSearchItemCollection.cpp" />
+    <ClCompile Include="IndexedStreamFragment.cpp" />
+    <ClCompile Include="IndexedStreamFragmentCollection.cpp" />
     <ClCompile Include="LinearBuffer.cpp" />
     <ClCompile Include="LockMutex.cpp" />
     <ClCompile Include="MediaPacket.cpp" />
@@ -166,6 +172,8 @@
       <FileType>CppCode</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="StreamFragment.cpp" />
+    <ClCompile Include="StreamFragmentCollection.cpp" />
     <ClCompile Include="StreamInformation.cpp" />
     <ClCompile Include="StreamInformationCollection.cpp" />
     <ClCompile Include="StreamPackage.cpp" />

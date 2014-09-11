@@ -31,10 +31,8 @@
 #define CACHE_FILE_ITEM_FLAG_NONE                                     FAST_SEARCH_ITEM_FLAG_NONE
 
 #define CACHE_FILE_ITEM_FLAG_NO_CLEAN_UP_FROM_MEMORY                  (1 << (FAST_SEARCH_ITEM_FLAG_LAST + 0))
-#define CACHE_FILE_ITEM_FLAG_DOWNLOADED                               (1 << (FAST_SEARCH_ITEM_FLAG_LAST + 1))
-#define CACHE_FILE_ITEM_FLAG_DISCONTINUITY                            (1 << (FAST_SEARCH_ITEM_FLAG_LAST + 2))
 
-#define CACHE_FILE_ITEM_FLAG_LAST                                     (FAST_SEARCH_ITEM_FLAG_LAST + 3)
+#define CACHE_FILE_ITEM_FLAG_LAST                                     (FAST_SEARCH_ITEM_FLAG_LAST + 1)
 
 #define CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET                      0
 #define CACHE_FILE_ITEM_POSITION_NOT_SET                              -1
@@ -82,16 +80,6 @@ public:
   // @param cacheFileItemIndex : the index of cache file item (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
   virtual void SetNoCleanUpFromMemory(bool noCleanUpFromMemory, unsigned int cacheFileItemIndex);
 
-  // sets if cache file item is downloaded
-  // @param downloaded : true if cache file item is downloaded
-  // @param cacheFileItemIndex : the index of cache file item (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
-  virtual void SetDownloaded(bool downloaded, unsigned int cacheFileItemIndex);
-
-  // set discontinuity
-  // @param discontinuity : true if discontinuity after data, false otherwise
-  // @param cacheFileItemIndex : the index of cache file item (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
-  virtual void SetDiscontinuity(bool discontinuity, unsigned int cacheFileItemIndex);
-
   /* other methods */
 
   // tests if item is stored to file
@@ -108,11 +96,11 @@ public:
 
   // tests if discontinuity is set
   // @return : true if discontinuity is set, false otherwise
-  virtual bool IsDiscontinuity(void);
+  //virtual bool IsDiscontinuity(void);
 
   // tests if fragment is downloaded
   // @return : true if downloaded, false otherwise
-  virtual bool IsDownloaded(void);
+  //virtual bool IsDownloaded(void);
 
 protected:
   // holds buffer data

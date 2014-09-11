@@ -29,25 +29,20 @@
 #define AFFECTED_INDEX_CLEAN_UP_FROM_MEMORY_STORED_TO_FILE_LOADED_TO_MEMORY_INC             (1 << (FLAGS_LAST + 2))
 #define AFFECTED_INDEX_CLEAN_UP_FROM_MEMORY_NOT_STORED_TO_FILE_LOADED_TO_MEMORY_ADD         (1 << (FLAGS_LAST + 3))
 #define AFFECTED_INDEX_CLEAN_UP_FROM_MEMORY_NOT_STORED_TO_FILE_LOADED_TO_MEMORY_INC         (1 << (FLAGS_LAST + 4))
-#define AFFECTED_INDEX_NOT_DOWNLOADED_ADD                                                   (1 << (FLAGS_LAST + 5))
-#define AFFECTED_INDEX_NOT_DOWNLOADED_INC                                                   (1 << (FLAGS_LAST + 6))
 
 CCacheFileItemCollection::CCacheFileItemCollection(HRESULT *result)
   : CFastSearchItemCollection(result)
 {
   this->indexCleanUpFromMemoryStoredToFileLoadedToMemory = NULL;
   this->indexCleanUpFromMemoryNotStoredToFileLoadedToMemory = NULL;
-  this->indexNotDownloaded = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->indexCleanUpFromMemoryStoredToFileLoadedToMemory = new CIndexCollection(result);
     this->indexCleanUpFromMemoryNotStoredToFileLoadedToMemory = new CIndexCollection(result);
-    this->indexNotDownloaded = new CIndexCollection(result);
 
     CHECK_POINTER_HRESULT(*result, this->indexCleanUpFromMemoryStoredToFileLoadedToMemory, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->indexCleanUpFromMemoryNotStoredToFileLoadedToMemory, *result, E_OUTOFMEMORY);
-    CHECK_POINTER_HRESULT(*result, this->indexNotDownloaded, *result, E_OUTOFMEMORY);
   }
 }
 
@@ -55,7 +50,6 @@ CCacheFileItemCollection::~CCacheFileItemCollection(void)
 {
   FREE_MEM_CLASS(this->indexCleanUpFromMemoryStoredToFileLoadedToMemory);
   FREE_MEM_CLASS(this->indexCleanUpFromMemoryNotStoredToFileLoadedToMemory);
-  FREE_MEM_CLASS(this->indexNotDownloaded);
 }
 
 /* get methods */
@@ -102,43 +96,6 @@ HRESULT CCacheFileItemCollection::GetCleanUpFromMemoryNotStoredToFileLoadedToMem
 
     CHECK_CONDITION_HRESULT(result, collection->Add(item), result, E_OUTOFMEMORY);
     CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(item));
-  }
-
-  return result;
-}
-
-HRESULT CCacheFileItemCollection::GetNotDownloadedItems(CIndexedCacheFileItemCollection *collection)
-{
-  HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, collection);
-
-  CHECK_CONDITION_HRESULT(result, collection->EnsureEnoughSpace(this->indexNotDownloaded->Count()), result, E_OUTOFMEMORY);
-
-  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->indexNotDownloaded->Count())); i++)
-  {
-    unsigned int index = this->indexNotDownloaded->GetItem(i);
-
-    CIndexedCacheFileItem *item = new CIndexedCacheFileItem(&result, this->GetItem(index), index);
-    CHECK_POINTER_HRESULT(result, item, result, E_OUTOFMEMORY);
-
-    CHECK_CONDITION_HRESULT(result, collection->Add(item), result, E_OUTOFMEMORY);
-    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(item));
-  }
-
-  return result;
-}
-
-unsigned int CCacheFileItemCollection::GetFirstNotDownloadedItemIndex(unsigned int itemIndex)
-{
-  unsigned int result = UINT_MAX;
-
-  // get position to insert item index
-  unsigned int startIndex = 0;
-  unsigned int endIndex = 0;
-
-  if (this->indexNotDownloaded->GetItemInsertPosition(itemIndex, &startIndex, &endIndex))
-  {
-    result = this->indexNotDownloaded->GetItem(endIndex);
   }
 
   return result;
@@ -216,31 +173,6 @@ bool CCacheFileItemCollection::InsertIndexes(unsigned int itemIndex)
         }
       }
     }
-
-    // third index
-    if (result)
-    {
-      // get position to insert item index
-      unsigned int startIndex = 0;
-      unsigned int endIndex = 0;
-
-      result &= this->indexNotDownloaded->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
-
-      if (result)
-      {
-        indexNotDownloadedItemIndex = min(endIndex, this->indexNotDownloaded->Count());
-
-        // update (increase) values in index
-        CHECK_CONDITION_EXECUTE(result, this->indexNotDownloaded->Increase(indexNotDownloadedItemIndex));
-        CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_NOT_DOWNLOADED_INC);
-
-        if (!item->IsDownloaded())
-        {
-          result &= this->indexNotDownloaded->Insert(indexNotDownloadedItemIndex, itemIndex);
-          CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_NOT_DOWNLOADED_ADD);
-        }
-      }
-    }
   }
 
   if (!result)
@@ -252,10 +184,6 @@ bool CCacheFileItemCollection::InsertIndexes(unsigned int itemIndex)
     // revert seconds index
     CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_CLEAN_UP_FROM_MEMORY_NOT_STORED_TO_FILE_LOADED_TO_MEMORY_ADD), this->indexCleanUpFromMemoryNotStoredToFileLoadedToMemory->Remove(indexCleanUpFromMemoryNotStoredToFileLoadedToMemoryItemIndex));
     CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_CLEAN_UP_FROM_MEMORY_NOT_STORED_TO_FILE_LOADED_TO_MEMORY_INC), this->indexCleanUpFromMemoryNotStoredToFileLoadedToMemory->Decrease(indexCleanUpFromMemoryNotStoredToFileLoadedToMemoryItemIndex, 1));
-
-    // revert third index
-    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_NOT_DOWNLOADED_ADD), this->indexNotDownloaded->Remove(indexNotDownloadedItemIndex));
-    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_NOT_DOWNLOADED_INC), this->indexNotDownloaded->Decrease(indexNotDownloadedItemIndex, 1));
 
     // revert base indexes
     CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_BASE), __super::RemoveIndexes(itemIndex, 1));
@@ -296,17 +224,6 @@ void CCacheFileItemCollection::RemoveIndexes(unsigned int startIndex, unsigned i
   CHECK_CONDITION_EXECUTE(indexCount > 0, this->indexCleanUpFromMemoryNotStoredToFileLoadedToMemory->Remove(indexStart, indexCount));
   // update (decrease) values in index
   this->indexCleanUpFromMemoryNotStoredToFileLoadedToMemory->Decrease(indexStart, count);
-
-  // third index
-  this->indexNotDownloaded->GetItemInsertPosition(startIndex, &start, &end);
-  indexStart = min(end, this->indexNotDownloaded->Count());
-
-  this->indexNotDownloaded->GetItemInsertPosition(startIndex + count, &start, &end);
-  indexCount = min(end, this->indexNotDownloaded->Count()) - indexStart;
-
-  CHECK_CONDITION_EXECUTE(indexCount > 0, this->indexNotDownloaded->Remove(indexStart, indexCount));
-  // update (decrease) values in index
-  this->indexNotDownloaded->Decrease(indexStart, count);
 }
 
 bool CCacheFileItemCollection::UpdateIndexes(unsigned int itemIndex, unsigned int count)
@@ -364,30 +281,6 @@ bool CCacheFileItemCollection::UpdateIndexes(unsigned int itemIndex, unsigned in
         this->indexCleanUpFromMemoryNotStoredToFileLoadedToMemory->Remove(indexIndex, count);
       }
     }
-
-    // third index
-    if (result)
-    {
-      bool test = (!item->IsDownloaded());
-      unsigned int indexIndex = this->indexNotDownloaded->GetItemIndex(itemIndex);
-
-      if (result && test && (indexIndex == UINT_MAX))
-      {
-        // get position to insert item index
-        unsigned int startIndex = 0;
-        unsigned int endIndex = 0;
-
-        result &= this->indexNotDownloaded->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
-
-        // insert into index
-        CHECK_CONDITION_EXECUTE(result, result &= this->indexNotDownloaded->Insert(min(endIndex, this->indexNotDownloaded->Count()), itemIndex, count));
-      }
-      else if (result && (!test) && (indexIndex != UINT_MAX))
-      {
-        // remove from index
-        this->indexNotDownloaded->Remove(indexIndex, count);
-      }
-    }
   }
 
   return result;
@@ -401,7 +294,6 @@ bool CCacheFileItemCollection::EnsureEnoughSpaceIndexes(unsigned int addingCount
   {
     result &= this->indexCleanUpFromMemoryStoredToFileLoadedToMemory->EnsureEnoughSpace(this->indexCleanUpFromMemoryStoredToFileLoadedToMemory->Count() + addingCount);
     result &= this->indexCleanUpFromMemoryNotStoredToFileLoadedToMemory->EnsureEnoughSpace(this->indexCleanUpFromMemoryNotStoredToFileLoadedToMemory->Count() + addingCount);
-    result &= this->indexNotDownloaded->EnsureEnoughSpace(this->indexNotDownloaded->Count() + addingCount);
   }
 
   return result;
@@ -413,7 +305,6 @@ void CCacheFileItemCollection::ClearIndexes(void)
 
   this->indexCleanUpFromMemoryStoredToFileLoadedToMemory->Clear();
   this->indexCleanUpFromMemoryNotStoredToFileLoadedToMemory->Clear();
-  this->indexNotDownloaded->Clear();
 }
 
 /* protected methods */

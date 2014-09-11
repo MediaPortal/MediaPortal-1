@@ -164,12 +164,16 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ContinuousStreamRange.h" />
+    <ClInclude Include="ContinuousStreamRangeCollection.h" />
     <ClInclude Include="MPUrlSourceSplitter_Parser_MPEG2TS.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TsPacket.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ContinuousStreamRange.cpp" />
+    <ClCompile Include="ContinuousStreamRangeCollection.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

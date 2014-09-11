@@ -23,9 +23,8 @@
 #include "HttpStreamFragment.h"
 
 CHttpStreamFragment::CHttpStreamFragment(HRESULT *result)
-  : CCacheFileItem(result)
+  : CStreamFragment(result)
 {
-  this->start = 0;
 }
 
 CHttpStreamFragment::~CHttpStreamFragment(void)
@@ -34,17 +33,7 @@ CHttpStreamFragment::~CHttpStreamFragment(void)
 
 /* get methods */
 
-int64_t CHttpStreamFragment::GetStart(void)
-{
-  return this->start;
-}
-
 /* set methods */
-
-void CHttpStreamFragment::SetStart(int64_t position)
-{
-  this->start = position;
-}
 
 /* other methods */
 
@@ -66,13 +55,12 @@ bool CHttpStreamFragment::InternalClone(CFastSearchItem *item)
   
   if (result)
   {
-    CHttpStreamFragment *fragment = dynamic_cast<CHttpStreamFragment *>(item);
+    /*CHttpStreamFragment *fragment = dynamic_cast<CHttpStreamFragment *>(item);
     result &= (fragment != NULL);
 
     if (result)
     {
-      fragment->start = this->start;
-    }
+    }*/
   }
 
   return result;

@@ -524,14 +524,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
           FREE_MEM_CLASS(processedFragment);
 
           // update current processing stream fragment flags and indexes
-          currentProcessingFragment->SetDownloaded(true, UINT_MAX);
           currentProcessingFragment->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
-          currentProcessingFragment->SetReadyForProcessing(false, UINT_MAX);
+          currentProcessingFragment->SetProcessed(true, UINT_MAX);
 
           this->streamFragments->UpdateIndexes(indexedReadyForProcessingStreamFragment->GetItemIndex(), 1);
 
-          // recalculate start position of all downloaded stream fragments until first not downloaded stream fragment
-          this->RecalculateStreamFragmentStartPosition(this->streamFragments, indexedReadyForProcessingStreamFragment->GetItemIndex());
+          // recalculate start position of all processed stream fragments until first not processed stream fragment
+          this->streamFragments->RecalculateProcessedStreamFragmentStartPosition(indexedReadyForProcessingStreamFragment->GetItemIndex());
         }
       }
 
@@ -629,9 +628,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
       }
       
       // if not set stream fragment to download, then set stream fragment to download (get next not downloaded stream fragment after current processed stream fragment)
-      this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->streamFragments->GetFirstNotReadyForProcessingNotDownloadedStreamFragmentIndex(this->streamFragmentProcessing) : this->streamFragmentToDownload;
+      this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(this->streamFragmentProcessing) : this->streamFragmentToDownload;
       // if not set stream fragment to download, then set stream fragment to download (get next not downloaded stream fragment from first stream fragment)
-      this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->streamFragments->GetFirstNotReadyForProcessingNotDownloadedStreamFragmentIndex(0) : this->streamFragmentToDownload;
+      this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(0) : this->streamFragmentToDownload;
       // stream fragment to download still can be UINT_MAX = no stream fragment to download
 
       unsigned int finishTime = UINT_MAX;
@@ -732,12 +731,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
         CMshsStreamFragment *currentDownloadingFragment = this->streamFragments->GetItem(this->streamFragmentDownloading);
 
         CHECK_CONDITION_HRESULT(result, currentDownloadingFragment->GetBuffer()->AddToBufferWithResize(this->mainCurlInstance->GetMshsDownloadResponse()->GetReceivedData()) == this->mainCurlInstance->GetMshsDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace(), result, E_OUTOFMEMORY);
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), currentDownloadingFragment->SetReadyForProcessing(true, this->streamFragmentDownloading));
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), currentDownloadingFragment->SetDownloaded(true, this->streamFragmentDownloading));
         
         // if not set fragment to download, then set fragment to download (get next not downloaded fragment after current processed fragment)
-        this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->streamFragments->GetFirstNotReadyForProcessingNotDownloadedStreamFragmentIndex(this->streamFragmentDownloading + 1) : this->streamFragmentToDownload;
+        this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(this->streamFragmentDownloading + 1) : this->streamFragmentToDownload;
         // if not set fragment to download, then set fragment to download (get next not downloaded fragment from first fragment)
-        this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->streamFragments->GetFirstNotReadyForProcessingNotDownloadedStreamFragmentIndex(0) : this->streamFragmentToDownload;
+        this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(0) : this->streamFragmentToDownload;
         // fragment to download still can be UINT_MAX = no fragment to download
 
         // we are not downloading any stream fragment
@@ -790,35 +789,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
       this->flags &= ~PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
     }
 
-    if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_MSHS_FLAG_CLOSE_CURL_INSTANCE) && (this->mainCurlInstance->IsLockedCurlInstanceByOwner(this) || (!this->mainCurlInstance->IsLockedCurlInstance())))
-    {
-      HRESULT res = S_OK;
-      this->mainCurlInstance->SetConnectionState(Closing);
-
-      if (this->mainCurlInstance != NULL)
-      {
-        res = this->mainCurlInstance->StopReceivingData();
-
-        CHECK_CONDITION_EXECUTE(FAILED(res), this->logger->Log(LOGGER_INFO, L"%s: %s: closing connection failed, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, res));
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(res), this->mainCurlInstance->GetDownloadResponse()->GetReceivedData()->ClearBuffer());
-      }
-
-      if ((res == S_OK) && (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_MSHS_FLAG_STOP_RECEIVING_DATA)))
-      {
-        // this clear CURL instance and buffer, it leads to GetConnectionState() to ProtocolConnectionState::None result and connection will be reopened by ProtocolHoster
-        this->StopReceivingData();
-      }
-
-      if (res == S_OK)
-      {
-        this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"connection closed successfully");
-        this->flags &= ~(MP_URL_SOURCE_SPLITTER_PROTOCOL_MSHS_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_MSHS_FLAG_STOP_RECEIVING_DATA);
-
-        // if CURL instance is locked, then we unlock CURL instance
-        this->mainCurlInstance->UnlockCurlInstance(this);
-      }
-    }
-
     // process stream package (if valid)
     if (streamPackage->GetState() == CStreamPackage::Created)
     {
@@ -867,7 +837,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
         // first try to find starting segment fragment (segment fragment which have first data)
         unsigned int foundDataLength = dataResponse->GetBuffer()->GetBufferOccupiedSpace();
 
-        int64_t startPosition = ((foundDataLength == 0) && this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_MSHS_FLAG_SKIP_HEADER)) ? this->reconstructedHeaderSize : 0;
+        int64_t startPosition = this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_MSHS_FLAG_SKIP_HEADER) ? this->reconstructedHeaderSize : 0;
         startPosition += dataRequest->GetStart() + foundDataLength;
 
         if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_MSHS_FLAG_SEND_FRAGMENTED_INDEX) && (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_MSHS_FLAG_FRAGMENTED_INDEX_SENT)))
@@ -1013,13 +983,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
               streamPackage->SetCompleted(E_NO_MORE_DATA_AVAILABLE);
             }
 
-            if ((fragment != NULL) && (!fragment->IsDownloaded()) && (!fragment->IsReadyForProcessing()) && (fragmentIndex != this->streamFragmentDownloading) && ((this->mainCurlInstance->GetConnectionState() == None) || (this->mainCurlInstance->GetConnectionState() == Opened)))
+            if ((fragment != NULL) && (!fragment->IsDownloaded()) && (fragmentIndex != this->streamFragmentDownloading) && (fragmentIndex != this->streamFragmentToDownload) && ((this->mainCurlInstance->GetConnectionState() == None) || (this->mainCurlInstance->GetConnectionState() == Opened)))
             {
               // fragment is not downloaded and also is not downloading currently
               this->streamFragmentDownloading = UINT_MAX;
               this->streamFragmentToDownload = fragmentIndex;
 
-              this->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u', requesting data from '%lld' to '%lld', segment fragment not downloaded, not downloading and not ready for processing, scheduled for download", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetStart() + dataRequest->GetLength());
+              this->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u', requesting data from '%lld' to '%lld', stream fragment not downloaded and not downloading, scheduled for download", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetStart() + dataRequest->GetLength());
 
               if (this->mainCurlInstance->GetConnectionState() == Opened)
               {
@@ -1033,6 +1003,35 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
           // found data length is equal than requested
           streamPackage->SetCompleted(S_OK);
         }
+      }
+    }
+
+    if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_MSHS_FLAG_CLOSE_CURL_INSTANCE) && (this->mainCurlInstance->IsLockedCurlInstanceByOwner(this) || (!this->mainCurlInstance->IsLockedCurlInstance())))
+    {
+      HRESULT res = S_OK;
+      this->mainCurlInstance->SetConnectionState(Closing);
+
+      if (this->mainCurlInstance != NULL)
+      {
+        res = this->mainCurlInstance->StopReceivingData();
+
+        CHECK_CONDITION_EXECUTE(FAILED(res), this->logger->Log(LOGGER_INFO, L"%s: %s: closing connection failed, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, res));
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(res), this->mainCurlInstance->GetDownloadResponse()->GetReceivedData()->ClearBuffer());
+      }
+
+      if ((res == S_OK) && (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_MSHS_FLAG_STOP_RECEIVING_DATA)))
+      {
+        // this clear CURL instance and buffer, it leads to GetConnectionState() to ProtocolConnectionState::None result and connection will be reopened by ProtocolHoster
+        this->StopReceivingData();
+      }
+
+      if (res == S_OK)
+      {
+        this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"connection closed successfully");
+        this->flags &= ~(MP_URL_SOURCE_SPLITTER_PROTOCOL_MSHS_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_MSHS_FLAG_STOP_RECEIVING_DATA);
+
+        // if CURL instance is locked, then we unlock CURL instance
+        this->mainCurlInstance->UnlockCurlInstance(this);
       }
     }
 
@@ -1055,7 +1054,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
           {
             CMshsStreamFragment *fragment = this->streamFragments->GetItem(fragmentRemoveStart + fragmentRemoveCount);
 
-            if (((fragmentRemoveStart + fragmentRemoveCount) != this->streamFragments->GetStartSearchingIndex()) && fragment->IsDownloaded() && (fragment->GetFragmentTimestamp()  < (int64_t)this->reportedStreamTime))
+            if (((fragmentRemoveStart + fragmentRemoveCount) != this->streamFragments->GetStartSearchingIndex()) && fragment->IsProcessed() && (fragment->GetFragmentTimestamp()  < (int64_t)this->reportedStreamTime))
             {
               // fragment will be removed
               fragmentRemoveCount++;
@@ -1339,11 +1338,12 @@ int64_t CMPUrlSourceSplitter_Protocol_Mshs::SeekToTime(unsigned int streamId, in
       this->fragmentedIndexBoxSize = (unsigned int)this->fragmentedIndexBox->GetSize();
       this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_MSHS_FLAG_SEND_FRAGMENTED_INDEX;
 
-      if ((!processingFragment->IsReadyForProcessing()) && (!processingFragment->IsDownloaded()))
+      if (!processingFragment->IsDownloaded())
       {
         // stream fragment is not downloaded, force its download
         // force to download missing fragment
 
+        processingFragment->SetFragmentStartPosition(0);
         this->streamFragmentToDownload = this->streamFragmentProcessing;
 
         this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_MSHS_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_MSHS_FLAG_STOP_RECEIVING_DATA;
@@ -1352,7 +1352,7 @@ int64_t CMPUrlSourceSplitter_Protocol_Mshs::SeekToTime(unsigned int streamId, in
       // set start searching index to current processing stream fragment
       this->streamFragments->SetStartSearchingIndex(this->streamFragmentProcessing);
       // set count of fragments to search for specific position
-      unsigned int firstNotDownloadedFragmentIndex = this->streamFragments->GetFirstNotReadyForProcessingNotDownloadedStreamFragmentIndex(this->streamFragmentProcessing);
+      unsigned int firstNotDownloadedFragmentIndex = this->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(this->streamFragmentProcessing);
 
       if (firstNotDownloadedFragmentIndex == UINT_MAX)
       {
@@ -1475,33 +1475,6 @@ int64_t CMPUrlSourceSplitter_Protocol_Mshs::GetBytePosition(void)
   }
 
   return result;
-}
-
-void CMPUrlSourceSplitter_Protocol_Mshs::RecalculateStreamFragmentStartPosition(CMshsStreamFragmentCollection *streamFragments, unsigned int startIndex)
-{
-  for (unsigned int i = startIndex; i < streamFragments->Count(); i++)
-  {
-    CMshsStreamFragment *fragment = streamFragments->GetItem(i);
-    CMshsStreamFragment *previousFragment = (i > 0) ? streamFragments->GetItem(i - 1) : NULL;
-
-    if (fragment->IsDownloaded())
-    {
-      if ((previousFragment != NULL) && (previousFragment->IsDownloaded()))
-      {
-        fragment->SetFragmentStartPosition(previousFragment->GetFragmentStartPosition() + previousFragment->GetLength());
-      }
-
-      if (i == (streamFragments->GetStartSearchingIndex() + streamFragments->GetSearchCount()))
-      {
-        streamFragments->SetSearchCount(streamFragments->GetSearchCount() + 1);
-      }
-    }
-    else
-    {
-      // we found not downloaded stream fragment, stop recalculating start positions
-      break;
-    }
-  }
 }
 
 HRESULT CMPUrlSourceSplitter_Protocol_Mshs::GetStreamFragmentsFromManifest(CMshsStreamFragmentCollection *streamFragments, CMshsManifestSmoothStreamingMediaBox *manifest)

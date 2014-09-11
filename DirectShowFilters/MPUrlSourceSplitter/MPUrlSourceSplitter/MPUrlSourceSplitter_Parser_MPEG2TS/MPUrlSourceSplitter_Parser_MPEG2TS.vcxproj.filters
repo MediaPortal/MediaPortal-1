@@ -27,6 +27,12 @@
     <ClInclude Include="TsPacket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ContinuousStreamRange.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ContinuousStreamRangeCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -39,6 +45,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TsPacket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ContinuousStreamRange.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ContinuousStreamRangeCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

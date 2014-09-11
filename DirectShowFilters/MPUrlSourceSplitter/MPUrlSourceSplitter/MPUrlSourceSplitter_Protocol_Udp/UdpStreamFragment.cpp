@@ -23,9 +23,8 @@
 #include "UdpStreamFragment.h"
 
 CUdpStreamFragment::CUdpStreamFragment(HRESULT *result)
-  : CCacheFileItem(result)
+  : CStreamFragment(result)
 {
-  this->start = 0;
 }
 
 CUdpStreamFragment::~CUdpStreamFragment(void)
@@ -34,17 +33,7 @@ CUdpStreamFragment::~CUdpStreamFragment(void)
 
 /* get methods */
 
-int64_t CUdpStreamFragment::GetStart(void)
-{
-  return this->start;
-}
-
 /* set methods */
-
-void CUdpStreamFragment::SetStart(int64_t position)
-{
-  this->start = position;
-}
 
 /* other methods */
 
@@ -66,13 +55,12 @@ bool CUdpStreamFragment::InternalClone(CFastSearchItem *item)
   
   if (result)
   {
-    CUdpStreamFragment *fragment = dynamic_cast<CUdpStreamFragment *>(item);
+    /*CUdpStreamFragment *fragment = dynamic_cast<CUdpStreamFragment *>(item);
     result &= (fragment != NULL);
 
     if (result)
     {
-      fragment->start = this->start;
-    }
+    }*/
   }
 
   return result;

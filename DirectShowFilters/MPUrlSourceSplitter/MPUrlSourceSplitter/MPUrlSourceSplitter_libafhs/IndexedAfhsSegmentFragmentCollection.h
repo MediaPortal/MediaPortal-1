@@ -23,10 +23,10 @@
 #ifndef __INDEXED_AFHS_SEGMENT_FRAGMENT_COLLECTION_DEFINED
 #define __INDEXED_AFHS_SEGMENT_FRAGMENT_COLLECTION_DEFINED
 
-#include "IndexedCacheFileItemCollection.h"
+#include "IndexedStreamFragmentCollection.h"
 #include "IndexedAfhsSegmentFragment.h"
 
-class CIndexedAfhsSegmentFragmentCollection : public CIndexedCacheFileItemCollection
+class CIndexedAfhsSegmentFragmentCollection : public CIndexedStreamFragmentCollection
 {
 public:
   CIndexedAfhsSegmentFragmentCollection(HRESULT *result);

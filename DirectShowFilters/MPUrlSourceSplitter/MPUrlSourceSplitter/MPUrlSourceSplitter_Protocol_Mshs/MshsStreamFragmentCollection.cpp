@@ -25,33 +25,25 @@
 #define AFFECTED_INDEX_NONE                                           FLAGS_NONE
 
 #define AFFECTED_INDEX_BASE                                           (1 << (FLAGS_LAST + 0))
-#define AFFECTED_INDEX_READY_FOR_PROCESSING_ADD                       (1 << (FLAGS_LAST + 1))
-#define AFFECTED_INDEX_READY_FOR_PROCESSING_INC                       (1 << (FLAGS_LAST + 2))
-#define AFFECTED_INDEX_NOT_READY_FOR_PROCESSING_NOT_DOWNLOADED_ADD    (1 << (FLAGS_LAST + 3))
-#define AFFECTED_INDEX_NOT_READY_FOR_PROCESSING_NOT_DOWNLOADED_INC    (1 << (FLAGS_LAST + 4))
+#define AFFECTED_INDEX_DOWNLOADED_NOT_PROCESSED_ADD                   (1 << (FLAGS_LAST + 1))
+#define AFFECTED_INDEX_DOWNLOADED_NOT_PROCESSED_INC                   (1 << (FLAGS_LAST + 2))
 
 CMshsStreamFragmentCollection::CMshsStreamFragmentCollection(HRESULT *result)
-  : CCacheFileItemCollection(result)
+  : CStreamFragmentCollection(result)
 {
-  this->startSearchingIndex = 0;
-  this->searchCount = 0;
-  this->indexReadyForProcessing = NULL;
-  this->indexNotReadyForProcessingNotDownloaded = NULL;
+  this->indexDownloadedNotProcessed = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->indexReadyForProcessing = new CIndexCollection(result);
-    this->indexNotReadyForProcessingNotDownloaded = new CIndexCollection(result);
+    this->indexDownloadedNotProcessed = new CIndexCollection(result);
 
-    CHECK_POINTER_HRESULT(*result, this->indexReadyForProcessing, *result, E_OUTOFMEMORY);
-    CHECK_POINTER_HRESULT(*result, this->indexNotReadyForProcessingNotDownloaded, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->indexDownloadedNotProcessed, *result, E_OUTOFMEMORY);
   }
 }
 
 CMshsStreamFragmentCollection::~CMshsStreamFragmentCollection(void)
 {
-  FREE_MEM_CLASS(this->indexReadyForProcessing);
-  FREE_MEM_CLASS(this->indexNotReadyForProcessingNotDownloaded);
+  FREE_MEM_CLASS(this->indexDownloadedNotProcessed);
 }
 
 /* get methods */
@@ -61,125 +53,16 @@ CMshsStreamFragment *CMshsStreamFragmentCollection::GetItem(unsigned int index)
   return (CMshsStreamFragment *)__super::GetItem(index);
 }
 
-unsigned int CMshsStreamFragmentCollection::GetStreamFragmentIndexBetweenPositions(int64_t position)
-{
-  unsigned int index = UINT_MAX;
-
-  unsigned int startIndex = 0;
-  unsigned int endIndex = 0;
-
-  CMshsStreamFragment *zeroPositionFragment = this->GetItem(this->startSearchingIndex);
-
-  if (zeroPositionFragment != NULL)
-  {
-    position += zeroPositionFragment->GetFragmentStartPosition();
-
-    if (this->GetStreamFragmentInsertPosition(position, &startIndex, &endIndex))
-    {
-      if (startIndex != UINT_MAX)
-      {
-        // if requested position is somewhere after start of stream fragments
-        CMshsStreamFragment *streamFragment = this->GetItem(startIndex);
-        int64_t positionStart = streamFragment->GetFragmentStartPosition();
-        int64_t positionEnd = positionStart + streamFragment->GetLength();
-
-        if ((position >= positionStart) && (position < positionEnd))
-        {
-          // we found segment fragment
-          index = startIndex;
-        }
-      }
-    }
-  }
-
-  return index;
-}
-
-bool CMshsStreamFragmentCollection::GetStreamFragmentInsertPosition(int64_t position, unsigned int *startIndex, unsigned int *endIndex)
-{
-  bool result = ((startIndex != NULL) && (endIndex != NULL));
-
-  if (result)
-  {
-    result = ((this->startSearchingIndex != SEGMENT_FRAGMENT_INDEX_NOT_SET) && (this->searchCount > 0));
-
-    if (result)
-    {
-      unsigned int first = this->startSearchingIndex;
-      unsigned int last = this->startSearchingIndex + this->searchCount - 1;
-      result = false;
-
-      while ((first <= last) && (first != UINT_MAX) && (last != UINT_MAX))
-      {
-        // compute middle index
-        unsigned int middle = (first + last) / 2;
-
-        // get stream fragment at middle index
-        CMshsStreamFragment *streamFragment = this->GetItem(middle);
-
-        // compare stream fragment start to position
-        if (position > streamFragment->GetFragmentStartPosition())
-        {
-          // position is bigger than stream fragment start time
-          // search in top half
-          first = middle + 1;
-        }
-        else if (position < streamFragment->GetFragmentStartPosition()) 
-        {
-          // position is lower than stream fragment start time
-          // search in bottom half
-          last = middle - 1;
-        }
-        else
-        {
-          // we found stream fragment with same starting time as position
-          *startIndex = middle;
-          *endIndex = middle;
-          result = true;
-          break;
-        }
-      }
-
-      if (!result)
-      {
-        // we don't found stream fragment
-        // it means that stream fragment with 'position' belongs between first and last
-        *startIndex = last;
-        *endIndex = (first >= (this->startSearchingIndex + this->searchCount)) ? UINT_MAX : first;
-        result = true;
-      }
-    }
-    else
-    {
-      *startIndex = UINT_MAX;
-      *endIndex = 0;
-      result = true;
-    }
-  }
-
-  return result;
-}
-
-unsigned int CMshsStreamFragmentCollection::GetStartSearchingIndex(void)
-{
-  return this->startSearchingIndex;
-}
-
-unsigned int CMshsStreamFragmentCollection::GetSearchCount(void)
-{
-  return this->searchCount;
-}
-
 HRESULT CMshsStreamFragmentCollection::GetReadyForProcessingStreamFragments(CIndexedMshsStreamFragmentCollection *collection)
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, collection);
 
-  CHECK_CONDITION_HRESULT(result, collection->EnsureEnoughSpace(this->indexReadyForProcessing->Count()), result, E_OUTOFMEMORY);
+  CHECK_CONDITION_HRESULT(result, collection->EnsureEnoughSpace(this->indexDownloadedNotProcessed->Count()), result, E_OUTOFMEMORY);
 
-  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->indexReadyForProcessing->Count())); i++)
+  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->indexDownloadedNotProcessed->Count())); i++)
   {
-    unsigned int index = this->indexReadyForProcessing->GetItem(i);
+    unsigned int index = this->indexDownloadedNotProcessed->GetItem(i);
 
     CIndexedMshsStreamFragment *item = new CIndexedMshsStreamFragment(&result, this->GetItem(index), index);
     CHECK_POINTER_HRESULT(result, item, result, E_OUTOFMEMORY);
@@ -191,54 +74,13 @@ HRESULT CMshsStreamFragmentCollection::GetReadyForProcessingStreamFragments(CInd
   return result;
 }
 
-unsigned int CMshsStreamFragmentCollection::GetFirstNotReadyForProcessingNotDownloadedStreamFragmentIndex(unsigned int itemIndex)
-{
-  unsigned int result = UINT_MAX;
-
-  // get position to insert item index
-  unsigned int startIndex = 0;
-  unsigned int endIndex = 0;
-
-  if (this->indexNotReadyForProcessingNotDownloaded->GetItemInsertPosition(itemIndex, &startIndex, &endIndex))
-  {
-    result = this->indexNotReadyForProcessingNotDownloaded->GetItem(endIndex);
-  }
-
-  return result;
-}
-
 /* set methods */
-
-void CMshsStreamFragmentCollection::SetStartSearchingIndex(unsigned int startSearchingIndex)
-{
-  this->startSearchingIndex = startSearchingIndex;
-}
-
-void CMshsStreamFragmentCollection::SetSearchCount(unsigned int searchCount)
-{
-  this->searchCount = searchCount;
-}
 
 /* other methods */
 
-bool CMshsStreamFragmentCollection::Insert(unsigned int position, CCacheFileItem *item)
-{
-  bool result = __super::Insert(position, item);
-
-  if (result)
-  {
-    if (position <= this->startSearchingIndex)
-    {
-      this->startSearchingIndex++;
-    }
-  }
-
-  return result;
-}
-
 bool CMshsStreamFragmentCollection::HasReadyForProcessingStreamFragments(void)
 {
-  return (this->indexReadyForProcessing->Count() != 0);
+  return (this->indexDownloadedNotProcessed->Count() != 0);
 }
 
 /* index methods */
@@ -248,8 +90,7 @@ bool CMshsStreamFragmentCollection::InsertIndexes(unsigned int itemIndex)
   uint32_t flags = AFFECTED_INDEX_NONE;
   bool result = __super::InsertIndexes(itemIndex);
 
-  unsigned int indexReadyForProcessingItemIndex = UINT_MAX;
-  unsigned int indexNotReadyForProcessingNotDownloadedItemIndex = UINT_MAX;
+  unsigned int indexDownloadedNotProcessedItemIndex = UINT_MAX;
 
   if (result)
   {
@@ -266,45 +107,20 @@ bool CMshsStreamFragmentCollection::InsertIndexes(unsigned int itemIndex)
       unsigned int startIndex = 0;
       unsigned int endIndex = 0;
 
-      result &= this->indexReadyForProcessing->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
+      result &= this->indexDownloadedNotProcessed->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
 
       if (result)
       {
-        indexReadyForProcessingItemIndex = min(endIndex, this->indexReadyForProcessing->Count());
+        indexDownloadedNotProcessedItemIndex = min(endIndex, this->indexDownloadedNotProcessed->Count());
 
         // update (increase) values in index
-        CHECK_CONDITION_EXECUTE(result, this->indexReadyForProcessing->Increase(indexReadyForProcessingItemIndex));
-        CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_READY_FOR_PROCESSING_INC);
+        CHECK_CONDITION_EXECUTE(result, this->indexDownloadedNotProcessed->Increase(indexDownloadedNotProcessedItemIndex));
+        CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_DOWNLOADED_NOT_PROCESSED_INC);
 
-        if (item->IsReadyForProcessing())
+        if (item->IsDownloaded() && (!item->IsProcessed()))
         {
-          result &= this->indexReadyForProcessing->Insert(indexReadyForProcessingItemIndex, itemIndex);
-          CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_READY_FOR_PROCESSING_ADD);
-        }
-      }
-    }
-
-    // second index
-    if (result)
-    {
-      // get position to insert item index
-      unsigned int startIndex = 0;
-      unsigned int endIndex = 0;
-
-      result &= this->indexNotReadyForProcessingNotDownloaded->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
-
-      if (result)
-      {
-        indexNotReadyForProcessingNotDownloadedItemIndex = min(endIndex, this->indexNotReadyForProcessingNotDownloaded->Count());
-
-        // update (increase) values in index
-        CHECK_CONDITION_EXECUTE(result, this->indexNotReadyForProcessingNotDownloaded->Increase(indexNotReadyForProcessingNotDownloadedItemIndex));
-        CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_NOT_READY_FOR_PROCESSING_NOT_DOWNLOADED_INC);
-
-        if ((!item->IsReadyForProcessing()) && (!item->IsDownloaded()))
-        {
-          result &= this->indexNotReadyForProcessingNotDownloaded->Insert(indexNotReadyForProcessingNotDownloadedItemIndex, itemIndex);
-          CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_NOT_READY_FOR_PROCESSING_NOT_DOWNLOADED_ADD);
+          result &= this->indexDownloadedNotProcessed->Insert(indexDownloadedNotProcessedItemIndex, itemIndex);
+          CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_DOWNLOADED_NOT_PROCESSED_ADD);
         }
       }
     }
@@ -313,12 +129,8 @@ bool CMshsStreamFragmentCollection::InsertIndexes(unsigned int itemIndex)
   if (!result)
   {
     // revert first index
-    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_READY_FOR_PROCESSING_ADD), this->indexReadyForProcessing->Remove(indexReadyForProcessingItemIndex));
-    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_READY_FOR_PROCESSING_INC), this->indexReadyForProcessing->Decrease(indexReadyForProcessingItemIndex, 1));
-
-    // revert second index
-    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_NOT_READY_FOR_PROCESSING_NOT_DOWNLOADED_ADD), this->indexNotReadyForProcessingNotDownloaded->Remove(indexNotReadyForProcessingNotDownloadedItemIndex));
-    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_NOT_READY_FOR_PROCESSING_NOT_DOWNLOADED_INC), this->indexNotReadyForProcessingNotDownloaded->Decrease(indexNotReadyForProcessingNotDownloadedItemIndex, 1));
+    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_DOWNLOADED_NOT_PROCESSED_ADD), this->indexDownloadedNotProcessed->Remove(indexDownloadedNotProcessedItemIndex));
+    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_DOWNLOADED_NOT_PROCESSED_INC), this->indexDownloadedNotProcessed->Decrease(indexDownloadedNotProcessedItemIndex, 1));
 
     // revert base indexes
     CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_BASE), __super::RemoveIndexes(itemIndex, 1));
@@ -338,26 +150,15 @@ void CMshsStreamFragmentCollection::RemoveIndexes(unsigned int startIndex, unsig
   unsigned int indexCount = 0;
 
   // first index
-  this->indexReadyForProcessing->GetItemInsertPosition(startIndex, &start, &end);
-  indexStart = min(end, this->indexReadyForProcessing->Count());
+  this->indexDownloadedNotProcessed->GetItemInsertPosition(startIndex, &start, &end);
+  indexStart = min(end, this->indexDownloadedNotProcessed->Count());
 
-  this->indexReadyForProcessing->GetItemInsertPosition(startIndex + count, &start, &end);
-  indexCount = min(end, this->indexReadyForProcessing->Count()) - indexStart;
+  this->indexDownloadedNotProcessed->GetItemInsertPosition(startIndex + count, &start, &end);
+  indexCount = min(end, this->indexDownloadedNotProcessed->Count()) - indexStart;
 
-  CHECK_CONDITION_EXECUTE(indexCount > 0, this->indexReadyForProcessing->Remove(indexStart, indexCount));
+  CHECK_CONDITION_EXECUTE(indexCount > 0, this->indexDownloadedNotProcessed->Remove(indexStart, indexCount));
   // update (decrease) values in index
-  this->indexReadyForProcessing->Decrease(indexStart, count);
-
-  // second index
-  this->indexNotReadyForProcessingNotDownloaded->GetItemInsertPosition(startIndex, &start, &end);
-  indexStart = min(end, this->indexNotReadyForProcessingNotDownloaded->Count());
-
-  this->indexNotReadyForProcessingNotDownloaded->GetItemInsertPosition(startIndex + count, &start, &end);
-  indexCount = min(end, this->indexNotReadyForProcessingNotDownloaded->Count()) - indexStart;
-
-  CHECK_CONDITION_EXECUTE(indexCount > 0, this->indexNotReadyForProcessingNotDownloaded->Remove(indexStart, indexCount));
-  // update (decrease) values in index
-  this->indexNotReadyForProcessingNotDownloaded->Decrease(indexStart, count);
+  this->indexDownloadedNotProcessed->Decrease(indexStart, count);
 }
 
 bool CMshsStreamFragmentCollection::UpdateIndexes(unsigned int itemIndex, unsigned int count)
@@ -371,8 +172,8 @@ bool CMshsStreamFragmentCollection::UpdateIndexes(unsigned int itemIndex, unsign
     // first index
     if (result)
     {
-      bool test = item->IsReadyForProcessing();
-      unsigned int indexIndex = this->indexReadyForProcessing->GetItemIndex(itemIndex);
+      bool test = item->IsDownloaded() && (!item->IsProcessed());
+      unsigned int indexIndex = this->indexDownloadedNotProcessed->GetItemIndex(itemIndex);
 
       if (result && test && (indexIndex == UINT_MAX))
       {
@@ -380,39 +181,15 @@ bool CMshsStreamFragmentCollection::UpdateIndexes(unsigned int itemIndex, unsign
         unsigned int startIndex = 0;
         unsigned int endIndex = 0;
 
-        result &= this->indexReadyForProcessing->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
+        result &= this->indexDownloadedNotProcessed->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
 
         // insert into index
-        CHECK_CONDITION_EXECUTE(result, result &= this->indexReadyForProcessing->Insert(min(endIndex, this->indexReadyForProcessing->Count()), itemIndex, count));
+        CHECK_CONDITION_EXECUTE(result, result &= this->indexDownloadedNotProcessed->Insert(min(endIndex, this->indexDownloadedNotProcessed->Count()), itemIndex, count));
       }
       else if (result && (!test) && (indexIndex != UINT_MAX))
       {
         // remove from index
-        this->indexReadyForProcessing->Remove(indexIndex, count);
-      }
-    }
-
-    // second index
-    if (result)
-    {
-      bool test = (!item->IsReadyForProcessing()) && (!item->IsDownloaded());
-      unsigned int indexIndex = this->indexNotReadyForProcessingNotDownloaded->GetItemIndex(itemIndex);
-
-      if (result && test && (indexIndex == UINT_MAX))
-      {
-        // get position to insert item index
-        unsigned int startIndex = 0;
-        unsigned int endIndex = 0;
-
-        result &= this->indexNotReadyForProcessingNotDownloaded->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
-
-        // insert into index
-        CHECK_CONDITION_EXECUTE(result, result &= this->indexNotReadyForProcessingNotDownloaded->Insert(min(endIndex, this->indexNotReadyForProcessingNotDownloaded->Count()), itemIndex, count));
-      }
-      else if (result && (!test) && (indexIndex != UINT_MAX))
-      {
-        // remove from index
-        this->indexNotReadyForProcessingNotDownloaded->Remove(indexIndex, count);
+        this->indexDownloadedNotProcessed->Remove(indexIndex, count);
       }
     }
   }
@@ -426,8 +203,7 @@ bool CMshsStreamFragmentCollection::EnsureEnoughSpaceIndexes(unsigned int adding
 
   if (result)
   {
-    result &= this->indexReadyForProcessing->EnsureEnoughSpace(this->indexReadyForProcessing->Count() + addingCount);
-    result &= this->indexNotReadyForProcessingNotDownloaded->EnsureEnoughSpace(this->indexNotReadyForProcessingNotDownloaded->Count() + addingCount);
+    result &= this->indexDownloadedNotProcessed->EnsureEnoughSpace(this->indexDownloadedNotProcessed->Count() + addingCount);
   }
 
   return result;
@@ -437,8 +213,7 @@ void CMshsStreamFragmentCollection::ClearIndexes(void)
 {
   __super::ClearIndexes();
 
-  this->indexReadyForProcessing->Clear();
-  this->indexNotReadyForProcessingNotDownloaded->Clear();
+  this->indexDownloadedNotProcessed->Clear();
 }
 
 /* protected methods */

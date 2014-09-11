@@ -129,7 +129,7 @@ HRESULT CMPUrlSourceSplitter_Parser_Mshs::GetParserResult(void)
           {
             request->SetStart(0);
             request->SetLength(requestLength);
-            request->SetAnyDataLength(true);
+            request->SetAnyNonZeroDataLength(true);
 
             package->SetRequest(request);
           }

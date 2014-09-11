@@ -23,7 +23,7 @@
 #include "UdpStreamFragmentCollection.h"
 
 CUdpStreamFragmentCollection::CUdpStreamFragmentCollection(HRESULT *result)
-  : CCacheFileItemCollection(result)
+  : CStreamFragmentCollection(result)
 {
 }
 
@@ -41,123 +41,5 @@ CUdpStreamFragment *CUdpStreamFragmentCollection::GetItem(unsigned int index)
 /* set methods */
 
 /* other methods */
-
-bool CUdpStreamFragmentCollection::Add(CUdpStreamFragment *item)
-{
-  bool result = (item != NULL);
-
-  CHECK_CONDITION_EXECUTE(result, result &= this->EnsureEnoughSpace(this->Count() + 1));
-
-  if (result)
-  {
-    unsigned int startIndex = 0;
-    unsigned int endIndex = 0;
-
-    if (this->GetItemInsertPosition(item->GetStart(), &startIndex, &endIndex))
-    {
-      // check if media packet exists in collection
-      result &= (startIndex != endIndex);
-
-      if (result)
-      {
-        result &= __super::Insert(min(endIndex, this->Count()), item);
-      }
-    }
-  }
-
-  return result;
-}
-
-unsigned int CUdpStreamFragmentCollection::GetStreamFragmentIndexBetweenPositions(int64_t position)
-{
-  unsigned int index = UINT_MAX;
-
-  unsigned int startIndex = 0;
-  unsigned int endIndex = 0;
-
-  if (this->GetItemInsertPosition(position, &startIndex, &endIndex))
-  {
-    if (startIndex != UINT_MAX)
-    {
-      // if requested position is somewhere after start of stream fragments
-      CUdpStreamFragment *fragment = this->GetItem(startIndex);
-      int64_t positionStart = fragment->GetStart();
-      int64_t positionEnd = positionStart + fragment->GetLength();
-
-      if ((position >= positionStart) && (position < positionEnd))
-      {
-        // we found stream fragment
-        index = startIndex;
-      }
-    }
-  }
-
-  return index;
-}
-
-bool CUdpStreamFragmentCollection::GetItemInsertPosition(int64_t position, unsigned int *startIndex, unsigned int *endIndex)
-{
-  bool result = ((startIndex != NULL) && (endIndex != NULL));
-
-  if (result)
-  {
-    result = (this->Count() > 0);
-
-    if (result)
-    {
-      unsigned int first = 0;
-      unsigned int last = this->Count() - 1;
-      result = false;
-
-      while ((first <= last) && (first != UINT_MAX) && (last != UINT_MAX))
-      {
-        // compute middle index
-        unsigned int middle = (first + last) / 2;
-
-        // get stream fragment at middle index
-        CUdpStreamFragment *fragment = this->GetItem(middle);
-
-        // compare stream fragment start to position
-        if (position > fragment->GetStart())
-        {
-          // position is bigger than stream fragment start time
-          // search in top half
-          first = middle + 1;
-        }
-        else if (position < fragment->GetStart()) 
-        {
-          // position is lower than stream fragment start time
-          // search in bottom half
-          last = middle - 1;
-        }
-        else
-        {
-          // we found stream fragment with same starting time as position
-          *startIndex = middle;
-          *endIndex = middle;
-          result = true;
-          break;
-        }
-      }
-
-      if (!result)
-      {
-        // we don't found stream fragment
-        // it means that stream fragment with 'position' belongs between first and last
-        *startIndex = last;
-        *endIndex = (first >= this->Count()) ? UINT_MAX : first;
-        result = true;
-      }
-    }
-    else
-    {
-      *startIndex = UINT_MAX;
-      *endIndex = 0;
-      result = true;
-    }
-  }
-
-  return result;
-}
 
 /* protected methods */

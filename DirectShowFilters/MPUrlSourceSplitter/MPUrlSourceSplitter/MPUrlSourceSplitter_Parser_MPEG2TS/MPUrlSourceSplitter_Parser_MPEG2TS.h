@@ -24,6 +24,7 @@
 #define __MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_DEFINED
 
 #include "ParserPlugin.h"
+#include "ContinuousStreamRangeCollection.h"
 
 #define PARSER_NAME                                                   L"PARSER_MPEG2TS"
 
@@ -157,8 +158,10 @@ public:
   virtual HRESULT ReceiveData(CStreamPackage *streamPackage);
 
 protected:
-
+  // holds last received length of data when requesting parser result
   unsigned int lastReceivedLength;
+  // holds continuous stream ranges
+  CContinuousStreamRangeCollection *continuousStreamRanges;
 };
 
 #endif

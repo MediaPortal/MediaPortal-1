@@ -51,16 +51,6 @@ public:
   // @return : S_OK if successful, error code otherwise
   virtual HRESULT GetCleanUpFromMemoryNotStoredToFileLoadedToMemoryItems(CIndexedCacheFileItemCollection *collection);
 
-  // gets collection of indexed cache file items which are not downloaded
-  // @param collection : the collection to fill in indexed cache file items
-  // @return : S_OK if successful, error code otherwise
-  virtual HRESULT GetNotDownloadedItems(CIndexedCacheFileItemCollection *collection);
-
-  // gets first not downloaded cache file item index
-  // @param itemIndex : item index to start searching
-  // @return : index of first not downloaded cache file item or UINT_MAX if not exists
-  virtual unsigned int GetFirstNotDownloadedItemIndex(unsigned int itemIndex);
-
   /* set methods */
 
   /* other methods */
@@ -98,11 +88,9 @@ public:
   // we need to maintain several indexes
   // first index : (!item->IsNoCleanUpFromMemory()) && item->IsStoredToFile() && item->IsLoadedToMemory()
   // second index : (!item->IsNoCleanUpFromMemory()) && (!item->IsStoredToFile()) && item->IsLoadedToMemory()
-  // third index : not downloaded cache file items
 
   CIndexCollection *indexCleanUpFromMemoryStoredToFileLoadedToMemory;
   CIndexCollection *indexCleanUpFromMemoryNotStoredToFileLoadedToMemory;
-  CIndexCollection *indexNotDownloaded;
 
   /* methods */
 

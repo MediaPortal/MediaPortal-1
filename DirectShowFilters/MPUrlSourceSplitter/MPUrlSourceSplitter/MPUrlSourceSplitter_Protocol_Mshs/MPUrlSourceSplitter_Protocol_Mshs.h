@@ -231,11 +231,6 @@ protected:
   // @return : byte position in buffer
   int64_t GetBytePosition(void);
 
-  // recalculate segment fragments start positions based on previous stream fragments
-  // @param streamFragments : the collection of stream fragments to recalculate
-  // @param startIndex : the index of first stream fragment to recalculate start position
-  void RecalculateStreamFragmentStartPosition(CMshsStreamFragmentCollection *streamFragments, unsigned int startIndex);
-
   HRESULT GetStreamFragmentsFromManifest(CMshsStreamFragmentCollection *streamFragments, CMshsManifestSmoothStreamingMediaBox *manifest);
 
   wchar_t *FormatUrl(const wchar_t *baseUrl, const wchar_t *urlPattern, CMshsManifestTrackBox *track, CMshsManifestStreamFragmentBox *fragment);

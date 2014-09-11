@@ -23,7 +23,7 @@
 #ifndef __MEDIA_PACKET_DEFINED
 #define __MEDIA_PACKET_DEFINED
 
-#include "CacheFileItem.h"
+#include "StreamFragment.h"
 
 #define MEDIA_PACKET_PRESENTATION_TIMESTAMP_UNDEFINED                 INT64_MIN
 
@@ -32,13 +32,13 @@
 #define DSHOW_TIME_BASE                                               10000000
 #endif
 
-#define MEDIA_PACKET_FLAG_NONE                                        CACHE_FILE_ITEM_FLAG_NONE
+#define MEDIA_PACKET_FLAG_NONE                                        STREAM_FRAGMENT_FLAG_NONE
 
-#define MEDIA_PACKET_FLAG_LAST                                        (CACHE_FILE_ITEM_FLAG_LAST + 1)
+#define MEDIA_PACKET_FLAG_LAST                                        (STREAM_FRAGMENT_FLAG_LAST + 0)
 
 // CMediaPacket class is wrapper for IMediaSample interface
 // this class doesn't implement all methods of IMediaSample interface
-class CMediaPacket : public CCacheFileItem
+class CMediaPacket : public CStreamFragment
 {
 public:
   CMediaPacket(HRESULT *result);
@@ -80,12 +80,12 @@ protected:
 
   /* methods */
 
-  // gets new instance of cache file item
-  // @return : new cache file item instance or NULL if error
+  // gets new instance of media packet
+  // @return : new media packet instance or NULL if error
   virtual CFastSearchItem *CreateItem(void);
 
   // deeply clones current instance
-  // @param item : the cache file item instance to clone
+  // @param item : the media packet instance to clone
   // @return : true if successful, false otherwise
   virtual bool InternalClone(CFastSearchItem *item);
 };

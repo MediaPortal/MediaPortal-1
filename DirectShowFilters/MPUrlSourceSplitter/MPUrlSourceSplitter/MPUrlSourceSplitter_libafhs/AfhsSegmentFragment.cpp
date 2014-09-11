@@ -24,21 +24,19 @@
 #include "FastSearchItemCollection.h"
 
 CAfhsSegmentFragment::CAfhsSegmentFragment(HRESULT *result, unsigned int segment, unsigned int fragment)
-  : CCacheFileItem(result)
+  : CStreamFragment(result)
 {
   this->segment = segment;
   this->fragment = fragment;
   this->fragmentTimestamp = 0;
-  this->fragmentStartPosition = AFHS_SEGMENT_FRAGMENT_START_POSITION_NOT_SET;
 }
 
 CAfhsSegmentFragment::CAfhsSegmentFragment(HRESULT *result, unsigned int segment, unsigned int fragment, int64_t fragmentTimestamp)
-  : CCacheFileItem(result)
+  : CStreamFragment(result)
 {
   this->segment = segment;
   this->fragment = fragment;
   this->fragmentTimestamp = fragmentTimestamp;
-  this->fragmentStartPosition = AFHS_SEGMENT_FRAGMENT_START_POSITION_NOT_SET;
 }
 
 CAfhsSegmentFragment::~CAfhsSegmentFragment(void)
@@ -50,11 +48,6 @@ CAfhsSegmentFragment::~CAfhsSegmentFragment(void)
 int64_t CAfhsSegmentFragment::GetFragmentTimestamp(void)
 {
   return this->fragmentTimestamp;
-}
-
-int64_t CAfhsSegmentFragment::GetFragmentStartPosition(void)
-{
-  return this->fragmentStartPosition;
 }
 
 unsigned int CAfhsSegmentFragment::GetSegment(void)
@@ -91,11 +84,6 @@ void CAfhsSegmentFragment::SetEncrypted(bool encrypted, unsigned int segmentFrag
   }
 }
 
-void CAfhsSegmentFragment::SetFragmentStartPosition(int64_t fragmentStartPosition)
-{
-  this->fragmentStartPosition = fragmentStartPosition;
-}
-
 void CAfhsSegmentFragment::SetContainsHeaderOrMetaPacket(bool containsHeaderOrMetaPacket)
 {
   this->flags &= ~AFHS_SEGMENT_FRAGMENT_FLAG_CONTAINS_HEADER_OR_META_PACKET;
@@ -112,11 +100,6 @@ bool CAfhsSegmentFragment::IsDecrypted(void)
 bool CAfhsSegmentFragment::IsEncrypted(void)
 {
   return this->IsSetFlags(AFHS_SEGMENT_FRAGMENT_FLAG_ENCRYPTED);
-}
-
-bool CAfhsSegmentFragment::IsSetFragmentStartPosition(void)
-{
-  return (this->fragmentStartPosition != AFHS_SEGMENT_FRAGMENT_START_POSITION_NOT_SET);
 }
 
 bool CAfhsSegmentFragment::ContainsHeaderOrMetaPacket(void)
@@ -148,7 +131,6 @@ bool CAfhsSegmentFragment::InternalClone(CFastSearchItem *item)
     if (result)
     {
       fragment->fragmentTimestamp = this->fragmentTimestamp;
-      fragment->fragmentStartPosition = this->fragmentStartPosition;
     }
   }
 

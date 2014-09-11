@@ -200,8 +200,8 @@ bool CFreeSpaceCollection::GetItemInsertPosition(int64_t start, unsigned int *st
 
       if (!result)
       {
-        // we don't found media packet
-        // it means that free space with 'key' belongs between first and last
+        // we don't found free space
+        // it means that free space belongs between first and last
         *startIndex = last;
         *endIndex = (first >= this->Count()) ? UINT_MAX : first;
         result = true;
@@ -262,7 +262,7 @@ bool CFreeSpaceCollection::Add(CFreeSpace *item)
   {
     if (startIndex == endIndex)
     {
-      // media packet exists in collection
+      // free space exists in collection
       return false;
     }
 

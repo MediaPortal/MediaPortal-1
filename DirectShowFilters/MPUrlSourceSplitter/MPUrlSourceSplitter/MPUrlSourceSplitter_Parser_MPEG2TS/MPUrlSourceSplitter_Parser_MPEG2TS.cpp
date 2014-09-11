@@ -67,6 +67,7 @@ CMPUrlSourceSplitter_Parser_Mpeg2TS::CMPUrlSourceSplitter_Parser_Mpeg2TS(HRESULT
   : CParserPlugin(result, logger, configuration)
 {
   this->lastReceivedLength = 0;
+  this->continuousStreamRanges = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -79,6 +80,9 @@ CMPUrlSourceSplitter_Parser_Mpeg2TS::CMPUrlSourceSplitter_Parser_Mpeg2TS(HRESULT
     }
     FREE_MEM(version);
 
+    this->continuousStreamRanges = new CContinuousStreamRangeCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->continuousStreamRanges, *result, E_OUTOFMEMORY);
+
     this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
   }
 }
@@ -86,6 +90,8 @@ CMPUrlSourceSplitter_Parser_Mpeg2TS::CMPUrlSourceSplitter_Parser_Mpeg2TS(HRESULT
 CMPUrlSourceSplitter_Parser_Mpeg2TS::~CMPUrlSourceSplitter_Parser_Mpeg2TS()
 {
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME));
+
+  FREE_MEM_CLASS(this->continuousStreamRanges);
 
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME));
 }
@@ -96,100 +102,102 @@ CMPUrlSourceSplitter_Parser_Mpeg2TS::~CMPUrlSourceSplitter_Parser_Mpeg2TS()
 
 HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::GetParserResult(void)
 {
-  if (this->parserResult == PARSER_RESULT_PENDING)
-  {
-    CStreamInformationCollection *streams = new CStreamInformationCollection(&this->parserResult);
-    CHECK_POINTER_HRESULT(this->parserResult, streams, this->parserResult, E_OUTOFMEMORY);
+  //if (this->parserResult == PARSER_RESULT_PENDING)
+  //{
+  //  CStreamInformationCollection *streams = new CStreamInformationCollection(&this->parserResult);
+  //  CHECK_POINTER_HRESULT(this->parserResult, streams, this->parserResult, E_OUTOFMEMORY);
 
-    CHECK_HRESULT_EXECUTE(this->parserResult, this->protocolHoster->GetStreamInformation(streams));
+  //  CHECK_HRESULT_EXECUTE(this->parserResult, this->protocolHoster->GetStreamInformation(streams));
 
-    if (SUCCEEDED(this->parserResult) && (streams->Count() == 1))
-    {
-      CStreamPackage *package = new CStreamPackage(&this->parserResult);
-      CHECK_POINTER_HRESULT(this->parserResult, package, this->parserResult, E_OUTOFMEMORY);
+  //  if (SUCCEEDED(this->parserResult) && (streams->Count() == 1))
+  //  {
+  //    CStreamPackage *package = new CStreamPackage(&this->parserResult);
+  //    CHECK_POINTER_HRESULT(this->parserResult, package, this->parserResult, E_OUTOFMEMORY);
 
-      if (SUCCEEDED(this->parserResult))
-      {
-        unsigned int requestLength = MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_DATA_LENGTH_DEFAULT;
-        bool receivedSameLength = false;
-        this->parserResult = PARSER_RESULT_PENDING;
+  //    if (SUCCEEDED(this->parserResult))
+  //    {
+  //      unsigned int requestLength = MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_DATA_LENGTH_DEFAULT;
+  //      bool receivedSameLength = false;
+  //      this->parserResult = PARSER_RESULT_PENDING;
 
-        while ((this->parserResult == PARSER_RESULT_PENDING) && (!receivedSameLength))
-        {
-          package->Clear();
+  //      while ((this->parserResult == PARSER_RESULT_PENDING) && (!receivedSameLength))
+  //      {
+  //        package->Clear();
 
-          CStreamPackageDataRequest *request = new CStreamPackageDataRequest(&this->parserResult);
-          CHECK_POINTER_HRESULT(this->parserResult, request, this->parserResult, E_OUTOFMEMORY);
+  //        CStreamPackageDataRequest *request = new CStreamPackageDataRequest(&this->parserResult);
+  //        CHECK_POINTER_HRESULT(this->parserResult, request, this->parserResult, E_OUTOFMEMORY);
 
-          if (SUCCEEDED(this->parserResult))
-          {
-            request->SetStart(0);
-            request->SetLength(requestLength);
-            request->SetAnyDataLength(true);
+  //        if (SUCCEEDED(this->parserResult))
+  //        {
+  //          request->SetStart(0);
+  //          request->SetLength(requestLength);
+  //          request->SetAnyDataLength(true);
 
-            package->SetRequest(request);
-          }
+  //          package->SetRequest(request);
+  //        }
 
-          CHECK_CONDITION_EXECUTE(FAILED(this->parserResult), FREE_MEM_CLASS(request));
-          CHECK_HRESULT_EXECUTE(this->parserResult, this->protocolHoster->ProcessStreamPackage(package));
+  //        CHECK_CONDITION_EXECUTE(FAILED(this->parserResult), FREE_MEM_CLASS(request));
+  //        CHECK_HRESULT_EXECUTE(this->parserResult, this->protocolHoster->ProcessStreamPackage(package));
 
-          if (SUCCEEDED(this->parserResult))
-          {
-            this->parserResult = PARSER_RESULT_PENDING;
-            CStreamPackageDataResponse *response = dynamic_cast<CStreamPackageDataResponse *>(package->GetResponse());
+  //        if (SUCCEEDED(this->parserResult))
+  //        {
+  //          this->parserResult = PARSER_RESULT_PENDING;
+  //          CStreamPackageDataResponse *response = dynamic_cast<CStreamPackageDataResponse *>(package->GetResponse());
 
-            if (package->IsError())
-            {
-              // TO DO: check type of error
+  //          if (package->IsError())
+  //          {
+  //            // TO DO: check type of error
 
-              this->parserResult = PARSER_RESULT_NOT_KNOWN;
-            }
+  //            this->parserResult = PARSER_RESULT_NOT_KNOWN;
+  //          }
 
-            if (response != NULL)
-            {
-              receivedSameLength = (response->GetBuffer()->GetBufferOccupiedSpace() == this->lastReceivedLength);
-              if (!receivedSameLength)
-              {
-                // try parse data
-                int res = CTsPacket::FindPacket(response->GetBuffer(), TS_PACKET_MINIMUM_CHECKED_UNSPECIFIED);
+  //          if (response != NULL)
+  //          {
+  //            receivedSameLength = (response->GetBuffer()->GetBufferOccupiedSpace() == this->lastReceivedLength);
+  //            if (!receivedSameLength)
+  //            {
+  //              // try parse data
+  //              int res = CTsPacket::FindPacket(response->GetBuffer(), TS_PACKET_MINIMUM_CHECKED_UNSPECIFIED);
 
-                switch (res)
-                {
-                case TS_PACKET_FIND_RESULT_NOT_FOUND:
-                  this->parserResult = PARSER_RESULT_NOT_KNOWN;
-                  break;
-                case TS_PACKET_FIND_RESULT_NOT_ENOUGH_DATA_FOR_HEADER:
-                case TS_PACKET_FIND_RESULT_NOT_FOUND_MINIMUM_PACKETS:
-                  this->parserResult = PARSER_RESULT_PENDING;
-                  break;
-                case TS_PACKET_FIND_RESULT_NOT_ENOUGH_MEMORY:
-                  this->parserResult = E_OUTOFMEMORY;
-                  break;
-                default:
-                  // we found at least TS_PACKET_MINIMUM_CHECKED MPEG2 TS packets
-                  this->parserResult = PARSER_RESULT_KNOWN;
-                  break;
-                }
+  //              switch (res)
+  //              {
+  //              case TS_PACKET_FIND_RESULT_NOT_FOUND:
+  //                this->parserResult = PARSER_RESULT_NOT_KNOWN;
+  //                break;
+  //              case TS_PACKET_FIND_RESULT_NOT_ENOUGH_DATA_FOR_HEADER:
+  //              case TS_PACKET_FIND_RESULT_NOT_FOUND_MINIMUM_PACKETS:
+  //                this->parserResult = PARSER_RESULT_PENDING;
+  //                break;
+  //              case TS_PACKET_FIND_RESULT_NOT_ENOUGH_MEMORY:
+  //                this->parserResult = E_OUTOFMEMORY;
+  //                break;
+  //              default:
+  //                // we found at least TS_PACKET_MINIMUM_CHECKED MPEG2 TS packets
+  //                this->parserResult = PARSER_RESULT_KNOWN;
+  //                break;
+  //              }
 
-                requestLength *= 2;
-              }
+  //              requestLength *= 2;
+  //            }
 
-              this->lastReceivedLength = response->GetBuffer()->GetBufferOccupiedSpace();
-            }
-          }
-        }
-      }
+  //            this->lastReceivedLength = response->GetBuffer()->GetBufferOccupiedSpace();
+  //          }
+  //        }
+  //      }
+  //    }
 
-      FREE_MEM_CLASS(package);
-    }
-    else
-    {
-      // MPEG2 TS parser doesn't support multiple streams
-      this->parserResult = PARSER_RESULT_NOT_KNOWN;
-    }
+  //    FREE_MEM_CLASS(package);
+  //  }
+  //  else
+  //  {
+  //    // MPEG2 TS parser doesn't support multiple streams
+  //    this->parserResult = PARSER_RESULT_NOT_KNOWN;
+  //  }
 
-    FREE_MEM_CLASS(streams);
-  }
+  //  FREE_MEM_CLASS(streams);
+  //}
+
+  this->parserResult = PARSER_RESULT_NOT_KNOWN;
 
   return this->parserResult;
 }
@@ -260,12 +268,146 @@ int64_t CMPUrlSourceSplitter_Parser_Mpeg2TS::GetDuration(void)
 
 HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::ProcessStreamPackage(CStreamPackage *streamPackage)
 {
-  // in rare cases (e.g. HTTP protocol) are MPEG2 TS streams not aligned to MPEG2 TS packet boundary (sync byte)
-  // in that case is FFmpeg (and maybe also TvService) confused
-  // we must align MPEG2 TS stream to MPEG2 TS packet boundary (sync byte)
+  //// in rare cases (e.g. HTTP protocol) are MPEG2 TS streams not aligned to MPEG2 TS packet boundary (sync byte)
+  //// in that case is FFmpeg (and maybe also TvService) confused
+  //// we must align MPEG2 TS stream to MPEG2 TS packet boundary (sync byte)
 
+  //// because we can skip some TS packets, we must maintain position index for requests from filter to protocol
+  //// anyway, filter usually asks for 32768 bytes of data, but aligned TS packets are only for 32712 bytes (we have 56 bytes from last MPEG2 TS packet, 132 bytes are missing)
+  //// in that case we must handle such TS packet and not align (or better - align after missing 132 bytes)
 
-  return this->protocolHoster->ProcessStreamPackage(streamPackage);
+  //HRESULT result = S_OK;
+  //CHECK_POINTER_DEFAULT_HRESULT(result, streamPackage);
+
+  //if (SUCCEEDED(result))
+  //{
+  //  unsigned int receivedData = 0;
+  //  CStreamPackageDataRequest *dataRequest = dynamic_cast<CStreamPackageDataRequest *>(streamPackage->GetRequest());
+  //  CHECK_POINTER_HRESULT(result, dataRequest, result, E_INVALID_STREAM_PACKAGE_REQUEST);
+
+  //  if (SUCCEEDED(result))
+  //  {
+  //    // TO DO: get correct start position
+  //    int64_t filterStartPosition = dataRequest->GetStart();
+  //    int64_t protocolStartPosition = filterStartPosition;
+  //    int64_t streamLength = dataRequest->GetLength();
+
+  //    while (SUCCEEDED(result) && SUCCEEDED(streamPackage->GetError()) && (streamLength > 0))
+  //    {
+  //      // check continuous stream range collection for correct protocol stream range
+  //      unsigned int startIndex = 0;
+  //      unsigned int endIndex = 0;
+
+  //      // request length can be larger than original streamLength, we align request length to boundary of MPEG2 TS packet
+  //      int64_t requestLength = streamLength / 2;
+
+  //      CHECK_CONDITION_HRESULT(result, this->continuousStreamRanges->GetItemInsertPosition(protocolStartPosition, &startIndex, &endIndex), result, E_NOT_VALID_STATE);
+  //      if (SUCCEEDED(result))
+  //      {
+  //        // requested filter stream start position is between startIndex and endIndex
+  //        // if startIndex equal to endIndex then it is exactly in startIndex
+
+  //        endIndex = min(endIndex, this->continuousStreamRanges->Count());
+  //      }
+
+  //      requestLength = max(TS_PACKET_SIZE, requestLength);
+  //      if ((requestLength % TS_PACKET_SIZE) != 0)
+  //      {
+  //        requestLength = ((requestLength / TS_PACKET_SIZE) + 1) * TS_PACKET_SIZE;
+  //      }
+
+  //      // we need to request missing data
+
+  //      CStreamPackage *tempPackage = streamPackage->Clone();
+  //      CHECK_POINTER_HRESULT(result, tempPackage, result, E_OUTOFMEMORY);
+
+  //      if (SUCCEEDED(result))
+  //      {
+  //        CStreamPackageDataRequest *request = dynamic_cast<CStreamPackageDataRequest *>(tempPackage->GetRequest());
+  //        CHECK_POINTER_HRESULT(result, request, result, E_INVALID_STREAM_PACKAGE_REQUEST);
+
+  //        if (SUCCEEDED(result))
+  //        {
+  //          request->SetStart(protocolStartPosition);
+  //          request->SetLength((unsigned int)requestLength);
+  //        }
+
+  //        CHECK_HRESULT_EXECUTE(result, this->protocolHoster->ProcessStreamPackage(tempPackage));
+  //        CHECK_CONDITION_EXECUTE(FAILED(tempPackage->GetError()), streamPackage->SetCompleted(tempPackage->GetError()));
+  //        
+  //        if (SUCCEEDED(result) && (SUCCEEDED(tempPackage->GetError())))
+  //        {
+  //          // process data response
+  //          CStreamPackageDataResponse *tempDataResponse = dynamic_cast<CStreamPackageDataResponse *>(tempPackage->GetResponse());
+  //          CHECK_CONDITION_HRESULT(result, tempDataResponse, result, E_INVALID_STREAM_PACKAGE_RESPONSE);
+
+  //          if (SUCCEEDED(result))
+  //          {
+  //            if (streamPackage->GetResponse() == NULL)
+  //            {
+  //              // create response based on dataResponse
+  //              // we don't need data, because we make sync to sync byte
+
+  //              CStreamPackageDataResponse *response = (CStreamPackageDataResponse *)tempDataResponse->Clone();
+  //              CHECK_POINTER_HRESULT(result, response, result, E_OUTOFMEMORY);
+
+  //              if (SUCCEEDED(result))
+  //              {
+  //                response->GetBuffer()->ClearBuffer();
+  //                streamPackage->SetResponse(response);
+  //              }
+
+  //              CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(response));
+  //            }
+
+  //            unsigned int firstPacketPosition = 0;
+  //            unsigned int packetSequenceLength = 0;
+
+  //            result = CTsPacket::FindPacketSequence(tempDataResponse->GetBuffer(), &firstPacketPosition, &packetSequenceLength);
+
+  //            if (SUCCEEDED(result))
+  //            {
+  //              if (packetSequenceLength != 0)
+  //              {
+  //                // add received protocol stream range to continuous stream range collection
+  //                this->continuousStreamRanges->AddContinuousStreamRange(filterStartPosition, protocolStartPosition + (int64_t)firstPacketPosition, (int64_t)packetSequenceLength, 0);
+
+  //                CStreamPackageDataResponse *dataResponse = dynamic_cast<CStreamPackageDataResponse *>(streamPackage->GetResponse());
+
+  //                if (((firstPacketPosition == 0) && (dataResponse->GetBuffer()->GetBufferOccupiedSpace() != 0)) ||
+  //                    (dataResponse->GetBuffer()->GetBufferOccupiedSpace() == 0))
+  //                {
+  //                  // in case that we have some data in filter respose, we must be aligned to start of request
+  //                  // in another case set discontinuity and return
+
+  //                  unsigned int copyDataLength = min(packetSequenceLength, (unsigned int)streamLength);
+  //                  CHECK_CONDITION_HRESULT(result, dataResponse->GetBuffer()->AddToBufferWithResize(tempDataResponse->GetBuffer(), firstPacketPosition, copyDataLength) == copyDataLength, result, E_OUTOFMEMORY);
+
+  //                  filterStartPosition += packetSequenceLength;
+  //                  protocolStartPosition += firstPacketPosition + packetSequenceLength;
+  //                  receivedData += packetSequenceLength;
+  //                  streamLength -= packetSequenceLength;
+  //                }
+  //                else
+  //                {
+  //                  dataResponse->SetDiscontinuity(true);
+  //                  // finish request and response, return to filter
+  //                  streamLength = 0;
+  //                }
+  //              }
+  //            }
+  //          }
+  //        }
+  //      }
+
+  //      FREE_MEM_CLASS(tempPackage);
+  //    }
+  //  }
+  //}
+
+  //return result;
+
+  return E_NOTIMPL;
 }
 
 // ISimpleProtocol interface
@@ -305,6 +447,7 @@ void CMPUrlSourceSplitter_Parser_Mpeg2TS::ClearSession(void)
   __super::ClearSession();
 
   this->lastReceivedLength = 0;
+  this->continuousStreamRanges->Clear();
 }
 
 void CMPUrlSourceSplitter_Parser_Mpeg2TS::ReportStreamTime(uint64_t streamTime, uint64_t streamPosition)

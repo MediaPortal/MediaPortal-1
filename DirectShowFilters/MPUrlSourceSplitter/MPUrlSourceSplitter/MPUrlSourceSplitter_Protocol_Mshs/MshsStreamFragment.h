@@ -23,20 +23,17 @@
 #ifndef __MSHS_STREAM_FRAGMENT_DEFINED
 #define __MSHS_STREAM_FRAGMENT_DEFINED
 
-#include "CacheFileItem.h"
+#include "StreamFragment.h"
 
-#define MSHS_STREAM_FRAGMENT_FLAG_NONE                                CACHE_FILE_ITEM_FLAG_NONE
+#define MSHS_STREAM_FRAGMENT_FLAG_NONE                                STREAM_FRAGMENT_FLAG_NONE
 
-#define MSHS_STREAM_FRAGMENT_FLAG_VIDEO                               (1 << (CACHE_FILE_ITEM_FLAG_LAST + 0))
-#define MSHS_STREAM_FRAGMENT_FLAG_AUDIO                               (1 << (CACHE_FILE_ITEM_FLAG_LAST + 1))
-#define MSHS_STREAM_FRAGMENT_FLAG_READY_FOR_PROCESSING                (1 << (CACHE_FILE_ITEM_FLAG_LAST + 2))
-#define MSHS_STREAM_FRAGMENT_FLAG_CONTAINS_RECONSTRUCTED_HEADER       (1 << (CACHE_FILE_ITEM_FLAG_LAST + 3))
+#define MSHS_STREAM_FRAGMENT_FLAG_VIDEO                               (1 << (STREAM_FRAGMENT_FLAG_LAST + 0))
+#define MSHS_STREAM_FRAGMENT_FLAG_AUDIO                               (1 << (STREAM_FRAGMENT_FLAG_LAST + 1))
+#define MSHS_STREAM_FRAGMENT_FLAG_CONTAINS_RECONSTRUCTED_HEADER       (1 << (STREAM_FRAGMENT_FLAG_LAST + 2))
 
-#define MSHS_STREAM_FRAGMENT_FLAG_LAST                                (CACHE_FILE_ITEM_FLAG_LAST + 4)
+#define MSHS_STREAM_FRAGMENT_FLAG_LAST                                (STREAM_FRAGMENT_FLAG_LAST + 3)
 
-#define MSHS_STREAM_FRAGMENT_START_POSITION_NOT_SET                   -1
-
-class CMshsStreamFragment : public CCacheFileItem
+class CMshsStreamFragment : public CStreamFragment
 {
 public:
   // creats new instance of CMshsStreamFragment class
@@ -51,34 +48,13 @@ public:
   // @return : fragment timestamp
   int64_t GetFragmentTimestamp(void);
 
-  // gets fragment start position within stream
-  // @return : fragment start position within stream or MSHS_STREAM_FRAGMENT_START_POSITION_NOT_SET if not set
-  int64_t GetFragmentStartPosition(void);
-
   // gets stream fragment URL
   // @return : stream fragment URL or NULL if error
   const wchar_t *GetUrl(void);
 
   /* set methods */
 
-  // sets fragment start position
-  // @param fragmentStartPosition : fragment start position to set
-  void SetFragmentStartPosition(int64_t fragmentStartPosition);
-
-  // sets if stream fragment is ready for processing
-  // @param readyForProcessing : true if stream fragment is ready for processing
-  // @param streamFragmentItemIndex : the index of stream fragment (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
-  void SetReadyForProcessing(bool readyForProcessing, unsigned int streamFragmentItemIndex);
-
   /* other methods */
-
-  // tests if fragment has set start position
-  // @return : true if fragment has set start position, false otherwise
-  bool IsSetFragmentStartPosition(void);
-
-  // tests if fragment is ready for processing
-  // @return : true if ready for processing, false otherwise
-  bool IsReadyForProcessing(void);
 
   // tests if fragment is video fragment
   // @return : true if fragment is video, false otherwise
@@ -97,8 +73,6 @@ protected:
   wchar_t *url;
   // holds fragment timestamp
   int64_t fragmentTimestamp;
-  // holds fragment start position within stream
-  int64_t fragmentStartPosition;
 
   /* methods */
 

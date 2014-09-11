@@ -23,10 +23,10 @@
 #ifndef __UDP_STREAM_FRAGMENT_COLLECTION_DEFINED
 #define __UDP_STREAM_FRAGMENT_COLLECTION_DEFINED
 
-#include "CacheFileItemCollection.h"
+#include "StreamFragmentCollection.h"
 #include "UdpStreamFragment.h"
 
-class CUdpStreamFragmentCollection : public CCacheFileItemCollection
+class CUdpStreamFragmentCollection : public CStreamFragmentCollection
 {
 public:
   CUdpStreamFragmentCollection(HRESULT *result);
@@ -42,27 +42,6 @@ public:
   /* set methods */
 
   /* other methods */
-
-  // adds UDP stream fragment to collection
-  // @param item : the reference to UDP stream fragment to add
-  // @return : true if successful, false otherwise
-  virtual bool Add(CUdpStreamFragment *item);
-
-  // gets index of UDP stream fragment where position is between start position and end position
-  // @param position : the position between start position and end position
-  // @return : index of UDP stream fragment or UINT_MAX if not exists
-  unsigned int GetStreamFragmentIndexBetweenPositions(int64_t position);
-
-  // returns indexes where UDP stream fragment have to be placed
-  // startIndex == UINT_MAX && endIndex == 0 => UDP stream fragment have to be placed on beginning
-  // startIndex == Count() - 1 && endIndex == UINT_MAX => UDP stream fragment have to be placed on end
-  // startIndex == endIndex => UDP stream fragment with same start position exists in collection (index of UDP stream fragment is startIndex)
-  // UDP stream fragment have to be placed between startIndex and endIndex
-  // @param position : the start position to compare
-  // @param startIndex : reference to variable which holds start index where UDP stream fragment have to be placed
-  // @param endIndex : reference to variable which holds end index where UDP stream fragment have to be placed
-  // @return : true if successful, false otherwise
-  bool GetItemInsertPosition(int64_t position, unsigned int *startIndex, unsigned int *endIndex);
 
 protected:
 

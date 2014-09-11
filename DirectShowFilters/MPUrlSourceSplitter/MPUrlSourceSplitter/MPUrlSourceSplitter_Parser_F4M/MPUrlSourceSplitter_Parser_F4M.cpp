@@ -130,7 +130,7 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::GetParserResult(void)
           {
             request->SetStart(0);
             request->SetLength(requestLength);
-            request->SetAnyDataLength(true);
+            request->SetAnyNonZeroDataLength(true);
 
             package->SetRequest(request);
           }

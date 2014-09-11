@@ -129,6 +129,21 @@ public:
   // @return : equal or greater to zero is position of MPEG2 TS packet sequence in buffer, TS_PACKET_FIND_RESULT value if error
   static int FindPacket(CLinearBuffer *buffer, unsigned int minimumPacketsToCheck);
 
+  // tries to find MPEG2 TS packet sequence in buffer
+  // @param buffer : buffer to try to find TS packet sequence
+  // @param length : length of buffer
+  // @param firstPacketPosition : the first MPEG2 TS packet position in buffer
+  // @param packetSequenceLength : the length in bytes of continuous MPEG2 TS packets
+  // @return : S_OK if successful, E_POINTER if buffer, firstPacketPosition or packetSequenceLength is NULL, error code otherwise
+  static HRESULT FindPacketSequence(const unsigned char *buffer, unsigned int length, unsigned int *firstPacketPosition, unsigned int *packetSequenceLength);
+
+  // tries to find MPEG2 TS packet sequence in buffer
+  // @param buffer : linear buffer to parse
+  // @param firstPacketPosition : the first MPEG2 TS packet position in buffer
+  // @param packetSequenceLength : the length in bytes of continuous MPEG2 TS packets
+  // @return : S_OK if successful, E_POINTER if buffer, firstPacketPosition or packetSequenceLength is NULL, error code otherwise
+  static HRESULT FindPacketSequence(CLinearBuffer *buffer, unsigned int *firstPacketPosition, unsigned int *packetSequenceLength);
+
 protected:
   // holds TS packet header (first 4 bytes)
   uint32_t header;

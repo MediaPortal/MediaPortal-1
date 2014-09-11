@@ -23,18 +23,16 @@
 #ifndef __RTMP_STREAM_FRAGMENT_DEFINED
 #define __RTMP_STREAM_FRAGMENT_DEFINED
 
-#include "CacheFileItem.h"
+#include "StreamFragment.h"
 
-#define RTMP_STREAM_FRAGMENT_FLAG_NONE                                CACHE_FILE_ITEM_FLAG_NONE
+#define RTMP_STREAM_FRAGMENT_FLAG_NONE                                STREAM_FRAGMENT_FLAG_NONE
 
-#define RTMP_STREAM_FRAGMENT_FLAG_SET_TIMESTAMP                       (1 << (CACHE_FILE_ITEM_FLAG_LAST + 0))
-#define RTMP_STREAM_FRAGMENT_FLAG_CONTAINS_HEADER_OR_META_PACKET      (1 << (CACHE_FILE_ITEM_FLAG_LAST + 1))
+#define RTMP_STREAM_FRAGMENT_FLAG_SET_TIMESTAMP                       (1 << (STREAM_FRAGMENT_FLAG_LAST + 0))
+#define RTMP_STREAM_FRAGMENT_FLAG_CONTAINS_HEADER_OR_META_PACKET      (1 << (STREAM_FRAGMENT_FLAG_LAST + 1))
 
-#define RTMP_STREAM_FRAGMENT_FLAG_LAST                                (CACHE_FILE_ITEM_FLAG_LAST + 2)
+#define RTMP_STREAM_FRAGMENT_FLAG_LAST                                (STREAM_FRAGMENT_FLAG_LAST + 2)
 
-#define RTMP_STREAM_FRAGMENT_START_POSITION_NOT_SET                   -1
-
-class CRtmpStreamFragment : public CCacheFileItem
+class CRtmpStreamFragment : public CStreamFragment
 {
 public:
   // creates new instance of CRtmpStreamFragment class
@@ -49,10 +47,6 @@ public:
   // @return : fragment start timestamp
   int64_t GetFragmentStartTimestamp(void);
 
-  // gets fragment start position within stream
-  // @return : fragment start position within stream or RTMP_STREAM_FRAGMENT_START_POSITION_NOT_SET if not set
-  int64_t GetFragmentStartPosition(void);
-
   /* set methods */
 
   // sets fragment start timestamp
@@ -64,10 +58,6 @@ public:
   // @param setStartTimestampFlag : fragment has set start timestamp flag
   void SetFragmentStartTimestamp(int64_t fragmentStartTimestamp, bool setStartTimestampFlag);
 
-  // sets fragment start position
-  // @param fragmentStartPosition : fragment start position to set
-  void SetFragmentStartPosition(int64_t fragmentStartPosition);
-
   // sets if fragment contains header or meta packet
   // @param containsHeaderOrMetaPacket : true if fragment contains header or meta packet, false otherwise
   void SetContainsHeaderOrMetaPacket(bool containsHeaderOrMetaPacket);
@@ -78,10 +68,6 @@ public:
   // @return : true if fragment has set start timestamp, false otherwise
   bool IsSetFragmentStartTimestamp(void);
 
-  // tests if fragment has set start position
-  // @return : true if fragment has set start position, false otherwise
-  bool IsSetFragmentStartPosition(void);
-
   // tests if fragment contains header or meta packet
   // @return : true if fragment contains header or meta packet, false otherwise
   bool ContainsHeaderOrMetaPacket(void);
@@ -89,19 +75,17 @@ public:
 private:
   // holds fragment start timestamp
   int64_t fragmentStartTimestamp;
-  // holds fragment start position within stream
-  int64_t fragmentStartPosition;
 
   /* methods */
 
   // gets new instance of RTMP stream fragment
   // @return : new RTMP stream fragment instance or NULL if error
-  virtual CCacheFileItem *CreateItem(void);
+  virtual CFastSearchItem *CreateItem(void);
 
   // deeply clones current instance
   // @param item : the cache file item instance to clone
   // @return : true if successful, false otherwise
-  virtual bool InternalClone(CCacheFileItem *item);
+  virtual bool InternalClone(CFastSearchItem *item);
 };
 
 #endif

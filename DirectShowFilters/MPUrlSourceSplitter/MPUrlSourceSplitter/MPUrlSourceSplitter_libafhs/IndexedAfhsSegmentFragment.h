@@ -23,14 +23,14 @@
 #ifndef __INDEXED_AFHS_SEGMENT_FRAGMENT_DEFINED
 #define __INDEXED_AFHS_SEGMENT_FRAGMENT_DEFINED
 
-#include "IndexedCacheFileItem.h"
+#include "IndexedStreamFragment.h"
 #include "AfhsSegmentFragment.h"
 
-#define INDEXED_AFHS_SEGMENT_FRAGMENT_FLAG_NONE                       INDEXED_CACHE_FILE_ITEM_FLAG_NONE
+#define INDEXED_AFHS_SEGMENT_FRAGMENT_FLAG_NONE                       INDEXED_STREAM_FRAGMENT_FLAG_NONE
 
-#define INDEXED_AFHS_SEGMENT_FRAGMENT_FLAG_LAST                       (INDEXED_CACHE_FILE_ITEM_FLAG_LAST + 0)
+#define INDEXED_AFHS_SEGMENT_FRAGMENT_FLAG_LAST                       (INDEXED_STREAM_FRAGMENT_FLAG_LAST + 0)
 
-class CIndexedAfhsSegmentFragment : public CIndexedCacheFileItem
+class CIndexedAfhsSegmentFragment : public CIndexedStreamFragment
 {
 public:
   CIndexedAfhsSegmentFragment(HRESULT *result, CAfhsSegmentFragment *item, unsigned int index);
