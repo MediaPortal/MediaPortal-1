@@ -275,11 +275,16 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     /// <returns>The start time of the episode within a schedule that overlaps with program</returns>
     public DateTime GetSchedStartTimeForProg(Program prog)
     {
-      DateTime dtSchedStart;
-      DateTime dtSchedEnd;
-      if (GetAdjustedScheduleTimeRange(prog, out dtSchedStart, out dtSchedEnd))
+      if ((ScheduleRecordingType)_entity.ScheduleType != ScheduleRecordingType.EveryTimeOnEveryChannel
+         && (ScheduleRecordingType)_entity.ScheduleType != ScheduleRecordingType.EveryTimeOnThisChannel
+         && (ScheduleRecordingType)_entity.ScheduleType != ScheduleRecordingType.WeeklyEveryTimeOnThisChannel)
       {
-        return dtSchedStart;
+        DateTime dtSchedStart;
+        DateTime dtSchedEnd;
+        if (GetAdjustedScheduleTimeRange(prog, out dtSchedStart, out dtSchedEnd))
+        {
+          return dtSchedStart;
+        }
       }
       return prog.StartTime;
     }
