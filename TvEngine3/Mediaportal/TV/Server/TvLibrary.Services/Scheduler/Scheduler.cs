@@ -380,6 +380,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     [MethodImpl(MethodImplOptions.Synchronized)]
     private void DoScheduleWork()
     {
+      CanceledScheduleManagement.DeleteAllCancelledSeries();
       StopAnyDueRecordings();
       StartAnyDueRecordings();
       CheckAndDeleteOrphanedRecordings();

@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
+using System;
 using System.Data.Objects;
 using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
+using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
@@ -28,5 +31,23 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         return canceledScheduleRepository.GetAll<CanceledSchedule>().ToList();
       }
     }
+
+    public static void DeleteAllCancelledSeries()
+	  {
+	    DateTime date = DateTime.Now.AddDays(-5);
+
+      IList<CanceledSchedule> CanceledScheduleList = ListAllCanceledSchedules();
+	    using (IScheduleRepository scheduleRepository = new ScheduleRepository(true))
+      {
+        foreach (CanceledSchedule cs in CanceledScheduleList)
+	      {
+	        if (cs.CancelDateTime < date)
+	        {
+            Log.Debug("DeleteAllCancelledSeries: Removing {0}", cs.CancelDateTime);
+            scheduleRepository.Delete(cs);
+	        }
+	      }
+      }
+	  }
   }
 }
