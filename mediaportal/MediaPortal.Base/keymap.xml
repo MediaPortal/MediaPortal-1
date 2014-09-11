@@ -864,19 +864,19 @@
       <id>86</id>
       <key>F8</key>
       <sound />
-      <description>increase time</description>
+      <description>increase timeblock</description>
     </action>
     <action>
       <id>87</id>
       <key>F7</key>
       <sound />
-      <description>decrease time</description>
+      <description>decrease timeblock</description>
     </action>
     <action>
       <id>88</id>
       <key>F1</key>
       <sound />
-      <description>default time</description>
+      <description>default timeblock</description>
     </action>
     <action>
       <id>96</id>
@@ -907,6 +907,70 @@
       <key>A</key>
       <sound />
       <description>Prev Tv Group</description>
+    </action>
+  </window>
+  <window>
+    <id>762</id>
+    <description>Radio Guide</description>
+    <action>
+      <id>77</id>
+      <key>F6</key>
+      <sound>click.wav</sound>
+      <description>increase time</description>
+    </action>
+    <action>
+      <id>78</id>
+      <key>F5</key>
+      <sound>click.wav</sound>
+      <description>decrease time</description>
+    </action>
+    <action>
+      <id>86</id>
+      <key>F8</key>
+      <sound />
+      <description>increase timeblock</description>
+    </action>
+    <action>
+      <id>87</id>
+      <key>F7</key>
+      <sound />
+      <description>decrease timeblock</description>
+    </action>
+    <action>
+      <id>88</id>
+      <key>F1</key>
+      <sound />
+      <description>default timeblock</description>
+    </action>
+    <action>
+      <id>96</id>
+      <key>HOME</key>
+      <sound />
+      <description>goto current time</description>
+    </action>
+    <action>
+      <id>9991</id>
+      <key>I</key>
+      <sound />
+      <description>Increase Day</description>
+    </action>
+    <action>
+      <id>9992</id>
+      <key>U</key>
+      <sound />
+      <description>Decrease Day</description>
+    </action>
+    <action>
+      <id>9995</id>
+      <key>Q</key>
+      <sound />
+      <description>Next Radio Group</description>
+    </action>
+    <action>
+      <id>9996</id>
+      <key>A</key>
+      <sound />
+      <description>Prev Radio Group</description>
     </action>
   </window>
   <window>
