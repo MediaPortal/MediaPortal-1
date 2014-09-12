@@ -31,14 +31,7 @@ SynchCorrection::SynchCorrection(AudioRendererSettings* pSettings) :
 
 SynchCorrection::~SynchCorrection()
 {
-  CAutoLock lock(&m_csSampleQueueLock);
-
-  while (m_qSampleTimes.size()>0)
-  {
-    SampleTimeData * oldSample = m_qSampleTimes.front();
-    m_qSampleTimes.pop();
-    delete oldSample;
-  }
+  Flush();
 }
 
 void SynchCorrection::Flush()
