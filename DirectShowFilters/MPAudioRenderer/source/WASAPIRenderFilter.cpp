@@ -1298,7 +1298,8 @@ HRESULT CWASAPIRenderFilter::InitAudioClient()
     return hr;
   }
 
-  GetBufferSize((WAVEFORMATEX*)pwfxAccepted, &rtPeriod);
+  //Leave the buffer size alone. Reseting it based on media type causes issues on AMD systems, doesn't seem to impact +/- Intel, haven't tested NVIDIA
+  //GetBufferSize((WAVEFORMATEX*)pwfxAccepted, &rtPeriod);
 
   if (SUCCEEDED(hr))
     hr = m_pAudioClient->Initialize(m_pSettings->GetWASAPIMode(), m_dwStreamFlags,rtPeriod, 
