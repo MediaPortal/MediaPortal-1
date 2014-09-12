@@ -62,6 +62,11 @@ CParserPlugin::~CParserPlugin(void)
 
 // CPlugin
 
+GUID CParserPlugin::GetInstanceId(void)
+{
+  return this->logger->GetLoggerInstanceId();
+}
+
 HRESULT CParserPlugin::Initialize(CPluginConfiguration *configuration)
 {
   CParserPluginConfiguration *parserConfiguration = dynamic_cast<CParserPluginConfiguration *>(configuration);
@@ -81,6 +86,21 @@ HRESULT CParserPlugin::Initialize(CPluginConfiguration *configuration)
 
 // IDemuxerOwner interface
 
+int64_t CParserPlugin::GetDuration(void)
+{
+  return this->protocolHoster->GetDuration();
+}
+
+HRESULT CParserPlugin::ProcessStreamPackage(CStreamPackage *streamPackage)
+{
+  return this->protocolHoster->ProcessStreamPackage(streamPackage);
+}
+
+HRESULT CParserPlugin::QueryStreamProgress(CStreamProgress *streamProgress)
+{
+  return this->protocolHoster->QueryStreamProgress(streamProgress);
+}
+
 // IProtocol interface
 
 HRESULT CParserPlugin::GetConnectionParameters(CParameterCollection *parameters)
@@ -93,7 +113,47 @@ HRESULT CParserPlugin::GetConnectionParameters(CParameterCollection *parameters)
   return result;
 }
 
+ProtocolConnectionState CParserPlugin::GetConnectionState(void)
+{
+  return None;
+}
+
+HRESULT CParserPlugin::ParseUrl(const CParameterCollection *parameters)
+{
+  return S_OK;
+}
+
+HRESULT CParserPlugin::ReceiveData(CStreamPackage *streamPackage)
+{
+  return S_OK;
+}
+
 // ISimpleProtocol interface
+
+unsigned int CParserPlugin::GetOpenConnectionTimeout(void)
+{
+  return this->protocolHoster->GetOpenConnectionTimeout();
+}
+
+unsigned int CParserPlugin::GetOpenConnectionSleepTime(void)
+{
+  return this->protocolHoster->GetOpenConnectionSleepTime();
+}
+
+unsigned int CParserPlugin::GetTotalReopenConnectionTimeout(void)
+{
+  return this->protocolHoster->GetTotalReopenConnectionTimeout();
+}
+
+HRESULT CParserPlugin::StartReceivingData(CParameterCollection *parameters)
+{
+  return S_OK;
+}
+
+HRESULT CParserPlugin::StopReceivingData(void)
+{
+  return S_OK;
+}
 
 void CParserPlugin::ClearSession(void)
 {
@@ -103,13 +163,38 @@ void CParserPlugin::ClearSession(void)
   this->connectionParameters->Clear();
 }
 
+void CParserPlugin::ReportStreamTime(uint64_t streamTime, uint64_t streamPosition)
+{
+  this->protocolHoster->ReportStreamTime(streamTime, streamPosition);
+}
+
+HRESULT CParserPlugin::GetStreamInformation(CStreamInformationCollection *streams)
+{
+  return this->protocolHoster->GetStreamInformation(streams);
+}
+
 // ISeeking interface
+
+unsigned int CParserPlugin::GetSeekingCapabilities(void)
+{
+  return this->protocolHoster->GetSeekingCapabilities();
+}
 
 /* get methods */
 
 HRESULT CParserPlugin::GetParserResult(void)
 {
   return this->parserResult;
+}
+
+int64_t CParserPlugin::SeekToTime(unsigned int streamId, int64_t time)
+{
+  return this->protocolHoster->SeekToTime(streamId, time);
+}
+
+void CParserPlugin::SetPauseSeekStopMode(unsigned int pauseSeekStopMode)
+{
+  this->protocolHoster->SetPauseSeekStopMode(pauseSeekStopMode);
 }
 
 /* set methods */

@@ -254,6 +254,8 @@ HRESULT CParserHoster::StartReceivingData(CParameterCollection *parameters)
   if (SUCCEEDED(result))
   {
     this->logger->Log(LOGGER_INFO, L"%s: %s: active parser: '%s'", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, this->activeParser->GetName());
+
+    result = this->activeParser->StartReceivingData(parameters);
   }
 
   return result;
@@ -264,6 +266,7 @@ HRESULT CParserHoster::StopReceivingData(void)
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, this->hosterName, METHOD_STOP_RECEIVING_DATA_NAME);
 
   // stop receiving data
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->activeParser, this->activeParser->StopReceivingData());
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->protocolHoster, this->protocolHoster->StopReceivingData());
 
   this->activeParser = NULL;

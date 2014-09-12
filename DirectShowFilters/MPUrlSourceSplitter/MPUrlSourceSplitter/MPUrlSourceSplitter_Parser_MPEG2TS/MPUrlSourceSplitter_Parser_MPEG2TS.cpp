@@ -98,8 +98,6 @@ CMPUrlSourceSplitter_Parser_Mpeg2TS::~CMPUrlSourceSplitter_Parser_Mpeg2TS()
 
 // CParserPlugin
 
-#include <stdio.h>
-
 HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::GetParserResult(void)
 {
   //if (this->parserResult == PARSER_RESULT_PENDING)
@@ -219,11 +217,6 @@ const wchar_t *CMPUrlSourceSplitter_Parser_Mpeg2TS::GetName(void)
   return PARSER_NAME;
 }
 
-GUID CMPUrlSourceSplitter_Parser_Mpeg2TS::GetInstanceId(void)
-{
-  return this->logger->GetLoggerInstanceId();
-}
-
 HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::Initialize(CPluginConfiguration *configuration)
 {
   HRESULT result = __super::Initialize(configuration);
@@ -244,27 +237,7 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::Initialize(CPluginConfiguration *co
 
 // ISeeking interface
 
-unsigned int CMPUrlSourceSplitter_Parser_Mpeg2TS::GetSeekingCapabilities(void)
-{
-  return this->protocolHoster->GetSeekingCapabilities();
-}
-
-int64_t CMPUrlSourceSplitter_Parser_Mpeg2TS::SeekToTime(unsigned int streamId, int64_t time)
-{
-  return this->protocolHoster->SeekToTime(streamId, time);
-}
-
-void CMPUrlSourceSplitter_Parser_Mpeg2TS::SetPauseSeekStopMode(unsigned int pauseSeekStopMode)
-{
-  this->protocolHoster->SetPauseSeekStopMode(pauseSeekStopMode);
-}
-
 // IDemuxerOwner interface
-
-int64_t CMPUrlSourceSplitter_Parser_Mpeg2TS::GetDuration(void)
-{
-  return this->protocolHoster->GetDuration();
-}
 
 HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::ProcessStreamPackage(CStreamPackage *streamPackage)
 {
@@ -412,36 +385,6 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::ProcessStreamPackage(CStreamPackage
 
 // ISimpleProtocol interface
 
-unsigned int CMPUrlSourceSplitter_Parser_Mpeg2TS::GetOpenConnectionTimeout(void)
-{
-  return this->protocolHoster->GetOpenConnectionTimeout();
-}
-
-unsigned int CMPUrlSourceSplitter_Parser_Mpeg2TS::GetOpenConnectionSleepTime(void)
-{
-  return this->protocolHoster->GetOpenConnectionSleepTime();
-}
-
-unsigned int CMPUrlSourceSplitter_Parser_Mpeg2TS::GetTotalReopenConnectionTimeout(void)
-{
-  return this->protocolHoster->GetTotalReopenConnectionTimeout();
-}
-
-HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::StartReceivingData(CParameterCollection *parameters)
-{
-  return E_NOTIMPL;
-}
-
-HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::StopReceivingData(void)
-{
-  return E_NOTIMPL;
-}
-
-HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::QueryStreamProgress(CStreamProgress *streamProgress)
-{
-  return this->protocolHoster->QueryStreamProgress(streamProgress);
-}
-  
 void CMPUrlSourceSplitter_Parser_Mpeg2TS::ClearSession(void)
 {
   __super::ClearSession();
@@ -450,29 +393,24 @@ void CMPUrlSourceSplitter_Parser_Mpeg2TS::ClearSession(void)
   this->continuousStreamRanges->Clear();
 }
 
-void CMPUrlSourceSplitter_Parser_Mpeg2TS::ReportStreamTime(uint64_t streamTime, uint64_t streamPosition)
-{
-  this->protocolHoster->ReportStreamTime(streamTime, streamPosition);
-}
-
-HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::GetStreamInformation(CStreamInformationCollection *streams)
-{
-  return this->protocolHoster->GetStreamInformation(streams);
-}
-
 // IProtocol interface
 
-ProtocolConnectionState CMPUrlSourceSplitter_Parser_Mpeg2TS::GetConnectionState(void)
-{
-  return None;
-}
+/* protected methods */
 
-HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::ParseUrl(const CParameterCollection *parameters)
+wchar_t *CMPUrlSourceSplitter_Parser_Mpeg2TS::GetStoreFile(const wchar_t *extension)
 {
-  return E_NOTIMPL;
-}
+  wchar_t *result = NULL;
+  const wchar_t *folder = this->connectionParameters->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
 
-HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveData(CStreamPackage *streamPackage)
-{
-  return E_NOTIMPL;
+  if (folder != NULL)
+  {
+    wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
+    if (guid != NULL)
+    {
+      result = FormatString(L"%smpurlsourcesplitter_parser_mpeg2ts_%s.%s", folder, guid, extension);
+    }
+    FREE_MEM(guid);
+  }
+
+  return result;
 }

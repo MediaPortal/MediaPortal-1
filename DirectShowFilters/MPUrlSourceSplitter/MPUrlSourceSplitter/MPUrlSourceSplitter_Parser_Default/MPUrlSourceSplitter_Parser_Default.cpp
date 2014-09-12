@@ -97,11 +97,6 @@ const wchar_t *CMPUrlSourceSplitter_Parser_Default::GetName(void)
   return PARSER_NAME;
 }
 
-GUID CMPUrlSourceSplitter_Parser_Default::GetInstanceId(void)
-{
-  return this->logger->GetLoggerInstanceId();
-}
-
 HRESULT CMPUrlSourceSplitter_Parser_Default::Initialize(CPluginConfiguration *configuration)
 {
   HRESULT result = __super::Initialize(configuration);
@@ -122,65 +117,10 @@ HRESULT CMPUrlSourceSplitter_Parser_Default::Initialize(CPluginConfiguration *co
 
 // ISeeking interface
 
-unsigned int CMPUrlSourceSplitter_Parser_Default::GetSeekingCapabilities(void)
-{
-  return this->protocolHoster->GetSeekingCapabilities();
-}
-
-int64_t CMPUrlSourceSplitter_Parser_Default::SeekToTime(unsigned int streamId, int64_t time)
-{
-  return this->protocolHoster->SeekToTime(streamId, time);
-}
-
-void CMPUrlSourceSplitter_Parser_Default::SetPauseSeekStopMode(unsigned int pauseSeekStopMode)
-{
-  this->protocolHoster->SetPauseSeekStopMode(pauseSeekStopMode);
-}
-
 // IDemuxerOwner interface
-
-int64_t CMPUrlSourceSplitter_Parser_Default::GetDuration(void)
-{
-  return this->protocolHoster->GetDuration();
-}
-
-HRESULT CMPUrlSourceSplitter_Parser_Default::ProcessStreamPackage(CStreamPackage *streamPackage)
-{
-  return this->protocolHoster->ProcessStreamPackage(streamPackage);
-}
 
 // ISimpleProtocol interface
 
-unsigned int CMPUrlSourceSplitter_Parser_Default::GetOpenConnectionTimeout(void)
-{
-  return this->protocolHoster->GetOpenConnectionTimeout();
-}
-
-unsigned int CMPUrlSourceSplitter_Parser_Default::GetOpenConnectionSleepTime(void)
-{
-  return this->protocolHoster->GetOpenConnectionSleepTime();
-}
-
-unsigned int CMPUrlSourceSplitter_Parser_Default::GetTotalReopenConnectionTimeout(void)
-{
-  return this->protocolHoster->GetTotalReopenConnectionTimeout();
-}
-
-HRESULT CMPUrlSourceSplitter_Parser_Default::StartReceivingData(CParameterCollection *parameters)
-{
-  return E_NOTIMPL;
-}
-
-HRESULT CMPUrlSourceSplitter_Parser_Default::StopReceivingData(void)
-{
-  return E_NOTIMPL;
-}
-
-HRESULT CMPUrlSourceSplitter_Parser_Default::QueryStreamProgress(CStreamProgress *streamProgress)
-{
-  return this->protocolHoster->QueryStreamProgress(streamProgress);
-}
-  
 void CMPUrlSourceSplitter_Parser_Default::ClearSession(void)
 {
   __super::ClearSession();
@@ -188,29 +128,4 @@ void CMPUrlSourceSplitter_Parser_Default::ClearSession(void)
   this->parserResult = PARSER_RESULT_KNOWN;
 }
 
-void CMPUrlSourceSplitter_Parser_Default::ReportStreamTime(uint64_t streamTime, uint64_t streamPosition)
-{
-  this->protocolHoster->ReportStreamTime(streamTime, streamPosition);
-}
-
-HRESULT CMPUrlSourceSplitter_Parser_Default::GetStreamInformation(CStreamInformationCollection *streams)
-{
-  return this->protocolHoster->GetStreamInformation(streams);
-}
-
 // IProtocol interface
-
-ProtocolConnectionState CMPUrlSourceSplitter_Parser_Default::GetConnectionState(void)
-{
-  return None;
-}
-
-HRESULT CMPUrlSourceSplitter_Parser_Default::ParseUrl(const CParameterCollection *parameters)
-{
-  return E_NOTIMPL;
-}
-
-HRESULT CMPUrlSourceSplitter_Parser_Default::ReceiveData(CStreamPackage *streamPackage)
-{
-  return E_NOTIMPL;
-}

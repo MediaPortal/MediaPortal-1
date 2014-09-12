@@ -57,10 +57,6 @@ public:
   // @return : reference to null-terminated string
   virtual const wchar_t *GetName(void);
 
-  // get plugin instance ID
-  // @return : GUID, which represents instance identifier or GUID_NULL if error
-  virtual GUID GetInstanceId(void);
-
   // initialize plugin implementation with configuration parameters
   // @param configuration : the reference to additional configuration parameters (created by plugin's hoster class)
   // @return : S_OK if successfull, error code otherwise
@@ -68,93 +64,14 @@ public:
 
   // ISeeking interface
 
-  // gets seeking capabilities of protocol
-  // @return : bitwise combination of SEEKING_METHOD flags
-  virtual unsigned int GetSeekingCapabilities(void);
-
-  // request protocol implementation to receive data from specified time (in ms) for specified stream
-  // this method is called with same time for each stream in protocols with multiple streams
-  // @param streamId : the stream ID to receive data from specified time
-  // @param time : the requested time (zero is start of stream)
-  // @return : time (in ms) where seek finished or lower than zero if error
-  virtual int64_t SeekToTime(unsigned int streamId, int64_t time);
-
-  // set pause, seek or stop mode
-  // in such mode are reading operations disabled
-  // @param pauseSeekStopMode : one of PAUSE_SEEK_STOP_MODE values
-  virtual void SetPauseSeekStopMode(unsigned int pauseSeekStopMode);
-
   // IDemuxerOwner interface
-
-  // gets duration of stream in ms
-  // @return : stream duration in ms or DURATION_LIVE_STREAM in case of live stream or DURATION_UNSPECIFIED if duration is unknown
-  virtual int64_t GetDuration(void);
-
-  // process stream package request
-  // @param streamPackage : the stream package request to process
-  // @return : S_OK if successful, error code only in case when error is not related to processing request
-  virtual HRESULT ProcessStreamPackage(CStreamPackage *streamPackage);
 
   // ISimpleProtocol interface
 
-  // gets timeout (in ms) for opening connection
-  // @return : timeout (in ms) for opening connection
-  virtual unsigned int GetOpenConnectionTimeout(void);
-
-  // gets sleep time (in ms) for opening connection
-  // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
-  // @return : sleep time (in ms) for opening connection
-  virtual unsigned int GetOpenConnectionSleepTime(void);
-
-  // gets total timeout (in ms) for re-opening connection (opening connection after lost connection)
-  // re-open connection total timeout should be much more greater (e.g. 3 - 5 times) in order to allow more opening requests
-  // @return : total timeout (in ms) for re-opening connection
-  virtual unsigned int GetTotalReopenConnectionTimeout(void);
-
-  // starts receiving data from specified url and configuration parameters
-  // @param parameters : the url and parameters used for connection
-  // @return : S_OK if url is loaded, false otherwise
-  virtual HRESULT StartReceivingData(CParameterCollection *parameters);
-
-  // request protocol implementation to cancel the stream reading operation
-  // @return : S_OK if successful
-  virtual HRESULT StopReceivingData(void);
-
-  // retrieves the progress of the stream reading operation
-  // @param streamProgress : reference to instance of class that receives the stream progress
-  // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_INVALIDARG if stream ID is unknown, E_UNEXPECTED if unexpected error
-  virtual HRESULT QueryStreamProgress(CStreamProgress *streamProgress);
-  
   // clears current session
   virtual void ClearSession(void);
 
-  // reports actual stream time to protocol
-  // @param streamTime : the actual stream time in ms to report to protocol
-  // @param streamPosition : the actual stream position (related to stream time) to report to protocol
-  virtual void ReportStreamTime(uint64_t streamTime, uint64_t streamPosition);
-
-  // gets information about streams
-  // receiving data is disabled until protocol reports valid stream count (at least one)
-  // @return : S_OK if successful, E_STREAM_COUNT_UNKNOWN if stream count is unknown, error code otherwise
-  virtual HRESULT GetStreamInformation(CStreamInformationCollection *streams);
-
   // IProtocol interface
-
-  // gets connection state
-  // @return : one of protocol connection state values
-  ProtocolConnectionState GetConnectionState(void);
-
-  // parse given url to internal variables for specified protocol
-  // errors should be logged to log file
-  // @param parameters : the url and connection parameters
-  // @return : S_OK if successfull
-  virtual HRESULT ParseUrl(const CParameterCollection *parameters);
-
-  // receives data and process stream package request
-  // the method can't block call (method is called within thread which can be terminated anytime)
-  // @param streamPackage : the stream package request to process
-  // @return : S_OK if successful, error code only in case when error is not related to processing request
-  virtual HRESULT ReceiveData(CStreamPackage *streamPackage);
 
 protected:
   // holds last received length
