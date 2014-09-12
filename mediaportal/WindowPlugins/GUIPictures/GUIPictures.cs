@@ -740,24 +740,28 @@ namespace MediaPortal.GUI.Pictures
 
             while (true)
             {
-              if (rootFolderPath == directoryNameCheck)
+              if (!string.IsNullOrEmpty(rootFolderPath) && !string.IsNullOrEmpty(directoryNameCheck))
               {
-                folderHistory.Set(strSelectedItem, directoryName);
-                break;
+                if (rootFolderPath == directoryNameCheck)
+                {
+                  folderHistory.Set(strSelectedItem, directoryName);
+                  break;
+                }
+                string sourceFolder = directoryNameCheck;
+                if (rootFolderPath != directoryNameCheck)
+                {
+                  string sourceCurrentFolder = Path.GetDirectoryName(sourceFolder);
+                  string destinationItem = Path.GetFileName(sourceFolder);
+                  folderHistory.Set(destinationItem, sourceCurrentFolder);
+                }
+                else
+                {
+                  string destinationItem = Path.GetFileName(sourceFolder);
+                  folderHistory.Set(destinationItem, sourceFolder);
+                }
+                directoryNameCheck = Path.GetDirectoryName(sourceFolder);
               }
-              string sourceFolder = directoryNameCheck;
-              if ( rootFolderPath != directoryNameCheck)
-              {
-                string sourceCurrentFolder = Path.GetDirectoryName(sourceFolder);
-                string destinationItem = Path.GetFileName(sourceFolder);
-                folderHistory.Set(destinationItem, sourceCurrentFolder);
-              }
-              else
-              {
-                string destinationItem = Path.GetFileName(sourceFolder);
-                folderHistory.Set(destinationItem, sourceFolder);
-              }
-              directoryNameCheck = Path.GetDirectoryName(sourceFolder);
+              break;
             }
 
             folderHistory.Set(rootFolder, "");
