@@ -199,6 +199,10 @@ protected:
   // holds header and meta packet size
   unsigned headerAndMetaPacketSize;
 
+  // holds last processed size from last store time
+  unsigned int lastProcessedSize;
+  unsigned int currentProcessedSize;
+
   /* methods */
 
   // gets store file path based on configuration

@@ -111,6 +111,14 @@ public:
   // @return : last receive data time (in ms)
   unsigned int GetLastReceiveDataTime(void);
 
+  // gets last processed size of data from stream track
+  // @return : last processed size of data from stream track
+  unsigned int GetLastProcessedSize(void);
+
+  // gets current processed size of data from stream track
+  // @return : current processed size of data from stream track
+  unsigned int GetCurrentProcessedSize(void);
+
   /* set methods */
 
   // sets currently downloading fragment
@@ -160,6 +168,14 @@ public:
   // sets last receive data time (in ms)
   // @param lastReceiveDataTime : last receive data time (in ms) to set
   void SetLastReceiveDataTime(unsigned int lastReceiveDataTime);
+
+  // sets last processed size of data from stream track
+  // @param lastProcessedSize : last processed size of data from stream track to set
+  void SetLastProcessedSize(unsigned lastProcessedSize);
+
+  // sets current processed size of data from stream track
+  // @param currentProcessedSize : current processed size of data from stream track to set
+  void SetCurrentProcessedSize(unsigned int currentProcessedSize);
 
   /* other methods */
 
@@ -217,6 +233,10 @@ protected:
 
   // holds cache file instance
   CCacheFile *cacheFile;
+
+  // holds last processed size from last store time
+  unsigned int lastProcessedSize;
+  unsigned int currentProcessedSize;
 
   /* methods */
 };

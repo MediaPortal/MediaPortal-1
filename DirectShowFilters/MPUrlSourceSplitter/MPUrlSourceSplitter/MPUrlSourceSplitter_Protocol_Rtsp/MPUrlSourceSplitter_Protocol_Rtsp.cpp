@@ -921,7 +921,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
           unsigned int copyDataLength = min(streamFragment->GetLength() - copyDataStart, dataRequest->GetLength() - foundDataLength);
 
           // copy data from stream fragment to response buffer
-          if (streamTrack->GetCacheFile()->LoadItems(streamTrack->GetStreamFragments(), fragmentIndex, true))
+          if (streamTrack->GetCacheFile()->LoadItems(streamTrack->GetStreamFragments(), fragmentIndex, true, UINT_MAX, (streamTrack->GetLastProcessedSize() == 0) ? CACHE_FILE_RELOAD_SIZE : streamTrack->GetLastProcessedSize()))
           {
             // memory is allocated while switching from Created to Waiting state, we can't have problem on next line
             dataResponse->GetBuffer()->AddToBufferWithResize(streamFragment->GetBuffer(), copyDataStart, copyDataLength);
@@ -934,6 +934,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
 
           // update length of data
           foundDataLength += copyDataLength;
+          streamTrack->SetCurrentProcessedSize(streamTrack->GetCurrentProcessedSize() + copyDataLength);
 
           if ((streamFragment->IsDiscontinuity()) && ((dataRequest->GetStart() + dataRequest->GetLength()) >= (streamFragmentRelativeStart + streamFragment->GetLength())))
           {
@@ -1150,6 +1151,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
         for (unsigned int i = 0; i < this->streamTracks->Count(); i++)
         {
           CRtspStreamTrack *track = this->streamTracks->GetItem(i);
+
+          track->SetLastProcessedSize(track->GetCurrentProcessedSize());
+          track->SetCurrentProcessedSize(0);
 
           // in case of live stream remove all downloaded and processed stream fragments before reported stream time
           if ((this->IsLiveStream()) && (this->reportedStreamTime > 0))

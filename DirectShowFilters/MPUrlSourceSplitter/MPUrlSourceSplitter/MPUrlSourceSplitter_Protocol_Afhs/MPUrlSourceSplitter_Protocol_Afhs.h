@@ -207,6 +207,10 @@ protected:
   // holds last bootstrap info update time (in live case)
   unsigned int lastBootstrapInfoUpdateTime;
 
+  // holds last processed size from last store time
+  unsigned int lastProcessedSize;
+  unsigned int currentProcessedSize;
+
   /* methods */
 
   // gets store file path based on configuration

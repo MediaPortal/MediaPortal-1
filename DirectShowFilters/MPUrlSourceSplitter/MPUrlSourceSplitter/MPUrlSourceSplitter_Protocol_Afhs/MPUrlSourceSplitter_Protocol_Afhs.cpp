@@ -94,6 +94,8 @@ CMPUrlSourceSplitter_Protocol_Afhs::CMPUrlSourceSplitter_Protocol_Afhs(HRESULT *
   this->headerAndMetaPacketSize = 0;
   this->segmentFragmentZeroTimestamp = 0;
   this->lastBootstrapInfoUpdateTime = 0;
+  this->lastProcessedSize = 0;
+  this->currentProcessedSize = 0;
   
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -1002,7 +1004,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
           unsigned int copyDataLength = min(segmentFragment->GetLength() - copyDataStart, dataRequest->GetLength() - foundDataLength);
 
           // copy data from segment fragment to response buffer
-          if (this->cacheFile->LoadItems(this->segmentFragments, fragmentIndex, true))
+          if (this->cacheFile->LoadItems(this->segmentFragments, fragmentIndex, true, UINT_MAX, (this->lastProcessedSize == 0) ? CACHE_FILE_RELOAD_SIZE : this->lastProcessedSize))
           {
             // memory is allocated while switching from Created to Waiting state, we can't have problem on next line
             dataResponse->GetBuffer()->AddToBufferWithResize(segmentFragment->GetBuffer(), copyDataStart, copyDataLength);
@@ -1015,6 +1017,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
 
           // update length of data
           foundDataLength += copyDataLength;
+          this->currentProcessedSize += copyDataLength;
 
           if ((segmentFragment->IsDiscontinuity()) && ((dataRequest->GetStart() + dataRequest->GetLength()) >= (streamFragmentRelativeStart + segmentFragment->GetLength())))
           {
@@ -1160,6 +1163,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
     if ((GetTickCount() - this->lastStoreTime) > CACHE_FILE_LOAD_TO_MEMORY_TIME_SPAN_DEFAULT)
     {
       this->lastStoreTime = GetTickCount();
+
+      this->lastProcessedSize = this->currentProcessedSize;
+      this->currentProcessedSize = 0;
 
       if (this->segmentFragments->Count() > 0)
       {
@@ -1335,6 +1341,8 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
   this->headerAndMetaPacketSize = 0;
   this->segmentFragmentZeroTimestamp = 0;
   this->lastBootstrapInfoUpdateTime = 0;
+  this->lastProcessedSize = 0;
+  this->currentProcessedSize = 0;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
 }

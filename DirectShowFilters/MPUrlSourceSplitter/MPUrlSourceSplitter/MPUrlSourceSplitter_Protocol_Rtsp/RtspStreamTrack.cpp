@@ -41,6 +41,9 @@ CRtspStreamTrack::CRtspStreamTrack(HRESULT *result)
 
   this->cacheFile = NULL;
 
+  this->lastProcessedSize = 0;
+  this->currentProcessedSize = 0;
+
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->streamFragments = new CRtspStreamFragmentCollection(result);
@@ -164,6 +167,16 @@ unsigned int CRtspStreamTrack::GetLastReceiveDataTime(void)
   return this->lastReceiveDataTime;
 }
 
+unsigned int CRtspStreamTrack::GetLastProcessedSize(void)
+{
+  return this->lastProcessedSize;
+}
+
+unsigned int CRtspStreamTrack::GetCurrentProcessedSize(void)
+{
+  return this->currentProcessedSize;
+}
+
 /* set methods */
 
 void CRtspStreamTrack::SetStreamFragmentDownloading(unsigned int streamFragmentDownloading)
@@ -237,6 +250,16 @@ void CRtspStreamTrack::SetRtpTimestampCorrection(int64_t rtpTimestampCorrection)
 void CRtspStreamTrack::SetLastReceiveDataTime(unsigned int lastReceiveDataTime)
 {
   this->lastReceiveDataTime = lastReceiveDataTime;
+}
+
+void CRtspStreamTrack::SetLastProcessedSize(unsigned lastProcessedSize)
+{
+  this->lastProcessedSize = lastProcessedSize;
+}
+
+void CRtspStreamTrack::SetCurrentProcessedSize(unsigned int currentProcessedSize)
+{
+  this->currentProcessedSize = currentProcessedSize;
 }
 
 /* other methods */

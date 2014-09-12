@@ -169,6 +169,10 @@ protected:
   // holds last receive data time
   unsigned int lastReceiveDataTime;
 
+  // holds last processed size from last store time
+  unsigned int lastProcessedSize;
+  unsigned int currentProcessedSize;
+
   /* methods */
 
   // gets store file name

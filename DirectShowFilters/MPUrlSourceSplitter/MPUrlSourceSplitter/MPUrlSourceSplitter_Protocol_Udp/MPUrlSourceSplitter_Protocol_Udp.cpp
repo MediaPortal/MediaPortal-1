@@ -74,6 +74,8 @@ CMPUrlSourceSplitter_Protocol_Udp::CMPUrlSourceSplitter_Protocol_Udp(HRESULT *re
   this->lastStoreTime = 0;
   this->flags |= PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
   this->lastReceiveDataTime = 0;
+  this->lastProcessedSize = 0;
+  this->currentProcessedSize = 0;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -492,7 +494,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
         unsigned int copyDataLength = min(fragment->GetLength() - copyDataStart, request->GetLength() - foundDataLength);
 
         // copy data from stream fragment to response buffer
-        if (this->cacheFile->LoadItems(this->streamFragments, packetIndex, true))
+        if (this->cacheFile->LoadItems(this->streamFragments, packetIndex, true, UINT_MAX, (this->lastProcessedSize == 0) ? CACHE_FILE_RELOAD_SIZE : this->lastProcessedSize))
         {
           // memory is allocated while switching from Created to Waiting state, we can't have problem on next line
           response->GetBuffer()->AddToBufferWithResize(fragment->GetBuffer(), copyDataStart, copyDataLength);
@@ -505,6 +507,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
 
         // update length of data
         foundDataLength += copyDataLength;
+        this->currentProcessedSize += copyDataLength;
 
         if (fragment->IsDiscontinuity())
         {
@@ -593,6 +596,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
     if ((GetTickCount() - this->lastStoreTime) > CACHE_FILE_LOAD_TO_MEMORY_TIME_SPAN_DEFAULT)
     {
       this->lastStoreTime = GetTickCount();
+
+      this->lastProcessedSize = this->currentProcessedSize;
+      this->currentProcessedSize = 0;
 
       if (this->cacheFile->GetCacheFile() == NULL)
       {
@@ -745,6 +751,8 @@ void CMPUrlSourceSplitter_Protocol_Udp::ClearSession(void)
   this->lastStoreTime = 0;
   this->flags |= PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
   this->lastReceiveDataTime = 0;
+  this->lastProcessedSize = 0;
+  this->currentProcessedSize = 0;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
 }
