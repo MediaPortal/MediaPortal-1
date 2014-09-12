@@ -273,7 +273,7 @@ double SynchCorrection::GetRequiredAdjustment(REFERENCE_TIME rtAHwTime, REFERENC
 
 void SynchCorrection::AddSample(INT64 rtOriginalStart, INT64 rtAdjustedStart, INT64 rtOriginalEnd, INT64 rtAdjustedEnd)
 {
-  SampleTimeData* newSample = new SampleTimeData();
+  SampleTimeData* newSample = new SampleTimeData;
   newSample->rtOriginalSampleStart = rtOriginalStart;
   newSample->rtAdjustedSampleStart = rtAdjustedStart;
   newSample->rtOriginalSampleEnd = rtOriginalEnd;
