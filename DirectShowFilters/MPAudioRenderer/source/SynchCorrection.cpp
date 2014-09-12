@@ -66,9 +66,6 @@ void SynchCorrection::Reset(bool soft)
     m_dlastAdjustment = 1.0;
     m_iQualityDir = 0;
     m_bQualityCorrectionOn = false;
-    m_bDriftCorrectionEnabled = true;
-    m_bBiasCorrectionEnabled = true;
-    m_bAdjustmentCorrectionEnabled = true;
     m_rtAHwStartSet = false;
     m_rtAHwStart = 0;
 
