@@ -1071,7 +1071,7 @@ namespace TvDatabase
           if (program.Title == ProgramName && program.IdChannel == IdChannel &&
               StartTime.DayOfWeek == program.StartTime.DayOfWeek)
           {
-            if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime))
+            if (filterCanceledRecordings && IsSerieIsCanceled(GetSchedStartTimeForProg(program), program.IdChannel))
             {
               return false;
             }
@@ -1215,11 +1215,16 @@ namespace TvDatabase
     /// <returns>The start time of the episode within a schedule that overlaps with program</returns>
     public DateTime GetSchedStartTimeForProg(Program prog)
     {
-      DateTime dtSchedStart;
-      DateTime dtSchedEnd;
-      if (GetAdjustedScheduleTimeRange(prog, out dtSchedStart, out dtSchedEnd))
+      if ((ScheduleRecordingType)this.scheduleType != ScheduleRecordingType.EveryTimeOnEveryChannel
+        && (ScheduleRecordingType)this.scheduleType != ScheduleRecordingType.EveryTimeOnThisChannel
+        && (ScheduleRecordingType)this.scheduleType != ScheduleRecordingType.WeeklyEveryTimeOnThisChannel)
       {
-        return dtSchedStart;
+        DateTime dtSchedStart;
+        DateTime dtSchedEnd;
+        if (GetAdjustedScheduleTimeRange(prog, out dtSchedStart, out dtSchedEnd))
+        {
+          return dtSchedStart;
+        }
       }
       return prog.StartTime;
     }
