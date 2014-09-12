@@ -97,9 +97,6 @@ private:
   double m_Bias;
   double m_Adjustment;
   double m_dDeltaError;
-  bool m_bDriftCorrectionEnabled;
-  bool m_bBiasCorrectionEnabled;
-  bool m_bAdjustmentCorrectionEnabled;
 
   bool m_bQualityCorrectionOn;
   int m_iQualityDir;
