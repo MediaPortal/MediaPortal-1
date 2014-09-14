@@ -45,10 +45,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
     }
 
-    internal MiniDisplayHelper(BassAudioEngine bass) : base()
-    {
-      Bass = bass;
-    }
 
     internal static BassAudioEngine Bass
     {
@@ -63,6 +59,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     /// <returns>True if it is appropriate to show our EQ, false otherwise.</returns>    public static bool GetEQ(ref EQControl EQSETTINGS)
     public static bool GetEQ(ref EQControl EQSETTINGS)
     {
+        if (Bass == null)
+        {
+            Bass = BassMusicPlayer.Player;
+        }
       SystemStatus MPStatus=new SystemStatus();
       GetSystemStatus(ref MPStatus);
       bool extensiveLogging = Settings.Instance.ExtensiveLogging;
@@ -156,11 +156,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             num2 = Bass.GetChannelData(handle, EQSETTINGS.EqFftData, num3);
           }
         }
-        catch
+        catch (Exception exception)
         {
           if (extensiveLogging)
           {
-            Log.Info("MiniDisplay.GetEQ(): CAUGHT EXCeption - audio stream {0} disappeared", new object[] {handle});
+            Log.Info("MiniDisplay.GetEQ(): CAUGHT Exception - audio stream {0} disappeared - {1}", new object[] {handle}, exception.Message);
           }
           return false;
         }
