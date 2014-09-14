@@ -59,10 +59,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     /// <returns>True if it is appropriate to show our EQ, false otherwise.</returns>    public static bool GetEQ(ref EQControl EQSETTINGS)
     public static bool GetEQ(ref EQControl EQSETTINGS)
     {
-        if (Bass == null)
-        {
-            Bass = BassMusicPlayer.Player;
-        }
       SystemStatus MPStatus=new SystemStatus();
       GetSystemStatus(ref MPStatus);
       bool extensiveLogging = Settings.Instance.ExtensiveLogging;
@@ -85,6 +81,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         if (g_Player.Paused)
         {
             return false;
+        }
+
+        if (Bass == null)
+        {
+            Bass = BassMusicPlayer.Player;
         }
 
         if (EQSETTINGS.DelayEQ & (g_Player.CurrentPosition < EQSETTINGS._DelayEQTime))
