@@ -625,7 +625,8 @@ STDMETHODIMP CMPAudioRenderer::Run(REFERENCE_TIME tStart)
   if (m_pClock)
     m_pClock->Reset();
 
-  hr = m_pPipeline->Run(tStart);
+  if (m_pPipeline)
+    hr = m_pPipeline->Run(tStart);
      
   if (FAILED(hr))
     return hr;
@@ -642,8 +643,11 @@ STDMETHODIMP CMPAudioRenderer::Stop()
   if (m_hStopWaitingRenderer)
     SetEvent(m_hStopWaitingRenderer);
 
-  m_pPipeline->BeginStop();
-  m_pPipeline->EndStop();
+  if (m_pPipeline)
+  {
+    m_pPipeline->BeginStop();
+    m_pPipeline->EndStop();
+  }
 
   if (m_pSettings->GetReleaseDeviceOnStop())
     m_pRenderer->ReleaseDevice();
@@ -659,10 +663,13 @@ STDMETHODIMP CMPAudioRenderer::Pause()
   if (m_hStopWaitingRenderer)
     SetEvent(m_hStopWaitingRenderer);
 
-  HRESULT hr = m_pPipeline->Pause();
+  if (m_pPipeline)
+  {
+    HRESULT hr = m_pPipeline->Pause();
 
-  if (FAILED(hr))
-    return hr;
+    if (FAILED(hr))
+      return hr;
+  }
 
   return CBaseRenderer::Pause(); 
 }
@@ -698,9 +705,12 @@ HRESULT CMPAudioRenderer::EndOfStream()
   if (m_hStopWaitingRenderer)
     SetEvent(m_hStopWaitingRenderer);
 
-  HRESULT hr = m_pPipeline->EndOfStream();
-  if (FAILED(hr))
-    return hr;
+  if (m_pPipeline)
+  {
+    HRESULT hr = m_pPipeline->EndOfStream();
+    if (FAILED(hr))
+      return hr;
+  }
 
   return CBaseRenderer::EndOfStream();
 }
@@ -708,6 +718,7 @@ HRESULT CMPAudioRenderer::EndOfStream()
 HRESULT CMPAudioRenderer::BeginFlush()
 {
   Log("BeginFlush");
+  HRESULT hr = S_OK;
 
   if (m_State == State_Paused) 
     NotReady();
@@ -719,8 +730,11 @@ HRESULT CMPAudioRenderer::BeginFlush()
   CancelNotification();
   ClearPendingSample();
 
-  HRESULT hr = m_pPipeline->BeginFlush();
-  WaitForReceiveToComplete();
+  if (m_pPipeline)
+  {
+    hr = m_pPipeline->BeginFlush();
+    WaitForReceiveToComplete();
+  }
 
   return hr;
 }
@@ -733,8 +747,10 @@ HRESULT CMPAudioRenderer::EndFlush()
   if (m_hStopWaitingRenderer)
     ResetEvent(m_hStopWaitingRenderer);
 
-  m_pPipeline->EndFlush();
-  m_pClock->Reset(0);
+  if (m_pPipeline)
+    m_pPipeline->EndFlush();
+  if (m_pClock)
+    m_pClock->Reset(0);
 
   return CBaseRenderer::EndFlush(); 
 }
