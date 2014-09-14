@@ -45,10 +45,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
     }
 
-    internal MiniDisplayHelper(BassAudioEngine bass) : base()
-    {
-      Bass = bass;
-    }
 
     internal static BassAudioEngine Bass
     {
@@ -85,6 +81,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         if (g_Player.Paused)
         {
             return false;
+        }
+
+        if (Bass == null)
+        {
+            Bass = BassMusicPlayer.Player;
         }
 
         if (EQSETTINGS.DelayEQ & (g_Player.CurrentPosition < EQSETTINGS._DelayEQTime))
@@ -156,11 +157,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             num2 = Bass.GetChannelData(handle, EQSETTINGS.EqFftData, num3);
           }
         }
-        catch
+        catch (Exception exception)
         {
           if (extensiveLogging)
           {
-            Log.Info("MiniDisplay.GetEQ(): CAUGHT EXCeption - audio stream {0} disappeared", new object[] {handle});
+            Log.Info("MiniDisplay.GetEQ(): CAUGHT Exception - audio stream {0} disappeared - {1}", new object[] {handle}, exception.Message);
           }
           return false;
         }
