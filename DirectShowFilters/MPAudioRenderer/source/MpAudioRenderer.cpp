@@ -391,15 +391,14 @@ HRESULT CMPAudioRenderer::Receive(IMediaSample* pSample)
     return hr;
   }
 
-  if (m_State == State_Paused) 
+  if (m_State == State_Paused)
   {
     {
+      // Make sure CBaseRenderer::WaitForReceiveToComplete won't block infinitely
+      m_bInReceive = FALSE;
       CAutoLock cRendererLock(&m_InterfaceLock);
       if (m_State == State_Stopped)
-      {
-        m_bInReceive = FALSE;
         return NOERROR;
-      }
     }
     Ready();
   }
