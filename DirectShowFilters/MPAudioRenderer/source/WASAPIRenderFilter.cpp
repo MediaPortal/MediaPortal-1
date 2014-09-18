@@ -305,17 +305,10 @@ HRESULT CWASAPIRenderFilter::IsFormatSupported(const WAVEFORMATEXTENSIBLE* pwfx,
   HRESULT hr = m_pAudioClient->IsFormatSupported(shareMode, (WAVEFORMATEX*)pwfx, (WAVEFORMATEX**)&pwfxCM);
   if (hr != S_OK)
   {
-    if(shareMode == AUDCLNT_SHAREMODE_EXCLUSIVE)
+    if (hr == AUDCLNT_E_EXCLUSIVE_MODE_NOT_ALLOWED)
     {
-      //on the off-chance that the PC is configured to disallow exclusive, test it that way
-      hr = m_pAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, (WAVEFORMATEX*)pwfx, (WAVEFORMATEX**)&pwfxCM);
-      if (hr == S_OK)
-      {
-        Log("CWASAPIRenderFilter::NegotiateFormat WASAPI client will only accept shared mode sessions, check PC configuration.");
-        CopyWaveFormatEx(pwfxAccepted, pwfx);
-        m_pSettings->SetWASAPIMode(AUDCLNT_SHAREMODE_SHARED);
-        return hr;
-      }
+      Log("CWASAPIRenderFilter::NegotiateFormat WASAPI client will only accept shared mode sessions, check audio device's configuration.");
+      return hr;
     }
 
     CopyWaveFormatEx((WAVEFORMATEXTENSIBLE**)&tmpPwfx, pwfx);
@@ -329,6 +322,7 @@ HRESULT CWASAPIRenderFilter::IsFormatSupported(const WAVEFORMATEXTENSIBLE* pwfx,
       LogWaveFormat(pwfxCM, "Closest match would be" );
       SAFE_DELETE_WAVEFORMATEX(tmpPwfx);
       CoTaskMemFree(pwfxCM);
+
       return VFW_E_TYPE_NOT_ACCEPTED;
     }
 
