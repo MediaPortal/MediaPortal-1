@@ -99,7 +99,7 @@ int64_t CRtspStreamTrack::GetBytePosition(void)
     CRtspStreamFragment *firstFragment = this->GetStreamFragments()->GetItem(first);
     CRtspStreamFragment *lastFragment = this->GetStreamFragments()->GetItem(first + count - 1);
 
-    result = (unsigned int)(lastFragment->GetFragmentStartPosition() + lastFragment->GetLength() - firstFragment->GetFragmentStartPosition());
+    result = lastFragment->GetFragmentStartPosition() + (int64_t)lastFragment->GetLength() - firstFragment->GetFragmentStartPosition();
   }
 
   return result;

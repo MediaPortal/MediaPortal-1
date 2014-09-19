@@ -927,11 +927,31 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
           // found data length is lower than requested
           // check request flags, maybe we can complete request
 
-          if ((dataRequest->IsSetAnyNonZeroDataLength() && (foundDataLength > 0)) ||
-            (dataRequest->IsSetAnyDataLength()))
+          if ((dataRequest->IsSetAnyNonZeroDataLength() || dataRequest->IsSetAnyDataLength()) && (foundDataLength > 0))
           {
             // request can be completed with any length of available data
             streamPackage->SetCompleted(S_OK);
+          }
+          else if (dataRequest->IsSetAnyDataLength() && (foundDataLength == 0))
+          {
+            // no data available, check end of stream and connection lost
+
+            if (this->IsConnectionLostCannotReopen())
+            {
+              // connection is lost and we cannot reopen it
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: connection lost, no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), this->streamLength);
+
+              dataResponse->SetConnectionLostCannotReopen(true);
+              streamPackage->SetCompleted(S_OK);
+            }
+            else if (this->IsEndOfStreamReached() && ((dataRequest->GetStart() + dataRequest->GetLength()) >= this->streamLength))
+            {
+              // we are not receiving more data, complete request
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), this->streamLength);
+
+              dataResponse->SetNoMoreDataAvailable(true);
+              streamPackage->SetCompleted(S_OK);
+            }
           }
           else
           {
@@ -944,6 +964,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
               // connection is lost and we cannot reopen it
               this->logger->Log(LOGGER_VERBOSE, L"%s: %s: connection lost, no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), this->streamLength);
 
+              dataResponse->SetConnectionLostCannotReopen(true);
               streamPackage->SetCompleted((dataResponse->GetBuffer()->GetBufferOccupiedSpace() != 0) ? S_OK : E_CONNECTION_LOST_CANNOT_REOPEN);
             }
             else if (this->IsEndOfStreamReached() && ((dataRequest->GetStart() + dataRequest->GetLength()) >= this->streamLength))
@@ -951,6 +972,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
               // we are not receiving more data, complete request
               this->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), this->streamLength);
 
+              dataResponse->SetNoMoreDataAvailable(true);
               streamPackage->SetCompleted((dataResponse->GetBuffer()->GetBufferOccupiedSpace() != 0) ? S_OK : E_NO_MORE_DATA_AVAILABLE);
             }
             //else if (this->IsLiveStreamDetected() && (this->connectionState != Opened))
@@ -1039,7 +1061,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
     if ((GetTickCount() - this->lastStoreTime) > CACHE_FILE_LOAD_TO_MEMORY_TIME_SPAN_DEFAULT)
     {
       this->lastStoreTime = GetTickCount();
-      this->lastProcessedSize = this->currentProcessedSize;
+      if (this->currentProcessedSize != 0)
+      {
+        this->lastProcessedSize = this->currentProcessedSize;
+      }
       this->currentProcessedSize = 0;
 
       if (this->streamFragments->Count() > 0)
@@ -1097,9 +1122,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
         }
 
         // store all segment fragments (which are not stored) to file
-        if ((this->cacheFile->GetCacheFile() != NULL) && (this->streamFragments->Count() != 0))
+        if ((this->cacheFile->GetCacheFile() != NULL) && (this->streamFragments->Count() != 0) && (this->streamFragments->GetLoadedToMemorySize() > CACHE_FILE_RELOAD_SIZE))
         {
-          this->cacheFile->StoreItems(this->streamFragments, this->lastStoreTime, this->IsWholeStreamDownloaded());
+          this->cacheFile->StoreItems(this->streamFragments, this->lastStoreTime, false, this->IsWholeStreamDownloaded());
         }
       }
     }
@@ -1470,7 +1495,7 @@ int64_t CMPUrlSourceSplitter_Protocol_Mshs::GetBytePosition(void)
       CMshsStreamFragment *firstFragment = this->streamFragments->GetItem(first);
       CMshsStreamFragment *lastFragment = this->streamFragments->GetItem(first + count - 1);
 
-      result = (unsigned int)(lastFragment->GetFragmentStartPosition() + lastFragment->GetLength() - firstFragment->GetFragmentStartPosition());
+      result = lastFragment->GetFragmentStartPosition() + (int64_t)lastFragment->GetLength() - firstFragment->GetFragmentStartPosition();
     }
   }
 

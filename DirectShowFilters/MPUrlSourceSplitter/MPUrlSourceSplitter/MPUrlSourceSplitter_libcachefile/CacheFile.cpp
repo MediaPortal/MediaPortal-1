@@ -198,10 +198,10 @@ bool CCacheFile::LoadItems(CCacheFileItemCollection *collection, unsigned int in
 
 bool CCacheFile::StoreItems(CCacheFileItemCollection *collection, unsigned int lastCheckTime)
 {
-  return this->StoreItems(collection, lastCheckTime, false);
+  return this->StoreItems(collection, lastCheckTime, false, false);
 }
 
-bool CCacheFile::StoreItems(CCacheFileItemCollection *collection, unsigned int lastCheckTime, bool force)
+bool CCacheFile::StoreItems(CCacheFileItemCollection *collection, unsigned int lastCheckTime, bool forceCleanUp, bool forceStoreToFile)
 {
   HRESULT result = ((collection != NULL) && (this->GetCacheFile() != NULL)) ? S_OK : E_NOT_VALID_STATE;
 
@@ -253,7 +253,7 @@ bool CCacheFile::StoreItems(CCacheFileItemCollection *collection, unsigned int l
               count = 0;
             }
 
-            if (force || ((lastCheckTime - item->GetLoadedToMemoryTime()) > timeSpan))
+            if (forceCleanUp || ((lastCheckTime - item->GetLoadedToMemoryTime()) > timeSpan))
             {
               // release memory
               item->GetBuffer()->DeleteBuffer();
@@ -283,7 +283,7 @@ bool CCacheFile::StoreItems(CCacheFileItemCollection *collection, unsigned int l
               CIndexedCacheFileItem *indexedItem = cleanUpFromMemoryNotStoredToFileLoadedToMemoryItems->GetItem(i);
               CCacheFileItem *item = indexedItem->GetItem();
 
-              if (force || ((lastCheckTime - item->GetLoadedToMemoryTime()) > timeSpan))
+              if (forceStoreToFile || ((lastCheckTime - item->GetLoadedToMemoryTime()) > timeSpan))
               {
                 // if item is not stored to file, store it to file
                 if (item->GetLength() <= (bufferSize - bufferPosition))
@@ -371,7 +371,7 @@ bool CCacheFile::StoreItems(CCacheFileItemCollection *collection, unsigned int l
                       count = 0;
                     }
 
-                    if (force || ((lastCheckTime - item->GetLoadedToMemoryTime()) > timeSpan))
+                    if (forceStoreToFile || ((lastCheckTime - item->GetLoadedToMemoryTime()) > timeSpan))
                     {
                       item->SetCacheFilePosition(size.QuadPart, UINT_MAX);
                       size.QuadPart += item->GetLength();

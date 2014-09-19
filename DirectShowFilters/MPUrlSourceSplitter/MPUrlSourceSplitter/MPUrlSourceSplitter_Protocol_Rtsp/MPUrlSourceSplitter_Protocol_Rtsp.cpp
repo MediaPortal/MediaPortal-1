@@ -321,11 +321,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
                   currentDownloadingFragment = NULL;
 
                   // request to download first not downloaded stream fragment after current downloaded fragment
-                  streamTrack->SetStreamFragmentToDownload(streamTrack->GetStreamFragments()->GetFirstNotDownloadedStreamFragmentIndex(streamTrack->GetStreamFragmentDownloading()));
-                  streamTrack->SetStreamFragmentDownloading(UINT_MAX);
+                  // if not set fragment to download, then set fragment to download (get next not downloaded fragment after current processed fragment)
+                  streamTrack->SetStreamFragmentToDownload((streamTrack->GetStreamFragmentToDownload() == UINT_MAX) ? streamTrack->GetStreamFragments()->GetFirstNotDownloadedStreamFragmentIndex(streamTrack->GetStreamFragmentDownloading()) : streamTrack->GetStreamFragmentToDownload());
+                  // if not set fragment to download, then set fragment to download (get next not downloaded fragment from first fragment)
+                  streamTrack->SetStreamFragmentToDownload((streamTrack->GetStreamFragmentToDownload() == UINT_MAX) ? streamTrack->GetStreamFragments()->GetFirstNotDownloadedStreamFragmentIndex(0) : streamTrack->GetStreamFragmentToDownload());
+                  // fragment to download still can be UINT_MAX = no fragment to download
 
                   this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_FLAG_CLOSE_CURL_INSTANCE;
-                  this->flags |= (streamTrack->GetStreamFragmentToDownload() != UINT_MAX) ? MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_FLAG_STOP_RECEIVING_DATA : MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_FLAG_NONE;
+                  this->flags |= (streamTrack->GetStreamFragmentToDownload() != UINT_MAX) ? MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_FLAG_STOP_RECEIVING_DATA : (PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED);
                 }
                 else
                 {
@@ -925,6 +928,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
           {
             // memory is allocated while switching from Created to Waiting state, we can't have problem on next line
             dataResponse->GetBuffer()->AddToBufferWithResize(streamFragment->GetBuffer(), copyDataStart, copyDataLength);
+
+            // update fragment loaded to memory time to avoid its freeing from memory
+            streamFragment->SetLoadedToMemoryTime(GetTickCount(), fragmentIndex);
           }
           else
           {
@@ -968,11 +974,31 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
           // found data length is lower than requested
           // check request flags, maybe we can complete request
 
-          if ((dataRequest->IsSetAnyNonZeroDataLength() && (foundDataLength > 0)) ||
-            (dataRequest->IsSetAnyDataLength()))
+          if ((dataRequest->IsSetAnyNonZeroDataLength() || dataRequest->IsSetAnyDataLength()) && (foundDataLength > 0))
           {
             // request can be completed with any length of available data
             streamPackage->SetCompleted(S_OK);
+          }
+          else if (dataRequest->IsSetAnyDataLength() && (foundDataLength == 0))
+          {
+            // no data available, check end of stream and connection lost
+
+            if (this->IsConnectionLostCannotReopen())
+            {
+              // connection is lost and we cannot reopen it
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: connection lost, no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), streamTrack->GetStreamLength());
+
+              dataResponse->SetConnectionLostCannotReopen(true);
+              streamPackage->SetCompleted(S_OK);
+            }
+            else if (this->IsEndOfStreamReached() && ((dataRequest->GetStart() + dataRequest->GetLength()) >= streamTrack->GetStreamLength()))
+            {
+              // we are not receiving more data, complete request
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), streamTrack->GetStreamLength());
+
+              dataResponse->SetNoMoreDataAvailable(true);
+              streamPackage->SetCompleted(S_OK);
+            }
           }
           else
           {
@@ -985,6 +1011,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
               // connection is lost and we cannot reopen it
               this->logger->Log(LOGGER_VERBOSE, L"%s: %s: connection lost, no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), streamTrack->GetStreamLength());
 
+              dataResponse->SetConnectionLostCannotReopen(true);
               streamPackage->SetCompleted((dataResponse->GetBuffer()->GetBufferOccupiedSpace() != 0) ? S_OK : E_CONNECTION_LOST_CANNOT_REOPEN);
             }
             else if (this->IsEndOfStreamReached() && ((dataRequest->GetStart() + dataRequest->GetLength()) >= streamTrack->GetStreamLength()))
@@ -992,6 +1019,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
               // we are not receiving more data, complete request
               this->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), streamTrack->GetStreamLength());
 
+              dataResponse->SetNoMoreDataAvailable(true);
               streamPackage->SetCompleted((dataResponse->GetBuffer()->GetBufferOccupiedSpace() != 0) ? S_OK : E_NO_MORE_DATA_AVAILABLE);
             }
             else if (this->IsLiveStreamDetected() && (this->connectionState != Opened))
@@ -1020,6 +1048,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
 
               this->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u', requesting data from '%lld' to '%lld', not found stream fragment", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetStart() + dataRequest->GetLength());
 
+              dataResponse->SetNoMoreDataAvailable(true);
               streamPackage->SetCompleted(E_NO_MORE_DATA_AVAILABLE);
             }
 
@@ -1094,6 +1123,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
             // connection is lost and we cannot reopen it
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: connection lost, no more data available, request '%u', stream '%u'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, packetRequest->GetId(), packetRequest->GetStreamId());
 
+            packetResponse->SetConnectionLostCannotReopen(true);
             streamPackage->SetCompleted(E_CONNECTION_LOST_CANNOT_REOPEN);
           }
           else if (this->IsEndOfStreamReached() && (streamTrack->GetStreamFragmentProcessing() >= streamTrack->GetStreamFragments()->Count()))
@@ -1101,6 +1131,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
             // we are not receiving more data, complete request
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', stream '%u'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, packetRequest->GetId(), packetRequest->GetStreamId());
 
+            packetResponse->SetNoMoreDataAvailable(true);
             streamPackage->SetCompleted(E_NO_MORE_DATA_AVAILABLE);
           }
           else if (this->IsLiveStreamDetected() && (this->connectionState != Opened))
@@ -1152,7 +1183,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
         {
           CRtspStreamTrack *track = this->streamTracks->GetItem(i);
 
-          track->SetLastProcessedSize(track->GetCurrentProcessedSize());
+          if (track->GetCurrentProcessedSize() != 0)
+          {
+            track->SetLastProcessedSize(track->GetCurrentProcessedSize());
+          }
           track->SetCurrentProcessedSize(0);
 
           // in case of live stream remove all downloaded and processed stream fragments before reported stream time
@@ -1213,9 +1247,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
           }
 
           // store all stream fragments (which are not stored) to file
-          if ((track->GetCacheFile()->GetCacheFile() != NULL) && (track->GetStreamFragments()->Count() != 0))
+          if ((track->GetCacheFile()->GetCacheFile() != NULL) && (track->GetStreamFragments()->Count() != 0) && (track->GetStreamFragments()->GetLoadedToMemorySize() > CACHE_FILE_RELOAD_SIZE))
           {
-            track->GetCacheFile()->StoreItems(track->GetStreamFragments(), this->lastStoreTime, this->IsWholeStreamDownloaded());
+            track->GetCacheFile()->StoreItems(track->GetStreamFragments(), this->lastStoreTime, false, this->IsWholeStreamDownloaded());
           }
         }
       }

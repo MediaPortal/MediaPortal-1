@@ -41,11 +41,33 @@ void CStreamPackageResponse::SetDiscontinuity(bool discontinuity)
   this->flags |= discontinuity ? STREAM_PACKAGE_RESPONSE_FLAG_DISCONTINUITY : STREAM_PACKAGE_RESPONSE_FLAG_NONE;
 }
 
+void CStreamPackageResponse::SetNoMoreDataAvailable(bool noMoreDataAvailable)
+{
+  this->flags &= ~STREAM_PACKAGE_RESPONSE_FLAG_NO_MORE_DATA_AVAILABLE;
+  this->flags |= noMoreDataAvailable ? STREAM_PACKAGE_RESPONSE_FLAG_NO_MORE_DATA_AVAILABLE : STREAM_PACKAGE_RESPONSE_FLAG_NONE;
+}
+
+void CStreamPackageResponse::SetConnectionLostCannotReopen(bool connectionLostCannotReopen)
+{
+  this->flags &= ~STREAM_PACKAGE_RESPONSE_FLAG_CONNECTION_LOST_CANNOT_REOPEN;
+  this->flags |= connectionLostCannotReopen ? STREAM_PACKAGE_RESPONSE_FLAG_CONNECTION_LOST_CANNOT_REOPEN : STREAM_PACKAGE_RESPONSE_FLAG_NONE;
+}
+
 /* other methods */
 
 bool CStreamPackageResponse::IsDiscontinuity(void)
 {
   return this->IsSetFlags(STREAM_PACKAGE_RESPONSE_FLAG_DISCONTINUITY);
+}
+
+bool CStreamPackageResponse::IsNoMoreDataAvailable(void)
+{
+  return this->IsSetFlags(STREAM_PACKAGE_RESPONSE_FLAG_NO_MORE_DATA_AVAILABLE);
+}
+
+bool CStreamPackageResponse::IsConnectionLostCannotReopen(void)
+{
+  return this->IsSetFlags(STREAM_PACKAGE_RESPONSE_FLAG_CONNECTION_LOST_CANNOT_REOPEN);
 }
 
 CStreamPackageResponse *CStreamPackageResponse::Clone(void)

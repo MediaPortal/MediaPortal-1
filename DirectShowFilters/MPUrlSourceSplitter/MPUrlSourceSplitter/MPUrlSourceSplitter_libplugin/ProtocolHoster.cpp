@@ -362,6 +362,46 @@ HRESULT CProtocolHoster::LoadPlugins(void)
   return result;
 }
 
+bool CProtocolHoster::IsLiveStreamSpecified(void)
+{
+  return this->activeProtocol->IsLiveStreamSpecified();
+}
+
+bool CProtocolHoster::IsLiveStreamDetected(void)
+{
+  return this->activeProtocol->IsLiveStreamDetected();
+}
+
+bool CProtocolHoster::IsLiveStream(void)
+{
+  return this->activeProtocol->IsLiveStream();
+}
+
+bool CProtocolHoster::IsSetStreamLength(void)
+{
+  return this->activeProtocol->IsSetStreamLength();
+}
+
+bool CProtocolHoster::IsStreamLengthEstimated(void)
+{
+  return this->activeProtocol->IsStreamLengthEstimated();
+}
+
+bool CProtocolHoster::IsWholeStreamDownloaded(void)
+{
+  return this->activeProtocol->IsWholeStreamDownloaded();
+}
+
+bool CProtocolHoster::IsEndOfStreamReached(void)
+{
+  return this->activeProtocol->IsEndOfStreamReached();
+}
+
+bool CProtocolHoster::IsConnectionLostCannotReopen(void)
+{
+  return this->activeProtocol->IsConnectionLostCannotReopen();
+}
+
 /* protected methods */
 
 CHosterPluginMetadata *CProtocolHoster::CreateHosterPluginMetadata(HRESULT *result, CLogger *logger, CParameterCollection *configuration, const wchar_t *hosterName, const wchar_t *pluginLibraryFileName)

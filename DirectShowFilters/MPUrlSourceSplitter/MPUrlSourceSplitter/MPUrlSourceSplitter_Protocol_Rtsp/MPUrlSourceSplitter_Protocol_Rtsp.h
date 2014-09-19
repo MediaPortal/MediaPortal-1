@@ -33,8 +33,6 @@
 #define TOTAL_SUPPORTED_PROTOCOLS                                             1
 wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { L"RTSP" };
 
-#define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                                    1 * 1024 * 1024
-
 #define MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_FLAG_NONE                        PROTOCOL_PLUGIN_FLAG_NONE
 
 // only closes curl instance (stop receive data in curl instance), but stays in memory

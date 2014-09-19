@@ -32,7 +32,15 @@
 
 #define PARSER_PLUGIN_FLAG_NONE                                       PLUGIN_FLAG_NONE
 
-#define PARSER_PLUGIN_FLAG_LAST                                       (PLUGIN_FLAG_LAST + 0)
+#define PARSER_PLUGIN_FLAG_LIVE_STREAM_SPECIFIED                      (1 << (PLUGIN_FLAG_LAST + 0))
+#define PARSER_PLUGIN_FLAG_LIVE_STREAM_DETECTED                       (1 << (PLUGIN_FLAG_LAST + 1))
+#define PARSER_PLUGIN_FLAG_SET_STREAM_LENGTH                          (1 << (PLUGIN_FLAG_LAST + 2))
+#define PARSER_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED                    (1 << (PLUGIN_FLAG_LAST + 3))
+#define PARSER_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED                    (1 << (PLUGIN_FLAG_LAST + 4))
+#define PARSER_PLUGIN_FLAG_END_OF_STREAM_REACHED                      (1 << (PLUGIN_FLAG_LAST + 5))
+#define PARSER_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN              (1 << (PLUGIN_FLAG_LAST + 6))
+
+#define PARSER_PLUGIN_FLAG_LAST                                       (PLUGIN_FLAG_LAST + 7)
 
 #define PARSER_RESULT_PENDING                                         1
 #define PARSER_RESULT_NOT_KNOWN                                       2
@@ -180,6 +188,38 @@ public:
 
   /* other methods */
 
+  // tests if stream is specified as live stream by configuration
+  // @return : true if stream is specified as live stream, false otherwise
+  virtual bool IsLiveStreamSpecified(void);
+
+  // tests if stream is detected as live stream
+  // @return : true if stream is detected as live stream
+  virtual bool IsLiveStreamDetected(void);
+
+  // tests if stream is specified or detected as live stream
+  // @return : true if stream is specified or detected as live stream
+  virtual bool IsLiveStream(void);
+
+  // tests if stream length was set
+  // @return : true if stream length was set, false otherwise
+  virtual bool IsSetStreamLength(void);
+
+  // tests if stream length is estimated
+  // @return : true if stream length is estimated, false otherwise
+  virtual bool IsStreamLengthEstimated(void);
+
+  // tests if whole stream is downloaded (no gaps)
+  // @return : true if whole stream is downloaded
+  virtual bool IsWholeStreamDownloaded(void);
+
+  // tests if end of stream is reached (but it can be with gaps)
+  // @return : true if end of stream reached, false otherwise
+  virtual bool IsEndOfStreamReached(void);
+
+  // tests if connection was lost and can't be opened again
+  // @return : true if connection was lost and can't be opened again, false otherwise
+  virtual bool IsConnectionLostCannotReopen(void);
+
 protected:
   // holds logger instance
   CLogger *logger;
@@ -191,8 +231,12 @@ protected:
   HRESULT parserResult;
   // holds connection parameters
   CParameterCollection *connectionParameters;
+  // holds reported stream time and position
+  uint64_t reportedStreamTime;
+  uint64_t reportedStreamPosition;
 
   /* methods */
+
 };
 
 #endif

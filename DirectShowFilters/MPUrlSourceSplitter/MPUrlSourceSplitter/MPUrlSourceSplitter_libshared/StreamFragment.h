@@ -63,7 +63,7 @@ public:
   // @param streamFragmentIndex : the index of stream fragment (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
   virtual void SetProcessed(bool processed, unsigned int streamFragmentIndex);
 
-  // set discontinuity
+  // sets discontinuity
   // @param discontinuity : true if discontinuity after data, false otherwise
   // @param streamFragmentIndex : the index of stream fragment (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
   virtual void SetDiscontinuity(bool discontinuity, unsigned int streamFragmentIndex);

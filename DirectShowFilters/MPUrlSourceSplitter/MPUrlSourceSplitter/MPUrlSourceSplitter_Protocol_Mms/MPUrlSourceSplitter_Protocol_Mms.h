@@ -48,8 +48,6 @@
 #define TOTAL_SUPPORTED_PROTOCOLS                                     1
 wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =             { L"MMS" };
 
-#define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                            1 * 1024 * 1024
-
 #define CHUNK_HEADER_LENGTH                                           4   // 2bytes chunk type and 2bytes chunk length
 #define EXT_HEADER_LENGTH                                             8   // 4bytes sequence, 2bytes useless and 2bytes chunk length
 

@@ -108,6 +108,9 @@ public:
   // @param startIndex : the index of first processed stream fragment to recalculate start position
   virtual void RecalculateProcessedStreamFragmentStartPosition(unsigned int startIndex);
 
+  // clear collection of items
+  virtual void Clear(void);
+
   /* index methods */
 
   // insert item with specified item index to indexes

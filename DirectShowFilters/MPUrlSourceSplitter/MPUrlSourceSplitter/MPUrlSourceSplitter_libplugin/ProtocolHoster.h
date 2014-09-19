@@ -153,6 +153,38 @@ public:
   // @return : S_OK if successful, E_NO_PROTOCOL_LOADED if no protocol loaded, error code otherwise
   virtual HRESULT LoadPlugins(void);
 
+  // tests if stream is specified as live stream by configuration
+  // @return : true if stream is specified as live stream, false otherwise
+  virtual bool IsLiveStreamSpecified(void);
+
+  // tests if stream is detected as live stream
+  // @return : true if stream is detected as live stream
+  virtual bool IsLiveStreamDetected(void);
+
+  // tests if stream is specified or detected as live stream
+  // @return : true if stream is specified or detected as live stream
+  virtual bool IsLiveStream(void);
+
+  // tests if stream length was set
+  // @return : true if stream length was set, false otherwise
+  virtual bool IsSetStreamLength(void);
+
+  // tests if stream length is estimated
+  // @return : true if stream length is estimated, false otherwise
+  virtual bool IsStreamLengthEstimated(void);
+
+  // tests if whole stream is downloaded (no gaps)
+  // @return : true if whole stream is downloaded
+  virtual bool IsWholeStreamDownloaded(void);
+
+  // tests if end of stream is reached (but it can be with gaps)
+  // @return : true if end of stream reached, false otherwise
+  virtual bool IsEndOfStreamReached(void);
+
+  // tests if connection was lost and can't be opened again
+  // @return : true if connection was lost and can't be opened again, false otherwise
+  virtual bool IsConnectionLostCannotReopen(void);
+
 protected:
   // stores active protocol
   CProtocolPlugin *activeProtocol;

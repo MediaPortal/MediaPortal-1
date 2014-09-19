@@ -157,6 +157,25 @@ void CLinearBuffer::RemoveFromBufferAndMove(unsigned int length)
   }
 }
 
+void CLinearBuffer::RemoveFromBufferEnd(unsigned int length)
+{
+  // the length to remove from buffer cannot be greater than occupied space
+  length = min(length, this->GetBufferOccupiedSpace());
+
+  if (length > 0)
+  {
+    if (length == this->GetBufferOccupiedSpace())
+    {
+      // removing all data from buffer
+      this->ClearBuffer();
+    }
+    else
+    {
+      this->dataEnd -= length;
+    }
+  }
+}
+
 unsigned int CLinearBuffer::AddToBuffer(const unsigned char *source, unsigned int length)
 {
   unsigned int returnValue = 0;

@@ -38,6 +38,8 @@ CParserPlugin::CParserPlugin(HRESULT *result, CLogger *logger, CParameterCollect
   this->protocolHoster = NULL;
   this->parserResult = PARSER_RESULT_PENDING;
   this->connectionParameters = NULL;
+  this->reportedStreamTime = 0;
+  this->reportedStreamPosition = 0;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -161,10 +163,15 @@ void CParserPlugin::ClearSession(void)
 
   this->parserResult = PARSER_RESULT_PENDING;
   this->connectionParameters->Clear();
+  this->reportedStreamTime = 0;
+  this->reportedStreamPosition = 0;
 }
 
 void CParserPlugin::ReportStreamTime(uint64_t streamTime, uint64_t streamPosition)
 {
+  this->reportedStreamTime = streamTime;
+  this->reportedStreamPosition = streamPosition;
+
   this->protocolHoster->ReportStreamTime(streamTime, streamPosition);
 }
 
@@ -210,5 +217,45 @@ HRESULT CParserPlugin::SetConnectionParameters(const CParameterCollection *param
 }
 
 /* other methods */
+
+bool CParserPlugin::IsLiveStreamSpecified(void)
+{
+  return this->protocolHoster->IsLiveStreamSpecified();
+}
+
+bool CParserPlugin::IsLiveStreamDetected(void)
+{
+  return this->protocolHoster->IsLiveStreamDetected();
+}
+
+bool CParserPlugin::IsLiveStream(void)
+{
+  return this->protocolHoster->IsLiveStream();
+}
+
+bool CParserPlugin::IsSetStreamLength(void)
+{
+  return this->protocolHoster->IsSetStreamLength();
+}
+
+bool CParserPlugin::IsStreamLengthEstimated(void)
+{
+  return this->protocolHoster->IsStreamLengthEstimated();
+}
+
+bool CParserPlugin::IsWholeStreamDownloaded(void)
+{
+  return this->protocolHoster->IsWholeStreamDownloaded();
+}
+
+bool CParserPlugin::IsEndOfStreamReached(void)
+{
+  return this->protocolHoster->IsEndOfStreamReached();
+}
+
+bool CParserPlugin::IsConnectionLostCannotReopen(void)
+{
+  return this->protocolHoster->IsConnectionLostCannotReopen();
+}
 
 /* protected methods */

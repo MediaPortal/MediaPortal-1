@@ -96,9 +96,10 @@ public:
   // it also release from memory items which are loaded to memory more than specified timestamp
   // @param collection : the collection of items to store to cache file or release from memory
   // @param lastCheckTime : the last check time in ticks
-  // @param force : true if all items should be stored to cache file or released from memory, false otherwise
+  // @param forceCleanUp : true if all items should be released from memory, false otherwise
+  // @param forceStoreToFile : true if all items should be stored to cache file, false otherwise
   // @return : true if successful (all unstored items (which are longer in memory than specified time stamp) were stored, all items (which are longer in memory than specified time stamp) were released), false otherwise
-  bool StoreItems(CCacheFileItemCollection *collection, unsigned int lastCheckTime, bool force);
+  bool StoreItems(CCacheFileItemCollection *collection, unsigned int lastCheckTime, bool forceCleanUp, bool forceStoreToFile);
 
   // removes stored items from cache file, used space is marked as free and can be possibly reused
   // @param collection : the collection of items to remove from cache file

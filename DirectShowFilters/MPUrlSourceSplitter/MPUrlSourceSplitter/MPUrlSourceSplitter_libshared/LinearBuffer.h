@@ -106,6 +106,10 @@ public:
   // @param length : the length of data to remove from buffer
   void RemoveFromBufferAndMove(unsigned int length);
 
+  // remove from buffer counted from end
+  // @param length : the length of data to remove from buffer
+  void RemoveFromBufferEnd(unsigned int length);
+
   // copy data from internal buffer to destination, data are copied by packets if specified packetSize
   // @param destination : the reference to destination buffer to copy data
   // @param length : the length of data to copy

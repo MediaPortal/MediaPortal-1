@@ -43,8 +43,6 @@ unsigned char FLV_FILE_HEADER[FLV_FILE_HEADER_LENGTH] =                         
 // defines delay between two bootstrap info requests
 #define LAST_REQUEST_BOOTSTRAP_INFO_DELAY                                         10000
 
-#define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                                        1 * 1024 * 1024
-
 #define MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_FLAG_NONE                            PROTOCOL_PLUGIN_FLAG_NONE
 
 // only closes curl instance (stop receive data in curl instance), but stays in memory

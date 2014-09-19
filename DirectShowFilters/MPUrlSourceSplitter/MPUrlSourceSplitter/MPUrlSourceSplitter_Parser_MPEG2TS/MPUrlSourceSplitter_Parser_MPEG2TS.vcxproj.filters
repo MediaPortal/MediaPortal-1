@@ -27,10 +27,19 @@
     <ClInclude Include="TsPacket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ContinuousStreamRange.h">
+    <ClInclude Include="Mpeg2tsStreamFragment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ContinuousStreamRangeCollection.h">
+    <ClInclude Include="Mpeg2tsStreamFragmentCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MPUrlSourceSplitter_Parser_MPEG2TS_Parameters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexedMpeg2tsStreamFragment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexedMpeg2tsStreamFragmentCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,10 +56,16 @@
     <ClCompile Include="TsPacket.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ContinuousStreamRange.cpp">
+    <ClCompile Include="Mpeg2tsStreamFragment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ContinuousStreamRangeCollection.cpp">
+    <ClCompile Include="Mpeg2tsStreamFragmentCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexedMpeg2tsStreamFragment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexedMpeg2tsStreamFragmentCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

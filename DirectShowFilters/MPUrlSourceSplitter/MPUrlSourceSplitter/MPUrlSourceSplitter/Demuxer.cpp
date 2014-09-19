@@ -1140,8 +1140,6 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
   {
     this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, time: %lld, seek_pts: %lld", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, this->demuxerId, time, seek_pts);
 
-    // enable reading from seek method, do not allow (yet) to read from demuxing worker
-    this->filter->SetPauseSeekStopMode(PAUSE_SEEK_STOP_MODE_DISABLE_DEMUXING);
     this->flags |= DEMUXER_FLAG_DISABLE_DEMUXING_WITH_RETURN_TO_DEMUXING_WORKER;
     this->flags &= ~DEMUXER_FLAG_DISABLE_READING;
     // wait until DemuxingWorker() confirm
@@ -1160,6 +1158,9 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
 
     // seek to time
     int64_t seekedTime = this->filter->SeekToTime(this->demuxerId, time / (DSHOW_TIME_BASE / 1000)); // (1000 / DSHOW_TIME_BASE)
+
+    // enable reading from seek method, do not allow (yet) to read from demuxing worker
+    this->filter->SetPauseSeekStopMode(PAUSE_SEEK_STOP_MODE_DISABLE_DEMUXING);
 
     if (seekedTime >= 0)
     {
@@ -1283,6 +1284,11 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
               int avResult = 0;
               do
               {
+                if ((avResult == E_CONNECTION_LOST_TRYING_REOPEN) || this->IsSetFlags(DEMUXER_FLAG_PENDING_DISCONTINUITY))
+                {
+                  this->flags &= ~DEMUXER_FLAG_PENDING_DISCONTINUITY;
+                }
+
                 avResult = av_read_frame(this->formatContext, &avPacket);
 
                 // assume we are not eof
@@ -1766,6 +1772,11 @@ HRESULT CDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
                   int avResult = 0;
                   do
                   {
+                    if ((avResult == E_CONNECTION_LOST_TRYING_REOPEN) || this->IsSetFlags(DEMUXER_FLAG_PENDING_DISCONTINUITY))
+                    {
+                      this->flags &= ~DEMUXER_FLAG_PENDING_DISCONTINUITY;
+                    }
+
                     avResult = av_read_frame(this->formatContext, &avPacket);
 
                     // assume we are not eof
@@ -2023,6 +2034,11 @@ HRESULT CDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
       int avResult = 0;
       do
       {
+        if ((avResult == E_CONNECTION_LOST_TRYING_REOPEN) || this->IsSetFlags(DEMUXER_FLAG_PENDING_DISCONTINUITY))
+        {
+          this->flags &= ~DEMUXER_FLAG_PENDING_DISCONTINUITY;
+        }
+
         avResult = av_read_frame(this->formatContext, &avPacket);
 
         // assume we are not eof
@@ -2115,6 +2131,11 @@ HRESULT CDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
       int avResult = 0;
       do
       {
+        if ((avResult == E_CONNECTION_LOST_TRYING_REOPEN) || this->IsSetFlags(DEMUXER_FLAG_PENDING_DISCONTINUITY))
+        {
+          this->flags &= ~DEMUXER_FLAG_PENDING_DISCONTINUITY;
+        }
+
         avResult = av_read_frame(this->formatContext, &avPacket);
 
         // assume we are not eof
@@ -3064,8 +3085,8 @@ HRESULT CDemuxer::InitFormatContext(void)
 
       this->formatContext->flags |= AVFMT_FLAG_IGNPARSERSYNC;
 
-      // set minimum time for stream analysis in FFmpeg (1000 ms)
-      this->formatContext->max_analyze_duration = 1000000;
+      // set minimum time for stream analysis in FFmpeg (2000 ms)
+      this->formatContext->max_analyze_duration = 2000000;
 
       unsigned int startTime = GetTickCount();
 

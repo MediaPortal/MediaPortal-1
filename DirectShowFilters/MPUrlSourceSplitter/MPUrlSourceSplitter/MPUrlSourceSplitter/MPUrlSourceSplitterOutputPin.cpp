@@ -728,9 +728,9 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
           if (lock.IsLocked())
           {
             // store all media packets (which are not stored) to file
-            if ((this->cacheFile->GetCacheFile() != NULL) && (this->mediaPackets->Count() != 0))
+            if ((this->cacheFile->GetCacheFile() != NULL) && (this->mediaPackets->Count() != 0) && (this->mediaPackets->GetLoadedToMemorySize() > CACHE_FILE_RELOAD_SIZE))
             {
-              this->cacheFile->StoreItems(this->mediaPackets, this->lastStoreTime, false);
+              this->cacheFile->StoreItems(this->mediaPackets, this->lastStoreTime, false, false);
             }
           }
         }

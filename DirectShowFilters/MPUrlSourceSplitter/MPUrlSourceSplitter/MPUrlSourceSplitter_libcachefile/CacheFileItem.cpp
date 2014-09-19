@@ -22,6 +22,7 @@
 
 #include "CacheFileItem.h"
 #include "FastSearchItemCollection.h"
+#include "CacheFileItemCollection.h"
 
 CCacheFileItem::CCacheFileItem(HRESULT *result)
   : CFastSearchItem(result)
@@ -75,7 +76,9 @@ void CCacheFileItem::SetCacheFilePosition(int64_t position, unsigned int cacheFi
   {
     this->length = this->GetBuffer()->GetBufferOccupiedSpace();
     this->buffer->DeleteBuffer();
-    this->loadedToMemoryTime = CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET;
+    //this->loadedToMemoryTime = CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET;
+
+    this->SetLoadedToMemoryTime(CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET, UINT_MAX);
   }
 
   if ((this->owner != NULL) && (cacheFileItemIndex != UINT_MAX))
@@ -86,6 +89,22 @@ void CCacheFileItem::SetCacheFilePosition(int64_t position, unsigned int cacheFi
 
 void CCacheFileItem::SetLoadedToMemoryTime(unsigned int time, unsigned int cacheFileItemIndex)
 {
+  if (this->owner != NULL)
+  {
+    CCacheFileItemCollection *collection = dynamic_cast<CCacheFileItemCollection *>(this->owner);
+
+    if (this->IsLoadedToMemory() && (time == CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET))
+    {
+      // removing from memory
+      collection->SetLoadedToMemorySize(collection->GetLoadedToMemorySize() - this->GetLength());
+    }
+    else if ((!this->IsLoadedToMemory()) && (time != CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET))
+    {
+      // loading to memory
+      collection->SetLoadedToMemorySize(collection->GetLoadedToMemorySize() + this->GetLength());
+    }
+  }
+
   this->loadedToMemoryTime = time;
 
   if ((this->owner != NULL) && (cacheFileItemIndex != UINT_MAX))

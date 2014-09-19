@@ -535,11 +535,31 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
         // found data length is lower than requested
         // check request flags, maybe we can complete request
 
-        if ((request->IsSetAnyNonZeroDataLength() && (foundDataLength > 0)) ||
-          (request->IsSetAnyDataLength()))
+        if ((request->IsSetAnyNonZeroDataLength() || request->IsSetAnyDataLength()) && (foundDataLength > 0))
         {
           // request can be completed with any length of available data
           streamPackage->SetCompleted(S_OK);
+        }
+        else if (request->IsSetAnyDataLength() && (foundDataLength == 0))
+        {
+          // no data available, check end of stream and connection lost
+
+          if (this->IsConnectionLostCannotReopen())
+          {
+            // connection is lost and we cannot reopen it
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: connection lost, no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, request->GetId(), request->GetStart(), request->GetLength(), this->streamLength);
+
+            response->SetConnectionLostCannotReopen(true);
+            streamPackage->SetCompleted(S_OK);
+          }
+          else if (this->IsEndOfStreamReached() && ((request->GetStart() + request->GetLength()) >= this->streamLength))
+          {
+            // we are not receiving more data, complete request
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, request->GetId(), request->GetStart(), request->GetLength(), this->streamLength);
+
+            response->SetNoMoreDataAvailable(true);
+            streamPackage->SetCompleted(S_OK);
+          }
         }
         else
         {
@@ -552,6 +572,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
             // connection is lost and we cannot reopen it
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: connection lost, no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, request->GetId(), request->GetStart(), request->GetLength(), this->streamLength);
 
+            response->SetConnectionLostCannotReopen(true);
             streamPackage->SetCompleted((response->GetBuffer()->GetBufferOccupiedSpace() != 0) ? S_OK : E_CONNECTION_LOST_CANNOT_REOPEN);
           }
           else if (this->IsEndOfStreamReached() && ((request->GetStart() + request->GetLength()) >= this->streamLength))
@@ -559,6 +580,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
             // we are not receiving more data, complete request
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, request->GetId(), request->GetStart(), request->GetLength(), this->streamLength);
 
+            response->SetNoMoreDataAvailable(true);
             streamPackage->SetCompleted((response->GetBuffer()->GetBufferOccupiedSpace() != 0) ? S_OK : E_NO_MORE_DATA_AVAILABLE);
           }
           else if (this->IsLiveStreamDetected() && (this->connectionState != Opened))
@@ -597,7 +619,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
     {
       this->lastStoreTime = GetTickCount();
 
-      this->lastProcessedSize = this->currentProcessedSize;
+      if (this->currentProcessedSize != 0)
+      {
+        this->lastProcessedSize = this->currentProcessedSize;
+      }
       this->currentProcessedSize = 0;
 
       if (this->cacheFile->GetCacheFile() == NULL)
@@ -642,9 +667,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
       }
 
       // store all stream fragments (which are not stored) to file
-      if ((this->cacheFile->GetCacheFile() != NULL) && (this->streamFragments->Count() != 0))
+      if ((this->cacheFile->GetCacheFile() != NULL) && (this->streamFragments->Count() != 0) && (this->streamFragments->GetLoadedToMemorySize() > CACHE_FILE_RELOAD_SIZE))
       {
-        this->cacheFile->StoreItems(this->streamFragments, this->lastStoreTime, false);
+        this->cacheFile->StoreItems(this->streamFragments, this->lastStoreTime, false, this->IsWholeStreamDownloaded());
       }
     }
   }

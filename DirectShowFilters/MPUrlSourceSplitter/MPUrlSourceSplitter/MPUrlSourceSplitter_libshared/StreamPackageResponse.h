@@ -28,8 +28,10 @@
 #define STREAM_PACKAGE_RESPONSE_FLAG_NONE                             FLAGS_NONE
 
 #define STREAM_PACKAGE_RESPONSE_FLAG_DISCONTINUITY                    (1 << (FLAGS_LAST + 0))
+#define STREAM_PACKAGE_RESPONSE_FLAG_NO_MORE_DATA_AVAILABLE           (1 << (FLAGS_LAST + 1))
+#define STREAM_PACKAGE_RESPONSE_FLAG_CONNECTION_LOST_CANNOT_REOPEN    (1 << (FLAGS_LAST + 2))
 
-#define STREAM_PACKAGE_RESPONSE_FLAG_LAST                             (FLAGS_LAST + 1)
+#define STREAM_PACKAGE_RESPONSE_FLAG_LAST                             (FLAGS_LAST + 3)
 
 class CStreamPackageResponse : public CFlags
 {
@@ -41,15 +43,31 @@ public:
 
   /* set methods */
 
-  // set discontinuity
+  // sets discontinuity
   // @param discontinuity : true if discontinuity after data, false otherwise
   virtual void SetDiscontinuity(bool discontinuity);
+
+  // sets no more data available
+  // @param noMoreDataAvailable : true if no more data available, false otherwise
+  virtual void SetNoMoreDataAvailable(bool noMoreDataAvailable);
+
+  // sets connection lost cannot reopen
+  // @param connectionLostCannotReopen : true if connection lost cannot reopen, false otherwise
+  virtual void SetConnectionLostCannotReopen(bool connectionLostCannotReopen);
 
   /* other methods */
 
   // tests if discontinuity is set
   // @return : true if discontinuity is set, false otherwise
   virtual bool IsDiscontinuity(void);
+
+  // tests if no more data available is set
+  // @return : true if no more data available is set, false otherwise
+  virtual bool IsNoMoreDataAvailable(void);
+
+  // tests if connection lost cannot reopen is set
+  // @return : true if connection lost cannot reopen is set, false otherwise
+  virtual bool IsConnectionLostCannotReopen(void);
 
   // deeply clones current instance of stream package response
   // @return : deep clone of current instance or NULL if error

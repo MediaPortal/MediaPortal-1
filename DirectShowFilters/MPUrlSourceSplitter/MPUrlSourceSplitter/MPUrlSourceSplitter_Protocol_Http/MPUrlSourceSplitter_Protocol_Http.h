@@ -34,8 +34,6 @@
 #define TOTAL_SUPPORTED_PROTOCOLS                                             2
 wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { L"HTTP", L"HTTPS" };
 
-#define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                                    1 * 1024 * 1024
-
 #define MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_NONE                        PROTOCOL_PLUGIN_FLAG_NONE
 
 #define MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_RANGES_SUPPORTED            (1 << (PROTOCOL_PLUGIN_FLAG_LAST + 0))

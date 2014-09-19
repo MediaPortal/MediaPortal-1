@@ -24,7 +24,14 @@
 #define __MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_DEFINED
 
 #include "ParserPlugin.h"
-#include "ContinuousStreamRangeCollection.h"
+#include "CacheFile.h"
+#include "Mpeg2tsStreamFragmentCollection.h"
+
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_NONE               PARSER_PLUGIN_FLAG_NONE
+
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_RECEIVE_DATA       (1 << (PARSER_PLUGIN_FLAG_LAST + 0))
+
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_LAST               (PARSER_PLUGIN_FLAG_LAST + 1)
 
 #define PARSER_NAME                                                   L"PARSER_MPEG2TS"
 
@@ -51,6 +58,22 @@ public:
   // @return : one of Action values
   virtual Action GetAction(void);
 
+  // tests if stream length was set
+  // @return : true if stream length was set, false otherwise
+  virtual bool IsSetStreamLength(void);
+
+  // tests if stream length is estimated
+  // @return : true if stream length is estimated, false otherwise
+  virtual bool IsStreamLengthEstimated(void);
+
+  // tests if whole stream is downloaded (no gaps)
+  // @return : true if whole stream is downloaded
+  virtual bool IsWholeStreamDownloaded(void);
+
+  // tests if end of stream is reached (but it can be with gaps)
+  // @return : true if end of stream reached, false otherwise
+  virtual bool IsEndOfStreamReached(void);
+
   // CPlugin
 
   // return reference to null-terminated string which represents plugin name
@@ -65,6 +88,18 @@ public:
 
   // ISeeking interface
 
+  // request protocol implementation to receive data from specified time (in ms) for specified stream
+  // this method is called with same time for each stream in protocols with multiple streams
+  // @param streamId : the stream ID to receive data from specified time
+  // @param time : the requested time (zero is start of stream)
+  // @return : time (in ms) where seek finished or lower than zero if error
+  virtual int64_t SeekToTime(unsigned int streamId, int64_t time);
+
+  // set pause, seek or stop mode
+  // in such mode are reading operations disabled
+  // @param pauseSeekStopMode : one of PAUSE_SEEK_STOP_MODE values
+  virtual void SetPauseSeekStopMode(unsigned int pauseSeekStopMode);
+
   // IDemuxerOwner interface
 
   // process stream package request
@@ -72,7 +107,21 @@ public:
   // @return : S_OK if successful, error code only in case when error is not related to processing request
   virtual HRESULT ProcessStreamPackage(CStreamPackage *streamPackage);
 
+  // retrieves the progress of the stream reading operation
+  // @param streamProgress : reference to instance of class that receives the stream progress
+  // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_INVALIDARG if stream ID is unknown, E_UNEXPECTED if unexpected error
+  virtual HRESULT QueryStreamProgress(CStreamProgress *streamProgress);
+
   // ISimpleProtocol interface
+
+  // starts receiving data from specified url and configuration parameters
+  // @param parameters : the url and parameters used for connection
+  // @return : S_OK if url is loaded, false otherwise
+  virtual HRESULT StartReceivingData(CParameterCollection *parameters);
+
+  // request protocol implementation to cancel the stream reading operation
+  // @return : S_OK if successful
+  virtual HRESULT StopReceivingData(void);
   
   // clears current session
   virtual void ClearSession(void);
@@ -82,8 +131,40 @@ public:
 protected:
   // holds last received length of data when requesting parser result
   unsigned int lastReceivedLength;
-  // holds continuous stream ranges
-  CContinuousStreamRangeCollection *continuousStreamRanges;
+  // mutex for locking access to file, buffer, ...
+  HANDLE mutex;
+
+  // holds stream fragments
+  CMpeg2tsStreamFragmentCollection *streamFragments;
+  // holds last store time to cache file
+  unsigned int lastStoreTime;
+  // holds cache file
+  CCacheFile *cacheFile;
+  // holds last processed size from last store time
+  unsigned int lastProcessedSize;
+  unsigned int currentProcessedSize;
+  // holds which fragment is currently downloading (UINT_MAX means none)
+  unsigned int streamFragmentDownloading;
+  // holds which fragment have to be downloaded
+  // (UINT_MAX means next fragment, always reset after started download of fragment)
+  unsigned int streamFragmentToDownload;
+
+  // the length of stream
+  int64_t streamLength;
+
+  // holds stream package for processing (only reference, not deep clone)
+  CStreamPackage *streamPackage;
+
+  // holds pause, seek or stop mode
+  volatile unsigned int pauseSeekStopMode;
+
+  // holds position offset added to stream length 
+  int64_t positionOffset;
+
+  /* received data worker */
+
+  HANDLE receiveDataWorkerThread;
+  volatile bool receiveDataWorkerShouldExit;
 
   /* methods */
 
@@ -91,6 +172,23 @@ protected:
   // @param extension : the extension of store file
   // @return : store file name or NULL if error
   wchar_t *GetStoreFile(const wchar_t *extension);
+
+  // gets byte position in buffer
+  // it is always reset on seek
+  // @return : byte position in buffer
+  int64_t GetBytePosition(void);
+
+  /* receive data worker */
+
+  // creates receive data worker
+  // @return : S_OK if successful
+  HRESULT CreateReceiveDataWorker(void);
+
+  // destroys receive data worker
+  // @return : S_OK if successful
+  HRESULT DestroyReceiveDataWorker(void);
+
+  static unsigned int WINAPI ReceiveDataWorker(LPVOID lpParam);
 };
 
 #endif

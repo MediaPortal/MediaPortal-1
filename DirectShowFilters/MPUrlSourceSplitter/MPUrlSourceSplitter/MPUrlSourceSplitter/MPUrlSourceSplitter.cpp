@@ -475,9 +475,12 @@ STDMETHODIMP CMPUrlSourceSplitter::Stop()
 
   if (!this->IsEnabledMethodActive())
   {
+    // stop creating demuxers
+    this->DestroyCreateAllDemuxersWorker();
+    // clear all demuxers
+    this->demuxers->Clear();
     // if we are not changing streams stop receiving data, data are not needed
     this->parserHoster->StopReceivingData();
-
     // clear also session, it will no longer be needed
     this->parserHoster->ClearSession();
   }

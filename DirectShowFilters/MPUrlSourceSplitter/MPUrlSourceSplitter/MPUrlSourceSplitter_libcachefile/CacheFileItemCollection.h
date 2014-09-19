@@ -51,9 +51,37 @@ public:
   // @return : S_OK if successful, error code otherwise
   virtual HRESULT GetCleanUpFromMemoryNotStoredToFileLoadedToMemoryItems(CIndexedCacheFileItemCollection *collection);
 
+  // gets loaded to memory size
+  // @return : loaded to memory size
+  virtual unsigned int GetLoadedToMemorySize(void);
+
   /* set methods */
 
+  // sets loaded to memory size
+  // @param size : loaded to memory size to set
+  virtual void SetLoadedToMemorySize(unsigned int size);
+
   /* other methods */
+
+  // add item to collection
+  // @param item : the reference to item to add
+  // @return : true if successful, false otherwise
+  virtual bool Add(CFastSearchItem *item);
+
+  // insert item to collection
+  // @param position : zero-based position to insert new item
+  // @param item : item to insert
+  // @result : true if successful, false otherwise
+  virtual bool Insert(unsigned int position, CFastSearchItem *item);
+
+  // clear collection of items
+  virtual void Clear(void);
+
+  // removes count of items from collection from specified index
+  // @param index : the index of item to start removing
+  // @param count : the count of items to remove
+  // @return : true if removed, false otherwise
+  virtual bool Remove(unsigned int index, unsigned int count);
 
   /* index methods */
 
@@ -84,6 +112,9 @@ public:
   virtual void ClearIndexes(void);
 
 public:
+
+  // holds amount of data loaded to memory
+  unsigned int loadedToMemorySize;
 
   // we need to maintain several indexes
   // first index : (!item->IsNoCleanUpFromMemory()) && item->IsStoredToFile() && item->IsLoadedToMemory()

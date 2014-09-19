@@ -316,6 +316,14 @@ void CStreamFragmentCollection::RecalculateProcessedStreamFragmentStartPosition(
   }
 }
 
+void CStreamFragmentCollection::Clear(void)
+{
+  __super::Clear();
+
+  this->startSearchingIndex = 0;
+  this->searchCount = 0;
+}
+
 /* index methods */
 
 bool CStreamFragmentCollection::InsertIndexes(unsigned int itemIndex)

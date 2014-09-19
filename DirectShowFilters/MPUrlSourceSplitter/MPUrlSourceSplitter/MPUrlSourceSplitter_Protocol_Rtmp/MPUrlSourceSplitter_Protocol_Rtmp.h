@@ -34,8 +34,6 @@
 #define TOTAL_SUPPORTED_PROTOCOLS                                             6
 wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { L"RTMP", L"RTMPT", L"RTMPE", L"RTMPTE", L"RTMPS", L"RTMPTS" };
 
-#define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                                    1 * 1024 * 1024
-
 #define MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_NONE                        PROTOCOL_PLUGIN_FLAG_NONE
 
 // only closes curl instance (stop receive data in curl instance), but stays in memory
@@ -184,7 +182,7 @@ protected:
   // holds last store time of storing stream fragments to file
   unsigned int lastStoreTime;
 
-  // the lenght of stream
+  // the length of stream
   int64_t streamLength;
 
   // holds video timestamp correction (calculated after seek)

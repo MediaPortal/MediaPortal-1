@@ -34,6 +34,8 @@
 #define METHOD_CLEAR_SESSION_NAME                                     L"ClearSession()"
 #endif
 
+#define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                            1 * 1024 * 1024
+
 #define PLUGIN_FLAG_NONE                                              FLAGS_NONE
 
 #define PLUGIN_FLAG_LAST                                              (FLAGS_LAST + 0)

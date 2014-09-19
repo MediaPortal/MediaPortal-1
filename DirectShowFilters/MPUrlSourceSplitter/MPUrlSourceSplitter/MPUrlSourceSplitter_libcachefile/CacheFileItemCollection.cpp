@@ -35,6 +35,7 @@ CCacheFileItemCollection::CCacheFileItemCollection(HRESULT *result)
 {
   this->indexCleanUpFromMemoryStoredToFileLoadedToMemory = NULL;
   this->indexCleanUpFromMemoryNotStoredToFileLoadedToMemory = NULL;
+  this->loadedToMemorySize = 0;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -101,9 +102,71 @@ HRESULT CCacheFileItemCollection::GetCleanUpFromMemoryNotStoredToFileLoadedToMem
   return result;
 }
 
+unsigned int CCacheFileItemCollection::GetLoadedToMemorySize(void)
+{
+  return this->loadedToMemorySize;
+}
+
 /* set methods */
 
+void CCacheFileItemCollection::SetLoadedToMemorySize(unsigned int size)
+{
+  this->loadedToMemorySize = size;
+}
+
 /* other methods */
+
+bool CCacheFileItemCollection::Add(CFastSearchItem *item)
+{
+  bool result = __super::Add(item);
+
+  if (result)
+  {
+    CCacheFileItem *cacheFileItem = dynamic_cast<CCacheFileItem *>(item);
+
+    CHECK_CONDITION_EXECUTE(cacheFileItem->IsLoadedToMemory(), this->loadedToMemorySize += cacheFileItem->GetLength());
+  }
+
+  return result;
+}
+
+bool CCacheFileItemCollection::Insert(unsigned int position, CFastSearchItem *item)
+{
+  bool result = __super::Insert(position, item);
+
+  if (result)
+  {
+    CCacheFileItem *cacheFileItem = dynamic_cast<CCacheFileItem *>(item);
+
+    CHECK_CONDITION_EXECUTE(cacheFileItem->IsLoadedToMemory(), this->loadedToMemorySize += cacheFileItem->GetLength());
+  }
+
+  return result;
+}
+
+void CCacheFileItemCollection::Clear(void)
+{
+  __super::Clear();
+
+  this->loadedToMemorySize = 0;
+}
+
+bool CCacheFileItemCollection::Remove(unsigned int index, unsigned int count)
+{
+  unsigned int size = 0;
+  for (unsigned int i = index; i < (index + count); i++)
+  {
+    CCacheFileItem *item = this->GetItem(i);
+
+    CHECK_CONDITION_EXECUTE(item->IsLoadedToMemory(), size += item->GetLength());
+  }
+
+  bool result = __super::Remove(index, count);
+
+  CHECK_CONDITION_EXECUTE(result, this->loadedToMemorySize -= size);
+
+  return result;
+}
 
 /* index methods */
 
@@ -188,7 +251,6 @@ bool CCacheFileItemCollection::InsertIndexes(unsigned int itemIndex)
     // revert base indexes
     CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_BASE), __super::RemoveIndexes(itemIndex, 1));
   }
-
 
   return result;
 }
