@@ -1333,19 +1333,24 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::StopReceivingData(void)
 HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::QueryStreamProgress(CStreamProgress *streamProgress)
 {
   HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, streamProgress);
-  CHECK_CONDITION_HRESULT(result, streamProgress->GetStreamId() < this->streamTracks->Count(), result, E_INVALIDARG);
 
-  if (SUCCEEDED(result))
   {
-    CRtspStreamTrack *track = this->streamTracks->GetItem(streamProgress->GetStreamId());
+    CLockMutex lock(this->lockMutex, INFINITE);
 
-    streamProgress->SetTotalLength((track->GetStreamLength() == 0) ? 1 : track->GetStreamLength());
-    streamProgress->SetCurrentLength((track->GetStreamLength() == 0) ? 0 : track->GetBytePosition());
+    CHECK_POINTER_DEFAULT_HRESULT(result, streamProgress);
+    CHECK_CONDITION_HRESULT(result, streamProgress->GetStreamId() < this->streamTracks->Count(), result, E_INVALIDARG);
 
-    if (!track->IsSetStreamLength())
+    if (SUCCEEDED(result))
     {
-      result = VFW_S_ESTIMATED;
+      CRtspStreamTrack *track = this->streamTracks->GetItem(streamProgress->GetStreamId());
+
+      streamProgress->SetTotalLength((track->GetStreamLength() == 0) ? 1 : track->GetStreamLength());
+      streamProgress->SetCurrentLength((track->GetStreamLength() == 0) ? 0 : track->GetBytePosition());
+
+      if (!track->IsSetStreamLength())
+      {
+        result = VFW_S_ESTIMATED;
+      }
     }
   }
 

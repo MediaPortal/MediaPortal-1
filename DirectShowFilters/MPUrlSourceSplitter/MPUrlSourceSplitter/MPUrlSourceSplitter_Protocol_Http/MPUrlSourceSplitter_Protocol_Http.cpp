@@ -1076,17 +1076,22 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StopReceivingData(void)
 HRESULT CMPUrlSourceSplitter_Protocol_Http::QueryStreamProgress(CStreamProgress *streamProgress)
 {
   HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, streamProgress);
-  CHECK_CONDITION_HRESULT(result, streamProgress->GetStreamId() == 0, result, E_INVALIDARG);
 
-  if (SUCCEEDED(result))
   {
-    streamProgress->SetTotalLength(this->streamLength);
-    streamProgress->SetCurrentLength(this->currentStreamPosition);
+    CLockMutex lock(this->lockMutex, INFINITE);
 
-    if (this->IsStreamLengthEstimated())
+    CHECK_POINTER_DEFAULT_HRESULT(result, streamProgress);
+    CHECK_CONDITION_HRESULT(result, streamProgress->GetStreamId() == 0, result, E_INVALIDARG);
+
+    if (SUCCEEDED(result))
     {
-      result = VFW_S_ESTIMATED;
+      streamProgress->SetTotalLength(this->streamLength);
+      streamProgress->SetCurrentLength(this->currentStreamPosition);
+
+      if (this->IsStreamLengthEstimated())
+      {
+        result = VFW_S_ESTIMATED;
+      }
     }
   }
 
