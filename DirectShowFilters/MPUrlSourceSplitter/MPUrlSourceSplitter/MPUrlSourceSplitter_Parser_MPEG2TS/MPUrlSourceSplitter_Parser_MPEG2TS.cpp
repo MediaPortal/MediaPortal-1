@@ -323,6 +323,8 @@ int64_t CMPUrlSourceSplitter_Parser_Mpeg2TS::SeekToTime(unsigned int streamId, i
     this->streamFragmentToDownload = UINT_MAX;
     this->currentProcessedSize = 0;
     this->positionOffset = 0;
+    this->reportedStreamTime = 0;
+    this->reportedStreamPosition = 0;
 
     HRESULT res = S_OK;
     CMpeg2tsStreamFragment *fragment = new CMpeg2tsStreamFragment(&res);
@@ -331,7 +333,7 @@ int64_t CMPUrlSourceSplitter_Parser_Mpeg2TS::SeekToTime(unsigned int streamId, i
     if (SUCCEEDED(res))
     {
       fragment->SetFragmentStartPosition(0);
-      fragment->SetFragmentOriginalStartPosition(0);
+      fragment->SetRequestStartPosition(0);
     }
 
     CHECK_CONDITION_HRESULT(res, this->streamFragments->Add(fragment), res, E_OUTOFMEMORY);
@@ -427,7 +429,7 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::StartReceivingData(CParameterCollec
     if (SUCCEEDED(result))
     {
       fragment->SetFragmentStartPosition(0);
-      fragment->SetFragmentOriginalStartPosition(0);
+      fragment->SetRequestStartPosition(0);
     }
 
     CHECK_CONDITION_HRESULT(result, this->streamFragments->Add(fragment), result, E_OUTOFMEMORY);
@@ -803,7 +805,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
             request->SetAnyDataLength(true);
             request->SetId(requestId);
             request->SetStreamId(0);
-            request->SetStart(currentDownloadingFragment->GetFragmentOriginalStartPosition());
+            request->SetStart(currentDownloadingFragment->GetRequestStartPosition());
             request->SetLength(length);
 
             package->SetRequest(request);
@@ -881,7 +883,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
               if (SUCCEEDED(result))
               {
                 // fragment start position will be set after processing
-                fragment->SetFragmentOriginalStartPosition(currentDownloadingFragment->GetFragmentOriginalStartPosition() + response->GetBuffer()->GetBufferOccupiedSpace());
+                fragment->SetRequestStartPosition(currentDownloadingFragment->GetRequestStartPosition() + response->GetBuffer()->GetBufferOccupiedSpace());
               }
 
               CHECK_CONDITION_HRESULT(result, caller->streamFragments->Insert(caller->streamFragmentDownloading + 1, fragment), result, E_OUTOFMEMORY);
@@ -1132,7 +1134,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
 
                 if ((firstFragment->GetFragmentStartPosition() > dataRequest->GetStart()) ||
                   (lastFragment->IsProcessed() && ((lastFragment->GetFragmentStartPosition() + dataRequest->GetLength()) < dataRequest->GetStart())) ||
-                  ((!lastFragment->IsProcessed()) && ((lastFragment->GetFragmentOriginalStartPosition() + dataRequest->GetLength()) < dataRequest->GetStart())))
+                  ((!lastFragment->IsProcessed()) && ((lastFragment->GetRequestStartPosition() + dataRequest->GetLength()) < dataRequest->GetStart())))
                 {
                   caller->logger->Log(LOGGER_INFO, L"%s: %s: request '%u', requesting data from '%lld' to '%lld', not found stream fragment, creating new stream fragment", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetStart() + dataRequest->GetLength());
 
@@ -1145,7 +1147,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                   if (SUCCEEDED(result))
                   {
                     fragment->SetFragmentStartPosition(dataRequest->GetStart());
-                    fragment->SetFragmentOriginalStartPosition(dataRequest->GetStart());
+                    fragment->SetRequestStartPosition(dataRequest->GetStart());
                   }
 
                   CHECK_CONDITION_HRESULT(result, caller->streamFragments->Add(fragment), result, E_OUTOFMEMORY);
@@ -1204,7 +1206,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
           CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, caller->cacheFile->SetCacheFile(storeFilePath));
           FREE_MEM(storeFilePath);
         }
-
+        
         // in case of live stream remove all downloaded and processed stream fragments before reported stream time
         if ((caller->IsLiveStream()) && (caller->reportedStreamTime > 0))
         {

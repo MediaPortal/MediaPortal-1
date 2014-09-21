@@ -1173,6 +1173,17 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
       // set buffer position to zero
       this->demuxerContextBufferPosition = 0;
       this->flags &= ~DEMUXER_FLAG_END_OF_STREAM_OUTPUT_PACKET_QUEUED;
+
+      // clear our seeking entries
+      for (unsigned int i = 0; (i < CStream::Unknown); i++)
+      {
+        for (unsigned int j = 0; j < this->GetStreams((CStream::StreamType)i)->Count(); j++)
+        {
+          CStream *stream = this->GetStreams((CStream::StreamType)i)->GetItem(j);
+
+          stream->GetSeekIndexEntries()->Clear();
+        }
+      }
     }
     else
     {

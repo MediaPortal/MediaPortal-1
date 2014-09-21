@@ -41,15 +41,15 @@ public:
 
   /* get methods */
 
-  // gets fragment start position within protocol stream
-  // @return : fragment start position within protocol stream or STREAM_FRAGMENT_START_POSITION_NOT_SET if not set
-  int64_t GetFragmentOriginalStartPosition(void);
+  // gets request start position within protocol stream
+  // @return : request start position within protocol stream or STREAM_FRAGMENT_START_POSITION_NOT_SET if not set
+  int64_t GetRequestStartPosition(void);
 
   /* set methods */
 
-  // sets fragment start position within protocol stream
-  // @param fragmentOriginalStartPosition : fragment start position within protocol stream to set
-  void SetFragmentOriginalStartPosition(int64_t fragmentOriginalStartPosition);
+  // sets request start position within protocol stream
+  // @param requestStartPosition : request start position within protocol stream to set
+  void SetRequestStartPosition(int64_t requestStartPosition);
 
   // sets ready for align flag
   // @param readyForAlign : true if ready for align, false otherwise
@@ -68,9 +68,9 @@ public:
 
   /* other methods */
 
-  // tests if fragment has set original start position (in protocol stream)
-  // @return : true if fragment has set original start position, false otherwise
-  bool IsSetFragmentOriginalStartPosition(void);
+  // tests if fragment has set request start position (in protocol stream)
+  // @return : true if fragment has set request start position, false otherwise
+  bool IsSetRequestStartPosition(void);
 
   // tests if fragment is ready for aligning
   // @return : true if fragment is ready for aligning, false otherwise
@@ -85,8 +85,8 @@ public:
   bool IsPartiallyProcessed(void);
 
 protected:
-  // holds fragment start position within protocol stream
-  int64_t fragmentOriginalStartPosition;
+  // holds request start position within protocol stream
+  int64_t requestStartPosition;
 
   /* methods */
 

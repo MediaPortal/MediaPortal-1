@@ -26,7 +26,7 @@
 CMpeg2tsStreamFragment::CMpeg2tsStreamFragment(HRESULT *result)
   : CStreamFragment(result)
 {
-  this->fragmentOriginalStartPosition = STREAM_FRAGMENT_START_POSITION_NOT_SET;
+  this->requestStartPosition = STREAM_FRAGMENT_START_POSITION_NOT_SET;
 }
 
 CMpeg2tsStreamFragment::~CMpeg2tsStreamFragment(void)
@@ -35,16 +35,16 @@ CMpeg2tsStreamFragment::~CMpeg2tsStreamFragment(void)
 
 /* get methods */
 
-int64_t CMpeg2tsStreamFragment::GetFragmentOriginalStartPosition(void)
+int64_t CMpeg2tsStreamFragment::GetRequestStartPosition(void)
 {
-  return this->fragmentOriginalStartPosition;
+  return this->requestStartPosition;
 }
 
 /* set methods */
 
-void CMpeg2tsStreamFragment::SetFragmentOriginalStartPosition(int64_t fragmentOriginalStartPosition)
+void CMpeg2tsStreamFragment::SetRequestStartPosition(int64_t requestStartPosition)
 {
-  this->fragmentOriginalStartPosition = fragmentOriginalStartPosition;
+  this->requestStartPosition = requestStartPosition;
 }
 
 void CMpeg2tsStreamFragment::SetReadyForAlign(bool readyForAlign, unsigned int streamFragmentIndex)
@@ -82,9 +82,9 @@ void CMpeg2tsStreamFragment::SetPartiallyProcessed(bool partiallyProcessed, unsi
 
 /* other methods */
 
-bool CMpeg2tsStreamFragment::IsSetFragmentOriginalStartPosition(void)
+bool CMpeg2tsStreamFragment::IsSetRequestStartPosition(void)
 {
-  return (this->fragmentOriginalStartPosition != STREAM_FRAGMENT_START_POSITION_NOT_SET);
+  return (this->requestStartPosition != STREAM_FRAGMENT_START_POSITION_NOT_SET);
 }
 
 bool CMpeg2tsStreamFragment::IsReadyForAlign(void)
@@ -125,7 +125,7 @@ bool CMpeg2tsStreamFragment::InternalClone(CFastSearchItem *item)
 
     if (result)
     {
-      fragment->fragmentOriginalStartPosition = this->fragmentOriginalStartPosition;
+      fragment->requestStartPosition = this->requestStartPosition;
     }
   }
 
