@@ -297,6 +297,8 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::Initialize(CPluginConfiguration *co
 
 void CMPUrlSourceSplitter_Parser_Mpeg2TS::SetPauseSeekStopMode(unsigned int pauseSeekStopMode)
 {
+  CLockMutex lock(this->mutex, INFINITE);
+
   this->pauseSeekStopMode = pauseSeekStopMode;
 
   this->protocolHoster->SetPauseSeekStopMode(pauseSeekStopMode);
