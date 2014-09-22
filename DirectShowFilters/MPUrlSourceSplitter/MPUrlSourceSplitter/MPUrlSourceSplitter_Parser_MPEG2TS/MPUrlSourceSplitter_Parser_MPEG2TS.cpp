@@ -607,56 +607,61 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
           // we assume that previous stream fragments are aligned
           // if some data will remain in current stream fragment, we add them to start of next stream fragment (or drop)
 
-          unsigned int firstPacketPosition = 0;
-          unsigned int packetSequenceLength = 0;
+          CLinearBuffer *processingBuffer = currentReadyForAlignStreamFragment->GetBuffer()->Clone();
+          CLinearBuffer *fragmentBuffer = new CLinearBuffer(&result, currentReadyForAlignStreamFragment->GetBuffer()->GetBufferOccupiedSpace());
 
-          result = CTsPacket::FindPacketSequence(currentReadyForAlignStreamFragment->GetBuffer(), &firstPacketPosition, &packetSequenceLength);
+          CHECK_POINTER_HRESULT(result, processingBuffer, result, E_OUTOFMEMORY);
+          CHECK_POINTER_HRESULT(result, fragmentBuffer, result, E_OUTOFMEMORY);
 
-          if (SUCCEEDED(result))
+          while (SUCCEEDED(result) && (processingBuffer->GetBufferOccupiedSpace() >= TS_PACKET_SIZE))
           {
-            CHECK_CONDITION_EXECUTE(firstPacketPosition != 0, currentReadyForAlignStreamFragment->GetBuffer()->RemoveFromBuffer(firstPacketPosition));
+            unsigned int firstPacketPosition = 0;
+            unsigned int packetSequenceLength = 0;
 
-            if (packetSequenceLength != currentReadyForAlignStreamFragment->GetLength())
+            result = CTsPacket::FindPacketSequence(processingBuffer, &firstPacketPosition, &packetSequenceLength);
+
+            if (SUCCEEDED(result))
             {
-              // move remaining data to next fragment or drop it when next fragment doesn't exist
-              if (nextStreamFragment == NULL)
+              if (firstPacketPosition != 0)
               {
-                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, packetSequenceLength, 0);
-                CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
+                processingBuffer->RemoveFromBuffer(firstPacketPosition);
 
-                if (SUCCEEDED(result))
-                {
-                  currentReadyForAlignStreamFragment->GetBuffer()->CopyFromBuffer(buffer, packetSequenceLength, packetSequenceLength);
-                  currentReadyForAlignStreamFragment->GetBuffer()->ClearBuffer();
-
-                  CHECK_CONDITION_HRESULT(result, currentReadyForAlignStreamFragment->GetBuffer()->AddToBufferWithResize(buffer, packetSequenceLength) == packetSequenceLength, result, E_OUTOFMEMORY);
-                }
-
-                FREE_MEM(buffer);
+                caller->logger->Log(LOGGER_WARNING, L"%s: %s: invalid data, removing %u bytes", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, firstPacketPosition);
               }
-              else
-              {
-                unsigned int diff = currentReadyForAlignStreamFragment->GetLength() - packetSequenceLength;
-                unsigned int length = nextStreamFragment->GetLength() + diff;
 
-                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-                CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
-
-                if (SUCCEEDED(result))
-                {
-                  currentReadyForAlignStreamFragment->GetBuffer()->CopyFromBuffer(buffer, diff, packetSequenceLength);
-                  nextStreamFragment->GetBuffer()->CopyFromBuffer(buffer + diff, length - diff);
-
-                  nextStreamFragment->GetBuffer()->ClearBuffer();
-                  CHECK_CONDITION_HRESULT(result, nextStreamFragment->GetBuffer()->AddToBufferWithResize(buffer, length) == length, result, E_OUTOFMEMORY);
-
-                  currentReadyForAlignStreamFragment->GetBuffer()->RemoveFromBufferEnd(diff);
-                }
-
-                FREE_MEM(buffer);
-              }
+              CHECK_CONDITION_HRESULT(result, fragmentBuffer->AddToBufferWithResize(processingBuffer, 0, packetSequenceLength) == packetSequenceLength, result, E_OUTOFMEMORY);
+              processingBuffer->RemoveFromBuffer(packetSequenceLength);
             }
           }
+
+          if (SUCCEEDED(result) && (fragmentBuffer->GetBufferOccupiedSpace() != currentReadyForAlignStreamFragment->GetLength()))
+          {
+            currentReadyForAlignStreamFragment->GetBuffer()->ClearBuffer();
+            CHECK_CONDITION_HRESULT(result, currentReadyForAlignStreamFragment->GetBuffer()->AddToBufferWithResize(fragmentBuffer) == fragmentBuffer->GetBufferOccupiedSpace(), result, E_OUTOFMEMORY);
+
+            // move remaining data to next fragment or drop it when next fragment doesn't exist
+            if ((nextStreamFragment != NULL) && (processingBuffer->GetBufferOccupiedSpace() != 0))
+            {
+              unsigned int length = nextStreamFragment->GetLength() + processingBuffer->GetBufferOccupiedSpace();
+
+              ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+              CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
+
+              if (SUCCEEDED(result))
+              {
+                processingBuffer->CopyFromBuffer(buffer, processingBuffer->GetBufferOccupiedSpace());
+                nextStreamFragment->GetBuffer()->CopyFromBuffer(buffer + processingBuffer->GetBufferOccupiedSpace(), length - processingBuffer->GetBufferOccupiedSpace());
+
+                nextStreamFragment->GetBuffer()->ClearBuffer();
+                CHECK_CONDITION_HRESULT(result, nextStreamFragment->GetBuffer()->AddToBufferWithResize(buffer, length) == length, result, E_OUTOFMEMORY);
+              }
+
+              FREE_MEM(buffer);
+            }
+          }
+
+          FREE_MEM_CLASS(processingBuffer);
+          FREE_MEM_CLASS(fragmentBuffer);
 
           if (SUCCEEDED(result))
           {
