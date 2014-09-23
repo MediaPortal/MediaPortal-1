@@ -24,9 +24,6 @@
     <ClInclude Include="MPUrlSourceSplitter_Parser_MPEG2TS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TsPacket.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Mpeg2tsStreamFragment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -51,9 +48,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MPUrlSourceSplitter_Parser_MPEG2TS.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TsPacket.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Mpeg2tsStreamFragment.cpp">

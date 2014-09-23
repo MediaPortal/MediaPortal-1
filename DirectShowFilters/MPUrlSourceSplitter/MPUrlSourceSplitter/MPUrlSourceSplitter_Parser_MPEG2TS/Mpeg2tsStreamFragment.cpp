@@ -69,6 +69,17 @@ void CMpeg2tsStreamFragment::SetAligned(bool aligned, unsigned int streamFragmen
   }
 }
 
+void CMpeg2tsStreamFragment::SetDiscontinuityProcessed(bool discontinuityProcessed, unsigned int streamFragmentIndex)
+{
+  this->flags &= ~MPEG2TS_STREAM_FRAGMENT_FLAG_DISCONTINUITY_PROCESSED;
+  this->flags |= (discontinuityProcessed) ? MPEG2TS_STREAM_FRAGMENT_FLAG_DISCONTINUITY_PROCESSED : MPEG2TS_STREAM_FRAGMENT_FLAG_NONE;
+
+  if ((this->owner != NULL) && (streamFragmentIndex != UINT_MAX))
+  {
+    this->owner->UpdateIndexes(streamFragmentIndex);
+  }
+}
+
 void CMpeg2tsStreamFragment::SetPartiallyProcessed(bool partiallyProcessed, unsigned int streamFragmentIndex)
 {
   this->flags &= ~MPEG2TS_STREAM_FRAGMENT_FLAG_PARTIALLY_PROCESSED;
@@ -95,6 +106,11 @@ bool CMpeg2tsStreamFragment::IsReadyForAlign(void)
 bool CMpeg2tsStreamFragment::IsAligned(void)
 {
   return this->IsSetFlags(MPEG2TS_STREAM_FRAGMENT_FLAG_ALIGNED);
+}
+
+bool CMpeg2tsStreamFragment::IsDiscontinuityProcessed(void)
+{
+  return this->IsSetFlags(MPEG2TS_STREAM_FRAGMENT_FLAG_DISCONTINUITY_PROCESSED);
 }
 
 bool CMpeg2tsStreamFragment::IsPartiallyProcessed(void)

@@ -56,7 +56,7 @@ public:
   /* other methods */
 
   // clears instance to its default state
-  void Clear();
+  void Clear(void);
 
   // loads item with specified index to memory from cache file (if needed)
   // if item is loading from cache file, next items in collection are also loaded from cache file (until buffer size is reached)

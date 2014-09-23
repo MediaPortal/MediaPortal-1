@@ -36,6 +36,7 @@
 #include "VersionInfo.h"
 #include "ErrorCodes.h"
 #include "TsPacket.h"
+#include "TsPacketConstants.h"
 #include "LockMutex.h"
 
 #include <process.h>
@@ -85,6 +86,7 @@ CMPUrlSourceSplitter_Parser_Mpeg2TS::CMPUrlSourceSplitter_Parser_Mpeg2TS(HRESULT
   this->streamPackage = NULL;
   this->pauseSeekStopMode = PAUSE_SEEK_STOP_MODE_NONE;
   this->positionOffset = 0;
+  this->discontinuityParser = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -100,10 +102,12 @@ CMPUrlSourceSplitter_Parser_Mpeg2TS::CMPUrlSourceSplitter_Parser_Mpeg2TS(HRESULT
     this->mutex = CreateMutex(NULL, FALSE, NULL);
     this->cacheFile = new CCacheFile(result);
     this->streamFragments = new CMpeg2tsStreamFragmentCollection(result);
+    this->discontinuityParser = new CDiscontinuityParser(result);
 
     CHECK_POINTER_HRESULT(*result, this->streamFragments, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->cacheFile, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->mutex, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->discontinuityParser, *result, E_OUTOFMEMORY);
 
     this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
   }
@@ -115,6 +119,7 @@ CMPUrlSourceSplitter_Parser_Mpeg2TS::~CMPUrlSourceSplitter_Parser_Mpeg2TS()
 
   FREE_MEM_CLASS(this->cacheFile);
   FREE_MEM_CLASS(this->streamFragments);
+  FREE_MEM_CLASS(this->discontinuityParser);
 
   if (this->mutex != NULL)
   {
@@ -131,8 +136,7 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::GetParserResult(void)
 {
   if (this->parserResult == PARSER_RESULT_PENDING)
   {
-    if (this->connectionParameters->GetValueBool(PARAMETER_NAME_MPEG2TS_DETECT_DISCONTINUITY, true, MPEG2TS_DETECT_DISCONTINUITY_DEFAULT) ||
-      this->connectionParameters->GetValueBool(PARAMETER_NAME_MPEG2TS_ALIGN_TO_MPEG2TS_PACKET, true, MPEG2TS_ALIGN_TO_MPEG2TS_PACKET))
+    if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_DETECT_DISCONTINUITY) || this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_ALIGN_TO_MPEG2TS_PACKET))
     {
       // allowed detection of discontinuity of packets
       // allowed aligning of MPEG2 TS packets
@@ -248,6 +252,21 @@ CParserPlugin::Action CMPUrlSourceSplitter_Parser_Mpeg2TS::GetAction(void)
   return ParseStream;
 }
 
+HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::SetConnectionParameters(const CParameterCollection *parameters)
+{
+  HRESULT result = __super::SetConnectionParameters(parameters);
+
+  if (SUCCEEDED(result))
+  {
+    this->flags &= ~(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_DETECT_DISCONTINUITY | MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_ALIGN_TO_MPEG2TS_PACKET);
+
+    this->flags |= this->connectionParameters->GetValueBool(PARAMETER_NAME_MPEG2TS_DETECT_DISCONTINUITY, true, MPEG2TS_DETECT_DISCONTINUITY_DEFAULT) ? MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_DETECT_DISCONTINUITY : MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_NONE;
+    this->flags |= this->connectionParameters->GetValueBool(PARAMETER_NAME_MPEG2TS_ALIGN_TO_MPEG2TS_PACKET, true, MPEG2TS_ALIGN_TO_MPEG2TS_PACKET) ? MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_ALIGN_TO_MPEG2TS_PACKET : MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_NONE;
+  }
+
+  return result;
+}
+
 bool CMPUrlSourceSplitter_Parser_Mpeg2TS::IsSetStreamLength(void)
 {
   return this->IsSetFlags(PARSER_PLUGIN_FLAG_SET_STREAM_LENGTH);
@@ -327,6 +346,7 @@ int64_t CMPUrlSourceSplitter_Parser_Mpeg2TS::SeekToTime(unsigned int streamId, i
     this->positionOffset = 0;
     this->reportedStreamTime = 0;
     this->reportedStreamPosition = 0;
+    this->discontinuityParser->Clear();
 
     HRESULT res = S_OK;
     CMpeg2tsStreamFragment *fragment = new CMpeg2tsStreamFragment(&res);
@@ -479,6 +499,7 @@ void CMPUrlSourceSplitter_Parser_Mpeg2TS::ClearSession(void)
   this->streamPackage = NULL;
   this->pauseSeekStopMode = PAUSE_SEEK_STOP_MODE_NONE;
   this->positionOffset = 0;
+  this->discontinuityParser->Clear();
 }
 
 // IProtocol interface
@@ -613,55 +634,58 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
           CHECK_POINTER_HRESULT(result, processingBuffer, result, E_OUTOFMEMORY);
           CHECK_POINTER_HRESULT(result, fragmentBuffer, result, E_OUTOFMEMORY);
 
-          while (SUCCEEDED(result) && (processingBuffer->GetBufferOccupiedSpace() >= TS_PACKET_SIZE))
+          if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_ALIGN_TO_MPEG2TS_PACKET))
           {
-            unsigned int firstPacketPosition = 0;
-            unsigned int packetSequenceLength = 0;
-
-            result = CTsPacket::FindPacketSequence(processingBuffer, &firstPacketPosition, &packetSequenceLength);
-
-            if (SUCCEEDED(result))
+            while (SUCCEEDED(result) && (processingBuffer->GetBufferOccupiedSpace() >= TS_PACKET_SIZE))
             {
-              if (firstPacketPosition != 0)
-              {
-                processingBuffer->RemoveFromBuffer(firstPacketPosition);
+              unsigned int firstPacketPosition = 0;
+              unsigned int packetSequenceLength = 0;
 
-                caller->logger->Log(LOGGER_WARNING, L"%s: %s: invalid data, removing %u bytes", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, firstPacketPosition);
-              }
-
-              CHECK_CONDITION_HRESULT(result, fragmentBuffer->AddToBufferWithResize(processingBuffer, 0, packetSequenceLength) == packetSequenceLength, result, E_OUTOFMEMORY);
-              processingBuffer->RemoveFromBuffer(packetSequenceLength);
-            }
-          }
-
-          if (SUCCEEDED(result) && (fragmentBuffer->GetBufferOccupiedSpace() != currentReadyForAlignStreamFragment->GetLength()))
-          {
-            currentReadyForAlignStreamFragment->GetBuffer()->ClearBuffer();
-            CHECK_CONDITION_HRESULT(result, currentReadyForAlignStreamFragment->GetBuffer()->AddToBufferWithResize(fragmentBuffer) == fragmentBuffer->GetBufferOccupiedSpace(), result, E_OUTOFMEMORY);
-
-            // move remaining data to next fragment or drop it when next fragment doesn't exist
-            if ((nextStreamFragment != NULL) && (processingBuffer->GetBufferOccupiedSpace() != 0))
-            {
-              unsigned int length = nextStreamFragment->GetLength() + processingBuffer->GetBufferOccupiedSpace();
-
-              ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-              CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
+              result = CTsPacket::FindPacketSequence(processingBuffer, &firstPacketPosition, &packetSequenceLength);
 
               if (SUCCEEDED(result))
               {
-                processingBuffer->CopyFromBuffer(buffer, processingBuffer->GetBufferOccupiedSpace());
-                nextStreamFragment->GetBuffer()->CopyFromBuffer(buffer + processingBuffer->GetBufferOccupiedSpace(), length - processingBuffer->GetBufferOccupiedSpace());
+                if (firstPacketPosition != 0)
+                {
+                  processingBuffer->RemoveFromBuffer(firstPacketPosition);
 
-                nextStreamFragment->GetBuffer()->ClearBuffer();
-                CHECK_CONDITION_HRESULT(result, nextStreamFragment->GetBuffer()->AddToBufferWithResize(buffer, length) == length, result, E_OUTOFMEMORY);
+                  caller->logger->Log(LOGGER_WARNING, L"%s: %s: invalid data, removing %u bytes", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, firstPacketPosition);
+                }
+
+                CHECK_CONDITION_HRESULT(result, fragmentBuffer->AddToBufferWithResize(processingBuffer, 0, packetSequenceLength) == packetSequenceLength, result, E_OUTOFMEMORY);
+                processingBuffer->RemoveFromBuffer(packetSequenceLength);
               }
-
-              FREE_MEM(buffer);
             }
-          }
 
-          FREE_MEM_CLASS(processingBuffer);
-          FREE_MEM_CLASS(fragmentBuffer);
+            if (SUCCEEDED(result) && (fragmentBuffer->GetBufferOccupiedSpace() != currentReadyForAlignStreamFragment->GetLength()))
+            {
+              currentReadyForAlignStreamFragment->GetBuffer()->ClearBuffer();
+              CHECK_CONDITION_HRESULT(result, currentReadyForAlignStreamFragment->GetBuffer()->AddToBufferWithResize(fragmentBuffer) == fragmentBuffer->GetBufferOccupiedSpace(), result, E_OUTOFMEMORY);
+
+              // move remaining data to next fragment or drop it when next fragment doesn't exist
+              if ((nextStreamFragment != NULL) && (processingBuffer->GetBufferOccupiedSpace() != 0))
+              {
+                unsigned int length = nextStreamFragment->GetLength() + processingBuffer->GetBufferOccupiedSpace();
+
+                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+                CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
+
+                if (SUCCEEDED(result))
+                {
+                  processingBuffer->CopyFromBuffer(buffer, processingBuffer->GetBufferOccupiedSpace());
+                  nextStreamFragment->GetBuffer()->CopyFromBuffer(buffer + processingBuffer->GetBufferOccupiedSpace(), length - processingBuffer->GetBufferOccupiedSpace());
+
+                  nextStreamFragment->GetBuffer()->ClearBuffer();
+                  CHECK_CONDITION_HRESULT(result, nextStreamFragment->GetBuffer()->AddToBufferWithResize(buffer, length) == length, result, E_OUTOFMEMORY);
+                }
+
+                FREE_MEM(buffer);
+              }
+            }
+
+            FREE_MEM_CLASS(processingBuffer);
+            FREE_MEM_CLASS(fragmentBuffer);
+          }
 
           if (SUCCEEDED(result))
           {
@@ -677,34 +701,97 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
       }
     }
 
-    if (SUCCEEDED(result) && (caller->streamFragments->HasAlignedNotPartiallyOrFullProcessed()))
+    if (SUCCEEDED(result) && (caller->streamFragments->HasAlignedNotDiscontinuityProcessed()))
     {
       // don't wait too long, we can do this later
       CLockMutex lock(caller->mutex, 20);
 
       if (lock.IsLocked())
       {
-        CIndexedMpeg2tsStreamFragmentCollection *indexedAlignedNotPartiallyOrFullProcessedStreamFragments = new CIndexedMpeg2tsStreamFragmentCollection(&result);
-        CHECK_POINTER_HRESULT(result, indexedAlignedNotPartiallyOrFullProcessedStreamFragments, result, E_OUTOFMEMORY);
+        CIndexedMpeg2tsStreamFragmentCollection *indexedAlignedNotDiscontinuityProcessedStreamFragments = new CIndexedMpeg2tsStreamFragmentCollection(&result);
+        CHECK_POINTER_HRESULT(result, indexedAlignedNotDiscontinuityProcessedStreamFragments, result, E_OUTOFMEMORY);
 
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetAlignedNotPartiallyOrFullProcessedStreamFragments(indexedAlignedNotPartiallyOrFullProcessedStreamFragments));
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetAlignedNotDiscontinuityProcessedStreamFragments(indexedAlignedNotDiscontinuityProcessedStreamFragments));
 
-        for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedAlignedNotPartiallyOrFullProcessedStreamFragments->Count())); i++)
+        for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedAlignedNotDiscontinuityProcessedStreamFragments->Count())); i++)
         {
-          CIndexedMpeg2tsStreamFragment *indexedAlignedNotPartiallyOrFullProcessedStreamFragment = indexedAlignedNotPartiallyOrFullProcessedStreamFragments->GetItem(i);
-          CMpeg2tsStreamFragment *currentAlignedNotPartiallyOrFullProcessedStreamFragment = indexedAlignedNotPartiallyOrFullProcessedStreamFragment->GetItem();
+          CIndexedMpeg2tsStreamFragment *indexedAlignedNotDiscontinuityProcessedStreamFragment = indexedAlignedNotDiscontinuityProcessedStreamFragments->GetItem(i);
+          CMpeg2tsStreamFragment *currentAlignedNotDiscontinuityProcessedStreamFragment = indexedAlignedNotDiscontinuityProcessedStreamFragment->GetItem();
+
+          if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_DETECT_DISCONTINUITY))
+          {
+            unsigned int processed = 0;
+            unsigned int length = currentAlignedNotDiscontinuityProcessedStreamFragment->GetBuffer()->GetBufferOccupiedSpace();
+
+            ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+            CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
+
+            CHECK_CONDITION_HRESULT(result, currentAlignedNotDiscontinuityProcessedStreamFragment->GetBuffer()->CopyFromBuffer(buffer, length) == length, result, E_OUTOFMEMORY);
+            
+            while (SUCCEEDED(result) && (processed < length))
+            {
+              HRESULT res = caller->discontinuityParser->Parse(buffer + processed, length - processed);
+
+              if ((res > 0) && (res < (length - processed)))
+              {
+                // discontinuity on some MPEG2 TS packet occured
+
+                caller->logger->Log(LOGGER_WARNING, L"%s: %s: discontinuity detected, PID: %u (0x%04X), expected counter: %u, packet counter: %u", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, caller->discontinuityParser->GetLastDiscontinuityPid(), caller->discontinuityParser->GetLastDiscontinuityPid(), (unsigned int)caller->discontinuityParser->GetLastExpectedCounter(), (unsigned int)caller->discontinuityParser->GetLastDiscontinuityCounter());
+                processed += (unsigned int)res;
+              }
+              else if ((res > 0) && (res == (length - processed)))
+              {
+                processed += (unsigned int)res;
+              }
+              else if (res < 0)
+              {
+                // error occured, we hope that value 0 will never return
+                result = res;
+              }
+            }
+
+            FREE_MEM(buffer);
+          }
+
+          currentAlignedNotDiscontinuityProcessedStreamFragment->SetDiscontinuityProcessed(true, indexedAlignedNotDiscontinuityProcessedStreamFragment->GetItemIndex());
+        }
+
+        FREE_MEM_CLASS(indexedAlignedNotDiscontinuityProcessedStreamFragments);
+      }
+    }
+
+    if (SUCCEEDED(result) && (caller->streamFragments->HasAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed()))
+    {
+      // don't wait too long, we can do this later
+      CLockMutex lock(caller->mutex, 20);
+
+      if (lock.IsLocked())
+      {
+        CIndexedMpeg2tsStreamFragmentCollection *indexedAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedStreamFragments = new CIndexedMpeg2tsStreamFragmentCollection(&result);
+        CHECK_POINTER_HRESULT(result, indexedAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedStreamFragments, result, E_OUTOFMEMORY);
+
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedStreamFragments(indexedAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedStreamFragments));
+
+        for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedStreamFragments->Count())); i++)
+        {
+          CIndexedMpeg2tsStreamFragment *indexedAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedStreamFragment = indexedAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedStreamFragments->GetItem(i);
+          CMpeg2tsStreamFragment *currentAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedStreamFragment = indexedAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedStreamFragment->GetItem();
 
           // FAKE !!!
 
-          currentAlignedNotPartiallyOrFullProcessedStreamFragment->SetProcessed(true, UINT_MAX);
-          currentAlignedNotPartiallyOrFullProcessedStreamFragment->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
+          /*if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_DETECT_DISCONTINUITY))
+          {
+          }*/
 
-          caller->streamFragments->UpdateIndexes(indexedAlignedNotPartiallyOrFullProcessedStreamFragment->GetItemIndex(), 1);
+          currentAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedStreamFragment->SetProcessed(true, UINT_MAX);
+          currentAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedStreamFragment->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
 
-          caller->streamFragments->RecalculateProcessedStreamFragmentStartPosition(indexedAlignedNotPartiallyOrFullProcessedStreamFragment->GetItemIndex());
+          caller->streamFragments->UpdateIndexes(indexedAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedStreamFragment->GetItemIndex(), 1);
+
+          caller->streamFragments->RecalculateProcessedStreamFragmentStartPosition(indexedAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedStreamFragment->GetItemIndex());
         }
 
-        FREE_MEM_CLASS(indexedAlignedNotPartiallyOrFullProcessedStreamFragments);
+        FREE_MEM_CLASS(indexedAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedStreamFragments);
 
         // check if last fragment is processed
         // if yes, then set end of stream reached flag
@@ -735,13 +822,13 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
           // just make guess
 
           caller->streamLength = MINIMUM_RECEIVED_DATA_FOR_SPLITTER;
-          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %lld", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, caller->streamLength);
+          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %lld", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, caller->streamLength);
         }
         else if ((caller->GetBytePosition() > (caller->streamLength * 3 / 4)))
         {
           // it is time to adjust stream length, we are approaching to end but still we don't know total length
           caller->streamLength = caller->GetBytePosition() * 2;
-          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %lld", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, caller->streamLength);
+          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %lld", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, caller->streamLength);
         }
       }
       else if (res == S_OK)
@@ -751,7 +838,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
         if (streamProgress->GetTotalLength() > caller->streamLength)
         {
           caller->streamLength = streamProgress->GetTotalLength();
-          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %lld", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, caller->streamLength);
+          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %lld", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, caller->streamLength);
         }
       }
 
@@ -763,7 +850,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
       // reached end of stream, set stream length
 
       caller->streamLength = caller->GetBytePosition();
-      caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %llu", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, caller->streamLength);
+      caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %llu", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, caller->streamLength);
 
       caller->flags |= PARSER_PLUGIN_FLAG_SET_STREAM_LENGTH;
       caller->flags &= ~PARSER_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
@@ -1013,7 +1100,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
 
               if ((streamFragment->IsDiscontinuity()) && ((dataRequest->GetStart() + dataRequest->GetLength()) >= (streamFragmentRelativeStart + streamFragment->GetLength())))
               {
-                caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: discontinuity, completing request, request '%u', start '%lld', size '%u', found: '%u', fragment start: %lld, fragment length: %u, start searching fragment start: %u", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), foundDataLength, streamFragment->GetFragmentStartPosition(), streamFragment->GetLength(), startSearchingStreamFragment->GetFragmentStartPosition());
+                caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: discontinuity, completing request, request '%u', start '%lld', size '%u', found: '%u', fragment start: %lld, fragment length: %u, start searching fragment start: %u", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), foundDataLength, streamFragment->GetFragmentStartPosition(), streamFragment->GetLength(), startSearchingStreamFragment->GetFragmentStartPosition());
 
                 dataResponse->SetDiscontinuity(true);
                 break;
@@ -1050,7 +1137,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                 if (caller->IsConnectionLostCannotReopen())
                 {
                   // connection is lost and we cannot reopen it
-                  caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: connection lost, no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), caller->streamLength);
+                  caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: connection lost, no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), caller->streamLength);
 
                   dataResponse->SetConnectionLostCannotReopen(true);
                   caller->streamPackage->SetCompleted(S_OK);
@@ -1058,7 +1145,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                 else if (caller->IsEndOfStreamReached() && ((dataRequest->GetStart() + dataRequest->GetLength()) >= caller->streamLength))
                 {
                   // we are not receiving more data, complete request
-                  caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), caller->streamLength);
+                  caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), caller->streamLength);
 
                   dataResponse->SetNoMoreDataAvailable(true);
                   caller->streamPackage->SetCompleted(S_OK);
@@ -1073,7 +1160,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                 else if (caller->IsConnectionLostCannotReopen())
                 {
                   // connection is lost and we cannot reopen it
-                  caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: connection lost, no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), caller->streamLength);
+                  caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: connection lost, no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), caller->streamLength);
 
                   dataResponse->SetConnectionLostCannotReopen(true);
                   caller->streamPackage->SetCompleted((dataResponse->GetBuffer()->GetBufferOccupiedSpace() != 0) ? S_OK : E_CONNECTION_LOST_CANNOT_REOPEN);
@@ -1081,7 +1168,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                 else if (caller->IsEndOfStreamReached() && ((dataRequest->GetStart() + dataRequest->GetLength()) >= caller->streamLength))
                 {
                   // we are not receiving more data, complete request
-                  caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), caller->streamLength);
+                  caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), caller->streamLength);
 
                   dataResponse->SetNoMoreDataAvailable(true);
                   caller->streamPackage->SetCompleted((dataResponse->GetBuffer()->GetBufferOccupiedSpace() != 0) ? S_OK : E_NO_MORE_DATA_AVAILABLE);
@@ -1115,7 +1202,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                 {
                   // bad, no such fragment exists, we don't have data
 
-                  caller->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u', requesting data from '%lld' to '%lld', not found stream fragment", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetStart() + dataRequest->GetLength());
+                  caller->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u', requesting data from '%lld' to '%lld', not found stream fragment", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetStart() + dataRequest->GetLength());
 
                   dataResponse->SetNoMoreDataAvailable(true);
                   caller->streamPackage->SetCompleted(E_NO_MORE_DATA_AVAILABLE);
@@ -1128,7 +1215,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                   caller->streamFragmentDownloading = UINT_MAX;
                   caller->streamFragmentToDownload = fragmentIndex;
 
-                  caller->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u', requesting data from '%lld' to '%lld', stream fragment not downloaded and not downloading, scheduled for download", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetStart() + dataRequest->GetLength());
+                  caller->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u', requesting data from '%lld' to '%lld', stream fragment not downloaded and not downloading, scheduled for download", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetStart() + dataRequest->GetLength());
                 }
               }
 
@@ -1143,7 +1230,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                   (lastFragment->IsProcessed() && ((lastFragment->GetFragmentStartPosition() + dataRequest->GetLength()) < dataRequest->GetStart())) ||
                   ((!lastFragment->IsProcessed()) && ((lastFragment->GetRequestStartPosition() + dataRequest->GetLength()) < dataRequest->GetStart())))
                 {
-                  caller->logger->Log(LOGGER_INFO, L"%s: %s: request '%u', requesting data from '%lld' to '%lld', not found stream fragment, creating new stream fragment", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetStart() + dataRequest->GetLength());
+                  caller->logger->Log(LOGGER_INFO, L"%s: %s: request '%u', requesting data from '%lld' to '%lld', not found stream fragment, creating new stream fragment", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetStart() + dataRequest->GetLength());
 
                   caller->streamFragments->Clear();
                   caller->cacheFile->Clear();

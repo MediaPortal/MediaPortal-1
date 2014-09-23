@@ -32,15 +32,6 @@
 
 #define TS_PACKET_FLAG_LAST                                           (FLAGS_LAST + 1)
 
-#define TS_PACKET_SIZE                                                188
-
-#define TS_PACKET_HEADER_LENGTH                                       4
-
-#define TS_PACKET_SYNC_BYTE                                           0x47
-//#define     PID_PAT                                                   0x0000
-#define TS_PACKET_PID_NULL                                            0x1FFF
-#define TS_PACKET_MAX_RESERVED_PID                                    0x000F
-
 #define TS_PACKET_FIND_RESULT_NOT_FOUND                               -1
 #define TS_PACKET_FIND_RESULT_NOT_ENOUGH_DATA_FOR_HEADER              -2
 #define TS_PACKET_FIND_RESULT_NOT_ENOUGH_MEMORY                       -3

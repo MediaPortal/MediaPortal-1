@@ -190,4 +190,9 @@
 #define E_MSHS_CANNOT_GET_VIDEO_FRAGMENT_INDEX                                  -205
 #define E_MSHS_CANNOT_GET_AUDIO_FRAGMENT_INDEX                                  -206
 
+// MPEG2 TS parser error codes
+
+#define E_MPEG2TS_NOT_ALIGNED_BUFFER_SIZE                                       -210
+#define E_MPEG2TS_CANNOT_PARSE_PACKET                                           -211
+
 #endif

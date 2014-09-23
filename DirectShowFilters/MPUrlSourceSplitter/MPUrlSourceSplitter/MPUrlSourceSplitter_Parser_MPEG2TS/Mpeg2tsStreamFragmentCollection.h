@@ -45,10 +45,15 @@ public:
   // @return : S_OK if successful, error code otherwise
   HRESULT GetReadyForAlignStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection);
 
-  // gets collection of indexed stream fragments which are aligned, but not partially or full processed
+  // gets collection of indexed stream fragments which are aligned, but not discontinuity processed
   // @param collection : the collection to fill in indexed stream fragments
   // @return : S_OK if successful, error code otherwise
-  HRESULT GetAlignedNotPartiallyOrFullProcessedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection);
+  HRESULT GetAlignedNotDiscontinuityProcessedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection);
+
+  // gets collection of indexed stream fragments which are aligned, discontinuity processed, but not partially or full processed
+  // @param collection : the collection to fill in indexed stream fragments
+  // @return : S_OK if successful, error code otherwise
+  HRESULT GetAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection);
 
   // gets collection of indexed stream fragments which are partially processed
   // @param collection : the collection to fill in indexed stream fragments
@@ -63,9 +68,13 @@ public:
   // @return : true if collection has such fragments, false otherwise
   bool HasReadyForAlignStreamFragments(void);
 
-  // tests if collection has some stream fragments, which are aligned, but not partially or full processed
+  // tests if collection has some stream fragments, which are aligned, but not discontinuity processed
   // @return : true if collection has such fragments, false otherwise
-  bool HasAlignedNotPartiallyOrFullProcessed(void);
+  bool HasAlignedNotDiscontinuityProcessed(void);
+
+  // tests if collection has some stream fragments, which are aligned discontinuity processed, but not partially or full processed
+  // @return : true if collection has such fragments, false otherwise
+  bool HasAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed(void);
 
   // tests if collection has some stream fragments, which are partially processed
   // @return : true if collection has such fragments, false otherwise
@@ -103,11 +112,13 @@ protected:
 
   // we need to maintain several indexes
   // first index : item->IsReadyForAlign()
-  // second index : item->IsAligned() && (!(item->IsPartiallyProcessed() || item->IsProcessed()))
-  // third index : item->IsPartiallyProcessed()
+  // second index : item->IsAligned() && (!item->IsDiscontinuityProcessed())
+  // third index : item->IsAligned() && item->IsDiscontinuityProcessed() && (!(item->IsPartiallyProcessed() || item->IsProcessed()))
+  // fourth index : item->IsPartiallyProcessed()
 
   CIndexCollection *indexReadyForAlign;
-  CIndexCollection *indexAlignedNotPartiallyOrFullProcessed;
+  CIndexCollection *indexAlignedNotDiscontinuityProcessed;
+  CIndexCollection *indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed;
   CIndexCollection *indexPartiallyProcessed;
 
   /* methods */

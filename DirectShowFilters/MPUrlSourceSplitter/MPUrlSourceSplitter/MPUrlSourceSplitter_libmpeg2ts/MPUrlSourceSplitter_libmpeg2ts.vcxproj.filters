@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Packets">
+      <UniqueIdentifier>{4dc5a4d7-e03c-4d35-bf32-3ff8fde3b621}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Packets\Header Files">
+      <UniqueIdentifier>{58361bd6-efac-4413-aaa9-b0a33d3e5b09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Packets\Source Files">
+      <UniqueIdentifier>{cee9a1c8-e0c6-49fe-b6d4-dc27755aa7ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Parsers">
+      <UniqueIdentifier>{acd134b2-b248-43c2-816a-b041da5d314e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Parsers\Header Files">
+      <UniqueIdentifier>{163ce141-8572-4241-8faa-66611fc04972}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Parsers\Source Files">
+      <UniqueIdentifier>{35d13a3d-dd4c-4644-a641-3105c7c23540}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DiscontinuityParser.h">
+      <Filter>Parsers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser.h">
+      <Filter>Parsers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TsPacket.h">
+      <Filter>Packets\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PidCounter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PidCounterCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TsPacketConstants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DiscontinuityParser.cpp">
+      <Filter>Parsers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Parser.cpp">
+      <Filter>Parsers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TsPacket.cpp">
+      <Filter>Packets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PidCounter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PidCounterCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

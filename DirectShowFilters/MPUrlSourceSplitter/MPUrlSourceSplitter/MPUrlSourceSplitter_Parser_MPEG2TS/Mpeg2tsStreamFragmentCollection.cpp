@@ -27,26 +27,31 @@
 #define AFFECTED_INDEX_BASE                                                                 (1 << (FLAGS_LAST + 0))
 #define AFFECTED_INDEX_READY_FOR_ALIGN_ADD                                                  (1 << (FLAGS_LAST + 1))
 #define AFFECTED_INDEX_READY_FOR_ALIGN_INC                                                  (1 << (FLAGS_LAST + 2))
-#define AFFECTED_INDEX_ALIGNED_NOT_PARTIALLY_OR_FULL_PROCESSED_ADD                          (1 << (FLAGS_LAST + 3))
-#define AFFECTED_INDEX_ALIGNED_NOT_PARTIALLY_OR_FULL_PROCESSED_INC                          (1 << (FLAGS_LAST + 4))
-#define AFFECTED_INDEX_PARTIALLY_PROCESSED_ADD                                              (1 << (FLAGS_LAST + 5))
-#define AFFECTED_INDEX_PARTIALLY_PROCESSED_INC                                              (1 << (FLAGS_LAST + 6))
+#define AFFECTED_INDEX_ALIGNED_NOT_DISCONTINUITY_PROCESSED_ADD                              (1 << (FLAGS_LAST + 3))
+#define AFFECTED_INDEX_ALIGNED_NOT_DISCONTINUITY_PROCESSED_INC                              (1 << (FLAGS_LAST + 4))
+#define AFFECTED_INDEX_ALIGNED_DISCONTINUITY_PROCESSED_NOT_PARTIALLY_OR_FULL_PROCESSED_ADD  (1 << (FLAGS_LAST + 5))
+#define AFFECTED_INDEX_ALIGNED_DISCONTINUITY_PROCESSED_NOT_PARTIALLY_OR_FULL_PROCESSED_INC  (1 << (FLAGS_LAST + 6))
+#define AFFECTED_INDEX_PARTIALLY_PROCESSED_ADD                                              (1 << (FLAGS_LAST + 7))
+#define AFFECTED_INDEX_PARTIALLY_PROCESSED_INC                                              (1 << (FLAGS_LAST + 8))
 
 CMpeg2tsStreamFragmentCollection::CMpeg2tsStreamFragmentCollection(HRESULT *result)
   : CStreamFragmentCollection(result)
 {
   this->indexReadyForAlign = NULL;
-  this->indexAlignedNotPartiallyOrFullProcessed = NULL;
+  this->indexAlignedNotDiscontinuityProcessed = NULL;
+  this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed = NULL;
   this->indexPartiallyProcessed = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->indexReadyForAlign = new CIndexCollection(result);
-    this->indexAlignedNotPartiallyOrFullProcessed = new CIndexCollection(result);
+    this->indexAlignedNotDiscontinuityProcessed = new CIndexCollection(result);
+    this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed = new CIndexCollection(result);
     this->indexPartiallyProcessed = new CIndexCollection(result);
 
     CHECK_POINTER_HRESULT(*result, this->indexReadyForAlign, *result, E_OUTOFMEMORY);
-    CHECK_POINTER_HRESULT(*result, this->indexAlignedNotPartiallyOrFullProcessed, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->indexAlignedNotDiscontinuityProcessed, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->indexPartiallyProcessed, *result, E_OUTOFMEMORY);
   }
 }
@@ -54,7 +59,8 @@ CMpeg2tsStreamFragmentCollection::CMpeg2tsStreamFragmentCollection(HRESULT *resu
 CMpeg2tsStreamFragmentCollection::~CMpeg2tsStreamFragmentCollection(void)
 {
   FREE_MEM_CLASS(this->indexReadyForAlign);
-  FREE_MEM_CLASS(this->indexAlignedNotPartiallyOrFullProcessed);
+  FREE_MEM_CLASS(this->indexAlignedNotDiscontinuityProcessed);
+  FREE_MEM_CLASS(this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed);
   FREE_MEM_CLASS(this->indexPartiallyProcessed);
 }
 
@@ -86,16 +92,37 @@ HRESULT CMpeg2tsStreamFragmentCollection::GetReadyForAlignStreamFragments(CIndex
   return result;
 }
 
-HRESULT CMpeg2tsStreamFragmentCollection::GetAlignedNotPartiallyOrFullProcessedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection)
+HRESULT CMpeg2tsStreamFragmentCollection::GetAlignedNotDiscontinuityProcessedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection)
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, collection);
 
-  CHECK_CONDITION_HRESULT(result, collection->EnsureEnoughSpace(this->indexAlignedNotPartiallyOrFullProcessed->Count()), result, E_OUTOFMEMORY);
+  CHECK_CONDITION_HRESULT(result, collection->EnsureEnoughSpace(this->indexAlignedNotDiscontinuityProcessed->Count()), result, E_OUTOFMEMORY);
 
-  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->indexAlignedNotPartiallyOrFullProcessed->Count())); i++)
+  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->indexAlignedNotDiscontinuityProcessed->Count())); i++)
   {
-    unsigned int index = this->indexAlignedNotPartiallyOrFullProcessed->GetItem(i);
+    unsigned int index = this->indexAlignedNotDiscontinuityProcessed->GetItem(i);
+
+    CIndexedMpeg2tsStreamFragment *item = new CIndexedMpeg2tsStreamFragment(&result, this->GetItem(index), index);
+    CHECK_POINTER_HRESULT(result, item, result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_HRESULT(result, collection->Add(item), result, E_OUTOFMEMORY);
+    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(item));
+  }
+
+  return result;
+}
+
+HRESULT CMpeg2tsStreamFragmentCollection::GetAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, collection);
+
+  CHECK_CONDITION_HRESULT(result, collection->EnsureEnoughSpace(this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->Count()), result, E_OUTOFMEMORY);
+
+  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->Count())); i++)
+  {
+    unsigned int index = this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->GetItem(i);
 
     CIndexedMpeg2tsStreamFragment *item = new CIndexedMpeg2tsStreamFragment(&result, this->GetItem(index), index);
     CHECK_POINTER_HRESULT(result, item, result, E_OUTOFMEMORY);
@@ -137,9 +164,14 @@ bool CMpeg2tsStreamFragmentCollection::HasReadyForAlignStreamFragments(void)
   return (this->indexReadyForAlign->Count() != 0);
 }
 
-bool CMpeg2tsStreamFragmentCollection::HasAlignedNotPartiallyOrFullProcessed(void)
+bool CMpeg2tsStreamFragmentCollection::HasAlignedNotDiscontinuityProcessed(void)
 {
-  return (this->indexAlignedNotPartiallyOrFullProcessed->Count() != 0);
+  return (this->indexAlignedNotDiscontinuityProcessed->Count() != 0);
+}
+
+bool CMpeg2tsStreamFragmentCollection::HasAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed(void)
+{
+  return (this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->Count() != 0);
 }
 
 bool CMpeg2tsStreamFragmentCollection::HasPartiallyProcessed(void)
@@ -155,7 +187,8 @@ bool CMpeg2tsStreamFragmentCollection::InsertIndexes(unsigned int itemIndex)
   bool result = __super::InsertIndexes(itemIndex);
 
   unsigned int indexReadyForAlignItemIndex = UINT_MAX;
-  unsigned int indexAlignedNotPartiallyOrFullProcessedItemIndex = UINT_MAX;
+  unsigned int indexAlignedNotDiscontinuityProcessedItemIndex = UINT_MAX;
+  unsigned int indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedItemIndex = UINT_MAX;
   unsigned int indexPartiallyProcessedItemIndex = UINT_MAX;
 
   if (result)
@@ -198,25 +231,50 @@ bool CMpeg2tsStreamFragmentCollection::InsertIndexes(unsigned int itemIndex)
       unsigned int startIndex = 0;
       unsigned int endIndex = 0;
 
-      result &= this->indexAlignedNotPartiallyOrFullProcessed->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
+      result &= this->indexAlignedNotDiscontinuityProcessed->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
 
       if (result)
       {
-        indexAlignedNotPartiallyOrFullProcessedItemIndex = min(endIndex, this->indexAlignedNotPartiallyOrFullProcessed->Count());
+        indexAlignedNotDiscontinuityProcessedItemIndex = min(endIndex, this->indexAlignedNotDiscontinuityProcessed->Count());
 
         // update (increase) values in index
-        CHECK_CONDITION_EXECUTE(result, this->indexAlignedNotPartiallyOrFullProcessed->Increase(indexAlignedNotPartiallyOrFullProcessedItemIndex));
-        CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_ALIGNED_NOT_PARTIALLY_OR_FULL_PROCESSED_INC);
+        CHECK_CONDITION_EXECUTE(result, this->indexAlignedNotDiscontinuityProcessed->Increase(indexAlignedNotDiscontinuityProcessedItemIndex));
+        CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_ALIGNED_NOT_DISCONTINUITY_PROCESSED_INC);
 
-        if (item->IsAligned() && (!(item->IsPartiallyProcessed() || item->IsProcessed())))
+        if (item->IsAligned() && (!item->IsDiscontinuityProcessed()))
         {
-          result &= this->indexAlignedNotPartiallyOrFullProcessed->Insert(indexAlignedNotPartiallyOrFullProcessedItemIndex, itemIndex);
-          CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_ALIGNED_NOT_PARTIALLY_OR_FULL_PROCESSED_ADD);
+          result &= this->indexAlignedNotDiscontinuityProcessed->Insert(indexAlignedNotDiscontinuityProcessedItemIndex, itemIndex);
+          CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_ALIGNED_NOT_DISCONTINUITY_PROCESSED_ADD);
         }
       }
     }
 
     // third index
+    if (result)
+    {
+      // get position to insert item index
+      unsigned int startIndex = 0;
+      unsigned int endIndex = 0;
+
+      result &= this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
+
+      if (result)
+      {
+        indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedItemIndex = min(endIndex, this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->Count());
+
+        // update (increase) values in index
+        CHECK_CONDITION_EXECUTE(result, this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->Increase(indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedItemIndex));
+        CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_ALIGNED_DISCONTINUITY_PROCESSED_NOT_PARTIALLY_OR_FULL_PROCESSED_INC);
+
+        if (item->IsAligned() && item->IsDiscontinuityProcessed() && (!(item->IsPartiallyProcessed() || item->IsProcessed())))
+        {
+          result &= this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->Insert(indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedItemIndex, itemIndex);
+          CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_ALIGNED_DISCONTINUITY_PROCESSED_NOT_PARTIALLY_OR_FULL_PROCESSED_ADD);
+        }
+      }
+    }
+
+    // fourth index
     if (result)
     {
       // get position to insert item index
@@ -249,10 +307,14 @@ bool CMpeg2tsStreamFragmentCollection::InsertIndexes(unsigned int itemIndex)
     CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_READY_FOR_ALIGN_INC), this->indexReadyForAlign->Decrease(indexReadyForAlignItemIndex, 1));
 
     // revert second index
-    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_ALIGNED_NOT_PARTIALLY_OR_FULL_PROCESSED_ADD), this->indexAlignedNotPartiallyOrFullProcessed->Remove(indexAlignedNotPartiallyOrFullProcessedItemIndex));
-    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_ALIGNED_NOT_PARTIALLY_OR_FULL_PROCESSED_INC), this->indexAlignedNotPartiallyOrFullProcessed->Decrease(indexAlignedNotPartiallyOrFullProcessedItemIndex, 1));
+    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_ALIGNED_NOT_DISCONTINUITY_PROCESSED_ADD), this->indexAlignedNotDiscontinuityProcessed->Remove(indexAlignedNotDiscontinuityProcessedItemIndex));
+    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_ALIGNED_NOT_DISCONTINUITY_PROCESSED_INC), this->indexAlignedNotDiscontinuityProcessed->Decrease(indexAlignedNotDiscontinuityProcessedItemIndex, 1));
 
     // revert third index
+    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_ALIGNED_DISCONTINUITY_PROCESSED_NOT_PARTIALLY_OR_FULL_PROCESSED_ADD), this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->Remove(indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedItemIndex));
+    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_ALIGNED_DISCONTINUITY_PROCESSED_NOT_PARTIALLY_OR_FULL_PROCESSED_INC), this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->Decrease(indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedItemIndex, 1));
+
+    // revert fourth index
     CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_PARTIALLY_PROCESSED_ADD), this->indexPartiallyProcessed->Remove(indexPartiallyProcessedItemIndex));
     CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_PARTIALLY_PROCESSED_INC), this->indexPartiallyProcessed->Decrease(indexPartiallyProcessedItemIndex, 1));
 
@@ -286,17 +348,28 @@ void CMpeg2tsStreamFragmentCollection::RemoveIndexes(unsigned int startIndex, un
   this->indexReadyForAlign->Decrease(indexStart, count);
 
   // second index
-  this->indexAlignedNotPartiallyOrFullProcessed->GetItemInsertPosition(startIndex, &start, &end);
-  indexStart = min(end, this->indexAlignedNotPartiallyOrFullProcessed->Count());
+  this->indexAlignedNotDiscontinuityProcessed->GetItemInsertPosition(startIndex, &start, &end);
+  indexStart = min(end, this->indexAlignedNotDiscontinuityProcessed->Count());
 
-  this->indexAlignedNotPartiallyOrFullProcessed->GetItemInsertPosition(startIndex + count, &start, &end);
-  indexCount = min(end, this->indexAlignedNotPartiallyOrFullProcessed->Count()) - indexStart;
+  this->indexAlignedNotDiscontinuityProcessed->GetItemInsertPosition(startIndex + count, &start, &end);
+  indexCount = min(end, this->indexAlignedNotDiscontinuityProcessed->Count()) - indexStart;
 
-  CHECK_CONDITION_EXECUTE(indexCount > 0, this->indexAlignedNotPartiallyOrFullProcessed->Remove(indexStart, indexCount));
+  CHECK_CONDITION_EXECUTE(indexCount > 0, this->indexAlignedNotDiscontinuityProcessed->Remove(indexStart, indexCount));
   // update (decrease) values in index
-  this->indexAlignedNotPartiallyOrFullProcessed->Decrease(indexStart, count);
+  this->indexAlignedNotDiscontinuityProcessed->Decrease(indexStart, count);
 
-  // this index
+  // third index
+  this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->GetItemInsertPosition(startIndex, &start, &end);
+  indexStart = min(end, this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->Count());
+
+  this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->GetItemInsertPosition(startIndex + count, &start, &end);
+  indexCount = min(end, this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->Count()) - indexStart;
+
+  CHECK_CONDITION_EXECUTE(indexCount > 0, this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->Remove(indexStart, indexCount));
+  // update (decrease) values in index
+  this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->Decrease(indexStart, count);
+
+  // fourth index
   this->indexPartiallyProcessed->GetItemInsertPosition(startIndex, &start, &end);
   indexStart = min(end, this->indexPartiallyProcessed->Count());
 
@@ -343,8 +416,8 @@ bool CMpeg2tsStreamFragmentCollection::UpdateIndexes(unsigned int itemIndex, uns
     // second index
     if (result)
     {
-      bool test = item->IsAligned() && (!(item->IsPartiallyProcessed() || item->IsProcessed()));
-      unsigned int indexIndex = this->indexAlignedNotPartiallyOrFullProcessed->GetItemIndex(itemIndex);
+      bool test = item->IsAligned() && (!item->IsDiscontinuityProcessed());
+      unsigned int indexIndex = this->indexAlignedNotDiscontinuityProcessed->GetItemIndex(itemIndex);
 
       if (result && test && (indexIndex == UINT_MAX))
       {
@@ -352,19 +425,43 @@ bool CMpeg2tsStreamFragmentCollection::UpdateIndexes(unsigned int itemIndex, uns
         unsigned int startIndex = 0;
         unsigned int endIndex = 0;
 
-        result &= this->indexAlignedNotPartiallyOrFullProcessed->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
+        result &= this->indexAlignedNotDiscontinuityProcessed->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
 
         // insert into index
-        CHECK_CONDITION_EXECUTE(result, result &= this->indexAlignedNotPartiallyOrFullProcessed->Insert(min(endIndex, this->indexAlignedNotPartiallyOrFullProcessed->Count()), itemIndex, count));
+        CHECK_CONDITION_EXECUTE(result, result &= this->indexAlignedNotDiscontinuityProcessed->Insert(min(endIndex, this->indexAlignedNotDiscontinuityProcessed->Count()), itemIndex, count));
       }
       else if (result && (!test) && (indexIndex != UINT_MAX))
       {
         // remove from index
-        this->indexAlignedNotPartiallyOrFullProcessed->Remove(indexIndex, count);
+        this->indexAlignedNotDiscontinuityProcessed->Remove(indexIndex, count);
       }
     }
 
-    // this index
+    // third index
+    if (result)
+    {
+      bool test = item->IsAligned() && item->IsDiscontinuityProcessed() && (!(item->IsPartiallyProcessed() || item->IsProcessed()));
+      unsigned int indexIndex = this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->GetItemIndex(itemIndex);
+
+      if (result && test && (indexIndex == UINT_MAX))
+      {
+        // get position to insert item index
+        unsigned int startIndex = 0;
+        unsigned int endIndex = 0;
+
+        result &= this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
+
+        // insert into index
+        CHECK_CONDITION_EXECUTE(result, result &= this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->Insert(min(endIndex, this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->Count()), itemIndex, count));
+      }
+      else if (result && (!test) && (indexIndex != UINT_MAX))
+      {
+        // remove from index
+        this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->Remove(indexIndex, count);
+      }
+    }
+
+    // fourth index
     if (result)
     {
       bool test = item->IsPartiallyProcessed();
@@ -399,7 +496,8 @@ bool CMpeg2tsStreamFragmentCollection::EnsureEnoughSpaceIndexes(unsigned int add
   if (result)
   {
     result &= this->indexReadyForAlign->EnsureEnoughSpace(this->indexReadyForAlign->Count() + addingCount);
-    result &= this->indexAlignedNotPartiallyOrFullProcessed->EnsureEnoughSpace(this->indexAlignedNotPartiallyOrFullProcessed->Count() + addingCount);
+    result &= this->indexAlignedNotDiscontinuityProcessed->EnsureEnoughSpace(this->indexAlignedNotDiscontinuityProcessed->Count() + addingCount);
+    result &= this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->EnsureEnoughSpace(this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->Count() + addingCount);
     result &= this->indexPartiallyProcessed->EnsureEnoughSpace(this->indexPartiallyProcessed->Count() + addingCount);
   }
 
@@ -411,7 +509,8 @@ void CMpeg2tsStreamFragmentCollection::ClearIndexes(void)
   __super::ClearIndexes();
 
   this->indexReadyForAlign->Clear();
-  this->indexAlignedNotPartiallyOrFullProcessed->Clear();
+  this->indexAlignedNotDiscontinuityProcessed->Clear();
+  this->indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed->Clear();
   this->indexPartiallyProcessed->Clear();
 }
 

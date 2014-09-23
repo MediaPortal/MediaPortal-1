@@ -29,9 +29,10 @@
 
 #define MPEG2TS_STREAM_FRAGMENT_FLAG_READY_FOR_ALIGN                  (1 << (STREAM_FRAGMENT_FLAG_LAST + 0))
 #define MPEG2TS_STREAM_FRAGMENT_FLAG_ALIGNED                          (1 << (STREAM_FRAGMENT_FLAG_LAST + 1))
-#define MPEG2TS_STREAM_FRAGMENT_FLAG_PARTIALLY_PROCESSED              (1 << (STREAM_FRAGMENT_FLAG_LAST + 2))
+#define MPEG2TS_STREAM_FRAGMENT_FLAG_DISCONTINUITY_PROCESSED          (1 << (STREAM_FRAGMENT_FLAG_LAST + 2))
+#define MPEG2TS_STREAM_FRAGMENT_FLAG_PARTIALLY_PROCESSED              (1 << (STREAM_FRAGMENT_FLAG_LAST + 3))
 
-#define MPEG2TS_STREAM_FRAGMENT_FLAG_LAST                             (STREAM_FRAGMENT_FLAG_LAST + 3)
+#define MPEG2TS_STREAM_FRAGMENT_FLAG_LAST                             (STREAM_FRAGMENT_FLAG_LAST + 4)
 
 class CMpeg2tsStreamFragment : public CStreamFragment
 {
@@ -61,6 +62,11 @@ public:
   // @param streamFragmentIndex : the index of stream fragment (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
   void SetAligned(bool aligned, unsigned int streamFragmentIndex);
 
+  // sets discontinuity processed flag
+  // @param discontinuityProcessed : true if discontinuity processed, false otherwise
+  // @param streamFragmentIndex : the index of stream fragment (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
+  void SetDiscontinuityProcessed(bool discontinuityProcessed, unsigned int streamFragmentIndex);
+
   // sets partially processed flag
   // @param partiallyProcessed : true if partially processed, false otherwise
   // @param streamFragmentIndex : the index of stream fragment (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
@@ -79,6 +85,10 @@ public:
   // tests if fragment is aligned
   // @return : true if fragment is aligned, false otherwise
   bool IsAligned(void);
+
+  // tests if fragment is processed for discontinuity
+  // @return : true if fragment is processed for discontinuity, false otherwise
+  bool IsDiscontinuityProcessed(void);
 
   // tests if fragment is partially processed (some unprocessed MPEG2 TS packets are still in fragment)
   // @return : true if fragment is partially processed, false otherwise

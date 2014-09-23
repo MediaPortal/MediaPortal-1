@@ -26,12 +26,16 @@
 #include "ParserPlugin.h"
 #include "CacheFile.h"
 #include "Mpeg2tsStreamFragmentCollection.h"
+#include "DiscontinuityParser.h"
 
 #define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_NONE               PARSER_PLUGIN_FLAG_NONE
 
-#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_RECEIVE_DATA       (1 << (PARSER_PLUGIN_FLAG_LAST + 0))
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_RECEIVE_DATA                     (1 << (PARSER_PLUGIN_FLAG_LAST + 0))
 
-#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_LAST               (PARSER_PLUGIN_FLAG_LAST + 1)
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_DETECT_DISCONTINUITY             (1 << (PARSER_PLUGIN_FLAG_LAST + 1))
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_ALIGN_TO_MPEG2TS_PACKET          (1 << (PARSER_PLUGIN_FLAG_LAST + 2))
+
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_LAST               (PARSER_PLUGIN_FLAG_LAST + 3)
 
 #define PARSER_NAME                                                   L"PARSER_MPEG2TS"
 
@@ -57,6 +61,11 @@ public:
   // gets parser action after parser recognizes stream
   // @return : one of Action values
   virtual Action GetAction(void);
+
+  // sets current connection url and parameters
+  // @param parameters : the collection of url and connection parameters
+  // @return : S_OK if successful
+  virtual HRESULT SetConnectionParameters(const CParameterCollection *parameters);
 
   // tests if stream length was set
   // @return : true if stream length was set, false otherwise
@@ -160,6 +169,9 @@ protected:
 
   // holds position offset added to stream length 
   int64_t positionOffset;
+
+  // holds discontinuity parser
+  CDiscontinuityParser *discontinuityParser;
 
   /* received data worker */
 

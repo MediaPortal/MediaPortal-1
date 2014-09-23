@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "TsPacket.h"
+#include "TsPacketConstants.h"
 #include "BufferHelper.h"
 
 CTsPacket::CTsPacket(HRESULT *result)
