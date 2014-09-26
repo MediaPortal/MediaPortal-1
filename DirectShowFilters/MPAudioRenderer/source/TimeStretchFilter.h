@@ -128,9 +128,6 @@ protected:
 
 // Internal implementation
 private:
-
-  AudioRendererSettings* m_pSettings;
-
   vector<HANDLE> m_hSampleEvents;
   vector<DWORD>  m_dwSampleWaitObjects;
 

@@ -22,7 +22,7 @@
 #include "alloctracing.h"
 
 CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSyncClock* pClock) :
-  m_pSettings(pSettings),
+  CQueuedAudioSink(pSettings),
   m_pClock(pClock),
   m_hLibAVRT(NULL),
   m_pMMDevice(NULL),

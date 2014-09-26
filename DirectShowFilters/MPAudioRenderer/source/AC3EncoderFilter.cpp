@@ -26,8 +26,7 @@ template<class T> inline T odd2even(T x)
 }
 
 CAC3EncoderFilter::CAC3EncoderFilter(AudioRendererSettings* pSettings) : 
-  CBaseAudioSink(true),
-  m_pSettings(pSettings),
+  CBaseAudioSink(true, pSettings),
   m_bPassThrough(false),
   m_cbRemainingInput(0),
   m_pRemainingInput(NULL),

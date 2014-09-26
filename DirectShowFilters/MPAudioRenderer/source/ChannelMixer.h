@@ -18,7 +18,6 @@
 
 #include "stdafx.h"
 #include "BaseAudioSink.h"
-#include "Settings.h"
 #include "..\AE_mixer\AERemap.h"
 #include "..\AE_mixer\AEChannelInfo.h"
 
@@ -62,6 +61,4 @@ protected:
 
   REFERENCE_TIME m_rtNextIncomingSampleTime;
   REFERENCE_TIME m_rtInSampleTime;
-
-  AudioRendererSettings* m_pSettings;
 };

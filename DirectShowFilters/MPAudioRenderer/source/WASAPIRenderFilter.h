@@ -103,7 +103,6 @@ private:
   void RenderSilence(BYTE* pTarget, UINT32 bufferSizeInBytes, LONGLONG &writeSilence, UINT32 &bytesFilled);
   void HandleFlush();
 
-  AudioRendererSettings* m_pSettings;
   IMMDevice*          m_pMMDevice;
   IAudioClient*       m_pAudioClient;
   IAudioRenderClient* m_pRenderClient;

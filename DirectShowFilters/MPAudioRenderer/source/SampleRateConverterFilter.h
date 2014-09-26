@@ -67,7 +67,5 @@ protected:
   REFERENCE_TIME m_rtInSampleTime;
 
   SRC_STATE* m_pSrcState;
-
-  AudioRendererSettings* m_pSettings;
 };
 

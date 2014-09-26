@@ -34,7 +34,7 @@
   }
 
 CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings, CSyncClock* pClock) :
-  m_pSettings(pSettings),
+  CQueuedAudioSink(pSettings),
   m_Streams(NULL),
   m_fCurrentTempo(1.0),
   m_fNewAdjustment(1.0),

@@ -25,7 +25,7 @@ using namespace std;
 class CQueuedAudioSink : public CBaseAudioSink
 {
 public:
-  CQueuedAudioSink();
+  CQueuedAudioSink(AudioRendererSettings* pSettings);
   virtual ~CQueuedAudioSink();
 
 // IAudioSink implementation

@@ -230,7 +230,7 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
 
   if (nUseFilters & USE_FILTERS_BIT_DEPTH_OUT)
   {
-    m_pOutBitDepthAdapter = new CBitDepthAdapter();
+    m_pOutBitDepthAdapter = new CBitDepthAdapter(m_pSettings);
     if (!m_pOutBitDepthAdapter)
       return E_OUTOFMEMORY;
 
@@ -272,7 +272,7 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
 
   if (nUseFilters & USE_FILTERS_BIT_DEPTH_IN)
   {
-    m_pInBitDepthAdapter = new CBitDepthAdapter();
+    m_pInBitDepthAdapter = new CBitDepthAdapter(m_pSettings);
     if (!m_pInBitDepthAdapter)
       return E_OUTOFMEMORY;
 
@@ -282,7 +282,7 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
 
   if (m_pSettings->GetAllowBitStreaming())
   {
-    m_pSampleCopier = new CSampleCopier();
+    m_pSampleCopier = new CSampleCopier(m_pSettings);
     if (!m_pSampleCopier)
       return E_OUTOFMEMORY;
 

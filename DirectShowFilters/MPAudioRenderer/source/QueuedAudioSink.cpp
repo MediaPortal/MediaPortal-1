@@ -22,8 +22,8 @@
 
 #define END_OF_STREAM_FLUSH_TIMEOUT (5000)
 
-CQueuedAudioSink::CQueuedAudioSink(void) : 
-  CBaseAudioSink(false),
+CQueuedAudioSink::CQueuedAudioSink(AudioRendererSettings* pSettings) : 
+  CBaseAudioSink(false, pSettings),
   m_hThread(NULL),
   m_ThreadId(NULL)
 {

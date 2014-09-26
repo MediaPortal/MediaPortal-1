@@ -24,7 +24,7 @@
 class CBitDepthAdapter : public CBaseAudioSink
 {
 public:
-  CBitDepthAdapter();
+  CBitDepthAdapter(AudioRendererSettings* pSettings);
   virtual ~CBitDepthAdapter();
 
 // type definitions

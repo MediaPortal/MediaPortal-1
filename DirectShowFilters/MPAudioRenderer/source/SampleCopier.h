@@ -24,7 +24,7 @@
 class CSampleCopier : public CBaseAudioSink
 {
 public:
-  CSampleCopier();
+  CSampleCopier(AudioRendererSettings* pSettings);
   virtual ~CSampleCopier();
 
 // type definitions
