@@ -89,8 +89,8 @@ static BitDepthConversionDescriptor gValidConversions[] =
 BitDepthDescriptor* FindConversion(const BitDepthDescriptor& source);
 
 
-CBitDepthAdapter::CBitDepthAdapter() : 
-  CBaseAudioSink(true),  
+CBitDepthAdapter::CBitDepthAdapter(AudioRendererSettings* pSettings) : 
+  CBaseAudioSink(true, pSettings),  
   m_bPassThrough(false),
   m_rtInSampleTime(0),
   m_rtNextIncomingSampleTime(0),

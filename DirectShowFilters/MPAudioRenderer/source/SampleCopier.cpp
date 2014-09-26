@@ -21,8 +21,8 @@
 
 #include "alloctracing.h"
 
-CSampleCopier::CSampleCopier() : 
-  CBaseAudioSink(true),  
+CSampleCopier::CSampleCopier(AudioRendererSettings* pSettings) : 
+  CBaseAudioSink(true, pSettings),  
   m_bPassThrough(false),
   m_rtInSampleTime(0),
   m_rtNextIncomingSampleTime(0)
