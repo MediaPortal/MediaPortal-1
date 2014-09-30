@@ -434,6 +434,10 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       {
         m_FillBuffSleepTime = 5;
         buffer=NULL; //Continue looping
+        if (!m_pTsReaderFilter->m_bStreamCompensated && (m_nNextAFT != 0))
+        {
+          ClearAverageFtime();
+        }
         
         if (!m_pTsReaderFilter->m_bStreamCompensated)
         {
@@ -465,16 +469,26 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           clock = (double)(RefClock-m_rtStart.m_time)/10000000.0 ;
           fTime = ((double)cRefTime.m_time/10000000.0) - clock ;
           
+          if ((m_sampleCount <= (NB_AFTSIZE*2)) || (clock < 2.0)) //only do this at start of play
+          {
+            //Need to do this with 'raw' fTime data
+            CalcAverageFtime(fTime);
+            if (clock > 1.8)
+              LogDebug("audPin : m_fAFTMean= %03.3f", (float)m_fAFTMean) ;
+          }
+          
           //Add compensation time for external downstream audio delay
-          //to stop samples becoming 'late'
-          fTime += ((double)m_pTsReaderFilter->m_regExternalDelayComp/10000000.0);
+          //to stop samples becoming 'late' (note: this does NOT change the actual sample timestamps)
+          //fTime += ((double)m_pTsReaderFilter->m_regExternalDelayComp/10000000.0);
+          fTime -= m_fAFTMean;  //remove the 'mean' offset
+          fTime += AUDIO_STALL_POINT/2; //re-centre the timing                 
 
           //Discard late samples at start of play,
           //and samples outside a sensible timing window during play 
           //(helps with signal corruption recovery)
           cRefTime -= m_pTsReaderFilter->m_ClockOnStart.m_time;
 
-          if ((fTime < 0.2) && (m_dRateSeeking == 1.0) && (m_pTsReaderFilter->State() == State_Running) && (m_sampleCount > 10))
+          if ((fTime < 0.2) && (m_dRateSeeking == 1.0) && (m_pTsReaderFilter->State() == State_Running) && (m_sampleCount > (NB_AFTSIZE*2)))
           {              
             if (!demux.m_bAudioSampleLate) 
             {
@@ -569,6 +583,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               LogDebug("Aud/Ref : %03.3f, Compensated = %03.3f ( %0.3f A/V buffers=%02d/%02d), Clk : %f, SampCnt %d, Sleep %d ms, stallPt %03.3f", (float)RefTime.Millisecs()/1000.0f, (float)cRefTime.Millisecs()/1000.0f, fTime,cntA,cntV, clock, m_sampleCount, m_FillBuffSleepTime, (float)stallPoint);
             }
             if (m_pTsReaderFilter->m_ShowBufferAudio) m_pTsReaderFilter->m_ShowBufferAudio--;
+            // CalcAverageFtime(fTime);
               
             if (((float)cRefTime.Millisecs()/1000.0f) > AUDIO_READY_POINT)
             {
@@ -624,6 +639,46 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   return NOERROR;
 }
 
+void CAudioPin::ClearAverageFtime()
+{
+  m_nNextAFT = 0;
+	m_fAFTMean = 0.0;
+	m_llAFTSumAvg = 0.0;
+  ZeroMemory((void*)&m_pllAFT, sizeof(double) * NB_AFTSIZE);
+}
+
+// Calculate rolling average audio ftime
+void CAudioPin::CalcAverageFtime(double ftime)
+{          
+    // Calculate the mean timestamp difference
+  if (m_nNextAFT >= NB_AFTSIZE)
+  {
+    m_fAFTMean = m_llAFTSumAvg / (double)NB_AFTSIZE;
+  }
+  else if (m_nNextAFT > 1)
+  {
+    m_fAFTMean = m_llAFTSumAvg / (double)m_nNextAFT;
+  }
+  else
+  {
+    m_fAFTMean = ftime;
+  }
+
+    // Update the rolling timestamp to presentation diff average
+    // (these values are initialised in OnThreadStartPlay())
+  int tempNextASD = (m_nNextAFT % NB_AFTSIZE);
+  m_llAFTSumAvg -= m_pllAFT[tempNextASD];
+  m_pllAFT[tempNextASD] = ftime;
+  m_llAFTSumAvg += ftime;
+  m_nNextAFT++;
+  
+  //LogDebug("audPin:GetAverageSampleTime, nextASD %d, TsMeanDiff %0.3f, ftime %0.3f", m_nNextAFT, (float)m_fAFTMean/10000.0f, (float)ftime/10000.0f);  
+}
+
+double CAudioPin::GetAudToPresMeanDelta()
+{
+  return m_fAFTMean;
+}
 
 bool CAudioPin::IsInFillBuffer()
 {
@@ -699,6 +754,8 @@ HRESULT CAudioPin::OnThreadStartPlay()
 
   m_FillBuffSleepTime = 1;
   m_LastFillBuffTime = GET_TIME_NOW();
+
+  ClearAverageFtime();
   
   //get file-duration and set m_rtDuration
   GetDuration(NULL);
