@@ -31,5 +31,6 @@ namespace Databases.Folders
     void GetPath(string strPath, ref ArrayList strPathList, string strKey);
     void Dispose();
     string DatabaseName { get; }
+    bool DbHealth { get; }
   }
 }

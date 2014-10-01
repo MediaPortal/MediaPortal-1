@@ -667,6 +667,24 @@ namespace MediaPortal.GUI.Pictures
         xmlreader.SetValueAsBool("thumbnails", "videosharepreview", false);
       }
       base.OnPageLoad();
+
+      if (!PictureDatabase.DbHealth)
+      {
+        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+        pDlgOK.SetHeading(315);
+        pDlgOK.SetLine(1, string.Empty);
+        pDlgOK.SetLine(2, GUILocalizeStrings.Get(190010, new object[] { GUILocalizeStrings.Get(1) }));
+        pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+      }
+      if (!FolderSettings.DbHealth)
+      {
+        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+        pDlgOK.SetHeading(315);
+        pDlgOK.SetLine(1, string.Empty);
+        pDlgOK.SetLine(2, GUILocalizeStrings.Get(190010, new object[] { GUILocalizeStrings.Get(190011) }));
+        pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+      }
+
       if (!KeepVirtualDirectory(PreviousWindowId))
       {
         _virtualDirectory.Reset();

@@ -42,6 +42,7 @@ namespace MediaPortal.Video.Database
   public class VideoDatabaseSqlLite : IVideoDatabase, IDisposable
   {
     public SQLiteClient m_db;
+    private bool _dbHealth = false;
 
     #region ctor
 
@@ -76,6 +77,9 @@ namespace MediaPortal.Video.Database
         }
         catch (Exception) {}
         m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, @"VideoDatabaseV5.db3"));
+
+        _dbHealth = DatabaseUtility.IntegrityCheck(m_db);
+
         DatabaseUtility.SetPragmas(m_db);
         
         CreateTables();
@@ -6796,6 +6800,14 @@ namespace MediaPortal.Video.Database
         details.MediaInfo = mInfo;
       }
 
+    }
+
+    public bool DbHealth
+    {
+      get
+      {
+        return _dbHealth;
+      }
     }
 
     public string DatabaseName

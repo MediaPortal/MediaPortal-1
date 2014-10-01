@@ -332,5 +332,13 @@ namespace Databases.Folders.SqlServer
     {
       get { return _connection.ConnectionString; }
     }
+
+    public bool DbHealth
+    {
+      get
+      {
+        return true;
+      }
+    }
   }
 }
