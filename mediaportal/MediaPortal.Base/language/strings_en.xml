@@ -1341,6 +1341,8 @@
     <String id="2147">Not enough space on DVD</String>
     <String id="2148">Do you want to change it on all sub-folders?</String>
     <String id="2149">Question</String>
+    <String id="2160">Update Mediainfo in selected folder</String>
+    <String id="2161">Abort update Mediainfo thread</String>
     <String id="2200" prefix="My ">Explorer</String>
     <String id="2201">Select source</String>
     <String id="2202">Select destination</String>
