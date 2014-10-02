@@ -675,7 +675,7 @@ HRESULT CWASAPIRenderFilter::EndFlush()
 
 HRESULT CWASAPIRenderFilter::PutSample(IMediaSample* pSample)
 {
- HRESULT hr = CQueuedAudioSink::PutSample(pSample);
+  HRESULT hr = CQueuedAudioSink::PutSample(pSample);
 
   if (m_filterState != State_Running)
   {
@@ -710,18 +710,6 @@ DWORD CWASAPIRenderFilter::ThreadProc()
   HRESULT hr = S_FALSE;
 
   m_csResources.Lock();
-
-  if (m_pSettings->GetReleaseDeviceOnStop() && !m_pAudioClient && m_pInputFormat)
-  {
-    hr = CreateAudioClient(true);
-    if (FAILED(hr))
-    {
-      Log("CWASAPIRenderFilter::Render thread Error, audio client not available: (0x%08x)", hr);
-      StopRenderThread();
-      m_csResources.Unlock();
-      return 0;
-    }
-  }
 
   if (m_pAudioClient)
   {
