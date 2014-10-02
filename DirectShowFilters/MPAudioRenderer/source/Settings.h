@@ -170,7 +170,6 @@ public:
   STDMETHODIMP SetString(MPARSetting setting, LPWSTR value);
 
   int GetSpeakerCount();
-  bool GetReleaseDeviceOnStop();
   double GetMinBias();
   double GetMaxBias();
   bool GetLogDebug();
@@ -255,8 +254,6 @@ private:
   DWORD m_nForceSamplingRate;
   DWORD m_nForceBitDepth;
 
-  bool m_bReleaseDeviceOnStop;
-  
   REFERENCE_TIME m_hnsPeriod;
   UINT32 m_msOutputBuffer;
 

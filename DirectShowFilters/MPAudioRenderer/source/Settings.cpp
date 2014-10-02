@@ -67,7 +67,6 @@ LPCTSTR quality_SEEKWINDOW_MS = TEXT("Quality_SEEKWINDOW_MS");
 LPCTSTR quality_OVERLAP_MS = TEXT("Quality_OVERLAP_MS");
 LPCTSTR speakerConfig = TEXT("SpeakerConfig");
 LPCTSTR forceChannelMixing = TEXT("ForceChannelMixing");
-LPCTSTR releaseDeviceOnStop = TEXT("ReleaseDeviceOnStop");
 LPCTSTR expandMonoToStereo = TEXT("ExpandMonoToStereo");
 LPCTSTR allowBitStreaming = TEXT("AllowBitStreaming");
 
@@ -91,7 +90,6 @@ DWORD forceBitDepthData = 0;
 DWORD resamplingQualityData = 4;
 DWORD speakerConfigData = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
 DWORD forceChannelMixingData = 0;
-DWORD releaseDeviceOnStopData = 0;
 DWORD expandMonoToStereoData = 1;
 DWORD quality_USE_QUICKSEEKData = 0;
 DWORD quality_USE_AA_FILTERData = 0;
@@ -131,7 +129,6 @@ AudioRendererSettings::AudioRendererSettings() :
   m_lSpeakerCount(2),
   m_lSpeakerConfig(SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT),
   m_bForceChannelMixing(false),
-  m_bReleaseDeviceOnStop(false),
   m_bExpandMonoToStereo(true),
   m_nUseFilters(USE_FILTERS_ALL),
   m_bAllowBitStreaming(true)
@@ -191,7 +188,6 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, resamplingQuality, resamplingQualityData);
     ReadRegistryKeyDword(hKey, speakerConfig, speakerConfigData);
     ReadRegistryKeyDword(hKey, forceChannelMixing, forceChannelMixingData);
-    ReadRegistryKeyDword(hKey, releaseDeviceOnStop, releaseDeviceOnStopData);
     ReadRegistryKeyDword(hKey, expandMonoToStereo, expandMonoToStereoData);
     ReadRegistryKeyDword(hKey, allowBitStreaming, allowBitStreamingData);
 
@@ -222,7 +218,6 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   ResamplingQuality:        %s", ResamplingQualityAsString(resamplingQualityData));
     Log("   SpeakerConfig:            %d", speakerConfigData);
     Log("   ForceChannelMixing:       %d", forceChannelMixingData);
-    Log("   ReleaseDeviceOnStop:      %d", releaseDeviceOnStopData);
     Log("   ExpandMonoToStereo:       %d", expandMonoToStereoData);
     Log("   AllowBitStreaming:        %d", allowBitStreamingData);
     Log("   quality_USE_QUICKSEEK:    %d", quality_USE_QUICKSEEKData);
@@ -389,11 +384,6 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     else
       m_lSpeakerConfig = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
 
-    if (releaseDeviceOnStopData > 0)
-      m_bReleaseDeviceOnStop = true;
-    else
-      m_bReleaseDeviceOnStop = false;
-
     if (quality_USE_QUICKSEEKData > 0)
       m_bQuality_USE_QUICKSEEK = true;
     else
@@ -443,7 +433,6 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, resamplingQuality, resamplingQualityData);
       WriteRegistryKeyDword(hKey, speakerConfig, speakerConfigData);
       WriteRegistryKeyDword(hKey, forceChannelMixing, forceChannelMixingData);
-      WriteRegistryKeyDword(hKey, releaseDeviceOnStop, releaseDeviceOnStopData);
       WriteRegistryKeyDword(hKey, expandMonoToStereo, expandMonoToStereoData);
       WriteRegistryKeyDword(hKey, allowBitStreaming, allowBitStreamingData);
       WriteRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
@@ -496,7 +485,6 @@ void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
   resamplingQualityData = m_nResamplingQuality;
   speakerConfigData = m_lSpeakerConfig;
   forceChannelMixingData = m_bForceChannelMixing ? 1 : 0;
-  releaseDeviceOnStopData = m_bReleaseDeviceOnStop ? 1 : 0;
   expandMonoToStereoData = m_bExpandMonoToStereo ? 1 : 0;
   allowBitStreamingData = m_bAllowBitStreaming ? 1 : 0;
   quality_USE_QUICKSEEKData = m_bQuality_USE_QUICKSEEK;
@@ -527,7 +515,6 @@ void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
   WriteRegistryKeyDword(hKey, resamplingQuality, resamplingQualityData);
   WriteRegistryKeyDword(hKey, speakerConfig, speakerConfigData);
   WriteRegistryKeyDword(hKey, forceChannelMixing, forceChannelMixingData);
-  WriteRegistryKeyDword(hKey, releaseDeviceOnStop, releaseDeviceOnStopData);
   WriteRegistryKeyDword(hKey, expandMonoToStereo, expandMonoToStereoData);
   WriteRegistryKeyDword(hKey, allowBitStreaming, allowBitStreamingData);
   WriteRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
@@ -1173,12 +1160,6 @@ void AudioRendererSettings::SetResamplingQuality(int setting)
 {
   CAutoLock settingLock(&m_csSettings);
   m_nResamplingQuality = setting;
-}
-
-bool AudioRendererSettings::GetReleaseDeviceOnStop()
-{
-  CAutoLock settingLock(&m_csSettings);
-  return m_bReleaseDeviceOnStop;
 }
 
 bool AudioRendererSettings::GetAllowBitStreaming()
