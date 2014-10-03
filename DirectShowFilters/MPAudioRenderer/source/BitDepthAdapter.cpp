@@ -132,7 +132,7 @@ HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int 
     HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
     if (SUCCEEDED(hr))
     {
-      m_bNextFormatPassthru = true;      
+      m_bNextFormatPassthru = true;
       m_bPassThrough = true;
       m_chOrder = *pChOrder;
       return hr;
@@ -237,13 +237,17 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
   if (!pSample)
     return S_OK;
 
+  WAVEFORMATEXTENSIBLE* pwfe = NULL;
   AM_MEDIA_TYPE *pmt = NULL;
   bool bFormatChanged = false;
   
   HRESULT hr = S_OK;
 
   if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt != NULL)
-    bFormatChanged = !FormatsEqual((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, m_pInputFormat);
+  {
+    pwfe = (WAVEFORMATEXTENSIBLE*)pmt->pbFormat;
+    bFormatChanged = !FormatsEqual(pwfe, m_pInputFormat);
+  }
 
   if (pSample->IsDiscontinuity() == S_OK)
     m_bDiscontinuity = true;
@@ -269,6 +273,8 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
       Log("BitDepthAdapter: PutSample failed to change format: 0x%08x", hr);
       return hr;
     }
+
+    SetInputFormat(pwfe);
     m_chOrder = chOrder;
   }
 
