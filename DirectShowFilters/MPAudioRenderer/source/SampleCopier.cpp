@@ -52,21 +52,33 @@ HRESULT CSampleCopier::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
   if (!m_pNextSink)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
+  bool bApplyChanges = (nApplyChangesDepth != 0);
   if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
     nApplyChangesDepth--;
 
+  // Try passthrough
   HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
   if (SUCCEEDED(hr))
   {
-    m_bBitstreaming = CanBitstream(pwfx);
+    if (bApplyChanges)
+    {
+      m_bPassThrough = true;
+      SetInputFormat(pwfx);
+      SetOutputFormat(pwfx);
+    }
 
-    if (m_bBitstreaming)
+    m_bNextFormatPassthru = true;
+    m_chOrder = *pChOrder;
+    return hr;
+  }
+
+  hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
+  if (SUCCEEDED(hr))
+  {
+    if (CanBitstream(pwfx))
     {
       hr = m_pNextSink->NegotiateBuffer(pwfx, &m_nOutBufferSize, &m_nOutBufferCount, true);
       m_chOrder = *pChOrder;
-
-      SetInputFormat(pwfx);
-      SetOutputFormat(pwfx);
     }
   }
 
@@ -79,42 +91,50 @@ HRESULT CSampleCopier::PutSample(IMediaSample *pSample)
   if (!pSample)
     return S_OK;
 
+  WAVEFORMATEXTENSIBLE* pwfe = NULL;
+  AM_MEDIA_TYPE *pmt = NULL;
+  bool bFormatChanged = false;
+  
+  HRESULT hr = S_OK;
+
+  CAutoLock lock (&m_csOutputSample);
+  if (m_bFlushing)
+    return S_OK;
+
+  if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt != NULL)
+  {
+    pwfe = (WAVEFORMATEXTENSIBLE*)pmt->pbFormat;
+    bFormatChanged = !FormatsEqual(pwfe, m_pInputFormat);
+  }
+
+  if (bFormatChanged)
+  {
+    m_bBitstreaming = CanBitstream(pwfe);
+
+    // Apply format change locally, 
+    // next filter will evaluate the format change when it receives the sample
+    Log("CSampleCopier::PutSample: Processing format change");
+    ChannelOrder chOrder;
+    hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1, &chOrder);
+    if (FAILED(hr))
+    {
+      DeleteMediaType(pmt);
+      Log("SampleCopier: PutSample failed to change format: 0x%08x", hr);
+      return hr;
+    }
+
+    SetInputFormat(pwfe);
+    m_chOrder = chOrder;
+  }
+
   if (m_bBitstreaming)
   {
-    AM_MEDIA_TYPE *pmt = NULL;
-    bool bFormatChanged = false;
-  
-    HRESULT hr = S_OK;
-
     ASSERT(m_pMemAllocator);
 
     if (!m_pMemAllocator)
     {
       Log("CSampleCopier::PutSample m_pMemAllocator is NULL");
       return E_POINTER;
-    }
-
-    CAutoLock lock (&m_csOutputSample);
-    if (m_bFlushing)
-      return S_OK;
-
-    if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt != NULL)
-      bFormatChanged = !FormatsEqual((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, m_pInputFormat);
-
-    if (bFormatChanged)
-    {    
-      // Apply format change locally, 
-      // next filter will evaluate the format change when it receives the sample
-      Log("CSampleCopier::PutSample: Processing format change");
-      ChannelOrder chOrder;
-      hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1, &chOrder);
-      if (FAILED(hr))
-      {
-        DeleteMediaType(pmt);
-        Log("SampleCopier: PutSample failed to change format: 0x%08x", hr);
-        return hr;
-      }
-      m_chOrder = chOrder;
     }
 
     REFERENCE_TIME rtStop = 0;
