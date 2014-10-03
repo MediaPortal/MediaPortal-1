@@ -447,6 +447,15 @@ bool CMPAudioRenderer::DeliverSample(IMediaSample* pSample)
     }
   }
 
+  REFERENCE_TIME rtStart = 0;
+  REFERENCE_TIME rtStop = 0;
+
+  pSample->GetTime(&rtStart, &rtStop);
+
+  // Discard samples that have negative timestamps as render will reject those in any case
+  if (rtStart < 0)
+    return false;
+
   // In some cases audio decoder wont put the PMT on 1st sample (depends how the format negotiation goes?)
   if (m_bFirstSample && m_pMediaType)
   {
@@ -456,11 +465,6 @@ bool CMPAudioRenderer::DeliverSample(IMediaSample* pSample)
 
   if (m_pSettings->GetLogSampleTimes())
   {
-    REFERENCE_TIME rtStart = 0;
-    REFERENCE_TIME rtStop = 0;
-
-    pSample->GetTime(&rtStart, &rtStop);
-
     if (abs(m_rtNextSample - rtStart) > MAX_SAMPLE_TIME_ERROR)
       Log("Stream discontinuity detected in incoming samples: %6.3f", (m_rtNextSample - rtStart) / 10000000.0);
    
