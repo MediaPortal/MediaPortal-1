@@ -1,24 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="source\AC3EncoderFilter.cpp" />
-    <ClCompile Include="source\BaseAudioSink.cpp" />
-    <ClCompile Include="source\BitDepthAdapter.cpp" />
     <ClCompile Include="source\dllmain.cpp" />
     <ClCompile Include="source\dllsetup.cpp" />
     <ClCompile Include="source\FilterApp.cpp" />
     <ClCompile Include="source\MediaSeeking.cpp" />
     <ClCompile Include="source\MpAudioRenderer.cpp" />
-    <ClCompile Include="source\QueuedAudioSink.cpp" />
-    <ClCompile Include="source\SampleRateConverterFilter.cpp" />
-    <ClCompile Include="source\Settings.cpp" />
-    <ClCompile Include="source\SoundTouchEx.cpp" />
-    <ClCompile Include="source\SyncClock.cpp" />
-    <ClCompile Include="source\TimeSource.cpp" />
-    <ClCompile Include="source\TimeStretchFilter.cpp" />
     <ClCompile Include="source\VolumeHandler.cpp" />
-    <ClCompile Include="source\SynchCorrection.cpp" />
-    <ClCompile Include="source\WASAPIRenderFilter.cpp" />
     <ClCompile Include="libresample\src\src_linear.c">
       <Filter>libsamplerate</Filter>
     </ClCompile>
@@ -32,7 +20,6 @@
       <Filter>libsamplerate</Filter>
     </ClCompile>
     <ClCompile Include="source\Globals.cpp" />
-    <ClCompile Include="source\ChannelMixer.cpp" />
     <ClCompile Include="AE_mixer\AEChannelInfo.cpp">
       <Filter>AE Mixer</Filter>
     </ClCompile>
@@ -75,7 +62,6 @@
     <ClCompile Include="AC3_encoder\bits.cpp">
       <Filter>AC3_encoder</Filter>
     </ClCompile>
-    <ClCompile Include="source\SettingsProp.cpp" />
     <ClCompile Include="SoundTouch\source\cpu_detect_x86.cpp">
       <Filter>SoundTouch</Filter>
     </ClCompile>
@@ -88,37 +74,64 @@
     <ClCompile Include="SoundTouch\source\InterpolateCubic.cpp">
       <Filter>SoundTouch</Filter>
     </ClCompile>
-    <ClCompile Include="source\SampleCopier.cpp" />
+    <ClCompile Include="source\BaseAudioSink.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="source\BitDepthAdapter.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ChannelMixer.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SampleCopier.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SampleRateConverterFilter.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="source\TimeStretchFilter.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="source\WASAPIRenderFilter.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SoundTouchEx.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="source\QueuedAudioSink.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AC3EncoderFilter.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="source\TimeSource.cpp">
+      <Filter>Clock</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SynchCorrection.cpp">
+      <Filter>Clock</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SyncClock.cpp">
+      <Filter>Clock</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Settings.cpp">
+      <Filter>Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SettingsProp.cpp">
+      <Filter>Settings</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\AC3EncoderFilter.h" />
-    <ClInclude Include="source\BaseAudioSink.h" />
-    <ClInclude Include="source\BitDepthAdapter.h" />
     <ClInclude Include="source\dllsetup.h" />
     <ClInclude Include="source\FilterApp.h" />
-    <ClInclude Include="source\IAudioSink.h" />
-    <ClInclude Include="source\IAVSyncClock.h" />
-    <ClInclude Include="source\IRenderFilter.h" />
-    <ClInclude Include="source\ITimeStretch.h" />
     <ClInclude Include="source\MpAudioRenderer.h" />
-    <ClInclude Include="source\QueuedAudioSink.h" />
     <ClInclude Include="source\resource.h" />
-    <ClInclude Include="source\SampleRateConverterFilter.h" />
-    <ClInclude Include="source\Settings.h" />
     <ClInclude Include="source\SharedInclude.h" />
-    <ClInclude Include="source\SoundTouchEx.h" />
     <ClInclude Include="source\stdafx.h" />
-    <ClInclude Include="source\SyncClock.h" />
-    <ClInclude Include="source\TimeSource.h" />
-    <ClInclude Include="source\TimeStretchFilter.h" />
     <ClInclude Include="source\VolumeHandler.h" />
-    <ClInclude Include="source\SynchCorrection.h" />
-    <ClInclude Include="source\WASAPIRenderFilter.h" />
     <ClInclude Include="libresample\src\samplerate.h">
       <Filter>libsamplerate</Filter>
     </ClInclude>
     <ClInclude Include="source\Globals.h" />
-    <ClInclude Include="source\ChannelMixer.h" />
     <ClInclude Include="AE_mixer\AEAudioFormat.h">
       <Filter>AE Mixer</Filter>
     </ClInclude>
@@ -170,8 +183,6 @@
     <ClInclude Include="AC3_encoder\bits.h">
       <Filter>AC3_encoder</Filter>
     </ClInclude>
-    <ClInclude Include="source\SettingsProp.h" />
-    <ClInclude Include="source\IMPAudioSettings.h" />
     <ClInclude Include="SoundTouch\source\InterpolateCubic.h">
       <Filter>SoundTouch</Filter>
     </ClInclude>
@@ -181,7 +192,66 @@
     <ClInclude Include="SoundTouch\source\InterpolateShannon.h">
       <Filter>SoundTouch</Filter>
     </ClInclude>
-    <ClInclude Include="source\SampleCopier.h" />
+    <ClInclude Include="source\BaseAudioSink.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="source\BitDepthAdapter.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ChannelMixer.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SampleCopier.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SampleRateConverterFilter.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="source\TimeStretchFilter.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="source\WASAPIRenderFilter.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SoundTouchEx.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="source\QueuedAudioSink.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="source\AC3EncoderFilter.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="source\IAudioSink.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="source\TimeSource.h">
+      <Filter>Clock</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SynchCorrection.h">
+      <Filter>Clock</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SyncClock.h">
+      <Filter>Clock</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Settings.h">
+      <Filter>Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SettingsProp.h">
+      <Filter>Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ITimeStretch.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="source\IRenderFilter.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="source\IMPAudioSettings.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="source\IAVSyncClock.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="source\MpAudioRenderer.rc" />
@@ -201,6 +271,18 @@
     </Filter>
     <Filter Include="AC3_encoder">
       <UniqueIdentifier>{c3c8d455-8c72-4d60-af16-01d8b87474ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Filters">
+      <UniqueIdentifier>{d0090beb-988b-49a0-b426-dd43e4685ab7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Clock">
+      <UniqueIdentifier>{8fd4ddd1-f2e2-4a5d-85f0-62fc1791d43f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Settings">
+      <UniqueIdentifier>{1bbf0e38-e446-4940-b93d-b12d1e6ba0fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interfaces">
+      <UniqueIdentifier>{6f6faefb-5fb8-440c-8662-734259de4025}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
