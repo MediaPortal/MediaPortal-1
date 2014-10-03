@@ -75,6 +75,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   m_pChannelMixer(NULL),
   m_pClock(NULL),
   m_bInitialized(false),
+  m_bFirstSample(true),
   m_pSampleCopier(NULL)
 {
   StartLogger();
@@ -446,15 +447,12 @@ bool CMPAudioRenderer::DeliverSample(IMediaSample* pSample)
     }
   }
 
-  if (pmt)
+  // In some cases audio decoder wont put the PMT on 1st sample (depends how the format negotiation goes?)
+  if (m_bFirstSample && m_pMediaType)
   {
-    if (m_pMediaType)
-      DeleteMediaType(m_pMediaType);
-
-    m_pMediaType = CreateMediaType(pmt);
-  }
-  else if (m_pMediaType)
     pSample->SetMediaType(m_pMediaType);
+    m_bFirstSample = false;
+  }
 
   if (m_pSettings->GetLogSampleTimes())
   {
@@ -747,6 +745,8 @@ HRESULT CMPAudioRenderer::EndFlush()
     m_pPipeline->EndFlush();
   if (m_pClock)
     m_pClock->Reset(0);
+
+  m_bFirstSample = true;
 
   return CBaseRenderer::EndFlush(); 
 }
