@@ -189,13 +189,17 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
   if (!pSample)
     return S_OK;
 
-  AM_MEDIA_TYPE* pmt = NULL;
+  WAVEFORMATEXTENSIBLE* pwfe = NULL;
+  AM_MEDIA_TYPE *pmt = NULL;
   bool bFormatChanged = false;
   
   HRESULT hr = S_OK;
 
   if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt != NULL)
-    bFormatChanged = !FormatsEqual((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, m_pInputFormat);
+  {
+    pwfe = (WAVEFORMATEXTENSIBLE*)pmt->pbFormat;
+    bFormatChanged = !FormatsEqual(pwfe, m_pInputFormat);
+  }
 
   if (pSample->IsDiscontinuity() == S_OK)
     m_bDiscontinuity = true;
@@ -209,6 +213,7 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
     // Process any remaining input
     if (!m_bPassThrough)
       hr = ProcessData(NULL, 0, NULL);
+
     // Apply format change locally, 
     // next filter will evaluate the format change when it receives the sample
     Log("CSampleRateConverter::PutSample: Processing format change");
@@ -220,6 +225,8 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
       Log("SampleRateConverter: PutSample failed to change format: 0x%08x", hr);
       return hr;
     }
+
+    SetInputFormat(pwfe);
     m_chOrder = chOrder;
   }
 

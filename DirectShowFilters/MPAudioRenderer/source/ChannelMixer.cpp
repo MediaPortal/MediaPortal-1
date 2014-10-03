@@ -156,13 +156,17 @@ HRESULT CChannelMixer::PutSample(IMediaSample *pSample)
   if (!pSample)
     return S_OK;
 
+  WAVEFORMATEXTENSIBLE* pwfe = NULL;
   AM_MEDIA_TYPE *pmt = NULL;
   bool bFormatChanged = false;
   
   HRESULT hr = S_OK;
 
-  if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt)
-    bFormatChanged = !FormatsEqual((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, m_pInputFormat);
+  if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt != NULL)
+  {
+    pwfe = (WAVEFORMATEXTENSIBLE*)pmt->pbFormat;
+    bFormatChanged = !FormatsEqual(pwfe, m_pInputFormat);
+  }
 
   if (pSample->IsDiscontinuity() == S_OK)
     m_bDiscontinuity = true;
@@ -188,6 +192,8 @@ HRESULT CChannelMixer::PutSample(IMediaSample *pSample)
       Log("CChannelMixer: PutSample failed to change format: 0x%08x", hr);
       return hr;
     }
+
+    SetInputFormat(pwfe);
     m_chOrder = chOrder;
   }
 
