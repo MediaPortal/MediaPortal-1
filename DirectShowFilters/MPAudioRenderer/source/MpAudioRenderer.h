@@ -160,4 +160,5 @@ private:
   bool m_bFirstSample;
 
   CCritSec  m_csAudioRenderer;
+  CCritSec  m_csInitLock;
 };
