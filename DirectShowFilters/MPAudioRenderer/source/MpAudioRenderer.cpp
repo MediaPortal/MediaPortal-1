@@ -80,7 +80,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
 {
   StartLogger();
   LogRotate();
-  Log("MP Audio Renderer - v1.1.6");
+  Log("MP Audio Renderer - v1.1.9");
 
   Log("CMPAudioRenderer - instance 0x%x", this);
 
