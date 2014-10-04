@@ -126,8 +126,8 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
     {
       m_bNextFormatPassthru = true;
       m_chOrder = *pChOrder;
-      return hr;
     }
+    return hr;
   }
 
 #ifdef INTEGER_SAMPLES

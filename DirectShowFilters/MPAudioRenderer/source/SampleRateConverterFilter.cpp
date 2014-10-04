@@ -74,8 +74,8 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, 
       m_bNextFormatPassthru = true;
       m_bPassThrough = true;
       m_chOrder = *pChOrder;
-      return hr;
     }
+    return hr;
   }
 
   bool bApplyChanges = (nApplyChangesDepth != 0);
