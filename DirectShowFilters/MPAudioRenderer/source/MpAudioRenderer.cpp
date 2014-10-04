@@ -194,10 +194,12 @@ HRESULT CMPAudioRenderer::InitFilter()
 {
   HRESULT hr = S_OK;
 
-  CAutoLock cs(&m_csAudioRenderer);
+  CAutoLock cs(&m_csInitLock);
 
   if (!m_bInitialized)
   {
+    CAutoLock cs(&m_csAudioRenderer);
+
     m_pClock->SetAudioDelay(m_pSettings->GetAudioDelay() * 10000); // setting in registry is in ms
 
     SetupFilterPipeline();
