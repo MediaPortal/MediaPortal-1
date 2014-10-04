@@ -589,6 +589,8 @@ void CTimeStretchFilter::CreateOutput(UINT32 nInFrames, UINT32 nOutFrames, doubl
   UINT32 maxBufferFrames = m_nOutBufferSize / m_pOutputFormat->Format.nBlockAlign;
   UINT32 nOutFramesTotal = 0;
 
+  CAutoLock lock (&m_csOutputSample);
+
   while (nOutFrames > 0)
   {
     // try to get an output buffer if none available
