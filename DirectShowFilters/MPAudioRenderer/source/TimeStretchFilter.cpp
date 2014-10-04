@@ -575,7 +575,6 @@ DWORD CTimeStretchFilter::ThreadProc()
 
           CreateOutput(nInFrames, nOutFrames, bias, adjustment, AVMult, false);
 
-
           m_pClock->AddSample(rtStart, rtAdjustedStart, rtEnd, rtAdjustedEnd);
         }
       }
@@ -594,18 +593,20 @@ void CTimeStretchFilter::CreateOutput(UINT32 nInFrames, UINT32 nOutFrames, doubl
     // try to get an output buffer if none available
     if (!m_pNextOutSample && FAILED(hr = RequestNextOutBuffer(m_rtInSampleTime)))
     {
-      Log("CTimeStretchFilter::timestretch thread - Failed to get next output sample!");
+      if (hr != VFW_E_NOT_COMMITTED)
+        Log("CTimeStretchFilter::timestretch thread - Failed to get next output sample!");
+
       break;
     }
 
     BYTE* pOutData = NULL;
     m_pNextOutSample->GetPointer(&pOutData);
-              
+
     if (pOutData)
     {
       UINT32 nOffset = m_pNextOutSample->GetActualDataLength();
       UINT32 nOffsetInFrames = nOffset / m_pOutputFormat->Format.nBlockAlign;
-                
+
       if (nOutFrames > maxBufferFrames - nOffsetInFrames)
         nOutFrames = maxBufferFrames - nOffsetInFrames;
 
@@ -618,7 +619,7 @@ void CTimeStretchFilter::CreateOutput(UINT32 nInFrames, UINT32 nOutFrames, doubl
         m_pNextOutSample->SetMediaType(m_pMediaType);
 
       OutputSample(bFlushPartialSample);
-        
+
       nOutFrames = numSamples();
     }
   }
