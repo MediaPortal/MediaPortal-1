@@ -135,8 +135,8 @@ HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int 
       m_bNextFormatPassthru = true;
       m_bPassThrough = true;
       m_chOrder = *pChOrder;
-      return hr;
     }
+    return hr;
   }
 
   bool bApplyChanges = (nApplyChangesDepth != 0);
