@@ -480,6 +480,7 @@ DWORD CTimeStretchFilter::ThreadProc()
     {
       Log("CTimeStretchFilter::timestretch thread - closing down - thread ID: %d", m_ThreadId);
       SetEvent(m_hCurrentSampleReleased);
+      clear();
       CloseThread();
       m_csResources.Unlock();
       return 0;
@@ -494,7 +495,7 @@ DWORD CTimeStretchFilter::ThreadProc()
         if (m_pNextOutSample)
           m_pNextOutSample.Release();
 
-        flush();
+        clear();
         m_pClock->Flush();
         sample.Release();
         SetEvent(m_hCurrentSampleReleased);
