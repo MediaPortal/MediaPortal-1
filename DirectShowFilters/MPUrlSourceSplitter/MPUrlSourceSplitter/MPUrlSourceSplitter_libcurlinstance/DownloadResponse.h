@@ -57,7 +57,7 @@ public:
   /* other methods */
 
   // deeply clones current instance
-  // @result : deep clone of current instance or NULL if error
+  // @return : deep clone of current instance or NULL if error
   virtual CDownloadResponse *Clone(void);
 
 protected:

@@ -194,5 +194,11 @@
 
 #define E_MPEG2TS_NOT_ALIGNED_BUFFER_SIZE                                       -210
 #define E_MPEG2TS_CANNOT_PARSE_PACKET                                           -211
+#define E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION              -212
+#define E_MPEG2TS_INCOMPLETE_SECTION                                            -213
+#define E_MPEG2TS_SECTION_INVALID_CRC32                                         -214
+#define E_MPEG2TS_CANNOT_SPLIT_SECTION_INTO_PSI_PACKETS                         -215
+#define E_MPEG2TS_SECTION_BIGGER_THAN_ORIGINAL_SECTION                          -216
+#define E_MPEG2TS_ONLY_ONE_PROGRAM_ALLOWED                                      -217
 
 #endif

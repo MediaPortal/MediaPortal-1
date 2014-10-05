@@ -71,7 +71,7 @@ protected:
 
   // deeply clones current instance to specified payload type
   // @param payloadType : the payload type to clone current instance
-  // @result : true if successful, false otherwise
+  // @return : true if successful, false otherwise
   virtual bool CloneInternal(CPayloadType *payloadType);
 };
 

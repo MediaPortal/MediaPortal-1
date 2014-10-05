@@ -53,14 +53,14 @@ public:
   // inserts item to collection
   // @param position : zero-based position to insert new item
   // @param item : item to insert
-  // @result : true if successful, false otherwise
+  // @return : true if successful, false otherwise
   virtual bool Insert(unsigned int position, unsigned int item);
 
   // inserts items to collection
   // @param position : zero-based position to insert new items
   // @param item : item to insert
   // @param count : the count of items to insert
-  // @result : true if successful, false otherwise
+  // @return : true if successful, false otherwise
   virtual bool Insert(unsigned int position, unsigned int item, unsigned int count);
 
   // clears collection of items

@@ -71,7 +71,7 @@ public:
   // insert item to collection
   // @param position : zero-based position to insert new item
   // @param item : item to insert
-  // @result : true if successful, false otherwise
+  // @return : true if successful, false otherwise
   virtual bool Insert(unsigned int position, CFastSearchItem *item);
 
   // clear collection of items

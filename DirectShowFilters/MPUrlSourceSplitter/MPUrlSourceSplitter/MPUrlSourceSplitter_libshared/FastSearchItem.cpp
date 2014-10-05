@@ -58,7 +58,6 @@ CFastSearchItem *CFastSearchItem::Clone(void)
   return result;
 }
 
-
 /* protected methods */
 
 bool CFastSearchItem::InternalClone(CFastSearchItem *item)

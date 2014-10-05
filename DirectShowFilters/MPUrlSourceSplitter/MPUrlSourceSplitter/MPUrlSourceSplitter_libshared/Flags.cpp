@@ -47,6 +47,11 @@ void CFlags::SetFlags(uint32_t flags)
 
 /* other methods */
 
+bool CFlags::IsSetAnyOfFlags(uint32_t flags)
+{
+  return ((this->flags & flags) != 0);
+}
+
 bool CFlags::IsSetFlags(uint32_t flags)
 {
   return ((this->flags & flags) == flags);
@@ -57,6 +62,11 @@ bool CFlags::IsSetFlags(uint32_t flags)
 bool CFlags::IsSetFlags(uint32_t flags, uint32_t combination)
 {
   return ((flags & combination) == combination);
+}
+
+bool CFlags::IsSetAnyOfFlags(uint32_t flags, uint32_t combination)
+{
+  return ((flags & combination) != 0);
 }
 
 /* protected methods */

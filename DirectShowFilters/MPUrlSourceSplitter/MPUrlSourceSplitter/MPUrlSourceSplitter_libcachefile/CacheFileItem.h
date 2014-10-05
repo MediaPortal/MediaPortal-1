@@ -94,14 +94,6 @@ public:
   // @return : true if no clean up from memory is set, false otherwise
   virtual bool IsNoCleanUpFromMemory(void);
 
-  // tests if discontinuity is set
-  // @return : true if discontinuity is set, false otherwise
-  //virtual bool IsDiscontinuity(void);
-
-  // tests if fragment is downloaded
-  // @return : true if downloaded, false otherwise
-  //virtual bool IsDownloaded(void);
-
 protected:
   // holds buffer data
   CLinearBuffer *buffer;

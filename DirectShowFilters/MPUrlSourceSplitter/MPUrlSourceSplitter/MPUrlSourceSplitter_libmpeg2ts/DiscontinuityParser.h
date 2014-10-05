@@ -28,7 +28,9 @@
 
 #define DISCONTINUITY_PARSER_FLAG_NONE                                PARSER_FLAG_NONE
 
-#define DISCONTINUITY_PARSER_FLAG_LAST                                (PARSER_FLAG_LAST + 0)
+#define DISCONTINUITY_PARSER_FLAG_DISCONTINUITY                       (1 << (PARSER_FLAG_LAST + 0))
+
+#define DISCONTINUITY_PARSER_FLAG_LAST                                (PARSER_FLAG_LAST + 1)
 
 #define DISCONTINUITY_PID_NOT_SPECIFIED                               0xFFFF
 
@@ -56,11 +58,14 @@ public:
 
   /* other methods */
 
-  // parses input data for MPEG2 TS packets
-  // @param buffer : the buffer to parse
-  // @param length : the length of buffer to parse
-  // @result : positive values if successful (the length of processed data), error code otherwise
-  virtual HRESULT Parse(unsigned char *buffer, unsigned int length);
+  // tests if discontinuity occurred
+  // @return : true if discontinuity occurred, false otherwise
+  bool IsDiscontinuity(void);
+
+  // parses input MPEG2 TS packet
+  // @param packet : the MPEG2 TS packet to parse
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT Parse(CTsPacket *packet);
 
   // clears instance to its default state
   virtual void Clear(void);

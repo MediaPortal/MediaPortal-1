@@ -92,7 +92,7 @@ protected:
 
   // deeply clones current instance to specified RTP packet
   // @param rtpPacket : the RTP packet to clone current instance
-  // @result : true if successful, false otherwise
+  // @return : true if successful, false otherwise
   virtual bool CloneInternal(CRtpPacket *rtpPacket);
 };
 

@@ -76,25 +76,53 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Crc32.h" />
     <ClInclude Include="DiscontinuityParser.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="PidCounter.h" />
     <ClInclude Include="PidCounterCollection.h" />
+    <ClInclude Include="ProgramAssociationParser.h" />
+    <ClInclude Include="ProgramAssociationSection.h" />
+    <ClInclude Include="ProgramAssociationSectionProgram.h" />
+    <ClInclude Include="ProgramAssociationSectionProgramCollection.h" />
+    <ClInclude Include="ProgramDefinition.h" />
+    <ClInclude Include="ProgramDefinitionCollection.h" />
+    <ClInclude Include="ProgramSpecificInformationPacket.h" />
+    <ClInclude Include="Section.h" />
+    <ClInclude Include="SectionPayload.h" />
+    <ClInclude Include="SectionPayloadCollection.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TransportStreamProgramMapParser.h" />
+    <ClInclude Include="TransportStreamProgramMapSection.h" />
     <ClInclude Include="TsPacket.h" />
+    <ClInclude Include="TsPacketCollection.h" />
     <ClInclude Include="TsPacketConstants.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Crc32.cpp" />
     <ClCompile Include="DiscontinuityParser.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="PidCounter.cpp" />
     <ClCompile Include="PidCounterCollection.cpp" />
+    <ClCompile Include="ProgramAssociationParser.cpp" />
+    <ClCompile Include="ProgramAssociationSection.cpp" />
+    <ClCompile Include="ProgramAssociationSectionProgram.cpp" />
+    <ClCompile Include="ProgramAssociationSectionProgramCollection.cpp" />
+    <ClCompile Include="ProgramDefinition.cpp" />
+    <ClCompile Include="ProgramDefinitionCollection.cpp" />
+    <ClCompile Include="ProgramSpecificInformationPacket.cpp" />
+    <ClCompile Include="Section.cpp" />
+    <ClCompile Include="SectionPayload.cpp" />
+    <ClCompile Include="SectionPayloadCollection.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TransportStreamProgramMapParser.cpp" />
+    <ClCompile Include="TransportStreamProgramMapSection.cpp" />
     <ClCompile Include="TsPacket.cpp" />
+    <ClCompile Include="TsPacketCollection.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

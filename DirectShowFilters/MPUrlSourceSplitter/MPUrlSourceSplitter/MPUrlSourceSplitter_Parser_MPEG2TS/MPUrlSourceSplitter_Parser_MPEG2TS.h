@@ -27,6 +27,10 @@
 #include "CacheFile.h"
 #include "Mpeg2tsStreamFragmentCollection.h"
 #include "DiscontinuityParser.h"
+#include "ProgramAssociationParser.h"
+#include "ProgramAssociationSectionContext.h"
+#include "TransportStreamProgramMapParser.h"
+#include "TransportStreamProgramMapSectionContext.h"
 
 #define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_NONE               PARSER_PLUGIN_FLAG_NONE
 
@@ -35,7 +39,11 @@
 #define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_DETECT_DISCONTINUITY             (1 << (PARSER_PLUGIN_FLAG_LAST + 1))
 #define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_ALIGN_TO_MPEG2TS_PACKET          (1 << (PARSER_PLUGIN_FLAG_LAST + 2))
 
-#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_LAST               (PARSER_PLUGIN_FLAG_LAST + 3)
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_TRANSPORT_STREAM_ID       (1 << (PARSER_PLUGIN_FLAG_LAST + 3))
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER            (1 << (PARSER_PLUGIN_FLAG_LAST + 4))
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID           (1 << (PARSER_PLUGIN_FLAG_LAST + 5))
+
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_LAST               (PARSER_PLUGIN_FLAG_LAST + 6)
 
 #define PARSER_NAME                                                   L"PARSER_MPEG2TS"
 
@@ -172,6 +180,21 @@ protected:
 
   // holds discontinuity parser
   CDiscontinuityParser *discontinuityParser;
+
+  // holds program association (PAT) parser
+  CProgramAssociationParser *programAssociationParser;
+  // holds program association section context
+  CProgramAssociationSectionContext *programAssociationSectionContext;
+
+  // holds transport stream program map (PMT) parser
+  CTransportStreamProgramMapParser *transportStreamProgramMapParser;
+  // holds transport stream program map section context
+  CTransportStreamProgramMapSectionContext *transportStreamProgramMapSectionContext;
+
+  // holds new stream identification (transport stream ID, program number and program map PID)
+  unsigned int transportStreamId;
+  unsigned int programNumber;
+  unsigned int programMapPID;
 
   /* received data worker */
 

@@ -23,14 +23,27 @@
 #ifndef __TS_PACKET_CONSTANTS_DEFINED
 #define __TS_PACKET_CONSTANTS_DEFINED
 
-#define TS_PACKET_SIZE                                                188
+#define TS_PACKET_SIZE                                                          188
 
-#define TS_PACKET_HEADER_LENGTH                                       4
+#define TS_PACKET_HEADER_LENGTH                                                 4
 
-#define TS_PACKET_SYNC_BYTE                                           0x47
+#define TS_PACKET_MAXIMUM_PAYLOAD_SIZE                                          (TS_PACKET_SIZE - TS_PACKET_HEADER_LENGTH)
+#define TS_PACKET_MAXIMUM_CONTINUITY_COUNTER                                    0x0F
 
-#define TS_PACKET_PID_NULL                                            0x1FFF
-#define TS_PACKET_MAX_RESERVED_PID                                    0x000F
-#define TS_PACKET_PID_COUNT                                           (TS_PACKET_PID_NULL + 1)
+#define TS_PACKET_SYNC_BYTE                                                     0x47
+
+#define TS_PACKET_PID_NULL                                                      0x1FFF
+#define TS_PACKET_MAX_RESERVED_PID                                              0x000F
+#define TS_PACKET_PID_COUNT                                                     (TS_PACKET_PID_NULL + 1)
+
+#define TS_PACKET_TRANSPORT_SCRAMBLING_CONTROL_NOT_SCRAMBLED                    0x00
+
+#define TS_PACKET_ADAPTATION_FIELD_CONTROL_RESERVED                             0x00
+#define TS_PACKET_ADAPTATION_FIELD_CONTROL_ONLY_PAYLOAD                         0x01
+#define TS_PACKET_ADAPTATION_FIELD_CONTROL_ONLY_ADAPTATION_FIELD                0x02
+#define TS_PACKET_ADAPTATION_FIELD_CONTROL_ADAPTATION_FIELD_WITH_PAYLOAD        0x03
+
+#define TS_PACKET_NULL_PAYLOAD_BYTE                                             0xFF
+#define TS_PACKET_STUFFING_BYTE                                                 0xFF
 
 #endif

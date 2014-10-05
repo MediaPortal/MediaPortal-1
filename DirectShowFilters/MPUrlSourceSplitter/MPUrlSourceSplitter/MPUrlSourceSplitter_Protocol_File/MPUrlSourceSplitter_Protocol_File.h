@@ -60,7 +60,7 @@ public:
   // the method should fill receiveData parameter with relevant data and finish
   // the method can't block call (method is called within thread which can be terminated anytime)
   // @param receiveData : received data
-  // @result: S_OK if successful, error code otherwise
+  // @return: S_OK if successful, error code otherwise
   HRESULT ReceiveData(CReceiveData *receiveData);
 
   // gets current connection parameters (can be different as supplied connection parameters)

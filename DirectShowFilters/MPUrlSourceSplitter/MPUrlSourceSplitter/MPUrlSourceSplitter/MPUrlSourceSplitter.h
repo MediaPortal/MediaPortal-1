@@ -322,7 +322,7 @@ protected:
   HRESULT GetNextPacket(COutputPinPacket *packet, unsigned int demuxerId);
 
   // initializes input pin and loads url based on configuration
-  // @result : S_OK if successful
+  // @return : S_OK if successful
   STDMETHODIMP Load();
 
   // parses parameters from specified string

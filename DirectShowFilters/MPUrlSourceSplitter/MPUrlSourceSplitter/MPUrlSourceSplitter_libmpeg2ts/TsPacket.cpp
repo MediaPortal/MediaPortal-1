@@ -27,40 +27,189 @@
 CTsPacket::CTsPacket(HRESULT *result)
   : CFlags()
 {
-  this->header = 0;
+  this->packet = NULL;
 
-  /*if ((result != NULL) && (SUCCEEDED(*result)))
+  if ((result != NULL) && (SUCCEEDED(*result)))
   {
-  }*/
+    this->packet = ALLOC_MEM_SET(this->packet, uint8_t, TS_PACKET_SIZE, 0);
+
+    CHECK_POINTER_HRESULT(*result, this->packet, *result, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(result))
+    {
+      unsigned int header = ((TS_PACKET_SYNC_BYTE & TS_PACKET_HEADER_SYNC_BYTE_MASK) << TS_PACKET_HEADER_SYNC_BYTE_SHIFT);
+
+      WBE32(this->packet, 0, header);
+    }
+  }
 }
 
 CTsPacket::~CTsPacket(void)
 {
+  FREE_MEM(this->packet);
 }
 
 /* get methods */
 
 unsigned int CTsPacket::GetPID(void)
 {
-  return ((this->header & TS_PACKET_HEADER_PID_MASK) >> 8);
+  unsigned int header = RBE32(this->packet, 0);
+
+  return (((header >> TS_PACKET_HEADER_PID_SHIFT) & TS_PACKET_HEADER_PID_MASK));
 }
 
 unsigned int CTsPacket::GetTransportScramblingControl(void)
 {
-  return ((this->header & TS_PACKET_HEADER_TRANSPORT_SCRAMBLING_MASK) >> 6);
+  unsigned int header = RBE32(this->packet, 0);
+
+  return (((header >> TS_PACKET_HEADER_TRANSPORT_SCRAMBLING_SHIFT) & TS_PACKET_HEADER_TRANSPORT_SCRAMBLING_MASK));
 }
 
 unsigned int CTsPacket::GetAdaptationFieldControl(void)
 {
-  return ((this->header & TS_PACKET_HEADER_ADAPTATION_FIELD_MASK) >> 4);
+  unsigned int header = RBE32(this->packet, 0);
+
+  return (((header >> TS_PACKET_HEADER_ADAPTATION_FIELD_SHIFT) & TS_PACKET_HEADER_ADAPTATION_FIELD_MASK));
 }
   
 unsigned int CTsPacket::GetContinuityCounter(void)
 {
-  return (this->header & TS_PACKET_HEADER_CONTINUITY_COUNTER_MASK);
+  unsigned int header = RBE32(this->packet, 0);
+
+  return (((header >> TS_PACKET_HEADER_CONTINUITY_COUNTER_SHIFT) & TS_PACKET_HEADER_CONTINUITY_COUNTER_MASK));
+}
+
+unsigned int CTsPacket::GetAdaptationFieldSize(void)
+{
+  unsigned int adaptationFieldSize = 0;
+
+  if ((this->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ONLY_ADAPTATION_FIELD) ||
+    (this->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ADAPTATION_FIELD_WITH_PAYLOAD))
+  {
+    // adaptation field in MPEG2 TS packet
+    adaptationFieldSize = RBE8(this->packet, TS_PACKET_HEADER_LENGTH);
+  }
+
+  return adaptationFieldSize;
+}
+
+unsigned int CTsPacket::GetPayloadSize(void)
+{
+  unsigned int payloadSize = 0;
+
+  if ((this->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ONLY_PAYLOAD) ||
+    (this->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ADAPTATION_FIELD_WITH_PAYLOAD))
+  {
+    payloadSize = TS_PACKET_SIZE - this->GetAdaptationFieldSize() - TS_PACKET_HEADER_LENGTH;
+  }
+
+  return payloadSize;
+}
+
+const uint8_t *CTsPacket::GetPayload(void)
+{
+  const uint8_t *payload = NULL;
+
+  if ((this->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ONLY_PAYLOAD) ||
+    (this->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ADAPTATION_FIELD_WITH_PAYLOAD))
+  {
+    payload = this->packet + TS_PACKET_HEADER_LENGTH + this->GetAdaptationFieldSize();
+  }
+
+  return payload;
+}
+
+const uint8_t *CTsPacket::GetPacket(void)
+{
+  return this->packet;
 }
 
 /* set methods */
+
+void CTsPacket::SetPID(unsigned int pid)
+{
+  unsigned int header = RBE32(this->packet, 0);
+
+  header &= ~(TS_PACKET_HEADER_PID_MASK << TS_PACKET_HEADER_PID_SHIFT);
+  header |= ((pid & TS_PACKET_HEADER_PID_MASK) << TS_PACKET_HEADER_PID_SHIFT);
+
+  WBE32(this->packet, 0, header);
+}
+
+void CTsPacket::SetTransportScramblingControl(unsigned int transportScramblingControl)
+{
+  unsigned int header = RBE32(this->packet, 0);
+
+  header &= ~(TS_PACKET_HEADER_TRANSPORT_SCRAMBLING_MASK << TS_PACKET_HEADER_TRANSPORT_SCRAMBLING_SHIFT);
+  header |= ((transportScramblingControl & TS_PACKET_HEADER_TRANSPORT_SCRAMBLING_MASK) << TS_PACKET_HEADER_TRANSPORT_SCRAMBLING_SHIFT);
+
+  WBE32(this->packet, 0, header);
+}
+
+void CTsPacket::SetAdaptationFieldControl(unsigned int adaptationFieldControl)
+{
+  unsigned int header = RBE32(this->packet, 0);
+
+  header &= ~(TS_PACKET_HEADER_ADAPTATION_FIELD_MASK << TS_PACKET_HEADER_ADAPTATION_FIELD_SHIFT);
+  header |= ((adaptationFieldControl & TS_PACKET_HEADER_ADAPTATION_FIELD_MASK) << TS_PACKET_HEADER_ADAPTATION_FIELD_SHIFT);
+
+  WBE32(this->packet, 0, header);
+}
+  
+void CTsPacket::SetContinuityCounter(unsigned int continuityCounter)
+{
+  unsigned int header = RBE32(this->packet, 0);
+
+  header &= ~(TS_PACKET_HEADER_CONTINUITY_COUNTER_MASK << TS_PACKET_HEADER_CONTINUITY_COUNTER_SHIFT);
+  header |= ((continuityCounter & TS_PACKET_HEADER_CONTINUITY_COUNTER_MASK) << TS_PACKET_HEADER_CONTINUITY_COUNTER_SHIFT);
+
+  WBE32(this->packet, 0, header);
+}
+
+bool CTsPacket::SetPayload(const uint8_t *payload, unsigned int payloadSize)
+{
+  HRESULT result = S_OK;
+  CHECK_CONDITION_HRESULT(result, payloadSize == this->GetPayloadSize(), result, E_INVALIDARG);
+
+  if (payloadSize != 0)
+  {
+    CHECK_POINTER_DEFAULT_HRESULT(result, payload);
+
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), memcpy((uint8_t *)this->GetPayload(), payload, payloadSize));
+  }
+
+  return SUCCEEDED(result);
+}
+
+void CTsPacket::SetTransportErrorIndicator(bool transportErrorIndicator)
+{
+  unsigned int header = RBE32(this->packet, 0);
+
+  header &= ~(TS_PACKET_HEADER_TRANSPORT_ERROR_INDICATOR_MASK << TS_PACKET_HEADER_TRANSPORT_ERROR_INDICATOR_SHIFT);
+  header |= transportErrorIndicator ? (TS_PACKET_HEADER_TRANSPORT_ERROR_INDICATOR_MASK << TS_PACKET_HEADER_TRANSPORT_ERROR_INDICATOR_SHIFT) : 0;
+
+  WBE32(this->packet, 0, header);
+}
+
+void CTsPacket::SetPayloadUnitStart(bool payloadUnitStart)
+{
+  unsigned int header = RBE32(this->packet, 0);
+
+  header &= ~(TS_PACKET_HEADER_PAYLOAD_UNIT_START_MASK << TS_PACKET_HEADER_PAYLOAD_UNIT_START_SHIFT);
+  header |= payloadUnitStart ? (TS_PACKET_HEADER_PAYLOAD_UNIT_START_MASK << TS_PACKET_HEADER_PAYLOAD_UNIT_START_SHIFT) : 0;
+
+  WBE32(this->packet, 0, header);
+}
+
+void CTsPacket::SetTransportPriority(bool transportPriority)
+{
+  unsigned int header = RBE32(this->packet, 0);
+
+  header &= ~(TS_PACKET_HEADER_TRANSPORT_PRIORITY_MASK << TS_PACKET_HEADER_TRANSPORT_PRIORITY_SHIFT);
+  header |= transportPriority ? (TS_PACKET_HEADER_TRANSPORT_PRIORITY_MASK << TS_PACKET_HEADER_TRANSPORT_PRIORITY_SHIFT) : 0;
+
+  WBE32(this->packet, 0, header);
+}
 
 /* other methods */
 
@@ -71,31 +220,43 @@ bool CTsPacket::IsParsed(void)
 
 bool CTsPacket::IsTransportErrorIndicator(void)
 {
-  return ((this->header & TS_PACKET_HEADER_TRANSPORT_ERROR_INDICATOR_MASK) != 0);
+  unsigned int header = RBE32(this->packet, 0);
+
+  return (((header >> TS_PACKET_HEADER_TRANSPORT_ERROR_INDICATOR_SHIFT) & TS_PACKET_HEADER_TRANSPORT_ERROR_INDICATOR_MASK) != 0);
 }
 
 bool CTsPacket::IsPayloadUnitStart(void)
 {
-  return ((this->header & TS_PACKET_HEADER_PAYLOAD_UNIT_START_MASK) != 0);
+  unsigned int header = RBE32(this->packet, 0);
+
+  return (((header >> TS_PACKET_HEADER_PAYLOAD_UNIT_START_SHIFT) & TS_PACKET_HEADER_PAYLOAD_UNIT_START_MASK) != 0);
 }
 
 bool CTsPacket::IsTransportPriority(void)
 {
-  return ((this->header & TS_PACKET_HEADER_TRANSPORT_PRIORITY_MASK) != 0);
+  unsigned int header = RBE32(this->packet, 0);
+
+  return (((header >> TS_PACKET_HEADER_TRANSPORT_PRIORITY_SHIFT) & TS_PACKET_HEADER_TRANSPORT_PRIORITY_MASK) != 0);
 }
 
 bool CTsPacket::Parse(const unsigned char *buffer, uint32_t length)
 {
-  this->flags &= ~TS_PACKET_FLAG_PARSED;
+  return this->Parse(buffer, length, false);
+}
 
-  if ((buffer != NULL) && (length >= TS_PACKET_HEADER_LENGTH))
+CTsPacket *CTsPacket::Clone(void)
+{
+  CTsPacket *result = this->CreateItem();
+
+  if (result != NULL)
   {
-    this->header = RBE32(buffer, 0);
-
-    this->flags |= ((this->header & TS_PACKET_HEADER_SYNC_BYTE_MASK) == TS_PACKET_HEADER_SYNC_BYTE) ? TS_PACKET_FLAG_PARSED : TS_PACKET_FLAG_NONE;
+    if (!this->InternalClone(result))
+    {
+      FREE_MEM_CLASS(result);
+    }
   }
 
-  return this->IsSetFlags(TS_PACKET_FLAG_PARSED);
+  return result;
 }
 
 /* static methods */
@@ -330,4 +491,105 @@ HRESULT CTsPacket::FindPacketSequence(CLinearBuffer *buffer, unsigned int *first
   return result;
 }
 
+CTsPacket *CTsPacket::CreateNullPacket(void)
+{
+  return CTsPacket::CreateNullPacket(TS_PACKET_NULL_PAYLOAD_BYTE);
+}
+
+CTsPacket *CTsPacket::CreateNullPacket(uint8_t dataByte)
+{
+  CTsPacket *packet = NULL;
+  HRESULT result = S_OK;
+  ALLOC_MEM_DEFINE_SET(payload, uint8_t, TS_PACKET_MAXIMUM_PAYLOAD_SIZE, dataByte);
+  CHECK_POINTER_HRESULT(result, payload, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), packet = CTsPacket::CreateNullPacket(payload, TS_PACKET_MAXIMUM_PAYLOAD_SIZE));
+
+  FREE_MEM(payload);
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(packet));
+  return packet;
+}
+
+CTsPacket *CTsPacket::CreateNullPacket(const uint8_t *payload, unsigned int payloadSize)
+{
+  CTsPacket *packet = NULL;
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, payload);
+  CHECK_CONDITION_HRESULT(result, payloadSize == TS_PACKET_MAXIMUM_PAYLOAD_SIZE, result, E_INVALIDARG);
+
+  if (SUCCEEDED(result))
+  {
+    packet = new CTsPacket(&result);
+    CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(result))
+    {
+      packet->SetPID(TS_PACKET_PID_NULL);
+      packet->SetAdaptationFieldControl(TS_PACKET_ADAPTATION_FIELD_CONTROL_ONLY_PAYLOAD);
+      CHECK_CONDITION_HRESULT(result, packet->SetPayload(payload, payloadSize), result, E_OUTOFMEMORY);
+    }
+  }
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(packet));
+  return packet;
+}
+
 /* protected methods */
+
+bool CTsPacket::Parse(const unsigned char *buffer, uint32_t length, bool onlyHeader)
+{
+  this->flags &= ~TS_PACKET_FLAG_PARSED;
+
+  if ((buffer != NULL) && (length >= TS_PACKET_HEADER_LENGTH))
+  {
+    memcpy(this->packet, buffer, TS_PACKET_HEADER_LENGTH);
+    unsigned int header = RBE32(buffer, 0);
+    
+    this->flags |= (((header >> TS_PACKET_HEADER_SYNC_BYTE_SHIFT) & TS_PACKET_HEADER_SYNC_BYTE_MASK) == TS_PACKET_SYNC_BYTE) ? TS_PACKET_FLAG_PARSED : TS_PACKET_FLAG_NONE;
+
+    if (this->IsSetFlags(TS_PACKET_FLAG_PARSED) && (!onlyHeader))
+    {
+      unsigned int position = TS_PACKET_HEADER_LENGTH;
+      HRESULT result = S_OK;
+
+      memcpy(this->packet, buffer, TS_PACKET_SIZE);
+
+      if ((this->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ONLY_ADAPTATION_FIELD) ||
+        (this->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ADAPTATION_FIELD_WITH_PAYLOAD))
+      {
+        // adaptation field in MPEG2 TS packet
+        // check adaptation field size
+        RBE8INC_DEFINE(buffer, position, adaptationFieldSize, unsigned int);
+        CHECK_CONDITION_HRESULT(result, (position + adaptationFieldSize) <= TS_PACKET_SIZE, result, E_OUTOFMEMORY);
+      }
+
+      this->flags &= ~TS_PACKET_FLAG_PARSED;
+      this->flags |= SUCCEEDED(result) ? TS_PACKET_FLAG_PARSED : TS_PACKET_FLAG_NONE;
+    }
+  }
+
+  return this->IsSetFlags(TS_PACKET_FLAG_PARSED);
+}
+
+CTsPacket *CTsPacket::CreateItem(void)
+{
+  HRESULT result = S_OK;
+  CTsPacket *packet = new CTsPacket(&result);
+  CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(packet));
+  return packet;
+}
+
+bool CTsPacket::InternalClone(CTsPacket *item)
+{
+  bool result = (item != NULL);
+
+  if (result)
+  {
+    item->flags = this->flags;
+    memcpy(item->packet, this->packet, TS_PACKET_SIZE);
+  }
+
+  return result;
+}

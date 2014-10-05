@@ -67,61 +67,47 @@ uint8_t CDiscontinuityParser::GetLastExpectedCounter(void)
 
 /* other methods */
 
-HRESULT CDiscontinuityParser::Parse(unsigned char *buffer, unsigned int length)
+bool CDiscontinuityParser::IsDiscontinuity(void)
+{
+  return this->IsSetFlags(DISCONTINUITY_PARSER_FLAG_DISCONTINUITY);
+}
+
+HRESULT CDiscontinuityParser::Parse(CTsPacket *packet)
 {
   HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, buffer);
-  CHECK_CONDITION_HRESULT(result, (length % TS_PACKET_SIZE) == 0, result, E_MPEG2TS_NOT_ALIGNED_BUFFER_SIZE);
+  CHECK_POINTER_DEFAULT_HRESULT(result, packet);
 
   if (SUCCEEDED(result))
   {
-    // analyze discontinuity only if we have aligned MPEG2 TS packets
-    unsigned int processed = 0;
-    bool discontinuityDetected = false;
+    this->flags &= ~DISCONTINUITY_PARSER_FLAG_DISCONTINUITY;
 
-    while (SUCCEEDED(result) && (processed < length) && (!discontinuityDetected))
+    // check for right values
+    // skip null packets (pid 0x1fff)
+    // pid counters are incremented only if payload is present (adaptation field control is ts_packet_adaptation_field_control_only_payload or ts_packet_adaptation_field_control_adaptation_field_with_payload)
+
+    if ((packet->GetPID() != TS_PACKET_PID_NULL) && ((packet->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ONLY_PAYLOAD) || (packet->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ADAPTATION_FIELD_WITH_PAYLOAD)))
     {
-      CTsPacket *packet = new CTsPacket(&result);
-      CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
+      // check if PID counter is set
+      CPidCounter *pidCounter = this->pidCounters->GetItem(packet->GetPID());
 
-      CHECK_CONDITION_HRESULT(result, packet->Parse(buffer + processed, length - processed), result, E_MPEG2TS_CANNOT_PARSE_PACKET);
-
-      if (SUCCEEDED(result))
+      if (pidCounter->IsSetCurrentCounter())
       {
-        // check for right values
-        // skip NULL packets (PID 0x1FFF)
-        // PID counters are incremented only if payload is present (adaptation field control is 1 or 3)
+        // PID counter for 'pid' is already set
 
-        if ((packet->GetPID() != TS_PACKET_PID_NULL) && ((packet->GetAdaptationFieldControl() == 1) || (packet->GetAdaptationFieldControl() == 3)))
+        this->flags |= (pidCounter->GetExpectedCurrentCounter() != packet->GetContinuityCounter()) ? DISCONTINUITY_PARSER_FLAG_DISCONTINUITY : DISCONTINUITY_PARSER_FLAG_NONE;
+
+        if (this->IsDiscontinuity())
         {
-          // check if PID counter is set
-          CPidCounter *pidCounter = this->pidCounters->GetItem(packet->GetPID());
-
-          if (pidCounter->IsSetCurrentCounter())
-          {
-            // PID counter for 'pid' is already set
-
-            discontinuityDetected |= (pidCounter->GetExpectedCurrentCounter() != packet->GetContinuityCounter());
-
-            if (discontinuityDetected)
-            {
-              this->lastDiscontinuityPid = packet->GetPID();
-              this->lastDiscontinuityCounter = packet->GetContinuityCounter();
-              this->lastExpectedCounter = pidCounter->GetExpectedCurrentCounter();
-            }
-          }
-
-          // in all cases set PID counter
-          pidCounter->SetPreviousCounter(pidCounter->GetCurrentCounter());
-          pidCounter->SetCurrentCounter(packet->GetContinuityCounter());
+          this->lastDiscontinuityPid = packet->GetPID();
+          this->lastDiscontinuityCounter = packet->GetContinuityCounter();
+          this->lastExpectedCounter = pidCounter->GetExpectedCurrentCounter();
         }
       }
 
-      processed += TS_PACKET_SIZE;
-      FREE_MEM_CLASS(packet);
+      // in all cases set PID counter
+      pidCounter->SetPreviousCounter(pidCounter->GetCurrentCounter());
+      pidCounter->SetCurrentCounter(packet->GetContinuityCounter());
     }
-
-    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = processed);
   }
 
   return result;

@@ -49,7 +49,7 @@ public:
   // sets buffer
   // @param buffer : the buffer containg data to set
   // @param length : the length of buffer
-  // @result : true if successful, false otherwise
+  // @return : true if successful, false otherwise
   bool SetBuffer(const uint8_t *buffer, uint16_t length);
 
   /* other methods */

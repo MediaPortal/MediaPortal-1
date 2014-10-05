@@ -120,7 +120,7 @@ public:
   bool IsMulticast(void);
 
   // deeply clones current instance
-  // @result : deep clone of current instance or NULL if error
+  // @return : deep clone of current instance or NULL if error
   CIpAddress *Clone(void);
 
 protected:

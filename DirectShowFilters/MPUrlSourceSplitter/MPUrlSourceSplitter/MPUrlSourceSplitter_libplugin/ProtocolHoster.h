@@ -219,13 +219,13 @@ protected:
   // @param configuration : the reference to configuration
   // @param hosterName : the hoster name
   // @param pluginLibraryFileName : the plugin library file name
-  // @result : hoster plugin metadata instance
+  // @return : hoster plugin metadata instance
   virtual CHosterPluginMetadata *CreateHosterPluginMetadata(HRESULT *result, CLogger *logger, CParameterCollection *configuration, const wchar_t *hosterName, const wchar_t *pluginLibraryFileName);
 
   // creates plugin configuration
   // @param result : the reference to result
   // @param configuration : the collection of parameters
-  // @result : plugin configuration instance
+  // @return : plugin configuration instance
   virtual CPluginConfiguration *CreatePluginConfiguration(HRESULT *result, CParameterCollection *configuration);
 
   /* receive data worker */

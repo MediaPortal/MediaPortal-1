@@ -154,7 +154,7 @@ public:
   virtual bool Parse(const unsigned char *buffer, unsigned int length);
 
   // deeply clones current instance
-  // @result : deep clone of current instance or NULL if error
+  // @return : deep clone of current instance or NULL if error
   virtual CRtpPacket *Clone(void);
 
 protected:
@@ -179,7 +179,7 @@ protected:
 
   // deeply clones current instance to specified RTP packet
   // @param rtpPacket : the RTP packet to clone current instance
-  // @result : true if successful, false otherwise
+  // @return : true if successful, false otherwise
   virtual bool CloneInternal(CRtpPacket *rtpPacket);
 };
 

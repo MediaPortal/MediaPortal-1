@@ -26,7 +26,15 @@
 #define PARAMETER_NAME_MPEG2TS_DETECT_DISCONTINUITY                   L"Mpeg2TsDetectDiscontinuity"
 #define PARAMETER_NAME_MPEG2TS_ALIGN_TO_MPEG2TS_PACKET                L"Mpeg2TsAlignToMpeg2TSPacket"
 
+#define PARAMETER_NAME_MPEG2TS_TRANSPORT_STREAM_ID                    L"Mpeg2TsTransportStreamID"
+#define PARAMETER_NAME_MPEG2TS_PROGRAM_NUMBER                         L"Mpeg2TsProgramNumber"
+#define PARAMETER_NAME_MPEG2TS_PROGRAM_MAP_PID                        L"Mpeg2TsProgramMapPID"
+
 #define MPEG2TS_DETECT_DISCONTINUITY_DEFAULT                          true
 #define MPEG2TS_ALIGN_TO_MPEG2TS_PACKET                               true
+
+#define MPEG2TS_TRANSPORT_STREAM_ID_DEFAULT                           UINT_MAX
+#define MPEG2TS_PROGRAM_NUMBER_DEFAULT                                UINT_MAX
+#define MPEG2TS_PROGRAM_MAP_PID_DEFAULT                               UINT_MAX
 
 #endif

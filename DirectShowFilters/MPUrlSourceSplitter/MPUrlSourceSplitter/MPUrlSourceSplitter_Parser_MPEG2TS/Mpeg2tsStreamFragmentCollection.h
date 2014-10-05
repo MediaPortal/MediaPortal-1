@@ -45,20 +45,30 @@ public:
   // @return : S_OK if successful, error code otherwise
   HRESULT GetReadyForAlignStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection);
 
-  // gets collection of indexed stream fragments which are aligned, but not discontinuity processed
+  // gets collection of indexed stream fragments which are aligned
   // @param collection : the collection to fill in indexed stream fragments
   // @return : S_OK if successful, error code otherwise
-  HRESULT GetAlignedNotDiscontinuityProcessedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection);
+  HRESULT GetAlignedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection);
 
-  // gets collection of indexed stream fragments which are aligned, discontinuity processed, but not partially or full processed
+  // gets collection of indexed stream fragments which are discontinuity processed
   // @param collection : the collection to fill in indexed stream fragments
   // @return : S_OK if successful, error code otherwise
-  HRESULT GetAlignedDiscontinuityProcessedNotPartiallyOrFullProcessedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection);
+  HRESULT GetDiscontinuityProcessedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection);
 
-  // gets collection of indexed stream fragments which are partially processed
+  // gets collection of indexed stream fragments which are parsed for program association sections
   // @param collection : the collection to fill in indexed stream fragments
   // @return : S_OK if successful, error code otherwise
-  HRESULT GetPartiallyProcessedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection);
+  HRESULT GetProgramAssociationSectionDetectionFinishedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection);
+
+  // gets collection of indexed stream fragments which are parsed for transport stream map sections
+  // @param collection : the collection to fill in indexed stream fragments
+  // @return : S_OK if successful, error code otherwise
+  HRESULT GetTransportStreamMapSectionDetectionFinishedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection);
+
+  // gets collection of indexed stream fragments which have program association sections and transport stream map sections updated
+  // @param collection : the collection to fill in indexed stream fragments
+  // @return : S_OK if successful, error code otherwise
+  HRESULT GetBothSectionsUpdatedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection);
 
   /* set methods */
 
@@ -68,17 +78,29 @@ public:
   // @return : true if collection has such fragments, false otherwise
   bool HasReadyForAlignStreamFragments(void);
 
-  // tests if collection has some stream fragments, which are aligned, but not discontinuity processed
+  // tests if collection has some stream fragments, which are aligned
   // @return : true if collection has such fragments, false otherwise
-  bool HasAlignedNotDiscontinuityProcessed(void);
+  bool HasAlignedStreamFragments(void);
 
-  // tests if collection has some stream fragments, which are aligned discontinuity processed, but not partially or full processed
+  // tests if collection has some stream fragments, which are discontinuity processed
   // @return : true if collection has such fragments, false otherwise
-  bool HasAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed(void);
+  bool HasDiscontinuityProcessedStreamFragments(void);
 
   // tests if collection has some stream fragments, which are partially processed
   // @return : true if collection has such fragments, false otherwise
-  bool HasPartiallyProcessed(void);
+  bool HasProgramAssociationSectionDetectionFinishedStreamFragments(void);
+
+  // tests if collection has some stream fragments, which are partially processed
+  // @return : true if collection has such fragments, false otherwise
+  bool HasTransportStreamMapSectionDetectionFinishedStreamFragments(void);
+
+  // tests if collection has some stream fragments, which have program association sections and transport stream map sections updated
+  // @return : true if collection has such fragments, false otherwise
+  bool HasBothSectionsUpdatedStreamFragments(void);
+
+  // recalculate aligned stream fragments start positions based on previous aligned stream fragments
+  // @param startIndex : the index of first aligned stream fragment to recalculate start position
+  void RecalculateAlignedStreamFragmentStartPosition(unsigned int startIndex);
 
   /* index methods */
 
@@ -112,14 +134,18 @@ protected:
 
   // we need to maintain several indexes
   // first index : item->IsReadyForAlign()
-  // second index : item->IsAligned() && (!item->IsDiscontinuityProcessed())
-  // third index : item->IsAligned() && item->IsDiscontinuityProcessed() && (!(item->IsPartiallyProcessed() || item->IsProcessed()))
-  // fourth index : item->IsPartiallyProcessed()
+  // second index : item->IsAligned()
+  // third index : item->IsDiscontinuityProcessed()
+  // fourth index : item->IsProgramAssociationSectionDetectionFinished()
+  // fifth index : item->IsTransportStreamMapSectionDetectionFinished()
+  // sixth index : item->IsProgramAssociationSectionUpdated() && item->IsTransportStreamMapSectionUpdated()
 
   CIndexCollection *indexReadyForAlign;
-  CIndexCollection *indexAlignedNotDiscontinuityProcessed;
-  CIndexCollection *indexAlignedDiscontinuityProcessedNotPartiallyOrFullProcessed;
-  CIndexCollection *indexPartiallyProcessed;
+  CIndexCollection *indexAligned;
+  CIndexCollection *indexDiscontinuityProcessed;
+  CIndexCollection *indexProgramAssociationSectionDetectionFinished;
+  CIndexCollection *indexTransportStreamMapSectionDetectionFinished;
+  CIndexCollection *indexBothSectionsUpdated;
 
   /* methods */
 };

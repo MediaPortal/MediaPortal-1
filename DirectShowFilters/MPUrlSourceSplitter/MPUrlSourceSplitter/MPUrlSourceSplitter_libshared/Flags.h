@@ -49,18 +49,29 @@ public:
 
   /* other methods */
 
+  // tests if any flag from specified combination of flags is set
+  // @param flags : the combination of flags to test
+  // @return : true if any flags from combination of flags is set, false otherwise
+  virtual bool IsSetAnyOfFlags(uint32_t flags);
+
   // tests if specific combination of flags is set
-  // @param flags : the set of flags to test
-  // @return : true if set of flags is set, false otherwise
+  // @param flags : the combination of flags to test
+  // @return : true if combination of flags is set, false otherwise
   virtual bool IsSetFlags(uint32_t flags);
 
   /* static methods */
 
   // tests if specific combination of flags is set
-  // @param flags : the set of flags to test
+  // @param flags : the flags to test
   // @param combination : the combination of flags to test
   // @return : true if combination of flags is set, false otherwise
   static bool IsSetFlags(uint32_t flags, uint32_t combination);
+
+  // tests if any flag from specific combination of flags is set
+  // @param flags : the flags to test
+  // @param combination : the combination of flags to test
+  // @return : true if any flags from combination of flags is set, false otherwise
+  static bool IsSetAnyOfFlags(uint32_t flags, uint32_t combination);
 
 protected:
   // holds various flags

@@ -1924,7 +1924,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load()
   {
     result = E_INVALID_CONFIGURATION;
   }
-  
+
   if (SUCCEEDED(result))
   {
     // check log file parameter, if not set, add default

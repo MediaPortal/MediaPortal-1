@@ -24,15 +24,39 @@
 #define __MPEG2TS_STREAM_FRAGMENT_DEFINED
 
 #include "StreamFragment.h"
+#include "ProgramAssociationSectionPacketContextCollection.h"
+#include "TransportStreamProgramMapSectionPacketContextCollection.h"
 
-#define MPEG2TS_STREAM_FRAGMENT_FLAG_NONE                             STREAM_FRAGMENT_FLAG_NONE
+#define MPEG2TS_STREAM_FRAGMENT_FLAG_NONE                                                             STREAM_FRAGMENT_FLAG_NONE
 
-#define MPEG2TS_STREAM_FRAGMENT_FLAG_READY_FOR_ALIGN                  (1 << (STREAM_FRAGMENT_FLAG_LAST + 0))
-#define MPEG2TS_STREAM_FRAGMENT_FLAG_ALIGNED                          (1 << (STREAM_FRAGMENT_FLAG_LAST + 1))
-#define MPEG2TS_STREAM_FRAGMENT_FLAG_DISCONTINUITY_PROCESSED          (1 << (STREAM_FRAGMENT_FLAG_LAST + 2))
-#define MPEG2TS_STREAM_FRAGMENT_FLAG_PARTIALLY_PROCESSED              (1 << (STREAM_FRAGMENT_FLAG_LAST + 3))
+// stream fragment processing workflow
+// 1. ready for align
+// 2. aligned
+// 3. discontinuity processed
+// 4A. program association section detection finished
+// 4B. transport stream program map section detection finished
+// 5A. program association section updated
+// 5B. transport stream program map section updated
+// 6. processed, loaded to memory, ...
 
-#define MPEG2TS_STREAM_FRAGMENT_FLAG_LAST                             (STREAM_FRAGMENT_FLAG_LAST + 4)
+// states 1, 2 and 3 are mutually exclusive, can be set only one of them
+// states 4A and 4B can be set both
+// states 5A and 5B can be set both
+// states 4A and 5A are mutually exclusive, can be set one of them
+// states 4B and 5B are mutually exclusive, can be set one of them
+// states 5A and 5B are exclusive with state 6, transition to state 6 can happen only from both states 5A and 5B
+
+#define MPEG2TS_STREAM_FRAGMENT_FLAG_READY_FOR_ALIGN                                                  (1 << (STREAM_FRAGMENT_FLAG_LAST + 0))
+#define MPEG2TS_STREAM_FRAGMENT_FLAG_ALIGNED                                                          (1 << (STREAM_FRAGMENT_FLAG_LAST + 1))
+#define MPEG2TS_STREAM_FRAGMENT_FLAG_DISCONTINUITY_PROCESSED                                          (1 << (STREAM_FRAGMENT_FLAG_LAST + 2))
+
+#define MPEG2TS_STREAM_FRAGMENT_FLAG_PROGRAM_ASSOCIATION_SECTION_DETECTION_FINISHED                   (1 << (STREAM_FRAGMENT_FLAG_LAST + 3))
+#define MPEG2TS_STREAM_FRAGMENT_FLAG_PROGRAM_ASSOCIATION_SECTION_UPDATED                              (1 << (STREAM_FRAGMENT_FLAG_LAST + 4))
+
+#define MPEG2TS_STREAM_FRAGMENT_FLAG_TRANSPORT_STREAM_PROGRAM_MAP_SECTION_DETECTION_FINISHED          (1 << (STREAM_FRAGMENT_FLAG_LAST + 5))
+#define MPEG2TS_STREAM_FRAGMENT_FLAG_TRANSPORT_STREAM_PROGRAM_MAP_SECTION_UPDATED                     (1 << (STREAM_FRAGMENT_FLAG_LAST + 6))
+
+#define MPEG2TS_STREAM_FRAGMENT_FLAG_LAST                                                             (STREAM_FRAGMENT_FLAG_LAST + 7)
 
 class CMpeg2tsStreamFragment : public CStreamFragment
 {
@@ -45,6 +69,14 @@ public:
   // gets request start position within protocol stream
   // @return : request start position within protocol stream or STREAM_FRAGMENT_START_POSITION_NOT_SET if not set
   int64_t GetRequestStartPosition(void);
+
+  // gets program association section packet contexts
+  // @return : program association section packet contexts
+  CProgramAssociationSectionPacketContextCollection *GetProgramAssociationSectionPacketContexts(void);
+
+  // gets transport stream program map section packet contexts
+  // @return : transport stream program map section packet contexts
+  CTransportStreamProgramMapSectionPacketContextCollection *GetTransportStreamProgramMapSectionPacketContexts(void);
 
   /* set methods */
 
@@ -67,10 +99,25 @@ public:
   // @param streamFragmentIndex : the index of stream fragment (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
   void SetDiscontinuityProcessed(bool discontinuityProcessed, unsigned int streamFragmentIndex);
 
-  // sets partially processed flag
-  // @param partiallyProcessed : true if partially processed, false otherwise
+  // sets program association section detection finished flag
+  // @param programAssociationSectionDetectionFinished : true if program association section detection finished, false otherwise
   // @param streamFragmentIndex : the index of stream fragment (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
-  void SetPartiallyProcessed(bool partiallyProcessed, unsigned int streamFragmentIndex);
+  void SetProgramAssociationSectionDetectionFinished(bool programAssociationSectionDetectionFinished, unsigned int streamFragmentIndex);
+
+  // sets program association section updated flag
+  // @param programAssociationSectionUpdated : true if program association section updated, false otherwise
+  // @param streamFragmentIndex : the index of stream fragment (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
+  void SetProgramAssociationSectionUpdated(bool programAssociationSectionUpdated, unsigned int streamFragmentIndex);
+
+  // sets transport stream map section detection finished flag
+  // @param transportStreamMapSectionDetectionFinished : true if transport stream map section detection finished, false otherwise
+  // @param streamFragmentIndex : the index of stream fragment (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
+  void SetTransportStreamMapSectionDetectionFinished(bool transportStreamMapSectionDetectionFinished, unsigned int streamFragmentIndex);
+
+  // sets transport stream map section updated flag
+  // @param transportStreamMapSectionUpdated : true if transport stream map section updated, false otherwise
+  // @param streamFragmentIndex : the index of stream fragment (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
+  void SetTransportStreamMapSectionUpdated(bool transportStreamMapSectionUpdated, unsigned int streamFragmentIndex);
 
   /* other methods */
 
@@ -86,17 +133,37 @@ public:
   // @return : true if fragment is aligned, false otherwise
   bool IsAligned(void);
 
+  // tests if stream fragment is at least in aligned state
+  // @return : true if fragment is at least aligned, false otherwise
+  bool IsAtLeastAligned(void);
+
   // tests if fragment is processed for discontinuity
   // @return : true if fragment is processed for discontinuity, false otherwise
   bool IsDiscontinuityProcessed(void);
 
-  // tests if fragment is partially processed (some unprocessed MPEG2 TS packets are still in fragment)
-  // @return : true if fragment is partially processed, false otherwise
-  bool IsPartiallyProcessed(void);
+  // tests if program association section detection finished
+  // @return : true if program association section detection finished, false otherwise
+  bool IsProgramAssociationSectionDetectionFinished(void);
+
+  // tests if program association section updated
+  // @return : true if program association section updated, false otherwise
+  bool IsProgramAssociationSectionUpdated(void);
+
+  // tests if transport stream map section detection finished
+  // @return : true if transport stream map section detection finished, false otherwise
+  bool IsTransportStreamMapSectionDetectionFinished(void);
+
+  // tests if transport stream map section updated
+  // @return : true if transport stream map section updated, false otherwise
+  bool IsTransportStreamMapSectionUpdated(void);
 
 protected:
   // holds request start position within protocol stream
   int64_t requestStartPosition;
+  // holds program association section packet contexts
+  CProgramAssociationSectionPacketContextCollection *programAssociationSectionPacketContexts;
+  // holds transport stream program map section packet contexts
+  CTransportStreamProgramMapSectionPacketContextCollection *transportStreamProgramMapSectionPacketContexts;
 
   /* methods */
 

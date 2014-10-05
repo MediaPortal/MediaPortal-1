@@ -31,6 +31,15 @@
     <Filter Include="Parsers\Source Files">
       <UniqueIdentifier>{35d13a3d-dd4c-4644-a641-3105c7c23540}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sections">
+      <UniqueIdentifier>{1a59db25-b45b-4d38-8860-178b1f811198}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sections\Header Files">
+      <UniqueIdentifier>{6b4b4987-9403-4b98-8c9c-12301037ac3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sections\Source Files">
+      <UniqueIdentifier>{c360a762-551c-4216-97ce-131828e80aa2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -57,6 +66,48 @@
     <ClInclude Include="TsPacketConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Crc32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SectionPayload.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SectionPayloadCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramSpecificInformationPacket.h">
+      <Filter>Packets\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Section.h">
+      <Filter>Sections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramAssociationSection.h">
+      <Filter>Sections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramAssociationSectionProgram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramAssociationSectionProgramCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TransportStreamProgramMapSection.h">
+      <Filter>Sections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramDefinition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramDefinitionCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramAssociationParser.h">
+      <Filter>Parsers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TsPacketCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TransportStreamProgramMapParser.h">
+      <Filter>Parsers\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -76,6 +127,48 @@
     </ClCompile>
     <ClCompile Include="PidCounterCollection.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Crc32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SectionPayload.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SectionPayloadCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramSpecificInformationPacket.cpp">
+      <Filter>Packets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Section.cpp">
+      <Filter>Sections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramAssociationSection.cpp">
+      <Filter>Sections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramAssociationSectionProgram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramAssociationSectionProgramCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TransportStreamProgramMapSection.cpp">
+      <Filter>Sections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramDefinition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramDefinitionCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramAssociationParser.cpp">
+      <Filter>Parsers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TsPacketCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TransportStreamProgramMapParser.cpp">
+      <Filter>Parsers\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

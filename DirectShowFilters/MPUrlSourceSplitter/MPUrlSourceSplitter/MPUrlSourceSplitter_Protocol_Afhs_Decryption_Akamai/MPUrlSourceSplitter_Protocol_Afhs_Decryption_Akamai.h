@@ -135,7 +135,7 @@ protected:
   // gets media data box from specified segment and fragment
   // @param mediaDataBox : the media data box to be filled in (it will be created, caller is responsible for freeing memory)
   // @param segmentFragment : segment and fragment to get media data box
-  // @result : S_OK if successful, error code otherwise
+  // @return : S_OK if successful, error code otherwise
   HRESULT GetMediaDataBox(CMediaDataBox **mediaDataBox, CAfhsSegmentFragment *segmentFragment);
 
   // gets FLV packet from specified buffer
