@@ -32,6 +32,7 @@
 #include "StreamProgress.h"
 #include "MPUrlSourceSplitterOutputSplitterPin.h"
 #include "MPUrlSourceSplitterOutputDownloadPin.h"
+#include "MPUrlSourceSplitter_Parser_MPEG2TS_Parameters.h"
 
 #include <crtdbg.h>
 #include <process.h>
@@ -94,6 +95,29 @@ extern "C"
 #define PARAMETER_SEPARATOR                                       L"&"
 #define PARAMETER_IDENTIFIER                                      L"####"
 #define PARAMETER_ASSIGN                                          L"="
+
+// stock filter backward compatibility
+#define PARAMETER_SEPARATOR_STOCK_FILTER                          L"|"
+#define PARAMETER_ASSIGN_STOCK_FILTER                             L"="
+
+// stock filter supported parameters
+#define PARAMETER_NAME_STOCK_FILTER_MPEG2TS_PROGRAM_NUMBER        L"SidValue"
+#define PARAMETER_NAME_STOCK_FILTER_MPEG2TS_PROGRAM_MAP_PID       L"PidValue"
+#define PARAMETER_NAME_STOCK_FILTER_INTERFACE                     L"interface"
+#define PARAMETER_NAME_STOCK_FILTER_URL                           L"url"
+
+#define PARAMETER_NAME_STOCK_FILTER_TOTAL_SUPPORTED               4
+const wchar_t *SUPPORTED_PARAMETER_NAME_STOCK_FILTER[PARAMETER_NAME_STOCK_FILTER_TOTAL_SUPPORTED] = {
+                                                                  PARAMETER_NAME_STOCK_FILTER_MPEG2TS_PROGRAM_NUMBER,
+                                                                  PARAMETER_NAME_STOCK_FILTER_MPEG2TS_PROGRAM_MAP_PID,
+                                                                  PARAMETER_NAME_STOCK_FILTER_INTERFACE,
+                                                                  PARAMETER_NAME_STOCK_FILTER_URL };
+
+const wchar_t *REPLACE_PARAMETER_NAME_STOCK_FILTER[PARAMETER_NAME_STOCK_FILTER_TOTAL_SUPPORTED] = {
+                                                                  PARAMETER_NAME_MPEG2TS_PROGRAM_NUMBER,
+                                                                  PARAMETER_NAME_MPEG2TS_PROGRAM_MAP_PID,
+                                                                  PARAMETER_NAME_INTERFACE,
+                                                                  PARAMETER_NAME_URL};
 
 extern "C" char *curl_easy_unescape(void *handle, const char *string, int length, int *olen);
 extern "C" void curl_free(void *p);
@@ -2055,6 +2079,77 @@ CParameterCollection *CMPUrlSourceSplitter::ParseParameters(const wchar_t *param
       unsigned int tokenLength = 0;
       wchar_t *rest = NULL;
 
+      splitted = SplitBySeparator(parameters, PARAMETER_SEPARATOR_STOCK_FILTER, &tokenLength, &rest, true);
+      if (splitted)
+      {
+        // identifier for parameters for MediaPortal Source Filter is found
+        parameters = rest;
+        splitted = false;
+
+        do
+        {
+          splitted = SplitBySeparator(parameters, PARAMETER_SEPARATOR_STOCK_FILTER, &tokenLength, &rest, false);
+          if (splitted)
+          {
+            // token length is without terminating null character
+            tokenLength++;
+
+            ALLOC_MEM_DEFINE_SET(token, wchar_t, tokenLength, 0);
+            CHECK_POINTER_HRESULT(result, token, result, E_PARSE_PARAMETERS_NOT_ENOUGH_MEMORY_FOR_TOKEN);
+
+            if (SUCCEEDED(result))
+            {
+              // copy token from parameters string
+              wcsncpy_s(token, tokenLength, parameters, tokenLength - 1);
+              parameters = rest;
+
+              unsigned int nameLength = 0;
+              wchar_t *value = NULL;
+              bool splittedNameAndValue = SplitBySeparator(token, PARAMETER_ASSIGN, &nameLength, &value, true);
+
+              if ((splittedNameAndValue) && (nameLength != 0))
+              {
+                // if correctly splitted parameter name and value
+                nameLength++;
+
+                ALLOC_MEM_DEFINE_SET(name, wchar_t, nameLength, 0);
+                CHECK_POINTER_HRESULT(result, name, result, E_PARSE_PARAMETERS_NOT_ENOUGH_MEMORY_FOR_PARAMETER_NAME);
+
+                if (SUCCEEDED(result))
+                {
+                  // copy name from token
+                  // the value is plain text
+                  wcsncpy_s(name, nameLength, token, nameLength - 1);
+
+                  // check parameter name again known stock filter parameter names
+                  // if supported, replace them with filter parameter name
+                  
+                  for (unsigned int i = 0; (SUCCEEDED(result) && (i < PARAMETER_NAME_STOCK_FILTER_TOTAL_SUPPORTED)); i++)
+                  {
+                    if (_wcsicmp(name, SUPPORTED_PARAMETER_NAME_STOCK_FILTER[i]) == 0)
+                    {
+                      CHECK_CONDITION_HRESULT(result, parsedParameters->Add(REPLACE_PARAMETER_NAME_STOCK_FILTER[i], value), result, E_OUTOFMEMORY);
+                      break;
+                    }
+                  }
+                }
+
+                FREE_MEM(name);
+              }
+            }
+
+            FREE_MEM(token);
+          }
+        } while ((splitted) && (rest != NULL) && (SUCCEEDED(result)));
+      }
+    }
+
+    if (SUCCEEDED(result) && (parsedParameters->Count() == 0))
+    {
+      bool splitted = false;
+      unsigned int tokenLength = 0;
+      wchar_t *rest = NULL;
+
       splitted = SplitBySeparator(parameters, PARAMETER_IDENTIFIER, &tokenLength, &rest, false);
       if (splitted)
       {
@@ -2070,11 +2165,7 @@ CParameterCollection *CMPUrlSourceSplitter::ParseParameters(const wchar_t *param
             // token length is without terminating null character
             tokenLength++;
             ALLOC_MEM_DEFINE_SET(token, wchar_t, tokenLength, 0);
-            if (token == NULL)
-            {
-              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, L"not enough memory for token");
-              result = E_OUTOFMEMORY;
-            }
+            CHECK_POINTER_HRESULT(result, token, result, E_PARSE_PARAMETERS_NOT_ENOUGH_MEMORY_FOR_TOKEN);
 
             if (SUCCEEDED(result))
             {
@@ -2091,11 +2182,7 @@ CParameterCollection *CMPUrlSourceSplitter::ParseParameters(const wchar_t *param
                 // if correctly splitted parameter name and value
                 nameLength++;
                 ALLOC_MEM_DEFINE_SET(name, wchar_t, nameLength, 0);
-                if (name == NULL)
-                {
-                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, L"not enough memory for parameter name");
-                  result = E_OUTOFMEMORY;
-                }
+                CHECK_POINTER_HRESULT(result, name, result, E_PARSE_PARAMETERS_NOT_ENOUGH_MEMORY_FOR_PARAMETER_NAME);
 
                 if (SUCCEEDED(result))
                 {
@@ -2110,31 +2197,17 @@ CParameterCollection *CMPUrlSourceSplitter::ParseParameters(const wchar_t *param
 
                   wchar_t *replacedValue = ReplaceString(value, L"+", L"%20");
                   char *curlValue = ConvertToMultiByte(replacedValue);
-                  if (curlValue == NULL)
-                  {
-                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, L"not enough memory for value for CURL library");
-                    result = E_CONVERT_STRING_ERROR;
-                  }
+                  CHECK_POINTER_HRESULT(result, curlValue, result, E_CONVERT_STRING_ERROR);
 
                   if (SUCCEEDED(result))
                   {
                     char *unescapedCurlValue = curl_easy_unescape(NULL, curlValue, 0, NULL);
-
-                    if (unescapedCurlValue == NULL)
-                    {
-                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, "error occured while getting unescaped value from CURL library");
-                      result = E_FAIL;
-                    }
-
+                    CHECK_POINTER_HRESULT(result, unescapedCurlValue, result, E_PARSE_PARAMETERS_CANNOT_GET_UNESCAPED_VALUE);
+                    
                     if (SUCCEEDED(result))
                     {
                       wchar_t *unescapedValue = ConvertToUnicodeA(unescapedCurlValue);
-
-                      if (unescapedValue == NULL)
-                      {
-                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, "not enough memory for unescaped value");
-                        result = E_CONVERT_STRING_ERROR;
-                      }
+                      CHECK_POINTER_HRESULT(result, unescapedValue, result, E_CONVERT_STRING_ERROR);
 
                       if (SUCCEEDED(result))
                       {

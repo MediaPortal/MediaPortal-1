@@ -49,6 +49,10 @@
 #define E_INVALID_STREAM_ID                                                     -12
 #define E_CANNOT_GET_MODULE_FILE_NAME                                           -13
 #define E_CONNECTION_LOST_TRYING_REOPEN                                         -14
+#define E_PARSE_PARAMETERS_NOT_ENOUGH_MEMORY_FOR_TOKEN                          -15
+#define E_PARSE_PARAMETERS_NOT_ENOUGH_MEMORY_FOR_PARAMETER_NAME                 -16
+#define E_PARSE_PARAMETERS_NOT_ENOUGH_MEMORY_FOR_PARAMETER_VALUE                -17
+#define E_PARSE_PARAMETERS_CANNOT_GET_UNESCAPED_VALUE                           -18
 
 // parser error codes
 
