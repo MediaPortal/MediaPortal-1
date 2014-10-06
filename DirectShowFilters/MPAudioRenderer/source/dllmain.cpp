@@ -249,21 +249,42 @@ void Log(const char *fmt, ...)
   m_eLog.Set();
 }
 
+const char* SubFormatToString(GUID subFormat)
+{
+  if (subFormat == KSDATAFORMAT_SUBTYPE_PCM)
+    return "PCM";
+  else if (subFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
+    return "Float";
+  else if (subFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL)
+    return "DD";
+  else if (subFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL_PLUS)
+    return "DD Plus";
+  else if (subFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_MLP)
+    return "True HD";
+  else if (subFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DTS)
+    return "DTS";
+  else if (subFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DTS_HD)
+    return "DTS-HD";
+  else if (subFormat == KSDATAFORMAT_SUBTYPE_IEC61937_WMA_PRO)
+    return "Windows Media Audio (WMA) Pro";
+  else 
+    return "Unknown";
+}
+
 void LogWaveFormat(const WAVEFORMATEXTENSIBLE* pwfx, const char* text)
 {
   if (pwfx)
   {
-    char type = 'u';
-      
     if (pwfx->Format.wFormatTag == WAVE_FORMAT_EXTENSIBLE)
     {
-      if (pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_PCM)
-        type = 'i';
-      else if (pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
-        type = 'f';
-
-      Log("%s: %6dHz %2d%c (%2d)bits %2dch -- ch mask: %4d align: %2d avgbytes: %8d", text, pwfx->Format.nSamplesPerSec, 
-        pwfx->Format.wBitsPerSample, type, pwfx->Samples.wValidBitsPerSample, pwfx->Format.nChannels, pwfx->dwChannelMask, pwfx->Format.nBlockAlign, pwfx->Format.nAvgBytesPerSec);
+      Log("%s: %6dHz %2d (%2d)bits %2dch -- ch mask: %4d align: %2d avgbytes: %8d type: %s tag: %d", text, pwfx->Format.nSamplesPerSec,
+        pwfx->Format.wBitsPerSample, pwfx->Samples.wValidBitsPerSample, pwfx->Format.nChannels, pwfx->dwChannelMask,
+        pwfx->Format.nBlockAlign, pwfx->Format.nAvgBytesPerSec, SubFormatToString(pwfx->SubFormat), pwfx->Format.wFormatTag);
+    }
+    else
+    {
+      Log("%s: %6dHz %2d %2dch -- align: %2d avgbytes: %8d tag: %d", text, pwfx->Format.nSamplesPerSec,
+        pwfx->Format.wBitsPerSample, pwfx->Format.nChannels, pwfx->Format.nBlockAlign, pwfx->Format.nAvgBytesPerSec, pwfx->Format.wFormatTag);
     }
   }
 }
