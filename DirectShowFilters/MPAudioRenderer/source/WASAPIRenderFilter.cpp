@@ -311,6 +311,9 @@ HRESULT CWASAPIRenderFilter::IsFormatSupported(const WAVEFORMATEXTENSIBLE* pwfx,
       return hr;
     }
 
+    if (CBaseAudioSink::CanBitstream(pwfx)) // Misrepresenting the media type for bit streamable formats will make negotiation succeed, but playback will not
+      return hr;
+
     CopyWaveFormatEx((WAVEFORMATEXTENSIBLE**)&tmpPwfx, pwfx);
     tmpPwfx->cbSize = 0;
     tmpPwfx->wFormatTag = WAVE_FORMAT_PCM;
