@@ -771,8 +771,6 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       BYTE* data = NULL;
       DWORD flags = 0;
 
-      static BYTE* prevData = NULL;
-       
       hr = GetWASAPIBuffer(bufferSize, currentPadding, bufferSizeInBytes, &data);
       if (SUCCEEDED(hr))
       {
