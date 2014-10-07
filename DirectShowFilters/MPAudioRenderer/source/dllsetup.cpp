@@ -291,7 +291,7 @@ AMovieSetupRegisterFilter2( const AMOVIESETUP_FILTER * const psetupdata
                              , psetupdata->strName
                              , 0 // moniker
                              , &CLSID_AudioRendererCategory // category
-                             , NULL // instance
+                             , _T("") // instance
                              , &rf2);
   }
 
