@@ -130,7 +130,7 @@ void SynchCorrection::SetAdjustment(double adjustment)
     else if (adjustment < 1)
       m_iBiasDir = DIRDOWN;
 
-    CAutoLock lock(&m_csBiasLock);
+    CAutoLock biasLock(&m_csBiasLock);
     m_Bias += m_dBiasCorrection * (double) m_iBiasDir;
   }
 
