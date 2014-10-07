@@ -199,7 +199,7 @@ HRESULT CTimeStretchFilter::CheckSample(IMediaSample* pSample, REFERENCE_TIME* r
     REFERENCE_TIME rtStart = 0;
     REFERENCE_TIME rtStop = 0;
 
-    HRESULT hr = pSample->GetTime(&rtStart, &rtStop);
+    hr = pSample->GetTime(&rtStart, &rtStop);
     
     if (SUCCEEDED(hr))
     {
