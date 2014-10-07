@@ -338,7 +338,7 @@ HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE** dst, WAVEFORMATEX* src)
     pwfe->SubFormat = KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL;
     break;
   default:
-    delete pwfe;
+    delete[] pwfe;
     return VFW_E_TYPE_NOT_ACCEPTED;
   }
   if (pwfe->Format.nChannels >= 1 && pwfe->Format.nChannels <= 8)
@@ -346,13 +346,13 @@ HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE** dst, WAVEFORMATEX* src)
     pwfe->dwChannelMask = gdwDefaultChannelMask[pwfe->Format.nChannels];
     if (pwfe->dwChannelMask == 0)
     {
-      delete pwfe;
+      delete[] pwfe;
       return VFW_E_TYPE_NOT_ACCEPTED;
     }
   }
   else
   {
-    delete pwfe;
+    delete[] pwfe;
     return VFW_E_TYPE_NOT_ACCEPTED;
   }
 
