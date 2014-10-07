@@ -106,6 +106,9 @@ STDAPI DllUnregisterServer()
 const int MAX_LOG_LINE_LENGHT = 1000;
 const int LOG_LINE_RESERVED = 32;
 
+char prev_log_line[MAX_LOG_LINE_LENGHT];
+int repeat = 0;
+
 void LogPath(TCHAR* dest, TCHAR* name)
 {
   TCHAR folder[MAX_PATH];
@@ -220,7 +223,8 @@ void Log(const char *fmt, ...)
   if (!m_hLogger)
     return;
 
-  char buffer[MAX_LOG_LINE_LENGHT - LOG_LINE_RESERVED]; 
+  char buffer[MAX_LOG_LINE_LENGHT - LOG_LINE_RESERVED];
+  buffer[0] = '\n';
   int ret;
   va_start(ap, fmt);
   ret = _vsnprintf(buffer, MAX_LOG_LINE_LENGHT - LOG_LINE_RESERVED, fmt, ap);
@@ -228,6 +232,12 @@ void Log(const char *fmt, ...)
 
   if (ret < 0)
     return;
+
+  if (!strcmp(buffer, prev_log_line))
+  {
+    repeat++;
+    return;
+  }
 
 #ifdef TRACELOGENTRY
   TRACE("%s\n", buffer);
@@ -244,6 +254,17 @@ void Log(const char *fmt, ...)
     buffer);
 
   CAutoLock l(&m_qLock);
+
+  if (repeat > 0)
+  {
+    char test[MAX_LOG_LINE_LENGHT];
+    sprintf_s(test, MAX_LOG_LINE_LENGHT, "   line repeated times %d\n", repeat);
+    m_logQueue.push(test);
+    
+    repeat = 0;
+  }
+
+  strncpy_s(prev_log_line, buffer, _TRUNCATE);
 
   m_logQueue.push((string)msg);
   m_eLog.Set();
