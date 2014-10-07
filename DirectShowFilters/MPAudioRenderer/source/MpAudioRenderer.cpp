@@ -458,11 +458,19 @@ bool CMPAudioRenderer::DeliverSample(IMediaSample* pSample)
   if (rtStart < 0)
     return false;
 
-  // In some cases audio decoder wont put the PMT on 1st sample (depends how the format negotiation goes?)
-  if (m_bFirstSample && m_pMediaType)
+  if (m_pMediaType)
   {
-    pSample->SetMediaType(m_pMediaType);
-    m_bFirstSample = false;
+    if (m_bFirstSample)
+    {
+      // In some cases audio decoder wont put the PMT on 1st sample (depends how the format negotiation goes?)
+      pSample->SetMediaType(m_pMediaType);
+      m_bFirstSample = false;
+    }
+
+    WAVEFORMATEXTENSIBLE* pwf = (WAVEFORMATEXTENSIBLE*)m_pMediaType->pbFormat;
+
+    UINT nFrames = pSample->GetActualDataLength() / pwf->Format.nBlockAlign;
+    pSample->SetActualDataLength(nFrames * pwf->Format.nBlockAlign);
   }
 
   if (m_pSettings->GetLogSampleTimes())
