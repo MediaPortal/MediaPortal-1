@@ -229,7 +229,7 @@ HRESULT CBaseAudioSink::EndFlush()
 
 bool CBaseAudioSink::FormatsEqual(const WAVEFORMATEXTENSIBLE* pwfx1, const WAVEFORMATEXTENSIBLE* pwfx2)
 {
-  if ((!pwfx1 && pwfx2) || (pwfx1 && !pwfx2))
+  if ((!pwfx1 && pwfx2) || (pwfx1 && !pwfx2) || (!pwfx1 && !pwfx2))
     return false;
 
   if (pwfx1->Format.wFormatTag != pwfx2->Format.wFormatTag ||
