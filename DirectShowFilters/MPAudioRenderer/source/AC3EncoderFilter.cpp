@@ -181,8 +181,10 @@ HRESULT CAC3EncoderFilter::NegotiateBuffer(const WAVEFORMATEXTENSIBLE* pwfx, lon
 {
   if (m_pNextSink && m_bNextFormatPassthru)
     return m_pNextSink->NegotiateBuffer(pwfx, pBufferSize, pBufferCount, bCanModifyBufferSize);
-
-  return m_pNextSink->NegotiateBuffer(m_pOutputFormat, &m_nOutBufferSize, pBufferCount, false);
+  else if (m_pNextSink)
+    return m_pNextSink->NegotiateBuffer(m_pOutputFormat, &m_nOutBufferSize, pBufferCount, false);
+  else
+    return E_POINTER;
 }
 
 // Processing
