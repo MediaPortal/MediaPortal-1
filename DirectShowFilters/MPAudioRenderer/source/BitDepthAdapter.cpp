@@ -127,6 +127,10 @@ HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int 
   if (!m_pNextSink)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
+  bool bApplyChanges = (nApplyChangesDepth != 0);
+  if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
+    nApplyChangesDepth--;
+
   if (m_pSettings->GetAllowBitStreaming() && CanBitstream(pwfx))
   {
     HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
@@ -138,10 +142,6 @@ HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int 
     }
     return hr;
   }
-
-  bool bApplyChanges = (nApplyChangesDepth != 0);
-  if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
-    nApplyChangesDepth--;
 
   // Try passthrough
   HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);

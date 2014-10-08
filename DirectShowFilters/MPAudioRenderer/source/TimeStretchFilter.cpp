@@ -119,6 +119,10 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
     return S_OK;
   }
 
+  bool bApplyChanges = (nApplyChangesDepth != 0);
+  if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
+    nApplyChangesDepth--;
+
   if (m_pSettings->GetAllowBitStreaming() && CanBitstream(pwfx))
   {
     HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
@@ -139,10 +143,6 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
   if (pwfx->Format.wBitsPerSample != 32 || pwfx->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
     return VFW_E_TYPE_NOT_ACCEPTED;
 #endif
-
-  bool bApplyChanges = (nApplyChangesDepth != 0);
-  if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
-    nApplyChangesDepth--;
 
   HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
   if (FAILED(hr))
