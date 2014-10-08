@@ -765,21 +765,6 @@ HRESULT CMPAudioRenderer::EndFlush()
   return CBaseRenderer::EndFlush(); 
 }
 
-// TODO - implement TsReader side as well
-
-/*
-bool CMPAudioRenderer::CheckForLiveSouce()
-{
-  FILTER_INFO filterInfo;
-  ZeroMemory(&filterInfo, sizeof(filterInfo));
-  m_EVRFilter->QueryFilterInfo(&filterInfo); // This addref's the pGraph member
-
-  CComPtr<IBaseFilter> pBaseFilter;
-
-  HRESULT hr = filterInfo.pGraph->FindFilterByName(L"MediaPortal File Reader", &pBaseFilter);
-  filterInfo.pGraph->Release();
-}*/
-
 // IAVSyncClock interface implementation
 
 HRESULT CMPAudioRenderer::AdjustClock(DOUBLE pAdjustment)
