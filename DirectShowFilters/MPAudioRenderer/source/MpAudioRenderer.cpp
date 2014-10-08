@@ -469,8 +469,15 @@ bool CMPAudioRenderer::DeliverSample(IMediaSample* pSample)
 
     WAVEFORMATEXTENSIBLE* pwf = (WAVEFORMATEXTENSIBLE*)m_pMediaType->pbFormat;
 
-    UINT nFrames = pSample->GetActualDataLength() / pwf->Format.nBlockAlign;
-    pSample->SetActualDataLength(nFrames * pwf->Format.nBlockAlign);
+    UINT32 nSampleLength = pSample->GetActualDataLength();
+    UINT nFrames = nSampleLength / pwf->Format.nBlockAlign;
+    UINT32 nExpectedLength = nFrames * pwf->Format.nBlockAlign;
+    
+    if (nSampleLength != nExpectedLength)
+    {
+      Log("CMPAudioRenderer::DeliverSample incorrect incoming sample length %d expected %d", nSampleLength, nExpectedLength);
+      pSample->SetActualDataLength(nExpectedLength);
+    }
   }
 
   if (m_pSettings->GetLogSampleTimes())
