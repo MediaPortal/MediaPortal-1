@@ -66,6 +66,10 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, 
   if (!m_pNextSink)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
+  bool bApplyChanges = (nApplyChangesDepth != 0);
+  if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
+    nApplyChangesDepth--;
+
   if (m_pSettings->GetAllowBitStreaming() && CanBitstream(pwfx))
   {
     HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
@@ -77,10 +81,6 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, 
     }
     return hr;
   }
-
-  bool bApplyChanges = (nApplyChangesDepth != 0);
-  if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
-    nApplyChangesDepth--;
 
   // Try passthrough
   HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
