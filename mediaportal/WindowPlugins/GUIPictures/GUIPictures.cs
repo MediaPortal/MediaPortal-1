@@ -1074,7 +1074,6 @@ namespace MediaPortal.GUI.Pictures
         dlg.AddLocalizedString(200048); //Regenerate Thumbnails
       }
 
-      dlg.AddLocalizedString(457); //Switch View
       string iPincodeCorrect;
       
       if (!_virtualDirectory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && isFileMenuEnabled)
@@ -1129,6 +1128,10 @@ namespace MediaPortal.GUI.Pictures
       }
       switch (dlg.SelectedId)
       {
+        case 457: //Switch View
+          ;
+          break;
+        
         case 735: // rotate
           OnRotatePicture(90);
           break;
