@@ -360,15 +360,10 @@ void COverlayRenderer::LockARGBSurface(BD_ARGB_BUFFER_EX* buffer)
     return;
 
   RECT area = {};
-  area.left = buffer->dirty[BD_OVERLAY_IG].x0;
-  area.top = buffer->dirty[BD_OVERLAY_IG].y0;
-  area.right = buffer->dirty[BD_OVERLAY_IG].x1;
-  area.bottom = buffer->dirty[BD_OVERLAY_IG].y1;
-
   area.left = 0;
-  area.right = 1920;
+  area.right = m_pPlanes[BD_OVERLAY_IG]->width;
   area.top = 0;
-  area.bottom = 1080;
+  area.bottom = m_pPlanes[BD_OVERLAY_IG]->height;
 
   D3DLOCKED_RECT lockedRect = {};
 
@@ -379,14 +374,18 @@ void COverlayRenderer::LockARGBSurface(BD_ARGB_BUFFER_EX* buffer)
     return;
   }
 
-  int width =  area.right - area.left;
-  int height = area.bottom - area.top;
-
   m_ARGBBuffer.buf[BD_OVERLAY_IG] = (uint32_t*)lockedRect.pBits;
-  m_ARGBBuffer.width = lockedRect.Pitch / 4;
-  m_ARGBBuffer.height = height;
 
-  AdjustDirtyRect(BD_OVERLAY_IG, (uint16_t)area.left, (uint16_t)area.top, width, height);
+  RECT dirtyArea = {};
+  dirtyArea.left = buffer->dirty[BD_OVERLAY_IG].x0;
+  dirtyArea.top = buffer->dirty[BD_OVERLAY_IG].y0;
+  dirtyArea.right = buffer->dirty[BD_OVERLAY_IG].x1 + 1;
+  dirtyArea.bottom = buffer->dirty[BD_OVERLAY_IG].y1 + 1;
+
+  int width =  dirtyArea.right - dirtyArea.left;
+  int height = dirtyArea.bottom - dirtyArea.top;
+
+  AdjustDirtyRect(BD_OVERLAY_IG, (uint16_t)dirtyArea.left, (uint16_t)dirtyArea.top, width, height);
 }
 
 void ARBGUnlock(BD_ARGB_BUFFER* buffer)
