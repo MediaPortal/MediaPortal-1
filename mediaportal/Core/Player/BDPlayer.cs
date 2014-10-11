@@ -2756,12 +2756,11 @@ namespace MediaPortal.Player
         //Sync Audio Renderer
         SyncAudioRenderer();
 
-        if (!_vmr9.IsVMR9Connected)
+        if (_vmr9.IsVMR9Connected)
         {
-          Log.Error("BDPlayer: Failed vmr9 not connected");
-          return false;
+          _vmr9.SetDeinterlaceMode();
         }
-        _vmr9.SetDeinterlaceMode();
+
         return true;
       }
       catch (Exception ex)

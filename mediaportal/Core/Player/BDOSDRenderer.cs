@@ -119,8 +119,8 @@ namespace MediaPortal.Player
           int wx = 0, wy = 0, wwidth = 0, wheight = 0;
           if (GUIGraphicsContext.IsFullScreenVideo)
           {
-            wheight = PlaneScene.DestRect.Height;
-            wwidth = PlaneScene.DestRect.Width;
+            wheight = GUIGraphicsContext.Height;
+            wwidth = GUIGraphicsContext.Width;
 
             wx = GUIGraphicsContext.OverScanLeft;
             wy = GUIGraphicsContext.OverScanTop;
