@@ -545,10 +545,13 @@ namespace MediaPortal.GUI.Music
             }
             break;
 
-          case "disc#":
           case "track":
-            goto case "album";
+          {
+            base.OnRetrieveCoverArt(item);
+            break;
+          }
 
+          case "disc#":
           case "album":
 
             bool thumbFound = false;

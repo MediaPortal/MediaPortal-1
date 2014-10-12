@@ -130,10 +130,14 @@ namespace MediaPortal.GUI.Music
 
     #region SkinControls
 
-    [SkinControl(8)] protected GUIButtonControl btnSearch = null;
-    [SkinControl(12)] protected GUIButtonControl btnPlayCd = null;
-    [SkinControl(10)] protected GUIButtonControl btnSavedPlaylists = null;
-    [SkinControl(18)] protected GUICheckButton btnAutoDJ;
+    [SkinControl(8)]
+    protected GUIButtonControl btnSearch = null;
+    [SkinControl(12)]
+    protected GUIButtonControl btnPlayCd = null;
+    [SkinControl(10)]
+    protected GUIButtonControl btnSavedPlaylists = null;
+    [SkinControl(18)]
+    protected GUICheckButton btnAutoDJ;
 
     #endregion
 
@@ -148,7 +152,7 @@ namespace MediaPortal.GUI.Music
 
       playlistPlayer = PlayListPlayer.SingletonPlayer;
 
-      playlistPlayer.PlaylistChanged += new PlayListPlayer.PlaylistChangedEventHandler(playlistPlayer_PlaylistChanged); 
+      playlistPlayer.PlaylistChanged += new PlayListPlayer.PlaylistChangedEventHandler(playlistPlayer_PlaylistChanged);
       playlistPlayer.PlaylistChanged += playlistPlayer_PlaylistChanged;
       g_Player.PlayBackChanged += OnPlaybackChangedOrStopped;
       g_Player.PlayBackStopped += OnPlaybackChangedOrStopped;
@@ -1046,12 +1050,41 @@ namespace MediaPortal.GUI.Music
       }
     }
 
+    /// <summary>
+    /// Get Cover Art 
+    /// If we received a folder, we shall look for folder.jpg
+    /// 
+    /// If we have received a Music File, we will try to get the cover art in the following sequence
+    /// 1. Get embedded Tag fromn the Track (stored in a temp file, which will get deleted upon exit of MP)
+    /// 2. Search the Thumbs folder for a file in the form "Artist-Album"
+    /// 3. return folder.jpg
+    /// 
+    /// </summary>
+    /// <param name="isfolder">Are we on a folder?</param>
+    /// <param name="filename">The Filename</param>
+    /// <param name="tag">the music tag</param>
+    /// <returns></returns>
     public static string GetCoverArt(bool isfolder, string filename, MusicTag tag)
     {
-      string strAlbumName = string.Empty;
-      string strArtistName = string.Empty;
-      if (tag != null)
+      // If we are not on a folder, try to get the embeded cover art
+      if (!isfolder)
       {
+        if (tag != null)
+        {
+          string cover = tag.CoverArtFile;
+          if (!string.IsNullOrEmpty(cover))
+          {
+            return cover;
+          }
+        }
+      }
+
+      // No embedded Cover art found
+      // Get from Thumbs folder
+      if (tag != null && !isfolder)
+      {
+        string strAlbumName = string.Empty;
+        string strArtistName = string.Empty;
         if (!string.IsNullOrEmpty(tag.Album))
         {
           strAlbumName = tag.Album;
@@ -1060,24 +1093,24 @@ namespace MediaPortal.GUI.Music
         {
           strArtistName = tag.Artist;
         }
-      }
 
-      // attempt to pick up album thumb if already scanned 
-      string strThumb = Util.Utils.GetAlbumThumbName(strArtistName, strAlbumName);
-      if (Util.Utils.FileExistsInCache(strThumb))
-      {
-        if (_createMissingFolderThumbs && _createMissingFolderThumbCache)
+        // attempt to pick up album thumb if already scanned 
+        string strThumb = Util.Utils.GetAlbumThumbName(strArtistName, strAlbumName);
+        if (Util.Utils.FileExistsInCache(strThumb))
         {
-          string folderThumb = Util.Utils.GetFolderThumb(filename);
-          if (!Util.Utils.FileExistsInCache(folderThumb))
+          if (_createMissingFolderThumbs && _createMissingFolderThumbCache)
           {
-            FolderThumbCreator thumbCreator = new FolderThumbCreator(filename, tag);
+            string folderThumb = Util.Utils.GetFolderThumb(filename);
+            if (!Util.Utils.FileExistsInCache(folderThumb))
+            {
+              FolderThumbCreator thumbCreator = new FolderThumbCreator(filename, tag);
+            }
           }
+          return strThumb;
         }
-        return strThumb;
       }
 
-      // attempt to load folder.jpg
+      // No ebedded cover art and thumb found. Attempt to load folder.jpg
       if (!Util.Utils.IsAVStream(filename))
       {
         string strFolderThumb = string.Empty;
@@ -1102,8 +1135,6 @@ namespace MediaPortal.GUI.Music
           }
         }
       }
-
-      //TODO: consider lookup of embedded artwork
 
       return string.Empty;
     }
@@ -1343,7 +1374,7 @@ namespace MediaPortal.GUI.Music
           {
             // need to get user to choose which one to use
             Log.Debug("Muliple Artist Match Found ({0}) prompting user", artists.Count);
-            var pDlg = (GUIDialogSelect2) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_SELECT2);
+            var pDlg = (GUIDialogSelect2)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT2);
             if (null != pDlg)
             {
               pDlg.Reset();
