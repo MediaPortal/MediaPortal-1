@@ -258,7 +258,7 @@ void Log(const char *fmt, ...)
   if (repeat > 0)
   {
     char test[MAX_LOG_LINE_LENGHT];
-    sprintf_s(test, MAX_LOG_LINE_LENGHT, "   line repeated times %d\n", repeat);
+    sprintf_s(test, MAX_LOG_LINE_LENGHT, "   line repeated %d times\n", repeat);
     m_logQueue.push(test);
     
     repeat = 0;
