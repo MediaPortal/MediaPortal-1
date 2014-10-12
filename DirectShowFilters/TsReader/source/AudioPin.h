@@ -23,7 +23,7 @@
 #include "tsreader.h"
 #include "mediaseeking.h"
 
-#define NB_AFTSIZE 10
+#define NB_AFTSIZE 16
 
 class CAudioPin : public CSourceStream, public CSourceSeeking
 {

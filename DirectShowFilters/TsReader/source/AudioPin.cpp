@@ -469,11 +469,11 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           clock = (double)(RefClock-m_rtStart.m_time)/10000000.0 ;
           fTime = ((double)cRefTime.m_time/10000000.0) - clock ;
           
-          if ((m_sampleCount <= (NB_AFTSIZE*2)) || (clock < 2.0)) //only do this at start of play
+          if (clock < 20.0) //only do this at start of play
           {
             //Need to do this with 'raw' fTime data
             CalcAverageFtime(fTime);
-            if (clock > 1.8)
+            if (((m_sampleCount%NB_AFTSIZE) == (NB_AFTSIZE-1)) && (clock > 15.0))
               LogDebug("audPin : m_fAFTMean= %03.3f", (float)m_fAFTMean) ;
           }
           
@@ -488,11 +488,11 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           //(helps with signal corruption recovery)
           cRefTime -= m_pTsReaderFilter->m_ClockOnStart.m_time;
 
-          if ((fTime < 0.2) && (m_dRateSeeking == 1.0) && (m_pTsReaderFilter->State() == State_Running) && (m_sampleCount > (NB_AFTSIZE*2)))
+          if ((fTime < 0.2) && (m_dRateSeeking == 1.0) && (m_pTsReaderFilter->State() == State_Running) && (clock > 8.0))
           {              
             if (!demux.m_bAudioSampleLate) 
             {
-              LogDebug("audPin : Audio to render late= %03.3f", (float)fTime) ;
+              LogDebug("audPin : Audio to render late= %03.3f, m_fAFTMean= %03.3f", (float)fTime, (float)m_fAFTMean) ;
             }
             //Samples times are getting close to presentation time
             demux.m_bAudioSampleLate = true;  
