@@ -332,16 +332,6 @@ namespace MediaPortal.GUI.Music
       base.OnAction(action);
       switch (action.wID)
       {
-        case Action.ActionType.ACTION_STOP:
-
-          if (GUIWindowManager.ActiveWindow == GetID)
-          {
-            Action act = new Action();
-            act.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
-            GUIGraphicsContext.OnAction(act);
-          }
-          break;
-
           // Since a ACTION_STOP action clears the player and CurrentPlaylistType type
           // we need a way to restart playback after an ACTION_STOP has been received
         case Action.ActionType.ACTION_MUSIC_PLAY:
