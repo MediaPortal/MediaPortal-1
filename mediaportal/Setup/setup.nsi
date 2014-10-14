@@ -543,6 +543,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\${BUILD_TYPE}\MusicShareWatcherHelper.dll"
   ; WatchDog
   File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\WatchDog.exe"
+File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDogService.Interface.dll"
   File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\DaggerLib.dll"
   File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\DaggerLib.DSGraphEdit.dll"
   File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\DirectShowLib-2005.dll"
@@ -858,6 +859,7 @@ SectionEnd
   Delete "$MPdir.Base\MusicShareWatcherHelper.dll"
   ; WatchDog
   Delete "$MPdir.Base\WatchDog.exe"
+  Delete "$MPdir.Base\WatchDogService.Interface.dll"
   Delete "$MPdir.Base\DaggerLib.dll"
   Delete "$MPdir.Base\DaggerLib.DSGraphEdit.dll"
   Delete "$MPdir.Base\DirectShowLib-2005.dll"

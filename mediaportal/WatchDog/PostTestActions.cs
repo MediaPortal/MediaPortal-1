@@ -21,8 +21,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.Support;
+using MediaPortal.Core;
 
 namespace WatchDog
 {
@@ -171,7 +173,28 @@ namespace WatchDog
     {
       List<ILogCreator> logs = new List<ILogCreator>();
       logs.Add(new MediaPortalLogs(Config.GetFolder(Config.Dir.Log)));
-      logs.Add(new TvServerLogger());
+      
+      bool isSingleSeat = true;
+      try
+      {
+        isSingleSeat = MediaPortal.Util.Network.IsSingleSeat();
+      }
+      catch (Exception)
+      {
+      }
+      if (isSingleSeat)
+      {
+        logs.Add(new TvServerLogger());
+      }
+      else
+      {
+        setAction("Collecting the logs from remote server...");
+        Update();
+
+        string zipFile = _zipFile.Replace("MediaPortalLogs_", "MediaPortal_TVserverLogs_");
+        TVServerManager mngr = new TVServerManager();
+        mngr.TvServerRemoteLogRead(zipFile);
+      }
       logs.Add(new DxDiagLog(new ProcessRunner()));
       logs.Add(new HotFixInformationLogger());
       logs.Add(new EventLogCsvLogger("Application"));

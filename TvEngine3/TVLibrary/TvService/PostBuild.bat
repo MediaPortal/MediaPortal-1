@@ -21,3 +21,4 @@ xcopy %1\..\..\DirectShowFilters\StreamingServer\bin\%2\*.* . /R /Y /D
 xcopy %1\..\..\DirectShowFilters\DXErr9\bin\%2\*.* . /R /Y /D
 xcopy %1\SetupTv\bin\%2\SetupTv.* . /R /Y /D
 xcopy %1\TvLibrary.Utils\bin\%2\*.* /R /Y /D
+xcopy %1\WatchDogService\bin\%2\*.* /R /Y /D

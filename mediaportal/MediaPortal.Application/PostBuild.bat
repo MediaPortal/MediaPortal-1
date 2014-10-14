@@ -146,6 +146,7 @@ xcopy %1\..\libbluray\3rd_party\freetype2\objs\Win32\Debug\freetype.dll . /Y /D
 
 REM mpWatchDog
 xcopy %1\WatchDog\bin\%2\WatchDog.exe . /Y /D
+xcopy %1\..\Common-MP-TVE3\WatchDogService.Interface\bin\%2\WatchDogService.Interface.dll . /Y /D
 xcopy %1\WatchDog\bin\%2\DaggerLib.dll . /Y /D
 xcopy %1\WatchDog\bin\%2\DaggerLib.DSGraphEdit.dll . /Y /D
 xcopy %1\WatchDog\bin\%2\DirectShowLib-2005.dll . /Y /D
