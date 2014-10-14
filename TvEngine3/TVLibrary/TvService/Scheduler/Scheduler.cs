@@ -378,6 +378,7 @@ namespace TvService
     [MethodImpl(MethodImplOptions.Synchronized)]
     private void DoScheduleWork()
     {
+      CanceledSchedule.DeleteAllCancelledSeries();
       StopAnyDueRecordings();
       StartAnyDueRecordings();
       CheckAndDeleteOrphanedRecordings();
