@@ -43,7 +43,7 @@ public:
   // @return : url to download
   virtual const wchar_t *GetUrl(void);
 
-  // gets receive data timeout
+  // gets receive data timeout in ms
   // @return : receive data timeout or UINT_MAX if not specified
   virtual unsigned int GetReceiveDataTimeout(void);
 
@@ -62,7 +62,7 @@ public:
   // @return : true if successful, false otherwise
   virtual bool SetUrl(const wchar_t *url);
 
-  // sets receive data timeout
+  // sets receive data timeout in ms
   // @param timeout : receive data timeout (UINT_MAX if not specified)
   virtual void SetReceivedDataTimeout(unsigned int timeout);
 

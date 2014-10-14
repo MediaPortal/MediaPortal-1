@@ -2140,7 +2140,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
 
                               FREE_MEM_CLASS(lastSenderIpAddress);
                             }
-                         }
+                          }
 
                           FREE_MEM_CLASS(ipAddress);
                         }
@@ -2174,7 +2174,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                 reportBuffer[1] = track->GetTransportResponseHeader()->GetMaxInterleavedChannel();  // interleaved packet channnel (specified in transport header)
                 WBE16(reportBuffer, 2, (receiverReportSize + sourceDescriptionSize));               // interleaved packet length (without header length)
 
-                result = this->SendData(reportBuffer, receiverReportSize + sourceDescriptionSize + 4, this->downloadRequest->GetReceiveDataTimeout() * 1000);
+                result = this->SendData(reportBuffer, receiverReportSize + sourceDescriptionSize + 4, this->downloadRequest->GetReceiveDataTimeout());
                 CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending interleaved RTCP packets: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, result));
               }
 
@@ -2186,6 +2186,9 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
 
           FREE_MEM_CLASS(receiverReport);
           FREE_MEM_CLASS(sourceDescription);
+
+          // ignore any error and continue in work
+          result = S_OK;
         }
 
         endOfStreamReached &= track->IsEndOfStream();
