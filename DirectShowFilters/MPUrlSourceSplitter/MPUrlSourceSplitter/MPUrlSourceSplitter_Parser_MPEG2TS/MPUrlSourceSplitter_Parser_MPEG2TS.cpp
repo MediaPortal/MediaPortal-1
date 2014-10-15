@@ -200,7 +200,7 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::GetParserResult(void)
             {
               this->parserResult = PARSER_RESULT_PENDING;
               CStreamPackageDataResponse *response = dynamic_cast<CStreamPackageDataResponse *>(package->GetResponse());
-
+              
               if (package->IsError())
               {
                 // TO DO: check type of error
@@ -235,6 +235,11 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::GetParserResult(void)
                   }
 
                   requestLength *= 2;
+                }
+
+                if (response->IsNoMoreDataAvailable() && (this->parserResult == PARSER_RESULT_PENDING))
+                {
+                  this->parserResult = PARSER_RESULT_NOT_KNOWN;
                 }
 
                 this->lastReceivedLength = response->GetBuffer()->GetBufferOccupiedSpace();

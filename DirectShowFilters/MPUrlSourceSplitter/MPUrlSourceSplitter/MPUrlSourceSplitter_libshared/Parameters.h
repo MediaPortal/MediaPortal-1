@@ -29,7 +29,10 @@
 #define PARAMETER_NAME_DOWNLOAD_FILE_NAME                                     L"DownloadFileName"
 #define PARAMETER_NAME_CACHE_FOLDER                                           L"CacheFolder"
 #define PARAMETER_NAME_LIVE_STREAM                                            L"LiveStream"
-#define PARAMETER_NAME_DUMP_INPUT_RAW_DATA                                    L"DumpInputRawData"
+#define PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA                               L"DumpProtocolInputData"
+#define PARAMETER_NAME_DUMP_PROTOCOL_OUTPUT_DATA                              L"DumpProtocolOutputData"
+#define PARAMETER_NAME_DUMP_PARSER_INPUT_DATA                                 L"DumpParserInputData"
+#define PARAMETER_NAME_DUMP_PARSER_OUTPUT_DATA                                L"DumpParserOutputData"
 #define PARAMETER_NAME_DUMP_OUTPUT_PIN_RAW_DATA                               L"DumpOutputPinRawData"
 
 #define PARAMETER_NAME_LOG_FILE_NAME                                          L"LogFileName"
@@ -39,7 +42,10 @@
 #define PARAMETER_NAME_FINISH_TIME                                            L"FinishTime"
 
 #define PARAMETER_NAME_LIVE_STREAM_DEFAULT                                    false
-#define PARAMETER_NAME_DUMP_INPUT_RAW_DATA_DEFAULT                            false
+#define PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA_DEFAULT                       false
+#define PARAMETER_NAME_DUMP_PROTOCOL_OUTPUT_DATA_DEFAULT                      false
+#define PARAMETER_NAME_DUMP_PARSER_INPUT_DATA_DEFAULT                         false
+#define PARAMETER_NAME_DUMP_PARSER_OUTPUT_DATA_DEFAULT                        false
 #define PARAMETER_NAME_DUMP_OUTPUT_PIN_RAW_DATA_DEFAULT                       false
 
 #define LOG_MAX_SIZE_DEFAULT                                                  10485760
