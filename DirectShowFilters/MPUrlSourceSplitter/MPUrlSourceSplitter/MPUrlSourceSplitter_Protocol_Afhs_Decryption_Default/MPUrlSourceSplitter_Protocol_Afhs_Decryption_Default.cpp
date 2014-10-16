@@ -24,6 +24,9 @@
 #include "MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default_Parameters.h"
 #include "AfhsDecryptionPluginConfiguration.h"
 #include "VersionInfo.h"
+#include "ErrorCodes.h"
+#include "MediaDataBox.h"
+#include "FlvPacket.h"
 
 // decryption implementation name
 #ifdef _DEBUG
@@ -138,6 +141,85 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Default::DecryptSegmentFra
     {
       CIndexedAfhsSegmentFragment *indexedEncryptedSegmentFragment = indexedEncryptedSegmentFragments->GetItem(i);
       CAfhsSegmentFragment *currentEncryptedFragment = indexedEncryptedSegmentFragment->GetItem();
+
+      unsigned int bufferSize = currentEncryptedFragment->GetBuffer()->GetBufferOccupiedSpace();
+      unsigned int processed = 0;
+
+      CHECK_CONDITION_HRESULT(result, bufferSize != 0, result, E_AFHS_DECRYPTED_DATA_SIZE_ZERO);
+
+      if (SUCCEEDED(result))
+      {
+        ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bufferSize, 0);
+        CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(result))
+        {
+          // check media data box if it contains not encrypted FLV packets
+          currentEncryptedFragment->GetBuffer()->CopyFromBuffer(buffer, bufferSize);
+
+          CBox *box = new CBox(&result);
+          CHECK_POINTER_HRESULT(result, box, result, E_OUTOFMEMORY);
+
+          while (SUCCEEDED(result) && (processed < bufferSize))
+          {
+            CHECK_CONDITION_HRESULT(result, box->Parse(buffer + processed, bufferSize - processed), result, E_AFHS_CANNOT_PARSE_BOX);
+            CHECK_CONDITION_HRESULT(result, box->GetSize() != 0, result, E_AFHS_BOX_SIZE_ZERO);
+
+            if (SUCCEEDED(result) && (wcscmp(box->GetType(), MEDIA_DATA_BOX_TYPE) == 0))
+            {
+              CMediaDataBox *mediaBox = new CMediaDataBox(&result);
+              CHECK_POINTER_HRESULT(result, mediaBox, result, E_OUTOFMEMORY);
+
+              CFlvPacket *packet = new CFlvPacket(&result);
+              CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
+
+              CHECK_CONDITION_HRESULT(result, mediaBox->Parse(buffer + processed, bufferSize - processed), result, E_AFHS_CANNOT_PARSE_MEDIA_DATA_BOX);
+
+              if (SUCCEEDED(result))
+              {
+                unsigned int mediaDataBoxProcessed = 0;
+                unsigned int mediaDataBoxPayloadSize = (unsigned int)mediaBox->GetPayloadSize();
+
+                while (SUCCEEDED(result) && (mediaDataBoxProcessed < mediaDataBoxPayloadSize))
+                {
+                  int res = packet->ParsePacket(mediaBox->GetPayload() + mediaDataBoxProcessed, mediaDataBoxPayloadSize - mediaDataBoxProcessed);
+
+                  switch (res)
+                  {
+                  case FLV_PARSE_RESULT_OK:
+                    break;
+                  case FLV_PARSE_RESULT_NOT_ENOUGH_DATA_FOR_HEADER:
+                  case FLV_PARSE_RESULT_NOT_ENOUGH_DATA_FOR_PACKET:
+                  case FLV_PARSE_RESULT_NOT_ENOUGH_MEMORY:
+                    result = E_OUTOFMEMORY;
+                    break;
+                  case FLV_PARSE_RESULT_CHECK_SIZE_INCORRECT:
+                    result = E_FAIL;
+                    break;
+                  }
+
+                  CHECK_CONDITION_HRESULT(result, !packet->IsEncrypted(), result, E_DRM_PROTECTED);
+                  
+                  if (SUCCEEDED(result))
+                  {
+                    mediaDataBoxProcessed += packet->GetSize();
+                  }
+                  packet->Clear();
+                }
+              }
+
+              FREE_MEM_CLASS(mediaBox);
+              FREE_MEM_CLASS(packet);
+            }
+
+            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), processed += (unsigned int)box->GetSize());
+          }
+
+          FREE_MEM_CLASS(box);
+        }
+
+        FREE_MEM(buffer);
+      }
 
       currentEncryptedFragment->SetEncrypted(false, UINT_MAX);
       currentEncryptedFragment->SetDecrypted(true, UINT_MAX);
