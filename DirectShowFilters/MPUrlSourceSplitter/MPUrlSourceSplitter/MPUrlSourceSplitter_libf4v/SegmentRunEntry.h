@@ -29,9 +29,11 @@ class CSegmentRunEntry
 {
 public:
   // initializes a new instance of CSegmentRunEntry class
-  CSegmentRunEntry(HRESULT *result, uint32_t firstSegment, uint32_t fragmentsPerSegment);
+  CSegmentRunEntry(HRESULT *result, uint32_t firstSegment, uint32_t fragmentsPerSegment, uint32_t cumulatedFragmentCount);
 
   ~CSegmentRunEntry(void);
+
+  /* get methods */
 
   // gets first segment
   // @return : first segment
@@ -41,11 +43,24 @@ public:
   // @return : fragments per segment
   uint32_t GetFragmentsPerSegment(void);
 
-private:
-  // stores the identifying number of the first segment in the run of segments containing the same number of fragments
+  // gets cumulated fragment count
+  // @return : cumulated fragment count
+  uint32_t GetCumulatedFragmentCount(void);
+
+  /* set methods */
+
+  /* other methods */
+
+protected:
+
+  // holds the identifying number of the first segment in the run of segments containing the same number of fragments
   uint32_t firstSegment;
-  // stores the number of fragments in each segment in this run
+  // holds the number of fragments in each segment in this run
   uint32_t fragmentsPerSegment;
+  // holds cumulated fragment count
+  uint32_t cumulatedFragmentCount;
+
+  /* methods */
 };
 
 #endif

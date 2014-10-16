@@ -23,21 +23,24 @@
 #ifndef __FRAGMENT_RUN_ENTRY_DEFINED
 #define __FRAGMENT_RUN_ENTRY_DEFINED
 
-#include <stdint.h>
+#include "Flags.h"
 
-#define DISCONTINUITY_INDICATOR_END_OF_PRESENTATION                           0
-#define DISCONTINUITY_INDICATOR_FRAGMENT_NUMBERING                            1
-#define DISCONTINUITY_INDICATOR_TIMESTAMPS                                    2
-#define DISCONTINUITY_INDICATOR_FRAGMENT_NUMBERING_AND_TIMESTAMPS             3
+#define FRAGMENT_RUN_ENTRY_FLAG_NONE                                  FLAGS_NONE
 
-#define DISCONTINUITY_INDICATOR_NOT_AVAILABLE                                 UINT_MAX
+#define FRAGMENT_RUN_ENTRY_FLAG_END_OF_PRESENTATION                   (1 << (FLAGS_LAST + 0))
+#define FRAGMENT_RUN_ENTRY_FLAG_DISCONTINUITY_FRAGMENT_NUMBERING      (1 << (FLAGS_LAST + 1))
+#define FRAGMENT_RUN_ENTRY_FLAG_DISCONTINUITY_TIMESTAMPS              (1 << (FLAGS_LAST + 2))
 
-class CFragmentRunEntry
+#define FRAGMENT_RUN_ENTRY_FLAG_LAST                                  (FLAGS_LAST + 0)
+
+class CFragmentRunEntry : public CFlags
 {
 public:
   // initializes a new instance of CFragmentRunEntry class
-  CFragmentRunEntry(HRESULT *result, uint32_t firstFragment, uint64_t firstFragmentTimestamp, uint32_t fragmentDuration, uint32_t discontinuityIndicator);
+  CFragmentRunEntry(HRESULT *result, uint32_t firstFragment, uint64_t firstFragmentTimestamp, uint32_t fragmentDuration, uint32_t cumulatedFragmentCount);
   ~CFragmentRunEntry(void);
+
+  /* get method */
 
   // gets first fragment
   // @return : first fragment
@@ -51,20 +54,37 @@ public:
   // @return : fragment duration
   uint32_t GetFragmentDuration(void);
 
-  // gets discontinuity indicator
-  // @return : discontinuity indicator or DISCONTINUITY_INDICATOR_NOT_AVAILABLE if not available
-  uint32_t GetDiscontinuityIndicator(void);
+  // gets cumulated fragment count
+  // @return : cumulated fragment count
+  uint32_t GetCumulatedFragmentCount(void);
 
-private:
-  // stores the identifying number of the first fragment in this run of fragments with the same duration
+  /* set methods */
+
+  /* other methods */
+
+  // tests if end of presentation flag is set
+  // @return : true if flag is set, false otherwise
+  bool IsEndOfPresentation(void);
+
+  // tests if discontinuity in fragment numbering flag is set
+  // @return : true if flag is set, false otherwise
+  bool IsDiscontinuityFragmentNumbering(void);
+
+  // tests if discontinuity in timestamps flag is set
+  // @return : true if flag is set, false otherwise
+  bool IsDiscontinuityTimestamps(void);
+
+protected:
+  // holds the identifying number of the first fragment in this run of fragments with the same duration
   uint32_t firstFragment;
-  // stores the timestamp of the FirstFragment, in TimeScale units
+  // holds the timestamp of the FirstFragment, in TimeScale units
   uint64_t firstFragmentTimestamp;
-  // stores the duration, in TimeScale units, of each fragment in this run
+  // holds the duration, in TimeScale units, of each fragment in this run
   uint32_t fragmentDuration;
-  // indicates discontinuities in timestamps, fragment numbers, or both
-  // this field is also used to identify the end of a (live) presentation
-  uint32_t discontinuityIndicator;
+  // holds cumulated fragment count
+  uint32_t cumulatedFragmentCount;
+
+  /* methods */
 };
 
 #endif

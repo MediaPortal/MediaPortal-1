@@ -82,14 +82,16 @@ wchar_t *CFragmentRunTableBox::GetParsedHumanReadable(const wchar_t *indent)
       CFragmentRunEntry *fragmentRunEntryEntry = this->fragmentRunEntryTable->GetItem(i);
 
       wchar_t *tempFragmentRunEntry = FormatString(
-        L"%s%s%sFirst fragment: %u, first fragment timestamp: %llu, fragment duration: %u, discontinuity indicator: %u",
+        L"%s%s%sFirst fragment: %u, first fragment timestamp: %llu, fragment duration: %u, end of stream: %u, discontinuity fragment numbering: %u, discontinuity timestamps: %u",
         (i == 0) ? L"" : fragmentRunEntry,
         (i == 0) ? L"" : L"\n",
         tempIndent,
         fragmentRunEntryEntry->GetFirstFragment(),
         fragmentRunEntryEntry->GetFirstFragmentTimestamp(),
         fragmentRunEntryEntry->GetFragmentDuration(),
-        fragmentRunEntryEntry->GetDiscontinuityIndicator()
+        fragmentRunEntryEntry->IsEndOfPresentation() ? 1 : 0,
+        fragmentRunEntryEntry->IsDiscontinuityFragmentNumbering() ? 1 : 0,
+        fragmentRunEntryEntry->IsDiscontinuityTimestamps() ? 1 : 0
         );
       FREE_MEM(fragmentRunEntry);
 
@@ -199,6 +201,8 @@ bool CFragmentRunTableBox::ParseInternal(const unsigned char *buffer, uint32_t l
         // fragment run entry count and fragment run entry table
         RBE32INC_DEFINE(buffer, position, fragmentRunEntryCount, uint32_t);
 
+        uint32_t cumulatedFragmentCount = 0;
+
         for(uint32_t  i = 0; (SUCCEEDED(continueParsing) && (i < fragmentRunEntryCount)); i++)
         {
           // minimum fragment size is 16 bytes
@@ -211,19 +215,55 @@ bool CFragmentRunTableBox::ParseInternal(const unsigned char *buffer, uint32_t l
             RBE64INC_DEFINE(buffer, position, firstFragmentTimestamp, uint64_t);
             RBE32INC_DEFINE(buffer, position, fragmentDuration, uint32_t);
 
-            uint32_t discontinuityIndicator = DISCONTINUITY_INDICATOR_NOT_AVAILABLE;
             if (fragmentDuration == 0)
             {
+              uint32_t discontinuityFlags = FRAGMENT_RUN_ENTRY_FLAG_NONE;
+              uint32_t discontinuityIndicator = 0;
+
               CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
 
               CHECK_CONDITION_EXECUTE(SUCCEEDED(continueParsing), RBE8INC(buffer, position, discontinuityIndicator));
-            }
 
-            CFragmentRunEntry *fragment = new CFragmentRunEntry(&continueParsing, firstFragment, firstFragmentTimestamp, fragmentDuration, discontinuityIndicator);
-            CHECK_POINTER_HRESULT(continueParsing, fragment, continueParsing, E_OUTOFMEMORY);
-            
-            CHECK_CONDITION_HRESULT(continueParsing, this->fragmentRunEntryTable->Add(fragment), continueParsing, E_OUTOFMEMORY);
-            CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(fragment));
+              switch (discontinuityIndicator)
+              {
+              case FRAGMENT_RUN_TABLE_BOX_END_OF_PRESENTATION:
+                discontinuityFlags |= FRAGMENT_RUN_ENTRY_FLAG_END_OF_PRESENTATION;
+                break;
+              case FRAGMENT_RUN_TABLE_BOX_DISCONTINUITY_FRAGMENT_NUMBERING:
+                discontinuityFlags |= FRAGMENT_RUN_ENTRY_FLAG_DISCONTINUITY_FRAGMENT_NUMBERING;
+                break;
+              case FRAGMENT_RUN_TABLE_BOX_DISCONTINUITY_TIMESTAMPS:
+                discontinuityFlags |= FRAGMENT_RUN_ENTRY_FLAG_DISCONTINUITY_TIMESTAMPS;
+                break;
+              case FRAGMENT_RUN_TABLE_BOX_DISCONTINUITY_FRAGMENT_NUMBERING_AND_TIMESTAMPS:
+                discontinuityFlags |= FRAGMENT_RUN_ENTRY_FLAG_DISCONTINUITY_FRAGMENT_NUMBERING | FRAGMENT_RUN_ENTRY_FLAG_DISCONTINUITY_TIMESTAMPS;
+                break;
+              }
+
+              if (SUCCEEDED(continueParsing))
+              {
+                // discontinuity flags set to last fragment run entry
+                CFragmentRunEntry *entry = this->fragmentRunEntryTable->GetItem(this->fragmentRunEntryTable->Count() - 1);
+                entry->SetFlags(entry->GetFlags() | discontinuityFlags);
+              }
+
+              cumulatedFragmentCount++;
+            }
+            else
+            {
+              // change cumulated fragment count (if needed)
+              CFragmentRunEntry *previousFragment = this->fragmentRunEntryTable->GetItem(this->fragmentRunEntryTable->Count() - 1);
+              if ((previousFragment != NULL) && (!previousFragment->IsSetFlags(FRAGMENT_RUN_ENTRY_FLAG_DISCONTINUITY_FRAGMENT_NUMBERING)))
+              {
+                cumulatedFragmentCount += firstFragment - previousFragment->GetFirstFragment();
+              }
+              
+              CFragmentRunEntry *fragment = new CFragmentRunEntry(&continueParsing, firstFragment, firstFragmentTimestamp, fragmentDuration, cumulatedFragmentCount);
+              CHECK_POINTER_HRESULT(continueParsing, fragment, continueParsing, E_OUTOFMEMORY);
+
+              CHECK_CONDITION_HRESULT(continueParsing, this->fragmentRunEntryTable->Add(fragment), continueParsing, E_OUTOFMEMORY);
+              CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(fragment));
+            }
           }
         }
       }

@@ -1764,85 +1764,57 @@ CAfhsSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsF
     {
       // convert segment run entry table and fragment run entry table to segments and fragments
 
-      unsigned int segmentRunEntryIndex = 0;  // holds index in segmentRunEntryTable
+      // find starting fragment run entry and segment run entry
+      unsigned int fragmentRunEntryIndex = fragmentRunEntryTableTemp->GetFragmentRunEntryIndex(lastSegmentFragmentTimestamp);
 
-      unsigned int firstSegmentInRun = segmentRunEntryTable->GetItem(segmentRunEntryIndex)->GetFirstSegment();
-      unsigned int lastSegmentInRun = (((segmentRunEntryIndex + 1) < segmentRunEntryTable->Count()) ? segmentRunEntryTable->GetItem(segmentRunEntryIndex + 1)->GetFirstSegment() : UINT_MAX);
-      unsigned int fragmentsPerSegment = segmentRunEntryTable->GetItem(segmentRunEntryIndex)->GetFragmentsPerSegment();   // if UINT_MAX, then current segment is forever
-      unsigned int fragmentInSegment = 0;     // holds fragment in current segment, if it reach fragmentsPerSegment, the segment must be changed
-
-      unsigned int segmentNumber = firstSegmentInRun;     // holds segment number for final segment and fragment
-
-      for (unsigned int i = 0; i < fragmentRunEntryTableTemp->Count(); i++)
+      if ((lastSegmentFragmentTimestamp == 0) && (fragmentRunEntryIndex == UINT_MAX) && (fragmentRunEntryTableTemp->Count() != 0))
       {
-        CFragmentRunEntry *fragmentRunEntryTemp = fragmentRunEntryTableTemp->GetItem(i);
-        unsigned int nextItemIndex = i + 1;
-        CFragmentRunEntry *fragmentRunEntryTempNext = NULL;
+        // not found, lastSegmentFragmentTimestamp is lower than first fragment run entry first fragment timestamp
+        // set index to first fragment run entry
+        fragmentRunEntryIndex = 0;
 
-        for (unsigned int j = nextItemIndex; j < fragmentRunEntryTableTemp->Count(); j++)
+        CFragmentRunEntry *fragmentEntry = fragmentRunEntryTableTemp->GetItem(fragmentRunEntryIndex);
+        lastSegmentFragmentTimestamp = max(lastSegmentFragmentTimestamp, fragmentEntry->GetFirstFragmentTimestamp());
+      }
+
+      if ((fragmentRunEntryIndex != UINT_MAX) && (fragmentRunEntryTableTemp->Count() != 0))
+      {
+        uint64_t fragmentTimestamp = lastSegmentFragmentTimestamp;
+
+        for (unsigned int i = fragmentRunEntryIndex; (SUCCEEDED(result) && (i < fragmentRunEntryTableTemp->Count())); i++)
         {
-          CFragmentRunEntry *temp = fragmentRunEntryTableTemp->GetItem(nextItemIndex);
-          if (temp->GetFirstFragment() != 0)
+          CFragmentRunEntry *fragmentEntry = fragmentRunEntryTableTemp->GetItem(i);
+          CFragmentRunEntry *nextFragmentEntry = fragmentRunEntryTableTemp->GetItem(i + 1);   // NULL on last fragment entry
+
+          fragmentTimestamp = max(fragmentTimestamp, fragmentEntry->GetFirstFragmentTimestamp());
+          
+          unsigned int indexInFragmentEntry = (unsigned int)((fragmentTimestamp - fragmentEntry->GetFirstFragmentTimestamp()) / (uint64_t)fragmentEntry->GetFragmentDuration());
+          unsigned int indexCount = (nextFragmentEntry == NULL) ? 1 : (nextFragmentEntry->GetCumulatedFragmentCount() - fragmentEntry->GetCumulatedFragmentCount());
+
+          fragmentTimestamp = fragmentEntry->GetFirstFragmentTimestamp() + indexInFragmentEntry * fragmentEntry->GetFragmentDuration();
+
+          for (unsigned int j = indexInFragmentEntry; (SUCCEEDED(result) && (j < indexCount)); j++)
           {
-            fragmentRunEntryTempNext = temp;
-            break;
-          }
-          else
-          {
-            nextItemIndex++;
-          }
-        }
+            // j + fragmentEntry->GetFirstFragment() = URL
+            // j + fragmentEntry->GetCumulatedFragmentCount() = index for segment
 
-        uint64_t fragmentTimestamp = fragmentRunEntryTemp->GetFirstFragmentTimestamp();
-        unsigned int lastFragment = (fragmentRunEntryTempNext == NULL) ? (fragmentRunEntryTemp->GetFirstFragment() + 1) : fragmentRunEntryTempNext->GetFirstFragment();
-        uint64_t lastFragmentTimestamp = (fragmentRunEntryTempNext == NULL) ? (fragmentRunEntryTemp->GetFirstFragmentTimestamp() + fragmentRunEntryTemp->GetFragmentDuration() - 1) : (fragmentRunEntryTempNext->GetFirstFragmentTimestamp() - 1);
+            unsigned int fragmentIndexUrl = j + fragmentEntry->GetFirstFragment();
+            unsigned int fragmentSegmentIndex = j + fragmentEntry->GetCumulatedFragmentCount();
 
-        // in some special live session can be some fragments with zero duration
-        // these fragments can get HTTP 503 error, which disables playback
-        // just skip these fragments and continue with next fragment
-        if ((lastFragmentTimestamp >= lastSegmentFragmentTimestamp) && (fragmentRunEntryTemp->GetFragmentDuration() != 0))
-        {
-          // current fragment run entry has at least some timestamps greater than requested segment and fragment timestamp (lastSegmentFragmentTimestamp)
-          unsigned int fragmentIndex = (unsigned int)((lastFragmentTimestamp - fragmentRunEntryTemp->GetFirstFragmentTimestamp()) / fragmentRunEntryTemp->GetFragmentDuration());
+            // search for correct segment index
+            unsigned int segmentIndex = segmentRunEntryTable->GetFragmentRunEntrySegmentIndex(fragmentSegmentIndex);
+            CHECK_CONDITION_HRESULT(result, segmentIndex != UINT_MAX, result, E_FAIL);
 
-          fragmentTimestamp += fragmentIndex * fragmentRunEntryTemp->GetFragmentDuration();
-          fragmentIndex += fragmentRunEntryTemp->GetFirstFragment();
-
-          while (SUCCEEDED(result) && (fragmentIndex < lastFragment))
-          {
-            CAfhsSegmentFragment *segFrag = new CAfhsSegmentFragment(&result, segmentNumber, fragmentIndex, fragmentTimestamp * 1000 / timeScale);
-            CHECK_POINTER_HRESULT(result, segFrag, result, E_OUTOFMEMORY);
-
-            CHECK_CONDITION_HRESULT(result, segmentsFragments->Add(segFrag), result, E_OUTOFMEMORY);
-            CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(segFrag));
-
-            fragmentTimestamp += fragmentRunEntryTemp->GetFragmentDuration();
-            fragmentIndex++;
-          }
-        }
-
-        // update segment information if necessary
-        unsigned int fragmentCount = lastFragment - fragmentRunEntryTemp->GetFirstFragment();
-        while (fragmentCount != 0)
-        {
-          unsigned int fragmentsToEndOfSegment = min(fragmentsPerSegment - fragmentInSegment, fragmentCount);
-          fragmentCount -= fragmentsToEndOfSegment;
-          fragmentInSegment += fragmentsToEndOfSegment;
-
-          if (fragmentInSegment == fragmentsPerSegment)
-          {
-            // we reached end of segment, update segment information
-            if ((++segmentNumber) >= lastSegmentInRun)
+            if (SUCCEEDED(result))
             {
-              // we reached end of segment run, we must update firstSegmentInRun, lastSegmentInRun, fragmentsPerSegment
-              segmentRunEntryIndex++;
+              CAfhsSegmentFragment *segFrag = new CAfhsSegmentFragment(&result, segmentRunEntryTable->GetItem(segmentIndex)->GetFirstSegment(), fragmentIndexUrl, fragmentTimestamp * 1000 / timeScale);
+              CHECK_POINTER_HRESULT(result, segFrag, result, E_OUTOFMEMORY);
 
-              firstSegmentInRun = segmentRunEntryTable->GetItem(segmentRunEntryIndex)->GetFirstSegment();
-              lastSegmentInRun = (((segmentRunEntryIndex + 1) < segmentRunEntryTable->Count()) ? segmentRunEntryTable->GetItem(segmentRunEntryIndex + 1)->GetFirstSegment() : UINT_MAX);
-              fragmentsPerSegment = segmentRunEntryTable->GetItem(segmentRunEntryIndex)->GetFragmentsPerSegment();   // if UINT_MAX, then current segment is forever
+              CHECK_CONDITION_HRESULT(result, segmentsFragments->Add(segFrag), result, E_OUTOFMEMORY);
+              CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(segFrag));
             }
 
-            fragmentInSegment = 0;
+            fragmentTimestamp += fragmentEntry->GetFragmentDuration();
           }
         }
       }

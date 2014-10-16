@@ -193,6 +193,8 @@ bool CSegmentRunTableBox::ParseInternal(const unsigned char *buffer, uint32_t le
         // segment run entry count and segment run entry table
         RBE32INC_DEFINE(buffer, position, segmentRunEntryCount, uint32_t);
 
+        uint32_t cumulatedFragmentCount = 0;
+
         for(uint32_t i = 0; (SUCCEEDED(continueParsing) && (i < segmentRunEntryCount)); i++)
         {
           // need to read 8 bytes
@@ -204,11 +206,13 @@ bool CSegmentRunTableBox::ParseInternal(const unsigned char *buffer, uint32_t le
             RBE32INC_DEFINE(buffer, position, firstSegment, uint32_t);
             RBE32INC_DEFINE(buffer, position, fragmentsPerSegment, uint32_t);
 
-            CSegmentRunEntry *segment = new CSegmentRunEntry(&continueParsing, firstSegment, fragmentsPerSegment);
+            CSegmentRunEntry *segment = new CSegmentRunEntry(&continueParsing, firstSegment, fragmentsPerSegment, cumulatedFragmentCount);
             CHECK_POINTER_HRESULT(continueParsing, segment, continueParsing, E_OUTOFMEMORY);
 
             CHECK_CONDITION_HRESULT(continueParsing, this->segmentRunEntryTable->Add(segment), continueParsing, E_OUTOFMEMORY);
             CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(segment));
+
+            cumulatedFragmentCount += fragmentsPerSegment;
           }
         }
       }

@@ -22,15 +22,18 @@
 
 #include "SegmentRunEntry.h"
 
-CSegmentRunEntry::CSegmentRunEntry(HRESULT *result, uint32_t firstSegment, uint32_t fragmentsPerSegment)
+CSegmentRunEntry::CSegmentRunEntry(HRESULT *result, uint32_t firstSegment, uint32_t fragmentsPerSegment, uint32_t cumulatedFragmentCount)
 {
   this->firstSegment = firstSegment;
   this->fragmentsPerSegment = fragmentsPerSegment;
+  this->cumulatedFragmentCount = cumulatedFragmentCount;
 }
 
 CSegmentRunEntry::~CSegmentRunEntry(void)
 {
 }
+
+/* get methods */
 
 uint32_t CSegmentRunEntry::GetFirstSegment(void)
 {
@@ -41,3 +44,14 @@ uint32_t CSegmentRunEntry::GetFragmentsPerSegment(void)
 {
   return this->fragmentsPerSegment;
 }
+
+uint32_t CSegmentRunEntry::GetCumulatedFragmentCount(void)
+{
+  return this->cumulatedFragmentCount;
+}
+
+/* set methods */
+
+/* other methods */
+
+/* protected methods */

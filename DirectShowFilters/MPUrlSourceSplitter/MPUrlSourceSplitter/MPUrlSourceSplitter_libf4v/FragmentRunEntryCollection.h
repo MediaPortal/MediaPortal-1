@@ -32,7 +32,20 @@ public:
   CFragmentRunEntryCollection(HRESULT *result);
   ~CFragmentRunEntryCollection(void);
 
+  /* get methods */
+
+  // gets fragment run entry index with first fragment timestamp lower or equal to specified timestamp
+  // @param timestamp : the timestamp to get fragment run entry index
+  // @return : fragment run entry index or UINT_MAX if not found
+  unsigned int GetFragmentRunEntryIndex(uint64_t timestamp);
+
+  /* set methods */
+
+  /* other methods */
+
 protected:
+
+  /* methods */
 
   // clones specified item
   // @param item : the item to clone

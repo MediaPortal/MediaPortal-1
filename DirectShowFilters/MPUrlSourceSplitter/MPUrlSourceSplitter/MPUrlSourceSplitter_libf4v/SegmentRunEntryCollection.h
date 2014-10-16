@@ -32,7 +32,20 @@ public:
   CSegmentRunEntryCollection(HRESULT *result);
   ~CSegmentRunEntryCollection(void);
 
+  /* get methods */
+
+  // returns segment run entry index of fragment run entry index
+  // @param fragmentRunEntryIndex : the fragment run entry index to compare
+  // @return : segment run entry index or UINT_MAX if not found
+  unsigned int GetFragmentRunEntrySegmentIndex(uint32_t fragmentRunEntryIndex);
+
+  /* set methods */
+
+  /* other methods */
+
 protected:
+
+  /* methods */
 
   // clones specified item
   // @param item : the item to clone

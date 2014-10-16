@@ -28,7 +28,12 @@
 #include "QualitySegmentUrlModifierCollection.h"
 #include "FragmentRunEntryCollection.h"
 
-#define FRAGMENT_RUN_TABLE_BOX_TYPE                                           L"afrt"
+#define FRAGMENT_RUN_TABLE_BOX_TYPE                                               L"afrt"
+
+#define FRAGMENT_RUN_TABLE_BOX_END_OF_PRESENTATION                                0x00000000
+#define FRAGMENT_RUN_TABLE_BOX_DISCONTINUITY_FRAGMENT_NUMBERING                   0x00000001
+#define FRAGMENT_RUN_TABLE_BOX_DISCONTINUITY_TIMESTAMPS                           0x00000002
+#define FRAGMENT_RUN_TABLE_BOX_DISCONTINUITY_FRAGMENT_NUMBERING_AND_TIMESTAMPS    0x00000003
 
 class CFragmentRunTableBox :
   public CFullBox

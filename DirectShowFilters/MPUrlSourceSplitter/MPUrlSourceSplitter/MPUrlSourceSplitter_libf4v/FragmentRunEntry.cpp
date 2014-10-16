@@ -22,17 +22,21 @@
 
 #include "FragmentRunEntry.h"
 
-CFragmentRunEntry::CFragmentRunEntry(HRESULT *result, uint32_t firstFragment, uint64_t firstFragmentTimestamp, uint32_t fragmentDuration, uint32_t discontinuityIndicator)
+CFragmentRunEntry::CFragmentRunEntry(HRESULT *result, uint32_t firstFragment, uint64_t firstFragmentTimestamp, uint32_t fragmentDuration, uint32_t cumulatedFragmentCount)
+  : CFlags()
 {
   this->firstFragment = firstFragment;
   this->firstFragmentTimestamp = firstFragmentTimestamp;
   this->fragmentDuration = fragmentDuration;
-  this->discontinuityIndicator = discontinuityIndicator;
+  this->flags = FRAGMENT_RUN_ENTRY_FLAG_NONE;
+  this->cumulatedFragmentCount = cumulatedFragmentCount;
 }
 
 CFragmentRunEntry::~CFragmentRunEntry(void)
 {
 }
+
+/* get methods */
 
 uint32_t CFragmentRunEntry::GetFirstFragment(void)
 {
@@ -49,7 +53,28 @@ uint32_t CFragmentRunEntry::GetFragmentDuration(void)
   return this->fragmentDuration;
 }
 
-uint32_t CFragmentRunEntry::GetDiscontinuityIndicator(void)
+uint32_t CFragmentRunEntry::GetCumulatedFragmentCount(void)
 {
-  return this->discontinuityIndicator;
+  return this->cumulatedFragmentCount;
 }
+
+/* set methods */
+
+/* other methods */
+
+bool CFragmentRunEntry::IsEndOfPresentation(void)
+{
+  return this->IsSetFlags(FRAGMENT_RUN_ENTRY_FLAG_END_OF_PRESENTATION);
+}
+
+bool CFragmentRunEntry::IsDiscontinuityFragmentNumbering(void)
+{
+  return this->IsSetFlags(FRAGMENT_RUN_ENTRY_FLAG_DISCONTINUITY_FRAGMENT_NUMBERING);
+}
+
+bool CFragmentRunEntry::IsDiscontinuityTimestamps(void)
+{
+  return this->IsSetFlags(FRAGMENT_RUN_ENTRY_FLAG_DISCONTINUITY_TIMESTAMPS);
+}
+
+/* protected methods */
