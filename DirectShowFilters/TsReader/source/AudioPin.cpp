@@ -77,6 +77,7 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
   m_bPinNoAddPMT = false;
   m_bAddPMT = false;
   m_bDownstreamFlush=false;
+  m_bDisableSlowPlayDiscontinuity=false;
 }
 
 CAudioPin::~CAudioPin()
@@ -238,6 +239,14 @@ HRESULT CAudioPin::CompleteConnect(IPin *pReceivePin)
     LogDebug("audPin:CompleteConnect() ok, filter: %s", szName);
     
     m_bConnected=true;
+
+    CLSID &ref=m_pTsReaderFilter->GetCLSIDFromPin(pReceivePin);
+    m_pTsReaderFilter->m_audioDecoderCLSID = ref;
+    if (m_pTsReaderFilter->m_audioDecoderCLSID == CLSID_LAVAUDIO)
+    {
+      m_bDisableSlowPlayDiscontinuity = (m_pTsReaderFilter->m_regLAV_AutoAVSync > 0);
+      LogDebug("audPin:CompleteConnect() DisableSlowPlayDiscontinuity = %d", m_bDisableSlowPlayDiscontinuity);
+    }
   }
   else
   {
@@ -463,6 +472,17 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 					cRefTime -= m_rtStart ;
           //adjust the timestamp with the compensation
           cRefTime-= m_pTsReaderFilter->GetCompensation() ;
+          
+          //Check if total compensation offset is more than 10ms
+          if (m_pTsReaderFilter->GetTotalDeltaComp() > 100000)
+          {
+            if (!m_bDisableSlowPlayDiscontinuity)
+            {
+              //Force downstream filters to resync by setting discontinuity flag
+              pSample->SetDiscontinuity(TRUE);
+            }
+            m_pTsReaderFilter->ClearTotalDeltaComp();
+          }
 
           REFERENCE_TIME RefClock = 0;
           m_pTsReaderFilter->GetMediaPosition(&RefClock) ;

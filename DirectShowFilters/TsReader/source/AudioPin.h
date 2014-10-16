@@ -88,6 +88,7 @@ protected:
   int   m_sampleCount;
   bool  m_bPinNoAddPMT;
   bool  m_bAddPMT;
+  bool  m_bDisableSlowPlayDiscontinuity;
   
 };
 
