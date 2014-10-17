@@ -303,18 +303,17 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
           {
             // checks if any schedule assigned to this cards overlaps current parsed schedule
             bool free = true;
-            foreach (Schedule assignedShedule in cardSchedules[cardno[card.IdCard]])
+            foreach (Schedule assignedSchedule in cardSchedules[cardno[card.IdCard]])
             {
               ScheduleBLL bll = new ScheduleBLL(schedule);
-              if (bll.IsOverlapping(assignedShedule))
-              {                                                
-                if (!(bll.IsSameTransponder(assignedShedule)))
+              if (bll.IsOverlapping(assignedSchedule))
+              {
+                if (ScheduleManagement.IsSameTransponder(schedule, assignedSchedule))
                 {
                   free = false;
                   //_overlap = true;
-                  lastOverlappingSchedule = assignedShedule;
+                  lastOverlappingSchedule = assignedSchedule;
                   lastBusyCard = card.IdCard;
-                  break;
                 }
               }
             }

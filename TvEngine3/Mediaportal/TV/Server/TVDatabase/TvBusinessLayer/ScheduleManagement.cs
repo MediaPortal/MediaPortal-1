@@ -7,6 +7,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
@@ -321,6 +322,30 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       return conflicts;
     }
 
+    /// <summary>
+    /// checks if 2 schedules have a common Transponder
+    /// depending on tuningdetails of their respective channels
+    /// </summary>
+    /// <param name="schedule"></param>
+    /// <returns>True if a common transponder exists</returns>
+    public static bool IsSameTransponder(Schedule schedule1, Schedule schedule2)
+    {
+      IList<TuningDetail> tuningDetailList1 = schedule1.Channel.TuningDetails;
+      IList<TuningDetail> tuningDetailList2 = schedule2.Channel.TuningDetails;
+      foreach (TuningDetail td1 in tuningDetailList1)
+      {
+        IChannel c1 = ChannelManagement.GetTuningChannel(td1);
+        foreach (TuningDetail td2 in tuningDetailList2)
+        {
+          if (!c1.IsDifferentTransponder(ChannelManagement.GetTuningChannel(td2)))
+          {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
     private static bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules, out IList<Schedule> overlappingSchedules, out List<Schedule> notViewabledSchedules)
     {
       overlappingSchedules = new List<Schedule>();
@@ -344,14 +369,13 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
             bool hasOverlappingSchedule = scheduleBll.IsOverlapping(assignedSchedule);
             if (hasOverlappingSchedule)
             {
-              bool isSameTransponder = (scheduleBll.IsSameTransponder(assignedSchedule));
+              bool isSameTransponder = (IsSameTransponder(schedule, assignedSchedule));
               if (!isSameTransponder)
               {
                 overlappingSchedules.Add(assignedSchedule);
                 Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule + " on card {0}, ID = {1}", count,
                          card.IdCard);
                 free = false;
-                break;
               }
             }
           }

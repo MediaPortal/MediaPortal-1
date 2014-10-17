@@ -206,29 +206,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
       }
     }
 
-    /// <summary>
-    /// checks if 2 schedules have a common Transponder
-    /// depending on tuningdetails of their respective channels
-    /// </summary>
-    /// <param name="schedule"></param>
-    /// <returns>True if a common transponder exists</returns>
-    public bool IsSameTransponder(Schedule schedule)
-    {
-      IList<TuningDetail> tuningList1 = _entity.Channel.TuningDetails;
-      IList<TuningDetail> tuningList2 = schedule.Channel.TuningDetails;
-      foreach (TuningDetail tun1 in tuningList1)
-      {
-        foreach (TuningDetail tun2 in tuningList2)
-        {
-          if (tun1.Frequency == tun2.Frequency)
-          {
-            return true;
-          }
-        }
-      }
-      return false;
-    }
-
     public bool IsOverlapping(Schedule schedule)
     {
       DateTime Start1 = _entity.StartTime.AddMinutes(-_entity.PreRecordInterval);
