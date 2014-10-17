@@ -2966,7 +2966,31 @@ namespace TvDatabase
       return;
     }
 
-    private static bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules,
+    /// <summary>
+    /// checks if 2 schedules have a common Transponder
+    /// depending on tuningdetails of their respective channels
+    /// </summary>
+    /// <param name="schedule"></param>
+    /// <returns>True if a common transponder exists</returns>
+    public bool isSameTransponder(Schedule schedule1, Schedule schedule2)
+    {
+      IList<TuningDetail> tuningDetailList1 = schedule1.ReferencedChannel().ReferringTuningDetail();
+      IList<TuningDetail> tuningDetailList2 = schedule2.ReferencedChannel().ReferringTuningDetail();
+      foreach (TuningDetail td1 in tuningDetailList1)
+      {
+        IChannel c1 = GetTuningChannel(td1);
+        foreach (TuningDetail td2 in tuningDetailList2)
+        {
+          if (!c1.IsDifferentTransponder(GetTuningChannel(td2)))
+          {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    private bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules,
                                               out List<Schedule> overlappingSchedules, out List<Schedule> notViewabledSchedules)
     {
       overlappingSchedules = new List<Schedule>();
@@ -2989,14 +3013,13 @@ namespace TvDatabase
             bool hasOverlappingSchedule = schedule.IsOverlapping(assignedSchedule);
             if (hasOverlappingSchedule)
             {
-              bool isSameTransponder = (schedule.isSameTransponder(assignedSchedule) && card.supportSubChannels);
-              if (!isSameTransponder)
+              bool _isSameTransponder = (isSameTransponder(schedule, assignedSchedule) && card.supportSubChannels);
+              if (!_isSameTransponder)
               {
                 overlappingSchedules.Add(assignedSchedule);
                 Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule + " on card {0}, ID = {1}", count,
                          card.IdCard);
                 free = false;
-                break;
               }
             }
           }
