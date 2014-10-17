@@ -59,6 +59,7 @@
     <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="GUIVolumeOverlay.cs" />
     <Compile Include="Music\GUICoverArtGrabberResults.cs" />
     <Compile Include="Music\GUIMusicArtistInfo.cs" />
     <Compile Include="Music\GUIMusicBaseWindow.cs" />

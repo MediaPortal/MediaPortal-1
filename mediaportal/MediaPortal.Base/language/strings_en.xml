@@ -2238,7 +2238,7 @@
     <String id="300116">Classic (linear)</String>
     <String id="300117">Logarithmic</String>
     <String id="300118">Windows Vista/Win7</String>
-    <String id="300119">Show default volume OSD for fullscreen video</String>
+    <String id="300119">Show volume OSD</String>
     <String id="300120">Skin</String>
     <String id="300121">On-screen Display</String>
     <String id="300122">Allow remember last focused items</String>
