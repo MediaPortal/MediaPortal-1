@@ -25,6 +25,12 @@
 CRtspDumpBox::CRtspDumpBox(HRESULT *result)
   : CDumpBox(result)
 {
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(RTSP_DUMP_BOX_TYPE);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+  }
 }
 
 CRtspDumpBox::~CRtspDumpBox(void)
@@ -39,7 +45,16 @@ CRtspDumpBox::~CRtspDumpBox(void)
 
 /* protected methods */
 
-CBoxFactory *CRtspDumpBox::GetBoxFactory(void)
+bool CRtspDumpBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes, bool checkType)
 {
-  return NULL;
+  if (__super::ParseInternal(buffer, length, false, false))
+  {
+    if (checkType)
+    {
+      this->flags &= BOX_FLAG_PARSED;
+      this->flags |= (wcscmp(this->type, RTSP_DUMP_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
+    }
+  }
+
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }

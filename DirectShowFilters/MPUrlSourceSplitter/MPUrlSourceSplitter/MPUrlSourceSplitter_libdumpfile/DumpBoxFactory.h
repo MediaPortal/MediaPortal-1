@@ -25,17 +25,17 @@
 
 #include "BoxFactory.h"
 
-class CDumpBoxFactory : public CBoxFactory
-{
-public:
-  CDumpBoxFactory(HRESULT *result);
-  virtual ~CDumpBoxFactory(void);
-
-  // creates box based on type
-  // @param buffer : buffer with box data for parsing
-  // @param length : the length of data in buffer
-  // @return : box or NULL if error
-  virtual CBox *CreateBox(const uint8_t *buffer, uint32_t length);
-};
+//class CDumpBoxFactory : public CBoxFactory
+//{
+//public:
+//  CDumpBoxFactory(HRESULT *result);
+//  virtual ~CDumpBoxFactory(void);
+//
+//  // creates box based on type
+//  // @param buffer : buffer with box data for parsing
+//  // @param length : the length of data in buffer
+//  // @return : box or NULL if error
+//  virtual CBox *CreateBox(const uint8_t *buffer, uint32_t length);
+//};
 
 #endif

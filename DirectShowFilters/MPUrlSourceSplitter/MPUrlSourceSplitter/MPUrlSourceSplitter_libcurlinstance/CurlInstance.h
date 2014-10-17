@@ -243,7 +243,7 @@ protected:
 
   // creates dump box for dump file
   // @return : dump box or NULL if error
-  virtual CDumpBox *CreateDumpBox(void);
+  virtual CDumpBox *CreateDumpBox(void) = 0;
 };
 
 #endif

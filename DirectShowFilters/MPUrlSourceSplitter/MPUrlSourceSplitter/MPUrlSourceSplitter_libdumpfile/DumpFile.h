@@ -54,8 +54,8 @@ public:
   // @return : true if successful, false otherwise
   bool AddDumpBox(CDumpBox *dumpBox);
 
-  // dump packages to dump file
-  void DumpBoxes(void);
+  // flush dump boxes to dump file
+  void FlushDumpBoxes(void);
 
 protected:
   // holds dump file

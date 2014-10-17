@@ -26,8 +26,6 @@
 #include "Box.h"
 #include "DumpBoxFactory.h"
 
-#define DUMP_BOX_TYPE                                                 L"dump"
-
 #define DUMP_BOX_FLAG_NONE                                            BOX_FLAG_NONE
 
 #define DUMP_BOX_FLAG_LAST                                            (BOX_FLAG_LAST + 0)
@@ -75,12 +73,6 @@ public:
 
   /* other methods */
 
-  // parses data in buffer
-  // @param buffer : buffer with box data for parsing
-  // @param length : the length of data in buffer
-  // @return : true if parsed successfully, false otherwise
-  virtual bool Parse(const uint8_t *buffer, uint32_t length);
-
   // gets box data in human readable format
   // @param indent : string to insert before each line
   // @return : box data in human readable format or NULL if error
@@ -115,9 +107,13 @@ protected:
   // @return : number of bytes stored into buffer, 0 if error
   virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 
-  // gets box factory for creating additional boxes in current box
-  // @return : box factory or NULL if error
-  virtual CBoxFactory *GetBoxFactory(void);
+  // parses data in buffer
+  // @param buffer : buffer with box data for parsing
+  // @param length : the length of data in buffer
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed
+  // @param checkType : specifies if check for type is allowed
+  // @return : true if parsed successfully, false otherwise
+  virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes, bool checkType);
 };
 
 #endif

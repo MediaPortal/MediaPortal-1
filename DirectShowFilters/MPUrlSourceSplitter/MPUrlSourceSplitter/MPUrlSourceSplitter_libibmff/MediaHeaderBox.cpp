@@ -109,11 +109,6 @@ bool CMediaHeaderBox::SetLanguage(const wchar_t *language)
 
 /* other methods */
 
-bool CMediaHeaderBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CMediaHeaderBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;

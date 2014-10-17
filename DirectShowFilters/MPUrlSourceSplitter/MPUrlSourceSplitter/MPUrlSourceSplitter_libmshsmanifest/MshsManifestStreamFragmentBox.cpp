@@ -86,11 +86,6 @@ void CMshsManifestStreamFragmentBox::SetFragmentTime(uint64_t fragmentTime)
 
 /* other methods */
 
-bool CMshsManifestStreamFragmentBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CMshsManifestStreamFragmentBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   return NULL;

@@ -171,6 +171,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="UdpCurlInstance.h" />
     <ClInclude Include="UdpDownloadRequest.h" />
     <ClInclude Include="UdpDownloadResponse.h" />
+    <ClInclude Include="UdpDumpBox.h" />
     <ClInclude Include="UdpStreamFragment.h" />
     <ClInclude Include="UdpStreamFragmentCollection.h" />
   </ItemGroup>
@@ -191,6 +192,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClCompile Include="UdpCurlInstance.cpp" />
     <ClCompile Include="UdpDownloadRequest.cpp" />
     <ClCompile Include="UdpDownloadResponse.cpp" />
+    <ClCompile Include="UdpDumpBox.cpp" />
     <ClCompile Include="UdpStreamFragment.cpp" />
     <ClCompile Include="UdpStreamFragmentCollection.cpp" />
   </ItemGroup>

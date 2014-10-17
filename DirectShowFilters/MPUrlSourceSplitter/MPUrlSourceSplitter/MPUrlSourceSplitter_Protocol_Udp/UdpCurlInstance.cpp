@@ -29,6 +29,7 @@
 #include "Dns.h"
 #include "IpAddress.h"
 #include "RtpPacket.h"
+#include "UdpDumpBox.h"
 #include "ErrorCodes.h"
 
 CUdpCurlInstance::CUdpCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
@@ -416,4 +417,14 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, this->protocolName, METHOD_CURL_WORKER_NAME);
   return S_OK;
+}
+
+CDumpBox *CUdpCurlInstance::CreateDumpBox(void)
+{
+  HRESULT result = S_OK;
+  CUdpDumpBox *box = new CUdpDumpBox(&result);
+  CHECK_POINTER_HRESULT(result, box, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(box));
+  return box;
 }

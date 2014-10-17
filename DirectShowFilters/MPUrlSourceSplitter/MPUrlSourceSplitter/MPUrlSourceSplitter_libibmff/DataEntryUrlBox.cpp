@@ -65,11 +65,6 @@ bool CDataEntryUrlBox::SetLocation(const wchar_t *location)
 
 /* other methods */
 
-bool CDataEntryUrlBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CDataEntryUrlBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;

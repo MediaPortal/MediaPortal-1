@@ -60,11 +60,6 @@ CTimeToSampleCollection *CTimeToSampleBox::GetTimesToSamples(void)
 
 /* other methods */
 
-bool CTimeToSampleBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CTimeToSampleBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;

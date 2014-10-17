@@ -26,6 +26,7 @@
 #pragma warning(disable:4005)
 
 #include "AfhsCurlInstance.h"
+#include "AfhsDumpBox.h"
 
 #pragma warning(pop)
 
@@ -155,4 +156,14 @@ CDownloadResponse *CAfhsCurlInstance::CreateDownloadResponse(void)
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(response));
   return response;
+}
+
+CDumpBox *CAfhsCurlInstance::CreateDumpBox(void)
+{
+  HRESULT result = S_OK;
+  CAfhsDumpBox *box = new CAfhsDumpBox(&result);
+  CHECK_POINTER_HRESULT(result, box, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(box));
+  return box;
 }

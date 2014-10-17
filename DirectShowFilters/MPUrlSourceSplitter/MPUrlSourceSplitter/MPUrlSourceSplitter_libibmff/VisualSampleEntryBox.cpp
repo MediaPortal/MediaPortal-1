@@ -132,11 +132,6 @@ void CVisualSampleEntryBox::SetDepth(uint16_t depth)
 
 /* other methods */
 
-bool CVisualSampleEntryBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CVisualSampleEntryBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;

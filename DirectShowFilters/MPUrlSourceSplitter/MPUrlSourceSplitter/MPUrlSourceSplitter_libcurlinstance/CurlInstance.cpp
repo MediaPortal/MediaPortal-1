@@ -700,13 +700,3 @@ HRESULT CCurlInstance::ReadData(unsigned char *data, unsigned int length)
 
   return result;
 }
-
-CDumpBox *CCurlInstance::CreateDumpBox(void)
-{
-  HRESULT result = S_OK;
-  CDumpBox *box = new CDumpBox(&result);
-  CHECK_POINTER_HRESULT(result, box, result, E_OUTOFMEMORY);
-
-  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(box));
-  return box;
-}

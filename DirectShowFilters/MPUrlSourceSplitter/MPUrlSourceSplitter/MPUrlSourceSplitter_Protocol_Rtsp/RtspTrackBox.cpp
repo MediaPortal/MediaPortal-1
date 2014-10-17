@@ -62,11 +62,6 @@ void CRtspTrackBox::SetTrackId(uint32_t trackId)
 
 /* other methods */
 
-bool CRtspTrackBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CRtspTrackBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;

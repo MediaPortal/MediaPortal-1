@@ -34,11 +34,9 @@ CDumpBox::CDumpBox(HRESULT *result)
   this->type = NULL;
   memset(&this->time, 0, sizeof(SYSTEMTIME));
 
-  if ((result != NULL) && (SUCCEEDED(*result)))
+  /*if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->type = Duplicate(DUMP_BOX_TYPE);
-    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
-  }
+  }*/
 }
 
 CDumpBox::~CDumpBox(void)
@@ -106,11 +104,6 @@ void CDumpBox::SetTimeWithLocalTime(void)
 
 /* other methods */
 
-bool CDumpBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CDumpBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;
@@ -121,6 +114,7 @@ wchar_t *CDumpBox::GetParsedHumanReadable(const wchar_t *indent)
     // prepare finally human readable representation
     result = FormatString(
       L"%s\n" \
+      L"%sFlags: 0x%08X\n" \
       L"%sDay: %hu\n" \
       L"%sMonth: %hu\n" \
       L"%sYear: %hu\n" \
@@ -132,6 +126,7 @@ wchar_t *CDumpBox::GetParsedHumanReadable(const wchar_t *indent)
       L"%sPayload size: %llu",
       
       previousResult,
+      indent, this->flags,
       indent, this->time.wDay,
       indent, this->time.wMonth,
       indent, this->time.wYear,
@@ -149,9 +144,11 @@ wchar_t *CDumpBox::GetParsedHumanReadable(const wchar_t *indent)
   return result;
 }
 
+/* protected methods */
+
 uint64_t CDumpBox::GetBoxSize(void)
 {
-  uint64_t result = sizeof(SYSTEMTIME) + 4 + this->payloadSize;
+  uint64_t result = 8 + sizeof(SYSTEMTIME) + this->payloadSize;
 
   uint64_t boxSize = __super::GetBoxSize();
   result = (boxSize != 0) ? (result + boxSize) : 0; 
@@ -161,14 +158,47 @@ uint64_t CDumpBox::GetBoxSize(void)
 
 bool CDumpBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
+  return this->ParseInternal(buffer, length, processAdditionalBoxes, true);;
+}
+
+uint32_t CDumpBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    WBE32INC(buffer, result, this->flags);
+
+    memcpy(buffer + result, &this->time, sizeof(SYSTEMTIME));
+    result += sizeof(SYSTEMTIME);
+
+    WBE32INC(buffer, result, this->payloadSize);
+
+    if (this->payloadSize > 0)
+    {
+      memcpy(buffer + result, this->payload, this->payloadSize);
+      result += this->payloadSize;
+    }
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
+
+  return result;
+}
+
+bool CDumpBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes, bool checkType)
+{
   FREE_MEM(this->payload);
   this->payloadSize = 0;
 
   if (__super::ParseInternal(buffer, length, false))
   {
-    this->flags &= ~BOX_FLAG_PARSED;
-    this->flags |= (wcscmp(this->type, DUMP_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
-    
+    // don't know box type, don't check box type
+   
     if (this->IsSetFlags(BOX_FLAG_PARSED))
     {
       // box is dump box, parse all values
@@ -177,6 +207,8 @@ bool CDumpBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool 
 
       if (SUCCEEDED(continueParsing))
       {
+        RBE32INC(buffer, position, this->flags);
+
         memcpy(&this->time, buffer + position, sizeof(SYSTEMTIME));
         position += sizeof(SYSTEMTIME);
 
@@ -203,41 +235,4 @@ bool CDumpBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool 
   }
 
   return this->IsSetFlags(BOX_FLAG_PARSED);
-}
-
-uint32_t CDumpBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
-{
-  uint32_t result = __super::GetBoxInternal(buffer, length, false);
-
-  if (result != 0)
-  {
-    memcpy(buffer + result, &this->time, sizeof(SYSTEMTIME));
-    result += sizeof(SYSTEMTIME);
-
-    WBE32INC(buffer, result, this->payloadSize);
-
-    if (this->payloadSize > 0)
-    {
-      memcpy(buffer + result, this->payload, this->payloadSize);
-      result += this->payloadSize;
-    }
-
-    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
-    {
-      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
-      result = (boxSizes != 0) ? (result + boxSizes) : 0;
-    }
-  }
-
-  return result;
-}
-
-CBoxFactory *CDumpBox::GetBoxFactory(void)
-{
-  HRESULT result = S_OK;
-  CDumpBoxFactory *factory = new CDumpBoxFactory(&result);
-  CHECK_POINTER_HRESULT(result, factory, result, E_OUTOFMEMORY);
-
-  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(factory));
-  return factory;
 }

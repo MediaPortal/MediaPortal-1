@@ -326,7 +326,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::DeliverBeginFlush()
   this->logger->Log(LOGGER_INFO, L"%s: %s: pin '%s', sent data length: %llu", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, this->outputPinDataLength);
   this->logger->Log(LOGGER_INFO, L"%s: %s: pin '%s', flushed data length: %llu", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, flushedDataLength);
 
-  this->dumpFile->DumpBoxes();
+  this->dumpFile->FlushDumpBoxes();
   this->outputPinDataLength = 0;
 
   // clear all media packets
@@ -515,10 +515,10 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
       // we receive CMD_PLAY command
       // just check dumping data flag in filter configuration
 
-      this->flags &= ~MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_DUMP_RAW_DATA;
-      this->flags |= (this->parameters->GetValueBool(PARAMETER_NAME_DUMP_OUTPUT_PIN_RAW_DATA, true, PARAMETER_NAME_DUMP_OUTPUT_PIN_RAW_DATA_DEFAULT)) ? MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_DUMP_RAW_DATA : MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_NONE;
+      this->flags &= ~MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_DUMP_DATA;
+      this->flags |= (this->parameters->GetValueBool(PARAMETER_NAME_DUMP_OUTPUT_PIN_DATA, true, PARAMETER_NAME_DUMP_OUTPUT_PIN_DATA_DEFAULT)) ? MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_DUMP_DATA : MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_NONE;
 
-      if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_DUMP_RAW_DATA))
+      if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_DUMP_DATA))
       {
         wchar_t *storeFilePath = this->GetStoreFile(L"dump");
         CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->dumpFile->SetDumpFile(storeFilePath));
@@ -628,7 +628,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
                 // count send data to output pin
                 this->outputPinDataLength += (uint64_t)sampleSize;
 
-                if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_DUMP_RAW_DATA))
+                if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_DUMP_DATA))
                 {
                   // we are dumping data, we must copy output data to temporary buffer
 
@@ -743,7 +743,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
   }
 
   this->logger->Log(LOGGER_INFO, L"%s: %s: pin '%s', sent data length: %llu", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, this->outputPinDataLength);
-  this->dumpFile->DumpBoxes();
+  this->dumpFile->FlushDumpBoxes();
 
   return S_OK;
 }

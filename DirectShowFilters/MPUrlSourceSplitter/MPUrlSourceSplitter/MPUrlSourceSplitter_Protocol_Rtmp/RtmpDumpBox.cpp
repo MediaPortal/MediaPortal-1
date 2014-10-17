@@ -25,6 +25,12 @@
 CRtmpDumpBox::CRtmpDumpBox(HRESULT *result)
   : CDumpBox(result)
 {
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(RTMP_DUMP_BOX_TYPE);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+  }
 }
 
 CRtmpDumpBox::~CRtmpDumpBox(void)
@@ -39,7 +45,16 @@ CRtmpDumpBox::~CRtmpDumpBox(void)
 
 /* protected methods */
 
-CBoxFactory *CRtmpDumpBox::GetBoxFactory(void)
+bool CRtmpDumpBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes, bool checkType)
 {
-  return NULL;
+  if (__super::ParseInternal(buffer, length, false, false))
+  {
+    if (checkType)
+    {
+      this->flags &= BOX_FLAG_PARSED;
+      this->flags |= (wcscmp(this->type, RTMP_DUMP_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
+    }
+  }
+
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }

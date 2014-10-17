@@ -95,11 +95,6 @@ void CVideoMediaHeaderBox::SetColorBlue(uint16_t blue)
 
 /* other methods */
 
-bool CVideoMediaHeaderBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CVideoMediaHeaderBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;

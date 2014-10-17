@@ -71,11 +71,6 @@ void CFragmentedIndexTrackBox::SetTrackId(uint32_t trackId)
 
 /* other methods */
 
-bool CFragmentedIndexTrackBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CFragmentedIndexTrackBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;

@@ -117,11 +117,6 @@ void CTrackFragmentHeaderBox::SetDefaultSampleFlags(uint32_t defaultSampleFlags)
 
 /* other methods */
 
-bool CTrackFragmentHeaderBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CTrackFragmentHeaderBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;

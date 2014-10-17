@@ -26,6 +26,7 @@
 #pragma warning(disable:4005)
 
 #include "MshsCurlInstance.h"
+#include "MshsDumpBox.h"
 
 #pragma warning(pop)
 
@@ -155,4 +156,14 @@ CDownloadResponse *CMshsCurlInstance::CreateDownloadResponse(void)
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(response));
   return response;
+}
+
+CDumpBox *CMshsCurlInstance::CreateDumpBox(void)
+{
+  HRESULT result = S_OK;
+  CMshsDumpBox *box = new CMshsDumpBox(&result);
+  CHECK_POINTER_HRESULT(result, box, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(box));
+  return box;
 }

@@ -79,11 +79,6 @@ bool CDataEntryUrnBox::SetLocation(const wchar_t *location)
 
 /* other methods */
 
-bool CDataEntryUrnBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CDataEntryUrnBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;

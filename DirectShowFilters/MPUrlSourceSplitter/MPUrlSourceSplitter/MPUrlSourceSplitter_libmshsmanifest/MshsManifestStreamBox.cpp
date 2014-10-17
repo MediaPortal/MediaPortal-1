@@ -190,11 +190,6 @@ bool CMshsManifestStreamBox::IsText(void)
   return (wcscmp(this->GetStreamBoxType(), STREAM_TYPE_TEXT) == 0);
 }
 
-bool CMshsManifestStreamBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CMshsManifestStreamBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   return NULL;

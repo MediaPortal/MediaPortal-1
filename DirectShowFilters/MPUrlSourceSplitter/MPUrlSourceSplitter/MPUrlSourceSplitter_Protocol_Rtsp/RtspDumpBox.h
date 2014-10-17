@@ -25,6 +25,8 @@
 
 #include "DumpBox.h"
 
+#define RTSP_DUMP_BOX_TYPE                                            L"rtsp"
+
 #define RTSP_DUMP_BOX_FLAG_NONE                                       DUMP_BOX_FLAG_NONE
 
 #define RTSP_DUMP_BOX_FLAG_LAST                                       (DUMP_BOX_FLAG_LAST + 0)
@@ -45,9 +47,13 @@ protected:
 
   /* methods */
 
-  // gets box factory for creating additional boxes in current box
-  // @return : box factory or NULL if error
-  virtual CBoxFactory *GetBoxFactory(void);
+  // parses data in buffer
+  // @param buffer : buffer with box data for parsing
+  // @param length : the length of data in buffer
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed
+  // @param checkType : specifies if check for type is allowed
+  // @return : true if parsed successfully, false otherwise
+  virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes, bool checkType);
 };
 
 #endif

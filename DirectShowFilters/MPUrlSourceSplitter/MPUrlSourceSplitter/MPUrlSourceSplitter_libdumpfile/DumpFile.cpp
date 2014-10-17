@@ -37,7 +37,7 @@ CDumpFile::CDumpFile(HRESULT *result)
 
 CDumpFile::~CDumpFile(void)
 {
-  this->DumpBoxes();
+  this->FlushDumpBoxes();
 
   FREE_MEM_CLASS(this->dumpBoxes);
   FREE_MEM(this->dumpFile);
@@ -68,7 +68,7 @@ bool CDumpFile::AddDumpBox(CDumpBox *dumpBox)
     this->size += (uint32_t)dumpBox->GetSize();
     if (this->size > DUMP_FILE_MINIMUM_DUMP_SIZE)
     {
-      this->DumpBoxes();
+      this->FlushDumpBoxes();
       this->size = 0;
     }
   }
@@ -76,7 +76,7 @@ bool CDumpFile::AddDumpBox(CDumpBox *dumpBox)
   return result;
 }
 
-void CDumpFile::DumpBoxes(void)
+void CDumpFile::FlushDumpBoxes(void)
 {
   if ((this->dumpBoxes != NULL) && (this->dumpFile != NULL) && (this->size != 0))
   {

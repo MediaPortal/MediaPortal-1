@@ -65,11 +65,6 @@ CBootstrapInfoBox::~CBootstrapInfoBox(void)
   FREE_MEM_CLASS(this->fragmentRunTable);
 }
 
-bool CBootstrapInfoBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CBootstrapInfoBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;

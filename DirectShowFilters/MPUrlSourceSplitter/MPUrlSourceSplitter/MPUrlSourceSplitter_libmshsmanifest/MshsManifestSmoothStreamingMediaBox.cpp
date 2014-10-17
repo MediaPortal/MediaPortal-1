@@ -120,11 +120,6 @@ bool CMshsManifestSmoothStreamingMediaBox::IsProtected(void)
   return (this->GetProtections()->Count() != 0);
 }
 
-bool CMshsManifestSmoothStreamingMediaBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CMshsManifestSmoothStreamingMediaBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   return NULL;

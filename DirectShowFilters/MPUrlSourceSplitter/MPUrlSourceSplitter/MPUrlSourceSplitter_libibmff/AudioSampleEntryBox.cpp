@@ -94,11 +94,6 @@ void CAudioSampleEntryBox::SetSampleSize(uint16_t sampleSize)
 
 /* other methods */
 
-bool CAudioSampleEntryBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CAudioSampleEntryBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;

@@ -63,11 +63,6 @@ uint32_t CPixelAspectRatioBox::GetVerticalSpacing(void)
 
 /* other methods */
 
-bool CPixelAspectRatioBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CPixelAspectRatioBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;

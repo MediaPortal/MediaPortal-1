@@ -1217,7 +1217,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
           unsigned int fragmentRemoveStart = (this->segmentFragments->GetStartSearchingIndex() == 0) ? 1 : 0;
           unsigned int fragmentRemoveCount = 0;
 
-          while ((fragmentRemoveStart + fragmentRemoveCount) < this->segmentFragmentProcessing)
+          // leave at least 3 segment fragments (one is start searching segment fragment, the last two are needed to compute waiting time for updating bootstrap info)
+          while (((fragmentRemoveStart + fragmentRemoveCount) < this->segmentFragmentProcessing) && ((fragmentRemoveStart + fragmentRemoveCount + 3) < this->segmentFragments->Count()))
           {
             CAfhsSegmentFragment *fragment = this->segmentFragments->GetItem(fragmentRemoveStart + fragmentRemoveCount);
 

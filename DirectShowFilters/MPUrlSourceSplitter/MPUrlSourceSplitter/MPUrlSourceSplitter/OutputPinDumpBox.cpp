@@ -25,6 +25,12 @@
 COutputPinDumpBox::COutputPinDumpBox(HRESULT *result)
   : CDumpBox(result)
 {
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(OUTPUT_PIN_DUMP_BOX_TYPE);
+
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+  }
 }
 
 COutputPinDumpBox::~COutputPinDumpBox(void)
@@ -39,7 +45,16 @@ COutputPinDumpBox::~COutputPinDumpBox(void)
 
 /* protected methods */
 
-CBoxFactory *COutputPinDumpBox::GetBoxFactory(void)
+bool COutputPinDumpBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes, bool checkType)
 {
-  return NULL;
+  FREE_MEM(this->payload);
+  this->payloadSize = 0;
+
+  if (__super::ParseInternal(buffer, length, false, false))
+  {
+    this->flags &= BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, OUTPUT_PIN_DUMP_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
+  }
+
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }

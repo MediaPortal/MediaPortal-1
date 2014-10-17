@@ -99,11 +99,6 @@ uint32_t CCleanApertureBox::GetVerticalOffsetN(void)
 
 /* other methods */
 
-bool CCleanApertureBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CCleanApertureBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;

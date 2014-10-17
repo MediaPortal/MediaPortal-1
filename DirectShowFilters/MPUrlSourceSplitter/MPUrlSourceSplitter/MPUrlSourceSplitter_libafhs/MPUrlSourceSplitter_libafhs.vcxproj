@@ -84,6 +84,7 @@
     <ClInclude Include="AfhsDecryptionPluginConfiguration.h" />
     <ClInclude Include="AfhsDownloadRequest.h" />
     <ClInclude Include="AfhsDownloadResponse.h" />
+    <ClInclude Include="AfhsDumpBox.h" />
     <ClInclude Include="AfhsSegmentFragment.h" />
     <ClInclude Include="AfhsSegmentFragmentCollection.h" />
     <ClInclude Include="IndexedAfhsSegmentFragment.h" />
@@ -99,6 +100,7 @@
     <ClCompile Include="AfhsDecryptionPlugin.cpp" />
     <ClCompile Include="AfhsDownloadRequest.cpp" />
     <ClCompile Include="AfhsDownloadResponse.cpp" />
+    <ClCompile Include="AfhsDumpBox.cpp" />
     <ClCompile Include="AfhsSegmentFragment.cpp" />
     <ClCompile Include="AfhsSegmentFragmentCollection.cpp" />
     <ClCompile Include="AfhsDecryptionPluginConfiguration.cpp" />

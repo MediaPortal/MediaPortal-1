@@ -86,6 +86,7 @@
     <ClInclude Include="HttpCurlInstance.h" />
     <ClInclude Include="HttpDownloadRequest.h" />
     <ClInclude Include="HttpDownloadResponse.h" />
+    <ClInclude Include="HttpDumpBox.h" />
     <ClInclude Include="HttpHeader.h" />
     <ClInclude Include="HttpHeaderCollection.h" />
     <ClInclude Include="stdafx.h" />
@@ -98,6 +99,7 @@
     <ClCompile Include="HttpCurlInstance.cpp" />
     <ClCompile Include="HttpDownloadRequest.cpp" />
     <ClCompile Include="HttpDownloadResponse.cpp" />
+    <ClCompile Include="HttpDumpBox.cpp" />
     <ClCompile Include="HttpHeader.cpp" />
     <ClCompile Include="HttpHeaderCollection.cpp" />
     <ClCompile Include="stdafx.cpp">

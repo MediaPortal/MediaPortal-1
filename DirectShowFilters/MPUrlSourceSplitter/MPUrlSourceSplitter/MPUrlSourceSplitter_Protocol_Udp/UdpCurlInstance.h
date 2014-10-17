@@ -88,6 +88,10 @@ protected:
 
   // virtual CurlWorker() method is called from static CurlWorker() method
   virtual unsigned int CurlWorker(void);
+
+  // creates dump box for dump file
+  // @return : dump box or NULL if error
+  virtual CDumpBox *CreateDumpBox(void);
 };
 
 #endif

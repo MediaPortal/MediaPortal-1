@@ -111,6 +111,10 @@ protected:
   // gets new instance of download response
   // @return : new download response or NULL if error
   virtual CDownloadResponse *CreateDownloadResponse(void);
+
+  // creates dump box for dump file
+  // @return : dump box or NULL if error
+  virtual CDumpBox *CreateDumpBox(void);
 };
 
 #endif

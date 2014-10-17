@@ -195,11 +195,6 @@ void CMshsManifestTrackBox::SetNalUnitLengthField(uint16_t nalUnitLengthField)
 
 /* other methods */
 
-bool CMshsManifestTrackBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CMshsManifestTrackBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   return NULL;

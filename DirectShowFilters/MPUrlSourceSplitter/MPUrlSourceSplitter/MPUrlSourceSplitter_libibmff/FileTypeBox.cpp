@@ -80,11 +80,6 @@ bool CFileTypeBox::SetMinorVersion(uint32_t minorVersion)
 
 /* other methods */
 
-bool CFileTypeBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CFileTypeBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;

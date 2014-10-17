@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "HttpCurlInstance.h"
+#include "HttpDumpBox.h"
 #include "ErrorCodes.h"
 
 CHttpCurlInstance::CHttpCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
@@ -442,4 +443,14 @@ HRESULT CHttpCurlInstance::DestroyCurlWorker(void)
   }
 
   return __super::DestroyCurlWorker();
+}
+
+CDumpBox *CHttpCurlInstance::CreateDumpBox(void)
+{
+  HRESULT result = S_OK;
+  CHttpDumpBox *box = new CHttpDumpBox(&result);
+  CHECK_POINTER_HRESULT(result, box, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(box));
+  return box;
 }

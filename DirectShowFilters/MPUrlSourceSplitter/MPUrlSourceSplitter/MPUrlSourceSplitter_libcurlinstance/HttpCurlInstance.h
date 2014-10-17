@@ -125,6 +125,10 @@ protected:
   // destroys libcurl worker
   // @return : S_OK if successful
   virtual HRESULT DestroyCurlWorker(void);
+
+  // creates dump box for dump file
+  // @return : dump box or NULL if error
+  virtual CDumpBox *CreateDumpBox(void);
 };
 
 #endif

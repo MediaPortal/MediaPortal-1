@@ -75,11 +75,6 @@ bool CMshsManifestCustomAttributeBox::SetValue(const wchar_t *value)
 
 /* other methods */
 
-bool CMshsManifestCustomAttributeBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CMshsManifestCustomAttributeBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   return NULL;

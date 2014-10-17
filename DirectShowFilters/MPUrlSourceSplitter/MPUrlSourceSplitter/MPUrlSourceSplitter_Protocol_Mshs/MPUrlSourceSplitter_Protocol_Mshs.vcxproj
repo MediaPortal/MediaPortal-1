@@ -171,6 +171,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="MshsCurlInstance.h" />
     <ClInclude Include="MshsDownloadRequest.h" />
     <ClInclude Include="MshsDownloadResponse.h" />
+    <ClInclude Include="MshsDumpBox.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="MshsStreamFragment.h" />
     <ClInclude Include="MshsStreamFragmentCollection.h" />
@@ -191,6 +192,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClCompile Include="MshsCurlInstance.cpp" />
     <ClCompile Include="MshsDownloadRequest.cpp" />
     <ClCompile Include="MshsDownloadResponse.cpp" />
+    <ClCompile Include="MshsDumpBox.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

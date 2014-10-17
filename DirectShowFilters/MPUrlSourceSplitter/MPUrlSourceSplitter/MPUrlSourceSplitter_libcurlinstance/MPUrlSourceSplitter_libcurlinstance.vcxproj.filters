@@ -45,6 +45,9 @@
     <ClInclude Include="HttpHeaderCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="HttpDumpBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -72,6 +75,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="HttpHeaderCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpDumpBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

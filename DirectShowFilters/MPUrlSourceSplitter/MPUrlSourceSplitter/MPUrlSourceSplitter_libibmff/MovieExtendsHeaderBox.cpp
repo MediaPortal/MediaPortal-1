@@ -62,11 +62,6 @@ void CMovieExtendsHeaderBox::SetFragmentDuration(uint64_t fragmentDuration)
 
 /* other methods */
 
-bool CMovieExtendsHeaderBox::Parse(const uint8_t *buffer, uint32_t length)
-{
-  return this->ParseInternal(buffer, length, true);
-}
-
 wchar_t *CMovieExtendsHeaderBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;
