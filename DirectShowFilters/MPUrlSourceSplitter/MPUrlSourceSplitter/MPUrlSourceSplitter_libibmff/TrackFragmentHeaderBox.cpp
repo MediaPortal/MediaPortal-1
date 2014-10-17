@@ -48,11 +48,6 @@ CTrackFragmentHeaderBox::~CTrackFragmentHeaderBox(void)
 
 /* get methods */
 
-bool CTrackFragmentHeaderBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 uint32_t CTrackFragmentHeaderBox::GetTrackId(void)
 {
   return this->trackId;

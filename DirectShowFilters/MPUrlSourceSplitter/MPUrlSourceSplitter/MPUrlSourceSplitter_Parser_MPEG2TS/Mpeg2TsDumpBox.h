@@ -20,65 +20,70 @@
 
 #pragma once
 
-#ifndef __DUMP_BOX_DEFINED
-#define __DUMP_BOX_DEFINED
+#ifndef __MPEG2TS_DUMP_BOX_DEFINED
+#define __MPEG2TS_DUMP_BOX_DEFINED
 
-#include "Box.h"
-#include "DumpBoxFactory.h"
+#include "DumpBox.h"
+#include "StreamPackage.h"
 
-#define DUMP_BOX_FLAG_NONE                                            BOX_FLAG_NONE
+#define MPEG2TS_DUMP_BOX_TYPE                                         L"m2ts"
 
-#define DUMP_BOX_FLAG_LAST                                            (BOX_FLAG_LAST + 0)
+#define MPEG2TS_DUMP_BOX_FLAG_NONE                                    DUMP_BOX_FLAG_NONE
 
-class CDumpBox : public CBox
+#define MPEG2TS_DUMP_BOX_FLAG_INPUT_DATA                              (1 << (DUMP_BOX_FLAG_LAST + 0))
+#define MPEG2TS_DUMP_BOX_FLAG_OUTPUT_DATA                             (1 << (DUMP_BOX_FLAG_LAST + 1))
+
+#define MPEG2TS_DUMP_BOX_FLAG_LAST                                    (DUMP_BOX_FLAG_LAST + 2)
+
+class CMpeg2TsDumpBox : public CDumpBox
 {
 public:
-  CDumpBox(HRESULT *result);
-  virtual ~CDumpBox(void);
+  CMpeg2TsDumpBox(HRESULT *result);
+  virtual ~CMpeg2TsDumpBox(void);
 
   /* get methods */
 
-  // gets payload data of media data box
-  // @return : payload data or NULL if error
-  virtual const uint8_t *GetPayload(void);
-
-  // gets payload size
-  // @return : payload size
-  virtual uint64_t GetPayloadSize(void);
-
-  // gets time of creation of dump box
-  // @return : time of creation of dump box
-  virtual SYSTEMTIME GetTime(void);
-
   /* set methods */
 
-  // sets time of creation of dump box
-  // @param time : time of creation of dump box to set
-  virtual void SetTime(SYSTEMTIME time);
+  // sets MPEG2 TS dump box data with stream package data
+  // @param streamPackage : the stream package to set
+  // @return : true if successful, false otherwise
+  bool SetStreamPackage(CStreamPackage *streamPackage);
 
-  // sets time of creation of dump box with local system time
-  virtual void SetTimeWithLocalTime(void);
+  // sets if dump box contains input data
+  // @param inputData : true if dump box contains input data, false otherwise
+  void SetInputData(bool inputData);
 
-  // sets payload data of media data box
-  // @param buffer : buffer with payload data
-  // @param length : buffer size (payload data size)
-  // @return : true if successfull, false otherwise
-  virtual bool SetPayload(const uint8_t *buffer, uint32_t length);
+  // sets if dump box contains output data
+  // @param inputData : true if dump box contains output data, false otherwise
+  void SetOutputData(bool outputData);
 
   /* other methods */
 
-  // gets box data in human readable format
-  // @param indent : string to insert before each line
-  // @return : box data in human readable format or NULL if error
-  virtual wchar_t *GetParsedHumanReadable(const wchar_t *indent);
+  // tests if dump box contains input data
+  // @return : true if dump box contains input data, false otherwise
+  bool IsInputData(void);
+
+  // tests if dump box contains output data
+  // @return : true if dump box contains output data, false otherwise
+  bool IsOutputData(void);
 
 protected:
-  // stores local system time of dump box
-  SYSTEMTIME time;
-  // stores playload
-  uint8_t *payload;
-  // stores payload size
-  uint32_t payloadSize;
+
+  // holds stream package data
+  uint8_t packageState;
+  int32_t packageErrorCode;
+
+  // holds request data
+  uint32_t requestFlags;
+  uint32_t requestId;
+  int64_t requestStart;
+  uint32_t requestLength;
+  uint32_t requestStreamId;
+  uint32_t requestStartTime;
+
+  // holds response data
+  uint32_t responseFlags;
 
   /* methods */
 
@@ -86,13 +91,6 @@ protected:
   // method is called to determine whole box size for storing box into buffer
   // @return : size of box 
   virtual uint64_t GetBoxSize(void);
-
-  // parses data in buffer
-  // @param buffer : buffer with box data for parsing
-  // @param length : the length of data in buffer
-  // @param processAdditionalBoxes : specifies if additional boxes have to be processed
-  // @return : true if parsed successfully, false otherwise
-  virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
 
   // gets whole box into buffer (buffer must be allocated before)
   // @param buffer : the buffer for box data

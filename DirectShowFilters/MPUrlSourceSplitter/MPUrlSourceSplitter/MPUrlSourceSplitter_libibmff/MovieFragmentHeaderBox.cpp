@@ -43,11 +43,6 @@ CMovieFragmentHeaderBox::~CMovieFragmentHeaderBox(void)
 
 /* get methods */
 
-bool CMovieFragmentHeaderBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 uint32_t CMovieFragmentHeaderBox::GetSequenceNumber(void)
 {
   return this->sequenceNumber;

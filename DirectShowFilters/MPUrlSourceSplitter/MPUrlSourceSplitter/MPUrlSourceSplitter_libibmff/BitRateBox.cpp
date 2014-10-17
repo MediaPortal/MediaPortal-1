@@ -45,11 +45,6 @@ CBitrateBox::~CBitrateBox(void)
 
 /* get methods */
 
-bool CBitrateBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 uint32_t CBitrateBox::GetBufferSize(void)
 {
   return this->bufferSize;

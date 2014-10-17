@@ -45,16 +45,28 @@ CRtmpDumpBox::~CRtmpDumpBox(void)
 
 /* protected methods */
 
-bool CRtmpDumpBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes, bool checkType)
+unsigned int CRtmpDumpBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes, bool checkType)
 {
-  if (__super::ParseInternal(buffer, length, false, false))
+  uint32_t position = __super::ParseInternal(buffer, length, false, false);
+
+  if (position != 0)
   {
+    HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
+
     if (checkType)
     {
       this->flags &= BOX_FLAG_PARSED;
       this->flags |= (wcscmp(this->type, RTMP_DUMP_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
+
+    if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
+    {
+      this->ProcessAdditionalBoxes(buffer, length, position);
+    }
+
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
   }
 
-  return this->IsSetFlags(BOX_FLAG_PARSED);
+  return this->IsSetFlags(BOX_FLAG_PARSED) ? position : 0;
 }

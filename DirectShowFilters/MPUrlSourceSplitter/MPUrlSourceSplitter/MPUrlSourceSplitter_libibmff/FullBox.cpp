@@ -46,11 +46,6 @@ uint32_t CFullBox::GetBoxFlags(void)
   return this->boxFlags;
 }
 
-bool CFullBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 /* set methods */
 
 void CFullBox::SetVersion(uint8_t version)

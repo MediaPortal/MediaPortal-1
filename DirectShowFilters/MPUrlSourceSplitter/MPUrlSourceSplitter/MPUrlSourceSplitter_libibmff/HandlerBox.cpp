@@ -47,11 +47,6 @@ CHandlerBox::~CHandlerBox(void)
 
 /* get methods */
 
-bool CHandlerBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 uint32_t CHandlerBox::GetHandlerType(void)
 {
   return this->handlerType;

@@ -43,12 +43,6 @@ public:
 
   /* get methods */
 
-  // gets whole box into buffer (buffer must be allocated before)
-  // @param buffer : the buffer for box data
-  // @param length : the length of buffer for data
-  // @return : true if all data were successfully stored into buffer, false otherwise
-  virtual bool GetBox(uint8_t *buffer, uint32_t length);
-
   // fractional number which defines the exact clean aperture width, in counted pixels, of the video image
   virtual uint32_t GetCleanApertureWidthN(void);
 

@@ -43,11 +43,6 @@ CMovieExtendsHeaderBox::~CMovieExtendsHeaderBox(void)
 
 /* get methods */
 
-bool CMovieExtendsHeaderBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 uint64_t CMovieExtendsHeaderBox::GetFragmentDuration(void)
 {
   return this->fragmentDuration;

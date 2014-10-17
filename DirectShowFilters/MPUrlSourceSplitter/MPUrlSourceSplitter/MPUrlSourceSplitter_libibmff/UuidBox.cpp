@@ -72,11 +72,6 @@ uint64_t CUuidBox::GetPayloadSize(void)
   return this->payloadSize;
 }
 
-bool CUuidBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 /* set methods */
 
 void CUuidBox::SetGuid(GUID guid)

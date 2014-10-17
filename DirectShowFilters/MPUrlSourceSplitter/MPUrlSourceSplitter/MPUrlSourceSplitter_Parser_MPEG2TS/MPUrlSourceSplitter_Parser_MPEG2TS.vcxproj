@@ -53,7 +53,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_PARSER_MPEG2TS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libmpeg2ts;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libmpeg2ts;..\MPUrlSourceSplitter_libdumpfile;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -111,7 +111,7 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_PARSER_MPEG2TS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libmpeg2ts;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libmpeg2ts;..\MPUrlSourceSplitter_libdumpfile;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -166,6 +166,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
   <ItemGroup>
     <ClInclude Include="IndexedMpeg2tsStreamFragment.h" />
     <ClInclude Include="IndexedMpeg2tsStreamFragmentCollection.h" />
+    <ClInclude Include="Mpeg2TsDumpBox.h" />
     <ClInclude Include="Mpeg2tsStreamFragment.h" />
     <ClInclude Include="Mpeg2tsStreamFragmentCollection.h" />
     <ClInclude Include="MPUrlSourceSplitter_Parser_MPEG2TS.h" />
@@ -193,6 +194,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     </ClCompile>
     <ClCompile Include="IndexedMpeg2tsStreamFragment.cpp" />
     <ClCompile Include="IndexedMpeg2tsStreamFragmentCollection.cpp" />
+    <ClCompile Include="Mpeg2TsDumpBox.cpp" />
     <ClCompile Include="Mpeg2tsStreamFragment.cpp" />
     <ClCompile Include="Mpeg2tsStreamFragmentCollection.cpp" />
     <ClCompile Include="MPUrlSourceSplitter_Parser_MPEG2TS.cpp" />

@@ -46,11 +46,6 @@ CDataEntryUrlBox::~CDataEntryUrlBox(void)
 
 /* get methods */
 
-bool CDataEntryUrlBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 const wchar_t *CDataEntryUrlBox::GetLocation(void)
 {
   return this->location;

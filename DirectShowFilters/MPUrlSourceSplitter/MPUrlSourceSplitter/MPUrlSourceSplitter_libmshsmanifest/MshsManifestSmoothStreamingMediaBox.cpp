@@ -86,11 +86,6 @@ CMshsManifestStreamBoxCollection *CMshsManifestSmoothStreamingMediaBox::GetStrea
   return this->streams;
 }
 
-bool CMshsManifestSmoothStreamingMediaBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 /* set methods */
 
 void CMshsManifestSmoothStreamingMediaBox::SetMajorVersion(uint32_t majorVersion)

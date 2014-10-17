@@ -129,3 +129,10 @@ void CMPUrlSourceSplitter_Parser_Default::ClearSession(void)
 }
 
 // IProtocol interface
+
+/* protected methods */
+
+wchar_t *CMPUrlSourceSplitter_Parser_Default::GetStoreFile(const wchar_t *extension)
+{
+  return NULL;
+}

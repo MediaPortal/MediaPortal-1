@@ -46,11 +46,6 @@ CSoundMediaHeaderBox::~CSoundMediaHeaderBox(void)
 
 /* get methods */
 
-bool CSoundMediaHeaderBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 CFixedPointNumber *CSoundMediaHeaderBox::GetBalance(void)
 {
   return this->balance;

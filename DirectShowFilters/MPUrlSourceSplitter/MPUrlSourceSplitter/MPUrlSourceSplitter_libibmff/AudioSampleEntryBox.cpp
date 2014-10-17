@@ -45,11 +45,6 @@ CAudioSampleEntryBox::~CAudioSampleEntryBox(void)
 
 /* get methods */
 
-bool CAudioSampleEntryBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 const wchar_t *CAudioSampleEntryBox::GetCodingName(void)
 {
   return this->GetType();

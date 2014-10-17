@@ -44,11 +44,6 @@ CMediaInformationBox::~CMediaInformationBox(void)
 
 /* get methods */
 
-bool CMediaInformationBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 uint32_t CMediaInformationBox::GetHandlerType(void)
 {
   return this->handlerType;

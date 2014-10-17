@@ -46,11 +46,6 @@ CAVCConfigurationBox::~CAVCConfigurationBox(void)
 
 /* get methods */
 
-bool CAVCConfigurationBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 CAVCDecoderConfiguration *CAVCConfigurationBox::GetAVCDecoderConfiguration(void)
 {
   return this->avcDecoderConfiguration;

@@ -53,11 +53,6 @@ CVisualSampleEntryBox::~CVisualSampleEntryBox(void)
 
 /* get methods */
 
-bool CVisualSampleEntryBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 const wchar_t *CVisualSampleEntryBox::GetCodingName(void)
 {
   return this->GetType();

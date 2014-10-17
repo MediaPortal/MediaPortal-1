@@ -50,11 +50,6 @@ CDataEntryUrnBox::~CDataEntryUrnBox(void)
 
 /* get methods */
 
-bool CDataEntryUrnBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 const wchar_t *CDataEntryUrnBox::GetName(void)
 {
   return this->name;

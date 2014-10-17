@@ -27,6 +27,7 @@
 
 #include "ParserPlugin.h"
 #include "ParserPluginConfiguration.h"
+#include "Parameters.h"
 
 #pragma warning(pop)
 
@@ -40,16 +41,19 @@ CParserPlugin::CParserPlugin(HRESULT *result, CLogger *logger, CParameterCollect
   this->connectionParameters = NULL;
   this->reportedStreamTime = 0;
   this->reportedStreamPosition = 0;
+  this->dumpFile = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->logger = new CLogger(result, logger);
     this->configuration = new CParameterCollection(result);
     this->connectionParameters = new CParameterCollection(result);
+    this->dumpFile = new CDumpFile(result);
 
     CHECK_POINTER_HRESULT(*result, this->logger, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->configuration, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->connectionParameters, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->dumpFile, *result, E_OUTOFMEMORY);
 
     CHECK_CONDITION_HRESULT(*result, this->configuration->Append(configuration), *result, E_OUTOFMEMORY);
   }
@@ -60,6 +64,7 @@ CParserPlugin::~CParserPlugin(void)
   FREE_MEM_CLASS(this->connectionParameters);
   FREE_MEM_CLASS(this->configuration);
   FREE_MEM_CLASS(this->logger);
+  FREE_MEM_CLASS(this->dumpFile);
 }
 
 // CPlugin
@@ -165,6 +170,8 @@ void CParserPlugin::ClearSession(void)
   this->connectionParameters->Clear();
   this->reportedStreamTime = 0;
   this->reportedStreamPosition = 0;
+  this->dumpFile->FlushDumpBoxes();
+  this->dumpFile->SetDumpFile(NULL);
 }
 
 void CParserPlugin::ReportStreamTime(uint64_t streamTime, uint64_t streamPosition)
@@ -212,6 +219,21 @@ HRESULT CParserPlugin::SetConnectionParameters(const CParameterCollection *param
   CHECK_POINTER_DEFAULT_HRESULT(result, parameters);
 
   CHECK_CONDITION_HRESULT(result, this->connectionParameters->Append((CParameterCollection *)parameters), result, E_OUTOFMEMORY);
+
+  if (SUCCEEDED(result))
+  {
+    this->flags &= ~(PARSER_PLUGIN_FLAG_DUMP_INPUT_DATA | PARSER_PLUGIN_FLAG_DUMP_OUTPUT_DATA);
+
+    this->flags |= this->connectionParameters->GetValueBool(PARAMETER_NAME_DUMP_PARSER_INPUT_DATA, true, PARAMETER_NAME_DUMP_PARSER_INPUT_DATA_DEFAULT) ? PARSER_PLUGIN_FLAG_DUMP_INPUT_DATA : PARSER_PLUGIN_FLAG_NONE;
+    this->flags |= this->connectionParameters->GetValueBool(PARAMETER_NAME_DUMP_PARSER_OUTPUT_DATA, true, PARAMETER_NAME_DUMP_PARSER_OUTPUT_DATA_DEFAULT) ? PARSER_PLUGIN_FLAG_DUMP_OUTPUT_DATA : PARSER_PLUGIN_FLAG_NONE;
+
+    if (this->IsSetAnyOfFlags(PARSER_PLUGIN_FLAG_DUMP_INPUT_DATA | PARSER_PLUGIN_FLAG_DUMP_OUTPUT_DATA))
+    {
+      wchar_t *storeFilePath = this->GetStoreFile(L"dump");
+      CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->dumpFile->SetDumpFile(storeFilePath));
+      FREE_MEM(storeFilePath);
+    }
+  }
 
   return result;
 }

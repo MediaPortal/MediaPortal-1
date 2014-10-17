@@ -46,11 +46,6 @@ CChunkOffsetBox::~CChunkOffsetBox(void)
 
 /* get methods */
 
-bool CChunkOffsetBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 CChunkOffsetCollection *CChunkOffsetBox::GetChunkOffsets(void)
 {
   return this->chunkOffsets;

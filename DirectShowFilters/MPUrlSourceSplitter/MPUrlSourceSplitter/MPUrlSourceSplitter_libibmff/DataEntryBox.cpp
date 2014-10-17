@@ -34,11 +34,6 @@ CDataEntryBox::~CDataEntryBox(void)
 
 /* get methods */
 
-bool CDataEntryBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 bool CDataEntryBox::IsSelfContained(void)
 {
   return ((this->boxFlags & FLAGS_SELF_CONTAINED) != 0);

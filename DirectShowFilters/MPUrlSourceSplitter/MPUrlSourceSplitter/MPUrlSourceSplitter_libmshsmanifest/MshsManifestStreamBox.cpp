@@ -121,11 +121,6 @@ CMshsManifestStreamFragmentBoxCollection *CMshsManifestStreamBox::GetStreamFragm
   return this->streamFragments;
 }
 
-bool CMshsManifestStreamBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 /* set methods */
 
 bool CMshsManifestStreamBox::SetStreamBoxType(const wchar_t *streamBoxType)

@@ -47,11 +47,6 @@ CFragmentedIndexTrackBox::~CFragmentedIndexTrackBox(void)
 
 /* get methods */
 
-bool CFragmentedIndexTrackBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 uint32_t CFragmentedIndexTrackBox::GetTrackId(void)
 {
   return this->trackId;

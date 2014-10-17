@@ -65,11 +65,6 @@ CBrandCollection *CFileTypeBox::GetCompatibleBrands(void)
   return this->compatibleBrands;
 }
 
-bool CFileTypeBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 /* set methods */
 
 bool CFileTypeBox::SetMinorVersion(uint32_t minorVersion)

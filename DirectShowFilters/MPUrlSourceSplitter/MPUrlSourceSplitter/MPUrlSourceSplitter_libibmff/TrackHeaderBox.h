@@ -52,12 +52,6 @@ public:
 
   /* get methods */
 
-  // gets whole box into buffer (buffer must be allocated before)
-  // @param buffer : the buffer for box data
-  // @param length : the length of buffer for data
-  // @return : true if all data were successfully stored into buffer, false otherwise
-  virtual bool GetBox(uint8_t *buffer, uint32_t length);
-
   // gets the creation time of this track (in seconds since midnight, Jan. 1, 1904, in UTC time)
   // @return : the creation time of this track (in seconds since midnight, Jan. 1, 1904, in UTC time)
   virtual uint64_t GetCreationTime(void);

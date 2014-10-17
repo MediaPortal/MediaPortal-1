@@ -48,11 +48,6 @@ uint32_t CRtspTrackBox::GetTrackId(void)
   return this->trackId;
 }
 
-bool CRtspTrackBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 /* set methods */
 
 void CRtspTrackBox::SetTrackId(uint32_t trackId)

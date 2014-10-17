@@ -126,11 +126,6 @@ CMshsManifestCustomAttributeBoxCollection *CMshsManifestTrackBox::GetCustomAttri
   return this->customAttributes;
 }
 
-bool CMshsManifestTrackBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 /* set methods */
 
 void CMshsManifestTrackBox::SetIndex(uint32_t index)

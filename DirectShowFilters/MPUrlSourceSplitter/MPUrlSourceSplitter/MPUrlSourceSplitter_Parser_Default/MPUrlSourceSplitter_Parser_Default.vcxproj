@@ -53,14 +53,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_PARSER_DEFAULT_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libplugin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libdumpfile;..\MPUrlSourceSplitter_libibmff;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>mpurlsourcesplitter_parser_default.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)d\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libplugin.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libplugin.lib;MPUrlSourceSplitter_libdumpfile.lib;MPUrlSourceSplitter_libibmff.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>echo /* &gt; VersionInfo.h
@@ -111,7 +111,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_PARSER_DEFAULT_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libplugin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libdumpfile;..\MPUrlSourceSplitter_libibmff;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -120,7 +120,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <OptimizeReferences>true</OptimizeReferences>
       <ModuleDefinitionFile>mpurlsourcesplitter_parser_default.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libplugin.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libplugin.lib;MPUrlSourceSplitter_libdumpfile.lib;MPUrlSourceSplitter_libibmff.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(TargetDir)$(TargetName).lib" "$(SolutionDir)bin_$(PlatformName)\lib\$(TargetName).lib"

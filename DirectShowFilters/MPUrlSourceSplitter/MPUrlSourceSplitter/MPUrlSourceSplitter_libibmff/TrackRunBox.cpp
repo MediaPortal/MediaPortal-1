@@ -48,11 +48,6 @@ CTrackRunBox::~CTrackRunBox(void)
 
 /* get methods */
 
-bool CTrackRunBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 int32_t CTrackRunBox::GetDataOffset(void)
 {
   return this->dataOffset;

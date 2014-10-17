@@ -46,11 +46,6 @@ CVideoMediaHeaderBox::~CVideoMediaHeaderBox(void)
 
 /* get methods */
 
-bool CVideoMediaHeaderBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 uint16_t CVideoMediaHeaderBox::GetGraphicsMode(void)
 {
   return this->graphicsMode;

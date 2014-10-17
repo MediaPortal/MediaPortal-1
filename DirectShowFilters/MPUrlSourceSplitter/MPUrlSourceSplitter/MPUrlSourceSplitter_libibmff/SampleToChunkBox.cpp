@@ -46,11 +46,6 @@ CSampleToChunkBox::~CSampleToChunkBox(void)
 
 /* get methods */
 
-bool CSampleToChunkBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 CSampleToChunkCollection *CSampleToChunkBox::GetSamplesToChunks(void)
 {
   return this->samplesToChunks;

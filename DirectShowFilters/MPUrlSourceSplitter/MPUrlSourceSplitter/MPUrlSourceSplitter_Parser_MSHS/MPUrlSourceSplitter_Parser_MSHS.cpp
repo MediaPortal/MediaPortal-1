@@ -563,3 +563,10 @@ void CMPUrlSourceSplitter_Parser_Mshs::ClearSession(void)
 }
 
 // IProtocol interface
+
+/* protected methods */
+
+wchar_t *CMPUrlSourceSplitter_Parser_Mshs::GetStoreFile(const wchar_t *extension)
+{
+  return NULL;
+}

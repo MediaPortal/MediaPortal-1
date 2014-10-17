@@ -52,12 +52,6 @@ public:
   // @return : opaque protection content data
   const wchar_t *GetContent(void);
 
-  // gets whole box into buffer (buffer must be allocated before)
-  // @param buffer : the buffer for box data
-  // @param length : the length of buffer for data
-  // @return : true if all data were successfully stored into buffer, false otherwise
-  virtual bool GetBox(uint8_t *buffer, uint32_t length);
-
   /* set methods */
 
   // sets system ID - UUID that uniquely identifies the Content Protection System

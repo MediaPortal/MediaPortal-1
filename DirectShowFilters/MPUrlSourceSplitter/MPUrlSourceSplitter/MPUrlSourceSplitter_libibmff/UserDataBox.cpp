@@ -42,11 +42,6 @@ CUserDataBox::~CUserDataBox(void)
 
 /* get methods */
 
-bool CUserDataBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 /* set methods */
 
 /* other methods */

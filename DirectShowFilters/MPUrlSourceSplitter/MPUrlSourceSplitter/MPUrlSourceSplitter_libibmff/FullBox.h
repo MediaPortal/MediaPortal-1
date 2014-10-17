@@ -53,12 +53,6 @@ public:
   // @return : map of box flags
   virtual uint32_t GetBoxFlags(void);
 
-  // gets whole box into buffer (buffer must be allocated before)
-  // @param buffer : the buffer for box data
-  // @param length : the length of buffer for data
-  // @return : true if all data were successfully stored into buffer, false otherwise
-  virtual bool GetBox(uint8_t *buffer, uint32_t length);
-
   /* set methods */
 
   // sets version of this format of the box

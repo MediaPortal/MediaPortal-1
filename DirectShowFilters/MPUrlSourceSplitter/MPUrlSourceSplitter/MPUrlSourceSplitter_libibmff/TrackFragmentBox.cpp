@@ -42,11 +42,6 @@ CTrackFragmentBox::~CTrackFragmentBox(void)
 
 /* get methods */
 
-bool CTrackFragmentBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 /* set methods */
 
 /* other methods */

@@ -52,8 +52,8 @@ protected:
   // @param length : the length of data in buffer
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed
   // @param checkType : specifies if check for type is allowed
-  // @return : true if parsed successfully, false otherwise
-  virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes, bool checkType);
+  // @return : number of bytes read from buffer, 0 if error
+  virtual unsigned int ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes, bool checkType);
 };
 
 #endif

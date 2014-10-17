@@ -44,12 +44,6 @@ public:
 
   /* get methods */
 
-  // gets whole box into buffer (buffer must be allocated before)
-  // @param buffer : the buffer for box data
-  // @param length : the length of buffer for data
-  // @return : true if all data were successfully stored into buffer, false otherwise
-  virtual bool GetBox(uint8_t *buffer, uint32_t length);
-
   // gets number that places mono audio tracks in a stereo space; 0 is centre (the normal value);
   // full left is -1.0 and full right is 1.0
   // @return : number that places mono audio tracks in a stereo space

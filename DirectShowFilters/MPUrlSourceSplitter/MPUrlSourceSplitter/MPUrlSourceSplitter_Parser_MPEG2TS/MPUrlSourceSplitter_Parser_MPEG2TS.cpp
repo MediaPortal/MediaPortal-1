@@ -38,6 +38,7 @@
 #include "TsPacket.h"
 #include "TsPacketConstants.h"
 #include "LockMutex.h"
+#include "Mpeg2TsDumpBox.h"
 
 #include <process.h>
 
@@ -1628,6 +1629,22 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
         CHECK_HRESULT_EXECUTE(result, caller->protocolHoster->ProcessStreamPackage(package));
         CHECK_HRESULT_EXECUTE(result, package->GetError());
 
+        if (caller->IsSetFlags(PARSER_PLUGIN_FLAG_DUMP_INPUT_DATA))
+        {
+          CMpeg2TsDumpBox *dumpBox = new CMpeg2TsDumpBox(&result);
+          CHECK_CONDITION_HRESULT(result, dumpBox, result, E_OUTOFMEMORY);
+
+          if (SUCCEEDED(result))
+          {
+            dumpBox->SetInputData(true);
+            dumpBox->SetTimeWithLocalTime();
+            dumpBox->SetStreamPackage(package);
+          }
+
+          CHECK_CONDITION_HRESULT(result, caller->dumpFile->AddDumpBox(dumpBox), result, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(dumpBox));
+        }
+
         if (result == E_PAUSE_SEEK_STOP_MODE_DISABLE_READING)
         {
           result = S_OK;
@@ -1997,6 +2014,22 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
               caller->flags &= ~MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_RECEIVE_DATA;
             }
           }
+        }
+
+        if (caller->IsSetFlags(PARSER_PLUGIN_FLAG_DUMP_OUTPUT_DATA) && (caller->streamPackage->GetState() == CStreamPackage::Completed))
+        {
+          CMpeg2TsDumpBox *dumpBox = new CMpeg2TsDumpBox(&result);
+          CHECK_CONDITION_HRESULT(result, dumpBox, result, E_OUTOFMEMORY);
+
+          if (SUCCEEDED(result))
+          {
+            dumpBox->SetOutputData(true);
+            dumpBox->SetTimeWithLocalTime();
+            dumpBox->SetStreamPackage(caller->streamPackage);
+          }
+
+          CHECK_CONDITION_HRESULT(result, caller->dumpFile->AddDumpBox(dumpBox), result, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(dumpBox));
         }
       }
     }

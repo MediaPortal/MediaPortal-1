@@ -67,11 +67,6 @@ CMovieHeaderBox::~CMovieHeaderBox(void)
 
 /* get methods */
 
-bool CMovieHeaderBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 uint64_t CMovieHeaderBox::GetCreationTime(void)
 {
   return this->creationTime;

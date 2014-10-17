@@ -62,11 +62,6 @@ uint64_t CMshsManifestStreamFragmentBox::GetFragmentTime(void)
   return this->fragmentTime;
 }
 
-bool CMshsManifestStreamFragmentBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 /* set methods */
 
 void CMshsManifestStreamFragmentBox::SetFragmentNumber(uint32_t fragmentNumber)

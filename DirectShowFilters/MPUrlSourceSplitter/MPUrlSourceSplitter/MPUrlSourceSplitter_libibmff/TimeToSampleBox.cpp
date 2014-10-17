@@ -46,11 +46,6 @@ CTimeToSampleBox::~CTimeToSampleBox(void)
 
 /* get methods */
 
-bool CTimeToSampleBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 CTimeToSampleCollection *CTimeToSampleBox::GetTimesToSamples(void)
 {
   return this->timesToSamples;

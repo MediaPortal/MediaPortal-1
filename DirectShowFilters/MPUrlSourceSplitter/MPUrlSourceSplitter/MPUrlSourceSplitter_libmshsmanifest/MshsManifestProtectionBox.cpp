@@ -57,11 +57,6 @@ const wchar_t *CMshsManifestProtectionBox::GetContent(void)
   return this->content;
 }
 
-bool CMshsManifestProtectionBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 /* set methods */
 
 void CMshsManifestProtectionBox::SetSystemId(GUID systemId)

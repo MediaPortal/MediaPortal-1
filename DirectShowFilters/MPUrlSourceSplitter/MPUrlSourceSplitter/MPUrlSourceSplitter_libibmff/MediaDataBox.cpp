@@ -54,11 +54,6 @@ uint64_t CMediaDataBox::GetPayloadSize(void)
   return this->payloadSize;
 }
 
-bool CMediaDataBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 /* set methods */
 
 bool CMediaDataBox::SetPayload(const uint8_t *buffer, uint32_t length)

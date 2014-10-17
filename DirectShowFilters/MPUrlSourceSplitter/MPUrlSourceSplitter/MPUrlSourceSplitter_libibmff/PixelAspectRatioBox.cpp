@@ -44,11 +44,6 @@ CPixelAspectRatioBox::~CPixelAspectRatioBox(void)
 
 /* get methods */
 
-bool CPixelAspectRatioBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 uint32_t CPixelAspectRatioBox::GetHorizontalSpacing(void)
 {
   return this->horizontalSpacing;

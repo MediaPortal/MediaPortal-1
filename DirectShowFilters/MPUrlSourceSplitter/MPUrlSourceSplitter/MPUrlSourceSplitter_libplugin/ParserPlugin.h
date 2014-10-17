@@ -27,20 +27,23 @@
 #include "IDemuxerOwner.h"
 #include "ProtocolHoster.h"
 #include "IProtocol.h"
+#include "DumpFile.h"
 
 #define METHOD_GET_PARSER_RESULT_NAME                                 L"GetParserResult()"
 
 #define PARSER_PLUGIN_FLAG_NONE                                       PLUGIN_FLAG_NONE
 
-#define PARSER_PLUGIN_FLAG_LIVE_STREAM_SPECIFIED                      (1 << (PLUGIN_FLAG_LAST + 0))
-#define PARSER_PLUGIN_FLAG_LIVE_STREAM_DETECTED                       (1 << (PLUGIN_FLAG_LAST + 1))
-#define PARSER_PLUGIN_FLAG_SET_STREAM_LENGTH                          (1 << (PLUGIN_FLAG_LAST + 2))
-#define PARSER_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED                    (1 << (PLUGIN_FLAG_LAST + 3))
-#define PARSER_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED                    (1 << (PLUGIN_FLAG_LAST + 4))
-#define PARSER_PLUGIN_FLAG_END_OF_STREAM_REACHED                      (1 << (PLUGIN_FLAG_LAST + 5))
-#define PARSER_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN              (1 << (PLUGIN_FLAG_LAST + 6))
+#define PARSER_PLUGIN_FLAG_DUMP_INPUT_DATA                            (1 << (PLUGIN_FLAG_LAST + 0))
+#define PARSER_PLUGIN_FLAG_DUMP_OUTPUT_DATA                           (1 << (PLUGIN_FLAG_LAST + 1))
+#define PARSER_PLUGIN_FLAG_LIVE_STREAM_SPECIFIED                      (1 << (PLUGIN_FLAG_LAST + 2))
+#define PARSER_PLUGIN_FLAG_LIVE_STREAM_DETECTED                       (1 << (PLUGIN_FLAG_LAST + 3))
+#define PARSER_PLUGIN_FLAG_SET_STREAM_LENGTH                          (1 << (PLUGIN_FLAG_LAST + 4))
+#define PARSER_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED                    (1 << (PLUGIN_FLAG_LAST + 5))
+#define PARSER_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED                    (1 << (PLUGIN_FLAG_LAST + 6))
+#define PARSER_PLUGIN_FLAG_END_OF_STREAM_REACHED                      (1 << (PLUGIN_FLAG_LAST + 7))
+#define PARSER_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN              (1 << (PLUGIN_FLAG_LAST + 8))
 
-#define PARSER_PLUGIN_FLAG_LAST                                       (PLUGIN_FLAG_LAST + 7)
+#define PARSER_PLUGIN_FLAG_LAST                                       (PLUGIN_FLAG_LAST + 9)
 
 #define PARSER_RESULT_PENDING                                         1
 #define PARSER_RESULT_NOT_KNOWN                                       2
@@ -234,8 +237,15 @@ protected:
   // holds reported stream time and position
   uint64_t reportedStreamTime;
   uint64_t reportedStreamPosition;
+  // holds dump file
+  CDumpFile *dumpFile;
 
   /* methods */
+
+  // gets store file name
+  // @param extension : the extension of store file
+  // @return : store file name or NULL if error
+  virtual wchar_t *GetStoreFile(const wchar_t *extension) = 0;
 
 };
 

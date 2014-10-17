@@ -50,11 +50,6 @@ CCleanApertureBox::~CCleanApertureBox(void)
 
 /* get methods */
 
-bool CCleanApertureBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 uint32_t CCleanApertureBox::GetCleanApertureWidthN(void)
 {
   return this->cleanApertureWidthN;

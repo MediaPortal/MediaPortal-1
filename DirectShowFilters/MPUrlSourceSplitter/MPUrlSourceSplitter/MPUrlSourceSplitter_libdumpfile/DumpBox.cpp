@@ -56,11 +56,6 @@ uint64_t CDumpBox::GetPayloadSize(void)
   return this->payloadSize;
 }
 
-bool CDumpBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 SYSTEMTIME CDumpBox::GetTime(void)
 {
   return this->time;
@@ -158,7 +153,7 @@ uint64_t CDumpBox::GetBoxSize(void)
 
 bool CDumpBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  return this->ParseInternal(buffer, length, processAdditionalBoxes, true);;
+  return (this->ParseInternal(buffer, length, processAdditionalBoxes, true) != 0);
 }
 
 uint32_t CDumpBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -190,10 +185,11 @@ uint32_t CDumpBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool process
   return result;
 }
 
-bool CDumpBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes, bool checkType)
+unsigned int CDumpBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes, bool checkType)
 {
   FREE_MEM(this->payload);
   this->payloadSize = 0;
+  uint32_t position = 0;
 
   if (__super::ParseInternal(buffer, length, false))
   {
@@ -202,7 +198,7 @@ bool CDumpBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool 
     if (this->IsSetFlags(BOX_FLAG_PARSED))
     {
       // box is dump box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
       HRESULT continueParsing = (this->GetSize() <= (uint64_t)length) ? S_OK : E_NOT_VALID_STATE;
 
       if (SUCCEEDED(continueParsing))
@@ -234,5 +230,5 @@ bool CDumpBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool 
     }
   }
 
-  return this->IsSetFlags(BOX_FLAG_PARSED);
+  return this->IsSetFlags(BOX_FLAG_PARSED) ? position : 0;
 }

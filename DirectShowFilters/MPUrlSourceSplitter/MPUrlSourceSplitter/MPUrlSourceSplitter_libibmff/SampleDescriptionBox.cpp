@@ -48,11 +48,6 @@ CSampleDescriptionBox::~CSampleDescriptionBox(void)
 
 /* get methods */
 
-bool CSampleDescriptionBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 CSampleEntryBoxCollection *CSampleDescriptionBox::GetSampleEntries(void)
 {
   return this->sampleEntries;

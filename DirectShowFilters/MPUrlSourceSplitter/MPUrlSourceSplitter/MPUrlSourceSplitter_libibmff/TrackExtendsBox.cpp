@@ -47,11 +47,6 @@ CTrackExtendsBox::~CTrackExtendsBox(void)
 
 /* get methods */
 
-bool CTrackExtendsBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 uint32_t CTrackExtendsBox::GetTrackId(void)
 {
   return this->trackId;

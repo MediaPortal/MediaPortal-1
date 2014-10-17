@@ -46,11 +46,6 @@ CMetaBox::~CMetaBox(void)
 
 /* get methods */
 
-bool CMetaBox::GetBox(uint8_t *buffer, uint32_t length)
-{
-  return (this->GetBoxInternal(buffer, length, true) != 0);
-}
-
 CHandlerBox *CMetaBox::GetHandlerBox(void)
 {
   return this->handlerBox;
