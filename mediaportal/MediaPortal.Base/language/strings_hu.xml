@@ -1446,10 +1446,13 @@
     <String id="6040">Tegnap</String>
     <String id="6041">Tegnap előtt</String>
     <String id="6050">Ez a hét</String>
+    <String id="6055">Ennél a hétnél korábban</String>
     <String id="6056">Múlt hét</String>
     <String id="6060">Ez a hónap</String>
+    <String id="6062">Ennél a hónapnál korábban</String>
     <String id="6065">Múlt hónap</String>
     <String id="6070">Ez az év</String>
+    <String id="6075">Ennél az évnél korábban</String>
     <String id="6080">Tavaly</String>
     <String id="6090">Régi</String>
     <String id="8000">Levelezés</String>

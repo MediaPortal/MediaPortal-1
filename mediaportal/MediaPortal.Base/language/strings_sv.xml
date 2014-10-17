@@ -717,7 +717,7 @@
     <String id="784">Rotera 270°</String>
     <String id="789">Nu: </String>
     <String id="790">Nästa: </String>
-    <String id="791">Layout: Omslagsrad</String>
+    <String id="791">Omslagsrad</String>
     <String id="792">Layoutmeny</String>
     <String id="798">Lågt</String>
     <String id="799">Högt</String>
@@ -1183,11 +1183,19 @@
     <String id="1977">Filsystem</String>
     <String id="1978">Virtuellt minne</String>
     <String id="1984">Uppdatera tumnagelbild för video</String>
+    <String id="1989">Mappen är skrivskyddad</String>
     <String id="1990">Sätt igång servern</String>
     <String id="1991">Vänligen vänta tills servern är igång</String>
     <String id="1992">Servern är inte tillgänglig.</String>
     <String id="1993">Kontrollera nätverksanslutningen eller öka timeout-gränsen.</String>
     <String id="1994">Vänta tills den delade enheten är online.</String>
+    <String id="1995">Skapa mapp-ikon av fil-ikoner</String>
+    <String id="1999">Titel och speltid</String>
+    <String id="2000">Låten är skrivskyddad!</String>
+    <String id="2001">Bilden är skrivskyddad!</String>
+    <String id="2002">Filmen är skrivskyddad!</String>
+    <String id="2003">Filen är skrivskyddad</String>
+    <String id="2004">Vill du ta bort?</String>
     <String id="2005">Ta bort</String>
     <String id="2006">Titel</String>
     <String id="2007">Vinst</String>
@@ -1330,6 +1338,8 @@
     <String id="2145">Importera aktiv spellista</String>
     <String id="2146">Ej tillräckligt med utrymme på CD:n</String>
     <String id="2147">Ej tillräckligt med utrymme på DVD:n</String>
+    <String id="2148">Vill du ändra den i alla undermappar?</String>
+    <String id="2149">Fråga</String>
     <String id="2200" prefix="Min">Utforskare</String>
     <String id="2201">Välj källa</String>
     <String id="2202">Välj mål</String>
@@ -1885,6 +1895,8 @@
     <String id="100510" prefix="Min ">Musik/Nu spelas</String>
     <String id="100511" prefix="Min ">Musik/Fullskärm</String>
     <String id="100512">LastFM Älska/Hata</String>
+    <String id="100513">Skriv in den gamla PIN-koden</String>
+    <String id="100514">Skriv in den nya PIN-koden</String>
     <String id="100600" prefix="Min ">TV/Tablå</String>
     <String id="100601" prefix="Min ">TV/Planerade inspelningar</String>
     <String id="100602" prefix="Min ">TV/Fullskärm</String>

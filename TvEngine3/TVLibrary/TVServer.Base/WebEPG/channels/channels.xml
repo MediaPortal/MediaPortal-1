@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <profile>
   <section name="ChannelInfo">
-    <entry name="TotalChannels">1497</entry>
+    <entry name="TotalChannels">1499</entry>
   </section>
   <section name="0">
     <entry name="ChannelID">1@betv.be</entry>
@@ -5991,6 +5991,14 @@
     <entry name="ChannelID">tv12@tv4.se</entry>
     <entry name="FullName">TV12</entry>
   </section>
+  <section name="1497">
+    <entry name="ChannelID">fox@fox.com</entry>
+    <entry name="FullName">FOX</entry>
+  </section>
+  <section name="1498">
+    <entry name="ChannelID">foxhd@fox.com</entry>
+    <entry name="FullName">FOX HD</entry>
+  </section>
   <section name=".svn">
     <entry name="TotalChannels">0</entry>
   </section>
@@ -7443,7 +7451,7 @@
     <entry name="62">1218</entry>
   </section>
   <section name="SE">
-	<entry name="TotalChannels">231</entry>
+	<entry name="TotalChannels">233</entry>
 	<entry name="0">22</entry>
 	<entry name="1">24</entry>
 	<entry name="2">25</entry>
@@ -7676,6 +7684,8 @@
 	<entry name="228">1494</entry>
 	<entry name="229">1495</entry>
 	<entry name="230">1496</entry>
+	<entry name="231">1497</entry>
+	<entry name="232">1498</entry>
   </section>
   <section name="US">
     <entry name="TotalChannels">73</entry>

@@ -186,6 +186,8 @@
     <Channel id="hitshd@cmore.se" siteId="501" />
     <Channel id="firsthd@cmore.se" siteId="502" />
     <Channel id="tv12@tv4.se" siteId="600" />
+    <Channel id="fox@fox.com" siteId="601" />
+    <Channel id="foxhd@fox.com" siteId="602" />
     <Channel id="tv2charlie@tv2.dk" siteId="906" />
     <Channel id="dk4.dk" siteId="908" />
     <!--<Channel id="nick.co.uk" siteId="909" /> Conflicting name -->
