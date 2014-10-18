@@ -147,6 +147,8 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_pFileReadBuffer = NULL;
   m_pFileReadBuffer = new byte[READ_SIZE]; //~130ms of data @ 8Mbit/s
   
+  m_dVidPTSJumpLimit = 2.0; //Maximum allowed time in seconds for video PTS jumps
+  
   LogDebug(" ");
   LogDebug("=================== New filter instance =========================================");
   LogDebug("  Logging format: [Date Time] [InstanceID-instanceCount] [ThreadID] Message....  ");
@@ -1686,7 +1688,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
               m_vidDTScount++;    
           }        
 
-          if (diff>2.0)
+          if (diff > m_dVidPTSJumpLimit)
           {
             //Large PTS jump - flush the world...
             LogDebug("DeMultiplexer::FillVideoH264 pts jump found : %f %f, %f", (float) diff, (float)pts.ToClock(), (float)m_lastVideoPTS.ToClock());
@@ -2245,7 +2247,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
               m_vidDTScount++;    
           }        
 
-          if (diff>2.0)
+          if (diff > m_dVidPTSJumpLimit)
           {
             //Large PTS jump - flush the world...
             LogDebug("DeMultiplexer::FillVideoMPEG2 pts jump found : %f %f, %f", (float) diff, (float)pts.ToClock(), (float)m_lastVideoPTS.ToClock());
@@ -2853,6 +2855,20 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   {
     m_duration.SetVideoPid(m_pids.videoPids[0].Pid);
   }
+
+  if (m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid>0x1)
+  {
+    //Adjust PTS jump detection limits for still image streams
+    if (m_pids.videoPids[0].DescriptorData & 0x01) //Still image flag
+    {
+      m_dVidPTSJumpLimit = 70.0;
+    }
+    else
+    {
+      m_dVidPTSJumpLimit = 2.0;
+    }
+  }
+
   m_audioStreams.clear();
 
   for(int i(0) ; i < m_pids.audioPids.size() ; i++)

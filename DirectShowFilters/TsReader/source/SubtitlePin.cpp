@@ -403,10 +403,15 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
       //did we reach the end of the file
       if (demux.EndOfFile())
       {
-        LogDebug("subPin:set eof");
-        CreateEmptySample(pSample);
-        m_bInFillBuffer=false;
-        return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
+        int ACnt, VCnt;
+        demux.GetBufferCounts(&ACnt, &VCnt);
+        if (ACnt <= 0 && VCnt <= 0) //have we used all the data ?
+        {
+          LogDebug("subPin:set eof");
+          CreateEmptySample(pSample);
+          m_bInFillBuffer=false;
+          return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
+        }
       }
 
       //if the filter is currently seeking to a new position
