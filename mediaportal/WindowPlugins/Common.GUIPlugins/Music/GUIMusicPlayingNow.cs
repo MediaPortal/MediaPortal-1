@@ -123,6 +123,7 @@ namespace MediaPortal.GUI.Music
     private string _vuMeter = "none";
     private static readonly Random Randomizer = new Random();
     private bool _lookupSimilarTracks;
+    private bool _isStopped = false;
 
     #endregion
 
@@ -191,8 +192,9 @@ namespace MediaPortal.GUI.Music
       {
         Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackEnded for {0}", filename);
 
-        if (!g_Player.Playing && NextTrackTag == null)
+        if (!g_Player.Playing && NextTrackTag == null && !_isStopped)
         {
+          _isStopped = true;
           Log.Debug("GUIMusicPlayingNow: All playlist items played - returning to previous window");
           Action action = new Action();
           action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
@@ -208,8 +210,9 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
-      if (GUIWindowManager.ActiveWindow == GetID)
+      if (GUIWindowManager.ActiveWindow == GetID && !_isStopped)
       {
+        _isStopped = true;
         Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackStopped for {0} - stoptime: {1}", filename, stoptime);
         Action action = new Action();
         action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
@@ -332,6 +335,16 @@ namespace MediaPortal.GUI.Music
       base.OnAction(action);
       switch (action.wID)
       {
+          case Action.ActionType.ACTION_STOP:
+
+          if (GUIWindowManager.ActiveWindow == GetID && !_isStopped)
+          {
+            _isStopped = true;
+            Action act = new Action();
+            act.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
+            GUIGraphicsContext.OnAction(act);
+          }
+          break;
           // Since a ACTION_STOP action clears the player and CurrentPlaylistType type
           // we need a way to restart playback after an ACTION_STOP has been received
         case Action.ActionType.ACTION_MUSIC_PLAY:
@@ -458,6 +471,7 @@ namespace MediaPortal.GUI.Music
         OnPlayBackStarted(g_Player.MediaType.Music, g_Player.CurrentFile);
 
         SetVisualizationWindow();
+        _isStopped = false;
       }
       else
       {
