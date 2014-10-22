@@ -153,13 +153,15 @@ namespace MediaPortal.Dialogs
       GUIGraphicsContext.Skin = _userSkin;
       GUITextureManager.Clear();
       GUITextureManager.Init();
-      GUIFontManager.LoadFonts(GUIGraphicsContext.Skin + @"\fonts.xml");
+      SkinSettings.Load();
+      GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
       GUIFontManager.InitializeDeviceObjects();
       GUIExpressionManager.ClearExpressionCache();
       GUIControlFactory.ClearReferences();
-      GUIControlFactory.LoadReferences(GUIGraphicsContext.Skin + @"\references.xml");
+      GUIControlFactory.LoadReferences(GUIGraphicsContext.GetThemedSkinFile(@"\references.xml"));
       GUIWindowManager.OnResize();
       //GUIWindowManager.ActivateWindow(ActiveWindowID);
+
       using (Settings xmlreader = new MPSettings())
       {
         xmlreader.SetValue("general", "skinobsoletecount", 0);
