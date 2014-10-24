@@ -548,9 +548,11 @@ int CLibBlurayWrapper::Read(unsigned char* pData, int pSize, bool& pPause, bool 
 
     while (readBytes == 0 && ev.event != BD_EVENT_NONE && ev.event != BD_EVENT_END_OF_TITLE && !m_bStopping && !m_bStopReading)
     {
-      // TODO add error handling
-      readBytes = _bd_read_ext(m_pBd, pData, pSize, &ev); 
+      readBytes = _bd_read_ext(m_pBd, pData, pSize, &ev);
       HandleBDEvent(ev, pIgnorePauseEvents);
+
+      if (ev.event == BD_EVENT_ERROR || ev.event == BD_EVENT_READ_ERROR)
+        break;
     }
     pPause = m_bStopReading;
   }
