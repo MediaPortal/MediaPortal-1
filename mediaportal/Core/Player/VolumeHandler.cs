@@ -214,22 +214,30 @@ namespace MediaPortal.Player
         };
         GUIGraphicsContext.SendMessage(msg);
 
-        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && _showVolumeOSD ||
-            GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && _showVolumeOSD)
-        {
-          var showVolume = new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0);
-          GUIWindowManager.OnAction(showVolume);
-        }
+        var showVolume = new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0);
+        GUIWindowManager.OnAction(showVolume);
       }
       catch (Exception e)
       {
         Log.Info("VolumeHandler.HandleGUIOnControlChange: {0}", e.ToString());
       }
-    } 
+    }
 
     private static void mixer_ControlChanged(object sender, Mixer.MixerEventArgs e)
     {
       Instance.HandleGUIOnControlChange();
+      GUIGraphicsContext.VolumeOverlay = true;
+      GUIGraphicsContext.VolumeOverlayTimeOut = DateTime.Now;
+      Instance.UpdateVolumeProperties();
+    }
+
+    public void UpdateVolumeProperties()
+    {
+      float fRange = (float)(Instance.Maximum - Instance.Minimum);
+      float fPos = (float)(Instance.Volume - Instance.Minimum);
+      float fPercent = (fPos / fRange) * 100.0f;
+      GUIPropertyManager.SetProperty("#volume.percent", ((int)Math.Round(fPercent)).ToString());
+      GUIPropertyManager.SetProperty("#volume.mute", Instance.IsMuted.ToString().ToLowerInvariant());
     }
 
     #endregion Methods
@@ -246,6 +254,12 @@ namespace MediaPortal.Player
     {
       get { return _mixer.IsMuted; }
       set { SetVolume(value); }
+    }
+
+    public virtual bool IsEnabledVolumeOSD
+    {
+      get { return _showVolumeOSD; }
+      set { _showVolumeOSD = value; }
     }
 
     public virtual int Next
@@ -336,7 +350,7 @@ namespace MediaPortal.Player
 
     private int[] _volumeTable;
     private int _startupVolume;
-    private readonly bool _showVolumeOSD;
+    private bool _showVolumeOSD;
 
     #endregion Fields
   }

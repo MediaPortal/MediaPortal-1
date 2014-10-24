@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Language name="Dutch" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="Mijn ">Programma's</String>
@@ -2226,7 +2226,7 @@
     <String id="300116">Klassiek (linear)</String>
     <String id="300117">Logaritmisch</String>
     <String id="300118">Windows Vista/Win7</String>
-    <String id="300119">Toon standaardvolume OSD voor video in volledig scherm</String>
+    <String id="300119">Activeer Volume Indicator</String>
     <String id="300120">Skin</String>
     <String id="300121">Op-scherm weergave</String>
     <String id="300122">Onthouden laatst geselecteerde items toestaan</String>

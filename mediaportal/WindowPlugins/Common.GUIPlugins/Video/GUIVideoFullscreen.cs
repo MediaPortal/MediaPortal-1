@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -372,7 +373,7 @@ namespace MediaPortal.GUI.Video
           return;
         }
       }
-      if (action.wID == Action.ActionType.ACTION_SHOW_VOLUME)
+      if (action.wID == Action.ActionType.ACTION_SHOW_VOLUME && !File.Exists(GUIGraphicsContext.Skin + @"\VolumeOverlay.xml"))
       {
         _volumeTimer = DateTime.Now;
         _isVolumeVisible = true;
