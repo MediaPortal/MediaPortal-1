@@ -148,6 +148,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_pFileReadBuffer = new byte[READ_SIZE]; //~130ms of data @ 8Mbit/s
   
   m_dVidPTSJumpLimit = 2.0; //Maximum allowed time in seconds for video PTS jumps
+  m_dfAudSampleDuration = -1.0;
   
   LogDebug(" ");
   LogDebug("=================== New filter instance =========================================");
@@ -874,6 +875,7 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
     m_initialAudioSamples = (int)(((double)(310 + m_filter.m_regInitialBuffDelay))/faudSampleDuration);
     m_initialAudioSamples = max(3, m_initialAudioSamples);
     m_prefetchLoopDelay = min(PF_LOOP_DELAY_MAX, min(vidSampDuration,(max(PF_LOOP_DELAY_MIN,(int)faudSampleDuration))));
+    m_dfAudSampleDuration = faudSampleDuration/1000.0;
 
     LogDebug("Audio Samples : %d, First : %03.3f, Last : %03.3f, buffThresh : %d, pfLoopDel : %d",cntA, (float)firstAudio.Millisecs()/1000.0f,(float)lastAudio.Millisecs()/1000.0f, m_initialAudioSamples, m_prefetchLoopDelay);
     LogDebug("Video Samples : %d, First : %03.3f, Last : %03.3f, buffThresh : %d",cntV, (float)firstVideo.Millisecs()/1000.0f,(float)lastVideo.Millisecs()/1000.0f, m_initialVideoSamples);

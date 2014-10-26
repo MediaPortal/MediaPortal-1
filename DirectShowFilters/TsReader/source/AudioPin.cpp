@@ -78,6 +78,7 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
   m_bAddPMT = false;
   m_bDownstreamFlush=false;
   m_bDisableSlowPlayDiscontinuity=false;
+  m_nMaxAFT = -1;
 }
 
 CAudioPin::~CAudioPin()
@@ -478,8 +479,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           //adjust the timestamp with the compensation
           cRefTime-= m_pTsReaderFilter->GetCompensation() ;
           
-          //Check if total compensation offset is more than 10ms
-          if (m_pTsReaderFilter->GetTotalDeltaComp() > 100000)
+          //Check if total compensation offset is more than +/-10ms
+          if (abs(m_pTsReaderFilter->GetTotalDeltaComp()) > 100000)
           {
             if (!m_bDisableSlowPlayDiscontinuity)
             {
@@ -494,18 +495,18 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           clock = (double)(RefClock-m_rtStart.m_time)/10000000.0 ;
           fTime = ((double)cRefTime.m_time/10000000.0) - clock ;
           
-          if (clock < 20.0) //only do this at start of play
+          //Need to do this with 'raw' fTime data
+          CalcAverageFtime(fTime);
+          if (clock < 30.0) //only do this at start of play
           {
-            //Need to do this with 'raw' fTime data
-            CalcAverageFtime(fTime);
-            if (((m_sampleCount%NB_AFTSIZE) == (NB_AFTSIZE-1)) && (clock > 15.0))
+            m_fAFTMeanRef = m_fAFTMean;
+            if (((m_sampleCount%m_nMaxAFT) == (m_nMaxAFT-1)) && (clock > 25.0))
               LogDebug("audPin : m_fAFTMean= %03.3f", (float)m_fAFTMean) ;
           }
           
           //Add compensation time for external downstream audio delay
           //to stop samples becoming 'late' (note: this does NOT change the actual sample timestamps)
-          //fTime += ((double)m_pTsReaderFilter->m_regExternalDelayComp/10000000.0);
-          fTime -= m_fAFTMean;  //remove the 'mean' offset
+          fTime -= m_fAFTMeanRef;  //remove the 'mean' offset
           fTime += AUDIO_STALL_POINT/2; //re-centre the timing                 
 
           //Discard late samples at start of play,
@@ -666,19 +667,37 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
 void CAudioPin::ClearAverageFtime()
 {
+  m_nMaxAFT = -1;
   m_nNextAFT = 0;
 	m_fAFTMean = 0.0;
 	m_llAFTSumAvg = 0.0;
+	m_fAFTMeanRef = 0.0; 
   ZeroMemory((void*)&m_pllAFT, sizeof(double) * NB_AFTSIZE);
 }
 
 // Calculate rolling average audio ftime
 void CAudioPin::CalcAverageFtime(double ftime)
-{          
+{      
+  if (m_nMaxAFT < 0)   
+  { 
+    CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();    
+    if (demux.m_dfAudSampleDuration > 0.0)
+    {
+      //Calculate the number of samples needed to provide an average over 3 seconds 
+      //but limit to maximum array size and a minimum of 16 samples
+      m_nMaxAFT = max(16, min(NB_AFTSIZE, (int)(3.0/demux.m_dfAudSampleDuration)));
+    }
+    else
+    {
+      m_nMaxAFT = NB_AFTSIZE;
+    }
+    LogDebug("audPin:CalcAverageFtime m_nMaxAFT: %d, SampDur: %03.6f", m_nMaxAFT, (float)demux.m_dfAudSampleDuration);
+  }
+
     // Calculate the mean timestamp difference
-  if (m_nNextAFT >= NB_AFTSIZE)
+  if (m_nNextAFT >= m_nMaxAFT)
   {
-    m_fAFTMean = m_llAFTSumAvg / (double)NB_AFTSIZE;
+    m_fAFTMean = m_llAFTSumAvg / (double)m_nMaxAFT;
   }
   else if (m_nNextAFT > 1)
   {
@@ -689,9 +708,9 @@ void CAudioPin::CalcAverageFtime(double ftime)
     m_fAFTMean = ftime;
   }
 
-    // Update the rolling timestamp to presentation diff average
-    // (these values are initialised in OnThreadStartPlay())
-  int tempNextASD = (m_nNextAFT % NB_AFTSIZE);
+  // Update the rolling timestamp to presentation diff average
+  // (these values are initialised in OnThreadStartPlay())
+  int tempNextASD = (m_nNextAFT % m_nMaxAFT);
   m_llAFTSumAvg -= m_pllAFT[tempNextASD];
   m_pllAFT[tempNextASD] = ftime;
   m_llAFTSumAvg += ftime;
@@ -703,6 +722,11 @@ void CAudioPin::CalcAverageFtime(double ftime)
 double CAudioPin::GetAudToPresMeanDelta()
 {
   return m_fAFTMean;
+}
+
+double CAudioPin::GetAudioPresToRefDiff()
+{
+  return  m_fAFTMean - m_fAFTMeanRef;
 }
 
 bool CAudioPin::IsInFillBuffer()

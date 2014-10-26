@@ -23,7 +23,7 @@
 #include "tsreader.h"
 #include "mediaseeking.h"
 
-#define NB_AFTSIZE 16
+#define NB_AFTSIZE 300
 
 class CAudioPin : public CSourceStream, public CSourceSeeking
 {
@@ -63,6 +63,7 @@ public:
   void SetAddPMT();
   double GetAudToPresMeanDelta();
   DWORD  m_FillBuffSleepTime;
+  double GetAudioPresToRefDiff();
 
 protected:
   HRESULT   UpdateFromSeek();
@@ -83,6 +84,8 @@ protected:
   int     m_nNextAFT;
 	double  m_fAFTMean;
 	double  m_llAFTSumAvg;	
+	double  m_fAFTMeanRef;
+	int     m_nMaxAFT;
     
   DWORD m_LastFillBuffTime;
   int   m_sampleCount;

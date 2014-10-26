@@ -286,6 +286,7 @@ public:
   bool            m_bSubPinConnectAlways;
   REFERENCE_TIME  m_regAudioDelay;
   REFERENCE_TIME  m_regSlowPlayInPPM;
+  int             m_AutoSpeedAdjust;
 
   CLSID           GetCLSIDFromPin(IPin* pPin);
   HRESULT         GetSubInfoFromPin(IPin* pPin);
