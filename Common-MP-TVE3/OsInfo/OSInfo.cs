@@ -200,10 +200,14 @@ namespace OSInfo
       /// Windows 8
       ///</summary>
       Windows8,
-	  ///<summary>
-      /// Windows 8
+      ///<summary>
+      /// Windows 81
       ///</summary>
       Windows81,
+      ///<summary>
+      /// Windows 10
+      ///</summary>
+      Windows10,
       ///<summary>
       /// Windows 2003 Server
       ///</summary>
@@ -223,7 +227,11 @@ namespace OSInfo
       ///<summary>
       /// Windows 2012 Server
       ///</summary>
-      Windows2012
+      Windows2012,
+      ///<summary>
+      /// Windows 2012 R2 Server
+      ///</summary>
+      Windows2012R2
     }
 
     /// <summary>
@@ -498,8 +506,6 @@ namespace OSInfo
                       {
                         osName = GetSystemMetrics(SM_SERVERR2) ? "Windows Server 2003 R2" : "Windows Server 2003";
                       }
-
-
                       break;
                   }
                   break;
@@ -518,7 +524,10 @@ namespace OSInfo
                       osName = OSProductType == NT_WORKSTATION ? "Windows 8" : "Windows 2012";
                       break;
                     case 3:
-                      osName = OSProductType == NT_WORKSTATION ? "Windows 81" : "Windows 2012";
+                      osName = OSProductType == NT_WORKSTATION ? "Windows 81" : "Windows 2012 R2";
+                      break;
+                    case 4:
+                      osName = OSProductType == NT_WORKSTATION ? "Windows 10" : "Windows 2012 R2";
                       break;
                   }
                   break;
@@ -559,7 +568,9 @@ namespace OSInfo
         case 62:
           return OSProductType == NT_WORKSTATION ? OSList.Windows8 : OSList.Windows2012;
         case 63:
-          return OSProductType == NT_WORKSTATION ? OSList.Windows81 : OSList.Windows2012;
+          return OSProductType == NT_WORKSTATION ? OSList.Windows81 : OSList.Windows2012R2;
+        case 64:
+          return OSProductType == NT_WORKSTATION ? OSList.Windows10 : OSList.Windows2012R2;  
       }
       return OSList.Windows2000andPrevious;
     }
@@ -607,6 +618,10 @@ namespace OSInfo
       if (VerifyDesktopOSMinRequirement(6, 3, 9600, NT_WORKSTATION, 0))
       { // Windows 8.1 RTM
         return OsSupport.FullySupported;
+      }
+      if (VerifyDesktopOSMinRequirement(6, 4, 9841, NT_WORKSTATION, 0))
+      { // Windows 10 Preview
+        return OsSupport.NotSupported;
       }
       if (IsServer())
       { // any server OS
@@ -676,6 +691,16 @@ namespace OSInfo
       return VerifyVersionGreaterEqual(6, 3);
     }
 
+    /// <summary>
+    /// Return if running on Windows10 or later
+    /// </summary>
+    /// <returns>true means Windows 10 or later</returns>
+    /// <returns>false means Win 8.1 or previous</returns>
+    public static bool Win10OrLater()
+    {
+      return VerifyVersionGreaterEqual(6, 4);
+    }
+    
     /// <summary>
     /// Return a numeric value rappresenting OS version
     /// </summary>
