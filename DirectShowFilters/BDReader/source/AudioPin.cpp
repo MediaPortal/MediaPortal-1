@@ -487,7 +487,11 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
             if (!m_bFlushing)
             {
-              ProcessAudioSample(buffer, pSample);
+              BYTE* pSampleBuffer = NULL;
+              pSample->SetActualDataLength(buffer->GetDataSize());
+              pSample->GetPointer(&pSampleBuffer);
+              memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
+
 #ifdef LOG_AUDIO_PIN_SAMPLES
              LogDebug("aud: %6.3f corr %6.3f Playlist time %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, rtCorrectedStartTime / 10000000.0,
                 buffer->rtPlaylistTime / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);
@@ -570,99 +574,6 @@ void CAudioPin::JoinAudioBuffers(Packet* pBuffer, CDeMultiplexer* pDemuxer)
       }
     }
   }
-}
-
-void CAudioPin::ProcessAudioSample(Packet* pBuffer, IMediaSample *pSample)
-{
-  BYTE* pSampleBuffer;
-
-  if (m_mt.subtype == MEDIASUBTYPE_PCM)
-  {
-    WAVEFORMATEXTENSIBLE* wfe = (WAVEFORMATEXTENSIBLE*)pBuffer->pmt->pbFormat;
-    WAVEFORMATEX* wf = (WAVEFORMATEX*)wfe;
-
-    int bufSize = pBuffer->GetDataSize();
-    bufSize -= LPCM_HEADER_SIZE;
-
-    BYTE* header = pBuffer->GetData();
-    int bytesPerSample = (wfe->Samples.wValidBitsPerSample+4)>>3;
-    int channel_layout = header[2] >> 4;
-    int nChannels = wf->nChannels;
-    int channelMap = channel_map_layouts[channel_layout];
-    int discChannels = (nChannels + 1) &0xfe;
-    
-#ifdef SOUNDDEBUG
-    LogDebug("Input Channels %d Output Channels %d nSamples Calc %d bytesPerSample %d",
-      discChannels, nChannels, bufSize / (bytesPerSample * discChannels),bytesPerSample);
-#endif
-
-    int samples = bufSize / (bytesPerSample * discChannels);
-
-    pSample->SetActualDataLength(samples * wf->nChannels * ((bytesPerSample+1)&0xfe));
-    pSample->GetPointer(&pSampleBuffer);
-
-    UINT32* dst32 = (UINT32*)pSampleBuffer;
-    BYTE* src = pBuffer->GetData() + LPCM_HEADER_SIZE;
-
-    ConvertLPCMFromBE(src, dst32, nChannels, samples, bytesPerSample , channelMap);
-  }
-  else // no specific handling - just copy the audio data
-  {
-    pSample->SetActualDataLength(pBuffer->GetDataSize());
-    pSample->GetPointer(&pSampleBuffer);
-    memcpy(pSampleBuffer, pBuffer->GetData(), pBuffer->GetDataSize());
-  }
-}
-
-// switches the audio from big to little endian
-// param src pointer to source data
-// param dest pointer to destination for converted data
-// param channels is the number of valid channels in the input stream
-// param nSamples is the number of samples present
-// param samplesize is the size in bytes of the sample (2 for 16 bit and 3 for 24 bit)
-void CAudioPin::ConvertLPCMFromBE(BYTE * src,void * dest,int channels, int nSamples, int sampleSize, int channelMap)
-{
-  UINT16* dst16 = (UINT16*)dest;
-  UINT32* dst32 = (UINT32*)dest;
-  BYTE* csrc;
-  int inputChannels = (channels + 1) & 0xfe; // there are always an even number of channels
-  int outputChannels = channels;
-  do 
-  {
-    int channel = outputChannels;
-    do 
-    {
-      csrc = src + CHANNEL_MAP[channelMap][outputChannels-channel] * sampleSize;
-      if (sampleSize == 2) // 16 bit
-      {
-        *dst16++ = *csrc<<8|*(csrc+1);
-#ifdef SOUNDDEBUG
-        LogDebug("Input 16 bit %4X:%02X%02X Output %4X:%04X", csrc,*(csrc+1),*csrc,dst16-2,*(dst16-1));
-#endif
-      }
-      else
-      {
-        *dst32++ = (*csrc<<16|*(csrc+1)<<8|*(csrc+2)) << 8;
-#ifdef SOUNDDEBUG
-        LogDebug("Input 24 bit %4X:%02X%02X%02X Output %4X:%08X", csrc,*(csrc+2),*(csrc+1),*csrc,dst32-4,*(dst32-1));
-#endif
-      }
-    } while (--channel);
-    src += inputChannels * sampleSize;
-#ifdef SOUNDDEBUG
-    if (inputChannels!=outputChannels)
-    {
-      if (sampleSize == 2)
-      {
-        LogDebug("Dropped 16bit %4X:%02X%02X", src-2,*(src-1),*(src-2));
-      }
-      else
-      {
-        LogDebug("Dropped 24bit %4X:%02X%02X%02X", src-3,*(src-1),*(src-2),*(src-3));
-      }
-    }
-#endif
-  } while (--nSamples);
 }
 
 bool CAudioPin::IsConnected()
