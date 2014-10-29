@@ -185,7 +185,6 @@
     <ClCompile Include="source\Playlist.cpp" />
     <ClCompile Include="source\PlaylistManager.cpp" />
     <ClCompile Include="source\StreamParser.cpp" />
-    <ClCompile Include="source\SubtitlePin.cpp" />
     <ClCompile Include="source\utils.cpp" />
     <ClCompile Include="source\VideoPin.cpp" />
   </ItemGroup>
@@ -214,7 +213,6 @@
     <ClInclude Include="source\PlaylistManager.h" />
     <ClInclude Include="source\StdAfx.h" />
     <ClInclude Include="source\StreamParser.h" />
-    <ClInclude Include="source\SubtitlePin.h" />
     <ClInclude Include="source\VideoPin.h" />
     <ClInclude Include="..\shared\DebugSettings.h" />
   </ItemGroup>
