@@ -2088,7 +2088,7 @@ namespace MediaPortal
             Thread.Sleep(20);
           } while (!SplashScreen.IsStopped());
           SplashScreen = null;
-          
+          MediaPortalApp.ShowStartupWarningDialogs();
         }
 
         if (MinimizeOnStartup && _firstTimeWindowDisplayed)

@@ -111,7 +111,7 @@ public class MediaPortalApp : D3D, IRender
   private static string         _alternateConfig;
   private static string         _safePluginsList;
   private string                _dateFormat;
-  private string                _outdatedSkinName;
+  private static string         _outdatedSkinName;
   private static DateTime       _lastOnresume;
   private DateTime              _updateTimer;
   private DateTime              _lastContextMenuAction;
@@ -2669,10 +2669,6 @@ public class MediaPortalApp : D3D, IRender
       Log.Error("MediaPortalApp: Error setting date and time properties - {0}", ex.Message);
     }
 
-    if (_outdatedSkinName != null || PluginManager.IncompatiblePluginAssemblies.Count > 0 || PluginManager.IncompatiblePlugins.Count > 0)
-    {
-      GUIWindowManager.SendThreadCallback(ShowStartupWarningDialogs, 0, 0, null);
-    }
     Log.Debug("Main: Auto play start listening");
     AutoPlay.StartListening();
 
@@ -2739,15 +2735,7 @@ public class MediaPortalApp : D3D, IRender
     }
   }
 
-
-  /// <summary>
-  /// 
-  /// </summary>
-  /// <param name="param1"></param>
-  /// <param name="param2"></param>
-  /// <param name="data"></param>
-  /// <returns></returns>
-  private int ShowStartupWarningDialogs(int param1, int param2, object data)
+  public static void ShowStartupWarningDialogs()
   {
     // If skin is outdated it may not have a skin file for this dialog but user may choose to use it anyway
     // So show incompatible plugins dialog first (possibly using default skin)
@@ -2760,13 +2748,14 @@ public class MediaPortalApp : D3D, IRender
     if (_outdatedSkinName != null)
     {
       var dlg = (GUIDialogOldSkin)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OLD_SKIN);
+      
       dlg.UserSkin = _outdatedSkinName;
+      _outdatedSkinName = null;
       dlg.DoModal(GUIWindowManager.ActiveWindow);
     }
 
-    return 0;
+    return;
   }
-
 
   /// <summary>
   /// Load string_xx.xml based on config
