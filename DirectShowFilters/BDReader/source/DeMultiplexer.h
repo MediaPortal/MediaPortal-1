@@ -58,10 +58,8 @@ public:
   Packet*    GetVideo();
   Packet*    GetAudio();
   Packet*    GetAudio(int playlist, int clip);
-  Packet*    GetSubtitle();
   void       OnTsPacket(byte* tsPacket);
 
-  void       FillSubtitle(CTsHeader& header, byte* tsPacket);
   void       FillAudio(CTsHeader& header, byte* tsPacket);
   void       FillVideo(CTsHeader& header, byte* tsPacket);
   void       FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> p, bool pFlushBuffers = false);
@@ -100,13 +98,10 @@ public:
   bool       HoldAudio();
   void       SetHoldAudio(bool onOff);
   void       SetHoldVideo(bool onOff);
-  void       SetHoldSubtitle(bool onOff);
   bool       HoldVideo();
-  bool       HoldSubtitle();
   void       ThreadProc();
   void       FlushVideo();
   void       FlushAudio();
-  void       FlushSubtitle();
   int        GetVideoServiceType();
 
   void SetMediaChanging(bool onOff);
@@ -165,13 +160,11 @@ private:
   
   CCritSec m_sectionAudio;
   CCritSec m_sectionVideo;
-  CCritSec m_sectionSubtitle;
   CCritSec m_sectionMediaChanging;
 
   StreamParser* m_videoParser;
   StreamParser* m_audioParser;
 
-  vector<Packet*> m_vecSubtitleBuffers;
   UINT32 m_nAudioPesLenght;
   
   typedef vector<Packet*>::iterator ivecVBuffers;
@@ -183,7 +176,6 @@ private:
   bool m_VideoValidPES;
   int  m_WaitHeaderPES;
 
-  Packet* m_pCurrentSubtitleBuffer;
   Packet* m_pCurrentVideoBuffer;
   Packet* m_pCurrentAudioBuffer;
 
@@ -194,22 +186,18 @@ private:
   int m_videoServiceType;
 
   unsigned int m_audioPid;
-  unsigned int m_currentSubtitlePid;
   unsigned int m_iSubtitleStream;
 
   void FlushPESBuffers(bool bDiscardData, bool bSetCurrentClipFilled);
 
   bool m_bHoldAudio;
   bool m_bHoldVideo;
-  bool m_bHoldSubtitle;
   int m_iAudioIdx;
 
   int m_loopLastSearch;
 
   bool m_bWaitForMediaChange;
   bool m_bReadFailed;
-
-  int (CALLBACK *m_pSubUpdateCallback)(int c, void* opts, int* bi);
 
   // Used only for H.264 stream demuxing
   CAutoPtr<Packet> m_p;
@@ -237,8 +225,6 @@ private:
   bool m_bVideoFormatParsed;
   bool m_bAudioFormatParsed;
   
-  bool m_bUpdateSubtitleOffset;
-
   REFERENCE_TIME m_rtTitleDuration;
   REFERENCE_TIME m_nMPEG2LastTitleDuration;
 

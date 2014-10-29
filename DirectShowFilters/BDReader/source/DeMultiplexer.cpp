@@ -30,8 +30,6 @@
 #include "bdreader.h"
 #include "audioPin.h"
 #include "videoPin.h"
-#include "subtitlePin.h"
-#include "..\..\DVBSubtitle3\Source\IDVBSub.h"
 #include "mediaFormats.h"
 #include "h264nalu.h"
 
@@ -48,20 +46,15 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_filter.lib.SetEventObserver(this);
   m_pCurrentVideoBuffer = NULL;
   m_pCurrentAudioBuffer = new Packet();
-  m_pCurrentSubtitleBuffer = new Packet();
   m_iAudioStream = 0;
   m_AudioStreamType = NO_STREAM;
-  m_iSubtitleStream = 0;
   m_audioPid = 0;
-  m_currentSubtitlePid = 0;
   m_bEndOfFile = false;
   m_bHoldAudio = false;
   m_bHoldVideo = false;
-  m_bHoldSubtitle = false;
   m_bShuttingDown = false;
   m_iAudioIdx = -1;
   m_bRebuildOngoing = false;
-  m_pSubUpdateCallback = NULL;
   SetMediaChanging(false);
 
   m_WaitHeaderPES = -1 ;
@@ -70,8 +63,6 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
 
   m_bReadFailed = false;
   m_bFlushBuffersOnPause = false;
-
-  m_bUpdateSubtitleOffset = true;
 
   m_fHasAccessUnitDelimiters = false;
 
@@ -121,13 +112,11 @@ CDeMultiplexer::~CDeMultiplexer()
 
   delete m_pCurrentVideoBuffer;
   delete m_pCurrentAudioBuffer;
-  delete m_pCurrentSubtitleBuffer;
   delete m_videoParser;
   delete m_audioParser;
 
   m_pl.RemoveAll();
 
-  m_subtitleStreams.clear();
   m_audioStreams.clear();
 }
 
@@ -255,17 +244,6 @@ int CDeMultiplexer::GetCurrentAudioStreamType()
     return m_audioStreams[m_iAudioStream].audioType;
 }
 
-// This methods selects the subtitle stream specified
-bool CDeMultiplexer::SetSubtitleStream(__int32 stream)
-{
-  if (stream < 0 || stream >= (__int32)m_subtitleStreams.size())
-    return S_FALSE;
-
-  m_iSubtitleStream = stream;
-
-  return S_OK;
-}
-
 bool CDeMultiplexer::GetCurrentSubtitleStream(__int32 &stream)
 {
   stream = m_iSubtitleStream;
@@ -296,8 +274,7 @@ bool CDeMultiplexer::GetSubtitleStreamCount(__int32 &count)
 
 bool CDeMultiplexer::SetSubtitleResetCallback(int(CALLBACK *cb)(int, void*, int*))
 {
-  m_pSubUpdateCallback = cb;
-  return S_OK;
+  return true;
 }
 
 bool CDeMultiplexer::GetSubtitleStreamType(__int32 stream, __int32 &type)
@@ -346,31 +323,6 @@ void CDeMultiplexer::FlushAudio()
   m_pCurrentAudioBuffer = new Packet();
 }
 
-void CDeMultiplexer::FlushSubtitle()
-{
-  LogDebug("demux:flush subtitle");
-  CAutoLock lock (&m_sectionSubtitle);
-  delete m_pCurrentSubtitleBuffer;
-  ivecSBuffers it = m_vecSubtitleBuffers.begin();
-  
-  while (it != m_vecSubtitleBuffers.end())
-  {
-    Packet* subtitleBuffer = *it;
-
-    it = m_vecSubtitleBuffers.erase(it);
-    LogDebug("Flush Subtitle - sample was removed clip: %d pl: %d start: %03.5f", 
-      subtitleBuffer->nClipNumber, subtitleBuffer->nPlaylist, subtitleBuffer->rtStart / 10000000.0);
-
-    delete subtitleBuffer;
-  }
-
-  m_pCurrentSubtitleBuffer = new Packet();
-  
-  m_pCurrentSubtitleBuffer->nPlaylist = -1;
-  m_pCurrentSubtitleBuffer->nClipNumber = -1;
-  m_pCurrentSubtitleBuffer->rtTitleDuration = 0;
-}
-
 HRESULT CDeMultiplexer::FlushToChapter(UINT32 nChapter)
 {
   LogDebug("demux:ChangingChapter");
@@ -379,14 +331,12 @@ HRESULT CDeMultiplexer::FlushToChapter(UINT32 nChapter)
 
   SetHoldAudio(true);
   SetHoldVideo(true);
-  SetHoldSubtitle(true);
 
   // Make sure data isn't being processed
   CAutoLock lockRead(&m_sectionRead);
 
   CAutoLock lockVid(&m_sectionVideo);
   CAutoLock lockAud(&m_sectionAudio);
-  CAutoLock lockSub(&m_sectionSubtitle);
 
   m_playlistManager->ClearAllButCurrentClip();
 
@@ -395,13 +345,11 @@ HRESULT CDeMultiplexer::FlushToChapter(UINT32 nChapter)
     FlushPESBuffers(true, false);
     FlushAudio();
     FlushVideo();
-    FlushSubtitle();
     hr = S_OK;
   }
 
   SetHoldAudio(false);
   SetHoldVideo(false);
-  SetHoldSubtitle(false);
 
   return hr;
 }
@@ -412,7 +360,6 @@ void CDeMultiplexer::Flush(bool pSeeking, REFERENCE_TIME rtSeekTime)
 
   SetHoldAudio(true);
   SetHoldVideo(true);
-  SetHoldSubtitle(true);
 
   // Make sure data isn't being processed
   CAutoLock lockRead(&m_sectionRead);
@@ -421,40 +368,14 @@ void CDeMultiplexer::Flush(bool pSeeking, REFERENCE_TIME rtSeekTime)
 
   CAutoLock lockVid(&m_sectionVideo);
   CAutoLock lockAud(&m_sectionAudio);
-  CAutoLock lockSub(&m_sectionSubtitle);
 
   m_playlistManager->ClearAllButCurrentClip();
 
-  IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
-  if (pDVBSubtitleFilter)
-    pDVBSubtitleFilter->NotifyChannelChange();
-
   FlushAudio();
   FlushVideo();
-  FlushSubtitle();
 
   SetHoldAudio(false);
   SetHoldVideo(false);
-  SetHoldSubtitle(false);
-}
-
-Packet* CDeMultiplexer::GetSubtitle()
-{
-  if (m_currentSubtitlePid == 0) return NULL;
-  if (m_bEndOfFile) return NULL;
-  if (m_bHoldSubtitle) return NULL;
-
-  CAutoLock lock (&m_sectionSubtitle);
-
-  if (m_vecSubtitleBuffers.size() != 0)
-  {
-    ivecSBuffers it = m_vecSubtitleBuffers.begin();
-    Packet* subtitleBuffer = *it;
-    m_vecSubtitleBuffers.erase(it);
-    return subtitleBuffer;
-  }
-
-  return NULL;
 }
 
 Packet* CDeMultiplexer::GetVideo()
@@ -680,13 +601,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv)
       break;
 
     case BD_EVENT_PG_TEXTST_STREAM:
-    {
-      IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
-      if (pDVBSubtitleFilter)
-        pDVBSubtitleFilter->NotifyChannelChange();
-
       break;
-    }
 
     case BD_EVENT_PLAYITEM:
       LogDebug("demux: New playitem %d", pEv.param);
@@ -701,9 +616,6 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv)
 
         m_rtOffset = clipStart - clipIn;
         m_nClip = pEv.param;
-
-        if (m_rtOffset != rtOldOffset)
-          m_bUpdateSubtitleOffset = true;
 
         BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();
         if (!clip)
@@ -757,7 +669,6 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   if (header.TScrambling) return;
   if (header.TransportError) return;
 
-  FillSubtitle(header, tsPacket);
   FillAudio(header, tsPacket);
   FillVideo(header, tsPacket);
 }
@@ -1645,66 +1556,6 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
   }
 }
 
-/// This method will check if the tspacket is an subtitle packet
-/// if so store it in the subtitle buffers
-void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
-{
-  if (!m_filter.GetSubtitlePin()->IsConnected()) return;
-  if (m_iSubtitleStream < 0 || m_iSubtitleStream >= m_subtitleStreams.size()) return;
-
-  IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
-  if (pDVBSubtitleFilter)
-  {
-    // If current subtitle PID has changed notify the DVB sub filter
-    if (m_subtitleStreams[m_iSubtitleStream].pid > 0 &&
-        m_subtitleStreams[m_iSubtitleStream].pid != m_currentSubtitlePid)
-    {
-      pDVBSubtitleFilter->SetSubtitlePid(m_subtitleStreams[m_iSubtitleStream].pid);
-      pDVBSubtitleFilter->SetFirstPcr(0);
-      m_currentSubtitlePid = m_subtitleStreams[m_iSubtitleStream].pid;
-
-      pDVBSubtitleFilter->SetHDMV(true);
-    }
-
-    if (m_bUpdateSubtitleOffset)
-    {
-      m_bUpdateSubtitleOffset = false;
-
-      CRefTime refTime = -CONVERT_90KHz_DS(m_rtOffset) + m_rtStallTime;
-        
-      LogDebug("demux: Set subtitle compensation %6.3f", refTime.Millisecs() / 1000.0f);
-      pDVBSubtitleFilter->SetTimeCompensation(refTime);
-    }    
-  }
-
-  if (m_currentSubtitlePid == 0 || m_currentSubtitlePid != header.Pid) return;
-  if (header.AdaptionFieldOnly()) return;
-
-  CAutoLock lock (&m_sectionSubtitle);
-  if (!header.AdaptionFieldOnly())
-  {
-    if (m_vecSubtitleBuffers.size() > MAX_BUF_SIZE)
-    {
-      ivecSBuffers it = m_vecSubtitleBuffers.begin();
-      Packet* subtitleBuffer = *it;
-      delete subtitleBuffer;
-      m_vecSubtitleBuffers.erase(it);
-    }
-
-    m_pCurrentSubtitleBuffer->rtStart = 0;
-    m_pCurrentSubtitleBuffer->SetCount(m_pCurrentSubtitleBuffer->GetDataSize() + 188);
-    memcpy(m_pCurrentSubtitleBuffer->GetData() + m_pCurrentSubtitleBuffer->GetDataSize() - 188, tsPacket, 188);
-
-    m_pCurrentSubtitleBuffer->nClipNumber = m_nClip;
-    m_pCurrentSubtitleBuffer->nPlaylist = m_nPlaylist;
-    m_pCurrentSubtitleBuffer->rtTitleDuration = m_rtTitleDuration;
-
-    m_vecSubtitleBuffers.push_back(m_pCurrentSubtitleBuffer);
-
-    m_pCurrentSubtitleBuffer = new Packet();
-  }
-}
-
 void CDeMultiplexer::ParseVideoStream(BLURAY_CLIP_INFO* clip)
 {
   if (clip)
@@ -1804,14 +1655,6 @@ void CDeMultiplexer::ParseSubtitleStreams(BLURAY_CLIP_INFO* clip)
 
       m_subtitleStreams.push_back(subtitle);
     }
-
-    if (m_pSubUpdateCallback)
-    {
-      int bitmap_index = -1;
-      (*m_pSubUpdateCallback)(m_subtitleStreams.size(), (m_subtitleStreams.size() > 0 ? &m_subtitleStreams[0] : NULL), &bitmap_index);
-      if (bitmap_index >= 0)
-        SetSubtitleStream(bitmap_index);
-    }
   }
 }
 
@@ -1839,19 +1682,6 @@ void CDeMultiplexer::SetHoldVideo(bool onOff)
 {
   LogDebug("demux: set hold video:%d", onOff);
   m_bHoldVideo = onOff;
-}
-
-///Returns whether the demuxer is allowed to block in GetSubtitle() or not
-bool CDeMultiplexer::HoldSubtitle()
-{
-  return m_bHoldSubtitle;
-}
-
-///Sets whether the demuxer may block in GetSubtitle() or not
-void CDeMultiplexer::SetHoldSubtitle(bool onOff)
-{
-  LogDebug("demux: set hold subtitle:%d", onOff);
-  m_bHoldSubtitle = onOff;
 }
 
 void CDeMultiplexer::SetMediaChanging(bool onOff)
