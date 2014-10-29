@@ -26,8 +26,6 @@
 
 #include "pcrdecoder.h"
 #include "demultiplexer.h"
-#include "..\..\DVBSubtitle3\Source\IDVBSub.h"
-#include "ISubtitleStream.h"
 #include "IAudioStream.h"
 #include "LibBlurayWrapper.h"
 #include "BDEventObserver.h"
@@ -46,7 +44,6 @@
 
 using namespace std;
 
-class CSubtitlePin;
 class CAudioPin;
 class CVideoPin;
 class CBDReader;
@@ -109,7 +106,6 @@ class CBDReaderFilter : public CSource,
                         public IFileSourceFilter, 
                         public IAMFilterMiscFlags, 
                         public IAMStreamSelect, 
-                        public ISubtitleStream, 
                         public IAudioStream,
                         public IBDReader,
                         public BDEventObserver,
@@ -146,14 +142,6 @@ private:
   // IAudioStream
   STDMETHODIMP GetAudioStream(__int32 &stream);
 
-  // ISubtitleStream
-  STDMETHODIMP SetSubtitleStream(__int32 stream);
-  STDMETHODIMP GetSubtitleStreamType(__int32 stream, int &type);
-  STDMETHODIMP GetSubtitleStreamCount(__int32 &count);
-  STDMETHODIMP GetCurrentSubtitleStream(__int32 &stream);
-  STDMETHODIMP GetSubtitleStreamLanguage(__int32 stream,char* szLanguage);
-  STDMETHODIMP SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int count, void* opts, int* select)); 
-
 public:
   // IBDReader
   STDMETHODIMP SetGraphCallback(IBDReaderCallback* pCallback);
@@ -188,8 +176,6 @@ public:
   void            Seek(REFERENCE_TIME rtAbsSeek);
   CAudioPin*      GetAudioPin();
   CVideoPin*      GetVideoPin();
-  CSubtitlePin*   GetSubtitlePin();
-  IDVBSubtitle*   GetSubtitleFilter();
   FILTER_STATE    State() {return m_State;}
 
   // IMediaSeeking
@@ -229,16 +215,12 @@ private:
   void DeliverBeginFlush();
   void DeliverEndFlush();
 
-  HRESULT FindSubtitleFilter();
-
   CAudioPin*      m_pAudioPin;
   CVideoPin*      m_pVideoPin;
-  CSubtitlePin*	  m_pSubtitlePin;
   WCHAR           m_fileName[1024];
   CCritSec        m_section;
   CDeMultiplexer  m_demultiplexer;
 
-  IDVBSubtitle*   m_pDVBSubtitle;
   IBDReaderCallback* m_pCallback;
   IBDReaderAudioChange* m_pRequestAudioCallback;
 

@@ -594,7 +594,6 @@ namespace MediaPortal.Player
     protected bool _forceTitle = false;
     protected int _titleToPlay = 0;
     protected VMR9Util _vmr9 = null;
-    protected Player.TSReaderPlayer.ISubtitleStream _subtitleStream = null;
     protected IBDReader _ireader = null;
     protected int iSpeed = 1;
     protected int _positionX = 0;
@@ -623,7 +622,6 @@ namespace MediaPortal.Player
     protected IBaseFilter _audioRendererFilter = null;
     protected IBaseFilter VideoCodec = null;
     protected IBaseFilter AudioCodec = null;
-    protected SubtitleSelector _subSelector = null;
 
     /// <summary> control interface. </summary>
     protected IMediaControl _mediaCtrl = null;
@@ -1458,11 +1456,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (_subSelector == null)
-        {
-          return 0;
-        }
-        return _subSelector.CountOptions();
+        return 0;
       }
     }
 
@@ -1473,28 +1467,10 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (_subSelector != null)
-        {
-          return _subSelector.GetCurrentOption();
-        }
-        else
-        {
-          return 0;
-        }
+        return 0;
       }
       set
       {
-        if (_subSelector != null)
-        {
-          try
-          {
-            _subSelector.SetOption(value);
-          }
-          catch(Exception)
-          {
-            Log.Error("BDPlayer: CurrentSubtitleStream failed - TODO: add stream cache on .ax side");
-          }
-        }
       }
     }
 
@@ -1503,14 +1479,8 @@ namespace MediaPortal.Player
     /// </summary>
     public override string SubtitleLanguage(int iStream)
     {
-      if (_subSelector != null)
-      {
-        return GetFullLanguageName(_subSelector.GetLanguage(iStream));
-      }
-      else
-      {
-        return Strings.Unknown;
-      }
+      //return GetFullLanguageName(_subSelector.GetLanguage(iStream));
+      return Strings.Unknown;
     }
 
     /// <summary>
@@ -1528,21 +1498,10 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (_subSelector != null)
-        {
-          return true;//return _dvbSubRenderer.RenderSubtitles;
-        }
-        else
-        {
-          return false;
-        }
+        return false;
       }
       set
       {
-        if (_subSelector != null)
-        {
-          //_dvbSubRenderer.RenderSubtitles = value;
-        }
       }
     }
 
@@ -2131,15 +2090,6 @@ namespace MediaPortal.Player
         }
         DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
 
-        //remove InternalScriptRenderer as it takes subtitle pin
-        disableISR();
-
-        // disable Closed Captions!
-        disableCC();
-
-        /*if (_mChangedMediaType == MediaType.Audio)
-        RemoveAudioR();*/
-
         try
         {
           hr = _mediaCtrl.Run();
@@ -2299,40 +2249,6 @@ namespace MediaPortal.Player
       }
     }
 
-    protected void disableCC()
-    {
-      while (true)
-      {
-        IBaseFilter basefilter;
-        DirectShowUtil.FindFilterByClassID(_graphBuilder, ClassId.Line21_1, out basefilter);
-        if (basefilter == null)
-          DirectShowUtil.FindFilterByClassID(_graphBuilder, ClassId.Line21_2, out basefilter);
-        if (basefilter != null)
-        {
-          _graphBuilder.RemoveFilter(basefilter);
-          DirectShowUtil.ReleaseComObject(basefilter);
-          basefilter = null;
-          Log.Info("BDPlayer: Cleanup Captions");
-        }
-        else
-          break;
-      }
-    }
-
-    protected void disableISR()
-    {
-      #region Remove isr
-      //remove InternalScriptRenderer as it takes subtitle pin
-      IBaseFilter isr = null;
-      DirectShowUtil.FindFilterByClassID(_graphBuilder, ClassId.InternalScriptRenderer, out isr);
-      if (isr != null)
-      {
-        _graphBuilder.RemoveFilter(isr);
-        DirectShowUtil.ReleaseComObject(isr);
-      }
-      #endregion
-    }
-
     protected void SyncAudioRenderer()
     {
       if (_audioRendererFilter != null)
@@ -2346,31 +2262,6 @@ namespace MediaPortal.Player
         _basicAudio = (IBasicAudio)_graphBuilder;
       }
     }
-
-    /*protected void RemoveAudioR()
-    {
-      //Get Audio Renderer
-      if (filterConfig.AudioRenderer.Length > 0 && _audioRendererFilter == null)
-      {
-        _audioRendererFilter = DirectShowUtil.GetFilterByName(_graphBuilder, filterConfig.AudioRenderer);
-      }
-      //Detection if it's the good audio renderer connected
-      bool ResultPinAudioRenderer = false;
-      IPin PinAudioRenderer = DsFindPin.ByDirection(_audioRendererFilter, PinDirection.Input, 0); //audio
-      if (PinAudioRenderer != null)
-        DirectShowUtil.IsPinConnected(PinAudioRenderer, out ResultPinAudioRenderer);
-      if (!ResultPinAudioRenderer && _audioRendererFilter != null)
-      {
-        this._graphBuilder.RemoveFilter(_audioRendererFilter);
-        DirectShowUtil.ReleaseComObject(_audioRendererFilter);
-        _audioRendererFilter = null;
-      }
-      if (PinAudioRenderer != null)
-      {
-        DirectShowUtil.ReleaseComObject(PinAudioRenderer);
-        PinAudioRenderer = null;
-      }
-    }*/
 
     protected void PostProcessAddVideo()
     {
@@ -2727,14 +2618,6 @@ namespace MediaPortal.Player
           DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _interfaceBDReader);
         }
         
-        //remove InternalScriptRenderer as it takes subtitle pin
-        disableISR();
-
-        //disable Closed Captions!
-        disableCC();
-
-        //RemoveAudioR();
-
         DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
 
         #endregion
@@ -2742,16 +2625,6 @@ namespace MediaPortal.Player
         _mediaCtrl = (IMediaControl)_graphBuilder;
         _mediaEvt = (IMediaEventEx)_graphBuilder;
         _mediaSeeking = (IMediaSeeking)_graphBuilder;
-
-        _subtitleStream = (Player.TSReaderPlayer.ISubtitleStream)_interfaceBDReader;
-        if (_subtitleStream == null)
-        {
-          Log.Error("BDPlayer: Unable to get ISubtitleStream interface");
-        }
-
-        // if only dvb subs are enabled, pass null for ttxtDecoder
-        _subSelector = new SubtitleSelector(_subtitleStream, null, null);
-        EnableSubtitle = _subtitlesEnabled;
 
         //Sync Audio Renderer
         SyncAudioRenderer();
