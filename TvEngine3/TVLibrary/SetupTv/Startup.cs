@@ -269,9 +269,7 @@ namespace SetupTv
       }
 
       Log.Info("---- upgrade database schema ----");
-      // Get MySQL server version
-      string currentServerVersion = dlg.GetCurrentServerVersion(startupMode);
-      if (!dlg.UpgradeDBSchema(currentSchemaVersion, currentServerVersion))
+      if (!dlg.UpgradeDBSchema(currentSchemaVersion))
       {
         MessageBox.Show("Failed to upgrade the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
