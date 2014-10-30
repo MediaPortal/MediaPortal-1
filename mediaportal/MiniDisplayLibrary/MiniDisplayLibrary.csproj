@@ -84,6 +84,8 @@
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
@@ -131,6 +133,7 @@
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonSettingsForm.designer.cs">
       <DependentUpon>SoundGraphImonSettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\SharpDisplayManager\SharpDisplayManager.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\ShuttlePF27.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\DM140GINK.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\FicSpectra.cs" />

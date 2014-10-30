@@ -33,7 +33,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         public abstract void DrawImage(Bitmap bitmap);
         public abstract void Initialize();
         public abstract void SetCustomCharacters(int[][] customCharacters);
-        public abstract void SetLine(int line, string message);
+        public abstract void SetLine(int line, string message, ContentAlignment aAlignment);
         public abstract void Setup(string port, int lines, int cols, int delay, int linesG, int colsG, int timeG, bool backLight, int backLightLevel, bool contrast, int contrastLevel, bool BlankOnExit);
         public virtual void Update() { }
         //  Properties

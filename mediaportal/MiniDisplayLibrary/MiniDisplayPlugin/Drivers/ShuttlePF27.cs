@@ -136,7 +136,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// </summary>
     /// <param name="line">The line to display the message on</param>
     /// <param name="message">The message to display</param>
-    public override void SetLine(int line, string message)
+    public override void SetLine(int line, string message, ContentAlignment aAlignment)
     {
       if (line >= Lines)
       {

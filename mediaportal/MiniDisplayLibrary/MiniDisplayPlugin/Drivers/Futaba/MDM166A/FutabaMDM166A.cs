@@ -41,7 +41,6 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Control;
 
-
 #endregion usings
 
 
@@ -863,7 +862,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         /// </summary>
         /// <param name="line">The line to display the message on</param>
         /// <param name="message">The message to display</param>
-        public override void SetLine(int line, string message)
+        public override void SetLine(int line, string message, ContentAlignment aAlignment)
         {
             //if given line exceeds maximum lines of this display
             if (line >= lines)
