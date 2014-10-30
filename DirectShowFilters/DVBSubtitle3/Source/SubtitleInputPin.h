@@ -38,7 +38,6 @@ public:
                 CCritSec *pLock,
                 CCritSec *pReceiveLock,
                 CDVBSubDecoder* pSubDecoder,
-                CHdmvSub* pHdmvSub,
                 HRESULT *phr );
 
   ~CSubtitleInputPin();
@@ -57,8 +56,6 @@ public:
   void Reset();
   void SetSubtitlePid( LONG pPID );
 
-  void SetHDMV( bool pHDMV );
-
   // From CPacketSync
   void OnTsPacket( byte* tsPacket );
 
@@ -73,15 +70,10 @@ public:
 private:
   CDVBSubDecoder*    m_pSubDecoder;
   CPesDecoder*       m_pesDecoder;
-
-  // Hdmv subtitle decoder
-  CHdmvSub*          m_pHdmvSub;
   
   LONG  m_SubtitlePid;
 
   CDVBSub* const    m_pDVBSub;      // Main renderer object
   CCritSec * const	m_pReceiveLock; // Sample critical section
   CCritSec* const   m_Lock;	
-
-  bool              m_bHDMV;        // Blu-ray subtitles in use
 };
