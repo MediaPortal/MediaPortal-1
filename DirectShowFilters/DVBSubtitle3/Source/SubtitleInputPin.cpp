@@ -43,7 +43,6 @@ CSubtitleInputPin::CSubtitleInputPin( CDVBSub *pDVBSub,
                     CCritSec *pLock,
                     CCritSec *pReceiveLock,
                     CDVBSubDecoder* pSubDecoder,
-                    CHdmvSub* pHdmvSub,
                     HRESULT *phr ) :
 
     CBaseInputPin(NAME( "CSubtitleInputPin" ),
@@ -54,7 +53,6 @@ CSubtitleInputPin::CSubtitleInputPin( CDVBSub *pDVBSub,
           m_pReceiveLock( pReceiveLock ),
           m_pDVBSub( pDVBSub ),
           m_pSubDecoder( pSubDecoder ),
-          m_pHdmvSub( pHdmvSub ),
           m_SubtitlePid( -1 ),
           m_Lock( pLock )
 {
@@ -157,15 +155,6 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 
 
 //
-// SetHDMV
-//
-void CSubtitleInputPin::SetHDMV( bool pHDMV )
-{
-  m_bHDMV = pHDMV;
-}
-
-
-//
 // OnTsPacket
 //
 void CSubtitleInputPin::OnTsPacket( byte* tsPacket )
@@ -186,21 +175,10 @@ int CSubtitleInputPin::OnNewPesPacket( int streamid, byte* header, int headerlen
   byte* pesData = NULL;
   byte* pesHeader = NULL;
   
-  if( m_bHDMV ) // Blu-ray subtitles
-  {
-    pesHeader = (unsigned char*)malloc( headerlen );
-    pesData = (unsigned char*)malloc( len );
-    memcpy( pesData, data, len );
-    memcpy( pesHeader, header, headerlen );
-    m_pHdmvSub->ParsePES( pesData, len, pesHeader, headerlen );
-  }
-  else  // DVB subtitles
-  {
-    pesData = (unsigned char*)malloc( headerlen + len );
-    memcpy( pesData, header, headerlen );
-    memcpy( pesData + headerlen, data, len );
-    m_pSubDecoder->ProcessPES( pesData, headerlen + len, m_SubtitlePid );		
-  }
+  pesData = (unsigned char*)malloc( headerlen + len );
+  memcpy( pesData, header, headerlen );
+  memcpy( pesData + headerlen, data, len );
+  m_pSubDecoder->ProcessPES( pesData, headerlen + len, m_SubtitlePid );		
 
   delete pesData;
   delete pesHeader;
@@ -217,9 +195,7 @@ void CSubtitleInputPin::Reset()
   if (m_pesDecoder)
     m_pesDecoder->Reset();
 
-  if (m_bHDMV && m_pHdmvSub)
-    m_pHdmvSub->Reset();
-  else if (m_pSubDecoder)
+  if (m_pSubDecoder)
     m_pSubDecoder->Reset();
 }
 
