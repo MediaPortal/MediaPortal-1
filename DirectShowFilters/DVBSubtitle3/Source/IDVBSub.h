@@ -56,5 +56,4 @@ DECLARE_INTERFACE_( IDVBSubtitle, IUnknown )
   STDMETHOD(SetFirstPcr)( LONGLONG pPcr ) PURE;
   STDMETHOD(SeekDone)( CRefTime& rtSeek ) PURE;
   STDMETHOD(SetTimeCompensation)( CRefTime& rtCompensation ) PURE;
-  STDMETHOD(SetHDMV)( bool pHDMV ) PURE;
 };
