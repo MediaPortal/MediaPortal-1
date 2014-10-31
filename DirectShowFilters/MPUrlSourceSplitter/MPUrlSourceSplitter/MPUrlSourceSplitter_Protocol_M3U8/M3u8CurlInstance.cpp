@@ -26,7 +26,7 @@
 #pragma warning(disable:4005)
 
 #include "M3u8CurlInstance.h"
-//#include "M3u8DumpBox.h"
+#include "M3u8DumpBox.h"
 
 #pragma warning(pop)
 
@@ -160,12 +160,10 @@ CDownloadResponse *CM3u8CurlInstance::CreateDownloadResponse(void)
 
 CDumpBox *CM3u8CurlInstance::CreateDumpBox(void)
 {
-  /*HRESULT result = S_OK;
-  CAfhsDumpBox *box = new CAfhsDumpBox(&result);
+  HRESULT result = S_OK;
+  CM3u8DumpBox *box = new CM3u8DumpBox(&result);
   CHECK_POINTER_HRESULT(result, box, result, E_OUTOFMEMORY);
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(box));
-  return box;*/
-
-  return NULL;
+  return box;
 }

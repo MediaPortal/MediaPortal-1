@@ -167,6 +167,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="M3u8CurlInstance.h" />
     <ClInclude Include="M3u8DownloadRequest.h" />
     <ClInclude Include="M3u8DownloadResponse.h" />
+    <ClInclude Include="M3u8DumpBox.h" />
     <ClInclude Include="M3u8StreamFragment.h" />
     <ClInclude Include="M3u8StreamFragmentCollection.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_M3u8.h" />
@@ -186,6 +187,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClCompile Include="M3u8CurlInstance.cpp" />
     <ClCompile Include="M3u8DownloadRequest.cpp" />
     <ClCompile Include="M3u8DownloadResponse.cpp" />
+    <ClCompile Include="M3u8DumpBox.cpp" />
     <ClCompile Include="M3u8StreamFragment.cpp" />
     <ClCompile Include="M3u8StreamFragmentCollection.cpp" />
     <ClCompile Include="MPUrlSourceSplitter_Protocol_M3u8.cpp" />
