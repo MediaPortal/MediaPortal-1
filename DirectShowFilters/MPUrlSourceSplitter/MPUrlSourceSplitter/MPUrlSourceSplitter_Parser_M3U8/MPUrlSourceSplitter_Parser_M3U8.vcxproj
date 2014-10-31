@@ -157,6 +157,11 @@ echo ^" &gt;&gt; VersionInfo.h
 echo. &gt;&gt; VersionInfo.h
 echo #endif &gt;&gt; VersionInfo.h</Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetName).lib" "$(SolutionDir)bin_$(PlatformName)\lib\$(TargetName).lib"
+copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(TargetFileName)"
+copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(TargetName).pdb"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="MPUrlSourceSplitter_Parser_M3U8.h" />
