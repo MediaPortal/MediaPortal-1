@@ -78,6 +78,8 @@ CRtspResponseHeader *CRtspResponseHeaderFactory::CreateResponseHeader(const wcha
     {
       result = header;
     }
+
+    CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(header));
   }
 
   CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(result));

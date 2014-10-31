@@ -85,10 +85,6 @@ public:
   // @return : true if in collection are some decrypted segment fragments, false otherwise
   bool HasDecryptedSegmentFragments(void);
 
-  // recalculate decrypted segment fragments start positions based on previous stream fragments
-  // @param startIndex : the index of first stream fragment to recalculate start position
-  //void RecalculateDecryptedSegmentFragmentStartPosition(unsigned int startIndex);
-
   /* index methods */
 
   // insert item with specified item index to indexes

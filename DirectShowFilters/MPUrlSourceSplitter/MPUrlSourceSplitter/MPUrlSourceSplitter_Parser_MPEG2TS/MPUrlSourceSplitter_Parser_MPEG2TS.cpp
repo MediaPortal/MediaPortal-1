@@ -1540,13 +1540,13 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
           // just make guess
 
           caller->streamLength = MINIMUM_RECEIVED_DATA_FOR_SPLITTER;
-          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %lld", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, caller->streamLength);
+          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting guess total length: %lld", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, caller->streamLength);
         }
         else if ((caller->GetBytePosition() > (caller->streamLength * 3 / 4)))
         {
           // it is time to adjust stream length, we are approaching to end but still we don't know total length
           caller->streamLength = caller->GetBytePosition() * 2;
-          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %lld", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, caller->streamLength);
+          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting guess total length: %lld", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, caller->streamLength);
         }
       }
       else if (res == S_OK)
@@ -1556,7 +1556,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
         if (streamProgress->GetTotalLength() > caller->streamLength)
         {
           caller->streamLength = streamProgress->GetTotalLength();
-          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %lld", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, caller->streamLength);
+          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting guess total length: %lld", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, caller->streamLength);
         }
       }
 
@@ -1659,24 +1659,32 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
           {
             // connection lost, cannot reopen
             caller->flags |= response->IsConnectionLostCannotReopen() ? PARSER_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN : PARSER_PLUGIN_FLAG_NONE;
-
+            
             // mark current downloading stream fragment as downloaded or remove it, if it has not any data
             if (currentDownloadingFragment != NULL)
             {
-              if (currentDownloadingFragment->GetLength() == 0)
+              if (response->GetBuffer() != NULL)
               {
-                caller->streamFragments->Remove(caller->streamFragmentDownloading, 1);
-
-                // set count of fragments to search for specific position
-                unsigned int firstNotDownloadedFragmentIndex = caller->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(caller->streamFragments->GetStartSearchingIndex());
-                caller->streamFragments->SetSearchCount(((firstNotDownloadedFragmentIndex == UINT_MAX) ? caller->streamFragments->Count() : firstNotDownloadedFragmentIndex) - caller->streamFragments->GetStartSearchingIndex());
+                CHECK_CONDITION_HRESULT(result, currentDownloadingFragment->GetBuffer()->AddToBufferWithResize(response->GetBuffer()) == response->GetBuffer()->GetBufferOccupiedSpace(), result, E_OUTOFMEMORY);
               }
-              else
-              {
-                currentDownloadingFragment->SetDownloaded(true, UINT_MAX);
-                currentDownloadingFragment->SetReadyForAlign(true, UINT_MAX);
 
-                caller->streamFragments->UpdateIndexes(caller->streamFragmentDownloading, 1);
+              if (SUCCEEDED(result))
+              {
+                if (currentDownloadingFragment->GetLength() == 0)
+                {
+                  caller->streamFragments->Remove(caller->streamFragmentDownloading, 1);
+
+                  // set count of fragments to search for specific position
+                  unsigned int firstNotDownloadedFragmentIndex = caller->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(caller->streamFragments->GetStartSearchingIndex());
+                  caller->streamFragments->SetSearchCount(((firstNotDownloadedFragmentIndex == UINT_MAX) ? caller->streamFragments->Count() : firstNotDownloadedFragmentIndex) - caller->streamFragments->GetStartSearchingIndex());
+                }
+                else
+                {
+                  currentDownloadingFragment->SetDownloaded(true, UINT_MAX);
+                  currentDownloadingFragment->SetReadyForAlign(true, UINT_MAX);
+
+                  caller->streamFragments->UpdateIndexes(caller->streamFragmentDownloading, 1);
+                }
               }
 
               caller->streamFragmentDownloading = UINT_MAX;

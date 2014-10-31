@@ -225,6 +225,16 @@ const wchar_t *SkipBlanksW(const wchar_t *str);
 #define SkipBlanks SkipBlanksW
 #endif
 
+const char *SkipBlanksReversedA(const char *str);
+const wchar_t *SkipBlanksReversedW(const wchar_t *str);
+
+#ifdef _MBCS
+#define SkipBlanksReversed SkipBlanksReversedA
+#else
+#define SkipBlanksReversed SkipBlanksReversedW
+#endif
+
+
 char *EscapeA(const char *input);
 wchar_t *EscapeW(const wchar_t *input);
 

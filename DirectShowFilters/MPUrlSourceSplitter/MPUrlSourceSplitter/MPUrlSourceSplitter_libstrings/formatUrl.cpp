@@ -207,3 +207,26 @@ wchar_t *FormatAbsoluteBaseUrl(const wchar_t *baseUrl, const wchar_t *relativeUr
 
   return result;
 }
+
+wchar_t *ReplaceSchema(const wchar_t *url, const wchar_t *schema)
+{
+  wchar_t *result = NULL;
+
+  if ((url != NULL) && (schema != NULL))
+  {
+    int index = IndexOf(url, L"://");
+
+    if (index != (-1))
+    {
+      // schema found
+      result = FormatString(L"%s%s", schema, url + (unsigned int)index);
+    }
+    else
+    {
+      // schema not found, return duplicate
+      result = Duplicate(url);
+    }
+  }
+
+  return result;
+}

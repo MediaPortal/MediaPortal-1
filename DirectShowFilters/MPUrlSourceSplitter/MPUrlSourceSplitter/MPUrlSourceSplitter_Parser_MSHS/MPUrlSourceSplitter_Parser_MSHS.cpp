@@ -398,6 +398,8 @@ HRESULT CMPUrlSourceSplitter_Parser_Mshs::GetParserResult(void)
 
                             FREE_MEM(compressedSmoothStreamingMediaBoxBase64Encoded);
                           }
+
+                          FREE_MEM(compressedSmoothStreamingMediaBox);
                         }
 
                         FREE_MEM(smoothStreamingMediaBox);
@@ -423,30 +425,38 @@ HRESULT CMPUrlSourceSplitter_Parser_Mshs::GetParserResult(void)
 
                         if (SUCCEEDED(this->parserResult))
                         {
-                          // extract cookies from connection parameters
+                          // extract cookies from current protocol connection parameters
                           CParameterCollection *usedCookies = new CParameterCollection(&this->parserResult);
                           CHECK_POINTER_HRESULT(this->parserResult, usedCookies, this->parserResult, E_OUTOFMEMORY);
 
                           if (SUCCEEDED(this->parserResult))
                           {
-                            unsigned int currentCookiesCount = connectionParameters->GetValueUnsignedInt(PARAMETER_NAME_HTTP_COOKIES_COUNT, true, 0);
+                            CParameterCollection *protocolConnectionParameters = new CParameterCollection(&this->parserResult);
+                            CHECK_POINTER_HRESULT(this->parserResult, protocolConnectionParameters, this->parserResult, E_OUTOFMEMORY);
+                            CHECK_CONDITION_EXECUTE(SUCCEEDED(this->parserResult), this->parserResult = this->protocolHoster->GetConnectionParameters(protocolConnectionParameters));
 
-                            for (unsigned int i = 0; (SUCCEEDED(this->parserResult) && (i < currentCookiesCount)); i++)
+                            if (SUCCEEDED(protocolConnectionParameters))
                             {
-                              wchar_t *httpCookieName = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
-                              CHECK_POINTER_HRESULT(this->parserResult, httpCookieName, this->parserResult, E_OUTOFMEMORY);
+                              unsigned int currentCookiesCount = protocolConnectionParameters->GetValueUnsignedInt(PARAMETER_NAME_HTTP_COOKIES_COUNT, true, 0);
 
-                              if (SUCCEEDED(this->parserResult))
+                              for (unsigned int i = 0; (SUCCEEDED(this->parserResult) && (i < currentCookiesCount)); i++)
                               {
-                                const wchar_t *cookieValue = connectionParameters->GetValue(httpCookieName, true, NULL);
-                                CHECK_POINTER_HRESULT(this->parserResult, cookieValue, this->parserResult, E_OUTOFMEMORY);
+                                wchar_t *httpCookieName = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
+                                CHECK_POINTER_HRESULT(this->parserResult, httpCookieName, this->parserResult, E_OUTOFMEMORY);
 
-                                CHECK_CONDITION_HRESULT(this->parserResult, usedCookies->Add(L"", cookieValue), this->parserResult, E_OUTOFMEMORY);
-                                CHECK_CONDITION_EXECUTE(FAILED(this->parserResult), FREE_MEM_CLASS(cookieValue));
+                                if (SUCCEEDED(this->parserResult))
+                                {
+                                  const wchar_t *cookieValue = protocolConnectionParameters->GetValue(httpCookieName, true, NULL);
+                                  CHECK_POINTER_HRESULT(this->parserResult, cookieValue, this->parserResult, E_OUTOFMEMORY);
+
+                                  CHECK_CONDITION_HRESULT(this->parserResult, usedCookies->Add(L"", cookieValue), this->parserResult, E_OUTOFMEMORY);
+                                }
+
+                                FREE_MEM(httpCookieName);
                               }
-
-                              FREE_MEM(httpCookieName);
                             }
+
+                            FREE_MEM_CLASS(protocolConnectionParameters);
                           }
 
                           // copy current cookies parameters

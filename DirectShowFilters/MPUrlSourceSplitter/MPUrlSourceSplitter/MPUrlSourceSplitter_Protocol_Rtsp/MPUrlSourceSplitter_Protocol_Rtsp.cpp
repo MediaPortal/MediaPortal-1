@@ -798,13 +798,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
             // just make guess
 
             track->SetStreamLength((int64_t)MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, setting quess total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, track->GetStreamLength());
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, setting guess total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, track->GetStreamLength());
           }
           else if ((track->GetBytePosition() > (track->GetStreamLength() * 3 / 4)))
           {
             // it is time to adjust stream length, we are approaching to end but still we don't know total length
             track->SetStreamLength(track->GetBytePosition() * 2);
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, setting quess total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, track->GetStreamLength());
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, setting guess total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, track->GetStreamLength());
           }
         }
       }

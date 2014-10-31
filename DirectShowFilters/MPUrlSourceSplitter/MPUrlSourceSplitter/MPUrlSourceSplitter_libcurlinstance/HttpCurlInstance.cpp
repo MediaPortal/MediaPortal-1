@@ -401,6 +401,32 @@ CParameterCollection *CHttpCurlInstance::GetCurrentCookies(void)
   return currentCookies;
 }
 
+bool CHttpCurlInstance::AddCookies(CParameterCollection *cookies)
+{
+  bool result = (cookies != NULL);
+
+  if (result)
+  {
+    // convert cookies collection to CURL list
+    for (unsigned int i = 0; (result && (i < cookies->Count())); i++)
+    {
+      CParameter *cookie = cookies->GetItem(i);
+
+      char *convertedValue = ConvertToMultiByteW(cookie->GetValue());
+      result &= (convertedValue != NULL);
+
+      if (result)
+      {
+        this->cookies = curl_slist_append(this->cookies, convertedValue);
+        result &= (this->cookies != NULL);
+      }
+      FREE_MEM(convertedValue);
+    }
+  }
+
+  return result;
+}
+
 bool CHttpCurlInstance::SetCurrentCookies(CParameterCollection *cookies)
 {
   bool result = (cookies != NULL);

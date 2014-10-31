@@ -631,6 +631,47 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
           
           if (SUCCEEDED(this->mainCurlInstance->LockCurlInstance(this)))
           {
+            // apply cookies
+
+            unsigned int cookiesCount = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_AFHS_COOKIES_COUNT, true, 0);
+
+            if (cookiesCount != 0)
+            {
+              CParameterCollection *cookies = new CParameterCollection(&result);
+              CHECK_POINTER_HRESULT(result, cookies, result, E_OUTOFMEMORY);
+
+              for (unsigned int i = 0; (SUCCEEDED(result) && (i < cookiesCount)); i++)
+              {
+                wchar_t *httpCookieName = FormatString(AFHS_COOKIE_FORMAT_PARAMETER_NAME, i);
+                CHECK_POINTER_HRESULT(result, httpCookieName, result, E_OUTOFMEMORY);
+
+                if (SUCCEEDED(result))
+                {
+                  const wchar_t *cookieValue = this->configuration->GetValue(httpCookieName, true, NULL);
+                  CHECK_POINTER_HRESULT(result, cookieValue, result, E_OUTOFMEMORY);
+
+                  CHECK_CONDITION_HRESULT(result, cookies->Add(L"", cookieValue), result, E_OUTOFMEMORY);
+                }
+
+                FREE_MEM(httpCookieName);
+              }
+
+              CHECK_CONDITION_HRESULT(result, this->mainCurlInstance->AddCookies(cookies), result, E_OUTOFMEMORY);
+              FREE_MEM_CLASS(cookies);
+
+              // clear set cookies to avoid adding same cookies
+              for (unsigned int i = 0; (SUCCEEDED(result) && (i < cookiesCount)); i++)
+              {
+                wchar_t *httpCookieName = FormatString(AFHS_COOKIE_FORMAT_PARAMETER_NAME, i);
+                CHECK_POINTER_HRESULT(result, httpCookieName, result, E_OUTOFMEMORY);
+
+                CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->configuration->Remove(httpCookieName, true));
+                FREE_MEM(httpCookieName);
+              }
+
+              this->configuration->Remove(PARAMETER_NAME_AFHS_COOKIES_COUNT, true);
+            }
+
             if (SUCCEEDED(this->mainCurlInstance->Initialize(request)))
             {
               // all parameters set
@@ -913,13 +954,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
         // just make guess
 
         this->streamLength = MINIMUM_RECEIVED_DATA_FOR_SPLITTER;
-        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting guess total length: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
       }
       else if ((this->GetBytePosition() > (this->streamLength * 3 / 4)))
       {
         // it is time to adjust stream length, we are approaching to end but still we don't know total length
         this->streamLength = this->GetBytePosition() * 2;
-        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting guess total length: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
       }
     }
 
@@ -1041,7 +1082,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
           }
           else
           {
-            // do not find any more media packets for this request because we have enough data
+            // do not find any more segment fragments for this request because we have enough data
             break;
           }
         }
@@ -1141,7 +1182,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
               // bad, no such fragment exists, we don't have data
               // if live stream, we must update segment and fragments
 
-              this->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u', requesting data from '%lld' to '%lld', not found stream fragment", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetStart() + dataRequest->GetLength());
+              this->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u', requesting data from '%lld' to '%lld', not found segment fragment", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetStart() + dataRequest->GetLength());
 
               streamPackage->SetCompleted(E_NO_MORE_DATA_AVAILABLE);
             }

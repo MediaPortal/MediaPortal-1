@@ -144,33 +144,6 @@ bool CAfhsSegmentFragmentCollection::HasDecryptedSegmentFragments(void)
   return (this->indexDecrypted->Count() != 0);
 }
 
-//void CAfhsSegmentFragmentCollection::RecalculateDecryptedSegmentFragmentStartPosition(unsigned int startIndex)
-//{
-//  for (unsigned int i = startIndex; i < this->Count(); i++)
-//  {
-//    CAfhsSegmentFragment *fragment = this->GetItem(i);
-//    CAfhsSegmentFragment *previousFragment = (i > 0) ? this->GetItem(i - 1) : NULL;
-//
-//    if (fragment->IsDecrypted())
-//    {
-//      if ((previousFragment != NULL) && (previousFragment->IsDecrypted()))
-//      {
-//        fragment->SetFragmentStartPosition(previousFragment->GetFragmentStartPosition() + previousFragment->GetLength());
-//      }
-//
-//      if (i == (this->GetStartSearchingIndex() + this->GetSearchCount()))
-//      {
-//        this->SetSearchCount(this->GetSearchCount() + 1);
-//      }
-//    }
-//    else
-//    {
-//      // we found not downloaded stream fragment, stop recalculating start positions
-//      break;
-//    }
-//  }
-//}
-
 /* index methods */
 
 bool CAfhsSegmentFragmentCollection::InsertIndexes(unsigned int itemIndex)

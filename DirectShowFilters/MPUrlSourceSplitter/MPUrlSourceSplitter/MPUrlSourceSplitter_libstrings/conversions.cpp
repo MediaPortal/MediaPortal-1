@@ -62,6 +62,46 @@ unsigned int GetValueUnsignedIntW(const wchar_t *input, unsigned int defaultValu
   }
 }
 
+unsigned int GetHexValueUnsignedIntA(const char *input, unsigned int defaultValue)
+{
+  if (!IsNullOrEmptyOrWhitespaceA(input))
+  {
+    char *end = NULL;
+    long valueLong = strtoul(input, &end, 16);
+    if ((valueLong == 0) && (input == end))
+    {
+      // error while converting
+      valueLong = defaultValue;
+    }
+
+    return (unsigned int)valueLong;
+  }
+  else
+  {
+    return defaultValue;
+  }
+}
+
+unsigned int GetHexValueUnsignedIntW(const wchar_t *input, unsigned int defaultValue)
+{
+  if (!IsNullOrEmptyOrWhitespaceW(input))
+  {
+    wchar_t *end = NULL;
+    long valueLong = wcstoul(input, &end, 16);
+    if ((valueLong == 0) && (input == end))
+    {
+      // error while converting
+      valueLong = defaultValue;
+    }
+
+    return (unsigned int)valueLong;
+  }
+  else
+  {
+    return defaultValue;
+  }
+}
+
 uint64_t GetValueUnsignedInt64A(const char *input, uint64_t defaultValue)
 {
   if (!IsNullOrEmptyOrWhitespaceA(input))
@@ -183,8 +223,8 @@ uint8_t *HexToDecA(const char *input)
     {
       for (unsigned int i = 0; ((result != NULL) && (i < length)); i+= 2)
       {
-        uint8_t high = HexToDec(input[i]);
-        uint8_t low = HexToDec(input[i + 1]);
+        uint8_t high = HexToDecA(input[i]);
+        uint8_t low = HexToDecA(input[i + 1]);
 
         if ((high != UINT8_MAX) && (low != UINT8_MAX))
         {
@@ -215,8 +255,8 @@ uint8_t *HexToDecW(const wchar_t *input)
     {
       for (unsigned int i = 0; ((result != NULL) && (i < length)); i+= 2)
       {
-        uint8_t high = HexToDec(input[i]);
-        uint8_t low = HexToDec(input[i + 1]);
+        uint8_t high = HexToDecW(input[i]);
+        uint8_t low = HexToDecW(input[i + 1]);
 
         if ((high != UINT8_MAX) && (low != UINT8_MAX))
         {

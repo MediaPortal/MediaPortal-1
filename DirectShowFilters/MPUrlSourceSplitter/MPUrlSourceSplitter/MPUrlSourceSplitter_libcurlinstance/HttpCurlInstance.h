@@ -70,6 +70,11 @@ public:
 
   /* set methods */
 
+  // adds cookies to current cookies in CURL instance (must be done before calling Initialize() method)
+  // @param cookies : collection of cookies previously get by GetCurrentCookies() method
+  // @return : true if successful, false otherwise
+  virtual bool AddCookies(CParameterCollection *cookies);
+
   // sets current cookies in CURL instance (must be done before calling Initialize() method)
   // @param cookies : collection of cookies previously get by GetCurrentCookies() method
   // @return : true if successful, false otherwise

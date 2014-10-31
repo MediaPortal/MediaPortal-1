@@ -56,4 +56,10 @@ wchar_t *FormatAbsoluteUrl(const wchar_t *baseUrl, const wchar_t *relativeUrl);
 // @return : absolute base URL or NULL if error
 wchar_t *FormatAbsoluteBaseUrl(const wchar_t *baseUrl, const wchar_t *relativeUrl);
 
+// replaces schema in url with specified schema
+// @param url : the URL to replace schema
+// @param schema : the schema to replace URL schema
+// @return : URL with replaces schema or NULL if error
+wchar_t *ReplaceSchema(const wchar_t *url, const wchar_t *schema);
+
 #endif

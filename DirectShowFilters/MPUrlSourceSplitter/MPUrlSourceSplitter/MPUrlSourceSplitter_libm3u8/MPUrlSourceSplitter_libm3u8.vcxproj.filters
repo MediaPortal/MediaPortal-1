@@ -1,0 +1,485 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Tags">
+      <UniqueIdentifier>{0a809d10-e6f8-4df0-9d23-67601a31b8bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tags\Header Files">
+      <UniqueIdentifier>{feb6656a-53be-4d9c-9dc4-d3dbf9dee1db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tags\Source Files">
+      <UniqueIdentifier>{162e8254-118e-4f2e-bdae-d3d624e2bb32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Attributes">
+      <UniqueIdentifier>{50c3e9cf-d349-493f-9da6-82da4ce391dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Attributes\Header Files">
+      <UniqueIdentifier>{15505a5b-6ca6-4fe1-9429-091884eea7ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Attributes\Source Files">
+      <UniqueIdentifier>{f3a10672-261a-4f67-9bdb-0f6416d7275b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Specifications">
+      <UniqueIdentifier>{fda272a9-4029-4f92-892c-99fac4f8fffc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Playlists">
+      <UniqueIdentifier>{f369a1a1-00aa-49ab-8700-266e3df38f06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Playlists\Header Files">
+      <UniqueIdentifier>{319b0d8c-1f9e-4c15-8dcb-d201710e58de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Playlists\Source Files">
+      <UniqueIdentifier>{5dbc3791-5b91-43c5-8960-3e9d70891f44}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TagFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Attribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AttributeCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AttributeFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BandwidthAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CodecsAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResolutionAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SubtitlesAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClosedCaptionsAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AllowCacheTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VersionTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MethodAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UriAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InitializationVectorAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyFormatAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyFormatVersionsAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ByteRangeAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeOffsetAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PreciseAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GroupIdAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LanguageAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AssociatedLanguageAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NameAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DefaultAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoselectAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ForcedAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InstreamIdAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacteristicsAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneralTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneralTagFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommentTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaylistItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TagCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaylistItemCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ByteRangeTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DiscontinuitySequenceTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DiscontinuityTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DurationTitleTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EndListTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HeaderTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IndependedSegmentsTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IntraFrameOnlyTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IntraFrameStreamVariantTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MapTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaSequenceTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaylistTypeTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramDateTimeTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StartTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamVariantTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TargetDurationTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramIdAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Playlist.h">
+      <Filter>Playlists\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MasterPlaylist.h">
+      <Filter>Playlists\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaPlaylist.h">
+      <Filter>Playlists\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MasterPlaylistV01.h">
+      <Filter>Playlists\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MasterPlaylistFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaylistVersion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaPlaylistV01.h">
+      <Filter>Playlists\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaPlaylistFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="M3u8Fragment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="M3u8FragmentCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HeaderTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TagFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Attribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AttributeCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AttributeFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BandwidthAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CodecsAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ResolutionAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SubtitlesAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ClosedCaptionsAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamVariantTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ByteRangeTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TargetDurationTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaSequenceTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramDateTimeTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AllowCacheTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EndListTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaylistTypeTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DiscontinuitySequenceTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DiscontinuityTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IntraFrameStreamVariantTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IndependedSegmentsTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MapTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StartTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VersionTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IntraFrameOnlyTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MethodAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UriAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InitializationVectorAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyFormatAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyFormatVersionsAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ByteRangeAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeOffsetAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PreciseAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GroupIdAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LanguageAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AssociatedLanguageAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NameAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DefaultAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoselectAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ForcedAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InstreamIdAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacteristicsAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DurationTitleTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneralTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneralTagFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommentTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaylistItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TagCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaylistItemCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramIdAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Playlist.cpp">
+      <Filter>Playlists\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaPlaylist.cpp">
+      <Filter>Playlists\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MasterPlaylist.cpp">
+      <Filter>Playlists\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MasterPlaylistV01.cpp">
+      <Filter>Playlists\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MasterPlaylistFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaPlaylistV01.cpp">
+      <Filter>Playlists\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaPlaylistFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="M3u8Fragment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="M3u8FragmentCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="m3u8_v1_draft-pantos-http-live-streaming-02.txt">
+      <Filter>Specifications</Filter>
+    </None>
+    <None Include="readme.txt">
+      <Filter>Specifications</Filter>
+    </None>
+  </ItemGroup>
+</Project>

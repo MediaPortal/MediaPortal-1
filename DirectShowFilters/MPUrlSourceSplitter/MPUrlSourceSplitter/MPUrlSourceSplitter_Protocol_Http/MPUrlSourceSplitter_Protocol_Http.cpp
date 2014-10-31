@@ -612,13 +612,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
           // stream length not set
           // just make guess
           this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting guess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
         }
         else if ((this->currentStreamPosition > (this->streamLength * 3 / 4)))
         {
           // it is time to adjust stream length, we are approaching to end but still we don't know total length
           this->streamLength = this->currentStreamPosition * 2;
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting guess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
         }
       }
     }

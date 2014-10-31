@@ -32,7 +32,16 @@ public:
   CAttributeCollection(HRESULT *result);
   ~CAttributeCollection(void);
 
+  /* get methods */
+
+  /* set methods */
+
+  /* other methods */
+
 protected:
+
+  /* methods */
+
   // compare two item keys
   // @param firstKey : the first item key to compare
   // @param secondKey : the second item key to compare

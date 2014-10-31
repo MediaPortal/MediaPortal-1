@@ -63,10 +63,6 @@ public:
   HRESULT ReceiveData(CStreamPackage *streamPackage);
 
   // gets current connection parameters (can be different as supplied connection parameters)
-  // @return : current connection parameters or NULL if error
-  CParameterCollection *GetConnectionParameters(void);
-
-  // gets current connection parameters (can be different as supplied connection parameters)
   // @param parameters : the reference to parameter collection to be filled with connection parameters
   // @return : S_OK if successful, error code otherwise
   HRESULT GetConnectionParameters(CParameterCollection *parameters);

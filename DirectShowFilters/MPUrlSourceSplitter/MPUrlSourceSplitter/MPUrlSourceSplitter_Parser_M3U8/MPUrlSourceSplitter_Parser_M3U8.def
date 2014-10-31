@@ -1,0 +1,5 @@
+LIBRARY     mpurlsourcesplitter_parser_m3u8.dll
+
+EXPORTS
+			CreatePlugin				PRIVATE
+			DestroyPlugin				PRIVATE

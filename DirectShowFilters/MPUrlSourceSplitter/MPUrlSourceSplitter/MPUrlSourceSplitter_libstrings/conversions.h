@@ -43,6 +43,24 @@ unsigned int GetValueUnsignedIntW(const wchar_t *input, unsigned int defaultValu
 #define GetValueUint GetValueUnsignedIntW
 #endif
 
+// converts hex string to unsigned int
+// @param input : hex string to convert
+// @param defaultValue : default value
+// @return : converted string value or default value if error
+unsigned int GetHexValueUnsignedIntA(const char *input, unsigned int defaultValue);
+
+// converts hex string to unsigned int
+// @param input : hex string to convert
+// @param defaultValue : default value
+// @return : converted string value or default value if error
+unsigned int GetHexValueUnsignedIntW(const wchar_t *input, unsigned int defaultValue);
+
+#ifdef _MBCS
+#define GetHexValueUint GetHexValueUnsignedIntA
+#else
+#define GetHexValueUint GetHexValueUnsignedIntW
+#endif
+
 // converts string to unsigned int64
 // @param input : string to convert
 // @param defaultValue : default value

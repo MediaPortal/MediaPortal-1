@@ -31,7 +31,8 @@
 // each module can define other error codes
 // after changing error code appropriate files in OnlineVideos have to be changed
 
-#define IS_OUR_ERROR(error)                                                     ((error & 0xFFFFFF00) == 0xFFFFFF00)
+// our error code is error code with highest bit set, set lowest two bytes, except second byte equal to 0F (in this case it is error code from CURL)
+FORCEINLINE bool IS_OUR_ERROR(HRESULT error) { return (((error & 0xFFFFF000) == 0x80000000) && ((error &0x00000F00) != 0x00000F00)); }
 
 // common error codes
 
@@ -54,7 +55,7 @@
 #define E_PARSE_PARAMETERS_NOT_ENOUGH_MEMORY_FOR_PARAMETER_VALUE                -17
 #define E_PARSE_PARAMETERS_CANNOT_GET_UNESCAPED_VALUE                           -18
 
-// parser error codes
+// parser general error codes
 
 #define E_PARSER_STILL_PENDING                                                  -20
 #define E_NO_PARSER_LOADED                                                      -21
@@ -83,6 +84,8 @@
 #define E_MINIMUM_TIMESTAMP_GREATER_THAN_MAXIMUM_TIMESTAMP                      -49
 #define E_SEEK_INDEX_ENTRY_EXISTS                                               -50
 
+// specific parser error code
+
 // F4M parser error codes
 
 #define E_F4M_BASE_URL_NULL_OR_EMPTY                                            -60
@@ -93,6 +96,40 @@
 #define E_F4M_NO_BOOTSTRAP_INFO_VALUE                                           -65
 #define E_F4M_CANNOT_PARSE_BOOTSTRAP_INFO_BOX                                   -66
 #define E_F4M_ONLY_HTTP_PROTOCOL_SUPPORTED_IN_BASE_URL                          -67
+
+// MSHS parser error codes
+
+#define E_MSHS_NO_VIDEO_OR_AUDIO_STREAM_PRESENT                                 -68
+#define E_MSHS_ONLY_HTTP_PROTOCOL_SUPPORTED_IN_URL                              -69
+
+// MPEG2 TS parser error codes
+
+#define E_MPEG2TS_NOT_ALIGNED_BUFFER_SIZE                                       -70
+#define E_MPEG2TS_CANNOT_PARSE_PACKET                                           -71
+#define E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION              -72
+#define E_MPEG2TS_INCOMPLETE_SECTION                                            -73
+#define E_MPEG2TS_SECTION_INVALID_CRC32                                         -74
+#define E_MPEG2TS_CANNOT_SPLIT_SECTION_INTO_PSI_PACKETS                         -75
+#define E_MPEG2TS_SECTION_BIGGER_THAN_ORIGINAL_SECTION                          -76
+#define E_MPEG2TS_ONLY_ONE_PROGRAM_ALLOWED                                      -77
+
+// M3U8 parser error codes
+
+#define E_M3U8_NO_ITEM_FOUND                                                    -80
+#define E_M3U8_NO_GENERAL_TAG_FOUND                                             -81
+#define E_M3U8_NO_PLAYLIST_ITEM_FOUND                                           -82
+#define E_M3U8_NO_TAG_FOUND                                                     -83
+#define E_M3U8_NO_COMMENT_TAG_FOUND                                             -84
+#define E_M3U8_NOT_PLAYLIST                                                     -85
+#define E_M3U8_NOT_SUPPORTED_PLAYLIST_VERSION                                   -86
+#define E_M3U8_NOT_VALID_PLAYLIST                                               -87
+#define E_M3U8_NOT_SUPPORTED_PLAYLIST_ITEM                                      -88
+#define E_M3U8_NOT_SUPPORTED_TAG                                                -89
+#define E_M3U8_NO_PLAYLIST_ITEM_FOR_TAG                                         -90
+
+FORCEINLINE bool IS_M3U8_ERROR(HRESULT error) { return ((error >= E_M3U8_NO_PLAYLIST_ITEM_FOR_TAG) && (error <= E_M3U8_NO_ITEM_FOUND)); }
+
+// specific protocol error codes
 
 // HTTP protocol error codes
 
@@ -171,11 +208,6 @@
 #define E_AFHS_AKAMAI_DECRYPTOR_DECRYPTED_DATA_NOT_EQUAL_TO_ENCRYPTED_DATA      -186
 #define E_AFHS_AKAMAI_DECRYPTOR_CANNOT_CREATE_DECRYPTED_FLV_PACKET              -187
 
-// MSHS parser error codes
-
-#define E_MSHS_NO_VIDEO_OR_AUDIO_STREAM_PRESENT                                 -190
-#define E_MSHS_ONLY_HTTP_PROTOCOL_SUPPORTED_IN_URL                              -191
-
 // MSHS protocol error codes
 
 #define E_MSHS_NO_VIDEO_OR_AUDIO_FRAGMENT                                       -192
@@ -194,15 +226,8 @@
 #define E_MSHS_CANNOT_GET_VIDEO_FRAGMENT_INDEX                                  -205
 #define E_MSHS_CANNOT_GET_AUDIO_FRAGMENT_INDEX                                  -206
 
-// MPEG2 TS parser error codes
+// M3U8 protocol error codes
 
-#define E_MPEG2TS_NOT_ALIGNED_BUFFER_SIZE                                       -210
-#define E_MPEG2TS_CANNOT_PARSE_PACKET                                           -211
-#define E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION              -212
-#define E_MPEG2TS_INCOMPLETE_SECTION                                            -213
-#define E_MPEG2TS_SECTION_INVALID_CRC32                                         -214
-#define E_MPEG2TS_CANNOT_SPLIT_SECTION_INTO_PSI_PACKETS                         -215
-#define E_MPEG2TS_SECTION_BIGGER_THAN_ORIGINAL_SECTION                          -216
-#define E_MPEG2TS_ONLY_ONE_PROGRAM_ALLOWED                                      -217
+#define E_M3U8_CANNOT_GET_STREAM_FRAGMENTS_FROM_MEDIA_PLAYLIST                  -210
 
 #endif

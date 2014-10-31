@@ -437,7 +437,7 @@ const char *SkipBlanksA(const char *str)
 
   unsigned int length = strlen(str);
 
-  while(length > 0)
+  while (length > 0)
   {
     if (IsBlankA(str))
     {
@@ -462,12 +462,64 @@ const wchar_t *SkipBlanksW(const wchar_t *str)
 
   unsigned int length = wcslen(str);
 
-  while(length > 0)
+  while (length > 0)
   {
     if (IsBlankW(str))
     {
       --length;
       ++str;
+    }
+    else
+    {
+      length = 0;
+    }
+  }
+
+  return str;
+}
+
+const char *SkipBlanksReversedA(const char *str)
+{
+  if (str == NULL)
+  {
+    return NULL;
+  }
+
+  unsigned int length = strlen(str);
+  str = str + length - 1;
+
+  while (length > 0)
+  {
+    if (IsBlankA(str))
+    {
+      --length;
+      --str;
+    }
+    else
+    {
+      length = 0;
+    }
+  }
+
+  return str;
+}
+
+const wchar_t *SkipBlanksReversedW(const wchar_t *str)
+{
+  if (str == NULL)
+  {
+    return NULL;
+  }
+
+  unsigned int length = wcslen(str);
+  str = str + length - 1;
+
+  while (length > 0)
+  {
+    if (IsBlankW(str))
+    {
+      --length;
+      --str;
     }
     else
     {
@@ -774,26 +826,18 @@ wchar_t *TrimLeftW(const wchar_t *input)
 
 char *TrimRightA(const char *input)
 {
-  char *reversed = ReverseA(input);
-  char *trimmed = TrimLeftA(reversed);
-  char *result = ReverseA(trimmed);
-
-  FREE_MEM(reversed);
-  FREE_MEM(trimmed);
-
-  return result;
+  const char *reversedTrim = SkipBlanksReversedA(input);
+  unsigned int length = reversedTrim + 1 - input;
+  
+  return (length == 0) ? DuplicateA("") :SubstringA(input, 0, length);
 }
 
 wchar_t *TrimRightW(const wchar_t *input)
 {
-  wchar_t *reversed = ReverseW(input);
-  wchar_t *trimmed = TrimLeftW(reversed);
-  wchar_t *result = ReverseW(trimmed);
+  const wchar_t *reversedTrim = SkipBlanksReversedW(input);
+  unsigned int length = reversedTrim + 1 - input;
 
-  FREE_MEM(reversed);
-  FREE_MEM(trimmed);
-
-  return result;
+  return (length == 0) ? DuplicateW(L"") : SubstringW(input, 0, length);
 }
 
 char *TrimA(const char *input)

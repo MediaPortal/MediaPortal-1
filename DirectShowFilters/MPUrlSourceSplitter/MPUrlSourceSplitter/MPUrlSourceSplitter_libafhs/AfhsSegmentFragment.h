@@ -23,8 +23,6 @@
 #ifndef __AFHS_SEGMENT_FRAGMENT_DEFINED
 #define __AFHS_SEGMENT_FRAGMENT_DEFINED
 
-#include "HttpDownloadRequest.h"
-#include "HttpDownloadResponse.h"
 #include "StreamFragment.h"
 
 #define AFHS_SEGMENT_FRAGMENT_FLAG_NONE                               STREAM_FRAGMENT_FLAG_NONE

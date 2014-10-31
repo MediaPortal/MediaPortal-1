@@ -85,6 +85,8 @@ CSessionTag *CSessionTagFactory::CreateSessionTag(const wchar_t *buffer, unsigne
     {
       result = sessionTag;
     }
+
+    CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(sessionTag));
   }
 
   if (FAILED(continueParsing))
