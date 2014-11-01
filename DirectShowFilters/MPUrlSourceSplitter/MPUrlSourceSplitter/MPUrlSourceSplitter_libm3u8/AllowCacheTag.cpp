@@ -39,7 +39,7 @@ CAllowCacheTag::~CAllowCacheTag(void)
 
 bool CAllowCacheTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return (version == PLAYLIST_VERSION_01);
+  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02));
 }
 
 bool CAllowCacheTag::IsMasterPlaylistItem(unsigned int version)

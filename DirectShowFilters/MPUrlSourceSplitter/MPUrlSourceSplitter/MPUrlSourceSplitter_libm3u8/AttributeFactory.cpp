@@ -26,13 +26,13 @@
 #include "BandwidthAttribute.h"
 #include "CodecsAttribute.h"
 #include "ProgramIdAttribute.h"
+#include "InitializationVectorAttribute.h"
+#include "ResolutionAttribute.h"
 
-//#include "ResolutionAttribute.h"
 //#include "AudioAttribute.h"
 //#include "VideoAttribute.h"
 //#include "SubtitlesAttribute.h"
 //#include "ClosedCaptionsAttribute.h"
-//#include "InitializationVectorAttribute.h"
 //#include "KeyFormatAttribute.h"
 //#include "KeyFormatVersionsAttribute.h"
 //#include "ByteRangeAttribute.h"
@@ -82,13 +82,13 @@ CAttribute *CAttributeFactory::CreateAttribute(unsigned int version, const wchar
       CREATE_SPECIFIC_ATTRIBUTE(attribute, BANDWIDTH_ATTRIBUTE_NAME, CBandwidthAttribute, continueParsing, result, version);
       CREATE_SPECIFIC_ATTRIBUTE(attribute, CODECS_ATTRIBUTE_NAME, CCodecsAttribute, continueParsing, result, version);
       CREATE_SPECIFIC_ATTRIBUTE(attribute, PROGRAM_ID_ATTRIBUTE_NAME, CProgramIdAttribute, continueParsing, result, version);
+      CREATE_SPECIFIC_ATTRIBUTE(attribute, INITIALIZATION_VECTOR_ATTRIBUTE_NAME, CInitializationVectorAttribute, continueParsing, result, version);
+      CREATE_SPECIFIC_ATTRIBUTE(attribute, RESOLUTION_ATTRIBUTE_NAME, CResolutionAttribute, continueParsing, result, version);
 
-      //CREATE_SPECIFIC_ATTRIBUTE(attribute, RESOLUTION_ATTRIBUTE_NAME, CResolutionAttribute, continueParsing, result);
       //CREATE_SPECIFIC_ATTRIBUTE(attribute, AUDIO_ATTRIBUTE_NAME, CAudioAttribute, continueParsing, result);
       //CREATE_SPECIFIC_ATTRIBUTE(attribute, VIDEO_ATTRIBUTE_NAME, CVideoAttribute, continueParsing, result);
       //CREATE_SPECIFIC_ATTRIBUTE(attribute, SUBTITLES_ATTRIBUTE_NAME, CSubtitlesAttribute, continueParsing, result);
       //CREATE_SPECIFIC_ATTRIBUTE(attribute, CLOSED_CAPTIONS_ATTRIBUTE_NAME, CClosedCaptionsAttribute, continueParsing, result);
-      //CREATE_SPECIFIC_ATTRIBUTE(attribute, INITIALIZATION_VECTOR_ATTRIBUTE_NAME, CInitializationVectorAttribute, continueParsing, result);
       //CREATE_SPECIFIC_ATTRIBUTE(attribute, KEY_FORMAT_ATTRIBUTE_NAME, CKeyFormatAttribute, continueParsing, result);
       //CREATE_SPECIFIC_ATTRIBUTE(attribute, KEY_FORMAT_VERSIONS_ATTRIBUTE_NAME, CKeyFormatVersionsAttribute, continueParsing, result);
       //CREATE_SPECIFIC_ATTRIBUTE(attribute, BYTE_RANGE_ATTRIBUTE_NAME, CByteRangeAttribute, continueParsing, result);

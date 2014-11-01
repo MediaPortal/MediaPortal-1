@@ -45,7 +45,7 @@ unsigned int CMediaSequenceTag::GetSequenceNumber(void)
 
 bool CMediaSequenceTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return (version == PLAYLIST_VERSION_01);
+  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02));
 }
 
 bool CMediaSequenceTag::IsMasterPlaylistItem(unsigned int version)

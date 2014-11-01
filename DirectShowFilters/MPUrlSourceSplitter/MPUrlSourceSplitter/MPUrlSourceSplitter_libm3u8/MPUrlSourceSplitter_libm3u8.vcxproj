@@ -136,10 +136,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="InitializationVectorAttribute.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="InitializationVectorAttribute.h" />
     <ClInclude Include="InstreamIdAttribute.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -180,6 +177,7 @@
     <ClInclude Include="MediaPlaylistFactory.h" />
     <ClInclude Include="M3u8Fragment.h" />
     <ClInclude Include="MediaPlaylistV01.h" />
+    <ClInclude Include="MediaPlaylistV02.h" />
     <ClInclude Include="MediaSequenceTag.h" />
     <ClInclude Include="MediaTag.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -204,10 +202,7 @@
     </ClInclude>
     <ClInclude Include="ProgramDateTimeTag.h" />
     <ClInclude Include="ProgramIdAttribute.h" />
-    <ClInclude Include="ResolutionAttribute.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="ResolutionAttribute.h" />
     <ClInclude Include="StartTag.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -300,10 +295,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="InitializationVectorAttribute.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="InitializationVectorAttribute.cpp" />
     <ClCompile Include="InstreamIdAttribute.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -344,6 +336,7 @@
     <ClCompile Include="MediaPlaylistFactory.cpp" />
     <ClCompile Include="M3u8Fragment.cpp" />
     <ClCompile Include="MediaPlaylistV01.cpp" />
+    <ClCompile Include="MediaPlaylistV02.cpp" />
     <ClCompile Include="MediaSequenceTag.cpp" />
     <ClCompile Include="MediaTag.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -367,10 +360,7 @@
     </ClCompile>
     <ClCompile Include="ProgramDateTimeTag.cpp" />
     <ClCompile Include="ProgramIdAttribute.cpp" />
-    <ClCompile Include="ResolutionAttribute.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="ResolutionAttribute.cpp" />
     <ClCompile Include="StartTag.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -406,6 +396,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="m3u8_v1_draft-pantos-http-live-streaming-02.txt" />
+    <None Include="m3u8_v2_draft-pantos-http-live-streaming-04.txt" />
     <None Include="readme.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -261,6 +261,9 @@
     <ClInclude Include="M3u8FragmentCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MediaPlaylistV02.h">
+      <Filter>Playlists\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -473,12 +476,18 @@
     <ClCompile Include="M3u8FragmentCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MediaPlaylistV02.cpp">
+      <Filter>Playlists\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="m3u8_v1_draft-pantos-http-live-streaming-02.txt">
       <Filter>Specifications</Filter>
     </None>
     <None Include="readme.txt">
+      <Filter>Specifications</Filter>
+    </None>
+    <None Include="m3u8_v2_draft-pantos-http-live-streaming-04.txt">
       <Filter>Specifications</Filter>
     </None>
   </ItemGroup>

@@ -52,7 +52,7 @@ bool CBandwidthAttribute::Parse(unsigned int version, const wchar_t *name, const
 
   if (result)
   {
-    if (version == PLAYLIST_VERSION_01)
+    if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02))
     {
       this->bandwidth = CAttribute::GetDecimalInteger(value);
       result &= (this->bandwidth != BANDWIDTH_NOT_SPECIFIED);

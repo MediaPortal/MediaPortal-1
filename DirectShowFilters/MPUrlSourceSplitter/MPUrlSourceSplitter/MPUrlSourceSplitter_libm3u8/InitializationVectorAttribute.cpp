@@ -47,26 +47,33 @@ void CInitializationVectorAttribute::Clear(void)
   FREE_MEM(this->iv);
 }
 
-bool CInitializationVectorAttribute::Parse(const wchar_t *name, const wchar_t *value)
+bool CInitializationVectorAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
 {
-  bool result = __super::Parse(name, value);
+  bool result = __super::Parse(version, name, value);
 
   if (result)
   {
-    // initialization vector is exactly 16 hexadecimal numbers
-    result &= (wcslen(value) == INITIALIZATION_VECTOR_VALUE_LENGTH);
-
-    if (result)
+    if (version == PLAYLIST_VERSION_02)
     {
-      // check first two characters 
-      result &= (_wcsnicmp(value, INITIALIZATION_VECTOR_VALUE_START, INITIALIZATION_VECTOR_VALUE_START_LENGTH) == 0);
-      
+      // initialization vector is exactly 16 hexadecimal numbers
+      result &= (wcslen(value) == INITIALIZATION_VECTOR_VALUE_LENGTH);
+
       if (result)
       {
-        // length is correct, starting characters are correct, we can parse
-        this->iv = HexToDec(value + INITIALIZATION_VECTOR_VALUE_START_LENGTH);
-        result &= (this->iv != NULL);
+        // check first two characters 
+        result &= (_wcsnicmp(value, INITIALIZATION_VECTOR_VALUE_START, INITIALIZATION_VECTOR_VALUE_START_LENGTH) == 0);
+
+        if (result)
+        {
+          // length is correct, starting characters are correct, we can parse
+          this->iv = HexToDec(value + INITIALIZATION_VECTOR_VALUE_START_LENGTH);
+          result &= (this->iv != NULL);
+        }
       }
+    }
+    else
+    {
+      result = false;
     }
   }
 

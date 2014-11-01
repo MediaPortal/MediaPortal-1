@@ -47,17 +47,24 @@ void CResolutionAttribute::Clear(void)
   this->height = RESOLUTION_NOT_SPECIFIED;
 }
 
-bool CResolutionAttribute::Parse(const wchar_t *name, const wchar_t *value)
+bool CResolutionAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
 {
-  bool result = __super::Parse(name, value);
+  bool result = __super::Parse(version, name, value);
 
   if (result)
   {
-    this->width = CAttribute::GetDecimalResolutionWidth(value);
-    this->height = CAttribute::GetDecimalResolutionHeight(value);
+    if (version == PLAYLIST_VERSION_02)
+    {
+      this->width = CAttribute::GetDecimalResolutionWidth(value);
+      this->height = CAttribute::GetDecimalResolutionHeight(value);
 
-    result &= (this->width != RESOLUTION_NOT_SPECIFIED);
-    result &= (this->height != RESOLUTION_NOT_SPECIFIED);
+      result &= (this->width != RESOLUTION_NOT_SPECIFIED);
+      result &= (this->height != RESOLUTION_NOT_SPECIFIED);
+    }
+    else
+    {
+      result = false;
+    }
   }
 
   return result;
