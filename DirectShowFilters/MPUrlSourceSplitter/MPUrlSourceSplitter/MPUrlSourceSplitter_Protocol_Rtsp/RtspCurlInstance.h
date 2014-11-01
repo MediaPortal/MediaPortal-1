@@ -148,8 +148,9 @@ public:
   virtual HRESULT StopReceivingData(void);
 
   // stops receiving data asynchronously
+  // @param force : true if receiving data must be stopped, false otherwise
   // @return : S_OK if stopped, S_FALSE if pending, error code otherwise
-  virtual HRESULT StopReceivingDataAsync(void);
+  virtual HRESULT StopReceivingDataAsync(bool force);
 
 protected:
   // holds RTSP download request
@@ -212,6 +213,11 @@ protected:
   // creates dump box for dump file
   // @return : dump box or NULL if error
   virtual CDumpBox *CreateDumpBox(void);
+
+  // stops receiving data
+  // @param force : true if receiving data must be stopped, false otherwise
+  // @return : true if successful, false otherwise
+  virtual HRESULT StopReceivingData(bool force);
 };
 
 #endif

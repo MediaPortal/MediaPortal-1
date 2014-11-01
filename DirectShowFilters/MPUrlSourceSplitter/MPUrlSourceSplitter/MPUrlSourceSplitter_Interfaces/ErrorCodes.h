@@ -32,7 +32,7 @@
 // after changing error code appropriate files in OnlineVideos have to be changed
 
 // our error code is error code with highest bit set, set lowest two bytes, except second byte equal to 0F (in this case it is error code from CURL)
-FORCEINLINE bool IS_OUR_ERROR(HRESULT error) { return (((error & 0xFFFFF000) == 0x80000000) && ((error &0x00000F00) != 0x00000F00)); }
+FORCEINLINE bool IS_OUR_ERROR(HRESULT error) { return (((error & 0xFFFFF000) == 0x80000000) && ((error & 0x00000F00) != 0x00000F00)); }
 
 // common error codes
 

@@ -230,8 +230,7 @@ void CHttpCurlInstance::CurlDebug(curl_infotype type, const wchar_t *data)
   {
     this->logger->Log(LOGGER_VERBOSE, L"%s: %s: sent HTTP header: '%s'", this->protocolName, METHOD_CURL_DEBUG_CALLBACK, data);
   }
-
-  if (type == CURLINFO_HEADER_IN)
+  else if (type == CURLINFO_HEADER_IN)
   {
     wchar_t *trimmed = Trim(data);
     // we are just interested in headers comming in from peer
@@ -297,6 +296,10 @@ void CHttpCurlInstance::CurlDebug(curl_infotype type, const wchar_t *data)
     }
 
     FREE_MEM(lowerBuffer);
+  }
+  else
+  {
+    __super::CurlDebug(type, data);
   }
 }
 

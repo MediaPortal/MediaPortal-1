@@ -1170,7 +1170,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
 
       if (this->mainCurlInstance != NULL)
       {
-        res = this->mainCurlInstance->StopReceivingDataAsync();
+        res = this->mainCurlInstance->StopReceivingDataAsync(false);
 
         CHECK_CONDITION_EXECUTE(FAILED(res), this->logger->Log(LOGGER_INFO, L"%s: %s: closing connection failed, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, res));
       }

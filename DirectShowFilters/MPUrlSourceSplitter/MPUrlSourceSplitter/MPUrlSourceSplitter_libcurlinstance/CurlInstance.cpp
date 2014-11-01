@@ -561,6 +561,14 @@ int CCurlInstance::CurlDebugCallback(CURL *handle, curl_infotype type, char *dat
 
 void CCurlInstance::CurlDebug(curl_infotype type, const wchar_t *data)
 {
+  if (type == CURLINFO_TEXT)
+  {
+    wchar_t *text = Trim(data);
+
+    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: CURL message: '%s'", this->protocolName, METHOD_CURL_DEBUG_NAME, text);
+
+    FREE_MEM(text);
+  }
 }
 
 HRESULT CCurlInstance::SetString(CURLoption option, const wchar_t *string)

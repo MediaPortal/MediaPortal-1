@@ -94,7 +94,11 @@ CRtspCurlInstance::CRtspCurlInstance(HRESULT *result, CLogger *logger, HANDLE mu
 
 CRtspCurlInstance::~CRtspCurlInstance(void)
 {
-  this->StopReceivingData();
+  // receiving data must be stopped, because of crash in CurlWorker() method
+  if (FAILED(this->StopReceivingData(false)))
+  {
+    this->StopReceivingData(true);
+  }
 
   FREE_MEM(this->sessionId);
 }
@@ -1179,19 +1183,10 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
 HRESULT CRtspCurlInstance::StopReceivingData(void)
 {
-  HRESULT result = S_FALSE;
-
-  while (result == S_FALSE)
-  {
-    result = this->StopReceivingDataAsync();
-
-    Sleep(1);
-  }
-
-  return result;
+  return this->StopReceivingData(false);
 }
 
-HRESULT CRtspCurlInstance::StopReceivingDataAsync(void)
+HRESULT CRtspCurlInstance::StopReceivingDataAsync(bool force)
 {
   HRESULT result = S_OK;
 
@@ -1232,7 +1227,7 @@ HRESULT CRtspCurlInstance::StopReceivingDataAsync(void)
   }
 
   // CurlInstance::StopReceivingData returns always S_OK
-  CHECK_CONDITION_EXECUTE(result == S_OK, __super::StopReceivingData());
+  CHECK_CONDITION_EXECUTE((result == S_OK) || force, __super::StopReceivingData());
 
   return result;
 }
@@ -2410,4 +2405,18 @@ CDumpBox *CRtspCurlInstance::CreateDumpBox(void)
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(box));
   return box;
+}
+
+HRESULT CRtspCurlInstance::StopReceivingData(bool force)
+{
+  HRESULT result = S_FALSE;
+
+  while (result == S_FALSE)
+  {
+    result = this->StopReceivingDataAsync(force);
+
+    Sleep(1);
+  }
+
+  return result;
 }
