@@ -544,7 +544,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             
               m_demux.m_bVideoClipSeen = true;
  
-              m_bInitDuration = true;
               checkPlaybackState = true;
 
               if (m_nSampleCounter > EOS_THRESHOLD)
@@ -576,7 +575,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
                 m_bClipEndingNotified = true;
               }
             }
-            if ((buffer->nNewSegment & NS_STREAM_RESET) == NS_STREAM_RESET)
+
+            if ((buffer->nNewSegment & NS_NEW_PLAYLIST) == NS_NEW_PLAYLIST)
               m_bInitDuration = true;
           }
 
