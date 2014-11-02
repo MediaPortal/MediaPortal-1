@@ -20,25 +20,25 @@
 
 #pragma once
 
-#ifndef __DURATION_TITLE_TAG_DEFINED
-#define __DURATION_TITLE_TAG_DEFINED
+#ifndef __DURATION_TITLE_FLOATING_TAG_DEFINED
+#define __DURATION_TITLE_FLOATING_TAG_DEFINED
 
 #include "Tag.h"
 
-#define DURATION_TITLE_TAG_FLAG_NONE                                  TAG_FLAG_NONE
+#define DURATION_TITLE_FLOATING_TAG_FLAG_NONE                         TAG_FLAG_NONE
 
-#define DURATION_TITLE_TAG_FLAG_LAST                                  (TAG_FLAG_LAST + 0)
+#define DURATION_TITLE_FLOATING_TAG_FLAG_LAST                         (TAG_FLAG_LAST + 0)
 
-#define TAG_DURATION_TITLE                                            L"EXTINF"
+#define TAG_DURATION_TITLE_FLOATING                                   L"EXTINF"
 
-#define DURATION_TITLE_SEPARATOR                                      L","
-#define DURATION_TITLE_SEPARATOR_LENGTH                               1
+#define DURATION_TITLE_FLOATING_SEPARATOR                             L","
+#define DURATION_TITLE_FLOATING_SEPARATOR_LENGTH                      1
 
-class CDurationTitleTag : public CTag
+class CDurationTitleFloatingTag : public CTag
 {
 public:
-  CDurationTitleTag(HRESULT *result);
-  virtual ~CDurationTitleTag(void);
+  CDurationTitleFloatingTag(HRESULT *result);
+  virtual ~CDurationTitleFloatingTag(void);
 
   /* get methods */
 

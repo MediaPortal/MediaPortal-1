@@ -20,31 +20,31 @@
 
 #include "StdAfx.h"
 
-#include "DurationTitleTag.h"
+#include "DurationTitleFloatingTag.h"
 #include "ItemCollection.h"
 #include "PlaylistItemCollection.h"
 #include "PlaylistItem.h"
 
-CDurationTitleTag::CDurationTitleTag(HRESULT *result)
+CDurationTitleFloatingTag::CDurationTitleFloatingTag(HRESULT *result)
   : CTag(result)
 {
   this->duration = DECIMAL_INTEGER_NOT_SPECIFIED;
   this->title = NULL;
 }
 
-CDurationTitleTag::~CDurationTitleTag(void)
+CDurationTitleFloatingTag::~CDurationTitleFloatingTag(void)
 {
   FREE_MEM(this->title);
 }
 
 /* get methods */
 
-unsigned int CDurationTitleTag::GetDuration(void)
+unsigned int CDurationTitleFloatingTag::GetDuration(void)
 {
   return this->duration;
 }
 
-const wchar_t *CDurationTitleTag::GetTitle(void)
+const wchar_t *CDurationTitleFloatingTag::GetTitle(void)
 {
   return this->title;
 }
@@ -53,24 +53,24 @@ const wchar_t *CDurationTitleTag::GetTitle(void)
 
 /* other methods */
 
-bool CDurationTitleTag::IsMediaPlaylistItem(unsigned int version)
+bool CDurationTitleFloatingTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02));
+  return ((version == PLAYLIST_VERSION_03));
 }
 
-bool CDurationTitleTag::IsMasterPlaylistItem(unsigned int version)
+bool CDurationTitleFloatingTag::IsMasterPlaylistItem(unsigned int version)
 {
   return false;
 }
 
-bool CDurationTitleTag::IsPlaylistItemTag(void)
+bool CDurationTitleFloatingTag::IsPlaylistItemTag(void)
 {
   return true;
 }
 
-bool CDurationTitleTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *notProcessedItems, CPlaylistItemCollection *processedPlaylistItems)
+bool CDurationTitleFloatingTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *notProcessedItems, CPlaylistItemCollection *processedPlaylistItems)
 {
-  if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02))
+  if ((version == PLAYLIST_VERSION_03))
   {
     // it is applied to exactly next playlist item
     bool applied = false;
@@ -101,7 +101,7 @@ bool CDurationTitleTag::ApplyTagToPlaylistItems(unsigned int version, CItemColle
   }
 }
 
-void CDurationTitleTag::Clear(void)
+void CDurationTitleFloatingTag::Clear(void)
 {
   __super::Clear();
 
@@ -109,7 +109,7 @@ void CDurationTitleTag::Clear(void)
   FREE_MEM(this->title);
 }
 
-bool CDurationTitleTag::ParseTag(void)
+bool CDurationTitleFloatingTag::ParseTag(void)
 {
   bool result = __super::ParseTag();
 
@@ -117,14 +117,14 @@ bool CDurationTitleTag::ParseTag(void)
   {
     // successful parsing of tag
     // compare it to our tag
-    result &= (wcscmp(this->tag, TAG_DURATION_TITLE) == 0);
+    result &= (wcscmp(this->tag, TAG_DURATION_TITLE_FLOATING) == 0);
 
     if (result)
     {
       unsigned int tagContentSize = wcslen(this->tagContent);
 
       // duration is required, must be present
-      int index = IndexOf(this->tagContent, tagContentSize, DURATION_TITLE_SEPARATOR, DURATION_TITLE_SEPARATOR_LENGTH);
+      int index = IndexOf(this->tagContent, tagContentSize, DURATION_TITLE_FLOATING_SEPARATOR, DURATION_TITLE_FLOATING_SEPARATOR_LENGTH);
       result &= (index != (-1));
 
       if (result)
@@ -134,13 +134,13 @@ bool CDurationTitleTag::ParseTag(void)
 
         if (result)
         {
-          this->duration = CAttribute::GetDecimalInteger(durationValue);
-          result &= (this->duration != DECIMAL_INTEGER_NOT_SPECIFIED);
-        }
+          double temp = CAttribute::GetDecimalFloatingPoint(durationValue);
+          result &= (temp != DECIMAL_FLOATING_NOT_SPECIFIED);
 
-        if (result)
-        {
-          this->duration *= 1000;
+          if (result)
+          {
+            this->duration = (unsigned int)(temp * 1000);
+          }
         }
 
         FREE_MEM(durationValue);
@@ -149,7 +149,7 @@ bool CDurationTitleTag::ParseTag(void)
       if (result)
       {
         // title is optional
-        this->title = (tagContentSize == ((unsigned int)index + DURATION_TITLE_SEPARATOR_LENGTH)) ? Duplicate(L"") : Substring(this->tagContent, (unsigned int)index + DURATION_TITLE_SEPARATOR_LENGTH, tagContentSize - (unsigned int)index - DURATION_TITLE_SEPARATOR_LENGTH);
+        this->title = (tagContentSize == ((unsigned int)index + DURATION_TITLE_FLOATING_SEPARATOR_LENGTH)) ? Duplicate(L"") : Substring(this->tagContent, (unsigned int)index + DURATION_TITLE_FLOATING_SEPARATOR_LENGTH, tagContentSize - (unsigned int)index - DURATION_TITLE_FLOATING_SEPARATOR_LENGTH);
         result &= (this->title != NULL);
       }
     }
@@ -160,20 +160,20 @@ bool CDurationTitleTag::ParseTag(void)
 
 /* protected methods */
 
-CItem *CDurationTitleTag::CreateItem(void)
+CItem *CDurationTitleFloatingTag::CreateItem(void)
 {
   HRESULT result = S_OK;
-  CDurationTitleTag *item = new CDurationTitleTag(&result);
+  CDurationTitleFloatingTag *item = new CDurationTitleFloatingTag(&result);
   CHECK_POINTER_HRESULT(result, item, result, E_OUTOFMEMORY);
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(item));
   return item;
 }
 
-bool CDurationTitleTag::CloneInternal(CItem *item)
+bool CDurationTitleFloatingTag::CloneInternal(CItem *item)
 {
   bool result = __super::CloneInternal(item);
-  CDurationTitleTag *tag = dynamic_cast<CDurationTitleTag *>(item);
+  CDurationTitleFloatingTag *tag = dynamic_cast<CDurationTitleFloatingTag *>(item);
   result &= (tag != NULL);
 
   if (result)

@@ -40,7 +40,7 @@ CTargetDurationTag::~CTargetDurationTag(void)
 
 bool CTargetDurationTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02));
+  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03));
 }
 
 bool CTargetDurationTag::IsMasterPlaylistItem(unsigned int version)

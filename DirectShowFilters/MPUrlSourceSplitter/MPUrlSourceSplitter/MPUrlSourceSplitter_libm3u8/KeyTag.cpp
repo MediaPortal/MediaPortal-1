@@ -42,7 +42,7 @@ CKeyTag::~CKeyTag(void)
 
 bool CKeyTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02));
+  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03));
 }
 
 bool CKeyTag::IsMasterPlaylistItem(unsigned int version)
@@ -57,7 +57,7 @@ bool CKeyTag::IsPlaylistItemTag(void)
 
 bool CKeyTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *notProcessedItems, CPlaylistItemCollection *processedPlaylistItems)
 {
-  if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02))
+  if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03))
   {
     // it is applied to all playlist items after this tag until next key tag or end of playlist
     bool applied = this->ParseAttributes(version);

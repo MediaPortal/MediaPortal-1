@@ -35,13 +35,14 @@
 //#include "MapTag.h"
 #include "MediaSequenceTag.h"
 //#include "MediaTag.h"
-//#include "PlaylistTypeTag.h"
+#include "PlaylistTypeTag.h"
 #include "ProgramDateTimeTag.h"
 //#include "StartTag.h"
 #include "StreamVariantTag.h"
 #include "TargetDurationTag.h"
 #include "VersionTag.h"
 #include "DurationTitleTag.h"
+#include "DurationTitleFloatingTag.h"
 #include "ErrorCodes.h"
 
 CTagFactory::CTagFactory(HRESULT *result)
@@ -90,13 +91,14 @@ CTag *CTagFactory::CreateTag(HRESULT *result, CGeneralTag *generalTag)
         //CREATE_SPECIFIC_TAG(temp, TAG_MAP, CMapTag, (*result), tag);
         CREATE_SPECIFIC_TAG(temp, TAG_MEDIA_SEQUENCE, CMediaSequenceTag, (*result), tag);
         //CREATE_SPECIFIC_TAG(temp, TAG_MEDIA, CMediaTag, (*result), tag);
-        //CREATE_SPECIFIC_TAG(temp, TAG_PLAYLIST_TYPE, CPlaylistTypeTag, (*result), tag);
+        CREATE_SPECIFIC_TAG(temp, TAG_PLAYLIST_TYPE, CPlaylistTypeTag, (*result), tag);
         CREATE_SPECIFIC_TAG(temp, TAG_PROGRAM_DATE_TIME, CProgramDateTimeTag, (*result), tag);
         //CREATE_SPECIFIC_TAG(temp, TAG_START, CStartTag, (*result), tag);
         CREATE_SPECIFIC_TAG(temp, TAG_STREAM_VARIANT, CStreamVariantTag, (*result), tag);
         CREATE_SPECIFIC_TAG(temp, TAG_TARGET_DURATION, CTargetDurationTag, (*result), tag);
         CREATE_SPECIFIC_TAG(temp, TAG_VERSION, CVersionTag, (*result), tag);
         CREATE_SPECIFIC_TAG(temp, TAG_DURATION_TITLE, CDurationTitleTag, (*result), tag);
+        CREATE_SPECIFIC_TAG(temp, TAG_DURATION_TITLE_FLOATING, CDurationTitleFloatingTag, (*result), tag);
       }
 
       CHECK_CONDITION_NOT_NULL_EXECUTE(tag, FREE_MEM_CLASS(temp));

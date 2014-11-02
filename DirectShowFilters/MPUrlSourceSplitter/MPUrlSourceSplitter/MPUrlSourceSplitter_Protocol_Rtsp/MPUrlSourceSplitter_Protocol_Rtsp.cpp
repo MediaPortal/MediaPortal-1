@@ -728,8 +728,55 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
         else
         {
           // more common case, whole stream downloaded
-          this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
-          this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"live stream, all data received");
+
+          bool allEndOfStreamReached = true;
+          for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->Count())); i++)
+          {
+            CRtspTrack *track = this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->GetItem(i);
+            CRtspStreamTrack *streamTrack = this->streamTracks->GetItem(i);
+
+            allEndOfStreamReached &= (track->GetRtpPackets()->Count() == 0);
+            if (track->GetRtpPackets()->Count() == 0)
+            {
+              if (track->IsEndOfStream() && (streamTrack->GetStreamFragmentDownloading() != UINT_MAX))
+              {
+                // mark currently downloading stream fragment as downloaded
+                CRtspStreamFragment *fragment = streamTrack->GetStreamFragments()->GetItem(streamTrack->GetStreamFragmentDownloading());
+                if (fragment != NULL)
+                {
+                  fragment->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
+                  fragment->SetDownloaded(true, UINT_MAX);
+                  fragment->SetProcessed(true, UINT_MAX);
+
+                  streamTrack->GetStreamFragments()->UpdateIndexes(streamTrack->GetStreamFragmentDownloading(), 1);
+
+                  // recalculate start position of all processed stream fragments until first not processed stream fragment
+                  streamTrack->GetStreamFragments()->RecalculateProcessedStreamFragmentStartPosition(streamTrack->GetStreamFragmentDownloading());
+                }
+
+                streamTrack->SetStreamFragmentDownloading(UINT_MAX);
+              }
+
+              if ((!streamTrack->IsSetEndOfStream()) && (streamTrack->GetStreamFragments()->Count() != 0))
+              {
+                // all data read from CURL instance for track i, not set end of stream, at least one stream fragment
+                CRtspStreamFragment *lastFragment = streamTrack->GetStreamFragments()->GetItem(streamTrack->GetStreamFragments()->Count() - 1);
+
+                allEndOfStreamReached &= lastFragment->IsDownloaded();
+                if (lastFragment->IsDownloaded())
+                {
+                  this->logger->Log(LOGGER_INFO, L"%s: %s: track %u, end of stream reached", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i);
+                  streamTrack->SetEndOfStreamFlag(true);
+                }
+              }
+            }
+          }
+
+          if (allEndOfStreamReached)
+          {
+            this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
+            this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"live stream, all data received");
+          }
         }
       }
       else

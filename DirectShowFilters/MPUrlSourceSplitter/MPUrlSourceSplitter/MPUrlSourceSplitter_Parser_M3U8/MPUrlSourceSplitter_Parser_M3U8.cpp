@@ -177,7 +177,7 @@ HRESULT CMPUrlSourceSplitter_Parser_M3U8::GetParserResult(void)
 
                   wchar_t *tempBuffer = ConvertToUnicodeA((const char *)buffer);
 
-                  if (tempBuffer != 0)
+                  if (tempBuffer != NULL)
                   {
                     unsigned int tempBufferLength = wcslen(tempBuffer);
                     CMediaPlaylistFactory *factory = new CMediaPlaylistFactory(&this->parserResult);

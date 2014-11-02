@@ -51,7 +51,7 @@ bool CProgramIdAttribute::Parse(unsigned int version, const wchar_t *name, const
 
   if (result)
   {
-    if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02))
+    if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03))
     {
       this->programId = CAttribute::GetDecimalInteger(value);
       result &= (this->programId != PROGRAM_ID_NOT_SPECIFIED);

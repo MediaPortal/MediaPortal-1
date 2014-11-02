@@ -58,7 +58,7 @@ bool CMethodAttribute::Parse(unsigned int version, const wchar_t *name, const wc
 
   if (result)
   {
-    if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02))
+    if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03))
     {
       wchar_t *method = CAttribute::GetEnumeratedString(this->value);
       result &= (method != NULL);

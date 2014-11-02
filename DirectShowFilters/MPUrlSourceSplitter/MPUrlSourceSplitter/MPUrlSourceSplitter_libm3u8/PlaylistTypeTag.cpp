@@ -39,12 +39,12 @@ CPlaylistTypeTag::~CPlaylistTypeTag(void)
 
 bool CPlaylistTypeTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return false;
+  return  (version == PLAYLIST_VERSION_03);
 }
 
 bool CPlaylistTypeTag::IsMasterPlaylistItem(unsigned int version)
 {
-  return false;
+  return  (version == PLAYLIST_VERSION_03);
 }
 
 bool CPlaylistTypeTag::IsPlaylistItemTag(void)

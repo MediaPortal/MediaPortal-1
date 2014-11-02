@@ -120,6 +120,7 @@
     </ClInclude>
     <ClInclude Include="DiscontinuityTag.h" />
     <ClInclude Include="DurationTitleTag.h" />
+    <ClInclude Include="DurationTitleFloatingTag.h" />
     <ClInclude Include="EndListTag.h" />
     <ClInclude Include="ForcedAttribute.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -178,6 +179,7 @@
     <ClInclude Include="M3u8Fragment.h" />
     <ClInclude Include="MediaPlaylistV01.h" />
     <ClInclude Include="MediaPlaylistV02.h" />
+    <ClInclude Include="MediaPlaylistV03.h" />
     <ClInclude Include="MediaSequenceTag.h" />
     <ClInclude Include="MediaTag.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -191,10 +193,7 @@
     <ClInclude Include="Playlist.h" />
     <ClInclude Include="PlaylistItem.h" />
     <ClInclude Include="PlaylistItemCollection.h" />
-    <ClInclude Include="PlaylistTypeTag.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="PlaylistTypeTag.h" />
     <ClInclude Include="PlaylistVersion.h" />
     <ClInclude Include="PreciseAttribute.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -279,6 +278,7 @@
     </ClCompile>
     <ClCompile Include="DiscontinuityTag.cpp" />
     <ClCompile Include="DurationTitleTag.cpp" />
+    <ClCompile Include="DurationTitleFloatingTag.cpp" />
     <ClCompile Include="EndListTag.cpp" />
     <ClCompile Include="ForcedAttribute.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -337,6 +337,7 @@
     <ClCompile Include="M3u8Fragment.cpp" />
     <ClCompile Include="MediaPlaylistV01.cpp" />
     <ClCompile Include="MediaPlaylistV02.cpp" />
+    <ClCompile Include="MediaPlaylistV03.cpp" />
     <ClCompile Include="MediaSequenceTag.cpp" />
     <ClCompile Include="MediaTag.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -350,10 +351,7 @@
     <ClCompile Include="Playlist.cpp" />
     <ClCompile Include="PlaylistItem.cpp" />
     <ClCompile Include="PlaylistItemCollection.cpp" />
-    <ClCompile Include="PlaylistTypeTag.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="PlaylistTypeTag.cpp" />
     <ClCompile Include="PreciseAttribute.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -397,6 +395,7 @@
   <ItemGroup>
     <None Include="m3u8_v1_draft-pantos-http-live-streaming-02.txt" />
     <None Include="m3u8_v2_draft-pantos-http-live-streaming-04.txt" />
+    <None Include="m3u8_v3_draft-pantos-http-live-streaming-06.txt" />
     <None Include="readme.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

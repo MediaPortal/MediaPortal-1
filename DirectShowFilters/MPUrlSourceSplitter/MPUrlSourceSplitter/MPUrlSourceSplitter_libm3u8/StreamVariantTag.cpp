@@ -47,7 +47,7 @@ bool CStreamVariantTag::IsMediaPlaylistItem(unsigned int version)
 
 bool CStreamVariantTag::IsMasterPlaylistItem(unsigned int version)
 {
-  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02));
+  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03));
 }
 
 bool CStreamVariantTag::IsPlaylistItemTag(void)
@@ -57,7 +57,7 @@ bool CStreamVariantTag::IsPlaylistItemTag(void)
 
 bool CStreamVariantTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *notProcessedItems, CPlaylistItemCollection *processedPlaylistItems)
 {
-  if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02))
+  if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03))
   {
     // it is applied to exactly next playlist item
     bool applied = false;

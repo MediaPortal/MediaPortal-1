@@ -52,7 +52,7 @@ bool CCodecsAttribute::Parse(unsigned int version, const wchar_t *name, const wc
 
   if (result)
   {
-    if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02))
+    if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03))
     {
       this->codecs = CAttribute::GetQuotedString(value);
       result &= (this->codecs != NULL);

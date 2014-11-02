@@ -264,6 +264,12 @@
     <ClInclude Include="MediaPlaylistV02.h">
       <Filter>Playlists\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MediaPlaylistV03.h">
+      <Filter>Playlists\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DurationTitleFloatingTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -479,6 +485,12 @@
     <ClCompile Include="MediaPlaylistV02.cpp">
       <Filter>Playlists\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MediaPlaylistV03.cpp">
+      <Filter>Playlists\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DurationTitleFloatingTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="m3u8_v1_draft-pantos-http-live-streaming-02.txt">
@@ -488,6 +500,9 @@
       <Filter>Specifications</Filter>
     </None>
     <None Include="m3u8_v2_draft-pantos-http-live-streaming-04.txt">
+      <Filter>Specifications</Filter>
+    </None>
+    <None Include="m3u8_v3_draft-pantos-http-live-streaming-06.txt">
       <Filter>Specifications</Filter>
     </None>
   </ItemGroup>

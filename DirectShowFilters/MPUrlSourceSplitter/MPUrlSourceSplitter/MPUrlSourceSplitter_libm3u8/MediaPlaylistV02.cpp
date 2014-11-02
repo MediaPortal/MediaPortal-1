@@ -103,7 +103,7 @@ HRESULT CMediaPlaylistV02::ParseTagsAndPlaylistItemsInternal(void)
 
           if (durationTitle != NULL)
           {
-            fragment->SetDuration(durationTitle->GetDuration() * 1000);
+            fragment->SetDuration(durationTitle->GetDuration());
           }
 
           if (discontinuity != NULL)

@@ -20,28 +20,28 @@
 
 #include "StdAfx.h"
 
-#include "MediaPlaylistV01.h"
+#include "MediaPlaylistV03.h"
 #include "ErrorCodes.h"
-#include "DurationTitleTag.h"
+#include "DurationTitleFloatingTag.h"
 #include "DiscontinuityTag.h"
 #include "KeyTag.h"
 #include "MethodAttribute.h"
 #include "EndListTag.h"
 
-CMediaPlaylistV01::CMediaPlaylistV01(HRESULT *result)
+CMediaPlaylistV03::CMediaPlaylistV03(HRESULT *result)
   : CMediaPlaylist(result)
 {
 }
 
-CMediaPlaylistV01::~CMediaPlaylistV01(void)
+CMediaPlaylistV03::~CMediaPlaylistV03(void)
 {
 }
 
 /* get methods */
 
-unsigned int CMediaPlaylistV01::GetVersion(void)
+unsigned int CMediaPlaylistV03::GetVersion(void)
 {
-  return PLAYLIST_VERSION_01;
+  return PLAYLIST_VERSION_03;
 }
 
 /* set methods */
@@ -50,22 +50,22 @@ unsigned int CMediaPlaylistV01::GetVersion(void)
 
 /* protected methods */
 
-HRESULT CMediaPlaylistV01::CheckPlaylistVersion(void)
+HRESULT CMediaPlaylistV03::CheckPlaylistVersion(void)
 {
-  HRESULT result = (PLAYLIST_VERSION_01 == this->detectedVersion) ? S_OK : E_M3U8_NOT_SUPPORTED_PLAYLIST_VERSION;
+  HRESULT result = (PLAYLIST_VERSION_03 == this->detectedVersion) ? S_OK : E_M3U8_NOT_SUPPORTED_PLAYLIST_VERSION;
 
   CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->flags |= PLAYLIST_FLAG_DETECTED_VERSION_01);
 
   return result;
 }
 
-HRESULT CMediaPlaylistV01::ParseTagsAndPlaylistItemsInternal(void)
+HRESULT CMediaPlaylistV03::ParseTagsAndPlaylistItemsInternal(void)
 {
   HRESULT result = __super::ParseTagsAndPlaylistItemsInternal();
 
   if (SUCCEEDED(result))
   {
-    // master playlist version 01 has these tags:
+    // master playlist version 02 has these tags:
     // EXTM3U - header tag, it is checked in CPlaylist
     // EXTINF - playlist item tag, MUST NOT be in master playlist
     // EXT-X-TARGETDURATION - playlist tag, approximate duration of the next media file that will be added to the main presentation - ignored
@@ -76,6 +76,8 @@ HRESULT CMediaPlaylistV01::ParseTagsAndPlaylistItemsInternal(void)
     // EXT-X-ENDLIST - playlist tag, indicates that no more media files will be added to the Playlist file
     // EXT-X-STREAM-INF - playlist item tag, indicates that the next URI in the playlist file identifies another playlist file
     // EXT-X-DISCONTINUITY - playlist item tag, indicates that the media file following it has different characteristics than the one that preceded it
+    // EXT-X-VERSION - playlist tag, the compatibility version of the playlist file
+    // EXT-X-PLAYLIST-TYPE - playlist tag, provides mutability information about the playlist file
 
     CMediaSequenceTag *mediaSequenceTag = this->tags->GetMediaSequence();
     unsigned int mediaSequence = (mediaSequenceTag != NULL) ? mediaSequenceTag->GetSequenceNumber() : MEDIA_SEQUENCE_ID_DEFAULT;
@@ -96,7 +98,7 @@ HRESULT CMediaPlaylistV01::ParseTagsAndPlaylistItemsInternal(void)
         {
           CTag *tag = item->GetTags()->GetItem(j);
 
-          CDurationTitleTag *durationTitle = dynamic_cast<CDurationTitleTag *>(tag);
+          CDurationTitleFloatingTag *durationTitle = dynamic_cast<CDurationTitleFloatingTag *>(tag);
           CDiscontinuityTag *discontinuity = dynamic_cast<CDiscontinuityTag *>(tag);
           CKeyTag *key = dynamic_cast<CKeyTag *>(tag);
 

@@ -42,7 +42,7 @@ CProgramDateTimeTag::~CProgramDateTimeTag(void)
 
 bool CProgramDateTimeTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02));
+  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03));
 }
 
 bool CProgramDateTimeTag::IsMasterPlaylistItem(unsigned int version)
@@ -57,7 +57,7 @@ bool CProgramDateTimeTag::IsPlaylistItemTag(void)
 
 bool CProgramDateTimeTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *notProcessedItems, CPlaylistItemCollection *processedPlaylistItems)
 {
-  if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02))
+  if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03))
   {
     // it is applied to exactly next playlist item
     bool applied = false;

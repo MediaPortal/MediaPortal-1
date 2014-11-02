@@ -53,7 +53,7 @@ bool CInitializationVectorAttribute::Parse(unsigned int version, const wchar_t *
 
   if (result)
   {
-    if (version == PLAYLIST_VERSION_02)
+    if ((version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03))
     {
       // initialization vector is exactly 16 hexadecimal numbers
       result &= (wcslen(value) == INITIALIZATION_VECTOR_VALUE_LENGTH);
