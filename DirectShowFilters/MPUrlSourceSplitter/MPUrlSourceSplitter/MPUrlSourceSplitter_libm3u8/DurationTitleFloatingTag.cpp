@@ -109,9 +109,10 @@ void CDurationTitleFloatingTag::Clear(void)
   FREE_MEM(this->title);
 }
 
-bool CDurationTitleFloatingTag::ParseTag(void)
+bool CDurationTitleFloatingTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag();
+  bool result = __super::ParseTag(version);
+  result &= (version == PLAYLIST_VERSION_03);
 
   if (result)
   {

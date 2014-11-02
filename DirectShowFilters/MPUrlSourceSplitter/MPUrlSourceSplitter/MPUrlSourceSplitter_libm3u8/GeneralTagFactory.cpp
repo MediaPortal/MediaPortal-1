@@ -39,7 +39,7 @@ CGeneralTagFactory::~CGeneralTagFactory(void)
 
 /* other methods */
 
-CGeneralTag *CGeneralTagFactory::CreateTag(HRESULT *result, CItem *item)
+CGeneralTag *CGeneralTagFactory::CreateTag(HRESULT *result, unsigned int version, CItem *item)
 {
   CGeneralTag *tag = NULL;
 
@@ -63,7 +63,7 @@ CGeneralTag *CGeneralTagFactory::CreateTag(HRESULT *result, CItem *item)
           CTagFactory *factory = new CTagFactory(result);
           CHECK_POINTER_HRESULT(*result, factory, *result, E_OUTOFMEMORY);
 
-          CHECK_CONDITION_EXECUTE(SUCCEEDED(*result), tag = factory->CreateTag(result, temp));
+          CHECK_CONDITION_EXECUTE(SUCCEEDED(*result), tag = factory->CreateTag(result, version, temp));
 
           FREE_MEM_CLASS(factory);
 
@@ -82,7 +82,7 @@ CGeneralTag *CGeneralTagFactory::CreateTag(HRESULT *result, CItem *item)
           CCommentTag *comment = new CCommentTag(result);
           CHECK_POINTER_HRESULT(*result, comment, *result, E_OUTOFMEMORY);
 
-          CHECK_CONDITION_HRESULT(*result, comment->ParseGeneralTag(temp), *result, E_M3U8_NO_COMMENT_TAG_FOUND);
+          CHECK_CONDITION_HRESULT(*result, comment->ParseGeneralTag(temp, version), *result, E_M3U8_NO_COMMENT_TAG_FOUND);
 
           CHECK_CONDITION_EXECUTE(FAILED(*result), FREE_MEM_CLASS(comment));
 

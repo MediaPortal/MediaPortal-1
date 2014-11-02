@@ -70,9 +70,9 @@ void CMediaSequenceTag::Clear(void)
   this->sequenceNumber = SEQUENCE_NUMBER_NOT_DEFINED;
 }
 
-bool CMediaSequenceTag::ParseTag(void)
+bool CMediaSequenceTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag();
+  bool result = __super::ParseTag(version);
 
   if (result)
   {

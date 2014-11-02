@@ -88,9 +88,9 @@ bool CProgramDateTimeTag::ApplyTagToPlaylistItems(unsigned int version, CItemCol
   }
 }
 
-bool CProgramDateTimeTag::ParseTag(void)
+bool CProgramDateTimeTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag();
+  bool result = __super::ParseTag(version);
 
   if (result)
   {

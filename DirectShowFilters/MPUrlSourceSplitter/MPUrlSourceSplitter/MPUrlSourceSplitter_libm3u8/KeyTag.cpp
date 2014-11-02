@@ -92,9 +92,9 @@ bool CKeyTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *not
   }
 }
 
-bool CKeyTag::ParseTag(void)
+bool CKeyTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag();
+  bool result = __super::ParseTag(version);
 
   if (result)
   {

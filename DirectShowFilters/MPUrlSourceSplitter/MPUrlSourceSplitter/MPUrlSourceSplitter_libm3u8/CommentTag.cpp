@@ -49,9 +49,9 @@ bool CCommentTag::IsMasterPlaylistItem(unsigned int version)
 
 /* protected methods */
 
-bool CCommentTag::ParseTag(void)
+bool CCommentTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag();
+  bool result = __super::ParseTag(version);
 
   if (result)
   {

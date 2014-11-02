@@ -57,9 +57,9 @@ bool CAllowCacheTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollecti
   return false;
 }
 
-bool CAllowCacheTag::ParseTag(void)
+bool CAllowCacheTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag();
+  bool result = __super::ParseTag(version);
 
   if (result)
   {

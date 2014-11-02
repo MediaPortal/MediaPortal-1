@@ -103,25 +103,48 @@ HRESULT CPlaylist::Parse(const wchar_t *buffer, unsigned int length)
     // split playlist into lines
     // skip all empty lines
 
+    // we need to parse playlist twice
+    // in first run we check header and version
+    // second run is parsing with specified version (if not PLAYLIST_VERSION_01)
+
     unsigned int processed = 0;
+    unsigned int version = PLAYLIST_VERSION_01;
+
     CItemFactory *factory = new CItemFactory(&result);
     CHECK_POINTER_HRESULT(result, factory, result, E_OUTOFMEMORY);
 
     while (SUCCEEDED(result) && (processed < length))
     {
       unsigned int position = 0;
-      CItem *item = factory->CreateItem(&result, buffer + processed, length - processed, &position);
+      CItem *item = factory->CreateItem(&result, version, buffer + processed, length - processed, &position);
       CHECK_POINTER_HRESULT(result, item, result, E_OUTOFMEMORY);
 
       // in playlist can be only tag or playlist item
       // skip everything else (comments, empty lines, ...)
 
-      if ((!this->IsSetFlags(PLAYLIST_FLAG_DETECTED_HEADER)) && item->IsTag())
+      if (SUCCEEDED(result) && (!this->IsSetFlags(PLAYLIST_FLAG_DETECTED_HEADER)) && item->IsTag())
       {
         CHeaderTag *headerTag = dynamic_cast<CHeaderTag *>(item);
         this->flags |= (headerTag != NULL) ? PLAYLIST_FLAG_DETECTED_HEADER : PLAYLIST_FLAG_NONE;
       }
 
+      if (SUCCEEDED(result) && (item->IsTag()))
+      {
+        CVersionTag *versionTag = dynamic_cast<CVersionTag *>(item);
+        if ((versionTag != NULL) && (versionTag->GetVersion() != version))
+        {
+          // remember version and start parsing again
+          version = versionTag->GetVersion();
+
+          FREE_MEM_CLASS(item);
+          this->items->Clear();
+          processed = 0;
+
+          continue;
+        }
+      }
+
+      
       if (SUCCEEDED(result) && (item->IsTag() || item->IsPlaylistItem()))
       {
         CHECK_CONDITION_HRESULT(result, this->items->Add(item), result, E_OUTOFMEMORY);
@@ -172,7 +195,7 @@ HRESULT CPlaylist::ParseTagsAndPlaylistItems(CTagCollection *tags, CPlaylistItem
       // each playlist must specify version
       // if not, it is PLAYLIST_VERSION_01
 
-      CVersionTag *version = this->items->GetVersion();
+      CVersionTag *version = this->tags->GetVersion();
 
       this->detectedVersion = (version != NULL) ? version->GetVersion() : PLAYLIST_VERSION_01;
       result = this->CheckPlaylistVersion();

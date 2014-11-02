@@ -59,7 +59,7 @@ CTagFactory::~CTagFactory(void)
 
 /* other methods */
 
-CTag *CTagFactory::CreateTag(HRESULT *result, CGeneralTag *generalTag)
+CTag *CTagFactory::CreateTag(HRESULT *result, unsigned int version, CGeneralTag *generalTag)
 {
   CTag *tag = NULL;
 
@@ -72,33 +72,33 @@ CTag *CTagFactory::CreateTag(HRESULT *result, CGeneralTag *generalTag)
       CTag *temp = new CTag(result);
       CHECK_POINTER_HRESULT(*result, temp, *result, E_OUTOFMEMORY);
 
-      CHECK_CONDITION_HRESULT(*result, temp->ParseGeneralTag(generalTag), *result, E_M3U8_NO_TAG_FOUND);
+      CHECK_CONDITION_HRESULT(*result, temp->ParseGeneralTag(generalTag, version), *result, E_M3U8_NO_TAG_FOUND);
 
       if (SUCCEEDED(*result))
       {
         // insert most specific tags on top
 
-        CREATE_SPECIFIC_TAG(temp, TAG_ALLOW_CACHE, CAllowCacheTag, (*result), tag);
-        //CREATE_SPECIFIC_TAG(temp, TAG_BYTE_RANGE, CByteRangeTag, (*result), tag);
-        //CREATE_SPECIFIC_TAG(temp, TAG_DISCONTINUITY_SEQUENCE, CDiscontinuitySequenceTag, (*result), tag);
-        CREATE_SPECIFIC_TAG(temp, TAG_DISCONTINUITY, CDiscontinuityTag, (*result), tag);
-        CREATE_SPECIFIC_TAG(temp, TAG_END_LIST, CEndListTag, (*result), tag);
-        CREATE_SPECIFIC_TAG(temp, TAG_HEADER, CHeaderTag, (*result), tag);
-        //CREATE_SPECIFIC_TAG(temp, TAG_INDEPENDED_SEGMENTS, CIndependedSegmentsTag, (*result), tag);
-        //CREATE_SPECIFIC_TAG(temp, TAG_INTRA_FRAME_ONLY, CIntraFrameOnlyTag, (*result), tag);
-        //CREATE_SPECIFIC_TAG(temp, TAG_INTRA_FRAME_STREAM_VARIANT, CIntraFrameStreamVariantTag, (*result), tag);
-        CREATE_SPECIFIC_TAG(temp, TAG_KEY, CKeyTag, (*result), tag);
-        //CREATE_SPECIFIC_TAG(temp, TAG_MAP, CMapTag, (*result), tag);
-        CREATE_SPECIFIC_TAG(temp, TAG_MEDIA_SEQUENCE, CMediaSequenceTag, (*result), tag);
-        //CREATE_SPECIFIC_TAG(temp, TAG_MEDIA, CMediaTag, (*result), tag);
-        CREATE_SPECIFIC_TAG(temp, TAG_PLAYLIST_TYPE, CPlaylistTypeTag, (*result), tag);
-        CREATE_SPECIFIC_TAG(temp, TAG_PROGRAM_DATE_TIME, CProgramDateTimeTag, (*result), tag);
+        CREATE_SPECIFIC_TAG(temp, TAG_ALLOW_CACHE, CAllowCacheTag, (*result), tag, version);
+        //CREATE_SPECIFIC_TAG(temp, TAG_BYTE_RANGE, CByteRangeTag, (*result), tag, version);
+        //CREATE_SPECIFIC_TAG(temp, TAG_DISCONTINUITY_SEQUENCE, CDiscontinuitySequenceTag, (*result), tag, version);
+        CREATE_SPECIFIC_TAG(temp, TAG_DISCONTINUITY, CDiscontinuityTag, (*result), tag, version);
+        CREATE_SPECIFIC_TAG(temp, TAG_END_LIST, CEndListTag, (*result), tag, version);
+        CREATE_SPECIFIC_TAG(temp, TAG_HEADER, CHeaderTag, (*result), tag, version);
+        //CREATE_SPECIFIC_TAG(temp, TAG_INDEPENDED_SEGMENTS, CIndependedSegmentsTag, (*result), tag, version);
+        //CREATE_SPECIFIC_TAG(temp, TAG_INTRA_FRAME_ONLY, CIntraFrameOnlyTag, (*result), tag, version);
+        //CREATE_SPECIFIC_TAG(temp, TAG_INTRA_FRAME_STREAM_VARIANT, CIntraFrameStreamVariantTag, (*result), tag, version);
+        CREATE_SPECIFIC_TAG(temp, TAG_KEY, CKeyTag, (*result), tag, version);
+        //CREATE_SPECIFIC_TAG(temp, TAG_MAP, CMapTag, (*result), tag, version);
+        CREATE_SPECIFIC_TAG(temp, TAG_MEDIA_SEQUENCE, CMediaSequenceTag, (*result), tag, version);
+        //CREATE_SPECIFIC_TAG(temp, TAG_MEDIA, CMediaTag, (*result), tag, version);
+        CREATE_SPECIFIC_TAG(temp, TAG_PLAYLIST_TYPE, CPlaylistTypeTag, (*result), tag, version);
+        CREATE_SPECIFIC_TAG(temp, TAG_PROGRAM_DATE_TIME, CProgramDateTimeTag, (*result), tag, version);
         //CREATE_SPECIFIC_TAG(temp, TAG_START, CStartTag, (*result), tag);
-        CREATE_SPECIFIC_TAG(temp, TAG_STREAM_VARIANT, CStreamVariantTag, (*result), tag);
-        CREATE_SPECIFIC_TAG(temp, TAG_TARGET_DURATION, CTargetDurationTag, (*result), tag);
-        CREATE_SPECIFIC_TAG(temp, TAG_VERSION, CVersionTag, (*result), tag);
-        CREATE_SPECIFIC_TAG(temp, TAG_DURATION_TITLE, CDurationTitleTag, (*result), tag);
-        CREATE_SPECIFIC_TAG(temp, TAG_DURATION_TITLE_FLOATING, CDurationTitleFloatingTag, (*result), tag);
+        CREATE_SPECIFIC_TAG(temp, TAG_STREAM_VARIANT, CStreamVariantTag, (*result), tag, version);
+        CREATE_SPECIFIC_TAG(temp, TAG_TARGET_DURATION, CTargetDurationTag, (*result), tag, version);
+        CREATE_SPECIFIC_TAG(temp, TAG_VERSION, CVersionTag, (*result), tag, version);
+        CREATE_SPECIFIC_TAG(temp, TAG_DURATION_TITLE, CDurationTitleTag, (*result), tag, version);
+        CREATE_SPECIFIC_TAG(temp, TAG_DURATION_TITLE_FLOATING, CDurationTitleFloatingTag, (*result), tag, version);
       }
 
       CHECK_CONDITION_NOT_NULL_EXECUTE(tag, FREE_MEM_CLASS(temp));

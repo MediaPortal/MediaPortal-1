@@ -39,7 +39,7 @@ CItemFactory::~CItemFactory(void)
 
 /* other methods */
 
-CItem *CItemFactory::CreateItem(HRESULT *result, const wchar_t *buffer, unsigned int length, unsigned int *position)
+CItem *CItemFactory::CreateItem(HRESULT *result, unsigned int version, const wchar_t *buffer, unsigned int length, unsigned int *position)
 {
   CItem *item = NULL;
 
@@ -57,7 +57,7 @@ CItem *CItemFactory::CreateItem(HRESULT *result, const wchar_t *buffer, unsigned
 
       if (SUCCEEDED(*result))
       {
-        *position = temp->Parse(buffer, length);
+        *position = temp->Parse(buffer, length, version);
         CHECK_CONDITION_HRESULT(*result, *position != 0, *result, E_M3U8_NO_ITEM_FOUND);
       }
 
@@ -70,7 +70,7 @@ CItem *CItemFactory::CreateItem(HRESULT *result, const wchar_t *buffer, unsigned
           CGeneralTagFactory *factory = new CGeneralTagFactory(result);
           CHECK_POINTER_HRESULT(*result, factory, *result, E_OUTOFMEMORY);
 
-          CHECK_CONDITION_EXECUTE(SUCCEEDED(*result), item = factory->CreateTag(result, temp));
+          CHECK_CONDITION_EXECUTE(SUCCEEDED(*result), item = factory->CreateTag(result, version, temp));
 
           FREE_MEM_CLASS(factory);
 

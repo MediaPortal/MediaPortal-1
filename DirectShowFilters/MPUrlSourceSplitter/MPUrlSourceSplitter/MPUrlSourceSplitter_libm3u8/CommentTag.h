@@ -56,8 +56,9 @@ protected:
   /* methods */
 
   // parses current tag
+  // @param : the playlist version
   // @return : true if successful, false otherwise
-  virtual bool ParseTag(void);
+  virtual bool ParseTag(unsigned int version);
 
   // creates item
   // @return : item or NULL if error

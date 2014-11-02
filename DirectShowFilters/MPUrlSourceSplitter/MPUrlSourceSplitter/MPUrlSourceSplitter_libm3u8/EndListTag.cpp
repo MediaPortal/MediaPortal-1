@@ -57,9 +57,9 @@ bool CEndListTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection 
   return false;
 }
 
-bool CEndListTag::ParseTag(void)
+bool CEndListTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag();
+  bool result = __super::ParseTag(version);
 
   if (result)
   {

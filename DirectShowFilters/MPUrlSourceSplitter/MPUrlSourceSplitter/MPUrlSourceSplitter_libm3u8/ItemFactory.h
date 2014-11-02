@@ -38,12 +38,13 @@ public:
   /* other methods */
 
   // creates item from buffer
+  // @param version : the playlist version
   // @param result : reference to HRESULT variable holding error code if some error
   // @param buffer : buffer with item data for parsing
   // @param length : the length of data in buffer
   // @param position : pointer to position after parsing
   // @return : item or NULL
-  CItem *CreateItem(HRESULT *result, const wchar_t *buffer, unsigned int length, unsigned int *position);
+  CItem *CreateItem(HRESULT *result, unsigned int version, const wchar_t *buffer, unsigned int length, unsigned int *position);
 };
 
 #endif

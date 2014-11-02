@@ -81,9 +81,9 @@ void CTag::Clear(void)
 
 /* protected methods */
 
-bool CTag::ParseTag(void)
+bool CTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag();
+  bool result = __super::ParseTag(version);
 
   if (result)
   {

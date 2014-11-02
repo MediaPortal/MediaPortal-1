@@ -69,9 +69,9 @@ void CGeneralTag::Clear(void)
   FREE_MEM(this->tagContent);
 }
 
-unsigned int CGeneralTag::Parse(const wchar_t *buffer, unsigned int length)
+unsigned int CGeneralTag::Parse(const wchar_t *buffer, unsigned int length, unsigned int version)
 {
-  unsigned int result = __super::Parse(buffer, length);
+  unsigned int result = __super::Parse(buffer, length, version);
 
   if (result != 0)
   {
@@ -107,7 +107,7 @@ unsigned int CGeneralTag::Parse(const wchar_t *buffer, unsigned int length)
 
         if (result != 0)
         {
-          result = this->ParseTag() ? result : 0;
+          result = this->ParseTag(version) ? result : 0;
         }
       }
     }
@@ -155,7 +155,7 @@ bool CGeneralTag::ParseItem(CItem *item)
   return result;
 }
 
-bool CGeneralTag::ParseGeneralTag(CGeneralTag *tag)
+bool CGeneralTag::ParseGeneralTag(CGeneralTag *tag, unsigned int version)
 {
   this->Clear();
   bool result = (tag != NULL);
@@ -168,7 +168,7 @@ bool CGeneralTag::ParseGeneralTag(CGeneralTag *tag)
     SET_STRING_AND_RESULT_WITH_NULL(this->tag, tag->tag, result);
     SET_STRING_AND_RESULT_WITH_NULL(this->tagContent, tag->tagContent, result);
 
-    CHECK_CONDITION_EXECUTE(result, result &= this->ParseTag());
+    CHECK_CONDITION_EXECUTE(result, result &= this->ParseTag(version));
   }
 
   return result;
@@ -176,7 +176,7 @@ bool CGeneralTag::ParseGeneralTag(CGeneralTag *tag)
 
 /* protected methods */
 
-bool CGeneralTag::ParseTag(void)
+bool CGeneralTag::ParseTag(unsigned int version)
 {
   return (this->tag != NULL);
 }

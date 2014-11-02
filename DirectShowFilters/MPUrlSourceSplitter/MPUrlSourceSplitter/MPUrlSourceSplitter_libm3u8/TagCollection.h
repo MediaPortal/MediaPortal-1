@@ -27,6 +27,7 @@
 #include "Tag.h"
 #include "MediaSequenceTag.h"
 #include "EndListTag.h"
+#include "VersionTag.h"
 
 class CTagCollection : public CCollection<CTag>
 {
@@ -43,6 +44,10 @@ public:
   // gets media sequence tag from collection of items
   // @return : media sequence tag or NULL if not found
   virtual CMediaSequenceTag *GetMediaSequence(void);
+
+  // gets version tag from collection of items
+  // @return : version tag or NULL if not found
+  virtual CVersionTag *GetVersion(void);
 
   /* set methods */
 

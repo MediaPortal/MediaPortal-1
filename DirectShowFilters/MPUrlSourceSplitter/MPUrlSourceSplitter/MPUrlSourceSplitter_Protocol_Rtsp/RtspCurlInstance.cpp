@@ -1703,27 +1703,6 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
       rtspRequest = maintainRequest;
     }
 
-    //if (SUCCEEDED(result) && (this->IsSetFlags(RTSP_CURL_INSTANCE_FLAG_METHOD_GET_PARAMETER_SUPPORTED)) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID) && (rtspRequest == NULL) && (GetTickCount() > nextMaintainConnectionRequest))
-    //{
-    //  // create GET_PARAMETER request to maintain connection alive
-    //  CRtspGetParameterRequest *getParameter = new CRtspGetParameterRequest(&result);
-    //  CHECK_POINTER_HRESULT(result, getParameter, result, E_OUTOFMEMORY);
-
-    //  CHECK_CONDITION_HRESULT(result, getParameter->SetUri(this->rtspDownloadRequest->GetUrl()), result, E_OUTOFMEMORY);
-    //  CHECK_CONDITION_HRESULT(result, getParameter->SetSessionId(this->sessionId), result, E_OUTOFMEMORY);
-    //  
-    //  if (SUCCEEDED(result))
-    //  {
-    //    getParameter->SetTimeout(this->downloadRequest->GetReceiveDataTimeout());
-    //    getParameter->SetSequenceNumber(this->lastSequenceNumber++);
-    //  }
-
-    //  nextMaintainConnectionRequest = GetTickCount() + this->rtspDownloadResponse->GetSessionTimeout() / 2;
-    //  
-    //  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(getParameter));
-    //  rtspRequest = getParameter;
-    //}
-
     if (SUCCEEDED(result))
     {
       // only one thread can work with RTSP tracks and responses in one time

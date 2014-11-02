@@ -57,9 +57,10 @@ bool CPlaylistTypeTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollec
   return false;
 }
 
-bool CPlaylistTypeTag::ParseTag(void)
+bool CPlaylistTypeTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag();
+  bool result = __super::ParseTag(version);
+  result &= (version == PLAYLIST_VERSION_03);
 
   if (result)
   {

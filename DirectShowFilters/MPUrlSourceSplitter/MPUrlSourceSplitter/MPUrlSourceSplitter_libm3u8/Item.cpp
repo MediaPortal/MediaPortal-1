@@ -76,7 +76,7 @@ void CItem::Clear(void)
   FREE_MEM(this->itemContent);
 }
 
-unsigned int CItem::Parse(const wchar_t *buffer, unsigned int length)
+unsigned int CItem::Parse(const wchar_t *buffer, unsigned int length, unsigned int version)
 {
   this->Clear();
   unsigned int result = 0;

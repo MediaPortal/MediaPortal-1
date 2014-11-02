@@ -62,8 +62,9 @@ public:
   // parses data in buffer
   // @param buffer : buffer with item data for parsing
   // @param length : the length of data in buffer
+  // @param : the playlist version
   // @return : return position in buffer after processing or 0 if not processed
-  virtual unsigned int Parse(const wchar_t *buffer, unsigned int length);
+  virtual unsigned int Parse(const wchar_t *buffer, unsigned int length, unsigned int version);
 
   // parses item data
   // @param item : the item to parse

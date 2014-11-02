@@ -57,9 +57,9 @@ bool CHeaderTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *
   return false;
 }
 
-bool CHeaderTag::ParseTag(void)
+bool CHeaderTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag();
+  bool result = __super::ParseTag(version);
 
   if (result)
   {

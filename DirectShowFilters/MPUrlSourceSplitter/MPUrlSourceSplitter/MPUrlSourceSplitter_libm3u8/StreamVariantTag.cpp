@@ -91,9 +91,9 @@ bool CStreamVariantTag::ApplyTagToPlaylistItems(unsigned int version, CItemColle
   }
 }
 
-bool CStreamVariantTag::ParseTag(void)
+bool CStreamVariantTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag();
+  bool result = __super::ParseTag(version);
 
   if (result)
   {

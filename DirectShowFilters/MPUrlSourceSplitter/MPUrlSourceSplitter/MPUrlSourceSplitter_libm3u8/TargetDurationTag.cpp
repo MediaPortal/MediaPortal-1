@@ -65,9 +65,9 @@ void CTargetDurationTag::Clear(void)
   this->targetDuration = TARGET_DURATION_NOT_SPECIFIED;
 }
 
-bool CTargetDurationTag::ParseTag(void)
+bool CTargetDurationTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag();
+  bool result = __super::ParseTag(version);
 
   if (result)
   {

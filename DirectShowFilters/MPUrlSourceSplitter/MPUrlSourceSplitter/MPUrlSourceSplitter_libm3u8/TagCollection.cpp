@@ -63,6 +63,21 @@ CMediaSequenceTag *CTagCollection::GetMediaSequence(void)
   return NULL;
 }
 
+CVersionTag *CTagCollection::GetVersion(void)
+{
+  for (unsigned int i = 0; i < this->Count(); i++)
+  {
+    CVersionTag *tag = dynamic_cast<CVersionTag *>(this->GetItem(i));
+    
+    if (tag != NULL)
+    {
+      return tag;
+    }
+  }
+
+  return NULL;
+}
+
 /* set methods */
 
 /* other methods */

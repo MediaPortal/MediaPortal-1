@@ -70,9 +70,9 @@ void CVersionTag::Clear(void)
   this->protocolVersion = PROTOCOL_VERSION_NOT_SPECIFIED;
 }
 
-bool CVersionTag::ParseTag(void)
+bool CVersionTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag();
+  bool result = __super::ParseTag(version);
 
   if (result)
   {

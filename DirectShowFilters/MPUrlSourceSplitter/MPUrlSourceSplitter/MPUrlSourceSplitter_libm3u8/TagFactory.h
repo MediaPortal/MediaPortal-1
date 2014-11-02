@@ -25,7 +25,7 @@
 
 #include "Tag.h"
 
-#define CREATE_SPECIFIC_TAG(tempTag, tagIdentifier, tagType, continueParsing, tag)                                  \
+#define CREATE_SPECIFIC_TAG(tempTag, tagIdentifier, tagType, continueParsing, tag, version)                         \
                                                                                                                     \
 if (SUCCEEDED(continueParsing) && (tag == NULL) && (wcscmp(tempTag->GetTag(), tagIdentifier) == 0))                 \
 {                                                                                                                   \
@@ -34,7 +34,7 @@ if (SUCCEEDED(continueParsing) && (tag == NULL) && (wcscmp(tempTag->GetTag(), ta
                                                                                                                     \
   if (SUCCEEDED(continueParsing))                                                                                   \
   {                                                                                                                 \
-    if (specificTag->ParseGeneralTag(tempTag))                                                                      \
+    if (specificTag->ParseGeneralTag(tempTag, version))                                                             \
     {                                                                                                               \
       tag = specificTag;                                                                                            \
     }                                                                                                               \
@@ -60,9 +60,10 @@ public:
 
   // creates tag from general tag
   // @param result : reference to HRESULT variable holding error code if some error
+  // @param version : the playlist version
   // @param generalTag : the general tag to create specific tag
   // @return : tag or NULL
-  CTag *CreateTag(HRESULT *result, CGeneralTag *generalTag);
+  CTag *CreateTag(HRESULT *result, unsigned int version, CGeneralTag *generalTag);
 };
 
 #endif

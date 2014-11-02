@@ -83,9 +83,9 @@ bool CDiscontinuityTag::ApplyTagToPlaylistItems(unsigned int version, CItemColle
   }
 }
 
-bool CDiscontinuityTag::ParseTag(void)
+bool CDiscontinuityTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag();
+  bool result = __super::ParseTag(version);
 
   if (result)
   {

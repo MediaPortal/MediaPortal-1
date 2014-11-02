@@ -68,9 +68,9 @@ void CPlaylistItem::Clear(void)
   this->tags->Clear();
 }
 
-unsigned int CPlaylistItem::Parse(const wchar_t *buffer, unsigned int length)
+unsigned int CPlaylistItem::Parse(const wchar_t *buffer, unsigned int length, unsigned int version)
 {
-  unsigned int result = __super::Parse(buffer, length);
+  unsigned int result = __super::Parse(buffer, length, version);
 
   if (result != 0)
   {

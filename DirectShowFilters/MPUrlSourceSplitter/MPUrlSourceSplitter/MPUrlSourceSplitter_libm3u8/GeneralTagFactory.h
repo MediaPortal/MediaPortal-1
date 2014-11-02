@@ -37,19 +37,12 @@ public:
 
   /* other methods */
 
-  // creates general tag from buffer
-  // @param result : reference to HRESULT variable holding error code if some error
-  // @param buffer : buffer with general tag data for parsing
-  // @param length : the length of data in buffer
-  // @param position : pointer to position after parsing
-  // @return : general tag or NULL
-  //CGeneralTag *CreateTag(HRESULT *result, const wchar_t *buffer, unsigned int length, unsigned int *position);
-
   // creates general tag from item
   // @param result : reference to HRESULT variable holding error code if some error
+  // @param version : the playlist version
   // @param item : the item to create general tag
   // @return : general tag or NULL
-  CGeneralTag *CreateTag(HRESULT *result, CItem *item);
+  CGeneralTag *CreateTag(HRESULT *result, unsigned int version, CItem *item);
 };
 
 #endif

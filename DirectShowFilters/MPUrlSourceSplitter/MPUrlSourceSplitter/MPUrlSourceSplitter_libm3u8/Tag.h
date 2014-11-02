@@ -85,8 +85,9 @@ protected:
   /* methods */
 
   // parses current tag
+  // @param : the playlist version
   // @return : true if successful, false otherwise
-  virtual bool ParseTag(void);
+  virtual bool ParseTag(unsigned int version);
 
   // parses attributes in this->tagContent
   // @param version : the playlist version
