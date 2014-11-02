@@ -110,7 +110,7 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
     if (firstAudio)
     {
       firstAudioPosition = ret->rtStart;
-      ret->nNewSegment = NS_STREAM_RESET;
+      ret->nNewSegment |= NS_STREAM_RESET;
       ret->bDiscontinuity = clipInterrupted | bSeekTarget | clipReset;
       firstAudio = false;
       if (!clipReset) ret->nNewSegment |= NS_NEW_CLIP;
@@ -154,7 +154,7 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
       if (firstVideo)
       {
         ret->bDiscontinuity = clipInterrupted | bSeekTarget | clipReset;
-        ret->nNewSegment = NS_STREAM_RESET;
+        ret->nNewSegment |= NS_STREAM_RESET;
         if (bSeekTarget) ret->nNewSegment |= NS_SEEK_TARGET; 
         if (!clipReset) ret->nNewSegment |= NS_NEW_CLIP;
         if (clipInterrupted) ret->nNewSegment |= NS_INTERRUPTED;
