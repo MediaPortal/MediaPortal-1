@@ -108,7 +108,7 @@ protected:
   typedef vector<Packet*>::iterator ivecAudioBuffers;
   vector<Packet*> m_vecClipAudioPackets;
   vector<Packet*> m_vecClipVideoPackets;
-  AM_MEDIA_TYPE *m_videoPmt;
+  AM_MEDIA_TYPE* m_videoPmt;
   int superceeded;
 
   CCritSec m_sectionRead;
