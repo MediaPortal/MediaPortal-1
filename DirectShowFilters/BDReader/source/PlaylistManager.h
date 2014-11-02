@@ -64,7 +64,8 @@ protected:
   void PushPlaylists();
   void PopPlaylists(int difference);
 
-  bool firstVideo, firstAudio;
+  bool firstVideo;
+  bool firstAudio;
 
   REFERENCE_TIME Incomplete();
   REFERENCE_TIME ClipPlayTime();
@@ -77,6 +78,7 @@ protected:
   ivecPlaylists m_itCurrentVideoPlayBackPlaylist;
   ivecPlaylists m_itCurrentAudioSubmissionPlaylist;
   ivecPlaylists m_itCurrentVideoSubmissionPlaylist;
+
   int m_itCurrentAudioPlayBackPlaylistPos;
   int m_itCurrentVideoPlayBackPlaylistPos;
   int m_itCurrentAudioSubmissionPlaylistPos;
