@@ -95,6 +95,5 @@ protected:
 
   void PushClips();
   void PopClips();
-
 };
 
