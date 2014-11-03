@@ -593,6 +593,7 @@
     <Compile Include="Util\PathUtility.cs" />
     <Compile Include="Util\PRNG.cs" />
     <Compile Include="Util\ProcessLock.cs" />
+    <Compile Include="Util\RawInput.cs" />
     <Compile Include="Util\RegistryTools.cs" />
     <Compile Include="Util\RemovableDriveHelper.cs" />
     <Compile Include="Util\ShellNotification.cs" />
@@ -1538,6 +1539,10 @@
     <Compile Include="Util\Win32API.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\Win32AppCommand.cs" />
+    <Compile Include="Util\Win32CreateFile.cs" />
+    <Compile Include="Util\Win32Hid.cs" />
+    <Compile Include="Util\Win32RawInput.cs" />
     <Compile Include="Util\WindowsController.cs">
       <SubType>Code</SubType>
     </Compile>
