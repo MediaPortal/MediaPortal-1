@@ -76,13 +76,12 @@ FORCEINLINE bool IS_OUR_ERROR(HRESULT error) { return (((error & 0xFFFFF000) == 
 #define E_NO_STREAM_TO_SEEK                                                     -41
 #define E_NOT_FOUND_SEEK_INDEX_ENTRY                                            -42
 #define E_NOT_FOUND_ANY_FLV_PACKET                                              -43
-#define E_NO_MPEG_TS_POSITION_TO_SEEK                                           -44
-#define E_NOT_FOUND_MINIMUM_TIMESTAMP                                           -45
-#define E_NOT_FOUND_MAXIMUM_TIMESTAMP                                           -46
-#define E_NOT_FOUND_TIMESTAMP                                                   -47
-#define E_POSITION_LIMIT_OVER_MAXIMUM_POSITION                                  -48
-#define E_MINIMUM_TIMESTAMP_GREATER_THAN_MAXIMUM_TIMESTAMP                      -49
-#define E_SEEK_INDEX_ENTRY_EXISTS                                               -50
+#define E_NOT_FOUND_MINIMUM_TIMESTAMP                                           -44
+#define E_NOT_FOUND_MAXIMUM_TIMESTAMP                                           -45
+#define E_NOT_FOUND_TIMESTAMP                                                   -46
+#define E_POSITION_LIMIT_OVER_MAXIMUM_POSITION                                  -47
+#define E_MINIMUM_TIMESTAMP_GREATER_THAN_MAXIMUM_TIMESTAMP                      -48
+#define E_SEEK_INDEX_ENTRY_EXISTS                                               -49
 
 // specific parser error code
 
@@ -104,22 +103,21 @@ FORCEINLINE bool IS_OUR_ERROR(HRESULT error) { return (((error & 0xFFFFF000) == 
 
 // MPEG2 TS parser error codes
 
-#define E_MPEG2TS_NOT_ALIGNED_BUFFER_SIZE                                       -70
-#define E_MPEG2TS_CANNOT_PARSE_PACKET                                           -71
-#define E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION              -72
-#define E_MPEG2TS_INCOMPLETE_SECTION                                            -73
-#define E_MPEG2TS_SECTION_INVALID_CRC32                                         -74
-#define E_MPEG2TS_CANNOT_SPLIT_SECTION_INTO_PSI_PACKETS                         -75
-#define E_MPEG2TS_SECTION_BIGGER_THAN_ORIGINAL_SECTION                          -76
-#define E_MPEG2TS_ONLY_ONE_PROGRAM_ALLOWED                                      -77
+#define E_MPEG2TS_CANNOT_PARSE_PACKET                                           -70
+#define E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION              -71
+#define E_MPEG2TS_INCOMPLETE_SECTION                                            -72
+#define E_MPEG2TS_SECTION_INVALID_CRC32                                         -73
+#define E_MPEG2TS_CANNOT_SPLIT_SECTION_INTO_PSI_PACKETS                         -74
+#define E_MPEG2TS_SECTION_BIGGER_THAN_ORIGINAL_SECTION                          -75
+#define E_MPEG2TS_ONLY_ONE_PROGRAM_ALLOWED                                      -76
 
 // M3U8 parser error codes
 
-#define E_M3U8_NO_ITEM_FOUND                                                    -80
-#define E_M3U8_NO_GENERAL_TAG_FOUND                                             -81
-#define E_M3U8_NO_PLAYLIST_ITEM_FOUND                                           -82
-#define E_M3U8_NO_TAG_FOUND                                                     -83
-#define E_M3U8_NO_COMMENT_TAG_FOUND                                             -84
+#define E_M3U8_NOT_VALID_ITEM_FOUND                                             -80
+#define E_M3U8_NOT_VALID_GENERAL_TAG_FOUND                                      -81
+#define E_M3U8_NOT_VALID_PLAYLIST_ITEM_FOUND                                    -82
+#define E_M3U8_NOT_VALID_TAG_FOUND                                              -83
+#define E_M3U8_NOT_VALID_COMMENT_TAG_FOUND                                      -84
 #define E_M3U8_NOT_PLAYLIST                                                     -85
 #define E_M3U8_NOT_SUPPORTED_PLAYLIST_VERSION                                   -86
 #define E_M3U8_NOT_VALID_PLAYLIST                                               -87
@@ -127,7 +125,7 @@ FORCEINLINE bool IS_OUR_ERROR(HRESULT error) { return (((error & 0xFFFFF000) == 
 #define E_M3U8_NOT_SUPPORTED_TAG                                                -89
 #define E_M3U8_NO_PLAYLIST_ITEM_FOR_TAG                                         -90
 
-FORCEINLINE bool IS_M3U8_ERROR(HRESULT error) { return ((error >= E_M3U8_NO_PLAYLIST_ITEM_FOR_TAG) && (error <= E_M3U8_NO_ITEM_FOUND)); }
+FORCEINLINE bool IS_M3U8_ERROR(HRESULT error) { return ((error >= E_M3U8_NO_PLAYLIST_ITEM_FOR_TAG) && (error <= E_M3U8_NOT_VALID_ITEM_FOUND)); }
 
 // specific protocol error codes
 
@@ -199,7 +197,6 @@ FORCEINLINE bool IS_M3U8_ERROR(HRESULT error) { return ((error >= E_M3U8_NO_PLAY
 #define E_AFHS_AKAMAI_DECRYPTOR_CANNOT_SAVE_DECRYPTOR                           -177
 #define E_AFHS_AKAMAI_DECRYPTOR_GENERAL_ERROR                                   -178
 #define E_AFHS_AKAMAI_DECRYPTOR_INVALID_COUNT_OF_ENCRYPTED_SEGMENT_FRAGMENTS    -179
-#define E_AFHS_AKAMAI_DECRYPTOR_CANNOT_DOWNLOAD_KEY                             -180
 #define E_AFHS_AKAMAI_DECRYPTOR_NOT_FLV_PACKET                                  -181
 #define E_AFHS_AKAMAI_DECRYPTOR_NOT_AKAMAI_FLV_PACKET                           -182
 #define E_AFHS_AKAMAI_DECRYPTOR_NOT_FOUND_MEDIA_DATA_BOX                        -183
@@ -210,7 +207,7 @@ FORCEINLINE bool IS_M3U8_ERROR(HRESULT error) { return ((error >= E_M3U8_NO_PLAY
 
 // MSHS protocol error codes
 
-#define E_MSHS_NO_VIDEO_OR_AUDIO_FRAGMENT                                       -192
+#define E_MSHS_NO_VIDEO_AND_AUDIO_FRAGMENT                                      -192
 #define E_MSHS_NO_FRAGMENT_URL                                                  -193
 #define E_MSHS_CANNOT_PARSE_STREAMING_MEDIA_BOX                                 -194
 #define E_MSHS_CANNOT_PARSE_MOVIE_FRAGMENT_BOX                                  -195

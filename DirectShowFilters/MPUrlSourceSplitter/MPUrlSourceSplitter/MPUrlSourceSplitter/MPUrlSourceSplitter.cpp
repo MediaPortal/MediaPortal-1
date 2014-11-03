@@ -35,6 +35,7 @@
 #include "MPUrlSourceSplitter_Parser_MPEG2TS_Parameters.h"
 #include "CurlInstance.h"
 #include "conversions.h"
+#include "ErrorMessages.h"
 
 #include <crtdbg.h>
 #include <process.h>
@@ -1505,7 +1506,26 @@ STDMETHODIMP CMPUrlSourceSplitter::GetErrorDescription(HRESULT error, wchar_t **
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, description);
 
-  SET_STRING_HRESULT_WITH_NULL(*description, L"", result);
+  if (SUCCEEDED(result))
+  {
+    for (unsigned int i = 0; ; i++)
+    {
+      ErrorMessage msg = ERROR_MESSAGES[i];
+
+      if (msg.code == error)
+      {
+        SET_STRING_HRESULT_WITH_NULL(*description, msg.message, result);
+        break;
+      }
+
+      if (msg.code == 0)
+      {
+        // the last item without specified message
+        SET_STRING_HRESULT_WITH_NULL(*description, L"", result);
+        break;
+      }
+    }
+  }
 
   return result;
 }

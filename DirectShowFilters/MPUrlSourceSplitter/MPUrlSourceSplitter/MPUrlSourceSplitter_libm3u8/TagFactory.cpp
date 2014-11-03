@@ -72,7 +72,7 @@ CTag *CTagFactory::CreateTag(HRESULT *result, unsigned int version, CGeneralTag 
       CTag *temp = new CTag(result);
       CHECK_POINTER_HRESULT(*result, temp, *result, E_OUTOFMEMORY);
 
-      CHECK_CONDITION_HRESULT(*result, temp->ParseGeneralTag(generalTag, version), *result, E_M3U8_NO_TAG_FOUND);
+      CHECK_CONDITION_HRESULT(*result, temp->ParseGeneralTag(generalTag, version), *result, E_M3U8_NOT_VALID_TAG_FOUND);
 
       if (SUCCEEDED(*result))
       {

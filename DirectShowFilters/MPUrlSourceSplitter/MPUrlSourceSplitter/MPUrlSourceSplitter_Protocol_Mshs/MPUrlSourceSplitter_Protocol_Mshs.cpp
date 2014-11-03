@@ -1632,7 +1632,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::GetStreamFragmentsFromManifest(CMshs
       int64_t fragmentTime = 0;
       unsigned int fragmentType = MSHS_STREAM_FRAGMENT_FLAG_NONE;
 
-      CHECK_CONDITION_HRESULT(result, (videoFragment != NULL) || (audioFragment != NULL), result, E_MSHS_NO_VIDEO_OR_AUDIO_FRAGMENT);
+      CHECK_CONDITION_HRESULT(result, (videoFragment != NULL) || (audioFragment != NULL), result, E_MSHS_NO_VIDEO_AND_AUDIO_FRAGMENT);
 
       if (SUCCEEDED(result))
       {

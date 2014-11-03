@@ -75,6 +75,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ErrorCodes.h" />
+    <ClInclude Include="ErrorMessages.h" />
     <ClInclude Include="IDownload.h" />
     <ClInclude Include="IDemuxerOwner.h" />
     <ClInclude Include="IFilterState.h" />

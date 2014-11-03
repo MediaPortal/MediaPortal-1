@@ -58,7 +58,7 @@ CItem *CItemFactory::CreateItem(HRESULT *result, unsigned int version, const wch
       if (SUCCEEDED(*result))
       {
         *position = temp->Parse(buffer, length, version);
-        CHECK_CONDITION_HRESULT(*result, *position != 0, *result, E_M3U8_NO_ITEM_FOUND);
+        CHECK_CONDITION_HRESULT(*result, *position != 0, *result, E_M3U8_NOT_VALID_ITEM_FOUND);
       }
 
       if (SUCCEEDED(*result))
@@ -76,7 +76,7 @@ CItem *CItemFactory::CreateItem(HRESULT *result, unsigned int version, const wch
 
           switch (*result)
           {
-          case E_M3U8_NO_GENERAL_TAG_FOUND:
+          case E_M3U8_NOT_VALID_GENERAL_TAG_FOUND:
             *result = S_OK;
             break;
           default:
@@ -90,13 +90,13 @@ CItem *CItemFactory::CreateItem(HRESULT *result, unsigned int version, const wch
           CPlaylistItem *playlistItem = new CPlaylistItem(result);
           CHECK_POINTER_HRESULT(*result, playlistItem, *result, E_OUTOFMEMORY);
 
-          CHECK_CONDITION_HRESULT(*result, playlistItem->ParsePlaylistItem(temp), *result, E_M3U8_NO_PLAYLIST_ITEM_FOUND);
+          CHECK_CONDITION_HRESULT(*result, playlistItem->ParsePlaylistItem(temp), *result, E_M3U8_NOT_VALID_PLAYLIST_ITEM_FOUND);
 
           CHECK_CONDITION_EXECUTE(FAILED(*result), FREE_MEM_CLASS(playlistItem));
 
           switch (*result)
           {
-          case E_M3U8_NO_PLAYLIST_ITEM_FOUND:
+          case E_M3U8_NOT_VALID_PLAYLIST_ITEM_FOUND:
             *result = S_OK;
             break;
           default:

@@ -52,7 +52,7 @@ CGeneralTag *CGeneralTagFactory::CreateTag(HRESULT *result, unsigned int version
       CGeneralTag *temp = new CGeneralTag(result);
       CHECK_POINTER_HRESULT(*result, temp, *result, E_OUTOFMEMORY);
 
-      CHECK_CONDITION_HRESULT(*result, temp->ParseItem(item), *result, E_M3U8_NO_GENERAL_TAG_FOUND);
+      CHECK_CONDITION_HRESULT(*result, temp->ParseItem(item), *result, E_M3U8_NOT_VALID_GENERAL_TAG_FOUND);
 
       if (SUCCEEDED(*result))
       {
@@ -69,7 +69,7 @@ CGeneralTag *CGeneralTagFactory::CreateTag(HRESULT *result, unsigned int version
 
           switch (*result)
           {
-          case E_M3U8_NO_TAG_FOUND:
+          case E_M3U8_NOT_VALID_TAG_FOUND:
             *result = S_OK;
             break;
           default:
@@ -82,13 +82,13 @@ CGeneralTag *CGeneralTagFactory::CreateTag(HRESULT *result, unsigned int version
           CCommentTag *comment = new CCommentTag(result);
           CHECK_POINTER_HRESULT(*result, comment, *result, E_OUTOFMEMORY);
 
-          CHECK_CONDITION_HRESULT(*result, comment->ParseGeneralTag(temp, version), *result, E_M3U8_NO_COMMENT_TAG_FOUND);
+          CHECK_CONDITION_HRESULT(*result, comment->ParseGeneralTag(temp, version), *result, E_M3U8_NOT_VALID_COMMENT_TAG_FOUND);
 
           CHECK_CONDITION_EXECUTE(FAILED(*result), FREE_MEM_CLASS(comment));
 
           switch (*result)
           {
-          case E_M3U8_NO_COMMENT_TAG_FOUND:
+          case E_M3U8_NOT_VALID_COMMENT_TAG_FOUND:
             *result = S_OK;
             break;
           default:
