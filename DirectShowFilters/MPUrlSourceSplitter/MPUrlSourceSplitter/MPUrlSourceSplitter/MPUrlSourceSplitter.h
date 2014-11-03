@@ -25,6 +25,7 @@
 
 #include "IDownload.h"
 #include "IFilterState.h"
+#include "IFilterStateEx.h"
 #include "IDemuxerOwner.h"
 #include "MPUrlSourceSplitterOutputPinCollection.h"
 #include "ParserHoster.h"
@@ -79,7 +80,7 @@ class CMPUrlSourceSplitter
   , public IDownload
   , public IDownloadCallback
   , public IDemuxerOwner
-  , public IFilterState
+  , public IFilterStateEx
 {
 public:
   ~CMPUrlSourceSplitter();
@@ -227,6 +228,24 @@ public:
   // @param path : reference to string which will hold path to cache file name
   // @return : S_OK if successful (*path can be NULL), E_POINTER if path is NULL
   STDMETHODIMP GetCacheFileName(wchar_t **path);
+
+  // IFilterStateEx interface
+
+  // gets filter version
+  // @param version : reference to unsigned integer which will hold filter version
+  // @return : S_OK if successful, error code otherwise
+  STDMETHODIMP GetVersion(unsigned int *version);
+
+  // tests if error code is filter error
+  // @param isFilterError : reference to variable that holds result of test
+  // @param error : the error code to test
+  // @return : S_OK if successful, error code otherwise
+  STDMETHODIMP IsFilterError(bool *isFilterError, HRESULT error);
+
+  // gets error description for filter error
+  // @param error : the error code to get description
+  // @param description : reference to string which will hold description error
+  STDMETHODIMP GetErrorDescription(HRESULT error, wchar_t **description);
 
   enum { CMD_EXIT, CMD_SEEK, CMD_PAUSE, CMD_PLAY };
 

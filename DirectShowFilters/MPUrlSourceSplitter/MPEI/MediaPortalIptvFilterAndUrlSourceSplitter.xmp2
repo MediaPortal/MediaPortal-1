@@ -353,7 +353,7 @@ Supported protocols:
 - Apple HTTP live streaming (M3U8 playlists)</ExtensionDescription>
     <VersionDescription />
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation />
+    <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=327&amp;cf_id=24</OnlineLocation>
     <ReleaseDate>2014-11-01T20:21:47.9245983+01:00</ReleaseDate>
     <Tags>codec</Tags>
     <Location>.\MediaPortalUrlSourceSplitter[Version].mpe1</Location>

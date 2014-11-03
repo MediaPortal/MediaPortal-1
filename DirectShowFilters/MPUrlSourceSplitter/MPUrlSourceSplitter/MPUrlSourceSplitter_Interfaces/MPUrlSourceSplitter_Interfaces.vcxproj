@@ -78,6 +78,7 @@
     <ClInclude Include="IDownload.h" />
     <ClInclude Include="IDemuxerOwner.h" />
     <ClInclude Include="IFilterState.h" />
+    <ClInclude Include="IFilterStateEx.h" />
     <ClInclude Include="IProtocol.h" />
     <ClInclude Include="ISeeking.h" />
     <ClInclude Include="ISimpleProtocol.h" />

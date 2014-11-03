@@ -33,6 +33,8 @@
 #include "MPUrlSourceSplitterOutputSplitterPin.h"
 #include "MPUrlSourceSplitterOutputDownloadPin.h"
 #include "MPUrlSourceSplitter_Parser_MPEG2TS_Parameters.h"
+#include "CurlInstance.h"
+#include "conversions.h"
 
 #include <crtdbg.h>
 #include <process.h>
@@ -119,8 +121,8 @@ const wchar_t *REPLACE_PARAMETER_NAME_STOCK_FILTER[PARAMETER_NAME_STOCK_FILTER_T
                                                                   PARAMETER_NAME_INTERFACE,
                                                                   PARAMETER_NAME_URL};
 
-extern "C" char *curl_easy_unescape(void *handle, const char *string, int length, int *olen);
-extern "C" void curl_free(void *p);
+#define UNIX_TIMESTAMP_2000_01_01                                 946684800
+#define SECONDS_IN_DAY                                            86400
 
 extern "C++" CStaticLogger *staticLogger;
 
@@ -432,6 +434,7 @@ STDMETHODIMP CMPUrlSourceSplitter::NonDelegatingQueryInterface(REFIID riid, void
       QI(IAMOpenProgress)
       QI(IDownload)
       QI(IFilterState)
+      QI(IFilterStateEx)
       __super::NonDelegatingQueryInterface(riid, ppv);
   }
 
@@ -1462,6 +1465,47 @@ HRESULT CMPUrlSourceSplitter::GetCacheFileName(wchar_t **path)
     SET_STRING(*path, storeFilePath);
     result = TEST_STRING_WITH_NULL(*path, storeFilePath) ? result : E_OUTOFMEMORY;
   }
+
+  return result;
+}
+
+// IFilterStateEx
+
+STDMETHODIMP CMPUrlSourceSplitter::GetVersion(unsigned int *version)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, version);
+
+  if (SUCCEEDED(result))
+  {
+    uint64_t buildDate = BUILD_INFO_MP_URL_SOURCE_SPLITTER - UNIX_TIMESTAMP_2000_01_01;
+    buildDate /= SECONDS_IN_DAY;
+
+    *version = (unsigned int)buildDate;
+  }
+
+  return result;
+}
+
+STDMETHODIMP CMPUrlSourceSplitter::IsFilterError(bool *isFilterError, HRESULT error)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, isFilterError);
+
+  if (SUCCEEDED(result))
+  {
+    *isFilterError = (IS_OUR_ERROR(error) || IS_CURL_ERROR(error));
+  }
+
+  return result;
+}
+
+STDMETHODIMP CMPUrlSourceSplitter::GetErrorDescription(HRESULT error, wchar_t **description)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, description);
+
+  SET_STRING_HRESULT_WITH_NULL(*description, L"", result);
 
   return result;
 }

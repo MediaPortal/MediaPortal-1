@@ -55,7 +55,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\..\ffmpeg;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libdumpfile;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_Parser_MPEG2TS;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\..\ffmpeg;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libdumpfile;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_Parser_MPEG2TS;..\MPUrlSourceSplitter_libcurlinstance;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -102,6 +102,8 @@ echo ^" &gt;&gt; VersionInfo.h
 (echo.|set /p=#define DATE_INFO_MP_URL_SOURCE_SPLITTER                                      L^") &gt;&gt; VersionInfo.h
 git log -1 --pretty=format:"%%ci" -- . &gt;&gt; VersionInfo.h
 echo ^" &gt;&gt; VersionInfo.h
+(echo.|set /p=#define BUILD_INFO_MP_URL_SOURCE_SPLITTER                                     ) &gt;&gt; VersionInfo.h
+git log -1 --pretty=format:"%%ct" &gt;&gt; VersionInfo.h
 echo. &gt;&gt; VersionInfo.h
 echo #endif &gt;&gt; VersionInfo.h</Command>
     </PreBuildEvent>
@@ -114,7 +116,7 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\..\ffmpeg;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libdumpfile;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_Parser_MPEG2TS;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\..\ffmpeg;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libdumpfile;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_Parser_MPEG2TS;..\MPUrlSourceSplitter_libcurlinstance;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -162,6 +164,8 @@ echo ^" &gt;&gt; VersionInfo.h
 (echo.|set /p=#define DATE_INFO_MP_URL_SOURCE_SPLITTER                                      L^") &gt;&gt; VersionInfo.h
 git log -1 --pretty=format:"%%ci" -- . &gt;&gt; VersionInfo.h
 echo ^" &gt;&gt; VersionInfo.h
+(echo.|set /p=#define BUILD_INFO_MP_URL_SOURCE_SPLITTER                                     ) &gt;&gt; VersionInfo.h
+git log -1 --pretty=format:"%%ct" &gt;&gt; VersionInfo.h
 echo. &gt;&gt; VersionInfo.h
 echo #endif &gt;&gt; VersionInfo.h</Command>
     </PreBuildEvent>

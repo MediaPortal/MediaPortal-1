@@ -45,6 +45,9 @@
     <ClInclude Include="IDemuxerOwner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IFilterStateEx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
