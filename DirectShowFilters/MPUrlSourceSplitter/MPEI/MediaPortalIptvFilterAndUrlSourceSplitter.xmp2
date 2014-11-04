@@ -3,147 +3,308 @@
   <Version>2.0</Version>
   <Groups>
     <Items>
-      <GroupItem Name="Default">
+      <GroupItem Name="TvServer">
         <ParentGroup />
-        <DisplayName>Filter</DisplayName>
-        <DefaulChecked>true</DefaulChecked>
-        <Description>All required files of the filter.</Description>
+        <DisplayName>TV Server</DisplayName>
+        <DefaulChecked>false</DefaulChecked>
+        <Description>Tv Server</Description>
         <Files>
           <Items>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\avcodec-mpurlsourcesplitter-54.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{40fe3cd9-0316-42b6-8f71-193506ac26fb}-avcodec-mpurlsourcesplitter-54.dll</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\avcodec-mpurlsourcesplitter-54.dll</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{cbfe24eb-b540-4beb-8dc9-318ab2578e1a}-avcodec-mpurlsourcesplitter-54.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avcodec-mpurlsourcesplitter-54.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\avformat-mpurlsourcesplitter-54.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{22042036-702d-49f5-810a-e06483aaee1f}-avformat-mpurlsourcesplitter-54.dll</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\avformat-mpurlsourcesplitter-54.dll</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{ecc97123-c480-4486-a481-a921f297633d}-avformat-mpurlsourcesplitter-54.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-54.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\avutil-mpurlsourcesplitter-51.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{d6d03b3f-de52-4134-92fa-3591b5c15bdf}-avutil-mpurlsourcesplitter-51.dll</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\avutil-mpurlsourcesplitter-51.dll</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{d0c3784e-98c0-42c7-9d24-5242689ac9cb}-avutil-mpurlsourcesplitter-51.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avutil-mpurlsourcesplitter-51.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter.ax</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{cd326625-484c-406d-9611-a3020daf85c9}-MPUrlSourceSplitter.ax</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter.ax</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{c86e43b2-c9eb-4c97-a9e0-b60cdd64ccf8}-MPUrlSourceSplitter.ax</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter.ax</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_libcurl.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{92697eb8-bebe-45d5-8c83-8a17044b3036}-MPUrlSourceSplitter_libcurl.dll</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_libcurl.dll</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{af823fa2-8197-48ac-987b-bbe83230b3fd}-MPUrlSourceSplitter_libcurl.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_libcurl.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Parser_Default.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{1dd89d9d-980f-4bd1-9dfc-5c3204c2bbf9}-MPUrlSourceSplitter_Parser_Default.dll</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Parser_Default.dll</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{41a79612-ae51-4f4a-a1b7-0aa9e9ce0f69}-MPUrlSourceSplitter_Parser_Default.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_Default.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Parser_F4M.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{febd3686-88a4-413e-9505-aebd7bb61d64}-MPUrlSourceSplitter_Parser_F4M.dll</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Parser_F4M.dll</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{df8f665f-b8ac-4749-b65a-bb384016303b}-MPUrlSourceSplitter_Parser_F4M.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_F4M.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Parser_M3U8.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{8a719f59-e746-4f12-921a-a43174c520e0}-MPUrlSourceSplitter_Parser_M3U8.dll</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Parser_M3U8.dll</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{dca715f2-ddcd-428b-8a0f-ac2bd7171a73}-MPUrlSourceSplitter_Parser_M3U8.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_M3U8.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Parser_MPEG2TS.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{bfc16000-7fcb-4f4c-b1ef-acc5e046fea5}-MPUrlSourceSplitter_Parser_MPEG2TS.dll</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Parser_MPEG2TS.dll</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{9965a9ed-fd31-444c-bd7a-a59d2e7e24c8}-MPUrlSourceSplitter_Parser_MPEG2TS.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_MPEG2TS.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Parser_MSHS.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{67b0988b-a48f-4c65-96b6-ad8d31f27ad8}-MPUrlSourceSplitter_Parser_MSHS.dll</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Parser_MSHS.dll</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{58e73b0f-a512-449a-8e66-eb956cf52b0b}-MPUrlSourceSplitter_Parser_MSHS.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_MSHS.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Afhs.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{e4c8ade0-c2dc-4370-9511-9ef485215884}-MPUrlSourceSplitter_Protocol_Afhs.dll</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Protocol_Afhs.dll</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{b5ad2547-6774-4890-824f-2a1e5f5ccbbc}-MPUrlSourceSplitter_Protocol_Afhs.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{12d5b736-3aba-4c89-a0d0-313a8857a1fb}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{fe480a86-5f0e-4a26-b4ed-2c4b9619548a}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{56c193c6-3bbe-4026-a01d-5987aa235ad7}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{f41fa654-a14d-40c5-9835-fcd7b2379374}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Http.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{4d24d292-0f1d-48a6-a4eb-ea9b2ca6cbac}-MPUrlSourceSplitter_Protocol_Http.dll</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Protocol_Http.dll</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{9401bfc9-7d87-4d45-990d-e35f57968567}-MPUrlSourceSplitter_Protocol_Http.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Http.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_M3U8.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{9cc6152a-5c42-4212-9940-b4c0cbcbe015}-MPUrlSourceSplitter_Protocol_M3U8.dll</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Protocol_M3U8.dll</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{58594901-32fc-45ba-b8e7-56c4000bd086}-MPUrlSourceSplitter_Protocol_M3U8.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Mshs.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{0955e97b-ea77-4912-bef5-502270995811}-MPUrlSourceSplitter_Protocol_Mshs.dll</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Protocol_Mshs.dll</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{f454063a-bf0b-42a6-9436-bc565ab52cf3}-MPUrlSourceSplitter_Protocol_Mshs.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Mshs.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Rtmp.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{3a18a7af-091d-4d13-8da5-f143619b5eba}-MPUrlSourceSplitter_Protocol_Rtmp.dll</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Protocol_Rtmp.dll</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{c4aaee71-b406-45d5-ab0d-cb1fef1d9f2a}-MPUrlSourceSplitter_Protocol_Rtmp.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtmp.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Rtsp.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{ecd14c54-667f-4915-9f47-13459da9f9e2}-MPUrlSourceSplitter_Protocol_Rtsp.dll</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Protocol_Rtsp.dll</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{110094b7-8880-4155-94ac-b843cd1b4484}-MPUrlSourceSplitter_Protocol_Rtsp.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtsp.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Udp.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{0d70ed5d-0b2d-4f24-9035-ce53a29999d1}-MPUrlSourceSplitter_Protocol_Udp.dll</ZipFileName>
-              <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Protocol_Udp.dll</DestinationFilename>
+              <ZipFileName>Installer{CopyFile}\{c65a44a7-e514-4dc1-83ec-a830589d511e}-MPUrlSourceSplitter_Protocol_Udp.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Udp.dll</DestinationFilename>
             </FileItem>
           </Items>
+        </Files>
+      </GroupItem>
+      <GroupItem Name="MediaPortal">
+        <ParentGroup />
+        <DisplayName>MediaPortal</DisplayName>
+        <DefaulChecked>false</DefaulChecked>
+        <Description>MediaPortal</Description>
+        <Files>
+          <Items>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\avcodec-mpurlsourcesplitter-54.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{bdb873c5-d4bb-4297-bfef-41aefa208cca}-avcodec-mpurlsourcesplitter-54.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\avcodec-mpurlsourcesplitter-54.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\avformat-mpurlsourcesplitter-54.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e131a120-f491-41d8-a4f1-67545709d5f0}-avformat-mpurlsourcesplitter-54.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-54.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\avutil-mpurlsourcesplitter-51.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{14315686-f14b-4696-acad-dfee404d0b7e}-avutil-mpurlsourcesplitter-51.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\avutil-mpurlsourcesplitter-51.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter.ax</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d67f6df4-0399-4531-a5ad-051c95c277c7}-MPUrlSourceSplitter.ax</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter.ax</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_libcurl.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2e085461-c604-4743-a5e2-42f8bf8940cf}-MPUrlSourceSplitter_libcurl.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_libcurl.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Parser_Default.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{dfabc56e-d275-40dc-a20c-cdee0fd6fde6}-MPUrlSourceSplitter_Parser_Default.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_Default.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Parser_F4M.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d38fca6c-134f-4976-8a34-57ba052665e9}-MPUrlSourceSplitter_Parser_F4M.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_F4M.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Parser_M3U8.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{79def024-2607-429a-b161-39d08d645488}-MPUrlSourceSplitter_Parser_M3U8.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_M3U8.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Parser_MPEG2TS.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{aee3a7a0-520a-4390-82f1-f608b3c5122a}-MPUrlSourceSplitter_Parser_MPEG2TS.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_MPEG2TS.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Parser_MSHS.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{981b8816-5a1f-4977-895c-3d0c2d30d358}-MPUrlSourceSplitter_Parser_MSHS.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_MSHS.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Afhs.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{90aea961-d987-4306-9a9a-6ea7235947cf}-MPUrlSourceSplitter_Protocol_Afhs.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{dc0654a6-8716-438b-aa9c-3e6db8b93ce8}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{49d8fe56-893c-4368-a4dd-555117a384fb}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Http.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{eb464680-3495-4625-a64f-a1bfa0a2cf7b}-MPUrlSourceSplitter_Protocol_Http.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Http.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_M3U8.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{13b584e9-eb30-42bf-81ff-96eab1310fe4}-MPUrlSourceSplitter_Protocol_M3U8.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Mshs.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ac7456e1-8bc7-4b34-a796-85a9c59e6ebf}-MPUrlSourceSplitter_Protocol_Mshs.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Mshs.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Rtmp.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f0b9a662-4464-40e1-8c7e-35aa31e0481b}-MPUrlSourceSplitter_Protocol_Rtmp.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtmp.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Rtsp.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{815a59f2-0e59-4ff8-9721-bfbea35e3fd7}-MPUrlSourceSplitter_Protocol_Rtsp.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtsp.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Udp.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{bd77678b-58b7-4337-83ad-7981d19aa882}-MPUrlSourceSplitter_Protocol_Udp.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Udp.dll</DestinationFilename>
+            </FileItem>
+          </Items>
+        </Files>
+      </GroupItem>
+      <GroupItem Name="Never">
+        <ParentGroup />
+        <DisplayName>Never</DisplayName>
+        <DefaulChecked>true</DefaulChecked>
+        <Description>Dummy group to handle install section visibility.</Description>
+        <Files>
+          <Items />
+        </Files>
+      </GroupItem>
+      <GroupItem Name="MPUrlSourceSplitterConflict">
+        <ParentGroup />
+        <DisplayName>MPUrlSourceSplitterConflict</DisplayName>
+        <DefaulChecked>false</DefaulChecked>
+        <Description>MPUrlSourceSplitterConflict</Description>
+        <Files>
+          <Items />
         </Files>
       </GroupItem>
     </Items>
@@ -178,13 +339,174 @@ Click Next to continue or Cancel to exit Setup.</Value>
           </Items>
         </Params>
         <Actions>
+          <Items>
+            <ActionItem Name="Script" ActionType="Script" ConditionGroup="">
+              <Params>
+                <Items>
+                  <SectionParam Name="Script">
+                    <Value>//css_reference "MpeCore.dll";
+
+using MpeCore.Classes;
+using MpeCore;
+using System;
+using System.ServiceProcess;
+using System.Windows.Forms;
+
+public class Script
+{
+    public enum TvServiceState
+    {
+        NotInstalled,
+        StartPending,
+        Running,
+        StopPending,
+        Stopped
+    }
+
+    public static TvServiceState CheckTvServiceState()
+    {
+        using (ServiceController sc = new ServiceController("TvService"))
+        {
+            try
+            {
+                switch (sc.Status)
+                {
+                    case ServiceControllerStatus.Running:
+                        return TvServiceState.Running;
+                    case ServiceControllerStatus.StartPending:
+                        return TvServiceState.StartPending;
+                    case ServiceControllerStatus.StopPending:
+                        return TvServiceState.StopPending;
+                    case ServiceControllerStatus.Stopped:
+                        return TvServiceState.Stopped;
+                    default:
+                        throw new Exception(String.Format("Unknown TvService state: {0}", sc.Status));
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                // no TvService
+                return TvServiceState.NotInstalled;
+            }
+        }
+
+        throw new NotImplementedException();
+    }
+
+    public static void Main(PackageClass packageClass, ActionItem actionItem)
+    {
+        try
+        {
+            // detect TvService
+            bool tvServiceInstalled = (CheckTvServiceState() != TvServiceState.NotInstalled);
+
+            for (int i = 0; i &lt; packageClass.Groups.Items.Count; i++)
+            {
+                GroupItem group = packageClass.Groups.Items[i];
+
+                if (group.Name == "TvServer")
+                {
+                    group.Checked = tvServiceInstalled;
+                    group.DefaulChecked = tvServiceInstalled;
+                }
+
+                if (group.Name == "MediaPortal")
+                {
+                    group.Checked = !tvServiceInstalled;
+                    group.DefaulChecked = !tvServiceInstalled;
+                }
+            }
+
+            for (int i = 0; i &lt; MpeInstaller.InstalledExtensions.Items.Count; i++)
+            {
+                PackageClass installedPackage = MpeInstaller.InstalledExtensions.Items[i];
+
+                if (installedPackage.GeneralInfo.Id == "b3e6e01a-4fa3-4cf0-8d2a-b0b8c1eba78b")
+                {
+                   packageClass.Groups["MPUrlSourceSplitterConflict"].DefaulChecked = true;
+                   packageClass.Groups["MPUrlSourceSplitterConflict"].Checked = true;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            if (!packageClass.Silent)
+            {
+                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        return;
+    }
+}
+
+
+</Value>
+                    <ValueType>Script</ValueType>
+                    <Description />
+                  </SectionParam>
+                  <SectionParam Name="Uninstall Script">
+                    <Value>//css_reference "MpeCore.dll";
+
+using MpeCore.Classes;
+using MpeCore;
+
+public class Script
+{
+    public static void Main(PackageClass packageClass, UnInstallItem item)
+    {
+        return;
+    }
+}
+</Value>
+                    <ValueType>Script</ValueType>
+                    <Description />
+                  </SectionParam>
+                </Items>
+              </Params>
+              <ExecuteLocation>AfterPanelShow</ExecuteLocation>
+            </ActionItem>
+          </Items>
+        </Actions>
+        <IncludedGroups />
+        <PanelName>Welcome Screen</PanelName>
+        <WizardButtonsEnum>NextCancel</WizardButtonsEnum>
+      </SectionItem>
+      <SectionItem Guid="9dde0996-8b62-4463-a66e-50bd7e38b4aa" Name="Welcome Screen" ConditionGroup="MPUrlSourceSplitterConflict">
+        <Params>
+          <Items>
+            <SectionParam Name="Header text">
+              <Value>Previous version of MediaPortal Url Source Splitter detected</Value>
+              <ValueType>String</ValueType>
+              <Description />
+            </SectionParam>
+            <SectionParam Name="Description">
+              <Value>The previous version of MediaPortal Url Source Splitter detected. This previous version must be uninstalled first before installing MediaPortal IPTV filter and url source splitter.
+
+Click Next to uninstall previous version of MediaPortal Url Source Splitter or Cancel to exit Setup.</Value>
+              <ValueType>String</ValueType>
+              <Description />
+            </SectionParam>
+            <SectionParam Name="Left part image">
+              <Value />
+              <ValueType>File</ValueType>
+              <Description />
+            </SectionParam>
+            <SectionParam Name="Header image">
+              <Value />
+              <ValueType>File</ValueType>
+              <Description>Image in upper right part</Description>
+            </SectionParam>
+          </Items>
+        </Params>
+        <Actions>
           <Items />
         </Actions>
         <IncludedGroups />
         <PanelName>Welcome Screen</PanelName>
         <WizardButtonsEnum>NextCancel</WizardButtonsEnum>
       </SectionItem>
-      <SectionItem Guid="64b76d84-2be7-415b-a09c-2de611a440de" Name="Install Section" ConditionGroup="">
+      <SectionItem Guid="6445c464-28f3-4cb4-b705-c0f72ec32793" Name="Install Section" ConditionGroup="Never">
         <Params>
           <Items>
             <SectionParam Name="Header Title">
@@ -206,136 +528,544 @@ Click Next to continue or Cancel to exit Setup.</Value>
         </Params>
         <Actions>
           <Items>
+            <ActionItem Name="Script" ActionType="Script" ConditionGroup="">
+              <Params>
+                <Items>
+                  <SectionParam Name="Script">
+                    <Value>//css_reference "MpeCore.dll";
+
+using MpeCore.Classes;
+using MpeCore;
+using System;
+using System.Windows.Forms;
+using System.IO;
+using System.Threading;
+using System.Diagnostics;
+
+public class Script
+{
+    public static void UnregisterFilter(String filterPath)
+    {
+        String processPath = Path.Combine(MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
+
+        using (Process process = new Process())
+        {
+            process.StartInfo.FileName = processPath;
+            process.StartInfo.Arguments = "/u /s \"" + filterPath + " \"";
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+
+            process.Start();
+
+            while (!process.HasExited)
+            {
+                Thread.Sleep(1);
+            }
+
+            if (process.ExitCode != 0)
+            {
+                throw new Exception(String.Format("Unregistration of filter failed with error code: {0}", process.ExitCode));
+            }
+        }
+    }
+
+    public static void Main(PackageClass packageClass, ActionItem actionItem)
+    {
+        try
+        {
+            for (int i = 0; i &lt; MpeInstaller.InstalledExtensions.Items.Count; i++)
+            {
+                PackageClass installedPackage = MpeInstaller.InstalledExtensions.Items[i];
+
+                if (installedPackage.GeneralInfo.Id == "b3e6e01a-4fa3-4cf0-8d2a-b0b8c1eba78b")
+                {
+                    UnregisterFilter(Path.Combine(MpeInstaller.TransformInRealPath("%Base%"), "MPUrlSourceSplitter\\MPUrlSourceSplitter.ax"));
+
+                    installedPackage.UnInstall();
+                    Directory.Delete(Path.Combine(MpeInstaller.TransformInRealPath("%Base%"), "MPUrlSourceSplitter"), true);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            if (!packageClass.Silent)
+            {
+                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        return;
+    }
+}
+
+
+</Value>
+                    <ValueType>Script</ValueType>
+                    <Description />
+                  </SectionParam>
+                  <SectionParam Name="Uninstall Script">
+                    <Value>//css_reference "MpeCore.dll";
+
+using MpeCore.Classes;
+using MpeCore;
+
+public class Script
+{
+    public static void Main(PackageClass packageClass, UnInstallItem item)
+    {
+        return;
+    }
+}
+</Value>
+                    <ValueType>Script</ValueType>
+                    <Description />
+                  </SectionParam>
+                </Items>
+              </Params>
+              <ExecuteLocation>BeforPanelShow</ExecuteLocation>
+            </ActionItem>
             <ActionItem Name="InstallFiles" ActionType="InstallFiles" ConditionGroup="">
               <Params>
                 <Items />
               </Params>
               <ExecuteLocation>AfterPanelShow</ExecuteLocation>
             </ActionItem>
-            <ActionItem Name="StopTvService" ActionType="RunApplication" ConditionGroup="">
+            <ActionItem Name="Script" ActionType="Script" ConditionGroup="">
               <Params>
                 <Items>
-                  <SectionParam Name="Path to application">
-                    <Value>%System%\net.exe</Value>
-                    <ValueType>Template</ValueType>
-                    <Description>Path to the application like 
- %Base%\MediaPortal.exe</Description>
+                  <SectionParam Name="Script">
+                    <Value>//css_reference "MpeCore.dll";
+
+using MpeCore.Classes;
+using MpeCore;
+using System;
+using System.IO;
+using System.Windows.Forms;
+using System.Diagnostics;
+using System.Threading;
+using System.ServiceProcess;
+
+public class Script
+{
+    public enum TvServiceState
+    {
+        NotInstalled,
+        StartPending,
+        Running,
+        StopPending,
+        Stopped
+    }
+
+    public static TvServiceState CheckTvServiceState()
+    {
+        using (ServiceController sc = new ServiceController("TvService"))
+        {
+            try
+            {
+                switch (sc.Status)
+                {
+                    case ServiceControllerStatus.Running:
+                        return TvServiceState.Running;
+                    case ServiceControllerStatus.StartPending:
+                        return TvServiceState.StartPending;
+                    case ServiceControllerStatus.StopPending:
+                        return TvServiceState.StopPending;
+                    case ServiceControllerStatus.Stopped:
+                        return TvServiceState.Stopped;
+                    default:
+                        throw new Exception(String.Format("Unknown TvService state: {0}", sc.Status));
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                // no TvService
+                return TvServiceState.NotInstalled;
+            }
+        }
+
+        throw new NotImplementedException();
+    }
+
+    public static void StopTvService()
+    {
+        using (ServiceController sc = new ServiceController("TvService"))
+        {
+            sc.Stop();
+        }
+    }
+
+    public static void StartTvService()
+    {
+        using (ServiceController sc = new ServiceController("TvService"))
+        {
+            sc.Start();
+        }
+    }
+
+    public static void RegisterFilter(String filterPath)
+    {
+        String processPath = Path.Combine(MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
+
+        using (Process process = new Process())
+        {
+            process.StartInfo.FileName = processPath;
+            process.StartInfo.Arguments = "/s \"" + filterPath + " \"";
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+
+            process.Start();
+
+            while (!process.HasExited)
+            {
+                Thread.Sleep(1);
+            }
+
+            if (process.ExitCode != 0)
+            {
+                throw new Exception(String.Format("Registration of filter failed with error code: {0}", process.ExitCode));
+            }
+        }
+    }
+
+    public static void UnregisterFilter(String filterPath)
+    {
+        String processPath = Path.Combine(MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
+
+        using (Process process = new Process())
+        {
+            process.StartInfo.FileName = processPath;
+            process.StartInfo.Arguments = "/u /s \"" + filterPath + " \"";
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+
+            process.Start();
+
+            while (!process.HasExited)
+            {
+                Thread.Sleep(1);
+            }
+
+            if (process.ExitCode != 0)
+            {
+                throw new Exception(String.Format("Unregistration of filter failed with error code: {0}", process.ExitCode));
+            }
+        }
+    }
+
+    public static void Main(PackageClass packageClass, ActionItem actionItem)
+    {
+        try
+        {
+            // detect TvService
+            bool tvServiceInstalled = false;
+            bool tvServiceStarted = false;
+
+            tvServiceInstalled = (CheckTvServiceState() != TvServiceState.NotInstalled);
+
+            if (tvServiceInstalled)
+            {
+                // check TvService state
+
+                while (true)
+                {
+                    TvServiceState state = CheckTvServiceState();
+
+                    if ((state == TvServiceState.Running) || (state == TvServiceState.Stopped))
+                    {
+                        tvServiceStarted = (state == TvServiceState.Running);
+                        break;
+                    }
+
+                    Thread.Sleep(100);
+                }
+            }
+
+            if (tvServiceStarted)
+            {
+                // stop TvService
+
+                StopTvService();
+
+                // check TvService state
+
+                while (true)
+                {
+                    TvServiceState state = CheckTvServiceState();
+
+                    if (state == TvServiceState.Stopped)
+                    {
+                        break;
+                    }
+
+                    Thread.Sleep(100);
+                }
+            }
+
+            // register filter
+            RegisterFilter(Path.Combine(MpeInstaller.TransformInRealPath(tvServiceInstalled ? "%TvServerBase%" : "%Base%"), "MPUrlSourceSplitter\\MPUrlSourceSplitter.ax"));
+
+            if (tvServiceStarted)
+            {
+                // start TvService
+
+                StartTvService();
+
+                // check TvService state
+
+                while (true)
+                {
+                    TvServiceState state = CheckTvServiceState();
+
+                    if ((state == TvServiceState.Running) || (state == TvServiceState.Stopped))
+                    {
+                        break;
+                    }
+
+                    Thread.Sleep(100);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            if (!packageClass.Silent)
+            {
+                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        return;
+    }
+}
+</Value>
+                    <ValueType>Script</ValueType>
+                    <Description />
                   </SectionParam>
-                  <SectionParam Name="Parameters for application">
-                    <Value>stop TvService</Value>
-                    <ValueType>String</ValueType>
-                    <Description>Command line parameters</Description>
-                  </SectionParam>
-                  <SectionParam Name="Wait for exit">
-                    <Value>YES</Value>
-                    <ValueType>Bool</ValueType>
-                    <Description>Wait for exit </Description>
-                  </SectionParam>
-                  <SectionParam Name="Don't run when silent install">
-                    <Value>NO</Value>
-                    <ValueType>Bool</ValueType>
-                    <Description>If set to Yes the aplication don't run when the istalation is silent </Description>
-                  </SectionParam>
-                  <SectionParam Name="Path to uninstall application">
-                    <Value>%System%\net.exe</Value>
-                    <ValueType>Template</ValueType>
-                    <Description>Path to the application which should be executed when uninstall</Description>
-                  </SectionParam>
-                  <SectionParam Name="Parameters for uninstall application">
-                    <Value>start TvService</Value>
-                    <ValueType>String</ValueType>
-                    <Description>Command line parameters for uninstall app</Description>
-                  </SectionParam>
-                  <SectionParam Name="Wait for exit on uninstall">
-                    <Value>YES</Value>
-                    <ValueType>Bool</ValueType>
-                    <Description>Wait for exit on uninstall </Description>
-                  </SectionParam>
-                </Items>
-              </Params>
-              <ExecuteLocation>AfterPanelShow</ExecuteLocation>
-            </ActionItem>
-            <ActionItem Name="FilterRegistration" ActionType="RunApplication" ConditionGroup="">
-              <Params>
-                <Items>
-                  <SectionParam Name="Path to application">
-                    <Value>%System%\regsvr32.exe</Value>
-                    <ValueType>Template</ValueType>
-                    <Description>Path to the application like 
- %Base%\MediaPortal.exe</Description>
-                  </SectionParam>
-                  <SectionParam Name="Parameters for application">
-                    <Value>/s "%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter.ax"</Value>
-                    <ValueType>String</ValueType>
-                    <Description>Command line parameters</Description>
-                  </SectionParam>
-                  <SectionParam Name="Wait for exit">
-                    <Value>YES</Value>
-                    <ValueType>Bool</ValueType>
-                    <Description>Wait for exit </Description>
-                  </SectionParam>
-                  <SectionParam Name="Don't run when silent install">
-                    <Value>NO</Value>
-                    <ValueType>Bool</ValueType>
-                    <Description>If set to Yes the aplication don't run when the istalation is silent </Description>
-                  </SectionParam>
-                  <SectionParam Name="Path to uninstall application">
-                    <Value>%System%\regsvr32.exe</Value>
-                    <ValueType>Template</ValueType>
-                    <Description>Path to the application which should be executed when uninstall</Description>
-                  </SectionParam>
-                  <SectionParam Name="Parameters for uninstall application">
-                    <Value>/s /u "%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter.ax"</Value>
-                    <ValueType>String</ValueType>
-                    <Description>Command line parameters for uninstall app</Description>
-                  </SectionParam>
-                  <SectionParam Name="Wait for exit on uninstall">
-                    <Value>YES</Value>
-                    <ValueType>Bool</ValueType>
-                    <Description>Wait for exit on uninstall </Description>
-                  </SectionParam>
-                </Items>
-              </Params>
-              <ExecuteLocation>AfterPanelShow</ExecuteLocation>
-            </ActionItem>
-            <ActionItem Name="StartTvService" ActionType="RunApplication" ConditionGroup="">
-              <Params>
-                <Items>
-                  <SectionParam Name="Path to application">
-                    <Value>%System%\net.exe</Value>
-                    <ValueType>Template</ValueType>
-                    <Description>Path to the application like 
- %Base%\MediaPortal.exe</Description>
-                  </SectionParam>
-                  <SectionParam Name="Parameters for application">
-                    <Value>start TvService</Value>
-                    <ValueType>String</ValueType>
-                    <Description>Command line parameters</Description>
-                  </SectionParam>
-                  <SectionParam Name="Wait for exit">
-                    <Value>YES</Value>
-                    <ValueType>Bool</ValueType>
-                    <Description>Wait for exit </Description>
-                  </SectionParam>
-                  <SectionParam Name="Don't run when silent install">
-                    <Value>NO</Value>
-                    <ValueType>Bool</ValueType>
-                    <Description>If set to Yes the aplication don't run when the istalation is silent </Description>
-                  </SectionParam>
-                  <SectionParam Name="Path to uninstall application">
-                    <Value>%System%\net.exe</Value>
-                    <ValueType>Template</ValueType>
-                    <Description>Path to the application which should be executed when uninstall</Description>
-                  </SectionParam>
-                  <SectionParam Name="Parameters for uninstall application">
-                    <Value>stop TvService</Value>
-                    <ValueType>String</ValueType>
-                    <Description>Command line parameters for uninstall app</Description>
-                  </SectionParam>
-                  <SectionParam Name="Wait for exit on uninstall">
-                    <Value>YES</Value>
-                    <ValueType>Bool</ValueType>
-                    <Description>Wait for exit on uninstall </Description>
+                  <SectionParam Name="Uninstall Script">
+                    <Value>//css_reference "MpeCore.dll";
+
+using MpeCore.Classes;
+using MpeCore;
+using System;
+using System.IO;
+using System.Windows.Forms;
+using System.Diagnostics;
+using System.Threading;
+using System.ServiceProcess;
+
+public class Script
+{
+    public enum TvServiceState
+    {
+        NotInstalled,
+        StartPending,
+        Running,
+        StopPending,
+        Stopped
+    }
+
+    public static TvServiceState CheckTvServiceState()
+    {
+        using (ServiceController sc = new ServiceController("TvService"))
+        {
+            try
+            {
+                switch (sc.Status)
+                {
+                    case ServiceControllerStatus.Running:
+                        return TvServiceState.Running;
+                    case ServiceControllerStatus.StartPending:
+                        return TvServiceState.StartPending;
+                    case ServiceControllerStatus.StopPending:
+                        return TvServiceState.StopPending;
+                    case ServiceControllerStatus.Stopped:
+                        return TvServiceState.Stopped;
+                    default:
+                        throw new Exception(String.Format("Unknown TvService state: {0}", sc.Status));
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                // no TvService
+                return TvServiceState.NotInstalled;
+            }
+        }
+
+        throw new NotImplementedException();
+    }
+
+    public static void StopTvService()
+    {
+        using (ServiceController sc = new ServiceController("TvService"))
+        {
+            sc.Stop();
+        }
+    }
+
+    public static void StartTvService()
+    {
+        using (ServiceController sc = new ServiceController("TvService"))
+        {
+            sc.Start();
+        }
+    }
+
+    public static void RegisterFilter(String filterPath)
+    {
+        String processPath = Path.Combine(MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
+
+        using (Process process = new Process())
+        {
+            process.StartInfo.FileName = processPath;
+            process.StartInfo.Arguments = "/s \"" + filterPath + " \"";
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+
+            process.Start();
+
+            while (!process.HasExited)
+            {
+                Thread.Sleep(1);
+            }
+
+            if (process.ExitCode != 0)
+            {
+                throw new Exception(String.Format("Registration of filter failed with error code: {0}", process.ExitCode));
+            }
+        }
+    }
+
+    public static void UnregisterFilter(String filterPath)
+    {
+        String processPath = Path.Combine(MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
+
+        using (Process process = new Process())
+        {
+            process.StartInfo.FileName = processPath;
+            process.StartInfo.Arguments = "/u /s \"" + filterPath + " \"";
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+
+            process.Start();
+
+            while (!process.HasExited)
+            {
+                Thread.Sleep(1);
+            }
+
+            if (process.ExitCode != 0)
+            {
+                throw new Exception(String.Format("Unregistration of filter failed with error code: {0}", process.ExitCode));
+            }
+        }
+    }
+
+    public static void Main(PackageClass packageClass, UnInstallItem item)
+    {
+        try
+        {
+            // detect TvService
+            bool tvServiceInstalled = false;
+            bool tvServiceStarted = false;
+
+            tvServiceInstalled = (CheckTvServiceState() != TvServiceState.NotInstalled);
+
+            if (tvServiceInstalled)
+            {
+                // check TvService state
+
+                while (true)
+                {
+                    TvServiceState state = CheckTvServiceState();
+
+                    if ((state == TvServiceState.Running) || (state == TvServiceState.Stopped))
+                    {
+                        tvServiceStarted = (state == TvServiceState.Running);
+                        break;
+                    }
+
+                    Thread.Sleep(100);
+                }
+            }
+
+            if (tvServiceStarted)
+            {
+                // stop TvService
+
+                StopTvService();
+
+                // check TvService state
+
+                while (true)
+                {
+                    TvServiceState state = CheckTvServiceState();
+
+                    if (state == TvServiceState.Stopped)
+                    {
+                        break;
+                    }
+
+                    Thread.Sleep(100);
+                }
+            }
+
+            // unregister filter
+            UnregisterFilter(Path.Combine(MpeInstaller.TransformInRealPath(tvServiceInstalled ? "%TvServerBase%" : "%Base%"), "MPUrlSourceSplitter\\MPUrlSourceSplitter.ax"));
+            if (tvServiceInstalled)
+            {
+                RegisterFilter(Path.Combine(MpeInstaller.TransformInRealPath("%TvServerBase%"), "MPIPTVSource.ax"));
+            }
+
+            if (tvServiceStarted)
+            {
+                // start TvService
+
+                StartTvService();
+
+                // check TvService state
+
+                while (true)
+                {
+                    TvServiceState state = CheckTvServiceState();
+
+                    if ((state == TvServiceState.Running) || (state == TvServiceState.Stopped))
+                    {
+                        break;
+                    }
+
+                    Thread.Sleep(100);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            if (!packageClass.Silent)
+            {
+                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        return;
+    }
+}
+
+</Value>
+                    <ValueType>Script</ValueType>
+                    <Description />
                   </SectionParam>
                 </Items>
               </Params>
@@ -345,7 +1075,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
         </Actions>
         <IncludedGroups />
         <PanelName>Install Section</PanelName>
-        <WizardButtonsEnum>Next</WizardButtonsEnum>
+        <WizardButtonsEnum>BackNextCancel</WizardButtonsEnum>
       </SectionItem>
       <SectionItem Guid="5d16b55e-ca80-48da-8168-c9d3bd9f32bf" Name="Setup Complete" ConditionGroup="">
         <Params>
@@ -481,140 +1211,140 @@ Supported protocols:
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\avcodec-mpurlsourcesplitter-54.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{40fe3cd9-0316-42b6-8f71-193506ac26fb}-avcodec-mpurlsourcesplitter-54.dll</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\avcodec-mpurlsourcesplitter-54.dll</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{cbfe24eb-b540-4beb-8dc9-318ab2578e1a}-avcodec-mpurlsourcesplitter-54.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avcodec-mpurlsourcesplitter-54.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\avformat-mpurlsourcesplitter-54.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{22042036-702d-49f5-810a-e06483aaee1f}-avformat-mpurlsourcesplitter-54.dll</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\avformat-mpurlsourcesplitter-54.dll</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{ecc97123-c480-4486-a481-a921f297633d}-avformat-mpurlsourcesplitter-54.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-54.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\avutil-mpurlsourcesplitter-51.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{d6d03b3f-de52-4134-92fa-3591b5c15bdf}-avutil-mpurlsourcesplitter-51.dll</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\avutil-mpurlsourcesplitter-51.dll</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{d0c3784e-98c0-42c7-9d24-5242689ac9cb}-avutil-mpurlsourcesplitter-51.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avutil-mpurlsourcesplitter-51.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter.ax</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{cd326625-484c-406d-9611-a3020daf85c9}-MPUrlSourceSplitter.ax</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter.ax</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{c86e43b2-c9eb-4c97-a9e0-b60cdd64ccf8}-MPUrlSourceSplitter.ax</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter.ax</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_libcurl.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{92697eb8-bebe-45d5-8c83-8a17044b3036}-MPUrlSourceSplitter_libcurl.dll</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_libcurl.dll</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{af823fa2-8197-48ac-987b-bbe83230b3fd}-MPUrlSourceSplitter_libcurl.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_libcurl.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Parser_Default.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{1dd89d9d-980f-4bd1-9dfc-5c3204c2bbf9}-MPUrlSourceSplitter_Parser_Default.dll</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Parser_Default.dll</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{41a79612-ae51-4f4a-a1b7-0aa9e9ce0f69}-MPUrlSourceSplitter_Parser_Default.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_Default.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Parser_F4M.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{febd3686-88a4-413e-9505-aebd7bb61d64}-MPUrlSourceSplitter_Parser_F4M.dll</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Parser_F4M.dll</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{df8f665f-b8ac-4749-b65a-bb384016303b}-MPUrlSourceSplitter_Parser_F4M.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_F4M.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Parser_M3U8.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{8a719f59-e746-4f12-921a-a43174c520e0}-MPUrlSourceSplitter_Parser_M3U8.dll</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Parser_M3U8.dll</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{dca715f2-ddcd-428b-8a0f-ac2bd7171a73}-MPUrlSourceSplitter_Parser_M3U8.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_M3U8.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Parser_MPEG2TS.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{bfc16000-7fcb-4f4c-b1ef-acc5e046fea5}-MPUrlSourceSplitter_Parser_MPEG2TS.dll</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Parser_MPEG2TS.dll</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{9965a9ed-fd31-444c-bd7a-a59d2e7e24c8}-MPUrlSourceSplitter_Parser_MPEG2TS.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_MPEG2TS.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Parser_MSHS.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{67b0988b-a48f-4c65-96b6-ad8d31f27ad8}-MPUrlSourceSplitter_Parser_MSHS.dll</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Parser_MSHS.dll</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{58e73b0f-a512-449a-8e66-eb956cf52b0b}-MPUrlSourceSplitter_Parser_MSHS.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_MSHS.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Afhs.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{e4c8ade0-c2dc-4370-9511-9ef485215884}-MPUrlSourceSplitter_Protocol_Afhs.dll</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Protocol_Afhs.dll</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{b5ad2547-6774-4890-824f-2a1e5f5ccbbc}-MPUrlSourceSplitter_Protocol_Afhs.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{12d5b736-3aba-4c89-a0d0-313a8857a1fb}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{fe480a86-5f0e-4a26-b4ed-2c4b9619548a}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{56c193c6-3bbe-4026-a01d-5987aa235ad7}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{f41fa654-a14d-40c5-9835-fcd7b2379374}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Http.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{4d24d292-0f1d-48a6-a4eb-ea9b2ca6cbac}-MPUrlSourceSplitter_Protocol_Http.dll</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Protocol_Http.dll</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{9401bfc9-7d87-4d45-990d-e35f57968567}-MPUrlSourceSplitter_Protocol_Http.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Http.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_M3U8.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{9cc6152a-5c42-4212-9940-b4c0cbcbe015}-MPUrlSourceSplitter_Protocol_M3U8.dll</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Protocol_M3U8.dll</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{58594901-32fc-45ba-b8e7-56c4000bd086}-MPUrlSourceSplitter_Protocol_M3U8.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Mshs.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{0955e97b-ea77-4912-bef5-502270995811}-MPUrlSourceSplitter_Protocol_Mshs.dll</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Protocol_Mshs.dll</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{f454063a-bf0b-42a6-9436-bc565ab52cf3}-MPUrlSourceSplitter_Protocol_Mshs.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Mshs.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Rtmp.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{3a18a7af-091d-4d13-8da5-f143619b5eba}-MPUrlSourceSplitter_Protocol_Rtmp.dll</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Protocol_Rtmp.dll</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{c4aaee71-b406-45d5-ab0d-cb1fef1d9f2a}-MPUrlSourceSplitter_Protocol_Rtmp.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtmp.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Rtsp.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{ecd14c54-667f-4915-9f47-13459da9f9e2}-MPUrlSourceSplitter_Protocol_Rtsp.dll</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Protocol_Rtsp.dll</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{110094b7-8880-4155-94ac-b843cd1b4484}-MPUrlSourceSplitter_Protocol_Rtsp.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtsp.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_Udp.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{0d70ed5d-0b2d-4f24-9035-ce53a29999d1}-MPUrlSourceSplitter_Protocol_Udp.dll</ZipFileName>
-        <DestinationFilename>%Config%\..\MPUrlSourceSplitterBin\MPUrlSourceSplitter_Protocol_Udp.dll</DestinationFilename>
+        <ZipFileName>Installer{CopyFile}\{c65a44a7-e514-4dc1-83ec-a830589d511e}-MPUrlSourceSplitter_Protocol_Udp.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Udp.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>MPUrlSourceSplitter.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{2bef0bc8-5d30-4500-9917-bd8110b5e865}-MPUrlSourceSplitter.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{beff47ee-62ef-447d-a45f-c27f5e37e861}-MPUrlSourceSplitter.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
