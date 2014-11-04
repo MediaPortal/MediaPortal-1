@@ -80,6 +80,8 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSync
   m_bNextFormatPassthru = false; 
 
   m_nOutBufferCount = WASAPI_OUT_BUFFER_COUNT;
+
+  ResetClockData();
 }
 
 CWASAPIRenderFilter::~CWASAPIRenderFilter(void)
