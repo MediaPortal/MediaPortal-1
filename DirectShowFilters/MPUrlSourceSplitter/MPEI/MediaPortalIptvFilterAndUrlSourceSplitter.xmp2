@@ -1146,34 +1146,24 @@ public class Script
     <UpdateUrl>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=327&amp;cf_id=52</UpdateUrl>
     <Version>
       <Major>2</Major>
-      <Minor>0</Minor>
+      <Minor>1</Minor>
       <Build>0</Build>
-      <Revision>5421</Revision>
+      <Revision>5422</Revision>
     </Version>
     <ExtensionDescription>The MediaPortal IPTV filter and url source splitter is a directshow source filter that enables direct playback for many protocols and filetypes used in online video sources in the internet.
 
 Supported protocols:
-
 - HTTP, HTTPS
-
 - UDP, RTP
-
 - RTSP
-
 - Adobe Real-Time Messaging Protocol (RTMP)
-
 - Adobe HTTP Dynamic Streaming (HDS, F4M manifest)
-
 - Microsoft Smooth Streaming
-
 - Apple HTTP live streaming (M3U8 playlists)</ExtensionDescription>
-    <VersionDescription>- added special interface to distiguish MediaPortal IPTV filter and url source splitter from previous MediaPortal Url Source Splitter
-- some cleanup in error codes
-- added error messages for filter error codes
-- enhanced installer</VersionDescription>
+    <VersionDescription>- added support for M3U8 protocol version 4, 5, 6 and 7</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=327&amp;cf_id=24</OnlineLocation>
-    <ReleaseDate>2014-11-04T20:21:47</ReleaseDate>
+    <ReleaseDate>2014-11-05T20:21:47</ReleaseDate>
     <Tags>codec</Tags>
     <Location>.\MediaPortalUrlSourceSplitter[Version].mpe1</Location>
     <Params>
@@ -1347,7 +1337,7 @@ Supported protocols:
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>MPUrlSourceSplitter.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{beff47ee-62ef-447d-a45f-c27f5e37e861}-MPUrlSourceSplitter.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{e1e4aec6-98f9-46e9-9a03-e4573a59e646}-MPUrlSourceSplitter.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
