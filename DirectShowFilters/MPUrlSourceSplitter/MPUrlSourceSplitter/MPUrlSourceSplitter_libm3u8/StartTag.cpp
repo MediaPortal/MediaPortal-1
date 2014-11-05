@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "StartTag.h"
+#include "TimeOffsetAttribute.h"
 
 CStartTag::CStartTag(HRESULT *result)
   : CTag(result)
@@ -39,12 +40,12 @@ CStartTag::~CStartTag(void)
 
 bool CStartTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return false;
+  return (version == PLAYLIST_VERSION_06);
 }
 
 bool CStartTag::IsMasterPlaylistItem(unsigned int version)
 {
-  return false;
+  return (version == PLAYLIST_VERSION_06);
 }
 
 bool CStartTag::IsPlaylistItemTag(void)
@@ -57,9 +58,10 @@ bool CStartTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *n
   return false;
 }
 
-bool CStartTag::ParseTag(void)
+bool CStartTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag();
+  bool result = __super::ParseTag(version);
+  result &= (version == PLAYLIST_VERSION_06);
 
   if (result)
   {
@@ -69,7 +71,17 @@ bool CStartTag::ParseTag(void)
 
     if (result)
     {
-      result &= this->ParseAttributes();
+      result &= this->ParseAttributes(version);
+
+      if (result)
+      {
+        if (version == PLAYLIST_VERSION_06)
+        {
+          // TIME-OFFSET attribute is mandatory
+          CTimeOffsetAttribute *timeOffset = dynamic_cast<CTimeOffsetAttribute *>(this->GetAttributes()->GetAttribute(TIME_OFFSET_ATTRIBUTE_NAME, true));
+          result &= (timeOffset != NULL);
+        }
+      }
     }
   }
 

@@ -39,7 +39,7 @@ CIntraFrameOnlyTag::~CIntraFrameOnlyTag(void)
 
 bool CIntraFrameOnlyTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
+  return ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
 }
 
 bool CIntraFrameOnlyTag::IsMasterPlaylistItem(unsigned int version)
@@ -60,7 +60,7 @@ bool CIntraFrameOnlyTag::ApplyTagToPlaylistItems(unsigned int version, CItemColl
 bool CIntraFrameOnlyTag::ParseTag(unsigned int version)
 {
   bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
+  result &= ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
 
   if (result)
   {

@@ -54,7 +54,7 @@ unsigned int CByteRangeTag::GetLength(void)
 
 bool CByteRangeTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return true;
+  return ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
 }
 
 bool CByteRangeTag::IsMasterPlaylistItem(unsigned int version)
@@ -69,7 +69,7 @@ bool CByteRangeTag::IsPlaylistItemTag(void)
 
 bool CByteRangeTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *notProcessedItems, CPlaylistItemCollection *processedPlaylistItems)
 {
-  if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05))
+  if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06))
   {
     // it is applied to exactly next playlist item
     bool applied = false;
@@ -111,7 +111,7 @@ void CByteRangeTag::Clear(void)
 bool CByteRangeTag::ParseTag(unsigned int version)
 {
   bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
+  result &= ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
 
   if (result)
   {

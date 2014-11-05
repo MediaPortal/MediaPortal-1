@@ -21,6 +21,9 @@
 #include "StdAfx.h"
 
 #include "MediaTag.h"
+#include "TypeAttribute.h"
+#include "GroupIdAttribute.h"
+#include "NameAttribute.h"
 
 CMediaTag::CMediaTag(HRESULT *result)
   : CTag(result)
@@ -43,7 +46,7 @@ bool CMediaTag::IsMediaPlaylistItem(unsigned int version)
 
 bool CMediaTag::IsMasterPlaylistItem(unsigned int version)
 {
-  return ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
+  return ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
 }
 
 bool CMediaTag::IsPlaylistItemTag(void)
@@ -59,7 +62,7 @@ bool CMediaTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *n
 bool CMediaTag::ParseTag(unsigned int version)
 {
   bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
+  result &= ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
 
   if (result)
   {
@@ -70,6 +73,24 @@ bool CMediaTag::ParseTag(unsigned int version)
     if (result)
     {
       result &= this->ParseAttributes(version);
+
+      if (result)
+      {
+        if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06))
+        {
+          // TYPE attribute is mandatory
+          CTypeAttribute *type = dynamic_cast<CTypeAttribute *>(this->GetAttributes()->GetAttribute(TYPE_ATTRIBUTE_NAME, true));
+          result &= (type != NULL);
+
+          // GROUP-ID attribute is mandatory
+          CGroupIdAttribute *groupId = dynamic_cast<CGroupIdAttribute *>(this->GetAttributes()->GetAttribute(GROUP_ID_ATTRIBUTE_NAME, true));
+          result &= (groupId != NULL);
+
+          // NAME attribute is mandatory
+          CNameAttribute *name = dynamic_cast<CNameAttribute *>(this->GetAttributes()->GetAttribute(NAME_ATTRIBUTE_NAME, true));
+          result &= (name != NULL);
+        }
+      }
     }
   }
 

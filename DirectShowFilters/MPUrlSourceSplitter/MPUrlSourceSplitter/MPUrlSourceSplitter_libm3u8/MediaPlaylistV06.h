@@ -20,24 +20,24 @@
 
 #pragma once
 
-#ifndef __MEDIA_PLAYLIST_V04_DEFINED
-#define __MEDIA_PLAYLIST_V04_DEFINED
+#ifndef __MEDIA_PLAYLIST_V06_DEFINED
+#define __MEDIA_PLAYLIST_V06_DEFINED
 
 #include "MediaPlaylist.h"
 
-#define MEDIA_PLAYLIST_V04_FLAG_NONE                                  MEDIA_PLAYLIST_FLAG_NONE
+#define MEDIA_PLAYLIST_V06_FLAG_NONE                                  MEDIA_PLAYLIST_FLAG_NONE
 
-#define MEDIA_PLAYLIST_V04_FLAG_LAST                                  (MEDIA_PLAYLIST_FLAG_LAST + 0)
+#define MEDIA_PLAYLIST_V06_FLAG_LAST                                  (MEDIA_PLAYLIST_FLAG_LAST + 0)
 
-#define MEDIA_PLAYLIST_VERSION_04                                     PLAYLIST_VERSION_04
+#define MEDIA_PLAYLIST_VERSION_06                                     PLAYLIST_VERSION_06
 
-#define MEDIA_SEQUENCE_ID_V04_DEFAULT                                 0
+#define MEDIA_SEQUENCE_ID_V06_DEFAULT                                 0
 
-class CMediaPlaylistV04 : public CMediaPlaylist
+class CMediaPlaylistV06 : public CMediaPlaylist
 {
 public:
-  CMediaPlaylistV04(HRESULT *result);
-  virtual ~CMediaPlaylistV04(void);
+  CMediaPlaylistV06(HRESULT *result);
+  virtual ~CMediaPlaylistV06(void);
 
   /* get methods */
 

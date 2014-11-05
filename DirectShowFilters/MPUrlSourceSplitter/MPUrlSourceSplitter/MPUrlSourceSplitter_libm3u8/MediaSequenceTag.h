@@ -33,8 +33,6 @@
 
 #define SEQUENCE_NUMBER_NOT_DEFINED                                   DECIMAL_INTEGER_NOT_SPECIFIED
 
-#define MEDIA_SEQUENCE_ID_DEFAULT                                     1
-
 class CMediaSequenceTag : public CTag
 {
 public:

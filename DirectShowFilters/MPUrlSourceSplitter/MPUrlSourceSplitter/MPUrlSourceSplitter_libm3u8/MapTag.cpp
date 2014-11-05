@@ -25,6 +25,7 @@
 #include "PlaylistItemCollection.h"
 #include "PlaylistItem.h"
 #include "DiscontinuityTag.h"
+#include "UriAttribute.h"
 
 CMapTag::CMapTag(HRESULT *result)
   : CTag(result)
@@ -58,10 +59,10 @@ bool CMapTag::IsPlaylistItemTag(void)
 
 bool CMapTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *notProcessedItems, CPlaylistItemCollection *processedPlaylistItems)
 {
-  if (version == PLAYLIST_VERSION_05)
+  if ((version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06))
   {
     // it is applied to all playlist items after this tag until next discontinuity tag or end of playlist
-    bool applied = this->ParseAttributes(version);
+    bool applied = true;
 
     for (unsigned int i = 1; (applied & (i < notProcessedItems->Count())); i++)
     {
@@ -96,13 +97,28 @@ bool CMapTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *not
 bool CMapTag::ParseTag(unsigned int version)
 {
   bool result = __super::ParseTag(version);
-  result &= (version == PLAYLIST_VERSION_05);
+  result &= ((version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
 
   if (result)
   {
     // successful parsing of tag
     // compare it to our tag
     result &= (wcscmp(this->tag, TAG_MAP) == 0);
+
+    if (result)
+    {
+      result &= this->ParseAttributes(version);
+
+      if (result)
+      {
+        if ((version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06))
+        {
+          // URI attribute is mandatory
+          CUriAttribute *uri = dynamic_cast<CUriAttribute *>(this->GetAttributes()->GetAttribute(URI_ATTRIBUTE_NAME, true));
+          result &= (uri != NULL);
+        }
+      }
+    }
   }
 
   return result;

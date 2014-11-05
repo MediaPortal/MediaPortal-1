@@ -38,9 +38,12 @@ CDiscontinuitySequenceTag::~CDiscontinuitySequenceTag(void)
 
 /* other methods */
 
+
+
+
 bool CDiscontinuitySequenceTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return false;
+  return (version == PLAYLIST_VERSION_06);
 }
 
 bool CDiscontinuitySequenceTag::IsMasterPlaylistItem(unsigned int version)
@@ -65,9 +68,10 @@ void CDiscontinuitySequenceTag::Clear(void)
   this->discontinuitySequenceNumber = DISCONTINUITY_SEQUENCE_NUMBER_NOT_SPECIFIED;
 }
 
-bool CDiscontinuitySequenceTag::ParseTag(void)
+bool CDiscontinuitySequenceTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag();
+  bool result = __super::ParseTag(version);
+  result &= (version == PLAYLIST_VERSION_06);
 
   if (result)
   {

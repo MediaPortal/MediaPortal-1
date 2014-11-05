@@ -62,7 +62,7 @@ HRESULT CMediaPlaylistV01::ParseTagsAndPlaylistItemsInternal(void)
   if (SUCCEEDED(result))
   {
     CMediaSequenceTag *mediaSequenceTag = this->tags->GetMediaSequence();
-    unsigned int mediaSequence = (mediaSequenceTag != NULL) ? mediaSequenceTag->GetSequenceNumber() : MEDIA_SEQUENCE_ID_DEFAULT;
+    unsigned int mediaSequence = (mediaSequenceTag != NULL) ? mediaSequenceTag->GetSequenceNumber() : MEDIA_SEQUENCE_ID_V01_DEFAULT;
 
     for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->playlistItems->Count())); i++)
     {
@@ -107,6 +107,7 @@ HRESULT CMediaPlaylistV01::ParseTagsAndPlaylistItemsInternal(void)
         }
       }
 
+      CHECK_CONDITION_HRESULT(result, fragment->GetDuration() != DURATION_NOT_SPECIFIED, result, E_M3U8_NOT_VALID_PLAYLIST);
       CHECK_CONDITION_HRESULT(result, this->fragments->Add(fragment), result, E_OUTOFMEMORY);
       CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(fragment));
     }

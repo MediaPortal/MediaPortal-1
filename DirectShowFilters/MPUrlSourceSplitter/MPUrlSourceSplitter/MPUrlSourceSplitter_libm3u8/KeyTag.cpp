@@ -24,6 +24,8 @@
 #include "ItemCollection.h"
 #include "PlaylistItemCollection.h"
 #include "PlaylistItem.h"
+#include "MethodAttribute.h"
+#include "UriAttribute.h"
 
 CKeyTag::CKeyTag(HRESULT *result)
   : CTag(result)
@@ -42,7 +44,7 @@ CKeyTag::~CKeyTag(void)
 
 bool CKeyTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
+  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
 }
 
 bool CKeyTag::IsMasterPlaylistItem(unsigned int version)
@@ -57,10 +59,10 @@ bool CKeyTag::IsPlaylistItemTag(void)
 
 bool CKeyTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *notProcessedItems, CPlaylistItemCollection *processedPlaylistItems)
 {
-  if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05))
+  if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06))
   {
     // it is applied to all playlist items after this tag until next key tag or end of playlist
-    bool applied = this->ParseAttributes(version);
+    bool applied = true;
 
     for (unsigned int i = 1; (applied & (i < notProcessedItems->Count())); i++)
     {
@@ -95,13 +97,41 @@ bool CKeyTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *not
 bool CKeyTag::ParseTag(unsigned int version)
 {
   bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
+  result &= ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
 
   if (result)
   {
     // successful parsing of tag
     // compare it to our tag
     result &= (wcscmp(this->tag, TAG_KEY) == 0);
+
+    if (result)
+    {
+      result &= this->ParseAttributes(version);
+
+      if (result)
+      {
+        if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06))
+        {
+          // METHOD attribute is mandatory
+          // URI attribute is optional
+
+          CMethodAttribute *method = dynamic_cast<CMethodAttribute *>(this->GetAttributes()->GetAttribute(METHOD_ATTRIBUTE_NAME, true));
+          result &= (method != NULL);
+
+          if (result && ((version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06)))
+          {
+            // if METHOD is not NONE, the URI is mandatory
+
+            if (!method->IsNone())
+            {
+              CUriAttribute *uri = dynamic_cast<CUriAttribute *>(this->GetAttributes()->GetAttribute(URI_ATTRIBUTE_NAME, true));
+              result &= (uri != NULL);
+            }
+          }
+        }
+      }
+    }
   }
 
   return result;

@@ -47,36 +47,51 @@ void CByteRangeAttribute::Clear(void)
   this->offset = BYTE_RANGE_OFFSET_NOT_SPECIFIED;
 }
 
-bool CByteRangeAttribute::Parse(const wchar_t *name, const wchar_t *value)
+bool CByteRangeAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
 {
-  bool result = __super::Parse(name, value);
+  bool result = __super::Parse(version, name, value);
 
   if (result)
   {
-    int index = IndexOf(value, BYTE_RANGE_OFFSET_SEPARATOR);
-
-    if (index != (-1))
+    if ((version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06))
     {
-      // byte range length and offset specified
+      wchar_t *byteRange = CAttribute::GetQuotedString(value);
+      result &= (byteRange != NULL);
 
-      wchar_t *lengthValue = Substring(value, 0, index);
-      wchar_t *offsetValue = Substring(value, index + BYTE_RANGE_OFFSET_SEPARATOR_LENGTH);
+      if (result)
+      {
+        int index = IndexOf(byteRange, BYTE_RANGE_OFFSET_SEPARATOR);
 
-      this->length = CAttribute::GetDecimalInteger(lengthValue);
-      this->offset = CAttribute::GetDecimalInteger(offsetValue);
+        if (index != (-1))
+        {
+          // byte range length and offset specified
 
-      FREE_MEM(lengthValue);
-      FREE_MEM(offsetValue);
+          wchar_t *lengthValue = Substring(byteRange, 0, index);
+          wchar_t *offsetValue = Substring(byteRange, index + BYTE_RANGE_OFFSET_SEPARATOR_LENGTH);
 
-      result &= (this->length != BYTE_RANGE_LENGTH_NOT_SPECIFIED);
-      result &= (this->offset != BYTE_RANGE_OFFSET_NOT_SPECIFIED);
+          this->length = CAttribute::GetDecimalInteger(lengthValue);
+          this->offset = CAttribute::GetDecimalInteger(offsetValue);
+
+          FREE_MEM(lengthValue);
+          FREE_MEM(offsetValue);
+
+          result &= (this->length != BYTE_RANGE_LENGTH_NOT_SPECIFIED);
+          result &= (this->offset != BYTE_RANGE_OFFSET_NOT_SPECIFIED);
+        }
+        else
+        {
+          // only byte range length specified
+          this->length = CAttribute::GetDecimalInteger(byteRange);
+
+          result &= (this->length != BYTE_RANGE_LENGTH_NOT_SPECIFIED);
+        }
+      }
+
+      FREE_MEM(byteRange);
     }
     else
     {
-      // only byte range length specified
-      this->length = CAttribute::GetDecimalInteger(value);
-
-      result &= (this->length != BYTE_RANGE_LENGTH_NOT_SPECIFIED);
+      result = false;
     }
   }
 

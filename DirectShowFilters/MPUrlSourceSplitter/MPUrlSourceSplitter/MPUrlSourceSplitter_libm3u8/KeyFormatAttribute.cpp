@@ -52,7 +52,7 @@ bool CKeyFormatAttribute::Parse(unsigned int version, const wchar_t *name, const
 
   if (result)
   {
-    if (version == PLAYLIST_VERSION_05)
+    if ((version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06))
     {
       this->keyFormat = CAttribute::GetQuotedString(value);
       result &= (this->keyFormat != NULL);

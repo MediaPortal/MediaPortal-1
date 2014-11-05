@@ -52,7 +52,7 @@ bool CCharacteristicsAttribute::Parse(unsigned int version, const wchar_t *name,
 
   if (result)
   {
-    if (version == PLAYLIST_VERSION_05)
+    if ((version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06))
     {
       this->uniformTypeIdentifiers = CAttribute::GetQuotedString(value);
       result &= (this->uniformTypeIdentifiers != NULL);

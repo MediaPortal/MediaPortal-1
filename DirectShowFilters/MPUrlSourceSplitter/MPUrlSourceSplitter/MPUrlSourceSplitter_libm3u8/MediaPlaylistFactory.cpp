@@ -26,6 +26,7 @@
 #include "MediaPlaylistV03.h"
 #include "MediaPlaylistV04.h"
 #include "MediaPlaylistV05.h"
+#include "MediaPlaylistV06.h"
 
 CMediaPlaylistFactory::CMediaPlaylistFactory(HRESULT *result)
 {
@@ -60,6 +61,7 @@ CMediaPlaylist *CMediaPlaylistFactory::CreateMediaPlaylist(HRESULT *result, cons
       if (SUCCEEDED(*result))
       {
         // check most specific media playlists first
+        CREATE_SPECIFIC_PLAYLIST(temp, CMediaPlaylistV06, MEDIA_PLAYLIST_VERSION_06, (*result), mediaPlaylist);
         CREATE_SPECIFIC_PLAYLIST(temp, CMediaPlaylistV05, MEDIA_PLAYLIST_VERSION_05, (*result), mediaPlaylist);
         CREATE_SPECIFIC_PLAYLIST(temp, CMediaPlaylistV04, MEDIA_PLAYLIST_VERSION_04, (*result), mediaPlaylist);
         CREATE_SPECIFIC_PLAYLIST(temp, CMediaPlaylistV03, MEDIA_PLAYLIST_VERSION_03, (*result), mediaPlaylist);

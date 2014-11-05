@@ -24,6 +24,7 @@
 #include "ItemCollection.h"
 #include "PlaylistItemCollection.h"
 #include "PlaylistItem.h"
+#include "BandwidthAttribute.h"
 
 CStreamVariantTag::CStreamVariantTag(HRESULT *result)
   : CTag(result)
@@ -47,7 +48,7 @@ bool CStreamVariantTag::IsMediaPlaylistItem(unsigned int version)
 
 bool CStreamVariantTag::IsMasterPlaylistItem(unsigned int version)
 {
-  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
+  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
 }
 
 bool CStreamVariantTag::IsPlaylistItemTag(void)
@@ -57,28 +58,25 @@ bool CStreamVariantTag::IsPlaylistItemTag(void)
 
 bool CStreamVariantTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *notProcessedItems, CPlaylistItemCollection *processedPlaylistItems)
 {
-  if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05))
+  if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06))
   {
     // it is applied to exactly next playlist item
     bool applied = false;
 
-    if (this->ParseAttributes(version))
+    for (unsigned int i = 0; i < notProcessedItems->Count(); i++)
     {
-      for (unsigned int i = 0; i < notProcessedItems->Count(); i++)
+      CPlaylistItem *playlistItem = dynamic_cast<CPlaylistItem *>(notProcessedItems->GetItem(i));
+
+      if (playlistItem != NULL)
       {
-        CPlaylistItem *playlistItem = dynamic_cast<CPlaylistItem *>(notProcessedItems->GetItem(i));
-
-        if (playlistItem != NULL)
+        CTag *clone = (CTag *)this->Clone();
+        if (clone != NULL)
         {
-          CTag *clone = (CTag *)this->Clone();
-          if (clone != NULL)
-          {
-            applied |= playlistItem->GetTags()->Add(clone);
-          }
-
-          CHECK_CONDITION_EXECUTE(!applied, FREE_MEM_CLASS(clone));
-          break;
+          applied |= playlistItem->GetTags()->Add(clone);
         }
+
+        CHECK_CONDITION_EXECUTE(!applied, FREE_MEM_CLASS(clone));
+        break;
       }
     }
 
@@ -94,13 +92,29 @@ bool CStreamVariantTag::ApplyTagToPlaylistItems(unsigned int version, CItemColle
 bool CStreamVariantTag::ParseTag(unsigned int version)
 {
   bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
+  result &= ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
 
   if (result)
   {
     // successful parsing of tag
     // compare it to our tag
     result &= (wcscmp(this->tag, TAG_STREAM_VARIANT) == 0);
+
+    if (result)
+    {
+      result &= this->ParseAttributes(version);
+
+      if (result)
+      {
+        if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06))
+        {
+          // BANDWIDTH attribute is mandatory
+
+          CBandwidthAttribute *bandwidth = dynamic_cast<CBandwidthAttribute *>(this->GetAttributes()->GetAttribute(BANDWIDTH_ATTRIBUTE_NAME, true));
+          result &= (bandwidth != NULL);
+        }
+      }
+    }
   }
 
   return result;

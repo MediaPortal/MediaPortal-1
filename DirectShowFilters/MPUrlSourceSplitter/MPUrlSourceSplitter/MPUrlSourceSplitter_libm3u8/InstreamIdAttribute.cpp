@@ -46,14 +46,21 @@ void CInstreamIdAttribute::Clear(void)
   FREE_MEM(this->instreamId);
 }
 
-bool CInstreamIdAttribute::Parse(const wchar_t *name, const wchar_t *value)
+bool CInstreamIdAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
 {
-  bool result = __super::Parse(name, value);
+  bool result = __super::Parse(version, name, value);
 
   if (result)
   {
-    this->instreamId = CAttribute::GetQuotedString(value);
-    result &= (this->instreamId != NULL);
+    if (version == PLAYLIST_VERSION_06)
+    {
+      this->instreamId = CAttribute::GetQuotedString(value);
+      result &= (this->instreamId != NULL);
+    }
+    else
+    {
+      result = false;
+    }
   }
 
   return result;

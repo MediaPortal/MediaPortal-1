@@ -21,6 +21,9 @@
 #include "StdAfx.h"
 
 #include "IntraFrameStreamVariantTag.h"
+#include "PlaylistItem.h"
+#include "BandwidthAttribute.h"
+#include "UriAttribute.h"
 
 CIntraFrameStreamVariantTag::CIntraFrameStreamVariantTag(HRESULT *result)
   : CTag(result)
@@ -44,7 +47,7 @@ bool CIntraFrameStreamVariantTag::IsMediaPlaylistItem(unsigned int version)
 
 bool CIntraFrameStreamVariantTag::IsMasterPlaylistItem(unsigned int version)
 {
-  return ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
+  return ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
 }
 
 bool CIntraFrameStreamVariantTag::IsPlaylistItemTag(void)
@@ -60,7 +63,7 @@ bool CIntraFrameStreamVariantTag::ApplyTagToPlaylistItems(unsigned int version, 
 bool CIntraFrameStreamVariantTag::ParseTag(unsigned int version)
 {
   bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
+  result &= ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
 
   if (result)
   {
@@ -71,12 +74,26 @@ bool CIntraFrameStreamVariantTag::ParseTag(unsigned int version)
     if (result)
     {
       result &= this->ParseAttributes(version);
+
+      if (result)
+      {
+        if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06))
+        {
+          // BANDWIDTH attribute is mandatory
+
+          CBandwidthAttribute *bandwidth = dynamic_cast<CBandwidthAttribute *>(this->GetAttributes()->GetAttribute(BANDWIDTH_ATTRIBUTE_NAME, true));
+          result &= (bandwidth != NULL);
+
+          // URI attribute is mandatory
+          CUriAttribute *uri = dynamic_cast<CUriAttribute *>(this->GetAttributes()->GetAttribute(URI_ATTRIBUTE_NAME, true));
+          result &= (uri != NULL);
+        }
+      }
     }
   }
 
   return result;
 }
-
 
 /* protected methods */
 

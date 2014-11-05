@@ -52,7 +52,7 @@ bool CSubtitlesAttribute::Parse(unsigned int version, const wchar_t *name, const
 
   if (result)
   {
-    if (version == PLAYLIST_VERSION_05)
+    if ((version == PLAYLIST_VERSION_05)  || (version == PLAYLIST_VERSION_06))
     {
       this->subtitlesGroupId = CAttribute::GetQuotedString(value);
       result &= (this->subtitlesGroupId != NULL);

@@ -46,20 +46,27 @@ void CClosedCaptionsAttribute::Clear(void)
   FREE_MEM(this->closedCaptionsGroupId);
 }
 
-bool CClosedCaptionsAttribute::Parse(const wchar_t *name, const wchar_t *value)
+bool CClosedCaptionsAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
 {
-  bool result = __super::Parse(name, value);
+  bool result = __super::Parse(version, name, value);
 
   if (result)
   {
-    this->closedCaptionsGroupId = CAttribute::GetQuotedString(value);
-
-    if (this->closedCaptionsGroupId == NULL)
+    if (version == PLAYLIST_VERSION_06)
     {
-      this->closedCaptionsGroupId = CAttribute::GetEnumeratedString(value);
-    }
+      this->closedCaptionsGroupId = CAttribute::GetQuotedString(value);
 
-    result &= (this->closedCaptionsGroupId != NULL);
+      if (this->closedCaptionsGroupId == NULL)
+      {
+        this->closedCaptionsGroupId = CAttribute::GetEnumeratedString(value);
+      }
+
+      result &= (this->closedCaptionsGroupId != NULL);
+    }
+    else
+    {
+      result = false;
+    }
   }
 
   return result;

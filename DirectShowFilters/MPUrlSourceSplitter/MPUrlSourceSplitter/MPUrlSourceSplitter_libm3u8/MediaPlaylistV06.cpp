@@ -20,7 +20,7 @@
 
 #include "StdAfx.h"
 
-#include "MediaPlaylistV05.h"
+#include "MediaPlaylistV06.h"
 #include "ErrorCodes.h"
 #include "DurationTitleFloatingTag.h"
 #include "DiscontinuityTag.h"
@@ -29,20 +29,20 @@
 #include "EndListTag.h"
 #include "ByteRangeTag.h"
 
-CMediaPlaylistV05::CMediaPlaylistV05(HRESULT *result)
+CMediaPlaylistV06::CMediaPlaylistV06(HRESULT *result)
   : CMediaPlaylist(result)
 {
 }
 
-CMediaPlaylistV05::~CMediaPlaylistV05(void)
+CMediaPlaylistV06::~CMediaPlaylistV06(void)
 {
 }
 
 /* get methods */
 
-unsigned int CMediaPlaylistV05::GetVersion(void)
+unsigned int CMediaPlaylistV06::GetVersion(void)
 {
-  return PLAYLIST_VERSION_05;
+  return PLAYLIST_VERSION_06;
 }
 
 /* set methods */
@@ -51,19 +51,19 @@ unsigned int CMediaPlaylistV05::GetVersion(void)
 
 /* protected methods */
 
-HRESULT CMediaPlaylistV05::CheckPlaylistVersion(void)
+HRESULT CMediaPlaylistV06::CheckPlaylistVersion(void)
 {
-  return (PLAYLIST_VERSION_05 == this->detectedVersion) ? S_OK : E_M3U8_NOT_SUPPORTED_PLAYLIST_VERSION;
+  return (PLAYLIST_VERSION_06 == this->detectedVersion) ? S_OK : E_M3U8_NOT_SUPPORTED_PLAYLIST_VERSION;
 }
 
-HRESULT CMediaPlaylistV05::ParseTagsAndPlaylistItemsInternal(void)
+HRESULT CMediaPlaylistV06::ParseTagsAndPlaylistItemsInternal(void)
 {
   HRESULT result = __super::ParseTagsAndPlaylistItemsInternal();
 
   if (SUCCEEDED(result))
   {
     CMediaSequenceTag *mediaSequenceTag = this->tags->GetMediaSequence();
-    unsigned int mediaSequence = (mediaSequenceTag != NULL) ? mediaSequenceTag->GetSequenceNumber() : MEDIA_SEQUENCE_ID_V05_DEFAULT;
+    unsigned int mediaSequence = (mediaSequenceTag != NULL) ? mediaSequenceTag->GetSequenceNumber() : MEDIA_SEQUENCE_ID_V06_DEFAULT;
 
     unsigned int offset = 0;
 

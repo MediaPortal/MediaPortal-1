@@ -39,7 +39,7 @@ CPlaylistTypeTag::~CPlaylistTypeTag(void)
 
 bool CPlaylistTypeTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return ((version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
+  return ((version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
 }
 
 bool CPlaylistTypeTag::IsMasterPlaylistItem(unsigned int version)
@@ -60,7 +60,7 @@ bool CPlaylistTypeTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollec
 bool CPlaylistTypeTag::ParseTag(unsigned int version)
 {
   bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
+  result &= ((version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
 
   if (result)
   {

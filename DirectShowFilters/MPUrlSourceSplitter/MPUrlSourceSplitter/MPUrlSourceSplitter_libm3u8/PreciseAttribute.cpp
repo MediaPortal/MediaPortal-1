@@ -37,22 +37,29 @@ CPreciseAttribute::~CPreciseAttribute(void)
 
 /* other methods */
 
-bool CPreciseAttribute::Parse(const wchar_t *name, const wchar_t *value)
+bool CPreciseAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
 {
-  bool result = __super::Parse(name, value);
+  bool result = __super::Parse(version, name, value);
 
   if (result)
   {
-    wchar_t *precise = CAttribute::GetEnumeratedString(value);
-    result &= (precise != NULL);
-
-    if (result)
+    if (version == PLAYLIST_VERSION_06)
     {
-      this->flags |= (wcscmp(precise, PRECISE_YES) == 0) ? PRECISE_ATTRIBUTE_FLAG_YES : PRECISE_ATTRIBUTE_FLAG_NONE;
-      this->flags |= (wcscmp(precise, PRECISE_NO) == 0) ? PRECISE_ATTRIBUTE_FLAG_NO : PRECISE_ATTRIBUTE_FLAG_NONE;
-    }
+      wchar_t *precise = CAttribute::GetEnumeratedString(value);
+      result &= (precise != NULL);
 
-    FREE_MEM(precise);
+      if (result)
+      {
+        this->flags |= (wcscmp(precise, PRECISE_YES) == 0) ? PRECISE_ATTRIBUTE_FLAG_YES : PRECISE_ATTRIBUTE_FLAG_NONE;
+        this->flags |= (wcscmp(precise, PRECISE_NO) == 0) ? PRECISE_ATTRIBUTE_FLAG_NO : PRECISE_ATTRIBUTE_FLAG_NONE;
+      }
+
+      FREE_MEM(precise);
+    }
+    else
+    {
+      result = false;
+    }
   }
 
   return result;

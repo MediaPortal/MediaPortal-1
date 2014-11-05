@@ -77,32 +77,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AllowCacheTag.h" />
-    <ClInclude Include="AssociatedLanguageAttribute.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="AssociatedLanguageAttribute.h" />
     <ClInclude Include="Attribute.h" />
     <ClInclude Include="AttributeCollection.h" />
     <ClInclude Include="AttributeFactory.h" />
     <ClInclude Include="AudioAttribute.h" />
     <ClInclude Include="AutoselectAttribute.h" />
-    <ClInclude Include="ByteRangeAttribute.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="ByteRangeAttribute.h" />
     <ClInclude Include="ByteRangeTag.h" />
     <ClInclude Include="CharacteristicsAttribute.h" />
-    <ClInclude Include="ClosedCaptionsAttribute.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="ClosedCaptionsAttribute.h" />
     <ClInclude Include="CodecsAttribute.h" />
     <ClInclude Include="CommentTag.h" />
     <ClInclude Include="DefaultAttribute.h" />
-    <ClInclude Include="DiscontinuitySequenceTag.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="DiscontinuitySequenceTag.h" />
     <ClInclude Include="DiscontinuityTag.h" />
     <ClInclude Include="DurationTitleTag.h" />
     <ClInclude Include="DurationTitleFloatingTag.h" />
@@ -112,15 +100,9 @@
     <ClInclude Include="GeneralTagFactory.h" />
     <ClInclude Include="GroupIdAttribute.h" />
     <ClInclude Include="HeaderTag.h" />
-    <ClInclude Include="IndependedSegmentsTag.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="IndependedSegmentsTag.h" />
     <ClInclude Include="InitializationVectorAttribute.h" />
-    <ClInclude Include="InstreamIdAttribute.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="InstreamIdAttribute.h" />
     <ClInclude Include="IntraFrameOnlyTag.h" />
     <ClInclude Include="IntraFrameStreamVariantTag.h" />
     <ClInclude Include="Item.h" />
@@ -143,6 +125,7 @@
     <ClInclude Include="MediaPlaylistV03.h" />
     <ClInclude Include="MediaPlaylistV04.h" />
     <ClInclude Include="MediaPlaylistV05.h" />
+    <ClInclude Include="MediaPlaylistV06.h" />
     <ClInclude Include="MediaSequenceTag.h" />
     <ClInclude Include="MediaTag.h" />
     <ClInclude Include="MethodAttribute.h" />
@@ -152,17 +135,11 @@
     <ClInclude Include="PlaylistItemCollection.h" />
     <ClInclude Include="PlaylistTypeTag.h" />
     <ClInclude Include="PlaylistVersion.h" />
-    <ClInclude Include="PreciseAttribute.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="PreciseAttribute.h" />
     <ClInclude Include="ProgramDateTimeTag.h" />
     <ClInclude Include="ProgramIdAttribute.h" />
     <ClInclude Include="ResolutionAttribute.h" />
-    <ClInclude Include="StartTag.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="StartTag.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="BandwidthAttribute.h" />
     <ClInclude Include="StreamVariantTag.h" />
@@ -172,10 +149,7 @@
     <ClInclude Include="TagFactory.h" />
     <ClInclude Include="TargetDurationTag.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="TimeOffsetAttribute.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="TimeOffsetAttribute.h" />
     <ClInclude Include="TypeAttribute.h" />
     <ClInclude Include="UriAttribute.h" />
     <ClInclude Include="VersionTag.h" />
@@ -183,32 +157,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AllowCacheTag.cpp" />
-    <ClCompile Include="AssociatedLanguageAttribute.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="AssociatedLanguageAttribute.cpp" />
     <ClCompile Include="Attribute.cpp" />
     <ClCompile Include="AttributeCollection.cpp" />
     <ClCompile Include="AttributeFactory.cpp" />
     <ClCompile Include="AudioAttribute.cpp" />
     <ClCompile Include="AutoselectAttribute.cpp" />
-    <ClCompile Include="ByteRangeAttribute.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="ByteRangeAttribute.cpp" />
     <ClCompile Include="ByteRangeTag.cpp" />
     <ClCompile Include="CharacteristicsAttribute.cpp" />
-    <ClCompile Include="ClosedCaptionsAttribute.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="ClosedCaptionsAttribute.cpp" />
     <ClCompile Include="CodecsAttribute.cpp" />
     <ClCompile Include="CommentTag.cpp" />
     <ClCompile Include="DefaultAttribute.cpp" />
-    <ClCompile Include="DiscontinuitySequenceTag.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="DiscontinuitySequenceTag.cpp" />
     <ClCompile Include="DiscontinuityTag.cpp" />
     <ClCompile Include="DurationTitleTag.cpp" />
     <ClCompile Include="DurationTitleFloatingTag.cpp" />
@@ -218,15 +180,9 @@
     <ClCompile Include="GeneralTagFactory.cpp" />
     <ClCompile Include="GroupIdAttribute.cpp" />
     <ClCompile Include="HeaderTag.cpp" />
-    <ClCompile Include="IndependedSegmentsTag.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="IndependedSegmentsTag.cpp" />
     <ClCompile Include="InitializationVectorAttribute.cpp" />
-    <ClCompile Include="InstreamIdAttribute.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="InstreamIdAttribute.cpp" />
     <ClCompile Include="IntraFrameOnlyTag.cpp" />
     <ClCompile Include="IntraFrameStreamVariantTag.cpp" />
     <ClCompile Include="Item.cpp" />
@@ -249,6 +205,7 @@
     <ClCompile Include="MediaPlaylistV03.cpp" />
     <ClCompile Include="MediaPlaylistV04.cpp" />
     <ClCompile Include="MediaPlaylistV05.cpp" />
+    <ClCompile Include="MediaPlaylistV06.cpp" />
     <ClCompile Include="MediaSequenceTag.cpp" />
     <ClCompile Include="MediaTag.cpp" />
     <ClCompile Include="MethodAttribute.cpp" />
@@ -257,17 +214,11 @@
     <ClCompile Include="PlaylistItem.cpp" />
     <ClCompile Include="PlaylistItemCollection.cpp" />
     <ClCompile Include="PlaylistTypeTag.cpp" />
-    <ClCompile Include="PreciseAttribute.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="PreciseAttribute.cpp" />
     <ClCompile Include="ProgramDateTimeTag.cpp" />
     <ClCompile Include="ProgramIdAttribute.cpp" />
     <ClCompile Include="ResolutionAttribute.cpp" />
-    <ClCompile Include="StartTag.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="StartTag.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -279,10 +230,7 @@
     <ClCompile Include="TagCollection.cpp" />
     <ClCompile Include="TagFactory.cpp" />
     <ClCompile Include="TargetDurationTag.cpp" />
-    <ClCompile Include="TimeOffsetAttribute.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="TimeOffsetAttribute.cpp" />
     <ClCompile Include="TypeAttribute.cpp" />
     <ClCompile Include="UriAttribute.cpp" />
     <ClCompile Include="VersionTag.cpp" />
@@ -294,6 +242,7 @@
     <None Include="m3u8_v3_draft-pantos-http-live-streaming-06.txt" />
     <None Include="m3u8_v4_draft-pantos-http-live-streaming-08.txt" />
     <None Include="m3u8_v5_draft-pantos-http-live-streaming-11.txt" />
+    <None Include="m3u8_v6_draft-pantos-http-live-streaming-13.txt" />
     <None Include="readme.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

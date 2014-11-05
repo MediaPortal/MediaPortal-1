@@ -53,10 +53,11 @@ public:
   virtual void Clear(void);
 
   // parses name and value
+  // @param version : the playlist version
   // @param name : the name of attribute
   // @param value : the value of attribute
   // @return : true if successful, false otherwise
-  virtual bool Parse(const wchar_t *name, const wchar_t *value);
+  virtual bool Parse(unsigned int version, const wchar_t *name, const wchar_t *value);
 
 protected:
 

@@ -45,14 +45,27 @@ void CTimeOffsetAttribute::Clear(void)
   this->timeOffset = TIME_OFFSET_NOT_SPECIFIED;
 }
 
-bool CTimeOffsetAttribute::Parse(const wchar_t *name, const wchar_t *value)
+bool CTimeOffsetAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
 {
-  bool result = __super::Parse(name, value);
+  bool result = __super::Parse(version, name, value);
 
   if (result)
   {
-    this->timeOffset = CAttribute::GetDecimalFloatingPoint(value);
-    result &= (this->timeOffset != TIME_OFFSET_NOT_SPECIFIED);
+    if (version == PLAYLIST_VERSION_06)
+    {
+      double temp = CAttribute::GetDecimalFloatingPoint(value);
+
+      if (temp != TIME_OFFSET_NOT_SPECIFIED)
+      {
+        this->timeOffset = (int)(temp * 1000);
+      }
+
+      result &= (this->timeOffset != TIME_OFFSET_NOT_SPECIFIED);
+    }
+    else
+    {
+      result = false;
+    }
   }
 
   return result;

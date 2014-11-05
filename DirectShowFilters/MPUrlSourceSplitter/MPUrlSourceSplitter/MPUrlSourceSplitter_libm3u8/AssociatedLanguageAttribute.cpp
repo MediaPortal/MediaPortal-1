@@ -46,14 +46,21 @@ void CAssociatedLanguageAttribute::Clear(void)
   FREE_MEM(this->language);
 }
 
-bool CAssociatedLanguageAttribute::Parse(const wchar_t *name, const wchar_t *value)
+bool CAssociatedLanguageAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
 {
-  bool result = __super::Parse(name, value);
+  bool result = __super::Parse(version, name, value);
 
   if (result)
   {
-    this->language = CAttribute::GetQuotedString(value);
-    result &= (this->language != NULL);
+    if (version == PLAYLIST_VERSION_06)
+    {
+      this->language = CAttribute::GetQuotedString(value);
+      result &= (this->language != NULL);
+    }
+    else
+    {
+      result = false;
+    }
   }
 
   return result;
