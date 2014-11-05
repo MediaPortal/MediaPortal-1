@@ -46,14 +46,21 @@ void CAudioAttribute::Clear(void)
   FREE_MEM(this->audioGroupId);
 }
 
-bool CAudioAttribute::Parse(const wchar_t *name, const wchar_t *value)
+bool CAudioAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
 {
-  bool result = __super::Parse(name, value);
+  bool result = __super::Parse(version, name, value);
 
   if (result)
   {
-    this->audioGroupId = CAttribute::GetQuotedString(value);
-    result &= (this->audioGroupId != NULL);
+    if (version == PLAYLIST_VERSION_04)
+    {
+      this->audioGroupId = CAttribute::GetQuotedString(value);
+      result &= (this->audioGroupId != NULL);
+    }
+    else
+    {
+      result = false;
+    }
   }
 
   return result;

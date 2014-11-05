@@ -20,28 +20,29 @@
 
 #include "StdAfx.h"
 
-#include "MediaPlaylistV02.h"
+#include "MediaPlaylistV04.h"
 #include "ErrorCodes.h"
-#include "DurationTitleTag.h"
+#include "DurationTitleFloatingTag.h"
 #include "DiscontinuityTag.h"
 #include "KeyTag.h"
 #include "MethodAttribute.h"
 #include "EndListTag.h"
+#include "ByteRangeTag.h"
 
-CMediaPlaylistV02::CMediaPlaylistV02(HRESULT *result)
+CMediaPlaylistV04::CMediaPlaylistV04(HRESULT *result)
   : CMediaPlaylist(result)
 {
 }
 
-CMediaPlaylistV02::~CMediaPlaylistV02(void)
+CMediaPlaylistV04::~CMediaPlaylistV04(void)
 {
 }
 
 /* get methods */
 
-unsigned int CMediaPlaylistV02::GetVersion(void)
+unsigned int CMediaPlaylistV04::GetVersion(void)
 {
-  return PLAYLIST_VERSION_02;
+  return PLAYLIST_VERSION_04;
 }
 
 /* set methods */
@@ -50,12 +51,12 @@ unsigned int CMediaPlaylistV02::GetVersion(void)
 
 /* protected methods */
 
-HRESULT CMediaPlaylistV02::CheckPlaylistVersion(void)
+HRESULT CMediaPlaylistV04::CheckPlaylistVersion(void)
 {
-  return (PLAYLIST_VERSION_02 == this->detectedVersion) ? S_OK : E_M3U8_NOT_SUPPORTED_PLAYLIST_VERSION;
+  return (PLAYLIST_VERSION_04 == this->detectedVersion) ? S_OK : E_M3U8_NOT_SUPPORTED_PLAYLIST_VERSION;
 }
 
-HRESULT CMediaPlaylistV02::ParseTagsAndPlaylistItemsInternal(void)
+HRESULT CMediaPlaylistV04::ParseTagsAndPlaylistItemsInternal(void)
 {
   HRESULT result = __super::ParseTagsAndPlaylistItemsInternal();
 
@@ -63,6 +64,8 @@ HRESULT CMediaPlaylistV02::ParseTagsAndPlaylistItemsInternal(void)
   {
     CMediaSequenceTag *mediaSequenceTag = this->tags->GetMediaSequence();
     unsigned int mediaSequence = (mediaSequenceTag != NULL) ? mediaSequenceTag->GetSequenceNumber() : MEDIA_SEQUENCE_ID_DEFAULT;
+
+    unsigned int offset = 0;
 
     for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->playlistItems->Count())); i++)
     {
@@ -80,9 +83,10 @@ HRESULT CMediaPlaylistV02::ParseTagsAndPlaylistItemsInternal(void)
         {
           CTag *tag = item->GetTags()->GetItem(j);
 
-          CDurationTitleTag *durationTitle = dynamic_cast<CDurationTitleTag *>(tag);
+          CDurationTitleFloatingTag *durationTitle = dynamic_cast<CDurationTitleFloatingTag *>(tag);
           CDiscontinuityTag *discontinuity = dynamic_cast<CDiscontinuityTag *>(tag);
           CKeyTag *key = dynamic_cast<CKeyTag *>(tag);
+          CByteRangeTag *byteRange = dynamic_cast<CByteRangeTag *>(tag);
 
           if (durationTitle != NULL)
           {
@@ -102,6 +106,21 @@ HRESULT CMediaPlaylistV02::ParseTagsAndPlaylistItemsInternal(void)
             if (SUCCEEDED(result))
             {
               fragment->SetEncrypted(!method->IsNone());
+            }
+          }
+
+          if (byteRange != NULL)
+          {
+            CHECK_CONDITION_HRESULT(result, byteRange->GetLength() != BYTE_RANGE_LENGTH_NOT_SPECIFIED, result, E_M3U8_NOT_VALID_PLAYLIST);
+            
+            if (SUCCEEDED(result))
+            {
+              CHECK_CONDITION_EXECUTE(byteRange->GetOffset() != BYTE_RANGE_OFFSET_NOT_SPECIFIED, offset = byteRange->GetOffset());
+
+              fragment->SetOffset(offset);
+              fragment->SetLength(byteRange->GetLength());
+
+              offset += byteRange->GetLength();
             }
           }
         }

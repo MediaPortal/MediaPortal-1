@@ -46,14 +46,21 @@ void CNameAttribute::Clear(void)
   FREE_MEM(this->nameValue);
 }
 
-bool CNameAttribute::Parse(const wchar_t *name, const wchar_t *value)
+bool CNameAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
 {
-  bool result = __super::Parse(name, value);
+  bool result = __super::Parse(version, name, value);
 
   if (result)
   {
-    this->nameValue = CAttribute::GetQuotedString(value);
-    result &= (this->nameValue != NULL);
+    if (version == PLAYLIST_VERSION_04)
+    {
+      this->nameValue = CAttribute::GetQuotedString(value);
+      result &= (this->nameValue != NULL);
+    }
+    else
+    {
+      result = false;
+    }
   }
 
   return result;

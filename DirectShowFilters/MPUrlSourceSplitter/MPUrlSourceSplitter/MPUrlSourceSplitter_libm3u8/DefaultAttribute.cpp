@@ -37,22 +37,29 @@ CDefaultAttribute::~CDefaultAttribute(void)
 
 /* other methods */
 
-bool CDefaultAttribute::Parse(const wchar_t *name, const wchar_t *value)
+bool CDefaultAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
 {
-  bool result = __super::Parse(name, value);
+  bool result = __super::Parse(version, name, value);
 
   if (result)
   {
-    wchar_t *defaultValue = CAttribute::GetEnumeratedString(value);
-    result &= (defaultValue != NULL);
-
-    if (result)
+    if (version == PLAYLIST_VERSION_04)
     {
-      this->flags |= (wcscmp(defaultValue, DEFAULT_YES) == 0) ? DEFAULT_ATTRIBUTE_FLAG_YES : DEFAULT_ATTRIBUTE_FLAG_NONE;
-      this->flags |= (wcscmp(defaultValue, DEFAULT_NO) == 0) ? DEFAULT_ATTRIBUTE_FLAG_NO : DEFAULT_ATTRIBUTE_FLAG_NONE;
-    }
+      wchar_t *defaultValue = CAttribute::GetEnumeratedString(value);
+      result &= (defaultValue != NULL);
 
-    FREE_MEM(defaultValue);
+      if (result)
+      {
+        this->flags |= (wcscmp(defaultValue, DEFAULT_YES) == 0) ? DEFAULT_ATTRIBUTE_FLAG_YES : DEFAULT_ATTRIBUTE_FLAG_NONE;
+        this->flags |= (wcscmp(defaultValue, DEFAULT_NO) == 0) ? DEFAULT_ATTRIBUTE_FLAG_NO : DEFAULT_ATTRIBUTE_FLAG_NONE;
+      }
+
+      FREE_MEM(defaultValue);
+    }
+    else
+    {
+      result = false;
+    }
   }
 
   return result;

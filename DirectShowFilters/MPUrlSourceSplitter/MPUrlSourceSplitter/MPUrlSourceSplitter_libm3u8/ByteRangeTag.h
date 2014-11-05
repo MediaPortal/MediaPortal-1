@@ -45,6 +45,14 @@ public:
 
   /* get methods */
 
+  // gets offset of range request
+  // @return : offset or BYTE_RANGE_OFFSET_NOT_SPECIFIED if not specified
+  unsigned int GetOffset(void);
+
+  // gets length of range request
+  // @return : length or BYTE_RANGE_LENGTH_NOT_SPECIFIED if not specified
+  unsigned int GetLength(void);
+
   /* set methods */
 
   /* other methods */
@@ -83,8 +91,9 @@ protected:
   /* methods */
 
   // parses current tag
+  // @param : the playlist version
   // @return : true if successful, false otherwise
-  virtual bool ParseTag(void);
+  virtual bool ParseTag(unsigned int version);
 
   // creates item
   // @return : item or NULL if error

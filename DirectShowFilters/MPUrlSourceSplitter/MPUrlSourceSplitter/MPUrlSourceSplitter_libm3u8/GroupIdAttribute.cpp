@@ -46,14 +46,21 @@ void CGroupIdAttribute::Clear(void)
   FREE_MEM(this->groupId);
 }
 
-bool CGroupIdAttribute::Parse(const wchar_t *name, const wchar_t *value)
+bool CGroupIdAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
 {
-  bool result = __super::Parse(name, value);
+  bool result = __super::Parse(version, name, value);
 
   if (result)
   {
-    this->groupId = CAttribute::GetQuotedString(value);
-    result &= (this->groupId != NULL);
+    if (version == PLAYLIST_VERSION_04)
+    {
+      this->groupId = CAttribute::GetQuotedString(value);
+      result &= (this->groupId != NULL);
+    }
+    else
+    {
+      result = false;
+    }
   }
 
   return result;

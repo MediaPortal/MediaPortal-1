@@ -23,18 +23,18 @@
 #include "TagFactory.h"
 
 #include "AllowCacheTag.h"
-//#include "ByteRangeTag.h"
+#include "ByteRangeTag.h"
 //#include "DiscontinuitySequenceTag.h"
 #include "DiscontinuityTag.h"
 #include "EndListTag.h"
 #include "HeaderTag.h"
 //#include "IndependedSegmentsTag.h"
-//#include "IntraFrameOnlyTag.h"
-//#include "IntraFrameStreamVariantTag.h"
+#include "IntraFrameOnlyTag.h"
+#include "IntraFrameStreamVariantTag.h"
 #include "KeyTag.h"
 //#include "MapTag.h"
 #include "MediaSequenceTag.h"
-//#include "MediaTag.h"
+#include "MediaTag.h"
 #include "PlaylistTypeTag.h"
 #include "ProgramDateTimeTag.h"
 //#include "StartTag.h"
@@ -79,18 +79,18 @@ CTag *CTagFactory::CreateTag(HRESULT *result, unsigned int version, CGeneralTag 
         // insert most specific tags on top
 
         CREATE_SPECIFIC_TAG(temp, TAG_ALLOW_CACHE, CAllowCacheTag, (*result), tag, version);
-        //CREATE_SPECIFIC_TAG(temp, TAG_BYTE_RANGE, CByteRangeTag, (*result), tag, version);
+        CREATE_SPECIFIC_TAG(temp, TAG_BYTE_RANGE, CByteRangeTag, (*result), tag, version);
         //CREATE_SPECIFIC_TAG(temp, TAG_DISCONTINUITY_SEQUENCE, CDiscontinuitySequenceTag, (*result), tag, version);
         CREATE_SPECIFIC_TAG(temp, TAG_DISCONTINUITY, CDiscontinuityTag, (*result), tag, version);
         CREATE_SPECIFIC_TAG(temp, TAG_END_LIST, CEndListTag, (*result), tag, version);
         CREATE_SPECIFIC_TAG(temp, TAG_HEADER, CHeaderTag, (*result), tag, version);
         //CREATE_SPECIFIC_TAG(temp, TAG_INDEPENDED_SEGMENTS, CIndependedSegmentsTag, (*result), tag, version);
-        //CREATE_SPECIFIC_TAG(temp, TAG_INTRA_FRAME_ONLY, CIntraFrameOnlyTag, (*result), tag, version);
-        //CREATE_SPECIFIC_TAG(temp, TAG_INTRA_FRAME_STREAM_VARIANT, CIntraFrameStreamVariantTag, (*result), tag, version);
+        CREATE_SPECIFIC_TAG(temp, TAG_INTRA_FRAME_ONLY, CIntraFrameOnlyTag, (*result), tag, version);
+        CREATE_SPECIFIC_TAG(temp, TAG_INTRA_FRAME_STREAM_VARIANT, CIntraFrameStreamVariantTag, (*result), tag, version);
         CREATE_SPECIFIC_TAG(temp, TAG_KEY, CKeyTag, (*result), tag, version);
         //CREATE_SPECIFIC_TAG(temp, TAG_MAP, CMapTag, (*result), tag, version);
         CREATE_SPECIFIC_TAG(temp, TAG_MEDIA_SEQUENCE, CMediaSequenceTag, (*result), tag, version);
-        //CREATE_SPECIFIC_TAG(temp, TAG_MEDIA, CMediaTag, (*result), tag, version);
+        CREATE_SPECIFIC_TAG(temp, TAG_MEDIA, CMediaTag, (*result), tag, version);
         CREATE_SPECIFIC_TAG(temp, TAG_PLAYLIST_TYPE, CPlaylistTypeTag, (*result), tag, version);
         CREATE_SPECIFIC_TAG(temp, TAG_PROGRAM_DATE_TIME, CProgramDateTimeTag, (*result), tag, version);
         //CREATE_SPECIFIC_TAG(temp, TAG_START, CStartTag, (*result), tag);

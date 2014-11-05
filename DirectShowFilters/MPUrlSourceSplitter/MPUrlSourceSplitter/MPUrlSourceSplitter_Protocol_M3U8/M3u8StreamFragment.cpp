@@ -45,6 +45,8 @@ CM3u8StreamFragment::CM3u8StreamFragment(HRESULT *result, const wchar_t *uri, un
   this->fragmentTimestamp = fragmentTimestamp;
   this->fragment = fragment;
   this->duration = duration;
+  this->offset = UINT_MAX;
+  this->length = UINT_MAX;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -81,6 +83,16 @@ unsigned int CM3u8StreamFragment::GetDuration(void)
   return this->duration;
 }
 
+unsigned int CM3u8StreamFragment::GetOffset(void)
+{
+  return this->offset;
+}
+
+unsigned int CM3u8StreamFragment::GetLength(void)
+{
+  return this->length;
+}
+
 /* set methods */
 
 void CM3u8StreamFragment::SetEncrypted(bool ecnrypted)
@@ -93,6 +105,16 @@ void CM3u8StreamFragment::SetEndOfStream(bool endOfStream)
 {
   this->flags &= ~M3U8_STREAM_FRAGMENT_FLAG_END_OF_STREAM;
   this->flags |= endOfStream ? M3U8_STREAM_FRAGMENT_FLAG_END_OF_STREAM : M3U8_STREAM_FRAGMENT_FLAG_NONE;
+}
+
+void CM3u8StreamFragment::SetOffset(unsigned int offset)
+{
+  this->offset = offset;
+}
+
+void CM3u8StreamFragment::SetLength(unsigned int length)
+{
+  this->length = length;
 }
 
 /* other methods */
@@ -128,9 +150,11 @@ bool CM3u8StreamFragment::InternalClone(CFastSearchItem *item)
     CM3u8StreamFragment *fragment = dynamic_cast<CM3u8StreamFragment *>(item);
     result &= (fragment != NULL);
 
-    /*if (result)
+    if (result)
     {
-    }*/
+      fragment->offset = this->offset;
+      fragment->length = this->length;
+    }
   }
 
   return result;

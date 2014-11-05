@@ -35,6 +35,8 @@
 
 #define SEQUENCE_NUMBER_NOT_SPECIFIED                                 UINT_MAX
 #define DURATION_NOT_SPECIFIED                                        UINT_MAX
+#define OFFSET_NOT_SPECIFED                                           UINT_MAX
+#define LENGTH_NOT_SPECIFIED                                          UINT_MAX
 
 class CM3u8Fragment : public CFlags
 {
@@ -56,6 +58,14 @@ public:
   // @return : URI or NULL if not specified
   const wchar_t *GetUri(void);
 
+  // gets offset of range request
+  // @return : offset or OFFSET_NOT_SPECIFED if not specified
+  unsigned int GetOffset(void);
+
+  // gets length of range request
+  // @return : length or LENGTH_NOT_SPECIFIED if not specified
+  unsigned int GetLength(void);
+
   /* set methods */
 
   // sets sequence number
@@ -70,6 +80,14 @@ public:
   // @param uri : the URI to set
   // @return : true if successful, false otherwise
   bool SetUri(const wchar_t *uri);
+
+  // sets offset of range request
+  // @param offset : offset or OFFSET_NOT_SPECIFED if not specified
+  void SetOffset(unsigned int offset);
+
+  // sets length of range request
+  // @param length : length or LENGTH_NOT_SPECIFIED if not specified
+  void SetLength(unsigned int length);
 
   // sets if after fragment is discontinuity
   // @param discontinuity : true if after fragment is discontinuity, false otherwise
@@ -107,6 +125,12 @@ protected:
 
   // holds uri (relative or absolute)
   wchar_t *uri;
+
+  // holds offset of range request
+  unsigned int offset;
+
+  // holds length of range request
+  unsigned int length;
 
   /* methods */
 };

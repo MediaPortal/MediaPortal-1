@@ -37,22 +37,32 @@ CTypeAttribute::~CTypeAttribute(void)
 
 /* other methods */
 
-bool CTypeAttribute::Parse(const wchar_t *name, const wchar_t *value)
+bool CTypeAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
 {
-  bool result = __super::Parse(name, value);
+  bool result = __super::Parse(version, name, value);
 
   if (result)
   {
-    wchar_t *type = CAttribute::GetEnumeratedString(value);
-    result &= (type != NULL);
-    
-    if (result)
+    if (version == PLAYLIST_VERSION_04)
     {
-      this->flags |= (wcscmp(type, TYPE_ATTRIBUTE_AUDIO) == 0) ? TYPE_ATTRIBUTE_FLAG_AUDIO : TYPE_ATTRIBUTE_FLAG_NONE;
-      this->flags |= (wcscmp(type, TYPE_ATTRIBUTE_VIDEO) == 0) ? TYPE_ATTRIBUTE_FLAG_VIDEO : TYPE_ATTRIBUTE_FLAG_NONE;
-      this->flags |= (wcscmp(type, TYPE_ATTRIBUTE_SUBTITLES) == 0) ? TYPE_ATTRIBUTE_FLAG_SUBTITLES : TYPE_ATTRIBUTE_FLAG_NONE;
-      this->flags |= (wcscmp(type, TYPE_ATTRIBUTE_CLOSED_CAPTIONS) == 0) ? TYPE_ATTRIBUTE_FLAG_CLOSED_CAPTIONS : TYPE_ATTRIBUTE_FLAG_NONE;
+      wchar_t *type = CAttribute::GetEnumeratedString(value);
+      result &= (type != NULL);
+
+      if (result)
+      {
+        this->flags |= (wcscmp(type, TYPE_ATTRIBUTE_AUDIO) == 0) ? TYPE_ATTRIBUTE_FLAG_AUDIO : TYPE_ATTRIBUTE_FLAG_NONE;
+        this->flags |= (wcscmp(type, TYPE_ATTRIBUTE_VIDEO) == 0) ? TYPE_ATTRIBUTE_FLAG_VIDEO : TYPE_ATTRIBUTE_FLAG_NONE;
+      }
+
+      FREE_MEM(type);
     }
+    else
+    {
+      result = false;
+    }
+
+    //      this->flags |= (wcscmp(type, TYPE_ATTRIBUTE_SUBTITLES) == 0) ? TYPE_ATTRIBUTE_FLAG_SUBTITLES : TYPE_ATTRIBUTE_FLAG_NONE;
+    //      this->flags |= (wcscmp(type, TYPE_ATTRIBUTE_CLOSED_CAPTIONS) == 0) ? TYPE_ATTRIBUTE_FLAG_CLOSED_CAPTIONS : TYPE_ATTRIBUTE_FLAG_NONE;
   }
 
   return result;

@@ -52,11 +52,7 @@ unsigned int CMediaPlaylistV03::GetVersion(void)
 
 HRESULT CMediaPlaylistV03::CheckPlaylistVersion(void)
 {
-  HRESULT result = (PLAYLIST_VERSION_03 == this->detectedVersion) ? S_OK : E_M3U8_NOT_SUPPORTED_PLAYLIST_VERSION;
-
-  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->flags |= PLAYLIST_FLAG_DETECTED_VERSION_01);
-
-  return result;
+  return (PLAYLIST_VERSION_03 == this->detectedVersion) ? S_OK : E_M3U8_NOT_SUPPORTED_PLAYLIST_VERSION;
 }
 
 HRESULT CMediaPlaylistV03::ParseTagsAndPlaylistItemsInternal(void)
@@ -65,20 +61,6 @@ HRESULT CMediaPlaylistV03::ParseTagsAndPlaylistItemsInternal(void)
 
   if (SUCCEEDED(result))
   {
-    // master playlist version 02 has these tags:
-    // EXTM3U - header tag, it is checked in CPlaylist
-    // EXTINF - playlist item tag, MUST NOT be in master playlist
-    // EXT-X-TARGETDURATION - playlist tag, approximate duration of the next media file that will be added to the main presentation - ignored
-    // EXT-X-MEDIA-SEQUENCE - playlist tag, indicates the sequence number of the first URI that appears in a playlist file
-    // EXT-X-KEY - multiple playlist item tag, provides information necessary to decrypt media files that follow it - E_DRM_PROTECTED
-    // EXT-X-PROGRAM-DATE-TIME - playlist item tag, associates the beginning of the next media file with an absolute date and/or time - ignored
-    // EXT-X-ALLOW-CACHE - playlist tag, indicates whether the client MAY cache downloaded media files for later replay - ignored
-    // EXT-X-ENDLIST - playlist tag, indicates that no more media files will be added to the Playlist file
-    // EXT-X-STREAM-INF - playlist item tag, indicates that the next URI in the playlist file identifies another playlist file
-    // EXT-X-DISCONTINUITY - playlist item tag, indicates that the media file following it has different characteristics than the one that preceded it
-    // EXT-X-VERSION - playlist tag, the compatibility version of the playlist file
-    // EXT-X-PLAYLIST-TYPE - playlist tag, provides mutability information about the playlist file
-
     CMediaSequenceTag *mediaSequenceTag = this->tags->GetMediaSequence();
     unsigned int mediaSequence = (mediaSequenceTag != NULL) ? mediaSequenceTag->GetSequenceNumber() : MEDIA_SEQUENCE_ID_DEFAULT;
 

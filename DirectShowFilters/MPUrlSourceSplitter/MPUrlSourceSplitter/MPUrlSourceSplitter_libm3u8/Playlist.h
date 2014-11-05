@@ -31,9 +31,8 @@
 #define PLAYLIST_FLAG_NONE                                            FLAGS_NONE
 
 #define PLAYLIST_FLAG_DETECTED_HEADER                                 (1 << (FLAGS_LAST + 0))
-#define PLAYLIST_FLAG_DETECTED_VERSION_01                             (1 << (FLAGS_LAST + 1))
 
-#define PLAYLIST_FLAG_LAST                                            (FLAGS_LAST + 2)
+#define PLAYLIST_FLAG_LAST                                            (FLAGS_LAST + 1)
 
 class CPlaylist : public CFlags
 {

@@ -21,6 +21,9 @@
 #include "StdAfx.h"
 
 #include "ByteRangeTag.h"
+#include "ItemCollection.h"
+#include "PlaylistItemCollection.h"
+#include "PlaylistItem.h"
 
 CByteRangeTag::CByteRangeTag(HRESULT *result)
   : CTag(result)
@@ -35,13 +38,23 @@ CByteRangeTag::~CByteRangeTag(void)
 
 /* get methods */
 
+unsigned int CByteRangeTag::GetOffset(void)
+{
+  return this->offset;
+}
+
+unsigned int CByteRangeTag::GetLength(void)
+{
+  return this->length;
+}
+
 /* set methods */
 
 /* other methods */
 
 bool CByteRangeTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return false;
+  return true;
 }
 
 bool CByteRangeTag::IsMasterPlaylistItem(unsigned int version)
@@ -54,9 +67,38 @@ bool CByteRangeTag::IsPlaylistItemTag(void)
   return true;
 }
 
-//bool CByteRangeTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *notProcessedItems, CPlaylistItemCollection *processedPlaylistItems)
-//{
-//}
+bool CByteRangeTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *notProcessedItems, CPlaylistItemCollection *processedPlaylistItems)
+{
+  if (version == PLAYLIST_VERSION_04)
+  {
+    // it is applied to exactly next playlist item
+    bool applied = false;
+
+    for (unsigned int i = 0; i < notProcessedItems->Count(); i++)
+    {
+      CPlaylistItem *playlistItem = dynamic_cast<CPlaylistItem *>(notProcessedItems->GetItem(i));
+
+      if (playlistItem != NULL)
+      {
+        CTag *clone = (CTag *)this->Clone();
+        if (clone != NULL)
+        {
+          applied |= playlistItem->GetTags()->Add(clone);
+        }
+
+        CHECK_CONDITION_EXECUTE(!applied, FREE_MEM_CLASS(clone));
+        break;
+      }
+    }
+
+    return applied;
+  }
+  else
+  {
+    // unknown playlist version
+    return false;
+  }
+}
 
 void CByteRangeTag::Clear(void)
 {
@@ -66,9 +108,10 @@ void CByteRangeTag::Clear(void)
   this->offset = BYTE_RANGE_OFFSET_NOT_SPECIFIED;
 }
 
-bool CByteRangeTag::ParseTag(void)
+bool CByteRangeTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag();
+  bool result = __super::ParseTag(version);
+  result &= (version == PLAYLIST_VERSION_04);
 
   if (result)
   {

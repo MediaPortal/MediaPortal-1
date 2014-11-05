@@ -112,7 +112,7 @@ void CDurationTitleFloatingTag::Clear(void)
 bool CDurationTitleFloatingTag::ParseTag(unsigned int version)
 {
   bool result = __super::ParseTag(version);
-  result &= (version == PLAYLIST_VERSION_03);
+  result &= ((version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_03));
 
   if (result)
   {

@@ -27,7 +27,8 @@
 #define PLAYLIST_VERSION_01                                           1
 #define PLAYLIST_VERSION_02                                           2
 #define PLAYLIST_VERSION_03                                           3
+#define PLAYLIST_VERSION_04                                           4
 
-#define PLAYLIST_LAST_KNOWN_VERSION                                   PLAYLIST_VERSION_03
+#define PLAYLIST_LAST_KNOWN_VERSION                                   PLAYLIST_VERSION_04
 
 #endif

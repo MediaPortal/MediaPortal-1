@@ -47,11 +47,7 @@ unsigned int CMasterPlaylistV01::GetVersion(void)
 
 HRESULT CMasterPlaylistV01::CheckPlaylistVersion(void)
 {
-  HRESULT result = (PLAYLIST_VERSION_01 == this->detectedVersion) ? S_OK : E_M3U8_NOT_SUPPORTED_PLAYLIST_VERSION;
-
-  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->flags |= PLAYLIST_FLAG_DETECTED_VERSION_01);
-
-  return result;
+  return (PLAYLIST_VERSION_01 == this->detectedVersion) ? S_OK : E_M3U8_NOT_SUPPORTED_PLAYLIST_VERSION;
 }
 
 HRESULT CMasterPlaylistV01::ParseTagsAndPlaylistItemsInternal(void)
@@ -60,22 +56,6 @@ HRESULT CMasterPlaylistV01::ParseTagsAndPlaylistItemsInternal(void)
 
   if (SUCCEEDED(result))
   {
-    // master playlist version 01 has these tags:
-    // EXTM3U - header tag, it is checked in CPlaylist
-    // EXTINF - playlist item tag, MUST NOT be in master playlist
-    // EXT-X-TARGETDURATION - playlist tag, approximate duration of the next media file that will be added to the main presentation - ignored
-    // EXT-X-MEDIA-SEQUENCE - playlist tag, indicates the sequence number of the first URI that appears in a playlist file - ignored ???
-    // EXT-X-KEY - multiple playlist item tag, provides information necessary to decrypt media files that follow it - E_DRM_PROTECTED
-    // EXT-X-PROGRAM-DATE-TIME - playlist item tag, associates the beginning of the next media file with an absolute date and/or time - ignored
-    // EXT-X-ALLOW-CACHE - playlist tag, indicates whether the client MAY cache downloaded media files for later replay - ignored
-    // EXT-X-ENDLIST - playlist tag, indicates that no more media files will be added to the Playlist file
-    // EXT-X-STREAM-INF - playlist item tag, indicates that the next URI in the playlist file identifies another playlist file
-    // EXT-X-DISCONTINUITY - playlist item tag, indicates that the media file following it has different characteristics than the one that preceded it
-
-    // for master playlist we need to check EXT-X-STREAM-INF tags in playlist items and create groups of same streams
-
-
-
     result = E_NOTIMPL;
   }
 

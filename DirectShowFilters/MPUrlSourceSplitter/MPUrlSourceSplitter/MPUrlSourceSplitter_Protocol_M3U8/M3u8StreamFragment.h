@@ -37,7 +37,6 @@ class CM3u8StreamFragment : public CStreamFragment
 public:
   // initializes a new instance of CM3u8StreamFragment class
   CM3u8StreamFragment(HRESULT *result, const wchar_t *uri, unsigned int fragment, int64_t fragmentTimestamp, unsigned int duration);
-  //CM3u8StreamFragment(HRESULT *result, const wchar_t *uri, unsigned int fragment);
 
   // destructor
   ~CM3u8StreamFragment(void);
@@ -60,6 +59,14 @@ public:
   // @return : stream fragment duration in ms
   unsigned int GetDuration(void);
 
+  // gets offset of range request
+  // @return : offset or UINT_MAX if not specified
+  unsigned int GetOffset(void);
+
+  // gets length of range request
+  // @return : length or UINT_MAX if not specified
+  unsigned int GetLength(void);
+
   /* set methods */
 
   // sets if fragment is encrypted
@@ -69,6 +76,14 @@ public:
   // sets if fragment is end of stream
   // @param endOfStream : true if after fragment is end of stream, false otherwise
   void SetEndOfStream(bool endOfStream);
+
+  // sets offset of range request
+  // @param offset : offset or UINT_MAX if not specified
+  void SetOffset(unsigned int offset);
+
+  // sets length of range request
+  // @param length : length or UINT_MAX if not specified
+  void SetLength(unsigned int length);
 
   /* other methods */
 
@@ -89,6 +104,10 @@ private:
   int64_t fragmentTimestamp;
   // holds duration in ms
   unsigned int duration;
+  // holds offset of range request
+  unsigned int offset;
+  // holds length of range request
+  unsigned int length;
 
   /* methods */
 

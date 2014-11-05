@@ -28,6 +28,8 @@ CM3u8Fragment::CM3u8Fragment(HRESULT *result)
   this->sequenceNumber = SEQUENCE_NUMBER_NOT_SPECIFIED;
   this->duration = DURATION_NOT_SPECIFIED;
   this->uri = NULL;
+  this->offset = OFFSET_NOT_SPECIFED;
+  this->length = LENGTH_NOT_SPECIFIED;
 }
 
 CM3u8Fragment::~CM3u8Fragment(void)
@@ -52,6 +54,16 @@ const wchar_t *CM3u8Fragment::GetUri(void)
   return this->uri;
 }
 
+unsigned int CM3u8Fragment::GetOffset(void)
+{
+  return this->offset;
+}
+
+unsigned int CM3u8Fragment::GetLength(void)
+{
+  return this->length;
+}
+
 /* set methods */
 
 void CM3u8Fragment::SetSequenceNumber(unsigned int sequenceNumber)
@@ -67,6 +79,16 @@ void CM3u8Fragment::SetDuration(unsigned int duration)
 bool CM3u8Fragment::SetUri(const wchar_t *uri)
 {
   SET_STRING_RETURN_WITH_NULL(this->uri, uri);
+}
+
+void CM3u8Fragment::SetOffset(unsigned int offset)
+{
+  this->offset = offset;
+}
+
+void CM3u8Fragment::SetLength(unsigned int length)
+{
+  this->length = length;
 }
 
 void CM3u8Fragment::SetDiscontinuity(bool discontinuity)

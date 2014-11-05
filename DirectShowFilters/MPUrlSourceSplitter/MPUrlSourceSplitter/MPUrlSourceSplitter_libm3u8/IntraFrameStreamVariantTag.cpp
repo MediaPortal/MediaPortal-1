@@ -44,7 +44,7 @@ bool CIntraFrameStreamVariantTag::IsMediaPlaylistItem(unsigned int version)
 
 bool CIntraFrameStreamVariantTag::IsMasterPlaylistItem(unsigned int version)
 {
-  return false;
+  return (version == PLAYLIST_VERSION_04);
 }
 
 bool CIntraFrameStreamVariantTag::IsPlaylistItemTag(void)
@@ -57,9 +57,10 @@ bool CIntraFrameStreamVariantTag::ApplyTagToPlaylistItems(unsigned int version, 
   return false;
 }
 
-bool CIntraFrameStreamVariantTag::ParseTag(void)
+bool CIntraFrameStreamVariantTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag();
+  bool result = __super::ParseTag(version);
+  result &= (version == PLAYLIST_VERSION_04);
 
   if (result)
   {
@@ -69,12 +70,13 @@ bool CIntraFrameStreamVariantTag::ParseTag(void)
 
     if (result)
     {
-      result &= this->ParseAttributes();
+      result &= this->ParseAttributes(version);
     }
   }
 
   return result;
 }
+
 
 /* protected methods */
 

@@ -410,6 +410,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
           request->SetIgnoreContentLength((this->configuration->GetValueLong(PARAMETER_NAME_M3U8_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
           CHECK_CONDITION_HRESULT(result, request->SetReferer(this->configuration->GetValue(PARAMETER_NAME_M3U8_REFERER, true, NULL)), result, E_OUTOFMEMORY);
           CHECK_CONDITION_HRESULT(result, request->SetUserAgent(this->configuration->GetValue(PARAMETER_NAME_M3U8_USER_AGENT, true, NULL)), result, E_OUTOFMEMORY);
+          
+          if ((fragment->GetOffset() != UINT_MAX) && (fragment->GetLength() != UINT_MAX))
+          {
+            request->SetStartPosition((uint64_t)fragment->GetOffset());
+            request->SetEndPosition((uint64_t)(fragment->GetOffset() + fragment->GetLength() - 1));
+          }
 
           if (SUCCEEDED(this->mainCurlInstance->LockCurlInstance(this)))
           {
@@ -1554,6 +1560,9 @@ CM3u8StreamFragmentCollection *CMPUrlSourceSplitter_Protocol_M3u8::GetStreamFrag
               fragment->SetDiscontinuity(frag->IsDiscontinuity(), UINT_MAX);
               fragment->SetEncrypted(frag->IsEncrypted());
               fragment->SetEndOfStream(frag->IsEndOfStream());
+
+              fragment->SetOffset((frag->GetOffset() != OFFSET_NOT_SPECIFED) ? frag->GetOffset() : UINT_MAX);
+              fragment->SetLength((frag->GetLength() != LENGTH_NOT_SPECIFIED) ? frag->GetLength() : UINT_MAX);
             }
 
             CHECK_CONDITION_HRESULT(result, streamFragments->Add(fragment), result, E_OUTOFMEMORY);
