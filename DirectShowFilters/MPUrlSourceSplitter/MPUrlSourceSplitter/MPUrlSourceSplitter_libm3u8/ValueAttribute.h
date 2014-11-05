@@ -20,24 +20,22 @@
 
 #pragma once
 
-#ifndef __BANDWIDTH_ATTRIBUTE_DEFINED
-#define __BANDWIDTH_ATTRIBUTE_DEFINED
+#ifndef __VALUE_ATTRIBUTE_DEFINED
+#define __VALUE_ATTRIBUTE_DEFINED
 
 #include "Attribute.h"
 
-#define BANDWIDTH_ATTRIBUTE_FLAG_NONE                                 ATTRIBUTE_FLAG_NONE
+#define VALUE_ATTRIBUTE_FLAG_NONE                                     ATTRIBUTE_FLAG_NONE
 
-#define BANDWIDTH_ATTRIBUTE_FLAG_LAST                                 (ATTRIBUTE_FLAG_LAST + 0)
+#define VALUE_ATTRIBUTE_FLAG_LAST                                     (ATTRIBUTE_FLAG_LAST + 0)
 
-#define BANDWIDTH_ATTRIBUTE_NAME                                      L"BANDWIDTH"
+#define VALUE_ATTRIBUTE_NAME                                          L"VALUE"
 
-#define BANDWIDTH_NOT_SPECIFIED                                       DECIMAL_INTEGER_NOT_SPECIFIED
-
-class CBandwidthAttribute : public CAttribute
+class CValueAttribute : public CAttribute
 {
 public:
-  CBandwidthAttribute(HRESULT *result);
-  virtual ~CBandwidthAttribute(void);
+  CValueAttribute(HRESULT *result);
+  virtual ~CValueAttribute(void);
 
   /* get methods */
 
@@ -57,9 +55,8 @@ public:
 
 protected:
 
-  // holds bandwidth
-  // bandwidth is specified as bits per second (2^32 b/s is 512 MB/s - hopefully sufficient)
-  unsigned int bandwidth;
+  // holds value
+  wchar_t *valueData;
 
   /* methods */
 

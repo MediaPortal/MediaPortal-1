@@ -43,7 +43,7 @@ bool CPreciseAttribute::Parse(unsigned int version, const wchar_t *name, const w
 
   if (result)
   {
-    if (version == PLAYLIST_VERSION_06)
+    if ((version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07))
     {
       wchar_t *precise = CAttribute::GetEnumeratedString(value);
       result &= (precise != NULL);

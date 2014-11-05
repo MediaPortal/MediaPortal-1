@@ -279,6 +279,21 @@
     <ClInclude Include="MediaPlaylistV06.h">
       <Filter>Playlists\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AverageBandwidthAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataIdAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ValueAttribute.h">
+      <Filter>Attributes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionDataTag.h">
+      <Filter>Tags\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaPlaylistV07.h">
+      <Filter>Playlists\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -509,6 +524,21 @@
     <ClCompile Include="MediaPlaylistV06.cpp">
       <Filter>Playlists\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AverageBandwidthAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataIdAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ValueAttribute.cpp">
+      <Filter>Attributes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionDataTag.cpp">
+      <Filter>Tags\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaPlaylistV07.cpp">
+      <Filter>Playlists\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="m3u8_v1_draft-pantos-http-live-streaming-02.txt">
@@ -530,6 +560,9 @@
       <Filter>Specifications</Filter>
     </None>
     <None Include="m3u8_v6_draft-pantos-http-live-streaming-13.txt">
+      <Filter>Specifications</Filter>
+    </None>
+    <None Include="m3u8_v7_draft-pantos-http-live-streaming-14.txt">
       <Filter>Specifications</Filter>
     </None>
   </ItemGroup>

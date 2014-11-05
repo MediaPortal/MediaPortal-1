@@ -20,17 +20,17 @@
 
 #include "StdAfx.h"
 
-#include "GroupIdAttribute.h"
+#include "ValueAttribute.h"
 
-CGroupIdAttribute::CGroupIdAttribute(HRESULT *result)
+CValueAttribute::CValueAttribute(HRESULT *result)
   : CAttribute(result)
 {
-  this->groupId = NULL;
+  this->valueData = NULL;
 }
 
-CGroupIdAttribute::~CGroupIdAttribute(void)
+CValueAttribute::~CValueAttribute(void)
 {
-  FREE_MEM(this->groupId);
+  FREE_MEM(this->valueData);
 }
 
 /* get methods */
@@ -39,23 +39,23 @@ CGroupIdAttribute::~CGroupIdAttribute(void)
 
 /* other methods */
 
-void CGroupIdAttribute::Clear(void)
+void CValueAttribute::Clear(void)
 {
   __super::Clear();
 
-  FREE_MEM(this->groupId);
+  FREE_MEM(this->valueData);
 }
 
-bool CGroupIdAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
+bool CValueAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
 {
   bool result = __super::Parse(version, name, value);
 
   if (result)
   {
-    if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07))
+    if (version == PLAYLIST_VERSION_07)
     {
-      this->groupId = CAttribute::GetQuotedString(value);
-      result &= (this->groupId != NULL);
+      this->valueData = CAttribute::GetQuotedString(value);
+      result &= (this->valueData != NULL);
     }
     else
     {
@@ -68,25 +68,25 @@ bool CGroupIdAttribute::Parse(unsigned int version, const wchar_t *name, const w
 
 /* protected methods */
 
-CAttribute *CGroupIdAttribute::CreateAttribute(void)
+CAttribute *CValueAttribute::CreateAttribute(void)
 {
   HRESULT result = S_OK;
-  CGroupIdAttribute *attribute = new CGroupIdAttribute(&result);
+  CValueAttribute *attribute = new CValueAttribute(&result);
   CHECK_POINTER_HRESULT(result, attribute, result, E_OUTOFMEMORY);
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(attribute));
   return attribute;
 }
 
-bool CGroupIdAttribute::CloneInternal(CAttribute *attribute)
+bool CValueAttribute::CloneInternal(CAttribute *attribute)
 {
   bool result = __super::CloneInternal(attribute);
-  CGroupIdAttribute *groupId = dynamic_cast<CGroupIdAttribute *>(attribute);
-  result &= (groupId != NULL);
+  CValueAttribute *valueData = dynamic_cast<CValueAttribute *>(attribute);
+  result &= (valueData != NULL);
 
   if (result)
   {
-    SET_STRING_AND_RESULT_WITH_NULL(groupId->groupId, this->groupId, result);
+    SET_STRING_AND_RESULT_WITH_NULL(valueData->valueData, this->valueData, result);
   }
 
   return result;

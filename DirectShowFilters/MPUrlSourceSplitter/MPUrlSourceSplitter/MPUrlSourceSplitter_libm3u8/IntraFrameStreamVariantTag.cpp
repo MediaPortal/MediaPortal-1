@@ -47,7 +47,7 @@ bool CIntraFrameStreamVariantTag::IsMediaPlaylistItem(unsigned int version)
 
 bool CIntraFrameStreamVariantTag::IsMasterPlaylistItem(unsigned int version)
 {
-  return ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
+  return ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
 }
 
 bool CIntraFrameStreamVariantTag::IsPlaylistItemTag(void)
@@ -63,7 +63,7 @@ bool CIntraFrameStreamVariantTag::ApplyTagToPlaylistItems(unsigned int version, 
 bool CIntraFrameStreamVariantTag::ParseTag(unsigned int version)
 {
   bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
+  result &= ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
 
   if (result)
   {
@@ -77,7 +77,7 @@ bool CIntraFrameStreamVariantTag::ParseTag(unsigned int version)
 
       if (result)
       {
-        if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06))
+        if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07))
         {
           // BANDWIDTH attribute is mandatory
 

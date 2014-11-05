@@ -20,24 +20,24 @@
 
 #pragma once
 
-#ifndef __BANDWIDTH_ATTRIBUTE_DEFINED
-#define __BANDWIDTH_ATTRIBUTE_DEFINED
+#ifndef __AVERAGE_BANDWIDTH_ATTRIBUTE_DEFINED
+#define __AVERAGE_BANDWIDTH_ATTRIBUTE_DEFINED
 
 #include "Attribute.h"
 
-#define BANDWIDTH_ATTRIBUTE_FLAG_NONE                                 ATTRIBUTE_FLAG_NONE
+#define AVERAGE_BANDWIDTH_ATTRIBUTE_FLAG_NONE                         ATTRIBUTE_FLAG_NONE
 
-#define BANDWIDTH_ATTRIBUTE_FLAG_LAST                                 (ATTRIBUTE_FLAG_LAST + 0)
+#define AVERAGE_BANDWIDTH_ATTRIBUTE_FLAG_LAST                         (ATTRIBUTE_FLAG_LAST + 0)
 
-#define BANDWIDTH_ATTRIBUTE_NAME                                      L"BANDWIDTH"
+#define AVERAGE_BANDWIDTH_ATTRIBUTE_NAME                              L"AVERAGE-BANDWIDTH"
 
-#define BANDWIDTH_NOT_SPECIFIED                                       DECIMAL_INTEGER_NOT_SPECIFIED
+#define AVERAGE_BANDWIDTH_NOT_SPECIFIED                               DECIMAL_INTEGER_NOT_SPECIFIED
 
-class CBandwidthAttribute : public CAttribute
+class CAverageBandwidthAttribute : public CAttribute
 {
 public:
-  CBandwidthAttribute(HRESULT *result);
-  virtual ~CBandwidthAttribute(void);
+  CAverageBandwidthAttribute(HRESULT *result);
+  virtual ~CAverageBandwidthAttribute(void);
 
   /* get methods */
 

@@ -83,12 +83,14 @@
     <ClInclude Include="AttributeFactory.h" />
     <ClInclude Include="AudioAttribute.h" />
     <ClInclude Include="AutoselectAttribute.h" />
+    <ClInclude Include="AverageBandwidthAttribute.h" />
     <ClInclude Include="ByteRangeAttribute.h" />
     <ClInclude Include="ByteRangeTag.h" />
     <ClInclude Include="CharacteristicsAttribute.h" />
     <ClInclude Include="ClosedCaptionsAttribute.h" />
     <ClInclude Include="CodecsAttribute.h" />
     <ClInclude Include="CommentTag.h" />
+    <ClInclude Include="DataIdAttribute.h" />
     <ClInclude Include="DefaultAttribute.h" />
     <ClInclude Include="DiscontinuitySequenceTag.h" />
     <ClInclude Include="DiscontinuityTag.h" />
@@ -126,6 +128,7 @@
     <ClInclude Include="MediaPlaylistV04.h" />
     <ClInclude Include="MediaPlaylistV05.h" />
     <ClInclude Include="MediaPlaylistV06.h" />
+    <ClInclude Include="MediaPlaylistV07.h" />
     <ClInclude Include="MediaSequenceTag.h" />
     <ClInclude Include="MediaTag.h" />
     <ClInclude Include="MethodAttribute.h" />
@@ -139,6 +142,7 @@
     <ClInclude Include="ProgramDateTimeTag.h" />
     <ClInclude Include="ProgramIdAttribute.h" />
     <ClInclude Include="ResolutionAttribute.h" />
+    <ClInclude Include="SessionDataTag.h" />
     <ClInclude Include="StartTag.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="BandwidthAttribute.h" />
@@ -152,6 +156,7 @@
     <ClInclude Include="TimeOffsetAttribute.h" />
     <ClInclude Include="TypeAttribute.h" />
     <ClInclude Include="UriAttribute.h" />
+    <ClInclude Include="ValueAttribute.h" />
     <ClInclude Include="VersionTag.h" />
     <ClInclude Include="VideoAttribute.h" />
   </ItemGroup>
@@ -163,12 +168,14 @@
     <ClCompile Include="AttributeFactory.cpp" />
     <ClCompile Include="AudioAttribute.cpp" />
     <ClCompile Include="AutoselectAttribute.cpp" />
+    <ClCompile Include="AverageBandwidthAttribute.cpp" />
     <ClCompile Include="ByteRangeAttribute.cpp" />
     <ClCompile Include="ByteRangeTag.cpp" />
     <ClCompile Include="CharacteristicsAttribute.cpp" />
     <ClCompile Include="ClosedCaptionsAttribute.cpp" />
     <ClCompile Include="CodecsAttribute.cpp" />
     <ClCompile Include="CommentTag.cpp" />
+    <ClCompile Include="DataIdAttribute.cpp" />
     <ClCompile Include="DefaultAttribute.cpp" />
     <ClCompile Include="DiscontinuitySequenceTag.cpp" />
     <ClCompile Include="DiscontinuityTag.cpp" />
@@ -206,6 +213,7 @@
     <ClCompile Include="MediaPlaylistV04.cpp" />
     <ClCompile Include="MediaPlaylistV05.cpp" />
     <ClCompile Include="MediaPlaylistV06.cpp" />
+    <ClCompile Include="MediaPlaylistV07.cpp" />
     <ClCompile Include="MediaSequenceTag.cpp" />
     <ClCompile Include="MediaTag.cpp" />
     <ClCompile Include="MethodAttribute.cpp" />
@@ -218,6 +226,7 @@
     <ClCompile Include="ProgramDateTimeTag.cpp" />
     <ClCompile Include="ProgramIdAttribute.cpp" />
     <ClCompile Include="ResolutionAttribute.cpp" />
+    <ClCompile Include="SessionDataTag.cpp" />
     <ClCompile Include="StartTag.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -233,6 +242,7 @@
     <ClCompile Include="TimeOffsetAttribute.cpp" />
     <ClCompile Include="TypeAttribute.cpp" />
     <ClCompile Include="UriAttribute.cpp" />
+    <ClCompile Include="ValueAttribute.cpp" />
     <ClCompile Include="VersionTag.cpp" />
     <ClCompile Include="VideoAttribute.cpp" />
   </ItemGroup>
@@ -243,6 +253,7 @@
     <None Include="m3u8_v4_draft-pantos-http-live-streaming-08.txt" />
     <None Include="m3u8_v5_draft-pantos-http-live-streaming-11.txt" />
     <None Include="m3u8_v6_draft-pantos-http-live-streaming-13.txt" />
+    <None Include="m3u8_v7_draft-pantos-http-live-streaming-14.txt" />
     <None Include="readme.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

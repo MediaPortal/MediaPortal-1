@@ -52,7 +52,7 @@ bool CVideoAttribute::Parse(unsigned int version, const wchar_t *name, const wch
 
   if (result)
   {
-    if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06))
+    if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07))
     {
       this->videoGroupId = CAttribute::GetQuotedString(value);
       result &= (this->videoGroupId != NULL);

@@ -40,12 +40,12 @@ CStartTag::~CStartTag(void)
 
 bool CStartTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return (version == PLAYLIST_VERSION_06);
+  return ((version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
 }
 
 bool CStartTag::IsMasterPlaylistItem(unsigned int version)
 {
-  return (version == PLAYLIST_VERSION_06);
+  return ((version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
 }
 
 bool CStartTag::IsPlaylistItemTag(void)
@@ -61,7 +61,7 @@ bool CStartTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *n
 bool CStartTag::ParseTag(unsigned int version)
 {
   bool result = __super::ParseTag(version);
-  result &= (version == PLAYLIST_VERSION_06);
+  result &= ((version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
 
   if (result)
   {
@@ -75,7 +75,7 @@ bool CStartTag::ParseTag(unsigned int version)
 
       if (result)
       {
-        if (version == PLAYLIST_VERSION_06)
+        if ((version == PLAYLIST_VERSION_06)  || (version == PLAYLIST_VERSION_07))
         {
           // TIME-OFFSET attribute is mandatory
           CTimeOffsetAttribute *timeOffset = dynamic_cast<CTimeOffsetAttribute *>(this->GetAttributes()->GetAttribute(TIME_OFFSET_ATTRIBUTE_NAME, true));

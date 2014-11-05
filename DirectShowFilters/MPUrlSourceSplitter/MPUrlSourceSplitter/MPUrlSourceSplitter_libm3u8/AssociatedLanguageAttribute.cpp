@@ -52,7 +52,7 @@ bool CAssociatedLanguageAttribute::Parse(unsigned int version, const wchar_t *na
 
   if (result)
   {
-    if (version == PLAYLIST_VERSION_06)
+    if ((version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07))
     {
       this->language = CAttribute::GetQuotedString(value);
       result &= (this->language != NULL);

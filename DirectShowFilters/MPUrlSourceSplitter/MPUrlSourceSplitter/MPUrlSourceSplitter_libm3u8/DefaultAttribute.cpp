@@ -43,7 +43,7 @@ bool CDefaultAttribute::Parse(unsigned int version, const wchar_t *name, const w
 
   if (result)
   {
-    if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06))
+    if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07))
     {
       wchar_t *defaultValue = CAttribute::GetEnumeratedString(value);
       result &= (defaultValue != NULL);

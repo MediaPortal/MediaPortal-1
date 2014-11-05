@@ -39,12 +39,12 @@ CIndependedSegmentsTag::~CIndependedSegmentsTag(void)
 
 bool CIndependedSegmentsTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return (version == PLAYLIST_VERSION_06);
+  return ((version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
 }
 
 bool CIndependedSegmentsTag::IsMasterPlaylistItem(unsigned int version)
 {
-  return (version == PLAYLIST_VERSION_06);
+  return ((version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
 }
 
 bool CIndependedSegmentsTag::IsPlaylistItemTag(void)
@@ -60,7 +60,7 @@ bool CIndependedSegmentsTag::ApplyTagToPlaylistItems(unsigned int version, CItem
 bool CIndependedSegmentsTag::ParseTag(unsigned int version)
 {
   bool result = __super::ParseTag(version);
-  result &= (version == PLAYLIST_VERSION_06);
+  result &= ((version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
 
   if (result)
   {

@@ -47,6 +47,9 @@
 #include "ClosedCaptionsAttribute.h"
 #include "TimeOffsetAttribute.h"
 #include "PreciseAttribute.h"
+#include "AverageBandwidthAttribute.h"
+#include "DataIdAttribute.h"
+#include "ValueAttribute.h"
 
 CAttributeFactory::CAttributeFactory(HRESULT *result)
 {
@@ -102,6 +105,9 @@ CAttribute *CAttributeFactory::CreateAttribute(unsigned int version, const wchar
       CREATE_SPECIFIC_ATTRIBUTE(attribute, CLOSED_CAPTIONS_ATTRIBUTE_NAME, CClosedCaptionsAttribute, continueParsing, result, version);
       CREATE_SPECIFIC_ATTRIBUTE(attribute, TIME_OFFSET_ATTRIBUTE_NAME, CTimeOffsetAttribute, continueParsing, result, version);
       CREATE_SPECIFIC_ATTRIBUTE(attribute, PRECISE_ATTRIBUTE_NAME, CPreciseAttribute, continueParsing, result, version);
+      CREATE_SPECIFIC_ATTRIBUTE(attribute, AVERAGE_BANDWIDTH_ATTRIBUTE_NAME, CAverageBandwidthAttribute, continueParsing, result, version);
+      CREATE_SPECIFIC_ATTRIBUTE(attribute, DATA_ID_ATTRIBUTE_NAME, CDataIdAttribute, continueParsing, result, version);
+      CREATE_SPECIFIC_ATTRIBUTE(attribute, VALUE_ATTRIBUTE_NAME, CValueAttribute, continueParsing, result, version);
     }
 
     CHECK_CONDITION_NOT_NULL_EXECUTE(result, FREE_MEM_CLASS(attribute));

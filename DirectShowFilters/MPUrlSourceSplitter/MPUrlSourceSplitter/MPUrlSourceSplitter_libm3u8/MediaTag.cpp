@@ -46,7 +46,7 @@ bool CMediaTag::IsMediaPlaylistItem(unsigned int version)
 
 bool CMediaTag::IsMasterPlaylistItem(unsigned int version)
 {
-  return ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
+  return ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
 }
 
 bool CMediaTag::IsPlaylistItemTag(void)
@@ -62,7 +62,7 @@ bool CMediaTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *n
 bool CMediaTag::ParseTag(unsigned int version)
 {
   bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06));
+  result &= ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
 
   if (result)
   {
@@ -76,7 +76,7 @@ bool CMediaTag::ParseTag(unsigned int version)
 
       if (result)
       {
-        if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06))
+        if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07))
         {
           // TYPE attribute is mandatory
           CTypeAttribute *type = dynamic_cast<CTypeAttribute *>(this->GetAttributes()->GetAttribute(TYPE_ATTRIBUTE_NAME, true));

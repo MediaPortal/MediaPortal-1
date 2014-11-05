@@ -20,17 +20,17 @@
 
 #include "StdAfx.h"
 
-#include "GroupIdAttribute.h"
+#include "AverageBandwidthAttribute.h"
+#include "conversions.h"
 
-CGroupIdAttribute::CGroupIdAttribute(HRESULT *result)
+CAverageBandwidthAttribute::CAverageBandwidthAttribute(HRESULT *result)
   : CAttribute(result)
 {
-  this->groupId = NULL;
+  this->bandwidth = AVERAGE_BANDWIDTH_NOT_SPECIFIED;
 }
 
-CGroupIdAttribute::~CGroupIdAttribute(void)
+CAverageBandwidthAttribute::~CAverageBandwidthAttribute(void)
 {
-  FREE_MEM(this->groupId);
 }
 
 /* get methods */
@@ -39,23 +39,23 @@ CGroupIdAttribute::~CGroupIdAttribute(void)
 
 /* other methods */
 
-void CGroupIdAttribute::Clear(void)
+void CAverageBandwidthAttribute::Clear(void)
 {
   __super::Clear();
 
-  FREE_MEM(this->groupId);
+  this->bandwidth = AVERAGE_BANDWIDTH_NOT_SPECIFIED;
 }
 
-bool CGroupIdAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
+bool CAverageBandwidthAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
 {
   bool result = __super::Parse(version, name, value);
 
   if (result)
   {
-    if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07))
+    if (version == PLAYLIST_VERSION_07)
     {
-      this->groupId = CAttribute::GetQuotedString(value);
-      result &= (this->groupId != NULL);
+      this->bandwidth = CAttribute::GetDecimalInteger(value);
+      result &= (this->bandwidth != AVERAGE_BANDWIDTH_NOT_SPECIFIED);
     }
     else
     {
@@ -68,25 +68,25 @@ bool CGroupIdAttribute::Parse(unsigned int version, const wchar_t *name, const w
 
 /* protected methods */
 
-CAttribute *CGroupIdAttribute::CreateAttribute(void)
+CAttribute *CAverageBandwidthAttribute::CreateAttribute(void)
 {
   HRESULT result = S_OK;
-  CGroupIdAttribute *attribute = new CGroupIdAttribute(&result);
+  CAverageBandwidthAttribute *attribute = new CAverageBandwidthAttribute(&result);
   CHECK_POINTER_HRESULT(result, attribute, result, E_OUTOFMEMORY);
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(attribute));
   return attribute;
 }
 
-bool CGroupIdAttribute::CloneInternal(CAttribute *attribute)
+bool CAverageBandwidthAttribute::CloneInternal(CAttribute *attribute)
 {
   bool result = __super::CloneInternal(attribute);
-  CGroupIdAttribute *groupId = dynamic_cast<CGroupIdAttribute *>(attribute);
-  result &= (groupId != NULL);
+  CAverageBandwidthAttribute *bandwidth = dynamic_cast<CAverageBandwidthAttribute *>(attribute);
+  result &= (bandwidth != NULL);
 
   if (result)
   {
-    SET_STRING_AND_RESULT_WITH_NULL(groupId->groupId, this->groupId, result);
+    bandwidth->bandwidth = this->bandwidth;
   }
 
   return result;

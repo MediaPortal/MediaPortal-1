@@ -51,7 +51,7 @@ bool CTimeOffsetAttribute::Parse(unsigned int version, const wchar_t *name, cons
 
   if (result)
   {
-    if (version == PLAYLIST_VERSION_06)
+    if ((version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07))
     {
       double temp = CAttribute::GetDecimalFloatingPoint(value);
 

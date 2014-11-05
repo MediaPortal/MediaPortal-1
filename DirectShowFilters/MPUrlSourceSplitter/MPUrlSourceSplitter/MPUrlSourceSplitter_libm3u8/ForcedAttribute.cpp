@@ -43,7 +43,7 @@ bool CForcedAttribute::Parse(unsigned int version, const wchar_t *name, const wc
 
   if (result)
   {
-    if ((version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06))
+    if ((version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07))
     {
       wchar_t *forcedValue = CAttribute::GetEnumeratedString(value);
       result &= (forcedValue != NULL);

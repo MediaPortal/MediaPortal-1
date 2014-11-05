@@ -53,7 +53,7 @@ bool CResolutionAttribute::Parse(unsigned int version, const wchar_t *name, cons
 
   if (result)
   {
-    if ((version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06))
+    if ((version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07))
     {
       this->width = CAttribute::GetDecimalResolutionWidth(value);
       this->height = CAttribute::GetDecimalResolutionHeight(value);

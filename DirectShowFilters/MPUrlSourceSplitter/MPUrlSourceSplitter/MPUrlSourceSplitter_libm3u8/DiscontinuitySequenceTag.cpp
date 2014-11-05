@@ -43,7 +43,7 @@ CDiscontinuitySequenceTag::~CDiscontinuitySequenceTag(void)
 
 bool CDiscontinuitySequenceTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return (version == PLAYLIST_VERSION_06);
+  return ((version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
 }
 
 bool CDiscontinuitySequenceTag::IsMasterPlaylistItem(unsigned int version)
@@ -71,7 +71,7 @@ void CDiscontinuitySequenceTag::Clear(void)
 bool CDiscontinuitySequenceTag::ParseTag(unsigned int version)
 {
   bool result = __super::ParseTag(version);
-  result &= (version == PLAYLIST_VERSION_06);
+  result &= ((version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
 
   if (result)
   {

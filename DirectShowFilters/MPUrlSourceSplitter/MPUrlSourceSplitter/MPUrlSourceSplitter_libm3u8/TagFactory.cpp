@@ -43,6 +43,7 @@
 #include "VersionTag.h"
 #include "DurationTitleTag.h"
 #include "DurationTitleFloatingTag.h"
+#include "SessionDataTag.h"
 #include "ErrorCodes.h"
 
 CTagFactory::CTagFactory(HRESULT *result)
@@ -99,6 +100,7 @@ CTag *CTagFactory::CreateTag(HRESULT *result, unsigned int version, CGeneralTag 
         CREATE_SPECIFIC_TAG(temp, TAG_VERSION, CVersionTag, (*result), tag, version);
         CREATE_SPECIFIC_TAG(temp, TAG_DURATION_TITLE, CDurationTitleTag, (*result), tag, version);
         CREATE_SPECIFIC_TAG(temp, TAG_DURATION_TITLE_FLOATING, CDurationTitleFloatingTag, (*result), tag, version);
+        CREATE_SPECIFIC_TAG(temp, TAG_SESSION_DATA, CSessionDataTag, (*result), tag, version);
       }
 
       CHECK_CONDITION_NOT_NULL_EXECUTE(tag, FREE_MEM_CLASS(temp));
