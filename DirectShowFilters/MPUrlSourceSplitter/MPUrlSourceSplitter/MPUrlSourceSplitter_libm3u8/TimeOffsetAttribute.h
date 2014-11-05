@@ -31,7 +31,7 @@
 
 #define TIME_OFFSET_ATTRIBUTE_NAME                                    L"TIME-OFFSET"
 
-#define TIME_OFFSET_NOT_SPECIFIED                                     DECIMAL_FLOATING_NOT_SPECIFIED
+#define TIME_OFFSET_NOT_SPECIFIED                                     DECIMAL_INTEGER_NOT_SPECIFIED
 
 class CTimeOffsetAttribute : public CAttribute
 {
