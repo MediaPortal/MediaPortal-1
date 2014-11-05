@@ -40,7 +40,7 @@ CTargetDurationTag::~CTargetDurationTag(void)
 
 bool CTargetDurationTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04));
+  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
 }
 
 bool CTargetDurationTag::IsMasterPlaylistItem(unsigned int version)
@@ -68,7 +68,7 @@ void CTargetDurationTag::Clear(void)
 bool CTargetDurationTag::ParseTag(unsigned int version)
 {
   bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04));
+  result &= ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
 
   if (result)
   {

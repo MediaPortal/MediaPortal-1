@@ -21,6 +21,10 @@
 #include "StdAfx.h"
 
 #include "MapTag.h"
+#include "ItemCollection.h"
+#include "PlaylistItemCollection.h"
+#include "PlaylistItem.h"
+#include "DiscontinuityTag.h"
 
 CMapTag::CMapTag(HRESULT *result)
   : CTag(result)
@@ -39,7 +43,7 @@ CMapTag::~CMapTag(void)
 
 bool CMapTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return false;
+  return (version == PLAYLIST_VERSION_05);
 }
 
 bool CMapTag::IsMasterPlaylistItem(unsigned int version)
@@ -52,25 +56,53 @@ bool CMapTag::IsPlaylistItemTag(void)
   return true;
 }
 
-//bool CMapTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *notProcessedItems, CPlaylistItemCollection *processedPlaylistItems)
-//{
-//  return false;
-//}
-
-bool CMapTag::ParseTag(void)
+bool CMapTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *notProcessedItems, CPlaylistItemCollection *processedPlaylistItems)
 {
-  bool result = __super::ParseTag();
+  if (version == PLAYLIST_VERSION_05)
+  {
+    // it is applied to all playlist items after this tag until next discontinuity tag or end of playlist
+    bool applied = this->ParseAttributes(version);
+
+    for (unsigned int i = 1; (applied & (i < notProcessedItems->Count())); i++)
+    {
+      CPlaylistItem *playlistItem = dynamic_cast<CPlaylistItem *>(notProcessedItems->GetItem(i));
+      CDiscontinuityTag *discontinuityTag = dynamic_cast<CDiscontinuityTag *>(notProcessedItems->GetItem(i));
+
+      if (playlistItem != NULL)
+      {
+        CTag *clone = (CTag *)this->Clone();
+        applied &= (clone != NULL);
+
+        CHECK_CONDITION_EXECUTE(applied, applied &= playlistItem->GetTags()->Add(clone));
+
+        CHECK_CONDITION_EXECUTE(!applied, FREE_MEM_CLASS(clone));
+      }
+
+      if (discontinuityTag != NULL)
+      {
+        break;
+      }
+    }
+
+    return applied;
+  }
+  else
+  {
+    // unknown playlist version
+    return false;
+  }
+}
+
+bool CMapTag::ParseTag(unsigned int version)
+{
+  bool result = __super::ParseTag(version);
+  result &= (version == PLAYLIST_VERSION_05);
 
   if (result)
   {
     // successful parsing of tag
     // compare it to our tag
     result &= (wcscmp(this->tag, TAG_MAP) == 0);
-
-    if (result)
-    {
-      result &= this->ParseAttributes();
-    }
   }
 
   return result;

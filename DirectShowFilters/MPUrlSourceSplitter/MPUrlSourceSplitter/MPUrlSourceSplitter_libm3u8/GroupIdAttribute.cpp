@@ -52,7 +52,7 @@ bool CGroupIdAttribute::Parse(unsigned int version, const wchar_t *name, const w
 
   if (result)
   {
-    if (version == PLAYLIST_VERSION_04)
+    if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05))
     {
       this->groupId = CAttribute::GetQuotedString(value);
       result &= (this->groupId != NULL);

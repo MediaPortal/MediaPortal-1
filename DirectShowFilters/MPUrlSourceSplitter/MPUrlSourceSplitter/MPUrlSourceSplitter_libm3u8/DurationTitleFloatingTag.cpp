@@ -55,7 +55,7 @@ const wchar_t *CDurationTitleFloatingTag::GetTitle(void)
 
 bool CDurationTitleFloatingTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return ((version == PLAYLIST_VERSION_03));
+  return ((version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
 }
 
 bool CDurationTitleFloatingTag::IsMasterPlaylistItem(unsigned int version)
@@ -70,7 +70,7 @@ bool CDurationTitleFloatingTag::IsPlaylistItemTag(void)
 
 bool CDurationTitleFloatingTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *notProcessedItems, CPlaylistItemCollection *processedPlaylistItems)
 {
-  if ((version == PLAYLIST_VERSION_03))
+  if ((version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05))
   {
     // it is applied to exactly next playlist item
     bool applied = false;
@@ -112,7 +112,7 @@ void CDurationTitleFloatingTag::Clear(void)
 bool CDurationTitleFloatingTag::ParseTag(unsigned int version)
 {
   bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_03));
+  result &= ((version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
 
   if (result)
   {

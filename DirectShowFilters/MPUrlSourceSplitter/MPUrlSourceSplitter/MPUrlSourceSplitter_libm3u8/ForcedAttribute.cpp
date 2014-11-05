@@ -37,22 +37,29 @@ CForcedAttribute::~CForcedAttribute(void)
 
 /* other methods */
 
-bool CForcedAttribute::Parse(const wchar_t *name, const wchar_t *value)
+bool CForcedAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
 {
-  bool result = __super::Parse(name, value);
+  bool result = __super::Parse(version, name, value);
 
   if (result)
   {
-    wchar_t *defaultValue = CAttribute::GetEnumeratedString(value);
-    result &= (defaultValue != NULL);
-
-    if (result)
+    if (version == PLAYLIST_VERSION_05)
     {
-      this->flags |= (wcscmp(defaultValue, FORCED_YES) == 0) ? FORCED_ATTRIBUTE_FLAG_YES : FORCED_ATTRIBUTE_FLAG_NONE;
-      this->flags |= (wcscmp(defaultValue, FORCED_NO) == 0) ? FORCED_ATTRIBUTE_FLAG_NO : FORCED_ATTRIBUTE_FLAG_NONE;
-    }
+      wchar_t *forcedValue = CAttribute::GetEnumeratedString(value);
+      result &= (forcedValue != NULL);
 
-    FREE_MEM(defaultValue);
+      if (result)
+      {
+        this->flags |= (wcscmp(forcedValue, FORCED_YES) == 0) ? FORCED_ATTRIBUTE_FLAG_YES : FORCED_ATTRIBUTE_FLAG_NONE;
+        this->flags |= (wcscmp(forcedValue, FORCED_NO) == 0) ? FORCED_ATTRIBUTE_FLAG_NO : FORCED_ATTRIBUTE_FLAG_NONE;
+      }
+
+      FREE_MEM(forcedValue);
+    }
+    else
+    {
+      result = false;
+    }
   }
 
   return result;

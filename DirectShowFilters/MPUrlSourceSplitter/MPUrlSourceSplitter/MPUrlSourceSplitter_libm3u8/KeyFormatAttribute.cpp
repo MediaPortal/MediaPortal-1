@@ -46,14 +46,21 @@ void CKeyFormatAttribute::Clear(void)
   FREE_MEM(this->keyFormat);
 }
 
-bool CKeyFormatAttribute::Parse(const wchar_t *name, const wchar_t *value)
+bool CKeyFormatAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
 {
-  bool result = __super::Parse(name, value);
+  bool result = __super::Parse(version, name, value);
 
   if (result)
   {
-    this->keyFormat = CAttribute::GetQuotedString(value);
-    result &= (this->keyFormat != NULL);
+    if (version == PLAYLIST_VERSION_05)
+    {
+      this->keyFormat = CAttribute::GetQuotedString(value);
+      result &= (this->keyFormat != NULL);
+    }
+    else
+    {
+      result = false;
+    }
   }
 
   return result;

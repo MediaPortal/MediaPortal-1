@@ -58,7 +58,7 @@ bool CMethodAttribute::Parse(unsigned int version, const wchar_t *name, const wc
 
   if (result)
   {
-    if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04))
+    if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05))
     {
       wchar_t *method = CAttribute::GetEnumeratedString(this->value);
       result &= (method != NULL);
@@ -67,6 +67,11 @@ bool CMethodAttribute::Parse(unsigned int version, const wchar_t *name, const wc
       {
         this->flags |= (wcscmp(method, METHOD_ATTRIBUTE_VALUE_NONE) == 0) ? METHOD_ATTRIBUTE_FLAG_METHOD_NONE : METHOD_ATTRIBUTE_FLAG_NONE;
         this->flags |= (wcscmp(method, METHOD_ATTRIBUTE_VALUE_AES_128) == 0) ? METHOD_ATTRIBUTE_FLAG_METHOD_AES_128 : METHOD_ATTRIBUTE_FLAG_NONE;
+
+        if (version == PLAYLIST_VERSION_05)
+        {
+          this->flags |= (wcscmp(method, METHOD_ATTRIBUTE_VALUE_SAMPLE_AES) == 0) ? METHOD_ATTRIBUTE_FLAG_METHOD_SAMPLE_AES : METHOD_ATTRIBUTE_FLAG_NONE;
+        }
       }
 
       FREE_MEM(method);
@@ -75,8 +80,6 @@ bool CMethodAttribute::Parse(unsigned int version, const wchar_t *name, const wc
     {
       result = false;
     }
-
-    //this->flags |= (wcscmp(method, METHOD_ATTRIBUTE_VALUE_SAMPLE_AES) == 0) ? METHOD_ATTRIBUTE_FLAG_METHOD_SAMPLE_AES : METHOD_ATTRIBUTE_FLAG_NONE;
   }
 
   return result;

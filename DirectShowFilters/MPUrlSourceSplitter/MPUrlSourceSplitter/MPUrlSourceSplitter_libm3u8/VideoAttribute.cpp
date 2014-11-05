@@ -52,7 +52,7 @@ bool CVideoAttribute::Parse(unsigned int version, const wchar_t *name, const wch
 
   if (result)
   {
-    if (version == PLAYLIST_VERSION_04)
+    if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05))
     {
       this->videoGroupId = CAttribute::GetQuotedString(value);
       result &= (this->videoGroupId != NULL);
@@ -65,7 +65,6 @@ bool CVideoAttribute::Parse(unsigned int version, const wchar_t *name, const wch
 
   return result;
 }
-
 
 /* protected methods */
 

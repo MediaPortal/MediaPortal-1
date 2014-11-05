@@ -42,7 +42,7 @@ CKeyTag::~CKeyTag(void)
 
 bool CKeyTag::IsMediaPlaylistItem(unsigned int version)
 {
-  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04));
+  return ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
 }
 
 bool CKeyTag::IsMasterPlaylistItem(unsigned int version)
@@ -57,7 +57,7 @@ bool CKeyTag::IsPlaylistItemTag(void)
 
 bool CKeyTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *notProcessedItems, CPlaylistItemCollection *processedPlaylistItems)
 {
-  if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04))
+  if ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05))
   {
     // it is applied to all playlist items after this tag until next key tag or end of playlist
     bool applied = this->ParseAttributes(version);
@@ -95,7 +95,7 @@ bool CKeyTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *not
 bool CKeyTag::ParseTag(unsigned int version)
 {
   bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04));
+  result &= ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
 
   if (result)
   {

@@ -143,7 +143,6 @@ HRESULT CPlaylist::Parse(const wchar_t *buffer, unsigned int length)
           continue;
         }
       }
-
       
       if (SUCCEEDED(result) && (item->IsTag() || item->IsPlaylistItem()))
       {

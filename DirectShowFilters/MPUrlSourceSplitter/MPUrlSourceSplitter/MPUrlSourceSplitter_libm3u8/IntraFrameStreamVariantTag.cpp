@@ -44,7 +44,7 @@ bool CIntraFrameStreamVariantTag::IsMediaPlaylistItem(unsigned int version)
 
 bool CIntraFrameStreamVariantTag::IsMasterPlaylistItem(unsigned int version)
 {
-  return (version == PLAYLIST_VERSION_04);
+  return ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
 }
 
 bool CIntraFrameStreamVariantTag::IsPlaylistItemTag(void)
@@ -60,7 +60,7 @@ bool CIntraFrameStreamVariantTag::ApplyTagToPlaylistItems(unsigned int version, 
 bool CIntraFrameStreamVariantTag::ParseTag(unsigned int version)
 {
   bool result = __super::ParseTag(version);
-  result &= (version == PLAYLIST_VERSION_04);
+  result &= ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05));
 
   if (result)
   {

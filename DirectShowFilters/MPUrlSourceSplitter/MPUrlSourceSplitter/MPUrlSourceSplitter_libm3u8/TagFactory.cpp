@@ -32,7 +32,7 @@
 #include "IntraFrameOnlyTag.h"
 #include "IntraFrameStreamVariantTag.h"
 #include "KeyTag.h"
-//#include "MapTag.h"
+#include "MapTag.h"
 #include "MediaSequenceTag.h"
 #include "MediaTag.h"
 #include "PlaylistTypeTag.h"
@@ -88,7 +88,7 @@ CTag *CTagFactory::CreateTag(HRESULT *result, unsigned int version, CGeneralTag 
         CREATE_SPECIFIC_TAG(temp, TAG_INTRA_FRAME_ONLY, CIntraFrameOnlyTag, (*result), tag, version);
         CREATE_SPECIFIC_TAG(temp, TAG_INTRA_FRAME_STREAM_VARIANT, CIntraFrameStreamVariantTag, (*result), tag, version);
         CREATE_SPECIFIC_TAG(temp, TAG_KEY, CKeyTag, (*result), tag, version);
-        //CREATE_SPECIFIC_TAG(temp, TAG_MAP, CMapTag, (*result), tag, version);
+        CREATE_SPECIFIC_TAG(temp, TAG_MAP, CMapTag, (*result), tag, version);
         CREATE_SPECIFIC_TAG(temp, TAG_MEDIA_SEQUENCE, CMediaSequenceTag, (*result), tag, version);
         CREATE_SPECIFIC_TAG(temp, TAG_MEDIA, CMediaTag, (*result), tag, version);
         CREATE_SPECIFIC_TAG(temp, TAG_PLAYLIST_TYPE, CPlaylistTypeTag, (*result), tag, version);

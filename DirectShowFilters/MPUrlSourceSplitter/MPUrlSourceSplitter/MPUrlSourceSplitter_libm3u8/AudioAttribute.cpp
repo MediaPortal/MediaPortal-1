@@ -52,7 +52,7 @@ bool CAudioAttribute::Parse(unsigned int version, const wchar_t *name, const wch
 
   if (result)
   {
-    if (version == PLAYLIST_VERSION_04)
+    if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05))
     {
       this->audioGroupId = CAttribute::GetQuotedString(value);
       result &= (this->audioGroupId != NULL);

@@ -61,11 +61,11 @@ public:
 
   // gets offset of range request
   // @return : offset or UINT_MAX if not specified
-  unsigned int GetOffset(void);
+  unsigned int GetByteRangeOffset(void);
 
   // gets length of range request
   // @return : length or UINT_MAX if not specified
-  unsigned int GetLength(void);
+  unsigned int GetByteRangeLength(void);
 
   /* set methods */
 
@@ -79,11 +79,11 @@ public:
 
   // sets offset of range request
   // @param offset : offset or UINT_MAX if not specified
-  void SetOffset(unsigned int offset);
+  void SetByteRangeOffset(unsigned int offset);
 
   // sets length of range request
   // @param length : length or UINT_MAX if not specified
-  void SetLength(unsigned int length);
+  void SetByteRangeLength(unsigned int length);
 
   /* other methods */
 
@@ -105,9 +105,9 @@ private:
   // holds duration in ms
   unsigned int duration;
   // holds offset of range request
-  unsigned int offset;
+  unsigned int byteRangeOffset;
   // holds length of range request
-  unsigned int length;
+  unsigned int byteRangeLength;
 
   /* methods */
 

@@ -46,14 +46,21 @@ void CSubtitlesAttribute::Clear(void)
   FREE_MEM(this->subtitlesGroupId);
 }
 
-bool CSubtitlesAttribute::Parse(const wchar_t *name, const wchar_t *value)
+bool CSubtitlesAttribute::Parse(unsigned int version, const wchar_t *name, const wchar_t *value)
 {
-  bool result = __super::Parse(name, value);
+  bool result = __super::Parse(version, name, value);
 
   if (result)
   {
-    this->subtitlesGroupId = CAttribute::GetQuotedString(value);
-    result &= (this->subtitlesGroupId != NULL);
+    if (version == PLAYLIST_VERSION_05)
+    {
+      this->subtitlesGroupId = CAttribute::GetQuotedString(value);
+      result &= (this->subtitlesGroupId != NULL);
+    }
+    else
+    {
+      result = false;
+    }
   }
 
   return result;
