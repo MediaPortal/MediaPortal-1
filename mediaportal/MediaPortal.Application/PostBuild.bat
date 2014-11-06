@@ -162,6 +162,7 @@ xcopy %1\..\Packages\bass.aac.2.4.4.4\bass_aac.dll "MusicPlayer\plugins\audio de
 xcopy %1\..\Packages\bass.ac3.2.4.0.3\bass_ac3.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 xcopy %1\..\Packages\bass.alac.2.4.3\bass_alac.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 xcopy %1\..\Packages\bass.ape.2.4.1\bass_ape.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\..\Packages\bass.dsd.0.0.1\bassdsd.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 xcopy %1\..\Packages\bass.mpc.2.4.1.1\bass_mpc.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 xcopy %1\..\Packages\bass.ofr.2.4.0.2\bass_ofr.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 xcopy %1\..\Packages\bass.spx.2.4.2\bass_spx.dll "MusicPlayer\plugins\audio decoders\" /Y /D

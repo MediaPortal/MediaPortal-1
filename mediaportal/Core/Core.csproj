@@ -1701,6 +1701,7 @@
     <Error Condition="!Exists('..\..\Packages\bass.wasapi.2.4.0.2\build\bass.wasapi.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wasapi.2.4.0.2\build\bass.wasapi.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.wma.2.4.4\build\bass.wma.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wma.2.4.4\build\bass.wma.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.wv.2.4.4\build\bass.wv.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wv.2.4.4\build\bass.wv.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.dsd.0.0.1\build\bass.dsd.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.dsd.0.0.1\build\bass.dsd.targets'))" />
   </Target>
   <Import Project="..\..\Packages\BASS.2.4.10\build\bass.targets" Condition="Exists('..\..\Packages\BASS.2.4.10\build\bass.targets')" />
   <Import Project="..\..\Packages\bass.aac.2.4.4.4\build\bass.aac.targets" Condition="Exists('..\..\Packages\bass.aac.2.4.4.4\build\bass.aac.targets')" />
@@ -1724,4 +1725,5 @@
   <Import Project="..\..\Packages\bass.wma.2.4.4\build\bass.wma.targets" Condition="Exists('..\..\Packages\bass.wma.2.4.4\build\bass.wma.targets')" />
   <Import Project="..\..\Packages\bass.wv.2.4.4\build\bass.wv.targets" Condition="Exists('..\..\Packages\bass.wv.2.4.4\build\bass.wv.targets')" />
   <Import Project="..\..\Packages\MediaInfo.0.7.69\build\MediaInfo.targets" Condition="Exists('..\..\Packages\MediaInfo.0.7.69\build\MediaInfo.targets')" />
+  <Import Project="..\..\Packages\bass.dsd.0.0.1\build\bass.dsd.targets" Condition="Exists('..\..\Packages\bass.dsd.0.0.1\build\bass.dsd.targets')" />
 </Project>
