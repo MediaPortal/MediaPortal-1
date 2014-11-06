@@ -32,10 +32,10 @@
 
 #include <curl/curl.h>
 
-FORCEINLINE HRESULT HRESULT_FROM_CURL_CODE(CURLcode curlCode) { return ((curlCode != 0) ? (HRESULT)(curlCode | 0x80000F00) : 0); }
-FORCEINLINE HRESULT HRESULT_FROM_CURLM_CODE(CURLMcode curlmCode) { return ((curlmCode != 0) ? (HRESULT)(curlmCode | 0x80000F80) : 0); }
+FORCEINLINE HRESULT HRESULT_FROM_CURL_CODE(CURLcode curlCode) { return ((curlCode != 0) ? (HRESULT)(curlCode | 0xFFFFF000) : 0); }
+FORCEINLINE HRESULT HRESULT_FROM_CURLM_CODE(CURLMcode curlmCode) { return ((curlmCode != 0) ? (HRESULT)(curlmCode | 0xFFFFF080) : 0); }
 
-FORCEINLINE bool IS_CURL_ERROR(HRESULT error) { return ((error & 0xFFFFFF00) == 0x80000F00); }
+FORCEINLINE bool IS_CURL_ERROR(HRESULT error) { return ((error & 0xFFFFFF00) == 0xFFFFF000); }
 
 #define CURL_INSTANCE_FLAG_NONE                                               FLAGS_NONE
 

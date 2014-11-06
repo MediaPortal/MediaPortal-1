@@ -24,13 +24,14 @@
 #define __IFILTER_EX_STATE_DEFINED
 
 #include "IFilterState.h"
+#include <streams.h>
 
 // {6E33E032-E321-4392-ABA4-82C03AC3DC20}
 DEFINE_GUID(IID_IFilterStateEx, 0x6e33e032, 0xe321, 0x4392, 0xab, 0xa4, 0x82, 0xc0, 0x3a, 0xc3, 0xdc, 0x20);
 
 // provides interface for filter state
 MIDL_INTERFACE("6E33E032-E321-4392-ABA4-82C03AC3DC20")
-IFilterStateEx : virtual public IFilterState
+IFilterStateEx : public IFilterState
 {
 public:
   // gets filter version

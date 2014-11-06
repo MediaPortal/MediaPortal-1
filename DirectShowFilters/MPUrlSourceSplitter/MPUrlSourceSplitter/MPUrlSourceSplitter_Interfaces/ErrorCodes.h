@@ -31,8 +31,8 @@
 // each module can define other error codes
 // after changing error code appropriate files in OnlineVideos have to be changed
 
-// our error code is error code with highest bit set, set lowest two bytes, except second byte equal to 0F (in this case it is error code from CURL)
-FORCEINLINE bool IS_OUR_ERROR(HRESULT error) { return (((error & 0xFFFFF000) == 0x80000000) && ((error & 0x00000F00) != 0x00000F00)); }
+// our error code is error code with highest bit set, set lowest two bytes, except second byte equal to F0 (in this case it is error code from CURL)
+FORCEINLINE bool IS_OUR_ERROR(HRESULT error) { return (((error & 0xFFFFF000) == 0xFFFFF000) && ((error & 0x0000FF00) != 0x0000F000)); }
 
 // common error codes
 
