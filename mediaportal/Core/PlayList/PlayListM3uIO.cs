@@ -168,7 +168,7 @@ namespace MediaPortal.Playlists
     {
       try
       {
-        using (StreamWriter writer = new StreamWriter(fileName, false, Encoding.UTF8))
+        using (StreamWriter writer = new StreamWriter(fileName, false, Encoding.GetEncoding("Windows-1252")))
         {
           writer.WriteLine(M3U_START_MARKER);
 
