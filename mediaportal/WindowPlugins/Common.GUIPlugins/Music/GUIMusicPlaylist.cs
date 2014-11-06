@@ -771,7 +771,7 @@ namespace MediaPortal.GUI.Music
           PlayListItem newItem = new PlayListItem();
           newItem.FileName = pItem.Path;
           newItem.Description = pItem.Label;
-          newItem.Duration = pItem.Duration;
+          newItem.Duration = (pItem.MusicTag == null) ? pItem.Duration : (pItem.MusicTag as MusicTag).Duration;
           newItem.Type = PlayListItem.PlayListItemType.Audio;
           playlist.Add(newItem);
         }
