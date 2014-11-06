@@ -518,6 +518,7 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
+        MusicTag tag;
         switch (filter.Where)
         {
           case "genre":
@@ -547,6 +548,17 @@ namespace MediaPortal.GUI.Music
 
           case "track":
           {
+            // If we want to get the Cover from embedded cover arts, we need to re-read the Tag from the file, 
+            // since the database query didn't return a cover
+            if (_useEmbeddedCover)
+            {
+              tag = item.MusicTag as MusicTag;
+              if (tag != null && tag.CoverArtImageBytes == null)
+              {
+                item.MusicTag = TagReader.TagReader.ReadTag(item.Path);
+              }
+            }
+
             base.OnRetrieveCoverArt(item);
             break;
           }
@@ -555,7 +567,7 @@ namespace MediaPortal.GUI.Music
           case "album":
 
             bool thumbFound = false;
-            MusicTag tag = item.MusicTag as MusicTag;
+            tag = item.MusicTag as MusicTag;
             strThumb = Util.Utils.GetAlbumThumbName(tag.Artist, tag.Album);
             if (Util.Utils.FileExistsInCache(strThumb))
             {
