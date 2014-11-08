@@ -533,6 +533,9 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\bass.wma.2.4.4\basswma.dll"
   File "${git_ROOT}\Packages\bass.wv.2.4.4\basswv.dll"
   File "${git_ROOT}\Packages\bass.dsd.0.0.1\bassdsd.dll"
+  ; taglib-sharp
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\MediaPortal.TagLib.2.0.3.8\lib\taglib-sharp.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"
