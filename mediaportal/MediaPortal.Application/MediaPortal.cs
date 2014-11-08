@@ -88,7 +88,8 @@ public class MediaPortalApp : D3D, IRender
   private readonly bool         _useIdleblankScreen;
   private int                   _idlePluginWindowId;
   private readonly bool         _showLastActiveModule;
-  private readonly bool         _stopOnLostAudioRenderer; 
+  private readonly bool         _stopOnLostAudioRenderer;
+  private readonly int          _delayOnResume;
   private bool                  _playingState;
   private bool                  _showStats;
   private bool                  _showStatsPrevious;
@@ -128,8 +129,9 @@ public class MediaPortalApp : D3D, IRender
   private IntPtr                _userPresenceHandle;
   private IntPtr                _awayModeHandle;
   private bool                  _resumedAutomatic;
-  private bool                  _userActivity;
-  private Timer                 _delayTimer;
+  private bool                  _resumedSuspended;
+  private bool                  _delayedResume;
+  private readonly Object       _delayedResumeLock = new Object();
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND            = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
@@ -247,9 +249,8 @@ public class MediaPortalApp : D3D, IRender
     PBT_APMOEMEVENT           = 0x000B,
     PBT_APMQUERYSUSPEND       = 0x0000,
     PBT_APMQUERYSUSPENDFAILED = 0x0002,
-    PBT_APMRESUMECRITICAL     = 0x0006,
-    // Delay resume pseudo message
-    PBT_APMRESUMEDELAYED      = 0x000E
+    PBT_APMRESUMECRITICAL     = 0x0006
+
   }
   // ReSharper restore UnusedMember.Local
   // ReSharper restore InconsistentNaming
@@ -1082,6 +1083,7 @@ public class MediaPortalApp : D3D, IRender
       _showLastActiveModule       = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
       screenNumber                = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
       _stopOnLostAudioRenderer    = xmlreader.GetValueAsBool("general", "stoponaudioremoval", true);
+      _delayOnResume              = xmlreader.GetValueAsBool("general", "delay resume", false) ? xmlreader.GetValueAsInt("general", "delay", 0) : 0;
     }
 
     if (ScreenNumberOverride >= 0)
@@ -1629,21 +1631,16 @@ public class MediaPortalApp : D3D, IRender
   {
     try
     {
-      Log.Debug("Main: WM_POWERBROADCAST ({0})", Enum.GetName(typeof(PBT_EVENT), msg.WParam.ToInt32()));
+      Log.Info("Main: WM_POWERBROADCAST ({0})", Enum.GetName(typeof(PBT_EVENT), msg.WParam.ToInt32()));
 
       switch (msg.WParam.ToInt32())
       {
         // The computer is about to enter a suspended state
         case (int)PBT_EVENT.PBT_APMSUSPEND:
-          // Reset timer and resume states
-          if (_delayTimer != null)
-          {
-            _delayTimer.Stop();
-            _delayTimer.Elapsed -= SendResumeDelayedMsg;
-            _delayTimer = null;
-          }
+
           _resumedAutomatic = false;
-          _userActivity = false;
+          _resumedSuspended = false;
+          _delayedResume = false;
 
           // Suspend operation
           Log.Info("Main: Suspending operation");
@@ -1652,84 +1649,64 @@ public class MediaPortalApp : D3D, IRender
           OnSuspend();
           break;
 
-        // Pseudo message for delayed resume
-        case (int)PBT_EVENT.PBT_APMRESUMEDELAYED:
-          // Resume automatic operation
-          Log.Info("Main: Resuming automatic operation after delay");
-          OnResumeAutomatic();
-          msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMEAUTOMATIC);
-          PluginManager.WndProc(ref msg);
-          _resumedAutomatic = true;
-
-          // If there was a PBT_APMRESUMESUSPEND message, resume operation of user interface
-          if (_userActivity)
-          {
-            // Resume operation of user interface
-            Log.Info("Main: Resuming operation of user interface after delay");
-            OnResumeSuspend();
-            msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
-            PluginManager.WndProc(ref msg);
-          }
-          break;
-
-        // The computer has woken up automatically to handle an event
         case (int)PBT_EVENT.PBT_APMRESUMEAUTOMATIC:
-          // Delay resuming if configured
-          using (Settings xmlreader = new MPSettings())
-          {
-            int waitOnResume = xmlreader.GetValueAsBool("general", "delay resume", false) ? xmlreader.GetValueAsInt("general", "delay", 0) : 0;
-            if (waitOnResume > 0)
-            {
-              // Schedule PBT_APMRESUMEDELAYED message
-              Log.Info("Main: Delay resuming operation for {0} secs", waitOnResume);
-              _delayTimer = new System.Timers.Timer(waitOnResume * 1000);
-              _delayTimer.AutoReset = false;
-              _delayTimer.Elapsed += new ElapsedEventHandler(SendResumeDelayedMsg);
-              _delayTimer.Enabled = true;
-              return;
-            }
-          }
+          // Check Delayed Resume
+          CheckDelayedResume();
 
           // Resume automatic operation
-          Log.Info("Main: Resuming automatic operation");
-          OnResumeAutomatic();
-          PluginManager.WndProc(ref msg);
-          _resumedAutomatic = true;
-
-          // If there was a PBT_APMRESUMESUSPEND message, resume operation of user interface
-          if (_userActivity)
-          {
-            Log.Info("Main: Resuming operation of user interface");
-            OnResumeSuspend();
-            msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
-            PluginManager.WndProc(ref msg);
-          }
-          break;
-
-        // only for Windows XP
-        case (int)PBT_EVENT.PBT_APMRESUMECRITICAL:
-          Log.Info("Main: Resuming operation after a forced suspend");
-          OnResumeAutomatic();
-          _resumedAutomatic = true;
-          OnResumeSuspend();
-          PluginManager.WndProc(ref msg);
-          break;
-
-        // The system has resumed operation on a user activity
-        case (int)PBT_EVENT.PBT_APMRESUMESUSPEND:
-          _userActivity = true;
-
-          // If automatic resume is not processed yet, wait for ResumeAutomatic / ResumeDelayed message
           if (!_resumedAutomatic)
           {
-            Log.Debug("Main: OnPowerBroadcast - wait for ResumeAutomatic / ResumeDelayed message");
-            return;
+            Log.Info("Main: Resuming automatic operation");
+            OnResumeAutomatic();
+            msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMEAUTOMATIC);
+            PluginManager.WndProc(ref msg);
+            _resumedAutomatic = true;
+          }
+          else
+          {
+            Log.Info("Main: PBT_APMRESUMEAUTOMATIC was already handled, skipping");
+          }
+          break;
+
+        // Only for Windows XP
+        case (int)PBT_EVENT.PBT_APMRESUMECRITICAL:
+          Log.Info("Main: Resuming operation after a forced suspend");
+
+          // We don't know if this is a 2nd call (bug in bios / drivers) or 1st call without a PBT_APMSUSPEND.
+          // We can only assume this is 1st call in a scenario where PBT_APMSUSPEND is missing.
+          // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372719(v=vs.85).aspx
+
+          _resumedAutomatic = false;
+          _resumedSuspended = false;
+
+          // PBT_APMRESUMECRITICAL should be handled in same way as PBT_APMRESUMEAUTOMATIC
+          goto case (int)PBT_EVENT.PBT_APMRESUMEAUTOMATIC;
+
+        case (int)PBT_EVENT.PBT_APMRESUMESUSPEND:
+          // Check Delayed Resume
+          CheckDelayedResume();
+
+          if (!_resumedAutomatic)
+          {
+            Log.Info("Main: Resuming automatic operation - order of events is wrong");
+            OnResumeAutomatic();
+            msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
+            PluginManager.WndProc(ref msg);
+            _resumedAutomatic = true;
           }
 
-          // Resume operation of user interface
-          Log.Info("Main: Resuming operation of user interface");
-          OnResumeSuspend();
-          PluginManager.WndProc(ref msg);
+          if (!_resumedSuspended)
+          {
+            // Resume operation of user interface
+            Log.Info("Main: Resuming operation of user interface");
+            OnResumeSuspend();
+            PluginManager.WndProc(ref msg);
+            _resumedSuspended = true;
+          }
+          else
+          {
+            Log.Info("Main: PBT_APMRESUMESUSPEND was already handled, skipping");
+          }
           break;
 
         // A change in the power status of the computer is detected
@@ -1798,28 +1775,21 @@ public class MediaPortalApp : D3D, IRender
     }
   }
 
-  /// <summary>
-  /// Timer callback: Stop timer and send PBT_RESUMEDELAYED message
-  /// </summary>
-  /// <param name="sender"></param>
-  /// <param name="e"></param>
-  private void SendResumeDelayedMsg(object sender, ElapsedEventArgs e)
+  private bool CheckDelayedResume()
   {
-    // Stop and dispose timer
-    if (_delayTimer != null)
+    if (_delayOnResume > 0 && !_delayedResume)
     {
-      _delayTimer.Stop();
-      _delayTimer.Elapsed -= SendResumeDelayedMsg;
-      _delayTimer = null;
+      // Use delayed resume events
+      lock (_delayedResumeLock)
+      {
+        // delay resuming as configured
+        Log.Info("Main: DelayedResume - waiting on resume {0} secs", _delayOnResume);
+        Thread.Sleep(_delayOnResume * 1000);
+        _delayedResume = true;
+      }
+      return true;
     }
-
-    // Send PBT_APMRESUMEDELAYED message
-    Log.Debug("Main: SendResumeDelayedMsg - sending PBT_APMRESUMEDELAYED message");
-    IntPtr hWnd = Form.ActiveForm.Handle;
-    if (hWnd != IntPtr.Zero)
-    {
-      PostMessage(hWnd, WM_POWERBROADCAST, new IntPtr((int)PBT_EVENT.PBT_APMRESUMEDELAYED), IntPtr.Zero);
-    }
+    return false;
   }
 
   /// <summary>
@@ -1987,6 +1957,9 @@ public class MediaPortalApp : D3D, IRender
       }
       if (!Equals(currentBounds.Size, newBounds.Size))
       {
+        // disable event handlers
+        GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+
         // Check if start screen is equal to device screen and check if current screen bond differ from current detected screen bond then recreate swap chain.
         Log.Debug("Main: Screen MP OnDisplayChange current screen detected                                {0}", GetCleanDisplayName(screen));
         Log.Debug("Main: Screen MP OnDisplayChange current screen                                         {0}", GetCleanDisplayName(GUIGraphicsContext.currentScreen));
@@ -1999,6 +1972,9 @@ public class MediaPortalApp : D3D, IRender
         NeedRecreateSwapChain = true;
         RecreateSwapChain();
         _changeScreenDisplayChange = true;
+
+        // enable event handlers
+        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
       }
       // Restore original Start Screen in case of change from RDP Session
       if (!Equals(screen, GUIGraphicsContext.currentStartScreen))
@@ -2075,6 +2051,9 @@ public class MediaPortalApp : D3D, IRender
 
     if (!Equals(currentBounds.Size, newBounds.Size) && !_firstLoadedScreen && !_restoreLoadedScreen)
     {
+      // disable event handlers
+      GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+
       // Check if start screen is equal to device screen and check if current screen bond differ from current detected screen bond then recreate swap chain.
       Log.Debug("Main: Screen MP OnGetMinMaxInfo Information.DeviceName Manager.Adapters                {0}", adapterOrdinalScreenName);
       Log.Debug("Main: Screen MP OnGetMinMaxInfo current screen detected                                {0}", GetCleanDisplayName(screen));
@@ -2093,6 +2072,9 @@ public class MediaPortalApp : D3D, IRender
       {
         SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
       }
+
+      // enable event handlers
+      GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
     }
 
     if (_changeScreen || _changeScreenDisplayChange)
