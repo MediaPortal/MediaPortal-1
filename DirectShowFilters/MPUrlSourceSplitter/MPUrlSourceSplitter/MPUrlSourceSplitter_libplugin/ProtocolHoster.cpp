@@ -41,6 +41,8 @@ CProtocolHoster::CProtocolHoster(HRESULT *result, CLogger *logger, CParameterCol
   this->finishTime = 0;
   this->startReceivingData = false;
   this->protocolError = S_OK;
+  this->startReceiveDataWorkerShouldExit = false;
+  this->startReceiveDataWorkerThread = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -158,35 +160,17 @@ HRESULT CProtocolHoster::StartReceivingData(CParameterCollection *parameters)
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, this->hosterName, METHOD_START_RECEIVING_DATA_NAME);
 
   HRESULT result = S_OK;
-  CHECK_POINTER_HRESULT(result, this->activeProtocol, result, E_NO_ACTIVE_PROTOCOL);
 
-  DWORD timeout = 0;
-
-  if (SUCCEEDED(result))
+  do
   {
-    // get open connection data timeout for active protocol
-    this->finishTime = GetTickCount() + this->activeProtocol->GetOpenConnectionTimeout();
+    result = this->StartReceivingDataAsync(parameters);
 
-    // now we have active protocol with loaded url, but still not working
-    // create thread for receiving data
-
-    this->startReceivingData = true;
-    result = this->CreateReceiveDataWorker();
-  }
-
-  if (SUCCEEDED(result))
-  {
-    // wait for receiving data, timeout or exit
-    while (SUCCEEDED(this->protocolError) && (this->activeProtocol->GetConnectionState() != Opened) && (!this->activeProtocol->IsWholeStreamDownloaded()) && (!this->activeProtocol->IsConnectionLostCannotReopen()) && (GetTickCount() <= this->finishTime) && (!this->receiveDataWorkerShouldExit))
+    if (result == S_FALSE)
     {
       Sleep(1);
     }
-
-    CHECK_CONDITION_EXECUTE(FAILED(this->protocolError), result = this->protocolError);
-    CHECK_CONDITION_HRESULT(result, (!this->activeProtocol->IsConnectionLostCannotReopen()) && (GetTickCount() <= this->finishTime) && (!this->receiveDataWorkerShouldExit), result, E_CONNECTION_LOST_CANNOT_REOPEN);
   }
-
-  this->startReceivingData = false;
+  while (result == S_FALSE);
 
   this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, this->hosterName, METHOD_START_RECEIVING_DATA_NAME, result);
   return result;
@@ -196,6 +180,8 @@ HRESULT CProtocolHoster::StopReceivingData(void)
 {
   // stop receive data worker
   this->DestroyReceiveDataWorker();
+  // stop start receive data worker
+  this->DestroyStartReceiveDataWorker();
 
   this->pauseSeekStopMode = PAUSE_SEEK_STOP_MODE_NONE;
   this->finishTime = 0;
@@ -402,6 +388,30 @@ bool CProtocolHoster::IsConnectionLostCannotReopen(void)
   return this->activeProtocol->IsConnectionLostCannotReopen();
 }
 
+HRESULT CProtocolHoster::StartReceivingDataAsync(CParameterCollection *parameters)
+{
+  HRESULT result = S_FALSE;
+
+  if (this->startReceiveDataWorkerThread == NULL)
+  {
+    result = this->CreateStartReceiveDataWorker();
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = S_FALSE);
+  }
+
+  if (SUCCEEDED(result) && (this->startReceiveDataWorkerThread != NULL))
+  {
+    result = (WaitForSingleObject(this->startReceiveDataWorkerThread, 0) == WAIT_TIMEOUT) ? S_FALSE : this->protocolError;
+  }
+  
+  if (result != S_FALSE)
+  {
+    // thread finished or error
+    this->DestroyStartReceiveDataWorker();
+  }
+
+  return result;
+}
+
 /* protected methods */
 
 CHosterPluginMetadata *CProtocolHoster::CreateHosterPluginMetadata(HRESULT *result, CLogger *logger, CParameterCollection *configuration, const wchar_t *hosterName, const wchar_t *pluginLibraryFileName)
@@ -432,6 +442,92 @@ CPluginConfiguration *CProtocolHoster::CreatePluginConfiguration(HRESULT *result
   }
 
   return protocolConfiguration;
+}
+
+HRESULT CProtocolHoster::CreateStartReceiveDataWorker(void)
+{
+  HRESULT result = S_OK;
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, this->hosterName, METHOD_CREATE_START_RECEIVE_DATA_WORKER_NAME);
+
+  if (this->startReceiveDataWorkerThread == NULL)
+  {
+    this->startReceiveDataWorkerThread = (HANDLE)_beginthreadex(NULL, 0, &CProtocolHoster::StartReceiveDataWorker, this, 0, NULL);
+  }
+
+  if (this->startReceiveDataWorkerThread == NULL)
+  {
+    // thread not created
+    result = HRESULT_FROM_WIN32(GetLastError());
+    this->logger->Log(LOGGER_ERROR, L"%s: %s: _beginthreadex() error: 0x%08X", this->hosterName, METHOD_CREATE_START_RECEIVE_DATA_WORKER_NAME, result);
+  }
+
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, this->hosterName, METHOD_CREATE_START_RECEIVE_DATA_WORKER_NAME, result);
+  return result;
+}
+
+HRESULT CProtocolHoster::DestroyStartReceiveDataWorker(void)
+{
+  HRESULT result = S_OK;
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, this->hosterName, METHOD_DESTROY_START_RECEIVE_DATA_WORKER_NAME);
+
+  this->startReceiveDataWorkerShouldExit = true;
+
+  // wait for the receive data worker thread to exit      
+  if (this->startReceiveDataWorkerThread != NULL)
+  {
+    if (WaitForSingleObject(this->startReceiveDataWorkerThread, INFINITE) == WAIT_TIMEOUT)
+    {
+      // thread didn't exit, kill it now
+      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, this->hosterName, METHOD_DESTROY_START_RECEIVE_DATA_WORKER_NAME, L"thread didn't exit, terminating thread");
+      TerminateThread(this->startReceiveDataWorkerThread, 0);
+    }
+    CloseHandle(this->startReceiveDataWorkerThread);
+  }
+
+  this->startReceiveDataWorkerThread = NULL;
+  this->startReceiveDataWorkerShouldExit = false;
+
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, this->hosterName, METHOD_DESTROY_START_RECEIVE_DATA_WORKER_NAME, result);
+  return result;
+}
+
+unsigned int WINAPI CProtocolHoster::StartReceiveDataWorker(LPVOID lpParam)
+{
+  CProtocolHoster *caller = (CProtocolHoster *)lpParam;
+  caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, caller->hosterName, METHOD_START_RECEIVE_DATA_WORKER_NAME);
+
+  CHECK_POINTER_HRESULT(caller->protocolError, caller->activeProtocol, caller->protocolError, E_NO_ACTIVE_PROTOCOL);
+
+  unsigned int timeout = 0;
+
+  if (SUCCEEDED(caller->protocolError))
+  {
+    // get open connection data timeout for active protocol
+    caller->finishTime = GetTickCount() + caller->activeProtocol->GetOpenConnectionTimeout();
+
+    // now we have active protocol with loaded url, but still not working
+    // create thread for receiving data
+
+    caller->startReceivingData = true;
+    caller->protocolError = caller->CreateReceiveDataWorker();
+  }
+
+  // wait for receiving data, timeout or exit
+  while (SUCCEEDED(caller->protocolError) && (caller->activeProtocol->GetConnectionState() != Opened) && (!caller->activeProtocol->IsWholeStreamDownloaded()) && (!caller->activeProtocol->IsConnectionLostCannotReopen()) && (GetTickCount() <= caller->finishTime) && (!caller->startReceiveDataWorkerShouldExit))
+  {
+    Sleep(1);
+  }
+
+  CHECK_CONDITION_EXECUTE(FAILED(caller->protocolError), caller->StopReceivingData());
+  CHECK_CONDITION_HRESULT(caller->protocolError, (!caller->activeProtocol->IsConnectionLostCannotReopen()) && (GetTickCount() <= caller->finishTime) && (!caller->startReceiveDataWorkerShouldExit), caller->protocolError, E_CONNECTION_LOST_CANNOT_REOPEN);
+  caller->startReceivingData = false;
+
+  caller->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, caller->hosterName, METHOD_START_RECEIVE_DATA_WORKER_NAME);
+
+  // _endthreadex should be called automatically, but for sure
+  _endthreadex(0);
+
+  return S_OK;
 }
 
 HRESULT CProtocolHoster::CreateReceiveDataWorker(void)

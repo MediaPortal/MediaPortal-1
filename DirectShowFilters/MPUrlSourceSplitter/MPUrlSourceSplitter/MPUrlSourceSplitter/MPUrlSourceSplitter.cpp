@@ -71,6 +71,7 @@ extern "C"
 #endif
 
 #define METHOD_LOAD_NAME                                          L"Load()"
+#define METHOD_LOAD_ASYNC_NAME                                    L"LoadAsync()"
 #define METHOD_THREAD_PROC_NAME                                   L"ThreadProc()"
 
 #define METHOD_STOP_NAME                                          L"Stop()"
@@ -91,9 +92,9 @@ extern "C"
 
 #define METHOD_ENABLE_NAME                                        L"Enable()"
 
-#define METHOD_CREATE_CREATE_ALL_DEMUXERS_WORKER_NAME             L"CreateCreateAllDemuxersWorker()"
-#define METHOD_DESTROY_CREATE_ALL_DEMUXERS_WORKER_NAME            L"DestroyCreateAllDemuxersWorker()"
-#define METHOD_CREATE_ALL_DEMUXERS_WORKER_NAME                    L"CreateAllDemuxersWorker()"
+#define METHOD_CREATE_LOAD_ASYNC_WORKER_NAME                      L"CreateLoadAsyncWorker()"
+#define METHOD_DESTROY_LOAD_ASYNC_WORKER_NAME                     L"DestroyLoadAsyncWorker()"
+#define METHOD_LOAD_ASYNC_WORKER_NAME                             L"LoadAsyncWorker()"
 
 #define PARAMETER_SEPARATOR                                       L"&"
 #define PARAMETER_IDENTIFIER                                      L"####"
@@ -198,10 +199,11 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
   , asyncDownloadResult(S_OK)
   , asyncDownloadCallback(NULL)
   , downloadFileName(NULL)
-  , createAllDemuxersWorkerShouldExit(false)
-  , createAllDemuxersWorkerThread(NULL)
   , demuxStart(0)
   , demuxNewStart(0)
+  , loadAsyncWorkerThread(NULL)
+  , loadAsyncWorkerShouldExit(false)
+  , loadAsyncResult(S_OK)
 {
   CParameterCollection *loggerParameters = new CParameterCollection(phr);
   CHECK_POINTER_HRESULT(*phr, loggerParameters, *phr, E_OUTOFMEMORY);
@@ -503,8 +505,8 @@ STDMETHODIMP CMPUrlSourceSplitter::Stop()
 
   if (!this->IsEnabledMethodActive())
   {
-    // stop creating demuxers
-    this->DestroyCreateAllDemuxersWorker();
+    // stop async loading
+    this->DestroyLoadAsyncWorker();
     // clear all demuxers
     this->demuxers->Clear();
     // if we are not changing streams stop receiving data, data are not needed
@@ -568,104 +570,11 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
   this->ClearSession(true);
 
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_NAME);
-  HRESULT result = E_NOT_VALID_STATE;
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, pszFileName);
 
-  if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_AS_IPTV))
+  if (SUCCEEDED(result))
   {
-    result = S_OK;
-    CHECK_POINTER_DEFAULT_HRESULT(result, pszFileName);
-
-    // FAKE for UDP protocol request from MediaPortal
-    if (_wcsnicmp(pszFileName, L"udp://@0.0.0.0:1234", 19) != 0)
-    {
-      CHECK_POINTER_DEFAULT_HRESULT(result, this->parserHoster);
-
-      wchar_t *url = ConvertToUnicodeW(pszFileName);
-      CHECK_POINTER_HRESULT(result, url, result, E_CONVERT_STRING_ERROR);
-
-      if (SUCCEEDED(result))
-      {
-        CParameterCollection *suppliedParameters = this->ParseParameters(url);
-        if (suppliedParameters != NULL)
-        {
-          // we have set some parameters
-          // set them as configuration parameters
-          this->configuration->Clear();
-          this->configuration->Append(suppliedParameters);
-          if (!this->configuration->Contains(PARAMETER_NAME_URL, true))
-          {
-            result = this->configuration->Add(PARAMETER_NAME_URL, url) ? result : E_OUTOFMEMORY;
-          }
-
-          FREE_MEM_CLASS(suppliedParameters);
-        }
-        else
-        {
-          // parameters are not supplied, just set current url as only one parameter in configuration
-          this->configuration->Clear();
-          result = this->configuration->Add(PARAMETER_NAME_URL, url) ? result : E_OUTOFMEMORY;
-        }
-      }
-
-      if (SUCCEEDED(result))
-      {
-        // IPTV is always live stream, remove live stream flag and create new one
-        this->configuration->Remove(PARAMETER_NAME_LIVE_STREAM, true);
-        result = this->configuration->Add(PARAMETER_NAME_LIVE_STREAM, L"1") ? result : E_OUTOFMEMORY;
-      }
-
-      if (SUCCEEDED(result))
-      {
-        // loads protocol based on current configuration parameters
-        // it also reset all parser and protocol implementations
-        result = this->Load();
-      }
-
-      FREE_MEM(url);
-    }
-    
-    // if in output pin collection isn't any pin, then add new output pin with MPEG2 TS media type
-    // in another case filter assume that there is only one output pin with MPEG2 TS media type
-    if (SUCCEEDED(result) && (this->outputPins->Count() == 0))
-    {
-      // create valid MPEG2 TS media type, add it to media types and create output pin
-      CMediaTypeCollection *mediaTypes = new CMediaTypeCollection(&result);
-      CHECK_POINTER_HRESULT(result, mediaTypes, result, E_OUTOFMEMORY);
-
-      if (SUCCEEDED(result))
-      {
-        CMediaType *mediaType = new CMediaType();
-        CHECK_POINTER_HRESULT(result, mediaType, result, E_OUTOFMEMORY);
-
-        if (SUCCEEDED(result))
-        {
-          mediaType->SetType(&MEDIATYPE_Stream);
-          mediaType->SetSubtype(&MEDIASUBTYPE_MPEG2_TRANSPORT);
-
-          result = (mediaTypes->Add(mediaType)) ? result : E_OUTOFMEMORY;
-        }
-
-        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(mediaType));
-      }
-
-      if (SUCCEEDED(result))
-      {
-        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(L"Output", this, this, &result, this->logger, this->configuration, mediaTypes);
-        CHECK_POINTER_HRESULT(result, outputPin, result, E_OUTOFMEMORY);
-
-        CHECK_CONDITION_HRESULT(result, this->outputPins->Add(outputPin), result, E_OUTOFMEMORY);
-        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(outputPin));
-      }
-
-      FREE_MEM_CLASS(mediaTypes);
-    }
-  }
-  else if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_AS_SPLITTER))
-  {
-    result = S_OK;
-    CHECK_POINTER_DEFAULT_HRESULT(result, pszFileName);
-    CHECK_POINTER_DEFAULT_HRESULT(result, this->parserHoster);
-
     wchar_t *url = ConvertToUnicodeW(pszFileName);
     CHECK_POINTER_HRESULT(result, url, result, E_CONVERT_STRING_ERROR);
 
@@ -682,7 +591,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
         {
           result = this->configuration->Add(PARAMETER_NAME_URL, url) ? result : E_OUTOFMEMORY;
         }
-        
+
         FREE_MEM_CLASS(suppliedParameters);
       }
       else
@@ -692,17 +601,22 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
         result = this->configuration->Add(PARAMETER_NAME_URL, url) ? result : E_OUTOFMEMORY;
       }
     }
-    
+
     if (SUCCEEDED(result))
     {
-      // loads protocol based on current configuration parameters
-      result = this->Load();
+      do
+      {
+        result = this->LoadAsync();
+
+        if (result == S_FALSE)
+        {
+          Sleep(1);
+        }
+      }
+      while (result == S_FALSE);
     }
 
     FREE_MEM(url);
-
-    // output pins are created after demuxer is created
-    // now we don't know nothing about video/audio/other stream types
   }
 
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LOAD_NAME, result);
@@ -1322,7 +1236,7 @@ STDMETHODIMP CMPUrlSourceSplitter::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileNa
   if (SUCCEEDED(result))
   {
     // loads protocol based on current configuration parameters
-    result = this->Load();
+    result = this->LoadAsync();
   }
 
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_DOWNLOAD_ASYNC_NAME, result);
@@ -1429,21 +1343,26 @@ HRESULT CMPUrlSourceSplitter::IsFilterReadyToConnectPins(bool *ready)
     {
       CLockMutex lock(this->demuxersMutex, INFINITE);
 
-      bool createdDemuxers = (this->demuxers->Count() > 0);
+      result = this->loadAsyncResult;
 
-      // all demuxers must be created successfully
-      for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->demuxers->Count())); i++)
+      if (SUCCEEDED(result))
       {
-        CDemuxer *demuxer = this->demuxers->GetItem(i);
+        bool createdDemuxers = (this->demuxers->Count() > 0);
 
-        createdDemuxers &= demuxer->IsCreatedDemuxer();
+        // all demuxers must be created successfully
+        for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->demuxers->Count())); i++)
+        {
+          CDemuxer *demuxer = this->demuxers->GetItem(i);
 
-        // if demuxer is not created and demuxer worker finished its work
-        // it throws exception in caller and immediately stops buffering and playback
-        result = ((!demuxer->IsCreatedDemuxer()) && demuxer->IsCreateDemuxerWorkerFinished()) ? demuxer->GetCreateDemuxerError() : result;
+          createdDemuxers &= demuxer->IsCreatedDemuxer();
+
+          // if demuxer is not created and demuxer worker finished its work
+          // it throws exception in caller and immediately stops buffering and playback
+          result = ((!demuxer->IsCreatedDemuxer()) && demuxer->IsCreateDemuxerWorkerFinished()) ? demuxer->GetCreateDemuxerError() : result;
+        }
+
+        *ready = SUCCEEDED(result) ? createdDemuxers : false;
       }
-
-      *ready = SUCCEEDED(result) ? createdDemuxers : false;
     }
   }
   
@@ -1527,6 +1446,98 @@ STDMETHODIMP CMPUrlSourceSplitter::GetErrorDescription(HRESULT error, wchar_t **
     }
   }
 
+  return result;
+}
+
+HRESULT CMPUrlSourceSplitter::LoadAsync(void)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_HRESULT(result, this->configuration, result, E_INVALID_CONFIGURATION);
+  CHECK_POINTER_HRESULT(result, this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL), result, E_URL_NOT_SPECIFIED);
+
+  if (SUCCEEDED(result))
+  {
+    result = S_FALSE;
+
+    if (this->loadAsyncWorkerThread == NULL)
+    {
+      result = this->CreateLoadAsyncWorker();
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = S_FALSE);
+    }
+
+    if (SUCCEEDED(result) && (this->loadAsyncWorkerThread != NULL))
+    {
+      result = (WaitForSingleObject(this->loadAsyncWorkerThread, 0) == WAIT_TIMEOUT) ? S_FALSE : this->loadAsyncResult;
+    }
+
+    if (result != S_FALSE)
+    {
+      // thread finished or error
+      this->DestroyLoadAsyncWorker();
+    }
+  }
+
+  return result;
+}
+
+STDMETHODIMP CMPUrlSourceSplitter::LoadAsync(const wchar_t *url)
+{
+  // reset all internal properties to default values
+  this->ClearSession(true);
+
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_ASYNC_NAME);
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, url);
+
+  if (SUCCEEDED(result))
+  {
+    CParameterCollection *suppliedParameters = this->ParseParameters(url);
+    if (suppliedParameters != NULL)
+    {
+      // we have set some parameters
+      // set them as configuration parameters
+      this->configuration->Clear();
+      this->configuration->Append(suppliedParameters);
+      if (!this->configuration->Contains(PARAMETER_NAME_URL, true))
+      {
+        result = this->configuration->Add(PARAMETER_NAME_URL, url) ? result : E_OUTOFMEMORY;
+      }
+
+      FREE_MEM_CLASS(suppliedParameters);
+    }
+    else
+    {
+      // parameters are not supplied, just set current url as only one parameter in configuration
+      this->configuration->Clear();
+      result = this->configuration->Add(PARAMETER_NAME_URL, url) ? result : E_OUTOFMEMORY;
+    }
+
+    if (SUCCEEDED(result))
+    {
+      result = this->LoadAsync();
+    }
+  }
+
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LOAD_ASYNC_NAME, result);
+  return result;
+}
+
+STDMETHODIMP CMPUrlSourceSplitter::IsStreamOpened(bool *opened)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, opened);
+
+  if (SUCCEEDED(result))
+  {
+    *opened = false;
+    result = SUCCEEDED(this->loadAsyncResult) ? result : this->loadAsyncResult;
+
+    if (SUCCEEDED(result))
+    {
+      *opened = this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_STREAM_OPENED);
+    }
+  }
+  
   return result;
 }
 
@@ -2003,71 +2014,6 @@ HRESULT CMPUrlSourceSplitter::GetNextPacket(COutputPinPacket *packet, unsigned i
   return result;
 }
 
-STDMETHODIMP CMPUrlSourceSplitter::Load()
-{
-  HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, this->parserHoster);
-
-  if (this->configuration == NULL)
-  {
-    result = E_INVALID_CONFIGURATION;
-  }
-
-  if (SUCCEEDED(result))
-  {
-    // check log file parameter, if not set, add default
-    if (!this->configuration->Contains(PARAMETER_NAME_LOG_FILE_NAME, true))
-    {
-      wchar_t *logFile = this->IsIptv() ? GetTvServerFilePath(MP_IPTV_SOURCE_LOG_FILE) : GetMediaPortalFilePath(MP_URL_SOURCE_SPLITTER_LOG_FILE);
-      CHECK_POINTER_HRESULT(result, logFile, result, E_OUTOFMEMORY);
-
-      CHECK_CONDITION_HRESULT(result, this->configuration->Add(PARAMETER_NAME_LOG_FILE_NAME, logFile), result, E_OUTOFMEMORY);
-      FREE_MEM(logFile);
-    }
-
-    // set logger parameters
-    this->logger->SetParameters(this->configuration);
-  }
-
-  if (SUCCEEDED(result))
-  {
-    result = (this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL) == NULL) ? E_URL_NOT_SPECIFIED : S_OK;
-  }
-
-  if (SUCCEEDED(result))
-  {
-    FREE_MEM(this->downloadFileName);
-    this->downloadFileName = Duplicate(this->configuration->GetValue(PARAMETER_NAME_DOWNLOAD_FILE_NAME, true, NULL));
-    this->flags |= (this->downloadFileName != NULL) ? MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOADING_FILE : MP_URL_SOURCE_SPLITTER_FLAG_NONE;
-    this->flags |= (this->configuration->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, PARAMETER_NAME_LIVE_STREAM_DEFAULT)) ? MP_URL_SOURCE_SPLITTER_FLAG_LIVE_STREAM : MP_URL_SOURCE_SPLITTER_FLAG_NONE;
-
-    wchar_t *folder = GetStoreFilePath(this->IsIptv() ? L"MPIPTVSource" : L"MPUrlSourceSplitter", this->configuration);
-    const wchar_t *cacheFolder = configuration->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
-
-    if ((folder != NULL) && (cacheFolder == NULL))
-    {
-      // cache folder is not specified in configuration parameters
-      // add new folder to configuration parameters
-
-      this->configuration->Add(PARAMETER_NAME_CACHE_FOLDER, folder);
-    }
-
-    FREE_MEM(folder);
-  }
-
-  if (SUCCEEDED(result))
-  {
-    result = this->parserHoster->StartReceivingData(this->configuration);
-  }
-
-  if (SUCCEEDED(result))
-  {
-    result = this->CreateCreateAllDemuxersWorker();
-  }
-
-  return result;
-}
-
 // split parameters string by separator
 // @param parameters : null-terminated string containing parameters
 // @param separator : null-terminated separator string
@@ -2322,288 +2268,405 @@ CParameterCollection *CMPUrlSourceSplitter::ParseParameters(const wchar_t *param
   return parsedParameters;
 }
 
-unsigned int WINAPI CMPUrlSourceSplitter::CreateAllDemuxersWorker(LPVOID lpParam)
+HRESULT CMPUrlSourceSplitter::CreateLoadAsyncWorker(void)
+{
+  HRESULT result = S_OK;
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CREATE_LOAD_ASYNC_WORKER_NAME);
+
+  if (this->loadAsyncWorkerThread == NULL)
+  {
+    this->loadAsyncWorkerThread = (HANDLE)_beginthreadex(NULL, 0, &CMPUrlSourceSplitter::LoadAsyncWorker, this, 0, NULL);
+  }
+
+  if (this->loadAsyncWorkerThread == NULL)
+  {
+    // thread not created
+    result = HRESULT_FROM_WIN32(GetLastError());
+    this->logger->Log(LOGGER_ERROR, L"%s: %s: _beginthreadex() error: 0x%08X", MODULE_NAME, METHOD_CREATE_LOAD_ASYNC_WORKER_NAME, result);
+  }
+
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CREATE_LOAD_ASYNC_WORKER_NAME, result);
+  return result;
+}
+
+HRESULT CMPUrlSourceSplitter::DestroyLoadAsyncWorker(void)
+{
+  HRESULT result = S_OK;
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTROY_LOAD_ASYNC_WORKER_NAME);
+
+  this->loadAsyncWorkerShouldExit = true;
+
+  // wait for the receive data worker thread to exit      
+  if (this->loadAsyncWorkerThread != NULL)
+  {
+    if (WaitForSingleObject(this->loadAsyncWorkerThread, INFINITE) == WAIT_TIMEOUT)
+    {
+      // thread didn't exit, kill it now
+      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DESTROY_LOAD_ASYNC_WORKER_NAME, L"thread didn't exit, terminating thread");
+      TerminateThread(this->loadAsyncWorkerThread, 0);
+    }
+    CloseHandle(this->loadAsyncWorkerThread);
+  }
+
+  this->loadAsyncWorkerThread = NULL;
+  this->loadAsyncWorkerShouldExit = false;
+
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_DESTROY_LOAD_ASYNC_WORKER_NAME, result);
+  return result;
+}
+
+unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
 {
   CMPUrlSourceSplitter *caller = (CMPUrlSourceSplitter *)lpParam;
-  HRESULT result = S_OK;
+  caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_ASYNC_WORKER_NAME);
 
-  caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CREATE_ALL_DEMUXERS_WORKER_NAME);
-
-  // we start to create first demuxer, then next, etc.
-  unsigned int activeDemuxer = 0;
-
-  while (SUCCEEDED(result) && (!caller->createAllDemuxersWorkerShouldExit))
+  if (SUCCEEDED(caller->loadAsyncResult))
   {
-    CDemuxer *demuxer = caller->demuxers->GetItem(activeDemuxer);
-
-    if (!demuxer->HasStartedCreatingDemuxer())
+    if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_AS_IPTV))
     {
-      result = demuxer->StartCreatingDemuxer();
+      // FAKE for UDP protocol request from MediaPortal
+      const wchar_t *url = caller->configuration->GetValue(PARAMETER_NAME_URL, true, NULL);
+
+      if (_wcsnicmp(url, L"udp://@0.0.0.0:1234", 19) != 0)
+      {
+        CHECK_POINTER_DEFAULT_HRESULT(caller->loadAsyncResult, caller->parserHoster);
+
+        if (SUCCEEDED(caller->loadAsyncResult))
+        {
+          // IPTV is always live stream, remove live stream flag and create new one
+          caller->configuration->Remove(PARAMETER_NAME_LIVE_STREAM, true);
+          CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->configuration->Add(PARAMETER_NAME_LIVE_STREAM, L"1"), caller->loadAsyncResult, E_OUTOFMEMORY);
+        }
+      }
+
+      // if in output pin collection isn't any pin, then add new output pin with MPEG2 TS media type
+      // in another case filter assume that there is only one output pin with MPEG2 TS media type
+      if (SUCCEEDED(caller->loadAsyncResult) && (caller->outputPins->Count() == 0))
+      {
+        // create valid MPEG2 TS media type, add it to media types and create output pin
+        CMediaTypeCollection *mediaTypes = new CMediaTypeCollection(&caller->loadAsyncResult);
+        CHECK_POINTER_HRESULT(caller->loadAsyncResult, mediaTypes, caller->loadAsyncResult, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(caller->loadAsyncResult))
+        {
+          CMediaType *mediaType = new CMediaType();
+          CHECK_POINTER_HRESULT(caller->loadAsyncResult, mediaType, caller->loadAsyncResult, E_OUTOFMEMORY);
+
+          if (SUCCEEDED(caller->loadAsyncResult))
+          {
+            mediaType->SetType(&MEDIATYPE_Stream);
+            mediaType->SetSubtype(&MEDIASUBTYPE_MPEG2_TRANSPORT);
+          }
+
+          CHECK_CONDITION_HRESULT(caller->loadAsyncResult, mediaTypes->Add(mediaType), caller->loadAsyncResult, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(caller->loadAsyncResult), FREE_MEM_CLASS(mediaType));
+        }
+
+        if (SUCCEEDED(caller->loadAsyncResult))
+        {
+          CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(L"Output", caller, caller, &caller->loadAsyncResult, caller->logger, caller->configuration, mediaTypes);
+          CHECK_POINTER_HRESULT(caller->loadAsyncResult, outputPin, caller->loadAsyncResult, E_OUTOFMEMORY);
+
+          CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->outputPins->Add(outputPin), caller->loadAsyncResult, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(caller->loadAsyncResult), FREE_MEM_CLASS(outputPin));
+        }
+
+        FREE_MEM_CLASS(mediaTypes);
+      }
+    }
+    else if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_AS_SPLITTER))
+    {
+      CHECK_POINTER_DEFAULT_HRESULT(caller->loadAsyncResult, caller->parserHoster);
+
+      // output pins are created after demuxer is created
+      // now we don't know nothing about video/audio/other stream types
+    }
+  }
+
+  if (SUCCEEDED(caller->loadAsyncResult))
+  {
+    // check log file parameter, if not set, add default
+    if (!caller->configuration->Contains(PARAMETER_NAME_LOG_FILE_NAME, true))
+    {
+      wchar_t *logFile = caller->IsIptv() ? GetTvServerFilePath(MP_IPTV_SOURCE_LOG_FILE) : GetMediaPortalFilePath(MP_URL_SOURCE_SPLITTER_LOG_FILE);
+      CHECK_POINTER_HRESULT(caller->loadAsyncResult, logFile, caller->loadAsyncResult, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->configuration->Add(PARAMETER_NAME_LOG_FILE_NAME, logFile), caller->loadAsyncResult, E_OUTOFMEMORY);
+      FREE_MEM(logFile);
     }
 
-    if (demuxer->IsCreatedDemuxer() || demuxer->IsCreateDemuxerWorkerFinished())
+    // set logger parameters
+    caller->logger->SetParameters(caller->configuration);
+  }
+
+  if (SUCCEEDED(caller->loadAsyncResult))
+  {
+    FREE_MEM(caller->downloadFileName);
+    caller->downloadFileName = Duplicate(caller->configuration->GetValue(PARAMETER_NAME_DOWNLOAD_FILE_NAME, true, NULL));
+    caller->flags |= (caller->downloadFileName != NULL) ? MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOADING_FILE : MP_URL_SOURCE_SPLITTER_FLAG_NONE;
+    caller->flags |= (caller->configuration->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, PARAMETER_NAME_LIVE_STREAM_DEFAULT)) ? MP_URL_SOURCE_SPLITTER_FLAG_LIVE_STREAM : MP_URL_SOURCE_SPLITTER_FLAG_NONE;
+
+    wchar_t *folder = GetStoreFilePath(caller->IsIptv() ? L"MPIPTVSource" : L"MPUrlSourceSplitter", caller->configuration);
+    const wchar_t *cacheFolder = caller->configuration->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
+
+    if ((folder != NULL) && (cacheFolder == NULL))
     {
-      activeDemuxer++;
-      result = demuxer->GetCreateDemuxerError();
+      // cache folder is not specified in configuration parameters
+      // add new folder to configuration parameters
+
+      CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->configuration->Add(PARAMETER_NAME_CACHE_FOLDER, folder), caller->loadAsyncResult, E_OUTOFMEMORY);
     }
 
-    if (activeDemuxer >= caller->demuxers->Count())
+    FREE_MEM(folder);
+  }
+
+  while (SUCCEEDED(caller->loadAsyncResult) && (!caller->loadAsyncWorkerShouldExit))
+  {
+    caller->loadAsyncResult = caller->parserHoster->StartReceivingDataAsync(caller->configuration);
+
+    if (caller->loadAsyncResult == S_FALSE)
     {
-      // all demuxers are created, we finished our work
+      // still pending result, wait some time
+      Sleep(1);
+    }
+    else
+    {
+      // S_OK or error, doesn't matter
+      caller->flags |= SUCCEEDED(caller->loadAsyncResult) ? MP_URL_SOURCE_SPLITTER_FLAG_STREAM_OPENED : MP_URL_SOURCE_SPLITTER_FLAG_NONE;
       break;
     }
-
-    Sleep(1);
   }
 
-  if (SUCCEEDED(result) && (caller->IsSplitter()) && (!caller->IsDownloadingFile()) && (!caller->createAllDemuxersWorkerShouldExit) && (activeDemuxer >= caller->demuxers->Count()))
+  if (SUCCEEDED(caller->loadAsyncResult))
   {
-    // all demuxers successfully created
-    // initialize output pins
+    // create demuxers
 
-    caller->demuxNewStart = 0;
-    caller->demuxStart = 0;
+    CHECK_POINTER_HRESULT(caller->loadAsyncResult, caller->demuxers, caller->loadAsyncResult, E_OUTOFMEMORY);
 
-    // select video stream
-    for (unsigned int i = 0; (SUCCEEDED(result) && (i < caller->demuxers->Count())); i++)
+    if (SUCCEEDED(caller->loadAsyncResult))
     {
-      CDemuxer *demuxer = caller->demuxers->GetItem(i);
-      CStream *videoStream = demuxer->SelectVideoStream();
+      CLockMutex lock(caller->demuxersMutex, INFINITE);
 
-      if (videoStream != NULL)
+      CStreamInformationCollection *streams = new CStreamInformationCollection(&caller->loadAsyncResult);
+      CHECK_POINTER_HRESULT(caller->loadAsyncResult, streams, caller->loadAsyncResult, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(caller->loadAsyncResult))
       {
-        CMPUrlSourceSplitterOutputSplitterPin *outputPin = new CMPUrlSourceSplitterOutputSplitterPin(L"Video", caller, caller, &result, caller->logger, caller->configuration, videoStream->GetStreamInfo()->GetMediaTypes(), demuxer->GetContainerFormat());
-        CHECK_POINTER_HRESULT(result, outputPin, result, E_OUTOFMEMORY);
+        caller->loadAsyncResult = caller->parserHoster->GetStreamInformation(streams);
 
-        if (SUCCEEDED(result))
+        if (SUCCEEDED(caller->loadAsyncResult) && (caller->demuxers->Count() != streams->Count()))
         {
-          outputPin->SetStreamPid(videoStream->GetPid());
-          outputPin->SetDemuxerId(i);
-          result = (caller->outputPins->Add(outputPin)) ? result : E_OUTOFMEMORY;
+          caller->demuxers->Clear();
 
-          demuxer->SetActiveStream(CStream::Video, videoStream->GetPid());
+          for (unsigned int i = 0; (SUCCEEDED(caller->loadAsyncResult) && (i < streams->Count())); i++)
+          {
+            CDemuxer *demuxer = new CDemuxer(&caller->loadAsyncResult, caller->logger, caller, caller->configuration);
+            CHECK_POINTER_HRESULT(caller->loadAsyncResult, demuxer, caller->loadAsyncResult, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(caller->loadAsyncResult))
+            {
+              demuxer->SetDemuxerId(i);
+              demuxer->SetRealDemuxingNeeded(caller->IsSplitter() && (!caller->IsDownloadingFile()));
+
+              caller->loadAsyncResult = demuxer->SetStreamInformation(streams->GetItem(i));
+            }
+
+            CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->demuxers->Add(demuxer), caller->loadAsyncResult, E_OUTOFMEMORY);
+            CHECK_CONDITION_EXECUTE(FAILED(caller->loadAsyncResult), FREE_MEM_CLASS(demuxer));
+          }
         }
-
-        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(outputPin));
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), caller->logger->Log(LOGGER_INFO, L"%s: %s: created video output pin, demuxer: %u, stream ID: %u", MODULE_NAME, METHOD_CREATE_ALL_DEMUXERS_WORKER_NAME, i, videoStream->GetPid()));
-        break;
       }
+
+      FREE_MEM_CLASS(streams);
     }
-
-    // select audio stream
-    for (unsigned int i = 0; (SUCCEEDED(result) && (i < caller->demuxers->Count())); i++)
-    {
-      CDemuxer *demuxer = caller->demuxers->GetItem(i);
-      CStream *audioStream = demuxer->SelectAudioStream();
-
-      if (audioStream != NULL)
-      {
-        CMPUrlSourceSplitterOutputSplitterPin *outputPin = new CMPUrlSourceSplitterOutputSplitterPin(L"Audio", caller, caller, &result, caller->logger, caller->configuration, audioStream->GetStreamInfo()->GetMediaTypes(), demuxer->GetContainerFormat());
-        CHECK_POINTER_HRESULT(result, outputPin, result, E_OUTOFMEMORY);
-
-        if (SUCCEEDED(result))
-        {
-          outputPin->SetStreamPid(audioStream->GetPid());
-          outputPin->SetDemuxerId(i);
-          result = (caller->outputPins->Add(outputPin)) ? result : E_OUTOFMEMORY;
-
-          demuxer->SetActiveStream(CStream::Audio, audioStream->GetPid());
-        }
-
-        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(outputPin));
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), caller->logger->Log(LOGGER_INFO, L"%s: %s: created audio output pin, demuxer: %u, stream ID: %u", MODULE_NAME, METHOD_CREATE_ALL_DEMUXERS_WORKER_NAME, i, audioStream->GetPid()));
-        break;
-      }
-    }
-
-    // select subtitle stream
-    for (unsigned int i = 0; (SUCCEEDED(result) && (i < caller->demuxers->Count())); i++)
-    {
-      CDemuxer *demuxer = caller->demuxers->GetItem(i);
-
-      // if there are some subtitles, just choose first and create output pin
-      CStream *subtitleStream = (demuxer->GetStreams(CStream::Subpic)->Count() != 0) ? demuxer->GetStreams(CStream::Subpic)->GetItem(0) : NULL;
-
-      if (subtitleStream != NULL)
-      {
-        CMPUrlSourceSplitterOutputSplitterPin *outputPin = new CMPUrlSourceSplitterOutputSplitterPin(L"Subtitle", caller, caller, &result, caller->logger, caller->configuration, subtitleStream->GetStreamInfo()->GetMediaTypes(), demuxer->GetContainerFormat());
-        CHECK_POINTER_HRESULT(result, outputPin, result, E_OUTOFMEMORY);
-
-        if (SUCCEEDED(result))
-        {
-          outputPin->SetStreamPid(subtitleStream->GetPid());
-          outputPin->SetDemuxerId(i);
-          result = (caller->outputPins->Add(outputPin)) ? result : E_OUTOFMEMORY;
-
-          demuxer->SetActiveStream(CStream::Subpic, subtitleStream->GetPid());
-        }
-
-        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(outputPin));
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), caller->logger->Log(LOGGER_INFO, L"%s: %s: created subtitle output pin, demuxer: %u, stream ID: %u", MODULE_NAME, METHOD_CREATE_ALL_DEMUXERS_WORKER_NAME, i, subtitleStream->GetPid()));
-        break;
-      }
-    }
-
-    if (SUCCEEDED(result))
-    {
-      CHECK_CONDITION_HRESULT(result, caller->outputPins->Count() > 0, result, E_FAIL);
-
-      // if there are no pins, then it is bad
-      if (FAILED(result))
-      {
-        caller->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CREATE_ALL_DEMUXERS_WORKER_NAME, L"no output in any of demuxers, no output pin created");
-      }
-    }
-  }
-  else if (SUCCEEDED(result) && (caller->IsSplitter()) && (caller->IsDownloadingFile()) && (!caller->createAllDemuxersWorkerShouldExit) && (activeDemuxer >= caller->demuxers->Count()))
-  {
-    // we are downloading file
-    // create output pin, which save received data to file
     
-    CMediaTypeCollection *mediaTypes = new CMediaTypeCollection(&result);
-    CHECK_POINTER_HRESULT(result, mediaTypes, result, E_OUTOFMEMORY);
-
-    if (SUCCEEDED(result))
+    if (SUCCEEDED(caller->loadAsyncResult))
     {
-      CMediaType *mediaType = new CMediaType();
-      CHECK_POINTER_HRESULT(result, mediaTypes, result, E_OUTOFMEMORY);
+      // we start to create first demuxer, then next, etc.
+      unsigned int activeDemuxer = 0;
 
-      CHECK_CONDITION_HRESULT(result, mediaTypes->Add(mediaType), result, E_OUTOFMEMORY);
-      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(mediaType));
-    }
-
-    if (SUCCEEDED(result))
-    {
-      CMPUrlSourceSplitterOutputDownloadPin *outputPin = new CMPUrlSourceSplitterOutputDownloadPin(PathFindFileName(caller->downloadFileName), caller, caller, &result, caller->logger, caller->configuration, mediaTypes, caller->downloadFileName);
-      CHECK_POINTER_HRESULT(result, outputPin, result, E_OUTOFMEMORY);
-
-      if (SUCCEEDED(result))
+      while (SUCCEEDED(caller->loadAsyncResult) && (!caller->loadAsyncWorkerShouldExit))
       {
-        outputPin->SetStreamPid(caller->demuxers->GetItem(0)->GetDemuxerId());
-        outputPin->SetDemuxerId(0);
+        CDemuxer *demuxer = caller->demuxers->GetItem(activeDemuxer);
 
-        result = (caller->outputPins->Add(outputPin)) ? result : E_OUTOFMEMORY;
+        if (!demuxer->HasStartedCreatingDemuxer())
+        {
+          caller->loadAsyncResult = demuxer->StartCreatingDemuxer();
+        }
+
+        if (demuxer->IsCreatedDemuxer() || demuxer->IsCreateDemuxerWorkerFinished())
+        {
+          activeDemuxer++;
+          caller->loadAsyncResult = demuxer->GetCreateDemuxerError();
+        }
+
+        if (activeDemuxer >= caller->demuxers->Count())
+        {
+          // all demuxers are created, we finished our work
+          break;
+        }
+
+        Sleep(1);
       }
 
-      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(outputPin));
+      if (SUCCEEDED(caller->loadAsyncResult) && (caller->IsSplitter()) && (!caller->IsDownloadingFile()) && (!caller->loadAsyncWorkerShouldExit) && (activeDemuxer >= caller->demuxers->Count()))
+      {
+        // all demuxers successfully created
+        // initialize output pins
+
+        caller->demuxNewStart = 0;
+        caller->demuxStart = 0;
+
+        // select video stream
+        for (unsigned int i = 0; (SUCCEEDED(caller->loadAsyncResult) && (i < caller->demuxers->Count())); i++)
+        {
+          CDemuxer *demuxer = caller->demuxers->GetItem(i);
+          CStream *videoStream = demuxer->SelectVideoStream();
+
+          if (videoStream != NULL)
+          {
+            CMPUrlSourceSplitterOutputSplitterPin *outputPin = new CMPUrlSourceSplitterOutputSplitterPin(L"Video", caller, caller, &caller->loadAsyncResult, caller->logger, caller->configuration, videoStream->GetStreamInfo()->GetMediaTypes(), demuxer->GetContainerFormat());
+            CHECK_POINTER_HRESULT(caller->loadAsyncResult, outputPin, caller->loadAsyncResult, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(caller->loadAsyncResult))
+            {
+              outputPin->SetStreamPid(videoStream->GetPid());
+              outputPin->SetDemuxerId(i);
+              demuxer->SetActiveStream(CStream::Video, videoStream->GetPid());
+            }
+
+            CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->outputPins->Add(outputPin), caller->loadAsyncResult, E_OUTOFMEMORY);
+            CHECK_CONDITION_EXECUTE(FAILED(caller->loadAsyncResult), FREE_MEM_CLASS(outputPin));
+            CHECK_CONDITION_EXECUTE(SUCCEEDED(caller->loadAsyncResult), caller->logger->Log(LOGGER_INFO, L"%s: %s: created video output pin, demuxer: %u, stream ID: %u", MODULE_NAME, METHOD_LOAD_ASYNC_WORKER_NAME, i, videoStream->GetPid()));
+            break;
+          }
+        }
+
+        // select audio stream
+        for (unsigned int i = 0; (SUCCEEDED(caller->loadAsyncResult) && (i < caller->demuxers->Count())); i++)
+        {
+          CDemuxer *demuxer = caller->demuxers->GetItem(i);
+          CStream *audioStream = demuxer->SelectAudioStream();
+
+          if (audioStream != NULL)
+          {
+            CMPUrlSourceSplitterOutputSplitterPin *outputPin = new CMPUrlSourceSplitterOutputSplitterPin(L"Audio", caller, caller, &caller->loadAsyncResult, caller->logger, caller->configuration, audioStream->GetStreamInfo()->GetMediaTypes(), demuxer->GetContainerFormat());
+            CHECK_POINTER_HRESULT(caller->loadAsyncResult, outputPin, caller->loadAsyncResult, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(caller->loadAsyncResult))
+            {
+              outputPin->SetStreamPid(audioStream->GetPid());
+              outputPin->SetDemuxerId(i);
+              demuxer->SetActiveStream(CStream::Audio, audioStream->GetPid());
+            }
+
+            CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->outputPins->Add(outputPin), caller->loadAsyncResult, E_OUTOFMEMORY);
+            CHECK_CONDITION_EXECUTE(FAILED(caller->loadAsyncResult), FREE_MEM_CLASS(outputPin));
+            CHECK_CONDITION_EXECUTE(SUCCEEDED(caller->loadAsyncResult), caller->logger->Log(LOGGER_INFO, L"%s: %s: created audio output pin, demuxer: %u, stream ID: %u", MODULE_NAME, METHOD_LOAD_ASYNC_WORKER_NAME, i, audioStream->GetPid()));
+            break;
+          }
+        }
+
+        // select subtitle stream
+        for (unsigned int i = 0; (SUCCEEDED(caller->loadAsyncResult) && (i < caller->demuxers->Count())); i++)
+        {
+          CDemuxer *demuxer = caller->demuxers->GetItem(i);
+
+          // if there are some subtitles, just choose first and create output pin
+          CStream *subtitleStream = (demuxer->GetStreams(CStream::Subpic)->Count() != 0) ? demuxer->GetStreams(CStream::Subpic)->GetItem(0) : NULL;
+
+          if (subtitleStream != NULL)
+          {
+            CMPUrlSourceSplitterOutputSplitterPin *outputPin = new CMPUrlSourceSplitterOutputSplitterPin(L"Subtitle", caller, caller, &caller->loadAsyncResult, caller->logger, caller->configuration, subtitleStream->GetStreamInfo()->GetMediaTypes(), demuxer->GetContainerFormat());
+            CHECK_POINTER_HRESULT(caller->loadAsyncResult, outputPin, caller->loadAsyncResult, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(caller->loadAsyncResult))
+            {
+              outputPin->SetStreamPid(subtitleStream->GetPid());
+              outputPin->SetDemuxerId(i);
+              demuxer->SetActiveStream(CStream::Subpic, subtitleStream->GetPid());
+            }
+
+            CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->outputPins->Add(outputPin), caller->loadAsyncResult, E_OUTOFMEMORY);
+            CHECK_CONDITION_EXECUTE(FAILED(caller->loadAsyncResult), FREE_MEM_CLASS(outputPin));
+            CHECK_CONDITION_EXECUTE(SUCCEEDED(caller->loadAsyncResult), caller->logger->Log(LOGGER_INFO, L"%s: %s: created subtitle output pin, demuxer: %u, stream ID: %u", MODULE_NAME, METHOD_LOAD_ASYNC_WORKER_NAME, i, subtitleStream->GetPid()));
+            break;
+          }
+        }
+
+        if (SUCCEEDED(caller->loadAsyncResult))
+        {
+          CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->outputPins->Count() > 0, caller->loadAsyncResult, E_FAIL);
+
+          // if there are no pins, then it is bad
+          if (FAILED(caller->loadAsyncResult))
+          {
+            caller->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_LOAD_ASYNC_WORKER_NAME, L"no output in any of demuxers, no output pin created");
+          }
+        }
+      }
+      else if (SUCCEEDED(caller->loadAsyncResult) && (caller->IsSplitter()) && (caller->IsDownloadingFile()) && (!caller->loadAsyncWorkerShouldExit) && (activeDemuxer >= caller->demuxers->Count()))
+      {
+        // we are downloading file
+        // create output pin, which save received data to file
+
+        CMediaTypeCollection *mediaTypes = new CMediaTypeCollection(&caller->loadAsyncResult);
+        CHECK_POINTER_HRESULT(caller->loadAsyncResult, mediaTypes, caller->loadAsyncResult, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(caller->loadAsyncResult))
+        {
+          CMediaType *mediaType = new CMediaType();
+          CHECK_POINTER_HRESULT(caller->loadAsyncResult, mediaTypes, caller->loadAsyncResult, E_OUTOFMEMORY);
+
+          CHECK_CONDITION_HRESULT(caller->loadAsyncResult, mediaTypes->Add(mediaType), caller->loadAsyncResult, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(caller->loadAsyncResult), FREE_MEM_CLASS(mediaType));
+        }
+
+        if (SUCCEEDED(caller->loadAsyncResult))
+        {
+          CMPUrlSourceSplitterOutputDownloadPin *outputPin = new CMPUrlSourceSplitterOutputDownloadPin(PathFindFileName(caller->downloadFileName), caller, caller, &caller->loadAsyncResult, caller->logger, caller->configuration, mediaTypes, caller->downloadFileName);
+          CHECK_POINTER_HRESULT(caller->loadAsyncResult, outputPin, caller->loadAsyncResult, E_OUTOFMEMORY);
+
+          if (SUCCEEDED(caller->loadAsyncResult))
+          {
+            outputPin->SetStreamPid(caller->demuxers->GetItem(0)->GetDemuxerId());
+            outputPin->SetDemuxerId(0);
+          }
+
+          CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->outputPins->Add(outputPin), caller->loadAsyncResult, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(caller->loadAsyncResult), FREE_MEM_CLASS(outputPin));
+        }
+
+        FREE_MEM_CLASS(mediaTypes);
+      }
+
+      if (SUCCEEDED(caller->loadAsyncResult))
+      {
+        // start all demuxers to demux their streams
+        for (unsigned int i = 0; (SUCCEEDED(caller->loadAsyncResult) && (i < caller->demuxers->Count())); i++)
+        {
+          CDemuxer *demuxer = caller->demuxers->GetItem(i);
+
+          // don't demux streams until CMD_PLAY command is received
+          demuxer->SetPauseSeekStopRequest(true);
+          caller->loadAsyncResult = demuxer->StartDemuxing();
+        }
+      }
+
+      if (SUCCEEDED(caller->loadAsyncResult) && (caller->IsDownloadingFile()))
+      {
+        // start downloading and storing file
+        caller->Run(0);
+      }
     }
-
-    FREE_MEM_CLASS(mediaTypes);
   }
 
-  if (SUCCEEDED(result))
-  {
-    // start all demuxers to demux their streams
-    for (unsigned int i = 0; (SUCCEEDED(result) && (i < caller->demuxers->Count())); i++)
-    {
-      CDemuxer *demuxer = caller->demuxers->GetItem(i);
-
-      // don't demux streams until CMD_PLAY command is received
-      demuxer->SetPauseSeekStopRequest(true);
-      result = demuxer->StartDemuxing();
-    }
-  }
-
-  if (SUCCEEDED(result) && (caller->IsDownloadingFile()))
-  {
-    // start downloading and storing file
-    caller->Run(0);
-  }
-
-  caller->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CREATE_ALL_DEMUXERS_WORKER_NAME, result);
+  caller->logger->Log(SUCCEEDED(caller->loadAsyncResult) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(caller->loadAsyncResult) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LOAD_ASYNC_WORKER_NAME, caller->loadAsyncResult);
 
   // _endthreadex should be called automatically, but for sure
   _endthreadex(0);
 
   return S_OK;
-}
-
-HRESULT CMPUrlSourceSplitter::CreateCreateAllDemuxersWorker(void)
-{
-  HRESULT result = S_OK;
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CREATE_CREATE_ALL_DEMUXERS_WORKER_NAME);
-
-  CHECK_POINTER_HRESULT(result, this->demuxers, result, E_OUTOFMEMORY);
-
-  if (SUCCEEDED(result))
-  {
-    CLockMutex lock(this->demuxersMutex, INFINITE);
-
-    CStreamInformationCollection *streams = new CStreamInformationCollection(&result);
-    CHECK_POINTER_HRESULT(result, streams, result, E_OUTOFMEMORY);
-
-    if (SUCCEEDED(result))
-    {
-      result = this->parserHoster->GetStreamInformation(streams);
-
-      if (SUCCEEDED(result) && (this->demuxers->Count() != streams->Count()))
-      {
-        this->demuxers->Clear();
-
-        for (unsigned int i = 0; (SUCCEEDED(result) && (i < streams->Count())); i++)
-        {
-          CDemuxer *demuxer = new CDemuxer(&result, this->logger, this, this->configuration);
-          CHECK_POINTER_HRESULT(result, demuxer, result, E_OUTOFMEMORY);
-
-          if (SUCCEEDED(result))
-          {
-            demuxer->SetDemuxerId(i);
-            demuxer->SetRealDemuxingNeeded(this->IsSplitter() && (!this->IsDownloadingFile()));
-
-            result = demuxer->SetStreamInformation(streams->GetItem(i));
-          }
-
-          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->demuxers->Add(demuxer) ? result : E_OUTOFMEMORY);
-          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(demuxer));
-        }
-      }
-    }
-
-    FREE_MEM_CLASS(streams);
-  }
-
-  if (SUCCEEDED(result))
-  {
-    this->createAllDemuxersWorkerShouldExit = false;
-
-    this->createAllDemuxersWorkerThread = (HANDLE)_beginthreadex(NULL, 0, &CMPUrlSourceSplitter::CreateAllDemuxersWorker, this, 0, NULL);
-
-    if (this->createAllDemuxersWorkerThread == NULL)
-    {
-      // thread not created
-      result = HRESULT_FROM_WIN32(GetLastError());
-      this->logger->Log(LOGGER_ERROR, L"%s: %s: _beginthreadex() error: 0x%08X", MODULE_NAME, METHOD_CREATE_CREATE_ALL_DEMUXERS_WORKER_NAME, result);
-    }
-  }
-
-  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CREATE_CREATE_ALL_DEMUXERS_WORKER_NAME, result);
-  return result;
-}
-
-HRESULT CMPUrlSourceSplitter::DestroyCreateAllDemuxersWorker(void)
-{
-  HRESULT result = S_OK;
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTROY_CREATE_ALL_DEMUXERS_WORKER_NAME);
-
-  this->createAllDemuxersWorkerShouldExit = true;
-
-  // wait for the create demuxer worker thread to exit
-  if (this->createAllDemuxersWorkerThread != NULL)
-  {
-    if (WaitForSingleObject(this->createAllDemuxersWorkerThread, INFINITE) == WAIT_TIMEOUT)
-    {
-      // thread didn't exit, kill it now
-      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DESTROY_CREATE_ALL_DEMUXERS_WORKER_NAME, L"thread didn't exit, terminating thread");
-      TerminateThread(this->createAllDemuxersWorkerThread, 0);
-    }
-    CloseHandle(this->createAllDemuxersWorkerThread);
-  }
-
-  this->createAllDemuxersWorkerThread = NULL;
-  this->createAllDemuxersWorkerShouldExit = false;
-
-  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_DESTROY_CREATE_ALL_DEMUXERS_WORKER_NAME, result);
-  return result;
 }
 
 void CMPUrlSourceSplitter::SetPauseSeekStopRequest(bool pauseSeekStopRequest)
@@ -2624,8 +2687,8 @@ void CMPUrlSourceSplitter::ClearSession(bool withLogger)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CLEAR_SESSION_NAME);
 
-  // stop creating demuxers
-  this->DestroyCreateAllDemuxersWorker();
+  // stop async loading
+  this->DestroyLoadAsyncWorker();
 
   // clear all demuxers
   this->demuxers->Clear();
@@ -2659,6 +2722,7 @@ void CMPUrlSourceSplitter::ClearSession(bool withLogger)
 
   this->lastCommand = -1;
   this->pauseSeekStopRequest = false;
+  this->loadAsyncResult = S_OK;
 
   FREE_MEM(this->downloadFileName);
 

@@ -68,6 +68,7 @@ const GUID GUID_MP_URL_SOURCE_SPLITTER    = { 0x59ED045A, 0xA938, 0x4A09, 0xA8, 
 #define MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DELAYING          (1 << (FLAGS_LAST + 10))
 #define MP_URL_SOURCE_SPLITTER_FLAG_CORRECTED_TIMESTAMP               (1 << (FLAGS_LAST + 11))
 #define MP_URL_SOURCE_SPLITTER_FLAG_ALL_PINS_END_OF_STREAM            (1 << (FLAGS_LAST + 12))
+#define MP_URL_SOURCE_SPLITTER_FLAG_STREAM_OPENED                     (1 << (FLAGS_LAST + 13))
 
 class CMPUrlSourceSplitter 
   : public CBaseFilter
@@ -133,7 +134,7 @@ public:
 
   // IFileSourceFilter
   
-  // loads the source filter with the stream
+  // loads the stream to filter (asynchronous method)
   // @param pszFileName : pointer to the URI of stream to open
   // @param pmt : pointer to the media type of the stream, this can be NULL
   // @return : S_OK if successful, one of error codes from ErrorCodes.h or error code otherwise
@@ -247,6 +248,23 @@ public:
   // @param description : reference to string which will hold description error
   STDMETHODIMP GetErrorDescription(HRESULT error, wchar_t **description);
 
+  /* other methods */
+
+  // loads the stream to filter (asynchronous method)
+  // the url parameters must be loaded into this->configuration parameter collection
+  // @return : S_OK if url is loaded, S_FALSE if pending, error code otherwise
+  HRESULT LoadAsync(void);
+
+  // loads stream into filter
+  // @param url : the formatted url to load stream
+  // @return : S_OK if successfully loaded, S_FALSE if loading started, error code otherwise
+  STDMETHODIMP LoadAsync(const wchar_t *url);
+
+  // tests if stream is opened
+  // @param opened : reference to variable that holds stream state
+  // @return : S_OK if successful
+  STDMETHODIMP IsStreamOpened(bool *opened);
+
   enum { CMD_EXIT, CMD_SEEK, CMD_PAUSE, CMD_PLAY };
 
 protected:
@@ -282,13 +300,14 @@ protected:
   // holds parsers (parser hoster hosts protocol hoster)
   CParserHoster *parserHoster;
 
-  // holds create all demuxer thread handle
-  HANDLE createAllDemuxersWorkerThread;
-  // specifies if all demuxer worker should exit
-  volatile bool createAllDemuxersWorkerShouldExit;
-
   // demuxer times
   REFERENCE_TIME demuxStart, demuxNewStart;
+
+  /* load async worker */
+
+  HANDLE loadAsyncWorkerThread;
+  volatile bool loadAsyncWorkerShouldExit;
+  HRESULT loadAsyncResult;
 
   /* methods */
 
@@ -340,27 +359,22 @@ protected:
   // @return : S_OK if successful, S_FALSE if no output pin packet available, error code otherwise
   HRESULT GetNextPacket(COutputPinPacket *packet, unsigned int demuxerId);
 
-  // initializes input pin and loads url based on configuration
-  // @return : S_OK if successful
-  STDMETHODIMP Load();
-
   // parses parameters from specified string
   // @param parameters : null-terminated string with specified parameters
   // @return : reference to variable holding collection of parameters or NULL if error
   CParameterCollection *ParseParameters(const wchar_t *parameters);
 
-  /* create all demuxers worker methods */
+  /* load async worker */
 
-  // create all demuxer worker thread method
-  static unsigned int WINAPI CreateAllDemuxersWorker(LPVOID lpParam);
-
-  // creates create all demuxers worker
+  // creates load async worker
   // @return : S_OK if successful
-  HRESULT CreateCreateAllDemuxersWorker(void);
+  HRESULT CreateLoadAsyncWorker(void);
 
-  // destroys create all demuxers worker
+  // destroys load async worker
   // @return : S_OK if successful
-  HRESULT DestroyCreateAllDemuxersWorker(void);
+  HRESULT DestroyLoadAsyncWorker(void);
+
+  static unsigned int WINAPI LoadAsyncWorker(LPVOID lpParam);
 
   // set pause, seek or stop request flag (in filter and also in all demuxers)
   void SetPauseSeekStopRequest(bool pauseSeekStopRequest);

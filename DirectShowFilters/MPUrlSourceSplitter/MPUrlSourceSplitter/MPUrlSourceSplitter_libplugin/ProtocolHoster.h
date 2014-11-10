@@ -34,6 +34,10 @@
 #define METHOD_CREATE_RECEIVE_DATA_WORKER_NAME                        L"CreateReceiveDataWorker()"
 #define METHOD_DESTROY_RECEIVE_DATA_WORKER_NAME                       L"DestroyReceiveDataWorker()"
 
+#define METHOD_START_RECEIVE_DATA_WORKER_NAME                         L"StartReceiveDataWorker()"
+#define METHOD_CREATE_START_RECEIVE_DATA_WORKER_NAME                  L"CreateStartReceiveDataWorker()"
+#define METHOD_DESTROY_START_RECEIVE_DATA_WORKER_NAME                 L"DestroyStartReceiveDataWorker()"
+
 #define PROTOCOL_HOSTER_FLAG_NONE                                     HOSTER_FLAG_NONE
 
 #define PROTOCOL_HOSTER_FLAG_LAST                                     (HOSTER_FLAG_LAST + 0)
@@ -85,7 +89,7 @@ public:
 
   // starts receiving data from specified url and configuration parameters
   // @param parameters : the url and parameters used for connection
-  // @return : S_OK if url is loaded, false otherwise
+  // @return : S_OK if url is loaded, error code otherwise
   HRESULT StartReceivingData(CParameterCollection *parameters);
 
   // request protocol implementation to cancel the stream reading operation
@@ -181,6 +185,11 @@ public:
   // @return : true if connection was lost and can't be opened again, false otherwise
   virtual bool IsConnectionLostCannotReopen(void);
 
+  // starts receiving data from specified url and configuration parameters (asynchronous method)
+  // @param parameters : the url and parameters used for connection
+  // @return : S_OK if url is loaded, S_FALSE if pending, error code otherwise
+  HRESULT StartReceivingDataAsync(CParameterCollection *parameters);
+
 protected:
   // stores active protocol
   CProtocolPlugin *activeProtocol;
@@ -193,6 +202,11 @@ protected:
 
   // holds protocol error
   HRESULT protocolError;
+
+  /* start receive data worker */
+
+  HANDLE startReceiveDataWorkerThread;
+  volatile bool startReceiveDataWorkerShouldExit;
 
   /* received data worker */
 
@@ -223,6 +237,18 @@ protected:
   // @param configuration : the collection of parameters
   // @return : plugin configuration instance
   virtual CPluginConfiguration *CreatePluginConfiguration(HRESULT *result, CParameterCollection *configuration);
+
+  /* start receive data worker */
+
+  // creates start receive data worker
+  // @return : S_OK if successful
+  HRESULT CreateStartReceiveDataWorker(void);
+
+  // destroys start receive data worker
+  // @return : S_OK if successful
+  HRESULT DestroyStartReceiveDataWorker(void);
+
+  static unsigned int WINAPI StartReceiveDataWorker(LPVOID lpParam);
 
   /* receive data worker */
 

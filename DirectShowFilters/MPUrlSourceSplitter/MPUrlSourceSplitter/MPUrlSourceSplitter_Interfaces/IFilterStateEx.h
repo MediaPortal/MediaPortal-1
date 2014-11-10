@@ -49,6 +49,16 @@ public:
   // @param error : the error code to get description
   // @param description : reference to string which will hold description error
   virtual STDMETHODIMP GetErrorDescription(HRESULT error, wchar_t **description) = 0;
+
+  // loads stream into filter
+  // @param url : the formatted url to load stream
+  // @return : S_OK if successfully loaded, S_FALSE if loading started, error code otherwise
+  virtual STDMETHODIMP LoadAsync(const wchar_t *url) = 0;
+
+  // tests if stream is opened
+  // @param opened : reference to variable that holds stream state
+  // @return : S_OK if successful
+  virtual STDMETHODIMP IsStreamOpened(bool *opened) = 0;
 };
 
 #endif

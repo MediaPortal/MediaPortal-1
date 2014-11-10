@@ -28,12 +28,17 @@
 
 #include <Shlwapi.h>
 #include <Shlobj.h>
+#include <process.h>
 
 CParserHoster::CParserHoster(HRESULT *result, CLogger *logger, CParameterCollection *configuration)
   : CHoster(result, logger, configuration, L"ParserHoster", L"mpurlsourcesplitter_parser_*.dll")
 {
   this->protocolHoster = NULL;
   this->activeParser = NULL;
+  this->startReceiveDataWorkerShouldExit = false;
+  this->startReceiveDataWorkerThread = NULL;
+  this->parserError = S_OK;
+  this->startReceiveDataParameters = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -105,157 +110,16 @@ HRESULT CParserHoster::StartReceivingData(CParameterCollection *parameters)
 
   if (SUCCEEDED(result))
   {
-    CParameterCollection *urlConnection = new CParameterCollection(&result);
-    CHECK_POINTER_HRESULT(result, urlConnection, result, E_INVALID_CONFIGURATION);
-
-    if (SUCCEEDED(result))
+    do
     {
-      urlConnection->Append((CParameterCollection *)parameters);
-      bool newUrlSpecified = false;
+      result = this->StartReceivingDataAsync(parameters);
 
-      do
+      if (result == S_FALSE)
       {
-        newUrlSpecified = false;
-
-        // clear all protocol plugins and parse url connection
-        // the first thing of ParseUrl() is call to ClearSession()
-        result = this->protocolHoster->ParseUrl(urlConnection);
-
-        if (SUCCEEDED(result))
-        {
-          result = this->protocolHoster->StartReceivingData(parameters);
-        }
-
-        if (SUCCEEDED(result))
-        {
-          for (unsigned int i = 0; i < this->hosterPluginMetadataCollection->Count(); i++)
-          {
-            CParserHosterPluginMetadata *metadata = dynamic_cast<CParserHosterPluginMetadata *>(this->hosterPluginMetadataCollection->GetItem(i));
-            CParserPlugin *parser = (CParserPlugin *)metadata->GetPlugin();
-
-            // clear parser session and notify about new url and parameters
-            metadata->ClearSession();
-
-            parser->ClearSession();
-            result = parser->SetConnectionParameters(urlConnection);
-          }
-        }
-
-        if (SUCCEEDED(result))
-        {
-          // we are receiving data, we can try parsers
-
-          bool pendingParser = true;
-          unsigned int endTicks = GetTickCount() + this->protocolHoster->GetOpenConnectionSleepTime() + this->protocolHoster->GetOpenConnectionTimeout();
-
-          while (SUCCEEDED(result) && pendingParser && (GetTickCount() < endTicks))
-          {
-            // check if there is any pending parser
-            
-            pendingParser = false;
-            for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->hosterPluginMetadataCollection->Count())); i++)
-            {
-              CParserHosterPluginMetadata *metadata = (CParserHosterPluginMetadata *)this->hosterPluginMetadataCollection->GetItem(i);
-
-              if (metadata->IsParserStillPending())
-              {
-                HRESULT parserResult = metadata->GetParserResult();
-
-                switch(parserResult)
-                {
-                case PARSER_RESULT_PENDING:
-                  pendingParser = true;
-                  break;
-                case PARSER_RESULT_NOT_KNOWN:
-                  this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' doesn't recognize stream", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName());
-                  break;
-                case PARSER_RESULT_KNOWN:
-                  this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' recognizes stream, score: %u", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName(), metadata->GetParserScore());
-                  break;
-                case PARSER_RESULT_DRM_PROTECTED:
-                  this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' recognizes pattern, DRM protected", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName());
-                  break;
-                default:
-                  this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' returns error: 0x%08X", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName(), parserResult);
-                  result = parserResult;
-                  break;
-                }
-              }
-            }
-
-            // sleep some time, get other threads chance to work
-            if (SUCCEEDED(result) && pendingParser)
-            {
-              Sleep(1);
-            }
-          }
-
-          if (SUCCEEDED(result) && pendingParser)
-          {
-            // timeout reached, some parser(s) is (are) still pending
-            for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->hosterPluginMetadataCollection->Count())); i++)
-            {
-              CParserHosterPluginMetadata *metadata = (CParserHosterPluginMetadata *)this->hosterPluginMetadataCollection->GetItem(i);
-
-              if (metadata->IsParserStillPending())
-              {
-                this->logger->Log(LOGGER_ERROR, L"%s: %s: parser '%s' still pending", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName());
-              }
-            }
-
-            result = E_PARSER_STILL_PENDING;
-          }
-
-          if (SUCCEEDED(result))
-          {
-            // we don't have timeout, also no pending parser
-            // find parser with highest score and execute its action (specify new URL or set as active parser)
-
-            unsigned int highestScore = 0;
-            CParserPlugin *highestScoreParser = NULL;
-
-            for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->hosterPluginMetadataCollection->Count())); i++)
-            {
-              CParserHosterPluginMetadata *metadata = (CParserHosterPluginMetadata *)this->hosterPluginMetadataCollection->GetItem(i);
-
-              if ((metadata->GetParserResult() == PARSER_RESULT_KNOWN) && (metadata->GetParserScore() > highestScore))
-              {
-                highestScore = metadata->GetParserScore();
-                highestScoreParser = dynamic_cast<CParserPlugin *>(metadata->GetPlugin());
-              }
-            }
-
-            switch(highestScoreParser->GetAction())
-            {
-            case CParserPlugin::ParseStream:
-              this->activeParser = highestScoreParser;
-              break;
-            case CParserPlugin::GetNewConnection:
-              newUrlSpecified = true;
-
-              this->StopReceivingData();
-              urlConnection->Clear();
-              result = highestScoreParser->GetConnectionParameters(urlConnection);
-              break;
-            }
-          }
-        }
-        
-        CHECK_CONDITION_EXECUTE(FAILED(result), this->protocolHoster->StopReceivingData());
+        Sleep(1);
       }
-      while ((newUrlSpecified) && SUCCEEDED(result));
     }
-
-    FREE_MEM_CLASS(urlConnection);
-  }
-
-  CHECK_POINTER_HRESULT(result, this->activeParser, result, E_NO_ACTIVE_PARSER);
-
-  if (SUCCEEDED(result))
-  {
-    this->logger->Log(LOGGER_INFO, L"%s: %s: active parser: '%s'", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, this->activeParser->GetName());
-
-    result = this->activeParser->StartReceivingData(parameters);
+    while (result == S_FALSE);
   }
 
   return result;
@@ -264,6 +128,9 @@ HRESULT CParserHoster::StartReceivingData(CParameterCollection *parameters)
 HRESULT CParserHoster::StopReceivingData(void)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, this->hosterName, METHOD_STOP_RECEIVING_DATA_NAME);
+
+  // stop start receive data worker
+  this->DestroyStartReceiveDataWorker();
 
   // stop receiving data
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->activeParser, this->activeParser->StopReceivingData());
@@ -289,6 +156,9 @@ void CParserHoster::ClearSession(void)
 
   // reset all protocol implementations
   this->protocolHoster->ClearSession();
+
+  this->parserError = S_OK;
+  this->startReceiveDataParameters = NULL;
 }
 
 int64_t CParserHoster::GetDuration(void)
@@ -327,6 +197,34 @@ HRESULT CParserHoster::LoadPlugins(void)
   return result;
 }
 
+HRESULT CParserHoster::StartReceivingDataAsync(CParameterCollection *parameters)
+{
+  HRESULT result = S_FALSE;
+
+  if (this->startReceiveDataWorkerThread == NULL)
+  {
+    this->startReceiveDataParameters = parameters;
+
+    result = this->CreateStartReceiveDataWorker();
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = S_FALSE);
+  }
+
+  if (SUCCEEDED(result) && (this->startReceiveDataWorkerThread != NULL))
+  {
+    result = (WaitForSingleObject(this->startReceiveDataWorkerThread, 0) == WAIT_TIMEOUT) ? S_FALSE : this->parserError;
+  }
+  
+  if (result != S_FALSE)
+  {
+    // thread finished or error
+    this->DestroyStartReceiveDataWorker();
+
+    this->startReceiveDataParameters = NULL;
+  }
+
+  return result;
+}
+
 /* protected methods */
 
 CHosterPluginMetadata *CParserHoster::CreateHosterPluginMetadata(HRESULT *result, CLogger *logger, CParameterCollection *configuration, const wchar_t *hosterName, const wchar_t *pluginLibraryFileName)
@@ -357,4 +255,230 @@ CPluginConfiguration *CParserHoster::CreatePluginConfiguration(HRESULT *result, 
   }
 
   return parserConfiguration;
+}
+
+HRESULT CParserHoster::CreateStartReceiveDataWorker(void)
+{
+  HRESULT result = S_OK;
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, this->hosterName, METHOD_CREATE_START_RECEIVE_DATA_WORKER_NAME);
+
+  if (this->startReceiveDataWorkerThread == NULL)
+  {
+    this->startReceiveDataWorkerThread = (HANDLE)_beginthreadex(NULL, 0, &CParserHoster::StartReceiveDataWorker, this, 0, NULL);
+  }
+
+  if (this->startReceiveDataWorkerThread == NULL)
+  {
+    // thread not created
+    result = HRESULT_FROM_WIN32(GetLastError());
+    this->logger->Log(LOGGER_ERROR, L"%s: %s: _beginthreadex() error: 0x%08X", this->hosterName, METHOD_CREATE_START_RECEIVE_DATA_WORKER_NAME, result);
+  }
+
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, this->hosterName, METHOD_CREATE_START_RECEIVE_DATA_WORKER_NAME, result);
+  return result;
+}
+
+HRESULT CParserHoster::DestroyStartReceiveDataWorker(void)
+{
+  HRESULT result = S_OK;
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, this->hosterName, METHOD_DESTROY_START_RECEIVE_DATA_WORKER_NAME);
+
+  this->startReceiveDataWorkerShouldExit = true;
+
+  // wait for the receive data worker thread to exit      
+  if (this->startReceiveDataWorkerThread != NULL)
+  {
+    if (WaitForSingleObject(this->startReceiveDataWorkerThread, INFINITE) == WAIT_TIMEOUT)
+    {
+      // thread didn't exit, kill it now
+      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, this->hosterName, METHOD_DESTROY_START_RECEIVE_DATA_WORKER_NAME, L"thread didn't exit, terminating thread");
+      TerminateThread(this->startReceiveDataWorkerThread, 0);
+    }
+    CloseHandle(this->startReceiveDataWorkerThread);
+  }
+
+  this->startReceiveDataWorkerThread = NULL;
+  this->startReceiveDataWorkerShouldExit = false;
+
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, this->hosterName, METHOD_DESTROY_START_RECEIVE_DATA_WORKER_NAME, result);
+  return result;
+}
+
+unsigned int WINAPI CParserHoster::StartReceiveDataWorker(LPVOID lpParam)
+{
+  CParserHoster *caller = (CParserHoster *)lpParam;
+  caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, caller->hosterName, METHOD_START_RECEIVE_DATA_WORKER_NAME);
+
+  if (SUCCEEDED(caller->parserError))
+  {
+    CParameterCollection *urlConnection = new CParameterCollection(&caller->parserError);
+    CHECK_POINTER_HRESULT(caller->parserError, urlConnection, caller->parserError, E_INVALID_CONFIGURATION);
+
+    if (SUCCEEDED(caller->parserError))
+    {
+      urlConnection->Append((CParameterCollection *)caller->startReceiveDataParameters);
+      bool newUrlSpecified = false;
+
+      do
+      {
+        newUrlSpecified = false;
+
+        // clear all protocol plugins and parse url connection
+        // the first thing of ParseUrl() is call to ClearSession()
+        caller->parserError = caller->protocolHoster->ParseUrl(urlConnection);
+
+        if (SUCCEEDED(caller->parserError))
+        {
+          do
+          {
+            caller->parserError = caller->protocolHoster->StartReceivingDataAsync(caller->startReceiveDataParameters);
+
+            if (caller->parserError == S_FALSE)
+            {
+              Sleep(1);
+            }
+          }
+          while ((!caller->startReceiveDataWorkerShouldExit) && (caller->parserError == S_FALSE));
+
+          CHECK_CONDITION_HRESULT(caller->parserError, !caller->startReceiveDataWorkerShouldExit, caller->parserError, E_CONNECTION_LOST_CANNOT_REOPEN);
+        }
+
+        if (SUCCEEDED(caller->parserError))
+        {
+          for (unsigned int i = 0; i < caller->hosterPluginMetadataCollection->Count(); i++)
+          {
+            CParserHosterPluginMetadata *metadata = dynamic_cast<CParserHosterPluginMetadata *>(caller->hosterPluginMetadataCollection->GetItem(i));
+            CParserPlugin *parser = (CParserPlugin *)metadata->GetPlugin();
+
+            // clear parser session and notify about new url and parameters
+            metadata->ClearSession();
+
+            parser->ClearSession();
+            caller->parserError = parser->SetConnectionParameters(urlConnection);
+          }
+        }
+
+        if (SUCCEEDED(caller->parserError))
+        {
+          // we are receiving data, we can try parsers
+
+          bool pendingParser = true;
+          unsigned int endTicks = GetTickCount() + caller->protocolHoster->GetOpenConnectionSleepTime() + caller->protocolHoster->GetOpenConnectionTimeout();
+
+          while (SUCCEEDED(caller->parserError) && pendingParser && (GetTickCount() < endTicks))
+          {
+            // check if there is any pending parser
+            
+            pendingParser = false;
+            for (unsigned int i = 0; (SUCCEEDED(caller->parserError) && (i < caller->hosterPluginMetadataCollection->Count())); i++)
+            {
+              CParserHosterPluginMetadata *metadata = (CParserHosterPluginMetadata *)caller->hosterPluginMetadataCollection->GetItem(i);
+
+              if (metadata->IsParserStillPending())
+              {
+                HRESULT parserResult = metadata->GetParserResult();
+
+                switch(parserResult)
+                {
+                case PARSER_RESULT_PENDING:
+                  pendingParser = true;
+                  break;
+                case PARSER_RESULT_NOT_KNOWN:
+                  caller->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' doesn't recognize stream", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName());
+                  break;
+                case PARSER_RESULT_KNOWN:
+                  caller->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' recognizes stream, score: %u", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName(), metadata->GetParserScore());
+                  break;
+                case PARSER_RESULT_DRM_PROTECTED:
+                  caller->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' recognizes pattern, DRM protected", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName());
+                  break;
+                default:
+                  caller->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' returns error: 0x%08X", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName(), parserResult);
+                  caller->parserError = parserResult;
+                  break;
+                }
+              }
+            }
+
+            // sleep some time, get other threads chance to work
+            if (SUCCEEDED(caller->parserError) && pendingParser)
+            {
+              Sleep(1);
+            }
+          }
+
+          if (SUCCEEDED(caller->parserError) && pendingParser)
+          {
+            // timeout reached, some parser(s) is (are) still pending
+            for (unsigned int i = 0; (SUCCEEDED(caller->parserError) && (i < caller->hosterPluginMetadataCollection->Count())); i++)
+            {
+              CParserHosterPluginMetadata *metadata = (CParserHosterPluginMetadata *)caller->hosterPluginMetadataCollection->GetItem(i);
+
+              if (metadata->IsParserStillPending())
+              {
+                caller->logger->Log(LOGGER_ERROR, L"%s: %s: parser '%s' still pending", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName());
+              }
+            }
+
+            caller->parserError = E_PARSER_STILL_PENDING;
+          }
+
+          if (SUCCEEDED(caller->parserError))
+          {
+            // we don't have timeout, also no pending parser
+            // find parser with highest score and execute its action (specify new URL or set as active parser)
+
+            unsigned int highestScore = 0;
+            CParserPlugin *highestScoreParser = NULL;
+
+            for (unsigned int i = 0; (SUCCEEDED(caller->parserError) && (i < caller->hosterPluginMetadataCollection->Count())); i++)
+            {
+              CParserHosterPluginMetadata *metadata = (CParserHosterPluginMetadata *)caller->hosterPluginMetadataCollection->GetItem(i);
+
+              if ((metadata->GetParserResult() == PARSER_RESULT_KNOWN) && (metadata->GetParserScore() > highestScore))
+              {
+                highestScore = metadata->GetParserScore();
+                highestScoreParser = dynamic_cast<CParserPlugin *>(metadata->GetPlugin());
+              }
+            }
+
+            switch(highestScoreParser->GetAction())
+            {
+            case CParserPlugin::ParseStream:
+              caller->activeParser = highestScoreParser;
+              break;
+            case CParserPlugin::GetNewConnection:
+              newUrlSpecified = true;
+
+              caller->StopReceivingData();
+              urlConnection->Clear();
+              caller->parserError = highestScoreParser->GetConnectionParameters(urlConnection);
+              break;
+            }
+          }
+        }
+        
+        CHECK_CONDITION_EXECUTE(FAILED(caller->parserError), caller->protocolHoster->StopReceivingData());
+      }
+      while ((!caller->startReceiveDataWorkerShouldExit) && (newUrlSpecified) && SUCCEEDED(caller->parserError));
+    }
+
+    FREE_MEM_CLASS(urlConnection);
+  }
+
+  CHECK_POINTER_HRESULT(caller->parserError, caller->activeParser, caller->parserError, E_NO_ACTIVE_PARSER);
+
+  if (SUCCEEDED(caller->parserError))
+  {
+    caller->logger->Log(LOGGER_INFO, L"%s: %s: active parser: '%s'", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, caller->activeParser->GetName());
+
+    caller->parserError = caller->activeParser->StartReceivingData(caller->startReceiveDataParameters);
+  }
+
+  caller->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, caller->hosterName, METHOD_START_RECEIVE_DATA_WORKER_NAME);
+
+  // _endthreadex should be called automatically, but for sure
+  _endthreadex(0);
+
+  return S_OK;
 }

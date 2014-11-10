@@ -76,7 +76,7 @@ public:
 
   // starts receiving data from specified url and configuration parameters
   // @param parameters : the url and parameters used for connection
-  // @return : S_OK if url is loaded, false otherwise
+  // @return : S_OK if url is loaded, error code otherwise
   HRESULT StartReceivingData(CParameterCollection *parameters);
 
   // request protocol implementation to cancel the stream reading operation
@@ -119,12 +119,29 @@ public:
   // @return : S_OK if successful, E_NO_PARSER_LOADED if no parser loaded, error code otherwise
   virtual HRESULT LoadPlugins(void);
 
+  // starts receiving data from specified url and configuration parameters (asynchronous method)
+  // @param parameters : the url and parameters used for connection
+  // @return : S_OK if url is loaded, S_FALSE if pending, error code otherwise
+  HRESULT StartReceivingDataAsync(CParameterCollection *parameters);
+
 protected:
   // hoster for all protocols
   CProtocolHoster *protocolHoster;
 
   // reference to active parser
   CParserPlugin *activeParser;
+
+  // holds parser error
+  HRESULT parserError;
+
+  /* start receive data worker */
+
+  // holds parameters for calling StartReceiveData() methods
+  // it is only reference, not deep clone
+  CParameterCollection *startReceiveDataParameters;
+
+  HANDLE startReceiveDataWorkerThread;
+  volatile bool startReceiveDataWorkerShouldExit;
 
   /* methods */
 
@@ -142,6 +159,18 @@ protected:
   // @param configuration : the collection of parameters
   // @return : plugin configuration instance
   virtual CPluginConfiguration *CreatePluginConfiguration(HRESULT *result, CParameterCollection *configuration);
+
+  /* start receive data worker */
+
+  // creates start receive data worker
+  // @return : S_OK if successful
+  HRESULT CreateStartReceiveDataWorker(void);
+
+  // destroys start receive data worker
+  // @return : S_OK if successful
+  HRESULT DestroyStartReceiveDataWorker(void);
+
+  static unsigned int WINAPI StartReceiveDataWorker(LPVOID lpParam);
 };
 
 #endif
