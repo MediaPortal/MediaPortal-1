@@ -699,8 +699,6 @@ void CLibBlurayWrapper::HandleBDEvent(BD_EVENT& ev, bool pIgnorePauseEvents)
 
     case BD_EVENT_PLAYLIST:
       m_currentTitleIdx = _bd_get_current_title(m_pBd);
-      m_currentClip = 0;
-      UpdateTitleInfo();
       break;
 
     case BD_EVENT_PLAYITEM:
@@ -709,6 +707,7 @@ void CLibBlurayWrapper::HandleBDEvent(BD_EVENT& ev, bool pIgnorePauseEvents)
       else
         m_currentClip = 0;
 
+      UpdateTitleInfo();
       break;
   }
 
