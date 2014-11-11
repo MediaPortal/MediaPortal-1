@@ -450,7 +450,12 @@ unsigned int WINAPI CParserHoster::StartReceiveDataWorker(LPVOID lpParam)
             case CParserPlugin::GetNewConnection:
               newUrlSpecified = true;
 
-              caller->StopReceivingData();
+              // stop receiving data
+              CHECK_CONDITION_NOT_NULL_EXECUTE(caller->activeParser, caller->activeParser->StopReceivingData());
+              CHECK_CONDITION_NOT_NULL_EXECUTE(caller->protocolHoster, caller->protocolHoster->StopReceivingData());
+
+              caller->activeParser = NULL;
+
               urlConnection->Clear();
               caller->parserError = highestScoreParser->GetConnectionParameters(urlConnection);
               break;

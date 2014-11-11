@@ -26,11 +26,11 @@
 #include "IFilterState.h"
 #include <streams.h>
 
-// {6E33E032-E321-4392-ABA4-82C03AC3DC20}
-DEFINE_GUID(IID_IFilterStateEx, 0x6e33e032, 0xe321, 0x4392, 0xab, 0xa4, 0x82, 0xc0, 0x3a, 0xc3, 0xdc, 0x20);
+// {505C28D8-01F4-41C7-BD51-013FA6DBBD39}
+DEFINE_GUID(IID_IFilterStateEx, 0x505c28d8, 0x1f4, 0x41c7, 0xbd, 0x51, 0x1, 0x3f, 0xa6, 0xdb, 0xbd, 0x39);
 
 // provides interface for filter state
-MIDL_INTERFACE("6E33E032-E321-4392-ABA4-82C03AC3DC20")
+MIDL_INTERFACE("505C28D8-01F4-41C7-BD51-013FA6DBBD39")
 IFilterStateEx : public IFilterState
 {
 public:
