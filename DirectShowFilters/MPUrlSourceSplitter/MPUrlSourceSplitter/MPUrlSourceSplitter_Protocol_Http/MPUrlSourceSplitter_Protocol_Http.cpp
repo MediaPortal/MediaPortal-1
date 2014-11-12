@@ -853,26 +853,29 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
                 {
                   endIndex = min(endIndex, this->streamFragments->Count());
 
-                  CHttpStreamFragment *fragment = new CHttpStreamFragment(&result);
-                  CHECK_POINTER_HRESULT(result, fragment, result, E_OUTOFMEMORY);
-
-                  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), fragment->SetFragmentStartPosition(requestStart));
-                  CHECK_CONDITION_HRESULT(result, this->streamFragments->Insert(endIndex, fragment), result, E_OUTOFMEMORY);
-                  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(fragment));
-
-                  if (SUCCEEDED(result))
+                  if ((this->streamFragmentDownloading != endIndex) && (this->streamFragmentToDownload != endIndex))
                   {
-                    this->streamFragments->SetSearchCount(this->streamFragments->Count() - 1);
+                    CHttpStreamFragment *fragment = new CHttpStreamFragment(&result);
+                    CHECK_POINTER_HRESULT(result, fragment, result, E_OUTOFMEMORY);
 
-                    // stops receiving data
-                    // this clear CURL instance and buffer, it leads to GetConnectionState() to ProtocolConnectionState::None result and connection will be reopened by ProtocolHoster
-                    this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_STOP_RECEIVING_DATA;
+                    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), fragment->SetFragmentStartPosition(requestStart));
+                    CHECK_CONDITION_HRESULT(result, this->streamFragments->Insert(endIndex, fragment), result, E_OUTOFMEMORY);
+                    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(fragment));
 
-                    // re-open connection at requested stream fragment
-                    this->streamFragmentToDownload = endIndex;
-                    this->streamFragmentDownloading = UINT_MAX;
+                    if (SUCCEEDED(result))
+                    {
+                      this->streamFragments->SetSearchCount(this->streamFragments->Count() - 1);
 
-                    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: request '%u', requesting data from '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, request->GetId(), requestStart);
+                      // stops receiving data
+                      // this clear CURL instance and buffer, it leads to GetConnectionState() to ProtocolConnectionState::None result and connection will be reopened by ProtocolHoster
+                      this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_STOP_RECEIVING_DATA;
+
+                      // re-open connection at requested stream fragment
+                      this->streamFragmentToDownload = endIndex;
+                      this->streamFragmentDownloading = UINT_MAX;
+
+                      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: request '%u', requesting data from '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, request->GetId(), requestStart);
+                    }
                   }
                 }
               }
