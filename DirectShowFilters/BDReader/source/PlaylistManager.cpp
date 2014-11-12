@@ -50,7 +50,7 @@ CPlaylistManager::~CPlaylistManager(void)
   }
 }
 
-bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audioPresent, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffsetTime, REFERENCE_TIME duration)
+bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audioPresent, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffsetTime, REFERENCE_TIME duration, REFERENCE_TIME streamStartPosition)
 {
   CAutoLock lock (&m_sectionAudio);
   CAutoLock lockv (&m_sectionVideo);
@@ -73,7 +73,7 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
   {
     // First playlist
     CPlaylist* firstPlaylist = new CPlaylist(nPlaylist, firstPacketTime);
-    if (firstPlaylist->CreateNewClip(nClip, firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, false, false))
+    if (firstPlaylist->CreateNewClip(nClip, firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, streamStartPosition, false, false))
     {
       m_vecPlaylists.push_back(firstPlaylist);
       m_itCurrentAudioPlayBackPlaylist = m_itCurrentVideoPlayBackPlaylist = m_itCurrentAudioSubmissionPlaylist = m_itCurrentVideoSubmissionPlaylist = m_vecPlaylists.begin();
@@ -83,7 +83,7 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
   {
     // New clip in existing playlist
     CPlaylist* existingPlaylist = m_vecPlaylists.back();
-    existingPlaylist->CreateNewClip(nClip, firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, playedDuration == 0, ret);
+    existingPlaylist->CreateNewClip(nClip, firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, streamStartPosition, playedDuration == 0, ret);
   }
   else
   {
@@ -102,7 +102,7 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
     }
 
     CPlaylist* newPlaylist = new CPlaylist(nPlaylist,firstPacketTime);
-    if (newPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, playedDuration == 0, ret))
+    if (newPlaylist->CreateNewClip(nClip, firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, streamStartPosition, playedDuration == 0, ret))
     {
       PushPlaylists();
       m_vecPlaylists.push_back(newPlaylist);
