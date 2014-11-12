@@ -126,8 +126,6 @@ bool CPlaylist::AcceptAudioPacket(Packet* packet)
 
   if (!firstAudioPESPacketSeen && ret && packet->rtStart != Packet::INVALID_TIME)
   {
-    REFERENCE_TIME oldPEStime = firstAudioPESTimeStamp;
-
     firstAudioPESPacketSeen = true;
     firstAudioPESTimeStamp = (*m_itCurrentAudioSubmissionClip)->clipPlaylistOffset - packet->rtStart;
   }
@@ -156,8 +154,6 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet)
 
   if (!firstVideoPESPacketSeen && ret && packet->rtStart != Packet::INVALID_TIME)
   {
-    REFERENCE_TIME oldPEStime = firstVideoPESTimeStamp;
-
     firstVideoPESPacketSeen = true;
     firstVideoPESTimeStamp = (*m_itCurrentVideoSubmissionClip)->clipPlaylistOffset - packet->rtStart;
   }
