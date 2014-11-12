@@ -34,7 +34,7 @@ class Packet : public CAtlArray<BYTE>
 {
 public:
 
-  Packet() ;
+  Packet();
   virtual ~Packet();
   virtual int GetDataSize();
   void SetData(const void* ptr, DWORD len);
@@ -45,8 +45,19 @@ public:
   INT32 nClipNumber;
   INT32 nPlaylist;
   INT32 nNewSegment;
-  bool bDiscontinuity, bSyncPoint, bResuming;
-  static const REFERENCE_TIME INVALID_TIME = _I64_MIN;  
-  REFERENCE_TIME rtStart, rtStop, rtOffset, rtPlaylistTime, rtClipStartTime, rtTitleDuration;
+
+  bool bDiscontinuity;
+  bool bSyncPoint;
+  bool bResuming;
+
+  static const REFERENCE_TIME INVALID_TIME = _I64_MIN;
+
+  REFERENCE_TIME rtStart;
+  REFERENCE_TIME rtStop;
+  REFERENCE_TIME rtOffset;
+  REFERENCE_TIME rtPlaylistTime;
+  REFERENCE_TIME rtClipStartTime;
+  REFERENCE_TIME rtTitleDuration;
+
   AM_MEDIA_TYPE* pmt;
 };

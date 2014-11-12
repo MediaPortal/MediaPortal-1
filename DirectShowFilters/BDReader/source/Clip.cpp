@@ -37,7 +37,7 @@ CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime,
   nClip = clipNumber;
   nPlaylist = playlistNumber;
 
-  playlistFirstPacketTime=firstPacketTime;
+  playlistFirstPacketTime = firstPacketTime;
 
   lastVideoPosition = playlistFirstPacketTime;
   lastAudioPosition = playlistFirstPacketTime;
@@ -144,7 +144,7 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
   CAutoLock vectorVLock(&m_sectionVectorVideo);
 
   Packet* ret = NULL;
-  if (m_vecClipVideoPackets.size()>0 && m_videoPmt)
+  if (m_vecClipVideoPackets.size() > 0 && m_videoPmt)
   {
     ivecVideoBuffers it = m_vecClipVideoPackets.begin();
     ret = *it;
@@ -207,7 +207,7 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
 {
   if (superceeded & SUPERCEEDED_AUDIO_RETURN) 
     return NULL;
-  
+
   if (!FakeAudioAvailable()) 
     return NULL;
 
@@ -218,7 +218,7 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
     LogDebug("Fake audio SUPERCEEDED_AUDIO_RETURN (%d,%d) clipDuration: %I64d", nPlaylist, nClip, clipDuration);
     bSetAudioSuperceeded = true;
   }
-  
+
   Packet* packet = new Packet();
   packet->nClipNumber = nClip;
   packet->nPlaylist = nPlaylist;
@@ -264,7 +264,9 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
 bool CClip::AcceptAudioPacket(Packet* packet)
 {
   CAutoLock vectorALock(&m_sectionVectorAudio);
-  if (nPlaylist != packet->nPlaylist) return false;
+  if (nPlaylist != packet->nPlaylist) 
+    return false;
+
   if (packet->nClipNumber != nClip)
   {
     LogDebug("Clip::Removing incorrect Audio Packet");
@@ -279,14 +281,17 @@ bool CClip::AcceptAudioPacket(Packet* packet)
       if (earliestPacketAccepted > packet->rtStart) earliestPacketAccepted = packet->rtStart;
         firstPacketAccepted = true;
     }
-    packet->nClipNumber=nClip;
+
+    packet->nClipNumber = nClip;
+
     m_vecClipAudioPackets.push_back(packet);
-    
+
     if (packet->rtStart != Packet::INVALID_TIME)
-      lastAudioPosition=packet->rtStart;
+      lastAudioPosition = packet->rtStart;
     
-    noAudio=false;
+    noAudio = false;
   }
+
   return true;
 }
 
@@ -315,6 +320,7 @@ bool CClip::AcceptVideoPacket(Packet*  packet)
 
     m_vecClipVideoPackets.push_back(packet);
   }
+
   return true;
 }
 
@@ -331,7 +337,7 @@ void CClip::Superceed(int superceedType)
 
 bool CClip::IsSuperceeded(int superceedType)
 {
-  return ((superceeded&superceedType)==superceedType);
+  return ((superceeded & superceedType) == superceedType);
 }
 
 void CClip::FlushAudio(Packet* pPacketToKeep)
@@ -340,7 +346,7 @@ void CClip::FlushAudio(Packet* pPacketToKeep)
   ivecAudioBuffers ita = m_vecClipAudioPackets.begin();
   while (ita != m_vecClipAudioPackets.end())
   {
-    Packet* packet=*ita;
+    Packet* packet =* ita;
     if (packet!=pPacketToKeep)
     {
       ita = m_vecClipAudioPackets.erase(ita);
@@ -361,8 +367,8 @@ void CClip::FlushVideo(Packet* pPacketToKeep)
   ivecVideoBuffers itv = m_vecClipVideoPackets.begin();
   while (itv != m_vecClipVideoPackets.end())
   {
-    Packet* packet=*itv;
-    if (packet!=pPacketToKeep)
+    Packet* packet =* itv;
+    if (packet != pPacketToKeep)
     {
       itv = m_vecClipVideoPackets.erase(itv);
       delete packet;
@@ -380,7 +386,7 @@ void CClip::Reset(REFERENCE_TIME totalStreamOffset)
 {
   CAutoLock vectorVLock(&m_sectionVectorVideo);
   CAutoLock vectorALock(&m_sectionVectorAudio);
-  
+
   LogDebug("CClip:: Clip Reset (%d,%d) stream Offset %I64d", nPlaylist, nClip, totalStreamOffset);
 
   FlushAudio();
@@ -420,7 +426,7 @@ bool CClip::HasAudio()
   if (m_vecClipAudioPackets.size() > 0)
     return true;
 
-  if (noAudio) 
+  if (noAudio)
   {
     if (FakeAudioAvailable()) 
       return true;
@@ -435,7 +441,7 @@ bool CClip::HasAudio()
 bool CClip::HasVideo()
 {
   CAutoLock vectorVLock(&m_sectionVectorVideo);
-//  if (!noAudio  && firstAudio ) return false;
+
   if (!m_videoPmt)
     return false;
 
@@ -464,7 +470,8 @@ REFERENCE_TIME CClip::PlayedDuration()
 {
   REFERENCE_TIME start = earliestPacketAccepted;
   REFERENCE_TIME finish = audioPlaybackPosition;
-  REFERENCE_TIME playDuration=0LL;
+  REFERENCE_TIME playDuration = 0LL;
+
   LogDebug("CClip::(%d,%d) earliestPacketAccepted %I64d audioPlaybackPosition %I64d videoPlaybackPosition %I64d a:%d v:%d",
     nPlaylist, nClip, earliestPacketAccepted, audioPlaybackPosition, videoPlaybackPosition, firstAudio, firstVideo);
 
@@ -481,10 +488,12 @@ REFERENCE_TIME CClip::PlayedDuration()
   }
 
   playDuration = finish - playlistFirstPacketTime;
-  if (abs(clipDuration - playDuration) < HALF_SECOND) 
+  if (abs(clipDuration - playDuration) < HALF_SECOND)
   {
     LogDebug("CClip::PlayedDuration %I64d - clip played to end", clipDuration - earliestPacketAccepted + playlistFirstPacketTime);
-    if (!noAudio) return lastAudioPosition - firstAudioPosition;
+    if (!noAudio)
+      return lastAudioPosition - firstAudioPosition;
+
     return clipDuration - earliestPacketAccepted + playlistFirstPacketTime;
   }
 
