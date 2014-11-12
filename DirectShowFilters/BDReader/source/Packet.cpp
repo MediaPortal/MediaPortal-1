@@ -34,20 +34,20 @@ Packet::Packet()
   ResetProperties(true);
 }
 
-Packet::~Packet() 
+Packet::~Packet()
 {
   if (pmt) 
     DeleteMediaType(pmt);
 }
 
-int Packet::GetDataSize() 
+int Packet::GetDataSize()
 {
   return GetCount();
 }
 
-void Packet::SetData(const void* ptr, DWORD len) 
+void Packet::SetData(const void* ptr, DWORD len)
 {
-  SetCount(len); 
+  SetCount(len);
   memcpy(GetData(), ptr, len);
 }
 
