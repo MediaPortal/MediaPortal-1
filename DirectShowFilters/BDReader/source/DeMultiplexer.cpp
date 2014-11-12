@@ -444,11 +444,7 @@ HRESULT CDeMultiplexer::Start()
   DWORD dwBytesProcessed = 0;
   DWORD m_Time = GetTickCount();
 
-#ifdef DEBUG
-  const DWORD readTimeout = 50000;  // give more time when debugging 
-#else
-  const DWORD readTimeout = 5000;
-#endif
+  const DWORD readTimeout = 25000;
 
   if (m_playlistManager)
     m_playlistManager->ClearAllButCurrentClip();
