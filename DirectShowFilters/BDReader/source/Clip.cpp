@@ -32,7 +32,7 @@ extern void LogDebug(const char *fmt, ...);
 
 #define HALF_SECOND 5000000LL
 
-CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffset, REFERENCE_TIME totalStreamOffset, bool audioPresent, REFERENCE_TIME duration, bool seekTarget, bool interrupted)
+CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffset, REFERENCE_TIME totalStreamOffset, bool audioPresent, REFERENCE_TIME duration, REFERENCE_TIME streamStartOffset, bool seekTarget, bool interrupted)
 {
   nClip = clipNumber;
   nPlaylist = playlistNumber;
@@ -50,6 +50,7 @@ CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime,
 
   clipDuration = duration;
   clipPlaylistOffset = totalStreamOffset;
+  m_rtStreamStartOffset = streamStartOffset;
 
   m_playlistOffset = clipOffset;
   m_rtClipVideoStartingOffset = 0LL;

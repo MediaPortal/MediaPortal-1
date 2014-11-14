@@ -45,7 +45,7 @@ using namespace std;
 class CClip
 {
 public:
-  CClip(int clipNumber, int playlistNumber, REFERENCE_TIME playlistFirstPacketTime, REFERENCE_TIME clipOffset, REFERENCE_TIME totalStreamOffset, bool audioPresent, REFERENCE_TIME duration, bool seekTarget, bool interrupted);
+  CClip(int clipNumber, int playlistNumber, REFERENCE_TIME playlistFirstPacketTime, REFERENCE_TIME clipOffset, REFERENCE_TIME totalStreamOffset, bool audioPresent, REFERENCE_TIME duration, REFERENCE_TIME streamStartOffset, bool seekTarget, bool interrupted);
   ~CClip();
   Packet* ReturnNextAudioPacket(REFERENCE_TIME playlistOffset);
   Packet* ReturnNextVideoPacket(REFERENCE_TIME playlistOffset);
@@ -92,6 +92,9 @@ public:
 
   // offset of this clip from the beginning of the playlist
   REFERENCE_TIME m_playlistOffset;
+
+  // offset of this clip fromt he beginning of the stream
+  REFERENCE_TIME m_rtStreamStartOffset;
 
   // Accurate clip starting time (when known).
   // Not set when selecting chapter from the menu
