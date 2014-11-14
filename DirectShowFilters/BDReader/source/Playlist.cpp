@@ -116,7 +116,7 @@ bool CPlaylist::AcceptAudioPacket(Packet* packet)
 
   if ((*m_itCurrentAudioSubmissionClip)->nClip == packet->nClipNumber)
   {
-    if (!firstAudioPESPacketSeen)
+    if (!firstAudioPESPacketSeen && (*m_itCurrentAudioSubmissionClip)->nPlaylist != packet->nPlaylist)
       packet->nNewSegment |= NS_NEW_PLAYLIST;
 
     ret = (*m_itCurrentAudioSubmissionClip)->AcceptAudioPacket(packet);
@@ -145,7 +145,7 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet)
   }
   if ((*m_itCurrentVideoSubmissionClip)->nClip == packet->nClipNumber)
   {
-    if (!firstVideoPESPacketSeen)
+    if (!firstVideoPESPacketSeen && (*m_itCurrentVideoSubmissionClip)->nPlaylist != packet->nPlaylist)
       packet->nNewSegment |= NS_NEW_PLAYLIST;
 
     prevVideoPosition = (*m_itCurrentVideoSubmissionClip)->lastVideoPosition;
