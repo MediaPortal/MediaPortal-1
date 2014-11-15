@@ -81,7 +81,7 @@ public:
   STDMETHODIMP Notify(IBaseFilter* pSender, Quality q);
   HRESULT DeliverBeginFlush();
   HRESULT DeliverEndFlush();
-  HRESULT DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate);
+  HRESULT DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate, bool doFakeSeek = false);
   bool IsConnected();
 
   void SetInitialMediaType(const CMediaType* pmt);
@@ -112,6 +112,7 @@ protected:
   CAMEvent* m_eFlushStart;
   bool m_bFlushing;
   bool m_bSeekDone;
+  bool m_bResetToLibSeek;
   bool m_bDiscontinuity;
   bool m_bZeroTimeStream;
 

@@ -109,8 +109,7 @@ class CBDReaderFilter : public CSource,
                         public IAudioStream,
                         public IBDReader,
                         public BDEventObserver,
-                        public CCritSec,
-                        protected CAMThread
+                        public CCritSec
 {
 public:
   DECLARE_IUNKNOWN
@@ -198,18 +197,12 @@ public:
 
   bool  m_bStopping;
 
-protected:
-
-  // CAMThread
-  enum {CMD_EXIT, CMD_SEEK};
-  DWORD ThreadProc();
-
 private:
 
   struct DS_CMD
   {
     DS_CMD_ID id;
-    CRefTime refTime; 
+    CRefTime refTime;
   };
 
   void DeliverBeginFlush();
@@ -244,14 +237,11 @@ private:
   HANDLE          m_hCommandEvent;
   HANDLE          m_hStopCommandThreadEvent;
   DWORD           m_dwThreadId;
-  bool            m_bUpdateStreamPositionOnly;
 
   REFERENCE_TIME m_rtPlaybackOffset;
   REFERENCE_TIME m_rtSeekPosition;
   REFERENCE_TIME m_rtTitleDuration;
   REFERENCE_TIME m_rtCurrentTime;
-  REFERENCE_TIME m_rtRunOffset;
-  REFERENCE_TIME m_rtRun;
   CCritSec       m_csClock;
 
   // Times
@@ -268,13 +258,7 @@ private:
   std::set<void *> m_lastSeekers;
   bool m_bFirstSeek;
 
-  // Flushing
-  bool m_bFlushing;
-  CAMEvent m_eEndFlush;
-  CAMEvent m_eEndNewSegment;
-  CAMEvent m_eSeekDone;
-  
-  bool m_bChapterChangeRequested;
+  bool m_bHandleSeekEvent;
   bool m_bForceTitleBasedPlayback;
 
   bool m_bRebuildOngoing;
