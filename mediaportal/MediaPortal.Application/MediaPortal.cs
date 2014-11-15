@@ -1715,6 +1715,9 @@ public class MediaPortalApp : D3D, IRender
 
           if (ps.PowerSetting == GUID_SYSTEM_AWAYMODE && ps.DataLength == Marshal.SizeOf(typeof(Int32)))
           {
+            // focus MP
+            ForceMPFocus();
+
             switch (ps.Data)
             {
               case 0:
@@ -1730,6 +1733,9 @@ public class MediaPortalApp : D3D, IRender
           // GUID_SESSION_DISPLAY_STATUS is only provided on Win8 and above
           else if ((ps.PowerSetting == GUID_MONITOR_POWER_ON || ps.PowerSetting == GUID_SESSION_DISPLAY_STATUS) && ps.DataLength == Marshal.SizeOf(typeof(Int32)))
           {
+            // focus MP
+            ForceMPFocus();
+
             switch (ps.Data)
             {
               case 0:
@@ -1750,6 +1756,9 @@ public class MediaPortalApp : D3D, IRender
           // GUIT_SESSION_USER_PRESENCE is only provide on Win8 and above
           else if (ps.PowerSetting == GUID_SESSION_USER_PRESENCE && ps.DataLength == Marshal.SizeOf(typeof(Int32)))
           {
+            // focus MP
+            ForceMPFocus();
+
             switch (ps.Data)
             {
               case 0:
@@ -2527,6 +2536,10 @@ public class MediaPortalApp : D3D, IRender
 
     _suspended = false;
     _lastOnresume = DateTime.Now;
+
+    // Force Focus after resume done (really weird sequence)
+    ForceMPFocus();
+
     Log.Info("Main: OnResumeSuspend - Done");
   }
 
@@ -5122,6 +5135,40 @@ public class MediaPortalApp : D3D, IRender
     int length = screen.DeviceName.IndexOf("\0", StringComparison.Ordinal);
     string deviceName = length == -1 ? screen.DeviceName : screen.DeviceName.Substring(0, length);
     return deviceName;
+  }
+
+  /// <summary>
+  /// Focus Mediaportal is visible.
+  /// </summary>
+  private void ForceMPFocus()
+  {
+    // Focus only when MP is not minimize and when SplashScreen is close
+    if (SplashScreen == null)
+    {
+      Log.Info("Main: SplashScreen is null.");
+    }
+    else
+    {
+      Log.Info("Main: SplashScreen is not null.");
+    }
+    if ((WindowState != FormWindowState.Minimized) && SplashScreen == null)
+    {
+      // Make MediaPortal window normal ( if minimized )
+      Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
+
+      // Make Mediaportal window focused
+      if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
+      {
+        Log.Info("Main: Successfully switched focus.");
+      }
+
+      // Bring MP to front
+      BringToFront();
+    }
+    else
+    {
+      MinimizeToTray();
+    }
   }
 
   #endregion
