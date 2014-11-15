@@ -94,8 +94,9 @@ namespace TvPlugin
       CardChange = 2,
       SeekToEnd = 4,
       SeekToEndAfterPlayback = 8
-    }    
-    
+    }
+
+    private static readonly SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
     private Channel _resumeChannel = null;
     private Thread heartBeatTransmitterThread = null;
     private static DateTime _updateProgressTimer = DateTime.MinValue;
@@ -1642,7 +1643,10 @@ namespace TvPlugin
 
       if (!_playbackStopped)
       {
-        g_Player.ShowFullScreenWindow();
+        _mainThreadContext.Send(delegate
+        {
+          g_Player.ShowFullScreenWindow();
+        }, null);
       }
     }
 
