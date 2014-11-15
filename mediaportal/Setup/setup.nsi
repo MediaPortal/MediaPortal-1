@@ -843,6 +843,7 @@ Section -Post
   ${If} $noDesktopSC != 1
     CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
     CreateShortCut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
+    CreateShortCut "$DESKTOP\MediaPortal WatchDog.lnk"      "$MPdir.Base\WatchDog.exe"         "" "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
   ${EndIf}
 
   ; create startmenu shortcuts
