@@ -797,7 +797,7 @@ SectionGroupEnd
 ${MementoSectionDone}
 
 #---------------------------------------------------------------------------
-# This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
+# This Section is executed after the Main section has finished and writes Uninstall information into the registry
 Section -Post
   ${LOG_TEXT} "INFO" "Doing post installation stuff..."
 
@@ -927,6 +927,7 @@ Section Uninstall
   ; remove Desktop shortcuts
   Delete "$DESKTOP\MediaPortal.lnk"
   Delete "$DESKTOP\MediaPortal Configuration.lnk"
+  Delete "$DESKTOP\MediaPortal WatchDog.lnk"
 
   ; remove last files and instdir
   Delete "$MPdir.Base\uninstall-mp.exe"
