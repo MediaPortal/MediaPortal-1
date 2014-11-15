@@ -41,14 +41,14 @@ class CPlaylistManager
 public:
   CPlaylistManager(void);
   ~CPlaylistManager(void);
-  bool CreateNewPlaylistClip(int nPlaylist, int nClip, bool audioPresent, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffsetTime, REFERENCE_TIME duration, REFERENCE_TIME streamStartPosition);
+  void CreateNewPlaylistClip(int nPlaylist, int nClip, bool audioPresent, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffsetTime, REFERENCE_TIME duration, REFERENCE_TIME streamStartPosition, bool interrupted);
   void SetVideoPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip);
 
   bool SubmitAudioPacket(Packet * packet);
   bool SubmitVideoPacket(Packet * packet);
   void FlushAudio(void);
   void FlushVideo(void);
-  void ClearAllButCurrentClip();
+  void ClearClips(bool skipCurrentClip = true);
   Packet* GetNextAudioPacket();
   Packet* GetNextAudioPacket(int playlist, int clip);
   Packet* GetNextVideoPacket();

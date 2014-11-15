@@ -53,8 +53,7 @@ public:
   // TODO - not all of these should be puclic!
 
   HRESULT    Start();
-  void       Flush(bool pSeeking, REFERENCE_TIME rtSeekTime);
-  HRESULT    FlushToChapter(UINT32 nChapter);
+  void       Flush(bool bClearclips);
   Packet*    GetVideo();
   Packet*    GetAudio();
   Packet*    GetAudio(int playlist, int clip);
@@ -229,6 +228,8 @@ private:
   
   REFERENCE_TIME m_rtTitleDuration;
   REFERENCE_TIME m_nMPEG2LastTitleDuration;
+
+  bool m_bLibRequestedFlush;
 
   unsigned int m_iReadErrors;
   // Used for playlist/clip tracking
