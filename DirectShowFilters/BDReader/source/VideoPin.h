@@ -63,7 +63,7 @@ public:
 
   HRESULT DeliverBeginFlush();
   HRESULT DeliverEndFlush();
-  HRESULT DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate);
+  HRESULT DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate, bool doFakeSeek = false);
   
   bool IsConnected();
   void StopWait();
@@ -120,6 +120,7 @@ protected:
   REFERENCE_TIME m_rtStreamTimeOffset;
   REFERENCE_TIME m_rtTitleDuration;
 
+  bool m_bResetToLibSeek;
   bool m_bDoFakeSeek;
   bool m_bZeroStreamOffset;
 };

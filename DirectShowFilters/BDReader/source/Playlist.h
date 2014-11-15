@@ -55,7 +55,7 @@ public:
   void SetFilledAudio();
   int  nPlaylist;
   REFERENCE_TIME playlistFirstPacketTime;
-  REFERENCE_TIME ClearAllButCurrentClip(REFERENCE_TIME totalStreamOffset);
+  void ClearClips(REFERENCE_TIME totalStreamOffset, bool skipCurrentClip);
   bool HasAudio();
   bool HasVideo();
   REFERENCE_TIME Incomplete();

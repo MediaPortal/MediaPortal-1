@@ -103,6 +103,7 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_rtTitleDuration(0),
   m_nSampleCounter(0),
   m_bDoFakeSeek(false),
+  m_bResetToLibSeek(false),
   m_H264decoder(GUID_NULL),
   m_VC1decoder(GUID_NULL),
   m_MPEG2decoder(GUID_NULL),
@@ -357,7 +358,8 @@ HRESULT CVideoPin::DoBufferProcessingLoop()
         if (hr != S_OK)
         {
           DbgLog((LOG_TRACE, 2, TEXT("Deliver() returned %08x; stopping"), hr));
-          return S_OK;
+          // Delivery thread will be stalled instead of stopping
+          //return S_OK;
         }
       }
       else if (hr == ERROR_NO_DATA)
@@ -537,13 +539,12 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
           if (buffer->nNewSegment > 0)
           {
-            if ((buffer->nNewSegment & NS_NEW_CLIP) == NS_NEW_CLIP)
+            if (buffer->nNewSegment & NS_NEW_CLIP)
             {
-              LogDebug("vid: Playlist changed to %d - nNewSegment: %d offset: %6.3f rtStart: %6.3f rtPlaylistTime: %6.3f", 
+              LogDebug("vid: Playlist changed to %d - nNewSegment: %d offset: %6.3f rtStart: %6.3f rtPlaylistTime: %6.3f",
                 buffer->nPlaylist, buffer->nNewSegment, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
-            
+
               m_demux.m_bVideoClipSeen = true;
- 
               checkPlaybackState = true;
 
               if (m_nSampleCounter > EOS_THRESHOLD)
@@ -575,8 +576,16 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
                 m_bClipEndingNotified = true;
               }
             }
+            
+            if (m_bResetToLibSeek)
+            {
+              m_demux.m_bVideoClipSeen = true;
+              checkPlaybackState = true;
+              m_bDoFakeSeek = true;
+              m_bResetToLibSeek = false;
+            }
 
-            if ((buffer->nNewSegment & NS_NEW_PLAYLIST) == NS_NEW_PLAYLIST)
+            if (buffer->nNewSegment & NS_STREAM_RESET)
               m_bInitDuration = true;
           }
 
@@ -683,7 +692,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
           if (m_bInitDuration)
           {
             m_pFilter->SetTitleDuration(m_rtTitleDuration);
-            m_pFilter->ResetPlaybackOffset(buffer->rtPlaylistTime - rtCorrectedStartTime);
+            m_pFilter->ResetPlaybackOffset(buffer->rtPlaylistTime);// -rtCorrectedStartTime);
             m_bInitDuration = false;
           }
 
@@ -777,7 +786,7 @@ HRESULT CVideoPin::DeliverEndFlush()
   return hr;
 }
 
-HRESULT CVideoPin::DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate)
+HRESULT CVideoPin::DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate, bool doFakeSeek)
 {
   if (m_bFlushing || !ThreadExists()) 
   {
@@ -794,6 +803,7 @@ HRESULT CVideoPin::DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop
     LogDebug("vid: DeliverNewSegment - error: %08lX", hr);
 
   m_bSeekDone = true;
+  m_bResetToLibSeek = doFakeSeek;
 
   return hr;
 }

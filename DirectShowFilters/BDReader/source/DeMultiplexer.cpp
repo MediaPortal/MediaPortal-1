@@ -84,6 +84,8 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_videoServiceType = NO_STREAM;
   m_nVideoPid = -1;
 
+  m_bLibRequestedFlush = false;
+
   m_nClip = -1;
   m_nTitle = -1;
   m_nPlaylist = -1;
@@ -328,38 +330,7 @@ void CDeMultiplexer::FlushAudio()
   m_pCurrentAudioBuffer = new Packet();
 }
 
-HRESULT CDeMultiplexer::FlushToChapter(UINT32 nChapter)
-{
-  LogDebug("demux:ChangingChapter");
-
-  HRESULT hr = S_FALSE;
-
-  SetHoldAudio(true);
-  SetHoldVideo(true);
-
-  // Make sure data isn't being processed
-  CAutoLock lockRead(&m_sectionRead);
-
-  CAutoLock lockVid(&m_sectionVideo);
-  CAutoLock lockAud(&m_sectionAudio);
-
-  m_playlistManager->ClearAllButCurrentClip();
-
-  if (m_filter.lib.SetChapter(nChapter))
-  {
-    FlushPESBuffers(true, false);
-    FlushAudio();
-    FlushVideo();
-    hr = S_OK;
-  }
-
-  SetHoldAudio(false);
-  SetHoldVideo(false);
-
-  return hr;
-}
-
-void CDeMultiplexer::Flush(bool pSeeking, REFERENCE_TIME rtSeekTime)
+void CDeMultiplexer::Flush(bool bClearclips)
 {
   LogDebug("demux:flushing");
 
@@ -374,7 +345,8 @@ void CDeMultiplexer::Flush(bool pSeeking, REFERENCE_TIME rtSeekTime)
   CAutoLock lockVid(&m_sectionVideo);
   CAutoLock lockAud(&m_sectionAudio);
 
-  m_playlistManager->ClearAllButCurrentClip();
+  if (bClearclips)
+    m_playlistManager->ClearClips();
 
   FlushAudio();
   FlushVideo();
@@ -452,7 +424,7 @@ HRESULT CDeMultiplexer::Start()
   const DWORD readTimeout = 25000;
 
   if (m_playlistManager)
-    m_playlistManager->ClearAllButCurrentClip();
+    m_playlistManager->ClearClips(false);
 
   while ((GetTickCount() - m_Time) < readTimeout && !m_bReadFailed)
   {
@@ -569,8 +541,13 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv)
       m_filter.NotifyEvent(EC_ERRORABORT, STG_E_STATUS_COPY_PROTECTION_FAILURE, 0);
       break;
 
+    case BD_EVENT_FLUSH:
+      Flush(false);
+      m_bLibRequestedFlush = true;
+      break;
+
     case BD_EVENT_SEEK:
-      Flush(true, 0LL);
+      Flush(true);
       break;
 
     case BD_EVENT_STILL_TIME:
@@ -629,23 +606,18 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv)
         m_filter.lib.CurrentPosition(position, (UINT64&)m_rtTitleDuration);
         m_rtTitleDuration = CONVERT_90KHz_DS(m_rtTitleDuration);
 
-        bool interrupted = false;
-
         //if (!m_bStarting)
         {
           REFERENCE_TIME clipOffset = m_rtOffset * -1;
 
           FlushPESBuffers(false, false);
-          interrupted = m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, AudioStreamsAvailable(clip), 
-            CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration), CONVERT_90KHz_DS(position));
+          m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, AudioStreamsAvailable(clip), 
+            CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration), CONVERT_90KHz_DS(position), m_bLibRequestedFlush);
 
-          if (interrupted)
-          {
-            LogDebug("demux: current clip was interrupted - triggering flush");
-            //TODO get clipstart relative to clip start
-            REFERENCE_TIME rtClipStart = 0LL;
-            Flush(true, rtClipStart);
-          }
+          if (m_bLibRequestedFlush)
+            m_playlistManager->ClearClips();
+
+          m_bLibRequestedFlush = false;
         }
 
         m_bVideoFormatParsed = false;

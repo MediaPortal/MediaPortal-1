@@ -299,7 +299,7 @@ void CPlaylist::FlushVideo()
   }
 }
 
-REFERENCE_TIME CPlaylist::ClearAllButCurrentClip(REFERENCE_TIME totalStreamOffset)
+void CPlaylist::ClearClips(REFERENCE_TIME totalStreamOffset, bool skipCurrentClip)
 {
   CAutoLock vectorLock(&m_sectionVector);
   REFERENCE_TIME ret = 0LL;
@@ -307,7 +307,7 @@ REFERENCE_TIME CPlaylist::ClearAllButCurrentClip(REFERENCE_TIME totalStreamOffse
   while (it != m_vecClips.end())
   {
     CClip* clip =* it;
-    if (clip == m_vecClips.back())
+    if (clip == m_vecClips.back() && skipCurrentClip)
       ++it;
     else
     {
@@ -315,16 +315,14 @@ REFERENCE_TIME CPlaylist::ClearAllButCurrentClip(REFERENCE_TIME totalStreamOffse
       delete clip;
     }
   }
+
   if (m_vecClips.size() > 0)
   {
     m_itCurrentAudioPlayBackClip = m_itCurrentVideoPlayBackClip = m_itCurrentAudioSubmissionClip = m_itCurrentVideoSubmissionClip = m_vecClips.begin();
     ret = (*m_itCurrentAudioPlayBackClip)->PlayedDuration();
     Reset(nPlaylist, playlistFirstPacketTime);
     (*m_itCurrentAudioPlayBackClip)->Reset(totalStreamOffset + ret);
-    return ret;
   }
-
-  return 0LL;
 }
 
 void CPlaylist::Reset(int playlistNumber, REFERENCE_TIME firstPacketTime)
@@ -440,8 +438,7 @@ vector<CClip*> CPlaylist::Superceed()
   while (it != m_vecClips.end())
   {
     CClip* clip = *it;
-    if (clip->noAudio)
-      ret.push_back(clip);
+    clip->Supersede(AUDIO_FILL);
 
     ++it;
   }
