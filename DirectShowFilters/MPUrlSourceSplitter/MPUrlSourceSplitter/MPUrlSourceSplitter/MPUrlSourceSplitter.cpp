@@ -2319,6 +2319,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
 {
   CMPUrlSourceSplitter *caller = (CMPUrlSourceSplitter *)lpParam;
   caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_ASYNC_WORKER_NAME);
+  bool fakeIptvUrl = false;
 
   if (SUCCEEDED(caller->loadAsyncResult))
   {
@@ -2337,6 +2338,10 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
           caller->configuration->Remove(PARAMETER_NAME_LIVE_STREAM, true);
           CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->configuration->Add(PARAMETER_NAME_LIVE_STREAM, L"1"), caller->loadAsyncResult, E_OUTOFMEMORY);
         }
+      }
+      else
+      {
+        fakeIptvUrl = true;
       }
 
       // if in output pin collection isn't any pin, then add new output pin with MPEG2 TS media type
@@ -2420,7 +2425,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
     FREE_MEM(folder);
   }
 
-  while (SUCCEEDED(caller->loadAsyncResult) && (!caller->loadAsyncWorkerShouldExit))
+  while ((!fakeIptvUrl) && SUCCEEDED(caller->loadAsyncResult) && (!caller->loadAsyncWorkerShouldExit))
   {
     caller->loadAsyncResult = caller->parserHoster->StartReceivingDataAsync(caller->configuration);
 
@@ -2437,7 +2442,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
     }
   }
 
-  if (SUCCEEDED(caller->loadAsyncResult))
+  if ((!fakeIptvUrl) && SUCCEEDED(caller->loadAsyncResult))
   {
     // create demuxers
 
