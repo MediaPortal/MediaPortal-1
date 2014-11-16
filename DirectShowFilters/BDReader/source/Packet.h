@@ -26,9 +26,8 @@
 
 #define NS_NEW_CLIP     1
 #define NS_STREAM_RESET 2
-#define NS_SEEK_TARGET  4
-#define NS_INTERRUPTED  8
-#define NS_NEW_PLAYLIST 16
+#define NS_INTERRUPTED  4
+#define NS_NEW_PLAYLIST 8
 
 class Packet : public CAtlArray<BYTE>
 {
