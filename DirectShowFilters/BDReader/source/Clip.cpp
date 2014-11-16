@@ -161,9 +161,6 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
         ret->bDiscontinuity = clipInterrupted | bSeekTarget | clipReset;
         ret->nNewSegment |= NS_STREAM_RESET;
 
-        if (bSeekTarget)
-          ret->nNewSegment |= NS_SEEK_TARGET; 
-
         if (!clipReset)
           ret->nNewSegment |= NS_NEW_CLIP;
 
