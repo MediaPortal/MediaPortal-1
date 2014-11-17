@@ -292,6 +292,11 @@ void CDeMultiplexer::GetVideoStreamPMT(CMediaType &pmt)
     pmt = m_videoParser->pmt;
 }
 
+REFERENCE_TIME CDeMultiplexer::TitleDuration()
+{
+  return m_rtTitleDuration;
+}
+
 void CDeMultiplexer::FlushVideo()
 {
   LogDebug("demux:flush video");
