@@ -1639,7 +1639,10 @@ public class MediaPortalApp : D3D, IRender
         case (int)PBT_EVENT.PBT_APMSUSPEND:
 
           // disable event handlers
-          GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+          if (GUIGraphicsContext.DX9Device != null)
+          {
+            GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+          }
 
           _resumedAutomatic = false;
           _resumedSuspended = false;
@@ -1652,12 +1655,18 @@ public class MediaPortalApp : D3D, IRender
           OnSuspend();
 
           // enable event handlers
-          GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+          if (GUIGraphicsContext.DX9Device != null)
+          {
+            GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+          }
           break;
 
         case (int)PBT_EVENT.PBT_APMRESUMEAUTOMATIC:
           // disable event handlers
-          GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+          if (GUIGraphicsContext.DX9Device != null)
+          {
+            GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+          }
 
           // Check Delayed Resume
           CheckDelayedResume();
@@ -1677,7 +1686,10 @@ public class MediaPortalApp : D3D, IRender
           }
 
           // enable event handlers
-          GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+          if (GUIGraphicsContext.DX9Device != null)
+          {
+            GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+          }
           break;
 
         // Only for Windows XP
@@ -1696,7 +1708,10 @@ public class MediaPortalApp : D3D, IRender
 
         case (int)PBT_EVENT.PBT_APMRESUMESUSPEND:
           // disable event handlers
-          GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+          if (GUIGraphicsContext.DX9Device != null)
+          {
+            GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+          }
 
           // Check Delayed Resume
           CheckDelayedResume();
@@ -1724,7 +1739,10 @@ public class MediaPortalApp : D3D, IRender
           }
 
           // enable event handlers
-          GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+          if (GUIGraphicsContext.DX9Device != null)
+          {
+            GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+          }
           break;
 
         // A change in the power status of the computer is detected
@@ -1967,6 +1985,12 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnDisplayChange(ref Message msg)
   {
+    // disable event handlers
+    if (GUIGraphicsContext.DX9Device != null)
+    {
+      GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+    }
+
     Log.Debug("Main: WM_DISPLAYCHANGE");
     if (VMR9Util.g_vmr9 != null && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsEvr)
     {
@@ -1984,9 +2008,6 @@ public class MediaPortalApp : D3D, IRender
       }
       if (!Equals(currentBounds.Size, newBounds.Size))
       {
-        // disable event handlers
-        GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
-
         // Check if start screen is equal to device screen and check if current screen bond differ from current detected screen bond then recreate swap chain.
         Log.Debug("Main: Screen MP OnDisplayChange current screen detected                                {0}", GetCleanDisplayName(screen));
         Log.Debug("Main: Screen MP OnDisplayChange current screen                                         {0}", GetCleanDisplayName(GUIGraphicsContext.currentScreen));
@@ -1999,9 +2020,6 @@ public class MediaPortalApp : D3D, IRender
         NeedRecreateSwapChain = true;
         RecreateSwapChain();
         _changeScreenDisplayChange = true;
-
-        // enable event handlers
-        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
       }
       // Restore original Start Screen in case of change from RDP Session
       if (!Equals(screen, GUIGraphicsContext.currentStartScreen))
@@ -2033,6 +2051,12 @@ public class MediaPortalApp : D3D, IRender
     _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
 
     msg.Result = (IntPtr)1;
+
+    // enable event handlers
+    if (GUIGraphicsContext.DX9Device != null)
+    {
+      GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+    }
   }
 
 
@@ -2042,6 +2066,12 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnGetMinMaxInfo(ref Message msg)
   {
+    // disable event handlers
+    if (GUIGraphicsContext.DX9Device != null)
+    {
+      GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+    }
+
     var mmi = (MINMAXINFO)Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
     Log.Debug("Main: WM_GETMINMAXINFO Start (MaxSize: {0}x{1} - MaxPostion: {2},{3} - MinTrackSize: {4}x{5} - MaxTrackSize: {6}x{7})",
               mmi.ptMaxSize.x, mmi.ptMaxSize.y, mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMinTrackSize.x, mmi.ptMinTrackSize.y, mmi.ptMaxTrackSize.x, mmi.ptMaxTrackSize.y);
@@ -2078,9 +2108,6 @@ public class MediaPortalApp : D3D, IRender
 
     if (!Equals(currentBounds.Size, newBounds.Size) && !_firstLoadedScreen && !_restoreLoadedScreen)
     {
-      // disable event handlers
-      GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
-
       // Check if start screen is equal to device screen and check if current screen bond differ from current detected screen bond then recreate swap chain.
       Log.Debug("Main: Screen MP OnGetMinMaxInfo Information.DeviceName Manager.Adapters                {0}", adapterOrdinalScreenName);
       Log.Debug("Main: Screen MP OnGetMinMaxInfo current screen detected                                {0}", GetCleanDisplayName(screen));
@@ -2099,9 +2126,6 @@ public class MediaPortalApp : D3D, IRender
       {
         SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
       }
-
-      // enable event handlers
-      GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
     }
 
     if (_changeScreen || _changeScreenDisplayChange)
@@ -2148,6 +2172,12 @@ public class MediaPortalApp : D3D, IRender
     // needed to avoid cursor show when MP windows change (for ex when refesh rate is working)
     _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
     _restoreLoadedScreen = false;
+
+    // enable event handlers
+    if (GUIGraphicsContext.DX9Device != null)
+    {
+      GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+    }
   }
 
 
@@ -3114,12 +3144,13 @@ public class MediaPortalApp : D3D, IRender
   protected override void OnDeviceLost(object sender, EventArgs e)
   {
     Log.Warn("Main: OnDeviceLost()");
-    if (!Created)
+    if (!Created || !AppActive)
     {
       Log.Debug("Main: Form not created yet - ignoring Event");
       return;
     }
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+    Log.Debug("Main: OnDeviceLost CurrentState : {0}", GUIGraphicsContext.CurrentState);
     RecoverDevice();
     base.OnDeviceLost(sender, e);
   }

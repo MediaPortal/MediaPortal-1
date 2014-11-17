@@ -473,7 +473,10 @@ namespace MediaPortal
       Log.Debug("D3D: ToggleFullScreen()");
 
       // disable event handlers
-      GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+      }
 
       // Reset DialogMenu to avoid freeze when going to fullscreen/windowed
       var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
@@ -554,7 +557,10 @@ namespace MediaPortal
       Log.Info("D3D: Screen size: {0}x{1}", GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
 
       // enable event handlers
-      GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+      }
     }
 
 
@@ -563,6 +569,12 @@ namespace MediaPortal
     /// </summary>
     internal void RecreateSwapChain()
     {
+      // disable event handlers
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+      }
+
       if (AppActive || NeedRecreateSwapChain)
       {
         Log.Debug("Main: RecreateSwapChain()");
@@ -633,6 +645,12 @@ namespace MediaPortal
         // continue rendering
         AppActive = true;
         NeedRecreateSwapChain = false;
+      }
+
+      // enable event handlers
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
       }
     }
 
@@ -730,14 +748,17 @@ namespace MediaPortal
     /// </summary>
     protected void RecoverDevice()
     {
-      // do not try to receover device, when MP does not set a lost state
+      // do not try to recover device, when MP does not set a lost state
       if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.LOST)
       {
         return;
       }
 
       // disable event handlers
-      GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+      }
 
       Log.Debug("D3D: RecoverDevice()");
 
@@ -765,10 +786,6 @@ namespace MediaPortal
 
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
 
-      // enable handlers
-      GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
-
-
       if (RefreshRateChanger.RefreshRateChangePending && RefreshRateChanger.RefreshRateChangeStrFile.Length > 0)
       {
         RefreshRateChanger.RefreshRateChangePending = false;
@@ -786,6 +803,12 @@ namespace MediaPortal
         {
           g_Player.ShowFullScreenWindow();
         }
+      }
+
+      // enable handlers
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
       }
     }
 
@@ -1163,6 +1186,12 @@ namespace MediaPortal
     /// <param name="windowed">true for window, false for fullscreen</param>
     protected void BuildPresentParams(bool windowed)
     {
+      // disable event handlers
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+      }
+
       Log.Debug("D3D: BuildPresentParams()");
       Size size = CalcMaxClientArea();
       _presentParams.BackBufferWidth  = windowed ? size.Width  : GUIGraphicsContext.currentScreen.Bounds.Width;
@@ -1207,6 +1236,12 @@ namespace MediaPortal
       GUIGraphicsContext.DirectXPresentParameters = _presentParams;
       Log.Info("D3D: Back Buffer Size set to: {0}x{1}", _presentParams.BackBufferWidth, _presentParams.BackBufferHeight);
       Windowed = windowed;
+
+      // enable event handlers
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+      }
     }
 
     /// <summary>
@@ -1313,7 +1348,10 @@ namespace MediaPortal
         }
 
         // Setup the event handlers for our device
-        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+        if (GUIGraphicsContext.DX9Device != null)
+        {
+          GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+        }
 
         // Initialize the app's device-dependent objects
         try
