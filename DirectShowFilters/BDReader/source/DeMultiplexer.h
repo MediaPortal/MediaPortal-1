@@ -86,6 +86,8 @@ public:
   void       GetVideoStreamPMT(CMediaType &pmt);
   int        GetAudioStreamCount();
 
+  REFERENCE_TIME TitleDuration();
+
   // BDReader::ISubtitleStream uses these
   bool       SetSubtitleStream(__int32 stream);
   bool       GetSubtitleStreamType(__int32 stream, __int32& count);
