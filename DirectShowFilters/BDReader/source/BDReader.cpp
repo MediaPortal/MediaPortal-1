@@ -697,12 +697,7 @@ STDMETHODIMP CBDReaderFilter::GetDuration(REFERENCE_TIME* pDuration)
   if (!pDuration)
     return E_INVALIDARG;
 
-  ULONGLONG pos = 0, dur = 0;
-
-  if (lib.CurrentPosition(pos, dur))
-    *pDuration = CONVERT_90KHz_DS(dur);
-  else
-    pDuration = 0;
+  *pDuration = m_demultiplexer.TitleDuration();
 
   return NOERROR;
 }
