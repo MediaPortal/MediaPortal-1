@@ -426,6 +426,8 @@ STDMETHODIMP CMPUrlSourceSplitter::NonDelegatingQueryInterface(REFIID riid, void
   {
     return
       QI(IFileSourceFilter)
+      QI(IFilterState)
+      QI(IFilterStateEx)
       __super::NonDelegatingQueryInterface(riid, ppv);
   }
   else if (this->IsSplitter())
@@ -2412,14 +2414,10 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
     caller->flags |= (caller->configuration->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, PARAMETER_NAME_LIVE_STREAM_DEFAULT)) ? MP_URL_SOURCE_SPLITTER_FLAG_LIVE_STREAM : MP_URL_SOURCE_SPLITTER_FLAG_NONE;
 
     wchar_t *folder = GetStoreFilePath(caller->IsIptv() ? L"MPIPTVSource" : L"MPUrlSourceSplitter", caller->configuration);
-    const wchar_t *cacheFolder = caller->configuration->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
-
-    if ((folder != NULL) && (cacheFolder == NULL))
+    if (folder != NULL)
     {
-      // cache folder is not specified in configuration parameters
-      // add new folder to configuration parameters
-
-      CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->configuration->Add(PARAMETER_NAME_CACHE_FOLDER, folder), caller->loadAsyncResult, E_OUTOFMEMORY);
+      // replace cache folder in configuration parameters with properly formatted folder
+      CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->configuration->Update(PARAMETER_NAME_CACHE_FOLDER, true, folder), caller->loadAsyncResult, E_OUTOFMEMORY);
     }
 
     FREE_MEM(folder);
