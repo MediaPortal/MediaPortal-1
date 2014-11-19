@@ -3165,7 +3165,14 @@ public class MediaPortalApp : D3D, IRender
     Log.Warn("Main: OnDeviceLost()");
     if (!Created || !AppActive)
     {
-      Log.Debug("Main: Form not created yet - ignoring Event");
+      if (!Created)
+      {
+        Log.Debug("Main: Form not created yet - ignoring Event");
+      }
+      else
+      {
+        Log.Debug("Main: Application not ready - ignoring Event");
+      }
       return;
     }
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
