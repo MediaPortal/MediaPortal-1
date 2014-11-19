@@ -1637,6 +1637,13 @@ public class MediaPortalApp : D3D, IRender
       {
         // The computer is about to enter a suspended state
         case (int)PBT_EVENT.PBT_APMSUSPEND:
+          // Suspending when we are on minimize (otherwise MP can stay freezed if notification windows show up while minimize)
+          WindowState = FormWindowState.Minimized;
+
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+          {
+            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+          }
 
           // disable event handlers
           if (GUIGraphicsContext.DX9Device != null)
@@ -1674,11 +1681,11 @@ public class MediaPortalApp : D3D, IRender
           // Resume automatic operation
           if (!_resumedAutomatic)
           {
+            _resumedAutomatic = true;
             Log.Info("Main: Resuming automatic operation");
             OnResumeAutomatic();
             msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMEAUTOMATIC);
             PluginManager.WndProc(ref msg);
-            _resumedAutomatic = true;
           }
           else
           {
@@ -1718,11 +1725,11 @@ public class MediaPortalApp : D3D, IRender
 
           if (!_resumedAutomatic)
           {
+            _resumedAutomatic = true;
             Log.Info("Main: Resuming automatic operation - order of events is wrong");
             OnResumeAutomatic();
-            msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
+            msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMEAUTOMATIC)
             PluginManager.WndProc(ref msg);
-            _resumedAutomatic = true;
           }
 
           if (!_resumedSuspended)
@@ -1730,6 +1737,7 @@ public class MediaPortalApp : D3D, IRender
             // Resume operation of user interface
             Log.Info("Main: Resuming operation of user interface");
             OnResumeSuspend();
+            msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
             PluginManager.WndProc(ref msg);
             _resumedSuspended = true;
           }
@@ -1985,77 +1993,80 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnDisplayChange(ref Message msg)
   {
-    // disable event handlers
-    if (GUIGraphicsContext.DX9Device != null)
+    if (!_suspended)
     {
-      GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
-    }
+      // disable event handlers
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+      }
 
-    Log.Debug("Main: WM_DISPLAYCHANGE");
-    if (VMR9Util.g_vmr9 != null && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsEvr)
-    {
-      VMR9Util.g_vmr9.UpdateEVRDisplayFPS(); // Update FPS
-    }
-    Screen screen = Screen.FromControl(this);
-    Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
-    Rectangle newBounds = screen.Bounds;
-    if (Created && !Equals(screen, GUIGraphicsContext.currentScreen) || !Equals(currentBounds.Size, newBounds.Size))
-    {
-      Log.Info("Main: Screen MP OnDisplayChange is displayed on changed from {0} to {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
-      if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
+      Log.Debug("Main: WM_DISPLAYCHANGE");
+      if (VMR9Util.g_vmr9 != null && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsEvr)
       {
-        Log.Info("Main: OnDisplayChange Bounds of display changed from {0}x{1} to {2}x{3}", currentBounds.Width, currentBounds.Height, newBounds.Width, newBounds.Height);
+        VMR9Util.g_vmr9.UpdateEVRDisplayFPS(); // Update FPS
       }
-      if (!Equals(currentBounds.Size, newBounds.Size))
+      Screen screen = Screen.FromControl(this);
+      Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
+      Rectangle newBounds = screen.Bounds;
+      if (Created && !Equals(screen, GUIGraphicsContext.currentScreen) || !Equals(currentBounds.Size, newBounds.Size))
       {
-        // Check if start screen is equal to device screen and check if current screen bond differ from current detected screen bond then recreate swap chain.
-        Log.Debug("Main: Screen MP OnDisplayChange current screen detected                                {0}", GetCleanDisplayName(screen));
-        Log.Debug("Main: Screen MP OnDisplayChange current screen                                         {0}", GetCleanDisplayName(GUIGraphicsContext.currentScreen));
-        Log.Debug("Main: Screen MP OnDisplayChange start screen                                           {0}", GetCleanDisplayName(GUIGraphicsContext.currentStartScreen));
-        Log.Debug("Main: Screen MP OnDisplayChange change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
-        GUIGraphicsContext.currentScreen = screen;
-        Log.Debug("Main: Screen MP OnDisplayChange set current detected screen bounds : {0} to previous bounds values : {1}", GUIGraphicsContext.currentScreen.Bounds, Bounds);
-        Bounds = screen.Bounds;
-        Log.Debug("Main: Screen MP OnDisplayChange recreate swap chain");
-        NeedRecreateSwapChain = true;
-        RecreateSwapChain();
-        _changeScreenDisplayChange = true;
-      }
-      // Restore original Start Screen in case of change from RDP Session
-      if (!Equals(screen, GUIGraphicsContext.currentStartScreen))
-      {
-        foreach (GraphicsAdapterInfo adapterInfo in _enumerationSettings.AdapterInfoList)
+        Log.Info("Main: Screen MP OnDisplayChange is displayed on changed from {0} to {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
+        if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
         {
-          var hMon = Manager.GetAdapterMonitor(adapterInfo.AdapterOrdinal);
-          var info = new MonitorInformation();
-          info.Size = (uint)Marshal.SizeOf(info);
-          GetMonitorInfo(hMon, ref info);
-          var rect = Screen.FromRectangle(info.MonitorRectangle).Bounds;
-          if (Equals(Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName, GetCleanDisplayName(GUIGraphicsContext.currentStartScreen)) && rect.Equals(screen.Bounds))
-          {
-            GUIGraphicsContext.currentScreen = GUIGraphicsContext.currentStartScreen;
-            break;
-          }
+          Log.Info("Main: OnDisplayChange Bounds of display changed from {0}x{1} to {2}x{3}", currentBounds.Width, currentBounds.Height, newBounds.Width, newBounds.Height);
+        }
+        if (!Equals(currentBounds.Size, newBounds.Size))
+        {
+          // Check if start screen is equal to device screen and check if current screen bond differ from current detected screen bond then recreate swap chain.
+          Log.Debug("Main: Screen MP OnDisplayChange current screen detected                                {0}", GetCleanDisplayName(screen));
+          Log.Debug("Main: Screen MP OnDisplayChange current screen                                         {0}", GetCleanDisplayName(GUIGraphicsContext.currentScreen));
+          Log.Debug("Main: Screen MP OnDisplayChange start screen                                           {0}", GetCleanDisplayName(GUIGraphicsContext.currentStartScreen));
+          Log.Debug("Main: Screen MP OnDisplayChange change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
           GUIGraphicsContext.currentScreen = screen;
-          Log.Debug("Main: Screen MP OnDisplayChange restore screen");
+          Log.Debug("Main: Screen MP OnDisplayChange set current detected screen bounds : {0} to previous bounds values : {1}", GUIGraphicsContext.currentScreen.Bounds, Bounds);
+          Bounds = screen.Bounds;
+          Log.Debug("Main: Screen MP OnDisplayChange recreate swap chain");
+          NeedRecreateSwapChain = true;
+          RecreateSwapChain();
+          _changeScreenDisplayChange = true;
+        }
+        // Restore original Start Screen in case of change from RDP Session
+        if (!Equals(screen, GUIGraphicsContext.currentStartScreen))
+        {
+          foreach (GraphicsAdapterInfo adapterInfo in _enumerationSettings.AdapterInfoList)
+          {
+            var hMon = Manager.GetAdapterMonitor(adapterInfo.AdapterOrdinal);
+            var info = new MonitorInformation();
+            info.Size = (uint)Marshal.SizeOf(info);
+            GetMonitorInfo(hMon, ref info);
+            var rect = Screen.FromRectangle(info.MonitorRectangle).Bounds;
+            if (Equals(Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName, GetCleanDisplayName(GUIGraphicsContext.currentStartScreen)) && rect.Equals(screen.Bounds))
+            {
+              GUIGraphicsContext.currentScreen = GUIGraphicsContext.currentStartScreen;
+              break;
+              }
+              GUIGraphicsContext.currentScreen = screen;
+              Log.Debug("Main: Screen MP OnDisplayChange restore screen");
+            }
         }
       }
-    }
 
-    if (!Windowed)
-    {
-      SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
-    }
+      if (!Windowed)
+      {
+        SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+      }
 
-    // needed to avoid cursor show when MP windows change (for ex when refesh rate is working)
-    _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
+      // needed to avoid cursor show when MP windows change (for ex when refesh rate is working)
+      _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
 
-    msg.Result = (IntPtr)1;
+      msg.Result = (IntPtr)1;
 
-    // enable event handlers
-    if (GUIGraphicsContext.DX9Device != null)
-    {
-      GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+      // enable event handlers
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+      }
     }
   }
 
@@ -2584,6 +2595,14 @@ public class MediaPortalApp : D3D, IRender
 
     _suspended = false;
     _lastOnresume = DateTime.Now;
+
+    WindowState = FormWindowState.Normal;
+
+    // Restore GUIGraphicsContext.State when we recover from minimize
+    if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+    {
+      GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+    }
 
     // Force Focus after resume done (really weird sequence)
     ForceMPFocus();
