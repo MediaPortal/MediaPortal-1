@@ -1728,7 +1728,7 @@ public class MediaPortalApp : D3D, IRender
             _resumedAutomatic = true;
             Log.Info("Main: Resuming automatic operation - order of events is wrong");
             OnResumeAutomatic();
-            msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMEAUTOMATIC)
+            msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMEAUTOMATIC);
             PluginManager.WndProc(ref msg);
           }
 
