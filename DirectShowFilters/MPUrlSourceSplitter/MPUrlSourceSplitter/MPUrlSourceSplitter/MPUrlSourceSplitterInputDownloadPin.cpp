@@ -45,6 +45,7 @@ CMPUrlSourceSplitterInputDownloadPin::CMPUrlSourceSplitterInputDownloadPin(CLogg
   this->name = NULL;
   this->buffer = NULL;
   this->bufferPosition = 0;
+  this->outputPin = NULL;
   
   if (phr != NULL)
   {
@@ -75,6 +76,7 @@ CMPUrlSourceSplitterInputDownloadPin::~CMPUrlSourceSplitterInputDownloadPin(void
 {
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_PIN_START_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME, PIN_NAME));
 
+  this->EndOfStream();
   FREE_MEM(this->downloadFileName);
   FREE_MEM(this->buffer);
 
@@ -160,14 +162,17 @@ HRESULT STDMETHODCALLTYPE CMPUrlSourceSplitterInputDownloadPin::EndOfStream(void
 {
   HRESULT result = S_OK;
 
-  if (this->bufferPosition > 0)
+  if ((this->downloadFileName != NULL) && (this->outputPin != NULL))
   {
-    result = this->DumpDataToFile(this->buffer, this->bufferPosition);
+    if (this->bufferPosition > 0)
+    {
+      result = this->DumpDataToFile(this->buffer, this->bufferPosition);
 
-    this->bufferPosition = 0;
+      this->bufferPosition = 0;
+    }
+
+    this->outputPin->FinishDownload(result);
   }
-
-  this->outputPin->FinishDownload(result);
 
   return S_OK;
 }
