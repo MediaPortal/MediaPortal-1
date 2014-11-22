@@ -3096,8 +3096,8 @@ HRESULT CDemuxer::InitFormatContext(void)
 
       this->formatContext->flags |= AVFMT_FLAG_IGNPARSERSYNC;
 
-      // set minimum time for stream analysis in FFmpeg (2000 ms)
-      this->formatContext->max_analyze_duration = 2000000;
+      // set minimum time for stream analysis in FFmpeg (5000 ms)
+      this->formatContext->max_analyze_duration = 5000000;
 
       unsigned int startTime = GetTickCount();
 

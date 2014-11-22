@@ -98,6 +98,12 @@ if (st->first_dts == AV_NOPTS_VALUE &&
 must be disabled (comment it)
 
 --------------------------------------------
+Comment: in method estimate_timings_from_pts() replace 'filesize = ic->pb ? avio_size(ic->pb) : 0;'
+Code:
+
+filesize = ic->pb ? old_offset : 0;
+
+--------------------------------------------
 Comment: in method estimate_timings() block calling estimate_timings_from_pts2()
 Code:
 
