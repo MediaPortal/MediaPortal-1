@@ -68,6 +68,8 @@
 #include "compress_zlib.h"
 #include "conversions.h"
 
+#include <Shlwapi.h>
+
 #pragma warning(pop)
 
 // protocol implementation name
@@ -649,7 +651,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
       {
         if (this->configuration->GetValueBool(PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA, true, PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA_DEFAULT))
         {
-          wchar_t *storeFilePath = this->GetStoreFile(L"dump");
+          wchar_t *storeFilePath = this->GetDumpFile();
           CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->mainCurlInstance->SetDumpFile(storeFilePath));
           FREE_MEM(storeFilePath);
         }
@@ -1174,7 +1176,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
 
         if (this->cacheFile->GetCacheFile() == NULL)
         {
-          wchar_t *storeFilePath = this->GetStoreFile(L"temp");
+          wchar_t *storeFilePath = this->GetStoreFile();
           CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->cacheFile->SetCacheFile(storeFilePath));
           FREE_MEM(storeFilePath);
         }
@@ -1525,7 +1527,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::Initialize(CPluginConfiguration *con
 
 /* protected methods */
 
-wchar_t *CMPUrlSourceSplitter_Protocol_Mshs::GetStoreFile(const wchar_t *extension)
+wchar_t *CMPUrlSourceSplitter_Protocol_Mshs::GetStoreFile(void)
 {
   wchar_t *result = NULL;
   const wchar_t *folder = this->configuration->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
@@ -1535,10 +1537,32 @@ wchar_t *CMPUrlSourceSplitter_Protocol_Mshs::GetStoreFile(const wchar_t *extensi
     wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
     if (guid != NULL)
     {
-      result = FormatString(L"%smpurlsourcesplitter_protocol_mshs_%s.%s", folder, guid, extension);
+      result = FormatString(L"%smpurlsourcesplitter_protocol_mshs_%s.temp", folder, guid);
     }
     FREE_MEM(guid);
   }
+
+  return result;
+}
+
+wchar_t *CMPUrlSourceSplitter_Protocol_Mshs::GetDumpFile(void)
+{
+  wchar_t *result = NULL;
+  wchar_t *folder = Duplicate(this->configuration->GetValue(PARAMETER_NAME_LOG_FILE_NAME, true, NULL));
+
+  if (folder != NULL)
+  {
+    PathRemoveFileSpec(folder);
+
+    wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
+    if (guid != NULL)
+    {
+      result = FormatString(L"%s\\mpurlsourcesplitter_protocol_mshs_%s.dump", folder, guid);
+    }
+    FREE_MEM(guid);
+  }
+
+  FREE_MEM(folder);
 
   return result;
 }

@@ -211,11 +211,13 @@ protected:
 
   /* methods */
 
-  // gets store file path based on configuration
-  // creates folder structure if not created
-  // @param extension : the extension of store file
-  // @return : store file or NULL if error
-  wchar_t *GetStoreFile(const wchar_t *extension);
+  // gets store file name
+  // @return : store file name or NULL if error
+  wchar_t *GetStoreFile(void);
+
+  // gets dump file name
+  // @return : dump file name or NULL if error
+  wchar_t *GetDumpFile(void);
 
   // gets byte position in buffer
   // it is always reset on seek

@@ -49,6 +49,8 @@
 #include "FlvPacket.h"
 #include "F4MManifest.h"
 
+#include <Shlwapi.h>
+
 #pragma warning(pop)
 
 // protocol implementation name
@@ -593,7 +595,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
       {
         if (this->configuration->GetValueBool(PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA, true, PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA_DEFAULT))
         {
-          wchar_t *storeFilePath = this->GetStoreFile(L"dump");
+          wchar_t *storeFilePath = this->GetDumpFile();
           CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->mainCurlInstance->SetDumpFile(storeFilePath));
           FREE_MEM(storeFilePath);
         }
@@ -745,7 +747,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
         {
           if (this->configuration->GetValueBool(PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA, true, PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA_DEFAULT))
           {
-            wchar_t *storeFilePath = this->GetStoreFile(L"dump");
+            wchar_t *storeFilePath = this->GetDumpFile();
             CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->mainCurlInstance->SetDumpFile(storeFilePath));
             FREE_MEM(storeFilePath);
           }
@@ -1300,7 +1302,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
 
         if (this->cacheFile->GetCacheFile() == NULL)
         {
-          wchar_t *storeFilePath = this->GetStoreFile(L"temp");
+          wchar_t *storeFilePath = this->GetStoreFile();
           CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->cacheFile->SetCacheFile(storeFilePath));
           FREE_MEM(storeFilePath);
         }
@@ -1621,7 +1623,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::Initialize(CPluginConfiguration *con
 
 /* protected methods */
 
-wchar_t *CMPUrlSourceSplitter_Protocol_Afhs::GetStoreFile(const wchar_t *extension)
+wchar_t *CMPUrlSourceSplitter_Protocol_Afhs::GetStoreFile(void)
 {
   wchar_t *result = NULL;
   const wchar_t *folder = this->configuration->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
@@ -1631,10 +1633,32 @@ wchar_t *CMPUrlSourceSplitter_Protocol_Afhs::GetStoreFile(const wchar_t *extensi
     wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
     if (guid != NULL)
     {
-      result = FormatString(L"%smpurlsourcesplitter_protocol_afhs_%s.%s", folder, guid, extension);
+      result = FormatString(L"%smpurlsourcesplitter_protocol_afhs_%s.temp", folder, guid);
     }
     FREE_MEM(guid);
   }
+
+  return result;
+}
+
+wchar_t *CMPUrlSourceSplitter_Protocol_Afhs::GetDumpFile(void)
+{
+  wchar_t *result = NULL;
+  wchar_t *folder = Duplicate(this->configuration->GetValue(PARAMETER_NAME_LOG_FILE_NAME, true, NULL));
+
+  if (folder != NULL)
+  {
+    PathRemoveFileSpec(folder);
+
+    wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
+    if (guid != NULL)
+    {
+      result = FormatString(L"%s\\mpurlsourcesplitter_protocol_afhs_%s.dump", folder, guid);
+    }
+    FREE_MEM(guid);
+  }
+
+  FREE_MEM(folder);
 
   return result;
 }

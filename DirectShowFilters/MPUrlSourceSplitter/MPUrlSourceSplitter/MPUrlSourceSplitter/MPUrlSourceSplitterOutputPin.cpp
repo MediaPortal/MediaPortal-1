@@ -520,7 +520,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
 
       if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_DUMP_DATA))
       {
-        wchar_t *storeFilePath = this->GetStoreFile(L"dump");
+        wchar_t *storeFilePath = this->GetDumpFile();
         CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->dumpFile->SetDumpFile(storeFilePath));
         FREE_MEM(storeFilePath);
       }
@@ -716,7 +716,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
 
         if (this->cacheFile->GetCacheFile() == NULL)
         {
-          wchar_t *storeFilePath = this->GetStoreFile(L"temp");
+          wchar_t *storeFilePath = this->GetStoreFile();
           CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->cacheFile->SetCacheFile(storeFilePath));
           FREE_MEM(storeFilePath);
         }
@@ -748,7 +748,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
   return S_OK;
 }
 
-wchar_t *CMPUrlSourceSplitterOutputPin::GetStoreFile(const wchar_t *extension)
+wchar_t *CMPUrlSourceSplitterOutputPin::GetStoreFile(void)
 {
   wchar_t *result = NULL;
   const wchar_t *folder = this->parameters->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
@@ -758,10 +758,32 @@ wchar_t *CMPUrlSourceSplitterOutputPin::GetStoreFile(const wchar_t *extension)
     wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
     if (guid != NULL)
     {
-      result = FormatString(L"%smpurlsourcesplitter_output_pin_%s_%02u_%02u.%s", folder, guid, this->GetDemuxerId(), this->GetStreamPid(), extension);
+      result = FormatString(L"%smpurlsourcesplitter_output_pin_%s_%02u_%02u.temp", folder, guid, this->GetDemuxerId(), this->GetStreamPid());
     }
     FREE_MEM(guid);
   }
+
+  return result;
+}
+
+wchar_t *CMPUrlSourceSplitterOutputPin::GetDumpFile(void)
+{
+  wchar_t *result = NULL;
+  wchar_t *folder = Duplicate(this->parameters->GetValue(PARAMETER_NAME_LOG_FILE_NAME, true, NULL));
+
+  if (folder != NULL)
+  {
+    PathRemoveFileSpec(folder);
+
+    wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
+    if (guid != NULL)
+    {
+      result = FormatString(L"%s\\mpurlsourcesplitter_output_pin_%s_%02u_%02u.dump", folder, guid, this->GetDemuxerId(), this->GetStreamPid());
+    }
+    FREE_MEM(guid);
+  }
+
+  FREE_MEM(folder);
 
   return result;
 }

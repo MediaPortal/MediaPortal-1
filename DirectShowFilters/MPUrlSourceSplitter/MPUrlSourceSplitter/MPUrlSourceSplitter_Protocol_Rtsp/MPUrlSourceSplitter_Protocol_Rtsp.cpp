@@ -42,6 +42,7 @@
 
 #include <WinInet.h>
 #include <stdio.h>
+#include <Shlwapi.h>
 
 #pragma warning(pop)
 
@@ -485,7 +486,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
 
         if (this->configuration->GetValueBool(PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA, true, PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA_DEFAULT))
         {
-          wchar_t *storeFilePath = this->GetStoreFile(0, L"dump");
+          wchar_t *storeFilePath = this->GetDumpFile(0);
           CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->mainCurlInstance->SetDumpFile(storeFilePath));
           FREE_MEM(storeFilePath);
         }
@@ -1305,7 +1306,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
 
           if (track->GetCacheFile()->GetCacheFile() == NULL)
           {
-            wchar_t *storeFilePath = this->GetStoreFile(i, L"temp");
+            wchar_t *storeFilePath = this->GetStoreFile(i);
             CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, track->GetCacheFile()->SetCacheFile(storeFilePath));
             FREE_MEM(storeFilePath);
           }
@@ -1673,7 +1674,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::Initialize(CPluginConfiguration *con
 
 /* protected methods */
 
-wchar_t *CMPUrlSourceSplitter_Protocol_Rtsp::GetStoreFile(unsigned int trackId, const wchar_t *extension)
+wchar_t *CMPUrlSourceSplitter_Protocol_Rtsp::GetStoreFile(unsigned int trackId)
 {
   wchar_t *result = NULL;
   const wchar_t *folder = this->configuration->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
@@ -1683,10 +1684,32 @@ wchar_t *CMPUrlSourceSplitter_Protocol_Rtsp::GetStoreFile(unsigned int trackId, 
     wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
     if (guid != NULL)
     {
-      result = FormatString(L"%smpurlsourcesplitter_protocol_rtsp_%s_track_%02u.%s", folder, guid, trackId, extension);
+      result = FormatString(L"%smpurlsourcesplitter_protocol_rtsp_%s_track_%02u.temp", folder, guid, trackId);
     }
     FREE_MEM(guid);
   }
+
+  return result;
+}
+
+wchar_t *CMPUrlSourceSplitter_Protocol_Rtsp::GetDumpFile(unsigned int trackId)
+{
+  wchar_t *result = NULL;
+  wchar_t *folder = Duplicate(this->configuration->GetValue(PARAMETER_NAME_LOG_FILE_NAME, true, NULL));
+
+  if (folder != NULL)
+  {
+    PathRemoveFileSpec(folder);
+
+    wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
+    if (guid != NULL)
+    {
+      result = FormatString(L"%s\\mpurlsourcesplitter_protocol_rtsp_%s_track_%02u.dump", folder, guid, trackId);
+    }
+    FREE_MEM(guid);
+  }
+
+  FREE_MEM(folder);
 
   return result;
 }

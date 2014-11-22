@@ -171,12 +171,15 @@ protected:
 
   /* methods */
 
-  // gets store file path based on configuration
-  // creates folder structure if not created
+  // gets store file name
   // @param trackId : the ID of track to get store file path
-  // @param extension : the extension of store file
-  // @return : store file or NULL if error
-  wchar_t *GetStoreFile(unsigned int trackId, const wchar_t *extension);
+  // @return : store file name or NULL if error
+  wchar_t *GetStoreFile(unsigned int trackId);
+
+  // gets dump file name
+  // @param trackId : the ID of track to get dump file path
+  // @return : dump file name or NULL if error
+  wchar_t *GetDumpFile(unsigned int trackId);
 };
 
 #endif
