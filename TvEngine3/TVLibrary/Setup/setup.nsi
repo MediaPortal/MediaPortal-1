@@ -391,6 +391,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   SetOutPath "$INSTDIR\Plugins"
   File "${git_TVServer}\Plugins\ComSkipLauncher\bin\${BUILD_TYPE}\ComSkipLauncher.dll"
   File "${git_TVServer}\Plugins\ConflictsManager\bin\${BUILD_TYPE}\ConflictsManager.dll"
+  File "${git_TVServer}\Plugins\MediaPortalIptvFilterAndUrlSourceSplitter\bin\${BUILD_TYPE}\MediaPortalIptvFilterAndUrlSourceSplitter.dll"
   File "${git_TVServer}\Plugins\PowerScheduler\bin\${BUILD_TYPE}\PowerScheduler.dll"
   File "${git_TVServer}\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\ServerBlaster.dll"
   File "${git_TVServer}\Plugins\TvMovie\bin\${BUILD_TYPE}\TvMovie.dll"
@@ -578,6 +579,7 @@ ${MementoSectionEnd}
   ; Remove Plugins
   Delete "$INSTDIR\Plugins\ComSkipLauncher.dll"
   Delete "$INSTDIR\Plugins\ConflictsManager.dll"
+  Delete "$INSTDIR\Plugins\MediaPortalIptvFilterAndUrlSourceSplitter.dll"
   Delete "$INSTDIR\Plugins\PowerScheduler.dll"
   Delete "$INSTDIR\Plugins\ServerBlaster.dll"
   Delete "$INSTDIR\Plugins\TvMovie.dll"
