@@ -242,7 +242,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
   {
     CLockMutex lock(this->lockMutex, INFINITE);
 
-    if (SUCCEEDED(result) && (this->mainCurlInstance != NULL) && ((this->connectionState == Opening) || (this->connectionState == Opened)))
+    if (SUCCEEDED(result) && this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_REPORTED_STATUS_CODE) && (this->mainCurlInstance != NULL) && ((this->connectionState == Opening) || (this->connectionState == Opened)))
     {
       {
         CLockMutex lockData(this->lockCurlMutex, INFINITE);
@@ -469,88 +469,92 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
       }
     }
 
-    if (SUCCEEDED(result) && (!this->IsWholeStreamDownloaded()) && (this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+    if (SUCCEEDED(result) && this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_REPORTED_STATUS_CODE) && (!this->IsWholeStreamDownloaded()) && (this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
     {
       // all data received, we're not receiving data
       // check end of stream or error on HTTP connection
 
       if (SUCCEEDED(this->mainCurlInstance->GetHttpDownloadResponse()->GetResultError()))
       {
-        // mark current downloading stream fragment as downloaded or remove it, if it has not any data
-        CHttpStreamFragment *currentDownloadingFragment = this->streamFragments->GetItem(this->streamFragmentDownloading);
-
-        if (currentDownloadingFragment != NULL)
+        // check if all data removed from CURL instance
+        if (this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace() == 0)
         {
-          if (currentDownloadingFragment->GetLength() == 0)
+          // mark current downloading stream fragment as downloaded or remove it, if it has not any data
+          CHttpStreamFragment *currentDownloadingFragment = this->streamFragments->GetItem(this->streamFragmentDownloading);
+
+          if (currentDownloadingFragment != NULL)
           {
-            this->streamFragments->Remove(this->streamFragmentDownloading, 1);
+            if (currentDownloadingFragment->GetLength() == 0)
+            {
+              this->streamFragments->Remove(this->streamFragmentDownloading, 1);
+            }
+            else
+            {
+              currentDownloadingFragment->SetLoadedToMemoryTime(this->lastReceiveDataTime, UINT_MAX);
+              currentDownloadingFragment->SetDownloaded(true, UINT_MAX);
+              currentDownloadingFragment->SetProcessed(true, UINT_MAX);
+
+              this->streamFragments->UpdateIndexes(this->streamFragmentDownloading, 1);
+              this->streamFragments->RecalculateProcessedStreamFragmentStartPosition(this->streamFragmentDownloading);
+            }
+          }
+
+          if (!this->IsLiveStreamDetected())
+          {
+            // check if all data removed from CURL instance
+            if (this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace() == 0)
+            {
+              // check if we are not missing any data
+
+              if (this->IsSetStreamLength() && (this->currentStreamPosition >= this->streamLength))
+              {
+                // stream length is set and our position is at least stream length, we reached end of stream
+                this->flags |= PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
+              }
+
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: searching for gap in stream fragments, stream fragment count: %u, stream position: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamFragments->Count(), this->currentStreamPosition);
+              this->streamFragmentToDownload = this->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(this->streamFragmentDownloading);
+
+              if (this->streamFragmentToDownload == UINT_MAX)
+              {
+                this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"searching for gap in stream fragments from beginning");
+                this->streamFragmentToDownload = this->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(0);
+              }
+
+              if (this->streamFragmentToDownload == UINT_MAX)
+              {
+                // we didn't find gap after beggining of stream fragments, we have whole stream
+
+                // whole stream downloaded
+                this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
+                this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"no gap found, all data received");
+
+                this->currentStreamPosition = this->streamLength;
+
+                this->streamFragmentDownloading = UINT_MAX;
+
+                this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_CLOSE_CURL_INSTANCE;
+                this->flags &= ~MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_STOP_RECEIVING_DATA;
+              }
+              else 
+              {
+                this->streamFragmentDownloading = UINT_MAX;
+                CHttpStreamFragment *fragmentToDownload = this->streamFragments->GetItem(this->streamFragmentToDownload);
+
+                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: found gap in stream fragments, start: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, fragmentToDownload->GetFragmentStartPosition());
+
+                // stops receiving data
+                // this clear CURL instance and buffer, it leads to GetConnectionState() to ProtocolConnectionState::None result and connection will be reopened by ProtocolHoster
+                this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_STOP_RECEIVING_DATA;
+              }
+            }
           }
           else
           {
-            currentDownloadingFragment->SetLoadedToMemoryTime(this->lastReceiveDataTime, UINT_MAX);
-            currentDownloadingFragment->SetDownloaded(true, UINT_MAX);
-            currentDownloadingFragment->SetProcessed(true, UINT_MAX);
-
-            this->streamFragments->UpdateIndexes(this->streamFragmentDownloading, 1);
-            this->streamFragments->RecalculateProcessedStreamFragmentStartPosition(this->streamFragmentDownloading);
+            // whole stream downloaded
+            this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
+            this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"live stream, all data received");
           }
-        }
-
-        if (!this->IsLiveStreamDetected())
-        {
-          // check if all data removed from CURL instance
-          if (this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace() == 0)
-          {
-            // check if we are not missing any data
-
-            if (this->IsSetStreamLength() && (this->currentStreamPosition >= this->streamLength))
-            {
-              // stream length is set and our position is at least stream length, we reached end of stream
-              this->flags |= PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
-            }
-
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: searching for gap in stream fragments, stream fragment count: %u, stream position: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamFragments->Count(), this->currentStreamPosition);
-            this->streamFragmentToDownload = this->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(this->streamFragmentDownloading);
-
-            if (this->streamFragmentToDownload == UINT_MAX)
-            {
-              this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"searching for gap in stream fragments from beginning");
-              this->streamFragmentToDownload = this->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(0);
-            }
-
-            if (this->streamFragmentToDownload == UINT_MAX)
-            {
-              // we didn't find gap after beggining of stream fragments, we have whole stream
-
-              // whole stream downloaded
-              this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
-              this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"no gap found, all data received");
-
-              this->currentStreamPosition = this->streamLength;
-
-              this->streamFragmentDownloading = UINT_MAX;
-
-              this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_CLOSE_CURL_INSTANCE;
-              this->flags &= ~MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_STOP_RECEIVING_DATA;
-            }
-            else 
-            {
-              this->streamFragmentDownloading = UINT_MAX;
-              CHttpStreamFragment *fragmentToDownload = this->streamFragments->GetItem(this->streamFragmentToDownload);
-
-              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: found gap in stream fragments, start: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, fragmentToDownload->GetFragmentStartPosition());
-
-              // stops receiving data
-              // this clear CURL instance and buffer, it leads to GetConnectionState() to ProtocolConnectionState::None result and connection will be reopened by ProtocolHoster
-              this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_STOP_RECEIVING_DATA;
-            }
-          }
-        }
-        else
-        {
-          // whole stream downloaded
-          this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
-          this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"live stream, all data received");
         }
       }
       else
