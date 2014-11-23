@@ -638,5 +638,141 @@ Supported protocols:
       </ProjectSettings>
       <IsSkin>false</IsSkin>
     </PackageClass>
+    <PackageClass>
+      <Version>2.0</Version>
+      <Groups>
+        <Items>
+          <GroupItem Name="TvServer">
+            <DisplayName>TvServer</DisplayName>
+            <DefaulChecked>false</DefaulChecked>
+            <Description>TvServer</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="MediaPortal">
+            <DisplayName>MediaPortal</DisplayName>
+            <DefaulChecked>false</DefaulChecked>
+            <Description>MediaPortal</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Never">
+            <DisplayName>Never</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Never</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="MPUrlSourceSplitterConflict">
+            <DisplayName>MPUrlSourceSplitterConflict</DisplayName>
+            <DefaulChecked>false</DefaulChecked>
+            <Description>MPUrlSourceSplitterConflict</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+        </Items>
+      </Groups>
+      <Sections>
+        <Items />
+      </Sections>
+      <Dependencies>
+        <Items>
+          <DependencyItem>
+            <Type>MediaPortal</Type>
+            <Id />
+            <MinVersion>
+              <Major>1</Major>
+              <Minor>1</Minor>
+              <Build>6</Build>
+              <Revision>27644</Revision>
+            </MinVersion>
+            <MaxVersion>
+              <Major>1</Major>
+              <Minor>1</Minor>
+              <Build>6</Build>
+              <Revision>27644</Revision>
+            </MaxVersion>
+            <WarnOnly>false</WarnOnly>
+            <Message>requires MediaPortal version 1.1.6.27644 to 1.1.6.27644.</Message>
+            <Name>MediaPortal</Name>
+          </DependencyItem>
+        </Items>
+      </Dependencies>
+      <PluginDependencies>
+        <Items />
+      </PluginDependencies>
+      <GeneralInfo>
+        <Name>MediaPortal IPTV filter and url source splitter</Name>
+        <Id>46346a1d-b99f-4e4a-a018-6abd93f42497</Id>
+        <Author>georgius</Author>
+        <HomePage />
+        <ForumPage>http://forum.team-mediaportal.com/threads/merging-mediaportal-url-source-splitter-iptv-filter.121165/</ForumPage>
+        <UpdateUrl>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=327&amp;cf_id=52</UpdateUrl>
+        <Version>
+          <Major>2</Major>
+          <Minor>1</Minor>
+          <Build>3</Build>
+          <Revision>5440</Revision>
+        </Version>
+        <ExtensionDescription>The MediaPortal IPTV filter and url source splitter is a directshow source filter that enables direct playback for many protocols and filetypes used in online video sources in the internet.
+
+Supported protocols:
+- HTTP, HTTPS
+- UDP, RTP
+- RTSP
+- Adobe Real-Time Messaging Protocol (RTMP)
+- Adobe HTTP Dynamic Streaming (HDS, F4M manifest)
+- Microsoft Smooth Streaming
+- Apple HTTP live streaming (M3U8 playlists)</ExtensionDescription>
+        <VersionDescription>- fixed crash in HTTP protocol
+- fixed not complete bug in downloading in OnlineVideos
+- splitted cache and dump file locations
+- extended time for analysis (especially MPEG2 TS streams)
+- changed FFmpeg libraries to faster load of MPEG2 TS streams
+- added TV server plugin for creating scan playlist with additional filter parameters</VersionDescription>
+        <DevelopmentStatus>Stable</DevelopmentStatus>
+        <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=327&amp;cf_id=24</OnlineLocation>
+        <ReleaseDate>2014-11-05T20:21:47</ReleaseDate>
+        <Tags>codec</Tags>
+        <Location>.\MediaPortalUrlSourceSplitter[Version].mpe1</Location>
+        <Params>
+          <Items>
+            <SectionParam Name="Online Icon">
+              <Value />
+              <ValueType>String</ValueType>
+              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
+            </SectionParam>
+            <SectionParam Name="Configuration file">
+              <Value />
+              <ValueType>Template</ValueType>
+              <Description>The file used to configure the extension.
+ If it has .exe extension the will be executed.
+ If it has .dll extension it's started like MP plugin configuration.</Description>
+            </SectionParam>
+            <SectionParam Name="Online Screenshots">
+              <Value />
+              <ValueType>String</ValueType>
+              <Description>Online stored screenshot urls separated by ; </Description>
+            </SectionParam>
+            <SectionParam Name="Force to uninstall on update">
+              <Value>YES</Value>
+              <ValueType>Bool</ValueType>
+              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
+            </SectionParam>
+          </Items>
+        </Params>
+      </GeneralInfo>
+      <UniqueFileList>
+        <Items />
+      </UniqueFileList>
+      <ProjectSettings>
+        <FolderGroups />
+      </ProjectSettings>
+      <IsSkin>false</IsSkin>
+    </PackageClass>
   </Items>
 </ExtensionCollection>
