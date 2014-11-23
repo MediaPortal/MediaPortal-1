@@ -579,6 +579,12 @@ namespace MediaPortal
       {
         Log.Debug("Main: RecreateSwapChain()");
 
+        // Suspending GUIGraphicsContext.State
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+        {
+          GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+        }
+
         // stop plaback if we are using a a D3D9 device and the device is not lost, meaning we are toggling between fullscreen and windowed mode
         if (!GUIGraphicsContext.IsDirectX9ExUsed() && g_Player.Playing && !RefreshRateChanger.RefreshRateChangePending)
         {
@@ -645,6 +651,12 @@ namespace MediaPortal
         // continue rendering
         AppActive = true;
         NeedRecreateSwapChain = false;
+
+        // Restore GUIGraphicsContext.State
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+        {
+          GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+        }
       }
 
       // enable event handlers
