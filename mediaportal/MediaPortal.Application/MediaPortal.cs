@@ -2077,117 +2077,120 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnGetMinMaxInfo(ref Message msg)
   {
-    // disable event handlers
-    if (GUIGraphicsContext.DX9Device != null)
+    if (!_suspended)
     {
-      GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
-    }
-
-    var mmi = (MINMAXINFO)Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
-    Log.Debug("Main: WM_GETMINMAXINFO Start (MaxSize: {0}x{1} - MaxPostion: {2},{3} - MinTrackSize: {4}x{5} - MaxTrackSize: {6}x{7})",
-              mmi.ptMaxSize.x, mmi.ptMaxSize.y, mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMinTrackSize.x, mmi.ptMinTrackSize.y, mmi.ptMaxTrackSize.x, mmi.ptMaxTrackSize.y);
-
-    // do not continue if form is not created yet
-    if (!Created)
-    {
-      Log.Debug("Main: Form not created yet - ignoring message");
-      return;
-    }
-
-    if (Windowed && Screen.PrimaryScreen.WorkingArea.Width == 0 && Screen.PrimaryScreen.WorkingArea.Height == 0)
-    {
-      Log.Debug("Main: Desktop is not visible - ignoring message");
-      return;
-    }
-
-    // check if display changes in case no DISPLAYCHANGE message is send by Windows
-    Screen screen = Screen.FromControl(this);
-    Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
-    Rectangle newBounds = screen.Bounds;
-    string adapterOrdinalScreenName = Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName;
-
-    if ((!Equals(screen, GUIGraphicsContext.currentScreen) || (!Equals(GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen)))) && !_firstLoadedScreen && !_restoreLoadedScreen)
-    {
-      Log.Info("Main: Screen MP OnGetMinMaxInfo is displayed on changed from {0} to {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
-      if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
+      // disable event handlers
+      if (GUIGraphicsContext.DX9Device != null)
       {
-        Log.Info("Main: OnGetMinMaxInfo Bounds of display changed from {0}x{1} @ {2},{3} to {4}x{5} @ {6},{7}",
-                 currentBounds.Width, currentBounds.Height, currentBounds.X, currentBounds.Y, newBounds.Width, newBounds.Height, newBounds.X, newBounds.Y);
+        GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
       }
-      _changeScreen = true;
-    }
 
-    if (!Equals(currentBounds.Size, newBounds.Size) && !_firstLoadedScreen && !_restoreLoadedScreen)
-    {
-      // Check if start screen is equal to device screen and check if current screen bond differ from current detected screen bond then recreate swap chain.
-      Log.Debug("Main: Screen MP OnGetMinMaxInfo Information.DeviceName Manager.Adapters                {0}", adapterOrdinalScreenName);
-      Log.Debug("Main: Screen MP OnGetMinMaxInfo current screen detected                                {0}", GetCleanDisplayName(screen));
-      Log.Debug("Main: Screen MP OnGetMinMaxInfo current screen                                         {0}", GetCleanDisplayName(GUIGraphicsContext.currentScreen));
-      Log.Debug("Main: Screen MP OnGetMinMaxInfo start screen                                           {0}", GetCleanDisplayName(GUIGraphicsContext.currentStartScreen));
-      Log.Debug("Main: Screen MP OnGetMinMaxInfo change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
-      GUIGraphicsContext.currentScreen = screen;
-      Log.Debug("Main: Screen MP OnGetMinMaxInfo set current screen bounds {0} to Bounds {1}", GUIGraphicsContext.currentScreen.Bounds, Bounds);
-      Bounds = screen.Bounds;
-      Log.Debug("Main: Screen MP OnGetMinMaxInfo recreate swap chain");
-      NeedRecreateSwapChain = true;
-      RecreateSwapChain();
-      _changeScreen = true;
+      var mmi = (MINMAXINFO)Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
+      Log.Debug("Main: WM_GETMINMAXINFO Start (MaxSize: {0}x{1} - MaxPostion: {2},{3} - MinTrackSize: {4}x{5} - MaxTrackSize: {6}x{7})",
+                mmi.ptMaxSize.x, mmi.ptMaxSize.y, mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMinTrackSize.x, mmi.ptMinTrackSize.y, mmi.ptMaxTrackSize.x, mmi.ptMaxTrackSize.y);
 
-      if (!Windowed)
+      // do not continue if form is not created yet
+      if (!Created)
       {
-        SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+        Log.Debug("Main: Form not created yet - ignoring message");
+        return;
       }
-    }
 
-    if (_changeScreen || _changeScreenDisplayChange)
-    {
-      Log.Debug("Main: Screen MP OnGetMinMaxInfo (changeScreen) change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
-      GUIGraphicsContext.currentScreen = screen;
-      _changeScreen = false;
-      _changeScreenDisplayChange = false;
-    }
+      if (Windowed && Screen.PrimaryScreen.WorkingArea.Width == 0 && Screen.PrimaryScreen.WorkingArea.Height == 0)
+      {
+        Log.Debug("Main: Desktop is not visible - ignoring message");
+        return;
+      }
 
-    // calculate form dimension limits based on primary screen.
-    if (Windowed)
-    {
-      double ratio         = Math.Min((double)Screen.PrimaryScreen.WorkingArea.Width / Width, (double)Screen.PrimaryScreen.WorkingArea.Height / Height);
-      mmi.ptMaxSize.x      = (int)(Width * ratio);
-      mmi.ptMaxSize.y      = (int)(Height * ratio);
-      mmi.ptMaxPosition.x  = Screen.PrimaryScreen.WorkingArea.Left;
-      mmi.ptMaxPosition.y  = Screen.PrimaryScreen.WorkingArea.Top;
-      mmi.ptMinTrackSize.x = GUIGraphicsContext.SkinSize.Width / 3;
-      mmi.ptMinTrackSize.y = GUIGraphicsContext.SkinSize.Height / 3;
-      mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.WorkingArea.Right - GUIGraphicsContext.currentScreen.WorkingArea.Left;
-      mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.WorkingArea.Bottom - GUIGraphicsContext.currentScreen.WorkingArea.Top;
-      Marshal.StructureToPtr(mmi, msg.LParam, true);
-      msg.Result = (IntPtr)0;
-    }
-    else
-    {
-      mmi.ptMaxSize.x = screen.Bounds.Width;
-      mmi.ptMaxSize.y = screen.Bounds.Height;
-      mmi.ptMaxPosition.x = screen.Bounds.X;
-      mmi.ptMaxPosition.y = screen.Bounds.Y;
-      mmi.ptMinTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
-      mmi.ptMinTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
-      mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
-      mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
-      Marshal.StructureToPtr(mmi, msg.LParam, true);
-      msg.Result = (IntPtr)0;
+      // check if display changes in case no DISPLAYCHANGE message is send by Windows
+      Screen screen = Screen.FromControl(this);
+      Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
+      Rectangle newBounds = screen.Bounds;
+      string adapterOrdinalScreenName = Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName;
 
-      // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
-      //Bounds = GUIGraphicsContext.currentScreen.Bounds;
-    }
-    Log.Debug("Main: WM_GETMINMAXINFO End (MaxSize: {0}x{1} - MaxPostion: {2},{3} - MinTrackSize: {4}x{5} - MaxTrackSize: {6}x{7})",
-          mmi.ptMaxSize.x, mmi.ptMaxSize.y, mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMinTrackSize.x, mmi.ptMinTrackSize.y, mmi.ptMaxTrackSize.x, mmi.ptMaxTrackSize.y);
-    // needed to avoid cursor show when MP windows change (for ex when refesh rate is working)
-    _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
-    _restoreLoadedScreen = false;
+      if ((!Equals(screen, GUIGraphicsContext.currentScreen) || (!Equals(GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen)))) && !_firstLoadedScreen && !_restoreLoadedScreen)
+      {
+        Log.Info("Main: Screen MP OnGetMinMaxInfo is displayed on changed from {0} to {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
+        if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
+        {
+          Log.Info("Main: OnGetMinMaxInfo Bounds of display changed from {0}x{1} @ {2},{3} to {4}x{5} @ {6},{7}",
+                   currentBounds.Width, currentBounds.Height, currentBounds.X, currentBounds.Y, newBounds.Width, newBounds.Height, newBounds.X, newBounds.Y);
+        }
+        _changeScreen = true;
+      }
 
-    // enable event handlers
-    if (GUIGraphicsContext.DX9Device != null)
-    {
-      GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+      if (!Equals(currentBounds.Size, newBounds.Size) && !_firstLoadedScreen && !_restoreLoadedScreen)
+      {
+        // Check if start screen is equal to device screen and check if current screen bond differ from current detected screen bond then recreate swap chain.
+        Log.Debug("Main: Screen MP OnGetMinMaxInfo Information.DeviceName Manager.Adapters                {0}", adapterOrdinalScreenName);
+        Log.Debug("Main: Screen MP OnGetMinMaxInfo current screen detected                                {0}", GetCleanDisplayName(screen));
+        Log.Debug("Main: Screen MP OnGetMinMaxInfo current screen                                         {0}", GetCleanDisplayName(GUIGraphicsContext.currentScreen));
+        Log.Debug("Main: Screen MP OnGetMinMaxInfo start screen                                           {0}", GetCleanDisplayName(GUIGraphicsContext.currentStartScreen));
+        Log.Debug("Main: Screen MP OnGetMinMaxInfo change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
+        GUIGraphicsContext.currentScreen = screen;
+        Log.Debug("Main: Screen MP OnGetMinMaxInfo set current screen bounds {0} to Bounds {1}", GUIGraphicsContext.currentScreen.Bounds, Bounds);
+        Bounds = screen.Bounds;
+        Log.Debug("Main: Screen MP OnGetMinMaxInfo recreate swap chain");
+        NeedRecreateSwapChain = true;
+        RecreateSwapChain();
+        _changeScreen = true;
+
+        if (!Windowed)
+        {
+          SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+        }
+      }
+
+      if (_changeScreen || _changeScreenDisplayChange)
+      {
+        Log.Debug("Main: Screen MP OnGetMinMaxInfo (changeScreen) change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
+        GUIGraphicsContext.currentScreen = screen;
+        _changeScreen = false;
+        _changeScreenDisplayChange = false;
+      }
+
+      // calculate form dimension limits based on primary screen.
+      if (Windowed)
+      {
+        double ratio         = Math.Min((double)Screen.PrimaryScreen.WorkingArea.Width / Width, (double)Screen.PrimaryScreen.WorkingArea.Height / Height);
+        mmi.ptMaxSize.x      = (int)(Width * ratio);
+        mmi.ptMaxSize.y      = (int)(Height * ratio);
+        mmi.ptMaxPosition.x  = Screen.PrimaryScreen.WorkingArea.Left;
+        mmi.ptMaxPosition.y  = Screen.PrimaryScreen.WorkingArea.Top;
+        mmi.ptMinTrackSize.x = GUIGraphicsContext.SkinSize.Width / 3;
+        mmi.ptMinTrackSize.y = GUIGraphicsContext.SkinSize.Height / 3;
+        mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.WorkingArea.Right - GUIGraphicsContext.currentScreen.WorkingArea.Left;
+        mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.WorkingArea.Bottom - GUIGraphicsContext.currentScreen.WorkingArea.Top;
+        Marshal.StructureToPtr(mmi, msg.LParam, true);
+        msg.Result = (IntPtr)0;
+      }
+      else
+      {
+        mmi.ptMaxSize.x = screen.Bounds.Width;
+        mmi.ptMaxSize.y = screen.Bounds.Height;
+        mmi.ptMaxPosition.x = screen.Bounds.X;
+        mmi.ptMaxPosition.y = screen.Bounds.Y;
+        mmi.ptMinTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
+        mmi.ptMinTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
+        mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
+        mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
+        Marshal.StructureToPtr(mmi, msg.LParam, true);
+        msg.Result = (IntPtr)0;
+
+        // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
+        //Bounds = GUIGraphicsContext.currentScreen.Bounds;
+      }
+      Log.Debug("Main: WM_GETMINMAXINFO End (MaxSize: {0}x{1} - MaxPostion: {2},{3} - MinTrackSize: {4}x{5} - MaxTrackSize: {6}x{7})",
+            mmi.ptMaxSize.x, mmi.ptMaxSize.y, mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMinTrackSize.x, mmi.ptMinTrackSize.y, mmi.ptMaxTrackSize.x, mmi.ptMaxTrackSize.y);
+      // needed to avoid cursor show when MP windows change (for ex when refesh rate is working)
+      _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
+      _restoreLoadedScreen = false;
+
+      // enable event handlers
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+      }
     }
   }
 
