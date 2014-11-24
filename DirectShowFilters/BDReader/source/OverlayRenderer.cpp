@@ -263,11 +263,13 @@ void COverlayRenderer::ScheduleOverlays()
     LARGE_INTEGER liDueTime;
     liDueTime.QuadPart = -rtDue;
 
+#ifdef LOG_DRAWING
     LogDebug("           liDueTime: %6.3f", liDueTime.QuadPart / 10000000.0);
+#endif
 
     if (SetWaitableTimer(m_hOverlayTimerIG, &liDueTime, 0, NULL, NULL, 0) == 0)
     {
-#ifdef LOG_DRAWING      
+#ifdef LOG_DRAWING
       DWORD error = GetLastError();
       LogDebug("COverlayRenderer::ScheduleOverlay - SetWaitableTimer failed: %d", error);
 #endif
@@ -279,7 +281,9 @@ void COverlayRenderer::ScheduleOverlays()
     LARGE_INTEGER liDueTime;
     liDueTime.QuadPart = -rtDue;
 
+#ifdef LOG_DRAWING
     LogDebug("           liDueTime: %6.3f", liDueTime.QuadPart / 10000000.0);
+#endif
 
     if (SetWaitableTimer(m_hOverlayTimerPG, &liDueTime, 0, NULL, NULL, 0) == 0)
     {
