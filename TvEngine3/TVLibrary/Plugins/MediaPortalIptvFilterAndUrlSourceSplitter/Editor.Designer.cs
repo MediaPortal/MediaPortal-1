@@ -19,7 +19,7 @@
                 {
                     this.testWorker.Dispose();
                     this.testWorker = null;
-                    this.testRow = null;
+                    this.testPlaylistRow = null;
                 }
 
                 components.Dispose();
@@ -103,7 +103,7 @@
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.tabPagePlaylistEditor = new System.Windows.Forms.TabPage();
             this.splitContainerPlaylist = new System.Windows.Forms.SplitContainer();
-            this.dataGridView = new System.Windows.Forms.DataGridView();
+            this.dataGridViewPlaylist = new System.Windows.Forms.DataGridView();
             this.ColumnChannelName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnUrl = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnProtocol = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -116,6 +116,17 @@
             this.tabPageGeneral = new System.Windows.Forms.TabPage();
             this.buttonUpdateDatabase = new System.Windows.Forms.Button();
             this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
+            this.tabPageDatabaseEditor = new System.Windows.Forms.TabPage();
+            this.splitContainerDatabase = new System.Windows.Forms.SplitContainer();
+            this.dataGridViewDatabase = new System.Windows.Forms.DataGridView();
+            this.propertyGridDatabase = new System.Windows.Forms.PropertyGrid();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewImageColumn2 = new System.Windows.Forms.DataGridViewImageColumn();
             this.tabPageHttp.SuspendLayout();
             this.groupBoxCommonParametersHttp.SuspendLayout();
             this.tabPageRtmp.SuspendLayout();
@@ -129,8 +140,13 @@
             this.splitContainerPlaylist.Panel1.SuspendLayout();
             this.splitContainerPlaylist.Panel2.SuspendLayout();
             this.splitContainerPlaylist.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPlaylist)).BeginInit();
             this.tabProtocols.SuspendLayout();
+            this.tabPageDatabaseEditor.SuspendLayout();
+            this.splitContainerDatabase.Panel1.SuspendLayout();
+            this.splitContainerDatabase.Panel2.SuspendLayout();
+            this.splitContainerDatabase.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDatabase)).BeginInit();
             this.SuspendLayout();
             // 
             // tabPageHttp
@@ -785,7 +801,7 @@
             // 
             // splitContainerPlaylist.Panel1
             // 
-            this.splitContainerPlaylist.Panel1.Controls.Add(this.dataGridView);
+            this.splitContainerPlaylist.Panel1.Controls.Add(this.dataGridViewPlaylist);
             // 
             // splitContainerPlaylist.Panel2
             // 
@@ -794,29 +810,29 @@
             this.splitContainerPlaylist.SplitterDistance = 181;
             this.splitContainerPlaylist.TabIndex = 2;
             // 
-            // dataGridView
+            // dataGridViewPlaylist
             // 
-            this.dataGridView.AllowUserToAddRows = false;
-            this.dataGridView.AllowUserToDeleteRows = false;
-            this.dataGridView.AllowUserToResizeRows = false;
-            this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewPlaylist.AllowUserToAddRows = false;
+            this.dataGridViewPlaylist.AllowUserToDeleteRows = false;
+            this.dataGridViewPlaylist.AllowUserToResizeRows = false;
+            this.dataGridViewPlaylist.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewPlaylist.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ColumnChannelName,
             this.ColumnUrl,
             this.ColumnProtocol,
             this.ColumnFilterUrl,
             this.ColumnImage});
-            this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dataGridView.Location = new System.Drawing.Point(0, 0);
-            this.dataGridView.Name = "dataGridView";
-            this.dataGridView.RowHeadersVisible = false;
-            this.dataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView.Size = new System.Drawing.Size(470, 181);
-            this.dataGridView.TabIndex = 0;
-            this.dataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellClick);
-            this.dataGridView.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_RowEnter);
-            this.dataGridView.SelectionChanged += new System.EventHandler(this.dataGridView_SelectionChanged);
+            this.dataGridViewPlaylist.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridViewPlaylist.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.dataGridViewPlaylist.Location = new System.Drawing.Point(0, 0);
+            this.dataGridViewPlaylist.Name = "dataGridViewPlaylist";
+            this.dataGridViewPlaylist.RowHeadersVisible = false;
+            this.dataGridViewPlaylist.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridViewPlaylist.Size = new System.Drawing.Size(470, 181);
+            this.dataGridViewPlaylist.TabIndex = 0;
+            this.dataGridViewPlaylist.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellClick);
+            this.dataGridViewPlaylist.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_RowEnter);
+            this.dataGridViewPlaylist.SelectionChanged += new System.EventHandler(this.dataGridView_SelectionChanged);
             // 
             // ColumnChannelName
             // 
@@ -901,6 +917,7 @@
             this.tabProtocols.Controls.Add(this.tabPageRtsp);
             this.tabProtocols.Controls.Add(this.tabPageUdpRtp);
             this.tabProtocols.Controls.Add(this.tabPagePlaylistEditor);
+            this.tabProtocols.Controls.Add(this.tabPageDatabaseEditor);
             this.tabProtocols.Location = new System.Drawing.Point(0, 0);
             this.tabProtocols.Name = "tabProtocols";
             this.tabProtocols.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -944,6 +961,127 @@
             this.dataGridViewImageColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dataGridViewImageColumn1.Width = 20;
             // 
+            // tabPageDatabaseEditor
+            // 
+            this.tabPageDatabaseEditor.Controls.Add(this.splitContainerDatabase);
+            this.tabPageDatabaseEditor.Location = new System.Drawing.Point(4, 22);
+            this.tabPageDatabaseEditor.Name = "tabPageDatabaseEditor";
+            this.tabPageDatabaseEditor.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageDatabaseEditor.Size = new System.Drawing.Size(476, 368);
+            this.tabPageDatabaseEditor.TabIndex = 6;
+            this.tabPageDatabaseEditor.Text = "Database editor";
+            this.tabPageDatabaseEditor.UseVisualStyleBackColor = true;
+            // 
+            // splitContainerDatabase
+            // 
+            this.splitContainerDatabase.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerDatabase.Location = new System.Drawing.Point(3, 3);
+            this.splitContainerDatabase.Name = "splitContainerDatabase";
+            this.splitContainerDatabase.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainerDatabase.Panel1
+            // 
+            this.splitContainerDatabase.Panel1.Controls.Add(this.dataGridViewDatabase);
+            // 
+            // splitContainerDatabase.Panel2
+            // 
+            this.splitContainerDatabase.Panel2.Controls.Add(this.propertyGridDatabase);
+            this.splitContainerDatabase.Size = new System.Drawing.Size(470, 362);
+            this.splitContainerDatabase.SplitterDistance = 181;
+            this.splitContainerDatabase.TabIndex = 3;
+            // 
+            // dataGridViewDatabase
+            // 
+            this.dataGridViewDatabase.AllowUserToAddRows = false;
+            this.dataGridViewDatabase.AllowUserToDeleteRows = false;
+            this.dataGridViewDatabase.AllowUserToResizeRows = false;
+            this.dataGridViewDatabase.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewDatabase.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewTextBoxColumn1,
+            this.dataGridViewTextBoxColumn2,
+            this.dataGridViewTextBoxColumn3,
+            this.dataGridViewTextBoxColumn4,
+            this.Column1,
+            this.Column2,
+            this.dataGridViewImageColumn2});
+            this.dataGridViewDatabase.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridViewDatabase.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.dataGridViewDatabase.Location = new System.Drawing.Point(0, 0);
+            this.dataGridViewDatabase.Name = "dataGridViewDatabase";
+            this.dataGridViewDatabase.RowHeadersVisible = false;
+            this.dataGridViewDatabase.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridViewDatabase.Size = new System.Drawing.Size(470, 181);
+            this.dataGridViewDatabase.TabIndex = 0;
+            this.dataGridViewDatabase.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewDatabase_CellClick);
+            this.dataGridViewDatabase.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewDatabase_RowEnter);
+            this.dataGridViewDatabase.SelectionChanged += new System.EventHandler(this.dataGridViewDatabase_SelectionChanged);
+            // 
+            // propertyGridDatabase
+            // 
+            this.propertyGridDatabase.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propertyGridDatabase.Location = new System.Drawing.Point(0, 0);
+            this.propertyGridDatabase.Name = "propertyGridDatabase";
+            this.propertyGridDatabase.Size = new System.Drawing.Size(470, 177);
+            this.propertyGridDatabase.TabIndex = 1;
+            this.propertyGridDatabase.ToolbarVisible = false;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.dataGridViewTextBoxColumn1.HeaderText = "Channel name";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn1.Width = 120;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn2.HeaderText = "Url";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.dataGridViewTextBoxColumn2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.dataGridViewTextBoxColumn3.HeaderText = "Protocol";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            this.dataGridViewTextBoxColumn3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn3.Width = 52;
+            // 
+            // dataGridViewTextBoxColumn4
+            // 
+            this.dataGridViewTextBoxColumn4.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.dataGridViewTextBoxColumn4.HeaderText = "Transport Stream ID";
+            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+            this.dataGridViewTextBoxColumn4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn4.Width = 75;
+            // 
+            // Column1
+            // 
+            this.Column1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.Column1.HeaderText = "Program number";
+            this.Column1.Name = "Column1";
+            this.Column1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column1.Width = 49;
+            // 
+            // Column2
+            // 
+            this.Column2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.Column2.HeaderText = "Program map PID";
+            this.Column2.Name = "Column2";
+            this.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column2.Width = 75;
+            // 
+            // dataGridViewImageColumn2
+            // 
+            this.dataGridViewImageColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.dataGridViewImageColumn2.HeaderText = "";
+            this.dataGridViewImageColumn2.Image = global::TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Properties.Resources.not_tested;
+            this.dataGridViewImageColumn2.Name = "dataGridViewImageColumn2";
+            this.dataGridViewImageColumn2.ReadOnly = true;
+            this.dataGridViewImageColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewImageColumn2.Width = 20;
+            // 
             // Editor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -972,8 +1110,13 @@
             this.splitContainerPlaylist.Panel1.ResumeLayout(false);
             this.splitContainerPlaylist.Panel2.ResumeLayout(false);
             this.splitContainerPlaylist.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPlaylist)).EndInit();
             this.tabProtocols.ResumeLayout(false);
+            this.tabPageDatabaseEditor.ResumeLayout(false);
+            this.splitContainerDatabase.Panel1.ResumeLayout(false);
+            this.splitContainerDatabase.Panel2.ResumeLayout(false);
+            this.splitContainerDatabase.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDatabase)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1049,7 +1192,7 @@
         private System.Windows.Forms.TabPage tabPageGeneral;
         private System.Windows.Forms.PropertyGrid propertyGridPlaylist;
         private System.Windows.Forms.Button buttonUpdateDatabase;
-        private System.Windows.Forms.DataGridView dataGridView;
+        private System.Windows.Forms.DataGridView dataGridViewPlaylist;
         private System.Windows.Forms.DataGridViewImageColumn dataGridViewImageColumn1;
         private Url.RtspConnectionPreference rtspConnectionPreference;
         private System.Windows.Forms.SplitContainer splitContainerPlaylist;
@@ -1060,5 +1203,16 @@
         private System.Windows.Forms.DataGridViewImageColumn ColumnImage;
         private System.Windows.Forms.Label labelRtspIgnoreRtpPayloadType;
         private System.Windows.Forms.CheckBox checkBoxRtspIgnoreRtpPayloadType;
+        private System.Windows.Forms.TabPage tabPageDatabaseEditor;
+        private System.Windows.Forms.SplitContainer splitContainerDatabase;
+        private System.Windows.Forms.DataGridView dataGridViewDatabase;
+        private System.Windows.Forms.PropertyGrid propertyGridDatabase;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
+        private System.Windows.Forms.DataGridViewImageColumn dataGridViewImageColumn2;
     }
 }
