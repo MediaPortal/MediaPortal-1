@@ -31,13 +31,14 @@
 
 using namespace std;
 
-// TODO - enum
-#define SUPERCEEDED_AUDIO_RETURN    1
-#define SUPERCEEDED_VIDEO_RETURN    2
-#define SUPERCEEDED_SUBTITLE_RETURN 4
-#define SUPERCEEDED_AUDIO_FILL      8
-#define SUPERCEEDED_VIDEO_FILL     16
-#define SUPERCEEDED_SUBTITLE_FILL  32
+enum SUPERSEDE
+{
+  NO_SUPERSEDE = 0,
+  AUDIO_RETURN = 1,
+  VIDEO_RETURN = 2,
+  AUDIO_FILL = 4,
+  VIDEO_FILL = 8
+};
 
 #define FAKE_AUDIO_DURATION 320000LL
 #define AC3_FRAME_LENGTH 1792
@@ -59,8 +60,8 @@ public:
   bool bSeekTarget;
   bool clipReset;
   bool clipInterrupted;
-  void Superceed(int superceedType);
-  bool IsSuperceeded(int superceedType);
+  void Supersede(int supersedeType);
+  bool IsSuperseded(int supersedeType);
   REFERENCE_TIME playlistFirstPacketTime;
   REFERENCE_TIME clipPlaylistOffset;
   void Reset(REFERENCE_TIME totalStreamOffset);
@@ -107,12 +108,14 @@ public:
   bool firstVideo;
 
 protected:
+  void LogSupersede(int supersede);
+
   typedef vector<Packet*>::iterator ivecVideoBuffers;
   typedef vector<Packet*>::iterator ivecAudioBuffers;
   vector<Packet*> m_vecClipAudioPackets;
   vector<Packet*> m_vecClipVideoPackets;
   AM_MEDIA_TYPE* m_videoPmt;
-  int superceeded;
+  int superseded;
 
   CCritSec m_sectionRead;
   CCritSec m_sectionVectorAudio;

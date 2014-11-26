@@ -64,7 +64,7 @@ CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime,
   bSeekTarget = seekTarget;
   clipInterrupted = interrupted;
 
-  superceeded = 0;
+  superseded = NO_SUPERSEDE;
 
   m_videoPmt = NULL;
 
@@ -72,6 +72,7 @@ CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime,
   firstVideo = true;
   firstPacketAccepted = false;
   firstPacketReturned = false;
+
   clipReset = false;
   //LogDebug("CClip:: New Clip (%d,%d) stream Offset %I64d", nPlaylist, nClip, totalStreamOffset);
 }
@@ -203,7 +204,7 @@ bool CClip::FakeAudioAvailable()
 
 Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
 {
-  if (superceeded & SUPERCEEDED_AUDIO_RETURN) 
+  if (superseded & AUDIO_RETURN)
     return NULL;
 
   if (!FakeAudioAvailable()) 
@@ -254,7 +255,7 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
   audioPlaybackPosition += FAKE_AUDIO_DURATION;
 
   if (bSetAudioSuperceeded)
-    superceeded |= SUPERCEEDED_AUDIO_RETURN | SUPERCEEDED_AUDIO_FILL;
+    superseded |= AUDIO_RETURN | AUDIO_FILL;
 
   return packet;
 }
@@ -322,20 +323,20 @@ bool CClip::AcceptVideoPacket(Packet*  packet)
   return true;
 }
 
-void CClip::Superceed(int superceedType)
+void CClip::Supersede(int supersedeType)
 {
-  if ((superceedType == SUPERCEEDED_AUDIO_FILL) && noAudio)
-    LogDebug("Superceed clip %d,%d = %4X - ignored as fake audio", nPlaylist, nClip, superceeded);
+  if ((supersedeType == AUDIO_FILL) && noAudio)
+    LogDebug("Superceed clip %d,%d = %d - ignored as fake audio", nPlaylist, nClip, superseded);
   else
   {
-    superceeded |= superceedType;
-    LogDebug("Superceed clip %d,%d = %4X", nPlaylist, nClip, superceeded);
+    superseded |= supersedeType;
+    LogSupersede(superseded);
   }
 }
 
-bool CClip::IsSuperceeded(int superceedType)
+bool CClip::IsSuperseded(int supersedeType)
 {
-  return ((superceeded & superceedType) == superceedType);
+  return (supersedeType & supersedeType) == supersedeType;
 }
 
 void CClip::FlushAudio(Packet* pPacketToKeep)
@@ -406,7 +407,7 @@ void CClip::Reset(REFERENCE_TIME totalStreamOffset)
 
   earliestPacketAccepted = INT64_MAX;
 
-  superceeded = 0;
+  superseded = NO_SUPERSEDE;
 
   firstAudio = true;
   firstVideo = true;
@@ -428,8 +429,8 @@ bool CClip::HasAudio()
   {
     if (FakeAudioAvailable()) 
       return true;
-    else if (!IsSuperceeded(SUPERCEEDED_AUDIO_RETURN))
-      Superceed(SUPERCEEDED_AUDIO_RETURN);
+    else if (!IsSuperseded(AUDIO_RETURN))
+      Superceed(AUDIO_RETURN);
   }
 
   return false;
@@ -509,5 +510,29 @@ void CClip::SetVideoPMT(AM_MEDIA_TYPE *pmt)
     DeleteMediaType(m_videoPmt);
 
   m_videoPmt = CreateMediaType(pmt);
+}
+
+void CClip::LogSupersede(int supersede)
+{
+  std::string tmp;
+
+  if (supersede & NO_SUPERSEDE)
+    tmp.append("NO_SUPERSEDE");
+  else
+  {
+    if (supersede & AUDIO_RETURN)
+      tmp.append("AUDIO_RETURN ");
+
+    if (supersede & VIDEO_RETURN)
+      tmp.append("VIDEO_RETURN ");
+
+    if (supersede & AUDIO_FILL)
+      tmp.append("AUDIO_FILL ");
+
+    if (supersede & VIDEO_FILL)
+      tmp.append("VIDEO_FILL");
+  }
+
+  LogDebug("Supersede clip %d, %d = %s", nPlaylist, nClip, tmp.c_str());
 }
 
