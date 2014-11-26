@@ -66,7 +66,6 @@
             this.groupBoxCommonParametersRtsp = new System.Windows.Forms.GroupBox();
             this.labelRtspIgnoreRtpPayloadType = new System.Windows.Forms.Label();
             this.checkBoxRtspIgnoreRtpPayloadType = new System.Windows.Forms.CheckBox();
-            this.rtspConnectionPreference = new TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url.RtspConnectionPreference();
             this.labelRtspConnectionPreference = new System.Windows.Forms.Label();
             this.label59 = new System.Windows.Forms.Label();
             this.textBoxRtspClientPortMax = new System.Windows.Forms.TextBox();
@@ -113,13 +112,9 @@
             this.buttonLoadPlaylist = new System.Windows.Forms.Button();
             this.buttonSavePlaylist = new System.Windows.Forms.Button();
             this.tabProtocols = new System.Windows.Forms.TabControl();
-            this.tabPageGeneral = new System.Windows.Forms.TabPage();
-            this.buttonUpdateDatabase = new System.Windows.Forms.Button();
-            this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
             this.tabPageDatabaseEditor = new System.Windows.Forms.TabPage();
             this.splitContainerDatabase = new System.Windows.Forms.SplitContainer();
             this.dataGridViewDatabase = new System.Windows.Forms.DataGridView();
-            this.propertyGridDatabase = new System.Windows.Forms.PropertyGrid();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -127,6 +122,13 @@
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewImageColumn2 = new System.Windows.Forms.DataGridViewImageColumn();
+            this.propertyGridDatabase = new System.Windows.Forms.PropertyGrid();
+            this.tabPageGeneral = new System.Windows.Forms.TabPage();
+            this.buttonUpdateDatabase = new System.Windows.Forms.Button();
+            this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
+            this.buttonStoreChanges = new System.Windows.Forms.Button();
+            this.rtspConnectionPreference = new TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url.RtspConnectionPreference();
+            this.buttonSetMpeg2TSParser = new System.Windows.Forms.Button();
             this.tabPageHttp.SuspendLayout();
             this.groupBoxCommonParametersHttp.SuspendLayout();
             this.tabPageRtmp.SuspendLayout();
@@ -459,16 +461,6 @@
             this.checkBoxRtspIgnoreRtpPayloadType.Size = new System.Drawing.Size(15, 14);
             this.checkBoxRtspIgnoreRtpPayloadType.TabIndex = 17;
             this.checkBoxRtspIgnoreRtpPayloadType.UseVisualStyleBackColor = true;
-            // 
-            // rtspConnectionPreference
-            // 
-            this.rtspConnectionPreference.Location = new System.Drawing.Point(172, 150);
-            this.rtspConnectionPreference.MulticastPreference = 2;
-            this.rtspConnectionPreference.Name = "rtspConnectionPreference";
-            this.rtspConnectionPreference.SameConnectionPreference = 0;
-            this.rtspConnectionPreference.Size = new System.Drawing.Size(126, 56);
-            this.rtspConnectionPreference.TabIndex = 15;
-            this.rtspConnectionPreference.UdpPreference = 1;
             // 
             // labelRtspConnectionPreference
             // 
@@ -928,39 +920,6 @@
             this.tabProtocols.Tag = "";
             this.tabProtocols.SelectedIndexChanged += new System.EventHandler(this.tabProtocols_SelectedIndexChanged);
             // 
-            // tabPageGeneral
-            // 
-            this.tabPageGeneral.Location = new System.Drawing.Point(4, 22);
-            this.tabPageGeneral.Name = "tabPageGeneral";
-            this.tabPageGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageGeneral.Size = new System.Drawing.Size(476, 368);
-            this.tabPageGeneral.TabIndex = 5;
-            this.tabPageGeneral.Text = "General";
-            this.tabPageGeneral.UseVisualStyleBackColor = true;
-            // 
-            // buttonUpdateDatabase
-            // 
-            this.buttonUpdateDatabase.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonUpdateDatabase.Location = new System.Drawing.Point(165, 400);
-            this.buttonUpdateDatabase.Name = "buttonUpdateDatabase";
-            this.buttonUpdateDatabase.Size = new System.Drawing.Size(102, 23);
-            this.buttonUpdateDatabase.TabIndex = 6;
-            this.buttonUpdateDatabase.Text = "Update database";
-            this.buttonUpdateDatabase.UseVisualStyleBackColor = true;
-            this.buttonUpdateDatabase.Visible = false;
-            this.buttonUpdateDatabase.Click += new System.EventHandler(this.buttonUpdateDatabase_Click);
-            // 
-            // dataGridViewImageColumn1
-            // 
-            this.dataGridViewImageColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.dataGridViewImageColumn1.HeaderText = "";
-            this.dataGridViewImageColumn1.Image = global::TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Properties.Resources.Up;
-            this.dataGridViewImageColumn1.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Stretch;
-            this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
-            this.dataGridViewImageColumn1.ReadOnly = true;
-            this.dataGridViewImageColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridViewImageColumn1.Width = 20;
-            // 
             // tabPageDatabaseEditor
             // 
             this.tabPageDatabaseEditor.Controls.Add(this.splitContainerDatabase);
@@ -1015,15 +974,6 @@
             this.dataGridViewDatabase.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewDatabase_CellClick);
             this.dataGridViewDatabase.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewDatabase_RowEnter);
             this.dataGridViewDatabase.SelectionChanged += new System.EventHandler(this.dataGridViewDatabase_SelectionChanged);
-            // 
-            // propertyGridDatabase
-            // 
-            this.propertyGridDatabase.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGridDatabase.Location = new System.Drawing.Point(0, 0);
-            this.propertyGridDatabase.Name = "propertyGridDatabase";
-            this.propertyGridDatabase.Size = new System.Drawing.Size(470, 177);
-            this.propertyGridDatabase.TabIndex = 1;
-            this.propertyGridDatabase.ToolbarVisible = false;
             // 
             // dataGridViewTextBoxColumn1
             // 
@@ -1082,10 +1032,89 @@
             this.dataGridViewImageColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dataGridViewImageColumn2.Width = 20;
             // 
+            // propertyGridDatabase
+            // 
+            this.propertyGridDatabase.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propertyGridDatabase.Location = new System.Drawing.Point(0, 0);
+            this.propertyGridDatabase.Name = "propertyGridDatabase";
+            this.propertyGridDatabase.Size = new System.Drawing.Size(470, 177);
+            this.propertyGridDatabase.TabIndex = 1;
+            this.propertyGridDatabase.ToolbarVisible = false;
+            this.propertyGridDatabase.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridDatabase_PropertyValueChanged);
+            // 
+            // tabPageGeneral
+            // 
+            this.tabPageGeneral.Location = new System.Drawing.Point(4, 22);
+            this.tabPageGeneral.Name = "tabPageGeneral";
+            this.tabPageGeneral.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageGeneral.Size = new System.Drawing.Size(476, 368);
+            this.tabPageGeneral.TabIndex = 5;
+            this.tabPageGeneral.Text = "General";
+            this.tabPageGeneral.UseVisualStyleBackColor = true;
+            // 
+            // buttonUpdateDatabase
+            // 
+            this.buttonUpdateDatabase.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonUpdateDatabase.Location = new System.Drawing.Point(165, 400);
+            this.buttonUpdateDatabase.Name = "buttonUpdateDatabase";
+            this.buttonUpdateDatabase.Size = new System.Drawing.Size(102, 23);
+            this.buttonUpdateDatabase.TabIndex = 6;
+            this.buttonUpdateDatabase.Text = "Update database";
+            this.buttonUpdateDatabase.UseVisualStyleBackColor = true;
+            this.buttonUpdateDatabase.Visible = false;
+            this.buttonUpdateDatabase.Click += new System.EventHandler(this.buttonUpdateDatabase_Click);
+            // 
+            // dataGridViewImageColumn1
+            // 
+            this.dataGridViewImageColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.dataGridViewImageColumn1.HeaderText = "";
+            this.dataGridViewImageColumn1.Image = global::TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Properties.Resources.Up;
+            this.dataGridViewImageColumn1.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Stretch;
+            this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
+            this.dataGridViewImageColumn1.ReadOnly = true;
+            this.dataGridViewImageColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewImageColumn1.Width = 20;
+            // 
+            // buttonStoreChanges
+            // 
+            this.buttonStoreChanges.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonStoreChanges.Location = new System.Drawing.Point(3, 400);
+            this.buttonStoreChanges.Name = "buttonStoreChanges";
+            this.buttonStoreChanges.Size = new System.Drawing.Size(91, 23);
+            this.buttonStoreChanges.TabIndex = 8;
+            this.buttonStoreChanges.Text = "Store changes";
+            this.buttonStoreChanges.UseVisualStyleBackColor = true;
+            this.buttonStoreChanges.Visible = false;
+            this.buttonStoreChanges.Click += new System.EventHandler(this.buttonStoreChanges_Click);
+            // 
+            // rtspConnectionPreference
+            // 
+            this.rtspConnectionPreference.Location = new System.Drawing.Point(172, 150);
+            this.rtspConnectionPreference.MulticastPreference = 2;
+            this.rtspConnectionPreference.Name = "rtspConnectionPreference";
+            this.rtspConnectionPreference.SameConnectionPreference = 0;
+            this.rtspConnectionPreference.Size = new System.Drawing.Size(126, 56);
+            this.rtspConnectionPreference.TabIndex = 15;
+            this.rtspConnectionPreference.UdpPreference = 1;
+            // 
+            // buttonSetMpeg2TSParser
+            // 
+            this.buttonSetMpeg2TSParser.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonSetMpeg2TSParser.Location = new System.Drawing.Point(273, 400);
+            this.buttonSetMpeg2TSParser.Name = "buttonSetMpeg2TSParser";
+            this.buttonSetMpeg2TSParser.Size = new System.Drawing.Size(96, 23);
+            this.buttonSetMpeg2TSParser.TabIndex = 9;
+            this.buttonSetMpeg2TSParser.Text = "Set M2TS parser";
+            this.buttonSetMpeg2TSParser.UseVisualStyleBackColor = true;
+            this.buttonSetMpeg2TSParser.Visible = false;
+            this.buttonSetMpeg2TSParser.Click += new System.EventHandler(this.buttonSetMpeg2TSParser_Click);
+            // 
             // Editor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.buttonSetMpeg2TSParser);
+            this.Controls.Add(this.buttonStoreChanges);
             this.Controls.Add(this.buttonUpdateDatabase);
             this.Controls.Add(this.tabProtocols);
             this.Controls.Add(this.buttonSavePlaylist);
@@ -1214,5 +1243,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
         private System.Windows.Forms.DataGridViewImageColumn dataGridViewImageColumn2;
+        private System.Windows.Forms.Button buttonStoreChanges;
+        private System.Windows.Forms.Button buttonSetMpeg2TSParser;
     }
 }

@@ -106,7 +106,10 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                 {
                     String[] paramValueSplitted = paramValue.Split(new String[] { Parameter.ParameterAssign }, StringSplitOptions.None);
 
-                    result.Add(new Parameter(paramValueSplitted[0], System.Web.HttpUtility.UrlDecode(paramValueSplitted[1])));
+                    if (paramValueSplitted.Length == 2)
+                    {
+                        result.Add(new Parameter(paramValueSplitted[0], System.Web.HttpUtility.UrlDecode(paramValueSplitted[1])));
+                    }
                 }
             }
 

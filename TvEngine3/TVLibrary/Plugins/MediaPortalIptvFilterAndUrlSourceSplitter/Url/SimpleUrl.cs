@@ -230,7 +230,9 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             // return current URI and formatted connection string
             // filter will ignore first part
 
-            return this.Uri.Scheme + "://" + this.Uri.Host + SimpleUrl.ParameterSeparator + parameters.FilterParameters + this.Mpeg2TsParser.ToString();
+            String mpeg2Ts = this.Mpeg2TsParser.ToString();
+
+            return this.Uri.Scheme + "://" + this.Uri.Host + SimpleUrl.ParameterSeparator + parameters.FilterParameters + ((!String.IsNullOrEmpty(mpeg2Ts)) ? ParameterCollection.ParameterSeparator : String.Empty) + ((!String.IsNullOrEmpty(mpeg2Ts)) ? mpeg2Ts : String.Empty);
         }
 
         /// <summary>

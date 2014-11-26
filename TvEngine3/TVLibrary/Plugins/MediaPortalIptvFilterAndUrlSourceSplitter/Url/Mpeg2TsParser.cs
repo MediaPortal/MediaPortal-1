@@ -79,7 +79,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             {
                 if (((value < 0) || (value > 65535)) && (value != Mpeg2TsParser.DefaultMpeg2TsProgramNumber))
                 {
-                    throw new ArgumentOutOfRangeException("TransportStreamID", value, "Must be greater than or equal to zero and lower than 65536.");
+                    throw new ArgumentOutOfRangeException("ProgramNumber", value, "Must be greater than or equal to zero and lower than 65536.");
                 }
 
                 this.programNumber = value;
@@ -97,7 +97,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             {
                 if (((value < 0) || (value > 0x1FFF)) && (value != Mpeg2TsParser.DefaultMpeg2TsProgramMapPID))
                 {
-                    throw new ArgumentOutOfRangeException("TransportStreamID", value, "Must be greater than or equal to zero and lower than 8192.");
+                    throw new ArgumentOutOfRangeException("ProgramMapPID", value, "Must be greater than or equal to zero and lower than 8192.");
                 }
 
                 this.programMapPID = value;

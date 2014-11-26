@@ -56,6 +56,8 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
         DataGridViewRow testPlaylistRow = null;
         DataGridViewRow testDatabaseRow = null;
 
+        IList<TuningDetail> tuningDetails = null;
+
         #endregion
 
         #region Constructors
@@ -181,14 +183,16 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
 
             try
             {
-                foreach (var tuningDetail in this.GetTuningDetails())
+                this.tuningDetails = this.GetTuningDetails();
+
+                foreach (var tuningDetail in this.tuningDetails)
                 {
                     this.dataGridViewDatabase.Rows.Add(new Object[] { tuningDetail.Name, UrlFactory.CreateUrl(tuningDetail.Url), (String)Settings.SupportedProtocols[new Uri(tuningDetail.Url).Scheme.ToUpperInvariant()], tuningDetail.TransportId, tuningDetail.ServiceId, tuningDetail.PmtPid });
                 }
             }
             catch (Exception ex)
             {
-                Log.Error(String.Format("Error occurred while loading database.\n{0}", ex.ToString()));
+                Log.Error(String.Format("Error occurred while loading tuning details from database.\n{0}", ex.ToString()));
 
                 this.dataGridViewDatabase.Rows.Clear();
             }
@@ -404,8 +408,10 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
             if (!error)
             {
                 this.ApplyDefaultUserSettings(this.settings, currentSettings);
+
                 this.settings = currentSettings;
                 this.propertyGridPlaylist.Refresh();
+                this.propertyGridDatabase.Refresh();
             }
         }
 
@@ -481,6 +487,9 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
 
             this.urlColumnLength = this.GetLengthOfUrlColumn(this.GetProviderTypeFromConfig());
             this.propertyGridPlaylist_PropertyValueChanged(this, null);
+            this.propertyGridDatabase_PropertyValueChanged(this, null);
+
+            this.tuningDetails = this.GetTuningDetails();
         }
 
         private void tabProtocols_SelectedIndexChanged(object sender, EventArgs e)
@@ -494,6 +503,17 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
             {
                 this.buttonLoadPlaylist.Visible = false;
                 this.buttonSavePlaylist.Visible = false;
+            }
+
+            if (this.tabProtocols.SelectedIndex == 1)
+            {
+                this.buttonStoreChanges.Visible = true;
+                this.buttonSetMpeg2TSParser.Visible = true;
+            }
+            else
+            {
+                this.buttonStoreChanges.Visible = false;
+                this.buttonSetMpeg2TSParser.Visible = false;
             }
         }
 
@@ -768,7 +788,38 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
                 }
             }
 
+            foreach (DataGridViewRow row in this.dataGridViewDatabase.Rows)
+            {
+                SimpleUrl simpleUrl = (SimpleUrl)row.Cells[1].Value;
+
+                if (simpleUrl is AfhsManifestUrl)
+                {
+                    simpleUrl.ApplyDefaultUserSettings(previousSettings.Http, currentSettings.Http);
+                }
+
+                if (simpleUrl is HttpUrl)
+                {
+                    simpleUrl.ApplyDefaultUserSettings(previousSettings.Http, currentSettings.Http);
+                }
+
+                if (simpleUrl is RtmpUrl)
+                {
+                    simpleUrl.ApplyDefaultUserSettings(previousSettings.Rtmp, currentSettings.Rtmp);
+                }
+
+                if (simpleUrl is RtspUrl)
+                {
+                    simpleUrl.ApplyDefaultUserSettings(previousSettings.Rtsp, currentSettings.Rtsp);
+                }
+
+                if (simpleUrl is UdpRtpUrl)
+                {
+                    simpleUrl.ApplyDefaultUserSettings(previousSettings.UdpRtp, currentSettings.UdpRtp);
+                }
+            }
+
             this.propertyGridPlaylist_PropertyValueChanged(this, null);
+            this.propertyGridDatabase_PropertyValueChanged(this, null);
         }
 
         private void propertyGridPlaylist_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
@@ -841,6 +892,66 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
                     this.testWorker.StartOperation();
                 }
             }
+        }
+
+        private void buttonStoreChanges_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                for (int i = 0; i < this.dataGridViewDatabase.Rows.Count; i++)
+                {
+                    DataGridViewRow row = this.dataGridViewDatabase.Rows[i];
+                    TuningDetail detail = this.tuningDetails[i];
+
+                    SimpleUrl simpleUrl = (SimpleUrl)row.Cells[1].Value;
+                    detail.Url = simpleUrl.ToString();
+                }
+
+                foreach (var tuningDetail in this.tuningDetails)
+                {
+                    tuningDetail.Persist();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(String.Format("Error occurred while storing changes to database.\n{0}", ex.ToString()));
+            }
+        }
+
+        private void propertyGridDatabase_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            bool urlLengthTooShort = false;
+
+            foreach (DataGridViewRow row in this.dataGridViewDatabase.Rows)
+            {
+                SimpleUrl simpleUrl = (SimpleUrl)row.Cells[1].Value;
+
+                urlLengthTooShort |= (simpleUrl.ToString().Length > this.urlColumnLength);
+            }
+
+            this.buttonUpdateDatabase.Visible = urlLengthTooShort;
+            if (urlLengthTooShort)
+            {
+                this.buttonStoreChanges.Enabled = false;
+            }
+        }
+
+        private void buttonSetMpeg2TSParser_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < this.dataGridViewDatabase.Rows.Count; i++)
+            {
+                DataGridViewRow row = this.dataGridViewDatabase.Rows[i];
+                TuningDetail detail = this.tuningDetails[i];
+                SimpleUrl simpleUrl = (SimpleUrl)row.Cells[1].Value;
+
+                simpleUrl.Mpeg2TsParser.AlignToMpeg2TSPacket = true;
+                simpleUrl.Mpeg2TsParser.DetectDiscontinuity = true;
+                simpleUrl.Mpeg2TsParser.TransportStreamID = detail.TransportId;
+                simpleUrl.Mpeg2TsParser.ProgramNumber = detail.ServiceId;
+                simpleUrl.Mpeg2TsParser.ProgramMapPID = detail.PmtPid;
+            }
+
+            this.propertyGridDatabase_PropertyValueChanged(this, null);
         }
 
         // MySQL
