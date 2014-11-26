@@ -60,7 +60,7 @@ Packet* CPlaylist::ReturnNextAudioPacket()
       SetEmptiedAudio();
     else
     {
-      (*m_itCurrentAudioPlayBackClip)->Superceed(SUPERCEEDED_AUDIO_RETURN);
+      (*m_itCurrentAudioPlayBackClip)->Supersede(AUDIO_RETURN);
       m_itCurrentAudioPlayBackClip++;
       ret = ReturnNextAudioPacket();
     }
@@ -98,7 +98,7 @@ Packet* CPlaylist::ReturnNextVideoPacket()
       SetEmptiedVideo();
     else
     {
-      (*(m_itCurrentVideoPlayBackClip))->Superceed(SUPERCEEDED_VIDEO_RETURN);
+      (*(m_itCurrentVideoPlayBackClip))->Supersede(VIDEO_RETURN);
       m_itCurrentVideoPlayBackClip++;
       ret = ReturnNextVideoPacket();
     }
@@ -140,7 +140,7 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet)
   REFERENCE_TIME prevVideoPosition = 0;
   if (nPlaylist != packet->nPlaylist)
   {
-    (*m_itCurrentVideoSubmissionClip)->Superceed(SUPERCEEDED_VIDEO_FILL);
+    (*m_itCurrentVideoSubmissionClip)->Supersede(VIDEO_FILL);
     return false;
   }
   if ((*m_itCurrentVideoSubmissionClip)->nClip == packet->nClipNumber)
@@ -165,8 +165,8 @@ void CPlaylist::CurrentClipFilled()
 {
   if (m_vecClips.size())
   {
-    (*m_itCurrentAudioSubmissionClip)->Superceed(SUPERCEEDED_AUDIO_FILL);
-    (*m_itCurrentVideoSubmissionClip)->Superceed(SUPERCEEDED_VIDEO_FILL);
+    (*m_itCurrentAudioSubmissionClip)->Supersede(AUDIO_FILL);
+    (*m_itCurrentVideoSubmissionClip)->Supersede(VIDEO_FILL);
   }
 }
 
@@ -214,10 +214,10 @@ bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENC
     }
 
     if (audioClip)
-      audioClip->Superceed(SUPERCEEDED_AUDIO_FILL);
+      audioClip->Supersede(AUDIO_FILL);
 
     if (videoClip)
-      videoClip->Superceed(SUPERCEEDED_VIDEO_FILL);
+      videoClip->Supersede(VIDEO_FILL);
 
     PushClips();
     m_vecClips.push_back(new CClip(clipNumber, nPlaylist, clipStart, clipOffset, playlistClipOffset, audioPresent, duration, streamStartOffset, seekTarget, interrupted));
@@ -417,7 +417,7 @@ bool CPlaylist::RemoveRedundantClips()
   while (it != m_vecClips.begin())
   {
     CClip* clip = *it;
-    if (clip->IsSuperceeded(SUPERCEEDED_AUDIO_RETURN|SUPERCEEDED_VIDEO_RETURN|SUPERCEEDED_AUDIO_FILL|SUPERCEEDED_VIDEO_FILL)) 
+    if (clip->IsSuperseded(AUDIO_RETURN | VIDEO_RETURN | AUDIO_FILL | VIDEO_FILL))
     {
       it = m_vecClips.erase(it);
       delete clip;
