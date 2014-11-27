@@ -118,12 +118,12 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             {
                 if (String.CompareOrdinal(param.Name, Mpeg2TsParser.ParameterMpeg2TsDetectDiscontinuity) == 0)
                 {
-                    this.DetectDiscontinuity = (String.CompareOrdinal(param.Value, "1") == 0);
+                    this.DetectDiscontinuity = (String.CompareOrdinal(param.Value, SimpleUrl.DefaultTrue) == 0);
                 }
 
                 if (String.CompareOrdinal(param.Name, Mpeg2TsParser.ParameterMpeg2TsAlignToMpeg2TSPacket) == 0)
                 {
-                    this.AlignToMpeg2TSPacket = (String.CompareOrdinal(param.Value, "1") == 0);
+                    this.AlignToMpeg2TSPacket = (String.CompareOrdinal(param.Value, SimpleUrl.DefaultTrue) == 0);
                 }
 
                 if (String.CompareOrdinal(param.Name, Mpeg2TsParser.ParameterMpeg2TsTransportStreamID) == 0)
@@ -155,11 +155,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 
             if (this.DetectDiscontinuity != Mpeg2TsParser.DefaultMpeg2TsDetectDiscontinuity)
             {
-                parameters.Add(new Parameter(Mpeg2TsParser.ParameterMpeg2TsDetectDiscontinuity, this.DetectDiscontinuity ? "1" : "0"));
+                parameters.Add(new Parameter(Mpeg2TsParser.ParameterMpeg2TsDetectDiscontinuity, this.DetectDiscontinuity ? SimpleUrl.DefaultTrue : SimpleUrl.DefaultFalse));
             }
             if (this.AlignToMpeg2TSPacket != Mpeg2TsParser.DefaultMpeg2TsAlignToMpeg2TSPacket)
             {
-                parameters.Add(new Parameter(Mpeg2TsParser.ParameterMpeg2TsAlignToMpeg2TSPacket, this.AlignToMpeg2TSPacket ? "1" : "0"));
+                parameters.Add(new Parameter(Mpeg2TsParser.ParameterMpeg2TsAlignToMpeg2TSPacket, this.AlignToMpeg2TSPacket ? SimpleUrl.DefaultTrue : SimpleUrl.DefaultFalse));
             }
             if (this.TransportStreamID != Mpeg2TsParser.DefaultMpeg2TsTransportStreamID)
             {

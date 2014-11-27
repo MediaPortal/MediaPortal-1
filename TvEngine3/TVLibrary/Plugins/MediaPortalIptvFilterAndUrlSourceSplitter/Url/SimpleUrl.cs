@@ -193,6 +193,36 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             }
         }
 
+        /// <summary>
+        /// Specifies if protocol have to dump input data.
+        /// </summary>
+        [Category("Debug options"), Description("Specifies if protocol have to dump input data."), DefaultValue(SimpleUrl.DefaultDumpProtocolInputData)]
+        public Boolean DumpProtocolInputData { get; set; }
+
+        /// <summary>
+        /// Specifies if protocol have to dump output data.
+        /// </summary>
+        [Category("Debug options"), Description("Specifies if protocol have to dump output data."), DefaultValue(SimpleUrl.DefaultDumpProtocolOutputData)]
+        public Boolean DumpProtocolOutputData { get; set; }
+
+        /// <summary>
+        /// Specifies if parser have to dump input data.
+        /// </summary>
+        [Category("Debug options"), Description("Specifies if parser have to dump input data."), DefaultValue(SimpleUrl.DefaultDumpParserInputData)]
+        public Boolean DumpParserInputData { get; set; }
+
+        /// <summary>
+        /// Specifies if parser have to dump output data.
+        /// </summary>
+        [Category("Debug options"), Description("Specifies if parser have to dump output data."), DefaultValue(SimpleUrl.DefaultDumpParserOutputData)]
+        public Boolean DumpParserOutputData { get; set; }
+
+        /// <summary>
+        /// Specifies if output pin(s) have to dump data.
+        /// </summary>
+        [Category("Debug options"), Description("Specifies if output pin(s) have to dump data."), DefaultValue(SimpleUrl.DefaultDumpOutputPinData)]
+        public Boolean DumpOutputPinData { get; set; }
+
         #endregion
 
         #region Methods
@@ -223,6 +253,26 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             if ((!String.IsNullOrEmpty(this.CacheFolder)) && (String.CompareOrdinal(this.CacheFolder, CacheFolderEditor.DefaultCacheFolder) != 0))
             {
                 parameters.Add(new Parameter(SimpleUrl.ParameterCacheFolder, this.CacheFolder));
+            }
+            if (this.DumpProtocolInputData != SimpleUrl.DefaultDumpProtocolInputData)
+            {
+                parameters.Add(new Parameter(SimpleUrl.ParameterDumpProtocolInputData, this.DumpProtocolInputData ? SimpleUrl.DefaultTrue : SimpleUrl.DefaultFalse));
+            }
+            if (this.DumpProtocolOutputData != SimpleUrl.DefaultDumpProtocolOutputData)
+            {
+                parameters.Add(new Parameter(SimpleUrl.ParameterDumpProtocolOutputData, this.DumpProtocolOutputData ? SimpleUrl.DefaultTrue : SimpleUrl.DefaultFalse));
+            }
+            if (this.DumpParserInputData != SimpleUrl.DefaultDumpParserInputData)
+            {
+                parameters.Add(new Parameter(SimpleUrl.ParameterDumpParserInputData, this.DumpParserInputData ? SimpleUrl.DefaultTrue : SimpleUrl.DefaultFalse));
+            }
+            if (this.DumpParserOutputData != SimpleUrl.DefaultDumpParserOutputData)
+            {
+                parameters.Add(new Parameter(SimpleUrl.ParameterDumpParserOutputData, this.DumpParserOutputData ? SimpleUrl.DefaultTrue : SimpleUrl.DefaultFalse));
+            }
+            if (this.DumpOutputPinData != SimpleUrl.DefaultDumpOutputPinData)
+            {
+                parameters.Add(new Parameter(SimpleUrl.ParameterDumpOutputPinData, this.DumpOutputPinData ? SimpleUrl.DefaultTrue : SimpleUrl.DefaultFalse));
             }
 
             // for MediaPortal IPTV Source Filter is live stream always true (overriden by filter itself)
@@ -266,6 +316,31 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                 if (String.CompareOrdinal(param.Name, SimpleUrl.ParameterCacheFolder) == 0)
                 {
                     this.CacheFolder = param.Value;
+                }
+
+                if (String.CompareOrdinal(param.Name, SimpleUrl.ParameterDumpProtocolInputData) == 0)
+                {
+                    this.DumpProtocolInputData = (String.CompareOrdinal(param.Value, SimpleUrl.DefaultTrue) == 0);
+                }
+
+                if (String.CompareOrdinal(param.Name, SimpleUrl.ParameterDumpProtocolOutputData) == 0)
+                {
+                    this.DumpProtocolOutputData = (String.CompareOrdinal(param.Value, SimpleUrl.DefaultTrue) == 0);
+                }
+
+                if (String.CompareOrdinal(param.Name, SimpleUrl.ParameterDumpParserInputData) == 0)
+                {
+                    this.DumpParserInputData = (String.CompareOrdinal(param.Value, SimpleUrl.DefaultTrue) == 0);
+                }
+
+                if (String.CompareOrdinal(param.Name, SimpleUrl.ParameterDumpParserOutputData) == 0)
+                {
+                    this.DumpParserOutputData = (String.CompareOrdinal(param.Value, SimpleUrl.DefaultTrue) == 0);
+                }
+
+                if (String.CompareOrdinal(param.Name, SimpleUrl.ParameterDumpOutputPinData) == 0)
+                {
+                    this.DumpOutputPinData = (String.CompareOrdinal(param.Value, SimpleUrl.DefaultTrue) == 0);
                 }
             }
 
@@ -337,6 +412,31 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// </summary>
         protected static readonly String ParameterLiveStream = "LiveStream";
 
+        /// <summary>
+        /// Specifies parameter name for protocol input data.
+        /// </summary>
+        protected static readonly String ParameterDumpProtocolInputData = "DumpProtocolInputData";
+
+        /// <summary>
+        /// Specifies parameter name for protocol output data.
+        /// </summary>
+        protected static readonly String ParameterDumpProtocolOutputData = "DumpProtocolOutputData";
+
+        /// <summary>
+        /// Specifies parameter name for parser input data.
+        /// </summary>
+        protected static readonly String ParameterDumpParserInputData = "DumpParserInputData";
+
+        /// <summary>
+        /// Specifies parameter name for parser output data.
+        /// </summary>
+        protected static readonly String ParameterDumpParserOutputData = "DumpParserOutputData";
+
+        /// <summary>
+        /// Specifies parameter name for output pin data.
+        /// </summary>
+        protected static readonly String ParameterDumpOutputPinData = "DumpOutputPinData";
+
         // default values for some parameters
 
         /// <summary>
@@ -371,7 +471,6 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// </remarks>
         public const Boolean DefaultLiveStream = false;
 
-
         /// <summary>
         /// Specifies <see langword="true"/> value for filter parameter value.
         /// </summary>
@@ -382,32 +481,31 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// </summary>
         public static readonly String DefaultFalse = "0";
 
+        /// <summary>
+        /// Default value for parameter for protocol input data parameter.
+        /// </summary>
+        public const Boolean DefaultDumpProtocolInputData = false;
+
+        /// <summary>
+        /// Default value for protocol output data parameter.
+        /// </summary>
+        public const Boolean DefaultDumpProtocolOutputData = false;
+
+        /// <summary>
+        /// Default value for parser input data parameter.
+        /// </summary>
+        public const Boolean DefaultDumpParserInputData = false;
+
+        /// <summary>
+        /// Default value for parser output data parameter.
+        /// </summary>
+        public const Boolean DefaultDumpParserOutputData = false;
+
+        /// <summary>
+        /// Default value for output pin data parameter.
+        /// </summary>
+        public const Boolean DefaultDumpOutputPinData = false;
+
         #endregion
-
-
-//#define PARAMETER_NAME_DOWNLOAD_FILE_NAME                                     L"DownloadFileName"
-//#define PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA                               L"DumpProtocolInputData"
-//#define PARAMETER_NAME_DUMP_PROTOCOL_OUTPUT_DATA                              L"DumpProtocolOutputData"
-//#define PARAMETER_NAME_DUMP_PARSER_INPUT_DATA                                 L"DumpParserInputData"
-//#define PARAMETER_NAME_DUMP_PARSER_OUTPUT_DATA                                L"DumpParserOutputData"
-//#define PARAMETER_NAME_DUMP_OUTPUT_PIN_DATA                                   L"DumpOutputPinData"
-
-//#define PARAMETER_NAME_LOG_FILE_NAME                                          L"LogFileName"
-
-
-//#define PARAMETER_NAME_FINISH_TIME                                            L"FinishTime"
-
-//#define PARAMETER_NAME_LIVE_STREAM_DEFAULT                                    false
-//#define PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA_DEFAULT                       false
-//#define PARAMETER_NAME_DUMP_PROTOCOL_OUTPUT_DATA_DEFAULT                      false
-//#define PARAMETER_NAME_DUMP_PARSER_INPUT_DATA_DEFAULT                         false
-//#define PARAMETER_NAME_DUMP_PARSER_OUTPUT_DATA_DEFAULT                        false
-//#define PARAMETER_NAME_DUMP_OUTPUT_PIN_DATA_DEFAULT                           false
-
-
-
-
-
-
     }
 }
