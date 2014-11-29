@@ -147,6 +147,7 @@ namespace MediaPortal
 
     private readonly Control           _renderTarget;             // render target object
     private readonly PresentParameters _presentParams;            // D3D presentation parameters
+    private PresentParameters          _presentParamsBackup;      // D3D presentation parameters Backup
     internal D3DEnumeration            _enumerationSettings;      //
     private readonly bool              _useExclusiveDirectXMode;  // 
     private readonly bool              _disableMouseEvents;       //
@@ -488,7 +489,7 @@ namespace MediaPortal
 
       // reset device if necessary
       Windowed = !Windowed;
-      RecreateSwapChain();
+      RecreateSwapChain(false);
       Windowed = !Windowed;
 
       // adjust form sizes and properties
@@ -567,7 +568,7 @@ namespace MediaPortal
     /// <summary>
     /// reset device if back buffer does not match skin dimensions (e.g. 16:10 display with 16:9 skin, 720p skin on 1080p display etc.)
     /// </summary>
-    internal void RecreateSwapChain()
+    internal void RecreateSwapChain(bool useBackup)
     {
       // disable event handlers
       if (GUIGraphicsContext.DX9Device != null)
@@ -606,31 +607,62 @@ namespace MediaPortal
         GUITextureManager.Dispose();
         GUIGraphicsContext.DX9Device.EvictManagedResources();
 
-        // build new D3D presentation parameters and reset device
-        BuildPresentParams(Windowed);
-        try
+        if (useBackup)
         {
-          GUIGraphicsContext.DX9Device.Reset(_presentParams);
+          try
+          {
+            GUIGraphicsContext.DirectXPresentParameters = _presentParamsBackup;
+            GUIGraphicsContext.DX9Device.Reset(_presentParamsBackup);
+          }
+          catch (InvalidCallException)
+          {
+            Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value");
+          }
+          catch (DeviceLostException)
+          {
+            Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+          }
+          catch (DriverInternalErrorException)
+          {
+            Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
+          }
+          catch (OutOfVideoMemoryException)
+          {
+            Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
+          }
+          catch (OutOfMemoryException)
+          {
+            Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+          }
         }
-        catch (InvalidCallException)
+        else
         {
-          Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value");
-        }
-        catch (DeviceLostException)
-        {
-          Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
-        }
-        catch (DriverInternalErrorException)
-        {
-          Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
-        }
-        catch (OutOfVideoMemoryException)
-        {
-          Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
-        }
-        catch (OutOfMemoryException)
-        {
-          Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+          // build new D3D presentation parameters and reset device
+          BuildPresentParams(Windowed);
+          try
+          {
+            GUIGraphicsContext.DX9Device.Reset(_presentParams);
+          }
+          catch (InvalidCallException)
+          {
+            Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value");
+          }
+          catch (DeviceLostException)
+          {
+            Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+          }
+          catch (DriverInternalErrorException)
+          {
+            Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
+          }
+          catch (OutOfVideoMemoryException)
+          {
+            Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
+          }
+          catch (OutOfMemoryException)
+          {
+            Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+          }
         }
 
         // load resources
@@ -794,7 +826,7 @@ namespace MediaPortal
       }
 
       // lock rendering loop and recreate the backbuffer for the current D3D device
-      RecreateSwapChain();
+      RecreateSwapChain(true);
 
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
 
@@ -1327,6 +1359,9 @@ namespace MediaPortal
 
         // Set up the presentation parameters
         BuildPresentParams(Windowed);
+
+        // backup _presentParams for later use (standby)
+        _presentParamsBackup = _presentParams;
 
         // Create the device
         if (GUIGraphicsContext.IsDirectX9ExUsed())
