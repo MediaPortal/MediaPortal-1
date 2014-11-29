@@ -135,6 +135,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>bin\Release/Win7RefreshRateHelper.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
