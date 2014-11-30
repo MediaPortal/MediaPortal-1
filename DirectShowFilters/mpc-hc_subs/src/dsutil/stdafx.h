@@ -21,6 +21,8 @@
 
 #pragma once
 
+#define _WIN32_WINNT 0x0600
+
 #include "SharedInclude.h"
 #include "../../include/stdafx_common.h"
 #include "../../include/stdafx_common_afx.h"
