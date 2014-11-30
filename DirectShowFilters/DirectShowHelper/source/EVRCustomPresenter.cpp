@@ -944,7 +944,6 @@ HRESULT MPEVRCustomPresenter::GetCurrentMediaType(IMFVideoMediaType** ppMediaTyp
   return hr;
 }
 
-
 HRESULT MPEVRCustomPresenter::TrackSample(IMFSample *pSample)
 {
   HRESULT hr = S_OK;
