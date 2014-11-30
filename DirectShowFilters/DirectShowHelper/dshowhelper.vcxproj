@@ -64,12 +64,11 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;DSHOWHELPER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderOutputFile>.\obj\Debug\dshowhelper.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>.\obj\Debug/</AssemblerListingLocation>
       <ObjectFileName>.\obj\Debug/</ObjectFileName>
@@ -77,6 +76,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeaderFile>Stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <AdditionalDependencies>strmbasd.lib;winmm.lib;comsupp.lib;dxguid.lib;d3d9.lib;d3dx9.lib;mfuuid.lib;dxva2.lib;evr.lib;mf.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -101,10 +101,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;DSHOWHELPER_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderOutputFile>.\obj\Release/dshowhelper.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>.\obj\Release/</AssemblerListingLocation>
       <ObjectFileName>.\obj\Release/</ObjectFileName>
@@ -112,6 +111,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeaderFile>Stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <AdditionalDependencies>strmbase.lib;winmm.lib;comsupp.lib;dxguid.lib;d3d9.lib;d3dx9.lib;mfuuid.lib;dxva2.lib;evr.lib;mf.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -153,6 +153,7 @@
     <ClInclude Include="source\DX9AllocatorPresenter.h" />
     <ClInclude Include="source\EVRCustomPresenter.h" />
     <ClInclude Include="source\IAVSyncClock.h" />
+    <ClInclude Include="source\IMF.h" />
     <ClInclude Include="source\MyQueue.h" />
     <ClInclude Include="source\OuterEVR.h" />
     <ClInclude Include="source\Scheduler.h" />
