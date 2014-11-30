@@ -132,7 +132,8 @@ public class MediaPortalApp : D3D, IRender
   private bool                  _resumedSuspended;
   private bool                  _delayedResume;
   private readonly Object       _delayedResumeLock = new Object();
-  private bool                  _deviceVideo;
+  private bool                  _deviceVideoConnected;
+  private bool                  _deviceVideoRemoved;
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND            = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
@@ -1434,7 +1435,7 @@ public class MediaPortalApp : D3D, IRender
 
         // set maximum and minimum form size in windowed mode
         case WM_GETMINMAXINFO:
-          if (!_suspended && !_deviceVideo)
+          if (!_suspended && !_deviceVideoRemoved)
           {
             OnGetMinMaxInfo(ref msg);
             PluginManager.WndProc(ref msg);
@@ -1978,7 +1979,8 @@ public class MediaPortalApp : D3D, IRender
               Log.Info("Main: Video Device {0} removed", deviceName);
               try
               {
-                _deviceVideo = true;
+                _deviceVideoRemoved = true;
+                _deviceVideoConnected = false;
               }
               catch (Exception exception)
               {
@@ -1990,7 +1992,8 @@ public class MediaPortalApp : D3D, IRender
               Log.Info("Main: Video Device {0} connected", deviceName);
               try
               {
-                _deviceVideo = false;
+                _deviceVideoRemoved = false;
+                _deviceVideoConnected = true;
               }
               catch (Exception exception)
               {
@@ -2064,7 +2067,19 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnDisplayChange(ref Message msg)
   {
-    if (!_suspended && !_deviceVideo)
+    Screen screen = Screen.FromControl(this);
+    if (!_suspended && _deviceVideoConnected)
+    {
+      // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
+      if (screen.Bounds.Width == 1024 &&
+          screen.Bounds.Height == 768)
+      {
+        Log.Debug("Main: OnDisplayChange native bounds {0}x{1} detected after fresh video device connected bypass it", screen.Bounds.Width, screen.Bounds.Height);
+        return;
+      }
+    }
+
+    if (!_suspended && !_deviceVideoRemoved)
     {
       // disable event handlers
       if (GUIGraphicsContext.DX9Device != null)
@@ -2077,7 +2092,6 @@ public class MediaPortalApp : D3D, IRender
       {
         VMR9Util.g_vmr9.UpdateEVRDisplayFPS(); // Update FPS
       }
-      Screen screen = Screen.FromControl(this);
       Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
       Rectangle newBounds = screen.Bounds;
       if (Created && !Equals(screen, GUIGraphicsContext.currentScreen) || !Equals(currentBounds.Size, newBounds.Size))
@@ -2148,7 +2162,19 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnGetMinMaxInfo(ref Message msg)
   {
-    if (!_suspended && !_deviceVideo)
+    if (!_suspended && _deviceVideoConnected)
+    {
+      Screen screen = Screen.FromControl(this);
+      // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
+      if (screen.Bounds.Width == 1024 &&
+          screen.Bounds.Height == 768)
+      {
+        Log.Debug("Main: OnGetMinMaxInfo native bounds {0}x{1} detected after fresh video device connected bypass it", screen.Bounds.Width, screen.Bounds.Height);
+        return;
+      }
+    }
+
+    if (!_suspended && !_deviceVideoRemoved)
     {
       // disable event handlers
       if (GUIGraphicsContext.DX9Device != null)
