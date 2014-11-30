@@ -146,8 +146,8 @@ namespace MediaPortal
     #region private attributes
 
     private readonly Control           _renderTarget;             // render target object
-    private readonly PresentParameters _presentParams;            // D3D presentation parameters
-    private PresentParameters          _presentParamsBackup;      // D3D presentation parameters Backup
+    protected readonly PresentParameters _presentParams;          // D3D presentation parameters
+    protected PresentParameters        _presentParamsBackup;      // D3D presentation parameters Backup
     internal D3DEnumeration            _enumerationSettings;      //
     private readonly bool              _useExclusiveDirectXMode;  // 
     private readonly bool              _disableMouseEvents;       //
@@ -197,6 +197,8 @@ namespace MediaPortal
     protected static bool              _firstLoadedScreen;        //
     protected static bool              _restoreLoadedScreen;      // Restoring correct screen when multi screen in use
     protected static Screen            _screenFocus;              // Screen Focus when minimize / restore to systray
+    protected static Screen            _backupscreen;             // Screen Focus when minimize / restore to systray
+    protected static Rectangle         _backupBounds;             // Bounds backup
 
     #endregion
 
@@ -421,7 +423,7 @@ namespace MediaPortal
           AdapterInfo = null;
         }
       }
-      
+
       if (!Windowed)
       {
         Log.Info("D3D: Starting in full screen");
@@ -442,6 +444,15 @@ namespace MediaPortal
         Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
                  ClientSize.Width, ClientSize.Height,
                  GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+      }
+
+      // Backup bounds when native resolution is not (1024x768)
+      if (GUIGraphicsContext.currentScreen.Bounds.Width != 1024 &&
+          GUIGraphicsContext.currentScreen.Bounds.Height != 768)
+      {
+        Log.Debug("D3D: backups screen Bounds {0}", Bounds);
+        _backupBounds = GUIGraphicsContext.currentScreen.Bounds;
+        _backupscreen = GUIGraphicsContext.currentScreen;
       }
 
       if (!successful)
@@ -611,6 +622,7 @@ namespace MediaPortal
         {
           try
           {
+            Log.Debug("Main: RecreateSwapChain() by restoring startup DirectX values");
             GUIGraphicsContext.DirectXPresentParameters = _presentParamsBackup;
             GUIGraphicsContext.DX9Device.Reset(_presentParamsBackup);
           }
@@ -638,6 +650,7 @@ namespace MediaPortal
         else
         {
           // build new D3D presentation parameters and reset device
+          Log.Debug("Main: RecreateSwapChain() by rebuild PresentParams");
           BuildPresentParams(Windowed);
           try
           {
@@ -1362,6 +1375,7 @@ namespace MediaPortal
 
         // backup _presentParams for later use (standby)
         _presentParamsBackup = _presentParams;
+        Log.Debug("D3D: Backup PresentParams with buffer size set to: {0}x{1}", _presentParamsBackup.BackBufferWidth, _presentParamsBackup.BackBufferHeight);
 
         // Create the device
         if (GUIGraphicsContext.IsDirectX9ExUsed())

@@ -132,6 +132,7 @@ public class MediaPortalApp : D3D, IRender
   private bool                  _resumedSuspended;
   private bool                  _delayedResume;
   private readonly Object       _delayedResumeLock = new Object();
+  private bool                  _deviceVideo;
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND            = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
@@ -181,6 +182,8 @@ public class MediaPortalApp : D3D, IRender
 
   private static readonly Guid KSCATEGORY_RENDER  = new Guid("{65E8773E-8F56-11D0-A3B9-00A0C9223196}");
   private static readonly Guid RDP_REMOTE_AUDIO = new Guid("{E6327CAD-DCEC-4949-AE8A-991E976A79D2}");
+  private static readonly Guid KSCATEGORY_AUDIO = new Guid("{6994ad04-93ef-11d0-a3cc-00a0c9223196}");
+  private static readonly Guid KSCATEGORY_VIDEO = new Guid("{e6dfdc31-31d0-46ac-86af-da1eb05fc599}");
   
   // http://msdn.microsoft.com/en-us/library/windows/desktop/hh448380(v=vs.85).aspx
   private static Guid GUID_MONITOR_POWER_ON             = new Guid("02731015-4510-4526-99e6-e5a17ebd1aea"); 
@@ -1431,7 +1434,7 @@ public class MediaPortalApp : D3D, IRender
 
         // set maximum and minimum form size in windowed mode
         case WM_GETMINMAXINFO:
-          if (!_suspended)
+          if (!_suspended && !_deviceVideo)
           {
             OnGetMinMaxInfo(ref msg);
             PluginManager.WndProc(ref msg);
@@ -1644,6 +1647,25 @@ public class MediaPortalApp : D3D, IRender
           _resumedSuspended = false;
           _delayedResume = false;
 
+          // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
+          if (GUIGraphicsContext.currentScreen.Bounds.Width == 1024 &&
+              GUIGraphicsContext.currentScreen.Bounds.Height == 768)
+          {
+            _restoreLoadedScreen = true;
+            Bounds = _backupBounds;
+            GUIGraphicsContext.currentScreen = _backupscreen;
+            BuildPresentParams(Windowed);
+
+            // backup GUIGraphicsContext.DirectXPresentParameters for restoring upon resume if different from native 1024x768
+            if (_presentParamsBackup.BackBufferWidth == 1024 && _presentParamsBackup.BackBufferHeight == 768)
+            {
+              _presentParamsBackup = _presentParams;
+            }
+            RecreateSwapChain(true);
+            _restoreLoadedScreen = false;
+            Log.Debug("Main: PBT_APMSUSPEND force restoring start screen to Bounds {0}", Bounds);
+          }
+
           // Suspending when we are on minimize (otherwise MP can stay freezed if notification windows show up while minimize)
           WindowState = FormWindowState.Minimized;
 
@@ -1758,6 +1780,14 @@ public class MediaPortalApp : D3D, IRender
           }
 
           _suspended = false;
+
+          // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
+          if (GUIGraphicsContext.currentScreen.Bounds.Width == 1024 &&
+              GUIGraphicsContext.currentScreen.Bounds.Height == 768)
+          {
+            Bounds = _backupBounds;
+            Log.Debug("Main: PBT_APMRESUMESUSPEND force restoring start screen to Bounds {0}", Bounds);
+          }
           break;
 
         // A change in the power status of the computer is detected
@@ -1940,7 +1970,38 @@ public class MediaPortalApp : D3D, IRender
         Log.Debug("Main: Device type is {0} - Name: {1}", Enum.GetName(typeof(DBT_DEV_TYPE), hdr.dbcc_devicetype), deviceName);
 
         // special chanding for audio renderer
-        if (deviceInterface.dbcc_classguid == KSCATEGORY_RENDER || deviceInterface.dbcc_classguid == RDP_REMOTE_AUDIO)
+        if (deviceInterface.dbcc_classguid == KSCATEGORY_VIDEO)
+        {
+          switch (msg.WParam.ToInt32())
+          {
+            case DBT_DEVICEREMOVECOMPLETE:
+              Log.Info("Main: Video Device {0} removed", deviceName);
+              try
+              {
+                _deviceVideo = true;
+              }
+              catch (Exception exception)
+              {
+                Log.Warn("Main: Exception on removal Video Device {0} exception: {1} ", deviceName, exception.Message);
+              }
+              break;
+
+            case DBT_DEVICEARRIVAL:
+              Log.Info("Main: Video Device {0} connected", deviceName);
+              try
+              {
+                _deviceVideo = false;
+              }
+              catch (Exception exception)
+              {
+                Log.Warn("Main: Exception on arrival Video Device {0} exception: {1} ", deviceName, exception.Message);
+              }
+              break;
+          }
+        }
+
+        // special chanding for audio renderer
+        if (deviceInterface.dbcc_classguid == KSCATEGORY_RENDER || deviceInterface.dbcc_classguid == RDP_REMOTE_AUDIO || deviceInterface.dbcc_classguid == KSCATEGORY_AUDIO)
         {
           switch (msg.WParam.ToInt32())
           {
@@ -2003,7 +2064,7 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnDisplayChange(ref Message msg)
   {
-    if (!_suspended)
+    if (!_suspended && !_deviceVideo)
     {
       // disable event handlers
       if (GUIGraphicsContext.DX9Device != null)
@@ -2087,7 +2148,7 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnGetMinMaxInfo(ref Message msg)
   {
-    if (!_suspended)
+    if (!_suspended && !_deviceVideo)
     {
       // disable event handlers
       if (GUIGraphicsContext.DX9Device != null)
@@ -2160,35 +2221,38 @@ public class MediaPortalApp : D3D, IRender
       }
 
       // calculate form dimension limits based on primary screen.
-      if (Windowed)
+      if (!_restoreLoadedScreen)
       {
-        double ratio         = Math.Min((double)Screen.PrimaryScreen.WorkingArea.Width / Width, (double)Screen.PrimaryScreen.WorkingArea.Height / Height);
-        mmi.ptMaxSize.x      = (int)(Width * ratio);
-        mmi.ptMaxSize.y      = (int)(Height * ratio);
-        mmi.ptMaxPosition.x  = Screen.PrimaryScreen.WorkingArea.Left;
-        mmi.ptMaxPosition.y  = Screen.PrimaryScreen.WorkingArea.Top;
-        mmi.ptMinTrackSize.x = GUIGraphicsContext.SkinSize.Width / 3;
-        mmi.ptMinTrackSize.y = GUIGraphicsContext.SkinSize.Height / 3;
-        mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.WorkingArea.Right - GUIGraphicsContext.currentScreen.WorkingArea.Left;
-        mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.WorkingArea.Bottom - GUIGraphicsContext.currentScreen.WorkingArea.Top;
-        Marshal.StructureToPtr(mmi, msg.LParam, true);
-        msg.Result = (IntPtr)0;
-      }
-      else
-      {
-        mmi.ptMaxSize.x = screen.Bounds.Width;
-        mmi.ptMaxSize.y = screen.Bounds.Height;
-        mmi.ptMaxPosition.x = screen.Bounds.X;
-        mmi.ptMaxPosition.y = screen.Bounds.Y;
-        mmi.ptMinTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
-        mmi.ptMinTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
-        mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
-        mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
-        Marshal.StructureToPtr(mmi, msg.LParam, true);
-        msg.Result = (IntPtr)0;
+        if (Windowed)
+        {
+          double ratio         = Math.Min((double)Screen.PrimaryScreen.WorkingArea.Width / Width, (double)Screen.PrimaryScreen.WorkingArea.Height / Height);
+          mmi.ptMaxSize.x      = (int)(Width * ratio);
+          mmi.ptMaxSize.y      = (int)(Height * ratio);
+          mmi.ptMaxPosition.x  = Screen.PrimaryScreen.WorkingArea.Left;
+          mmi.ptMaxPosition.y  = Screen.PrimaryScreen.WorkingArea.Top;
+          mmi.ptMinTrackSize.x = GUIGraphicsContext.SkinSize.Width / 3;
+          mmi.ptMinTrackSize.y = GUIGraphicsContext.SkinSize.Height / 3;
+          mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.WorkingArea.Right - GUIGraphicsContext.currentScreen.WorkingArea.Left;
+          mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.WorkingArea.Bottom - GUIGraphicsContext.currentScreen.WorkingArea.Top;
+          Marshal.StructureToPtr(mmi, msg.LParam, true);
+          msg.Result = (IntPtr)0;
+        }
+        else
+        {
+          mmi.ptMaxSize.x = screen.Bounds.Width;
+          mmi.ptMaxSize.y = screen.Bounds.Height;
+          mmi.ptMaxPosition.x = screen.Bounds.X;
+          mmi.ptMaxPosition.y = screen.Bounds.Y;
+          mmi.ptMinTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
+          mmi.ptMinTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
+          mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
+          mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
+          Marshal.StructureToPtr(mmi, msg.LParam, true);
+          msg.Result = (IntPtr)0;
 
-        // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
-        //Bounds = GUIGraphicsContext.currentScreen.Bounds;
+          // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
+          //Bounds = GUIGraphicsContext.currentScreen.Bounds;
+        }
       }
       Log.Debug("Main: WM_GETMINMAXINFO End (MaxSize: {0}x{1} - MaxPostion: {2},{3} - MinTrackSize: {4}x{5} - MaxTrackSize: {6}x{7})",
             mmi.ptMaxSize.x, mmi.ptMaxSize.y, mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMinTrackSize.x, mmi.ptMinTrackSize.y, mmi.ptMaxTrackSize.x, mmi.ptMaxTrackSize.y);
@@ -4542,7 +4606,7 @@ public class MediaPortalApp : D3D, IRender
     }
   }
 
-  
+
   /// <summary>
   /// 
   /// </summary>
