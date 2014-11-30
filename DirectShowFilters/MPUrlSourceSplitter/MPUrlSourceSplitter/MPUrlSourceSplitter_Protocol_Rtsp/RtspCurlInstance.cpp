@@ -181,7 +181,7 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
   this->state = CURL_STATE_CREATED;
 
   this->lastSequenceNumber = 1;
-  this->flags &= ~(RTSP_CURL_INSTANCE_FLAG_REQUEST_COMMAND_FINISHED | RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX);
+  this->flags &= ~(RTSP_CURL_INSTANCE_FLAG_REQUEST_COMMAND_FINISHED | RTSP_CURL_INSTANCE_FLAG_SERVER_LIVE555 | RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX | RTSP_CURL_INSTANCE_FLAG_SERVER_LIBCETON);
   this->rtspDownloadRequest = dynamic_cast<CRtspDownloadRequest  *>(this->downloadRequest);
   this->rtspDownloadResponse = dynamic_cast<CRtspDownloadResponse *>(this->downloadResponse);
 
@@ -277,6 +277,7 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
             // check server RTSP response header for specific server
 
             this->flags |= (IndexOf(serverHeader->GetValue(), SERVER_FREEBOX) != (-1)) ? RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX : RTSP_CURL_INSTANCE_FLAG_NONE;
+            this->flags |= (IndexOf(serverHeader->GetValue(), SERVER_LIBCETON) != (-1)) ? RTSP_CURL_INSTANCE_FLAG_SERVER_LIBCETON : RTSP_CURL_INSTANCE_FLAG_NONE;
           }
         }
       }
@@ -347,6 +348,7 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
             // check server RTSP response header for specific server
 
             this->flags |= (IndexOf(serverHeader->GetValue(), SERVER_FREEBOX) != (-1)) ? RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX : RTSP_CURL_INSTANCE_FLAG_NONE;
+            this->flags |= (IndexOf(serverHeader->GetValue(), SERVER_LIBCETON) != (-1)) ? RTSP_CURL_INSTANCE_FLAG_SERVER_LIBCETON : RTSP_CURL_INSTANCE_FLAG_NONE;
           }
         }
       }
@@ -390,7 +392,7 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
       if (SUCCEEDED(result))
       {
-        // check if server isn't Live555
+        // check if server isn't Live555 or libceton
 
         for (unsigned int i = 0; i < this->rtspDownloadResponse->GetSessionDescription()->GetAttributes()->Count(); i++)
         {
@@ -1870,6 +1872,12 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                       FREE_MEM_CLASS(packet);
                       FREE_MEM(buffer);
                       FREE_MEM_CLASS(sender);
+
+                      if (FAILED(result) && this->IsSetFlags(RTSP_CURL_INSTANCE_FLAG_SERVER_LIBCETON))
+                      {
+                        // ignore error when irrelevant packet comes
+                        result = S_OK;
+                      }
                     }
                   }
 

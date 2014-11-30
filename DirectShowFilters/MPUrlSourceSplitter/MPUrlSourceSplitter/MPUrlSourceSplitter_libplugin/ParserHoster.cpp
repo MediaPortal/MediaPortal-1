@@ -384,16 +384,16 @@ unsigned int WINAPI CParserHoster::StartReceiveDataWorker(LPVOID lpParam)
                   pendingParser = true;
                   break;
                 case PARSER_RESULT_NOT_KNOWN:
-                  caller->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' doesn't recognize stream", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName());
+                  caller->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' doesn't recognize stream", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVE_DATA_WORKER_NAME, metadata->GetPlugin()->GetName());
                   break;
                 case PARSER_RESULT_KNOWN:
-                  caller->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' recognizes stream, score: %u", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName(), metadata->GetParserScore());
+                  caller->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' recognizes stream, score: %u", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVE_DATA_WORKER_NAME, metadata->GetPlugin()->GetName(), metadata->GetParserScore());
                   break;
                 case PARSER_RESULT_DRM_PROTECTED:
-                  caller->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' recognizes pattern, DRM protected", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName());
+                  caller->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' recognizes pattern, DRM protected", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVE_DATA_WORKER_NAME, metadata->GetPlugin()->GetName());
                   break;
                 default:
-                  caller->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' returns error: 0x%08X", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName(), parserResult);
+                  caller->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' returns error: 0x%08X", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVE_DATA_WORKER_NAME, metadata->GetPlugin()->GetName(), parserResult);
                   caller->parserError = parserResult;
                   break;
                 }
@@ -416,7 +416,7 @@ unsigned int WINAPI CParserHoster::StartReceiveDataWorker(LPVOID lpParam)
 
               if (metadata->IsParserStillPending())
               {
-                caller->logger->Log(LOGGER_ERROR, L"%s: %s: parser '%s' still pending", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName());
+                caller->logger->Log(LOGGER_ERROR, L"%s: %s: parser '%s' still pending", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVE_DATA_WORKER_NAME, metadata->GetPlugin()->GetName());
               }
             }
 
@@ -475,7 +475,7 @@ unsigned int WINAPI CParserHoster::StartReceiveDataWorker(LPVOID lpParam)
 
   if (SUCCEEDED(caller->parserError))
   {
-    caller->logger->Log(LOGGER_INFO, L"%s: %s: active parser: '%s'", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, caller->activeParser->GetName());
+    caller->logger->Log(LOGGER_INFO, L"%s: %s: active parser: '%s'", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVE_DATA_WORKER_NAME, caller->activeParser->GetName());
 
     caller->parserError = caller->activeParser->StartReceivingData(caller->startReceiveDataParameters);
   }

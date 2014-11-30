@@ -49,10 +49,12 @@
 #define RTSP_CURL_INSTANCE_FLAG_SERVER_LIVE555                        (1 << (CURL_INSTANCE_FLAG_LAST + 4))
 // special flag for Freebox RTSP server (fbxrtspd/1.2 Freebox RTSP server doesn't compute RTP packet timestamps)
 #define RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX                        (1 << (CURL_INSTANCE_FLAG_LAST + 5))
+// special flag for libceton RTSP server (libcetonrtsp/1.0 RTSP server sends sometimes irrelevant message instead of RTP packet)
+#define RTSP_CURL_INSTANCE_FLAG_SERVER_LIBCETON                       (1 << (CURL_INSTANCE_FLAG_LAST + 6))
 
-#define RTSP_CURL_INSTANCE_FLAG_PENDING_REQUEST_ASYNC                 (1 << (CURL_INSTANCE_FLAG_LAST + 6))
+#define RTSP_CURL_INSTANCE_FLAG_PENDING_REQUEST_ASYNC                 (1 << (CURL_INSTANCE_FLAG_LAST + 7))
 
-#define RTSP_CURL_INSTANCE_FLAG_LAST                                  (CURL_INSTANCE_FLAG_LAST + 7)
+#define RTSP_CURL_INSTANCE_FLAG_LAST                                  (CURL_INSTANCE_FLAG_LAST + 8)
 
 #define RTSP_CURL_INSTANCE_COMMAND_NONE                               0x00000000
 #define RTSP_CURL_INSTANCE_COMMAND_OPTIONS                            0x00000001
@@ -65,6 +67,7 @@
 
 #define SERVER_FREEBOX                                                L"Freebox RTSP server"
 #define SERVER_LIVE555                                                L"LIVE555 Streaming Media"
+#define SERVER_LIBCETON                                               L"libcetonrtsp/1.0"
 
 class CRtspCurlInstance : public CCurlInstance
 {
