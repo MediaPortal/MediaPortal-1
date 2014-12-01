@@ -126,6 +126,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai::Initialize(CPlugin
 
     CHECK_CONDITION_HRESULT(result, this->configuration->Append(decryptionConfiguration->GetConfiguration()), result, E_OUTOFMEMORY);
 
+    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_SPLITTER, true, PARAMETER_NAME_SPLITTER_DEFAULT) ? PLUGIN_FLAG_SPLITTER : AFHS_DECRYPTION_PLUGIN_FLAG_NONE;
+    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_IPTV, true, PARAMETER_NAME_IPTV_DEFAULT) ? PLUGIN_FLAG_IPTV : AFHS_DECRYPTION_PLUGIN_FLAG_NONE;
+
     this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, DECRYPTION_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
   }
 
@@ -417,7 +420,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai::DecryptSegmentFrag
                           }
 
                           request->SetFinishTime(finishTime);
-                          request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_AFHS_OPEN_CONNECTION_TIMEOUT, true, AFHS_OPEN_CONNECTION_TIMEOUT_DEFAULT));
+                          request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_AFHS_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? AFHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : AFHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER));
                           request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
 
                           CHECK_CONDITION_HRESULT(result, request->SetUrl(keyUrl), result, E_OUTOFMEMORY);

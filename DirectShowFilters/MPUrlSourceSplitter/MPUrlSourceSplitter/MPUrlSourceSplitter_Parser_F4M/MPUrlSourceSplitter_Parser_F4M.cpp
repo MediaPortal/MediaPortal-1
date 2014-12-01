@@ -413,7 +413,7 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::GetParserResult(void)
                                       HRESULT downloadResult = bootstrapInfo->DownloadBootstrapInfo(
                                         this->logger,
                                         PARSER_IMPLEMENTATION_NAME,
-                                        this->connectionParameters->GetValueUnsignedInt(PARAMETER_NAME_FINISH_TIME, true, GetTickCount() + this->connectionParameters->GetValueUnsignedInt(PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT, true, HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT)),
+                                        this->connectionParameters->GetValueUnsignedInt(PARAMETER_NAME_FINISH_TIME, true, GetTickCount() + this->connectionParameters->GetValueUnsignedInt(PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER)),
                                         this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL),
                                         this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL),
                                         this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL),

@@ -27,6 +27,7 @@
 #include "ErrorCodes.h"
 #include "MediaDataBox.h"
 #include "FlvPacket.h"
+#include "Parameters.h"
 
 // decryption implementation name
 #ifdef _DEBUG
@@ -106,6 +107,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Default::Initialize(CPlugi
     this->configuration->Clear();
 
     CHECK_CONDITION_HRESULT(result, this->configuration->Append(decryptionConfiguration->GetConfiguration()), result, E_OUTOFMEMORY);
+
+    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_SPLITTER, true, PARAMETER_NAME_SPLITTER_DEFAULT) ? PLUGIN_FLAG_SPLITTER : AFHS_DECRYPTION_PLUGIN_FLAG_NONE;
+    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_IPTV, true, PARAMETER_NAME_IPTV_DEFAULT) ? PLUGIN_FLAG_IPTV : AFHS_DECRYPTION_PLUGIN_FLAG_NONE;
 
     this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, DECRYPTION_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
   }

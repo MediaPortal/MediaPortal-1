@@ -39,9 +39,14 @@
 #define PARAMETER_NAME_M3U8_PLAYLIST_URL                              L"M3u8PlaylistUrl"
 #define PARAMETER_NAME_M3U8_PLAYLIST_CONTENT                          L"M3u8PlaylistContent"
 
-// we should get data in twenty seconds
-#define M3U8_OPEN_CONNECTION_TIMEOUT_DEFAULT                          20000
-#define M3U8_OPEN_CONNECTION_SLEEP_TIME_DEFAULT                       0
-#define M3U8_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT                  60000
+// we should get data in twenty seconds (splitter)
+#define M3U8_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER                 20000
+#define M3U8_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_SPLITTER              0
+#define M3U8_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER         60000
+
+// we should get data in five seconds (iptv)
+#define M3U8_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV                     5000
+#define M3U8_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_IPTV                  0
+#define M3U8_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV             60000
 
 #endif

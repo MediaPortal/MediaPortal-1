@@ -128,9 +128,14 @@
 #define RTMP_JTV_DEFAULT                                                      NULL
 #define RTMP_SWF_VERIFY_DEFAULT                                               false
 
-// we should get data in twenty seconds
-#define RTMP_OPEN_CONNECTION_TIMEOUT_DEFAULT                                  20000
-#define RTMP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT                               0
-#define RTMP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT                          60000
+// we should get data in twenty seconds (splitter)
+#define RTMP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER                         20000
+#define RTMP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_SPLITTER                      0
+#define RTMP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER                 60000
+
+// we should get data in twenty seconds (iptv)
+#define RTMP_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV                             20000
+#define RTMP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_IPTV                          0
+#define RTMP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV                     60000
 
 #endif

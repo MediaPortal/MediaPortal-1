@@ -2380,6 +2380,11 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
 
         FREE_MEM_CLASS(mediaTypes);
       }
+
+      // add IPTV flag to configuration
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(caller->loadAsyncResult), caller->configuration->Remove(PARAMETER_NAME_IPTV, true));
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(caller->loadAsyncResult), caller->configuration->Remove(PARAMETER_NAME_SPLITTER, true));
+      CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->configuration->Add(PARAMETER_NAME_IPTV, L"1"), caller->loadAsyncResult, E_OUTOFMEMORY);
     }
     else if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_AS_SPLITTER))
     {
@@ -2387,6 +2392,11 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
 
       // output pins are created after demuxer is created
       // now we don't know nothing about video/audio/other stream types
+
+      // add splitter flag to configuration
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(caller->loadAsyncResult), caller->configuration->Remove(PARAMETER_NAME_IPTV, true));
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(caller->loadAsyncResult), caller->configuration->Remove(PARAMETER_NAME_SPLITTER, true));
+      CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->configuration->Add(PARAMETER_NAME_SPLITTER, L"1"), caller->loadAsyncResult, E_OUTOFMEMORY);
     }
   }
 

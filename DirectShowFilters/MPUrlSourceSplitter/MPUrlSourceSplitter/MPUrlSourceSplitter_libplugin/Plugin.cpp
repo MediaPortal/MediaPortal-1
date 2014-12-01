@@ -49,6 +49,16 @@ CPlugin::~CPlugin(void)
 
 /* other methods */
 
+bool CPlugin::IsSplitter(void)
+{
+  return this->IsSetFlags(PLUGIN_FLAG_SPLITTER);
+}
+
+bool CPlugin::IsIptv(void)
+{
+  return this->IsSetFlags(PLUGIN_FLAG_IPTV);
+}
+
 void CPlugin::ClearSession(void)
 {
   this->flags = PLUGIN_FLAG_NONE;

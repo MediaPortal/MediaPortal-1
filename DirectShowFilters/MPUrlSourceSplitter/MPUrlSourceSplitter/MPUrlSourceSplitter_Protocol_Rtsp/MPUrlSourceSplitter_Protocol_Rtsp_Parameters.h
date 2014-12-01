@@ -34,11 +34,15 @@
 #define PARAMETER_NAME_RTSP_CLIENT_PORT_MAX                           L"RtspClientPortMax"
 #define PARAMETER_NAME_RTSP_IGNORE_RTP_PAYLOAD_TYPE                   L"RtspIgnoreRtpPayloadType"
 
-// we should get data in twenty seconds
-#define RTSP_OPEN_CONNECTION_TIMEOUT_DEFAULT                          20000
-#define RTSP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT                       0
-#define RTSP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT                  60000
+// we should get data in twenty seconds (splitter)
+#define RTSP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER                 20000
+#define RTSP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_SPLITTER              0
+#define RTSP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER         60000
 
+// we should get data in one and half seconds (iptv)
+#define RTSP_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV                     1500
+#define RTSP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_IPTV                  0
+#define RTSP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV             60000
 
 #define RTSP_MULTICAST_PREFERENCE_DEFAULT                             2
 #define RTSP_UDP_PREFERENCE_DEFAULT                                   1

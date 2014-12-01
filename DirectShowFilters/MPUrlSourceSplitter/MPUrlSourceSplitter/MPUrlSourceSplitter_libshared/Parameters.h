@@ -51,4 +51,12 @@
 #define LOG_MAX_SIZE_DEFAULT                                                  10485760
 #define LOG_VERBOSITY_DEFAULT                                                 LOGGER_VERBOSE
 
+// internal filter parameters, they can't be set from external source
+
+#define PARAMETER_NAME_SPLITTER                                               L"Splitter"
+#define PARAMETER_NAME_IPTV                                                   L"Iptv"
+
+#define PARAMETER_NAME_SPLITTER_DEFAULT                                       false
+#define PARAMETER_NAME_IPTV_DEFAULT                                           false
+
 #endif

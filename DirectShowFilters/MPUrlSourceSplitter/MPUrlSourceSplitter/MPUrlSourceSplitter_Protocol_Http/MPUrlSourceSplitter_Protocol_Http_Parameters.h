@@ -42,10 +42,15 @@
 // special parameter for enabling (by default) or disabling detection of seeking support
 #define PARAMETER_NAME_HTTP_SEEKING_SUPPORT_DETECTION                 L"HttpSeekingSupportDetection"
 
-// we should get data in twenty seconds
-#define HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT                          20000
-#define HTTP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT                       0
-#define HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT                  60000
+// we should get data in twenty seconds (splitter)
+#define HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER                 20000
+#define HTTP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_SPLITTER              0
+#define HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER         60000
+
+// we should get data in five seconds (iptv)
+#define HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV                     5000
+#define HTTP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_IPTV                  0
+#define HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV             60000
 
 #define HTTP_SEEKING_SUPPORTED_DEFAULT                                false
 #define HTTP_SEEKING_SUPPORT_DETECTION_DEFAULT                        true

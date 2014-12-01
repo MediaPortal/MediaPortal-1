@@ -45,10 +45,14 @@
 #define PARAMETER_NAME_AFHS_COOKIES_COUNT                             L"AfhsCookiesCount"
 #define AFHS_COOKIE_FORMAT_PARAMETER_NAME                             L"AfhsCookie%08u"
 
-// we should get data in twenty seconds
-#define AFHS_OPEN_CONNECTION_TIMEOUT_DEFAULT                          20000
-#define AFHS_OPEN_CONNECTION_SLEEP_TIME_DEFAULT                       0
-#define AFHS_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT                  60000
+// we should get data in twenty seconds (splitter)
+#define AFHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER                 20000
+#define AFHS_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_SPLITTER              0
+#define AFHS_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER         60000
 
+// we should get data in twenty seconds (iptv)
+#define AFHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV                     20000
+#define AFHS_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_IPTV                  0
+#define AFHS_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV             60000
 
 #endif

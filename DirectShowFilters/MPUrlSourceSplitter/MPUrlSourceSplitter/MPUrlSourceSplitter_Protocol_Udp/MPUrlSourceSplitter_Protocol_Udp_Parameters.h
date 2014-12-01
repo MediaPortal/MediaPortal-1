@@ -30,12 +30,18 @@
 // specify check interval for incoming data
 #define PARAMETER_NAME_UDP_RECEIVE_DATA_CHECK_INTERVAL                L"UdpReceiveDataCheckInterval"
 
-// we should get data in two seconds
-#define UDP_OPEN_CONNECTION_TIMEOUT_DEFAULT                           2000
-#define UDP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT                        0
-#define UDP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT                   60000
+// we should get data in two seconds (splitter)
+#define UDP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER                  2000
+#define UDP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_SPLITTER               0
+#define UDP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER          60000
+
+// we should get data in one seconds (iptv)
+#define UDP_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV                      1000
+#define UDP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_IPTV                   0
+#define UDP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV              60000
 
 // we check if we are receiving data each 500 ms
-#define UDP_RECEIVE_DATA_CHECK_INTERVAL_DEFAULT                       500
+#define UDP_RECEIVE_DATA_CHECK_INTERVAL_DEFAULT_SPLITTER              500
+#define UDP_RECEIVE_DATA_CHECK_INTERVAL_DEFAULT_IPTV                  500
 
 #endif

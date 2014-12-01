@@ -504,7 +504,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
 
           // set finish time, all methods must return before finish time
           request->SetFinishTime(finishTime);
-          request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_OPEN_CONNECTION_TIMEOUT, true, RTSP_OPEN_CONNECTION_TIMEOUT_DEFAULT));
+          request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? RTSP_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : RTSP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER));
           request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
 
           if (SUCCEEDED(this->mainCurlInstance->Initialize(request)))
@@ -1339,17 +1339,17 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::GetConnectionParameters(CParameterCo
 
 unsigned int CMPUrlSourceSplitter_Protocol_Rtsp::GetOpenConnectionTimeout(void)
 {
-  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_OPEN_CONNECTION_TIMEOUT, true, RTSP_OPEN_CONNECTION_TIMEOUT_DEFAULT);
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? RTSP_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : RTSP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER);
 }
 
 unsigned int CMPUrlSourceSplitter_Protocol_Rtsp::GetOpenConnectionSleepTime(void)
 {
-  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_OPEN_CONNECTION_SLEEP_TIME, true, RTSP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT);
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_OPEN_CONNECTION_SLEEP_TIME, true, this->IsIptv() ? RTSP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_IPTV : RTSP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_SPLITTER);
 }
 
 unsigned int CMPUrlSourceSplitter_Protocol_Rtsp::GetTotalReopenConnectionTimeout(void)
 {
-  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_TOTAL_REOPEN_CONNECTION_TIMEOUT, true, RTSP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT);
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_TOTAL_REOPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? RTSP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : RTSP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER);
 }
 
 HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::StartReceivingData(CParameterCollection *parameters)
@@ -1667,6 +1667,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::Initialize(CPluginConfiguration *con
     this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
 
     this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, PARAMETER_NAME_LIVE_STREAM_DEFAULT) ? PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_SPECIFIED : PROTOCOL_PLUGIN_FLAG_NONE;
+    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_SPLITTER, true, PARAMETER_NAME_SPLITTER_DEFAULT) ? PLUGIN_FLAG_SPLITTER : PROTOCOL_PLUGIN_FLAG_NONE;
+    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_IPTV, true, PARAMETER_NAME_IPTV_DEFAULT) ? PLUGIN_FLAG_IPTV : PROTOCOL_PLUGIN_FLAG_NONE;
   }
 
   return result;

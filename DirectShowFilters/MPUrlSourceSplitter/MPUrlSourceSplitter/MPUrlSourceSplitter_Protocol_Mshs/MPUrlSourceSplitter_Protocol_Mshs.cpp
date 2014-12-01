@@ -666,7 +666,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
         {
           // set finish time, all methods must return before finish time
           request->SetFinishTime(finishTime);
-          request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_MSHS_OPEN_CONNECTION_TIMEOUT, true, MSHS_OPEN_CONNECTION_TIMEOUT_DEFAULT));
+          request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_MSHS_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? MSHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : MSHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER));
           request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
 
           CMshsStreamFragment *fragment = this->streamFragments->GetItem(this->streamFragmentToDownload);
@@ -1208,17 +1208,17 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::GetConnectionParameters(CParameterCo
 
 unsigned int CMPUrlSourceSplitter_Protocol_Mshs::GetOpenConnectionTimeout(void)
 {
-  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_MSHS_OPEN_CONNECTION_TIMEOUT, true, MSHS_OPEN_CONNECTION_TIMEOUT_DEFAULT);
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_MSHS_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? MSHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : MSHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER);
 }
 
 unsigned int CMPUrlSourceSplitter_Protocol_Mshs::GetOpenConnectionSleepTime(void)
 {
-  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_MSHS_OPEN_CONNECTION_SLEEP_TIME, true, MSHS_OPEN_CONNECTION_SLEEP_TIME_DEFAULT);
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_MSHS_OPEN_CONNECTION_SLEEP_TIME, true, this->IsIptv() ? MSHS_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_IPTV : MSHS_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_SPLITTER);
 }
 
 unsigned int CMPUrlSourceSplitter_Protocol_Mshs::GetTotalReopenConnectionTimeout(void)
 {
-  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_MSHS_TOTAL_REOPEN_CONNECTION_TIMEOUT, true, MSHS_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT);
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_MSHS_TOTAL_REOPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? MSHS_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : MSHS_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER);
 }
 
 HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(CParameterCollection *parameters)
@@ -1489,6 +1489,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::Initialize(CPluginConfiguration *con
     this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
 
     this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, PARAMETER_NAME_LIVE_STREAM_DEFAULT) ? PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_SPECIFIED : PROTOCOL_PLUGIN_FLAG_NONE;
+    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_SPLITTER, true, PARAMETER_NAME_SPLITTER_DEFAULT) ? PLUGIN_FLAG_SPLITTER : PROTOCOL_PLUGIN_FLAG_NONE;
+    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_IPTV, true, PARAMETER_NAME_IPTV_DEFAULT) ? PLUGIN_FLAG_IPTV : PROTOCOL_PLUGIN_FLAG_NONE;
   }
 
   if (SUCCEEDED(result))

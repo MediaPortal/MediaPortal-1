@@ -38,7 +38,10 @@
 
 #define PLUGIN_FLAG_NONE                                              FLAGS_NONE
 
-#define PLUGIN_FLAG_LAST                                              (FLAGS_LAST + 0)
+#define PLUGIN_FLAG_SPLITTER                                          (1 << (FLAGS_LAST + 0))
+#define PLUGIN_FLAG_IPTV                                              (1 << (FLAGS_LAST + 1))
+
+#define PLUGIN_FLAG_LAST                                              (FLAGS_LAST + 2)
 
 class CPlugin : public CFlags
 {
@@ -60,6 +63,14 @@ public:
   /* set methods */
 
   /* other methods */
+
+  // tests if working as splitter filter
+  // @return : true if working as splitter filter, false otherwise
+  virtual bool IsSplitter(void);
+
+  // tests if working as IPTV filter
+  // @return : true if working as IPTV filter, false otherwise
+  virtual bool IsIptv(void);
 
   // initialize plugin implementation with configuration parameters
   // @param configuration : the reference to additional configuration parameters (created by plugin's hoster class)
