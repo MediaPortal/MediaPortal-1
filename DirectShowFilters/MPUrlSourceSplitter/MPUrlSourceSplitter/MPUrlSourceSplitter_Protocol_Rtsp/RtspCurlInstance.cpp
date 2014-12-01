@@ -392,7 +392,7 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
       if (SUCCEEDED(result))
       {
-        // check if server isn't Live555 or libceton
+        // check if server isn't Live555
 
         for (unsigned int i = 0; i < this->rtspDownloadResponse->GetSessionDescription()->GetAttributes()->Count(); i++)
         {
