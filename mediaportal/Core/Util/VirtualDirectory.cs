@@ -128,7 +128,7 @@ namespace MediaPortal.Util
 
             foreach (var share in m_shares)
             {
-              if (share.Path == drive)
+              if (share.Path.StartsWith(drive))
               {
                 driveFound = true;
                 break;
@@ -268,7 +268,7 @@ namespace MediaPortal.Util
       bool driveFound = false;
       foreach (Share share in m_shares)
       {
-        if (share.Path == path)
+        if (share.Path.StartsWith(path))
         {
           driveFound = true;
           break;
@@ -1522,13 +1522,12 @@ namespace MediaPortal.Util
           string driveName = Utils.GetDriveName(drive);
           string driveLetter = drive.Substring(0, 1).ToUpperInvariant() + ":";
           if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
-
           //
           // Check if the share already exists
           //
           foreach (Share share in m_shares)
           {
-            if (share.Path == driveLetter)
+            if (share.Path.StartsWith(driveLetter))
             {
               driveFound = true;
               break;

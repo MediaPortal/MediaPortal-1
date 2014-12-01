@@ -255,6 +255,8 @@ namespace MediaPortal.GUI.Video
       g_Player.PlayBackChanged += OnPlayBackChanged;
       GUIWindowManager.Receivers += GUIWindowManager_OnNewMessage;
       LoadSettings();
+
+      RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
     }
 
     protected override void OnSearchNew()
@@ -620,6 +622,7 @@ namespace MediaPortal.GUI.Video
               _virtualDirectory.AddRemovableDrive(message.Label, message.Label2);
             }
           }
+          RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
           LoadDirectory(_currentFolder);
           break;
 
@@ -3093,6 +3096,11 @@ namespace MediaPortal.GUI.Video
       {
         // here we get ALL files in every subdir, look for folderthumbs, defaultthumbs, etc
         itemlist = _virtualDirectory.GetDirectoryExt(_currentFolder);
+
+        if (_currentFolder == string.Empty)
+        {
+          RemovableDrivesHandler.FilterDrives(ref itemlist);
+        }
 
         if (_mapSettings != null && _mapSettings.Stack)
         {

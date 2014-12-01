@@ -346,6 +346,8 @@ namespace MediaPortal.GUI.Music
       LoadSettings();
       _virtualDirectory.AddDrives();
       _virtualDirectory.SetExtensions(Util.Utils.AudioExtensions);
+
+      RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
     }
 
     public override bool Init()
@@ -513,6 +515,11 @@ namespace MediaPortal.GUI.Music
 
         List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(currentFolder);
 
+        if (currentFolder == string.Empty)
+        {
+          RemovableDrivesHandler.FilterDrives(ref itemlist);
+        }
+
         string strSelectedItem = _dirHistory.Get(currentFolder);
 
         int iItem = 0;
@@ -650,6 +657,7 @@ namespace MediaPortal.GUI.Music
               _virtualDirectory.AddRemovableDrive(message.Label, message.Label2);
             }
           }
+          RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
           LoadDirectory(currentFolder);
           break;
         case GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE:
