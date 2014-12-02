@@ -260,7 +260,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// <summary>
         /// Default value for <see cref="ParameterUdpOpenConnectionTimeout"/>.
         /// </summary>
-        public const int DefaultUdpOpenConnectionTimeout = 2000;
+        public const int DefaultUdpOpenConnectionTimeout = 1000;
 
         /// <summary>
         /// Default value for <see cref="ParameterUdpOpenConnectionSleepTime"/>.

@@ -480,7 +480,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// <summary>
         /// Default value for <see cref="ParameterRtspOpenConnectionTimeout"/>.
         /// </summary>
-        public const int DefaultRtspOpenConnectionTimeout = 20000;
+        public const int DefaultRtspOpenConnectionTimeout = 1500;
 
         /// <summary>
         /// Default value for <see cref="ParameterRtspOpenConnectionSleepTime"/>.

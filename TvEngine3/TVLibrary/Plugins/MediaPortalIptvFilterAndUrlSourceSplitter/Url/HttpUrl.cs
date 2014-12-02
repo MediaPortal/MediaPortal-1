@@ -434,7 +434,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// <summary>
         /// Default value for <see cref="ParameterHttpOpenConnectionTimeout"/>.
         /// </summary>
-        public const int DefaultHttpOpenConnectionTimeout = 20000;
+        public const int DefaultHttpOpenConnectionTimeout = 5000;
 
         /// <summary>
         /// Default value for <see cref="ParameterHttpOpenConnectionSleepTime"/>.
