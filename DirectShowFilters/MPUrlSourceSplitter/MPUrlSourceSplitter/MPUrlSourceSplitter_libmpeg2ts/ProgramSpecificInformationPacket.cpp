@@ -78,6 +78,12 @@ bool CProgramSpecificInformationPacket::Parse(const unsigned char *buffer, uint3
       // if IsPayloadUnitStart() is true, than in this packet starts at least one section
 
       unsigned int position = TS_PACKET_HEADER_LENGTH + this->GetAdaptationFieldSize();
+
+      if ((this->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ONLY_ADAPTATION_FIELD) ||
+          (this->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ADAPTATION_FIELD_WITH_PAYLOAD))
+      {
+        position++;
+      }
       
       if (this->IsPayloadUnitStart())
       {

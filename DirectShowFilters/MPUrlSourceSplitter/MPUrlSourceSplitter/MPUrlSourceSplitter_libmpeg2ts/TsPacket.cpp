@@ -97,10 +97,13 @@ unsigned int CTsPacket::GetPayloadSize(void)
 {
   unsigned int payloadSize = 0;
 
-  if ((this->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ONLY_PAYLOAD) ||
-    (this->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ADAPTATION_FIELD_WITH_PAYLOAD))
+  if (this->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ONLY_PAYLOAD)
   {
-    payloadSize = TS_PACKET_SIZE - this->GetAdaptationFieldSize() - TS_PACKET_HEADER_LENGTH;
+    payloadSize = TS_PACKET_SIZE - TS_PACKET_HEADER_LENGTH;
+  }
+  else if (this->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ADAPTATION_FIELD_WITH_PAYLOAD)
+  {
+    payloadSize = TS_PACKET_SIZE - this->GetAdaptationFieldSize() - TS_PACKET_HEADER_LENGTH - 1;
   }
 
   return payloadSize;
@@ -110,10 +113,13 @@ const uint8_t *CTsPacket::GetPayload(void)
 {
   const uint8_t *payload = NULL;
 
-  if ((this->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ONLY_PAYLOAD) ||
-    (this->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ADAPTATION_FIELD_WITH_PAYLOAD))
+  if (this->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ONLY_PAYLOAD)
   {
-    payload = this->packet + TS_PACKET_HEADER_LENGTH + this->GetAdaptationFieldSize();
+    payload = this->packet + TS_PACKET_HEADER_LENGTH;
+  }
+  else if (this->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ADAPTATION_FIELD_WITH_PAYLOAD)
+  {
+    payload = this->packet + TS_PACKET_HEADER_LENGTH + this->GetAdaptationFieldSize() + 1;
   }
 
   return payload;

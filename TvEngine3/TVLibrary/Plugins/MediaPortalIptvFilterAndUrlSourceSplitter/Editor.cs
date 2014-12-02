@@ -938,7 +938,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
 
         private void buttonSetMpeg2TSParser_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < this.dataGridViewDatabase.Rows.Count; i++)
+            for (int i = 0; i < this.dataGridViewDatabase.SelectedRows.Count; i++)
             {
                 DataGridViewRow row = this.dataGridViewDatabase.Rows[i];
                 TuningDetail detail = this.tuningDetails[i];
