@@ -309,6 +309,12 @@ void COverlayRenderer::SetScr(INT64 pts, INT64 offset)
 
 bool COverlayRenderer:: CreateARGBBuffers(bd_argb_buffer_s** pBuffer)
 {
+  if (!m_pD3DDevice)
+  {
+    LogDebug("COverlayRenderer::CreateARGBBuffers - m_pD3DDevice is NULL");
+    return false;
+  }
+
   // only BD_OVERLAY_IG layer is used at the moment, 
   // so no texture is created for BD_OVERLAY_PG layer
   
