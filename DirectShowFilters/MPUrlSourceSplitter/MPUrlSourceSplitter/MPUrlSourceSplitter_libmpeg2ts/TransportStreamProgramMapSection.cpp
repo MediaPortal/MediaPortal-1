@@ -295,8 +295,6 @@ unsigned int CTransportStreamProgramMapSection::GetSectionInternal(void)
         memcpy(this->payload + position, programDefinition->GetEsInfoDescriptor(), programDefinition->GetEsInfoSize());
         position += programDefinition->GetEsInfoSize();
       }
-
-      position += programDefinition->GetEsInfoSize();
     }
   }
 
