@@ -89,11 +89,6 @@ public:
 protected:
   DWORD ThreadProc();
 
-  void JoinAudioBuffers(Packet* pBuffer, CDeMultiplexer* pDemuxer);
-  void ProcessAudioSample(Packet* pBuffer, IMediaSample* pSample);
-
-  inline void ConvertLPCMFromBE(BYTE* src, void* dest, int channels, int nSamples, int sampleSize, int channelMap);
-  
   void LogMediaType(AM_MEDIA_TYPE* pmt);
 
   CBDReaderFilter* const m_pFilter;

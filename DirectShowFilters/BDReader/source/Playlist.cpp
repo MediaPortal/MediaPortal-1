@@ -69,22 +69,6 @@ Packet* CPlaylist::ReturnNextAudioPacket()
   return ret;
 }
 
-Packet* CPlaylist::ReturnNextAudioPacket(int clip)
-{
-  CAutoLock vectorLock(&m_sectionVector);
-  Packet* ret = NULL;
-  if ((*m_itCurrentAudioPlayBackClip)->nClip == clip)
-  {
-    ret = (*m_itCurrentAudioPlayBackClip)->ReturnNextAudioPacket(playlistFirstPacketTime);
-    if (ret)
-      ret->nPlaylist = nPlaylist;
-  }
-  if (ret)
-    firstPacketRead = true;
-
-  return ret;
-}
-
 Packet* CPlaylist::ReturnNextVideoPacket()
 {
   CAutoLock vectorLock(&m_sectionVector);

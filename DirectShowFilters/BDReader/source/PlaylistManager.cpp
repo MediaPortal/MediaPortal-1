@@ -85,10 +85,6 @@ void CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
   }
   else
   {
-    // A completely new playlist
-    CPlaylist* existingPlaylist = m_vecPlaylists.back();
-    vector<CClip*> audioLess = existingPlaylist->Superceed();
-
     CPlaylist* newPlaylist = new CPlaylist(nPlaylist,firstPacketTime);
     if (newPlaylist->CreateNewClip(nClip, firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, streamStartPosition, playedDuration == 0, interrupted))
     {
@@ -162,24 +158,6 @@ Packet* CPlaylistManager::GetNextAudioPacket()
       //LogDebug("playlistManager: setting audio playback playlist to %d",(*m_itCurrentAudioPlayBackPlaylist)->nPlaylist);
     }
   }
-
-  if (ret && firstAudio)
-  {
-    firstAudio = false;
-    ret->nNewSegment = 0;
-  }
-
-  return ret;
-}
-
-Packet* CPlaylistManager::GetNextAudioPacket(int playlist, int clip)
-{
-  CAutoLock lock (&m_sectionAudio);
-  CAutoLock vectorLock(&m_sectionVector);
-
-  Packet* ret = NULL;
-  if ((*m_itCurrentAudioPlayBackPlaylist)->nPlaylist==playlist)
-    ret=(*m_itCurrentAudioPlayBackPlaylist)->ReturnNextAudioPacket(clip);
 
   if (ret && firstAudio)
   {
