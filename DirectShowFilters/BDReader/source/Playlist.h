@@ -36,7 +36,6 @@ public:
   CPlaylist(int playlistNumber, REFERENCE_TIME firstPacketTime);
   ~CPlaylist(void);
   Packet* ReturnNextAudioPacket();
-  Packet* ReturnNextAudioPacket(int clip);
   Packet* ReturnNextVideoPacket();
   bool CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, REFERENCE_TIME playlistClipOffset, REFERENCE_TIME streamStartOffset, bool seekTarget, bool interrupted);
   bool RemoveRedundantClips(); // returns true if no clips left;
