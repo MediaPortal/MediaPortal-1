@@ -65,7 +65,6 @@ public:
   REFERENCE_TIME playlistFirstPacketTime;
   REFERENCE_TIME clipPlaylistOffset;
   void Reset(REFERENCE_TIME totalStreamOffset);
-  bool FakeAudioAvailable();
   bool HasAudio();
   bool HasVideo();
   REFERENCE_TIME Incomplete();

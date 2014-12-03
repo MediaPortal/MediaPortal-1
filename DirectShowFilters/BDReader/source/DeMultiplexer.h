@@ -56,7 +56,6 @@ public:
   void       Flush(bool bClearclips);
   Packet*    GetVideo();
   Packet*    GetAudio();
-  Packet*    GetAudio(int playlist, int clip);
   void       OnTsPacket(byte* tsPacket);
 
   void       FillAudio(CTsHeader& header, byte* tsPacket);
