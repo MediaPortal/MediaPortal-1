@@ -370,24 +370,6 @@ Packet* CDeMultiplexer::GetVideo()
   return ret;
 }
 
-Packet* CDeMultiplexer::GetAudio(int playlist, int clip)
-{
-  if (HoldAudio())
-    return NULL;
-
-  while (!m_playlistManager->HasAudio())
-  {
-    if (m_filter.IsStopping() || m_bEndOfFile || ReadFromFile() <= 0)
-      return NULL;
-  }
-
-  Packet* packet = m_playlistManager->GetNextAudioPacket(playlist, clip);
-  if (packet->rtTitleDuration == 0)
-    packet->rtTitleDuration = m_rtTitleDuration; // for fake audio
-
-  return packet;
-}
-
 ///
 ///Returns the next audio packet
 // or NULL if there is none available

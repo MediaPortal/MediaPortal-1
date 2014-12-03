@@ -538,52 +538,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   return NOERROR;
 }
 
-void CAudioPin::JoinAudioBuffers(Packet* pBuffer, CDeMultiplexer* pDemuxer)
-{
-  if (pBuffer->pmt)
-  {
-    // Currently only uncompressed PCM audio is supported
-    if (pBuffer->pmt->subtype == MEDIASUBTYPE_PCM)
-    {
-      //LogDebug("aud: Joinig Audio Buffers");
-      WAVEFORMATEXTENSIBLE* wfe = (WAVEFORMATEXTENSIBLE*)pBuffer->pmt->pbFormat;
-      WAVEFORMATEX* wf = (WAVEFORMATEX*)wfe;
-
-      // Assuming all packets in the stream are the same size
-      int packetSize = pBuffer->GetDataSize();
-
-      int maxDurationInBytes = wf->nAvgBytesPerSec / 10; // max 100 ms buffer
-
-      while (true)
-      {
-        if ((MAX_BUFFER_SIZE - pBuffer->GetDataSize() >= packetSize ) && 
-            (maxDurationInBytes >= pBuffer->GetDataSize() + packetSize))
-        {
-          Packet* buf = pDemuxer->GetAudio(pBuffer->nPlaylist,pBuffer->nClipNumber);
-          if (buf)
-          {
-            byte* data = buf->GetData();
-            // Skip LPCM header when copying the next buffer
-            pBuffer->SetCount(pBuffer->GetDataSize() + buf->GetDataSize() - LPCM_HEADER_SIZE);
-            memcpy(pBuffer->GetData()+pBuffer->GetDataSize() - (buf->GetDataSize() - LPCM_HEADER_SIZE), &data[LPCM_HEADER_SIZE], buf->GetDataSize() - LPCM_HEADER_SIZE);
-            delete buf;
-          }
-          else
-          {
-            // No new buffer was available in the demuxer
-            break;
-          }
-        }
-        else
-        {
-          // buffer limit reached
-          break;
-        }
-      }
-    }
-  }
-}
-
 bool CAudioPin::IsConnected()
 {
   return m_bConnected;

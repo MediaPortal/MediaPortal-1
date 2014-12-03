@@ -50,7 +50,6 @@ public:
   void FlushVideo(void);
   void ClearClips(bool skipCurrentClip = true);
   Packet* GetNextAudioPacket();
-  Packet* GetNextAudioPacket(int playlist, int clip);
   Packet* GetNextVideoPacket();
   bool HasAudio();
   bool HasVideo();
