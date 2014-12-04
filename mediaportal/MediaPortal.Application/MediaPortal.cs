@@ -194,6 +194,9 @@ public class MediaPortalApp : D3D, IRender
 
   private ShellNotifications Notifications = new ShellNotifications();
 
+  // Framegrabber instance
+  private FrameGrabber grabber = FrameGrabber.GetInstance();
+
   #endregion
 
   #region enumns
@@ -3150,6 +3153,8 @@ public class MediaPortalApp : D3D, IRender
               GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D ||
               GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
           {
+            grabber.OnFrame();
+
             // clear the surface
             GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
             GUIGraphicsContext.DX9Device.BeginScene();
@@ -3182,6 +3187,8 @@ public class MediaPortalApp : D3D, IRender
             // 3D output either SBS or TAB
 
             Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
+
+            grabber.OnFrame(backbuffer);
 
             // create texture/surface for preparation for 3D output if they don't exist
 
