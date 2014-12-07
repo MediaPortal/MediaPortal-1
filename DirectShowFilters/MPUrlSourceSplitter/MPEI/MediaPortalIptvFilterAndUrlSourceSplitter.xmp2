@@ -1154,8 +1154,8 @@ public class Script
     <Version>
       <Major>2</Major>
       <Minor>1</Minor>
-      <Build>3</Build>
-      <Revision>5440</Revision>
+      <Build>4</Build>
+      <Revision>5454</Revision>
     </Version>
     <ExtensionDescription>The MediaPortal IPTV filter and url source splitter is a directshow source filter that enables direct playback for many protocols and filetypes used in online video sources in the internet.
 
@@ -1167,12 +1167,17 @@ Supported protocols:
 - Adobe HTTP Dynamic Streaming (HDS, F4M manifest)
 - Microsoft Smooth Streaming
 - Apple HTTP live streaming (M3U8 playlists)</ExtensionDescription>
-    <VersionDescription>- fixed crash in HTTP protocol
+    <VersionDescription>- fixed discontinuity or connection lost handling in IPTV case
+- fixed bug in creating filter url
 - fixed not complete bug in downloading in OnlineVideos
-- splitted cache and dump file locations
-- extended time for analysis (especially MPEG2 TS streams)
-- changed FFmpeg libraries to faster load of MPEG2 TS streams
-- added TV server plugin for creating scan playlist with additional filter parameters</VersionDescription>
+- fixed MPEG2 TS packet parsing
+- fixed storing transport stream program map section into MPEG2 TS packet
+- changed default timeouts for IPTV
+- changed MPEG2 TS parser to work only on aligned streams
+- changed RTSP protocol to ignore libceton server exceptions
+- added debug options to filter url
+- added database editor
+</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=327&amp;cf_id=24</OnlineLocation>
     <ReleaseDate>2014-11-05T20:21:47</ReleaseDate>
@@ -1356,7 +1361,7 @@ Supported protocols:
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>MPUrlSourceSplitter.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{baf88af0-0602-4ba3-858f-0f41dd3cc13b}-MPUrlSourceSplitter.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{59782b57-7c5d-4cf2-9f6c-1b253f63711a}-MPUrlSourceSplitter.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
