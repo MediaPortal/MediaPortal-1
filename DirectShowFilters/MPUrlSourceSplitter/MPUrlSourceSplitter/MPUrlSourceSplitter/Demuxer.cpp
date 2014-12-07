@@ -3007,6 +3007,27 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
 
         result = res;
       }
+      else if ((res == E_CONNECTION_LOST_TRYING_REOPEN) || (this->IsSetFlags(DEMUXER_FLAG_PENDING_DISCONTINUITY)))
+      {
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, discontinuity received or connection lost", MODULE_NAME, METHOD_GET_NEXT_PACKET_INTERNAL_NAME, this->demuxerId);
+
+        result = S_FALSE;
+        this->flags &= ~(DEMUXER_FLAG_PENDING_DISCONTINUITY | DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT);
+
+        // set discontinuity for all streams, we have lost some data
+
+        for (unsigned int i = 0; i < CStream::Unknown; i++)
+        {
+          CStreamCollection *streams = this->GetStreams((CStream::StreamType)i);
+
+          for (unsigned int j = 0; j < streams->Count(); j++)
+          {
+            CStream *stream = streams->GetItem(j);
+
+            stream->SetDiscontinuity(true);
+          }
+        }
+      }
     }
 
     FREE_MEM(temp);
