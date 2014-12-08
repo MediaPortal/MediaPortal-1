@@ -154,7 +154,7 @@ void CPlaylist::CurrentClipFilled()
   }
 }
 
-bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, REFERENCE_TIME playlistClipOffset, REFERENCE_TIME streamStartOffset, bool seekTarget, bool interrupted)
+bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, REFERENCE_TIME playlistClipOffset, REFERENCE_TIME streamStartOffset, bool interrupted)
 {
   CAutoLock vectorLock(&m_sectionVector);
   bool ret = true;
@@ -204,7 +204,7 @@ bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENC
       videoClip->Supersede(VIDEO_FILL);
 
     PushClips();
-    m_vecClips.push_back(new CClip(clipNumber, nPlaylist, clipStart, clipOffset, playlistClipOffset, audioPresent, duration, streamStartOffset, seekTarget, interrupted));
+    m_vecClips.push_back(new CClip(clipNumber, nPlaylist, clipStart, clipOffset, playlistClipOffset, audioPresent, duration, streamStartOffset, interrupted));
 
     // initialise
     if (clipsSize == 0)
