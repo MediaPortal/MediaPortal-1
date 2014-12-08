@@ -109,10 +109,7 @@ bool CPlaylist::AcceptAudioPacket(Packet* packet)
     LogDebug("CPlaylist Panic in Accept Audio Packet");
 
   if (!firstAudioPESPacketSeen && ret && packet->rtStart != Packet::INVALID_TIME)
-  {
     firstAudioPESPacketSeen = true;
-    firstAudioPESTimeStamp = (*m_itCurrentAudioSubmissionClip)->clipPlaylistOffset - packet->rtStart;
-  }
 
   return ret;
 }
@@ -132,15 +129,11 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet)
     if (!firstVideoPESPacketSeen && (*m_itCurrentVideoSubmissionClip)->nPlaylist != packet->nPlaylist)
       packet->nNewSegment |= NS_NEW_PLAYLIST;
 
-    prevVideoPosition = (*m_itCurrentVideoSubmissionClip)->lastVideoPosition;
     ret = (*m_itCurrentVideoSubmissionClip)->AcceptVideoPacket(packet);
   }
 
   if (!firstVideoPESPacketSeen && ret && packet->rtStart != Packet::INVALID_TIME)
-  {
     firstVideoPESPacketSeen = true;
-    firstVideoPESTimeStamp = (*m_itCurrentVideoSubmissionClip)->clipPlaylistOffset - packet->rtStart;
-  }
 
   return ret;
 }
@@ -321,8 +314,6 @@ void CPlaylist::Reset(int playlistNumber, REFERENCE_TIME firstPacketTime)
 
   firstAudioPESPacketSeen = false;
   firstVideoPESPacketSeen = false;
-  firstAudioPESTimeStamp = 0LL;
-  firstVideoPESTimeStamp = 0LL;
 
   firstPacketRead = false;
 }
