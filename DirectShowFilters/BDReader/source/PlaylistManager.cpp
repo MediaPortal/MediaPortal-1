@@ -71,7 +71,7 @@ void CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
   {
     // First playlist
     CPlaylist* firstPlaylist = new CPlaylist(nPlaylist, firstPacketTime);
-    if (firstPlaylist->CreateNewClip(nClip, firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, streamStartPosition, false, false))
+    if (firstPlaylist->CreateNewClip(nClip, firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, streamStartPosition, false))
     {
       m_vecPlaylists.push_back(firstPlaylist);
       m_itCurrentAudioPlayBackPlaylist = m_itCurrentVideoPlayBackPlaylist = m_itCurrentAudioSubmissionPlaylist = m_itCurrentVideoSubmissionPlaylist = m_vecPlaylists.begin();
@@ -81,12 +81,12 @@ void CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
   {
     // New clip in existing playlist
     CPlaylist* existingPlaylist = m_vecPlaylists.back();
-    existingPlaylist->CreateNewClip(nClip, firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, streamStartPosition, false, interrupted);
+    existingPlaylist->CreateNewClip(nClip, firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, streamStartPosition, interrupted);
   }
   else
   {
     CPlaylist* newPlaylist = new CPlaylist(nPlaylist,firstPacketTime);
-    if (newPlaylist->CreateNewClip(nClip, firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, streamStartPosition, playedDuration == 0, interrupted))
+    if (newPlaylist->CreateNewClip(nClip, firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, streamStartPosition, interrupted))
     {
       PushPlaylists();
       m_vecPlaylists.push_back(newPlaylist);
