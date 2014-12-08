@@ -85,8 +85,6 @@ protected:
 
   bool firstAudioPESPacketSeen;
   bool firstVideoPESPacketSeen;
-  REFERENCE_TIME firstAudioPESTimeStamp;
-  REFERENCE_TIME firstVideoPESTimeStamp;
 
   CCritSec m_sectionVector;
 
