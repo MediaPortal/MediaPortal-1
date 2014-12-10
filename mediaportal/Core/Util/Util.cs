@@ -2561,7 +2561,6 @@ namespace MediaPortal.Util
           return false;
         }
 
-        Log.Debug("Util: FileDelete {0} successful.", strFile);
         return true;
       }
       catch (Exception ex)
