@@ -690,7 +690,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
       if (CPcr::DecodeFromPesHeader(p, 0, pts, dts))
       {
 #ifdef LOG_DEMUXER_AUDIO_SAMPLES
-        LogDebug("demux: aud pts %6.3f clip: %d playlist: %d", pts.ToClock(), m_nClip, m_nPlaylist);
+        LogDebug("demux: aud pts: %6.3f clip: %d playlist: %d", pts.ToClock(), m_nClip, m_nPlaylist);
 #endif
         m_bAC3Substream = false;
 
