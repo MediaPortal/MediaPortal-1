@@ -42,6 +42,7 @@ CMPUrlSourceSplitterOutputPin::CMPUrlSourceSplitterOutputPin(LPCWSTR pName, CBas
   : CBaseOutputPin(NAME("MediaPortal Url Source Splitter Output Pin"), pFilter, pLock, phr, pName), CFlags()
 {
   this->mediaPackets = NULL;
+  this->mediaPacketsLock = NULL;
   this->parameters = NULL;
   this->mediaTypes = NULL;
   this->demuxerId = DEMUXER_ID_UNSPECIFIED;

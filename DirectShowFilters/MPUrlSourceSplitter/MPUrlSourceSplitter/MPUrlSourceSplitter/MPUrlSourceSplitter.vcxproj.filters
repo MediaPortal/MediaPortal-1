@@ -22,6 +22,15 @@
     <Filter Include="Demuxers\Source Files">
       <UniqueIdentifier>{398ba232-0b4b-44f7-be62-02c68d12e766}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Muxers">
+      <UniqueIdentifier>{51ea234f-60ae-465d-9c4b-8362fb993a85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Muxers\Header Files">
+      <UniqueIdentifier>{587afc57-0d3f-4a09-9770-7242e7396de8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Muxers\Source Files">
+      <UniqueIdentifier>{81965b7f-77a7-41bf-91d2-15189d82015f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -123,6 +132,9 @@
     <ClInclude Include="PacketDemuxer.h">
       <Filter>Demuxers\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Muxer.h">
+      <Filter>Muxers\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -220,6 +232,9 @@
     </ClCompile>
     <ClCompile Include="PacketDemuxer.cpp">
       <Filter>Demuxers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Muxer.cpp">
+      <Filter>Muxers\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
