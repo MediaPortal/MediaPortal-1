@@ -27,9 +27,9 @@
 #include "LockMutex.h"
 #include "ErrorCodes.h"
 //#include "Parameters.h"
-//#include "StreamPackage.h"
-//#include "StreamPackageDataRequest.h"
-//#include "StreamPackageDataResponse.h"
+#include "StreamPackage.h"
+#include "StreamPackageDataRequest.h"
+#include "StreamPackageDataResponse.h"
 //#include "StreamPackagePacketRequest.h"
 //#include "StreamPackagePacketResponse.h"
 #include "FFmpegLogger.h"
@@ -49,6 +49,98 @@ extern "C" void asf_reset_header2(AVFormatContext *s);
 #else
 #define MODULE_NAME                                                   L"StandardDemuxer"
 #endif
+
+static const char *RAW_VIDEO = "rawvideo";
+static const char *RAW_VIDEO_DESC = "raw video files";
+
+static const char *RAW_AUDIO = "rawaudio";
+static const char *RAW_AUDIO_DESC = "raw audio files";
+
+struct input_format_map
+{
+  const char *orig_format;
+  const char *new_format;
+  const char *new_description;
+} input_formats [] =
+{
+  // shorten these formats
+  { "matroska,webm",           "matroska", NULL },
+  { "mov,mp4,m4a,3gp,3g2,mj2", "mp4",      "MPEG-4/QuickTime format" },
+
+  // raw Video formats (grouped into "rawvideo")
+  { "dnxhd", RAW_VIDEO, RAW_VIDEO_DESC },
+  { "h261",  RAW_VIDEO, RAW_VIDEO_DESC },
+  { "h263",  RAW_VIDEO, RAW_VIDEO_DESC },
+  { "h264",  RAW_VIDEO, RAW_VIDEO_DESC },
+  { "ingenient", RAW_VIDEO, RAW_VIDEO_DESC },
+  { "mjpeg", RAW_VIDEO, RAW_VIDEO_DESC },
+  { "vc1",   RAW_VIDEO, RAW_VIDEO_DESC },
+
+  // raw Audio Formats (grouped into "rawaudio")
+  { "dirac", RAW_AUDIO, RAW_AUDIO_DESC },
+  { "f32be", RAW_AUDIO, RAW_AUDIO_DESC },
+  { "f32le", RAW_AUDIO, RAW_AUDIO_DESC },
+  { "f64be", RAW_AUDIO, RAW_AUDIO_DESC },
+  { "f64le", RAW_AUDIO, RAW_AUDIO_DESC },
+  { "g722",  RAW_AUDIO, RAW_AUDIO_DESC },
+  { "gsm",   RAW_AUDIO, RAW_AUDIO_DESC },
+  { "s16be", RAW_AUDIO, RAW_AUDIO_DESC },
+  { "s16le", RAW_AUDIO, RAW_AUDIO_DESC },
+  { "s24be", RAW_AUDIO, RAW_AUDIO_DESC },
+  { "s24le", RAW_AUDIO, RAW_AUDIO_DESC },
+  { "s32be", RAW_AUDIO, RAW_AUDIO_DESC },
+  { "s32le", RAW_AUDIO, RAW_AUDIO_DESC },
+  { "s8",    RAW_AUDIO, RAW_AUDIO_DESC },
+  { "u16be", RAW_AUDIO, RAW_AUDIO_DESC },
+  { "u16le", RAW_AUDIO, RAW_AUDIO_DESC },
+  { "u24be", RAW_AUDIO, RAW_AUDIO_DESC },
+  { "u24le", RAW_AUDIO, RAW_AUDIO_DESC },
+  { "u32be", RAW_AUDIO, RAW_AUDIO_DESC },
+  { "u32le", RAW_AUDIO, RAW_AUDIO_DESC },
+  { "u8",    RAW_AUDIO, RAW_AUDIO_DESC },
+
+  // disabled Formats
+  { "applehttp", NULL, NULL },
+  { "ass", NULL, NULL },
+  { "ffm", NULL, NULL },
+  { "ffmetadata", NULL, NULL },
+  { "microdvd", NULL, NULL },
+  { "mpegtsraw", NULL, NULL },
+  { "spdif", NULL, NULL },
+  { "srt", NULL, NULL },
+  { "tty", NULL, NULL },
+  { "vc1test", NULL, NULL },
+  { "yuv4mpegpipe", NULL, NULL },
+};
+
+void GetInputFormatInfo(AVInputFormat *inputFormat, const char **resName, const char **resDescription)
+{
+  const char *name = inputFormat->name;
+  const char *desc = inputFormat->long_name;
+
+  for (int i=0; i < countof(input_formats); ++i)
+  {
+    if (strcmp(input_formats[i].orig_format, name) == 0)
+    {
+      name = input_formats[i].new_format;
+
+      if (input_formats[i].new_description != NULL)
+      {
+        desc = input_formats[i].new_description;
+      }
+      break;
+    }
+  }
+
+  if (resName != NULL)
+  {
+    *resName = name;
+  }
+  if (resDescription)
+  {
+    *resDescription = desc;
+  }
+}
 
 static int GetAudioCodecPriority(AVCodecContext *codec)
 {
@@ -585,6 +677,38 @@ HRESULT CStandardDemuxer::Seek(REFERENCE_TIME time)
 
 /* protected methods */
 
+HRESULT CStandardDemuxer::CreateDemuxerInternal(void)
+{
+  HRESULT result = S_OK;
+
+  if (this->demuxerContext == NULL)
+  {
+    uint8_t *buffer = (uint8_t *)av_mallocz(DEMUXER_READ_BUFFER_SIZE + FF_INPUT_BUFFER_PADDING_SIZE);
+    this->demuxerContext = avio_alloc_context(buffer, DEMUXER_READ_BUFFER_SIZE, 0, this, DemuxerRead, NULL, DemuxerSeek);
+  }
+
+  CHECK_POINTER_HRESULT(result, this->demuxerContext, result, E_OUTOFMEMORY);
+  CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, METHOD_DEMUXER_MESSAGE_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_WORKER_NAME, this->demuxerId, L"not enough memory to allocate AVIOContext"));
+
+  if (SUCCEEDED(result))
+  {
+    result = this->OpenStream(this->demuxerContext);
+
+    if (FAILED(result))
+    {
+      this->logger->Log(LOGGER_ERROR, L"%s: %s: stream %u, OpenStream() error: 0x%08X", MODULE_NAME, METHOD_CREATE_DEMUXER_WORKER_NAME, this->demuxerId, result);
+
+      // clean up
+      av_free(this->demuxerContext->buffer);
+      av_free(this->demuxerContext);
+      this->demuxerContext = NULL;
+      this->demuxerContextBufferPosition = 0;
+    }
+  }
+
+  return result;
+}
+
 void CStandardDemuxer::CleanupDemuxerInternal(void)
 {
   if (this->demuxerContext != NULL)
@@ -837,8 +961,8 @@ HRESULT CStandardDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
           }
         }
 
-        REFERENCE_TIME pts = this->GetPacketPts(&ffmpegPacket);
-        REFERENCE_TIME dts = this->GetPacketDts(&ffmpegPacket);
+        REFERENCE_TIME pts = this->GetPacketPts(stream, &ffmpegPacket);
+        REFERENCE_TIME dts = this->GetPacketDts(stream, &ffmpegPacket);
 
         REFERENCE_TIME duration = (REFERENCE_TIME)ConvertTimestampToRT((this->IsMatroska() && (stream->codec->codec_type == AVMEDIA_TYPE_SUBTITLE)) ? ffmpegPacket.convergence_duration : ffmpegPacket.duration, stream->time_base.num, stream->time_base.den, 0);
 
@@ -2232,4 +2356,448 @@ void CStandardDemuxer::UpdateParserFlags(AVStream *stream)
       }
     }
   }
+}
+
+int CStandardDemuxer::DemuxerRead(void *opaque, uint8_t *buf, int buf_size)
+{
+  CStandardDemuxer *demuxer = static_cast<CStandardDemuxer *>(opaque);
+  HRESULT result = demuxer->DemuxerReadPosition(demuxer->demuxerContextBufferPosition, buf, buf_size, STREAM_PACKAGE_DATA_REQUEST_FLAG_NONE);
+
+  if (SUCCEEDED(result))
+  {
+    // in case of success is in result is length of returned data
+    demuxer->demuxerContextBufferPosition += (unsigned int)result;
+  }
+
+  return (int)result;
+}
+
+int64_t CStandardDemuxer::DemuxerSeek(void *opaque, int64_t offset, int whence)
+{
+  CStandardDemuxer *demuxer = static_cast<CStandardDemuxer *>(opaque);
+
+  int64_t result = -1;
+
+  if (whence == SEEK_SET)
+  {
+    demuxer->demuxerContextBufferPosition = offset;
+    result = demuxer->demuxerContextBufferPosition;
+  }
+  else if (whence == SEEK_CUR)
+  {
+    demuxer->demuxerContextBufferPosition += offset;
+    result = demuxer->demuxerContextBufferPosition;
+
+  }
+  else if ((whence == SEEK_END) || (whence == AVSEEK_SIZE))
+  {
+    HRESULT res = S_OK;
+    CStreamProgress *progress = new CStreamProgress();
+    CHECK_POINTER_HRESULT(result, progress, result, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(res))
+    {
+      progress->SetStreamId(demuxer->GetDemuxerId());
+      res = demuxer->filter->QueryStreamProgress(progress);
+    }
+
+    if (SUCCEEDED(res))
+    {
+      if (whence == SEEK_END)
+      {
+        demuxer->demuxerContextBufferPosition = progress->GetTotalLength() - offset;
+        result = demuxer->demuxerContextBufferPosition;
+      }
+      else
+      {
+        result = progress->GetTotalLength();
+      }
+    }
+
+    FREE_MEM_CLASS(progress);
+  }
+
+  return result;
+}
+
+HRESULT CStandardDemuxer::InitFormatContext(void)
+{
+  HRESULT result = S_OK;
+
+  if (SUCCEEDED(result))
+  {
+    const char *format = NULL;
+    GetInputFormatInfo(this->formatContext->iformat, &format, NULL);
+
+    result = ((format == NULL) && (this->formatContext->iformat == NULL)) ? E_FAIL : result;
+
+    if (SUCCEEDED(result))
+    {
+      this->containerFormat = ConvertToUnicodeA((format != NULL) ? format : this->formatContext->iformat->name);
+      CHECK_POINTER_HRESULT(result, this->containerFormat, result, E_OUTOFMEMORY);
+    }
+
+    if (SUCCEEDED(result))
+    {
+      this->flags &= ~STANDARD_DEMUXER_FLAG_VC1_SEEN_TIMESTAMP;
+
+      this->flags |= (_wcsnicmp(this->containerFormat, L"flv", 3) == 0) ? STANDARD_DEMUXER_FLAG_FLV : DEMUXER_FLAG_NONE;
+      this->flags |= (_wcsnicmp(this->containerFormat, L"asf", 3) == 0) ? STANDARD_DEMUXER_FLAG_ASF : DEMUXER_FLAG_NONE;
+      this->flags |= (_wcsnicmp(this->containerFormat, L"mp4", 3) == 0) ? STANDARD_DEMUXER_FLAG_MP4 : DEMUXER_FLAG_NONE;
+      this->flags |= (_wcsnicmp(this->containerFormat, L"matroska", 8) == 0) ? STANDARD_DEMUXER_FLAG_MATROSKA : DEMUXER_FLAG_NONE;
+      this->flags |= (_wcsnicmp(this->containerFormat, L"ogg", 3) == 0) ? STANDARD_DEMUXER_FLAG_OGG : DEMUXER_FLAG_NONE;
+      this->flags |= (_wcsnicmp(this->containerFormat, L"avi", 3) == 0) ? STANDARD_DEMUXER_FLAG_AVI : DEMUXER_FLAG_NONE;
+      this->flags |= (_wcsnicmp(this->containerFormat, L"mpegts", 6) == 0) ? STANDARD_DEMUXER_FLAG_MPEG_TS : DEMUXER_FLAG_NONE;
+      this->flags |= (_wcsicmp(this->containerFormat, L"mpeg") == 0) ? STANDARD_DEMUXER_FLAG_MPEG_PS : DEMUXER_FLAG_NONE;
+      this->flags |= (_wcsicmp(this->containerFormat, L"rm") == 0) ? STANDARD_DEMUXER_FLAG_RM : DEMUXER_FLAG_NONE;
+
+      this->formatContext->flags |= AVFMT_FLAG_IGNPARSERSYNC;
+
+      // set minimum time for stream analysis in FFmpeg (5000 ms)
+      this->formatContext->max_analyze_duration = 5000000;
+
+      unsigned int startTime = GetTickCount();
+
+      int ret = avformat_find_stream_info(this->formatContext, NULL);
+      CHECK_CONDITION_EXECUTE(ret < 0, result = ret);
+      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, finished finding stream information (%s), duration: %u ms", MODULE_NAME, L"InitFormatContext()", this->demuxerId, ret < 0 ? L"failed" : L"succeeded", GetTickCount() - startTime);
+
+      if (SUCCEEDED(result))
+      {
+        for (unsigned int i = 0; i < this->formatContext->nb_streams; i++)
+        {
+          AVStream *st = this->formatContext->streams[i];
+
+          // disable full stream parsing for these formats
+          if (st->need_parsing == AVSTREAM_PARSE_FULL)
+          {
+            if (st->codec->codec_id == CODEC_ID_DVB_SUBTITLE)
+            {
+              st->need_parsing = AVSTREAM_PARSE_NONE;
+            }
+          }
+
+          if (this->IsOgg() && (st->codec->codec_id == CODEC_ID_H264))
+          {
+            st->need_parsing = AVSTREAM_PARSE_FULL;
+          }
+
+          // create the parsers with the appropriate flags
+          this->InitParser(this->formatContext, st);
+          this->UpdateParserFlags(st);
+
+          if (((st->codec->codec_id == CODEC_ID_DTS) && (st->codec->codec_tag == 0xA2)) ||
+            ((st->codec->codec_id == CODEC_ID_EAC3) && (st->codec->codec_tag == 0xA1)))
+          {
+            st->disposition |= AV_DISPOSITION_SECONDARY_AUDIO;
+          }
+
+          // update substreams
+          for (unsigned int j = 0; j < this->formatContext->nb_streams; j++)
+          {
+            AVStream *tempStream = this->formatContext->streams[j];
+
+            // find and flag the AC-3 substream
+            if (this->IsMpegTs() && (tempStream->codec->codec_id == CODEC_ID_TRUEHD))
+            {
+              int id = tempStream->id;
+              AVStream *subStream = NULL;
+
+              for (unsigned int k = 0; k < this->formatContext->nb_streams; k++)
+              {
+                AVStream *sst = this->formatContext->streams[k];
+
+                if ((j != k) && (sst->id == id))
+                {
+                  subStream = sst;
+                  break;
+                }
+              }
+
+              if (subStream != NULL)
+              {
+                subStream->disposition = tempStream->disposition | AV_DISPOSITION_SUB_STREAM;
+                av_dict_copy(&subStream->metadata, tempStream->metadata, 0);
+              }
+            }
+          }
+
+          /*if ((st->codec->codec_type == AVMEDIA_TYPE_ATTACHMENT) && (st->codec->codec_id == CODEC_ID_TTF))
+          {
+          if (!m_pFontInstaller)
+          {
+          m_pFontInstaller = new CFontInstaller();
+          }
+
+          m_pFontInstaller->InstallFont(st->codec->extradata, st->codec->extradata_size);
+          }*/
+        }
+      }
+
+      if (SUCCEEDED(result))
+      {
+        // create streams
+
+        // try to use non-blocking methods
+        this->formatContext->flags |= AVFMT_FLAG_NONBLOCK;
+
+        for (int i = 0; i < countof(this->streams); i++)
+        {
+          this->streams[i]->Clear();
+        }
+
+        unsigned int program = UINT_MAX;
+
+        if (this->formatContext->nb_programs != 0)
+        {
+          // use a scoring system to select the best available program
+          // a "good" program at least has a valid video and audio stream
+          // we'll try here to detect these streams and decide on the best program
+          // every present stream gets one point, if it appears to be valid, it gets 4
+          // valid video streams have a width and height, valid audio streams have a channel count
+          // if one program was found with both streams valid, we'll stop looking
+
+          DWORD score = 0; // stream found: 1, stream valid: 4
+
+          for (unsigned int i = 0; i < this->formatContext->nb_programs; i++)
+          {
+            if (this->formatContext->programs[i]->nb_stream_indexes > 0)
+            {
+              DWORD videoScore = 0;
+              DWORD audioScore = 0;
+
+              for (unsigned k = 0; k < this->formatContext->programs[i]->nb_stream_indexes; k++)
+              {
+                unsigned streamIndex = this->formatContext->programs[i]->stream_index[k];
+                AVStream *stream = this->formatContext->streams[streamIndex];
+
+                if ((stream->codec->codec_type == AVMEDIA_TYPE_VIDEO) && (videoScore < 4))
+                {
+                  videoScore = ((stream->codec->width != 0) && (stream->codec->height != 0)) ? 4 : 1;
+                }
+                else if ((stream->codec->codec_type == AVMEDIA_TYPE_AUDIO) && (audioScore < 4))
+                {
+                  audioScore = (stream->codec->channels != 0) ? 4 : 1;
+                }
+              }
+
+              // check the score of the previously found stream
+              // in addition, we always require a valid video stream (or none), a invalid one is not allowed
+
+              if (videoScore != 1 && (videoScore + audioScore) > score)
+              {
+                score = videoScore + audioScore;
+                program = i;
+
+                if (score == 8)
+                {
+                  break;
+                }
+              }
+            }
+          }
+        }
+
+        // stream has programs
+        bool isProgram = (program < this->formatContext->nb_programs);
+
+        // discard unwanted programs
+        if (isProgram)
+        {
+          for (unsigned int i = 0; i < this->formatContext->nb_programs; i++)
+          {
+            CHECK_CONDITION_EXECUTE(i != program, this->formatContext->programs[i]->discard = AVDISCARD_ALL);
+          }
+        }
+
+        // re-compute the overall stream duration based on video and audio durations
+        int64_t duration = INT64_MIN;
+        int64_t streamDuration = 0;
+        int64_t startTime = INT64_MAX;
+        int64_t streamStartTime = 0;
+
+        // number of streams (either in stream or in program)
+        unsigned int streamCount = isProgram ? this->formatContext->programs[program]->nb_stream_indexes : this->formatContext->nb_streams;
+
+        // stream has PGS streams
+        //bool hasPGS = false;
+
+        // add streams from selected program, or all streams if no program was selected
+        for (unsigned int i = 0; i < streamCount; i++)
+        {
+          int streamIndex = isProgram ? this->formatContext->programs[program]->stream_index[i] : i;
+
+          AVStream *stream = this->formatContext->streams[streamIndex];
+
+          // if known stream type, add stream
+
+          if ((stream->codec->codec_type == AVMEDIA_TYPE_VIDEO) ||
+            (stream->codec->codec_type == AVMEDIA_TYPE_AUDIO) ||
+            (stream->codec->codec_type == AVMEDIA_TYPE_SUBTITLE))
+          {
+            if ((stream->codec->codec_type == AVMEDIA_TYPE_UNKNOWN) ||
+              (stream->discard == AVDISCARD_ALL) ||
+              ((stream->codec->codec_id == CODEC_ID_NONE) && (stream->codec->codec_tag == 0)) ||
+              (stream->disposition & AV_DISPOSITION_ATTACHED_PIC))
+            {
+              stream->discard = AVDISCARD_ALL;
+              result = S_FALSE;
+            }
+
+            if (result == S_OK)
+            {
+              CStream *newStream = new CStream(&result);
+              CHECK_POINTER_HRESULT(result, newStream, result, E_OUTOFMEMORY);
+
+              if (SUCCEEDED(result))
+              {
+                newStream->SetPid(streamIndex);
+
+                // Extract language
+                const char *lang = NULL;
+                if (av_dict_get(stream->metadata, "language", NULL, 0) != NULL)
+                {
+                  lang = av_dict_get(stream->metadata, "language", NULL, 0)->value;
+                }
+
+                wchar_t *language = ConvertToUnicodeA(lang);
+                result = (newStream->SetLanguage((language != NULL) ? CDemuxerUtils::ProbeForISO6392(language) : L"und")) ? result : E_OUTOFMEMORY;
+                FREE_MEM(language);
+
+                CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = newStream->CreateStreamInfo(this->formatContext, stream, this->containerFormat));
+                CHECK_CONDITION_EXECUTE(FAILED(result), stream->discard = AVDISCARD_ALL);
+              }
+
+              if (SUCCEEDED(result))
+              {
+                switch(stream->codec->codec_type)
+                {
+                case AVMEDIA_TYPE_VIDEO:
+                  newStream->SetStreamType(CStream::Video);
+                  result = (this->streams[CStream::Video]->Add(newStream)) ? result : E_OUTOFMEMORY;
+                  break;
+                case AVMEDIA_TYPE_AUDIO:
+                  newStream->SetStreamType(CStream::Audio);
+                  result = (this->streams[CStream::Audio]->Add(newStream)) ? result : E_OUTOFMEMORY;
+                  break;
+                case AVMEDIA_TYPE_SUBTITLE:
+                  newStream->SetStreamType(CStream::Subpic);
+                  result = (this->streams[CStream::Subpic]->Add(newStream)) ? result : E_OUTOFMEMORY;
+                  break;
+                default:
+                  // unsupported stream
+                  // normally this should be caught while creating the stream info already
+                  result = E_FAIL;
+                  break;
+                }
+              }
+
+              CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(newStream));
+            }
+
+            if (result != S_OK)
+            {
+              result = S_OK;
+              continue;
+            }
+
+            if ((stream->codec->codec_type == AVMEDIA_TYPE_VIDEO) || (stream->codec->codec_type == AVMEDIA_TYPE_AUDIO))
+            {
+              if (stream->duration != AV_NOPTS_VALUE)
+              {
+                streamDuration = av_rescale_q(stream->duration, stream->time_base, AV_RATIONAL_TIMEBASE);
+
+                CHECK_CONDITION_EXECUTE(streamDuration > duration, duration = streamDuration);
+              }
+
+              if (stream->start_time != AV_NOPTS_VALUE)
+              {
+                streamStartTime = av_rescale_q(stream->start_time, stream->time_base, AV_RATIONAL_TIMEBASE);
+
+                if ((startTime != INT64_MAX) && (this->IsMpegTs() || this->IsMpegPs()) && (stream->pts_wrap_bits < 60))
+                {
+                  int64_t start = av_rescale_q(startTime, AV_RATIONAL_TIMEBASE, stream->time_base);
+
+                  if ((start < (3LL << (stream->pts_wrap_bits - 3))) && (stream->start_time > (3LL << (stream->pts_wrap_bits - 2))))
+                  {
+                    startTime = av_rescale_q(start + (1LL << stream->pts_wrap_bits), stream->time_base, AV_RATIONAL_TIMEBASE);
+
+                  }
+                  else if ((stream->start_time < (3LL << (stream->pts_wrap_bits - 3))) && (start > (3LL << (stream->pts_wrap_bits - 2))))
+                  {
+                    streamStartTime = av_rescale_q(stream->start_time + (1LL << stream->pts_wrap_bits), stream->time_base, AV_RATIONAL_TIMEBASE);
+                  }
+                }
+
+                CHECK_CONDITION_EXECUTE(streamStartTime < startTime, startTime = streamStartTime);
+              }
+            }
+
+            //hasPGS = (stream->codec->codec_id == CODEC_ID_HDMV_PGS_SUBTITLE) ? true : hasPGS;
+          }
+        }
+
+        if (duration != INT64_MIN)
+        {
+          this->formatContext->duration = duration;
+        }
+
+        if (startTime != INT64_MAX)
+        {
+          this->formatContext->start_time = startTime;
+        }
+
+        //if (hasPGS)
+        //{
+        //  CStream *stream = new CStream();
+        //  CHECK_POINTER_HRESULT(result, stream, result, E_OUTOFMEMORY);
+
+        //  if (SUCCEEDED(result))
+        //  {
+        //    stream->SetPid(FORCED_SUBTITLE_PID);
+        //    result = stream->CreateStreamInfo();
+        //  }
+
+        //  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (stream->SetLanguage(L"und")) ? result : E_OUTOFMEMORY);
+
+        //  if (SUCCEEDED(result))
+        //  {
+        //    // create media type
+        //    CMediaType *mediaType = new CMediaType();
+        //    CHECK_POINTER_HRESULT(result, mediaType, result, E_OUTOFMEMORY);
+
+        //    if (SUCCEEDED(result))
+        //    {
+        //      mediaType->majortype = MEDIATYPE_Subtitle;
+        //      mediaType->subtype = MEDIASUBTYPE_HDMVSUB;
+        //      mediaType->formattype = FORMAT_SubtitleInfo;
+
+        //      SUBTITLEINFO *subInfo = (SUBTITLEINFO *)mediaType->AllocFormatBuffer(sizeof(SUBTITLEINFO));
+        //      CHECK_POINTER_HRESULT(result, subInfo, result, E_OUTOFMEMORY);
+
+        //      if (SUCCEEDED(result))
+        //      {
+        //        memset(subInfo, 0, mediaType->FormatLength());
+        //        wcscpy_s(subInfo->TrackName, FORCED_SUB_STRING);
+        //        subInfo->dwOffset = sizeof(SUBTITLEINFO);
+
+        //        result = (stream->GetStreamInfo()->GetMediaTypes()->Add(mediaType)) ? result : E_OUTOFMEMORY;
+        //      }
+
+        //      // there is no need to free subInfo
+        //      // in case of error it is freed with ~CMediaType()
+        //    }
+
+        //    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(mediaType));
+        //  }
+
+        //  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (this->streams[CDemuxer::Subpic]->Add(stream)) ? result : E_OUTOFMEMORY);
+        //  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(stream));
+        //}
+      }
+    }
+  }
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), this->CleanupFormatContext());
+  return result;
 }

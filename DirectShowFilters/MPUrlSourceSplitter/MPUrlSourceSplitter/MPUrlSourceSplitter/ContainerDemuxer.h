@@ -51,14 +51,21 @@ protected:
   /* methods */
 
   // gets AV packet PTS
+  // @param stream : the AV stream
   // @param packet : the AV packet to get PTS
   // @return : the PTS of AV packet
-  virtual int64_t GetPacketPts(AVPacket *packet);
+  virtual int64_t GetPacketPts(AVStream *stream, AVPacket *packet);
 
   // gets AV packet DTS
+  // @param stream : the AV stream
   // @param packet : the AV packet to get DTS
   // @return : the DTS of AV packet
-  virtual int64_t GetPacketDts(AVPacket *packet);
+  virtual int64_t GetPacketDts(AVStream *stream, AVPacket *packet);
+
+  // opens stream
+  // @param demuxerContext : demuxer context
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT OpenStream(AVIOContext *demuxerContext);
 };
 
 #endif

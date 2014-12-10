@@ -43,6 +43,11 @@ CDefaultDemuxer::CDefaultDemuxer(HRESULT *result, CLogger *logger, IDemuxerOwner
 
 CDefaultDemuxer::~CDefaultDemuxer(void)
 {
+  // destroy create demuxer worker (if not finished earlier)
+  this->DestroyCreateDemuxerWorker();
+
+  // destroy demuxing worker (if not finished earlier)
+  this->DestroyDemuxingWorker();
 }
 
 /* CDemuxer methods */

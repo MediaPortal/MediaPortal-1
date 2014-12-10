@@ -40,7 +40,7 @@
 #define STANDARD_DEMUXER_FLAG_MPEG_PS                                 (1 << (DEMUXER_FLAG_LAST + 7))
 #define STANDARD_DEMUXER_FLAG_RM                                      (1 << (DEMUXER_FLAG_LAST + 8))
 
-#define STANDARD_DEMUXER_FLAG_ALL_CONTAINERS                          (DEMUXER_FLAG_RM | DEMUXER_FLAG_MPEG_PS | DEMUXER_FLAG_MPEG_TS | DEMUXER_FLAG_AVI | DEMUXER_FLAG_OGG | DEMUXER_FLAG_MATROSKA | DEMUXER_FLAG_MP4 | DEMUXER_FLAG_ASF | DEMUXER_FLAG_FLV)
+#define STANDARD_DEMUXER_FLAG_ALL_CONTAINERS                          (STANDARD_DEMUXER_FLAG_RM | STANDARD_DEMUXER_FLAG_MPEG_PS | STANDARD_DEMUXER_FLAG_MPEG_TS | STANDARD_DEMUXER_FLAG_AVI | STANDARD_DEMUXER_FLAG_OGG | STANDARD_DEMUXER_FLAG_MATROSKA | STANDARD_DEMUXER_FLAG_MP4 | STANDARD_DEMUXER_FLAG_ASF | STANDARD_DEMUXER_FLAG_FLV)
 
 #define STANDARD_DEMUXER_FLAG_VC1_SEEN_TIMESTAMP                      (1 << (DEMUXER_FLAG_LAST + 9))
 #define STANDARD_DEMUXER_FLAG_VC1_CORRECTION                          (1 << (DEMUXER_FLAG_LAST + 10))
@@ -71,6 +71,10 @@ struct FlvSeekPosition
 #define FLV_SEEKING_BUFFER_SIZE                                       32 * 1024   // size of buffer to read from stream
 #define FLV_SEEKING_TOTAL_BUFFER_SIZE                                 32 * FLV_SEEKING_BUFFER_SIZE // total buffer size for reading from stream (1 MB)
 #define FLV_NO_SEEK_DIFFERENCE_TIME                                   10000000    // time in DSHOW_TIME_BASE units between lower FLV seeking boundary time and seek pts to ignore seeking
+
+#define DEMUXER_READ_BUFFER_SIZE								                      32768
+
+#define countof(array) (sizeof(array) / sizeof(array[0]))
 
 class CStandardDemuxer : public CDemuxer, public IFFmpegLog
 {
@@ -178,14 +182,16 @@ protected:
   virtual void CleanupFormatContext(void);
 
   // gets AV packet PTS
+  // @param stream : the AV stream
   // @param packet : the AV packet to get PTS
   // @return : the PTS of AV packet
-  virtual int64_t GetPacketPts(AVPacket *packet) = 0;
+  virtual int64_t GetPacketPts(AVStream *stream, AVPacket *packet) = 0;
 
   // gets AV packet DTS
+  // @param stream : the AV stream
   // @param packet : the AV packet to get DTS
   // @return : the DTS of AV packet
-  virtual int64_t GetPacketDts(AVPacket *packet) = 0;
+  virtual int64_t GetPacketDts(AVStream *stream, AVPacket *packet) = 0;
 
   virtual bool IsFlv(void);
   virtual bool IsAsf(void);
@@ -205,6 +211,20 @@ protected:
 
   virtual int InitParser(AVFormatContext *formatContext, AVStream *stream);
   virtual void UpdateParserFlags(AVStream *stream);
+
+  /* demuxer (AVIOContext from ffmpeg) read and seek methods */
+
+  static int DemuxerRead(void *opaque, uint8_t *buf, int buf_size);
+  static int64_t DemuxerSeek(void *opaque, int64_t offset, int whence);
+
+  // opens stream
+  // @param demuxerContext : demuxer context
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT OpenStream(AVIOContext *demuxerContext) = 0;
+
+  // initializes format context
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT InitFormatContext(void);
 };
 
 #endif

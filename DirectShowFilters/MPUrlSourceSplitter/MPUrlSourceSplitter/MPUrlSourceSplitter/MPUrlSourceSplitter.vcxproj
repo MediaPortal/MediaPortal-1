@@ -207,14 +207,10 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ByteParser.cpp" />
-    <ClCompile Include="ContainerDemuxer.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="ContainerDemuxer.cpp" />
     <ClCompile Include="DefaultDemuxer.cpp" />
     <ClCompile Include="Demuxer.cpp" />
-    <ClCompile Include="PacketDemuxer.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="PacketDemuxer.cpp" />
     <ClCompile Include="StandardDemuxer.cpp" />
     <ClCompile Include="DemuxerAudioHelper.cpp" />
     <ClCompile Include="DemuxerCollection.cpp" />

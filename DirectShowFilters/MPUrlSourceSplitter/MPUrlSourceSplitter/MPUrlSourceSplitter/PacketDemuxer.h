@@ -26,10 +26,13 @@
 #include "StandardDemuxer.h"
 #include "MediaPacketCollection.h"
 #include "IPacketDemuxer.h"
+#include "PacketInputFormat.h"
 
 #define PACKET_DEMUXER_FLAG_NONE                                      STANDARD_DEMUXER_FLAG_NONE
 
 #define PACKET_DEMUXER_FLAG_LAST                                      (STANDARD_DEMUXER_FLAG_LAST + 0)
+
+#define METHOD_GET_NEXT_MEDIA_PACKET_NAME                             L"GetNextMediaPacket()"
 
 class CPacketDemuxer : public CStandardDemuxer, public IPacketDemuxer
 {
@@ -69,17 +72,29 @@ public:
 
 protected:
 
+  // holds stream input format (if specified)
+  wchar_t *streamInputFormat;
+  // holds special packet input format (only in case of DEMUXER_FLAG_STREAM_IN_PACKETS set flag)
+  CPacketInputFormat *packetInputFormat;
+
   /* methods */
 
   // gets AV packet PTS
+  // @param stream : the AV stream
   // @param packet : the AV packet to get PTS
   // @return : the PTS of AV packet
-  virtual int64_t GetPacketPts(AVPacket *packet);
+  virtual int64_t GetPacketPts(AVStream *stream, AVPacket *packet);
 
   // gets AV packet DTS
+  // @param stream : the AV stream
   // @param packet : the AV packet to get DTS
   // @return : the DTS of AV packet
-  virtual int64_t GetPacketDts(AVPacket *packet);
+  virtual int64_t GetPacketDts(AVStream *stream, AVPacket *packet);
+
+  // opens stream
+  // @param demuxerContext : demuxer context
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT OpenStream(AVIOContext *demuxerContext);
 };
 
 #endif
