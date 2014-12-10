@@ -86,9 +86,34 @@ namespace MediaPortal.Music.Database
 
       LoadDBSettings();
       Open();
+
+      // Create Temp Folder, which we can use for all purposes. e.g. Storing temporary folder thumbs
+      var tmpFolder = Path.Combine(Path.GetTempPath(), "TeamMediaPortal");
+      if (!Directory.Exists(tmpFolder))
+      {
+        Directory.CreateDirectory(tmpFolder);
+      }
     }
 
-    ~MusicDatabase() {}
+    ~MusicDatabase()
+    {
+      // Cleanup Temp folder
+      var tmpFolder = Path.Combine(Path.GetTempPath(), "TeamMediaPortal");
+      if (Directory.Exists(tmpFolder))
+      {
+        foreach (var file in Directory.GetFiles(tmpFolder))
+        {
+          try
+          {
+            File.Delete(file);
+          }
+          catch (IOException)
+          {
+            // Don't need to report anything, if we couldn't delete a temp file
+          }
+        }
+      }
+    }
 
     public static void ReOpen()
     {
