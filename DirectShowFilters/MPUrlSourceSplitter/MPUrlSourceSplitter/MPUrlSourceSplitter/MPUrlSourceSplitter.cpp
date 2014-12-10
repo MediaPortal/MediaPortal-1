@@ -37,6 +37,11 @@
 #include "conversions.h"
 #include "ErrorMessages.h"
 
+#include "DefaultDemuxer.h"
+#include "StandardDemuxer.h"
+#include "ContainerDemuxer.h"
+#include "PacketDemuxer.h"
+
 #include <crtdbg.h>
 #include <process.h>
 
@@ -826,9 +831,9 @@ STDMETHODIMP CMPUrlSourceSplitter::Count(DWORD *pcStreams)
 
   for (unsigned int i = 0; i < this->demuxers->Count(); i++)
   {
-    CDemuxer *demuxer = this->demuxers->GetItem(i);
+    CStandardDemuxer *demuxer = dynamic_cast<CStandardDemuxer *>(this->demuxers->GetItem(i));
 
-    for (unsigned int j = 0; j < CStream::Unknown; j++)
+    for (unsigned int j = 0; ((demuxer != NULL) && (j < CStream::Unknown)); j++)
     {
       *pcStreams += (DWORD)demuxer->GetStreams((CStream::StreamType)j)->Count();
     }
@@ -848,13 +853,13 @@ STDMETHODIMP CMPUrlSourceSplitter::Enable(long lIndex, DWORD dwFlags)
     // stream index and stream from demuxer
     unsigned int targetGroup = UINT_MAX;
     unsigned int targetIndex = UINT_MAX;
-    CDemuxer *targetDemuxer = NULL;
+    CStandardDemuxer *targetDemuxer = NULL;
     CStream *targetStream = NULL;
 
     int k = 0;
     for (unsigned int i = 0; ((targetStream == NULL) && (i < this->demuxers->Count())); i++)
     {
-      CDemuxer *demuxer = this->demuxers->GetItem(i);
+      CStandardDemuxer *demuxer = dynamic_cast<CStandardDemuxer *>(this->demuxers->GetItem(i));
 
       for (unsigned int j = 0; ((targetStream == NULL) && (j < CStream::Unknown)); j++)
       {
@@ -880,7 +885,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Enable(long lIndex, DWORD dwFlags)
       // go through each stream in found group and enable requested stream
 
       CMPUrlSourceSplitterOutputPin *groupOutputPin = NULL;
-      CDemuxer *groupDemuxer = NULL;
+      CStandardDemuxer *groupDemuxer = NULL;
       CStream *groupStream = NULL;
 
       // find stream from group of streams which is in output pin (it can be only one stream)
@@ -888,7 +893,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Enable(long lIndex, DWORD dwFlags)
       {
         CMPUrlSourceSplitterOutputPin *outputPin = this->outputPins->GetItem(i);
 
-        CDemuxer *outputPinDemuxer = this->demuxers->GetItem(outputPin->GetDemuxerId());
+        CStandardDemuxer *outputPinDemuxer = dynamic_cast<CStandardDemuxer *>(this->demuxers->GetItem(outputPin->GetDemuxerId()));
         CStreamCollection *outputPinDemuxerStreams = outputPinDemuxer->GetStreams((CStream::StreamType)targetGroup);
 
         for (unsigned int j = 0; ((groupOutputPin == NULL) && (j < outputPinDemuxerStreams->Count())); j++)
@@ -1077,9 +1082,9 @@ STDMETHODIMP CMPUrlSourceSplitter::Info(long lIndex, AM_MEDIA_TYPE **ppmt, DWORD
 
     for (unsigned int i = 0; ((result == S_FALSE) && (i < this->demuxers->Count())); i++)
     {
-      CDemuxer *demuxer = this->demuxers->GetItem(i);
+      CStandardDemuxer *demuxer = dynamic_cast<CStandardDemuxer *>(this->demuxers->GetItem(i));
 
-      for (unsigned int j = 0; ((result == S_FALSE) && (j < CStream::Unknown)); j++)
+      for (unsigned int j = 0; ((demuxer != NULL) && (result == S_FALSE) && (j < CStream::Unknown)); j++)
       {
         CStreamCollection *streams = demuxer->GetStreams((CStream::StreamType)j);
         int count = (int)streams->Count();
@@ -1601,7 +1606,7 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
 
         for (unsigned int i = 0; (SUCCEEDED(seekResult) && (i < this->demuxers->Count())); i++)
         {
-          CDemuxer *demuxer = this->demuxers->GetItem(i);
+          CStandardDemuxer *demuxer = dynamic_cast<CStandardDemuxer *>(this->demuxers->GetItem(i));
 
           seekResult = demuxer->Seek(max(this->demuxStart, 0));
         }
@@ -1756,32 +1761,36 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
               CHECK_CONDITION_EXECUTE(!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DISCONTINUITY), this->logger->Log(LOGGER_VERBOSE, L"%s: %s: discontinuity packet, demuxer: %u, stream ID: %u, start: %016lld, end: %016lld", MODULE_NAME, METHOD_THREAD_PROC_NAME, packet->GetDemuxerId(), packet->GetStreamPid(), packet->GetStartTime(), packet->GetEndTime()));
               this->flags |= MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DISCONTINUITY;
 
-              CStream *audioStream = this->demuxers->GetItem(packet->GetDemuxerId())->GetActiveStream(CStream::Audio);
-              if (audioStream != NULL)
+              CStandardDemuxer *demuxer = dynamic_cast<CStandardDemuxer *>(this->demuxers->GetItem(packet->GetDemuxerId()));
+              if (demuxer != NULL)
               {
-                if (packet->GetStreamPid() == audioStream->GetPid())
+                CStream *audioStream = demuxer->GetActiveStream(CStream::Audio);
+                if (audioStream != NULL)
                 {
-                  // we have audio stream discontinuity
-                  // we must wait with output pin packet for right time (at max 10 ms before packet start time)
-
-                  CRefTime refTime;
-                  if (SUCCEEDED(this->StreamTime(refTime)))
+                  if (packet->GetStreamPid() == audioStream->GetPid())
                   {
-                    // refTime is measured from demuxStart
-                    // packet start time is also measured from demuxStart
+                    // we have audio stream discontinuity
+                    // we must wait with output pin packet for right time (at max 10 ms before packet start time)
 
-                    if (refTime.Millisecs() > 0)
+                    CRefTime refTime;
+                    if (SUCCEEDED(this->StreamTime(refTime)))
                     {
-                      int64_t streamTime = (int64_t)(refTime.Millisecs() * (DSHOW_TIME_BASE / 1000));
+                      // refTime is measured from demuxStart
+                      // packet start time is also measured from demuxStart
 
-                      if (packet->GetStartTime() >= (streamTime + 100000))
+                      if (refTime.Millisecs() > 0)
                       {
-                        CHECK_CONDITION_EXECUTE(!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DELAYING), this->logger->Log(LOGGER_WARNING, L"%s: %s: delaying packet, demuxer: %u, stream ID: %u, start: %016lld, end: %016lld, delay: %016lld, stream time: %lld, demux start: %lld", MODULE_NAME, METHOD_THREAD_PROC_NAME, packet->GetDemuxerId(), packet->GetStreamPid(), packet->GetStartTime(), packet->GetEndTime(), packet->GetStartTime() - (streamTime + 100000), streamTime, this->demuxStart));
+                        int64_t streamTime = (int64_t)(refTime.Millisecs() * (DSHOW_TIME_BASE / 1000));
 
-                        this->flags |= MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DELAYING;
-                        result = E_FAIL;
+                        if (packet->GetStartTime() >= (streamTime + 100000))
+                        {
+                          CHECK_CONDITION_EXECUTE(!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DELAYING), this->logger->Log(LOGGER_WARNING, L"%s: %s: delaying packet, demuxer: %u, stream ID: %u, start: %016lld, end: %016lld, delay: %016lld, stream time: %lld, demux start: %lld", MODULE_NAME, METHOD_THREAD_PROC_NAME, packet->GetDemuxerId(), packet->GetStreamPid(), packet->GetStartTime(), packet->GetEndTime(), packet->GetStartTime() - (streamTime + 100000), streamTime, this->demuxStart));
 
-                        Sleep(1);
+                          this->flags |= MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DELAYING;
+                          result = E_FAIL;
+
+                          Sleep(1);
+                        }
                       }
                     }
                   }
@@ -2473,16 +2482,38 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
 
           for (unsigned int i = 0; (SUCCEEDED(caller->loadAsyncResult) && (i < streams->Count())); i++)
           {
-            CDemuxer *demuxer = new CDemuxer(&caller->loadAsyncResult, caller->logger, caller, caller->configuration);
-            CHECK_POINTER_HRESULT(caller->loadAsyncResult, demuxer, caller->loadAsyncResult, E_OUTOFMEMORY);
+            CDemuxer *demuxer = NULL;
 
-            if (SUCCEEDED(caller->loadAsyncResult))
+            if (caller->IsSplitter() && (!caller->IsDownloadingFile()))
             {
-              demuxer->SetDemuxerId(i);
-              demuxer->SetRealDemuxingNeeded(caller->IsSplitter() && (!caller->IsDownloadingFile()));
+              if (streams->GetItem(i)->IsContainer())
+              {
+                demuxer = new CContainerDemuxer(&caller->loadAsyncResult, caller->logger, caller, caller->configuration);
+              }
+              else if (streams->GetItem(i)->IsPackets())
+              {
+                demuxer = new CPacketDemuxer(&caller->loadAsyncResult, caller->logger, caller, caller->configuration);
+              }
 
-              caller->loadAsyncResult = demuxer->SetStreamInformation(streams->GetItem(i));
+              if (SUCCEEDED(caller->loadAsyncResult))
+              {
+                CStandardDemuxer *standardDemuxer = dynamic_cast<CStandardDemuxer *>(demuxer);
+
+                standardDemuxer->SetDemuxerId(i);
+                caller->loadAsyncResult = standardDemuxer->SetStreamInformation(streams->GetItem(i));
+              }
             }
+            else
+            {
+              demuxer = new CDefaultDemuxer(&caller->loadAsyncResult, caller->logger, caller, caller->configuration);
+
+              if (SUCCEEDED(caller->loadAsyncResult))
+              {
+                demuxer->SetDemuxerId(i);
+              }
+            }
+
+            CHECK_POINTER_HRESULT(caller->loadAsyncResult, demuxer, caller->loadAsyncResult, E_OUTOFMEMORY);
 
             CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->demuxers->Add(demuxer), caller->loadAsyncResult, E_OUTOFMEMORY);
             CHECK_CONDITION_EXECUTE(FAILED(caller->loadAsyncResult), FREE_MEM_CLASS(demuxer));
@@ -2533,7 +2564,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
         // select video stream
         for (unsigned int i = 0; (SUCCEEDED(caller->loadAsyncResult) && (i < caller->demuxers->Count())); i++)
         {
-          CDemuxer *demuxer = caller->demuxers->GetItem(i);
+          CStandardDemuxer *demuxer = dynamic_cast<CStandardDemuxer *>(caller->demuxers->GetItem(i));
           CStream *videoStream = demuxer->SelectVideoStream();
 
           if (videoStream != NULL)
@@ -2558,7 +2589,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
         // select audio stream
         for (unsigned int i = 0; (SUCCEEDED(caller->loadAsyncResult) && (i < caller->demuxers->Count())); i++)
         {
-          CDemuxer *demuxer = caller->demuxers->GetItem(i);
+          CStandardDemuxer *demuxer = dynamic_cast<CStandardDemuxer *>(caller->demuxers->GetItem(i));
           CStream *audioStream = demuxer->SelectAudioStream();
 
           if (audioStream != NULL)
@@ -2583,7 +2614,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
         // select subtitle stream
         for (unsigned int i = 0; (SUCCEEDED(caller->loadAsyncResult) && (i < caller->demuxers->Count())); i++)
         {
-          CDemuxer *demuxer = caller->demuxers->GetItem(i);
+          CStandardDemuxer *demuxer = dynamic_cast<CStandardDemuxer *>(caller->demuxers->GetItem(i));
 
           // if there are some subtitles, just choose first and create output pin
           CStream *subtitleStream = (demuxer->GetStreams(CStream::Subpic)->Count() != 0) ? demuxer->GetStreams(CStream::Subpic)->GetItem(0) : NULL;
