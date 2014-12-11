@@ -30,6 +30,8 @@ CStream::CStream(HRESULT *result)
   this->streamInfo = NULL;
   this->streamType = Unknown;
   this->seekIndexEntries = NULL;
+  this->formatContext = NULL;
+  this->stream = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -72,6 +74,16 @@ CSeekIndexEntryCollection *CStream::GetSeekIndexEntries(void)
   return this->seekIndexEntries;
 }
 
+AVFormatContext *CStream::GetAVFormatContext(void)
+{
+  return this->formatContext;
+}
+
+AVStream *CStream::GetAVStream(void)
+{
+  return this->stream;
+}
+
 /* set methods */
 
 void CStream::SetPid(unsigned int pid)
@@ -102,17 +114,6 @@ bool CStream::IsDiscontinuity(void)
   return this->IsSetFlags(STREAM_FLAG_DISCONTINUITY);
 }
 
-HRESULT CStream::CreateStreamInfo(void)
-{
-  FREE_MEM_CLASS(this->streamInfo);
-  HRESULT result = S_OK;
-  this->streamInfo = new CStreamInfo(&result);
-  CHECK_POINTER_HRESULT(result, this->streamInfo, result, E_OUTOFMEMORY);
-
-  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(this->streamInfo));
-  return result;
-}
-
 HRESULT CStream::CreateStreamInfo(AVFormatContext *formatContext, AVStream *stream, const wchar_t *containerFormat)
 {
   FREE_MEM_CLASS(this->streamInfo);
@@ -120,6 +121,12 @@ HRESULT CStream::CreateStreamInfo(AVFormatContext *formatContext, AVStream *stre
 
   this->streamInfo = new CStreamInfo(&result, formatContext, stream, containerFormat);
   CHECK_POINTER_HRESULT(result, this->streamInfo, result, E_OUTOFMEMORY);
+
+  if (SUCCEEDED(result))
+  {
+    this->formatContext = formatContext;
+    this->stream = stream;
+  }
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(this->streamInfo));
   return result;

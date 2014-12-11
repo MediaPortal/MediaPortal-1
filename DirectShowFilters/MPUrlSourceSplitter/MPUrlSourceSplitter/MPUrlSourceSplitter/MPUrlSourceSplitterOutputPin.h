@@ -192,11 +192,11 @@ public:
 protected:
   enum { CMD_EXIT, CMD_BEGIN_FLUSH, CMD_END_FLUSH, CMD_PLAY, CMD_PAUSE };
 
-  // lock mutex for access to media packets
-  HANDLE mediaPacketsLock;
+  // lock mutex for access to output pin packets
+  HANDLE outputPinPacketsLock;
 
-  // holds media packets ready to send through pin
-  COutputPinPacketCollection *mediaPackets;
+  // holds output pin packets ready to send through pin
+  COutputPinPacketCollection *outputPinPackets;
 
   // holds media types associated with output pin
   CMediaTypeCollection *mediaTypes;
@@ -235,8 +235,8 @@ protected:
   // holds dump file
   CDumpFile *dumpFile;
 
-  // holds media packet processed from last store time
-  unsigned int mediaPacketProcessed;
+  // holds output pin packet processed from last store time
+  unsigned int outputPinPacketProcessed;
 
   /* methods */
 

@@ -26,6 +26,7 @@
 #include "Logger.h"
 #include "OutputPinPacketCollection.h"
 #include "Flags.h"
+#include "StreamCollection.h"
 
 #define MUXER_FLAG_NONE                                               FLAGS_NONE
 
@@ -65,6 +66,21 @@ public:
   virtual HRESULT GetMuxerError(void);
 
   /* set methods */
+
+  // sets video streams to muxer (only reference)
+  // @param streams : the collection of video streams
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT SetVideoStreams(CStreamCollection *streams) = 0;
+
+  // sets audio streams to muxer (only reference)
+  // @param streams : the collection of audio streams
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT SetAudioStreams(CStreamCollection *streams) = 0;
+
+  // sets subtitle streams to muxer (only reference)
+  // @param streams : the collection of subtitles streams
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT SetSubtitleStreams(CStreamCollection *streams) = 0;
 
   /* other methods */
 
@@ -152,12 +168,9 @@ protected:
   // @return : S_OK if successful
   virtual HRESULT DestroyMuxerWorker(void);
 
-  //// creates demuxer
-  //// @return : S_OK if successful, error code otherwise
-  //virtual HRESULT CreateDemuxerInternal(void) = 0;
-
-  //// cleans up demuxer
-  //virtual void CleanupDemuxerInternal(void) = 0;
+  // internal muxer worker method
+  // @return : S_OK if successful
+  virtual HRESULT MuxerWorkerInternal(void) = 0;
 
   // gets next output pin packet
   // @param packet : pointer to output packet

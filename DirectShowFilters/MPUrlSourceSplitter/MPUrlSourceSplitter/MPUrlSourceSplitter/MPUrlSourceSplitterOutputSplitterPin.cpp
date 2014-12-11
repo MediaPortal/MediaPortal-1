@@ -83,7 +83,6 @@ CMPUrlSourceSplitterOutputSplitterPin::~CMPUrlSourceSplitterOutputSplitterPin(vo
   FREE_MEM_CLASS(this->h264Buffer);
   FREE_MEM_CLASS(this->h264PacketCollection);
 
-
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_PIN_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME, this->m_pName));
 }
 
@@ -105,7 +104,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::QueuePacket(COutputPinPacket *pac
   HRESULT result = S_OK;
 
   {
-    CLockMutex lock(this->mediaPacketsLock, timeout);
+    CLockMutex lock(this->outputPinPacketsLock, timeout);
     result = (lock.IsLocked()) ? S_OK : VFW_E_TIMEOUT;
 
     if (SUCCEEDED(result))
@@ -119,7 +118,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::QueuePacket(COutputPinPacket *pac
       if (packet->IsEndOfStream())
       {
         // add packet to output packet collection
-        result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
+        result = this->outputPinPackets->Add(packet) ? result : E_OUTOFMEMORY;
 
         CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->flags |= MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_END_OF_STREAM);
       }
@@ -162,7 +161,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
     {
       // add packet to output packet collection
       packet->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
-      result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
+      result = this->outputPinPackets->Add(packet) ? result : E_OUTOFMEMORY;
     }
     else if (this->mediaTypeSubType == MEDIASUBTYPE_AVC1 &&
       (this->IsContainerMpegTs() || this->IsContainerMpeg() || this->IsContainerWtv() || this->IsContainerAsf() || ((this->IsContainerOgg() || this->IsContainerMatroska()) && packet->IsH264AnnexB())))
@@ -440,7 +439,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
 
             // add packet to output collection
             queuePacket->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaPackets->Add(queuePacket) ? result : E_OUTOFMEMORY);
+            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->outputPinPackets->Add(queuePacket) ? result : E_OUTOFMEMORY);
 
             // delete processed H264 packets
             for (unsigned int i = 0; (SUCCEEDED(result) && (i < nextPacketIndex)); i++)
@@ -485,7 +484,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
 
           // add packet to output packet collection
           packet->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
-          result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
+          result = this->outputPinPackets->Add(packet) ? result : E_OUTOFMEMORY;
         }
         else
         {
@@ -563,7 +562,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
     {
       // add packet to output packet collection, if successful, change it's data
       packet->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
-      result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
+      result = this->outputPinPackets->Add(packet) ? result : E_OUTOFMEMORY;
 
       CHECK_CONDITION_EXECUTE(SUCCEEDED(result), packet->GetBuffer()->RemoveFromBuffer(4));
     }
@@ -592,7 +591,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
 
             // add packet to output packet collection
             packet->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
-            result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
+            result = this->outputPinPackets->Add(packet) ? result : E_OUTOFMEMORY;
           }
           else
           {
@@ -638,13 +637,13 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
       FREE_MEM(buffer);
 
       packet->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
-      CHECK_CONDITION_HRESULT(result, this->mediaPackets->Add(packet), result, E_OUTOFMEMORY);
+      CHECK_CONDITION_HRESULT(result, this->outputPinPackets->Add(packet), result, E_OUTOFMEMORY);
     }
     else
     {
       // add packet to output packet collection
       packet->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
-      result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
+      result = this->outputPinPackets->Add(packet) ? result : E_OUTOFMEMORY;
     }
   }
 

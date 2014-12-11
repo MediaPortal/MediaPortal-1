@@ -135,6 +135,9 @@
     <ClInclude Include="Muxer.h">
       <Filter>Muxers\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MPUrlSourceSplitterOutputM2tsMuxerPin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -235,6 +238,9 @@
     </ClCompile>
     <ClCompile Include="Muxer.cpp">
       <Filter>Muxers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MPUrlSourceSplitterOutputM2tsMuxerPin.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -32,6 +32,7 @@
 #include "StreamProgress.h"
 #include "MPUrlSourceSplitterOutputSplitterPin.h"
 #include "MPUrlSourceSplitterOutputDownloadPin.h"
+#include "MPUrlSourceSplitterOutputM2tsMuxerPin.h"
 #include "MPUrlSourceSplitter_Parser_MPEG2TS_Parameters.h"
 #include "CurlInstance.h"
 #include "conversions.h"
@@ -391,7 +392,8 @@ CUnknown * WINAPI CMPUrlSourceSplitter::CreateInstanceIptvSource(LPUNKNOWN lpunk
 
       if (SUCCEEDED(*phr))
       {
-        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(L"Output", instance, instance, phr, instance->logger, instance->configuration, mediaTypes);
+        //CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(L"Output", instance, instance, phr, instance->logger, instance->configuration, mediaTypes);
+        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputM2tsMuxerPin(L"Output", instance, instance, phr, instance->logger, instance->configuration, mediaTypes);
         CHECK_POINTER_HRESULT(*phr, outputPin, *phr, E_OUTOFMEMORY);
 
         CHECK_CONDITION_HRESULT(*phr, instance->outputPins->Add(outputPin), *phr, E_OUTOFMEMORY);
@@ -2380,7 +2382,8 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
 
         if (SUCCEEDED(caller->loadAsyncResult))
         {
-          CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(L"Output", caller, caller, &caller->loadAsyncResult, caller->logger, caller->configuration, mediaTypes);
+          //CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(L"Output", caller, caller, &caller->loadAsyncResult, caller->logger, caller->configuration, mediaTypes);
+          CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputM2tsMuxerPin(L"Output", caller, caller, &caller->loadAsyncResult, caller->logger, caller->configuration, mediaTypes);
           CHECK_POINTER_HRESULT(caller->loadAsyncResult, outputPin, caller->loadAsyncResult, E_OUTOFMEMORY);
 
           CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->outputPins->Add(outputPin), caller->loadAsyncResult, E_OUTOFMEMORY);

@@ -246,15 +246,13 @@ unsigned int WINAPI CMuxer::MuxerWorker(LPVOID lpParam)
 
   while (SUCCEEDED(caller->muxerError) && (!caller->muxerWorkerShouldExit))
   {
-    //caller->DemuxingWorkerInternal();
-
     if (!caller->flushing)
     {
+      caller->muxerError = caller->MuxerWorkerInternal();
     }
 
     Sleep(1);
   }
-
   
   caller->logger->Log(SUCCEEDED(caller->muxerError) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(caller->muxerError) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_MUXER_WORKER_NAME, caller->muxerError);
 
