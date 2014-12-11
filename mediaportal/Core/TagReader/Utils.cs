@@ -568,20 +568,25 @@ namespace MediaPortal.TagReader
     /// at least use a temporary file in case you want to process this image further
     /// </summary>
     /// <param name="imgBytes">The raw image</param>
-    /// <param name="fileSavePath">The destination file path</param>
+    /// <param name="fileName">The file name including the Path</param>
     /// <returns>The path to the created file or empty if unsuccessful</returns>
-    public static string GetImageFile(byte[] imgBytes, string fileSavePath)
+    public static string GetImageFile(byte[] imgBytes, string fileName)
     {
       if (imgBytes == null || imgBytes.Length == 0) return null;
 
       Image img = null;
       try
       {
-        if (String.IsNullOrEmpty(fileSavePath))
-          fileSavePath = Util.PathUtility.GetSecureTempFileName(false);
+        string fileSavePath = string.Format(@"{0}\{1}\{2}.jpg",Path.GetTempPath(), "TeamMediaPortal", Util.Utils.EncryptLine(fileName));
+
+        if (File.Exists(fileSavePath))
+        {
+          return fileSavePath;
+        }
+
         try
         {
-          using (MemoryStream stream = new MemoryStream(imgBytes))
+          using (var stream = new MemoryStream(imgBytes))
           {
             stream.Flush();
 
@@ -591,7 +596,9 @@ namespace MediaPortal.TagReader
               // Try without validation first for more speed
               img = Image.FromStream(stream, true, false);
               if (!Util.Picture.SaveThumbnail(fileSavePath, img))
+              {
                 retry = true;
+              }
             }
             catch (ArgumentException)
             {
@@ -613,7 +620,7 @@ namespace MediaPortal.TagReader
         try
         {
           // If a valid image has been writen return the path to it.
-          FileInfo fi = new FileInfo(fileSavePath);
+          var fi = new FileInfo(fileSavePath);
           return (fi.Length > 0) ? fileSavePath : String.Empty;
         }
         catch (Exception)
@@ -624,7 +631,9 @@ namespace MediaPortal.TagReader
       finally
       {
         if (img != null)
+        {
           img.SafeDispose();
+        }
       }
     }
 
