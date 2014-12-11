@@ -560,7 +560,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_bMPARinGraph = false;
   m_bEVRhasConnected = false;
   m_MPmainThreadID = GetCurrentThreadId() ;
-  m_lastPause = GET_TIME_NOW();
+  m_lastPauseRun = GET_TIME_NOW();
   
   LogDebug("CTsReaderFilter::Start duration thread");
   StartThread();
@@ -832,8 +832,10 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
 
   if (m_bStreamCompensated && m_bLiveTv)
   {
-    LogDebug("Run() - Elapsed time from pause to Audio/Video ( total zapping time ) : %d mS",GET_TIME_NOW()-m_lastPause);
+    LogDebug("Run() - Elapsed time from pause to Audio/Video ( total zapping time ) : %d mS",GET_TIME_NOW()-m_lastPauseRun);
   }
+  
+  m_lastPauseRun = GET_TIME_NOW();
  
   CAutoLock cObjectLock(m_pLock);
  
@@ -990,9 +992,11 @@ STDMETHODIMP CTsReaderFilter::Pause()
   
     if (m_State == State_Running)
     {
-      m_lastPause = GET_TIME_NOW();
+      m_lastPauseRun = GET_TIME_NOW();
       m_RandomCompensation = 0;
     }
+    m_demultiplexer.m_bVideoSampleLate=false;
+    m_demultiplexer.m_bAudioSampleLate=false;
   
     //pause filter
     hr=CSource::Pause();
@@ -1518,7 +1522,7 @@ HRESULT CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
       m_bLiveTv=false ;
     }
 
-    LogDebug("Zap to File Seek : %d mS ( %f / %f ) LiveTv : %d, Seek : %d",GET_TIME_NOW()-m_lastPause, (float)seekTime/1000.0f, (float)duration/1000.0f, m_bLiveTv, doSeek);
+    LogDebug("Zap to File Seek : %d mS ( %f / %f ) LiveTv : %d, Seek : %d",GET_TIME_NOW()-m_lastPauseRun, (float)seekTime/1000.0f, (float)duration/1000.0f, m_bLiveTv, doSeek);
   }
 
   m_seekTime=rtSeek ;
@@ -1810,27 +1814,48 @@ void CTsReaderFilter::ThreadProc()
           if ((timeNow - 1000) > lastSlowPlayTime) //run every 1 seconds
           {
             lastSlowPlayTime = timeNow;      
-            double presToRef = GetAudioPin()->GetAudioPresToRefDiff(); //In seconds           
+            double presToRef = GetAudioPin()->GetAudioPresToRefDiff(); //In seconds   
+                    
             if (presToRef < -0.02) //slow down play
             {
               //Calculate the playSpeedAdjustInPPM value to compensate for the difference over the next 60 seconds
               //This assumes the nominal 'DeltaCompensation()' update rate is 10 per second
-              playSpeedAdjustInPPM = (REFERENCE_TIME)(presToRef * ((double)(-1000*1000*DUR_LOOP_TIMEOUT)/(60.0*100.0)));
-              
-              if (playSpeedAdjustInPPM > 1000)
+              playSpeedAdjustInPPM = (REFERENCE_TIME)(presToRef * ((double)(-1000*1000*DUR_LOOP_TIMEOUT)/(60.0*100.0)));              
+              if (playSpeedAdjustInPPM > 2000)
               {
-                playSpeedAdjustInPPM = 1000;
+                playSpeedAdjustInPPM = 2000;
+              }
+              
+              if (presToRef < -0.15)
+              {
+                if (!m_demultiplexer.m_bAudioSampleLate) 
+                {
+                  //Re-adjust the audio pin m_fAFTMeanRef value
+                  m_lastPauseRun = timeNow;
+                  LogDebug("CTsReaderFilter:: DurationThread : Audio to render late= %03.3f", (float)presToRef) ;
+                }
+                //We have lost a substantial amount of buffered data,
+                //so we may need to pause playback to recover quickly
+                _InterlockedExchange(&m_demultiplexer.m_AudioDataLowPauseTime, (long)((presToRef-0.02) * -1000.0));
+                m_demultiplexer.m_bAudioSampleLate=true;
               }
             }
             else if ((presToRef > 0.02) && (m_AutoSpeedAdjust > 1)) //speed up play
             {
               //Calculate the playSpeedAdjustInPPM value to compensate for the difference over the next 60 seconds
               //This assumes the nominal 'DeltaCompensation()' update rate is 10 per second
-              playSpeedAdjustInPPM = (REFERENCE_TIME)(presToRef * ((double)(-1000*1000*DUR_LOOP_TIMEOUT)/(60.0*100.0)));
-              
-              if (playSpeedAdjustInPPM < -1000)
+              playSpeedAdjustInPPM = (REFERENCE_TIME)(presToRef * ((double)(-1000*1000*DUR_LOOP_TIMEOUT)/(60.0*100.0)));              
+              if (playSpeedAdjustInPPM < -2000)
               {
-                playSpeedAdjustInPPM = -1000;
+                playSpeedAdjustInPPM = -2000;
+              }
+              
+              if (presToRef > 0.15)
+              {
+                //We have gained a substantial amount of buffered data,
+                //so re-adjust the audio pin m_fAFTMeanRef value
+                m_lastPauseRun = timeNow;
+                LogDebug("CTsReaderFilter:: DurationThread : Audio to render early= %03.3f", (float)presToRef) ;
               }
             }
             else  //We are within the +/-20ms 'dead band' so don't adjust
@@ -2074,10 +2099,11 @@ void CTsReaderFilter::ThreadProc()
                 
         if ((cntA > AUD_BUF_SIZE_LOG_LIM) || (cntV > VID_BUF_SIZE_LOG_LIM) || m_bEnableBufferLogging)
         {
-          LogDebug("Buffers : A/V = %d/%d, RTSP = %d, A last: %03.3f, V Last: %03.3f, Compensation: %.3f s, AudPresToRefDiff: %.3f s, SPPM: %d", 
+          LogDebug("Buffers : A/V = %d/%d, RTSP = %d, A last: %03.3f, V Last: %03.3f, Comp: %.3f s, AudMean: %.3f s, AudDelta: %.3f s, SPPM: %d", 
           cntA, cntV, rtspBuffSize, 
           (float)lastAudio.Millisecs()/1000.0f, (float)lastVideo.Millisecs()/1000.0f, 
-          (float)Compensation.m_time/10000000, (float)GetAudioPin()->GetAudioPresToRefDiff(), playSpeedAdjustInPPM);
+          (float)Compensation.m_time/10000000, (float)GetAudioPin()->GetAudToPresMeanDelta(), 
+          (float)GetAudioPin()->GetAudioPresToRefDiff(), playSpeedAdjustInPPM);
         }
       }
                         
@@ -2387,7 +2413,7 @@ void CTsReaderFilter::BufferingPause(bool longPause, long extraSleep)
     }          
     
     //Don't pause too soon after last time
-    if ((GET_TIME_NOW()- m_lastPause) < minDelayTime)
+    if ((GET_TIME_NOW()- m_lastPauseRun) < minDelayTime)
     {
       return ;                  
     }

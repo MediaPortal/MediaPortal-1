@@ -48,7 +48,7 @@
 #define AV_READY_DELAY 200     // ms units - delay before asserting VFW_S_CANT_CUE
 #define PRESENT_DELAY (200*10000) // hns units - timestamp compensation offset
 #define AUDIO_READY_POINT (0.2f + ((float)PRESENT_DELAY/10000000.0f))    // in seconds
-#define AUDIO_STALL_POINT 1.1f     // in seconds
+#define AUDIO_STALL_POINT 1.5f     // in seconds
 #define VIDEO_STALL_POINT 2.5f     // in seconds
 
 //Vid/Aud/Sub buffer sizes and limits
@@ -73,8 +73,8 @@
 
 //File/RTSP ReadFromFile() block sizes
 #define READ_SIZE (131072)
-#define MIN_READ_SIZE (READ_SIZE/16)
-#define MIN_READ_SIZE_UNC (READ_SIZE/8)
+#define MIN_READ_SIZE (2048)
+#define MIN_READ_SIZE_UNC (2048)
 #define INITIAL_READ_SIZE (READ_SIZE * 256)
 
 //Duration loop timeout in ms (effective background repeat/iteration time)
@@ -244,7 +244,7 @@ public:
   bool            IsStopping();
   bool            IsWaitDataAfterSeek();
 
-  DWORD           m_lastPause;
+  DWORD           m_lastPauseRun;
   bool            m_bStreamCompensated;
   CRefTime        m_ClockOnStart;
   bool            m_bForcePosnUpdate;

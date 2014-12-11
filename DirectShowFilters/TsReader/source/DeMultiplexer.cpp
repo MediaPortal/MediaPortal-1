@@ -135,6 +135,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_targetAVready = m_LastDataFromRtsp;
   m_tWaitForMediaChange=m_LastDataFromRtsp ;
   m_tWaitForAudioSelection=m_LastDataFromRtsp;
+  m_lastFlushTime=m_LastDataFromRtsp; 
   m_bWaitForMediaChange=false;
   m_bWaitForAudioSelection=false;
   m_bSubtitleCompensationSet=false;
@@ -927,7 +928,7 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
       m_filter.m_ClockOnStart = RefClock - rtStartTime.m_time ;
       if (m_filter.m_bLiveTv)
       {
-        LogDebug("CheckCompensation() - Elapsed time from pause to Audio/Video ( total zapping time ) : %d mS",GET_TIME_NOW()-m_filter.m_lastPause);
+        LogDebug("CheckCompensation() - Elapsed time from pause to Audio/Video ( total zapping time ) : %d mS",GET_TIME_NOW()-m_filter.m_lastPauseRun);
       }
     }
     else
@@ -3202,7 +3203,7 @@ void CDeMultiplexer::ThreadProc()
   LogDebug("CDeMultiplexer::ThreadProc start(), threadID:0x%x", GetCurrentThreadId());
 
   DWORD timeNow = GET_TIME_NOW();
-  DWORD  lastFlushTime = timeNow;
+  m_lastFlushTime = timeNow;
   DWORD  lastFileReadTime = timeNow;
   DWORD  lastRetryLoopTime = timeNow;
   int sizeRead = 0;
@@ -3217,14 +3218,19 @@ void CDeMultiplexer::ThreadProc()
     //Flush delegated to this thread
     if (m_bFlushDelegated || m_bFlushDelgNow)
     {
-      if (!m_bFlushDelgNow && ((timeNow - 500) < lastFlushTime)) 
+      if (!m_bFlushDelgNow && ((timeNow - 500) < m_lastFlushTime)) 
       { 
         // Too early for next flush
         m_bFlushDelegated = false;
       }
       else
       {
-        lastFlushTime = timeNow;
+        m_lastFlushTime = timeNow;
+        
+        if (m_filter.State() == State_Running)
+        {
+          m_filter.m_lastPauseRun = timeNow;
+        }
   
         LogDebug("CDeMultiplexer::ThreadProc - Flush");     
         //Flush the internal data

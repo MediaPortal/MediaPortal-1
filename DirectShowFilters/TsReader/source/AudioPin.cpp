@@ -495,50 +495,61 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           clock = (double)(RefClock-m_rtStart.m_time)/10000000.0 ;
           fTime = ((double)cRefTime.m_time/10000000.0) - clock ;
           
-          //Need to do this with 'raw' fTime data
+          //Calculate a mean 'fTime' value using 'raw' fTime data
           CalcAverageFtime(fTime);
-          if (clock < 30.0) //only do this at start of play
+          if (timeNow < (m_pTsReaderFilter->m_lastPauseRun + (30*1000)))
           {
+            //do this for 30s after start of play, a flush or pause
             m_fAFTMeanRef = m_fAFTMean;
-            if (((m_sampleCount%m_nMaxAFT) == (m_nMaxAFT-1)) && (clock > 25.0))
-              LogDebug("audPin : m_fAFTMean= %03.3f", (float)m_fAFTMean) ;
           }
           
           //Add compensation time for external downstream audio delay
           //to stop samples becoming 'late' (note: this does NOT change the actual sample timestamps)
           fTime -= m_fAFTMeanRef;  //remove the 'mean' offset
-          fTime += AUDIO_STALL_POINT/2; //re-centre the timing                 
+          fTime += ((AUDIO_STALL_POINT/2.0) + 0.2); //re-centre the timing                 
 
           //Discard late samples at start of play,
           //and samples outside a sensible timing window during play 
           //(helps with signal corruption recovery)
           cRefTime -= m_pTsReaderFilter->m_ClockOnStart.m_time;
 
-          if ((fTime < 0.2) && (m_dRateSeeking == 1.0) && (m_pTsReaderFilter->State() == State_Running) && (clock > 8.0))
-          {              
-            if (!demux.m_bAudioSampleLate) 
-            {
-              LogDebug("audPin : Audio to render late= %03.3f, m_fAFTMean= %03.3f", (float)fTime, (float)m_fAFTMean) ;
-            }
-            //Samples times are getting close to presentation time
-            demux.m_bAudioSampleLate = true;  
-             
-            if (fTime < 0.05)
-            {              
-              _InterlockedExchange(&demux.m_AudioDataLowPauseTime, (long)((fTime-0.02) * -1000.0));
-              //Samples are running very late - check if this is a persistant problem by counting over a period of time 
-              //(m_AVDataLowCount is checked in CTsReaderFilter::ThreadProc())
-              _InterlockedIncrement(&demux.m_AVDataLowCount);   
-            }
-            
-            if ((fTime < -2.0) && !demux.m_bFlushDelegated)
+//          if ((fTime < 0.1) && (m_dRateSeeking == 1.0) && (m_pTsReaderFilter->State() == State_Running) && (clock > 8.0))
+//          {              
+//            if (!demux.m_bAudioSampleLate) 
+//            {
+//              LogDebug("audPin : Audio to render late= %03.3f, m_fAFTMean= %03.3f", (float)fTime, (float)m_fAFTMean) ;
+//            }
+//            //Samples times are getting close to presentation time
+//            demux.m_bAudioSampleLate = true;  
+//             
+//            if (fTime < 0.05)
+//            {              
+//              if (timeNow > (m_pTsReaderFilter->m_lastPauseRun + (15*1000)))
+//              {
+//                _InterlockedExchange(&demux.m_AudioDataLowPauseTime, (long)((fTime-0.02) * -1000.0));
+//                //Samples are running very late - check if this is a persistant problem by counting over a period of time 
+//                //(m_AVDataLowCount is checked in CTsReaderFilter::ThreadProc())
+//                _InterlockedIncrement(&demux.m_AVDataLowCount); 
+//              }  
+//            }
+//            
+//            if ((fTime < -2.0) && !demux.m_bFlushDelegated)
+//            { 
+//              //Very late - request internal flush and re-sync to stream
+//              demux.DelegatedFlush(false, false);
+//              LogDebug("audPin : Audio to render very late, flushing") ;
+//            }
+//          }
+
+          if (fTime < -2.0)
+          {                          
+            if ((m_dRateSeeking == 1.0) && (m_pTsReaderFilter->State() == State_Running) && (clock > 8.0) && !demux.m_bFlushDelegated)
             { 
               //Very late - request internal flush and re-sync to stream
               demux.DelegatedFlush(false, false);
               LogDebug("audPin : Audio to render very late, flushing") ;
             }
           }
-
           
           if ((cRefTime.m_time >= PRESENT_DELAY) && 
               (fTime > ((cRefTime.m_time >= FS_TIM_LIM) ? -0.3 : -0.5)) && (fTime < 2.5))
@@ -726,7 +737,14 @@ double CAudioPin::GetAudToPresMeanDelta()
 
 double CAudioPin::GetAudioPresToRefDiff()
 {
-  return  m_fAFTMean - m_fAFTMeanRef;
+  if ((m_dRateSeeking == 1.0) && (m_pTsReaderFilter->State() == State_Running))
+  {
+    return  m_fAFTMean - m_fAFTMeanRef;
+  }
+  else
+  {
+    return  0.0;
+  }
 }
 
 bool CAudioPin::IsInFillBuffer()
