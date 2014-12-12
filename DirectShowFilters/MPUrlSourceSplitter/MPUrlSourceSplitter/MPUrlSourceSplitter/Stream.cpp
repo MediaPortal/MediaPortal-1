@@ -109,6 +109,29 @@ void CStream::SetDiscontinuity(bool discontinuity)
 
 /* other methods */
 
+CStream *CStream::Clone(void)
+{
+  HRESULT result = S_OK;
+  CStream *stream = new CStream(&result);
+  CHECK_POINTER_HRESULT(result, stream, result, E_OUTOFMEMORY);
+
+  if (SUCCEEDED(result))
+  {
+    SET_STRING_HRESULT_WITH_NULL(stream->language, this->language, result);
+    stream->pid = this->pid;
+    stream->streamType = this->streamType;
+    stream->formatContext = this->formatContext;
+    stream->stream = this->stream;
+    stream->flags = this->flags;
+
+    CHECK_CONDITION_HRESULT(result, stream->seekIndexEntries->Append(this->seekIndexEntries), result, E_OUTOFMEMORY);
+    stream->streamInfo = (this->streamInfo != NULL) ? this->streamInfo->Clone() : NULL;
+  }
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(stream));
+  return stream;
+}
+
 bool CStream::IsDiscontinuity(void)
 {
   return this->IsSetFlags(STREAM_FLAG_DISCONTINUITY);

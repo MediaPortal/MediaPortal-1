@@ -447,6 +447,21 @@ bool CMPUrlSourceSplitterOutputPin::SetNewMediaTypes(CMediaTypeCollection *media
   return this->mediaTypes->Append(mediaTypes);
 }
 
+HRESULT CMPUrlSourceSplitterOutputPin::SetVideoStreams(unsigned int demuxerId, CStreamCollection *streams)
+{
+  return S_OK;
+}
+
+HRESULT CMPUrlSourceSplitterOutputPin::SetAudioStreams(unsigned int demuxerId, CStreamCollection *streams)
+{
+  return S_OK;
+}
+
+HRESULT CMPUrlSourceSplitterOutputPin::SetSubtitleStreams(unsigned int demuxerId, CStreamCollection *streams)
+{
+  return S_OK;
+}
+
 /* other methods */
 
 HRESULT CMPUrlSourceSplitterOutputPin::DeliverPlay()

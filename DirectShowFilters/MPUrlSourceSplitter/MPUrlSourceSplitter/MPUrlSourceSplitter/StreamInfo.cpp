@@ -160,6 +160,24 @@ bool CStreamInfo::SetStreamDescription(const wchar_t *streamDescription)
 
 /* other methods */
 
+CStreamInfo *CStreamInfo::Clone(void)
+{
+  HRESULT result = S_OK;
+  CStreamInfo *streamInfo = new CStreamInfo(&result);
+  CHECK_POINTER_HRESULT(result, streamInfo, result, E_OUTOFMEMORY);
+
+  if (SUCCEEDED(result))
+  {
+    SET_STRING_HRESULT_WITH_NULL(streamInfo->containerFormat, this->containerFormat, result);
+    SET_STRING_HRESULT_WITH_NULL(streamInfo->streamDescription, this->streamDescription, result);
+
+    CHECK_CONDITION_HRESULT(result, streamInfo->mediaTypes->Append(this->mediaTypes), result, E_OUTOFMEMORY);
+  }
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(streamInfo));
+  return streamInfo;
+}
+
 HRESULT CStreamInfo::CreateAudioMediaType(AVFormatContext *formatContext, AVStream *stream)
 {
   HRESULT result = S_OK;

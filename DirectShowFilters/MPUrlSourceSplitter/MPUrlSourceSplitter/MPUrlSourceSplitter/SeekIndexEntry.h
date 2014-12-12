@@ -53,6 +53,10 @@ public:
 
   /* other methods */
 
+  // deeply clones current instance
+  // @return : deep clone of current instance or NULL if error
+  CSeekIndexEntry *Clone(void);
+
 protected:
   // holds position
   int64_t position;

@@ -39,6 +39,24 @@ public:
 
   /* set methods */
 
+  // sets video streams to muxer
+  // @param demuxerId : the demuxer ID with streams
+  // @param streams : the collection of video streams
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT SetVideoStreams(unsigned int demuxerId, CStreamCollection *streams);
+
+  // sets audio streams to muxer
+  // @param demuxerId : the demuxer ID with streams
+  // @param streams : the collection of audio streams
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT SetAudioStreams(unsigned int demuxerId, CStreamCollection *streams);
+
+  // sets subtitle streams to muxer
+  // @param demuxerId : the demuxer ID with streams
+  // @param streams : the collection of subtitles streams
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT SetSubtitleStreams(unsigned int demuxerId, CStreamCollection *streams);
+
   /* other methods */
 
   // queues output pin packet

@@ -100,6 +100,10 @@ public:
   // @return : S_OK if successful, error code otherwise
   HRESULT CreateStreamInfo(AVFormatContext *formatContext, AVStream *stream, const wchar_t *containerFormat);
 
+  // deeply clones current instance
+  // @return : deep clone of current instance or NULL if error
+  CStream *Clone(void);
+
 protected:
   // holds stream info
   CStreamInfo *streamInfo;

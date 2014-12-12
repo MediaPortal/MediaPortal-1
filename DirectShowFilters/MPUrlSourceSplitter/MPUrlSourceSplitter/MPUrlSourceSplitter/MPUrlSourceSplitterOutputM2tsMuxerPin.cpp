@@ -28,7 +28,6 @@
 #define MODULE_NAME                                               L"MPUrlSourceSplitterOutputM2tsMuxerPin"
 #endif
 
-
 CMPUrlSourceSplitterOutputM2tsMuxerPin::CMPUrlSourceSplitterOutputM2tsMuxerPin(LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr, CLogger *logger, CParameterCollection *parameters, CMediaTypeCollection *mediaTypes)
   : CMPUrlSourceSplitterOutputPin(pName, pFilter, pLock, phr, logger, parameters, mediaTypes)
 {
@@ -52,6 +51,30 @@ CMPUrlSourceSplitterOutputM2tsMuxerPin::~CMPUrlSourceSplitterOutputM2tsMuxerPin(
 /* get methods */
 
 /* set methods */
+
+HRESULT CMPUrlSourceSplitterOutputM2tsMuxerPin::SetVideoStreams(unsigned int demuxerId, CStreamCollection *streams)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, streams);
+
+  return result;
+}
+
+HRESULT CMPUrlSourceSplitterOutputM2tsMuxerPin::SetAudioStreams(unsigned int demuxerId, CStreamCollection *streams)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, streams);
+
+  return result;
+}
+
+HRESULT CMPUrlSourceSplitterOutputM2tsMuxerPin::SetSubtitleStreams(unsigned int demuxerId, CStreamCollection *streams)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, streams);
+
+  return result;
+}
 
 /* other methods */
 

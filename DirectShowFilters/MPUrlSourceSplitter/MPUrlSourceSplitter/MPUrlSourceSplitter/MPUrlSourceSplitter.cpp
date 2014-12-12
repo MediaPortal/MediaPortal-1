@@ -392,7 +392,6 @@ CUnknown * WINAPI CMPUrlSourceSplitter::CreateInstanceIptvSource(LPUNKNOWN lpunk
 
       if (SUCCEEDED(*phr))
       {
-        //CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(L"Output", instance, instance, phr, instance->logger, instance->configuration, mediaTypes);
         CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputM2tsMuxerPin(L"Output", instance, instance, phr, instance->logger, instance->configuration, mediaTypes);
         CHECK_POINTER_HRESULT(*phr, outputPin, *phr, E_OUTOFMEMORY);
 
@@ -2359,8 +2358,44 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
 
       // if in output pin collection isn't any pin, then add new output pin with MPEG2 TS media type
       // in another case filter assume that there is only one output pin with MPEG2 TS media type
-      if (SUCCEEDED(caller->loadAsyncResult) && (caller->outputPins->Count() == 0))
+      //if (SUCCEEDED(caller->loadAsyncResult) && (caller->outputPins->Count() == 0))
+      //{
+      //  // create valid MPEG2 TS media type, add it to media types and create output pin
+      //  CMediaTypeCollection *mediaTypes = new CMediaTypeCollection(&caller->loadAsyncResult);
+      //  CHECK_POINTER_HRESULT(caller->loadAsyncResult, mediaTypes, caller->loadAsyncResult, E_OUTOFMEMORY);
+
+      //  if (SUCCEEDED(caller->loadAsyncResult))
+      //  {
+      //    CMediaType *mediaType = new CMediaType();
+      //    CHECK_POINTER_HRESULT(caller->loadAsyncResult, mediaType, caller->loadAsyncResult, E_OUTOFMEMORY);
+
+      //    if (SUCCEEDED(caller->loadAsyncResult))
+      //    {
+      //      mediaType->SetType(&MEDIATYPE_Stream);
+      //      mediaType->SetSubtype(&MEDIASUBTYPE_MPEG2_TRANSPORT);
+      //    }
+
+      //    CHECK_CONDITION_HRESULT(caller->loadAsyncResult, mediaTypes->Add(mediaType), caller->loadAsyncResult, E_OUTOFMEMORY);
+      //    CHECK_CONDITION_EXECUTE(FAILED(caller->loadAsyncResult), FREE_MEM_CLASS(mediaType));
+      //  }
+
+      //  if (SUCCEEDED(caller->loadAsyncResult))
+      //  {
+      //    //CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(L"Output", caller, caller, &caller->loadAsyncResult, caller->logger, caller->configuration, mediaTypes);
+      //    CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputM2tsMuxerPin(L"Output", caller, caller, &caller->loadAsyncResult, caller->logger, caller->configuration, mediaTypes);
+      //    CHECK_POINTER_HRESULT(caller->loadAsyncResult, outputPin, caller->loadAsyncResult, E_OUTOFMEMORY);
+
+      //    CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->outputPins->Add(outputPin), caller->loadAsyncResult, E_OUTOFMEMORY);
+      //    CHECK_CONDITION_EXECUTE(FAILED(caller->loadAsyncResult), FREE_MEM_CLASS(outputPin));
+      //  }
+
+      //  FREE_MEM_CLASS(mediaTypes);
+      //}
+
+      if (SUCCEEDED(caller->loadAsyncResult))
       {
+        caller->outputPins->Clear();
+
         // create valid MPEG2 TS media type, add it to media types and create output pin
         CMediaTypeCollection *mediaTypes = new CMediaTypeCollection(&caller->loadAsyncResult);
         CHECK_POINTER_HRESULT(caller->loadAsyncResult, mediaTypes, caller->loadAsyncResult, E_OUTOFMEMORY);
@@ -2382,7 +2417,6 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
 
         if (SUCCEEDED(caller->loadAsyncResult))
         {
-          //CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(L"Output", caller, caller, &caller->loadAsyncResult, caller->logger, caller->configuration, mediaTypes);
           CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputM2tsMuxerPin(L"Output", caller, caller, &caller->loadAsyncResult, caller->logger, caller->configuration, mediaTypes);
           CHECK_POINTER_HRESULT(caller->loadAsyncResult, outputPin, caller->loadAsyncResult, E_OUTOFMEMORY);
 
@@ -2556,6 +2590,26 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
         Sleep(1);
       }
 
+      if (SUCCEEDED(caller->loadAsyncResult) && caller->IsIptv() && (!caller->loadAsyncWorkerShouldExit) && (activeDemuxer >= caller->demuxers->Count()))
+      {
+        // all demuxers successfully created
+        // initialize output pins
+
+        for (unsigned int i = 0; (SUCCEEDED(caller->loadAsyncResult) && (i < caller->demuxers->Count())); i++)
+        {
+          CStandardDemuxer *demuxer = dynamic_cast<CStandardDemuxer *>(caller->demuxers->GetItem(i));
+
+          for (unsigned int j = 0; (SUCCEEDED(caller->loadAsyncResult) && (demuxer != NULL) && (j < caller->outputPins->Count())); j++)
+          {
+            CMPUrlSourceSplitterOutputPin *outputPin = caller->outputPins->GetItem(j);
+
+            CHECK_HRESULT_EXECUTE(caller->loadAsyncResult, caller->loadAsyncResult = outputPin->SetVideoStreams(demuxer->GetDemuxerId(), demuxer->GetStreams(CStream::Video)));
+            CHECK_HRESULT_EXECUTE(caller->loadAsyncResult, caller->loadAsyncResult = outputPin->SetAudioStreams(demuxer->GetDemuxerId(), demuxer->GetStreams(CStream::Audio)));
+            CHECK_HRESULT_EXECUTE(caller->loadAsyncResult, caller->loadAsyncResult = outputPin->SetSubtitleStreams(demuxer->GetDemuxerId(), demuxer->GetStreams(CStream::Subpic)));
+          }
+        }
+      }
+
       if (SUCCEEDED(caller->loadAsyncResult) && (caller->IsSplitter()) && (!caller->IsDownloadingFile()) && (!caller->loadAsyncWorkerShouldExit) && (activeDemuxer >= caller->demuxers->Count()))
       {
         // all demuxers successfully created
@@ -2579,6 +2633,8 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
             {
               outputPin->SetStreamPid(videoStream->GetPid());
               outputPin->SetDemuxerId(i);
+              caller->loadAsyncResult = outputPin->SetVideoStreams(demuxer->GetDemuxerId(), demuxer->GetStreams(CStream::Video));
+
               demuxer->SetActiveStream(CStream::Video, videoStream->GetPid());
             }
 
@@ -2604,6 +2660,8 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
             {
               outputPin->SetStreamPid(audioStream->GetPid());
               outputPin->SetDemuxerId(i);
+              caller->loadAsyncResult = outputPin->SetAudioStreams(demuxer->GetDemuxerId(), demuxer->GetStreams(CStream::Audio));
+
               demuxer->SetActiveStream(CStream::Audio, audioStream->GetPid());
             }
 
@@ -2631,6 +2689,8 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
             {
               outputPin->SetStreamPid(subtitleStream->GetPid());
               outputPin->SetDemuxerId(i);
+              caller->loadAsyncResult = outputPin->SetSubtitleStreams(demuxer->GetDemuxerId(), demuxer->GetStreams(CStream::Subpic));
+
               demuxer->SetActiveStream(CStream::Subpic, subtitleStream->GetPid());
             }
 

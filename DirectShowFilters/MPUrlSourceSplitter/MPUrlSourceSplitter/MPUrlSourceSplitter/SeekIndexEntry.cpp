@@ -57,3 +57,13 @@ void CSeekIndexEntry::SetTimestamp(int64_t timestamp)
 }
 
 /* other methods */
+
+CSeekIndexEntry *CSeekIndexEntry::Clone(void)
+{
+  HRESULT result = S_OK;
+  CSeekIndexEntry *entry = new CSeekIndexEntry(this->position, this->timestamp);
+  CHECK_POINTER_HRESULT(result, entry, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(entry));
+  return entry;
+}
