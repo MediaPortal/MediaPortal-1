@@ -27,6 +27,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Diagnostics;
 using System.ServiceProcess;
+using System.Management;
 using WatchDogService.Interface;
 
 namespace WatchDogService
@@ -95,6 +96,27 @@ namespace WatchDogService
       return result;
     }
 
+    public void Reboot()
+    {
+      EventLog _eventLog = new EventLog();
+      _eventLog.Source = "WatchDogService";
+      _eventLog.WriteEntry("WatchDogService: Reboot command received.", EventLogEntryType.Information);
+
+      ManagementBaseObject mboShutdown = null;
+      ManagementClass mcWin32 = new ManagementClass("Win32_OperatingSystem");
+      mcWin32.Get();
+
+      mcWin32.Scope.Options.EnablePrivileges = true;
+      ManagementBaseObject mboShutdownParams = mcWin32.GetMethodParameters("Win32Shutdown");
+
+      mboShutdownParams["Flags"] = "6";
+      mboShutdownParams["Reserved"] = "0";
+      foreach (ManagementObject manObj in mcWin32.GetInstances())
+      {
+        mboShutdown = manObj.InvokeMethod("Win32Shutdown", mboShutdownParams, null);
+      }
+    }
+
     public Object ReadLog()
     {
       string _tmpDir = Path.GetTempPath() + "\\TvServerLogs";
@@ -103,7 +125,6 @@ namespace WatchDogService
       ILogCreator TvServerLog = new TvServerLogger();
       ILogCreator TvServerApplicationLog = new EventLogCsvLogger("Application");
       ILogCreator TvServerSystemLog = new EventLogCsvLogger("System");
-      //ILogCreator TvServerWatchDogServiceLog = new EventLogCsvLogger("WatchDogServiceLog");
 
       if (!Directory.Exists(_tmpDir))
       {
@@ -118,7 +139,6 @@ namespace WatchDogService
       TvServerLog.CreateLogs(_tmpDir);
       TvServerApplicationLog.CreateLogs(_tmpDir);
       TvServerSystemLog.CreateLogs(_tmpDir);
-      //TvServerWatchDogServiceLog.CreateLogs(_tmpDir);
 
       using (Archiver archiver = new Archiver())
       {

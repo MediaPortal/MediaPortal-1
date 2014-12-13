@@ -34,5 +34,6 @@ namespace WatchDogService.Interface
     string StopTVService();
     string ClearTVserverLogs();
     string ClearWindowsEventLogs();
+    void Reboot();
   }
 }
