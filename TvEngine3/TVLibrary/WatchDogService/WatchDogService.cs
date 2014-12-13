@@ -41,12 +41,12 @@ namespace WatchDogService
     public WatchDogService()
     {
       InitializeComponent();
-      if (!System.Diagnostics.EventLog.SourceExists("WatchDogService"))
+      /*if (!System.Diagnostics.EventLog.SourceExists("WatchDogService"))
       {
         System.Diagnostics.EventLog.CreateEventSource("WatchDogService", "WatchDogServiceLog");
-      }
+      }*/
       _eventLog.Source = "WatchDogService";
-      _eventLog.Log = "WatchDogServiceLog";
+      //_eventLog.Log = "WatchDogServiceLog";
     }
 
     protected override void OnStart(string[] args)

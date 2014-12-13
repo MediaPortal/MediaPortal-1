@@ -103,7 +103,7 @@ namespace WatchDogService
       ILogCreator TvServerLog = new TvServerLogger();
       ILogCreator TvServerApplicationLog = new EventLogCsvLogger("Application");
       ILogCreator TvServerSystemLog = new EventLogCsvLogger("System");
-      ILogCreator TvServerWatchDogServiceLog = new EventLogCsvLogger("WatchDogServiceLog");
+      //ILogCreator TvServerWatchDogServiceLog = new EventLogCsvLogger("WatchDogServiceLog");
 
       if (!Directory.Exists(_tmpDir))
       {
@@ -118,7 +118,7 @@ namespace WatchDogService
       TvServerLog.CreateLogs(_tmpDir);
       TvServerApplicationLog.CreateLogs(_tmpDir);
       TvServerSystemLog.CreateLogs(_tmpDir);
-      TvServerWatchDogServiceLog.CreateLogs(_tmpDir);
+      //TvServerWatchDogServiceLog.CreateLogs(_tmpDir);
 
       using (Archiver archiver = new Archiver())
       {
@@ -149,7 +149,7 @@ namespace WatchDogService
     public string ClearWindowsEventLogs()
     {
       string result = "Done.";
-      string[] logNames = { "Application", "System", "WatchDogServiceLog"};
+      string[] logNames = { "Application", "System"};
       foreach (string strLogName in logNames)
       {
         EventLog e = new EventLog(strLogName);
