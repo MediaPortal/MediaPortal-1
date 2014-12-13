@@ -166,6 +166,10 @@ public:
   DWORD m_targetAVready;
   bool  m_bSubtitleCompensationSet;
   bool m_bShuttingDown;
+  double m_dVidPTSJumpLimit;
+  double m_dfAudSampleDuration;
+  
+  DWORD  m_lastFlushTime;
 
 private:
   struct stAudioStream
@@ -309,5 +313,5 @@ private:
   int  m_prefetchLoopDelay;
   
   byte* m_pFileReadBuffer;
-  
+    
 };

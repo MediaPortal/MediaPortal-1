@@ -410,11 +410,16 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       //did we reach the end of the file
       if (demux.EndOfFile())
       {
-        LogDebug("vidPin:set eof");
-        m_FillBuffSleepTime = 5;
-        CreateEmptySample(pSample);
-        m_bInFillBuffer = false;
-        return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
+        int ACnt, VCnt;
+        demux.GetBufferCounts(&ACnt, &VCnt);
+        if (ACnt <= 0 && VCnt <= 0) //have we used all the data ?
+        {
+          LogDebug("vidPin:set eof");
+          m_FillBuffSleepTime = 5;
+          CreateEmptySample(pSample);
+          m_bInFillBuffer = false;
+          return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
+        }
       }
 
       //if the filter is currently seeking to a new position
@@ -534,7 +539,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
             //Discard late samples at start of play,
             //and samples outside a sensible timing window during play 
             //(helps with signal corruption recovery)
-            if ((fTime > (ForcePresent ? -1.0 : -0.3)) && (fTime < (stallPoint + 1.0)))
+            if ((fTime > (ForcePresent ? -1.0 : -0.3)) && (fTime < (demux.m_dVidPTSJumpLimit + 1.0))   )
             {
               if ((fTime > stallPoint) && (m_sampleCount > 10))
               {

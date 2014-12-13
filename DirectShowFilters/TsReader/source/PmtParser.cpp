@@ -148,6 +148,15 @@ void CPmtParser::OnNewSection(CSection& section)
 
         int indicator=section.Data[pointer];
         x = section.Data[pointer + 1] + 2;
+
+        if(indicator==DESCRIPTOR_VIDEO_STREAM)
+        {								
+          VideoPid pid = m_pidInfo.videoPids.back(); //Get the current video PID data
+          pid.DescriptorData = section.Data[pointer+2];
+          
+          m_pidInfo.videoPids.pop_back();
+          m_pidInfo.videoPids.push_back(pid);
+        }
   						
         if(indicator==DESCRIPTOR_DVB_AC3 || indicator==DESCRIPTOR_DVB_E_AC3)
         {								
