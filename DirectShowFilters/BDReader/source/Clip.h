@@ -127,6 +127,9 @@ protected:
   // indicates if this is the first packet to be returned from the clip
   bool firstPacketReturned;
 
+  REFERENCE_TIME m_rtPrevAudioStart;
+  REFERENCE_TIME m_rtPlayedDuration; // Do not zero on reset as this should be cumulative
+
   Packet* GenerateFakeAudio(REFERENCE_TIME rtStart);
 };
 
