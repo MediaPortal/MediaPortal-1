@@ -931,6 +931,8 @@ namespace MediaPortal.Player
         return false;
       }
 
+      BDOSDRenderer.StartRendering();
+
       if (!GetInterfaces(strFile, g_Player.SetResumeBDTitleState))
       {
         MovieEnded();
@@ -2708,8 +2710,8 @@ namespace MediaPortal.Player
       Log.Debug("BDPlayer: Cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
       try
       {
-        BDOSDRenderer.Release();
-        
+        BDOSDRenderer.StopRendering();
+
         if (_mediaCtrl != null)
         {
           int counter = 0;
