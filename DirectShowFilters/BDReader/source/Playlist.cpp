@@ -279,7 +279,6 @@ void CPlaylist::FlushVideo()
 void CPlaylist::ClearClips(REFERENCE_TIME totalStreamOffset, bool skipCurrentClip)
 {
   CAutoLock vectorLock(&m_sectionVector);
-  REFERENCE_TIME ret = 0LL;
   ivecClip it = m_vecClips.begin();
   while (it != m_vecClips.end())
   {
@@ -296,9 +295,8 @@ void CPlaylist::ClearClips(REFERENCE_TIME totalStreamOffset, bool skipCurrentCli
   if (m_vecClips.size() > 0)
   {
     m_itCurrentAudioPlayBackClip = m_itCurrentVideoPlayBackClip = m_itCurrentAudioSubmissionClip = m_itCurrentVideoSubmissionClip = m_vecClips.begin();
-    ret = (*m_itCurrentAudioPlayBackClip)->PlayedDuration();
     Reset(nPlaylist, playlistFirstPacketTime);
-    (*m_itCurrentAudioPlayBackClip)->Reset(totalStreamOffset + ret);
+    (*m_itCurrentAudioPlayBackClip)->Reset(totalStreamOffset);
   }
 }
 
