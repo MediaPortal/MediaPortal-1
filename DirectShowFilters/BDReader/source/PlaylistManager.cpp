@@ -282,7 +282,11 @@ void CPlaylistManager::ClearClips(bool skipCurrentClip)
   {
     CPlaylist* playlist = *it;
     if (playlist == m_vecPlaylists.back() && skipCurrentClip)
+    {
+      playlist->FlushAudio();
+      playlist->FlushVideo();
       ++it;
+    }
     else
     {
       it = m_vecPlaylists.erase(it);

@@ -524,7 +524,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv)
       break;
 
     case BD_EVENT_FLUSH:
-      Flush(false);
+      Flush(true);
       m_bLibRequestedFlush = true;
       break;
 
