@@ -26,7 +26,7 @@ using Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.Player
 {
-  public class BDOSDRenderer
+  public sealed class BDOSDRenderer
   {
     private enum BD_OVERLAY_PLANE
     {
@@ -35,6 +35,8 @@ namespace MediaPortal.Player
     }
 
     private static BDOSDRenderer _instance;
+    private static bool _render = false;
+    private readonly static object _instanceLock = new Object();
 
     /// <summary>
     /// The coordinates of current vertex buffer
@@ -66,22 +68,50 @@ namespace MediaPortal.Player
     {
       if (_instance == null)
       {
-        _instance = new BDOSDRenderer();
+        lock (_instanceLock)
+        {
+          if (_instance == null)
+          {
+            _instance = new BDOSDRenderer();
+          }
+        }
       }
       return _instance;
     }
 
-    public static void Release()
+    public static void StartRendering()
     {
-      _instance = null;
+      lock (_instanceLock)
+      {
+        _render = true;
+      }
     }
-    
+
+    public static void StopRendering()
+    {
+      if (_instance != null)
+      {
+        lock (_instanceLock)
+        {
+          if (_instance != null)
+          {
+            _instance.ReleaseTextures();
+          }
+        }
+      }
+    }
+
     public void DrawItem(OSDTexture item)
     {
       try
       {
-        lock (_OSDLock)
+        lock (_instanceLock)
         {
+          if (!_render)
+          {
+            return;
+          }
+
           if (item.texture != null && item.width > 0 && item.height > 0)
           {
             if (_planes[item.plane] == null)
@@ -103,8 +133,13 @@ namespace MediaPortal.Player
 
     public void Render()
     {
-      lock (_OSDLock)
+      lock (_instanceLock)
       {
+        if (!_render)
+        {
+          return;
+        }
+
         // Store current settings so they can be restored when we are done
         VertexFormats vertexFormat = GUIGraphicsContext.DX9Device.VertexFormat;
         
@@ -217,6 +252,13 @@ namespace MediaPortal.Player
         _wheight = wheight;
         _wwidth = wwidth;
       }
+    }
+
+    private void ReleaseTextures()
+    {
+      _render = false;
+      _planes[0] = null;
+      _planes[1] = null;
     }
   }
 }
