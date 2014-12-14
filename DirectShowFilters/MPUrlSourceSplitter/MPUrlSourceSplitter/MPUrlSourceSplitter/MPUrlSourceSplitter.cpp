@@ -2542,11 +2542,33 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
             }
             else
             {
-              demuxer = new CDefaultDemuxer(&caller->loadAsyncResult, caller->logger, caller, caller->configuration);
-
-              if (SUCCEEDED(caller->loadAsyncResult))
+              if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_MUXING))
               {
-                demuxer->SetDemuxerId(i);
+                if (streams->GetItem(i)->IsContainer())
+                {
+                  demuxer = new CContainerDemuxer(&caller->loadAsyncResult, caller->logger, caller, caller->configuration);
+                }
+                else if (streams->GetItem(i)->IsPackets())
+                {
+                  demuxer = new CPacketDemuxer(&caller->loadAsyncResult, caller->logger, caller, caller->configuration);
+                }
+
+                if (SUCCEEDED(caller->loadAsyncResult))
+                {
+                  CStandardDemuxer *standardDemuxer = dynamic_cast<CStandardDemuxer *>(demuxer);
+
+                  standardDemuxer->SetDemuxerId(i);
+                  caller->loadAsyncResult = standardDemuxer->SetStreamInformation(streams->GetItem(i));
+                }
+              }
+              else
+              {
+                demuxer = new CDefaultDemuxer(&caller->loadAsyncResult, caller->logger, caller, caller->configuration);
+
+                if (SUCCEEDED(caller->loadAsyncResult))
+                {
+                  demuxer->SetDemuxerId(i);
+                }
               }
             }
 
@@ -2601,11 +2623,47 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
 
           for (unsigned int j = 0; (SUCCEEDED(caller->loadAsyncResult) && (demuxer != NULL) && (j < caller->outputPins->Count())); j++)
           {
-            CMPUrlSourceSplitterOutputPin *outputPin = caller->outputPins->GetItem(j);
+            CMPUrlSourceSplitterOutputM2tsMuxerPin *outputPin = (CMPUrlSourceSplitterOutputM2tsMuxerPin *)caller->outputPins->GetItem(j);
 
             CHECK_HRESULT_EXECUTE(caller->loadAsyncResult, caller->loadAsyncResult = outputPin->SetVideoStreams(demuxer->GetDemuxerId(), demuxer->GetStreams(CStream::Video)));
             CHECK_HRESULT_EXECUTE(caller->loadAsyncResult, caller->loadAsyncResult = outputPin->SetAudioStreams(demuxer->GetDemuxerId(), demuxer->GetStreams(CStream::Audio)));
             CHECK_HRESULT_EXECUTE(caller->loadAsyncResult, caller->loadAsyncResult = outputPin->SetSubtitleStreams(demuxer->GetDemuxerId(), demuxer->GetStreams(CStream::Subpic)));
+          }
+        }
+      }
+
+      // dump stream information
+      for (unsigned int i = 0; (SUCCEEDED(caller->loadAsyncResult) && (i < caller->demuxers->Count())); i++)
+      {
+        CStandardDemuxer *demuxer = dynamic_cast<CStandardDemuxer *>(caller->demuxers->GetItem(i));
+        
+        if (demuxer != NULL)
+        {
+          CStreamCollection *streams = demuxer->GetStreams(CStream::Video);
+
+          for (unsigned int j = 0; (SUCCEEDED(caller->loadAsyncResult) && (j < streams->Count())); j++)
+          {
+            CStream *stream = streams->GetItem(j);
+
+            caller->logger->Log(LOGGER_INFO, L"%s: %s: demuxer ID: %u, video stream ID: %u, stream info: '%s'", MODULE_NAME, METHOD_LOAD_ASYNC_WORKER_NAME, demuxer->GetDemuxerId(), stream->GetPid(), stream->GetStreamInfo()->GetStreamDescription());
+          }
+
+          streams = demuxer->GetStreams(CStream::Audio);
+
+          for (unsigned int j = 0; (SUCCEEDED(caller->loadAsyncResult) && (j < streams->Count())); j++)
+          {
+            CStream *stream = streams->GetItem(j);
+
+            caller->logger->Log(LOGGER_INFO, L"%s: %s: demuxer ID: %u, audio stream ID: %u, stream info: '%s'", MODULE_NAME, METHOD_LOAD_ASYNC_WORKER_NAME, demuxer->GetDemuxerId(), stream->GetPid(), stream->GetStreamInfo()->GetStreamDescription());
+          }
+
+          streams = demuxer->GetStreams(CStream::Subpic);
+
+          for (unsigned int j = 0; (SUCCEEDED(caller->loadAsyncResult) && (j < streams->Count())); j++)
+          {
+            CStream *stream = streams->GetItem(j);
+
+            caller->logger->Log(LOGGER_INFO, L"%s: %s: demuxer ID: %u, subtitle stream ID: %u, stream info: '%s'", MODULE_NAME, METHOD_LOAD_ASYNC_WORKER_NAME, demuxer->GetDemuxerId(), stream->GetPid(), stream->GetStreamInfo()->GetStreamDescription());
           }
         }
       }
@@ -2633,7 +2691,6 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
             {
               outputPin->SetStreamPid(videoStream->GetPid());
               outputPin->SetDemuxerId(i);
-              caller->loadAsyncResult = outputPin->SetVideoStreams(demuxer->GetDemuxerId(), demuxer->GetStreams(CStream::Video));
 
               demuxer->SetActiveStream(CStream::Video, videoStream->GetPid());
             }
@@ -2660,7 +2717,6 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
             {
               outputPin->SetStreamPid(audioStream->GetPid());
               outputPin->SetDemuxerId(i);
-              caller->loadAsyncResult = outputPin->SetAudioStreams(demuxer->GetDemuxerId(), demuxer->GetStreams(CStream::Audio));
 
               demuxer->SetActiveStream(CStream::Audio, audioStream->GetPid());
             }
@@ -2689,7 +2745,6 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
             {
               outputPin->SetStreamPid(subtitleStream->GetPid());
               outputPin->SetDemuxerId(i);
-              caller->loadAsyncResult = outputPin->SetSubtitleStreams(demuxer->GetDemuxerId(), demuxer->GetStreams(CStream::Subpic));
 
               demuxer->SetActiveStream(CStream::Subpic, subtitleStream->GetPid());
             }
