@@ -202,7 +202,7 @@ LPCTSTR CPidTable::StreamFormatAsString(int streamType)
 	case 0x87:
 		return _T("DD+");
   case 0x0f:
-		return _T("AAC");
+		return _T("ADTS AAC");
 	case 0x11:
 		return _T("LATM AAC");
   case 0xA1:

@@ -313,5 +313,8 @@ private:
   int  m_prefetchLoopDelay;
   
   byte* m_pFileReadBuffer;
+  
+  DWORD m_currentADTSheader;
+  int m_ADTSheaderCount;
     
 };
