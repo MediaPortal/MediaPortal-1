@@ -64,6 +64,7 @@ public:
   double GetAudToPresMeanDelta();
   DWORD  m_FillBuffSleepTime;
   double GetAudioPresToRefDiff();
+  int GetPMTiPosition();
 
 protected:
   HRESULT   UpdateFromSeek();
@@ -92,6 +93,7 @@ protected:
   bool  m_bPinNoAddPMT;
   bool  m_bAddPMT;
   bool  m_bDisableSlowPlayDiscontinuity;
+  int   m_iPosition;
   
 };
 

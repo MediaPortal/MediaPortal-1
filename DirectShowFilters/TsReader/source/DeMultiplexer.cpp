@@ -301,7 +301,7 @@ int CDeMultiplexer::GetAudioStreamCount()
   return m_audioStreams.size();
 }
 
-void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
+void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPosition)
 {
   if (m_iAudioStream< 0 || stream >= m_audioStreams.size())
   {
@@ -343,7 +343,7 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
     case SERVICE_TYPE_AUDIO_AAC:
       pmt.InitMediaType();
       pmt.SetType      (& MEDIATYPE_Audio);
-      pmt.SetSubtype   (& MEDIASUBTYPE_AAC);
+      iPosition ? pmt.SetSubtype(& MEDIASUBTYPE_AAC) : pmt.SetSubtype(& MEDIASUBTYPE_MPEG_ADTS_AAC);
       pmt.SetSampleSize(1);
       pmt.SetTemporalCompression(FALSE);
       pmt.SetVariableSize();
@@ -353,7 +353,7 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
     case SERVICE_TYPE_AUDIO_LATM_AAC:
       pmt.InitMediaType();
       pmt.SetType      (& MEDIATYPE_Audio);
-      pmt.SetSubtype   (& MEDIASUBTYPE_LATM_AAC);
+      iPosition ? pmt.SetSubtype(& MEDIASUBTYPE_MPEG_LOAS) : pmt.SetSubtype(& MEDIASUBTYPE_LATM_AAC);
       pmt.SetSampleSize(1);
       pmt.SetTemporalCompression(FALSE);
       pmt.SetVariableSize();
@@ -1360,16 +1360,11 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
       m_pCurrentAudioBuffer = new CBuffer();
     }
 
-    //m_AudioValidPES = true;     
-
-    if (1)
+    //write in pes header data (only)
+    int headerLen=9+tsPacket[posn+8] ;
+    if (headerLen>0 && headerLen < 188)
     {
-      //write in pes header data (only)
-      int headerLen=9+tsPacket[posn+8] ;
-      if (headerLen>0 && headerLen < 188)
-      {
-        m_pCurrentAudioBuffer->Add(&tsPacket[posn],headerLen);
-      }
+      m_pCurrentAudioBuffer->Add(&tsPacket[posn],headerLen);
     }
 
     if (m_t_vecAudioBuffers.size()) //Process the previous PES packet
@@ -1603,17 +1598,14 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
     //does the entire data in this tspacket fit in the current buffer ?
     if (m_pCurrentAudioBuffer->Length()+(188-pos)>=MAX_BUFFER_SIZE)
     {
-      //no, then determine how many bytes do fit
-      int copyLen=MAX_BUFFER_SIZE-m_pCurrentAudioBuffer->Length();
-      //copy those bytes
-      m_pCurrentAudioBuffer->Add(&tsPacket[pos],copyLen);
-      pos+=copyLen;
-
-      m_t_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
-      //and create a new one
-      m_pCurrentAudioBuffer = new CBuffer();
+      //Discard this new/current PES packet due to overflow
+      m_AudioValidPES=false;  
+      m_bSetAudioDiscontinuity=true;
+      m_pCurrentAudioBuffer->SetLength(0);
+      LogDebug("PES audio buffer overflow error");
+      return;
     }
-    //copy (rest) data in current buffer
+    //copy the data into the current buffer
     if (pos>0 && pos < 188)
     {
       m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos);

@@ -63,6 +63,7 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
   m_section(section)
 {
   m_bConnected=false;
+  m_iPosition=0;
   m_rtStart=0;
   m_dwSeekingCaps =
     AM_SEEKING_CanSeekAbsolute  |
@@ -114,13 +115,18 @@ HRESULT CAudioPin::CheckMediaType(const CMediaType* pmt)
   CMediaType pmti;
   int audioIndex = 0;
   demux.GetAudioStream(audioIndex);
-  demux.GetAudioStreamType(audioIndex, pmti);
-  CMediaType* ppmti = &pmti;
-
-  if(*pmt == *ppmti)
+  
+  for (int iPosition(0); iPosition <2; iPosition++)
   {
-    //LogDebug("audPin:CheckMediaType() ok");  
-    return S_OK;
+    demux.GetAudioStreamType(audioIndex, pmti, iPosition);
+    CMediaType* ppmti = &pmti;
+  
+    if(*pmt == *ppmti)
+    {
+      m_iPosition = iPosition;
+      //LogDebug("audPin:CheckMediaType() ok, iPosition = %d", iPosition);  
+      return S_OK;
+    }
   }
 
   //LogDebug("audPin:CheckMediaType() fail");  
@@ -138,7 +144,7 @@ HRESULT CAudioPin::GetMediaType(int iPosition, CMediaType *pmt)
   {              
     return E_INVALIDARG;
   }                                        
-  if (iPosition > 0)   
+  if (iPosition > 1)   
   {           
     return VFW_S_NO_MORE_ITEMS;
   }   
@@ -160,7 +166,7 @@ HRESULT CAudioPin::GetMediaType(int iPosition, CMediaType *pmt)
         //LogDebug("audPin:GetMediaType() - good pid");
         int audioIndex = 0;
         demux.GetAudioStream(audioIndex);
-        demux.GetAudioStreamType(audioIndex, *pmt);
+        demux.GetAudioStreamType(audioIndex, *pmt, iPosition);
         return S_OK;
       }
     }
@@ -237,7 +243,7 @@ HRESULT CAudioPin::CompleteConnect(IPin *pReceivePin)
   {
     char szName[MAX_FILTER_NAME];
     int cch = WideCharToMultiByte(CP_ACP, 0, filterInfo.achName, MAX_FILTER_NAME, szName, MAX_FILTER_NAME, 0, 0);
-    LogDebug("audPin:CompleteConnect() ok, filter: %s", szName);
+    LogDebug("audPin:CompleteConnect() ok, filter: %s, iPosition: %d", szName, m_iPosition);
     
     m_bConnected=true;
 
@@ -251,7 +257,7 @@ HRESULT CAudioPin::CompleteConnect(IPin *pReceivePin)
   }
   else
   {
-    LogDebug("audPin:CompleteConnect() failed:%x",hr);
+    LogDebug("audPin:CompleteConnect() failed:%x, iPosition: %d", hr, m_iPosition);
     return E_FAIL;
   }
 
@@ -275,6 +281,7 @@ HRESULT CAudioPin::CompleteConnect(IPin *pReceivePin)
 HRESULT CAudioPin::BreakConnect()
 {
   m_bConnected=false;
+  m_iPosition=0;
   return CSourceStream::BreakConnect();
 }
 
@@ -586,7 +593,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               CMediaType mt; 
               int audioIndex = 0;
               demux.GetAudioStream(audioIndex);
-              demux.GetAudioStreamType(audioIndex, mt);
+              demux.GetAudioStreamType(audioIndex, mt, m_iPosition);
               pSample->SetMediaType(&mt);            
               LogDebug("audPin: Add pmt and set discontinuity L:%d B:%d fTime:%03.3f SampCnt:%d", m_bDiscontinuity, buffer->GetDiscontinuity(), (float)fTime, m_sampleCount);
               m_bAddPMT = false; //Only add once
@@ -761,6 +768,12 @@ bool CAudioPin::IsConnected()
 {
   return m_bConnected;
 }
+
+int CAudioPin::GetPMTiPosition()
+{
+  return m_iPosition;
+}
+
 
 HRESULT CAudioPin::ChangeStart()
 {

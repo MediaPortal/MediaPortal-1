@@ -13,3 +13,10 @@ Thumbs.db
 Packages
 *.DotSettings
 /Build/NuGet.exe
+*.zip
+*.gif
+Build/Build_Report_Release_Filters.html
+Build/VS_build_DirectShowFilters (2).bat
+Build/_BuildReport_Files/BuildReport.xslt
+Build/_BuildReport_Files/BuildReport.css
+Build/Build_Report_Release_Filters.xml
