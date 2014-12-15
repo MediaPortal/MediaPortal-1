@@ -45,6 +45,7 @@ namespace MediaPortal.GUI.Music
     private string _playlistFolder = string.Empty;
     private string m_strCurrentFile = string.Empty;
     private bool _savePlaylistOnExit = false;
+    private bool _savePlaylistAsUtf8 = false;
     private bool _resumePlaylistOnEnter = false;
     private string _defaultPlaylist = "default.m3u";
     private WaitCursor waitCursor;
@@ -79,11 +80,16 @@ namespace MediaPortal.GUI.Music
         _playlistFolder = xmlreader.GetValueAsString("music", "playlists", string.Empty);
         _savePlaylistOnExit = xmlreader.GetValueAsBool("musicfiles", "savePlaylistOnExit", false);
         _resumePlaylistOnEnter = xmlreader.GetValueAsBool("musicfiles", "resumePlaylistOnMusicEnter", false);
+        _savePlaylistAsUtf8 = xmlreader.GetValueAsBool("musicfiles", "savePlaylistUTF8", false);
         playlistPlayer.RepeatPlaylist = xmlreader.GetValueAsBool("musicfiles", "repeat", true);
       }
 
       if (_resumePlaylistOnEnter)
       {
+        if (_savePlaylistAsUtf8)
+        {
+          _defaultPlaylist = string.Format("{0}.m3u8", Path.GetFileNameWithoutExtension(_defaultPlaylist));
+        }
         Log.Info("GUIMusicPlaylist: Loading default playlist {0}", _defaultPlaylist);
         bw = new BackgroundWorker();
         bw.WorkerSupportsCancellation = true;
