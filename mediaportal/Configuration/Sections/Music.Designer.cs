@@ -120,6 +120,7 @@ namespace MediaPortal.Configuration.Sections
       this.ShowVizInNowPlayingChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.PlaylistTabPg = new System.Windows.Forms.TabPage();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.PlayListUTF8CheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.PlaylistCurrentCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.autoShuffleCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.ResumePlaylistChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -130,11 +131,6 @@ namespace MediaPortal.Configuration.Sections
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.VisualizationsTabPg = new System.Windows.Forms.TabPage();
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.groupBoxWinampVis = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.winampFFTsensitivityLbl = new System.Windows.Forms.Label();
-      this.FFTsensitivityLbl = new System.Windows.Forms.Label();
-      this.winampFFTsensitivity = new System.Windows.Forms.TrackBar();
-      this.btWinampConfig = new MediaPortal.UserInterface.Controls.MPButton();
       this.EnableStatusOverlaysChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.ShowTrackInfoChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label11 = new System.Windows.Forms.Label();
@@ -152,6 +148,11 @@ namespace MediaPortal.Configuration.Sections
       this.label3 = new System.Windows.Forms.Label();
       this.comboViewPortSizes = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.ckUseOpenGL = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupBoxWinampVis = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.winampFFTsensitivityLbl = new System.Windows.Forms.Label();
+      this.FFTsensitivityLbl = new System.Windows.Forms.Label();
+      this.winampFFTsensitivity = new System.Windows.Forms.TrackBar();
+      this.btWinampConfig = new MediaPortal.UserInterface.Controls.MPButton();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBox2 = new System.Windows.Forms.CheckBox();
       this.MusicSettingsTabCtl.SuspendLayout();
@@ -178,11 +179,11 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.SuspendLayout();
       this.VisualizationsTabPg.SuspendLayout();
       this.mpGroupBox3.SuspendLayout();
-      this.groupBoxWinampVis.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.winampFFTsensitivity)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).BeginInit();
       this.groupBoxSoniqueVis.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.soniqueRenderTiming)).BeginInit();
+      this.groupBoxWinampVis.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.winampFFTsensitivity)).BeginInit();
       this.SuspendLayout();
       // 
       // MusicSettingsTabCtl
@@ -975,6 +976,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.PlayListUTF8CheckBox);
       this.groupBox1.Controls.Add(this.PlaylistCurrentCheckBox);
       this.groupBox1.Controls.Add(this.autoShuffleCheckBox);
       this.groupBox1.Controls.Add(this.ResumePlaylistChkBox);
@@ -990,6 +992,17 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Playlist settings";
+      // 
+      // PlayListUTF8CheckBox
+      // 
+      this.PlayListUTF8CheckBox.AutoSize = true;
+      this.PlayListUTF8CheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.PlayListUTF8CheckBox.Location = new System.Drawing.Point(91, 176);
+      this.PlayListUTF8CheckBox.Name = "PlayListUTF8CheckBox";
+      this.PlayListUTF8CheckBox.Size = new System.Drawing.Size(324, 17);
+      this.PlayListUTF8CheckBox.TabIndex = 8;
+      this.PlayListUTF8CheckBox.Text = "Save Playlist in UTF8 Format (not compatible with some players)";
+      this.PlayListUTF8CheckBox.UseVisualStyleBackColor = true;
       // 
       // PlaylistCurrentCheckBox
       // 
@@ -1106,65 +1119,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.TabIndex = 0;
       this.mpGroupBox3.TabStop = false;
       this.mpGroupBox3.Text = "Visualization settings";
-      // 
-      // groupBoxWinampVis
-      // 
-      this.groupBoxWinampVis.Controls.Add(this.winampFFTsensitivityLbl);
-      this.groupBoxWinampVis.Controls.Add(this.FFTsensitivityLbl);
-      this.groupBoxWinampVis.Controls.Add(this.winampFFTsensitivity);
-      this.groupBoxWinampVis.Controls.Add(this.btWinampConfig);
-      this.groupBoxWinampVis.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxWinampVis.Location = new System.Drawing.Point(91, 86);
-      this.groupBoxWinampVis.Name = "groupBoxWinampVis";
-      this.groupBoxWinampVis.Size = new System.Drawing.Size(322, 122);
-      this.groupBoxWinampVis.TabIndex = 11;
-      this.groupBoxWinampVis.TabStop = false;
-      this.groupBoxWinampVis.Text = "Winamp Vis.";
-      this.groupBoxWinampVis.Visible = false;
-      // 
-      // winampFFTsensitivityLbl
-      // 
-      this.winampFFTsensitivityLbl.AutoSize = true;
-      this.winampFFTsensitivityLbl.Location = new System.Drawing.Point(283, 80);
-      this.winampFFTsensitivityLbl.Name = "winampFFTsensitivityLbl";
-      this.winampFFTsensitivityLbl.Size = new System.Drawing.Size(13, 13);
-      this.winampFFTsensitivityLbl.TabIndex = 13;
-      this.winampFFTsensitivityLbl.Text = "0";
-      // 
-      // FFTsensitivityLbl
-      // 
-      this.FFTsensitivityLbl.AutoSize = true;
-      this.FFTsensitivityLbl.Location = new System.Drawing.Point(8, 79);
-      this.FFTsensitivityLbl.Name = "FFTsensitivityLbl";
-      this.FFTsensitivityLbl.Size = new System.Drawing.Size(79, 13);
-      this.FFTsensitivityLbl.TabIndex = 12;
-      this.FFTsensitivityLbl.Text = "FFT Sensitivity:";
-      // 
-      // winampFFTsensitivity
-      // 
-      this.winampFFTsensitivity.LargeChange = 32;
-      this.winampFFTsensitivity.Location = new System.Drawing.Point(92, 65);
-      this.winampFFTsensitivity.Margin = new System.Windows.Forms.Padding(1);
-      this.winampFFTsensitivity.Maximum = 256;
-      this.winampFFTsensitivity.Minimum = 1;
-      this.winampFFTsensitivity.Name = "winampFFTsensitivity";
-      this.winampFFTsensitivity.Size = new System.Drawing.Size(188, 45);
-      this.winampFFTsensitivity.SmallChange = 8;
-      this.winampFFTsensitivity.TabIndex = 11;
-      this.winampFFTsensitivity.TickFrequency = 8;
-      this.winampFFTsensitivity.TickStyle = System.Windows.Forms.TickStyle.Both;
-      this.winampFFTsensitivity.Value = 36;
-      this.winampFFTsensitivity.Scroll += new System.EventHandler(this.winampFFTsensitivity_Scroll);
-      // 
-      // btWinampConfig
-      // 
-      this.btWinampConfig.Location = new System.Drawing.Point(6, 24);
-      this.btWinampConfig.Name = "btWinampConfig";
-      this.btWinampConfig.Size = new System.Drawing.Size(75, 23);
-      this.btWinampConfig.TabIndex = 4;
-      this.btWinampConfig.Text = "Config";
-      this.btWinampConfig.UseVisualStyleBackColor = true;
-      this.btWinampConfig.Click += new System.EventHandler(this.btWinampConfig_Click);
       // 
       // EnableStatusOverlaysChkBox
       // 
@@ -1369,6 +1323,65 @@ namespace MediaPortal.Configuration.Sections
       this.ckUseOpenGL.Text = "Use OpenGL instead of GDI";
       this.ckUseOpenGL.UseVisualStyleBackColor = true;
       // 
+      // groupBoxWinampVis
+      // 
+      this.groupBoxWinampVis.Controls.Add(this.winampFFTsensitivityLbl);
+      this.groupBoxWinampVis.Controls.Add(this.FFTsensitivityLbl);
+      this.groupBoxWinampVis.Controls.Add(this.winampFFTsensitivity);
+      this.groupBoxWinampVis.Controls.Add(this.btWinampConfig);
+      this.groupBoxWinampVis.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxWinampVis.Location = new System.Drawing.Point(91, 86);
+      this.groupBoxWinampVis.Name = "groupBoxWinampVis";
+      this.groupBoxWinampVis.Size = new System.Drawing.Size(322, 122);
+      this.groupBoxWinampVis.TabIndex = 11;
+      this.groupBoxWinampVis.TabStop = false;
+      this.groupBoxWinampVis.Text = "Winamp Vis.";
+      this.groupBoxWinampVis.Visible = false;
+      // 
+      // winampFFTsensitivityLbl
+      // 
+      this.winampFFTsensitivityLbl.AutoSize = true;
+      this.winampFFTsensitivityLbl.Location = new System.Drawing.Point(283, 80);
+      this.winampFFTsensitivityLbl.Name = "winampFFTsensitivityLbl";
+      this.winampFFTsensitivityLbl.Size = new System.Drawing.Size(13, 13);
+      this.winampFFTsensitivityLbl.TabIndex = 13;
+      this.winampFFTsensitivityLbl.Text = "0";
+      // 
+      // FFTsensitivityLbl
+      // 
+      this.FFTsensitivityLbl.AutoSize = true;
+      this.FFTsensitivityLbl.Location = new System.Drawing.Point(8, 79);
+      this.FFTsensitivityLbl.Name = "FFTsensitivityLbl";
+      this.FFTsensitivityLbl.Size = new System.Drawing.Size(79, 13);
+      this.FFTsensitivityLbl.TabIndex = 12;
+      this.FFTsensitivityLbl.Text = "FFT Sensitivity:";
+      // 
+      // winampFFTsensitivity
+      // 
+      this.winampFFTsensitivity.LargeChange = 32;
+      this.winampFFTsensitivity.Location = new System.Drawing.Point(92, 65);
+      this.winampFFTsensitivity.Margin = new System.Windows.Forms.Padding(1);
+      this.winampFFTsensitivity.Maximum = 256;
+      this.winampFFTsensitivity.Minimum = 1;
+      this.winampFFTsensitivity.Name = "winampFFTsensitivity";
+      this.winampFFTsensitivity.Size = new System.Drawing.Size(188, 45);
+      this.winampFFTsensitivity.SmallChange = 8;
+      this.winampFFTsensitivity.TabIndex = 11;
+      this.winampFFTsensitivity.TickFrequency = 8;
+      this.winampFFTsensitivity.TickStyle = System.Windows.Forms.TickStyle.Both;
+      this.winampFFTsensitivity.Value = 36;
+      this.winampFFTsensitivity.Scroll += new System.EventHandler(this.winampFFTsensitivity_Scroll);
+      // 
+      // btWinampConfig
+      // 
+      this.btWinampConfig.Location = new System.Drawing.Point(6, 24);
+      this.btWinampConfig.Name = "btWinampConfig";
+      this.btWinampConfig.Size = new System.Drawing.Size(75, 23);
+      this.btWinampConfig.TabIndex = 4;
+      this.btWinampConfig.Text = "Config";
+      this.btWinampConfig.UseVisualStyleBackColor = true;
+      this.btWinampConfig.Click += new System.EventHandler(this.btWinampConfig_Click);
+      // 
       // label4
       // 
       this.label4.Location = new System.Drawing.Point(0, 0);
@@ -1428,13 +1441,13 @@ namespace MediaPortal.Configuration.Sections
       this.VisualizationsTabPg.ResumeLayout(false);
       this.mpGroupBox3.ResumeLayout(false);
       this.mpGroupBox3.PerformLayout();
-      this.groupBoxWinampVis.ResumeLayout(false);
-      this.groupBoxWinampVis.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.winampFFTsensitivity)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).EndInit();
       this.groupBoxSoniqueVis.ResumeLayout(false);
       this.groupBoxSoniqueVis.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.soniqueRenderTiming)).EndInit();
+      this.groupBoxWinampVis.ResumeLayout(false);
+      this.groupBoxWinampVis.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.winampFFTsensitivity)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -1547,5 +1560,6 @@ namespace MediaPortal.Configuration.Sections
     private Label winampFFTsensitivityLbl;
     private Label FFTsensitivityLbl;
     private TrackBar winampFFTsensitivity;
+    private MPCheckBox PlayListUTF8CheckBox;
   }
 }
