@@ -58,8 +58,7 @@ namespace WatchDogService
 
       try
       {
-        RemotingConfiguration.RegisterWellKnownServiceType(typeof(WatchDogServer), "WatchDogServer",
-         WellKnownObjectMode.SingleCall);
+        RemotingConfiguration.RegisterWellKnownServiceType(typeof(WatchDogServer), "WatchDogServer", WellKnownObjectMode.SingleCall);
       }
       catch (Exception ex)
       {

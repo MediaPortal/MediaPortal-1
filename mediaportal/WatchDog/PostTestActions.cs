@@ -25,6 +25,7 @@ using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.Support;
 using MediaPortal.Core;
+using MediaPortal.Profile;
 
 namespace WatchDog
 {
@@ -191,7 +192,14 @@ namespace WatchDog
         setAction("Collecting the logs from remote server...");
         Update();
 
+        string hostName;
+        using (Settings xmlreader = new MPSettings())
+        {
+          hostName = xmlreader.GetValueAsString("tvservice", "hostname", string.Empty);
+        }
+
         string zipFile = _zipFile.Replace("MediaPortalLogs_", "MediaPortal_TVserverLogs_");
+        zipFile = zipFile.Replace(Environment.MachineName, hostName);
         TVServerManager mngr = new TVServerManager();
         mngr.TvServerRemoteLogRead(zipFile);
       }

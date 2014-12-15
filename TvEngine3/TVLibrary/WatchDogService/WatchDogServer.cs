@@ -120,7 +120,7 @@ namespace WatchDogService
     public Object ReadLog()
     {
       string _tmpDir = Path.GetTempPath() + "\\TvServerLogs";
-      string _zipFile = Path.GetTempPath() + "\\TvServerLogs.zip";
+      string _zipFile = string.Format("{0}\\{1}_TvServerLogs.zip", Path.GetTempPath(), Environment.MachineName);
 
       ILogCreator TvServerLog = new TvServerLogger();
       ILogCreator TvServerApplicationLog = new EventLogCsvLogger("Application");

@@ -63,6 +63,8 @@ namespace WatchDog
       this.ProceedButton = new System.Windows.Forms.Button();
       this.label2 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
+      this.menuItemClearTVserverLogs = new System.Windows.Forms.MenuItem();
+      this.menuItem10 = new System.Windows.Forms.MenuItem();
       this.settingsGroup.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -215,7 +217,8 @@ namespace WatchDog
             this.menuItemStartTVserver,
             this.menuItemStopTVserver,
             this.menuItemClearWEventLogOnTVserver,
-            this.menuItemClearTVserverLogs});
+            this.menuItemClearTVserverLogs,
+            this.menuItem10});
       this.menuItem14.Text = "Manage TV server";
       // 
       // menuItemStartTVserver
@@ -347,6 +350,18 @@ namespace WatchDog
       this.label3.Text = "If MediaPortal crashes unexpectedly, or if you can not reproduce an issue nicely," +
     " then this option will simply export all the currently available log files.";
       // 
+      // menuItemClearTVserverLogs
+      // 
+      this.menuItemClearTVserverLogs.Index = 3;
+      this.menuItemClearTVserverLogs.Text = "Clear TV Server logs";
+      this.menuItemClearTVserverLogs.Click += new System.EventHandler(this.menuItemClearTVserverLogs_Click);
+      // 
+      // menuItem10
+      // 
+      this.menuItem10.Index = 4;
+      this.menuItem10.Text = "Reboot TvServer";
+      this.menuItem10.Click += new System.EventHandler(this.menuRebootTvServer_Click);
+      // 
       // MPWatchDog
       // 
       this.AcceptButton = this.ProceedButton;
@@ -409,5 +424,6 @@ namespace WatchDog
     private System.Windows.Forms.MenuItem menuItemClearMPlogs;
     private System.Windows.Forms.MenuItem menuItemClearWEventLogOnTVserver;
     private System.Windows.Forms.MenuItem menuItemClearTVserverLogs;
+    private System.Windows.Forms.MenuItem menuItem10;
   }
 }

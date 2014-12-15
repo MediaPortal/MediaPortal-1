@@ -165,6 +165,22 @@ namespace WatchDog
       }
     }
 
+    public void RebootTvServer()
+    {
+      try
+      {
+        _remoteObject = (WatchDogServiceInterface)Activator.GetObject(typeof(WatchDogServiceInterface), _url);
+
+        _remoteObject.Reboot();
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
+      MessageBox.Show("Done", "Status", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
     public void ClearTVserverLogs()
     {
       string result = string.Empty;
