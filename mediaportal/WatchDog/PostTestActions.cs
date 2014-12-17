@@ -198,7 +198,7 @@ namespace WatchDog
           hostName = xmlreader.GetValueAsString("tvservice", "hostname", string.Empty);
         }
 
-        string zipFile = _zipFile.Replace("MediaPortalLogs_", "MediaPortal_TVserverLogs_");
+        string zipFile = _zipFile.Replace("MP_logs__", "TVE_logs__");
         zipFile = zipFile.Replace(Environment.MachineName, hostName);
         TVServerManager mngr = new TVServerManager();
         mngr.TvServerRemoteLogRead(zipFile);
