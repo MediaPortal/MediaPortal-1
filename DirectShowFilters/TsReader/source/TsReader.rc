@@ -27,7 +27,7 @@ BEGIN
             VALUE "FileDescription", "TsReader.ax"
             VALUE "FileVersion", TSREADER_VERSION_STR
             VALUE "InternalName", "TsReader.ax"
-            VALUE "LegalCopyright", "Copyright © 2005-2013 Team MediaPortal"
+            VALUE "LegalCopyright", "Copyright © 2005-2014 Team MediaPortal"
             VALUE "OriginalFilename", "TsReader.ax"
             VALUE "ProductName", "MediaPortal"
             VALUE "ProductVersion", MP_VERSION_STR

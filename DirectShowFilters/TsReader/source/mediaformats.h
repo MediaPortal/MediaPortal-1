@@ -220,26 +220,56 @@ static BYTE AC3AudioFormat [] = {
 	0x00, 0x00				//cbSize
 };
 
-static BYTE AACAudioFormat [] = {
+//static BYTE AACRawAudioFormat [] = {
+//	0xFF, 0x00,				//wFormatTag
+//	0x02, 0x00,				//nChannels
+//	0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
+//	0xCE, 0x3E, 0x00, 0x00, //nAvgBytesPerSec
+//	0xAE, 0x02,				//nBlockAlign
+//	0x00, 0x00,				//wBitsPerSample
+//	0x02, 0x00,				//cbSize
+//	0x11, 0x90
+//};
+
+static BYTE AACRawAudioFormat [] = {
 	0xFF, 0x00,				//wFormatTag
 	0x02, 0x00,				//nChannels
 	0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
-	0xCE, 0x3E, 0x00, 0x00, //nAvgBytesPerSec
-	0xAE, 0x02,				//nBlockAlign
+	0x00, 0x00, 0x00, 0x00, //nAvgBytesPerSec
+	0x01, 0x00,				//nBlockAlign
 	0x00, 0x00,				//wBitsPerSample
 	0x02, 0x00,				//cbSize
-	0x11, 0x90
+	0x11, 0x90        //AAC-LC, 48kHz, 2 channels
 };
 
-static BYTE AACAudioFormat2 [] = {
-	0xFF, 0x00,				//wFormatTag
+static BYTE AACLatmAudioFormat [] = {
+	0xFF, 0x01,				//wFormatTag
 	0x02, 0x00,				//nChannels
 	0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
-	0x9F, 0x24, 0x00, 0x00, //nAvgBytesPerSec
-	0x90, 0x01,				//nBlockAlign
+	0x00, 0x00, 0x00, 0x00, //nAvgBytesPerSec
+	0x01, 0x00,				//nBlockAlign
 	0x00, 0x00,				//wBitsPerSample
-	0x02, 0x00,				//cbSize
-	0x11, 0x90
+	0x00, 0x00				//cbSize
+};
+
+static BYTE AACAdtsAudioFormat [] = {
+	0x00, 0x16,				//wFormatTag
+	0x02, 0x00,				//nChannels
+	0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
+	0x00, 0x00, 0x00, 0x00, //nAvgBytesPerSec
+	0x01, 0x00,				//nBlockAlign
+	0x00, 0x00,				//wBitsPerSample
+	0x00, 0x00				//cbSize
+};
+
+static BYTE AACLoasAudioFormat [] = {
+	0x02, 0x16,				//wFormatTag
+	0x02, 0x00,				//nChannels
+	0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
+	0x00, 0x00, 0x00, 0x00, //nAvgBytesPerSec
+	0x01, 0x00,				//nBlockAlign
+	0x00, 0x00,				//wBitsPerSample
+	0x00, 0x00				//cbSize
 };
 
 static BYTE DTSAudioFormat [] = {
@@ -305,5 +335,76 @@ static GUID MPG4_SubType                 = FOURCCMap(MAKEFOURCC('A','V','C','1')
 static GUID MEDIASUBTYPE_AAC             = {0x000000ff, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71};
 static GUID MEDIASUBTYPE_LATM_AAC        = {0x000001ff, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71};
 //static GUID MEDIASUBTYPE_MPEG_ADTS_AAC   = {0x00001600, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71};
+
+static inline unsigned short make_aac_config(DWORD srate, WORD chans)
+{
+	// Create two-byte AAC AudioSpecificConfig
+
+	unsigned short asc = 0;
+
+	// AudioSpecificConfig, 2 bytes
+
+	//   LSB      MSB
+	// xxxxx... ........  object type (00010 = AAC LC)
+	// .....xxx x.......  sampling frequency index (0 to 11)
+	// ........ .xxxx...  channels configuration (1 to 7)
+	// ........ .....x..  frame length flag (0 = 1024, 1 = 960)
+	// ........ ......x.  depends on core coder (0)
+	// ........ .......x  extensions flag (0)
+		
+	//   LSB      MSB
+	// .....000 0....... = 96000
+	// .....000 1....... = 88200
+	// .....001 0....... = 64000
+	// .....001 1....... = 48000
+	// .....010 0....... = 44100
+	// .....010 1....... = 32000
+	// .....011 0....... = 24000
+	// .....011 1....... = 22050
+	// .....100 0....... = 16000
+	// .....100 1....... = 12000
+	// .....101 0....... = 11025
+	// .....101 1....... =  8000
+
+	switch (srate) {
+	case 96000: break;
+	case 88200: asc |= 0x8000; break;
+	case 64000: asc |= 0x0001; break;
+	case 48000: asc |= 0x8001; break;
+	case 44100: asc |= 0x0002; break;
+	case 32000: asc |= 0x8002; break;
+	case 24000: asc |= 0x0003; break;
+	case 22050: asc |= 0x8003; break;
+	case 16000: asc |= 0x0004; break;
+	case 12000: asc |= 0x8004; break;
+	case 11025: asc |= 0x0005; break;
+	case  8000: asc |= 0x8005; break;
+	default:
+		return 0;
+	}
+
+	//   LSB      MSB
+	// ........ .0001... = 1 channel
+	// ........ .0010... = 2 channels
+	// ........ .0011... = 3 channels
+	// ........ .0100... = 4 channels
+	// ........ .0101... = 5 channels
+	// ........ .0110... = 6 channels
+	// ........ .0111... = 8 channels
+
+	switch (chans) {
+	case 1: asc |= 0x0800; break;
+	case 2: asc |= 0x1000; break;
+	case 3: asc |= 0x1800; break;
+	case 4: asc |= 0x2000; break;
+	case 5: asc |= 0x2800; break;
+	case 6: asc |= 0x3000; break;
+	case 8: asc |= 0x3800; break;
+	default:
+		return 0;
+	}
+
+	return (asc | 0x0010);
+}
 
 #endif

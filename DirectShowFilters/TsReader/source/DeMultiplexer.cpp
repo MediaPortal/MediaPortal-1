@@ -348,7 +348,7 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       pmt.SetTemporalCompression(FALSE);
       pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(AACAudioFormat,sizeof(AACAudioFormat));
+      iPosition ? pmt.SetFormat(AACRawAudioFormat,sizeof(AACRawAudioFormat)) : pmt.SetFormat(AACAdtsAudioFormat,sizeof(AACAdtsAudioFormat));
       break;
     case SERVICE_TYPE_AUDIO_LATM_AAC:
       pmt.InitMediaType();
@@ -358,7 +358,7 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       pmt.SetTemporalCompression(FALSE);
       pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(AACAudioFormat,sizeof(AACAudioFormat));
+      iPosition ? pmt.SetFormat(AACLoasAudioFormat,sizeof(AACLoasAudioFormat)) : pmt.SetFormat(AACLatmAudioFormat,sizeof(AACLatmAudioFormat));
       break;
     case SERVICE_TYPE_AUDIO_AC3:
       pmt.InitMediaType();
