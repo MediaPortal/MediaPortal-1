@@ -1673,37 +1673,37 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
       FREE_MEM_CLASS(rtspResponse);
     }
 
-    //if (SUCCEEDED(result) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID) && (rtspRequest == NULL) && (GetTickCount() > nextMaintainConnectionRequest))
-    //{
-    //  CRtspRequest *maintainRequest = NULL;
+    if (SUCCEEDED(result) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID) && (rtspRequest == NULL) && (GetTickCount() > nextMaintainConnectionRequest))
+    {
+      CRtspRequest *maintainRequest = NULL;
 
-    //  if (this->IsSetFlags(RTSP_CURL_INSTANCE_FLAG_METHOD_GET_PARAMETER_SUPPORTED))
-    //  {
-    //    // create GET_PARAMETER request to maintain connection alive
-    //    maintainRequest = new CRtspGetParameterRequest(&result);
-    //  }
-    //  else
-    //  {
-    //    // create OPTIONS request to maintain connection alive
-    //    maintainRequest = new CRtspOptionsRequest(&result);
-    //  }
+      if (this->IsSetFlags(RTSP_CURL_INSTANCE_FLAG_METHOD_GET_PARAMETER_SUPPORTED))
+      {
+        // create GET_PARAMETER request to maintain connection alive
+        maintainRequest = new CRtspGetParameterRequest(&result);
+      }
+      else
+      {
+        // create OPTIONS request to maintain connection alive
+        maintainRequest = new CRtspOptionsRequest(&result);
+      }
 
-    //  CHECK_POINTER_HRESULT(result, maintainRequest, result, E_OUTOFMEMORY);
+      CHECK_POINTER_HRESULT(result, maintainRequest, result, E_OUTOFMEMORY);
 
-    //  CHECK_CONDITION_HRESULT(result, maintainRequest->SetUri(this->rtspDownloadRequest->GetUrl()), result, E_OUTOFMEMORY);
-    //  CHECK_CONDITION_HRESULT(result, maintainRequest->SetSessionId(this->sessionId), result, E_OUTOFMEMORY);
+      CHECK_CONDITION_HRESULT(result, maintainRequest->SetUri(this->rtspDownloadRequest->GetUrl()), result, E_OUTOFMEMORY);
+      CHECK_CONDITION_HRESULT(result, maintainRequest->SetSessionId(this->sessionId), result, E_OUTOFMEMORY);
 
-    //  if (SUCCEEDED(result))
-    //  {
-    //    maintainRequest->SetTimeout(this->downloadRequest->GetReceiveDataTimeout());
-    //    maintainRequest->SetSequenceNumber(this->lastSequenceNumber++);
-    //  }
+      if (SUCCEEDED(result))
+      {
+        maintainRequest->SetTimeout(this->downloadRequest->GetReceiveDataTimeout());
+        maintainRequest->SetSequenceNumber(this->lastSequenceNumber++);
+      }
 
-    //  nextMaintainConnectionRequest = GetTickCount() + this->rtspDownloadResponse->GetSessionTimeout() / 2;
+      nextMaintainConnectionRequest = GetTickCount() + this->rtspDownloadResponse->GetSessionTimeout() / 2;
 
-    //  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(maintainRequest));
-    //  rtspRequest = maintainRequest;
-    //}
+      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(maintainRequest));
+      rtspRequest = maintainRequest;
+    }
 
     if (SUCCEEDED(result))
     {
