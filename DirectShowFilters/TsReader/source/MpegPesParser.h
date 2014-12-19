@@ -42,12 +42,17 @@ private:
 	CFrameHeaderParser hdrParser;
 	avchdr avc;
 	bool ParseVideo(byte* tsPacket,bool isMpeg2,bool reset);
+	bool ParseAudio(byte* audioPacket,bool reset);
 
 public:
 	CMpegPesParser();
 	bool OnTsPacket(byte* Frame,int Length,bool isMpeg2,bool reset);
+  bool OnAudioPacket(byte *Frame,int Length,bool reset);
 	CMediaType pmt;
+	CMediaType audPmt;
 	BasicVideoInfo basicVideoInfo;
+	BasicAudioInfo basicAudioInfo;
   CCritSec m_sectionVideoPmt;
+  CCritSec m_sectionAudioPmt;
 };
 

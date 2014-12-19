@@ -44,8 +44,13 @@ CMpegPesParser::CMpegPesParser()
 	pmt=CMediaType();
 	pmt.InitMediaType();
 	pmt.bFixedSizeSamples=false;
+	
+	audPmt=CMediaType();
+	audPmt.InitMediaType();
+	audPmt.bFixedSizeSamples=false;
+	
 	basicVideoInfo=BasicVideoInfo();
-
+	basicAudioInfo=BasicAudioInfo();
 }
 
 bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2,bool reset)
@@ -75,6 +80,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2,bool reset)
 	}
 	else 
 	{
+	  //avchdr avc;
 		if (hdrParser.Read(avc,framesize,&pmt,reset))
 		{
 			//hdrParser.DumpAvcHeader(avc);
@@ -104,3 +110,26 @@ bool CMpegPesParser::OnTsPacket(byte *Frame,int Length,bool isMpeg2,bool reset)
 	return ParseVideo(Frame,isMpeg2,reset);
 }
 
+bool CMpegPesParser::ParseAudio(byte* audioPacket,bool reset)
+{
+	bool parsed=false;
+	__int64 framesize=hdrParser.GetSize();
+  aachdr seq;
+	if (hdrParser.Read(seq,framesize,&audPmt))
+	{
+    basicAudioInfo.sampleRate=seq.nSamplesPerSec;
+    basicAudioInfo.channels=(seq.channels <= 6) ? seq.channels : 2;
+    basicAudioInfo.streamType = 3;
+    basicAudioInfo.isValid = true;
+	  parsed=true;
+    //LogDebug("ADTS header: sampleRate = %d, channels = %d", m_basicAudioInfo.sampleRate, m_basicAudioInfo.channels);
+	}
+	return parsed;
+}
+
+bool CMpegPesParser::OnAudioPacket(byte *Frame,int Length,bool reset)
+{
+  CAutoLock lock (&m_sectionAudioPmt);
+	hdrParser.Reset(Frame,Length);
+	return ParseAudio(Frame,reset);
+}
