@@ -130,7 +130,7 @@ struct pshdr
 
 		WORD crc;
 
-		int FrameSize, nBytesPerSec;
+		int FrameSize, nBytesPerSec, nSamplesPerSec;
 		REFERENCE_TIME rtDuration;
 	};
 
@@ -371,6 +371,22 @@ struct BasicVideoInfo
 		ary=0;
 		isInterlaced=0;
 		streamType;
+		isValid=false;
+	}
+};
+
+struct BasicAudioInfo
+{
+	int sampleRate;
+	int channels;
+	int streamType;
+	bool isValid;
+
+	BasicAudioInfo()
+	{
+		sampleRate=48000;
+		channels=2;
+		streamType=1;
 		isValid=false;
 	}
 };

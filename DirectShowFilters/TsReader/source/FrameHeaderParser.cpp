@@ -649,6 +649,7 @@ bool CFrameHeaderParser::Read(aachdr& h, int len, CMediaType* pmt)
 	static int freq[] = {96000, 88200, 64000, 48000, 44100, 32000, 24000, 22050, 16000, 12000, 11025, 8000};
 	h.nBytesPerSec = h.aac_frame_length * freq[h.freq] / 1024; // ok?
 	h.rtDuration = 10000000i64 * 1024 / freq[h.freq]; // ok?
+	h.nSamplesPerSec = freq[h.freq];
 
 	if(!pmt) return(true);
 
@@ -656,7 +657,7 @@ bool CFrameHeaderParser::Read(aachdr& h, int len, CMediaType* pmt)
 	memset(wfe, 0, sizeof(WAVEFORMATEX)+5);
 	wfe->wFormatTag = WAVE_FORMAT_AAC;
 	wfe->nChannels = h.channels <= 6 ? h.channels : 2;
-	wfe->nSamplesPerSec = freq[h.freq];
+	wfe->nSamplesPerSec = h.nSamplesPerSec;
 	wfe->nBlockAlign = h.aac_frame_length;
 	wfe->nAvgBytesPerSec = h.nBytesPerSec;
 	wfe->cbSize = MakeAACInitData((BYTE*)(wfe+1), h.profile, wfe->nSamplesPerSec, wfe->nChannels);

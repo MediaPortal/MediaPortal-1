@@ -1162,7 +1162,12 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     m_tickCount = GET_TIME_NOW();
     m_fileReader = new CMemoryReader(m_buffer);
     m_demultiplexer.SetFileReader(m_fileReader);
-    m_demultiplexer.Start();
+    if (!m_demultiplexer.Start())
+    {
+      LogDebug("close rtsp:%s", url);
+      m_rtspClient.Stop();
+      return E_FAIL;
+    }
     m_buffer.Run(false);
 
     LogDebug("close rtsp:%s", url);
@@ -1205,7 +1210,13 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
 
     //get audio /video pids
     m_demultiplexer.SetFileReader(m_fileReader);
-    m_demultiplexer.Start();
+    if (!m_demultiplexer.Start())
+    {
+      // stop streaming
+      LogDebug("close rtsp:%s", url);
+      m_rtspClient.Stop();
+      return E_FAIL;
+    }
     m_buffer.Run(false);
 
     // stop streaming
@@ -1258,7 +1269,10 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
 
     //detect audio/video pids
     m_demultiplexer.SetFileReader(m_fileReader);
-    m_demultiplexer.Start();
+    if (!m_demultiplexer.Start())
+    {
+      return E_FAIL;
+    }
 
     //get file duration
     m_duration.SetFileReader(m_fileDuration);

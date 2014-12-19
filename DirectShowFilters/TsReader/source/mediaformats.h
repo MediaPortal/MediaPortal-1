@@ -220,18 +220,7 @@ static BYTE AC3AudioFormat [] = {
 	0x00, 0x00				//cbSize
 };
 
-//static BYTE AACRawAudioFormat [] = {
-//	0xFF, 0x00,				//wFormatTag
-//	0x02, 0x00,				//nChannels
-//	0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
-//	0xCE, 0x3E, 0x00, 0x00, //nAvgBytesPerSec
-//	0xAE, 0x02,				//nBlockAlign
-//	0x00, 0x00,				//wBitsPerSample
-//	0x02, 0x00,				//cbSize
-//	0x11, 0x90
-//};
-
-static BYTE AACRawAudioFormat [] = {
+static BYTE AACRawAudioFormat2 [] = {
 	0xFF, 0x00,				//wFormatTag
 	0x02, 0x00,				//nChannels
 	0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
@@ -240,6 +229,17 @@ static BYTE AACRawAudioFormat [] = {
 	0x00, 0x00,				//wBitsPerSample
 	0x02, 0x00,				//cbSize
 	0x11, 0x90        //AAC-LC, 48kHz, 2 channels
+};
+
+static BYTE AACRawAudioFormat6 [] = {
+	0xFF, 0x00,				//wFormatTag
+	0x06, 0x00,				//nChannels
+	0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
+	0x00, 0x00, 0x00, 0x00, //nAvgBytesPerSec
+	0x01, 0x00,				//nBlockAlign
+	0x00, 0x00,				//wBitsPerSample
+	0x02, 0x00,				//cbSize
+	0x11, 0xB0        //AAC-LC, 48kHz, 6 channels
 };
 
 static BYTE AACLatmAudioFormat [] = {

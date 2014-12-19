@@ -75,7 +75,7 @@
 #define READ_SIZE (131072)
 #define MIN_READ_SIZE (2048)
 #define MIN_READ_SIZE_UNC (2048)
-#define INITIAL_READ_SIZE (READ_SIZE * 256)
+#define INITIAL_READ_SIZE (READ_SIZE * 512)
 
 //Duration loop timeout in ms (effective background repeat/iteration time)
 #define DUR_LOOP_TIMEOUT 105

@@ -39,6 +39,7 @@
 #include <map>
 #include <dvdmedia.h>
 #include "MpegPesParser.h"
+#include "FrameHeaderParser.h"
 
 using namespace std;
 class CTsReaderFilter;
@@ -64,7 +65,7 @@ public:
   CDeMultiplexer( CTsDuration& duration,CTsReaderFilter& filter);
   virtual ~CDeMultiplexer(void);
 
-  void       Start();
+  bool       Start();
   void       Flush(bool clearAVready);
   CBuffer*   GetVideo(bool earlyStall);
   CBuffer*   GetAudio(bool earlyStall, CRefTime rtStartTime);
@@ -316,5 +317,8 @@ private:
   
   DWORD m_currentADTSheader;
   int m_ADTSheaderCount;
-    
+  int m_hadPESfail;
+ 
+	BasicAudioInfo m_basicAudioInfo;
+   
 };
