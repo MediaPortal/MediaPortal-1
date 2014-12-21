@@ -48,6 +48,8 @@ public:
 	CMpegPesParser();
 	bool OnTsPacket(byte* Frame,int Length,bool isMpeg2,bool reset);
   bool OnAudioPacket(byte *Frame,int Length,bool reset);
+  void VideoReset();
+  void AudioReset();
 	CMediaType pmt;
 	CMediaType audPmt;
 	BasicVideoInfo basicVideoInfo;

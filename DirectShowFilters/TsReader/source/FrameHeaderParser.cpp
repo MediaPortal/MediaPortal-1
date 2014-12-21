@@ -657,9 +657,11 @@ bool CFrameHeaderParser::Read(aachdr& h, int len, CMediaType* pmt)
 	memset(wfe, 0, sizeof(WAVEFORMATEX)+5);
 	wfe->wFormatTag = WAVE_FORMAT_AAC;
 	wfe->nChannels = h.channels <= 6 ? h.channels : 2;
+	h.channels = wfe->nChannels;
 	wfe->nSamplesPerSec = h.nSamplesPerSec;
-	wfe->nBlockAlign = h.aac_frame_length;
+	wfe->nBlockAlign = 1; //h.aac_frame_length;
 	wfe->nAvgBytesPerSec = h.nBytesPerSec;
+	wfe->wBitsPerSample = 0;
 	wfe->cbSize = MakeAACInitData((BYTE*)(wfe+1), h.profile, wfe->nSamplesPerSec, wfe->nChannels);
 
 	pmt->majortype = MEDIATYPE_Audio;

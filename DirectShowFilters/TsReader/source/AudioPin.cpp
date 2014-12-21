@@ -329,7 +329,7 @@ HRESULT CAudioPin::DoBufferProcessingLoop(void)
       if (hr == S_OK) 
       {
         // Some decoders seem to crash when we provide empty samples 
-        if ((pSample->GetActualDataLength() > 0) && !m_pTsReaderFilter->IsStopping())
+        if ((pSample->GetActualDataLength() > 0) && !m_pTsReaderFilter->IsStopping() && m_bConnected)
         {
           hr = Deliver(pSample); 
           m_sampleCount++ ;

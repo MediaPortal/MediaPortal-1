@@ -56,7 +56,7 @@ CMpegPesParser::CMpegPesParser()
 bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2,bool reset)
 {
 	bool parsed=false;
-	__int64 framesize=hdrParser.GetSize();
+  __int64 framesize=hdrParser.GetSize();
 
 	if (isMpeg2)
 	{
@@ -80,7 +80,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2,bool reset)
 	}
 	else 
 	{
-	  //avchdr avc;
+	  // avchdr avc;
 		if (hdrParser.Read(avc,framesize,&pmt,reset))
 		{
 			//hdrParser.DumpAvcHeader(avc);
@@ -110,26 +110,51 @@ bool CMpegPesParser::OnTsPacket(byte *Frame,int Length,bool isMpeg2,bool reset)
 	return ParseVideo(Frame,isMpeg2,reset);
 }
 
+void CMpegPesParser::VideoReset()
+{
+  CAutoLock lock (&m_sectionVideoPmt);
+
+	basicVideoInfo.width=0;
+	basicVideoInfo.height=0;
+	basicVideoInfo.fps=0;
+	basicVideoInfo.arx=0;
+	basicVideoInfo.ary=0;
+	basicVideoInfo.isInterlaced=0;
+	basicVideoInfo.streamType=0;
+	basicVideoInfo.isValid=false;
+}
+
 bool CMpegPesParser::ParseAudio(byte* audioPacket,bool reset)
 {
 	bool parsed=false;
 	__int64 framesize=hdrParser.GetSize();
-  aachdr seq;
-	if (hdrParser.Read(seq,framesize,&audPmt))
+  aachdr aac;
+	if (hdrParser.Read(aac,framesize,&audPmt))
 	{
-    basicAudioInfo.sampleRate=seq.nSamplesPerSec;
-    basicAudioInfo.channels=(seq.channels <= 6) ? seq.channels : 2;
+    basicAudioInfo.sampleRate=aac.nSamplesPerSec;
+    basicAudioInfo.channels=aac.channels;
     basicAudioInfo.streamType = 3;
+	  basicAudioInfo.pmtValid = true;	
     basicAudioInfo.isValid = true;
 	  parsed=true;
-    //LogDebug("ADTS header: sampleRate = %d, channels = %d", m_basicAudioInfo.sampleRate, m_basicAudioInfo.channels);
 	}
 	return parsed;
 }
 
-bool CMpegPesParser::OnAudioPacket(byte *Frame,int Length,bool reset)
+bool CMpegPesParser::OnAudioPacket(byte *Frame, int Length, bool reset)
 {
   CAutoLock lock (&m_sectionAudioPmt);
 	hdrParser.Reset(Frame,Length);
 	return ParseAudio(Frame,reset);
+}
+
+void CMpegPesParser::AudioReset()
+{
+  CAutoLock lock (&m_sectionAudioPmt);
+
+	basicAudioInfo.isValid=false;	
+	basicAudioInfo.sampleRate=0;
+	basicAudioInfo.channels=0;
+	basicAudioInfo.streamType=0;
+	basicAudioInfo.pmtValid=false;	
 }

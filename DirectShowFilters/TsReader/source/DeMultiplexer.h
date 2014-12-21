@@ -318,7 +318,5 @@ private:
   DWORD m_currentADTSheader;
   int m_ADTSheaderCount;
   int m_hadPESfail;
- 
-	BasicAudioInfo m_basicAudioInfo;
-   
+    
 };

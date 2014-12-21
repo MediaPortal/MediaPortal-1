@@ -381,13 +381,15 @@ struct BasicAudioInfo
 	int channels;
 	int streamType;
 	bool isValid;
+	bool pmtValid;
 
 	BasicAudioInfo()
 	{
-		sampleRate=48000;
-		channels=2;
-		streamType=1;
+		sampleRate=0;
+		channels=0;
+		streamType=0;
 		isValid=false;
+		pmtValid=false;
 	}
 };
 

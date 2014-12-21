@@ -153,7 +153,6 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_currentADTSheader = 0;
   m_ADTSheaderCount = 0;
   m_hadPESfail = 0;
-  m_basicAudioInfo.isValid = false;
   
   
   LogDebug(" ");
@@ -247,7 +246,7 @@ bool CDeMultiplexer::SetAudioStream(int stream)
   if ((m_AudioStreamType == SERVICE_TYPE_AUDIO_UNKNOWN) || (m_AudioStreamType != newAudioStreamType))
   {
     m_AudioStreamType = newAudioStreamType;
-    m_basicAudioInfo.isValid = false; 
+    m_mpegPesParser->AudioReset(); 
     //yes, is the audio pin connected?
     if (m_filter.GetAudioPin()->IsConnected())
     {
@@ -306,7 +305,7 @@ int CDeMultiplexer::GetAudioStreamCount()
 
 void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPosition)
 {
-  if (m_iAudioStream< 0 || stream >= m_audioStreams.size())
+  if (m_iAudioStream< 0 || stream >= m_audioStreams.size() || m_mpegPesParser == NULL )
   {
     pmt.InitMediaType();
     pmt.SetType      (& MEDIATYPE_Audio);
@@ -318,6 +317,8 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
     pmt.SetFormat(MPEG2AudioFormat,sizeof(MPEG2AudioFormat));
     return;
   }
+
+  CAutoLock lock (&m_mpegPesParser->m_sectionAudioPmt);
 
   switch (m_audioStreams[stream].audioType)
   {
@@ -350,11 +351,15 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       pmt.SetSampleSize(1);
       pmt.SetTemporalCompression(FALSE);
       pmt.SetVariableSize();
-      pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      iPosition ? ( (m_basicAudioInfo.channels==6) ? 
-                     pmt.SetFormat(AACRawAudioFormat6,sizeof(AACRawAudioFormat6)) 
-                   : pmt.SetFormat(AACRawAudioFormat2,sizeof(AACRawAudioFormat2)))
-                : pmt.SetFormat(AACAdtsAudioFormat,sizeof(AACAdtsAudioFormat));
+      pmt.SetFormatType(&FORMAT_WaveFormatEx);      
+      if (m_mpegPesParser->basicAudioInfo.pmtValid)
+      {
+        pmt.SetFormat(m_mpegPesParser->audPmt.Format(), m_mpegPesParser->audPmt.FormatLength());
+      }
+      else
+      {
+        pmt.SetFormat(AACRawAudioFormat2,sizeof(AACRawAudioFormat2));
+      }
       break;
     case SERVICE_TYPE_AUDIO_LATM_AAC:
       pmt.InitMediaType();
@@ -985,8 +990,8 @@ bool CDeMultiplexer::Start()
   m_mpegParserTriggerFormatChange=false;
   m_mpegParserReset = true;  
   m_bFirstGopParsed = false; 
-  m_mpegPesParser->basicVideoInfo.isValid = false;
-  m_basicAudioInfo.isValid = false;
+  m_mpegPesParser->VideoReset(); 
+  m_mpegPesParser->AudioReset(); 
   m_videoChanged=false;
   m_audioChanged=false;
   m_bEndOfFile=false;
@@ -1026,7 +1031,7 @@ bool CDeMultiplexer::Start()
     if (dwBytesProcessed>INITIAL_READ_SIZE || GetAudioStreamCount()>0) //Wait for first PAT to be found
     {
       #ifdef USE_DYNAMIC_PINS
-      if (  (!m_basicAudioInfo.isValid ||
+      if (  (!m_mpegPesParser->basicAudioInfo.isValid ||
             ((m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid > 1) &&                   //There is a video stream.....
               (!m_mpegPesParser->basicVideoInfo.isValid || !m_bFirstGopParsed ||               //and the first GOP header is not parsed....
               !(m_vidPTScount > 5 || m_vidDTScount > 5 || !m_filter.m_bUseFPSfromDTSPTS || m_bUsingGOPtimestamp)))) &&  //or we havent seen enough PTS/DTS timestamps....
@@ -1334,7 +1339,6 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
   if (IsAudioChanging() || m_iAudioStream<0 || m_iAudioStream>=m_audioStreams.size()) return;
   m_audioPid=m_audioStreams[m_iAudioStream].pid;
   if (m_audioPid==0 || m_audioPid != header.Pid) return;
-//  if (m_filter.GetAudioPin()->IsConnected()==false) return;
   if (header.AdaptionFieldOnly())return;
 
   if(!CheckContinuity(m_AudioPrevCC, header))
@@ -1504,24 +1508,12 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                   {
                     foundADTSheader = true;
                     lastADTSheaderPosn = len;
-                    if (!m_basicAudioInfo.isValid && len > 8)
+                    if (!m_mpegPesParser->basicAudioInfo.isValid && len > 8)
                     {
-                      // CMediaType pmt;
-                    	// pmt=CMediaType();
-                    	// pmt.InitMediaType();
-                    	// pmt.bFixedSizeSamples=false;
-                      CFrameHeaderParser hdrParser;
-                  		aachdr seq;
-                      hdrParser.Reset(ps,len);
-                  		__int64 framesize=hdrParser.GetSize();
-                  		if (hdrParser.Read(seq,framesize,0))
-                  		{
-                        m_basicAudioInfo.sampleRate=seq.nSamplesPerSec;
-                        m_basicAudioInfo.channels=(seq.channels <= 6) ? seq.channels : 2;
-                        m_basicAudioInfo.streamType = 3;
-						            m_basicAudioInfo.isValid = true;
-						            LogDebug("ADTS header: sampleRate = %d, channels = %d", m_basicAudioInfo.sampleRate, m_basicAudioInfo.channels);
-                  		}
+                      m_mpegPesParser->OnAudioPacket(ps, len, true);
+                      m_filter.GetAudioPin()->SetAddPMT();
+                      m_bSetAudioDiscontinuity=true;
+						          LogDebug("demux: ADTS header: sampleRate = %d, channels = %d", m_mpegPesParser->basicAudioInfo.sampleRate, m_mpegPesParser->basicAudioInfo.channels);
                     }
                     if (m_ADTSheaderCount<8)
                     {
@@ -1552,12 +1544,16 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
           }
           else //not ADTS AAC audio
           {
-            if (!m_basicAudioInfo.isValid)
+            if (!m_mpegPesParser->basicAudioInfo.isValid)
             {
-              m_basicAudioInfo.sampleRate=48000;
-              m_basicAudioInfo.channels=2;
-              m_basicAudioInfo.streamType = 1;
-              m_basicAudioInfo.isValid = true; 
+              CAutoLock plock (&m_mpegPesParser->m_sectionAudioPmt);
+              m_mpegPesParser->basicAudioInfo.sampleRate=48000;
+              m_mpegPesParser->basicAudioInfo.channels=2;
+              m_mpegPesParser->basicAudioInfo.streamType = 1;
+              m_mpegPesParser->basicAudioInfo.pmtValid=false;	
+              m_mpegPesParser->basicAudioInfo.isValid = true; 
+              m_filter.GetAudioPin()->SetAddPMT();
+              m_bSetAudioDiscontinuity=true;
             }
             while(len--) 
             {
@@ -3115,14 +3111,14 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
         {
           m_AudioStreamType = newAudioStreamType ;
           m_audioChanged=true;
-          m_basicAudioInfo.isValid = false; 
+          m_mpegPesParser->AudioReset(); 
           LogDebug("DeMultiplexer: Audio media types changed");
         }
       }
       m_mpegParserTriggerFormatChange=true;
       m_mpegParserReset = true;
       m_bFirstGopParsed = false;
-      m_mpegPesParser->basicVideoInfo.isValid = false; 
+      m_mpegPesParser->VideoReset();  
     }
     else
     {
@@ -3131,7 +3127,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
         if ((m_AudioStreamType == SERVICE_TYPE_AUDIO_UNKNOWN) || (m_AudioStreamType != newAudioStreamType))
         {
           m_AudioStreamType = newAudioStreamType ;
-          m_basicAudioInfo.isValid = false; 
+          m_mpegPesParser->AudioReset(); 
           // notify the ITSReaderCallback. MP will then rebuild the graph
           LogDebug("DeMultiplexer: Audio media types changed. Trigger OnMediaTypeChanged()...");
           m_filter.OnMediaTypeChanged(AUDIO_CHANGE);
@@ -3161,7 +3157,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   else
   {
     m_AudioStreamType = newAudioStreamType;
-    m_basicAudioInfo.isValid = false; 
+    m_mpegPesParser->AudioReset(); 
   }
 
   LogDebug("OnNewChannel: New Audio stream type = 0x%x", m_AudioStreamType);
@@ -3274,7 +3270,8 @@ bool CDeMultiplexer::VidPidGood(void)
 
 bool CDeMultiplexer::AudPidGood(void)
 {
-  return ((m_pids.audioPids.size() > 0) && m_basicAudioInfo.isValid);
+  if (m_mpegPesParser == NULL) return false;
+  return ((m_pids.audioPids.size() > 0) && m_mpegPesParser->basicAudioInfo.isValid);
 }
 
 bool CDeMultiplexer::SubPidGood(void)
