@@ -67,9 +67,11 @@ namespace WatchDog
       this.ProceedButton = new System.Windows.Forms.Button();
       this.label2 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
-      this.menuItemClearTVserverLogs = new System.Windows.Forms.MenuItem();
-      this.menuItem10 = new System.Windows.Forms.MenuItem();
+      this.CollectBox = new System.Windows.Forms.GroupBox();
+      this.cbTVServer_logs = new System.Windows.Forms.CheckBox();
+      this.cbMediaPortalClient_logs = new System.Windows.Forms.CheckBox();
       this.settingsGroup.SuspendLayout();
+      this.CollectBox.SuspendLayout();
       this.SuspendLayout();
       // 
       // settingsGroup
@@ -89,7 +91,7 @@ namespace WatchDog
       // 
       // btnZipFileReset
       // 
-      this.btnZipFileReset.Location = new System.Drawing.Point(333, 57);
+      this.btnZipFileReset.Location = new System.Drawing.Point(406, 57);
       this.btnZipFileReset.Name = "btnZipFileReset";
       this.btnZipFileReset.Size = new System.Drawing.Size(64, 23);
       this.btnZipFileReset.TabIndex = 4;
@@ -99,7 +101,7 @@ namespace WatchDog
       // 
       // btnZipFile
       // 
-      this.btnZipFile.Location = new System.Drawing.Point(333, 32);
+      this.btnZipFile.Location = new System.Drawing.Point(406, 32);
       this.btnZipFile.Name = "btnZipFile";
       this.btnZipFile.Size = new System.Drawing.Size(64, 23);
       this.btnZipFile.TabIndex = 3;
@@ -110,7 +112,7 @@ namespace WatchDog
       // 
       this.tbZipFile.Location = new System.Drawing.Point(6, 34);
       this.tbZipFile.Name = "tbZipFile";
-      this.tbZipFile.Size = new System.Drawing.Size(321, 20);
+      this.tbZipFile.Size = new System.Drawing.Size(394, 20);
       this.tbZipFile.TabIndex = 2;
       this.tbZipFile.TextChanged += new System.EventHandler(this.tbZipFile_TextChanged);
       // 
@@ -142,7 +144,7 @@ namespace WatchDog
       this.label1.Location = new System.Drawing.Point(12, 124);
       this.label1.Name = "label1";
       this.label1.Padding = new System.Windows.Forms.Padding(18, 0, 0, 0);
-      this.label1.Size = new System.Drawing.Size(486, 53);
+      this.label1.Size = new System.Drawing.Size(486, 110);
       this.label1.TabIndex = 1;
       this.label1.Text = "This will start MediaPortal using the default skin, and only plugins which were p" +
     "art of the release version you installed. No extensions will be loaded.";
@@ -256,13 +258,14 @@ namespace WatchDog
             this.menuRebootTvServer,
             this.menuShutdownTvServer,
             this.menuPowerOffTvServer});
-      this.menuItem10.Text = "Power Management";
+      this.menuItem10.Text = "Reboot TvServer";
+      this.menuItem10.Click += new System.EventHandler(this.menuRebootTvServer_Click);
       // 
       // menuRebootTvServer
       // 
       this.menuRebootTvServer.Index = 0;
       this.menuRebootTvServer.Text = "Reboot TvServer";
-	  this.menuRebootTvServer.Click += new System.EventHandler(this.menuRebootTvServer_Click);
+      this.menuRebootTvServer.Click += new System.EventHandler(this.menuRebootTvServer_Click);
       // 
       // menuShutdownTvServer
       // 
@@ -311,7 +314,7 @@ namespace WatchDog
       // 
       // statusBar
       // 
-      this.statusBar.Location = new System.Drawing.Point(0, 358);
+      this.statusBar.Location = new System.Drawing.Point(0, 415);
       this.statusBar.Name = "statusBar";
       this.statusBar.Size = new System.Drawing.Size(510, 20);
       this.statusBar.TabIndex = 6;
@@ -347,9 +350,9 @@ namespace WatchDog
       // ProceedButton
       // 
       this.ProceedButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.ProceedButton.Location = new System.Drawing.Point(410, 329);
+      this.ProceedButton.Location = new System.Drawing.Point(411, 349);
       this.ProceedButton.Name = "ProceedButton";
-      this.ProceedButton.Size = new System.Drawing.Size(75, 23);
+      this.ProceedButton.Size = new System.Drawing.Size(75, 50);
       this.ProceedButton.TabIndex = 8;
       this.ProceedButton.Text = "Proceed";
       this.ProceedButton.UseVisualStyleBackColor = true;
@@ -363,7 +366,7 @@ namespace WatchDog
       this.label2.Location = new System.Drawing.Point(12, 206);
       this.label2.Name = "label2";
       this.label2.Padding = new System.Windows.Forms.Padding(18, 0, 0, 0);
-      this.label2.Size = new System.Drawing.Size(474, 41);
+      this.label2.Size = new System.Drawing.Size(474, 98);
       this.label2.TabIndex = 2;
       this.label2.Text = "Besides setting the log level to \"debug\", this option will start MediaPortal as c" +
     "onfigured, using all extensions you have installed.";
@@ -376,29 +379,53 @@ namespace WatchDog
       this.label3.Location = new System.Drawing.Point(12, 288);
       this.label3.Name = "label3";
       this.label3.Padding = new System.Windows.Forms.Padding(18, 0, 0, 0);
-      this.label3.Size = new System.Drawing.Size(486, 38);
+      this.label3.Size = new System.Drawing.Size(486, 48);
       this.label3.TabIndex = 9;
       this.label3.Text = "If MediaPortal crashes unexpectedly, or if you can not reproduce an issue nicely," +
     " then this option will simply export all the currently available log files.";
       // 
-      // menuItemClearTVserverLogs
+      // CollectBox
       // 
-      this.menuItemClearTVserverLogs.Index = 3;
-      this.menuItemClearTVserverLogs.Text = "Clear TV Server logs";
-      this.menuItemClearTVserverLogs.Click += new System.EventHandler(this.menuItemClearTVserverLogs_Click);
+      this.CollectBox.Controls.Add(this.cbTVServer_logs);
+      this.CollectBox.Controls.Add(this.cbMediaPortalClient_logs);
+      this.CollectBox.Location = new System.Drawing.Point(13, 339);
+      this.CollectBox.Name = "CollectBox";
+      this.CollectBox.Size = new System.Drawing.Size(375, 70);
+      this.CollectBox.TabIndex = 10;
+      this.CollectBox.TabStop = false;
+      this.CollectBox.Text = "Collecting logs from :";
       // 
-      // menuItem10
+      // cbTVServer_logs
       // 
-      this.menuItem10.Index = 4;
-      this.menuItem10.Text = "Reboot TvServer";
-      this.menuItem10.Click += new System.EventHandler(this.menuRebootTvServer_Click);
+      this.cbTVServer_logs.AutoSize = true;
+      this.cbTVServer_logs.Checked = true;
+      this.cbTVServer_logs.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbTVServer_logs.Location = new System.Drawing.Point(8, 41);
+      this.cbTVServer_logs.Name = "cbTVServer_logs";
+      this.cbTVServer_logs.Size = new System.Drawing.Size(194, 19);
+      this.cbTVServer_logs.TabIndex = 1;
+      this.cbTVServer_logs.Text = "TVE Server (Only for multiseat)";
+      this.cbTVServer_logs.UseVisualStyleBackColor = true;
+      // 
+      // cbMediaPortalClient_logs
+      // 
+      this.cbMediaPortalClient_logs.AutoSize = true;
+      this.cbMediaPortalClient_logs.Checked = true;
+      this.cbMediaPortalClient_logs.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbMediaPortalClient_logs.Location = new System.Drawing.Point(8, 20);
+      this.cbMediaPortalClient_logs.Name = "cbMediaPortalClient_logs";
+      this.cbMediaPortalClient_logs.Size = new System.Drawing.Size(252, 19);
+      this.cbMediaPortalClient_logs.TabIndex = 0;
+      this.cbMediaPortalClient_logs.Text = "MediaPortal Client (+ TVE for singleseat )";
+      this.cbMediaPortalClient_logs.UseVisualStyleBackColor = true;
       // 
       // MPWatchDog
       // 
       this.AcceptButton = this.ProceedButton;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(510, 378);
+      this.ClientSize = new System.Drawing.Size(510, 435);
+      this.Controls.Add(this.CollectBox);
       this.Controls.Add(this.label3);
       this.Controls.Add(this.ExportLogsRadioButton);
       this.Controls.Add(this.label2);
@@ -414,6 +441,8 @@ namespace WatchDog
       this.Text = "MediaPortal Watchdog";
       this.settingsGroup.ResumeLayout(false);
       this.settingsGroup.PerformLayout();
+      this.CollectBox.ResumeLayout(false);
+      this.CollectBox.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -459,5 +488,8 @@ namespace WatchDog
     private System.Windows.Forms.MenuItem menuRebootTvServer;
     private System.Windows.Forms.MenuItem menuShutdownTvServer;
     private System.Windows.Forms.MenuItem menuPowerOffTvServer;
+    private System.Windows.Forms.GroupBox CollectBox;
+    private System.Windows.Forms.CheckBox cbTVServer_logs;
+    private System.Windows.Forms.CheckBox cbMediaPortalClient_logs;
   }
 }
