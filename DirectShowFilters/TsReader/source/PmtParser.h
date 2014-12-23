@@ -67,6 +67,7 @@ public:
   void        OnNewSection(CSection& section);
   void        SetPmtCallBack(IPmtCallBack* callback);
   bool        IsReady();
+  void        ClearReady();
   CPidTable&  GetPidInfo();
 
 private:

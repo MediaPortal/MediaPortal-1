@@ -120,6 +120,7 @@ void CPatParser::SkipPacketsAtStart(__int64 packets)
   m_packetsToSkip=packets;
   m_packetsReceived=0;
 }
+
 void CPatParser::OnTsPacket(byte* tsPacket)
 {
   m_packetsReceived++;
@@ -148,6 +149,7 @@ void CPatParser::OnTsPacket(byte* tsPacket)
           info.PatVersion=m_iPatTableVersion;
           m_pCallback->OnNewChannel(info);
 	        m_iState=Parsing;
+	        parser->ClearReady();
 			    return ;
 		    }
       }

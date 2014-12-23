@@ -51,6 +51,11 @@ bool CPmtParser::IsReady()
   return m_isFound;
 }
 
+void CPmtParser::ClearReady()
+{
+  m_isFound = false;
+}
+
 void CPmtParser::OnNewSection(CSection& section)
 {   
   if (section.table_id!=2)

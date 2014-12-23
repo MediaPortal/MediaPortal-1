@@ -1372,7 +1372,13 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
       {
         m_hadPESfail++;
       }
-      LogDebug("PES audio 0-0-1 fail");
+      //LogDebug("PES audio 0-0-1 fail");
+      LogDebug("PES audio 0-0-1 fail, PES hdr = %x-%x-%x-%x-%x-%x-%x-%x, TS hdr = %x-%x-%x-%x-%x-%x-%x-%x-%x-%x", 
+                                                                          tsPacket[posn+0], tsPacket[posn+1], tsPacket[posn+2], tsPacket[posn+3],                                                                            
+                                                                          tsPacket[posn+4], tsPacket[posn+5], tsPacket[posn+6], tsPacket[posn+7],                                                                           
+                                                                          tsPacket[0], tsPacket[1], tsPacket[2], tsPacket[3], tsPacket[4],
+                                                                          tsPacket[5], tsPacket[6], tsPacket[7], tsPacket[8], tsPacket[9]);
+      //header.LogHeader();
       //Flushing is delegated to CDeMultiplexer::ThreadProc()
       DelegatedFlush(false, false);
       return;
@@ -1773,8 +1779,12 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
       {
         m_hadPESfail++;
       }
-      LogDebug("PES H264 0-0-1 fail");
-      //LogDebug("PES H264 0-0-1 fail, %x-%x-%x-%x-%x-%x-%x-%x", start[0], start[1], start[2], start[3], start[4], start[5], start[6], start[7]);
+      //LogDebug("PES H264 0-0-1 fail");
+      LogDebug("PES H264 0-0-1 fail, PES hdr = %x-%x-%x-%x-%x-%x-%x-%x, TS hdr = %x-%x-%x-%x-%x-%x-%x-%x-%x-%x", 
+                                                                          start[0], start[1], start[2], start[3], start[4], start[5], start[6], start[7],
+                                                                          tsPacket[0], tsPacket[1], tsPacket[2], tsPacket[3], tsPacket[4],
+                                                                          tsPacket[5], tsPacket[6], tsPacket[7], tsPacket[8], tsPacket[9]);
+      //header.LogHeader();
       m_VideoValidPES=false;
       m_mVideoValidPES = false;
       m_p->rtStart = Packet::INVALID_TIME;
@@ -2338,8 +2348,12 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
       {
         m_hadPESfail++;
       }
-      LogDebug("PES MPEG2 0-0-1 fail");
-      //LogDebug("Pes MPEG2 0-0-1 fail, %x-%x-%x-%x-%x-%x-%x-%x", start[0], start[1], start[2], start[3], start[4], start[5], start[6], start[7]);
+      //LogDebug("PES MPEG2 0-0-1 fail");
+      LogDebug("PES MPEG2 0-0-1 fail, PES hdr = %x-%x-%x-%x-%x-%x-%x-%x, TS hdr = %x-%x-%x-%x-%x-%x-%x-%x-%x-%x", 
+                                                                          start[0], start[1], start[2], start[3], start[4], start[5], start[6], start[7],
+                                                                          tsPacket[0], tsPacket[1], tsPacket[2], tsPacket[3], tsPacket[4],
+                                                                          tsPacket[5], tsPacket[6], tsPacket[7], tsPacket[8], tsPacket[9]);
+      //header.LogHeader();
       m_VideoValidPES = false;
       m_mVideoValidPES = false;
       m_p->rtStart = Packet::INVALID_TIME;
@@ -2903,8 +2917,9 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   //CAutoLock lock (&m_section);
   CPidTable pids=info.PidTable;
   
+  //pids.LogPIDs();
   //LogDebug("OnNewChannel callback, pat version:%d->%d",m_iPatVersion, info.PatVersion);
-
+  
   if ((info.PatVersion != m_iPatVersion) || m_bWaitGoodPat)
   {
     if (!m_bWaitGoodPat)
@@ -3388,7 +3403,7 @@ void CDeMultiplexer::ThreadProc()
     }
 
     //File read prefetch
-    if (m_bReadAheadFromFile && (timeNow > (lastFileReadTime + 10)) )
+    if (m_bReadAheadFromFile && (timeNow > (lastFileReadTime + 3)) )
     {
       lastFileReadTime = timeNow; 
       int sizeReadTemp = ReadAheadFromFile(); 
