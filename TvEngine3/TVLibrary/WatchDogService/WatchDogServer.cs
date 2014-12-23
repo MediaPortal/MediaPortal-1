@@ -117,6 +117,48 @@ namespace WatchDogService
       }
     }
 
+    public void Shutdown()
+    {
+      EventLog _eventLog = new EventLog();
+      _eventLog.Source = "WatchDogService";
+      _eventLog.WriteEntry("WatchDogService: Shutdown command received.", EventLogEntryType.Information);
+
+      ManagementBaseObject mboShutdown = null;
+      ManagementClass mcWin32 = new ManagementClass("Win32_OperatingSystem");
+      mcWin32.Get();
+
+      mcWin32.Scope.Options.EnablePrivileges = true;
+      ManagementBaseObject mboShutdownParams = mcWin32.GetMethodParameters("Win32Shutdown");
+
+      mboShutdownParams["Flags"] = "5";
+      mboShutdownParams["Reserved"] = "0";
+      foreach (ManagementObject manObj in mcWin32.GetInstances())
+      {
+        mboShutdown = manObj.InvokeMethod("Win32Shutdown", mboShutdownParams, null);
+      }
+    }
+
+    public void PowerOff()
+    {
+      EventLog _eventLog = new EventLog();
+      _eventLog.Source = "WatchDogService";
+      _eventLog.WriteEntry("WatchDogService: Power Off command received.", EventLogEntryType.Information);
+
+      ManagementBaseObject mboShutdown = null;
+      ManagementClass mcWin32 = new ManagementClass("Win32_OperatingSystem");
+      mcWin32.Get();
+
+      mcWin32.Scope.Options.EnablePrivileges = true;
+      ManagementBaseObject mboShutdownParams = mcWin32.GetMethodParameters("Win32Shutdown");
+
+      mboShutdownParams["Flags"] = "12";
+      mboShutdownParams["Reserved"] = "0";
+      foreach (ManagementObject manObj in mcWin32.GetInstances())
+      {
+        mboShutdown = manObj.InvokeMethod("Win32Shutdown", mboShutdownParams, null);
+      }
+    }
+
     public Object ReadLog()
     {
       string _tmpDir = Path.GetTempPath() + "\\TvServerLogs";
