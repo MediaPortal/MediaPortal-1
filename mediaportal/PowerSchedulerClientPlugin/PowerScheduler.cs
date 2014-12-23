@@ -973,7 +973,7 @@ namespace MediaPortal.Plugins.Process
           // Signal client activity to the remote TvServer
           try
           {
-            if (RemotePowerControl.HostName != String.Empty)
+            if (RemotePowerControl.HostName != String.Empty && IsTVpluginActive())
             {
               Log.Debug("PS: Signal client activity to the remote TvServer");
               RemotePowerControl.Instance.UserActivityDetected(DateTime.MinValue);
@@ -985,6 +985,40 @@ namespace MediaPortal.Plugins.Process
           }
         }
       }
+    }
+
+    private bool IsTVpluginActive()
+    {
+      bool result = false;
+
+      int act = GUIWindowManager.ActiveWindow;
+
+      result = (
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV_CROP_SETTINGS ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_SETTINGS_SORT_CHANNELS ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_SETTINGS_TV_EPG ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TVGUIDE ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_MINI_GUIDE ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV_SEARCH ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV_SEARCHTYPE ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV_PROGRAM_INFO ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_RECORDEDTV ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV_RECORDED_INFO ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_SETTINGS_RECORDINGS ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_SCHEDULER ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_SEARCHTV ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV_TUNING_DETAILS ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_RADIO ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_RADIO_GUIDE ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_RECORDEDRADIO ||
+                 g_Player.IsRadio || g_Player.IsTV || g_Player.IsTVRecording
+               );
+      Log.Debug("PS: TV/Radio: {0}", result);
+      return result;
     }
 
     /// <summary>

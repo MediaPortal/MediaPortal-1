@@ -262,6 +262,8 @@ namespace TvPlugin
     {
       Log.Info("RadioHome:OnPageLoad");
 
+      TVHome.HandleWakeUpTvServer();
+
       if (!TVHome.Connected)
       {
         RemoteControl.Clear();

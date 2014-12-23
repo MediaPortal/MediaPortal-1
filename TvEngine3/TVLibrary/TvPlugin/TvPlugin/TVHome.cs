@@ -363,7 +363,7 @@ namespace TvPlugin
         SetRemoteControlHostName();
 
         // Wake up the TV server, if required
-        HandleWakeUpTvServer();
+        //HandleWakeUpTvServer();
         startHeartBeatThread();
 
         TVHome.OnChannelChanged -= new OnChannelChangedDelegate(ForceUpdates);
@@ -474,6 +474,8 @@ namespace TvPlugin
       }
 
       btnActiveStreams.Label = GUILocalizeStrings.Get(692);
+
+      HandleWakeUpTvServer();
 
       if (!Connected)
       {
@@ -1007,11 +1009,15 @@ namespace TvPlugin
             GUIWindowManager.SendThreadMessage(initMsgTV);
             return true;
           }
-          Thread showDlgThread = new Thread(ShowDlgThread);
-          showDlgThread.IsBackground = true;
-          // show the dialog asynch.
-          // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
-          showDlgThread.Start();
+
+          if (IsTVpluginActive())
+          {
+              Thread showDlgThread = new Thread(ShowDlgThread);
+            showDlgThread.IsBackground = true;
+            // show the dialog asynch.
+            // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
+            showDlgThread.Start();
+          }
           return true;
         }
         else
@@ -1247,7 +1253,7 @@ namespace TvPlugin
       Log.Info("Remote control:master server :{0}", RemoteControl.HostName);
     }
 
-    private static void HandleWakeUpTvServer()
+    public static void HandleWakeUpTvServer()
     {
       bool isWakeOnLanEnabled;
       bool isAutoMacAddressEnabled;
@@ -1355,6 +1361,7 @@ namespace TvPlugin
           }
         }
       }
+      RefreshConnectionState();
     }
 
     ///// <summary>
@@ -1683,7 +1690,12 @@ namespace TvPlugin
         RemoteControl.OnRemotingDisconnected +=
           new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
         RemoteControl.OnRemotingConnected += new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
-        HandleWakeUpTvServer();
+        
+        if (IsTVpluginActive())
+        {
+          HandleWakeUpTvServer();
+        }
+
         startHeartBeatThread();
         _notifyManager.Start();
         if (_resumeChannel != null)
@@ -1740,6 +1752,39 @@ namespace TvPlugin
         }
       }
       return false; // false = all other processes will handle the msg
+    }
+
+    private static bool IsTVpluginActive()
+    {
+      bool result = false;
+
+      int act = GUIWindowManager.ActiveWindow;
+
+      result = (
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV_CROP_SETTINGS ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_SETTINGS_SORT_CHANNELS ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_SETTINGS_TV_EPG ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TVGUIDE ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_MINI_GUIDE ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV_SEARCH ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV_SEARCHTYPE ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV_PROGRAM_INFO ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_RECORDEDTV ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV_RECORDED_INFO ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_SETTINGS_RECORDINGS ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_SCHEDULER ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_SEARCHTV ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV_TUNING_DETAILS ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_RADIO ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_RADIO_GUIDE ||
+                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_RECORDEDRADIO ||
+                 g_Player.IsRadio || g_Player.IsTV || g_Player.IsTVRecording
+               );
+      return result;
     }
 
     private static bool wasPrevWinTVplugin()
