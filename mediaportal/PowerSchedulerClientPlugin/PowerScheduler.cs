@@ -1011,7 +1011,6 @@ namespace MediaPortal.Plugins.Process
                  act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_SEARCHTV ||
                  act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV_TUNING_DETAILS ||
                  act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV ||
-                 act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO ||
                  act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_RADIO ||
                  act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_RADIO_GUIDE ||
                  act == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_RECORDEDRADIO ||
