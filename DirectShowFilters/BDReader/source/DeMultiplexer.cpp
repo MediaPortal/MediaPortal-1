@@ -337,13 +337,7 @@ void CDeMultiplexer::Flush(bool bClearclips)
   SetHoldAudio(true);
   SetHoldVideo(true);
 
-  // Make sure data isn't being processed
-  CAutoLock lockRead(&m_sectionRead);
-
   FlushPESBuffers(true, false);
-
-  CAutoLock lockVid(&m_sectionVideo);
-  CAutoLock lockAud(&m_sectionAudio);
 
   if (bClearclips)
     m_playlistManager->ClearClips();
@@ -804,6 +798,10 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 void CDeMultiplexer::FlushPESBuffers(bool bDiscardData, bool bSetCurrentClipFilled)
 {
   LogDebug("Demux::Flushing PES %d", bDiscardData);
+
+  CAutoLock lockVid(&m_sectionVideo);
+  CAutoLock lockAud(&m_sectionAudio);
+
   if (m_videoServiceType != NO_STREAM && !bDiscardData)
   {
     if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_MPEG1 ||
