@@ -307,9 +307,14 @@ void CVideoPin::CreateEmptySample(IMediaSample *pSample)
 
 HRESULT CVideoPin::DoBufferProcessingLoop(void)
 {
+  if (!m_bConnected) 
+  {
+    return S_OK;
+  }
+  
   Command com;
   OnThreadStartPlay();
-  SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
+  SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_NORMAL);
 
   do 
   {
@@ -331,7 +336,7 @@ HRESULT CVideoPin::DoBufferProcessingLoop(void)
       if (hr == S_OK) 
       {
         // Some decoders seem to crash when we provide empty samples 
-        if ((pSample->GetActualDataLength() > 0) && !m_pTsReaderFilter->IsStopping())
+        if ((pSample->GetActualDataLength() > 0) && !m_pTsReaderFilter->IsStopping() && m_bConnected)
         {
           hr = Deliver(pSample);     
           m_sampleCount++ ;

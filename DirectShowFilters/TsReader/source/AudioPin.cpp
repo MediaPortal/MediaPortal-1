@@ -305,9 +305,14 @@ void CAudioPin::CreateEmptySample(IMediaSample *pSample)
 
 HRESULT CAudioPin::DoBufferProcessingLoop(void)
 {
+  if (!m_bConnected) 
+  {
+    return S_OK;
+  }
+    
   Command com;
   OnThreadStartPlay();
-  SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
+  SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_NORMAL);
 
   do 
   {
@@ -478,6 +483,15 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       {
         m_bPresentSample = true ;
         
+        if (buffer->GetForcePMT())
+        {
+          m_bAddPMT = true;
+        }
+        if (buffer->GetDiscontinuity())
+        {
+          m_bDiscontinuity = true;
+        }
+        
         CRefTime RefTime,cRefTime ;
         bool HasTimestamp ;
         double fTime = 0.0;
@@ -587,29 +601,42 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         if (m_bPresentSample && (m_dRateSeeking == 1.0) && (buffer->Length() > 0))
         {
           //do we need to set the discontinuity flag?
-          if (m_bDiscontinuity || buffer->GetDiscontinuity())
+          if (m_bDiscontinuity)
           {
             //ifso, set it
             pSample->SetDiscontinuity(TRUE);
 
-            if ((m_sampleCount == 0) && m_bAddPMT && !m_pTsReaderFilter->m_bDisableAddPMT && !m_bPinNoAddPMT)
-            {
-              //Add MediaType info to first sample after OnThreadStartPlay()
-              CMediaType mt; 
-              int audioIndex = 0;
-              demux.GetAudioStream(audioIndex);
-              demux.GetAudioStreamType(audioIndex, mt, m_iPosition);
-              pSample->SetMediaType(&mt);            
-              LogDebug("audPin: Add pmt and set discontinuity L:%d B:%d fTime:%03.3f SampCnt:%d", m_bDiscontinuity, buffer->GetDiscontinuity(), (float)fTime, m_sampleCount);
-              m_bAddPMT = false; //Only add once
-            }   
-            else
-            {        
-              LogDebug("audPin: Set discontinuity L:%d B:%d fTime:%03.3f SampCnt:%d", m_bDiscontinuity, buffer->GetDiscontinuity(), (float)fTime, m_sampleCount);
-            }
-
+            //if ((m_sampleCount == 0) && m_bAddPMT && !m_pTsReaderFilter->m_bDisableAddPMT && !m_bPinNoAddPMT)
+            //{
+            //  //Add MediaType info to first sample after OnThreadStartPlay()
+            //  CMediaType mt; 
+            //  int audioIndex = 0;
+            //  demux.GetAudioStream(audioIndex);
+            //  demux.GetAudioStreamType(audioIndex, mt, m_iPosition);
+            //  pSample->SetMediaType(&mt);            
+            //  LogDebug("audPin: Add pmt and set discontinuity L:%d B:%d fTime:%03.3f SampCnt:%d", m_bDiscontinuity, buffer->GetDiscontinuity(), (float)fTime, m_sampleCount);
+            //  m_bAddPMT = false; //Only add once
+            //}   
+            //else
+            //{        
+            //  LogDebug("audPin: Set discontinuity L:%d B:%d fTime:%03.3f SampCnt:%d", m_bDiscontinuity, buffer->GetDiscontinuity(), (float)fTime, m_sampleCount);
+            //}
+            
+            LogDebug("audPin: Set discontinuity L:%d B:%d fTime:%03.3f SampCnt:%d", m_bDiscontinuity, buffer->GetDiscontinuity(), (float)fTime, m_sampleCount);
             m_bDiscontinuity=FALSE;
           }
+
+          if (m_bAddPMT && !m_pTsReaderFilter->m_bDisableAddPMT && !m_bPinNoAddPMT)
+          {
+            //Add MediaType info to sample
+            CMediaType mt; 
+            int audioIndex = 0;
+            demux.GetAudioStream(audioIndex);
+            demux.GetAudioStreamType(audioIndex, mt, m_iPosition);
+            pSample->SetMediaType(&mt);            
+            LogDebug("audPin: Add pmt, fTime:%03.3f SampCnt:%d", (float)fTime, m_sampleCount);
+            m_bAddPMT = false; //Only add once
+          }   
 
           if (HasTimestamp)
           {

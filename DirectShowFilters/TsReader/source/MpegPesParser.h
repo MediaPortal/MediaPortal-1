@@ -50,6 +50,7 @@ public:
   bool OnAudioPacket(byte *Frame,int Length,bool reset);
   void VideoReset();
   void AudioReset();
+  void AudioValidReset();
 	CMediaType pmt;
 	CMediaType audPmt;
 	BasicVideoInfo basicVideoInfo;

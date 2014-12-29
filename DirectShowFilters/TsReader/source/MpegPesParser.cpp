@@ -132,7 +132,8 @@ bool CMpegPesParser::ParseAudio(byte* audioPacket,bool reset)
 	if (hdrParser.Read(aac,framesize,&audPmt))
 	{
     basicAudioInfo.sampleRate=aac.nSamplesPerSec;
-    basicAudioInfo.channels=aac.channels;
+    basicAudioInfo.channels=aac.channels;    
+    basicAudioInfo.aacObjectType=aac.profile+1;
     basicAudioInfo.streamType = 3;
 	  basicAudioInfo.pmtValid = true;	
     basicAudioInfo.isValid = true;
@@ -157,4 +158,10 @@ void CMpegPesParser::AudioReset()
 	basicAudioInfo.channels=0;
 	basicAudioInfo.streamType=0;
 	basicAudioInfo.pmtValid=false;	
+}
+
+void CMpegPesParser::AudioValidReset()
+{
+  CAutoLock lock (&m_sectionAudioPmt);
+	basicAudioInfo.isValid=false;	
 }

@@ -380,6 +380,7 @@ struct BasicAudioInfo
 	int sampleRate;
 	int channels;
 	int streamType;
+	int aacObjectType;
 	bool isValid;
 	bool pmtValid;
 
@@ -388,6 +389,7 @@ struct BasicAudioInfo
 		sampleRate=0;
 		channels=0;
 		streamType=0;
+		aacObjectType=0;
 		isValid=false;
 		pmtValid=false;
 	}
