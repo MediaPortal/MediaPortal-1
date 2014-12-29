@@ -2,11 +2,11 @@
 <window>
 	<controls>
 
-    <control>
+  <control>
       <description>Video resolution</description>
       <type>image</type>
       <id>0</id>
-			<posX>776</posX>
+			<posX>676</posX>
 			<posY>958</posY>
     	<width>99</width>
     	<height>65</height>
@@ -18,7 +18,7 @@
     	<description>Video codec</description>
       <type>image</type>
       <id>0</id>
-			<posX>866</posX>
+			<posX>766</posX>
 			<posY>958</posY>
     	<width>99</width>
     	<height>65</height>
@@ -27,10 +27,49 @@
       <colordiffuse>FF000000</colordiffuse>
     </control>
     <control>
+      <description>AspectRatio</description>
+      <type>image</type>
+      <id>0</id>
+			<posX>856</posX>
+			<posY>958</posY>
+    	<width>99</width>
+    	<height>65</height>
+      <texture>Logos\aspectratio\#Play.Current.AspectRatio.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>FF000000</colordiffuse>
+    </control>
+<control>
+        <description>Subtitles</description>
+        <type>image</type>
+        <id>0</id>
+			<posX>966</posX>
+			<posY>968</posY>
+    	<width>49</width>
+    	<height>45</height>
+        <visible>string.equals(#Play.Current.HasSubtitles, True)</visible>
+        <texture>logos\subtitles.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>FF000000</colordiffuse>
+      </control>
+      <control>
+        <description>NoSubtitles</description>
+        <type>image</type>
+        <id>0</id>
+			<posX>966</posX>
+			<posY>968</posY>
+    	<width>49</width>
+    	<height>45</height>
+        <visible>!string.equals(#Play.Current.HasSubtitles, True)</visible>
+        <texture>logos\nosubtitles.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>FF000000</colordiffuse>
+      </control>
+
+    <control>
       <description>Audio codec</description>
       <type>image</type>
       <id>0</id>
-			<posX>956</posX>
+			<posX>1036</posX>
 			<posY>958</posY>
     	<width>99</width>
     	<height>65</height>
@@ -38,11 +77,37 @@
       <keepaspectratio>yes</keepaspectratio>
       <colordiffuse>FF000000</colordiffuse>
     </control>
+<control>
+        <description>Teletext</description>
+        <type>image</type>
+        <id>0</id>
+			<posX>1166</posX>
+			<posY>968</posY>
+    	<width>62</width>
+    	<height>45</height>
+        <visible>string.equals(#TV.View.HasTeletext, True)</visible>
+        <texture>logos\Teletext.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>FF000000</colordiffuse>
+      </control>
+      <control>
+        <description>NoTeletext</description>
+        <type>image</type>
+        <id>0</id>
+			<posX>1166</posX>
+			<posY>968</posY>
+    	<width>62</width>
+    	<height>45</height>
+        <visible>!string.equals(#TV.View.HasTeletext, True)</visible>
+        <texture>logos\noTeletext.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>FF000000</colordiffuse>
+      </control>
     <control>
       <description>Audio channels</description>
       <type>image</type>
       <id>0</id>
-			<posX>1046</posX>
+			<posX>1216</posX>
 			<posY>958</posY>
     	<width>99</width>
     	<height>65</height>

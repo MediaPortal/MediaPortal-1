@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(0, Horizontal, true)</layout>
+      <posX>770</posX>
+      <posY>655</posY>
+      <control>
+        <description>Video resolution</description>
+        <type>image</type>
+        <id>0</id>
+        <width>50</width>
+        <height>32</height>
+        <texture>Logos\resolution\#Play.Current.VideoResolution.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>ff87cefa</colordiffuse>
+      </control>
+      <control>
+        <description>Video codec</description>
+        <type>image</type>
+        <id>0</id>
+        <width>50</width>
+        <height>45</height>
+        <texture>Logos\video\#Play.Current.VideoCodec.Texture.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>ff87cefa</colordiffuse>
+      </control>
+      <control>
+        <description>Audio codec</description>
+        <type>image</type>
+        <id>0</id>
+        <width>50</width>
+        <height>32</height>
+        <texture>Logos\audio\#Play.Current.AudioCodec.Texture.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>ff87cefa</colordiffuse>
+      </control>
+      <control>
+        <description>Audio channels</description>
+        <type>image</type>
+        <id>0</id>
+        <width>50</width>
+        <height>32</height>
+        <texture>Logos\aspectratio\#Play.Current.AspectRatio.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>ff87cefa</colordiffuse>
+      </control>
+      <control>
+        <description>Subtitles available</description>
+        <type>image</type>
+        <id>0</id>
+        <width>50</width>
+        <height>32</height>
+        <texture>Logos\#Play.Current.Subtitle</texture>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>ff87cefa</colordiffuse>
+      </control>
+    </control>
+  </controls>
+</window>
