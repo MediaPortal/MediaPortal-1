@@ -51,6 +51,7 @@ namespace WatchDog
       this.menuItemClearWEventLogOnTVserver = new System.Windows.Forms.MenuItem();
       this.menuItemClearTVserverLogs = new System.Windows.Forms.MenuItem();
       this.menuItem10 = new System.Windows.Forms.MenuItem();
+      this.menuItemWOLTvServer = new System.Windows.Forms.MenuItem();
       this.menuRebootTvServer = new System.Windows.Forms.MenuItem();
       this.menuShutdownTvServer = new System.Windows.Forms.MenuItem();
       this.menuPowerOffTvServer = new System.Windows.Forms.MenuItem();
@@ -224,7 +225,8 @@ namespace WatchDog
             this.menuItemStopTVserver,
             this.menuItemClearWEventLogOnTVserver,
             this.menuItemClearTVserverLogs,
-            this.menuItem10});
+            this.menuItem10,
+            this.menuItemWOLTvServer});
       this.menuItem14.Text = "Manage TV server";
       // 
       // menuItemStartTVserver
@@ -278,6 +280,12 @@ namespace WatchDog
       this.menuPowerOffTvServer.Index = 2;
       this.menuPowerOffTvServer.Text = "Power Off TvServer";
       this.menuPowerOffTvServer.Click += new System.EventHandler(this.menuPowerOffTvServer_Click);
+      // 
+      // menuItemWOLTvServer
+      // 
+      this.menuItemWOLTvServer.Index = 5;
+      this.menuItemWOLTvServer.Text = "Wake On TvServer";
+      this.menuItemWOLTvServer.Click += new System.EventHandler(this.menuItemWOLTvServer_Click);
       // 
       // menuItem9
       // 
@@ -491,5 +499,6 @@ namespace WatchDog
     private System.Windows.Forms.GroupBox CollectBox;
     private System.Windows.Forms.CheckBox cbTVServer_logs;
     private System.Windows.Forms.CheckBox cbMediaPortalClient_logs;
+    private System.Windows.Forms.MenuItem menuItemWOLTvServer;
   }
 }
