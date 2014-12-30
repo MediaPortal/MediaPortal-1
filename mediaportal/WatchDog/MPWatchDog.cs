@@ -25,6 +25,7 @@ using System.Reflection;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Net;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -32,6 +33,8 @@ using DaggerLib.DSGraphEdit;
 using DaggerLib.UI;
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
+using MediaPortal.Util;
+using MediaPortal.GUI.Library;
 using WatchDog.Properties;
 using Settings = MediaPortal.Profile.Settings;
 using System.ServiceProcess;
@@ -775,21 +778,45 @@ namespace WatchDog
 
     private void menuItemWOLTvServer_Click(object sender, EventArgs e)
     {
-      try
+      String macAddress, hostname;
+      byte[] hwAddress;
+      
+      using (Settings xmlreader = new MPSettings())
       {
-        string tvPlugin = Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll";
-        Assembly assem = Assembly.LoadFrom(tvPlugin);
-        var theType = assem.GetType("TvPlugin.TVHome");
-        var c = Activator.CreateInstance(theType);
-        var method = theType.GetMethod("HandleWakeUpTvServer");
-        method.Invoke(c, new object[] { });
+        macAddress = xmlreader.GetValueAsString("tvservice", "macAddress", null);
+        hostname = xmlreader.GetValueAsString("tvservice", "hostname", null);
 
-        MessageBox.Show("Done", "Status", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        if (!string.IsNullOrEmpty(macAddress))
+        {
+          try
+          {
+            WakeOnLanManager wakeOnLanManager = new WakeOnLanManager();
+
+            Log.Debug("WOLMgr: Ping {0}", hostname);
+            if (wakeOnLanManager.Ping(hostname, 200))
+            {
+              Log.Debug("WOLMgr: {0} already started", hostname);
+              return;
+            }
+
+            hwAddress = wakeOnLanManager.GetHwAddrBytes(macAddress);
+
+            if (!wakeOnLanManager.SendWakeOnLanPacket(hwAddress, IPAddress.Broadcast))
+            {
+              Log.Debug("WOLMgr: FAILED to send the first wake-on-lan packet!");
+            }
+
+
+          }
+          catch (Exception ex)
+          {
+            Log.Error("WOL - Failed to start the TV server - {0}", ex.Message);
+          }
+            
+          MessageBox.Show("Done", "Status", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
       }
-      catch (Exception ex)
-      {
-        MessageBox.Show("Error", "Status", MessageBoxButtons.OK, MessageBoxIcon.Error);
-      }
+
     }
   }
 }
