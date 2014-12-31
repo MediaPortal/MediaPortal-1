@@ -124,7 +124,7 @@ void CMpegPesParser::VideoReset()
 	basicVideoInfo.isValid=false;
 }
 
-bool CMpegPesParser::ParseAudio(byte* audioPacket,bool reset)
+bool CMpegPesParser::ParseAudio(byte* audioPacket, int streamType, bool reset)
 {
 	bool parsed=false;
 	__int64 framesize=hdrParser.GetSize();
@@ -134,7 +134,7 @@ bool CMpegPesParser::ParseAudio(byte* audioPacket,bool reset)
     basicAudioInfo.sampleRate=aac.nSamplesPerSec;
     basicAudioInfo.channels=aac.channels;    
     basicAudioInfo.aacObjectType=aac.profile+1;
-    basicAudioInfo.streamType = 3;
+    basicAudioInfo.streamType = streamType;
 	  basicAudioInfo.pmtValid = true;	
     basicAudioInfo.isValid = true;
 	  parsed=true;
@@ -142,11 +142,11 @@ bool CMpegPesParser::ParseAudio(byte* audioPacket,bool reset)
 	return parsed;
 }
 
-bool CMpegPesParser::OnAudioPacket(byte *Frame, int Length, bool reset)
+bool CMpegPesParser::OnAudioPacket(byte *Frame, int Length, int streamType, bool reset)
 {
   CAutoLock lock (&m_sectionAudioPmt);
 	hdrParser.Reset(Frame,Length);
-	return ParseAudio(Frame,reset);
+	return ParseAudio(Frame, streamType, reset);
 }
 
 void CMpegPesParser::AudioReset()
