@@ -897,7 +897,7 @@ namespace MediaPortal.GUI.Music
     private void FlipPictures()
     {
       // Check if we should let the visualization window handle image flipping
-      if (_usingBassEngine && _showVisualization)
+      if (_usingBassEngine && _showVisualization || g_Player.currentFileName == string.Empty)
       {
         return;
       }
