@@ -33,6 +33,7 @@
 #include <initguid.h>
 
 #include "MpegPesParser.h"
+#include "PmtParser.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
@@ -124,28 +125,63 @@ void CMpegPesParser::VideoReset()
 	basicVideoInfo.isValid=false;
 }
 
+void CMpegPesParser::VideoValidReset()
+{
+  CAutoLock lock (&m_sectionVideoPmt);
+	basicVideoInfo.isValid=false;	
+}
+
 bool CMpegPesParser::ParseAudio(byte* audioPacket, int streamType, bool reset)
 {
 	bool parsed=false;
-	__int64 framesize=hdrParser.GetSize();
-  aachdr aac;
-	if (hdrParser.Read(aac,framesize,&audPmt))
-	{
-    basicAudioInfo.sampleRate=aac.nSamplesPerSec;
-    basicAudioInfo.channels=aac.channels;    
-    basicAudioInfo.aacObjectType=aac.profile+1;
-    basicAudioInfo.streamType = streamType;
-	  basicAudioInfo.pmtValid = true;	
-    basicAudioInfo.isValid = true;
-	  parsed=true;
-	}
+
+  if (audioPacket==NULL) //Create default info
+  {
+  	basicAudioInfo.sampleRate=48000;
+  	basicAudioInfo.channels=2;
+    basicAudioInfo.aacObjectType=0;
+  	basicAudioInfo.streamType = streamType;
+  	basicAudioInfo.pmtValid=false;	
+  	basicAudioInfo.isValid=true;	
+  	
+  	if (streamType == SERVICE_TYPE_AUDIO_LATM_AAC)
+  	{
+      basicAudioInfo.aacObjectType=2; //AAC-LC
+  	}  	
+  	
+  	if (streamType == SERVICE_TYPE_AUDIO_AC3 ||
+  	    streamType == SERVICE_TYPE_AUDIO_DD_PLUS ||
+  	    streamType == SERVICE_TYPE_AUDIO_E_AC3)
+  	{
+      basicAudioInfo.channels=6;
+  	}  	
+  }
+  else if (streamType == SERVICE_TYPE_AUDIO_AAC)
+  {
+    aachdr aac;
+	  __int64 framesize=hdrParser.GetSize();
+  	if (hdrParser.Read(aac,framesize,&audPmt))
+  	{
+      basicAudioInfo.sampleRate=aac.nSamplesPerSec;
+      basicAudioInfo.channels=aac.channels;    
+      basicAudioInfo.aacObjectType=aac.profile+1;
+      basicAudioInfo.streamType = streamType;
+  	  basicAudioInfo.pmtValid = true;	
+      basicAudioInfo.isValid = true;
+  	  parsed=true;
+  	}
+  }
+	
 	return parsed;
 }
 
 bool CMpegPesParser::OnAudioPacket(byte *Frame, int Length, int streamType, bool reset)
 {
   CAutoLock lock (&m_sectionAudioPmt);
-	hdrParser.Reset(Frame,Length);
+  if (Frame != NULL)
+  {
+	  hdrParser.Reset(Frame,Length);
+  }
 	return ParseAudio(Frame, streamType, reset);
 }
 
@@ -156,7 +192,8 @@ void CMpegPesParser::AudioReset()
 	basicAudioInfo.isValid=false;	
 	basicAudioInfo.sampleRate=0;
 	basicAudioInfo.channels=0;
-	basicAudioInfo.streamType=0;
+  basicAudioInfo.aacObjectType=0;
+	basicAudioInfo.streamType = SERVICE_TYPE_AUDIO_UNKNOWN;
 	basicAudioInfo.pmtValid=false;	
 }
 

@@ -49,6 +49,7 @@ public:
 	bool OnTsPacket(byte* Frame,int Length,bool isMpeg2,bool reset);
   bool OnAudioPacket(byte *Frame,int Length, int streamType, bool reset);
   void VideoReset();
+  void VideoValidReset();
   void AudioReset();
   void AudioValidReset();
 	CMediaType pmt;

@@ -327,12 +327,6 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
       pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
-      if (m_mpegPesParser->basicAudioInfo.isValid)
-      {
-        WAVEFORMATEX* wfe = (WAVEFORMATEX*)pmt.Format();
-        wfe->nChannels = m_mpegPesParser->basicAudioInfo.channels;
-        wfe->nSamplesPerSec = m_mpegPesParser->basicAudioInfo.sampleRate;
-      }
       break;
   case SERVICE_TYPE_AUDIO_MPEG2:
       pmt.InitMediaType();
@@ -343,12 +337,6 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
       pmt.SetFormat(MPEG2AudioFormat,sizeof(MPEG2AudioFormat));
-      if (m_mpegPesParser->basicAudioInfo.isValid)
-      {
-        WAVEFORMATEX* wfe = (WAVEFORMATEX*)pmt.Format();
-        wfe->nChannels = m_mpegPesParser->basicAudioInfo.channels;
-        wfe->nSamplesPerSec = m_mpegPesParser->basicAudioInfo.sampleRate;
-      }
       break;
     case SERVICE_TYPE_AUDIO_AAC:
       pmt.InitMediaType();
@@ -365,12 +353,6 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       else
       {
         pmt.SetFormat(AACRawAudioFormat2,sizeof(AACRawAudioFormat2));
-        if (m_mpegPesParser->basicAudioInfo.isValid)
-        {
-          WAVEFORMATEX* wfe = (WAVEFORMATEX*)pmt.Format();
-          wfe->nChannels = m_mpegPesParser->basicAudioInfo.channels;
-          wfe->nSamplesPerSec = m_mpegPesParser->basicAudioInfo.sampleRate;
-        }
       }
       break;
     case SERVICE_TYPE_AUDIO_LATM_AAC:
@@ -382,12 +364,6 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
       iPosition ? pmt.SetFormat(AACLoasAudioFormat,sizeof(AACLoasAudioFormat)) : pmt.SetFormat(AACLatmAudioFormat,sizeof(AACLatmAudioFormat));
-      if (m_mpegPesParser->basicAudioInfo.isValid)
-      {
-        WAVEFORMATEX* wfe = (WAVEFORMATEX*)pmt.Format();
-        wfe->nChannels = m_mpegPesParser->basicAudioInfo.channels;
-        wfe->nSamplesPerSec = m_mpegPesParser->basicAudioInfo.sampleRate;
-      }
       break;
     case SERVICE_TYPE_AUDIO_AC3:
       pmt.InitMediaType();
@@ -419,6 +395,17 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
       pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
       break;
+  }
+  
+  //Modify pmt with correct channel count and sampling rate if possible
+  if (m_mpegPesParser->basicAudioInfo.isValid)
+  {
+    if (m_audioStreams[stream].audioType == m_mpegPesParser->basicAudioInfo.streamType) 
+    {
+      WAVEFORMATEX* wfe = (WAVEFORMATEX*)pmt.Format();
+      wfe->nChannels = m_mpegPesParser->basicAudioInfo.channels;
+      wfe->nSamplesPerSec = m_mpegPesParser->basicAudioInfo.sampleRate;
+    }
   }
 }
 // This methods selects the subtitle stream specified
@@ -480,8 +467,13 @@ bool CDeMultiplexer::GetSubtitleStreamType(__int32 stream, __int32 &type)
 
 bool CDeMultiplexer::GetVideoStreamType(CMediaType &pmt)
 {
-  if( m_pids.videoPids.size() != 0 && m_mpegPesParser != NULL && m_bFirstGopParsed)
+  if( m_pids.videoPids.size() != 0 && m_mpegPesParser != NULL)
   {
+    if (!m_mpegPesParser->basicVideoInfo.isValid)
+    {
+      return false;
+    }
+    
     CAutoLock lock (&m_mpegPesParser->m_sectionVideoPmt);
     pmt = m_mpegPesParser->pmt;
 
@@ -621,6 +613,11 @@ void CDeMultiplexer::FlushVideo()
   }
   m_bSetVideoDiscontinuity=true;
   m_bVideoSampleLate=false;
+
+  if (m_filter.IsSeeking() && m_filter.GetVideoPin()->IsConnected())
+  {
+    m_mpegPesParser->VideoValidReset(); 
+  }
   
   Reset();  // PacketSync reset.
 }
@@ -666,6 +663,11 @@ void CDeMultiplexer::FlushAudio()
   m_bAudioSampleLate=false;
   m_currentAACheader = 0;
   m_AACheaderCount = 0;
+
+  if (m_filter.IsSeeking() && m_filter.GetAudioPin()->IsConnected())
+  {
+    m_mpegPesParser->AudioValidReset(); 
+  }
   
   Reset();  // PacketSync reset.
 }
@@ -1050,7 +1052,7 @@ bool CDeMultiplexer::Start()
     {
       if (  (!m_mpegPesParser->basicAudioInfo.isValid ||
             ((m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid > 1) &&                   //There is a video stream.....
-              (!m_mpegPesParser->basicVideoInfo.isValid || !m_bFirstGopParsed ||               //and the first GOP header is not parsed....
+              (!m_mpegPesParser->basicVideoInfo.isValid ||               //and the first GOP header is not parsed....
               !(m_vidPTScount > 5 || m_vidDTScount > 5 || !m_filter.m_bUseFPSfromDTSPTS || m_bUsingGOPtimestamp)))) &&  //or we havent seen enough PTS/DTS timestamps....
            dwBytesProcessed<INITIAL_READ_SIZE)                                       //and we have not reached the data limit or the audio hasn't been parsed
       {
@@ -1626,24 +1628,19 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
 
                   //LATM find sync = 56 e3 52 20 0 11 b0, byteCount = 0, headerCount = 0
                   if (!m_mpegPesParser->basicAudioInfo.isValid)
-                  {
-                    CAutoLock plock (&m_mpegPesParser->m_sectionAudioPmt);
-                    
+                  {                    
                     byte hObjectType = ((*(ps+5) & 0xF8)>>3);
                     byte hFreq = ((*(ps+5) & 0x07) <<1) | ((*(ps+6) & 0x80)>>7);
                     byte hChannels = ((*(ps+6) & 0x78)>>3);
                     
                     if (hFreq<3 || hFreq>8 || hChannels>6 || hChannels<1 || (hObjectType!=2 && hObjectType!=5)) //Sanity checks...
                     {
-                      m_mpegPesParser->basicAudioInfo.sampleRate=48000;
-                      m_mpegPesParser->basicAudioInfo.channels=2;
-                      m_mpegPesParser->basicAudioInfo.streamType = m_AudioStreamType;
-                      m_mpegPesParser->basicAudioInfo.pmtValid = false;	
-                      m_mpegPesParser->basicAudioInfo.isValid = true; 
+                      m_mpegPesParser->OnAudioPacket(0, 0, m_AudioStreamType, true); //Generate default info
   				            LogDebug("demux: AAC LATM default header: sampleRate = %d, channels = %d, objectType = %d", m_mpegPesParser->basicAudioInfo.sampleRate, m_mpegPesParser->basicAudioInfo.channels, m_mpegPesParser->basicAudioInfo.aacObjectType);
                     }
                     else
                     {
+                      CAutoLock plock (&m_mpegPesParser->m_sectionAudioPmt);
                       static int freq[] = {96000, 88200, 64000, 48000, 44100, 32000, 24000, 22050, 16000, 12000, 11025, 8000, 7350};                     
                       m_mpegPesParser->basicAudioInfo.sampleRate = freq[hFreq];                      
                       m_mpegPesParser->basicAudioInfo.channels=hChannels;
@@ -1683,12 +1680,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
           {
             if (!m_mpegPesParser->basicAudioInfo.isValid)
             {
-              CAutoLock plock (&m_mpegPesParser->m_sectionAudioPmt);
-              m_mpegPesParser->basicAudioInfo.sampleRate=48000;
-              m_mpegPesParser->basicAudioInfo.channels=2;
-              m_mpegPesParser->basicAudioInfo.streamType = m_AudioStreamType;
-              m_mpegPesParser->basicAudioInfo.pmtValid=false;	
-              m_mpegPesParser->basicAudioInfo.isValid = true; 
+              m_mpegPesParser->OnAudioPacket(0, 0, m_AudioStreamType, true); //Generate default info
               m_filter.GetAudioPin()->SetAddPMT();
               m_bSetAudioDiscontinuity=true;
             }

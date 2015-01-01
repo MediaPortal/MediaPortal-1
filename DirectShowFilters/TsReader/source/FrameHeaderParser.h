@@ -26,6 +26,7 @@
 #include <strmif.h>
 //#include <mtype.h>
 #include "GolombBuffer.h"
+#include "PmtParser.h"
 
 enum mpeg_t {mpegunk, mpeg1, mpeg2};
 
@@ -388,7 +389,7 @@ struct BasicAudioInfo
 	{
 		sampleRate=0;
 		channels=0;
-		streamType=0;
+		streamType = SERVICE_TYPE_AUDIO_UNKNOWN;
 		aacObjectType=0;
 		isValid=false;
 		pmtValid=false;
