@@ -134,8 +134,58 @@ void CMpegPesParser::VideoValidReset()
 bool CMpegPesParser::ParseAudio(byte* audioPacket, int streamType, bool reset)
 {
 	bool parsed=false;
+ 
+  if (audioPacket!=NULL)
+  {
+    switch (streamType)
+    {
+      case SERVICE_TYPE_AUDIO_AAC:
+      {
+        aachdr aac;
+    	  __int64 framesize=hdrParser.GetSize();
+      	if (hdrParser.Read(aac,framesize,&audPmt))
+      	{
+          basicAudioInfo.sampleRate=aac.nSamplesPerSec;
+          basicAudioInfo.channels=aac.channels;    
+          basicAudioInfo.aacObjectType=aac.profile+1;
+          basicAudioInfo.streamType = streamType;
+      	  basicAudioInfo.pmtValid = true;	
+          basicAudioInfo.isValid = true;
+      	  parsed=true;
+      	}
+      }
+      break;
+      case SERVICE_TYPE_AUDIO_AC3:
+      {
+        ac3hdr ac3;
+    	  __int64 framesize=hdrParser.GetSize();
+      	if (hdrParser.Read(ac3,framesize,&audPmt))
+      	{
+        	static int freq[] = {48000, 44100, 32000, 0};
+        	basicAudioInfo.sampleRate = freq[ac3.fscod];        
+        	switch(ac3.bsid)
+        	{
+        	case  9: basicAudioInfo.sampleRate >>= 1; break;
+        	case 10: basicAudioInfo.sampleRate >>= 2; break;
+        	case 11: basicAudioInfo.sampleRate >>= 3; break;
+        	default: break;
+        	}
+          
+          static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
+	        basicAudioInfo.channels = channels[ac3.acmod] + ac3.lfeon;
 
-  if (audioPacket==NULL) //Create default info
+          basicAudioInfo.aacObjectType=0;
+          basicAudioInfo.streamType = streamType;
+      	  basicAudioInfo.pmtValid = true;	
+          basicAudioInfo.isValid = true;
+      	  parsed=true;
+      	}
+      }
+      break;
+    }
+  }
+
+  if (!parsed) //Create default info
   {
   	basicAudioInfo.sampleRate=48000;
   	basicAudioInfo.channels=2;
@@ -155,21 +205,6 @@ bool CMpegPesParser::ParseAudio(byte* audioPacket, int streamType, bool reset)
   	{
       basicAudioInfo.channels=6;
   	}  	
-  }
-  else if (streamType == SERVICE_TYPE_AUDIO_AAC)
-  {
-    aachdr aac;
-	  __int64 framesize=hdrParser.GetSize();
-  	if (hdrParser.Read(aac,framesize,&audPmt))
-  	{
-      basicAudioInfo.sampleRate=aac.nSamplesPerSec;
-      basicAudioInfo.channels=aac.channels;    
-      basicAudioInfo.aacObjectType=aac.profile+1;
-      basicAudioInfo.streamType = streamType;
-  	  basicAudioInfo.pmtValid = true;	
-      basicAudioInfo.isValid = true;
-  	  parsed=true;
-  	}
   }
 	
 	return parsed;

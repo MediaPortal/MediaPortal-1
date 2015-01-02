@@ -1541,14 +1541,14 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                       m_mpegPesParser->OnAudioPacket(ps, len, m_AudioStreamType, true);
                       m_filter.GetAudioPin()->SetAddPMT();
                       m_bSetAudioDiscontinuity=true;
-                      byte parsedChannels = ((*(ps+2) & 0x01)<<2) | ((*(ps+3) & 0xC0)>>6);
+                      //byte parsedChannels = ((*(ps+2) & 0x01)<<2) | ((*(ps+3) & 0xC0)>>6);
                       //LogDebug("demux: AAC ADTS parsedChannels = %d", parsedChannels);
 						          LogDebug("demux: AAC ADTS header: sampleRate = %d, channels = %d, objectType = %d", m_mpegPesParser->basicAudioInfo.sampleRate, m_mpegPesParser->basicAudioInfo.channels, m_mpegPesParser->basicAudioInfo.aacObjectType);
                     }
                     else
                     {
                       byte parsedChannels = ((*(ps+2) & 0x01)<<2) | ((*(ps+3) & 0xC0)>>6);
-                      if (parsedChannels<7 && parsedChannels>1 && (parsedChannels != m_mpegPesParser->basicAudioInfo.channels))
+                      if (parsedChannels<7 && parsedChannels>0 && (parsedChannels != m_mpegPesParser->basicAudioInfo.channels))
                       {
     				            LogDebug("demux: AAC ADTS channels = %d -> %d", m_mpegPesParser->basicAudioInfo.channels, parsedChannels);
                         CAutoLock plock (&m_mpegPesParser->m_sectionAudioPmt);
@@ -1588,7 +1588,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
             // LogDebug("LATM start PES = %d", len);
             while(len) 
             {
-              //Find correct LATM/LAOS frame header sync sequence by 'learning' the most frequent 28 bit header start pattern
+              //Find correct LATM/LAOS frame header sync sequence by 'learning' the correct header start pattern
               if ((*(INT16 *)ps & 0xE0FF) == 0xE056) //Syncword bits==0x2B7 (first 11 bits)
               {     
                 if (*(INT16 *)(ps+3) == 0x0020 && len > 6) //Preamble to AudioSpecificConfig() data
@@ -1658,7 +1658,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                   else if (m_AACheaderCount==4)
                   {
                     byte parsedChannels = ((*(ps+6) & 0x78)>>3);
-                    if (parsedChannels<7 && parsedChannels>1 && (parsedChannels != m_mpegPesParser->basicAudioInfo.channels))
+                    if (parsedChannels<7 && parsedChannels>0 && (parsedChannels != m_mpegPesParser->basicAudioInfo.channels))
                     {
     				          LogDebug("demux: AAC LATM channels = %d -> %d, header = %x %x %x %x %x %x %x", m_mpegPesParser->basicAudioInfo.channels, parsedChannels, *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6));
                       CAutoLock plock (&m_mpegPesParser->m_sectionAudioPmt);
@@ -1676,7 +1676,102 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
             
             Cbuf->SetLength(copyLen);            
           }         
-          else //not AAC audio
+          else if (m_AudioStreamType == SERVICE_TYPE_AUDIO_AC3)
+          {
+            // LogDebug("AC3 start PES = %d", len);
+            while(len) 
+            {
+              //Find correct AC3 frame header sync sequence by 'learning' the current header pattern
+              if (len > 6 && ((*(INT16 *)ps & 0xFFFF) == 0x770b)) //Syncword bits==0x0b77
+              {     
+                //LogDebug("demux: AC3 all sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_AACheaderCount);
+
+                if (m_AACheaderCount<4)  // Learning/training state
+                {
+                  if (m_currentAACheader == *(INT16 *)(ps+4)) //fscod, frmsizcod, bsid, bsmod fields
+                  {
+                    m_AACheaderCount++;
+                  }  
+                  else 
+                  {  
+                    m_currentAACheader = *(INT16 *)(ps+4); //fscod, frmsizcod, bsid, bsmod fields
+                    if (m_AACheaderCount>0) 
+                    {
+                      m_AACheaderCount--;
+                    } 
+                  }       
+                }
+                else // 'locked' state
+                {
+                  if (m_currentAACheader != *(INT16 *)(ps+4)) //fscod, frmsizcod, bsid, bsmod fields
+                  {
+                    m_AACheaderCount--; //invalid (or changing) header sequence
+                    //LogDebug("demux: AC3 lkd bad sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_AACheaderCount);
+                  }  
+                  else //good header sequence
+                  {
+                    foundAACheader = true;
+                    lastADTSheaderPosn = len;
+                    if (!m_mpegPesParser->basicAudioInfo.isValid)
+                    {
+                      m_mpegPesParser->OnAudioPacket(ps, len, m_AudioStreamType, true);
+                      m_filter.GetAudioPin()->SetAddPMT();
+                      m_bSetAudioDiscontinuity=true;
+                      
+                      //Parse the channel count
+                      byte bsi = *(ps+6);
+                      byte acmod = (bsi & 0xe0)>>5;
+                      
+                      //Get the 'lfeon' bit in the correct position
+                    	if((acmod & 1) && acmod != 1) bsi<<=2;
+                    	if(acmod & 4) bsi<<=2;
+                    	if(acmod == 2) bsi<<=2;
+
+                    	static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
+                      byte parsedChannels = channels[acmod] + ((bsi & 0x10)>>4); //Add one channel for 'lfeon'
+						          LogDebug("demux: AC3 header: sampleRate = %d, channels = %d, parsedChannels = %d", m_mpegPesParser->basicAudioInfo.sampleRate, m_mpegPesParser->basicAudioInfo.channels, parsedChannels);
+                    }
+                    else
+                    {
+                      //Parse the channel count
+                      byte bsi = *(ps+6);
+                      byte acmod = (bsi & 0xe0)>>5;
+                      
+                      //Get the 'lfeon' bit in the correct position - note the maximum total left shift is 4 bits
+                    	if((acmod & 1) && acmod != 1) bsi<<=2;
+                    	if(acmod & 4) bsi<<=2;
+                    	if(acmod == 2) bsi<<=2;
+
+                    	static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
+                      byte parsedChannels = channels[acmod] + ((bsi & 0x10)>>4); //Add one channel for 'lfeon'
+                      if (parsedChannels<7 && parsedChannels>0 && (parsedChannels != m_mpegPesParser->basicAudioInfo.channels))
+                      {
+    				            LogDebug("demux: AC3 channels = %d -> %d", m_mpegPesParser->basicAudioInfo.channels, parsedChannels);
+                        CAutoLock plock (&m_mpegPesParser->m_sectionAudioPmt);
+                        m_mpegPesParser->basicAudioInfo.channels=parsedChannels;
+                        Cbuf->SetForcePMT();
+                      }
+                    }
+                    if (m_AACheaderCount<8)
+                    {
+                      m_AACheaderCount++;
+                      if (m_AACheaderCount<7)
+                      {
+                        LogDebug("demux: AC3 good sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_AACheaderCount);
+                      }
+                    }
+                  }
+                }                  
+              }
+              
+              copyLen++;
+              *p++ = *ps++;   // memcpy could be not safe.
+              len--;            
+            }
+            
+            Cbuf->SetLength(copyLen);            
+          }         
+          else //other audio types
           {
             if (!m_mpegPesParser->basicAudioInfo.isValid)
             {
