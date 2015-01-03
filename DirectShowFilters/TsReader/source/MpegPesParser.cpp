@@ -182,6 +182,30 @@ bool CMpegPesParser::ParseAudio(byte* audioPacket, int streamType, bool reset)
       	}
       }
       break;
+      case SERVICE_TYPE_AUDIO_DD_PLUS:
+      case SERVICE_TYPE_AUDIO_E_AC3:
+      {
+        eac3hdr eac3;
+    	  __int64 framesize=hdrParser.GetSize();
+      	if (hdrParser.Read(eac3,framesize,&audPmt))
+      	{
+        	static int freq[] = {48000, 44100, 32000, 0};
+        	if (eac3.fscod==3)
+        	  basicAudioInfo.sampleRate = freq[eac3.fscod2]/2;
+        	else
+        	  basicAudioInfo.sampleRate = freq[eac3.fscod];
+          
+          static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
+	        basicAudioInfo.channels = channels[eac3.acmod] + eac3.lfeon;
+
+          basicAudioInfo.aacObjectType=0;
+          basicAudioInfo.streamType = streamType;
+      	  basicAudioInfo.pmtValid = true;	
+          basicAudioInfo.isValid = true;
+      	  parsed=true;
+      	}
+      }
+      break;
     }
   }
 

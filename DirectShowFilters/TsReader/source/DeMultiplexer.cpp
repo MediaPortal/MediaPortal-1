@@ -1771,6 +1771,92 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
             
             Cbuf->SetLength(copyLen);            
           }         
+          else if (m_AudioStreamType == SERVICE_TYPE_AUDIO_DD_PLUS ||
+                   m_AudioStreamType == SERVICE_TYPE_AUDIO_E_AC3)
+          {
+            // LogDebug("E-AC3 start PES = %d", len);
+            while(len) 
+            {
+              //Find correct AC3 frame header sync sequence by 'learning' the current header pattern
+              if (len > 6 && ((*(INT16 *)ps & 0xFFFF) == 0x770b)) //Syncword bits==0x0b77
+              {     
+                //LogDebug("demux: E-AC3 all sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_AACheaderCount);
+
+                if (m_AACheaderCount<4)  // Learning/training state
+                {
+                  if (m_currentAACheader == (*(INT16 *)(ps+4) & 0xFFF0)) //fscod, fscod2, bsid, bsmod fields
+                  {
+                    m_AACheaderCount++;
+                  }  
+                  else 
+                  {  
+                    m_currentAACheader = (*(INT16 *)(ps+4) & 0xFFF0); //fscod, fscod2, bsid, bsmod fields
+                    if (m_AACheaderCount>0) 
+                    {
+                      m_AACheaderCount--;
+                    } 
+                  }       
+                }
+                else // 'locked' state
+                {
+                  if (m_currentAACheader != (*(INT16 *)(ps+4) & 0xFFF0)) //fscod, fscod2, bsid, bsmod fields
+                  {
+                    m_AACheaderCount--; //invalid (or changing) header sequence
+                    //LogDebug("demux: E-AC3 lkd bad sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_AACheaderCount);
+                  }  
+                  else //good header sequence
+                  {
+                    foundAACheader = true;
+                    lastADTSheaderPosn = len;
+                    if (!m_mpegPesParser->basicAudioInfo.isValid)
+                    {
+                      m_mpegPesParser->OnAudioPacket(ps, len, m_AudioStreamType, true);
+                      m_filter.GetAudioPin()->SetAddPMT();
+                      m_bSetAudioDiscontinuity=true;
+                      
+                      //Parse the channel count
+                      byte chan = *(ps+4);
+                      byte acmod = (chan & 0x0E)>>1;
+                      
+                    	static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
+                      byte parsedChannels = channels[acmod] + (chan & 0x01); //Add one channel for 'lfeon'
+						          LogDebug("demux: E-AC3 header: sampleRate = %d, channels = %d, parsedChannels = %d", m_mpegPesParser->basicAudioInfo.sampleRate, m_mpegPesParser->basicAudioInfo.channels, parsedChannels);
+                    }
+                    else
+                    {
+                      //Parse the channel count
+                      byte chan = *(ps+4);
+                      byte acmod = (chan & 0x0E)>>1;
+                      
+                    	static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
+                      byte parsedChannels = channels[acmod] + (chan & 0x01); //Add one channel for 'lfeon'
+                      if (parsedChannels<7 && parsedChannels>0 && (parsedChannels != m_mpegPesParser->basicAudioInfo.channels))
+                      {
+    				            LogDebug("demux: E-AC3 channels = %d -> %d", m_mpegPesParser->basicAudioInfo.channels, parsedChannels);
+                        CAutoLock plock (&m_mpegPesParser->m_sectionAudioPmt);
+                        m_mpegPesParser->basicAudioInfo.channels=parsedChannels;
+                        Cbuf->SetForcePMT();
+                      }
+                    }
+                    if (m_AACheaderCount<8)
+                    {
+                      m_AACheaderCount++;
+                      if (m_AACheaderCount<7)
+                      {
+                        LogDebug("demux: E-AC3 good sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_AACheaderCount);
+                      }
+                    }
+                  }
+                }                  
+              }
+              
+              copyLen++;
+              *p++ = *ps++;   // memcpy could be not safe.
+              len--;            
+            }
+            
+            Cbuf->SetLength(copyLen);            
+          }         
           else //other audio types
           {
             if (!m_mpegPesParser->basicAudioInfo.isValid)

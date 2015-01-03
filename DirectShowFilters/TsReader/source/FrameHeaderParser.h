@@ -152,6 +152,22 @@ struct pshdr
 		// the rest is unimportant for us
 	};
 
+	class eac3hdr
+	{
+	public:
+		WORD sync;
+		BYTE strmtyp:2;
+		BYTE substreamid:3;
+		DWORD frmsiz;
+		BYTE fscod:2;
+		BYTE fscod2:2;
+		BYTE acmod:3;
+		BYTE lfeon:1;
+		BYTE bsid:5;
+		BYTE bsmod:3;
+		// the rest is unimportant for us
+	};
+
 	class dtshdr
 	{
 	public:
@@ -410,6 +426,7 @@ public:
 	bool Read(mpahdr& h, int len, bool fAllowV25, CMediaType* pmt = NULL);
 	bool Read(aachdr& h, int len, CMediaType* pmt = NULL);
 	bool Read(ac3hdr& h, int len, CMediaType* pmt = NULL);
+	bool Read(eac3hdr& h, int len, CMediaType* pmt = NULL);
 	bool Read(dtshdr& h, int len, CMediaType* pmt = NULL);
 	bool Read(lpcmhdr& h, CMediaType* pmt = NULL);
 	bool Read(hdmvlpcmhdr& h, CMediaType* pmt = NULL);
