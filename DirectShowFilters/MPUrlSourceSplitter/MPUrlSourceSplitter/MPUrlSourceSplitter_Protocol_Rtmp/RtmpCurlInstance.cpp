@@ -26,6 +26,10 @@
 #include "conversions.h"
 #include "ErrorCodes.h"
 
+#define SLEEP_MODE_NO                                                 0
+#define SLEEP_MODE_SHORT                                              1
+#define SLEEP_MODE_LONG                                               2
+
 CRtmpCurlInstance::CRtmpCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
   : CCurlInstance(result, logger, mutex, protocolName, instanceName)
 {
@@ -298,9 +302,12 @@ unsigned int CRtmpCurlInstance::CurlWorker(void)
   ALLOC_MEM_DEFINE_SET(buffer, char, RTMP_READ_BUFFER_SIZE, 0);
   CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
 
+  unsigned int sleepMode = SLEEP_MODE_LONG;
+
   while (!this->curlWorkerShouldExit)
   {
     readBytes = 0;
+    sleepMode = SLEEP_MODE_LONG;
 
     if ((this->state == CURL_STATE_RECEIVING_DATA) && (this->rtmp != NULL))
     {
@@ -350,7 +357,17 @@ unsigned int CRtmpCurlInstance::CurlWorker(void)
       UNLOCK_MUTEX(this->mutex)
     }
 
-    Sleep(1);
+    switch (sleepMode)
+    {
+    case SLEEP_MODE_SHORT:
+      Sleep(1);
+      break;
+    case SLEEP_MODE_LONG:
+      Sleep(20);
+      break;
+    default:
+      break;
+    }
   }
 
   FREE_MEM(buffer);

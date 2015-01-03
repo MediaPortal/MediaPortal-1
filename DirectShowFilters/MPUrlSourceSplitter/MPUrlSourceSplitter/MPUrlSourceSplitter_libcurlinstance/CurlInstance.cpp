@@ -28,6 +28,10 @@
 
 #include <process.h>
 
+#define SLEEP_MODE_NO                                                 0
+#define SLEEP_MODE_SHORT                                              1
+#define SLEEP_MODE_LONG                                               2
+
 CCurlInstance::CCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
   : CFlags()
 {
@@ -380,8 +384,11 @@ unsigned int CCurlInstance::CurlWorker(void)
 
   if (SUCCEEDED(result))
   {
+    unsigned int sleepMode = SLEEP_MODE_LONG;
+
     while (SUCCEEDED(result) && (!this->curlWorkerShouldExit))
     {
+      sleepMode = SLEEP_MODE_LONG;
       int runningHandles = 0;
       result = HRESULT_FROM_CURLM_CODE(curl_multi_perform(this->multi_curl, &runningHandles));
 
@@ -417,12 +424,19 @@ unsigned int CCurlInstance::CurlWorker(void)
       int ret = 0;
       if (curl_multi_wait(this->multi_curl, NULL, 0, 0, &ret) == CURLM_OK)
       {
-        if (ret == 0)
-        {
-          // nothing is waiting to read data
-          // sleep some time, get chance for other threads to work
-          Sleep(1);
-        }
+        sleepMode = (ret != 0) ? SLEEP_MODE_SHORT : sleepMode;
+      }
+
+      switch (sleepMode)
+      {
+      case SLEEP_MODE_SHORT:
+        Sleep(1);
+        break;
+      case SLEEP_MODE_LONG:
+        Sleep(20);
+        break;
+      default:
+        break;
       }
     }
 
