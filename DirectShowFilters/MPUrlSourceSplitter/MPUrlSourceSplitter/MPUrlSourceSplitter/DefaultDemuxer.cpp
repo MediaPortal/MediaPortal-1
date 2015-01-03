@@ -133,7 +133,7 @@ void CDefaultDemuxer::DemuxingWorkerInternal(void)
     // S_FALSE means no packet
     if (result == S_OK)
     {
-      CLockMutex lock(this->outputPacketMutex, INFINITE);
+      LOCK_MUTEX(this->outputPacketMutex, INFINITE)
 
       if (packet->IsEndOfStream())
       {
@@ -156,6 +156,8 @@ void CDefaultDemuxer::DemuxingWorkerInternal(void)
       {
         CHECK_CONDITION_HRESULT(result, this->outputPacketCollection->Add(packet), result, E_OUTOFMEMORY);
       }
+
+      UNLOCK_MUTEX(this->outputPacketMutex)
     }
 
     CHECK_CONDITION_EXECUTE(result != S_OK, FREE_MEM_CLASS(packet));

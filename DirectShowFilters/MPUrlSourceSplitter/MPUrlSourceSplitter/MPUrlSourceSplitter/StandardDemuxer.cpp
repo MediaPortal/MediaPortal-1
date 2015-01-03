@@ -757,7 +757,7 @@ void CStandardDemuxer::DemuxingWorkerInternal(void)
     // S_FALSE means no packet
     if (result == S_OK)
     {
-      CLockMutex lock(this->outputPacketMutex, INFINITE);
+      LOCK_MUTEX(this->outputPacketMutex, INFINITE)
 
       if (packet->IsEndOfStream())
       {
@@ -808,6 +808,8 @@ void CStandardDemuxer::DemuxingWorkerInternal(void)
       {
         CHECK_CONDITION_HRESULT(result, this->outputPacketCollection->Add(packet), result, E_OUTOFMEMORY);
       }
+
+      UNLOCK_MUTEX(this->outputPacketMutex)
     }
 
     CHECK_CONDITION_EXECUTE(result != S_OK, FREE_MEM_CLASS(packet));
@@ -1792,10 +1794,12 @@ HRESULT CStandardDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
 
     {
       // lock access to media packets and output packets
-      CLockMutex outputPacketLock(this->outputPacketMutex, INFINITE);
+      LOCK_MUTEX(this->outputPacketMutex, INFINITE)
 
       // clear output packets
       this->outputPacketCollection->Clear();
+
+      UNLOCK_MUTEX(this->outputPacketMutex)
     }
   }
 
@@ -1877,7 +1881,7 @@ HRESULT CStandardDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
     if (seekedTime >= 0)
     {
       // lock access to output packets
-      CLockMutex outputPacketLock(this->outputPacketMutex, INFINITE);
+      LOCK_MUTEX(this->outputPacketMutex, INFINITE)
 
       // clear output packets
       this->outputPacketCollection->Clear();
@@ -1896,6 +1900,8 @@ HRESULT CStandardDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
           stream->GetSeekIndexEntries()->Clear();
         }
       }
+
+      UNLOCK_MUTEX(this->outputPacketMutex)
     }
     else
     {
@@ -2298,10 +2304,12 @@ HRESULT CStandardDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
 
     {
       // lock access to media packets and output packets
-      CLockMutex outputPacketLock(this->outputPacketMutex, INFINITE);
+      LOCK_MUTEX(this->outputPacketMutex, INFINITE)
 
       // clear output packets
       this->outputPacketCollection->Clear();
+
+      UNLOCK_MUTEX(this->outputPacketMutex)
     }
   }
 

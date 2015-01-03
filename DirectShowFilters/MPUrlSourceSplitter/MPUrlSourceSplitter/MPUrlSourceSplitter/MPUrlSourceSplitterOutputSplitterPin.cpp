@@ -103,7 +103,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::QueuePacket(COutputPinPacket *pac
 {
   HRESULT result = S_OK;
 
-  LOCK_MUTEX(this->mediaPacketsLock, timeout)
+  LOCK_MUTEX(this->outputPinPacketsLock, timeout)
 
   if (this->mediaTypeToSend != NULL)
   {
@@ -117,14 +117,19 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::QueuePacket(COutputPinPacket *pac
 
     result = this->outputPinPackets->Add(packet) ? result : E_OUTOFMEMORY;
 
-    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->flags |= MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_END_OF_STREAM);  }
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->flags |= MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_END_OF_STREAM);
+  }
   else
   {
     // parse packet (if necessary)
     result = this->Parse(this->m_mt.subtype, packet);
   }
 
-  UNLOCK_MUTEX(this->mediaPacketsLock)
+  UNLOCK_MUTEX(this->outputPinPacketsLock)
+  else
+  {
+    result = VFW_E_TIMEOUT;
+  }
 
   return result;
 }

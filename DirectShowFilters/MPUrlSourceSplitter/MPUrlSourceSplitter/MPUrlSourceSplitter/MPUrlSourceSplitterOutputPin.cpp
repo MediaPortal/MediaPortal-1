@@ -59,7 +59,7 @@ CMPUrlSourceSplitterOutputPin::CMPUrlSourceSplitterOutputPin(LPCWSTR pName, CBas
   this->cacheFile = NULL;
   this->dumpFile = NULL;
   this->outputPinPacketProcessed = UINT_MAX;
-  this->mediaPacketsLock = NULL;
+  this->outputPinPacketsLock = NULL;
 
   if ((phr != NULL) && (SUCCEEDED(*phr)))
   {
@@ -570,9 +570,9 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
 
             if (this->outputPinPackets->Count() > 0)
             {
-              if ((this->mediaPackets->GetItem(0)->IsLoadedToMemory()) || (this->cacheFile->LoadItems(this->mediaPackets, 0, true, this->mediaPacketProcessed)))
+              if ((this->outputPinPackets->GetItem(0)->IsLoadedToMemory()) || (this->cacheFile->LoadItems(this->outputPinPackets, 0, true, this->outputPinPacketProcessed)))
               {
-                packet = this->mediaPackets->GetItem(0);
+                packet = this->outputPinPackets->GetItem(0);
 
                 // we don't want to remove content of output pin packet from memory
                 packet->SetNoCleanUpFromMemory(true, 0);
@@ -739,9 +739,9 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
           LOCK_MUTEX(this->outputPinPacketsLock, 10)
 
           // store all media packets (which are not stored) to file
-          if ((this->cacheFile->GetCacheFile() != NULL) && (this->mediaPackets->Count() != 0) && (this->mediaPackets->GetLoadedToMemorySize() > CACHE_FILE_RELOAD_SIZE))
+          if ((this->cacheFile->GetCacheFile() != NULL) && (this->outputPinPackets->Count() != 0) && (this->outputPinPackets->GetLoadedToMemorySize() > CACHE_FILE_RELOAD_SIZE))
           {
-            this->cacheFile->StoreItems(this->mediaPackets, this->lastStoreTime, false, false);
+            this->cacheFile->StoreItems(this->outputPinPackets, this->lastStoreTime, false, false);
           }
 
           UNLOCK_MUTEX(this->outputPinPacketsLock)

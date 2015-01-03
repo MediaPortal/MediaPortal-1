@@ -1798,16 +1798,20 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
                       // refTime is measured from demuxStart
                       // packet start time is also measured from demuxStart
 
-                      // 100000 is cca 10 ms in DSHOW_TIME_BASE units
-                      if (packet->GetStartTime() >= (streamTime + 100000))
+                      if (refTime.Millisecs() > 0)
                       {
                         int64_t streamTime = (int64_t)(refTime.Millisecs() * (DSHOW_TIME_BASE / 1000));
 
+                        // 100000 is cca 10 ms in DSHOW_TIME_BASE units
                         if (packet->GetStartTime() >= (streamTime + 100000))
                         {
                           CHECK_CONDITION_EXECUTE(!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DELAYING), this->logger->Log(LOGGER_WARNING, L"%s: %s: delaying packet, demuxer: %u, stream ID: %u, start: %016lld, end: %016lld, delay: %016lld, stream time: %lld, demux start: %lld", MODULE_NAME, METHOD_THREAD_PROC_NAME, packet->GetDemuxerId(), packet->GetStreamPid(), packet->GetStartTime(), packet->GetEndTime(), packet->GetStartTime() - (streamTime + 100000), streamTime, this->demuxStart));
 
-                        sleepMode = SLEEP_MODE_LONG;
+                          this->flags |= MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DELAYING;
+                          result = E_FAIL;
+
+                          sleepMode = SLEEP_MODE_LONG;
+                        }
                       }
                     }
                   }
