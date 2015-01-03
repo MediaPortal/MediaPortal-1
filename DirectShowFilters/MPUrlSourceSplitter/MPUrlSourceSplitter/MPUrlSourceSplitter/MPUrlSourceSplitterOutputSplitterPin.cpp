@@ -126,6 +126,10 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::QueuePacket(COutputPinPacket *pac
   }
 
   UNLOCK_MUTEX(this->mediaPacketsLock)
+  else
+  {
+    result = VFW_E_TIMEOUT;
+  }
 
   return result;
 }
