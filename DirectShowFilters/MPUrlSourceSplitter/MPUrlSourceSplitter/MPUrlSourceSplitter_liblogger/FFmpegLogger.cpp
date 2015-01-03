@@ -149,18 +149,18 @@ bool CFFmpegLogger::RegisterFFmpegContext(CFFmpegContext *ffmpegContext)
 {
   bool result = false;
 
-  {
-    CLockMutex lock(this->mutex, INFINITE);
+  LOCK_MUTEX(this->mutex, INFINITE)
 
-    result |= this->contexts->Add(ffmpegContext);
-  }
+  result |= this->contexts->Add(ffmpegContext);
+
+  UNLOCK_MUTEX(this->mutex)
 
   return result;
 }
 
 void CFFmpegLogger::UnregisterFFmpegContext(CFFmpegContext *ffmpegContext)
 {
-  CLockMutex lock(this->mutex, INFINITE);
+  LOCK_MUTEX(this->mutex, INFINITE)
 
   for (unsigned int i = 0; i < this->contexts->Count(); i++)
   {
@@ -172,6 +172,8 @@ void CFFmpegLogger::UnregisterFFmpegContext(CFFmpegContext *ffmpegContext)
       break;
     }
   }
+
+  UNLOCK_MUTEX(this->mutex)
 }
 
 /* protected methods */
@@ -244,7 +246,7 @@ void CFFmpegLogger::Log(unsigned int logLevel, const wchar_t *format, va_list vl
 
 void CFFmpegLogger::LogCallback(void *ptr, int log_level, const char *format, va_list vl)
 {
-  CLockMutex(ffmpegLogger->mutex, INFINITE);
+  LOCK_MUTEX(ffmpegLogger->mutex, INFINITE)
 
   bool logged = false;
 
@@ -268,4 +270,6 @@ void CFFmpegLogger::LogCallback(void *ptr, int log_level, const char *format, va
 
     FREE_MEM(message);
   }
+
+  UNLOCK_MUTEX(ffmpegLogger->mutex)
 }

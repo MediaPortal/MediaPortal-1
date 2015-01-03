@@ -152,9 +152,6 @@
     <ClCompile Include="LinearBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LockMutex.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MediaPacket.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

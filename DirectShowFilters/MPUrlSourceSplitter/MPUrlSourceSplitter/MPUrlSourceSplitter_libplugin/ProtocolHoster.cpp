@@ -29,6 +29,10 @@
 
 #include <process.h>
 
+#define SLEEP_MODE_NO                                                 0
+#define SLEEP_MODE_SHORT                                              1
+#define SLEEP_MODE_LONG                                               2
+
 CProtocolHoster::CProtocolHoster(HRESULT *result, CLogger *logger, CParameterCollection *configuration)
   : CHoster(result, logger, configuration, L"ProtocolHoster", L"mpurlsourcesplitter_protocol_*.dll")
 {
@@ -262,69 +266,72 @@ HRESULT CProtocolHoster::ProcessStreamPackage(CStreamPackage *streamPackage)
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, streamPackage);
 
+  CStreamPackage *clone = NULL;
   if (SUCCEEDED(result))
   {
-    {
-      // lock mutex to add stream package to stream package collection
+    // lock mutex to add stream package to stream package collection
+    LOCK_MUTEX(this->mutex, INFINITE)
 
-      CLockMutex lock(this->mutex, INFINITE);
+    clone = streamPackage->Clone();
+    CHECK_POINTER_HRESULT(result, clone, result, E_OUTOFMEMORY);
 
-      CStreamPackage *clone = streamPackage->Clone();
-      CHECK_POINTER_HRESULT(result, clone, result, E_OUTOFMEMORY);
+    CHECK_CONDITION_HRESULT(result, this->streamPackages->Add(clone), result, E_OUTOFMEMORY);
+    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(clone));
 
-      CHECK_CONDITION_HRESULT(result, this->streamPackages->Add(clone), result, E_OUTOFMEMORY);
-      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(clone));
-    }
+    UNLOCK_MUTEX(this->mutex)
   }
 
   if (SUCCEEDED(result))
   {
-    // monitor processing of stream package
+    // wait until request is processed
 
-    bool processed = false;
-    while (!processed)
+    if (WaitForSingleObject(clone->GetProcessedEventHandle(), INFINITE) == WAIT_OBJECT_0)
     {
+      // stream package is processed
+
+      bool processed = false;
+      while (!processed)
       {
         // lock mutex to get exclussive access to stream package
         // don't wait too long
-        CLockMutex lock(this->mutex, 20);
 
-        if (lock.IsLocked())
+        LOCK_MUTEX(this->mutex, 20)
+
+        for (unsigned int i = 0; ((!processed) && (i < this->streamPackages->Count())); i++)
         {
-          for (unsigned int i = 0; ((!processed) && (i < this->streamPackages->Count())); i++)
+          CStreamPackage *package = this->streamPackages->GetItem(i);
+
+          CHECK_CONDITION_EXECUTE(this->activeProtocol == NULL, package->SetCompleted(E_NO_ACTIVE_PROTOCOL));
+
+          if ((package->GetState() == CStreamPackage::Completed) &&
+            (package->GetRequest()->GetId() == streamPackage->GetRequest()->GetId()) &&
+            (package->GetRequest()->GetStreamId() == streamPackage->GetRequest()->GetStreamId()))
           {
-            CStreamPackage *package = this->streamPackages->GetItem(i);
-
-            CHECK_CONDITION_EXECUTE(this->activeProtocol == NULL, package->SetCompleted(E_NO_ACTIVE_PROTOCOL));
-
-            if ((package->GetState() == CStreamPackage::Completed) &&
-              (package->GetRequest()->GetId() == streamPackage->GetRequest()->GetId()) &&
-              (package->GetRequest()->GetStreamId() == streamPackage->GetRequest()->GetStreamId()))
+            // clone response to stream package
+            if (package->GetResponse() != NULL)
             {
-              // clone response to stream package
-              if (package->GetResponse() != NULL)
-              {
-                CStreamPackageResponse *response = package->GetResponse()->Clone();
-                CHECK_POINTER_HRESULT(result, response, result, E_OUTOFMEMORY);
+              CStreamPackageResponse *response = package->GetResponse()->Clone();
+              CHECK_POINTER_HRESULT(result, response, result, E_OUTOFMEMORY);
 
-                CHECK_CONDITION_EXECUTE(SUCCEEDED(result), streamPackage->SetResponse(response));
-                CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(response));
-              }
-
-              streamPackage->SetCompleted(SUCCEEDED(result) ? package->GetError() : result);
-
-              // remove stream package from collection
-              this->streamPackages->Remove(i);
-              processed = true;
+              CHECK_CONDITION_EXECUTE(SUCCEEDED(result), streamPackage->SetResponse(response));
+              CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(response));
             }
+
+            streamPackage->SetCompleted(SUCCEEDED(result) ? package->GetError() : result);
+
+            // remove stream package from collection
+            this->streamPackages->Remove(i);
+            processed = true;
           }
         }
-      }
 
-      if (!processed)
-      {
-        // sleep some time
-        Sleep(1);
+        UNLOCK_MUTEX(this->mutex)
+
+        if (!processed)
+        {
+          // sleep some time
+          Sleep(1);
+        }
       }
     }
   }
@@ -600,31 +607,46 @@ unsigned int WINAPI CProtocolHoster::ReceiveDataWorker(LPVOID lpParam)
   CStreamPackage *tempStreamPackage = new CStreamPackage(&result);
   CHECK_POINTER_HRESULT(result, tempStreamPackage, result, E_OUTOFMEMORY);
 
+  unsigned int sleepMode = SLEEP_MODE_NO;
+
   while (!caller->receiveDataWorkerShouldExit)
   {
-    Sleep(1);
+    switch (sleepMode)
+    {
+    case SLEEP_MODE_SHORT:
+      Sleep(1);
+      break;
+    case SLEEP_MODE_LONG:
+      Sleep(20);
+      break;
+    default:
+      break;
+    }
 
     if (FAILED(result) || (caller->pauseSeekStopMode == PAUSE_SEEK_STOP_MODE_DISABLE_READING))
     {
       // we have error, for each stream package (if any) return error
-
       // don't wait too long
-      CLockMutex lock(caller->mutex, 20);
 
-      if (lock.IsLocked())
+      LOCK_MUTEX(caller->mutex, 20)
+
+      for (unsigned int i = 0; i < caller->streamPackages->Count(); i++)
       {
-        for (unsigned int i = 0; i < caller->streamPackages->Count(); i++)
-        {
-          HRESULT res = S_OK;
-          CStreamPackage *package = caller->streamPackages->GetItem(i);
+        HRESULT res = S_OK;
+        CStreamPackage *package = caller->streamPackages->GetItem(i);
 
-          package->SetCompleted((caller->pauseSeekStopMode == PAUSE_SEEK_STOP_MODE_DISABLE_READING) ? E_PAUSE_SEEK_STOP_MODE_DISABLE_READING : result);
-        }
+        package->SetCompleted((caller->pauseSeekStopMode == PAUSE_SEEK_STOP_MODE_DISABLE_READING) ? E_PAUSE_SEEK_STOP_MODE_DISABLE_READING : result);
       }
+
+      UNLOCK_MUTEX(caller->mutex)
+
+      sleepMode = SLEEP_MODE_LONG;
     }
 
     if (SUCCEEDED(result))
     {
+      sleepMode = SLEEP_MODE_LONG;
+
       unsigned int connectionState = caller->activeProtocol->GetConnectionState();
       currentTime = GetTickCount();
 
@@ -734,35 +756,36 @@ unsigned int WINAPI CProtocolHoster::ReceiveDataWorker(LPVOID lpParam)
         // if no request available, we call ReceiveData() with temporary dummy request (we don't request any data)
 
         // don't wait too long
-        CLockMutex lock(caller->mutex, 20);
+        LOCK_MUTEX(caller->mutex, 20)
 
-        if (lock.IsLocked())
+        CStreamPackage *package = NULL;
+
+        if ((caller->pauseSeekStopMode != PAUSE_SEEK_STOP_MODE_DISABLE_READING) && (caller->streamPackages->Count() != 0))
         {
-          CStreamPackage *package = NULL;
+          // we have opened connection, we can process requests (if any)
 
-          if ((caller->pauseSeekStopMode != PAUSE_SEEK_STOP_MODE_DISABLE_READING) && (caller->streamPackages->Count() != 0))
+          for (unsigned int i = 0; (SUCCEEDED(result) && (i < caller->streamPackages->Count())); i++)
           {
-            // we have opened connection, we can process requests (if any)
+            result = caller->activeProtocol->ReceiveData(caller->streamPackages->GetItem(i));
 
-            for (unsigned int i = 0; (SUCCEEDED(result) && (i < caller->streamPackages->Count())); i++)
-            {
-              result = caller->activeProtocol->ReceiveData(caller->streamPackages->GetItem(i));
-            }
-          }
-          else
-          {
-            tempStreamPackage->Clear();
-
-            // we don't have any request, we can process only dummy request
-            result = caller->activeProtocol->ReceiveData(tempStreamPackage);
-          }
-
-          if (FAILED(result))
-          {
-            caller->protocolError = result;
-            caller->logger->Log(LOGGER_ERROR, L"%s: %s: protocol returned error: 0x%08X", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME, result);
+            sleepMode = (result == S_FALSE) ? SLEEP_MODE_SHORT : sleepMode;
           }
         }
+        else
+        {
+          tempStreamPackage->Clear();
+
+          // we don't have any request, we can process only dummy request
+          result = caller->activeProtocol->ReceiveData(tempStreamPackage);
+        }
+
+        if (FAILED(result))
+        {
+          caller->protocolError = result;
+          caller->logger->Log(LOGGER_ERROR, L"%s: %s: protocol returned error: 0x%08X", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME, result);
+        }
+
+        UNLOCK_MUTEX(caller->mutex)
       }
     }
   }

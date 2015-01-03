@@ -242,9 +242,6 @@ protected:
 
   virtual DWORD ThreadProc();
 
-  // dumps outgoing data and its sizes to dump file
-  //void DumpDataAndDumpDataSizes(void);
-
   // creates dump box for dump file
   // @return : dump box or NULL if error
   virtual CDumpBox *CreateDumpBox(void);

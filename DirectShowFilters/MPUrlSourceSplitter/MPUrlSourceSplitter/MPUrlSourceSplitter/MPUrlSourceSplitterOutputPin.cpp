@@ -33,10 +33,14 @@
 #include <Shlwapi.h>
 
 #ifdef _DEBUG
-#define MODULE_NAME                                               L"MPUrlSourceSplitterOutputPind"
+#define MODULE_NAME                                                   L"MPUrlSourceSplitterOutputPind"
 #else
-#define MODULE_NAME                                               L"MPUrlSourceSplitterOutputPin"
+#define MODULE_NAME                                                   L"MPUrlSourceSplitterOutputPin"
 #endif
+
+#define SLEEP_MODE_NO                                                 0
+#define SLEEP_MODE_SHORT                                              1
+#define SLEEP_MODE_LONG                                               2
 
 CMPUrlSourceSplitterOutputPin::CMPUrlSourceSplitterOutputPin(LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr, CLogger *logger, CParameterCollection *parameters, CMediaTypeCollection *mediaTypes)
   : CBaseOutputPin(NAME("MediaPortal Url Source Splitter Output Pin"), pFilter, pLock, phr, pName), CFlags()
@@ -54,6 +58,7 @@ CMPUrlSourceSplitterOutputPin::CMPUrlSourceSplitterOutputPin(LPCWSTR pName, CBas
   this->cacheFile = NULL;
   this->dumpFile = NULL;
   this->mediaPacketProcessed = UINT_MAX;
+  this->mediaPacketsLock = NULL;
 
   if ((phr != NULL) && (SUCCEEDED(*phr)))
   {
@@ -68,6 +73,7 @@ CMPUrlSourceSplitterOutputPin::CMPUrlSourceSplitterOutputPin(LPCWSTR pName, CBas
 
       this->mediaPackets = new COutputPinPacketCollection(phr);
       this->mediaPacketsLock = CreateMutex(NULL, FALSE, NULL);
+
       this->mediaTypes = new CMediaTypeCollection(phr);
       this->cacheFile = new CCacheFile(phr);
       this->dumpFile = new CDumpFile(phr);
@@ -353,24 +359,26 @@ HRESULT CMPUrlSourceSplitterOutputPin::QueuePacket(COutputPinPacket *packet, DWO
   HRESULT result = S_OK;
 
   {
-    CLockMutex lock(this->mediaPacketsLock, timeout);
-    result = (lock.IsLocked()) ? S_OK : VFW_E_TIMEOUT;
+    LOCK_MUTEX(this->mediaPacketsLock, timeout)
 
-    if (SUCCEEDED(result))
+    if (this->mediaTypeToSend != NULL)
     {
-      if (this->mediaTypeToSend != NULL)
-      {
-        packet->SetMediaType(CreateMediaType(this->mediaTypeToSend));
-        FREE_MEM_CLASS(this->mediaTypeToSend);
-      }
+      packet->SetMediaType(CreateMediaType(this->mediaTypeToSend));
+      FREE_MEM_CLASS(this->mediaTypeToSend);
+    }
 
-      // add packet to output packet collection
-      result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
+    // add packet to output packet collection
+    result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
 
-      if (packet->IsEndOfStream())
-      {
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->flags |= MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_END_OF_STREAM);
-      }
+    if (packet->IsEndOfStream())
+    {
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->flags |= MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_END_OF_STREAM);
+    }
+
+    UNLOCK_MUTEX(this->mediaPacketsLock)
+    else
+    {
+      result = VFW_E_TIMEOUT;
     }
   }
 
@@ -539,13 +547,12 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
       Reply(S_OK);
     }
 
-    // sleep will be disabled in case of media packets ready to delivery
-    bool sleepAllowed = true;
     unsigned int currentMediaPacketProcessed = 0;
+    unsigned int sleepMode = SLEEP_MODE_NO;
 
     while (!CheckRequest(&cmd))
     {
-      sleepAllowed = true;
+      sleepMode = SLEEP_MODE_LONG;
 
       if ((cmd == CMD_PLAY) && (this->IsConnected()))
       {
@@ -557,36 +564,41 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
           {
             // wait only 10 ms to lock mutex
             // if it fail, just wait
-            CLockMutex lock(this->mediaPacketsLock, 10);
 
-            if (lock.IsLocked())
+            LOCK_MUTEX(this->mediaPacketsLock, 10)
+
+            if (this->mediaPackets->Count() > 0)
             {
-              if (this->mediaPackets->Count() > 0)
+              if ((this->mediaPackets->GetItem(0)->IsLoadedToMemory()) || (this->cacheFile->LoadItems(this->mediaPackets, 0, true, this->mediaPacketProcessed)))
               {
-                if (this->cacheFile->LoadItems(this->mediaPackets, 0, true, this->mediaPacketProcessed))
-                {
-                  packet = this->mediaPackets->GetItem(0);
+                packet = this->mediaPackets->GetItem(0);
 
-                  // we don't want to remove content of output pin packet from memory
-                  packet->SetNoCleanUpFromMemory(true, 0);
-                }
+                // we don't want to remove content of output pin packet from memory
+                packet->SetNoCleanUpFromMemory(true, 0);
               }
             }
+
+            UNLOCK_MUTEX(this->mediaPacketsLock)
           }
 
           if (packet != NULL)
           {
+            // don't sleep and process next output packet
+            sleepMode = SLEEP_MODE_NO;
+
             if (packet->IsEndOfStream())
             {
               this->DeliverEndOfStream();
 
               if (SUCCEEDED(result))
               {
-                CLockMutex lock(this->mediaPacketsLock, INFINITE);
+                LOCK_MUTEX(this->mediaPacketsLock, INFINITE)
 
                 // remove processed packet
                 this->cacheFile->RemoveItems(this->mediaPackets, 0, 1);
                 this->mediaPackets->CCollection::Remove(0);
+
+                UNLOCK_MUTEX(this->mediaPacketsLock)
               }
             }
             else
@@ -675,13 +687,15 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
 
               if (SUCCEEDED(result) && (!notDeletePacket))
               {
-                CLockMutex lock(this->mediaPacketsLock, INFINITE);
+                LOCK_MUTEX(this->mediaPacketsLock, INFINITE)
 
                 // remove processed packet
                 this->cacheFile->RemoveItems(this->mediaPackets, 0, 1);
                 this->mediaPackets->CCollection::Remove(0);
 
                 currentMediaPacketProcessed++;
+
+                UNLOCK_MUTEX(this->mediaPacketsLock)
               }
 
               if (result == VFW_E_TIMEOUT)
@@ -689,11 +703,9 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
                 // it just means that no buffer is free
                 // just wait for free buffer
                 result = S_OK;
+                sleepMode = SLEEP_MODE_SHORT;
               }
             }
-
-            // don't sleep and process next output packet
-            sleepAllowed = false;
           }
 
           if (FAILED(result))
@@ -723,22 +735,31 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
 
         {
           // wait only 10 ms to lock mutex
-          CLockMutex lock(this->mediaPacketsLock, 10);
+          LOCK_MUTEX(this->mediaPacketsLock, 10)
 
-          if (lock.IsLocked())
+          // store all media packets (which are not stored) to file
+          if ((this->cacheFile->GetCacheFile() != NULL) && (this->mediaPackets->Count() != 0) && (this->mediaPackets->GetLoadedToMemorySize() > CACHE_FILE_RELOAD_SIZE))
           {
-            // store all media packets (which are not stored) to file
-            if ((this->cacheFile->GetCacheFile() != NULL) && (this->mediaPackets->Count() != 0) && (this->mediaPackets->GetLoadedToMemorySize() > CACHE_FILE_RELOAD_SIZE))
-            {
-              this->cacheFile->StoreItems(this->mediaPackets, this->lastStoreTime, false, false);
-            }
+            this->cacheFile->StoreItems(this->mediaPackets, this->lastStoreTime, false, false);
           }
+
+          UNLOCK_MUTEX(this->mediaPacketsLock)
         }
       }
 
       // we don't do anything in CMD_BEGIN_FLUSH or CMD_END_FLUSH command
 
-      CHECK_CONDITION_EXECUTE(sleepAllowed, Sleep(1));
+      switch (sleepMode)
+      {
+      case SLEEP_MODE_SHORT:
+        Sleep(1);
+        break;
+      case SLEEP_MODE_LONG:
+        Sleep(20);
+        break;
+      default:
+        break;
+      }
     }
   }
 

@@ -247,16 +247,18 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
 
   if (SUCCEEDED(result))
   {
-    CLockMutex lock(this->lockMutex, INFINITE);
+    LOCK_MUTEX(this->lockMutex, INFINITE)
 
     if (SUCCEEDED(result) && (this->mainCurlInstance->IsLockedCurlInstanceByOwner(this)) && (this->mainCurlInstance->GetConnectionState() == Opening))
     {
       unsigned int bufferSize = 0;
       {
         // only check received data length to not block Load() method
-        CLockMutex lockData(this->lockCurlMutex, INFINITE);
+        LOCK_MUTEX(this->lockCurlMutex, INFINITE)
 
         bufferSize = this->mainCurlInstance->GetM3u8DownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
+
+        UNLOCK_MUTEX(this->lockCurlMutex)
       }
 
       if (bufferSize > 0)
@@ -1162,6 +1164,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
         }
       }
     }
+
+    UNLOCK_MUTEX(this->lockMutex)
   }
 
   return result;
@@ -1220,7 +1224,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::StopReceivingData(void)
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
 
   // lock access to stream
-  CLockMutex lock(this->lockMutex, INFINITE);
+  LOCK_MUTEX(this->lockMutex, INFINITE)
 
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->mainCurlInstance, this->mainCurlInstance->StopReceivingData());
   this->flags &= ~(MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_STOP_RECEIVING_DATA);
@@ -1229,6 +1233,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::StopReceivingData(void)
 
   this->streamFragmentDownloading = UINT_MAX;
 
+  UNLOCK_MUTEX(this->lockMutex)
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
   return S_OK;
 }
@@ -1238,7 +1243,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::QueryStreamProgress(CStreamProgress 
   HRESULT result = S_OK;
 
   {
-    CLockMutex lock(this->lockMutex, INFINITE);
+    LOCK_MUTEX(this->lockMutex, INFINITE)
 
     CHECK_POINTER_DEFAULT_HRESULT(result, streamProgress);
     CHECK_CONDITION_HRESULT(result, streamProgress->GetStreamId() == 0, result, E_INVALIDARG);
@@ -1253,6 +1258,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::QueryStreamProgress(CStreamProgress 
         result = VFW_S_ESTIMATED;
       }
     }
+
+    UNLOCK_MUTEX(this->lockMutex)
   }
 
   return result;
@@ -1329,12 +1336,12 @@ unsigned int CMPUrlSourceSplitter_Protocol_M3u8::GetSeekingCapabilities(void)
 
 int64_t CMPUrlSourceSplitter_Protocol_M3u8::SeekToTime(unsigned int streamId, int64_t time)
 {
-  CLockMutex lock(this->lockMutex, INFINITE);
+  int64_t result = -1;
+
+  LOCK_MUTEX(this->lockMutex, INFINITE)
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME);
   this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from time: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, time);
-
-  int64_t result = -1;
 
   // find stream fragment to process
   // TO DO: implement better and faster seeking algorithm
@@ -1403,6 +1410,8 @@ int64_t CMPUrlSourceSplitter_Protocol_M3u8::SeekToTime(unsigned int streamId, in
   }
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
+
+  UNLOCK_MUTEX(this->lockMutex)
   return result;
 }
 
@@ -1518,7 +1527,7 @@ int64_t CMPUrlSourceSplitter_Protocol_M3u8::GetBytePosition(void)
   int64_t result = 0;
 
   {
-    CLockMutex lock(this->lockMutex, INFINITE);
+    LOCK_MUTEX(this->lockMutex, INFINITE)
 
     unsigned int first = this->streamFragments->GetStartSearchingIndex();
     unsigned int count = this->streamFragments->GetSearchCount();
@@ -1530,6 +1539,8 @@ int64_t CMPUrlSourceSplitter_Protocol_M3u8::GetBytePosition(void)
 
       result = lastFragment->GetFragmentStartPosition() + (int64_t)lastFragment->GetLength() - firstFragment->GetFragmentStartPosition();
     }
+
+    UNLOCK_MUTEX(this->lockMutex)
   }
 
   return result;

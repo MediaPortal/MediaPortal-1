@@ -104,32 +104,28 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::QueuePacket(COutputPinPacket *pac
 {
   HRESULT result = S_OK;
 
+  LOCK_MUTEX(this->mediaPacketsLock, timeout)
+
+  if (this->mediaTypeToSend != NULL)
   {
-    CLockMutex lock(this->mediaPacketsLock, timeout);
-    result = (lock.IsLocked()) ? S_OK : VFW_E_TIMEOUT;
-
-    if (SUCCEEDED(result))
-    {
-      if (this->mediaTypeToSend != NULL)
-      {
-        packet->SetMediaType(CreateMediaType(this->mediaTypeToSend));
-        FREE_MEM_CLASS(this->mediaTypeToSend);
-      }
-
-      if (packet->IsEndOfStream())
-      {
-        // add packet to output packet collection
-        result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
-
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->flags |= MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_END_OF_STREAM);
-      }
-      else
-      {
-        // parse packet (if necessary)
-        result = this->Parse(this->m_mt.subtype, packet);
-      }
-    }
+    packet->SetMediaType(CreateMediaType(this->mediaTypeToSend));
+    FREE_MEM_CLASS(this->mediaTypeToSend);
   }
+
+  if (packet->IsEndOfStream())
+  {
+    // add packet to output packet collection
+    result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
+
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->flags |= MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_END_OF_STREAM);
+  }
+  else
+  {
+    // parse packet (if necessary)
+    result = this->Parse(this->m_mt.subtype, packet);
+  }
+
+  UNLOCK_MUTEX(this->mediaPacketsLock)
 
   return result;
 }

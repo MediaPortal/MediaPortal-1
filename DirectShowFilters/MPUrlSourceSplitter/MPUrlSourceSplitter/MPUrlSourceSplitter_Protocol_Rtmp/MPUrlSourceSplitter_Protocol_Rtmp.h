@@ -75,7 +75,7 @@ public:
   // receives data and process stream package request
   // the method can't block call (method is called within thread which can be terminated anytime)
   // @param streamPackage : the stream package request to process
-  // @return : S_OK if successful, error code only in case when error is not related to processing request
+  // @return : S_OK if successful (long sleep), S_FALSE if successful (short sleep), error code only in case when error is not related to processing request
   HRESULT ReceiveData(CStreamPackage *streamPackage);
 
   // gets current connection parameters (can be different as supplied connection parameters)

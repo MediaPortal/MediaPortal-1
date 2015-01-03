@@ -496,7 +496,7 @@ size_t CCurlInstance::CurlReceiveData(CDumpBox *dumpBox, const unsigned char *bu
   {
     // lock access to receive data buffer
     // if mutex is NULL then access to received data buffer is not locked
-    CLockMutex lock(this->mutex, INFINITE);
+    LOCK_MUTEX(this->mutex, INFINITE)
 
     if (dumpBox != NULL)
     {
@@ -524,6 +524,8 @@ size_t CCurlInstance::CurlReceiveData(CDumpBox *dumpBox, const unsigned char *bu
     {
       this->downloadResponse->GetReceivedData()->AddToBuffer(buffer, length);
     }
+
+    UNLOCK_MUTEX(this->mutex)
   }
 
   return length;

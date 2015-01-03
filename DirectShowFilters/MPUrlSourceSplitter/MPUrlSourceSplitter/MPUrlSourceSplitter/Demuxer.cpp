@@ -80,7 +80,11 @@ extern "C++" CFFmpegLogger *ffmpegLogger;
 //#define FLV_DO_NOT_SEEK_DIFFERENCE                                          10000       // time in ms when FLV packet dts is closer to seek time
 //#define FLV_SEEKING_POSITIONS                                               1024        // maximum FLV seeking positions
 
-#define MAXIMUM_MPEG2_TS_DATA_PACKET                                        (188 * 5577)   // 5577 * 188 = 1048476 < 1 MB
+#define MAXIMUM_MPEG2_TS_DATA_PACKET                                        (188 * 174)       // 174 * 188 = 32712 < 32 kB
+
+#define SLEEP_MODE_NO                                                       0
+#define SLEEP_MODE_SHORT                                                    1
+#define SLEEP_MODE_LONG                                                     2
 
 extern "C" void asf_reset_header2(AVFormatContext *s);
 
@@ -454,7 +458,7 @@ HRESULT CDemuxer::GetOutputPinPacket(COutputPinPacket *packet)
 
   if (SUCCEEDED(result))
   {
-    CLockMutex lock(this->outputPacketMutex, INFINITE);
+    LOCK_MUTEX(this->outputPacketMutex, INFINITE)
 
     COutputPinPacket *outputPacket = this->outputPacketCollection->GetItem(0);
     if (outputPacket != NULL)
@@ -480,6 +484,8 @@ HRESULT CDemuxer::GetOutputPinPacket(COutputPinPacket *packet)
         result = S_OK;
       }
     }
+
+    UNLOCK_MUTEX(this->outputPacketMutex)
   }
 
   return result;
@@ -1165,7 +1171,7 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
     if (seekedTime >= 0)
     {
       // lock access to output packets
-      CLockMutex outputPacketLock(this->outputPacketMutex, INFINITE);
+      LOCK_MUTEX(this->outputPacketMutex, INFINITE)
 
       // clear output packets
       this->outputPacketCollection->Clear();
@@ -1184,6 +1190,8 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
           stream->GetSeekIndexEntries()->Clear();
         }
       }
+
+      UNLOCK_MUTEX(this->outputPacketMutex)
     }
     else
     {
@@ -1967,13 +1975,13 @@ HRESULT CDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
     // in another case, demuxing will not work and we don't have any video or audio
     this->flags &= ~DEMUXER_FLAG_END_OF_STREAM_OUTPUT_PACKET_QUEUED;
 
-    {
-      // lock access to media packets and output packets
-      CLockMutex outputPacketLock(this->outputPacketMutex, INFINITE);
+    // lock access to media packets and output packets
+    LOCK_MUTEX(this->outputPacketMutex, INFINITE)
 
-      // clear output packets
-      this->outputPacketCollection->Clear();
-    }
+    // clear output packets
+    this->outputPacketCollection->Clear();
+
+    UNLOCK_MUTEX(this->outputPacketMutex)
   }
 
   this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_DEMUXER_END_FORMAT : METHOD_DEMUXER_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId, result);
@@ -2186,13 +2194,13 @@ HRESULT CDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
     // in another case, demuxing will not work and we don't have any video or audio
     this->flags &= ~DEMUXER_FLAG_END_OF_STREAM_OUTPUT_PACKET_QUEUED;
 
-    {
-      // lock access to media packets and output packets
-      CLockMutex outputPacketLock(this->outputPacketMutex, INFINITE);
+    // lock access to media packets and output packets
+    LOCK_MUTEX(this->outputPacketMutex, INFINITE)
 
-      // clear output packets
-      this->outputPacketCollection->Clear();
-    }
+    // clear output packets
+    this->outputPacketCollection->Clear();
+
+    UNLOCK_MUTEX(this->outputPacketMutex)
   }
 
   this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_DEMUXER_END_FORMAT : METHOD_DEMUXER_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, this->demuxerId, result);
@@ -2495,8 +2503,12 @@ unsigned int WINAPI CDemuxer::DemuxingWorker(LPVOID lpParam)
   CDemuxer *caller = (CDemuxer *)lpParam;
   caller->logger->Log(LOGGER_INFO, METHOD_DEMUXER_START_FORMAT, MODULE_NAME, METHOD_DEMUXING_WORKER_NAME, caller->demuxerId);
 
+  unsigned int sleepMode = SLEEP_MODE_LONG;
+
   while (!caller->demuxingWorkerShouldExit)
   {
+    sleepMode = SLEEP_MODE_LONG;
+
     if (caller->IsSetFlags(DEMUXER_FLAG_DISABLE_DEMUXING_WITH_RETURN_TO_DEMUXING_WORKER) || caller->IsSetFlags(DEMUXER_FLAG_DISABLE_DEMUXING_WITH_SAFE_RETURN_TO_DEMUXING_WORKER))
     {
       caller->flags |= DEMUXER_FLAG_DISABLE_DEMUXING;
@@ -2532,7 +2544,9 @@ unsigned int WINAPI CDemuxer::DemuxingWorker(LPVOID lpParam)
       // S_FALSE means no packet
       if (result == S_OK)
       {
-        CLockMutex lock(caller->outputPacketMutex, INFINITE);
+        sleepMode = SLEEP_MODE_SHORT;
+
+        LOCK_MUTEX(caller->outputPacketMutex, INFINITE)
         
         if (packet->IsEndOfStream())
         {
@@ -2583,12 +2597,24 @@ unsigned int WINAPI CDemuxer::DemuxingWorker(LPVOID lpParam)
         {
           CHECK_CONDITION_HRESULT(result, caller->outputPacketCollection->Add(packet), result, E_OUTOFMEMORY);
         }
+
+        UNLOCK_MUTEX(caller->outputPacketMutex)
       }
 
       CHECK_CONDITION_EXECUTE(result != S_OK, FREE_MEM_CLASS(packet));
     }
 
-    Sleep(1);
+    switch (sleepMode)
+    {
+    case SLEEP_MODE_SHORT:
+      Sleep(1);
+      break;
+    case SLEEP_MODE_LONG:
+      Sleep(20);
+      break;
+    default:
+      break;
+    }
   }
 
   caller->logger->Log(LOGGER_INFO, METHOD_DEMUXER_END_FORMAT, MODULE_NAME, METHOD_DEMUXING_WORKER_NAME, caller->demuxerId);

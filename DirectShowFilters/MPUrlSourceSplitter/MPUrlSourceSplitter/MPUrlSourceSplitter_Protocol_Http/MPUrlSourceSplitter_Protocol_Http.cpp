@@ -240,12 +240,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
 
   if (SUCCEEDED(result))
   {
-    CLockMutex lock(this->lockMutex, INFINITE);
+    LOCK_MUTEX(this->lockMutex, INFINITE)
 
     if (SUCCEEDED(result) && this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_REPORTED_STATUS_CODE) && (this->mainCurlInstance != NULL) && ((this->connectionState == Opening) || (this->connectionState == Opened)))
     {
       {
-        CLockMutex lockData(this->lockCurlMutex, INFINITE);
+        LOCK_MUTEX(this->lockCurlMutex, INFINITE)
 
         FREE_MEM_CLASS(this->currentCookies);
         this->currentCookies = this->mainCurlInstance->GetCurrentCookies();
@@ -310,6 +310,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
             }
           }
         }
+
+        UNLOCK_MUTEX(this->lockCurlMutex)
       }
     }
 
@@ -1001,6 +1003,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
         this->cacheFile->StoreItems(this->streamFragments, this->lastStoreTime, false, this->IsWholeStreamDownloaded());
       }
     }
+
+    UNLOCK_MUTEX(this->lockMutex)
   }
 
   return result;
@@ -1085,7 +1089,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StopReceivingData(void)
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
 
   // lock access to stream
-  CLockMutex lock(this->lockMutex, INFINITE);
+  LOCK_MUTEX(this->lockMutex, INFINITE)
 
   FREE_MEM_CLASS(this->mainCurlInstance);
 
@@ -1094,6 +1098,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StopReceivingData(void)
 
   this->streamFragmentDownloading = UINT_MAX;
 
+  UNLOCK_MUTEX(this->lockMutex)
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
   return S_OK;
 }
@@ -1103,7 +1108,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::QueryStreamProgress(CStreamProgress 
   HRESULT result = S_OK;
 
   {
-    CLockMutex lock(this->lockMutex, INFINITE);
+    LOCK_MUTEX(this->lockMutex, INFINITE)
 
     CHECK_POINTER_DEFAULT_HRESULT(result, streamProgress);
     CHECK_CONDITION_HRESULT(result, streamProgress->GetStreamId() == 0, result, E_INVALIDARG);
@@ -1118,6 +1123,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::QueryStreamProgress(CStreamProgress 
         result = VFW_S_ESTIMATED;
       }
     }
+
+    UNLOCK_MUTEX(this->lockMutex)
   }
 
   return result;
@@ -1185,9 +1192,11 @@ unsigned int CMPUrlSourceSplitter_Protocol_Http::GetSeekingCapabilities(void)
 
   {
     // lock access to stream
-    CLockMutex lock(this->lockMutex, INFINITE);
+    LOCK_MUTEX(this->lockMutex, INFINITE)
     
     result = (this->IsWholeStreamDownloaded() || this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_RANGES_SUPPORTED)) ? SEEKING_METHOD_POSITION : SEEKING_METHOD_NONE;
+
+    UNLOCK_MUTEX(this->lockMutex)
   }
 
   return result;

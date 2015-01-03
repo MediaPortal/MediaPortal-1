@@ -131,6 +131,10 @@ extern "C++" CStaticLogger *staticLogger;
 #define SHOW_VERSION                                              2
 #define SHOW_CONFIG                                               4
 
+#define SLEEP_MODE_NO                                             0
+#define SLEEP_MODE_SHORT                                          1
+#define SLEEP_MODE_LONG                                           2
+
 #define GET_LIB_INFO(libInfo, libname, LIBNAME, flags)                                        \
 {                                                                                             \
     libInfo = NULL;                                                                           \
@@ -711,7 +715,7 @@ STDMETHODIMP CMPUrlSourceSplitter::GetDuration(LONGLONG* pDuration)
 
   *pDuration = -1;
 
-  CLockMutex lock(this->demuxersMutex, INFINITE);
+  LOCK_MUTEX(this->demuxersMutex, INFINITE)
 
   for (unsigned int i = 0; i < this->demuxers->Count(); i++)
   {
@@ -719,6 +723,8 @@ STDMETHODIMP CMPUrlSourceSplitter::GetDuration(LONGLONG* pDuration)
 
     *pDuration = max(*pDuration, demuxer->GetDuration());
   }
+
+  UNLOCK_MUTEX(this->demuxersMutex)
   
   return (*pDuration < 0) ? E_FAIL : S_OK;
 }
@@ -822,7 +828,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Count(DWORD *pcStreams)
 
   *pcStreams = 0;
 
-  CLockMutex lock(this->demuxersMutex, INFINITE);
+  LOCK_MUTEX(this->demuxersMutex, INFINITE)
 
   for (unsigned int i = 0; i < this->demuxers->Count(); i++)
   {
@@ -833,6 +839,8 @@ STDMETHODIMP CMPUrlSourceSplitter::Count(DWORD *pcStreams)
       *pcStreams += (DWORD)demuxer->GetStreams((CStream::StreamType)j)->Count();
     }
   }
+
+  UNLOCK_MUTEX(this->demuxersMutex)
 
   return S_OK;
 }
@@ -1072,7 +1080,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Info(long lIndex, AM_MEDIA_TYPE **ppmt, DWORD
 
   if (SUCCEEDED(result))
   {
-    CLockMutex lock(this->demuxersMutex, INFINITE);
+    LOCK_MUTEX(this->demuxersMutex, INFINITE)
     int k = 0;
 
     for (unsigned int i = 0; ((result == S_FALSE) && (i < this->demuxers->Count())); i++)
@@ -1114,6 +1122,8 @@ STDMETHODIMP CMPUrlSourceSplitter::Info(long lIndex, AM_MEDIA_TYPE **ppmt, DWORD
         k += count;
       }
     }
+
+    UNLOCK_MUTEX(this->demuxersMutex)
   }
 
   return result;
@@ -1342,30 +1352,30 @@ HRESULT CMPUrlSourceSplitter::IsFilterReadyToConnectPins(bool *ready)
   {
     *ready = false;
 
+    LOCK_MUTEX(this->demuxersMutex, INFINITE)
+
+    result = this->loadAsyncResult;
+
+    if (SUCCEEDED(result))
     {
-      CLockMutex lock(this->demuxersMutex, INFINITE);
+      bool createdDemuxers = (this->demuxers->Count() > 0);
 
-      result = this->loadAsyncResult;
-
-      if (SUCCEEDED(result))
+      // all demuxers must be created successfully
+      for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->demuxers->Count())); i++)
       {
-        bool createdDemuxers = (this->demuxers->Count() > 0);
+        CDemuxer *demuxer = this->demuxers->GetItem(i);
 
-        // all demuxers must be created successfully
-        for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->demuxers->Count())); i++)
-        {
-          CDemuxer *demuxer = this->demuxers->GetItem(i);
+        createdDemuxers &= demuxer->IsCreatedDemuxer();
 
-          createdDemuxers &= demuxer->IsCreatedDemuxer();
-
-          // if demuxer is not created and demuxer worker finished its work
-          // it throws exception in caller and immediately stops buffering and playback
-          result = ((!demuxer->IsCreatedDemuxer()) && demuxer->IsCreateDemuxerWorkerFinished()) ? demuxer->GetCreateDemuxerError() : result;
-        }
-
-        *ready = SUCCEEDED(result) ? createdDemuxers : false;
+        // if demuxer is not created and demuxer worker finished its work
+        // it throws exception in caller and immediately stops buffering and playback
+        result = ((!demuxer->IsCreatedDemuxer()) && demuxer->IsCreateDemuxerWorkerFinished()) ? demuxer->GetCreateDemuxerError() : result;
       }
+
+      *ready = SUCCEEDED(result) ? createdDemuxers : false;
     }
+
+    UNLOCK_MUTEX(this->demuxersMutex)
   }
   
   return result;
@@ -1378,7 +1388,7 @@ HRESULT CMPUrlSourceSplitter::GetCacheFileName(wchar_t **path)
 
   if (SUCCEEDED(result))
   {
-    CLockMutex lock(this->demuxersMutex, INFINITE);
+    LOCK_MUTEX(this->demuxersMutex, INFINITE)
 
     //const wchar_t *storeFilePath = (this->demuxers->Count() == 1) ? (this->demuxers->GetItem(0)->GetCacheFilePath()) : L"";
 
@@ -1386,6 +1396,8 @@ HRESULT CMPUrlSourceSplitter::GetCacheFileName(wchar_t **path)
     
     SET_STRING(*path, storeFilePath);
     result = TEST_STRING_WITH_NULL(*path, storeFilePath) ? result : E_OUTOFMEMORY;
+
+    UNLOCK_MUTEX(this->demuxersMutex)
   }
 
   return result;
@@ -1667,11 +1679,16 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
     unsigned int lastReportStreamTime = 0;
     unsigned int lastDemuxerId = 0;
 
+    // 0 - no sleep
+    // 1 - short sleep
+    // 2 - longer sleep
+    unsigned int sleepMode = SLEEP_MODE_NO;
+
     while (!CheckRequest(&cmd))
     {
       if ((cmd == CMD_PAUSE) || (cmd == CMD_SEEK) || (this->pauseSeekStopRequest))
       {
-        Sleep(1);
+        sleepMode = SLEEP_MODE_LONG;
       }
       else if (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_ALL_PINS_END_OF_STREAM))
       {
@@ -1711,6 +1728,8 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
         // it can return S_FALSE (no output pin packet) or error code
         if (result == S_OK)
         {
+          sleepMode = SLEEP_MODE_NO;
+
           // in case of IPTV there is only one output pin
           // in case of splitter there can be more than one output pin
 
@@ -1774,6 +1793,7 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
                     {
                       int64_t streamTime = (int64_t)(refTime.Millisecs() * (DSHOW_TIME_BASE / 1000));
 
+                      // 100000 is cca 10 ms in DSHOW_TIME_BASE units
                       if (packet->GetStartTime() >= (streamTime + 100000))
                       {
                         CHECK_CONDITION_EXECUTE(!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DELAYING), this->logger->Log(LOGGER_WARNING, L"%s: %s: delaying packet, demuxer: %u, stream ID: %u, start: %016lld, end: %016lld, delay: %016lld, stream time: %lld, demux start: %lld", MODULE_NAME, METHOD_THREAD_PROC_NAME, packet->GetDemuxerId(), packet->GetStreamPid(), packet->GetStartTime(), packet->GetEndTime(), packet->GetStartTime() - (streamTime + 100000), streamTime, this->demuxStart));
@@ -1781,7 +1801,7 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
                         this->flags |= MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DELAYING;
                         result = E_FAIL;
 
-                        Sleep(1);
+                        sleepMode = SLEEP_MODE_LONG;
                       }
                     }
                   }
@@ -1855,13 +1875,13 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
         if (result == S_FALSE)
         {
           // no output packet, sleep some time
-          Sleep(1);
+          sleepMode = (sleepMode < SLEEP_MODE_SHORT) ? SLEEP_MODE_SHORT : SLEEP_MODE_LONG;
         }
       }
       else
       {
         // no CMD_PAUSE, no CMD_SEEK, no pauseSeekStopRequest, endOfStream is set
-        Sleep(1);
+        sleepMode = SLEEP_MODE_LONG;
       }
 
       if (this->CanReportStreamTime() && (!this->IsDownloadingFile()) && ((GetTickCount() - lastReportStreamTime) > 1000))
@@ -1891,6 +1911,18 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
           this->OnDownloadCallback(outputPin->GetDownloadResult());
           this->flags |= MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOAD_CALLBACK_CALLED;
         }
+      }
+
+      switch (sleepMode)
+      {
+      case SLEEP_MODE_SHORT:
+        Sleep(1);
+        break;
+      case SLEEP_MODE_LONG:
+        Sleep(20);
+        break;
+      default:
+        break;
       }
     }
     
@@ -1992,25 +2024,24 @@ HRESULT CMPUrlSourceSplitter::GetNextPacket(COutputPinPacket *packet, unsigned i
   {
     // don't wait too long for output packet
     // we can try to get output packet later
-    CLockMutex lock(this->demuxersMutex, 20);
+    LOCK_MUTEX(this->demuxersMutex, 20)
 
-    if (lock.IsLocked())
+    unsigned int inputDemuxerId = demuxerId;
+
+    while (true)
     {
-      unsigned int inputDemuxerId = demuxerId;
+      CDemuxer *demuxer = this->demuxers->GetItem(demuxerId);
 
-      while (true)
+      result = demuxer->GetOutputPinPacket(packet);
+      demuxerId = (++demuxerId) % this->demuxers->Count();
+
+      if ((result != S_FALSE) || (inputDemuxerId == demuxerId))
       {
-        CDemuxer *demuxer = this->demuxers->GetItem(demuxerId);
-
-        result = demuxer->GetOutputPinPacket(packet);
-        demuxerId = (++demuxerId) % this->demuxers->Count();
-
-        if ((result != S_FALSE) || (inputDemuxerId == demuxerId))
-        {
-          break;
-        }
+        break;
       }
     }
+
+    UNLOCK_MUTEX(this->demuxersMutex)
   }
 
   return result;
@@ -2458,7 +2489,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
 
     if (SUCCEEDED(caller->loadAsyncResult))
     {
-      CLockMutex lock(caller->demuxersMutex, INFINITE);
+      LOCK_MUTEX(caller->demuxersMutex, INFINITE)
 
       CStreamInformationCollection *streams = new CStreamInformationCollection(&caller->loadAsyncResult);
       CHECK_POINTER_HRESULT(caller->loadAsyncResult, streams, caller->loadAsyncResult, E_OUTOFMEMORY);
@@ -2491,6 +2522,8 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
       }
 
       FREE_MEM_CLASS(streams);
+
+      UNLOCK_MUTEX(caller->demuxersMutex)
     }
     
     if (SUCCEEDED(caller->loadAsyncResult))
@@ -2686,14 +2719,14 @@ void CMPUrlSourceSplitter::SetPauseSeekStopRequest(bool pauseSeekStopRequest)
 {
   this->pauseSeekStopRequest = pauseSeekStopRequest;
 
-  {
-    CLockMutex lock(this->demuxersMutex, INFINITE);
+  LOCK_MUTEX(this->demuxersMutex, INFINITE)
 
-    for (unsigned int i = 0; i < this->demuxers->Count(); i++)
-    {
-      this->demuxers->GetItem(i)->SetPauseSeekStopRequest(pauseSeekStopRequest);
-    }
+  for (unsigned int i = 0; i < this->demuxers->Count(); i++)
+  {
+    this->demuxers->GetItem(i)->SetPauseSeekStopRequest(pauseSeekStopRequest);
   }
+
+  UNLOCK_MUTEX(this->demuxersMutex)
 }
 
 void CMPUrlSourceSplitter::ClearSession(bool withLogger)
