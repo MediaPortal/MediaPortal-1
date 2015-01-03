@@ -158,7 +158,7 @@ struct pshdr
 		WORD sync;
 		BYTE strmtyp:2;
 		BYTE substreamid:3;
-		DWORD frmsiz;
+		WORD frmsiz;
 		BYTE fscod:2;
 		BYTE fscod2:2;
 		BYTE acmod:3;

@@ -219,6 +219,7 @@ bool CMpegPesParser::ParseAudio(byte* audioPacket, int streamType, bool reset)
           basicAudioInfo.streamType = streamType;
       	  basicAudioInfo.pmtValid = true;	
           basicAudioInfo.isValid = true;
+          //LogDebug("hdrParser: E-AC3 frmsiz = %d, sampleRate = %d", eac3.frmsiz, basicAudioInfo.sampleRate);
       	  parsed=true;
       	}
       }

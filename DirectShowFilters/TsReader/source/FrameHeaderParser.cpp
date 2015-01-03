@@ -758,7 +758,7 @@ bool CFrameHeaderParser::Read(eac3hdr& h, int len, CMediaType* pmt)
 	//---- byte 2
 	h.strmtyp = BitRead(2);
 	h.substreamid = BitRead(3);
-	h.frmsiz = ((DWORD)BitRead(11)) + 1;
+	h.frmsiz = ((WORD)BitRead(11)) + 1;
 	//---- byte 4
 	h.fscod = BitRead(2);
 	h.fscod2 = BitRead(2); //only valid if h.fscod==3	
@@ -786,8 +786,8 @@ bool CFrameHeaderParser::Read(eac3hdr& h, int len, CMediaType* pmt)
 	else
 	  wfe.nSamplesPerSec = freq[h.fscod];
 	  
-	wfe.nAvgBytesPerSec = (h.frmsiz * 1000 * wfe.nSamplesPerSec) / (16 * 48000);
-	wfe.nBlockAlign = (WORD)(1536 * wfe.nAvgBytesPerSec / wfe.nSamplesPerSec);
+	wfe.nAvgBytesPerSec =  1000 *(((DWORD)h.frmsiz * wfe.nSamplesPerSec) / (16 * 48000));
+	wfe.nBlockAlign = (WORD)((1536 * wfe.nAvgBytesPerSec) / wfe.nSamplesPerSec);
 
 	pmt->majortype = MEDIATYPE_Audio;
 	pmt->subtype = MEDIASUBTYPE_DOLBY_DDPLUS;
