@@ -628,7 +628,7 @@ namespace MediaPortal
           }
           catch (InvalidCallException)
           {
-            Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value");
+            Log.Error("D3D: D3DERR_INVALIDCALL - presentation parameters might contain an invalid value");
           }
           catch (DeviceLostException)
           {
