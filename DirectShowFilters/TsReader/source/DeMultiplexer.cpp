@@ -147,8 +147,8 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   
   m_dVidPTSJumpLimit = 2.0; //Maximum allowed time in seconds for video PTS jumps
   m_dfAudSampleDuration = -1.0;
-  m_currentAACheader = 0;
-  m_AACheaderCount = 0;
+  m_currentAudHeader = 0;
+  m_audHeaderCount = 0;
   m_hadPESfail = 0;
   
   
@@ -326,7 +326,14 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       pmt.SetTemporalCompression(FALSE);
       pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
+      if (m_mpegPesParser->basicAudioInfo.pmtValid)
+      {
+        pmt.SetFormat(m_mpegPesParser->audPmt.Format(), m_mpegPesParser->audPmt.FormatLength());
+      }
+      else
+      {
+        pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
+      }
       break;
   case SERVICE_TYPE_AUDIO_MPEG2:
       pmt.InitMediaType();
@@ -336,7 +343,14 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       pmt.SetTemporalCompression(FALSE);
       pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(MPEG2AudioFormat,sizeof(MPEG2AudioFormat));
+      if (m_mpegPesParser->basicAudioInfo.pmtValid)
+      {
+        pmt.SetFormat(m_mpegPesParser->audPmt.Format(), m_mpegPesParser->audPmt.FormatLength());
+      }
+      else
+      {
+        pmt.SetFormat(MPEG2AudioFormat,sizeof(MPEG2AudioFormat));
+      }
       break;
     case SERVICE_TYPE_AUDIO_AAC:
       pmt.InitMediaType();
@@ -373,9 +387,17 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       pmt.SetTemporalCompression(FALSE);
       pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
+      if (m_mpegPesParser->basicAudioInfo.pmtValid)
+      {
+        pmt.SetFormat(m_mpegPesParser->audPmt.Format(), m_mpegPesParser->audPmt.FormatLength());
+      }
+      else
+      {
+        pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
+      }
       break;
-    case SERVICE_TYPE_AUDIO_DD_PLUS:
+    case SERVICE_TYPE_AUDIO_DD_PLUS: //ATSC E-AC3 (DD plus)
+    case SERVICE_TYPE_AUDIO_E_AC3:   //ATSC E-AC3 (DD plus)
       pmt.InitMediaType();
       pmt.SetType      (& MEDIATYPE_Audio);
       pmt.SetSubtype   (& MEDIASUBTYPE_DOLBY_DDPLUS);
@@ -383,17 +405,14 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       pmt.SetTemporalCompression(FALSE);
       pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
-      break;
-    case SERVICE_TYPE_AUDIO_E_AC3:  //ATSC E-AC3 (DD plus)
-      pmt.InitMediaType();
-      pmt.SetType      (& MEDIATYPE_Audio);
-      pmt.SetSubtype   (& MEDIASUBTYPE_DOLBY_DDPLUS);
-      pmt.SetSampleSize(1);
-      pmt.SetTemporalCompression(FALSE);
-      pmt.SetVariableSize();
-      pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
+      if (m_mpegPesParser->basicAudioInfo.pmtValid)
+      {
+        pmt.SetFormat(m_mpegPesParser->audPmt.Format(), m_mpegPesParser->audPmt.FormatLength());
+      }
+      else
+      {
+        pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
+      }
       break;
   }
   
@@ -661,8 +680,8 @@ void CDeMultiplexer::FlushAudio()
   }
   m_bSetAudioDiscontinuity=true;
   m_bAudioSampleLate=false;
-  m_currentAACheader = 0;
-  m_AACheaderCount = 0;
+  m_currentAudHeader = 0;
+  m_audHeaderCount = 0;
 
   if (m_filter.IsSeeking() && m_filter.GetAudioPin()->IsConnected())
   {
@@ -1498,7 +1517,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
         {
           byte *ps = p+headerLen;
           int length = len;
-          bool foundAACheader = false;
+          bool foundAudHeader = false;
           int copyLen = 0;
           
           if (m_AudioStreamType == SERVICE_TYPE_AUDIO_AAC) //ADTS AAC audio stream - requires data frame re-alignment 
@@ -1509,32 +1528,32 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
               //Find correct ADTS frame header sync sequence by 'learning' the most frequent 28 bit header start pattern
               if (len > 3 && ((*(INT16 *)ps & 0xF6FF) == 0xF0FF)) //Syncword bits==111111111111 and Layer bits==00
               {     
-                if (m_AACheaderCount<4)  // Learning/training state
+                if (m_audHeaderCount<4)  // Learning/training state
                 {
-                  if (m_currentAACheader == (*(INT32 *)ps & 0x30FEFFFF)) //compare first 28 bits only
+                  if (m_currentAudHeader == (*(INT32 *)ps & 0x30FEFFFF)) //compare first 28 bits only
                   {
-                    m_AACheaderCount++;
+                    m_audHeaderCount++;
                   }  
                   else 
                   {  
-                    m_currentAACheader = (*(INT32 *)ps & 0x30FEFFFF); //ony first 28 bits are relevant, and channel count is excluded
-                    if (m_AACheaderCount>0) 
+                    m_currentAudHeader = (*(INT32 *)ps & 0x30FEFFFF); //ony first 28 bits are relevant, and channel count is excluded
+                    if (m_audHeaderCount>0) 
                     {
-                      m_AACheaderCount--;
+                      m_audHeaderCount--;
                     } 
                     m_mpegPesParser->basicAudioInfo.isValid = false;     
                   }       
-                  // LogDebug("ADTS find sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_AACheaderCount);
+                  // LogDebug("ADTS find sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
                 }
-                else // m_AACheaderCount>=4, 'locked' state
+                else // m_audHeaderCount>=4, 'locked' state
                 {
-                  if (m_currentAACheader != (*(INT32 *)ps & 0x30FEFFFF))  //compare first 28 bits only
+                  if (m_currentAudHeader != (*(INT32 *)ps & 0x30FEFFFF))  //compare first 28 bits only
                   {
-                    m_AACheaderCount--; //invalid (or changing) header sequence
+                    m_audHeaderCount--; //invalid (or changing) header sequence
                   }  
                   else //good header sequence
                   {
-                    foundAACheader = true;
+                    foundAudHeader = true;
                     lastADTSheaderPosn = len;
                     if (!m_mpegPesParser->basicAudioInfo.isValid && len > 8)
                     {
@@ -1556,16 +1575,16 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                         Cbuf->SetForcePMT();
                       }
                     }
-                    if (m_AACheaderCount<8)
+                    if (m_audHeaderCount<8)
                     {
-                      m_AACheaderCount++;
+                      m_audHeaderCount++;
                     }
-                    // LogDebug("ADTS good sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_AACheaderCount);
+                    // LogDebug("ADTS good sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
                   }
                 }                  
               }
               
-              if (foundAACheader)
+              if (foundAudHeader)
               {
                 copyLen++;
                 *p++ = *ps;   // memcpy could be not safe.
@@ -1593,35 +1612,35 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
               {     
                 if (*(INT16 *)(ps+3) == 0x0020 && len > 6) //Preamble to AudioSpecificConfig() data
                 {     
-                  foundAACheader = true;
+                  foundAudHeader = true;
 
-                  if (m_AACheaderCount<2)  // Learning/training state
+                  if (m_audHeaderCount<2)  // Learning/training state
                   {
-                    if (m_currentAACheader == (*(INT16 *)(ps+5) & 0x87FF)) //AudioSpecificConfig(), channel count is excluded
+                    if (m_currentAudHeader == (*(INT16 *)(ps+5) & 0x87FF)) //AudioSpecificConfig(), channel count is excluded
                     {
-                      m_AACheaderCount++;
+                      m_audHeaderCount++;
                     }  
                     else 
                     {  
-                      m_currentAACheader = (*(INT16 *)(ps+5) & 0x87FF); //AudioSpecificConfig(), channel count is excluded
-                      if (m_AACheaderCount>0) 
+                      m_currentAudHeader = (*(INT16 *)(ps+5) & 0x87FF); //AudioSpecificConfig(), channel count is excluded
+                      if (m_audHeaderCount>0) 
                       {
-                        m_AACheaderCount--;
+                        m_audHeaderCount--;
                       } 
                     }       
                   }
                   else // 'locked' state
                   {
-                    if (m_currentAACheader != (*(INT16 *)(ps+5) & 0x87FF))  //AudioSpecificConfig(), channel count is excluded
+                    if (m_currentAudHeader != (*(INT16 *)(ps+5) & 0x87FF))  //AudioSpecificConfig(), channel count is excluded
                     {
-                      m_AACheaderCount--; //invalid (or changing) header sequence
+                      m_audHeaderCount--; //invalid (or changing) header sequence
                     }  
                     else //good header sequence
                     {
-                      if (m_AACheaderCount<4)
+                      if (m_audHeaderCount<4)
                       {
-                        m_AACheaderCount++;
-                        LogDebug("demux: AAC LATM good sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_AACheaderCount);
+                        m_audHeaderCount++;
+                        LogDebug("demux: AAC LATM good sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
                       }
                     }
                   }                  
@@ -1655,7 +1674,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                     m_filter.GetAudioPin()->SetAddPMT();
                     m_bSetAudioDiscontinuity=true;
                   }
-                  else if (m_AACheaderCount==4)
+                  else if (m_audHeaderCount==4)
                   {
                     byte parsedChannels = ((*(ps+6) & 0x78)>>3);
                     if (parsedChannels<7 && parsedChannels>0 && (parsedChannels != m_mpegPesParser->basicAudioInfo.channels))
@@ -1684,34 +1703,33 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
               //Find correct AC3 frame header sync sequence by 'learning' the current header pattern
               if (len > 6 && ((*(INT16 *)ps & 0xFFFF) == 0x770b)) //Syncword bits==0x0b77
               {     
-                //LogDebug("demux: AC3 all sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_AACheaderCount);
+                //LogDebug("demux: AC3 all sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
 
-                if (m_AACheaderCount<4)  // Learning/training state
+                if (m_audHeaderCount<4)  // Learning/training state
                 {
-                  if (m_currentAACheader == *(INT16 *)(ps+4)) //fscod, frmsizcod, bsid, bsmod fields
+                  if (m_currentAudHeader == *(INT16 *)(ps+4)) //fscod, frmsizcod, bsid, bsmod fields
                   {
-                    m_AACheaderCount++;
+                    m_audHeaderCount++;
                   }  
                   else 
                   {  
-                    m_currentAACheader = *(INT16 *)(ps+4); //fscod, frmsizcod, bsid, bsmod fields
-                    if (m_AACheaderCount>0) 
+                    m_currentAudHeader = *(INT16 *)(ps+4); //fscod, frmsizcod, bsid, bsmod fields
+                    if (m_audHeaderCount>0) 
                     {
-                      m_AACheaderCount--;
+                      m_audHeaderCount--;
                     } 
                   }       
                 }
                 else // 'locked' state
                 {
-                  if (m_currentAACheader != *(INT16 *)(ps+4)) //fscod, frmsizcod, bsid, bsmod fields
+                  if (m_currentAudHeader != *(INT16 *)(ps+4)) //fscod, frmsizcod, bsid, bsmod fields
                   {
-                    m_AACheaderCount--; //invalid (or changing) header sequence
-                    //LogDebug("demux: AC3 lkd bad sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_AACheaderCount);
+                    m_audHeaderCount--; //invalid (or changing) header sequence
+                    //LogDebug("demux: AC3 lkd bad sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
                   }  
                   else //good header sequence
                   {
-                    foundAACheader = true;
-                    lastADTSheaderPosn = len;
+                    foundAudHeader = true;
                     if (!m_mpegPesParser->basicAudioInfo.isValid)
                     {
                       m_mpegPesParser->OnAudioPacket(ps, len, m_AudioStreamType, true);
@@ -1752,12 +1770,12 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                         Cbuf->SetForcePMT();
                       }
                     }
-                    if (m_AACheaderCount<8)
+                    if (m_audHeaderCount<8)
                     {
-                      m_AACheaderCount++;
-                      if (m_AACheaderCount<7)
+                      m_audHeaderCount++;
+                      if (m_audHeaderCount<7)
                       {
-                        LogDebug("demux: AC3 good sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_AACheaderCount);
+                        LogDebug("demux: AC3 good sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
                       }
                     }
                   }
@@ -1780,34 +1798,33 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
               //Find correct AC3 frame header sync sequence by 'learning' the current header pattern
               if (len > 6 && ((*(INT16 *)ps & 0xFFFF) == 0x770b)) //Syncword bits==0x0b77
               {     
-                //LogDebug("demux: E-AC3 all sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_AACheaderCount);
+                //LogDebug("demux: E-AC3 all sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
 
-                if (m_AACheaderCount<4)  // Learning/training state
+                if (m_audHeaderCount<4)  // Learning/training state
                 {
-                  if (m_currentAACheader == (*(INT16 *)(ps+4) & 0xFFF0)) //fscod, fscod2, bsid, bsmod fields
+                  if (m_currentAudHeader == (*(INT16 *)(ps+4) & 0xFFF0)) //fscod, fscod2, bsid, bsmod fields
                   {
-                    m_AACheaderCount++;
+                    m_audHeaderCount++;
                   }  
                   else 
                   {  
-                    m_currentAACheader = (*(INT16 *)(ps+4) & 0xFFF0); //fscod, fscod2, bsid, bsmod fields
-                    if (m_AACheaderCount>0) 
+                    m_currentAudHeader = (*(INT16 *)(ps+4) & 0xFFF0); //fscod, fscod2, bsid, bsmod fields
+                    if (m_audHeaderCount>0) 
                     {
-                      m_AACheaderCount--;
+                      m_audHeaderCount--;
                     } 
                   }       
                 }
                 else // 'locked' state
                 {
-                  if (m_currentAACheader != (*(INT16 *)(ps+4) & 0xFFF0)) //fscod, fscod2, bsid, bsmod fields
+                  if (m_currentAudHeader != (*(INT16 *)(ps+4) & 0xFFF0)) //fscod, fscod2, bsid, bsmod fields
                   {
-                    m_AACheaderCount--; //invalid (or changing) header sequence
-                    //LogDebug("demux: E-AC3 lkd bad sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_AACheaderCount);
+                    m_audHeaderCount--; //invalid (or changing) header sequence
+                    //LogDebug("demux: E-AC3 lkd bad sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
                   }  
                   else //good header sequence
                   {
-                    foundAACheader = true;
-                    lastADTSheaderPosn = len;
+                    foundAudHeader = true;
                     if (!m_mpegPesParser->basicAudioInfo.isValid)
                     {
                       m_mpegPesParser->OnAudioPacket(ps, len, m_AudioStreamType, true);
@@ -1838,12 +1855,89 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                         Cbuf->SetForcePMT();
                       }
                     }
-                    if (m_AACheaderCount<8)
+                    if (m_audHeaderCount<8)
                     {
-                      m_AACheaderCount++;
-                      if (m_AACheaderCount<7)
+                      m_audHeaderCount++;
+                      if (m_audHeaderCount<7)
                       {
-                        LogDebug("demux: E-AC3 good sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_AACheaderCount);
+                        LogDebug("demux: E-AC3 good sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
+                      }
+                    }
+                  }
+                }                  
+              }
+              
+              copyLen++;
+              *p++ = *ps++;   // memcpy could be not safe.
+              len--;            
+            }
+            
+            Cbuf->SetLength(copyLen);            
+          }         
+          else if (m_AudioStreamType == SERVICE_TYPE_AUDIO_MPEG1 ||
+                   m_AudioStreamType == SERVICE_TYPE_AUDIO_MPEG2)
+          {
+            // LogDebug("MPA start PES = %d", len);
+            while(len) 
+            {
+              //Find correct AC3 frame header sync sequence by 'learning' the current header pattern
+              if (len > 3 && ((*(INT16 *)ps & 0xE0FF) == 0xE0FF)) //Syncword bits==0xE0FF - first 11 bits set
+              {     
+                //LogDebug("demux: MPA all sync = %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), length-len, m_audHeaderCount);
+
+                if (m_audHeaderCount<4)  // Learning/training state
+                {
+                  if (m_currentAudHeader == (*(INT32 *)(ps+0) & 0x0F0CFFFF))
+                  {
+                    m_audHeaderCount++;
+                  }  
+                  else 
+                  {  
+                    m_currentAudHeader = (*(INT32 *)(ps+0) & 0x0F0CFFFF);
+                    if (m_audHeaderCount>0) 
+                    {
+                      m_audHeaderCount--;
+                    } 
+                  }       
+                }
+                else // 'locked' state
+                {
+                  if (m_currentAudHeader != (*(INT32 *)(ps+0) & 0x0F0CFFFF))
+                  {
+                    m_audHeaderCount--; //invalid (or changing) header sequence
+                    //LogDebug("demux: MPA lkd bad sync = %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), length-len, m_audHeaderCount);
+                  }  
+                  else //good header sequence
+                  {
+                    foundAudHeader = true;
+                    if (!m_mpegPesParser->basicAudioInfo.isValid)
+                    {
+                      m_mpegPesParser->OnAudioPacket(ps, len, m_AudioStreamType, true);
+                      m_filter.GetAudioPin()->SetAddPMT();
+                      m_bSetAudioDiscontinuity=true;
+                      
+                      //Parse the channel count
+                      byte parsedChannels = ((*(ps+3) & 0xC0) == 0xC0) ? 1 : 2;
+						          LogDebug("demux: MPA header: sampleRate = %d, channels = %d, parsedChannels = %d", m_mpegPesParser->basicAudioInfo.sampleRate, m_mpegPesParser->basicAudioInfo.channels, parsedChannels);
+                    }
+                    else
+                    {
+                      //Parse the channel count
+                      byte parsedChannels = ((*(ps+3) & 0xC0) == 0xC0) ? 1 : 2;
+                      if (parsedChannels != m_mpegPesParser->basicAudioInfo.channels)
+                      {
+    				            LogDebug("demux: MPA channels = %d -> %d", m_mpegPesParser->basicAudioInfo.channels, parsedChannels);
+                        CAutoLock plock (&m_mpegPesParser->m_sectionAudioPmt);
+                        m_mpegPesParser->basicAudioInfo.channels=parsedChannels;
+                        Cbuf->SetForcePMT();
+                      }
+                    }
+                    if (m_audHeaderCount<8)
+                    {
+                      m_audHeaderCount++;
+                      if (m_audHeaderCount<7)
+                      {
+                        LogDebug("demux: MPA good sync = %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), length-len, m_audHeaderCount);
                       }
                     }
                   }

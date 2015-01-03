@@ -315,8 +315,8 @@ private:
   
   byte* m_pFileReadBuffer;
   
-  DWORD m_currentAACheader;
-  int m_AACheaderCount;
+  DWORD m_currentAudHeader;
+  int m_audHeaderCount;
   int m_hadPESfail;
     
 };
