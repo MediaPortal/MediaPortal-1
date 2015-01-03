@@ -54,6 +54,10 @@
 // 32 KB of data to request at start
 #define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_DATA_LENGTH_DEFAULT             32768
 
+#define SLEEP_MODE_NO                                                         0
+#define SLEEP_MODE_SHORT                                                      1
+#define SLEEP_MODE_LONG                                                       2
+
 CPlugin *CreatePlugin(HRESULT *result, CLogger *logger, CParameterCollection *configuration)
 {
   return new CMPUrlSourceSplitter_Parser_Mpeg2TS(result, logger, configuration);
@@ -364,21 +368,24 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::Initialize(CPluginConfiguration *co
 
 void CMPUrlSourceSplitter_Parser_Mpeg2TS::SetPauseSeekStopMode(unsigned int pauseSeekStopMode)
 {
-  CLockMutex lock(this->mutex, INFINITE);
+  this->protocolHoster->SetPauseSeekStopMode(pauseSeekStopMode);
+
+  LOCK_MUTEX(this->mutex, INFINITE)
 
   this->pauseSeekStopMode = pauseSeekStopMode;
 
-  this->protocolHoster->SetPauseSeekStopMode(pauseSeekStopMode);
+  UNLOCK_MUTEX(this->mutex)
 }
 
 int64_t CMPUrlSourceSplitter_Parser_Mpeg2TS::SeekToTime(unsigned int streamId, int64_t time)
 {
-  CLockMutex lock(this->mutex, INFINITE);
+  int64_t result = -1;
+  LOCK_MUTEX(this->mutex, INFINITE)
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME);
   this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from time: %llu", PARSER_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, time);
 
-  int64_t result = this->protocolHoster->SeekToTime(streamId, time);
+  result = this->protocolHoster->SeekToTime(streamId, time);
 
   if (result != (-1))
   {
@@ -424,6 +431,8 @@ int64_t CMPUrlSourceSplitter_Parser_Mpeg2TS::SeekToTime(unsigned int streamId, i
   }
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
+
+  UNLOCK_MUTEX(this->mutex)
   return result;
 }
 
@@ -436,29 +445,36 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::ProcessStreamPackage(CStreamPackage
 
   if (SUCCEEDED(result))
   {
+    LOCK_MUTEX(this->mutex, INFINITE)
+
+    this->streamPackage = streamPackage;
+
+    UNLOCK_MUTEX(this->mutex)
+
+    if (this->streamPackage != NULL)
     {
-      CLockMutex lock(this->mutex, INFINITE);
-
-      this->streamPackage = streamPackage;
-    }
-
-    while (true)
-    {
-      // lock mutex to get exclussive access to stream package
-      // don't wait too long
-      CLockMutex lock(this->mutex, 20);
-
-      if (lock.IsLocked())
+      if (WaitForSingleObject(this->streamPackage->GetProcessedEventHandle(), INFINITE) == WAIT_OBJECT_0)
       {
-        if (streamPackage->GetState() == CStreamPackage::Completed)
+        while (this->streamPackage != NULL)
         {
-          this->streamPackage = NULL;
-          break;
+          // lock mutex to get exclussive access to stream package
+          // don't wait too long
+          LOCK_MUTEX(this->mutex, 20)
+
+          if (streamPackage->GetState() == CStreamPackage::Completed)
+          {
+            this->streamPackage = NULL;
+          }
+
+          UNLOCK_MUTEX(this->mutex)
+
+          if (this->streamPackage != NULL)
+          {
+            // sleep some time
+            Sleep(1);
+          }
         }
       }
-
-      // sleep some time
-      Sleep(1);
     }
   }
 
@@ -583,20 +599,20 @@ int64_t CMPUrlSourceSplitter_Parser_Mpeg2TS::GetBytePosition(void)
 {
   int64_t result = 0;
 
+  LOCK_MUTEX(this->mutex, INFINITE)
+
+  unsigned int first = this->streamFragments->GetStartSearchingIndex();
+  unsigned int count = this->streamFragments->GetSearchCount();
+
+  if (count != 0)
   {
-    CLockMutex lock(this->mutex, INFINITE);
+    CMpeg2tsStreamFragment *firstFragment = this->streamFragments->GetItem(first);
+    CMpeg2tsStreamFragment *lastFragment = this->streamFragments->GetItem(first + count - 1);
 
-    unsigned int first = this->streamFragments->GetStartSearchingIndex();
-    unsigned int count = this->streamFragments->GetSearchCount();
-
-    if (count != 0)
-    {
-      CMpeg2tsStreamFragment *firstFragment = this->streamFragments->GetItem(first);
-      CMpeg2tsStreamFragment *lastFragment = this->streamFragments->GetItem(first + count - 1);
-
-      result = lastFragment->GetFragmentStartPosition() + (int64_t)lastFragment->GetLength() - firstFragment->GetFragmentStartPosition() + this->positionOffset;
-    }
+    result = lastFragment->GetFragmentStartPosition() + (int64_t)lastFragment->GetLength() - firstFragment->GetFragmentStartPosition() + this->positionOffset;
   }
+
+  UNLOCK_MUTEX(this->mutex)
 
   return result;
 }
@@ -658,879 +674,887 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
   HRESULT result = S_OK;
   unsigned int requestId = 0;
 
+  unsigned int sleepMode = SLEEP_MODE_LONG;
+
   while (!caller->receiveDataWorkerShouldExit)
   {
-    Sleep(1);
+    sleepMode = SLEEP_MODE_LONG;
 
     if (SUCCEEDED(result) && (caller->streamFragments->HasReadyForAlignStreamFragments()))
     {
+      sleepMode = SLEEP_MODE_SHORT;
+
       // don't wait too long, we can align stream fragments later
-      CLockMutex lock(caller->mutex, 20);
+      LOCK_MUTEX(caller->mutex, 20)
 
-      if (lock.IsLocked())
+      CIndexedMpeg2tsStreamFragmentCollection *indexedReadyForAlignStreamFragments = new CIndexedMpeg2tsStreamFragmentCollection(&result);
+      CHECK_POINTER_HRESULT(result, indexedReadyForAlignStreamFragments, result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetReadyForAlignStreamFragments(indexedReadyForAlignStreamFragments));
+
+      for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedReadyForAlignStreamFragments->Count())); i++)
       {
-        CIndexedMpeg2tsStreamFragmentCollection *indexedReadyForAlignStreamFragments = new CIndexedMpeg2tsStreamFragmentCollection(&result);
-        CHECK_POINTER_HRESULT(result, indexedReadyForAlignStreamFragments, result, E_OUTOFMEMORY);
+        CIndexedMpeg2tsStreamFragment *indexedReadyForAlignStreamFragment = indexedReadyForAlignStreamFragments->GetItem(i);
+        CMpeg2tsStreamFragment *currentReadyForAlignStreamFragment = indexedReadyForAlignStreamFragment->GetItem();
+        CMpeg2tsStreamFragment *nextStreamFragment = currentReadyForAlignStreamFragment->IsDiscontinuity() ? NULL : caller->streamFragments->GetItem(indexedReadyForAlignStreamFragment->GetItemIndex() + 1);
 
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetReadyForAlignStreamFragments(indexedReadyForAlignStreamFragments));
+        // we assume that previous stream fragments are aligned
+        // if some data will remain in current stream fragment, we add them to start of next stream fragment (or drop)
 
-        for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedReadyForAlignStreamFragments->Count())); i++)
+        CLinearBuffer *processingBuffer = currentReadyForAlignStreamFragment->GetBuffer()->Clone();
+        CLinearBuffer *fragmentBuffer = new CLinearBuffer(&result, currentReadyForAlignStreamFragment->GetBuffer()->GetBufferOccupiedSpace());
+
+        CHECK_POINTER_HRESULT(result, processingBuffer, result, E_OUTOFMEMORY);
+        CHECK_POINTER_HRESULT(result, fragmentBuffer, result, E_OUTOFMEMORY);
+
+        if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_ALIGN_TO_MPEG2TS_PACKET))
         {
-          CIndexedMpeg2tsStreamFragment *indexedReadyForAlignStreamFragment = indexedReadyForAlignStreamFragments->GetItem(i);
-          CMpeg2tsStreamFragment *currentReadyForAlignStreamFragment = indexedReadyForAlignStreamFragment->GetItem();
-          CMpeg2tsStreamFragment *nextStreamFragment = currentReadyForAlignStreamFragment->IsDiscontinuity() ? NULL : caller->streamFragments->GetItem(indexedReadyForAlignStreamFragment->GetItemIndex() + 1);
-
-          // we assume that previous stream fragments are aligned
-          // if some data will remain in current stream fragment, we add them to start of next stream fragment (or drop)
-
-          CLinearBuffer *processingBuffer = currentReadyForAlignStreamFragment->GetBuffer()->Clone();
-          CLinearBuffer *fragmentBuffer = new CLinearBuffer(&result, currentReadyForAlignStreamFragment->GetBuffer()->GetBufferOccupiedSpace());
-
-          CHECK_POINTER_HRESULT(result, processingBuffer, result, E_OUTOFMEMORY);
-          CHECK_POINTER_HRESULT(result, fragmentBuffer, result, E_OUTOFMEMORY);
-
-          if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_ALIGN_TO_MPEG2TS_PACKET))
+          while (SUCCEEDED(result) && (processingBuffer->GetBufferOccupiedSpace() >= TS_PACKET_SIZE))
           {
-            while (SUCCEEDED(result) && (processingBuffer->GetBufferOccupiedSpace() >= TS_PACKET_SIZE))
-            {
-              unsigned int firstPacketPosition = 0;
-              unsigned int packetSequenceLength = 0;
+            unsigned int firstPacketPosition = 0;
+            unsigned int packetSequenceLength = 0;
 
-              result = CTsPacket::FindPacketSequence(processingBuffer, &firstPacketPosition, &packetSequenceLength);
+            result = CTsPacket::FindPacketSequence(processingBuffer, &firstPacketPosition, &packetSequenceLength);
+
+            if (SUCCEEDED(result))
+            {
+              if (firstPacketPosition != 0)
+              {
+                processingBuffer->RemoveFromBuffer(firstPacketPosition);
+
+                caller->logger->Log(LOGGER_WARNING, L"%s: %s: invalid data, removing %u bytes", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, firstPacketPosition);
+              }
+
+              CHECK_CONDITION_HRESULT(result, fragmentBuffer->AddToBufferWithResize(processingBuffer, 0, packetSequenceLength) == packetSequenceLength, result, E_OUTOFMEMORY);
+              processingBuffer->RemoveFromBuffer(packetSequenceLength);
+            }
+          }
+
+          if (SUCCEEDED(result) && (fragmentBuffer->GetBufferOccupiedSpace() != currentReadyForAlignStreamFragment->GetLength()))
+          {
+            currentReadyForAlignStreamFragment->GetBuffer()->ClearBuffer();
+            CHECK_CONDITION_HRESULT(result, currentReadyForAlignStreamFragment->GetBuffer()->AddToBufferWithResize(fragmentBuffer) == fragmentBuffer->GetBufferOccupiedSpace(), result, E_OUTOFMEMORY);
+
+            // move remaining data to next fragment or drop it when next fragment doesn't exist
+            if ((nextStreamFragment != NULL) && (processingBuffer->GetBufferOccupiedSpace() != 0))
+            {
+              unsigned int length = nextStreamFragment->GetLength() + processingBuffer->GetBufferOccupiedSpace();
+
+              ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+              CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
 
               if (SUCCEEDED(result))
               {
-                if (firstPacketPosition != 0)
-                {
-                  processingBuffer->RemoveFromBuffer(firstPacketPosition);
+                processingBuffer->CopyFromBuffer(buffer, processingBuffer->GetBufferOccupiedSpace());
+                nextStreamFragment->GetBuffer()->CopyFromBuffer(buffer + processingBuffer->GetBufferOccupiedSpace(), length - processingBuffer->GetBufferOccupiedSpace());
 
-                  caller->logger->Log(LOGGER_WARNING, L"%s: %s: invalid data, removing %u bytes", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, firstPacketPosition);
-                }
-
-                CHECK_CONDITION_HRESULT(result, fragmentBuffer->AddToBufferWithResize(processingBuffer, 0, packetSequenceLength) == packetSequenceLength, result, E_OUTOFMEMORY);
-                processingBuffer->RemoveFromBuffer(packetSequenceLength);
+                nextStreamFragment->GetBuffer()->ClearBuffer();
+                CHECK_CONDITION_HRESULT(result, nextStreamFragment->GetBuffer()->AddToBufferWithResize(buffer, length) == length, result, E_OUTOFMEMORY);
               }
+
+              FREE_MEM(buffer);
             }
-
-            if (SUCCEEDED(result) && (fragmentBuffer->GetBufferOccupiedSpace() != currentReadyForAlignStreamFragment->GetLength()))
-            {
-              currentReadyForAlignStreamFragment->GetBuffer()->ClearBuffer();
-              CHECK_CONDITION_HRESULT(result, currentReadyForAlignStreamFragment->GetBuffer()->AddToBufferWithResize(fragmentBuffer) == fragmentBuffer->GetBufferOccupiedSpace(), result, E_OUTOFMEMORY);
-
-              // move remaining data to next fragment or drop it when next fragment doesn't exist
-              if ((nextStreamFragment != NULL) && (processingBuffer->GetBufferOccupiedSpace() != 0))
-              {
-                unsigned int length = nextStreamFragment->GetLength() + processingBuffer->GetBufferOccupiedSpace();
-
-                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-                CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
-
-                if (SUCCEEDED(result))
-                {
-                  processingBuffer->CopyFromBuffer(buffer, processingBuffer->GetBufferOccupiedSpace());
-                  nextStreamFragment->GetBuffer()->CopyFromBuffer(buffer + processingBuffer->GetBufferOccupiedSpace(), length - processingBuffer->GetBufferOccupiedSpace());
-
-                  nextStreamFragment->GetBuffer()->ClearBuffer();
-                  CHECK_CONDITION_HRESULT(result, nextStreamFragment->GetBuffer()->AddToBufferWithResize(buffer, length) == length, result, E_OUTOFMEMORY);
-                }
-
-                FREE_MEM(buffer);
-              }
-            }
-
-            FREE_MEM_CLASS(processingBuffer);
-            FREE_MEM_CLASS(fragmentBuffer);
           }
 
-          if (SUCCEEDED(result))
-          {
-            // mark stream fragment as aligned
-            currentReadyForAlignStreamFragment->SetReadyForAlign(false, UINT_MAX);
-            currentReadyForAlignStreamFragment->SetAligned(true, UINT_MAX);
-
-            caller->streamFragments->UpdateIndexes(indexedReadyForAlignStreamFragment->GetItemIndex(), 1);
-            caller->streamFragments->RecalculateAlignedStreamFragmentStartPosition(indexedReadyForAlignStreamFragment->GetItemIndex());
-          }
+          FREE_MEM_CLASS(processingBuffer);
+          FREE_MEM_CLASS(fragmentBuffer);
         }
 
-        FREE_MEM_CLASS(indexedReadyForAlignStreamFragments);
-
-        // check if last fragment is processed
-        // if yes, then set end of stream reached flag
-
-        CMpeg2tsStreamFragment *lastFragment = caller->streamFragments->GetItem(caller->streamFragments->Count() - 1);
-
-        if ((lastFragment == NULL) || ((lastFragment != NULL) && (lastFragment->IsProcessed())))
+        if (SUCCEEDED(result))
         {
-          // end of stream reached
-          caller->flags |= PARSER_PLUGIN_FLAG_END_OF_STREAM_REACHED;
+          // mark stream fragment as aligned
+          currentReadyForAlignStreamFragment->SetReadyForAlign(false, UINT_MAX);
+          currentReadyForAlignStreamFragment->SetAligned(true, UINT_MAX);
+
+          caller->streamFragments->UpdateIndexes(indexedReadyForAlignStreamFragment->GetItemIndex(), 1);
+          caller->streamFragments->RecalculateAlignedStreamFragmentStartPosition(indexedReadyForAlignStreamFragment->GetItemIndex());
         }
       }
+
+      FREE_MEM_CLASS(indexedReadyForAlignStreamFragments);
+
+      // check if last fragment is processed
+      // if yes, then set end of stream reached flag
+
+      CMpeg2tsStreamFragment *lastFragment = caller->streamFragments->GetItem(caller->streamFragments->Count() - 1);
+
+      if ((lastFragment == NULL) || ((lastFragment != NULL) && (lastFragment->IsProcessed())))
+      {
+        // end of stream reached
+        caller->flags |= PARSER_PLUGIN_FLAG_END_OF_STREAM_REACHED;
+      }
+      
+      UNLOCK_MUTEX(caller->mutex)
     }
 
     if (SUCCEEDED(result) && (caller->streamFragments->HasAlignedStreamFragments()))
     {
+      sleepMode = SLEEP_MODE_SHORT;
+
       // don't wait too long, we can do this later
-      CLockMutex lock(caller->mutex, 20);
+      LOCK_MUTEX(caller->mutex, 20)
 
-      if (lock.IsLocked())
+      CIndexedMpeg2tsStreamFragmentCollection *indexedAlignedStreamFragments = new CIndexedMpeg2tsStreamFragmentCollection(&result);
+      CHECK_POINTER_HRESULT(result, indexedAlignedStreamFragments, result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetAlignedStreamFragments(indexedAlignedStreamFragments));
+
+      for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedAlignedStreamFragments->Count())); i++)
       {
-        CIndexedMpeg2tsStreamFragmentCollection *indexedAlignedStreamFragments = new CIndexedMpeg2tsStreamFragmentCollection(&result);
-        CHECK_POINTER_HRESULT(result, indexedAlignedStreamFragments, result, E_OUTOFMEMORY);
+        CIndexedMpeg2tsStreamFragment *indexedAlignedStreamFragment = indexedAlignedStreamFragments->GetItem(i);
+        CMpeg2tsStreamFragment *currentAlignedStreamFragment = indexedAlignedStreamFragment->GetItem();
 
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetAlignedStreamFragments(indexedAlignedStreamFragments));
-
-        for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedAlignedStreamFragments->Count())); i++)
+        if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_DETECT_DISCONTINUITY))
         {
-          CIndexedMpeg2tsStreamFragment *indexedAlignedStreamFragment = indexedAlignedStreamFragments->GetItem(i);
-          CMpeg2tsStreamFragment *currentAlignedStreamFragment = indexedAlignedStreamFragment->GetItem();
+          unsigned int processed = 0;
+          unsigned int length = currentAlignedStreamFragment->GetBuffer()->GetBufferOccupiedSpace();
 
-          if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_DETECT_DISCONTINUITY))
+          ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+          CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
+
+          CHECK_CONDITION_HRESULT(result, currentAlignedStreamFragment->GetBuffer()->CopyFromBuffer(buffer, length) == length, result, E_OUTOFMEMORY);
+
+          while (SUCCEEDED(result) && (processed < length))
           {
-            unsigned int processed = 0;
-            unsigned int length = currentAlignedStreamFragment->GetBuffer()->GetBufferOccupiedSpace();
+            CTsPacket *packet = new CTsPacket(&result);
+            CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
 
-            ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-            CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, packet->Parse(buffer + processed, length - processed), result, E_MPEG2TS_CANNOT_PARSE_PACKET);
 
-            CHECK_CONDITION_HRESULT(result, currentAlignedStreamFragment->GetBuffer()->CopyFromBuffer(buffer, length) == length, result, E_OUTOFMEMORY);
-
-            while (SUCCEEDED(result) && (processed < length))
+            if (SUCCEEDED(result))
             {
-              CTsPacket *packet = new CTsPacket(&result);
-              CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
-
-              CHECK_CONDITION_HRESULT(result, packet->Parse(buffer + processed, length - processed), result, E_MPEG2TS_CANNOT_PARSE_PACKET);
+              result = caller->discontinuityParser->Parse(packet);
 
               if (SUCCEEDED(result))
               {
-                result = caller->discontinuityParser->Parse(packet);
+                CHECK_CONDITION_EXECUTE(caller->discontinuityParser->IsDiscontinuity(), caller->logger->Log(LOGGER_WARNING, L"%s: %s: discontinuity detected, PID: %u (0x%04X), expected counter: %u, packet counter: %u", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, caller->discontinuityParser->GetLastDiscontinuityPid(), caller->discontinuityParser->GetLastDiscontinuityPid(), (unsigned int)caller->discontinuityParser->GetLastExpectedCounter(), (unsigned int)caller->discontinuityParser->GetLastDiscontinuityCounter()));
 
-                if (SUCCEEDED(result))
-                {
-                  CHECK_CONDITION_EXECUTE(caller->discontinuityParser->IsDiscontinuity(), caller->logger->Log(LOGGER_WARNING, L"%s: %s: discontinuity detected, PID: %u (0x%04X), expected counter: %u, packet counter: %u", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, caller->discontinuityParser->GetLastDiscontinuityPid(), caller->discontinuityParser->GetLastDiscontinuityPid(), (unsigned int)caller->discontinuityParser->GetLastExpectedCounter(), (unsigned int)caller->discontinuityParser->GetLastDiscontinuityCounter()));
-
-                  processed += TS_PACKET_SIZE;
-                }
-                else
-                {
-                  caller->logger->Log(LOGGER_WARNING, L"%s: %s: discontinuity parser returned error: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, result);
-                }
+                processed += TS_PACKET_SIZE;
               }
-
-              FREE_MEM_CLASS(packet);
+              else
+              {
+                caller->logger->Log(LOGGER_WARNING, L"%s: %s: discontinuity parser returned error: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, result);
+              }
             }
 
-            FREE_MEM(buffer);
+            FREE_MEM_CLASS(packet);
           }
 
-          currentAlignedStreamFragment->SetAligned(false, UINT_MAX);
-          currentAlignedStreamFragment->SetDiscontinuityProcessed(true, UINT_MAX);
-
-          caller->streamFragments->UpdateIndexes(indexedAlignedStreamFragment->GetItemIndex(), 1);
+          FREE_MEM(buffer);
         }
 
-        FREE_MEM_CLASS(indexedAlignedStreamFragments);
+        currentAlignedStreamFragment->SetAligned(false, UINT_MAX);
+        currentAlignedStreamFragment->SetDiscontinuityProcessed(true, UINT_MAX);
+
+        caller->streamFragments->UpdateIndexes(indexedAlignedStreamFragment->GetItemIndex(), 1);
       }
+
+      FREE_MEM_CLASS(indexedAlignedStreamFragments);
+
+      UNLOCK_MUTEX(caller->mutex)
     }
 
     if (SUCCEEDED(result) && caller->streamFragments->HasDiscontinuityProcessedStreamFragments())
     {
+      sleepMode = SLEEP_MODE_SHORT;
+
       // don't wait too long, we can do this later
-      CLockMutex lock(caller->mutex, 20);
+      LOCK_MUTEX(caller->mutex, 20)
 
-      if (lock.IsLocked())
+      CIndexedMpeg2tsStreamFragmentCollection *indexedDiscontinuityProcessedStreamFragments = new CIndexedMpeg2tsStreamFragmentCollection(&result);
+      CHECK_POINTER_HRESULT(result, indexedDiscontinuityProcessedStreamFragments, result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetDiscontinuityProcessedStreamFragments(indexedDiscontinuityProcessedStreamFragments));
+
+      for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedDiscontinuityProcessedStreamFragments->Count())); i++)
       {
-        CIndexedMpeg2tsStreamFragmentCollection *indexedDiscontinuityProcessedStreamFragments = new CIndexedMpeg2tsStreamFragmentCollection(&result);
-        CHECK_POINTER_HRESULT(result, indexedDiscontinuityProcessedStreamFragments, result, E_OUTOFMEMORY);
+        CIndexedMpeg2tsStreamFragment *indexedDiscontinuityProcessedStreamFragment = indexedDiscontinuityProcessedStreamFragments->GetItem(i);
+        CMpeg2tsStreamFragment *currentDiscontinuityProcessedStreamFragment = indexedDiscontinuityProcessedStreamFragment->GetItem();
 
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetDiscontinuityProcessedStreamFragments(indexedDiscontinuityProcessedStreamFragments));
-
-        for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedDiscontinuityProcessedStreamFragments->Count())); i++)
+        if (caller->IsSetAnyOfFlags(
+          MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_TRANSPORT_STREAM_ID |
+          MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER |
+          MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID))
         {
-          CIndexedMpeg2tsStreamFragment *indexedDiscontinuityProcessedStreamFragment = indexedDiscontinuityProcessedStreamFragments->GetItem(i);
-          CMpeg2tsStreamFragment *currentDiscontinuityProcessedStreamFragment = indexedDiscontinuityProcessedStreamFragment->GetItem();
+          // changing stream identification is required
 
-          if (caller->IsSetAnyOfFlags(
-            MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_TRANSPORT_STREAM_ID |
-            MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER |
-            MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID))
+          unsigned int processed = 0;
+          unsigned int length = currentDiscontinuityProcessedStreamFragment->GetBuffer()->GetBufferOccupiedSpace();
+
+          ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+          CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
+
+          CHECK_CONDITION_HRESULT(result, currentDiscontinuityProcessedStreamFragment->GetBuffer()->CopyFromBuffer(buffer, length) == length, result, E_OUTOFMEMORY);
+
+          while (SUCCEEDED(result) && (processed < length))
           {
-            // changing stream identification is required
-
-            unsigned int processed = 0;
-            unsigned int length = currentDiscontinuityProcessedStreamFragment->GetBuffer()->GetBufferOccupiedSpace();
-
-            ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-            CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
-
-            CHECK_CONDITION_HRESULT(result, currentDiscontinuityProcessedStreamFragment->GetBuffer()->CopyFromBuffer(buffer, length) == length, result, E_OUTOFMEMORY);
-
-            while (SUCCEEDED(result) && (processed < length))
+            // process stream fragment for program association section
+            if (caller->IsSetAnyOfFlags(
+              MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_TRANSPORT_STREAM_ID |
+              MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER |
+              MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID))
             {
-              // process stream fragment for program association section
-              if (caller->IsSetAnyOfFlags(
-                MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_TRANSPORT_STREAM_ID |
-                MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER |
-                MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID))
-              {
-                CProgramSpecificInformationPacket *psiPacket = new CProgramSpecificInformationPacket(&result, PROGRAM_ASSOCIATION_PARSER_PSI_PACKET_PID);
-                CHECK_POINTER_HRESULT(result, psiPacket, result, E_OUTOFMEMORY);
+              CProgramSpecificInformationPacket *psiPacket = new CProgramSpecificInformationPacket(&result, PROGRAM_ASSOCIATION_PARSER_PSI_PACKET_PID);
+              CHECK_POINTER_HRESULT(result, psiPacket, result, E_OUTOFMEMORY);
                 
-                if (psiPacket->Parse(buffer + processed, length - processed))
+              if (psiPacket->Parse(buffer + processed, length - processed))
+              {
+                // PSI packet with specified PID
+                // program association section PSI packet
+
+                HRESULT res = caller->programAssociationParser->Parse(psiPacket);
+
+                if (caller->programAssociationParser->IsSectionFound())
                 {
-                  // PSI packet with specified PID
-                  // program association section PSI packet
+                  // found MPEG2 TS packet with program association section (maybe complete, maybe incomplete, maybe with error)
 
-                  HRESULT res = caller->programAssociationParser->Parse(psiPacket);
-
-                  if (caller->programAssociationParser->IsSectionFound())
+                  if (caller->programAssociationSectionContext == NULL)
                   {
-                    // found MPEG2 TS packet with program association section (maybe complete, maybe incomplete, maybe with error)
+                    // create new program association section context
+                    caller->programAssociationSectionContext = new CProgramAssociationSectionContext(&result);
+                    CHECK_POINTER_HRESULT(result, caller->programAssociationSectionContext, result, E_OUTOFMEMORY);
 
-                    if (caller->programAssociationSectionContext == NULL)
+                    if (SUCCEEDED(result))
                     {
-                      // create new program association section context
-                      caller->programAssociationSectionContext = new CProgramAssociationSectionContext(&result);
-                      CHECK_POINTER_HRESULT(result, caller->programAssociationSectionContext, result, E_OUTOFMEMORY);
-
-                      if (SUCCEEDED(result))
-                      {
-                        caller->programAssociationSectionContext->SetOriginalSectionEmpty(true);
-                        caller->programAssociationSectionContext->SetContinuityCounter(psiPacket->GetContinuityCounter());
-                      }
+                      caller->programAssociationSectionContext->SetOriginalSectionEmpty(true);
+                      caller->programAssociationSectionContext->SetContinuityCounter(psiPacket->GetContinuityCounter());
                     }
+                  }
 
-                    bool isOwner = false;
-                    switch (res)
+                  bool isOwner = false;
+                  switch (res)
+                  {
+                  case S_OK:
+                    // complete program association section
                     {
-                    case S_OK:
-                      // complete program association section
+                      isOwner = true;
+
+                      // check number of programs, we allow only one program (in another case we don't know, which program number and/or program map PID to replace)
+
+                      if (caller->IsSetAnyOfFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER | MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID))
                       {
-                        isOwner = true;
-
-                        // check number of programs, we allow only one program (in another case we don't know, which program number and/or program map PID to replace)
-
-                        if (caller->IsSetAnyOfFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER | MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID))
-                        {
-                          CHECK_CONDITION_HRESULT(result, caller->programAssociationParser->GetProgramAssociationSection()->GetPrograms()->Count() == 1, result, E_MPEG2TS_ONLY_ONE_PROGRAM_ALLOWED);
-
-                          if (SUCCEEDED(result))
-                          {
-                            CProgramAssociationSectionProgram *program = caller->programAssociationParser->GetProgramAssociationSection()->GetPrograms()->GetItem(0);
-
-                            caller->transportStreamProgramMapParser->SetTransportStreamProgramMapSectionPID(program->GetProgramMapPID());
-                          }
-                        }
+                        CHECK_CONDITION_HRESULT(result, caller->programAssociationParser->GetProgramAssociationSection()->GetPrograms()->Count() == 1, result, E_MPEG2TS_ONLY_ONE_PROGRAM_ALLOWED);
 
                         if (SUCCEEDED(result))
                         {
-                          CProgramAssociationSection *section = (CProgramAssociationSection *)caller->programAssociationParser->GetProgramAssociationSection()->Clone();
-                          CHECK_POINTER_HRESULT(result, section, result, E_OUTOFMEMORY);
+                          CProgramAssociationSectionProgram *program = caller->programAssociationParser->GetProgramAssociationSection()->GetPrograms()->GetItem(0);
 
-                          CHECK_CONDITION_HRESULT(result, caller->programAssociationSectionContext->SetOriginalSection(section), result, E_OUTOFMEMORY);
-                          caller->programAssociationParser->GetProgramAssociationSection()->Clear();
-
-                          caller->programAssociationSectionContext->SetOriginalSectionEmpty(false);
-                          caller->programAssociationSectionContext->SetOriginalSectionIncomplete(false);
-                          caller->programAssociationSectionContext->SetOriginalSectionComplete(true);
-                          caller->programAssociationSectionContext->SetOriginalSectionError(false);
-
-                          caller->programAssociationSectionContext->SetPacketCount(caller->programAssociationSectionContext->GetPacketCount() + 1);
+                          caller->transportStreamProgramMapParser->SetTransportStreamProgramMapSectionPID(program->GetProgramMapPID());
                         }
                       }
-                      break;
-                    case S_FALSE:
-                      // incomplete program association section
+
+                      if (SUCCEEDED(result))
                       {
-                        caller->programAssociationSectionContext->SetOriginalSectionEmpty(false);
-                        caller->programAssociationSectionContext->SetOriginalSectionIncomplete(true);
-                        caller->programAssociationSectionContext->SetOriginalSectionComplete(false);
-                        caller->programAssociationSectionContext->SetOriginalSectionError(false);
+                        CProgramAssociationSection *section = (CProgramAssociationSection *)caller->programAssociationParser->GetProgramAssociationSection()->Clone();
+                        CHECK_POINTER_HRESULT(result, section, result, E_OUTOFMEMORY);
 
-                        caller->programAssociationSectionContext->SetPacketCount(caller->programAssociationSectionContext->GetPacketCount() + 1);
-                      }
-                      break;
-                    case E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION:
-                      // section is empty and PSI packet with section data
-                      {
-                        isOwner = true;
-
-                        caller->programAssociationSectionContext->SetOriginalSectionEmpty(true);
-                        caller->programAssociationSectionContext->SetOriginalSectionIncomplete(false);
-                        caller->programAssociationSectionContext->SetOriginalSectionComplete(false);
-                        caller->programAssociationSectionContext->SetOriginalSectionError(true);
-
-                        caller->programAssociationSectionContext->SetPacketCount(caller->programAssociationSectionContext->GetPacketCount() + 1);
-                      }
-                      break;
-                    case E_MPEG2TS_INCOMPLETE_SECTION:
-                      // section is incomplete
-                      {
-                        isOwner = true;
-
-                        caller->programAssociationSectionContext->SetOriginalSectionEmpty(false);
-                        caller->programAssociationSectionContext->SetOriginalSectionIncomplete(true);
-                        caller->programAssociationSectionContext->SetOriginalSectionComplete(false);
-                        caller->programAssociationSectionContext->SetOriginalSectionError(true);
-
-                        caller->programAssociationSectionContext->SetPacketCount(caller->programAssociationSectionContext->GetPacketCount() + 1);
-                      }
-                      break;
-                    case E_MPEG2TS_SECTION_INVALID_CRC32:
-                      // invalid section CRC32 (corrupted section)
-                      {
-                        isOwner = true;
+                        CHECK_CONDITION_HRESULT(result, caller->programAssociationSectionContext->SetOriginalSection(section), result, E_OUTOFMEMORY);
+                        caller->programAssociationParser->GetProgramAssociationSection()->Clear();
 
                         caller->programAssociationSectionContext->SetOriginalSectionEmpty(false);
                         caller->programAssociationSectionContext->SetOriginalSectionIncomplete(false);
                         caller->programAssociationSectionContext->SetOriginalSectionComplete(true);
-                        caller->programAssociationSectionContext->SetOriginalSectionError(true);
+                        caller->programAssociationSectionContext->SetOriginalSectionError(false);
 
                         caller->programAssociationSectionContext->SetPacketCount(caller->programAssociationSectionContext->GetPacketCount() + 1);
                       }
-                      break;
-                    default:
-                      // another error
-                      {
-                        result = res;
-                        caller->logger->Log(LOGGER_ERROR, L"%s: %s: program association parser returned parse error: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, result);
-                      }
-                      break;
                     }
+                    break;
+                  case S_FALSE:
+                    // incomplete program association section
+                    {
+                      caller->programAssociationSectionContext->SetOriginalSectionEmpty(false);
+                      caller->programAssociationSectionContext->SetOriginalSectionIncomplete(true);
+                      caller->programAssociationSectionContext->SetOriginalSectionComplete(false);
+                      caller->programAssociationSectionContext->SetOriginalSectionError(false);
+
+                      caller->programAssociationSectionContext->SetPacketCount(caller->programAssociationSectionContext->GetPacketCount() + 1);
+                    }
+                    break;
+                  case E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION:
+                    // section is empty and PSI packet with section data
+                    {
+                      isOwner = true;
+
+                      caller->programAssociationSectionContext->SetOriginalSectionEmpty(true);
+                      caller->programAssociationSectionContext->SetOriginalSectionIncomplete(false);
+                      caller->programAssociationSectionContext->SetOriginalSectionComplete(false);
+                      caller->programAssociationSectionContext->SetOriginalSectionError(true);
+
+                      caller->programAssociationSectionContext->SetPacketCount(caller->programAssociationSectionContext->GetPacketCount() + 1);
+                    }
+                    break;
+                  case E_MPEG2TS_INCOMPLETE_SECTION:
+                    // section is incomplete
+                    {
+                      isOwner = true;
+
+                      caller->programAssociationSectionContext->SetOriginalSectionEmpty(false);
+                      caller->programAssociationSectionContext->SetOriginalSectionIncomplete(true);
+                      caller->programAssociationSectionContext->SetOriginalSectionComplete(false);
+                      caller->programAssociationSectionContext->SetOriginalSectionError(true);
+
+                      caller->programAssociationSectionContext->SetPacketCount(caller->programAssociationSectionContext->GetPacketCount() + 1);
+                    }
+                    break;
+                  case E_MPEG2TS_SECTION_INVALID_CRC32:
+                    // invalid section CRC32 (corrupted section)
+                    {
+                      isOwner = true;
+
+                      caller->programAssociationSectionContext->SetOriginalSectionEmpty(false);
+                      caller->programAssociationSectionContext->SetOriginalSectionIncomplete(false);
+                      caller->programAssociationSectionContext->SetOriginalSectionComplete(true);
+                      caller->programAssociationSectionContext->SetOriginalSectionError(true);
+
+                      caller->programAssociationSectionContext->SetPacketCount(caller->programAssociationSectionContext->GetPacketCount() + 1);
+                    }
+                    break;
+                  default:
+                    // another error
+                    {
+                      result = res;
+                      caller->logger->Log(LOGGER_ERROR, L"%s: %s: program association parser returned parse error: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, result);
+                    }
+                    break;
+                  }
+
+                  if (SUCCEEDED(result))
+                  {
+                    CProgramAssociationSectionPacketContext *packetContext = new CProgramAssociationSectionPacketContext(&result);
+                    CHECK_POINTER_HRESULT(result, packetContext, result, E_OUTOFMEMORY);
+
+                    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), packetContext->SetTsPacketIndex(processed / TS_PACKET_SIZE));
+                    CHECK_CONDITION_HRESULT(result, packetContext->SetSectionContext(caller->programAssociationSectionContext), result, E_FAIL);
+
+                    CHECK_CONDITION_HRESULT(result, currentDiscontinuityProcessedStreamFragment->GetProgramAssociationSectionPacketContexts()->Add(packetContext), result, E_OUTOFMEMORY);
+                    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(packetContext));
+
+                    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), packetContext->SetSectionContextOwner(isOwner));
+                  }
+
+                  // program association section context will be released from memory with removing packet context which is owner of program association section context 
+                  CHECK_CONDITION_EXECUTE(SUCCEEDED(result) && isOwner, caller->programAssociationSectionContext = NULL);
+                }
+                else
+                {
+                  result = res;
+                  caller->logger->Log(LOGGER_ERROR, L"%s: %s: program association parser returned error: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, result);
+                }
+              }
+
+              FREE_MEM_CLASS(psiPacket);
+            }
+
+            // process stream fragment for transport stream program map section
+            if (caller->IsSetAnyOfFlags(
+              MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER |
+              MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID) &&
+              caller->transportStreamProgramMapParser->GetTransportStreamProgramMapSectionPID() != TRANSPORT_STREAM_PROGRAM_MAP_PARSER_PID_NOT_DEFINED)
+            {
+              CProgramSpecificInformationPacket *psiPacket = new CProgramSpecificInformationPacket(&result, caller->transportStreamProgramMapParser->GetTransportStreamProgramMapSectionPID());
+              CHECK_POINTER_HRESULT(result, psiPacket, result, E_OUTOFMEMORY);
+
+              if (psiPacket->Parse(buffer + processed, length - processed))
+              {
+                // PSI packet with specified PID
+                // transport stream program map PSI packet
+
+                HRESULT res = caller->transportStreamProgramMapParser->Parse(psiPacket);
+
+                if (caller->transportStreamProgramMapParser->IsSectionFound())
+                {
+                  // found MPEG2 TS packet with transport stream program map section (maybe complete, maybe incomplete, maybe with error)
+
+                  if (caller->transportStreamProgramMapSectionContext == NULL)
+                  {
+                    // create new transport stream program map section context
+                    caller->transportStreamProgramMapSectionContext = new CTransportStreamProgramMapSectionContext(&result);
+                    CHECK_POINTER_HRESULT(result, caller->transportStreamProgramMapSectionContext, result, E_OUTOFMEMORY);
 
                     if (SUCCEEDED(result))
                     {
-                      CProgramAssociationSectionPacketContext *packetContext = new CProgramAssociationSectionPacketContext(&result);
-                      CHECK_POINTER_HRESULT(result, packetContext, result, E_OUTOFMEMORY);
-
-                      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), packetContext->SetTsPacketIndex(processed / TS_PACKET_SIZE));
-                      CHECK_CONDITION_HRESULT(result, packetContext->SetSectionContext(caller->programAssociationSectionContext), result, E_FAIL);
-
-                      CHECK_CONDITION_HRESULT(result, currentDiscontinuityProcessedStreamFragment->GetProgramAssociationSectionPacketContexts()->Add(packetContext), result, E_OUTOFMEMORY);
-                      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(packetContext));
-
-                      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), packetContext->SetSectionContextOwner(isOwner));
+                      caller->transportStreamProgramMapSectionContext->SetOriginalSectionEmpty(true);
+                      caller->transportStreamProgramMapSectionContext->SetContinuityCounter(psiPacket->GetContinuityCounter());
+                      caller->transportStreamProgramMapSectionContext->SetPID(caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID) ? caller->programMapPID : psiPacket->GetPID());
                     }
-
-                    // program association section context will be released from memory with removing packet context which is owner of program association section context 
-                    CHECK_CONDITION_EXECUTE(SUCCEEDED(result) && isOwner, caller->programAssociationSectionContext = NULL);
                   }
-                  else
+
+                  bool isOwner = false;
+                  switch (res)
                   {
-                    result = res;
-                    caller->logger->Log(LOGGER_ERROR, L"%s: %s: program association parser returned error: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, result);
-                  }
-                }
-
-                FREE_MEM_CLASS(psiPacket);
-              }
-
-              // process stream fragment for transport stream program map section
-              if (caller->IsSetAnyOfFlags(
-                MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER |
-                MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID) &&
-                caller->transportStreamProgramMapParser->GetTransportStreamProgramMapSectionPID() != TRANSPORT_STREAM_PROGRAM_MAP_PARSER_PID_NOT_DEFINED)
-              {
-                CProgramSpecificInformationPacket *psiPacket = new CProgramSpecificInformationPacket(&result, caller->transportStreamProgramMapParser->GetTransportStreamProgramMapSectionPID());
-                CHECK_POINTER_HRESULT(result, psiPacket, result, E_OUTOFMEMORY);
-
-                if (psiPacket->Parse(buffer + processed, length - processed))
-                {
-                  // PSI packet with specified PID
-                  // transport stream program map PSI packet
-
-                  HRESULT res = caller->transportStreamProgramMapParser->Parse(psiPacket);
-
-                  if (caller->transportStreamProgramMapParser->IsSectionFound())
-                  {
-                    // found MPEG2 TS packet with transport stream program map section (maybe complete, maybe incomplete, maybe with error)
-
-                    if (caller->transportStreamProgramMapSectionContext == NULL)
+                  case S_OK:
+                    // complete transport stream program map section
                     {
-                      // create new transport stream program map section context
-                      caller->transportStreamProgramMapSectionContext = new CTransportStreamProgramMapSectionContext(&result);
-                      CHECK_POINTER_HRESULT(result, caller->transportStreamProgramMapSectionContext, result, E_OUTOFMEMORY);
+                      isOwner = true;
 
                       if (SUCCEEDED(result))
                       {
-                        caller->transportStreamProgramMapSectionContext->SetOriginalSectionEmpty(true);
-                        caller->transportStreamProgramMapSectionContext->SetContinuityCounter(psiPacket->GetContinuityCounter());
-                        caller->transportStreamProgramMapSectionContext->SetPID(caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID) ? caller->programMapPID : psiPacket->GetPID());
-                      }
-                    }
+                        CTransportStreamProgramMapSection *section = (CTransportStreamProgramMapSection *)caller->transportStreamProgramMapParser->GetTransportStreamProgramMapSection()->Clone();
+                        CHECK_POINTER_HRESULT(result, section, result, E_OUTOFMEMORY);
 
-                    bool isOwner = false;
-                    switch (res)
-                    {
-                    case S_OK:
-                      // complete transport stream program map section
-                      {
-                        isOwner = true;
-
-                        if (SUCCEEDED(result))
-                        {
-                          CTransportStreamProgramMapSection *section = (CTransportStreamProgramMapSection *)caller->transportStreamProgramMapParser->GetTransportStreamProgramMapSection()->Clone();
-                          CHECK_POINTER_HRESULT(result, section, result, E_OUTOFMEMORY);
-
-                          CHECK_CONDITION_HRESULT(result, caller->transportStreamProgramMapSectionContext->SetOriginalSection(section), result, E_OUTOFMEMORY);
-                          caller->transportStreamProgramMapParser->GetTransportStreamProgramMapSection()->Clear();
-
-                          caller->transportStreamProgramMapSectionContext->SetOriginalSectionEmpty(false);
-                          caller->transportStreamProgramMapSectionContext->SetOriginalSectionIncomplete(false);
-                          caller->transportStreamProgramMapSectionContext->SetOriginalSectionComplete(true);
-                          caller->transportStreamProgramMapSectionContext->SetOriginalSectionError(false);
-
-                          caller->transportStreamProgramMapSectionContext->SetPacketCount(caller->transportStreamProgramMapSectionContext->GetPacketCount() + 1);
-                        }
-                      }
-                      break;
-                    case S_FALSE:
-                      // incomplete transport stream program map section
-                      {
-                        caller->transportStreamProgramMapSectionContext->SetOriginalSectionEmpty(false);
-                        caller->transportStreamProgramMapSectionContext->SetOriginalSectionIncomplete(true);
-                        caller->transportStreamProgramMapSectionContext->SetOriginalSectionComplete(false);
-                        caller->transportStreamProgramMapSectionContext->SetOriginalSectionError(false);
-
-                        caller->transportStreamProgramMapSectionContext->SetPacketCount(caller->transportStreamProgramMapSectionContext->GetPacketCount() + 1);
-                      }
-                      break;
-                    case E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION:
-                      // section is empty and PSI packet with section data
-                      {
-                        isOwner = true;
-
-                        caller->transportStreamProgramMapSectionContext->SetOriginalSectionEmpty(true);
-                        caller->transportStreamProgramMapSectionContext->SetOriginalSectionIncomplete(false);
-                        caller->transportStreamProgramMapSectionContext->SetOriginalSectionComplete(false);
-                        caller->transportStreamProgramMapSectionContext->SetOriginalSectionError(true);
-
-                        caller->transportStreamProgramMapSectionContext->SetPacketCount(caller->transportStreamProgramMapSectionContext->GetPacketCount() + 1);
-                      }
-                      break;
-                    case E_MPEG2TS_INCOMPLETE_SECTION:
-                      // section is incomplete
-                      {
-                        isOwner = true;
-
-                        caller->transportStreamProgramMapSectionContext->SetOriginalSectionEmpty(false);
-                        caller->transportStreamProgramMapSectionContext->SetOriginalSectionIncomplete(true);
-                        caller->transportStreamProgramMapSectionContext->SetOriginalSectionComplete(false);
-                        caller->transportStreamProgramMapSectionContext->SetOriginalSectionError(true);
-
-                        caller->transportStreamProgramMapSectionContext->SetPacketCount(caller->transportStreamProgramMapSectionContext->GetPacketCount() + 1);
-                      }
-                      break;
-                    case E_MPEG2TS_SECTION_INVALID_CRC32:
-                      // invalid section CRC32 (corrupted section)
-                      {
-                        isOwner = true;
+                        CHECK_CONDITION_HRESULT(result, caller->transportStreamProgramMapSectionContext->SetOriginalSection(section), result, E_OUTOFMEMORY);
+                        caller->transportStreamProgramMapParser->GetTransportStreamProgramMapSection()->Clear();
 
                         caller->transportStreamProgramMapSectionContext->SetOriginalSectionEmpty(false);
                         caller->transportStreamProgramMapSectionContext->SetOriginalSectionIncomplete(false);
                         caller->transportStreamProgramMapSectionContext->SetOriginalSectionComplete(true);
-                        caller->transportStreamProgramMapSectionContext->SetOriginalSectionError(true);
+                        caller->transportStreamProgramMapSectionContext->SetOriginalSectionError(false);
 
                         caller->transportStreamProgramMapSectionContext->SetPacketCount(caller->transportStreamProgramMapSectionContext->GetPacketCount() + 1);
                       }
-                      break;
-                    default:
-                      // another error
-                      {
-                        result = res;
-                        caller->logger->Log(LOGGER_ERROR, L"%s: %s: transport stream program map parser returned parse error: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, result);
-                      }
-                      break;
                     }
-
-                    if (SUCCEEDED(result))
+                    break;
+                  case S_FALSE:
+                    // incomplete transport stream program map section
                     {
-                      CTransportStreamProgramMapSectionPacketContext *packetContext = new CTransportStreamProgramMapSectionPacketContext(&result);
-                      CHECK_POINTER_HRESULT(result, packetContext, result, E_OUTOFMEMORY);
+                      caller->transportStreamProgramMapSectionContext->SetOriginalSectionEmpty(false);
+                      caller->transportStreamProgramMapSectionContext->SetOriginalSectionIncomplete(true);
+                      caller->transportStreamProgramMapSectionContext->SetOriginalSectionComplete(false);
+                      caller->transportStreamProgramMapSectionContext->SetOriginalSectionError(false);
 
-                      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), packetContext->SetTsPacketIndex(processed / TS_PACKET_SIZE));
-                      CHECK_CONDITION_HRESULT(result, packetContext->SetSectionContext(caller->transportStreamProgramMapSectionContext), result, E_FAIL);
-
-                      CHECK_CONDITION_HRESULT(result, currentDiscontinuityProcessedStreamFragment->GetTransportStreamProgramMapSectionPacketContexts()->Add(packetContext), result, E_OUTOFMEMORY);
-                      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(packetContext));
-
-                      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), packetContext->SetSectionContextOwner(isOwner));
+                      caller->transportStreamProgramMapSectionContext->SetPacketCount(caller->transportStreamProgramMapSectionContext->GetPacketCount() + 1);
                     }
+                    break;
+                  case E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION:
+                    // section is empty and PSI packet with section data
+                    {
+                      isOwner = true;
 
-                    // transport stream program map section context will be released from memory with removing packet context which is owner of transport stream program map section context 
-                    CHECK_CONDITION_EXECUTE(SUCCEEDED(result) && isOwner, caller->transportStreamProgramMapSectionContext = NULL);
+                      caller->transportStreamProgramMapSectionContext->SetOriginalSectionEmpty(true);
+                      caller->transportStreamProgramMapSectionContext->SetOriginalSectionIncomplete(false);
+                      caller->transportStreamProgramMapSectionContext->SetOriginalSectionComplete(false);
+                      caller->transportStreamProgramMapSectionContext->SetOriginalSectionError(true);
+
+                      caller->transportStreamProgramMapSectionContext->SetPacketCount(caller->transportStreamProgramMapSectionContext->GetPacketCount() + 1);
+                    }
+                    break;
+                  case E_MPEG2TS_INCOMPLETE_SECTION:
+                    // section is incomplete
+                    {
+                      isOwner = true;
+
+                      caller->transportStreamProgramMapSectionContext->SetOriginalSectionEmpty(false);
+                      caller->transportStreamProgramMapSectionContext->SetOriginalSectionIncomplete(true);
+                      caller->transportStreamProgramMapSectionContext->SetOriginalSectionComplete(false);
+                      caller->transportStreamProgramMapSectionContext->SetOriginalSectionError(true);
+
+                      caller->transportStreamProgramMapSectionContext->SetPacketCount(caller->transportStreamProgramMapSectionContext->GetPacketCount() + 1);
+                    }
+                    break;
+                  case E_MPEG2TS_SECTION_INVALID_CRC32:
+                    // invalid section CRC32 (corrupted section)
+                    {
+                      isOwner = true;
+
+                      caller->transportStreamProgramMapSectionContext->SetOriginalSectionEmpty(false);
+                      caller->transportStreamProgramMapSectionContext->SetOriginalSectionIncomplete(false);
+                      caller->transportStreamProgramMapSectionContext->SetOriginalSectionComplete(true);
+                      caller->transportStreamProgramMapSectionContext->SetOriginalSectionError(true);
+
+                      caller->transportStreamProgramMapSectionContext->SetPacketCount(caller->transportStreamProgramMapSectionContext->GetPacketCount() + 1);
+                    }
+                    break;
+                  default:
+                    // another error
+                    {
+                      result = res;
+                      caller->logger->Log(LOGGER_ERROR, L"%s: %s: transport stream program map parser returned parse error: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, result);
+                    }
+                    break;
                   }
-                  else
+
+                  if (SUCCEEDED(result))
                   {
-                    result = res;
-                    caller->logger->Log(LOGGER_ERROR, L"%s: %s: transport stream program map parser returned error: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, result);
-                  }
-                }
+                    CTransportStreamProgramMapSectionPacketContext *packetContext = new CTransportStreamProgramMapSectionPacketContext(&result);
+                    CHECK_POINTER_HRESULT(result, packetContext, result, E_OUTOFMEMORY);
 
-                FREE_MEM_CLASS(psiPacket);
+                    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), packetContext->SetTsPacketIndex(processed / TS_PACKET_SIZE));
+                    CHECK_CONDITION_HRESULT(result, packetContext->SetSectionContext(caller->transportStreamProgramMapSectionContext), result, E_FAIL);
+
+                    CHECK_CONDITION_HRESULT(result, currentDiscontinuityProcessedStreamFragment->GetTransportStreamProgramMapSectionPacketContexts()->Add(packetContext), result, E_OUTOFMEMORY);
+                    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(packetContext));
+
+                    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), packetContext->SetSectionContextOwner(isOwner));
+                  }
+
+                  // transport stream program map section context will be released from memory with removing packet context which is owner of transport stream program map section context 
+                  CHECK_CONDITION_EXECUTE(SUCCEEDED(result) && isOwner, caller->transportStreamProgramMapSectionContext = NULL);
+                }
+                else
+                {
+                  result = res;
+                  caller->logger->Log(LOGGER_ERROR, L"%s: %s: transport stream program map parser returned error: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, result);
+                }
               }
 
-              processed += TS_PACKET_SIZE;
+              FREE_MEM_CLASS(psiPacket);
             }
 
-            FREE_MEM(buffer);
-
-            currentDiscontinuityProcessedStreamFragment->SetDiscontinuityProcessed(false, UINT_MAX);
-
-            currentDiscontinuityProcessedStreamFragment->SetProgramAssociationSectionDetectionFinished(currentDiscontinuityProcessedStreamFragment->GetProgramAssociationSectionPacketContexts()->Count() != 0, UINT_MAX);
-            currentDiscontinuityProcessedStreamFragment->SetProgramAssociationSectionUpdated(currentDiscontinuityProcessedStreamFragment->GetProgramAssociationSectionPacketContexts()->Count() == 0, UINT_MAX);
-
-            currentDiscontinuityProcessedStreamFragment->SetTransportStreamMapSectionDetectionFinished(currentDiscontinuityProcessedStreamFragment->GetTransportStreamProgramMapSectionPacketContexts()->Count() != 0, UINT_MAX);
-            currentDiscontinuityProcessedStreamFragment->SetTransportStreamMapSectionUpdated(currentDiscontinuityProcessedStreamFragment->GetTransportStreamProgramMapSectionPacketContexts()->Count() == 0, UINT_MAX);
-
-            caller->streamFragments->UpdateIndexes(indexedDiscontinuityProcessedStreamFragment->GetItemIndex(), 1);
+            processed += TS_PACKET_SIZE;
           }
-          else
-          {
-            currentDiscontinuityProcessedStreamFragment->SetDiscontinuityProcessed(false, UINT_MAX);
-            currentDiscontinuityProcessedStreamFragment->SetProgramAssociationSectionUpdated(true, UINT_MAX);
-            currentDiscontinuityProcessedStreamFragment->SetTransportStreamMapSectionUpdated(true, UINT_MAX);
 
-            caller->streamFragments->UpdateIndexes(indexedDiscontinuityProcessedStreamFragment->GetItemIndex(), 1);
-          }
+          FREE_MEM(buffer);
+
+          currentDiscontinuityProcessedStreamFragment->SetDiscontinuityProcessed(false, UINT_MAX);
+
+          currentDiscontinuityProcessedStreamFragment->SetProgramAssociationSectionDetectionFinished(currentDiscontinuityProcessedStreamFragment->GetProgramAssociationSectionPacketContexts()->Count() != 0, UINT_MAX);
+          currentDiscontinuityProcessedStreamFragment->SetProgramAssociationSectionUpdated(currentDiscontinuityProcessedStreamFragment->GetProgramAssociationSectionPacketContexts()->Count() == 0, UINT_MAX);
+
+          currentDiscontinuityProcessedStreamFragment->SetTransportStreamMapSectionDetectionFinished(currentDiscontinuityProcessedStreamFragment->GetTransportStreamProgramMapSectionPacketContexts()->Count() != 0, UINT_MAX);
+          currentDiscontinuityProcessedStreamFragment->SetTransportStreamMapSectionUpdated(currentDiscontinuityProcessedStreamFragment->GetTransportStreamProgramMapSectionPacketContexts()->Count() == 0, UINT_MAX);
+
+          caller->streamFragments->UpdateIndexes(indexedDiscontinuityProcessedStreamFragment->GetItemIndex(), 1);
         }
+        else
+        {
+          currentDiscontinuityProcessedStreamFragment->SetDiscontinuityProcessed(false, UINT_MAX);
+          currentDiscontinuityProcessedStreamFragment->SetProgramAssociationSectionUpdated(true, UINT_MAX);
+          currentDiscontinuityProcessedStreamFragment->SetTransportStreamMapSectionUpdated(true, UINT_MAX);
 
-        FREE_MEM_CLASS(indexedDiscontinuityProcessedStreamFragments);
+          caller->streamFragments->UpdateIndexes(indexedDiscontinuityProcessedStreamFragment->GetItemIndex(), 1);
+        }
       }
+
+      FREE_MEM_CLASS(indexedDiscontinuityProcessedStreamFragments);
+
+      UNLOCK_MUTEX(caller->mutex)
     }
 
     if (SUCCEEDED(result) && caller->streamFragments->HasProgramAssociationSectionDetectionFinishedStreamFragments())
     {
+      sleepMode = SLEEP_MODE_SHORT;
+
       // don't wait too long, we can do this later
-      CLockMutex lock(caller->mutex, 20);
+      LOCK_MUTEX(caller->mutex, 20)
 
-      if (lock.IsLocked())
+      CIndexedMpeg2tsStreamFragmentCollection *indexedProgramAssociationSectionDetectionFinishedStreamFragments = new CIndexedMpeg2tsStreamFragmentCollection(&result);
+      CHECK_POINTER_HRESULT(result, indexedProgramAssociationSectionDetectionFinishedStreamFragments, result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetProgramAssociationSectionDetectionFinishedStreamFragments(indexedProgramAssociationSectionDetectionFinishedStreamFragments));
+
+      for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedProgramAssociationSectionDetectionFinishedStreamFragments->Count())); i++)
       {
-        CIndexedMpeg2tsStreamFragmentCollection *indexedProgramAssociationSectionDetectionFinishedStreamFragments = new CIndexedMpeg2tsStreamFragmentCollection(&result);
-        CHECK_POINTER_HRESULT(result, indexedProgramAssociationSectionDetectionFinishedStreamFragments, result, E_OUTOFMEMORY);
+        CIndexedMpeg2tsStreamFragment *indexedProgramAssociationSectionDetectionFinishedStreamFragment = indexedProgramAssociationSectionDetectionFinishedStreamFragments->GetItem(i);
+        CMpeg2tsStreamFragment *currentProgramAssociationSectionDetectionFinishedStreamFragment = indexedProgramAssociationSectionDetectionFinishedStreamFragment->GetItem();
 
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetProgramAssociationSectionDetectionFinishedStreamFragments(indexedProgramAssociationSectionDetectionFinishedStreamFragments));
+        // create buffer for replacing program association section MPEG2 TS packets
+        unsigned int length = currentProgramAssociationSectionDetectionFinishedStreamFragment->GetBuffer()->GetBufferOccupiedSpace();
 
-        for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedProgramAssociationSectionDetectionFinishedStreamFragments->Count())); i++)
+        ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+        CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
+
+        CHECK_CONDITION_HRESULT(result, currentProgramAssociationSectionDetectionFinishedStreamFragment->GetBuffer()->CopyFromBuffer(buffer, length) == length, result, E_OUTOFMEMORY);
+
+        unsigned int j = 0;
+        while (SUCCEEDED(result) && (j < currentProgramAssociationSectionDetectionFinishedStreamFragment->GetProgramAssociationSectionPacketContexts()->Count()))
         {
-          CIndexedMpeg2tsStreamFragment *indexedProgramAssociationSectionDetectionFinishedStreamFragment = indexedProgramAssociationSectionDetectionFinishedStreamFragments->GetItem(i);
-          CMpeg2tsStreamFragment *currentProgramAssociationSectionDetectionFinishedStreamFragment = indexedProgramAssociationSectionDetectionFinishedStreamFragment->GetItem();
+          bool contextProcessed = false;
+          CProgramAssociationSectionPacketContext *context = currentProgramAssociationSectionDetectionFinishedStreamFragment->GetProgramAssociationSectionPacketContexts()->GetItem(j);
 
-          // create buffer for replacing program association section MPEG2 TS packets
-          unsigned int length = currentProgramAssociationSectionDetectionFinishedStreamFragment->GetBuffer()->GetBufferOccupiedSpace();
-
-          ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-          CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
-
-          CHECK_CONDITION_HRESULT(result, currentProgramAssociationSectionDetectionFinishedStreamFragment->GetBuffer()->CopyFromBuffer(buffer, length) == length, result, E_OUTOFMEMORY);
-
-          unsigned int j = 0;
-          while (SUCCEEDED(result) && (j < currentProgramAssociationSectionDetectionFinishedStreamFragment->GetProgramAssociationSectionPacketContexts()->Count()))
+          if (SUCCEEDED(result) && (context->GetSectionContext()->IsOriginalSectionComplete() && (context->GetSectionContext()->GetUpdatedSection() == NULL)))
           {
-            bool contextProcessed = false;
-            CProgramAssociationSectionPacketContext *context = currentProgramAssociationSectionDetectionFinishedStreamFragment->GetProgramAssociationSectionPacketContexts()->GetItem(j);
+            // create new updated section and update its data
 
-            if (SUCCEEDED(result) && (context->GetSectionContext()->IsOriginalSectionComplete() && (context->GetSectionContext()->GetUpdatedSection() == NULL)))
+            CHECK_CONDITION_HRESULT(result, context->GetSectionContext()->CreateUpdatedSection(), result, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(result))
             {
-              // create new updated section and update its data
+              context->GetSectionContext()->GetUpdatedSection()->ResetSize();
 
-              CHECK_CONDITION_HRESULT(result, context->GetSectionContext()->CreateUpdatedSection(), result, E_OUTOFMEMORY);
-
-              if (SUCCEEDED(result))
+              // replace transport stream ID (if needed)
+              if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_TRANSPORT_STREAM_ID))
               {
-                context->GetSectionContext()->GetUpdatedSection()->ResetSize();
-
-                // replace transport stream ID (if needed)
-                if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_TRANSPORT_STREAM_ID))
-                {
-                  context->GetSectionContext()->GetUpdatedSection()->SetTransportStreamId(caller->transportStreamId);
-                }
-
-                // replace program number (if needed)
-                if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER))
-                {
-                  CProgramAssociationSectionProgram *program = context->GetSectionContext()->GetUpdatedSection()->GetPrograms()->GetItem(0);
-
-                  program->SetProgramNumber(caller->programNumber);
-                }
-
-                // replace program map PID (if needed)
-                if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID))
-                {
-                  CProgramAssociationSectionProgram *program = context->GetSectionContext()->GetUpdatedSection()->GetPrograms()->GetItem(0);
-
-                  program->SetProgramMapPID(caller->programMapPID);
-                }
+                context->GetSectionContext()->GetUpdatedSection()->SetTransportStreamId(caller->transportStreamId);
               }
 
-              if (SUCCEEDED(result))
+              // replace program number (if needed)
+              if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER))
               {
-                // split section into MPEG2 TS packets
-                // the count of MPEG2 TS packets must be same or lower than for original section
+                CProgramAssociationSectionProgram *program = context->GetSectionContext()->GetUpdatedSection()->GetPrograms()->GetItem(0);
 
-                context->GetSectionContext()->GetPackets()->Clear();
+                program->SetProgramNumber(caller->programNumber);
+              }
+
+              // replace program map PID (if needed)
+              if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID))
+              {
+                CProgramAssociationSectionProgram *program = context->GetSectionContext()->GetUpdatedSection()->GetPrograms()->GetItem(0);
+
+                program->SetProgramMapPID(caller->programMapPID);
+              }
+            }
+
+            if (SUCCEEDED(result))
+            {
+              // split section into MPEG2 TS packets
+              // the count of MPEG2 TS packets must be same or lower than for original section
+
+              context->GetSectionContext()->GetPackets()->Clear();
                                 
-                CTsPacketCollection *psiPackets = CProgramSpecificInformationPacket::SplitSectionInProgramSpecificInformationPackets(context->GetSectionContext()->GetUpdatedSection(), PROGRAM_ASSOCIATION_PARSER_PSI_PACKET_PID, context->GetSectionContext()->GetContinuityCounter());
-                CHECK_POINTER_HRESULT(result, psiPackets, result, E_MPEG2TS_CANNOT_SPLIT_SECTION_INTO_PSI_PACKETS);
-                CHECK_CONDITION_HRESULT(result, psiPackets->Count() <= context->GetSectionContext()->GetPacketCount(), result, E_MPEG2TS_SECTION_BIGGER_THAN_ORIGINAL_SECTION);
+              CTsPacketCollection *psiPackets = CProgramSpecificInformationPacket::SplitSectionInProgramSpecificInformationPackets(context->GetSectionContext()->GetUpdatedSection(), PROGRAM_ASSOCIATION_PARSER_PSI_PACKET_PID, context->GetSectionContext()->GetContinuityCounter());
+              CHECK_POINTER_HRESULT(result, psiPackets, result, E_MPEG2TS_CANNOT_SPLIT_SECTION_INTO_PSI_PACKETS);
+              CHECK_CONDITION_HRESULT(result, psiPackets->Count() <= context->GetSectionContext()->GetPacketCount(), result, E_MPEG2TS_SECTION_BIGGER_THAN_ORIGINAL_SECTION);
 
-                if (SUCCEEDED(result) && (psiPackets->Count() < context->GetSectionContext()->GetPacketCount()))
+              if (SUCCEEDED(result) && (psiPackets->Count() < context->GetSectionContext()->GetPacketCount()))
+              {
+                // we need to add NULL MPEG2 TS packets to fill gaps
+                for (unsigned int k = psiPackets->Count(); (SUCCEEDED(result) && (k < context->GetSectionContext()->GetPacketCount())); k++)
                 {
-                  // we need to add NULL MPEG2 TS packets to fill gaps
-                  for (unsigned int k = psiPackets->Count(); (SUCCEEDED(result) && (k < context->GetSectionContext()->GetPacketCount())); k++)
-                  {
-                    CTsPacket *nullPacket = CTsPacket::CreateNullPacket();
-                    CHECK_POINTER_HRESULT(result, nullPacket, result, E_OUTOFMEMORY);
+                  CTsPacket *nullPacket = CTsPacket::CreateNullPacket();
+                  CHECK_POINTER_HRESULT(result, nullPacket, result, E_OUTOFMEMORY);
 
-                    CHECK_CONDITION_HRESULT(result, psiPackets->Add(nullPacket), result, E_OUTOFMEMORY);
-                    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(nullPacket));
-                  }
+                  CHECK_CONDITION_HRESULT(result, psiPackets->Add(nullPacket), result, E_OUTOFMEMORY);
+                  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(nullPacket));
                 }
-
-                // now we same same count of PSI and NULL MPEG2 TS packets to replace original section MPEG2 TS packets
-                CHECK_CONDITION_HRESULT(result, context->GetSectionContext()->GetPackets()->Append(psiPackets), result, E_OUTOFMEMORY);
-                FREE_MEM_CLASS(psiPackets);
               }
-            }
 
-            if (SUCCEEDED(result) && (context->GetSectionContext()->IsOriginalSectionComplete() && (context->GetSectionContext()->GetUpdatedSection() != NULL)))
-            {
-              // updated section is already created and splitted to MPEG2 TS packets
-
-              CTsPacket *packet = context->GetSectionContext()->GetPackets()->GetItem(0);
-
-              memcpy(buffer + context->GetTsPacketIndex() * TS_PACKET_SIZE, packet->GetPacket(), TS_PACKET_SIZE);
-
-              // remove used MPEG2 TS packet, it is not needed more
-              context->GetSectionContext()->GetPackets()->Remove(0);
-
-              contextProcessed = true;
-            }
-
-            // in case of end of stream in protocol or connection problems we don't receive any more data, we must replace program association section with NULL MPEG2 TS packets
-            if (SUCCEEDED(result) && (context->GetSectionContext()->IsOriginalSectionError() || caller->protocolHoster->IsEndOfStreamReached() || caller->IsConnectionLostCannotReopen()))
-            {
-              // original section has some error: is empty, is incomplete or bad CRC32
-              // in all cases it will be replaced by NULL MPEG2 TS packet to avoid problems
-
-              CTsPacket *packet = CTsPacket::CreateNullPacket();
-              CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
-
-              CHECK_CONDITION_EXECUTE(SUCCEEDED(result), memcpy(buffer + context->GetTsPacketIndex() * TS_PACKET_SIZE, packet->GetPacket(), TS_PACKET_SIZE));
-
-              // remove used MPEG2 TS packet, it is not needed more
-              FREE_MEM_CLASS(packet);
-              contextProcessed = true;
-            }
-
-            if (contextProcessed)
-            {
-              currentProgramAssociationSectionDetectionFinishedStreamFragment->GetProgramAssociationSectionPacketContexts()->Remove(j);
-            }
-            else
-            {
-              j++;
+              // now we same same count of PSI and NULL MPEG2 TS packets to replace original section MPEG2 TS packets
+              CHECK_CONDITION_HRESULT(result, context->GetSectionContext()->GetPackets()->Append(psiPackets), result, E_OUTOFMEMORY);
+              FREE_MEM_CLASS(psiPackets);
             }
           }
 
-          // replace buffer in stream fragment
-          currentProgramAssociationSectionDetectionFinishedStreamFragment->GetBuffer()->ClearBuffer();
-          currentProgramAssociationSectionDetectionFinishedStreamFragment->GetBuffer()->AddToBuffer(buffer, length);
-          FREE_MEM(buffer);
-          
-          if (currentProgramAssociationSectionDetectionFinishedStreamFragment->GetProgramAssociationSectionPacketContexts()->Count() == 0)
+          if (SUCCEEDED(result) && (context->GetSectionContext()->IsOriginalSectionComplete() && (context->GetSectionContext()->GetUpdatedSection() != NULL)))
           {
-            // all program association sections in MPEG2 TS packet were updated
-            currentProgramAssociationSectionDetectionFinishedStreamFragment->SetProgramAssociationSectionDetectionFinished(false, UINT_MAX);
-            currentProgramAssociationSectionDetectionFinishedStreamFragment->SetProgramAssociationSectionUpdated(true, UINT_MAX);
+            // updated section is already created and splitted to MPEG2 TS packets
 
-            caller->streamFragments->UpdateIndexes(indexedProgramAssociationSectionDetectionFinishedStreamFragment->GetItemIndex(), 1);
+            CTsPacket *packet = context->GetSectionContext()->GetPackets()->GetItem(0);
+
+            memcpy(buffer + context->GetTsPacketIndex() * TS_PACKET_SIZE, packet->GetPacket(), TS_PACKET_SIZE);
+
+            // remove used MPEG2 TS packet, it is not needed more
+            context->GetSectionContext()->GetPackets()->Remove(0);
+
+            contextProcessed = true;
+          }
+
+          // in case of end of stream in protocol or connection problems we don't receive any more data, we must replace program association section with NULL MPEG2 TS packets
+          if (SUCCEEDED(result) && (context->GetSectionContext()->IsOriginalSectionError() || caller->protocolHoster->IsEndOfStreamReached() || caller->IsConnectionLostCannotReopen()))
+          {
+            // original section has some error: is empty, is incomplete or bad CRC32
+            // in all cases it will be replaced by NULL MPEG2 TS packet to avoid problems
+
+            CTsPacket *packet = CTsPacket::CreateNullPacket();
+            CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
+
+            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), memcpy(buffer + context->GetTsPacketIndex() * TS_PACKET_SIZE, packet->GetPacket(), TS_PACKET_SIZE));
+
+            // remove used MPEG2 TS packet, it is not needed more
+            FREE_MEM_CLASS(packet);
+            contextProcessed = true;
+          }
+
+          if (contextProcessed)
+          {
+            currentProgramAssociationSectionDetectionFinishedStreamFragment->GetProgramAssociationSectionPacketContexts()->Remove(j);
+          }
+          else
+          {
+            j++;
           }
         }
 
-        FREE_MEM_CLASS(indexedProgramAssociationSectionDetectionFinishedStreamFragments);
+        // replace buffer in stream fragment
+        currentProgramAssociationSectionDetectionFinishedStreamFragment->GetBuffer()->ClearBuffer();
+        currentProgramAssociationSectionDetectionFinishedStreamFragment->GetBuffer()->AddToBuffer(buffer, length);
+        FREE_MEM(buffer);
+          
+        if (currentProgramAssociationSectionDetectionFinishedStreamFragment->GetProgramAssociationSectionPacketContexts()->Count() == 0)
+        {
+          // all program association sections in MPEG2 TS packet were updated
+          currentProgramAssociationSectionDetectionFinishedStreamFragment->SetProgramAssociationSectionDetectionFinished(false, UINT_MAX);
+          currentProgramAssociationSectionDetectionFinishedStreamFragment->SetProgramAssociationSectionUpdated(true, UINT_MAX);
+
+          caller->streamFragments->UpdateIndexes(indexedProgramAssociationSectionDetectionFinishedStreamFragment->GetItemIndex(), 1);
+        }
       }
+
+      FREE_MEM_CLASS(indexedProgramAssociationSectionDetectionFinishedStreamFragments);
+      
+      UNLOCK_MUTEX(caller->mutex)
     }
 
     if (SUCCEEDED(result) && caller->streamFragments->HasTransportStreamMapSectionDetectionFinishedStreamFragments())
     {
+      sleepMode = SLEEP_MODE_SHORT;
+
       // don't wait too long, we can do this later
-      CLockMutex lock(caller->mutex, 20);
+      LOCK_MUTEX(caller->mutex, 20)
 
-      if (lock.IsLocked())
+      CIndexedMpeg2tsStreamFragmentCollection *indexedTransportStreamMapSectionDetectionFinishedStreamFragments = new CIndexedMpeg2tsStreamFragmentCollection(&result);
+      CHECK_POINTER_HRESULT(result, indexedTransportStreamMapSectionDetectionFinishedStreamFragments, result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetTransportStreamMapSectionDetectionFinishedStreamFragments(indexedTransportStreamMapSectionDetectionFinishedStreamFragments));
+
+      for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedTransportStreamMapSectionDetectionFinishedStreamFragments->Count())); i++)
       {
-        CIndexedMpeg2tsStreamFragmentCollection *indexedTransportStreamMapSectionDetectionFinishedStreamFragments = new CIndexedMpeg2tsStreamFragmentCollection(&result);
-        CHECK_POINTER_HRESULT(result, indexedTransportStreamMapSectionDetectionFinishedStreamFragments, result, E_OUTOFMEMORY);
+        CIndexedMpeg2tsStreamFragment *indexedTransportStreamMapSectionDetectionFinishedStreamFragment = indexedTransportStreamMapSectionDetectionFinishedStreamFragments->GetItem(i);
+        CMpeg2tsStreamFragment *currentTransportStreamMapSectionDetectionFinishedStreamFragment = indexedTransportStreamMapSectionDetectionFinishedStreamFragment->GetItem();
 
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetTransportStreamMapSectionDetectionFinishedStreamFragments(indexedTransportStreamMapSectionDetectionFinishedStreamFragments));
+        // create buffer for replacing transport stream program map section MPEG2 TS packets
+        unsigned int length = currentTransportStreamMapSectionDetectionFinishedStreamFragment->GetBuffer()->GetBufferOccupiedSpace();
 
-        for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedTransportStreamMapSectionDetectionFinishedStreamFragments->Count())); i++)
+        ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+        CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
+
+        CHECK_CONDITION_HRESULT(result, currentTransportStreamMapSectionDetectionFinishedStreamFragment->GetBuffer()->CopyFromBuffer(buffer, length) == length, result, E_OUTOFMEMORY);
+
+        unsigned int j = 0;
+        while (SUCCEEDED(result) && (j < currentTransportStreamMapSectionDetectionFinishedStreamFragment->GetTransportStreamProgramMapSectionPacketContexts()->Count()))
         {
-          CIndexedMpeg2tsStreamFragment *indexedTransportStreamMapSectionDetectionFinishedStreamFragment = indexedTransportStreamMapSectionDetectionFinishedStreamFragments->GetItem(i);
-          CMpeg2tsStreamFragment *currentTransportStreamMapSectionDetectionFinishedStreamFragment = indexedTransportStreamMapSectionDetectionFinishedStreamFragment->GetItem();
+          bool contextProcessed = false;
+          CTransportStreamProgramMapSectionPacketContext *context = currentTransportStreamMapSectionDetectionFinishedStreamFragment->GetTransportStreamProgramMapSectionPacketContexts()->GetItem(j);
 
-          // create buffer for replacing transport stream program map section MPEG2 TS packets
-          unsigned int length = currentTransportStreamMapSectionDetectionFinishedStreamFragment->GetBuffer()->GetBufferOccupiedSpace();
-
-          ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-          CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
-
-          CHECK_CONDITION_HRESULT(result, currentTransportStreamMapSectionDetectionFinishedStreamFragment->GetBuffer()->CopyFromBuffer(buffer, length) == length, result, E_OUTOFMEMORY);
-
-          unsigned int j = 0;
-          while (SUCCEEDED(result) && (j < currentTransportStreamMapSectionDetectionFinishedStreamFragment->GetTransportStreamProgramMapSectionPacketContexts()->Count()))
+          if (SUCCEEDED(result) && (context->GetSectionContext()->IsOriginalSectionComplete() && (context->GetSectionContext()->GetUpdatedSection() == NULL)))
           {
-            bool contextProcessed = false;
-            CTransportStreamProgramMapSectionPacketContext *context = currentTransportStreamMapSectionDetectionFinishedStreamFragment->GetTransportStreamProgramMapSectionPacketContexts()->GetItem(j);
+            // create new updated section and update its data
 
-            if (SUCCEEDED(result) && (context->GetSectionContext()->IsOriginalSectionComplete() && (context->GetSectionContext()->GetUpdatedSection() == NULL)))
+            CHECK_CONDITION_HRESULT(result, context->GetSectionContext()->CreateUpdatedSection(), result, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(result))
             {
-              // create new updated section and update its data
+              context->GetSectionContext()->GetUpdatedSection()->ResetSize();
 
-              CHECK_CONDITION_HRESULT(result, context->GetSectionContext()->CreateUpdatedSection(), result, E_OUTOFMEMORY);
+              // transport stream ID is replaced in program association section only
+              // program map PID is replaced in program association section and also as PID of PSI packet
 
-              if (SUCCEEDED(result))
+              // replace program number (if needed)
+              if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER))
               {
-                context->GetSectionContext()->GetUpdatedSection()->ResetSize();
-
-                // transport stream ID is replaced in program association section only
-                // program map PID is replaced in program association section and also as PID of PSI packet
-
-                // replace program number (if needed)
-                if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER))
-                {
-                  context->GetSectionContext()->GetUpdatedSection()->SetProgramNumber(caller->programNumber);
-                }
-              }
-
-              if (SUCCEEDED(result))
-              {
-                // split section into MPEG2 TS packets
-                // the count of MPEG2 TS packets must be same or lower than for original section
-
-                context->GetSectionContext()->GetPackets()->Clear();
-
-                CTsPacketCollection *psiPackets = CProgramSpecificInformationPacket::SplitSectionInProgramSpecificInformationPackets(context->GetSectionContext()->GetUpdatedSection(), context->GetSectionContext()->GetPID(), context->GetSectionContext()->GetContinuityCounter());
-                CHECK_POINTER_HRESULT(result, psiPackets, result, E_MPEG2TS_CANNOT_SPLIT_SECTION_INTO_PSI_PACKETS);
-                CHECK_CONDITION_HRESULT(result, psiPackets->Count() <= context->GetSectionContext()->GetPacketCount(), result, E_MPEG2TS_SECTION_BIGGER_THAN_ORIGINAL_SECTION);
-
-                if (SUCCEEDED(result) && (psiPackets->Count() < context->GetSectionContext()->GetPacketCount()))
-                {
-                  // we need to add NULL MPEG2 TS packets to fill gaps
-                  for (unsigned int k = psiPackets->Count(); (SUCCEEDED(result) && (k < context->GetSectionContext()->GetPacketCount())); k++)
-                  {
-                    CTsPacket *nullPacket = CTsPacket::CreateNullPacket();
-                    CHECK_POINTER_HRESULT(result, nullPacket, result, E_OUTOFMEMORY);
-
-                    CHECK_CONDITION_HRESULT(result, psiPackets->Add(nullPacket), result, E_OUTOFMEMORY);
-                    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(nullPacket));
-                  }
-                }
-
-                // now we same same count of PSI and NULL MPEG2 TS packets to replace original section MPEG2 TS packets
-                CHECK_CONDITION_HRESULT(result, context->GetSectionContext()->GetPackets()->Append(psiPackets), result, E_OUTOFMEMORY);
-                FREE_MEM_CLASS(psiPackets);
+                context->GetSectionContext()->GetUpdatedSection()->SetProgramNumber(caller->programNumber);
               }
             }
 
-            if (SUCCEEDED(result) && (context->GetSectionContext()->IsOriginalSectionComplete() && (context->GetSectionContext()->GetUpdatedSection() != NULL)))
+            if (SUCCEEDED(result))
             {
-              // updated section is already created and splitted to MPEG2 TS packets
+              // split section into MPEG2 TS packets
+              // the count of MPEG2 TS packets must be same or lower than for original section
 
-              CTsPacket *packet = context->GetSectionContext()->GetPackets()->GetItem(0);
+              context->GetSectionContext()->GetPackets()->Clear();
 
-              memcpy(buffer + context->GetTsPacketIndex() * TS_PACKET_SIZE, packet->GetPacket(), TS_PACKET_SIZE);
+              CTsPacketCollection *psiPackets = CProgramSpecificInformationPacket::SplitSectionInProgramSpecificInformationPackets(context->GetSectionContext()->GetUpdatedSection(), context->GetSectionContext()->GetPID(), context->GetSectionContext()->GetContinuityCounter());
+              CHECK_POINTER_HRESULT(result, psiPackets, result, E_MPEG2TS_CANNOT_SPLIT_SECTION_INTO_PSI_PACKETS);
+              CHECK_CONDITION_HRESULT(result, psiPackets->Count() <= context->GetSectionContext()->GetPacketCount(), result, E_MPEG2TS_SECTION_BIGGER_THAN_ORIGINAL_SECTION);
 
-              // remove used MPEG2 TS packet, it is not needed more
-              context->GetSectionContext()->GetPackets()->Remove(0);
+              if (SUCCEEDED(result) && (psiPackets->Count() < context->GetSectionContext()->GetPacketCount()))
+              {
+                // we need to add NULL MPEG2 TS packets to fill gaps
+                for (unsigned int k = psiPackets->Count(); (SUCCEEDED(result) && (k < context->GetSectionContext()->GetPacketCount())); k++)
+                {
+                  CTsPacket *nullPacket = CTsPacket::CreateNullPacket();
+                  CHECK_POINTER_HRESULT(result, nullPacket, result, E_OUTOFMEMORY);
 
-              contextProcessed = true;
-            }
+                  CHECK_CONDITION_HRESULT(result, psiPackets->Add(nullPacket), result, E_OUTOFMEMORY);
+                  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(nullPacket));
+                }
+              }
 
-            // in case of end of stream in protocol or connection problems we don't receive any more data, we must replace transport stream program map section with NULL MPEG2 TS packets
-            if (SUCCEEDED(result) && (context->GetSectionContext()->IsOriginalSectionError() || caller->protocolHoster->IsEndOfStreamReached() || caller->IsConnectionLostCannotReopen()))
-            {
-              // original section has some error: is empty, is incomplete or bad CRC32
-              // in all cases it will be replaced by NULL MPEG2 TS packet to avoid problems
-
-              CTsPacket *packet = CTsPacket::CreateNullPacket();
-              CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
-
-              CHECK_CONDITION_EXECUTE(SUCCEEDED(result), memcpy(buffer + context->GetTsPacketIndex() * TS_PACKET_SIZE, packet->GetPacket(), TS_PACKET_SIZE));
-
-              // remove used MPEG2 TS packet, it is not needed more
-              FREE_MEM_CLASS(packet);
-              contextProcessed = true;
-            }
-
-            if (contextProcessed)
-            {
-              currentTransportStreamMapSectionDetectionFinishedStreamFragment->GetTransportStreamProgramMapSectionPacketContexts()->Remove(j);
-            }
-            else
-            {
-              j++;
+              // now we same same count of PSI and NULL MPEG2 TS packets to replace original section MPEG2 TS packets
+              CHECK_CONDITION_HRESULT(result, context->GetSectionContext()->GetPackets()->Append(psiPackets), result, E_OUTOFMEMORY);
+              FREE_MEM_CLASS(psiPackets);
             }
           }
 
-          // replace buffer in stream fragment
-          currentTransportStreamMapSectionDetectionFinishedStreamFragment->GetBuffer()->ClearBuffer();
-          currentTransportStreamMapSectionDetectionFinishedStreamFragment->GetBuffer()->AddToBuffer(buffer, length);
-          FREE_MEM(buffer);
-          
-          if (currentTransportStreamMapSectionDetectionFinishedStreamFragment->GetTransportStreamProgramMapSectionPacketContexts()->Count() == 0)
+          if (SUCCEEDED(result) && (context->GetSectionContext()->IsOriginalSectionComplete() && (context->GetSectionContext()->GetUpdatedSection() != NULL)))
           {
-            // all transport stream program map sections in MPEG2 TS packet were updated
-            currentTransportStreamMapSectionDetectionFinishedStreamFragment->SetTransportStreamMapSectionDetectionFinished(false, UINT_MAX);
-            currentTransportStreamMapSectionDetectionFinishedStreamFragment->SetTransportStreamMapSectionUpdated(true, UINT_MAX);
+            // updated section is already created and splitted to MPEG2 TS packets
 
-            caller->streamFragments->UpdateIndexes(indexedTransportStreamMapSectionDetectionFinishedStreamFragment->GetItemIndex(), 1);
+            CTsPacket *packet = context->GetSectionContext()->GetPackets()->GetItem(0);
+
+            memcpy(buffer + context->GetTsPacketIndex() * TS_PACKET_SIZE, packet->GetPacket(), TS_PACKET_SIZE);
+
+            // remove used MPEG2 TS packet, it is not needed more
+            context->GetSectionContext()->GetPackets()->Remove(0);
+
+            contextProcessed = true;
+          }
+
+          // in case of end of stream in protocol or connection problems we don't receive any more data, we must replace transport stream program map section with NULL MPEG2 TS packets
+          if (SUCCEEDED(result) && (context->GetSectionContext()->IsOriginalSectionError() || caller->protocolHoster->IsEndOfStreamReached() || caller->IsConnectionLostCannotReopen()))
+          {
+            // original section has some error: is empty, is incomplete or bad CRC32
+            // in all cases it will be replaced by NULL MPEG2 TS packet to avoid problems
+
+            CTsPacket *packet = CTsPacket::CreateNullPacket();
+            CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
+
+            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), memcpy(buffer + context->GetTsPacketIndex() * TS_PACKET_SIZE, packet->GetPacket(), TS_PACKET_SIZE));
+
+            // remove used MPEG2 TS packet, it is not needed more
+            FREE_MEM_CLASS(packet);
+            contextProcessed = true;
+          }
+
+          if (contextProcessed)
+          {
+            currentTransportStreamMapSectionDetectionFinishedStreamFragment->GetTransportStreamProgramMapSectionPacketContexts()->Remove(j);
+          }
+          else
+          {
+            j++;
           }
         }
 
-        FREE_MEM_CLASS(indexedTransportStreamMapSectionDetectionFinishedStreamFragments);
+        // replace buffer in stream fragment
+        currentTransportStreamMapSectionDetectionFinishedStreamFragment->GetBuffer()->ClearBuffer();
+        currentTransportStreamMapSectionDetectionFinishedStreamFragment->GetBuffer()->AddToBuffer(buffer, length);
+        FREE_MEM(buffer);
+          
+        if (currentTransportStreamMapSectionDetectionFinishedStreamFragment->GetTransportStreamProgramMapSectionPacketContexts()->Count() == 0)
+        {
+          // all transport stream program map sections in MPEG2 TS packet were updated
+          currentTransportStreamMapSectionDetectionFinishedStreamFragment->SetTransportStreamMapSectionDetectionFinished(false, UINT_MAX);
+          currentTransportStreamMapSectionDetectionFinishedStreamFragment->SetTransportStreamMapSectionUpdated(true, UINT_MAX);
+
+          caller->streamFragments->UpdateIndexes(indexedTransportStreamMapSectionDetectionFinishedStreamFragment->GetItemIndex(), 1);
+        }
       }
+
+      FREE_MEM_CLASS(indexedTransportStreamMapSectionDetectionFinishedStreamFragments);
+      
+      UNLOCK_MUTEX(caller->mutex)
     }
 
     if (SUCCEEDED(result) && caller->streamFragments->HasBothSectionsUpdatedStreamFragments())
     {
+      sleepMode = SLEEP_MODE_SHORT;
+
       // don't wait too long, we can do this later
-      CLockMutex lock(caller->mutex, 20);
+      LOCK_MUTEX(caller->mutex, 20)
 
-      if (lock.IsLocked())
+      CIndexedMpeg2tsStreamFragmentCollection *indexedBothSectionsUpdatedStreamFragments = new CIndexedMpeg2tsStreamFragmentCollection(&result);
+      CHECK_POINTER_HRESULT(result, indexedBothSectionsUpdatedStreamFragments, result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetBothSectionsUpdatedStreamFragments(indexedBothSectionsUpdatedStreamFragments));
+
+      for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedBothSectionsUpdatedStreamFragments->Count())); i++)
       {
-        CIndexedMpeg2tsStreamFragmentCollection *indexedBothSectionsUpdatedStreamFragments = new CIndexedMpeg2tsStreamFragmentCollection(&result);
-        CHECK_POINTER_HRESULT(result, indexedBothSectionsUpdatedStreamFragments, result, E_OUTOFMEMORY);
+        CIndexedMpeg2tsStreamFragment *indexedBothSectionsUpdatedStreamFragment = indexedBothSectionsUpdatedStreamFragments->GetItem(i);
+        CMpeg2tsStreamFragment *currentBothSectionsUpdatedStreamFragment = indexedBothSectionsUpdatedStreamFragment->GetItem();
 
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetBothSectionsUpdatedStreamFragments(indexedBothSectionsUpdatedStreamFragments));
+        currentBothSectionsUpdatedStreamFragment->SetProgramAssociationSectionUpdated(false, UINT_MAX);
+        currentBothSectionsUpdatedStreamFragment->SetTransportStreamMapSectionUpdated(false, UINT_MAX);
+        currentBothSectionsUpdatedStreamFragment->SetProcessed(true, UINT_MAX);
+        currentBothSectionsUpdatedStreamFragment->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
 
-        for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedBothSectionsUpdatedStreamFragments->Count())); i++)
-        {
-          CIndexedMpeg2tsStreamFragment *indexedBothSectionsUpdatedStreamFragment = indexedBothSectionsUpdatedStreamFragments->GetItem(i);
-          CMpeg2tsStreamFragment *currentBothSectionsUpdatedStreamFragment = indexedBothSectionsUpdatedStreamFragment->GetItem();
-
-          currentBothSectionsUpdatedStreamFragment->SetProgramAssociationSectionUpdated(false, UINT_MAX);
-          currentBothSectionsUpdatedStreamFragment->SetTransportStreamMapSectionUpdated(false, UINT_MAX);
-          currentBothSectionsUpdatedStreamFragment->SetProcessed(true, UINT_MAX);
-          currentBothSectionsUpdatedStreamFragment->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
-
-          caller->streamFragments->UpdateIndexes(indexedBothSectionsUpdatedStreamFragment->GetItemIndex(), 1);
-        }
-
-        FREE_MEM_CLASS(indexedBothSectionsUpdatedStreamFragments);
-
-        // check if last fragment is processed
-        // if yes, then set end of stream reached flag
-
-        CMpeg2tsStreamFragment *lastFragment = caller->streamFragments->GetItem(caller->streamFragments->Count() - 1);
-
-        if ((lastFragment == NULL) || ((lastFragment != NULL) && (lastFragment->IsProcessed())))
-        {
-          // end of stream reached
-          caller->flags |= PARSER_PLUGIN_FLAG_END_OF_STREAM_REACHED;
-        }
+        caller->streamFragments->UpdateIndexes(indexedBothSectionsUpdatedStreamFragment->GetItemIndex(), 1);
       }
+
+      FREE_MEM_CLASS(indexedBothSectionsUpdatedStreamFragments);
+
+      // check if last fragment is processed
+      // if yes, then set end of stream reached flag
+
+      CMpeg2tsStreamFragment *lastFragment = caller->streamFragments->GetItem(caller->streamFragments->Count() - 1);
+
+      if ((lastFragment == NULL) || ((lastFragment != NULL) && (lastFragment->IsProcessed())))
+      {
+        // end of stream reached
+        caller->flags |= PARSER_PLUGIN_FLAG_END_OF_STREAM_REACHED;
+      }
+      
+      UNLOCK_MUTEX(caller->mutex)
     }
 
     if ((!caller->IsSetStreamLength()) && (!(caller->IsWholeStreamDownloaded() || caller->IsEndOfStreamReached() || caller->IsConnectionLostCannotReopen())))
@@ -1596,182 +1620,183 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
     if (SUCCEEDED(result) && caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_RECEIVE_DATA) && (caller->pauseSeekStopMode != PAUSE_SEEK_STOP_MODE_DISABLE_READING) && (caller->streamFragmentDownloading != UINT_MAX))
     {
       // don't wait too long, we can receive stream fragment later
-      CLockMutex lock(caller->mutex, 20);
+      LOCK_MUTEX(caller->mutex, 20)
 
-      if (lock.IsLocked())
+      CMpeg2tsStreamFragment *currentDownloadingFragment = caller->streamFragments->GetItem(caller->streamFragmentDownloading);
+
+      CStreamPackage *package = new CStreamPackage(&result);
+      CHECK_POINTER_HRESULT(result, package, result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(result))
       {
-        CMpeg2tsStreamFragment *currentDownloadingFragment = caller->streamFragments->GetItem(caller->streamFragmentDownloading);
+        CStreamPackageDataRequest *request = new CStreamPackageDataRequest(&result);
+        CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
 
-        CStreamPackage *package = new CStreamPackage(&result);
-        CHECK_POINTER_HRESULT(result, package, result, E_OUTOFMEMORY);
+        requestId++;
 
         if (SUCCEEDED(result))
         {
-          CStreamPackageDataRequest *request = new CStreamPackageDataRequest(&result);
-          CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
+          unsigned int length = MINIMUM_RECEIVED_DATA_FOR_SPLITTER;
 
-          requestId++;
-
-          if (SUCCEEDED(result))
+          if (caller->streamPackage != NULL)
           {
-            unsigned int length = MINIMUM_RECEIVED_DATA_FOR_SPLITTER;
+            CStreamPackageDataRequest *streamPackageRequest = dynamic_cast<CStreamPackageDataRequest *>(caller->streamPackage->GetRequest());
 
-            if (caller->streamPackage != NULL)
-            {
-              CStreamPackageDataRequest *streamPackageRequest = dynamic_cast<CStreamPackageDataRequest *>(caller->streamPackage->GetRequest());
-
-              length = streamPackageRequest->GetLength();
-            }
-
-            request->SetAnyDataLength(true);
-            request->SetId(requestId);
-            request->SetStreamId(0);
-            request->SetStart(currentDownloadingFragment->GetRequestStartPosition());
-            request->SetLength(length);
-
-            package->SetRequest(request);
+            length = streamPackageRequest->GetLength();
           }
 
-          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(request));
+          request->SetAnyDataLength(true);
+          request->SetId(requestId);
+          request->SetStreamId(0);
+          request->SetStart(currentDownloadingFragment->GetRequestStartPosition());
+          request->SetLength(length);
+
+          package->SetRequest(request);
         }
 
-        CHECK_HRESULT_EXECUTE(result, caller->protocolHoster->ProcessStreamPackage(package));
-        CHECK_HRESULT_EXECUTE(result, package->GetError());
+        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(request));
+      }
 
-        if (caller->IsSetFlags(PARSER_PLUGIN_FLAG_DUMP_INPUT_DATA))
+      CHECK_HRESULT_EXECUTE(result, caller->protocolHoster->ProcessStreamPackage(package));
+      CHECK_HRESULT_EXECUTE(result, package->GetError());
+
+      if (caller->IsSetFlags(PARSER_PLUGIN_FLAG_DUMP_INPUT_DATA))
+      {
+        CMpeg2TsDumpBox *dumpBox = new CMpeg2TsDumpBox(&result);
+        CHECK_CONDITION_HRESULT(result, dumpBox, result, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(result))
         {
-          CMpeg2TsDumpBox *dumpBox = new CMpeg2TsDumpBox(&result);
-          CHECK_CONDITION_HRESULT(result, dumpBox, result, E_OUTOFMEMORY);
-
-          if (SUCCEEDED(result))
-          {
-            dumpBox->SetInputData(true);
-            dumpBox->SetTimeWithLocalTime();
-            dumpBox->SetStreamPackage(package);
-          }
-
-          CHECK_CONDITION_HRESULT(result, caller->dumpFile->AddDumpBox(dumpBox), result, E_OUTOFMEMORY);
-          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(dumpBox));
+          dumpBox->SetInputData(true);
+          dumpBox->SetTimeWithLocalTime();
+          dumpBox->SetStreamPackage(package);
         }
 
-        if (result == E_PAUSE_SEEK_STOP_MODE_DISABLE_READING)
-        {
-          result = S_OK;
-        }
-        else if (SUCCEEDED(result))
-        {
-          // successfully processed stream package request
-          CStreamPackageDataRequest *request = dynamic_cast<CStreamPackageDataRequest *>(package->GetRequest());
-          CStreamPackageDataResponse *response = dynamic_cast<CStreamPackageDataResponse *>(package->GetResponse());
+        CHECK_CONDITION_HRESULT(result, caller->dumpFile->AddDumpBox(dumpBox), result, E_OUTOFMEMORY);
+        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(dumpBox));
+      }
 
-          if (response->IsConnectionLostCannotReopen() || response->IsNoMoreDataAvailable())
-          {
-            // connection lost, cannot reopen
-            caller->flags |= response->IsConnectionLostCannotReopen() ? PARSER_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN : PARSER_PLUGIN_FLAG_NONE;
+      if (result == E_PAUSE_SEEK_STOP_MODE_DISABLE_READING)
+      {
+        result = S_OK;
+      }
+      else if (SUCCEEDED(result))
+      {
+        // successfully processed stream package request
+        CStreamPackageDataRequest *request = dynamic_cast<CStreamPackageDataRequest *>(package->GetRequest());
+        CStreamPackageDataResponse *response = dynamic_cast<CStreamPackageDataResponse *>(package->GetResponse());
+
+        if (response->IsConnectionLostCannotReopen() || response->IsNoMoreDataAvailable())
+        {
+          // connection lost, cannot reopen
+          caller->flags |= response->IsConnectionLostCannotReopen() ? PARSER_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN : PARSER_PLUGIN_FLAG_NONE;
             
-            // mark current downloading stream fragment as downloaded or remove it, if it has not any data
-            if (currentDownloadingFragment != NULL)
-            {
-              if (response->GetBuffer() != NULL)
-              {
-                CHECK_CONDITION_HRESULT(result, currentDownloadingFragment->GetBuffer()->AddToBufferWithResize(response->GetBuffer()) == response->GetBuffer()->GetBufferOccupiedSpace(), result, E_OUTOFMEMORY);
-              }
-
-              if (SUCCEEDED(result))
-              {
-                if (currentDownloadingFragment->GetLength() == 0)
-                {
-                  caller->streamFragments->Remove(caller->streamFragmentDownloading, 1);
-
-                  // set count of fragments to search for specific position
-                  unsigned int firstNotDownloadedFragmentIndex = caller->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(caller->streamFragments->GetStartSearchingIndex());
-                  caller->streamFragments->SetSearchCount(((firstNotDownloadedFragmentIndex == UINT_MAX) ? caller->streamFragments->Count() : firstNotDownloadedFragmentIndex) - caller->streamFragments->GetStartSearchingIndex());
-                }
-                else
-                {
-                  currentDownloadingFragment->SetDownloaded(true, UINT_MAX);
-                  currentDownloadingFragment->SetReadyForAlign(true, UINT_MAX);
-
-                  caller->streamFragments->UpdateIndexes(caller->streamFragmentDownloading, 1);
-                }
-              }
-
-              caller->streamFragmentDownloading = UINT_MAX;
-            }
-
-            // check if last fragment is processed
-            // if yes, then set end of stream reached flag
-
-            CMpeg2tsStreamFragment *lastFragment = caller->streamFragments->GetItem(caller->streamFragments->Count() - 1);
-
-            if ((lastFragment == NULL) || ((lastFragment != NULL) && (lastFragment->IsProcessed())))
-            {
-              // end of stream reached
-              caller->flags |= PARSER_PLUGIN_FLAG_END_OF_STREAM_REACHED;
-            }
-          }
-          else if (response->GetBuffer()->GetBufferOccupiedSpace() != 0)
+          // mark current downloading stream fragment as downloaded or remove it, if it has not any data
+          if (currentDownloadingFragment != NULL)
           {
-            // we received some data
-
-            CHECK_CONDITION_HRESULT(result, currentDownloadingFragment->GetBuffer()->AddToBufferWithResize(response->GetBuffer()) == response->GetBuffer()->GetBufferOccupiedSpace(), result, E_OUTOFMEMORY);
+            if (response->GetBuffer() != NULL)
+            {
+              CHECK_CONDITION_HRESULT(result, currentDownloadingFragment->GetBuffer()->AddToBufferWithResize(response->GetBuffer()) == response->GetBuffer()->GetBufferOccupiedSpace(), result, E_OUTOFMEMORY);
+            }
 
             if (SUCCEEDED(result))
             {
-              currentDownloadingFragment->SetFlags(currentDownloadingFragment->GetFlags() | (response->IsDiscontinuity() ? STREAM_FRAGMENT_FLAG_DISCONTINUITY : STREAM_FRAGMENT_FLAG_NONE));
-
-              currentDownloadingFragment->SetDownloaded(true, UINT_MAX);
-              currentDownloadingFragment->SetReadyForAlign(true, UINT_MAX);
-
-              caller->streamFragments->UpdateIndexes(caller->streamFragmentDownloading, 1);
-
-              // create new stream fragment and set it to download
-              CMpeg2tsStreamFragment *fragment = new CMpeg2tsStreamFragment(&result);
-              CHECK_POINTER_HRESULT(result, fragment, result, E_OUTOFMEMORY);
-
-              if (SUCCEEDED(result))
+              if (currentDownloadingFragment->GetLength() == 0)
               {
-                // fragment start position will be set after processing
-                fragment->SetRequestStartPosition(currentDownloadingFragment->GetRequestStartPosition() + response->GetBuffer()->GetBufferOccupiedSpace());
+                caller->streamFragments->Remove(caller->streamFragmentDownloading, 1);
+
+                // set count of fragments to search for specific position
+                unsigned int firstNotDownloadedFragmentIndex = caller->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(caller->streamFragments->GetStartSearchingIndex());
+                caller->streamFragments->SetSearchCount(((firstNotDownloadedFragmentIndex == UINT_MAX) ? caller->streamFragments->Count() : firstNotDownloadedFragmentIndex) - caller->streamFragments->GetStartSearchingIndex());
               }
+              else
+              {
+                currentDownloadingFragment->SetDownloaded(true, UINT_MAX);
+                currentDownloadingFragment->SetReadyForAlign(true, UINT_MAX);
 
-              CHECK_CONDITION_HRESULT(result, caller->streamFragments->Insert(caller->streamFragmentDownloading + 1, fragment), result, E_OUTOFMEMORY);
-              CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(fragment));
-
-              // ??? maybe check caller->streamFragmentToDownload ???
-              caller->streamFragmentDownloading++;
+                caller->streamFragments->UpdateIndexes(caller->streamFragmentDownloading, 1);
+              }
             }
 
+            caller->streamFragmentDownloading = UINT_MAX;
+          }
+
+          // check if last fragment is processed
+          // if yes, then set end of stream reached flag
+
+          CMpeg2tsStreamFragment *lastFragment = caller->streamFragments->GetItem(caller->streamFragments->Count() - 1);
+
+          if ((lastFragment == NULL) || ((lastFragment != NULL) && (lastFragment->IsProcessed())))
+          {
+            // end of stream reached
+            caller->flags |= PARSER_PLUGIN_FLAG_END_OF_STREAM_REACHED;
           }
         }
+        else if (response->GetBuffer()->GetBufferOccupiedSpace() != 0)
+        {
+          // we received some data
 
-        FREE_MEM_CLASS(package);
+          CHECK_CONDITION_HRESULT(result, currentDownloadingFragment->GetBuffer()->AddToBufferWithResize(response->GetBuffer()) == response->GetBuffer()->GetBufferOccupiedSpace(), result, E_OUTOFMEMORY);
+
+          if (SUCCEEDED(result))
+          {
+            currentDownloadingFragment->SetFlags(currentDownloadingFragment->GetFlags() | (response->IsDiscontinuity() ? STREAM_FRAGMENT_FLAG_DISCONTINUITY : STREAM_FRAGMENT_FLAG_NONE));
+
+            currentDownloadingFragment->SetDownloaded(true, UINT_MAX);
+            currentDownloadingFragment->SetReadyForAlign(true, UINT_MAX);
+
+            caller->streamFragments->UpdateIndexes(caller->streamFragmentDownloading, 1);
+
+            // create new stream fragment and set it to download
+            CMpeg2tsStreamFragment *fragment = new CMpeg2tsStreamFragment(&result);
+            CHECK_POINTER_HRESULT(result, fragment, result, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(result))
+            {
+              // fragment start position will be set after processing
+              fragment->SetRequestStartPosition(currentDownloadingFragment->GetRequestStartPosition() + response->GetBuffer()->GetBufferOccupiedSpace());
+            }
+
+            CHECK_CONDITION_HRESULT(result, caller->streamFragments->Insert(caller->streamFragmentDownloading + 1, fragment), result, E_OUTOFMEMORY);
+            CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(fragment));
+
+            // ??? maybe check caller->streamFragmentToDownload ???
+            caller->streamFragmentDownloading++;
+          }
+
+        }
       }
+
+      FREE_MEM_CLASS(package);
+      
+      UNLOCK_MUTEX(caller->mutex)
     }
 
     if (FAILED(result) || (caller->pauseSeekStopMode == PAUSE_SEEK_STOP_MODE_DISABLE_READING))
     {
       // lock mutex to get exclussive access to stream package
       // don't wait too long
-      CLockMutex lock(caller->mutex, 20);
+      LOCK_MUTEX(caller->mutex, 20)
 
       // we must check again caller->pauseSeekStopMode value, because it can changed between test and lock !
 
-      if (lock.IsLocked() && (caller->streamPackage != NULL) && (FAILED(result) || (caller->pauseSeekStopMode == PAUSE_SEEK_STOP_MODE_DISABLE_READING)))
+      if ((caller->streamPackage != NULL) && (FAILED(result) || (caller->pauseSeekStopMode == PAUSE_SEEK_STOP_MODE_DISABLE_READING)))
       {
         // we have error, for each stream package (if any) return error
 
         caller->streamPackage->SetCompleted((caller->pauseSeekStopMode == PAUSE_SEEK_STOP_MODE_DISABLE_READING) ? E_PAUSE_SEEK_STOP_MODE_DISABLE_READING : result);
       }
+
+      UNLOCK_MUTEX(caller->mutex)
     }
 
     if (SUCCEEDED(result) && (caller->pauseSeekStopMode != PAUSE_SEEK_STOP_MODE_DISABLE_READING))
     {
       // lock mutex to get exclussive access to stream package
       // don't wait too long
-      CLockMutex lock(caller->mutex, 20);
+      LOCK_MUTEX(caller->mutex, 20)
 
-      if (lock.IsLocked() && (caller->streamPackage != NULL))
+      if (caller->streamPackage != NULL)
       {
         // process stream package (if valid)
         if (caller->streamPackage->GetState() == CStreamPackage::Created)
@@ -2049,80 +2074,93 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
           CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(dumpBox));
         }
       }
+
+      UNLOCK_MUTEX(caller->mutex)
     }
 
     // store stream fragments to temporary file
     if ((GetTickCount() - caller->lastStoreTime) > CACHE_FILE_LOAD_TO_MEMORY_TIME_SPAN_DEFAULT)
     {
       // don't wait too long, we can store received stream fragments later
-      CLockMutex lock(caller->mutex, 20);
+      LOCK_MUTEX(caller->mutex, 20)
 
-      if (lock.IsLocked())
+      caller->lastStoreTime = GetTickCount();
+
+      if (caller->currentProcessedSize != 0)
       {
-        caller->lastStoreTime = GetTickCount();
+        caller->lastProcessedSize = caller->currentProcessedSize;
+      }
+      caller->currentProcessedSize = 0;
 
-        if (caller->currentProcessedSize != 0)
-        {
-          caller->lastProcessedSize = caller->currentProcessedSize;
-        }
-        caller->currentProcessedSize = 0;
-
-        if (caller->cacheFile->GetCacheFile() == NULL)
-        {
-          wchar_t *storeFilePath = caller->GetStoreFile(L"temp");
-          CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, caller->cacheFile->SetCacheFile(storeFilePath));
-          FREE_MEM(storeFilePath);
-        }
+      if (caller->cacheFile->GetCacheFile() == NULL)
+      {
+        wchar_t *storeFilePath = caller->GetStoreFile(L"temp");
+        CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, caller->cacheFile->SetCacheFile(storeFilePath));
+        FREE_MEM(storeFilePath);
+      }
         
-        // in case of live stream remove all downloaded and processed stream fragments before reported stream time
-        if ((caller->IsLiveStream()) && (caller->reportedStreamTime > 0))
+      // in case of live stream remove all downloaded and processed stream fragments before reported stream time
+      if ((caller->IsLiveStream()) && (caller->reportedStreamTime > 0))
+      {
+        unsigned int fragmentRemoveStart = (caller->streamFragments->GetStartSearchingIndex() == 0) ? 1 : 0;
+        unsigned int fragmentRemoveCount = 0;
+
+        while ((fragmentRemoveStart + fragmentRemoveCount) < caller->streamFragments->Count())
         {
-          unsigned int fragmentRemoveStart = (caller->streamFragments->GetStartSearchingIndex() == 0) ? 1 : 0;
-          unsigned int fragmentRemoveCount = 0;
+          CMpeg2tsStreamFragment *fragment = caller->streamFragments->GetItem(fragmentRemoveStart + fragmentRemoveCount);
 
-          while ((fragmentRemoveStart + fragmentRemoveCount) < caller->streamFragments->Count())
+          if (((fragmentRemoveStart + fragmentRemoveCount) != caller->streamFragments->GetStartSearchingIndex()) && fragment->IsProcessed() && ((fragment->GetFragmentStartPosition() + (int64_t)fragment->GetLength()) < (int64_t)caller->reportedStreamPosition))
           {
-            CMpeg2tsStreamFragment *fragment = caller->streamFragments->GetItem(fragmentRemoveStart + fragmentRemoveCount);
-
-            if (((fragmentRemoveStart + fragmentRemoveCount) != caller->streamFragments->GetStartSearchingIndex()) && fragment->IsProcessed() && ((fragment->GetFragmentStartPosition() + (int64_t)fragment->GetLength()) < (int64_t)caller->reportedStreamPosition))
-            {
-              // fragment will be removed
-              fragmentRemoveCount++;
-            }
-            else
-            {
-              break;
-            }
+            // fragment will be removed
+            fragmentRemoveCount++;
           }
-
-          if ((fragmentRemoveCount > 0) && (caller->cacheFile->RemoveItems(caller->streamFragments, fragmentRemoveStart, fragmentRemoveCount)))
+          else
           {
-            unsigned int startSearchIndex = (fragmentRemoveCount > caller->streamFragments->GetStartSearchingIndex()) ? 0 : (caller->streamFragments->GetStartSearchingIndex() - fragmentRemoveCount);
-            unsigned int searchCountDecrease = (fragmentRemoveCount > caller->streamFragments->GetStartSearchingIndex()) ? (fragmentRemoveCount - caller->streamFragments->GetStartSearchingIndex()) : 0;
-
-            caller->streamFragments->SetStartSearchingIndex(startSearchIndex);
-            caller->streamFragments->SetSearchCount(caller->streamFragments->GetSearchCount() - searchCountDecrease);
-
-            caller->streamFragments->Remove(fragmentRemoveStart, fragmentRemoveCount);
-
-            if (caller->streamFragmentDownloading != UINT_MAX)
-            {
-              caller->streamFragmentDownloading -= fragmentRemoveCount;
-            }
-
-            if (caller->streamFragmentToDownload != UINT_MAX)
-            {
-              caller->streamFragmentToDownload -= fragmentRemoveCount;
-            }
+            break;
           }
         }
 
-        // store all stream fragments (which are not stored) to file
-        if ((caller->cacheFile->GetCacheFile() != NULL) && (caller->streamFragments->Count() != 0) && (caller->streamFragments->GetLoadedToMemorySize() > CACHE_FILE_RELOAD_SIZE))
+        if ((fragmentRemoveCount > 0) && (caller->cacheFile->RemoveItems(caller->streamFragments, fragmentRemoveStart, fragmentRemoveCount)))
         {
-          caller->cacheFile->StoreItems(caller->streamFragments, caller->lastStoreTime, false, false);
+          unsigned int startSearchIndex = (fragmentRemoveCount > caller->streamFragments->GetStartSearchingIndex()) ? 0 : (caller->streamFragments->GetStartSearchingIndex() - fragmentRemoveCount);
+          unsigned int searchCountDecrease = (fragmentRemoveCount > caller->streamFragments->GetStartSearchingIndex()) ? (fragmentRemoveCount - caller->streamFragments->GetStartSearchingIndex()) : 0;
+
+          caller->streamFragments->SetStartSearchingIndex(startSearchIndex);
+          caller->streamFragments->SetSearchCount(caller->streamFragments->GetSearchCount() - searchCountDecrease);
+
+          caller->streamFragments->Remove(fragmentRemoveStart, fragmentRemoveCount);
+
+          if (caller->streamFragmentDownloading != UINT_MAX)
+          {
+            caller->streamFragmentDownloading -= fragmentRemoveCount;
+          }
+
+          if (caller->streamFragmentToDownload != UINT_MAX)
+          {
+            caller->streamFragmentToDownload -= fragmentRemoveCount;
+          }
         }
       }
+
+      // store all stream fragments (which are not stored) to file
+      if ((caller->cacheFile->GetCacheFile() != NULL) && (caller->streamFragments->Count() != 0) && (caller->streamFragments->GetLoadedToMemorySize() > CACHE_FILE_RELOAD_SIZE))
+      {
+        caller->cacheFile->StoreItems(caller->streamFragments, caller->lastStoreTime, false, false);
+      }
+      
+      UNLOCK_MUTEX(caller->mutex)
+    }
+
+    switch (sleepMode)
+    {
+    case SLEEP_MODE_SHORT:
+      Sleep(1);
+      break;
+    case SLEEP_MODE_LONG:
+      Sleep(20);
+      break;
+    default:
+      break;
     }
   }
 

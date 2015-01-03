@@ -149,7 +149,6 @@
     <ClCompile Include="IndexedStreamFragment.cpp" />
     <ClCompile Include="IndexedStreamFragmentCollection.cpp" />
     <ClCompile Include="LinearBuffer.cpp" />
-    <ClCompile Include="LockMutex.cpp" />
     <ClCompile Include="MediaPacket.cpp" />
     <ClCompile Include="MediaPacketCollection.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

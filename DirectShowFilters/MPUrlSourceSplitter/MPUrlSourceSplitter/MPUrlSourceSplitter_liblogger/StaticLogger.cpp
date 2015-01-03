@@ -75,13 +75,14 @@ CLoggerContextCollection *CStaticLogger::GetLoggerContexts(void)
 
 unsigned int CStaticLogger::GetLoggerContext(GUID guid, unsigned int maxLogSize, unsigned int allowedLogVerbosity, const wchar_t *logFile)
 {
+  unsigned int contextHandle = LOGGER_CONTEXT_INVALID_HANDLE;
+
   // we must be sure, that Flush() isn't working
-  CLockMutex lock(this->mutex, INFINITE);
+  LOCK_MUTEX(this->mutex, INFINITE)
 
   HRESULT result = S_OK;
   CLoggerContext *context = NULL;
   CLoggerContext *firstFreeContext = NULL;
-  unsigned int contextHandle = LOGGER_CONTEXT_INVALID_HANDLE;
   unsigned int firstFreeContextHandle = LOGGER_CONTEXT_INVALID_HANDLE;
 
   for (unsigned int i = 0; i < this->loggerContexts->Count(); i++)
@@ -166,6 +167,8 @@ unsigned int CStaticLogger::GetLoggerContext(GUID guid, unsigned int maxLogSize,
     }
   }
 
+  UNLOCK_MUTEX(this->mutex)
+
   return contextHandle;
 }
 
@@ -181,9 +184,11 @@ void CStaticLogger::LogMessage(unsigned int context, unsigned int logLevel, cons
 
     if ((cnt != NULL) && cnt->IsAllowedLogVerbosity(logLevel))
     {
-      CLockMutex lock(cnt->GetMutex(), INFINITE);
+      LOCK_MUTEX(cnt->GetMutex(), INFINITE)
 
       cnt->GetMessages()->Add(L"", message);
+
+      UNLOCK_MUTEX(cnt->GetMutex())
     }
   }
   else
@@ -194,9 +199,11 @@ void CStaticLogger::LogMessage(unsigned int context, unsigned int logLevel, cons
 
       if ((!cnt->IsFree()) && cnt->IsAllowedLogVerbosity(logLevel))
       {
-        CLockMutex lock(cnt->GetMutex(), INFINITE);
+        LOCK_MUTEX(cnt->GetMutex(), INFINITE)
 
         cnt->GetMessages()->Add(L"", message);
+
+        UNLOCK_MUTEX(cnt->GetMutex())
       }
     }
   }
@@ -297,14 +304,11 @@ unsigned int WINAPI CStaticLogger::LoggerWorker(LPVOID lpParam)
     {
       lastFlushTime = GetTickCount();
 
-      {
-        CLockMutex lock(caller->mutex, 10);
+      LOCK_MUTEX(caller->mutex, 10)
 
-        if (lock.IsLocked())
-        {
-          caller->Flush();
-        }
-      }
+      caller->Flush();
+
+      UNLOCK_MUTEX(caller->mutex)
     }
 
     if (caller->loggerWorkerShouldExit)
@@ -313,7 +317,7 @@ unsigned int WINAPI CStaticLogger::LoggerWorker(LPVOID lpParam)
     }
 
     // give chance to other threads to do something useful
-    Sleep(1);
+    Sleep(20);
   }
 
   // _endthreadex should be called automatically, but for sure
@@ -364,7 +368,7 @@ HRESULT CStaticLogger::DestroyLoggerWorker(void)
 
 void CStaticLogger::Flush(void)
 {
-  CLockMutex lock(this->mutex, INFINITE);
+  LOCK_MUTEX(this->mutex, INFINITE)
 
   HRESULT result = S_OK;
   unsigned int contextCount = this->loggerContexts->Count();
@@ -373,13 +377,15 @@ void CStaticLogger::Flush(void)
   {
     result = this->FlushContext(i);
   }
+
+  UNLOCK_MUTEX(this->mutex)
 }
 
 HRESULT CStaticLogger::FlushContext(unsigned int contextHandle)
 {
-  CLockMutex lock(this->mutex, INFINITE);
-
   HRESULT result = S_OK;
+  LOCK_MUTEX(this->mutex, INFINITE)
+  
   CParameterCollection *temporaryMessages = new CParameterCollection(&result);
   CLoggerContext *context = this->loggerContexts->GetItem(contextHandle);
 
@@ -395,11 +401,11 @@ HRESULT CStaticLogger::FlushContext(unsigned int contextHandle)
 
     temporaryMessages->Clear();
 
-    {
-      CLockMutex lock(context->GetMutex(), INFINITE);
+    LOCK_MUTEX(context->GetMutex(), INFINITE)
 
-      temporaryMessages->Append(context->GetMessages());
-    }
+    temporaryMessages->Append(context->GetMessages());
+
+    UNLOCK_MUTEX(context->GetMutex())
 
     unsigned int messagesCount = temporaryMessages->Count();
 
@@ -477,14 +483,16 @@ HRESULT CStaticLogger::FlushContext(unsigned int contextHandle)
         }
       }
 
-      {
-        CLockMutex lock(context->GetMutex(), INFINITE);
+      LOCK_MUTEX(context->GetMutex(), INFINITE)
 
-        context->GetMessages()->CCollection::Remove(0, messagesCount);
-      }
+      context->GetMessages()->CCollection::Remove(0, messagesCount);
+
+      UNLOCK_MUTEX(context->GetMutex())
     }
   }
 
   FREE_MEM_CLASS(temporaryMessages);
+
+  UNLOCK_MUTEX(this->mutex)
   return result;
 }

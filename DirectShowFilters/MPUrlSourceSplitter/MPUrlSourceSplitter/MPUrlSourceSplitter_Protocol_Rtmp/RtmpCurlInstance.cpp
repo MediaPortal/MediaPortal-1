@@ -26,6 +26,10 @@
 #include "conversions.h"
 #include "ErrorCodes.h"
 
+#define SLEEP_MODE_NO                                                 0
+#define SLEEP_MODE_SHORT                                              1
+#define SLEEP_MODE_LONG                                               2
+
 CRtmpCurlInstance::CRtmpCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
   : CCurlInstance(result, logger, mutex, protocolName, instanceName)
 {
@@ -298,9 +302,12 @@ unsigned int CRtmpCurlInstance::CurlWorker(void)
   ALLOC_MEM_DEFINE_SET(buffer, char, RTMP_READ_BUFFER_SIZE, 0);
   CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
 
+  unsigned int sleepMode = SLEEP_MODE_LONG;
+
   while (!this->curlWorkerShouldExit)
   {
     readBytes = 0;
+    sleepMode = SLEEP_MODE_LONG;
 
     if ((this->state == CURL_STATE_RECEIVING_DATA) && (this->rtmp != NULL))
     {
@@ -311,12 +318,14 @@ unsigned int CRtmpCurlInstance::CurlWorker(void)
         // we must add read data to RTMP response
 
         // only one thread can work with RTMP data in one time
-        CLockMutex lock(this->mutex, INFINITE);
+        LOCK_MUTEX(this->mutex, INFINITE)
 
         CHECK_CONDITION_HRESULT(result, this->rtmpDownloadResponse->GetReceivedData()->AddToBufferWithResize((unsigned char *)buffer, readBytes) == readBytes, result, E_OUTOFMEMORY);
 
         this->totalReceivedBytes += readBytes;
         this->lastReceiveTime = GetTickCount();
+
+        UNLOCK_MUTEX(this->mutex)
       }
       else if ((readBytes < 0) || (this->rtmp->m_read.status == RTMP_READ_COMPLETE) || (this->rtmp->m_read.status == RTMP_READ_EOF))
       {
@@ -326,10 +335,12 @@ unsigned int CRtmpCurlInstance::CurlWorker(void)
           readBytes = 0;
         }
 
-        CLockMutex lock(this->mutex, INFINITE);
+        LOCK_MUTEX(this->mutex, INFINITE)
 
         this->rtmpDownloadResponse->SetResultError((readBytes < 0) ? E_RTMP_GENERAL_READ_ERROR : S_OK);
         this->state = CURL_STATE_RECEIVED_ALL_DATA;
+
+        UNLOCK_MUTEX(this->mutex)
       }
     }
 
@@ -338,13 +349,25 @@ unsigned int CRtmpCurlInstance::CurlWorker(void)
       // we have some error, we can't do more
       // report error code and wait for destroying CURL instance
 
-      CLockMutex lock(this->mutex, INFINITE);
+      LOCK_MUTEX(this->mutex, INFINITE)
 
       this->rtmpDownloadResponse->SetResultError(result);
       this->state = CURL_STATE_RECEIVED_ALL_DATA;
+
+      UNLOCK_MUTEX(this->mutex)
     }
 
-    Sleep(1);
+    switch (sleepMode)
+    {
+    case SLEEP_MODE_SHORT:
+      Sleep(1);
+      break;
+    case SLEEP_MODE_LONG:
+      Sleep(20);
+      break;
+    default:
+      break;
+    }
   }
 
   FREE_MEM(buffer);

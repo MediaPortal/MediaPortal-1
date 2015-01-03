@@ -58,9 +58,9 @@ bool CCacheFile::SetCacheFile(const wchar_t *cacheFile)
 
 void CCacheFile::Clear()
 {
-  if (this->GetCacheFile() != NULL)
+  if (this->cacheFile != NULL)
   {
-    DeleteFile(this->GetCacheFile());
+    DeleteFile(this->cacheFile);
   }
 
   FREE_MEM(this->cacheFile);
@@ -484,7 +484,7 @@ bool CCacheFile::RemoveItems(CCacheFileItemCollection *collection, unsigned int 
         size += this->freeSpaces->GetItem(i)->GetLength();
       }
 
-      if (size == this->cacheFileSize)
+      if ((size != 0) && (size == this->cacheFileSize))
       {
         if (DeleteFile(this->cacheFile))
         {

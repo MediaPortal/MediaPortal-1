@@ -32,6 +32,10 @@
 #include "UdpDumpBox.h"
 #include "ErrorCodes.h"
 
+#define SLEEP_MODE_NO                                                 0
+#define SLEEP_MODE_SHORT                                              1
+#define SLEEP_MODE_LONG                                               2
+
 CUdpCurlInstance::CUdpCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
   : CCurlInstance(result, logger, mutex, protocolName, instanceName)
 {
@@ -273,13 +277,16 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
       CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->StartListening(), result);
 
       unsigned int endTicks = (this->downloadRequest->GetFinishTime() == FINISH_TIME_NOT_SPECIFIED) ? (GetTickCount() + this->downloadRequest->GetReceiveDataTimeout()) : this->downloadRequest->GetFinishTime();
+      unsigned int sleepMode = SLEEP_MODE_LONG;
 
       while (SUCCEEDED(result) && (!this->curlWorkerShouldExit))
       {
+        sleepMode = SLEEP_MODE_LONG;
+
         if (SUCCEEDED(result))
         {
           // only one thread can work with UDP data in one time
-          CLockMutex lock(this->mutex, INFINITE);
+          LOCK_MUTEX(this->mutex, INFINITE)
 
           for (unsigned int i = 0; (SUCCEEDED(result) && (i < server->GetServers()->Count())); i++)
           {
@@ -301,6 +308,8 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
 
                 if (SUCCEEDED(res))
                 {
+                  sleepMode = SLEEP_MODE_SHORT;
+
                   this->totalReceivedBytes += receivedLength;
                   this->lastReceiveTime = GetTickCount();
 
@@ -347,7 +356,7 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
                 }
               }
             }
-            while (SUCCEEDED(res) && (pendingIncomingDataLength != 0));
+            while (SUCCEEDED(res) && (!this->curlWorkerShouldExit) && (pendingIncomingDataLength != 0));
 
             if (FAILED(res))
             {
@@ -355,6 +364,8 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
               result = res;
             }
           }
+
+          UNLOCK_MUTEX(this->mutex)
         }
 
         if (SUCCEEDED(result))
@@ -379,13 +390,25 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
           // we have some error, we can't do more
           // report error code and wait for destroying CURL instance
 
-          CLockMutex lock(this->mutex, INFINITE);
+          LOCK_MUTEX(this->mutex, INFINITE)
 
           this->udpDownloadResponse->SetResultError(result);
           this->state = CURL_STATE_RECEIVED_ALL_DATA;
+
+          UNLOCK_MUTEX(this->mutex)
         }
 
-        Sleep(1);
+        switch (sleepMode)
+        {
+        case SLEEP_MODE_SHORT:
+          Sleep(1);
+          break;
+        case SLEEP_MODE_LONG:
+          Sleep(20);
+          break;
+        default:
+          break;
+        }
       }
     }
   }
@@ -400,7 +423,7 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
 
   unsigned int count = 0;
   {
-    CLockMutex lock(this->mutex, INFINITE);
+    LOCK_MUTEX(this->mutex, INFINITE)
 
     for (unsigned int i = 0; ((server != NULL) && (i < server->GetServers()->Count())); i++)
     {
@@ -408,6 +431,8 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
 
       this->logger->Log(LOGGER_VERBOSE, L"%s: %s: address: %s, received bytes: %lld, sent bytes: %lld", this->protocolName, METHOD_CURL_WORKER_NAME, (context->GetIpAddress()->GetAddressString() == NULL) ? L"unknown" : context->GetIpAddress()->GetAddressString(), context->GetReceivedDataLength(), context->GetSentDataLength());
     }
+
+    UNLOCK_MUTEX(this->mutex)
   }
 
   this->state = CURL_STATE_RECEIVED_ALL_DATA;

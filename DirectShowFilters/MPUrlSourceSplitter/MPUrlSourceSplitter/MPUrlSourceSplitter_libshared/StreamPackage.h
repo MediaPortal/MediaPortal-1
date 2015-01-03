@@ -58,6 +58,10 @@ public:
   // @return : error code
   HRESULT GetError(void);
 
+  // gets processed event handle to block calling thread
+  // @return : processed event handle
+  HANDLE GetProcessedEventHandle(void);
+
   /* set methods */
 
   // sets request for stream package
@@ -99,6 +103,8 @@ protected:
   CStreamPackageResponse *response;
   // holds error code
   HRESULT errorCode;
+  // holds processed event handle
+  HANDLE processed;
 };
 
 #endif

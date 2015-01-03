@@ -28,12 +28,26 @@ CStreamPackage::CStreamPackage(HRESULT *result)
   this->request = NULL;
   this->response = NULL;
   this->errorCode = S_OK;
+  this->processed = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->processed = CreateEvent(NULL, TRUE, FALSE, NULL);
+    
+    CHECK_POINTER_HRESULT(*result, this->processed, *result, E_OUTOFMEMORY);
+  }
 }
 
 CStreamPackage::~CStreamPackage(void)
 {
   FREE_MEM_CLASS(this->request);
   FREE_MEM_CLASS(this->response);
+
+  if (this->processed != NULL)
+  {
+    CloseHandle(this->processed);
+  }
+  this->processed = NULL;
 }
 
 /* get methods */
@@ -58,6 +72,11 @@ HRESULT CStreamPackage::GetError(void)
   return this->errorCode;
 }
 
+HANDLE CStreamPackage::GetProcessedEventHandle(void)
+{
+  return this->processed;
+}
+
 /* set methods */
 
 void CStreamPackage::SetRequest(CStreamPackageRequest *request)
@@ -77,6 +96,7 @@ void CStreamPackage::SetCompleted(HRESULT error)
 {
   CHECK_CONDITION_EXECUTE(this->state != Invalid, this->state = Completed);
   this->errorCode = error;
+  SetEvent(this->processed);
 }
 
 void CStreamPackage::SetWaiting(void)
@@ -92,6 +112,7 @@ void CStreamPackage::Clear(void)
   FREE_MEM_CLASS(this->request);
   FREE_MEM_CLASS(this->response);
   this->errorCode = S_OK;
+  ResetEvent(this->processed);
 }
 
 bool CStreamPackage::IsError(void)

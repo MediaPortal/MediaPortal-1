@@ -232,7 +232,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
 
   if (SUCCEEDED(result))
   {
-    CLockMutex lock(this->lockMutex, INFINITE);
+    LOCK_MUTEX(this->lockMutex, INFINITE)
 
     if (SUCCEEDED(result) && (this->mainCurlInstance != NULL) && ((this->connectionState == Opening) || (this->connectionState == Opened)))
     {
@@ -246,10 +246,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
 
         {
           // copy RTP packets to avoid blocking of RTSP download instance
-          CLockMutex lockData(this->lockCurlMutex, INFINITE);
+          LOCK_MUTEX(this->lockCurlMutex, INFINITE)
 
           rtpPackets->Append(track->GetRtpPackets());
           track->GetRtpPackets()->Clear();
+
+          UNLOCK_MUTEX(this->lockCurlMutex)
         }
 
         if (rtpPackets->Count() != 0)
@@ -557,7 +559,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
               this->connectionState = Opening;
 
               // create same count of RTSP stream tracks as RTSP tracks in CURL instance
-              CLockMutex(this->lockCurlMutex, INFINITE);
+              LOCK_MUTEX(this->lockCurlMutex, INFINITE)
 
               if (this->streamTracks->Count() != this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->Count())
               {
@@ -615,6 +617,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
                 // we are downloading stream fragment, so reset scheduled download
                 track->SetStreamFragmentToDownload(UINT_MAX);
               }
+
+              UNLOCK_MUTEX(this->lockCurlMutex)
             }
             else
             {
@@ -1319,6 +1323,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
         }
       }
     }
+
+    UNLOCK_MUTEX(this->lockMutex)
   }
 
   return result;
@@ -1377,7 +1383,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::StopReceivingData(void)
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
 
   // lock access to stream
-  CLockMutex lock(this->lockMutex, INFINITE);
+  LOCK_MUTEX(this->lockMutex, INFINITE)
 
   FREE_MEM_CLASS(this->mainCurlInstance);
   this->flags &= ~(MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_FLAG_STOP_RECEIVING_DATA);
@@ -1391,6 +1397,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::StopReceivingData(void)
     track->SetStreamFragmentDownloading(UINT_MAX);
   }
 
+  UNLOCK_MUTEX(this->lockMutex)
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
   return S_OK;
 }
@@ -1400,7 +1407,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::QueryStreamProgress(CStreamProgress 
   HRESULT result = S_OK;
 
   {
-    CLockMutex lock(this->lockMutex, INFINITE);
+    LOCK_MUTEX(this->lockMutex, INFINITE)
 
     CHECK_POINTER_DEFAULT_HRESULT(result, streamProgress);
     CHECK_CONDITION_HRESULT(result, streamProgress->GetStreamId() < this->streamTracks->Count(), result, E_INVALIDARG);
@@ -1417,6 +1424,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::QueryStreamProgress(CStreamProgress 
         result = VFW_S_ESTIMATED;
       }
     }
+
+    UNLOCK_MUTEX(this->lockMutex)
   }
 
   return result;
@@ -1446,7 +1455,7 @@ int64_t CMPUrlSourceSplitter_Protocol_Rtsp::GetDuration(void)
   int64_t result = DURATION_LIVE_STREAM;
 
   {
-    CLockMutex lock(this->lockMutex, INFINITE);
+    LOCK_MUTEX(this->lockMutex, INFINITE)
 
     if ((!this->IsLiveStream()) && (this->sessionDescription != NULL))
     {
@@ -1470,6 +1479,8 @@ int64_t CMPUrlSourceSplitter_Protocol_Rtsp::GetDuration(void)
         }
       }
     }
+
+    UNLOCK_MUTEX(this->lockMutex)
   }
 
   return result;
@@ -1515,12 +1526,12 @@ unsigned int CMPUrlSourceSplitter_Protocol_Rtsp::GetSeekingCapabilities(void)
 
 int64_t CMPUrlSourceSplitter_Protocol_Rtsp::SeekToTime(unsigned int streamId, int64_t time)
 {
-  CLockMutex lock(this->lockMutex, INFINITE);
+  int64_t result = -1;
+
+  LOCK_MUTEX(this->lockMutex, INFINITE)
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME);
   this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from time: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, time);
-
-  int64_t result = -1;
 
   // find fragment to process for each track
   // TO DO: implement better and faster seeking algorithm
@@ -1637,6 +1648,8 @@ int64_t CMPUrlSourceSplitter_Protocol_Rtsp::SeekToTime(unsigned int streamId, in
   }
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
+
+  UNLOCK_MUTEX(this->lockMutex)
   return result;
 }
 

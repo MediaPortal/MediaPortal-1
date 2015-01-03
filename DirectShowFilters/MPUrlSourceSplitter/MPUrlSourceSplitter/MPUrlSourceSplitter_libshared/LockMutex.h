@@ -23,48 +23,9 @@
 #ifndef __LOCK_MUTEX_DEFINED
 #define __LOCK_MUTEX_DEFINED
 
-class CLockMutex
-{
-public:
-  CLockMutex(HANDLE lockMutex, DWORD milliseconds);
-  ~CLockMutex(void);
+#define LOCK_MUTEX(mutex, timeout)                                    if (WaitForSingleObject(mutex, timeout) == WAIT_OBJECT_0) \
+                                                                      {
 
-  // tests if result of locking is abandoned mutex
-  // @return : true if abandoned, false otherwise
-  bool IsAbandoned(void);
-
-  // tests if mutex is locked
-  // @return : true if locked, false otherwise
-  bool IsLocked(void);
-
-  // tests if timeout occured
-  // @return : true if timeout occured, false otherwise
-  bool IsTimeout(void);
-
-  // tests if locking operation failed
-  // @return : true if operation failed, false otherwise
-  bool IsFailed(void);
-
-  // gets error code if locking operation failed
-  // @return : error code or NOERROR
-  DWORD GetErrorCode(void);
-
-  // locks mutex
-  // @param milliseconds : timeout for waiting
-  // @return : true if mutex locked, false otherwise
-  bool Lock(DWORD milliseconds);
-
-  // unlocks locked mutex
-  void Unlock(void);
-
-private:
-  // store lock mutex here for releasing purpose
-  HANDLE lockMutex;
-
-  // result of lock operation
-  DWORD result;
-  // error code if failed
-  DWORD error;
-};
-
+#define UNLOCK_MUTEX(mutex)                                             ReleaseMutex(mutex); \
+                                                                      }
 #endif

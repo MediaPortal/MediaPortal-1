@@ -234,49 +234,49 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
 
   if (SUCCEEDED(result))
   {
-    CLockMutex lock(this->lockMutex, INFINITE);
+    LOCK_MUTEX(this->lockMutex, INFINITE)
 
     if (SUCCEEDED(result) && (this->mainCurlInstance != NULL) && ((this->connectionState == Opening) || (this->connectionState == Opened)))
     {
+      LOCK_MUTEX(this->lockCurlMutex, INFINITE)
+
+      unsigned int bytesRead = this->mainCurlInstance->GetUdpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
+      if (bytesRead > 0)
       {
-        CLockMutex lockData(this->lockCurlMutex, INFINITE);
+        this->connectionState = Opened;
+        this->lastReceiveDataTime = GetTickCount();
 
-        unsigned int bytesRead = this->mainCurlInstance->GetUdpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
-        if (bytesRead > 0)
+        CUdpStreamFragment *currentDownloadingFragment = this->streamFragments->GetItem(this->streamFragments->Count() - 1);
+        CHECK_CONDITION_HRESULT(result, currentDownloadingFragment->GetBuffer()->InitializeBuffer(bytesRead), result, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(result))
         {
-          this->connectionState = Opened;
-          this->lastReceiveDataTime = GetTickCount();
+          currentDownloadingFragment->GetBuffer()->AddToBufferWithResize(this->mainCurlInstance->GetUdpDownloadResponse()->GetReceivedData(), 0, bytesRead);
+          this->currentStreamPosition += bytesRead;
 
-          CUdpStreamFragment *currentDownloadingFragment = this->streamFragments->GetItem(this->streamFragments->Count() - 1);
-          CHECK_CONDITION_HRESULT(result, currentDownloadingFragment->GetBuffer()->InitializeBuffer(bytesRead), result, E_OUTOFMEMORY);
+          currentDownloadingFragment->SetLoadedToMemoryTime(this->lastReceiveDataTime, UINT_MAX);
+          currentDownloadingFragment->SetDownloaded(true, UINT_MAX);
+          currentDownloadingFragment->SetProcessed(true, UINT_MAX);
 
-          if (SUCCEEDED(result))
-          {
-            currentDownloadingFragment->GetBuffer()->AddToBufferWithResize(this->mainCurlInstance->GetUdpDownloadResponse()->GetReceivedData(), 0, bytesRead);
-            this->currentStreamPosition += bytesRead;
+          this->streamFragments->UpdateIndexes(this->streamFragments->Count() - 1, 1);
 
-            currentDownloadingFragment->SetLoadedToMemoryTime(this->lastReceiveDataTime, UINT_MAX);
-            currentDownloadingFragment->SetDownloaded(true, UINT_MAX);
-            currentDownloadingFragment->SetProcessed(true, UINT_MAX);
+          this->streamFragments->RecalculateProcessedStreamFragmentStartPosition(this->streamFragments->Count() - 1);
 
-            this->streamFragments->UpdateIndexes(this->streamFragments->Count() - 1, 1);
+          this->mainCurlInstance->GetUdpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
 
-            this->streamFragments->RecalculateProcessedStreamFragmentStartPosition(this->streamFragments->Count() - 1);
+          // create new UDP stream fragment
+          CUdpStreamFragment *fragment = new CUdpStreamFragment(&result);
+          CHECK_POINTER_HRESULT(result, fragment, result, E_OUTOFMEMORY);
 
-            this->mainCurlInstance->GetUdpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
+          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), fragment->SetFragmentStartPosition(this->currentStreamPosition));
 
-            // create new UDP stream fragment
-            CUdpStreamFragment *fragment = new CUdpStreamFragment(&result);
-            CHECK_POINTER_HRESULT(result, fragment, result, E_OUTOFMEMORY);
-
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), fragment->SetFragmentStartPosition(this->currentStreamPosition));
-
-            CHECK_CONDITION_HRESULT(result, this->streamFragments->Add(fragment), result, E_OUTOFMEMORY);
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->streamFragments->SetSearchCount(this->streamFragments->Count() - 1));
-            CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(fragment));
-          }
+          CHECK_CONDITION_HRESULT(result, this->streamFragments->Add(fragment), result, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->streamFragments->SetSearchCount(this->streamFragments->Count() - 1));
+          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(fragment));
         }
       }
+
+      UNLOCK_MUTEX(this->lockCurlMutex)
     }
 
     if (SUCCEEDED(result) && (this->mainCurlInstance == NULL) && (this->connectionState == Initializing) && (!this->IsWholeStreamDownloaded()))
@@ -691,6 +691,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
         this->cacheFile->StoreItems(this->streamFragments, this->lastStoreTime, false, this->IsWholeStreamDownloaded());
       }
     }
+
+    UNLOCK_MUTEX(this->lockMutex)
   }
 
   return result;
@@ -749,11 +751,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::StopReceivingData(void)
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
 
   // lock access to stream
-  CLockMutex lock(this->lockMutex, INFINITE);
+  LOCK_MUTEX(this->lockMutex, INFINITE)
 
   FREE_MEM_CLASS(this->mainCurlInstance);
 
   this->connectionState = None;
+
+  UNLOCK_MUTEX(this->lockMutex)
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
   return S_OK;
@@ -763,23 +767,23 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::QueryStreamProgress(CStreamProgress *
 {
   HRESULT result = S_OK;
 
+  LOCK_MUTEX(this->lockMutex, INFINITE)
+
+  CHECK_POINTER_DEFAULT_HRESULT(result, streamProgress);
+  CHECK_CONDITION_HRESULT(result, streamProgress->GetStreamId() == 0, result, E_INVALIDARG);
+
+  if (SUCCEEDED(result))
   {
-    CLockMutex lock(this->lockMutex, INFINITE);
+    streamProgress->SetTotalLength(this->streamLength);
+    streamProgress->SetCurrentLength(this->currentStreamPosition);
 
-    CHECK_POINTER_DEFAULT_HRESULT(result, streamProgress);
-    CHECK_CONDITION_HRESULT(result, streamProgress->GetStreamId() == 0, result, E_INVALIDARG);
-
-    if (SUCCEEDED(result))
+    if (this->IsStreamLengthEstimated())
     {
-      streamProgress->SetTotalLength(this->streamLength);
-      streamProgress->SetCurrentLength(this->currentStreamPosition);
-
-      if (this->IsStreamLengthEstimated())
-      {
-        result = VFW_S_ESTIMATED;
-      }
+      result = VFW_S_ESTIMATED;
     }
   }
+   
+  UNLOCK_MUTEX(this->lockMutex)
 
   return result;
 }
@@ -840,12 +844,12 @@ unsigned int CMPUrlSourceSplitter_Protocol_Udp::GetSeekingCapabilities(void)
 {
   unsigned int result = SEEKING_METHOD_NONE;
 
-  {
-    // lock access to stream
-    CLockMutex lock(this->lockMutex, INFINITE);
+  // lock access to stream
+  LOCK_MUTEX(this->lockMutex, INFINITE)
     
-    result = (this->IsWholeStreamDownloaded()) ? SEEKING_METHOD_POSITION : SEEKING_METHOD_NONE;
-  }
+  result = (this->IsWholeStreamDownloaded()) ? SEEKING_METHOD_POSITION : SEEKING_METHOD_NONE;
+
+  UNLOCK_MUTEX(this->lockMutex)
 
   return result;
 }
