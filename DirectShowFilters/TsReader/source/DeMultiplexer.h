@@ -316,6 +316,7 @@ private:
   byte* m_pFileReadBuffer;
   
   DWORD m_currentAudHeader;
+  DWORD m_lastAudHeader;
   int m_audHeaderCount;
   int m_hadPESfail;
     

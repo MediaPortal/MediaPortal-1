@@ -148,6 +148,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_dVidPTSJumpLimit = 2.0; //Maximum allowed time in seconds for video PTS jumps
   m_dfAudSampleDuration = -1.0;
   m_currentAudHeader = 0;
+  m_lastAudHeader = 0;
   m_audHeaderCount = 0;
   m_hadPESfail = 0;
   
@@ -681,6 +682,7 @@ void CDeMultiplexer::FlushAudio()
   m_bSetAudioDiscontinuity=true;
   m_bAudioSampleLate=false;
   m_currentAudHeader = 0;
+  m_lastAudHeader = 0;
   m_audHeaderCount = 0;
 
   if (m_filter.IsSeeking() && m_filter.GetAudioPin()->IsConnected())
@@ -1534,9 +1536,18 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                   {
                     m_audHeaderCount++;
                   }  
+                  else if (m_lastAudHeader != (*(INT32 *)ps & 0x30FEFFFF))
+                  {
+                    m_lastAudHeader = *(INT32 *)ps & 0x30FEFFFF;
+                    if (m_audHeaderCount==0) 
+                    {
+                      m_currentAudHeader = m_lastAudHeader;
+                    } 
+                  }  
                   else 
                   {  
                     m_currentAudHeader = (*(INT32 *)ps & 0x30FEFFFF); //ony first 28 bits are relevant, and channel count is excluded
+                    LogDebug("demux: ADTS AAC resync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
                     if (m_audHeaderCount>0) 
                     {
                       m_audHeaderCount--;
@@ -1547,7 +1558,11 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                 }
                 else // m_audHeaderCount>=4, 'locked' state
                 {
-                  if (m_currentAudHeader != (*(INT32 *)ps & 0x30FEFFFF))  //compare first 28 bits only
+                  if (m_lastAudHeader != (*(INT32 *)ps & 0x30FEFFFF))
+                  {
+                    m_lastAudHeader = *(INT32 *)ps & 0x30FEFFFF;
+                  }  
+                  else if (m_currentAudHeader != (*(INT32 *)ps & 0x30FEFFFF))  //compare first 28 bits only
                   {
                     m_audHeaderCount--; //invalid (or changing) header sequence
                   }  
@@ -1620,9 +1635,18 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                     {
                       m_audHeaderCount++;
                     }  
+                    else if (m_lastAudHeader != (*(INT16 *)(ps+5) & 0x87FF))
+                    {
+                      m_lastAudHeader = *(INT16 *)(ps+5) & 0x87FF;
+                      if (m_audHeaderCount==0) 
+                      {
+                        m_currentAudHeader = m_lastAudHeader;
+                      } 
+                    }  
                     else 
                     {  
                       m_currentAudHeader = (*(INT16 *)(ps+5) & 0x87FF); //AudioSpecificConfig(), channel count is excluded
+                      LogDebug("demux: LATM AAC resync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
                       if (m_audHeaderCount>0) 
                       {
                         m_audHeaderCount--;
@@ -1631,7 +1655,11 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                   }
                   else // 'locked' state
                   {
-                    if (m_currentAudHeader != (*(INT16 *)(ps+5) & 0x87FF))  //AudioSpecificConfig(), channel count is excluded
+                    if (m_lastAudHeader != (*(INT16 *)(ps+5) & 0x87FF))
+                    {
+                      m_lastAudHeader = *(INT16 *)(ps+5) & 0x87FF;
+                    }  
+                    else if (m_currentAudHeader != (*(INT16 *)(ps+5) & 0x87FF))  //AudioSpecificConfig(), channel count is excluded
                     {
                       m_audHeaderCount--; //invalid (or changing) header sequence
                     }  
@@ -1709,9 +1737,18 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                   {
                     m_audHeaderCount++;
                   }  
+                  else if (m_lastAudHeader != *(INT16 *)(ps+4))
+                  {
+                    m_lastAudHeader = *(INT16 *)(ps+4);
+                    if (m_audHeaderCount==0) 
+                    {
+                      m_currentAudHeader = m_lastAudHeader;
+                    } 
+                  }  
                   else 
                   {  
                     m_currentAudHeader = *(INT16 *)(ps+4); //fscod, frmsizcod, bsid, bsmod fields
+                    LogDebug("demux: AC3 resync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
                     if (m_audHeaderCount>0) 
                     {
                       m_audHeaderCount--;
@@ -1720,7 +1757,11 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                 }
                 else // 'locked' state
                 {
-                  if (m_currentAudHeader != *(INT16 *)(ps+4)) //fscod, frmsizcod, bsid, bsmod fields
+                  if (m_lastAudHeader != *(INT16 *)(ps+4))
+                  {
+                    m_lastAudHeader = *(INT16 *)(ps+4);
+                  }  
+                  else if (m_currentAudHeader != *(INT16 *)(ps+4)) //fscod, frmsizcod, bsid, bsmod fields
                   {
                     m_audHeaderCount--; //invalid (or changing) header sequence
                     //LogDebug("demux: AC3 lkd bad sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
@@ -1804,9 +1845,18 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                   {
                     m_audHeaderCount++;
                   }  
+                  else if (m_lastAudHeader != (*(INT16 *)(ps+4) & 0xFFF0))
+                  {
+                    m_lastAudHeader = *(INT16 *)(ps+4) & 0xFFF0;
+                    if (m_audHeaderCount==0) 
+                    {
+                      m_currentAudHeader = m_lastAudHeader;
+                    } 
+                  }  
                   else 
                   {  
                     m_currentAudHeader = (*(INT16 *)(ps+4) & 0xFFF0); //fscod, fscod2, bsid, bsmod fields
+                    LogDebug("demux: E-AC3 resync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
                     if (m_audHeaderCount>0) 
                     {
                       m_audHeaderCount--;
@@ -1815,7 +1865,11 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                 }
                 else // 'locked' state
                 {
-                  if (m_currentAudHeader != (*(INT16 *)(ps+4) & 0xFFF0)) //fscod, fscod2, bsid, bsmod fields
+                  if (m_lastAudHeader != (*(INT16 *)(ps+4) & 0xFFF0))
+                  {
+                    m_lastAudHeader = *(INT16 *)(ps+4) & 0xFFF0;
+                  }  
+                  else if (m_currentAudHeader != (*(INT16 *)(ps+4) & 0xFFF0)) //fscod, fscod2, bsid, bsmod fields
                   {
                     m_audHeaderCount--; //invalid (or changing) header sequence
                     //LogDebug("demux: E-AC3 lkd bad sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
@@ -1878,7 +1932,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
             // LogDebug("MPA start PES = %d", len);
             while(len) 
             {
-              //Find correct AC3 frame header sync sequence by 'learning' the current header pattern
+              //Find correct MPA frame header sync sequence by 'learning' the current header pattern
               if (len > 3 && ((*(INT16 *)ps & 0xE0FF) == 0xE0FF)) //Syncword bits==0xE0FF - first 11 bits set
               {     
                 //LogDebug("demux: MPA all sync = %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), length-len, m_audHeaderCount);
@@ -1887,23 +1941,48 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                 {
                   if (m_currentAudHeader == (*(INT32 *)(ps+0) & 0x0FFCFFFF))
                   {
-                    m_audHeaderCount++;
+                    m_audHeaderCount++; 
                   }  
-                  else 
-                  {  
-                    m_currentAudHeader = (*(INT32 *)(ps+0) & 0x0FFCFFFF);
-                    if (m_audHeaderCount>0) 
+                  else if (m_lastAudHeader != (*(INT32 *)(ps+0) & 0x0FFCFFFF))
+                  {
+                    m_lastAudHeader = *(INT32 *)(ps+0) & 0x0FFCFFFF;
+                    if (m_audHeaderCount==0) 
                     {
-                      m_audHeaderCount--;
+                      m_currentAudHeader = m_lastAudHeader;
                     } 
+                  }  
+                  else
+                  {  
+                    if ( ((*(ps+1) & 0x18) != 0x08) && //version check
+                         ((*(ps+1) & 0x06) != 0x00) && //layer check
+                         ((*(ps+2) & 0xF0) != 0xF0) && //bitrate check
+                         ((*(ps+2) & 0x0C) != 0x0C) )  //sampling freq check 
+                    {
+                      m_currentAudHeader = (*(INT32 *)(ps+0) & 0x0FFCFFFF);
+                      LogDebug("demux: MPA resync = %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), length-len, m_audHeaderCount);
+                      if (m_audHeaderCount>0) 
+                      {
+                        m_audHeaderCount--;
+                      } 
+                    }                    
                   }       
                 }
                 else // 'locked' state
                 {
-                  if (m_currentAudHeader != (*(INT32 *)(ps+0) & 0x0FFCFFFF))
+                  if (m_lastAudHeader != (*(INT32 *)(ps+0) & 0x0FFCFFFF))
                   {
-                    m_audHeaderCount--; //invalid (or changing) header sequence
-                    //LogDebug("demux: MPA lkd bad sync = %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), length-len, m_audHeaderCount);
+                    m_lastAudHeader = *(INT32 *)(ps+0) & 0x0FFCFFFF;
+                  }  
+                  else if (m_currentAudHeader != (*(INT32 *)(ps+0) & 0x0FFCFFFF))
+                  {
+                    if ( ((*(ps+1) & 0x18) != 0x08) && //version check
+                         ((*(ps+1) & 0x06) != 0x00) && //layer check
+                         ((*(ps+2) & 0xF0) != 0xF0) && //bitrate check
+                         ((*(ps+2) & 0x0C) != 0x0C) )  //sampling freq check 
+                    {
+                      LogDebug("demux: MPA lkd bad sync = %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), length-len, m_audHeaderCount);
+                      m_audHeaderCount--; //invalid (or changing) header sequence
+                    }
                   }  
                   else //good header sequence
                   {
@@ -1932,11 +2011,11 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                     }
                     if (m_audHeaderCount<8)
                     {
-                      m_audHeaderCount++;
-                      if (m_audHeaderCount<7)
+                      if (1)  //(m_audHeaderCount==4)
                       {
                         LogDebug("demux: MPA good sync = %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), length-len, m_audHeaderCount);
                       }
+                      m_audHeaderCount++;
                     }
                   }
                 }                  
