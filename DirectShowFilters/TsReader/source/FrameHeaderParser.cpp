@@ -706,31 +706,33 @@ bool CFrameHeaderParser::Read(ac3hdr& h, int len, CMediaType* pmt)
 
 	if(h.bsid >= 17 || h.fscod == 3 || h.frmsizecod >= 48)
 		return(false);
+			
+	static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
+	h.nChannels = channels[h.acmod] + h.lfeon;
+
+	static int freq[] = {48000, 44100, 32000, 0};
+	h.nSamplesPerSec = freq[h.fscod];
+
+	switch(h.bsid)
+	{
+	case 9: h.nSamplesPerSec >>= 1; break;
+	case 10: h.nSamplesPerSec >>= 2; break;
+	case 11: h.nSamplesPerSec >>= 3; break;
+	default: break;
+	}
+
+	static int rate[] = {32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384, 448, 512, 576, 640, 768, 896, 1024, 1152, 1280};
+
+	h.nBytesPerSec = (rate[h.frmsizecod>>1] * 1000) / 8;
 
 	if(!pmt) return(true);
 
 	WAVEFORMATEX wfe;
 	memset(&wfe, 0, sizeof(wfe));
 	wfe.wFormatTag = WAVE_FORMAT_DOLBY_AC3;
-
-	static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
-	wfe.nChannels = channels[h.acmod] + h.lfeon;
-
-	static int freq[] = {48000, 44100, 32000, 0};
-	wfe.nSamplesPerSec = freq[h.fscod];
-
-	switch(h.bsid)
-	{
-	case 9: wfe.nSamplesPerSec >>= 1; break;
-	case 10: wfe.nSamplesPerSec >>= 2; break;
-	case 11: wfe.nSamplesPerSec >>= 3; break;
-	default: break;
-	}
-
-	static int rate[] = {32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384, 448, 512, 576, 640, 768, 896, 1024, 1152, 1280};
-
-	wfe.nAvgBytesPerSec = (rate[h.frmsizecod>>1] * 1000) / 8;
-	wfe.nBlockAlign = (WORD)(1536 * wfe.nAvgBytesPerSec / wfe.nSamplesPerSec);
+	wfe.nChannels = h.nChannels;
+	wfe.nAvgBytesPerSec = h.nBytesPerSec;
+	wfe.nBlockAlign = (WORD)(1536 * h.nBytesPerSec / h.nSamplesPerSec);
 
 	pmt->majortype = MEDIATYPE_Audio;
 	pmt->subtype = MEDIASUBTYPE_DOLBY_AC3;
@@ -771,23 +773,25 @@ bool CFrameHeaderParser::Read(eac3hdr& h, int len, CMediaType* pmt)
 	if(h.bsid >= 17)
 		return(false);
 
+	static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
+	h.nChannels = channels[h.acmod] + h.lfeon;
+
+	static int freq[] = {48000, 44100, 32000, 0};
+	if (h.fscod==3)
+	  h.nSamplesPerSec = freq[h.fscod2]/2;
+	else
+	  h.nSamplesPerSec = freq[h.fscod];
+	  
+	h.nBytesPerSec = 1000 *(((DWORD)h.frmsiz * h.nSamplesPerSec) / (16 * 48000));
+
 	if(!pmt) return(true);
 
 	WAVEFORMATEX wfe;
 	memset(&wfe, 0, sizeof(wfe));
 	wfe.wFormatTag = WAVE_FORMAT_DOLBY_AC3;
-
-	static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
-	wfe.nChannels = channels[h.acmod] + h.lfeon;
-
-	static int freq[] = {48000, 44100, 32000, 0};
-	if (h.fscod==3)
-	  wfe.nSamplesPerSec = freq[h.fscod2]/2;
-	else
-	  wfe.nSamplesPerSec = freq[h.fscod];
-	  
-	wfe.nAvgBytesPerSec =  1000 *(((DWORD)h.frmsiz * wfe.nSamplesPerSec) / (16 * 48000));
-	wfe.nBlockAlign = (WORD)((1536 * wfe.nAvgBytesPerSec) / wfe.nSamplesPerSec);
+	wfe.nChannels = h.nChannels;	  
+	wfe.nAvgBytesPerSec = h.nBytesPerSec;
+	wfe.nBlockAlign = (WORD)((1536 * h.nBytesPerSec) / h.nSamplesPerSec);
 
 	pmt->majortype = MEDIATYPE_Audio;
 	pmt->subtype = MEDIASUBTYPE_DOLBY_DDPLUS;

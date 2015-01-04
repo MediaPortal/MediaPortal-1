@@ -150,6 +150,8 @@ struct pshdr
 		BYTE dsurmod:2;
 		BYTE lfeon:1;
 		// the rest is unimportant for us
+		int nBytesPerSec, nSamplesPerSec;
+		WORD nChannels;
 	};
 
 	class eac3hdr
@@ -166,6 +168,8 @@ struct pshdr
 		BYTE bsid:5;
 		BYTE bsmod:3;
 		// the rest is unimportant for us
+		int nBytesPerSec, nSamplesPerSec;
+		WORD nChannels;
 	};
 
 	class dtshdr
@@ -397,6 +401,8 @@ struct BasicAudioInfo
 	int sampleRate;
 	int channels;
 	int streamType;
+	unsigned int streamIndex;
+	int bitrate;
 	int aacObjectType;
 	bool isValid;
 	bool pmtValid;
@@ -406,6 +412,8 @@ struct BasicAudioInfo
 		sampleRate=0;
 		channels=0;
 		streamType = SERVICE_TYPE_AUDIO_UNKNOWN;
+		streamIndex=0;
+	  bitrate=0;
 		aacObjectType=0;
 		isValid=false;
 		pmtValid=false;

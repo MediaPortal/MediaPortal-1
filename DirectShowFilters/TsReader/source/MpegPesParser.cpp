@@ -150,6 +150,7 @@ bool CMpegPesParser::ParseAudio(byte* audioPacket, int streamType, bool reset)
           basicAudioInfo.channels = (mpa.channels == 3) ? 1 : 2;
           basicAudioInfo.aacObjectType=0;
           basicAudioInfo.streamType = streamType;
+          basicAudioInfo.bitrate = mpa.nBytesPerSec*8;
       	  basicAudioInfo.pmtValid = true;	
           basicAudioInfo.isValid = true;
       	  parsed=true;
@@ -166,6 +167,7 @@ bool CMpegPesParser::ParseAudio(byte* audioPacket, int streamType, bool reset)
           basicAudioInfo.channels=aac.channels;    
           basicAudioInfo.aacObjectType=aac.profile+1;
           basicAudioInfo.streamType = streamType;
+          basicAudioInfo.bitrate = aac.nBytesPerSec*8;
       	  basicAudioInfo.pmtValid = true;	
           basicAudioInfo.isValid = true;
       	  parsed=true;
@@ -178,21 +180,11 @@ bool CMpegPesParser::ParseAudio(byte* audioPacket, int streamType, bool reset)
     	  __int64 framesize=hdrParser.GetSize();
       	if (hdrParser.Read(ac3,framesize,&audPmt))
       	{
-        	static int freq[] = {48000, 44100, 32000, 0};
-        	basicAudioInfo.sampleRate = freq[ac3.fscod];        
-        	switch(ac3.bsid)
-        	{
-        	case  9: basicAudioInfo.sampleRate >>= 1; break;
-        	case 10: basicAudioInfo.sampleRate >>= 2; break;
-        	case 11: basicAudioInfo.sampleRate >>= 3; break;
-        	default: break;
-        	}
-          
-          static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
-	        basicAudioInfo.channels = channels[ac3.acmod] + ac3.lfeon;
-
+        	basicAudioInfo.sampleRate = ac3.nSamplesPerSec;        
+	        basicAudioInfo.channels = ac3.nChannels;
           basicAudioInfo.aacObjectType=0;
           basicAudioInfo.streamType = streamType;
+          basicAudioInfo.bitrate = ac3.nBytesPerSec*8;
       	  basicAudioInfo.pmtValid = true;	
           basicAudioInfo.isValid = true;
       	  parsed=true;
@@ -206,17 +198,11 @@ bool CMpegPesParser::ParseAudio(byte* audioPacket, int streamType, bool reset)
     	  __int64 framesize=hdrParser.GetSize();
       	if (hdrParser.Read(eac3,framesize,&audPmt))
       	{
-        	static int freq[] = {48000, 44100, 32000, 0};
-        	if (eac3.fscod==3)
-        	  basicAudioInfo.sampleRate = freq[eac3.fscod2]/2;
-        	else
-        	  basicAudioInfo.sampleRate = freq[eac3.fscod];
-          
-          static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
-	        basicAudioInfo.channels = channels[eac3.acmod] + eac3.lfeon;
-
+        	basicAudioInfo.sampleRate = eac3.nSamplesPerSec;        
+	        basicAudioInfo.channels = eac3.nChannels;
           basicAudioInfo.aacObjectType=0;
           basicAudioInfo.streamType = streamType;
+          basicAudioInfo.bitrate = eac3.nBytesPerSec*8;
       	  basicAudioInfo.pmtValid = true;	
           basicAudioInfo.isValid = true;
           //LogDebug("hdrParser: E-AC3 frmsiz = %d, sampleRate = %d", eac3.frmsiz, basicAudioInfo.sampleRate);
@@ -233,6 +219,7 @@ bool CMpegPesParser::ParseAudio(byte* audioPacket, int streamType, bool reset)
   	basicAudioInfo.channels=2;
     basicAudioInfo.aacObjectType=0;
   	basicAudioInfo.streamType = streamType;
+    basicAudioInfo.bitrate=0;
   	basicAudioInfo.pmtValid=false;	
   	basicAudioInfo.isValid=true;	
   	
@@ -252,13 +239,14 @@ bool CMpegPesParser::ParseAudio(byte* audioPacket, int streamType, bool reset)
 	return parsed;
 }
 
-bool CMpegPesParser::OnAudioPacket(byte *Frame, int Length, int streamType, bool reset)
+bool CMpegPesParser::OnAudioPacket(byte *Frame, int Length, int streamType, unsigned int streamIndex, bool reset)
 {
   CAutoLock lock (&m_sectionAudioPmt);
   if (Frame != NULL)
   {
 	  hdrParser.Reset(Frame,Length);
   }
+  basicAudioInfo.streamIndex = streamIndex;
 	return ParseAudio(Frame, streamType, reset);
 }
 
@@ -271,6 +259,8 @@ void CMpegPesParser::AudioReset()
 	basicAudioInfo.channels=0;
   basicAudioInfo.aacObjectType=0;
 	basicAudioInfo.streamType = SERVICE_TYPE_AUDIO_UNKNOWN;
+  basicAudioInfo.streamIndex=0;
+  basicAudioInfo.bitrate=0;
 	basicAudioInfo.pmtValid=false;	
 }
 
