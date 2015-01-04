@@ -173,7 +173,7 @@
       this.settingsCheckedListBox.CheckOnClick = true;
       this.settingsCheckedListBox.Items.AddRange(new object[] {
             "Start MediaPortal in fullscreen mode",
-            "Keep MediaPortal fullscreen mode (don\'t relay on windows resolution change)",
+            "Keep MediaPortal fullscreen mode (don\'t rely on windows resolution change)",
             "Use alternative fullscreen Splashscreen (fullscreen only)",
             "Keep MediaPortal always on top",
             "Hide taskbar in fullscreen mode",

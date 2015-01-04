@@ -81,7 +81,7 @@ namespace MediaPortal.Configuration.Sections
     {
                                             // 0 Start MediaPortal in fullscreen mode
                                             new[] {"general", "startfullscreen", "true"},
-                                            // 1 Keep MediaPortal fullscreen mode (don't relay on windows resolution change)
+                                            // 1 Keep MediaPortal fullscreen mode (don't rely on windows resolution change)
                                             new[] {"general", "keepstartfullscreen", "false"},
                                             // 2 Use screenselector to choose on which screen MP should start
                                             new[] {"general", "usefullscreensplash", "true"},
