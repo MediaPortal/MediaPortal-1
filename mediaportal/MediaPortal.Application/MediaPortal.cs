@@ -132,8 +132,6 @@ public class MediaPortalApp : D3D, IRender
   private bool                  _resumedSuspended;
   private bool                  _delayedResume;
   private readonly Object       _delayedResumeLock = new Object();
-  private bool                  _deviceVideoConnected;
-  private bool                  _deviceVideoRemoved;
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND            = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
@@ -185,6 +183,7 @@ public class MediaPortalApp : D3D, IRender
   private static readonly Guid RDP_REMOTE_AUDIO = new Guid("{E6327CAD-DCEC-4949-AE8A-991E976A79D2}");
   private static readonly Guid KSCATEGORY_AUDIO = new Guid("{6994ad04-93ef-11d0-a3cc-00a0c9223196}");
   private static readonly Guid KSCATEGORY_VIDEO = new Guid("{e6dfdc31-31d0-46ac-86af-da1eb05fc599}");
+  private static readonly Guid KSCATEGORY_SCREEN = new Guid("{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}");
   
   // http://msdn.microsoft.com/en-us/library/windows/desktop/hh448380(v=vs.85).aspx
   private static Guid GUID_MONITOR_POWER_ON             = new Guid("02731015-4510-4526-99e6-e5a17ebd1aea"); 
@@ -1125,6 +1124,8 @@ public class MediaPortalApp : D3D, IRender
     GUIGraphicsContext.graphics = null;
     GUIGraphicsContext.RenderGUI = this;
     GUIGraphicsContext.Render3DMode = GUIGraphicsContext.eRender3DMode.None;
+    GUIGraphicsContext.DeviceAudioConnected = true;
+    GUIGraphicsContext.DeviceVideoConnected = true;
 
     using (Settings xmlreader = new MPSettings())
     {
@@ -1435,7 +1436,7 @@ public class MediaPortalApp : D3D, IRender
 
         // set maximum and minimum form size in windowed mode
         case WM_GETMINMAXINFO:
-          if (!_suspended && !_deviceVideoRemoved)
+          if (!_suspended && GUIGraphicsContext.DeviceVideoConnected)
           {
             OnGetMinMaxInfo(ref msg);
             PluginManager.WndProc(ref msg);
@@ -1978,29 +1979,27 @@ public class MediaPortalApp : D3D, IRender
         Log.Debug("Main: Device type is {0} - Name: {1}", Enum.GetName(typeof(DBT_DEV_TYPE), hdr.dbcc_devicetype), deviceName);
 
         // special chanding for audio renderer
-        if (deviceInterface.dbcc_classguid == KSCATEGORY_VIDEO)
+        if (deviceInterface.dbcc_classguid == KSCATEGORY_VIDEO || deviceInterface.dbcc_classguid == KSCATEGORY_SCREEN)
         {
           switch (msg.WParam.ToInt32())
           {
             case DBT_DEVICEREMOVECOMPLETE:
-              Log.Info("Main: Video Device {0} removed", deviceName);
+              Log.Info("Main: Video Device or Screen {0} removed", deviceName);
               try
               {
-                _deviceVideoRemoved = true;
-                _deviceVideoConnected = false;
+                GUIGraphicsContext.DeviceVideoConnected = false;
               }
               catch (Exception exception)
               {
-                Log.Warn("Main: Exception on removal Video Device {0} exception: {1} ", deviceName, exception.Message);
+                Log.Warn("Main: Exception on removal Video Device or Screen {0} exception: {1} ", deviceName, exception.Message);
               }
               break;
 
             case DBT_DEVICEARRIVAL:
-              Log.Info("Main: Video Device {0} connected", deviceName);
+              Log.Info("Main: Video Device or Screen {0} connected", deviceName);
               try
               {
-                _deviceVideoRemoved = false;
-                _deviceVideoConnected = true;
+                GUIGraphicsContext.DeviceVideoConnected = true;
               }
               catch (Exception exception)
               {
@@ -2019,14 +2018,15 @@ public class MediaPortalApp : D3D, IRender
               Log.Info("Main: Audio Renderer {0} removed", deviceName);
               try
               {
-              if (_stopOnLostAudioRenderer)
-              {
-                g_Player.Stop();
-                while (GUIGraphicsContext.IsPlaying)
+                GUIGraphicsContext.DeviceAudioConnected = false;
+                if (_stopOnLostAudioRenderer)
                 {
-                  Thread.Sleep(100);
+                  g_Player.Stop();
+                  while (GUIGraphicsContext.IsPlaying)
+                  {
+                    Thread.Sleep(100);
+                  }
                 }
-              }
                 VolumeHandler.Dispose();
                 #pragma warning disable 168
                 VolumeHandler vh = VolumeHandler.Instance;
@@ -2042,14 +2042,15 @@ public class MediaPortalApp : D3D, IRender
               Log.Info("Main: Audio Renderer {0} connected", deviceName);
               try
               {
-              if (_stopOnLostAudioRenderer)
-              {
-                g_Player.Stop();
-                while (GUIGraphicsContext.IsPlaying)
+                GUIGraphicsContext.DeviceAudioConnected = true;
+                if (_stopOnLostAudioRenderer)
                 {
-                  Thread.Sleep(100);
+                  g_Player.Stop();
+                  while (GUIGraphicsContext.IsPlaying)
+                  {
+                    Thread.Sleep(100);
+                  }
                 }
-              }
                 VolumeHandler.Dispose();
                 #pragma warning disable 168
                 VolumeHandler vh = VolumeHandler.Instance;
@@ -2075,7 +2076,7 @@ public class MediaPortalApp : D3D, IRender
   private void OnDisplayChange(ref Message msg)
   {
     Screen screen = Screen.FromControl(this);
-    if (!_suspended && _deviceVideoConnected)
+    if (!_suspended && GUIGraphicsContext.DeviceVideoConnected)
     {
       // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
       if (screen.Bounds.Width == 1024 &&
@@ -2086,7 +2087,7 @@ public class MediaPortalApp : D3D, IRender
       }
     }
 
-    if (!_suspended && !_deviceVideoRemoved)
+    if (!_suspended && GUIGraphicsContext.DeviceVideoConnected)
     {
       // disable event handlers
       if (GUIGraphicsContext.DX9Device != null)
@@ -2169,7 +2170,7 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnGetMinMaxInfo(ref Message msg)
   {
-    if (!_suspended && _deviceVideoConnected)
+    if (!_suspended && GUIGraphicsContext.DeviceVideoConnected)
     {
       Screen screen = Screen.FromControl(this);
       // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
@@ -2181,7 +2182,7 @@ public class MediaPortalApp : D3D, IRender
       }
     }
 
-    if (!_suspended && !_deviceVideoRemoved)
+    if (!_suspended && GUIGraphicsContext.DeviceVideoConnected)
     {
       // disable event handlers
       if (GUIGraphicsContext.DX9Device != null)
