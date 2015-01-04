@@ -2148,6 +2148,9 @@ namespace MediaPortal
       FullRender();
       Activate();
 
+      // Set startup bounds
+      Bounds = GUIGraphicsContext.currentScreen.Bounds;
+
       // Start Minimize and restore to force MP focus
       if (!MinimizeOnStartup)
       {

@@ -81,25 +81,27 @@ namespace MediaPortal.Configuration.Sections
     {
                                             // 0 Start MediaPortal in fullscreen mode
                                             new[] {"general", "startfullscreen", "true"},
-                                            // 1 Use screenselector to choose on which screen MP should start
+                                            // 1 Keep MediaPortal fullscreen mode (don't relay on windows resolution change)
+                                            new[] {"general", "keepstartfullscreen", "false"},
+                                            // 2 Use screenselector to choose on which screen MP should start
                                             new[] {"general", "usefullscreensplash", "true"},
-                                            // 2 Keep MediaPortal always on top
+                                            // 3 Keep MediaPortal always on top
                                             new[] {"general", "alwaysontop", "false"},
-                                            // 3 Hide taskbar in fullscreen mode      
+                                            // 4 Hide taskbar in fullscreen mode
                                             new[] {"general", "hidetaskbar", "false"},
-                                            // 4 Autostart MediaPortal on Windows startup
+                                            // 5 Autostart MediaPortal on Windows startup
                                             new[] {"general", "autostart", "false"},
-                                            // 5 Minimize to tray on start up
+                                            // 6 Minimize to tray on start up
                                             new[] {"general", "minimizeonstartup", "false"},
-                                            // 6 Minimize to tray on GUI exit
+                                            // 7 Minimize to tray on GUI exit
                                             new[] {"general", "minimizeonexit", "false"},
-                                            // 7 Minimize to tray on focus loss (fullscreen only)
+                                            // 8 Minimize to tray on focus loss (fullscreen only)
                                             new[] {"general", "minimizeonfocusloss", "false"},
-                                            // 8 Turn off monitor when blanking screen	    
+                                            // 9 Turn off monitor when blanking screen
                                             new[] {"general", "turnoffmonitor", "false"},
-                                            // 9 Show last active module when starting / resuming from standby
+                                            // 10 Show last active module when starting / resuming from standby
                                             new[] {"general", "showlastactivemodule", "false"},
-                                            // 10 Stop playback on removal of an audio renderer
+                                            // 11 Stop playback on removal of an audio renderer
                                             new[] {"general", "stoponaudioremoval", "true"}
                                           };
 
