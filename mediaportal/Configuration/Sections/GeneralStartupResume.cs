@@ -186,7 +186,7 @@ namespace MediaPortal.Configuration.Sections
 
       try
       {
-        if (settingsCheckedListBox.GetItemChecked(4)) // autostart on boot
+        if (settingsCheckedListBox.GetItemChecked(5)) // autostart on boot
         {
           string fileName = Config.GetFile(Config.Dir.Base, "MediaPortal.exe");
           using (
@@ -206,7 +206,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
-        if (settingsCheckedListBox.GetItemChecked(2)) // always on top
+        if (settingsCheckedListBox.GetItemChecked(3)) // always on top
         {
           using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
           {
