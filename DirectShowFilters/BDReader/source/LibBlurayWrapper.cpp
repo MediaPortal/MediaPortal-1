@@ -138,6 +138,8 @@ bool CLibBlurayWrapper::Initialize()
 {
   USES_CONVERSION;
 
+  m_bLibInitialized = false;
+
   TCHAR szDirectory[MAX_PATH] = _T("");
   TCHAR szJAR[MAX_PATH] = _T("");
   TCHAR szPath[MAX_PATH] = _T("");
@@ -163,19 +165,12 @@ bool CLibBlurayWrapper::Initialize()
   }
 
   _stprintf_s(szDirectory, _T("%s\\bluray.dll"), szDirectory);
-  LogDebug("CLibBlurayWrapper - Load bluray: %s", szDirectory);
+  LogDebug("CLibBlurayWrapper - Load bluray: %s", T2A(szDirectory));
   m_hDLL = LoadLibrary(szDirectory);
 
   if (!m_hDLL)
   {
-    LogDebug("Failed to load the DLL from application exe path, trying c:\\");
-    m_hDLL = LoadLibrary(_T("c:\\bluray.dll"));
-  }
-
-  if (!m_hDLL)
-  {
-    LogDebug("CLibBlurayWrapper - Failed to load c:\\bluray.dll");
-    m_bLibInitialized = false;
+    LogDebug("Failed to load the bluray.dll");
     return false;
   }
 
@@ -268,7 +263,6 @@ bool CLibBlurayWrapper::Initialize()
       !_bd_refcnt_dec)
   {
     LogDebug("CLibBlurayWrapper - failed to load method from lib - a version mismatch?");
-    m_bLibInitialized = false;
     return false;
   }
 
