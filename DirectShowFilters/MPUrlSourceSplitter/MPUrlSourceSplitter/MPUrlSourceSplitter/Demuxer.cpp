@@ -80,7 +80,8 @@ extern "C++" CFFmpegLogger *ffmpegLogger;
 //#define FLV_DO_NOT_SEEK_DIFFERENCE                                          10000       // time in ms when FLV packet dts is closer to seek time
 //#define FLV_SEEKING_POSITIONS                                               1024        // maximum FLV seeking positions
 
-#define MAXIMUM_MPEG2_TS_DATA_PACKET                                        (188 * 174)       // 174 * 188 = 32712 < 32 kB
+//#define MAXIMUM_MPEG2_TS_DATA_PACKET                                        (188 * 174)       // 174 * 188 = 32712 < 32 kB
+#define MAXIMUM_MPEG2_TS_DATA_PACKET                                        (188 * 5577)       // 5577 * 188 = 1048476 < 1 MB
 
 #define SLEEP_MODE_NO                                                       0
 #define SLEEP_MODE_SHORT                                                    1
