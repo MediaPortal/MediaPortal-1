@@ -1,0 +1,32 @@
+
+See http://mpgedit.org/mpgedit/mpeg_format/mpeghdr.htm
+
+AAAAAAAA AAABBCCD EEEEFFGH IIJJKLMM
+
+11111111 11111111 11111100 00001111
+
+FF       FF       FC       0F
+
+0FFCFFFF
+
+ff fc c4 c
+
+
+AAAAAAAA AAABBCCD EEEEFFGH IIJJKLMM
+
+11111111 11111111 11111100 00001111
+
+00000000 00011000 = 00 18             => ((ps+1) & 0x18) != 0x08 //version check
+
+00000000 00000110 = 00 06             => ((ps+1) & 0x06) != 0x00 //layer check
+
+00000000 00000000 11110000 = 00 00 F0 => ((ps+2) & 0xF0) != 0xF0 //bitrate check
+
+00000000 00000000 00001100 = 00 00 0C => ((ps+2) & 0x0C) != 0x0C //sampling freq check
+
+
+if ( ((*(ps+1) & 0x18) != 0x08) && //version check
+     ((*(ps+1) & 0x06) != 0x00) && //layer check
+     ((*(ps+2) & 0xF0) != 0xF0) && //bitrate check
+     ((*(ps+2) & 0x0C) != 0x0C) )  //sampling freq check
+

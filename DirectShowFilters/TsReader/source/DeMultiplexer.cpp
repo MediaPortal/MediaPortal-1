@@ -327,16 +327,9 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       pmt.SetTemporalCompression(FALSE);
       pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      if (m_mpegPesParser->basicAudioInfo.pmtValid && m_mpegPesParser->basicAudioInfo.streamIndex==stream)
-      {
-        pmt.SetFormat(m_mpegPesParser->audPmt.Format(), m_mpegPesParser->audPmt.FormatLength());
-      }
-      else
-      {
-        pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
-      }
+      pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
       break;
-  case SERVICE_TYPE_AUDIO_MPEG2:
+    case SERVICE_TYPE_AUDIO_MPEG2:
       pmt.InitMediaType();
       pmt.SetType      (& MEDIATYPE_Audio);
       pmt.SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
@@ -344,14 +337,7 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       pmt.SetTemporalCompression(FALSE);
       pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      if (m_mpegPesParser->basicAudioInfo.pmtValid && m_mpegPesParser->basicAudioInfo.streamIndex==stream)
-      {
-        pmt.SetFormat(m_mpegPesParser->audPmt.Format(), m_mpegPesParser->audPmt.FormatLength());
-      }
-      else
-      {
-        pmt.SetFormat(MPEG2AudioFormat,sizeof(MPEG2AudioFormat));
-      }
+      pmt.SetFormat(MPEG2AudioFormat,sizeof(MPEG2AudioFormat));
       break;
     case SERVICE_TYPE_AUDIO_AAC:
       pmt.InitMediaType();
@@ -361,14 +347,7 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       pmt.SetTemporalCompression(FALSE);
       pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);      
-      if (m_mpegPesParser->basicAudioInfo.pmtValid && m_mpegPesParser->basicAudioInfo.streamIndex==stream)
-      {
-        pmt.SetFormat(m_mpegPesParser->audPmt.Format(), m_mpegPesParser->audPmt.FormatLength());
-      }
-      else
-      {
-        pmt.SetFormat(AACRawAudioFormat2,sizeof(AACRawAudioFormat2));
-      }
+      pmt.SetFormat(AACRawAudioFormat2,sizeof(AACRawAudioFormat2));
       break;
     case SERVICE_TYPE_AUDIO_LATM_AAC:
       pmt.InitMediaType();
@@ -388,14 +367,7 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       pmt.SetTemporalCompression(FALSE);
       pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      if (m_mpegPesParser->basicAudioInfo.pmtValid && m_mpegPesParser->basicAudioInfo.streamIndex==stream)
-      {
-        pmt.SetFormat(m_mpegPesParser->audPmt.Format(), m_mpegPesParser->audPmt.FormatLength());
-      }
-      else
-      {
-        pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
-      }
+      pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
       break;
     case SERVICE_TYPE_AUDIO_DD_PLUS: //ATSC E-AC3 (DD plus)
     case SERVICE_TYPE_AUDIO_E_AC3:   //ATSC E-AC3 (DD plus)
@@ -406,28 +378,24 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       pmt.SetTemporalCompression(FALSE);
       pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      if (m_mpegPesParser->basicAudioInfo.pmtValid && m_mpegPesParser->basicAudioInfo.streamIndex==stream)
-      {
-        pmt.SetFormat(m_mpegPesParser->audPmt.Format(), m_mpegPesParser->audPmt.FormatLength());
-      }
-      else
-      {
-        pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
-      }
+      pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
       break;
   }
   
-  //Modify pmt with correct channel count and sampling rate if possible
-  if (m_mpegPesParser->basicAudioInfo.isValid)
+  //Modify with generated WaveFormatEx, correct channel count and sampling rate if available
+  if (m_mpegPesParser->basicAudioInfo.isValid && m_mpegPesParser->basicAudioInfo.streamIndex==stream)
   {
-    if (m_mpegPesParser->basicAudioInfo.streamIndex==stream) 
+    if (m_mpegPesParser->basicAudioInfo.pmtValid)
     {
-      WAVEFORMATEX* wfe = (WAVEFORMATEX*)pmt.Format();
-      wfe->nChannels = m_mpegPesParser->basicAudioInfo.channels;
-      wfe->nSamplesPerSec = m_mpegPesParser->basicAudioInfo.sampleRate;
+      pmt.SetFormat(m_mpegPesParser->audPmt.Format(), m_mpegPesParser->audPmt.FormatLength());
     }
+    
+    WAVEFORMATEX* wfe = (WAVEFORMATEX*)pmt.Format();
+    wfe->nChannels = m_mpegPesParser->basicAudioInfo.channels;
+    wfe->nSamplesPerSec = m_mpegPesParser->basicAudioInfo.sampleRate;
   }
 }
+
 // This methods selects the subtitle stream specified
 bool CDeMultiplexer::SetSubtitleStream(__int32 stream)
 {
@@ -1561,6 +1529,12 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                   if (m_lastAudHeader != (*(INT32 *)ps & 0x30FEFFFF))
                   {
                     m_lastAudHeader = *(INT32 *)ps & 0x30FEFFFF;
+                    if (m_currentAudHeader == m_lastAudHeader)
+                    {
+                      //Good header
+                      foundAudHeader = true;
+                      lastADTSheaderPosn = len;
+                    }  
                   }  
                   else if (m_currentAudHeader != (*(INT32 *)ps & 0x30FEFFFF))  //compare first 28 bits only
                   {
