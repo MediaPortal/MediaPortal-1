@@ -2038,6 +2038,7 @@ public class MediaPortalApp : D3D, IRender
                           GetCleanDisplayName(GUIGraphicsContext.currentStartScreen)) && rect.Equals(screen.Bounds))
                       {
                         GUIGraphicsContext.currentScreen = GUIGraphicsContext.currentStartScreen;
+                        Log.Debug("Main: Video Device or Screen restore screen : {0}", GUIGraphicsContext.currentScreen);
                         break;
                       }
                       GUIGraphicsContext.currentScreen = screen;
@@ -2047,6 +2048,9 @@ public class MediaPortalApp : D3D, IRender
                   if (!Windowed)
                   {
                     SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y,
+                      GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+                    Log.Debug(
+                      "Main: Video Device or Screen restore screen bounds of display changed to {0}x{1}",
                       GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
                   }
                 }
