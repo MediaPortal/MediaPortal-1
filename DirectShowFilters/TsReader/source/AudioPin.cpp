@@ -633,8 +633,10 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             int audioIndex = 0;
             demux.GetAudioStream(audioIndex);
             demux.GetAudioStreamType(audioIndex, mt, m_iPosition);
-            pSample->SetMediaType(&mt);            
-            LogDebug("audPin: Add pmt, fTime:%03.3f SampCnt:%d", (float)fTime, m_sampleCount);
+            pSample->SetMediaType(&mt); 
+            SetMediaType(&mt);               
+            WAVEFORMATEX* wfe = (WAVEFORMATEX*)mt.Format();         
+            LogDebug("audPin: Add pmt, fTime:%03.3f SampCnt:%d, Ch:%d, Sr:%d", (float)fTime, m_sampleCount, wfe->nChannels, wfe->nSamplesPerSec);
             m_bAddPMT = false; //Only add once
           }   
 

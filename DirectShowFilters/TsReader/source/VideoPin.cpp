@@ -583,6 +583,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
               if (demux.GetVideoStreamType(mt))
               {
                 pSample->SetMediaType(&mt); 
+                SetMediaType(&mt);               
                 LogDebug("vidPin: Add pmt and set discontinuity L:%d B:%d fTime:%03.3f SampCnt:%d", m_bDiscontinuity, buffer->GetDiscontinuity(), (float)fTime, m_sampleCount);
               }
               else
