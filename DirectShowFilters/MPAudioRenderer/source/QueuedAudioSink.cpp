@@ -255,13 +255,17 @@ HRESULT CQueuedAudioSink::GetNextSampleOrCommand(AudioSinkCommand* pCommand, IMe
     (*pSample)->Release();
 
   CAutoLock queueLock(&m_inputQueueLock);
-  TQueueEntry entry = m_inputQueue.front();
-  if (pSample)
-    *pSample = entry.Sample.Detach();
-  if (pCommand)
-    *pCommand = entry.Command;
+  if (!m_inputQueue.empty())
+  {
+    TQueueEntry entry = m_inputQueue.front();
+    if (pSample)
+      *pSample = entry.Sample.Detach();
+    if (pCommand)
+      *pCommand = entry.Command;
 
-  m_inputQueue.erase(m_inputQueue.begin());
+    m_inputQueue.erase(m_inputQueue.begin());
+  }
+
   if (m_inputQueue.empty())
     ResetEvent(m_hInputAvailableEvent);
   //if (m_InputQueue.empty())
