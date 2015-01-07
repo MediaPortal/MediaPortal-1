@@ -310,6 +310,10 @@ protected:
   // holds create demuxer error
   HRESULT createDemuxerError;
 
+  // holds IPTV buffer
+  unsigned char *iptvBuffer;
+  unsigned int iptvBufferSize;
+
   /* methods */
 
   // cleans format context
