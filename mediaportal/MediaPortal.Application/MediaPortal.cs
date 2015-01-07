@@ -2047,11 +2047,11 @@ public class MediaPortalApp : D3D, IRender
                   }
                   if (!Windowed)
                   {
-                    SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y,
-                      GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+                    SetBounds(GUIGraphicsContext.currentStartScreen.Bounds.X, GUIGraphicsContext.currentStartScreen.Bounds.Y,
+                      GUIGraphicsContext.currentStartScreen.Bounds.Width, GUIGraphicsContext.currentStartScreen.Bounds.Height);
                     Log.Debug(
                       "Main: Video Device or Screen restore screen bounds of display changed to {0}x{1}",
-                      GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+                      GUIGraphicsContext.currentStartScreen.Bounds.Width, GUIGraphicsContext.currentStartScreen.Bounds.Height);
                   }
                 }
               }
@@ -2082,9 +2082,6 @@ public class MediaPortalApp : D3D, IRender
                   }
                 }
                 VolumeHandler.Dispose();
-                #pragma warning disable 168
-                VolumeHandler vh = VolumeHandler.Instance;
-                #pragma warning restore 168
               }
               catch (Exception exception)
               {
@@ -2096,19 +2093,33 @@ public class MediaPortalApp : D3D, IRender
               Log.Info("Main: Audio Renderer {0} connected", deviceName);
               try
               {
-                GUIGraphicsContext.DeviceAudioConnected = true;
-                if (_stopOnLostAudioRenderer)
+                if (!GUIGraphicsContext.DeviceAudioConnected)
                 {
-                  g_Player.Stop();
-                  while (GUIGraphicsContext.IsPlaying)
+                  GUIGraphicsContext.DeviceAudioConnected = true;
+                  if (_stopOnLostAudioRenderer)
                   {
-                    Thread.Sleep(100);
+                    g_Player.Stop();
+                    while (GUIGraphicsContext.IsPlaying)
+                    {
+                      Thread.Sleep(100);
+                    }
                   }
+                  #pragma warning disable 168
+                  if (GUIGraphicsContext.VolumeHandler == null)
+                  {
+                    VolumeHandler.Dispose();
+                    GUIGraphicsContext.VolumeHandler = VolumeHandler.Instance;
+                    BassMusicPlayer.FreeBass();
+
+                    Log.Debug("Main: Audio Renderer {0} connected and dispose and create a new instance of VolumeHandler", deviceName);
+                    // Asynchronously pre-initialize the music engine if we're using the BassMusicPlayer
+                    if (!BassMusicPlayer.Initialized && BassMusicPlayer.IsDefaultMusicPlayer)
+                    {
+                      BassMusicPlayer.CreatePlayerAsync();
+                    }
+                  }
+                  #pragma warning restore 168
                 }
-                VolumeHandler.Dispose();
-                #pragma warning disable 168
-                VolumeHandler vh = VolumeHandler.Instance;
-                #pragma warning restore 168
               }
               catch (Exception exception)
               {
@@ -2675,9 +2686,9 @@ public class MediaPortalApp : D3D, IRender
       Log.Debug("Main: OnSuspend - unmute volume");
       VolumeHandler.Instance.UnMute();
     }
-    VolumeHandler.Dispose();
+    //VolumeHandler.Dispose();
 
-    // we only dispose the DB connection if the DB path is remote.      
+    // we only dispose the DB connection if the DB path is remote.
     Log.Debug("Main: OnSuspend - dispose DB connection");
     DisposeDBs();
 
@@ -2745,17 +2756,20 @@ public class MediaPortalApp : D3D, IRender
     Log.Debug("Main: OnResumeSuspend - Autoplay start listening");
     AutoPlay.StartListening();
 
-    Log.Debug("Main: OnResumeSuspend - Initializing volume handler");
-    try
-    {
-#pragma warning disable 168
-      VolumeHandler vh = VolumeHandler.Instance;
-#pragma warning restore 168
-    }
-    catch (Exception exception)
-    {
-      Log.Warn("Main: OnResumeSuspend - Could not initialize volume handler: ", exception.Message);
-    }
+//    Log.Debug("Main: OnResumeSuspend - Initializing volume handler");
+//    try
+//    {
+//#pragma warning disable 168
+//      if (VolumeHandler.Instance == null)
+//      {
+//        _volumeHandler = VolumeHandler.Instance;
+//      }
+//#pragma warning restore 168
+//    }
+//    catch (Exception exception)
+//    {
+//      Log.Warn("Main: OnResumeSuspend - Could not initialize volume handler: ", exception.Message);
+//    }
 
     _lastOnresume = DateTime.Now;
 
@@ -2896,7 +2910,7 @@ public class MediaPortalApp : D3D, IRender
 
     Log.Info("Main: Initializing volume handler");
     #pragma warning disable 168
-    VolumeHandler vh = VolumeHandler.Instance;
+    GUIGraphicsContext.VolumeHandler = VolumeHandler.Instance;
     #pragma warning restore 168
 
     // register for device change notifications
@@ -2911,7 +2925,7 @@ public class MediaPortalApp : D3D, IRender
       {
         Log.Warn("Main: Could not register for power settings notification GUID_SESSION_DISPLAY_STATUS");
         // initialize volume handler and set volume handler properties
-        VolumeHandler.Instance.UpdateVolumeProperties();
+        GUIGraphicsContext.VolumeHandler.UpdateVolumeProperties();
       }
 
       _userPresenceHandle = RegisterPowerSettingNotification(Handle, ref GUID_SESSION_USER_PRESENCE, DEVICE_NOTIFY_WINDOW_HANDLE);
