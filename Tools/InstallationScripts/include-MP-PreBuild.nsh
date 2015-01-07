@@ -98,6 +98,7 @@
 !endif
 
 !ifdef BUILD_Installer
+!system '${git_ROOT}\Build\MSBUILD_MP_LargeAddressAware.bat Release' = 0
 !system '"${NSISDIR}\makensis.exe" "${git_MP}\Setup\setup.nsi"' = 0
 !system '"${NSISDIR}\makensis.exe" "${git_TVServer}\Setup\setup.nsi"' = 0
 !endif

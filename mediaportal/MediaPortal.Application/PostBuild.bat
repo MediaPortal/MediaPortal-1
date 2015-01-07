@@ -1,6 +1,8 @@
 REM %1 = Solution Directory
 REM %2 = $(ConfigurationName) Debug/Release
 
+set GIT_ROOT=%~dp0..\..\
+set Build="%GIT_ROOT%\Build"
 
 REM Identify configuration path for <=XP or >=Vista
 if exist %ProgramData%\nul (
@@ -182,6 +184,9 @@ xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll .
 
 REM taglib-sharp
 xcopy %1\..\Packages\MediaPortal.TagLib.2.1.0.1\lib\net40\taglib-sharp.dll ./Y /D
+
+REM Enable >2GB for 32 bit process
+call %Build%\MSBUILD_MP_LargeAddressAware.bat %2
 
 REM SharpLibHid
 xcopy %1\..\Packages\SharpLibHid.1.3.1\lib\net20\SharpLibHid.dll . /Y /D
