@@ -32,5 +32,9 @@ SET version=%errorlevel%
 DEL version.txt >> %log%
 
 echo.
+echo Make MediaPortal 2GB LARGEADDRESSAWARE...
+call MSBUILD_MP_LargeAddressAware.bat %BUILD_TYPE%
+
+echo.
 echo Building Installer...
 "%progpath%\NSIS\makensis.exe" /DBUILD_TYPE=%BUILD_TYPE% /DVER_BUILD=%version% "%MediaPortal%\Setup\setup.nsi" >> %log%

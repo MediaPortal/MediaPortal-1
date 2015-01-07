@@ -176,3 +176,6 @@ xcopy %1\..\Packages\bass.wv.2.4.4\basswv.dll "MusicPlayer\plugins\audio decoder
 REM iMON Display 
 xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll . /Y /D
 xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll . /Y /D
+
+REM Enable >2GB for 32 bit process
+call %Build%\MSBUILD_MP_LargeAddressAware.bat %2
