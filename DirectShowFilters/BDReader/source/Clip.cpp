@@ -132,12 +132,7 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
     if (!firstPacketReturned)
       firstPacketReturned = true;
 
-    ret->rtPlaylistTime = ret->rtStart + m_rtStreamStartOffset;
-
-    if (m_rtStreamStartOffset > 0)
-      ret->rtPlaylistTime -= earliestPacketAccepted;
-    else
-      ret->rtPlaylistTime -= playlistFirstPacketTime;
+    ret->rtPlaylistTime = ret->rtStart - m_playlistOffset;
 
     ret->rtClipStartTime = ret->rtStart - earliestPacketAccepted + m_rtClipAudioStartingOffset;
     ret->rtStart += clipPlaylistOffset - earliestPacketAccepted + m_rtClipAudioStartingOffset;
@@ -199,12 +194,7 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
       if (!firstPacketReturned)
         firstPacketReturned = true;
 
-      ret->rtPlaylistTime = ret->rtStart + m_rtStreamStartOffset;
-
-      if (m_rtStreamStartOffset > 0)
-        ret->rtPlaylistTime -= earliestPacketAccepted;
-      else
-        ret->rtPlaylistTime -= playlistFirstPacketTime;
+      ret->rtPlaylistTime = ret->rtStart - m_playlistOffset;
 
       ret->rtClipStartTime = ret->rtStart - earliestPacketAccepted + m_rtClipVideoStartingOffset;
       ret->rtStart += clipPlaylistOffset - earliestPacketAccepted + m_rtClipVideoStartingOffset;
@@ -403,11 +393,9 @@ void CClip::Reset(REFERENCE_TIME totalStreamOffset)
   lastVideoPosition = playlistFirstPacketTime;
   lastAudioPosition = playlistFirstPacketTime;
   
-  if (clipPlaylistOffset != totalStreamOffset)
-  {
-    clipReset = true;
-    clipPlaylistOffset = totalStreamOffset;
-  }
+  firstPacketAccepted ? clipReset = true : clipReset = false;
+
+  clipPlaylistOffset = totalStreamOffset;
 
   audioPlaybackPosition = playlistFirstPacketTime;
   videoPlaybackPosition = playlistFirstPacketTime;
