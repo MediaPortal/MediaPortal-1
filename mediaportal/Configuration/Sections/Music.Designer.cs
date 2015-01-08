@@ -21,20 +21,6 @@ namespace MediaPortal.Configuration.Sections
         {
           components.Dispose();
         }
-
-        // Close eventually open Viz stuff
-        if (_visParam != null)
-        {
-          BassVis_Api.BassVis.BASSVIS_Quit(_visParam);
-          _visParam = null;
-        }
-
-        // Make sure we shut down the viz engine
-        if (IVizMgr != null)
-        {
-          IVizMgr.Stop();
-          IVizMgr.ShutDown();
-        }
       }
 
       base.Dispose(disposing);
@@ -116,8 +102,6 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonVUNone = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.groupBoxDynamicContent = new System.Windows.Forms.GroupBox();
       this.chkDisableSimilarTrackLookups = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBoxVizOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.ShowVizInNowPlayingChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.PlaylistTabPg = new System.Windows.Forms.TabPage();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.PlaylistCurrentCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -128,30 +112,6 @@ namespace MediaPortal.Configuration.Sections
       this.playlistButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.playlistFolderTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.VisualizationsTabPg = new System.Windows.Forms.TabPage();
-      this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.groupBoxWinampVis = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.winampFFTsensitivityLbl = new System.Windows.Forms.Label();
-      this.FFTsensitivityLbl = new System.Windows.Forms.Label();
-      this.winampFFTsensitivity = new System.Windows.Forms.TrackBar();
-      this.btWinampConfig = new MediaPortal.UserInterface.Controls.MPButton();
-      this.EnableStatusOverlaysChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.ShowTrackInfoChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label11 = new System.Windows.Forms.Label();
-      this.label10 = new System.Windows.Forms.Label();
-      this.VizPresetsCmbBox = new System.Windows.Forms.ComboBox();
-      this.VisualizationsCmbBox = new System.Windows.Forms.ComboBox();
-      this.label7 = new System.Windows.Forms.Label();
-      this.label5 = new System.Windows.Forms.Label();
-      this.VisualizationFpsNud = new System.Windows.Forms.NumericUpDown();
-      this.groupBoxSoniqueVis = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.ckUseCover = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.soniqueRenderTimingLbl = new System.Windows.Forms.Label();
-      this.label6 = new System.Windows.Forms.Label();
-      this.soniqueRenderTiming = new System.Windows.Forms.TrackBar();
-      this.label3 = new System.Windows.Forms.Label();
-      this.comboViewPortSizes = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.ckUseOpenGL = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBox2 = new System.Windows.Forms.CheckBox();
       this.MusicSettingsTabCtl.SuspendLayout();
@@ -173,16 +133,8 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageNowPlaying.SuspendLayout();
       this.groupBoxVUMeter.SuspendLayout();
       this.groupBoxDynamicContent.SuspendLayout();
-      this.groupBoxVizOptions.SuspendLayout();
       this.PlaylistTabPg.SuspendLayout();
       this.groupBox1.SuspendLayout();
-      this.VisualizationsTabPg.SuspendLayout();
-      this.mpGroupBox3.SuspendLayout();
-      this.groupBoxWinampVis.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.winampFFTsensitivity)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).BeginInit();
-      this.groupBoxSoniqueVis.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.soniqueRenderTiming)).BeginInit();
       this.SuspendLayout();
       // 
       // MusicSettingsTabCtl
@@ -191,13 +143,11 @@ namespace MediaPortal.Configuration.Sections
       this.MusicSettingsTabCtl.Controls.Add(this.PlaySettingsTabPg);
       this.MusicSettingsTabCtl.Controls.Add(this.tabPageNowPlaying);
       this.MusicSettingsTabCtl.Controls.Add(this.PlaylistTabPg);
-      this.MusicSettingsTabCtl.Controls.Add(this.VisualizationsTabPg);
       this.MusicSettingsTabCtl.Location = new System.Drawing.Point(0, 8);
       this.MusicSettingsTabCtl.Name = "MusicSettingsTabCtl";
       this.MusicSettingsTabCtl.SelectedIndex = 0;
       this.MusicSettingsTabCtl.Size = new System.Drawing.Size(472, 447);
       this.MusicSettingsTabCtl.TabIndex = 1;
-      this.MusicSettingsTabCtl.SelectedIndexChanged += new System.EventHandler(this.MusicSettingsTabCtl_SelectedIndexChanged);
       // 
       // PlayerTabPg
       // 
@@ -861,7 +811,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.tabPageNowPlaying.Controls.Add(this.groupBoxVUMeter);
       this.tabPageNowPlaying.Controls.Add(this.groupBoxDynamicContent);
-      this.tabPageNowPlaying.Controls.Add(this.groupBoxVizOptions);
       this.tabPageNowPlaying.Location = new System.Drawing.Point(4, 22);
       this.tabPageNowPlaying.Name = "tabPageNowPlaying";
       this.tabPageNowPlaying.Padding = new System.Windows.Forms.Padding(3);
@@ -876,7 +825,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxVUMeter.Controls.Add(this.radioButtonVUAnalog);
       this.groupBoxVUMeter.Controls.Add(this.radioButtonVUNone);
       this.groupBoxVUMeter.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxVUMeter.Location = new System.Drawing.Point(16, 179);
+      this.groupBoxVUMeter.Location = new System.Drawing.Point(16, 111);
       this.groupBoxVUMeter.Name = "groupBoxVUMeter";
       this.groupBoxVUMeter.Size = new System.Drawing.Size(432, 64);
       this.groupBoxVUMeter.TabIndex = 5;
@@ -938,28 +887,6 @@ namespace MediaPortal.Configuration.Sections
       this.chkDisableSimilarTrackLookups.TabIndex = 10;
       this.chkDisableSimilarTrackLookups.Text = "Disable internet lookups for similar tracks";
       this.chkDisableSimilarTrackLookups.UseVisualStyleBackColor = true;
-      // 
-      // groupBoxVizOptions
-      // 
-      this.groupBoxVizOptions.Controls.Add(this.ShowVizInNowPlayingChkBox);
-      this.groupBoxVizOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxVizOptions.Location = new System.Drawing.Point(16, 110);
-      this.groupBoxVizOptions.Name = "groupBoxVizOptions";
-      this.groupBoxVizOptions.Size = new System.Drawing.Size(432, 54);
-      this.groupBoxVizOptions.TabIndex = 3;
-      this.groupBoxVizOptions.TabStop = false;
-      this.groupBoxVizOptions.Text = "Visualization options";
-      // 
-      // ShowVizInNowPlayingChkBox
-      // 
-      this.ShowVizInNowPlayingChkBox.AutoSize = true;
-      this.ShowVizInNowPlayingChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ShowVizInNowPlayingChkBox.Location = new System.Drawing.Point(91, 23);
-      this.ShowVizInNowPlayingChkBox.Name = "ShowVizInNowPlayingChkBox";
-      this.ShowVizInNowPlayingChkBox.Size = new System.Drawing.Size(201, 17);
-      this.ShowVizInNowPlayingChkBox.TabIndex = 4;
-      this.ShowVizInNowPlayingChkBox.Text = "Show visualization (BASS player only)";
-      this.ShowVizInNowPlayingChkBox.UseVisualStyleBackColor = true;
       // 
       // PlaylistTabPg
       // 
@@ -1076,299 +1003,6 @@ namespace MediaPortal.Configuration.Sections
       this.label1.TabIndex = 0;
       this.label1.Text = "Playlist folder:";
       // 
-      // VisualizationsTabPg
-      // 
-      this.VisualizationsTabPg.Controls.Add(this.mpGroupBox3);
-      this.VisualizationsTabPg.Location = new System.Drawing.Point(4, 22);
-      this.VisualizationsTabPg.Name = "VisualizationsTabPg";
-      this.VisualizationsTabPg.Size = new System.Drawing.Size(464, 421);
-      this.VisualizationsTabPg.TabIndex = 4;
-      this.VisualizationsTabPg.Text = "Visualizations";
-      this.VisualizationsTabPg.UseVisualStyleBackColor = true;
-      // 
-      // mpGroupBox3
-      // 
-      this.mpGroupBox3.Controls.Add(this.EnableStatusOverlaysChkBox);
-      this.mpGroupBox3.Controls.Add(this.ShowTrackInfoChkBox);
-      this.mpGroupBox3.Controls.Add(this.label11);
-      this.mpGroupBox3.Controls.Add(this.label10);
-      this.mpGroupBox3.Controls.Add(this.VizPresetsCmbBox);
-      this.mpGroupBox3.Controls.Add(this.VisualizationsCmbBox);
-      this.mpGroupBox3.Controls.Add(this.label7);
-      this.mpGroupBox3.Controls.Add(this.label5);
-      this.mpGroupBox3.Controls.Add(this.VisualizationFpsNud);
-      this.mpGroupBox3.Controls.Add(this.groupBoxSoniqueVis);
-      this.mpGroupBox3.Controls.Add(this.groupBoxWinampVis);
-      this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox3.Location = new System.Drawing.Point(16, 16);
-      this.mpGroupBox3.Name = "mpGroupBox3";
-      this.mpGroupBox3.Size = new System.Drawing.Size(432, 385);
-      this.mpGroupBox3.TabIndex = 0;
-      this.mpGroupBox3.TabStop = false;
-      this.mpGroupBox3.Text = "Visualization settings";
-      // 
-      // groupBoxWinampVis
-      // 
-      this.groupBoxWinampVis.Controls.Add(this.winampFFTsensitivityLbl);
-      this.groupBoxWinampVis.Controls.Add(this.FFTsensitivityLbl);
-      this.groupBoxWinampVis.Controls.Add(this.winampFFTsensitivity);
-      this.groupBoxWinampVis.Controls.Add(this.btWinampConfig);
-      this.groupBoxWinampVis.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxWinampVis.Location = new System.Drawing.Point(91, 86);
-      this.groupBoxWinampVis.Name = "groupBoxWinampVis";
-      this.groupBoxWinampVis.Size = new System.Drawing.Size(322, 122);
-      this.groupBoxWinampVis.TabIndex = 11;
-      this.groupBoxWinampVis.TabStop = false;
-      this.groupBoxWinampVis.Text = "Winamp Vis.";
-      this.groupBoxWinampVis.Visible = false;
-      // 
-      // winampFFTsensitivityLbl
-      // 
-      this.winampFFTsensitivityLbl.AutoSize = true;
-      this.winampFFTsensitivityLbl.Location = new System.Drawing.Point(283, 80);
-      this.winampFFTsensitivityLbl.Name = "winampFFTsensitivityLbl";
-      this.winampFFTsensitivityLbl.Size = new System.Drawing.Size(13, 13);
-      this.winampFFTsensitivityLbl.TabIndex = 13;
-      this.winampFFTsensitivityLbl.Text = "0";
-      // 
-      // FFTsensitivityLbl
-      // 
-      this.FFTsensitivityLbl.AutoSize = true;
-      this.FFTsensitivityLbl.Location = new System.Drawing.Point(8, 79);
-      this.FFTsensitivityLbl.Name = "FFTsensitivityLbl";
-      this.FFTsensitivityLbl.Size = new System.Drawing.Size(79, 13);
-      this.FFTsensitivityLbl.TabIndex = 12;
-      this.FFTsensitivityLbl.Text = "FFT Sensitivity:";
-      // 
-      // winampFFTsensitivity
-      // 
-      this.winampFFTsensitivity.LargeChange = 32;
-      this.winampFFTsensitivity.Location = new System.Drawing.Point(92, 65);
-      this.winampFFTsensitivity.Margin = new System.Windows.Forms.Padding(1);
-      this.winampFFTsensitivity.Maximum = 256;
-      this.winampFFTsensitivity.Minimum = 1;
-      this.winampFFTsensitivity.Name = "winampFFTsensitivity";
-      this.winampFFTsensitivity.Size = new System.Drawing.Size(188, 45);
-      this.winampFFTsensitivity.SmallChange = 8;
-      this.winampFFTsensitivity.TabIndex = 11;
-      this.winampFFTsensitivity.TickFrequency = 8;
-      this.winampFFTsensitivity.TickStyle = System.Windows.Forms.TickStyle.Both;
-      this.winampFFTsensitivity.Value = 36;
-      this.winampFFTsensitivity.Scroll += new System.EventHandler(this.winampFFTsensitivity_Scroll);
-      // 
-      // btWinampConfig
-      // 
-      this.btWinampConfig.Location = new System.Drawing.Point(6, 24);
-      this.btWinampConfig.Name = "btWinampConfig";
-      this.btWinampConfig.Size = new System.Drawing.Size(75, 23);
-      this.btWinampConfig.TabIndex = 4;
-      this.btWinampConfig.Text = "Config";
-      this.btWinampConfig.UseVisualStyleBackColor = true;
-      this.btWinampConfig.Click += new System.EventHandler(this.btWinampConfig_Click);
-      // 
-      // EnableStatusOverlaysChkBox
-      // 
-      this.EnableStatusOverlaysChkBox.AutoSize = true;
-      this.EnableStatusOverlaysChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.EnableStatusOverlaysChkBox.Location = new System.Drawing.Point(91, 333);
-      this.EnableStatusOverlaysChkBox.Name = "EnableStatusOverlaysChkBox";
-      this.EnableStatusOverlaysChkBox.Size = new System.Drawing.Size(299, 17);
-      this.EnableStatusOverlaysChkBox.TabIndex = 9;
-      this.EnableStatusOverlaysChkBox.Text = "Enable status display in fullscreen mode (fast systems only)";
-      this.EnableStatusOverlaysChkBox.UseVisualStyleBackColor = true;
-      this.EnableStatusOverlaysChkBox.CheckedChanged += new System.EventHandler(this.EnableStatusOverlaysChkBox_CheckedChanged);
-      // 
-      // ShowTrackInfoChkBox
-      // 
-      this.ShowTrackInfoChkBox.AutoSize = true;
-      this.ShowTrackInfoChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ShowTrackInfoChkBox.Location = new System.Drawing.Point(110, 354);
-      this.ShowTrackInfoChkBox.Name = "ShowTrackInfoChkBox";
-      this.ShowTrackInfoChkBox.Size = new System.Drawing.Size(178, 17);
-      this.ShowTrackInfoChkBox.TabIndex = 10;
-      this.ShowTrackInfoChkBox.Text = "Show song info on track change";
-      this.ShowTrackInfoChkBox.UseVisualStyleBackColor = true;
-      // 
-      // label11
-      // 
-      this.label11.AutoSize = true;
-      this.label11.Location = new System.Drawing.Point(45, 54);
-      this.label11.Name = "label11";
-      this.label11.Size = new System.Drawing.Size(40, 13);
-      this.label11.TabIndex = 2;
-      this.label11.Text = "Preset:";
-      // 
-      // label10
-      // 
-      this.label10.AutoSize = true;
-      this.label10.Location = new System.Drawing.Point(17, 27);
-      this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(68, 13);
-      this.label10.TabIndex = 0;
-      this.label10.Text = "Visualization:";
-      // 
-      // VizPresetsCmbBox
-      // 
-      this.VizPresetsCmbBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.VizPresetsCmbBox.FormattingEnabled = true;
-      this.VizPresetsCmbBox.Location = new System.Drawing.Point(91, 51);
-      this.VizPresetsCmbBox.Name = "VizPresetsCmbBox";
-      this.VizPresetsCmbBox.Size = new System.Drawing.Size(289, 21);
-      this.VizPresetsCmbBox.TabIndex = 3;
-      this.VizPresetsCmbBox.SelectedIndexChanged += new System.EventHandler(this.VizPresetsCmbBox_SelectedIndexChanged);
-      // 
-      // VisualizationsCmbBox
-      // 
-      this.VisualizationsCmbBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.VisualizationsCmbBox.FormattingEnabled = true;
-      this.VisualizationsCmbBox.Location = new System.Drawing.Point(91, 24);
-      this.VisualizationsCmbBox.Name = "VisualizationsCmbBox";
-      this.VisualizationsCmbBox.Size = new System.Drawing.Size(289, 21);
-      this.VisualizationsCmbBox.TabIndex = 1;
-      this.VisualizationsCmbBox.SelectedIndexChanged += new System.EventHandler(this.VisualizationsCmbBox_SelectedIndexChanged);
-      // 
-      // label7
-      // 
-      this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(149, 307);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(166, 13);
-      this.label7.TabIndex = 8;
-      this.label7.Text = "(use lower value for slow systems)";
-      // 
-      // label5
-      // 
-      this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(21, 307);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(64, 13);
-      this.label5.TabIndex = 6;
-      this.label5.Text = "Target FPS:";
-      // 
-      // VisualizationFpsNud
-      // 
-      this.VisualizationFpsNud.Location = new System.Drawing.Point(91, 305);
-      this.VisualizationFpsNud.Maximum = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-      this.VisualizationFpsNud.Minimum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-      this.VisualizationFpsNud.Name = "VisualizationFpsNud";
-      this.VisualizationFpsNud.Size = new System.Drawing.Size(52, 20);
-      this.VisualizationFpsNud.TabIndex = 7;
-      this.VisualizationFpsNud.Value = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
-      this.VisualizationFpsNud.ValueChanged += new System.EventHandler(this.VisualizationFpsNud_ValueChanged);
-      // 
-      // groupBoxSoniqueVis
-      // 
-      this.groupBoxSoniqueVis.Controls.Add(this.ckUseCover);
-      this.groupBoxSoniqueVis.Controls.Add(this.soniqueRenderTimingLbl);
-      this.groupBoxSoniqueVis.Controls.Add(this.label6);
-      this.groupBoxSoniqueVis.Controls.Add(this.soniqueRenderTiming);
-      this.groupBoxSoniqueVis.Controls.Add(this.label3);
-      this.groupBoxSoniqueVis.Controls.Add(this.comboViewPortSizes);
-      this.groupBoxSoniqueVis.Controls.Add(this.ckUseOpenGL);
-      this.groupBoxSoniqueVis.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxSoniqueVis.Location = new System.Drawing.Point(91, 86);
-      this.groupBoxSoniqueVis.Name = "groupBoxSoniqueVis";
-      this.groupBoxSoniqueVis.Size = new System.Drawing.Size(322, 175);
-      this.groupBoxSoniqueVis.TabIndex = 12;
-      this.groupBoxSoniqueVis.TabStop = false;
-      this.groupBoxSoniqueVis.Text = "Sonique Vis";
-      this.groupBoxSoniqueVis.Visible = false;
-      // 
-      // ckUseCover
-      // 
-      this.ckUseCover.AutoSize = true;
-      this.ckUseCover.Checked = true;
-      this.ckUseCover.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.ckUseCover.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ckUseCover.Location = new System.Drawing.Point(6, 43);
-      this.ckUseCover.Name = "ckUseCover";
-      this.ckUseCover.Size = new System.Drawing.Size(90, 17);
-      this.ckUseCover.TabIndex = 11;
-      this.ckUseCover.Text = "Use Cover Art";
-      this.ckUseCover.UseVisualStyleBackColor = true;
-      // 
-      // soniqueRenderTimingLbl
-      // 
-      this.soniqueRenderTimingLbl.AutoSize = true;
-      this.soniqueRenderTimingLbl.Location = new System.Drawing.Point(281, 92);
-      this.soniqueRenderTimingLbl.Name = "soniqueRenderTimingLbl";
-      this.soniqueRenderTimingLbl.Size = new System.Drawing.Size(29, 13);
-      this.soniqueRenderTimingLbl.TabIndex = 10;
-      this.soniqueRenderTimingLbl.Text = "0 ms";
-      // 
-      // label6
-      // 
-      this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(6, 92);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(81, 13);
-      this.label6.TabIndex = 9;
-      this.label6.Text = "Render Timimg:";
-      // 
-      // soniqueRenderTiming
-      // 
-      this.soniqueRenderTiming.LargeChange = 10;
-      this.soniqueRenderTiming.Location = new System.Drawing.Point(89, 77);
-      this.soniqueRenderTiming.Margin = new System.Windows.Forms.Padding(1);
-      this.soniqueRenderTiming.Maximum = 50;
-      this.soniqueRenderTiming.Minimum = 10;
-      this.soniqueRenderTiming.Name = "soniqueRenderTiming";
-      this.soniqueRenderTiming.Size = new System.Drawing.Size(188, 45);
-      this.soniqueRenderTiming.SmallChange = 5;
-      this.soniqueRenderTiming.TabIndex = 8;
-      this.soniqueRenderTiming.TickFrequency = 5;
-      this.soniqueRenderTiming.TickStyle = System.Windows.Forms.TickStyle.Both;
-      this.soniqueRenderTiming.Value = 25;
-      this.soniqueRenderTiming.Scroll += new System.EventHandler(this.soniqueRenderTiming_Scroll);
-      // 
-      // label3
-      // 
-      this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(6, 145);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(75, 13);
-      this.label3.TabIndex = 7;
-      this.label3.Text = "ViewPort Size:";
-      // 
-      // comboViewPortSizes
-      // 
-      this.comboViewPortSizes.BorderColor = System.Drawing.Color.Empty;
-      this.comboViewPortSizes.FormattingEnabled = true;
-      this.comboViewPortSizes.Items.AddRange(new object[] {
-            "512X384",
-            "640X480",
-            "800X600",
-            "1024x786"});
-      this.comboViewPortSizes.Location = new System.Drawing.Point(89, 139);
-      this.comboViewPortSizes.Name = "comboViewPortSizes";
-      this.comboViewPortSizes.Size = new System.Drawing.Size(188, 21);
-      this.comboViewPortSizes.TabIndex = 1;
-      // 
-      // ckUseOpenGL
-      // 
-      this.ckUseOpenGL.AutoSize = true;
-      this.ckUseOpenGL.Checked = true;
-      this.ckUseOpenGL.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.ckUseOpenGL.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ckUseOpenGL.Location = new System.Drawing.Point(6, 20);
-      this.ckUseOpenGL.Name = "ckUseOpenGL";
-      this.ckUseOpenGL.Size = new System.Drawing.Size(157, 17);
-      this.ckUseOpenGL.TabIndex = 0;
-      this.ckUseOpenGL.Text = "Use OpenGL instead of GDI";
-      this.ckUseOpenGL.UseVisualStyleBackColor = true;
-      // 
       // label4
       // 
       this.label4.Location = new System.Drawing.Point(0, 0);
@@ -1420,21 +1054,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxVUMeter.PerformLayout();
       this.groupBoxDynamicContent.ResumeLayout(false);
       this.groupBoxDynamicContent.PerformLayout();
-      this.groupBoxVizOptions.ResumeLayout(false);
-      this.groupBoxVizOptions.PerformLayout();
       this.PlaylistTabPg.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
-      this.VisualizationsTabPg.ResumeLayout(false);
-      this.mpGroupBox3.ResumeLayout(false);
-      this.mpGroupBox3.PerformLayout();
-      this.groupBoxWinampVis.ResumeLayout(false);
-      this.groupBoxWinampVis.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.winampFFTsensitivity)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).EndInit();
-      this.groupBoxSoniqueVis.ResumeLayout(false);
-      this.groupBoxSoniqueVis.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.soniqueRenderTiming)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -1455,17 +1077,6 @@ namespace MediaPortal.Configuration.Sections
     private MPGroupBox mpGroupBox1;
     private MPLabel label2;
     private MPComboBox audioPlayerComboBox;
-    private TabPage VisualizationsTabPg;
-    private MPGroupBox mpGroupBox3;
-    private MPCheckBox EnableStatusOverlaysChkBox;
-    private MPCheckBox ShowTrackInfoChkBox;
-    private Label label11;
-    private Label label10;
-    private ComboBox VizPresetsCmbBox;
-    private ComboBox VisualizationsCmbBox;
-    private Label label7;
-    private Label label5;
-    private NumericUpDown VisualizationFpsNud;
     private TabPage PlaylistTabPg;
     private MPGroupBox groupBox1;
     private MPCheckBox autoShuffleCheckBox;
@@ -1480,12 +1091,8 @@ namespace MediaPortal.Configuration.Sections
     private TabPage tabPageNowPlaying;
     private GroupBox groupBoxDynamicContent;
     private MPCheckBox chkDisableSimilarTrackLookups;
-    private MPGroupBox groupBoxVizOptions;
-    private MPCheckBox ShowVizInNowPlayingChkBox;
     private MPLabel mpLabel2;
     private MPComboBox soundDeviceComboBox;
-    private MPGroupBox groupBoxWinampVis;
-    private MPButton btWinampConfig;
     private MPGroupBox groupBoxVUMeter;
     private MPRadioButton radioButtonVUAnalog;
     private MPRadioButton radioButtonVUNone;
@@ -1536,16 +1143,5 @@ namespace MediaPortal.Configuration.Sections
     private MPComboBox WasApiSpeakersCombo;
     private MPLabel mpLabel14;
     private MPLabel mpLabel15;
-    private MPGroupBox groupBoxSoniqueVis;
-    private Label label3;
-    private MPComboBox comboViewPortSizes;
-    private MPCheckBox ckUseOpenGL;
-    private Label label6;
-    private TrackBar soniqueRenderTiming;
-    private Label soniqueRenderTimingLbl;
-    private MPCheckBox ckUseCover;
-    private Label winampFFTsensitivityLbl;
-    private Label FFTsensitivityLbl;
-    private TrackBar winampFFTsensitivity;
   }
 }
