@@ -28,7 +28,6 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Player.DSP;
 using MediaPortal.TagReader;
-using MediaPortal.Visualization;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
 using Un4seen.Bass.AddOn.Mix;
@@ -131,33 +130,20 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private PlayState _state = PlayState.Init;
     private string _filePath = string.Empty;
-    private VisualizationInfo VizPluginInfo = null;
-    private int VizFPS = 20;
 
     private int _DefaultCrossFadeIntervalMS = 4000;
     public static bool _initialized = false;
     private bool _bassFreed = false;
-    private VisualizationWindow VizWindow = null;
-    private VisualizationManager VizManager = null;
     private int _playBackType;
     private int _savedPlayBackType = -1;
 
     private bool _IsFullScreen = false;
-    private int _VideoPositionX = 10;
-    private int _VideoPositionY = 10;
-    private int _VideoWidth = 100;
-    private int _VideoHeight = 100;
 
-    private bool NeedUpdate = true;
     private bool NotifyPlaying = true;
 
     private bool _isCDDAFile = false;
-    private bool _validAction;
-    private DateTime _lastAction = DateTime.Now;
     private int _speed = 1;
     private DateTime _seekUpdate = DateTime.Now;
-
-    private StreamCopy _streamcopy; // To Clone the Stream for Visualisation
 
     // CUE Support
     private string _currentCueFileName = null;
@@ -301,15 +287,6 @@ namespace MediaPortal.MusicPlayer.BASS
     }
 
     /// <summary>
-    /// Gets/Sets the FPS for Visualisation
-    /// </summary>
-    public int TargetFPS
-    {
-      get { return VizManager.TargetFPS; }
-      set { VizManager.TargetFPS = value; }
-    }
-
-    /// <summary>
     /// Gets/Sets the Playback Volume
     /// </summary>
     public override int Volume
@@ -344,14 +321,6 @@ namespace MediaPortal.MusicPlayer.BASS
       set { _speed = value; }
     }
 
-    /// <summary>
-    /// Returns the instance of the Visualisation Manager
-    /// </summary>
-    public IVisualizationManager IVizManager
-    {
-      get { return VizManager; }
-    }
-
     public override bool IsRadio
     {
       get
@@ -384,7 +353,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
     public override bool HasViz
     {
-      get { return VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None; }
+      get { return false; }
     }
 
     /// <summary>
@@ -401,78 +370,7 @@ namespace MediaPortal.MusicPlayer.BASS
     public override bool FullScreen
     {
       get { return GUIGraphicsContext.IsFullScreenVideo; }
-      set
-      {
-        if (value != _IsFullScreen)
-        {
-          _IsFullScreen = value;
-          NeedUpdate = true;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Gets/sets the X Coordiante for Video
-    /// </summary>
-    public override int PositionX
-    {
-      get { return _VideoPositionX; }
-      set
-      {
-        if (value != _VideoPositionX)
-        {
-          _VideoPositionX = value;
-          NeedUpdate = true;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Gets/sets the Y Coordinate for Video
-    /// </summary>
-    public override int PositionY
-    {
-      get { return _VideoPositionY; }
-      set
-      {
-        if (value != _VideoPositionY)
-        {
-          _VideoPositionY = value;
-          NeedUpdate = true;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Gets/Sets the Width of the Video
-    /// </summary>
-    public override int RenderWidth
-    {
-      get { return _VideoWidth; }
-      set
-      {
-        if (value != _VideoWidth)
-        {
-          _VideoWidth = value;
-          NeedUpdate = true;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Gets/sets the Height of the Video
-    /// </summary>
-    public override int RenderHeight
-    {
-      get { return _VideoHeight; }
-      set
-      {
-        if (value != _VideoHeight)
-        {
-          _VideoHeight = value;
-          NeedUpdate = true;
-        }
-      }
+      set { _IsFullScreen = value; }
     }
 
     /// <summary>
@@ -481,14 +379,6 @@ namespace MediaPortal.MusicPlayer.BASS
     public override int PlaybackType
     {
       get { return _playBackType; }
-    }
-
-    /// <summary>
-    /// Returns the instance of the Video Window
-    /// </summary>
-    public VisualizationWindow VisualizationWindow
-    {
-      get { return VizWindow; }
     }
 
     /// <summary>
@@ -588,8 +478,6 @@ namespace MediaPortal.MusicPlayer.BASS
               _playBackType = 0;
             }
 
-            VizWindow.SelectedPlaybackType = _playBackType;
-
             string type = "";
             switch (_playBackType)
             {
@@ -609,52 +497,6 @@ namespace MediaPortal.MusicPlayer.BASS
                 break;
             }
             Log.Info("BASS: Playback changed to {0}", type);
-            break;
-          }
-
-        case Action.ActionType.ACTION_PAGE_UP:
-          {
-            var timeSpamVerif = DateTime.Now - _lastAction;
-            if (timeSpamVerif.TotalSeconds >= 2)
-            {
-              _validAction = true;
-            }
-            else
-            {
-              _validAction = false;
-            }
-            if (g_Player.IsMusic && g_Player.FullScreen)
-            {
-              if (_validAction)
-              {
-                _lastAction = DateTime.Now;
-                Log.Debug("BASS: Switch to Previous Vis");
-                VizManager.GetPrevVis();
-              }
-            }
-            break;
-          }
-
-        case Action.ActionType.ACTION_PAGE_DOWN:
-          {
-            var timeSpamVerif = DateTime.Now - _lastAction;
-            if (timeSpamVerif.TotalSeconds >= 2)
-            {
-              _validAction = true;
-            }
-            else
-            {
-              _validAction = false;
-            }
-            if (g_Player.IsMusic && g_Player.FullScreen)
-            {
-              if (_validAction)
-              {
-                _lastAction = DateTime.Now;
-                Log.Info("BASS: Switch to Next Vis");
-                VizManager.GetNextVis();
-              }
-            }
             break;
           }
       }
@@ -795,9 +637,6 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         _commandRegistered.Set();
 
-        // First deactivate Viz RenderThread, in HandleSongEnded, it's too late
-        VizWindow.Run = false;
-
         MusicStream stream = GetCurrentStream();
         try
         {
@@ -910,16 +749,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
           HandleSongEnded();
 
-          // Remove the Viz Window from the Main Form as it causes troubles to other plugin overlay window
-          try
-          {
-            RemoveVisualizationWindow();
-          }
-          catch (Exception)
-          {
-            Log.Error("BASS: Stop RemoveVisualizationWindow command caused an exception");
-          }
-
           // Switching back to normal playback mode
           SwitchToDefaultPlaybackMode();
         }
@@ -947,8 +776,6 @@ namespace MediaPortal.MusicPlayer.BASS
       try
       {
         Log.Info("BASS: Initialize BASS environment ...");
-        LoadSettings();
-
         result = BassRegistration.BassRegistration.Register();
 
         if (result)
@@ -976,19 +803,12 @@ namespace MediaPortal.MusicPlayer.BASS
           Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_NET_PREBUF, 0);
         }
 
-        InitializeControls();
+        GUIGraphicsContext.form.Disposed += OnAppFormDisposed; // We need to cleanup, when the appliacation ends
+
         Config.LoadAudioDecoderPlugins();
         Config.LoadDSPPlugins();
 
         _playBackType = (int)Config.PlayBack;
-
-        // Create a Stream Copy, if Visualisation is enabled
-        if (HasViz)
-        {
-          Log.Debug("BASS: Create Stream copy for Visualisation");
-          _streamcopy = new StreamCopy(this);
-          _streamcopy.StreamCopyFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE;
-        }
 
         Log.Info("BASS: Initializing BASS environment done.");
 
@@ -1348,59 +1168,6 @@ namespace MediaPortal.MusicPlayer.BASS
       return sounddevice;
     }
 
-    /// <summary>
-    /// Initialise Visualisation Controls and Create the Visualisation selected in the Configuration
-    /// </summary>
-    private void InitializeControls()
-    {
-      if (GUIGraphicsContext.form.InvokeRequired)
-      {
-        InitializeControlsDelegate d = new InitializeControlsDelegate(InitializeControls);
-        GUIGraphicsContext.form.Invoke(d);
-        return;
-      }
-
-      GUIGraphicsContext.form.Disposed += new EventHandler(OnAppFormDisposed);
-
-      VizWindow = new VisualizationWindow(this);
-      VizWindow.Visible = false;
-      VizManager = new VisualizationManager(this, VizWindow);
-      TargetFPS = VizFPS;
-
-      if (VizPluginInfo != null)
-      {
-        this.CreateVisualization(VizPluginInfo);
-      }
-    }
-
-    /// <summary>
-    /// Load Settings
-    /// </summary>
-    private void LoadSettings()
-    {
-      using (Profile.Settings xmlreader = new Profile.MPSettings())
-      {
-        int vizType = xmlreader.GetValueAsInt("musicvisualization", "vizType", (int)VisualizationInfo.PluginType.None);
-        string vizName = xmlreader.GetValueAsString("musicvisualization", "name", "");
-        string vizPath = xmlreader.GetValueAsString("musicvisualization", "path", "");
-        int vizPreset = xmlreader.GetValueAsInt("musicvisualization", "preset", 0);
-        int vizPlgIndex = xmlreader.GetValueAsInt("musicvisualization", "plgIndex", 0);
-
-        VizPluginInfo = new VisualizationInfo((VisualizationInfo.PluginType)vizType, vizPath, vizName,
-                                              vizPreset, vizPlgIndex);
-
-        if (vizType == (int)VisualizationInfo.PluginType.Sonique)
-        {
-          VizPluginInfo.UseOpenGL = xmlreader.GetValueAsBool("musicvisualization", "useOpenGL", true);
-          VizPluginInfo.RenderTiming = xmlreader.GetValueAsInt("musicvisualization", "renderTiming", 25);
-          VizPluginInfo.ViewPortSize = xmlreader.GetValueAsInt("musicvisualization", "viewPort", 0);
-        }
-
-        VizFPS = xmlreader.GetValueAsInt("musicvisualization", "fps", 30);
-      }
-    }
-
-
     #endregion
 
     #region Cleanup / Free Resources
@@ -1451,9 +1218,6 @@ namespace MediaPortal.MusicPlayer.BASS
         Bass.BASS_PluginFree(pluginHandle);
       }
 
-      VizManager.SafeDispose();
-      VizWindow.SafeDispose();
-
       lock (_commandQueueSync)
       {
         _commandQueue.Clear();
@@ -1471,9 +1235,6 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public void FreeBass()
     {
-      // Remove the Vis Window, as it might interfere with the overlay of other plugins
-      RemoveVisualizationWindow();
-
       // This is run outside the command queue as it is required to be synchronous as it must be done
       // before other players can start
       lock (_syncRoot)
@@ -1523,180 +1284,9 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public override void Dispose()
     {
-      if (VizWindow != null)
-      {
-        VizWindow.Visible = false;
-      }
-
       if (!Stopped) // Check if stopped already to avoid that Stop() is called two or three times
       {
         Stop();
-      }
-    }
-
-    #endregion
-
-    #region Visualisation Related
-
-    /// <summary>
-    /// Setup the Visualisation Window and add it to the Main Form control collection
-    /// </summary>
-    private void SetVisualizationWindow()
-    {
-      if (GUIGraphicsContext.form.InvokeRequired)
-      {
-        InitializeControlsDelegate d = new InitializeControlsDelegate(SetVisualizationWindow);
-        GUIGraphicsContext.form.BeginInvoke(d);
-        return;
-      }
-
-      GUIGraphicsContext.form.SuspendLayout();
-
-      bool foundWindow = false;
-
-      // Check if the MP window already has our viz window in it's control collection...
-      foreach (Control ctrl in GUIGraphicsContext.form.Controls)
-      {
-        if (ctrl.Name == "NativeVisualizationWindow" && ctrl is VisualizationWindow)
-        {
-          foundWindow = true;
-          break;
-        }
-      }
-
-      if (!foundWindow)
-      {
-        VizWindow.Visible = false;
-        VizWindow.Location = new Point(8, 16);
-        VizWindow.Name = "NativeVisualizationWindow";
-        VizWindow.Size = new Size(0, 0);
-        VizWindow.TabIndex = 0;
-        VizWindow.Enabled = false;
-        try
-        {
-          GUIGraphicsContext.form.Controls.Add(VizWindow);
-        }
-        catch (Exception)
-        {
-          Log.Error("BASS: VizWindow exception");
-       }
-      }
-
-      GUIGraphicsContext.form.ResumeLayout();
-    }
-
-    /// <summary>
-    /// Remove the Visualisation Window from the Main Form control collection when playback has stopped
-    /// It was causing troubles to other Controls. For example the WMP player.
-    /// </summary>
-    private void RemoveVisualizationWindow()
-    {
-      GUIGraphicsContext.form.SuspendLayout();
-
-      // Check if the MP window already has our viz window in it's control collection...
-      foreach (Control ctrl in GUIGraphicsContext.form.Controls)
-      {
-        if (ctrl.Name == "NativeVisualizationWindow" && ctrl is VisualizationWindow)
-        {
-          GUIGraphicsContext.form.Controls.Remove(VizWindow);
-          break;
-        }
-      }
-
-      GUIGraphicsContext.form.ResumeLayout();
-    }
-
-    /// <summary>
-    /// Start the thread for Creating the Visualisation async
-    /// </summary>
-    /// <param name="visPath"></param>
-    public void AsyncCreateVisualization(string visPath)
-    {
-      Thread createVizThread;
-      createVizThread = new Thread(new ParameterizedThreadStart(InternalCreateVisualization));
-      createVizThread.IsBackground = true;
-      createVizThread.Name = "BASS Viz starter";
-      createVizThread.Start(visPath);
-    }
-
-    /// <summary>
-    /// Thread for creating the Visualisation
-    /// </summary>
-    /// <param name="vizPluginInfo"></param>
-    private void InternalCreateVisualization(object vizPluginInfo)
-    {
-      CreateVisualization((VisualizationInfo)vizPluginInfo);
-    }
-
-    /// <summary>
-    /// Create the Visualisation
-    /// </summary>
-    /// <param name="vizPluginInfo"></param>
-    /// <returns></returns>
-    public bool CreateVisualization(VisualizationInfo vizPluginInfo)
-    {
-      if (vizPluginInfo == null || vizPluginInfo.VisualizationType == VisualizationInfo.PluginType.None ||
-          VizWindow == null)
-      {
-        return false;
-      }
-
-      Log.Info("BASS: Creating visualization...");
-      VizPluginInfo = vizPluginInfo;
-
-      bool result = true;
-
-      try
-      {
-        result = VizManager.CreateVisualization(vizPluginInfo);
-        Log.Debug("BASS: Create visualization {0}", (result ? "succeeded" : "failed"));
-      }
-
-      catch (Exception ex)
-      {
-        Log.Error("BASS: Error creating visualization - {0}", ex.Message);
-        result = false;
-      }
-
-      return result;
-    }
-
-    /// <summary>
-    /// Return the BASS Stream to be used for Visualisation purposes.
-    /// We will extract the WAVE and FFT data to be provided to the Visualisation Plugins
-    /// In case of Mixer active, we need to return the Mixer Stream.
-    /// In all other cases the current active stream is used.
-    /// </summary>
-    /// <returns></returns>
-    internal int GetCurrentVizStream()
-    {
-      // Return the clone of the stream, because for a decoding channel, we can't get data from the original stream
-      return _streamcopy.ChannelHandle;
-    }
-
-    /// <summary>
-    /// Show the Visualisation Window
-    /// </summary>
-    /// <param name="visible"></param>
-    private void ShowVisualizationWindow(bool visible)
-    {
-      if (VizWindow == null)
-      {
-        return;
-      }
-
-      if (VizWindow.InvokeRequired)
-      {
-        ShowVisualizationWindowDelegate d = new ShowVisualizationWindowDelegate(ShowVisualizationWindow);
-        try
-        {
-          VizWindow.BeginInvoke(d, new object[] { visible });
-        }
-        catch { }
-      }
-      else
-      {
-        VizWindow.Visible = visible;
       }
     }
 
@@ -1851,13 +1441,6 @@ namespace MediaPortal.MusicPlayer.BASS
           Log.Error("BASS: Could not create Mixer. Aborting playback.");
           return false;
         }
-
-        // Start a StreamCopy for Visualisation purposes
-        if (HasViz)
-        {
-          _streamcopy.ChannelHandle = _mixer.BassStream;
-          _streamcopy.Start();
-        }
       }
       else
       {
@@ -1873,11 +1456,6 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             Log.Error("BASS: Could not create Mixer. Aborting playback.");
             return false;
-          }
-
-          if (HasViz)
-          {
-            _streamcopy.ChannelHandle = _mixer.BassStream;
           }
         }
       }
@@ -2032,17 +1610,6 @@ namespace MediaPortal.MusicPlayer.BASS
           msg.Label = stream.FilePath;
           GUIWindowManager.SendThreadMessage(msg);
           NotifyPlaying = true;
-
-          NeedUpdate = true;
-          _IsFullScreen = GUIGraphicsContext.IsFullScreenVideo;
-          _VideoPositionX = GUIGraphicsContext.VideoWindow.Left;
-          _VideoPositionY = GUIGraphicsContext.VideoWindow.Top;
-          _VideoWidth = GUIGraphicsContext.VideoWindow.Width;
-          _VideoHeight = GUIGraphicsContext.VideoWindow.Height;
-
-          // Re-Add the Viswindow to the Mainform Control (It got removed on a manual Stop)
-          SetVisualizationWindow();
-          SetVideoWindow();
 
           PlayState oldState = _state;
           _state = PlayState.Playing;
@@ -2208,8 +1775,6 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         GUIGraphicsContext.IsFullScreenVideo = false;
       }
-
-      ShowVisualizationWindow(false);
 
       GUIGraphicsContext.IsPlaying = false;
 
@@ -2499,92 +2064,12 @@ namespace MediaPortal.MusicPlayer.BASS
         }
       }
 
-      if (VizManager == null)
-      {
-        return;
-      }
-
-      if (GUIGraphicsContext.BlankScreen)
-      //BAV || (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
-      {
-        //BAV if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
-        {
-          if (VizWindow.Visible)
-          {
-            VizWindow.Visible = false;
-          }
-        }
-      }
-
-      else if (!VizWindow.Visible && !GUIWindowManager.IsRouted &&
-               VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None)
-      {
-        NeedUpdate = true;
-        SetVideoWindow();
-        if (_IsFullScreen)
-          VizWindow.Visible = true;
-      }
-
       if (NotifyPlaying && CurrentPosition >= 10.0)
       {
         NotifyPlaying = false;
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC, 0, 0, 0, 0, 0, null);
         msg.Label = CurrentFile;
         GUIWindowManager.SendThreadMessage(msg);
-      }
-
-      if (FullScreen != GUIGraphicsContext.IsFullScreenVideo)
-      {
-        SetVideoWindow();
-      }
-    }
-
-    /// <summary>
-    /// Sets the Video Window
-    /// </summary>
-    public override void SetVideoWindow()
-    {
-      if (GUIGraphicsContext.IsFullScreenVideo != _IsFullScreen)
-      {
-        _IsFullScreen = GUIGraphicsContext.IsFullScreenVideo;
-        NeedUpdate = true;
-      }
-
-      if (!NeedUpdate)
-      {
-        return;
-      }
-      NeedUpdate = false;
-
-      if (_IsFullScreen)
-      {
-        Log.Debug("BASS: Fullscreen");
-
-        _VideoWidth = GUIGraphicsContext.form.ClientRectangle.Width;
-        _VideoHeight = GUIGraphicsContext.form.ClientRectangle.Height;
-
-        VizWindow.Size = new Size(_VideoWidth, _VideoHeight);
-        VizWindow.Visible = true;
-        return;
-      }
-      else
-      {
-        // bad idea use VideoWindow Size for VisualizationWindow Size, is not visible 1 pixel is enough
-        VizWindow.Size = new Size(1, 1);
-
-        VizWindow.Location = new Point(_VideoPositionX, _VideoPositionY);
-        _videoRectangle = new Rectangle(_VideoPositionX, _VideoPositionY, VizWindow.Size.Width, VizWindow.Size.Height);
-        _sourceRectangle = _videoRectangle;
-      }
-
-      if (!GUIWindowManager.IsRouted && VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None)
-      {
-        if (_IsFullScreen)
-          VizWindow.Visible = _state == PlayState.Playing; 
-      }
-      else
-      {
-        VizWindow.Visible = false;
       }
     }
 

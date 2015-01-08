@@ -34,7 +34,6 @@ using MediaPortal.Playlists;
 using MediaPortal.Profile;
 using MediaPortal.Subtitle;
 using MediaPortal.Util;
-using MediaPortal.Visualization;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
 using Action = MediaPortal.GUI.Library.Action;
@@ -3547,23 +3546,15 @@ namespace MediaPortal.Player
           return true;
         }
 
-        // When we don't have any Visualisation, switch to Now Playing, instead of showing a black screen
-        if (BassMusicPlayer.Player.IVizManager.CurrentVisualizationType == VisualizationInfo.PluginType.None)
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
         {
-          if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
-          {
-            GUIWindowManager.ShowPreviousWindow();
-            return true;
-          }
-
-          Log.Info("g_Player: ShowFullScreenWindow: No Visualisation defined. Switching to Now Playing");
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);
-          BassMusicPlayer.Player.VisualizationWindow.Size = new Size(1, 1); // Hide the Vis Window
+          GUIWindowManager.ShowPreviousWindow();
           return true;
         }
 
-        Log.Info("g_Player: ShowFullScreenWindow switching to fullscreen music");
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC);
+        Log.Info("g_Player: ShowFullScreenWindow: No Visualisation defined. Switching to Now Playing");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);
+        return true;
       }
       else
       {
