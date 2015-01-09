@@ -604,6 +604,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
             
             try
             {
+                System.Diagnostics.Debugger.Launch();
                 graphBuilder = (IGraphBuilder)new FilterGraph();
                 // add the source filter
                 sourceFilter = FilterGraphTools.AddFilterFromClsid(graphBuilder, typeof(TvLibrary.Implementations.DVB.TvCardDVBIPBuiltIn.MPIPTVSource).GUID, "MediaPortal IPTV Source Filter");
@@ -621,6 +622,13 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
                 {
                     result = fileSource.Load((String)this.testDatabaseRow.Cells[1].Value.ToString(), null);
                 }
+
+                if (result < 0)
+                {
+                    throw new FilterException(FilterError.ErrorDescription(filterStateEx, result));
+                }
+
+                result = sourceFilter.Run(0);
 
                 if (result < 0)
                 {
