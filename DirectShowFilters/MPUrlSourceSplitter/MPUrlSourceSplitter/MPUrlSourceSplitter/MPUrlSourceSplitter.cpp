@@ -332,7 +332,7 @@ CMPUrlSourceSplitter::~CMPUrlSourceSplitter()
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
 
-  // reset all internal properties to default values
+  // reset all internal properties to default values (except configuration parameters)
   this->ClearSession(false);
 
   FREE_MEM_CLASS(this->outputPins);
@@ -498,33 +498,7 @@ STDMETHODIMP CMPUrlSourceSplitter::GetState(DWORD dwMSecs, __out FILTER_STATE *S
 
 STDMETHODIMP CMPUrlSourceSplitter::Stop()
 {
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_STOP_NAME);
-
-  this->flags &= ~(MP_URL_SOURCE_SPLITTER_FLAG_PLAYBACK_STARTED | MP_URL_SOURCE_SPLITTER_FLAG_REPORT_STREAM_TIME);
-
-  this->SetPauseSeekStopRequest(true);
-  CAMThread::CallWorker(CMD_EXIT);
-
-  this->DeliverBeginFlush();
-  CAMThread::Close();
-  this->DeliverEndFlush();
-
-  if (!this->IsEnabledMethodActive())
-  {
-    // stop async loading
-    this->DestroyLoadAsyncWorker();
-    // clear all demuxers
-    this->demuxers->Clear();
-    // if we are not changing streams stop receiving data, data are not needed
-    this->parserHoster->StopReceivingData();
-    // clear also session, it will no longer be needed
-    this->parserHoster->ClearSession();
-  }
-
-  HRESULT result = __super::Stop();
-
-  this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_STOP_NAME, result);
-  return result;
+  return this->StopInternal(true);
 }
 
 STDMETHODIMP CMPUrlSourceSplitter::Pause()
@@ -559,20 +533,47 @@ STDMETHODIMP CMPUrlSourceSplitter::Run(REFERENCE_TIME tStart)
 
   CAutoLock cAutoLock(this);
 
-  HRESULT result = __super::Run(tStart);
+  HRESULT result = S_OK;
 
-  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), CAMThread::CallWorker(CMD_PLAY));
-  this->flags |= MP_URL_SOURCE_SPLITTER_FLAG_PLAYBACK_STARTED | MP_URL_SOURCE_SPLITTER_FLAG_REPORT_STREAM_TIME;
+  // in IPTV case we open connection now in Run() method, because Load() method is intened to only parse and cache stream URL
+  // in splitter case is connection opened, if not, filter later crash
+  if (SUCCEEDED(result) && this->IsIptv())
+  {
+    // reset all internal properties to default state, except flushing logger and configuration parameters
+    this->ClearSession(false);
+
+    do
+    {
+      result = this->LoadAsync();
+
+      if (result == S_FALSE)
+      {
+        Sleep(1);
+      }
+    }
+    while (result == S_FALSE);
+  }
+
+  CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), __super::Run(tStart), result);
+
+  if (SUCCEEDED(result))
+  {
+    CAMThread::CallWorker(CMD_PLAY);
+    this->flags |= MP_URL_SOURCE_SPLITTER_FLAG_PLAYBACK_STARTED | MP_URL_SOURCE_SPLITTER_FLAG_REPORT_STREAM_TIME;
+  }
+
+  // stop working if some error occured
+  CHECK_CONDITION_EXECUTE(FAILED(result), this->StopInternal(false));
 
   this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_RUN_NAME, result);
-  return S_OK;
+  return result;
 }
 
 // IFileSourceFilter
 
 STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt)
 {
-  // reset all internal properties to default values
+  // reset all internal properties to default values (except configuration parameters)
   this->ClearSession(true);
 
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_NAME);
@@ -608,7 +609,9 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
       }
     }
 
-    if (SUCCEEDED(result))
+    // in IPTV case we open connection in Run() method, because Load() method is intened to only parse and cache stream URL
+    // in splitter case we open connection now and report any error code
+    if (SUCCEEDED(result) && this->IsSplitter())
     {
       do
       {
@@ -1194,7 +1197,7 @@ STDMETHODIMP CMPUrlSourceSplitter::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileNa
 {
   HRESULT result = S_OK;
 
-  // reset all internal properties to default values
+  // reset all internal properties to default values (except configuration parameters)
   this->ClearSession(true);
 
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DOWNLOAD_ASYNC_NAME);
@@ -1496,7 +1499,7 @@ HRESULT CMPUrlSourceSplitter::LoadAsync(void)
 
 STDMETHODIMP CMPUrlSourceSplitter::LoadAsync(const wchar_t *url)
 {
-  // reset all internal properties to default values
+  // reset all internal properties to default values (except configuration parameters)
   this->ClearSession(true);
 
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_ASYNC_NAME);
@@ -2778,4 +2781,36 @@ void CMPUrlSourceSplitter::ClearSession(bool withLogger)
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CLEAR_SESSION_NAME);
 
   CHECK_CONDITION_EXECUTE(withLogger, this->logger->Clear());
+}
+
+HRESULT CMPUrlSourceSplitter::StopInternal(bool withBaseStop)
+{
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_STOP_NAME);
+
+  this->flags &= ~(MP_URL_SOURCE_SPLITTER_FLAG_PLAYBACK_STARTED | MP_URL_SOURCE_SPLITTER_FLAG_REPORT_STREAM_TIME);
+
+  this->SetPauseSeekStopRequest(true);
+  CAMThread::CallWorker(CMD_EXIT);
+
+  this->DeliverBeginFlush();
+  CAMThread::Close();
+  this->DeliverEndFlush();
+
+  if (!this->IsEnabledMethodActive())
+  {
+    // stop async loading
+    this->DestroyLoadAsyncWorker();
+    // clear all demuxers
+    this->demuxers->Clear();
+    // if we are not changing streams stop receiving data, data are not needed
+    this->parserHoster->StopReceivingData();
+    // clear also session, it will no longer be needed
+    this->parserHoster->ClearSession();
+  }
+
+  HRESULT result = S_OK;
+  CHECK_CONDITION_EXECUTE_RESULT(withBaseStop, __super::Stop(), result);
+
+  this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_STOP_NAME, result);
+  return result;
 }

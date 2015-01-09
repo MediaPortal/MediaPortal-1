@@ -3052,7 +3052,7 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
             this->iptvBufferSize = 0;
           }
 
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: demuxer: %u, stream: %d, discontinuity, resized IPTV buffer, from: %u, to: %u", MODULE_NAME, METHOD_GET_NEXT_PACKET_INTERNAL_NAME, this->demuxerId, packet->GetStreamPid(), previousSize, this->iptvBufferSize);
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: demuxer: %u, stream: %d, resized IPTV buffer, from: %u, to: %u", MODULE_NAME, METHOD_GET_NEXT_PACKET_INTERNAL_NAME, this->demuxerId, packet->GetStreamPid(), previousSize, this->iptvBufferSize);
         }
       }
       else if ((res < 0) && (res != E_CONNECTION_LOST_TRYING_REOPEN))

@@ -383,6 +383,11 @@ protected:
   // @param withLogger : true if reset logger, false otherwise
   // @return : S_OK if successfull
   void ClearSession(bool withLogger);
+
+  // stops the filter
+  // @param withBaseStop : true if base Stop() should be called, false otherwise
+  // @return : S_OK if successful, error code otherwise
+  HRESULT StopInternal(bool withBaseStop);
 };
 
 #endif
