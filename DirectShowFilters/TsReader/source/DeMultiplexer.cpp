@@ -1498,11 +1498,11 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
               //Find correct ADTS frame header sync sequence by 'learning' the most frequent 28 bit header start pattern
               if (len > 3 && ((*(INT16 *)ps & 0xF6FF) == 0xF0FF)) //Syncword bits==111111111111 and Layer bits==00
               {     
-                if (m_audHeaderCount<4)  // Learning/training state
+                if (m_audHeaderCount<16)  // Learning/training state
                 {
                   if (m_currentAudHeader == (*(INT32 *)ps & 0x30FEFFFF)) //compare first 28 bits only
                   {
-                    m_audHeaderCount++;
+                    m_audHeaderCount+=4;
                   }  
                   else if (m_lastAudHeader != (*(INT32 *)ps & 0x30FEFFFF))
                   {
@@ -1524,7 +1524,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                   }       
                   // LogDebug("ADTS find sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
                 }
-                else // m_audHeaderCount>=4, 'locked' state
+                else // m_audHeaderCount>=16, 'locked' state
                 {
                   if (m_lastAudHeader != (*(INT32 *)ps & 0x30FEFFFF))
                   {
@@ -1564,11 +1564,14 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                         Cbuf->SetForcePMT();
                       }
                     }
-                    if (m_audHeaderCount<8)
+                    if (m_audHeaderCount<32)
                     {
-                      m_audHeaderCount++;
+                      if (m_audHeaderCount>27 && m_audHeaderCount<31)
+                      {
+                        LogDebug("demux: ADTS good sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
+                      }
+                      m_audHeaderCount += min(4, 32-m_audHeaderCount);
                     }
-                    // LogDebug("ADTS good sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
                   }
                 }                  
               }
@@ -1581,9 +1584,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
               ps++;
               len--;            
             } 
-                         
-            // LogDebug("ADTS end-of-loop, lastADTSheaderPosn = %d, copyPointer = %d", lastADTSheaderPosn, (ps-lastADTSheaderPosn));
-            
+                                     
             Cbuf->SetLength(copyLen - lastADTSheaderPosn); //Adjust length to discard 'remainder' incomplete ADTS frame data
             
             if (lastADTSheaderPosn > 0) //Add the 'remainder' incomplete ADTS frame data to the next (current incoming) PES buffer - the PES header data is already there.
@@ -1603,11 +1604,11 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                 {     
                   foundAudHeader = true;
 
-                  if (m_audHeaderCount<2)  // Learning/training state
+                  if (m_audHeaderCount<8)  // Learning/training state
                   {
                     if (m_currentAudHeader == (*(INT16 *)(ps+5) & 0x87FF)) //AudioSpecificConfig(), channel count is excluded
                     {
-                      m_audHeaderCount++;
+                      m_audHeaderCount+=4;
                     }  
                     else if (m_lastAudHeader != (*(INT16 *)(ps+5) & 0x87FF))
                     {
@@ -1639,10 +1640,13 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                     }  
                     else //good header sequence
                     {
-                      if (m_audHeaderCount<4)
+                      if (m_audHeaderCount<16)
                       {
-                        m_audHeaderCount++;
-                        LogDebug("demux: AAC LATM good sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
+                        if (m_audHeaderCount>11 && m_audHeaderCount<15)
+                        {
+                          LogDebug("demux: AAC LATM good sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
+                        }
+                        m_audHeaderCount += min(4, 16-m_audHeaderCount);
                       }
                     }
                   }                  
@@ -1674,7 +1678,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                     m_filter.GetAudioPin()->SetAddPMT();
                     m_bSetAudioDiscontinuity=true;
                   }
-                  else if (m_audHeaderCount==4)
+                  else if (m_audHeaderCount==16)
                   {
                     byte parsedChannels = ((*(ps+6) & 0x78)>>3);
                     if (parsedChannels<7 && parsedChannels>0 && (parsedChannels != m_mpegPesParser->basicAudioInfo.channels))
@@ -1705,11 +1709,11 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
               {     
                 //LogDebug("demux: AC3 all sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
 
-                if (m_audHeaderCount<4)  // Learning/training state
+                if (m_audHeaderCount<16)  // Learning/training state
                 {
                   if (m_currentAudHeader == *(INT16 *)(ps+4)) //fscod, frmsizcod, bsid, bsmod fields
                   {
-                    m_audHeaderCount++;
+                    m_audHeaderCount+=4;
                   }  
                   else if (m_lastAudHeader != *(INT16 *)(ps+4))
                   {
@@ -1783,13 +1787,13 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                         Cbuf->SetForcePMT();
                       }
                     }
-                    if (m_audHeaderCount<8)
+                    if (m_audHeaderCount<32)
                     {
-                      m_audHeaderCount++;
-                      if (m_audHeaderCount<7)
+                      if (m_audHeaderCount>27 && m_audHeaderCount<31)
                       {
                         LogDebug("demux: AC3 good sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
                       }
+                      m_audHeaderCount += min(4, 32-m_audHeaderCount);
                     }
                   }
                 }                  
@@ -1813,11 +1817,11 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
               {     
                 //LogDebug("demux: E-AC3 all sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
 
-                if (m_audHeaderCount<4)  // Learning/training state
+                if (m_audHeaderCount<16)  // Learning/training state
                 {
                   if (m_currentAudHeader == (*(INT16 *)(ps+4) & 0xFFF0)) //fscod, fscod2, bsid, bsmod fields
                   {
-                    m_audHeaderCount++;
+                    m_audHeaderCount+=4;
                   }  
                   else if (m_lastAudHeader != (*(INT16 *)(ps+4) & 0xFFF0))
                   {
@@ -1881,13 +1885,13 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                         Cbuf->SetForcePMT();
                       }
                     }
-                    if (m_audHeaderCount<8)
+                    if (m_audHeaderCount<32)
                     {
-                      m_audHeaderCount++;
-                      if (m_audHeaderCount<7)
+                      if (m_audHeaderCount>27 && m_audHeaderCount<31)
                       {
                         LogDebug("demux: E-AC3 good sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
                       }
+                      m_audHeaderCount += min(4, 32-m_audHeaderCount);
                     }
                   }
                 }                  
@@ -1985,11 +1989,11 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                     }
                     if (m_audHeaderCount<32)
                     {
-                      if (m_audHeaderCount>28)  //(m_audHeaderCount==4)
+                      if (m_audHeaderCount>27 && m_audHeaderCount<31)
                       {
                         LogDebug("demux: MPA good sync = %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), length-len, m_audHeaderCount);
                       }
-                      m_audHeaderCount+=4;
+                      m_audHeaderCount += min(4, 32-m_audHeaderCount);
                     }
                   }
                 }                  
