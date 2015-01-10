@@ -1496,7 +1496,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
             while(len) 
             {
               //Find correct ADTS frame header sync sequence by 'learning' the most frequent 28 bit header start pattern
-              if (len > 3 && ((*(INT16 *)ps & 0xF6FF) == 0xF0FF)) //Syncword bits==111111111111 and Layer bits==00
+              if (((*(INT16 *)ps & 0xF6FF) == 0xF0FF) && len > 3) //Syncword bits==111111111111 and Layer bits==00
               {     
                 if (m_audHeaderCount<16)  // Learning/training state
                 {
@@ -1598,7 +1598,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
             while(len) 
             {
               //Find correct LATM/LAOS frame header sync sequence by 'learning' the correct header start pattern
-              if (len > 6 && (*(INT16 *)ps & 0xE0FF) == 0xE056) //Syncword bits==0x2B7 (first 11 bits)
+              if ((*(INT16 *)ps & 0xE0FF) == 0xE056 && len > 6) //Syncword bits==0x2B7 (first 11 bits)
               {     
                 if (*(INT16 *)(ps+3) == 0x0020) //Preamble to AudioSpecificConfig() data
                 {     
@@ -1620,12 +1620,18 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                     }  
                     else 
                     {  
-                      m_currentAudHeader = (*(INT16 *)(ps+5) & 0x87FF); //AudioSpecificConfig(), channel count is excluded
-                      LogDebug("demux: LATM AAC resync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
-                      if (m_audHeaderCount>0) 
+                      byte hObjectType = ((*(ps+5) & 0xF8)>>3);
+                      byte hFreq = ((*(ps+5) & 0x07) <<1) | ((*(ps+6) & 0x80)>>7);
+                      byte hChannels = ((*(ps+6) & 0x78)>>3);                      
+                      if (hFreq>2 && hFreq<9 && hChannels<7 && hChannels>0 && (hObjectType==2 || hObjectType==5)) //Sanity checks...
                       {
-                        m_audHeaderCount--;
-                      } 
+                        m_currentAudHeader = (*(INT16 *)(ps+5) & 0x87FF); //AudioSpecificConfig(), channel count is excluded
+                        LogDebug("demux: LATM AAC resync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
+                        if (m_audHeaderCount>0) 
+                        {
+                          m_audHeaderCount--;
+                        } 
+                      }
                     }       
                   }
                   else // 'locked' state
@@ -1636,7 +1642,13 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                     }  
                     else if (m_currentAudHeader != (*(INT16 *)(ps+5) & 0x87FF))  //AudioSpecificConfig(), channel count is excluded
                     {
-                      m_audHeaderCount--; //invalid (or changing) header sequence
+                      byte hObjectType = ((*(ps+5) & 0xF8)>>3);
+                      byte hFreq = ((*(ps+5) & 0x07) <<1) | ((*(ps+6) & 0x80)>>7);
+                      byte hChannels = ((*(ps+6) & 0x78)>>3);                      
+                      if (hFreq>2 && hFreq<9 && hChannels<7 && hChannels>0 && (hObjectType==2 || hObjectType==5)) //Sanity checks...
+                      {
+                        m_audHeaderCount--; //invalid (or changing) header sequence
+                      }
                     }  
                     else //good header sequence
                     {
@@ -1658,12 +1670,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                     byte hFreq = ((*(ps+5) & 0x07) <<1) | ((*(ps+6) & 0x80)>>7);
                     byte hChannels = ((*(ps+6) & 0x78)>>3);
                     
-                    if (hFreq<3 || hFreq>8 || hChannels>6 || hChannels<1 || (hObjectType!=2 && hObjectType!=5)) //Sanity checks...
-                    {
-                      m_mpegPesParser->OnAudioPacket(0, 0, m_AudioStreamType, m_iAudioStream, true); //Generate default info
-  				            LogDebug("demux: AAC LATM default header: sampleRate = %d, channels = %d, bitrate = %d, objectType = %d", m_mpegPesParser->basicAudioInfo.sampleRate, m_mpegPesParser->basicAudioInfo.channels, m_mpegPesParser->basicAudioInfo.bitrate, m_mpegPesParser->basicAudioInfo.aacObjectType);
-                    }
-                    else
+                    if (hFreq>2 && hFreq<9 && hChannels<7 && hChannels>0 && (hObjectType==2 || hObjectType==5)) //Sanity checks...
                     {
                       CAutoLock plock (&m_mpegPesParser->m_sectionAudioPmt);
                       m_mpegPesParser->OnAudioPacket(0, 0, m_AudioStreamType, m_iAudioStream, true); //Generate default info
@@ -1674,19 +1681,30 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                       m_mpegPesParser->basicAudioInfo.aacObjectType = hObjectType;                      
   				            LogDebug("demux: AAC LATM parsed header: sampleRate = %d, channels = %d, bitrate = %d, objectType = %d", m_mpegPesParser->basicAudioInfo.sampleRate, m_mpegPesParser->basicAudioInfo.channels, m_mpegPesParser->basicAudioInfo.bitrate, m_mpegPesParser->basicAudioInfo.aacObjectType);
                     }
+                    else
+                    {
+                      m_mpegPesParser->OnAudioPacket(0, 0, m_AudioStreamType, m_iAudioStream, true); //Generate default info
+  				            LogDebug("demux: AAC LATM default header: sampleRate = %d, channels = %d, bitrate = %d, objectType = %d", m_mpegPesParser->basicAudioInfo.sampleRate, m_mpegPesParser->basicAudioInfo.channels, m_mpegPesParser->basicAudioInfo.bitrate, m_mpegPesParser->basicAudioInfo.aacObjectType);
+                    }
                     
                     m_filter.GetAudioPin()->SetAddPMT();
                     m_bSetAudioDiscontinuity=true;
                   }
-                  else if (m_audHeaderCount==16)
+                  else if (m_audHeaderCount==16 && m_currentAudHeader==(*(INT16 *)(ps+5) & 0x87FF))
                   {
-                    byte parsedChannels = ((*(ps+6) & 0x78)>>3);
-                    if (parsedChannels<7 && parsedChannels>0 && (parsedChannels != m_mpegPesParser->basicAudioInfo.channels))
+                    byte hChannels = ((*(ps+6) & 0x78)>>3);
+                    if (hChannels<7 && hChannels>0 && (hChannels != m_mpegPesParser->basicAudioInfo.channels))
                     {
-    				          LogDebug("demux: AAC LATM channels = %d -> %d, header = %x %x %x %x %x %x %x", m_mpegPesParser->basicAudioInfo.channels, parsedChannels, *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6));
-                      CAutoLock plock (&m_mpegPesParser->m_sectionAudioPmt);
-                      m_mpegPesParser->basicAudioInfo.channels=parsedChannels;
-                      Cbuf->SetForcePMT();
+                      byte hObjectType = ((*(ps+5) & 0xF8)>>3);
+                      byte hFreq = ((*(ps+5) & 0x07) <<1) | ((*(ps+6) & 0x80)>>7);
+                      
+                      if (hFreq>2 && hFreq<9 && (hObjectType==2 || hObjectType==5)) //Sanity checks...
+                      {
+      				          LogDebug("demux: AAC LATM channels = %d -> %d, header = %x %x %x %x %x %x %x", m_mpegPesParser->basicAudioInfo.channels, hChannels, *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6));
+                        CAutoLock plock (&m_mpegPesParser->m_sectionAudioPmt);
+                        m_mpegPesParser->basicAudioInfo.channels=hChannels;
+                        Cbuf->SetForcePMT();
+                      }
                     }
                   }                  
                 }
@@ -1705,7 +1723,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
             while(len) 
             {
               //Find correct AC3 frame header sync sequence by 'learning' the current header pattern
-              if (len > 6 && ((*(INT16 *)ps & 0xFFFF) == 0x770b)) //Syncword bits==0x0b77
+              if (((*(INT16 *)ps & 0xFFFF) == 0x770b) && len > 6) //Syncword bits==0x0b77
               {     
                 //LogDebug("demux: AC3 all sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
 
@@ -1813,7 +1831,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
             while(len) 
             {
               //Find correct AC3 frame header sync sequence by 'learning' the current header pattern
-              if (len > 6 && ((*(INT16 *)ps & 0xFFFF) == 0x770b)) //Syncword bits==0x0b77
+              if (((*(INT16 *)ps & 0xFFFF) == 0x770b) && len > 6) //Syncword bits==0x0b77
               {     
                 //LogDebug("demux: E-AC3 all sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
 
@@ -1911,7 +1929,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
             while(len) 
             {
               //Find correct MPA frame header sync sequence by 'learning' the current header pattern
-              if (len > 3 && ((*(INT16 *)ps & 0xE0FF) == 0xE0FF)) //Syncword bits==0xE0FF - first 11 bits set
+              if (((*(INT16 *)ps & 0xE0FF) == 0xE0FF) && len > 3) //Syncword bits==0xE0FF - first 11 bits set
               {     
                 //LogDebug("demux: MPA all sync = %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), length-len, m_audHeaderCount);
 
