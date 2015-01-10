@@ -2938,7 +2938,6 @@ namespace TvDatabase
               List<Schedule> overlapping;
               List<Schedule> notViewable;
               AssignSchedulesToCard(episode, cardSchedules, out overlapping, out notViewable);
-              break;
             }
           }
         }
