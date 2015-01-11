@@ -59,6 +59,11 @@ public:
   // @param opened : reference to variable that holds stream state
   // @return : S_OK if successful
   virtual STDMETHODIMP IsStreamOpened(bool *opened) = 0;
+
+  // tests if stream is IPTV compatible
+  // @param compatible : reference to variable that holds result
+  // @return : S_OK if successful
+  virtual STDMETHODIMP IsStreamIptvCompatible(bool *compatible) = 0;
 };
 
 #endif

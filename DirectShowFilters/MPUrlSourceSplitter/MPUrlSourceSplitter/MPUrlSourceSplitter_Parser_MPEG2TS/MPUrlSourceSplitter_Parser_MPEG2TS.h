@@ -91,6 +91,10 @@ public:
   // @return : true if end of stream reached, false otherwise
   virtual bool IsEndOfStreamReached(void);
 
+  // tests if stream is IPTV compatible
+  // @return : true if stream is IPTV compatible, false otherwise
+  virtual bool IsStreamIptvCompatible(void);
+
   // CPlugin
 
   // return reference to null-terminated string which represents plugin name

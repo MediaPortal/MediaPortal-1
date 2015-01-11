@@ -1468,6 +1468,20 @@ STDMETHODIMP CMPUrlSourceSplitter::GetErrorDescription(HRESULT error, wchar_t **
   return result;
 }
 
+STDMETHODIMP CMPUrlSourceSplitter::IsStreamIptvCompatible(bool *compatible)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, compatible);
+  CHECK_POINTER_HRESULT(result, this->parserHoster, result, E_NOT_VALID_STATE);
+
+  if (SUCCEEDED(result))
+  {
+    *compatible = this->parserHoster->IsStreamIptvCompatible();
+  }
+
+  return result;
+}
+
 HRESULT CMPUrlSourceSplitter::LoadAsync(void)
 {
   HRESULT result = S_OK;

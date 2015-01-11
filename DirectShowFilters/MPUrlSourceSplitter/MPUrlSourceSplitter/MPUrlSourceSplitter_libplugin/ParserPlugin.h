@@ -223,6 +223,10 @@ public:
   // @return : true if connection was lost and can't be opened again, false otherwise
   virtual bool IsConnectionLostCannotReopen(void);
 
+  // tests if stream is IPTV compatible
+  // @return : true if stream is IPTV compatible, false otherwise
+  virtual bool IsStreamIptvCompatible(void);
+
 protected:
   // holds logger instance
   CLogger *logger;

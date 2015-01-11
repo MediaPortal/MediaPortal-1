@@ -248,6 +248,11 @@ public:
   // @param description : reference to string which will hold description error
   STDMETHODIMP GetErrorDescription(HRESULT error, wchar_t **description);
 
+  // tests if stream is IPTV compatible
+  // @param compatible : reference to variable that holds result
+  // @return : S_OK if successful
+  STDMETHODIMP IsStreamIptvCompatible(bool *compatible);
+
   /* other methods */
 
   // loads the stream to filter (asynchronous method)

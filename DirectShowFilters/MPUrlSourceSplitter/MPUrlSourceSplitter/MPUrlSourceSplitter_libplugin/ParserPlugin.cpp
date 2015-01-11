@@ -283,4 +283,9 @@ bool CParserPlugin::IsConnectionLostCannotReopen(void)
   return this->protocolHoster->IsConnectionLostCannotReopen();
 }
 
+bool CParserPlugin::IsStreamIptvCompatible(void)
+{
+  return false;
+}
+
 /* protected methods */
