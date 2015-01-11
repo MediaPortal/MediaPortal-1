@@ -208,6 +208,8 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
   , loadAsyncWorkerThread(NULL)
   , loadAsyncWorkerShouldExit(false)
   , loadAsyncResult(S_OK)
+  , parserHoster(NULL)
+  , configuration(NULL)
 {
   CParameterCollection *loggerParameters = new CParameterCollection(phr);
   CHECK_POINTER_HRESULT(*phr, loggerParameters, *phr, E_OUTOFMEMORY);
@@ -330,7 +332,7 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
 
 CMPUrlSourceSplitter::~CMPUrlSourceSplitter()
 {
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME));
 
   // reset all internal properties to default values (except configuration parameters)
   this->ClearSession(false);
@@ -348,8 +350,8 @@ CMPUrlSourceSplitter::~CMPUrlSourceSplitter()
   FREE_MEM(this->downloadFileName);
   FREE_MEM_CLASS(this->configuration);
 
-  this->logger->Log(LOGGER_INFO, L"%s: %s: instance reference count: %u", MODULE_NAME, METHOD_DESTRUCTOR_NAME, this->m_cRef);
-  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, L"%s: %s: instance reference count: %u", MODULE_NAME, METHOD_DESTRUCTOR_NAME, this->m_cRef));
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME));
 
   FREE_MEM_CLASS(this->logger);
 }
@@ -2328,7 +2330,7 @@ HRESULT CMPUrlSourceSplitter::CreateLoadAsyncWorker(void)
 HRESULT CMPUrlSourceSplitter::DestroyLoadAsyncWorker(void)
 {
   HRESULT result = S_OK;
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTROY_LOAD_ASYNC_WORKER_NAME);
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTROY_LOAD_ASYNC_WORKER_NAME));
 
   this->loadAsyncWorkerShouldExit = true;
 
@@ -2338,7 +2340,7 @@ HRESULT CMPUrlSourceSplitter::DestroyLoadAsyncWorker(void)
     if (WaitForSingleObject(this->loadAsyncWorkerThread, INFINITE) == WAIT_TIMEOUT)
     {
       // thread didn't exit, kill it now
-      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DESTROY_LOAD_ASYNC_WORKER_NAME, L"thread didn't exit, terminating thread");
+      CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DESTROY_LOAD_ASYNC_WORKER_NAME, L"thread didn't exit, terminating thread"));
       TerminateThread(this->loadAsyncWorkerThread, 0);
     }
     CloseHandle(this->loadAsyncWorkerThread);
@@ -2347,7 +2349,7 @@ HRESULT CMPUrlSourceSplitter::DestroyLoadAsyncWorker(void)
   this->loadAsyncWorkerThread = NULL;
   this->loadAsyncWorkerShouldExit = false;
 
-  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_DESTROY_LOAD_ASYNC_WORKER_NAME, result);
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_DESTROY_LOAD_ASYNC_WORKER_NAME, result));
   return result;
 }
 
@@ -2734,19 +2736,19 @@ void CMPUrlSourceSplitter::SetPauseSeekStopRequest(bool pauseSeekStopRequest)
 
 void CMPUrlSourceSplitter::ClearSession(bool withLogger)
 {
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CLEAR_SESSION_NAME);
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CLEAR_SESSION_NAME));
 
   // stop async loading
   this->DestroyLoadAsyncWorker();
 
   // clear all demuxers
-  this->demuxers->Clear();
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->demuxers, this->demuxers->Clear());
 
   // stops receiving data
   this->Stop();
 
   // clear all parsers and protocols
-  this->parserHoster->ClearSession();
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->parserHoster, this->parserHoster->ClearSession());
 
   // clear all flags instead of filter type (IPTV or splitter)
   this->flags &= (MP_URL_SOURCE_SPLITTER_FLAG_AS_IPTV | MP_URL_SOURCE_SPLITTER_FLAG_AS_SPLITTER);
@@ -2778,14 +2780,13 @@ void CMPUrlSourceSplitter::ClearSession(bool withLogger)
   this->demuxStart = 0;
   this->demuxNewStart = 0;
 
-  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CLEAR_SESSION_NAME);
-
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CLEAR_SESSION_NAME));
   CHECK_CONDITION_EXECUTE(withLogger, this->logger->Clear());
 }
 
 HRESULT CMPUrlSourceSplitter::StopInternal(bool withBaseStop)
 {
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_STOP_NAME);
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_STOP_NAME));
 
   this->flags &= ~(MP_URL_SOURCE_SPLITTER_FLAG_PLAYBACK_STARTED | MP_URL_SOURCE_SPLITTER_FLAG_REPORT_STREAM_TIME);
 
@@ -2801,16 +2802,16 @@ HRESULT CMPUrlSourceSplitter::StopInternal(bool withBaseStop)
     // stop async loading
     this->DestroyLoadAsyncWorker();
     // clear all demuxers
-    this->demuxers->Clear();
+    CHECK_CONDITION_NOT_NULL_EXECUTE(this->demuxers, this->demuxers->Clear());
     // if we are not changing streams stop receiving data, data are not needed
-    this->parserHoster->StopReceivingData();
+    CHECK_CONDITION_NOT_NULL_EXECUTE(this->parserHoster, this->parserHoster->StopReceivingData());
     // clear also session, it will no longer be needed
-    this->parserHoster->ClearSession();
+    CHECK_CONDITION_NOT_NULL_EXECUTE(this->parserHoster, this->parserHoster->ClearSession());
   }
 
   HRESULT result = S_OK;
   CHECK_CONDITION_EXECUTE_RESULT(withBaseStop, __super::Stop(), result);
 
-  this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_STOP_NAME, result);
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_STOP_NAME, result));
   return result;
 }
