@@ -858,7 +858,10 @@ void CBDReaderFilter::HandleOSDUpdate(OSDTexture& pTexture)
 /// returns the number of audio streams available
 STDMETHODIMP CBDReaderFilter::Count(DWORD* streamCount)
 {
-  *streamCount = m_demultiplexer.GetAudioStreamCount();
+  int subCount = 0;
+  m_demultiplexer.GetSubtitleStreamCount(subCount);
+
+  *streamCount = m_demultiplexer.GetAudioStreamCount() + subCount;
   return S_OK;
 }
 
@@ -866,39 +869,71 @@ STDMETHODIMP CBDReaderFilter::Count(DWORD* streamCount)
 /// Sets the current audio stream to use
 STDMETHODIMP CBDReaderFilter::Enable(long index, DWORD flags)
 {
-  return m_demultiplexer.SetAudioStream((int)index) ? S_OK : S_FALSE;
+  int subtitleOffset = m_demultiplexer.GetAudioStreamCount();
+
+  if (index < subtitleOffset)
+    return m_demultiplexer.SetAudioStream((int)index) ? S_OK : S_FALSE;
+  else
+  {
+    bool enable = flags & AMSTREAMSELECTENABLE_ENABLE;
+    
+    return lib.SetSubtitleStream((int)index - subtitleOffset, enable) ? S_OK : S_FALSE;
+  }
 }
 
 /// method which implements IAMStreamSelect.Info
-/// returns an array of all audio streams available
+/// returns an array of all audio and subtitle streams available
 STDMETHODIMP CBDReaderFilter::Info(long lIndex, AM_MEDIA_TYPE**ppmt, DWORD* pdwFlags, LCID* plcid, DWORD* pdwGroup, WCHAR** ppszName, IUnknown** ppObject, IUnknown** ppUnk)
 {
+  int subtitleOffset = m_demultiplexer.GetAudioStreamCount();
+  bool isAudioStream = lIndex < subtitleOffset;
+
   if (pdwFlags)
   {
     int audioIndex = 0;
+    int subtitleIndex = 0;
     m_demultiplexer.GetAudioStream(audioIndex);
+    m_demultiplexer.GetAudioStream(subtitleIndex);
 
-    //if (m_demultiplexer.GetAudioStream()==(int)lIndex)
-    if (audioIndex == (int)lIndex)
+    if (isAudioStream && audioIndex == (int)lIndex || !isAudioStream && subtitleIndex == (int)lIndex + subtitleOffset)
       *pdwFlags = AMSTREAMSELECTINFO_EXCLUSIVE;
     else
       *pdwFlags = 0;
   }
-  if (plcid) *plcid = 0;
-  if (pdwGroup) *pdwGroup = m_demultiplexer.GetAudioStreamType((int)lIndex); //*pdwGroup = 1;
-  if (ppObject) *ppObject = NULL;
-  if (ppUnk) *ppUnk = NULL;
+  if (plcid)
+    *plcid = 0;
+
+  if (pdwGroup)
+    *pdwGroup = isAudioStream ? 1 : 2;
+
+  if (ppObject)
+    *ppObject = NULL;
+  
+  if (ppUnk)
+    *ppUnk = NULL;
+  
   if (ppszName)
   {
     char szName[40];
-    m_demultiplexer.GetAudioStreamInfo((int)lIndex, szName);
+
+    if (isAudioStream)
+      m_demultiplexer.GetAudioStreamInfo((int)lIndex, szName);
+    else
+      m_demultiplexer.GetSubtitleStreamLanguage((int)lIndex - subtitleOffset, szName);
+    
     *ppszName = (WCHAR *)CoTaskMemAlloc(20);
     MultiByteToWideChar(CP_ACP, 0, szName, -1, *ppszName, 20);
   }
+
   if (ppmt)
   {
     CMediaType mediaType;
-    m_demultiplexer.GetAudioStreamPMT(mediaType);
+
+    if (isAudioStream)
+      m_demultiplexer.GetAudioStreamPMT(mediaType);
+    else
+      m_demultiplexer.GetSubtitleStreamPMT(mediaType);
+
     AM_MEDIA_TYPE* mType = (AM_MEDIA_TYPE*)(&mediaType);
     *ppmt = (AM_MEDIA_TYPE*)CoTaskMemAlloc(sizeof(AM_MEDIA_TYPE));
     if (*ppmt)

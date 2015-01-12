@@ -385,6 +385,30 @@ namespace MediaPortal.Player
       }
     }
 
+    protected class StreamInfo
+    {
+      private int _streamIndex;
+      private string _lang;
+
+      public StreamInfo(int index, string lang)
+      {
+        _streamIndex = index;
+        _lang = lang;
+      }
+
+      public string Lang
+      {
+        get { return _lang; }
+        set { _lang = value; }
+      }
+
+      public int Index
+      {
+        get { return _streamIndex; }
+        set { _streamIndex = value; }
+      }
+    }
+
     #endregion
 
     #region enums
@@ -646,6 +670,7 @@ namespace MediaPortal.Player
     protected int _currentTitle = 0xffff;
     protected int _currentChapter = 0xffff;
     protected int _currentSubtitleStream = 0xfff;
+    protected int _selectedSubtitleStream = 0;
     protected int _currentAudioStream = 0;
     protected EventBuffer eventBuffer = new EventBuffer();
     protected MenuItems menuItems = MenuItems.All;
@@ -655,6 +680,8 @@ namespace MediaPortal.Player
     protected int _currentAudioFormat;
     protected static BDPlayerSettings settings;
     protected MenuState menuState;
+    protected List<StreamInfo> _subtitleStreams = new List<StreamInfo>();
+    protected List<StreamInfo> _audioStreams = new List<StreamInfo>();
     protected bool _subtitlesEnabled = true;
     protected bool _bPopupMenuAvailable = true;
     protected bool firstinit = false;
@@ -786,29 +813,55 @@ namespace MediaPortal.Player
 
     public override bool CanSeek()
     {
-      return _state == PlayState.Playing && (menuState == MenuState.None || menuState == MenuState.RootPending);      
+      return _state == PlayState.Playing && (menuState == MenuState.None || menuState == MenuState.RootPending);
     }
 
-    /// <summary>
-    /// Implements the AudioStreams member which interfaces the BDReader filter to get the IAMStreamSelect interface for enumeration of available streams
-    /// </summary>
     public override int AudioStreams
     {
       get
       {
-        if (_interfaceBDReader == null)
-        {
-          return 0;
-        }
-
-        int streamCount = 0;
         IAMStreamSelect pStrm = _interfaceBDReader as IAMStreamSelect;
         if (pStrm != null)
         {
-          pStrm.Count(out streamCount);
+          ParseStreams(pStrm);
           pStrm = null;
         }
-        return streamCount;
+
+        return _audioStreams.Count();
+      }
+    }
+
+    private void ParseStreams(IAMStreamSelect pStrm)
+    {
+      int cStreams = 0;
+      pStrm.Count(out cStreams);
+
+      _audioStreams.Clear();
+      _subtitleStreams.Clear();
+
+      for (int istream = 0; istream < cStreams; istream++)
+      {
+        AMMediaType sType;
+        AMStreamSelectInfoFlags sFlag;
+        int sPDWGroup;
+        int sPLCid;
+        string sName;
+        object pppunk; 
+        object ppobject;
+
+        pStrm.Info(istream, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
+
+        if (sPDWGroup == 1)
+        {
+          StreamInfo info = new StreamInfo(istream, sName);
+          _audioStreams.Add(info);
+        }
+
+        if (sPDWGroup == 2)
+        {
+          StreamInfo info = new StreamInfo(istream, sName);
+          _subtitleStreams.Add(info);
+        }
       }
     }
 
@@ -830,7 +883,7 @@ namespace MediaPortal.Player
           Log.Error("BDPlayer: Unable to get IAudioStream interface");
           return _currentAudioStream;
         }
-        audioStream.GetAudioStream(ref _currentAudioStream);        
+        audioStream.GetAudioStream(ref _currentAudioStream);
         return _currentAudioStream; 
       }
       set
@@ -1458,7 +1511,14 @@ namespace MediaPortal.Player
     {
       get
       {
-        return 0;
+        IAMStreamSelect pStrm = _interfaceBDReader as IAMStreamSelect;
+        if (pStrm != null)
+        {
+          ParseStreams(pStrm);
+          pStrm = null;
+        }
+
+        return _subtitleStreams.Count();
       }
     }
 
@@ -1469,10 +1529,19 @@ namespace MediaPortal.Player
     {
       get
       {
-        return 0;
+        return _currentSubtitleStream;
       }
       set
       {
+        IAMStreamSelect pStrm = _interfaceBDReader as IAMStreamSelect;
+        if (pStrm != null)
+        {
+          // Subtitle streams are located after audio streams
+          pStrm.Enable(value + _audioStreams.Count(), AMStreamSelectEnableFlags.Enable);
+          pStrm = null;
+
+          _selectedSubtitleStream = value;
+        }
       }
     }
 
@@ -1481,8 +1550,7 @@ namespace MediaPortal.Player
     /// </summary>
     public override string SubtitleLanguage(int iStream)
     {
-      //return GetFullLanguageName(_subSelector.GetLanguage(iStream));
-      return Strings.Unknown;
+      return GetFullLanguageName(_subtitleStreams[iStream].Lang.Trim());
     }
 
     /// <summary>
@@ -1500,10 +1568,20 @@ namespace MediaPortal.Player
     {
       get
       {
-        return false;
+        return _currentSubtitleStream != 0;
       }
       set
       {
+        IAMStreamSelect pStrm = _interfaceBDReader as IAMStreamSelect;
+        if (pStrm != null)
+        {
+          AMStreamSelectEnableFlags enabled = value ? AMStreamSelectEnableFlags.Enable : AMStreamSelectEnableFlags.DisableAll;
+
+          int subtitleOffset = _audioStreams.Count();
+
+          pStrm.Enable(_selectedSubtitleStream + subtitleOffset, enabled);
+          pStrm = null;
+        }
       }
     }
 
@@ -1848,7 +1926,7 @@ namespace MediaPortal.Player
           case (int)BDEvents.BD_EVENT_PG_TEXTST_STREAM:
             Log.Debug("BDPlayer: Subtitle changed to {0}", bdevent.Param);
             if (bdevent.Param != 0xfff)
-              CurrentSubtitleStream = bdevent.Param;
+              _currentSubtitleStream = bdevent.Param;
             break;
 
           case (int)BDEvents.BD_EVENT_IG_STREAM:

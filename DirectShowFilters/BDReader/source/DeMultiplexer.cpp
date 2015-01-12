@@ -246,12 +246,6 @@ int CDeMultiplexer::GetCurrentAudioStreamType()
     return m_audioStreams[m_iAudioStream].audioType;
 }
 
-bool CDeMultiplexer::GetCurrentSubtitleStream(__int32 &stream)
-{
-  stream = m_iSubtitleStream;
-  return S_OK;
-}
-
 bool CDeMultiplexer::GetSubtitleStreamLanguage(__int32 stream, char* szLanguage)
 {
   if (stream <0 || stream >= (__int32)m_subtitleStreams.size())
@@ -274,18 +268,11 @@ bool CDeMultiplexer::GetSubtitleStreamCount(__int32 &count)
   return S_OK;
 }
 
-bool CDeMultiplexer::SetSubtitleResetCallback(int(CALLBACK *cb)(int, void*, int*))
+void CDeMultiplexer::GetSubtitleStreamPMT(CMediaType& pmt)
 {
-  return true;
-}
-
-bool CDeMultiplexer::GetSubtitleStreamType(__int32 stream, __int32 &type)
-{
-  if (m_iSubtitleStream < 0 || m_iSubtitleStream >= m_subtitleStreams.size())
-    return S_FALSE; // An invalid stream number
-
-  type = m_subtitleStreams[m_iSubtitleStream].subtitleType;
-  return S_OK;
+  pmt.InitMediaType();
+  pmt.SetType(&MEDIATYPE_Text);
+  pmt.SetSubtype(&MEDIATYPE_Subtitle);
 }
 
 void CDeMultiplexer::GetVideoStreamPMT(CMediaType &pmt)
