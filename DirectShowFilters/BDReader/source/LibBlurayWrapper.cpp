@@ -91,7 +91,8 @@ CLibBlurayWrapper::CLibBlurayWrapper() :
   _bd_get_clip_infos(NULL),
   _bd_register_argb_overlay_proc(NULL),
   _bd_refcnt_inc(NULL),
-  _bd_refcnt_dec(NULL)
+  _bd_refcnt_dec(NULL),
+  _bd_select_stream(NULL)
 {
   m_pOverlayRenderer = new COverlayRenderer(this);
   ZeroMemory((void*)&m_playerSettings, sizeof(bd_player_settings));
@@ -215,6 +216,7 @@ bool CLibBlurayWrapper::Initialize()
   _bd_register_argb_overlay_proc = (API_bd_register_argb_overlay_proc)GetProcAddress(m_hDLL, "bd_register_argb_overlay_proc");
   _bd_refcnt_inc = (API_bd_refcnt_inc)GetProcAddress(m_hDLL, "bd_refcnt_inc");
   _bd_refcnt_dec = (API_bd_refcnt_dec)GetProcAddress(m_hDLL, "bd_refcnt_dec");
+  _bd_select_stream = (API_bd_select_stream)GetProcAddress(m_hDLL, "bd_select_stream");
 
   // This method is not available in the vanilla libbluray 
   _bd_get_clip_infos = (API_bd_get_clip_infos)GetProcAddress(m_hDLL, "bd_get_clip_infos");
@@ -260,7 +262,8 @@ bool CLibBlurayWrapper::Initialize()
       !_bd_get_clip_infos ||
       !_bd_register_argb_overlay_proc ||
       !_bd_refcnt_inc ||
-      !_bd_refcnt_dec)
+      !_bd_refcnt_dec ||
+      !_bd_select_stream)
   {
     LogDebug("CLibBlurayWrapper - failed to load method from lib - a version mismatch?");
     return false;
@@ -427,6 +430,22 @@ void CLibBlurayWrapper::SetTitle(UINT32 pTitle)
 {
   if (pTitle >= 0)
     m_currentTitle = pTitle;
+}
+
+bool CLibBlurayWrapper::SetSubtitleStream(UINT32 streamId, bool enabled)
+{
+  if (streamId < 0)
+    return false;
+
+  CAutoLock cLibLock(&m_csLibLock);
+  if (m_pBd)
+  {
+    // lib uses 1 based stream indices
+    _bd_select_stream(m_pBd, BLURAY_PG_TEXTST_STREAM, streamId + 1, enabled);
+    return true;
+  }
+
+  return false;
 }
 
 bool CLibBlurayWrapper::GetAngle(UINT8* pAngle)
