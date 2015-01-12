@@ -168,7 +168,8 @@ protected:
   virtual void CleanupDemuxerInternal(void);
 
   // demuxing worker internal method executed from DemuxingWorker() method
-  virtual void DemuxingWorkerInternal(void);
+  // @return : S_OK if demuxed packet, S_FALSE if no packet to demux, error code otherwise
+  virtual HRESULT DemuxingWorkerInternal(void);
 
   // gets next output pin packet
   // @param packet : pointer to output packet

@@ -720,8 +720,11 @@ void CStandardDemuxer::CleanupDemuxerInternal(void)
   }
 }
 
-void CStandardDemuxer::DemuxingWorkerInternal(void)
+HRESULT CStandardDemuxer::DemuxingWorkerInternal(void)
 {
+  // S_FALSE means no packet
+  HRESULT result = S_FALSE;
+
   if (this->IsSetFlags(DEMUXER_FLAG_DISABLE_DEMUXING_WITH_RETURN_TO_DEMUXING_WORKER) || this->IsSetFlags(DEMUXER_FLAG_DISABLE_DEMUXING_WITH_SAFE_RETURN_TO_DEMUXING_WORKER))
   {
     this->flags |= DEMUXER_FLAG_DISABLE_DEMUXING;
@@ -734,8 +737,6 @@ void CStandardDemuxer::DemuxingWorkerInternal(void)
     (!this->IsSetFlags(DEMUXER_FLAG_DISABLE_READING)) && 
     (!this->IsEndOfStreamOutputPacketQueued()))
   {
-    // S_FALSE means no packet
-    HRESULT result = S_FALSE;
     COutputPinPacket *packet = new COutputPinPacket(&result);
     CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
 
@@ -814,6 +815,8 @@ void CStandardDemuxer::DemuxingWorkerInternal(void)
 
     CHECK_CONDITION_EXECUTE(result != S_OK, FREE_MEM_CLASS(packet));
   }
+
+  return result;
 }
 
 HRESULT CStandardDemuxer::GetNextPacketInternal(COutputPinPacket *packet)

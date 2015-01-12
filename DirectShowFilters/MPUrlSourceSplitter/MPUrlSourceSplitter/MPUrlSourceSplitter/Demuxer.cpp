@@ -35,6 +35,10 @@
 #define MODULE_NAME                                                         L"Demuxer"
 #endif
 
+#define SLEEP_MODE_NO                                                       0
+#define SLEEP_MODE_SHORT                                                    1
+#define SLEEP_MODE_LONG                                                     2
+
 CDemuxer::CDemuxer(HRESULT *result, CLogger *logger, IDemuxerOwner *filter, CParameterCollection *configuration)
   : CFlags()
 {
@@ -420,11 +424,25 @@ unsigned int WINAPI CDemuxer::DemuxingWorker(LPVOID lpParam)
   CDemuxer *caller = (CDemuxer *)lpParam;
   caller->logger->Log(LOGGER_INFO, METHOD_DEMUXER_START_FORMAT, MODULE_NAME, METHOD_DEMUXING_WORKER_NAME, caller->demuxerId);
 
+  unsigned int sleepMode = SLEEP_MODE_LONG;
+
   while (!caller->demuxingWorkerShouldExit)
   {
-    caller->DemuxingWorkerInternal();
+    sleepMode = SLEEP_MODE_LONG;
 
-    Sleep(1);
+    sleepMode = (caller->DemuxingWorkerInternal() == S_OK) ? SLEEP_MODE_SHORT : sleepMode;
+
+    switch (sleepMode)
+    {
+    case SLEEP_MODE_SHORT:
+      Sleep(1);
+      break;
+    case SLEEP_MODE_LONG:
+      Sleep(20);
+      break;
+    default:
+      break;
+    }
   }
 
   caller->logger->Log(LOGGER_INFO, METHOD_DEMUXER_END_FORMAT, MODULE_NAME, METHOD_DEMUXING_WORKER_NAME, caller->demuxerId);

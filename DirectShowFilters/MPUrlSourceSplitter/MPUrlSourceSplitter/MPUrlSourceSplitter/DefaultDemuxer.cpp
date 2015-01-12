@@ -31,11 +31,15 @@
 #define MODULE_NAME                                                         L"DefaultDemuxer"
 #endif
 
-#define MAXIMUM_MPEG2_TS_DATA_PACKET                                        (188 * 5577)   // 5577 * 188 = 1048476 < 1 MB
+#define MINIMUM_IPTV_BUFFER_SIZE                                            (188 * 174)       // 174 * 188 = 32712 < 32 kB
+#define MAXIMUM_IPTV_BUFFER_SZE                                             (32 * MINIMUM_IPTV_BUFFER_SIZE)   // 32 * 32712 = 1046784 < 1 MB
 
 CDefaultDemuxer::CDefaultDemuxer(HRESULT *result, CLogger *logger, IDemuxerOwner *filter, CParameterCollection *configuration)
   : CDemuxer(result, logger, filter, configuration)
 {
+  this->iptvBuffer = NULL;
+  this->iptvBufferSize = 0;
+
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
   }
@@ -48,6 +52,8 @@ CDefaultDemuxer::~CDefaultDemuxer(void)
 
   // destroy demuxing worker (if not finished earlier)
   this->DestroyDemuxingWorker();
+
+  FREE_MEM(this->iptvBuffer);
 }
 
 /* CDemuxer methods */
@@ -96,8 +102,11 @@ void CDefaultDemuxer::CleanupDemuxerInternal(void)
 {
 }
 
-void CDefaultDemuxer::DemuxingWorkerInternal(void)
+HRESULT CDefaultDemuxer::DemuxingWorkerInternal(void)
 {
+  // S_FALSE means no packet
+  HRESULT result = S_FALSE;
+
   if (this->IsSetFlags(DEMUXER_FLAG_DISABLE_DEMUXING_WITH_RETURN_TO_DEMUXING_WORKER) || this->IsSetFlags(DEMUXER_FLAG_DISABLE_DEMUXING_WITH_SAFE_RETURN_TO_DEMUXING_WORKER))
   {
     this->flags |= DEMUXER_FLAG_DISABLE_DEMUXING;
@@ -110,8 +119,6 @@ void CDefaultDemuxer::DemuxingWorkerInternal(void)
     (!this->IsSetFlags(DEMUXER_FLAG_DISABLE_READING)) && 
     (!this->IsEndOfStreamOutputPacketQueued()))
   {
-    // S_FALSE means no packet
-    HRESULT result = S_FALSE;
     COutputPinPacket *packet = new COutputPinPacket(&result);
     CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
 
@@ -162,6 +169,8 @@ void CDefaultDemuxer::DemuxingWorkerInternal(void)
 
     CHECK_CONDITION_EXECUTE(result != S_OK, FREE_MEM_CLASS(packet));
   }
+
+  return result;
 }
 
 HRESULT CDefaultDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
@@ -172,25 +181,50 @@ HRESULT CDefaultDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
 
   if (SUCCEEDED(result))
   {
-    ALLOC_MEM_DEFINE_SET(temp, unsigned char, MAXIMUM_MPEG2_TS_DATA_PACKET, 0);
-
-    if (temp != NULL)
+    if (this->iptvBufferSize == 0)
     {
-      HRESULT res = this->DemuxerReadPosition(this->demuxerContextBufferPosition, temp, MAXIMUM_MPEG2_TS_DATA_PACKET, STREAM_PACKAGE_DATA_REQUEST_FLAG_ANY_NONZERO_DATA_LENGTH);
+      this->iptvBufferSize = MINIMUM_IPTV_BUFFER_SIZE;
+      this->iptvBuffer = ALLOC_MEM_SET(this->iptvBuffer, unsigned char, this->iptvBufferSize, 0);
+
+      CHECK_POINTER_HRESULT(result, this->iptvBuffer, result, E_OUTOFMEMORY);
+    }
+
+    if (this->iptvBuffer != NULL)
+    {
+      HRESULT res = this->DemuxerReadPosition(this->demuxerContextBufferPosition, this->iptvBuffer, this->iptvBufferSize, STREAM_PACKAGE_DATA_REQUEST_FLAG_ANY_NONZERO_DATA_LENGTH);
 
       if (res > 0)
       {
-        CHECK_CONDITION_HRESULT(result, packet->GetBuffer()->InitializeBuffer((unsigned int)res), result, E_OUTOFMEMORY);
+        unsigned int receivedSize = (unsigned int)res;
+        CHECK_CONDITION_HRESULT(result, packet->GetBuffer()->InitializeBuffer(receivedSize), result, E_OUTOFMEMORY);
 
         if (SUCCEEDED(result))
         {
-          packet->GetBuffer()->AddToBuffer(temp, (unsigned int)res);
+          packet->GetBuffer()->AddToBuffer(this->iptvBuffer, receivedSize);
 
           packet->SetStreamPid(0);
           packet->SetDemuxerId(this->demuxerId);
 
-          this->demuxerContextBufferPosition += (unsigned int)res;
+          this->demuxerContextBufferPosition += receivedSize;
           result = S_OK;
+        }
+
+        if ((receivedSize == this->iptvBufferSize) && (this->iptvBufferSize < MAXIMUM_IPTV_BUFFER_SZE))
+        {
+          // need to increase buffer size, maybe we are slow in reading data
+          unsigned int previousSize = this->iptvBufferSize;
+
+          this->iptvBufferSize *= 2;
+          FREE_MEM(this->iptvBuffer);
+          this->iptvBuffer = ALLOC_MEM_SET(this->iptvBuffer, unsigned char, this->iptvBufferSize, 0);
+
+          if (this->iptvBuffer == NULL)
+          {
+            // try to create IPTV buffer with MINIMUM_IPTV_BUFFER_SIZE size
+            this->iptvBufferSize = 0;
+          }
+
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: demuxer: %u, stream: %d, resized IPTV buffer, from: %u, to: %u", MODULE_NAME, METHOD_GET_NEXT_PACKET_INTERNAL_NAME, this->demuxerId, packet->GetStreamPid(), previousSize, this->iptvBufferSize);
         }
       }
       else if ((res < 0) && (res != E_CONNECTION_LOST_TRYING_REOPEN))
@@ -208,8 +242,6 @@ HRESULT CDefaultDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
         this->flags &= ~(DEMUXER_FLAG_PENDING_DISCONTINUITY | DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT);
       }
     }
-
-    FREE_MEM(temp);
   }
 
   return result;

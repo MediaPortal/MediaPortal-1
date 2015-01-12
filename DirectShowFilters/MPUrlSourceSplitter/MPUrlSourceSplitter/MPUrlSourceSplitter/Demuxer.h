@@ -184,10 +184,6 @@ protected:
   // holds create demuxer error
   HRESULT createDemuxerError;
 
-  // holds IPTV buffer
-  unsigned char *iptvBuffer;
-  unsigned int iptvBufferSize;
-
   /* methods */
 
   virtual HRESULT DemuxerReadPosition(int64_t position, uint8_t *buffer, int length, uint64_t flags);
@@ -226,7 +222,8 @@ protected:
   virtual HRESULT DestroyDemuxingWorker(void);
 
   // demuxing worker internal method executed from DemuxingWorker() method
-  virtual void DemuxingWorkerInternal(void) = 0;
+  // @return : S_OK if demuxed packet, S_FALSE if no packet to demux, error code otherwise
+  virtual HRESULT DemuxingWorkerInternal(void) = 0;
 
   // gets next output pin packet
   // @param packet : pointer to output packet
