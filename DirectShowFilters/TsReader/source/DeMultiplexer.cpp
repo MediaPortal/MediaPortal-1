@@ -1496,14 +1496,14 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
             while(len) 
             {
               //Find correct ADTS frame header sync sequence by 'learning' the most frequent 28 bit header start pattern
-              if (((*(INT16 *)ps & 0xF6FF) == 0xF0FF) && len > 3) //Syncword bits==111111111111 and Layer bits==00
+              if (((*(INT16 *)ps & 0xF6FF) == 0xF0FF) && len > 6) //Syncword bits==111111111111 and Layer bits==00
               {     
-
                 //byte hObjectType = ((*(ps+2) & 0xC0)>>6);
                 byte hFreq     = ((*(ps+2) & 0x3C)>>2);
                 byte hChannels = ((*(ps+2) & 0x01)<<2) | ((*(ps+3) & 0xC0)>>6);                      
+                byte hRDBs     = *(ps+6) & 0x03; //Raw data blocks per frame
 
-                if (hFreq>2 && hFreq<9 && hChannels<7 && hChannels>0) //Sanity checks...
+                if (hFreq>2 && hFreq<9 && hChannels<7 && hChannels>0 && hRDBs==0) //Sanity checks...
                 {
                   if (m_audHeaderCount<16)  // Learning/training state
                   {
@@ -1556,15 +1556,14 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                         m_mpegPesParser->OnAudioPacket(ps, len, m_AudioStreamType, m_iAudioStream, true);
                         m_filter.GetAudioPin()->SetAddPMT();
                         m_bSetAudioDiscontinuity=true;
-                        //byte parsedChannels = ((*(ps+2) & 0x01)<<2) | ((*(ps+3) & 0xC0)>>6);
-                        //LogDebug("demux: AAC ADTS parsedChannels = %d", parsedChannels);
+                        //LogDebug("demux: AAC ADTS parsedChannels = %d", hChannels);
   						          LogDebug("demux: AAC ADTS header: sampleRate = %d, channels = %d, bitrate = %d, objectType = %d", m_mpegPesParser->basicAudioInfo.sampleRate, m_mpegPesParser->basicAudioInfo.channels, m_mpegPesParser->basicAudioInfo.bitrate, m_mpegPesParser->basicAudioInfo.aacObjectType);
                       }
                       else
                       {
                         if (hChannels != m_mpegPesParser->basicAudioInfo.channels)
                         {
-      				            LogDebug("demux: AAC ADTS channels = %d -> %d", m_mpegPesParser->basicAudioInfo.channels, hChannels);
+      				            LogDebug("demux: AAC ADTS channels = %d -> %d, header = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", m_mpegPesParser->basicAudioInfo.channels, hChannels, *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
                           CAutoLock plock (&m_mpegPesParser->m_sectionAudioPmt);
                           m_mpegPesParser->basicAudioInfo.channels=hChannels;
                           Cbuf->SetForcePMT();
@@ -1574,7 +1573,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                       {
                         if (m_audHeaderCount>27 && m_audHeaderCount<31)
                         {
-                          LogDebug("demux: ADTS good sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
+                          LogDebug("demux: AAC ADTS good sync = %x %x %x %x %x %x %x, byteCount = %d, headerCount = %d", *ps, *(ps+1), *(ps+2), *(ps+3), *(ps+4), *(ps+5), *(ps+6), length-len, m_audHeaderCount);
                         }
                         m_audHeaderCount += min(4, 32-m_audHeaderCount);
                       }
