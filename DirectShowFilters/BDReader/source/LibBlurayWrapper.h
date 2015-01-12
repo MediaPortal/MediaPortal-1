@@ -92,6 +92,7 @@ typedef int (*API_bd_mouse_select)(BLURAY *, int64_t, uint16_t, uint16_t);
 typedef struct meta_dl* (*API_bd_get_meta)(BLURAY *);
 typedef int (*API_bd_get_clip_infos)(BLURAY *, int, uint64_t *, uint64_t *, uint64_t *, uint64_t *);
 typedef int (*API_bd_register_argb_overlay_proc)(BLURAY *, void *, bd_argb_overlay_proc_f, struct bd_argb_buffer_s *);
+typedef void (*API_bd_select_stream)(BLURAY *, uint32_t, uint32_t, uint32_t);
 
 // overlay.h
 typedef void (*API_bd_refcnt_inc)(const void *);
@@ -112,6 +113,7 @@ public:
   bool SetAngle(UINT8 pAngle);
   bool SetChapter(UINT32 pChapter);
   void SetTitle(UINT32 pTitle);
+  bool SetSubtitleStream(UINT32 stream_id, bool enabled);
   bool GetAngle(UINT8* pAngle);
   bool GetChapter(UINT32* pChapter);
   bool Play();
@@ -235,6 +237,7 @@ private:
   API_bd_get_meta _bd_get_meta;
   API_bd_get_clip_infos _bd_get_clip_infos;
   API_bd_register_argb_overlay_proc _bd_register_argb_overlay_proc;
+  API_bd_select_stream _bd_select_stream;
 
   API_bd_refcnt_inc _bd_refcnt_inc;
   API_bd_refcnt_dec _bd_refcnt_dec;

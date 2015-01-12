@@ -82,18 +82,14 @@ public:
   int        GetCurrentAudioStreamType();
   void       GetAudioStreamPMT(CMediaType& pmt);
   void       GetVideoStreamPMT(CMediaType &pmt);
+  void       GetSubtitleStreamPMT(CMediaType& pmt);
   int        GetAudioStreamCount();
 
   REFERENCE_TIME TitleDuration();
 
-  // BDReader::ISubtitleStream uses these
-  bool       SetSubtitleStream(__int32 stream);
-  bool       GetSubtitleStreamType(__int32 stream, __int32& count);
   bool       GetSubtitleStreamCount(__int32 &count);
-  bool       GetCurrentSubtitleStream(__int32 &stream);
   bool       GetSubtitleStreamLanguage(__int32 stream, char* szLanguage);
-  bool       SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int c, void* opts, int* select));
-
+  
   bool       EndOfFile();
   bool       HoldAudio();
   void       SetHoldAudio(bool onOff);
@@ -186,7 +182,6 @@ private:
   int m_videoServiceType;
 
   unsigned int m_audioPid;
-  unsigned int m_iSubtitleStream;
 
   void FlushPESBuffers(bool bDiscardData, bool bSetCurrentClipFilled);
 
