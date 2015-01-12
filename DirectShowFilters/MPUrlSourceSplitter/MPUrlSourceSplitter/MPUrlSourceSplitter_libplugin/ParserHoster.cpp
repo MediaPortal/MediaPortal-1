@@ -225,6 +225,11 @@ HRESULT CParserHoster::StartReceivingDataAsync(CParameterCollection *parameters)
   return result;
 }
 
+bool CParserHoster::IsStreamIptvCompatible(void)
+{
+  return ((this->activeParser != NULL) && (this->activeParser->IsStreamIptvCompatible()));
+}
+
 /* protected methods */
 
 CHosterPluginMetadata *CParserHoster::CreateHosterPluginMetadata(HRESULT *result, CLogger *logger, CParameterCollection *configuration, const wchar_t *hosterName, const wchar_t *pluginLibraryFileName)

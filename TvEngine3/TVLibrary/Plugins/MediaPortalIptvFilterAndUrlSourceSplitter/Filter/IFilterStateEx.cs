@@ -82,5 +82,15 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Filter
         [PreserveSig]
         [return: MarshalAs(UnmanagedType.I4)]
         int IsStreamOpened([Out, MarshalAs(UnmanagedType.Bool)] out Boolean opened);
+
+
+        /// <summary>
+        /// Tests if stream is IPTV compatible.
+        /// </summary>
+        /// <param name="compatible">The reference to variable to get IPTV compatibility.</param>
+        /// <returns>0 if successful, error code otherwise</returns>
+        [PreserveSig]
+        [return: MarshalAs(UnmanagedType.I4)]
+        int IsStreamIptvCompatible([Out, MarshalAs(UnmanagedType.Bool)] out Boolean compatible);
     }
 }

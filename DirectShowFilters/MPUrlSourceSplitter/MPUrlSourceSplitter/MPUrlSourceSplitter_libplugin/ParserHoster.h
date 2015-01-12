@@ -124,6 +124,10 @@ public:
   // @return : S_OK if url is loaded, S_FALSE if pending, error code otherwise
   HRESULT StartReceivingDataAsync(CParameterCollection *parameters);
 
+  // tests if stream is IPTV compatible
+  // @return : true if stream is IPTV compatible, false otherwise
+  bool IsStreamIptvCompatible(void);
+
 protected:
   // hoster for all protocols
   CProtocolHoster *protocolHoster;

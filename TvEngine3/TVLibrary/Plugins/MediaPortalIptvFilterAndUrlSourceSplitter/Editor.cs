@@ -626,6 +626,26 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
                 {
                     throw new FilterException(FilterError.ErrorDescription(filterStateEx, result));
                 }
+
+                result = sourceFilter.Run(0);
+
+                if (result < 0)
+                {
+                    throw new FilterException(FilterError.ErrorDescription(filterStateEx, result));
+                }
+
+                Boolean compatible = false;
+                result = filterStateEx.IsStreamIptvCompatible(out compatible);
+
+                if (result < 0)
+                {
+                    throw new FilterException(FilterError.ErrorDescription(filterStateEx, result));
+                }
+
+                if (!compatible)
+                {
+                    throw new FilterException("The received stream is not IPTV compatible.");
+                }
             }
             finally
             {

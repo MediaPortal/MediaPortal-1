@@ -184,6 +184,10 @@ protected:
   // holds create demuxer error
   HRESULT createDemuxerError;
 
+  // holds IPTV buffer
+  unsigned char *iptvBuffer;
+  unsigned int iptvBufferSize;
+
   /* methods */
 
   virtual HRESULT DemuxerReadPosition(int64_t position, uint8_t *buffer, int length, uint64_t flags);

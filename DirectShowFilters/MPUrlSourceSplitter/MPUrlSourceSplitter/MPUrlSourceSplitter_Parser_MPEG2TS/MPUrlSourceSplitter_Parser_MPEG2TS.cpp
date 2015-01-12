@@ -339,6 +339,11 @@ bool CMPUrlSourceSplitter_Parser_Mpeg2TS::IsEndOfStreamReached(void)
   return this->IsSetFlags(PARSER_PLUGIN_FLAG_END_OF_STREAM_REACHED);
 }
 
+bool CMPUrlSourceSplitter_Parser_Mpeg2TS::IsStreamIptvCompatible(void)
+{
+  return (this->parserResult == PARSER_RESULT_KNOWN);
+}
+
 // CPlugin
 
 const wchar_t *CMPUrlSourceSplitter_Parser_Mpeg2TS::GetName(void)

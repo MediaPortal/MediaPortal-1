@@ -57,6 +57,10 @@ CLoggerFile::CLoggerFile(HRESULT *result, const wchar_t *logFile, unsigned int m
     CHECK_CONDITION_EXECUTE(SUCCEEDED(*result), this->mutex = CreateMutex(NULL, FALSE, this->globalMutexName));
     CHECK_POINTER_HRESULT(*result, this->mutex, *result, E_OUTOFMEMORY);
 
+    // TO DO:
+    // creating mutex fail if mutex is created by service and it is requested by user application
+    // it is returned access denied error code (5)
+
     FREE_MEM(backupFile);
   }
 }
