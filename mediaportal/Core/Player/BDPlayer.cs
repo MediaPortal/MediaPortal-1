@@ -669,8 +669,8 @@ namespace MediaPortal.Player
     protected bool _bMediaTypeChanged;
     protected int _currentTitle = 0xffff;
     protected int _currentChapter = 0xffff;
-    protected int _currentSubtitleStream = 0xfff;
     protected int _selectedSubtitleStream = 0;
+    protected bool _subtitleStreamEnabled = false;
     protected int _currentAudioStream = 0;
     protected EventBuffer eventBuffer = new EventBuffer();
     protected MenuItems menuItems = MenuItems.All;
@@ -682,7 +682,7 @@ namespace MediaPortal.Player
     protected MenuState menuState;
     protected List<StreamInfo> _subtitleStreams = new List<StreamInfo>();
     protected List<StreamInfo> _audioStreams = new List<StreamInfo>();
-    protected bool _subtitlesEnabled = true;
+    protected bool _subtitlesEnabled = false;
     protected bool _bPopupMenuAvailable = true;
     protected bool firstinit = false;
     protected bool VideoChange = false;
@@ -1529,7 +1529,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        return _currentSubtitleStream;
+        return _selectedSubtitleStream;
       }
       set
       {
@@ -1568,14 +1568,21 @@ namespace MediaPortal.Player
     {
       get
       {
-        return _currentSubtitleStream != 0;
+        return _subtitlesEnabled && _subtitleStreamEnabled;
       }
       set
       {
         IAMStreamSelect pStrm = _interfaceBDReader as IAMStreamSelect;
         if (pStrm != null)
         {
-          AMStreamSelectEnableFlags enabled = value ? AMStreamSelectEnableFlags.Enable : AMStreamSelectEnableFlags.DisableAll;
+          _subtitleStreamEnabled = value;
+
+          AMStreamSelectEnableFlags enabled = AMStreamSelectEnableFlags.Enable;
+          if (!value)
+          {
+            enabled = AMStreamSelectEnableFlags.DisableAll;
+            _selectedSubtitleStream = 0;
+          }
 
           int subtitleOffset = _audioStreams.Count();
 
@@ -1911,22 +1918,18 @@ namespace MediaPortal.Player
             if (bdevent.Param != 0xff)
               CurrentAudioStream = bdevent.Param - 1;
             break;
-          
+          */
             case (int)BDEvents.BD_EVENT_PG_TEXTST:
             Log.Debug("BDPlayer: Subtitles available {0}", bdevent.Param);
             if (bdevent.Param == 0)
-            {
               EnableSubtitle = false;
-            }
             else
               EnableSubtitle = true;
             break;
-          */
-
           case (int)BDEvents.BD_EVENT_PG_TEXTST_STREAM:
             Log.Debug("BDPlayer: Subtitle changed to {0}", bdevent.Param);
             if (bdevent.Param != 0xfff)
-              _currentSubtitleStream = bdevent.Param;
+              _selectedSubtitleStream = bdevent.Param - 1;
             break;
 
           case (int)BDEvents.BD_EVENT_IG_STREAM:
