@@ -24,6 +24,7 @@
 #include "StdAfx.h"
 #include <afx.h>
 #include <streams.h>
+#include <wmcodecdsp.h>
 #include "demultiplexer.h"
 #include <bluray.h>
 #include "..\..\shared\adaptionfield.h"
@@ -1635,6 +1636,51 @@ bool CDeMultiplexer::IsMediaChanging()
 {
   CAutoLock lock (&m_sectionMediaChanging);
   return m_bWaitForMediaChange;
+}
+
+void CDeMultiplexer::AudioStreamMediaType(int stream, CMediaType& pmt)
+{
+  pmt.InitMediaType();
+  pmt.SetType(&MEDIATYPE_Audio);
+  pmt.SetSampleSize(1);
+  pmt.SetTemporalCompression(FALSE);
+  pmt.SetVariableSize();
+  pmt.SetFormatType(&FORMAT_WaveFormatEx);
+
+  int type = GetAudioStreamType(stream);
+
+  switch (type)
+  {
+    case BLURAY_STREAM_TYPE_AUDIO_MPEG1:
+      pmt.SetSubtype(&MEDIASUBTYPE_MPEG1Payload);
+      break;
+    case BLURAY_STREAM_TYPE_AUDIO_MPEG2:
+      pmt.SetSubtype(&MEDIASUBTYPE_MPEG2_AUDIO);
+      break;
+    case BLURAY_STREAM_TYPE_AUDIO_LPCM:
+      pmt.SetSubtype(&MEDIASUBTYPE_HDMV_LPCM_AUDIO);
+    case BLURAY_STREAM_TYPE_AUDIO_AC3:
+      pmt.SetSubtype(&MEDIASUBTYPE_DOLBY_AC3);
+      break;
+    case BLURAY_STREAM_TYPE_AUDIO_DTS:
+      pmt.SetSubtype(&MEDIASUBTYPE_DTS);
+      break;
+    case BLURAY_STREAM_TYPE_AUDIO_TRUHD:
+      pmt.SetSubtype(&MEDIASUBTYPE_DOLBY_TRUEHD);
+      break;
+    case BLURAY_STREAM_TYPE_AUDIO_AC3PLUS:
+      pmt.SetSubtype(&MEDIASUBTYPE_DOLBY_DDPLUS);
+      break;
+    case BLURAY_STREAM_TYPE_AUDIO_DTSHD:
+      pmt.SetSubtype(&MEDIASUBTYPE_DTS_HD);
+      break;
+    case BLURAY_STREAM_TYPE_AUDIO_DTSHD_MASTER:
+      pmt.SetSubtype(&MEDIASUBTYPE_DTS_HD);
+      break;
+    default:
+      pmt.SetSubtype(&MEDIASUBTYPE_MPEG1Payload);
+      break;
+  }
 }
 
 char* CDeMultiplexer::StreamFormatAsString(int pStreamType)

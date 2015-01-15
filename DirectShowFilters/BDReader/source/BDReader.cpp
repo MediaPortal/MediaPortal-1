@@ -930,7 +930,7 @@ STDMETHODIMP CBDReaderFilter::Info(long lIndex, AM_MEDIA_TYPE**ppmt, DWORD* pdwF
     CMediaType mediaType;
 
     if (isAudioStream)
-      m_demultiplexer.GetAudioStreamPMT(mediaType);
+      m_demultiplexer.AudioStreamMediaType((int)lIndex, mediaType);
     else
       m_demultiplexer.GetSubtitleStreamPMT(mediaType);
 
