@@ -84,6 +84,7 @@ public:
   void       GetVideoStreamPMT(CMediaType &pmt);
   void       GetSubtitleStreamPMT(CMediaType& pmt);
   int        GetAudioStreamCount();
+  void       AudioStreamMediaType(int stream, CMediaType& type);
 
   REFERENCE_TIME TitleDuration();
 

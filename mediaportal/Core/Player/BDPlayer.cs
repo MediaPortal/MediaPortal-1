@@ -409,6 +409,17 @@ namespace MediaPortal.Player
       }
     }
 
+    protected class BDAudioGuids
+    {
+      static public readonly Guid DOLBY_DDPLUS = new Guid(0xa7fb87af, 0x2d02, 0x42fb, 0xa4, 0xd4, 0x5, 0xcd, 0x93, 0x84, 0x3b, 0xdd);
+      static public readonly Guid DOLBY_TRUEHD = new Guid(0xeb27cec4, 0x163e, 0x4ca3, 0x8b, 0x74, 0x8e, 0x25, 0xf9, 0x1b, 0x51, 0x7e);
+      static public readonly Guid DTS_HD = new Guid(0xa2e58eb7, 0xfa9, 0x48bb, 0xa4, 0xc, 0xfa, 0xe, 0x15, 0x6d, 0x6, 0x45);
+      static public readonly Guid DTSHD_MASTER = new Guid(0xa2e58eb7, 0xfa9, 0x48bb, 0xa4, 0xc, 0xfa, 0xe, 0x15, 0x6d, 0x6, 0x45);
+      static public readonly Guid DTS = new Guid(0xe06d8033, 0xdb46, 0x11cf, 0xb4, 0xd1, 0x00, 0x80, 0x05f, 0x6c, 0xbb, 0xea);
+      static public readonly Guid LPCM = new Guid(0x949f97fd, 0x56f6, 0x4527, 0xb4, 0xae, 0xdd, 0xeb, 0x37, 0x5a, 0xb8, 0xf);
+      static public readonly Guid AC3 = new Guid(0xe06d802c, 0xdb46, 0x11cf, 0xb4, 0xd1, 0x00, 0x80, 0x05f, 0x6c, 0xbb, 0xea);
+    }
+
     #endregion
 
     #region enums
@@ -937,7 +948,8 @@ namespace MediaPortal.Player
         object pppunk, ppobject;
         pStrm.Info(iStream, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
         int AudioChannelCount = _ireader.GetAudioChannelCount(iStream);
-        return StreamTypetoString(sPDWGroup) + " " + StreamTypeAudiotoString(AudioChannelCount);
+
+        return AudioGUIDToString(sType.subType) + " " + StreamTypeAudiotoString(AudioChannelCount);
       }
       return Strings.Unknown;
     }
@@ -3059,6 +3071,30 @@ namespace MediaPortal.Player
         default:
           return 0;
       }
+    }
+
+    protected string AudioGUIDToString(Guid guid)
+    {
+      if (guid.CompareTo(BDAudioGuids.AC3) == 0)
+        return "AC3";
+      else if (guid.CompareTo(BDAudioGuids.DOLBY_DDPLUS) == 0)
+          return "AC3+";
+      else if (guid.CompareTo(BDAudioGuids.DTS) == 0)
+          return "DTS";
+      else if (guid.CompareTo(BDAudioGuids.DTS_HD) == 0)
+          return "DTS-HD";
+      else if (guid.CompareTo(BDAudioGuids.DTSHD_MASTER) == 0)
+          return "DTS-HD Master";
+      else if (guid.CompareTo(BDAudioGuids.LPCM) == 0)
+          return "LPCM";
+      else if (guid.CompareTo(BDAudioGuids.DOLBY_TRUEHD) == 0)
+        return "TrueHD";
+      else if (guid.CompareTo(MediaSubType.MPEG1Audio) == 0)
+          return "MPEG1";
+      else if (guid.CompareTo(MediaSubType.Mpeg2Audio) == 0)
+          return "MPEG2";
+      else
+        return Strings.Unknown;
     }
     #endregion
 
