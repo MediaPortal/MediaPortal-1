@@ -152,7 +152,8 @@ namespace Mediaportal.TV.TvPlugin
 
           MediaPortal.Player.VideoStreamFormat videoFormat = MediaPortal.Player.g_Player.GetVideoFormat();
 
-          GUIPropertyManager.SetProperty("#Play.Current.TSBitRate", videoFormat.bitrate.ToString());
+          GUIPropertyManager.SetProperty("#Play.Current.TSBitRate",
+            ((float)MediaPortal.Player.g_Player.GetVideoFormat().bitrate / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture));
           GUIPropertyManager.SetProperty("#Play.Current.VideoFormat.RawResolution",
             videoFormat.width.ToString() + "x" + videoFormat.height.ToString());
 
@@ -194,7 +195,8 @@ namespace Mediaportal.TV.TvPlugin
       GUIPropertyManager.SetProperty("#TV.TuningDetails.TSPacketsTransferred", Convert.ToString(totalTSpackets));
       GUIPropertyManager.SetProperty("#TV.TuningDetails.Discontinuities", Convert.ToString(discontinuityCounter));
 
-      GUIPropertyManager.SetProperty("#Play.Current.TSBitRate", ((float)MediaPortal.Player.g_Player.GetVideoFormat().bitrate / 1024 / 1024).ToString("0.0"));
+      GUIPropertyManager.SetProperty("#Play.Current.TSBitRate",
+       ((float)MediaPortal.Player.g_Player.GetVideoFormat().bitrate / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture));
 
       _updateTimer = DateTime.Now;
     }

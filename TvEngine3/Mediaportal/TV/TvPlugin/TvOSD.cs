@@ -20,11 +20,13 @@
 
 using System;
 using System.Globalization;
+using System.Collections.Generic;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.TvPlugin.Helper;
 using Mediaportal.TV.TvPlugin.Recorded;
@@ -445,6 +447,67 @@ namespace Mediaportal.TV.TvPlugin
             g_Player.UpdateMediaInfoProperties();
             //GUIPropertyManager.SetProperty("#TV.View.HasTeletext", TVHome.Card.HasTeletext.ToString()); 
 
+                        MediaPortal.Player.VideoStreamFormat videoFormat = g_Player.GetVideoFormat();
+
+            GUIPropertyManager.SetProperty("#Play.Current.TSBitRate",
+             ((float)MediaPortal.Player.g_Player.GetVideoFormat().bitrate / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture));
+
+            GUIPropertyManager.SetProperty("#Play.Current.VideoFormat.RawResolution",
+              videoFormat.width.ToString() + "x" + videoFormat.height.ToString());
+
+            GUIPropertyManager.SetProperty("#TV.TuningDetails.FreeToAir", string.Empty);
+
+            Channel chan = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(TVHome.Navigator.Channel.Entity.IdChannel);
+            if (chan != null)
+            {
+              IList<TuningDetail> details = chan.TuningDetails;
+              if (details.Count > 0)
+              {
+                TuningDetail detail = null;
+                switch (TVHome.Card.Type)
+                {
+                  case CardType.Analog:
+                    foreach (TuningDetail t in details)
+                    {
+                      if (t.ChannelType == 0)
+                        detail = t;
+                    }
+                    break;
+                  case CardType.Atsc:
+                    foreach (TuningDetail t in details)
+                    {
+                      if (t.ChannelType == 1)
+                        detail = t;
+                    }
+                    break;
+                  case CardType.DvbC:
+                    foreach (TuningDetail t in details)
+                    {
+                      if (t.ChannelType == 2)
+                        detail = t;
+                    }
+                    break;
+                  case CardType.DvbS:
+                    foreach (TuningDetail t in details)
+                    {
+                      if (t.ChannelType == 3)
+                        detail = t;
+                    }
+                    break;
+                  case CardType.DvbT:
+                    foreach (TuningDetail t in details)
+                    {
+                      if (t.ChannelType == 4)
+                        detail = t;
+                    }
+                    break;
+                  default:
+                    detail = details[0];
+                    break;
+                }
+                GUIPropertyManager.SetProperty("#TV.TuningDetails.FreeToAir", detail.FreeToAir.ToString());
+              }
+            }
             return true;
           }
 
@@ -1880,6 +1943,9 @@ namespace Mediaportal.TV.TvPlugin
 
       else
       {
+        GUIPropertyManager.SetProperty("#Play.Current.TSBitRate",
+         ((float)MediaPortal.Player.g_Player.GetVideoFormat().bitrate / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture));
+        
         Recording rec = null;
         string startTime = "";
         string endTime = "";
