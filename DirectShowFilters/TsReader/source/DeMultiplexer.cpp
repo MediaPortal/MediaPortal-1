@@ -1337,8 +1337,8 @@ bool CDeMultiplexer::CheckContinuity(int prevCC, CTsHeader& header)
   return true;
 }
 
-/// This method will check if the tspacket is an audio packet
-/// ifso, it decodes the PES audio packet and stores it in the audio buffers
+// This method will check if the tspacket is an audio packet
+// ifso, it decodes the PES audio packet and stores it in the audio buffers
 void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffset, int bufferLength)
 {
   //LogDebug("FillAudio - audio PID %d", m_audioPid );
@@ -1361,6 +1361,8 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
   }
 
   m_AudioPrevCC = header.ContinuityCounter;
+
+  //LogDebug("FillAudio() process TS packet");
 
   //CAutoLock lock (&m_sectionAudio);
   //does tspacket contain the start of a pes packet?
@@ -2102,6 +2104,8 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
       m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos);
     }
   }
+  
+  //LogDebug("FillAudio() end");
 }
 
 

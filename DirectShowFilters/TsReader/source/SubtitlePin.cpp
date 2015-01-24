@@ -168,11 +168,14 @@ HRESULT CSubtitlePin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTI
   CheckPointer(pAlloc, E_POINTER);
   CheckPointer(pRequest, E_POINTER);
 
-  if (pRequest->cBuffers == 0)
-  {
-      pRequest->cBuffers = 30;
-  }
-  pRequest->cbBuffer = 8192;
+//  if (pRequest->cBuffers == 0)
+//  {
+//      pRequest->cBuffers = 30;
+//  }
+//  pRequest->cbBuffer = MAX_BUFFER_SIZE;
+
+  pRequest->cBuffers = max(30, pRequest->cBuffers);
+  pRequest->cbBuffer = max(MAX_BUFFER_SIZE, (ULONG)pRequest->cbBuffer);
 
   ALLOCATOR_PROPERTIES Actual;
   hr = pAlloc->SetProperties(pRequest, &Actual);
@@ -183,6 +186,7 @@ HRESULT CSubtitlePin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTI
 
   if (Actual.cbBuffer < pRequest->cbBuffer)
   {
+    LogDebug("subPin:DecideBufferSize - failed to get buffer");
     return E_FAIL;
   }
 

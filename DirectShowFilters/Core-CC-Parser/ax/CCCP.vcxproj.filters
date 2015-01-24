@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{179d8488-d5f1-435f-bcae-926305a9bdfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Auxiliary Files">
+      <UniqueIdentifier>{31cfa1f8-a3f9-4f70-9898-723315b9e573}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Parsing">
+      <UniqueIdentifier>{64a9bfca-d13a-4658-8b3d-f37612290b11}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CCcFilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CCCP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CcDataProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CCPProps.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>Auxiliary Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsing\CCParser.cpp">
+      <Filter>Parsing</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CCCP.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CcDataProcessor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CCPGUIDs.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CcpProps.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ICcParser.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h">
+      <Filter>Auxiliary Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parsing\CCParser.h">
+      <Filter>Parsing</Filter>
+    </ClInclude>
+    <ClInclude Include="mediaformats.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CCCP.def">
+      <Filter>Auxiliary Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CCParser.rc">
+      <Filter>Auxiliary Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

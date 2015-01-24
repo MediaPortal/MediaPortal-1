@@ -61,6 +61,7 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
   m_bAddPMT = false;
   m_bPinNoNewSegFlush = false;
   m_bDownstreamFlush=false;
+  m_bufferSize = 0;
 }
 
 CVideoPin::~CVideoPin()
@@ -171,8 +172,8 @@ HRESULT CVideoPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
   CheckPointer(pAlloc, E_POINTER);
   CheckPointer(pRequest, E_POINTER);
 
-  pRequest->cBuffers = max(2, pRequest->cBuffers);
-  pRequest->cbBuffer = max(8388608, (ULONG)pRequest->cbBuffer);
+  pRequest->cBuffers = max(8, pRequest->cBuffers);
+  pRequest->cbBuffer = max(2097152, (ULONG)pRequest->cbBuffer);
 
   ALLOCATOR_PROPERTIES Actual;
   hr = pAlloc->SetProperties(pRequest, &Actual);
@@ -180,6 +181,8 @@ HRESULT CVideoPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
   {
     return hr;
   }
+  
+  m_bufferSize = Actual.cbBuffer;
 
   if (Actual.cbBuffer < pRequest->cbBuffer)
   {
@@ -276,6 +279,7 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 HRESULT CVideoPin::BreakConnect()
 {  
   m_bConnected=false;
+  m_bufferSize = 0;
   return CSourceStream::BreakConnect();
 }
 
@@ -465,6 +469,16 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       if (buffer == NULL)
       {
         m_FillBuffSleepTime = 5;
+      }
+      else if (buffer->Length() > m_bufferSize)
+      {
+        //discard buffer
+        delete buffer;
+        demux.EraseVideoBuff();
+        m_bDiscontinuity = TRUE; //Next good sample will be discontinuous
+        buffer = NULL;
+        m_FillBuffSleepTime = 1;
+        LogDebug("vidPin : Error - buffer too large for sample") ;        
       }
       else
       {
