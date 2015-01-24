@@ -290,6 +290,7 @@ ShowUninstDetails show
   ;File "${git_MP}\MPE\MpeMaker\bin\${BUILD_TYPE}\MpeMaker.exe"
   File "${git_MP}\Utils\bin\${BUILD_TYPE}\Utils.dll"
   File "${git_MP}\core\bin\${BUILD_TYPE}\Core.dll"
+  File "${git_MP}\MediaPortal.Base\CSScriptLibrary.dll"
 
   ; create startmenu shortcuts
   ${If} $noDesktopSC != 1
@@ -313,6 +314,7 @@ ShowUninstDetails show
   Delete "$INSTDIR\MpeMaker.exe"
   Delete "$INSTDIR\Utils.dll"
   Delete "$INSTDIR\Core.dll"
+  Delete "$INSTDIR\CSScriptLibrary.dll"
 
   ; remove startmenu shortcuts
   Delete "$DESKTOP\MediaPortal Extension Manager.lnk"
