@@ -39,7 +39,6 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
-using MediaPortal.Visualization;
 using MediaPortal.LastFM;
 using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
@@ -251,8 +250,6 @@ namespace MediaPortal.GUI.Music
       Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackStarted for {0}", filename);
 
       ImagePathContainer.Clear();
-      ClearVisualizationImages();
-
       CurrentTrackFileName = filename;
       GetTrackTags();
 
@@ -281,11 +278,6 @@ namespace MediaPortal.GUI.Music
 
       UpdateImagePathContainer();
       UpdateTrackInfo();
-
-      if (GUIWindowManager.ActiveWindow == GetID)
-      {
-        SetVisualizationWindow();
-      }
     }
 
     #endregion
@@ -470,7 +462,6 @@ namespace MediaPortal.GUI.Music
       {
         OnPlayBackStarted(g_Player.MediaType.Music, g_Player.CurrentFile);
 
-        SetVisualizationWindow();
         _isStopped = false;
       }
       else
@@ -478,8 +469,6 @@ namespace MediaPortal.GUI.Music
         CurrentTrackTag = null;
         NextTrackTag = null;
         UpdateTrackInfo();
-        ClearVisualizationImages();
-        // notify user what he's lost here?
       }
     }
 
@@ -500,9 +489,6 @@ namespace MediaPortal.GUI.Music
 
       GC.Collect();
       ControlsInitialized = false;
-
-      // Make sure we clear any images we added so we revert back the coverart image
-      ClearVisualizationImages();
 
       BassMusicPlayer.Player.InternetStreamSongChanged -= OnInternetStreamSongChanged;
 
@@ -537,11 +523,6 @@ namespace MediaPortal.GUI.Music
 
       dlg.DoModal(GetID);
 
-      // The ImgCoverArt visibility gets restored when a context menu is popped up.
-      // So we need to reset the visualization window visibility is restored after
-      // the context menu is dismissed
-      SetVisualizationWindow();
-
       if (dlg.SelectedId == -1)
       {
         return;
@@ -567,11 +548,6 @@ namespace MediaPortal.GUI.Music
                 CurrentThumbFileName = strLarge;
               }
               AddImageToImagePathContainer(CurrentThumbFileName);
-
-              if (_usingBassEngine)
-              {
-                BassMusicPlayer.Player.VisualizationWindow.CoverArtImagePath = CurrentThumbFileName;
-              }
 
               UpdateImagePathContainer();
             }
@@ -831,34 +807,6 @@ namespace MediaPortal.GUI.Music
         {
           Log.Debug("GUIMusicPlayingNow: Found placeholder - not inserting image {0}", ImagePath);
           return false;
-        }
-
-        // Check if we should let the visualization window handle image flipping
-        if (_usingBassEngine && _showVisualization)
-        {
-          VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
-
-          if (vizWindow != null)
-          {
-            if (Util.Utils.FileExistsInCache(ImagePath))
-            {
-              try
-              {
-                Log.Debug("GUIMusicPlayingNow: adding image to visualization - {0}", ImagePath);
-                vizWindow.AddImage(ImagePath);
-                return true;
-              }
-              catch (Exception ex)
-              {
-                Log.Error("GUIMusicPlayingNow: error adding image ({0}) - {1}", ImagePath, ex.Message);
-              }
-            }
-            else
-            {
-              Log.Warn("GUIMusicPlayingNow: could not use image - {0}", ImagePath);
-              return false;
-            }
-          }
         }
 
         bool success = false;
@@ -1130,50 +1078,6 @@ namespace MediaPortal.GUI.Music
           PlaylistPlayer.Play(0);
           OnPlayBackStarted(g_Player.MediaType.Music, g_Player.CurrentFile);
         }
-      }
-    }
-
-    private void SetVisualizationWindow()
-    {
-      if (!ControlsInitialized || !_showVisualization || !_usingBassEngine)
-      {
-        return;
-      }
-
-      VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
-
-      if (vizWindow != null)
-      {
-        vizWindow.Visible = false;
-
-        int width = ImgCoverArt.RenderWidth;
-        int height = ImgCoverArt.RenderHeight;
-
-        Size vizSize = new Size(width, height);
-        float vizX = (float)ImgCoverArt.Location.X;
-        float vizY = (float)ImgCoverArt.Location.Y;
-        GUIGraphicsContext.Correct(ref vizX, ref vizY);
-        Point vizLoc = new Point((int)vizX, (int)vizY);
-        vizWindow.Size = vizSize;
-        vizWindow.Location = vizLoc;
-        vizWindow.Visible = true;
-
-        GUIGraphicsContext.VideoWindow = new Rectangle(vizLoc, vizSize);
-      }
-    }
-
-    private void ClearVisualizationImages()
-    {
-      if (!_usingBassEngine || !_showVisualization)
-      {
-        return;
-      }
-
-      VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
-
-      if (vizWindow != null)
-      {
-        vizWindow.ClearImages();
       }
     }
 

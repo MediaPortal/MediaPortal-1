@@ -25,9 +25,7 @@ using System.Windows.Forms;
 using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Player;
 using MediaPortal.Profile;
-using MediaPortal.Visualization;
 using Un4seen.Bass;
-using BassVis_Api;
 using Un4seen.BassAsio;
 using Un4seen.BassWasapi;
 
@@ -37,8 +35,6 @@ namespace MediaPortal.Configuration.Sections
 {
   public partial class Music : SectionSettings
   {
-    private delegate void LoadVisualizationListDelegate(List<VisualizationInfo> vizPluginsInfo);
-
     #region Variables
 
     private const string JumpToValue0 = "none";
@@ -109,19 +105,14 @@ namespace MediaPortal.Configuration.Sections
                                              LyricsOption2
                                            };
 
-    private string[] MonoUpmix = new string[] { "None", "Stereo", "QuadraphonicPhonic", "5.1 Surround", "7.1 Surround" };
-    private string[] StereoUpmix = new string[] { "None", "QuadraphonicPhonic", "5.1 Surround", "7.1 Surround" };
-    private string[] QuadroPhonicUpmix = new string[] { "None", "5.1 Surround", "7.1 Surround" };
-    private string[] FiveDotOneUpmix = new string[] { "None", "7.1 Surround" };
+    private string[] MonoUpmix = new string[] {"None", "Stereo", "QuadraphonicPhonic", "5.1 Surround", "7.1 Surround"};
+    private string[] StereoUpmix = new string[] {"None", "QuadraphonicPhonic", "5.1 Surround", "7.1 Surround"};
+    private string[] QuadroPhonicUpmix = new string[] {"None", "5.1 Surround", "7.1 Surround"};
+    private string[] FiveDotOneUpmix = new string[] {"None", "7.1 Surround"};
 
     private const string VUMeterValue0 = "none";
     private const string VUMeterValue1 = "analog";
     private const string VUMeterValue2 = "led";
-
-    private IVisualizationManager IVizMgr = null;
-    private VisualizationInfo VizPluginInfo = null;
-    private bool VisualizationsInitialized = false;
-    private BASSVIS_PARAM _visParam = null;
 
     private string _soundDevice = null;
     private string _soundDeviceID = "";
@@ -133,7 +124,9 @@ namespace MediaPortal.Configuration.Sections
     #region ctor
 
     public Music()
-      : this("Music") { }
+      : this("Music")
+    {
+    }
 
     public Music(string name)
       : base(name)
@@ -181,8 +174,6 @@ namespace MediaPortal.Configuration.Sections
       _initialising = true;
       trackBarBuffering_Scroll(null, null);
       trackBarCrossfade_Scroll(null, null);
-      soniqueRenderTiming_Scroll(null, null);
-      winampFFTsensitivity_Scroll(null, null);
       audioPlayerComboBox_SelectedIndexChanged(null, null);
       GaplessPlaybackChkBox_CheckedChanged(null, null);
     }
@@ -207,13 +198,14 @@ namespace MediaPortal.Configuration.Sections
         _soundDeviceID = xmlreader.GetValueAsString("audioplayer", "sounddeviceid", "");
 
         string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "playerId", "0");
-        int audioPlayer = (int)AudioPlayer.Bass; // Default to BASS Player
+        int audioPlayer = (int) AudioPlayer.Bass; // Default to BASS Player
         try
         {
           audioPlayer = Convert.ToInt16(strAudioPlayer);
         }
         catch (Exception) // We end up here in the conversion Phase, where we have still a string ioncluded
-        { }
+        {
+        }
 
         audioPlayerComboBox.SelectedIndex = audioPlayer;
 
@@ -253,7 +245,7 @@ namespace MediaPortal.Configuration.Sections
         GaplessPlaybackChkBox.Checked = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);
         UseSkipStepsCheckBox.Checked = xmlreader.GetValueAsBool("audioplayer", "useSkipSteps", false);
         FadeOnStartStopChkbox.Checked = xmlreader.GetValueAsBool("audioplayer", "fadeOnStartStop", true);
-        StreamOutputLevelNud.Value = (decimal)xmlreader.GetValueAsInt("audioplayer", "streamOutputLevel", 100);
+        StreamOutputLevelNud.Value = (decimal) xmlreader.GetValueAsInt("audioplayer", "streamOutputLevel", 100);
 
         cbUpmixMono.SelectedIndex = xmlreader.GetValueAsInt("audioplayer", "upMixMono", 0);
         cbUpmixStereo.SelectedIndex = xmlreader.GetValueAsInt("audioplayer", "upMixStereo", 0);
@@ -284,66 +276,8 @@ namespace MediaPortal.Configuration.Sections
 
         #endregion
 
-        #region Visualization Settings
-        int vizType = xmlreader.GetValueAsInt("musicvisualization", "vizType", (int)VisualizationInfo.PluginType.None);
-        string vizName = xmlreader.GetValueAsString("musicvisualization", "name", "None");
-        string vizPath = xmlreader.GetValueAsString("musicvisualization", "path", "");
-        int vizPreset = xmlreader.GetValueAsInt("musicvisualization", "preset", 0);
-        int vizPlgIndex = xmlreader.GetValueAsInt("musicvisualization", "plgIndex", -1);
-
-        if (vizType == (int)VisualizationInfo.PluginType.None
-            && vizName == "None")
-        {
-          VizPluginInfo = new VisualizationInfo("None", true);
-        }
-
-        else
-        {
-          VizPluginInfo = new VisualizationInfo((VisualizationInfo.PluginType)vizType, vizPath, vizName,
-                                                vizPreset, vizPlgIndex);
-        }
-
-        ckUseOpenGL.Checked = xmlreader.GetValueAsBool("musicvisualization", "useOpenGL", true);
-        ckUseCover.Checked = xmlreader.GetValueAsBool("musicvisualization", "useCover", true);
-        soniqueRenderTiming.Value = xmlreader.GetValueAsInt("musicvisualization", "renderTiming", 25);
-        winampFFTsensitivity.Value = xmlreader.GetValueAsInt("musicvisualization", "fftSensitivity", 36);
-        comboViewPortSizes.SelectedIndex = xmlreader.GetValueAsInt("musicvisualization", "viewPort", 0);
-
-        if (vizType == (int) VisualizationInfo.PluginType.Sonique)
-        {
-          VizPluginInfo.UseOpenGL = ckUseOpenGL.Checked;
-          VizPluginInfo.UseCover = ckUseCover.Checked;
-          VizPluginInfo.RenderTiming = soniqueRenderTiming.Value;
-          VizPluginInfo.ViewPortSize = comboViewPortSizes.SelectedIndex;
-        }
-
-        if (vizType == (int)VisualizationInfo.PluginType.Winamp)
-        {
-          VizPluginInfo.FFTSensitivity = winampFFTsensitivity.Value;
-        }
-        
-        int fps = xmlreader.GetValueAsInt("musicvisualization", "fps", 25);
-
-        if (fps < (int)VisualizationFpsNud.Minimum)
-        {
-          fps = (int)VisualizationFpsNud.Minimum;
-        }
-
-        else if (fps > VisualizationFpsNud.Maximum)
-        {
-          fps = (int)VisualizationFpsNud.Maximum;
-        }
-
-        VisualizationFpsNud.Value = fps;
-
-        EnableStatusOverlaysChkBox.Checked = xmlreader.GetValueAsBool("musicvisualization", "enableStatusOverlays",
-                                                                      false);
-        ShowTrackInfoChkBox.Checked = xmlreader.GetValueAsBool("musicvisualization", "showTrackInfo", true);
-        EnableStatusOverlaysChkBox_CheckedChanged(null, null);
-
-        #endregion
-
         #region Playlist Settings
+
         string playListFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
         playListFolder += @"\My Playlists";
         playlistFolderTextBox.Text = xmlreader.GetValueAsString("music", "playlists", playListFolder);
@@ -356,8 +290,10 @@ namespace MediaPortal.Configuration.Sections
             {
               Directory.CreateDirectory(playListFolder);
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
           }
+        }
         }
 
         repeatPlaylistCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "repeat", false);
@@ -371,9 +307,11 @@ namespace MediaPortal.Configuration.Sections
         String strSelectOption = xmlreader.GetValueAsString("musicfiles", "selectOption", "play");
         cmbSelectOption.Text = strSelectOption == "play" ? "Play" : "Queue";
         chkAddAllTracks.Checked = xmlreader.GetValueAsBool("musicfiles", "addall", true);
+
         #endregion
 
         #region Misc Settings
+
         string playNowJumpTo = xmlreader.GetValueAsString("music", "playnowjumpto", JumpToValue0);
 
         switch (playNowJumpTo)
@@ -411,7 +349,6 @@ namespace MediaPortal.Configuration.Sections
             break;
         }
 
-        ShowVizInNowPlayingChkBox.Checked = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", false);
         chkDisableSimilarTrackLookups.Checked = !(xmlreader.GetValueAsBool("musicmisc", "lookupSimilarTracks", true));
 
         string vuMeter = xmlreader.GetValueAsString("musicmisc", "vumeter", "none");
@@ -434,6 +371,7 @@ namespace MediaPortal.Configuration.Sections
             radioButtonVUNone.Checked = true;
             break;
         }
+
         #endregion
       }
     }
@@ -443,6 +381,7 @@ namespace MediaPortal.Configuration.Sections
       using (Settings xmlwriter = new MPSettings())
       {
         #region Player Settings
+
         xmlwriter.SetValue("audioplayer", "playerId", audioPlayerComboBox.SelectedIndex);
         xmlwriter.SetValue("audioplayer", "sounddevice", (soundDeviceComboBox.SelectedItem as SoundDeviceItem).Name);
         xmlwriter.SetValue("audioplayer", "sounddeviceid", (soundDeviceComboBox.SelectedItem as SoundDeviceItem).ID);
@@ -473,67 +412,8 @@ namespace MediaPortal.Configuration.Sections
 
         #endregion
 
-        #region Visualization Settings
-        if (IVizMgr != null && VisualizationsCmbBox.SelectedIndex > 0) // Something else than "None" selected
-        {
-          List<VisualizationInfo> vizPluginsInfo = IVizMgr.VisualizationPluginsInfo;
-          int selIndex = VisualizationsCmbBox.SelectedIndex;
-
-          if (selIndex < 0 || selIndex >= vizPluginsInfo.Count)
-          {
-            selIndex = 0;
-          }
-
-          xmlwriter.SetValue("musicvisualization", "name", vizPluginsInfo[selIndex].Name);
-          xmlwriter.SetValue("musicvisualization", "vizType",
-                             ((int)vizPluginsInfo[selIndex].VisualizationType).ToString());
-          xmlwriter.SetValue("musicvisualization", "path", vizPluginsInfo[selIndex].FilePath);
-          xmlwriter.SetValue("musicvisualization", "preset", vizPluginsInfo[selIndex].PresetIndex.ToString());
-          xmlwriter.SetValue("musicvisualization", "plgIndex", selIndex.ToString());
-          xmlwriter.SetValueAsBool("musicvisualization", "useOpenGL", ckUseOpenGL.Checked);
-          xmlwriter.SetValueAsBool("musicvisualization", "useCover", ckUseCover.Checked);
-          xmlwriter.SetValue("musicvisualization", "renderTiming", soniqueRenderTiming.Value.ToString());
-          xmlwriter.SetValue("musicvisualization", "fftSensitivity", winampFFTsensitivity.Value.ToString());
-          xmlwriter.SetValue("musicvisualization", "viewPort", comboViewPortSizes.SelectedIndex.ToString());
-          xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", true);
-        }
-        else if (VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None)
-        // This is the case, when we started Config without activating the Vis Tab
-        {
-          xmlwriter.SetValue("musicvisualization", "name", VizPluginInfo.Name);
-          xmlwriter.SetValue("musicvisualization", "vizType", ((int)VizPluginInfo.VisualizationType).ToString());
-          xmlwriter.SetValue("musicvisualization", "path", VizPluginInfo.FilePath);
-          xmlwriter.SetValue("musicvisualization", "preset", VizPluginInfo.PresetIndex.ToString());
-          xmlwriter.SetValue("musicvisualization", "plgIndex", VizPluginInfo.PlgIndex.ToString());
-          xmlwriter.SetValueAsBool("musicvisualization", "useOpenGL", ckUseOpenGL.Checked);
-          xmlwriter.SetValueAsBool("musicvisualization", "useCover", ckUseCover.Checked);
-          xmlwriter.SetValue("musicvisualization", "renderTiming", soniqueRenderTiming.Value.ToString());
-          xmlwriter.SetValue("musicvisualization", "fftSensitivity", winampFFTsensitivity.Value.ToString());
-          xmlwriter.SetValue("musicvisualization", "viewPort", comboViewPortSizes.SelectedIndex.ToString());
-          xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", true);
-        }
-        else
-        {
-          xmlwriter.SetValue("musicvisualization", "name", "");
-          xmlwriter.SetValue("musicvisualization", "vizType", 0);
-          xmlwriter.SetValue("musicvisualization", "path", "");
-          xmlwriter.SetValue("musicvisualization", "preset", "");
-          xmlwriter.SetValue("musicvisualization", "plgIndex", "");
-          xmlwriter.SetValueAsBool("musicvisualization", "useOpenGL", false);
-          xmlwriter.SetValueAsBool("musicvisualization", "useCover", false);
-          xmlwriter.SetValue("musicvisualization", "renderTiming", "");
-          xmlwriter.SetValue("musicvisualization", "fftSensitivity", "");
-          xmlwriter.SetValue("musicvisualization", "viewPort", "");
-          xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", false);
-        }
-
-        xmlwriter.SetValue("musicvisualization", "fps", VisualizationFpsNud.Value);
-
-        xmlwriter.SetValueAsBool("musicvisualization", "enableStatusOverlays", EnableStatusOverlaysChkBox.Checked);
-        xmlwriter.SetValueAsBool("musicvisualization", "showTrackInfo", ShowTrackInfoChkBox.Checked);
-        #endregion
-
         #region Playlist Settings
+
         xmlwriter.SetValue("music", "playlists", playlistFolderTextBox.Text);
         xmlwriter.SetValueAsBool("musicfiles", "repeat", repeatPlaylistCheckBox.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "autoshuffle", autoShuffleCheckBox.Checked);
@@ -545,9 +425,11 @@ namespace MediaPortal.Configuration.Sections
         //Play behaviour
         xmlwriter.SetValue("musicfiles", "selectOption", cmbSelectOption.Text.ToLowerInvariant());
         xmlwriter.SetValueAsBool("musicfiles", "addall", chkAddAllTracks.Checked);
+
         #endregion
 
         #region Misc Settings
+
         string playNowJumpTo = string.Empty;
 
         switch (PlayNowJumpToCmbBox.Text)
@@ -586,7 +468,6 @@ namespace MediaPortal.Configuration.Sections
         }
 
         xmlwriter.SetValue("music", "playnowjumpto", playNowJumpTo);
-        xmlwriter.SetValueAsBool("musicmisc", "showVisInNowPlaying", ShowVizInNowPlayingChkBox.Checked);
         xmlwriter.SetValueAsBool("musicmisc", "lookupSimilarTracks", !chkDisableSimilarTrackLookups.Checked);
 
         string vuMeter = VUMeterValue0;
@@ -604,14 +485,7 @@ namespace MediaPortal.Configuration.Sections
 
         #endregion
       }
-
-      // Make sure we shut down the viz engine
-      if (IVizMgr != null)
-      {
-        IVizMgr.Stop();
-        IVizMgr.ShutDown();
       }
-    }
 
     #endregion
 
@@ -654,37 +528,6 @@ namespace MediaPortal.Configuration.Sections
     }
 
     /// <summary>
-    /// A new Tab Page has been selected
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void MusicSettingsTabCtl_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      // If the user has selected the Vis Tab, then we need to see, if we have BASS Player active
-      if (MusicSettingsTabCtl.SelectedTab.Equals(VisualizationsTabPg))
-      {
-        if (audioPlayerComboBox.SelectedIndex < 3)
-        {
-          VisualizationsTabPg.Enabled = true;
-
-          if (!VisualizationsInitialized)
-          {
-            Application.DoEvents();
-
-            InitializeVizEngine();
-          }
-        }
-
-        else
-        {
-          VisualizationsTabPg.Enabled = false;
-          MessageBox.Show(this, "Visualization settings are only available with the BASS music player.",
-                          "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        }
-      }
-    }
-
-    /// <summary>
     /// A new Audio Device has been selected.
     /// We need to get the Sound devices supported by this device
     /// </summary>
@@ -696,7 +539,6 @@ namespace MediaPortal.Configuration.Sections
       bool useBassEngine = audioPlayerComboBox.SelectedIndex < 3;
       tabControlPlayerSettings.Enabled = useBassEngine;
       tabPagePlayerUpmixSettings.Enabled = useBassEngine;
-      groupBoxVizOptions.Enabled = useBassEngine;
 
       switch (audioPlayerComboBox.SelectedIndex)
       {
@@ -780,8 +622,8 @@ namespace MediaPortal.Configuration.Sections
     {
       switch (player)
       {
-        case (int)AudioPlayer.Bass:
-        case (int)AudioPlayer.DShow:
+        case (int) AudioPlayer.Bass:
+        case (int) AudioPlayer.DShow:
 
           // Get all available devices and add them to the combo box
           BASS_DEVICEINFO[] soundDevices = Bass.BASS_GetDeviceInfos();
@@ -804,7 +646,7 @@ namespace MediaPortal.Configuration.Sections
 
           break;
 
-        case (int)AudioPlayer.Asio:
+        case (int) AudioPlayer.Asio:
 
           // Get all available ASIO devices and add them to the combo box
           BASS_ASIO_DEVICEINFO[] asioDevices = BassAsio.BASS_ASIO_GetDeviceInfos();
@@ -826,7 +668,7 @@ namespace MediaPortal.Configuration.Sections
 
           break;
 
-        case (int)AudioPlayer.WasApi:
+        case (int) AudioPlayer.WasApi:
           // Get all available ASIO devices and add them to the combo box
           BASS_WASAPI_DEVICEINFO[] wasapiDevices = BassWasapi.BASS_WASAPI_GetDeviceInfos();
           if (wasapiDevices.Length == 0)
@@ -989,107 +831,20 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void hScrollBarBalance_ValueChanged(object sender, EventArgs e)
     {
-      double balance = (double)hScrollBarBalance.Value / 100.0;
+      double balance = (double) hScrollBarBalance.Value/100.0;
       lbBalance.Text = String.Format("{0}", balance);
     }
 
     private void trackBarCrossfade_Scroll(object sender, EventArgs e)
     {
-      float xFadeSecs = (float)trackBarCrossfade.Value / 1000f;
+      float xFadeSecs = (float) trackBarCrossfade.Value/1000f;
       CrossFadeSecondsLbl.Text = string.Format("{0:f2} Seconds", xFadeSecs);
     }
 
     private void trackBarBuffering_Scroll(object sender, EventArgs e)
     {
-      float bufferingSecs = (float)trackBarBuffering.Value / 1000f;
+      float bufferingSecs = (float) trackBarBuffering.Value/1000f;
       BufferingSecondsLbl.Text = string.Format("{0:f2} Seconds", bufferingSecs);
-    }
-
-    private void soniqueRenderTiming_Scroll(object sender, EventArgs e)
-    {
-      soniqueRenderTimingLbl.Text = string.Format("{0} ms", soniqueRenderTiming.Value);
-    }
-
-    private void VisualizationsCmbBox_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      int selIndex = VisualizationsCmbBox.SelectedIndex;
-
-      if (VisualizationsCmbBox.Items.Count <= 1 || selIndex < 0)
-      {
-        return;
-      }
-
-      if (IVizMgr == null)
-      {
-        return;
-      }
-
-      VizPluginInfo = (VisualizationInfo)VisualizationsCmbBox.SelectedItem;
-
-      if (VizPluginInfo == null || VizPluginInfo.IsDummyPlugin)
-      {
-        return;
-      }
-
-      VizPresetsCmbBox.Items.Clear();
-
-      if (VizPluginInfo.VisualizationType == VisualizationInfo.PluginType.Winamp)
-      {
-        groupBoxWinampVis.Visible = true;
-        groupBoxSoniqueVis.Visible = false;
-      }
-      else if (VizPluginInfo.VisualizationType == VisualizationInfo.PluginType.Sonique)
-      {
-        groupBoxWinampVis.Visible = false;
-        groupBoxSoniqueVis.Visible = true;
-        groupBoxSoniqueVis.Show();
-      }
-      else
-      {
-        groupBoxWinampVis.Visible = false;
-        groupBoxSoniqueVis.Visible = false;
-      }
-
-      if (VizPluginInfo.HasPresets)
-      {
-        VizPresetsCmbBox.Items.AddRange(VizPluginInfo.PresetNames.ToArray());
-        VizPresetsCmbBox.SelectedIndex = VizPluginInfo.PresetIndex;
-        VizPresetsCmbBox.Enabled = VizPresetsCmbBox.Items.Count > 1;
-      }
-      else
-      {
-        VizPresetsCmbBox.Enabled = false;
-      }
-    }
-
-    private void VizPresetsCmbBox_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      if (VizPluginInfo == null)
-      {
-        return;
-      }
-
-      if (VizPresetsCmbBox.SelectedIndex == -1)
-      {
-        return;
-      }
-
-      int selIndex = VizPresetsCmbBox.SelectedIndex;
-
-      if (selIndex < 0 || selIndex >= VizPluginInfo.PresetCount)
-      {
-        selIndex = 0;
-      }
-
-      VizPluginInfo.PresetIndex = selIndex;
-    }
-
-    private void VisualizationFpsNud_ValueChanged(object sender, EventArgs e)
-    {
-      if (IVizMgr != null)
-      {
-        IVizMgr.TargetFPS = (int)VisualizationFpsNud.Value;
-      }
     }
 
     private void GaplessPlaybackChkBox_CheckedChanged(object sender, EventArgs e)
@@ -1098,7 +853,7 @@ namespace MediaPortal.Configuration.Sections
       CrossFadingLbl.Enabled = !gaplessEnabled;
       trackBarCrossfade.Enabled = !gaplessEnabled;
       CrossFadeSecondsLbl.Enabled = !gaplessEnabled;
-      
+
       if (_initialising)
       {
         _initialising = false;
@@ -1119,100 +874,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void EnableStatusOverlaysChkBox_CheckedChanged(object sender, EventArgs e)
-    {
-      ShowTrackInfoChkBox.Enabled = EnableStatusOverlaysChkBox.Checked;
-    }
-
-    private void InitializeVizEngine()
-    {
-      //System.Diagnostics.Debugger.Launch();
-      Cursor.Current = Cursors.WaitCursor;
-
-      BassAudioEngine bassEngine = BassMusicPlayer.Player;
-
-      IVizMgr = bassEngine.IVizManager;
-      List<VisualizationInfo> vizPluginsInfo = null;
-
-      if (IVizMgr != null)
-      {
-        vizPluginsInfo = IVizMgr.VisualizationPluginsInfo;
-      }
-
-      LoadVisualizationList(vizPluginsInfo);
-    }
-
-    private void LoadVisualizationList(List<VisualizationInfo> vizPluginsInfo)
-    {
-      // If we're already populated the list we don't need to do it again so bail out
-      if (VisualizationsInitialized)
-      {
-        return;
-      }
-
-      if (InvokeRequired)
-      {
-        LoadVisualizationListDelegate d = new LoadVisualizationListDelegate(LoadVisualizationList);
-        Invoke(d, vizPluginsInfo);
-        return;
-      }
-
-      VisualizationsCmbBox.Items.Clear();
-
-      if (IVizMgr == null || vizPluginsInfo.Count == 0)
-      {
-        VisualizationsCmbBox.Items.Add(new VisualizationInfo("None", true));
-        VisualizationsCmbBox.SelectedIndex = 0;
-        return;
-      }
-
-      VisualizationsInitialized = true;
-      int selectedIndex = -1;
-
-      for (int i = 0; i < vizPluginsInfo.Count; i++)
-      {
-        VisualizationInfo pluginInfo = vizPluginsInfo[i];
-
-        if (pluginInfo.IsIdenticalTo(VizPluginInfo))
-        {
-          selectedIndex = i;
-          pluginInfo.PresetIndex = VizPluginInfo.PresetIndex;
-        }
-
-        VisualizationsCmbBox.Items.Add(pluginInfo);
-      }
-
-      if (selectedIndex == -1 && VisualizationsCmbBox.Items.Count > 0)
-      {
-        selectedIndex = 0;
-      }
-      VisualizationsCmbBox.SelectedIndex = selectedIndex;
-    }
-
-    private void btWinampConfig_Click(object sender, EventArgs e)
-    {
-      if (_visParam != null)
-      {
-        // Free first the previous winamp plugin
-        BassVis.BASSVIS_Quit(_visParam);
-      }
-      _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_WINAMP);
-      BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_WINAMP, MediaPortal.GUI.Library.GUIGraphicsContext.form.Handle);
-      int tmpVis = BassVis.BASSVIS_GetModuleHandle(BASSVISKind.BASSVISKIND_WINAMP, VizPluginInfo.FilePath);
-      if (tmpVis != 0)
-      {
-        int numModules = BassVis.BASSVIS_GetModulePresetCount(_visParam, VizPluginInfo.FilePath);
-        BassVis.BASSVIS_Config(_visParam, 0);
-      }
-    }
-
     #endregion
-
-    private void winampFFTsensitivity_Scroll(object sender, EventArgs e)
-    {
-      winampFFTsensitivityLbl.Text = string.Format("{0} ", winampFFTsensitivity.Value * 32);
-    }
-  }
 
   /// <summary>
   /// Class used to display the Sound Device Information in the Combo Box 
@@ -1233,5 +895,6 @@ namespace MediaPortal.Configuration.Sections
       // Generates the text shown in the combo box
       return Name;
     }
+  }
   }
 }
