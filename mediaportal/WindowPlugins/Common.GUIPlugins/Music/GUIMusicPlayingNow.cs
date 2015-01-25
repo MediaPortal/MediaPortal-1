@@ -1103,8 +1103,6 @@ namespace MediaPortal.GUI.Music
     {
       if (!_lookupSimilarTracks) return;
 
-      lstSimilarTracks.Clear();
-
       var worker = new BackgroundWorker();
       worker.DoWork += (obj, e) => UpdateSimilarTrackWorker(filename, CurrentTrackTag);
       worker.RunWorkerAsync();      
@@ -1113,6 +1111,8 @@ namespace MediaPortal.GUI.Music
     private void UpdateSimilarTrackWorker(string filename, MusicTag tag)
     {
       if (tag == null) return;
+
+      lstSimilarTracks.Clear();
 
       List<LastFMSimilarTrack> tracks;
       try
@@ -1146,6 +1146,7 @@ namespace MediaPortal.GUI.Music
                        };
           item.AlbumInfoTag = song;
           item.MusicTag = t;
+
           GUIMusicBaseWindow.SetTrackLabels(ref item, MusicSort.SortMethod.Album);
           dbTracks.RemoveAt(trackNo); // remove song after adding to playlist to prevent the same sone being added twice
 
