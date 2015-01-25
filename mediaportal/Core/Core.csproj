@@ -213,10 +213,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\BassRegistration.dll</HintPath>
     </Reference>
-    <Reference Include="BassVisAPI.Net, Version=2.4.1.9, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\BassVisAPI.Net.dll</HintPath>
-    </Reference>
     <Reference Include="CSScriptLibrary">
       <HintPath>..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
     </Reference>
@@ -370,9 +366,6 @@
     <Compile Include="guilib\ViewHandler.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
     <Compile Include="MusicPlayer\BASS\MixerStream.cs" />
-    <Compile Include="MusicPlayer\BASS\StreamCopy.cs" />
-    <Compile Include="MusicPlayer\Visualization\BassboxViz.cs" />
-    <Compile Include="MusicPlayer\Visualization\WmpViz.cs" />
     <Compile Include="Player\BDOSDRenderer.cs" />
     <Compile Include="Player\BDPlayer.cs" />
     <Compile Include="Mixer\MasterVolumeHelper.cs" />
@@ -395,7 +388,6 @@
     <Compile Include="Player\RefreshRateChanger.cs" />
     <Compile Include="guilib\Tween.cs" />
     <Compile Include="MusicPlayer\DSP\DSPPluginInfo.cs" />
-    <Compile Include="MusicPlayer\Visualization\WinampViz.cs" />
     <Compile Include="Player\AudioSelector.cs" />
     <Compile Include="Player\FrameGrabber.cs" />
     <Compile Include="guilib\Animations.cs" />
@@ -419,18 +411,6 @@
     <Compile Include="MusicPlayer\DSP\VSTPluginParm.cs" />
     <Compile Include="Player\IAutoCrop.cs" />
     <Compile Include="MusicPlayer\BASS\BassAudioEngine.cs" />
-    <Compile Include="MusicPlayer\Visualization\IVisualization.cs" />
-    <Compile Include="MusicPlayer\Visualization\IVisualizationManager.cs" />
-    <Compile Include="MusicPlayer\Visualization\SoniqueViz.cs" />
-    <Compile Include="MusicPlayer\Visualization\VisualizationBase.cs" />
-    <Compile Include="MusicPlayer\Visualization\VisualizationInfo.cs" />
-    <Compile Include="MusicPlayer\Visualization\VisualizationManager.cs" />
-    <Compile Include="MusicPlayer\Visualization\VisualizationWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MusicPlayer\Visualization\VisualizationWindow.Designer.cs">
-      <DependentUpon>VisualizationWindow.cs</DependentUpon>
-    </Compile>
     <Compile Include="Player\CropSettings.cs" />
     <Compile Include="Player\DummyPlayer.cs" />
     <Compile Include="Player\DummyPlayerFactory.cs" />
@@ -1592,10 +1572,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Transcoding\Wmlib.cs" />
-    <EmbeddedResource Include="MusicPlayer\Visualization\VisualizationWindow.resx">
-      <DependentUpon>VisualizationWindow.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="UserInterfaceControls\MPForm.resx">
       <DependentUpon>MPForm.cs</DependentUpon>
       <SubType>Designer</SubType>

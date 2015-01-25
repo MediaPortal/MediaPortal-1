@@ -1338,6 +1338,7 @@ namespace MediaPortal.GUI.Music
     {
       VirtualDirectory _virtualDirectory = new VirtualDirectory();
       _virtualDirectory.AddExtension(".m3u");
+      _virtualDirectory.AddExtension(".m3u8");
       _virtualDirectory.AddExtension(".pls");
       _virtualDirectory.AddExtension(".b4s");
       _virtualDirectory.AddExtension(".wpl");

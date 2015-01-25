@@ -178,11 +178,6 @@ namespace MediaPortal.Dialogs
           }
         }
       }
-
-      if (BassMusicPlayer.Player != null && BassMusicPlayer.Player.VisualizationWindow != null)
-      {
-        BassMusicPlayer.Player.VisualizationWindow.Reinit();
-      }
     }
 
   }

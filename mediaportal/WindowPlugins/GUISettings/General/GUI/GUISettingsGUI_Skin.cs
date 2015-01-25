@@ -319,10 +319,6 @@ namespace WindowPlugins.GUISettings
           }
         }
       }
-      if (BassMusicPlayer.Player != null && BassMusicPlayer.Player.VisualizationWindow != null)
-      {
-        BassMusicPlayer.Player.VisualizationWindow.Reinit();
-      }
 
       // Send a message that the skin has changed.
       var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SKIN_CHANGED, 0, 0, 0, 0, 0, null);
