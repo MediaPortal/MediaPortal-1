@@ -2153,7 +2153,7 @@
     <String id="300020">High Quality</String>
     <String id="300021">LCDs, Plasmas</String>
     <String id="300022">High Quality Bicubic</String>
-    <String id="300023">Very large LCDs, Projectors</String>
+    <String id="300023">Large LCDs, Plasmas</String>
     <String id="300024">Music database scan finished.</String>
     <String id="300025">Set scan date in database</String>
     <String id="300026">Are you sure you want do delete pictures database?</String>
@@ -2226,6 +2226,7 @@
     <String id="300093">Restart MP on crash</String>
     <String id="300094">Restart delay in seconds</String>
     <String id="300095">Turn off monitor (when blanking screen)</String>
+	<String id="300096">UHD TVs, Projectors</String>
     <String id="300100">Show last active module on wake up</String>
     <String id="300102">Delay startup</String>
     <String id="300103">On MediaPortal startup</String>
