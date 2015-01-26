@@ -311,5 +311,6 @@
       <ondown>31</ondown>
       <visible>no</visible>
     </control>
+    <import>common.logos.xml</import>
   </controls>
 </window>
