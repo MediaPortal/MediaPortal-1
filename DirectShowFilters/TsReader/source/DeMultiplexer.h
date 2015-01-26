@@ -98,7 +98,7 @@ public:
   bool       GetAudioStream(__int32 &stream);
 
   void       GetAudioStreamInfo(int stream,char* szName);
-  void       GetAudioStreamType(int stream,CMediaType&  pmt, int iPosition);
+  bool       GetAudioStreamType(int stream,CMediaType&  pmt, int iPosition);
   bool       GetVideoStreamType(CMediaType &pmt);
   int        GetAudioStreamCount();
 

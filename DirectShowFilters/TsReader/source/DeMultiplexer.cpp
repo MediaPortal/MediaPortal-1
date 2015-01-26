@@ -298,7 +298,7 @@ int CDeMultiplexer::GetAudioStreamCount()
   return m_audioStreams.size();
 }
 
-void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPosition)
+bool CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPosition)
 {
   if (stream < 0 || stream >= m_audioStreams.size() || m_mpegPesParser == NULL )
   {
@@ -310,7 +310,7 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
     pmt.SetVariableSize();
     pmt.SetFormatType(&FORMAT_WaveFormatEx);
     pmt.SetFormat(MPEG2AudioFormat,sizeof(MPEG2AudioFormat));
-    return;
+    return false;
   }
 
   CAutoLock lock (&m_mpegPesParser->m_sectionAudioPmt);
@@ -394,6 +394,8 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
     wfe->nChannels = m_mpegPesParser->basicAudioInfo.channels;
     wfe->nSamplesPerSec = m_mpegPesParser->basicAudioInfo.sampleRate;
   }
+  
+  return m_mpegPesParser->basicAudioInfo.isValid;
 }
 
 // This methods selects the subtitle stream specified
@@ -2088,7 +2090,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
     }
     
     //packet contains rest of a pes packet
-    //does the entire data in this tspacket fit in the current buffer ?
+    //does the entire data in this tspacket fit in the current buffer ?    
     if (m_pCurrentAudioBuffer->Length()+(188-pos)>=MAX_BUFFER_SIZE)
     {
       //Discard this new/current PES packet due to overflow
@@ -2098,6 +2100,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
       LogDebug("PES audio buffer overflow error");
       return;
     }
+
     //copy the data into the current buffer
     if (pos>0 && pos < 188)
     {
@@ -3712,8 +3715,7 @@ bool CDeMultiplexer::VidPidGood(void)
 
 bool CDeMultiplexer::AudPidGood(void)
 {
-  if (m_mpegPesParser == NULL) return false;
-  return ((m_pids.audioPids.size() > 0) && m_mpegPesParser->basicAudioInfo.isValid);
+  return (m_pids.audioPids.size() > 0);
 }
 
 bool CDeMultiplexer::SubPidGood(void)

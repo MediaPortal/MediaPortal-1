@@ -142,7 +142,7 @@ HRESULT CVideoPin::GetMediaType(int iPosition, CMediaType *pmt)
 
   CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   
-  for (int i=0; i < 200; i++) //Wait up to 1 sec for pmt to be valid
+  for (int i=0; i < 400; i++) //Wait up to 2 sec for pmt to be valid
   {
     if (demux.PatParsed())
     {
@@ -162,6 +162,7 @@ HRESULT CVideoPin::GetMediaType(int iPosition, CMediaType *pmt)
   }
 
   //Return a null media type
+  LogDebug("vidPin:GetMediaType() - Timeout");
   pmt->InitMediaType();
   return S_OK;
 }
@@ -172,7 +173,7 @@ HRESULT CVideoPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
   CheckPointer(pAlloc, E_POINTER);
   CheckPointer(pRequest, E_POINTER);
 
-  pRequest->cBuffers = max(8, pRequest->cBuffers);
+  pRequest->cBuffers = max(VID_PIN_BUFFERS, pRequest->cBuffers);
   pRequest->cbBuffer = max(2097152, (ULONG)pRequest->cbBuffer);
 
   ALLOCATOR_PROPERTIES Actual;

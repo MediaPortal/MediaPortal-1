@@ -168,13 +168,7 @@ HRESULT CSubtitlePin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTI
   CheckPointer(pAlloc, E_POINTER);
   CheckPointer(pRequest, E_POINTER);
 
-//  if (pRequest->cBuffers == 0)
-//  {
-//      pRequest->cBuffers = 30;
-//  }
-//  pRequest->cbBuffer = MAX_BUFFER_SIZE;
-
-  pRequest->cBuffers = max(30, pRequest->cBuffers);
+  pRequest->cBuffers = max(SUB_PIN_BUFFERS, pRequest->cBuffers);
   pRequest->cbBuffer = max(MAX_BUFFER_SIZE, (ULONG)pRequest->cbBuffer);
 
   ALLOCATOR_PROPERTIES Actual;

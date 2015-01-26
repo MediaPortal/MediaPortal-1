@@ -52,13 +52,16 @@
 #define VIDEO_STALL_POINT 2.5f     // in seconds
 
 //Vid/Aud/Sub buffer sizes and limits
-#define MAX_AUD_BUF_SIZE 1024
+#define MAX_AUD_BUF_SIZE 640
 #define MAX_VID_BUF_SIZE 640
 #define MAX_SUB_BUF_SIZE 640
 #define AUD_BUF_SIZE_LOG_LIM (MAX_AUD_BUF_SIZE-100)
 #define VID_BUF_SIZE_LOG_LIM (MAX_VID_BUF_SIZE-60)
 #define AUD_BUF_SIZE_PREFETCH_LIM (MAX_AUD_BUF_SIZE - 50)
 #define VID_BUF_SIZE_PREFETCH_LIM (MAX_VID_BUF_SIZE - 30)
+#define AUD_PIN_BUFFERS 16
+#define VID_PIN_BUFFERS 8
+#define SUB_PIN_BUFFERS 16
 
 //File read prefetch 'looping retry' timeout limit (in ms)
 #define MAX_PREFETCH_LOOP_TIME 5000
