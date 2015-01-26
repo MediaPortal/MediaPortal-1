@@ -703,7 +703,143 @@ namespace MediaPortal.Player
         }
       }
     }
-    
+
+    public static void UpdateMediaInfoProperties()
+    {
+      int currAudio = g_Player.CurrentAudioStream;
+      if (currAudio < 0)
+      {
+        return;
+      }
+
+      VideoStreamFormat videoFormat = g_Player.GetVideoFormat();
+
+      if (videoFormat.IsValid && (g_Player.IsTimeShifting || g_Player.IsTVRecording))
+      {
+        GUIPropertyManager.SetProperty("#Play.Current.VideoCodec.Texture", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Current.VideoResolution", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Current.AudioCodec.Texture", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Current.AudioChannels", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Current.AspectRatio", string.Empty);
+
+        if (g_Player.SubtitleStreams > 0 || g_Player.SupportsCC)
+        {
+          GUIPropertyManager.SetProperty("#Play.Current.HasSubtitles", "True");
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#Play.Current.HasSubtitles", "False");
+        }
+
+        string videoResolution;
+
+        GUIPropertyManager.SetProperty("#Play.Current.VideoCodec.Texture", videoFormat.streamType.ToString());
+
+        if (videoFormat.width >= 1280 || videoFormat.height >= 720)
+        {
+          videoResolution = "HD";
+        }
+        else
+        {
+          videoResolution = "SD";
+        }
+
+        if (videoResolution == "HD")
+        {
+          if ((videoFormat.width >= 7680 || videoFormat.height >= 4320) && !videoFormat.isInterlaced)
+          {
+            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\4320P.png")) ||
+              File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\4320P.png")))
+            {
+              videoResolution = "4320P";
+            }
+          }
+          else if ((videoFormat.width >= 3840 || videoFormat.height >= 2160) && !videoFormat.isInterlaced)
+          {
+            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\2160P.png")) ||
+             File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\2160P.png")))
+            {
+              videoResolution = "2160P";
+            }
+          }
+          else if ((videoFormat.width >= 1920 || videoFormat.height >= 1080) && videoFormat.isInterlaced)
+          {
+            videoResolution = "1080I";
+          }
+          else if ((videoFormat.width >= 1920 || videoFormat.height >= 1080) && !videoFormat.isInterlaced)
+          {
+            videoResolution = "1080P";
+          }
+          else if ((videoFormat.width >= 1280 || videoFormat.height >= 720) && !videoFormat.isInterlaced)
+          {
+            videoResolution = "720P";
+          }
+        }
+        else
+        {
+          if (videoFormat.height >= 576)
+          {
+            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\576.png")) ||
+              File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\576.png")))
+            {
+              videoResolution = "576";
+            }
+          }
+          else if (videoFormat.height >= 480)
+          {
+            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\480.png")) ||
+              File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\480.png")))
+            {
+              videoResolution = "480";
+            }
+          }
+        }
+
+        GUIPropertyManager.SetProperty("#Play.Current.VideoResolution", videoResolution);
+
+        string AudioCodec = string.Empty;
+        string streamType = g_Player.AudioType(currAudio);
+
+        switch (streamType)
+        {
+          case "AC3":
+          case "AC3plus": // just for the time being use the same icon for AC3 & AC3plus
+            AudioCodec = "AC-3";
+            break;
+
+          case "Mpeg1":
+            AudioCodec = "MP1";
+            break;
+
+          case "Mpeg2":
+            AudioCodec = "MP2";
+            break;
+
+          case "AAC":
+            AudioCodec = "AAC";
+            break;
+
+          case "LATMAAC":
+            AudioCodec = "AAC";
+            break;
+        }
+        GUIPropertyManager.SetProperty("#Play.Current.AudioCodec.Texture", AudioCodec);
+
+        string aspectRatio;
+        double ar = (double)videoFormat.arX / (double)videoFormat.arY;
+
+        if (ar < 1.4)
+        {
+          aspectRatio = "fullscreen";
+        }
+        else
+        {
+          aspectRatio = "widescreen";
+        }
+        GUIPropertyManager.SetProperty("#Play.Current.AspectRatio", aspectRatio);
+      }
+    }
+
     public static bool IsBDDirectory(string path)
     {
       if (File.Exists(path + @"\BDMV\index.bdmv"))

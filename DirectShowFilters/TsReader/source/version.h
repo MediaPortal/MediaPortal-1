@@ -16,13 +16,13 @@
 
 
 // Version numbers (used for resource and log display)
-#define TSREADER_MAJOR_VERSION 3
+#define TSREADER_MAJOR_VERSION 4
 #define TSREADER_MID_VERSION 0
-#define TSREADER_VERSION 82
-#define TSREADER_POINT_VERSION 5
-#define TSREADER_VERSION_STR "3.0.82.5\0"
+#define TSREADER_VERSION 0
+#define TSREADER_POINT_VERSION 0
+#define TSREADER_VERSION_STR "4.0.0.0\0"
 
-#define MP_VERSION 1,7,100,0
-#define MP_VERSION_STR "1.7.100.0\0"
+#define MP_VERSION 1,10,100,0
+#define MP_VERSION_STR "1.10.100.0\0"
 
 
