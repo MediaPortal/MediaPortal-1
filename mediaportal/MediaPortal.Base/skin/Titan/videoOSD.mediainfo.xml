@@ -6,7 +6,7 @@
       <description>Video resolution</description>
       <type>image</type>
       <id>0</id>
-			<posX>676</posX>
+			<posX>646</posX>
 			<posY>958</posY>
     	<width>99</width>
     	<height>65</height>
@@ -18,7 +18,7 @@
     	<description>Video codec</description>
       <type>image</type>
       <id>0</id>
-			<posX>766</posX>
+			<posX>736</posX>
 			<posY>958</posY>
     	<width>99</width>
     	<height>65</height>
@@ -30,7 +30,7 @@
       <description>AspectRatio</description>
       <type>image</type>
       <id>0</id>
-			<posX>856</posX>
+			<posX>826</posX>
 			<posY>958</posY>
     	<width>99</width>
     	<height>65</height>
@@ -42,7 +42,7 @@
         <description>Subtitles</description>
         <type>image</type>
         <id>0</id>
-			<posX>966</posX>
+			<posX>936</posX>
 			<posY>968</posY>
     	<width>49</width>
     	<height>45</height>
@@ -55,7 +55,7 @@
         <description>NoSubtitles</description>
         <type>image</type>
         <id>0</id>
-			<posX>966</posX>
+			<posX>936</posX>
 			<posY>968</posY>
     	<width>49</width>
     	<height>45</height>
@@ -69,7 +69,7 @@
       <description>Audio codec</description>
       <type>image</type>
       <id>0</id>
-			<posX>1036</posX>
+			<posX>1006</posX>
 			<posY>958</posY>
     	<width>99</width>
     	<height>65</height>
@@ -81,7 +81,7 @@
         <description>Teletext</description>
         <type>image</type>
         <id>0</id>
-			<posX>1166</posX>
+			<posX>1136</posX>
 			<posY>968</posY>
     	<width>62</width>
     	<height>45</height>
@@ -94,7 +94,7 @@
         <description>NoTeletext</description>
         <type>image</type>
         <id>0</id>
-			<posX>1166</posX>
+			<posX>1136</posX>
 			<posY>968</posY>
     	<width>62</width>
     	<height>45</height>

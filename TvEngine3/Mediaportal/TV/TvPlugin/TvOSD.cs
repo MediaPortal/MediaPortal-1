@@ -1887,6 +1887,13 @@ namespace Mediaportal.TV.TvPlugin
 
     private void UpdateProgressBar()
     {
+
+      if (g_Player.IsTimeShifting)
+      {
+        GUIPropertyManager.SetProperty("#Play.Current.TSBitRate",
+         ((float)MediaPortal.Player.g_Player.GetVideoFormat().bitrate / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture));
+      }
+
       if (!g_Player.IsTVRecording)
       {
         Program prog = GetChannel().CurrentProgram;
@@ -1943,9 +1950,6 @@ namespace Mediaportal.TV.TvPlugin
 
       else
       {
-        GUIPropertyManager.SetProperty("#Play.Current.TSBitRate",
-         ((float)MediaPortal.Player.g_Player.GetVideoFormat().bitrate / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture));
-        
         Recording rec = null;
         string startTime = "";
         string endTime = "";
