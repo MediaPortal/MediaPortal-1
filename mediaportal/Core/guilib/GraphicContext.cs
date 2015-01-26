@@ -915,6 +915,9 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static State CurrentState { get; set; }
 
+    // addendum to indicate that the system is powering off and not just rebooting
+    public static bool StoppingToPowerOff { get; set; }
+
     /// <summary>
     /// Get pointer to the applications form (needed by overlay windows)
     /// </summary>
