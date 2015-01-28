@@ -139,7 +139,6 @@ public:
 
 	// Pin-related constants
 	static const GUID m_guidPassThroughMediaMajor;
-	//static const GUID m_guidPassThroughMediaSubtype;
 
 	static const WCHAR m_szInput[];
 	static const WCHAR m_szPassThrough[];
@@ -183,6 +182,9 @@ private:
 
 	CCcDataProcessor m_proc;
 	CAtlArray<WORD> m_rgCCData;
+	
+  GUID m_guidPassThroughMediaSubtype;
+
 };
 
 inline CCcFilter* CLine21OutputPin::GetFilter() 

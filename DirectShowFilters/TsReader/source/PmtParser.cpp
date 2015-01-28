@@ -108,12 +108,13 @@ void CPmtParser::OnNewSection(CSection& section)
       elementary_PID = ((section.Data[pointer+1]&0x1F)<<8)+section.Data[pointer+2];
       ES_info_length = ((section.Data[pointer+3] & 0xF)<<8)+section.Data[pointer+4];
       //LogDebug("pmt: pid:%x type:%x",elementary_PID, stream_type);
-      if(stream_type==SERVICE_TYPE_VIDEO_MPEG1 
+      if ( stream_type==SERVICE_TYPE_VIDEO_MPEG1 
         || stream_type==SERVICE_TYPE_VIDEO_MPEG2
         || stream_type==SERVICE_TYPE_VIDEO_MPEG4
         || stream_type==SERVICE_TYPE_VIDEO_H264
-        || stream_type==SERVICE_TYPE_VIDEO_HEVC1
-        || stream_type==SERVICE_TYPE_VIDEO_HEVC2 )
+        // || stream_type==SERVICE_TYPE_VIDEO_HEVC1
+        // || stream_type==SERVICE_TYPE_VIDEO_HEVC2 
+        )
       {
         VideoPid pid;
         pid.Pid=elementary_PID;

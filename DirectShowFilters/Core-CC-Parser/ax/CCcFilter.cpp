@@ -6,7 +6,7 @@
 
 const GUID CCcFilter::m_guidPassThroughMediaMajor   = MEDIATYPE_Video;
 //const GUID CCcFilter::m_guidPassThroughMediaSubtype = MEDIASUBTYPE_MPEG2_VIDEO;
-//const GUID CCcFilter::m_guidPassThroughMediaSubtype = AVC1_SubType;
+//const GUID CCcFilter::m_guidPassThroughMediaSubtype = MPG4_SubType;   
 
 const WCHAR CCcFilter::m_szInput[]       = L"Input";
 const WCHAR CCcFilter::m_szPassThrough[] = L"Pass Through";
@@ -268,11 +268,20 @@ HRESULT CCcFilter::CheckInputType(const CMediaType *pmt)
 
     DisplayType(TEXT("CheckInputType"), pmt);
 
-    if( m_guidPassThroughMediaMajor != pmt->majortype /*|| 
-		( m_guidPassThroughMediaSubtype != pmt->subtype*/ && GUID_NULL != pmt->subtype )
-	  //)
-        return VFW_E_TYPE_NOT_ACCEPTED;
+    if( m_guidPassThroughMediaMajor != pmt->majortype || GUID_NULL == pmt->subtype)  
+	  {
+      m_guidPassThroughMediaSubtype = GUID_NULL;
+      return VFW_E_TYPE_NOT_ACCEPTED;
+    }
+    
+    //We can only process particular MPEG1/MPEG2/AVC1 stream formats
+    if (pmt->subtype != MEDIASUBTYPE_MPEG2_VIDEO && pmt->subtype != MPG4_SubType && pmt->subtype != MEDIASUBTYPE_MPEG1Payload)  
+	  {
+      m_guidPassThroughMediaSubtype = GUID_NULL;
+      return VFW_E_TYPE_NOT_ACCEPTED;
+    }
 
+    m_guidPassThroughMediaSubtype = pmt->subtype;
     return NOERROR;
 
 } // CheckInputType

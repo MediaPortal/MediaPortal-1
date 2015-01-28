@@ -362,8 +362,11 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 	{
   	if (!m_bIsStopping)
     {
-  	  HRESULT lastErr = HRESULT_FROM_WIN32(GetLastError());	  
-      LogDebug("FileReader::Read() read failed, Error = 0x%x, %ws, filename = %ws", lastErr, HresultToCString(lastErr), m_pFileName);
+  	  HRESULT lastErr = HRESULT_FROM_WIN32(GetLastError());	    	  
+  	  if (lastErr != 0x80090006) //Do not log "Invalid Signature" (2148073478) errors on SMB3 connections - these can be normal...
+  	  {
+        LogDebug("FileReader::Read() read failed, Error = 0x%x, %ws, filename = %ws", lastErr, HresultToCString(lastErr), m_pFileName);
+      }
     }
     *dwReadBytes = 0;
 		return E_FAIL;
