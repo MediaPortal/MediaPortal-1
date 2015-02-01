@@ -237,6 +237,12 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
     this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, version);
     FREE_MEM(version);
 
+    unsigned int buildVersion = 0;
+    if (SUCCEEDED(GetVersion(&buildVersion)))
+    {
+      this->logger->Log(LOGGER_INFO, L"%s: %s: Build: %u", MODULE_NAME, METHOD_CONSTRUCTOR_NAME, buildVersion);
+    }
+
     wchar_t *result = NULL;
 
 #if CONFIG_AVUTIL
