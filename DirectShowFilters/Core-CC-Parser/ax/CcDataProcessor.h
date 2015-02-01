@@ -20,7 +20,7 @@ public:
     STDMETHODIMP get_XformType( ICcParser_CCTYPE* piType );
     STDMETHODIMP put_XformType( ICcParser_CCTYPE piType );
 
-	void ProcessData( int cbData, const BYTE* pSrc, BYTE* pToTransform, CAtlArray<WORD>* pCCData );
+	void ProcessData( int cbData, const BYTE* pSrc, BYTE* pToTransform, CAtlArray<WORD>* pCCData, bool bIsSubtypeAVC1 );
 
 	//	CCcParser
 	virtual bool OnCc( int nType, int iField, CCWORD ccField );

@@ -101,7 +101,8 @@ public:
 // Implementation
 public:
 	void Reset();
-	virtual bool OnDataArrival( const BYTE* pData, UINT cbData );
+	virtual bool OnDataArrivalMPEG( const BYTE* pData, UINT cbData );
+	virtual bool OnDataArrivalAVC1( const BYTE* pData, UINT cbData );
 
 protected:
 	virtual bool OnCc( int nType, int iField, CCWORD ccField ) = 0;

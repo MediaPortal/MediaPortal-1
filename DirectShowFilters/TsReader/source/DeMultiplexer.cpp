@@ -36,7 +36,7 @@
 #include "subtitlePin.h"
 //#include "..\..\DVBSubtitle2\Source\IDVBSub.h"
 #include "mediaFormats.h"
-#include "h264nalu.h"
+//#include "h264nalu.h"
 #include <cassert>
 
 // For more details for memory leak detection see the alloctracing.h header
@@ -141,6 +141,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_prefetchLoopDelay = PF_LOOP_DELAY_MIN;
 
   m_mpegPesParser = new CMpegPesParser();
+  m_CCparser = new CCparse();
 
   m_pFileReadBuffer = NULL;
   m_pFileReadBuffer = new byte[READ_SIZE]; //~130ms of data @ 8Mbit/s
@@ -172,6 +173,8 @@ CDeMultiplexer::~CDeMultiplexer()
   delete m_pCurrentAudioBuffer;
   delete m_pCurrentSubtitleBuffer;
   delete m_mpegPesParser;
+  delete m_CCparser;
+
 
   m_subtitleStreams.clear();
   m_audioStreams.clear();
@@ -2435,6 +2438,14 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
       {
         m_fHasAccessUnitDelimiters = true;
       }
+
+//      if(*(p2->GetData()+4) == 0x06 && *(p2->GetData()+5) == 0x04) 
+//      {
+//        LogDebug("demux: p2 H264 SEI CC 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x", 
+//                                                                                      *(p2->GetData()+6), *(p2->GetData()+7), *(p2->GetData()+8), *(p2->GetData()+9), 
+//                                                                                      *(p2->GetData()+10), *(p2->GetData()+11), *(p2->GetData()+12), *(p2->GetData()+13),
+//                                                                                      *(p2->GetData()+14), *(p2->GetData()+15), *(p2->GetData()+16), *(p2->GetData()+17));
+//      }
         
       if(((*(p2->GetData()+4)&0x1f) == 0x09) || (!m_fHasAccessUnitDelimiters && m_isNewNALUTimestamp))
       {
@@ -2475,6 +2486,21 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
             //if (!iFrameScanner.SeenEnough())
             //  iFrameScanner.ProcessNALU(p2);
             LOG_OUTSAMPLES("Output p4 NALU Type: %d (%d), rtStart: %d", p4->GetAt(4)&0x1f, p4->GetCount(), (int)p->rtStart);
+
+            //if(p4->GetAt(4) == 0x06 && p4->GetAt(5) == 0x04) //SEI with Closed Caption data
+            if(p4->GetAt(4) == 0x06) //SEI data
+            {
+              if (p4->GetAt(5) == 0x04) //Closed Caption data payload
+              {
+                //LogDebug("demux: p4 H264 SEI NALU 0x%x 0x%x",p4->GetAt(6), p4->GetAt(7));
+                LogDebug("demux: p4 H264 SEI CC 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x", 
+                                   p4->GetAt(6 ), p4->GetAt(7 ), p4->GetAt(8 ), p4->GetAt(9 ), 
+                                   p4->GetAt(10), p4->GetAt(11), p4->GetAt(12), p4->GetAt(13),
+                                   p4->GetAt(14), p4->GetAt(15), p4->GetAt(16), p4->GetAt(17));
+              }
+              
+              m_CCparser->sei_rbsp(p4->GetData()+5, p4->GetCount()-6);
+            }
             
             nalID = p4->GetAt(4);
             if ((((nalID & 0x9f) == 0x07) || ((nalID & 0x9f) == 0x08)) && ((nalID & 0x60) != 0)) //Process SPS & PPS data
@@ -2482,7 +2508,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
               Gop = m_mpegPesParser->OnTsPacket(p4->GetData(), p4->GetCount(), false, m_mpegParserReset);
               m_mpegParserReset = false;
             }
-                                        
+                                                   
             if (p->rtStart == Packet::INVALID_TIME)
             {
               p->rtStart = p4->rtStart;

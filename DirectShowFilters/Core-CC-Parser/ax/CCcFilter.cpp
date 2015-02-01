@@ -5,8 +5,6 @@
 #include "mediaformats.h"
 
 const GUID CCcFilter::m_guidPassThroughMediaMajor   = MEDIATYPE_Video;
-//const GUID CCcFilter::m_guidPassThroughMediaSubtype = MEDIASUBTYPE_MPEG2_VIDEO;
-//const GUID CCcFilter::m_guidPassThroughMediaSubtype = MPG4_SubType;   
 
 const WCHAR CCcFilter::m_szInput[]       = L"Input";
 const WCHAR CCcFilter::m_szPassThrough[] = L"Pass Through";
@@ -205,6 +203,9 @@ CCcFilter::CCcFilter(TCHAR *tszName, LPUNKNOWN punk, HRESULT *phr)
 
 	m_pInput  = &m_inpinInput;
 	m_pOutput = &m_outpinPassThrough;
+	
+	m_bIsSubtypeAVC1 = false;
+	m_guidPassThroughMediaSubtype = GUID_NULL;
 
 	m_proc.put_XformType( ICcParser_CCTYPE_ATSC_A53 ); //TODO: remove
 }
@@ -278,10 +279,13 @@ HRESULT CCcFilter::CheckInputType(const CMediaType *pmt)
     if (pmt->subtype != MEDIASUBTYPE_MPEG2_VIDEO && pmt->subtype != MPG4_SubType && pmt->subtype != MEDIASUBTYPE_MPEG1Payload)  
 	  {
       m_guidPassThroughMediaSubtype = GUID_NULL;
+      m_bIsSubtypeAVC1 = false;
       return VFW_E_TYPE_NOT_ACCEPTED;
     }
-
+    
     m_guidPassThroughMediaSubtype = pmt->subtype;
+    m_bIsSubtypeAVC1 = (pmt->subtype == MPG4_SubType);
+    
     return NOERROR;
 
 } // CheckInputType
@@ -303,14 +307,14 @@ HRESULT CCcFilter::InitializeOutputSample( CBaseOutputPin* pPin, IMediaSample *p
 
 HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
 {
-    CAutoLock lock_it(m_pLock);
+  CAutoLock lock_it(m_pLock);
 
 	if( !m_pPassThroughQueue && !m_pLine21Queue )
 	    return NOERROR;
 
-    //  Check for other streams and pass them on
-    AM_SAMPLE2_PROPERTIES * const pProps = m_pInput->SampleProps();
-    if( pProps->dwStreamId != AM_STREAM_MEDIA ) 
+  //  Check for other streams and pass them on
+  AM_SAMPLE2_PROPERTIES * const pProps = m_pInput->SampleProps();
+  if( pProps->dwStreamId != AM_STREAM_MEDIA ) 
 	{
 		if( m_pPassThroughQueue )
 		{
@@ -325,7 +329,7 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
 		}
 
 		return S_OK;
-    }
+  }
 
 	int cbData = pSourceSample->GetActualDataLength();
 	const BYTE* pSourceData;
@@ -334,7 +338,7 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
 	m_rgCCData.SetCount(0);
 	if( !m_pPassThroughQueue )
 	{
-		m_proc.ProcessData( cbData, pSourceData, NULL, &m_rgCCData );
+		m_proc.ProcessData( cbData, pSourceData, NULL, &m_rgCCData, m_bIsSubtypeAVC1 );
 	}
 	else
 	{
@@ -347,7 +351,7 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
 		BYTE* pToTransform;
 		RETURN_FAILED( pifOutSample->GetPointer( &pToTransform ));
 
-		m_proc.ProcessData( cbData, pSourceData, pToTransform, &m_rgCCData );
+		m_proc.ProcessData( cbData, pSourceData, pToTransform, &m_rgCCData, m_bIsSubtypeAVC1 );
 
 		pifOutSample->AddRef();
 		m_pPassThroughQueue->Receive( pifOutSample );

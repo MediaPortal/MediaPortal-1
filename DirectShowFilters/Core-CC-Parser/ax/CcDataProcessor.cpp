@@ -160,17 +160,24 @@ STDMETHODIMP CCcDataProcessor::put_XformType( ICcParser_CCTYPE iTransformType )
 	return S_OK;
 }
 
-void CCcDataProcessor::ProcessData( int cbData, const BYTE* pSrc, BYTE* pToTransform, CAtlArray<WORD>* pCCData )
+void CCcDataProcessor::ProcessData( int cbData, const BYTE* pSrc, BYTE* pToTransform, CAtlArray<WORD>* pCCData, bool bIsSubtypeAVC1 )
 {
-    ASSERT( !m_pSrcData );
-    ASSERT( !m_pCCData );
+  ASSERT( !m_pSrcData );
+  ASSERT( !m_pCCData );
 	ASSERT( !m_pDataToTransform );
 
 	m_pSrcData = pSrc;
 	m_pCCData = pCCData;
 	m_pDataToTransform = pToTransform;
 
-	CCcParser::OnDataArrival( pSrc, cbData );
+	if (bIsSubtypeAVC1)
+	{
+		CCcParser::OnDataArrivalAVC1( pSrc, cbData );
+	}
+	else
+	{
+		CCcParser::OnDataArrivalMPEG( pSrc, cbData );
+	}
 	
 	m_pSrcData = NULL;
 	m_pCCData = NULL;

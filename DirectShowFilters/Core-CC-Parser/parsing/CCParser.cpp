@@ -185,7 +185,7 @@ inline bool RecognizePictureHeader( WORD& picture_coding_type, const BYTE* p, in
 	return false;
 }
 
-bool CCcParser::OnDataArrival( const BYTE* pData, UINT cbData )
+bool CCcParser::OnDataArrivalMPEG( const BYTE* pData, UINT cbData )
 {
 	const BYTE* pStop = pData + cbData;
 
@@ -247,6 +247,70 @@ bool CCcParser::OnDataArrival( const BYTE* pData, UINT cbData )
 
 	return true;
 }
+
+bool CCcParser::OnDataArrivalAVC1( const BYTE* pData, UINT cbData )
+{
+	const BYTE* pStop = pData + cbData;
+
+	ASSERT( 4 == sizeof(DWORD));
+	ASSERT( 2 == sizeof(WORD));
+
+	WORD picture_coding_type = typeNone;
+	WORD temporal_reference = 0;
+
+	for( const BYTE* p = pData; p < pStop - sizeof(DWORD); ++p )
+	{
+		if(( *reinterpret_cast<const UNALIGNED DWORD*>(p) & 0x00FFFFFF ) == 0x00010000 ) // 00000100 : start code prefix
+		{
+			switch( p[3])
+			{
+				case 0x00:   // picture_start_code
+				{
+					VERIFY( RecognizePictureHeader ( picture_coding_type, p ));
+					temporal_reference = MAKEWORD( p[5] & 0xC0, p[4] ) >> 6;
+				}
+				break;
+
+				case 0xb2:
+				{
+					if( picture_coding_type == typeNone )
+					{
+						// Sometimes pData starts a byte or so into the picture header.
+						//	That's the "start code prefix" is not recognized.
+						
+						for( int iRollBack = 1; iRollBack <= 4; iRollBack++ )
+							if( RecognizePictureHeader( picture_coding_type, pData, iRollBack ))
+								break; // for
+					}
+					
+					bool bPorI = ( picture_coding_type == typeP || picture_coding_type == typeI );
+					ASSERT( bPorI || picture_coding_type == typeB );
+					
+					p = OnUserData( bPorI, p + 4, pStop );
+					if( !p )
+						return false;
+
+					picture_coding_type = typeNone;
+				}
+				break;
+			}
+		}
+		else
+		{
+			enum{ cReportInterval = 1000 };
+			if( (p - pData) % cReportInterval == 0 )
+			{
+				if( !OnProgress( (p - pData) * 100 / cbData ))
+					return false;
+			}
+
+			continue;
+		}
+	}
+
+	return true;
+}
+
 
 const BYTE* CCcParser::OnUserData( bool bPorI, const BYTE* p, const BYTE* pStop )
 {

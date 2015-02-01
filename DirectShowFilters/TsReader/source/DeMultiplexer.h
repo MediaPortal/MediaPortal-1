@@ -40,6 +40,7 @@
 #include <dvdmedia.h>
 #include "MpegPesParser.h"
 #include "FrameHeaderParser.h"
+#include "CcParseH264.h"
 
 using namespace std;
 class CTsReaderFilter;
@@ -204,6 +205,7 @@ private:
   FileReader* m_reader;
   CPatParser m_patParser;
   CMpegPesParser *m_mpegPesParser;
+  CCparse *m_CCparser;
   CPidTable m_pids;
   vector<CBuffer*> m_vecSubtitleBuffers;
   vector<CBuffer*> m_vecVideoBuffers;

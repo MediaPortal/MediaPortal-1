@@ -184,6 +184,8 @@ private:
 	CAtlArray<WORD> m_rgCCData;
 	
   GUID m_guidPassThroughMediaSubtype;
+  
+  bool m_bIsSubtypeAVC1;
 
 };
 
