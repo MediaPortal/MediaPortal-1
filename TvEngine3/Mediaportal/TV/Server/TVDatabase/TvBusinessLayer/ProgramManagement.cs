@@ -1111,7 +1111,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IProgramRepository programRepository = new ProgramRepository())
       {
         DateTime now = DateTime.Now;
-        return programRepository.GetQuery<Program>(p => p.Title == programName && p.StartTime <= now.AddMinutes(preRecordInterval) && p.EndTime > now).ToList();
+        DateTime startTime = now.AddMinutes(preRecordInterval);
+        return programRepository.GetQuery<Program>(p => p.Title == programName && p.StartTime <= startTime && p.EndTime > now).ToList();
       }
     }
 
