@@ -10,12 +10,10 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
 {
   public class ScheduleBLL
   {
- 
-
-    private Schedule _entity;    
+    private Schedule _entity;
     public ScheduleBLL(Schedule entity)
-    {      
-      _entity = entity;      
+    {
+      _entity = entity;
     }
 
     public Schedule Entity
@@ -74,74 +72,51 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
       {
         return false;
       }
-      if (DateTime.Now > _entity.EndTime)
-      {
-        return true;
-      }
-      return false;
+      return DateTime.Now > _entity.EndTime;
     }
 
     /// <summary>
     /// Checks if the recording should record the specified tvprogram
     /// </summary>
     /// <param name="program">TVProgram to check</param>
+    /// <param name="filterCanceledRecordings">filterCanceledRecordings (true/false)
+    /// if <c>true</c> then we'll return false if recording has been canceled for this program
+    /// if <c>false</c> then we'll return true if recording has been not for this program</param>
     /// <returns>true if the specified tvprogram should be recorded</returns>
-    /// <returns>filterCanceledRecordings (true/false)
-    /// if true then  we'll return false if recording has been canceled for this program</returns>
-    /// if false then we'll return true if recording has been not for this program</returns>
     public bool IsRecordingProgram(Program program, bool filterCanceledRecordings)
     {
       if (program == null)
       {
         return false;
       }
+
       ScheduleRecordingType scheduleRecordingType = (ScheduleRecordingType)_entity.ScheduleType;
       switch (scheduleRecordingType)
       {
         case ScheduleRecordingType.Once:
+          if (program.StartTime == _entity.StartTime && program.EndTime == _entity.EndTime &&
+              program.IdChannel == _entity.IdChannel)
           {
-            if (program.StartTime == _entity.StartTime && program.EndTime == _entity.EndTime && program.IdChannel == _entity.IdChannel)
-            {
-              if (filterCanceledRecordings)
-              {
-                if (_entity.CanceledSchedules.Count > 0)
-                {
-                  return false;
-                }
-              }
-              return true;
-            }
+            return !filterCanceledRecordings || _entity.CanceledSchedules.Count <= 0;
           }
           break;
         case ScheduleRecordingType.EveryTimeOnEveryChannel:
           if (program.Title == _entity.ProgramName)
           {
-            if (filterCanceledRecordings && IsSerieIsCanceled(GetSchedStartTimeForProg(program), program.IdChannel))
-            {
-              return false;
-            }
-            return true;
+            return !filterCanceledRecordings || !IsSerieIsCanceled(GetSchedStartTimeForProg(program), program.IdChannel);
           }
           break;
         case ScheduleRecordingType.EveryTimeOnThisChannel:
           if (program.Title == _entity.ProgramName && program.IdChannel == _entity.IdChannel)
           {
-            if (filterCanceledRecordings && IsSerieIsCanceled(GetSchedStartTimeForProg(program), program.IdChannel))
-            {
-              return false;
-            }
-            return true;
+            return !filterCanceledRecordings || !IsSerieIsCanceled(GetSchedStartTimeForProg(program), program.IdChannel);
           }
           break;
         case ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
           if (program.Title == _entity.ProgramName && program.IdChannel == _entity.IdChannel &&
               _entity.StartTime.DayOfWeek == program.StartTime.DayOfWeek)
           {
-            if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime))
-            {
-              return false;
-            }
-            return true;
+            return !filterCanceledRecordings || !IsSerieIsCanceled(program.StartTime);
           }
           break;
         case ScheduleRecordingType.Daily:
@@ -151,30 +126,22 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
           }
           break;
         case ScheduleRecordingType.WorkingDays:
-          if (WeekEndTool.IsWorkingDay(program.StartTime.DayOfWeek))
+          if (WeekEndTool.IsWorkingDay(program.StartTime.DayOfWeek) && program.IdChannel == _entity.IdChannel)
           {
-            if (program.IdChannel == _entity.IdChannel)
-            {
-              return IsRecordingProgramWithinTimeRange(program, filterCanceledRecordings);
-            }
+            return IsRecordingProgramWithinTimeRange(program, filterCanceledRecordings);
           }
           break;
-
         case ScheduleRecordingType.Weekends:
-          if (WeekEndTool.IsWeekend(program.StartTime.DayOfWeek))
+          if (WeekEndTool.IsWeekend(program.StartTime.DayOfWeek) && program.IdChannel == _entity.IdChannel)
           {
-            if (program.IdChannel == _entity.IdChannel)
-            {
-              return IsRecordingProgramWithinTimeRange(program, filterCanceledRecordings);
-            }
+            return IsRecordingProgramWithinTimeRange(program, filterCanceledRecordings);
           }
           break;
 
         case ScheduleRecordingType.Weekly:
           if (program.IdChannel == _entity.IdChannel)
           {
-            return (_entity.StartTime.DayOfWeek == program.StartTime.DayOfWeek &&
-                    IsRecordingProgramWithinTimeRange(program, filterCanceledRecordings));
+            return (_entity.StartTime.DayOfWeek == program.StartTime.DayOfWeek && IsRecordingProgramWithinTimeRange(program, filterCanceledRecordings));
           }
           break;
       }
@@ -197,13 +164,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
       {
         return (prg.StartTime < schStart || prg.EndTime > schEnd);
       }
-      else
-      {
-        this.LogInfo(
-          "IsPartialRecording: program ({0} {1} - {2} is not (at least partially) included in the schedule {3:hh:mm} - {4:hh:mm}",
-          prg.Title, prg.StartTime, prg.EndTime, _entity.StartTime, _entity.EndTime);
-        return false;
-      }
+
+      this.LogInfo("IsPartialRecording: program ({0} {1} - {2} is not (at least partially) included in the schedule {3:hh:mm} - {4:hh:mm}", prg.Title, prg.StartTime, prg.EndTime, _entity.StartTime, _entity.EndTime);
+      return false;
     }
 
     /// <summary>
@@ -216,37 +179,23 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     {
       IList<TuningDetail> tuningList1 = _entity.Channel.TuningDetails;
       IList<TuningDetail> tuningList2 = schedule.Channel.TuningDetails;
-      foreach (TuningDetail tun1 in tuningList1)
-      {
-        foreach (TuningDetail tun2 in tuningList2)
-        {
-          if (tun1.Frequency == tun2.Frequency)
-          {
-            return true;
-          }
-        }
-      }
-      return false;
+      return (from tun1 in tuningList1 from tun2 in tuningList2 where tun1.Frequency == tun2.Frequency select tun1).Any();
     }
 
     public bool IsOverlapping(Schedule schedule)
     {
-      DateTime Start1 = _entity.StartTime.AddMinutes(-_entity.PreRecordInterval);
-      DateTime Start2 = schedule.StartTime.AddMinutes(-schedule.PreRecordInterval);
-      DateTime End1 = _entity.EndTime.AddMinutes(_entity.PostRecordInterval);
-      DateTime End2 = schedule.EndTime.AddMinutes(schedule.PostRecordInterval);
+      DateTime start1 = _entity.StartTime.AddMinutes(-_entity.PreRecordInterval);
+      DateTime start2 = schedule.StartTime.AddMinutes(-schedule.PreRecordInterval);
+      DateTime end1 = _entity.EndTime.AddMinutes(_entity.PostRecordInterval);
+      DateTime end2 = schedule.EndTime.AddMinutes(schedule.PostRecordInterval);
 
       // sch_1        s------------------------e
       // sch_2    ---------s-----------------------------
       // sch_2    s--------------------------------e
       // sch_2  ------------------e
-      if ((Start2 >= Start1 && Start2 < End1) ||
-          (Start2 <= Start1 && End2 >= End1) ||
-          (End2 > Start1 && End2 <= End1))
-      {
-        return true;
-      }
-      return false;
+      return (start2 >= start1 && start2 < end1) ||
+             (start2 <= start1 && end2 >= end1) ||
+             (end2 > start1 && end2 <= end1);
     }
 
     public bool IsSerieIsCanceled(DateTime startTimeParam)
@@ -277,11 +226,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     {
       DateTime dtSchedStart;
       DateTime dtSchedEnd;
-      if (GetAdjustedScheduleTimeRange(prog, out dtSchedStart, out dtSchedEnd))
-      {
-        return dtSchedStart;
-      }
-      return prog.StartTime;
+      return GetAdjustedScheduleTimeRange(prog, out dtSchedStart, out dtSchedEnd) ? dtSchedStart : prog.StartTime;
     }
 
     /// <summary>
@@ -294,8 +239,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     /// <returns>True if a suitable adjustment was found</returns>
     private bool GetAdjustedScheduleTimeRange(Program program, out DateTime scheduleStart, out DateTime scheduleEnd)
     {
-      scheduleStart = new DateTime(program.StartTime.Year, program.StartTime.Month, program.StartTime.Day,
-                                   _entity.StartTime.Hour, _entity.StartTime.Minute, 0).AddDays(-1);
+      scheduleStart = new DateTime(program.StartTime.Year, program.StartTime.Month, program.StartTime.Day, _entity.StartTime.Hour, _entity.StartTime.Minute, 0).AddDays(-1);
       scheduleEnd = scheduleStart.Add(_entity.EndTime.Subtract(_entity.StartTime));
 
       // Try to find on which day schedule should start in order to overlap the program
@@ -321,13 +265,13 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
       }
       return true;
     }
+
     private bool IsRecordingProgramWithinTimeRange(Program program, bool filterCanceledRecordings)
     {
       DateTime scheduleStartTime;
       DateTime scheduleEndTime;
 
-      bool isProgramWithinStartEndTimes = GetAdjustedScheduleTimeRange(program, out scheduleStartTime,
-                                                                       out scheduleEndTime);
+      bool isProgramWithinStartEndTimes = GetAdjustedScheduleTimeRange(program, out scheduleStartTime, out scheduleEndTime);
       bool isSerieNotCanceled = false;
 
       if (isProgramWithinStartEndTimes)
@@ -335,6 +279,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
         isSerieNotCanceled = !(filterCanceledRecordings && IsSerieIsCanceled(scheduleStartTime));
       }
       return isSerieNotCanceled;
-    }   
+    }
   }
 }
