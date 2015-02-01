@@ -81,6 +81,13 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       return programAt.FirstOrDefault();
     }
 
+    public Program GetProgramAt(DateTime date, int idChannel, string title)
+    {
+      var programAt = GetQuery<Program>().Where(p => p.IdChannel == idChannel && p.Title == title && p.EndTime > date && p.StartTime <= date);
+      programAt = IncludeAllRelations(programAt).OrderBy(p => p.StartTime);
+      return programAt.FirstOrDefault();
+    }
+
     public Program GetProgramAt(DateTime date, string title)
     {
       var programAt = GetQuery<Program>().Where(p => p.Title == title && p.EndTime > date && p.StartTime <= date);

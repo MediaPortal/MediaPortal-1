@@ -297,6 +297,14 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
+    public static Program GetProgramAt(DateTime date, int idChannel, string title)
+    {
+      using (IProgramRepository programRepository = new ProgramRepository())
+      {
+        return programRepository.GetProgramAt(date, idChannel, title);
+      }
+    }
+
     public static Program GetProgramAt(DateTime date, string title)
     {
       using (IProgramRepository programRepository = new ProgramRepository())

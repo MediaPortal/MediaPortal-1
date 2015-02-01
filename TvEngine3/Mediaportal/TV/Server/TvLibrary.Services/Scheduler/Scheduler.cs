@@ -827,7 +827,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     private bool IsTimeToRecordEveryTimeOnThisChannel(Schedule schedule, DateTime currentTime)
     {
       bool isTimeToRecord = false;
-      Program current = ProgramManagement.GetProgramAt(currentTime.AddMinutes(schedule.PreRecordInterval), schedule.ProgramName);
+      Program current = ProgramManagement.GetProgramAt(currentTime.AddMinutes(schedule.PreRecordInterval), schedule.IdChannel, schedule.ProgramName);
 
       if (current != null)
       {
