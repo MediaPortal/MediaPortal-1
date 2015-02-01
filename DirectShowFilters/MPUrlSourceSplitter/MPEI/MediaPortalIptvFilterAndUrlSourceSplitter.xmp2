@@ -1154,8 +1154,8 @@ public class Script
     <Version>
       <Major>2</Major>
       <Minor>1</Minor>
-      <Build>6</Build>
-      <Revision>5489</Revision>
+      <Build>7</Build>
+      <Revision>5510</Revision>
     </Version>
     <ExtensionDescription>The MediaPortal IPTV filter and url source splitter is a directshow source filter that enables direct playback for many protocols and filetypes used in online video sources in the internet.
 
@@ -1167,9 +1167,7 @@ Supported protocols:
 - Adobe HTTP Dynamic Streaming (HDS, F4M manifest)
 - Microsoft Smooth Streaming
 - Apple HTTP live streaming (M3U8 playlists)</ExtensionDescription>
-    <VersionDescription>- fixed crash when filter is not correctly created
-- fixed incompatibility with TV service (causing crash)
-- implemented checking of IPTV compatibility of received stream</VersionDescription>
+    <VersionDescription>- fixed crash on fast forward</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=327&amp;cf_id=24</OnlineLocation>
     <ReleaseDate>2014-11-05T20:21:47</ReleaseDate>
