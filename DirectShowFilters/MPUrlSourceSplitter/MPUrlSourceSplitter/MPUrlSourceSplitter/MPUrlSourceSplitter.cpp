@@ -538,7 +538,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Run(REFERENCE_TIME tStart)
   HRESULT result = S_OK;
 
   // in IPTV case we open connection now in Run() method, because Load() method is intened to only parse and cache stream URL
-  // in splitter case is connection opened, if not, filter later crash
+  // in splitter case is connection opened, if not, filter queue end of stream
   if (SUCCEEDED(result) && this->IsIptv())
   {
     // reset all internal properties to default state, except flushing logger and configuration parameters
@@ -811,7 +811,7 @@ STDMETHODIMP CMPUrlSourceSplitter::GetAvailable(LONGLONG* pEarliest, LONGLONG* p
 
 STDMETHODIMP CMPUrlSourceSplitter::SetRate(double dRate)
 {
-  return E_NOTIMPL;
+  return (dRate != 1.0) ? VFW_E_UNSUPPORTED_AUDIO : S_OK;
 }
 
 STDMETHODIMP CMPUrlSourceSplitter::GetRate(double* pdRate)
@@ -933,7 +933,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Enable(long lIndex, DWORD dwFlags)
 
             CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot get IMediaControl interface, result: 0x%08X", MODULE_NAME, METHOD_ENABLE_NAME, result));
 
-            this->flags |= MP_URL_SOURCE_SPLITTER_FLAG_ENABLED_METHOD_ACTIVE;
+            this->flags |= MP_URL_SOURCE_SPLITTER_FLAG_ENABLE_METHOD_ACTIVE;
 
             if (SUCCEEDED(result))
             {
@@ -1054,7 +1054,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Enable(long lIndex, DWORD dwFlags)
 
             COM_SAFE_RELEASE(mediaControl);
 
-            this->flags &= ~MP_URL_SOURCE_SPLITTER_FLAG_ENABLED_METHOD_ACTIVE;
+            this->flags &= ~MP_URL_SOURCE_SPLITTER_FLAG_ENABLE_METHOD_ACTIVE;
           }
           else
           {
@@ -1873,7 +1873,18 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
 
         if (SUCCEEDED(result))
         {
-          lastDemuxerId = (++lastDemuxerId) % this->demuxers->Count();
+          if (this->demuxers->Count() != 0)
+          {
+            lastDemuxerId = (++lastDemuxerId) % this->demuxers->Count();
+          }
+          else
+          {
+            // queue end of stream packets to all output pins
+            for (unsigned int i = 0; i < this->outputPins->Count(); i++)
+            {
+              this->outputPins->GetItem(i)->QueueEndOfStream(S_OK);
+            }
+          }
 
           // set end of stream flag, if all output pins have queued end of stream packets
           this->flags |= (this->outputPins->Count() > 0) ? MP_URL_SOURCE_SPLITTER_FLAG_ALL_PINS_END_OF_STREAM : MP_URL_SOURCE_SPLITTER_FLAG_NONE;
@@ -2019,9 +2030,9 @@ bool CMPUrlSourceSplitter::IsDownloadCallbackCalled(void)
   return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOAD_CALLBACK_CALLED);
 }
 
-bool CMPUrlSourceSplitter::IsEnabledMethodActive(void)
+bool CMPUrlSourceSplitter::IsEnableMethodActive(void)
 {
-  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_ENABLED_METHOD_ACTIVE);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_ENABLE_METHOD_ACTIVE);
 }
 
 bool CMPUrlSourceSplitter::IsPlaybackStarted(void)
@@ -2047,7 +2058,7 @@ HRESULT CMPUrlSourceSplitter::GetNextPacket(COutputPinPacket *packet, unsigned i
 
     unsigned int inputDemuxerId = demuxerId;
 
-    while (true)
+    while (this->demuxers->Count() != 0)
     {
       CDemuxer *demuxer = this->demuxers->GetItem(demuxerId);
 
@@ -2811,7 +2822,7 @@ HRESULT CMPUrlSourceSplitter::StopInternal(bool withBaseStop)
   CAMThread::Close();
   this->DeliverEndFlush();
 
-  if (!this->IsEnabledMethodActive())
+  if (!this->IsEnableMethodActive())
   {
     // stop async loading
     this->DestroyLoadAsyncWorker();

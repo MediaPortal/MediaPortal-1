@@ -58,7 +58,7 @@ const GUID GUID_MP_URL_SOURCE_SPLITTER    = { 0x59ED045A, 0xA938, 0x4A09, 0xA8, 
 // specifies if filter called download callback
 #define MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOAD_CALLBACK_CALLED          (1 << (FLAGS_LAST + 5))
 // specifies that filter is in Enable() method - this method is for changing streams and there are called method which affects receiving data (Stop(), Run())
-#define MP_URL_SOURCE_SPLITTER_FLAG_ENABLED_METHOD_ACTIVE             (1 << (FLAGS_LAST + 6))
+#define MP_URL_SOURCE_SPLITTER_FLAG_ENABLE_METHOD_ACTIVE              (1 << (FLAGS_LAST + 6))
 // specifies that playback started and is not stopped
 #define MP_URL_SOURCE_SPLITTER_FLAG_PLAYBACK_STARTED                  (1 << (FLAGS_LAST + 7))
 // specifies that filter can report stream time to protocol
@@ -346,9 +346,9 @@ protected:
   // @return : true if filter called download callback, false otherwise
   bool IsDownloadCallbackCalled(void);
 
-  // tests if FLAG_MP_URL_SOURCE_SPLITTER_ENABLED_METHOD_ACTIVE flag is set
+  // tests if FLAG_MP_URL_SOURCE_SPLITTER_ENABLE_METHOD_ACTIVE flag is set
   // @return : true if flag is set, false otherwise
-  bool IsEnabledMethodActive(void);
+  bool IsEnableMethodActive(void);
 
   // tests if FLAG_MP_URL_SOURCE_SPLITTER_PLAYBACK_STARTED flag is set
   // @return : true if flag is set, false otherwise
