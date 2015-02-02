@@ -695,5 +695,55 @@
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
 
+	<control>
+		<description>RawResolution</description>
+		<type>label</type>
+		<id>21</id>
+		<posX>788</posX>
+		<posY>806</posY>
+		<textcolor>FF00b7ff</textcolor>
+		<label>Video Resolution</label>
+    <font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>Video Resolution value</description>
+		<type>label</type>
+		<id>5</id>
+		<posX>992</posX>
+		<posY>806</posY>
+		<label>#Play.Current.VideoFormat.RawResolution</label>
+    <font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description>TS BitRate</description>
+		<type>label</type>
+		<id>21</id>
+		<posX>1440</posX>
+		<posY>806</posY>
+		<textcolor>FF00b7ff</textcolor>
+		<label>Stream BitRate</label>
+    <font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>TS BitRate value</description>
+		<type>label</type>
+		<id>5</id>
+		<posX>1640</posX>
+		<posY>806</posY>
+		<label>#Play.Current.TSBitRate</label>
+    <font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
 </controls>
 </window>

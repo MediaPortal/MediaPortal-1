@@ -25,6 +25,7 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Hardware;
 using MediaPortal.Profile;
+using MediaPortal.Util;
 
 namespace MediaPortal.InputDevices
 {
@@ -165,9 +166,9 @@ namespace MediaPortal.InputDevices
     /// <returns>Command handled</returns>
     public bool WndProc(Message msg)
     {
-      if (controlEnabled && (msg.Msg == 0x0319))
+      if (controlEnabled && (msg.Msg == Win32.Const.WM_APPCOMMAND))
       {
-        int command = (msg.LParam.ToInt32() >> 16) & ~0xF000;
+        int command = Win32.Macro.GET_APPCOMMAND_LPARAM(msg.LParam);
         InputDevices.LastHidRequest = (AppCommands)command;
 
         RemoteButton button = RemoteButton.None;

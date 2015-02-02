@@ -362,6 +362,8 @@ namespace MediaPortal.GUI.Library
 
     public static int Render3DSubtitleDistance { get; set; }
 
+    public static bool StretchSubtitles { get; set; }
+
     public enum eFullHD3DFormat { None, SBS, TAB };
 
     /// <summary>
@@ -978,6 +980,9 @@ namespace MediaPortal.GUI.Library
     /// Get/Set application state (starting,running,stopping)
     /// </summary>
     public static State CurrentState { get; set; }
+
+    // addendum to indicate that the system is powering off and not just rebooting
+    public static bool StoppingToPowerOff { get; set; }
 
     /// <summary>
     /// Get pointer to the applications form (needed by overlay windows)
