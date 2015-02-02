@@ -344,6 +344,7 @@ namespace MediaPortal.TagReader
         case ".aac":
         case ".aiff":
         case ".ape":
+        case ".dsf":
         case ".flac":
         case ".mp3":
         case ".ogg":
