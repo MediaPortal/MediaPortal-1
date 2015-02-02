@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -112,64 +112,9 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="mplogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\mplogo.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="logo_PayPal" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\logo_paypal.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="blu-ray_regions" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\blu-ray_regions.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="icon_help" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\icon_help.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="remote_Centarea" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\remote.Centarea.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="icon_refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\icon_refresh.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="remote_Mce2004" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\remote.Mce2004.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="remote_MceVista" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\remote.MceVista.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="icon_folder" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\icon_folder.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="remote_Mce2005" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\remote.Mce2005TT.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="mepo_donation" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\mepo_donation.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="codec_screwdriver" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\codec_screwdriver.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="k60_media_keys" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\k60_media_keys.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="remote_FireDtv" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\remote.FireDtv.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="remote_MceHp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\remote_MceHp.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="wizard_background" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\wizard_background.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="splashscreen_configuration" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\splashscreen_configuration.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ms_wed_7000" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ms_wed_7000.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
 </root>
