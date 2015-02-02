@@ -2313,6 +2313,7 @@ namespace MediaPortal.GUI.Music
       playlistPlayer.CurrentPlaylistType = GetPlayListType();
       int iStartFrom = 0; // where should we start in playlist
       int resumeAt = 0;
+      bool playlistPresent = false;
 
       // clear the playlist if required
       if (clearPlaylist)
@@ -2330,27 +2331,13 @@ namespace MediaPortal.GUI.Music
         if (PlayListFactory.IsPlayList(pItem.FileName))
         {
           pl.Remove(pItem.FileName, false);
-          if (pl.Count > 0)
-          {
-            // Playlist already filled, just add song
-            LoadPlayList(pItem.FileName, false, false, false, false);
-          }
-          else
-          {
-            LoadPlayList(pItem.FileName, false, false, false, true);
-          }
+          playlistPresent = true;
+          LoadPlayList(pItem.FileName, false, false, false, pl.Count <= 0);
         }
         else
         {
           // actually add items to the playlist
-          if (pItem != pItems[pItems.Count - 1])
-          {
-            pl.Add(pItem, false);
-          }
-          else
-          {
-            pl.Add(pItem, true);
-          }
+          pl.Add(pItem, pItem == pItems[pItems.Count - 1]);
         }
       }
 
@@ -2397,7 +2384,15 @@ namespace MediaPortal.GUI.Music
           // we are adding multiple tracks to playlist so need to ensure
           // playback starts on selected item
           int iSelectedItem = facadeLayout.SelectedListItemIndex;
-          int numberOfFolders = facadeLayout.Count - pl.Count;
+          int numberOfFolders;
+          if (playlistPresent)
+          {
+            numberOfFolders = facadeLayout.Count - pItems.Count;
+          }
+          else
+          {
+            numberOfFolders = facadeLayout.Count - pl.Count;
+          }
           iSelectedItem = iSelectedItem - numberOfFolders;
           if (iSelectedItem > 0)
           {
