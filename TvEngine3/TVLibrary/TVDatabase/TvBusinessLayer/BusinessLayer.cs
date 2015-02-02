@@ -512,6 +512,7 @@ namespace TvDatabase
       //filesNotFound += FileNotExistsString("Gentle.config");
       filesNotFound += FileNotExistsString("Gentle.Framework.dll");
       filesNotFound += FileNotExistsString("Gentle.Provider.MySQL.dll");
+      filesNotFound += FileNotExistsString("Gentle.Provider.Sqlite.dll");
       filesNotFound += FileNotExistsString("Gentle.Provider.SQLServer.dll");
 
       if (!filesNotFound.Equals(""))
