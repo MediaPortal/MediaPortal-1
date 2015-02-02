@@ -1168,7 +1168,19 @@ namespace MediaPortal.Player
 
         if (GUIGraphicsContext.Render3DSubtitle)
         {
-          SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+            if (!GUIGraphicsContext.StretchSubtitles)
+                SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+            else
+            {
+                Rectangle dstRect = _destinationRect;
+
+                if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide || GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
+                    dstRect.Width *= 2;
+                else
+                    dstRect.Height *= 2;
+                
+                SubEngine.GetInstance().Render(_subsRect, dstRect);
+            }
         }
       }
       else if (((GUIGraphicsContext.Render3DModeHalf == GUIGraphicsContext.eRender3DModeHalf.SBSRight ||
@@ -1184,6 +1196,14 @@ namespace MediaPortal.Player
         {
           Rectangle subRect = _subsRect;
           Rectangle dstRect = _destinationRect;
+
+          if (GUIGraphicsContext.StretchSubtitles)
+          {
+              if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide || GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
+                dstRect.Width *= 2;
+              else
+                dstRect.Height *= 2;
+          }
 
           subRect.X += GUIGraphicsContext.Render3DSubtitleDistance;
           dstRect.X += GUIGraphicsContext.Render3DSubtitleDistance;

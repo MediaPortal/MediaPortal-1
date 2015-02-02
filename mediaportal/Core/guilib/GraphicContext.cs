@@ -298,6 +298,8 @@ namespace MediaPortal.GUI.Library
 
     public static int Render3DSubtitleDistance { get; set; }
 
+    public static bool StretchSubtitles { get; set; }
+
     public enum eFullHD3DFormat { None, SBS, TAB };
 
     /// <summary>
