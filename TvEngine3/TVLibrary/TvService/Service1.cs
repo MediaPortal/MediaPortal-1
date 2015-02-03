@@ -36,6 +36,7 @@ using System.Runtime.Remoting;
 using System.Xml;
 using MediaPortal.Common.Utils.Logger;
 using TvDatabase;
+using TvLibrary.Interfaces.Integration;
 using TvLibrary.Log;
 using TvControl;
 using TvEngine;
@@ -213,7 +214,7 @@ namespace TvService
         {
           RequestAdditionalTime(60000); // starting database can be slow so increase default timeout        
         }
-        TvServiceThread tvServiceThread = new TvServiceThread();
+        TvServiceThread tvServiceThread = new TvServiceThread(Application.ExecutablePath);
         ThreadStart tvServiceThreadStart = new ThreadStart(tvServiceThread.OnStart);
         _tvServiceThread = new Thread(tvServiceThreadStart);
 
@@ -374,10 +375,13 @@ namespace TvService
 
     #endregion
 
-    public TvServiceThread()
+    public TvServiceThread(string applicationPath)
     {
+      // Initialize hosting environment
+      IntegrationProviderHelper.Register();
+
       // set working dir from application.exe
-      string applicationPath = Application.ExecutablePath;
+      _applicationPath = applicationPath;
       applicationPath = System.IO.Path.GetFullPath(applicationPath);
       applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
       System.IO.Directory.SetCurrentDirectory(applicationPath);
@@ -443,6 +447,7 @@ namespace TvService
 
     private Thread _powerEventThread;
     private uint _powerEventThreadId;
+    private string _applicationPath;
 
     [StructLayout(LayoutKind.Sequential)]
     private struct MSG
