@@ -1,63 +1,76 @@
+/*
+ *  Copyright (C) 2015 Team MediaPortal
+ *  http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+ 
+//  Derived from 'CCExtractor' code, credits below:
+//  ===============================================
+//  ccextractor, 0.75
+//  -----------------
+//  Authors: Carlos Fernández (cfsmp3), Volker Quetschke.
+//  Maintainer: cfsmp3
+//  
+//  Lots of credit goes to other people, though:
+//  McPoodle (author of the original SCC_RIP), Neuron2, 
+//  and others (see source code).
+//  
+//  Home: http://www.ccextractor.org
+//  
+//  Google Summer of Code 2014 students
+//  - Willem van iseghem
+//  - Ruslan KuchumoV
+//  - Anshul Maheshwari
+//  -----------------------------------------------
 
-#ifndef __CCparse_H
-#define __CCparse_H
+#ifndef __CcParseH264_H
+#define __CcParseH264_H
 
 #include "StdAfx.h"
 
-#include <atlbase.h>
-#include <mmsystem.h>
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-//#include "lib_ccx.h"
-//#include "ccx_common_option.h"
-//#include "utility.h"
-//#include <math.h>
 
-// Functions to parse a AVC/H.264 data stream, see ISO/IEC 14496-10
+// Functions to parse an AVC/H.264 data stream to extract Closed Caption data, see ISO/IEC 14496-10
 
-class CCparse
+class CcParseH264
 {
 public :
  
-CCparse();
-virtual ~CCparse();
+CcParseH264();
+virtual ~CcParseH264();
 
-//void          sei_rbsp (unsigned char *seibuf, unsigned char *seiend);
-void          sei_rbsp (unsigned char *seibuf, int Length);
-//void          init_avc(void);
+void  sei_rbsp (unsigned char *seibuf, int Length);
+void  do_NAL (unsigned char *NALstart, int Length);
 
-protected :
+private :
 
-//#define ZEROBYTES_SHORTSTARTCODE 2
-//typedef unsigned int u32;
+int           ccblocks_in_avc_total=0;
+int           ccblocks_in_avc_lost=0;
+long          num_unexpected_sei_length=0;
+unsigned char           cc_count;
 
-int ccblocks_in_avc_total=0;
-int ccblocks_in_avc_lost=0;
-long num_unexpected_sei_length=0;
-
-unsigned  char cc_count;
 // buffer to hold cc data
 unsigned char *cc_data = NULL;
-long      cc_databufsize = 1024;
-int       cc_buffer_saved=1; // Was the CC buffer saved after it was last updated?
-
-//int       got_seq_para=0;
-//unsigned  nal_ref_idc;
-//LLONG     seq_parameter_set_id;
-//int       log2_max_frame_num=0;
-//int       pic_order_cnt_type;
-//int       log2_max_pic_order_cnt_lsb=0;
-//int       frame_mbs_only_flag;
-
-// Use and throw stats for debug, remove this uglyness soon
-//long num_nal_unit_type_7=0;
-//long num_vcl_hrd=0;
-//long num_nal_hrd=0;
-//long num_jump_in_frames=0;
-
-//double roundportable(double x) { return floor(x + 0.5); }
+long          cc_databufsize = 1024;
+int           cc_buffer_saved=1; // Was the CC buffer saved after it was last updated?
 
 // local functions
 unsigned char   *sei_message (unsigned char *seibuf, unsigned char *seiend);
@@ -66,9 +79,6 @@ void            copy_ccdata_to_buffer (char *source, int new_cc_count);
 int             EBSPtoRBSP(unsigned char *streamBuffer, int end_bytepos, int begin_bytepos);
 unsigned char   *remove_03emu(unsigned char *from, unsigned char *to);
 
-//u32           avc_remove_emulation_bytes(const unsigned char *buffer_src, unsigned char *buffer_dst, u32 nal_size) ;
-//void          seq_parameter_set_rbsp (unsigned char *seqbuf, unsigned char *seqend);
-//void          slice_header (struct lib_ccx_ctx *ctx, unsigned char *heabuf, unsigned char *heaend, int nal_unit_type, struct cc_subtitle *sub);
 };
 
 #endif

@@ -43,8 +43,8 @@
 #include "..\..\alloctracing.h"
 
 
-//Macro borrowed from MPC-HC/LAV splitter...
-#define MOVE_TO_H264_START_CODE(b, e) while(b <= e-4 && !((*(DWORD *)b == 0x01000000) || ((*(DWORD *)b & 0x00FFFFFF) == 0x00010000))) b++; if((b <= e-4) && *(DWORD *)b == 0x01000000) b++;
+//Macro derived from from MPC-HC/LAV splitter...
+#define MOVE_TO_H264_START_CODE(b, e, fb) fb=false; while(b <= e-4 && !((*(DWORD *)b == 0x01000000) || ((*(DWORD *)b & 0x00FFFFFF) == 0x00010000))) b++; if((b <= e-4) && *(DWORD *)b == 0x01000000) {b++; fb=true;}
 
 // uncomment the //LogDebug to enable extra logging
 #define LOG_SAMPLES //LogDebug
@@ -141,7 +141,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_prefetchLoopDelay = PF_LOOP_DELAY_MIN;
 
   m_mpegPesParser = new CMpegPesParser();
-  m_CCparser = new CCparse();
+  m_CcParserH264 = new CcParseH264();
 
   m_pFileReadBuffer = NULL;
   m_pFileReadBuffer = new byte[READ_SIZE]; //~130ms of data @ 8Mbit/s
@@ -173,7 +173,7 @@ CDeMultiplexer::~CDeMultiplexer()
   delete m_pCurrentAudioBuffer;
   delete m_pCurrentSubtitleBuffer;
   delete m_mpegPesParser;
-  delete m_CCparser;
+  delete m_CcParserH264;
 
 
   m_subtitleStreams.clear();
@@ -2362,8 +2362,9 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
   {
     BYTE* start = m_p->GetData();
     BYTE* end = start + m_p->GetCount();
+    bool fourByte;
 
-    MOVE_TO_H264_START_CODE(start, end);
+    MOVE_TO_H264_START_CODE(start, end, fourByte);
 
     while(start <= end-4)
     {
@@ -2373,7 +2374,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
         next = m_p->GetData() + m_lastStart;
       }
 
-      MOVE_TO_H264_START_CODE(next, end);
+      MOVE_TO_H264_START_CODE(next, end, fourByte);
 
       if(next >= end-4)
       {
@@ -2389,7 +2390,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
       
       //Copy complete NALU into p2 buffer
           
-      size -= 3; //Adjust to allow for start code
+      size -= (fourByte ? 4 : 3); //Adjust to allow for start code
       
       if ((size <= 0) || (size > 4194303)) //Sanity check
       {
@@ -2404,12 +2405,8 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
         LogDebug("DeMux: H264 NALU size out-of-bounds %d", size);
         return;
       }
-      
-      DWORD dwNalLength = 
-        ((size >> 24) & 0x000000ff) |
-        ((size >>  8) & 0x0000ff00) |
-        ((size <<  8) & 0x00ff0000) |
-        ((size << 24) & 0xff000000);
+              
+      DWORD dwNalLength = _byteswap_ulong(size);  //dwNalLength is big-endian format
 
       //LogDebug("DeMux: NALU size %d", size);
 
@@ -2464,12 +2461,8 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
           {
             //Add fake AUD....
             DWORD size = 2;
-            WORD data9 = 0xF009;
-            DWORD dwNalLength = 
-              ((size >> 24) & 0x000000ff) |
-              ((size >>  8) & 0x0000ff00) |
-              ((size <<  8) & 0x00ff0000) |
-              ((size << 24) & 0xff000000);
+            WORD data9 = 0xF009;            
+            DWORD dwNalLength = _byteswap_ulong(size);  //dwNalLength is big-endian format
               
             p->SetCount (size+sizeof(dwNalLength));
             
@@ -2493,14 +2486,17 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
               if (p4->GetAt(5) == 0x04) //Closed Caption data payload
               {
                 //LogDebug("demux: p4 H264 SEI NALU 0x%x 0x%x",p4->GetAt(6), p4->GetAt(7));
-                LogDebug("demux: p4 H264 SEI CC 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x", 
+                LogDebug("demux: p4 H264 SEI CC start - 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x - end 0x%x, 0x%x, 0x%x, 0x%x", 
                                    p4->GetAt(6 ), p4->GetAt(7 ), p4->GetAt(8 ), p4->GetAt(9 ), 
                                    p4->GetAt(10), p4->GetAt(11), p4->GetAt(12), p4->GetAt(13),
-                                   p4->GetAt(14), p4->GetAt(15), p4->GetAt(16), p4->GetAt(17));
+                                   p4->GetAt(14), p4->GetAt(15), p4->GetAt(16), p4->GetAt(17),
+                                   p4->GetAt(p4->GetCount()-4), p4->GetAt(p4->GetCount()-3), p4->GetAt(p4->GetCount()-2), p4->GetAt(p4->GetCount()-1)
+                                   );
               }
               
-              m_CCparser->sei_rbsp(p4->GetData()+5, p4->GetCount()-6);
+              // m_CcParserH264->sei_rbsp(p4->GetData()+5, p4->GetCount()-6);
             }
+            m_CcParserH264->do_NAL(p4->GetData()+4, p4->GetCount()-4);
             
             nalID = p4->GetAt(4);
             if ((((nalID & 0x9f) == 0x07) || ((nalID & 0x9f) == 0x08)) && ((nalID & 0x60) != 0)) //Process SPS & PPS data
