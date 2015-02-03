@@ -31,6 +31,7 @@ using System.Diagnostics;
 using MediaPortal.Common.Utils.Logger;
 using TvControl;
 using TvDatabase;
+using TvLibrary.Interfaces.Integration;
 using TvLibrary.Log;
 using TvLibrary.Interfaces;
 
@@ -101,6 +102,9 @@ namespace SetupTv
     [STAThread]
     public static void Main(string[] arguments)
     {
+      // Initialize hosting environment
+      IntegrationProviderHelper.Register();
+
       // Init Common logger -> this will enable TVPlugin to write in the Mediaportal.log file
       var loggerName = Path.GetFileNameWithoutExtension(Environment.GetCommandLineArgs()[0]);
       var dataPath = Log.GetPathName();

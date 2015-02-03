@@ -96,6 +96,7 @@
     <Compile Include="Logger\CommonLogLevel.cs" />
     <Compile Include="Logger\CommonLogType.cs" />
     <Compile Include="Logger\ICommonLogger.cs" />
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

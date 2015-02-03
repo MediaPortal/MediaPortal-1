@@ -25,6 +25,8 @@ using System.Xml;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using TvLibrary.Hardware;
+using TVLibrary.Implementations;
+using TvLibrary.Implementations.Analog;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Channels;
@@ -92,7 +94,7 @@ namespace TvLibrary.Implementations.DVB
     #region constants
 
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
-    private class MpTsAnalyzer {}
+    private class TsWriter { }
 
     [ComImport, Guid("BC650178-0DE4-47DF-AF50-BBD9C7AEF5A9")]
     private class CyberLinkMuxer {}
@@ -1722,8 +1724,8 @@ namespace TvLibrary.Implementations.DVB
       if (_filterTsWriter == null)
       {
         Log.Log.WriteFile("dvb:  Add Mediaportal TsWriter filter");
-        _filterTsWriter = (IBaseFilter)new MpTsAnalyzer();
-        int hr = _graphBuilder.AddFilter(_filterTsWriter, "MediaPortal Ts Analyzer");
+        _filterTsWriter = FilterLoader.LoadFilterFromDll("TsWriter.ax", typeof(TsWriter).GUID, true);
+        int hr = _graphBuilder.AddFilter(_filterTsWriter, "MediaPortal Ts Writer");
         if (hr != 0)
         {
           Log.Log.Error("dvb:  Add main Ts Analyzer returns:0x{0:X}", hr);

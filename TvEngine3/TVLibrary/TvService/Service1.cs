@@ -124,6 +124,9 @@ namespace TvService
     /// </summary>
     private static void Main(string[] args)
     {
+      // Initialize hosting environment
+      IntegrationProviderHelper.Register();
+
       // Init Common logger -> this will enable TVPlugin to write in the Mediaportal.log file
       var loggerName = Path.GetFileNameWithoutExtension(Environment.GetCommandLineArgs()[0]);
       var dataPath = Log.GetPathName();
