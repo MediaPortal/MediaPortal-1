@@ -698,10 +698,10 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                         title = title.Replace("\n", " ");
                         title = title.Replace("  ", " ");
 
-                        description = description.Replace("\r\n", " ");
-                        description = description.Replace("\n\r", " ");
-                        description = description.Replace("\r", " ");
-                        description = description.Replace("\n", " ");
+                        //description = description.Replace("\r\n", " ");
+                        //description = description.Replace("\n\r", " ");
+                        //description = description.Replace("\r", " ");
+                        //description = description.Replace("\n", " ");
                         description = description.Replace("  ", " ");
 
                         episodeName = episodeName.Replace("\r\n", " ");
