@@ -378,6 +378,16 @@ namespace TvService
 
     #endregion
 
+    public IController Controller
+    {
+      get { return _controller; }
+    }
+
+    public EventWaitHandle InitializedEvent
+    {
+      get { return _InitializedEvent; }
+    }
+
     public TvServiceThread(string applicationPath)
     {
       // Initialize hosting environment
