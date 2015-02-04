@@ -90,7 +90,7 @@ namespace TvService
                   foundInterfaces = t.FindInterfaces(myFilter2, "TvEngine.ITvServerPlugin");
                   if (foundInterfaces.Length > 0)
                   {
-                    if (!CompatibilityManager.IsPluginCompatible(t))
+                    if (!CompatibilityManager.IsPluginCompatible(t, true))
                     {
                       Log.WriteFile(
                         "PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!",
