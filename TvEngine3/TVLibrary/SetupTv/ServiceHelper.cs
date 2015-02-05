@@ -69,6 +69,7 @@ namespace SetupTv
     {
       get
       {
+        return true;
         try
         {
           using (ServiceController sc = new ServiceController("TvService"))
@@ -112,6 +113,7 @@ namespace SetupTv
     /// <returns>true if thTvService is initialized</returns>
     public static bool WaitInitialized(int millisecondsTimeout)
     {
+      return true;
       try
       {
         EventWaitHandle initialized = EventWaitHandle.OpenExisting(RemoteControl.InitializedEventName,
@@ -165,6 +167,7 @@ namespace SetupTv
     {
       get
       {
+        return false;
         try
         {
           using (ServiceController sc = new ServiceController("TvService"))
@@ -188,6 +191,7 @@ namespace SetupTv
     /// <returns></returns>
     public static bool Stop()
     {
+      return true;
       try
       {
         using (ServiceController sc = new ServiceController("TvService"))
@@ -223,6 +227,7 @@ namespace SetupTv
     /// <returns></returns>
     public static bool Start()
     {
+      return true;
       return Start("TvService");
     }
 
@@ -263,10 +268,10 @@ namespace SetupTv
     /// <returns>Always true</returns>
     public static bool Restart()
     {
-      if (!IsInstalled(@"TvService"))
-      {
-        return false;
-      }
+      //if (!IsInstalled(@"TvService"))
+      //{
+      //  return false;
+      //}
       Stop();
       return Start();
     }

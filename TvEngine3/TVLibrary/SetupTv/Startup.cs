@@ -103,7 +103,7 @@ namespace SetupTv
     public static void Main(string[] arguments)
     {
       // Initialize hosting environment
-      IntegrationProviderHelper.Register();
+      IntegrationProviderHelper.Register(PathManager.BuildAssemblyRelativePath("Integration"));
 
       // Init Common logger -> this will enable TVPlugin to write in the Mediaportal.log file
       var loggerName = Path.GetFileNameWithoutExtension(Environment.GetCommandLineArgs()[0]);
@@ -112,7 +112,7 @@ namespace SetupTv
 #if DEBUG
       if (loggerName != null) loggerName = loggerName.Replace(".vshost", "");
 #endif
-      CommonLogger.Instance = new CommonLog4NetLogger(loggerName, dataPath, loggerPath);
+      //CommonLogger.Instance = new CommonLog4NetLogger(loggerName, dataPath, loggerPath);
       
       
       Thread.CurrentThread.Name = "SetupTv";

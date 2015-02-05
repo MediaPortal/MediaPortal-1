@@ -33,7 +33,7 @@ namespace TvLibrary.Log
 
     public static string GetPathName()
     {
-      return GlobalServiceProvider.Instance.Get<IIntegrationProvider>().PathManager.GetPath("<LOG>");
+      return GlobalServiceProvider.Instance.Get<IIntegrationProvider>().PathManager.GetPath("<DATA>");
     }
 
     public static void Write(Exception ex)
