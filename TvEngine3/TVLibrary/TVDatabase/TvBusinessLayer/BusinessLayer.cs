@@ -1151,7 +1151,7 @@ namespace TvDatabase
     public string GetDateTimeString()
     {
       string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
-      if (provider == "mysql")
+      if (provider == "mysql" || provider == "sqlite")
       {
         return "yyyy-MM-dd HH:mm:ss";
       }
@@ -1161,7 +1161,7 @@ namespace TvDatabase
     public string EscapeSQLString(string original)
     {
       string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
-      if (provider == "mysql")
+      if (provider == "mysql" || provider == "sqlite")
       {
         return original.Replace("\\", "\\\\").Replace("'", "\\'");
       }
@@ -2048,6 +2048,7 @@ namespace TvDatabase
 
         switch (provider)
         {
+          case "sqlite":
           case "mysql":
             insertProgams = InsertProgramsMySql;
             break;
@@ -2183,10 +2184,12 @@ namespace TvDatabase
 
     private static void InsertProgramsMySql(ImportParams aImportParam)
     {
-      MySqlTransaction transact = null;
+      IDbTransaction transact = null;
       try
       {
-        using (MySqlConnection connection = new MySqlConnection(aImportParam.ConnectString))
+        var provider = ProviderFactory.GetDefaultProvider();
+        var connection = provider.GetConnection();
+        //using (MySqlConnection connection = new MySqlConnection(aImportParam.ConnectString))
         {
           DeleteProgramsDelegate deletePrograms = null;
 
@@ -2203,7 +2206,7 @@ namespace TvDatabase
                 () => ExecuteDeleteProgramsMySqlCommand(channelIds, connection, transact, aImportParam.SleepTime);
               break;
           }
-          connection.Open();
+          //connection.Open();
           transact = connection.BeginTransaction();
           if (deletePrograms != null)
           {
@@ -2285,25 +2288,24 @@ namespace TvDatabase
     #region SQL Builder
 
     private static void ExecuteDeleteProgramsMySqlCommand(IEnumerable<ProgramListPartition> deleteProgramRanges,
-                                                          MySqlConnection aConnection,
-                                                          MySqlTransaction aTransaction, int aDelay)
+                                                          IDbConnection aConnection,
+                                                          IDbTransaction aTransaction, int aDelay)
     {
       int aCounter = 0;
-      MySqlCommand sqlCmd = new MySqlCommand();
+      IDbCommand sqlCmd = aConnection.CreateCommand();
 
-      sqlCmd.CommandText =
-        "DELETE FROM Program WHERE idChannel = ?idChannel AND ((endTime > ?rangeStart AND startTime < ?rangeEnd) OR (startTime = endTime AND startTime BETWEEN ?rangeStart AND ?rangeEnd))";
+      sqlCmd.CommandText = "DELETE FROM Program WHERE idChannel = ?idChannel AND ((endTime > ?rangeStart AND startTime < ?rangeEnd) OR (startTime = endTime AND startTime BETWEEN ?rangeStart AND ?rangeEnd))";
 
-      sqlCmd.Parameters.Add("?idChannel", MySqlDbType.Int32);
-      sqlCmd.Parameters.Add("?rangeStart", MySqlDbType.DateTime);
-      sqlCmd.Parameters.Add("?rangeEnd", MySqlDbType.DateTime);
+      var pIdChannel = AddParameter(sqlCmd, "?idChannel", DbType.Int32);
+      var pRangeStart = AddParameter(sqlCmd, "?rangeStart", DbType.DateTime);
+      var pRangeEnd = AddParameter(sqlCmd, "?rangeEnd", DbType.DateTime);
 
       try
       {
         sqlCmd.Connection = aConnection;
         sqlCmd.Transaction = aTransaction;
         // Prepare the command since we will reuse it quite often
-        sqlCmd.Prepare();
+        Prepare(sqlCmd);
       }
       catch (Exception ex)
       {
@@ -2313,9 +2315,9 @@ namespace TvDatabase
 
       foreach (ProgramListPartition partition in deleteProgramRanges)
       {
-        sqlCmd.Parameters["?idChannel"].Value = partition.IdChannel;
-        sqlCmd.Parameters["?rangeStart"].Value = partition.Start;
-        sqlCmd.Parameters["?rangeEnd"].Value = partition.End;
+        pIdChannel.Value = partition.IdChannel;
+        pRangeStart.Value = partition.Start;
+        pRangeEnd.Value = partition.End;
         try
         {
           // Finally insert all our data
@@ -2329,31 +2331,28 @@ namespace TvDatabase
         }
         catch (Exception ex)
         {
-          Log.Info("BusinessLayer: ExecuteDeleteProgramsMySqlCommand caused an Exception - {0}, {1}", ex.Message,
-                   ex.StackTrace);
+          Log.Info("BusinessLayer: ExecuteDeleteProgramsMySqlCommand caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
           throw;
         }
       }
-      return;
     }
 
-    private static void ExecuteDeleteProgramsMySqlCommand(IEnumerable<int> channelIds, MySqlConnection aConnection,
-                                                          MySqlTransaction aTransaction, int aDelay)
+    private static void ExecuteDeleteProgramsMySqlCommand(IEnumerable<int> channelIds, IDbConnection aConnection,
+                                                          IDbTransaction aTransaction, int aDelay)
     {
       int aCounter = 0;
-      MySqlCommand sqlCmd = new MySqlCommand();
+      IDbCommand sqlCmd = aConnection.CreateCommand();
 
-      sqlCmd.CommandText =
-        "DELETE FROM Program WHERE idChannel = ?idChannel";
+      sqlCmd.CommandText = "DELETE FROM Program WHERE idChannel = ?idChannel";
 
-      sqlCmd.Parameters.Add("?idChannel", MySqlDbType.Int32);
+      var pIdChannel = AddParameter(sqlCmd, "?idChannel", DbType.Int32);
 
       try
       {
         sqlCmd.Connection = aConnection;
         sqlCmd.Transaction = aTransaction;
         // Prepare the command since we will reuse it quite often
-        sqlCmd.Prepare();
+        Prepare(sqlCmd);
       }
       catch (Exception ex)
       {
@@ -2363,7 +2362,7 @@ namespace TvDatabase
 
       foreach (int idChannel in channelIds)
       {
-        sqlCmd.Parameters["?idChannel"].Value = idChannel;
+        pIdChannel.Value = idChannel;
         try
         {
           // Finally insert all our data
@@ -2382,41 +2381,58 @@ namespace TvDatabase
           throw;
         }
       }
-      return;
     }
 
-    private static void ExecuteInsertProgramsMySqlCommand(IEnumerable<Program> aProgramList, MySqlConnection aConnection,
-                                                          MySqlTransaction aTransaction, int aDelay)
+    private static IDbDataParameter AddParameter(IDbCommand cmd, string paramName, DbType type)
+    {
+      if (cmd.GetType().ToString().Contains("SQLite"))
+        paramName = paramName.Replace("?", "");
+
+      var par = cmd.CreateParameter();
+      par.ParameterName = paramName;
+      par.DbType = type;
+      cmd.Parameters.Add(par);
+      return par;
+    }
+
+    private static void Prepare(IDbCommand cmd)
+    {
+      if (cmd.GetType().ToString().Contains("SQLite"))
+        cmd.CommandText = cmd.CommandText.Replace('?', ':');
+      cmd.Prepare();
+    }
+
+    private static void ExecuteInsertProgramsMySqlCommand(IEnumerable<Program> aProgramList, IDbConnection aConnection,
+                                                          IDbTransaction aTransaction, int aDelay)
     {
       int aCounter = 0;
-      MySqlCommand sqlCmd = new MySqlCommand();
+      IDbCommand sqlCmd = aConnection.CreateCommand();
       List<Program> currentInserts = new List<Program>(aProgramList);
 
-      sqlCmd.CommandText =
-        "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, state, parentalRating, episodeName, episodePart) VALUES (?idChannel, ?startTime, ?endTime, ?title, ?description, ?seriesNum, ?episodeNum, ?genre, ?originalAirDate, ?classification, ?starRating, ?state, ?parentalRating, ?episodeName, ?episodePart)";
+      sqlCmd.CommandText = "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, state, parentalRating, episodeName, episodePart) VALUES (?idChannel, ?startTime, ?endTime, ?title, ?description, ?seriesNum, ?episodeNum, ?genre, ?originalAirDate, ?classification, ?starRating, ?state, ?parentalRating, ?episodeName, ?episodePart)";
 
-      sqlCmd.Parameters.Add("?idChannel", MySqlDbType.Int32);
-      sqlCmd.Parameters.Add("?startTime", MySqlDbType.DateTime);
-      sqlCmd.Parameters.Add("?endTime", MySqlDbType.DateTime);
-      sqlCmd.Parameters.Add("?title", MySqlDbType.VarChar);
-      sqlCmd.Parameters.Add("?description", MySqlDbType.VarChar);
-      sqlCmd.Parameters.Add("?seriesNum", MySqlDbType.VarChar);
-      sqlCmd.Parameters.Add("?episodeNum", MySqlDbType.VarChar);
-      sqlCmd.Parameters.Add("?genre", MySqlDbType.VarChar);
-      sqlCmd.Parameters.Add("?originalAirDate", MySqlDbType.DateTime);
-      sqlCmd.Parameters.Add("?classification", MySqlDbType.VarChar);
-      sqlCmd.Parameters.Add("?starRating", MySqlDbType.Int32);
-      sqlCmd.Parameters.Add("?state", MySqlDbType.Int32);
-      sqlCmd.Parameters.Add("?parentalRating", MySqlDbType.Int32);
-      sqlCmd.Parameters.Add("?episodeName", MySqlDbType.Text);
-      sqlCmd.Parameters.Add("?episodePart", MySqlDbType.Text);
+      var pIdChannel = AddParameter(sqlCmd, "?idChannel", DbType.Int32);
+      var pStartTime = AddParameter(sqlCmd, "?startTime", DbType.DateTime);
+      var pEndTime = AddParameter(sqlCmd, "?endTime", DbType.DateTime);
+      var pTitle = AddParameter(sqlCmd, "?title", DbType.String);
+      var pDescription = AddParameter(sqlCmd, "?description", DbType.String);
+      var pSeriesNum = AddParameter(sqlCmd, "?seriesNum", DbType.String);
+      var pEpisodeNum = AddParameter(sqlCmd, "?episodeNum", DbType.String);
+      var pGenre = AddParameter(sqlCmd, "?genre", DbType.String);
+      var pOriginalAirDate = AddParameter(sqlCmd, "?originalAirDate", DbType.DateTime);
+      var pClassification = AddParameter(sqlCmd, "?classification", DbType.String);
+      var pStarRating = AddParameter(sqlCmd, "?starRating", DbType.Int32);
+      var pState = AddParameter(sqlCmd, "?state", DbType.Int32);
+      var pParentalRating = AddParameter(sqlCmd, "?parentalRating", DbType.Int32);
+      var pEpisodeName = AddParameter(sqlCmd, "?episodeName", DbType.String);
+      var pEpisodePart = AddParameter(sqlCmd, "?episodePart", DbType.String);
 
       try
       {
         sqlCmd.Connection = aConnection;
         sqlCmd.Transaction = aTransaction;
         // Prepare the command since we will reuse it quite often
-        sqlCmd.Prepare();
+        Prepare(sqlCmd);
       }
       catch (Exception ex)
       {
@@ -2424,21 +2440,21 @@ namespace TvDatabase
       }
       foreach (Program prog in currentInserts)
       {
-        sqlCmd.Parameters["?idChannel"].Value = prog.IdChannel;
-        sqlCmd.Parameters["?startTime"].Value = prog.StartTime;
-        sqlCmd.Parameters["?endTime"].Value = prog.EndTime;
-        sqlCmd.Parameters["?title"].Value = prog.Title;
-        sqlCmd.Parameters["?description"].Value = prog.Description;
-        sqlCmd.Parameters["?seriesNum"].Value = prog.SeriesNum;
-        sqlCmd.Parameters["?episodeNum"].Value = prog.EpisodeNum;
-        sqlCmd.Parameters["?genre"].Value = prog.Genre;
-        sqlCmd.Parameters["?originalAirDate"].Value = prog.OriginalAirDate;
-        sqlCmd.Parameters["?classification"].Value = prog.Classification;
-        sqlCmd.Parameters["?starRating"].Value = prog.StarRating;
-        sqlCmd.Parameters["?state"].Value = 0; // prog.Notify;
-        sqlCmd.Parameters["?parentalRating"].Value = prog.ParentalRating;
-        sqlCmd.Parameters["?episodeName"].Value = prog.EpisodeName;
-        sqlCmd.Parameters["?episodePart"].Value = prog.EpisodePart;
+        pIdChannel.Value = prog.IdChannel;
+        pStartTime.Value = prog.StartTime;
+        pEndTime.Value = prog.EndTime;
+        pTitle.Value = prog.Title;
+        pDescription.Value = prog.Description;
+        pSeriesNum.Value = prog.SeriesNum;
+        pEpisodeNum.Value = prog.EpisodeNum;
+        pGenre.Value = prog.Genre;
+        pOriginalAirDate.Value = prog.OriginalAirDate;
+        pClassification.Value = prog.Classification;
+        pStarRating.Value = prog.StarRating;
+        pState.Value = 0; // prog.Notify;
+        pParentalRating.Value = prog.ParentalRating;
+        pEpisodeName.Value = prog.EpisodeName;
+        pEpisodePart.Value = prog.EpisodePart;
         try
         {
           // Finally insert all our data
@@ -2452,8 +2468,7 @@ namespace TvDatabase
         }
         catch (MySqlException myex)
         {
-          string errorRow = sqlCmd.Parameters["?idChannel"].Value + ", " + sqlCmd.Parameters["?title"].Value + " : " +
-                            sqlCmd.Parameters["?startTime"].Value + "-" + sqlCmd.Parameters["?endTime"].Value;
+          string errorRow = pIdChannel.Value + ", " + pTitle.Value + " : " + pStartTime.Value + "-" + pEndTime.Value;
           switch (myex.Number)
           {
             case 1062:
@@ -2471,8 +2486,7 @@ namespace TvDatabase
         }
         catch (Exception ex)
         {
-          Log.Info("BusinessLayer: ExecuteInsertProgramsMySqlCommand caused an Exception - {0}, {1}", ex.Message,
-                   ex.StackTrace);
+          Log.Info("BusinessLayer: ExecuteInsertProgramsMySqlCommand caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
         }
       }
       return;
