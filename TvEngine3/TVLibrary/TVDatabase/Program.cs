@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -551,6 +552,18 @@ namespace TvDatabase
       string baseConstraint;
       switch (provider)
       {
+          // startDate < pStart - startDate
+        case "sqlite":
+          List<string> args = new List<string>();
+          foreach (var dayOffset in new int[] {0, +1, -1})
+          {
+            baseConstraint = string.Format("({0} < DATETIME(DATE({0}, '{4} day'), TIME(:{3}))" +
+                                           " AND {1} > DATETIME(DATE({0}, '{5} day'), TIME(:{2})))",
+              startField, endField, startParam, endParam, (crossMidnight ? 1 : 0) + dayOffset, dayOffset);
+            args.Add(baseConstraint);
+          }
+          sb.AddConstraint(string.Format("({0})", string.Join(" OR ", args.ToArray())));
+          return;
         case "mysql":
           baseConstraint =
             string.Format("({0} < DATE_ADD(ADDDATE(DATE({0}), {4}{{0}}), INTERVAL TIME(?{3}) HOUR_SECOND)" +
@@ -575,6 +588,10 @@ namespace TvDatabase
       string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
       switch (provider)
       {
+        case "sqlite":
+          // Day of week starts from 0 (sunday), while MySQL from 1. So we add +1 here to compensate this.
+          sb.AddConstraint(string.Format("cast(strftime('%w', {0}) as integer) + 1 in ({1})", timeField, days));
+          break;
         case "mysql":
           sb.AddConstraint(string.Format("DAYOFWEEK({0}) in ({1})", timeField, days));
           break;
