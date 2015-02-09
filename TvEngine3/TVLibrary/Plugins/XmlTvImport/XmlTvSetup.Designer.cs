@@ -28,9 +28,9 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabSettings = new System.Windows.Forms.TabPage();
       this.panel1 = new System.Windows.Forms.Panel();
@@ -109,6 +109,7 @@ namespace SetupTv.Sections
       this.label6 = new System.Windows.Forms.Label();
       this.saveFileExport = new System.Windows.Forms.SaveFileDialog();
       this.folderBrowserDialogTVGuide = new System.Windows.Forms.FolderBrowserDialog();
+      this.cbNoTextMod = new System.Windows.Forms.CheckBox();
       this.tabControl1.SuspendLayout();
       this.tabSettings.SuspendLayout();
       this.panel1.SuspendLayout();
@@ -156,6 +157,7 @@ namespace SetupTv.Sections
       this.panel1.Controls.Add(this.label23);
       this.panel1.Controls.Add(this.buttonManualImport);
       this.panel1.Controls.Add(this.cbImportLST);
+      this.panel1.Controls.Add(this.cbNoTextMod);
       this.panel1.Controls.Add(this.cbImportXML);
       this.panel1.Controls.Add(this.groupBox1);
       this.panel1.Controls.Add(this.label13);
@@ -182,7 +184,7 @@ namespace SetupTv.Sections
       this.label1.Size = new System.Drawing.Size(274, 32);
       this.label1.TabIndex = 35;
       this.label1.Text = "Note: Could take quite some time to execute depending on how many days forward yo" +
-          "u grab.";
+    "u grab.";
       // 
       // checkBoxDeleteBeforeImport
       // 
@@ -572,9 +574,9 @@ namespace SetupTv.Sections
       this.dataGridChannelMappings.AllowUserToAddRows = false;
       this.dataGridChannelMappings.AllowUserToDeleteRows = false;
       this.dataGridChannelMappings.AllowUserToOrderColumns = true;
-      this.dataGridChannelMappings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.dataGridChannelMappings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.dataGridChannelMappings.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
       this.dataGridChannelMappings.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Id,
@@ -585,14 +587,14 @@ namespace SetupTv.Sections
       this.dataGridChannelMappings.Location = new System.Drawing.Point(6, 94);
       this.dataGridChannelMappings.MultiSelect = false;
       this.dataGridChannelMappings.Name = "dataGridChannelMappings";
-      dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-      this.dataGridChannelMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+      dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+      this.dataGridChannelMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
       this.dataGridChannelMappings.Size = new System.Drawing.Size(454, 317);
       this.dataGridChannelMappings.TabIndex = 2;
       // 
@@ -606,8 +608,8 @@ namespace SetupTv.Sections
       // tuningChannel
       // 
       this.tuningChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      dataGridViewCellStyle4.BackColor = System.Drawing.Color.White;
-      this.tuningChannel.DefaultCellStyle = dataGridViewCellStyle4;
+      dataGridViewCellStyle1.BackColor = System.Drawing.Color.White;
+      this.tuningChannel.DefaultCellStyle = dataGridViewCellStyle1;
       this.tuningChannel.HeaderText = "Tuning Channel";
       this.tuningChannel.Name = "tuningChannel";
       this.tuningChannel.ReadOnly = true;
@@ -616,8 +618,8 @@ namespace SetupTv.Sections
       // guideChannel
       // 
       this.guideChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      dataGridViewCellStyle5.BackColor = System.Drawing.Color.White;
-      this.guideChannel.DefaultCellStyle = dataGridViewCellStyle5;
+      dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
+      this.guideChannel.DefaultCellStyle = dataGridViewCellStyle2;
       this.guideChannel.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
       this.guideChannel.HeaderText = "Guide channel";
       this.guideChannel.Name = "guideChannel";
@@ -631,7 +633,7 @@ namespace SetupTv.Sections
       this.matchType.Name = "matchType";
       this.matchType.ReadOnly = true;
       this.matchType.ToolTipText = "Type of match. White = already mapped, Green = exact, Yellow = partial, Red = non" +
-          "e";
+    "e";
       this.matchType.Width = 36;
       // 
       // ShowInGuide
@@ -780,7 +782,7 @@ namespace SetupTv.Sections
       this.label27.Size = new System.Drawing.Size(399, 13);
       this.label27.TabIndex = 35;
       this.label27.Text = "The scheduler will download the remote tvguide.xml once a day at the time defined" +
-          ".";
+    ".";
       // 
       // dateTimePickerScheduler
       // 
@@ -831,7 +833,7 @@ namespace SetupTv.Sections
       this.label3.Size = new System.Drawing.Size(374, 13);
       this.label3.TabIndex = 30;
       this.label3.Text = "The retrieved file will be copied to the local folder specified in the \'Settings\'" +
-          " tab";
+    " tab";
       // 
       // label32
       // 
@@ -910,6 +912,16 @@ namespace SetupTv.Sections
       // 
       this.saveFileExport.Title = "Export the mapped guidechannels";
       this.saveFileExport.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileExport_FileOk);
+      // 
+      // cbNoTextMod
+      // 
+      this.cbNoTextMod.AutoSize = true;
+      this.cbNoTextMod.Location = new System.Drawing.Point(195, 121);
+      this.cbNoTextMod.Name = "cbNoTextMod";
+      this.cbNoTextMod.Size = new System.Drawing.Size(124, 17);
+      this.cbNoTextMod.TabIndex = 31;
+      this.cbNoTextMod.Text = "No text modifications";
+      this.cbNoTextMod.UseVisualStyleBackColor = true;
       // 
       // XmlTvSetup
       // 
@@ -1024,6 +1036,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label36;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioDownloadOnWakeUp;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioDownloadOnSchedule;
+    private System.Windows.Forms.CheckBox cbNoTextMod;
 
 
   }
