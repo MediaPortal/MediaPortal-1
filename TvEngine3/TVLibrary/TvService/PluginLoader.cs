@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using TvEngine;
 using TvLibrary.Log;
@@ -49,7 +50,9 @@ namespace TvService
       _plugins.Clear();
       try
       {
-        string[] strFiles = System.IO.Directory.GetFiles("plugins", "*.dll");
+        // Load plugins from "plugins" subfolder, relative to calling assembly's location
+        string pluginFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location), "Plugins");
+        string[] strFiles = System.IO.Directory.GetFiles(pluginFolder, "*.dll");
         foreach (string strFile in strFiles)
           LoadPlugin(strFile);
       }
