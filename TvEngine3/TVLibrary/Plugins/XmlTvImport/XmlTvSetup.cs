@@ -69,6 +69,10 @@ namespace SetupTv.Sections
       setting.Value = cbImportLST.Checked ? "true" : "false";
       setting.Persist();
 
+      setting = layer.GetSetting("xmlTvNoTextMod", "true");
+      setting.Value = cbNoTextMod.Checked ? "true" : "false";
+      setting.Persist();
+
       setting = layer.GetSetting("xmlTvTimeZoneHours", "0");
       setting.Value = textBoxHours.Text;
       setting.Persist();
@@ -130,6 +134,7 @@ namespace SetupTv.Sections
       checkBox1.Checked = layer.GetSetting("xmlTvUseTimeZone", "false").Value == "true";
       cbImportXML.Checked = layer.GetSetting("xmlTvImportXML", "true").Value == "true";
       cbImportLST.Checked = layer.GetSetting("xmlTvImportLST", "false").Value == "true";
+      cbNoTextMod.Checked = layer.GetSetting("xmlTvNoTextMod", "false").Value == "true";
       checkBoxDeleteBeforeImport.Checked = layer.GetSetting("xmlTvDeleteBeforeImport", "true").Value == "true";
 
       textBoxHours.Text = layer.GetSetting("xmlTvTimeZoneHours", "0").Value;
