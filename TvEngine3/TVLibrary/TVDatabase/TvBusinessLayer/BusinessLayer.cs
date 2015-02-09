@@ -1161,7 +1161,7 @@ namespace TvDatabase
     public string EscapeSQLString(string original)
     {
       string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
-      if (provider == "mysql" || provider == "sqlite")
+      if (provider == "mysql")
       {
         return original.Replace("\\", "\\\\").Replace("'", "\\'");
       }
