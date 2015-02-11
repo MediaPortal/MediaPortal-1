@@ -38,8 +38,8 @@
 //  - Anshul Maheshwari
 //  -----------------------------------------------
 
-#ifndef __CcParseH264_H
-#define __CcParseH264_H
+#ifndef __CCPARSEH264_H
+#define __CCPARSEH264_H
 
 
 // For more details for memory leak detection see the alloctracing.h header
