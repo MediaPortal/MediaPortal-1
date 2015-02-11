@@ -20,12 +20,13 @@ public:
     STDMETHODIMP get_XformType( ICcParser_CCTYPE* piType );
     STDMETHODIMP put_XformType( ICcParser_CCTYPE piType );
 
-	void ProcessData( int cbData, const BYTE* pSrc, BYTE* pToTransform, CAtlArray<WORD>* pCCData, bool bIsSubtypeAVC1 );
+	void ProcessData( int cbData, const BYTE* pSrc, BYTE* pToTransform, CAtlArray<WORD>* pCCData, bool bIsSubtypeAVC1, DWORD dwFlags, REFERENCE_TIME sourceTime );
 
 	//	CCcParser
 	virtual bool OnCc( int nType, int iField, CCWORD ccField );
-	virtual const BYTE* OnUserData( bool bPorI, const BYTE* p, const BYTE* pStop );
-	virtual bool OnCCSet( bool bPorI, int nType, const CCWORDSET& ccSet );
+	virtual const BYTE* OnUserData( bool bPorI, const BYTE* p, const BYTE* pStop, REFERENCE_TIME sourceTime, bool bIsSubtypeAVC1 );
+	virtual bool OnCCSet( bool bPorI, int nType, const CCWORDSET& ccSet, bool bIsSubtypeAVC1 );
+	virtual void Reset();
 
 private:
 	CCcTextParser::CCPROFILE m_profile;

@@ -21,6 +21,12 @@ CCcDataProcessor::~CCcDataProcessor()
 {
 }
 
+
+void CCcDataProcessor::Reset()
+{
+  CCcParser::Reset();
+}
+
 enum{ idTheOnlySink = 1 }; // TODO: remove when multiple sinks are implemented
 
 STDMETHODIMP CCcDataProcessor::AddDataSink( ICcDataSink* pSink, DWORD* pidSink )
@@ -160,7 +166,7 @@ STDMETHODIMP CCcDataProcessor::put_XformType( ICcParser_CCTYPE iTransformType )
 	return S_OK;
 }
 
-void CCcDataProcessor::ProcessData( int cbData, const BYTE* pSrc, BYTE* pToTransform, CAtlArray<WORD>* pCCData, bool bIsSubtypeAVC1 )
+void CCcDataProcessor::ProcessData( int cbData, const BYTE* pSrc, BYTE* pToTransform, CAtlArray<WORD>* pCCData, bool bIsSubtypeAVC1, DWORD dwFlags, REFERENCE_TIME sourceTime )
 {
   ASSERT( !m_pSrcData );
   ASSERT( !m_pCCData );
@@ -172,11 +178,11 @@ void CCcDataProcessor::ProcessData( int cbData, const BYTE* pSrc, BYTE* pToTrans
 
 	if (bIsSubtypeAVC1)
 	{
-		CCcParser::OnDataArrivalAVC1( pSrc, cbData );
+		CCcParser::OnDataArrivalAVC1( pSrc, cbData, dwFlags, sourceTime );
 	}
 	else
 	{
-		CCcParser::OnDataArrivalMPEG( pSrc, cbData );
+		CCcParser::OnDataArrivalMPEG( pSrc, cbData, sourceTime );
 	}
 	
 	m_pSrcData = NULL;
@@ -201,19 +207,19 @@ bool CCcDataProcessor::OnCc( int nType, int iField, CCWORD ccField )
 	return true;
 }
 
-bool CCcDataProcessor::OnCCSet( bool bPorI, int nType, const CCWORDSET& ccSet )
+bool CCcDataProcessor::OnCCSet( bool bPorI, int nType, const CCWORDSET& ccSet, bool bIsSubtypeAVC1 )
 {
 	m_nRecentlyRecognizedType = (ICcParser_CCTYPE)nType;
 	m_ccRecentlyRecognizedSet = ccSet;
 
-	return CCcParser::OnCCSet( bPorI, nType, ccSet );
+	return CCcParser::OnCCSet( bPorI, nType, ccSet, bIsSubtypeAVC1 );
 }
 
-const BYTE* CCcDataProcessor::OnUserData( bool bPorI, const BYTE* pUserData, const BYTE* pAllStop )
+const BYTE* CCcDataProcessor::OnUserData( bool bPorI, const BYTE* pUserData, const BYTE* pAllStop, REFERENCE_TIME sourceTime, bool bIsSubtypeAVC1 )
 {
 	ASSERT( 0 == m_nRecentlyRecognizedType && m_ccRecentlyRecognizedSet.IsEmpty());
 
-	const BYTE* pUserDataStop = CCcParser::OnUserData( bPorI, pUserData, pAllStop );
+	const BYTE* pUserDataStop = CCcParser::OnUserData( bPorI, pUserData, pAllStop, sourceTime, bIsSubtypeAVC1 );
 	const int cbUserData = pUserDataStop - pUserData;
 
 	ASSERT( m_pSrcData <= pUserData    && pUserData < pAllStop );

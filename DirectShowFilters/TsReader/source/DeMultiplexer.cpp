@@ -2480,23 +2480,20 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
             //  iFrameScanner.ProcessNALU(p2);
             LOG_OUTSAMPLES("Output p4 NALU Type: %d (%d), rtStart: %d", p4->GetAt(4)&0x1f, p4->GetCount(), (int)p->rtStart);
 
-            //if(p4->GetAt(4) == 0x06 && p4->GetAt(5) == 0x04) //SEI with Closed Caption data
-            if(p4->GetAt(4) == 0x06) //SEI data
-            {
-              if (p4->GetAt(5) == 0x04) //Closed Caption data payload
-              {
-                //LogDebug("demux: p4 H264 SEI NALU 0x%x 0x%x",p4->GetAt(6), p4->GetAt(7));
-                LogDebug("demux: p4 H264 SEI CC start - 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x - end 0x%x, 0x%x, 0x%x, 0x%x", 
-                                   p4->GetAt(6 ), p4->GetAt(7 ), p4->GetAt(8 ), p4->GetAt(9 ), 
-                                   p4->GetAt(10), p4->GetAt(11), p4->GetAt(12), p4->GetAt(13),
-                                   p4->GetAt(14), p4->GetAt(15), p4->GetAt(16), p4->GetAt(17),
-                                   p4->GetAt(p4->GetCount()-4), p4->GetAt(p4->GetCount()-3), p4->GetAt(p4->GetCount()-2), p4->GetAt(p4->GetCount()-1)
-                                   );
-              }
-              
-              // m_CcParserH264->sei_rbsp(p4->GetData()+5, p4->GetCount()-6);
-            }
-            m_CcParserH264->do_NAL(p4->GetData()+4, p4->GetCount()-4);
+//            if(p4->GetAt(4) == 0x06) //SEI data
+//            {
+//              if (p4->GetAt(5) == 0x04) //Closed Caption data payload
+//              {
+//                //LogDebug("demux: p4 H264 SEI NALU 0x%x 0x%x",p4->GetAt(6), p4->GetAt(7));
+//                LogDebug("demux: p4 H264 SEI CC start - 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x - end 0x%x, 0x%x, 0x%x, 0x%x", 
+//                                   p4->GetAt(6 ), p4->GetAt(7 ), p4->GetAt(8 ), p4->GetAt(9 ), 
+//                                   p4->GetAt(10), p4->GetAt(11), p4->GetAt(12), p4->GetAt(13),
+//                                   p4->GetAt(14), p4->GetAt(15), p4->GetAt(16), p4->GetAt(17),
+//                                   p4->GetAt(p4->GetCount()-4), p4->GetAt(p4->GetCount()-3), p4->GetAt(p4->GetCount()-2), p4->GetAt(p4->GetCount()-1)
+//                                   );
+//              }              
+//              //m_CcParserH264->do_NAL(p4->GetData()+4, p4->GetCount()-4);
+//            }
             
             nalID = p4->GetAt(4);
             if ((((nalID & 0x9f) == 0x07) || ((nalID & 0x9f) == 0x08)) && ((nalID & 0x60) != 0)) //Process SPS & PPS data
@@ -2519,6 +2516,9 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
               p = p4;
             }
           }
+
+//          // Parse the sample buffer for Closed Caption data (testing...)
+//          m_CcParserH264->parseAVC1sample(p->GetData(), p->GetCount(), 4);
 
           if (Gop)
           {
@@ -2620,9 +2620,11 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
               if (m_vecVideoBuffers.size()<=MAX_VID_BUF_SIZE)
               {
                 if (m_bFirstGopFound)
-                {
+                {                  
                   // ownership is transfered to vector
                   m_vecVideoBuffers.push_back(pCurrentVideoBuffer);
+                  // Parse the sample buffer for Closed Caption data (testing...)
+                  //m_CcParserH264->parseAVC1sample(pCurrentVideoBuffer->Data(), pCurrentVideoBuffer->Length(), 4);
                 }
                 else
                 {

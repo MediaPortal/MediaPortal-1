@@ -679,6 +679,13 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           pSample->GetPointer(&pSampleBuffer);
           memcpy(pSampleBuffer,buffer->Data(),buffer->Length());
           
+          if (demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_H264)
+          {
+            // Parse the sample buffer for Closed Caption data (testing...)
+            //demux.m_CcParserH264->parseAVC1sample(buffer->Data(), buffer->Length(), 4);
+          }
+
+          
           // delete the buffer
           delete buffer;
           demux.EraseVideoBuff();

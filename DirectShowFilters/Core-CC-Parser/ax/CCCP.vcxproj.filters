@@ -30,6 +30,9 @@
     <ClCompile Include="..\parsing\CCParser.cpp">
       <Filter>Parsing</Filter>
     </ClCompile>
+    <ClCompile Include="..\parsing\CcParseH264.cpp">
+      <Filter>Parsing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCCP.h">
@@ -58,6 +61,9 @@
     </ClInclude>
     <ClInclude Include="mediaformats.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parsing\CcParseH264.h">
+      <Filter>Parsing</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

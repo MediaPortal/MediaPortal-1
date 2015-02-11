@@ -58,26 +58,27 @@ virtual ~CcParseH264();
 
 void  sei_rbsp (unsigned char *seibuf, int Length);
 void  do_NAL (unsigned char *NALstart, int Length);
-void  parseAVC1sample (const BYTE* pData, DWORD sampleLength, DWORD dwFlags);
+DWORD  parseAVC1sample (const BYTE* pData, DWORD sampleLength, DWORD dwFlags);
+BYTE* get_cc_buffer_pointer();
 
 private :
 
 int           ccblocks_in_avc_total=0;
 int           ccblocks_in_avc_lost=0;
 long          num_unexpected_sei_length=0;
-unsigned char           cc_count;
+WORD          cc_count = 0;
+DWORD         cc_bytes_in_buffer = 0; //Max buffer size is 65536
 
 // buffer to hold cc data
 unsigned char *cc_data = NULL;
-long          cc_databufsize = 1024;
-int           cc_buffer_saved=1; // Was the CC buffer saved after it was last updated?
+DWORD         cc_databufsize = 1024;
 
 // local functions
 unsigned char   *sei_message (unsigned char *seibuf, unsigned char *seiend);
 void            user_data_registered_itu_t_t35 (unsigned char *userbuf, unsigned char *userend);
-void            copy_ccdata_to_buffer (char *source, int new_cc_count);
+void            copy_ccdata_to_buffer (unsigned char *source, int new_cc_count);
 int             EBSPtoRBSP(unsigned char *streamBuffer, int end_bytepos, int begin_bytepos);
-unsigned char   *remove_03emu(unsigned char *from, unsigned char *to);
+//unsigned char   *remove_03emu(unsigned char *from, unsigned char *to);
 
 };
 

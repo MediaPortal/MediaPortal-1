@@ -8,6 +8,10 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+#define LOG_DETAIL //LogDebug
+
+extern void LogDebug(const char *fmt, ...) ;
+
 /////////////////////////////////////////////////////////////////////////////
 // CCcParser
 
@@ -140,15 +144,26 @@ void CCWORD::GetString( TCHAR szString[3] ) const
 
 CCcParser::CCcParser()
 {
+  m_CcParserH264 = new CcParseH264();
+  Reset();
 }
 
 CCcParser::~CCcParser()
 {
+  delete m_CcParserH264;
 }
 
 void CCcParser::Reset()
 {
 	m_ccsetLastPorI.Empty();
+	
+	m_ccsetH264WrIdx = 0;
+    
+  for (int i = 0; i < _countof(m_ccsetH264); i++ )
+  {
+    m_ccsetH264[i].m_timeStamp = _I64_MAX;
+  }
+
 //	m_picture_coding_type = typeNone;
 }
 
@@ -185,7 +200,7 @@ inline bool RecognizePictureHeader( WORD& picture_coding_type, const BYTE* p, in
 	return false;
 }
 
-bool CCcParser::OnDataArrivalMPEG( const BYTE* pData, UINT cbData )
+bool CCcParser::OnDataArrivalMPEG( const BYTE* pData, UINT cbData, REFERENCE_TIME sourceTime )
 {
 	const BYTE* pStop = pData + cbData;
 
@@ -223,7 +238,7 @@ bool CCcParser::OnDataArrivalMPEG( const BYTE* pData, UINT cbData )
 					bool bPorI = ( picture_coding_type == typeP || picture_coding_type == typeI );
 					ASSERT( bPorI || picture_coding_type == typeB );
 					
-					p = OnUserData( bPorI, p + 4, pStop );
+					p = OnUserData( bPorI, p + 4, pStop, sourceTime, false );
 					if( !p )
 						return false;
 
@@ -248,74 +263,55 @@ bool CCcParser::OnDataArrivalMPEG( const BYTE* pData, UINT cbData )
 	return true;
 }
 
-bool CCcParser::OnDataArrivalAVC1( const BYTE* pData, UINT cbData )
+bool CCcParser::OnDataArrivalAVC1( const BYTE* pData, UINT cbData, DWORD dwFlags, REFERENCE_TIME sourceTime )
 {
-	const BYTE* pStop = pData + cbData;
-
 	ASSERT( 4 == sizeof(DWORD));
 	ASSERT( 2 == sizeof(WORD));
 
-	WORD picture_coding_type = typeNone;
-	WORD temporal_reference = 0;
+  DWORD ccBuffLength = m_CcParserH264->parseAVC1sample(pData, cbData, dwFlags);
+  
+  if (ccBuffLength < sizeof(DWORD))
+  {
+    return false;
+  }
 
-	for( const BYTE* p = pData; p < pStop - sizeof(DWORD); ++p )
-	{
-		if(( *reinterpret_cast<const UNALIGNED DWORD*>(p) & 0x00FFFFFF ) == 0x00010000 ) // 00000100 : start code prefix
-		{
-			switch( p[3])
-			{
-				case 0x00:   // picture_start_code
-				{
-					VERIFY( RecognizePictureHeader ( picture_coding_type, p ));
-					temporal_reference = MAKEWORD( p[5] & 0xC0, p[4] ) >> 6;
-				}
-				break;
+  const BYTE* pBuffer = m_CcParserH264->get_cc_buffer_pointer();
+  DWORD ccPackLen;
+	const BYTE* pStop;
 
-				case 0xb2:
-				{
-					if( picture_coding_type == typeNone )
-					{
-						// Sometimes pData starts a byte or so into the picture header.
-						//	That's the "start code prefix" is not recognized.
-						
-						for( int iRollBack = 1; iRollBack <= 4; iRollBack++ )
-							if( RecognizePictureHeader( picture_coding_type, pData, iRollBack ))
-								break; // for
-					}
-					
-					bool bPorI = ( picture_coding_type == typeP || picture_coding_type == typeI );
-					ASSERT( bPorI || picture_coding_type == typeB );
-					
-					p = OnUserData( bPorI, p + 4, pStop );
-					if( !p )
-						return false;
+  //LogDebug ("CCcParser: OnDataArrivalAVC1() - Start loop, pBuffer: %d", pBuffer);
 
-					picture_coding_type = typeNone;
-				}
-				break;
-			}
-		}
-		else
-		{
-			enum{ cReportInterval = 1000 };
-			if( (p - pData) % cReportInterval == 0 )
-			{
-				if( !OnProgress( (p - pData) * 100 / cbData ))
-					return false;
-			}
+  while (ccBuffLength >= sizeof(DWORD))
+  {  
+    ccPackLen = *(UNALIGNED DWORD*)pBuffer;  //The length field is little-endian format
 
-			continue;
-		}
-	}
+    pBuffer += sizeof(DWORD);
+    ccBuffLength -= sizeof(DWORD);
+        
+    if (ccBuffLength < ccPackLen)
+    {
+			LogDebug ("CCcParser: OnDataArrivalAVC1() - ccPackLen error: %d", ccBuffLength - ccPackLen);
+  	  return false;
+    }
+    
+    pStop = pBuffer + ccPackLen;
+
+	  OnUserData( false, pBuffer, pStop, sourceTime, true );
+		//LogDebug ("CCcParser: OnDataArrivalAVC1() - OnUserData() processed, pBuffer: %d", pBuffer);
+          
+    ccBuffLength -= ccPackLen;
+    pBuffer += ccPackLen;
+    
+  }
 
 	return true;
 }
 
 
-const BYTE* CCcParser::OnUserData( bool bPorI, const BYTE* p, const BYTE* pStop )
+const BYTE* CCcParser::OnUserData( bool bPorI, const BYTE* p, const BYTE* pStop, REFERENCE_TIME sourceTime, bool bIsSubtypeAVC1 )
 {
 	if( *reinterpret_cast<const UNALIGNED DWORD*>(p) == 0x34394147 ) // 47413934
-		return Parse_ATSC_A53( bPorI, p + 4, pStop );
+		return Parse_ATSC_A53( bPorI, p + 4, pStop, sourceTime, bIsSubtypeAVC1 );
 	
 	if( *reinterpret_cast<const UNALIGNED WORD*>(p) == 0x0205 ) // 0502
 		return Parse_Echostar( bPorI, p, pStop );
@@ -323,7 +319,7 @@ const BYTE* CCcParser::OnUserData( bool bPorI, const BYTE* p, const BYTE* pStop 
 	return Parse_Unknown( bPorI, p, pStop );
 }
 
-inline const BYTE* CCcParser::Parse_ATSC_A53( bool bPorI, const BYTE* p, const BYTE* pStop )
+inline const BYTE* CCcParser::Parse_ATSC_A53( bool bPorI, const BYTE* p, const BYTE* pStop, REFERENCE_TIME sourceTime, bool bIsSubtypeAVC1 )
 {
 	CCWORDSET cc;
 	int iField1 = 0;
@@ -353,7 +349,8 @@ inline const BYTE* CCcParser::Parse_ATSC_A53( bool bPorI, const BYTE* p, const B
 						typeField1 = 0x00, typeField2 = 0x01,  
 					};
 
-					if( p[0] & flag_cc_valid )
+					//if( p[0] & flag_cc_valid )
+					if( true )
 					{
 						switch( p[0] & mask_cc_type )
 						{
@@ -362,7 +359,9 @@ inline const BYTE* CCcParser::Parse_ATSC_A53( bool bPorI, const BYTE* p, const B
 								if( iField1 < _countof( cc.m_ccField1 ))
 								{
 									cc.m_ccField1[iField1] = CCWORD( &p[1] );
+									cc.m_timeStamp = sourceTime;
 									iField1++;
+		              LOG_DETAIL ("CCcParser: Parse_ATSC_A53() - Triplet F1 %d, Hex: 0x%x 0x%x 0x%x, ASCII: %c %c", iCC, *(p+0), *(p+1), *(p+2), (0x7F & *(p+1)), (0x7F & *(p+2)));
 								}
 								else
 									ASSERT(0);
@@ -374,7 +373,9 @@ inline const BYTE* CCcParser::Parse_ATSC_A53( bool bPorI, const BYTE* p, const B
 								if( iField2 < _countof( cc.m_ccField2 ))
 								{
 									cc.m_ccField2[iField2] = CCWORD( &p[1] );
+									cc.m_timeStamp = sourceTime;
 									iField2++;
+		              LOG_DETAIL ("CCcParser: Parse_ATSC_A53() - Triplet F2 %d, Hex: 0x%x 0x%x 0x%x, ASCII: %c %c", iCC, *(p+0), *(p+1), *(p+2), (0x7F & *(p+1)), (0x7F & *(p+2)));
 								}
 								else
 									ASSERT(0);
@@ -389,7 +390,7 @@ inline const BYTE* CCcParser::Parse_ATSC_A53( bool bPorI, const BYTE* p, const B
 		}
 	}
 	
-	if( !OnCCSet( bPorI, cctypeATSC_A53, cc ))
+	if( !OnCCSet( bPorI, cctypeATSC_A53, cc, bIsSubtypeAVC1 ))
 		return false; 
 
 	return SkipUserData( p, pStop ); //TODO
@@ -475,7 +476,7 @@ inline const BYTE* CCcParser::Parse_Echostar( bool bPorI, const BYTE* pData, con
 			
 			case 0x00:
 			{
-				if( !OnCCSet( bPorI, cctypeEchostar, cc ))
+				if( !OnCCSet( bPorI, cctypeEchostar, cc, false ))
 					return NULL;
 
 				return SkipUserData( p, pStop ); 
@@ -506,22 +507,65 @@ const BYTE* CCcParser::SkipUserData( const BYTE* p, const BYTE* pStop )
 	return p + 2;
 }
 
-bool CCcParser::OnCCSet( bool bPorI, int nType, const CCWORDSET& cc )
+bool CCcParser::OnCCSet( bool bPorI, int nType, const CCWORDSET& cc, bool bIsSubtypeAVC1 )
 {
-	if( bPorI )
-	{
-		if( !m_ccsetLastPorI.IsEmpty())
-		{
-			if( !SendCCSet( nType, m_ccsetLastPorI ))
-				return NULL;
-		}
+  if (!bIsSubtypeAVC1)
+  {
+  	if( bPorI)
+  	{
+  		if( !m_ccsetLastPorI.IsEmpty())
+  		{
+  			if( !SendCCSet( nType, m_ccsetLastPorI ))
+  				return NULL;
+  		}
+  
+  		m_ccsetLastPorI = cc;
+  
+  		return true;
+  	}
+  
+  	return SendCCSet( nType, cc );
+  }
+  else
+  {
+    //Use a buffer to re-order the samples into the correct temporal display order
+    bool retval = false;
+    //write to buffer
+    for (int i = 0; i < _countof(m_ccsetH264); i++ )
+    {
+      if (m_ccsetH264[i].m_timeStamp == _I64_MAX) //Found empty slot - push buffer
+      {
+        m_ccsetH264[i] = cc;
+        m_ccsetH264WrIdx++;
+        LOG_DETAIL("CCcParser: OnCCSet - write buffer, i: %d, m_ccsetH264WrIdx: %d", i, m_ccsetH264WrIdx);
+        break;
+      }
+    }
+        
+    if (m_ccsetH264WrIdx >= _countof(m_ccsetH264))
+    {      
+      REFERENCE_TIME earliestTime = _I64_MAX;
+      int earliestCCidx = 0;
+      for (int i = 0; i < m_ccsetH264WrIdx; i++)
+      {
+        if (m_ccsetH264[i].m_timeStamp < earliestTime)
+        {
+          earliestCCidx = i;
+          earliestTime = m_ccsetH264[i].m_timeStamp;
+        }
+      }
+    
+      if (earliestTime < _I64_MAX) //Found a valid timestamp - pop buffer
+      {
+        LOG_DETAIL("CCcParser: OnCCSet - read buffer, earliestCCidx: %d, m_ccsetH264WrIdx: %d", earliestCCidx, m_ccsetH264WrIdx);
+        retval = SendCCSet( nType, m_ccsetH264[earliestCCidx]);
+        m_ccsetH264[earliestCCidx].m_timeStamp = _I64_MAX; //invalidate buffer
+        m_ccsetH264WrIdx--;
+      }
+    }
 
-		m_ccsetLastPorI = cc;
-
-		return true;
-	}
-
-	return SendCCSet( nType, cc );
+  	return retval;
+  }
 }
 
 bool CCcParser::SendCCSet( int nType, const CCWORDSET& cc )

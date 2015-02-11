@@ -172,6 +172,8 @@ public:
   double m_dfAudSampleDuration;
   
   DWORD  m_lastFlushTime;
+  
+  CcParseH264 *m_CcParserH264;
 
 private:
   struct stAudioStream
@@ -205,7 +207,6 @@ private:
   FileReader* m_reader;
   CPatParser m_patParser;
   CMpegPesParser *m_mpegPesParser;
-  CcParseH264 *m_CcParserH264;
   CPidTable m_pids;
   vector<CBuffer*> m_vecSubtitleBuffers;
   vector<CBuffer*> m_vecVideoBuffers;

@@ -3,6 +3,218 @@
 #include "CCPGUIDs.h"
 #include "CCCP.h"
 #include "mediaformats.h"
+#include <dvdmedia.h>
+#include <shlobj.h>
+#include <queue>
+
+//These are global variables, and can be shared between multiple CCcFilter instances !
+long m_instanceCount = 0;
+CCritSec m_instanceLock;
+
+//-------------------- Async logging methods -------------------------------------------------
+
+//These are global variables, and can be shared between multiple CCcFilter instances !
+WORD logFileParsed = -1;
+WORD logFileDate = -1;
+
+CCcFilter* instanceID = 0;
+
+CCritSec m_qLock;
+CCritSec m_logLock;
+CCritSec m_logFileLock;
+std::queue<std::wstring> m_logQueue;
+BOOL m_bLoggerRunning = false;
+HANDLE m_hLogger = NULL;
+CAMEvent m_EndLoggingEvent;
+
+void LogPath(TCHAR* dest, TCHAR* name)
+{
+  TCHAR folder[MAX_PATH];
+  SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+  _stprintf(dest, _T("%s\\Team Mediaportal\\MediaPortal\\log\\CoreCC.%s"), folder, name);
+}
+
+
+void LogRotate()
+{   
+  CAutoLock lock(&m_logFileLock);
+    
+  TCHAR fileName[MAX_PATH];
+  LogPath(fileName, _T("log"));
+  
+  try
+  {
+    // Get the last file write date
+    WIN32_FILE_ATTRIBUTE_DATA fileInformation; 
+    if (GetFileAttributesEx(fileName, GetFileExInfoStandard, &fileInformation))
+    {  
+      // Convert the write time to local time.
+      SYSTEMTIME stUTC, fileTime;
+      if (FileTimeToSystemTime(&fileInformation.ftLastWriteTime, &stUTC))
+      {
+        if (SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &fileTime))
+        {
+          logFileDate = fileTime.wDay;
+        
+          SYSTEMTIME systemTime;
+          GetLocalTime(&systemTime);
+          
+          if(fileTime.wDay == systemTime.wDay)
+          {
+            //file date is today - no rotation needed
+            return;
+          }
+        } 
+      }   
+    }
+  }  
+  catch (...) {}
+  
+  TCHAR bakFileName[MAX_PATH];
+  LogPath(bakFileName, _T("bak"));
+  _tremove(bakFileName);
+  _trename(fileName, bakFileName);
+}
+
+
+wstring GetLogLine()
+{
+  CAutoLock lock(&m_qLock);
+  if ( m_logQueue.size() == 0 )
+  {
+    return L"";
+  }
+  wstring ret = m_logQueue.front();
+  m_logQueue.pop();
+  return ret;
+}
+
+
+UINT CALLBACK LogThread(void* param)
+{
+  TCHAR fileName[MAX_PATH];
+  LogPath(fileName, _T("log"));
+  while ( m_bLoggerRunning || (m_logQueue.size() > 0) ) 
+  {
+    if ( m_logQueue.size() > 0 ) 
+    {
+      SYSTEMTIME systemTime;
+      GetLocalTime(&systemTime);
+      if(logFileParsed != systemTime.wDay)
+      {
+        LogRotate();
+        logFileParsed=systemTime.wDay;
+        LogPath(fileName, _T("log"));
+      }
+      
+      CAutoLock lock(&m_logFileLock);
+      FILE* fp = _tfopen(fileName, _T("a+"));
+      if (fp!=NULL)
+      {
+        SYSTEMTIME systemTime;
+        GetLocalTime(&systemTime);
+        wstring line = GetLogLine();
+        while (!line.empty())
+        {
+          fwprintf_s(fp, L"%s", line.c_str());
+          line = GetLogLine();
+        }
+        fclose(fp);
+      }
+      else //discard data
+      {
+        wstring line = GetLogLine();
+        while (!line.empty())
+        {
+          line = GetLogLine();
+        }
+      }
+    }
+    if (m_bLoggerRunning)
+    {
+      m_EndLoggingEvent.Wait(1000); //Sleep for 1000ms, unless thread is ending
+    }
+    else
+    {
+      Sleep(1);
+    }
+  }
+  return 0;
+}
+
+
+void StartLogger()
+{
+  UINT id;
+  m_hLogger = (HANDLE)_beginthreadex(NULL, 0, LogThread, 0, 0, &id);
+  SetThreadPriority(m_hLogger, THREAD_PRIORITY_BELOW_NORMAL);
+}
+
+
+void StopLogger()
+{
+  CAutoLock logLock(&m_logLock);
+  if (m_hLogger)
+  {
+    m_bLoggerRunning = FALSE;
+    m_EndLoggingEvent.Set();
+    WaitForSingleObject(m_hLogger, INFINITE);	
+    m_EndLoggingEvent.Reset();
+    m_hLogger = NULL;
+    logFileParsed = -1;
+    logFileDate = -1;
+    instanceID = 0;
+  }
+}
+
+
+void LogDebug(const wchar_t *fmt, ...) 
+{
+  CAutoLock logLock(&m_logLock);
+  
+  if (!m_hLogger) {
+    m_bLoggerRunning = true;
+    StartLogger();
+  }
+
+  wchar_t buffer[2000]; 
+  int tmp;
+  va_list ap;
+  va_start(ap,fmt);
+  tmp = vswprintf_s(buffer, fmt, ap);
+  va_end(ap); 
+
+  SYSTEMTIME systemTime;
+  GetLocalTime(&systemTime);
+  wchar_t msg[5000];
+  swprintf_s(msg, 5000,L"[%04.4d-%02.2d-%02.2d %02.2d:%02.2d:%02.2d,%03.3d] [%8x] [%4x] - %s\n",
+    systemTime.wYear, systemTime.wMonth, systemTime.wDay,
+    systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds,
+    instanceID,
+    GetCurrentThreadId(),
+    buffer);
+  CAutoLock l(&m_qLock);
+  if (m_logQueue.size() < 2000) 
+  {
+    m_logQueue.push((wstring)msg);
+  }
+};
+
+void LogDebug(const char *fmt, ...)
+{
+  char logbuffer[2000]; 
+  wchar_t logbufferw[2000];
+
+	va_list ap;
+	va_start(ap,fmt);
+	vsprintf_s(logbuffer, fmt, ap);
+	va_end(ap); 
+
+	MultiByteToWideChar(CP_ACP, 0, logbuffer, -1,logbufferw, sizeof(logbuffer)/sizeof(wchar_t));
+	LogDebug(L"%s", logbufferw);
+};
+
+//------------------------------------------------------------------------------------
 
 const GUID CCcFilter::m_guidPassThroughMediaMajor   = MEDIATYPE_Video;
 
@@ -197,17 +409,31 @@ CCcFilter::CCcFilter(TCHAR *tszName, LPUNKNOWN punk, HRESULT *phr)
 	, m_pPassThroughQueue(NULL)
 	, m_pLine21Queue(NULL)
 {
-    m_nThisInstance = ++m_nInstanceCount; // Useful for debug, no other purpose
+  { // Scope for CAutoLock
+    CAutoLock lock(&m_instanceLock);  
+    m_instanceCount++;
+  }
+  m_nThisInstance = ++m_nInstanceCount; // Useful for debug, no other purpose
 
-    DbgFunc("CCcFilter");
+  DbgFunc("CCcFilter");
 
 	m_pInput  = &m_inpinInput;
 	m_pOutput = &m_outpinPassThrough;
 	
 	m_bIsSubtypeAVC1 = false;
 	m_guidPassThroughMediaSubtype = GUID_NULL;
+	m_dwFlags = 0;
 
 	m_proc.put_XformType( ICcParser_CCTYPE_ATSC_A53 ); //TODO: remove
+	
+	instanceID = this;  
+
+  LogDebug(" ");
+  LogDebug("=================== New filter instance =========================================");
+  LogDebug("  Logging format: [Date Time] [InstanceID-instanceCount] [ThreadID] Message....  ");
+  LogDebug("==================================================================================");
+  LogDebug("------------- v1.0.0.0 ------------- instanceCount:%d", m_instanceCount);
+
 }
 #pragma warning( pop )
 
@@ -221,6 +447,16 @@ CCcFilter::~CCcFilter()
 
 	ASSERT( m_pInput == &m_inpinInput );
 	m_pInput = NULL; // To prevent its destruction
+	
+  { // Scope for CAutoLock
+    CAutoLock lock(&m_instanceLock); 
+    if (m_instanceCount > 0) 
+    {
+      m_instanceCount--;
+    }
+  }
+  LogDebug("CCcFilter::dtor - finished, instanceCount:%d", m_instanceCount);
+  StopLogger();
 }
 
 int CCcFilter::GetPinCount()
@@ -285,6 +521,19 @@ HRESULT CCcFilter::CheckInputType(const CMediaType *pmt)
     
     m_guidPassThroughMediaSubtype = pmt->subtype;
     m_bIsSubtypeAVC1 = (pmt->subtype == MPG4_SubType);
+
+    if (pmt->formattype == FORMAT_MPEG2Video)
+    {
+      // Check the buffer size.
+      if (pmt->cbFormat >= sizeof(MPEG2VIDEOINFO))
+      {
+        MPEG2VIDEOINFO *pVih = reinterpret_cast<MPEG2VIDEOINFO*>(pmt->pbFormat);
+          /* Access MPEG2VIDEOINFO members through pVih. */
+        m_dwFlags = pVih->dwFlags;
+        LogDebug ("CCcFilter: CheckInputType() - m_dwFlags: %d", m_dwFlags);
+      }
+    }
+    
     
     return NOERROR;
 
@@ -334,11 +583,20 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
 	int cbData = pSourceSample->GetActualDataLength();
 	const BYTE* pSourceData;
 	RETURN_FAILED( pSourceSample->GetPointer( (BYTE**)&pSourceData ));
+	
+	REFERENCE_TIME sourceTimeStart = _I64_MAX;
+	REFERENCE_TIME sourceTimeEnd;
+	HRESULT gthr = pSourceSample->GetTime(&sourceTimeStart, &sourceTimeEnd);	
+	if (gthr != S_OK && gthr != VFW_S_NO_STOP_TIME )
+	{
+	  sourceTimeStart = _I64_MAX;
+	}
+  //LogDebug("CCcFilter: SampleGetTime: %f", (float)sourceTimeStart/10000000.0);
 
 	m_rgCCData.SetCount(0);
 	if( !m_pPassThroughQueue )
 	{
-		m_proc.ProcessData( cbData, pSourceData, NULL, &m_rgCCData, m_bIsSubtypeAVC1 );
+		m_proc.ProcessData( cbData, pSourceData, NULL, &m_rgCCData, m_bIsSubtypeAVC1, m_dwFlags, sourceTimeStart );
 	}
 	else
 	{
@@ -351,7 +609,7 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
 		BYTE* pToTransform;
 		RETURN_FAILED( pifOutSample->GetPointer( &pToTransform ));
 
-		m_proc.ProcessData( cbData, pSourceData, pToTransform, &m_rgCCData, m_bIsSubtypeAVC1 );
+		m_proc.ProcessData( cbData, pSourceData, pToTransform, &m_rgCCData, m_bIsSubtypeAVC1, m_dwFlags, sourceTimeStart );
 
 		pifOutSample->AddRef();
 		m_pPassThroughQueue->Receive( pifOutSample );
@@ -364,6 +622,7 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
 		{
 			for( const WORD* pData = m_rgCCData.GetData(); pData < m_rgCCData.GetData() + cWORDs; ++pData )
 			{
+        
 				auto_pif<IMediaSample> pifOutSample;
 				RETURN_FAILED( InitializeOutputSample( &m_outpinLine21, pSourceSample, pifOutSample.AcceptHere()));
 
@@ -383,7 +642,23 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
 				pifOutSample->SetActualDataLength( cbBufferOut );
 
 				//pifOutSample->SetSyncPoint(TRUE);
-				
+
+			  pifOutSample->SetTime(NULL,NULL); //Remove timestamps
+
+        //        if (m_pClock)
+        //        {
+        //          REFERENCE_TIME baseTime = 0;
+        //          m_pClock->GetTime(&baseTime);
+        //          baseTime -= m_tStart;
+        //          //baseTime += (100*10000); //add 500ms
+        //          LogDebug("CCcFilter: SampleSetTime: %f, m_tStart %f", (float)baseTime/10000000.0, (float)m_tStart/10000000.0);
+        //				  pifOutSample->SetTime(&baseTime,&baseTime);
+        //        }
+        //        else
+        //        {
+        //				  pifOutSample->SetTime(NULL,NULL);
+        //        }
+								
 				pifOutSample->AddRef();
 				HRESULT hr = m_pLine21Queue->Receive( pifOutSample );
 				m_bSampleSkipped = FALSE;	// last thing no longer dropped
@@ -392,7 +667,7 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
 			}
 
 			m_rgCCData.SetCount(0);
-        } 
+    } 
 		else 
 		{
             m_bSampleSkipped = TRUE;
@@ -490,6 +765,8 @@ HRESULT CCcFilter::NewSegment( REFERENCE_TIME tStart, REFERENCE_TIME tStop, doub
 
 	if( m_pLine21Queue )
 		m_pLine21Queue->NewSegment( tStart, tStop, dRate );
+
+	m_proc.Reset();
 
 	return S_OK;
 }

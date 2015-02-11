@@ -4,6 +4,8 @@
 #include "ICcParser.h"
 #include "CcDataProcessor.h"
 
+using namespace std;
+
 // Put out the name of a function and instance on the debugger.
 // Invoke this at the start of functions to allow a trace.
 #define DbgFunc(a) DbgLog(( LOG_TRACE                        \
@@ -186,6 +188,8 @@ private:
   GUID m_guidPassThroughMediaSubtype;
   
   bool m_bIsSubtypeAVC1;
+  
+  DWORD m_dwFlags;
 
 };
 

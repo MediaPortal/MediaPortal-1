@@ -1,6 +1,8 @@
 #ifndef __CCPARSER_H
 #define __CCPARSER_H
 
+#include "CcParseH264.h"
+
 /////////////////////////////////////////////////////////////////////////////
 // CCcParser
 //
@@ -76,14 +78,16 @@ protected:
 		
 		CCWORD m_ccField1[cSavedFields];
 		CCWORD m_ccField2[cSavedFields];
+		
+		REFERENCE_TIME m_timeStamp;
 
 		bool IsEmpty() const { return m_ccField1[0].IsEmpty() && m_ccField2[0].IsEmpty();}
-		void Empty() { m_ccField1[0] = CCWORD(); m_ccField2[0] = CCWORD(); ASSERT( IsEmpty()); }
+		void Empty() { m_ccField1[0] = CCWORD(); m_ccField2[0] = CCWORD(); m_timeStamp=0; ASSERT( IsEmpty());}
 	};
 
 public:
 	CCcParser();
-	~CCcParser();
+  virtual ~CCcParser();
 
 	enum
 	{
@@ -101,27 +105,32 @@ public:
 // Implementation
 public:
 	void Reset();
-	virtual bool OnDataArrivalMPEG( const BYTE* pData, UINT cbData );
-	virtual bool OnDataArrivalAVC1( const BYTE* pData, UINT cbData );
+	virtual bool OnDataArrivalMPEG( const BYTE* pData, UINT cbData, REFERENCE_TIME sourceTime );
+	virtual bool OnDataArrivalAVC1( const BYTE* pData, UINT cbData, DWORD m_dwFlags, REFERENCE_TIME sourceTime );
 
 protected:
 	virtual bool OnCc( int nType, int iField, CCWORD ccField ) = 0;
 	virtual bool OnProgress( int nPercent ) { return true; }
 
-	virtual const BYTE* OnUserData( bool bPorI, const BYTE* p, const BYTE* pStop ); // All return the last recognized byte
+	virtual const BYTE* OnUserData( bool bPorI, const BYTE* p, const BYTE* pStop, REFERENCE_TIME sourceTime, bool bIsSubtypeAVC1 ); // All return the last recognized byte
 
-	virtual bool OnCCSet( bool bPorI, int nType, const CCWORDSET& ccSet );
+	virtual bool OnCCSet( bool bPorI, int nType, const CCWORDSET& ccSet, bool bIsSubtypeAVC1 );
 	virtual bool SendCCSet( int nType, const CCWORDSET& ccSet );
 
 	const BYTE* SkipUserData( const BYTE* p, const BYTE* pStop );
 
 private:
 	inline const BYTE* Parse_DVD     ( bool bPorI, const BYTE* p, const BYTE* pStop );
-	inline const BYTE* Parse_ATSC_A53( bool bPorI, const BYTE* p, const BYTE* pStop );
+	inline const BYTE* Parse_ATSC_A53( bool bPorI, const BYTE* p, const BYTE* pStop, REFERENCE_TIME sourceTime, bool bIsSubtypeAVC1 );
 	inline const BYTE* Parse_Echostar( bool bPorI, const BYTE* p, const BYTE* pStop );
 	const BYTE* Parse_Unknown        ( bool bPorI, const BYTE* p, const BYTE* pStop );
 
 	CCWORDSET m_ccsetLastPorI;
+	
+	CCWORDSET m_ccsetH264[20]; //Sized to allow for maximum of 20 H.264 b-frames + ref frames
+	int m_ccsetH264WrIdx = 0;
+	
+  CcParseH264 *m_CcParserH264;
 };
 
 class CCcTextParser
