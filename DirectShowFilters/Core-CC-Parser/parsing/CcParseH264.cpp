@@ -50,6 +50,7 @@ extern void LogDebug(const char *fmt, ...) ;
 CcParseH264::CcParseH264()
 {
   cc_data = (unsigned char*)malloc(1024);
+  cc_databufsize = 1024;
   ccblocks_in_avc_total=0;
   ccblocks_in_avc_lost=0;
   num_unexpected_sei_length=0;
