@@ -1,3 +1,6 @@
+
+#pragma warning(disable:4996)
+
 #include "StdAfx.h"
 
 #include "CCPGUIDs.h"

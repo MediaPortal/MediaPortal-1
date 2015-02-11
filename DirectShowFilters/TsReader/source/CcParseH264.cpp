@@ -42,15 +42,20 @@
 
 #include "CcParseH264.h"
 
+// uncomment the //LogDebug to enable extra logging
+#define LOG_DETAIL //LogDebug
+
 extern void LogDebug(const char *fmt, ...) ;
 
 CcParseH264::CcParseH264()
 {
   cc_data = (unsigned char*)malloc(1024);
+  cc_databufsize = 1024;
   ccblocks_in_avc_total=0;
   ccblocks_in_avc_lost=0;
   num_unexpected_sei_length=0;
   cc_count = 0;
+  cc_bytes_in_buffer = 0;
 }
 
 CcParseH264::~CcParseH264()
@@ -64,11 +69,15 @@ CcParseH264::~CcParseH264()
 
 // Functions to parse a AVC/H.264 data stream, see ISO/IEC 14496-10
 
-void CcParseH264::parseAVC1sample (const BYTE* pData, DWORD sampleLength, DWORD dwFlags)
-{      
+DWORD CcParseH264::parseAVC1sample (const BYTE* pData, DWORD sampleLength, DWORD dwFlags)
+{
   DWORD dwNalLength;
   DWORD startLength = sampleLength;
   unsigned char *pSample = (unsigned char *) pData;
+
+  //reset output buffer
+  cc_count = 0;
+  cc_bytes_in_buffer = 0;
   
   while (sampleLength >= dwFlags)
   {  
@@ -84,8 +93,8 @@ void CcParseH264::parseAVC1sample (const BYTE* pData, DWORD sampleLength, DWORD 
         dwNalLength = _byteswap_ulong(*(DWORD *)pSample);  //The length field is big-endian format
         break;
   		default:
-  			LogDebug ("CcParseH264: parseAVC1sample() - invalid dwFlags: %d", dwFlags);
-  			return;
+  			LogDebug ("CcParseH264: FATAL - parseAVC1sample() - invalid dwFlags: %d", dwFlags);
+  			return cc_bytes_in_buffer;
     }
 
     pSample += dwFlags;
@@ -93,15 +102,15 @@ void CcParseH264::parseAVC1sample (const BYTE* pData, DWORD sampleLength, DWORD 
         
     if (sampleLength < dwNalLength)
     {
-			LogDebug ("CcParseH264: parseAVC1sample() - dwNalLength error: %d", sampleLength - dwNalLength);
-			return;
+			LogDebug ("CcParseH264: FATAL - parseAVC1sample() - dwNalLength error: %d", sampleLength - dwNalLength);
+  	  return cc_bytes_in_buffer;
     }
       
     if ( (*pSample & 0x1F) == 0x06 )  //SEI data nal_unit_type
     {
       // Found SEI (used for subtitles) - lets process it
-			LogDebug ("CcParseH264: parseAVC1sample() - found SEI, sampleLength %d, dwNalLength %d, startLength %d", sampleLength, dwNalLength, startLength);
-			
+			LOG_DETAIL ("CcParseH264: parseAVC1sample() - found SEI, sampleLength %d, dwNalLength %d, startLength %d", sampleLength, dwNalLength, startLength);
+
 			//Need to copy buffer before processing because EBSPtoRBSP() can modify the contents.... 
       unsigned char *pSampleBuffer = new unsigned char[dwNalLength-1];      
       memcpy(pSampleBuffer,pSample+1,dwNalLength-1);
@@ -113,6 +122,8 @@ void CcParseH264::parseAVC1sample (const BYTE* pData, DWORD sampleLength, DWORD 
     pSample += dwNalLength;
     
   }
+  
+  return cc_bytes_in_buffer;
 }
 
 void CcParseH264::do_NAL (unsigned char *NALstart, int Length)
@@ -124,20 +135,6 @@ void CcParseH264::do_NAL (unsigned char *NALstart, int Length)
     // Found SEI (used for subtitles)
     sei_rbsp(NALstart+1, Length-1);
   }
-}
-
-
-// Remove 'emulation_prevention_three_byte' extra bytes from NAL
-unsigned char * CcParseH264::remove_03emu(unsigned char *from, unsigned char *to)
-{
-	int num=to-from;
-	LogDebug ("CcParseH264: remove_03emu() - num %d, from %d, to %d", num, from, to);
-	int newsize = EBSPtoRBSP (from,num,0);
-	if (newsize < 0) // broken NAL....
-	{
-		return NULL;
-  }
-  return from+newsize;
 }
 
 
@@ -164,7 +161,7 @@ int CcParseH264::EBSPtoRBSP(unsigned char *streamBuffer, int end_bytepos, int be
     }
     if(count == ZEROBYTES_SHORTSTARTCODE && *(streamBuffer+i) == 0x03)
     {
-	    LogDebug ("CcParseH264: EBSPtoRBSP() 0x03 found, i %d", i);
+	    //LogDebug ("CcParseH264: EBSPtoRBSP() 0x03 found, i %d", i);
       //check the 4th byte after 0x000003, except when cabac_zero_word is used, in which case the last three bytes of this NAL unit must be 0x000003
       if((i < end_bytepos-1) && (*(streamBuffer+i+1) > 0x03))
       {
@@ -194,25 +191,25 @@ int CcParseH264::EBSPtoRBSP(unsigned char *streamBuffer, int end_bytepos, int be
 void CcParseH264::sei_rbsp (unsigned char *seibuf, int Length)
 {
   unsigned char *tbuf = seibuf;
-  unsigned char *seiend = seibuf + Length;
   
-	//LogDebug ("CcParseH264: sei_rbsp() - Start1, seibuf: %d, seiend: %d, Length: %d, endbyte: %x", seibuf, seiend, Length, *(seiend-1));
-	seiend = remove_03emu(tbuf, seiend); // Remove 'emulation_prevention_three_byte' added bytes	
-	if (seiend==NULL)
+  // Remove 'emulation_prevention_three_byte' added bytes	and calculate new 'end' pointer
+  int newsize = EBSPtoRBSP (tbuf, Length, 0);
+	if (newsize < 0) // broken NAL....
 	{
-		LogDebug ("CcParseH264: sei_rbsp() - remove_03emu fail, seiend == NULL");
+		LogDebug ("CcParseH264: sei_rbsp() - EBSPtoRBSP fail, discarding NAL, retval: %d", newsize);
 		return;
   }	
-	//LogDebug ("CcParseH264: sei_rbsp() - Start2, seibuf: %d, seiend: %d, endbyte: %x", seibuf, seiend, *(seiend-1));
+  unsigned char *seiend = seibuf + newsize;
 
   while(tbuf < seiend - 1) // Use -1 because of trailing marker
   {
-      tbuf = sei_message(tbuf, seiend - 1);
+    tbuf = sei_message(tbuf, seiend - 1);
   }
+  
   if(tbuf == seiend - 1 )
   {
-      if(*tbuf != 0x80)
-          LogDebug("CcParseH264: sei_rbsp() - Strange rbsp_trailing_bits value: %02X",*tbuf);
+    if(*tbuf != 0x80)
+        LogDebug("CcParseH264: sei_rbsp() - Strange rbsp_trailing_bits value: %02X",*tbuf);
   }
   else
 	{
@@ -253,7 +250,12 @@ unsigned char *CcParseH264::sei_message (unsigned char *seibuf, unsigned char *s
 	{
 		// TODO: What do we do here?
 		broken=1;
-		if (payloadType==4)
+		if (payloadSize == 0)  //Probably due to leading zero of (next) four byte NAL start code, following 0x80 trailing byte of this SEI
+		{
+		  *(seibuf-1) = 0x80; //trailing zero byte is spurious - replace with 0x80 and adjust pointer to keep caller happy...
+      return seibuf-1;
+		}
+		else if (payloadType==4)
 		{
 			LogDebug ("CcParseH264: sei_message() - Warning: Subtitle payload seems incorrect (too long)- Payload type: %d size: %d - seibuf: %d, seiend: %d", payloadType, payloadSize, seibuf, seiend);
 		}
@@ -272,18 +274,64 @@ unsigned char *CcParseH264::sei_message (unsigned char *seibuf, unsigned char *s
   return seibuf;
 }
 
-void CcParseH264::copy_ccdata_to_buffer (char *source, int new_cc_count)
+void CcParseH264::copy_ccdata_to_buffer (unsigned char *source, int new_cc_count)
 {
 	ccblocks_in_avc_total++;
-	if (cc_buffer_saved==0)
+	//Check space and increase buffer size if possible
+	DWORD newbuffsize = cc_bytes_in_buffer+sizeof(DWORD)+sizeof(DWORD)+3+(new_cc_count*3)+1;
+  if (newbuffsize > cc_databufsize)
 	{
-		LogDebug ("CcParseH264: copy_ccdata_to_buffer() - Warning: Probably loss of CC data, unsaved buffer being rewritten");
-		ccblocks_in_avc_lost++;
+	  if (newbuffsize > 65536)
+		{
+			LogDebug ("CcParseH264: udr_itu_t_t35() - FATAL - Max buffer size exceeded");
+			ccblocks_in_avc_lost++;
+			return;
+	  }						  
+		cc_data = (unsigned char*)realloc(cc_data, (size_t) newbuffsize);
+		if (!cc_data)
+		{
+			LogDebug ("CcParseH264: udr_itu_t_t35() - FATAL - Out of memory");
+			ccblocks_in_avc_lost++;
+			return;
+	  }
+		cc_databufsize = (long) newbuffsize;
 	}
-	memcpy(cc_data+cc_count*3, source, new_cc_count*3+1);
+	
+	if (new_cc_count > 31)
+	{
+		LogDebug ("CcParseH264: copy_ccdata_to_buffer() - cc_count overflow: %d", new_cc_count);
+		ccblocks_in_avc_lost++;
+		return;
+	}
+	
+	//Add header data
+	*(UNALIGNED DWORD*)(cc_data+cc_bytes_in_buffer) = (new_cc_count*3)+8; //length of CC packet
+	cc_bytes_in_buffer += sizeof(DWORD);	
+	*(UNALIGNED DWORD*)(cc_data+cc_bytes_in_buffer) = 0x34394147; //user_identifier "GA94"
+	cc_bytes_in_buffer += sizeof(DWORD);
+	*(cc_data+(cc_bytes_in_buffer++)) = 0x03; //user_data_type_code
+	*(cc_data+(cc_bytes_in_buffer++)) = 0x40 | (new_cc_count & 0x1F); //flags and cc_count
+	*(cc_data+(cc_bytes_in_buffer++)) = 0; //em_data
+	
+	//Copy in CC data
+	memcpy(cc_data+cc_bytes_in_buffer, source, (new_cc_count*3)+1); //cc_data_pkt's + marker_bits
+	
+  //	for (int i = 0; i < (new_cc_count*3); i+=3)
+  //	{
+  //		LogDebug ("Dump CC - Triplet %d, Hex: 0x%x 0x%x 0x%x, ASCII: %c %c", i/3,  
+  //		          *(unsigned char*)(source+i+0), *(unsigned char*)(source+i+1), *(unsigned char*)(source+i+2), 
+  //		          (0x7F & *(unsigned char*)(source+i+1)), (0x7F & *(unsigned char*)(source+i+2)));
+  //	}
+	
 	cc_count+=new_cc_count;
-	cc_buffer_saved=0;
+	cc_bytes_in_buffer += (new_cc_count*3)+1;
 }
+
+BYTE* CcParseH264::get_cc_buffer_pointer()
+{
+  return (BYTE*)cc_data;
+}
+
 
 
 void CcParseH264::user_data_registered_itu_t_t35 (unsigned char *userbuf, unsigned char *userend)
@@ -322,65 +370,26 @@ void CcParseH264::user_data_registered_itu_t_t35 (unsigned char *userbuf, unsign
 	switch (itu_t_35_provider_code)
 	{
 		case 0x0031: // ANSI/SCTE 128
-			LogDebug ("CcParseH264: udr_itu_t_t35() - Caption block in ANSI/SCTE 128...");
+			LOG_DETAIL ("CcParseH264: udr_itu_t_t35() - Caption block in ANSI/SCTE 128 - provider_code = 0x0031");
 			if (*tbuf==0x47 && *(tbuf+1)==0x41 && *(tbuf+2)==0x39 && *(tbuf+3)==0x34) // ATSC1_data() - GA94
 			{
-				LogDebug ("CcParseH264: udr_itu_t_t35() - ATSC1_data()...");
+				LOG_DETAIL ("CcParseH264: udr_itu_t_t35() - ATSC1_data()...");
 				tbuf+=4;
 				unsigned char user_data_type_code=*tbuf;
 				tbuf++;
 				switch (user_data_type_code)
 				{
 					case 0x03:
-						LogDebug ("CcParseH264: udr_itu_t_t35() - cc_data (finally)!");
-
-//						cc_count = 2; // Forced test
-//						process_cc_data_flag = (*tbuf & 2) >> 1;
-//						mandatory_1 = (*tbuf & 1);
-//						mandatory_0 = (*tbuf & 4) >>2;
-//						if (!mandatory_1 || mandatory_0)
-//						{
-//							printf ("Essential tests not passed.");
-//							break;
-//						}
+						LOG_DETAIL ("CcParseH264: udr_itu_t_t35() - cc_data (finally)!");
 
 						local_cc_count= *tbuf & 0x1F;
 						process_cc_data_flag = (*tbuf & 0x40) >> 6;
-
-//						if (!process_cc_data_flag)
-//						{
-//							LogDebug ("CcParseH264: udr_itu_t_t35() - process_cc_data_flag == 0, skipping this caption block.");
-//							break;
-//						}
-
-//						The following tests are not passed in Comcast's sample videos. *tbuf here is always 0x41.
-//						if (! (*tbuf & 0x80)) // First bit must be 1
-//						{
-//							LogDebug ("CcParseH264: udr_itu_t_t35() - Fixed bit should be 1, but it's 0 - skipping this caption block.");
-//							break;
-//						}
-//						if (*tbuf & 0x20) // Third bit must be 0
-//						{
-//							LogDebug ("CcParseH264: udr_itu_t_t35() - Fixed bit should be 0, but it's 1 - skipping this caption block.");
-//							break;
-//						}
 						
 						tbuf++;
-						
-//						Another test that the samples ignore. They contain 00!
-//						if (*tbuf!=0xFF)
-//						{
-//							LogDebug ("CcParseH264: udr_itu_t_t35() - Fixed value should be 0xFF, but it's %02X - skipping this caption block.", *tbuf);
-//						}
-						
+												
 						// OK, all checks passed!
 						tbuf++;
 						cc_tmpdata = tbuf;
-
-//						//TODO: I don't think we have user_data_len here
-//						if (cc_count*3+3 != user_data_len)
-//						fatal(CCX_COMMON_EXIT_BUG_BUG,
-//							"Syntax problem: user_data_len != cc_count*3+3.");
 
 						// Enough room for CC captions?
 						if (cc_tmpdata+local_cc_count*3 >= userend)
@@ -395,25 +404,16 @@ void CcParseH264::user_data_registered_itu_t_t35 (unsigned char *userbuf, unsign
 						}
 
 						// Save the data and process once we know the sequence number
-						if (local_cc_count*3+1 > cc_databufsize)
-						{
-							cc_data = (unsigned char*)realloc(cc_data, (size_t) cc_count*6+1);
-							if (!cc_data)
-							{
-								LogDebug ("CcParseH264: udr_itu_t_t35() - FATAL - Out of memory");
-								return;
-						  }
-							cc_databufsize = (long) cc_count*6+1;
-						}
 						// Copy new cc data into cc_data
-			      LogDebug ("CcParseH264: udr_itu_t_t35() - copy new 'code 49' CC data into cc_data, length: %d", local_cc_count);
-						copy_ccdata_to_buffer ((char *) cc_tmpdata, local_cc_count);
+			      LOG_DETAIL ("CcParseH264: udr_itu_t_t35() - copy new 'code 49' CC data into cc_data, length: %d", local_cc_count);
+						copy_ccdata_to_buffer (cc_tmpdata, local_cc_count);
 						break;
 					case 0x06:
-						LogDebug ("CcParseH264: udr_itu_t_t35() - bar_data (unsupported for now)");
+						LOG_DETAIL ("CcParseH264: udr_itu_t_t35() - bar_data (unsupported for now)");
 						break;
 					default:
-						LogDebug ("CcParseH264: udr_itu_t_t35() - SCTE/ATSC reserved.");
+						break;
+						LOG_DETAIL ("CcParseH264: udr_itu_t_t35() - SCTE/ATSC reserved.");
 				}
 
 			}
@@ -432,16 +432,16 @@ void CcParseH264::user_data_registered_itu_t_t35 (unsigned char *userbuf, unsign
 			}
 			else
 			{
-				LogDebug ("CcParseH264: udr_itu_t_t35() - SCTE/ATSC reserved.");
+				LOG_DETAIL ("CcParseH264: udr_itu_t_t35() - SCTE/ATSC reserved.");
 			}
 			break;
 		case 0x002F:
-      LogDebug ("CcParseH264: udr_itu_t_t35() - ATSC1_data() - provider_code = 0x002F");
+      LOG_DETAIL ("CcParseH264: udr_itu_t_t35() - ATSC1_data() - provider_code = 0x002F");
 
 			user_data_type_code = *((byte*)tbuf);
 			if(user_data_type_code != 0x03)
 			{
-				LogDebug ("CcParseH264: udr_itu_t_t35() - Not supported  user_data_type_code: %02x",
+				LOG_DETAIL ("CcParseH264: udr_itu_t_t35() - Not supported  user_data_type_code: %02x",
 				   user_data_type_code);
 				return;
 			}
@@ -453,7 +453,7 @@ void CcParseH264::user_data_registered_itu_t_t35 (unsigned char *userbuf, unsign
 			process_cc_data_flag = (*tbuf & 0x40) >> 6;
 			if (!process_cc_data_flag)
       {
-          LogDebug ("CcParseH264: udr_itu_t_t35() - process_cc_data_flag == 0, skipping this caption block.");
+          LOG_DETAIL ("CcParseH264: udr_itu_t_t35() - process_cc_data_flag == 0, skipping this caption block.");
           break;
       }
 			cc_tmpdata = tbuf+2;
@@ -477,25 +477,15 @@ void CcParseH264::user_data_registered_itu_t_t35 (unsigned char *userbuf, unsign
 		  }
 
 			// Save the data and process once we know the sequence number
-			if (cc_count*3+1 > cc_databufsize)
-			{
-				cc_data = (unsigned char*)realloc(cc_data, (size_t) cc_count*6+1);
-				if (!cc_data)
-				{
-					LogDebug ("CcParseH264: udr_itu_t_t35() - FATAL - Out of memory");
-					return;
-			  }
-				cc_databufsize = (long) cc_count*6+1;
-			}
       
       // Copy new cc data into cc_data - replace command below.
-			LogDebug ("CcParseH264: udr_itu_t_t35() - copy new 'code 47' CC data into cc_data, length: %d", local_cc_count);
-      copy_ccdata_to_buffer ((char *) cc_tmpdata, local_cc_count);
+			LOG_DETAIL ("CcParseH264: udr_itu_t_t35() - copy new 'code 47' CC data into cc_data, length: %d", local_cc_count);
+      copy_ccdata_to_buffer (cc_tmpdata, local_cc_count);
 
 			//dump(tbuf,user_data_len-1,0);
 			break;
 		default:
-			LogDebug ("CcParseH264: udr_itu_t_t35() - Not a supported user data SEI, itu_t_35_provider_code: %04x", itu_t_35_provider_code);
+			LOG_DETAIL ("CcParseH264: udr_itu_t_t35() - Not a supported user data SEI, itu_t_35_provider_code: %04x", itu_t_35_provider_code);
 			break;
 	}
 }
