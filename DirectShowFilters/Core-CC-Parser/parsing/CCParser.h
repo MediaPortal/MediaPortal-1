@@ -127,7 +127,7 @@ private:
 
 	CCWORDSET m_ccsetLastPorI;
 	
-	CCWORDSET m_ccsetH264[20]; //Sized to allow for maximum of 20 H.264 b-frames + ref frames
+	CCWORDSET m_ccsetH264[18]; //Sized to allow for maximum of 18 H.264 b-frames + ref frames
 	int m_ccsetH264WrIdx;
 	
   CcParseH264 *m_CcParserH264;

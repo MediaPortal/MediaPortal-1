@@ -551,9 +551,16 @@ namespace MediaPortal.Player
 
         using (MPSettings xmlreader = new MPSettings())
         {
-          int lastSubIndex = xmlreader.GetValueAsInt("tvservice", "lastsubtitleindex", 0);
-          Log.Debug("TSReaderPlayer: Last subtitle index: {0}", lastSubIndex);
-          CurrentSubtitleStream = lastSubIndex;
+          if (filterConfig.autoShowSubWhenTvStarts && SupportsCC && CurrentSubtitleStream == 0)
+          {
+            CurrentSubtitleStream = -1;
+          }
+          else
+          {
+            int lastSubIndex = xmlreader.GetValueAsInt("tvservice", "lastsubtitleindex", 0);
+            Log.Debug("TSReaderPlayer: Last subtitle index: {0}", lastSubIndex);
+            CurrentSubtitleStream = lastSubIndex;
+          }
         }
 
         if (filterConfig != null && !filterConfig.autoShowSubWhenTvStarts)

@@ -8,6 +8,7 @@
 //static char THIS_FILE[] = __FILE__;
 //#endif
 
+// uncomment the //LogDebug to enable extra logging
 #define LOG_DETAIL //LogDebug
 
 extern void LogDebug(const char *fmt, ...) ;

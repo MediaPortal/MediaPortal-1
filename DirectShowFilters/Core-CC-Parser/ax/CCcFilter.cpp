@@ -10,6 +10,9 @@
 #include <shlobj.h>
 #include <queue>
 
+// uncomment the //LogDebug to enable extra logging
+#define LOG_DETAIL //LogDebug
+
 //These are global variables, and can be shared between multiple CCcFilter instances !
 long m_instanceCount = 0;
 CCritSec m_instanceLock;
@@ -523,8 +526,9 @@ HRESULT CCcFilter::CheckInputType(const CMediaType *pmt)
     }
     
     m_guidPassThroughMediaSubtype = pmt->subtype;
-    m_bIsSubtypeAVC1 = (pmt->subtype == MPG4_SubType);
-
+    
+    m_dwFlags = 0;
+    
     if (pmt->formattype == FORMAT_MPEG2Video)
     {
       // Check the buffer size.
@@ -533,10 +537,26 @@ HRESULT CCcFilter::CheckInputType(const CMediaType *pmt)
         MPEG2VIDEOINFO *pVih = reinterpret_cast<MPEG2VIDEOINFO*>(pmt->pbFormat);
           /* Access MPEG2VIDEOINFO members through pVih. */
         m_dwFlags = pVih->dwFlags;
-        LogDebug ("CCcFilter: CheckInputType() - m_dwFlags: %d", m_dwFlags);
       }
     }
     
+    if (pmt->subtype == MPG4_SubType)
+    {
+      m_bIsSubtypeAVC1 = true;
+      LogDebug ("CCcFilter: CheckInputType() - Mediasubtype = AVC1, m_dwFlags: %d", m_dwFlags);
+    }
+    else
+    {
+      m_bIsSubtypeAVC1 = false;      
+      if (pmt->subtype == MEDIASUBTYPE_MPEG2_VIDEO)  
+  	  {
+        LogDebug ("CCcFilter: CheckInputType() - Mediasubtype = MPEG2, m_dwFlags: %d", m_dwFlags);
+  	  }
+  	  else
+  	  {
+        LogDebug ("CCcFilter: CheckInputType() - Mediasubtype = MPEG1, m_dwFlags: %d", m_dwFlags);
+  	  }
+    }
     
     return NOERROR;
 
@@ -592,7 +612,14 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
 	HRESULT gthr = pSourceSample->GetTime(&sourceTimeStart, &sourceTimeEnd);	
 	if (gthr != S_OK && gthr != VFW_S_NO_STOP_TIME )
 	{
+	  //No timestamp available, so just tag the samples with the current stream time + offset into future
 	  sourceTimeStart = _I64_MAX;
+    if (m_pClock)
+    {
+      m_pClock->GetTime(&sourceTimeStart);
+      sourceTimeStart -= m_tStart;
+      sourceTimeStart += (500*10000); //add 500ms
+    }        
 	}
   //LogDebug("CCcFilter: SampleGetTime: %f", (float)sourceTimeStart/10000000.0);
 
@@ -647,20 +674,6 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
 				//pifOutSample->SetSyncPoint(TRUE);
 
 			  pifOutSample->SetTime(NULL,NULL); //Remove timestamps
-
-        //        if (m_pClock)
-        //        {
-        //          REFERENCE_TIME baseTime = 0;
-        //          m_pClock->GetTime(&baseTime);
-        //          baseTime -= m_tStart;
-        //          //baseTime += (100*10000); //add 500ms
-        //          LogDebug("CCcFilter: SampleSetTime: %f, m_tStart %f", (float)baseTime/10000000.0, (float)m_tStart/10000000.0);
-        //				  pifOutSample->SetTime(&baseTime,&baseTime);
-        //        }
-        //        else
-        //        {
-        //				  pifOutSample->SetTime(NULL,NULL);
-        //        }
 								
 				pifOutSample->AddRef();
 				HRESULT hr = m_pLine21Queue->Receive( pifOutSample );
@@ -688,11 +701,14 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
 
 STDMETHODIMP CCcFilter::Stop()
 {
-    CBaseFilter::Stop(); // Note: great gradnparent
-    ASSERT( m_State == State_Stopped );
+	LOG_DETAIL("CCcFilter: Stop()");
+
+  CBaseFilter::Stop(); // Note: great gradnparent
+  ASSERT( m_State == State_Stopped );
 
 	delete m_pPassThroughQueue; m_pPassThroughQueue = NULL;
 	delete m_pLine21Queue;	    m_pLine21Queue = NULL;
+
 
 	return NOERROR;
 }
@@ -718,11 +734,13 @@ static void CreateQueue( COutputQueue** ppQueue, IPin* pPin )
 
 STDMETHODIMP CCcFilter::Pause()
 {
-    CreateQueue( &m_pPassThroughQueue, m_outpinPassThrough.GetConnected());
-    CreateQueue( &m_pLine21Queue,	   m_outpinLine21.GetConnected());
+	LOG_DETAIL("CCcFilter: Pause()");
+
+  CreateQueue( &m_pPassThroughQueue, m_outpinPassThrough.GetConnected());
+  CreateQueue( &m_pLine21Queue,	   m_outpinLine21.GetConnected());
 
 	CBaseFilter::Pause();  // Note: great grandparent
-    ASSERT( m_State == State_Paused );
+   ASSERT( m_State == State_Paused );
 //	m_pifIPSample = NULL;
 
     return NOERROR;
@@ -730,17 +748,22 @@ STDMETHODIMP CCcFilter::Pause()
 
 HRESULT CCcFilter::EndOfStream()
 {
+	LOG_DETAIL("CCcFilter: EndOfStream()");
+
 	if( m_pPassThroughQueue )
 		m_pPassThroughQueue->EOS();
 
 	if( m_pLine21Queue )
 		m_pLine21Queue->EOS();
 
+
 	return S_OK;
 }
 
 HRESULT CCcFilter::BeginFlush()
 {
+	LOG_DETAIL("CCcFilter: BeginFlush()");
+
 	if( m_pPassThroughQueue )
 		m_pPassThroughQueue->BeginFlush();
 
@@ -752,17 +775,22 @@ HRESULT CCcFilter::BeginFlush()
 
 HRESULT CCcFilter::EndFlush()
 {
+	LOG_DETAIL("CCcFilter: EndFlush()");
+
 	if( m_pPassThroughQueue )
 		m_pPassThroughQueue->EndFlush();
 
 	if( m_pLine21Queue )
 		m_pLine21Queue->EndFlush();
+		
 
 	return S_OK;
 }
 
 HRESULT CCcFilter::NewSegment( REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate)
 {
+	LOG_DETAIL("CCcFilter: NewSegment()");
+
 	if( m_pPassThroughQueue )
 		m_pPassThroughQueue->NewSegment( tStart, tStop, dRate );
 
@@ -770,6 +798,7 @@ HRESULT CCcFilter::NewSegment( REFERENCE_TIME tStart, REFERENCE_TIME tStop, doub
 		m_pLine21Queue->NewSegment( tStart, tStop, dRate );
 
 	m_proc.Reset();
+
 
 	return S_OK;
 }
