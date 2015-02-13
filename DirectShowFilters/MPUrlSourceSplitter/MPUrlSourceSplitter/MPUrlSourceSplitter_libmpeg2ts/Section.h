@@ -163,6 +163,10 @@ protected:
   // calculates section CRC32
   // @return : number of bytes written into buffer, zero if not successful
   virtual unsigned int CalculateSectionCrc32(void);
+
+  // checks table ID against actual table ID
+  // @return : true if table ID is valid, false otherwise
+  virtual bool CheckTableId(void) = 0;
 };
 
 #endif

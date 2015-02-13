@@ -35,10 +35,10 @@
 
 #define TRANSPORT_STREAM_PROGRAM_MAP_PARSER_PID_NOT_DEFINED           0xFFFF
 
-class CTransportStreamProgramMapParser : CParser
+class CTransportStreamProgramMapParser : public CParser
 {
 public:
-  CTransportStreamProgramMapParser(HRESULT *result);
+  CTransportStreamProgramMapParser(HRESULT *result, uint16_t pid);
   virtual ~CTransportStreamProgramMapParser(void);
 
   /* get methods */
@@ -62,10 +62,6 @@ public:
   uint16_t GetTransportStreamProgramMapSectionPID(void);
 
   /* set methods */
-
-  // sets transport stream program map section PSI packet PID
-  // @param : the transport stream program map section PSI packet PID to set
-  void SetTransportStreamProgramMapSectionPID(uint16_t pid);
 
   /* other methods */
 

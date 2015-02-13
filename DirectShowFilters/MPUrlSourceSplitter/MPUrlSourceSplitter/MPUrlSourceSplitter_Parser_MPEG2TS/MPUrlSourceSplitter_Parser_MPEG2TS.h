@@ -27,10 +27,8 @@
 #include "CacheFile.h"
 #include "Mpeg2tsStreamFragmentCollection.h"
 #include "DiscontinuityParser.h"
-#include "ProgramAssociationParser.h"
-#include "ProgramAssociationSectionContext.h"
-#include "TransportStreamProgramMapParser.h"
-#include "TransportStreamProgramMapSectionContext.h"
+#include "ProgramAssociationParserContext.h"
+#include "TransportStreamProgramMapParserContextCollection.h"
 
 #define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_NONE               PARSER_PLUGIN_FLAG_NONE
 
@@ -43,7 +41,9 @@
 #define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER            (1 << (PARSER_PLUGIN_FLAG_LAST + 4))
 #define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID           (1 << (PARSER_PLUGIN_FLAG_LAST + 5))
 
-#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_LAST               (PARSER_PLUGIN_FLAG_LAST + 6)
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_SET_NOT_SCRAMBLED                (1 << (PARSER_PLUGIN_FLAG_LAST + 6))
+
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_LAST               (PARSER_PLUGIN_FLAG_LAST + 7)
 
 #define PARSER_NAME                                                   L"PARSER_MPEG2TS"
 
@@ -185,15 +185,10 @@ protected:
   // holds discontinuity parser
   CDiscontinuityParser *discontinuityParser;
 
-  // holds program association (PAT) parser
-  CProgramAssociationParser *programAssociationParser;
-  // holds program association section context
-  CProgramAssociationSectionContext *programAssociationSectionContext;
-
-  // holds transport stream program map (PMT) parser
-  CTransportStreamProgramMapParser *transportStreamProgramMapParser;
-  // holds transport stream program map section context
-  CTransportStreamProgramMapSectionContext *transportStreamProgramMapSectionContext;
+  // holds program association (PAT) parser with program association section context
+  CProgramAssociationParserContext *programAssociationParserContext;
+  // holds collection of transport stream program map (PMT) parser with transport stream program map section context
+  CTransportStreamProgramMapParserContextCollection *transportStreamProgramMapParserContextCollection;
 
   // holds new stream identification (transport stream ID, program number and program map PID)
   unsigned int transportStreamId;

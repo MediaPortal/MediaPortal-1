@@ -30,11 +30,15 @@
 #define PARAMETER_NAME_MPEG2TS_PROGRAM_NUMBER                         L"Mpeg2TsProgramNumber"
 #define PARAMETER_NAME_MPEG2TS_PROGRAM_MAP_PID                        L"Mpeg2TsProgramMapPID"
 
+#define PARAMETER_NAME_MPEG2TS_SET_NOT_SCRAMBLED                      L"Mpeg2TsSetNotScrambled"
+
 #define MPEG2TS_DETECT_DISCONTINUITY_DEFAULT                          true
 #define MPEG2TS_ALIGN_TO_MPEG2TS_PACKET                               true
 
 #define MPEG2TS_TRANSPORT_STREAM_ID_DEFAULT                           UINT_MAX
 #define MPEG2TS_PROGRAM_NUMBER_DEFAULT                                UINT_MAX
 #define MPEG2TS_PROGRAM_MAP_PID_DEFAULT                               UINT_MAX
+
+#define MPEG2TS_SET_NOT_SCRAMBLED_DEFAULT                             false
 
 #endif

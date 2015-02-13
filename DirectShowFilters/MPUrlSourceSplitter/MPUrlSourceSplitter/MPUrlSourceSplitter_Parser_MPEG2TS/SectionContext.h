@@ -33,8 +33,9 @@
 #define SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_INCOMPLETE              (1 << (FLAGS_LAST + 1))
 #define SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_COMPLETE                (1 << (FLAGS_LAST + 2))
 #define SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_ERROR                   (1 << (FLAGS_LAST + 3))
+#define SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_IS_SECTION              (1 << (FLAGS_LAST + 4))
 
-#define SECTION_CONTEXT_FLAG_LAST                                     (FLAGS_LAST + 4)
+#define SECTION_CONTEXT_FLAG_LAST                                     (FLAGS_LAST + 5)
 
 class CSectionContext : public CFlags
 {
@@ -87,6 +88,10 @@ public:
   // @param sectionError : true if original section is in error, false otherwise
   void SetOriginalSectionError(bool sectionError);
 
+  // sets original section is section or not
+  // @param isSection : true if original section is section, false otherwise
+  void SetOriginalSectionIsSection(bool isSection);
+
   // sets MPEG2 TS packet count
   void SetPacketCount(unsigned int packetCount);
 
@@ -111,6 +116,10 @@ public:
   // tests if original section is in error
   // @return : true if original section is in error, false otherwise
   bool IsOriginalSectionError(void);
+
+  // tests if original section is section or not
+  // @return : true if original section is section, false otherwise
+  bool IsOriginalSectionIsSection(void);
 
   // creates updated section by cloning original section
   // @return : true if successful, false otherwise

@@ -229,3 +229,8 @@ unsigned int CProgramAssociationSection::GetSectionInternal(void)
 
   return position;
 }
+
+bool CProgramAssociationSection::CheckTableId(void)
+{
+  return (this->GetTableId() == PROGRAM_ASSOCIATION_SECTION_TABLE_ID);
+}

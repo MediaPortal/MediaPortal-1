@@ -40,6 +40,15 @@
     <Filter Include="Sections\Source Files">
       <UniqueIdentifier>{c360a762-551c-4216-97ce-131828e80aa2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Descriptors">
+      <UniqueIdentifier>{16a51f9b-a58e-4ae8-9931-8ba4fcabbc50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Descriptors\Header Files">
+      <UniqueIdentifier>{2dec64b4-6e4b-467d-a84f-48bc311a5dcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Descriptors\Source Files">
+      <UniqueIdentifier>{052f38ba-503d-4da8-94d9-ef82c6251647}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -108,6 +117,21 @@
     <ClInclude Include="TransportStreamProgramMapParser.h">
       <Filter>Parsers\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Descriptor.h">
+      <Filter>Descriptors\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConditionalAccessDescriptor.h">
+      <Filter>Descriptors\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DescriptorFactory.h">
+      <Filter>Descriptors\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DescriptorCollection.h">
+      <Filter>Descriptors\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConditionalAccessParser.h">
+      <Filter>Parsers\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -169,6 +193,18 @@
     </ClCompile>
     <ClCompile Include="TransportStreamProgramMapParser.cpp">
       <Filter>Parsers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Descriptor.cpp">
+      <Filter>Descriptors\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConditionalAccessDescriptor.cpp">
+      <Filter>Descriptors\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DescriptorFactory.cpp">
+      <Filter>Descriptors\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DescriptorCollection.cpp">
+      <Filter>Descriptors\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

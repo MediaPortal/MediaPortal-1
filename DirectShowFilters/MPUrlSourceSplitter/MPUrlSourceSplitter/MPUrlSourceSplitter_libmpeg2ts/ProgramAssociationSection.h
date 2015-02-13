@@ -157,6 +157,10 @@ protected:
   // gets whole section into payload
   // @return : number of bytes written into buffer, zero if not successful
   virtual unsigned int GetSectionInternal(void);
+
+  // checks table ID against actual table ID
+  // @return : true if table ID is valid, false otherwise
+  virtual bool CheckTableId(void);
 };
 
 #endif

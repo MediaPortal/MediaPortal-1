@@ -32,6 +32,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.TransportStreamID = Mpeg2TsParser.DefaultMpeg2TsTransportStreamID;
             this.ProgramNumber = Mpeg2TsParser.DefaultMpeg2TsProgramNumber;
             this.ProgramMapPID = Mpeg2TsParser.DefaultMpeg2TsProgramMapPID;
+            this.SetNotScrambled = Mpeg2TsParser.DefaultMpeg2TsSetNotScrambled;
         }
 
         #endregion
@@ -104,6 +105,12 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             }
         }
 
+        /// <summary>
+        /// Specifies if MPEG2 TS parser have to set stream as not scrambled.
+        /// </summary>
+        [Category("MPEG2 Transport Stream parser"), Description("Specifies if MPEG2 TS parser have to set stream as not scrambled."), DefaultValue(Mpeg2TsParser.DefaultMpeg2TsSetNotScrambled)]
+        public Boolean SetNotScrambled { get; set; }
+
         #endregion
 
         #region Methods
@@ -140,6 +147,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                 {
                     this.ProgramMapPID = int.Parse(param.Value);
                 }
+
+                if (String.CompareOrdinal(param.Name, Mpeg2TsParser.ParameterMpeg2TsSetNotScrambled) == 0)
+                {
+                    this.SetNotScrambled = (String.CompareOrdinal(param.Value, SimpleUrl.DefaultTrue) == 0);
+                }
             }
         }
 
@@ -172,6 +184,10 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             if (this.ProgramMapPID != Mpeg2TsParser.DefaultMpeg2TsProgramMapPID)
             {
                 parameters.Add(new Parameter(Mpeg2TsParser.ParameterMpeg2TsProgramMapPID, this.ProgramMapPID.ToString()));
+            }
+            if (this.SetNotScrambled != Mpeg2TsParser.DefaultMpeg2TsSetNotScrambled)
+            {
+                parameters.Add(new Parameter(Mpeg2TsParser.ParameterMpeg2TsSetNotScrambled, this.SetNotScrambled ? SimpleUrl.DefaultTrue : SimpleUrl.DefaultFalse));
             }
 
             return parameters.FilterParameters;
@@ -207,6 +223,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         protected static readonly String ParameterMpeg2TsProgramMapPID = "Mpeg2TsProgramMapPID";
 
         /// <summary>
+        /// Specifies if MPEG2 TS parser have to set stream as not scrambled.
+        /// </summary>
+        protected static readonly String ParameterMpeg2TsSetNotScrambled = "Mpeg2TsSetNotScrambled";
+
+        /// <summary>
         /// Default value for <see cref="ParameterMpeg2TsDetectDiscontinuity"/> parameter.
         /// </summary>
         public const Boolean DefaultMpeg2TsDetectDiscontinuity = true;
@@ -230,6 +251,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// Default value for <see cref="ParameterMpeg2TsProgramMapPID"/> parameter.
         /// </summary>
         public const int DefaultMpeg2TsProgramMapPID = -1;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterMpeg2TsSetNotScrambled"/> parameter.
+        /// </summary>
+        public const Boolean DefaultMpeg2TsSetNotScrambled = false;
 
         #endregion
     }

@@ -108,6 +108,12 @@ void CSectionContext::SetOriginalSectionError(bool sectionError)
   this->flags |= sectionError ? SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_ERROR : SECTION_CONTEXT_FLAG_NONE;
 }
 
+void CSectionContext::SetOriginalSectionIsSection(bool isSection)
+{
+  this->flags &= ~SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_IS_SECTION;
+  this->flags |= isSection ? SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_IS_SECTION : SECTION_CONTEXT_FLAG_NONE;
+}
+
 void CSectionContext::SetPacketCount(unsigned int packetCount)
 {
   this->packetCount = packetCount;
@@ -138,6 +144,11 @@ bool CSectionContext::IsOriginalSectionComplete(void)
 bool CSectionContext::IsOriginalSectionError(void)
 {
   return this->IsSetFlags(SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_ERROR);
+}
+
+bool CSectionContext::IsOriginalSectionIsSection(void)
+{
+  return this->IsSetFlags(SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_IS_SECTION);
 }
 
 /* protected methods */

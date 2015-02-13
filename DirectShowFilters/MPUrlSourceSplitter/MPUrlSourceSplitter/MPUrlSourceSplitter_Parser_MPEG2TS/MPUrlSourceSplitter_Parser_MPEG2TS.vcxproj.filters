@@ -69,6 +69,18 @@
     <ClInclude Include="Mpeg2TsDumpBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ParserContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramAssociationParserContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TransportStreamProgramMapParserContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TransportStreamProgramMapParserContextCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -120,6 +132,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Mpeg2TsDumpBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ParserContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramAssociationParserContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TransportStreamProgramMapParserContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TransportStreamProgramMapParserContextCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

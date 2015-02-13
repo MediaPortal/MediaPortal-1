@@ -237,6 +237,12 @@ HRESULT CSection::Parse(CProgramSpecificInformationPacket *psiPacket, unsigned i
       this->flags |= SECTION_FLAG_COMPLETE_SECTION;
     }
 
+    if (SUCCEEDED(result) && this->IsSetFlags(SECTION_FLAG_COMPLETE_SECTION))
+    {
+      // complete section, check table ID
+      CHECK_CONDITION_HRESULT(result, this->CheckTableId(), result, E_MPEG2TS_SECTION_INVALID_TABLE_ID);
+    }
+
     if (SUCCEEDED(result) && this->IsSetFlags(SECTION_FLAG_COMPLETE_SECTION | SECTION_FLAG_CHECK_CRC32))
     {
       // complete section, check CRC32

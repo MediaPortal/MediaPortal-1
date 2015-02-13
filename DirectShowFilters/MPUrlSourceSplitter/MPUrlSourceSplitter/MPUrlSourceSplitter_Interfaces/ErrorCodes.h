@@ -110,6 +110,7 @@ FORCEINLINE bool IS_OUR_ERROR(HRESULT error) { return (((error & 0xFFFFF000) == 
 #define E_MPEG2TS_CANNOT_SPLIT_SECTION_INTO_PSI_PACKETS                         -74
 #define E_MPEG2TS_SECTION_BIGGER_THAN_ORIGINAL_SECTION                          -75
 #define E_MPEG2TS_ONLY_ONE_PROGRAM_ALLOWED                                      -76
+#define E_MPEG2TS_SECTION_INVALID_TABLE_ID                                      -77
 
 // M3U8 parser error codes
 

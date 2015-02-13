@@ -171,12 +171,16 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="Mpeg2tsStreamFragmentCollection.h" />
     <ClInclude Include="MPUrlSourceSplitter_Parser_MPEG2TS.h" />
     <ClInclude Include="MPUrlSourceSplitter_Parser_MPEG2TS_Parameters.h" />
+    <ClInclude Include="ParserContext.h" />
+    <ClInclude Include="ProgramAssociationParserContext.h" />
     <ClInclude Include="ProgramAssociationSectionContext.h" />
     <ClInclude Include="ProgramAssociationSectionPacketContext.h" />
     <ClInclude Include="ProgramAssociationSectionPacketContextCollection.h" />
     <ClInclude Include="SectionContext.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TransportStreamProgramMapParserContext.h" />
+    <ClInclude Include="TransportStreamProgramMapParserContextCollection.h" />
     <ClInclude Include="TransportStreamProgramMapSectionContext.h" />
     <ClInclude Include="TransportStreamProgramMapSectionPacketContext.h" />
     <ClInclude Include="TransportStreamProgramMapSectionPacketContextCollection.h" />
@@ -198,6 +202,8 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClCompile Include="Mpeg2tsStreamFragment.cpp" />
     <ClCompile Include="Mpeg2tsStreamFragmentCollection.cpp" />
     <ClCompile Include="MPUrlSourceSplitter_Parser_MPEG2TS.cpp" />
+    <ClCompile Include="ParserContext.cpp" />
+    <ClCompile Include="ProgramAssociationParserContext.cpp" />
     <ClCompile Include="ProgramAssociationSectionContext.cpp" />
     <ClCompile Include="ProgramAssociationSectionPacketContext.cpp" />
     <ClCompile Include="ProgramAssociationSectionPacketContextCollection.cpp" />
@@ -206,6 +212,8 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TransportStreamProgramMapParserContext.cpp" />
+    <ClCompile Include="TransportStreamProgramMapParserContextCollection.cpp" />
     <ClCompile Include="TransportStreamProgramMapSectionContext.cpp" />
     <ClCompile Include="TransportStreamProgramMapSectionPacketContext.cpp" />
     <ClCompile Include="TransportStreamProgramMapSectionPacketContextCollection.cpp" />

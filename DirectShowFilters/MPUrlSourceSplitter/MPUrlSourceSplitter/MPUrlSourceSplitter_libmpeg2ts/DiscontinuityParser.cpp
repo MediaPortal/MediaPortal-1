@@ -82,7 +82,7 @@ HRESULT CDiscontinuityParser::Parse(CTsPacket *packet)
     this->flags &= ~DISCONTINUITY_PARSER_FLAG_DISCONTINUITY;
 
     // check for right values
-    // skip null packets (pid 0x1fff)
+    // skip null packets (pid 0x1FFF)
     // pid counters are incremented only if payload is present (adaptation field control is ts_packet_adaptation_field_control_only_payload or ts_packet_adaptation_field_control_adaptation_field_with_payload)
 
     if ((packet->GetPID() != TS_PACKET_PID_NULL) && ((packet->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ONLY_PAYLOAD) || (packet->GetAdaptationFieldControl() == TS_PACKET_ADAPTATION_FIELD_CONTROL_ADAPTATION_FIELD_WITH_PAYLOAD)))

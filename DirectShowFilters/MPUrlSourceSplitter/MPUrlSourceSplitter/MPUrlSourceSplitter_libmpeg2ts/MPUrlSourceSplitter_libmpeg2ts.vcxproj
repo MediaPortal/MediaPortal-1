@@ -76,7 +76,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ConditionalAccessDescriptor.h" />
+    <ClInclude Include="ConditionalAccessParser.h" />
     <ClInclude Include="Crc32.h" />
+    <ClInclude Include="Descriptor.h" />
+    <ClInclude Include="DescriptorCollection.h" />
+    <ClInclude Include="DescriptorFactory.h" />
     <ClInclude Include="DiscontinuityParser.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="PidCounter.h" />
@@ -100,7 +105,11 @@
     <ClInclude Include="TsPacketConstants.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ConditionalAccessDescriptor.cpp" />
     <ClCompile Include="Crc32.cpp" />
+    <ClCompile Include="Descriptor.cpp" />
+    <ClCompile Include="DescriptorCollection.cpp" />
+    <ClCompile Include="DescriptorFactory.cpp" />
     <ClCompile Include="DiscontinuityParser.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="PidCounter.cpp" />

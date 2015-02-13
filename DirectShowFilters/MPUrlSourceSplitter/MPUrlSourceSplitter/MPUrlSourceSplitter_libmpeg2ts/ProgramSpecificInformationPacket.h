@@ -33,6 +33,7 @@ class CProgramSpecificInformationPacket : public CTsPacket
 {
 public:
   CProgramSpecificInformationPacket(HRESULT *result, uint16_t pid);
+  CProgramSpecificInformationPacket(HRESULT *result, uint16_t pid, bool reference);
   virtual ~CProgramSpecificInformationPacket(void);
 
   /* get methods */

@@ -33,11 +33,33 @@ CProgramSpecificInformationPacket::CProgramSpecificInformationPacket(HRESULT *re
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    unsigned int header = RBE32(this->packet, 0);
+    unsigned int header = this->GetHeader();
+
     header &= ~(TS_PACKET_HEADER_PID_MASK << TS_PACKET_HEADER_PID_SHIFT);
     header |= ((this->pid & TS_PACKET_HEADER_PID_MASK) << TS_PACKET_HEADER_PID_SHIFT);
 
-    WBE32(this->packet, 0, header);
+    this->SetHeader(header);
+
+    this->sectionPayloads = new CSectionPayloadCollection(result);
+
+    CHECK_POINTER_HRESULT(*result, this->sectionPayloads, *result, E_OUTOFMEMORY);
+  }
+}
+
+CProgramSpecificInformationPacket::CProgramSpecificInformationPacket(HRESULT *result, uint16_t pid, bool reference)
+  : CTsPacket(result, reference)
+{
+  this->pid = pid;
+  this->sectionPayloads = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    unsigned int header = this->GetHeader();
+
+    header &= ~(TS_PACKET_HEADER_PID_MASK << TS_PACKET_HEADER_PID_SHIFT);
+    header |= ((this->pid & TS_PACKET_HEADER_PID_MASK) << TS_PACKET_HEADER_PID_SHIFT);
+
+    this->SetHeader(header);
 
     this->sectionPayloads = new CSectionPayloadCollection(result);
 
@@ -126,6 +148,8 @@ unsigned int CProgramSpecificInformationPacket::ParseSectionData(const uint8_t *
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, sectionData);
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->GetPayload());
+
   unsigned int processed = 0;
 
   if (SUCCEEDED(result))
@@ -224,7 +248,7 @@ CTsPacketCollection *CProgramSpecificInformationPacket::SplitSectionInProgramSpe
 CTsPacket *CProgramSpecificInformationPacket::CreateItem(void)
 {
   HRESULT result = S_OK;
-  CProgramSpecificInformationPacket *packet = new CProgramSpecificInformationPacket(&result, this->pid);
+  CProgramSpecificInformationPacket *packet = new CProgramSpecificInformationPacket(&result, this->pid, this->IsSetFlags(TS_PACKET_FLAG_REFERENCE));
   CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(packet));

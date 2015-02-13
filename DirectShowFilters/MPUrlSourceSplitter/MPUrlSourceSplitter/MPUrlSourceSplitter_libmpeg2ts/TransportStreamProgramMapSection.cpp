@@ -22,6 +22,7 @@
 
 #include "TransportStreamProgramMapSection.h"
 #include "BufferHelper.h"
+#include "DescriptorFactory.h"
 
 CTransportStreamProgramMapSection::CTransportStreamProgramMapSection(HRESULT *result)
   : CSection(result)
@@ -31,22 +32,23 @@ CTransportStreamProgramMapSection::CTransportStreamProgramMapSection(HRESULT *re
   this->sectionNumber = 0;
   this->lastSectionNumber = 0;
   this->pcrPID = 0;
-  this->programInfoSize = 0;
-  this->programInfoDescriptor = NULL;
   this->programDefinitions = NULL;
+  this->descriptors = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->programDefinitions = new CProgramDefinitionCollection(result);
+    this->descriptors = new CDescriptorCollection(result);
 
     CHECK_POINTER_HRESULT(*result, this->programDefinitions, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->descriptors, *result, E_OUTOFMEMORY);
   }
 }
 
 CTransportStreamProgramMapSection::~CTransportStreamProgramMapSection(void)
 {
-  FREE_MEM(this->programInfoDescriptor);
   FREE_MEM_CLASS(this->programDefinitions);
+  FREE_MEM_CLASS(this->descriptors);
 }
 
 /* get methods */
@@ -76,14 +78,9 @@ unsigned int CTransportStreamProgramMapSection::GetPcrPID(void)
   return ((this->pcrPID >> TRANSPORT_STREAM_PROGRAM_MAP_SECTION_PCR_PID_SHIFT) & TRANSPORT_STREAM_PROGRAM_MAP_SECTION_PCR_PID_MASK);
 }
 
-unsigned int CTransportStreamProgramMapSection::GetProgramInfoSize(void)
+CDescriptorCollection *CTransportStreamProgramMapSection::GetDescriptors(void)
 {
-  return ((this->programInfoSize >> TRANSPORT_STREAM_PROGRAM_MAP_SECTION_PROGRAM_INFO_SIZE_SHIFT) & TRANSPORT_STREAM_PROGRAM_MAP_SECTION_PROGRAM_INFO_SIZE_MASK);
-}
-
-const uint8_t *CTransportStreamProgramMapSection::GetProgramInfoDescriptor(void)
-{
-  return this->programInfoDescriptor;
+  return this->descriptors;
 }
 
 CProgramDefinitionCollection *CTransportStreamProgramMapSection::GetProgramDefinitions(void)
@@ -107,8 +104,8 @@ HRESULT CTransportStreamProgramMapSection::Parse(CProgramSpecificInformationPack
   this->sectionNumber = 0;
   this->lastSectionNumber = 0;
   this->pcrPID = 0;
-  this->programInfoSize = 0;
-  FREE_MEM(this->programInfoDescriptor);
+  this->descriptors->Clear();
+  this->programDefinitions->Clear();
 
   HRESULT result = __super::Parse(psiPacket, startFromSectionPayload);
 
@@ -126,16 +123,32 @@ HRESULT CTransportStreamProgramMapSection::Parse(CProgramSpecificInformationPack
       RBE8INC(this->payload, position, this->sectionNumber);
       RBE8INC(this->payload, position, this->lastSectionNumber);
       RBE16INC(this->payload, position, this->pcrPID);
-      RBE16INC(this->payload, position, this->programInfoSize);
 
-      if (this->GetProgramInfoSize() != 0)
+      // parse descriptors (if needed)
+      RBE16INC_DEFINE(this->payload, position, descriptorSize, uint16_t);
+      descriptorSize = ((descriptorSize >> TRANSPORT_STREAM_PROGRAM_MAP_SECTION_DESCRIPTORS_SIZE_SHIFT) & TRANSPORT_STREAM_PROGRAM_MAP_SECTION_DESCRIPTORS_SIZE_MASK);
+
+      if (descriptorSize != 0)
       {
-        this->programInfoDescriptor = ALLOC_MEM_SET(this->programInfoDescriptor, uint8_t, this->GetProgramInfoSize(), 0);
-        CHECK_POINTER_HRESULT(result, this->programInfoDescriptor, result, E_OUTOFMEMORY);
-        CHECK_CONDITION_HRESULT(result, (position + this->GetProgramInfoSize()) <= (this->GetSectionSize() - SECTION_CRC32_SIZE), result, E_OUTOFMEMORY);
+        uint16_t processed = 0;
 
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), memcpy(this->programInfoDescriptor, this->payload + position, this->GetProgramInfoSize()));
-        position += this->GetProgramInfoSize();
+        CDescriptorFactory *factory = new CDescriptorFactory(&result);
+        CHECK_POINTER_HRESULT(result, factory, result, E_OUTOFMEMORY);
+
+        while (SUCCEEDED(result) && (processed < descriptorSize))
+        {
+          CDescriptor *descriptor = factory->CreateDescriptor(this->payload + position + processed, descriptorSize - processed);
+          CHECK_POINTER_HRESULT(result, descriptor, result, E_OUTOFMEMORY);
+
+          CHECK_CONDITION_HRESULT(result, this->descriptors->Add(descriptor), result, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(descriptor));
+
+          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), processed += descriptor->GetDescriptorSize());
+        }
+
+        FREE_MEM_CLASS(factory);
+
+        position += processed;
       }
 
       // program definition size is not constant (it depends on ES info size)
@@ -148,25 +161,26 @@ HRESULT CTransportStreamProgramMapSection::Parse(CProgramSpecificInformationPack
         elementaryPID = (elementaryPID >> TRANSPORT_STREAM_PROGRAM_MAP_SECTION_PROGRAM_DEFINITION_ELEMENTARY_PID_SHIFT) & TRANSPORT_STREAM_PROGRAM_MAP_SECTION_PROGRAM_DEFINITION_ELEMENTARY_PID_MASK;
         esInfoSize = (esInfoSize >> TRANSPORT_STREAM_PROGRAM_MAP_SECTION_PROGRAM_DEFINITION_ES_INFO_LENGTH_SHIFT) & TRANSPORT_STREAM_PROGRAM_MAP_SECTION_PROGRAM_DEFINITION_ES_INFO_LENGTH_MASK;
 
-        if (esInfoSize != 0)
+        CHECK_CONDITION_HRESULT(result, (position + esInfoSize) <= (this->GetSectionSize() - SECTION_CRC32_SIZE), result, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(result))
         {
-          CHECK_CONDITION_HRESULT(result, (position + esInfoSize) <= (this->GetSectionSize() - SECTION_CRC32_SIZE), result, E_OUTOFMEMORY);
+          CProgramDefinition *programDefinition = new CProgramDefinition(&result);
+          CHECK_POINTER_HRESULT(result, programDefinition, result, E_OUTOFMEMORY);
 
           if (SUCCEEDED(result))
           {
-            CProgramDefinition *programDefinition = new CProgramDefinition(&result);
-            CHECK_POINTER_HRESULT(result, programDefinition, result, E_OUTOFMEMORY);
+            programDefinition->SetStreamType(streamType);
+            programDefinition->SetElementaryPID(elementaryPID);
 
-            if (SUCCEEDED(result))
+            if (esInfoSize != 0)
             {
-              programDefinition->SetStreamType(streamType);
-              programDefinition->SetElementaryPID(elementaryPID);
               CHECK_CONDITION_HRESULT(result, programDefinition->SetEsInfoDescriptor(this->payload + position, esInfoSize), result, E_OUTOFMEMORY);
             }
-
-            CHECK_CONDITION_HRESULT(result, this->programDefinitions->Add(programDefinition), result, E_OUTOFMEMORY);
-            CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(programDefinition));
           }
+
+          CHECK_CONDITION_HRESULT(result, this->programDefinitions->Add(programDefinition), result, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(programDefinition));
         }
 
         position += esInfoSize;
@@ -186,8 +200,7 @@ void CTransportStreamProgramMapSection::Clear(void)
   this->sectionNumber = 0;
   this->lastSectionNumber = 0;
   this->pcrPID = 0;
-  this->programInfoSize = 0;
-  FREE_MEM(this->programInfoDescriptor);
+  this->descriptors->Clear();
   this->programDefinitions->Clear();
 }
 
@@ -219,17 +232,9 @@ bool CTransportStreamProgramMapSection::InternalClone(CSection *item)
       section->sectionNumber = this->sectionNumber;
       section->lastSectionNumber = this->lastSectionNumber;
       section->pcrPID = this->pcrPID;
-      section->programInfoSize = this->programInfoSize;
 
-      if (this->GetProgramInfoSize() != 0)
-      {
-        section->programInfoDescriptor = ALLOC_MEM_SET(section->programInfoDescriptor, uint8_t, this->GetProgramInfoSize(), 0);
-        result &= (section->programInfoDescriptor != NULL);
-
-        CHECK_CONDITION_EXECUTE(result, memcpy(section->programInfoDescriptor, this->programInfoDescriptor, this->GetProgramInfoSize()));
-      }
-
-      section->programDefinitions->Append(this->programDefinitions);
+      result &= section->descriptors->Append(this->descriptors);
+      result &= section->programDefinitions->Append(this->programDefinitions);
     }
   }
 
@@ -242,7 +247,14 @@ unsigned int CTransportStreamProgramMapSection::GetSectionCalculatedSize(void)
 
   if (result != 0)
   {
-    result += 9 + this->GetProgramInfoSize();
+    result += 9;
+
+    for (unsigned int i = 0; i < this->GetDescriptors()->Count(); i++)
+    {
+      CDescriptor *descriptor = this->GetDescriptors()->GetItem(i);
+
+      result += descriptor->GetDescriptorSize();
+    }
 
     for (unsigned int i = 0; i < this->GetProgramDefinitions()->Count(); i++)
     {
@@ -266,18 +278,37 @@ unsigned int CTransportStreamProgramMapSection::GetSectionInternal(void)
     WBE8INC(this->payload, position, this->sectionNumber);
     WBE8INC(this->payload, position, this->lastSectionNumber);
     WBE16INC(this->payload, position, this->pcrPID);
-    WBE16INC(this->payload, position, this->programInfoSize);
 
-    if (this->GetProgramInfoSize() != 0)
+    uint16_t descriptorSize = 0;
+
+    for (unsigned int i = 0; i < this->GetDescriptors()->Count(); i++)
     {
-      memcpy(this->payload + position, this->programInfoDescriptor, this->GetProgramInfoSize());
-      position += this->GetProgramInfoSize();
+      CDescriptor *descriptor = this->GetDescriptors()->GetItem(i);
+
+      descriptorSize += descriptor->GetDescriptorSize();
+    }
+    descriptorSize = ((descriptorSize & TRANSPORT_STREAM_PROGRAM_MAP_SECTION_DESCRIPTORS_SIZE_MASK) << TRANSPORT_STREAM_PROGRAM_MAP_SECTION_DESCRIPTORS_SIZE_SHIFT);
+    descriptorSize |= ~TRANSPORT_STREAM_PROGRAM_MAP_SECTION_DESCRIPTORS_SIZE_MASK;
+    WBE16INC(this->payload, position, descriptorSize);
+
+    for (unsigned int i = 0; i < this->GetDescriptors()->Count(); i++)
+    {
+      CDescriptor *descriptor = this->GetDescriptors()->GetItem(i);
+
+      WBE8INC(this->payload, position, descriptor->GetTag());
+      WBE8INC(this->payload, position, descriptor->GetPayloadSize());
+
+      if (descriptor->GetPayloadSize() != 0)
+      {
+        memcpy(this->payload + position, descriptor->GetPayload(), descriptor->GetPayloadSize());
+        position += descriptor->GetPayloadSize();
+      }
     }
 
     // program definition size is not constant (it depends on ES info size)
     for (unsigned int i = 0; i < this->GetProgramDefinitions()->Count(); i++)
     {
-      CProgramDefinition *programDefinition = this->GetProgramDefinitions()->GetItem(i); 
+      CProgramDefinition *programDefinition = this->GetProgramDefinitions()->GetItem(i);
 
       WBE8INC(this->payload, position, programDefinition->GetStreamType());
 
@@ -299,4 +330,9 @@ unsigned int CTransportStreamProgramMapSection::GetSectionInternal(void)
   }
 
   return position;
+}
+
+bool CTransportStreamProgramMapSection::CheckTableId(void)
+{
+  return (this->GetTableId() == TRANSPORT_STREAM_PROGRAM_MAP_SECTION_TABLE_ID);
 }
