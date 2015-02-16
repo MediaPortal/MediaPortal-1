@@ -304,6 +304,18 @@ namespace ProcessPlugins.ViewModeSwitcher
     }
 
     /// <summary>
+    /// Checks if the horizontal line in the center of the frame is black.
+    /// This is the case for 3D videos in TAB format
+    /// </summary>
+    /// <param name="frame"></param>
+    /// <returns>True if analysis succeeded(ie is trustworthy) and false otherwise</returns>
+    public bool CheckFor3DTabBlackBar(Bitmap frame)
+    {
+        ScanLine(frame.Height / 2, 0, frame.Width - 1, true);        
+        return !IsContent(0, frame.Width - 1);        
+    }
+
+    /// <summary>
     /// Scans a line in the frame, producing R,G and B histograms
     /// </summary>
     /// <param name="line"> The line to scan</param>

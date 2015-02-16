@@ -140,6 +140,7 @@ namespace MediaPortal.GUI.Library
     private static readonly bool IsDX9EXused = OSInfo.OSInfo.VistaOrLater();
     private static bool _allowRememberLastFocusedItem = true;
     private static bool _fullHD3DFormat = false;
+    private static bool _tabWithBlackBars = false;
 
     // Stacks for matrix transformations.
     private static readonly Stack<Matrix> ProjectionMatrixStack = new Stack<Matrix>();
@@ -758,6 +759,12 @@ namespace MediaPortal.GUI.Library
     {
       get { return _fullHD3DFormat; }
       set { _fullHD3DFormat = value; }
+    }
+
+    public static bool IsTabWithBlackBars
+    {
+        get { return _tabWithBlackBars; }
+        set { _tabWithBlackBars = value; }
     }
 
     /// <summary>

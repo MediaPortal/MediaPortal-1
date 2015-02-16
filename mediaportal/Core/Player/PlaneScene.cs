@@ -1060,6 +1060,15 @@ namespace MediaPortal.Player
                   {
                     _sourceRect.Y = originalSource.Y;
                     _sourceRect.Height = originalSource.Height / 2;
+
+                    // ViewModeSwitcher crop correction
+
+                    if (GUIGraphicsContext.IsTabWithBlackBars)
+                    {
+                        _sourceRect.Height -= _cropSettings.Top;
+                        _sourceRect.X += _cropSettings.Left;
+                        _sourceRect.Width -= (_cropSettings.Left + _cropSettings.Right);
+                    }
                   }
                   break;
 
@@ -1073,6 +1082,16 @@ namespace MediaPortal.Player
                   {
                     _sourceRect.Y = _geometry.ImageHeight / 2 + originalSource.Y * 2;
                     _sourceRect.Height = originalSource.Height / 2;
+
+                    // ViewModeSwitcher crop correction
+
+                    if (GUIGraphicsContext.IsTabWithBlackBars)
+                    {
+                        _sourceRect.Y -= _cropSettings.Top;
+                        _sourceRect.Height -= _cropSettings.Bottom;
+                        _sourceRect.X += _cropSettings.Left;
+                        _sourceRect.Width -= (_cropSettings.Left + _cropSettings.Right);
+                    }
                   }
                   break;
               }
