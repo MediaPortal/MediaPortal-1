@@ -686,7 +686,8 @@ namespace TvEngine
                         // get the channel program
                         channelPrograms = dChannelPrograms[chan.IdChannel];
 
-                        if (chan.IdChannel < 0)
+                        // skip invalid programs with same start/end date
+                        if (chan.IdChannel < 0 || startDate == stopDate)
                         {
                           continue;
                         }
