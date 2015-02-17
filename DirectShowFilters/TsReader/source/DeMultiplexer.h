@@ -272,6 +272,7 @@ private:
   bool m_bStarting;
 
   bool m_mpegParserTriggerFormatChange;
+  bool m_audioParserTriggerFormatChange;
   bool m_videoChanged;
   bool m_audioChanged;
   bool m_bSetAudioDiscontinuity;

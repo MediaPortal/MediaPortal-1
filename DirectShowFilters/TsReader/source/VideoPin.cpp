@@ -291,7 +291,10 @@ void CVideoPin::SetDiscontinuity(bool onOff)
 
 void CVideoPin::SetAddPMT()
 {
-  LogDebug("vidPin:SetAddPMT()");
+  if (!m_bAddPMT) 
+  {
+    LogDebug("vidPin:SetAddPMT()");
+  }
   m_bAddPMT = true;
   m_sampleCount = 0;
 }

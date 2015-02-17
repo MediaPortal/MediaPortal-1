@@ -188,7 +188,10 @@ void CAudioPin::SetDiscontinuity(bool onOff)
 
 void CAudioPin::SetAddPMT()
 {
-  LogDebug("audPin:SetAddPMT()");
+  if (!m_bAddPMT) 
+  {
+    LogDebug("audPin:SetAddPMT()");
+  }
   m_bAddPMT = true;
   m_sampleCount = 0;
 }
