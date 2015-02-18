@@ -39,6 +39,7 @@ namespace MediaPortal.Util
       average = 2,
       higher = 3,
       highest = 4,
+      uhd = 5,
     }
 
     public enum LargeThumbSize
@@ -46,6 +47,7 @@ namespace MediaPortal.Util
       small = 400,
       average = 500,
       large = 600,
+      uhd = 1000,
     }
 
     public enum ThumbSize
@@ -53,6 +55,7 @@ namespace MediaPortal.Util
       small = 100,
       average = 120,
       large = 140,
+      uhd = 200,
     }
 
     public static readonly string TvNotifyIcon = "tvguide_notify_button.png";
@@ -140,7 +143,12 @@ namespace MediaPortal.Util
             case 4:
               Quality = ThumbQuality.highest;
               SetEncoderParams(97);
-              Log.Warn("Thumbs: MediaPortal is using highest quality thumbnail mode");
+              Log.Warn("Thumbs: MediaPortal is using very high quality thumbnail mode");
+              break;
+            case 5:
+              Quality = ThumbQuality.uhd;
+              SetEncoderParams(100);
+              Log.Warn("Thumbs: MediaPortal is using UHD quality thumbnail mode");
               break;
           }
         }
@@ -196,6 +204,8 @@ namespace MediaPortal.Util
           case ThumbQuality.higher:
             return true;
           case ThumbQuality.highest:
+            return true;
+          case ThumbQuality.uhd:
             return false;
           default:
             return true;
@@ -218,6 +228,8 @@ namespace MediaPortal.Util
           case ThumbQuality.higher:
             return false;
           case ThumbQuality.highest:
+            return true;
+          case ThumbQuality.uhd:
             return false;
           default:
             return true;
@@ -348,6 +360,14 @@ namespace MediaPortal.Util
           _currentSmoothingMode = SmoothingMode.HighQuality;
           _currentThumbSize = ThumbSize.large;
           _currentLargeThumbSize = LargeThumbSize.large;
+          break;
+
+        case ThumbQuality.uhd:
+          _currentCompositingQuality = CompositingQuality.HighQuality;
+          _currentInterpolationMode = InterpolationMode.HighQualityBicubic;
+          _currentSmoothingMode = SmoothingMode.HighQuality;
+          _currentThumbSize = ThumbSize.uhd;
+          _currentLargeThumbSize = LargeThumbSize.uhd;
           break;
 
         default:

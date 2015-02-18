@@ -545,6 +545,8 @@ namespace MediaPortal.GUI.Pictures
           _virtualDirectory.AddExtension(ext);
       }
       GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_OnNewMessage);
+
+      RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
     }
 
     public override void OnAction(Action action)
@@ -947,6 +949,7 @@ namespace MediaPortal.GUI.Pictures
               _virtualDirectory.AddRemovableDrive(message.Label, message.Label2);
             }
           }
+          RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
           LoadDirectory(currentFolder);
           break;
 
@@ -2599,6 +2602,12 @@ namespace MediaPortal.GUI.Pictures
       if (disp == Display.Files)
       {
         itemlist = _virtualDirectory.GetDirectoryExt(currentFolder);
+
+        if (currentFolder == string.Empty)
+        {
+          RemovableDrivesHandler.FilterDrives(ref itemlist);
+        }
+
         Filter(ref itemlist);
         MissingThumbCacher ThumbWorker = new MissingThumbCacher(currentFolder, _autocreateLargeThumbs, false, true);
         // int itemIndex = 0;

@@ -1142,6 +1142,10 @@
     <String id="1654">Windsnelheid eenheden</String>
     <String id="1655">Vernieuwingsinterval</String>
     <String id="1656">minuten</String>
+    <String id="1700">Pop-up menu</String>
+    <String id="1701">Selecteer afspeel modus</String>
+    <String id="1702">Titel: #{0} - hoofdstukken: {1}, speelduur: {2}</String>
+    <String id="1703">Selecteer uit alle titels</String>
     <String id="1900">Skin verouderd</String>
     <String id="1901">De huidig geselecteerde skin ({0}) is verouderd. Dit kan problemen veroorzaken tijdens het gebruik van MediaPortal. Om deze reden is MediaPortal tijdelijk overgeschakeld naar de standaard skin. Als u echter de verouderde skin wilt proberen, druk dan op de 'Negeer en probeer' knop, maar herinner: Rapporteer GEEN fouten tijdens het gebruik van deze skin!
 (om deze waarschuwing af te wijzen wacht totdat deze automatisch sluit of druk Terug/ESC op de afstandsbediening.</String>
@@ -1150,10 +1154,6 @@
     <String id="1910">Niet compatibele plugins</String>
     <String id="1911">De volgende plugins zijn niet compatibel met deze versie van MediaPortal en zijn automatisch uitgeschakeld:</String>
     <String id="1912">Doorgaan|Doorgaan ({0})...|Doorgaan ({0})...</String>
-    <String id="1700">Pop-up menu</String>
-    <String id="1701">Selecteer afspeel modus</String>
-    <String id="1702">Titel: #{0} - hoofdstukken: {1}, speelduur: {2}</String>
-    <String id="1703">Selecteer uit alle titels</String>
     <String id="1950" prefix="Mijn ">Status</String>
     <String id="1951">Harde schijf</String>
     <String id="1952">Ventilator</String>
@@ -1184,11 +1184,19 @@
     <String id="1977">Bestandssysteem</String>
     <String id="1978">Virtueel geheugen</String>
     <String id="1984">Ververs video miniaturenmap</String>
+	<String id="1989">Er bevind zich een 'alleen lezen' bestand in de folder</String>
     <String id="1990">Server ontwaken</String>
     <String id="1991">Wacht tot de server weer aan staat</String>
     <String id="1992">De server is niet beschikbaar</String>
     <String id="1993">Controleer netwerk verbindingen of verhoog de time out waarden</String>
     <String id="1994">Wacht tot de gedeelde folder online komt.</String>
+	<String id="1995">Maak folder miniatuur van miniaturenmap</String>
+	<String id="1999">Naam met speelduur</String>
+	<String id="2000">Het lied heeft de eigenschap 'alleen lezen'</String>
+	<String id="2001">De afbeelding heeft de eigenschap 'alleen lezen'</String>
+	<String id="2002">De film heeft de eigenschap 'alleen lezen'</String>
+	<String id="2003">Het bestand heeft de eigenschap 'alleen lezen'</String>
+	<String id="2004">Verwijderen bevestigen?</String>
     <String id="2005">Verwijderen</String>
     <String id="2006">Titel</String>
     <String id="2007">Aantal</String>
@@ -1331,6 +1339,10 @@
     <String id="2145">Huidige afspeellijst importeren</String>
     <String id="2146">Niet genoeg ruimte op de CD</String>
     <String id="2147">Niet genoeg ruimte op de DVD</String>
+	<String id="2148">Wil je de wijziging doorvoeren in alle submappen?</String>
+	<String id="2149">Vraag</String>
+	<String id="2160">MediaInfo bijwerken in geselecteerde folder</String>
+	<String id="2161">MediaInfo bijwerken annuleren</String>
     <String id="2200" prefix="Mijn ">Verkenner</String>
     <String id="2201">Selecteer bron</String>
     <String id="2202">Selecteer doel</String>
@@ -1886,6 +1898,8 @@
     <String id="100510">Muziek/Speelt nu</String>
     <String id="100511">Muziek/Beeldvullend</String>
     <String id="100512">LastFM Voorkeur/Afkeur</String>
+	<String id="100513">Voer oude pincode in</String>
+	<String id="100514">Voer nieuwe pincode in</String>
     <String id="100600">TV/TV-gids</String>
     <String id="100601">TV/Planner</String>
     <String id="100602">TV/Beeldvullend</String>
@@ -1991,6 +2005,7 @@
     <String id="102016">Notificatie</String>
     <String id="102017">Opname conflict</String>
     <String id="102018">CI-menu</String>
+	<String id="102019">TV-notificatie</String>
     <String id="102600" prefix="Mijn ">Weer</String>
     <String id="102700" prefix="Mijn ">Nieuws</String>
     <String id="102900">Schermbeveiliging</String>
@@ -2019,7 +2034,10 @@
     <String id="109004">MiniDisplay - Instellen - Equalizer</String>
     <String id="109005">MiniDisplay - Instellen - KeyPad</String>
     <String id="109006">MiniDisplay - Instellen - Afstandsbediening</String>
-    <String id="102019">TV-notificatie</String>
+    <String id="190000">Miniatuurweergave maken annuleren</String>
+	<String id="190001">Maak ontbrekende miniatuurweergaven (incl. submappen)</String>
+	<String id="190010">De {0} database is corrupt</String>
+	<String id="190011">Map</String>
     <String id="200000">Selecteer uw EPG-grabber. Als uw land er</String>
     <String id="200001">niet tussen staat, zult u dit handmatig moeten invoeren.</String>
     <String id="200002">U kunt nu de EPG-kanalen koppelen aan de TV-zenders</String>
@@ -2208,6 +2226,7 @@
     <String id="300093">Herstarten MP na crash</String>
     <String id="300094">Herstartvertraging in seconden</String>
     <String id="300095">Monitor uitschakelen (bij leeg scherm)</String>
+	<String id="300096">UHD TVs, Projectors</String>
     <String id="300100">Weergeven van laatste module na het wekken</String>
     <String id="300102">Vertraging bij opstarten</String>
     <String id="300103">Bij MediaPortal opstarten</String>

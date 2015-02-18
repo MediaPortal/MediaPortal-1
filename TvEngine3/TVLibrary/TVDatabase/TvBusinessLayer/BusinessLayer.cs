@@ -2938,7 +2938,6 @@ namespace TvDatabase
               List<Schedule> overlapping;
               List<Schedule> notViewable;
               AssignSchedulesToCard(episode, cardSchedules, out overlapping, out notViewable);
-              break;
             }
           }
         }
@@ -2956,38 +2955,42 @@ namespace TvDatabase
         }
         List<Schedule> overlapping;
         List<Schedule> notViewable;
-        if (!AssignSchedulesToCardConflict(newEpisode, cardSchedules, out overlapping, out notViewable))
+        if (!AssignSchedulesToCard(newEpisode, cardSchedules, out overlapping, out notViewable))
         {
           Log.Info("GetConflictingSchedules: newEpisode can not be assigned to a card = " + newEpisode);
           conflictingSchedules.AddRange(overlapping);
           notViewableSchedules.AddRange(notViewable);
         }
       }
+      return;
     }
 
-    private static bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules,
-                                              out List<Schedule> overlappingSchedules, out List<Schedule> notViewabledSchedules)
+    /// <summary>
+    /// checks if 2 schedules have a common Transponder
+    /// depending on tuningdetails of their respective channels
+    /// </summary>
+    /// <param name="schedule"></param>
+    /// <returns>True if a common transponder exists</returns>
+    public bool isSameTransponder(Schedule schedule1, Schedule schedule2)
     {
-      overlappingSchedules = new List<Schedule>();
-      notViewabledSchedules = new List<Schedule>();
-      Log.Info("AssignSchedulesToCard: schedule = " + schedule);
-      IList<Card> cards = Card.ListAllEnabled();
-      int count = 0;
-      foreach (Card card in cards)
+      IList<TuningDetail> tuningDetailList1 = schedule1.ReferencedChannel().ReferringTuningDetail();
+      IList<TuningDetail> tuningDetailList2 = schedule2.ReferencedChannel().ReferringTuningDetail();
+      foreach (TuningDetail td1 in tuningDetailList1)
       {
-        if (card.canViewTvChannel(schedule.IdChannel))
+        IChannel c1 = GetTuningChannel(td1);
+        foreach (TuningDetail td2 in tuningDetailList2)
         {
-          Log.Info("AssignSchedulesToCard: free on card {0}, ID = {1}", count, card.IdCard);
-          cardSchedules[count].Add(schedule);
-          break;
+          if (!c1.IsDifferentTransponder(GetTuningChannel(td2)))
+          {
+            return true;
+          }
         }
-        count++;
       }
-      return true;
+      return false;
     }
 
-    private static bool AssignSchedulesToCardConflict(Schedule schedule, List<Schedule>[] cardSchedules,
-                                          out List<Schedule> overlappingSchedules, out List<Schedule> notViewabledSchedules)
+    private bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules,
+                                              out List<Schedule> overlappingSchedules, out List<Schedule> notViewabledSchedules)
     {
       overlappingSchedules = new List<Schedule>();
       notViewabledSchedules = new List<Schedule>();
@@ -3009,11 +3012,12 @@ namespace TvDatabase
             bool hasOverlappingSchedule = schedule.IsOverlapping(assignedSchedule);
             if (hasOverlappingSchedule)
             {
-              bool isSameTransponder = (schedule.isSameTransponder(assignedSchedule) && card.supportSubChannels);
-              if (!isSameTransponder)
+              bool _isSameTransponder = (isSameTransponder(schedule, assignedSchedule) && card.supportSubChannels);
+              if (!_isSameTransponder)
               {
                 overlappingSchedules.Add(assignedSchedule);
-                Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule + " on card {0}, ID = {1}", count, card.IdCard);
+                Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule + " on card {0}, ID = {1}", count,
+                         card.IdCard);
                 free = false;
               }
             }
@@ -3021,6 +3025,7 @@ namespace TvDatabase
           if (free)
           {
             Log.Info("AssignSchedulesToCard: free on card {0}, ID = {1}", count, card.IdCard);
+            cardSchedules[count].Add(schedule);                                                
             assigned = true;
             break;
           }

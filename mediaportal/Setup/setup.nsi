@@ -532,6 +532,10 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\bass.opus.2.4.1.3\bassopus.dll"
   File "${git_ROOT}\Packages\bass.wma.2.4.4\basswma.dll"
   File "${git_ROOT}\Packages\bass.wv.2.4.4\basswv.dll"
+  File "${git_ROOT}\Packages\bass.dsd.0.0.1\bassdsd.dll"
+  ; taglib-sharp
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\MediaPortal.TagLib.2.0.3.8\lib\taglib-sharp.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"
@@ -797,7 +801,7 @@ SectionGroupEnd
 ${MementoSectionDone}
 
 #---------------------------------------------------------------------------
-# This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
+# This Section is executed after the Main section has finished and writes Uninstall information into the registry
 Section -Post
   ${LOG_TEXT} "INFO" "Doing post installation stuff..."
 
@@ -843,6 +847,7 @@ Section -Post
   ${If} $noDesktopSC != 1
     CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
     CreateShortCut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
+    CreateShortCut "$DESKTOP\MediaPortal WatchDog.lnk"      "$MPdir.Base\WatchDog.exe"         "" "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
   ${EndIf}
 
   ; create startmenu shortcuts
@@ -926,6 +931,7 @@ Section Uninstall
   ; remove Desktop shortcuts
   Delete "$DESKTOP\MediaPortal.lnk"
   Delete "$DESKTOP\MediaPortal Configuration.lnk"
+  Delete "$DESKTOP\MediaPortal WatchDog.lnk"
 
   ; remove last files and instdir
   Delete "$MPdir.Base\uninstall-mp.exe"

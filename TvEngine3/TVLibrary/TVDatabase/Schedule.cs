@@ -1373,29 +1373,6 @@ namespace TvDatabase
       return false;
     }
 
-    /// <summary>
-    /// checks if 2 schedules have a common Transponder
-    /// depending on tuningdetails of their respective channels
-    /// </summary>
-    /// <param name="schedule"></param>
-    /// <returns>True if a common transponder exists</returns>
-    public bool isSameTransponder(Schedule schedule)
-    {
-      IList<TuningDetail> tuningList1 = ReferencedChannel().ReferringTuningDetail();
-      IList<TuningDetail> tuningList2 = schedule.ReferencedChannel().ReferringTuningDetail();
-      foreach (TuningDetail tun1 in tuningList1)
-      {
-        foreach (TuningDetail tun2 in tuningList2)
-        {
-          if (tun1.Frequency == tun2.Frequency)
-          {
-            return true;
-          }
-        }
-      }
-      return false;
-    }
-
     public QualityType QualityType
     {
       get { return (QualityType)(quality / 10); }

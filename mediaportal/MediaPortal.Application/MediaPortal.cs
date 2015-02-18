@@ -51,7 +51,6 @@ using MediaPortal.Ripper;
 using MediaPortal.SerialIR;
 using MediaPortal.Util;
 using MediaPortal.Services;
-using MediaPortal.Visualization;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
@@ -193,6 +192,9 @@ public class MediaPortalApp : D3D, IRender
   #pragma warning restore 169
 
   private ShellNotifications Notifications = new ShellNotifications();
+
+  // Framegrabber instance
+  private FrameGrabber grabber = FrameGrabber.GetInstance();
 
   #endregion
 
@@ -2273,12 +2275,6 @@ public class MediaPortalApp : D3D, IRender
               x + border.Width, y + border.Height, x + border.Width, height + border.Height, x, height);
             ClientSize = new Size(x, height);
           }
-          // send new resolution to VisualizationWindow so the Winproc can work with it 
-          if (VisualizationBase.VisualizationWindow != null)
-          {
-            VisualizationBase.VisualizationWindow.Height = ClientRectangle.Width;
-            VisualizationBase.VisualizationWindow.Width = ClientRectangle.Height;
-          }
         }
         else
         {
@@ -2298,11 +2294,6 @@ public class MediaPortalApp : D3D, IRender
       
       case SIZE_MAXIMIZED:
         Log.Debug("Main: WM_SIZE (SIZE_MAXIMIZED: {0}x{1})", x, y);
-        if (VisualizationBase.VisualizationWindow != null)
-        {
-          VisualizationBase.VisualizationWindow.Height = ClientRectangle.Width;
-          VisualizationBase.VisualizationWindow.Width = ClientRectangle.Height;
-        }
         break;
       
       case SIZE_MAXSHOW:
@@ -3150,6 +3141,8 @@ public class MediaPortalApp : D3D, IRender
               GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D ||
               GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
           {
+            grabber.OnFrame();
+
             // clear the surface
             GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
             GUIGraphicsContext.DX9Device.BeginScene();
@@ -3182,6 +3175,8 @@ public class MediaPortalApp : D3D, IRender
             // 3D output either SBS or TAB
 
             Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
+
+            grabber.OnFrame(backbuffer);
 
             // create texture/surface for preparation for 3D output if they don't exist
 
@@ -3790,7 +3785,8 @@ public class MediaPortalApp : D3D, IRender
                   _restartOptions = RestartOptions.PowerOff;
                   _useRestartOptions = true;
                   GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
-                  ShuttingDown = true;
+                  GUIGraphicsContext.StoppingToPowerOff = true;
+                  ShuttingDown = true;                  
                   break;
 
                 case 1031:

@@ -158,6 +158,11 @@ public:
   bool m_bFlushRunning;
   bool m_bReadAheadFromFile;
 
+  DWORD m_sampleTime;
+  DWORD m_sampleTimePrev;
+  unsigned long m_byteRead;
+  float m_bitRate;
+
   bool m_bVideoSampleLate;
   bool m_bAudioSampleLate;
   //  long m_AudioDataLowCount;
@@ -305,6 +310,9 @@ private:
   
   int m_lastVidResX;
   int m_lastVidResY;
+
+  int m_lastARX;
+  int m_lastARY;
   
   bool m_mpegParserReset;
   bool m_bFirstGopParsed;

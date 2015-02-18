@@ -120,8 +120,36 @@ namespace MediaPortal
     }
 
     /// <summary>
-    /// Callback that gives the framegrabber a chance to grab the frame, 
-    /// returns immediatly if no one is requesting a frame grab
+    /// Callback that gives the framegrabber a chance to grab the frame
+    /// </summary>
+    public void OnFrame()
+    {
+      if (OnNewFrame != null)
+      {
+        using (Surface surface = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono))
+        {
+          OnFrame(surface);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Callback that gives the framegrabber a chance to grab the frame
+    /// </summary>
+    /// <param name="surface"></param>
+    public void OnFrame(Surface surface)
+    {
+      if (OnNewFrame != null)
+      {
+        unsafe
+        {
+          OnFrame((Int16)surface.Description.Width, (Int16)surface.Description.Height, 0, 0, (uint)surface.UnmanagedComPointer);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Callback that gives the framegrabber a chance to grab the frame
     /// </summary>
     /// <param name="width"></param>
     /// <param name="height"></param>
