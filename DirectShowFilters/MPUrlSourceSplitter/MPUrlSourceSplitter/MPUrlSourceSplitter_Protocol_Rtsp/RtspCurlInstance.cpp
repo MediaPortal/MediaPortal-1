@@ -1870,38 +1870,12 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                         {
                           // error while processing received packet, dump it for further analysis
 
-                          // every byte is in HEX encoding plus space
-                          // every 32 bytes is new line
-                          // add one character for null terminating character
-                          unsigned int dumpPacketLength = interleavedPacketLength * 3 + ((interleavedPacketLength / 32) + 1) * 2 + 1;
-                          ALLOC_MEM_DEFINE_SET(dumpPacket, wchar_t, dumpPacketLength, 0);
-                          
-                          if (dumpPacket != NULL)
-                          {
-                            unsigned int outputPosition = 0;
-                            for (unsigned int i = 0; i < interleavedPacketLength; i++)
-                            {
-                              dumpPacket[outputPosition++] = get_charW(buffer[i] >> 4);
-                              dumpPacket[outputPosition++] = get_charW(buffer[i] & 0x0F);
-                              dumpPacket[outputPosition++] = L' ';
-                              
-                              if ((i % 32) == 0x1F)
-                              {
-                                dumpPacket[outputPosition++] = L'\r';
-                                dumpPacket[outputPosition++] = L'\n';
-                              }
-                            }
-                          }
-
-                          this->logger->Log(LOGGER_ERROR, L"%s: %s: error while processing packet, track url: '%s', IP: %s, server IP: %s, length: %u\n%s",
+                          this->logger->LogBinary(LOGGER_ERROR, buffer, interleavedPacketLength, L"%s: %s: error while processing packet, track url: '%s', IP: %s, server IP: %s, length: %u",
                             protocolName, METHOD_CURL_WORKER_NAME,
                             track->GetTrackUrl(),
                             udpContext->GetIpAddress()->GetAddressString(),
                             sender->GetAddressString(),
-                            interleavedPacketLength,
-                            dumpPacket);
-
-                          FREE_MEM(dumpPacket);
+                            interleavedPacketLength);
                         }
                       }
 

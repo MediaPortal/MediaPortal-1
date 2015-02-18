@@ -121,6 +121,18 @@ const uint8_t *CSection::GetSection(void)
   return (size != 0) ? this->payload : NULL;
 }
 
+unsigned int CSection::GetCrc32(void)
+{
+  unsigned int result = SECTION_CRC32_UNDEFINED;
+
+  if (this->IsSetFlags(SECTION_FLAG_COMPLETE_SECTION) && (this->GetSectionSize() >= (SECTION_HEADER_SIZE + SECTION_CRC32_SIZE)))
+  {
+    result = RBE32(this->payload, this->GetSectionSize() - SECTION_CRC32_SIZE);
+  }
+
+  return result;
+}
+
 /* set methods */
 
 void CSection::SetTableId(unsigned int tableId)
