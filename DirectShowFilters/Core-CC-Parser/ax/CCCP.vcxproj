@@ -1,16 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug Unicode|Win32">
-      <Configuration>Debug Unicode</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release Unicode|Win32">
-      <Configuration>Release Unicode</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
@@ -23,12 +15,6 @@
     <RootNamespace>CCCP</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseOfMfc>Dynamic</UseOfMfc>
-    <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v120_xp</PlatformToolset>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>Dynamic</UseOfMfc>
@@ -41,17 +27,8 @@
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseOfMfc>Dynamic</UseOfMfc>
-    <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v120_xp</PlatformToolset>
-  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -59,16 +36,9 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">..\CCCP\Obj\Release_Unicode\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">..\CCCP\Obj\Release_Unicode\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\CCCP\Obj\Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\CCCP\Obj\Release\</IntDir>
     <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</EnableManagedIncrementalBuild>
@@ -77,30 +47,13 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\CCCP\Obj\Debug\</IntDir>
     <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</EnableManagedIncrementalBuild>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">..\CCCP\Obj\Debug_Unicode\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">..\CCCP\Obj\Debug_Unicode\</IntDir>
-    <PreBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">false</PreBuildEventUseInBuild>
-    <PreLinkEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">false</PreLinkEventUseInBuild>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">true</LinkIncremental>
-    <PostBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">false</PostBuildEventUseInBuild>
-    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'" />
-    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'" />
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
-    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'" />
-    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'" />
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-    <PostBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">false</PostBuildEventUseInBuild>
     <PostBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</PostBuildEventUseInBuild>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">
-    <IncludePath>$(ProjectDir);$(IncludePath);$(DXSDK_DIR)Include</IncludePath>
-    <LibraryPath>$(LibraryPath);$(DXSDK_DIR)Lib\x86</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(ProjectDir);$(IncludePath);$(DXSDK_DIR)Include</IncludePath>
@@ -110,64 +63,6 @@
     <IncludePath>$(ProjectDir);$(IncludePath);$(DXSDK_DIR)Include</IncludePath>
     <LibraryPath>$(LibraryPath);$(DXSDK_DIR)Lib\x86</LibraryPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">
-    <IncludePath>$(ProjectDir);$(IncludePath);$(DXSDK_DIR)Include</IncludePath>
-    <LibraryPath>$(LibraryPath);$(DXSDK_DIR)Lib\x86</LibraryPath>
-  </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">
-    <Midl>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MkTypLibCompatible>true</MkTypLibCompatible>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <TargetEnvironment>Win32</TargetEnvironment>
-      <TypeLibraryName>.\Release_Unicode/gargle.tlb</TypeLibraryName>
-    </Midl>
-    <ClCompile>
-      <AdditionalOptions>/Oxs /D_WIN32_WINNT=-0x0400  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;SoundTouch\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\CCCP\Obj\Release_Unicode/</AssemblerListingLocation>
-      <ObjectFileName>..\CCCP\Obj\Release_Unicode/</ObjectFileName>
-      <ProgramDataBaseFileName>..\CCCP\Obj\Release_Unicode/</ProgramDataBaseFileName>
-      <WarningLevel>Level3</WarningLevel>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <CallingConvention>StdCall</CallingConvention>
-      <CompileAs>Default</CompileAs>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>_AFXDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ResourceCompile>
-    <Link>
-      <AdditionalOptions>/MACHINE:I386 /IGNORE:4089 /IGNORE:4098 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>strmbase.lib;quartz.lib;vfw32.lib;winmm.lib;version.lib;comctl32.lib;olepro32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>..\CCCP\Release_Unicode\cccp.ax</OutputFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\release; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <ModuleDefinitionFile>.\CCCP.def</ModuleDefinitionFile>
-      <OptimizeReferences>
-      </OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <SetChecksum>true</SetChecksum>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <DataExecutionPrevention>
-      </DataExecutionPrevention>
-      <ImportLibrary>$(IntDir)CCCP.lib</ImportLibrary>
-    </Link>
-    <PostBuildEvent>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -287,58 +182,6 @@
       </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">
-    <Midl>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MkTypLibCompatible>true</MkTypLibCompatible>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <TargetEnvironment>Win32</TargetEnvironment>
-      <TypeLibraryName>.\Debug_Unicode/gargle.tlb</TypeLibraryName>
-    </Midl>
-    <ClCompile>
-      <AdditionalOptions>/Oid  %(AdditionalOptions)</AdditionalOptions>
-      <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;SoundTouch\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\CCCP\Obj\Debug_Unicode/</AssemblerListingLocation>
-      <ObjectFileName>..\CCCP\Obj\Debug_Unicode/</ObjectFileName>
-      <ProgramDataBaseFileName>..\CCCP\Obj\Debug_Unicode/</ProgramDataBaseFileName>
-      <WarningLevel>Level3</WarningLevel>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <CallingConvention>StdCall</CallingConvention>
-      <CompileAs>Default</CompileAs>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>_AFXDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ResourceCompile>
-    <Link>
-      <AdditionalOptions>/MACHINE:I386 /IGNORE:4089 /IGNORE:4098 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>strmbasd.lib;msvcrtd.lib;quartz.lib;vfw32.lib;winmm.lib;version.lib;comctl32.lib;olepro32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>..\CCCP\Debug_Unicode\cccp.ax</OutputFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\debug; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <ModuleDefinitionFile>.\CCCP.def</ModuleDefinitionFile>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <DataExecutionPrevention>
-      </DataExecutionPrevention>
-      <ImportLibrary>$(IntDir)CCCP.lib</ImportLibrary>
-    </Link>
-    <PostBuildEvent>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\parsing\CcParseH264.cpp" />
     <ClCompile Include="..\parsing\CCParser.cpp" />
@@ -347,9 +190,7 @@
     <ClCompile Include="CcDataProcessor.cpp" />
     <ClCompile Include="CCPProps.cpp" />
     <ClCompile Include="StdAfx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
