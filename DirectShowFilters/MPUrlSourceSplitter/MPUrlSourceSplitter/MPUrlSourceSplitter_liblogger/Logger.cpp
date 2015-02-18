@@ -208,7 +208,7 @@ wchar_t *CLogger::GetLogMessage(unsigned int level, const unsigned char *data, u
           dumpData[outputPosition++] = get_charW(data[i] & 0x0F);
           dumpData[outputPosition++] = L' ';
 
-          if ((i % 32) == 0x1F)
+          if (((i % 32) == 0x1F) && (i != (size - 1)))
           {
             dumpData[outputPosition++] = L'\r';
             dumpData[outputPosition++] = L'\n';
@@ -217,7 +217,7 @@ wchar_t *CLogger::GetLogMessage(unsigned int level, const unsigned char *data, u
       }
     }
     
-    logRow = FormatString(L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%4x] [%s] %s %s\r\nBinary data size: %u\r\n%s",
+    logRow = FormatString(L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%4x] [%s] %s %s\r\nBinary data size: %u\r\n%s\r\n",
       systemTime.wDay, systemTime.wMonth, systemTime.wYear,
       systemTime.wHour, systemTime.wMinute, systemTime.wSecond,
       systemTime.wMilliseconds,

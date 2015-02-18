@@ -27,6 +27,7 @@ CParserContext::CParserContext(HRESULT *result)
 {
   this->parser = NULL;
   this->sectionContext = NULL;
+  this->lastSectionCrc32 = SECTION_CRC32_UNDEFINED;
 }
 
 CParserContext::~CParserContext(void)
@@ -47,7 +48,17 @@ CSectionContext *CParserContext::GetSectionContext(void)
   return this->sectionContext;
 }
 
+unsigned int CParserContext::GetLastSectionCrc32(void)
+{
+  return this->lastSectionCrc32;
+}
+
 /* set methods */
+
+void CParserContext::SetLastSectionCrc32(unsigned int crc32)
+{
+  this->lastSectionCrc32 = crc32;
+}
 
 /* other methods */
 

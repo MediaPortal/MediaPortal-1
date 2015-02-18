@@ -959,6 +959,16 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
 
                       // check number of programs, we allow only one program (in another case we don't know, which program number and/or program map PID to replace)
 
+                      if (caller->programAssociationParserContext->GetLastSectionCrc32() != caller->programAssociationParserContext->GetParser()->GetProgramAssociationSection()->GetCrc32())
+                      {
+                        caller->logger->LogBinary(LOGGER_VERBOSE,
+                          caller->programAssociationParserContext->GetParser()->GetProgramAssociationSection()->GetSection(),
+                          caller->programAssociationParserContext->GetParser()->GetProgramAssociationSection()->GetSectionSize(),
+                          L"%s: %s: new program association section detected", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME);
+
+                        caller->programAssociationParserContext->SetLastSectionCrc32(caller->programAssociationParserContext->GetParser()->GetProgramAssociationSection()->GetCrc32());
+                      }
+
                       if (caller->IsSetAnyOfFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER | MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID | MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_SET_NOT_SCRAMBLED))
                       {
                         if (caller->IsSetAnyOfFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER | MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID))
@@ -1179,6 +1189,16 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                       // complete transport stream program map section
                       {
                         isOwner = true;
+
+                        if (context->GetLastSectionCrc32() != context->GetParser()->GetTransportStreamProgramMapSection()->GetCrc32())
+                        {
+                          caller->logger->LogBinary(LOGGER_VERBOSE,
+                            context->GetParser()->GetTransportStreamProgramMapSection()->GetSection(),
+                            context->GetParser()->GetTransportStreamProgramMapSection()->GetSectionSize(),
+                            L"%s: %s: new transport stream program map section detected for PID: 0x%04X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, context->GetParser()->GetTransportStreamProgramMapSectionPID());
+
+                          context->SetLastSectionCrc32(context->GetParser()->GetTransportStreamProgramMapSection()->GetCrc32());
+                        }
 
                         if (SUCCEEDED(result))
                         {

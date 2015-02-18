@@ -47,7 +47,15 @@ public:
   // @return : section context or NULL if no section context
   virtual CSectionContext *GetSectionContext(void);
 
+  // gets last section CRC32
+  // @return : last section CRC32 or SECTION_CRC32_UNDEFINED if CRC32 is not known
+  virtual unsigned int GetLastSectionCrc32(void);
+
   /* set methods */
+
+  // sets last section CRC32
+  // @param crc32 : the last section CRC32 or SECTION_CRC32_UNDEFINED if CRC32 is not known
+  virtual void SetLastSectionCrc32(unsigned int crc32);
 
   /* other methods */
 
@@ -67,6 +75,8 @@ protected:
   CParser *parser;
   // holds section context
   CSectionContext *sectionContext;
+  // holds last section CRC32
+  unsigned int lastSectionCrc32;
 
   /* methods */
 };
