@@ -505,7 +505,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv)
       m_filter.NotifyEvent(EC_ERRORABORT, STG_E_STATUS_COPY_PROTECTION_FAILURE, 0);
       break;
 
-    case BD_EVENT_FLUSH:
+    case BD_EVENT_PLAYLIST_STOP:
       Flush(true);
       m_bLibRequestedFlush = true;
       break;
