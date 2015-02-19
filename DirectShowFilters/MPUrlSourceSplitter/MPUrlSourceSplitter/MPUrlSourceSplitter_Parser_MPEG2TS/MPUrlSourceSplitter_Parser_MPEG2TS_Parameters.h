@@ -32,6 +32,12 @@
 
 #define PARAMETER_NAME_MPEG2TS_SET_NOT_SCRAMBLED                      L"Mpeg2TsSetNotScrambled"
 
+#define PARAMETER_NAME_MPEG2TS_FILTER_PROGRAM_MAP_PID_COUNT           L"Mpeg2TsFilterProgramMapPIDCount"
+
+#define PARAMETER_NAME_FORMAT_MPEG2TS_FILTER_PROGRAM_MAP_PID          L"Mpeg2TsFilterProgramMapPID%08u"
+
+#define PARAMETER_NAME_FORMAT_MPEG2TS_LEAVE_PROGRAM_ELEMENTS          L"Mpeg2TsLeaveProgramElements%08u"
+
 #define MPEG2TS_DETECT_DISCONTINUITY_DEFAULT                          true
 #define MPEG2TS_ALIGN_TO_MPEG2TS_PACKET                               true
 
@@ -40,5 +46,7 @@
 #define MPEG2TS_PROGRAM_MAP_PID_DEFAULT                               UINT_MAX
 
 #define MPEG2TS_SET_NOT_SCRAMBLED_DEFAULT                             false
+
+#define MPEG2TS_FILTER_PROGRAM_MAP_PID_COUNT_DEFAULT                  0
 
 #endif

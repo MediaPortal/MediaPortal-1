@@ -617,6 +617,10 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
       }
     }
 
+    //this->configuration->Add(PARAMETER_NAME_MPEG2TS_FILTER_PROGRAM_MAP_PID_COUNT, L"1");
+    //this->configuration->Add(L"Mpeg2TsFilterProgramMapPID00000000", L"66");
+    //this->configuration->Add(L"Mpeg2TsLeaveProgramElements00000066", L"1002,1003");
+
     // in IPTV case we open connection in Run() method, because Load() method is intened to only parse and cache stream URL
     // in splitter case we open connection now and report any error code
     if (SUCCEEDED(result) && this->IsSplitter())
