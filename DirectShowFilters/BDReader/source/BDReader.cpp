@@ -817,7 +817,7 @@ void CBDReaderFilter::HandleBDEvent(BD_EVENT& pEv)
 
       break;
 
-    case BD_EVENT_FLUSH:
+    case BD_EVENT_PLAYLIST_STOP:
       DeliverBeginFlush();
       DeliverEndFlush();
 
