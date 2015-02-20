@@ -26,6 +26,7 @@
 #include "ParserContext.h"
 #include "TransportStreamProgramMapParser.h"
 #include "TransportStreamProgramMapSectionContext.h"
+#include "ProgramElementCollection.h"
 
 #define TRANSPORT_STREAM_PROGRAM_MAP_PARSER_CONTEXT_FLAG_NONE                       PARSER_CONTEXT_FLAG_NONE
 
@@ -49,6 +50,10 @@ public:
   // @return : section context or NULL if no section context
   virtual CTransportStreamProgramMapSectionContext *GetSectionContext(void);
 
+  // gets collection of program elements to leave in transport stream program map
+  // @return : collection of program elements to leave in transport stream program map
+  virtual CProgramElementCollection *GetLeaveProgramElements(void);
+
   /* set methods */
 
   // sets filter program elements flag
@@ -66,6 +71,8 @@ public:
   virtual HRESULT CreateSectionContext(void);
 
 protected:
+  // holds program elements to leave in transport stream program map
+  CProgramElementCollection *leaveProgramElements;
 
   /* methods */
 };

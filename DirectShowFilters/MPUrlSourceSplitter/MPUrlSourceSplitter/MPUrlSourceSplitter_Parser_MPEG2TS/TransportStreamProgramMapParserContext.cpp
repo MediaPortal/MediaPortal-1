@@ -25,16 +25,21 @@
 CTransportStreamProgramMapParserContext::CTransportStreamProgramMapParserContext(HRESULT *result, uint16_t pid)
   : CParserContext(result)
 {
+  this->leaveProgramElements = NULL;
+
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->parser = new CTransportStreamProgramMapParser(result, pid);
+    this->leaveProgramElements = new CProgramElementCollection(result);
 
     CHECK_POINTER_HRESULT(*result, this->parser, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->leaveProgramElements, *result, E_OUTOFMEMORY);
   }
 }
 
 CTransportStreamProgramMapParserContext::~CTransportStreamProgramMapParserContext(void)
 {
+  FREE_MEM_CLASS(this->leaveProgramElements);
 }
 
 /* get methods */
@@ -47,6 +52,11 @@ CTransportStreamProgramMapParser *CTransportStreamProgramMapParserContext::GetPa
 CTransportStreamProgramMapSectionContext *CTransportStreamProgramMapParserContext::GetSectionContext(void)
 {
   return (CTransportStreamProgramMapSectionContext *)__super::GetSectionContext();
+}
+
+CProgramElementCollection *CTransportStreamProgramMapParserContext::GetLeaveProgramElements(void)
+{
+  return this->leaveProgramElements;
 }
 
 /* set methods */

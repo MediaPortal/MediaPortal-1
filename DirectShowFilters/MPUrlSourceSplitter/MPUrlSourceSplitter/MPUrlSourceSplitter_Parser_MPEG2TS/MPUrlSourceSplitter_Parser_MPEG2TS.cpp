@@ -1017,7 +1017,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                                   if (((uint16_t)filterProgramMapPid) == context->GetParser()->GetTransportStreamProgramMapSectionPID())
                                   {
                                     // found same program map PID as in current transport stream program map parser context
-                                    caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: transport stream program map parser (PID: 0x%04X) has enabled filtering of program element", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, program->GetProgramMapPID());
+                                    caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: transport stream program map parser (PID: 0x%04X) has enabled filtering of program elements", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, program->GetProgramMapPID());
 
                                     context->SetFilterProgramElements(true);
 
@@ -1037,7 +1037,16 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                                         {
                                           unsigned int leaveProgramElement = caller->connectionParameters->GetValueUnsignedInt(leaveProgramElementName, true, TS_PACKET_PID_COUNT);
 
-                                          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: transport stream program map parser (PID: 0x%04X), leaving program element PID: 0x%04X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, program->GetProgramMapPID(), leaveProgramElement);
+                                          if (leaveProgramElement < TS_PACKET_PID_COUNT)
+                                          {
+                                            CProgramElement *programElement = new CProgramElement(&result, leaveProgramElement);
+                                            CHECK_POINTER_HRESULT(result, programElement, result, E_OUTOFMEMORY);
+
+                                            CHECK_CONDITION_HRESULT(result, context->GetLeaveProgramElements()->Add(programElement), result, E_OUTOFMEMORY);
+                                            CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(programElement));
+
+                                            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: transport stream program map parser (PID: 0x%04X), leaving program element PID: 0x%04X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, program->GetProgramMapPID(), leaveProgramElement));
+                                          }
                                         }
 
                                         FREE_MEM(leaveProgramElementName);
@@ -1652,9 +1661,34 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                 // filter program elements (if needed)
                 if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FILTER_PROGRAM_ELEMENTS) && (context->GetSectionContext()->GetTransportStreamProgramMapParserContext()->IsFilterProgramElements()))
                 {
-                  // TO DO: filter program elements
+                  // filter program elements
 
-                  //context->GetSectionContext()->GetUpdatedSection()->GetProgramDefinitions()->Clear();
+                  unsigned int k = 0;
+                  while (SUCCEEDED(result) && (k < context->GetSectionContext()->GetUpdatedSection()->GetProgramDefinitions()->Count()))
+                  {
+                    bool leaveProgramDefinition = false;
+                    CProgramDefinition *programDefinition = context->GetSectionContext()->GetUpdatedSection()->GetProgramDefinitions()->GetItem(k);
+
+                    for (unsigned int l = 0; (SUCCEEDED(result) && (l < context->GetSectionContext()->GetTransportStreamProgramMapParserContext()->GetLeaveProgramElements()->Count())); l++)
+                    {
+                      CProgramElement *programElement = context->GetSectionContext()->GetTransportStreamProgramMapParserContext()->GetLeaveProgramElements()->GetItem(l);
+
+                      if (programDefinition->GetElementaryPID() == programElement->GetPID())
+                      {
+                        leaveProgramDefinition = true;
+                        break;
+                      }
+                    }
+
+                    if (leaveProgramDefinition)
+                    {
+                      k++;
+                    }
+                    else
+                    {
+                      context->GetSectionContext()->GetUpdatedSection()->GetProgramDefinitions()->Remove(k);
+                    }
+                  }
                 }
               }
 
