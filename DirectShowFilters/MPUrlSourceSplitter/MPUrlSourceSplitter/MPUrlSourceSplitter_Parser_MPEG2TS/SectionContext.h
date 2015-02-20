@@ -37,10 +37,12 @@
 
 #define SECTION_CONTEXT_FLAG_LAST                                     (FLAGS_LAST + 5)
 
+class CParserContext;
+
 class CSectionContext : public CFlags
 {
 public:
-  CSectionContext(HRESULT *result);
+  CSectionContext(HRESULT *result, CParserContext *parserContext);
   virtual ~CSectionContext(void);
 
   /* get methods */
@@ -64,6 +66,10 @@ public:
   // gets MPEG2 TS packets for replacing original section
   // @return : collection of MPEG2 TS packets
   CTsPacketCollection *GetPackets(void);
+
+  // gets parser context
+  // @return : parser context or NULL if error
+  virtual CParserContext *GetParserContext(void);
 
   /* set methods */
 
@@ -137,6 +143,8 @@ protected:
   unsigned int packetCount;
   // holds MPEG2 TS packets for replacing original section
   CTsPacketCollection *packets;
+  // holds reference to parser context
+  CParserContext *parserContext;
 
   /* methods */
 };

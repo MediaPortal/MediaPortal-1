@@ -21,9 +21,10 @@
 #include "StdAfx.h"
 
 #include "TransportStreamProgramMapSectionContext.h"
+#include "TransportStreamProgramMapParserContext.h"
 
-CTransportStreamProgramMapSectionContext::CTransportStreamProgramMapSectionContext(HRESULT *result)
-  : CSectionContext(result)
+CTransportStreamProgramMapSectionContext::CTransportStreamProgramMapSectionContext(HRESULT *result, CTransportStreamProgramMapParserContext *parserContext)
+  : CSectionContext(result, parserContext)
 {
   this->pid = TRANSPORT_STREAM_PROGRAM_MAP_PID_NOT_DEFINED;
 }
@@ -42,6 +43,11 @@ CTransportStreamProgramMapSection *CTransportStreamProgramMapSectionContext::Get
 CTransportStreamProgramMapSection *CTransportStreamProgramMapSectionContext::GetUpdatedSection(void)
 {
   return (CTransportStreamProgramMapSection *)__super::GetUpdatedSection();
+}
+
+CTransportStreamProgramMapParserContext *CTransportStreamProgramMapSectionContext::GetTransportStreamProgramMapParserContext(void)
+{
+  return (CTransportStreamProgramMapParserContext *)__super::GetParserContext();
 }
 
 uint16_t CTransportStreamProgramMapSectionContext::GetPID(void)

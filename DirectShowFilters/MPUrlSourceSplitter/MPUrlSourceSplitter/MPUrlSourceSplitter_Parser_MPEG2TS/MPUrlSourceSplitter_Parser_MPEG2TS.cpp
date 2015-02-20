@@ -1000,7 +1000,57 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                             context = new CTransportStreamProgramMapParserContext(&result, (uint16_t)program->GetProgramMapPID());
                             CHECK_POINTER_HRESULT(result, context, result, E_OUTOFMEMORY);
 
-                            // TO DO: setup filter program elements to transport stream program map parser context
+                            if (SUCCEEDED(result))
+                            {
+                              // TO DO: setup filter program elements to transport stream program map parser context
+                              unsigned int programMapPidCount = caller->connectionParameters->GetValueUnsignedInt(PARAMETER_NAME_MPEG2TS_FILTER_PROGRAM_MAP_PID_COUNT, true, MPEG2TS_FILTER_PROGRAM_MAP_PID_COUNT_DEFAULT);
+
+                              for (unsigned int j = 0; (SUCCEEDED(result) && (j < programMapPidCount)); j++)
+                              {
+                                wchar_t *filterProgramMapPidName = FormatString(PARAMETER_NAME_FORMAT_MPEG2TS_FILTER_PROGRAM_MAP_PID, j);
+                                CHECK_POINTER_HRESULT(result, filterProgramMapPidName, result, E_OUTOFMEMORY);
+
+                                if (SUCCEEDED(result))
+                                {
+                                  unsigned int filterProgramMapPid = caller->connectionParameters->GetValueUnsignedInt(filterProgramMapPidName, true, TS_PACKET_PID_COUNT);
+
+                                  if (((uint16_t)filterProgramMapPid) == context->GetParser()->GetTransportStreamProgramMapSectionPID())
+                                  {
+                                    // found same program map PID as in current transport stream program map parser context
+                                    caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: transport stream program map parser (PID: 0x%04X) has enabled filtering of program element", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, program->GetProgramMapPID());
+
+                                    context->SetFilterProgramElements(true);
+
+                                    wchar_t *leaveProgramElementCountName = FormatString(PARAMETER_NAME_FORMAT_MPEG2TS_LEAVE_PROGRAM_ELEMENT_COUNT, filterProgramMapPid);
+                                    CHECK_POINTER_HRESULT(result, leaveProgramElementCountName, result, E_OUTOFMEMORY);
+
+                                    if (SUCCEEDED(result))
+                                    {
+                                      unsigned int leaveProgramElementCount = caller->connectionParameters->GetValueUnsignedInt(leaveProgramElementCountName, true, MPEG2TS_LEAVE_PROGRAM_ELEMENT_COUNT_DEFAULT);
+
+                                      for (unsigned int k = 0; (SUCCEEDED(result) && (k < leaveProgramElementCount)); k++)
+                                      {
+                                        wchar_t *leaveProgramElementName = FormatString(PARAMETER_NAME_FORMAT_MPEG2TS_LEAVE_PROGRAM_ELEMENT, filterProgramMapPid, k);
+                                        CHECK_POINTER_HRESULT(result, leaveProgramElementName, result, E_OUTOFMEMORY);
+
+                                        if (SUCCEEDED(result))
+                                        {
+                                          unsigned int leaveProgramElement = caller->connectionParameters->GetValueUnsignedInt(leaveProgramElementName, true, TS_PACKET_PID_COUNT);
+
+                                          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: transport stream program map parser (PID: 0x%04X), leaving program element PID: 0x%04X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, program->GetProgramMapPID(), leaveProgramElement);
+                                        }
+
+                                        FREE_MEM(leaveProgramElementName);
+                                      }
+                                    }
+
+                                    FREE_MEM(leaveProgramElementCountName);
+                                  }
+                                }
+
+                                FREE_MEM(filterProgramMapPidName);
+                              }
+                            }
 
                             CHECK_CONDITION_HRESULT(result, caller->transportStreamProgramMapParserContextCollection->Add(context), result, E_OUTOFMEMORY);
                             CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(context));
@@ -1600,9 +1650,11 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                 }
 
                 // filter program elements (if needed)
-                if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FILTER_PROGRAM_ELEMENTS))
+                if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FILTER_PROGRAM_ELEMENTS) && (context->GetSectionContext()->GetTransportStreamProgramMapParserContext()->IsFilterProgramElements()))
                 {
                   // TO DO: filter program elements
+
+                  //context->GetSectionContext()->GetUpdatedSection()->GetProgramDefinitions()->Clear();
                 }
               }
 

@@ -58,7 +58,7 @@ HRESULT CProgramAssociationParserContext::CreateSectionContext(void)
   HRESULT result = S_OK;
   FREE_MEM_CLASS(this->sectionContext);
 
-  this->sectionContext = new CProgramAssociationSectionContext(&result);
+  this->sectionContext = new CProgramAssociationSectionContext(&result, this);
   CHECK_POINTER_HRESULT(result, this->sectionContext, result, E_OUTOFMEMORY);
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(this->sectionContext));

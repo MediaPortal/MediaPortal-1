@@ -22,7 +22,7 @@
 
 #include "SectionContext.h"
 
-CSectionContext::CSectionContext(HRESULT *result)
+CSectionContext::CSectionContext(HRESULT *result, CParserContext *parserContext)
   : CFlags()
 {
   this->flags = SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_EMPTY;
@@ -31,12 +31,19 @@ CSectionContext::CSectionContext(HRESULT *result)
   this->packetCount = 0;
   this->continuityCounter = 0;
   this->packets = NULL;
+  this->parserContext = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->packets = new CTsPacketCollection(result);
+    CHECK_POINTER_DEFAULT_HRESULT(*result, parserContext);
 
-    CHECK_POINTER_HRESULT(*result, this->packets, *result, E_OUTOFMEMORY);
+    if (SUCCEEDED(*result))
+    {
+      this->parserContext = parserContext;
+      this->packets = new CTsPacketCollection(result);
+
+      CHECK_POINTER_HRESULT(*result, this->packets, *result, E_OUTOFMEMORY);
+    }
   }
 }
 
@@ -72,6 +79,11 @@ unsigned int CSectionContext::GetContinuityCounter(void)
 CTsPacketCollection *CSectionContext::GetPackets(void)
 {
   return this->packets;
+}
+
+CParserContext *CSectionContext::GetParserContext(void)
+{
+  return this->parserContext;
 }
 
 /* set methods */

@@ -27,9 +27,11 @@
 #include "TransportStreamProgramMapParser.h"
 #include "TransportStreamProgramMapSectionContext.h"
 
-#define TRANSPORT_STREAM_PROGRAM_MAP_PARSER_CONTEXT_FLAG_NONE         PARSER_CONTEXT_FLAG_NONE
+#define TRANSPORT_STREAM_PROGRAM_MAP_PARSER_CONTEXT_FLAG_NONE                       PARSER_CONTEXT_FLAG_NONE
 
-#define TRANSPORT_STREAM_PROGRAM_MAP_PARSER_CONTEXT_FLAG_LAST         (PARSER_CONTEXT_FLAG_LAST + 0)
+#define TRANSPORT_STREAM_PROGRAM_MAP_PARSER_CONTEXT_FLAG_FILTER_PROGRAM_ELEMENTS    (1 << (PARSER_CONTEXT_FLAG_LAST + 0))
+
+#define TRANSPORT_STREAM_PROGRAM_MAP_PARSER_CONTEXT_FLAG_LAST                       (PARSER_CONTEXT_FLAG_LAST + 1)
 
 class CTransportStreamProgramMapParserContext : public CParserContext
 {
@@ -49,7 +51,15 @@ public:
 
   /* set methods */
 
+  // sets filter program elements flag
+  // @param filterProgramElements : true if filter program elements, false otherwise
+  virtual void SetFilterProgramElements(bool filterProgramElements);
+
   /* other methods */
+
+  // tests if filter program elements flag is set
+  // @return : true if filter program elements flag is set, false otherwise
+  virtual bool IsFilterProgramElements(void);
 
   // creates new section context
   // @return : S_OK if successful, error code otherwise

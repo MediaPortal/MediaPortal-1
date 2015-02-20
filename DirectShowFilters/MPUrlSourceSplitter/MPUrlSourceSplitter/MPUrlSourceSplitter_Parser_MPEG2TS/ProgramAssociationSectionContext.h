@@ -30,10 +30,12 @@
 
 #define PROGRAM_ASSOCIATION_SECTION_CONTEXT_FLAG_LAST                                     (SECTION_CONTEXT_FLAG_LAST + 0)
 
+class CProgramAssociationParserContext;
+
 class CProgramAssociationSectionContext : public CSectionContext
 {
 public:
-  CProgramAssociationSectionContext(HRESULT *result);
+  CProgramAssociationSectionContext(HRESULT *result, CProgramAssociationParserContext *parserContext);
   virtual ~CProgramAssociationSectionContext(void);
 
   /* get methods */
@@ -45,6 +47,10 @@ public:
   // gets updated section in section context
   // @return : updated section in section context (can be NULL if section is not complete)
   virtual CProgramAssociationSection *GetUpdatedSection(void);
+
+  // gets parser context
+  // @return : parser context or NULL if error
+  virtual CProgramAssociationParserContext *GetProgramAssociationParserContext(void);
 
   /* set methods */
 

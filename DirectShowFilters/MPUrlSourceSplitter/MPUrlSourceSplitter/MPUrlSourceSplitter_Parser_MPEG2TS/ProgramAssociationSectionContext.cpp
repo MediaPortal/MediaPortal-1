@@ -21,9 +21,10 @@
 #include "StdAfx.h"
 
 #include "ProgramAssociationSectionContext.h"
+#include "ProgramAssociationParserContext.h"
 
-CProgramAssociationSectionContext::CProgramAssociationSectionContext(HRESULT *result)
-  : CSectionContext(result)
+CProgramAssociationSectionContext::CProgramAssociationSectionContext(HRESULT *result, CProgramAssociationParserContext *parserContext)
+  : CSectionContext(result, parserContext)
 {
 }
 
@@ -41,6 +42,11 @@ CProgramAssociationSection *CProgramAssociationSectionContext::GetOriginalSectio
 CProgramAssociationSection *CProgramAssociationSectionContext::GetUpdatedSection(void)
 {
   return (CProgramAssociationSection *)__super::GetUpdatedSection();
+}
+
+CProgramAssociationParserContext *CProgramAssociationSectionContext::GetProgramAssociationParserContext(void)
+{
+  return (CProgramAssociationParserContext *)__super::GetParserContext();
 }
 
 /* set methods */
