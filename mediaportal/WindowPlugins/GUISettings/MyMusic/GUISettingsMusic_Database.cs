@@ -436,14 +436,9 @@ namespace MediaPortal.GUI.Settings
       EnableControls(true);
       SetProperties();
 
-      GUIDialogNotify dlgNotify =
-        (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-      if (null != dlgNotify)
-      {
-        dlgNotify.SetHeading(GUILocalizeStrings.Get(1020)); // Information
-        dlgNotify.SetText(GUILocalizeStrings.Get(300024)); // Scan finished
-        dlgNotify.DoModal(GetID);
-      }
+      // We can't send the message from here as this will result to run the dislog in a wrong thread
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DATABASE_SCAN_ENDED, 0, 0, 0, 0, 0, null);
+      GUIWindowManager.SendThreadMessage(msg);
     }
 
     private void SetStatus(object sender, DatabaseReorgEventArgs e)

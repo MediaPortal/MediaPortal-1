@@ -4657,6 +4657,16 @@ public class MediaPortalApp : D3D, IRender
             VirtualDirectories.Instance.Pictures.Remove(message.Label);
           }
           break;
+
+        case GUIMessage.MessageType.GUI_MSG_DATABASE_SCAN_ENDED:
+          dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+          if (null != dlgNotify)
+          {
+            dlgNotify.SetHeading(GUILocalizeStrings.Get(1020)); // Information
+            dlgNotify.SetText(GUILocalizeStrings.Get(300024)); // Scan finished
+            dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+          }       
+          break;
       }
     }
   }
