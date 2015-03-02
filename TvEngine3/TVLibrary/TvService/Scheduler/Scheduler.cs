@@ -378,6 +378,7 @@ namespace TvService
     [MethodImpl(MethodImplOptions.Synchronized)]
     private void DoScheduleWork()
     {
+      CanceledSchedule.DeleteAllCancelledSeries();
       StopAnyDueRecordings();
       StartAnyDueRecordings();
       CheckAndDeleteOrphanedRecordings();
@@ -626,6 +627,7 @@ namespace TvService
 
     private void CancelSchedule(RecordingDetail newRecording, int scheduleId)
     {
+      Log.Debug("Scheduler.CancelSchedule: {0} {1}", newRecording.Program.Title, newRecording.Program.StartTime);
       CanceledSchedule canceled = new CanceledSchedule(scheduleId,
                                                        newRecording.Program.IdChannel,
                                                        newRecording.Program.StartTime);
@@ -768,8 +770,13 @@ namespace TvService
         {
           if (CreateSpawnedOnceSchedule(schedule, program))
           {
+            Log.Debug("IsTimeToRecordEveryTimeOnEveryChannel: {0}, {1}", schedule.ProgramName, schedule.StartTime);
             createSpawnedOnceSchedule = true;
           }
+        }
+        else
+        {
+          Log.Debug("IsTimeToRecordEveryTimeOnEveryChannel: Canceled: {0}, {1}", schedule.ProgramName, schedule.StartTime);
         }
       }
       if (createSpawnedOnceSchedule)
@@ -796,8 +803,13 @@ namespace TvService
             bool createSpawnedOnceSchedule = CreateSpawnedOnceSchedule(schedule, current);
             if (createSpawnedOnceSchedule)
             {
+              Log.Debug("IsTimeToRecordEveryTimeOnThisChannel: {0}, {1}", schedule.ProgramName, schedule.StartTime);
               ResetTimer(); //lets process the spawned once schedule at once.
             }
+          }
+          else
+          {
+            Log.Debug("IsTimeToRecordEveryTimeOnThisChannel: Canceled: {0}, {1}", schedule.ProgramName, schedule.StartTime);
           }
         }
       }

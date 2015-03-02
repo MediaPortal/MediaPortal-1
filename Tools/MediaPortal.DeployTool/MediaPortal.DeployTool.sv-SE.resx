@@ -179,7 +179,7 @@ Denna dator kommer att fungera som en dedikerad TV-Server och leverera TV till a
     <value>Konfigurerar Windows brandvägg för att tillåta extern åtkomst till databasserver</value>
   </data>
   <data name="DBMSSettings_errInvalidInstallationPath" xml:space="preserve">
-    <value>Du måste välja en giltig installationssökväg för SQL-Serven.</value>
+    <value>Du måste välja en giltig installationssökväg för SQL-Servern.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
     <value>Du måste välja ett lösenord för SQL-serverns administratör.</value>
@@ -320,7 +320,8 @@ Denna dator kommer att fungera som en dedikerad TV-Server och leverera TV till a
     <value>Fortsätt</value>
   </data>
   <data name="ManualDownload_errFileNotFound" xml:space="preserve">
-    <value>Den begärda filen finns fortfarande inte</value>
+    <value>Den begärda filen finns fortfarande inte. Sök igenom din disk
+(filnamnet borde likna det föreslagna)</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
     <value>Tryck på "Fortsätt" när du laddat ner filen</value>
@@ -533,5 +534,14 @@ Innan du fortsätter med installationen av MediaPortal måste du starta om dator
   </data>
   <data name="Reinstall" xml:space="preserve">
     <value>Ominstallera nuvarande installation till {0}</value>
+  </data>
+  <data name="MySQLChoice_Information" xml:space="preserve">
+    <value>Markera ovan om du vill uppdatera MySQL 5.1 till 5.6 (Databasen kommer att finnas kvar)</value>
+  </data>
+  <data name="MySQLChoice_MoreInfo" xml:space="preserve">
+    <value>Mer information</value>
+  </data>
+  <data name="MySQLChoice_Title" xml:space="preserve">
+    <value>MySQL uppgradera 5.1 till 5.6</value>
   </data>
 </root>

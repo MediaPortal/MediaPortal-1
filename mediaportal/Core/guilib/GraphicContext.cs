@@ -97,6 +97,10 @@ namespace MediaPortal.GUI.Library
     private const int MONITOR_ON = -1;
     private const int MONITOR_OFF = 2;
     // ReSharper restore InconsistentNaming
+    private static bool m_volumeOverlay = false; // Volume overlay
+    private static bool m_disableVolumeOverlay = false; // Window volume overlay allowed
+    private static DateTime m_volumeOverlayTimeOut = DateTime.Now; // Volume overlay timeout timer
+    private static int m_volumeOverlayOffsetX, m_volumeOverlayOffsetY = 0;
 
     private static string _skin = "";
     private static string _theme = "";
@@ -293,6 +297,8 @@ namespace MediaPortal.GUI.Library
     public static bool Render3DSubtitle { get; set; }
 
     public static int Render3DSubtitleDistance { get; set; }
+
+    public static bool StretchSubtitles { get; set; }
 
     public enum eFullHD3DFormat { None, SBS, TAB };
 
@@ -911,6 +917,9 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static State CurrentState { get; set; }
 
+    // addendum to indicate that the system is powering off and not just rebooting
+    public static bool StoppingToPowerOff { get; set; }
+
     /// <summary>
     /// Get pointer to the applications form (needed by overlay windows)
     /// </summary>
@@ -1393,6 +1402,73 @@ namespace MediaPortal.GUI.Library
     /// 
     /// </summary>
     public static bool HasFocus { get; set; }
+
+    public static bool VolumeOverlay
+    {
+      get
+      {
+        return m_volumeOverlay;
+      }
+      set
+      {
+        if (!(value && DisableVolumeOverlay))
+          m_volumeOverlay = value;
+        else
+          m_volumeOverlay = false;
+      }
+    }
+
+    public static DateTime VolumeOverlayTimeOut
+    {
+      get
+      {
+        return m_volumeOverlayTimeOut;
+      }
+      set
+      {
+        m_volumeOverlayTimeOut = value;
+      }
+    }
+
+    public static bool DisableVolumeOverlay
+    {
+      get
+      {
+        return m_disableVolumeOverlay;
+      }
+      set
+      {
+        m_disableVolumeOverlay = value;
+        if (value)
+        {
+          VolumeOverlay = false;
+        }
+      }
+    }
+
+    public static int VolumeOverlayOffsetX
+    {
+      get
+      {
+        return m_volumeOverlayOffsetX;
+      }
+      set
+      {
+        m_volumeOverlayOffsetX = value;
+      }
+    }
+
+    public static int VolumeOverlayOffsetY
+    {
+      get
+      {
+        return m_volumeOverlayOffsetY;
+      }
+      set
+      {
+        m_volumeOverlayOffsetY = value;
+      }
+    }
 
     /// <summary>
     /// Returns true if the active window belongs to the my tv plugin

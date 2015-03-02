@@ -1,148 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBCTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <DVBCTuning>
-    <Frequency>426000</Frequency>
+    <Frequency>266000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>546000</Frequency>
+    <Frequency>274000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>562000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>418000</Frequency>
+    <Frequency>282000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>554000</Frequency>
+    <Frequency>290000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>410000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>514000</Frequency>
+    <Frequency>298000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>522000</Frequency>
+    <Frequency>306000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>610000</Frequency>
+    <Frequency>314000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>626000</Frequency>
+    <Frequency>322000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>634000</Frequency>
+    <Frequency>330000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>538000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>530000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>618000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>642000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>578000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>570000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
     <Frequency>338000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
     <Frequency>346000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
     <Frequency>354000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
     <Frequency>362000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>370000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
     <Frequency>378000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
     <Frequency>386000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>650000</Frequency>
+    <Frequency>410000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>330000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>578000</Frequency>
+    <Frequency>402000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>394000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>418000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>434000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>6558000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>666000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>554000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>562000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>506000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>514000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
     <Frequency>586000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
     <Frequency>594000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
     <Frequency>602000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>610000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>618000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>626000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>674000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>121000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>706000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
 </ArrayOfDVBCTuning>

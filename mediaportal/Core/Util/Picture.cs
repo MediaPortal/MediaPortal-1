@@ -949,7 +949,31 @@ namespace MediaPortal.Util
     public static bool CreateThumbnail(string thumbnailImageSource, string thumbnailImageDest, int aThumbWidth,
                                        int aThumbHeight, int iRotate, bool aFastMode, bool autocreateLargeThumbs, bool fallBack)
     {
-      if (File.Exists(thumbnailImageDest))
+      return ReCreateThumbnail(thumbnailImageSource, thumbnailImageDest, aThumbWidth,
+                                       aThumbHeight, iRotate, aFastMode, autocreateLargeThumbs, fallBack, false);
+    }
+
+    /// <summary>
+    /// Creates a thumbnail of the specified image
+    /// </summary>
+    /// <param name="thumbnailImageSource">The source filename to load a System.Drawing.Image from</param>
+    /// <param name="thumbnailImageDest">Filename of the thumbnail to create</param>
+    /// <param name="aThumbWidth">Maximum width of the thumbnail</param>
+    /// <param name="aThumbHeight">Maximum height of the thumbnail</param>
+    /// <param name="autocreateLargeThumbs">Auto create large thumbnail</param>
+    /// <param name="iRotate">
+    /// 0 = no rotate
+    /// 1 = rotate 90 degrees
+    /// 2 = rotate 180 degrees
+    /// 3 = rotate 270 degrees
+    /// <param name="fallBack">Set to true to generated file that need to be deleted (for ex in temp folder)</param>
+    /// </param>
+    /// /// <param name="needOverride">Override if the file is exist</param>
+    /// <returns>Whether the thumb has been successfully created</returns>
+    public static bool ReCreateThumbnail(string thumbnailImageSource, string thumbnailImageDest, int aThumbWidth,
+                                       int aThumbHeight, int iRotate, bool aFastMode, bool autocreateLargeThumbs, bool fallBack, bool needOverride)
+    {
+      if (!needOverride && File.Exists(thumbnailImageDest))
       {
         return false;
       }

@@ -112,8 +112,8 @@
 						<posY>595</posY>
 						<width>1700</width>
 						<height>340</height>
-						<onup>3</onup>
-						<ondown>3</ondown>
+						<onup>2</onup>
+						<ondown>2</ondown>
 						<onleft>50</onleft>
 						<onright>50</onright>
 						<thumbWidth>230</thumbWidth>
@@ -149,44 +149,45 @@
 						<description>Thumbnail Panel</description>
 						<type>thumbnailpanel</type>
 						<id>50</id>
-						<posX>102</posX>
+						<posX>754</posX>
 						<posY>342</posY>
-						<width>870</width>
+						<width>1150</width>
 						<height>700</height>
 						<folderPrefix></folderPrefix>
 						<folderSuffix></folderSuffix>
-						<onleft>3</onleft>
-						<onright>3</onright>
+						<onleft>2</onleft>
+						<onright>2</onright>
 						<itemWidth>138</itemWidth>
 						<itemHeight>196</itemHeight>
 						<textureWidth>138</textureWidth>
 						<textureHeight>196</textureHeight>
-						<thumbWidth>138</thumbWidth>
-						<thumbHeight>196</thumbHeight>
-						<thumbPosX>0</thumbPosX>
-						<thumbPosY>0</thumbPosY>
-						<itemWidthBig>208</itemWidthBig>
-						<itemHeightBig>296</itemHeightBig>
-						<thumbWidthBig>208</thumbWidthBig>
-						<thumbHeightBig>296</thumbHeightBig>
-						<textureWidthBig>208</textureWidthBig>
-						<textureHeightBig>296</textureHeightBig>
-						<thumbPosXBig>0</thumbPosXBig>
-						<thumbPosYBig>0</thumbPosYBig>
-						<zoomXPixels>40</zoomXPixels>
-						<zoomYPixels>60</zoomYPixels>
+						<thumbWidth>128</thumbWidth>
+						<thumbHeight>186</thumbHeight>
+						<thumbPosX>6</thumbPosX>
+						<thumbPosY>5</thumbPosY>
+						<itemWidthBig>214</itemWidthBig>
+						<itemHeightBig>304</itemHeightBig>
+						<thumbWidthBig>204</thumbWidthBig>
+						<thumbHeightBig>294</thumbHeightBig>
+						<textureWidthBig>216</textureWidthBig>
+						<textureHeightBig>304</textureHeightBig>
+						<thumbPosXBig>6</thumbPosXBig>
+						<thumbPosYBig>5</thumbPosYBig>
+						<zoomXPixels>0</zoomXPixels>
+						<zoomYPixels>0</zoomYPixels>
 						<hideUnfocusTexture>no</hideUnfocusTexture>
 						<keepaspectratio>no</keepaspectratio>
 						<renderFocusText>no</renderFocusText>
 						<renderUnfocusText>no</renderUnfocusText>
 						<frameNoFocus>-</frameNoFocus>
 						<frameFocus>video_thumb_focus.png</frameFocus>
-						<textureMask>video_thumb_mask.png</textureMask>
+						<textureMask></textureMask>
 						<shadowAngle>90</shadowAngle>
-		    		<shadowDistance>50</shadowDistance>
-						<thumbZoom>yes</thumbZoom>
+						<shadowDistance>50</shadowDistance>
+						<thumbZoom>no</thumbZoom>
 						<spinPosX>1828</spinPosX>
 						<spinPosY>1000</spinPosY>
+						<unfocusedAlpha>100</unfocusedAlpha>
 					</control>
 
 					<control>

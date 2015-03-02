@@ -43,9 +43,8 @@ class MultiFileReader : public FileReader
 {
 public:
 
-	MultiFileReader();
+	MultiFileReader(BOOL useFileNext, BOOL useDummyWrites);
 	virtual ~MultiFileReader();
-
 
 	virtual HRESULT GetFileName(LPOLESTR *lpszFileName);
 	virtual HRESULT SetFileName(LPCOLESTR pszFileName);
@@ -53,35 +52,27 @@ public:
 	virtual HRESULT CloseFile();
 	virtual HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
 	virtual HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod);
-	virtual HRESULT get_ReadOnly(WORD *ReadOnly);
-	virtual HRESULT set_DelayMode(WORD DelayMode);
-	virtual HRESULT get_DelayMode(WORD *DelayMode);
-	virtual HRESULT get_ReaderMode(WORD *ReaderMode);
-	virtual DWORD setFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
-	virtual __int64 getFilePointer();
-	virtual __int64 getBufferPointer();
-	virtual void setBufferPointer();
-
-	//TODO: GetFileSize should go since get_FileSize should do the same thing.
-	virtual HRESULT GetFileSize(__int64 *pStartPosition, __int64 *pLength);
 
 	virtual BOOL IsFileInvalid();
 
 	virtual DWORD SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
 	virtual __int64 GetFilePointer();
 	virtual __int64 GetFileSize();
+	
+	virtual void SetFileNext(BOOL useFileNext);
+	virtual BOOL GetFileNext();
+	virtual void SetStopping(BOOL isStopping);
 
 protected:
 	HRESULT RefreshTSBufferFile();
-	HRESULT GetFileLength(LPWSTR pFilename, __int64 &length);
-  void RefreshFileSize();
+	HRESULT GetFileLength(LPWSTR pFilename, __int64 &length, bool doubleCheck);
+	HRESULT ReadNoLock(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
 
 //	SharedMemory* m_pSharedMemory;
 	FileReader m_TSBufferFile;
 	__int64 m_startPosition;
 	__int64 m_endPosition;
 	__int64 m_currentPosition;
-	__int64 m_llBufferPointer;	
 	long m_filesAdded;
 	long m_filesRemoved;
 
@@ -89,11 +80,22 @@ protected:
 
 	FileReader m_TSFile;
 	long	 m_TSFileId;
-	BOOL     m_bReadOnly;
-	BOOL     m_bDelay;
-	BOOL     m_bDebugOutput;
-  __int64  m_cachedFileSize;
+	
+	FileReader m_TSFileNext;
+	long	 m_TSFileIdNext;
+  DWORD  m_lastFileNextRead;
+	__int64 m_currPosnFileNext;
 
+	FileReader m_TSFileGetLength;
+	
+	BOOL     m_bDebugOutput;
+	BOOL     m_bUseFileNext;
+	BOOL     m_bIsStopping;
+
+  byte*    m_pFileReadNextBuffer;
+  byte*    m_pInfoFileBuffer1;
+  byte*    m_pInfoFileBuffer2;
+  CCritSec  m_accessLock;
 };
 
 #endif

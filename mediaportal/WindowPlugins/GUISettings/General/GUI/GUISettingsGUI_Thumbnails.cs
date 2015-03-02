@@ -129,7 +129,7 @@ namespace WindowPlugins.GUISettings
           {
             base.OnMessage(message);
 
-            for (int i = 1; i <= 5; ++i)
+            for (int i = 1; i <= 6; ++i)
             {
               GUIControl.AddItemLabelControl(GetID, (int)Controls.CONTROL_THUMBNAILS_QUALITY, i.ToString());
             }
@@ -287,6 +287,9 @@ namespace WindowPlugins.GUISettings
         case 5:
           Thumbs.Quality = Thumbs.ThumbQuality.highest;
           break;
+        case 6:
+          Thumbs.Quality = Thumbs.ThumbQuality.uhd;
+          break;
       }
     }
 
@@ -332,7 +335,15 @@ namespace WindowPlugins.GUISettings
           GUIPropertyManager.SetProperty("#thumbCompositing", GUILocalizeStrings.Get(300020)); //High Quality
           GUIPropertyManager.SetProperty("#thumbInterpolation", GUILocalizeStrings.Get(300022)); //High Quality Bicubic
           GUIPropertyManager.SetProperty("#thumbSmoothing", GUILocalizeStrings.Get(300020)); //High Quality
-          GUIPropertyManager.SetProperty("#thumbScreen", GUILocalizeStrings.Get(300023)); //Very large LCDs, Projectors
+          GUIPropertyManager.SetProperty("#thumbScreen", GUILocalizeStrings.Get(300023)); //Large LCDs, Plasmas
+          break;
+        case 6:
+          GUIPropertyManager.SetProperty("#thumbResolution", Convert.ToString((int)Thumbs.ThumbResolution) + " + " +
+                                        Convert.ToString((int)Thumbs.ThumbLargeResolution));
+          GUIPropertyManager.SetProperty("#thumbCompositing", GUILocalizeStrings.Get(300020)); //High Quality
+          GUIPropertyManager.SetProperty("#thumbInterpolation", GUILocalizeStrings.Get(300022)); //High Quality Bicubic
+          GUIPropertyManager.SetProperty("#thumbSmoothing", GUILocalizeStrings.Get(300020)); //High Quality
+          GUIPropertyManager.SetProperty("#thumbScreen", GUILocalizeStrings.Get(300096)); //UHD TVs, Projectors
           break;
       }
     }

@@ -42,6 +42,7 @@ namespace MediaPortal.Video.Database
   public class VideoDatabaseSqlLite : IVideoDatabase, IDisposable
   {
     public SQLiteClient m_db;
+    private bool _dbHealth = false;
 
     #region ctor
 
@@ -76,6 +77,9 @@ namespace MediaPortal.Video.Database
         }
         catch (Exception) {}
         m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, @"VideoDatabaseV5.db3"));
+
+        _dbHealth = DatabaseUtility.IntegrityCheck(m_db);
+
         DatabaseUtility.SetPragmas(m_db);
         
         CreateTables();
@@ -871,11 +875,10 @@ namespace MediaPortal.Video.Database
         if (Util.Utils.IsDVD(strPath))
         {
           // It's a DVD! Any drive letter should be OK as long as the label and rest of the path matches
-          strPath = strPath.Replace(strPath.Substring(0, 1), "_");
           cdlabel = GetDVDLabel(strPath);
           DatabaseUtility.RemoveInvalidChars(ref cdlabel);
-          strSQL = String.Format("SELECT * FROM path WHERE strPath = '{0}' AND cdlabel = '{1}'", strPath,
-                                      cdlabel);
+          strPath = strPath.Replace(strPath.Substring(0, 1), "_");
+          strSQL = String.Format("SELECT * FROM path WHERE strPath LIKE '{0}' AND cdlabel LIKE '{1}'", strPath, cdlabel);
         }
         else
         {
@@ -6796,6 +6799,14 @@ namespace MediaPortal.Video.Database
         details.MediaInfo = mInfo;
       }
 
+    }
+
+    public bool DbHealth
+    {
+      get
+      {
+        return _dbHealth;
+      }
     }
 
     public string DatabaseName

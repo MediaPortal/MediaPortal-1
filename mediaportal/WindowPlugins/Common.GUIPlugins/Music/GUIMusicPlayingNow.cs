@@ -39,7 +39,6 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
-using MediaPortal.Visualization;
 using MediaPortal.LastFM;
 using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
@@ -123,6 +122,7 @@ namespace MediaPortal.GUI.Music
     private string _vuMeter = "none";
     private static readonly Random Randomizer = new Random();
     private bool _lookupSimilarTracks;
+    private bool _isStopped = false;
 
     #endregion
 
@@ -191,8 +191,9 @@ namespace MediaPortal.GUI.Music
       {
         Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackEnded for {0}", filename);
 
-        if (!g_Player.Playing && NextTrackTag == null)
+        if (!g_Player.Playing && NextTrackTag == null && !_isStopped)
         {
+          _isStopped = true;
           Log.Debug("GUIMusicPlayingNow: All playlist items played - returning to previous window");
           Action action = new Action();
           action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
@@ -208,8 +209,9 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
-      if (GUIWindowManager.ActiveWindow == GetID)
+      if (GUIWindowManager.ActiveWindow == GetID && !_isStopped)
       {
+        _isStopped = true;
         Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackStopped for {0} - stoptime: {1}", filename, stoptime);
         Action action = new Action();
         action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
@@ -241,7 +243,6 @@ namespace MediaPortal.GUI.Music
       }
 
       GUIGraphicsContext.form.Invoke(new PlaybackChangedDelegate(DoOnStarted), new object[] {type, filename});
-      UpdateSimilarTracks(filename);
     }
 
     private void DoOnStarted(g_Player.MediaType type, string filename)
@@ -249,8 +250,6 @@ namespace MediaPortal.GUI.Music
       Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackStarted for {0}", filename);
 
       ImagePathContainer.Clear();
-      ClearVisualizationImages();
-
       CurrentTrackFileName = filename;
       GetTrackTags();
 
@@ -279,11 +278,6 @@ namespace MediaPortal.GUI.Music
 
       UpdateImagePathContainer();
       UpdateTrackInfo();
-
-      if (GUIWindowManager.ActiveWindow == GetID)
-      {
-        SetVisualizationWindow();
-      }
     }
 
     #endregion
@@ -302,6 +296,8 @@ namespace MediaPortal.GUI.Music
     public override bool Init()
     {
       bool success = false;
+
+      GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
 
       // Load the various Music NowPlaying files
       // we might have:
@@ -331,16 +327,16 @@ namespace MediaPortal.GUI.Music
       base.OnAction(action);
       switch (action.wID)
       {
-        case Action.ActionType.ACTION_STOP:
+          case Action.ActionType.ACTION_STOP:
 
-          if (GUIWindowManager.ActiveWindow == GetID)
+          if (GUIWindowManager.ActiveWindow == GetID && !_isStopped)
           {
+            _isStopped = true;
             Action act = new Action();
             act.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
             GUIGraphicsContext.OnAction(act);
           }
           break;
-
           // Since a ACTION_STOP action clears the player and CurrentPlaylistType type
           // we need a way to restart playback after an ACTION_STOP has been received
         case Action.ActionType.ACTION_MUSIC_PLAY:
@@ -385,14 +381,6 @@ namespace MediaPortal.GUI.Music
               //  UpdateCurrentTrackRating(-1);
               //  break;
           }
-          break;
-
-        case Action.ActionType.ACTION_LASTFM_LOVE:
-          DoLastFMLove();
-          break;
-
-        case Action.ActionType.ACTION_LASTFM_BAN:
-          DoLastFMBan();
           break;
       }
     }
@@ -474,15 +462,13 @@ namespace MediaPortal.GUI.Music
       {
         OnPlayBackStarted(g_Player.MediaType.Music, g_Player.CurrentFile);
 
-        SetVisualizationWindow();
+        _isStopped = false;
       }
       else
       {
         CurrentTrackTag = null;
         NextTrackTag = null;
         UpdateTrackInfo();
-        ClearVisualizationImages();
-        // notify user what he's lost here?
       }
     }
 
@@ -504,24 +490,9 @@ namespace MediaPortal.GUI.Music
       GC.Collect();
       ControlsInitialized = false;
 
-      // Make sure we clear any images we added so we revert back the coverart image
-      ClearVisualizationImages();
-
       BassMusicPlayer.Player.InternetStreamSongChanged -= OnInternetStreamSongChanged;
 
       base.OnPageDestroy(newWindowId);
-    }
-
-    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
-    {
-      if (control == btnLastFMLove)
-      {
-        DoLastFMLove();
-      }
-      if (control == btnLastFMBan)
-      {
-        DoLastFMBan();
-      }
     }
 
     protected override void OnShowContextMenu()
@@ -552,11 +523,6 @@ namespace MediaPortal.GUI.Music
 
       dlg.DoModal(GetID);
 
-      // The ImgCoverArt visibility gets restored when a context menu is popped up.
-      // So we need to reset the visualization window visibility is restored after
-      // the context menu is dismissed
-      SetVisualizationWindow();
-
       if (dlg.SelectedId == -1)
       {
         return;
@@ -582,11 +548,6 @@ namespace MediaPortal.GUI.Music
                 CurrentThumbFileName = strLarge;
               }
               AddImageToImagePathContainer(CurrentThumbFileName);
-
-              if (_usingBassEngine)
-              {
-                BassMusicPlayer.Player.VisualizationWindow.CoverArtImagePath = CurrentThumbFileName;
-              }
 
               UpdateImagePathContainer();
             }
@@ -655,13 +616,6 @@ namespace MediaPortal.GUI.Music
             Log.Error("GUIMusicPlayingNow: error while adding album tracks for {0} - {1}", CurrentTrackTag.Album,
                       ex.Message);
           }
-          break;
-
-        case 34010: //love 
-          DoLastFMLove();
-          break;
-        case 34011: //ban
-          DoLastFMBan();
           break;
       }
     }
@@ -855,34 +809,6 @@ namespace MediaPortal.GUI.Music
           return false;
         }
 
-        // Check if we should let the visualization window handle image flipping
-        if (_usingBassEngine && _showVisualization)
-        {
-          VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
-
-          if (vizWindow != null)
-          {
-            if (Util.Utils.FileExistsInCache(ImagePath))
-            {
-              try
-              {
-                Log.Debug("GUIMusicPlayingNow: adding image to visualization - {0}", ImagePath);
-                vizWindow.AddImage(ImagePath);
-                return true;
-              }
-              catch (Exception ex)
-              {
-                Log.Error("GUIMusicPlayingNow: error adding image ({0}) - {1}", ImagePath, ex.Message);
-              }
-            }
-            else
-            {
-              Log.Warn("GUIMusicPlayingNow: could not use image - {0}", ImagePath);
-              return false;
-            }
-          }
-        }
-
         bool success = false;
         if (ImagePathContainer != null)
         {
@@ -919,7 +845,7 @@ namespace MediaPortal.GUI.Music
     private void FlipPictures()
     {
       // Check if we should let the visualization window handle image flipping
-      if (_usingBassEngine && _showVisualization)
+      if (_usingBassEngine && _showVisualization || g_Player.currentFileName == string.Empty)
       {
         return;
       }
@@ -1155,104 +1081,27 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    private void SetVisualizationWindow()
-    {
-      if (!ControlsInitialized || !_showVisualization || !_usingBassEngine)
-      {
-        return;
-      }
-
-      VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
-
-      if (vizWindow != null)
-      {
-        vizWindow.Visible = false;
-
-        int width = ImgCoverArt.RenderWidth;
-        int height = ImgCoverArt.RenderHeight;
-
-        Size vizSize = new Size(width, height);
-        float vizX = (float)ImgCoverArt.Location.X;
-        float vizY = (float)ImgCoverArt.Location.Y;
-        GUIGraphicsContext.Correct(ref vizX, ref vizY);
-        Point vizLoc = new Point((int)vizX, (int)vizY);
-        vizWindow.Size = vizSize;
-        vizWindow.Location = vizLoc;
-        vizWindow.Visible = true;
-
-        GUIGraphicsContext.VideoWindow = new Rectangle(vizLoc, vizSize);
-      }
-    }
-
-    private void ClearVisualizationImages()
-    {
-      if (!_usingBassEngine || !_showVisualization)
-      {
-        return;
-      }
-
-      VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
-
-      if (vizWindow != null)
-      {
-        vizWindow.ClearImages();
-      }
-    }
-
     #endregion
 
     #region last.fm integration
 
-    private void DoLastFMLove()
+    private void OnThreadMessage(GUIMessage message)
     {
-      string dlgText = GUILocalizeStrings.Get(34010) + " : " + CurrentTrackTag.Title;
-
-      try
+      switch (message.Message)
       {
-        LastFMLibrary.LoveTrack(CurrentTrackTag.Artist, CurrentTrackTag.Title);
+        case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
+          if (PlaylistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && _lookupSimilarTracks)
+          {
+            string strFile = message.Label;
+            UpdateSimilarTracks(strFile);
+          }
+          break;
       }
-      catch (Exception ex)
-      {
-        Log.Error("Error in DoLastFMLove");
-        Log.Error(ex);
-        dlgText = GUILocalizeStrings.Get(1025) + "\n" + dlgText; // prepend "An Error has occurred"
-      }
-
-      var dlgNotifyLastFM = (GUIDialogNotifyLastFM)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_LASTFM);
-      dlgNotifyLastFM.SetHeading(GUILocalizeStrings.Get(34000)); // last.FM
-      dlgNotifyLastFM.SetText(dlgText);
-      dlgNotifyLastFM.TimeOut = 2;
-      dlgNotifyLastFM.DoModal(GetID);
-      
-    }
-
-    private void DoLastFMBan()
-    {
-      string dlgText = GUILocalizeStrings.Get(34011) + " : " + CurrentTrackTag.Title;
-
-      try
-      {
-        LastFMLibrary.BanTrack(CurrentTrackTag.Artist, CurrentTrackTag.Title);
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Error in DoLastFMBan");
-        Log.Error(ex);
-        dlgText = GUILocalizeStrings.Get(1025) + "\n" + dlgText; // prepend "An Error has occurred"
-      }
-
-      var dlgNotifyLastFM = (GUIDialogNotifyLastFM)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_LASTFM);
-      dlgNotifyLastFM.SetHeading(GUILocalizeStrings.Get(34000)); // last.FM
-      dlgNotifyLastFM.SetText(dlgText);
-      dlgNotifyLastFM.TimeOut = 2;
-      dlgNotifyLastFM.DoModal(GetID);
     }
 
     private void UpdateSimilarTracks(string filename)
     {
       if (!_lookupSimilarTracks) return;
-
-      lstSimilarTracks.Clear();
 
       var worker = new BackgroundWorker();
       worker.DoWork += (obj, e) => UpdateSimilarTrackWorker(filename, CurrentTrackTag);
@@ -1262,6 +1111,8 @@ namespace MediaPortal.GUI.Music
     private void UpdateSimilarTrackWorker(string filename, MusicTag tag)
     {
       if (tag == null) return;
+
+      lstSimilarTracks.Clear();
 
       List<LastFMSimilarTrack> tracks;
       try
@@ -1295,6 +1146,7 @@ namespace MediaPortal.GUI.Music
                        };
           item.AlbumInfoTag = song;
           item.MusicTag = t;
+
           GUIMusicBaseWindow.SetTrackLabels(ref item, MusicSort.SortMethod.Album);
           dbTracks.RemoveAt(trackNo); // remove song after adding to playlist to prevent the same sone being added twice
 

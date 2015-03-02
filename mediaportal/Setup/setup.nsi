@@ -446,6 +446,9 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_DirectShowFilters}\mpc-hc_subs\bin\${BUILD_TYPE}\mpcSubs.dll"
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\Dxerr9.dll"
   File "${git_MP}\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
+  ; iMON VFD/LCD
+  File "${git_ROOT}\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll"
+  File "${git_ROOT}\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll"
   ; Utils
   File "${git_MP}\Utils\bin\${BUILD_TYPE}\Utils.dll"
   ; Common Utils
@@ -482,7 +485,6 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\WindowPlugins\GUIDisc\bin\${BUILD_TYPE}\GUIDisc.dll"
   File "${git_MP}\WindowPlugins\GUIDVD\bin\${BUILD_TYPE}\GUIDVD.dll"
   File "${git_MP}\WindowPlugins\GUIHome\bin\${BUILD_TYPE}\GUIHome.dll"
-  File "${git_MP}\WindowPlugins\GUILastFMRadio\bin\${BUILD_TYPE}\GUILastFMRadio.dll"
   File "${git_MP}\WindowPlugins\GUIMusic\bin\${BUILD_TYPE}\GUIMusic.dll"
   File "${git_MP}\WindowPlugins\GUISudoku\bin\${BUILD_TYPE}\GUISudoku.dll"
   File "${git_MP}\WindowPlugins\GUIPictures\bin\${BUILD_TYPE}\GUIPictures.dll"
@@ -497,13 +499,54 @@ Section "MediaPortal core files (required)" SecCore
   ; ffmpeg
   SetOutPath "$MPdir.Base\MovieThumbnailer"
   File "${git_ROOT}\Packages\ffmpeg.2.1.1\ffmpeg.exe"
+  ; NuGet binaries MediaInfo
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\MediaInfo.0.7.69\MediaInfo.dll"
+  ; NuGet binaries
+  ; Bass Core
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\BASS.2.4.10\bass.dll"
+  File "${git_ROOT}\Packages\BASS.NET.2.4.10.3\lib\net40\Bass.Net.dll"
+  ; Bass Addons
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\bass.asio.1.3.0.2\bassasio.dll"
+  File "${git_ROOT}\Packages\bass.fx.2.4.10.1\bass_fx.dll"
+  File "${git_ROOT}\Packages\bass.mix.2.4.7.2\bassmix.dll"
+  File "${git_ROOT}\Packages\bass.vst.2.4.5\bass_vst.dll"
+  File "${git_ROOT}\Packages\bass.wadsp.2.4.1\bass_wadsp.dll"
+  File "${git_ROOT}\Packages\bass.wasapi.2.4.0.2\basswasapi.dll"
+  File "${git_ROOT}\Packages\bass.ofr.2.4.0.2\OptimFROG.dll"
+  ; Bass AudioDecoders
+  SetOutPath "$MPdir.Base\MusicPlayer\plugins\audio decoders"
+  File "${git_ROOT}\Packages\bass.aac.2.4.4.4\bass_aac.dll"
+  File "${git_ROOT}\Packages\bass.ac3.2.4.0.3\bass_ac3.dll"
+  File "${git_ROOT}\Packages\bass.alac.2.4.3\bass_alac.dll"
+  File "${git_ROOT}\Packages\bass.ape.2.4.1\bass_ape.dll"
+  File "${git_ROOT}\Packages\bass.mpc.2.4.1.1\bass_mpc.dll"
+  File "${git_ROOT}\Packages\bass.ofr.2.4.0.2\bass_ofr.dll"
+  File "${git_ROOT}\Packages\bass.spx.2.4.2\bass_spx.dll"
+  File "${git_ROOT}\Packages\bass.tta.2.4.0\bass_tta.dll"
+  File "${git_ROOT}\Packages\bass.cd.2.4.5\basscd.dll"
+  File "${git_ROOT}\Packages\bass.flac.2.4.1\bassflac.dll"
+  File "${git_ROOT}\Packages\bass.midi.2.4.8\bassmidi.dll"
+  File "${git_ROOT}\Packages\bass.opus.2.4.1.3\bassopus.dll"
+  File "${git_ROOT}\Packages\bass.wma.2.4.4\basswma.dll"
+  File "${git_ROOT}\Packages\bass.wv.2.4.4\basswv.dll"
+  File "${git_ROOT}\Packages\bass.dsd.0.0.1\bassdsd.dll"
+  ; taglib-sharp
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\MediaPortal.TagLib.2.0.3.8\lib\taglib-sharp.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"
   File "${git_MP}\Docs\MediaPortal License.rtf"
   ; libbluray
   SetOutPath "$MPdir.Base"
-  File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
+  !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+    File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32d\libbluray.dll"
+  !else
+    File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
+  !endif
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
@@ -621,6 +664,9 @@ SectionEnd
   Delete "$MPdir.Base\Dxerr9.dll"
   Delete "$MPdir.Base\mpcSubs.dll"
   Delete "$MPdir.Base\MiniDisplayLibrary.dll"
+  ; iMON VFD/LCD
+  Delete "$MPdir.Base\iMONDisplay.dll"
+  Delete "$MPdir.Base\iMONDisplayWrapper.dll"
   ; Utils
   Delete "$MPdir.Base\Utils.dll"
   ; Common Utils
@@ -697,8 +743,8 @@ SectionEnd
   Delete "$MPdir.Plugins\Process\PowerSchedulerClientPlugin.dll"
 !macroend
 
-Section "-MediaPortal Extension Installer" SecMpeInstaller
-  ${LOG_TEXT} "INFO" "MediaPortal Extension Installer..."
+Section "-MediaPortal Extension Manager" SecMpeInstaller
+  ${LOG_TEXT} "INFO" "MediaPortal Extension Manager..."
 
   ; install files
   SetOutPath "$MPdir.Base"
@@ -706,12 +752,17 @@ Section "-MediaPortal Extension Installer" SecMpeInstaller
   File "${git_MP}\MPE\MpeInstaller\bin\${BUILD_TYPE}\MpeInstaller.exe"
   File "${git_MP}\MPE\MpeMaker\bin\${BUILD_TYPE}\MpeMaker.exe"
 
+  ; remove shortcuts on upgrade (MP1-4540 / MP1-4544)
+  Delete "$DESKTOP\MediaPortal Extension Installer.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal Extension Installer.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"
+  
   ; create startmenu shortcuts
   ${If} $noDesktopSC != 1
-    CreateShortCut "$DESKTOP\MediaPortal Extension Installer.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Installer"
+    CreateShortCut "$DESKTOP\MediaPortal Extension Manager.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager"
   ${EndIf}
   CreateDirectory "${STARTMENU_GROUP}"
-  CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Installer.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Installer"
+  CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager"
   CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"     "$MPdir.Base\MpeMaker.exe"      ""  "$MPdir.Base\MpeMaker.exe"      0 "" "" "MediaPortal Extension Maker"
 
   ; associate file extensions
@@ -721,7 +772,7 @@ Section "-MediaPortal Extension Installer" SecMpeInstaller
   ${RefreshShellIcons}
 SectionEnd
 !macro Remove_${SecMpeInstaller}
-  ${LOG_TEXT} "INFO" "Uninstalling MediaPortal Extension Installer..."
+  ${LOG_TEXT} "INFO" "Uninstalling MediaPortal Extension Manager..."
 
   ; remove files
   Delete "$MPdir.Base\MpeCore.dll"
@@ -730,7 +781,9 @@ SectionEnd
 
   ; remove startmenu shortcuts
   Delete "$DESKTOP\MediaPortal Extension Installer.lnk"
+  Delete "$DESKTOP\MediaPortal Extension Manager.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Extension Installer.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"
 
   ; unassociate file extensions
@@ -752,7 +805,7 @@ SectionGroupEnd
 ${MementoSectionDone}
 
 #---------------------------------------------------------------------------
-# This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
+# This Section is executed after the Main section has finished and writes Uninstall information into the registry
 Section -Post
   ${LOG_TEXT} "INFO" "Doing post installation stuff..."
 
@@ -786,6 +839,10 @@ Section -Post
   ${LOG_TEXT} "INFO" "Removing obsolete WindowPlugins.dll"
   Delete "$MPdir.Plugins\Windows\WindowPlugins.dll"
   
+  ; MP1-4463 LastFM Radio plugin dll
+  ${LOG_TEXT} "INFO" "Removing obsolete GUILastFMRadio.dll"
+  Delete "$MPdir.Plugins\Windows\GUILastFMRadio.dll"
+  
   ; removing old shortcut
   ${LOG_TEXT} "INFO" "Removing obsolete startmenu shortcuts"
   Delete "${STARTMENU_GROUP}\MediaPortal Logs Collector.lnk"
@@ -794,6 +851,7 @@ Section -Post
   ${If} $noDesktopSC != 1
     CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
     CreateShortCut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
+    CreateShortCut "$DESKTOP\MediaPortal WatchDog.lnk"      "$MPdir.Base\WatchDog.exe"         "" "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
   ${EndIf}
 
   ; create startmenu shortcuts
@@ -802,7 +860,7 @@ Section -Post
       CreateDirectory "${STARTMENU_GROUP}"
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
-      CreateShortCut "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"                 "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"   0 "" "" "MediaPortal Debug-Mode"
+      CreateShortCut "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"                   "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
       CreateShortCut "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"
       CreateShortCut "${STARTMENU_GROUP}\User Files.lnk"                             "$MPdir.Config"                 ""      "$MPdir.Config"                 0 "" "" "Browse you config files, databases, thumbs, logs, ..."
 
@@ -861,6 +919,7 @@ Section Uninstall
   Delete "${STARTMENU_GROUP}\MediaPortal.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Log-Files.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal TestTool.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Logs Collector.lnk"
@@ -876,6 +935,7 @@ Section Uninstall
   ; remove Desktop shortcuts
   Delete "$DESKTOP\MediaPortal.lnk"
   Delete "$DESKTOP\MediaPortal Configuration.lnk"
+  Delete "$DESKTOP\MediaPortal WatchDog.lnk"
 
   ; remove last files and instdir
   Delete "$MPdir.Base\uninstall-mp.exe"

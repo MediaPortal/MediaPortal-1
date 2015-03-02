@@ -164,13 +164,13 @@ namespace MediaPortal.GUI.Music
             countField = "strAlbumArtist";
           }
 
-          sql = String.Format("Select UPPER(SUBSTR({0},1,{1})) as IX, Count(distinct {2}) from {3} GROUP BY IX",
+          sql = String.Format("Select UPPER(SUBSTR({0},1,{1})) as IX, Count({2}) from {3} GROUP BY IX",
                               searchField, definition.Restriction, countField, searchTable);
           // only group special characters into a "#" entry is field is text based
           if (defRoot.Where == "rating" || defRoot.Where == "year" || defRoot.Where == "track" || defRoot.Where == "disc#" ||
               defRoot.Where == "timesplayed" || defRoot.Where == "favourites" || defRoot.Where == "date")
           {
-            database.GetSongsByFilter(sql, out songs, table);
+            database.GetSongsByFilter(sql, out songs, table, defRoot.Where, true);
           }
           else
           {
@@ -479,6 +479,9 @@ namespace MediaPortal.GUI.Music
 
         restrictionLength += Convert.ToInt16(filter.Restriction);
 
+        string selectedValue = filter.SelectedValue;
+        DatabaseUtility.RemoveInvalidChars(ref selectedValue);
+
         // muliple value fields are stored in one database field in tracks
         // table but on different rows in other tables
         if (IsMultipleValueField(GetField(filter.Where)))
@@ -523,7 +526,7 @@ namespace MediaPortal.GUI.Music
             else
             {
               whereClause += String.Format(" ({0} like '| {1}%' or '| {2}%')", GetField(filter.Where),
-                                           filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
+                                           selectedValue.PadRight(restrictionLength), selectedValue);
             }
           }
           else
@@ -534,8 +537,8 @@ namespace MediaPortal.GUI.Music
             }
             else
             {
-              whereClause += String.Format(" ({0} like '{1}%' or '{2}%')", GetField(filter.Where),
-                                           filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
+              whereClause += String.Format(" {0} like '{1}%'", GetField(filter.Where),
+                                           selectedValue.PadRight(restrictionLength));
             }
           }
         }
@@ -549,8 +552,8 @@ namespace MediaPortal.GUI.Music
           }
           else
           {
-            whereClause += String.Format(" ({0} like '{1}%' or '{2}%')", GetField(filter.Where),
-                                         filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
+            whereClause += String.Format(" {0} like '{1}%'", GetField(filter.Where),
+                                         selectedValue.PadRight(restrictionLength));
           }
         }
       }

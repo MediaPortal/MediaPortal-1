@@ -406,7 +406,7 @@ namespace MediaPortal.TagReader
 
     public string CoverArtFile
     {
-      get { return Utils.GetImageFile(m_CoverArtImageBytes, String.Empty); }
+      get { return Utils.GetImageFile(m_CoverArtImageBytes, m_FileName); }
     }
 
     public string ReplayGainTrack
