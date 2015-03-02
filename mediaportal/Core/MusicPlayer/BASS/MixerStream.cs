@@ -422,6 +422,7 @@ namespace MediaPortal.MusicPlayer.BASS
       // Only store object it, when it doesn't exist
       if (!_pinnedObjects.ContainsKey(stream.BassStream))
       {
+        Log.Debug("BASS: Updating Dictionary for GCHandle for stream {0}", stream.BassStream);
         // Add the pinned object to the global dictionary, so that we can free it later in the Sync End Proc
         _pinnedObjects.Add(stream.BassStream, GCHandle.Alloc(stream));
       }
@@ -876,7 +877,7 @@ namespace MediaPortal.MusicPlayer.BASS
         }
         catch (KeyNotFoundException)
         {
-          Log.Error("BASS: GCHandle of Musicstream not found in Dictionary");
+          Log.Error("BASS: GCHandle of Musicstream not found in Dictionary {0}", userData.ToInt32());
           return;
         }
 
