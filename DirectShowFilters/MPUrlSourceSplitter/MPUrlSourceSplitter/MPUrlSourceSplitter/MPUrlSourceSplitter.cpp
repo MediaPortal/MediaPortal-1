@@ -1488,6 +1488,34 @@ STDMETHODIMP CMPUrlSourceSplitter::IsStreamIptvCompatible(bool *compatible)
   return result;
 }
 
+STDMETHODIMP CMPUrlSourceSplitter::GetIptvSectionCount(unsigned int *count)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, count);
+  CHECK_POINTER_HRESULT(result, this->parserHoster, result, E_NOT_VALID_STATE);
+
+  if (SUCCEEDED(result))
+  {
+    *count = this->parserHoster->GetIptvSectionCount();
+  }
+
+  return result;
+}
+
+STDMETHODIMP CMPUrlSourceSplitter::GetIptvSection(unsigned int index, wchar_t **section)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, section);
+  CHECK_POINTER_HRESULT(result, this->parserHoster, result, E_NOT_VALID_STATE);
+
+  if (SUCCEEDED(result))
+  {
+    result = this->parserHoster->GetIptvSection(index, section);
+  }
+
+  return result;
+}
+
 HRESULT CMPUrlSourceSplitter::LoadAsync(void)
 {
   HRESULT result = S_OK;

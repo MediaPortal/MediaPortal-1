@@ -94,6 +94,7 @@
     <ClInclude Include="ProgramDefinitionCollection.h" />
     <ClInclude Include="ProgramSpecificInformationPacket.h" />
     <ClInclude Include="Section.h" />
+    <ClInclude Include="SectionCollection.h" />
     <ClInclude Include="SectionPayload.h" />
     <ClInclude Include="SectionPayloadCollection.h" />
     <ClInclude Include="stdafx.h" />
@@ -122,6 +123,7 @@
     <ClCompile Include="ProgramDefinitionCollection.cpp" />
     <ClCompile Include="ProgramSpecificInformationPacket.cpp" />
     <ClCompile Include="Section.cpp" />
+    <ClCompile Include="SectionCollection.cpp" />
     <ClCompile Include="SectionPayload.cpp" />
     <ClCompile Include="SectionPayloadCollection.cpp" />
     <ClCompile Include="stdafx.cpp">

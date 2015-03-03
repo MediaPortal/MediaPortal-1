@@ -214,6 +214,16 @@ void CParserPlugin::SetPauseSeekStopMode(unsigned int pauseSeekStopMode)
   this->protocolHoster->SetPauseSeekStopMode(pauseSeekStopMode);
 }
 
+unsigned int CParserPlugin::GetIptvSectionCount(void)
+{
+  return 0;
+}
+
+HRESULT CParserPlugin::GetIptvSection(unsigned int index, wchar_t **section)
+{
+  return E_NOTIMPL;
+}
+
 /* set methods */
 
 HRESULT CParserPlugin::SetConnectionParameters(const CParameterCollection *parameters)

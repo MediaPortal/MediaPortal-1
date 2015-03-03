@@ -253,6 +253,17 @@ public:
   // @return : S_OK if successful
   STDMETHODIMP IsStreamIptvCompatible(bool *compatible);
 
+  // gets IPTV section count
+  // @param count : reference to variable that holds section count
+  // @return : S_OK if successful
+  STDMETHODIMP GetIptvSectionCount(unsigned int *count);
+
+  // gets IPTV section with specified index
+  // @param index : the index of IPTV section to get
+  // @param section : the reference to string which holds section data in BASE64 encoding
+  // @return : S_OK if successful
+  STDMETHODIMP GetIptvSection(unsigned int index, wchar_t **section);
+
   /* other methods */
 
   // loads the stream to filter (asynchronous method)

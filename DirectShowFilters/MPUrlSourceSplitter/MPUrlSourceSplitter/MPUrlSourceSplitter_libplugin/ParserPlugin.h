@@ -182,6 +182,16 @@ public:
   // @return : one of Action values
   virtual Action GetAction(void) = 0;
 
+  // gets IPTV section count
+  // @return : IPTV section count
+  virtual unsigned int GetIptvSectionCount(void);
+
+  // gets IPTV section with specified index
+  // @param index : the index of IPTV section to get
+  // @param section : the reference to string which holds section data in BASE64 encoding
+  // @return : S_OK if successful
+  virtual HRESULT GetIptvSection(unsigned int index, wchar_t **section);
+
   /* set methods */
 
   // sets current connection url and parameters

@@ -29,6 +29,7 @@
 #include "DiscontinuityParser.h"
 #include "ProgramAssociationParserContext.h"
 #include "TransportStreamProgramMapParserContextCollection.h"
+#include "SectionCollection.h"
 
 #define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_NONE               PARSER_PLUGIN_FLAG_NONE
 
@@ -45,7 +46,9 @@
 
 #define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FILTER_PROGRAM_ELEMENTS          (1 << (PARSER_PLUGIN_FLAG_LAST + 7))
 
-#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_LAST               (PARSER_PLUGIN_FLAG_LAST + 8)
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_STREAM_ANALYSIS                  (1 << (PARSER_PLUGIN_FLAG_LAST + 8))
+
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_LAST               (PARSER_PLUGIN_FLAG_LAST + 9)
 
 #define PARSER_NAME                                                   L"PARSER_MPEG2TS"
 
@@ -96,6 +99,16 @@ public:
   // tests if stream is IPTV compatible
   // @return : true if stream is IPTV compatible, false otherwise
   virtual bool IsStreamIptvCompatible(void);
+
+  // gets IPTV section count
+  // @return : IPTV section count
+  virtual unsigned int GetIptvSectionCount(void);
+
+  // gets IPTV section with specified index
+  // @param index : the index of IPTV section to get
+  // @param section : the reference to string which holds section data in BASE64 encoding
+  // @return : S_OK if successful
+  virtual HRESULT GetIptvSection(unsigned int index, wchar_t **section);
 
   // CPlugin
 
@@ -196,6 +209,9 @@ protected:
   unsigned int transportStreamId;
   unsigned int programNumber;
   unsigned int programMapPID;
+
+  // holds sections
+  CSectionCollection *sections;
 
   /* received data worker */
 
