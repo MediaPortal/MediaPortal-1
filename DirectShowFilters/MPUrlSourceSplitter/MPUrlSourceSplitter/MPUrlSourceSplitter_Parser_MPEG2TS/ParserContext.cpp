@@ -66,6 +66,7 @@ void CParserContext::Clear(void)
 {
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->parser, this->parser->Clear());
   FREE_MEM_CLASS(this->sectionContext);
+  this->lastSectionCrc32 = SECTION_CRC32_UNDEFINED;
 }
 
 void CParserContext::FreeSectionContext(void)

@@ -175,8 +175,7 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::GetParserResult(void)
         MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_STREAM_ANALYSIS))
       {
         // allowed aligning of MPEG2 TS packets
-        // requested detection of discontinuity, changing stream identification, set stream to not encrypted, filtering program elements or remembering sections
-        
+        // requested detection of discontinuity, changing stream identification, set stream to not encrypted, filtering program elements or stream analysis
 
         CStreamInformationCollection *streams = new CStreamInformationCollection(&this->parserResult);
         CHECK_POINTER_HRESULT(this->parserResult, streams, this->parserResult, E_OUTOFMEMORY);
@@ -222,10 +221,10 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::GetParserResult(void)
                 {
                   // TO DO: check type of error
 
-                  this->parserResult = PARSER_RESULT_NOT_KNOWN;
+                  this->parserResult = IS_MPEG2TS_ERROR(package->GetError()) ? package->GetError() : PARSER_RESULT_NOT_KNOWN;
                 }
 
-                if (response != NULL)
+                if (SUCCEEDED(this->parserResult) && (response != NULL))
                 {
                   receivedSameLength = (response->GetBuffer()->GetBufferOccupiedSpace() == this->lastReceivedLength);
                   if (!receivedSameLength)
@@ -313,7 +312,9 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::SetConnectionParameters(const CPara
       MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID |
       MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_SET_NOT_SCRAMBLED |
       MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FILTER_PROGRAM_ELEMENTS |
-      MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_STREAM_ANALYSIS);
+      MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_STREAM_ANALYSIS |
+      MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FOUND_PAT |
+      MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FOUND_PMT);
 
     this->flags |= this->connectionParameters->GetValueBool(PARAMETER_NAME_MPEG2TS_DETECT_DISCONTINUITY, true, MPEG2TS_DETECT_DISCONTINUITY_DEFAULT) ? MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_DETECT_DISCONTINUITY : MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_NONE;
     this->flags |= this->connectionParameters->GetValueBool(PARAMETER_NAME_MPEG2TS_ALIGN_TO_MPEG2TS_PACKET, true, MPEG2TS_ALIGN_TO_MPEG2TS_PACKET) ? MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_ALIGN_TO_MPEG2TS_PACKET : MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_NONE;
@@ -578,6 +579,98 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::StartReceivingData(CParameterCollec
   }
 
   CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->CreateReceiveDataWorker());
+
+  if (SUCCEEDED(result) && this->IsSetAnyOfFlags(
+    MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_TRANSPORT_STREAM_ID |
+    MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER |
+    MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID))
+  {
+    CStreamPackage *package = new CStreamPackage(&result);
+    CHECK_POINTER_HRESULT(result, package, result, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(result))
+    {
+      unsigned int requestLength = MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_DATA_LENGTH_DEFAULT;
+      unsigned int lastReceivedLength = 0;
+      bool receivedSameLength = false;
+
+      while (SUCCEEDED(result) && (!receivedSameLength))
+      {
+        package->Clear();
+
+        CStreamPackageDataRequest *request = new CStreamPackageDataRequest(&result);
+        CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(result))
+        {
+          request->SetStart(0);
+          request->SetLength(requestLength);
+          request->SetAnyDataLength(true);
+
+          package->SetRequest(request);
+        }
+
+        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(request));
+        CHECK_HRESULT_EXECUTE(result, this->ProcessStreamPackage(package));
+
+        if (SUCCEEDED(result))
+        {
+          CStreamPackageDataResponse *response = dynamic_cast<CStreamPackageDataResponse *>(package->GetResponse());
+
+          if (package->IsError())
+          {
+            result = package->GetError();
+          }
+
+          if (SUCCEEDED(result) && (response != NULL))
+          {
+            receivedSameLength = (response->GetBuffer()->GetBufferOccupiedSpace() == lastReceivedLength);
+
+            if (!receivedSameLength)
+            {
+              bool detectedAllSections = true;
+
+              if (this->IsSetAnyOfFlags(
+                MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_TRANSPORT_STREAM_ID |
+                MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER |
+                MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID))
+              {
+                // check if program association section (PAT) is found
+                detectedAllSections &= this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FOUND_PAT);
+              }
+
+              if (this->IsSetAnyOfFlags(
+                MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER |
+                MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID))
+              {
+                // check if transport stream program map section (PMT) is found
+                detectedAllSections &= this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FOUND_PMT);
+              }
+
+              requestLength *= 2;
+
+              if (detectedAllSections)
+              {
+                break;
+              }
+            }
+
+            if (SUCCEEDED(result) && response->IsNoMoreDataAvailable())
+            {
+              break;
+            }
+
+            lastReceivedLength = response->GetBuffer()->GetBufferOccupiedSpace();
+          }
+        }
+
+        // sleep some time
+        Sleep(1);
+      }
+    }
+
+    FREE_MEM_CLASS(package);
+  }
 
   return result;
 }
@@ -1000,6 +1093,8 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
 
                       // check number of programs, we allow only one program (in another case we don't know, which program number and/or program map PID to replace)
 
+                      caller->flags |= MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FOUND_PAT;
+
                       if (caller->programAssociationParserContext->GetLastSectionCrc32() != caller->programAssociationParserContext->GetParser()->GetProgramAssociationSection()->GetCrc32())
                       {
                         caller->logger->LogBinary(LOGGER_VERBOSE,
@@ -1311,6 +1406,8 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                       // complete transport stream program map section
                       {
                         isOwner = true;
+
+                        MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FOUND_PMT;
 
                         if (context->GetLastSectionCrc32() != context->GetParser()->GetTransportStreamProgramMapSection()->GetCrc32())
                         {

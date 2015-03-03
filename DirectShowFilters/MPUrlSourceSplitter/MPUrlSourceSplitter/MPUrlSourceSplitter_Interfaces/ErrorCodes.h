@@ -112,6 +112,8 @@ FORCEINLINE bool IS_OUR_ERROR(HRESULT error) { return (((error & 0xFFFFF000) == 
 #define E_MPEG2TS_ONLY_ONE_PROGRAM_ALLOWED                                      -76
 #define E_MPEG2TS_SECTION_INVALID_TABLE_ID                                      -77
 
+FORCEINLINE bool IS_MPEG2TS_ERROR(HRESULT error) { return ((error >= E_MPEG2TS_CANNOT_PARSE_PACKET) && (error <= E_MPEG2TS_SECTION_INVALID_TABLE_ID)); }
+
 // M3U8 parser error codes
 
 #define E_M3U8_NOT_VALID_ITEM_FOUND                                             -80
