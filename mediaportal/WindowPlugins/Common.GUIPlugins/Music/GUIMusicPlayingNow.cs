@@ -278,6 +278,15 @@ namespace MediaPortal.GUI.Music
 
       UpdateImagePathContainer();
       UpdateTrackInfo();
+
+      // Do last.fm updates
+      if (g_Player.IsMusic && _lookupSimilarTracks && g_Player.CurrentPosition >= 10.0 && lstSimilarTracks.Count == 0)
+      {
+        Log.Debug("GUIMusicPlayingNow: Do Last.FM lookup for similar trracks");
+        UpdateSimilarTracks(CurrentTrackFileName);
+      }
+
+
     }
 
     #endregion
@@ -1117,6 +1126,7 @@ namespace MediaPortal.GUI.Music
       List<LastFMSimilarTrack> tracks;
       try
       {
+        Log.Debug("GUIMusicPlayingNow: Calling Last.FM to get similar Tracks");
         tracks = LastFMLibrary.GetSimilarTracks(tag.Title, tag.Artist);
       }
       catch (Exception ex)
@@ -1126,6 +1136,7 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
+      Log.Debug("GUIMusicPlayingNow: Number of similar tracks returned from Last.FM: {0}", tracks.Count);
       var dbTracks = GetSimilarTracksInDatabase(tracks);
 
       for (var i = 0; i < 3; i++)
@@ -1155,6 +1166,7 @@ namespace MediaPortal.GUI.Music
           lstSimilarTracks.Add(item);
         }
       }
+      Log.Debug("GUIMusicPlayingNow: Tracks returned after matching Last.FM results with database tracks: {0}", lstSimilarTracks.Count);
     }
 
     /// <summary>
