@@ -32,7 +32,7 @@ namespace MediaPortal.InputDevices
   /// <summary>
   /// Summary description for DirectInputHandler.
   /// </summary>
-  public class DirectInputHandler
+  public class DirectInputHandler 
   {
     [DllImport("winmm.dll")]
     public static extern int timeGetTime();

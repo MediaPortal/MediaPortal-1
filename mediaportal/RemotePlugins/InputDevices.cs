@@ -22,6 +22,8 @@ using System;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using Action = MediaPortal.GUI.Library.Action;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace MediaPortal.InputDevices
 {
@@ -39,15 +41,11 @@ namespace MediaPortal.InputDevices
         Stop();
       }
       _initialized = true;
-      //diRemote.Init(); // Disable DirectX Input (not compatible with NET4 and later)
-      X10Remote.Init();
-      CentareaRemote.Init();      
-      HidListener.Init(GUIGraphicsContext.ActiveForm);
-      AppCommandListener.Init(GUIGraphicsContext.ActiveForm);
-      MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
-      FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
-      HCWRemote.Init(GUIGraphicsContext.ActiveForm);
-      IrTrans.Init(GUIGraphicsContext.ActiveForm);
+
+      foreach (var device in Devices)
+      {
+          device.Init(GUIGraphicsContext.ActiveForm);
+      }
     }
 
     public static void Stop()
@@ -57,15 +55,10 @@ namespace MediaPortal.InputDevices
         Log.Info("Remotes: Stop was called without Init - exiting");
         return;
       }
-
-      HidListener.DeInit();
-      AppCommandListener.DeInit();
-      MCE2005Remote.DeInit();
-      FireDTVRemote.DeInit();
-      CentareaRemote.DeInit();
-      HCWRemote.DeInit();
-      IrTrans.DeInit();
-      //diRemote.Stop(); // Disable DirectX Input (not compatible with NET4 and later)
+      foreach (var device in Devices)
+      {
+          device.DeInit();
+      }
 
       _initialized = false;
     }
@@ -76,37 +69,76 @@ namespace MediaPortal.InputDevices
       key = (char)0;
       keyCode = Keys.A;
 
-      if (CentareaRemote.WndProc(ref msg))
+      foreach (var device in Devices)
       {
-        return true;
-      }
-
-      if (HidListener.WndProc(ref msg, out action, out key, out keyCode))
-      {
-        return true;
-      }
-
-      if (AppCommandListener.WndProc(ref msg, out action, out key, out keyCode))
-      {
-          return true;
-      }
-
-      if (HCWRemote.WndProc(msg))
-      {
-        return true;
-      }
-
-      if (FireDTVRemote.WndProc(ref msg, out action, out key, out keyCode))
-      {
-        return true;
-      }
-
-      if (MCE2005Remote.WndProc(msg))
-      {
-        return true;
+          if (device.WndProc(ref msg, out action, out key, out keyCode))
+          {
+              return true;
+          }
       }
 
       return false;
+    }
+
+
+    /// <summary>
+    /// Try and map a WndProc message to an action regardless of whether the remote is stopped or not (will still ignore if it's disabled)
+    /// </summary>
+    /// <param name="msg"></param>
+    /// <returns></returns>
+    public static Action MapToAction(Message msg)
+    {
+        Action result = null;
+        Log.Info(string.Format("WndProc message to be processed {0}, appCommand {1}, LParam {2}, WParam {3}", msg.Msg, Win32.Macro.GET_APPCOMMAND_LPARAM(msg.LParam), msg.LParam, msg.WParam)); 
+        foreach (var device in Devices)
+        {
+            var mapping = device.GetMapping(msg);
+            if (mapping != null)
+            {
+                switch (mapping.Command)
+                {
+                    case "ACTION": // execute Action x
+                        Key key = new Key(mapping.CmdKeyChar, mapping.CmdKeyCode);
+                        Log.Info("MappingToAction: key {0} / {1} / Action: {2} / {3}", mapping.CmdKeyChar, mapping.CmdKeyCode, mapping.CmdProperty,
+                                ((Action.ActionType)Convert.ToInt32(mapping.CmdProperty)).ToString());
+                        result = new Action(key, (Action.ActionType)Convert.ToInt32(mapping.CmdProperty), 0, 0);
+                        break;
+                    case "KEY": // Try and map the key to the Keys enum and process that way
+                        var tmpKey = Keys.A;
+                        if (Enum.TryParse<Keys>(mapping.CmdProperty, out tmpKey))
+                            result = MapToAction((int)tmpKey);
+                        break;
+                }
+                if (result != null) break;
+            }
+        }
+
+        if (result == null) Log.Info("No mapping found"); 
+
+        return result;
+    }
+
+    /// <summary>
+    /// Map a key press to an action
+    /// </summary>
+    /// <param name="keyPressed"></param>
+    /// <returns></returns>
+    public static Action MapToAction(int keyPressed)
+    {
+        var action = new Action();
+
+        if (ActionTranslator.GetAction(-1, new Key(0, keyPressed), ref action))
+            return action;
+        else
+        {
+            //See if it's mapped to KeyPressed instead
+            if (keyPressed >= (int)Keys.A && keyPressed <= (int)Keys.Z)
+                keyPressed += 32; //convert to char code
+            if (ActionTranslator.GetAction(-1, new Key(keyPressed, 0), ref action))
+                return action;
+        }
+
+        return null;
     }
 
     #endregion Methods
@@ -128,20 +160,28 @@ namespace MediaPortal.InputDevices
       get { return _lastHidRequestTick; }
     }
 
+    /// <summary>
+    /// All remote devices currently supported
+    /// </summary>
+    public static ReadOnlyCollection<IInputDevice> Devices 
+    {
+        get { return _devices; }
+    }
+
     #endregion Properties
 
     #region Fields
 
-    private static HidListener HidListener = new HidListener();
-    private static AppCommandListener AppCommandListener = new AppCommandListener();
-    private static MCE2005Remote MCE2005Remote = new MCE2005Remote();
-    private static HcwRemote HCWRemote = new HcwRemote();
-    private static X10Remote X10Remote = new X10Remote();
-    // Disable DirectX Input (not compatible with NET4 and later)
-    //private static DirectInputHandler diRemote = new DirectInputHandler();
-    private static IrTrans IrTrans = new IrTrans();
-    private static FireDTVRemote FireDTVRemote = new FireDTVRemote();
-    private static CentareaRemote CentareaRemote = new CentareaRemote();
+    private static ReadOnlyCollection<IInputDevice> _devices = new List<IInputDevice> { 
+                                                                    new HidListener(),
+                                                                    new AppCommandListener(),
+                                                                    new MCE2005Remote(),
+                                                                    new HcwRemote(),
+                                                                    new X10Remote(),
+                                                                    new IrTrans(),
+                                                                    new FireDTVRemote(),
+                                                                    new CentareaRemote()}.AsReadOnly();
+
     private static AppCommands _lastHidRequest;
 
     private static int _lastHidRequestTick;
