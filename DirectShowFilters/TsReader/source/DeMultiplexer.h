@@ -121,6 +121,7 @@ public:
   void       ThreadProc();
   void       FlushVideo();
   void       FlushAudio();
+  void       FlushCurrentAudio();
   void       FlushSubtitle();
   void       FlushTeletext();
   int        GetVideoServiceType();
@@ -144,6 +145,7 @@ public:
   bool VidPidGood(void);
   bool SubPidGood(void);
   bool PatParsed(void);
+  void CheckMediaChange(unsigned int Pid, bool isVideo);
 
   int  ReadAheadFromFile();
   bool CheckPrefetchState(bool isNormal, bool isForced);
@@ -276,8 +278,6 @@ private:
 
   bool m_bStarting;
 
-  bool m_mpegParserTriggerFormatChange;
-  bool m_audioParserTriggerFormatChange;
   bool m_videoChanged;
   bool m_audioChanged;
   bool m_bSetAudioDiscontinuity;
@@ -313,6 +313,8 @@ private:
 
   int m_lastARX;
   int m_lastARY;
+
+  int m_lastStreamType;
   
   bool m_mpegParserReset;
   bool m_bFirstGopParsed;

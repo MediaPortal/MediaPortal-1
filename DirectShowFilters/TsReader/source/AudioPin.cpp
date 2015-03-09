@@ -151,6 +151,10 @@ HRESULT CAudioPin::GetMediaType(int iPosition, CMediaType *pmt)
 
   CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
 
+//  int audioIdx = 0;
+//  demux.GetAudioStream(audioIdx);
+//  LogDebug("audPin:GetMediaType(), audioIdx: %d, iPosition: %d, patParsed: %d", audioIdx, iPosition, demux.PatParsed());
+
   for (int i=0; i < 400; i++) //Wait up to 2 sec for pmt to be valid
   {
     if (demux.PatParsed())

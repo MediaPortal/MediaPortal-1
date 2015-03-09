@@ -391,7 +391,7 @@ struct BasicVideoInfo
 		arx=0;
 		ary=0;
 		isInterlaced=0;
-		streamType;
+		streamType=0;
 		isValid=false;
 	}
 };
