@@ -2314,6 +2314,7 @@ namespace MediaPortal.GUI.Music
       int iStartFrom = 0; // where should we start in playlist
       int resumeAt = 0;
       bool playlistPresent = false;
+      int playlistcount = 0;
 
       // clear the playlist if required
       if (clearPlaylist)
@@ -2332,7 +2333,7 @@ namespace MediaPortal.GUI.Music
         {
           pl.Remove(pItem.FileName, false);
           playlistPresent = true;
-          LoadPlayList(pItem.FileName, false, false, false, pl.Count <= 0);
+          playlistcount++;
         }
         else
         {
@@ -2388,12 +2389,13 @@ namespace MediaPortal.GUI.Music
           if (playlistPresent)
           {
             numberOfFolders = facadeLayout.Count - pItems.Count;
+            iSelectedItem = iSelectedItem - numberOfFolders - playlistcount;
           }
           else
           {
             numberOfFolders = facadeLayout.Count - pl.Count;
+            iSelectedItem = iSelectedItem - numberOfFolders;
           }
-          iSelectedItem = iSelectedItem - numberOfFolders;
           if (iSelectedItem > 0)
           {
             // playback was not started from first track
