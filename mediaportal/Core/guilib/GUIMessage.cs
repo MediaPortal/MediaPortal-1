@@ -135,6 +135,7 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_SORT_CHANGED = 104,
       GUI_MSG_ONRESUME = 105,
       GUI_MSG_MANUAL_RECORDING_STARTED = 106,
+      GUI_MSG_DATABASE_SCAN_ENDED = 107,
       PS_ONSTANDBY = 9999
     } ;
 
