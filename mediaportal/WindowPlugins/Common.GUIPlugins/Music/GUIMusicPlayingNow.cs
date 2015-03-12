@@ -278,6 +278,15 @@ namespace MediaPortal.GUI.Music
 
       UpdateImagePathContainer();
       UpdateTrackInfo();
+
+      // Do last.fm updates
+      if (g_Player.IsMusic && _lookupSimilarTracks && g_Player.CurrentPosition >= 10.0 && lstSimilarTracks.Count == 0)
+      {
+        Log.Debug("GUIMusicPlayingNow: Do Last.FM lookup for similar trracks");
+        UpdateSimilarTracks(CurrentTrackFileName);
+      }
+
+
     }
 
     #endregion
@@ -1117,6 +1126,7 @@ namespace MediaPortal.GUI.Music
       List<LastFMSimilarTrack> tracks;
       try
       {
+        Log.Debug("GUIMusicPlayingNow: Calling Last.FM to get similar Tracks");
         tracks = LastFMLibrary.GetSimilarTracks(tag.Title, tag.Artist);
       }
       catch (Exception ex)
@@ -1125,6 +1135,8 @@ namespace MediaPortal.GUI.Music
         Log.Error(ex);
         return;
       }
+
+      Log.Debug("GUIMusicPlayingNow: Number of similar tracks returned from Last.FM: {0}", tracks.Count);
 
       var dbTracks = GetSimilarTracksInDatabase(tracks);
 
@@ -1155,6 +1167,7 @@ namespace MediaPortal.GUI.Music
           lstSimilarTracks.Add(item);
         }
       }
+      Log.Debug("GUIMusicPlayingNow: Tracks returned after matching Last.FM results with database tracks: {0}", lstSimilarTracks.Count);
     }
 
     /// <summary>
@@ -1169,7 +1182,7 @@ namespace MediaPortal.GUI.Music
       var dbTrackListing = new List<Song>();
 
       //identify which are available in users collection (ie. we can use they for auto DJ mode)
-      foreach (var strSql in tracks.Select(track => String.Format("select * from tracks where strartist like '%| {0} |%' and strTitle = '{1}'",
+      foreach (var strSql in tracks.Select(track => String.Format("select * from tracks where strartist like '%| {0} |%' and strTitle like '{1}'",
                                                                   DatabaseUtility.RemoveInvalidChars(track.ArtistName),
                                                                   DatabaseUtility.RemoveInvalidChars(track.TrackTitle))))
       {
