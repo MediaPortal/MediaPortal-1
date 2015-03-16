@@ -100,7 +100,9 @@ namespace MediaPortal.Configuration.Sections
                                             // 9 Show last active module when starting / resuming from standby
                                             new[] {"general", "showlastactivemodule", "false"},
                                             // 10 Stop playback on removal of an audio renderer
-                                            new[] {"general", "stoponaudioremoval", "true"}
+                                            new[] {"general", "stoponaudioremoval", "true"},
+                                            // 11 No AutoStart on RemoteDesktop
+                                            new[] {"general", "noautostartonrdp", "true"}
                                           };
 
     /// <summary> 
