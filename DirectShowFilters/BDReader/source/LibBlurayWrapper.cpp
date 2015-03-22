@@ -1038,6 +1038,9 @@ void CLibBlurayWrapper::LogEvent(const BD_EVENT& pEvent, bool pIgnoreNoneEvent)
   case BD_EVENT_PLAYMARK:
     LogDebug("    BD_EVENT_PLAYMARK - %d", pEvent.param);
     break;
+  case BD_EVENT_PLAYLIST_STOP:
+    LogDebug("    BD_EVENT_PLAYLIST_STOP - %d", pEvent.param);
+    break;
 
   default:
     LogDebug("    ERROR - unknown event: %d param %d", pEvent.event, pEvent.param);
