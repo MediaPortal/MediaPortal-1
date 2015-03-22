@@ -347,8 +347,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
           if (buffer->nNewSegment & NS_NEW_CLIP)
           {
-            LogDebug("aud: Playlist changed to %d - nNewSegment: %d offset: %6.3f rtStart: %6.3f rtPlaylistTime: %6.3f", 
-              buffer->nPlaylist, buffer->nNewSegment, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
+            LogDebug("aud: NS_NEW_CLIP pl: %d clip: %d nNewSegment: %d offset: %6.3f rtStart: %6.3f rtPlaylistTime: %6.3f",
+              buffer->nPlaylist, buffer->nClipNumber, buffer->nNewSegment, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
 
             checkPlaybackState = true;
             m_demux.m_eAudioClipSeen->Set();

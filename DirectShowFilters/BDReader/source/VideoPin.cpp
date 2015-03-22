@@ -541,8 +541,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
           {
             if (buffer->nNewSegment & NS_NEW_CLIP)
             {
-              LogDebug("vid: Playlist changed to %d - nNewSegment: %d offset: %6.3f rtStart: %6.3f rtPlaylistTime: %6.3f",
-                buffer->nPlaylist, buffer->nNewSegment, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
+              LogDebug("vid: NS_NEW_CLIP pl: %d clip: %d nNewSegment: %d offset: %6.3f rtStart: %6.3f rtPlaylistTime: %6.3f",
+                buffer->nPlaylist, buffer->nClipNumber, buffer->nNewSegment, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
 
               m_demux.m_bVideoClipSeen = true;
               checkPlaybackState = true;
