@@ -50,7 +50,7 @@ CPlaylistManager::~CPlaylistManager(void)
   }
 }
 
-void CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audioPresent, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffsetTime, REFERENCE_TIME duration, REFERENCE_TIME streamStartPosition, bool interrupted)
+bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audioPresent, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffsetTime, REFERENCE_TIME duration, REFERENCE_TIME streamStartPosition, bool interrupted)
 {
   CAutoLock lock (&m_sectionAudio);
   CAutoLock lockv (&m_sectionVideo);
@@ -61,7 +61,9 @@ void CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
   // Mark current playlist as filled
   CurrentClipFilled();
 
+  REFERENCE_TIME remainingClipTime = Incomplete();
   REFERENCE_TIME playedDuration = ClipPlayTime();
+  bool ret = remainingClipTime > INTERRUPTED_CLIP_TIME;
 
   //LogDebug("Playlist Manager::TimeStamp Correction changed to %I64d adding %I64d",m_rtPlaylistOffset + playedDuration, playedDuration);
 
@@ -100,6 +102,8 @@ void CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
       m_itCurrentVideoSubmissionPlaylist++;
     }
   }
+
+  return ret;
 }
 
 bool CPlaylistManager::SubmitAudioPacket(Packet * packet)
