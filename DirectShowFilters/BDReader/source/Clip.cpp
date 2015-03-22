@@ -30,8 +30,6 @@
 
 extern void LogDebug(const char *fmt, ...);
 
-#define HALF_SECOND 5000000LL
-
 CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffset, REFERENCE_TIME totalStreamOffset, bool audioPresent, REFERENCE_TIME duration, REFERENCE_TIME streamStartOffset, bool interrupted)
 {
   nClip = clipNumber;
@@ -446,12 +444,10 @@ REFERENCE_TIME CClip::Incomplete()
   if (!firstPacketReturned || !firstPacketAccepted || firstVideo)
     return 0LL;
 
-  REFERENCE_TIME ret = clipDuration - earliestPacketAccepted + playlistFirstPacketTime - PlayedDuration();
-  if (ret > HALF_SECOND)
-  {    
-    LogDebug("clip: Incomplete - nClip: %d lastAudioPosition: %I64d first: %I64d duration: %I64d", 
-      nClip, lastAudioPosition, playlistFirstPacketTime, clipDuration);
-  }
+  REFERENCE_TIME ret = clipDuration - m_rtPlayedDuration;
+  if (ret > INTERRUPTED_CLIP_TIME)
+    LogDebug("clip: Incomplete - nClip: %d m_rtPlayedDuration: %I64d duration: %I64d", nClip, m_rtPlayedDuration, clipDuration);
+
   return ret;
 }
 
