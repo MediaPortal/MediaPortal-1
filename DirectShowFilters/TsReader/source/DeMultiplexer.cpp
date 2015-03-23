@@ -3175,6 +3175,8 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
       pDVBSubtitleFilter->SetFirstPcr(m_duration.FirstStartPcr().PcrReferenceBase);
       LogDebug(" done - DVBSub - SetFirstPcr");
       m_currentSubtitlePid = m_subtitleStreams[m_iSubtitleStream].pid;
+      pDVBSubtitleFilter->SetHDMV(false);
+      LogDebug(" done - DVBSub3 - SetHDMV(false)");
     }
   }
 
