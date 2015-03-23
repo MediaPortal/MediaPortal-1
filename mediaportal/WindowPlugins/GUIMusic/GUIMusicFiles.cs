@@ -1658,13 +1658,26 @@ namespace MediaPortal.GUI.Music
         }
         else
         {
-          var tag = TagReader.TagReader.ReadTag(pItem.Path);
+          var song = new Song();
+          MusicTag tag;
+          if (m_database.GetSongByFileName(pItem.Path, ref song))
+          {
+            tag = song.ToMusicTag();
+          }
+          else
+          {
+            tag = TagReader.TagReader.ReadTag(pItem.Path);
+            if (tag != null)
+            {
+              tag.Artist = Util.Utils.FormatMultiItemMusicStringTrim(tag.Artist, _stripArtistPrefixes);
+              tag.AlbumArtist = Util.Utils.FormatMultiItemMusicStringTrim(tag.AlbumArtist, _stripArtistPrefixes);
+              tag.Genre = Util.Utils.FormatMultiItemMusicStringTrim(tag.Genre, false);
+              tag.Composer = Util.Utils.FormatMultiItemMusicStringTrim(tag.Composer, _stripArtistPrefixes);
+            }
+          }
+
           if (tag != null)
           {
-            tag.Artist = Util.Utils.FormatMultiItemMusicStringTrim(tag.Artist, _stripArtistPrefixes);
-            tag.AlbumArtist = Util.Utils.FormatMultiItemMusicStringTrim(tag.AlbumArtist, _stripArtistPrefixes);
-            tag.Genre = Util.Utils.FormatMultiItemMusicStringTrim(tag.Genre, false);
-            tag.Composer = Util.Utils.FormatMultiItemMusicStringTrim(tag.Composer, _stripArtistPrefixes);
             pItem.MusicTag = tag;
             pItem.Duration = tag.Duration;
             pItem.Year = tag.Year;
