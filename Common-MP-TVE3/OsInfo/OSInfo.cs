@@ -200,11 +200,11 @@ namespace OSInfo
       /// Windows 8
       ///</summary>
       Windows8,
-      ///<summary>
+	  ///<summary>
       /// Windows 81
       ///</summary>
       Windows81,
-      ///<summary>
+	  ///<summary>
       /// Windows 10
       ///</summary>
       Windows10,
@@ -621,11 +621,11 @@ namespace OSInfo
       }
       if (VerifyDesktopOSMinRequirement(6, 4, 9841, NT_WORKSTATION, 0))
       { // Windows 10 Preview
-        return OsSupport.NotSupported;
+        return OsSupport.FullySupported;
       }
       if (IsServer())
       { // any server OS
-        return OsSupport.NotSupported;
+        return OsSupport.FullySupported;
       }
 
       return OsSupport.Blocked;
