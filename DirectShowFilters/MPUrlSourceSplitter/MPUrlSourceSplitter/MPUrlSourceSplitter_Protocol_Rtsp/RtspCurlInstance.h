@@ -79,6 +79,11 @@ public:
   // @param instanceName : the name of CURL instance
   CRtspCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName);
 
+  // For accessing the registry
+  void LoadSettingsFromRegistry();
+  void ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);  
+  void WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
+
   // destructor
   virtual ~CRtspCurlInstance(void);
 
@@ -107,6 +112,10 @@ public:
   // gets RTSP maximum client port
   // @return : RTSP maximum client port
   virtual unsigned int GetRtspClientPortMax(void);
+
+  // gets RTSP registry minimun client port
+  // @return : RTSP registry minimun client port
+  virtual unsigned int GetRtspRegistryPortMin();
 
   /* set methods */
 
@@ -165,6 +174,7 @@ protected:
   CRtspDownloadResponse *rtspDownloadResponse;
 
   // holds min and max port for transport connection parameter
+  unsigned int clientRegistryPortMin;
   unsigned int clientPortMin;
   unsigned int clientPortMax;
 

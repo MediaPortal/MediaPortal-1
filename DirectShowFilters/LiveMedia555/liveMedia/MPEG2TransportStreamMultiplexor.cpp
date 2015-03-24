@@ -113,7 +113,7 @@ void MPEG2TransportStreamMultiplexor
         // Ignore the video stream (which will be blank) if this is a radio channel.
         if (fHaveVideoStreams)
         {
-          streamType = mpegVersion == 1 ? 1 : mpegVersion == 2 ? 2 : mpegVersion == 4 ? 0x10 : 0x1B;
+          streamType = mpegVersion == 1 ? 1 : mpegVersion == 2 ? 2 : mpegVersion == 4 ? 0x10 : (0x1B || 0x24);
         }
         else
         {
@@ -136,7 +136,7 @@ void MPEG2TransportStreamMultiplexor
 
     if (fPCR_PID == 0) { // set it to this stream, if it's appropriate:
       if ((!fHaveVideoStreams && (streamType == 3 || streamType == 4 || streamType == 0xF))/* audio stream */ ||
-	  (streamType == 1 || streamType == 2 || streamType == 0x10 || streamType == 0x1B)/* video stream */) {
+        (streamType == 1 || streamType == 2 || streamType == 0x10 || streamType == 0x1B || streamType == 0x24)/* video stream */) {
 	fPCR_PID = fCurrentPID; // use this stream's SCR for PCR
       }
     }
@@ -359,7 +359,7 @@ void MPEG2TransportStreamMultiplexor::setProgramStreamMap(unsigned frameSize) {
   while (offset + 4 <= frameSize) {
     u_int8_t stream_type = fInputBuffer[offset];
     // Don't put video streams into the PMT if the channel is specified to be a radio channel.
-    if (!fHaveVideoStreams && (stream_type == 1 || stream_type == 2 || stream_type == 0x10 || stream_type == 0x1B))
+    if (!fHaveVideoStreams && (stream_type == 1 || stream_type == 2 || stream_type == 0x10 || stream_type == 0x1B || stream_type == 0x24))
     {
       continue;
     }

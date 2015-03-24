@@ -225,6 +225,7 @@
     <ClInclude Include="Source\SubStructs.h" />
     <ClInclude Include="source\dvbsubs\subtitle.h" />
     <ClInclude Include="source\SubtitleInputPin.h" />
+    <ClInclude Include="source\dvbsubs\tables.h" />
     <ClInclude Include="Source\PesDecoder\PacketSync.h" />
     <ClInclude Include="Source\PesDecoder\PesDecoder.h" />
     <ClInclude Include="Source\PesDecoder\TsHeader.h" />

@@ -841,7 +841,7 @@ HRESULT CVideoPin::ChangeRate()
   
   if( m_dRateSeeking > 4.0 && 
      ((demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_H264) || 
-      (demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_MPEG4)) )
+     (demux.GetVideoServiceType() == SERVICE_TYPE_VIDEO_MPEG4) || demux.GetVideoServiceType() == SERVICE_TYPE_VIDEO_HEVC1))
   {
     m_dRateSeeking = 1.0;  // Reset to a reasonable value.
     return E_FAIL;

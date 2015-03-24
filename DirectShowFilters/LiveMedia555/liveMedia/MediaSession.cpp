@@ -813,6 +813,12 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
 	  = H264VideoRTPSource::createNew(env(), fRTPSocket,
 					  fRTPPayloadFormat,
 					  fRTPTimestampFrequency);
+      }
+      else if (strcmp(fCodecName, "HEVC") == 0) {
+        fReadSource = fRTPSource
+          = H264VideoRTPSource::createNew(env(), fRTPSocket,
+          fRTPPayloadFormat,
+          fRTPTimestampFrequency);
       } else if (strcmp(fCodecName, "JPEG") == 0) { // motion JPEG
 	fReadSource = fRTPSource
 	  = JPEGVideoRTPSource::createNew(env(), fRTPSocket,

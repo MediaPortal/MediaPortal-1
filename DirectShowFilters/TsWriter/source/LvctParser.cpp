@@ -345,6 +345,7 @@ void CLvctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* vide
           streamType == SERVICE_TYPE_VIDEO_MPEG2 ||
           streamType == SERVICE_TYPE_VIDEO_MPEG4 ||
           streamType == SERVICE_TYPE_VIDEO_H264 ||
+          streamType == SERVICE_TYPE_VIDEO_HEVC ||
           streamType == SERVICE_TYPE_VIDEO_MPEG2_DCII)
       {
         (*videoStreamCount)++;

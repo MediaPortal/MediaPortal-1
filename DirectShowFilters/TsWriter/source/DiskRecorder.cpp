@@ -797,6 +797,7 @@ bool CDiskRecorder::IsStreamWanted(int stream_type)
 					stream_type==SERVICE_TYPE_VIDEO_MPEG2_DCII ||
 					stream_type==SERVICE_TYPE_VIDEO_MPEG4 || 
 					stream_type==SERVICE_TYPE_VIDEO_H264 ||
+					stream_type==SERVICE_TYPE_VIDEO_HEVC ||
 					stream_type==SERVICE_TYPE_AUDIO_MPEG1 || 
 					stream_type==SERVICE_TYPE_AUDIO_MPEG2 || 
 					stream_type==SERVICE_TYPE_AUDIO_AC3 ||
@@ -821,9 +822,9 @@ void CDiskRecorder::AddStream(PidInfo2 pidInfo)
   //ITV HD workaround, this enables TSWriter to timeshift / record & avoids no audio/video found.
   if (pidInfo.streamType==SERVICE_TYPE_DVB_SUBTITLES2 && pidInfo.logicalStreamType==0xffffffff && pidInfo.elementaryPid==0xd49)
   {
-    pidInfo.streamType=SERVICE_TYPE_VIDEO_H264;
-    pidInfo.logicalStreamType=SERVICE_TYPE_VIDEO_H264;
-    LogDebug("AddStream: set ITV HD video stream to H.264");
+    pidInfo.streamType=SERVICE_TYPE_VIDEO_HEVC;
+    pidInfo.logicalStreamType=SERVICE_TYPE_VIDEO_HEVC;
+    LogDebug("AddStream: set ITV HD video stream to HEVC");
   }
   //end of workaround
 	if (IsStreamWanted(pidInfo.logicalStreamType))
@@ -846,7 +847,7 @@ void CDiskRecorder::AddStream(PidInfo2 pidInfo)
 			m_vecPids.push_back(pi);
 			WriteLog("add audio stream pid: 0x%x fake pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pi.fakePid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
 		}
-		else if (pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG2 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG4 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_H264 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG2_DCII)
+    else if (pidInfo.streamType == SERVICE_TYPE_VIDEO_MPEG1 || pidInfo.streamType == SERVICE_TYPE_VIDEO_MPEG2 || pidInfo.streamType == SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType == SERVICE_TYPE_VIDEO_MPEG4 || pidInfo.streamType == SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType == SERVICE_TYPE_VIDEO_H264 || pidInfo.streamType == SERVICE_TYPE_VIDEO_HEVC || pidInfo.streamType == SERVICE_TYPE_VIDEO_MPEG2_DCII)
 		{
 			pi.fakePid=DR_FAKE_VIDEO_PID;
 			DR_FAKE_VIDEO_PID++;
@@ -1067,7 +1068,7 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 
 				memcpy(info.m_Pkt,tsPacket,188);
 	
-				if (info.streamType==SERVICE_TYPE_VIDEO_MPEG1 || info.streamType==SERVICE_TYPE_VIDEO_MPEG2||info.streamType==SERVICE_TYPE_VIDEO_MPEG4||info.streamType==SERVICE_TYPE_VIDEO_H264 || info.streamType==SERVICE_TYPE_VIDEO_MPEG2_DCII)
+        if (info.streamType == SERVICE_TYPE_VIDEO_MPEG1 || info.streamType == SERVICE_TYPE_VIDEO_MPEG2 || info.streamType == SERVICE_TYPE_VIDEO_MPEG4 || info.streamType == SERVICE_TYPE_VIDEO_H264 || info.streamType == SERVICE_TYPE_VIDEO_HEVC || info.streamType == SERVICE_TYPE_VIDEO_MPEG2_DCII)
 				{
 					//video
 					if (!info.seenStart) 

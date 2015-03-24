@@ -81,12 +81,6 @@
     <ClInclude Include="TransportStreamProgramMapParserContextCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProgramElement.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ProgramElementCollection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -150,12 +144,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TransportStreamProgramMapParserContextCollection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ProgramElement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ProgramElementCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

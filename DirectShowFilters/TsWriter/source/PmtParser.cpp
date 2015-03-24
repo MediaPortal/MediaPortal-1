@@ -122,9 +122,9 @@ bool CPmtParser::DecodePmt(CSection sections, int& pcr_pid, bool& hasCaDescripto
     {
       if (pidInfo2.logicalStreamType==0xffffffff && pidInfo2.elementaryPid==0xd49)
       {
-        pidInfo2.streamType=SERVICE_TYPE_VIDEO_H264;
-        pidInfo2.logicalStreamType=SERVICE_TYPE_VIDEO_H264;
-        LogDebug("DecodePmt: set ITV HD video stream to H.264");
+        pidInfo2.streamType=SERVICE_TYPE_VIDEO_HEVC;
+        pidInfo2.logicalStreamType=SERVICE_TYPE_VIDEO_HEVC;
+        LogDebug("DecodePmt: set ITV HD video stream to HEVC");
       }
     }
     //end of workaround

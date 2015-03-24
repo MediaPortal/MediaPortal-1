@@ -48,7 +48,6 @@
 #define RTSP_UDP_PREFERENCE_DEFAULT                                   1
 #define RTSP_SAME_CONNECTION_TCP_PREFERENCE_DEFAULT                   0
 
-#define RTSP_CLIENT_PORT_MIN_DEFAULT                                  50000
 #define RTSP_CLIENT_PORT_MAX_DEFAULT                                  65535
 
 #define RTSP_IGNORE_RTP_PAYLOAD_TYPE_DEFAULT                          false

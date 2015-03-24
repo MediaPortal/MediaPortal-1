@@ -70,6 +70,8 @@
 #include "RtspMainBox.h"
 #include "RtspTrackBox.h"
 
+#include "MPUrlSourceSplitter_Protocol_Rtsp_Registry.h"
+
 #define METHOD_PROCESS_RECEIVED_BASE_RTP_PACKETS_NAME                 L"ProcessReceivedBaseRtpPackets()"
 
 #define SLEEP_MODE_NO                                                 0
@@ -79,6 +81,7 @@
 CRtspCurlInstance::CRtspCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
   : CCurlInstance(result, logger, mutex, protocolName, instanceName)
 {
+  LoadSettingsFromRegistry();
   this->rtspDownloadRequest = dynamic_cast<CRtspDownloadRequest *>(this->downloadRequest);
   this->rtspDownloadResponse = dynamic_cast<CRtspDownloadResponse *>(this->downloadResponse);
 
@@ -94,6 +97,64 @@ CRtspCurlInstance::CRtspCurlInstance(HRESULT *result, CLogger *logger, HANDLE mu
   this->flags = RTSP_CURL_INSTANCE_FLAG_NONE;
 
   this->SetWriteCallback(CRtspCurlInstance::CurlReceiveDataCallback, this);
+}
+
+void CRtspCurlInstance::LoadSettingsFromRegistry()
+{
+  HKEY hKey;
+  char* lpData = new char[MAX_REG_LENGTH];
+
+  // Try to access the setting root "Software\Team MediaPortal\Audio Renderer"
+  RegOpenKeyEx(HKEY_LOCAL_MACHINE, folder, NULL, KEY_ALL_ACCESS, &hKey);
+
+  if (hKey)
+  {
+    ReadRegistryKeyDword(hKey, IPTVPort, RTSP_CLIENT_PORT_MIN_DEFAULT_REG);    
+  }
+  else // no settings in registry, create default values
+  {
+    //USES_CONVERSION;
+
+    LONG result = RegCreateKeyEx(HKEY_LOCAL_MACHINE, folder, 0, NULL, REG_OPTION_NON_VOLATILE,
+                                  KEY_ALL_ACCESS, NULL, &hKey, NULL);
+
+    if (result == ERROR_SUCCESS) 
+    {      
+      WriteRegistryKeyDword(hKey, IPTVPort, RTSP_CLIENT_PORT_MIN_DEFAULT_REG);
+    } 
+  }
+  
+  delete[] lpData;
+  RegCloseKey (hKey);
+
+  if (RTSP_CLIENT_PORT_MIN_DEFAULT_REG > 0)
+  {
+    RTSP_CLIENT_PORT_MIN_DEFAULT = RTSP_CLIENT_PORT_MIN_DEFAULT_REG;
+	this->clientRegistryPortMin = (int)RTSP_CLIENT_PORT_MIN_DEFAULT;
+  }
+}
+
+void CRtspCurlInstance::ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data)
+{
+  //USES_CONVERSION;
+
+  DWORD dwSize = sizeof(DWORD);
+  DWORD dwType = REG_DWORD;
+  LONG error = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)&data, &dwSize);
+  if (error != ERROR_SUCCESS)
+  {
+    if (error == ERROR_FILE_NOT_FOUND)
+    {
+      WriteRegistryKeyDword(hKey, lpSubKey, data);
+    }
+  }
+}
+
+void CRtspCurlInstance::WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data)
+{
+  //USES_CONVERSION;
+  DWORD dwSize = sizeof(DWORD);
+  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_DWORD, (LPBYTE)&data, dwSize);
 }
 
 CRtspCurlInstance::~CRtspCurlInstance(void)
@@ -137,6 +198,11 @@ unsigned int CRtspCurlInstance::GetRtspClientPortMin(void)
 unsigned int CRtspCurlInstance::GetRtspClientPortMax(void)
 {
   return this->clientPortMax;
+}
+
+unsigned int CRtspCurlInstance::GetRtspRegistryPortMin()
+{
+  return this->clientRegistryPortMin;
 }
 
 /* set methods */
