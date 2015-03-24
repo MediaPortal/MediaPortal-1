@@ -60,8 +60,9 @@ WORD logFileDate = -1;
 CTsReaderFilter* instanceID = 0;
 
 CCritSec m_qLock;
+CCritSec m_logLock;
 CCritSec m_logFileLock;
-std::queue<std::string> m_logQueue;
+std::queue<std::wstring> m_logQueue;
 BOOL m_bLoggerRunning = false;
 HANDLE m_hLogger = NULL;
 CAMEvent m_EndLoggingEvent;
@@ -116,14 +117,14 @@ void LogRotate()
 }
 
 
-string GetLogLine()
+wstring GetLogLine()
 {
   CAutoLock lock(&m_qLock);
   if ( m_logQueue.size() == 0 )
   {
-    return "";
+    return L"";
   }
-  string ret = m_logQueue.front();
+  wstring ret = m_logQueue.front();
   m_logQueue.pop();
   return ret;
 }
@@ -145,24 +146,24 @@ UINT CALLBACK LogThread(void* param)
         logFileParsed=systemTime.wDay;
         LogPath(fileName, _T("log"));
       }
-
+      
       CAutoLock lock(&m_logFileLock);
       FILE* fp = _tfopen(fileName, _T("a+"));
       if (fp!=NULL)
       {
         SYSTEMTIME systemTime;
         GetLocalTime(&systemTime);
-        string line = GetLogLine();
+        wstring line = GetLogLine();
         while (!line.empty())
         {
-          fprintf(fp, "%s", line.c_str());
+          fwprintf_s(fp, L"%s", line.c_str());
           line = GetLogLine();
         }
         fclose(fp);
       }
       else //discard data
       {
-        string line = GetLogLine();
+        wstring line = GetLogLine();
         while (!line.empty())
         {
           line = GetLogLine();
@@ -192,6 +193,7 @@ void StartLogger()
 
 void StopLogger()
 {
+  CAutoLock logLock(&m_logLock);
   if (m_hLogger)
   {
     m_bLoggerRunning = FALSE;
@@ -206,27 +208,26 @@ void StopLogger()
 }
 
 
-void LogDebug(const char *fmt, ...) 
+void LogDebug(const wchar_t *fmt, ...) 
 {
-  static CCritSec lock;
-  va_list ap;
-  va_start(ap,fmt);
-
-  CAutoLock logLock(&lock);
+  CAutoLock logLock(&m_logLock);
+  
   if (!m_hLogger) {
     m_bLoggerRunning = true;
     StartLogger();
   }
-  char buffer[1000]; 
+
+  wchar_t buffer[2000]; 
   int tmp;
+  va_list ap;
   va_start(ap,fmt);
-  tmp = vsprintf(buffer, fmt, ap);
+  tmp = vswprintf_s(buffer, fmt, ap);
   va_end(ap); 
 
   SYSTEMTIME systemTime;
   GetLocalTime(&systemTime);
-  char msg[5000];
-  sprintf_s(msg, 5000,"[%04.4d-%02.2d-%02.2d %02.2d:%02.2d:%02.2d,%03.3d] [%8x] [%4x] - %s\n",
+  wchar_t msg[5000];
+  swprintf_s(msg, 5000,L"[%04.4d-%02.2d-%02.2d %02.2d:%02.2d:%02.2d,%03.3d] [%8x] [%4x] - %s\n",
     systemTime.wYear, systemTime.wMonth, systemTime.wDay,
     systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds,
     instanceID,
@@ -235,8 +236,22 @@ void LogDebug(const char *fmt, ...)
   CAutoLock l(&m_qLock);
   if (m_logQueue.size() < 2000) 
   {
-    m_logQueue.push((string)msg);
+    m_logQueue.push((wstring)msg);
   }
+};
+
+void LogDebug(const char *fmt, ...)
+{
+  char logbuffer[2000]; 
+  wchar_t logbufferw[2000];
+
+	va_list ap;
+	va_start(ap,fmt);
+	vsprintf_s(logbuffer, fmt, ap);
+	va_end(ap); 
+
+	MultiByteToWideChar(CP_ACP, 0, logbuffer, -1,logbufferw, sizeof(logbuffer)/sizeof(wchar_t));
+	LogDebug(L"%s", logbufferw);
 };
 
 //------------------------------------------------------------------------------------
