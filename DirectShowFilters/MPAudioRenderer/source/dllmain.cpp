@@ -106,6 +106,9 @@ STDAPI DllUnregisterServer()
 const int MAX_LOG_LINE_LENGHT = 1000;
 const int LOG_LINE_RESERVED = 32;
 
+char prev_log_line[MAX_LOG_LINE_LENGHT];
+int repeat = 0;
+
 void LogPath(TCHAR* dest, TCHAR* name)
 {
   TCHAR folder[MAX_PATH];
@@ -162,16 +165,16 @@ UINT CALLBACK LogThread(void* param)
     if (result == WAIT_OBJECT_0)
     {
       FILE* pFile = _tfopen(fileName, _T("a+"));
-      if (pFile)
+
+      string line = GetLogLine();
+      while (!line.empty())
       {
-        string line = GetLogLine();
-        while (!line.empty())
-        {
+        if (pFile)
           fprintf(pFile, "%s", line.c_str());
-          line = GetLogLine();
-        }
-        fclose(pFile);
+        line = GetLogLine();
       }
+      if (pFile)
+        fclose(pFile);
     }
     else if (result == WAIT_FAILED)
     {
@@ -220,7 +223,8 @@ void Log(const char *fmt, ...)
   if (!m_hLogger)
     return;
 
-  char buffer[MAX_LOG_LINE_LENGHT - LOG_LINE_RESERVED]; 
+  char buffer[MAX_LOG_LINE_LENGHT - LOG_LINE_RESERVED];
+  buffer[0] = '\n';
   int ret;
   va_start(ap, fmt);
   ret = _vsnprintf(buffer, MAX_LOG_LINE_LENGHT - LOG_LINE_RESERVED, fmt, ap);
@@ -228,6 +232,16 @@ void Log(const char *fmt, ...)
 
   if (ret < 0)
     return;
+
+  if (!strcmp(buffer, prev_log_line))
+  {
+    repeat++;
+    return;
+  }
+
+#ifdef TRACELOGENTRY
+  TRACE("%s\n", buffer);
+#endif
 
   SYSTEMTIME systemTime;
   GetLocalTime(&systemTime);
@@ -241,102 +255,59 @@ void Log(const char *fmt, ...)
 
   CAutoLock l(&m_qLock);
 
+  if (repeat > 0)
+  {
+    char test[MAX_LOG_LINE_LENGHT];
+    sprintf_s(test, MAX_LOG_LINE_LENGHT, "   line repeated %d times\n", repeat);
+    m_logQueue.push(test);
+    
+    repeat = 0;
+  }
+
+  strncpy_s(prev_log_line, buffer, _TRUNCATE);
+
   m_logQueue.push((string)msg);
   m_eLog.Set();
 }
 
-HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA)
+const char* SubFormatToString(GUID subFormat)
 {
-  ULONG cbAnsi;
-  ULONG cCharacters;
-
-  // If input is null then just return the same.
-  if (pszW == NULL)
-  {
-    *ppszA = NULL;
-    return NOERROR;
-  }
-
-  cCharacters = (ULONG)wcslen(pszW)+1;
-  // Determine number of bytes to be allocated for ANSI string. An
-  // ANSI string can have at most 2 bytes per character (for Double
-  // Byte Character Strings.)
-  cbAnsi = cCharacters*2;
-
-  // Use of the OLE allocator is not required because the resultant
-  // ANSI  string will never be passed to another COM component. You
-  // can use your own allocator.
-  *ppszA = (LPSTR) CoTaskMemAlloc(cbAnsi);
-  if (NULL == *ppszA)
-    return E_OUTOFMEMORY;
-
-  // Convert to ANSI.
-  if (0 == WideCharToMultiByte(CP_ACP, 0, pszW, cCharacters, *ppszA,
-    cbAnsi, NULL, NULL))
-  {
-    DWORD dwError = GetLastError();
-    CoTaskMemFree(*ppszA);
-    *ppszA = NULL;
-    return HRESULT_FROM_WIN32(dwError);
-  }
-  return NOERROR;
+  if (subFormat == KSDATAFORMAT_SUBTYPE_PCM)
+    return "PCM";
+  else if (subFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
+    return "Float";
+  else if (subFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL)
+    return "DD";
+  else if (subFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL_PLUS)
+    return "DD Plus";
+  else if (subFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_MLP)
+    return "True HD";
+  else if (subFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DTS)
+    return "DTS";
+  else if (subFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DTS_HD)
+    return "DTS-HD";
+  else if (subFormat == KSDATAFORMAT_SUBTYPE_IEC61937_WMA_PRO)
+    return "Windows Media Audio (WMA) Pro";
+  else 
+    return "Unknown";
 }
 
 void LogWaveFormat(const WAVEFORMATEXTENSIBLE* pwfx, const char* text)
 {
   if (pwfx)
   {
-    char type = 'u';
-      
     if (pwfx->Format.wFormatTag == WAVE_FORMAT_EXTENSIBLE)
     {
-      if (pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_PCM)
-        type = 'i';
-      else if (pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
-        type = 'f';
-
-      Log("%s: %6dHz %2d%c (%2d)bits %2dch -- ch mask: %4d align: %2d avgbytes: %8d", text, pwfx->Format.nSamplesPerSec, 
-        pwfx->Format.wBitsPerSample, type, pwfx->Samples.wValidBitsPerSample, pwfx->Format.nChannels, pwfx->dwChannelMask, pwfx->Format.nBlockAlign, pwfx->Format.nAvgBytesPerSec);
+      Log("%s: %6dHz %2d (%2d)bits %2dch -- ch mask: %4d align: %2d avgbytes: %8d type: %s tag: %d", text, pwfx->Format.nSamplesPerSec,
+        pwfx->Format.wBitsPerSample, pwfx->Samples.wValidBitsPerSample, pwfx->Format.nChannels, pwfx->dwChannelMask,
+        pwfx->Format.nBlockAlign, pwfx->Format.nAvgBytesPerSec, SubFormatToString(pwfx->SubFormat), pwfx->Format.wFormatTag);
+    }
+    else
+    {
+      Log("%s: %6dHz %2d %2dch -- align: %2d avgbytes: %8d tag: %d", text, pwfx->Format.nSamplesPerSec,
+        pwfx->Format.wBitsPerSample, pwfx->Format.nChannels, pwfx->Format.nBlockAlign, pwfx->Format.nAvgBytesPerSec, pwfx->Format.wFormatTag);
     }
   }
-
-  /*if (pwfx)
-  {
-    Log("WAVEFORMATEX - %s", text);
-    Log("  nAvgBytesPerSec     %d", pwfx->nAvgBytesPerSec);
-    Log("  nBlockAlign         %d", pwfx->nBlockAlign);
-    Log("  nChannels           %d", pwfx->nChannels);
-    Log("  nSamplesPerSec      %d", pwfx->nSamplesPerSec);
-    Log("  wBitsPerSample      %d", pwfx->wBitsPerSample);
-    Log("  wFormatTag          %d", pwfx->wFormatTag);
-
-    if (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
-    {
-      WAVEFORMATEXTENSIBLE* tmp = (WAVEFORMATEXTENSIBLE*)pwfx;
-      Log("  WAVE_FORMAT_EXTENSIBLE");
-      Log("  dwChannelMask       %d", tmp->dwChannelMask);
-      Log("  wValidBitsPerSample %d", tmp->Samples.wValidBitsPerSample);
-      if (tmp->SubFormat == KSDATAFORMAT_SUBTYPE_PCM)
-        Log("  SubFormat           PCM");
-      else if (tmp->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
-        Log("  SubFormat           FLOAT");
-
-      LPOLESTR str;
-      LPSTR astr;
-      str = (LPOLESTR)CoTaskMemAlloc(400);
-      if (str)
-      {
-        StringFromGUID2(tmp->SubFormat, str, 200);
-        UnicodeToAnsi(str, &astr);
-        Log("  GUID          %s", astr);
-        CoTaskMemFree(str);
-      }
-    }
-    else if (pwfx->wFormatTag == WAVE_FORMAT_PCM)
-      Log("  SubFormat           PCM");
-    else if (pwfx->wFormatTag == WAVE_FORMAT_IEEE_FLOAT)
-      Log("  SubFormat           FLOAT");
-  }*/
 }
 
 HRESULT CopyWaveFormatEx(WAVEFORMATEXTENSIBLE** dst, const WAVEFORMATEXTENSIBLE* src)
@@ -384,8 +355,11 @@ HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE** dst, WAVEFORMATEX* src)
   case WAVE_FORMAT_IEEE_FLOAT:
     pwfe->SubFormat = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
     break;
+  case WAVE_FORMAT_DOLBY_AC3_SPDIF:
+    pwfe->SubFormat = KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL;
+    break;
   default:
-    delete pwfe;
+    delete[] pwfe;
     return VFW_E_TYPE_NOT_ACCEPTED;
   }
   if (pwfe->Format.nChannels >= 1 && pwfe->Format.nChannels <= 8)
@@ -393,13 +367,13 @@ HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE** dst, WAVEFORMATEX* src)
     pwfe->dwChannelMask = gdwDefaultChannelMask[pwfe->Format.nChannels];
     if (pwfe->dwChannelMask == 0)
     {
-      delete pwfe;
+      delete[] pwfe;
       return VFW_E_TYPE_NOT_ACCEPTED;
     }
   }
   else
   {
-    delete pwfe;
+    delete[] pwfe;
     return VFW_E_TYPE_NOT_ACCEPTED;
   }
 

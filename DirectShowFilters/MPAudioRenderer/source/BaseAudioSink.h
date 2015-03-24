@@ -17,6 +17,7 @@
 #pragma once
 
 #include "IAudioSink.h"
+#include "Settings.h"
 
 #define DEFAULT_OUT_BUFFER_COUNT  (20)
 #define DEFAULT_OUT_BUFFER_SIZE   (0x10000)
@@ -26,7 +27,7 @@ typedef class CBaseAudioSink CNullAudioFilter;
 class CBaseAudioSink : public IAudioSink
 {
 public:
-  CBaseAudioSink(bool bHandleSampleRelease);
+  CBaseAudioSink(bool bHandleSampleRelease, AudioRendererSettings* pSettings);
   virtual ~CBaseAudioSink();
 
 // IAudioSink implementation
@@ -58,7 +59,9 @@ public:
   virtual HRESULT EndOfStream();
   virtual HRESULT BeginFlush();
   virtual HRESULT EndFlush();
-  
+
+  static bool CanBitstream(const WAVEFORMATEXTENSIBLE* pwfx);
+
 protected:
   // Helpers
   static bool FormatsEqual(const WAVEFORMATEXTENSIBLE* pwfx1, const WAVEFORMATEXTENSIBLE* pwfx2);
@@ -103,4 +106,6 @@ protected:
   long m_nOutBufferSize;
 
   bool m_bNextFormatPassthru;
+  bool m_bBitstreaming;  
+  AudioRendererSettings* m_pSettings;
 };

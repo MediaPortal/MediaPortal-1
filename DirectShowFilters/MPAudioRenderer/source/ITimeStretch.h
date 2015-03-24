@@ -26,5 +26,5 @@ public:
   virtual ~ITimeStretch(){};
 
   virtual void setRate(float newRate) = 0;
-  virtual void setTempo(float newTempo, float newAdjustment) = 0;
+  virtual bool setTempo(float newTempo, float newAdjustment) = 0;
 };

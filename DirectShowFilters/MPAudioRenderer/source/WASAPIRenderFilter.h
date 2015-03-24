@@ -103,7 +103,6 @@ private:
   void RenderSilence(BYTE* pTarget, UINT32 bufferSizeInBytes, LONGLONG &writeSilence, UINT32 &bytesFilled);
   void HandleFlush();
 
-  AudioRendererSettings* m_pSettings;
   IMMDevice*          m_pMMDevice;
   IAudioClient*       m_pAudioClient;
   IAudioRenderClient* m_pRenderClient;
@@ -129,6 +128,8 @@ private:
 
   REFERENCE_TIME      m_rtNextSampleTime;
   REFERENCE_TIME      m_rtHwStart;
+  REFERENCE_TIME      m_rtLatency;
+  int                 m_dOutputBufferSize;
 
   // Audio HW clock data
   CCritSec            m_csClockLock;

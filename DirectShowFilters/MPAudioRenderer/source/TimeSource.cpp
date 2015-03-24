@@ -26,11 +26,9 @@
 #define HighDW(num) ((unsigned __int64)(num >> 32))
 
 static BOOL           g_bTimerInitializer = false;
-static BOOL           g_bQPCAvail;
 static LARGE_INTEGER  g_lPerfFrequency;
 
 static CCritSec lock;  // lock for timer initialization (multiple threads are using the timer during startup)
-
 
 #pragma warning(disable: 4723)
 __int64 _stdcall cMulDiv64(__int64 operant, __int64 multiplier, __int64 divider)
@@ -126,13 +124,9 @@ __int64 _stdcall cMulDiv64(__int64 operant, __int64 multiplier, __int64 divider)
           REMAINDER.HighQW--;
         }
         else
-        {
           REMAINDER.LowQW -= divider;
-        }
         if (++QUOTIENT.LowQW == 0)
-        {
           QUOTIENT.HighQW++;
-        }
       }
     } while(--c > 0);
   }
@@ -144,33 +138,21 @@ __int64 _stdcall cMulDiv64(__int64 operant, __int64 multiplier, __int64 divider)
     return (__int64)var128.LowQW;
 }
 
-
 LONGLONG GetCurrentTimestamp()
 {
-  LONGLONG result;
   if (!g_bTimerInitializer)
   {
     CAutoLock timestmapLock(&lock);
-    DWORD_PTR oldmask = SetThreadAffinityMask(GetCurrentThread(), 1);
-    g_bQPCAvail = QueryPerformanceFrequency((LARGE_INTEGER*)&g_lPerfFrequency);
-    SetThreadAffinityMask(GetCurrentThread(), oldmask);
-    g_bTimerInitializer = true;
 
-    if( g_lPerfFrequency.QuadPart == 0)
+    if (!g_bTimerInitializer)
     {
-      // Bug in HW? Frequency cannot be zero
-      g_bQPCAvail = false;
+      // QueryPerformanceFrequency is quaranteed not to return FALSE in >= Windows XP
+      (void)QueryPerformanceFrequency((LARGE_INTEGER*)&g_lPerfFrequency);
+      g_bTimerInitializer = true;
     }
   }
-  if (g_bQPCAvail)
-  {
-    ULARGE_INTEGER tics;
-    QueryPerformanceCounter((LARGE_INTEGER*)&tics);
-    result = cMulDiv64(tics.QuadPart, 10000000, g_lPerfFrequency.QuadPart); // to keep accuracy
-  }
-  else
-    result = timeGetTime() * 10000; // ms to 100ns units
 
-  return result;
+  LARGE_INTEGER tics;
+  QueryPerformanceCounter(&tics);
+  return cMulDiv64(tics.QuadPart, 10000000, g_lPerfFrequency.QuadPart); // to keep accuracy
 }
-

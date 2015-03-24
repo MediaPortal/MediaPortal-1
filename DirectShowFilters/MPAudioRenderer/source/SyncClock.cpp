@@ -156,7 +156,7 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
 
   //UINT64 start1 = GetCurrentTimestamp();
 
-  if (m_pSettings->m_bHWBasedRefClock)
+  if (m_pSettings->GetHWBasedRefClock())
     hr = m_pAudioRenderer->AudioClock(hwClock, hwQpc, qpcNow);
 
   //UINT64 end1 = GetCurrentTimestamp();
