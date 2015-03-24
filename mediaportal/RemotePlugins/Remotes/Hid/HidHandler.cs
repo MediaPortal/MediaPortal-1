@@ -26,10 +26,9 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Xml;
-using Hid;
-using Hid.UsageTables;
 using MediaPortal.GUI.Library;
 using Win32;
+using Hid=SharpLib.Hid;
 
 namespace MediaPortal.InputDevices
 {
@@ -52,7 +51,6 @@ namespace MediaPortal.InputDevices
       IsLoaded = false;
       //We will need one usage/action mapping for each HID UsagePage/UsageCollection we are listening too
       _usageActions = new Dictionary<UInt32, HidUsageAction>();
-      _hidEvents = new List<HidEvent>();
 
       var xmlPath = GetXmlPath(deviceXmlName);
 
@@ -67,7 +65,10 @@ namespace MediaPortal.InputDevices
     private const int KCurrentLayer = 1;
 
     private readonly Dictionary<UInt32, HidUsageAction> _usageActions;
-    private readonly List<HidEvent> _hidEvents;
+
+    private Hid.Handler _handler;
+    private List<MediaPortal.InputDevices.HidUsageAction.ConditionalAction> _actions;
+    private bool _shouldRaiseAction;
 
     #endregion Private Fields
 
@@ -203,7 +204,7 @@ namespace MediaPortal.InputDevices
     {
       {
         //Try parsing it as a standard MCE usage
-        WindowsMediaCenterRemoteControl usage;
+        Hid.Usage.WindowsMediaCenterRemoteControl usage;
         if (Enum.TryParse(aUsageName, out usage))
         {
           aUsageValue = (ushort) usage;
@@ -213,7 +214,7 @@ namespace MediaPortal.InputDevices
 
       {
         //Try parsing is a an HP MCE usage
-        HpWindowsMediaCenterRemoteControl usage;
+        Hid.Usage.HpWindowsMediaCenterRemoteControl usage;
         if (Enum.TryParse(aUsageName, out usage))
         {
           aUsageValue = (ushort) usage;
@@ -246,7 +247,7 @@ namespace MediaPortal.InputDevices
           ushort rawUsageCollection = 0;
 
           //Parse usage page
-          if (!TryParseEnum<UsagePage>(usagePageName, out rawUsagePage))
+          if (!TryParseEnum<Hid.UsagePage>(usagePageName, out rawUsagePage))
           {
             Log.Error("HID: Unknown usage page {0}", usagePageName);
             //Move on to the next usage action then
@@ -265,9 +266,9 @@ namespace MediaPortal.InputDevices
 
           switch (rawUsagePage)
           {
-            case (ushort) UsagePage.WindowsMediaCenterRemoteControl:
+            case (ushort) Hid.UsagePage.WindowsMediaCenterRemoteControl:
             {
-              if (!TryParseEnum<UsageCollectionWindowsMediaCenter>(usageCollectionName, out rawUsageCollection))
+              if (!TryParseEnum<Hid.UsageCollection.WindowsMediaCenter>(usageCollectionName, out rawUsageCollection))
               {
                 Log.Error("HID: XML configuration could not parse UsageCollectionWindowsMediaCenter {0}", usageCollectionName);
                 continue;
@@ -278,33 +279,33 @@ namespace MediaPortal.InputDevices
             }
               break;
 
-            case (ushort) UsagePage.GenericDesktopControls:
+            case (ushort) Hid.UsagePage.GenericDesktopControls:
             {
-              if (!TryParseEnum<UsageCollectionGenericDesktop>(usageCollectionName, out rawUsageCollection))
+              if (!TryParseEnum<Hid.UsageCollection.GenericDesktop>(usageCollectionName, out rawUsageCollection))
               {
                 Log.Error("HID: XML configuration could not parse UsageCollectionGenericDesktop {0}", usageCollectionName);
                 continue;
               }
 
               //Now parse usage action mapping
-              usageAction.Load(usageActionNode, TryParseEnum<GenericDesktop>);
+              usageAction.Load(usageActionNode, TryParseEnum<Hid.Usage.GenericDesktop>);
             }
               break;
 
-            case (ushort) UsagePage.Consumer:
+            case (ushort) Hid.UsagePage.Consumer:
             {
-              if (!TryParseEnum<UsageCollectionConsumer>(usageCollectionName, out rawUsageCollection))
+              if (!TryParseEnum<Hid.UsageCollection.Consumer>(usageCollectionName, out rawUsageCollection))
               {
                 Log.Error("HID: XML configuration could not parse UsageCollectionConsumer {0}", usageCollectionName);
                 continue;
               }
 
               //Now parse usage action mapping
-              usageAction.Load(usageActionNode, TryParseEnum<ConsumerControl>);
+              usageAction.Load(usageActionNode, TryParseEnum<Hid.Usage.ConsumerControl>);
             }
               break;
 
-            case (ushort) UsagePage.SimulationControls:
+            case (ushort) Hid.UsagePage.SimulationControls:
             {
               if (!TryParseDefault(usageCollectionName, out rawUsageCollection))
               {
@@ -313,11 +314,11 @@ namespace MediaPortal.InputDevices
               }
 
               //Now parse usage action mapping
-              usageAction.Load(usageActionNode, TryParseEnum<SimulationControl>);
+              usageAction.Load(usageActionNode, TryParseEnum<Hid.Usage.SimulationControl>);
             }
               break;
 
-            case (ushort) UsagePage.GameControls:
+            case (ushort) Hid.UsagePage.GameControls:
             {
               if (!TryParseDefault(usageCollectionName, out rawUsageCollection))
               {
@@ -326,11 +327,11 @@ namespace MediaPortal.InputDevices
               }
 
               //Now parse usage action mapping
-              usageAction.Load(usageActionNode, TryParseEnum<GameControl>);
+              usageAction.Load(usageActionNode, TryParseEnum<Hid.Usage.GameControl>);
             }
               break;
 
-            case (ushort) UsagePage.Telephony:
+            case (ushort) Hid.UsagePage.Telephony:
             {
               if (!TryParseDefault(usageCollectionName, out rawUsageCollection))
               {
@@ -339,7 +340,7 @@ namespace MediaPortal.InputDevices
               }
 
               //Now parse usage action mapping
-              usageAction.Load(usageActionNode, TryParseEnum<TelephonyDevice>);
+              usageAction.Load(usageActionNode, TryParseEnum<Hid.Usage.TelephonyDevice>);
             }
               break;
           }
@@ -376,7 +377,7 @@ namespace MediaPortal.InputDevices
     /// <param name="aHWND"></param>
     public void Register(IntPtr aHWND)
     {
-      var rid = new RAWINPUTDEVICE[_usageActions.Count];
+      SharpLib.Win32.RAWINPUTDEVICE[] rid = new SharpLib.Win32.RAWINPUTDEVICE[_usageActions.Count];
 
       var i = 0;
       foreach (var entry in _usageActions)
@@ -388,95 +389,71 @@ namespace MediaPortal.InputDevices
         i++;
       }
 
-      var success = Function.RegisterRawInputDevices(rid, (uint) rid.Length, (uint) Marshal.SizeOf(rid[0]));
-      if (success)
+      _handler = new SharpLib.Hid.Handler(rid, true);
+      if (!_handler.IsRegistered)
       {
-        Log.Info("HID: Raw input devices registration successful");
+        Debug.WriteLine("Failed to register raw input devices: " + Marshal.GetLastWin32Error().ToString());
       }
-      else
-      {
-        Log.Info("HID: Raw input devices registration failed");
-      }
+      _handler.OnHidEvent += OnHidEvent;
+
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="aMessage"></param>
+    /// <param name="shouldRaiseAction"></param>
+    /// <returns></returns>
     public List<MediaPortal.InputDevices.HidUsageAction.ConditionalAction> ProcessInput(Message aMessage, bool shouldRaiseAction = true)
     {
-      var result = new List<MediaPortal.InputDevices.HidUsageAction.ConditionalAction>();
-      var hidEvent = new HidEvent(aMessage, OnHidEventRepeat);
-      if (HidListener.Verbose) //Avoid string conversion if not needed
-      {
-        Log.Info("\n" + hidEvent.ToString());
-      }
+      _shouldRaiseAction = shouldRaiseAction;
+      //Processing HID events
+      _handler.ProcessInput(ref aMessage);
 
-      if (!hidEvent.IsValid || !hidEvent.IsGeneric)
-      {
-        HidListener.LogInfo("HID: Skipping HID message.");
-        return null;
-      }
-
-      //
-      if (hidEvent.Usages[0] == 0)
-      {
-        //This is a key up event
-        //We need to discard any events belonging to the same page and collection
-        for (var i = (_hidEvents.Count - 1); i >= 0; i--)
-        {
-          if (_hidEvents[i].UsageId == hidEvent.UsageId)
-          {
-            _hidEvents[i].Dispose();
-            _hidEvents.RemoveAt(i);
-          }
-        }
-      }
-      else
-      {
-        //Keep that event until we get a key up message
-        _hidEvents.Add(hidEvent);
-      }
-
-      //Broadcast our events
-      //OnHidEvent(this, hidEvent);
-
-      HidUsageAction usageAction;
-      if (_usageActions.TryGetValue(hidEvent.UsageId, out usageAction))
-      {
-        //Alright we do handle this usage ID
-        //Try mapping actions to each of our usage
-        foreach (ushort usage in hidEvent.Usages)
-        {
-          HidListener.LogInfo("HID: try mapping usage {0}", usage.ToString("X4"));
-          result.Add(usageAction.GetAction(usage.ToString(), hidEvent.IsBackground, false));
-          if (shouldRaiseAction)
-          {
-              usageAction.MapAction(usage, hidEvent.IsBackground, false);
-          }
-        }
-        return result;
-      }
-      return null;
+      return _actions;
     }
 
-    public void OnHidEventRepeat(HidEvent aHidEvent)
-    {
-      //Broadcast our events
-      //OnHidEvent(this, aHidEvent);
 
-      if (aHidEvent.IsStray) //Defensive
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="aHidEvent"></param>
+    public void OnHidEvent(object aSender, Hid.Event aHidEvent)
+    {
+      if (aHidEvent.IsRepeat)
       {
-        return;
+        HidListener.LogInfo("HID: Repeat");  
       }
 
-      HidListener.LogInfo("HID: Repeat");
-
+      _actions = null;
+      _actions = new List<MediaPortal.InputDevices.HidUsageAction.ConditionalAction>();
       HidUsageAction usageAction;
       if (_usageActions.TryGetValue(aHidEvent.UsageId, out usageAction))
       {
         //Alright we do handle this usage ID
         //Try mapping actions to each of our usage
-        foreach (var usage in aHidEvent.Usages)
+        foreach (ushort usage in aHidEvent.Usages)
         {
           HidListener.LogInfo("HID: try mapping usage {0}", usage.ToString("X4"));
-          usageAction.MapAction(usage, aHidEvent.IsBackground, true);
+          _actions.Add(usageAction.GetAction(usage.ToString(), aHidEvent.IsBackground, aHidEvent.IsRepeat));
+          if (_shouldRaiseAction)
+          {
+            usageAction.MapAction(usage, aHidEvent.IsBackground, aHidEvent.IsRepeat);
+          }
+        }
+
+        //Do some extra checks if our device is a gamepad
+        if (aHidEvent.Device.IsGamePad)
+        {
+          //Check if dpad needs to be handled too
+          HidListener.LogInfo("HID: try mapping dpad {0}", aHidEvent.GetDirectionPadState());
+          const int KDPadButtonOffset = 1000; //This is our magic dpad button offset. Should be good enough as it leaves us with 998 genuine buttons. 
+          ushort dpadFakeUsage = (ushort)(KDPadButtonOffset + (int)aHidEvent.GetDirectionPadState());
+          _actions.Add(usageAction.GetAction(dpadFakeUsage.ToString(), aHidEvent.IsBackground, aHidEvent.IsRepeat));
+          if (_shouldRaiseAction)
+          {
+            usageAction.MapAction(dpadFakeUsage, aHidEvent.IsBackground, aHidEvent.IsRepeat);
+          }
         }
       }
     }

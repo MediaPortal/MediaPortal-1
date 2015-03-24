@@ -250,4 +250,71 @@
     </button>
 
   </HidUsageAction>
+
+
+  <HidUsageAction UsagePage="GenericDesktopControls" UsageCollection="GamePad" HandleHidEventsWhileInBackground="false">
+    <button name="Left" code="1006">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="1" sound="cursor.wav"/>
+    </button>
+
+    <button name="Down" code="1004">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="4" sound="cursor.wav"/>
+    </button>
+
+    <button name="Right" code="1002">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="2" sound="cursor.wav"/>
+    </button>
+
+    <button name="Up" code="1000">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="3" sound="cursor.wav"/>
+    </button>
+
+    <button name="Enter" code="1">
+      <action layer="0" condition="WINDOW" conproperty="11" command="ACTION" cmdproperty="47" sound="click.wav"/>
+      <action layer="0" condition="WINDOW" conproperty="10" command="ACTION" cmdproperty="10" sound="back.wav"/>
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="7" sound="click.wav"/>
+    </button>
+      
+    <button name="Enter" code="3">
+      <action layer="0" condition="WINDOW" conproperty="11" command="ACTION" cmdproperty="47" sound="click.wav"/>
+      <action layer="0" condition="WINDOW" conproperty="10" command="ACTION" cmdproperty="10" sound="back.wav"/>
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="7" sound="click.wav"/>
+    </button>
+    
+    <button name="Enter" code="5">
+      <action layer="0" condition="WINDOW" conproperty="11" command="ACTION" cmdproperty="47" sound="click.wav"/>
+      <action layer="0" condition="WINDOW" conproperty="10" command="ACTION" cmdproperty="10" sound="back.wav"/>
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="7" sound="click.wav"/>
+    </button>
+
+    <button name="Enter" code="6">
+      <action layer="0" condition="WINDOW" conproperty="11" command="ACTION" cmdproperty="47" sound="click.wav"/>
+      <action layer="0" condition="WINDOW" conproperty="10" command="ACTION" cmdproperty="10" sound="back.wav"/>
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="7" sound="click.wav"/>
+    </button>
+
+     <button name="Back" code="2">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav"/>
+    </button>
+    
+    <button name="Back" code="7">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav"/>
+    </button>
+
+    <button name="Back" code="8">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav"/>
+    </button>
+
+    <button name="Back" code="9">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav"/>
+    </button>
+
+    <button name="Enter" code="10">
+      <action layer="0" condition="WINDOW" conproperty="11" command="ACTION" cmdproperty="47" sound="click.wav"/>
+      <action layer="0" condition="WINDOW" conproperty="10" command="ACTION" cmdproperty="10" sound="back.wav"/>
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="7" sound="click.wav"/>
+    </button>
+
+  </HidUsageAction>
+
 </HidHandler>
