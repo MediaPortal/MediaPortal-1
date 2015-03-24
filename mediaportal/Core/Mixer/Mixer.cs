@@ -21,6 +21,7 @@
 using System;
 using System.Runtime.InteropServices;
 using MediaPortal.ExtensionMethods;
+using MediaPortal.Player;
 
 namespace MediaPortal.Mixer
 {
@@ -172,7 +173,7 @@ namespace MediaPortal.Mixer
     }
 
     private MixerNativeMethods.MixerControlDetails GetControl(MixerComponentType componentType,
-                                                              MixerControlType controlType)
+      MixerControlType controlType)
     {
       try
       {
@@ -181,7 +182,21 @@ namespace MediaPortal.Mixer
         if (MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) !=
             MixerError.None)
         {
-          throw new InvalidOperationException("Mixer.GetControl.1");
+          int pdnDevInst = 0;
+          if (
+            VolumeHandler.Win32Api.CM_Locate_DevNodeA(ref pdnDevInst, null,
+              VolumeHandler.Win32Api.CM_LOCATE_DEVNODE_NORMAL) != VolumeHandler.Win32Api.CR_SUCCESS)
+          {
+            // throw new Exception("something...");
+            throw new InvalidOperationException("Mixer.GetControl.1");
+          }
+
+          if (VolumeHandler.Win32Api.CM_Reenumerate_DevNode(pdnDevInst, VolumeHandler.Win32Api.CM_REENUMERATE_NORMAL) !=
+              VolumeHandler.Win32Api.CR_SUCCESS)
+          {
+            //throw new Exception("something else...");
+            throw new InvalidOperationException("Mixer.GetControl.1");
+          }
         }
 
         using (
@@ -191,7 +206,22 @@ namespace MediaPortal.Mixer
           if (MixerNativeMethods.mixerGetLineControlsA(_handle, mixerLineControls, MixerLineControlFlags.OneByType) !=
               MixerError.None)
           {
-            throw new InvalidOperationException("Mixer.GetControl.2");
+            int pdnDevInst = 0;
+            if (
+              VolumeHandler.Win32Api.CM_Locate_DevNodeA(ref pdnDevInst, null,
+                VolumeHandler.Win32Api.CM_LOCATE_DEVNODE_NORMAL) != VolumeHandler.Win32Api.CR_SUCCESS)
+            {
+              //throw new Exception("something...");
+              throw new InvalidOperationException("Mixer.GetControl.2");
+            }
+
+            if (
+              VolumeHandler.Win32Api.CM_Reenumerate_DevNode(pdnDevInst, VolumeHandler.Win32Api.CM_REENUMERATE_NORMAL) !=
+              VolumeHandler.Win32Api.CR_SUCCESS)
+            {
+              //throw new Exception("something else...");
+              throw new InvalidOperationException("Mixer.GetControl.2");
+            }
           }
 
           MixerNativeMethods.MixerControl mixerControl =
@@ -217,7 +247,21 @@ namespace MediaPortal.Mixer
         if (MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) !=
             MixerError.None)
         {
-          throw new InvalidOperationException("Mixer.OpenControl.1");
+          int pdnDevInst = 0;
+          if (
+            VolumeHandler.Win32Api.CM_Locate_DevNodeA(ref pdnDevInst, null,
+              VolumeHandler.Win32Api.CM_LOCATE_DEVNODE_NORMAL) != VolumeHandler.Win32Api.CR_SUCCESS)
+          {
+            //throw new Exception("something...");
+            throw new InvalidOperationException("Mixer.OpenControl.1");
+          }
+
+          if (VolumeHandler.Win32Api.CM_Reenumerate_DevNode(pdnDevInst, VolumeHandler.Win32Api.CM_REENUMERATE_NORMAL) !=
+              VolumeHandler.Win32Api.CR_SUCCESS)
+          {
+            //throw new Exception("something else...");
+            throw new InvalidOperationException("Mixer.OpenControl.1");
+          }
         }
 
         using (
@@ -227,7 +271,7 @@ namespace MediaPortal.Mixer
           MixerNativeMethods.mixerGetLineControlsA(_handle, mixerLineControls, MixerLineControlFlags.OneByType);
           MixerNativeMethods.MixerControl mixerControl =
             (MixerNativeMethods.MixerControl)
-              Marshal.PtrToStructure(mixerLineControls.Data, typeof(MixerNativeMethods.MixerControl));
+              Marshal.PtrToStructure(mixerLineControls.Data, typeof (MixerNativeMethods.MixerControl));
 
           using (
             MixerNativeMethods.MixerControlDetails mixerControlDetails =
@@ -253,7 +297,21 @@ namespace MediaPortal.Mixer
 
       if (MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) != MixerError.None)
       {
-        throw new InvalidOperationException("Mixer.SetValue.1");
+        int pdnDevInst = 0;
+        if (
+          VolumeHandler.Win32Api.CM_Locate_DevNodeA(ref pdnDevInst, null,
+            VolumeHandler.Win32Api.CM_LOCATE_DEVNODE_NORMAL) != VolumeHandler.Win32Api.CR_SUCCESS)
+        {
+          //throw new Exception("something...");
+          throw new InvalidOperationException("Mixer.SetValue.1");
+        }
+
+        if (VolumeHandler.Win32Api.CM_Reenumerate_DevNode(pdnDevInst, VolumeHandler.Win32Api.CM_REENUMERATE_NORMAL) !=
+            VolumeHandler.Win32Api.CR_SUCCESS)
+        {
+          //throw new Exception("something else...");
+          throw new InvalidOperationException("Mixer.SetValue.1");
+        }
       }
 
       using (
@@ -263,7 +321,21 @@ namespace MediaPortal.Mixer
         if (MixerNativeMethods.mixerGetLineControlsA(_handle, mixerLineControls, MixerLineControlFlags.OneByType) !=
             MixerError.None)
         {
-          throw new InvalidOperationException("Mixer.SetValue.2");
+          int pdnDevInst = 0;
+          if (
+            VolumeHandler.Win32Api.CM_Locate_DevNodeA(ref pdnDevInst, null,
+              VolumeHandler.Win32Api.CM_LOCATE_DEVNODE_NORMAL) != VolumeHandler.Win32Api.CR_SUCCESS)
+          {
+            //throw new Exception("something...");
+            throw new InvalidOperationException("Mixer.SetValue.2");
+          }
+
+          if (VolumeHandler.Win32Api.CM_Reenumerate_DevNode(pdnDevInst, VolumeHandler.Win32Api.CM_REENUMERATE_NORMAL) !=
+              VolumeHandler.Win32Api.CR_SUCCESS)
+          {
+            //throw new Exception("something else...");
+            throw new InvalidOperationException("Mixer.SetValue.2");
+          }
         }
 
         MixerNativeMethods.MixerControl mixerControl =

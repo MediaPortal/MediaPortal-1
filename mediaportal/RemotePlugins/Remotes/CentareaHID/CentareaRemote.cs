@@ -69,7 +69,7 @@ namespace MediaPortal.InputDevices
 
     public void Init(IntPtr hwnd)
     {
-        Init();
+      Init();
     }
 
     public void Init()
@@ -129,22 +129,22 @@ namespace MediaPortal.InputDevices
     {
       if (_remoteActive)
       {
-          AppCommands appCommand = (AppCommands)Win32.Macro.GET_APPCOMMAND_LPARAM(msg.LParam);
-          // find out which request the MCE remote handled last
-          if ((appCommand == InputDevices.LastHidRequest) && (appCommand != AppCommands.VolumeDown) &&
-              (appCommand != AppCommands.VolumeUp))
+        AppCommands appCommand = (AppCommands) Win32.Macro.GET_APPCOMMAND_LPARAM(msg.LParam);
+        // find out which request the MCE remote handled last
+        if ((appCommand == InputDevices.LastHidRequest) && (appCommand != AppCommands.VolumeDown) &&
+            (appCommand != AppCommands.VolumeUp))
+        {
+          if (Enum.IsDefined(typeof (AppCommands), InputDevices.LastHidRequest))
           {
-              if (Enum.IsDefined(typeof(AppCommands), InputDevices.LastHidRequest))
-              {
-                  // possible that it is the same request mapped to an app command?
-                  if (Environment.TickCount - InputDevices.LastHidRequestTick < 500)
-                  {
-                      return true;
-                  }
-              }
+            // possible that it is the same request mapped to an app command?
+            if (Environment.TickCount - InputDevices.LastHidRequestTick < 500)
+            {
+              return true;
+            }
           }
+        }
 
-          return MapWndProcMessage(msg) != null;
+        return MapWndProcMessage(msg) != null;
 
       }
       return false;
@@ -211,7 +211,7 @@ namespace MediaPortal.InputDevices
                             // we ignore double actions for the configured time
                             if (Environment.TickCount - _lastMouseTick < 400)
                             {
-                                return null;
+                              return null;
                             }
 
                             MouseDirection mmove = OnMouseMoved(p);
@@ -282,7 +282,7 @@ namespace MediaPortal.InputDevices
                     }
                     catch (ApplicationException)
                     {
-                        return null;
+                      return null;
                     }
                     msg.Result = new IntPtr(1);
                     break;
@@ -301,10 +301,10 @@ namespace MediaPortal.InputDevices
     /// <returns></returns>
     public bool WndProc(ref System.Windows.Forms.Message msg, out GUI.Library.Action action, out char key, out Keys keyCode)
     {
-        action = null;
-        key = (char)0;
-        keyCode = Keys.A;
-        return WndProc(ref msg);
+      action = null;
+      key = (char)0;
+      keyCode = Keys.A;
+      return WndProc(ref msg);
     }
 
     /// <summary>
@@ -314,11 +314,11 @@ namespace MediaPortal.InputDevices
     /// <returns></returns>
     public MediaPortal.InputDevices.InputHandler.Mapping GetMapping(Message msg)
     {
-        if (_remoteConfigured)
-        {
-            return MapWndProcMessage(msg, false);
-        }
-        return null;
+      if (_remoteConfigured)
+      {
+        return MapWndProcMessage(msg, false);
+      }
+      return null;
     }
     #endregion
 

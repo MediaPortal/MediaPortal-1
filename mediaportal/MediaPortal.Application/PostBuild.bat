@@ -1,13 +1,15 @@
 REM %1 = Solution Directory
 REM %2 = $(ConfigurationName) Debug/Release
 
-
 REM Identify configuration path for <=XP or >=Vista
 if exist %ProgramData%\nul (
 	set ConfigPath="%ProgramData%" 
 ) else (
 	set ConfigPath="%AllUsersProfile%\Application Data"
 )
+
+set GIT_ROOT=%~dp0..\..\
+set Build="%GIT_ROOT%\Build"
 
 REM Check for Microsoft Antispyware .BAT bug
 if exist .\kernel32.dll exit 1
@@ -121,6 +123,8 @@ xcopy %1\..\DirectShowFilters\DXErr9\bin\%2\dxerr9.dll . /Y /D
 
 REM Copy bluray dll from DirectShowFilters folder
 xcopy %1\..\DirectShowFilters\BDReader\libbluray\bluray.dll . /Y /D
+xcopy %1\..\libbluray\src\.libs\libbluray-.jar . /Y /D
+ren libbluray-.jar libbluray.jar
 
 REM mpWatchDog
 xcopy %1\WatchDog\bin\%2\WatchDog.exe . /Y /D
@@ -144,6 +148,10 @@ xcopy %1\..\Packages\MediaInfo.0.7.69\MediaInfo.dll . /Y /D
 REM ffmpeg 
 xcopy %1\..\Packages\ffmpeg.2.1.1\ffmpeg.exe MovieThumbnailer\ /Y /D
 
+REM iMON Display 
+xcopy %1\..\Packages\MediaPortal-iMON-Display.1.0.1\lib\iMONDisplay.dll . /Y /D
+xcopy %1\..\Packages\MediaPortal-iMON-Display.1.0.1\lib\iMONDisplayWrapper.dll . /Y /D
+
 REM Bass Core
 xcopy %1\..\Packages\BASS.2.4.10\bass.dll . /Y /D
 xcopy %1\..\Packages\BASS.NET.2.4.10.3\lib\net40\Bass.Net.dll . /Y /D
@@ -162,6 +170,7 @@ xcopy %1\..\Packages\bass.aac.2.4.4.4\bass_aac.dll "MusicPlayer\plugins\audio de
 xcopy %1\..\Packages\bass.ac3.2.4.0.3\bass_ac3.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 xcopy %1\..\Packages\bass.alac.2.4.3\bass_alac.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 xcopy %1\..\Packages\bass.ape.2.4.1\bass_ape.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\..\Packages\bass.dsd.0.0.1\bassdsd.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 xcopy %1\..\Packages\bass.mpc.2.4.1.1\bass_mpc.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 xcopy %1\..\Packages\bass.ofr.2.4.0.2\bass_ofr.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 xcopy %1\..\Packages\bass.spx.2.4.2\bass_spx.dll "MusicPlayer\plugins\audio decoders\" /Y /D
@@ -176,6 +185,12 @@ xcopy %1\..\Packages\bass.wv.2.4.4\basswv.dll "MusicPlayer\plugins\audio decoder
 REM iMON Display 
 xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll . /Y /D
 xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll . /Y /D
+
+REM taglib-sharp
+xcopy %1\..\Packages\MediaPortal.TagLib.2.0.3.8\lib\taglib-sharp.dll ./Y /D
+
+REM SharpLibHid
+xcopy %1\..\Packages\SharpLibHid.1.0.4\lib\net20\SharpLibHid.dll . /Y /D
 
 REM Enable >2GB for 32 bit process
 call %Build%\MSBUILD_MP_LargeAddressAware.bat %2

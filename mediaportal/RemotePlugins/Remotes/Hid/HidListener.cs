@@ -92,19 +92,18 @@ namespace MediaPortal.InputDevices
     /// <returns></returns>
     public Mapping GetMapping(Message msg)
     {
-        if (msg.Msg == Win32.Const.WM_INPUT)
+      if (msg.Msg == Win32.Const.WM_INPUT)
+      {
+        //Just ask our handler to process
+        var actions = _hidHandler.ProcessInput(msg, false);
+
+        if (actions != null && actions.Count > 0)
         {
-            //Just ask our handler to process
-            var actions = _hidHandler.ProcessInput(msg, false);
-            
-            if (actions != null && actions.Count > 0)
-            {
-                var action = actions[0];
-                return new Mapping(action.Layer, action.Condition, action.ConProperty, action.Command, action.CmdProperty, action.CmdKeyChar, action.CmdKeyCode, action.Sound, action.Focus);
-            }
-            
+          var action = actions[0];
+          return new Mapping(action.Layer, action.Condition, action.ConProperty, action.Command, action.CmdProperty, action.CmdKeyChar, action.CmdKeyCode, action.Sound, action.Focus);
         }
-        return null;
+      }
+      return null;
     }
 
     /// <summary>

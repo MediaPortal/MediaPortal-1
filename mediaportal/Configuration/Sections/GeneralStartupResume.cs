@@ -103,7 +103,7 @@ namespace MediaPortal.Configuration.Sections
                                             new[] {"general", "showlastactivemodule", "false"},
                                             // 11 Stop playback on removal of an audio renderer
                                             new[] {"general", "stoponaudioremoval", "true"},
-                                            // 11 No AutoStart on RemoteDesktop
+                                            // 12 No AutoStart on RemoteDesktop
                                             new[] {"general", "noautostartonrdp", "true"}
                                           };
 
@@ -135,7 +135,7 @@ namespace MediaPortal.Configuration.Sections
 
         foreach (AdapterInformation adapter in Manager.Adapters)
         {
-          if (screen.DeviceName.StartsWith(adapter.Information.DeviceName.Trim()))
+          if (screen.DeviceName.Equals(adapter.Information.DeviceName.Trim()))
           {
             cbScreen.Items.Add(string.Format("{0} ({1}x{2}) on {3}", monitorname, adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Information.Description));
           }

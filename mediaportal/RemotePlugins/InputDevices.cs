@@ -44,7 +44,7 @@ namespace MediaPortal.InputDevices
 
       foreach (var device in Devices)
       {
-          device.Init(GUIGraphicsContext.ActiveForm);
+        device.Init(GUIGraphicsContext.ActiveForm);
       }
     }
 
@@ -57,7 +57,7 @@ namespace MediaPortal.InputDevices
       }
       foreach (var device in Devices)
       {
-          device.DeInit();
+        device.DeInit();
       }
 
       _initialized = false;
@@ -71,10 +71,10 @@ namespace MediaPortal.InputDevices
 
       foreach (var device in Devices)
       {
-          if (device.WndProc(ref msg, out action, out key, out keyCode))
-          {
-              return true;
-          }
+        if (device.WndProc(ref msg, out action, out key, out keyCode))
+        {
+            return true;
+        }
       }
 
       return false;
@@ -88,34 +88,35 @@ namespace MediaPortal.InputDevices
     /// <returns></returns>
     public static Action MapToAction(Message msg)
     {
-        Action result = null;
-        Log.Info(string.Format("WndProc message to be processed {0}, appCommand {1}, LParam {2}, WParam {3}", msg.Msg, Win32.Macro.GET_APPCOMMAND_LPARAM(msg.LParam), msg.LParam, msg.WParam)); 
-        foreach (var device in Devices)
+      Action result = null;
+      Log.Info(string.Format("WndProc message to be processed {0}, appCommand {1}, LParam {2}, WParam {3}", msg.Msg, Win32.Macro.GET_APPCOMMAND_LPARAM(msg.LParam), msg.LParam, msg.WParam));
+      foreach (var device in Devices)
+      {
+        var mapping = device.GetMapping(msg);
+        if (mapping != null)
         {
-            var mapping = device.GetMapping(msg);
-            if (mapping != null)
-            {
-                switch (mapping.Command)
-                {
-                    case "ACTION": // execute Action x
-                        Key key = new Key(mapping.CmdKeyChar, mapping.CmdKeyCode);
-                        Log.Info("MappingToAction: key {0} / {1} / Action: {2} / {3}", mapping.CmdKeyChar, mapping.CmdKeyCode, mapping.CmdProperty,
-                                ((Action.ActionType)Convert.ToInt32(mapping.CmdProperty)).ToString());
-                        result = new Action(key, (Action.ActionType)Convert.ToInt32(mapping.CmdProperty), 0, 0);
-                        break;
-                    case "KEY": // Try and map the key to the Keys enum and process that way
-                        var tmpKey = Keys.A;
-                        if (Enum.TryParse<Keys>(mapping.CmdProperty, out tmpKey))
-                            result = MapToAction((int)tmpKey);
-                        break;
-                }
-                if (result != null) break;
-            }
+          switch (mapping.Command)
+          {
+            case "ACTION": // execute Action x
+              Key key = new Key(mapping.CmdKeyChar, mapping.CmdKeyCode);
+              Log.Info("MappingToAction: key {0} / {1} / Action: {2} / {3}", mapping.CmdKeyChar, mapping.CmdKeyCode,
+                mapping.CmdProperty,
+                ((Action.ActionType) Convert.ToInt32(mapping.CmdProperty)).ToString());
+              result = new Action(key, (Action.ActionType) Convert.ToInt32(mapping.CmdProperty), 0, 0);
+              break;
+            case "KEY": // Try and map the key to the Keys enum and process that way
+              var tmpKey = Keys.A;
+              if (Enum.TryParse<Keys>(mapping.CmdProperty, out tmpKey))
+                result = MapToAction((int) tmpKey);
+              break;
+          }
+          if (result != null) break;
         }
+      }
 
-        if (result == null) Log.Info("No mapping found"); 
+      if (result == null) Log.Info("No mapping found");
 
-        return result;
+      return result;
     }
 
     /// <summary>
@@ -125,20 +126,22 @@ namespace MediaPortal.InputDevices
     /// <returns></returns>
     public static Action MapToAction(int keyPressed)
     {
-        var action = new Action();
+      var action = new Action();
 
-        if (ActionTranslator.GetAction(-1, new Key(0, keyPressed), ref action))
-            return action;
-        else
-        {
-            //See if it's mapped to KeyPressed instead
-            if (keyPressed >= (int)Keys.A && keyPressed <= (int)Keys.Z)
-                keyPressed += 32; //convert to char code
-            if (ActionTranslator.GetAction(-1, new Key(keyPressed, 0), ref action))
-                return action;
-        }
-
-        return null;
+      if (ActionTranslator.GetAction(-1, new Key(0, keyPressed), ref action))
+      {
+        return action;
+      }
+      //See if it's mapped to KeyPressed instead
+      if (keyPressed >= (int) Keys.A && keyPressed <= (int) Keys.Z)
+      {
+        keyPressed += 32; //convert to char code
+      }
+      if (ActionTranslator.GetAction(-1, new Key(keyPressed, 0), ref action))
+      {
+        return action;
+      }
+      return null;
     }
 
     #endregion Methods

@@ -46,7 +46,14 @@ namespace MediaPortal.GUI.Library
     {
       lock (_lock)
       {
-        FontEngineRemoveTexture(textureNo);
+        try
+        {
+          FontEngineRemoveTexture(textureNo);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("fontEngine exeption : {0} ", ex);
+        }
       }
     }
 

@@ -310,7 +310,7 @@ namespace MediaPortal.GUI.Settings
 
         foreach (AdapterInformation adapter in Manager.Adapters)
         {
-          if (screen.DeviceName.StartsWith(adapter.Information.DeviceName.Trim()))
+          if (screen.DeviceName.Equals(adapter.Information.DeviceName.Trim()))
           {
             _screenCollection.Add(string.Format("{0} ({1}x{2}) on {3}",
                                              monitorname, adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height,

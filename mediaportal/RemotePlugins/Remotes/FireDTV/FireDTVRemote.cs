@@ -140,17 +140,17 @@ namespace MediaPortal.InputDevices
     /// <returns></returns>
     public MediaPortal.InputDevices.InputHandler.Mapping GetMapping(Message msg)
     {
-        if (_enabled && ((FireDTVConstants.FireDTVWindowMessages)msg.Msg == FireDTVConstants.FireDTVWindowMessages.RemoteControlEvent))
+      if (_enabled && ((FireDTVConstants.FireDTVWindowMessages) msg.Msg == FireDTVConstants.FireDTVWindowMessages.RemoteControlEvent))
+      {
+        int remoteKeyCode = msg.LParam.ToInt32();
+        if (_logVerbose)
         {
-            int remoteKeyCode = msg.LParam.ToInt32();
-            if (_logVerbose)
-            {
-                Log.Info("FireDTVRemote: GetMapping {0}", remoteKeyCode);
-            }
-
-            return _inputHandler.GetMapping(remoteKeyCode.ToString());
+          Log.Info("FireDTVRemote: GetMapping {0}", remoteKeyCode);
         }
-        return null;
+
+        return _inputHandler.GetMapping(remoteKeyCode.ToString());
+      }
+      return null;
     }
 
     public bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)

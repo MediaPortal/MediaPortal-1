@@ -503,6 +503,9 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\MediaInfo.0.7.69\MediaInfo.dll"
   ; NuGet binaries
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\bass.asio.1.3.0.2\bassasio.dll"
+  ; NuGet binaries
   ; Bass Core
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\BASS.2.4.10\bass.dll"
@@ -550,6 +553,8 @@ Section "MediaPortal core files (required)" SecCore
   !else
     File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
   !endif
+  File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-.jar"
+  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-0.6.2.jar"
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
@@ -557,9 +562,18 @@ Section "MediaPortal core files (required)" SecCore
   
   ; protocol implementations for MPUrlSourceSplitter.ax
   File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Parser_Default*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol_Http*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol_Rtsp*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol_Udp*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_libcurl*"
   File "${git_DirectShowFilters}\bin_Win32\avcodec-mpurlsourcesplitter-54.dll"
   File "${git_DirectShowFilters}\bin_Win32\avformat-mpurlsourcesplitter-54.dll"
   File "${git_DirectShowFilters}\bin_Win32\avutil-mpurlsourcesplitter-51.dll" 
+  
+  ; libbluray
+  ;SetOutPath "$MPdir.Base\lib"
+  ;File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\lib\*"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
@@ -572,6 +586,7 @@ Section "MediaPortal core files (required)" SecCore
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPAudioswitcher\bin\${BUILD_TYPE}\MPAudioSwitcher.ax"  "$MPdir.Base\MPAudioSwitcher.ax"  "$MPdir.Base"
   ; used for digital tv
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsReader\bin\${BUILD_TYPE}\TsReader.ax"                "$MPdir.Base\TsReader.ax"         "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\Core-CC-Parser\CCCP\${BUILD_TYPE}\cccp.ax"             "$MPdir.Base\cccp.ax"             "$MPdir.Base"
   WriteRegStr HKCR "Media Type\Extensions\.ts"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
   WriteRegStr HKCR "Media Type\Extensions\.tp"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
   WriteRegStr HKCR "Media Type\Extensions\.tsbuffer"  "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
@@ -621,6 +636,7 @@ SectionEnd
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MPAudioSwitcher.ax"
   ; used for digital tv
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\TsReader.ax"
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\cccp.ax"
   ; used for Blu-ray
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\BDReader.ax"
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\DVBSub3.ax"
@@ -661,6 +677,11 @@ SectionEnd
   RMDir "$MPdir.Config\scripts"
 
   ; protocol implementations for MPUrlSourceSplitter.ax
+  Delete "$MPdir.Base\MPUrlSourceSplitter_Parser_Default*"
+  Delete "$MPdir.Base\MPUrlSourceSplitter_Protocol_Http*"
+  Delete "$MPdir.Base\MPUrlSourceSplitter_Protocol_Rtsp*"
+  Delete "$MPdir.Base\MPUrlSourceSplitter_Protocol_Udp*"
+  Delete "$MPdir.Base\MPUrlSourceSplitter_libcurl*"
   Delete "$MPdir.Base\MPUrlSourceSplitter*"
   Delete "$MPdir.Base\avcodec-mpurlsourcesplitter-54.dll"
   Delete "$MPdir.Base\avformat-mpurlsourcesplitter-54.dll"

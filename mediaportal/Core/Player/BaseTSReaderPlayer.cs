@@ -1516,32 +1516,40 @@ namespace MediaPortal.Player
 
     protected void UpdateCurrentPosition()
     {
-      if (_mediaSeeking == null || _graphBuilder == null || Thread.CurrentThread.Name != "MPMain")
+      try
       {
-        return;
+        if (_mediaSeeking == null || _graphBuilder == null || Thread.CurrentThread.Name != "MPMain")
+        {
+          return;
+        }
+        lock (_mediaCtrl)
+        {
+          //GetCurrentPosition(): Returns stream position. 
+          //Stream position:The current playback position, relative to the content start
+          long lStreamPos;
+          double fCurrentPos;
+          _mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
+          fCurrentPos = lStreamPos;
+          fCurrentPos /= 10000000d;
+          _streamPos = fCurrentPos; // save the stream position 
+          long lContentStart, lContentEnd;
+          double fContentStart, fContentEnd;
+          _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
+          fContentStart = lContentStart;
+          fContentEnd = lContentEnd;
+          fContentStart /= 10000000d;
+          fContentEnd /= 10000000d;
+          // Log.Info("pos:{0} start:{1} end:{2}  pos:{3} dur:{4}", fCurrentPos, fContentStart, fContentEnd, (fCurrentPos - fContentStart), (fContentEnd - fContentStart));
+          fContentEnd -= fContentStart;
+          fCurrentPos -= fContentStart;
+          _duration = fContentEnd;
+          _currentPos = fCurrentPos;
+        }
       }
-      lock (_mediaCtrl)
+      catch (Exception ex)
       {
-        //GetCurrentPosition(): Returns stream position. 
-        //Stream position:The current playback position, relative to the content start
-        long lStreamPos;
-        double fCurrentPos;
-        _mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
-        fCurrentPos = lStreamPos;
-        fCurrentPos /= 10000000d;
-        _streamPos = fCurrentPos; // save the stream position 
-        long lContentStart, lContentEnd;
-        double fContentStart, fContentEnd;
-        _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
-        fContentStart = lContentStart;
-        fContentEnd = lContentEnd;
-        fContentStart /= 10000000d;
-        fContentEnd /= 10000000d;
-        // Log.Info("pos:{0} start:{1} end:{2}  pos:{3} dur:{4}", fCurrentPos, fContentStart, fContentEnd, (fCurrentPos - fContentStart), (fContentEnd - fContentStart));
-        fContentEnd -= fContentStart;
-        fCurrentPos -= fContentStart;
-        _duration = fContentEnd;
-        _currentPos = fCurrentPos;
+        Log.Error("TSReaderPlayer UpdateCurrentPosition Exception {0}", ex);
+        g_Player.Stop();
       }
     }
 

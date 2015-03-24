@@ -136,23 +136,20 @@ namespace MediaPortal.InputDevices
         controlActive = false;
       }
     }
-    
+
     /// <summary>
     /// Initialise the input handler
     /// </summary>
     private void InitInputHandler()
     {
-        _inputHandler = new InputHandler("Microsoft MCE");
-        if (!_inputHandler.IsLoaded)
-        {
-            Log.Info("MCE: Error loading default mapping file - please reinstall MediaPortal");
-            DeInit();
-            return;
-        }
-        else
-        {
-            Log.Info("MCE: MCE remote enabled");
-        }
+      _inputHandler = new InputHandler("Microsoft MCE");
+      if (!_inputHandler.IsLoaded)
+      {
+        Log.Info("MCE: Error loading default mapping file - please reinstall MediaPortal");
+        DeInit();
+        return;
+      }
+      Log.Info("MCE: MCE remote enabled");
     }
 
     private void OnDeviceRemoval(object sender, EventArgs e)
@@ -306,10 +303,10 @@ namespace MediaPortal.InputDevices
     /// <returns></returns>
     public bool WndProc(ref System.Windows.Forms.Message msg, out GUI.Library.Action action, out char key, out Keys keyCode)
     {
-        action = null;
-        key = (char)0;
-        keyCode = Keys.A;
-        return WndProc(msg);
+      action = null;
+      key = (char)0;
+      keyCode = Keys.A;
+      return WndProc(msg);
     }
 
     /// <summary>
@@ -319,12 +316,12 @@ namespace MediaPortal.InputDevices
     /// <returns></returns>
     public Mapping GetMapping(Message msg)
     {
-        if (controlEnabled && (msg.Msg == Win32.Const.WM_APPCOMMAND))
-        {
-            AppCommands command = (AppCommands)Win32.Macro.GET_APPCOMMAND_LPARAM(msg.LParam);
-            return MapFromAppCommand(command);
-        }
-        return null;
+      if (controlEnabled && (msg.Msg == Win32.Const.WM_APPCOMMAND))
+      {
+        AppCommands command = (AppCommands) Win32.Macro.GET_APPCOMMAND_LPARAM(msg.LParam);
+        return MapFromAppCommand(command);
+      }
+      return null;
     }
 
     /// <summary>
@@ -334,81 +331,81 @@ namespace MediaPortal.InputDevices
     /// <returns></returns>
     private Mapping MapFromAppCommand(AppCommands command)
     {
-        Mapping result = null;
-        RemoteButton button = RemoteButton.None;
-        switch (command)
+      Mapping result = null;
+      RemoteButton button = RemoteButton.None;
+      switch (command)
+      {
+        case AppCommands.BrowserBackward:
+          button = RemoteButton.Back;
+          break;
+        case AppCommands.VolumeMute:
+          button = RemoteButton.Mute;
+          break;
+        case AppCommands.VolumeDown:
+          button = RemoteButton.VolumeDown;
+          break;
+        case AppCommands.VolumeUp:
+          button = RemoteButton.VolumeUp;
+          break;
+        case AppCommands.MediaNextTrack:
+          button = RemoteButton.Skip;
+          break;
+        case AppCommands.MediaPreviousTrack:
+          button = RemoteButton.Replay;
+          break;
+        case AppCommands.MediaStop:
+          button = RemoteButton.Stop;
+          break;
+        case AppCommands.MediaPlayPause:
+          button = RemoteButton.Pause;
+          break;
+        case AppCommands.Print:
+          button = RemoteButton.Print;
+          break;
+        case AppCommands.MediaPlay:
+          button = RemoteButton.Play;
+          break;
+        case AppCommands.MediaPause:
+          button = RemoteButton.Pause;
+          break;
+        case AppCommands.MediaRecord:
+          button = RemoteButton.Record;
+          break;
+        case AppCommands.MediaFastForward:
+          button = RemoteButton.Forward;
+          break;
+        case AppCommands.MediaRewind:
+          button = RemoteButton.Rewind;
+          break;
+        case AppCommands.MediaChannelUp:
+          button = RemoteButton.ChannelUp;
+          break;
+        case AppCommands.MediaChannelDown:
+          button = RemoteButton.ChannelDown;
+          break;
+      }
+
+      if (button != RemoteButton.None)
+      {
+        if (_inputHandler == null) InitInputHandler();
+        if (_inputHandler == null || !_inputHandler.IsLoaded) return null;
+
+        result = _inputHandler.GetMapping(((int) button).ToString());
+
+        // Get the mapping
+        if (result != null)
         {
-            case AppCommands.BrowserBackward:
-                button = RemoteButton.Back;
-                break;
-            case AppCommands.VolumeMute:
-                button = RemoteButton.Mute;
-                break;
-            case AppCommands.VolumeDown:
-                button = RemoteButton.VolumeDown;
-                break;
-            case AppCommands.VolumeUp:
-                button = RemoteButton.VolumeUp;
-                break;
-            case AppCommands.MediaNextTrack:
-                button = RemoteButton.Skip;
-                break;
-            case AppCommands.MediaPreviousTrack:
-                button = RemoteButton.Replay;
-                break;
-            case AppCommands.MediaStop:
-                button = RemoteButton.Stop;
-                break;
-            case AppCommands.MediaPlayPause:
-                button = RemoteButton.Pause;
-                break;
-            case AppCommands.Print:
-                button = RemoteButton.Print;
-                break;
-            case AppCommands.MediaPlay:
-                button = RemoteButton.Play;
-                break;
-            case AppCommands.MediaPause:
-                button = RemoteButton.Pause;
-                break;
-            case AppCommands.MediaRecord:
-                button = RemoteButton.Record;
-                break;
-            case AppCommands.MediaFastForward:
-                button = RemoteButton.Forward;
-                break;
-            case AppCommands.MediaRewind:
-                button = RemoteButton.Rewind;
-                break;
-            case AppCommands.MediaChannelUp:
-                button = RemoteButton.ChannelUp;
-                break;
-            case AppCommands.MediaChannelDown:
-                button = RemoteButton.ChannelDown;
-                break;
+          if (logVerbose)
+          {
+            Log.Info("MCE: Command \"{0}\" mapped from AppCommands {1}", button, command);
+          }
         }
-
-        if (button != RemoteButton.None)
+        else if (logVerbose)
         {
-            if (_inputHandler == null) InitInputHandler();
-            if (_inputHandler == null || !_inputHandler.IsLoaded) return null;
-
-            result = _inputHandler.GetMapping(((int)button).ToString());
-
-            // Get the mapping
-            if (result != null)
-            {
-                if (logVerbose)
-                {
-                    Log.Info("MCE: Command \"{0}\" mapped from AppCommands {1}", button, command);
-                }
-            }
-            else if (logVerbose)
-            {
-                Log.Info("MCE: Command \"{0}\" not mapped from AppCommands {1}", button, command);
-            }
+          Log.Info("MCE: Command \"{0}\" not mapped from AppCommands {1}", button, command);
         }
-        return result;
+      }
+      return result;
     }
   }
 }

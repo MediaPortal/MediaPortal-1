@@ -34,6 +34,19 @@ namespace MediaPortal.Player
   {
     #region Vars
 
+    public static class Win32Api
+    {
+      public const int CM_LOCATE_DEVNODE_NORMAL = 0x00000000;
+      public const int CM_REENUMERATE_NORMAL = 0x00000000;
+      public const int CR_SUCCESS = 0x00000000;
+
+      [DllImport("CfgMgr32.dll", SetLastError = true)]
+      public static extern int CM_Locate_DevNodeA(ref int pdnDevInst, string pDeviceID, int ulFlags);
+
+      [DllImport("CfgMgr32.dll", SetLastError = true)]
+      public static extern int CM_Reenumerate_DevNode(int dnDevInst, int ulFlags);
+    }
+
     #endregion
 
     #region Constructors
@@ -79,6 +92,17 @@ namespace MediaPortal.Player
         catch (Exception ex)
         {
           Log.Error("VolumeHandler: Mixer exception when init {0}", ex);
+          int pdnDevInst = 0;
+
+          if (Win32Api.CM_Locate_DevNodeA(ref pdnDevInst, null, Win32Api.CM_LOCATE_DEVNODE_NORMAL) != Win32Api.CR_SUCCESS)
+          {
+            throw new Exception("something...");
+          }
+
+          if (Win32Api.CM_Reenumerate_DevNode(pdnDevInst, Win32Api.CM_REENUMERATE_NORMAL) != Win32Api.CR_SUCCESS)
+          {
+            Log.Error("VolumeHandler: Audio device not refreshed when init {0}", ex);
+          }
         }
       }
       else

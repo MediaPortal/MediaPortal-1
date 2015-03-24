@@ -221,7 +221,7 @@ namespace MediaPortal.InputDevices
     /// <param name="hwnd"></param>
     public void Init(IntPtr hwnd)
     {
-        Init();
+      Init();
     }
 
     /// <summary>
@@ -241,10 +241,10 @@ namespace MediaPortal.InputDevices
     /// <returns></returns>
     public bool WndProc(ref System.Windows.Forms.Message msg, out GUI.Library.Action action, out char key, out Keys keyCode)
     {
-        action = null;
-        key = (char)0;
-        keyCode = Keys.A;
-        return false;
+      action = null;
+      key = (char)0;
+      keyCode = Keys.A;
+      return false;
     }
 
     /// <summary>
@@ -254,7 +254,7 @@ namespace MediaPortal.InputDevices
     /// <returns></returns>
     public MediaPortal.InputDevices.InputHandler.Mapping GetMapping(Message msg)
     {
-        return null;
+      return null;
     }
   }
 }

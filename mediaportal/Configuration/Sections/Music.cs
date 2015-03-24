@@ -302,7 +302,6 @@ namespace MediaPortal.Configuration.Sections
         SavePlaylistOnExitChkBox.Checked = xmlreader.GetValueAsBool("musicfiles", "savePlaylistOnExit", true);
         ResumePlaylistChkBox.Checked = xmlreader.GetValueAsBool("musicfiles", "resumePlaylistOnMusicEnter", true);
         PlaylistCurrentCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "playlistIsCurrent", true);
-        PlayListUTF8CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "savePlaylistUTF8", false);
 
         String strSelectOption = xmlreader.GetValueAsString("musicfiles", "selectOption", "play");
         cmbSelectOption.Text = strSelectOption == "play" ? "Play" : "Queue";
@@ -420,7 +419,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("musicfiles", "savePlaylistOnExit", SavePlaylistOnExitChkBox.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "resumePlaylistOnMusicEnter", ResumePlaylistChkBox.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "playlistIsCurrent", PlaylistCurrentCheckBox.Checked);
-        xmlwriter.SetValueAsBool("musicfiles", "savePlaylistUTF8", PlayListUTF8CheckBox.Checked);
 
         //Play behaviour
         xmlwriter.SetValue("musicfiles", "selectOption", cmbSelectOption.Text.ToLowerInvariant());

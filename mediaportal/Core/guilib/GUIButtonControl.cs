@@ -753,24 +753,18 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        int r = -1;
+        int r;
         if (int.TryParse(_hyperLinkWindow,out r))
         {
           return r;
         }
-        else
+        string parsed = GUIPropertyManager.Parse(_hyperLinkWindow);
+        Log.Debug("GUIButtonControl.HyperLink: Trying to use parsed string, original {0}, parsed {1}", _hyperLinkWindow, parsed);
+        if (int.TryParse(parsed, out r))
         {
-          string parsed = GUIPropertyManager.Parse(_hyperLinkWindow);
-          Log.Debug("GUIButtonControl.HyperLink: Trying to use parsed string, original {0}, parsed {1}", _hyperLinkWindow, parsed);
-          if (int.TryParse(parsed, out r))
-          {
-            return r;
-          }
-          else
-          {
-            return -1;
-          }
+          return r;
         }
+        return -1;
       }
       set 
         { _hyperLinkWindow = string.Format("{0}",value); }
@@ -799,24 +793,18 @@ namespace MediaPortal.GUI.Library
     {
       get 
       {
-        int r = -1;
+        int r;
         if (int.TryParse(_action, out r))
         {
           return r;
         }
-        else
+        string parsed = GUIPropertyManager.Parse(_action);
+        Log.Debug("GUIButtonControl.ActionID: Trying to use parsed string, original {0}, parsed {1}", _action, parsed);
+        if (int.TryParse(parsed, out r))
         {
-          string parsed = GUIPropertyManager.Parse(_action);
-          Log.Debug("GUIButtonControl.ActionID: Trying to use parsed string, original {0}, parsed {1}", _action, parsed);
-          if (int.TryParse(parsed, out r))
-          {
-            return r;
-          }
-          else
-          {
-            return -1;
-          }
+          return r;
         }
+        return -1;
       }
       set { _action = string.Format("{0}",value); }
     }

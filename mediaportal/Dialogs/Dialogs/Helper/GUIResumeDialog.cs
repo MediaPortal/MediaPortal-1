@@ -131,10 +131,18 @@ namespace MediaPortal.Dialogs
         //if (lastStopTime <= 0 && mediaType != MediaType.LiveRecording)
         //  return Result.PlayFromBeginning;
 
+        // Add Cancel item needed for skin that didn't display X
+        dlg.AddLocalizedString(222);
+
         // show dialog
         dlg.DoModal(GUIWindowManager.ActiveWindow);
 
         // set results
+        if (dlg.SelectedId == 222)
+        {
+          dlg.SelectedId = -1;
+        }
+
         if (dlg.SelectedId == -1)
           return Result.Abort;
 

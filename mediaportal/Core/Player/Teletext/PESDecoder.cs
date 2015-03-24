@@ -185,8 +185,12 @@ namespace MediaPortal.Player.Teletext
           m_iWritePos = 0;
 
           m_iPesHeaderLen = tsPacket[pos + 8] + 9;
-          assert(m_iPesHeaderLen == 45,
-                 "PES header not 45 as required for teletext PES packets (actual " + m_iPesHeaderLen + ")");
+          if (m_iPesHeaderLen != 45)
+          {
+            //assert(m_iPesHeaderLen == 45,
+                   //"PES header not 45 as required for teletext PES packets (actual " + m_iPesHeaderLen + ")");
+            return;
+          }
 
           if (m_pesHeader.Length < m_iPesHeaderLen)
           {

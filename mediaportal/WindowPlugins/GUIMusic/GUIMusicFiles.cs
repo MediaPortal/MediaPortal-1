@@ -439,39 +439,53 @@ namespace MediaPortal.GUI.Music
 
     private bool WakeUpSrv(string newFolderName)
     {
+      bool wakeOnLanEnabled;
       if (!Util.Utils.IsUNCNetwork(newFolderName))
       {
-        return true;
+        // Check if letter drive is a network drive
+        string detectedFolderName = Util.Utils.FindUNCPaths(newFolderName);
+        if (Util.Utils.IsUNCNetwork(detectedFolderName))
+        {
+          wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
+          newFolderName = detectedFolderName;
+        }
+        else
+        {
+          return true;
+        }
       }
+      else
+      {
+        wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
+      } 
 
       string serverName = string.Empty;
-      bool wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
 
       if (wakeOnLanEnabled)
       {
         serverName = Util.Utils.GetServerNameFromUNCPath(newFolderName);
-      }
 
-      DateTime now = DateTime.Now;
-      TimeSpan ts = now - _prevWolTime;
+        DateTime now = DateTime.Now;
+        TimeSpan ts = now - _prevWolTime;
 
-      if (serverName == _prevServerName && _wolResendTime * 60 > ts.TotalSeconds)
-      {
-        return true;
-      }
+        if (serverName == _prevServerName && _wolResendTime * 60 > ts.TotalSeconds)
+        {
+          return true;
+        }
 
-      _prevWolTime = DateTime.Now;
-      _prevServerName = serverName;
+        _prevWolTime = DateTime.Now;
+        _prevServerName = serverName;
 
-      try
-      {
-        Log.Debug("WakeUpSrv: FolderName = {0}, ShareName = {1}, WOL enabled = {2}", newFolderName, _virtualDirectory.GetShare(newFolderName).Name, wakeOnLanEnabled);
-      }
-      catch { };
+        try
+        {
+          Log.Debug("WakeUpSrv: FolderName = {0}, ShareName = {1}, WOL enabled = {2}", newFolderName, _virtualDirectory.GetShare(newFolderName).Name, wakeOnLanEnabled);
+        }
+        catch { }
 
-      if (!string.IsNullOrEmpty(serverName))
-      {
-        return WakeupUtils.HandleWakeUpServer(serverName, _wolTimeout);
+        if (!string.IsNullOrEmpty(serverName))
+        {
+          return WakeupUtils.HandleWakeUpServer(serverName, _wolTimeout);
+        }
       }
       return true;
     }
@@ -489,131 +503,131 @@ namespace MediaPortal.GUI.Music
 
       ThreadPool.QueueUserWorkItem(delegate
                                    {
-      try
-      {
-        GUIListItem SelectedItem = facadeLayout.SelectedListItem;
-        if (SelectedItem != null)
-        {
-          if (SelectedItem.IsFolder && SelectedItem.Label != "..")
-          {
-            _dirHistory.Set(SelectedItem.Label, currentFolder);
-          }
-        }
-        if (strNewDirectory != currentFolder && _mapSettings != null)
-        {
-          SaveFolderSettings(currentFolder);
-        }
+                                     try
+                                     {
+                                       GUIListItem SelectedItem = facadeLayout.SelectedListItem;
+                                       if (SelectedItem != null)
+                                       {
+                                         if (SelectedItem.IsFolder && SelectedItem.Label != "..")
+                                         {
+                                           _dirHistory.Set(SelectedItem.Label, currentFolder);
+                                         }
+                                       }
+                                       if (strNewDirectory != currentFolder && _mapSettings != null)
+                                       {
+                                         SaveFolderSettings(currentFolder);
+                                       }
 
-        GUIControl.ClearControl(GetID, facadeLayout.GetID);
+                                       GUIControl.ClearControl(GetID, facadeLayout.GetID);
 
-        if (strNewDirectory != currentFolder || _mapSettings == null)
-        {
-          LoadFolderSettings(strNewDirectory);
-        }
+                                       if (strNewDirectory != currentFolder || _mapSettings == null)
+                                       {
+                                         LoadFolderSettings(strNewDirectory);
+                                       }
 
-        currentFolder = strNewDirectory;
+                                       currentFolder = strNewDirectory;
 
-        List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(currentFolder);
+                                       List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(currentFolder);
 
         if (currentFolder == string.Empty)
         {
           RemovableDrivesHandler.FilterDrives(ref itemlist);
         }
 
-        string strSelectedItem = _dirHistory.Get(currentFolder);
+                                       string strSelectedItem = _dirHistory.Get(currentFolder);
 
-        int iItem = 0;
-        bool itemSelected = false;
-        TimeSpan totalPlayingTime = new TimeSpan();
+                                       int iItem = 0;
+                                       bool itemSelected = false;
+                                       TimeSpan totalPlayingTime = new TimeSpan();
 
-        GetTagInfo(ref itemlist);
+                                       GetTagInfo(ref itemlist);
 
-        itemlist.Sort(new MusicSort(CurrentSortMethod, CurrentSortAsc));
+                                       itemlist.Sort(new MusicSort(CurrentSortMethod, CurrentSortAsc));
 
-        for (int i = 0; i < itemlist.Count; ++i)
-        {
-          GUIListItem item = itemlist[i];
+                                       for (int i = 0; i < itemlist.Count; ++i)
+                                       {
+                                         GUIListItem item = itemlist[i];
 
-          if (!item.IsFolder)
-          {
-            // labels for folders are set by the virtual directory
-            GUIMusicBaseWindow.SetTrackLabels(ref item, CurrentSortMethod);
-          }
+                                         if (!item.IsFolder)
+                                         {
+                                           // labels for folders are set by the virtual directory
+                                           GUIMusicBaseWindow.SetTrackLabels(ref item, CurrentSortMethod);
+                                         }
 
-          MusicTag tag = (MusicTag)item.MusicTag;
-          if (tag != null)
-          {
-            if (tag.Duration > 0)
-            {
-              totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
-            }
-          }
+                                         MusicTag tag = (MusicTag)item.MusicTag;
+                                         if (tag != null)
+                                         {
+                                           if (tag.Duration > 0)
+                                           {
+                                             totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
+                                           }
+                                         }
 
-          if (!itemSelected && item.Label == strSelectedItem)
-          {
-            itemSelected = true;
-            iItem = i;
-          }
+                                         if (!itemSelected && item.Label == strSelectedItem)
+                                         {
+                                           itemSelected = true;
+                                           iItem = i;
+                                         }
 
-          if (!string.IsNullOrEmpty(_currentPlaying) &&
-              item.Path.Equals(_currentPlaying, StringComparison.OrdinalIgnoreCase))
-          {
-            item.Selected = true;
-          }
+                                         if (!string.IsNullOrEmpty(_currentPlaying) &&
+                                             item.Path.Equals(_currentPlaying, StringComparison.OrdinalIgnoreCase))
+                                         {
+                                           item.Selected = true;
+                                         }
 
-          item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-          item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+                                         item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+                                         item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
 
-          facadeLayout.Add(item);
-        }
+                                         facadeLayout.Add(item);
+                                       }
 
-        int iTotalItems = facadeLayout.Count;
-        if (iTotalItems > 0)
-        {
-          GUIListItem rootItem = facadeLayout[0];
-          if (rootItem.Label == "..")
-          {
-            iTotalItems--;
-          }
-        }
+                                       int iTotalItems = facadeLayout.Count;
+                                       if (iTotalItems > 0)
+                                       {
+                                         GUIListItem rootItem = facadeLayout[0];
+                                         if (rootItem.Label == "..")
+                                         {
+                                           iTotalItems--;
+                                         }
+                                       }
 
-        //set object count label, total duration
+                                       //set object count label, total duration
                                        GUIPropertyManager.SetProperty("#itemcount",
                                          Util.Utils.GetObjectCountLabel(iTotalItems));
 
-        if (totalPlayingTime.TotalSeconds > 0)
-        {
-          GUIPropertyManager.SetProperty("#totalduration",
+                                       if (totalPlayingTime.TotalSeconds > 0)
+                                       {
+                                         GUIPropertyManager.SetProperty("#totalduration",
                                          Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));
-        }
-        else
-        {
-          GUIPropertyManager.SetProperty("#totalduration", string.Empty);
-        }
+                                       }
+                                       else
+                                       {
+                                         GUIPropertyManager.SetProperty("#totalduration", string.Empty);
+                                       }
 
-        if (itemSelected)
-        {
-          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, iItem);
-        }
-        else if (_selectedItem >= 0)
-        {
-          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _selectedItem);
-        }
-        else
-        {
-          SelectCurrentItem();
-        }
-        UpdateButtonStates();
-        GUIWaitCursor.Hide();
-      }
-      catch (Exception ex)
-      {
-        GUIWaitCursor.Hide();
+                                       if (itemSelected)
+                                       {
+                                         GUIControl.SelectItemControl(GetID, facadeLayout.GetID, iItem);
+                                       }
+                                       else if (_selectedItem >= 0)
+                                       {
+                                         GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _selectedItem);
+                                       }
+                                       else
+                                       {
+                                         SelectCurrentItem();
+                                       }
+                                       UpdateButtonStates();
+                                       GUIWaitCursor.Hide();
+                                     }
+                                     catch (Exception ex)
+                                     {
+                                       GUIWaitCursor.Hide();
                                        Log.Error("GUIMusicFiles: An error occured while loading the directory {0}",
                                          ex.Message);
-      }
-      TimeSpan ts = DateTime.Now.Subtract(dtStart);
-      Log.Debug("Folder: {0} : took : {1} s to load", strNewDirectory, ts.TotalSeconds);
+                                     }
+                                     TimeSpan ts = DateTime.Now.Subtract(dtStart);
+                                     Log.Debug("Folder: {0} : took : {1} s to load", strNewDirectory, ts.TotalSeconds);
                                    });
     }
 
@@ -1678,11 +1692,11 @@ namespace MediaPortal.GUI.Music
 
           if (tag != null)
           {
-            pItem.MusicTag = tag;
-            pItem.Duration = tag.Duration;
-            pItem.Year = tag.Year;
-            pItem.Rating = tag.Rating;
-          }
+              pItem.MusicTag = tag;
+              pItem.Duration = tag.Duration;
+              pItem.Year = tag.Year;
+              pItem.Rating = tag.Rating;
+            }
         }
       }
     }

@@ -711,7 +711,7 @@ namespace MediaPortal.GUI.Pictures
       LoadDirectory(currentFolder);
       if (selectedItemIndex >= 0 && (PreviousWindowId == (int)Window.WINDOW_SLIDESHOW || PreviousWindowId == (int)Window.WINDOW_PICTURES))
       {
-        GUISlideShow SlideShow = (GUISlideShow) GUIWindowManager.GetWindow((int) Window.WINDOW_SLIDESHOW);
+        GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
         Log.Debug("GUIPictures: currentSlideIndex {0}", SlideShow._currentSlideIndex);
         /*if (SlideShow._currentSlideIndex != -1)
           selectedItemIndex += SlideShow._currentSlideIndex+1;*/
@@ -2519,39 +2519,56 @@ namespace MediaPortal.GUI.Pictures
 
     private bool WakeUpSrv(string newFolderName)
     {
+      bool wakeOnLanEnabled;
       if (!Util.Utils.IsUNCNetwork(newFolderName))
       {
-        return true;
+        // Check if letter drive is a network drive
+        string detectedFolderName = Util.Utils.FindUNCPaths(newFolderName);
+        if (Util.Utils.IsUNCNetwork(detectedFolderName))
+        {
+          wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
+          newFolderName = detectedFolderName;
+        }
+        else
+        {
+          return true;
+        }
+      }
+      else
+      {
+        wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
       }
 
       string serverName = string.Empty;
-      bool wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
 
       if (wakeOnLanEnabled)
       {
         serverName = Util.Utils.GetServerNameFromUNCPath(newFolderName);
-      }
 
-      DateTime now = DateTime.Now;
-      TimeSpan ts = now - _prevWolTime;
+        DateTime now = DateTime.Now;
+        TimeSpan ts = now - _prevWolTime;
 
-      if (serverName == _prevServerName && _wolResendTime * 60 > ts.TotalSeconds)
-      {
-        return true;
-      }
+        if (serverName == _prevServerName && _wolResendTime*60 > ts.TotalSeconds)
+        {
+          return true;
+        }
 
-      _prevWolTime = DateTime.Now;
-      _prevServerName = serverName;
+        _prevWolTime = DateTime.Now;
+        _prevServerName = serverName;
 
-      try
-      {
-        Log.Debug("WakeUpSrv: FolderName = {0}, ShareName = {1}, WOL enabled = {2}", newFolderName, _virtualDirectory.GetShare(newFolderName).Name, wakeOnLanEnabled);
-      }
-      catch { };
+        try
+        {
+          Log.Debug("WakeUpSrv: FolderName = {0}, ShareName = {1}, WOL enabled = {2}", newFolderName,
+                    _virtualDirectory.GetShare(newFolderName).Name, wakeOnLanEnabled);
+        }
+        catch
+        {
+        }
 
-      if (!string.IsNullOrEmpty(serverName))
-      {
-        return WakeupUtils.HandleWakeUpServer(serverName, _wolTimeout);
+        if (!string.IsNullOrEmpty(serverName))
+        {
+          return WakeupUtils.HandleWakeUpServer(serverName, _wolTimeout);
+        }
       }
       return true;
     }
