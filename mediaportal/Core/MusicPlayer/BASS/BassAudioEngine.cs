@@ -559,6 +559,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
         case MusicStream.StreamAction.Freed:
           {
+            _mixer.FreeGcHandle(musicStream.BassStream);
             musicStream.Dispose();
           }
           break;
