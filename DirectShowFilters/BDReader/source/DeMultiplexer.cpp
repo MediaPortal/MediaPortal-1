@@ -347,9 +347,10 @@ Packet* CDeMultiplexer::GetVideo()
     if (m_filter.IsStopping() || m_bEndOfFile || ReadFromFile() <= 0)
       return NULL;
   }
-  Packet * ret = m_playlistManager->GetNextVideoPacket();
 
-  return ret;
+  m_filter.lib.ProcessEvents();
+
+  return m_playlistManager->GetNextVideoPacket();
 }
 
 ///
@@ -365,6 +366,8 @@ Packet* CDeMultiplexer::GetAudio()
     if (m_filter.IsStopping() || m_bEndOfFile || ReadFromFile() <= 0)
       return NULL;
   }
+
+  m_filter.lib.ProcessEvents();
 
   Packet* packet = m_playlistManager->GetNextAudioPacket();
   if (packet && packet->rtTitleDuration == 0)
