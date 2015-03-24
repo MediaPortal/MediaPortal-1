@@ -279,7 +279,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">The channel.</param>
     /// <param name="settings">The settings.</param>
     /// <returns></returns>
-    public virtual List<IChannel> Scan(IChannel channel, ScanParameters settings)
+    public virtual List<IChannel> Scan(IChannel channel, string userName, ScanParameters settings)
     {
       try
       {
@@ -289,7 +289,7 @@ namespace TvLibrary.Implementations.DVB
           isDigitalCableScan = true;
         }
         _card.IsScanning = true;
-        _card.Scan(0, channel);
+        _card.Scan(0, userName, channel);
         _analyzer = GetAnalyzer();
         if (_analyzer == null)
         {
@@ -452,7 +452,7 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         _card.IsScanning = true;
-        _card.Scan(0, channel);
+        _card.Scan(0, "", channel);
         _analyzer = GetAnalyzer();
         if (_analyzer == null)
         {

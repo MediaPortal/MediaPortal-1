@@ -125,9 +125,10 @@ namespace TvService
                 if (useErrorDetection)
                 {
                   bool isScrambled;
-                  if (WaitForFile(ref user, out isScrambled))
+                  bool isAsyncTuning;
+                  if (WaitForFile(ref user, out isScrambled, out isAsyncTuning))
                   {
-                    result = TvResult.Succeeded;
+                    result = isAsyncTuning ? TvResult.TuneAsync : TvResult.Succeeded;
                   }
                   else
                   {

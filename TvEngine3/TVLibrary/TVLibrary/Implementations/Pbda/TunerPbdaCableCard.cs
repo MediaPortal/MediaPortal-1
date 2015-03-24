@@ -238,7 +238,7 @@ namespace TvLibrary.Implementations.Pbda
 
     #region tuning & recording
 
-    protected override ITvSubChannel SubmitTuneRequest(int subChannelId, IChannel channel, ITuneRequest tuneRequest,
+    protected override ITvSubChannel SubmitTuneRequest(int subChannelId, string userName, IChannel channel, ITuneRequest tuneRequest,
                                               bool performTune)
     {
       Log.Log.Info("PBDA CC: tune channel \"{0}\", sub channel ID {1}", channel.Name, subChannelId);
@@ -249,7 +249,7 @@ namespace TvLibrary.Implementations.Pbda
       {
         Log.Log.Debug("  new subchannel");
         newSubChannel = true;
-        subChannelId = GetNewSubChannel(channel);
+        subChannelId = GetNewSubChannel(channel, userName);
         subChannel = _mapSubChannels[subChannelId];
       }
       else
@@ -317,7 +317,7 @@ namespace TvLibrary.Implementations.Pbda
     /// <param name="subChannelId">The sub channel id.</param>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded else false</returns>
-    public override ITvSubChannel Scan(int subChannelId, IChannel channel)
+    public override ITvSubChannel Scan(int subChannelId, string userName, IChannel channel)
     {
       Log.Log.Info("PBDA CC: scan, subchannel ID {0}", subChannelId);
       BeforeTune(channel);
@@ -328,7 +328,7 @@ namespace TvLibrary.Implementations.Pbda
       {
         Log.Log.Debug("  new subchannel");
         newSubChannel = true;
-        subChannelId = GetNewSubChannel(channel);
+        subChannelId = GetNewSubChannel(channel, userName);
         subChannel = _mapSubChannels[subChannelId];
       }
       else

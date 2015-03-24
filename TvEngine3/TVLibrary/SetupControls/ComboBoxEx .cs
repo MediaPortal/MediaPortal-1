@@ -90,13 +90,7 @@ namespace SetupControls
       set { _text = value; }
     }
 
-    private int _imageIndex;
-
-    public int ImageIndex
-    {
-      get { return _imageIndex; }
-      set { _imageIndex = value; }
-    }
+    public int ImageIndex { get; set; }
 
     public ComboBoxExItem()
       : this("") {}
@@ -108,7 +102,7 @@ namespace SetupControls
     {
       _id = id;
       _text = text;
-      _imageIndex = imageIndex;
+      ImageIndex = imageIndex;
     }
 
     public int Id

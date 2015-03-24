@@ -300,9 +300,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="subChannelId">The sub channel id</param>
     /// <param name="channel">The channel.</param>
     /// <returns></returns>
-    public virtual ITvSubChannel Scan(int subChannelId, IChannel channel)
+    public virtual ITvSubChannel Scan(int subChannelId, string userName, IChannel channel)
     {
-      return DoTune(subChannelId, channel, true);
+      return DoTune(subChannelId, userName, channel, true);
     }
 
     public abstract ITVScanning ScanningInterface { get; }
@@ -312,16 +312,17 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="subChannelId">The sub channel id</param>
     /// <param name="channel">The channel.</param>
+    /// <param name="Username">The current User.</param>
     /// <returns></returns>
-    public virtual ITvSubChannel Tune(int subChannelId, IChannel channel)
+    public virtual ITvSubChannel Tune(int subChannelId, string userName, IChannel channel)
     {
-      return DoTune(subChannelId, channel, false);
+      return DoTune(subChannelId, userName, channel, false);
     }
 
-    private ITvSubChannel DoTune(int subChannelId, IChannel channel, bool ignorePMT)
+    private ITvSubChannel DoTune(int subChannelId, string userName, IChannel channel, bool ignorePMT)
     {      
       bool performTune = (_previousChannel == null || _previousChannel.IsDifferentTransponder(channel));
-      ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest, performTune);
+      ITvSubChannel ch = SubmitTuneRequest(subChannelId, userName, channel, _tuneRequest, performTune);
       _previousChannel = channel;
 
       try
@@ -393,13 +394,13 @@ namespace TvLibrary.Implementations.DVB
     /// Allocates a new instance of TvDvbChannel which handles the new subchannel
     /// </summary>
     /// <returns>handle for to the subchannel</returns>
-    protected int GetNewSubChannel(IChannel channel)
+    protected int GetNewSubChannel(IChannel channel, string _userName)
     {
       int id = _subChannelId++;
       Log.Log.Info("dvb:GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
 
       TvDvbChannel subChannel = new TvDvbChannel(_graphBuilder, _conditionalAccess, _mdplugs, _filterTIF,
-                                                 _filterTsWriter, id, channel);
+                                                 _filterTsWriter, id, channel, _userName);
       subChannel.Parameters = Parameters;
       subChannel.CurrentChannel = channel;
       _mapSubChannels[id] = subChannel;
@@ -434,7 +435,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="tuneRequest">tune requests</param>
     /// <param name="performTune">Indicates if a tune is required</param>
     /// <returns></returns>
-    protected virtual ITvSubChannel SubmitTuneRequest(int subChannelId, IChannel channel, ITuneRequest tuneRequest,
+    protected virtual ITvSubChannel SubmitTuneRequest(int subChannelId, string userName, IChannel channel, ITuneRequest tuneRequest,
                                               bool performTune)
     {
       Log.Log.Info("dvb:Submiting tunerequest Channel:{0} subChannel:{1} ", channel.Name, subChannelId);
@@ -443,7 +444,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Info("dvb:Getting new subchannel");
         newSubChannel = true;
-        subChannelId = GetNewSubChannel(channel);
+        subChannelId = GetNewSubChannel(channel, userName);
       }
       else
       {
@@ -528,7 +529,8 @@ namespace TvLibrary.Implementations.DVB
         _mapSubChannels[subChannelId].OnAfterTune();
       }
       catch (Exception ex)
-      {        
+      {
+        _cancelTune = false;
         if (newSubChannel)
         {
           Log.Log.WriteFile("dvb:SubmitTuneRequest  failed - removing subchannel: {0}, {1} - {2}", subChannelId, ex.Message, ex.StackTrace);
@@ -855,6 +857,7 @@ namespace TvLibrary.Implementations.DVB
           dvbChannel.CancelTune();
         }
       }
+      _cancelTune = false;
     }
 
     //protected Dictionary<int, TvDvbChannel> _mapSubChannels;
@@ -898,7 +901,7 @@ namespace TvLibrary.Implementations.DVB
       _epgGrabbing = false;
       if (_mapSubChannels.ContainsKey(subChannel))
       {
-        LockInOnSignal();        
+        LockInOnSignal();
         _mapSubChannels[subChannel].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
         _mapSubChannels[subChannel].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
         _mapSubChannels[subChannel].OnGraphStarted();

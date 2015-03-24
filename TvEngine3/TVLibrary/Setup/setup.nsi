@@ -510,9 +510,14 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; protocol implementations for MPUrlSourceSplitter.ax
   File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Parser_Default*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol_Http*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol_Rtsp*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol_Udp*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_libcurl*"
   File "${git_DirectShowFilters}\bin_Win32\avcodec-mpurlsourcesplitter-54.dll"
   File "${git_DirectShowFilters}\bin_Win32\avformat-mpurlsourcesplitter-54.dll"
-  File "${git_DirectShowFilters}\bin_Win32\avutil-mpurlsourcesplitter-51.dll"  
+  File "${git_DirectShowFilters}\bin_Win32\avutil-mpurlsourcesplitter-51.dll"
 
   File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
   
@@ -536,6 +541,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ${IfNot} ${MP023IsInstalled}
   ${AndIfNot} ${MPIsInstalled}
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsReader\bin\${BUILD_TYPE}\TsReader.ax" "$INSTDIR\TsReader.ax" "$INSTDIR"
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\Core-CC-Parser\CCCP\${BUILD_TYPE}\cccp.ax" "$INSTDIR\cccp.ax" "$INSTDIR"
   ${EndIf}
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsWriter\bin\${BUILD_TYPE}\TsWriter.ax" "$INSTDIR\TsWriter.ax" "$INSTDIR"
   ; filters for analog tv
@@ -606,6 +612,7 @@ ${MementoSectionEnd}
   ${IfNot} ${MP023IsInstalled}
   ${AndIfNot} ${MPIsInstalled}
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\TsReader.ax"
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\cccp.ax"
     WriteRegStr HKCR "Media Type\Extensions\.ts"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
     WriteRegStr HKCR "Media Type\Extensions\.tp"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
     WriteRegStr HKCR "Media Type\Extensions\.tsbuffer"  "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
@@ -697,10 +704,15 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\MPIPTV_UDP.dll"  
 
   ; protocol implementations for MPUrlSourceSplitter.ax
+  Delete "$INSTDIR\MPUrlSourceSplitter_Parser_Default*"
+  Delete "$INSTDIR\MPUrlSourceSplitter_Protocol_Http*"
+  Delete "$INSTDIR\MPUrlSourceSplitter_Protocol_Rtsp*"
+  Delete "$INSTDIR\MPUrlSourceSplitter_Protocol_Udp*"
+  Delete "$INSTDIR\MPUrlSourceSplitter_libcurl*"
   Delete "$INSTDIR\MPUrlSourceSplitter*"
   Delete "$INSTDIR\avcodec-mpurlsourcesplitter-54.dll"
   Delete "$INSTDIR\avformat-mpurlsourcesplitter-54.dll"
-  Delete "$INSTDIR\avutil-mpurlsourcesplitter-51.dll" 
+  Delete "$INSTDIR\avutil-mpurlsourcesplitter-51.dll"
 
   ; remove Start Menu shortcuts
   Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"

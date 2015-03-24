@@ -124,7 +124,7 @@ namespace TvService
         return;
       context.GetUser(ref user, _cardHandler.DataBaseCard.IdCard);
 
-      Log.Debug("usermanagement.RemoveUser: {0}, subch: {1} of {2}, card: {3}", user.Name, user.SubChannel, _cardHandler.Card.SubChannels.Length, _cardHandler.DataBaseCard.IdCard);                  
+      Log.Debug("usermanagement.RemoveUser: {0}, subch: {1} of {2}, card: {3}", user.Name, user.SubChannel, _cardHandler.Card.SubChannels.Length, _cardHandler.DataBaseCard.IdCard);
       context.Remove(user);
       if (!context.ContainsUsersForSubchannel(user.SubChannel))
       {

@@ -96,6 +96,10 @@ namespace TvControl
     /// <summary>
     /// A tune operation was cancelled
     /// </summary>
-    TuneCancelled
+    TuneCancelled,
+    /// <summary>
+    /// A tune operation async
+    /// </summary>
+    TuneAsync
   }
 }

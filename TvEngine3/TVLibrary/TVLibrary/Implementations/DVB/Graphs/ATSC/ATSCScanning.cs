@@ -67,7 +67,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">The channel.</param>
     /// <param name="settings">The settings.</param>
     /// <returns></returns>
-    public override List<IChannel> Scan(IChannel channel, ScanParameters settings)
+    public override List<IChannel> Scan(IChannel channel, string userName, ScanParameters settings)
     {
       ATSCChannel atscChannel = channel as ATSCChannel;
       if (atscChannel == null)
@@ -82,7 +82,7 @@ namespace TvLibrary.Implementations.DVB
       {
         _transportStreamStandard = TransportStreamStandard.Scte;
       }
-      return base.Scan(channel, settings);
+      return base.Scan(channel, userName, settings);
     }
 
     /// <summary>

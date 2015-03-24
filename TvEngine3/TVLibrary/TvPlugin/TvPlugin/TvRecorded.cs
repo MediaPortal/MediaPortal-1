@@ -303,15 +303,47 @@ namespace TvPlugin
       base.OnPageLoad();
       InitViewSelections();
 
-      //DeleteInvalidRecordings();
+      // launch DeleteInvalidRecordings async for instant start of GUI screen - refresh GUI later, if recordings have been deleted
+      bool recordingsDeleted = false;
+      Object loadFacadeLock = new Object();
 
-      if (btnCompress != null)
+      new Thread(delegate()
       {
-        btnCompress.Visible = false;
-      }
+        {
+          try
+          {
+            recordingsDeleted = DeleteInvalidRecordings();
+          }
+          catch (Exception ex)
+          {
+            Log.Debug("TvRecorded: DeleteInvalidRecordings - error: " + ex.Message);
+          }
+        }
+        GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) =>
+        {
+          {
+            if (recordingsDeleted)
+            {
+              Log.Debug("TvRecorded: recordings were deleted -> now update GUI");
+              lock (loadFacadeLock)
+              {
+                UpdateGUI();
+              }
+            }
+            else
+            {
+              Log.Debug("TvRecorded: no recordings were deleted -> skip GUI update");
+            }
+          }
+          return 0;
+        }, 0, 0, null);
+      }) { Name = "TvRecorded: DeleteInvalidRecordings", IsBackground = true, Priority = ThreadPriority.BelowNormal }.Start();
 
       LoadSettings();
-      LoadDirectory();
+      lock (loadFacadeLock)
+      {
+        LoadDirectory();
+      }
 
       while (_iSelectedItem >= GetItemCount() && _iSelectedItem > 0)
       {

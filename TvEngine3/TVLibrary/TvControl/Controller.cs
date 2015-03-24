@@ -825,6 +825,14 @@ namespace TvControl
     bool StopTimeShifting(ref IUser user, TvStoppedReason reason);
 
     /// <summary>
+    /// Stops the time shifting.
+    /// </summary>
+    /// <param name="user">user credentials.</param>
+    /// <param name="reason">reason why timeshifting is stopped.</param>
+    /// <returns>true if success otherwise false</returns>
+    bool CancelTimeShifting(ref IUser user, int idChannel);
+
+    /// <summary>
     /// Gets the reason why timeshifting stopped.
     /// </summary>
     /// <param name="user">The user.</param>

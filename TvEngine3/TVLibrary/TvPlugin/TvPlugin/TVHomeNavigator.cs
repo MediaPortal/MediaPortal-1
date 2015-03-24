@@ -85,7 +85,7 @@ namespace TvPlugin
     private int m_zapChannelNr = -1;
     private int m_zapgroup = -1;
     private Channel _lastViewedChannel = null; // saves the last viewed Channel  // mPod    
-    private Channel m_currentChannel = null;
+    internal Channel m_currentChannel = null;
     private IList channels = new ArrayList();
     private bool reentrant = false;
 

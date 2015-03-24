@@ -257,6 +257,13 @@ namespace TvPlugin
       {
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           {
+            if (!TVHome.Connected)
+            {
+              RemoteControl.Clear();
+              GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+              PageDestroy();
+            }
+
             if (message.SenderControlId == 35 || message.SenderControlId == 37) // listbox
             {
               if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
@@ -357,6 +364,12 @@ namespace TvPlugin
     /// </summary>
     protected override void OnPageLoad()
     {
+      if (!TVHome.Connected)
+      {
+        RemoteControl.Clear();
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+        return;
+      }
       //Stopwatch bClock = Stopwatch.StartNew();
 
       //Log.Debug("TvMiniGuide: onpageload");

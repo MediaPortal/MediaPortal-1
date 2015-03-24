@@ -33,7 +33,9 @@ namespace TvLibrary
 
     private readonly ITVCard _card;
     private readonly System.Timers.Timer _epgTimer = new System.Timers.Timer();
+    private readonly System.Timers.Timer _epgTimerRefresh = new System.Timers.Timer();
     private DateTime _grabStartTime;
+    private DateTime _grabStartTimeRefresh;
     private List<EpgChannel> _epg;
     private bool _updateThreadRunning;
     private readonly EpgDBUpdater _dbUpdater;
@@ -46,15 +48,25 @@ namespace TvLibrary
       _dbUpdater = new EpgDBUpdater(epgEvents, "TimeshiftingEpgGrabber", false);
       _updateThreadRunning = false;
       _epgTimer.Elapsed += _epgTimer_Elapsed;
+      _epgTimerRefresh.Elapsed += _epgTimerRefresh_Elapsed;
     }
 
     private void LoadSettings()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       double timeout;
-      if (!double.TryParse(layer.GetSetting("timeshiftingEpgGrabberTimeout", "2").Value, out timeout))
+      int _epgReGrabAfter;
+      if (!double.TryParse(layer.GetSetting("timeshiftingEpgGrabberTimeout", "2").Value, out timeout) || timeout == 0)
+      {
         timeout = 2;
+      }
+      Setting s = layer.GetSetting("timeoutEPGRefresh", "240");
+      if (Int32.TryParse(s.Value, out _epgReGrabAfter) == false)
+      {
+        _epgReGrabAfter = 240;
+      }
       _epgTimer.Interval = timeout * 60000;
+      _epgTimerRefresh.Interval = _epgReGrabAfter * 60000;
     }
 
     public bool StartGrab()
@@ -67,7 +79,9 @@ namespace TvLibrary
       LoadSettings();
       Log.Log.Info("Timeshifting epg grabber started.");
       _grabStartTime = DateTime.Now;
+      _grabStartTimeRefresh = DateTime.Now;
       _epgTimer.Enabled = true;
+      _epgTimerRefresh.Enabled = true;
       return true;
     }
 
@@ -77,6 +91,13 @@ namespace TvLibrary
       Log.Log.Epg("TimeshiftingEpgGrabber: timeout after {0} mins", ts.TotalMinutes);
       _epgTimer.Enabled = false;
       _card.AbortGrabbing();
+    }
+
+    private void _epgTimerRefresh_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+      TimeSpan ts = DateTime.Now - _grabStartTimeRefresh;
+      Log.Log.Epg("TimeshiftingEpgGrabber: refresh EPG while timeshift after {0} mins", ts.TotalMinutes);
+      _card.GrabEpg();
     }
 
     #region BaseEpgGrabber implementation

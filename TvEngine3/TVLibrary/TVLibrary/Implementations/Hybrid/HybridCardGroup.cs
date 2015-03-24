@@ -200,7 +200,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <param name="subChannelId">The subchannel id</param>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded else false</returns>
-    public ITvSubChannel Tune(int subChannelId, IChannel channel)
+    public ITvSubChannel Tune(int subChannelId, string userName, IChannel channel)
     {
       for (int i = 0; i < _cards.Count; ++i)
       {
@@ -214,7 +214,7 @@ namespace TvLibrary.Implementations.Hybrid
               _cards[x].Dispose();
             }
           }
-          return _cards[_currentCardIndex].Tune(subChannelId, channel);
+          return _cards[_currentCardIndex].Tune(subChannelId, userName, channel);
         }
       }
       return null;
@@ -226,7 +226,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <param name="subChannelId">The subchannel id</param>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded else false</returns>
-    public ITvSubChannel Scan(int subChannelId, IChannel channel)
+    public ITvSubChannel Scan(int subChannelId, string userName, IChannel channel)
     {
       for (int i = 0; i < _cards.Count; ++i)
       {
@@ -240,7 +240,7 @@ namespace TvLibrary.Implementations.Hybrid
               _cards[x].Dispose();
             }
           }
-          return _cards[_currentCardIndex].Scan(subChannelId, channel);
+          return _cards[_currentCardIndex].Scan(subChannelId, userName, channel);
         }
       }
       return null;

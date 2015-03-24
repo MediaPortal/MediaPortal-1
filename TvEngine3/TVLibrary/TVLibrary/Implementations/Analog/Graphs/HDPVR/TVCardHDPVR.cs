@@ -276,7 +276,19 @@ namespace TvLibrary.Implementations.Analog
     /// <param name="subChannelId">The sub channel id.</param>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded else false</returns>
-    public ITvSubChannel Scan(int subChannelId, IChannel channel)
+    public ITvSubChannel Scan(int subChannelId, string userName, IChannel channel)
+    {
+      return Tune(subChannelId, channel);
+    }
+
+    /// <summary>
+    /// Scans the specified channel.
+    /// </summary>
+    /// <param name="subChannelId">The sub channel id.</param>
+    /// <param name="channel">The channel.</param>
+    /// <param name="Username">The current User.</param>
+    /// <returns>true if succeeded else false</returns>
+    public ITvSubChannel Tune(int subChannelId, string userName, IChannel channel)
     {
       return Tune(subChannelId, channel);
     }

@@ -138,19 +138,22 @@ namespace TvService
     /// <param name = "user">The user.</param>
     public void Add(IUser user)
     {
-      Log.Info("user:{0} add", user.Name);
-      if (_owner == null)
+      if (user != null)
       {
-        _owner = user;
-      }
-      int i = _users.FindIndex(t => t.Name == user.Name);
-      if (i > -1)
-      {
-        _users[i] = (User)user.Clone();
-      }
-      else
-      {
-        _users.Add(user);
+        Log.Info("user:{0} add", user.Name);
+        if (_owner == null)
+        {
+          _owner = user;
+        }
+        int i = _users.FindIndex(t => t.Name == user.Name);
+        if (i > -1)
+        {
+          _users[i] = (User) user.Clone();
+        }
+        else
+        {
+          _users.Add(user);
+        }
       }
     }
 

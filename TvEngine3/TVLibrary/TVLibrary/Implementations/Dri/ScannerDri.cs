@@ -328,7 +328,7 @@ namespace TvLibrary.Implementations.Dri
       }*/
     }
 
-    public List<IChannel> Scan(IChannel channel, ScanParameters settings)
+    public List<IChannel> Scan(IChannel channel, string userName, ScanParameters settings)
     {
       try
       {
@@ -336,7 +336,7 @@ namespace TvLibrary.Implementations.Dri
         _sourcesWithoutNames.Clear();
 
         _tuner.IsScanning = true;
-        _tuner.Scan(0, channel);
+        _tuner.Scan(0, userName, channel);
         _fdcService.SubscribeStateVariables(OnTableSection);
         Thread.Sleep(1000);
 

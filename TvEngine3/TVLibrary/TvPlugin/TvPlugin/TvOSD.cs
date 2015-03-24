@@ -2026,6 +2026,8 @@ namespace TvPlugin
 
       else
       {
+        GUIPropertyManager.SetProperty("#Play.Current.TSBitRate",
+         ((float)MediaPortal.Player.g_Player.GetVideoFormat().bitrate / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture));        
         Recording rec = null;
         string startTime = "";
         string endTime = "";

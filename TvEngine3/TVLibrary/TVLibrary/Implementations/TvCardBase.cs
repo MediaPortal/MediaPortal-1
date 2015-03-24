@@ -718,15 +718,15 @@ namespace TvLibrary.Implementations
         _subChannelId = 0;
         IsEpgGrabbing = false;  // stop the EPG grabber
 
-        Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, pausing graph");          
+        Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, pausing graph");
         if (SupportsPauseGraph)
         {
-          PauseGraph();  
+          PauseGraph();
         }
         else
         {
-          StopGraph();  
-        }          
+          StopGraph();
+        }
         
       }
       else

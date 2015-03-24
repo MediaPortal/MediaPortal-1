@@ -246,9 +246,19 @@ namespace SetupTv.Sections
           foreach (GroupMap map in maps)
           {
             XmlNode nodeMap = xmlDoc.CreateElement("map");
-            AddAttribute(nodeMap, "ChannelName", map.ReferencedChannel().DisplayName);
-            AddAttribute(nodeMap, "SortOrder", map.SortOrder.ToString());
-            nodeGroupMap.AppendChild(nodeMap);
+            Channel ch = map.ReferencedChannel();
+            if (ch == null)
+            {
+              map.Delete();
+              map.IsChanged = true;
+              map.Persist();
+            }
+            else
+            {
+              AddAttribute(nodeMap, "ChannelName", map.ReferencedChannel().DisplayName);
+              AddAttribute(nodeMap, "SortOrder", map.SortOrder.ToString());
+              nodeGroupMap.AppendChild(nodeMap);
+            }
           }
           nodeChannelGroup.AppendChild(nodeGroupMap);
           nodeChannelGroups.AppendChild(nodeChannelGroup);
@@ -271,7 +281,10 @@ namespace SetupTv.Sections
           foreach (RadioGroupMap map in maps)
           {
             XmlNode nodeMap = xmlDoc.CreateElement("map");
-            AddAttribute(nodeMap, "ChannelName", map.ReferencedChannel().DisplayName);
+            if (map.ReferencedChannel() != null)
+            {
+              AddAttribute(nodeMap, "ChannelName", map.ReferencedChannel().DisplayName);
+            }
             AddAttribute(nodeMap, "SortOrder", map.SortOrder.ToString());
             nodeRadioGroupMap.AppendChild(nodeMap);
           }

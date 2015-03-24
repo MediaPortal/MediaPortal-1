@@ -215,14 +215,14 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="subChannelId">The subchannel id</param>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded else false</returns>
-    public override ITvSubChannel Scan(int subChannelId, IChannel channel)
+    public override ITvSubChannel Scan(int subChannelId, string userName, IChannel channel)
     {
       Log.Log.WriteFile("dvbs ss2: Scan:{0}", channel);
 
       try
       {
         int pmtPid;
-        if (!BeforeTune(channel, ref subChannelId, out pmtPid))
+        if (!BeforeTune(channel, userName, ref subChannelId, out pmtPid))
         {
           return null;
         }
@@ -260,7 +260,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="subChannelId">The subchannel id</param>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded else false</returns>
-    public override ITvSubChannel Tune(int subChannelId, IChannel channel)
+    public override ITvSubChannel Tune(int subChannelId, string userName, IChannel channel)
     {
       Log.Log.WriteFile("dvbs ss2: Tune:{0}", channel);
 
@@ -268,7 +268,7 @@ namespace TvLibrary.Implementations.DVB
       {
         //FreePreviousChannelMDPlugs();
         int pmtPid;
-        if (!BeforeTune(channel, ref subChannelId, out pmtPid))
+        if (!BeforeTune(channel, userName, ref subChannelId, out pmtPid))
         {
           return null;
         }
@@ -369,7 +369,7 @@ namespace TvLibrary.Implementations.DVB
       
     }
 
-    private bool BeforeTune(IChannel channel, ref int subChannelId, out int pmtPid)
+    private bool BeforeTune(IChannel channel, string userName, ref int subChannelId, out int pmtPid)
     {
       int frequency = 0;
       int symbolRate = 0;
@@ -580,7 +580,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_mapSubChannels.ContainsKey(subChannelId) == false)
       {
-        subChannelId = GetNewSubChannel(channel);
+        subChannelId = GetNewSubChannel(channel, userName);
       }
       _mapSubChannels[subChannelId].CurrentChannel = channel;
       _mapSubChannels[subChannelId].OnBeforeTune();

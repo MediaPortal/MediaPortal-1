@@ -510,7 +510,7 @@ namespace TvControl
     }
 
     /// <summary>
-    /// Returns if we arecurrently grabbing the epg or not
+    /// Returns if we are currently grabbing the epg or not
     /// </summary>
     /// <returns>true when card is grabbing the epg otherwise false</returns>
     [XmlIgnore]

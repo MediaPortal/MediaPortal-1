@@ -21,6 +21,7 @@
 using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
+using TvLibrary.Implementations.Helper;
 using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
@@ -47,33 +48,62 @@ namespace TvLibrary.Implementations.DVB
       _defaultUrl = "udp://@0.0.0.0:1234";
     }
 
+    protected AMMediaType mpeg2ProgramStream = new AMMediaType();
+
     /// <summary>
     /// AddStreamSourceFilter
     /// </summary>
     /// <param name="url"></param>
     protected override void AddStreamSourceFilter(string url)
     {
-      Log.Log.WriteFile("dvbip:Add MediaPortal IPTV Source Filter");
-      _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graphBuilder, typeof (MPIPTVSource).GUID,
-                                                                "MediaPortal IPTV Source Filter");
-      AMMediaType mpeg2ProgramStream = new AMMediaType();
-      mpeg2ProgramStream.majorType = MediaType.Stream;
-      mpeg2ProgramStream.subType = MediaSubType.Mpeg2Transport;
-      mpeg2ProgramStream.unkPtr = IntPtr.Zero;
-      mpeg2ProgramStream.sampleSize = 0;
-      mpeg2ProgramStream.temporalCompression = false;
-      mpeg2ProgramStream.fixedSizeSamples = true;
-      mpeg2ProgramStream.formatType = FormatType.None;
-      mpeg2ProgramStream.formatSize = 0;
-      mpeg2ProgramStream.formatPtr = IntPtr.Zero;
-      ((IFileSourceFilter)_filterStreamSource).Load(url, mpeg2ProgramStream);
-      //connect the [stream source] -> [inf tee]
-      Log.Log.WriteFile("dvb:  Render [source]->[inftee]");
-      int hr = _capBuilder.RenderStream(null, null, _filterStreamSource, null, _infTeeMain);
-      if (hr != 0)
+      try
       {
-        Log.Log.Error("dvb:Add source returns:0x{0:X}", hr);
-        throw new TvException("Unable to add  source filter");
+        Log.Log.WriteFile("dvbip:Add MediaPortal IPTV Source Filter");
+        _filterStreamSource = FilterGraphTools.FindFilterByClsid(_graphBuilder, typeof (MPIPTVSource).GUID);
+
+        if (_filterStreamSource == null)
+        {
+          _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graphBuilder, typeof (MPIPTVSource).GUID,
+            "MediaPortal IPTV Source Filter");
+        }
+
+        if (_filterStreamSource != null)
+        {
+          AMMediaType mpeg2ProgramStream = new AMMediaType();
+          mpeg2ProgramStream.majorType = MediaType.Stream;
+          mpeg2ProgramStream.subType = MediaSubType.Mpeg2Transport;
+          mpeg2ProgramStream.unkPtr = IntPtr.Zero;
+          mpeg2ProgramStream.sampleSize = 0;
+          mpeg2ProgramStream.temporalCompression = false;
+          mpeg2ProgramStream.fixedSizeSamples = true;
+          mpeg2ProgramStream.formatType = FormatType.None;
+          mpeg2ProgramStream.formatSize = 0;
+          mpeg2ProgramStream.formatPtr = IntPtr.Zero;
+          DateTime dtNow = DateTime.Now;
+          int hr = ((IFileSourceFilter) _filterStreamSource).Load(url, mpeg2ProgramStream);
+          if (hr != 0)
+          {
+            Log.Log.Error("dvb:Add source returns:0x{0:X}", hr);
+            RemoveStreamSourceFilter();
+            throw new TvException("Unable to add source filter");
+          }
+          TimeSpan ts = DateTime.Now - dtNow;
+          //connect the [stream source] -> [inf tee]
+          Log.Log.WriteFile("dvb:  Render [source]->[inftee]");
+          hr = _capBuilder.RenderStream(null, null, _filterStreamSource, null, _infTeeMain);
+          if (hr != 0 || ts.TotalSeconds > 3)
+          {
+            Log.Log.Error("dvb:Add source returns:0x{0:X}", hr);
+            RemoveStreamSourceFilter();
+            throw new TvException("Unable to add source filter");
+          }
+        }
+      }
+      catch (Exception)
+      {
+        Log.Log.Error("dvb:Unable to add AddStreamSourceFilter");
+        RemoveStreamSourceFilter();
+        throw new TvException("Unable to add source filter");
       }
     }
 
@@ -87,6 +117,11 @@ namespace TvLibrary.Implementations.DVB
         _graphBuilder.RemoveFilter(_filterStreamSource);
         Release.ComObject("MediaPortal IPTV Source Filter", _filterStreamSource);
         _filterStreamSource = null;
+        if (mpeg2ProgramStream != null)
+        {
+          DsUtils.FreeAMMediaType(mpeg2ProgramStream);
+          mpeg2ProgramStream = null;
+        }
       }
     }
 
@@ -121,6 +156,7 @@ namespace TvLibrary.Implementations.DVB
       }
       RemoveStreamSourceFilter();
       AddStreamSourceFilter(url);
+
       Log.Log.Info("dvb:  RunGraph");
       hr = (_graphBuilder as IMediaControl).Run();
       if (hr < 0 || hr > 1)

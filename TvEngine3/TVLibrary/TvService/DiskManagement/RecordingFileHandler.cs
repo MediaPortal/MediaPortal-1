@@ -201,7 +201,7 @@ namespace TvService
           }
           else
           {
-            Log.Debug("RecordingFileHandler: Path not valid for removal - {1}", checkPath);
+            Log.Debug("RecordingFileHandler: Path not valid for removal - {0}", checkPath);
             return;
           }
         }

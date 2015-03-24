@@ -143,7 +143,7 @@ namespace TvService
           {
             return tvResult;
           }
-          result = _cardHandler.Card.Scan(user.SubChannel, channel);
+          result = _cardHandler.Card.Scan(user.SubChannel, user.Name, channel);
           if (result != null)
           {
             return AfterTune(user, idChannel, result);
@@ -218,7 +218,7 @@ namespace TvService
       {
         return;
       }
-      Log.Info("card: CancelTune {0} to {1}", _cardHandler.DataBaseCard.IdCard);
+      Log.Info("card: CancelTune {0}", _cardHandler.DataBaseCard.IdCard);
       _cardHandler.Card.CancelTune(subchannel);
       RaiseOnAfterCancelTuneEvent(subchannel);
       WaitForCancelledTuneToFinish(subchannel);
@@ -337,7 +337,7 @@ namespace TvService
         }
         user.FailedCardId = -1;
         
-        result = _cardHandler.Card.Tune(user.SubChannel, channel);
+        result = _cardHandler.Card.Tune(user.SubChannel, user.Name, channel);
 
         if (result != null)
         {
@@ -425,6 +425,13 @@ namespace TvService
       ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       if (result != null)
       {
+        if (result.CancelPMT)
+        {
+          // Reset CancelPMT to set future cancel when async tuning is used when PMT failed for channel
+          result.CancelPMT = false;
+          result.EventPMTCancelled.Set();
+          return TvResult.Succeeded;
+        }
         Log.Debug("card: tuned user: {0} subchannel: {1}", user.Name, result.SubChannelId);
         user.SubChannel = result.SubChannelId;
         user.IdChannel = idChannel;

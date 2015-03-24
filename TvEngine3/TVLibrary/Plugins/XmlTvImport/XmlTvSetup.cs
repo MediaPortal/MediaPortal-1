@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -85,65 +86,80 @@ namespace SetupTv.Sections
       setting.Value = txtRemoteURL.Text;
       setting.Persist();
 
+      setting = layer.GetSetting("UseKazer", "true");
+      setting.Value = (Bouton_Kazer.Checked ? "true" : "false");
+      setting.Persist();
+
+      setting = layer.GetSetting("KazerRemoteURL", "http://www.kazer.org/tvguide.xml?u=");
+      setting.Value = ("http://www.kazer.org/tvguide.xml?u=" + kazer_UserName.Text);
+      setting.Persist();
+
+      setting = layer.GetSetting("KazerUserName", "");
+      setting.Value = (kazer_UserName.Text);
+      setting.Persist();
+
+      setting = layer.GetSetting("UseZguideTV", "true");
+      setting.Value = (Bouton_ZguideTV.Checked ? "true" : "false");
+      setting.Persist();
+
+      setting = layer.GetSetting("UseZguideTNT", "true");
+      setting.Value = (Bouton_ZguideTV_TNT.Checked ? "true" : "false");
+      setting.Persist();
+
+      setting = layer.GetSetting("ZguideTNTRemoteURL", "http://xmltv.dtdns.net/download/tnt.zip");
+      setting.Value = ("http://xmltv.dtdns.net/download/tnt.zip");
+      setting.Persist();
+
+      setting = layer.GetSetting("UseZguideComplet", "true");
+      setting.Value = (Bouton_ZguideTV_complet.Checked ? "true" : "false");
+      setting.Persist();
+
+      setting = layer.GetSetting("ZguideCompletRemoteURL", "http://xmltv.dtdns.net/download/complet.zip");
+      setting.Value = ("http://xmltv.dtdns.net/download/complet.zip");
+      setting.Persist();
+
+      if (!txtRemoteURL.Text.Contains("kazer") && !txtRemoteURL.Text.Contains("http://xmltv.myftp.org/download/"))
+      {
+        setting = layer.GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml");
+        setting.Value = (txtRemoteURL.Text);
+        setting.Persist();
+      }
       setting = layer.GetSetting("xmlTvRemoteScheduleTime", "06:30");
-      DateTimeFormatInfo DTFI = new DateTimeFormatInfo();
-      DTFI.ShortDatePattern = _shortTimePattern24Hrs;
-      DateTime xmlTvRemoteScheduleTime = dateTimePickerScheduler.Value;
-      setting.Value = xmlTvRemoteScheduleTime.ToString("t", DTFI);
+      DateTimeFormatInfo dateTimeFormatInfo = new DateTimeFormatInfo();
+      dateTimeFormatInfo.ShortDatePattern = "HH:mm";
+      DateTime dateTime = dateTimePickerScheduler.Value;
+      setting.Value = (dateTime.ToString("t", (IFormatProvider)dateTimeFormatInfo));
       setting.Persist();
 
       setting = layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false");
-      setting.Value = chkScheduler.Checked ? "true" : "false";
+      setting.Value = (chkScheduler.Checked ? "true" : "false");
       setting.Persist();
 
       setting = layer.GetSetting("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", "false");
-      setting.Value = radioDownloadOnWakeUp.Checked ? "true" : "false";
+      setting.Value = (((RadioButton)radioDownloadOnWakeUp).Checked ? "true" : "false");
       setting.Persist();
-
 
       base.OnSectionDeActivated();
     }
 
-    private class CBChannelGroup
-    {
-      public string groupName;
-      public int idGroup;
-
-      public CBChannelGroup(string groupName, int idGroup)
-      {
-        this.groupName = groupName;
-        this.idGroup = idGroup;
-      }
-
-      public override string ToString()
-      {
-        return groupName;
-      }
-    }
-
     public override void OnSectionActivated()
     {
-      UpdateRadioButtonsState();
-
       TvBusinessLayer layer = new TvBusinessLayer();
-      textBoxFolder.Text = layer.GetSetting("xmlTv", XmlTvImporter.DefaultOutputFolder).Value;
+      UpdateRadioButtonsState();
+      textBoxFolder.Text = layer.GetSetting("xmlTv", XmlTvImporter.DefaultOutputFolder).Value;;
       checkBox1.Checked = layer.GetSetting("xmlTvUseTimeZone", "false").Value == "true";
       cbImportXML.Checked = layer.GetSetting("xmlTvImportXML", "true").Value == "true";
       cbImportLST.Checked = layer.GetSetting("xmlTvImportLST", "false").Value == "true";
       checkBoxDeleteBeforeImport.Checked = layer.GetSetting("xmlTvDeleteBeforeImport", "true").Value == "true";
-
       textBoxHours.Text = layer.GetSetting("xmlTvTimeZoneHours", "0").Value;
       textBoxMinutes.Text = layer.GetSetting("xmlTvTimeZoneMins", "0").Value;
       labelLastImport.Text = layer.GetSetting("xmlTvResultLastImport", "").Value;
       labelChannels.Text = layer.GetSetting("xmlTvResultChannels", "").Value;
       labelPrograms.Text = layer.GetSetting("xmlTvResultPrograms", "").Value;
       labelStatus.Text = layer.GetSetting("xmlTvResultStatus", "").Value;
-
-      chkScheduler.Checked = (layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false").Value == "true");
-      radioDownloadOnWakeUp.Checked = (layer.GetSetting("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", "false").Value ==
-                                       "true");
-      radioDownloadOnSchedule.Checked = !radioDownloadOnWakeUp.Checked;
-
+      chkScheduler.Checked = layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false").Value == "true";
+      ((RadioButton)radioDownloadOnWakeUp).Checked = layer.GetSetting("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", "false").Value == "true";
+      ((RadioButton)radioDownloadOnSchedule).Checked = !((RadioButton)radioDownloadOnWakeUp).Checked;
       txtRemoteURL.Text = layer.GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml").Value;
 
       DateTime dt = DateTime.Now;
@@ -169,7 +185,6 @@ namespace SetupTv.Sections
       }
 
       dateTimePickerScheduler.Value = dt;
-
       lblLastTransferAt.Text = layer.GetSetting("xmlTvRemoteScheduleLastTransfer", "").Value;
       lblTransferStatus.Text = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "").Value;
 
@@ -189,6 +204,167 @@ namespace SetupTv.Sections
       catch (Exception e)
       {
         Log.Error("Failed to load groups {0}", e.Message);
+      }
+
+      Bouton_Kazer.Checked = layer.GetSetting("UseKazer", "false").Value == "true";
+      Bouton_ZguideTV.Checked = layer.GetSetting("UseZguideTV", "false").Value == "true";
+      Bouton_Aucun.Checked = false;
+      if (!Bouton_Kazer.Checked && !Bouton_ZguideTV.Checked)
+      {
+        Bouton_Aucun.Checked = true;
+        btnGetNow.BackColor = Color.Transparent;
+      }
+      kazer_UserName.Text = layer.GetSetting("KazerUserName", "").Value;
+      Bouton_ZguideTV_TNT.Checked = layer.GetSetting("UseZguideTNT", "true").Value == "true";
+      Bouton_ZguideTV_complet.Checked = layer.GetSetting("UseZguideComplet", "false").Value == "true";
+      if (Bouton_Kazer.Checked)
+      {
+        txtRemoteURL.Text = layer.GetSetting("KazerRemoteURL", "http://www.kazer.org/tvguide.xml?u=").Value;
+        btnGetNow.BackColor = Color.Blue;
+        if (kazer_UserName.Text == "")
+          btnGetNow.BackColor = Color.Red;
+      }
+      if (!Bouton_ZguideTV.Checked)
+      {
+        return;
+      }
+      if (Bouton_ZguideTV_TNT.Checked)
+      {
+        txtRemoteURL.Text = layer.GetSetting("ZguideTNTRemoteURL", "http://xmltv.dtdns.net/download/tnt.zip").Value;
+        btnGetNow.BackColor = Color.BurlyWood;
+      }
+      else
+      {
+        txtRemoteURL.Text = layer.GetSetting("ZguideCompletRemoteURL", "http://xmltv.dtdns.net/download/complet.zip").Value;
+        btnGetNow.BackColor = Color.BlueViolet;
+      }
+    }
+
+    private void Bouton_Aucun_CheckedChanged(object sender, EventArgs e)
+    {
+      if (!Bouton_Aucun.Checked)
+        return;
+      txtRemoteURL.Text = new TvBusinessLayer().GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml").Value;
+      txtRemoteURL.Enabled = true;
+      groupBox_Kazer.Visible = false;
+      groupBox_ZguideTV.Visible = false;
+      pictureBox_WebEPGfr.Visible = true;
+      btnGetNow.Enabled = true;
+      btnGetNow.BackColor = Color.Transparent;
+    }
+
+    private void Bouton_Kazer_CheckedChanged(object sender, EventArgs e)
+    {
+      if (!Bouton_Kazer.Checked)
+        return;
+      TvBusinessLayer tvBusinessLayer = new TvBusinessLayer();
+      kazer_UserName.Text = tvBusinessLayer.GetSetting("KazerUserName", "").Value;
+      txtRemoteURL.Text = tvBusinessLayer.GetSetting("KazerRemoteURL", "http://www.kazer.org/tvguide.xml?u=").Value;
+      txtRemoteURL.Enabled = false;
+      groupBox_Kazer.Visible = true;
+      groupBox_ZguideTV.Visible = false;
+      pictureBox_WebEPGfr.Visible = false;
+      if (kazer_UserName.Text == "")
+      {
+        btnGetNow.Enabled = false;
+        btnGetNow.BackColor = Color.Red;
+      }
+      else
+      {
+        btnGetNow.Enabled = true;
+        btnGetNow.BackColor = Color.Blue;
+      }
+    }
+
+    private void kazer_UserName_TextChanged(object sender, EventArgs e)
+    {
+      txtRemoteURL.Enabled = false;
+      Setting setting = new TvBusinessLayer().GetSetting("KazerUserName", "");
+      setting.Value = kazer_UserName.Text;
+      setting.Persist();
+
+      txtRemoteURL.Text = "http://www.kazer.org/tvguide.xml?u=" + kazer_UserName.Text;
+      if (kazer_UserName.Text == "")
+      {
+        btnGetNow.Enabled = false;
+        btnGetNow.BackColor = Color.Red;
+      }
+      else
+      {
+        btnGetNow.Enabled = true;
+        btnGetNow.BackColor = Color.Blue;
+      }
+    }
+
+    private void Bouton_ZguideTV_CheckedChanged(object sender, EventArgs e)
+    {
+      if (!Bouton_ZguideTV.Checked)
+        return;
+      TvBusinessLayer tvBusinessLayer = new TvBusinessLayer();
+      txtRemoteURL.Enabled = false;
+      if (Bouton_ZguideTV_TNT.Checked)
+      {
+        txtRemoteURL.Text = "http://xmltv.dtdns.net/download/tnt.zip";
+        btnGetNow.BackColor = Color.BurlyWood;
+      }
+      else
+      {
+        txtRemoteURL.Text = "http://xmltv.dtdns.net/download/complet.zip";
+        btnGetNow.BackColor = Color.BlueViolet;
+      }
+      btnGetNow.Enabled = true;
+      groupBox_Kazer.Visible = false;
+      groupBox_ZguideTV.Visible = true;
+      pictureBox_WebEPGfr.Visible = false;
+    }
+
+    private void Bouton_ZguideTV_TNT_CheckedChanged(object sender, EventArgs e)
+    {
+      if (!Bouton_ZguideTV_TNT.Checked)
+        return;
+      txtRemoteURL.Text = "http://xmltv.dtdns.net/download/tnt.zip";
+      btnGetNow.Enabled = true;
+      btnGetNow.BackColor = Color.BurlyWood;
+    }
+
+    private void Bouton_ZguideTV_complet_CheckedChanged(object sender, EventArgs e)
+    {
+      if (!Bouton_ZguideTV_complet.Checked)
+        return;
+      txtRemoteURL.Text = "http://xmltv.dtdns.net/download/complet.zip";
+      btnGetNow.Enabled = true;
+      btnGetNow.BackColor = Color.BlueViolet;
+    }
+
+    private void lien_site_kazer_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      Process.Start("http://www.kazer.org");
+    }
+
+    private void lien_forum_ZguideTV_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      Process.Start("http://www.zguidetv.net/");
+    }
+
+    private void lien_download_ZguideTV_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      Process.Start("http://xmltv.dtdns.net/download/");
+    }
+
+    private class CBChannelGroup
+    {
+      public string groupName;
+      public int idGroup;
+
+      public CBChannelGroup(string groupName, int idGroup)
+      {
+        this.groupName = groupName;
+        this.idGroup = idGroup;
+      }
+
+      public override string ToString()
+      {
+        return groupName;
       }
     }
 

@@ -28,9 +28,30 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+      this.groupBox_Kazer = new System.Windows.Forms.GroupBox();
+      this.pictureBox4 = new System.Windows.Forms.PictureBox();
+      this.label30 = new System.Windows.Forms.Label();
+      this.kazer_UserName = new System.Windows.Forms.TextBox();
+      this.lien_site_kazer = new System.Windows.Forms.LinkLabel();
+      this.label29 = new System.Windows.Forms.Label();
+      this.groupBox_ZguideTV = new System.Windows.Forms.GroupBox();
+      this.pictureBox6 = new System.Windows.Forms.PictureBox();
+      this.lien_download_ZguideTV = new System.Windows.Forms.LinkLabel();
+      this.label31 = new System.Windows.Forms.Label();
+      this.Bouton_ZguideTV_complet = new System.Windows.Forms.RadioButton();
+      this.Bouton_ZguideTV_TNT = new System.Windows.Forms.RadioButton();
+      this.lien_forum_ZguideTV = new System.Windows.Forms.LinkLabel();
+      this.label34 = new System.Windows.Forms.Label();
+      this.groupBox_WebEPGfr = new System.Windows.Forms.GroupBox();
+      this.pictureBox_WebEPGfr = new System.Windows.Forms.PictureBox();
+      this.label28 = new System.Windows.Forms.Label();
+      this.Bouton_ZguideTV = new System.Windows.Forms.RadioButton();
+      this.Bouton_Aucun = new System.Windows.Forms.RadioButton();
+      this.Bouton_Kazer = new System.Windows.Forms.RadioButton();
+      this.pictureBox2 = new System.Windows.Forms.PictureBox();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabSettings = new System.Windows.Forms.TabPage();
       this.panel1 = new System.Windows.Forms.Panel();
@@ -109,6 +130,13 @@ namespace SetupTv.Sections
       this.label6 = new System.Windows.Forms.Label();
       this.saveFileExport = new System.Windows.Forms.SaveFileDialog();
       this.folderBrowserDialogTVGuide = new System.Windows.Forms.FolderBrowserDialog();
+      this.groupBox_Kazer.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
+      this.groupBox_ZguideTV.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
+      this.groupBox_WebEPGfr.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox_WebEPGfr)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
       this.tabControl1.SuspendLayout();
       this.tabSettings.SuspendLayout();
       this.panel1.SuspendLayout();
@@ -122,6 +150,243 @@ namespace SetupTv.Sections
       this.groupBox4.SuspendLayout();
       this.groupBox3.SuspendLayout();
       this.SuspendLayout();
+      // 
+      // groupBox_Kazer
+      // 
+      this.groupBox_Kazer.Controls.Add(this.pictureBox4);
+      this.groupBox_Kazer.Controls.Add(this.label30);
+      this.groupBox_Kazer.Controls.Add(this.kazer_UserName);
+      this.groupBox_Kazer.Controls.Add(this.lien_site_kazer);
+      this.groupBox_Kazer.Controls.Add(this.label29);
+      this.groupBox_Kazer.Location = new System.Drawing.Point(6, 52);
+      this.groupBox_Kazer.Name = "groupBox_Kazer";
+      this.groupBox_Kazer.Size = new System.Drawing.Size(414, 113);
+      this.groupBox_Kazer.TabIndex = 18;
+      this.groupBox_Kazer.TabStop = false;
+      this.groupBox_Kazer.Text = "Kazer";
+      this.groupBox_Kazer.Visible = false;
+      // 
+      // pictureBox4
+      // 
+      this.pictureBox4.Image = global::XmlTvImport.Properties.Resources.hover_kazer;
+      this.pictureBox4.Location = new System.Drawing.Point(8, 42);
+      this.pictureBox4.Name = "pictureBox4";
+      this.pictureBox4.Size = new System.Drawing.Size(70, 65);
+      this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+      this.pictureBox4.TabIndex = 11;
+      this.pictureBox4.TabStop = false;
+      // 
+      // label30
+      // 
+      this.label30.AutoSize = true;
+      this.label30.Location = new System.Drawing.Point(84, 78);
+      this.label30.Name = "label30";
+      this.label30.Size = new System.Drawing.Size(215, 13);
+      this.label30.TabIndex = 4;
+      this.label30.Text = "Nom d\'utilisateur kazer VALIDE (userhash) : ";
+      // 
+      // kazer_UserName
+      // 
+      this.kazer_UserName.Location = new System.Drawing.Point(304, 75);
+      this.kazer_UserName.Name = "kazer_UserName";
+      this.kazer_UserName.Size = new System.Drawing.Size(100, 20);
+      this.kazer_UserName.TabIndex = 6;
+      this.kazer_UserName.TextChanged += new System.EventHandler(this.kazer_UserName_TextChanged);
+      // 
+      // lien_site_kazer
+      // 
+      this.lien_site_kazer.AutoSize = true;
+      this.lien_site_kazer.Location = new System.Drawing.Point(378, 12);
+      this.lien_site_kazer.Name = "lien_site_kazer";
+      this.lien_site_kazer.Size = new System.Drawing.Size(33, 13);
+      this.lien_site_kazer.TabIndex = 3;
+      this.lien_site_kazer.TabStop = true;
+      this.lien_site_kazer.Tag = "";
+      this.lien_site_kazer.Text = "kazer";
+      this.lien_site_kazer.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lien_site_kazer_LinkClicked);
+      // 
+      // label29
+      // 
+      this.label29.AutoSize = true;
+      this.label29.Location = new System.Drawing.Point(40, 13);
+      this.label29.Name = "label29";
+      this.label29.Size = new System.Drawing.Size(340, 26);
+      this.label29.TabIndex = 7;
+      this.label29.Text = "Pour utiliser Kazer, vous devez au préalable vous inscrire sur le site de \r\npour " +
+    "définir les chaînes que vous souhaitez récupérer.\r\n";
+      // 
+      // groupBox_ZguideTV
+      // 
+      this.groupBox_ZguideTV.Controls.Add(this.pictureBox6);
+      this.groupBox_ZguideTV.Controls.Add(this.lien_download_ZguideTV);
+      this.groupBox_ZguideTV.Controls.Add(this.label31);
+      this.groupBox_ZguideTV.Controls.Add(this.Bouton_ZguideTV_complet);
+      this.groupBox_ZguideTV.Controls.Add(this.Bouton_ZguideTV_TNT);
+      this.groupBox_ZguideTV.Controls.Add(this.lien_forum_ZguideTV);
+      this.groupBox_ZguideTV.Controls.Add(this.label34);
+      this.groupBox_ZguideTV.Location = new System.Drawing.Point(6, 52);
+      this.groupBox_ZguideTV.Name = "groupBox_ZguideTV";
+      this.groupBox_ZguideTV.Size = new System.Drawing.Size(414, 113);
+      this.groupBox_ZguideTV.TabIndex = 19;
+      this.groupBox_ZguideTV.TabStop = false;
+      this.groupBox_ZguideTV.Text = "ZguideTV";
+      this.groupBox_ZguideTV.Visible = false;
+      // 
+      // pictureBox6
+      // 
+      this.pictureBox6.Image = global::XmlTvImport.Properties.Resources.hover_ZguideTV;
+      this.pictureBox6.Location = new System.Drawing.Point(8, 31);
+      this.pictureBox6.Name = "pictureBox6";
+      this.pictureBox6.Size = new System.Drawing.Size(73, 76);
+      this.pictureBox6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+      this.pictureBox6.TabIndex = 13;
+      this.pictureBox6.TabStop = false;
+      // 
+      // lien_download_ZguideTV
+      // 
+      this.lien_download_ZguideTV.AutoSize = true;
+      this.lien_download_ZguideTV.Location = new System.Drawing.Point(347, 14);
+      this.lien_download_ZguideTV.Name = "lien_download_ZguideTV";
+      this.lien_download_ZguideTV.Size = new System.Drawing.Size(54, 13);
+      this.lien_download_ZguideTV.TabIndex = 12;
+      this.lien_download_ZguideTV.TabStop = true;
+      this.lien_download_ZguideTV.Tag = "";
+      this.lien_download_ZguideTV.Text = "ZguideTV";
+      this.lien_download_ZguideTV.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lien_download_ZguideTV_LinkClicked);
+      // 
+      // label31
+      // 
+      this.label31.AutoSize = true;
+      this.label31.Location = new System.Drawing.Point(154, 15);
+      this.label31.Name = "label31";
+      this.label31.Size = new System.Drawing.Size(188, 13);
+      this.label31.TabIndex = 11;
+      this.label31.Text = "Lien sur la page de téléchargement de";
+      // 
+      // Bouton_ZguideTV_complet
+      // 
+      this.Bouton_ZguideTV_complet.AutoSize = true;
+      this.Bouton_ZguideTV_complet.Location = new System.Drawing.Point(256, 54);
+      this.Bouton_ZguideTV_complet.Name = "Bouton_ZguideTV_complet";
+      this.Bouton_ZguideTV_complet.Size = new System.Drawing.Size(117, 17);
+      this.Bouton_ZguideTV_complet.TabIndex = 10;
+      this.Bouton_ZguideTV_complet.Text = "Guide Télé complet";
+      this.Bouton_ZguideTV_complet.UseVisualStyleBackColor = true;
+      this.Bouton_ZguideTV_complet.CheckedChanged += new System.EventHandler(this.Bouton_ZguideTV_complet_CheckedChanged);
+      // 
+      // Bouton_ZguideTV_TNT
+      // 
+      this.Bouton_ZguideTV_TNT.AutoSize = true;
+      this.Bouton_ZguideTV_TNT.Checked = true;
+      this.Bouton_ZguideTV_TNT.Location = new System.Drawing.Point(93, 54);
+      this.Bouton_ZguideTV_TNT.Name = "Bouton_ZguideTV_TNT";
+      this.Bouton_ZguideTV_TNT.Size = new System.Drawing.Size(137, 17);
+      this.Bouton_ZguideTV_TNT.TabIndex = 9;
+      this.Bouton_ZguideTV_TNT.TabStop = true;
+      this.Bouton_ZguideTV_TNT.Text = "Guide Télé pour la TNT";
+      this.Bouton_ZguideTV_TNT.UseVisualStyleBackColor = true;
+      this.Bouton_ZguideTV_TNT.CheckedChanged += new System.EventHandler(this.Bouton_ZguideTV_TNT_CheckedChanged);
+      // 
+      // lien_forum_ZguideTV
+      // 
+      this.lien_forum_ZguideTV.AutoSize = true;
+      this.lien_forum_ZguideTV.Location = new System.Drawing.Point(98, 14);
+      this.lien_forum_ZguideTV.Name = "lien_forum_ZguideTV";
+      this.lien_forum_ZguideTV.Size = new System.Drawing.Size(54, 13);
+      this.lien_forum_ZguideTV.TabIndex = 8;
+      this.lien_forum_ZguideTV.TabStop = true;
+      this.lien_forum_ZguideTV.Tag = "";
+      this.lien_forum_ZguideTV.Text = "ZguideTV";
+      this.lien_forum_ZguideTV.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lien_forum_ZguideTV_LinkClicked);
+      // 
+      // label34
+      // 
+      this.label34.AutoSize = true;
+      this.label34.Location = new System.Drawing.Point(6, 15);
+      this.label34.Name = "label34";
+      this.label34.Size = new System.Drawing.Size(92, 13);
+      this.label34.TabIndex = 7;
+      this.label34.Text = "Visitez le forum de\r\n";
+      // 
+      // groupBox_WebEPGfr
+      // 
+      this.groupBox_WebEPGfr.Controls.Add(this.groupBox_Kazer);
+      this.groupBox_WebEPGfr.Controls.Add(this.pictureBox_WebEPGfr);
+      this.groupBox_WebEPGfr.Controls.Add(this.label28);
+      this.groupBox_WebEPGfr.Controls.Add(this.Bouton_ZguideTV);
+      this.groupBox_WebEPGfr.Controls.Add(this.Bouton_Aucun);
+      this.groupBox_WebEPGfr.Controls.Add(this.groupBox_ZguideTV);
+      this.groupBox_WebEPGfr.Controls.Add(this.Bouton_Kazer);
+      this.groupBox_WebEPGfr.Location = new System.Drawing.Point(15, 231);
+      this.groupBox_WebEPGfr.Name = "groupBox_WebEPGfr";
+      this.groupBox_WebEPGfr.Size = new System.Drawing.Size(426, 177);
+      this.groupBox_WebEPGfr.TabIndex = 36;
+      this.groupBox_WebEPGfr.TabStop = false;
+      this.groupBox_WebEPGfr.Text = "WebEPGfr:";
+      // 
+      // pictureBox_WebEPGfr
+      // 
+      this.pictureBox_WebEPGfr.Image = global::XmlTvImport.Properties.Resources.hover_WebEPGfr;
+      this.pictureBox_WebEPGfr.Location = new System.Drawing.Point(146, 71);
+      this.pictureBox_WebEPGfr.Name = "pictureBox_WebEPGfr";
+      this.pictureBox_WebEPGfr.Size = new System.Drawing.Size(116, 78);
+      this.pictureBox_WebEPGfr.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+      this.pictureBox_WebEPGfr.TabIndex = 17;
+      this.pictureBox_WebEPGfr.TabStop = false;
+      // 
+      // label28
+      // 
+      this.label28.AutoSize = true;
+      this.label28.Location = new System.Drawing.Point(17, 1);
+      this.label28.Name = "label28";
+      this.label28.Size = new System.Drawing.Size(362, 26);
+      this.label28.TabIndex = 10;
+      this.label28.Text = "\r\nChoisissez votre préférence concernant le site de téléchargement à utiliser :";
+      // 
+      // Bouton_ZguideTV
+      // 
+      this.Bouton_ZguideTV.AutoSize = true;
+      this.Bouton_ZguideTV.Location = new System.Drawing.Point(326, 29);
+      this.Bouton_ZguideTV.Name = "Bouton_ZguideTV";
+      this.Bouton_ZguideTV.Size = new System.Drawing.Size(72, 17);
+      this.Bouton_ZguideTV.TabIndex = 9;
+      this.Bouton_ZguideTV.Text = "ZguideTV";
+      this.Bouton_ZguideTV.UseVisualStyleBackColor = true;
+      this.Bouton_ZguideTV.CheckedChanged += new System.EventHandler(this.Bouton_ZguideTV_CheckedChanged);
+      // 
+      // Bouton_Aucun
+      // 
+      this.Bouton_Aucun.AutoSize = true;
+      this.Bouton_Aucun.Checked = true;
+      this.Bouton_Aucun.Location = new System.Drawing.Point(20, 29);
+      this.Bouton_Aucun.Name = "Bouton_Aucun";
+      this.Bouton_Aucun.Size = new System.Drawing.Size(56, 17);
+      this.Bouton_Aucun.TabIndex = 8;
+      this.Bouton_Aucun.TabStop = true;
+      this.Bouton_Aucun.Text = "Aucun";
+      this.Bouton_Aucun.UseVisualStyleBackColor = true;
+      this.Bouton_Aucun.CheckedChanged += new System.EventHandler(this.Bouton_Aucun_CheckedChanged);
+      // 
+      // Bouton_Kazer
+      // 
+      this.Bouton_Kazer.AutoSize = true;
+      this.Bouton_Kazer.Location = new System.Drawing.Point(182, 29);
+      this.Bouton_Kazer.Name = "Bouton_Kazer";
+      this.Bouton_Kazer.Size = new System.Drawing.Size(52, 17);
+      this.Bouton_Kazer.TabIndex = 8;
+      this.Bouton_Kazer.Text = "Kazer";
+      this.Bouton_Kazer.UseVisualStyleBackColor = true;
+      this.Bouton_Kazer.CheckedChanged += new System.EventHandler(this.Bouton_Kazer_CheckedChanged);
+      // 
+      // pictureBox2
+      // 
+      this.pictureBox2.Image = global::XmlTvImport.Properties.Resources.horloge;
+      this.pictureBox2.Location = new System.Drawing.Point(9, 27);
+      this.pictureBox2.Name = "pictureBox2";
+      this.pictureBox2.Size = new System.Drawing.Size(54, 52);
+      this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+      this.pictureBox2.TabIndex = 40;
+      this.pictureBox2.TabStop = false;
       // 
       // tabControl1
       // 
@@ -572,9 +837,9 @@ namespace SetupTv.Sections
       this.dataGridChannelMappings.AllowUserToAddRows = false;
       this.dataGridChannelMappings.AllowUserToDeleteRows = false;
       this.dataGridChannelMappings.AllowUserToOrderColumns = true;
-      this.dataGridChannelMappings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.dataGridChannelMappings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.dataGridChannelMappings.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
       this.dataGridChannelMappings.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Id,
@@ -585,14 +850,14 @@ namespace SetupTv.Sections
       this.dataGridChannelMappings.Location = new System.Drawing.Point(6, 94);
       this.dataGridChannelMappings.MultiSelect = false;
       this.dataGridChannelMappings.Name = "dataGridChannelMappings";
-      dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-      this.dataGridChannelMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+      dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+      this.dataGridChannelMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
       this.dataGridChannelMappings.Size = new System.Drawing.Size(454, 317);
       this.dataGridChannelMappings.TabIndex = 2;
       // 
@@ -606,8 +871,8 @@ namespace SetupTv.Sections
       // tuningChannel
       // 
       this.tuningChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      dataGridViewCellStyle4.BackColor = System.Drawing.Color.White;
-      this.tuningChannel.DefaultCellStyle = dataGridViewCellStyle4;
+      dataGridViewCellStyle1.BackColor = System.Drawing.Color.White;
+      this.tuningChannel.DefaultCellStyle = dataGridViewCellStyle1;
       this.tuningChannel.HeaderText = "Tuning Channel";
       this.tuningChannel.Name = "tuningChannel";
       this.tuningChannel.ReadOnly = true;
@@ -616,8 +881,8 @@ namespace SetupTv.Sections
       // guideChannel
       // 
       this.guideChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      dataGridViewCellStyle5.BackColor = System.Drawing.Color.White;
-      this.guideChannel.DefaultCellStyle = dataGridViewCellStyle5;
+      dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
+      this.guideChannel.DefaultCellStyle = dataGridViewCellStyle2;
       this.guideChannel.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
       this.guideChannel.HeaderText = "Guide channel";
       this.guideChannel.Name = "guideChannel";
@@ -660,14 +925,15 @@ namespace SetupTv.Sections
       this.panel3.BackColor = System.Drawing.Color.Transparent;
       this.panel3.Controls.Add(this.groupBox4);
       this.panel3.Controls.Add(this.groupBox3);
+      this.panel3.Controls.Add(this.groupBox_WebEPGfr);
       this.panel3.Controls.Add(this.label3);
       this.panel3.Controls.Add(this.label32);
       this.panel3.Controls.Add(this.btnGetNow);
       this.panel3.Controls.Add(this.label37);
       this.panel3.Controls.Add(this.txtRemoteURL);
-      this.panel3.Location = new System.Drawing.Point(3, 3);
+      this.panel3.Location = new System.Drawing.Point(0, 0);
       this.panel3.Name = "panel3";
-      this.panel3.Size = new System.Drawing.Size(469, 418);
+      this.panel3.Size = new System.Drawing.Size(469, 427);
       this.panel3.TabIndex = 23;
       // 
       // groupBox4
@@ -676,9 +942,9 @@ namespace SetupTv.Sections
       this.groupBox4.Controls.Add(this.lblLastTransferAt);
       this.groupBox4.Controls.Add(this.label33);
       this.groupBox4.Controls.Add(this.label36);
-      this.groupBox4.Location = new System.Drawing.Point(9, 248);
+      this.groupBox4.Location = new System.Drawing.Point(15, 183);
       this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(426, 92);
+      this.groupBox4.Size = new System.Drawing.Size(426, 46);
       this.groupBox4.TabIndex = 34;
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "transfer status report:";
@@ -702,7 +968,7 @@ namespace SetupTv.Sections
       // label33
       // 
       this.label33.AutoSize = true;
-      this.label33.Location = new System.Drawing.Point(17, 52);
+      this.label33.Location = new System.Drawing.Point(16, 28);
       this.label33.Name = "label33";
       this.label33.Size = new System.Drawing.Size(80, 13);
       this.label33.TabIndex = 20;
@@ -711,7 +977,7 @@ namespace SetupTv.Sections
       // label36
       // 
       this.label36.AutoSize = true;
-      this.label36.Location = new System.Drawing.Point(17, 28);
+      this.label36.Location = new System.Drawing.Point(17, 14);
       this.label36.Name = "label36";
       this.label36.Size = new System.Drawing.Size(80, 13);
       this.label36.TabIndex = 17;
@@ -719,6 +985,7 @@ namespace SetupTv.Sections
       // 
       // groupBox3
       // 
+      this.groupBox3.Controls.Add(this.pictureBox2);
       this.groupBox3.Controls.Add(this.radioDownloadOnWakeUp);
       this.groupBox3.Controls.Add(this.radioDownloadOnSchedule);
       this.groupBox3.Controls.Add(this.chkScheduler);
@@ -728,9 +995,9 @@ namespace SetupTv.Sections
       this.groupBox3.Controls.Add(this.label24);
       this.groupBox3.Controls.Add(this.label25);
       this.groupBox3.Controls.Add(this.label26);
-      this.groupBox3.Location = new System.Drawing.Point(9, 116);
+      this.groupBox3.Location = new System.Drawing.Point(9, 98);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(426, 126);
+      this.groupBox3.Size = new System.Drawing.Size(432, 82);
       this.groupBox3.TabIndex = 33;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Schedule:";
@@ -740,7 +1007,7 @@ namespace SetupTv.Sections
       this.radioDownloadOnWakeUp.AutoSize = true;
       this.radioDownloadOnWakeUp.Enabled = false;
       this.radioDownloadOnWakeUp.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioDownloadOnWakeUp.Location = new System.Drawing.Point(20, 83);
+      this.radioDownloadOnWakeUp.Location = new System.Drawing.Point(74, 56);
       this.radioDownloadOnWakeUp.Name = "radioDownloadOnWakeUp";
       this.radioDownloadOnWakeUp.Size = new System.Drawing.Size(358, 17);
       this.radioDownloadOnWakeUp.TabIndex = 39;
@@ -753,7 +1020,7 @@ namespace SetupTv.Sections
       this.radioDownloadOnSchedule.Checked = true;
       this.radioDownloadOnSchedule.Enabled = false;
       this.radioDownloadOnSchedule.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioDownloadOnSchedule.Location = new System.Drawing.Point(20, 64);
+      this.radioDownloadOnSchedule.Location = new System.Drawing.Point(74, 37);
       this.radioDownloadOnSchedule.Name = "radioDownloadOnSchedule";
       this.radioDownloadOnSchedule.Size = new System.Drawing.Size(112, 17);
       this.radioDownloadOnSchedule.TabIndex = 38;
@@ -764,7 +1031,7 @@ namespace SetupTv.Sections
       // chkScheduler
       // 
       this.chkScheduler.AutoSize = true;
-      this.chkScheduler.Location = new System.Drawing.Point(9, 19);
+      this.chkScheduler.Location = new System.Drawing.Point(344, 37);
       this.chkScheduler.Name = "chkScheduler";
       this.chkScheduler.Size = new System.Drawing.Size(65, 17);
       this.chkScheduler.TabIndex = 36;
@@ -775,7 +1042,7 @@ namespace SetupTv.Sections
       // label27
       // 
       this.label27.AutoSize = true;
-      this.label27.Location = new System.Drawing.Point(17, 38);
+      this.label27.Location = new System.Drawing.Point(17, 11);
       this.label27.Name = "label27";
       this.label27.Size = new System.Drawing.Size(399, 13);
       this.label27.TabIndex = 35;
@@ -785,7 +1052,7 @@ namespace SetupTv.Sections
       // dateTimePickerScheduler
       // 
       this.dateTimePickerScheduler.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-      this.dateTimePickerScheduler.Location = new System.Drawing.Point(157, 60);
+      this.dateTimePickerScheduler.Location = new System.Drawing.Point(211, 33);
       this.dateTimePickerScheduler.Name = "dateTimePickerScheduler";
       this.dateTimePickerScheduler.ShowUpDown = true;
       this.dateTimePickerScheduler.Size = new System.Drawing.Size(77, 20);
@@ -826,7 +1093,7 @@ namespace SetupTv.Sections
       // label3
       // 
       this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(6, 88);
+      this.label3.Location = new System.Drawing.Point(6, 79);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(374, 13);
       this.label3.TabIndex = 30;
@@ -919,6 +1186,16 @@ namespace SetupTv.Sections
       this.Name = "XmlTvSetup";
       this.Size = new System.Drawing.Size(483, 450);
       this.Load += new System.EventHandler(this.XmlSetup_Load);
+      this.groupBox_Kazer.ResumeLayout(false);
+      this.groupBox_Kazer.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
+      this.groupBox_ZguideTV.ResumeLayout(false);
+      this.groupBox_ZguideTV.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
+      this.groupBox_WebEPGfr.ResumeLayout(false);
+      this.groupBox_WebEPGfr.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox_WebEPGfr)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
       this.tabControl1.ResumeLayout(false);
       this.tabSettings.ResumeLayout(false);
       this.tabSettings.PerformLayout();
@@ -952,6 +1229,29 @@ namespace SetupTv.Sections
     private System.Windows.Forms.CheckBox cbImportLST;
     private System.Windows.Forms.CheckBox cbImportXML;
     private System.Windows.Forms.GroupBox groupBox1;
+    private System.Windows.Forms.GroupBox groupBox_ZguideTV;
+    private System.Windows.Forms.GroupBox groupBox_Kazer;
+    private System.Windows.Forms.GroupBox groupBox_WebEPGfr;
+    private System.Windows.Forms.Label label28;
+    private System.Windows.Forms.Label label29;
+    private System.Windows.Forms.Label label30;
+    private System.Windows.Forms.Label label31;
+    private System.Windows.Forms.Label label34;
+    private System.Windows.Forms.RadioButton Bouton_ZguideTV;
+    private System.Windows.Forms.RadioButton Bouton_Kazer;
+    private System.Windows.Forms.RadioButton Bouton_ZguideTV_TNT;
+    private System.Windows.Forms.RadioButton Bouton_ZguideTV_complet;
+    private System.Windows.Forms.RadioButton Bouton_Aucun;
+    private System.Windows.Forms.TextBox kazer_UserName;
+    private System.Windows.Forms.PictureBox pictureBox_WebEPGfr;
+    private System.Windows.Forms.PictureBox pictureBox2;
+    private System.Windows.Forms.PictureBox pictureBox3;
+    private System.Windows.Forms.PictureBox pictureBox4;
+    private System.Windows.Forms.PictureBox pictureBox5;
+    private System.Windows.Forms.PictureBox pictureBox6;
+    private System.Windows.Forms.LinkLabel lien_forum_ZguideTV;
+    private System.Windows.Forms.LinkLabel lien_download_ZguideTV;
+    private System.Windows.Forms.LinkLabel lien_site_kazer;
     private System.Windows.Forms.Label labelStatus;
     private System.Windows.Forms.Label labelPrograms;
     private System.Windows.Forms.Label labelChannels;
@@ -972,7 +1272,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label18;
     private System.Windows.Forms.TextBox textBoxFolder;
     private System.Windows.Forms.TabPage tabMappings;
-     private System.Windows.Forms.Label label9;
+    private System.Windows.Forms.Label label9;
     private System.Windows.Forms.Label label8;
     private System.Windows.Forms.Label label7;
     private System.Windows.Forms.Label label6;
@@ -1002,29 +1302,27 @@ namespace SetupTv.Sections
     private System.Windows.Forms.DataGridViewComboBoxColumn guideChannel;
     private System.Windows.Forms.DataGridViewTextBoxColumn matchType;
     private System.Windows.Forms.DataGridViewCheckBoxColumn ShowInGuide;
-		private System.Windows.Forms.TabPage tabRemote;
-		private System.Windows.Forms.Panel panel3;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label32;
-		private System.Windows.Forms.Button btnGetNow;
-		private System.Windows.Forms.Label label37;
-		private System.Windows.Forms.TextBox txtRemoteURL;
-		private System.Windows.Forms.GroupBox groupBox3;
-		private System.Windows.Forms.DateTimePicker dateTimePickerScheduler;
+    private System.Windows.Forms.TabPage tabRemote;
+    private System.Windows.Forms.Panel panel3;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.Label label32;
+    private System.Windows.Forms.Button btnGetNow;
+    private System.Windows.Forms.Label label37;
+    private System.Windows.Forms.TextBox txtRemoteURL;
+    private System.Windows.Forms.GroupBox groupBox3;
+    private System.Windows.Forms.DateTimePicker dateTimePickerScheduler;
     private System.Windows.Forms.Label label20;
-		private System.Windows.Forms.Label label24;
-		private System.Windows.Forms.Label label25;
-		private System.Windows.Forms.Label label26;
-		private System.Windows.Forms.CheckBox chkScheduler;
-		private System.Windows.Forms.Label label27;
-		private System.Windows.Forms.GroupBox groupBox4;
-		private System.Windows.Forms.Label lblTransferStatus;
-		private System.Windows.Forms.Label lblLastTransferAt;
-		private System.Windows.Forms.Label label33;
+    private System.Windows.Forms.Label label24;
+    private System.Windows.Forms.Label label25;
+    private System.Windows.Forms.Label label26;
+    private System.Windows.Forms.CheckBox chkScheduler;
+    private System.Windows.Forms.Label label27;
+    private System.Windows.Forms.GroupBox groupBox4;
+    private System.Windows.Forms.Label lblTransferStatus;
+    private System.Windows.Forms.Label lblLastTransferAt;
+    private System.Windows.Forms.Label label33;
     private System.Windows.Forms.Label label36;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioDownloadOnWakeUp;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioDownloadOnSchedule;
-
-
   }
 }

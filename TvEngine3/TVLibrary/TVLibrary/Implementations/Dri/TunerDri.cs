@@ -744,7 +744,7 @@ namespace TvLibrary.Implementations.Dri
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected override ITvSubChannel SubmitTuneRequest(int subChannelId, IChannel channel, ITuneRequest tuneRequest, bool performTune)
+    protected override ITvSubChannel SubmitTuneRequest(int subChannelId, string userName, IChannel channel, ITuneRequest tuneRequest, bool performTune)
     {
       ATSCChannel atscChannel = channel as ATSCChannel;
       if (atscChannel == null)
@@ -759,7 +759,7 @@ namespace TvLibrary.Implementations.Dri
       {
         Log.Log.Debug("  new subchannel");
         newSubChannel = true;
-        subChannelId = GetNewSubChannel(channel);
+        subChannelId = GetNewSubChannel(channel, userName);
         subChannel = _mapSubChannels[subChannelId];
       }
       else
@@ -902,7 +902,7 @@ namespace TvLibrary.Implementations.Dri
       get { return new ScannerDri(this, _fdcService); }
     }
 
-    public override ITvSubChannel Scan(int subChannelId, IChannel channel)
+    public override ITvSubChannel Scan(int subChannelId, string userName, IChannel channel)
     {
       Log.Log.Info("DRI CC: scan, sub channel ID {0}", subChannelId);
       BeforeTune(channel);
@@ -913,7 +913,7 @@ namespace TvLibrary.Implementations.Dri
       {
         Log.Log.Debug("  new subchannel");
         newSubChannel = true;
-        subChannelId = GetNewSubChannel(channel);
+        subChannelId = GetNewSubChannel(channel, userName);
         subChannel = _mapSubChannels[subChannelId];
       }
       else

@@ -66,7 +66,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Build graph
     /// </summary>
-    public override void BuildGraph()
+    public void BuildGraph(string url)
     {
       try
       {
@@ -91,7 +91,7 @@ namespace TvLibrary.Implementations.DVB
         }
 
         AddTsWriterFilterToGraph();
-        AddStreamSourceFilter(_defaultUrl);
+        AddStreamSourceFilter(url);
         IBaseFilter lastFilter = _filterStreamSource;
         AddMdPlugs(ref lastFilter);
         if (!ConnectTsWriter(lastFilter))
@@ -162,9 +162,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="subChannelId">The sub channel id</param>
     /// <param name="channel">The channel.</param>
     /// <returns></returns>
-    public override ITvSubChannel Scan(int subChannelId, IChannel channel)
+    public override ITvSubChannel Scan(int subChannelId, string userName, IChannel channel)
     {
-      return DoTune(subChannelId, channel, true);
+      return DoTune(subChannelId, userName, channel, true);
     }
 
     /// <summary>
@@ -172,10 +172,11 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="subChannelId">The sub channel id</param>
     /// <param name="channel">The channel.</param>
-    /// <returns></returns>
-    public override ITvSubChannel Tune(int subChannelId, IChannel channel)
+    /// <param name="Username">The current User.</param>
+    /// <returns>true if succeeded else false</returns>
+    public override ITvSubChannel Tune(int subChannelId, string userName, IChannel channel)
     {
-      return DoTune(subChannelId, channel, false);
+      return DoTune(subChannelId, userName, channel, false);
     }
 
     /// <summary>
@@ -184,7 +185,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="subChannelId"></param>
     /// <param name="channel"></param>
     /// <returns></returns>
-    private ITvSubChannel DoTune(int subChannelId, IChannel channel, bool ignorePMT)
+    private ITvSubChannel DoTune(int subChannelId, string userName,IChannel channel, bool ignorePMT)
     {
       Log.Log.WriteFile("dvbip:  Tune:{0}", channel);
       ITvSubChannel ch = null;
@@ -212,10 +213,10 @@ namespace TvLibrary.Implementations.DVB
         if (_graphState == GraphState.Idle)
         {
           Log.Log.Info("dvbip: tune: Building graph");
-          BuildGraph();
+          BuildGraph(dvbipChannel.Url);
           if (_mapSubChannels.ContainsKey(subChannelId) == false)
           {
-            subChannelId = GetNewSubChannel(channel);
+            subChannelId = GetNewSubChannel(channel, userName);
           }
         }
         else
@@ -229,7 +230,7 @@ namespace TvLibrary.Implementations.DVB
         if (_mapSubChannels.ContainsKey(subChannelId) == false)
         {
           Log.Log.Info("dvb:Getting new subchannel");
-          subChannelId = GetNewSubChannel(channel);
+          subChannelId = GetNewSubChannel(channel, userName);
         }
         else {}
         Log.Log.Info("dvb:Submit tunerequest size:{0} new:{1}", _mapSubChannels.Count, subChannelId);
@@ -313,7 +314,6 @@ namespace TvLibrary.Implementations.DVB
       if (_graphState != GraphState.Idle)
       {
         RemoveStreamSourceFilter();
-        AddStreamSourceFilter(_defaultUrl);
       }
     }
 
