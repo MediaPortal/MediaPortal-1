@@ -1,0 +1,255 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="RTP">
+      <UniqueIdentifier>{0c2c483b-19da-4733-8870-eb1db71fe6fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RTCP">
+      <UniqueIdentifier>{46c978f5-99dd-4619-9eaa-d2e9b01bc782}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RTP\Header Files">
+      <UniqueIdentifier>{a27201a8-59cd-4b67-ba39-5c24bb2dd127}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RTP\Source Files">
+      <UniqueIdentifier>{356cb6fd-2d94-43f7-bfec-ae90befb2bd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RTCP\Header Files">
+      <UniqueIdentifier>{dc61155d-a8e7-458c-ba7f-6a1352d65619}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RTCP\Source Files">
+      <UniqueIdentifier>{4ba3c153-e539-44fd-84d5-800570c3d27e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Factories">
+      <UniqueIdentifier>{560b0533-7530-4f5b-9ac1-65bbd7c544d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Factories\Header Files">
+      <UniqueIdentifier>{8ccb3201-72be-476e-8adf-8f098f85dcaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Factories\Source Files">
+      <UniqueIdentifier>{9db35a5e-82c2-4460-8111-f539c6f2d4f7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpPacket.h">
+      <Filter>RTP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ContributeSourceIdentifierCollection.h">
+      <Filter>RTP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ContributeSourceIdentifier.h">
+      <Filter>RTP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtcpPacket.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SenderReportRtcpPacket.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseRtpPacket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ReceiverReportRtcpPacket.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceDescriptionChunk.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceDescriptionRtcpPacket.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceDescriptionItem.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NullSourceDescriptionItem.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseRtpPacketFactory.h">
+      <Filter>Factories\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceDescriptionItemFactory.h">
+      <Filter>Factories\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceDescriptionItemCollection.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceDescriptionChunkCollection.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CanonicalEndPointSourceDescriptionItem.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UserNameSourceDescriptionItem.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EmailSourceDescriptionItem.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PhoneNumberSourceDescriptionItem.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeographicUserLocationSourceDescriptionItem.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolSourceDescriptionItem.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NoteSourceDescriptionItem.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PrivateSourceDescriptionItem.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Identifier.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GoodbyeRtcpPacket.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IdentifierCollection.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationRtcpPacket.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ReportBlockCollection.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ReportBlock.h">
+      <Filter>RTCP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mpeg1OrMpeg2VideoRtpPacket.h">
+      <Filter>RTP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MpegAudioRtpPacket.h">
+      <Filter>RTP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mpeg2TransportStreamRtpPacket.h">
+      <Filter>RTP\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpPacketCollection.h">
+      <Filter>RTP\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpPacket.cpp">
+      <Filter>RTP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ContributeSourceIdentifierCollection.cpp">
+      <Filter>RTP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ContributeSourceIdentifier.cpp">
+      <Filter>RTP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtcpPacket.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SenderReportRtcpPacket.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseRtpPacket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ReceiverReportRtcpPacket.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceDescriptionChunk.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceDescriptionRtcpPacket.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceDescriptionItem.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NullSourceDescriptionItem.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseRtpPacketFactory.cpp">
+      <Filter>Factories\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceDescriptionItemFactory.cpp">
+      <Filter>Factories\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceDescriptionItemCollection.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceDescriptionChunkCollection.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CanonicalEndPointSourceDescriptionItem.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UserNameSourceDescriptionItem.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EmailSourceDescriptionItem.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PhoneNumberSourceDescriptionItem.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeographicUserLocationSourceDescriptionItem.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolSourceDescriptionItem.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NoteSourceDescriptionItem.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PrivateSourceDescriptionItem.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Identifier.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GoodbyeRtcpPacket.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IdentifierCollection.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationRtcpPacket.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ReportBlockCollection.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ReportBlock.cpp">
+      <Filter>RTCP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mpeg1OrMpeg2VideoRtpPacket.cpp">
+      <Filter>RTP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MpegAudioRtpPacket.cpp">
+      <Filter>RTP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mpeg2TransportStreamRtpPacket.cpp">
+      <Filter>RTP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpPacketCollection.cpp">
+      <Filter>RTP\Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

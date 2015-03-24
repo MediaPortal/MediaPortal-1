@@ -552,6 +552,12 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
   ; MediaPortal.exe
   
+  ; protocol implementations for MPUrlSourceSplitter.ax
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter*"
+  File "${git_DirectShowFilters}\bin_Win32\avcodec-mpurlsourcesplitter-54.dll"
+  File "${git_DirectShowFilters}\bin_Win32\avformat-mpurlsourcesplitter-54.dll"
+  File "${git_DirectShowFilters}\bin_Win32\avutil-mpurlsourcesplitter-51.dll" 
+
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
@@ -572,6 +578,9 @@ Section "MediaPortal core files (required)" SecCore
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\BDReader\bin\${BUILD_TYPE}\BDReader.ax"                "$MPdir.Base\BDReader.ax"         "$MPdir.Base"
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\DVBSubtitle3\bin\${BUILD_TYPE}\DVBSub3.ax"             "$MPdir.Base\DVBSub3.ax"          "$MPdir.Base"
   
+  ; filter for IPTV support
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter.ax" "$INSTDIR\MPUrlSourceSplitter.ax" "$INSTDIR"
+
   ; used for Mediaportal Audio Renderer
   ${If} ${SSE2Supported} 
   ${AndIf} ${AtLeastWinVista}
@@ -620,6 +629,8 @@ SectionEnd
 		Delete  "$MPdir.Base\mpaudiorenderer.ax"
 	${EndIf}
   ${EndIf}
+  ; filter for URL/IPTV support
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\\MPUrlSourceSplitter.ax"
 
 ### AUTO-GENERATED   UNINSTALLATION CODE ###
   !include "${git_MP}\Setup\uninstall.nsh"
@@ -646,6 +657,11 @@ SectionEnd
   Delete "$MPdir.Config\scripts\VDBParserStrings.xml"
   RMDir "$MPdir.Config\scripts"
 
+  ; protocol implementations for MPUrlSourceSplitter.ax
+  Delete "$MPdir.Base\MPUrlSourceSplitter*"
+  Delete "$MPdir.Base\avcodec-mpurlsourcesplitter-54.dll"
+  Delete "$MPdir.Base\avformat-mpurlsourcesplitter-54.dll"
+  Delete "$MPdir.Base\avutil-mpurlsourcesplitter-51.dll" 
 
   ; MediaPortal.exe
   Delete "$MPdir.Base\MediaPortal.exe"

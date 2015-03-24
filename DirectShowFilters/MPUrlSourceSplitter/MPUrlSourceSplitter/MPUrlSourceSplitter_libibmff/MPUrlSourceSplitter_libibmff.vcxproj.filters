@@ -1,0 +1,428 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Boxes">
+      <UniqueIdentifier>{1adfeb8e-863e-423f-86c6-35fe487637be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Boxes\Header Files">
+      <UniqueIdentifier>{f46dd5e0-6af9-4e31-926b-e4514a18541a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Boxes\Source Files">
+      <UniqueIdentifier>{3aef5484-1d6c-4c46-b9d7-5a1a46e38b5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Factories">
+      <UniqueIdentifier>{c8f0f516-25a3-4d8d-8894-d17955d44ccc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Factories\Header Files">
+      <UniqueIdentifier>{c7dc3fdb-06cc-4390-972f-9eb47d538630}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Factories\Source Files">
+      <UniqueIdentifier>{ef089c54-fd24-4fce-9b13-cf6fd700ae9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Collections">
+      <UniqueIdentifier>{8e8bab40-adcf-4de7-86b7-13c9416a6013}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Collections\Header Files">
+      <UniqueIdentifier>{f587053e-7385-4725-8351-aafd202234c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Collections\Source Files">
+      <UniqueIdentifier>{54e77c7c-3084-43c9-acc4-c777e725e1d3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Brand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxConstants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedPointNumber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChunkOffset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SampleToChunk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioSampleEntryBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BitRateBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Box.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChunkLargeOffsetBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChunkOffsetBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CleanApertureBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataEntryBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataEntryUrlBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataEntryUrnBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataInformationBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualSampleEntryBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoMediaHeaderBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UserDataBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackHeaderBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundMediaHeaderBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SampleToChunkBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SampleTableBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SampleEntryBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SampleDescriptionBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelAspectRatioBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NullMediaHeaderBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MovieHeaderBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MovieBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MetaBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaInformationBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaHeaderBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaDataBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HintMediaHeaderBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HandlerBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileTypeBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataReferenceBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxFactory.h">
+      <Filter>Factories\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaInformationBoxFactory.h">
+      <Filter>Factories\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SampleEntryBoxFactory.h">
+      <Filter>Factories\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FullBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxCollection.h">
+      <Filter>Collections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BrandCollection.h">
+      <Filter>Collections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChunkOffsetCollection.h">
+      <Filter>Collections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataEntryBoxCollection.h">
+      <Filter>Collections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SampleEntryBoxCollection.h">
+      <Filter>Collections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SampleToChunkCollection.h">
+      <Filter>Collections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeToSample.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeToSampleCollection.h">
+      <Filter>Collections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeToSampleBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MovieFragmentBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MovieExtendsBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MovieExtendsHeaderBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackExtendsBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MovieFragmentHeaderBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackFragmentBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackFragmentHeaderBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UuidBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sample.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SampleCollection.h">
+      <Filter>Collections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackRunBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Brand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FixedPointNumber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChunkOffset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SampleToChunk.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioSampleEntryBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BitRateBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Box.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChunkLargeOffsetBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChunkOffsetBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CleanApertureBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataEntryBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataEntryUrlBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataEntryUrnBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataInformationBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataReferenceBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileTypeBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FullBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HandlerBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HintMediaHeaderBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaDataBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaHeaderBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaInformationBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MetaBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MovieBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MovieHeaderBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NullMediaHeaderBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelAspectRatioBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SampleDescriptionBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualSampleEntryBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoMediaHeaderBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UserDataBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TrackHeaderBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TrackBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundMediaHeaderBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SampleToChunkBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SampleTableBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SampleEntryBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxFactory.cpp">
+      <Filter>Factories\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaInformationBoxFactory.cpp">
+      <Filter>Factories\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SampleEntryBoxFactory.cpp">
+      <Filter>Factories\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxCollection.cpp">
+      <Filter>Collections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BrandCollection.cpp">
+      <Filter>Collections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChunkOffsetCollection.cpp">
+      <Filter>Collections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataEntryBoxCollection.cpp">
+      <Filter>Collections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SampleEntryBoxCollection.cpp">
+      <Filter>Collections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SampleToChunkCollection.cpp">
+      <Filter>Collections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeToSample.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeToSampleCollection.cpp">
+      <Filter>Collections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeToSampleBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MovieFragmentBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MovieExtendsBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MovieExtendsHeaderBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TrackExtendsBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MovieFragmentHeaderBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TrackFragmentBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TrackFragmentHeaderBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UuidBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SampleCollection.cpp">
+      <Filter>Collections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TrackRunBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

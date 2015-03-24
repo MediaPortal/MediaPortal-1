@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3E3AB099-0DA5-48DF-AE12-E11FD8259875}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter</RootNamespace>
+    <AssemblyName>MediaPortalIptvFilterAndUrlSourceSplitter</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Gentle.Common, Version=1.5.0.29113, Culture=neutral, PublicKeyToken=80b5de62e27be49b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TVDatabase\references\Gentle.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Gentle.Framework, Version=1.5.0.29113, Culture=neutral, PublicKeyToken=80b5de62e27be49b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TVDatabase\references\Gentle.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=5.1.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TVDatabase\references\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="Url\AfhsManifestUrl.cs" />
+    <Compile Include="BackgroundWorker.cs" />
+    <Compile Include="DoWorkEventArgs.cs" />
+    <Compile Include="Editor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editor.Designer.cs">
+      <DependentUpon>Editor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Filter\FilterError.cs" />
+    <Compile Include="Filter\FilterException.cs" />
+    <Compile Include="FinishedWorkEventArgs.cs" />
+    <Compile Include="HttpProtocolSettings.cs" />
+    <Compile Include="Url\CacheFolderEditor.cs" />
+    <Compile Include="Url\HttpUrl.cs" />
+    <Compile Include="Filter\IFilterState.cs" />
+    <Compile Include="Filter\IFilterStateEx.cs" />
+    <Compile Include="LogVerbosity.cs" />
+    <Compile Include="Url\HttpVersionConverter.cs" />
+    <Compile Include="Url\Mpeg2TsParser.cs" />
+    <Compile Include="Url\Mpeg2TsParserConverter.cs" />
+    <Compile Include="Url\NetworkInterfaceConverter.cs" />
+    <Compile Include="Url\Parameter.cs" />
+    <Compile Include="Url\ParameterCollection.cs" />
+    <Compile Include="Url\Parser.cs" />
+    <Compile Include="Plugin.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ProtocolSettings.cs" />
+    <Compile Include="Url\RtmpArbitraryData.cs" />
+    <Compile Include="Url\RtmpArbitraryDataCollection.cs" />
+    <Compile Include="Url\RtmpArbitraryDataCollectionEditor.cs" />
+    <Compile Include="Url\RtmpArbitraryDataFactory.cs" />
+    <Compile Include="Url\RtmpArbitraryDataType.cs" />
+    <Compile Include="Url\RtmpBooleanArbitraryData.cs" />
+    <Compile Include="Url\RtmpNullArbitraryData.cs" />
+    <Compile Include="Url\RtmpNumberArbitraryData.cs" />
+    <Compile Include="Url\RtmpObjectArbitraryData.cs" />
+    <Compile Include="Url\RtmpProtocol.cs" />
+    <Compile Include="RtmpProtocolSettings.cs" />
+    <Compile Include="Url\RtmpStringArbitraryData.cs" />
+    <Compile Include="Url\RtmpUrl.cs" />
+    <Compile Include="RtspProtocolSettings.cs" />
+    <Compile Include="Url\RtspConnectionPreference.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Url\RtspConnectionPreference.Designer.cs">
+      <DependentUpon>RtspConnectionPreference.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Url\RtspConnectionPreferenceEditor.cs" />
+    <Compile Include="Url\RtspUrl.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Url\SimpleUrl.cs" />
+    <Compile Include="UdpRtpProtocolSettings.cs" />
+    <Compile Include="Url\UdpRtpUrl.cs" />
+    <Compile Include="Url\UrlFactory.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
+      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
+      <Name>DirectShowLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SetupControls\SetupControls.csproj">
+      <Project>{A2792D3C-04C1-4A92-9383-A33D59C54D8D}</Project>
+      <Name>SetupControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SetupTv\SetupTv.csproj">
+      <Project>{FF9AAD68-BBE0-41F7-9183-F2B8474B9224}</Project>
+      <Name>SetupTv</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TvControl\TvControl.csproj">
+      <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
+      <Name>TvControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">
+      <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>
+      <Name>TvBusinessLayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TVDatabase\TVDatabase.csproj">
+      <Project>{0FD8DEAE-37A4-49CC-A7BE-E86E0E0D85BD}</Project>
+      <Name>TVDatabase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
+      <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
+      <Name>TvLibrary.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TVLibrary\TVLibrary.csproj">
+      <Project>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</Project>
+      <Name>TVLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PluginBase\PluginBase.csproj">
+      <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>
+      <Name>PluginBase</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Editor.resx">
+      <DependentUpon>Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Url\RtspConnectionPreference.resx">
+      <DependentUpon>RtspConnectionPreference.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\correct.png" />
+    <Content Include="Resources\Down.png" />
+    <Content Include="Resources\failed.png" />
+    <Content Include="Resources\not_tested.png" />
+    <Content Include="Resources\pending.png" />
+    <Content Include="Resources\Up.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

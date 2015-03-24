@@ -1,0 +1,5 @@
+LIBRARY     mpurlsourcesplitter_protocol_afhs_decryption_default.dll
+
+EXPORTS
+			CreatePlugin				PRIVATE
+			DestroyPlugin				PRIVATE
