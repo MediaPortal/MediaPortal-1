@@ -131,21 +131,22 @@ void CPidTable::LogPIDs()
 {
   USES_CONVERSION;
 
-  LogDebug(" pcr      pid: %4x ",PcrPid);
-  LogDebug(" pmt      pid: %4x ",PmtPid);
+  LogDebug(" pcr      pid: 0x%4x ",PcrPid);
+  LogDebug(" pmt      pid: 0x%4x ",PmtPid);
 
   // Log all video streams (Blu-ray can have multiple video streams)
   for(unsigned int i(0) ; i < videoPids.size() ; i++)
   {
-    LogDebug(" video    pid: %4x type: %s",
+    LogDebug(" video    pid: 0x%4x type: %s DescriptorData: 0x%2x",
       videoPids[i].Pid, 
-      T2A(StreamFormatAsString(videoPids[i].VideoServiceType)));
+      T2A(StreamFormatAsString(videoPids[i].VideoServiceType)),
+      videoPids[i].DescriptorData);
   }
 
   // Log all audio streams
   for(unsigned int i(0) ; i < audioPids.size() ; i++)
   {
-	  LogDebug(" audio    pid: %4x language: %3s type: %s",
+	  LogDebug(" audio    pid: 0x%4x language: %3s type: %s",
       audioPids[i].Pid, 
       audioPids[i].Lang,
       T2A(StreamFormatAsString(audioPids[i].AudioServiceType)));
@@ -154,7 +155,7 @@ void CPidTable::LogPIDs()
   // Log all subtitle streams
   for(unsigned int i(0) ; i < subtitlePids.size() ; i++)
   {
-	  LogDebug(" Subtitle pid: %4x language: %3s type: %s",
+	  LogDebug(" Subtitle pid: 0x%4x language: %3s type: %s",
       subtitlePids[i].Pid, 
       subtitlePids[i].Lang,
       T2A(StreamFormatAsString(subtitlePids[i].SubtitleServiceType)));  
@@ -182,6 +183,10 @@ LPCTSTR CPidTable::StreamFormatAsString(int streamType)
 		return _T("MPEG4");
 	case 0x1B:
 		return _T("H264");
+	case 0x24:
+		return _T("HEVC");
+	case 0x27:
+		return _T("HEVC2");
 	case 0xEA:
 		return _T("VC1");
 	case 0x80:
@@ -201,7 +206,7 @@ LPCTSTR CPidTable::StreamFormatAsString(int streamType)
 	case 0x87:
 		return _T("DD+");
   case 0x0f:
-		return _T("AAC");
+		return _T("ADTS AAC");
 	case 0x11:
 		return _T("LATM AAC");
   case 0xA1:

@@ -51,6 +51,11 @@ bool CPmtParser::IsReady()
   return m_isFound;
 }
 
+void CPmtParser::ClearReady()
+{
+  m_isFound = false;
+}
+
 void CPmtParser::OnNewSection(CSection& section)
 {   
   if (section.table_id!=2)
@@ -103,10 +108,13 @@ void CPmtParser::OnNewSection(CSection& section)
       elementary_PID = ((section.Data[pointer+1]&0x1F)<<8)+section.Data[pointer+2];
       ES_info_length = ((section.Data[pointer+3] & 0xF)<<8)+section.Data[pointer+4];
       //LogDebug("pmt: pid:%x type:%x",elementary_PID, stream_type);
-      if(stream_type==SERVICE_TYPE_VIDEO_MPEG1 
+      if ( stream_type==SERVICE_TYPE_VIDEO_MPEG1 
         || stream_type==SERVICE_TYPE_VIDEO_MPEG2
         || stream_type==SERVICE_TYPE_VIDEO_MPEG4
-        || stream_type==SERVICE_TYPE_VIDEO_H264 )
+        || stream_type==SERVICE_TYPE_VIDEO_H264
+        // || stream_type==SERVICE_TYPE_VIDEO_HEVC1
+        // || stream_type==SERVICE_TYPE_VIDEO_HEVC2 
+        )
       {
         VideoPid pid;
         pid.Pid=elementary_PID;
@@ -148,6 +156,15 @@ void CPmtParser::OnNewSection(CSection& section)
 
         int indicator=section.Data[pointer];
         x = section.Data[pointer + 1] + 2;
+
+        if(indicator==DESCRIPTOR_VIDEO_STREAM)
+        {								
+          VideoPid pid = m_pidInfo.videoPids.back(); //Get the current video PID data
+          pid.DescriptorData = section.Data[pointer+2];
+          
+          m_pidInfo.videoPids.pop_back();
+          m_pidInfo.videoPids.push_back(pid);
+        }
   						
         if(indicator==DESCRIPTOR_DVB_AC3 || indicator==DESCRIPTOR_DVB_E_AC3)
         {								

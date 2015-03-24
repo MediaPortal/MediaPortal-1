@@ -649,6 +649,7 @@ bool CFrameHeaderParser::Read(aachdr& h, int len, CMediaType* pmt)
 	static int freq[] = {96000, 88200, 64000, 48000, 44100, 32000, 24000, 22050, 16000, 12000, 11025, 8000};
 	h.nBytesPerSec = h.aac_frame_length * freq[h.freq] / 1024; // ok?
 	h.rtDuration = 10000000i64 * 1024 / freq[h.freq]; // ok?
+	h.nSamplesPerSec = freq[h.freq];
 
 	if(!pmt) return(true);
 
@@ -656,9 +657,11 @@ bool CFrameHeaderParser::Read(aachdr& h, int len, CMediaType* pmt)
 	memset(wfe, 0, sizeof(WAVEFORMATEX)+5);
 	wfe->wFormatTag = WAVE_FORMAT_AAC;
 	wfe->nChannels = h.channels <= 6 ? h.channels : 2;
-	wfe->nSamplesPerSec = freq[h.freq];
-	wfe->nBlockAlign = h.aac_frame_length;
+	h.channels = wfe->nChannels;
+	wfe->nSamplesPerSec = h.nSamplesPerSec;
+	wfe->nBlockAlign = 1; //h.aac_frame_length;
 	wfe->nAvgBytesPerSec = h.nBytesPerSec;
+	wfe->wBitsPerSample = 0;
 	wfe->cbSize = MakeAACInitData((BYTE*)(wfe+1), h.profile, wfe->nSamplesPerSec, wfe->nChannels);
 
 	pmt->majortype = MEDIATYPE_Audio;
@@ -681,15 +684,20 @@ bool CFrameHeaderParser::Read(ac3hdr& h, int len, CMediaType* pmt)
 	if(len < 7)
 		return(false);
 
+	//---- byte 0
 	h.sync = (WORD)BitRead(16);
 	if(h.sync != 0x0B77)
 		return(false);
 
+	//---- byte 2
 	h.crc1 = (WORD)BitRead(16);
+	//---- byte 3
 	h.fscod = BitRead(2);
 	h.frmsizecod = BitRead(6);
+	//---- byte 4
 	h.bsid = BitRead(5);
 	h.bsmod = BitRead(3);
+	//---- byte 5
 	h.acmod = BitRead(3);
 	if((h.acmod & 1) && h.acmod != 1) h.cmixlev = BitRead(2);
 	if(h.acmod & 4) h.surmixlev = BitRead(2);
@@ -698,31 +706,33 @@ bool CFrameHeaderParser::Read(ac3hdr& h, int len, CMediaType* pmt)
 
 	if(h.bsid >= 17 || h.fscod == 3 || h.frmsizecod >= 48)
 		return(false);
+			
+	static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
+	h.nChannels = channels[h.acmod] + h.lfeon;
+
+	static int freq[] = {48000, 44100, 32000, 0};
+	h.nSamplesPerSec = freq[h.fscod];
+
+	switch(h.bsid)
+	{
+	case 9: h.nSamplesPerSec >>= 1; break;
+	case 10: h.nSamplesPerSec >>= 2; break;
+	case 11: h.nSamplesPerSec >>= 3; break;
+	default: break;
+	}
+
+	static int rate[] = {32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384, 448, 512, 576, 640, 768, 896, 1024, 1152, 1280};
+
+	h.nBytesPerSec = (rate[h.frmsizecod>>1] * 1000) / 8;
 
 	if(!pmt) return(true);
 
 	WAVEFORMATEX wfe;
 	memset(&wfe, 0, sizeof(wfe));
 	wfe.wFormatTag = WAVE_FORMAT_DOLBY_AC3;
-
-	static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
-	wfe.nChannels = channels[h.acmod] + h.lfeon;
-
-	static int freq[] = {48000, 44100, 32000, 0};
-	wfe.nSamplesPerSec = freq[h.fscod];
-
-	switch(h.bsid)
-	{
-	case 9: wfe.nSamplesPerSec >>= 1; break;
-	case 10: wfe.nSamplesPerSec >>= 2; break;
-	case 11: wfe.nSamplesPerSec >>= 3; break;
-	default: break;
-	}
-
-	static int rate[] = {32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384, 448, 512, 576, 640, 768, 896, 1024, 1152, 1280};
-
-	wfe.nAvgBytesPerSec = (rate[h.frmsizecod>>1] * 1000) / 8;
-	wfe.nBlockAlign = (WORD)(1536 * wfe.nAvgBytesPerSec / wfe.nSamplesPerSec);
+	wfe.nChannels = h.nChannels;
+	wfe.nAvgBytesPerSec = h.nBytesPerSec;
+	wfe.nBlockAlign = (WORD)(1536 * h.nBytesPerSec / h.nSamplesPerSec);
 
 	pmt->majortype = MEDIATYPE_Audio;
 	pmt->subtype = MEDIASUBTYPE_DOLBY_AC3;
@@ -731,6 +741,67 @@ bool CFrameHeaderParser::Read(ac3hdr& h, int len, CMediaType* pmt)
 
 	return(true);
 }
+
+bool CFrameHeaderParser::Read(eac3hdr& h, int len, CMediaType* pmt)
+{
+	memset(&h, 0, sizeof(h));
+
+	for(; len >= 7 && BitRead(16, true) != 0x0b77; len--)
+		BitRead(8);
+
+	if(len < 7)
+		return(false);
+
+	//---- byte 0
+	h.sync = (WORD)BitRead(16);
+	if(h.sync != 0x0B77)
+		return(false);
+	
+	//---- byte 2
+	h.strmtyp = BitRead(2);
+	h.substreamid = BitRead(3);
+	h.frmsiz = ((WORD)BitRead(11)) + 1;
+	//---- byte 4
+	h.fscod = BitRead(2);
+	h.fscod2 = BitRead(2); //only valid if h.fscod==3	
+	h.acmod = BitRead(3);
+	h.lfeon = BitRead(1);
+	//---- byte 5	
+	h.bsid = BitRead(5);
+	h.bsmod = BitRead(3);
+
+	if(h.bsid >= 17)
+		return(false);
+
+	static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
+	h.nChannels = channels[h.acmod] + h.lfeon;
+
+	static int freq[] = {48000, 44100, 32000, 0};
+	if (h.fscod==3)
+	  h.nSamplesPerSec = freq[h.fscod2]/2;
+	else
+	  h.nSamplesPerSec = freq[h.fscod];
+	  
+	h.nBytesPerSec = 1000 *(((DWORD)h.frmsiz * h.nSamplesPerSec) / (16 * 48000));
+
+	if(!pmt) return(true);
+
+	WAVEFORMATEX wfe;
+	memset(&wfe, 0, sizeof(wfe));
+	wfe.wFormatTag = WAVE_FORMAT_DOLBY_AC3;
+	wfe.nChannels = h.nChannels;	  
+	wfe.nAvgBytesPerSec = h.nBytesPerSec;
+	wfe.nBlockAlign = (WORD)((1536 * h.nBytesPerSec) / h.nSamplesPerSec);
+
+	pmt->majortype = MEDIATYPE_Audio;
+	pmt->subtype = MEDIASUBTYPE_DOLBY_DDPLUS;
+	pmt->formattype = FORMAT_WaveFormatEx;
+	pmt->SetFormat((BYTE*)&wfe, sizeof(wfe));
+
+	return(true);
+}
+
+
 
 bool CFrameHeaderParser::Read(dtshdr& h, int len, CMediaType* pmt)
 {

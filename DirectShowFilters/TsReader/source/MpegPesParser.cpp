@@ -33,6 +33,7 @@
 #include <initguid.h>
 
 #include "MpegPesParser.h"
+#include "PmtParser.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
@@ -44,14 +45,19 @@ CMpegPesParser::CMpegPesParser()
 	pmt=CMediaType();
 	pmt.InitMediaType();
 	pmt.bFixedSizeSamples=false;
+	
+	audPmt=CMediaType();
+	audPmt.InitMediaType();
+	audPmt.bFixedSizeSamples=false;
+	
 	basicVideoInfo=BasicVideoInfo();
-
+	basicAudioInfo=BasicAudioInfo();
 }
 
 bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2,bool reset)
 {
 	bool parsed=false;
-	__int64 framesize=hdrParser.GetSize();
+  __int64 framesize=hdrParser.GetSize();
 
 	if (isMpeg2)
 	{
@@ -75,6 +81,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2,bool reset)
 	}
 	else 
 	{
+	  // avchdr avc;
 		if (hdrParser.Read(avc,framesize,&pmt,reset))
 		{
 			//hdrParser.DumpAvcHeader(avc);
@@ -104,3 +111,161 @@ bool CMpegPesParser::OnTsPacket(byte *Frame,int Length,bool isMpeg2,bool reset)
 	return ParseVideo(Frame,isMpeg2,reset);
 }
 
+void CMpegPesParser::VideoReset()
+{
+  CAutoLock lock (&m_sectionVideoPmt);
+
+	basicVideoInfo.width=0;
+	basicVideoInfo.height=0;
+	basicVideoInfo.fps=0;
+	basicVideoInfo.arx=0;
+	basicVideoInfo.ary=0;
+	basicVideoInfo.isInterlaced=0;
+	basicVideoInfo.streamType=0;
+	basicVideoInfo.isValid=false;
+}
+
+void CMpegPesParser::VideoValidReset()
+{
+  CAutoLock lock (&m_sectionVideoPmt);
+	basicVideoInfo.isValid=false;	
+}
+
+bool CMpegPesParser::ParseAudio(byte* audioPacket, int streamType, bool reset)
+{
+	bool parsed=false;
+ 
+  if (audioPacket!=NULL)
+  {
+    switch (streamType)
+    {
+      case SERVICE_TYPE_AUDIO_MPEG1:
+      case SERVICE_TYPE_AUDIO_MPEG2:
+      {
+        mpahdr mpa;
+    	  __int64 framesize=hdrParser.GetSize();
+      	if (hdrParser.Read(mpa,framesize,false,&audPmt)) //Don't allow v2.5
+      	{
+          basicAudioInfo.sampleRate=mpa.nSamplesPerSec;
+          basicAudioInfo.channels = (mpa.channels == 3) ? 1 : 2;
+          basicAudioInfo.aacObjectType=0;
+          basicAudioInfo.streamType = streamType;
+          basicAudioInfo.bitrate = mpa.nBytesPerSec*8;
+      	  basicAudioInfo.pmtValid = true;	
+          basicAudioInfo.isValid = true;
+      	  parsed=true;
+      	}
+      }
+      break;
+      case SERVICE_TYPE_AUDIO_AAC:
+      {
+        aachdr aac;
+    	  __int64 framesize=hdrParser.GetSize();
+      	if (hdrParser.Read(aac,framesize,&audPmt))
+      	{
+          basicAudioInfo.sampleRate=aac.nSamplesPerSec;
+          basicAudioInfo.channels=aac.channels;    
+          basicAudioInfo.aacObjectType=aac.profile+1;
+          basicAudioInfo.streamType = streamType;
+          basicAudioInfo.bitrate = aac.nBytesPerSec*8;
+      	  basicAudioInfo.pmtValid = true;	
+          basicAudioInfo.isValid = true;
+      	  parsed=true;
+      	}
+      }
+      break;
+      case SERVICE_TYPE_AUDIO_AC3:
+      {
+        ac3hdr ac3;
+    	  __int64 framesize=hdrParser.GetSize();
+      	if (hdrParser.Read(ac3,framesize,&audPmt))
+      	{
+        	basicAudioInfo.sampleRate = ac3.nSamplesPerSec;        
+	        basicAudioInfo.channels = ac3.nChannels;
+          basicAudioInfo.aacObjectType=0;
+          basicAudioInfo.streamType = streamType;
+          basicAudioInfo.bitrate = ac3.nBytesPerSec*8;
+      	  basicAudioInfo.pmtValid = true;	
+          basicAudioInfo.isValid = true;
+      	  parsed=true;
+      	}
+      }
+      break;
+      case SERVICE_TYPE_AUDIO_DD_PLUS:
+      case SERVICE_TYPE_AUDIO_E_AC3:
+      {
+        eac3hdr eac3;
+    	  __int64 framesize=hdrParser.GetSize();
+      	if (hdrParser.Read(eac3,framesize,&audPmt))
+      	{
+        	basicAudioInfo.sampleRate = eac3.nSamplesPerSec;        
+	        basicAudioInfo.channels = eac3.nChannels;
+          basicAudioInfo.aacObjectType=0;
+          basicAudioInfo.streamType = streamType;
+          basicAudioInfo.bitrate = eac3.nBytesPerSec*8;
+      	  basicAudioInfo.pmtValid = true;	
+          basicAudioInfo.isValid = true;
+          //LogDebug("hdrParser: E-AC3 frmsiz = %d, sampleRate = %d", eac3.frmsiz, basicAudioInfo.sampleRate);
+      	  parsed=true;
+      	}
+      }
+      break;
+    }
+  }
+
+  if (!parsed) //Create default info
+  {
+  	basicAudioInfo.sampleRate=48000;
+  	basicAudioInfo.channels=2;
+    basicAudioInfo.aacObjectType=0;
+  	basicAudioInfo.streamType = streamType;
+    basicAudioInfo.bitrate=0;
+  	basicAudioInfo.pmtValid=false;	
+  	basicAudioInfo.isValid=true;	
+  	
+  	if (streamType == SERVICE_TYPE_AUDIO_LATM_AAC)
+  	{
+      basicAudioInfo.aacObjectType=2; //AAC-LC
+  	}  	
+  	
+  	if (streamType == SERVICE_TYPE_AUDIO_AC3 ||
+  	    streamType == SERVICE_TYPE_AUDIO_DD_PLUS ||
+  	    streamType == SERVICE_TYPE_AUDIO_E_AC3)
+  	{
+      basicAudioInfo.channels=6;
+  	}  	
+  }
+	
+	return parsed;
+}
+
+bool CMpegPesParser::OnAudioPacket(byte *Frame, int Length, int streamType, unsigned int streamIndex, bool reset)
+{
+  CAutoLock lock (&m_sectionAudioPmt);
+  if (Frame != NULL)
+  {
+	  hdrParser.Reset(Frame,Length);
+  }
+  basicAudioInfo.streamIndex = streamIndex;
+	return ParseAudio(Frame, streamType, reset);
+}
+
+void CMpegPesParser::AudioReset()
+{
+  CAutoLock lock (&m_sectionAudioPmt);
+
+	basicAudioInfo.isValid=false;	
+	basicAudioInfo.sampleRate=0;
+	basicAudioInfo.channels=0;
+  basicAudioInfo.aacObjectType=0;
+	basicAudioInfo.streamType = SERVICE_TYPE_AUDIO_UNKNOWN;
+  basicAudioInfo.streamIndex=0;
+  basicAudioInfo.bitrate=0;
+	basicAudioInfo.pmtValid=false;	
+}
+
+void CMpegPesParser::AudioValidReset()
+{
+  CAutoLock lock (&m_sectionAudioPmt);
+	basicAudioInfo.isValid=false;	
+}

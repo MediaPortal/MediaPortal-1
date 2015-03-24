@@ -95,13 +95,14 @@ class VideoPid
 public:
   VideoPid()
   {
-    Pid=-1; VideoServiceType=-1; 
+    Pid=-1; VideoServiceType=-1; DescriptorData=0;
   }
 
   bool operator ==(const VideoPid& other) const
   {
     if(Pid != other.Pid 
-      || VideoServiceType != other.VideoServiceType)
+      || VideoServiceType != other.VideoServiceType
+      || DescriptorData != other.DescriptorData)
     {
       return false;
     }
@@ -113,6 +114,7 @@ public:
 
   WORD Pid;
   int VideoServiceType;
+  unsigned char DescriptorData;
 };
 
 class TempPid

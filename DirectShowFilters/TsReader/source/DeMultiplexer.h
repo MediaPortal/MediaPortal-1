@@ -39,6 +39,8 @@
 #include <map>
 #include <dvdmedia.h>
 #include "MpegPesParser.h"
+#include "FrameHeaderParser.h"
+#include "CcParseH264.h"
 
 using namespace std;
 class CTsReaderFilter;
@@ -64,7 +66,7 @@ public:
   CDeMultiplexer( CTsDuration& duration,CTsReaderFilter& filter);
   virtual ~CDeMultiplexer(void);
 
-  void       Start();
+  bool       Start();
   void       Flush(bool clearAVready);
   CBuffer*   GetVideo(bool earlyStall);
   CBuffer*   GetAudio(bool earlyStall, CRefTime rtStartTime);
@@ -97,7 +99,7 @@ public:
   bool       GetAudioStream(__int32 &stream);
 
   void       GetAudioStreamInfo(int stream,char* szName);
-  void       GetAudioStreamType(int stream,CMediaType&  pmt);
+  bool       GetAudioStreamType(int stream,CMediaType&  pmt, int iPosition);
   bool       GetVideoStreamType(CMediaType &pmt);
   int        GetAudioStreamCount();
 
@@ -171,6 +173,12 @@ public:
   DWORD m_targetAVready;
   bool  m_bSubtitleCompensationSet;
   bool m_bShuttingDown;
+  double m_dVidPTSJumpLimit;
+  double m_dfAudSampleDuration;
+  
+  DWORD  m_lastFlushTime;
+  
+  CcParseH264 *m_CcParserH264;
 
 private:
   struct stAudioStream
@@ -269,6 +277,7 @@ private:
   bool m_bStarting;
 
   bool m_mpegParserTriggerFormatChange;
+  bool m_audioParserTriggerFormatChange;
   bool m_videoChanged;
   bool m_audioChanged;
   bool m_bSetAudioDiscontinuity;
@@ -318,4 +327,9 @@ private:
   
   byte* m_pFileReadBuffer;
   
+  DWORD m_currentAudHeader;
+  DWORD m_lastAudHeader;
+  int m_audHeaderCount;
+  int m_hadPESfail;
+    
 };

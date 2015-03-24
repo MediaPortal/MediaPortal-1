@@ -44,20 +44,24 @@
 #define FS_ADDON_LIM (1000*10000) //1 second in hns units (must not be zero)
 #define INITIAL_BUFF_DELAY 0      // ms units
 #define AUDIO_DELAY (0*10000)     //hns units - audio timestamp offset (delays audio relative to video)
+#define SLOW_PLAY_PPM 0     //hns units - slow play in PPM 
 #define AV_READY_DELAY 200     // ms units - delay before asserting VFW_S_CANT_CUE
 #define PRESENT_DELAY (200*10000) // hns units - timestamp compensation offset
 #define AUDIO_READY_POINT (0.2f + ((float)PRESENT_DELAY/10000000.0f))    // in seconds
-#define AUDIO_STALL_POINT 1.1f     // in seconds
+#define AUDIO_STALL_POINT 1.5f     // in seconds
 #define VIDEO_STALL_POINT 2.5f     // in seconds
 
 //Vid/Aud/Sub buffer sizes and limits
-#define MAX_AUD_BUF_SIZE 1024
+#define MAX_AUD_BUF_SIZE 640
 #define MAX_VID_BUF_SIZE 640
 #define MAX_SUB_BUF_SIZE 640
 #define AUD_BUF_SIZE_LOG_LIM (MAX_AUD_BUF_SIZE-100)
 #define VID_BUF_SIZE_LOG_LIM (MAX_VID_BUF_SIZE-60)
 #define AUD_BUF_SIZE_PREFETCH_LIM (MAX_AUD_BUF_SIZE - 50)
 #define VID_BUF_SIZE_PREFETCH_LIM (MAX_VID_BUF_SIZE - 30)
+#define AUD_PIN_BUFFERS 16
+#define VID_PIN_BUFFERS 8
+#define SUB_PIN_BUFFERS 16
 
 //File read prefetch 'looping retry' timeout limit (in ms)
 #define MAX_PREFETCH_LOOP_TIME 5000
@@ -72,10 +76,12 @@
 
 //File/RTSP ReadFromFile() block sizes
 #define READ_SIZE (131072)
-#define MIN_READ_SIZE (READ_SIZE/16)
-#define MIN_READ_SIZE_UNC (READ_SIZE/8)
-#define INITIAL_READ_SIZE (READ_SIZE * 256)
+#define MIN_READ_SIZE (2048)
+#define MIN_READ_SIZE_UNC (2048)
+#define INITIAL_READ_SIZE (READ_SIZE * 512)
 
+//Duration loop timeout in ms (effective background repeat/iteration time)
+#define DUR_LOOP_TIMEOUT 105
 
 using namespace std;
 
@@ -101,13 +107,12 @@ DEFINE_GUID(CLSID_FFDSHOWVIDEO, 0x04fe9017, 0xf873, 0x410e, 0x87, 0x1e, 0xab, 0x
 DEFINE_GUID(CLSID_FFDSHOWDXVA, 0xb0eff97, 0xc750, 0x462c, 0x94, 0x88, 0xb1, 0xe, 0x7d, 0x87, 0xf1, 0xa6);
 // {DBF9000E-F08C-4858-B769-C914A0FBB1D7}
 DEFINE_GUID(CLSID_FFDSHOWSUBTITLES, 0xdbf9000e, 0xf08c, 0x4858, 0xb7, 0x69, 0xc9, 0x14, 0xa0, 0xfb, 0xb1, 0xd7);
-// {[uuid("62D767FE-4F1B-478B-B350-8ACE9E4DB00E")]}
-DEFINE_GUID(CLSID_LAVCUVID, 0x62D767FE, 0x4F1B, 0x478B, 0xB3, 0x50, 0x8A, 0xCE, 0x9E, 0x4D, 0xB0, 0x0E);
 // [uuid("EE30215D-164F-4A92-A4EB-9D4C13390F9F")]
 DEFINE_GUID(CLSID_LAVVIDEO, 0xEE30215D, 0x164F, 0x4A92, 0xA4, 0xEB, 0x9D, 0x4C, 0x13, 0x39, 0x0F, 0x9F);
 // {212690FB-83E5-4526-8FD7-74478B7939CD}
 DEFINE_GUID(CLSID_MSDTVDVDVIDEO, 0x212690FB, 0x83E5, 0x4526, 0x8F, 0xD7, 0x74, 0x47, 0x8B, 0x79, 0x39, 0xCD);
-// {1CF3606B-6F89-4813-9D05-F9CA324CF2EA}
+// [uuid("E8E73B6B-4CB3-44A4-BE99-4F7BCB96E491")]
+DEFINE_GUID(CLSID_LAVAUDIO, 0xE8E73B6B, 0x4CB3, 0x44A4, 0xBE, 0x99, 0x4F, 0x7B, 0xCB, 0x96, 0xE4, 0x91);
 
 
 DECLARE_INTERFACE_(ITSReaderCallback, IUnknown)
@@ -227,6 +232,8 @@ public:
   CTsDuration&    GetDuration();
   FILTER_STATE    State() {return m_State;};
   void            DeltaCompensation(REFERENCE_TIME deltaComp);
+  REFERENCE_TIME  GetTotalDeltaComp();
+  void            ClearTotalDeltaComp();
   void            SetCompensation(CRefTime newComp);
   CRefTime        GetCompensation();
   CRefTime        Compensation;
@@ -242,13 +249,14 @@ public:
   bool            IsStopping();
   bool            IsWaitDataAfterSeek();
 
-  DWORD           m_lastPause;
+  DWORD           m_lastPauseRun;
   bool            m_bStreamCompensated;
   CRefTime        m_ClockOnStart;
   bool            m_bForcePosnUpdate;
   bool            m_bDurationThreadBusy;
 
   REFERENCE_TIME  m_RandomCompensation;
+  REFERENCE_TIME  m_TotalDeltaCompensation;
   REFERENCE_TIME  m_MediaPos;
   REFERENCE_TIME  m_BaseTime;
   REFERENCE_TIME  m_LastTime;
@@ -270,6 +278,7 @@ public:
   int             m_ShowBufferVideo;
 
   CLSID           m_videoDecoderCLSID;
+  CLSID           m_audioDecoderCLSID;
   bool            m_bFastSyncFFDShow;
   bool            m_EnableSlowMotionOnZapping;
   bool            m_bDisableVidSizeRebuildMPEG2;
@@ -281,6 +290,8 @@ public:
   bool            m_bEnableBufferLogging;
   bool            m_bSubPinConnectAlways;
   REFERENCE_TIME  m_regAudioDelay;
+  REFERENCE_TIME  m_regSlowPlayInPPM;
+  int             m_AutoSpeedAdjust;
 
   CLSID           GetCLSIDFromPin(IPin* pPin);
   HRESULT         GetSubInfoFromPin(IPin* pPin);
@@ -297,6 +308,8 @@ public:
   CCritSec        m_ReadAheadLock;
 
   CTsDuration     m_duration;
+  
+  DWORD           m_regLAV_AutoAVSync; //LAV Audio Decoder 'AutoAVSync' registry value
     
 
 protected:
@@ -309,6 +322,7 @@ private:
   void    BufferingPause(bool longPause, long extraSleep);
   void    ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
   void    WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
+  LONG    ReadOnlyRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
      
   CAudioPin*	    m_pAudioPin;
   CVideoPin*	    m_pVideoPin;
@@ -345,6 +359,7 @@ private:
   DWORD           m_MPmainThreadID;
   bool            m_isUNCfile;
   CCritSec        m_sectionSeeking;
-
+  
+  DWORD dwResolution;   //Timer resolution variable
 };
 
