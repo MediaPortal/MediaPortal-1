@@ -173,6 +173,7 @@ namespace MediaPortal.DeployTool.Sections
         AddPackageToListView(new OldPackageChecker());
       AddPackageToListView(new DirectX9Checker());
       AddPackageToListView(new VCRedistChecker());
+      AddPackageToListView(new VCRedistChecker2013());
       AddPackageToListView(new VCRedistCheckerOld());
       AddPackageToListView(new WindowsMediaPlayerChecker());
       switch (InstallationProperties.Instance["InstallType"])
