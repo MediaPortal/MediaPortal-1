@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using System.Windows.Forms;
 
 namespace MediaPortal.InputDevices
 {
@@ -32,7 +33,7 @@ namespace MediaPortal.InputDevices
   /// Remote buttons are defined in the XML file.
   /// The name of the remote to load is defined in the Configuration. It os prefixed with "IrTrans"
   /// </summary>
-  public class IrTrans
+  public class IrTrans : IInputDevice
   {
     #region Variables and Constants
 
@@ -289,6 +290,32 @@ namespace MediaPortal.InputDevices
           Log.Info("IRTrans: Error on receive from socket: {0}", se.Message);
         }
       }
+    }
+
+    /// <summary>
+    /// Required for the IInputDevice interface
+    /// </summary>    
+    /// <param name="msg"></param>
+    /// <param name="action"></param>
+    /// <param name="key"></param>
+    /// <param name="keyCode"></param>
+    /// <returns></returns>
+    public bool WndProc(ref System.Windows.Forms.Message msg, out GUI.Library.Action action, out char key, out Keys keyCode)
+    {
+        action = null;
+        key = (char)0;
+        keyCode = Keys.A;
+        return false;
+    }
+
+    /// <summary>
+    /// Required for the IInputDevice interface
+    /// </summary>
+    /// <param name="msg"></param>
+    /// <returns></returns>
+    public MediaPortal.InputDevices.InputHandler.Mapping GetMapping(Message msg)
+    {
+        return null;
     }
   }
 }

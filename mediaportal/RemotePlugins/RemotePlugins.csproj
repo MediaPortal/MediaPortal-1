@@ -183,6 +183,7 @@
     <Compile Include="Hook\HookEventArgs.cs" />
     <Compile Include="Hook\HookEventHandler.cs" />
     <Compile Include="Hook\KeyboardHook.cs" />
+    <Compile Include="IInputDevice.cs" />
     <Compile Include="InputMapper\HidInputMappingForm.cs">
       <SubType>Form</SubType>
     </Compile>
