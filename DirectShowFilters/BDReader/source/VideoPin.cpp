@@ -566,6 +566,9 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
                 m_bInitDuration = true;
               }
 
+              if (buffer->nNewSegment & NS_INTERRUPTED)
+                m_demux.m_eAudioClipSeen->Set();
+
               // LAV video decoder requires an end of stream notification to be able to provide complete video frames
               // to downstream filters in a case where we are waiting for the audio pin to see the clip boundary as
               // we cannot provide yet the next clip's PMT downstream since audio stream could require a rebuild
