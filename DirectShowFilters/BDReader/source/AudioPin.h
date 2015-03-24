@@ -81,7 +81,7 @@ public:
   STDMETHODIMP Notify(IBaseFilter* pSender, Quality q);
   HRESULT DeliverBeginFlush();
   HRESULT DeliverEndFlush();
-  HRESULT DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate);
+  HRESULT DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate, bool doFakeSeek = false);
   bool IsConnected();
 
   void SetInitialMediaType(const CMediaType* pmt);
@@ -89,11 +89,6 @@ public:
 protected:
   DWORD ThreadProc();
 
-  void JoinAudioBuffers(Packet* pBuffer, CDeMultiplexer* pDemuxer);
-  void ProcessAudioSample(Packet* pBuffer, IMediaSample* pSample);
-
-  inline void ConvertLPCMFromBE(BYTE* src, void* dest, int channels, int nSamples, int sampleSize, int channelMap);
-  
   void LogMediaType(AM_MEDIA_TYPE* pmt);
 
   CBDReaderFilter* const m_pFilter;
@@ -112,8 +107,8 @@ protected:
   CAMEvent* m_eFlushStart;
   bool m_bFlushing;
   bool m_bSeekDone;
+  bool m_bResetToLibSeek;
   bool m_bDiscontinuity;
-  bool m_bFirstSample;
   bool m_bZeroTimeStream;
 
   bool m_bUsePCM;
@@ -121,6 +116,5 @@ protected:
   REFERENCE_TIME m_rtStreamTimeOffset;
 
   bool m_bZeroStreamOffset;
-  bool m_bClipEndingNotified;
 };
 

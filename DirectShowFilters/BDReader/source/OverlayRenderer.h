@@ -22,15 +22,45 @@
 #pragma once
 
 #include "StdAfx.h"
+#include <vector>
 #include <bluray.h>
 #include <overlay.h>
 #include <streams.h>
 #include <D3d9.h>
 #include "OSDTexture.h"
 
+#define OVERLAY_WIDTH 1920
+#define OVERLAY_HEIGHT 1080
 #define PALETTE_SIZE 256
+#define NUM_OF_PLANES 2
+
+using namespace std;
 
 class CLibBlurayWrapper;
+
+struct BD_OVERLAY_EX : BD_OVERLAY
+{
+  bool scheduled;
+};
+
+typedef vector<BD_OVERLAY_EX*>::iterator ivecOverlayQueue;
+
+void __cdecl ARBGLock(BD_ARGB_BUFFER* buffer);
+void __cdecl ARBGUnlock(BD_ARGB_BUFFER* buffer);
+
+class COverlayRenderer;
+
+struct BD_ARGB_BUFFER_EX : BD_ARGB_BUFFER
+{
+  COverlayRenderer* render;
+};
+
+enum OVERLAY_TYPE
+{
+  NONE = 0,
+  NORMAL_OVERLAY = 1,
+  ARGB_OVERLAY = 2
+};
 
 class COverlayRenderer
 {
@@ -39,34 +69,81 @@ public:
   ~COverlayRenderer();
 
   void OverlayProc(const BD_OVERLAY* ov);
+  void ARGBOverlayProc(const BD_ARGB_OVERLAY* ov);
+
   void SetD3DDevice(IDirect3DDevice9* device);
+
+  void SetScr(INT64 pts, INT64 offset);
+
+  bool CreateARGBBuffers(bd_argb_buffer_s** pBuffer);
+  void LockARGBSurface(BD_ARGB_BUFFER_EX* buffer);
+  void UnlockARGBSurface(BD_ARGB_BUFFER_EX* buffer);
 
 private:
 
   void OpenOverlay(const BD_OVERLAY* pOv);
-  void CloseOverlay(const int pPlane);
+  void OpenOverlay(const BD_ARGB_OVERLAY* pOv);
+  void CloseOverlay(const uint8_t plane);
 
-  void ClearArea(OSDTexture* pPlane, const BD_OVERLAY* pOv);
-  void ClearOverlay();
-  void DrawBitmap(OSDTexture* pPlane, const BD_OVERLAY* pOv);
+  void ProcessOverlay(const BD_OVERLAY* pOv);
+
+  void CreateFrontAndBackBuffers(uint8_t plane, uint16_t x, uint16_t y, uint16_t w, uint16_t h);
+
+  void ClearArea(OSDTexture* pOsdTexture, const BD_OVERLAY* pOv);
+  void ClearOverlay(const uint8_t plane);
+  void DrawBitmap(OSDTexture* pOsdTexture, const BD_OVERLAY* pOv);
+  void DrawARGBBitmap(OSDTexture* pOsdTexture, const BD_ARGB_OVERLAY* pOv);
+
+  void DrawToTexture(OSDTexture* pOsdTexture, IDirect3DTexture9* pTexture, uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 
   void DecodePalette(const BD_OVERLAY* ov);
 
-  void CopyToFrontBuffer();
-  void ResetDirtyRect();
-  void ResetDirtyRect(const BD_OVERLAY* pOv);
-  void AdjustDirtyRect(const BD_OVERLAY* pOv);
+  void CopyToFrontBuffer(const uint8_t plane, bool ARGB = false);
+  void ResetDirtyRect(const uint8_t plane);
+  void ResetDirtyRect(const uint8_t plane, uint16_t w, uint16_t h);
+  void AdjustDirtyRect(const uint8_t plane, uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 
   void LogCommand(const BD_OVERLAY* ov);
-  LPCTSTR CommandAsString(int pCmd);
+  void LogARGBCommand(const BD_ARGB_OVERLAY* ov);
+  char* CommandAsString(int cmd);
+  char* ARGBCommandAsString(int cmd);
+
+  static DWORD WINAPI ScheduleThreadEntryPoint(LPVOID lpParameter);
+  DWORD ScheduleThread();
+  bool NextScheduleTime(REFERENCE_TIME& rtPts, UINT8 plane);
+  void ScheduleOverlays();
+  void CancelTimers();
+
+  ivecOverlayQueue FreeOverlay(ivecOverlayQueue overlay);
+  void FreeOverlayQueue(const uint8_t plane);
 
   uint32_t m_palette[PALETTE_SIZE];
 
   CLibBlurayWrapper* m_pLib;
   IDirect3DDevice9* m_pD3DDevice;
 
-  OSDTexture* m_pPlanes[2];
-  OSDTexture* m_pPlanesBackbuffer[2];
+  OSDTexture* m_pPlanes[NUM_OF_PLANES];
+  OSDTexture* m_pPlanesBackbuffer[NUM_OF_PLANES];
 
-  RECT m_dirtyRect;
+  BD_ARGB_BUFFER_EX m_ARGBBuffer;
+  IDirect3DTexture9* m_pARGBTextures[NUM_OF_PLANES];
+
+  RECT m_dirtyRect[NUM_OF_PLANES];
+
+  CCritSec m_csOverlayQueue;
+  vector<BD_OVERLAY_EX*> m_overlayQueue[NUM_OF_PLANES];
+
+  HANDLE m_hThread;
+  HANDLE m_hStopThreadEvent;
+
+  HANDLE m_hOverlayTimerIG;
+  HANDLE m_hOverlayTimerPG;
+  HANDLE m_hNewOverlayAvailable;
+
+  REFERENCE_TIME m_rtPlaybackPosition;
+  REFERENCE_TIME m_rtOffset;
+
+  CCritSec m_csRenderLock;
+
+  OVERLAY_TYPE m_overlayType[NUM_OF_PLANES];
 };
