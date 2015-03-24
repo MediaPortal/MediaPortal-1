@@ -444,6 +444,17 @@ public class MediaPortalApp : D3D, IRender
   [STAThread]
   public static void Main(string[] args)
   {
+    using (Settings xmlreader = new MPSettings())
+    {
+      bool noAutoStartOnRDP = xmlreader.GetValueAsBool("general", "noautostartonrdp", true);
+
+      if (System.Windows.Forms.SystemInformation.TerminalServerSession && noAutoStartOnRDP)
+      {
+        Environment.Exit(0);
+        return; // exit 
+      }
+    }
+
     Thread.CurrentThread.Name = "MPMain";
 
     if (Environment.OSVersion.Version.Major >= 6)
