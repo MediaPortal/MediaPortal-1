@@ -718,8 +718,10 @@ void CTsReaderFilter::OnVideoFormatChanged(int streamType,int width,int height,i
 
 void CTsReaderFilter::OnBitRateChanged(int bitrate)
 {
-  if ( m_pCallback )
+#ifdef BITRATE_REPORT
+  if ( m_pCallback)
     m_pCallback->OnBitRateChanged(bitrate);
+#endif
 }
 
 STDMETHODIMP CTsReaderFilter::SetGraphCallback(ITSReaderCallback* pCallback)

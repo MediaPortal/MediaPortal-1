@@ -22,6 +22,7 @@
 #pragma warning( disable: 4995 4996 )
 
 #define _AFXDLL
+#include "hdmv\StdAfx.h"
 #include <bdaiface.h>
 #include <shlobj.h>
 #include "DVBSub.h"
@@ -49,7 +50,8 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_startTimestamp( -1 ),
   m_CurrentSeekPosition( 0 ),
   m_prevSubtitleTimestamp( 0 ),
-  m_bBasePcrSet( false )
+  m_bBasePcrSet( false ),
+  m_bHDMV( false )
 {
   TCHAR filename[1024];
   GetLogFile(filename);
@@ -69,6 +71,18 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
     return;
   }
 
+  // Create subtitle decoder
+  m_pHdmvSub = new CHdmvSub();
+  
+  if( m_pHdmvSub == NULL )
+  {
+    if( phr )
+    {
+      *phr = E_OUTOFMEMORY;
+    }
+    return;
+  }
+
   // Create subtitle input pin
   m_pSubtitlePin = new CSubtitleInputPin( this,
                          GetOwner(),
@@ -76,6 +90,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
                          &m_Lock,
                          &m_ReceiveLock,
                          m_pSubDecoder,
+                         m_pHdmvSub,
                          phr );
 
   if ( m_pSubtitlePin == NULL )
@@ -95,6 +110,15 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   {
     LogDebug("No DVB subtitle decoder available!");
   }
+
+  if( m_pHdmvSub )
+  {
+    m_pHdmvSub->SetObserver( this );
+  }
+  else
+  {
+    LogDebug("No Blu-ray subtitle decoder available!");
+  }
 }
 
 
@@ -110,6 +134,7 @@ CDVBSub::~CDVBSub()
   }
 
   delete m_pSubDecoder;
+  delete m_pHdmvSub;
   delete m_pSubtitlePin;
   
   LogDebug( "CDVBSub::~CDVBSub() - end" );
@@ -197,6 +222,7 @@ STDMETHODIMP CDVBSub::Stop()
   // Make sure no further processing is done
   if( m_pSubDecoder ) m_pSubDecoder->Reset();
   if( m_pSubtitlePin ) m_pSubtitlePin->Reset();
+  if( m_pHdmvSub ) m_pHdmvSub->Reset();
   
   //LogDebug( "Release m_pIMediaSeeking" );
   //if( m_pIMediaSeeking )
@@ -222,6 +248,7 @@ void CDVBSub::Reset()
 
   if( m_pSubDecoder ) m_pSubDecoder->Reset();
   if( m_pSubtitlePin ) m_pSubtitlePin->Reset();
+  if( m_pHdmvSub ) m_pHdmvSub->Reset();
 
   // Notify reset observer
   if( m_pResetObserver )
@@ -340,7 +367,14 @@ STDMETHODIMP CDVBSub::NotifyChannelChange()
 
 STDMETHODIMP CDVBSub::SetHDMV( bool pHDMV )
 {
-  return E_NOTIMPL;
+  m_bHDMV = pHDMV;
+  if( m_pSubtitlePin )
+  {
+    m_pSubtitlePin->SetHDMV( pHDMV );
+    return S_OK;
+  }
+  
+  return S_FALSE;
 }
 
 
@@ -354,7 +388,18 @@ void CDVBSub::NotifySubtitle()
   // Calculate the time stamp
   CSubtitle* pSubtitle( NULL );
   
-  pSubtitle = m_pSubDecoder->GetLatestSubtitle();
+  if( m_bHDMV )
+  {
+    pSubtitle = m_pHdmvSub->GetLatestSubtitle();
+    if (pSubtitle)
+    {
+      pSubtitle->SetTimeout( 20 );
+    }
+  }
+  else
+  {
+    pSubtitle = m_pSubDecoder->GetLatestSubtitle();
+  }
   
   if( pSubtitle )
   {
@@ -385,15 +430,18 @@ void CDVBSub::NotifySubtitle()
   {
     // Notify the MediaPortal side
     SUBTITLE sub;
-    GetSubtitle( 0, &sub );
-    LogDebug( "Calling subtitle callback" );
-    int retval = (*m_pSubtitleObserver)( &sub );
-    LogDebug( "Subtitle Callback returned" );
+    if (GetSubtitle( 0, &sub ) == S_OK)
+    {
+      LogDebug( "Calling subtitle callback" );
+      int retval = (*m_pSubtitleObserver)( &sub );
+      LogDebug( "Subtitle Callback returned" );
+    }
     DiscardOldestSubtitle();
   }
   else
   {
-    LogDebug( "No callback set" );
+    LogDebug( "No callback set, discarding subtitle" );
+    DiscardOldestSubtitle();
   }
 }
 
@@ -437,7 +485,11 @@ STDMETHODIMP CDVBSub::GetSubtitle( int place, SUBTITLE* subtitle )
 {
   CSubtitle* pCSubtitle( NULL );
 
-  if( m_pSubDecoder )
+  if( m_bHDMV && m_pHdmvSub )
+  {
+    pCSubtitle = m_pHdmvSub->GetSubtitle( place );
+  }
+  else if( m_pSubDecoder )
   {
     pCSubtitle = m_pSubDecoder->GetSubtitle( place );
   }
@@ -508,8 +560,17 @@ STDMETHODIMP CDVBSub::SetUpdateTimeoutCallback( int (CALLBACK *pUpdateTimeoutObs
 STDMETHODIMP CDVBSub::GetSubtitleCount( int* pcount )
 {
   LogDebug( "GetSubtitleCount" );
-  *pcount = m_pSubDecoder->GetSubtitleCount();
-  return S_OK;
+  if( m_bHDMV && m_pHdmvSub )
+  {
+    *pcount = m_pHdmvSub->GetSubtitleCount();
+    return S_OK;
+  }
+  else if( m_pSubDecoder )
+  {
+    *pcount = m_pSubDecoder->GetSubtitleCount();
+    return S_OK;
+  }
+  return S_FALSE;
 }
 
 
@@ -519,8 +580,18 @@ STDMETHODIMP CDVBSub::GetSubtitleCount( int* pcount )
 STDMETHODIMP CDVBSub::DiscardOldestSubtitle()
 {
   LogDebug( "DiscardOldestSubtitle" );
-  m_pSubDecoder->ReleaseOldestSubtitle();
-  return S_OK;
+
+  if( m_bHDMV && m_pHdmvSub )
+  {
+    m_pHdmvSub->ReleaseOldestSubtitle();
+    return S_OK;
+  }
+  else if( m_pSubDecoder )
+  {
+    m_pSubDecoder->ReleaseOldestSubtitle();
+    return S_OK;
+  }
+  return S_FALSE;
 }
 
 //

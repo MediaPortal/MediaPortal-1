@@ -107,8 +107,6 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_bFlushRunning = false; 
   m_bStarting=false;
   m_bReadAheadFromFile = false;
-  m_mpegParserTriggerFormatChange = false;
-  m_audioParserTriggerFormatChange = false;
   m_mpegParserReset = true;
   m_videoChanged=false;
   m_audioChanged=false;
@@ -126,9 +124,16 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_bFirstGopParsed = false;
   m_lastVidResX=-1 ;
   m_lastVidResY=-1 ;
+  m_lastARX=-1;
+  m_lastARY=-1;
+  m_lastStreamType=-1;
   m_FirstVideoSample = 0x7FFFFFFF00000000LL;
   m_LastVideoSample = 0;
   
+  m_sampleTime = GET_TIME_NOW();
+  m_sampleTimePrev = GET_TIME_NOW();
+  m_byteRead = 0;
+  m_bitRate = 0;
   m_LastDataFromRtsp = GET_TIME_NOW();
   m_targetAVready = m_LastDataFromRtsp;
   m_tWaitForMediaChange=m_LastDataFromRtsp ;
@@ -248,28 +253,26 @@ bool CDeMultiplexer::SetAudioStream(int stream)
     //yes, is the audio pin connected?
     if (m_filter.GetAudioPin()->IsConnected())
     {
-	  // here, stream is not parsed yet
+	    // here, stream is not parsed yet
+      m_audioChanged = true;
       if (!IsMediaChanging())             
       {
-        LogDebug("SetAudioStream : OnMediaTypeChanged(AUDIO_CHANGE)");
+        LogDebug("SetAudioStream : SetMediaChanging(true)");
         //Flushing is delegated to CDeMultiplexer::ThreadProc()
         DelegatedFlush(true, false);
-        m_filter.OnMediaTypeChanged(AUDIO_CHANGE);
         SetMediaChanging(true);
         m_filter.m_bForceSeekOnStop=true;     // Force stream to be resumed after
       }
       else   // Mpeg parser info is required or audio graph is already rebuilding.
       {
         LogDebug("SetAudioStream : Media already changing");   // just wait 1st GOP
-        m_audioChanged = true;
       }
     }
   }
   else
   {
-    m_mpegPesParser->AudioValidReset(); 
-    m_filter.GetAudioPin()->SetAddPMT();
-    m_filter.GetAudioPin()->SetDiscontinuity(true);
+    //Reset the audio parser (but do not flush the audio sample queue)
+    FlushCurrentAudio();
   }
 
   SetAudioChanging(false);
@@ -304,6 +307,8 @@ int CDeMultiplexer::GetAudioStreamCount()
 
 bool CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPosition)
 {
+  //LogDebug("GetAudioStreamType() : Stream %d, iPosition %d, audioIsValid %d", stream, iPosition, m_mpegPesParser->basicAudioInfo.isValid);
+
   if (stream < 0 || stream >= m_audioStreams.size() || m_mpegPesParser == NULL )
   {
     pmt.InitMediaType();
@@ -398,6 +403,8 @@ bool CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
     wfe->nChannels = m_mpegPesParser->basicAudioInfo.channels;
     wfe->nSamplesPerSec = m_mpegPesParser->basicAudioInfo.sampleRate;
   }
+  
+  
   
   return m_mpegPesParser->basicAudioInfo.isValid;
 }
@@ -608,7 +615,7 @@ void CDeMultiplexer::FlushVideo()
   m_bSetVideoDiscontinuity=true;
   m_bVideoSampleLate=false;
 
-  if (m_filter.IsSeeking() && m_filter.GetVideoPin()->IsConnected())
+  if (m_filter.IsSeeking() && m_filter.GetVideoPin()->IsConnected() && !IsMediaChanging())
   {
     m_mpegPesParser->VideoValidReset(); 
   }
@@ -659,12 +666,38 @@ void CDeMultiplexer::FlushAudio()
   m_lastAudHeader = 0;
   m_audHeaderCount = 0;
 
-  if (m_filter.IsSeeking() && m_filter.GetAudioPin()->IsConnected())
+  if (m_filter.IsSeeking() && m_filter.GetAudioPin()->IsConnected() && !IsMediaChanging())
   {
     m_mpegPesParser->AudioValidReset(); 
   }
   
   Reset();  // PacketSync reset.
+}
+
+void CDeMultiplexer::FlushCurrentAudio()
+{
+  LogDebug("demux:flush current audio");
+  CAutoLock flock (&m_sectionFlushAudio);
+  CAutoLock lock (&m_sectionAudio);
+
+  // Clear PES temporary queue.
+  delete m_pCurrentAudioBuffer;
+  ivecBuffers it = m_t_vecAudioBuffers.begin();
+  while (it != m_t_vecAudioBuffers.end())
+  {
+    CBuffer* AudioBuffer=*it;
+    delete AudioBuffer;
+    it=m_t_vecAudioBuffers.erase(it);
+  }
+  m_pCurrentAudioBuffer = new CBuffer();
+
+  m_AudioValidPES = false;
+  m_bSetAudioDiscontinuity=true;
+  m_currentAudHeader = 0;
+  m_lastAudHeader = 0;
+  m_audHeaderCount = 0;
+
+  m_mpegPesParser->AudioValidReset();   
 }
 
 void CDeMultiplexer::FlushSubtitle()
@@ -1002,8 +1035,6 @@ bool CDeMultiplexer::Start()
 {
   //reset some values
   m_bStarting=true ;
-  m_mpegParserTriggerFormatChange=false;
-  m_audioParserTriggerFormatChange = false;
   m_mpegParserReset = true;  
   m_bFirstGopParsed = false; 
   m_mpegPesParser->VideoReset(); 
@@ -1326,7 +1357,7 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLeng
   {
   	return;
   }
-
+  
   //process the ts packet further
   FillVideo(header,tsPacket, bufferOffset, bufferLength);
   FillAudio(header,tsPacket, bufferOffset, bufferLength);
@@ -1563,7 +1594,6 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                       if (!m_mpegPesParser->basicAudioInfo.isValid && len > 8)
                       {
                         m_mpegPesParser->OnAudioPacket(ps, len, m_AudioStreamType, m_iAudioStream, true);
-                        m_filter.GetAudioPin()->SetAddPMT();
                         m_bSetAudioDiscontinuity=true;
                         //LogDebug("demux: AAC ADTS parsedChannels = %d", hChannels);
   						          LogDebug("demux: AAC ADTS header: sampleRate = %d, channels = %d, bitrate = %d, objectType = %d", m_mpegPesParser->basicAudioInfo.sampleRate, m_mpegPesParser->basicAudioInfo.channels, m_mpegPesParser->basicAudioInfo.bitrate, m_mpegPesParser->basicAudioInfo.aacObjectType);
@@ -1679,7 +1709,6 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                       m_mpegPesParser->basicAudioInfo.aacObjectType = hObjectType;                      
   				            LogDebug("demux: AAC LATM parsed header: sampleRate = %d, channels = %d, bitrate = %d, objectType = %d", m_mpegPesParser->basicAudioInfo.sampleRate, m_mpegPesParser->basicAudioInfo.channels, m_mpegPesParser->basicAudioInfo.bitrate, m_mpegPesParser->basicAudioInfo.aacObjectType);
                       //Update the PMT on the output pin
-                      m_filter.GetAudioPin()->SetAddPMT();
                       m_bSetAudioDiscontinuity=true;
                     }
                     else if (m_audHeaderCount==16 && m_currentAudHeader==(*(INT16 *)(ps+5) & 0x87FF))
@@ -1754,7 +1783,6 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                     if (!m_mpegPesParser->basicAudioInfo.isValid)
                     {
                       m_mpegPesParser->OnAudioPacket(ps, len, m_AudioStreamType, m_iAudioStream, true);
-                      m_filter.GetAudioPin()->SetAddPMT();
                       m_bSetAudioDiscontinuity=true;
                       
                       //Parse the channel count
@@ -1862,7 +1890,6 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                     if (!m_mpegPesParser->basicAudioInfo.isValid)
                     {
                       m_mpegPesParser->OnAudioPacket(ps, len, m_AudioStreamType, m_iAudioStream, true);
-                      m_filter.GetAudioPin()->SetAddPMT();
                       m_bSetAudioDiscontinuity=true;
                       
                       //Parse the channel count
@@ -1964,7 +1991,6 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                       if (!m_mpegPesParser->basicAudioInfo.isValid)
                       {
                         m_mpegPesParser->OnAudioPacket(ps, len, m_AudioStreamType, m_iAudioStream, true);
-                        m_filter.GetAudioPin()->SetAddPMT();
                         m_bSetAudioDiscontinuity=true;
                         
                         //Parse the channel count
@@ -2008,7 +2034,6 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
             if (!m_mpegPesParser->basicAudioInfo.isValid)
             {
               m_mpegPesParser->OnAudioPacket(0, 0, m_AudioStreamType, m_iAudioStream, true); //Generate default info
-              m_filter.GetAudioPin()->SetAddPMT();
               m_bSetAudioDiscontinuity=true;
             }
             while(len--) 
@@ -2029,6 +2054,12 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
 
       { //Scoped for CAutoLock
         CAutoLock lock (&m_sectionAudio);
+        
+        if (m_AudioValidPES && m_mpegPesParser->basicAudioInfo.isValid)
+        {
+          CheckMediaChange(header.Pid, false);   
+        }
+
         if (m_AudioValidPES && m_filter.GetAudioPin()->IsConnected() && m_mpegPesParser->basicAudioInfo.isValid)
         {
           if (m_bSetAudioDiscontinuity)
@@ -2186,6 +2217,19 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
   if (headerlen < 188)
   {            
     int dataLen = 188-headerlen;
+
+	m_byteRead = m_byteRead + dataLen;
+	m_sampleTime = GET_TIME_NOW();
+	DWORD elapsedTime = m_sampleTime - m_sampleTimePrev;
+
+	if (elapsedTime >= 5000)
+	{
+      m_bitRate = (float)m_byteRead*8*1000/elapsedTime;
+	  m_filter.OnBitRateChanged(m_bitRate);
+	  m_sampleTimePrev = m_sampleTime;
+	  m_byteRead = 0;
+    }
+
     p->SetCount(dataLen);
     p->SetData(&tsPacket[headerlen],dataLen);
 
@@ -2368,6 +2412,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
 
     MOVE_TO_H264_START_CODE(start, end, fourByte);
 
+ 	
     while(start <= end-4)
     {
       BYTE* next = start+1;
@@ -2481,21 +2526,6 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
             //if (!iFrameScanner.SeenEnough())
             //  iFrameScanner.ProcessNALU(p2);
             LOG_OUTSAMPLES("Output p4 NALU Type: %d (%d), rtStart: %d", p4->GetAt(4)&0x1f, p4->GetCount(), (int)p->rtStart);
-
-//            if(p4->GetAt(4) == 0x06) //SEI data
-//            {
-//              if (p4->GetAt(5) == 0x04) //Closed Caption data payload
-//              {
-//                //LogDebug("demux: p4 H264 SEI NALU 0x%x 0x%x",p4->GetAt(6), p4->GetAt(7));
-//                LogDebug("demux: p4 H264 SEI CC start - 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x - end 0x%x, 0x%x, 0x%x, 0x%x", 
-//                                   p4->GetAt(6 ), p4->GetAt(7 ), p4->GetAt(8 ), p4->GetAt(9 ), 
-//                                   p4->GetAt(10), p4->GetAt(11), p4->GetAt(12), p4->GetAt(13),
-//                                   p4->GetAt(14), p4->GetAt(15), p4->GetAt(16), p4->GetAt(17),
-//                                   p4->GetAt(p4->GetCount()-4), p4->GetAt(p4->GetCount()-3), p4->GetAt(p4->GetCount()-2), p4->GetAt(p4->GetCount()-1)
-//                                   );
-//              }              
-//              //m_CcParserH264->do_NAL(p4->GetData()+4, p4->GetCount()-4);
-//            }
             
             nalID = p4->GetAt(4);
             if ((((nalID & 0x9f) == 0x07) || ((nalID & 0x9f) == 0x08)) && ((nalID & 0x60) != 0)) //Process SPS & PPS data
@@ -2518,9 +2548,6 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
               p = p4;
             }
           }
-
-//          // Parse the sample buffer for Closed Caption data (testing...)
-//          m_CcParserH264->parseAVC1sample(p->GetData(), p->GetCount(), 4);
 
           if (Gop)
           {
@@ -2649,52 +2676,8 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
           }
 
           if (Gop)
-          {
-            if (m_lastVidResX!=m_mpegPesParser->basicVideoInfo.width || m_lastVidResY!=m_mpegPesParser->basicVideoInfo.height)
-            {
-              LogDebug("DeMultiplexer: %x video format changed, %dx%d @ %d:%d, %.3fHz %s",header.Pid,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,(float)m_mpegPesParser->basicVideoInfo.fps,m_mpegPesParser->basicVideoInfo.isInterlaced ? "interlaced":"progressive");
-              m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,15000000,m_mpegPesParser->basicVideoInfo.isInterlaced);
-              if (m_mpegParserTriggerFormatChange && !IsAudioChanging() && m_mpegPesParser->basicAudioInfo.isValid)
-              {
-                LogDebug("DeMultiplexer: OnMediaFormatChange triggered by H264Parser, aud %d, vid 1", m_audioChanged);
-                SetMediaChanging(true);
-                if (m_audioChanged)
-                  m_filter.OnMediaTypeChanged(VIDEO_CHANGE | AUDIO_CHANGE); //Video and audio
-                else
-                  m_filter.OnMediaTypeChanged(VIDEO_CHANGE); //Video only
-                m_mpegParserTriggerFormatChange=false;
-              }
-              else if (m_mpegParserTriggerFormatChange)
-              {
-                m_videoChanged = true;
-              }
-              m_filter.GetVideoPin()->SetAddPMT();
-            }
-            else //video resolution is unchanged, but there may be other format changes
-            {
-              if (m_mpegParserTriggerFormatChange && !IsAudioChanging() && m_mpegPesParser->basicAudioInfo.isValid)
-              {
-                LogDebug("DeMultiplexer: Got GOP after channel change detected, format change, aud %d, vid %d", m_audioChanged, m_videoChanged);
-                if (m_audioChanged || m_videoChanged)
-                {
-                  SetMediaChanging(true);
-                  if (m_audioChanged && m_videoChanged)
-                    m_filter.OnMediaTypeChanged(VIDEO_CHANGE | AUDIO_CHANGE);
-                  else if (m_audioChanged)
-                    m_filter.OnMediaTypeChanged(AUDIO_CHANGE);
-                  else
-                    m_filter.OnMediaTypeChanged(VIDEO_CHANGE);
-                }
-                else
-                {
-                  SetMediaChanging(false);
-                }
-                m_mpegParserTriggerFormatChange=false;
-                m_filter.GetVideoPin()->SetAddPMT();
-              }
-            }
-            m_lastVidResX=m_mpegPesParser->basicVideoInfo.width;
-            m_lastVidResY=m_mpegPesParser->basicVideoInfo.height;
+          {            
+            CheckMediaChange(header.Pid, true);
           }
         }
         else
@@ -2771,6 +2754,19 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
   if (headerlen < 188)
   {
     int dataLen = 188-headerlen;
+
+	m_byteRead = m_byteRead + dataLen;
+	m_sampleTime = GET_TIME_NOW();
+	DWORD elapsedTime = m_sampleTime - m_sampleTimePrev;
+
+	if (elapsedTime >= 5000)
+	{
+      m_bitRate = (float)m_byteRead*8*1000/elapsedTime;
+	  m_filter.OnBitRateChanged(m_bitRate);
+	  m_sampleTimePrev = m_sampleTime;
+	  m_byteRead = 0;
+    }
+
     p->SetCount(dataLen);
     p->SetData(&tsPacket[headerlen],dataLen);
 
@@ -3126,51 +3122,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
             
             if (Gop)
             {              
-              if (m_lastVidResX!=m_mpegPesParser->basicVideoInfo.width || m_lastVidResY!=m_mpegPesParser->basicVideoInfo.height)
-              {
-                LogDebug("DeMultiplexer: %x video format changed, %dx%d @ %d:%d, %.3fHz %s",header.Pid,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,(float)m_mpegPesParser->basicVideoInfo.fps,m_mpegPesParser->basicVideoInfo.isInterlaced ? "interlaced":"progressive");
-                m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,15000000,m_mpegPesParser->basicVideoInfo.isInterlaced);
-                if (m_mpegParserTriggerFormatChange && !IsAudioChanging() && m_mpegPesParser->basicAudioInfo.isValid)
-                {
-                  LogDebug("DeMultiplexer: OnMediaFormatChange triggered by MPEG2 parser, aud %d, vid 1", m_audioChanged);
-                  SetMediaChanging(true);
-                  if (m_audioChanged)
-                    m_filter.OnMediaTypeChanged(VIDEO_CHANGE | AUDIO_CHANGE); //Video and audio
-                  else
-                    m_filter.OnMediaTypeChanged(VIDEO_CHANGE); //Video only
-                  m_mpegParserTriggerFormatChange=false;
-                }
-                else if (m_mpegParserTriggerFormatChange)
-                {
-                  m_videoChanged = true;
-                }
-                m_filter.GetVideoPin()->SetAddPMT();
-              }
-              else //video resolution is unchanged, but there may be other format changes
-              {
-                if (m_mpegParserTriggerFormatChange && !IsAudioChanging() && m_mpegPesParser->basicAudioInfo.isValid)
-                {
-                  LogDebug("DeMultiplexer: Got GOP after channel change detected, format change, aud %d, vid %d", m_audioChanged, m_videoChanged);
-                  if (m_audioChanged || m_videoChanged)
-                  {
-                    SetMediaChanging(true);
-                    if (m_audioChanged && m_videoChanged)
-                      m_filter.OnMediaTypeChanged(VIDEO_CHANGE | AUDIO_CHANGE);
-                    else if (m_audioChanged)
-                      m_filter.OnMediaTypeChanged(AUDIO_CHANGE);
-                    else
-                      m_filter.OnMediaTypeChanged(VIDEO_CHANGE);
-                  }
-                  else
-                  {
-                    SetMediaChanging(false);
-                  }
-                  m_mpegParserTriggerFormatChange=false;
-                  m_filter.GetVideoPin()->SetAddPMT();
-                }
-              }
-              m_lastVidResX=m_mpegPesParser->basicVideoInfo.width;
-              m_lastVidResY=m_mpegPesParser->basicVideoInfo.height;
+              CheckMediaChange(header.Pid, true);              
             }
           }
           else
@@ -3223,11 +3175,8 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
       pDVBSubtitleFilter->SetFirstPcr(m_duration.FirstStartPcr().PcrReferenceBase);
       LogDebug(" done - DVBSub - SetFirstPcr");
       m_currentSubtitlePid = m_subtitleStreams[m_iSubtitleStream].pid;
-      if (m_filter.m_subtitleCLSID == CLSID_DVBSub3)
-      {
-        pDVBSubtitleFilter->SetHDMV(false);
-        LogDebug(" done - DVBSub3 - SetHDMV");
-      }
+      pDVBSubtitleFilter->SetHDMV(false);
+      LogDebug(" done - DVBSub3 - SetHDMV(false)");
     }
   }
 
@@ -3454,7 +3403,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   }
 
   m_pids=pids;
-  LogDebug("New channel found (PAT/PMT/SDT changed)");
+  LogDebug("OnNewChannel: New channel found (PAT/PMT/SDT changed)");
   m_pids.LogPIDs();
 
   if(pTeletextEventCallback != NULL)
@@ -3523,17 +3472,23 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     m_subtitleStreams.push_back(subtitle);
   }
 
-  bool changed=false;
+  //bool changed=false;
   m_videoChanged=false;
   m_audioChanged=false;
 
   //Is the video pin connected?
-  if ((m_filter.GetVideoPin()->IsConnected()) && (m_pids.videoPids.size() > 0))
+  if (m_filter.GetVideoPin()->IsConnected()) 
   {
-    changed=true; //force a check in the mpeg parser
-    if (oldVideoServiceType != m_pids.videoPids[0].VideoServiceType)
+    if (m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid>0x1)
     {
+     //force a check in the mpeg parser
+      //changed=true;
+      LogDebug("OnNewChannel: Video media type changed. SetMediaChanging(true)...");
+      m_mpegParserReset = true;
+      m_bFirstGopParsed = false;
       m_videoChanged=true;
+      m_mpegPesParser->VideoReset();  
+      SetMediaChanging(true);
     }
   }
 
@@ -3541,8 +3496,6 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   CAutoLock lock (&m_sectionSetAudioStream);
     
   m_iAudioStream = 0;
-
-  LogDebug ("Setting initial audio index to : %i", m_iAudioStream);
 
   //get the new audio format
   int newAudioStreamType=SERVICE_TYPE_AUDIO_UNKNOWN;
@@ -3557,54 +3510,23 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     //yes, is the audio pin connected?
     if (m_filter.GetAudioPin()->IsConnected())
     {
-      changed=true;
-      m_audioChanged=true;
-    }
-  }
-
-  //did audio/video format change?
-  if (changed)
-  {
-    // if we have a video stream, let the mpeg parser trigger the OnMediaTypeChanged
-    if (m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid>0x1)  
-    {
-      LogDebug("DeMultiplexer: We have a video stream, so we let the mpegParser check/trigger format changes");
-      SetMediaChanging(true);
+      //changed=true;
       if (m_audioStreams.size() == 1)
       {
-        if ((m_AudioStreamType == SERVICE_TYPE_AUDIO_UNKNOWN) || (m_AudioStreamType != newAudioStreamType))
-        {
-          m_AudioStreamType = newAudioStreamType ;
-          m_audioChanged=true;
-          m_mpegPesParser->AudioReset(); 
-          LogDebug("DeMultiplexer: Audio media types changed");
-        }
-      }
-      m_mpegParserTriggerFormatChange=true;
-      m_mpegParserReset = true;
-      m_bFirstGopParsed = false;
-      m_mpegPesParser->VideoReset();  
-    }
-    else
-    {
-      if (m_audioStreams.size() == 1)
-      {
-        if ((m_AudioStreamType == SERVICE_TYPE_AUDIO_UNKNOWN) || (m_AudioStreamType != newAudioStreamType))
-        {
-          m_AudioStreamType = newAudioStreamType ;
-          m_mpegPesParser->AudioReset(); 
-          // notify the ITSReaderCallback. MP will then rebuild the graph
-          LogDebug("DeMultiplexer: Audio media types changed. Trigger OnMediaTypeChanged()...");
-          m_filter.OnMediaTypeChanged(AUDIO_CHANGE);
-          SetMediaChanging(true); 
-        }
+        // notify the ITSReaderCallback. MP will then rebuild the graph
+        LogDebug("OnNewChannel: Audio media types changed. SetMediaChanging(true)...");
+        //m_filter.OnMediaTypeChanged(AUDIO_CHANGE);
+        m_AudioStreamType = newAudioStreamType ;
+        m_audioChanged=true;
+        m_mpegPesParser->AudioReset(); 
+        SetMediaChanging(true); 
       }
     }
   }
 
   //if we have more than 1 audio track available, tell host application that we are ready
   //to receive an audio track change.
-  if ((m_audioStreams.size() >= 1) && m_filter.CheckAudioCallback())
+  if ((m_audioStreams.size() > 1) && m_filter.CheckAudioCallback())
   {
     LogDebug("OnNewChannel: OnRequestAudioChange()");
     SetAudioChanging(true);
@@ -3625,7 +3547,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     (*pSubUpdateCallback)(m_subtitleStreams.size(),(m_subtitleStreams.size() > 0 ? &m_subtitleStreams[0] : NULL),&bitmap_index);
     if(bitmap_index >= 0)
     {
-      LogDebug("Calling SetSubtitleStream from OnNewChannel:  %i", bitmap_index);
+      LogDebug("OnNewChannel: Calling SetSubtitleStream:  %i", bitmap_index);
       SetSubtitleStream(bitmap_index);
     }
   }
@@ -3637,9 +3559,12 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 void CDeMultiplexer::SetMediaChanging(bool onOff)
 {
   CAutoLock lock (&m_sectionMediaChanging);
-  LogDebug("demux:Wait for media format change:%d", onOff);
-  m_bWaitForMediaChange=onOff;
-  m_tWaitForMediaChange=GET_TIME_NOW() ;
+  if (m_bWaitForMediaChange != onOff)
+  {
+    LogDebug("demux:Wait for media format change:%d", onOff);
+    m_bWaitForMediaChange=onOff;
+    m_tWaitForMediaChange=GET_TIME_NOW() ;
+  }
 }
 
 bool CDeMultiplexer::IsMediaChanging(void)
@@ -3738,6 +3663,111 @@ bool CDeMultiplexer::SubPidGood(void)
 bool CDeMultiplexer::PatParsed(void)
 {
   return m_bPatParsed;
+}
+
+void CDeMultiplexer::CheckMediaChange(unsigned int Pid, bool isVideo)
+{
+  if (m_bStarting) 
+	{
+    if (isVideo)
+    {
+      if (m_lastVidResX!=m_mpegPesParser->basicVideoInfo.width || m_lastVidResY!=m_mpegPesParser->basicVideoInfo.height)
+      {
+        LogDebug("DeMultiplexer: %x new video format, %dx%d @ %d:%d, %.3fHz %s",Pid,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,(float)m_mpegPesParser->basicVideoInfo.fps,m_mpegPesParser->basicVideoInfo.isInterlaced ? "interlaced":"progressive");
+        m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,15000000,m_mpegPesParser->basicVideoInfo.isInterlaced);
+      }
+
+      m_lastVidResX     = m_mpegPesParser->basicVideoInfo.width;
+      m_lastVidResY     = m_mpegPesParser->basicVideoInfo.height;
+  	  m_lastARX         = m_mpegPesParser->basicVideoInfo.arx;
+  	  m_lastARY         = m_mpegPesParser->basicVideoInfo.ary;
+  	  m_lastStreamType  = m_mpegPesParser->basicVideoInfo.streamType;
+    }
+	  return; //do not check for dynamic changes when Start() is active
+	}
+	
+	bool update = false;
+		
+  if (isVideo)
+  {
+    if ((m_lastARX != m_mpegPesParser->basicVideoInfo.arx || m_lastARY != m_mpegPesParser->basicVideoInfo.ary)
+          && m_lastVidResX==m_mpegPesParser->basicVideoInfo.width && m_lastVidResY==m_mpegPesParser->basicVideoInfo.height)
+    {
+      LogDebug("DeMultiplexer: Video aspect ratio change to %d:%d", m_mpegPesParser->basicVideoInfo.arx, m_mpegPesParser->basicVideoInfo.ary);
+      m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType, m_mpegPesParser->basicVideoInfo.width, m_mpegPesParser->basicVideoInfo.height, m_mpegPesParser->basicVideoInfo.arx, m_mpegPesParser->basicVideoInfo.ary, m_bitRate, m_mpegPesParser->basicVideoInfo.isInterlaced);
+    }
+        
+    if (m_lastVidResX!=m_mpegPesParser->basicVideoInfo.width || m_lastVidResY!=m_mpegPesParser->basicVideoInfo.height || m_lastStreamType != m_mpegPesParser->basicVideoInfo.streamType)
+    {
+      LogDebug("DeMultiplexer: %x video format changed, %dx%d @ %d:%d, %.3fHz %s",Pid,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,(float)m_mpegPesParser->basicVideoInfo.fps,m_mpegPesParser->basicVideoInfo.isInterlaced ? "interlaced":"progressive");
+      m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,15000000,m_mpegPesParser->basicVideoInfo.isInterlaced);
+      m_videoChanged = true;
+
+      if (m_mpegPesParser->basicAudioInfo.isValid && !IsAudioChanging())
+      {
+        LogDebug("DeMultiplexer: OnMediaTypeChanged() triggered by video 1, aud %d, vid %d", m_audioChanged, m_videoChanged);
+        update = true;                
+      }
+
+      m_filter.GetVideoPin()->SetAddPMT();
+    }
+    else //video resolution is unchanged, but there may be other format changes
+    {
+      if (m_mpegPesParser->basicAudioInfo.isValid && !IsAudioChanging())
+      {
+        if (m_audioChanged || m_videoChanged)
+        {
+          LogDebug("DeMultiplexer: OnMediaTypeChanged() triggered by video 2, aud %d, vid %d", m_audioChanged, m_videoChanged);
+          update = true;
+            
+          if (m_videoChanged)
+            m_filter.GetVideoPin()->SetAddPMT();            
+        }
+      }
+    }
+  
+    m_lastVidResX     = m_mpegPesParser->basicVideoInfo.width;
+    m_lastVidResY     = m_mpegPesParser->basicVideoInfo.height;
+	  m_lastARX         = m_mpegPesParser->basicVideoInfo.arx;
+	  m_lastARY         = m_mpegPesParser->basicVideoInfo.ary;
+    m_lastStreamType  = m_mpegPesParser->basicVideoInfo.streamType;
+  }
+  else  //audio
+  {
+    if (m_audioChanged && !IsAudioChanging())
+    {
+      m_filter.GetAudioPin()->SetAddPMT();
+      if ((m_videoChanged && m_mpegPesParser->basicVideoInfo.isValid) || !m_videoChanged)
+      {
+        LogDebug("DeMultiplexer: OnMediaTypeChanged() triggered by audio 1, aud %d, vid %d", m_audioChanged, m_videoChanged);
+        update = true;
+      }
+    }    
+  }
+
+
+  if (update)
+  {
+    if (m_audioChanged || m_videoChanged)
+    {
+      SetMediaChanging(true);
+      
+      if (m_audioChanged && m_videoChanged)
+        m_filter.OnMediaTypeChanged(VIDEO_CHANGE | AUDIO_CHANGE);
+      else if (m_audioChanged)
+        m_filter.OnMediaTypeChanged(AUDIO_CHANGE);
+      else
+        m_filter.OnMediaTypeChanged(VIDEO_CHANGE);
+        
+      m_audioChanged = false;
+      m_videoChanged = false;
+    }
+    else
+    {
+      SetMediaChanging(false);
+    }
+  }
+
 }
 
 void CDeMultiplexer::SetTeletextEventCallback(int (CALLBACK *pTeletextEventCallback)(int eventcode, DWORD64 eval))
