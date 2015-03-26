@@ -233,8 +233,10 @@ namespace MediaPortal.Video.Database.SqlServer
     {
       Log.Debug("VideodatabaseADO AddFile:{0}", strFileName);
 
-      strFileName = strFileName.Replace("\\", "\\\\").Trim();
+      string origStrFileName = strFileName;
 
+      strFileName = strFileName.Replace("\\", "\\\\").Trim();
+      strFileName = strFileName.Replace("'", "\\'").Trim();
       if (!IsConnected())
       {
         return -1;
@@ -256,7 +258,7 @@ namespace MediaPortal.Video.Database.SqlServer
         if (query != null)
         {
           lFileId = query.idFile;
-          CheckMediaInfo(strFileName, string.Empty, lPathId, lFileId, false);
+          CheckMediaInfo(origStrFileName, string.Empty, lPathId, lFileId, false);
           return lFileId;
         }
 
@@ -283,7 +285,7 @@ namespace MediaPortal.Video.Database.SqlServer
 
         lFileId = query2.idFile;
 
-        CheckMediaInfo(strFileName, string.Empty, lPathId, lFileId, false);
+        CheckMediaInfo(origStrFileName, string.Empty, lPathId, lFileId, false);
 
         return lFileId;
       }
@@ -467,6 +469,7 @@ namespace MediaPortal.Video.Database.SqlServer
         string cdlabel = GetDVDLabel(strPath);
         DatabaseUtility.RemoveInvalidChars(ref cdlabel);
         strPath = strPath.Replace("\\", "\\\\").Trim();
+        strPath = strPath.Replace("'", "\\'").Trim();
 
         /*var query = (from sql in _connection.paths
                      where sql.strPath == strPath && sql.cdlabel == cdlabel
@@ -733,32 +736,31 @@ namespace MediaPortal.Video.Database.SqlServer
         string strSQL = string.Empty;
         string strFilenameAndPath = string.Empty;
 
-        // Get path name from pathID
-
-        /*var query = (from sql in _connection.paths
-                     where sql.idPath == pathID
-                     select sql).FirstOrDefault<Databases.path>();*/
-
-        strSQL = String.Format("SELECT * FROM path WHERE idPath={0}", pathID);
-
-        var query = _connection.ExecuteStoreQuery<Databases.path>(strSQL).FirstOrDefault();
-
-        // No ftp or http videos
-        if (query == null)
-        {
-          return;
-        }
-
-        string path = query.strPath;
-
-        if (path.IndexOf("remote:") >= 0 || path.IndexOf("http:") >= 0)
-        {
-          return;
-        }
-
         // We can use (path+file) or full path filename
         if (fullPathFilename == string.Empty)
         {
+          // Get path name from pathID
+
+          /*var query = (from sql in _connection.paths
+                       where sql.idPath == pathID
+                       select sql).FirstOrDefault<Databases.path>();*/
+
+          strSQL = String.Format("SELECT * FROM path WHERE idPath={0}", pathID);
+
+          var query = _connection.ExecuteStoreQuery<Databases.path>(strSQL).FirstOrDefault();
+
+          // No ftp or http videos
+          if (query == null)
+          {
+            return;
+          }
+
+          string path = query.strPath;
+
+          if (path.IndexOf("remote:") >= 0 || path.IndexOf("http:") >= 0)
+          {
+            return;
+          }
           strFilenameAndPath = path + file.Replace("''", "'");
         }
         else
@@ -3595,8 +3597,6 @@ namespace MediaPortal.Video.Database.SqlServer
         string strPath, strFileName;
 
         DatabaseUtility.Split(strFilenameAndPath, out strPath, out strFileName);
-        DatabaseUtility.RemoveInvalidChars(ref strPath);
-        DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
         int lMovieId = GetMovie(strFilenameAndPath, false);
         if (lMovieId < 0)
