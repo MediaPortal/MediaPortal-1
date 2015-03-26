@@ -114,6 +114,13 @@ namespace MediaPortal.Picture.Database
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
+    public bool ClearDB()
+    {
+      Log.Error("Picturedatabase:ClearDB use this method only in Entity Framework");
+      return true;
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public int AddPicture(string strPicture, int iRotation)
     {
       // Continue only if it's a picture files

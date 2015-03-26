@@ -2334,21 +2334,32 @@ public class MediaPortalApp : D3D, IRender
   /// </summary>
   private static void ReOpenDBs()
   {
+    bool FolderDBUseADO = false;
+    bool PictureDBUseADO = false;
+    bool MovieDBUseADO = false;
+
+    using (MediaPortal.Profile.Settings xmlreader = new MPSettings())
+    {
+      FolderDBUseADO = xmlreader.GetValueAsBool("folderdatabase", "UseADO", false);
+      PictureDBUseADO = xmlreader.GetValueAsBool("picturedatabase", "UseADO", false);
+      MovieDBUseADO = xmlreader.GetValueAsBool("moviedatabase", "UseADO", false);
+    }
+    
     string dbPath = FolderSettings.DatabaseName;
-    if (string.IsNullOrEmpty(dbPath) || PathIsNetworkPath(dbPath))
+    if (string.IsNullOrEmpty(dbPath) || PathIsNetworkPath(dbPath) || FolderDBUseADO)
     {
       Log.Info("Main: reopen FolderDatabase3 sqllite database.");
       FolderSettings.ReOpen();
     }
     dbPath = MediaPortal.Picture.Database.PictureDatabase.DatabaseName;
-    if (string.IsNullOrEmpty(dbPath) || PathIsNetworkPath(dbPath))
+    if (string.IsNullOrEmpty(dbPath) || PathIsNetworkPath(dbPath) || PictureDBUseADO)
     {
       Log.Info("Main: reopen PictureDatabase sqllite database.");
       MediaPortal.Picture.Database.PictureDatabase.ReOpen();
     }
 
     dbPath = MediaPortal.Video.Database.VideoDatabase.DatabaseName;
-    if (string.IsNullOrEmpty(dbPath) || PathIsNetworkPath(dbPath))
+    if (string.IsNullOrEmpty(dbPath) || PathIsNetworkPath(dbPath) || MovieDBUseADO)
     {
       Log.Info("Main: reopen VideoDatabaseV5.db3 sqllite database.");
       MediaPortal.Video.Database.VideoDatabase.ReOpen();
@@ -2373,22 +2384,33 @@ public class MediaPortalApp : D3D, IRender
   /// </summary>
   private static void DisposeDBs()
   {
+    bool FolderDBUseADO = false;
+    bool PictureDBUseADO = false;
+    bool MovieDBUseADO = false;
+
+    using (MediaPortal.Profile.Settings xmlreader = new MPSettings())
+    {
+      FolderDBUseADO = xmlreader.GetValueAsBool("folderdatabase", "UseADO", false);
+      PictureDBUseADO = xmlreader.GetValueAsBool("picturedatabase", "UseADO", false);
+      MovieDBUseADO = xmlreader.GetValueAsBool("moviedatabase", "UseADO", false);
+    }
+
     string dbPath = FolderSettings.DatabaseName;
-    if (!string.IsNullOrEmpty(dbPath) && PathIsNetworkPath(dbPath))
+    if (!string.IsNullOrEmpty(dbPath) && PathIsNetworkPath(dbPath) || FolderDBUseADO)
     {
       Log.Info("Main: disposing FolderDatabase3 sqllite database.");
       FolderSettings.Dispose();
     }
 
     dbPath = MediaPortal.Picture.Database.PictureDatabase.DatabaseName;
-    if (!string.IsNullOrEmpty(dbPath) && PathIsNetworkPath(dbPath))
+    if (!string.IsNullOrEmpty(dbPath) && PathIsNetworkPath(dbPath) || PictureDBUseADO)
     {
       Log.Info("Main: disposing PictureDatabase sqllite database.");
       MediaPortal.Picture.Database.PictureDatabase.Dispose();
     }
 
     dbPath = MediaPortal.Video.Database.VideoDatabase.DatabaseName;
-    if (!string.IsNullOrEmpty(dbPath) && PathIsNetworkPath(dbPath))
+    if (!string.IsNullOrEmpty(dbPath) && PathIsNetworkPath(dbPath) || MovieDBUseADO)
     {
       Log.Info("Main: disposing VideoDatabaseV5.db3 sqllite database.");
       MediaPortal.Video.Database.VideoDatabase.Dispose();

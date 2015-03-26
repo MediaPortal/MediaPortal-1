@@ -409,37 +409,21 @@ namespace MediaPortal.Configuration.Sections
     {
       DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the entire video database?",
                                                   "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+      bool MovieDBUseADO = false;
+
+      using (Profile.Settings xmlreader = new MPSettings())
+      {
+        MovieDBUseADO = xmlreader.GetValueAsBool("moviedatabase", "UseADO", false);
+      }
+
       if (dialogResult == DialogResult.Yes)
       {
-        string database = Config.GetFile(Config.Dir.Database, "VideoDatabaseV5.db3");
-        if (File.Exists(database))
+        if (MovieDBUseADO)
         {
-          VideoDatabase.Dispose();
           try
           {
-            File.Delete(database);
-            // Delete covers
-            string files = @"*.jpg"; // Only delete jpg files
-            string configDir = Config.GetFolder(Config.Dir.Thumbs) + @"\Videos\Title\";
-            DeleteVideoThumbs(files, configDir);
-            // Delete actor images
-            configDir = Config.GetFolder(Config.Dir.Thumbs) + @"\Videos\Actors\";
-            DeleteVideoThumbs(files, configDir);
-            
-            // FanArt delete all files
-            if (useFanartCheckBox.CheckState == CheckState.Checked)
-            {
-              DialogResult dialogResultFanart = MessageBox.Show("Delete all fanarts (All files in " +
-                                                                configDir +
-                                                                " will be deleted) ?",
-                                                                "Information", MessageBoxButtons.YesNo,
-                                                                MessageBoxIcon.Question);
-              if (dialogResultFanart == DialogResult.Yes)
-              {
-                FanArt.GetFanArtFolder(out configDir);
-                DeleteVideoThumbs(files, configDir);
-              }
-            }
+            VideoDatabase.ClearDB();
           }
           catch (Exception)
           {
@@ -452,31 +436,86 @@ namespace MediaPortal.Configuration.Sections
             VideoDatabase.ReOpen();
           }
         }
-        // Actor detail clear
-        cbActor.DataSource = null;
-        cbActor.Items.Clear();
-        _actTable.Clear();
-        _actTable.Dispose();
-        tbBirthDate.Text = string.Empty;
-        tbBirthPlace.Text = string.Empty;
-        tbBiography.Text = string.Empty;
-        tbThumbLoc.Text = string.Empty;
-        if (pictureBoxActor.Image != null)
+        else
         {
-          pictureBoxActor.Image.Dispose();
-          pictureBoxActor.Image = null;
+          string database = Config.GetFile(Config.Dir.Database, "VideoDatabaseV5.db3");
+          if (File.Exists(database))
+          {
+            VideoDatabase.Dispose();
+            try
+            {
+              File.Delete(database);
+            }
+            catch (Exception)
+            {
+              MessageBox.Show("Video database could not be cleared", "Video Database", MessageBoxButtons.OK,
+                              MessageBoxIcon.Exclamation);
+              return;
+            }
+            finally
+            {
+              VideoDatabase.ReOpen();
+            }
+          }
         }
-        // Clear Actors listboxes
-        //listViewAllActors.Items.Clear();
-        listViewMovieActors.Items.Clear();
-        // Clear Genres listboxes
-        listViewAllGenres.Items.Clear();
-        listViewGenres.Items.Clear();
-        //Cleat Groups listboxes
-        lvUserGroups.Items.Clear();
-        lvMovieUserGroups.Items.Clear();
-        MessageBox.Show("Video database has been cleared", "Video Database", MessageBoxButtons.OK,
-                        MessageBoxIcon.Exclamation);
+
+        try
+        {
+          // Delete covers
+          string files = @"*.jpg"; // Only delete jpg files
+          string configDir = Config.GetFolder(Config.Dir.Thumbs) + @"\Videos\Title\";
+          DeleteVideoThumbs(files, configDir);
+          // Delete actor images
+          configDir = Config.GetFolder(Config.Dir.Thumbs) + @"\Videos\Actors\";
+          DeleteVideoThumbs(files, configDir);
+
+          // FanArt delete all files
+          if (useFanartCheckBox.CheckState == CheckState.Checked)
+          {
+            DialogResult dialogResultFanart = MessageBox.Show("Delete all fanarts (All files in " +
+                                                              configDir +
+                                                              " will be deleted) ?",
+                                                              "Information", MessageBoxButtons.YesNo,
+                                                              MessageBoxIcon.Question);
+            if (dialogResultFanart == DialogResult.Yes)
+            {
+              FanArt.GetFanArtFolder(out configDir);
+              DeleteVideoThumbs(files, configDir);
+            }
+          }
+
+          // Actor detail clear
+          cbActor.DataSource = null;
+          cbActor.Items.Clear();
+          _actTable.Clear();
+          _actTable.Dispose();
+          tbBirthDate.Text = string.Empty;
+          tbBirthPlace.Text = string.Empty;
+          tbBiography.Text = string.Empty;
+          tbThumbLoc.Text = string.Empty;
+          if (pictureBoxActor.Image != null)
+          {
+            pictureBoxActor.Image.Dispose();
+            pictureBoxActor.Image = null;
+          }
+          // Clear Actors listboxes
+          //listViewAllActors.Items.Clear();
+          listViewMovieActors.Items.Clear();
+          // Clear Genres listboxes
+          listViewAllGenres.Items.Clear();
+          listViewGenres.Items.Clear();
+          //Cleat Groups listboxes
+          lvUserGroups.Items.Clear();
+          lvMovieUserGroups.Items.Clear();
+          MessageBox.Show("Video database has been cleared", "Video Database", MessageBoxButtons.OK,
+                          MessageBoxIcon.Exclamation);
+        }
+        catch (Exception)
+        {
+          MessageBox.Show("Video database could not be cleared", "Video Database", MessageBoxButtons.OK,
+                          MessageBoxIcon.Exclamation);
+          return;
+        }
       }
     }
 
@@ -4149,7 +4188,7 @@ namespace MediaPortal.Configuration.Sections
           break;
           
         case "Aspect Ratio":
-          _tableField = "filesmediainfo.aspectration";
+          _tableField = "filesmediainfo.aspectratio";
           _tableFieldType = TableFieldTypes.String.ToString();
           sql = "SELECT DISTINCT " + _tableField + " FROM filesmediainfo";
           values = VideoDatabase.ExecuteRuleSql(sql, _tableField, out error, out  errorMessage);

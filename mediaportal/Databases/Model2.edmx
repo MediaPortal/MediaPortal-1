@@ -1,0 +1,760 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="videodatabaseModel.Store" Alias="Self" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.6" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="videodatabaseModelStoreContainer">
+          <EntitySet Name="actorinfo" EntityType="videodatabaseModel.Store.actorinfo" store:Type="Tables" Schema="videodatabase" />
+          <EntitySet Name="actorinfomovies" EntityType="videodatabaseModel.Store.actorinfomovies" store:Type="Tables" Schema="videodatabase" />
+          <EntitySet Name="actorlinkmovie" EntityType="videodatabaseModel.Store.actorlinkmovie" store:Type="Tables" Schema="videodatabase" />
+          <EntitySet Name="actors" EntityType="videodatabaseModel.Store.actors" store:Type="Tables" Schema="videodatabase" />
+          <EntitySet Name="bookmark" EntityType="videodatabaseModel.Store.bookmark" store:Type="Tables" Schema="videodatabase" />
+          <EntitySet Name="duration" EntityType="videodatabaseModel.Store.duration" store:Type="Tables" Schema="videodatabase" />
+          <EntitySet Name="files" EntityType="videodatabaseModel.Store.files" store:Type="Tables" Schema="videodatabase" />
+          <EntitySet Name="filesmediainfo" EntityType="videodatabaseModel.Store.filesmediainfo" store:Type="Tables" Schema="videodatabase" />
+          <EntitySet Name="genre" EntityType="videodatabaseModel.Store.genre" store:Type="Tables" Schema="videodatabase" />
+          <EntitySet Name="genrelinkmovie" EntityType="videodatabaseModel.Store.genrelinkmovie" store:Type="Tables" Schema="videodatabase" />
+          <EntitySet Name="imdbmovies" EntityType="videodatabaseModel.Store.imdbmovies" store:Type="Tables" Schema="videodatabase" />
+          <EntitySet Name="movie" EntityType="videodatabaseModel.Store.movie" store:Type="Tables" Schema="videodatabase" />
+          <EntitySet Name="movieinfo" EntityType="videodatabaseModel.Store.movieinfo" store:Type="Tables" Schema="videodatabase" />
+          <EntitySet Name="path" EntityType="videodatabaseModel.Store.path" store:Type="Tables" Schema="videodatabase" />
+          <EntitySet Name="resume" EntityType="videodatabaseModel.Store.resume" store:Type="Tables" Schema="videodatabase" />
+          <EntitySet Name="usergroup" EntityType="videodatabaseModel.Store.usergroup" store:Type="Tables" Schema="videodatabase" />
+          <EntitySet Name="usergrouplinkmovie" EntityType="videodatabaseModel.Store.usergrouplinkmovie" store:Type="Tables" Schema="videodatabase" />
+          <EntitySet Name="videothumbblist" EntityType="videodatabaseModel.Store.videothumbblist" store:Type="Tables" Schema="videodatabase" />
+        </EntityContainer>
+        <EntityType Name="actorinfo">
+          <Key>
+            <PropertyRef Name="idActor" />
+          </Key>
+          <Property Name="idActor" Type="int" Nullable="false" />
+          <Property Name="dateofbirth" Type="varchar" MaxLength="200" />
+          <Property Name="placeofbirth" Type="varchar" MaxLength="200" />
+          <Property Name="minibio" Type="varchar" MaxLength="2000" />
+          <Property Name="biography" Type="varchar" MaxLength="2000" />
+          <Property Name="thumbURL" Type="varchar" MaxLength="200" />
+          <Property Name="IMDBActorID" Type="varchar" MaxLength="200" />
+          <Property Name="dateofdeath" Type="varchar" MaxLength="200" />
+          <Property Name="placeofdeath" Type="varchar" MaxLength="200" />
+          <Property Name="lastupdate" Type="timestamp" Nullable="false" />
+        </EntityType>
+        <EntityType Name="actorinfomovies">
+          <Key>
+            <PropertyRef Name="actorinfomoviesID" />
+          </Key>
+          <Property Name="idActor" Type="int" />
+          <Property Name="idDirector" Type="int" />
+          <Property Name="strPlotOutline" Type="varchar" MaxLength="200" />
+          <Property Name="strPlot" Type="varchar" MaxLength="2000" />
+          <Property Name="strTagLine" Type="varchar" MaxLength="200" />
+          <Property Name="strVotes" Type="varchar" MaxLength="200" />
+          <Property Name="fRating" Type="varchar" MaxLength="200" />
+          <Property Name="strCast" Type="varchar" MaxLength="200" />
+          <Property Name="strCredits" Type="varchar" MaxLength="200" />
+          <Property Name="iYear" Type="int" />
+          <Property Name="strGenre" Type="varchar" MaxLength="200" />
+          <Property Name="strPictureURL" Type="varchar" MaxLength="200" />
+          <Property Name="strTitle" Type="varchar" MaxLength="200" />
+          <Property Name="IMDBID" Type="varchar" MaxLength="200" />
+          <Property Name="mpaa" Type="varchar" MaxLength="200" />
+          <Property Name="runtime" Type="int" />
+          <Property Name="iswatched" Type="int" />
+          <Property Name="role" Type="varchar" MaxLength="200" />
+          <Property Name="actorinfomoviesID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="actorlinkmovie">
+          <Key>
+            <PropertyRef Name="actorlinkmovieId" />
+          </Key>
+          <Property Name="idActor" Type="int" />
+          <Property Name="idMovie" Type="int" />
+          <Property Name="strRole" Type="varchar" MaxLength="200" />
+          <Property Name="actorlinkmovieId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="actors">
+          <Key>
+            <PropertyRef Name="idActor" />
+          </Key>
+          <Property Name="idActor" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="strActor" Type="varchar" MaxLength="200" />
+          <Property Name="IMDBActorID" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="bookmark">
+          <Key>
+            <PropertyRef Name="idBookmark" />
+          </Key>
+          <Property Name="idBookmark" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="idFile" Type="int" />
+          <Property Name="fPercentage" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="duration">
+          <Key>
+            <PropertyRef Name="idDuration" />
+          </Key>
+          <Property Name="idDuration" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="idFile" Type="int" />
+          <Property Name="duration" Type="int" />
+        </EntityType>
+        <EntityType Name="files">
+          <Key>
+            <PropertyRef Name="idFile" />
+          </Key>
+          <Property Name="idFile" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="idPath" Type="int" />
+          <Property Name="idMovie" Type="int" />
+          <Property Name="strFilename" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="filesmediainfo">
+          <Key>
+            <PropertyRef Name="idFile" />
+          </Key>
+          <Property Name="idFile" Type="int" Nullable="false" />
+          <Property Name="videoCodec" Type="varchar" MaxLength="200" />
+          <Property Name="videoResolution" Type="varchar" MaxLength="200" />
+          <Property Name="aspectRatio" Type="varchar" MaxLength="200" />
+          <Property Name="hasSubtitles" Type="bool" />
+          <Property Name="audioCodec" Type="varchar" MaxLength="200" />
+          <Property Name="audioChannels" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="genre">
+          <Key>
+            <PropertyRef Name="idGenre" />
+          </Key>
+          <Property Name="idGenre" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="strGenre" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="genrelinkmovie">
+          <Key>
+            <PropertyRef Name="genreinkmovieId" />
+          </Key>
+          <Property Name="idGenre" Type="int" />
+          <Property Name="idMovie" Type="int" />
+          <Property Name="genreinkmovieId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="imdbmovies">
+          <Key>
+            <PropertyRef Name="imdbmoviesId" />
+          </Key>
+          <Property Name="idIMDB" Type="varchar" MaxLength="200" />
+          <Property Name="idTmdb" Type="varchar" MaxLength="200" />
+          <Property Name="strPlot" Type="varchar" MaxLength="200" />
+          <Property Name="strCast" Type="varchar" MaxLength="200" />
+          <Property Name="strCredits" Type="varchar" MaxLength="200" />
+          <Property Name="iYear" Type="int" />
+          <Property Name="strGenre" Type="varchar" MaxLength="200" />
+          <Property Name="strPictureURL" Type="varchar" MaxLength="200" />
+          <Property Name="strTitle" Type="varchar" MaxLength="200" />
+          <Property Name="mpaa" Type="varchar" MaxLength="200" />
+          <Property Name="imdbmoviesId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="movie">
+          <Key>
+            <PropertyRef Name="idMovie" />
+          </Key>
+          <Property Name="idMovie" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="idPath" Type="int" />
+          <Property Name="hasSubtitles" Type="int" />
+          <Property Name="discid" Type="varchar" MaxLength="200" />
+          <Property Name="watched" Type="bool" />
+          <Property Name="timeswatched" Type="int" />
+          <Property Name="iduration" Type="int" />
+          <Property Name="iwatchedPercent" Type="int" />
+        </EntityType>
+        <EntityType Name="movieinfo">
+          <Key>
+            <PropertyRef Name="idMovie" />
+          </Key>
+          <Property Name="idMovie" Type="int" Nullable="false" />
+          <Property Name="idDirector" Type="int" />
+          <Property Name="strDirector" Type="varchar" MaxLength="200" />
+          <Property Name="strPlotOutline" Type="varchar" MaxLength="200" />
+          <Property Name="strPlot" Type="varchar" MaxLength="2000" />
+          <Property Name="strTagLine" Type="varchar" MaxLength="200" />
+          <Property Name="strVotes" Type="varchar" MaxLength="200" />
+          <Property Name="fRating" Type="varchar" MaxLength="200" />
+          <Property Name="strCast" Type="varchar" MaxLength="200" />
+          <Property Name="strCredits" Type="varchar" MaxLength="200" />
+          <Property Name="iYear" Type="int" />
+          <Property Name="strGenre" Type="varchar" MaxLength="200" />
+          <Property Name="strPictureURL" Type="varchar" MaxLength="200" />
+          <Property Name="strTitle" Type="varchar" MaxLength="200" />
+          <Property Name="IMDBID" Type="varchar" MaxLength="200" />
+          <Property Name="mpaa" Type="varchar" MaxLength="200" />
+          <Property Name="runtime" Type="int" />
+          <Property Name="iswatched" Type="int" />
+          <Property Name="strUserReview" Type="varchar" MaxLength="2000" />
+          <Property Name="strFanartURL" Type="varchar" MaxLength="200" />
+          <Property Name="dateAdded" Type="timestamp" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="dateWatched" Type="timestamp" Nullable="false" />
+          <Property Name="studios" Type="varchar" MaxLength="200" />
+          <Property Name="country" Type="varchar" MaxLength="200" />
+          <Property Name="language" Type="varchar" MaxLength="200" />
+          <Property Name="lastupdate" Type="timestamp" Nullable="false" />
+          <Property Name="strSortTitle" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="path">
+          <Key>
+            <PropertyRef Name="idPath" />
+          </Key>
+          <Property Name="idPath" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="strPath" Type="varchar" MaxLength="200" />
+          <Property Name="cdlabel" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="resume">
+          <Key>
+            <PropertyRef Name="idResume" />
+          </Key>
+          <Property Name="idResume" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="idFile" Type="int" />
+          <Property Name="stoptime" Type="int" />
+          <Property Name="resumeData" Type="blob" />
+          <Property Name="bdtitle" Type="int" />
+        </EntityType>
+        <EntityType Name="usergroup">
+          <Key>
+            <PropertyRef Name="idGroup" />
+          </Key>
+          <Property Name="idGroup" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="strGroup" Type="varchar" MaxLength="200" />
+          <Property Name="strRule" Type="varchar" MaxLength="200" />
+          <Property Name="strGroupDescription" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="usergrouplinkmovie">
+          <Key>
+            <PropertyRef Name="usergrouplinkmovieId" />
+          </Key>
+          <Property Name="idGroup" Type="int" />
+          <Property Name="idMovie" Type="int" />
+          <Property Name="usergrouplinkmovieId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="videothumbblist">
+          <Key>
+            <PropertyRef Name="idVideoThumbBList" />
+          </Key>
+          <Property Name="idVideoThumbBList" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="strPath" Type="varchar" MaxLength="200" />
+          <Property Name="strExpires" Type="datetime" />
+          <Property Name="strFileDate" Type="datetime" />
+          <Property Name="strFileSize" Type="varchar" MaxLength="200" />
+        </EntityType>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="videodatabaseModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="videodatabaseEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="actorinfoes" EntityType="videodatabaseModel.actorinfo" />
+          <EntitySet Name="actorinfomovies" EntityType="videodatabaseModel.actorinfomovy" />
+          <EntitySet Name="actorlinkmovies" EntityType="videodatabaseModel.actorlinkmovie" />
+          <EntitySet Name="actors" EntityType="videodatabaseModel.actor" />
+          <EntitySet Name="bookmarks" EntityType="videodatabaseModel.bookmark" />
+          <EntitySet Name="durations" EntityType="videodatabaseModel.duration" />
+          <EntitySet Name="files" EntityType="videodatabaseModel.file" />
+          <EntitySet Name="filesmediainfoes" EntityType="videodatabaseModel.filesmediainfo" />
+          <EntitySet Name="genres" EntityType="videodatabaseModel.genre" />
+          <EntitySet Name="genrelinkmovies" EntityType="videodatabaseModel.genrelinkmovie" />
+          <EntitySet Name="imdbmovies" EntityType="videodatabaseModel.imdbmovy" />
+          <EntitySet Name="movies" EntityType="videodatabaseModel.movie" />
+          <EntitySet Name="movieinfoes" EntityType="videodatabaseModel.movieinfo" />
+          <EntitySet Name="paths" EntityType="videodatabaseModel.path" />
+          <EntitySet Name="resumes" EntityType="videodatabaseModel.resume" />
+          <EntitySet Name="usergroups" EntityType="videodatabaseModel.usergroup" />
+          <EntitySet Name="usergrouplinkmovies" EntityType="videodatabaseModel.usergrouplinkmovie" />
+          <EntitySet Name="videothumbblists" EntityType="videodatabaseModel.videothumbblist" />
+        </EntityContainer>
+        <EntityType Name="actorinfo">
+          <Key>
+            <PropertyRef Name="idActor" />
+          </Key>
+          <Property Type="Int32" Name="idActor" Nullable="false" />
+          <Property Type="String" Name="dateofbirth" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="placeofbirth" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="minibio" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="biography" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="thumbURL" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="IMDBActorID" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="dateofdeath" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="placeofdeath" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="lastupdate" Nullable="false" />
+        </EntityType>
+        <EntityType Name="actorinfomovy">
+          <Key>
+            <PropertyRef Name="actorinfomoviesID" />
+          </Key>
+          <Property Type="Int32" Name="idActor" />
+          <Property Type="Int32" Name="idDirector" />
+          <Property Type="String" Name="strPlotOutline" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strPlot" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strTagLine" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strVotes" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="fRating" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strCast" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strCredits" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="iYear" />
+          <Property Type="String" Name="strGenre" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strPictureURL" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strTitle" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="IMDBID" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="mpaa" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="runtime" />
+          <Property Type="Int32" Name="iswatched" />
+          <Property Type="String" Name="role" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="actorinfomoviesID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="actorlinkmovie">
+          <Key>
+            <PropertyRef Name="actorlinkmovieId" />
+          </Key>
+          <Property Type="Int32" Name="idActor" />
+          <Property Type="Int32" Name="idMovie" />
+          <Property Type="String" Name="strRole" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="actorlinkmovieId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="actor">
+          <Key>
+            <PropertyRef Name="idActor" />
+          </Key>
+          <Property Type="Int32" Name="idActor" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="strActor" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="IMDBActorID" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="bookmark">
+          <Key>
+            <PropertyRef Name="idBookmark" />
+          </Key>
+          <Property Type="Int32" Name="idBookmark" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="idFile" />
+          <Property Type="String" Name="fPercentage" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="duration">
+          <Key>
+            <PropertyRef Name="idDuration" />
+          </Key>
+          <Property Type="Int32" Name="idDuration" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="idFile" />
+          <Property Type="Int32" Name="duration1" />
+        </EntityType>
+        <EntityType Name="file">
+          <Key>
+            <PropertyRef Name="idFile" />
+          </Key>
+          <Property Type="Int32" Name="idFile" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="idPath" />
+          <Property Type="Int32" Name="idMovie" />
+          <Property Type="String" Name="strFilename" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="filesmediainfo">
+          <Key>
+            <PropertyRef Name="idFile" />
+          </Key>
+          <Property Type="Int32" Name="idFile" Nullable="false" />
+          <Property Type="String" Name="videoCodec" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="videoResolution" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="aspectRatio" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="hasSubtitles" />
+          <Property Type="String" Name="audioCodec" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="audioChannels" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="genre">
+          <Key>
+            <PropertyRef Name="idGenre" />
+          </Key>
+          <Property Type="Int32" Name="idGenre" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="strGenre" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="genrelinkmovie">
+          <Key>
+            <PropertyRef Name="genreinkmovieId" />
+          </Key>
+          <Property Type="Int32" Name="idGenre" />
+          <Property Type="Int32" Name="idMovie" />
+          <Property Type="Int32" Name="genreinkmovieId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="imdbmovy">
+          <Key>
+            <PropertyRef Name="imdbmoviesId" />
+          </Key>
+          <Property Type="String" Name="idIMDB" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="idTmdb" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strPlot" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strCast" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strCredits" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="iYear" />
+          <Property Type="String" Name="strGenre" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strPictureURL" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strTitle" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="mpaa" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="imdbmoviesId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="movie">
+          <Key>
+            <PropertyRef Name="idMovie" />
+          </Key>
+          <Property Type="Int32" Name="idMovie" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="idPath" />
+          <Property Type="Int32" Name="hasSubtitles" />
+          <Property Type="String" Name="discid" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="watched" />
+          <Property Type="Int32" Name="timeswatched" />
+          <Property Type="Int32" Name="iduration" />
+          <Property Type="Int32" Name="iwatchedPercent" />
+        </EntityType>
+        <EntityType Name="movieinfo">
+          <Key>
+            <PropertyRef Name="idMovie" />
+          </Key>
+          <Property Type="Int32" Name="idMovie" Nullable="false" />
+          <Property Type="Int32" Name="idDirector" />
+          <Property Type="String" Name="strDirector" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strPlotOutline" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strPlot" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strTagLine" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strVotes" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="fRating" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strCast" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strCredits" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="iYear" />
+          <Property Type="String" Name="strGenre" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strPictureURL" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strTitle" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="IMDBID" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="mpaa" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="runtime" />
+          <Property Type="Int32" Name="iswatched" />
+          <Property Type="String" Name="strUserReview" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strFanartURL" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="dateAdded" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="DateTime" Name="dateWatched" Nullable="false" />
+          <Property Type="String" Name="studios" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="country" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="language" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="lastupdate" Nullable="false" />
+          <Property Type="String" Name="strSortTitle" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="path">
+          <Key>
+            <PropertyRef Name="idPath" />
+          </Key>
+          <Property Type="Int32" Name="idPath" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="strPath" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="cdlabel" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="resume">
+          <Key>
+            <PropertyRef Name="idResume" />
+          </Key>
+          <Property Type="Int32" Name="idResume" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="idFile" />
+          <Property Type="Int32" Name="stoptime" />
+          <Property Type="Binary" Name="resumeData" MaxLength="Max" FixedLength="false" />
+          <Property Type="Int32" Name="bdtitle" />
+        </EntityType>
+        <EntityType Name="usergroup">
+          <Key>
+            <PropertyRef Name="idGroup" />
+          </Key>
+          <Property Type="Int32" Name="idGroup" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="strGroup" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strRule" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="strGroupDescription" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="usergrouplinkmovie">
+          <Key>
+            <PropertyRef Name="usergrouplinkmovieId" />
+          </Key>
+          <Property Type="Int32" Name="idGroup" />
+          <Property Type="Int32" Name="idMovie" />
+          <Property Type="Int32" Name="usergrouplinkmovieId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="videothumbblist">
+          <Key>
+            <PropertyRef Name="idVideoThumbBList" />
+          </Key>
+          <Property Type="Int32" Name="idVideoThumbBList" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="strPath" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="strExpires" />
+          <Property Type="DateTime" Name="strFileDate" />
+          <Property Type="String" Name="strFileSize" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="videodatabaseModelStoreContainer" CdmEntityContainer="videodatabaseEntities">
+          <EntitySetMapping Name="actorinfoes">
+            <EntityTypeMapping TypeName="videodatabaseModel.actorinfo">
+              <MappingFragment StoreEntitySet="actorinfo">
+                <ScalarProperty Name="lastupdate" ColumnName="lastupdate" />
+                <ScalarProperty Name="placeofdeath" ColumnName="placeofdeath" />
+                <ScalarProperty Name="dateofdeath" ColumnName="dateofdeath" />
+                <ScalarProperty Name="IMDBActorID" ColumnName="IMDBActorID" />
+                <ScalarProperty Name="thumbURL" ColumnName="thumbURL" />
+                <ScalarProperty Name="biography" ColumnName="biography" />
+                <ScalarProperty Name="minibio" ColumnName="minibio" />
+                <ScalarProperty Name="placeofbirth" ColumnName="placeofbirth" />
+                <ScalarProperty Name="dateofbirth" ColumnName="dateofbirth" />
+                <ScalarProperty Name="idActor" ColumnName="idActor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="actorinfomovies">
+            <EntityTypeMapping TypeName="videodatabaseModel.actorinfomovy">
+              <MappingFragment StoreEntitySet="actorinfomovies">
+                <ScalarProperty Name="actorinfomoviesID" ColumnName="actorinfomoviesID" />
+                <ScalarProperty Name="role" ColumnName="role" />
+                <ScalarProperty Name="iswatched" ColumnName="iswatched" />
+                <ScalarProperty Name="runtime" ColumnName="runtime" />
+                <ScalarProperty Name="mpaa" ColumnName="mpaa" />
+                <ScalarProperty Name="IMDBID" ColumnName="IMDBID" />
+                <ScalarProperty Name="strTitle" ColumnName="strTitle" />
+                <ScalarProperty Name="strPictureURL" ColumnName="strPictureURL" />
+                <ScalarProperty Name="strGenre" ColumnName="strGenre" />
+                <ScalarProperty Name="iYear" ColumnName="iYear" />
+                <ScalarProperty Name="strCredits" ColumnName="strCredits" />
+                <ScalarProperty Name="strCast" ColumnName="strCast" />
+                <ScalarProperty Name="fRating" ColumnName="fRating" />
+                <ScalarProperty Name="strVotes" ColumnName="strVotes" />
+                <ScalarProperty Name="strTagLine" ColumnName="strTagLine" />
+                <ScalarProperty Name="strPlot" ColumnName="strPlot" />
+                <ScalarProperty Name="strPlotOutline" ColumnName="strPlotOutline" />
+                <ScalarProperty Name="idDirector" ColumnName="idDirector" />
+                <ScalarProperty Name="idActor" ColumnName="idActor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="actorlinkmovies">
+            <EntityTypeMapping TypeName="videodatabaseModel.actorlinkmovie">
+              <MappingFragment StoreEntitySet="actorlinkmovie">
+                <ScalarProperty Name="actorlinkmovieId" ColumnName="actorlinkmovieId" />
+                <ScalarProperty Name="strRole" ColumnName="strRole" />
+                <ScalarProperty Name="idMovie" ColumnName="idMovie" />
+                <ScalarProperty Name="idActor" ColumnName="idActor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="actors">
+            <EntityTypeMapping TypeName="videodatabaseModel.actor">
+              <MappingFragment StoreEntitySet="actors">
+                <ScalarProperty Name="IMDBActorID" ColumnName="IMDBActorID" />
+                <ScalarProperty Name="strActor" ColumnName="strActor" />
+                <ScalarProperty Name="idActor" ColumnName="idActor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="bookmarks">
+            <EntityTypeMapping TypeName="videodatabaseModel.bookmark">
+              <MappingFragment StoreEntitySet="bookmark">
+                <ScalarProperty Name="fPercentage" ColumnName="fPercentage" />
+                <ScalarProperty Name="idFile" ColumnName="idFile" />
+                <ScalarProperty Name="idBookmark" ColumnName="idBookmark" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="durations">
+            <EntityTypeMapping TypeName="videodatabaseModel.duration">
+              <MappingFragment StoreEntitySet="duration">
+                <ScalarProperty Name="duration1" ColumnName="duration" />
+                <ScalarProperty Name="idFile" ColumnName="idFile" />
+                <ScalarProperty Name="idDuration" ColumnName="idDuration" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="files">
+            <EntityTypeMapping TypeName="videodatabaseModel.file">
+              <MappingFragment StoreEntitySet="files">
+                <ScalarProperty Name="strFilename" ColumnName="strFilename" />
+                <ScalarProperty Name="idMovie" ColumnName="idMovie" />
+                <ScalarProperty Name="idPath" ColumnName="idPath" />
+                <ScalarProperty Name="idFile" ColumnName="idFile" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="filesmediainfoes">
+            <EntityTypeMapping TypeName="videodatabaseModel.filesmediainfo">
+              <MappingFragment StoreEntitySet="filesmediainfo">
+                <ScalarProperty Name="audioChannels" ColumnName="audioChannels" />
+                <ScalarProperty Name="audioCodec" ColumnName="audioCodec" />
+                <ScalarProperty Name="hasSubtitles" ColumnName="hasSubtitles" />
+                <ScalarProperty Name="aspectRatio" ColumnName="aspectRatio" />
+                <ScalarProperty Name="videoResolution" ColumnName="videoResolution" />
+                <ScalarProperty Name="videoCodec" ColumnName="videoCodec" />
+                <ScalarProperty Name="idFile" ColumnName="idFile" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="genres">
+            <EntityTypeMapping TypeName="videodatabaseModel.genre">
+              <MappingFragment StoreEntitySet="genre">
+                <ScalarProperty Name="strGenre" ColumnName="strGenre" />
+                <ScalarProperty Name="idGenre" ColumnName="idGenre" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="genrelinkmovies">
+            <EntityTypeMapping TypeName="videodatabaseModel.genrelinkmovie">
+              <MappingFragment StoreEntitySet="genrelinkmovie">
+                <ScalarProperty Name="genreinkmovieId" ColumnName="genreinkmovieId" />
+                <ScalarProperty Name="idMovie" ColumnName="idMovie" />
+                <ScalarProperty Name="idGenre" ColumnName="idGenre" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="imdbmovies">
+            <EntityTypeMapping TypeName="videodatabaseModel.imdbmovy">
+              <MappingFragment StoreEntitySet="imdbmovies">
+                <ScalarProperty Name="imdbmoviesId" ColumnName="imdbmoviesId" />
+                <ScalarProperty Name="mpaa" ColumnName="mpaa" />
+                <ScalarProperty Name="strTitle" ColumnName="strTitle" />
+                <ScalarProperty Name="strPictureURL" ColumnName="strPictureURL" />
+                <ScalarProperty Name="strGenre" ColumnName="strGenre" />
+                <ScalarProperty Name="iYear" ColumnName="iYear" />
+                <ScalarProperty Name="strCredits" ColumnName="strCredits" />
+                <ScalarProperty Name="strCast" ColumnName="strCast" />
+                <ScalarProperty Name="strPlot" ColumnName="strPlot" />
+                <ScalarProperty Name="idTmdb" ColumnName="idTmdb" />
+                <ScalarProperty Name="idIMDB" ColumnName="idIMDB" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="movies">
+            <EntityTypeMapping TypeName="videodatabaseModel.movie">
+              <MappingFragment StoreEntitySet="movie">
+                <ScalarProperty Name="iwatchedPercent" ColumnName="iwatchedPercent" />
+                <ScalarProperty Name="iduration" ColumnName="iduration" />
+                <ScalarProperty Name="timeswatched" ColumnName="timeswatched" />
+                <ScalarProperty Name="watched" ColumnName="watched" />
+                <ScalarProperty Name="discid" ColumnName="discid" />
+                <ScalarProperty Name="hasSubtitles" ColumnName="hasSubtitles" />
+                <ScalarProperty Name="idPath" ColumnName="idPath" />
+                <ScalarProperty Name="idMovie" ColumnName="idMovie" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="movieinfoes">
+            <EntityTypeMapping TypeName="videodatabaseModel.movieinfo">
+              <MappingFragment StoreEntitySet="movieinfo">
+                <ScalarProperty Name="strSortTitle" ColumnName="strSortTitle" />
+                <ScalarProperty Name="lastupdate" ColumnName="lastupdate" />
+                <ScalarProperty Name="language" ColumnName="language" />
+                <ScalarProperty Name="country" ColumnName="country" />
+                <ScalarProperty Name="studios" ColumnName="studios" />
+                <ScalarProperty Name="dateWatched" ColumnName="dateWatched" />
+                <ScalarProperty Name="dateAdded" ColumnName="dateAdded" />
+                <ScalarProperty Name="strFanartURL" ColumnName="strFanartURL" />
+                <ScalarProperty Name="strUserReview" ColumnName="strUserReview" />
+                <ScalarProperty Name="iswatched" ColumnName="iswatched" />
+                <ScalarProperty Name="runtime" ColumnName="runtime" />
+                <ScalarProperty Name="mpaa" ColumnName="mpaa" />
+                <ScalarProperty Name="IMDBID" ColumnName="IMDBID" />
+                <ScalarProperty Name="strTitle" ColumnName="strTitle" />
+                <ScalarProperty Name="strPictureURL" ColumnName="strPictureURL" />
+                <ScalarProperty Name="strGenre" ColumnName="strGenre" />
+                <ScalarProperty Name="iYear" ColumnName="iYear" />
+                <ScalarProperty Name="strCredits" ColumnName="strCredits" />
+                <ScalarProperty Name="strCast" ColumnName="strCast" />
+                <ScalarProperty Name="fRating" ColumnName="fRating" />
+                <ScalarProperty Name="strVotes" ColumnName="strVotes" />
+                <ScalarProperty Name="strTagLine" ColumnName="strTagLine" />
+                <ScalarProperty Name="strPlot" ColumnName="strPlot" />
+                <ScalarProperty Name="strPlotOutline" ColumnName="strPlotOutline" />
+                <ScalarProperty Name="strDirector" ColumnName="strDirector" />
+                <ScalarProperty Name="idDirector" ColumnName="idDirector" />
+                <ScalarProperty Name="idMovie" ColumnName="idMovie" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="paths">
+            <EntityTypeMapping TypeName="videodatabaseModel.path">
+              <MappingFragment StoreEntitySet="path">
+                <ScalarProperty Name="cdlabel" ColumnName="cdlabel" />
+                <ScalarProperty Name="strPath" ColumnName="strPath" />
+                <ScalarProperty Name="idPath" ColumnName="idPath" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="resumes">
+            <EntityTypeMapping TypeName="videodatabaseModel.resume">
+              <MappingFragment StoreEntitySet="resume">
+                <ScalarProperty Name="bdtitle" ColumnName="bdtitle" />
+                <ScalarProperty Name="resumeData" ColumnName="resumeData" />
+                <ScalarProperty Name="stoptime" ColumnName="stoptime" />
+                <ScalarProperty Name="idFile" ColumnName="idFile" />
+                <ScalarProperty Name="idResume" ColumnName="idResume" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="usergroups">
+            <EntityTypeMapping TypeName="videodatabaseModel.usergroup">
+              <MappingFragment StoreEntitySet="usergroup">
+                <ScalarProperty Name="strGroupDescription" ColumnName="strGroupDescription" />
+                <ScalarProperty Name="strRule" ColumnName="strRule" />
+                <ScalarProperty Name="strGroup" ColumnName="strGroup" />
+                <ScalarProperty Name="idGroup" ColumnName="idGroup" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="usergrouplinkmovies">
+            <EntityTypeMapping TypeName="videodatabaseModel.usergrouplinkmovie">
+              <MappingFragment StoreEntitySet="usergrouplinkmovie">
+                <ScalarProperty Name="usergrouplinkmovieId" ColumnName="usergrouplinkmovieId" />
+                <ScalarProperty Name="idMovie" ColumnName="idMovie" />
+                <ScalarProperty Name="idGroup" ColumnName="idGroup" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="videothumbblists">
+            <EntityTypeMapping TypeName="videodatabaseModel.videothumbblist">
+              <MappingFragment StoreEntitySet="videothumbblist">
+                <ScalarProperty Name="strFileSize" ColumnName="strFileSize" />
+                <ScalarProperty Name="strFileDate" ColumnName="strFileDate" />
+                <ScalarProperty Name="strExpires" ColumnName="strExpires" />
+                <ScalarProperty Name="strPath" ColumnName="strPath" />
+                <ScalarProperty Name="idVideoThumbBList" ColumnName="idVideoThumbBList" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="DDLGenerationTemplate" Value="$(VSEFTools)\DBGen\SSDLToMySQL.tt" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="Model2" ZoomLevel="86">
+        <EntityTypeShape EntityType="videodatabaseModel.actorinfo" Width="1.5" PointX="0.75" PointY="0.75" Height="2.9417936197916674" />
+        <EntityTypeShape EntityType="videodatabaseModel.actorinfomovy" Width="1.5" PointX="2.75" PointY="0.75" Height="4.6725065104166674" />
+        <EntityTypeShape EntityType="videodatabaseModel.actorlinkmovie" Width="1.5" PointX="4.75" PointY="0.75" Height="1.7879850260416674" />
+        <EntityTypeShape EntityType="videodatabaseModel.actor" Width="1.5" PointX="4.75" PointY="3.75" Height="1.5956835937500067" />
+        <EntityTypeShape EntityType="videodatabaseModel.bookmark" Width="1.5" PointX="6.75" PointY="0.75" Height="1.5956835937500102" />
+        <EntityTypeShape EntityType="videodatabaseModel.duration" Width="1.5" PointX="0.75" PointY="6.75" Height="1.5956835937500102" />
+        <EntityTypeShape EntityType="videodatabaseModel.file" Width="1.5" PointX="2.75" PointY="6.75" Height="1.7879850260416674" />
+        <EntityTypeShape EntityType="videodatabaseModel.filesmediainfo" Width="1.5" PointX="6.75" PointY="3.75" Height="2.3648893229166674" />
+        <EntityTypeShape EntityType="videodatabaseModel.genre" Width="1.5" PointX="4.75" PointY="7.75" Height="1.4033821614583246" />
+        <EntityTypeShape EntityType="videodatabaseModel.genrelinkmovie" Width="1.5" PointX="6.75" PointY="7.75" Height="1.5956835937500102" />
+        <EntityTypeShape EntityType="videodatabaseModel.imdbmovy" Width="1.5" PointX="8.75" PointY="0.75" Height="3.1340950520833246" />
+        <EntityTypeShape EntityType="videodatabaseModel.movie" Width="1.5" PointX="8.75" PointY="4.75" Height="2.5571907552083246" />
+        <EntityTypeShape EntityType="videodatabaseModel.movieinfo" Width="1.5" PointX="8.75" PointY="8.75" Height="6.21091796875001" />
+        <EntityTypeShape EntityType="videodatabaseModel.path" Width="1.5" PointX="0.75" PointY="9.75" Height="1.5956835937500102" />
+        <EntityTypeShape EntityType="videodatabaseModel.resume" Width="1.5" PointX="10.75" PointY="0.75" Height="1.9802864583333246" />
+        <EntityTypeShape EntityType="videodatabaseModel.usergroup" Width="1.5" PointX="2.75" PointY="10.75" Height="1.7879850260416674" />
+        <EntityTypeShape EntityType="videodatabaseModel.usergrouplinkmovie" Width="1.5" PointX="10.75" PointY="3.75" Height="1.5956835937500102" />
+        <EntityTypeShape EntityType="videodatabaseModel.videothumbblist" Width="1.5" PointX="4.75" PointY="10.75" Height="1.9802864583333246" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -858,6 +858,11 @@ namespace MediaPortal.Video.Database
     /// <param name="item"></param>
     public static void SetMovieData(GUIListItem item)
     {
+      if (!VideoDatabase.IsConnected())
+      {
+        return;
+      }
+      
       IMDBMovie info = new IMDBMovie();
 
       if (item == null)

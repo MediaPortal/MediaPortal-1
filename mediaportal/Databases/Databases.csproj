@@ -187,6 +187,13 @@
     <Reference Include="HtmlAgilityPack">
       <HintPath>..\..\Packages\HtmlAgilityPack.1.4.6\lib\Net40-client\HtmlAgilityPack.dll</HintPath>
     </Reference>
+    <Reference Include="MySql.Data">
+      <HintPath>..\MediaPortal.Base\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data.Entity, Version=6.7.4.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\MySql.Data.Entity.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -196,9 +203,13 @@
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
+    <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web">
       <Name>System.Web</Name>
     </Reference>
@@ -224,6 +235,21 @@
     </Compile>
     <Compile Include="Folders\IFolderSettings.cs" />
     <Compile Include="Folders\ADO\FolderSettingAdo.cs" />
+    <Compile Include="Model1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model1.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Model2.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model2.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Model3.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model3.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Music\InternetLookups\AllMusicAlbumMatch.cs" />
     <Compile Include="Music\InternetLookups\AllMusicArtistMatch.cs" />
     <Compile Include="Music\MusicDatabaseSettings.cs" />
@@ -274,6 +300,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SqlServerUtility.cs" />
+    <Compile Include="Video\Ado\VideoDatabaseADO.cs" />
     <Compile Include="Video\IMDBFetcher.cs" />
     <Compile Include="Video\SqlLite\VideoDatabaseSqlLite.cs">
       <SubType>Code</SubType>
@@ -293,12 +320,37 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Video\VideoThumbBlacklistDBImpl.cs" />
+    <Compile Include="WakeUpUtils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Video\Ado\" />
+    <EmbeddedResource Include="Video\Ado\create_videodatabase.sql" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.Config" />
+    <EntityDeploy Include="Model1.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Model1.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <EntityDeploy Include="Model2.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Model2.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <EntityDeploy Include="Model3.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Model3.Designer.cs</LastGenOutput>
+    </EntityDeploy>
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\foldersettingEntities.datasource" />
+    <None Include="Properties\DataSources\videodatabaseEntities.datasource" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Folders\ADO\create_folderdatabase.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pictures\ADO\create_picturedatabase.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

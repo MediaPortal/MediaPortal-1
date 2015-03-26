@@ -19,6 +19,8 @@
 #endregion
 
 using System;
+using System.Data;
+using System.IO;
 using MediaPortal.GUI.Library;
 using SQLite.NET;
 
@@ -424,6 +426,81 @@ namespace MediaPortal.Database
       }
       Log.Error("IntegrityCheck: the {0} is corrupt.", m_db.DatabaseName);
       return false;
+    }
+
+    public static bool CreateDb(string ConnectionString, string DatabaseName)
+    {
+      try
+      {
+        Log.Debug("{0}: database is not exist, createing...", DatabaseName);
+
+        System.Reflection.Assembly assm = System.Reflection.Assembly.GetExecutingAssembly();
+        Stream stream = null;
+        
+        stream = assm.GetManifestResourceStream(DatabaseName);
+
+        string sql = string.Empty;
+        string[] CommandScript = null;
+        if (stream != null)
+        {
+          using (StreamReader reader = new StreamReader(stream))
+            sql = reader.ReadToEnd();
+        }
+        CommandScript = CleanMySqlStatement(sql);
+
+        if (CommandScript != null)
+          using (MySql.Data.MySqlClient.MySqlConnection connect = new MySql.Data.MySqlClient.MySqlConnection(ConnectionString))
+          {
+            connect.Open();
+            foreach (string SingleStmt in CommandScript)
+            {
+              string SqlStmt = SingleStmt.Trim();
+              if (!string.IsNullOrEmpty(SqlStmt) && !SqlStmt.StartsWith("--") && !SqlStmt.StartsWith("/*"))
+              {
+                try
+                {
+                  using (MySql.Data.MySqlClient.MySqlCommand cmd = new MySql.Data.MySqlClient.MySqlCommand(SqlStmt, connect))
+                  {
+                    Log.Debug("Exec SQL: {0}", SqlStmt);
+                    cmd.CommandTimeout = 60;    // extra long 60 second timeout needed for long-running upgrade statements
+                    cmd.ExecuteNonQuery();
+                  }
+                }
+                catch (Exception ex)
+                {
+                  Log.Error("{0}:CreateDb exception err:{1} stack:{2} {3}", DatabaseName, ex.Message, ex.StackTrace, ex.InnerException);
+                  return false;
+                }
+              }
+            }
+            connect.Close();
+          return true;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("{0}:CreateDb exception err:{1} stack:{2} {3}", DatabaseName, ex.Message, ex.StackTrace, ex.InnerException);
+      }
+      return false;
+    }
+
+    private static string[] CleanMySqlStatement(string sql)
+    {
+      sql = sql.Replace("\r\n", "\r");
+      sql = sql.Replace("\t", " ");
+      sql = sql.Replace('"', '`'); // allow usage of ANSI quoted identifiers
+
+      string[] lines = sql.Split('\r');
+      sql = "";
+      for (int i = 0; i < lines.Length; ++i)
+      {
+        string line = lines[i].Trim();
+        if (line.StartsWith("/*")) continue;
+        if (line.StartsWith("--")) continue;
+        if (line.Length == 0) continue;
+        sql += line;
+      }
+      return sql.Split('#');
     }
 
     public static void Split(string strFileNameAndPath, out string strPath, out string strFileName)
