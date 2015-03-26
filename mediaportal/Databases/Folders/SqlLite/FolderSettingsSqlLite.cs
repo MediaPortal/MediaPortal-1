@@ -185,7 +185,7 @@ namespace Databases.Folders
       }
       catch (Exception ex)
       {
-        Log.Error("Lolderdatabase.GetPath() exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("Folderdatabase.GetPath() exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
 

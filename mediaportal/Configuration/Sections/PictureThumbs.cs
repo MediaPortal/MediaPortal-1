@@ -298,23 +298,49 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private bool ClearDatabase()
     {
-      string database = Config.GetFile(Config.Dir.Database, "PictureDatabase.db3");
-      if (File.Exists(database))
+      bool MovieDBUseADO = false;
+
+      using (Profile.Settings xmlreader = new MPSettings())
       {
-        PictureDatabase.Dispose();
-        try
-        {
-          File.Delete(database);
-        }
-        catch (Exception)
-        {
-          return false;
-        }
-        finally
-        {
-          PictureDatabase.ReOpen();
-        }
+        MovieDBUseADO = xmlreader.GetValueAsBool("picturedatabase", "UseADO", false);
       }
+        if (MovieDBUseADO)
+        {
+          try
+          {
+            PictureDatabase.ClearDB();
+          }
+          catch (Exception)
+          {
+            MessageBox.Show("Video database could not be cleared", "Video Database", MessageBoxButtons.OK,
+                            MessageBoxIcon.Exclamation);
+            return false;
+          }
+          finally
+          {
+            PictureDatabase.ReOpen();
+          }
+        }
+        else
+        {
+          string database = Config.GetFile(Config.Dir.Database, "PictureDatabase.db3");
+          if (File.Exists(database))
+          {
+            PictureDatabase.Dispose();
+            try
+            {
+              File.Delete(database);
+            }
+            catch (Exception)
+            {
+              return false;
+            }
+            finally
+            {
+              PictureDatabase.ReOpen();
+            }
+          }
+        }
       return true;
     }
 

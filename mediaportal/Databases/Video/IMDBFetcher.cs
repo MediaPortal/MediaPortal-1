@@ -884,12 +884,8 @@ namespace MediaPortal.Video.Database
       }
 
       // Update ActorImdbId
-      string sql = string.Format("update Actors set IMDBActorId='{0}' where idActor ={1}",
-                                  _imdbActor.IMDBActorID,
-                                  _actorId);
-      bool error = false;
-      string errorMessage = string.Empty;
-      VideoDatabase.ExecuteSql(sql, out error, out errorMessage);
+
+      VideoDatabase.SetIMDBActorId(_actorId, _imdbActor.IMDBActorID);
 
       // Keep user actor image
       bool userActorImage = false;

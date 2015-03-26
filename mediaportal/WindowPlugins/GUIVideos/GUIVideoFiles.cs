@@ -564,6 +564,8 @@ namespace MediaPortal.GUI.Video
         _history.Set("0", _currentFolder);
       }
 
+      _getMediaInfoThreadAbort = true;
+
       SaveFolderSettings(_currentFolder);
       ReleaseResources();
       base.OnPageDestroy(newWindowId);
@@ -2960,6 +2962,8 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
+      System.Diagnostics.Stopwatch benchClock = System.Diagnostics.Stopwatch.StartNew();
+
       GUIWaitCursor.Show();
 
       if (newFolderName != _currentFolder && _mapSettings != null)
@@ -3260,6 +3264,7 @@ namespace MediaPortal.GUI.Video
               int timesWatched = 0;
               int movieId = VideoDatabase.GetMovieId(file);
               bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
+              item.Duration = VideoDatabase.GetMovieDuration(movieId);
 
               if (_markWatchedFiles)
               {
@@ -3352,6 +3357,9 @@ namespace MediaPortal.GUI.Video
         }
       }
 
+      Log.Debug("GUIVideoFiles:LoadDirectory is finished in {0} ms", benchClock.ElapsedMilliseconds.ToString());
+      benchClock.Stop();
+
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(totalItems));
 
@@ -3431,6 +3439,10 @@ namespace MediaPortal.GUI.Video
         catch (ThreadAbortException)
         {
           Log.Debug("GetMediaInfoThread: ThreadAbortException");
+        }
+        catch (Exception ex)
+        {
+          Log.Error("GetMediaInfoThread: exception: {0}", ex.Message);
         }
         Thread.Sleep(100);
       }

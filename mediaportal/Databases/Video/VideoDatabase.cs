@@ -37,6 +37,14 @@ namespace MediaPortal.Video.Database
       _database = DatabaseFactory.GetVideoDatabase();
     }
 
+    public static bool ClearDB()
+    {
+      lock (typeof(VideoDatabase))
+      {
+        return _database.ClearDB();
+      }
+    }
+
     public static void Dispose()
     {
       if (_database != null)
@@ -44,6 +52,11 @@ namespace MediaPortal.Video.Database
         _database.Dispose();
       }
       _database = null;
+    }
+
+    public static bool IsConnected()
+    {
+      return _database.IsConnected();
     }
 
     public static string DatabaseName
@@ -62,37 +75,58 @@ namespace MediaPortal.Video.Database
 
     public static int AddFile(int lMovieId, int lPathId, string strFileName)
     {
-      return _database.AddFile(lMovieId, lPathId, strFileName);
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.AddFile(lMovieId, lPathId, strFileName);
+      }
     }
 
     public static int GetFile(string strFilenameAndPath, out int lPathId, out int lMovieId, bool bExact)
     {
-      return _database.GetFile(strFilenameAndPath, out lPathId, out lMovieId, bExact);
+      lock (typeof(VideoDatabase))
+      {
+        return _database.GetFile(strFilenameAndPath, out lPathId, out lMovieId, bExact);
+      }
     }
 
     public static int AddMovieFile(string strFile)
     {
-      return _database.AddMovieFile(strFile);
+      lock (typeof(VideoDatabase))
+      {
+        return _database.AddMovieFile(strFile);
+      }
     }
 
     public static int AddPath(string strPath)
     {
-      return _database.AddPath(strPath);
+      lock (typeof(VideoDatabase))
+      {
+        return _database.AddPath(strPath);
+      }
     }
 
     public static int GetPath(string strPath)
     {
-      return _database.GetPath(strPath);
+      lock (typeof(VideoDatabase))
+      {
+        return _database.GetPath(strPath);
+      }
     }
 
     public static void DeleteFile(int iFileId)
     {
-      _database.DeleteFile(iFileId);
+      lock (typeof(VideoDatabase))
+      {
+        _database.DeleteFile(iFileId);
+      }
     }
 
     public static void RemoveFilesForMovie(int lMovieId)
     {
-      _database.RemoveFilesForMovie(lMovieId);
+      lock (typeof(VideoDatabase))
+      {
+        _database.RemoveFilesForMovie(lMovieId);
+      }
     }
 
     /// <summary>
@@ -102,12 +136,18 @@ namespace MediaPortal.Video.Database
     /// <returns></returns>
     public static int GetFileId(string strFilenameAndPath)
     {
-      return _database.GetFileId(strFilenameAndPath);
+      lock (typeof(VideoDatabase))
+      {
+        return _database.GetFileId(strFilenameAndPath);
+      }
     }
 
     public static void GetFilesForMovie(int lMovieId, ref ArrayList files)
     {
-      _database.GetFilesForMovie(lMovieId, ref files);
+      lock (typeof(VideoDatabase))
+      {
+        _database.GetFilesForMovie(lMovieId, ref files);
+      }
     }
 
     #endregion
@@ -116,12 +156,18 @@ namespace MediaPortal.Video.Database
 
     public static void GetVideoFilesMediaInfo(string strFilenameAndPath, ref VideoFilesMediaInfo mediaInfo, bool refresh)
     {
-      _database.GetVideoFilesMediaInfo(strFilenameAndPath, ref mediaInfo, refresh);
+      lock (typeof(VideoDatabase))
+      {
+        _database.GetVideoFilesMediaInfo(strFilenameAndPath, ref mediaInfo, refresh);
+      }
     }
 
     public static bool HasMediaInfo(string fileName)
     {
-      return _database.HasMediaInfo(fileName);
+      lock (typeof(VideoDatabase))
+      {
+        return _database.HasMediaInfo(fileName);
+      }
     }
 
     #endregion
@@ -130,32 +176,50 @@ namespace MediaPortal.Video.Database
 
     public static int AddGenre(string strGenre1)
     {
-      return _database.AddGenre(strGenre1);
+      lock (typeof(VideoDatabase))
+      {
+        return _database.AddGenre(strGenre1);
+      }
     }
 
     public static void GetGenres(ArrayList genres)
     {
-      _database.GetGenres(genres);
+      lock (typeof(VideoDatabase))
+      {
+        _database.GetGenres(genres);
+      }
     }
 
     public static string GetGenreById(int genreId)
     {
-      return _database.GetGenreById(genreId);
+      lock (typeof(VideoDatabase))
+      {
+        return _database.GetGenreById(genreId);
+      }
     }
 
     public static void AddGenreToMovie(int lMovieId, int lGenreId)
     {
-      _database.AddGenreToMovie(lMovieId, lGenreId);
+      lock (typeof(VideoDatabase))
+      {
+        _database.AddGenreToMovie(lMovieId, lGenreId);
+      }
     }
 
     public static void DeleteGenre(string genre)
     {
-      _database.DeleteGenre(genre);
+      lock (typeof(VideoDatabase))
+      {
+        _database.DeleteGenre(genre);
+      }
     }
 
     public static void RemoveGenresForMovie(int lMovieId)
     {
-      _database.RemoveGenresForMovie(lMovieId);
+      lock (typeof(VideoDatabase))
+      {
+        _database.RemoveGenresForMovie(lMovieId);
+      }
     }
 
     #endregion
@@ -164,77 +228,131 @@ namespace MediaPortal.Video.Database
 
     public static int AddUserGroup(string userGroup)
     {
-      return _database.AddUserGroup(userGroup);
+      lock (typeof(VideoDatabase))
+      {
+        return _database.AddUserGroup(userGroup);
+      }
     }
 
     public static int GetUserGroupId(string userGroup)
     {
-      return _database.GetUserGroupId(userGroup);
+      lock (typeof(VideoDatabase))
+      {
+        return _database.GetUserGroupId(userGroup);
+      }
     }
 
     public static void AddUserGroupDescription(string userGroup, string description)
     {
-      _database.AddUserGroupDescription(userGroup, description);
+      lock (typeof(VideoDatabase))
+      {
+        _database.AddUserGroupDescription(userGroup, description);
+      }
     }
     
     public static void GetUserGroups(ArrayList userGroups)
     {
-      _database.GetUserGroups(userGroups);
+      lock (typeof(VideoDatabase))
+      {
+        _database.GetUserGroups(userGroups);
+      }
     }
 
     public static string GetUserGroupById(int groupId)
     {
-      return _database.GetUserGroupById(groupId);
+      lock (typeof(VideoDatabase))
+      {
+        return _database.GetUserGroupById(groupId);
+      }
     }
 
     public static string GetUserGroupDescriptionById(int groupId)
     {
-      return _database.GetUserGroupDescriptionById(groupId);
+      lock (typeof(VideoDatabase))
+      {
+        return _database.GetUserGroupDescriptionById(groupId);
+      }
     }
     
     public static void GetMovieUserGroups(int movieId, ArrayList userGroups)
-    {
-      _database.GetMovieUserGroups(movieId, userGroups);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetMovieUserGroups(movieId, userGroups);
+      }
     }
     
     public static void AddUserGroupToMovie(int lMovieId, int lUserGroupId)
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.AddUserGroupToMovie(lMovieId, lUserGroupId);
+      }
+    }
+
+
+    public static void GetMoviesByYear(ref ArrayList movies)
     {
-      _database.AddUserGroupToMovie(lMovieId, lUserGroupId);
+      lock (typeof(VideoDatabase))
+      {
+        _database.GetMoviesByYear(ref movies);
+      }
     }
 
     public static void AddUserGroupRuleByGroupId(int groupId, string rule)
-    {
-      _database.AddUserGroupRuleByGroupId(groupId, rule);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.AddUserGroupRuleByGroupId(groupId, rule);
+      }
     }
 
     public static void AddUserGroupRuleByGroupName(string groupName, string rule)
-    {
-      _database.AddUserGroupRuleByGroupName(groupName, rule);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.AddUserGroupRuleByGroupName(groupName, rule);
+      }
     }
 
     public static string GetUserGroupRule(string group)
-    {
-      return _database.GetUserGroupRule(group);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetUserGroupRule(group);
+      }
     }
 
     public static void RemoveUserGroupFromMovie(int lMovieId, int lUserGroupId)
-    {
-      _database.RemoveUserGroupFromMovie(lMovieId, lUserGroupId);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.RemoveUserGroupFromMovie(lMovieId, lUserGroupId);
+      }
     }
 
     public static void DeleteUserGroup(string userGroup)
-    {
-      _database.DeleteUserGroup(userGroup);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.DeleteUserGroup(userGroup);
+      }
     }
 
     public static void RemoveUserGroupsForMovie(int lMovieId)
-    {
-      _database.RemoveUserGroupsForMovie(lMovieId);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.RemoveUserGroupsForMovie(lMovieId);
+      }
     }
 
     public static void RemoveUserGroupRule(string groupName)
-    {
-      _database.RemoveUserGroupRule(groupName);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.RemoveUserGroupRule(groupName);
+      }
     }
 
     #endregion
@@ -242,53 +360,83 @@ namespace MediaPortal.Video.Database
     #region Actors
 
     public static int AddActor(string strActorImdbId, string strActorName)
-    {
-      return _database.AddActor(strActorImdbId, strActorName);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.AddActor(strActorImdbId, strActorName);
+      }
     }
 
     public static void GetActors(ArrayList actors)
-    {
-      _database.GetActors(actors);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetActors(actors);
+      }
     }
 
     public static string GetActorNameById(int actorId)
     {
-      return _database.GetActorNameById(actorId);
+      lock (typeof(VideoDatabase))
+      {
+        return _database.GetActorNameById(actorId);
+      }
     }
 
     public static void GetActorByName(string actorName, ArrayList actors)
-    {
-      _database.GetActorByName(actorName, actors);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetActorByName(actorName, actors);
+      }
     }
 
     public static void GetActorsByMovieID(int idMovie, ref ArrayList actorsByMovieID)
-    {
-      _database.GetActorsByMovieID(idMovie, ref actorsByMovieID);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetActorsByMovieID(idMovie, ref actorsByMovieID);
+      }
     }
 
     public static void AddActorToMovie(int lMovieId, int lActorId, string role)
-    {
-      _database.AddActorToMovie(lMovieId, lActorId, role);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.AddActorToMovie(lMovieId, lActorId, role);
+      }
     }
 
     public static void DeleteActorFromMovie(int movieId, int actorId)
-    {
-      _database.DeleteActorFromMovie(movieId, actorId);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.DeleteActorFromMovie(movieId, actorId);
+      }
     }
 
     public static string GetRoleByMovieAndActorId (int lMovieId, int lActorId)
-    {
-      return _database.GetRoleByMovieAndActorId(lMovieId, lActorId);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetRoleByMovieAndActorId(lMovieId, lActorId);
+      }
     }
 
     public static void DeleteActor(string actorImdbId)
-    {
-      _database.DeleteActor(actorImdbId);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.DeleteActor(actorImdbId);
+      }
     }
 
     public static void RemoveActorsForMovie(int lMovieId)
-    {
-      _database.RemoveActorsForMovie(lMovieId);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.RemoveActorsForMovie(lMovieId);
+      }
     }
 
     #endregion
@@ -296,18 +444,27 @@ namespace MediaPortal.Video.Database
     #region Bookmarks
 
     public static void ClearBookMarksOfMovie(string strFilenameAndPath)
-    {
-      _database.ClearBookMarksOfMovie(strFilenameAndPath);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.ClearBookMarksOfMovie(strFilenameAndPath);
+      }
     }
 
     public static void AddBookMarkToMovie(string strFilenameAndPath, float fTime)
-    {
-      _database.AddBookMarkToMovie(strFilenameAndPath, fTime);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.AddBookMarkToMovie(strFilenameAndPath, fTime);
+      }
     }
 
     public static void GetBookMarksForMovie(string strFilenameAndPath, ref ArrayList bookmarks)
-    {
-      _database.GetBookMarksForMovie(strFilenameAndPath, ref bookmarks);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetBookMarksForMovie(strFilenameAndPath, ref bookmarks);
+      }
     }
 
     #endregion
@@ -315,43 +472,67 @@ namespace MediaPortal.Video.Database
     #region Movieinfo
 
     public static void SetMovieInfo(string strFilenameAndPath, ref IMDBMovie details)
-    {
-      _database.SetMovieInfo(strFilenameAndPath, ref details);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.SetMovieInfo(strFilenameAndPath, ref details);
+      }
     }
 
     public static void SetMovieInfoById(int lMovieId, ref IMDBMovie details)
-    {
-      _database.SetMovieInfoById(lMovieId, ref details);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.SetMovieInfoById(lMovieId, ref details);
+      }
     }
 
     public static void SetMovieInfoById(int lMovieId, ref IMDBMovie details, bool updateTimeStamp)
-    {
-      _database.SetMovieInfoById(lMovieId, ref details, updateTimeStamp);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.SetMovieInfoById(lMovieId, ref details, updateTimeStamp);
+      }
     }
 
     public static void DeleteMovieInfo(string strFileNameAndPath)
-    {
-      _database.DeleteMovieInfo(strFileNameAndPath);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.DeleteMovieInfo(strFileNameAndPath);
+      }
     }
 
     public static void DeleteMovieInfoById(long lMovieId)
-    {
-      _database.DeleteMovieInfoById(lMovieId);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.DeleteMovieInfoById(lMovieId);
+      }
     }
 
     public static bool HasMovieInfo(string strFilenameAndPath)
-    {
-      return _database.HasMovieInfo(strFilenameAndPath);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.HasMovieInfo(strFilenameAndPath);
+      }
     }
 
     public static int GetMovieInfo(string strFilenameAndPath, ref IMDBMovie details)
-    {
-      return _database.GetMovieInfo(strFilenameAndPath, ref details);
+    {     
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetMovieInfo(strFilenameAndPath, ref details);
+      }
     }
 
     public static void GetMovieInfoById(int lMovieId, ref IMDBMovie details)
-    {
-      _database.GetMovieInfoById(lMovieId, ref details);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetMovieInfoById(lMovieId, ref details);
+      }
     }
 
     #endregion
@@ -359,74 +540,145 @@ namespace MediaPortal.Video.Database
     #region Watched status, stoptime
 
     public static void SetWatched(IMDBMovie details)
-    {
-      _database.SetWatched(details);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.SetWatched(details);
+      }
     }
 
     public static void SetDateWatched(IMDBMovie details)
-    {
-      _database.SetDateWatched(details);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.SetDateWatched(details);
+      }
     }
 
     public static void DeleteMovieStopTime(int iFileId)
-    {
-      _database.DeleteMovieStopTime(iFileId);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.DeleteMovieStopTime(iFileId);
+      }
     }
 
     public static int GetMovieStopTime(int iFileId)
-    {
-      return _database.GetMovieStopTime(iFileId);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetMovieStopTime(iFileId);
+      }
     }
 
     public static void SetMovieStopTime(int iFileId, int stoptime)
-    {
-      _database.SetMovieStopTime(iFileId, stoptime);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.SetMovieStopTime(iFileId, stoptime);
+      }
     }
 
     /// <summary>
     /// Deprecated Method (this one will not use the new Blu-ray Title mode resume)
     /// </summary>
     public static int GetMovieStopTimeAndResumeData(int iFileId, out byte[] resumeData)
-    {
-      return _database.GetMovieStopTimeAndResumeData(iFileId, out resumeData, g_Player.BdDefaultTitle);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetMovieStopTimeAndResumeData(iFileId, out resumeData, g_Player.BdDefaultTitle);
+      }
     }
 
     /// <summary>
     /// Deprecated Method (this one will not use the new Blu-ray Title mode resume)
     /// </summary>
     public static void SetMovieStopTimeAndResumeData(int iFileId, int stoptime, byte[] resumeData)
-    {
-      _database.SetMovieStopTimeAndResumeData(iFileId, stoptime, resumeData, g_Player.BdDefaultTitle);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.SetMovieStopTimeAndResumeData(iFileId, stoptime, resumeData, g_Player.BdDefaultTitle);
+      }
     }
 
     public static int GetMovieStopTimeAndResumeData(int iFileId, out byte[] resumeData, int bdtitle)
-    {
-      return _database.GetMovieStopTimeAndResumeData(iFileId, out resumeData, bdtitle);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetMovieStopTimeAndResumeData(iFileId, out resumeData, bdtitle);
+      }
     }
 
     public static void SetMovieStopTimeAndResumeData(int iFileId, int stoptime, byte[] resumeData, int bdtitle)
-    {
-      _database.SetMovieStopTimeAndResumeData(iFileId, stoptime, resumeData, bdtitle);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.SetMovieStopTimeAndResumeData(iFileId, stoptime, resumeData, bdtitle);
+      }
     }
 
     public static void SetMovieWatchedStatus(int iMovieId, bool watched, int percent)
-    {
-      _database.SetMovieWatchedStatus(iMovieId, watched, percent);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+       _database.SetMovieWatchedStatus(iMovieId, watched, percent);
+      }
     }
 
     public static void MovieWatchedCountIncrease(int idMovie)
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.MovieWatchedCountIncrease(idMovie);
+      }
+    }
+
+    public static void SetIMDBMovies(string sql)
     {
-      _database.MovieWatchedCountIncrease(idMovie);
+      lock (typeof(VideoDatabase))
+      {
+        _database.SetIMDBMovies(sql);
+      }
+    }
+
+    public static void SetIMDBActorId(int actorId, string IMDBActorID)
+    {
+      lock (typeof(VideoDatabase))
+      {
+        _database.SetIMDBActorId(actorId, IMDBActorID);
+      }
+    }
+
+    public static void SetMovieTitle(string movieTitle, int movieId)
+    {
+      lock (typeof(VideoDatabase))
+      {
+        _database.SetMovieTitle(movieTitle, movieId);
+      }
+    }
+
+    public static void SetMovieShortTitle(string movieTitle, int movieId)
+    {
+      lock (typeof(VideoDatabase))
+      {
+        _database.SetMovieShortTitle(movieTitle, movieId);
+      }
     }
 
     public static void SetMovieWatchedCount(int movieId, int watchedCount)
-    {
-      _database.SetMovieWatchedCount(movieId, watchedCount);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.SetMovieWatchedCount(movieId, watchedCount);
+      }
     }
 
     public static bool GetmovieWatchedStatus(int iMovieId, out int percent, out int timesWatched)
-    {
-      return _database.GetMovieWatchedStatus(iMovieId, out percent, out timesWatched);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetMovieWatchedStatus(iMovieId, out percent, out timesWatched);
+      }
     }
 
     #endregion
@@ -434,23 +686,35 @@ namespace MediaPortal.Video.Database
     #region Duration
 
     public static int GetMovieDuration(int iMovieId)
-    {
-      return _database.GetMovieDuration(iMovieId);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetMovieDuration(iMovieId);
+      }
     }
 
     public static int GetVideoDuration(int iFileId)
-    {
-      return _database.GetVideoDuration(iFileId);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetVideoDuration(iFileId);
+      }
     }
 
     public static void SetVideoDuration(int iFileId, int duration)
-    {
-      _database.SetVideoDuration(iFileId, duration);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.SetVideoDuration(iFileId, duration);
+      }
     }
 
     public static void SetMovieDuration(int iMovieId, int duration)
-    {
-      _database.SetMovieDuration(iMovieId, duration);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.SetMovieDuration(iMovieId, duration);
+      }
     }
 
     #endregion
@@ -458,33 +722,51 @@ namespace MediaPortal.Video.Database
     #region Movie
 
     public static void DeleteMovie(string strFilenameAndPath)
-    {
-      _database.DeleteMovie(strFilenameAndPath);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.DeleteMovie(strFilenameAndPath);
+      }
     }
 
     public static int AddMovie(string strFilenameAndPath, bool bHassubtitles)
-    {
-      return _database.AddMovie(strFilenameAndPath, bHassubtitles);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.AddMovie(strFilenameAndPath, bHassubtitles);
+      }
     }
 
     public static void GetMovies(ref ArrayList movies)
-    {
-      _database.GetMovies(ref movies);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetMovies(ref movies);
+      }
     }
 
     public static int GetMovieId(string strFilenameAndPath)
-    {
-      return _database.GetMovieId(strFilenameAndPath);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetMovieId(strFilenameAndPath);
+      }
     }
 
     public static int GetTitleBDId(int iFileId, out byte[] resumeData)
-    {
-      return _database.GetTitleBDId(iFileId, out resumeData);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetTitleBDId(iFileId, out resumeData);
+      }
     }
 
     public static bool HasSubtitle(string strFilenameAndPath)
-    {
-      return _database.HasSubtitle(strFilenameAndPath);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.HasSubtitle(strFilenameAndPath);
+      }
     }
 
     #endregion
@@ -492,13 +774,19 @@ namespace MediaPortal.Video.Database
     #region Images
 
     public static void SetThumbURL(int lMovieId, string thumbURL)
-    {
-      _database.SetThumbURL(lMovieId, thumbURL);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.SetThumbURL(lMovieId, thumbURL);
+      }
     }
 
     public static void SetFanartURL(int lMovieId, string fanartURL)
-    {
-      _database.SetFanartURL(lMovieId, fanartURL);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.SetFanartURL(lMovieId, fanartURL);
+      }
     }
 
     #endregion
@@ -506,99 +794,156 @@ namespace MediaPortal.Video.Database
     #region Movie queries
 
     public static void GetYears(ArrayList years)
-    {
-      _database.GetYears(years);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetYears(years);
+      }
     }
 
     public static void GetMoviesByGenre(string strGenre1, ref ArrayList movies)
-    {
-      _database.GetMoviesByGenre(strGenre1, ref movies);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetMoviesByGenre(strGenre1, ref movies);
+      }
     }
 
     public static void GetRandomMoviesByGenre(string strGenre1, ref ArrayList movies, int limit)
-    {
-      _database.GetRandomMoviesByGenre(strGenre1, ref movies, limit);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetRandomMoviesByGenre(strGenre1, ref movies, limit);
+      }
     }
 
     public static string GetMovieTitlesByGenre(string strGenre)
-    {
-      return _database.GetMovieTitlesByGenre(strGenre);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetMovieTitlesByGenre(strGenre);
+      }
     }
 
     public static void GetMoviesByUserGroup(string strUserGroup, ref ArrayList movies)
-    {
-      _database.GetMoviesByUserGroup(strUserGroup, ref movies);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetMoviesByUserGroup(strUserGroup, ref movies);
+      }
     }
 
     public static void GetRandomMoviesByUserGroup(string strUserGroup, ref ArrayList movies, int limit)
-    {
-      _database.GetRandomMoviesByUserGroup(strUserGroup, ref movies, limit);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetRandomMoviesByUserGroup(strUserGroup, ref movies, limit);
+      }
     }
 
     public static string GetMovieTitlesByUserGroup(int idGroup)
-    {
-      return _database.GetMovieTitlesByUserGroup(idGroup);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetMovieTitlesByUserGroup(idGroup);
+      }
     }
 
     public static void GetMoviesByActor(string strActor1, ref ArrayList movies)
-    {
-      _database.GetMoviesByActor(strActor1, ref movies);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetMoviesByActor(strActor1, ref movies);
+      }
     }
 
     public static void GetRandomMoviesByActor(string strActor1, ref ArrayList movies, int limit)
-    {
-      _database.GetRandomMoviesByActor(strActor1, ref movies, limit);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetRandomMoviesByActor(strActor1, ref movies, limit);
+      }
     }
 
     public static string GetMovieTitlesByActor(int actorId)
-    {
-      return _database.GetMovieTitlesByActor(actorId);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetMovieTitlesByActor(actorId);
+      }
     }
 
     public static string GetMovieTitlesByDirector(int directorId)
-    {
-      return _database.GetMovieTitlesByDirector(directorId);
+    {     
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetMovieTitlesByDirector(directorId);
+      }
     }
 
     public static void GetMoviesByYear(string strYear, ref ArrayList movies)
-    {
-      _database.GetMoviesByYear(strYear, ref movies);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetMoviesByYear(strYear, ref movies);
+      }
     }
 
     public static void GetRandomMoviesByYear(string strYear, ref ArrayList movies, int limit)
-    {
-      _database.GetRandomMoviesByYear(strYear, ref movies, limit);
+    {     
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetRandomMoviesByYear(strYear, ref movies, limit);
+     }
     }
 
     public static string GetMovieTitlesByYear(string strYear)
-    {
-      return _database.GetMovieTitlesByYear(strYear);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetMovieTitlesByYear(strYear);
+      }
     }
 
     public static void GetMoviesByPath(string strPath1, ref ArrayList movies)
-    {
-      _database.GetMoviesByPath(strPath1, ref movies);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetMoviesByPath(strPath1, ref movies);
+      }
     }
 
     public static void GetRandomMoviesByPath(string strPath1, ref ArrayList movies, int limit)
-    {
-      _database.GetRandomMoviesByPath(strPath1, ref movies, limit);
+    {  
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetRandomMoviesByPath(strPath1, ref movies, limit);
+      }
     }
 
     public static void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable, bool movieinfoTable,
                                          bool genreTable, bool usergroupTable)
-    {
-      _database.GetMoviesByFilter(sql, out movies, actorTable, movieinfoTable, genreTable, usergroupTable);
+    { 
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetMoviesByFilter(sql, out movies, actorTable, movieinfoTable, genreTable, usergroupTable);
+      }
     }
 
     public static void GetIndexByFilter(string sql, bool filterNonWordChar, out ArrayList movieList)
-    {
-      _database.GetIndexByFilter(sql, filterNonWordChar, out movieList);
+    { 
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetIndexByFilter(sql, filterNonWordChar, out movieList);
+      }
     }
 
     public static string GetMovieTitlesByIndex(string sql)
     {
-      return _database.GetMovieTitlesByIndex(sql);
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetMovieTitlesByIndex(sql);
+      }
     }
 
     #endregion
@@ -606,18 +951,27 @@ namespace MediaPortal.Video.Database
     #region CD/DVD labels
 
     public static void SetDVDLabel(int lMovieId, string strDVDLabel1)
-    {
-      _database.SetDVDLabel(lMovieId, strDVDLabel1);
+    { 
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.SetDVDLabel(lMovieId, strDVDLabel1);
+      }
     }
 
     public static void UpdateCDLabel(IMDBMovie movieDetails, string CDlabel)
     {
-      _database.UpdateCDLabel(movieDetails, CDlabel);
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.UpdateCDLabel(movieDetails, CDlabel);
+      }
     }
 
     public static string GetDVDLabel(string strFile)
     {
-      return _database.GetDVDLabel(strFile);
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetDVDLabel(strFile);
+      }
     }
 
     #endregion
@@ -625,23 +979,35 @@ namespace MediaPortal.Video.Database
     #region Actor info
 
     public static void SetActorInfo(int idActor, IMDBActor actor)
-    {
-      _database.SetActorInfo(idActor, actor);
+    { 
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.SetActorInfo(idActor, actor);
+      }
     }
 
     public static void AddActorInfoMovie(int idActor, IMDBActor.IMDBActorMovie movie)
     {
-      _database.AddActorInfoMovie(idActor, movie);
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.AddActorInfoMovie(idActor, movie);
+      }
     }
 
     public static IMDBActor GetActorInfo(int idActor)
-    {
-      return _database.GetActorInfo(idActor);
+    { 
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetActorInfo(idActor);
+      }
     }
 
     public static string GetActorImdbId(int idActor)
-    {
-      return _database.GetActorImdbId(idActor);
+    { 
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetActorImdbId(idActor);
+      }
     }
 
     #endregion
@@ -649,28 +1015,43 @@ namespace MediaPortal.Video.Database
     #region Thumb blacklist
 
     public static bool IsVideoThumbBlacklisted(string path)
-    {
-      return _database.IsVideoThumbBlacklisted(path);
+    { 
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.IsVideoThumbBlacklisted(path);
+      }
     }
 
     public static int VideoThumbBlacklist(string path, DateTime expiresOn)
-    {
-      return _database.VideoThumbBlacklist(path, expiresOn);
+    { 
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.VideoThumbBlacklist(path, expiresOn);
+      }
     }
 
     public static bool VideoThumbRemoveFromBlacklist(string path)
     {
-      return _database.VideoThumbRemoveFromBlacklist(path);
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.VideoThumbRemoveFromBlacklist(path);
+      }
     }
 
     public static void RemoveExpiredVideoThumbBlacklistEntries()
     {
-      _database.RemoveExpiredVideoThumbBlacklistEntries();
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.RemoveExpiredVideoThumbBlacklistEntries();
+      }
     }
 
     public static void RemoveAllVideoThumbBlacklistEntries()
-    {
-      _database.RemoveAllVideoThumbBlacklistEntries();
+    { 
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.RemoveAllVideoThumbBlacklistEntries();
+      }
     }
 
     #endregion
@@ -679,34 +1060,52 @@ namespace MediaPortal.Video.Database
 
     public static void ImportNfo(string nfoFile, bool skipExisting, bool refreshdbOnly)
     {
-      _database.ImportNfo(nfoFile, skipExisting, refreshdbOnly);
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.ImportNfo(nfoFile, skipExisting, refreshdbOnly);
+      }
     }
 
     public static bool MakeNfo (int movieId)
-    {
-      return _database.MakeNfo(movieId);
+    { 
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.MakeNfo(movieId);
+      }
     }
 
     public static void ImportNfoUsingVideoFile(string videoFile, bool skipExisting, bool refreshdbOnly)
-    {
-      _database.ImportNfoUsingVideoFile(videoFile, skipExisting, refreshdbOnly);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.ImportNfoUsingVideoFile(videoFile, skipExisting, refreshdbOnly);
+      }
     }
 
     #endregion
 
     public static SQLiteResultSet GetResults(string sql)
-    {
-      return _database.GetResults(sql);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.GetResults(sql);
+      }
     }
 
     public static void ExecuteSql(string sql, out bool error, out string errorMessage)
-    {
-      _database.ExecuteSQL(sql, out error, out errorMessage);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.ExecuteSQL(sql, out error, out errorMessage);
+      }
     }
 
     public static ArrayList ExecuteRuleSql(string sql, string fieldName, out bool error, out string errorMessage)
-    {
-      return _database.ExecuteRuleSQL(sql, fieldName, out error, out errorMessage);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.ExecuteRuleSQL(sql, fieldName, out error, out errorMessage);
+      }
     }
 
     /// <summary>
@@ -715,8 +1114,11 @@ namespace MediaPortal.Video.Database
     /// <param name="id"></param>
     /// <returns></returns>
     public static bool CheckMovieImdbId(string id)
-    {
-      return _database.CheckMovieImdbId(id);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.CheckMovieImdbId(id);
+      }
     }
 
     /// <summary>
@@ -725,8 +1127,11 @@ namespace MediaPortal.Video.Database
     /// <param name="id"></param>
     /// <returns></returns>
     public static bool CheckActorImdbId(string id)
-    {
-      return _database.CheckActorImdbId(id);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        return _database.CheckActorImdbId(id);
+      }
     }
     
     /// <summary>
@@ -735,8 +1140,11 @@ namespace MediaPortal.Video.Database
     /// <param name="path"></param>
     /// <param name="availableFiles"></param>
     public static void GetVideoFiles(string path, ref ArrayList availableFiles)
-    {
-      _database.GetVideoFiles(path, ref availableFiles);
+    {      
+      lock (typeof(VideoDatabase)) 
+      {
+        _database.GetVideoFiles(path, ref availableFiles);
+      }
     }
 
     /// <summary>
@@ -746,7 +1154,8 @@ namespace MediaPortal.Video.Database
     public static string NonwordCharacters()
     {
       string characters =
-        @"'1','2','3','4','5','6','7','8','9','''','(',')','[',']','{','}','""','!','#','$','%','&','/','+','-','<','>','.',',',':',';','§','|','_','\','@','€','~','^','ˇ','½','*'";
+        @"'1','2','3','4','5','6','7','8','9','''','(',')','[',']','{      lock (typeof(VideoDatabase)) 
+      {','}','""','!','#','$','%','&','/','+','-','<','>','.',',',':',';','§','|','_','\','@','€','~','^','ˇ','½','*'";
       return characters;
     }
 
