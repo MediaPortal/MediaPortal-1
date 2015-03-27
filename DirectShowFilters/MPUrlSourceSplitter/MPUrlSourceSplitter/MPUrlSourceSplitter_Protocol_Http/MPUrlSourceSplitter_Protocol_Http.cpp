@@ -392,6 +392,33 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
           request->SetStartPosition(this->IsLiveStreamDetected() ? 0 : startStreamPosition);
           request->SetEndPosition(this->IsLiveStreamDetected() ? 0 : endStreamPosition);
 
+          // apply custom headers (if any)
+
+          unsigned int headersCount = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_HEADERS_COUNT, true, 0);
+
+          for (unsigned int i = 0; (SUCCEEDED(result) && (i < headersCount)); i++)
+          {
+            wchar_t *httpHeaderName = FormatString(HTTP_HEADER_FORMAT_PARAMETER_NAME, i);
+            wchar_t *httpHeaderValue = FormatString(HTTP_HEADER_FORMAT_PARAMETER_VALUE, i);
+
+            CHECK_POINTER_HRESULT(result, httpHeaderName, result, E_OUTOFMEMORY);
+            CHECK_POINTER_HRESULT(result, httpHeaderValue, result, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(result))
+            {
+              const wchar_t *name = this->configuration->GetValue(httpHeaderName, true, NULL);
+              const wchar_t *value = this->configuration->GetValue(httpHeaderValue, true, NULL);
+
+              CHECK_POINTER_HRESULT(result, name, result, E_OUTOFMEMORY);
+              CHECK_POINTER_HRESULT(result, value, result, E_OUTOFMEMORY);
+
+              CHECK_CONDITION_HRESULT(result, request->GetHeaders()->Add(name, value), result, E_OUTOFMEMORY);
+            }
+
+            FREE_MEM(httpHeaderName);
+            FREE_MEM(httpHeaderValue);
+          }
+
           // set finish time, all methods must return before finish time
           request->SetFinishTime(finishTime);
           request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER));

@@ -36,6 +36,10 @@
 #define PARAMETER_NAME_HTTP_COOKIES_COUNT                             L"HttpCookiesCount"
 #define HTTP_COOKIE_FORMAT_PARAMETER_NAME                             L"HttpCookie%08u"
 
+#define PARAMETER_NAME_HTTP_HEADERS_COUNT                             L"HttpHeadersCount"
+#define HTTP_HEADER_FORMAT_PARAMETER_NAME                             L"HttpHeaderName%08u"
+#define HTTP_HEADER_FORMAT_PARAMETER_VALUE                            L"HttpHeaderValue%08u"
+
 // special parameter to force supported seeking by position even if server doesn't respond as expected
 // (HTTP 206 response code or Accept-Ranges HTTP response header)
 #define PARAMETER_NAME_HTTP_SEEKING_SUPPORTED                         L"HttpSeekingSupported"
