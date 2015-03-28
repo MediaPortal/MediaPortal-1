@@ -3059,7 +3059,7 @@ namespace MediaPortal.Video.Database
       {
         if (duration > 0)
         {
-          string sql = sql = String.Format("UPDATE movie SET iduration={0} WHERE idMovie={1}",
+          string sql = String.Format("UPDATE movie SET iduration={0} WHERE idMovie={1}",
                                            duration, iMovieId);
           m_db.Execute(sql);
         }
