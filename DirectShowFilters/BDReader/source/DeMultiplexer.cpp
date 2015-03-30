@@ -342,13 +342,16 @@ Packet* CDeMultiplexer::GetVideo()
   if (HoldVideo())
     return NULL;
 
-  while (!m_playlistManager->HasVideo())
+  bool allowBuffering = m_playlistManager->AllowBuffering();
+
+  while (!m_playlistManager->HasVideo() && allowBuffering)
   {
     if (m_filter.IsStopping() || m_bEndOfFile || ReadFromFile() <= 0)
       return NULL;
   }
 
-  m_filter.lib.ProcessEvents();
+  if (!allowBuffering)
+    ReadFromFile(true);
 
   return m_playlistManager->GetNextVideoPacket();
 }
@@ -361,13 +364,16 @@ Packet* CDeMultiplexer::GetAudio()
   if (HoldAudio())
     return NULL;
 
-  while (!m_playlistManager->HasAudio())
+  bool allowBuffering = m_playlistManager->AllowBuffering();
+
+  while (!m_playlistManager->HasAudio() && allowBuffering)
   {
     if (m_filter.IsStopping() || m_bEndOfFile || ReadFromFile() <= 0)
       return NULL;
   }
 
-  m_filter.lib.ProcessEvents();
+  if (!allowBuffering)
+    ReadFromFile(true);
 
   Packet* packet = m_playlistManager->GetNextAudioPacket();
   if (packet && packet->rtTitleDuration == 0)
@@ -439,14 +445,18 @@ bool CDeMultiplexer::EndOfFile()
 /// and processes the raw data
 /// When a TS packet has been discovered, OnTsPacket(byte* tsPacket) gets called
 //  which in its turn deals with the packet
-int CDeMultiplexer::ReadFromFile()
+int CDeMultiplexer::ReadFromFile(bool pollEvents)
 {
   if (m_filter.IsStopping()) return 0;
   CAutoLock lock (&m_sectionRead);
   int dwReadBytes = 0;
   bool pause = false;
 
-  dwReadBytes = m_filter.lib.Read(m_readBuffer, sizeof(m_readBuffer), pause, false);
+  int readSize = sizeof(m_readBuffer);
+  if (pollEvents)
+    readSize = 0;
+
+  dwReadBytes = m_filter.lib.Read(m_readBuffer, readSize, pause, false);
 
   if (dwReadBytes > 0)
   {
@@ -582,8 +592,13 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv)
           bool interrupted = m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, AudioStreamsAvailable(clip),
             CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration), CONVERT_90KHz_DS(position), m_bLibRequestedFlush);
 
-          if (m_bLibRequestedFlush || interrupted)
+          if (m_bLibRequestedFlush)
+          {
             m_playlistManager->ClearClips();
+            CVideoPin* pVideoPin = m_filter.GetVideoPin();
+            if (pVideoPin)
+              pVideoPin->SyncClipBoundary();
+          }
 
           m_bLibRequestedFlush = false;
         }

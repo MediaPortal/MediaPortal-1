@@ -152,7 +152,7 @@ private:
 
   int m_nVideoPid;
 
-  int ReadFromFile();
+  int ReadFromFile(bool pollEvents = false);
   bool m_bEndOfFile;
   
   CCritSec m_sectionAudio;
