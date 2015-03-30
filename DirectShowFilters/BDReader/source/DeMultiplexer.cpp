@@ -589,7 +589,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv)
 
           FlushPESBuffers(false, false);
 
-          bool interrupted = m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, AudioStreamsAvailable(clip),
+          m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, AudioStreamsAvailable(clip),
             CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration), CONVERT_90KHz_DS(position), m_bLibRequestedFlush);
 
           if (m_bLibRequestedFlush)
