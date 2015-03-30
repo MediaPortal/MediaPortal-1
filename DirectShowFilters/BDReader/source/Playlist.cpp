@@ -455,3 +455,14 @@ void CPlaylist::PopClips()
   m_itCurrentAudioSubmissionClip = m_vecClips.begin() + m_itCurrentAudioSubmissionClipPos;
   m_itCurrentVideoSubmissionClip = m_vecClips.begin() + m_itCurrentVideoSubmissionClipPos;
 }
+
+bool CPlaylist::AllowBuffering()
+{
+  bool ret = true;
+
+  if (*m_itCurrentAudioPlayBackClip)
+    ret = (*m_itCurrentAudioPlayBackClip)->AllowBuffering();
+
+  return ret;
+}
+

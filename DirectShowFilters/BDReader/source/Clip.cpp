@@ -465,6 +465,34 @@ void CClip::SetVideoPMT(AM_MEDIA_TYPE *pmt)
   m_videoPmt = CreateMediaType(pmt);
 }
 
+bool CClip::AllowBuffering()
+{
+  bool ret = true;
+
+  CAutoLock vectorVLock(&m_sectionVectorAudio);
+
+  if (m_vecClipAudioPackets.size() > 1 && !noAudio)
+  {
+    Packet* first = m_vecClipAudioPackets.front();
+    REFERENCE_TIME rtFirst = first->rtStart;
+
+    Packet* last = m_vecClipAudioPackets.back();
+    REFERENCE_TIME rtLast = last->rtStart;
+
+    if (firstVideo)
+      ret = true;
+    else if (m_videoPmt && (rtLast > rtFirst + BUFFER_LIMIT_TIME))
+      ret = false;
+
+    //LogDebug("CClip::AllowBuffering %d - firstVideo: %d vid PMT: %d pl: %d clip: %d rtFirst: %6.3f rtLast: %6.3f", 
+    //  ret, firstVideo, m_videoPmt ? 1: 0, nPlaylist, nClip, rtFirst / 10000000.0, rtLast / 10000000.0);
+  }
+  //else
+  //  LogDebug("CClip::AllowBuffering %d - pl: %d clip: %d", ret, nPlaylist, nClip);
+
+  return ret;
+}
+
 void CClip::LogSupersede(int supersede)
 {
   std::string tmp;
