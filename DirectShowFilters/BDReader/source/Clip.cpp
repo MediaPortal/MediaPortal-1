@@ -438,19 +438,6 @@ bool CClip::HasVideo()
   return false;
 }
 
-REFERENCE_TIME CClip::Incomplete()
-{
-  // clip not played so not incomplete
-  if (!firstPacketReturned || !firstPacketAccepted || firstVideo)
-    return 0LL;
-
-  REFERENCE_TIME ret = clipDuration - m_rtPlayedDuration;
-  if (ret > INTERRUPTED_CLIP_TIME)
-    LogDebug("clip: Incomplete - nClip: %d m_rtPlayedDuration: %I64d duration: %I64d", nClip, m_rtPlayedDuration, clipDuration);
-
-  return ret;
-}
-
 REFERENCE_TIME CClip::PlayedDuration()
 {
   LogDebug("CClip::PlayedDuration %6.3f", m_rtPlayedDuration / 10000000.0);
