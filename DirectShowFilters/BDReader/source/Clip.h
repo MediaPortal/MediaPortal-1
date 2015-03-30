@@ -43,6 +43,7 @@ enum SUPERSEDE
 #define FAKE_AUDIO_DURATION 320000LL
 #define AC3_FRAME_LENGTH 1792
 #define INTERRUPTED_CLIP_TIME 30000000LL // 3 seconds
+#define BUFFER_LIMIT_TIME 30000000LL // 3 seconds
 
 class CClip
 {
@@ -70,6 +71,7 @@ public:
   REFERENCE_TIME Incomplete();
   REFERENCE_TIME PlayedDuration();
   void SetVideoPMT(AM_MEDIA_TYPE *pmt);
+  bool AllowBuffering();
 
   // endtime of the last audio packet buffered in the clip
   REFERENCE_TIME lastAudioPosition;

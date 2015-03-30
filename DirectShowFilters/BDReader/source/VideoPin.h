@@ -66,6 +66,7 @@ public:
   HRESULT DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate, bool doFakeSeek = false);
   
   bool IsConnected();
+  void SyncClipBoundary();
   void StopWait();
   void SetInitialMediaType(const CMediaType* pmt);
   void SetVideoDecoder(int format, GUID* decoder);
@@ -107,6 +108,7 @@ protected:
 
   CCritSec m_csDeliver;
   CAMEvent* m_eFlushStart;
+  CAMEvent* m_eSyncClips;
   bool m_bFlushing;
   bool m_bSeekDone;
   bool m_bDiscontinuity;
