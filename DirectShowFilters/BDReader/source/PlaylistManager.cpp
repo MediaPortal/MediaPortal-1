@@ -353,6 +353,8 @@ void CPlaylistManager::PushPlaylists()
 
 void CPlaylistManager::PopPlaylists(int difference)
 {
+  CAutoLock vectorLock(&m_sectionVector);
+
   if (m_itCurrentAudioPlayBackPlaylistPos - difference < 0)
     m_itCurrentAudioPlayBackPlaylistPos = difference;
 
@@ -368,9 +370,23 @@ void CPlaylistManager::PopPlaylists(int difference)
 
 void CPlaylistManager::CurrentClipFilled()
 {
+  CAutoLock vectorLock(&m_sectionVector);
+
   if (m_vecPlaylists.size())
   {
     LogDebug("CPlaylistManager::CurrentClipFilled");
     (*m_itCurrentVideoSubmissionPlaylist)->CurrentClipFilled();
   }
+}
+
+bool CPlaylistManager::AllowBuffering()
+{
+  bool ret = true;
+
+  CAutoLock vectorLock(&m_sectionVector);
+
+  if (*m_itCurrentAudioPlayBackPlaylist)
+    ret = (*m_itCurrentAudioPlayBackPlaylist)->AllowBuffering();
+
+  return ret;
 }
