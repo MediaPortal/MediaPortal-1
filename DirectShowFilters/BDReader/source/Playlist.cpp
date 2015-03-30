@@ -356,15 +356,6 @@ bool CPlaylist::HasVideo()
   return false;
 }
 
-REFERENCE_TIME CPlaylist::Incomplete()
-{
-  CAutoLock vectorLock(&m_sectionVector);
-  if (m_vecClips.size() > 0)
-    return m_vecClips.back()->Incomplete();
-
-  return 0LL;
-}
-
 REFERENCE_TIME CPlaylist::PlayedDuration()
 {
   CAutoLock vectorLock(&m_sectionVector);

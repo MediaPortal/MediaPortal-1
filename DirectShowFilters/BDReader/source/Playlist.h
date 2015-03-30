@@ -57,7 +57,6 @@ public:
   void ClearClips(REFERENCE_TIME totalStreamOffset, bool skipCurrentClip);
   bool HasAudio();
   bool HasVideo();
-  REFERENCE_TIME Incomplete();
   REFERENCE_TIME PlayedDuration();
   void SetVideoPMT(AM_MEDIA_TYPE * pmt, int nClip);
   vector<CClip*> Superceed();
