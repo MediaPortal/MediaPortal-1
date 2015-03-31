@@ -3706,10 +3706,11 @@ namespace MediaPortal.Video.Database.SqlServer
           return titles;
         }
 
-        var query = (from sql in _connection.movieinfoes
-                     where sql.strGenre == strGenre || sql.strGenre.Contains(strGenre)
-                     orderby sql.strTitle ascending
-                     select sql).ToList();
+        string strSQL = String.Format(
+         "SELECT DISTINCT * FROM movieinfo WHERE strGenre LIKE '%{0}%' ORDER BY strTitle ASC",
+         strGenre);
+
+        var query = _connection.ExecuteStoreQuery<Databases.movieinfo>(strSQL).ToList();
 
         if (query.Count == 0)
         {
