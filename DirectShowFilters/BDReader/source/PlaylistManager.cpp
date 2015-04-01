@@ -50,7 +50,7 @@ CPlaylistManager::~CPlaylistManager(void)
   }
 }
 
-bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audioPresent, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffsetTime, REFERENCE_TIME duration, REFERENCE_TIME streamStartPosition, bool interrupted)
+void CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audioPresent, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffsetTime, REFERENCE_TIME duration, REFERENCE_TIME streamStartPosition, bool interrupted)
 {
   CAutoLock lock (&m_sectionAudio);
   CAutoLock lockv (&m_sectionVideo);
@@ -61,9 +61,7 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
   // Mark current playlist as filled
   CurrentClipFilled();
 
-  REFERENCE_TIME remainingClipTime = Incomplete();
   REFERENCE_TIME playedDuration = ClipPlayTime();
-  bool ret = remainingClipTime > INTERRUPTED_CLIP_TIME;
 
   //LogDebug("Playlist Manager::TimeStamp Correction changed to %I64d adding %I64d",m_rtPlaylistOffset + playedDuration, playedDuration);
 
@@ -102,8 +100,6 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
       m_itCurrentVideoSubmissionPlaylist++;
     }
   }
-
-  return ret;
 }
 
 bool CPlaylistManager::SubmitAudioPacket(Packet * packet)
@@ -305,18 +301,6 @@ void CPlaylistManager::ClearClips(bool skipCurrentClip)
   }
 }
 
-REFERENCE_TIME CPlaylistManager::Incomplete()
-{
-  CAutoLock vectorLock(&m_sectionVector);
-
-  REFERENCE_TIME ret = 0LL;
-
-  if (!m_vecPlaylists.empty())
-    ret = m_vecPlaylists.back()->Incomplete();
-    
-  return ret;
-}
-
 REFERENCE_TIME CPlaylistManager::ClipPlayTime()
 {
   CAutoLock vectorLock(&m_sectionVector);
@@ -353,6 +337,8 @@ void CPlaylistManager::PushPlaylists()
 
 void CPlaylistManager::PopPlaylists(int difference)
 {
+  CAutoLock vectorLock(&m_sectionVector);
+
   if (m_itCurrentAudioPlayBackPlaylistPos - difference < 0)
     m_itCurrentAudioPlayBackPlaylistPos = difference;
 
@@ -368,9 +354,23 @@ void CPlaylistManager::PopPlaylists(int difference)
 
 void CPlaylistManager::CurrentClipFilled()
 {
+  CAutoLock vectorLock(&m_sectionVector);
+
   if (m_vecPlaylists.size())
   {
     LogDebug("CPlaylistManager::CurrentClipFilled");
     (*m_itCurrentVideoSubmissionPlaylist)->CurrentClipFilled();
   }
+}
+
+bool CPlaylistManager::AllowBuffering()
+{
+  bool ret = true;
+
+  CAutoLock vectorLock(&m_sectionVector);
+
+  if (*m_itCurrentAudioPlayBackPlaylist)
+    ret = (*m_itCurrentAudioPlayBackPlaylist)->AllowBuffering();
+
+  return ret;
 }

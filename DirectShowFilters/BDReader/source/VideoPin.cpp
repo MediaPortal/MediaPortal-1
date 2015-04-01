@@ -122,13 +122,16 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
     AM_SEEKING_Source;
 
   m_eFlushStart = new CAMEvent(true);
+  m_eSyncClips = new CAMEvent(true);
 }
 
 CVideoPin::~CVideoPin()
 {
   m_eFlushStart->Set();
+  m_eSyncClips->Set();
 
   delete m_eFlushStart;
+  delete m_eSyncClips;
   delete m_pCachedBuffer;
 }
 
@@ -325,6 +328,12 @@ void CVideoPin::StopWait()
     m_eFlushStart->Set();
 }
 
+void CVideoPin::SyncClipBoundary()
+{
+  if (m_eSyncClips)
+    m_eSyncClips->Set();
+}
+
 HRESULT CVideoPin::DoBufferProcessingLoop()
 {
   Command com;
@@ -424,7 +433,15 @@ void CVideoPin::CheckPlaybackState()
 {
   if (m_demux.m_bVideoClipSeen)
   {
-    m_demux.m_eAudioClipSeen->Wait();
+    HANDLE handles[2] = { *m_demux.m_eAudioClipSeen, *m_eSyncClips };
+    
+    DWORD error = 0;
+    DWORD wait = WaitForMultipleObjects(2, handles, false, INFINITE);
+
+    if (wait == WAIT_OBJECT_0 + 1)
+      return;
+    else if (wait == WAIT_FAILED)
+      error = GetLastError();
 
     CheckStall();
 
@@ -436,7 +453,7 @@ void CVideoPin::CheckPlaybackState()
       m_pFilter->IssueCommand(REBUILD, m_rtStreamOffset);
       m_demux.m_bRebuildOngoing = true;
     }
-    else if (!m_bStopWait && m_bDoFakeSeek)    
+    else if (!m_bStopWait && m_bDoFakeSeek)
     {
       LogDebug("vid: Request zeroing the stream time");
       m_eFlushStart->Reset();
@@ -446,6 +463,8 @@ void CVideoPin::CheckPlaybackState()
     }
 
     m_bStopWait = m_bDoFakeSeek = false;
+
+    LogDebug("vid: reseting audio and video seen indicators");
 
     m_demux.m_eAudioClipSeen->Reset();
     m_demux.m_bVideoClipSeen = false;
@@ -565,9 +584,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
                 m_rtStreamOffset = buffer->rtPlaylistTime;
                 m_bInitDuration = true;
               }
-
-              if (buffer->nNewSegment & NS_INTERRUPTED)
-                m_demux.m_eAudioClipSeen->Set();
 
               // LAV video decoder requires an end of stream notification to be able to provide complete video frames
               // to downstream filters in a case where we are waiting for the audio pin to see the clip boundary as

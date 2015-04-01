@@ -94,30 +94,6 @@ CLibBlurayWrapper::CLibBlurayWrapper() :
   _bd_refcnt_dec(NULL),
   _bd_select_stream(NULL)
 {
-
-  #define ENABLE_ALLOC_BOOKKEEPING
-  #define _CRTDBG_MAP_ALLOC
-  /*
-  #include <stdlib.h>
-  #include <crtdbg.h>
-
-  #define DEBUG_NEW_OWN new(_NORMAL_BLOCK, __FILE__, __LINE__)
-  #define new DEBUG_NEW_OWN
-  #endif
-  #endif*/
-
-  // Get current flag
-  int tmpFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
-
-  // Turn on leak-checking bit.
-  tmpFlag |= _CRTDBG_LEAK_CHECK_DF;
-
-  // Turn off CRT block checking bit.
-  tmpFlag &= ~_CRTDBG_CHECK_CRT_DF;
-
-  // Set flag to the new value.
-  _CrtSetDbgFlag(tmpFlag);
-
   m_pOverlayRenderer = new COverlayRenderer(this);
   ZeroMemory((void*)&m_playerSettings, sizeof(bd_player_settings));
 }
@@ -139,8 +115,6 @@ CLibBlurayWrapper::~CLibBlurayWrapper()
     m_pOverlayRenderer->SetD3DDevice(NULL);
 
   delete m_pOverlayRenderer;
-
-  _CrtDumpMemoryLeaks();
 
   FreeLibrary(m_hDLL);
 }
