@@ -170,7 +170,7 @@ namespace MediaPortal.Picture.Database
           Log.Debug("PicturedatabaseADO: database is not exist, createing...");
           System.Reflection.Assembly assembly = this.GetType().Assembly;
 
-          string DatabaseName = assembly.GetName().Name + ".Video.Ado.create_videodatabase.sql";
+          string DatabaseName = assembly.GetName().Name + ".Pictures.ADO.create_picturedatabase.sql";
           _dbHealth = DatabaseUtility.CreateDb(_connectionString, DatabaseName);
         }
         else
