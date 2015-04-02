@@ -46,6 +46,13 @@ namespace MediaPortal.Picture.Database
       //_database = null;
     }
 
+    public static bool ClearDB()
+    {
+      {
+        return _database.ClearDB();
+      }
+    }
+
     public static int AddPicture(string strPicture, int iRotation)
     {
       return _database.AddPicture(strPicture, iRotation);

@@ -919,9 +919,7 @@ namespace MediaPortal.GUI.Video
                                     columnName,
                                     columnData,
                                     ListItemMovieInfo(item).MovieImdbID);
-        bool error = false;
-        string errorMessage = string.Empty;
-        VideoDatabase.ExecuteSql(sql, out error, out errorMessage);
+        VideoDatabase.SetIMDBMovies(sql);
       }
       catch (Exception) {}
     }

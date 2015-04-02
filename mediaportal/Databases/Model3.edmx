@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="picturedatabaseModel.Store" Alias="Self" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.6" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="picturedatabaseModelStoreContainer">
+          <EntitySet Name="picture" EntityType="picturedatabaseModel.Store.picture" store:Type="Tables" Schema="picturedatabase" />
+        </EntityContainer>
+        <EntityType Name="picture">
+          <Key>
+            <PropertyRef Name="idPicture" />
+          </Key>
+          <Property Name="idPicture" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="strFile" Type="varchar" MaxLength="200" />
+          <Property Name="iRotation" Type="int" />
+          <Property Name="strDateTaken" Type="varchar" MaxLength="200" />
+        </EntityType>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="picturedatabaseModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="picturedatabaseEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="pictures" EntityType="picturedatabaseModel.picture" />
+        </EntityContainer>
+        <EntityType Name="picture">
+          <Key>
+            <PropertyRef Name="idPicture" />
+          </Key>
+          <Property Name="idPicture" Type="Int32" Nullable="false" />
+          <Property Name="strFile" Type="String" MaxLength="65535" Unicode="false" FixedLength="false" />
+          <Property Name="iRotation" Type="Int32" />
+          <Property Name="strDateTaken" Type="String" MaxLength="65535" Unicode="false" FixedLength="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="picturedatabaseModelStoreContainer" CdmEntityContainer="picturedatabaseEntities">
+          <EntitySetMapping Name="pictures">
+            <EntityTypeMapping TypeName="picturedatabaseModel.picture">
+              <MappingFragment StoreEntitySet="picture">
+                <ScalarProperty Name="idPicture" ColumnName="idPicture" />
+                <ScalarProperty Name="strFile" ColumnName="strFile" />
+                <ScalarProperty Name="iRotation" ColumnName="iRotation" />
+                <ScalarProperty Name="strDateTaken" ColumnName="strDateTaken" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="DDLGenerationTemplate" Value="$(VSEFTools)\DBGen\SSDLToMySQL.tt" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="Model3">
+        <EntityTypeShape EntityType="picturedatabaseModel.picture" Width="1.5" PointX="0.75" PointY="0.75" Height="1.787985026041667" IsExpanded="true" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

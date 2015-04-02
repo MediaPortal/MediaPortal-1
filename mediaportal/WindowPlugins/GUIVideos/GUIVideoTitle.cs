@@ -778,6 +778,9 @@ namespace MediaPortal.GUI.Video
     protected override void LoadDirectory(string strNewDirectory)
     {
       GUIWaitCursor.Show();
+
+      System.Diagnostics.Stopwatch benchClock = System.Diagnostics.Stopwatch.StartNew();
+
       currentFolder = strNewDirectory;
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
       ArrayList itemlist = new ArrayList();
@@ -827,13 +830,13 @@ namespace MediaPortal.GUI.Video
         
         if (handler.CurrentLevelWhere == "director")
         {
-          sql = "SELECT idActor, strActor, imdbActorId FROM actors INNER JOIN movieinfo ON movieinfo.idDirector = actors.idActor WHERE strActor LIKE '%" 
+          sql = "SELECT idActor AS IX, strActor AS CNT FROM actors INNER JOIN movieinfo ON movieinfo.idDirector = actors.idActor WHERE strActor LIKE '%" 
                 + _searchActorString + 
                 "%' ORDER BY strActor ASC";
         }
         else
         {
-          sql = "SELECT * FROM actors WHERE strActor LIKE '%" + _searchActorString + "%' ORDER BY strActor ASC";
+          sql = "SELECT idActor AS IX, strActor AS CNT FROM actors WHERE strActor LIKE '%" + _searchActorString + "%' ORDER BY strActor ASC";
         }
         
         VideoDatabase.GetMoviesByFilter(sql, out movies, true, false, false, false);
@@ -1050,6 +1053,10 @@ namespace MediaPortal.GUI.Video
 
       UpdateButtonStates();
       GUIWaitCursor.Hide();
+
+      Log.Debug("GUIVideoTitle:LoadDirectory is finished in {0} ms", benchClock.ElapsedMilliseconds.ToString());
+      benchClock.Stop();
+
     }
     
     // Scan for new movies for selected folder in configuration
@@ -2049,15 +2056,8 @@ namespace MediaPortal.GUI.Video
 
         movie.Title = movieTitle;
         // update db
-        bool error;
-        string errorMessage = string.Empty;
-        string sql = string.Format("UPDATE movieinfo SET strTitle = '{0}' WHERE idMovie = {1}", movieTitle, movie.ID);
-        VideoDatabase.ExecuteSql(sql, out error, out errorMessage);
 
-        if (error)
-        {
-          return;
-        }
+        VideoDatabase.SetMovieTitle(movieTitle, movie.ID);
 
         // updateitem
         facadeLayout[itemIndex].AlbumInfoTag = movie;
@@ -2209,15 +2209,7 @@ namespace MediaPortal.GUI.Video
 
       movie.SortTitle = movieSortTitle;
       // update db
-      bool error;
-      string errorMessage = string.Empty;
-      string sql = string.Format("UPDATE movieinfo SET strSortTitle = '{0}' WHERE idMovie = {1}", movieSortTitle, movie.ID);
-      VideoDatabase.ExecuteSql(sql, out error, out  errorMessage);
-
-      if (error)
-      {
-        return;
-      }
+      VideoDatabase.SetMovieShortTitle(movieSortTitle, movie.ID);
 
       // updateitem
       facadeLayout[itemIndex].AlbumInfoTag = movie;

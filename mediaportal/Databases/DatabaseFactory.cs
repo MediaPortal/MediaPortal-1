@@ -22,16 +22,25 @@ using Databases.Folders;
 using Databases.Folders.SqlServer;
 using MediaPortal.Picture.Database;
 using MediaPortal.Video.Database;
+using MediaPortal.Video.Database.SqlServer;
+using MediaPortal.Profile;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Database
 {
   public class DatabaseFactory
   {
-    private static bool UseADO = false;
-
     public static IFolderSettings GetFolderDatabase()
     {
-      if (UseADO)
+      bool FolderDBUseADO = false;
+
+      using (Profile.Settings xmlreader = new MPSettings())
+      {
+        FolderDBUseADO = xmlreader.GetValueAsBool("folderdatabase", "UseADO", false);
+      }
+      Log.Debug("DatabaseFactory FolderDBUseADO: {0}", FolderDBUseADO);
+
+      if (FolderDBUseADO)
       {
         return new FolderSettingAdo();
       }
@@ -43,7 +52,15 @@ namespace MediaPortal.Database
 
     public static IPictureDatabase GetPictureDatabase()
     {
-      if (UseADO)
+      bool PictureDBUseADO = false;
+
+      using (Profile.Settings xmlreader = new MPSettings())
+      {
+        PictureDBUseADO = xmlreader.GetValueAsBool("picturedatabase", "UseADO", false);
+      }
+      Log.Debug("DatabaseFactory PictureDBUseADO: {0}", PictureDBUseADO);
+
+      if (PictureDBUseADO)
       {
         return new PictureDatabaseADO();
       }
@@ -55,9 +72,17 @@ namespace MediaPortal.Database
 
     public static IVideoDatabase GetVideoDatabase()
     {
-      if (UseADO)
+      bool MovieDBUseADO = false;
+
+      using (Profile.Settings xmlreader = new MPSettings())
       {
-        return null;
+        MovieDBUseADO = xmlreader.GetValueAsBool("moviedatabase", "UseADO", false);
+      }
+      Log.Debug("DatabaseFactory MovieDBUseADO: {0}", MovieDBUseADO);
+
+      if (MovieDBUseADO)
+      {
+        return new VideoDatabaseADO();
       }
       else
       {

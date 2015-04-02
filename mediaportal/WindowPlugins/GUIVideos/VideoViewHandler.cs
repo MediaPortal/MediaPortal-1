@@ -28,7 +28,6 @@ using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
 using MediaPortal.Video.Database;
-using SQLite.NET;
 
 namespace MediaPortal.GUI.Video
 {
@@ -80,7 +79,35 @@ namespace MediaPortal.GUI.Video
       string whereClause = string.Empty;
       string orderClause = string.Empty;
       string fromClause = string.Empty;
-      
+
+      string movieinfoFields = " movieinfo.idMovie," +
+                     "movieinfo.idDirector," +
+                     "movieinfo.strDirector," +
+                     "movieinfo.strPlotOutline," +
+                     "movieinfo.strPlot," +
+                     "movieinfo.strTagLine," +
+                     "movieinfo.strVotes," +
+                     "movieinfo.fRating," +
+                     "movieinfo.strCast," +
+                     "movieinfo.strCredits," +
+                     "movieinfo.iYear," +
+                     "movieinfo.strGenre," +
+                     "movieinfo.strPictureURL," +
+                     "movieinfo.strTitle," +
+                     "movieinfo.IMDBID," +
+                     "movieinfo.mpaa," +
+                     "movieinfo.runtime," +
+                     "movieinfo.iswatched," +
+                     "movieinfo.strUserReview," +
+                     "movieinfo.strFanartURL," +
+                     "movieinfo.dateAdded," +
+                     "movieinfo.dateWatched," +
+                     "movieinfo.studios," +
+                     "movieinfo.country," +
+                     "movieinfo.language," +
+                     "movieinfo.lastupdate, " +
+                     "movieinfo.strSortTitle ";
+
       if (CurrentLevel == MaxLevels - 1)
       {
         whereClause = "WHERE movieinfo.idmovie=movie.idmovie AND movie.idpath=path.idpath";
@@ -112,28 +139,29 @@ namespace MediaPortal.GUI.Video
 
         if (string.IsNullOrEmpty(table) && defRoot.Where == "actorindex")
         {
-          sql = String.Format("SELECT UPPER(SUBSTR(strActor,1,1)) AS IX, COUNT (strActor) FROM actors WHERE idActor NOT IN (SELECT DISTINCT idDirector FROM movieinfo WHERE strDirector <> 'unknown') AND strActor <> 'unknown' GROUP BY IX ");
+          sql = String.Format("SELECT UPPER(SUBSTR(strActor,1,1)) AS IX, COUNT(strActor) AS CNT FROM actors WHERE idActor NOT IN (SELECT DISTINCT idDirector FROM movieinfo WHERE strDirector <> 'unknown') AND strActor <> 'unknown' GROUP BY IX ");
+
           VideoDatabase.GetIndexByFilter(sql, true, out movies);
         }
         else if (string.IsNullOrEmpty(table) && defRoot.Where == "directorindex")
         {
-          sql = String.Format("SELECT UPPER(SUBSTR(strActor,1,1)) AS IX, COUNT (strActor) FROM actors WHERE idActor IN (SELECT DISTINCT idDirector FROM movieinfo WHERE strDirector <> 'unknown') GROUP BY IX ");
+          sql = String.Format("SELECT UPPER(SUBSTR(strActor,1,1)) AS IX, COUNT(strActor) AS CNT FROM actors WHERE idActor IN (SELECT DISTINCT idDirector FROM movieinfo WHERE strDirector <> 'unknown') GROUP BY IX ");
           VideoDatabase.GetIndexByFilter(sql, true, out movies);
         }
         else if (string.IsNullOrEmpty(table) && defRoot.Where == "titleindex")
         {
-          sql = String.Format("SELECT UPPER(SUBSTR(strTitle,1,1)) AS IX, COUNT (strTitle) FROM movieinfo GROUP BY IX ");
+          sql = String.Format("SELECT UPPER(SUBSTR(strTitle,1,1)) AS IX, COUNT(strTitle) AS CNT FROM movieinfo GROUP BY IX ");
           VideoDatabase.GetIndexByFilter(sql, true, out movies);
         }
         else if (table == "actors")
         {
           if (defRoot.Where == "director")
           {
-            sql = String.Format("SELECT idActor, strActor, imdbActorId FROM actors WHERE idActor IN (SELECT DISTINCT idDirector FROM movieinfo WHERE strDirector <> 'unknown') AND strActor <> 'unknown' ");
+            sql = String.Format("SELECT idActor AS IX, strActor AS CNT FROM actors WHERE idActor IN (SELECT DISTINCT idDirector FROM movieinfo WHERE strDirector <> 'unknown') AND strActor <> 'unknown' ");
           }
           else
           {
-            sql = String.Format("SELECT * FROM actors WHERE strActor <> 'unknown' ");
+            sql = String.Format("SELECT idActor AS IX, strActor AS CNT FROM actors WHERE strActor <> 'unknown' ");
           }
 
           if (whereClause != string.Empty && defRoot.Where == "director")
@@ -154,7 +182,7 @@ namespace MediaPortal.GUI.Video
         }
         else if (table == "genre")
         {
-          sql = String.Format("SELECT * FROM genre ");
+          sql = String.Format("SELECT idGenre AS IX, strGenre AS CNT FROM genre ");
           if (whereClause != string.Empty)
           {
             sql += "WHERE " + whereClause;
@@ -168,7 +196,7 @@ namespace MediaPortal.GUI.Video
         }
         else if (table == "usergroup")
         {
-          sql = String.Format("SELECT * FROM usergroup ");
+          sql = String.Format("SELECT idGroup AS IX, strGroup AS CNT FROM usergroup ");
           
           if (whereClause != string.Empty)
           {
@@ -189,16 +217,7 @@ namespace MediaPortal.GUI.Video
         else if (defRoot.Where == "year")
         {
           movies = new ArrayList();
-          sql = String.Format("SELECT DISTINCT iYear FROM movieinfo ");
-
-          SQLiteResultSet results = VideoDatabase.GetResults(sql);
-
-          for (int i = 0; i < results.Rows.Count; i++)
-          {
-            IMDBMovie movie = new IMDBMovie();
-            movie.Year = (int)Math.Floor(0.5d + Double.Parse(DatabaseUtility.Get(results, i, "iYear")));
-            movies.Add(movie);
-          }
+          VideoDatabase.GetMoviesByYear(ref movies);
         }
         // Recently added
         else if (defRoot.Where == "recently added")
@@ -233,7 +252,7 @@ namespace MediaPortal.GUI.Video
             whereClause = String.Format("WHERE movieinfo.dateWatched >= '{0}'",
                                         searchDate.ToString("yyyy-MM-dd" + " 00:00:00"));
 
-            sql = String.Format("SELECT * FROM movieinfo {0} {1}", whereClause, orderClause);
+            sql = String.Format("SELECT {2} FROM movieinfo {0} {1}", whereClause, orderClause, movieinfoFields);
 
             VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false);
           }
@@ -245,9 +264,9 @@ namespace MediaPortal.GUI.Video
             "WHERE movieinfo.idmovie=movie.idmovie AND movie.idpath=path.idpath";
 
           BuildRestriction(defRoot, ref whereClause);
-
-          sql = String.Format("SELECT * FROM {0} {1} {2}",
-                              fromClause, whereClause, orderClause);
+          
+          sql = String.Format("SELECT {3} FROM {0} {1} {2}",
+                              fromClause, whereClause, orderClause, movieinfoFields);
 
           VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, true, true);
         }
@@ -260,7 +279,7 @@ namespace MediaPortal.GUI.Video
         bool useGenreTable = false;
         bool useUserGroupsTable = false;
         string join = string.Empty;
-        string fields = "*";
+        string fields = "idActor AS IX, strActor AS CNT ";
         
         FilterDefinition defCurrent = (FilterDefinition)currentView.Filters[CurrentLevel];
         
@@ -269,7 +288,7 @@ namespace MediaPortal.GUI.Video
 
         if (defCurrent.Where == "director")
         {
-          fields = "idActor, strActor, imdbActorId";
+          fields = "idActor AS IX, strActor AS CNT ";
           join = "INNER JOIN movieinfo ON movieinfo.idDirector = actors.idActor";
         }
         
@@ -292,9 +311,10 @@ namespace MediaPortal.GUI.Video
             whereClause = " WHERE idActor NOT IN (SELECT idDirector FROM movieinfo)";
           }
         }
-       
+        
         sql = String.Format("SELECT DISTINCT {0} FROM {1} {2} {3} {4}",
                             fields, table, join, whereClause, orderClause);
+
         VideoDatabase.GetMoviesByFilter(sql, out movies, useActorsTable, useMovieInfoTable, useGenreTable, useUserGroupsTable);
       }
       else
@@ -327,10 +347,7 @@ namespace MediaPortal.GUI.Video
                    "movieinfo.country, " +
                    "movieinfo.language, " +
                    "movieinfo.lastupdate, " +
-                   "movieinfo.strSortTitle, " +
-                   "path.strPath, " +
-                   "movie.discid, " +
-                   "path.cdlabel " +
+                   "movieinfo.strSortTitle " +
                    "FROM {0} {1} {2}",
             fromClause, whereClause, orderClause);
         
