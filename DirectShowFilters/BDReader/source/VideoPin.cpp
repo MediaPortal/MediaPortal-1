@@ -441,7 +441,10 @@ void CVideoPin::CheckPlaybackState()
     if (wait == WAIT_OBJECT_0 + 1)
       return;
     else if (wait == WAIT_FAILED)
+    {
       error = GetLastError();
+      LogDebug("vid: WaitForMultipleObjects failed: %d", error);
+    }
 
     CheckStall();
 
