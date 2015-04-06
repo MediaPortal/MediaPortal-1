@@ -129,18 +129,19 @@ void LogRotate()
     {  
       // Convert the write time to local time.
       SYSTEMTIME stUTC, fileTime;
-      if (FileTimeToSystemTime(&fileInformation.ftLastWriteTime, &stUTC))
+
+			if (FileTimeToSystemTime(&fileInformation.ftLastWriteTime, &stUTC))
       {
-        if (SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &fileTime))
+				if (SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &fileTime))
         {
           logFileDate = fileTime.wDay;
         
           SYSTEMTIME systemTime;
           GetLocalTime(&systemTime);
           
-          if(fileTime.wDay == systemTime.wDay)
+          if(fileTime.wDay == systemTime.wDay && fileInformation.nFileSizeLow < 1048576)
           {
-            //file date is today - no rotation needed
+            //file date is today and the file size less then 10MB - no rotation needed
             return;
           }
         } 
@@ -179,7 +180,11 @@ UINT CALLBACK LogThread(void* param)
     {
       SYSTEMTIME systemTime;
       GetLocalTime(&systemTime);
-      if(logFileParsed != systemTime.wDay)
+			WIN32_FILE_ATTRIBUTE_DATA fileInformation;
+
+			GetFileAttributesEx(fileName, GetFileExInfoStandard, &fileInformation);
+
+      if(logFileParsed != systemTime.wDay || fileInformation.nFileSizeLow > 10485760)
       {
         LogRotate();
         logFileParsed=systemTime.wDay;
