@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using System.Drawing.Design;
+using TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Sections;
 
 namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 {
@@ -16,6 +18,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         private int transportStreamID;
         private int programNumber;
         private int programMapPID;
+        private FilterProgramMapPIDCollection filterProgramMapPIDs;
 
         #endregion
 
@@ -33,6 +36,9 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.ProgramNumber = Mpeg2TsParser.DefaultMpeg2TsProgramNumber;
             this.ProgramMapPID = Mpeg2TsParser.DefaultMpeg2TsProgramMapPID;
             this.SetNotScrambled = Mpeg2TsParser.DefaultMpeg2TsSetNotScrambled;
+            this.filterProgramMapPIDs = new FilterProgramMapPIDCollection();
+            this.Sections = new StreamSectionCollection();
+            this.StreamAnalysis = Mpeg2TsParser.DefaultMpeg2TsStreamAnalysis;
         }
 
         #endregion
@@ -111,6 +117,26 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         [Category("MPEG2 Transport Stream parser"), Description("Specifies if MPEG2 TS parser have to set stream as not scrambled."), DefaultValue(Mpeg2TsParser.DefaultMpeg2TsSetNotScrambled)]
         public Boolean SetNotScrambled { get; set; }
 
+        /// <summary>
+        /// Gets 
+        /// </summary>
+        public FilterProgramMapPIDCollection FilterProgramMapPIDs
+        {
+            get { return this.filterProgramMapPIDs; }
+        }
+
+        /// <summary>
+        /// Holds sections for easier setting of MPEG2 TS parser.
+        /// </summary>
+        [Browsable(false)]
+        public StreamSectionCollection Sections { get; private set; }
+
+        /// <summary>
+        /// Specifies if MPEG2 TS parser have to analyse stream.
+        /// </summary>
+        [Browsable(false)]
+        public Boolean StreamAnalysis { get; set; }
+
         #endregion
 
         #region Methods
@@ -152,6 +178,60 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                 {
                     this.SetNotScrambled = (String.CompareOrdinal(param.Value, SimpleUrl.DefaultTrue) == 0);
                 }
+
+                if (String.CompareOrdinal(param.Name, Mpeg2TsParser.ParameterMpeg2TsFilterProgramMapPIDCount) == 0)
+                {
+                    int filterProgramMapPIDCount = int.Parse(param.Value);
+
+                    for (int i = 0; i < filterProgramMapPIDCount; i++)
+                    {
+                        FilterProgramMapPID filterPID = new FilterProgramMapPID();
+                        String parameterFilterProgramMapPID = String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsFilterProgramMapPID, i);
+                        int leaveProgramElementsCount = 0;
+
+                        foreach (var param2 in parameters)
+                        {
+                            if (String.CompareOrdinal(param2.Name, parameterFilterProgramMapPID) == 0)
+                            {
+                                filterPID.AllowFilteringProgramElements = true;
+                                filterPID.ProgramMapPID = int.Parse(param2.Value);
+                                break;
+                            }
+                        }
+
+                        if (filterPID.AllowFilteringProgramElements)
+                        {
+                            String parameterLeaveProgramElementsCount = String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsLeaveProgramElementCount, filterPID.ProgramMapPID);
+                            foreach (var param2 in parameters)
+                            {
+                                if (String.CompareOrdinal(param2.Name, parameterLeaveProgramElementsCount) == 0)
+                                {
+                                    leaveProgramElementsCount = int.Parse(param2.Value);
+                                    break;
+                                }
+                            }
+
+                            for (int j = 0; j < leaveProgramElementsCount; j++)
+                            {
+                                String parameterLeaveProgramElement = String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsLeaveProgramElement, filterPID.ProgramMapPID, j);
+
+                                foreach (var param2 in parameters)
+                                {
+                                    if (String.CompareOrdinal(param2.Name, parameterLeaveProgramElement) == 0)
+                                    {
+                                        ProgramElement programElement = new ProgramElement();
+
+                                        programElement.ProgramElementPID = int.Parse(param2.Value);
+                                        filterPID.LeaveProgramElements.Add(programElement);
+                                        break;
+                                    }
+                                }
+                            }
+
+                            this.FilterProgramMapPIDs.Add(filterPID);
+                        }
+                    }
+                }
             }
         }
 
@@ -188,6 +268,39 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             if (this.SetNotScrambled != Mpeg2TsParser.DefaultMpeg2TsSetNotScrambled)
             {
                 parameters.Add(new Parameter(Mpeg2TsParser.ParameterMpeg2TsSetNotScrambled, this.SetNotScrambled ? SimpleUrl.DefaultTrue : SimpleUrl.DefaultFalse));
+            }
+            if (this.StreamAnalysis != Mpeg2TsParser.DefaultMpeg2TsStreamAnalysis)
+            {
+                parameters.Add(new Parameter(Mpeg2TsParser.ParameterMpeg2TsStreamAnalysis, this.StreamAnalysis ? SimpleUrl.DefaultTrue : SimpleUrl.DefaultFalse));
+            }
+
+            if (this.FilterProgramMapPIDs.Count != 0)
+            {
+                int filterProgramMapPIDCount = 0;
+                for (int i = 0; i < this.FilterProgramMapPIDs.Count; i++)
+                {
+                    FilterProgramMapPID filterPID = this.FilterProgramMapPIDs[i];
+
+                    if (filterPID.AllowFilteringProgramElements)
+                    {
+                        parameters.Add(new Parameter(String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsFilterProgramMapPID, filterProgramMapPIDCount), filterPID.ProgramMapPID.ToString()));
+                        parameters.Add(new Parameter(String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsLeaveProgramElementCount, filterPID.ProgramMapPID), filterPID.LeaveProgramElements.Count.ToString()));
+
+                        for (int j = 0; j < filterPID.LeaveProgramElements.Count; j++)
+                        {
+                            ProgramElement programElement = filterPID.LeaveProgramElements[j];
+
+                            parameters.Add(new Parameter(String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsLeaveProgramElement, filterPID.ProgramMapPID, j), programElement.ProgramElementPID.ToString()));
+                        }                        
+
+                        filterProgramMapPIDCount++;
+                    }
+                }
+
+                if (filterProgramMapPIDCount != 0)
+                {
+                    parameters.Add(new Parameter(Mpeg2TsParser.ParameterMpeg2TsFilterProgramMapPIDCount, filterProgramMapPIDCount.ToString()));
+                }
             }
 
             return parameters.FilterParameters;
@@ -228,6 +341,19 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         protected static readonly String ParameterMpeg2TsSetNotScrambled = "Mpeg2TsSetNotScrambled";
 
         /// <summary>
+        /// Specifies the count of transport stream program map to filter program elements.
+        /// </summary>
+        protected static readonly String ParameterMpeg2TsFilterProgramMapPIDCount = "Mpeg2TsFilterProgramMapPIDCount";
+
+        protected static readonly String ParameterFormatMpeg2TsFilterProgramMapPID = "Mpeg2TsFilterProgramMapPID{0:00000000}";
+
+        protected static readonly String ParameterFormatMpeg2TsLeaveProgramElementCount = "Mpeg2TsFilterProgramMapPID{0:00000000}LeaveProgramElementCount";
+
+        protected static readonly String ParameterFormatMpeg2TsLeaveProgramElement = "Mpeg2TsFilterProgramMapPID{0:00000000}LeaveProgramElement{1:00000000}";
+
+        protected static readonly String ParameterMpeg2TsStreamAnalysis = "Mpeg2TsStreamAnalysis";
+
+        /// <summary>
         /// Default value for <see cref="ParameterMpeg2TsDetectDiscontinuity"/> parameter.
         /// </summary>
         public const Boolean DefaultMpeg2TsDetectDiscontinuity = true;
@@ -256,6 +382,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// Default value for <see cref="ParameterMpeg2TsSetNotScrambled"/> parameter.
         /// </summary>
         public const Boolean DefaultMpeg2TsSetNotScrambled = false;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterMpeg2TsStreamAnalysis"/> parameter.
+        /// </summary>
+        public const Boolean DefaultMpeg2TsStreamAnalysis = false;
 
         #endregion
     }

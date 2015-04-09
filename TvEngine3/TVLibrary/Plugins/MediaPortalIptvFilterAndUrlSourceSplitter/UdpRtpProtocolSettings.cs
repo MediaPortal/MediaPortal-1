@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url;
 
 namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
 {
@@ -29,10 +30,10 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
         public UdpRtpProtocolSettings()
             : base()
         {
-            this.OpenConnectionTimeout = UdpRtpProtocolSettings.DefaultUdpRtpOpenConnectionTimeout;
-            this.OpenConnectionSleepTime = UdpRtpProtocolSettings.DefaultUdpRtpOpenConnectionSleepTime;
-            this.TotalReopenConnectionTimeout = UdpRtpProtocolSettings.DefaultUdpRtpTotalReopenConnectionTimeout;
-            this.ReceiveDataCheckInterval = UdpRtpProtocolSettings.DefaultUdpRtpReceiveDataCheckInterval;
+            this.OpenConnectionTimeout = UdpRtpUrl.DefaultUdpOpenConnectionTimeout;
+            this.OpenConnectionSleepTime = UdpRtpUrl.DefaultUdpOpenConnectionSleepTime;
+            this.TotalReopenConnectionTimeout = UdpRtpUrl.DefaultUdpTotalReopenConnectionTimeout;
+            this.ReceiveDataCheckInterval = UdpRtpUrl.DefaultUdpReceiveDataCheckInterval;
         }
 
         #endregion
@@ -126,15 +127,5 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
 
         #region Methods
         #endregion
-
-        #region Constants
-
-        public static readonly int DefaultUdpRtpOpenConnectionTimeout = 2000;            // ms
-        public static readonly int DefaultUdpRtpOpenConnectionSleepTime = 0;             // ms
-        public static readonly int DefaultUdpRtpTotalReopenConnectionTimeout = 60000;    // ms
-        public static readonly int DefaultUdpRtpReceiveDataCheckInterval = 500;          // ms
-
-        #endregion
     }
-
 }
