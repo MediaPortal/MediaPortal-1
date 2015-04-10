@@ -47,5 +47,8 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 
     [OperationContract(Name = "GetValueDateTime")]
     DateTime GetValue(string tagName, DateTime defaultValue);
+
+    [OperationContract]
+    void DeleteSetting(string tagName);
   }
 }

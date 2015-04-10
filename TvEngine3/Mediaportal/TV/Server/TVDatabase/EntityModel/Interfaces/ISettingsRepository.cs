@@ -17,5 +17,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces
     /// </summary>
     /// <returns>A Setting object with the stored value, if it doesnt exist a empty string will be the value</returns>
     Setting GetSetting(string tagName);
+
+    /// <summary>
+    /// Deletes a setting from the database
+    /// </summary>
+    void DeleteSetting(string tagName);
   }
 }

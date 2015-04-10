@@ -138,5 +138,13 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         return settings.ToList();
       }
     }
+
+    public static void DeleteSetting(string tagName)
+    {
+      using (ISettingsRepository settingsRepository = new SettingsRepository(true))
+      {
+        settingsRepository.DeleteSetting(tagName);
+      }
+    }
   }
 }

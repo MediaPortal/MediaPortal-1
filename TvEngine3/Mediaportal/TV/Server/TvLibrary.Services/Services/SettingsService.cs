@@ -72,5 +72,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     {
       return SettingsManagement.GetValue(tagName, defaultValue);
     }
+
+    public void DeleteSetting(string tagName)
+    {
+      SettingsManagement.DeleteSetting(tagName);
+    } 
   }
 }

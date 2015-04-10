@@ -71,5 +71,13 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       var setting = GetOrSaveSetting(tagName, string.Empty);
       return setting;
     }
+
+    /// <summary>
+    /// Deletes a setting from the database
+    /// </summary>
+    public void DeleteSetting(string tagName)
+    {
+      Delete<Setting>(s => s.Tag == tagName);
+    }
   }
 }
