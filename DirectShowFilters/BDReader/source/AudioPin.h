@@ -87,6 +87,8 @@ public:
   void SetInitialMediaType(const CMediaType* pmt);
 
 protected:
+  bool CompareMediaTypes(AM_MEDIA_TYPE* lhs_pmt, AM_MEDIA_TYPE* rhs_pmt);
+  
   DWORD ThreadProc();
 
   void LogMediaType(AM_MEDIA_TYPE* pmt);

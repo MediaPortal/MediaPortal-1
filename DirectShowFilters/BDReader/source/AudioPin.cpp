@@ -287,6 +287,17 @@ HRESULT CAudioPin::DoBufferProcessingLoop()
   return S_FALSE;
 }
 
+bool CAudioPin::CompareMediaTypes(AM_MEDIA_TYPE* lhs_pmt, AM_MEDIA_TYPE* rhs_pmt)
+{
+  return (IsEqualGUID(lhs_pmt->majortype, rhs_pmt->majortype) &&
+    IsEqualGUID(lhs_pmt->subtype, rhs_pmt->subtype) &&
+    IsEqualGUID(lhs_pmt->formattype, rhs_pmt->formattype) &&
+    (lhs_pmt->cbFormat == rhs_pmt->cbFormat) &&
+    ((lhs_pmt->cbFormat == 0) ||
+    lhs_pmt->pbFormat && rhs_pmt->pbFormat &&
+    (memcmp(lhs_pmt->pbFormat, rhs_pmt->pbFormat, lhs_pmt->cbFormat) == 0)));
+}
+
 HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 {
   try
@@ -447,7 +458,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             m_bDiscontinuity = false;
           }
 
-          if (buffer->pmt || setPMT)
+          if (buffer->pmt && !CompareMediaTypes(buffer->pmt, &m_mt) || setPMT)
           {
             LogDebug("aud: set PMT");
             pSample->SetMediaType(buffer->pmt);
