@@ -41,7 +41,7 @@ namespace MediaPortal.GUI.Settings
   /// <summary>
   /// Change and tweak settings like Video codecs, skins, etc from inside MP
   /// </summary>
-  [PluginIcons("WindowPlugins.GUISettings.Settings.gif", "WindowPlugins.GUISettings.SettingsDisabled.gif")]
+  [PluginIcons("GUISettings.Settings.gif", "GUISettings.SettingsDisabled.gif")]
   public sealed class GUISettings : GUIInternalWindow, ISetupForm, IShowPlugin
   {
     [SkinControl(11)] private readonly GUIButtonControl _btnMiniDisplay = null;
@@ -70,7 +70,7 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlreader = new MPSettings())
       {
-        _pin = Util.Utils.DecryptPin(xmlreader.GetValueAsString("mpsettings", "pin", string.Empty));
+        _pin = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("mpsettings", "pin", string.Empty));
 
         if (_pin != string.Empty)
         {
@@ -84,7 +84,7 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlwriter = new MPSettings())
       {
-        xmlwriter.SetValue("mpsettings", "pin", Util.Utils.EncryptPin(_pin));
+        xmlwriter.SetValue("mpsettings", "pin", Util.Utils.EncryptPassword(_pin));
       }
     }
 
@@ -146,9 +146,9 @@ namespace MediaPortal.GUI.Settings
         // User want's to lock settings with PIN
         if (_btnLocked.Selected)
         {
-          if (!SetPin())
+          SetPin();
+          if (_pin == string.Empty)
           {
-            // No PIN entered, reset control
             _btnLocked.Selected = false;
           }
         }
@@ -242,21 +242,12 @@ namespace MediaPortal.GUI.Settings
       set { _settingsChanged = value; }
     }
 
-    private bool SetPin()
+    private void SetPin()
     {
       var msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
       GUIWindowManager.SendMessage(msgGetPassword);
-        
-      try
-      {
-        int iPincode = Int32.Parse(msgGetPassword.Label);
-        _pin = iPincode.ToString(CultureInfo.InvariantCulture);
-        return true;
-      }
-      // ReSharper disable EmptyGeneralCatchClause
-      catch (Exception) {}
-      // ReSharper restore EmptyGeneralCatchClause
-      return false;
+
+      _pin = msgGetPassword.Label;
     }
 
     public static bool RequestPin()
@@ -268,16 +259,8 @@ namespace MediaPortal.GUI.Settings
       {
         var msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
         GUIWindowManager.SendMessage(msgGetPassword);
-        int iPincode = -1;
-        try
-        {
-          iPincode = Int32.Parse(msgGetPassword.Label);
-        }
-        // ReSharper disable EmptyGeneralCatchClause
-        catch (Exception) { }
-        // ReSharper restore EmptyGeneralCatchClause
 
-        if (iPincode == Convert.ToInt32(_pin))
+        if (msgGetPassword.Label == _pin)
         {
           sucess = true;
         }
@@ -295,7 +278,7 @@ namespace MediaPortal.GUI.Settings
         {
           retry = false;
         }
-      }
+        }
       return false;
     }
 
@@ -303,7 +286,7 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlreader = new MPSettings())
       {
-        _pin = Util.Utils.DecryptPin(xmlreader.GetValueAsString("mpsettings", "pin", string.Empty));
+        _pin = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("mpsettings", "pin", string.Empty));
       }
 
       if (_pin == string.Empty)
@@ -334,7 +317,7 @@ namespace MediaPortal.GUI.Settings
       }
 
       using (Profile.Settings xmlreader = new MPSettings())
-      {
+        {
         if (xmlreader.GetValueAsBool("general", "hidetaskbar", false))
         {
           Win32API.EnableStartBar(true);
@@ -342,13 +325,13 @@ namespace MediaPortal.GUI.Settings
         }
       }
 
-      Log.Info("Settings: OnRestart - prepare for restart!");
-      File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running"));
-      Log.Info("Settings: OnRestart - saving settings...");
-      Profile.Settings.SaveCache();
-      DisposeDBs();
-      VolumeHandler.Dispose();
-      Log.Info("Main: OnSuspend - Done");
+        Log.Info("Settings: OnRestart - prepare for restart!");
+        File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running"));
+        Log.Info("Settings: OnRestart - saving settings...");
+        Profile.Settings.SaveCache();
+        DisposeDBs();
+        VolumeHandler.Dispose();
+        Log.Info("Main: OnSuspend - Done");
       var restartScript = new Process
       {
         EnableRaisingEvents = false,
@@ -358,21 +341,21 @@ namespace MediaPortal.GUI.Settings
           FileName = Config.GetFile(Config.Dir.Base, @"restart.vbs")
         }
       };
-      Log.Debug("Settings: OnRestart - executing script {0}", restartScript.StartInfo.FileName);
-      restartScript.Start();
-      try
-      {
-        // Maybe the scripting host is not available therefore do not wait infinitely.
-        if (!restartScript.HasExited)
+        Log.Debug("Settings: OnRestart - executing script {0}", restartScript.StartInfo.FileName);
+        restartScript.Start();
+        try
         {
-          restartScript.WaitForExit();
+          // Maybe the scripting host is not available therefore do not wait infinitely.
+          if (!restartScript.HasExited)
+          {
+            restartScript.WaitForExit();
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Settings: OnRestart - WaitForExit: {0}", ex.Message);
         }
       }
-      catch (Exception ex)
-      {
-        Log.Error("Settings: OnRestart - WaitForExit: {0}", ex.Message);
-      }
-    }
 
     private static void DisposeDBs()
     {

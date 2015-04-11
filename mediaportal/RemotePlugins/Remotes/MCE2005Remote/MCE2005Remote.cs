@@ -25,6 +25,7 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Hardware;
 using MediaPortal.Profile;
+using MediaPortal.Util;
 
 namespace MediaPortal.InputDevices
 {
@@ -165,9 +166,9 @@ namespace MediaPortal.InputDevices
     /// <returns>Command handled</returns>
     public bool WndProc(Message msg)
     {
-      if (controlEnabled && (msg.Msg == 0x0319))
+      if (controlEnabled && (msg.Msg == Win32.Const.WM_APPCOMMAND))
       {
-        int command = (msg.LParam.ToInt32() >> 16) & ~0xF000;
+        int command = Win32.Macro.GET_APPCOMMAND_LPARAM(msg.LParam);
         InputDevices.LastHidRequest = (AppCommands)command;
 
         RemoteButton button = RemoteButton.None;
@@ -180,6 +181,16 @@ namespace MediaPortal.InputDevices
         if ((AppCommands)command == AppCommands.VolumeDown)
         {
           button = RemoteButton.VolumeDown;
+        }
+
+        if ((AppCommands)command == AppCommands.MediaChannelUp)
+        {
+            button = RemoteButton.ChannelUp;
+        }
+
+        if ((AppCommands)command == AppCommands.MediaChannelDown)
+        {
+            button = RemoteButton.ChannelDown;
         }
 
         if (button != RemoteButton.None)
@@ -248,11 +259,9 @@ namespace MediaPortal.InputDevices
           InputDevices.LastHidRequest = AppCommands.BrowserBackward;
           break;
         case RemoteButton.ChannelUp:
-          InputDevices.LastHidRequest = AppCommands.MediaChannelUp;
-          break;
+          return; // Don't handle this command, benefit from OS' repeat handling instead
         case RemoteButton.ChannelDown:
-          InputDevices.LastHidRequest = AppCommands.MediaChannelDown;
-          break;
+          return; // Don't handle this command, benefit from OS' repeat handling instead
         case RemoteButton.Mute:
           InputDevices.LastHidRequest = AppCommands.VolumeMute;
           break;

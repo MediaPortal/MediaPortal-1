@@ -40,6 +40,7 @@ public:
 
 	BOOL ThreadIsStopping(DWORD dwTimeoutMilliseconds);
   BOOL IsThreadRunning();
+
 protected:
 	virtual void InternalThreadProc();
 	HANDLE m_hDoneEvent;
@@ -47,6 +48,7 @@ protected:
 	HANDLE m_hWakeEvent;
 
 private:
+  CCritSec  m_ThreadStateLock;
   BOOL   m_bThreadRunning;
 	HANDLE m_threadHandle;
 	 static void __cdecl thread_function(void* p);

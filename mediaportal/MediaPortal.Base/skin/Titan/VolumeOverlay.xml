@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>3004</id>
+<defaultcontrol>2</defaultcontrol>
+
+<controls>
+<control>
+<id>501</id>
+<type>image</type>
+<posX>100</posX>
+<posY>140</posY>
+<width>279</width>
+<height>20</height>
+<texture>volume_back.png</texture>
+<animation effect="fade" time="100">visiblechange</animation>
+</control>
+
+<control>
+<id>502</id>
+<type>image</type>
+<posX>60</posX>
+<posY>110</posY>
+<width>345</width>
+<height>66</height>
+<texture>volume.states.mute.png</texture>
+<animation effect="fade" time="100">visiblechange</animation>
+</control>
+<control>
+<id>503</id>
+<type>volumebar</type>
+<posX>90</posX>
+<posY>134</posY>
+<align>left</align>
+<height>13</height>
+<width>290</width>
+<imageHeight>3</imageHeight>
+<texture>volume_states.png</texture>
+<colordiffuse>White</colordiffuse>
+<animation effect="fade" time="100">visiblechange</animation>
+</control>
+
+<control>
+<id>0</id>
+<type>image</type>
+<posX>60</posX>
+<posY>110</posY>
+<align>left</align>
+<height>66</height>
+<width>345</width>
+<texture>volume_overlay.png</texture>
+<animation effect="fade" time="100">visiblechange</animation>
+<visible>!control.hasfocus(502)</visible>
+</control>
+
+</controls>
+</window> 

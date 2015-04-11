@@ -10,7 +10,7 @@
 //
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 1 VERSIONINFO
-    FILEVERSION     DSHOWHELPER_MAJOR_VERSION,DSHOWHELPER_VERSION,0
+    FILEVERSION     DSHOWHELPER_MAJOR_VERSION, DSHOWHELPER_MID_VERSION, DSHOWHELPER_VERSION,0
     PRODUCTVERSION  MP_VERSION
     FILEOS          VOS_UNKNOWN
     FILETYPE        VFT_UNKNOWN
@@ -27,7 +27,7 @@ BEGIN
             VALUE "FileDescription", "dshowhelper.dll"
             VALUE "FileVersion", DSHOWHELPER_VERSION_STR
             VALUE "InternalName", "dshowhelper.dll"
-            VALUE "LegalCopyright", "Copyright © 2005-2012 Team MediaPortal"
+            VALUE "LegalCopyright", "Copyright © 2005-2013 Team MediaPortal"
             VALUE "OriginalFilename", "dshowhelper.dll"
             VALUE "ProductName", "MediaPortal"
             VALUE "ProductVersion", MP_VERSION_STR

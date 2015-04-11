@@ -317,9 +317,9 @@ namespace MediaPortal.Configuration.Sections
       this._useVolumeOSD.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this._useVolumeOSD.Location = new System.Drawing.Point(16, 19);
       this._useVolumeOSD.Name = "_useVolumeOSD";
-      this._useVolumeOSD.Size = new System.Drawing.Size(242, 17);
+      this._useVolumeOSD.Size = new System.Drawing.Size(115, 17);
       this._useVolumeOSD.TabIndex = 0;
-      this._useVolumeOSD.Text = "Show default Volume OSD for fullscreen video";
+      this._useVolumeOSD.Text = "Show Volume OSD";
       this._useVolumeOSD.UseVisualStyleBackColor = true;
       // 
       // groupBoxMixerControl
@@ -559,6 +559,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxScale.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
+
     }
 
     #endregion

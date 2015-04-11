@@ -252,7 +252,10 @@ namespace TvLibrary.Implementations.DVB
 
         try
         {
-          RunGraph(ch.SubChannelId, dvbipChannel.Url);
+          if (dvbipChannel.Url != _defaultUrl)
+          {
+            RunGraph(ch.SubChannelId, dvbipChannel.Url);
+          }
         }
         catch (TvExceptionNoPMT)
         {

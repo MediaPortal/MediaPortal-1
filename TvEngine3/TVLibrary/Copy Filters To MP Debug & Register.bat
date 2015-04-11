@@ -1,16 +1,34 @@
 xcopy "..\..\DirectShowFilters\bin\Release\*.*" "_TvPluginDebug\MediaPortal\" /R /Y
 
-chdir "..\..\DirectShowFilters\bin\Release\"
-regsvr32 cdxareader.ax /s
-regsvr32 CLDump.ax /s
-regsvr32 DVBSub3.ax /s
-regsvr32 mmaacd.ax /s
-regsvr32 MpaDecFilter.ax /s
-regsvr32 MPAudioSwitcher.ax /s
-regsvr32 Mpeg2DecFilter.ax /s
-regsvr32 MPFileWriter.ax /s
-regsvr32 MPSA.ax /s
-regsvr32 PDMpgMux.ax /s
-regsvr32 shoutcastsource.ax /s
-regsvr32 TsReader.ax /s
-regsvr32 TsWriter.ax /s
+cd "..\..\DirectShowFilters\bin\Release\"
+pushd %MYPATH0%
+set MYPATH0=%CD%
+regsvr32 %CD%\cdxareader.ax /s
+regsvr32 %CD%\mmaacd.ax /s
+regsvr32 %CD%\PDMpgMux.ax /s
+popd
+cd "..\..\DVBSubtitle3\bin\Release\"
+pushd %MYPATH1%
+set MYPATH1=%CD%
+regsvr32 %CD%\DVBSub3.ax /s
+popd
+cd "..\..\..\MPAudioswitcher\bin\Release\"
+pushd %MYPATH2%
+set MYPATH2=%CD%
+regsvr32 %CD%\MPAudioSwitcher.ax /s
+popd
+cd "..\..\..\MPWriter\bin\Release\"
+pushd %MYPATH3%
+set MYPATH3=%CD%
+regsvr32 %CD%\MPFileWriter.ax /s
+popd
+cd "..\..\..\TsReader\bin\Release\"
+pushd %MYPATH4%
+set MYPATH4=%CD%
+regsvr32 %CD%\TsReader.ax /s
+popd
+cd "..\..\..\TsWriter\bin\Release\"
+pushd %MYPATH5%
+set MYPATH5=%CD%
+regsvr32 %CD%\TsWriter.ax /s
+popd

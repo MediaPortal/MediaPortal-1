@@ -44,7 +44,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="callbacks">callback pointer struct</param>
     /// <returns></returns>
     [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_Enable", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
+      CallingConvention = CallingConvention.StdCall)]
     public static extern uint KNCBDA_CI_Enable(uint m_iDeviceIndex, IBaseFilter tunerFilter, IntPtr callbacks);
 
     /// <summary>
@@ -53,7 +53,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="m_iDeviceIndex">device index 0..n</param>
     /// <returns></returns>
     [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_Disable", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
+      CallingConvention = CallingConvention.StdCall)]
     public static extern uint KNCBDA_CI_Disable(uint m_iDeviceIndex);
 
     /// <summary>
@@ -62,7 +62,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="m_iDeviceIndex"></param>
     /// <returns></returns>
     [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_IsAvailable", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
+      CallingConvention = CallingConvention.StdCall)]
     public static extern uint KNCBDA_CI_IsAvailable(uint m_iDeviceIndex);
 
     /// <summary>
@@ -71,7 +71,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="m_iDeviceIndex"></param>
     /// <returns></returns>
     [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_IsReady", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
+      CallingConvention = CallingConvention.StdCall)]
     public static extern uint KNCBDA_CI_IsReady(uint m_iDeviceIndex);
 
     /// <summary>
@@ -81,7 +81,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="param"></param>
     /// <returns></returns>
     [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_HW_Enable", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
+      CallingConvention = CallingConvention.StdCall)]
     public static extern uint KNCBDA_CI_HW_Enable(uint m_iDeviceIndex, bool param);
 
     /// <summary>
@@ -92,7 +92,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="BufferSize"></param>
     /// <returns></returns>
     [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_GetName", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
+      CallingConvention = CallingConvention.StdCall)]
     public static extern uint KNCBDA_CI_GetName(uint m_iDeviceIndex, [MarshalAs(UnmanagedType.LPStr)] StringBuilder Name,
                                                 uint BufferSize);
 
@@ -104,7 +104,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="caPmtLen"></param>
     /// <returns></returns>
     [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SendPMTCommand", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
+      CallingConvention = CallingConvention.StdCall)]
     public static extern uint KNCBDA_CI_SendPMTCommand(uint m_iDeviceIndex, IntPtr caPMT, uint caPmtLen);
 
     /// <summary>
@@ -114,7 +114,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nSlot"></param>
     /// <returns></returns>
     [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_EnterMenu", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
+      CallingConvention = CallingConvention.StdCall)]
     public static extern uint KNCBDA_CI_EnterMenu(uint m_iDeviceIndex, byte nSlot);
 
     /// <summary>
@@ -125,7 +125,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nChoice"></param>
     /// <returns></returns>
     [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SelectMenu", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
+      CallingConvention = CallingConvention.StdCall)]
     public static extern uint KNCBDA_CI_SelectMenu(uint m_iDeviceIndex, byte nSlot, byte nChoice);
 
     /// <summary>
@@ -135,7 +135,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nSlot"></param>
     /// <returns></returns>
     [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_CloseMenu", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
+      CallingConvention = CallingConvention.StdCall)]
     public static extern uint KNCBDA_CI_CloseMenu(uint m_iDeviceIndex, byte nSlot);
 
     /// <summary>
@@ -147,7 +147,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="MenuAnswer"></param>
     /// <returns></returns>
     [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SendMenuAnswer", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
+      CallingConvention = CallingConvention.StdCall)]
     public static extern uint KNCBDA_CI_SendMenuAnswer(uint m_iDeviceIndex, byte nSlot, bool cancel,
                                                        [In, MarshalAs(UnmanagedType.LPStr)] String MenuAnswer);
 

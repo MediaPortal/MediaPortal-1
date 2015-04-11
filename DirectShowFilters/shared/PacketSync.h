@@ -33,9 +33,11 @@ public:
   void OnRawData(byte* pData, int nDataLen);
   void OnRawData2(byte* pData, int nDataLen);
   virtual void OnTsPacket(byte* tsPacket);
+  virtual void OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLength);
   void Reset(void);
 
 private:
-  byte  m_tempBuffer[200];
+  byte  m_tempBuffer[400];
   int   m_tempBufferPos;
+  bool  m_bInSync;
 };

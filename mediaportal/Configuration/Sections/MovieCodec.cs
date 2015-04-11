@@ -89,6 +89,10 @@ namespace MediaPortal.Configuration.Sections
         {
           availableVideoFilters.Remove("Nero Mpeg2 Encoder");
         }
+        while (availableVideoFilters.Contains("Core CC Parser"))
+        {
+          availableVideoFilters.Remove("Core CC Parser");
+        }
         availableVideoFilters.Sort();
         videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
         while (availableAudioFilters.Contains("CyberLink MPEG Muxer"))
@@ -447,7 +451,7 @@ namespace MediaPortal.Configuration.Sections
                             RegistryValueKind.DWord);
             return true;
           }
-          catch (Exception e)
+          catch (Exception)
           {
             return false;
           }

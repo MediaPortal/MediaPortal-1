@@ -481,8 +481,8 @@ namespace TvDatabase
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
       SqlStatement origStmt = sb.GetStatement(true);
-      string sql = "select c.* from channel c inner join groupmap gm on (c.idChannel = gm.idChannel and gm.idGroup =" +
-                   group.IdGroup + ") order by gm.SortOrder asc";
+      string sql = "SELECT c.* FROM Channel c INNER JOIN GroupMap gm ON (c.idChannel = gm.idChannel AND gm.idGroup =" +
+                   group.IdGroup + ") ORDER BY gm.SortOrder ASC";
       SqlStatement statement = new SqlStatement(StatementType.Select, origStmt.Command, sql,
                                                 typeof (Channel));
       return ObjectFactory.GetCollection<Channel>(statement.Execute());
@@ -1768,10 +1768,19 @@ namespace TvDatabase
       SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
       SqlSelectCommand.AppendFormat("where endTime > '{0}' ", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
 
-      if (searchCriteria.Length > 0)
+      string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
+      if (provider == "mysql" && searchCriteria == "[0-9]")
+      {
+        if (searchCriteria.Length > 0)
+        {
+          SqlSelectCommand.AppendFormat("and title REGEXP '^{0}' ", EscapeSQLString(searchCriteria));
+        }
+      }
+      else if (searchCriteria.Length > 0)
       {
         SqlSelectCommand.AppendFormat("and title like '{0}%' ", EscapeSQLString(searchCriteria));
       }
+
       switch (channelType)
       {
         case ChannelType.Radio:
@@ -2929,7 +2938,6 @@ namespace TvDatabase
               List<Schedule> overlapping;
               List<Schedule> notViewable;
               AssignSchedulesToCard(episode, cardSchedules, out overlapping, out notViewable);
-              break;
             }
           }
         }
@@ -2957,7 +2965,31 @@ namespace TvDatabase
       return;
     }
 
-    private static bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules,
+    /// <summary>
+    /// checks if 2 schedules have a common Transponder
+    /// depending on tuningdetails of their respective channels
+    /// </summary>
+    /// <param name="schedule"></param>
+    /// <returns>True if a common transponder exists</returns>
+    public bool isSameTransponder(Schedule schedule1, Schedule schedule2)
+    {
+      IList<TuningDetail> tuningDetailList1 = schedule1.ReferencedChannel().ReferringTuningDetail();
+      IList<TuningDetail> tuningDetailList2 = schedule2.ReferencedChannel().ReferringTuningDetail();
+      foreach (TuningDetail td1 in tuningDetailList1)
+      {
+        IChannel c1 = GetTuningChannel(td1);
+        foreach (TuningDetail td2 in tuningDetailList2)
+        {
+          if (!c1.IsDifferentTransponder(GetTuningChannel(td2)))
+          {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    private bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules,
                                               out List<Schedule> overlappingSchedules, out List<Schedule> notViewabledSchedules)
     {
       overlappingSchedules = new List<Schedule>();
@@ -2980,14 +3012,13 @@ namespace TvDatabase
             bool hasOverlappingSchedule = schedule.IsOverlapping(assignedSchedule);
             if (hasOverlappingSchedule)
             {
-              bool isSameTransponder = (schedule.isSameTransponder(assignedSchedule) && card.supportSubChannels);
-              if (!isSameTransponder)
+              bool _isSameTransponder = (isSameTransponder(schedule, assignedSchedule) && card.supportSubChannels);
+              if (!_isSameTransponder)
               {
                 overlappingSchedules.Add(assignedSchedule);
                 Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule + " on card {0}, ID = {1}", count,
                          card.IdCard);
                 free = false;
-                break;
               }
             }
           }

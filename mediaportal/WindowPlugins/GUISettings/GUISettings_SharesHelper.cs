@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Music;
-using MediaPortal.GUI.Pictures;
 using MediaPortal.GUI.Video;
 using MediaPortal.Profile;
 using MediaPortal.Util;
@@ -248,7 +247,7 @@ namespace MediaPortal.GUI.Settings
 
           string shareNameData = xmlreader.GetValueAsString(section, shareName, "");
           string sharePathData = xmlreader.GetValueAsString(section, sharePath, "");
-          string sharePinData = Util.Utils.DecryptPin(xmlreader.GetValueAsString(section, sharePin, ""));
+          string sharePinData = Util.Utils.DecryptPassword(xmlreader.GetValueAsString(section, sharePin, ""));
 
           // provide default shares
           if (index == 0 && shareNameData == string.Empty)
@@ -263,7 +262,7 @@ namespace MediaPortal.GUI.Settings
           bool shareTypeData = xmlreader.GetValueAsBool(section, shareType, false);
           string shareServerData = xmlreader.GetValueAsString(section, shareServer, "");
           string shareLoginData = xmlreader.GetValueAsString(section, shareLogin, "");
-          string sharePwdData = xmlreader.GetValueAsString(section, sharePwd, "");
+          string sharePwdData = Util.Utils.DecryptPassword(xmlreader.GetValueAsString(section, sharePwd, ""));
           int sharePortData = xmlreader.GetValueAsInt(section, sharePort, 21);
           string shareRemotePathData = xmlreader.GetValueAsString(section, shareRemotePath, "/");
           int shareLayout = xmlreader.GetValueAsInt(section, shareViewPath, (int)GUIFacadeControl.Layout.List);
@@ -451,11 +450,11 @@ namespace MediaPortal.GUI.Settings
 
               xmlwriter.SetValue(section, shareName, shareNameData);
               xmlwriter.SetValue(section, sharePath, sharePathData);
-              xmlwriter.SetValue(section, sharePin, Util.Utils.EncryptPin(sharePinData));
+              xmlwriter.SetValue(section, sharePin, Util.Utils.EncryptPassword(sharePinData));
               xmlwriter.SetValueAsBool(section, shareType, shareTypeData);
               xmlwriter.SetValue(section, shareServer, shareServerData);
               xmlwriter.SetValue(section, shareLogin, shareLoginData);
-              xmlwriter.SetValue(section, sharePwd, sharePwdData);
+              xmlwriter.SetValue(section, sharePwd, Util.Utils.EncryptPassword(sharePwdData));
               xmlwriter.SetValue(section, sharePort, sharePortData.ToString());
               xmlwriter.SetValue(section, shareRemotePath, shareRemotePathData);
               xmlwriter.SetValue(section, shareViewPath, shareLayout);
@@ -492,7 +491,7 @@ namespace MediaPortal.GUI.Settings
           GUIMusicFiles.ResetShares();
           break;
         case "pictures":
-          GUIPictures.ResetShares();
+          Pictures.GUIPictures.ResetShares();
           break;
       }
     }

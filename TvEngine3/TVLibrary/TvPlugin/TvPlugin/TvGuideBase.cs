@@ -25,7 +25,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Windows.Media.Animation;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -84,6 +83,8 @@ namespace TvPlugin
     private int _backupCursorX = 0;
     private int _backupCursorY = 0;
     private int _backupChannelOffset = 0;
+
+    private int _backupSingleViewCursorX = 0;
 
     private DateTime _keyPressedTimer = DateTime.Now;
     private string _lineInput = String.Empty;
@@ -333,14 +334,11 @@ namespace TvPlugin
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           if (_singleChannelView)
           {
-            OnSwitchMode();
-            return; // base.OnAction would close the EPG as well
-          }
-          else
-          {
-            GUIWindowManager.ShowPreviousWindow();
+            OnSwitchMode(true);
             return;
           }
+          GUIWindowManager.ShowPreviousWindow();
+          return;
 
         case Action.ActionType.ACTION_KEY_PRESSED:
           if (action.m_key != null)
@@ -439,7 +437,8 @@ namespace TvPlugin
             {
               if (_cursorY == 0)
               {
-                OnSwitchMode();
+                _backupSingleViewCursorX = _cursorX;
+                OnSwitchMode(false);
                 return;
               }
               else
@@ -728,17 +727,20 @@ namespace TvPlugin
 
           case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
             {
-              base.OnMessage(message);
-              SaveSettings();
-              if (_recordingList != null && TVHome.Connected)
+              if (!_singleChannelView)
               {
-                _recordingList.Clear();
-              }
+                base.OnMessage(message);
+                SaveSettings();
+                if (_recordingList != null && TVHome.Connected)
+                {
+                  _recordingList.Clear();
+                }
 
-              _controls = new Dictionary<int, GUIButton3PartControl>();
-              _channelList = null;
-              _recordingList = null;
-              _currentProgram = null;
+                _controls = new Dictionary<int, GUIButton3PartControl>();
+                _channelList = null;
+                _recordingList = null;
+                _currentProgram = null;
+              }
 
               return true;
             }
@@ -975,7 +977,8 @@ namespace TvPlugin
             }
             else if (_cursorY == 0)
             {
-              OnSwitchMode();
+              _backupSingleViewCursorX = _cursorX;
+              OnSwitchMode(false);
             }
             break;
         }
@@ -3513,7 +3516,8 @@ namespace TvPlugin
 
 
           case 939: // switch mode
-            OnSwitchMode();
+            _backupSingleViewCursorX = _cursorX;
+            OnSwitchMode(false);
             break;
           case 629: //stop recording
             Schedule schedule = Schedule.FindNoEPGSchedule(_currentProgram.ReferencedChannel());
@@ -3538,7 +3542,7 @@ namespace TvPlugin
       }
     }
 
-    private void OnSwitchMode()
+    private void OnSwitchMode(bool returnPreviousMenu)
     {
       UnFocus();
       _singleChannelView = !_singleChannelView;
@@ -3550,6 +3554,13 @@ namespace TvPlugin
 
         _programOffset = _cursorY = _cursorX = 0;
         _recalculateProgramOffset = true;
+      }
+      else if (returnPreviousMenu)
+      {
+        //focus current channel
+        _cursorY = 0;
+        _cursorX = _backupSingleViewCursorX;
+        ChannelOffset = _backupChannelOffset;
       }
       else
       {

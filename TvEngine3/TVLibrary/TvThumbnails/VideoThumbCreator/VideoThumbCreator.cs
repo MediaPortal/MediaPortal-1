@@ -88,6 +88,12 @@ namespace TvThumbnails.VideoThumbCreator
 
       int Duration = MediaInfo.VideoDuration / 1000;
 
+      if (Duration == 0)
+      {
+        Log.Debug("TvThumbnails.VideoThumbCreator: the {0} is corrupt.", aVideoPath);
+        return false;
+      }
+
       if (preGapSec > Duration)
       {
         preGapSec = ( Duration / 100 ) * 20; // 20% of the duration
@@ -100,26 +106,12 @@ namespace TvThumbnails.VideoThumbCreator
       bool Success = false;
       string strFilenamewithoutExtension = Path.ChangeExtension(aVideoPath, null);
 
-/*      string ffmpegArgs =
-        string.Format("select=isnan(prev_selected_t)+gte(t-prev_selected_t\\,{0}),", TimeIntBwThumbs) +
-        string.Format("yadif=0:-1:0,") +
-        string.Format("scale={0}:{1},", 600, 337) +
-        string.Format("setsar=1:1,") +
-        string.Format("tile={0}x{1}", Thumbs.PreviewColumns, Thumbs.PreviewRows);
-*/
       string ffmpegFallbackArgs =
         string.Format("yadif=0:-1:0,") +
         string.Format("scale={0}:{1},", 600, 337) +
         string.Format("setsar=1:1,") +
         string.Format("tile={0}x{1}", Thumbs.PreviewColumns, Thumbs.PreviewRows);
 
-/*      string ExtractorArgs =
-        string.Format("-loglevel quiet -ss {0} ", preGapSec) +
-        string.Format("-i \"{0}\" ", aVideoPath) +
-        string.Format("-vf {0} ", ffmpegArgs) +
-        string.Format("-vframes 1 -vsync 0 ") +
-        string.Format("-an \"{0}_s.jpg\"", strFilenamewithoutExtension);
-*/
       string ExtractorFallbackArgs =
         string.Format("-loglevel quiet -ss 5 ") +
         string.Format("-i \"{0}\" ", aVideoPath) +
