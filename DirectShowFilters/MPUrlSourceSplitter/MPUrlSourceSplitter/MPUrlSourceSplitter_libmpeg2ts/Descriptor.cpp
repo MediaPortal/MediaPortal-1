@@ -177,6 +177,7 @@ bool CDescriptor::InternalClone(CDescriptor *descriptor)
   if (result)
   {
     descriptor->flags = this->flags;
+    descriptor->tag = this->tag;
 
     if (this->payloadSize != 0)
     {

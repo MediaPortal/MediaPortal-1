@@ -19,7 +19,6 @@
                 {
                     this.testWorker.Dispose();
                     this.testWorker = null;
-                    this.testPlaylistRow = null;
                 }
 
                 components.Dispose();
@@ -66,6 +65,7 @@
             this.groupBoxCommonParametersRtsp = new System.Windows.Forms.GroupBox();
             this.labelRtspIgnoreRtpPayloadType = new System.Windows.Forms.Label();
             this.checkBoxRtspIgnoreRtpPayloadType = new System.Windows.Forms.CheckBox();
+            this.rtspConnectionPreference = new TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url.RtspConnectionPreference();
             this.labelRtspConnectionPreference = new System.Windows.Forms.Label();
             this.label59 = new System.Windows.Forms.Label();
             this.textBoxRtspClientPortMax = new System.Windows.Forms.TextBox();
@@ -100,6 +100,7 @@
             this.comboBoxUdpRtpPreferredNetworkInterface = new System.Windows.Forms.ComboBox();
             this.buttonApply = new System.Windows.Forms.Button();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.textBoxStreamAnalysisTimeout = new System.Windows.Forms.TextBox();
             this.tabPagePlaylistEditor = new System.Windows.Forms.TabPage();
             this.splitContainerPlaylist = new System.Windows.Forms.SplitContainer();
             this.dataGridViewPlaylist = new System.Windows.Forms.DataGridView();
@@ -123,12 +124,15 @@
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewImageColumn2 = new System.Windows.Forms.DataGridViewImageColumn();
             this.propertyGridDatabase = new System.Windows.Forms.PropertyGrid();
+            this.tabPageSettings = new System.Windows.Forms.TabPage();
+            this.labelStreamAnalysisTimeout = new System.Windows.Forms.Label();
             this.tabPageGeneral = new System.Windows.Forms.TabPage();
             this.buttonUpdateDatabase = new System.Windows.Forms.Button();
             this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
             this.buttonStoreChanges = new System.Windows.Forms.Button();
-            this.rtspConnectionPreference = new TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url.RtspConnectionPreference();
             this.buttonSetMpeg2TSParser = new System.Windows.Forms.Button();
+            this.groupBoxStreamAnalysis = new System.Windows.Forms.GroupBox();
+            this.checkBoxStreamAnalysis = new System.Windows.Forms.CheckBox();
             this.tabPageHttp.SuspendLayout();
             this.groupBoxCommonParametersHttp.SuspendLayout();
             this.tabPageRtmp.SuspendLayout();
@@ -149,6 +153,8 @@
             this.splitContainerDatabase.Panel2.SuspendLayout();
             this.splitContainerDatabase.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDatabase)).BeginInit();
+            this.tabPageSettings.SuspendLayout();
+            this.groupBoxStreamAnalysis.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabPageHttp
@@ -462,6 +468,16 @@
             this.checkBoxRtspIgnoreRtpPayloadType.TabIndex = 17;
             this.checkBoxRtspIgnoreRtpPayloadType.UseVisualStyleBackColor = true;
             // 
+            // rtspConnectionPreference
+            // 
+            this.rtspConnectionPreference.Location = new System.Drawing.Point(172, 150);
+            this.rtspConnectionPreference.MulticastPreference = 2;
+            this.rtspConnectionPreference.Name = "rtspConnectionPreference";
+            this.rtspConnectionPreference.SameConnectionPreference = 0;
+            this.rtspConnectionPreference.Size = new System.Drawing.Size(126, 56);
+            this.rtspConnectionPreference.TabIndex = 15;
+            this.rtspConnectionPreference.UdpPreference = 1;
+            // 
             // labelRtspConnectionPreference
             // 
             this.labelRtspConnectionPreference.AutoSize = true;
@@ -773,6 +789,14 @@
             this.errorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
             this.errorProvider.ContainerControl = this;
             // 
+            // textBoxStreamAnalysisTimeout
+            // 
+            this.errorProvider.SetIconPadding(this.textBoxStreamAnalysisTimeout, 8);
+            this.textBoxStreamAnalysisTimeout.Location = new System.Drawing.Point(194, 37);
+            this.textBoxStreamAnalysisTimeout.Name = "textBoxStreamAnalysisTimeout";
+            this.textBoxStreamAnalysisTimeout.Size = new System.Drawing.Size(81, 20);
+            this.textBoxStreamAnalysisTimeout.TabIndex = 1;
+            // 
             // tabPagePlaylistEditor
             // 
             this.tabPagePlaylistEditor.Controls.Add(this.splitContainerPlaylist);
@@ -910,6 +934,7 @@
             this.tabProtocols.Controls.Add(this.tabPageUdpRtp);
             this.tabProtocols.Controls.Add(this.tabPagePlaylistEditor);
             this.tabProtocols.Controls.Add(this.tabPageDatabaseEditor);
+            this.tabProtocols.Controls.Add(this.tabPageSettings);
             this.tabProtocols.Location = new System.Drawing.Point(0, 0);
             this.tabProtocols.Name = "tabProtocols";
             this.tabProtocols.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -1042,6 +1067,26 @@
             this.propertyGridDatabase.ToolbarVisible = false;
             this.propertyGridDatabase.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridDatabase_PropertyValueChanged);
             // 
+            // tabPageSettings
+            // 
+            this.tabPageSettings.Controls.Add(this.groupBoxStreamAnalysis);
+            this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSettings.Name = "tabPageSettings";
+            this.tabPageSettings.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageSettings.Size = new System.Drawing.Size(476, 368);
+            this.tabPageSettings.TabIndex = 7;
+            this.tabPageSettings.Text = "Settings";
+            this.tabPageSettings.UseVisualStyleBackColor = true;
+            // 
+            // labelStreamAnalysisTimeout
+            // 
+            this.labelStreamAnalysisTimeout.AutoSize = true;
+            this.labelStreamAnalysisTimeout.Location = new System.Drawing.Point(6, 40);
+            this.labelStreamAnalysisTimeout.Name = "labelStreamAnalysisTimeout";
+            this.labelStreamAnalysisTimeout.Size = new System.Drawing.Size(182, 13);
+            this.labelStreamAnalysisTimeout.TabIndex = 0;
+            this.labelStreamAnalysisTimeout.Text = "Stream analysis timeout (milliseconds)";
+            // 
             // tabPageGeneral
             // 
             this.tabPageGeneral.Location = new System.Drawing.Point(4, 22);
@@ -1087,16 +1132,6 @@
             this.buttonStoreChanges.Visible = false;
             this.buttonStoreChanges.Click += new System.EventHandler(this.buttonStoreChanges_Click);
             // 
-            // rtspConnectionPreference
-            // 
-            this.rtspConnectionPreference.Location = new System.Drawing.Point(172, 150);
-            this.rtspConnectionPreference.MulticastPreference = 2;
-            this.rtspConnectionPreference.Name = "rtspConnectionPreference";
-            this.rtspConnectionPreference.SameConnectionPreference = 0;
-            this.rtspConnectionPreference.Size = new System.Drawing.Size(126, 56);
-            this.rtspConnectionPreference.TabIndex = 15;
-            this.rtspConnectionPreference.UdpPreference = 1;
-            // 
             // buttonSetMpeg2TSParser
             // 
             this.buttonSetMpeg2TSParser.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -1108,6 +1143,30 @@
             this.buttonSetMpeg2TSParser.UseVisualStyleBackColor = true;
             this.buttonSetMpeg2TSParser.Visible = false;
             this.buttonSetMpeg2TSParser.Click += new System.EventHandler(this.buttonSetMpeg2TSParser_Click);
+            // 
+            // groupBoxStreamAnalysis
+            // 
+            this.groupBoxStreamAnalysis.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxStreamAnalysis.Controls.Add(this.checkBoxStreamAnalysis);
+            this.groupBoxStreamAnalysis.Controls.Add(this.labelStreamAnalysisTimeout);
+            this.groupBoxStreamAnalysis.Controls.Add(this.textBoxStreamAnalysisTimeout);
+            this.groupBoxStreamAnalysis.Location = new System.Drawing.Point(6, 6);
+            this.groupBoxStreamAnalysis.Name = "groupBoxStreamAnalysis";
+            this.groupBoxStreamAnalysis.Size = new System.Drawing.Size(464, 66);
+            this.groupBoxStreamAnalysis.TabIndex = 2;
+            this.groupBoxStreamAnalysis.TabStop = false;
+            this.groupBoxStreamAnalysis.Text = "Stream analysis";
+            // 
+            // checkBoxStreamAnalysis
+            // 
+            this.checkBoxStreamAnalysis.AutoSize = true;
+            this.checkBoxStreamAnalysis.Location = new System.Drawing.Point(7, 20);
+            this.checkBoxStreamAnalysis.Name = "checkBoxStreamAnalysis";
+            this.checkBoxStreamAnalysis.Size = new System.Drawing.Size(99, 17);
+            this.checkBoxStreamAnalysis.TabIndex = 2;
+            this.checkBoxStreamAnalysis.Text = "Stream analysis";
+            this.checkBoxStreamAnalysis.UseVisualStyleBackColor = true;
             // 
             // Editor
             // 
@@ -1146,6 +1205,9 @@
             this.splitContainerDatabase.Panel2.ResumeLayout(false);
             this.splitContainerDatabase.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDatabase)).EndInit();
+            this.tabPageSettings.ResumeLayout(false);
+            this.groupBoxStreamAnalysis.ResumeLayout(false);
+            this.groupBoxStreamAnalysis.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1245,5 +1307,10 @@
         private System.Windows.Forms.DataGridViewImageColumn dataGridViewImageColumn2;
         private System.Windows.Forms.Button buttonStoreChanges;
         private System.Windows.Forms.Button buttonSetMpeg2TSParser;
+        private System.Windows.Forms.TabPage tabPageSettings;
+        private System.Windows.Forms.TextBox textBoxStreamAnalysisTimeout;
+        private System.Windows.Forms.Label labelStreamAnalysisTimeout;
+        private System.Windows.Forms.GroupBox groupBoxStreamAnalysis;
+        private System.Windows.Forms.CheckBox checkBoxStreamAnalysis;
     }
 }

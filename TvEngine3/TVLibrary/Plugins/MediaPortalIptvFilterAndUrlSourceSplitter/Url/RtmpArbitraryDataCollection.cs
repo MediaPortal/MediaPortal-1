@@ -59,6 +59,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// </exception>
         protected override void SetItem(int index, RtmpArbitraryData item)
         {
+            if (item == null)
+            {
+                throw new ArgumentNullException("item");
+            }
+
             base.SetItem(index, item);
         }
 
