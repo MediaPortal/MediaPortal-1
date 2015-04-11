@@ -562,10 +562,8 @@ Section "MediaPortal core files (required)" SecCore
   
   ; protocol implementations for MPUrlSourceSplitter.ax
   File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter*"
-  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Parser_Default*"
-  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol_Http*"
-  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol_Rtsp*"
-  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol_Udp*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Parser*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol*"
   File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_libcurl*"
   File "${git_DirectShowFilters}\bin_Win32\avcodec-mpurlsourcesplitter-54.dll"
   File "${git_DirectShowFilters}\bin_Win32\avformat-mpurlsourcesplitter-54.dll"
