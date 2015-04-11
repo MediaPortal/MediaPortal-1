@@ -20,14 +20,14 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -96,6 +96,7 @@
     <ClInclude Include="ProgramDefinitionCollection.h" />
     <ClInclude Include="ProgramSpecificInformationPacket.h" />
     <ClInclude Include="Section.h" />
+    <ClInclude Include="SectionCollection.h" />
     <ClInclude Include="SectionPayload.h" />
     <ClInclude Include="SectionPayloadCollection.h" />
     <ClInclude Include="stdafx.h" />
@@ -124,6 +125,7 @@
     <ClCompile Include="ProgramDefinitionCollection.cpp" />
     <ClCompile Include="ProgramSpecificInformationPacket.cpp" />
     <ClCompile Include="Section.cpp" />
+    <ClCompile Include="SectionCollection.cpp" />
     <ClCompile Include="SectionPayload.cpp" />
     <ClCompile Include="SectionPayloadCollection.cpp" />
     <ClCompile Include="stdafx.cpp">
