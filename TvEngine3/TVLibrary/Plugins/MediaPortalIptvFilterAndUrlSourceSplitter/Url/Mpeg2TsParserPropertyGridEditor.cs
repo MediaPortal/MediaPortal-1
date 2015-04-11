@@ -54,9 +54,9 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                             filterPID.AllowFilteringProgramElements = true;
                             filterPID.ProgramMapPID = filterProgramMapPID.ProgramMapPID;
 
-                            foreach (var leaveProgramElement in filterProgramMapPID.LeaveProgramElements)
+                            foreach (var leaveProgramElement in filterProgramMapPID.ProgramElements)
                             {
-                                filterPID.LeaveProgramElements.Add(new ProgramElement() { ProgramElementPID = leaveProgramElement.ProgramElementPID });
+                                filterPID.ProgramElements.Add(new ProgramElement() { ProgramElementPID = leaveProgramElement.ProgramElementPID, LeaveProgramElement = true });
                             }
 
                             parserEditor.FilterProgramMapPIDs.Add(filterPID);
@@ -83,16 +83,17 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                                     filterPID.AllowFilteringProgramElements = true;
                                     filterPID.ProgramMapPID = filterProgramMapPID.ProgramMapPID;
 
-                                    foreach (var leaveProgramElement in filterProgramMapPID.LeaveProgramElements)
+                                    foreach (var programElement in filterProgramMapPID.ProgramElements)
                                     {
-                                        filterPID.LeaveProgramElements.Add(new ProgramElement() { ProgramElementPID = leaveProgramElement.ProgramElementPID });
+                                        if (programElement.LeaveProgramElement)
+                                        {
+                                            filterPID.ProgramElements.Add(new ProgramElement() { ProgramElementPID = programElement.ProgramElementPID, LeaveProgramElement = true });
+                                        }
                                     }
 
                                     url.Mpeg2TsParser.FilterProgramMapPIDs.Add(filterPID);
                                 }
                             }
-                            //System.Diagnostics.Debugger.Launch();
-                            //value = url.Mpeg2TsParser;
                         }
                     }
                 }

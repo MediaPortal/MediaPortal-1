@@ -222,7 +222,9 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                                         ProgramElement programElement = new ProgramElement();
 
                                         programElement.ProgramElementPID = int.Parse(param2.Value);
-                                        filterPID.LeaveProgramElements.Add(programElement);
+                                        programElement.LeaveProgramElement = true;
+
+                                        filterPID.ProgramElements.Add(programElement);
                                         break;
                                     }
                                 }
@@ -284,11 +286,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                     if (filterPID.AllowFilteringProgramElements)
                     {
                         parameters.Add(new Parameter(String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsFilterProgramMapPID, filterProgramMapPIDCount), filterPID.ProgramMapPID.ToString()));
-                        parameters.Add(new Parameter(String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsLeaveProgramElementCount, filterPID.ProgramMapPID), filterPID.LeaveProgramElements.Count.ToString()));
+                        parameters.Add(new Parameter(String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsLeaveProgramElementCount, filterPID.ProgramMapPID), filterPID.ProgramElements.Count.ToString()));
 
-                        for (int j = 0; j < filterPID.LeaveProgramElements.Count; j++)
+                        for (int j = 0; j < filterPID.ProgramElements.Count; j++)
                         {
-                            ProgramElement programElement = filterPID.LeaveProgramElements[j];
+                            ProgramElement programElement = filterPID.ProgramElements[j];
 
                             parameters.Add(new Parameter(String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsLeaveProgramElement, filterPID.ProgramMapPID, j), programElement.ProgramElementPID.ToString()));
                         }                        
@@ -351,6 +353,9 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 
         protected static readonly String ParameterFormatMpeg2TsLeaveProgramElement = "Mpeg2TsFilterProgramMapPID{0:00000000}LeaveProgramElement{1:00000000}";
 
+        /// <summary>
+        /// Specifies if MPEG2 TS parser have to analyse stream for known sections.
+        /// </summary>
         protected static readonly String ParameterMpeg2TsStreamAnalysis = "Mpeg2TsStreamAnalysis";
 
         /// <summary>

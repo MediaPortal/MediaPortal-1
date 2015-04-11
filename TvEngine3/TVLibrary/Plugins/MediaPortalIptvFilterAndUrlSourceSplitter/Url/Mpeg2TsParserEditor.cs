@@ -70,13 +70,55 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                             if (filterPID.ProgramMapPID == (int)pat.Programs[i].ProgramMapPID)
                             {
                                 found = true;
+
+                                foreach (var patInternalSection in section.StreamSections)
+                                {
+                                    TransportStreamProgramMapSection pmt = patInternalSection.Section as TransportStreamProgramMapSection;
+                                    if ((pmt != null) && (pmt.ProgramMapPID == (uint)filterPID.ProgramMapPID))
+                                    {
+                                        foreach (var programDefinition in pmt.Programs)
+                                        {
+                                            Boolean foundProgramElement = false;
+                                            foreach (var programElement in filterPID.ProgramElements)
+                                            {
+                                                if (programElement.ProgramElementPID == (int)programDefinition.ElementaryPID)
+                                                {
+                                                    foundProgramElement = true;
+                                                    break;
+                                                }
+                                            }
+
+                                            if (!foundProgramElement)
+                                            {
+                                                filterPID.ProgramElements.Add(new ProgramElement() { ProgramElementPID = (int)programDefinition.ElementaryPID, LeaveProgramElement = false });
+                                            }
+                                        }
+
+                                    }
+                                }
+
                                 break;
                             }
                         }
 
                         if (!found)
                         {
-                            this.FilterProgramMapPIDs.Add(new FilterProgramMapPID() { ProgramMapPID = (int)pat.Programs[i].ProgramMapPID });
+                            FilterProgramMapPID filterPID = new FilterProgramMapPID() { ProgramMapPID = (int)pat.Programs[i].ProgramMapPID };
+
+                            foreach (var patInternalSection in section.StreamSections)
+                            {
+                                TransportStreamProgramMapSection pmt = patInternalSection.Section as TransportStreamProgramMapSection;
+                                if ((pmt != null) && (pmt.ProgramMapPID == (uint)filterPID.ProgramMapPID))
+                                {
+                                    foreach (var programDefinition in pmt.Programs)
+                                    {
+                                        filterPID.ProgramElements.Add(new ProgramElement() { ProgramElementPID = (int)programDefinition.ElementaryPID, LeaveProgramElement = false });
+                                    }
+                                    
+                                }
+                            }
+
+                            this.FilterProgramMapPIDs.Add(filterPID);
                         }
                     }
 
@@ -134,19 +176,6 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < this.FilterProgramMapPIDs.Count; i++)
-            {
-                FilterProgramMapPID filterPID = this.FilterProgramMapPIDs[i];
-                TabPage filterPage = this.tabControlFilterProgramElements.TabPages[i];
-                FilterProgramMapPIDControl filterControl = (FilterProgramMapPIDControl)filterPage.Controls["PID"];
-
-                filterPID.AllowFilteringProgramElements = filterControl.checkBoxAllowFilteringProgramElements.Checked;
-                if (filterControl.checkBoxAllowFilteringProgramElements.Checked)
-                {
-                    
-                }
-            }
-
             try
             {
                 if (!String.IsNullOrEmpty(this.textBoxTransportStreamId.Text))
@@ -341,8 +370,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                         control.Dock = System.Windows.Forms.DockStyle.Fill;
                         control.Location = new System.Drawing.Point(3, 3);
 
-                        control.checkBoxAllowFilteringProgramElements.Checked = filterPID.AllowFilteringProgramElements;
-
+                        control.FilterProgramMapPID = filterPID;
                         addedPage.Controls.Add(control);
 
                         this.tabControlFilterProgramElements.TabPages.Add(addedPage);

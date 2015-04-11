@@ -14,7 +14,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         #region Private fields
 
         private int programMapPID;
-        private ProgramElementCollection leaveProgramElements;
+        private ProgramElementCollection programElements;
 
         #endregion
 
@@ -26,8 +26,8 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         public FilterProgramMapPID()
         {
             this.ProgramMapPID = Mpeg2TsParser.DefaultMpeg2TsProgramMapPID;
-            this.leaveProgramElements = new ProgramElementCollection();
             this.AllowFilteringProgramElements = false;
+            this.programElements = new ProgramElementCollection();
         }
 
         #endregion
@@ -57,11 +57,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         }
 
         /// <summary>
-        /// Gets program elements to leave in stream.
+        /// Gets program elements in stream.
         /// </summary>
-        public ProgramElementCollection LeaveProgramElements
+        public ProgramElementCollection ProgramElements
         {
-            get { return this.leaveProgramElements; }
+            get { return this.programElements; }
         }
 
         #endregion

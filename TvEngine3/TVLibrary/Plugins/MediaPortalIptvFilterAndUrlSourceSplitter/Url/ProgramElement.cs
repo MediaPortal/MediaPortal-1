@@ -24,6 +24,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         public ProgramElement()
         {
             this.ProgramElementPID = 0;
+            this.LeaveProgramElement = false;
         }
 
         #endregion
@@ -46,6 +47,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                 this.programElementPID = value;
             }
         }
+
+        /// <summary>
+        /// Specifies if program element have to be left in stream.
+        /// </summary>
+        public Boolean LeaveProgramElement { get; set; }
 
         #endregion
 

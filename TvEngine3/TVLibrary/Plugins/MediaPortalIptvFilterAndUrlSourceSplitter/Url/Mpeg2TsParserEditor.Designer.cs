@@ -49,6 +49,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.checkBoxDetectDiscontinuity = new System.Windows.Forms.CheckBox();
             this.checkBoxAlignToMpeg2TsPacket = new System.Windows.Forms.CheckBox();
             this.tabPageFilteringProgramElements = new System.Windows.Forms.TabPage();
+            this.textBoxTransportStreamProgramMapSectionPID = new System.Windows.Forms.TextBox();
             this.labelTransportStreamProgramMapPID = new System.Windows.Forms.Label();
             this.buttonRemove = new System.Windows.Forms.Button();
             this.buttonAdd = new System.Windows.Forms.Button();
@@ -63,7 +64,6 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.labelRawSectionData = new System.Windows.Forms.Label();
             this.textBoxRawSectionData = new System.Windows.Forms.TextBox();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-            this.textBoxTransportStreamProgramMapSectionPID = new System.Windows.Forms.TextBox();
             this.tabControl.SuspendLayout();
             this.tabPageBasicSettings.SuspendLayout();
             this.groupBoxDescription.SuspendLayout();
@@ -311,6 +311,13 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.tabPageFilteringProgramElements.UseVisualStyleBackColor = true;
             this.tabPageFilteringProgramElements.Enter += new System.EventHandler(this.checkBoxAlignToMpeg2TsPacket_Enter);
             // 
+            // textBoxTransportStreamProgramMapSectionPID
+            // 
+            this.textBoxTransportStreamProgramMapSectionPID.Location = new System.Drawing.Point(183, 9);
+            this.textBoxTransportStreamProgramMapSectionPID.Name = "textBoxTransportStreamProgramMapSectionPID";
+            this.textBoxTransportStreamProgramMapSectionPID.Size = new System.Drawing.Size(74, 20);
+            this.textBoxTransportStreamProgramMapSectionPID.TabIndex = 0;
+            // 
             // labelTransportStreamProgramMapPID
             // 
             this.labelTransportStreamProgramMapPID.AutoSize = true;
@@ -325,7 +332,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.buttonRemove.Location = new System.Drawing.Point(344, 7);
             this.buttonRemove.Name = "buttonRemove";
             this.buttonRemove.Size = new System.Drawing.Size(75, 23);
-            this.buttonRemove.TabIndex = 5;
+            this.buttonRemove.TabIndex = 2;
             this.buttonRemove.Text = "Remove";
             this.buttonRemove.UseVisualStyleBackColor = true;
             this.buttonRemove.Click += new System.EventHandler(this.buttonRemove_Click);
@@ -335,7 +342,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.buttonAdd.Location = new System.Drawing.Point(263, 7);
             this.buttonAdd.Name = "buttonAdd";
             this.buttonAdd.Size = new System.Drawing.Size(75, 23);
-            this.buttonAdd.TabIndex = 4;
+            this.buttonAdd.TabIndex = 1;
             this.buttonAdd.Text = "Add";
             this.buttonAdd.UseVisualStyleBackColor = true;
             this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
@@ -469,13 +476,6 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             // 
             this.errorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
             this.errorProvider.ContainerControl = this;
-            // 
-            // textBoxTransportStreamProgramMapSectionPID
-            // 
-            this.textBoxTransportStreamProgramMapSectionPID.Location = new System.Drawing.Point(183, 9);
-            this.textBoxTransportStreamProgramMapSectionPID.Name = "textBoxTransportStreamProgramMapSectionPID";
-            this.textBoxTransportStreamProgramMapSectionPID.Size = new System.Drawing.Size(74, 20);
-            this.textBoxTransportStreamProgramMapSectionPID.TabIndex = 8;
             // 
             // Mpeg2TsParserEditor
             // 
