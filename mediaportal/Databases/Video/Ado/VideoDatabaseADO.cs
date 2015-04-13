@@ -2421,33 +2421,25 @@ namespace MediaPortal.Video.Database.SqlServer
         {
           // Update movie info (no dateAdded update)
 
-          query.idDirector = lDirector;
-          query.strPlotOutline = details1.PlotOutline;
-          query.strPlot = details1.Plot;
-          query.strTagLine = details1.TagLine;
-          query.strVotes = details1.Votes;
-          query.fRating = strRating;
-          query.strCast = details1.Cast;
-          query.strCredits = details1.WritingCredits;
-          query.iYear = details1.Year;
-          query.strGenre = details1.Genre;
-          query.strPictureURL = details1.ThumbURL;
-          query.strTitle = details1.Title;
-          query.IMDBID = details1.IMDBNumber;
-          query.mpaa = details1.MPARating;
-          query.runtime = details1.RunTime;
-          query.iswatched = details1.Watched;
-          query.strUserReview = details1.UserReview;
-          query.strFanartURL = details1.FanartURL;
-          query.strDirector = details1.Director;
-          query.dateWatched = Convert.ToDateTime(details1.DateWatched);
-          query.studios = details1.Studios;
-          query.country = details1.Country;
-          query.language = details1.Language;
-          query.lastupdate = Convert.ToDateTime(details1.LastUpdate);
-          query.strSortTitle = details1.SortTitle;
+          strSQL =
+            String.Format(
+              "UPDATE movieinfo SET idDirector={0}, strPlotOutline='{1}', strPlot='{2}', strTagLine='{3}', strVotes='{4}', fRating='{5}', strCast='{6}',strCredits='{7}', iYear={8}, strGenre='{9}', strPictureURL='{10}', strTitle='{11}', IMDBID='{12}', mpaa='{13}', runtime={14}, iswatched={15} , strUserReview='{16}', strFanartURL='{17}' , strDirector ='{18}', dateWatched='{19}', studios = '{20}', country = '{21}', language = '{22}' , lastupdate = '{23}', strSortTitle = '{24}' WHERE idMovie={25}",
+              lDirector, details1.PlotOutline,
+              details1.Plot, details1.TagLine,
+              details1.Votes, strRating,
+              details1.Cast, details1.WritingCredits,
+              details1.Year, details1.Genre,
+              details1.ThumbURL, details1.Title,
+              details1.IMDBNumber,
+              details1.MPARating, details1.RunTime,
+              details1.Watched, details1.UserReview,
+              details1.FanartURL, details1.Director,
+              details1.DateWatched, details1.Studios,
+              details1.Country, details1.Language,
+              details1.LastUpdate, details1.SortTitle,
+              lMovieId);
 
-          _connection.SaveChanges();
+          _connection.ExecuteStoreCommand(strSQL);
         }
 
         VideoDatabase.GetMovieInfoById(details1.ID, ref details1);
@@ -2602,11 +2594,11 @@ namespace MediaPortal.Video.Database.SqlServer
       
       try
       {
-        List<Databases.movieinfo> query = (from sql in _connection.movieinfoes
-                                           join s1 in _connection.movies on sql.idMovie equals s1.idMovie
-                                           join s2 in _connection.paths on s1.idPath equals s2.idPath
-                                           where sql.idMovie == lMovieId
-                                           select sql).ToList();
+        string strSQL = String.Format(
+         "SELECT * FROM movieinfo,movie,path WHERE path.idpath=movie.idpath AND movie.idMovie=movieinfo.idMovie AND movieinfo.idmovie={0}",
+         lMovieId);
+
+        var query = _connection.ExecuteStoreQuery<Databases.movieinfo>(strSQL).ToList();
 
         if (query.Count == 0)
         {
@@ -3486,6 +3478,11 @@ namespace MediaPortal.Video.Database.SqlServer
           return;
         }
 
+        if (string.IsNullOrEmpty(thumbURL))
+        {
+          thumbURL = Strings.Unknown;
+        }
+
         var query = (from sql in _connection.movieinfoes
                      where sql.idMovie == lMovieId
                      select sql).FirstOrDefault();
@@ -3852,7 +3849,10 @@ namespace MediaPortal.Video.Database.SqlServer
       try
       {
         string strActor = strActor1;
-        //DatabaseUtility.RemoveInvalidChars(ref strActor);
+        if (string.IsNullOrEmpty(strActor))
+        {
+          strActor = Strings.Unknown;
+        }
         movies.Clear();
 
         if (!IsConnected())
