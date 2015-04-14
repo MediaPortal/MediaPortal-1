@@ -349,14 +349,7 @@ namespace MediaPortal.Player
         }
         if (basicVideo != null)
         {
-          hr = basicVideo.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
-          if (hr < 0)
-          {
-            Error.SetError("Unable to play movie", "Can not find movie width/height");
-            m_strCurrentFile = "";
-            CloseInterfaces();
-            return false;
-          }
+          basicVideo.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
         }
         /*
         GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target, Color.Black, 1.0f, 0);
@@ -500,10 +493,9 @@ namespace MediaPortal.Player
     {
       if (GUIGraphicsContext.Vmr9Active)
       {
-        _updateNeeded = false;
         m_bStarted = true;
-        return;
       }
+
       if (GUIGraphicsContext.IsFullScreenVideo != m_bFullScreen)
       {
         m_bFullScreen = GUIGraphicsContext.IsFullScreenVideo;
@@ -593,7 +585,14 @@ namespace MediaPortal.Player
         {
           return;
         }
-        videoWin.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          videoWin.SetWindowPosition(0, 0, GUIGraphicsContext.Width, GUIGraphicsContext.Width);
+        }
+        else
+        {
+          videoWin.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+        }
       }
     }
 
@@ -609,8 +608,17 @@ namespace MediaPortal.Player
         {
           return;
         }
+
         basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
-        basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
+
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+        }
+        else
+        {
+          basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
+        }
       }
     }
 
@@ -665,7 +673,6 @@ namespace MediaPortal.Player
             videoWin.put_Visible(OABool.True);
           }
         }
-        CheckVideoResolutionChanges();
         updateTimer = DateTime.Now;
       }
       if (m_speedRate != 10000)
@@ -677,32 +684,6 @@ namespace MediaPortal.Player
         m_lastFrameCounter = 0;
       }
       OnProcess();
-    }
-
-    private void CheckVideoResolutionChanges()
-    {
-      if (videoWin == null || basicVideo == null)
-      {
-        return;
-      }
-      int aspectX, aspectY;
-      int videoWidth = 1, videoHeight = 1;
-      if (basicVideo != null)
-      {
-        basicVideo.GetVideoSize(out videoWidth, out videoHeight);
-      }
-      aspectX = videoWidth;
-      aspectY = videoHeight;
-      if (basicVideo != null)
-      {
-        basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
-      }
-      if (videoHeight != m_iVideoHeight || videoWidth != m_iVideoWidth ||
-          aspectX != m_aspectX || aspectY != m_aspectY)
-      {
-        _updateNeeded = true;
-        SetVideoWindow();
-      }
     }
 
     protected virtual void OnProcess() {}

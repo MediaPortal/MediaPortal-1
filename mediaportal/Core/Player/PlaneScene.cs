@@ -546,6 +546,48 @@ namespace MediaPortal.Player
       return 0;
     }
 
+    public void RenderGui()
+    {
+      // TODO render GUI in two partd
+      //RenderLayers(GUILayers.under);
+    }
+
+    public void RenderOverlay()
+    {
+      RenderLayers(GUILayers.all);
+    }
+
+    private void RenderLayers(GUILayers layers)
+    {
+      lock (GUIGraphicsContext.RenderLock)
+      {
+        GUIGraphicsContext.InVmr9Render = true;
+
+        Device device = GUIGraphicsContext.DX9Device;
+
+        device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+        device.BeginScene();
+
+        GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers);
+        GUIFontManager.Present();
+
+        device.EndScene();
+        device.Present();
+
+        GUIGraphicsContext.InVmr9Render = false;
+      }
+    }
+
+    public void SetRenderTarget(uint target)
+    {
+      lock (GUIGraphicsContext.RenderLock)
+      {
+        IntPtr ptr = (IntPtr)target;
+        Surface surface = new Surface(ptr);
+        GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
+      }
+    }
+
     public static void RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf renderModeHalf, float timePassed,
                                        Surface backbuffer, Surface surface, Rectangle targetRect)
     {
@@ -563,7 +605,7 @@ namespace MediaPortal.Player
         if (!GUIGraphicsContext.BlankScreen)
         {
           // Render GUI + Video surface
-          GUIGraphicsContext.RenderGUI.RenderFrame(timePassed);
+          GUIGraphicsContext.RenderGUI.RenderFrame(timePassed, GUILayers.all);
           GUIFontManager.Present();
         }
       }
@@ -713,7 +755,7 @@ namespace MediaPortal.Player
               if (!GUIGraphicsContext.BlankScreen)
               {
                 // Render GUI + Video surface
-                GUIGraphicsContext.RenderGUI.RenderFrame(timePassed);
+                GUIGraphicsContext.RenderGUI.RenderFrame(timePassed, GUILayers.all);
                 GUIFontManager.Present();
               }
             }

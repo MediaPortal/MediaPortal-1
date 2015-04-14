@@ -15,10 +15,12 @@ GrabBitmaps             @10
 AddTeeSinkNameToGraph   @11
 EvrInit                 @12
 EvrDeinit               @13
-EVRDrawStats		    @14
-EVRResetStatCounters	@15
+EVRDrawStats            @14
+EVRResetStatCounters    @15
 EVRNotifyRateChange     @16
 EVRNotifyDVDMenuState   @17
 EVRGetVideoFPS          @18
 EVRUpdateDisplayFPS     @19
 EVRGetDisplayFPS        @20
+MadInit                 @21
+MadDeinit               @22

@@ -156,20 +156,6 @@ namespace MediaPortal.Player
       }
     }
 
-    public override void SetVideoWindow()
-    {
-      if (GUIGraphicsContext.IsFullScreenVideo != _isFullscreen)
-      {
-        _isFullscreen = GUIGraphicsContext.IsFullScreenVideo;
-        _updateNeeded = true;
-      }
-      if (!_updateNeeded)
-      {
-        return;
-      }
-      _updateNeeded = false;
-    }
-
     protected override string MatchFilters(string format)
     {
       if (filterConfig != null && format == "Video")

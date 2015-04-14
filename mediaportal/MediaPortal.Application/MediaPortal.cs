@@ -1302,7 +1302,8 @@ public class MediaPortalApp : D3D, IRender
     {
       UpdateStats();
 
-      if (GUIGraphicsContext.IsEvr && g_Player.HasVideo && GUIGraphicsContext.Vmr9Active)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR && 
+           g_Player.HasVideo && GUIGraphicsContext.Vmr9Active)
       {
         if (_showStats != _showStatsPrevious)
         {
@@ -1976,7 +1977,8 @@ public class MediaPortalApp : D3D, IRender
   private void OnDisplayChange(ref Message msg)
   {
     Log.Debug("Main: WM_DISPLAYCHANGE");
-    if (VMR9Util.g_vmr9 != null && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsEvr)
+    if (VMR9Util.g_vmr9 != null && GUIGraphicsContext.Vmr9Active && 
+        GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
     {
       VMR9Util.g_vmr9.UpdateEVRDisplayFPS(); // Update FPS
     }
@@ -2576,14 +2578,14 @@ public class MediaPortalApp : D3D, IRender
   /// 
   /// </summary>
   /// <param name="timePassed"></param>
-  public void RenderFrame(float timePassed)
+  public void RenderFrame(float timePassed, GUILayers layers)
   {
     if (!_suspended && AppActive)
     {
       try
       {
         CreateStateBlock();
-        GUILayerManager.Render(timePassed);
+        GUILayerManager.Render(timePassed, layers);
         RenderStats();
       }
       catch (Exception ex)
@@ -3149,7 +3151,7 @@ public class MediaPortalApp : D3D, IRender
             CreateStateBlock();
             GUIGraphicsContext.SetScalingResolution(0, 0, false);
             // ask the layer manager to render all layers
-            GUILayerManager.Render(timePassed);
+            GUILayerManager.Render(timePassed, GUILayers.all);
             RenderStats();
             GUIFontManager.Present();
             GUIGraphicsContext.DX9Device.EndScene();

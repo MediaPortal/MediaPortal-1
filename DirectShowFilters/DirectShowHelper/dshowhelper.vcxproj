@@ -140,6 +140,7 @@
     <ClCompile Include="source\DX9AllocatorPresenter.cpp" />
     <ClCompile Include="source\EVRCustomPresenter.cpp" />
     <ClCompile Include="source\GrabBitmaps.cpp" />
+    <ClCompile Include="source\MadPresenter.cpp" />
     <ClCompile Include="source\OuterEVR.cpp" />
     <ClCompile Include="source\Scheduler.cpp" />
     <ClCompile Include="source\StatsRenderer.cpp" />
@@ -154,6 +155,8 @@
     <ClInclude Include="source\EVRCustomPresenter.h" />
     <ClInclude Include="source\IAVSyncClock.h" />
     <ClInclude Include="source\IMF.h" />
+    <ClInclude Include="source\MadPresenter.h" />
+    <ClInclude Include="source\mvrInterfaces.h" />
     <ClInclude Include="source\MyQueue.h" />
     <ClInclude Include="source\OuterEVR.h" />
     <ClInclude Include="source\Scheduler.h" />

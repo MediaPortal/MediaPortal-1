@@ -76,6 +76,13 @@ namespace MediaPortal.GUI.Library
       LOST
       // ReSharper restore InconsistentNaming
     }
+
+    public enum VideoRendererType
+    {
+      VMR9 = 0,
+      EVR = 1,
+      madVR = 2
+    }
     
     public static event SendMessageHandler Receivers; // triggered when a message has arrived
     public static event OnActionHandler OnNewAction; // triggered when a action has arrived
@@ -133,6 +140,7 @@ namespace MediaPortal.GUI.Library
     private static bool _idleTimePowerSaving;
     private static bool _turnOffMonitor;
     private static bool _vmr9Allowed = true;
+    private static VideoRendererType _videoRendererType;
     private static DateTime _lastActivity = DateTime.Now;
     private static Screen _currentScreen;
     private static Screen _currentStartScreen;
@@ -1354,10 +1362,11 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static bool IsVMR9Exclusive { get; set; }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public static bool IsEvr { get; set; }
+    public static VideoRendererType VideoRenderer
+    {
+      get { return _videoRendererType; }
+      set { _videoRendererType = value; }
+    }
 
     /// <summary>
     /// 

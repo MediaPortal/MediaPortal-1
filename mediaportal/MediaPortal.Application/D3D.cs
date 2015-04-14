@@ -129,6 +129,7 @@ namespace MediaPortal
     protected bool                 IsDisplayTurnedOn;        // indicates if the display is turned on, assume yes on application launch
     protected bool                 IsUserPresent;            // indicates if a user is present, assume yes on application launch
     protected bool                 UseEnhancedVideoRenderer; // should EVR be used?
+    protected bool                 UseMadVideoRenderer;      // is madVR used?
     protected bool                 ExitToTray;               //
     protected int                  Frames;                   // number of frames since our last update
     protected static int           Volume;                   // used to save old volume level in case we mute audio
@@ -249,8 +250,20 @@ namespace MediaPortal
 
       _useExclusiveDirectXMode = !UseEnhancedVideoRenderer && _useExclusiveDirectXMode;
       GUIGraphicsContext.IsVMR9Exclusive = _useExclusiveDirectXMode;
-      GUIGraphicsContext.IsEvr = UseEnhancedVideoRenderer;
-      
+
+      if (UseEnhancedVideoRenderer)
+      {
+        GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.EVR;
+      }
+      else if (UseMadVideoRenderer)
+      {
+        GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.madVR;
+      }
+      else
+      {
+        GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.VMR9;
+      }
+
       InitializeComponent();
     }
 
@@ -806,7 +819,13 @@ namespace MediaPortal
 
       if (GUIGraphicsContext.Vmr9Active)
       {
-        FrameStatsLine2 = String.Format(GUIGraphicsContext.IsEvr ? "EVR {0} " : "VMR9 {0} ", GUIGraphicsContext.Vmr9FPS.ToString("f2"));
+        string renderer = "VMR9 {0} ";
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
+          renderer = "EVR {0} ";
+        else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          renderer = "madVR {0} ";
+
+        FrameStatsLine2 = String.Format(renderer, GUIGraphicsContext.Vmr9FPS.ToString("f2"));
       }
 
       string quality = String.Format("avg fps:{0} sync:{1} drawn:{2} dropped:{3} jitter:{4}",

@@ -30,6 +30,7 @@
 #include "dshowhelper.h"
 #include "evrcustomPresenter.h"
 #include "dx9allocatorpresenter.h"
+#include "madPresenter.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
@@ -67,12 +68,13 @@ TAvRevertMmThreadCharacteristics*   m_pAvRevertMmThreadCharacteristics = NULL;
 BOOL m_bEVRLoaded    = false;
 TCHAR* m_RenderPrefix = _T("vmr9");
 
-LPDIRECT3DDEVICE9			    m_pDevice       = NULL;
-CVMR9AllocatorPresenter*	m_vmr9Presenter = NULL;
-MPEVRCustomPresenter*	    m_evrPresenter  = NULL;
-IBaseFilter*				      m_pVMR9Filter   = NULL;
-IVMRSurfaceAllocator9*		m_allocator     = NULL;
-LONG						          m_iRecordingId  = 0;
+LPDIRECT3DDEVICE9         m_pDevice       = NULL;
+CVMR9AllocatorPresenter*  m_vmr9Presenter = NULL;
+MPEVRCustomPresenter*     m_evrPresenter  = NULL;
+MPMadPresenter*           m_madPresenter  = NULL;
+IBaseFilter*              m_pVMR9Filter   = NULL;
+IVMRSurfaceAllocator9*    m_allocator     = NULL;
+LONG                      m_iRecordingId  = 0;
 
 map<int,IStreamBufferRecordControl*> m_mapRecordControl;
 typedef map<int,IStreamBufferRecordControl*>::iterator imapRecordControl;
@@ -845,6 +847,35 @@ double EVRGetDisplayFPS()
       displayFPS = 1000.0 / displayFPS; // Convert period into FPS
   }
   return displayFPS;
+}
+
+BOOL MadInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter** madFilter)
+{
+  m_RenderPrefix = _T("mad");
+
+  m_pDevice = (LPDIRECT3DDEVICE9)(dwD3DDevice);
+
+  m_madPresenter = new MPMadPresenter(callback, m_pDevice);
+  m_pVMR9Filter = m_madPresenter->Initialize();
+  m_pVMR9Filter->AddRef();
+  *madFilter = m_pVMR9Filter;
+
+  if (!madFilter)
+    return FALSE;
+
+  return TRUE;
+}
+
+void MadDeinit()
+{
+  try
+  {
+    m_pVMR9Filter->Release();
+    m_pVMR9Filter = NULL;
+  }
+  catch(...)
+  {
+  }
 }
 
 void Vmr9SetDeinterlaceMode(int mode)

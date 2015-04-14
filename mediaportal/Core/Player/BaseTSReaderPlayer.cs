@@ -577,6 +577,10 @@ namespace MediaPortal.Player
         ExclusiveMode(false);
         return false;
       }
+
+      _basicVideo = _graphBuilder as IBasicVideo2;
+      _videoWin = _graphBuilder as IVideoWindow;
+
       int hr = _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
       if (hr < 0)
       {
@@ -598,11 +602,7 @@ namespace MediaPortal.Player
         hr = _basicVideo.GetVideoSize(out _videoWidth, out _videoHeight);
         if (hr < 0)
         {
-          Log.Error("TSReaderPlayer:GetVideoSize() failed");
-          _currentFile = "";
-          CloseInterfaces();
-          ExclusiveMode(false);
-          return false;
+          Log.Info("TSReaderPlayer:GetVideoSize() failed");
         }
         Log.Info("TSReaderPlayer:VideoSize:{0}x{1}", _videoWidth, _videoHeight);
       }
@@ -657,7 +657,7 @@ namespace MediaPortal.Player
         return;
       }
       _updateNeeded = false;
-      _isStarted = true;
+
       float x = _positionX;
       float y = _positionY;
       int nw = _width;
@@ -802,7 +802,6 @@ namespace MediaPortal.Player
         }
       }
       OnProcess();
-      CheckVideoResolutionChanges();
       if ((_currentPos > (_duration - 1.0)) && IsTimeShifting && (iSpeed != 1))
       {
         Log.Info("TSReaderPlayer : timeshifting FFWD/REW : currentPos > duration-1");
@@ -1442,7 +1441,14 @@ namespace MediaPortal.Player
         {
           return;
         }
-        _videoWin.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          _videoWin.SetWindowPosition(0, 0, GUIGraphicsContext.Width, GUIGraphicsContext.Width);
+        }
+        else
+        {
+          _videoWin.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+        }
       }
     }
 
@@ -1458,8 +1464,17 @@ namespace MediaPortal.Player
         {
           return;
         }
+
         _basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
-        _basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
+
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          _basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+        }
+        else
+        {
+          _basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
+        }
       }
     }
 
@@ -1479,32 +1494,6 @@ namespace MediaPortal.Player
       {
         _endOfFileDetected = true;
         Log.Info("TSReaderPlayer timeshift EOF");
-      }
-    }
-
-    private void CheckVideoResolutionChanges()
-    {
-      if (_videoWin == null || _basicVideo == null)
-      {
-        return;
-      }
-      int aspectX, aspectY;
-      int videoWidth = 1, videoHeight = 1;
-      if (_basicVideo != null)
-      {
-        _basicVideo.GetVideoSize(out videoWidth, out videoHeight);
-      }
-      aspectX = videoWidth;
-      aspectY = videoHeight;
-      if (_basicVideo != null)
-      {
-        _basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
-      }
-      if (videoHeight != _videoHeight || videoWidth != _videoWidth ||
-          aspectX != _aspectX || aspectY != _aspectY)
-      {
-        _updateNeeded = true;
-        SetVideoWindow();
       }
     }
 

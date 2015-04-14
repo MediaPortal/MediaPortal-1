@@ -67,7 +67,7 @@ namespace MediaPortal.GUI.Library
       return _layers[(int)zOrder];
     }
 
-    public static void Render(float timePassed)
+    public static void Render(float timePassed, GUILayers layers)
     {
       if (GUIGraphicsContext.BlankScreen)
       {
@@ -85,7 +85,16 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-      for (int i = 0; i < MAX_LAYERS; ++i)
+
+      int startLayer = 0;
+      int endLayer = MAX_LAYERS;
+
+      if (layers == GUILayers.under)
+        endLayer = 3;
+      else if (layers == GUILayers.over)
+        startLayer = 4;
+
+      for (int i = startLayer; i < endLayer; ++i)
       {
         if (_layers[i] != null)
         {
