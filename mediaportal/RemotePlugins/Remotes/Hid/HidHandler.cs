@@ -399,8 +399,9 @@ namespace MediaPortal.InputDevices
       }
     }
 
-    public void ProcessInput(Message aMessage)
+    public List<MediaPortal.InputDevices.HidUsageAction.ConditionalAction> ProcessInput(Message aMessage, bool shouldRaiseAction = true)
     {
+      var result = new List<MediaPortal.InputDevices.HidUsageAction.ConditionalAction>();
       var hidEvent = new HidEvent(aMessage, OnHidEventRepeat);
       if (HidListener.Verbose) //Avoid string conversion if not needed
       {
@@ -410,7 +411,7 @@ namespace MediaPortal.InputDevices
       if (!hidEvent.IsValid || !hidEvent.IsGeneric)
       {
         HidListener.LogInfo("HID: Skipping HID message.");
-        return;
+        return null;
       }
 
       //
@@ -444,9 +445,15 @@ namespace MediaPortal.InputDevices
         foreach (ushort usage in hidEvent.Usages)
         {
           HidListener.LogInfo("HID: try mapping usage {0}", usage.ToString("X4"));
-          usageAction.MapAction(usage, hidEvent.IsBackground, false);
+          result.Add(usageAction.GetAction(usage.ToString(), hidEvent.IsBackground, false));
+          if (shouldRaiseAction)
+          {
+              usageAction.MapAction(usage, hidEvent.IsBackground, false);
+          }
         }
+        return result;
       }
+      return null;
     }
 
     public void OnHidEventRepeat(HidEvent aHidEvent)
@@ -475,5 +482,6 @@ namespace MediaPortal.InputDevices
     }
 
     #endregion Implementation
+
   }
 }
