@@ -242,6 +242,11 @@ namespace MediaPortal.Player
 
       grabber.Clean();
       SubtitleRenderer.GetInstance().Clear();
+
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        GUIGraphicsContext.InVmr9Render = false;
+      }
     }
 
     /// <summary>
@@ -256,6 +261,11 @@ namespace MediaPortal.Player
       _renderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Video);
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnMessage);
+
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        GUIGraphicsContext.InVmr9Render = true;
+      }
     }
 
     /// <summary>
@@ -561,8 +571,6 @@ namespace MediaPortal.Player
     {
       lock (GUIGraphicsContext.RenderLock)
       {
-        GUIGraphicsContext.InVmr9Render = true;
-
         Device device = GUIGraphicsContext.DX9Device;
 
         device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
@@ -586,8 +594,6 @@ namespace MediaPortal.Player
 
         device.EndScene();
         device.Present();
-
-        GUIGraphicsContext.InVmr9Render = false;
       }
     }
 
