@@ -215,20 +215,20 @@ namespace MediaPortal.InputDevices
             }
         }
 
-        /// <summary>
-        /// Get the mapping for this remote
-        /// </summary>
-        /// <param name="msg"></param>
-        /// <returns></returns>
-        public MediaPortal.InputDevices.InputHandler.Mapping GetMapping(Message msg)
+      /// <summary>
+      /// Get the mapping for this remote
+      /// </summary>
+      /// <param name="msg"></param>
+      /// <returns></returns>
+      public MediaPortal.InputDevices.InputHandler.Mapping GetMapping(Message msg)
+      {
+        if (controlEnabled && msg.Msg == Win32.Const.WM_APPCOMMAND)
         {
-            if (controlEnabled && msg.Msg == Win32.Const.WM_APPCOMMAND)
-            {
-                Mapping mappedCommand = null;
-                if (WndProcAppCommand(ref msg, out mappedCommand, false))
-                    return mappedCommand;
-            }
-            return null;
+          Mapping mappedCommand = null;
+          if (WndProcAppCommand(ref msg, out mappedCommand, false))
+            return mappedCommand;
         }
+        return null;
+      }
     }
 }
