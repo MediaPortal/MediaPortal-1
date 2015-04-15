@@ -125,6 +125,9 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 {
   HRESULT hr = E_UNEXPECTED;
 
+  WORD height = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top;
+  WORD width = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
+
   CAutoLock cAutoLock(this);
 
   if (FAILED(hr = RenderToTexture(m_pMPTextureGui, m_pMPSurfaceGui)))
@@ -133,7 +136,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   if (FAILED(hr = StoreMadDeviceState()))
     return hr;
 
-  if (FAILED(hr = m_pCallback->RenderGui()))
+  if (FAILED(hr = m_pCallback->RenderGui(width, height, width, height)))
     return hr;
 
   if (FAILED(hr = SetupMadDeviceState()))
@@ -158,13 +161,16 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 
   CAutoLock cAutoLock(this);
 
+  WORD height = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top;
+  WORD width = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
+
   if (FAILED(hr = RenderToTexture(m_pMPTextureOsd, m_pMPSurfaceOsd)))
     return hr;
 
   if (FAILED(hr = StoreMadDeviceState()))
     return hr;
 
-  if (FAILED(hr = m_pCallback->RenderOverlay()))
+  if (FAILED(hr = m_pCallback->RenderOverlay(width, height, width, height)))
     return hr;
 
   if (FAILED(hr = SetupMadDeviceState()))

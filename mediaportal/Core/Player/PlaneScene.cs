@@ -546,18 +546,18 @@ namespace MediaPortal.Player
       return 0;
     }
 
-    public void RenderGui()
+    public void RenderGui(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
       // TODO render GUI in two partd
-      //RenderLayers(GUILayers.under);
+      //RenderLayers(GUILayers.under, width, height, arWidth, arHeight);
     }
 
-    public void RenderOverlay()
+    public void RenderOverlay(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
-      RenderLayers(GUILayers.all);
+      RenderLayers(GUILayers.all, width, height, arWidth, arHeight);
     }
 
-    private void RenderLayers(GUILayers layers)
+    private void RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
       lock (GUIGraphicsContext.RenderLock)
       {
@@ -570,6 +570,19 @@ namespace MediaPortal.Player
 
         GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers);
         GUIFontManager.Present();
+
+        if (width > 0 && height > 0)
+        {
+          _vmr9Util.VideoWidth = width;
+          _vmr9Util.VideoHeight = height;
+          _vmr9Util.VideoAspectRatioX = arWidth;
+          _vmr9Util.VideoAspectRatioY = arHeight;
+          _arVideoWidth = arWidth;
+          _arVideoHeight = arHeight;
+        }
+
+        SubtitleRenderer.GetInstance().Render();
+        //SubEngine.GetInstance().Render(_subsRect, _destinationRect);
 
         device.EndScene();
         device.Present();

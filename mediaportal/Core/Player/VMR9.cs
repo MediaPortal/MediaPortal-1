@@ -66,10 +66,10 @@ namespace MediaPortal.Player
     void SetSampleTime(Int64 nsSampleTime);
 
     [PreserveSig]
-    void RenderGui();
+    void RenderGui(Int16 cx, Int16 cy, Int16 arx, Int16 ary);
 
     [PreserveSig]
-    void RenderOverlay();
+    void RenderOverlay(Int16 cx, Int16 cy, Int16 arx, Int16 ary);
 
     [PreserveSig]
     void SetRenderTarget(uint target);
