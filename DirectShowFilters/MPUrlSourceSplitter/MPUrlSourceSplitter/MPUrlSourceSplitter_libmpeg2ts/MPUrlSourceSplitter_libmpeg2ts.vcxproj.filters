@@ -135,6 +135,9 @@
     <ClInclude Include="SectionCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ConditionalAccessSection.h">
+      <Filter>Sections\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -211,6 +214,12 @@
     </ClCompile>
     <ClCompile Include="SectionCollection.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConditionalAccessSection.cpp">
+      <Filter>Sections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConditionalAccessParser.cpp">
+      <Filter>Parsers\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

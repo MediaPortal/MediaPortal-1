@@ -80,6 +80,7 @@
   <ItemGroup>
     <ClInclude Include="ConditionalAccessDescriptor.h" />
     <ClInclude Include="ConditionalAccessParser.h" />
+    <ClInclude Include="ConditionalAccessSection.h" />
     <ClInclude Include="Crc32.h" />
     <ClInclude Include="Descriptor.h" />
     <ClInclude Include="DescriptorCollection.h" />
@@ -109,6 +110,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConditionalAccessDescriptor.cpp" />
+    <ClCompile Include="ConditionalAccessParser.cpp" />
+    <ClCompile Include="ConditionalAccessSection.cpp" />
     <ClCompile Include="Crc32.cpp" />
     <ClCompile Include="Descriptor.cpp" />
     <ClCompile Include="DescriptorCollection.cpp" />
