@@ -62,6 +62,7 @@
     <Compile Include="BufferHelper.cs" />
     <Compile Include="FilterUrl.cs" />
     <Compile Include="FilterUrlCollection.cs" />
+    <Compile Include="Sections\ConditionalAccessDescriptor.cs" />
     <Compile Include="Sections\Descriptor.cs" />
     <Compile Include="Sections\DescriptorCollection.cs" />
     <Compile Include="Sections\DescriptorFactory.cs" />
