@@ -849,7 +849,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
                     {
                         System.Threading.Thread.Sleep(100);
                     }
-
+                    
                     uint iptvSectionCount = 0;
                     result = filterStateEx.GetIptvSectionCount(out iptvSectionCount);
 
@@ -886,7 +886,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
                                 TransportStreamProgramMapSection streamSection = section as TransportStreamProgramMapSection;
 
                                 bool continueWithNextSection = false;
-                                for (int j = 0; ((!continueWithNextSection) && (j < filterUrl.Url.Mpeg2TsParser.Sections.Count)); i++)
+                                for (int j = 0; ((!continueWithNextSection) && (j < filterUrl.Url.Mpeg2TsParser.Sections.Count)); j++)
                                 {
                                     ProgramAssociationSection filterSection = filterUrl.Url.Mpeg2TsParser.Sections[j].Section as ProgramAssociationSection;
 
@@ -908,7 +908,10 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
                                     }
                                 }
                             }
-
+                            else
+                            {
+                                filterUrl.Url.Mpeg2TsParser.Sections.Add(new StreamSection(section));
+                            }
                         }
                     }
                 }

@@ -63,6 +63,7 @@
     <Compile Include="FilterUrl.cs" />
     <Compile Include="FilterUrlCollection.cs" />
     <Compile Include="Sections\ConditionalAccessDescriptor.cs" />
+    <Compile Include="Sections\ConditionalAccessSection.cs" />
     <Compile Include="Sections\Descriptor.cs" />
     <Compile Include="Sections\DescriptorCollection.cs" />
     <Compile Include="Sections\DescriptorFactory.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Sections\SectionFactory.cs" />
     <Compile Include="Sections\TransportStreamProgramMapSection.cs" />
     <Compile Include="Sections\UnknownDescriptor.cs" />
+    <Compile Include="Sections\UnknownSection.cs" />
     <Compile Include="StreamSection.cs" />
     <Compile Include="StreamSectionCollection.cs" />
     <Compile Include="Url\AfhsManifestUrl.cs" />

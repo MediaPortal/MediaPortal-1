@@ -60,7 +60,9 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Sections
             this.VersionNumber = 0;
             this.CurrentNextIndicator = false;
             this.SectionNumber = 0;
-            this.LastSectionNumber = 0;   
+            this.LastSectionNumber = 0;
+            this.Programs.Clear();
+            this.NetworkInformationTablePID = ProgramAssociationSection.NetworkInformationTablePIDUndefined;
 
             base.Parse(sectionData);
 

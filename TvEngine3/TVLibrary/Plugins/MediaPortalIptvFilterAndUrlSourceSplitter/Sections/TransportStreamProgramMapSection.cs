@@ -66,6 +66,8 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Sections
             this.SectionNumber = 0;
             this.LastSectionNumber = 0;
             this.PcrPID = 0;
+            this.Descriptors.Clear();
+            this.Programs.Clear();
 
             base.Parse(sectionData);
 
