@@ -146,6 +146,18 @@ bool CMshsCurlInstance::IsLockedCurlInstanceByOwner(void *owner)
   return (this->owner == owner);
 }
 
+void CMshsCurlInstance::ClearSession(void)
+{
+  __super::ClearSession();
+
+  this->owner = NULL;
+  this->ownerLockCount = 0;
+  this->connectionState = None;
+
+  this->mshsDownloadRequest = NULL;
+  this->mshsDownloadResponse = NULL;
+}
+
 /* protected methods */
 
 CDownloadResponse *CMshsCurlInstance::CreateDownloadResponse(void)

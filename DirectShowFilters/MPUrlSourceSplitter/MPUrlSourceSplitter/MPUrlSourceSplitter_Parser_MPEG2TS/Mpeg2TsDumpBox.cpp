@@ -100,41 +100,14 @@ bool CMpeg2TsDumpBox::SetStreamPackage(CStreamPackage *streamPackage)
   return result;
 }
 
-void CMpeg2TsDumpBox::SetInputData(bool inputData)
-{
-  this->flags &= ~MPEG2TS_DUMP_BOX_FLAG_INPUT_DATA;
-  this->flags |= (inputData) ? MPEG2TS_DUMP_BOX_FLAG_INPUT_DATA : MPEG2TS_DUMP_BOX_FLAG_NONE;
-}
-
-void CMpeg2TsDumpBox::SetOutputData(bool outputData)
-{
-  this->flags &= ~MPEG2TS_DUMP_BOX_FLAG_OUTPUT_DATA;
-  this->flags |= (outputData) ? MPEG2TS_DUMP_BOX_FLAG_OUTPUT_DATA : MPEG2TS_DUMP_BOX_FLAG_NONE;
-}
-
 /* other methods */
-
-bool CMpeg2TsDumpBox::IsInputData(void)
-{
-  return this->IsSetFlags(MPEG2TS_DUMP_BOX_FLAG_INPUT_DATA);
-}
-
-bool CMpeg2TsDumpBox::IsOutputData(void)
-{
-  return this->IsSetFlags(MPEG2TS_DUMP_BOX_FLAG_OUTPUT_DATA);
-}
 
 /* protected methods */
 
 uint64_t CMpeg2TsDumpBox::GetBoxSize(void)
 {
-  uint64_t result = 0;
+  uint64_t result = 37;
 
-  if (this->IsSetAnyOfFlags(MPEG2TS_DUMP_BOX_FLAG_INPUT_DATA | MPEG2TS_DUMP_BOX_FLAG_OUTPUT_DATA))
-  {
-    result = 37;
-  }
-  
   uint64_t boxSize = __super::GetBoxSize();
   result = (boxSize != 0) ? (result + boxSize) : 0; 
 
@@ -147,20 +120,17 @@ uint32_t CMpeg2TsDumpBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool 
 
   if (result != 0)
   {
-    if (this->IsSetAnyOfFlags(MPEG2TS_DUMP_BOX_FLAG_INPUT_DATA | MPEG2TS_DUMP_BOX_FLAG_OUTPUT_DATA))
-    {
-      WBE8INC(buffer, result, this->packageState);
-      WBE32INC(buffer, result, this->packageErrorCode);
+    WBE8INC(buffer, result, this->packageState);
+    WBE32INC(buffer, result, this->packageErrorCode);
 
-      WBE32INC(buffer, result, this->requestFlags);
-      WBE32INC(buffer, result, this->requestId);
-      WBE64INC(buffer, result, this->requestStart);
-      WBE32INC(buffer, result, this->requestLength);
-      WBE32INC(buffer, result, this->requestStreamId);
-      WBE32INC(buffer, result, this->requestStartTime);
+    WBE32INC(buffer, result, this->requestFlags);
+    WBE32INC(buffer, result, this->requestId);
+    WBE64INC(buffer, result, this->requestStart);
+    WBE32INC(buffer, result, this->requestLength);
+    WBE32INC(buffer, result, this->requestStreamId);
+    WBE32INC(buffer, result, this->requestStartTime);
 
-      WBE32INC(buffer, result, this->responseFlags);
-    }
+    WBE32INC(buffer, result, this->responseFlags);
 
     if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
     {

@@ -145,8 +145,11 @@ bool CDescriptor::ParseInternal(const unsigned char *buffer, uint32_t length, bo
     {
       result &= ((length - position) >= this->payloadSize);
 
-      this->payload = ALLOC_MEM_SET(this->payload, uint8_t, this->payloadSize, 0);
-      result &= (this->payload != NULL);
+      if (result)
+      {
+        this->payload = ALLOC_MEM_SET(this->payload, uint8_t, this->payloadSize, 0);
+        result &= (this->payload != NULL);
+      }
 
       if (result)
       {

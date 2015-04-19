@@ -731,7 +731,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
 
         if (this->cacheFile->GetCacheFile() == NULL)
         {
-          wchar_t *storeFilePath = this->GetStoreFile();
+          wchar_t *storeFilePath = this->GetCacheFile();
           CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->cacheFile->SetCacheFile(storeFilePath));
           FREE_MEM(storeFilePath);
         }
@@ -772,7 +772,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
   return S_OK;
 }
 
-wchar_t *CMPUrlSourceSplitterOutputPin::GetStoreFile(void)
+wchar_t *CMPUrlSourceSplitterOutputPin::GetCacheFile(void)
 {
   wchar_t *result = NULL;
   const wchar_t *folder = this->parameters->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);

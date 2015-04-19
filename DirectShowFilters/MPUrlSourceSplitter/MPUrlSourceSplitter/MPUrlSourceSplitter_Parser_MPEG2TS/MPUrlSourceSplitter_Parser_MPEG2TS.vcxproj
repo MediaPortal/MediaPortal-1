@@ -166,6 +166,10 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ConditionalAccessParserContext.h" />
+    <ClInclude Include="ConditionalAccessSectionContext.h" />
+    <ClInclude Include="ConditionalAccessSectionPacketContext.h" />
+    <ClInclude Include="ConditionalAccessSectionPacketContextCollection.h" />
     <ClInclude Include="IndexedMpeg2tsStreamFragment.h" />
     <ClInclude Include="IndexedMpeg2tsStreamFragmentCollection.h" />
     <ClInclude Include="Mpeg2TsDumpBox.h" />
@@ -192,6 +196,10 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="TsPacketContextCollection.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ConditionalAccessParserContext.cpp" />
+    <ClCompile Include="ConditionalAccessSectionContext.cpp" />
+    <ClCompile Include="ConditionalAccessSectionPacketContext.cpp" />
+    <ClCompile Include="ConditionalAccessSectionPacketContextCollection.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

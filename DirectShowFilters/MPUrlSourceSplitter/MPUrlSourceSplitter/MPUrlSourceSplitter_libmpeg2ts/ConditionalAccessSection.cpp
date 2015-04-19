@@ -107,7 +107,7 @@ HRESULT CConditionalAccessSection::Parse(CProgramSpecificInformationPacket *psiP
         CHECK_POINTER_HRESULT(result, factory, result, E_OUTOFMEMORY);
 
         uint16_t processed = 0;
-        uint16_t descriptorSize = this->GetSectionSize() - SECTION_CRC32_SIZE;
+        uint16_t descriptorSize = this->GetSectionSize() - position - SECTION_CRC32_SIZE;
 
         while (SUCCEEDED(result) && (processed < descriptorSize))
         {

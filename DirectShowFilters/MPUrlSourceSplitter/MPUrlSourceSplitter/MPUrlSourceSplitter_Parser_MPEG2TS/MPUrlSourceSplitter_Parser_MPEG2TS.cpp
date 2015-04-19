@@ -40,7 +40,6 @@
 #include "LockMutex.h"
 #include "Mpeg2TsDumpBox.h"
 #include "ConditionalAccessDescriptor.h"
-#include "ConditionalAccessParser.h"
 
 #include "base64.h"
 
@@ -102,6 +101,7 @@ CMPUrlSourceSplitter_Parser_Mpeg2TS::CMPUrlSourceSplitter_Parser_Mpeg2TS(HRESULT
   this->programAssociationParserContext = NULL;
   this->transportStreamProgramMapParserContextCollection = NULL;
   this->sections = NULL;
+  this->conditionalAccessParserContext = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -120,6 +120,7 @@ CMPUrlSourceSplitter_Parser_Mpeg2TS::CMPUrlSourceSplitter_Parser_Mpeg2TS(HRESULT
     this->discontinuityParser = new CDiscontinuityParser(result);
     this->programAssociationParserContext = new CProgramAssociationParserContext(result);
     this->transportStreamProgramMapParserContextCollection = new CTransportStreamProgramMapParserContextCollection(result);
+    this->conditionalAccessParserContext = new CConditionalAccessParserContext(result);
     this->sections = new CSectionCollection(result);
 
     CHECK_POINTER_HRESULT(*result, this->streamFragments, *result, E_OUTOFMEMORY);
@@ -128,6 +129,7 @@ CMPUrlSourceSplitter_Parser_Mpeg2TS::CMPUrlSourceSplitter_Parser_Mpeg2TS(HRESULT
     CHECK_POINTER_HRESULT(*result, this->discontinuityParser, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->programAssociationParserContext, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->transportStreamProgramMapParserContextCollection, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->conditionalAccessParserContext, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->sections, *result, E_OUTOFMEMORY);
 
     this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
@@ -143,6 +145,7 @@ CMPUrlSourceSplitter_Parser_Mpeg2TS::~CMPUrlSourceSplitter_Parser_Mpeg2TS()
   FREE_MEM_CLASS(this->discontinuityParser);
   FREE_MEM_CLASS(this->programAssociationParserContext);
   FREE_MEM_CLASS(this->transportStreamProgramMapParserContextCollection);
+  FREE_MEM_CLASS(this->conditionalAccessParserContext);
   FREE_MEM_CLASS(this->sections);
 
   if (this->mutex != NULL)
@@ -705,6 +708,7 @@ void CMPUrlSourceSplitter_Parser_Mpeg2TS::ClearSession(void)
   this->programMapPID = MPEG2TS_PROGRAM_MAP_PID_DEFAULT;
   this->programAssociationParserContext->Clear();
   this->transportStreamProgramMapParserContextCollection->Clear();
+  this->conditionalAccessParserContext->Clear();
   this->sections->Clear();
 }
 
@@ -712,22 +716,9 @@ void CMPUrlSourceSplitter_Parser_Mpeg2TS::ClearSession(void)
 
 /* protected methods */
 
-wchar_t *CMPUrlSourceSplitter_Parser_Mpeg2TS::GetStoreFile(const wchar_t *extension)
+const wchar_t *CMPUrlSourceSplitter_Parser_Mpeg2TS::GetStoreFileNamePart(void)
 {
-  wchar_t *result = NULL;
-  const wchar_t *folder = this->connectionParameters->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
-
-  if (folder != NULL)
-  {
-    wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
-    if (guid != NULL)
-    {
-      result = FormatString(L"%smpurlsourcesplitter_parser_mpeg2ts_%s.%s", folder, guid, extension);
-    }
-    FREE_MEM(guid);
-  }
-
-  return result;
+  return PARSER_STORE_FILE_NAME_PART;
 }
 
 int64_t CMPUrlSourceSplitter_Parser_Mpeg2TS::GetBytePosition(void)
@@ -936,9 +927,6 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
 
       if (SUCCEEDED(result))
       {
-        CTsPacket *nullPacket = CTsPacket::CreateNullPacket();
-        CHECK_POINTER_HRESULT(result, nullPacket, result, E_OUTOFMEMORY);
-
         // create only reference TS packet (we don't copy data from original TS packet from buffer)
         CTsPacket *packet = new CTsPacket(&result, true);
         CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
@@ -971,17 +959,11 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                   caller->logger->Log(LOGGER_WARNING, L"%s: %s: discontinuity parser returned error: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, result);
                 }
               }
-
+              
               if (SUCCEEDED(result) && caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_SET_NOT_SCRAMBLED))
               {
                 // directly change transport scrambling control flag in buffer
                 packet->SetTransportScramblingControl(TS_PACKET_TRANSPORT_SCRAMBLING_CONTROL_NOT_SCRAMBLED);
-
-                if (packet->GetPID() == CONDITIONAL_ACCESS_PARSER_PSI_PACKET_PID)
-                {
-                  // replace conditional access PSI packet with NULL packet
-                  memcpy(buffer + processed, nullPacket->GetPacket(), TS_PACKET_SIZE);
-                }
               }
 
               processed += TS_PACKET_SIZE;
@@ -995,7 +977,6 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
         }
 
         FREE_MEM_CLASS(packet);
-        FREE_MEM_CLASS(nullPacket);
       }
 
       FREE_MEM_CLASS(indexedAlignedStreamFragments);
@@ -1616,6 +1597,202 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
               }
             }
 
+            // process stream fragment for conditional access section
+            if (SUCCEEDED(result) && (packet->GetPID() == CONDITIONAL_ACCESS_PARSER_PSI_PACKET_PID) && caller->IsSetAnyOfFlags(
+              MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_SET_NOT_SCRAMBLED |
+              MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_STREAM_ANALYSIS))
+            {
+              // create only reference program specific information TS packet (we don't copy data from original TS packet from buffer)
+              CProgramSpecificInformationPacket *psiPacket = new CProgramSpecificInformationPacket(&result, CONDITIONAL_ACCESS_PARSER_PSI_PACKET_PID, true);
+              CHECK_POINTER_HRESULT(result, psiPacket, result, E_OUTOFMEMORY);
+
+              if (psiPacket->Parse(buffer + processed, length - processed))
+              {
+                // PSI packet with specified PID
+                // conditional access section PSI packet
+
+                HRESULT res = caller->conditionalAccessParserContext->GetParser()->Parse(psiPacket);
+
+                if (caller->conditionalAccessParserContext->GetParser()->IsSectionFound())
+                {
+                  // found MPEG2 TS packet with conditional access section (maybe complete, maybe incomplete, maybe with error)
+
+                  if ((caller->conditionalAccessParserContext->GetSectionContext() == NULL) &&
+                    caller->IsSetAnyOfFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_SET_NOT_SCRAMBLED))
+                  {
+                    // create new conditional access section context
+                    result = caller->conditionalAccessParserContext->CreateSectionContext();
+                    CHECK_POINTER_HRESULT(result, caller->conditionalAccessParserContext->GetSectionContext(), result, E_OUTOFMEMORY);
+
+                    if (SUCCEEDED(result))
+                    {
+                      caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionEmpty(true);
+                      caller->conditionalAccessParserContext->GetSectionContext()->SetContinuityCounter(psiPacket->GetContinuityCounter());
+                    }
+                  }
+
+                  bool isOwner = false;
+                  switch (res)
+                  {
+                  case S_OK:
+                    // complete conditional access section
+                    {
+                      isOwner = true;
+
+                      if (caller->conditionalAccessParserContext->GetLastSectionCrc32() != caller->conditionalAccessParserContext->GetParser()->GetConditionalAccessSection()->GetCrc32())
+                      {
+                        caller->logger->LogBinary(LOGGER_VERBOSE,
+                          caller->conditionalAccessParserContext->GetParser()->GetConditionalAccessSection()->GetSection(),
+                          caller->conditionalAccessParserContext->GetParser()->GetConditionalAccessSection()->GetSectionSize(),
+                          L"%s: %s: new conditional access section detected", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME);
+
+                        caller->conditionalAccessParserContext->SetLastSectionCrc32(caller->conditionalAccessParserContext->GetParser()->GetConditionalAccessSection()->GetCrc32());
+
+                        // remember section (if needed)
+                        if (SUCCEEDED(result) && caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_STREAM_ANALYSIS))
+                        {
+                          CConditionalAccessSection *section = (CConditionalAccessSection *)caller->conditionalAccessParserContext->GetParser()->GetConditionalAccessSection()->Clone();
+                          CHECK_POINTER_HRESULT(result, section, result, E_OUTOFMEMORY);
+
+                          CHECK_CONDITION_HRESULT(result, caller->sections->Add(section), result, E_OUTOFMEMORY);
+                          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(section));
+                        }
+                      }
+
+                      if (SUCCEEDED(result) &&
+                        caller->IsSetAnyOfFlags(
+                        MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_SET_NOT_SCRAMBLED))
+                      {
+                        CConditionalAccessSection *section = (CConditionalAccessSection *)caller->conditionalAccessParserContext->GetParser()->GetConditionalAccessSection()->Clone();
+                        CHECK_POINTER_HRESULT(result, section, result, E_OUTOFMEMORY);
+
+                        CHECK_CONDITION_HRESULT(result, caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSection(section), result, E_OUTOFMEMORY);
+
+                        caller->conditionalAccessParserContext->GetParser()->GetConditionalAccessSection()->Clear();
+
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionEmpty(false);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionIncomplete(false);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionComplete(true);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionError(false);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionIsSection(true);
+
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetPacketCount(caller->conditionalAccessParserContext->GetSectionContext()->GetPacketCount() + 1);
+                      }
+                    }
+                    break;
+                  case S_FALSE:
+                    // incomplete conditional access section
+                    {
+                      if (caller->IsSetAnyOfFlags(
+                        MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_SET_NOT_SCRAMBLED))
+                      {
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionEmpty(false);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionIncomplete(true);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionComplete(false);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionError(false);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionIsSection(true);
+
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetPacketCount(caller->conditionalAccessParserContext->GetSectionContext()->GetPacketCount() + 1);
+                      }
+                    }
+                    break;
+                  case E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION:
+                    // section is empty and PSI packet with section data
+                    {
+                      isOwner = true;
+
+                      caller->conditionalAccessParserContext->GetParser()->GetConditionalAccessSection()->Clear();
+
+                      if (caller->IsSetAnyOfFlags(
+                        MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_SET_NOT_SCRAMBLED))
+                      {
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionEmpty(true);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionIncomplete(false);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionComplete(false);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionError(true);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionIsSection(true);
+
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetPacketCount(caller->conditionalAccessParserContext->GetSectionContext()->GetPacketCount() + 1);
+                      }
+                    }
+                    break;
+                  case E_MPEG2TS_INCOMPLETE_SECTION:
+                    // section is incomplete
+                    {
+                      isOwner = true;
+
+                      caller->conditionalAccessParserContext->GetParser()->GetConditionalAccessSection()->Clear();
+
+                      if (caller->IsSetAnyOfFlags(
+                        MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_SET_NOT_SCRAMBLED))
+                      {
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionEmpty(false);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionIncomplete(true);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionComplete(false);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionError(true);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionIsSection(true);
+
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetPacketCount(caller->conditionalAccessParserContext->GetSectionContext()->GetPacketCount() + 1);
+                      }
+                    }
+                    break;
+                  case E_MPEG2TS_SECTION_INVALID_CRC32:
+                    // invalid section CRC32 (corrupted section)
+                    {
+                      isOwner = true;
+
+                      caller->conditionalAccessParserContext->GetParser()->GetConditionalAccessSection()->Clear();
+
+                      if (caller->IsSetAnyOfFlags(
+                        MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_SET_NOT_SCRAMBLED))
+                      {
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionEmpty(false);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionIncomplete(false);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionComplete(true);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionError(true);
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetOriginalSectionIsSection(true);
+
+                        caller->conditionalAccessParserContext->GetSectionContext()->SetPacketCount(caller->conditionalAccessParserContext->GetSectionContext()->GetPacketCount() + 1);
+                      }
+                    }
+                    break;
+                  default:
+                    // another error
+                    {
+                      result = res;
+                      caller->logger->Log(LOGGER_ERROR, L"%s: %s: conditional access parser returned parse error: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, result);
+                    }
+                    break;
+                  }
+
+                  if (SUCCEEDED(result) && caller->IsSetAnyOfFlags(
+                    MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_SET_NOT_SCRAMBLED))
+                  {
+                    CConditionalAccessSectionPacketContext *packetContext = new CConditionalAccessSectionPacketContext(&result);
+                    CHECK_POINTER_HRESULT(result, packetContext, result, E_OUTOFMEMORY);
+
+                    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), packetContext->SetTsPacketIndex(processed / TS_PACKET_SIZE));
+                    CHECK_CONDITION_HRESULT(result, packetContext->SetSectionContext(caller->conditionalAccessParserContext->GetSectionContext()), result, E_FAIL);
+
+                    CHECK_CONDITION_HRESULT(result, currentDiscontinuityProcessedStreamFragment->GetConditionalAccessSectionPacketContexts()->Add(packetContext), result, E_OUTOFMEMORY);
+                    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(packetContext));
+
+                    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), packetContext->SetSectionContextOwner(isOwner));
+                  }
+
+                  // conditional access section context will be released from memory with removing packet context which is owner of conditional access section context 
+                  CHECK_CONDITION_EXECUTE(SUCCEEDED(result) && isOwner, caller->conditionalAccessParserContext->FreeSectionContext());
+                }
+                else
+                {
+                  result = res;
+                  caller->logger->Log(LOGGER_ERROR, L"%s: %s: conditional access parser returned error: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, result);
+                }
+              }
+
+              FREE_MEM_CLASS(psiPacket);
+            }
+
             processed += TS_PACKET_SIZE;
           }
 
@@ -1629,6 +1806,9 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
           currentDiscontinuityProcessedStreamFragment->SetTransportStreamMapSectionDetectionFinished(currentDiscontinuityProcessedStreamFragment->GetTransportStreamProgramMapSectionPacketContexts()->Count() != 0, UINT_MAX);
           currentDiscontinuityProcessedStreamFragment->SetTransportStreamMapSectionUpdated(currentDiscontinuityProcessedStreamFragment->GetTransportStreamProgramMapSectionPacketContexts()->Count() == 0, UINT_MAX);
 
+          currentDiscontinuityProcessedStreamFragment->SetConditionalAccessSectionDetectionFinished(currentDiscontinuityProcessedStreamFragment->GetConditionalAccessSectionPacketContexts()->Count() != 0, UINT_MAX);
+          currentDiscontinuityProcessedStreamFragment->SetConditionalAccessSectionUpdated(currentDiscontinuityProcessedStreamFragment->GetConditionalAccessSectionPacketContexts()->Count() == 0, UINT_MAX);
+
           caller->streamFragments->UpdateIndexes(indexedDiscontinuityProcessedStreamFragment->GetItemIndex(), 1);
         }
         else
@@ -1636,6 +1816,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
           currentDiscontinuityProcessedStreamFragment->SetDiscontinuityProcessed(false, UINT_MAX);
           currentDiscontinuityProcessedStreamFragment->SetProgramAssociationSectionUpdated(true, UINT_MAX);
           currentDiscontinuityProcessedStreamFragment->SetTransportStreamMapSectionUpdated(true, UINT_MAX);
+          currentDiscontinuityProcessedStreamFragment->SetConditionalAccessSectionUpdated(true, UINT_MAX);
 
           caller->streamFragments->UpdateIndexes(indexedDiscontinuityProcessedStreamFragment->GetItemIndex(), 1);
         }
@@ -1730,7 +1911,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                 }
               }
 
-              // now we same same count of PSI and NULL MPEG2 TS packets to replace original section MPEG2 TS packets
+              // now we have same count of PSI and NULL MPEG2 TS packets to replace original section MPEG2 TS packets
               CHECK_CONDITION_HRESULT(result, context->GetSectionContext()->GetPackets()->Append(psiPackets), result, E_OUTOFMEMORY);
               FREE_MEM_CLASS(psiPackets);
             }
@@ -1918,7 +2099,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                   }
                 }
 
-                // now we same same count of PSI and NULL MPEG2 TS packets to replace original section MPEG2 TS packets
+                // now we have same count of PSI and NULL MPEG2 TS packets to replace original section MPEG2 TS packets
                 CHECK_CONDITION_HRESULT(result, context->GetSectionContext()->GetPackets()->Append(psiPackets), result, E_OUTOFMEMORY);
                 FREE_MEM_CLASS(psiPackets);
               }
@@ -1987,32 +2168,109 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
       UNLOCK_MUTEX(caller->mutex)
     }
 
-    if (SUCCEEDED(result) && caller->streamFragments->HasBothSectionsUpdatedStreamFragments())
+
+    if (SUCCEEDED(result) && caller->streamFragments->HasConditionalAccessSectionDetectionFinishedStreamFragments())
     {
       sleepMode = SLEEP_MODE_SHORT;
 
       // don't wait too long, we can do this later
       LOCK_MUTEX(caller->mutex, 20)
 
-      CIndexedMpeg2tsStreamFragmentCollection *indexedBothSectionsUpdatedStreamFragments = new CIndexedMpeg2tsStreamFragmentCollection(&result);
-      CHECK_POINTER_HRESULT(result, indexedBothSectionsUpdatedStreamFragments, result, E_OUTOFMEMORY);
+      CIndexedMpeg2tsStreamFragmentCollection *indexedConditionalAccessSectionDetectionFinishedStreamFragments = new CIndexedMpeg2tsStreamFragmentCollection(&result);
+      CHECK_POINTER_HRESULT(result, indexedConditionalAccessSectionDetectionFinishedStreamFragments, result, E_OUTOFMEMORY);
 
-      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetBothSectionsUpdatedStreamFragments(indexedBothSectionsUpdatedStreamFragments));
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetConditionalAccessSectionDetectionFinishedStreamFragments(indexedConditionalAccessSectionDetectionFinishedStreamFragments));
 
-      for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedBothSectionsUpdatedStreamFragments->Count())); i++)
+      CTsPacket *nullPacket = CTsPacket::CreateNullPacket();
+      CHECK_POINTER_HRESULT(result, nullPacket, result, E_OUTOFMEMORY);
+
+      for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedConditionalAccessSectionDetectionFinishedStreamFragments->Count())); i++)
       {
-        CIndexedMpeg2tsStreamFragment *indexedBothSectionsUpdatedStreamFragment = indexedBothSectionsUpdatedStreamFragments->GetItem(i);
-        CMpeg2tsStreamFragment *currentBothSectionsUpdatedStreamFragment = indexedBothSectionsUpdatedStreamFragment->GetItem();
+        CIndexedMpeg2tsStreamFragment *indexedConditionalAccessSectionDetectionFinishedStreamFragment = indexedConditionalAccessSectionDetectionFinishedStreamFragments->GetItem(i);
+        CMpeg2tsStreamFragment *currentConditionalAccessSectionDetectionFinishedStreamFragment = indexedConditionalAccessSectionDetectionFinishedStreamFragment->GetItem();
 
-        currentBothSectionsUpdatedStreamFragment->SetProgramAssociationSectionUpdated(false, UINT_MAX);
-        currentBothSectionsUpdatedStreamFragment->SetTransportStreamMapSectionUpdated(false, UINT_MAX);
-        currentBothSectionsUpdatedStreamFragment->SetProcessed(true, UINT_MAX);
-        currentBothSectionsUpdatedStreamFragment->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
+        // create buffer for replacing conditional access section MPEG2 TS packets
+        unsigned int length = currentConditionalAccessSectionDetectionFinishedStreamFragment->GetBuffer()->GetBufferOccupiedSpace();
+        unsigned char *buffer = currentConditionalAccessSectionDetectionFinishedStreamFragment->GetBuffer()->GetInternalBuffer();
 
-        caller->streamFragments->UpdateIndexes(indexedBothSectionsUpdatedStreamFragment->GetItemIndex(), 1);
+        unsigned int j = 0;
+        while (SUCCEEDED(result) && (j < currentConditionalAccessSectionDetectionFinishedStreamFragment->GetConditionalAccessSectionPacketContexts()->Count()))
+        {
+          bool contextProcessed = false;
+          CConditionalAccessSectionPacketContext *context = currentConditionalAccessSectionDetectionFinishedStreamFragment->GetConditionalAccessSectionPacketContexts()->GetItem(j);
+
+          if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_SET_NOT_SCRAMBLED))
+          {
+            // replace conditional access section with null MPEG2 TS packet
+
+            memcpy(buffer + context->GetTsPacketIndex() * TS_PACKET_SIZE, nullPacket->GetPacket(), TS_PACKET_SIZE);
+            contextProcessed = true;
+          }
+
+          // in case of end of stream in protocol or connection problems we don't receive any more data, we must replace program association section with NULL MPEG2 TS packets
+          if (SUCCEEDED(result) && (context->GetSectionContext()->IsOriginalSectionError() || caller->protocolHoster->IsEndOfStreamReached() || caller->IsConnectionLostCannotReopen()))
+          {
+            // original section has some error: is empty, is incomplete or bad CRC32
+            // in all cases it will be replaced by NULL MPEG2 TS packet to avoid problems
+
+            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), memcpy(buffer + context->GetTsPacketIndex() * TS_PACKET_SIZE, nullPacket->GetPacket(), TS_PACKET_SIZE));
+            contextProcessed = true;
+          }
+
+          if (contextProcessed)
+          {
+            currentConditionalAccessSectionDetectionFinishedStreamFragment->GetConditionalAccessSectionPacketContexts()->Remove(j);
+          }
+          else
+          {
+            j++;
+          }
+        }
+
+        if (currentConditionalAccessSectionDetectionFinishedStreamFragment->GetConditionalAccessSectionPacketContexts()->Count() == 0)
+        {
+          // all conditional access sections in MPEG2 TS packet were updated
+          currentConditionalAccessSectionDetectionFinishedStreamFragment->SetConditionalAccessSectionDetectionFinished(false, UINT_MAX);
+          currentConditionalAccessSectionDetectionFinishedStreamFragment->SetConditionalAccessSectionUpdated(true, UINT_MAX);
+
+          caller->streamFragments->UpdateIndexes(indexedConditionalAccessSectionDetectionFinishedStreamFragment->GetItemIndex(), 1);
+        }
       }
 
-      FREE_MEM_CLASS(indexedBothSectionsUpdatedStreamFragments);
+      FREE_MEM_CLASS(nullPacket);
+      FREE_MEM_CLASS(indexedConditionalAccessSectionDetectionFinishedStreamFragments);
+
+      UNLOCK_MUTEX(caller->mutex)
+    }
+
+
+
+    if (SUCCEEDED(result) && caller->streamFragments->HasAllSectionsUpdatedStreamFragments())
+    {
+      sleepMode = SLEEP_MODE_SHORT;
+
+      // don't wait too long, we can do this later
+      LOCK_MUTEX(caller->mutex, 20)
+
+      CIndexedMpeg2tsStreamFragmentCollection *indexedAllSectionsUpdatedStreamFragments = new CIndexedMpeg2tsStreamFragmentCollection(&result);
+      CHECK_POINTER_HRESULT(result, indexedAllSectionsUpdatedStreamFragments, result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetAllSectionsUpdatedStreamFragments(indexedAllSectionsUpdatedStreamFragments));
+
+      for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedAllSectionsUpdatedStreamFragments->Count())); i++)
+      {
+        CIndexedMpeg2tsStreamFragment *indexedAllSectionsUpdatedStreamFragment = indexedAllSectionsUpdatedStreamFragments->GetItem(i);
+        CMpeg2tsStreamFragment *currentAllSectionsUpdatedStreamFragment = indexedAllSectionsUpdatedStreamFragment->GetItem();
+
+        currentAllSectionsUpdatedStreamFragment->SetProgramAssociationSectionUpdated(false, UINT_MAX);
+        currentAllSectionsUpdatedStreamFragment->SetTransportStreamMapSectionUpdated(false, UINT_MAX);
+        currentAllSectionsUpdatedStreamFragment->SetProcessed(true, UINT_MAX);
+        currentAllSectionsUpdatedStreamFragment->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
+
+        caller->streamFragments->UpdateIndexes(indexedAllSectionsUpdatedStreamFragment->GetItemIndex(), 1);
+      }
+
+      FREE_MEM_CLASS(indexedAllSectionsUpdatedStreamFragments);
 
       // check if last fragment is processed
       // if yes, then set end of stream reached flag
@@ -2131,7 +2389,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
       CHECK_HRESULT_EXECUTE(result, caller->protocolHoster->ProcessStreamPackage(package));
       CHECK_HRESULT_EXECUTE(result, package->GetError());
 
-      if (caller->IsSetFlags(PARSER_PLUGIN_FLAG_DUMP_INPUT_DATA))
+      if (caller->IsDumpInputData())
       {
         CMpeg2TsDumpBox *dumpBox = new CMpeg2TsDumpBox(&result);
         CHECK_CONDITION_HRESULT(result, dumpBox, result, E_OUTOFMEMORY);
@@ -2529,7 +2787,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
           }
         }
 
-        if (caller->IsSetFlags(PARSER_PLUGIN_FLAG_DUMP_OUTPUT_DATA) && (caller->streamPackage->GetState() == CStreamPackage::Completed))
+        if (caller->IsDumpOutputData() && (caller->streamPackage->GetState() == CStreamPackage::Completed))
         {
           CMpeg2TsDumpBox *dumpBox = new CMpeg2TsDumpBox(&result);
           CHECK_CONDITION_HRESULT(result, dumpBox, result, E_OUTOFMEMORY);
@@ -2565,7 +2823,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
 
       if (caller->cacheFile->GetCacheFile() == NULL)
       {
-        wchar_t *storeFilePath = caller->GetStoreFile(L"temp");
+        wchar_t *storeFilePath = caller->GetCacheFile(NULL);
         CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, caller->cacheFile->SetCacheFile(storeFilePath));
         FREE_MEM(storeFilePath);
       }

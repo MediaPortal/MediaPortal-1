@@ -39,7 +39,10 @@ FORCEINLINE bool IS_CURL_ERROR(HRESULT error) { return ((error & 0xFFFFFF00) == 
 
 #define CURL_INSTANCE_FLAG_NONE                                               FLAGS_NONE
 
-#define CURL_INSTANCE_FLAG_LAST                                               (FLAGS_LAST + 0)
+#define CURL_INSTANCE_FLAG_DUMP_INPUT_DATA                                    (1 << (FLAGS_LAST + 0))
+#define CURL_INSTANCE_FLAG_DUMP_OUTPUT_DATA                                   (1 << (FLAGS_LAST + 1))
+
+#define CURL_INSTANCE_FLAG_LAST                                               (FLAGS_LAST + 2)
 
 #define METHOD_CREATE_CURL_WORKER_NAME                                        L"CreateCurlWorker()"
 #define METHOD_DESTROY_CURL_WORKER_NAME                                       L"DestroyCurlWorker()"
@@ -102,6 +105,14 @@ public:
   // @return : true if successful, false otherwise
   virtual bool SetDumpFile(const wchar_t *dumpFile);
 
+  // sets dump input data flag
+  // @return : true to set, false otherwise
+  virtual void SetDumpInputData(bool dumpInputData);
+
+  // sets dump output data flag
+  // @return : true to set, false otherwise
+  virtual void SetDumpOutputData(bool dumpOutputData);
+
   /* other methods */
 
   // initializes CURL instance
@@ -143,6 +154,17 @@ public:
   // @param timeout : the timeout in us (microseconds), UINT_MAX for no timeout
   // @return : S_OK if successful, E_NOT_VALID_STATE if no CURL instance or can't get internal socket, E_INVALIDARG if read and write are false, error code if another error
   virtual HRESULT Select(bool read, bool write, unsigned int timeout);
+
+  // tests if dump input data flag is set
+  // @return : true if set, false otherwise
+  virtual bool IsDumpInputData(void);
+
+  // tests if dump output data flag is set
+  // @return : true if set, false otherwise
+  virtual bool IsDumpOutputData(void);
+
+  // clears session
+  virtual void ClearSession(void);
 
 protected:
   CURL *curl;
@@ -217,14 +239,14 @@ protected:
   // called when CURL debug message arives
   // @param type : CURL message type
   // @param data : received CURL message data
-  virtual void CurlDebug(curl_infotype type, const wchar_t *data);
+  // @param size : size of the data
+  virtual void CurlDebug(curl_infotype type, const unsigned char *data, size_t size);
 
   // process received data
-  // @param dumpBox : the dump box for dump file (can be NULL if dumping is not required)
   // @param buffer : buffer with received data
   // @param length : the length of buffer
   // @return : the length of processed data (lower value than length means error)
-  virtual size_t CurlReceiveData(CDumpBox *dumpBox, const unsigned char *buffer, size_t length);
+  virtual size_t CurlReceiveData(const unsigned char *buffer, size_t length);
 
   // gets new instance of download response
   // @return : new download response or NULL if error
@@ -244,6 +266,12 @@ protected:
   // creates dump box for dump file
   // @return : dump box or NULL if error
   virtual CDumpBox *CreateDumpBox(void) = 0;
+
+  // converts CURL text data into readable string
+  // @param data : points to CURL text data
+  // @param size : the size of data
+  // @return : readable string or NULL if error
+  static wchar_t *ConvertTextData(const unsigned char *data, size_t size);
 };
 
 #endif

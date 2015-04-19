@@ -546,6 +546,7 @@ void CRtmpCurlInstance::RtmpDumpRawDataCallback(struct RTMP *r, char *buffer, in
 
     if (dumpBox != NULL)
     {
+      dumpBox->SetInputData(true);
       dumpBox->SetTimeWithLocalTime();
       dumpBox->SetPayload((uint8_t *)buffer, (uint32_t)length);
     }

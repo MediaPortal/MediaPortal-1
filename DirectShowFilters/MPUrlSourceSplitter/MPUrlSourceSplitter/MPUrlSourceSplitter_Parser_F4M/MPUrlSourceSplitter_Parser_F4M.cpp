@@ -643,7 +643,7 @@ void CMPUrlSourceSplitter_Parser_F4M::ClearSession(void)
 
 /* protected methods */
 
-wchar_t *CMPUrlSourceSplitter_Parser_F4M::GetStoreFile(const wchar_t *extension)
+const wchar_t *CMPUrlSourceSplitter_Parser_F4M::GetStoreFileNamePart(void)
 {
-  return NULL;
+  return PARSER_STORE_FILE_NAME_PART;
 }

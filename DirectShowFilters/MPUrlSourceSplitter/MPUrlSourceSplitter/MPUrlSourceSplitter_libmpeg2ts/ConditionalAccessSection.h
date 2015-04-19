@@ -30,7 +30,7 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 
 #define CONDITIONAL_ACCESS_SECTION_FLAG_LAST                          (SECTION_FLAG_LAST + 0)
 
-#define CONDITIONAL_ACCESS_SECTION_TABLE_ID                           0x00000009
+#define CONDITIONAL_ACCESS_SECTION_TABLE_ID                           0x00000001
 
 #define CONDITIONAL_ACCESS_SECTION_VERSION_NUMBER_MASK                0x1F
 #define CONDITIONAL_ACCESS_SECTION_VERSION_NUMBER_SHIFT               1

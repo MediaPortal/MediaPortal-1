@@ -217,6 +217,11 @@ protected:
   // @return : dump box or NULL if error
   virtual CDumpBox *CreateDumpBox(void);
 
+  // creates dump box for dump file for specified track ID
+  // @param trackId : the track ID to create dump box
+  // @return : dump box or NULL if error
+  virtual CDumpBox *CreateDumpBox(unsigned int trackId);
+
   // stops receiving data
   // @param force : true if receiving data must be stopped, false otherwise
   // @return : true if successful, false otherwise

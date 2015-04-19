@@ -318,6 +318,7 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
 
                   if (dumpBox != NULL)
                   {
+                    dumpBox->SetInputData(true);
                     dumpBox->SetTimeWithLocalTime();
                     dumpBox->SetPayload(buffer, receivedLength);
                   }

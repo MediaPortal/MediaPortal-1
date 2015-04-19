@@ -35,15 +35,17 @@
 
 #define PROTOCOL_PLUGIN_FLAG_NONE                                     PLUGIN_FLAG_NONE
 
-#define PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_SPECIFIED                    (1 << (PLUGIN_FLAG_LAST + 0))
-#define PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_DETECTED                     (1 << (PLUGIN_FLAG_LAST + 1))
-#define PROTOCOL_PLUGIN_FLAG_SET_STREAM_LENGTH                        (1 << (PLUGIN_FLAG_LAST + 2))
-#define PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED                  (1 << (PLUGIN_FLAG_LAST + 3))
-#define PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED                  (1 << (PLUGIN_FLAG_LAST + 4))
-#define PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED                    (1 << (PLUGIN_FLAG_LAST + 5))
-#define PROTOCOL_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN            (1 << (PLUGIN_FLAG_LAST + 6))
+#define PROTOCOL_PLUGIN_FLAG_DUMP_INPUT_DATA                          (1 << (PLUGIN_FLAG_LAST + 0))
+#define PROTOCOL_PLUGIN_FLAG_DUMP_OUTPUT_DATA                         (1 << (PLUGIN_FLAG_LAST + 1))
+#define PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_SPECIFIED                    (1 << (PLUGIN_FLAG_LAST + 2))
+#define PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_DETECTED                     (1 << (PLUGIN_FLAG_LAST + 3))
+#define PROTOCOL_PLUGIN_FLAG_SET_STREAM_LENGTH                        (1 << (PLUGIN_FLAG_LAST + 4))
+#define PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED                  (1 << (PLUGIN_FLAG_LAST + 5))
+#define PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED                  (1 << (PLUGIN_FLAG_LAST + 6))
+#define PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED                    (1 << (PLUGIN_FLAG_LAST + 7))
+#define PROTOCOL_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN            (1 << (PLUGIN_FLAG_LAST + 8))
 
-#define PROTOCOL_PLUGIN_FLAG_LAST                                     (PLUGIN_FLAG_LAST + 7)
+#define PROTOCOL_PLUGIN_FLAG_LAST                                     (PLUGIN_FLAG_LAST + 9)
 
 class CProtocolPlugin : public CPlugin, virtual public IProtocol
 {
@@ -51,12 +53,19 @@ public:
   CProtocolPlugin(HRESULT *result, CLogger *logger, CParameterCollection *configuration);
   virtual ~CProtocolPlugin(void);
 
-  // IProtocol interface
+  // CPlugin
 
-  // ISimpleProtocol interface
+  // initialize plugin implementation with configuration parameters
+  // @param configuration : the reference to additional configuration parameters (created by plugin's hoster class)
+  // @return : S_OK if successfull, error code otherwise
+  virtual HRESULT Initialize(CPluginConfiguration *configuration);
 
   // clears current session
   virtual void ClearSession(void);
+
+  // IProtocol interface
+
+  // ISimpleProtocol interface
 
   // reports actual stream time to protocol
   // @param streamTime : the actual stream time in ms to report to protocol
@@ -108,6 +117,14 @@ public:
   // @return : true if connection was lost and can't be opened again, false otherwise
   virtual bool IsConnectionLostCannotReopen(void);
 
+  // tests if dump input data flags is set
+  // @return : true if dump input data is set, false otherwise
+  virtual bool IsDumpInputData(void);
+
+  // tests if dump output data flags is set
+  // @return : true if dump output data is set, false otherwise
+  virtual bool IsDumpOutputData(void);
+
 protected:
   // holds logger instance
   CLogger *logger;
@@ -120,6 +137,24 @@ protected:
   volatile unsigned int pauseSeekStopMode;
 
   /* methods */
+
+  // gets store file name part
+  // @return : store file name part or NULL if error
+  virtual const wchar_t *GetStoreFileNamePart(void) = 0;
+
+  // gets cache file name
+  // @param extra : the extra string to be added to dump file name (NULL or empty string if no extra string is added)
+  // @return : cache file name or NULL if error
+  virtual wchar_t *GetCacheFile(const wchar_t *extra);
+
+  // gets dump file name
+  // @param extra : the extra string to be added to dump file name (NULL or empty string if no extra string is added)
+  // @return : dump file name or NULL if error
+  virtual wchar_t *GetDumpFile(const wchar_t *extra);
+
+  // gets dump file name for input data
+  // @return : dump file name or NULL if error
+  virtual wchar_t *GetDumpFile(void);
 };
 
 #endif
