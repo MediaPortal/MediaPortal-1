@@ -1207,9 +1207,10 @@ namespace TvService
             recDetail.User.CardId = user.CardId;
             SetRecordingProgramState(recDetail);
             _recordingsInProgressList.Add(recDetail);
-            RecordingStartedNotification(recDetail);
             SetupQualityControl(recDetail);
             WriteMatroskaFile(recDetail);
+            // Morpheus_xx, 2015-04-20: make sure that all recording details (including .xml file) are available before we fire the event
+            RecordingStartedNotification(recDetail);
           }
           catch (Exception ex)
           {
