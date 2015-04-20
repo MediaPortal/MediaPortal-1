@@ -41,8 +41,9 @@ namespace MediaPortal.InputDevices
       _initialized = true;
       //diRemote.Init(); // Disable DirectX Input (not compatible with NET4 and later)
       X10Remote.Init();
-      CentareaRemote.Init();
+      CentareaRemote.Init();      
       HidListener.Init(GUIGraphicsContext.ActiveForm);
+      AppCommandListener.Init(GUIGraphicsContext.ActiveForm);
       MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
       FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
       HCWRemote.Init(GUIGraphicsContext.ActiveForm);
@@ -58,6 +59,7 @@ namespace MediaPortal.InputDevices
       }
 
       HidListener.DeInit();
+      AppCommandListener.DeInit();
       MCE2005Remote.DeInit();
       FireDTVRemote.DeInit();
       CentareaRemote.DeInit();
@@ -82,6 +84,11 @@ namespace MediaPortal.InputDevices
       if (HidListener.WndProc(ref msg, out action, out key, out keyCode))
       {
         return true;
+      }
+
+      if (AppCommandListener.WndProc(ref msg, out action, out key, out keyCode))
+      {
+          return true;
       }
 
       if (HCWRemote.WndProc(msg))
@@ -126,6 +133,7 @@ namespace MediaPortal.InputDevices
     #region Fields
 
     private static HidListener HidListener = new HidListener();
+    private static AppCommandListener AppCommandListener = new AppCommandListener();
     private static MCE2005Remote MCE2005Remote = new MCE2005Remote();
     private static HcwRemote HCWRemote = new HcwRemote();
     private static X10Remote X10Remote = new X10Remote();

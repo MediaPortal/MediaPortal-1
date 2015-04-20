@@ -140,6 +140,7 @@ namespace MediaPortal.GUI.Library
     private static readonly bool IsDX9EXused = OSInfo.OSInfo.VistaOrLater();
     private static bool _allowRememberLastFocusedItem = true;
     private static bool _fullHD3DFormat = false;
+    private static bool _tabWithBlackBars = false;
 
     // Stacks for matrix transformations.
     private static readonly Stack<Matrix> ProjectionMatrixStack = new Stack<Matrix>();
@@ -297,6 +298,8 @@ namespace MediaPortal.GUI.Library
     public static bool Render3DSubtitle { get; set; }
 
     public static int Render3DSubtitleDistance { get; set; }
+
+    public static bool StretchSubtitles { get; set; }
 
     public enum eFullHD3DFormat { None, SBS, TAB };
 
@@ -758,6 +761,12 @@ namespace MediaPortal.GUI.Library
       set { _fullHD3DFormat = value; }
     }
 
+    public static bool IsTabWithBlackBars
+    {
+      get { return _tabWithBlackBars; }
+      set { _tabWithBlackBars = value; }
+    }
+
     /// <summary>
     /// Get/set current skin folder path
     /// </summary>
@@ -914,6 +923,9 @@ namespace MediaPortal.GUI.Library
     /// Get/Set application state (starting,running,stopping)
     /// </summary>
     public static State CurrentState { get; set; }
+
+    // addendum to indicate that the system is powering off and not just rebooting
+    public static bool StoppingToPowerOff { get; set; }
 
     /// <summary>
     /// Get pointer to the applications form (needed by overlay windows)

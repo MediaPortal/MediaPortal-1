@@ -3785,7 +3785,8 @@ public class MediaPortalApp : D3D, IRender
                   _restartOptions = RestartOptions.PowerOff;
                   _useRestartOptions = true;
                   GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
-                  ShuttingDown = true;
+                  GUIGraphicsContext.StoppingToPowerOff = true;
+                  ShuttingDown = true;                  
                   break;
 
                 case 1031:
@@ -4655,6 +4656,16 @@ public class MediaPortalApp : D3D, IRender
             VirtualDirectories.Instance.Music.Remove(message.Label);
             VirtualDirectories.Instance.Pictures.Remove(message.Label);
           }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_DATABASE_SCAN_ENDED:
+          dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+          if (null != dlgNotify)
+          {
+            dlgNotify.SetHeading(GUILocalizeStrings.Get(1020)); // Information
+            dlgNotify.SetText(GUILocalizeStrings.Get(300024)); // Scan finished
+            dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+          }       
           break;
       }
     }

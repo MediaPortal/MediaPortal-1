@@ -3,7 +3,7 @@
   <DVBCTuning>
     <Frequency>474000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
+    <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
     <Frequency>762000</Frequency>

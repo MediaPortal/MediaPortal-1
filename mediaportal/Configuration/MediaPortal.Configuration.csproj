@@ -258,6 +258,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Plugins.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Sections\TVAdvancedOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -426,11 +431,6 @@
     </Compile>
     <Compile Include="Subdialogs\ParameterForm.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SectionSettings.cs">
       <SubType>UserControl</SubType>
@@ -645,6 +645,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Content Include="Resources\blu-ray_regions.png" />
+    <None Include="Resources\ms_wed_7000.jpg" />
+    <None Include="Resources\Wireless-Entertainment-Desktop-7000.jpg" />
+    <None Include="Resources\remote_MceHp.jpg" />
     <EmbeddedResource Include="Sections\TVAdvancedOptions.resx">
       <DependentUpon>TVAdvancedOptions.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -997,6 +1000,7 @@
     <Content Include="Resources\icon_folder.png" />
     <Content Include="Resources\icon_help.png" />
     <Content Include="Resources\icon_refresh.png" />
+    <None Include="Resources\k60_media_keys.png" />
     <Content Include="Resources\logo_PayPal.png" />
     <None Include="Resources\mplogo.png" />
     <None Include="Resources\remote.MceVista.png" />

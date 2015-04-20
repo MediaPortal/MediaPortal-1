@@ -177,10 +177,10 @@ namespace MediaPortal.Util
         ".aac,.mp4,.m4a,.m4b,.m4p," +
         // BassAc3
         ".ac3," +
-        // BassAlac
-        //".m4a,.aac,.mp4," +
         // BassApe
         ".ape,.apl," +
+        // BassDSD
+        ".dsf," +
         // BassFlac
         ".flac," +
         // BassMidi
