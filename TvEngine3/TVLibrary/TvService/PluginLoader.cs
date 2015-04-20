@@ -107,11 +107,11 @@ namespace TvService
                                   plugin.Author);
                   }
                 }
-                catch (TargetInvocationException)
+                catch (TargetInvocationException ex)
                 {
                   Log.WriteFile(
-                    "PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!",
-                    t.FullName);
+                    "PluginManager: {0} is incompatible with the current tvserver version and won't be loaded! Ex: {1}",
+                    t.FullName, ex);
                   continue;
                 }
                 catch (Exception ex)
