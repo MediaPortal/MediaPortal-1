@@ -330,6 +330,7 @@ namespace TvEngine
 
           SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
           sb.AddOrderByField(true, "externalId");
+          sb.AddConstraint("visibleInGuide = 1");
           sb.AddConstraint("externalId IS NOT null");
           sb.AddConstraint(Operator.NotEquals, "externalId", "");
 

@@ -266,7 +266,7 @@ namespace SetupTv.Sections
                                                         String.Format(
                                                           "select c.* from Channel c join GroupMap g on c.idChannel=g.idChannel where " +
                                                           (loadRadio ? "" : " c.isTv = 1 and ") +
-                                                          " g.idGroup = '{0}' order by g.sortOrder", chGroup.idGroup),
+                                                          " g.idGroup = '{0}' and c.visibleInGuide = 1 order by g.sortOrder", chGroup.idGroup),
                                                         typeof (Channel));
           channels = ObjectFactory.GetCollection<Channel>(ManualJoinSQL.Execute());
         }
@@ -276,6 +276,7 @@ namespace SetupTv.Sections
           sb.AddOrderByField(true, "sortOrder");
           if (!loadRadio)
             sb.AddConstraint(" isTv = 1");
+          sb.AddConstraint(" visibleInGuide = 1");
           SqlStatement stmt = sb.GetStatement(true);
           channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
         }
