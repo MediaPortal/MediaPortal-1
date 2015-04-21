@@ -423,7 +423,7 @@ void CMPUrlSourceSplitter_Parser_M3U8::ClearSession(void)
 
 /* protected methods */
 
-wchar_t *CMPUrlSourceSplitter_Parser_M3U8::GetStoreFile(const wchar_t *extension)
+const wchar_t *CMPUrlSourceSplitter_Parser_M3U8::GetStoreFileNamePart(void)
 {
-  return NULL;
+  return PARSER_STORE_FILE_NAME_PART;
 }

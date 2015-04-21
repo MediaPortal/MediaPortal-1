@@ -97,6 +97,11 @@ void CTransportStreamProgramMapSection::SetProgramNumber(unsigned int programNum
 
 /* other methods */
 
+bool CTransportStreamProgramMapSection::IsCurrentNextIndicator(void)
+{
+  return (((this->reservedVersionNumberCurrentNextIndicator >> TRANSPORT_STREAM_PROGRAM_MAP_SECTION_CURRENT_NEXT_INDICATOR_SHIFT) & TRANSPORT_STREAM_PROGRAM_MAP_SECTION_CURRENT_NEXT_INDICATOR_MASK) != 0);
+}
+
 HRESULT CTransportStreamProgramMapSection::Parse(CProgramSpecificInformationPacket *psiPacket, unsigned int startFromSectionPayload)
 {
   this->programNumber = 0;

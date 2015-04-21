@@ -13,24 +13,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Sections
         {
             try
             {
+                ConditionalAccessDescriptor descriptor = new ConditionalAccessDescriptor();
 
-                //ProgramAssociationSection section = new ProgramAssociationSection();
+                descriptor.Parse(data, position);
 
-                //section.Parse(sectionData);
-
-                //return section;
-            }
-            catch (InvalidDescriptorTagException)
-            {
-            }
-
-            try
-            {
-                //TransportStreamProgramMapSection section = new TransportStreamProgramMapSection();
-
-                //section.Parse(sectionData);
-
-                //return section;
+                return descriptor;
             }
             catch (InvalidDescriptorTagException)
             {

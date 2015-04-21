@@ -97,6 +97,18 @@ void CDumpBox::SetTimeWithLocalTime(void)
   GetLocalTime(&this->time);
 }
 
+void CDumpBox::SetInputData(bool inputData)
+{
+  this->flags &= ~DUMP_BOX_FLAG_INPUT_DATA;
+  this->flags |= (inputData) ? DUMP_BOX_FLAG_INPUT_DATA : DUMP_BOX_FLAG_NONE;
+}
+
+void CDumpBox::SetOutputData(bool outputData)
+{
+  this->flags &= ~DUMP_BOX_FLAG_OUTPUT_DATA;
+  this->flags |= (outputData) ? DUMP_BOX_FLAG_OUTPUT_DATA : DUMP_BOX_FLAG_NONE;
+}
+
 /* other methods */
 
 wchar_t *CDumpBox::GetParsedHumanReadable(const wchar_t *indent)
@@ -137,6 +149,16 @@ wchar_t *CDumpBox::GetParsedHumanReadable(const wchar_t *indent)
   FREE_MEM(previousResult);
 
   return result;
+}
+
+bool CDumpBox::IsInputData(void)
+{
+  return this->IsSetFlags(DUMP_BOX_FLAG_INPUT_DATA);
+}
+
+bool CDumpBox::IsOutputData(void)
+{
+  return this->IsSetFlags(DUMP_BOX_FLAG_OUTPUT_DATA);
 }
 
 /* protected methods */

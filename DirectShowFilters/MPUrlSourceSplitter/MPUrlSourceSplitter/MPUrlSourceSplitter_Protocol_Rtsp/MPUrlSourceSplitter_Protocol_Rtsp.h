@@ -30,6 +30,8 @@
 
 #define PROTOCOL_NAME                                                         L"RTSP"
 
+#define PROTOCOL_STORE_FILE_NAME_PART                                         L"mpurlsourcesplitter_protocol_rtsp"
+
 #define TOTAL_SUPPORTED_PROTOCOLS                                             1
 wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { L"RTSP" };
 
@@ -171,15 +173,9 @@ protected:
 
   /* methods */
 
-  // gets store file name
-  // @param trackId : the ID of track to get store file path
-  // @return : store file name or NULL if error
-  wchar_t *GetStoreFile(unsigned int trackId);
-
-  // gets dump file name
-  // @param trackId : the ID of track to get dump file path
-  // @return : dump file name or NULL if error
-  wchar_t *GetDumpFile(unsigned int trackId);
+  // gets store file name part
+  // @return : store file name part or NULL if error
+  const wchar_t *GetStoreFileNamePart(void);
 };
 
 #endif

@@ -28,7 +28,10 @@
 
 #define DUMP_BOX_FLAG_NONE                                            BOX_FLAG_NONE
 
-#define DUMP_BOX_FLAG_LAST                                            (BOX_FLAG_LAST + 0)
+#define DUMP_BOX_FLAG_INPUT_DATA                                      (1 << (BOX_FLAG_LAST + 0))
+#define DUMP_BOX_FLAG_OUTPUT_DATA                                     (1 << (BOX_FLAG_LAST + 1))
+
+#define DUMP_BOX_FLAG_LAST                                            (BOX_FLAG_LAST + 2)
 
 class CDumpBox : public CBox
 {
@@ -65,12 +68,28 @@ public:
   // @return : true if successfull, false otherwise
   virtual bool SetPayload(const uint8_t *buffer, uint32_t length);
 
+  // sets if dump box contains input data
+  // @param inputData : true if dump box contains input data, false otherwise
+  virtual void SetInputData(bool inputData);
+
+  // sets if dump box contains output data
+  // @param inputData : true if dump box contains output data, false otherwise
+  virtual void SetOutputData(bool outputData);
+
   /* other methods */
 
   // gets box data in human readable format
   // @param indent : string to insert before each line
   // @return : box data in human readable format or NULL if error
   virtual wchar_t *GetParsedHumanReadable(const wchar_t *indent);
+
+  // tests if dump box contains input data
+  // @return : true if dump box contains input data, false otherwise
+  virtual bool IsInputData(void);
+
+  // tests if dump box contains output data
+  // @return : true if dump box contains output data, false otherwise
+  virtual bool IsOutputData(void);
 
 protected:
   // stores local system time of dump box

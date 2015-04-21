@@ -97,6 +97,18 @@ HRESULT CM3u8CurlInstance::Initialize(CDownloadRequest *downloadRequest)
   return result;
 }
 
+void CM3u8CurlInstance::ClearSession(void)
+{
+  __super::ClearSession();
+
+  this->m3u8DownloadRequest = NULL;
+  this->m3u8DownloadResponse = NULL;
+
+  this->owner = NULL;
+  this->ownerLockCount = 0;
+  this->connectionState = None;
+}
+
 HRESULT CM3u8CurlInstance::LockCurlInstance(void *owner)
 {
   HRESULT result = E_FAIL;

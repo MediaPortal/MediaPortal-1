@@ -35,6 +35,30 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Sections
             {
             }
 
+            try
+            {
+                ConditionalAccessSection section = new ConditionalAccessSection();
+
+                section.Parse(sectionData);
+
+                return section;
+            }
+            catch (InvalidTableIdException)
+            {
+            }
+
+            try
+            {
+                UnknownSection section = new UnknownSection();
+
+                section.Parse(sectionData);
+
+                return section;
+            }
+            catch (InvalidTableIdException)
+            {
+            }
+
             return null;
         }
 
