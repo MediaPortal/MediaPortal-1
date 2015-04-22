@@ -47,7 +47,7 @@ namespace MediaPortal.Player
     protected ITeletextSource _teletextSource = null;
     
     //Set to false to use normal CoreCCParser - Set to true for using CoreCCParser H264 Build Test
-    protected bool CoreCCParserH264 = false;
+    protected bool CoreCCParserH264 = true;
 
     #endregion
 
