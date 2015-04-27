@@ -837,7 +837,6 @@ namespace MediaPortal.Player
             _mediaEvt = null;
           }
 
-          _videoWin = _graphBuilder as IVideoWindow;
           if (_videoWin != null)
           {
             hr = _videoWin.put_Visible(OABool.False);
@@ -976,7 +975,6 @@ namespace MediaPortal.Player
             _vmr9 = null;
           }
 
-          GUIGraphicsContext.form.Invalidate(true);
           _state = PlayState.Init;
         }
         catch (Exception ex)
