@@ -139,7 +139,7 @@ void LogRotate()
           SYSTEMTIME systemTime;
           GetLocalTime(&systemTime);
           
-          if(fileTime.wDay == systemTime.wDay && fileInformation.nFileSizeLow < 1048576)
+          if(fileTime.wDay == systemTime.wDay && fileInformation.nFileSizeLow <= 10485760)
           {
             //file date is today and the file size less then 10MB - no rotation needed
             return;
