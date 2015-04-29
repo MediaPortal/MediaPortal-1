@@ -24,10 +24,11 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Win32;
 using Action = MediaPortal.GUI.Library.Action;
+using Mapping = MediaPortal.InputDevices.InputHandler.Mapping;
 
 namespace MediaPortal.InputDevices
 {
-  public class HidListener
+  public class HidListener : IInputDevice
   {
     private bool _controlEnabled;
 
@@ -78,10 +79,31 @@ namespace MediaPortal.InputDevices
     }
 
     /// <summary>
-    /// 
+    /// Required for IInputDevice Interface
     /// </summary>
     public void DeInit()
     {
+    }
+
+    /// <summary>
+    /// Get the first mapping for this message
+    /// </summary>
+    /// <param name="msg"></param>
+    /// <returns></returns>
+    public Mapping GetMapping(Message msg)
+    {
+      if (msg.Msg == Win32.Const.WM_INPUT)
+      {
+        //Just ask our handler to process
+        var actions = _hidHandler.ProcessInput(msg, false);
+
+        if (actions != null && actions.Count > 0)
+        {
+          var action = actions[0];
+          return new Mapping(action.Layer, action.Condition, action.ConProperty, action.Command, action.CmdProperty, action.CmdKeyChar, action.CmdKeyCode, action.Sound, action.Focus);
+        }
+      }
+      return null;
     }
 
     /// <summary>
