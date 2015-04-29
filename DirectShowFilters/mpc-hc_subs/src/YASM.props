@@ -11,7 +11,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <YASM>
-      <CommandLineTemplate>yasm -X vc -g cv8 -f $(Platform) -o "$(IntDir)%(Filename).obj" "%(FullPath)"</CommandLineTemplate>
+      <CommandLineTemplate>vsyasm -X vc -g cv8 -f $(Platform) -o "$(IntDir)%(Filename).obj" "%(FullPath)"</CommandLineTemplate>
       <Outputs>$(IntDir)%(Filename).obj</Outputs>
       <ExecutionDescription>YASM: Assembling %(Filename)%(Extension)</ExecutionDescription>
     </YASM>
