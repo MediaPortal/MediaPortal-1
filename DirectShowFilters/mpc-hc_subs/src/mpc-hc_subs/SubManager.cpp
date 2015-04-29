@@ -616,6 +616,10 @@ void CSubManager::LoadSubtitlesForFile(const wchar_t* fn, IGraphBuilder* pGB, co
 		{
 			pGB->FindFilterByName(L"Video Mixing Renderer 9", &vmr);
 		}
+    if (!vmr)
+    {
+      pGB->FindFilterByName(L"madVR", &vmr);
+    }
 		if (!vmr)
 		{
 			ATLTRACE(L"Failed to load subtitles: could not find video renderer");
