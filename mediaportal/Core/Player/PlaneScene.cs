@@ -587,10 +587,13 @@ namespace MediaPortal.Player
           _vmr9Util.VideoAspectRatioY = arHeight;
           _arVideoWidth = arWidth;
           _arVideoHeight = arHeight;
+
+          Size nativeSize = new Size(width, height);
+          _shouldRenderTexture = SetVideoWindow(nativeSize);
         }
 
         SubtitleRenderer.GetInstance().Render();
-        //SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+        SubEngine.GetInstance().Render(_subsRect, _destinationRect);
 
         device.EndScene();
         device.Present();
