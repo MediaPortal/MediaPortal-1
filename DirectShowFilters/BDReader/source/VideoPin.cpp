@@ -519,6 +519,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         LogDebug("vid: cached fetch %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
         buffer = m_pCachedBuffer;
         m_pCachedBuffer = NULL;
+        buffer->bDiscontinuity = true;
         
         if (m_bProvidePMT)
         {
