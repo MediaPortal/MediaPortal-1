@@ -1,15 +1,15 @@
 REM %1 = Solution Directory
 REM %2 = $(ConfigurationName) Debug/Release
 
+set GIT_ROOT=%~dp0..\..\
+set Build="%GIT_ROOT%\Build"
+
 REM Identify configuration path for <=XP or >=Vista
 if exist %ProgramData%\nul (
 	set ConfigPath="%ProgramData%" 
 ) else (
 	set ConfigPath="%AllUsersProfile%\Application Data"
 )
-
-set GIT_ROOT=%~dp0..\..\
-set Build="%GIT_ROOT%\Build"
 
 REM Check for Microsoft Antispyware .BAT bug
 if exist .\kernel32.dll exit 1
