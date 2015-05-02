@@ -725,13 +725,17 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
                   // if not set fragment to download, then set fragment to download (get next not downloaded fragment from first fragment)
                   this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(0) : this->streamFragmentToDownload;
                   // fragment to download still can be UINT_MAX = no fragment to download
-
-                  if (this->streamFragmentToDownload == UINT_MAX)
-                  {
-                    // no stream fragment to download, we have all data
-                    this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
-                  }
                 }
+              }
+
+              // request to download next segment fragment after current downloaded fragment
+              this->streamFragmentToDownload = (this->streamFragmentToDownload != UINT_MAX) ? this->streamFragmentToDownload : this->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(this->streamFragmentDownloading + 1);
+              this->streamFragmentDownloading = UINT_MAX;
+
+              if (this->streamFragmentToDownload == UINT_MAX)
+              {
+                // no stream fragment to download, we have all data
+                this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
               }
             }
             else
@@ -756,14 +760,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
                     this->logger->Log(LOGGER_INFO, L"%s: %s: live stream, downloaded last stream fragment, requesting media playlist for update of stream fragments", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
                     this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_UPDATE_STREAM_FRAGMENTS | MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_STOP_RECEIVING_DATA;
                   }
+
+                  this->streamFragmentToDownload = UINT_MAX;
+                  this->streamFragmentDownloading = UINT_MAX;
                 }
               }
             }
           }
-
-          // request to download next segment fragment after current downloaded fragment
-          this->streamFragmentToDownload = this->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(this->streamFragmentDownloading + 1);
-          this->streamFragmentDownloading = UINT_MAX;
 
           this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE;
           this->flags |= (this->streamFragmentToDownload != UINT_MAX) ? MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_STOP_RECEIVING_DATA : MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_NONE;
