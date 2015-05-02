@@ -360,6 +360,11 @@ bool CMPUrlSourceSplitter_Parser_Mpeg2TS::IsEndOfStreamReached(void)
   return this->IsSetFlags(PARSER_PLUGIN_FLAG_END_OF_STREAM_REACHED);
 }
 
+bool CMPUrlSourceSplitter_Parser_Mpeg2TS::IsConnectionLostCannotReopen(void)
+{
+  return this->IsSetFlags(PARSER_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN);
+}
+
 bool CMPUrlSourceSplitter_Parser_Mpeg2TS::IsStreamIptvCompatible(void)
 {
   return (this->parserResult == PARSER_RESULT_KNOWN);
@@ -436,7 +441,7 @@ int64_t CMPUrlSourceSplitter_Parser_Mpeg2TS::SeekToTime(unsigned int streamId, i
 
   if (result != (-1))
   {
-    this->flags &= ~(PARSER_PLUGIN_FLAG_SET_STREAM_LENGTH | PARSER_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PARSER_PLUGIN_FLAG_END_OF_STREAM_REACHED);
+    this->flags &= ~(PARSER_PLUGIN_FLAG_SET_STREAM_LENGTH | PARSER_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PARSER_PLUGIN_FLAG_END_OF_STREAM_REACHED | PARSER_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN);
     this->flags |= PARSER_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
 
     this->streamLength = 0;
@@ -1932,7 +1937,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
           }
 
           // in case of end of stream in protocol or connection problems we don't receive any more data, we must replace program association section with NULL MPEG2 TS packets
-          if (SUCCEEDED(result) && (context->GetSectionContext()->IsOriginalSectionError() || caller->protocolHoster->IsEndOfStreamReached() || caller->IsConnectionLostCannotReopen()))
+          if (SUCCEEDED(result) && (context->GetSectionContext()->IsOriginalSectionError() || caller->protocolHoster->IsEndOfStreamReached() || caller->protocolHoster->IsConnectionLostCannotReopen()))
           {
             // original section has some error: is empty, is incomplete or bad CRC32
             // in all cases it will be replaced by NULL MPEG2 TS packet to avoid problems
@@ -2120,7 +2125,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
             }
 
             // in case of end of stream in protocol or connection problems we don't receive any more data, we must replace transport stream program map section with NULL MPEG2 TS packets
-            if (SUCCEEDED(result) && (!contextProcessed) && (context->GetSectionContext()->IsOriginalSectionError() || caller->protocolHoster->IsEndOfStreamReached() || caller->IsConnectionLostCannotReopen()))
+            if (SUCCEEDED(result) && (!contextProcessed) && (context->GetSectionContext()->IsOriginalSectionError() || caller->protocolHoster->IsEndOfStreamReached() || caller->protocolHoster->IsConnectionLostCannotReopen()))
             {
               // original section has some error: is empty, is incomplete or bad CRC32
               // in all cases it will be replaced by NULL MPEG2 TS packet to avoid problems
@@ -2208,7 +2213,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
           }
 
           // in case of end of stream in protocol or connection problems we don't receive any more data, we must replace program association section with NULL MPEG2 TS packets
-          if (SUCCEEDED(result) && (context->GetSectionContext()->IsOriginalSectionError() || caller->protocolHoster->IsEndOfStreamReached() || caller->IsConnectionLostCannotReopen()))
+          if (SUCCEEDED(result) && (context->GetSectionContext()->IsOriginalSectionError() || caller->protocolHoster->IsEndOfStreamReached() || caller->protocolHoster->IsConnectionLostCannotReopen()))
           {
             // original section has some error: is empty, is incomplete or bad CRC32
             // in all cases it will be replaced by NULL MPEG2 TS packet to avoid problems
@@ -2772,7 +2777,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                     unsigned int firstNotDownloadedFragmentIndex = caller->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(caller->streamFragmentToDownload);
                     caller->streamFragments->SetSearchCount(((firstNotDownloadedFragmentIndex == UINT_MAX) ? caller->streamFragments->Count() : firstNotDownloadedFragmentIndex) - caller->streamFragmentToDownload);
 
-                    caller->flags &= ~(PARSER_PLUGIN_FLAG_SET_STREAM_LENGTH | PARSER_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PARSER_PLUGIN_FLAG_END_OF_STREAM_REACHED);
+                    caller->flags &= ~(PARSER_PLUGIN_FLAG_SET_STREAM_LENGTH | PARSER_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PARSER_PLUGIN_FLAG_END_OF_STREAM_REACHED | PARSER_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN);
                     caller->flags |= PARSER_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
                   }
                 }
