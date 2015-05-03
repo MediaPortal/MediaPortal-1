@@ -738,14 +738,6 @@ namespace MediaPortal.Configuration
         macAddress = xmlreader.GetValueAsString("macAddress", hostName, null);
       }
 
-      if (wakeOnLanManager.Ping(hostName, 100) && !string.IsNullOrEmpty(macAddress))
-      {
-        MessageBox.Show("WakeUpServer: The " + hostName + "server already started and mac address is learnt!",
-          "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        Log.Debug("WakeUpServer: The {0} server already started and mac address is learnt!", hostName);
-        return;
-      }
-
       // Check if we already have a valid IP address stored,
       // otherwise try to resolve the IP address
       if (!IPAddress.TryParse(hostName, out ipAddress))
