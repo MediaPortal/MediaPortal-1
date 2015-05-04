@@ -10,6 +10,9 @@
 //    Closed Captioning MPEG2 Parser
 //    Original author: Zodiak
 //    Copyright (C) 2004 zodiak@dvbn
+//
+//    Also more information on the SourceForge CCCP project is here:
+//    http://sourceforge.net/p/cccp/discussion/496070/thread/6f610e28/
 //    -----------------------------------------
 
 /*
