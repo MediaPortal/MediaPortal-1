@@ -199,7 +199,7 @@ namespace MediaPortal.Configuration.Sections
     #region Constructor
 
     public Remote()
-      : this("Remote") {}
+      : this("Remotes and Input Devices") {}
 
     public Remote(string name)
       : base(name)
