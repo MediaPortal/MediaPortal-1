@@ -130,6 +130,9 @@ namespace MediaPortal.GUI.Library
     private static float _currentFPS;
     private static long _lasttime;
     private static bool _blankScreen;
+    private static bool _deviceAudioConnected;
+    private static VolumeHandler _initVolumeHandler;
+    private static bool _deviceVideoConnected;
     private static bool _idleTimePowerSaving;
     private static bool _turnOffMonitor;
     private static bool _vmr9Allowed = true;
@@ -224,6 +227,67 @@ namespace MediaPortal.GUI.Library
               MaxFPS = xmlReader.GetValueAsInt("screen", "GuiRenderFps", 60);
             }
           }
+        }
+      }
+    }
+
+
+    public static object InitVolumeHandlerLock = new Object();
+
+    /// <summary>
+    /// Set/get init volume handler
+    /// </summary>
+    public static VolumeHandler VolumeHandler
+    {
+      get { return _initVolumeHandler; }
+      set
+      {
+        lock (InitVolumeHandlerLock)
+        {
+          _initVolumeHandler = value;
+        }
+        Log.Debug("GraphicContext: init volume handler");
+      }
+    }
+
+    /// <summary>
+    /// Set/get audio device connected or removed
+    /// </summary>
+    public static bool DeviceAudioConnected
+    {
+      get { return _deviceAudioConnected; }
+      set
+      {
+        if (value == false)
+        {
+          _deviceAudioConnected = false;
+          Log.Debug("GraphicContext: device audio removed");
+        }
+        else
+        {
+          _deviceAudioConnected = true;
+          Log.Debug("GraphicContext: device audio connected");
+        }
+      }
+    }
+
+    /// <summary>
+    /// Set/get video device connected or removed
+    /// </summary>
+    public static bool DeviceVideoConnected
+    {
+      get { return _deviceVideoConnected; }
+      set
+      {
+        if (value == false)
+        {
+          _deviceVideoConnected = false;
+          Log.Debug("GraphicContext: device video removed");
+        }
+        else
+        {
+          _deviceVideoConnected = true;
+          Log.Debug("GraphicContext: device video connected");
         }
       }
     }
