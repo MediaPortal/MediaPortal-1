@@ -573,7 +573,7 @@ namespace MediaPortal.Player
       {
         Device device = GUIGraphicsContext.DX9Device;
 
-        device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+        device.Clear(ClearFlags.Target, Color.FromArgb(0, 0, 0, 0), 1.0f, 0);
         device.BeginScene();
 
         GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers);

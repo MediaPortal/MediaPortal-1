@@ -86,5 +86,14 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     UINT  m_nOldOffsetInBytes = 0;
     UINT  m_nOldStride = 0;
     RECT  m_oldScissorRect;
+
+    DWORD mD3DRS_CULLMODE = 0;
+    DWORD mD3DRS_LIGHTING = 0;
+    DWORD mD3DRS_ZENABLE = 0;
+    DWORD mD3DRS_ALPHABLENDENABLE = 0;
+    DWORD mD3DRS_SRCBLEND = 0;
+    DWORD mD3DRS_DESTBLEND = 0;
+
+    IDirect3DPixelShader9* mPix = nullptr;
 };
 
