@@ -109,7 +109,8 @@
     </Reference>
     <Reference Include="SharpLibHid, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Packages\SharpLibHid.1.0.4\lib\net20\SharpLibHid.dll</HintPath>
+      <HintPath>..\..\Packages\SharpLibHid.1.0.7\lib\net20\SharpLibHid.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -188,9 +189,13 @@
     <Compile Include="Hook\HookEventHandler.cs" />
     <Compile Include="Hook\KeyboardHook.cs" />
     <Compile Include="IInputDevice.cs" />
-    <Compile Include="InputMapper\HidInputMappingForm.cs" />
+    <Compile Include="InputMapper\HidInputMappingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="InputMapper\InputHandler.cs" />
-    <Compile Include="InputMapper\InputMappingForm.cs" />
+    <Compile Include="InputMapper\InputMappingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Remotes\AppCommand\AppCommandListener.cs" />
     <Compile Include="Remotes\CentareaHID\CentareaRemote.cs" />
     <Compile Include="Remotes\DirectInputRemote\DirectInputHandler.cs">
@@ -241,7 +246,9 @@
     </None>
     <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTSettings.cs" />
     <Compile Include="Remotes\WinLirc\WinLirc.cs" />
-    <Compile Include="Remotes\RemoteLearn.cs" />
+    <Compile Include="Remotes\RemoteLearn.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Remotes\RemoteLearn.Designer.cs">
       <DependentUpon>RemoteLearn.cs</DependentUpon>
     </Compile>

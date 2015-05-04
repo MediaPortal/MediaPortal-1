@@ -392,7 +392,7 @@ namespace MediaPortal.InputDevices
       _handler = new SharpLib.Hid.Handler(rid, true);
       if (!_handler.IsRegistered)
       {
-        Debug.WriteLine("Failed to register raw input devices: " + Marshal.GetLastWin32Error().ToString());
+        Log.Info("Failed to register raw input devices: " + Marshal.GetLastWin32Error().ToString());
       }
       _handler.OnHidEvent += OnHidEvent;
 

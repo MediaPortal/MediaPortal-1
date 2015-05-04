@@ -104,7 +104,7 @@ namespace MediaPortal.Configuration.Sections
                                             // 11 Stop playback on removal of an audio renderer
                                             new[] {"general", "stoponaudioremoval", "true"},
                                             // 12 No AutoStart on RemoteDesktop
-                                            new[] {"general", "noautostartonrdp", "true"}
+                                            new[] {"general", "noautostartonrdp", "false"}
                                           };
 
     /// <summary> 

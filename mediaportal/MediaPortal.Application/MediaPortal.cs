@@ -446,7 +446,7 @@ public class MediaPortalApp : D3D, IRender
   {
     using (Settings xmlreader = new MPSettings())
     {
-      bool noAutoStartOnRDP = xmlreader.GetValueAsBool("general", "noautostartonrdp", true);
+      bool noAutoStartOnRDP = xmlreader.GetValueAsBool("general", "noautostartonrdp", false);
 
       if (System.Windows.Forms.SystemInformation.TerminalServerSession && noAutoStartOnRDP)
       {
@@ -3374,7 +3374,10 @@ public class MediaPortalApp : D3D, IRender
               GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D ||
               GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
           {
-            grabber.OnFrame();
+
+            // Alert the frame grabber that it has a chance to grab a GUI frame
+            // if it likes (method returns immediately otherwise
+            grabber.OnFrameGUI();
 
             // clear the surface
             GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
@@ -3409,7 +3412,9 @@ public class MediaPortalApp : D3D, IRender
 
             Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
 
-            grabber.OnFrame(backbuffer);
+            // Alert the frame grabber that it has a chance to grab a GUI frame
+            // if it likes (method returns immediately otherwise
+            grabber.OnFrameGUI(backbuffer);
 
             // create texture/surface for preparation for 3D output if they don't exist
 

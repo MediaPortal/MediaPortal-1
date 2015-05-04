@@ -511,9 +511,9 @@ namespace MediaPortal.Player
       {
         try
         {
-          // Alert the frame grabber that it has a chance to grab a frame
+          // Alert the frame grabber that it has a chance to grab a video frame
           // if it likes (method returns immediately otherwise
-          grabber.OnFrame(width, height, arWidth, arHeight, pSurface);
+          grabber.OnFrame(width, height, arWidth, arHeight, pSurface, FrameGrabber.FrameSource.Video);
 
           _textureAddress = pTexture;
 
@@ -841,6 +841,10 @@ namespace MediaPortal.Player
             {
               // old output path or force 3D material to 2D by blitting only left/top halp
 
+              // Alert the frame grabber that it has a chance to grab a GUI frame
+              // if it likes (method returns immediately otherwise
+              grabber.OnFrameGUI();
+
               GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.None;
 
               if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
@@ -877,7 +881,11 @@ namespace MediaPortal.Player
 
             Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
 
-            // create texture/surface for preparation for 3D output 
+            // create texture/surface for preparation for 3D output
+ 
+            // Alert the frame grabber that it has a chance to grab a GUI frame
+            // if it likes (method returns immediately otherwise
+            grabber.OnFrameGUI(backbuffer);
 
             Texture auto3DTexture = new Texture(GUIGraphicsContext.DX9Device,
               backbuffer.Description.Width,
