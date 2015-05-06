@@ -157,6 +157,8 @@ namespace MediaPortal.GUI.Music
     private static int _wolTimeout;
     private static int _wolResendTime;
 
+    public static MusicDatabase musicDB = null;
+
     #endregion
 
     public GUIMusicFiles()
@@ -195,6 +197,18 @@ namespace MediaPortal.GUI.Music
               LoadDirectory(currentFolder);
             }
           }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_ONRESUME:
+          using (Settings xmlreader = new MPSettings())
+          {
+            if (!xmlreader.GetValueAsBool("general", "showlastactivemodule", false))
+            {
+              currentFolder = string.Empty;
+      }
+    }
+
+          Log.Debug("{0}:{1}", SerializeName, message.Message);
           break;
       }
     }
@@ -242,7 +256,7 @@ namespace MediaPortal.GUI.Music
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
         MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
         _useFileMenu = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        _fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+        _fileMenuPinCode = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         _wolTimeout = xmlreader.GetValueAsInt("WOL", "WolTimeout", 10);
         _wolResendTime = xmlreader.GetValueAsInt("WOL", "WolResendTime", 1);
         //string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
@@ -279,7 +293,7 @@ namespace MediaPortal.GUI.Music
       {
         VirtualDirectory vDir = new VirtualDirectory();
         vDir.LoadSettings("music");
-        int pincode = 0;
+        string pincode = string.Empty;
         bool FolderPinProtected = vDir.IsProtectedShare(currentFolder, out pincode);
         if (FolderPinProtected)
         {
@@ -327,12 +341,13 @@ namespace MediaPortal.GUI.Music
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
         MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
       }
-
       GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
       GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_OnNewMessage);
       LoadSettings();
       _virtualDirectory.AddDrives();
       _virtualDirectory.SetExtensions(Util.Utils.AudioExtensions);
+
+      RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
     }
 
     public override bool Init()
@@ -374,6 +389,25 @@ namespace MediaPortal.GUI.Music
     {
       base.OnPageLoad();
 
+      musicDB = MusicDatabase.Instance;
+
+      if (!musicDB.DbHealth)
+      {
+        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+        pDlgOK.SetHeading(315);
+        pDlgOK.SetLine(1, string.Empty);
+        pDlgOK.SetLine(2, GUILocalizeStrings.Get(190010, new object[] { GUILocalizeStrings.Get(2) }));
+        pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+      }
+      if (!FolderSettings.DbHealth)
+      {
+        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+        pDlgOK.SetHeading(315);
+        pDlgOK.SetLine(1, string.Empty);
+        pDlgOK.SetLine(2, GUILocalizeStrings.Get(190010, new object[] { GUILocalizeStrings.Get(190011) }));
+        pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+      }
+      
       if (!KeepVirtualDirectory(PreviousWindowId))
       {
         _virtualDirectory.Reset();
@@ -467,6 +501,8 @@ namespace MediaPortal.GUI.Music
 
       GUIWaitCursor.Show();
 
+      ThreadPool.QueueUserWorkItem(delegate
+                                   {
       try
       {
         GUIListItem SelectedItem = facadeLayout.SelectedListItem;
@@ -492,6 +528,11 @@ namespace MediaPortal.GUI.Music
         currentFolder = strNewDirectory;
 
         List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(currentFolder);
+
+        if (currentFolder == string.Empty)
+        {
+          RemovableDrivesHandler.FilterDrives(ref itemlist);
+        }
 
         string strSelectedItem = _dirHistory.Get(currentFolder);
 
@@ -551,7 +592,8 @@ namespace MediaPortal.GUI.Music
         }
 
         //set object count label, total duration
-        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
+                                       GUIPropertyManager.SetProperty("#itemcount",
+                                         Util.Utils.GetObjectCountLabel(iTotalItems));
 
         if (totalPlayingTime.TotalSeconds > 0)
         {
@@ -575,18 +617,18 @@ namespace MediaPortal.GUI.Music
         {
           SelectCurrentItem();
         }
-
         UpdateButtonStates();
-
         GUIWaitCursor.Hide();
       }
       catch (Exception ex)
       {
         GUIWaitCursor.Hide();
-        Log.Error("GUIMusicFiles: An error occured while loading the directory {0}", ex.Message);
+                                       Log.Error("GUIMusicFiles: An error occured while loading the directory {0}",
+                                         ex.Message);
       }
       TimeSpan ts = DateTime.Now.Subtract(dtStart);
       Log.Debug("Folder: {0} : took : {1} s to load", strNewDirectory, ts.TotalSeconds);
+                                   });
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -629,6 +671,7 @@ namespace MediaPortal.GUI.Music
               _virtualDirectory.AddRemovableDrive(message.Label, message.Label2);
             }
           }
+          RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
           LoadDirectory(currentFolder);
           break;
         case GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE:
@@ -650,6 +693,16 @@ namespace MediaPortal.GUI.Music
             currentFolder = string.Empty;
             LoadDirectory(currentFolder);
           }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_LAYOUT_CHANGED:
+          FolderSetting folderSettingL = new FolderSetting();
+          folderSettingL.UpdateFolders(-1, CurrentSortAsc, (int)CurrentLayout);
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_SORT_CHANGED:
+          FolderSetting folderSettingS = new FolderSetting();
+          folderSettingS.UpdateFolders((int)CurrentSortMethod, CurrentSortAsc, -1);
           break;
       }
       return base.OnMessage(message);
@@ -742,7 +795,7 @@ namespace MediaPortal.GUI.Music
           }
         }
 
-        int iPincodeCorrect;
+        string iPincodeCorrect;
         if (!_virtualDirectory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && _useFileMenu)
         {
           dlg.AddLocalizedString(500); // FileMenu
@@ -1139,7 +1192,7 @@ namespace MediaPortal.GUI.Music
       {
         return;
       }
-      int pin;
+      string pin;
       if (item.IsFolder && (_virtualDirectory.IsProtectedShare(item.Path, out pin)))
       {
         return;
@@ -1594,9 +1647,7 @@ namespace MediaPortal.GUI.Music
     /// <param name="items">GUIListItem to be read</param>
     private void GetTagInfo(ref List<GUIListItem> items)
     {
-      MusicTag tag;
-      bool CDLookupAlreadyFailed = false;
-      string strExtension;
+      bool cdLookupAlreadyFailed = false;
 
       for (int i = 0; i < items.Count; i++)
       {
@@ -1606,28 +1657,41 @@ namespace MediaPortal.GUI.Music
           // no need to get tags for folders in shares view
           continue;
         }
-        strExtension = Path.GetExtension(pItem.Path).ToLowerInvariant();
+
+        string strExtension = Path.GetExtension(pItem.Path).ToLowerInvariant();
 
         if (strExtension == ".cda")
         {
           // we have a CD track so look up info
-          if (!GetCDInfo(ref pItem, CDLookupAlreadyFailed))
+          if (!GetCDInfo(ref pItem, cdLookupAlreadyFailed))
           {
             // if CD info fails set failure flag to prevent further lookups
             Log.Error("Error looking up CD Track: {0}", pItem.Label);
-            CDLookupAlreadyFailed = true;
+            cdLookupAlreadyFailed = true;
           }
         }
         else
         {
-          // not a CD track so attempt to pick up tag info
-          tag = TagReader.TagReader.ReadTag(pItem.Path);
+          var song = new Song();
+          MusicTag tag;
+          if (m_database.GetSongByFileName(pItem.Path, ref song))
+          {
+            tag = song.ToMusicTag();
+          }
+          else
+          {
+            tag = TagReader.TagReader.ReadTag(pItem.Path);
+            if (tag != null)
+            {
+              tag.Artist = Util.Utils.FormatMultiItemMusicStringTrim(tag.Artist, _stripArtistPrefixes);
+              tag.AlbumArtist = Util.Utils.FormatMultiItemMusicStringTrim(tag.AlbumArtist, _stripArtistPrefixes);
+              tag.Genre = Util.Utils.FormatMultiItemMusicStringTrim(tag.Genre, false);
+              tag.Composer = Util.Utils.FormatMultiItemMusicStringTrim(tag.Composer, _stripArtistPrefixes);
+            }
+          }
+
           if (tag != null)
           {
-            tag.Artist = Util.Utils.FormatMultiItemMusicStringTrim(tag.Artist, _stripArtistPrefixes);
-            tag.AlbumArtist = Util.Utils.FormatMultiItemMusicStringTrim(tag.AlbumArtist, _stripArtistPrefixes);
-            tag.Genre = Util.Utils.FormatMultiItemMusicStringTrim(tag.Genre, false);
-            tag.Composer = Util.Utils.FormatMultiItemMusicStringTrim(tag.Composer, _stripArtistPrefixes);
             pItem.MusicTag = tag;
             pItem.Duration = tag.Duration;
             pItem.Year = tag.Year;
@@ -1718,7 +1782,6 @@ namespace MediaPortal.GUI.Music
       {
         // recursively add sub folders
         List<GUIListItem> subFolders = _virtualDirectory.GetDirectoryExt(item.Path);
-        GetTagInfo(ref subFolders);
         foreach (GUIListItem subItem in subFolders)
         {
           AddFolderToPlaylist(subItem, ref pl, playCD, addAllTracks);
@@ -2026,7 +2089,7 @@ namespace MediaPortal.GUI.Music
       
       if (_virtualDirectory.DefaultShare != null)
       {
-        int pincode;
+        string pincode;
         bool folderPinProtected = _virtualDirectory.IsProtectedShare(_virtualDirectory.DefaultShare.Path, out pincode);
         if (folderPinProtected)
         {
@@ -2042,6 +2105,11 @@ namespace MediaPortal.GUI.Music
     public static void ResetExtensions(ArrayList extensions)
     {
       _virtualDirectory.SetExtensions(extensions);
+    }
+
+    public static string GetCurrentFolder
+    {
+      get { return currentFolder; }
     }
 
     #region ISetupForm Members

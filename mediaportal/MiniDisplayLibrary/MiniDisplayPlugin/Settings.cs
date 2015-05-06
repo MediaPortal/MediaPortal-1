@@ -64,6 +64,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private string m_PrefixChar = string.Empty;
     private int m_ScrollDelay = 300;
     private int m_UpdateDelay = 300;
+    private bool m_AutoScroll = false;
     private bool m_ShowPropertyBrowser;
     private string m_Shutdown1 = string.Empty;
     private string m_Shutdown2 = string.Empty;
@@ -309,6 +310,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading FICSpectra...");
       list.Add(new FICSpectra());
 
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading FutabaMDM166A...");
+      list.Add(new FutabaMDM166A());
+
       LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading MediaPad...");
       list.Add(new MediaPad());
 
@@ -321,6 +325,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       //New sound graph display
       LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading SoundGraph display...");
       list.Add(new SoundGraphDisplay());
+
+      //Sharp Display Manager
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading Sharp Display Manager...");
+      list.Add(new Drivers.SharpDisplayManager.Display());
+
 
       //Add Debug Form
       LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading Debug Display...");
@@ -468,6 +477,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       get { return this.m_ExtensiveLogging; }
       set { this.m_ExtensiveLogging = value; }
+    }
+
+    [XmlAttribute]
+    public bool AutoScroll
+    {
+        get { return this.m_AutoScroll; }
+        set { this.m_AutoScroll = value; }
     }
 
     [XmlAttribute]

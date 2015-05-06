@@ -46,7 +46,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private DateTime lastScroll = DateTime.MinValue;
     private Status status;
     private bool stopRequested;
-    private Thread t;
+    private Thread renderThread;
+    private Thread statusThread;
 
     #endregion
 
@@ -172,78 +173,169 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private void DoStart()
     {
-      if ((this.t == null) || !this.t.IsAlive)
-      {
-        try
-        {
-          this.display = Settings.Instance.LCDType;
-          if (this.display == null)
-          {
-            Log.Info("MiniDisplay.DoStart(): Internal display type not found.  Plugin not started!!!");
-            return;
-          }
-          Log.Info("MiniDisplay.DoStart(): Starting background thread");
-          this.stopRequested = false;
-          this.t = new Thread(new ThreadStart(this.Run));
-          this.t.Priority = ThreadPriority.Lowest;
-          this.t.Name = "MiniDisplay";
-          this.t.TrySetApartmentState(ApartmentState.MTA);
-          this.t.Start();
-          GUIWindowManager.OnNewAction += new OnActionHandler(this.GUIWindowManager_OnNewAction);
-          Thread.Sleep(100);
-          if (!this.t.IsAlive)
-          {
-            Log.Info("MiniDisplay.DoStart(): ERROR - backgrund thread NOT STARTED");
-          }
-        }
-        catch (Exception exception)
-        {
-          Log.Info("MiniDisplay.DoStart: Exception while starting plugin: " + exception.Message);
-          if ((this.t != null) && this.t.IsAlive)
-          {
-            this.t.Abort();
-          }
-          this.t = null;
-        }
+        DoStartRenderThread();
+        DoStartStatusThread();
         Log.Info("MiniDisplay.DoStart(): Completed");
-      }
     }
+
+    private void DoStartRenderThread()
+    {
+        if ((this.renderThread == null) || !this.renderThread.IsAlive)
+        {
+            try
+            {
+                this.display = Settings.Instance.LCDType;
+                if (this.display == null)
+                {
+                    Log.Info("MiniDisplay.DoStart(): Internal display type not found.  Plugin not started!!!");
+                    return;
+                }
+                Log.Info("MiniDisplay.DoStart(): Starting background thread");
+                this.stopRequested = false;
+                this.renderThread = new Thread(new ThreadStart(this.Run));
+                this.renderThread.Priority = ThreadPriority.Lowest;
+                this.renderThread.Name = "MiniDisplayRender";
+                this.renderThread.TrySetApartmentState(ApartmentState.MTA);
+                this.renderThread.Start();
+                GUIWindowManager.OnNewAction += new OnActionHandler(this.GUIWindowManager_OnNewAction);
+                Thread.Sleep(100);
+                if (!this.renderThread.IsAlive)
+                {
+                    Log.Info("MiniDisplay.DoStart(): ERROR - backgrund thread NOT STARTED");
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.Info("MiniDisplay.DoStart: Exception while starting plugin: " + exception.Message);
+                if ((this.renderThread != null) && this.renderThread.IsAlive)
+                {
+                    this.renderThread.Abort();
+                }
+                this.renderThread = null;
+            }            
+        }
+    }
+
+    //
+    private void DoStartStatusThread()
+    {
+        if ((this.statusThread == null) || !this.statusThread.IsAlive)
+        {
+            try
+            {
+                this.display = Settings.Instance.LCDType;
+                if (this.display == null)
+                {
+                    Log.Info("MiniDisplay.DoStartStatusThread(): Internal display type not found.  Plugin not started!!!");
+                    return;
+                }
+                Log.Info("MiniDisplay.DoStartStatusThread(): Starting status thread");
+                this.stopRequested = false;
+                this.statusThread = new Thread(new ThreadStart(this.StatusThreadMain));
+                this.statusThread.Priority = ThreadPriority.Lowest;
+                this.statusThread.Name = "MiniDisplayStatus";
+                this.statusThread.TrySetApartmentState(ApartmentState.MTA);
+                this.statusThread.Start();
+                GUIWindowManager.OnNewAction += new OnActionHandler(this.GUIWindowManager_OnNewAction);
+                Thread.Sleep(100);
+                if (!this.statusThread.IsAlive)
+                {
+                    Log.Info("MiniDisplay.DoStartStatusThread(): ERROR - status thread NOT STARTED");
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.Info("MiniDisplay.DoStart: Exception while starting plugin: " + exception.Message);
+                if ((this.statusThread != null) && this.statusThread.IsAlive)
+                {
+                    this.statusThread.Abort();
+                }
+                this.statusThread = null;
+            }
+        }
+
+    }
+
 
     private void DoStop()
     {
-      Log.Info("MiniDisplay.DoStop(): Called.");
-      try
-      {
-        if ((this.t == null) || !this.t.IsAlive)
-        {
-          Log.Info("MiniDisplay.DoStop(): ERROR - background thread not running.");
-        }
-        else
-        {
-          this.stopRequested = true;
-          Log.Info("MiniDisplay.DoStop(): Requesting background thread to stop.");
-          DateTime time = DateTime.Now.AddSeconds(5.0);
-          while (this.t.IsAlive && (DateTime.Now.Ticks < time.Ticks))
-          {
-            Settings.Instance.LogInfo("MiniDisplay.DoStop: Background thread still alive, waiting 100ms...");
-            Thread.Sleep(100);
-          }
-          if (DateTime.Now.Ticks > time.Ticks)
-          {
-            this.t.Abort();
-            Thread.Sleep(100);
-            Settings.Instance.LogInfo("MiniDisplay.DoStop(): Forcing display thread shutdown. t.IsAlive = {0}", this.t.IsAlive);
-          }
-          Settings.Instance.LogInfo("MiniDisplay.DoStop(): Background thread has stopped.");
-          this.t = null;
-        }
-      }
-      catch (Exception exception)
-      {
-        Log.Error(exception);
-      }
+        Log.Info("MiniDisplay.DoStop(): Called.");
+        DoStopRenderThread();
+        DoStopStatusThread();
     }
 
+    private void DoStopRenderThread()
+    {
+        try
+        {
+            if ((this.renderThread == null) || !this.renderThread.IsAlive)
+            {
+                Log.Info("MiniDisplay.DoStop(): ERROR - background thread not running.");
+            }
+            else
+            {
+                this.stopRequested = true;
+                Log.Info("MiniDisplay.DoStop(): Requesting background thread to stop.");
+                DateTime time = DateTime.Now.AddSeconds(5.0);
+                while (this.renderThread.IsAlive && (DateTime.Now.Ticks < time.Ticks))
+                {
+                    Settings.Instance.LogInfo("MiniDisplay.DoStop: Background thread still alive, waiting 100ms...");
+                    Thread.Sleep(100);
+                }
+                if (DateTime.Now.Ticks > time.Ticks)
+                {
+                    this.renderThread.Abort();
+                    Thread.Sleep(100);
+                    Settings.Instance.LogInfo("MiniDisplay.DoStop(): Forcing display thread shutdown. t.IsAlive = {0}", this.renderThread.IsAlive);
+                }
+                Settings.Instance.LogInfo("MiniDisplay.DoStop(): Background thread has stopped.");
+                this.renderThread = null;
+            }
+        }
+        catch (Exception exception)
+        {
+            Log.Error(exception);
+        }
+    }
+
+    //
+    private void DoStopStatusThread()
+    {
+        try
+        {
+            if ((this.statusThread == null) || !this.statusThread.IsAlive)
+            {
+                Log.Info("MiniDisplay.DoStopStatusThread(): ERROR - background thread not running.");
+            }
+            else
+            {
+                this.stopRequested = true;
+                Log.Info("MiniDisplay.DoStopStatusThread(): Requesting background thread to stop.");
+                DateTime time = DateTime.Now.AddSeconds(5.0);
+                while (this.statusThread.IsAlive && (DateTime.Now.Ticks < time.Ticks))
+                {
+                    Settings.Instance.LogInfo("MiniDisplay.DoStopStatusThread: Background thread still alive, waiting 100ms...");
+                    Thread.Sleep(100);
+                }
+                if (DateTime.Now.Ticks > time.Ticks)
+                {
+                    this.statusThread.Abort();
+                    Thread.Sleep(100);
+                    Settings.Instance.LogInfo("MiniDisplay.DoStopStatusThread(): Forcing display thread shutdown. t.IsAlive = {0}", this.statusThread.IsAlive);
+                }
+                Settings.Instance.LogInfo("MiniDisplay.DoStopStatusThread(): Background thread has stopped.");
+                this.statusThread = null;
+            }
+        }
+        catch (Exception exception)
+        {
+            Log.Error(exception);
+        }
+
+
+    }
+
+    //Perform work on render thread
     private void DoWork()
     {
       try
@@ -395,6 +487,45 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
     }
 
+
+    private void StatusThreadMain()
+    {
+        while (!stopRequested)
+        {
+            try
+            {
+                //lock (MiniDisplayHelper.StatusMutex)
+                {
+                    if (MiniDisplayHelper.IsCaptureCardRecording())
+                    {
+                        MiniDisplayHelper.MPStatus.Media_IsRecording = true;
+                    }
+                    else 
+                    {
+                        MiniDisplayHelper.MPStatus.Media_IsRecording = false;
+                    }
+
+                    if (MiniDisplayHelper.IsCaptureCardViewing())
+                    {
+                        MiniDisplayHelper.MPStatus.Media_IsTV = true;
+                    }
+                    else
+                    {
+                        MiniDisplayHelper.MPStatus.Media_IsTV = false;
+                    }
+
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.Debug("MiniDisplay.StatusThreadMain(): CAUGHT EXCEPTION - {0}", exception);
+            }
+
+            Thread.Sleep(2000); //No need to update too often
+        }
+    }
+
+    //Render thread entry point
     public void Run()
     {
       SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(this.SystemEvents_PowerModeChanged);

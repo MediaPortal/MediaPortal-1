@@ -181,10 +181,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\BassRegistration.dll</HintPath>
     </Reference>
-    <Reference Include="BassVisAPI.Net, Version=2.4.1.9, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\BassVisAPI.Net.dll</HintPath>
-    </Reference>
     <Reference Include="CSScriptLibrary, Version=1.9.0.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
@@ -262,6 +258,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Plugins.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\TVAdvancedOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\Radio.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -427,11 +431,6 @@
     </Compile>
     <Compile Include="Subdialogs\ParameterForm.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SectionSettings.cs">
       <SubType>UserControl</SubType>
@@ -646,6 +645,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Content Include="Resources\blu-ray_regions.png" />
+    <None Include="Resources\ms_wed_7000.jpg" />
+    <None Include="Resources\remote_MceHp.jpg" />
+    <EmbeddedResource Include="Sections\TVAdvancedOptions.resx">
+      <DependentUpon>TVAdvancedOptions.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\00_plugin_other.png" />
     <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\01_plugin_other_off.png" />
     <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\02_plugin_window.png" />
@@ -987,13 +992,16 @@
     <None Include="packages.config" />
     <None Include="Resources\config.ico" />
     <None Include="Resources\wizard_background.png" />
-    <None Include="Resources\remote.HidKeys.png" />
     <None Include="Resources\remote.FireDtv.png" />
     <None Include="Resources\remote.Centarea.png" />
     <None Include="Resources\codec_screwdriver.png" />
+    <None Include="Resources\gamepad.LogitechWirelessGamepadF710.png" />
+    <None Include="Resources\gamepad.MicrosoftXbox360WirelessController.png" />
+    <None Include="Resources\gamepad.LogitechCordlessRumblePad2.png" />
     <Content Include="Resources\icon_folder.png" />
     <Content Include="Resources\icon_help.png" />
     <Content Include="Resources\icon_refresh.png" />
+    <None Include="Resources\k60_media_keys.png" />
     <Content Include="Resources\logo_PayPal.png" />
     <None Include="Resources\mplogo.png" />
     <None Include="Resources\remote.MceVista.png" />

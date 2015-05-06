@@ -20,11 +20,10 @@
 
 using System;
 using System.IO;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Player;
-using Un4seen.Bass;
-using Un4seen.BassWasapi;
+using Config = MediaPortal.Configuration.Config;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
@@ -35,6 +34,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     public static object PropertyBrowserMutex = new object();
     public static object StatusMutex = new object();
     public static bool UseTVServer = false;
+    protected static BassAudioEngine _bass = null;
+
 
     public static void DisablePropertyBrowser()
     {
@@ -44,11 +45,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
     }
 
+
+    internal static BassAudioEngine Bass
+    {
+      get { return _bass; }
+      set { _bass = value; }
+    }
+
     /// <summary>
     /// Check our EQ settings and MP states to determine if it is appropriate to show our EQ.
     /// </summary>
     /// <param name="EQSETTINGS"></param>
-    /// <returns>True if it is appropriate to show our EQ, false otherwise.</returns>
+    /// <returns>True if it is appropriate to show our EQ, false otherwise.</returns>    public static bool GetEQ(ref EQControl EQSETTINGS)
     public static bool GetEQ(ref EQControl EQSETTINGS)
     {
       SystemStatus MPStatus=new SystemStatus();
@@ -73,6 +81,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         if (g_Player.Paused)
         {
             return false;
+        }
+
+        if (Bass == null)
+        {
+            Bass = BassMusicPlayer.Player;
         }
 
         if (EQSETTINGS.DelayEQ & (g_Player.CurrentPosition < EQSETTINGS._DelayEQTime))
@@ -135,21 +148,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             num3 = -2147483646;
           }
 
-          if (BassWasapi.BASS_WASAPI_IsStarted())
+          if (Bass.BASS_WASAPI_IsStarted())
           {
-              num2 = BassWasapi.BASS_WASAPI_GetData(EQSETTINGS.EqFftData, num3);
+            num2 = Bass.GetDataFFT(EQSETTINGS.EqFftData, num3);
           }
           else
           {
-              num2 = Bass.BASS_ChannelGetData(handle, EQSETTINGS.EqFftData, num3);
+            num2 = Bass.GetChannelData(handle, EQSETTINGS.EqFftData, num3);
           }
-
         }
-        catch
+        catch (Exception exception)
         {
           if (extensiveLogging)
           {
-            Log.Info("MiniDisplay.GetEQ(): CAUGHT EXCeption - audio stream {0} disappeared", new object[] {handle});
+            Log.Info("MiniDisplay.GetEQ(): CAUGHT Exception - audio stream {0} disappeared - {1}", new object[] {handle}, exception.Message);
           }
           return false;
         }
@@ -312,26 +324,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     public static bool IsCaptureCardRecording()
     {
-      if (UseTVServer)
-      {
-        return
-          (bool)
-          DynaInvoke.InvokeMethod(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll", "TvServer",
-                                  "IsAnyCardRecording", null);
-      }
-      return false;
+        if (!UseTVServer)
+        {
+            return false;
+        }
+
+        //Now see if we are recording
+        return (bool) DynaInvoke.InvokeMethod(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll", "TvServer", "IsAnyCardRecording", null);
     }
 
+    //This function is broken cause it simply calls IsAnyCardRecording
+    //We just left it here for compatibility.
     public static bool IsCaptureCardViewing()
     {
-      if (UseTVServer)
-      {
-        return
-          (bool)
-          DynaInvoke.InvokeMethod(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll", "TvServer",
-                                  "IsAnyCardRecording", null);
-      }
-      return false;
+        if (!UseTVServer)
+        {
+            return false;
+        }
+        //See if any card is timeshifting?
+        return (bool)DynaInvoke.InvokeMethod(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll", "TvServer", "IsAnyCardRecording", null);
     }
 
     public static bool Player_Playing()
@@ -828,19 +839,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       MPStatus.Media_IsRadio = false;
       MPStatus.Media_IsDVD = false;
       MPStatus.Media_IsMusic = false;
-      MPStatus.Media_IsRecording = false;
-      MPStatus.Media_IsTV = false;
       MPStatus.Media_IsTVRecording = false;
       MPStatus.Media_IsVideo = false;
-      if (IsCaptureCardRecording())
+
+      if (MPStatus.Media_IsRecording) //Should have been set by our status thread
       {
         num |= (ulong)0x400000000L;
-        MPStatus.Media_IsRecording = true;
       }
-      else if (IsCaptureCardViewing())
+      else if (MPStatus.Media_IsTV) //Should have been set by our status thread
       {
         num |= (ulong)8L;
-        MPStatus.Media_IsTV = true;
       }
       if (g_Player.Player == null)
       {

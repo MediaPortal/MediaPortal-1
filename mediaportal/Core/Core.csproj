@@ -213,10 +213,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\BassRegistration.dll</HintPath>
     </Reference>
-    <Reference Include="BassVisAPI.Net, Version=2.4.1.9, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\BassVisAPI.Net.dll</HintPath>
-    </Reference>
     <Reference Include="CSScriptLibrary">
       <HintPath>..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
     </Reference>
@@ -280,9 +276,9 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="taglib-sharp, Version=2.0.2.10, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
+    <Reference Include="taglib-sharp, Version=2.0.3.8, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\taglib-sharp.dll</HintPath>
+      <HintPath>..\..\Packages\MediaPortal.TagLib.2.0.3.8\lib\taglib-sharp.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -370,8 +366,6 @@
     <Compile Include="guilib\ViewHandler.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
     <Compile Include="MusicPlayer\BASS\MixerStream.cs" />
-    <Compile Include="MusicPlayer\BASS\StreamCopy.cs" />
-    <Compile Include="MusicPlayer\Visualization\BassboxViz.cs" />
     <Compile Include="Player\BDOSDRenderer.cs" />
     <Compile Include="Player\BDPlayer.cs" />
     <Compile Include="Mixer\MasterVolumeHelper.cs" />
@@ -394,7 +388,6 @@
     <Compile Include="Player\RefreshRateChanger.cs" />
     <Compile Include="guilib\Tween.cs" />
     <Compile Include="MusicPlayer\DSP\DSPPluginInfo.cs" />
-    <Compile Include="MusicPlayer\Visualization\WinampViz.cs" />
     <Compile Include="Player\AudioSelector.cs" />
     <Compile Include="Player\FrameGrabber.cs" />
     <Compile Include="guilib\Animations.cs" />
@@ -418,22 +411,6 @@
     <Compile Include="MusicPlayer\DSP\VSTPluginParm.cs" />
     <Compile Include="Player\IAutoCrop.cs" />
     <Compile Include="MusicPlayer\BASS\BassAudioEngine.cs" />
-    <Compile Include="MusicPlayer\Visualization\IVisualization.cs" />
-    <Compile Include="MusicPlayer\Visualization\IVisualizationManager.cs" />
-    <Compile Include="MusicPlayer\Visualization\IWMPEffects.cs" />
-    <Compile Include="MusicPlayer\Visualization\SoniqueViz.cs" />
-    <Compile Include="MusicPlayer\Visualization\SoundSpectrumViz.cs" />
-    <Compile Include="MusicPlayer\Visualization\VisualizationBase.cs" />
-    <Compile Include="MusicPlayer\Visualization\VisualizationInfo.cs" />
-    <Compile Include="MusicPlayer\Visualization\VisualizationManager.cs" />
-    <Compile Include="MusicPlayer\Visualization\VisualizationWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MusicPlayer\Visualization\VisualizationWindow.Designer.cs">
-      <DependentUpon>VisualizationWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MusicPlayer\Visualization\WMPVisualizationHelper.cs" />
-    <Compile Include="MusicPlayer\Visualization\WMPViz.cs" />
     <Compile Include="Player\CropSettings.cs" />
     <Compile Include="Player\DummyPlayer.cs" />
     <Compile Include="Player\DummyPlayerFactory.cs" />
@@ -596,6 +573,7 @@
     <Compile Include="Util\PathUtility.cs" />
     <Compile Include="Util\PRNG.cs" />
     <Compile Include="Util\ProcessLock.cs" />
+    <Compile Include="Util\RawInput.cs" />
     <Compile Include="Util\RegistryTools.cs" />
     <Compile Include="Util\RemovableDriveHelper.cs" />
     <Compile Include="Util\ShellNotification.cs" />
@@ -1541,6 +1519,10 @@
     <Compile Include="Util\Win32API.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\Win32AppCommand.cs" />
+    <Compile Include="Util\Win32CreateFile.cs" />
+    <Compile Include="Util\Win32Hid.cs" />
+    <Compile Include="Util\Win32RawInput.cs" />
     <Compile Include="Util\WindowsController.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1590,10 +1572,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Transcoding\Wmlib.cs" />
-    <EmbeddedResource Include="MusicPlayer\Visualization\VisualizationWindow.resx">
-      <DependentUpon>VisualizationWindow.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="UserInterfaceControls\MPForm.resx">
       <DependentUpon>MPForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -1704,6 +1682,7 @@
     <Error Condition="!Exists('..\..\Packages\bass.wasapi.2.4.0.2\build\bass.wasapi.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wasapi.2.4.0.2\build\bass.wasapi.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.wma.2.4.4\build\bass.wma.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wma.2.4.4\build\bass.wma.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.wv.2.4.4\build\bass.wv.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wv.2.4.4\build\bass.wv.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.dsd.0.0.1\build\bass.dsd.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.dsd.0.0.1\build\bass.dsd.targets'))" />
   </Target>
   <Import Project="..\..\Packages\BASS.2.4.10\build\bass.targets" Condition="Exists('..\..\Packages\BASS.2.4.10\build\bass.targets')" />
   <Import Project="..\..\Packages\bass.aac.2.4.4.4\build\bass.aac.targets" Condition="Exists('..\..\Packages\bass.aac.2.4.4.4\build\bass.aac.targets')" />
@@ -1727,4 +1706,5 @@
   <Import Project="..\..\Packages\bass.wma.2.4.4\build\bass.wma.targets" Condition="Exists('..\..\Packages\bass.wma.2.4.4\build\bass.wma.targets')" />
   <Import Project="..\..\Packages\bass.wv.2.4.4\build\bass.wv.targets" Condition="Exists('..\..\Packages\bass.wv.2.4.4\build\bass.wv.targets')" />
   <Import Project="..\..\Packages\MediaInfo.0.7.69\build\MediaInfo.targets" Condition="Exists('..\..\Packages\MediaInfo.0.7.69\build\MediaInfo.targets')" />
+  <Import Project="..\..\Packages\bass.dsd.0.0.1\build\bass.dsd.targets" Condition="Exists('..\..\Packages\bass.dsd.0.0.1\build\bass.dsd.targets')" />
 </Project>

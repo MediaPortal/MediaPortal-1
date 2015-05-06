@@ -393,11 +393,9 @@ namespace MediaPortal.Configuration
             | System.Windows.Forms.AnchorStyles.Right)));
       this.pinCodeTextBox.BorderColor = System.Drawing.Color.Empty;
       this.pinCodeTextBox.Location = new System.Drawing.Point(216, 39);
-      this.pinCodeTextBox.MaxLength = 4;
       this.pinCodeTextBox.Name = "pinCodeTextBox";
-      this.pinCodeTextBox.Size = new System.Drawing.Size(63, 20);
+      this.pinCodeTextBox.Size = new System.Drawing.Size(71, 20);
       this.pinCodeTextBox.TabIndex = 1;
-      this.pinCodeTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.pinCodeTextBox_KeyPress);
       // 
       // label4
       // 
@@ -580,17 +578,6 @@ namespace MediaPortal.Configuration
       this.Hide();
     }
 
-    private void pinCodeTextBox_KeyPress(object sender, KeyPressEventArgs e)
-    {
-      //
-      // Allow only numbers, and backspace.
-      //
-      if (char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
-      {
-        e.Handled = true;
-      }
-    }
-
     private void checkBoxRemote_CheckedChanged(object sender, EventArgs e)
     {
       if (checkBoxRemote.Checked)
@@ -763,14 +750,6 @@ namespace MediaPortal.Configuration
       using (Profile.Settings xmlreader = new MPSettings())
       {
         macAddress = xmlreader.GetValueAsString("macAddress", hostName, null);
-      }
-
-      if (wakeOnLanManager.Ping(hostName, 100) && !string.IsNullOrEmpty(macAddress))
-      {
-        MessageBox.Show("WakeUpServer: The " + hostName + "server already started and mac address is learnt!",
-          "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        Log.Debug("WakeUpServer: The {0} server already started and mac address is learnt!", hostName);
-        return;
       }
 
       // Check if we already have a valid IP address stored,

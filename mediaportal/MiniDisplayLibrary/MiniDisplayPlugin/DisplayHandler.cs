@@ -119,6 +119,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     public void Dispose()
     {
       this.Stop();
+      //
+      emptyBitmap.Dispose();
+      font.Dispose();
+      graphicBrush.Dispose();
+      textBrush.Dispose();
     }
 
     private void DrawImages(Graphics graphics)
@@ -177,6 +182,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       return (Bitmap)this.emptyBitmap.Clone();
     }
 
+    /// <summary>
+    /// Process a line of text, applying alignment and scrolling as needed according to our display features.
+    /// </summary>
+    /// <param name="_line">The line index. O is the top line, 1 the bottom one.</param>
+    /// <returns></returns>
     protected string Process(int _line)
     {
       if (Settings.Instance.ExtensiveLogging)
@@ -188,19 +198,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       string str;
       if (this.heightInChars == 1)
       {
+        //SL: I believe this is the feature that combines both lines on a single one if our display only supports one line.
         line = this.lines[0];
         line2 = this.lines[1];
-        str = line2.Process() + " - " + line.Process();
+        str = line.Process() + " - " + line2.Process();
       }
       else
       {
+        //Our display supports more than one line. Well, it could be zero though...
         line = this.lines[_line];
         str = line.Process();
       }
       if (Settings.Instance.ExtensiveLogging)
       {
-        Log.Info("MiniDisplayPlugin.DisplayHandler.Process(): translated line #{0} to \"{2}\"",
-                 new object[] {_line, str});
+        Log.Info("MiniDisplayPlugin.DisplayHandler.Process(): translated line #{0} to \"{1}\"",_line, str);
       }
       if ((str == null) || (str.Length == 0))
       {
@@ -221,27 +232,59 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       catch (Exception exception)
       {
-        Log.Error("MiniDisplayPlugin.DisplayHandler.Process(): CAUGHT EXCEPTION - {0}\n\n{1}\n\n" + exception.Message,
+        Log.Error("MiniDisplayPlugin.DisplayHandler.Process(): CAUGHT EXCEPTION - {0}\n\n{1}\n\n", exception.Message,
                   new object[] {exception.StackTrace});
       }
       if (str.Length <= this.widthInChars)
       {
+        //Our line is short enough that we don't need to scroll.
+        //That means we will need to apply alignment.
+        if (Settings.Instance.AutoScroll)
+        {
+            //Display driver is going to take care of scrolling.
+            //No need for alignment and padding then.
+            return str;
+        }
+
+
         if (Settings.Instance.ExtensiveLogging)
         {
           Log.Info("MiniDisplayPlugin.DisplayHandler.Process(): final processing result: \"{0}\"", new object[] {str});
         }
+
+        //Once alignment is applied, we are done here since the rest of this function handling scrolling
         switch (line.Alignment)
         {
-          case Alignment.Centered:
+            case Alignment.Centered:
             {
-              int count = (this.widthInChars - str.Length) / 2;
-              return (new string(' ', count) + str + new string(' ', (this.widthInChars - str.Length) - count));
+                int count = (this.widthInChars - str.Length) / 2;
+                return (new string(' ', count) + str + new string(' ', (this.widthInChars - str.Length) - count));
             }
-          case Alignment.Right:
-            return string.Format("{0," + this.widthInChars + "}", str);
+            
+            case Alignment.Right:
+            {
+                return string.Format("{0," + this.widthInChars + "}", str);
+            }
+
+            case Alignment.Left:
+            {
+                return string.Format("{0,-" + this.widthInChars + "}", str);
+            }
         }
-        return string.Format("{0,-" + this.widthInChars + "}", str);
+
+        
+        
       }
+
+      //Handle text scrolling
+      if (Settings.Instance.AutoScroll)
+      {
+          //Display driver is going to take care of scrolling.
+          //Just pass in the whole line of text.
+          return str;
+      }
+
+
       if (this.pos[_line] > ((str.Length + this.charsToScroll) + 1))
       {
         this.pos[_line] = 0;
@@ -297,7 +340,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         }
         catch (Exception exception)
         {
-          Log.Error("MiniDisplayPlugin.DisplayHandler.ProcessG(): error - {0}" + exception.Message);
+          Log.Error("MiniDisplayPlugin.DisplayHandler.ProcessG(): error - {0}", exception.Message);
         }
         SizeF ef = _graphics.MeasureString(str, font);
         if (ef.Height > this.graphicTextHeight)
@@ -370,11 +413,26 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
     }
 
+    private static ContentAlignment AlignmentToContentAlignment(Alignment aAlignment)
+    {
+        switch (aAlignment)
+        {
+            case Alignment.Left:
+                return ContentAlignment.MiddleLeft;
+            case Alignment.Centered:
+                return ContentAlignment.MiddleCenter;
+            case Alignment.Right:
+                return ContentAlignment.MiddleRight;
+            default:
+                return ContentAlignment.MiddleLeft;
+        }
+    }
+
     private void SendText()
     {
       for (int i = 0; i < this.heightInChars; i++)
       {
-        this.display.SetLine(i, this.Process(i));
+          this.display.SetLine(i, this.Process(i), AlignmentToContentAlignment(this.lines[i].Alignment));
       }
     }
 

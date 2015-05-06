@@ -188,7 +188,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public override void SetCustomCharacters(int[][] customCharacters) { }
 
-    public override void SetLine(int line, string message)
+    public override void SetLine(int line, string message, ContentAlignment aAlignment)
     {
       if (!this._isDisabled && this.MOD.IsOpen)
       {
@@ -1043,7 +1043,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Collecting status...");
           }
-          if (MiniDisplayHelper.IsCaptureCardRecording())
+          if (MiniDisplayHelper.MPStatus.Media_IsRecording)
           {
             num5 |= 0x2000;
             num4 = 5;

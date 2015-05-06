@@ -467,6 +467,7 @@ namespace MediaPortal.Plugins.Process
             handlerStandbyMode = handler.DisAllowShutdown ? StandbyMode.StandbyPrevented : StandbyMode.StandbyAllowed;
           if (handlerStandbyMode != StandbyMode.StandbyAllowed)
           {
+            Log.Debug("PS: Inspecting {0}: {1}", handler.HandlerName, handlerStandbyMode.ToString());
             if (standbyMode != StandbyMode.AwayModeRequested)
               standbyMode = handlerStandbyMode;
             if (standbyHandler == "")
@@ -474,8 +475,6 @@ namespace MediaPortal.Plugins.Process
             else
               standbyHandler += ", " + handler.HandlerName;
           }
-          Log.Debug("PS: Inspecting {0}: {1}", handler.HandlerName,
-            handlerStandbyMode == StandbyMode.StandbyAllowed ? "" : handlerStandbyMode.ToString());
         }
         if (standbyMode != StandbyMode.StandbyAllowed)
         {
@@ -485,7 +484,6 @@ namespace MediaPortal.Plugins.Process
         }
 
         // Then check if user interface allows suspend
-        Log.Debug("PS: Check if user interface is idle");
         if (!UserInterfaceIdle)
         {
           Log.Debug("PS: User interface not idle: StandbyPrevented");
@@ -496,7 +494,6 @@ namespace MediaPortal.Plugins.Process
         if (!_singleSeat)
         {
           // Then check whether the next event is almost due (within pre-no-standby time)
-          Log.Debug("PS: Check whether the next event is almost due");
           if (DateTime.Now >= _currentNextWakeupTime.AddSeconds(-_settings.PreNoShutdownTime))
           {
             Log.Debug("PS: Event is almost due ({0}): StandbyPrevented", _currentNextWakeupHandler);
@@ -506,7 +503,6 @@ namespace MediaPortal.Plugins.Process
           }
 
           // Then check if standby is allowed at this moment
-          Log.Debug("PS: Check if standby is allowed at this moment");
           int Current24hHour = Convert.ToInt32(DateTime.Now.ToString("HH"));
           if ((( // Stop time one day after start time (23:00 -> 07:00)
             ((_settings.AllowedSleepStartTime > _settings.AllowedSleepStopTime)
@@ -631,8 +627,9 @@ namespace MediaPortal.Plugins.Process
         DateTime nextTime = handler.GetNextWakeupTime(earliestWakeupTime);
         if (nextTime < earliestWakeupTime)
           nextTime = DateTime.MaxValue;
-        Log.Debug("PS: Inspecting {0}: {1}",
-          handler.HandlerName, (nextTime < DateTime.MaxValue ? nextTime.ToString() : ""));
+        if (nextTime < DateTime.MaxValue)
+          Log.Debug("PS: Inspecting {0}: {1}", handler.HandlerName, nextTime.ToString());
+
         if (nextTime < nextWakeupTime && nextTime >= earliestWakeupTime)
         {
           handlerName = handler.HandlerName;

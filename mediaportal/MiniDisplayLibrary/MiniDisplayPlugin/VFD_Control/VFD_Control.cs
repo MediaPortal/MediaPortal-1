@@ -193,7 +193,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
                 if (Settings.Instance.ExtensiveLogging)
                 {
                   Log.Debug(
-                    "MiniDisplay.VFD_Control: Vendor ID: {0:X}, Product ID: {1:X}, Version {2:X}" +
+                    "MiniDisplay.VFD_Control: Vendor ID: {0:X}, Product ID: {1:X}, Version {2:X}",
                     _MyHID.DeviceAttributes.VendorID, _MyHID.DeviceAttributes.ProductID,
                     _MyHID.DeviceAttributes.VersionNumber);
                 }

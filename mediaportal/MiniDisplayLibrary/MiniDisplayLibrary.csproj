@@ -84,6 +84,8 @@
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
@@ -108,6 +110,13 @@
     <Compile Include="MiniDisplayPlugin\ByteArray.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\Futaba\MDM166A\FutabaMDM166A.cs" />
+    <Compile Include="MiniDisplayPlugin\Drivers\Futaba\MDM166A\FutabaMDM166A_AdvancedSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\Futaba\MDM166A\FutabaMDM166A_AdvancedSetupForm.Designer.cs">
+      <DependentUpon>FutabaMDM166A_AdvancedSetupForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImon.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphDisplay.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonChooseDisplayTypeForm.cs">
@@ -124,6 +133,7 @@
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonSettingsForm.designer.cs">
       <DependentUpon>SoundGraphImonSettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\SharpDisplayManager\SharpDisplayManager.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\ShuttlePF27.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\DM140GINK.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\FicSpectra.cs" />
@@ -358,6 +368,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="MiniDisplayPlugin\Drivers\Futaba\MDM166A\FutabaMDM166A_AdvancedSetupForm.resx">
+      <DependentUpon>FutabaMDM166A_AdvancedSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MiniDisplayPlugin\Drivers\iMON-Legacy\iMONLCDg_AdvancedSetupForm.resx">
       <DependentUpon>iMONLCDg_AdvancedSetupForm.cs</DependentUpon>
     </EmbeddedResource>

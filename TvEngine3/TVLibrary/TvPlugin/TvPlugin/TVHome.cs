@@ -94,8 +94,9 @@ namespace TvPlugin
       CardChange = 2,
       SeekToEnd = 4,
       SeekToEndAfterPlayback = 8
-    }    
-    
+    }
+
+    private static readonly SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
     private Channel _resumeChannel = null;
     private Thread heartBeatTransmitterThread = null;
     private static DateTime _updateProgressTimer = DateTime.MinValue;
@@ -849,6 +850,8 @@ namespace TvPlugin
         newSchedule.Persist();
         server.OnNewSchedule();
       }
+      GUIMessage msgManualRecord = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MANUAL_RECORDING_STARTED, 0, 0, 0, 0, 0, null);
+      GUIWindowManager.SendMessage(msgManualRecord);
     }
 
     public static bool UseRTSP()
@@ -1640,7 +1643,10 @@ namespace TvPlugin
 
       if (!_playbackStopped)
       {
-        g_Player.ShowFullScreenWindow();
+        _mainThreadContext.Send(delegate
+        {
+          g_Player.ShowFullScreenWindow();
+        }, null);
       }
     }
 
@@ -2026,6 +2032,8 @@ namespace TvPlugin
               case 875:
                 //record current program                  
                 TVProgramInfo.CreateProgram(prog, (int)ScheduleRecordingType.Once, dialogId);
+                GUIMessage msgManualRecord = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MANUAL_RECORDING_STARTED, 0, 0, 0, 0, 0, null);
+                GUIWindowManager.SendMessage(msgManualRecord);
                 return true;
 
               case 876:
@@ -2566,8 +2574,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.View.subtitle", current.EpisodeName);
         GUIPropertyManager.SetProperty("#TV.View.episode", current.EpisodeNumber);
         GUIPropertyManager.SetProperty("#TV.View.genre", current.Genre);
-        GUIPropertyManager.SetProperty("#TV.View.remaining",
-                                       Utils.SecondsToHMSString(current.EndTime - current.StartTime));
+        GUIPropertyManager.SetProperty("#TV.View.remaining",Utils.SecondsToHMSString(current.CalculateTimeRemaining()));
         SetTvThumbProperty(ch);
 
         TimeSpan ts = current.EndTime - current.StartTime;

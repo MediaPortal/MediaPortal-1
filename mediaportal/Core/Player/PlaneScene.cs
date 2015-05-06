@@ -502,9 +502,9 @@ namespace MediaPortal.Player
       {
         try
         {
-          // Alert the frame grabber that it has a chance to grab a frame
+          // Alert the frame grabber that it has a chance to grab a video frame
           // if it likes (method returns immediately otherwise
-          grabber.OnFrame(width, height, arWidth, arHeight, pSurface);
+          grabber.OnFrame(width, height, arWidth, arHeight, pSurface, FrameGrabber.FrameSource.Video);
 
           _textureAddress = pTexture;
 
@@ -697,6 +697,10 @@ namespace MediaPortal.Player
           {
             // old output path or force 3D material to 2D by blitting only left/top halp
 
+            // Alert the frame grabber that it has a chance to grab a GUI frame
+            // if it likes (method returns immediately otherwise
+            grabber.OnFrameGUI();
+
             GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.None;
 
             if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
@@ -730,6 +734,10 @@ namespace MediaPortal.Player
             // 3D output either SBS or TAB
 
             Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
+
+            // Alert the frame grabber that it has a chance to grab a GUI frame
+            // if it likes (method returns immediately otherwise
+            grabber.OnFrameGUI(backbuffer);
 
             // create texture/surface for preparation for 3D output if they don't exist
 
@@ -1060,6 +1068,15 @@ namespace MediaPortal.Player
                   {
                     _sourceRect.Y = originalSource.Y;
                     _sourceRect.Height = originalSource.Height / 2;
+
+                    // ViewModeSwitcher crop correction
+
+                    if (GUIGraphicsContext.IsTabWithBlackBars)
+                    {
+                      _sourceRect.Height -= _cropSettings.Top;
+                      _sourceRect.X += _cropSettings.Left;
+                      _sourceRect.Width -= (_cropSettings.Left + _cropSettings.Right);
+                    }
                   }
                   break;
 
@@ -1073,6 +1090,16 @@ namespace MediaPortal.Player
                   {
                     _sourceRect.Y = _geometry.ImageHeight / 2 + originalSource.Y * 2;
                     _sourceRect.Height = originalSource.Height / 2;
+
+                    // ViewModeSwitcher crop correction
+
+                    if (GUIGraphicsContext.IsTabWithBlackBars)
+                    {
+                      _sourceRect.Y -= _cropSettings.Top;
+                      _sourceRect.Height -= _cropSettings.Bottom;
+                      _sourceRect.X += _cropSettings.Left;
+                      _sourceRect.Width -= (_cropSettings.Left + _cropSettings.Right);
+                    }
                   }
                   break;
               }
@@ -1168,7 +1195,19 @@ namespace MediaPortal.Player
 
         if (GUIGraphicsContext.Render3DSubtitle)
         {
-          SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+            if (!GUIGraphicsContext.StretchSubtitles)
+                SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+            else
+            {
+                Rectangle dstRect = _destinationRect;
+
+                if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide || GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
+                    dstRect.Width *= 2;
+                else
+                    dstRect.Height *= 2;
+                
+                SubEngine.GetInstance().Render(_subsRect, dstRect);
+            }
         }
       }
       else if (((GUIGraphicsContext.Render3DModeHalf == GUIGraphicsContext.eRender3DModeHalf.SBSRight ||
@@ -1184,6 +1223,14 @@ namespace MediaPortal.Player
         {
           Rectangle subRect = _subsRect;
           Rectangle dstRect = _destinationRect;
+
+          if (GUIGraphicsContext.StretchSubtitles)
+          {
+              if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide || GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
+                dstRect.Width *= 2;
+              else
+                dstRect.Height *= 2;
+          }
 
           subRect.X += GUIGraphicsContext.Render3DSubtitleDistance;
           dstRect.X += GUIGraphicsContext.Render3DSubtitleDistance;

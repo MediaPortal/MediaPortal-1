@@ -763,7 +763,7 @@ namespace MediaPortal.Video.Database
     private void SetMovieIDProperty(string file, bool isFolder)
     {
       VirtualDirectory vDir = new VirtualDirectory();
-      int pin = 0;
+      string pin = string.Empty;
       vDir.LoadSettings("movies");
 
       if (isFolder && !vDir.IsProtectedShare(file, out pin))
@@ -907,7 +907,7 @@ namespace MediaPortal.Video.Database
           int rndMovieId = -1;
 
           VirtualDirectory vDir = new VirtualDirectory();
-          int pin = 0;
+          string pin = string.Empty;
           vDir.LoadSettings("movies");
 
           if (!vDir.IsProtectedShare(path, out pin))
@@ -1692,6 +1692,7 @@ namespace MediaPortal.Video.Database
     {
       try
       {
+        GUIPropertyManager.SetProperty("#isfolder", item.IsFolder.ToString());
         IMDBMovie info = item.AlbumInfoTag as IMDBMovie;
 
         if (info == null)
@@ -1828,7 +1829,6 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#HasSubtitles", hasSubtitles);
         GUIPropertyManager.SetProperty("#AspectRatio", info.MediaInfo.AspectRatio);
         GUIPropertyManager.SetProperty("#myvideosuserfanart", info.UserFanart);
-
         
       }
       catch (Exception ex)

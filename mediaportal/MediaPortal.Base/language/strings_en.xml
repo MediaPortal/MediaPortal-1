@@ -1184,12 +1184,19 @@
     <String id="1977">File system</String>
     <String id="1978">Virtual Memory</String>
     <String id="1984">Refresh video thumb</String>
+    <String id="1989">There is read only file in the folder!</String>
     <String id="1990">Wake Up Server</String>
     <String id="1991">Please wait until the server is waking up</String>
     <String id="1992">The server is not available.</String>
     <String id="1993">Check the network connection or increase the timeout value.</String>
     <String id="1994">Wait until the share comes online.</String>
     <String id="1995">Create folder thumb from thumbnails</String>
+    <String id="1999">Name with Duration</String>
+    <String id="2000">The song is read only!</String>
+    <String id="2001">The picture is read only!</String>
+    <String id="2002">The movie is read only!</String>
+    <String id="2003">The file is read only!</String>
+    <String id="2004">Do you want to delete?</String>
     <String id="2005">Delete</String>
     <String id="2006">Title</String>
     <String id="2007">Yield</String>
@@ -1332,6 +1339,10 @@
     <String id="2145">Import current playlist</String>
     <String id="2146">Not enough space on CD</String>
     <String id="2147">Not enough space on DVD</String>
+    <String id="2148">Do you want to change it on all sub-folders?</String>
+    <String id="2149">Question</String>
+    <String id="2160">Update Mediainfo in selected folder</String>
+    <String id="2161">Abort update Mediainfo thread</String>
     <String id="2200" prefix="My ">Explorer</String>
     <String id="2201">Select source</String>
     <String id="2202">Select destination</String>
@@ -1887,6 +1898,8 @@
     <String id="100510">Music/Now playing</String>
     <String id="100511">Music/Fullscreen</String>
     <String id="100512">LastFM Love/Ban</String>
+    <String id="100513">Enter the old PIN code</String>
+    <String id="100514">Enter the new PIN code</String>
     <String id="100600">TV/Guide</String>
     <String id="100601">TV/Scheduler</String>
     <String id="100602">TV/fullscreen</String>
@@ -2021,6 +2034,10 @@
     <String id="109005">MiniDisplay - Setup - Keypad</String>
     <String id="109006">MiniDisplay - Setup - Remote Control</String>
     <String id="102019">TV notification</String>
+    <String id="190000">Abort thumbnail creation thread</String>
+    <String id="190001">Create missing thumbnails (incl. subfolders)</String>
+    <String id="190010">Your {0} database is corrupt.</String>
+    <String id="190011">Folder</String>
     <String id="200000">Please select your EPG grabber. Note if your country is</String>
     <String id="200001">not listed then you will need to supply the EPG manually</String>
     <String id="200002">You can now map the EPG channels to your TV channels</String>
@@ -2069,7 +2086,7 @@
     <String id="200044">Invalid recordings</String>
     <String id="200045">Watched and Invalid Recordings</String>
     <String id="200046">Create thumbnails (this directory)</String>
-    <String id="200047">Create thumbnails (incl. subfolders)</String>
+    <String id="200047">Recreate all thumbnails (incl. subfolders)</String>
     <String id="200048">Re-create all thumbnails</String>
     <String id="200049">Only watched recording for this show</String>
     <String id="200050">This will delete your recordings from hard drive</String>
@@ -2136,7 +2153,7 @@
     <String id="300020">High Quality</String>
     <String id="300021">LCDs, Plasmas</String>
     <String id="300022">High Quality Bicubic</String>
-    <String id="300023">Very large LCDs, Projectors</String>
+    <String id="300023">Large LCDs, Plasmas</String>
     <String id="300024">Music database scan finished.</String>
     <String id="300025">Set scan date in database</String>
     <String id="300026">Are you sure you want do delete pictures database?</String>
@@ -2209,6 +2226,7 @@
     <String id="300093">Restart MP on crash</String>
     <String id="300094">Restart delay in seconds</String>
     <String id="300095">Turn off monitor (when blanking screen)</String>
+	<String id="300096">UHD TVs, Projectors</String>
     <String id="300100">Show last active module on wake up</String>
     <String id="300102">Delay startup</String>
     <String id="300103">On MediaPortal startup</String>
@@ -2227,7 +2245,7 @@
     <String id="300116">Classic (linear)</String>
     <String id="300117">Logarithmic</String>
     <String id="300118">Windows Vista/Win7</String>
-    <String id="300119">Show default volume OSD for fullscreen video</String>
+    <String id="300119">Show volume OSD</String>
     <String id="300120">Skin</String>
     <String id="300121">On-screen Display</String>
     <String id="300122">Allow remember last focused items</String>

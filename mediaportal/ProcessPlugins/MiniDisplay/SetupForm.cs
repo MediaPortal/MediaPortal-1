@@ -91,6 +91,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private IContainer components;
     private MPTextBox txtUpdateDelay;
     private MPLabel mpLabel8;
+    private MPCheckBox mpCheckBoxAutoScroll;
     private MPTextBox txtTimG;
 
     public SetupForm()
@@ -123,6 +124,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.txtUpdateDelay.DataBindings.Add("Text", Settings.Instance, "UpdateDelay");
       this.txtUpdateDelay.Validating += new CancelEventHandler(txtUpdateDelay_Validating);
       this.txtIdleTimeout.DataBindings.Add("Text", Settings.Instance, "IdleTimeout");
+      this.mpCheckBoxAutoScroll.DataBindings.Add("Checked", Settings.Instance, "AutoScroll");
       this.ckForceGraphicText.DataBindings.Add("Checked", Settings.Instance, "ForceGraphicText");
       this.txtPixelsToScroll.DataBindings.Add("Text", Settings.Instance, "PixelsToScroll");
       this.txtCharsToScroll.DataBindings.Add("Text", Settings.Instance, "CharsToScroll");
@@ -230,8 +232,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           this.lcd.Initialize();
           Thread.Sleep(1000);
-          this.lcd.SetLine(0, "MiniDisplay");
-          this.lcd.SetLine(1, this.lcd.Name);
+          this.lcd.SetLine(0, "MiniDisplay", ContentAlignment.MiddleCenter);
+          this.lcd.SetLine(1, this.lcd.Name, ContentAlignment.MiddleCenter);
           this.lcd.Update();
           Thread.Sleep(5000);
           this.lcd.CleanUp();
@@ -271,6 +273,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.cmbPort = new MediaPortal.UserInterface.Controls.MPComboBox();
             this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
             this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+            this.txtUpdateDelay = new MediaPortal.UserInterface.Controls.MPTextBox();
+            this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
             this.txtIdleTimeout = new MediaPortal.UserInterface.Controls.MPTextBox();
             this.mpLabel7 = new MediaPortal.UserInterface.Controls.MPLabel();
             this.btnTest = new MediaPortal.UserInterface.Controls.MPButton();
@@ -322,8 +326,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.mpDisableGUISetup = new MediaPortal.UserInterface.Controls.MPCheckBox();
             this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.txtUpdateDelay = new MediaPortal.UserInterface.Controls.MPTextBox();
-            this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.mpCheckBoxAutoScroll = new MediaPortal.UserInterface.Controls.MPCheckBox();
             this.groupBox1.SuspendLayout();
             this.groupShutdown.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
@@ -382,6 +385,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.mpCheckBoxAutoScroll);
             this.groupBox1.Controls.Add(this.txtUpdateDelay);
             this.groupBox1.Controls.Add(this.mpLabel8);
             this.groupBox1.Controls.Add(this.txtIdleTimeout);
@@ -412,6 +416,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Configuration";
+            // 
+            // txtUpdateDelay
+            // 
+            this.txtUpdateDelay.BorderColor = System.Drawing.Color.Empty;
+            this.txtUpdateDelay.Location = new System.Drawing.Point(106, 245);
+            this.txtUpdateDelay.Name = "txtUpdateDelay";
+            this.txtUpdateDelay.Size = new System.Drawing.Size(48, 20);
+            this.txtUpdateDelay.TabIndex = 87;
+            this.txtUpdateDelay.Text = "300";
+            // 
+            // mpLabel8
+            // 
+            this.mpLabel8.Location = new System.Drawing.Point(15, 243);
+            this.mpLabel8.Name = "mpLabel8";
+            this.mpLabel8.Size = new System.Drawing.Size(86, 23);
+            this.mpLabel8.TabIndex = 86;
+            this.mpLabel8.Text = "Update (ms)";
+            this.mpLabel8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.mpLabel8, "Time in milliseconds after which our MiniDisplay is refreshed");
             // 
             // txtIdleTimeout
             // 
@@ -508,7 +531,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             // 
             this.cbDisplayOff.AutoSize = true;
             this.cbDisplayOff.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.cbDisplayOff.Location = new System.Drawing.Point(8, 299);
+            this.cbDisplayOff.Location = new System.Drawing.Point(179, 262);
             this.cbDisplayOff.Name = "cbDisplayOff";
             this.cbDisplayOff.Size = new System.Drawing.Size(138, 17);
             this.cbDisplayOff.TabIndex = 80;
@@ -949,24 +972,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // txtUpdateDelay
+            // mpCheckBoxAutoScroll
             // 
-            this.txtUpdateDelay.BorderColor = System.Drawing.Color.Empty;
-            this.txtUpdateDelay.Location = new System.Drawing.Point(106, 245);
-            this.txtUpdateDelay.Name = "txtUpdateDelay";
-            this.txtUpdateDelay.Size = new System.Drawing.Size(48, 20);
-            this.txtUpdateDelay.TabIndex = 87;
-            this.txtUpdateDelay.Text = "300";
-            // 
-            // mpLabel8
-            // 
-            this.mpLabel8.Location = new System.Drawing.Point(15, 243);
-            this.mpLabel8.Name = "mpLabel8";
-            this.mpLabel8.Size = new System.Drawing.Size(86, 23);
-            this.mpLabel8.TabIndex = 86;
-            this.mpLabel8.Text = "Update (ms)";
-            this.mpLabel8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolTip1.SetToolTip(this.mpLabel8, "Time in milliseconds after which our MiniDisplay is refreshed");
+            this.mpCheckBoxAutoScroll.AutoSize = true;
+            this.mpCheckBoxAutoScroll.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.mpCheckBoxAutoScroll.Location = new System.Drawing.Point(19, 297);
+            this.mpCheckBoxAutoScroll.Name = "mpCheckBoxAutoScroll";
+            this.mpCheckBoxAutoScroll.Size = new System.Drawing.Size(75, 17);
+            this.mpCheckBoxAutoScroll.TabIndex = 88;
+            this.mpCheckBoxAutoScroll.Text = "Auto Scroll";
+            this.toolTip1.SetToolTip(this.mpCheckBoxAutoScroll, "Text scrolling is handled by the display driver itself.");
+            this.mpCheckBoxAutoScroll.UseVisualStyleBackColor = true;
             // 
             // SetupForm
             // 

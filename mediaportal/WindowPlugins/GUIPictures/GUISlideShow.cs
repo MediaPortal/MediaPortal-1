@@ -61,18 +61,21 @@ namespace MediaPortal.GUI.Pictures
         if (_isSlideShow && _showRecursive)
         {
           // Analyse for folder and add picture/video items to the list and then remove the folder item
-          while (IsPathDirectory(_slideList[_currentSlideIndex]))
+          if (_currentSlideIndex != -1 && _slideList.Count > 0)
           {
-            GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
-            _slideList.Remove(_slideList[_currentSlideIndex]);
-            _autoShuffleFolder = true;
+            while (IsPathDirectory(_slideList[_currentSlideIndex]))
+            {
+              GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
+              _slideList.Remove(_slideList[_currentSlideIndex]);
+              _autoShuffleFolder = true;
+            }
           }
         }
 
         // Item list has changed, if we use autoshuffle then do a new shuffle and check if new selected entry is a folder
         if (_autoShuffleFolder && _autoShuffle)
         {
-          Shuffle(true, false);
+          Shuffle(_showRecursive, false);
           // Analyse for folder and add picture/video items to the list and then remove the folder item
           // like shuffle is done, continue slideshow on first entry
           _currentSlideIndex = 0;
@@ -86,8 +89,25 @@ namespace MediaPortal.GUI.Pictures
         }
         else
         {
-          _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
-          GUIPictures.fileNameCheck = _slideList[_currentSlideIndex];
+          try
+          {
+            if (_currentSlideIndex != -1 && _slideList.Count > 0)
+            {
+              int currentIndex = _currentSlideIndex;
+              _currentSlide = _slideCache.GetCurrentSlide(_slideList[currentIndex]);
+              GUIPictures.fileNameCheck = _slideList[currentIndex];
+            }
+            else
+            {
+              return _currentSlide;
+            }
+          }
+          catch (Exception)
+          {
+            Log.Debug("GUISlideShow: catch exception when LoadSlide on stop");
+            return _currentSlide;
+          }
+
         }
 
         GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(GUIPictures.fileNameCheck));
@@ -143,9 +163,12 @@ namespace MediaPortal.GUI.Pictures
           }
           g_Player.ShowFullScreenWindow();
 
-          if (_isSlideShow)
+          if ((_currentSlideIndex + 1 < _slideList.Count))
           {
-            GUIPictureSlideShow._slideDirection = 1;
+            if (Util.Utils.IsVideo(_slideList[_currentSlideIndex + 1]) || _isSlideShow)
+            {
+              GUIPictureSlideShow._slideDirection = 1;
+            }
           }
 
           _loadVideoPlayback = false;
@@ -170,12 +193,15 @@ namespace MediaPortal.GUI.Pictures
         Log.Error("GUISlideShow: Exception in LoadCurrentSlide() : {0}", ex);
         // If exception occurs, select first entry to avoid render loop
         _currentSlideIndex = 0;
-        while (IsPathDirectory(_slideList[_currentSlideIndex]))
+        if (_slideList.Count > 0)
         {
-          GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
-          _slideList.Remove(_slideList[_currentSlideIndex]);
+          while (IsPathDirectory(_slideList[_currentSlideIndex]))
+          {
+            GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
+            _slideList.Remove(_slideList[_currentSlideIndex]);
+          }
+          _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
         }
-        _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
       }
       return _currentSlide;
     }
@@ -578,6 +604,16 @@ namespace MediaPortal.GUI.Pictures
           {
             GUIPictureSlideShow._slideDirection = -1;
           }
+          else if (_currentSlideIndex > 0)
+          {
+            if (_currentSlideIndex - 1 < _slideList.Count)
+            {
+              if (Util.Utils.IsVideo(_slideList[_currentSlideIndex - 1]))
+              {
+                GUIPictureSlideShow._slideDirection = -1;
+              }
+            }
+          }
           else
           {
             GUIPictureSlideShow._slideDirection = 0;
@@ -609,6 +645,16 @@ namespace MediaPortal.GUI.Pictures
           else if (_isSlideShow)
           {
             GUIPictureSlideShow._slideDirection = 1;
+          }
+          else if (_currentSlideIndex > 0)
+          {
+            if (_currentSlideIndex + 1 < _slideList.Count)
+            {
+              if (Util.Utils.IsVideo(_slideList[_currentSlideIndex + 1]))
+              {
+                GUIPictureSlideShow._slideDirection = 1;
+              }
+            }
           }
           else
           {
@@ -932,15 +978,16 @@ namespace MediaPortal.GUI.Pictures
                   if (_autoRepeat)
                   {
                     _currentSlideIndex = 0;
-                    if (_autoShuffle && (_isSlideShow || _showRecursive))
+                    if (_autoShuffle)
                     {
-                      Shuffle(false, _autoRepeat);
+                      Shuffle(_showRecursive, _autoRepeat);
                     }
                   }
                   else
                   {
                     _currentSlideIndex--;
                     // How to exit back to GUIPictures?
+                    GUIPictureSlideShow.SlideDirection = 0;
                     ShowPreviousWindow();
                   }
                 }
@@ -1223,6 +1270,10 @@ namespace MediaPortal.GUI.Pictures
     public void Select(string strFile)
     {
       LoadSettings();
+      if (_autoShuffle)
+      {
+        Shuffle(_showRecursive, _autoRepeat);
+      }
       for (int i = 0; i < _slideList.Count; ++i)
       {
         string strSlide = _slideList[i];
@@ -1305,17 +1356,6 @@ namespace MediaPortal.GUI.Pictures
       StartBackgroundMusic(path);
       GUIPictureSlideShow._slideDirection = 1;
       _isSlideShow = true;
-      if (_autoShuffle)
-      {
-        if (_showRecursive)
-        {
-          Shuffle(true, false);
-        }
-        else
-        {
-          Shuffle(false, false);
-        }
-      }
     }
 
 
@@ -1407,6 +1447,11 @@ namespace MediaPortal.GUI.Pictures
           ShowPreviousWindow();
           return;
         }
+      }
+      else if ((_currentSlideIndex >= _slideList.Count - 1) && _autoShuffle)
+      {
+        // Autoshuffle when reach the end of the slide list
+        Shuffle(false, false);
       }
 
       // Reset slide time

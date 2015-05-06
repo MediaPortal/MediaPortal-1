@@ -1091,6 +1091,9 @@
     <String id="1318">Tallenna tekstitys</String>
     <String id="1319">Tallenna muokattu tekstitys tiedosto?</String>
     <String id="1320">{0} kuin {1} &#10;</String>
+	<String id="1321">Automaattinen dekooderin valinta</String>
+    <String id="1322">Pakota lähde filtteri</String>
+    <String id="1323">Koodekit .TS tiedostoille</String>
     <String id="1440">Teksti-TV</String>
     <String id="1441">Teksti-TV</String>
     <String id="1442">Vieritysnopeus (vaaka)</String>
@@ -1180,6 +1183,20 @@
     <String id="1976">kier/min</String>
     <String id="1977">Tiedostojärjestelmä</String>
     <String id="1978">Virtuaalimuisti</String>
+	<String id="1984">Päivitä videon pikkukuvat</String>
+    <String id="1989">Kansiossa on "Vain luku" tiedosto!</String>
+    <String id="1990">Herätä palvelin</String>
+    <String id="1991">Ole hyvä ja odota kunnes palvelin herää</String>
+    <String id="1992">Palvelin ei ole saatavilla.</String>
+    <String id="1993">Tarkista internet yhteys tai lisää aikakatkaisun aikaa.</String>
+    <String id="1994">Odota kunnes jaot tulevat Online -tilaan.</String>
+    <String id="1995">Luo kansion Thumbs -tiedosto kansion pikkukuvista</String>
+    <String id="1999">Nimi yhdessä Keston kanssa</String>
+    <String id="2000">Laulu on "Vain luku" -tyyppinen!</String>
+    <String id="2001">Kuva on "Vain luku" -tyyppinen!</String>
+    <String id="2002">Elokuva on "Vain luku" -tyyppinen!</String>
+    <String id="2003">Tiedosto on "Vain luku" -tyyppinen!</String>
+    <String id="2004">Do you want to delete?</String>
     <String id="2005">Poista</String>
     <String id="2006">Otsikko</String>
     <String id="2007">Lisää</String>
@@ -1322,6 +1339,8 @@
     <String id="2145">Tuo soittolista</String>
     <String id="2146">CD:llä ei ole tarpeeksi tilaa.</String>
     <String id="2147">DVD:llä ei ole tarpeeksi tilaa.</String>
+	<String id="2148">Haluatko muuttaa valinnan kaikkiin alikansioihin?</String>
+    <String id="2149">Kysymys</String>
     <String id="2200">Tiedostonhallinta</String>
     <String id="2201">Valitse lähde</String>
     <String id="2202">Valitse kohde</String>
@@ -1826,6 +1845,7 @@
     <String id="34061">Syötä käyttäjätunnus...</String>
     <String id="34062">Syötä artisti...</String>
     <String id="34063">Artistia ei ole vielä valittu.</String>
+	<String id="34064">Internet yhteys vaaditaan\nLast.FM Radiolle</String>
     <String id="40001">Odottaa valmiustilaa...</String>
     <String id="40002">MediaPortal on yhä käynnissä.</String>
     <String id="40003">Toiminnon loputtua Mediaportal menee valmiustilaan...</String>
@@ -1876,6 +1896,8 @@
     <String id="100510">Musiikki/Soi nyt</String>
     <String id="100511">Musiikki/Koko näyttö</String>
     <String id="100512">LastFM tykkää/kiellä</String>
+	<String id="100513">Syötä vanha PIN-koodi</String>
+    <String id="100514">Syötä uusi PIN-koodi</String>
     <String id="100600">TV/Opas</String>
     <String id="100601">TV/Ajastus</String>
     <String id="100602">TV/Koko näyttö</String>
@@ -1976,7 +1998,7 @@
     <String id="102011">Artistitiedot</String>
     <String id="102012">Toimintovalikko</String>
     <String id="102013">Anna arvio</String>
-    <String id="102014">Kuvan tiedot</String>
+    <String id="102014">Kuvan tiedot.</String>
     <String id="102015">Pikavalikko</String>
     <String id="102016">Ilmoitus</String>
     <String id="102017">Tallennusristiriita</String>
@@ -2198,12 +2220,7 @@
     <String id="300093">Käynnistä MP uudelleen virhetilanteessa</String>
     <String id="300094">Uudelleen käynnistyksen viive (s)</String>
     <String id="300095">Sammuta näyttö (kun musta ruutu)</String>
-    <String id="300096">Käynnistä näyttö (kun palaudutaan unitilasta)</String>
-    <String id="300097">Salli S3-tila</String>
-    <String id="300098">Käytä korjausta jumittumiseen kun palaudutaan unitilasta</String>
-    <String id="300099">Käynnistä MediaPortal uudelleen kun palaudutaan unitilasta</String>
     <String id="300100">Näytä viimeinen aktiivinen moduuli kun palaudutaan unitilasta</String>
-    <String id="300101">Käytä näytön valintaa valitaksesi MediaPortalin aloitus näytön</String>
     <String id="300102">Käynnistyksen viive</String>
     <String id="300103">Kun MediaPortal käynnistyy</String>
     <String id="300104">Kun MediaPortal palautuu unitilasta</String>
@@ -2225,7 +2242,6 @@
     <String id="300120">Ulkoasu</String>
     <String id="300121">Kuvaruutu</String>
     <String id="300122">Muista viimeksi käytetyt kohteet</String>
-    <String id="300123">Ikkunoituna levitä automaattisesti ulkoasun mittoihin</String>
     <String id="300124">Piilota tiedoston päätteet (.mp3, .avi...)</String>
     <String id="300125">Ota käyttöön tiedostojen välimuisti</String>
     <String id="300126">Ota käyttöön ulkoasun äänet</String>
@@ -2331,5 +2347,9 @@
     <String id="300226">Käytä vain sisäisiä nfo lukioita</String>
     <String id="300227">Tyhjennä mustalla listalla olevat pienoiskuvat</String>
     <String id="300228">Kysy varmistus ajansiirtoa lopetettaessa</String>
+	<String id="300229">Pienennä tehtäväpalkkiin kun MP ei ole tarkennettuna</String>
+    <String id="300230">Lopeta toisto jos ääni renderöijä poistetaan</String>
+    <String id="300231">Pienennä kuvanopeutta kun MP ei ole tarkennettuna</String>
+	<String id="300232">Päivitä vain tiedostot jotka ovat jälkeen {0}</String>
   </Section>
 </Language>

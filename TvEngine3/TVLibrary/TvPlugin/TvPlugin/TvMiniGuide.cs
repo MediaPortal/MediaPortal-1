@@ -267,7 +267,7 @@ namespace TvPlugin
                 Channel changeChannel = null;
                 if (AutoZap)
                 {
-                  if ((TVHome.Navigator.Channel.IdChannel != SelectedChannel.IdChannel) || g_Player.IsTVRecording)
+                  if (TVHome.Navigator.Channel.IdChannel != SelectedChannel.IdChannel || !g_Player.IsTimeShifting || g_Player.IsTVRecording)
                   {
                     List<Channel> tvChannelList = GetChannelListByGroup();
                     if (tvChannelList != null)

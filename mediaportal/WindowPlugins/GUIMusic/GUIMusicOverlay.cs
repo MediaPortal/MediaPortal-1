@@ -420,6 +420,10 @@ namespace MediaPortal.GUI.Music
         if (tag != null)
         {
           tag.Artist = Util.Utils.FormatMultiItemMusicStringTrim(tag.Artist, _stripArtistPrefixes);
+          if (item != null)
+          {
+            item.MusicTag = tag;
+          }
         }
       }
 
@@ -431,7 +435,7 @@ namespace MediaPortal.GUI.Music
       var thumb = string.Empty;
       if (tag != null)
       {
-        string strThumb = Util.Utils.GetAlbumThumbName(tag.Artist, tag.Album);
+        string strThumb = GUIMusicBaseWindow.GetCoverArt(false, fileName, tag);
         if (Util.Utils.FileExistsInCache(strThumb))
         {
           thumb = strThumb;
@@ -577,7 +581,7 @@ namespace MediaPortal.GUI.Music
       var thumb = string.Empty;
       if (tag != null)
       {
-        string strThumb = Util.Utils.GetAlbumThumbName(tag.Artist, tag.Album);
+        string strThumb = GUIMusicBaseWindow.GetCoverArt(false, fileName, tag);
         if (Util.Utils.FileExistsInCache(strThumb))
         {
           thumb = strThumb;

@@ -176,6 +176,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_DVD = 3001, // for keymapping
       WINDOW_TV_OVERLAY = 3002,
       WINDOW_TVOSD = 3003,
+      WINDOW_GUI_VOLUME_OVERLAY = 3004,
       WINDOW_TOPBAR = 3005,
       WINDOW_TVZAPOSD = 3007,
       WINDOW_VIDEO_OVERLAY_TOP = 3008,
@@ -245,6 +246,8 @@ namespace MediaPortal.GUI.Library
     private bool _hasRendered = false;
     private bool _windowLoaded = false;
     private static bool _hasWindowVisibilityUpdated;
+    protected int _volumeOverlayOffsetX = 0; // default x offset for volume overlay is 0
+    protected int _volumeOverlayOffsetY = 0; // default y offset for volume overlay is 0
 
     private VisualEffect _showAnimation = new VisualEffect(); // for dialogs
     private VisualEffect _closeAnimation = new VisualEffect();
@@ -254,7 +257,7 @@ namespace MediaPortal.GUI.Library
     #region ctor
 
     /// <summary>
-    /// The (emtpy) constructur of the GUIWindow
+    /// The (empty) constructor of the GUIWindow
     /// </summary>
     public GUIWindow() {}
 
@@ -653,6 +656,36 @@ namespace MediaPortal.GUI.Library
             _disableTopBar = true;
           }
         }
+
+
+        XmlNode nodeVolumeOverlayOffsetX = doc.DocumentElement.SelectSingleNode("/window/volumeoverlayoffsetx");
+        _volumeOverlayOffsetX = 0;
+        if (nodeVolumeOverlayOffsetX != null)
+        {
+          if (nodeVolumeOverlayOffsetX.InnerText != null)
+          {
+            string value = nodeVolumeOverlayOffsetX.InnerText.ToLower();
+            if (!Int32.TryParse(value, out _volumeOverlayOffsetX))
+            {
+              _volumeOverlayOffsetX = 0;
+            }
+          }
+        }
+
+        XmlNode nodeVolumeOverlayOffsetY = doc.DocumentElement.SelectSingleNode("/window/volumeoverlayoffsety");
+        _volumeOverlayOffsetY = 0;
+        if (nodeVolumeOverlayOffsetY != null)
+        {
+          if (nodeVolumeOverlayOffsetY.InnerText != null)
+          {
+            string value = nodeVolumeOverlayOffsetY.InnerText.ToLower();
+            if (!Int32.TryParse(value, out _volumeOverlayOffsetY))
+            {
+              _volumeOverlayOffsetY = 0;
+            }
+          }
+        }
+        
         _rememberLastFocusedControl = false;
         if (GUIGraphicsContext.AllowRememberLastFocusedItem)
         {
@@ -1507,12 +1540,52 @@ namespace MediaPortal.GUI.Library
       }
       if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
       {
-        OnShowContextMenu();
+        // send the action to the control which has the focus, if there is an override
+        int id;
+        GUIControl cntlFoc = GetControl(GetFocusControlId());
+        if (cntlFoc != null && cntlFoc.OnInfo.Length > 0)
+        {
+          id = GetFocusControlId();
+          if (id >= 0)
+          {
+            _previousFocusedControlId = id;
+          }
+          cntlFoc.OnAction(action);
+          id = GetFocusControlId();
+          if (id >= 0)
+          {
+            _previousFocusedControlId = id;
+          }
+        }
+        else
+        {
+          OnShowContextMenu();
+        }
         return;
       }
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
-        OnPreviousWindow();
+        // send the action to the control which has the focus, if there is an override
+        int id;
+        GUIControl cntlFoc = GetControl(GetFocusControlId());
+        if (cntlFoc != null && cntlFoc.OnESC.Length > 0)
+        {
+          id = GetFocusControlId();
+          if (id >= 0)
+          {
+            _previousFocusedControlId = id;
+          }
+          cntlFoc.OnAction(action);
+          id = GetFocusControlId();
+          if (id >= 0)
+          {
+            _previousFocusedControlId = id;
+          }
+        }
+        else
+        {
+          OnPreviousWindow();
+        }
         return;
       }
 
@@ -1684,6 +1757,8 @@ namespace MediaPortal.GUI.Library
               GUIGraphicsContext.AutoHideTopBar = _autoHideTopbar;
               GUIGraphicsContext.TopBarHidden = _autoHideTopbar;
               GUIGraphicsContext.DisableTopBar = _disableTopBar;
+              GUIGraphicsContext.VolumeOverlayOffsetX = _volumeOverlayOffsetX;
+              GUIGraphicsContext.VolumeOverlayOffsetY = _volumeOverlayOffsetY;
 
               if (message.Param1 != (int) Window.WINDOW_INVALID && message.Param1 != GetID)
               {

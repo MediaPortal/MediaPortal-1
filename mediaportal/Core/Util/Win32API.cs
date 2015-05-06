@@ -34,14 +34,16 @@ namespace MediaPortal.Util
   /// <summary>
   /// Summary description for Win32API.
   /// </summary>
-  public static class Win32API
-  {
+    public static class Win32API
+    {
     #region Interop declarations
 
     #region Constants
 
     private const int WPF_RESTORETOMAXIMIZED = 2;
     public const int WM_SHOWWINDOW = 0x0018;
+
+    //
     private const int WM_ACTIVATE = 0x0006; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
     private const int WA_CLICKACTIVE = 2;   // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
 
@@ -50,6 +52,7 @@ namespace MediaPortal.Util
     public const int CSIDL_MYMUSIC = 0x000d; // "My Music" folder
     public const int CSIDL_MYVIDEO = 0x000e; // "My Videos" folder
     public const int CSIDL_MYPICTURES = 0x0027; // "My Pictures" folder
+
 
     #endregion
 
@@ -60,6 +63,29 @@ namespace MediaPortal.Util
 
     //   [DllImportAttribute("user32", ExactSpelling=true, CharSet=CharSet.Ansi, SetLastError=true)]
     //   public static extern int GetKeyState(int nVirtKey);
+
+    /// <summary>
+    /// Registers the devices that supply the raw input data.
+    /// <para />
+    /// See: http://msdn.microsoft.com/en-us/library/windows/desktop/ms645600%28v=vs.85%29.aspx
+    /// </summary>
+    /// <param name="pRawInputDevices"></param>
+    /// <param name="uiNumDevices"></param>
+    /// <param name="cbSize"></param>
+    /// <returns></returns>
+    [DllImport("User32.dll", EntryPoint = "RegisterRawInputDevices", SetLastError = true)]
+    public static extern bool RegisterRawInputDevices([In] RAWINPUTDEVICE[] pRawInputDevices, [In] uint uiNumDevices, [In] uint cbSize);
+
+    /// <summary>
+    /// Sends the specified message to one or more windows.
+    /// </summary>
+    /// <param name="hWnd"></param>
+    /// <param name="Msg"></param>
+    /// <param name="wParam"></param>
+    /// <param name="lParam"></param>
+    /// <returns></returns>
+    [DllImport("user32.dll")]
+    public static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, uint lParam);
 
     [DllImport("user32")]
     public static extern IntPtr SetWindowsHookEx(HookType code, HookDelegate func, IntPtr hInstance, int threadID);
@@ -305,6 +331,50 @@ namespace MediaPortal.Util
       public IntPtr lpData;
     }
 
+    /// <summary>
+    /// Defines information for the raw input devices.
+    /// <para />
+    /// See: http://msdn.microsoft.com/en-us/library/windows/desktop/ms645565%28v=vs.85%29.aspx
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct RAWINPUTDEVICE
+    {
+        public ushort usUsagePage;
+        public ushort usUsage;
+        public uint dwFlags;
+        public IntPtr hwndTarget;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct RAWINPUTHEADER
+    {
+        public uint dwType;
+        public uint dwSize;
+        public IntPtr Device;
+        public IntPtr wParam;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct RAWKEYBOARD
+    {
+        public ushort MakeCode;
+        public ushort Flags;
+        public ushort Reserved;
+        public ushort VirtualKey;
+        public int Message;
+        public int ExtraInformation;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    public struct RAWINPUT
+    {
+        [FieldOffset(0)]
+        public RAWINPUTHEADER Header;
+        [FieldOffset(16)]
+        public RAWKEYBOARD Keyboard;
+        //mouse and HID parts omitted
+    }
+
     #endregion
 
     #region Enums
@@ -399,6 +469,7 @@ namespace MediaPortal.Util
     }
 
     #endregion
+
 
     //Checks if the computer is connected to the internet...
     public static bool IsConnectedToInternet()

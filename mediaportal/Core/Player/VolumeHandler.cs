@@ -42,41 +42,48 @@ namespace MediaPortal.Player
 
     public VolumeHandler(int[] volumeTable)
     {
-      bool isDigital;
-
-      using (Settings reader = new MPSettings())
+      if (GUIGraphicsContext.DeviceAudioConnected)
       {
-        int levelStyle = reader.GetValueAsInt("volume", "startupstyle", 0);
+        bool isDigital;
 
-        if (levelStyle == 0)
+        using (Settings reader = new MPSettings())
         {
-          _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "lastknown", 52428)));
+          int levelStyle = reader.GetValueAsInt("volume", "startupstyle", 0);
+
+          if (levelStyle == 0)
+          {
+            _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "lastknown", 52428)));
+          }
+
+          if (levelStyle == 1)
+          {
+          }
+
+          if (levelStyle == 2)
+          {
+            _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "startuplevel", 52428)));
+          }
+
+          isDigital = reader.GetValueAsBool("volume", "digital", false);
+
+          _showVolumeOSD = reader.GetValueAsBool("volume", "defaultVolumeOSD", true);
         }
 
-        if (levelStyle == 1)
+        try
         {
+          _mixer = new Mixer.Mixer();
+          _mixer.Open(0, isDigital);
+          _volumeTable = volumeTable;
+          _mixer.ControlChanged += mixer_ControlChanged;
         }
-
-        if (levelStyle == 2)
+        catch (Exception ex)
         {
-          _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "startuplevel", 52428)));
+          Log.Error("VolumeHandler: Mixer exception when init {0}", ex);
         }
-
-        isDigital = reader.GetValueAsBool("volume", "digital", false);
-
-        _showVolumeOSD = reader.GetValueAsBool("volume", "defaultVolumeOSD", true);
       }
-
-      try
+      else
       {
-        _mixer = new Mixer.Mixer();
-        _mixer.Open(0, isDigital);
         _volumeTable = volumeTable;
-        _mixer.ControlChanged += mixer_ControlChanged;
-      }
-      catch (Exception ex)
-      {
-        Log.Error("VolumeHandler: Mixer exception when init {0}", ex);
       }
     }
 
@@ -86,41 +93,46 @@ namespace MediaPortal.Player
 
     private static VolumeHandler CreateInstance()
     {
-      using (Settings reader = new MPSettings())
+      if (GUIGraphicsContext.DeviceAudioConnected)
       {
-        int volumeStyle = reader.GetValueAsInt("volume", "handler", 1);
-
-        switch (volumeStyle)
+        using (Settings reader = new MPSettings())
         {
-          // classic volume table
-          case 0:
-            return new VolumeHandler(new[] {0, 6553, 13106, 19659, 26212, 32765, 39318, 45871, 52424, 58977, 65535});
-          // windows default from registry
-          case 1:
-            return new VolumeHandler();
-          // logarithmic
-          case 2:
-            return new VolumeHandler(new[]
-                                  {
-                                    0, 1039, 1234, 1467, 1744, 2072, 2463, 2927, 3479, 4135, 4914, 5841, 6942, 8250,
-                                    9806
-                                    , 11654, 13851, 16462, 19565, 23253, 27636, 32845, 39037, 46395, 55141, 65535
-                                  });
-          // custom user setting
-          case 3:
-            return new VolumeHandlerCustom();
-          // defaults to vista safe "0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151, 53247, 57343, 61439, 65535"
-          // Vista recommended values
-          case 4:
-            return new VolumeHandler(new[]
-                                  {
-                                    0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151,
-                                    53247, 57343, 61439, 65535
-                                  });
-          default:
-            return new VolumeHandlerCustom();
+          int volumeStyle = reader.GetValueAsInt("volume", "handler", 1);
+
+          switch (volumeStyle)
+          {
+              // classic volume table
+            case 0:
+              return new VolumeHandler(new[] {0, 6553, 13106, 19659, 26212, 32765, 39318, 45871, 52424, 58977, 65535});
+              // windows default from registry
+            case 1:
+              return new VolumeHandler();
+              // logarithmic
+            case 2:
+              return new VolumeHandler(new[]
+                                       {
+                                         0, 1039, 1234, 1467, 1744, 2072, 2463, 2927, 3479, 4135, 4914, 5841, 6942, 8250,
+                                         9806
+                                         , 11654, 13851, 16462, 19565, 23253, 27636, 32845, 39037, 46395, 55141, 65535
+                                       });
+              // custom user setting
+            case 3:
+              return new VolumeHandlerCustom();
+              // defaults to vista safe "0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151, 53247, 57343, 61439, 65535"
+              // Vista recommended values
+            case 4:
+              return new VolumeHandler(new[]
+                                       {
+                                         0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055,
+                                         49151,
+                                         53247, 57343, 61439, 65535
+                                       });
+            default:
+              return new VolumeHandlerCustom();
+          }
         }
       }
+      return new VolumeHandlerCustom();
     }
 
     public static void Dispose()
@@ -142,6 +154,7 @@ namespace MediaPortal.Player
         _instance._mixer = null;
       }
       _instance = null;
+      GUIGraphicsContext.VolumeHandler = null;
     }
 
     public virtual void UnMute()
@@ -190,16 +203,22 @@ namespace MediaPortal.Player
 
     protected virtual void SetVolume(int volume)
     {
-      if (_mixer.IsMuted)
+      if (_mixer != null)
       {
-        _mixer.IsMuted = false;
+        if (_mixer.IsMuted)
+        {
+          _mixer.IsMuted = false;
+        }
+        _mixer.Volume = volume;
       }
-      _mixer.Volume = volume;
     }
 
     protected virtual void SetVolume(bool isMuted)
     {
-      _mixer.IsMuted = isMuted;
+      if (_mixer != null)
+      {
+        _mixer.IsMuted = isMuted;
+      }
     }
 
     private void HandleGUIOnControlChange()
@@ -214,22 +233,30 @@ namespace MediaPortal.Player
         };
         GUIGraphicsContext.SendMessage(msg);
 
-        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && _showVolumeOSD ||
-            GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && _showVolumeOSD)
-        {
-          var showVolume = new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0);
-          GUIWindowManager.OnAction(showVolume);
-        }
+        var showVolume = new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0);
+        GUIWindowManager.OnAction(showVolume);
       }
       catch (Exception e)
       {
         Log.Info("VolumeHandler.HandleGUIOnControlChange: {0}", e.ToString());
       }
-    } 
+    }
 
     private static void mixer_ControlChanged(object sender, Mixer.MixerEventArgs e)
     {
       Instance.HandleGUIOnControlChange();
+      GUIGraphicsContext.VolumeOverlay = true;
+      GUIGraphicsContext.VolumeOverlayTimeOut = DateTime.Now;
+      Instance.UpdateVolumeProperties();
+    }
+
+    public void UpdateVolumeProperties()
+    {
+      float fRange = (float)(Instance.Maximum - Instance.Minimum);
+      float fPos = (float)(Instance.Volume - Instance.Minimum);
+      float fPercent = (fPos / fRange) * 100.0f;
+      GUIPropertyManager.SetProperty("#volume.percent", ((int)Math.Round(fPercent)).ToString());
+      GUIPropertyManager.SetProperty("#volume.mute", Instance.IsMuted.ToString().ToLowerInvariant());
     }
 
     #endregion Methods
@@ -238,26 +265,50 @@ namespace MediaPortal.Player
 
     public virtual int Volume
     {
-      get { return _mixer.Volume; }
+      get
+      {
+        if (_mixer != null)
+        {
+          return _mixer.Volume;
+        }
+        return 0;
+      }
       set { SetVolume(value); }
     }
 
     public virtual bool IsMuted
     {
-      get { return _mixer.IsMuted; }
+      get
+      {
+        if (_mixer != null)
+        {
+          return _mixer.IsMuted;
+        }
+        return false;
+      }
       set { SetVolume(value); }
+    }
+
+    public virtual bool IsEnabledVolumeOSD
+    {
+      get { return _showVolumeOSD; }
+      set { _showVolumeOSD = value; }
     }
 
     public virtual int Next
     {
       get
       {
-        lock (_volumeTable)
-          foreach (int vol in _volumeTable.Where(vol => Volume < vol))
-          {
-            return vol;
-          }
-        return Maximum;
+        if (_volumeTable != null)
+        {
+          lock (_volumeTable)
+            foreach (int vol in _volumeTable.Where(vol => Volume < vol))
+            {
+              return vol;
+            }
+          return Maximum;
+        }
+        return 0;
       }
     }
 
@@ -296,15 +347,19 @@ namespace MediaPortal.Player
     {
       get
       {
-        lock (_volumeTable)
-          for (int index = _volumeTable.Length - 1; index >= 0; --index)
-          {
-            if (Volume > _volumeTable[index])
+        if (_volumeTable != null)
+        {
+          lock (_volumeTable)
+            for (int index = _volumeTable.Length - 1; index >= 0; --index)
             {
-              return _volumeTable[index];
+              if (Volume > _volumeTable[index])
+              {
+                return _volumeTable[index];
+              }
             }
-          }
-        return Minimum;
+          return Minimum;
+        }
+        return 0;
       }
     }
 
@@ -336,7 +391,7 @@ namespace MediaPortal.Player
 
     private int[] _volumeTable;
     private int _startupVolume;
-    private readonly bool _showVolumeOSD;
+    private bool _showVolumeOSD;
 
     #endregion Fields
   }

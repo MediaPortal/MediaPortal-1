@@ -26,6 +26,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
+using MediaPortal.Player;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace WindowPlugins.GUISettings
@@ -139,6 +140,7 @@ namespace WindowPlugins.GUISettings
           xmlwriter.SetValueAsBool("volume", "digital", useDigital);
           xmlwriter.SetValue("volume", "table", _customVolume);
           xmlwriter.SetValueAsBool("volume", "defaultVolumeOSD", btnEnableOSDVolume.Selected);
+          VolumeHandler.Instance.IsEnabledVolumeOSD = btnEnableOSDVolume.Selected;
         }
       }
     }

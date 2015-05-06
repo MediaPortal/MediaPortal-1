@@ -236,7 +236,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         //From IDisplay
-        public override void SetLine(int line, string message)
+        public override void SetLine(int line, string message, ContentAlignment aAlignment)
         {
             CheckDisplay();
             //Pass on that call to our actual display
@@ -251,8 +251,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             if (iDisplay != null)
             {
                 //Display something for fun
-                SetLine(0,"Adv. Settings");
-                SetLine(1, Name);
+                SetLine(0,"Adv. Settings",ContentAlignment.MiddleCenter);
+                SetLine(1, Name, ContentAlignment.MiddleCenter);
                 Update();
             }
             else

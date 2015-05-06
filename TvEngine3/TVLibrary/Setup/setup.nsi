@@ -280,6 +280,54 @@ ShowUninstDetails show
   ${EndIf}
 !macroend
 
+!macro SecMpeInstaller
+  ${LOG_TEXT} "INFO" "MediaPortal Extension Manager..."
+
+  ; install files
+  SetOutPath "$INSTDIR"
+  File "${git_MP}\MPE\MpeCore\bin\${BUILD_TYPE}\MpeCore.dll"
+  File "${git_MP}\MPE\MpeInstaller\bin\${BUILD_TYPE}\MpeInstaller.exe"
+  ;File "${git_MP}\MPE\MpeMaker\bin\${BUILD_TYPE}\MpeMaker.exe"
+  File "${git_MP}\Utils\bin\${BUILD_TYPE}\Utils.dll"
+  File "${git_MP}\core\bin\${BUILD_TYPE}\Core.dll"
+  File "${git_MP}\MediaPortal.Base\CSScriptLibrary.dll"
+
+  ; create startmenu shortcuts
+  ${If} $noDesktopSC != 1
+    CreateShortCut "$DESKTOP\MediaPortal Extension Manager.lnk" "$INSTDIR\MpeInstaller.exe"  ""  "$INSTDIR\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager"
+  ${EndIf}
+  CreateDirectory "${STARTMENU_GROUP}"
+  CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk" "$INSTDIR\MpeInstaller.exe"  ""  "$INSTDIR\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager"
+
+  ; associate file extensions
+  ${RegisterExtension} "$INSTDIR\MpeInstaller.exe" ".mpe1" "MediaPortal extension"
+
+  ${RefreshShellIcons}
+!macroend
+
+!macro Remove_SecMpeInstaller
+  ${LOG_TEXT} "INFO" "Uninstalling MediaPortal Extension Manager..."
+
+  ; remove files
+  Delete "$INSTDIR\MpeCore.dll"
+  Delete "$INSTDIR\MpeInstaller.exe"
+  Delete "$INSTDIR\MpeMaker.exe"
+  Delete "$INSTDIR\Utils.dll"
+  Delete "$INSTDIR\Core.dll"
+  Delete "$INSTDIR\CSScriptLibrary.dll"
+
+  ; remove startmenu shortcuts
+  Delete "$DESKTOP\MediaPortal Extension Manager.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk"
+  ;Delete "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"
+
+  ; unassociate file extensions
+  ${UnRegisterExtension} ".mpe1" "MediaPortal extension"
+  ${UnRegisterExtension} ".xmp2"  "MediaPortal extension project"
+
+  ${RefreshShellIcons}
+!macroend
+
 Function RunUninstaller
 
   ${VersionCompare} 1.0.2.22779 $PREVIOUS_VERSION $R0
@@ -366,6 +414,10 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ${KillProcess} "SetupTv.exe"
   ; ffmpeg
   ${KillProcess} "ffmpeg.exe"
+  
+  ${IfNot} ${MPIsInstalled}
+    !insertmacro SecMpeInstaller
+  ${EndIf}
 
   SetOverwrite on
 
@@ -477,6 +529,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ${IfNot} ${MP023IsInstalled}
   ${AndIfNot} ${MPIsInstalled}
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsReader\bin\${BUILD_TYPE}\TsReader.ax" "$INSTDIR\TsReader.ax" "$INSTDIR"
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\Core-CC-Parser\CCCP\${BUILD_TYPE}\cccp.ax" "$INSTDIR\cccp.ax" "$INSTDIR"
   ${EndIf}
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsWriter\bin\${BUILD_TYPE}\TsWriter.ax" "$INSTDIR\TsWriter.ax" "$INSTDIR"
   ; filters for analog tv
@@ -546,6 +599,7 @@ ${MementoSectionEnd}
   ${IfNot} ${MP023IsInstalled}
   ${AndIfNot} ${MPIsInstalled}
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\TsReader.ax"
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\cccp.ax"
     WriteRegStr HKCR "Media Type\Extensions\.ts"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
     WriteRegStr HKCR "Media Type\Extensions\.tp"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
     WriteRegStr HKCR "Media Type\Extensions\.tsbuffer"  "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
@@ -643,6 +697,11 @@ ${MementoSectionEnd}
   Delete "${STARTMENU_GROUP}\web site.url"
   ; remove Desktop shortcuts
   Delete "$DESKTOP\TV-Server Configuration.lnk"
+  
+  ${IfNot} ${MPIsInstalled}
+    !insertmacro Remove_SecMpeInstaller
+  ${EndIf}
+  
 !macroend
 
 ${MementoSection} "MediaPortal TV Client plugin" SecClient

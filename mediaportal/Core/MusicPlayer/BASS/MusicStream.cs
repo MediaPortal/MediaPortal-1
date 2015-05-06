@@ -304,7 +304,7 @@ namespace MediaPortal.MusicPlayer.BASS
         case FileMainType.MODFile:
           _stream = Bass.BASS_MusicLoad(_filePath, 0, 0,
                              BASSFlag.BASS_SAMPLE_SOFTWARE | BASSFlag.BASS_SAMPLE_FLOAT |
-                             BASSFlag.BASS_MUSIC_AUTOFREE | BASSFlag.BASS_MUSIC_PRESCAN |
+                             BASSFlag.BASS_MUSIC_DECODE | BASSFlag.BASS_MUSIC_PRESCAN |
                              BASSFlag.BASS_MUSIC_RAMP, 0);
           break;
 

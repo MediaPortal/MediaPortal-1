@@ -341,7 +341,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           string message = new string(' ', cols);
           for (int i = 0; i < lines; i++)
           {
-            SetLine(i, message);
+            SetLine(i, message, ContentAlignment.MiddleLeft);
           }
         }
         else
@@ -1636,7 +1636,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public override void SetLine(int line, string message)
+    public override void SetLine(int line, string message, ContentAlignment aAlignment)
     {
       if (!isDisabled && _EnableDisplay)
       {

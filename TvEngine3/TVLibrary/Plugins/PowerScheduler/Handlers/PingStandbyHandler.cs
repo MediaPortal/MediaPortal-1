@@ -64,7 +64,6 @@ namespace TvEngine.PowerScheduler.Handlers
 
             if (_isActiveHost)
             {
-              _isActiveHost = false;
               return _useAwayMode ? StandbyMode.AwayModeRequested : StandbyMode.StandbyPrevented;
             }
             else
@@ -77,14 +76,18 @@ namespace TvEngine.PowerScheduler.Handlers
           if (_enabled && !_pingRun)
           {
             string hosts = _tvbLayer.GetSetting("PowerSchedulerPingMonitorHosts", "").Value;
+            bool lastActiveHostState = _isActiveHost;
 
             if (string.IsNullOrEmpty(hosts))
             {
               Log.Debug("PS: PingMonitor: No Hosts in List");
+              _isActiveHost = false;
             }
             else
             {
               _pingRun = true;
+              _isActiveHost = false;
+
               foreach (string hostName in hosts.Split(";".ToCharArray()))
               {
                 try
@@ -96,24 +99,34 @@ namespace TvEngine.PowerScheduler.Handlers
                 catch (Exception) {}
               }
             }
+
+            if (lastActiveHostState)
+            {
+              return _useAwayMode ? StandbyMode.AwayModeRequested : StandbyMode.StandbyPrevented;
+            }
           }
+
           return StandbyMode.StandbyAllowed;
         }
       }
 
       private void PingCompletedCallback(object sender, PingCompletedEventArgs e)
       {
-        if (e.Cancelled)
+        try
         {
-          Log.Debug("PS: PingCompletedCallback, Ping canceled.");
-          return;
-        }
+          if (e.Cancelled)
+          {
+            Log.Debug("PS: PingCompletedCallback, Ping canceled.");
+            return;
+          }
 
-        if (e.Reply.Status == IPStatus.Success)
-        {
-          _isActiveHost = true;
-          Log.Debug("PS: PingMonitor found an active host {0}", e.Reply.Address);
+          if (e.Reply.Status == IPStatus.Success)
+          {
+            _isActiveHost = true;
+            Log.Debug("PS: PingMonitor found an active host {0}", e.Reply.Address);
+          }
         }
+        catch (Exception) { }
       }
 
       public void UserShutdownNow() { }

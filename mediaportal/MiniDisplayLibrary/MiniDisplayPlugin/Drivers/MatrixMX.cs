@@ -520,7 +520,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public override void SetCustomCharacters(int[][] customCharacters) { }
 
-    public override void SetLine(int line, string message)
+    public override void SetLine(int line, string message, ContentAlignment aAlignment)
     {
       if (this._IsDisabled)
       {
