@@ -519,12 +519,27 @@ namespace MediaPortal.Util
         if (strDir != "cdda:")
           try
           {
-            // TODO (Fix slow issue if hostname is not linked to IP address in system32/drivers/host file
-            //bool available = Util.Utils.CheckServerStatus(strDir);
-            //if (available)
+            //Check if UNC host is online and file/folder exists
+            try
             {
-              strRoot = Path.GetFullPath(strDir);
+                if (UNCTools.UNCFileFolderExists(strDir))
+                {
+                    //UNC host is online and file/folder exists
+                    strRoot = Path.GetFullPath(strDir);
+                    Log.Debug("GetShare: strDir: '{0}' ({1}), exists and host is online!", strDir, UNCTools.ResolveToUNC(strDir));
+                }
+                else
+                {
+                    //UNC host is offline or file/folder doesnt exists
+                    Log.Debug("GetShare: strDir: '{0}' DOESNT exists or host is offline, aborting!", strDir);
+                    return null;
+                }
             }
+            catch (Exception ex)
+            {
+                Log.Error("GetShare: exception on check if UNCFileFolderExists '{0}' exists, ex:{2} stack:{3}", strDir, ex.Message, ex.StackTrace);
+            }
+
           }
           catch (Exception) {}
       }
