@@ -558,27 +558,18 @@ namespace MediaPortal.Player
 
     public void RenderGui(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
-      // TODO render GUI in two partd
-      //RenderLayers(GUILayers.under, width, height, arWidth, arHeight);
+      RenderLayers(GUILayers.under, width, height, arWidth, arHeight);
     }
 
     public void RenderOverlay(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
-      RenderLayers(GUILayers.all, width, height, arWidth, arHeight);
+      RenderLayers(GUILayers.over, width, height, arWidth, arHeight);
     }
 
     private void RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
       lock (GUIGraphicsContext.RenderLock)
       {
-        Device device = GUIGraphicsContext.DX9Device;
-
-        device.Clear(ClearFlags.Target, Color.FromArgb(0, 0, 0, 0), 1.0f, 0);
-        device.BeginScene();
-
-        GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers);
-        GUIFontManager.Present();
-
         if (width > 0 && height > 0)
         {
           _vmr9Util.VideoWidth = width;
@@ -592,8 +583,19 @@ namespace MediaPortal.Player
           _shouldRenderTexture = SetVideoWindow(nativeSize);
         }
 
-        SubtitleRenderer.GetInstance().Render();
-        SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+        Device device = GUIGraphicsContext.DX9Device;
+
+        device.Clear(ClearFlags.Target, Color.FromArgb(0, 0, 0, 0), 1.0f, 0);
+        device.BeginScene();
+
+        if (layers == GUILayers.over)
+        {
+          SubtitleRenderer.GetInstance().Render();
+          SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+        }
+
+        GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers);
+        GUIFontManager.Present();
 
         device.EndScene();
         device.Present();
