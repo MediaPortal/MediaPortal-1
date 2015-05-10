@@ -171,6 +171,7 @@ public class MediaPortalApp : D3D, IRender
   private const int D3DERR_DEVICEHUNG        = -2005530508; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
   private const int D3DERR_DEVICEREMOVED     = -2005530512; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
   private const int D3DERR_INVALIDCALL       = -2005530516; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
+  private const int WM_NOTIFY_VIDEO_WINDOW   = 0x0400 + 100; // WM_USER as base
 
   private const int DEVICE_NOTIFY_WINDOW_HANDLE         = 0;
   private const int DEVICE_NOTIFY_ALL_INTERFACE_CLASSES = 4;
@@ -1508,6 +1509,10 @@ public class MediaPortalApp : D3D, IRender
             return;
           }
           PluginManager.WndProc(ref msg);
+          break;
+
+        case WM_NOTIFY_VIDEO_WINDOW:
+          GUIGraphicsContext.NotifyVideoWindowChanged();
           break;
 
         // handle default commands needed for plugins
