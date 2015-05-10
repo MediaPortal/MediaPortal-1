@@ -375,16 +375,31 @@ HRESULT MPMadPresenter::RestoreMadDeviceState()
   if (FAILED(hr = m_pMadD3DDev->SetScissorRect(&m_oldScissorRect)))
     return hr;
 
-  if (FAILED(hr = m_pMadD3DDev->SetTexture(0, m_pOldTexture)))
+  hr = m_pMadD3DDev->SetTexture(0, m_pOldTexture);
+
+  if (m_pOldTexture)
+    m_pOldTexture->Release();
+
+  if (FAILED(hr))
     return hr;
 
-  if (FAILED(hr = m_pMadD3DDev->SetVertexShader(m_pOldVS)))
+  hr = m_pMadD3DDev->SetVertexShader(m_pOldVS);
+
+  if (m_pOldVS)
+    m_pOldVS->Release();
+
+  if (FAILED(hr))
     return hr;
 
   if (FAILED(hr = m_pMadD3DDev->SetFVF(m_dwOldFVF)))
     return hr;
 
-  if (FAILED(hr = m_pMadD3DDev->SetStreamSource(0, m_pOldStreamData, m_nOldOffsetInBytes, m_nOldStride)))
+  hr = m_pMadD3DDev->SetStreamSource(0, m_pOldStreamData, m_nOldOffsetInBytes, m_nOldStride);
+
+  if (m_pOldStreamData)
+    m_pOldStreamData->Release();
+
+  if (FAILED(hr))
     return hr;
 
   if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, m_dwOldALPHABLENDENABLE)))
