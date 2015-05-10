@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -29,6 +30,7 @@ using MediaPortal.Configuration;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
+using MediaPortal;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 
@@ -54,6 +56,9 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIGraphicsContext
   {
+    [DllImport("user32.dll", SetLastError = true)]
+    static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
     public static event BlackImageRenderedHandler OnBlackImageRendered;
     public static event VideoReceivedHandler OnVideoReceived;
     
@@ -103,6 +108,8 @@ namespace MediaPortal.GUI.Library
     private const int WM_SYSCOMMAND = 0x0112;
     private const int MONITOR_ON = -1;
     private const int MONITOR_OFF = 2;
+    private const int WM_NOTIFY_VIDEO_WINDOW = 0x0400 + 100; // WM_USER as base
+
     // ReSharper restore InconsistentNaming
     private static bool m_volumeOverlay = false; // Volume overlay
     private static bool m_disableVolumeOverlay = false; // Window volume overlay allowed
@@ -264,12 +271,9 @@ namespace MediaPortal.GUI.Library
                 Log.Warn("GraphicContext: Could not power monitor {0}", value ? "off" : "on");
               }
             }
-            _blankScreen = value;
 
-            if (OnVideoWindowChanged != null)
-            {
-              OnVideoWindowChanged();
-            }
+            _blankScreen = value;
+            VideoWindowChanged();
           }
           catch (Exception ex)
           {
@@ -736,10 +740,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void VideoReceived()
     {
-      if (OnVideoReceived != null)
-      {
-        OnVideoReceived();
-      }
+      VideoWindowChanged();
     }
 
     /// <summary>
@@ -756,10 +757,7 @@ namespace MediaPortal.GUI.Library
       set
       {
         _geometryType = value;
-        if (OnVideoWindowChanged != null)
-        {
-          OnVideoWindowChanged();
-        }
+        VideoWindowChanged();
       }
     }
 
@@ -900,10 +898,7 @@ namespace MediaPortal.GUI.Library
         if (value != _isFullScreenVideo)
         {
           _isFullScreenVideo = value;
-          if (OnVideoWindowChanged != null)
-          {
-            OnVideoWindowChanged();
-          }
+          VideoWindowChanged();
         }
       }
     }
@@ -919,11 +914,31 @@ namespace MediaPortal.GUI.Library
         if (!_rectVideo.Equals(value))
         {
           _rectVideo = value;
-          if (OnVideoWindowChanged != null)
-          {
-            OnVideoWindowChanged();
-          }
+          VideoWindowChanged();
         }
+      }
+    }
+
+    /// <summary>
+    /// Delegates video window size/position change notify to be done by main thread
+    /// </summary>
+    private static void VideoWindowChanged()
+    {
+     IntPtr hWnd = ActiveForm;
+      if (hWnd != IntPtr.Zero)
+      {
+        PostMessage(hWnd, WM_NOTIFY_VIDEO_WINDOW, IntPtr.Zero, IntPtr.Zero);
+      }
+    }
+
+    /// <summary>
+    /// Notifies video window position/size change. Should be called only from the window owning thread
+    /// </summary>
+    public static void NotifyVideoWindowChanged()
+    {
+      if (OnVideoWindowChanged != null)
+      {
+        OnVideoWindowChanged();
       }
     }
 
@@ -971,9 +986,9 @@ namespace MediaPortal.GUI.Library
             VideoWindow = new Rectangle(0, 0, 1, 1);
           }
 
-          if (bOldOverlay != _overlay && OnVideoWindowChanged != null)
+          if (bOldOverlay != _overlay)
           {
-            OnVideoWindowChanged();
+            VideoWindowChanged();
           }
         }
       }
