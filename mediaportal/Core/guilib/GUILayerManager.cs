@@ -90,9 +90,9 @@ namespace MediaPortal.GUI.Library
       int endLayer = MAX_LAYERS;
 
       if (layers == GUILayers.under)
-        endLayer = 3;
+        endLayer = videoLayer - 1;
       else if (layers == GUILayers.over)
-        startLayer = 4;
+        startLayer = videoLayer + 1;
 
       for (int i = startLayer; i < endLayer; ++i)
       {
