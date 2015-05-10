@@ -190,10 +190,6 @@
       <Project>{FE0B7969-38A1-4150-BB3B-C2E87F40AEED}</Project>
       <Name>LastFMLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MiniDisplayLibrary\MiniDisplayLibrary.csproj">
-      <Project>{8635D515-A5D4-4FB7-BD30-71770651E18B}</Project>
-      <Name>MiniDisplayLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
@@ -243,10 +239,6 @@
       <DependentUpon>LastFMConfig.cs</DependentUpon>
     </Compile>
     <Compile Include="LastFMScrobbler\LastFMScrobbler.cs" />
-    <Compile Include="MiniDisplay\MiniDisplay.cs" />
-    <Compile Include="MiniDisplay\SetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="MusicDBReorg\MusicDBReorg.cs" />
     <Compile Include="MusicDBReorg\MusicDBReorgSettings.cs">
       <SubType>Form</SubType>
@@ -302,12 +294,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="MiniDisplay\MiniDisplay.lcd.gif" />
-    <EmbeddedResource Include="MiniDisplay\MiniDisplay.lcd_deactivated.gif" />
-    <EmbeddedResource Include="MiniDisplay\SetupForm.resx">
-      <DependentUpon>SetupForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="ViewModeSwitcher\ViewModeSwitcherConfig.resx">
       <DependentUpon>ViewModeSwitcherConfig.cs</DependentUpon>
     </EmbeddedResource>

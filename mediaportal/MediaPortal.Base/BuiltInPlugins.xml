@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <whitelist>
+  <plugin>MiniDisplayPlugin.dll</plugin>
   <plugin>ProcessPlugins.dll</plugin>
   <plugin>PowerScheduler.Interfaces.dll</plugin>
   <plugin>PowerSchedulerClientPlugin.dll</plugin>

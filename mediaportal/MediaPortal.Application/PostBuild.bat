@@ -66,6 +66,7 @@ xcopy %1\Dialogs\bin\%2\Dialogs.* plugins\Windows\ /Y /D
 
 REM ProcessPlugins
 xcopy %1\ProcessPlugins\bin\%2\ProcessPlugins.* plugins\process\ /Y /D
+xcopy %1\ProcessPlugins\MiniDisplay\bin\%2\MiniDisplayPlugin.* plugins\process\ /Y /D
 xcopy %1\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\%2\MusicShareWatcherHelper.* . /Y /D
 xcopy %1\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\%2\MusicShareWatcher.exe . /Y /D
 

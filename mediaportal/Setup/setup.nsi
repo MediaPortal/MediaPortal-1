@@ -477,6 +477,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\ExternalPlayers\bin\${BUILD_TYPE}\ExternalPlayers.dll"
   SetOutPath "$MPdir.Plugins\process"
   File "${git_MP}\ProcessPlugins\bin\${BUILD_TYPE}\ProcessPlugins.dll"
+  File "${git_MP}\ProcessPlugins\MiniDisplay\bin\${BUILD_TYPE}\MiniDisplayPlugin.dll"
   SetOutPath "$MPdir.Plugins\subtitle"
   File "${git_MP}\SubtitlePlugins\bin\${BUILD_TYPE}\SubtitlePlugins.dll"
   SetOutPath "$MPdir.Plugins\Windows"
@@ -701,6 +702,7 @@ SectionEnd
   Delete "$MPdir.Plugins\ExternalPlayers\ExternalPlayers.dll"
   RMDir "$MPdir.Plugins\ExternalPlayers"
   Delete "$MPdir.Plugins\process\ProcessPlugins.dll"
+  Delete "$MPdir.Plugins\process\MiniDisplayPlugin.dll"
   RMDir "$MPdir.Plugins\process"
   Delete "$MPdir.Plugins\subtitle\SubtitlePlugins.dll"
   RMDir "$MPdir.Plugins\subtitle"
@@ -832,7 +834,6 @@ Section -Post
   ; removing old externaldisplay files - requested by chemelli
   ${LOG_TEXT} "INFO" "Removing obsolete (External/Mini/Cybr)Display files"
   Delete "$MPdir.Plugins\process\ExternalDisplayPlugin.dll"
-  Delete "$MPdir.Plugins\process\MiniDisplayPlugin.dll"
   Delete "$MPdir.Plugins\process\CybrDisplayPlugin.dll"
   Delete "$MPdir.Plugins\windows\CybrDisplayPlugin.dll"
 
