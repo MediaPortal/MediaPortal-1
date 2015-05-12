@@ -592,6 +592,8 @@ namespace MediaPortal.Player
         {
           SubtitleRenderer.GetInstance().Render();
           SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+
+          BDOSDRenderer.GetInstance().Render();
         }
 
         GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers);
