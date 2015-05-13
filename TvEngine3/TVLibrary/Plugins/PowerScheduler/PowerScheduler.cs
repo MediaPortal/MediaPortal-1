@@ -1011,6 +1011,14 @@ namespace TvEngine.PowerScheduler
       }
     }
 
+    /// <summary>
+    /// Returns the next wakeup time from the PowerScheduler plugin
+    /// </summary>
+    public DateTime GetTimeToWakeup()
+    {
+      return _wakeupTimer.TimeToWakeup;
+    }
+
     #endregion
 
     #region Private methods
