@@ -23,7 +23,7 @@ using namespace std;
 class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritSec
 {
   public:
-    MPMadPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* pDevice);
+    MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, IDirect3DDevice9* pDevice);
     ~MPMadPresenter();
 
     IBaseFilter* Initialize();
@@ -73,6 +73,9 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
 
     HANDLE m_hSharedGuiHandle = nullptr;
     HANDLE m_hSharedOsdHandle = nullptr;
+
+    DWORD m_dwWidth = 0;
+    DWORD m_dwHeight = 0;
 
     // stored mad device state
     IDirect3DVertexShader9* m_pOldVS = nullptr;

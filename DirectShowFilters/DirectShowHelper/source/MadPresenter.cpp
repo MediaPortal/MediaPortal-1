@@ -39,9 +39,11 @@ struct VID_FRAME_VERTEX
   float v;
 };
 
-MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* pDevice) :
+MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, IDirect3DDevice9* pDevice) :
   CUnknown(NAME("MPMadPresenter"), NULL),
   m_pCallback(pCallback),
+  m_dwWidth(width),
+  m_dwHeight(height),
   m_pDevice((IDirect3DDevice9Ex*)pDevice)
 {
 }
@@ -439,20 +441,20 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
   if (m_pMadD3DDev)
   {
     m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadGuiVertexBuffer, NULL);
+
     if (FAILED(hr = m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadOsdVertexBuffer, NULL)))
       return hr;
 
-    // TODO check texture size
-    if (FAILED(hr = m_pDevice->CreateTexture(1920, 1080, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureGui, &m_hSharedGuiHandle)))
+    if (FAILED(hr = m_pDevice->CreateTexture(m_dwWidth, m_dwHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureGui, &m_hSharedGuiHandle)))
       return hr;
 
-    if (FAILED(hr = m_pMadD3DDev->CreateTexture(1920, 1080, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureGui, &m_hSharedGuiHandle)))
+    if (FAILED(hr = m_pMadD3DDev->CreateTexture(m_dwWidth, m_dwHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureGui, &m_hSharedGuiHandle)))
       return hr;
 
-    if (FAILED(hr = m_pDevice->CreateTexture(1920, 1080, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureOsd, &m_hSharedOsdHandle)))
+    if (FAILED(hr = m_pDevice->CreateTexture(m_dwWidth, m_dwHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureOsd, &m_hSharedOsdHandle)))
       return hr;
 
-    if (FAILED(hr = m_pMadD3DDev->CreateTexture(1920, 1080, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureOsd, &m_hSharedOsdHandle)))
+    if (FAILED(hr = m_pMadD3DDev->CreateTexture(m_dwWidth, m_dwHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureOsd, &m_hSharedOsdHandle)))
       return hr;
   }
   else
