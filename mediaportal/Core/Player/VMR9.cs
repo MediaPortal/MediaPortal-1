@@ -122,7 +122,7 @@ namespace MediaPortal.Player
     private static extern unsafe void EVRUpdateDisplayFPS();
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe bool MadInit(IVMR9PresentCallback callback, uint dwD3DDevice, ref IBaseFilter madFilter);
+    private static extern unsafe bool MadInit(IVMR9PresentCallback callback, int width, int height, uint dwD3DDevice, ref IBaseFilter madFilter);
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void MadDeinit();
@@ -440,7 +440,7 @@ namespace MediaPortal.Player
       }
       else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-         MadInit(_scene, (uint)upDevice.ToInt32(), ref _vmr9Filter);
+         MadInit(_scene, GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height, (uint)upDevice.ToInt32(), ref _vmr9Filter);
 
          hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
          Log.Info("VMR9: added madVR Renderer to graph");
