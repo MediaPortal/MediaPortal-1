@@ -1336,7 +1336,7 @@ namespace MediaPortal.Player
         if (value != _isFullscreen)
         {
           _isFullscreen = value;
-          GUIGraphicsContext.IsFullScreenVideo = _isFullscreen;
+          _updateNeeded = true;
         }
       }
     }
