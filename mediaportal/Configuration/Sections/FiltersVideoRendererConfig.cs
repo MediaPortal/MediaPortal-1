@@ -67,6 +67,7 @@ namespace MediaPortal.Configuration.Sections
           }
 
           radioButtonEVR.Checked = xmlreader.GetValueAsBool("general", "useEVRenderer", ValueEVR);
+          radioButtonMadVR.Checked = xmlreader.GetValueAsBool("general", "useMadVideoRenderer", false);
         }
         _init = true;
       }
