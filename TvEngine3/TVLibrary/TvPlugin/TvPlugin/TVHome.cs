@@ -3294,7 +3294,7 @@ namespace TvPlugin
     {
       if (GUIGraphicsContext.RenderBlackImage)
       {
-        FramesBeforeStopRenderBlackImage = 3;
+        FramesBeforeStopRenderBlackImage = !_useasynctuning ? 3 : 1;
         // Ambass : we need to wait the 3rd frame to avoid persistance of previous channel....Why ?????
         // Morpheus: number of frames depends on hardware, from 1..5 or higher might be needed! 
         //           Probably the faster the graphics card is, the more frames required???
