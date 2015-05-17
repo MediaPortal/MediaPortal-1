@@ -73,6 +73,12 @@ namespace MediaPortal.Player
 
     [PreserveSig]
     void SetRenderTarget(uint target);
+
+    [PreserveSig]
+    void SetSubtitleDevice(IntPtr device);
+
+    [PreserveSig]
+    void RenderSubtitle(Int64 frameStart, int left, int top, int right, int bottom, int width, int height);
   }
 
   #endregion

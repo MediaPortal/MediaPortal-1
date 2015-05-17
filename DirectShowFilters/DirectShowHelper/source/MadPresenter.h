@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "callback.h"
 #include "mvrInterfaces.h"
+#include "MadSubtitleProxy.h"
 #include "DeviceState.h"
 
 using namespace std;
@@ -47,6 +48,8 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
 
     HRESULT SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf);
     HRESULT SetupMadDeviceState();
+
+    MadSubtitleProxy* m_subProxy = nullptr;
 
     IDirect3DDevice9Ex* m_pDevice = nullptr;
     IDirect3DDevice9Ex* m_pMadD3DDev = nullptr;

@@ -157,6 +157,8 @@ namespace MediaPortal.Player.Subtitles
 
     #region ISubEngine Members
 
+    public void SetDevice(IntPtr device) {}
+
     public bool LoadSubtitles(IGraphBuilder graphBuilder, string filename)
     {
       LoadSettings();

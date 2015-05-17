@@ -46,11 +46,17 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD heig
   m_dwHeight(height),
   m_pDevice((IDirect3DDevice9Ex*)pDevice)
 {
+  m_subProxy = new MadSubtitleProxy(pCallback);
+  if (m_subProxy)
+    m_subProxy->AddRef();
 }
 
 MPMadPresenter::~MPMadPresenter()
 {
   CAutoLock cAutoLock(this);
+
+  if (m_subProxy)
+    m_subProxy->Release();
 }
 
 IBaseFilter* MPMadPresenter::Initialize()
@@ -66,12 +72,15 @@ IBaseFilter* MPMadPresenter::Initialize()
   CComQIPtr<IMadVROsdServices> pOsdServices = m_pMad;
   CComQIPtr<IMadVRDirect3D9Manager> manager = m_pMad;
   CComQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad;
+  CComQIPtr<ISubRender> pSubRender = m_pMad;
 
-  if (!baseFilter || !pOsdServices || !manager || !pSubclassReplacement)
+  if (!baseFilter || !pOsdServices || !manager || !pSubclassReplacement || !pSubRender)
     return NULL;
 
   pOsdServices->OsdSetRenderCallback("MP-GUI", this);
   manager->ConfigureDisplayModeChanger(false, true);
+
+  pSubRender->SetCallback(m_subProxy);
 
   // TODO implement IMadVRSubclassReplacement
   //pSubclassReplacement->DisableSubclassing();
@@ -98,6 +107,15 @@ HRESULT MPMadPresenter::QueryInterface(REFIID riid, void** ppvObject)
     *ppvObject = static_cast<IOsdRenderCallback*>(this);
     AddRef();
     hr = S_OK;
+  }
+  else if (riid == __uuidof(ISubRender))
+  {
+    if (m_subProxy)
+    {
+      *ppvObject = static_cast<ISubRenderCallback*>(m_subProxy);
+      AddRef();
+      hr = S_OK;
+    }
   }
 
   return hr;
