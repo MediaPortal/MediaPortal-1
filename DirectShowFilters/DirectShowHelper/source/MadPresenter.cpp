@@ -71,7 +71,7 @@ IBaseFilter* MPMadPresenter::Initialize()
     return NULL;
 
   pOsdServices->OsdSetRenderCallback("MP-GUI", this);
-  manager->ConfigureDisplayModeChanger(false, false);
+  manager->ConfigureDisplayModeChanger(false, true);
 
   // TODO implement IMadVRSubclassReplacement
   //pSubclassReplacement->DisableSubclassing();
