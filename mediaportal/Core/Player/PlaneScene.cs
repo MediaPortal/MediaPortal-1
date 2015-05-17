@@ -621,11 +621,12 @@ namespace MediaPortal.Player
       }
     }
 
-    public void RenderSubtitle(Int64 frameStart, int left, int top, int right, int bottom, int width, int height)
+    public void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height)
     {
       ISubEngine engine = SubEngine.GetInstance(true);
       if (engine != null)
       {
+        engine.SetTime(frameStart);
         engine.Render(_subsRect, _destinationRect);
       }
     }

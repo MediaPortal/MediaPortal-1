@@ -32,7 +32,8 @@ CSubManager::CSubManager(IDirect3DDevice9* d3DDev, SIZE size, HRESULT& hr)
 	m_isIntSubStreamSelected(false),
 	m_rtNow(-1),
 	m_delay(0),
-	m_lastSize(size)
+	m_lastSize(size),
+  m_bIsMadVR(false)
 {
 	ATLTRACE("CSubManager constructor: texture size %dx%d, buffer ahead: %d, pow2tex: %d", g_textureSize.cx, g_textureSize.cy, g_subPicsBufferAhead, g_pow2tex);
 	m_pAllocator = new CDX9SubPicAllocator(d3DDev, g_textureSize, g_pow2tex/*AfxGetAppSettings().fSPCPow2Tex*/, false);
@@ -268,7 +269,11 @@ BOOL CSubManager::GetEnable()
 
 void CSubManager::SetTime(REFERENCE_TIME nsSampleTime)
 {
-	m_rtNow = g_tSegmentStart + nsSampleTime - m_delay;
+  if (m_bIsMadVR)
+    m_rtNow = nsSampleTime - m_delay;
+  else
+    m_rtNow = g_tSegmentStart + nsSampleTime - m_delay;
+
 	m_pSubPicQueue->SetTime(m_rtNow);
 	m_isSetTime = true;
 }
@@ -280,7 +285,11 @@ void CSubManager::Render(int x, int y, int width, int height)
 
 	if (!m_isSetTime)
 	{
-		m_rtNow = g_tSegmentStart + g_tSampleStart - m_delay;
+    if (m_bIsMadVR)
+      m_rtNow = g_tSampleStart - m_delay;
+    else
+      m_rtNow = g_tSegmentStart + g_tSampleStart - m_delay;
+
 		m_pSubPicQueue->SetTime(m_rtNow);
 	}
 
@@ -643,6 +652,7 @@ void CSubManager::LoadSubtitlesForFile(const wchar_t* fn, IGraphBuilder* pGB, co
     if (!vmr)
     {
       pGB->FindFilterByName(L"madVR", &vmr);
+      m_bIsMadVR = true;
     }
 		if (!vmr)
 		{

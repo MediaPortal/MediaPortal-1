@@ -58,6 +58,7 @@ private:
 	CComPtr<IDirect3DDevice9> m_d3DDev;
 	CComQIPtr<ISubPicQueue> m_pSubPicQueue;
 	bool m_isSetTime;
+  bool m_bIsMadVR;
 	CCritSec m_csSubLock; 
 	
 	//list of subs (that are not coming from IAMStreamSelect filter, e.g. external sub files)
