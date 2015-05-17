@@ -939,7 +939,7 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
     double faudSampleDuration = ((double)(lastAudio.Millisecs() - firstAudio.Millisecs())/(double)cntA);
     m_initialAudioSamples = (int)(((double)(310 + m_filter.m_regInitialBuffDelay))/faudSampleDuration);
     m_initialAudioSamples = max(3, m_initialAudioSamples);
-    m_prefetchLoopDelay = min(PF_LOOP_DELAY_MAX, min(vidSampDuration,(max(PF_LOOP_DELAY_MIN,(int)faudSampleDuration))));
+    m_prefetchLoopDelay = (DWORD)(min(PF_LOOP_DELAY_MAX, min(vidSampDuration,(max(PF_LOOP_DELAY_MIN,(int)faudSampleDuration)))));
     m_dfAudSampleDuration = faudSampleDuration/1000.0;
 
     LogDebug("Audio Samples : %d, First : %03.3f, Last : %03.3f, buffThresh : %d, pfLoopDel : %d",cntA, (float)firstAudio.Millisecs()/1000.0f,(float)lastAudio.Millisecs()/1000.0f, m_initialAudioSamples, m_prefetchLoopDelay);
@@ -3842,6 +3842,7 @@ void CDeMultiplexer::ThreadProc()
   DWORD  lastRetryLoopTime = timeNow;
   int sizeRead = 0;
   bool retryRead = false;
+  DWORD pfLoopDelay = PF_LOOP_DELAY_MIN;
 
   ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_NORMAL);
   do
@@ -3870,14 +3871,18 @@ void CDeMultiplexer::ThreadProc()
         //Flush the internal data
         Flush(true);
         m_bFlushDelgNow = false;
+        
+        sizeRead = 0;
+        retryRead = false;
       }
     }
 
     //File read prefetch
-    if (m_bReadAheadFromFile && (timeNow > (lastFileReadTime + 3)) )
+    if (m_bReadAheadFromFile && (timeNow > (lastFileReadTime + 2)) )
     {
       lastFileReadTime = timeNow; 
       int sizeReadTemp = ReadAheadFromFile(); 
+      sizeRead += sizeReadTemp;
            
       if (
             (sizeReadTemp < 0) ||        //Read aborted or failed
@@ -3895,20 +3900,18 @@ void CDeMultiplexer::ThreadProc()
         sizeRead = 0;
         retryRead = false;
       }
-      else //Looping retry mode
+      else if (!retryRead) //Enable looping retry mode
       {
-        sizeRead += sizeReadTemp;
-        if (!retryRead)
-        {
-          lastRetryLoopTime = timeNow;
-          retryRead = true;
-        } 
+        lastRetryLoopTime = timeNow;
+        retryRead = true;
       }
     }
+    
+    pfLoopDelay = retryRead ? PF_LOOP_DELAY_MIN : m_prefetchLoopDelay;
               
-    Sleep(1);
+    //Sleep(1);
   }
-  while (!ThreadIsStopping(m_prefetchLoopDelay)) ;
+  while (!ThreadIsStopping(pfLoopDelay)) ;
   LogDebug("CDeMultiplexer::ThreadProc stopped()");
 }
 

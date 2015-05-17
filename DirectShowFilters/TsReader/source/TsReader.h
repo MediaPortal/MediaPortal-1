@@ -64,8 +64,8 @@
 #define SUB_PIN_BUFFERS 16
 
 //File read prefetch 'looping retry' timeout limit (in ms)
-#define MAX_PREFETCH_LOOP_TIME 5000
-#define PF_LOOP_DELAY_MIN 12
+#define MAX_PREFETCH_LOOP_TIME 10000
+#define PF_LOOP_DELAY_MIN 3
 #define PF_LOOP_DELAY_MAX 120
 
 ////File/RTSP ReadFromFile() block sizes

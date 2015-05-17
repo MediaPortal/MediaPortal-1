@@ -599,7 +599,7 @@ CTsReaderFilter::~CTsReaderFilter()
   if (m_fileDuration != NULL)
     delete m_fileDuration;
   LogDebug("CTsReaderFilter::dtor - finished");
-  //StopLogger() is called from demux thread
+  StopLogger();
 }
 
 STDMETHODIMP CTsReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
