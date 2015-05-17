@@ -135,7 +135,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   if (FAILED(hr = RenderToTexture(m_pMPTextureGui, m_pMPSurfaceGui)))
     return hr;
 
-  if (FAILED(hr = StoreMadDeviceState()))
+  if (FAILED(hr = m_deviceState.Store()))
     return hr;
 
   if (FAILED(hr = m_pCallback->RenderGui(width, height, width, height)))
@@ -151,7 +151,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   if (FAILED(hr = RenderTexture(m_pMadGuiVertexBuffer, m_pRenderTextureGui)))
     return hr;
 
-  if (FAILED(hr = RestoreMadDeviceState()))
+  if (FAILED(hr = m_deviceState.Restore()))
     return hr;
 
   return hr;
@@ -169,7 +169,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   if (FAILED(hr = RenderToTexture(m_pMPTextureOsd, m_pMPSurfaceOsd)))
     return hr;
 
-  if (FAILED(hr = StoreMadDeviceState()))
+  if (FAILED(hr = m_deviceState.Store()))
     return hr;
 
   if (FAILED(hr = m_pCallback->RenderOverlay(width, height, width, height)))
@@ -185,7 +185,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   if (FAILED(hr = RenderTexture(m_pMadOsdVertexBuffer, m_pRenderTextureOsd)))
     return hr;
 
-  if (FAILED(hr = RestoreMadDeviceState()))
+  if (FAILED(hr = m_deviceState.Restore()))
     return hr;
 
   return hr;
@@ -275,58 +275,6 @@ HRESULT MPMadPresenter::SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf)
   return hr;
 }
 
-HRESULT MPMadPresenter::StoreMadDeviceState()
-{
-  HRESULT hr = E_UNEXPECTED;
-
-  if (FAILED(hr = m_pMadD3DDev->GetRenderState(D3DRS_ALPHABLENDENABLE, &m_dwOldALPHABLENDENABLE)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->GetRenderState(D3DRS_SRCBLEND, &m_dwOldSRCALPHA)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->GetRenderState(D3DRS_DESTBLEND, &m_dwOldINVSRCALPHA)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->GetScissorRect(&m_oldScissorRect)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->GetVertexShader(&m_pOldVS)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->GetFVF(&m_dwOldFVF)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->GetTexture(0, &m_pOldTexture)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->GetStreamSource(0, &m_pOldStreamData, &m_nOldOffsetInBytes, &m_nOldStride)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->GetRenderState(D3DRS_CULLMODE, &mD3DRS_CULLMODE)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->GetRenderState(D3DRS_LIGHTING, &mD3DRS_LIGHTING)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->GetRenderState(D3DRS_ZENABLE, &mD3DRS_ZENABLE)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->GetRenderState(D3DRS_ALPHABLENDENABLE, &mD3DRS_ALPHABLENDENABLE)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->GetRenderState(D3DRS_SRCBLEND, &mD3DRS_SRCBLEND)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->GetRenderState(D3DRS_DESTBLEND, &mD3DRS_DESTBLEND)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->GetPixelShader(&mPix)))
-    return hr;
-
-  return hr;
-}
-
 HRESULT MPMadPresenter::SetupMadDeviceState()
 {
   HRESULT hr = E_UNEXPECTED;
@@ -370,73 +318,13 @@ HRESULT MPMadPresenter::SetupMadDeviceState()
   return hr;
 }
 
-HRESULT MPMadPresenter::RestoreMadDeviceState()
-{
-  HRESULT hr = S_FALSE;
-
-  if (FAILED(hr = m_pMadD3DDev->SetScissorRect(&m_oldScissorRect)))
-    return hr;
-
-  hr = m_pMadD3DDev->SetTexture(0, m_pOldTexture);
-
-  if (m_pOldTexture)
-    m_pOldTexture->Release();
-
-  if (FAILED(hr))
-    return hr;
-
-  hr = m_pMadD3DDev->SetVertexShader(m_pOldVS);
-
-  if (m_pOldVS)
-    m_pOldVS->Release();
-
-  if (FAILED(hr))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->SetFVF(m_dwOldFVF)))
-    return hr;
-
-  hr = m_pMadD3DDev->SetStreamSource(0, m_pOldStreamData, m_nOldOffsetInBytes, m_nOldStride);
-
-  if (m_pOldStreamData)
-    m_pOldStreamData->Release();
-
-  if (FAILED(hr))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, m_dwOldALPHABLENDENABLE)))
-    return hr;
-  
-  if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_SRCBLEND, m_dwOldSRCALPHA)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_CULLMODE, mD3DRS_CULLMODE)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_LIGHTING, mD3DRS_LIGHTING)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_ZENABLE, mD3DRS_ZENABLE)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, mD3DRS_ALPHABLENDENABLE)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_SRCBLEND, mD3DRS_SRCBLEND)))
-    return hr;
-
-  if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_DESTBLEND, mD3DRS_DESTBLEND)))
-    return hr;
-
-  return hr;
-}
-
 HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 {
   HRESULT hr = S_FALSE;
 
   CAutoLock cAutoLock(this);
   m_pMadD3DDev = (IDirect3DDevice9Ex*)pD3DDev;
+  m_deviceState.SetDevice(pD3DDev);
 
   if (m_pMadD3DDev)
   {

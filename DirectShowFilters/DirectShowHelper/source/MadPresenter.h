@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "callback.h"
 #include "mvrInterfaces.h"
+#include "DeviceState.h"
 
 using namespace std;
 
@@ -45,9 +46,7 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     HRESULT RenderTexture(IDirect3DVertexBuffer9* pVertexBuf, IDirect3DTexture9* pTexture);
 
     HRESULT SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf);
-    HRESULT StoreMadDeviceState();
     HRESULT SetupMadDeviceState();
-    HRESULT RestoreMadDeviceState();
 
     IDirect3DDevice9Ex* m_pDevice = nullptr;
     IDirect3DDevice9Ex* m_pMadD3DDev = nullptr;
@@ -77,26 +76,6 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     DWORD m_dwWidth = 0;
     DWORD m_dwHeight = 0;
 
-    // stored mad device state
-    IDirect3DVertexShader9* m_pOldVS = nullptr;
-    IDirect3DVertexBuffer9* m_pOldStreamData = nullptr;
-    IDirect3DBaseTexture9* m_pOldTexture = nullptr;
-
-    DWORD m_dwOldFVF = 0;
-    DWORD m_dwOldALPHABLENDENABLE = 0;
-    DWORD m_dwOldSRCALPHA = 0;
-    DWORD m_dwOldINVSRCALPHA = 0;
-    UINT  m_nOldOffsetInBytes = 0;
-    UINT  m_nOldStride = 0;
-    RECT  m_oldScissorRect;
-
-    DWORD mD3DRS_CULLMODE = 0;
-    DWORD mD3DRS_LIGHTING = 0;
-    DWORD mD3DRS_ZENABLE = 0;
-    DWORD mD3DRS_ALPHABLENDENABLE = 0;
-    DWORD mD3DRS_SRCBLEND = 0;
-    DWORD mD3DRS_DESTBLEND = 0;
-
-    IDirect3DPixelShader9* mPix = nullptr;
+    DeviceState m_deviceState;
 };
 
