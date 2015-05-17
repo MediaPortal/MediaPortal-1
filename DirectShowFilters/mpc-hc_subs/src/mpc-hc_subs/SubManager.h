@@ -33,6 +33,7 @@ public:
 	bool IsModified() { return m_subresync.IsModified(); };
 	void SaveToDisk();
 	void ToggleForcedOnly(bool onlyShowForcedSubs);
+  void SetDevice(IDirect3DDevice9* d3DDev);
 private:
 	friend class CTextPassThruInputPin;
 	friend class CTextPassThruFilter;

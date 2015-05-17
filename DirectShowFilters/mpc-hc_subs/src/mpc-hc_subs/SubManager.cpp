@@ -52,6 +52,30 @@ CSubManager::~CSubManager(void)
 	ATLTRACE("CSubManager destructor");
 }
 
+void CSubManager::SetDevice(IDirect3DDevice9* d3DDev)
+{
+  m_d3DDev = d3DDev;
+
+  if (m_pAllocator)
+    m_pAllocator.Detach();
+
+  if (m_pSubPicQueue)
+    m_pSubPicQueue.Detach();
+
+  m_pAllocator = new CDX9SubPicAllocator(d3DDev, g_textureSize, g_pow2tex, false);
+  HRESULT hr = S_OK;
+
+  if (g_subPicsBufferAhead > 0)
+    m_pSubPicQueue = new CSubPicQueue(g_subPicsBufferAhead, g_disableAnim, m_pAllocator, &hr);
+  else
+    m_pSubPicQueue = new CSubPicQueueNoThread(m_pAllocator, &hr);
+
+  if (FAILED(hr))
+  {
+    ATLTRACE("CSubPicQueue creation error: %x", hr);
+  }
+}
+
 void CSubManager::ApplyStyle(CRenderedTextSubtitle* pRTS) {
 	if (g_overrideUserStyles)
 	{

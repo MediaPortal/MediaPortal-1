@@ -591,8 +591,6 @@ namespace MediaPortal.Player
         if (layers == GUILayers.over)
         {
           SubtitleRenderer.GetInstance().Render();
-          SubEngine.GetInstance().Render(_subsRect, _destinationRect);
-
           BDOSDRenderer.GetInstance().Render();
         }
 
@@ -611,6 +609,24 @@ namespace MediaPortal.Player
         IntPtr ptr = (IntPtr)target;
         Surface surface = new Surface(ptr);
         GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
+      }
+    }
+
+    public void SetSubtitleDevice(IntPtr device)
+    {
+      ISubEngine engine = SubEngine.GetInstance(true);
+      if (engine != null)
+      {
+        engine.SetDevice(device);
+      }
+    }
+
+    public void RenderSubtitle(Int64 frameStart, int left, int top, int right, int bottom, int width, int height)
+    {
+      ISubEngine engine = SubEngine.GetInstance(true);
+      if (engine != null)
+      {
+        engine.Render(_subsRect, _destinationRect);
       }
     }
 
