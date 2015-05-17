@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\DeviceState.cpp" />
     <ClCompile Include="source\dllmodul.cpp" />
     <ClCompile Include="source\dshowhelper.cpp" />
     <ClCompile Include="source\DX9AllocatorPresenter.cpp" />
@@ -150,6 +151,7 @@
     <ClInclude Include="..\alloctracing.h" />
     <ClInclude Include="source\autoint.h" />
     <ClInclude Include="source\callback.h" />
+    <ClInclude Include="source\DeviceState.h" />
     <ClInclude Include="source\dshowhelper.h" />
     <ClInclude Include="source\DX9AllocatorPresenter.h" />
     <ClInclude Include="source\EVRCustomPresenter.h" />
