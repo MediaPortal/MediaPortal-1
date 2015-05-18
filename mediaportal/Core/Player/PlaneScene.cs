@@ -614,7 +614,7 @@ namespace MediaPortal.Player
 
     public void SetSubtitleDevice(IntPtr device)
     {
-      ISubEngine engine = SubEngine.GetInstance(true);
+      ISubEngine engine = SubEngine.GetInstance();
       if (engine != null)
       {
         engine.SetDevice(device);
@@ -623,7 +623,7 @@ namespace MediaPortal.Player
 
     public void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height)
     {
-      ISubEngine engine = SubEngine.GetInstance(true);
+      ISubEngine engine = SubEngine.GetInstance();
       if (engine != null)
       {
         engine.SetTime(frameStart);
