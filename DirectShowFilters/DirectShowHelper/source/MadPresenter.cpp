@@ -145,8 +145,8 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 {
   HRESULT hr = E_UNEXPECTED;
 
-  WORD height = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top;
-  WORD width = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
+  WORD height = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
+  WORD width = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
   CAutoLock cAutoLock(this);
 
@@ -181,8 +181,8 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 
   CAutoLock cAutoLock(this);
 
-  WORD height = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top;
-  WORD width = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
+  WORD height = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
+  WORD width = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
   if (FAILED(hr = RenderToTexture(m_pMPTextureOsd, m_pMPSurfaceOsd)))
     return hr;
