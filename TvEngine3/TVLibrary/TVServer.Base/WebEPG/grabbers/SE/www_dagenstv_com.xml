@@ -3,7 +3,7 @@
   <Info treatErrorAsWarning="true" availableDays="14" timezone="W. Europe Standard Time" version="2.2.0" />
   <Channels>
     <Channel id="3sat.de" siteId="1" />
-    <Channel id="bbcentertainment.com" siteId="2" />
+    <!--<Channel id="bbcentertainment.com" siteId="2" />  Empty channel -->
     <Channel id="bbcw@bbc.co.uk" siteId="3" />
     <Channel id="cartoonnetwork.se" siteId="4" />
     <Channel id="cnn.com" siteId="5" />
@@ -60,7 +60,7 @@
     <Channel id="MTVRocks@mtve.com" siteId="74" />
     <Channel id="viasat4@viasat.no" siteId="75" />
     <Channel id="explorer@viasat.se" siteId="76" />
-    <Channel id="kanalglobal.se" siteId="80" />
+    <!--<Channel id="kanalglobal.se" siteId="80" /> Empty channel -->
     <Channel id="ftv.com" siteId="82" />
     <Channel id="3plus.dk" siteId="83" />
     <Channel id="arte-tv.com" siteId="84" />
@@ -182,12 +182,14 @@
     <Channel id="outtv.ca" siteId="400" />
     <Channel id="wildtv.ca" siteId="401" />
     <Channel id="wildhd@natgeotv.com" siteId="403" />
-    <Channel id="kids@cmore.se" siteId="405" />
+    <!--<Channel id="kids@cmore.se" siteId="405" /> Empty channel -->
     <Channel id="hitshd@cmore.se" siteId="501" />
     <Channel id="firsthd@cmore.se" siteId="502" />
     <Channel id="tv12@tv4.se" siteId="600" />
     <Channel id="fox@fox.com" siteId="601" />
     <Channel id="foxhd@fox.com" siteId="602" />
+    <Channel id="brit@bbc.co.uk" siteId="603" />
+    <Channel id="earth@bbc.co.uk" siteId="604" />
     <Channel id="tv2charlie@tv2.dk" siteId="906" />
     <Channel id="dk4.dk" siteId="908" />
     <!--<Channel id="nick.co.uk" siteId="909" /> Conflicting name -->
