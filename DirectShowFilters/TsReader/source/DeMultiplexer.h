@@ -325,7 +325,7 @@ private:
   
   int  m_initialAudioSamples;
   int  m_initialVideoSamples;
-  int  m_prefetchLoopDelay;
+  DWORD  m_prefetchLoopDelay;
   
   byte* m_pFileReadBuffer;
   
