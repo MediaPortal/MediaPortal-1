@@ -251,6 +251,11 @@ namespace MediaPortal.Player
         }
         GUIGraphicsContext.LastFrames.Clear();
       }
+
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        GUIGraphicsContext.InVmr9Render = false;
+      }
     }
 
     /// <summary>
@@ -265,6 +270,11 @@ namespace MediaPortal.Player
       _renderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Video);
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnMessage);
+
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        GUIGraphicsContext.InVmr9Render = true;
+      }
     }
 
     /// <summary>
@@ -555,6 +565,81 @@ namespace MediaPortal.Player
       return 0;
     }
 
+    public void RenderGui(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
+    {
+      RenderLayers(GUILayers.under, width, height, arWidth, arHeight);
+    }
+
+    public void RenderOverlay(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
+    {
+      RenderLayers(GUILayers.over, width, height, arWidth, arHeight);
+    }
+
+    private void RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
+    {
+      lock (GUIGraphicsContext.RenderLock)
+      {
+        if (width > 0 && height > 0)
+        {
+          _vmr9Util.VideoWidth = width;
+          _vmr9Util.VideoHeight = height;
+          _vmr9Util.VideoAspectRatioX = arWidth;
+          _vmr9Util.VideoAspectRatioY = arHeight;
+          _arVideoWidth = arWidth;
+          _arVideoHeight = arHeight;
+
+          Size nativeSize = new Size(width, height);
+          _shouldRenderTexture = SetVideoWindow(nativeSize);
+        }
+
+        Device device = GUIGraphicsContext.DX9Device;
+
+        device.Clear(ClearFlags.Target, Color.FromArgb(0, 0, 0, 0), 1.0f, 0);
+        device.BeginScene();
+
+        if (layers == GUILayers.over)
+        {
+          SubtitleRenderer.GetInstance().Render();
+          BDOSDRenderer.GetInstance().Render();
+        }
+
+        GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers);
+        GUIFontManager.Present();
+
+        device.EndScene();
+        device.Present();
+      }
+    }
+
+    public void SetRenderTarget(uint target)
+    {
+      lock (GUIGraphicsContext.RenderLock)
+      {
+        IntPtr ptr = (IntPtr)target;
+        Surface surface = new Surface(ptr);
+        GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
+      }
+    }
+
+    public void SetSubtitleDevice(IntPtr device)
+    {
+      ISubEngine engine = SubEngine.GetInstance();
+      if (engine != null)
+      {
+        engine.SetDevice(device);
+      }
+    }
+
+    public void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height)
+    {
+      ISubEngine engine = SubEngine.GetInstance();
+      if (engine != null)
+      {
+        engine.SetTime(frameStart);
+        engine.Render(_subsRect, _destinationRect);
+      }
+    }
+
     public static void RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf renderModeHalf, float timePassed,
       Surface backbuffer, Surface surface, Rectangle targetRect)
     {
@@ -576,7 +661,7 @@ namespace MediaPortal.Player
           if (!GUIGraphicsContext.BlankScreen)
           {
             // Render GUI + Video surface
-            GUIGraphicsContext.RenderGUI.RenderFrame(timePassed);
+            GUIGraphicsContext.RenderGUI.RenderFrame(timePassed, GUILayers.all);
             GUIFontManager.Present();
           }
         }
@@ -861,7 +946,7 @@ namespace MediaPortal.Player
                 if (!GUIGraphicsContext.BlankScreen)
                 {
                   // Render GUI + Video surface
-                  GUIGraphicsContext.RenderGUI.RenderFrame(timePassed);
+                  GUIGraphicsContext.RenderGUI.RenderFrame(timePassed, GUILayers.all);
                   GUIFontManager.Present();
                 }
               }

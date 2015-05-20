@@ -37,6 +37,16 @@ void SetShowForcedOnly(BOOL onlyShowForcedSubs)
 	}
 }
 
+BOOL SetDevice(IDirect3DDevice9* d3DDev)
+{
+  if (g_subManager)
+  {
+    g_subManager->SetDevice(d3DDev);
+    return TRUE;
+  }
+
+  return FALSE;
+}
 
 BOOL LoadSubtitles(IDirect3DDevice9* d3DDev, SIZE size, const wchar_t* fn, IGraphBuilder* pGB, const wchar_t* paths, LCID lcidci)
 {

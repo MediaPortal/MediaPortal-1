@@ -1,4 +1,4 @@
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2015 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -16,13 +16,30 @@
 
 #pragma once
 
-DECLARE_INTERFACE_(IVMR9Callback, IUnknown)
+#include "stdafx.h"
+#include "callback.h"
+#include "DeviceState.h"
+#include "mvrInterfaces.h"
+
+class MadSubtitleProxy : public CUnknown, public ISubRenderCallback, public CCritSec
 {
-  STDMETHOD(PresentImage)  (THIS_ WORD cx, WORD cy, WORD arx, WORD ary, DWORD pTexture, DWORD pSurface)PURE;
-  STDMETHOD(SetSampleTime)(REFERENCE_TIME nsSampleTime)PURE;
-  STDMETHOD(RenderGui)(WORD cx, WORD cy, WORD arx, WORD ary)PURE;
-  STDMETHOD(RenderOverlay)(WORD cx, WORD cy, WORD arx, WORD ary)PURE;
-  STDMETHOD(SetRenderTarget)(DWORD pTarget)PURE;
-  STDMETHOD(SetSubtitleDevice)(DWORD pDevice)PURE;
-  STDMETHOD(RenderSubtitle)(REFERENCE_TIME frameStart, int left, int top, int right, int bottom, int width, int height)PURE;
+  public:
+    MadSubtitleProxy(IVMR9Callback* pCallback);
+    ~MadSubtitleProxy();
+
+    DECLARE_IUNKNOWN;
+
+    STDMETHOD(SetDevice)(IDirect3DDevice9* device);
+    STDMETHOD(Render)(REFERENCE_TIME frameStart, int left, int top, int right, int bottom, int width, int height);
+
+  private:
+
+    HRESULT SetupMadDeviceState();
+
+    IDirect3DDevice9* m_pMadD3DDev = nullptr;
+
+    IVMR9Callback* m_pCallback;
+
+    DeviceState m_deviceState;
 };
+

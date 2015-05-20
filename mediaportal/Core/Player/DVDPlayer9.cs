@@ -42,6 +42,7 @@ namespace MediaPortal.Player
   {
     private const uint VFW_E_DVD_DECNOTENOUGH = 0x8004027B;
     private const uint VFW_E_DVD_RENDERFAIL = 0x8004027A;
+    private const int WM_GRAPHNOTIFY = 0x00008001;
 
     private VMR9Util _vmr9 = null;
 
@@ -179,6 +180,9 @@ namespace MediaPortal.Player
 
         hr = _dvdGraph.GetFiltergraph(out _graphBuilder);
         DsError.ThrowExceptionForHR(hr);
+
+        _basicVideo = _graphBuilder as IBasicVideo2;
+        _videoWin = _graphBuilder as IVideoWindow;
 
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
@@ -397,14 +401,25 @@ namespace MediaPortal.Player
           _vmr9.Enable(false);
         }
 
+        if (_mediaEvt != null)
+        {
+          hr = _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
+          _mediaEvt = null;
+        }
+
+        if (_videoWin != null)
+        {
+          hr = _videoWin.put_Visible(OABool.False);
+          hr = _videoWin.put_Owner(IntPtr.Zero);
+          _videoWin = null;
+        }
+
         _visible = false;
-        _mediaEvt = null;
         _dvdCtrl = null;
         _dvdInfo = null;
         _basicVideo = null;
         _basicAudio = null;
         _mediaPos = null;
-        _videoWin = null;
         _pendingCmd = false;
 
         if (_cmdOption != null)

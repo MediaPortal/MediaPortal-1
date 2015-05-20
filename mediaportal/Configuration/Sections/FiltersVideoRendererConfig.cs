@@ -67,6 +67,7 @@ namespace MediaPortal.Configuration.Sections
           }
 
           radioButtonEVR.Checked = xmlreader.GetValueAsBool("general", "useEVRenderer", ValueEVR);
+          radioButtonMadVR.Checked = xmlreader.GetValueAsBool("general", "useMadVideoRenderer", false);
         }
         _init = true;
       }
@@ -89,12 +90,13 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("general", "usevrm9forwebstreams", checkBoxVMRWebStreams.Checked);
         xmlwriter.SetValueAsBool("general", "dx9decimatemask", checkBoxDecimateMask.Checked);
         xmlwriter.SetValueAsBool("general", "useEVRenderer", radioButtonEVR.Checked);
+        xmlwriter.SetValueAsBool("general", "useMadVideoRenderer", radioButtonMadVR.Checked);
       }
     }
 
     private void radioButtonEVR_CheckedChanged(object sender, EventArgs e)
     {
-      if (radioButtonEVR.Checked == true)
+      if (radioButtonEVR.Checked)
       {
         checkBoxVMRWebStreams.Enabled = false;
         checkboxDXEclusive.Enabled = false;
@@ -107,7 +109,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void radioButtonVMR9_CheckedChanged(object sender, EventArgs e)
     {
-      if (radioButtonVMR9.Checked == true)
+      if (radioButtonVMR9.Checked)
       {
         checkBoxVMRWebStreams.Enabled = true;
         checkboxDXEclusive.Enabled = true;
@@ -115,6 +117,19 @@ namespace MediaPortal.Configuration.Sections
         checkBoxDecimateMask.Enabled = true;
         mpVMR9FilterMethod.Enabled = true;
         labelFilteringHint.Enabled = true;
+      }
+    }
+
+    private void radioButtonMadVR_CheckedChanged(object sender, EventArgs e)
+    {
+      if (radioButtonMadVR.Checked)
+      {
+        checkBoxVMRWebStreams.Enabled = false;
+        checkboxDXEclusive.Enabled = false;
+        checkboxMpNonsquare.Enabled = false;
+        checkBoxDecimateMask.Enabled = false;
+        mpVMR9FilterMethod.Enabled = false;
+        labelFilteringHint.Enabled = false;
       }
     }
   }

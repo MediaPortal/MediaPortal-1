@@ -156,20 +156,6 @@ namespace MediaPortal.Player
       }
     }
 
-    public override void SetVideoWindow()
-    {
-      if (GUIGraphicsContext.IsFullScreenVideo != _isFullscreen)
-      {
-        _isFullscreen = GUIGraphicsContext.IsFullScreenVideo;
-        _updateNeeded = true;
-      }
-      if (!_updateNeeded)
-      {
-        return;
-      }
-      _updateNeeded = false;
-    }
-
     protected override string MatchFilters(string format)
     {
       if (filterConfig != null && format == "Video")
@@ -858,7 +844,6 @@ namespace MediaPortal.Player
             _mediaEvt = null;
           }
 
-          _videoWin = _graphBuilder as IVideoWindow;
           if (_videoWin != null)
           {
             hr = _videoWin.put_Visible(OABool.False);
@@ -997,7 +982,6 @@ namespace MediaPortal.Player
             _vmr9 = null;
           }
 
-          GUIGraphicsContext.form.Invalidate(true);
           _state = PlayState.Init;
         }
         catch (Exception ex)

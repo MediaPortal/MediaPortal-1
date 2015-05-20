@@ -96,6 +96,11 @@ namespace MediaPortal.Player.Subtitles
 
     #region ISubEngine Members
 
+    public void SetDevice(IntPtr device)
+    {
+      MpcSubtitles.SetDevice(device);
+    }
+
     public bool LoadSubtitles(IGraphBuilder graphBuilder, string filename)
     {
       LoadSettings();
@@ -270,6 +275,10 @@ namespace MediaPortal.Player.Subtitles
       [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Unicode)]
       public static extern bool LoadSubtitles(IntPtr d3DDev, Size size, string filename, IGraphBuilder graphBuilder,
                                               string paths, int lcidCI);
+
+      //updates used D3D device
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Unicode)]
+      public static extern bool SetDevice(IntPtr d3DDev);
 
       //set sample time (set from EVR presenter, not used in case of vmr9)
       [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]

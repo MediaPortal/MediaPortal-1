@@ -522,6 +522,8 @@ namespace MediaPortal.Player
         //Get filterCodecName
         filterCodec = GetFilterCodec();
 
+        basicVideo = graphBuilder as IBasicVideo2;
+
         if (filterConfig.bAutoDecoderSettings)
         {
           AutoRenderingCheck = true;

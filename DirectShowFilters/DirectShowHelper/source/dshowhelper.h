@@ -21,12 +21,15 @@
 // DSHOWHELPER_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
 
+#pragma once
+
 #ifdef DSHOWHELPER_EXPORTS
 #define DSHOWHELPER_API __declspec(dllexport)
 #else
 #define DSHOWHELPER_API __declspec(dllimport)
 #endif
 
+#include <mfapi.h>
 #include <dxva2api.h>
 #include <dwmapi.h>
 #include <Avrt.h>

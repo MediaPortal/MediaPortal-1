@@ -230,7 +230,10 @@ namespace MediaPortal.Dialogs
           {
             _prevLayer = GUILayerManager.GetLayer(GUILayerManager.LayerType.Dialog);
             _prevOverlay = GUIGraphicsContext.Overlay;
-            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
+
+            if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+              GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
+
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
 
             GUIPropertyManager.SetProperty("#currentmoduleid", Convert.ToString(GUIWindowManager.ActiveWindow));
