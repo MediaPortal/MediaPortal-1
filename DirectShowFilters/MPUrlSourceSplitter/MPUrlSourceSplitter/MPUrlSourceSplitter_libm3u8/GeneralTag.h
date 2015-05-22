@@ -77,14 +77,14 @@ public:
 
   // parses item data
   // @param item : the item to parse
-  // @return : true if successful, false otherwise
-  virtual bool ParseItem(CItem *item);
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT ParseItem(CItem *item);
 
   // parses general tag data
   // @param tag : the general tag to parse
   // @param : the playlist version
-  // @return : true if successful, false otherwise
-  virtual bool ParseGeneralTag(CGeneralTag *tag, unsigned int version);
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT ParseGeneralTag(CGeneralTag *tag, unsigned int version);
 
 protected:
 
@@ -98,8 +98,8 @@ protected:
 
   // parses current tag
   // @param : the playlist version
-  // @return : true if successful, false otherwise
-  virtual bool ParseTag(unsigned int version);
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT ParseTag(unsigned int version);
 
   // creates item
   // @return : item or NULL if error

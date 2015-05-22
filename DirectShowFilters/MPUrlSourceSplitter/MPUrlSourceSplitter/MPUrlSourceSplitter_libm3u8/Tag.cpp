@@ -22,6 +22,7 @@
 
 #include "Tag.h"
 #include "AttributeFactory.h"
+#include "ErrorCodes.h"
 
 CTag::CTag(HRESULT *result)
   : CGeneralTag(result)
@@ -81,17 +82,13 @@ void CTag::Clear(void)
 
 /* protected methods */
 
-bool CTag::ParseTag(unsigned int version)
+HRESULT CTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag(version);
+  HRESULT result = __super::ParseTag(version);
 
-  if (result)
-  {
-    // tag only when contains TAG_PREFIX
-    result &= (wcsncmp(this->tag, TAG_PREFIX, TAG_PREFIX_SIZE) == 0);
-  }
+  CHECK_CONDITION_HRESULT(result, wcsncmp(this->tag, TAG_PREFIX, TAG_PREFIX_SIZE) == 0, result, E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     this->flags |= ITEM_FLAG_TAG;
   }

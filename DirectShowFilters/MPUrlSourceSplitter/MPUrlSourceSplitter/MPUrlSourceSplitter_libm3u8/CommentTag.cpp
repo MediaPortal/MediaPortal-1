@@ -49,11 +49,11 @@ bool CCommentTag::IsMasterPlaylistItem(unsigned int version)
 
 /* protected methods */
 
-bool CCommentTag::ParseTag(unsigned int version)
+HRESULT CCommentTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag(version);
+  HRESULT result = __super::ParseTag(version);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     this->flags |= ITEM_FLAG_COMMENT;
   }
