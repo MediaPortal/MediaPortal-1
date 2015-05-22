@@ -24,6 +24,7 @@
 #include "DataIdAttribute.h"
 #include "ValueAttribute.h"
 #include "UriAttribute.h"
+#include "ErrorCodes.h"
 
 CSessionDataTag::CSessionDataTag(HRESULT *result)
   : CTag(result)
@@ -60,38 +61,36 @@ bool CSessionDataTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollect
   return false;
 }
 
-bool CSessionDataTag::ParseTag(unsigned int version)
+HRESULT CSessionDataTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag(version);
-  result &= (version == PLAYLIST_VERSION_07);
+  HRESULT result = __super::ParseTag(version);
+  CHECK_CONDITION_HRESULT(result, (version == PLAYLIST_VERSION_07), result, E_M3U8_NOT_SUPPORTED_TAG);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     // successful parsing of tag
     // compare it to our tag
-    result &= (wcscmp(this->tag, TAG_SESSION_DATA) == 0);
+    CHECK_CONDITION_HRESULT(result, wcscmp(this->tag, TAG_SESSION_DATA) == 0, result, E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE);
+    CHECK_POINTER_HRESULT(result, this->tagContent, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
 
-    if (result)
+    CHECK_CONDITION_HRESULT(result, this->ParseAttributes(version), result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
+
+    if (SUCCEEDED(result))
     {
-      result &= this->ParseAttributes(version);
-
-      if (result)
+      if (version == PLAYLIST_VERSION_07)
       {
-        if (version == PLAYLIST_VERSION_07)
-        {
-          // DATA-ID attribute is mandatory
+        // DATA-ID attribute is mandatory
 
-          CDataIdAttribute *dataId = dynamic_cast<CDataIdAttribute *>(this->GetAttributes()->GetAttribute(DATA_ID_ATTRIBUTE_NAME, true));
-          result &= (dataId != NULL);
+        CDataIdAttribute *dataId = dynamic_cast<CDataIdAttribute *>(this->GetAttributes()->GetAttribute(DATA_ID_ATTRIBUTE_NAME, true));
+        CHECK_POINTER_HRESULT(result, dataId, result, E_M3U8_MISSING_REQUIRED_ATTRIBUTE);
 
-          // there must be VALUE attribute or URI attribute, but not both
+        // there must be VALUE attribute or URI attribute, but not both
 
-          CValueAttribute *valueAttr = dynamic_cast<CValueAttribute *>(this->GetAttributes()->GetAttribute(VALUE_ATTRIBUTE_NAME, true));
-          CUriAttribute *uriAttr = dynamic_cast<CUriAttribute *>(this->GetAttributes()->GetAttribute(URI_ATTRIBUTE_NAME, true));
+        CValueAttribute *valueAttr = dynamic_cast<CValueAttribute *>(this->GetAttributes()->GetAttribute(VALUE_ATTRIBUTE_NAME, true));
+        CUriAttribute *uriAttr = dynamic_cast<CUriAttribute *>(this->GetAttributes()->GetAttribute(URI_ATTRIBUTE_NAME, true));
 
-          result &= (!((valueAttr != NULL) && (uriAttr != NULL)));
-          result &= ((valueAttr != NULL) || (uriAttr != NULL));
-        }
+        CHECK_CONDITION_HRESULT(result, (!((valueAttr != NULL) && (uriAttr != NULL))), result, E_M3U8_MISSING_REQUIRED_ATTRIBUTE);
+        CHECK_CONDITION_HRESULT(result, ((valueAttr != NULL) || (uriAttr != NULL)), result, E_M3U8_MISSING_REQUIRED_ATTRIBUTE);
       }
     }
   }

@@ -28,6 +28,7 @@
 #include "MediaPlaylistV05.h"
 #include "MediaPlaylistV06.h"
 #include "MediaPlaylistV07.h"
+#include "ErrorCodes.h"
 
 CMediaPlaylistFactory::CMediaPlaylistFactory(HRESULT *result)
 {
@@ -73,15 +74,15 @@ CMediaPlaylist *CMediaPlaylistFactory::CreateMediaPlaylist(HRESULT *result, cons
 
       CHECK_CONDITION_NOT_NULL_EXECUTE(mediaPlaylist, FREE_MEM_CLASS(temp));
 
-      if (SUCCEEDED(*result) && (mediaPlaylist == NULL))
+      if ((SUCCEEDED(*result) || IS_M3U8_PARSE_ERROR(*result)) && (mediaPlaylist == NULL))
       {
         mediaPlaylist = temp;
       }
 
-      CHECK_CONDITION_EXECUTE(FAILED(*result), FREE_MEM_CLASS(temp));
+      CHECK_CONDITION_EXECUTE(!(SUCCEEDED(*result) || IS_M3U8_PARSE_ERROR(*result)), FREE_MEM_CLASS(temp));
     }
 
-    CHECK_CONDITION_EXECUTE(FAILED(*result), FREE_MEM_CLASS(mediaPlaylist));
+    CHECK_CONDITION_EXECUTE(!(SUCCEEDED(*result) || IS_M3U8_PARSE_ERROR(*result)), FREE_MEM_CLASS(mediaPlaylist));
   }
 
   return mediaPlaylist;

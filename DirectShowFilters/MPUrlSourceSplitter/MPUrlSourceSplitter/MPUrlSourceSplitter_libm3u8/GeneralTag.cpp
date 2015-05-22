@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "GeneralTag.h"
+#include "ErrorCodes.h"
 
 CGeneralTag::CGeneralTag(HRESULT *result)
   : CItem(result)
@@ -116,38 +117,42 @@ unsigned int CGeneralTag::Parse(const wchar_t *buffer, unsigned int length, unsi
   return result;
 }
 
-bool CGeneralTag::ParseItem(CItem *item)
+HRESULT CGeneralTag::ParseItem(CItem *item)
 {
-  bool result = __super::ParseItem(item);
+  HRESULT result = __super::ParseItem(item);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
-    result &= (wcsncmp(this->itemContent, TAG_DIRECTIVE_PREFIX, TAG_DIRECTIVE_SIZE) == 0);
+    CHECK_CONDITION_HRESULT(result, wcsncmp(this->itemContent, TAG_DIRECTIVE_PREFIX, TAG_DIRECTIVE_SIZE) == 0, result, E_M3U8_NOT_VALID_GENERAL_TAG_FOUND);
 
-    if (result)
+    if (SUCCEEDED(result))
     {
       unsigned int contentSize = wcslen(this->itemContent) - TAG_DIRECTIVE_SIZE;
+      CHECK_CONDITION_HRESULT(result, contentSize != 0, result, E_M3U8_INCOMPLETE_TAG);
 
-      int index = IndexOf(this->itemContent + TAG_DIRECTIVE_SIZE, contentSize, TAG_SEPARATOR, TAG_SEPARATOR_SIZE);
-
-      if (index != (-1))
+      if (SUCCEEDED(result))
       {
-        // there is specified separator
+        int index = IndexOf(this->itemContent + TAG_DIRECTIVE_SIZE, contentSize, TAG_SEPARATOR, TAG_SEPARATOR_SIZE);
 
-        if (contentSize >= ((unsigned int)index + TAG_SEPARATOR_SIZE))
+        if (index != (-1))
         {
-          this->tag = Substring(this->itemContent + TAG_DIRECTIVE_SIZE, 0, index);
-          this->tagContent = (contentSize == ((unsigned int)index + TAG_SEPARATOR_SIZE)) ? Duplicate(L"") : Substring(this->itemContent + TAG_DIRECTIVE_SIZE, (unsigned int)index + TAG_SEPARATOR_SIZE, contentSize - (unsigned int)index - TAG_SEPARATOR_SIZE);
+          // there is specified separator
+
+          if (contentSize >= ((unsigned int)index + TAG_SEPARATOR_SIZE))
+          {
+            this->tag = Substring(this->itemContent + TAG_DIRECTIVE_SIZE, 0, index);
+            this->tagContent = (contentSize == ((unsigned int)index + TAG_SEPARATOR_SIZE)) ? Duplicate(L"") : Substring(this->itemContent + TAG_DIRECTIVE_SIZE, (unsigned int)index + TAG_SEPARATOR_SIZE, contentSize - (unsigned int)index - TAG_SEPARATOR_SIZE);
+          }
+
+          CHECK_POINTER_HRESULT(result, this->tag, result, E_OUTOFMEMORY);
+          CHECK_POINTER_HRESULT(result, this->tagContent, result, E_OUTOFMEMORY);
         }
+        else
+        {
+          this->tag = Substring(this->itemContent + TAG_DIRECTIVE_SIZE, 0, contentSize);
 
-        result &= (this->tag != NULL);
-        result &= (this->tagContent != NULL);
-      }
-      else
-      {
-        this->tag = Substring(this->itemContent + TAG_DIRECTIVE_SIZE, 0, contentSize);
-
-        result &= (this->tag != NULL);
+          CHECK_POINTER_HRESULT(result, this->tag, result, E_OUTOFMEMORY);
+        }
       }
     }
   }
@@ -155,20 +160,20 @@ bool CGeneralTag::ParseItem(CItem *item)
   return result;
 }
 
-bool CGeneralTag::ParseGeneralTag(CGeneralTag *tag, unsigned int version)
+HRESULT CGeneralTag::ParseGeneralTag(CGeneralTag *tag, unsigned int version)
 {
   this->Clear();
-  bool result = (tag != NULL);
+  HRESULT result = (tag != NULL) ? S_OK : E_POINTER;
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     this->flags = tag->flags;
-    
-    SET_STRING_AND_RESULT_WITH_NULL(this->itemContent, tag->itemContent, result);
-    SET_STRING_AND_RESULT_WITH_NULL(this->tag, tag->tag, result);
-    SET_STRING_AND_RESULT_WITH_NULL(this->tagContent, tag->tagContent, result);
 
-    CHECK_CONDITION_EXECUTE(result, result &= this->ParseTag(version));
+    SET_STRING_HRESULT(this->itemContent, tag->itemContent, result);
+    SET_STRING_HRESULT(this->tag, tag->tag, result);
+    SET_STRING_HRESULT_WITH_NULL(this->tagContent, tag->tagContent, result);
+    
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->ParseTag(version));
   }
 
   return result;
@@ -176,9 +181,9 @@ bool CGeneralTag::ParseGeneralTag(CGeneralTag *tag, unsigned int version)
 
 /* protected methods */
 
-bool CGeneralTag::ParseTag(unsigned int version)
+HRESULT CGeneralTag::ParseTag(unsigned int version)
 {
-  return (this->tag != NULL);
+  return (this->tag != NULL) ? S_OK : E_POINTER;
 }
 
 CItem *CGeneralTag::CreateItem(void)

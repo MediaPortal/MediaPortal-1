@@ -24,6 +24,7 @@
 #include "ItemCollection.h"
 #include "PlaylistItemCollection.h"
 #include "PlaylistItem.h"
+#include "ErrorCodes.h"
 
 CByteRangeTag::CByteRangeTag(HRESULT *result)
   : CTag(result)
@@ -108,18 +109,19 @@ void CByteRangeTag::Clear(void)
   this->offset = BYTE_RANGE_OFFSET_NOT_SPECIFIED;
 }
 
-bool CByteRangeTag::ParseTag(unsigned int version)
+HRESULT CByteRangeTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
+  HRESULT result = __super::ParseTag(version);
+  CHECK_CONDITION_HRESULT(result, (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07), result, E_M3U8_NOT_SUPPORTED_TAG);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     // successful parsing of tag
     // compare it to our tag
-    result &= (wcscmp(this->tag, TAG_BYTE_RANGE) == 0);
+    CHECK_CONDITION_HRESULT(result, wcscmp(this->tag, TAG_BYTE_RANGE) == 0, result, E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE);
+    CHECK_POINTER_HRESULT(result, this->tagContent, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
 
-    if (result)
+    if (SUCCEEDED(result))
     {
       int index = IndexOf(this->tagContent, BYTE_RANGE_OFFSET_SEPARATOR);
 
@@ -136,15 +138,14 @@ bool CByteRangeTag::ParseTag(unsigned int version)
         FREE_MEM(lengthValue);
         FREE_MEM(offsetValue);
 
-        result = (this->length != BYTE_RANGE_LENGTH_NOT_SPECIFIED) ? result : 0;
-        result = (this->offset != BYTE_RANGE_OFFSET_NOT_SPECIFIED) ? result : 0;
+        CHECK_CONDITION_HRESULT(result, this->length != BYTE_RANGE_LENGTH_NOT_SPECIFIED, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
+        CHECK_CONDITION_HRESULT(result, this->offset != BYTE_RANGE_OFFSET_NOT_SPECIFIED, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
       }
       else
       {
         // only byte range length specified
         this->length = CAttribute::GetDecimalInteger(this->tagContent);
-
-        result &= (this->length != BYTE_RANGE_LENGTH_NOT_SPECIFIED);
+        CHECK_CONDITION_HRESULT(result, this->length != BYTE_RANGE_LENGTH_NOT_SPECIFIED, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
       }
     }
   }

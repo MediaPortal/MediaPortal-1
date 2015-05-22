@@ -83,8 +83,8 @@ public:
 
   // parses item data
   // @param item : the item to parse
-  // @return : true if successful, false otherwise
-  virtual bool ParseItem(CItem *item);
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT ParseItem(CItem *item);
 
   // deep clone of current instance
   // @return : reference to clone of item or NULL if error

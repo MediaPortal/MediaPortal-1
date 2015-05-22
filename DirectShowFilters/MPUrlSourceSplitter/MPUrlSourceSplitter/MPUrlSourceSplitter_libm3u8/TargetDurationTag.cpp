@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "TargetDurationTag.h"
+#include "ErrorCodes.h"
 
 CTargetDurationTag::CTargetDurationTag(HRESULT *result)
   : CTag(result)
@@ -65,22 +66,22 @@ void CTargetDurationTag::Clear(void)
   this->targetDuration = TARGET_DURATION_NOT_SPECIFIED;
 }
 
-bool CTargetDurationTag::ParseTag(unsigned int version)
+HRESULT CTargetDurationTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
+  HRESULT result = __super::ParseTag(version);
+  CHECK_CONDITION_HRESULT(result, (version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07), result, E_M3U8_NOT_SUPPORTED_TAG);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     // successful parsing of tag
     // compare it to our tag
-    result &= (wcscmp(this->tag, TAG_TARGET_DURATION) == 0);
+    CHECK_CONDITION_HRESULT(result, wcscmp(this->tag, TAG_TARGET_DURATION) == 0, result, E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE);
+    CHECK_POINTER_HRESULT(result, this->tagContent, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
 
-    if (result)
+    if (SUCCEEDED(result))
     {
       this->targetDuration = CAttribute::GetDecimalInteger(this->tagContent);
-
-      result &= (this->targetDuration != TARGET_DURATION_NOT_SPECIFIED);
+      CHECK_CONDITION_HRESULT(result, this->targetDuration != TARGET_DURATION_NOT_SPECIFIED, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
     }
   }
 

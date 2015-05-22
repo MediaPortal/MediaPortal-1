@@ -90,7 +90,7 @@ CItem *CItemFactory::CreateItem(HRESULT *result, unsigned int version, const wch
           CPlaylistItem *playlistItem = new CPlaylistItem(result);
           CHECK_POINTER_HRESULT(*result, playlistItem, *result, E_OUTOFMEMORY);
 
-          CHECK_CONDITION_HRESULT(*result, playlistItem->ParsePlaylistItem(temp), *result, E_M3U8_NOT_VALID_PLAYLIST_ITEM_FOUND);
+          CHECK_CONDITION_EXECUTE(SUCCEEDED(*result), *result = playlistItem->ParsePlaylistItem(temp));
 
           CHECK_CONDITION_EXECUTE(FAILED(*result), FREE_MEM_CLASS(playlistItem));
 

@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "PlaylistItem.h"
+#include "ErrorCodes.h"
 
 CPlaylistItem::CPlaylistItem(HRESULT *result)
   : CItem(result)
@@ -80,15 +81,15 @@ unsigned int CPlaylistItem::Parse(const wchar_t *buffer, unsigned int length, un
   return result;
 }
 
-bool CPlaylistItem::ParsePlaylistItem(CItem *item)
+HRESULT CPlaylistItem::ParsePlaylistItem(CItem *item)
 {
-  bool result = __super::ParseItem(item);
+  HRESULT result = __super::ParseItem(item);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
-    result &= (!IsNullOrEmptyOrWhitespace(this->itemContent));
+    CHECK_CONDITION_HRESULT(result, !IsNullOrEmptyOrWhitespace(this->itemContent), result, E_M3U8_NOT_VALID_PLAYLIST_ITEM_FOUND);
 
-    this->flags |= result ? ITEM_FLAG_PLAYLIST_ITEM : ITEM_FLAG_NONE;
+    this->flags |= SUCCEEDED(result) ? ITEM_FLAG_PLAYLIST_ITEM : ITEM_FLAG_NONE;
   }
 
   return result;

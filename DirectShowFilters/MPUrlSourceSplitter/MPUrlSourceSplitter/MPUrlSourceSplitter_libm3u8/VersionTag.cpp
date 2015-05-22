@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "VersionTag.h"
+#include "ErrorCodes.h"
 
 CVersionTag::CVersionTag(HRESULT *result)
   : CTag(result)
@@ -70,21 +71,21 @@ void CVersionTag::Clear(void)
   this->protocolVersion = PROTOCOL_VERSION_NOT_SPECIFIED;
 }
 
-bool CVersionTag::ParseTag(unsigned int version)
+HRESULT CVersionTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag(version);
+  HRESULT result = __super::ParseTag(version);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     // successful parsing of tag
     // compare it to our tag
-    result &= (wcscmp(this->tag, TAG_VERSION) == 0);
+    CHECK_CONDITION_HRESULT(result, wcscmp(this->tag, TAG_VERSION) == 0, result, E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE);
+    CHECK_POINTER_HRESULT(result, this->tagContent, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
 
-    if (result)
+    if (SUCCEEDED(result))
     {
       this->protocolVersion = CAttribute::GetDecimalInteger(this->tagContent);
-
-      result &= (this->protocolVersion != PROTOCOL_VERSION_NOT_SPECIFIED);
+      CHECK_CONDITION_HRESULT(result, this->protocolVersion != PROTOCOL_VERSION_NOT_SPECIFIED, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
     }
   }
 
