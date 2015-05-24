@@ -42,8 +42,8 @@ struct VID_FRAME_VERTEX
 MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, IDirect3DDevice9* pDevice) :
   CUnknown(NAME("MPMadPresenter"), NULL),
   m_pCallback(pCallback),
-  m_dwWidth(width),
-  m_dwHeight(height),
+  m_dwGUIWidth(width),
+  m_dwGUIHeight(height),
   m_pDevice((IDirect3DDevice9Ex*)pDevice)
 {
   m_subProxy = new MadSubtitleProxy(pCallback);
@@ -145,10 +145,13 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 {
   HRESULT hr = E_UNEXPECTED;
 
-  WORD height = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
-  WORD width = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
+  WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
+  WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
   CAutoLock cAutoLock(this);
+
+  m_dwHeight = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top;
+  m_dwWidth = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
 
   if (FAILED(hr = RenderToTexture(m_pMPTextureGui, m_pMPSurfaceGui)))
     return hr;
@@ -156,7 +159,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   if (FAILED(hr = m_deviceState.Store()))
     return hr;
 
-  if (FAILED(hr = m_pCallback->RenderGui(width, height, width, height)))
+  if (FAILED(hr = m_pCallback->RenderGui(videoWidth, videoHeight, videoWidth, videoHeight)))
     return hr;
 
   if (FAILED(hr = SetupMadDeviceState()))
@@ -179,10 +182,14 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 {
   HRESULT hr = E_UNEXPECTED;
 
+
+  WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
+  WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
+
   CAutoLock cAutoLock(this);
 
-  WORD height = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
-  WORD width = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
+  m_dwHeight = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top;
+  m_dwWidth = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
 
   if (FAILED(hr = RenderToTexture(m_pMPTextureOsd, m_pMPSurfaceOsd)))
     return hr;
@@ -190,7 +197,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   if (FAILED(hr = m_deviceState.Store()))
     return hr;
 
-  if (FAILED(hr = m_pCallback->RenderOverlay(width, height, width, height)))
+  if (FAILED(hr = m_pCallback->RenderOverlay(videoWidth, videoHeight, videoWidth, videoHeight)))
     return hr;
 
   if (FAILED(hr = SetupMadDeviceState()))
@@ -247,14 +254,14 @@ HRESULT MPMadPresenter::SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf)
   VID_FRAME_VERTEX* vertices = nullptr;
 
   // Lock the vertex buffer
-  HRESULT hr = pVertextBuf->Lock(0, 0, (void**)&vertices, NULL);
+  HRESULT hr = pVertextBuf->Lock(0, 0, (void**)&vertices, D3DLOCK_DISCARD);
 
   if (SUCCEEDED(hr))
   {
     RECT rDest;
-    rDest.bottom = 1080;
+    rDest.bottom = m_dwHeight;
     rDest.left = 0;
-    rDest.right = 1920;
+    rDest.right = m_dwWidth;
     rDest.top = 0;
 
     vertices[0].x = (float)rDest.left - 0.5f;
@@ -298,10 +305,10 @@ HRESULT MPMadPresenter::SetupMadDeviceState()
   HRESULT hr = E_UNEXPECTED;
 
   RECT newScissorRect;
-  newScissorRect.bottom = 1080;
+  newScissorRect.bottom = m_dwHeight;
   newScissorRect.top = 0;
   newScissorRect.left = 0;
-  newScissorRect.right = 1920;
+  newScissorRect.right = m_dwWidth;
 
   if (FAILED(hr = m_pMadD3DDev->SetScissorRect(&newScissorRect)))
     return hr;
@@ -346,21 +353,22 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 
   if (m_pMadD3DDev)
   {
-    m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadGuiVertexBuffer, NULL);
+    if (FAILED(hr = m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadGuiVertexBuffer, NULL)))
+      return hr;
 
     if (FAILED(hr = m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadOsdVertexBuffer, NULL)))
       return hr;
 
-    if (FAILED(hr = m_pDevice->CreateTexture(m_dwWidth, m_dwHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureGui, &m_hSharedGuiHandle)))
+    if (FAILED(hr = m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureGui, &m_hSharedGuiHandle)))
       return hr;
 
-    if (FAILED(hr = m_pMadD3DDev->CreateTexture(m_dwWidth, m_dwHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureGui, &m_hSharedGuiHandle)))
+    if (FAILED(hr = m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureGui, &m_hSharedGuiHandle)))
       return hr;
 
-    if (FAILED(hr = m_pDevice->CreateTexture(m_dwWidth, m_dwHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureOsd, &m_hSharedOsdHandle)))
+    if (FAILED(hr = m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureOsd, &m_hSharedOsdHandle)))
       return hr;
 
-    if (FAILED(hr = m_pMadD3DDev->CreateTexture(m_dwWidth, m_dwHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureOsd, &m_hSharedOsdHandle)))
+    if (FAILED(hr = m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureOsd, &m_hSharedOsdHandle)))
       return hr;
   }
   else

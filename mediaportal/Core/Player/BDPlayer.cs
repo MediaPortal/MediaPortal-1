@@ -833,7 +833,8 @@ namespace MediaPortal.Player
         }
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          _videoWin.SetWindowPosition(0, 0, GUIGraphicsContext.Width, GUIGraphicsContext.Width);
+          Size client = GUIGraphicsContext.form.ClientSize;
+          _videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
         }
         else
         {
@@ -1181,6 +1182,7 @@ namespace MediaPortal.Player
       _aspectY = aspectY;
 
       GUIGraphicsContext.VideoSize = new Size(_videoWidth, _videoHeight);
+      GUIGraphicsContext.ScaleVideoWindow(ref nw, ref nh, ref x, ref y);
 
       Rectangle rSource, rDest;
 
@@ -3054,7 +3056,6 @@ namespace MediaPortal.Player
           _vmr9 = null;
         }
 
-        GUIGraphicsContext.form.Invalidate(true);
         _state = PlayState.Init;
       }
       catch (Exception ex)
