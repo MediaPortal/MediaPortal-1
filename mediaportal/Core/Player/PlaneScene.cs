@@ -338,8 +338,8 @@ namespace MediaPortal.Player
         // get the window where the video/tv should be shown
         float x = GUIGraphicsContext.VideoWindow.X;
         float y = GUIGraphicsContext.VideoWindow.Y;
-        float nw = GUIGraphicsContext.VideoWindow.Width;
-        float nh = GUIGraphicsContext.VideoWindow.Height;
+        int nw = GUIGraphicsContext.VideoWindow.Width;
+        int nh = GUIGraphicsContext.VideoWindow.Height;
 
         //sanity checks
         if (nw > GUIGraphicsContext.OverScanWidth)
@@ -368,6 +368,7 @@ namespace MediaPortal.Player
         }
 
         GUIGraphicsContext.VideoReceived();
+        GUIGraphicsContext.ScaleVideoWindow(ref nw, ref nh, ref x, ref y);
 
         //did the video window,aspect ratio change? if not
         //then we dont need to recalculate and just return the previous settings
