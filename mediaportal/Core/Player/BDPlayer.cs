@@ -3089,7 +3089,6 @@ namespace MediaPortal.Player
           _vmr9 = null;
         }
 
-        GUIGraphicsContext.form.Invalidate(true);
         _state = PlayState.Init;
       }
       catch (Exception ex)
