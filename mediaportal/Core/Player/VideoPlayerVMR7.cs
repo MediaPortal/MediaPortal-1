@@ -550,6 +550,7 @@ namespace MediaPortal.Player
         m_aspectX = aspectX;
         m_aspectY = aspectY;
         GUIGraphicsContext.VideoSize = new Size(m_iVideoWidth, m_iVideoHeight);
+        GUIGraphicsContext.ScaleVideoWindow(ref nw, ref nh, ref x, ref y);
         Rectangle rSource, rDest;
         Geometry m_geometry = new Geometry();
         m_geometry.ImageWidth = m_iVideoWidth;
@@ -587,7 +588,8 @@ namespace MediaPortal.Player
         }
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          videoWin.SetWindowPosition(0, 0, GUIGraphicsContext.Width, GUIGraphicsContext.Width);
+          Size client = GUIGraphicsContext.form.ClientSize;
+          videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
         }
         else
         {
