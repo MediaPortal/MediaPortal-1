@@ -1383,6 +1383,23 @@ namespace MediaPortal.GUI.Library
       set { _videoRendererType = value; }
     }
 
+    public static void ScaleVideoWindow(ref int width, ref int height, ref float x, ref float y)
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        Size client = GUIGraphicsContext.form.ClientSize;
+        float ration = 1.0f;
+        
+        if (DX9Device != null && DX9Device.PresentationParameters != null)
+          ration = (float)client.Width / (float)DX9Device.PresentationParameters.BackBufferWidth;
+
+        width = (int)((float)width * (float)ration);
+        height = (int)((float)height * (float)ration);
+        x *= ration;
+        y *= ration;
+      }
+    }
+
     /// <summary>
     /// 
     /// </summary>

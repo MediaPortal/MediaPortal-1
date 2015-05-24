@@ -76,6 +76,9 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     HANDLE m_hSharedGuiHandle = nullptr;
     HANDLE m_hSharedOsdHandle = nullptr;
 
+    DWORD m_dwGUIWidth = 0;
+    DWORD m_dwGUIHeight = 0;
+
     DWORD m_dwWidth = 0;
     DWORD m_dwHeight = 0;
 

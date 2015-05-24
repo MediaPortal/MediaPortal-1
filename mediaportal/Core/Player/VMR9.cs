@@ -446,10 +446,11 @@ namespace MediaPortal.Player
       }
       else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-         MadInit(_scene, GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height, (uint)upDevice.ToInt32(), ref _vmr9Filter);
+        var backbuffer = GUIGraphicsContext.DX9Device.PresentationParameters;
+        MadInit(_scene, backbuffer.BackBufferWidth, backbuffer.BackBufferHeight, (uint)upDevice.ToInt32(), ref _vmr9Filter);
 
-         hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
-         Log.Info("VMR9: added madVR Renderer to graph");
+        hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
+        Log.Info("VMR9: added madVR Renderer to graph");
       }
       else
       {
