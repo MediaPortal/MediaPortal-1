@@ -467,8 +467,6 @@ namespace MediaPortal.Player
         }
 
         _state = PlayState.Init;
-        GUIGraphicsContext.form.Invalidate(true);
-        //GUIGraphicsContext.form.Activate();
       }
       catch (Exception ex)
       {
