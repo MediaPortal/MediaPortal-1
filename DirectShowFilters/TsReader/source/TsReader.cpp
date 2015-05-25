@@ -485,7 +485,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     keyValue = (DWORD)m_regSlowPlayInPPM;
     LPCTSTR regSlowPlayInPPM_RRK = _T("SlowPlayInPPM");
     ReadRegistryKeyDword(key, regSlowPlayInPPM_RRK, keyValue);
-    if ((keyValue >= 0) && (keyValue <= 2000))
+    if ((keyValue >= 0) && (keyValue <= SPEED_ADJ_LIMIT))
     {
       m_regSlowPlayInPPM = (REFERENCE_TIME)keyValue;
       LogDebug("--- Slow Play = %d PPM", m_regSlowPlayInPPM);
@@ -493,7 +493,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     else
     {
       m_regSlowPlayInPPM = SLOW_PLAY_PPM;
-      LogDebug("--- Slow Play = %d PPM (default value, allowed range is %d - %d)", m_regSlowPlayInPPM, 0, 2000);
+      LogDebug("--- Slow Play = %d PPM (default value, allowed range is %d - %d)", m_regSlowPlayInPPM, 0, SPEED_ADJ_LIMIT);
     }
 
     keyValue = (DWORD)m_AutoSpeedAdjust;
@@ -1264,8 +1264,8 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
       //local timeshift buffer file file
       m_bTimeShifting = true;
       m_bLiveTv = true;
-      m_fileReader = new MultiFileReader(m_isUNCfile, m_isUNCfile); //enable SMB2 'data cache' and 'file exists' workarounds for UNC
-      m_fileDuration = new MultiFileReader(false, m_isUNCfile); //enable SMB2 'file exists' workaround for UNC
+      m_fileReader = new MultiFileReader(m_isUNCfile, m_isUNCfile, &m_multiFileReaderLock); //enable SMB2 'data cache' and 'file exists' workarounds for UNC
+      m_fileDuration = new MultiFileReader(false, m_isUNCfile, &m_multiFileReaderLock); //enable SMB2 'file exists' workaround for UNC
     }    
 
     //open file
@@ -1843,9 +1843,9 @@ void CTsReaderFilter::ThreadProc()
               //Calculate the playSpeedAdjustInPPM value to compensate for the difference over the next 60 seconds
               //This assumes the nominal 'DeltaCompensation()' update rate is 10 per second
               playSpeedAdjustInPPM = (REFERENCE_TIME)(presToRef * ((double)(-1000*1000*DUR_LOOP_TIMEOUT)/(60.0*100.0)));              
-              if (playSpeedAdjustInPPM > 2000)
+              if (playSpeedAdjustInPPM > SPEED_ADJ_LIMIT)
               {
-                playSpeedAdjustInPPM = 2000;
+                playSpeedAdjustInPPM = SPEED_ADJ_LIMIT;
               }
               
               if (presToRef < -0.15)
@@ -1867,9 +1867,9 @@ void CTsReaderFilter::ThreadProc()
               //Calculate the playSpeedAdjustInPPM value to compensate for the difference over the next 60 seconds
               //This assumes the nominal 'DeltaCompensation()' update rate is 10 per second
               playSpeedAdjustInPPM = (REFERENCE_TIME)(presToRef * ((double)(-1000*1000*DUR_LOOP_TIMEOUT)/(60.0*100.0)));              
-              if (playSpeedAdjustInPPM < -2000)
+              if (playSpeedAdjustInPPM < -SPEED_ADJ_LIMIT)
               {
-                playSpeedAdjustInPPM = -2000;
+                playSpeedAdjustInPPM = -SPEED_ADJ_LIMIT;
               }
               
               if (presToRef > 0.15)

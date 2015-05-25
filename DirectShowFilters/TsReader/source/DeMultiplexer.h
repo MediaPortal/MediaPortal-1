@@ -147,7 +147,7 @@ public:
   bool PatParsed(void);
   void CheckMediaChange(unsigned int Pid, bool isVideo);
 
-  int  ReadAheadFromFile();
+  int  ReadAheadFromFile(ULONG lDataLength);
   bool CheckPrefetchState(bool isNormal, bool isForced);
 
   void DelegatedFlush(bool forceNow, bool waitForFlush);
@@ -198,7 +198,7 @@ private:
 
   vector<struct stAudioStream> m_audioStreams;
   vector<struct stSubtitleStream> m_subtitleStreams;
-  int ReadFromFile();
+  int ReadFromFile(ULONG lDataLength);
   bool m_bEndOfFile;
   HRESULT RenderFilterPin(CBasePin* pin, bool isAudio, bool isVideo);
   CCritSec m_sectionFlushAudio;

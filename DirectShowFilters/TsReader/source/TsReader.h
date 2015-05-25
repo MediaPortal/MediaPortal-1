@@ -51,6 +51,9 @@
 #define AUDIO_STALL_POINT 1.5f     // in seconds
 #define VIDEO_STALL_POINT 2.5f     // in seconds
 
+//Playback speed adjust limit (in PPM)
+#define SPEED_ADJ_LIMIT 4000
+
 //Vid/Aud/Sub buffer sizes and limits
 #define MAX_AUD_BUF_SIZE 640
 #define MAX_VID_BUF_SIZE 640
@@ -64,9 +67,12 @@
 #define SUB_PIN_BUFFERS 16
 
 //File read prefetch 'looping retry' timeout limit (in ms)
-#define MAX_PREFETCH_LOOP_TIME 10000
-#define PF_LOOP_DELAY_MIN 3
+#define MAX_PREFETCH_LOOP_TIME 1500
+#define PF_LOOP_DELAY_MIN 4
 #define PF_LOOP_DELAY_MAX 120
+
+//Timeout for RTSP 'no data available' end-of-file detection (in ms)
+#define RTSP_EOF_TIMEOUT 2000
 
 ////File/RTSP ReadFromFile() block sizes
 //#define READ_SIZE (65536)
@@ -338,6 +344,7 @@ private:
   CCritSec        m_GetTimeLock;
   CCritSec        m_GetCompLock;
   CCritSec        m_DurationThreadLock;
+  CCritSec        m_multiFileReaderLock;
   FileReader*     m_fileReader;
   FileReader*     m_fileDuration;
   CTsDuration     m_updateThreadDuration;

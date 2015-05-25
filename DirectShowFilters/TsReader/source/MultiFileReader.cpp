@@ -42,12 +42,21 @@
 #define INFO_BUFF_SIZE (131072)
 
 extern void LogDebug(const char *fmt, ...) ;
-MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites):
+MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec* pFilterLock):
 	m_TSBufferFile(),
 	m_TSFile(),
 	m_TSFileGetLength(),
 	m_TSFileNext()
 {
+  if (pFilterLock != NULL)
+  {
+    m_pAccessLock = pFilterLock;
+  }
+  else
+  {
+    m_pAccessLock = &m_accessLock;
+  }
+    
 	m_startPosition = 0;
 	m_endPosition = 0;
 	m_currentPosition = 0;
@@ -121,14 +130,14 @@ MultiFileReader::~MultiFileReader()
 HRESULT MultiFileReader::GetFileName(LPOLESTR *lpszFileName)
 {
 //	CheckPointer(lpszFileName,E_POINTER);
-  CAutoLock rLock (&m_accessLock);
+  CAutoLock rLock (m_pAccessLock);
 	return m_TSBufferFile.GetFileName(lpszFileName);
 }
 
 HRESULT MultiFileReader::SetFileName(LPCOLESTR pszFileName)
 {
 //	CheckPointer(pszFileName,E_POINTER);
-  CAutoLock rLock (&m_accessLock);
+  CAutoLock rLock (m_pAccessLock);
 	return m_TSBufferFile.SetFileName(pszFileName);
 }
 
@@ -137,7 +146,7 @@ HRESULT MultiFileReader::SetFileName(LPCOLESTR pszFileName)
 //
 HRESULT MultiFileReader::OpenFile()
 {
-  CAutoLock rLock (&m_accessLock);
+  CAutoLock rLock (m_pAccessLock);
   SetStopping(false);
   
 	HRESULT hr = m_TSBufferFile.OpenFile();
@@ -166,7 +175,7 @@ HRESULT MultiFileReader::OpenFile()
 HRESULT MultiFileReader::CloseFile()
 {
   SetStopping(true);
-  CAutoLock rLock (&m_accessLock);
+  CAutoLock rLock (m_pAccessLock);
 	HRESULT hr;
 	hr = m_TSBufferFile.CloseFile();
 	hr = m_TSFile.CloseFile();
@@ -178,13 +187,13 @@ HRESULT MultiFileReader::CloseFile()
 
 BOOL MultiFileReader::IsFileInvalid()
 {
-  CAutoLock rLock (&m_accessLock);    
+  CAutoLock rLock (m_pAccessLock);    
 	return m_TSBufferFile.IsFileInvalid();
 }
 
 DWORD MultiFileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod)
 {
-  CAutoLock rLock (&m_accessLock);
+  CAutoLock rLock (m_pAccessLock);
   
 	RefreshTSBufferFile();
 
@@ -214,14 +223,14 @@ DWORD MultiFileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMeth
 
 __int64 MultiFileReader::GetFilePointer()
 {
-  CAutoLock rLock (&m_accessLock);
+  CAutoLock rLock (m_pAccessLock);
 	return m_currentPosition;
 }
 
 
 HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 {
-  CAutoLock rLock (&m_accessLock);
+  CAutoLock rLock (m_pAccessLock);
   return ReadNoLock(pbData, lDataLength, dwReadBytes);
 }
 
@@ -694,10 +703,12 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   			fileID++;
   			file->filePositionId = fileID;
   
-  			result = GetFileLength(pFilename, file->length, false);
+  			result = GetFileLength(pFilename, file->length, true);
   		  if (!SUCCEEDED(result)) 
 		      Error |= 0x100;
   
+        //LogDebug("MultiFileReader: Update file list, filePositionId = %d, length = %d", file->filePositionId, file->length) ;
+
   			m_tsFiles.push_back(file);
   
   			nextStartPosition = file->startPosition + file->length;
@@ -753,7 +764,7 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 
 __int64 MultiFileReader::GetFileSize()
 {
-  CAutoLock rLock (&m_accessLock);
+  CAutoLock rLock (m_pAccessLock);
   RefreshTSBufferFile();
   return m_endPosition - m_startPosition;
 }
@@ -779,7 +790,7 @@ HRESULT MultiFileReader::GetFileLength(LPWSTR pFilename, __int64 &length, bool d
    	  {
   	    LogDebug("MultiFileReader::GetFileLength() has error 0x%x in Loop %d. Trying again", Error, 10-Loop);  
   	  }	  
-  	  Sleep(5);
+  	  Sleep(10);
     }  
 
     Error=0;
@@ -794,7 +805,7 @@ HRESULT MultiFileReader::GetFileLength(LPWSTR pFilename, __int64 &length, bool d
   	length = m_TSFileGetLength.GetFileSize();
   	if (doubleCheck)
   	{
-    	Sleep(5);
+    	Sleep(10);
     	if (length != m_TSFileGetLength.GetFileSize())
     	{
     	  Error |= 0x4;
@@ -803,6 +814,11 @@ HRESULT MultiFileReader::GetFileLength(LPWSTR pFilename, __int64 &length, bool d
     m_TSFileGetLength.CloseFile();
 
   } while ( Error && Loop ) ; // If Error is set, try again...until Loop reaches 0.
+  
+  if (length <= 0)
+  {
+    LogDebug("MultiFileReader::GetFileLength(), file is %d length, iterations %d", length, 10-Loop) ;
+  }
  
   if (Loop < 2)
   {
@@ -822,14 +838,14 @@ HRESULT MultiFileReader::GetFileLength(LPWSTR pFilename, __int64 &length, bool d
 //Enable 'FileNext' file reads to workaround SMB2/SM3 possible 'data cache' problems
 void MultiFileReader::SetFileNext(BOOL useFileNext)
 {
-  CAutoLock rLock (&m_accessLock);
+  CAutoLock rLock (m_pAccessLock);
 	m_bUseFileNext = useFileNext;
 	//LogDebug("FileReader::SetFileNext, useFileNext = %d", useFileNext);
 }
 
 BOOL MultiFileReader::GetFileNext()
 {
-  CAutoLock rLock (&m_accessLock);
+  CAutoLock rLock (m_pAccessLock);
 	return m_bUseFileNext;
 }
 
