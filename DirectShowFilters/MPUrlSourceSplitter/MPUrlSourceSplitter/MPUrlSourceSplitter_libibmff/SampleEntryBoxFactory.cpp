@@ -69,6 +69,8 @@ CBox *CSampleEntryBoxFactory::CreateBox(const uint8_t *buffer, uint32_t length, 
       }
     }
 
+    CHECK_CONDITION_NOT_NULL_EXECUTE(result, FREE_MEM_CLASS(box));
+
     if (SUCCEEDED(continueParsing) && (result == NULL))
     {
       result = box;

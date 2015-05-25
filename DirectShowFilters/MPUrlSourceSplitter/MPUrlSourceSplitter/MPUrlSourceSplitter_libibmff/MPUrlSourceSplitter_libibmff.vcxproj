@@ -117,6 +117,7 @@
     <ClInclude Include="MovieFragmentHeaderBox.h" />
     <ClInclude Include="MovieHeaderBox.h" />
     <ClInclude Include="NullMediaHeaderBox.h" />
+    <ClInclude Include="PayloadBox.h" />
     <ClInclude Include="PixelAspectRatioBox.h" />
     <ClInclude Include="SampleCollection.h" />
     <ClInclude Include="SampleDescriptionBox.h" />
@@ -183,6 +184,7 @@
     <ClCompile Include="MovieFragmentHeaderBox.cpp" />
     <ClCompile Include="MovieHeaderBox.cpp" />
     <ClCompile Include="NullMediaHeaderBox.cpp" />
+    <ClCompile Include="PayloadBox.cpp" />
     <ClCompile Include="PixelAspectRatioBox.cpp" />
     <ClCompile Include="SampleCollection.cpp" />
     <ClCompile Include="SampleDescriptionBox.cpp" />
