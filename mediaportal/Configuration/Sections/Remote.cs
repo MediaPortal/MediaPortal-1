@@ -182,6 +182,12 @@ namespace MediaPortal.Configuration.Sections
     private PictureBox pictureBox12;
     private LinkLabel linkLabelDocumentation;
     private LinkLabel linkLabelMediaDocumentation;
+    private Label labelMediaWarning;
+    private Label labelMceWarning;
+    private Label labelRepeatSpeed;
+    private Label labelRepeatDelay;
+    private NumericUpDown numericRepeatSpeed;
+    private NumericUpDown numericRepeatDelay;
     private MPLabel labelFireDTVModel;
 
     #endregion
@@ -392,7 +398,9 @@ namespace MediaPortal.Configuration.Sections
         #region Generic HID
 
         checkBoxHidEnabled.Checked = xmlreader.GetValueAsBool("remote", "HidEnabled", false);
-        checkBoxHidExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "HidVerbose", false);        
+        checkBoxHidExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "HidVerbose", false);
+        numericRepeatDelay.Value = xmlreader.GetValueAsInt("remote", "HidRepeatDelayInMs", -1);
+        numericRepeatSpeed.Value = xmlreader.GetValueAsInt("remote", "HidRepeatSpeedInMs", -1);        
         buttonHidMapping.Enabled = checkBoxHidEnabled.Checked;
 
         #endregion
@@ -549,6 +557,8 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValueAsBool("remote", "HidEnabled", checkBoxHidEnabled.Checked);
         xmlwriter.SetValueAsBool("remote", "HidVerbose", checkBoxHidExtendedLogging.Checked);
+        xmlwriter.SetValue("remote", "HidRepeatDelayInMs", ((int)numericRepeatDelay.Value).ToString());
+        xmlwriter.SetValue("remote", "HidRepeatSpeedInMs", ((int)numericRepeatSpeed.Value).ToString());
 
         #endregion
 
@@ -638,18 +648,25 @@ namespace MediaPortal.Configuration.Sections
       this.pictureBox5 = new System.Windows.Forms.PictureBox();
       this.pictureBox2 = new System.Windows.Forms.PictureBox();
       this.groupBoxHidGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.numericRepeatSpeed = new System.Windows.Forms.NumericUpDown();
+      this.numericRepeatDelay = new System.Windows.Forms.NumericUpDown();
       this.linkLabelDocumentation = new System.Windows.Forms.LinkLabel();
       this.checkBoxHidExtendedLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.buttonHidMapping = new MediaPortal.UserInterface.Controls.MPButton();
+      this.labelRepeatSpeed = new System.Windows.Forms.Label();
+      this.labelRepeatDelay = new System.Windows.Forms.Label();
       this.tabPageAppCommand = new System.Windows.Forms.TabPage();
+      this.labelMediaWarning = new System.Windows.Forms.Label();
       this.pictureBox8 = new System.Windows.Forms.PictureBox();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.linkLabelMediaDocumentation = new System.Windows.Forms.LinkLabel();
       this.checkBoxAppCommandBackground = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpCheckBoxAppCommandVerbose = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpButtonAppCommandMapping = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpCheckBoxAppCommandEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.pictureBox7 = new System.Windows.Forms.PictureBox();
       this.tabPageMce = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.labelMceWarning = new System.Windows.Forms.Label();
       this.pictureBoxMceVista = new System.Windows.Forms.PictureBox();
       this.pictureBoxMCE2004 = new System.Windows.Forms.PictureBox();
       this.groupBoxMceGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -739,7 +756,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBox1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpCheckBox2 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.linkLabelMediaDocumentation = new System.Windows.Forms.LinkLabel();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageHid.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox11)).BeginInit();
@@ -751,6 +767,8 @@ namespace MediaPortal.Configuration.Sections
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
       this.groupBoxHidGeneral.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericRepeatSpeed)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericRepeatDelay)).BeginInit();
       this.tabPageAppCommand.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox8)).BeginInit();
       this.mpGroupBox1.SuspendLayout();
@@ -925,16 +943,64 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBoxHidGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxHidGeneral.Controls.Add(this.numericRepeatSpeed);
+      this.groupBoxHidGeneral.Controls.Add(this.numericRepeatDelay);
       this.groupBoxHidGeneral.Controls.Add(this.linkLabelDocumentation);
       this.groupBoxHidGeneral.Controls.Add(this.checkBoxHidExtendedLogging);
       this.groupBoxHidGeneral.Controls.Add(this.buttonHidMapping);
       this.groupBoxHidGeneral.Controls.Add(this.checkBoxHidEnabled);
+      this.groupBoxHidGeneral.Controls.Add(this.labelRepeatSpeed);
+      this.groupBoxHidGeneral.Controls.Add(this.labelRepeatDelay);
       this.groupBoxHidGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxHidGeneral.Location = new System.Drawing.Point(12, 8);
       this.groupBoxHidGeneral.Name = "groupBoxHidGeneral";
       this.groupBoxHidGeneral.Size = new System.Drawing.Size(448, 77);
       this.groupBoxHidGeneral.TabIndex = 1;
       this.groupBoxHidGeneral.TabStop = false;
+      // 
+      // numericRepeatSpeed
+      // 
+      this.numericRepeatSpeed.Location = new System.Drawing.Point(269, 47);
+      this.numericRepeatSpeed.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+      this.numericRepeatSpeed.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
+      this.numericRepeatSpeed.Name = "numericRepeatSpeed";
+      this.numericRepeatSpeed.Size = new System.Drawing.Size(47, 20);
+      this.numericRepeatSpeed.TabIndex = 7;
+      this.numericRepeatSpeed.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
+      // 
+      // numericRepeatDelay
+      // 
+      this.numericRepeatDelay.Location = new System.Drawing.Point(269, 24);
+      this.numericRepeatDelay.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+      this.numericRepeatDelay.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
+      this.numericRepeatDelay.Name = "numericRepeatDelay";
+      this.numericRepeatDelay.Size = new System.Drawing.Size(47, 20);
+      this.numericRepeatDelay.TabIndex = 6;
+      this.numericRepeatDelay.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
       // 
       // linkLabelDocumentation
       // 
@@ -969,8 +1035,27 @@ namespace MediaPortal.Configuration.Sections
       this.buttonHidMapping.UseVisualStyleBackColor = true;
       this.buttonHidMapping.Click += new System.EventHandler(this.buttonHidMapping_Click);
       // 
+      // labelRepeatSpeed
+      // 
+      this.labelRepeatSpeed.AutoSize = true;
+      this.labelRepeatSpeed.Location = new System.Drawing.Point(169, 49);
+      this.labelRepeatSpeed.Name = "labelRepeatSpeed";
+      this.labelRepeatSpeed.Size = new System.Drawing.Size(96, 13);
+      this.labelRepeatSpeed.TabIndex = 9;
+      this.labelRepeatSpeed.Text = "Repeat speed (ms)";
+      // 
+      // labelRepeatDelay
+      // 
+      this.labelRepeatDelay.AutoSize = true;
+      this.labelRepeatDelay.Location = new System.Drawing.Point(169, 26);
+      this.labelRepeatDelay.Name = "labelRepeatDelay";
+      this.labelRepeatDelay.Size = new System.Drawing.Size(92, 13);
+      this.labelRepeatDelay.TabIndex = 8;
+      this.labelRepeatDelay.Text = "Repeat delay (ms)";
+      // 
       // tabPageAppCommand
       // 
+      this.tabPageAppCommand.Controls.Add(this.labelMediaWarning);
       this.tabPageAppCommand.Controls.Add(this.pictureBox8);
       this.tabPageAppCommand.Controls.Add(this.mpGroupBox1);
       this.tabPageAppCommand.Controls.Add(this.pictureBox7);
@@ -981,6 +1066,17 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageAppCommand.TabIndex = 7;
       this.tabPageAppCommand.Text = "Media";
       this.tabPageAppCommand.UseVisualStyleBackColor = true;
+      // 
+      // labelMediaWarning
+      // 
+      this.labelMediaWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelMediaWarning.ForeColor = System.Drawing.Color.Red;
+      this.labelMediaWarning.Location = new System.Drawing.Point(7, 371);
+      this.labelMediaWarning.Name = "labelMediaWarning";
+      this.labelMediaWarning.Size = new System.Drawing.Size(459, 48);
+      this.labelMediaWarning.TabIndex = 8;
+      this.labelMediaWarning.Text = "Consider using HID instead.\r\nDo not enable together with HID unless you know what" +
+    " you are doing.\r\n\r\n\r\n";
       // 
       // pictureBox8
       // 
@@ -1007,6 +1103,17 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Size = new System.Drawing.Size(448, 95);
       this.mpGroupBox1.TabIndex = 5;
       this.mpGroupBox1.TabStop = false;
+      // 
+      // linkLabelMediaDocumentation
+      // 
+      this.linkLabelMediaDocumentation.AutoSize = true;
+      this.linkLabelMediaDocumentation.Location = new System.Drawing.Point(319, 70);
+      this.linkLabelMediaDocumentation.Name = "linkLabelMediaDocumentation";
+      this.linkLabelMediaDocumentation.Size = new System.Drawing.Size(112, 13);
+      this.linkLabelMediaDocumentation.TabIndex = 6;
+      this.linkLabelMediaDocumentation.TabStop = true;
+      this.linkLabelMediaDocumentation.Text = "Online Documentation";
+      this.linkLabelMediaDocumentation.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelMediaDocumentation_LinkClicked);
       // 
       // checkBoxAppCommandBackground
       // 
@@ -1065,6 +1172,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageMce
       // 
+      this.tabPageMce.Controls.Add(this.labelMceWarning);
       this.tabPageMce.Controls.Add(this.pictureBoxMceVista);
       this.tabPageMce.Controls.Add(this.pictureBoxMCE2004);
       this.tabPageMce.Controls.Add(this.groupBoxMceGeneral);
@@ -1075,6 +1183,17 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageMce.TabIndex = 0;
       this.tabPageMce.Text = "Microsoft MCE";
       this.tabPageMce.UseVisualStyleBackColor = true;
+      // 
+      // labelMceWarning
+      // 
+      this.labelMceWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelMceWarning.ForeColor = System.Drawing.Color.Red;
+      this.labelMceWarning.Location = new System.Drawing.Point(3, 374);
+      this.labelMceWarning.Name = "labelMceWarning";
+      this.labelMceWarning.Size = new System.Drawing.Size(459, 48);
+      this.labelMceWarning.TabIndex = 9;
+      this.labelMceWarning.Text = "Deprecated use HID instead.\r\nIt could be removed in upcoming MediaPortal release." +
+    "\r\n\r\n\r\n\r\n";
       // 
       // pictureBoxMceVista
       // 
@@ -2109,17 +2228,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpButton1.Text = "Mapping";
       this.mpButton1.UseVisualStyleBackColor = true;
       // 
-      // linkLabelMediaDocumentation
-      // 
-      this.linkLabelMediaDocumentation.AutoSize = true;
-      this.linkLabelMediaDocumentation.Location = new System.Drawing.Point(319, 70);
-      this.linkLabelMediaDocumentation.Name = "linkLabelMediaDocumentation";
-      this.linkLabelMediaDocumentation.Size = new System.Drawing.Size(112, 13);
-      this.linkLabelMediaDocumentation.TabIndex = 6;
-      this.linkLabelMediaDocumentation.TabStop = true;
-      this.linkLabelMediaDocumentation.Text = "Online Documentation";
-      this.linkLabelMediaDocumentation.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelMediaDocumentation_LinkClicked);
-      // 
       // Remote
       // 
       this.Controls.Add(this.tabControlRemotes);
@@ -2137,6 +2245,8 @@ namespace MediaPortal.Configuration.Sections
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
       this.groupBoxHidGeneral.ResumeLayout(false);
       this.groupBoxHidGeneral.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericRepeatSpeed)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericRepeatDelay)).EndInit();
       this.tabPageAppCommand.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox8)).EndInit();
       this.mpGroupBox1.ResumeLayout(false);
