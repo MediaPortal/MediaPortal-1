@@ -37,7 +37,7 @@ CSampleEntryBoxFactory::~CSampleEntryBoxFactory(void)
 CBox *CSampleEntryBoxFactory::CreateBox(const uint8_t *buffer, uint32_t length, uint32_t handlerType)
 {
   CBox *result = NULL;
-  HRESULT continueParsing = ((buffer != NULL) && (length > 0));
+  HRESULT continueParsing = ((buffer != NULL) && (length > 0)) ? S_OK : E_INVALIDARG;
 
   if (SUCCEEDED(continueParsing))
   {
@@ -68,6 +68,8 @@ CBox *CSampleEntryBoxFactory::CreateBox(const uint8_t *buffer, uint32_t length, 
         }
       }
     }
+
+    CHECK_CONDITION_NOT_NULL_EXECUTE(result, FREE_MEM_CLASS(box));
 
     if (SUCCEEDED(continueParsing) && (result == NULL))
     {
