@@ -105,4 +105,5 @@ protected:
   CCritSec  m_csResources;
 
   CComPtr<IMediaSample> m_pCurrentSample;
+  CCritSec m_csCurrentSample;
 };
