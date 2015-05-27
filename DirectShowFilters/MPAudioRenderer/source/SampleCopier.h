@@ -20,11 +20,12 @@
 #include <ks.h>
 #include <ksmedia.h>
 #include "BaseAudioSink.h"
+#include "Logger.h"
 
 class CSampleCopier : public CBaseAudioSink
 {
 public:
-  CSampleCopier(AudioRendererSettings* pSettings);
+  CSampleCopier(AudioRendererSettings* pSettings, Logger* pLogger);
   virtual ~CSampleCopier();
 
 // type definitions
@@ -65,5 +66,6 @@ protected:
   REFERENCE_TIME m_rtNextIncomingSampleTime;
   REFERENCE_TIME m_rtInSampleTime; 
 
+  Logger* m_pLogger;
 };
 

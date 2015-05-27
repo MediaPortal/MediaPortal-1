@@ -21,8 +21,8 @@
 
 #include "alloctracing.h"
 
-CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSyncClock* pClock) :
-  CQueuedAudioSink(pSettings),
+CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSyncClock* pClock, Logger* pLogger) :
+  CQueuedAudioSink(pSettings, pLogger),
   m_pClock(pClock),
   m_hLibAVRT(NULL),
   m_pMMDevice(NULL),
@@ -47,7 +47,8 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSync
   m_ullPrevPos(0),
   m_hNeedMoreSamples(NULL),
   m_rtLatency(0),
-  m_dOutputBufferSize(m_pSettings->GetOutputBuffer() * 10000)
+  m_dOutputBufferSize(m_pSettings->GetOutputBuffer() * 10000),
+  m_pLogger(pLogger)
 {
   OSVERSIONINFO osvi;
   ZeroMemory(&osvi, sizeof(OSVERSIONINFO));

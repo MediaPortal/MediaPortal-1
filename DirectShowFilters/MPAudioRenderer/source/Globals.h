@@ -43,9 +43,6 @@ extern DWORD gdwAC3SpeakerOrder[];
 
 #define IS_WAVEFORMAT_FLOAT(pwfx)       (pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
 
-extern void Log(const char *fmt, ...);
-extern void LogWaveFormat(const WAVEFORMATEXTENSIBLE* pwfx, const char *text);
-
 extern HRESULT CopyWaveFormatEx(WAVEFORMATEXTENSIBLE** dst, const WAVEFORMATEXTENSIBLE* src);
 extern HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE** dst, WAVEFORMATEX* src);
 

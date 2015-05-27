@@ -22,8 +22,6 @@
 
 #include "alloctracing.h"
 
-extern void Log(const char* fmt, ...);
-
 // IMediaSeeking interface implementation
 
 STDMETHODIMP CMPAudioRenderer::IsFormatSupported(const GUID* pFormat)

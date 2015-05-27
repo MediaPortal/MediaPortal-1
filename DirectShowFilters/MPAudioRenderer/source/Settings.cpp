@@ -23,8 +23,6 @@
 
 #include "alloctracing.h"
 
-extern void Log(const char *fmt, ...);
-
 unsigned int gAllowedAC3bitrates[9]         = {192, 224, 256, 320, 384, 448, 512, 576, 640};
 unsigned int gAllowedSampleRates[7]         = {22050, 32000, 44100, 48000, 88200, 96000, 192000};
 unsigned int gAllowedBitDepths[4]           = {8, 16, 24, 32};
@@ -99,7 +97,7 @@ DWORD quality_SEEKWINDOW_MSData = 28;     // in ms (same as soundtouch default)
 DWORD quality_OVERLAP_MSData = 28;        // in ms (same as soundtouch default)
 DWORD allowBitStreamingData = 1;
 
-AudioRendererSettings::AudioRendererSettings() :
+AudioRendererSettings::AudioRendererSettings(Logger* pLogger) :
   CUnknown(_T("MPAR_Settings"), NULL),
   m_bLogSampleTimes(false),
   m_bLogDebug(false),
@@ -131,7 +129,8 @@ AudioRendererSettings::AudioRendererSettings() :
   m_bForceChannelMixing(false),
   m_bExpandMonoToStereo(true),
   m_nUseFilters(USE_FILTERS_ALL),
-  m_bAllowBitStreaming(true)
+  m_bAllowBitStreaming(true),
+  m_pLogger(pLogger)
 {
   LoadSettingsFromRegistry();
 }

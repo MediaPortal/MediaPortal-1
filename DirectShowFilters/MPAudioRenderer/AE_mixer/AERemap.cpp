@@ -32,7 +32,10 @@
 
 using namespace std;
 
-CAERemap::CAERemap() : m_inChannels(0), m_outChannels(0) 
+CAERemap::CAERemap(Logger* pLogger) :
+  m_inChannels(0), 
+  m_outChannels(0),
+  m_pLogger(pLogger)
 {
   memset(m_mixInfo, 0, sizeof(m_mixInfo));
 }

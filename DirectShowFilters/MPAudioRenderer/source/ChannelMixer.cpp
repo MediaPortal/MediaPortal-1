@@ -20,13 +20,14 @@
 
 #include "alloctracing.h"
 
-CChannelMixer::CChannelMixer(AudioRendererSettings* pSettings) :
-  CBaseAudioSink(true, pSettings),
+CChannelMixer::CChannelMixer(AudioRendererSettings* pSettings, Logger* pLogger) :
+  CBaseAudioSink(true, pSettings, pLogger),
   m_bPassThrough(false),
   m_rtInSampleTime(0),
-  m_rtNextIncomingSampleTime(0)
+  m_rtNextIncomingSampleTime(0),
+  m_pLogger(pLogger)
 {
-  m_pRemap = new CAERemap();
+  m_pRemap = new CAERemap(pLogger);
 }
 
 CChannelMixer::~CChannelMixer(void)

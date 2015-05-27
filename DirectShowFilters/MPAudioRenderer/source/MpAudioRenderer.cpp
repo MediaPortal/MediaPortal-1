@@ -46,12 +46,6 @@ CUnknown* WINAPI CMPAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT* phr)
   return pNewObject;
 }
 
-// for logging
-extern void Log(const char* fmt, ...);
-extern void StartLogger();
-extern void LogRotate();
-extern void StopLogger();
-
 CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   : CBaseRenderer(__uuidof(this), NAME("MediaPortal - Audio Renderer"), punk, phr),
   m_dRate(1.0),
@@ -78,13 +72,22 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   m_bFirstSample(true),
   m_pSampleCopier(NULL)
 {
-  StartLogger();
-  LogRotate();
-  Log("MP Audio Renderer - v1.1.9");
+  m_pLogger = new Logger();
 
+  if (!m_pLogger)
+  {
+    if (phr)
+      *phr = E_OUTOFMEMORY;
+    return;
+  }
+
+  m_pLogger->Start();
+  m_pLogger->LogRotate();
+
+  Log("MP Audio Renderer - v1.1.9");
   Log("CMPAudioRenderer - instance 0x%x", this);
 
-  m_pSettings = new AudioRendererSettings();
+  m_pSettings = new AudioRendererSettings(m_pLogger);
 
   if (!m_pSettings)
   {
@@ -98,7 +101,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   m_hRendererStarving = CreateEvent(NULL, TRUE, FALSE, NULL);
   m_hStopWaitingRenderer = CreateEvent(NULL, TRUE, FALSE, NULL);
 
-  m_pClock = new CSyncClock(static_cast<IBaseFilter*>(this), phr, this, m_pSettings);
+  m_pClock = new CSyncClock(static_cast<IBaseFilter*>(this), phr, this, m_pSettings, m_pLogger);
 
   if (!m_pClock)
   {
@@ -129,7 +132,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
     return;
   }
 
-  m_pWASAPIRenderer = new CWASAPIRenderFilter(m_pSettings, m_pClock);
+  m_pWASAPIRenderer = new CWASAPIRenderFilter(m_pSettings, m_pClock, m_pLogger);
   if (!m_pWASAPIRenderer)
   {
     *phr = E_OUTOFMEMORY;
@@ -187,7 +190,11 @@ CMPAudioRenderer::~CMPAudioRenderer()
   delete m_pSampleCopier;
 
   Log("MP Audio Renderer - destructor - instance 0x%x - end", this);
-  StopLogger();
+  if (m_pLogger)
+  {
+    m_pLogger->Stop();
+    delete m_pLogger;
+  }
 }
 
 HRESULT CMPAudioRenderer::InitFilter()
@@ -223,7 +230,7 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
 
   if (m_pSettings->GetAC3EncodingMode() != DISABLED && nUseFilters & USE_FILTERS_AC3ENCODER)
   {
-    m_pAC3Encoder = new CAC3EncoderFilter(m_pSettings);
+    m_pAC3Encoder = new CAC3EncoderFilter(m_pSettings, m_pLogger);
     if (!m_pAC3Encoder)
       return E_OUTOFMEMORY;
 
@@ -233,7 +240,7 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
 
   if (nUseFilters & USE_FILTERS_BIT_DEPTH_OUT)
   {
-    m_pOutBitDepthAdapter = new CBitDepthAdapter(m_pSettings);
+    m_pOutBitDepthAdapter = new CBitDepthAdapter(m_pSettings, m_pLogger);
     if (!m_pOutBitDepthAdapter)
       return E_OUTOFMEMORY;
 
@@ -243,7 +250,7 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
 
   if (m_pSettings->GetUseTimeStretching() && nUseFilters & USE_FILTERS_TIME_STRETCH)
   {
-    m_pTimestretchFilter = new CTimeStretchFilter(m_pSettings, m_pClock);
+    m_pTimestretchFilter = new CTimeStretchFilter(m_pSettings, m_pClock, m_pLogger);
     if (!m_pTimestretchFilter)
       return E_OUTOFMEMORY;
 
@@ -255,7 +262,7 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
 
   if (nUseFilters & USE_FILTERS_CHANNEL_MIXER)
   {
-    m_pChannelMixer = new CChannelMixer(m_pSettings);
+    m_pChannelMixer = new CChannelMixer(m_pSettings, m_pLogger);
     if (!m_pChannelMixer)
       return E_OUTOFMEMORY;
 
@@ -265,7 +272,7 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
 
   if (nUseFilters & USE_FILTERS_SAMPLE_RATE_CONVERTER)
   {
-    m_pSampleRateConverter = new CSampleRateConverter(m_pSettings);
+    m_pSampleRateConverter = new CSampleRateConverter(m_pSettings, m_pLogger);
     if (!m_pSampleRateConverter)
       return E_OUTOFMEMORY;
 
@@ -275,7 +282,7 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
 
   if (nUseFilters & USE_FILTERS_BIT_DEPTH_IN)
   {
-    m_pInBitDepthAdapter = new CBitDepthAdapter(m_pSettings);
+    m_pInBitDepthAdapter = new CBitDepthAdapter(m_pSettings, m_pLogger);
     if (!m_pInBitDepthAdapter)
       return E_OUTOFMEMORY;
 
@@ -285,7 +292,7 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
 
   if (m_pSettings->GetAllowBitStreaming())
   {
-    m_pSampleCopier = new CSampleCopier(m_pSettings);
+    m_pSampleCopier = new CSampleCopier(m_pSettings, m_pLogger);
     if (!m_pSampleCopier)
       return E_OUTOFMEMORY;
 

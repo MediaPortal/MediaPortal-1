@@ -153,6 +153,7 @@
     <ClCompile Include="source\dllsetup.cpp" />
     <ClCompile Include="source\FilterApp.cpp" />
     <ClCompile Include="source\Globals.cpp" />
+    <ClCompile Include="source\Logger.cpp" />
     <ClCompile Include="source\MediaSeeking.cpp" />
     <ClCompile Include="source\MpAudioRenderer.cpp" />
     <ClCompile Include="source\QueuedAudioSink.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="source\IAVSyncClock.h" />
     <ClInclude Include="source\IRenderFilter.h" />
     <ClInclude Include="source\ITimeStretch.h" />
+    <ClInclude Include="source\Logger.h" />
     <ClInclude Include="source\MpAudioRenderer.h" />
     <ClInclude Include="source\QueuedAudioSink.h" />
     <ClInclude Include="source\resource.h" />

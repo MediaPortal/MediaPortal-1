@@ -25,8 +25,8 @@ template<class T> inline T odd2even(T x)
   return x&1 ? x + 1 : x;
 }
 
-CAC3EncoderFilter::CAC3EncoderFilter(AudioRendererSettings* pSettings) : 
-  CBaseAudioSink(true, pSettings),
+CAC3EncoderFilter::CAC3EncoderFilter(AudioRendererSettings* pSettings, Logger* pLogger) :
+  CBaseAudioSink(true, pSettings, pLogger),
   m_bPassThrough(false),
   m_cbRemainingInput(0),
   m_pRemainingInput(NULL),
@@ -35,7 +35,8 @@ CAC3EncoderFilter::CAC3EncoderFilter(AudioRendererSettings* pSettings) :
   m_nBitRate(448000),
   m_rtInSampleTime(0),
   m_rtNextIncomingSampleTime(0),
-  m_nMaxCompressedAC3FrameSize(AC3_MAX_COMP_FRAME_SIZE)
+  m_nMaxCompressedAC3FrameSize(AC3_MAX_COMP_FRAME_SIZE),
+  m_pLogger(pLogger)
 {
   m_nOutBufferCount = AC3_OUT_BUFFER_COUNT;
   m_nOutBufferSize = AC3_DATA_BURST_LENGTH * 2;
