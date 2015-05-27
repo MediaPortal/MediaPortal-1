@@ -23,6 +23,7 @@
 #include <audioclient.h>
 
 #include "IMPAudioSettings.h"
+#include "Logger.h"
 
 #define MAX_REG_LENGTH 256
 
@@ -93,7 +94,7 @@ interface IMPARSettings : public IUnknown
 class AudioRendererSettings : public CUnknown, public IMPARSettings, public ISpecifyPropertyPages, public IMPAudioRendererConfig
 {
 public:
-  AudioRendererSettings();
+  AudioRendererSettings(Logger* pLogger);
   ~AudioRendererSettings();
 
 public:
@@ -264,4 +265,6 @@ private:
   bool m_bAllowBitStreaming;
   int m_nUseFilters;
   CCritSec m_csSettings;
+
+  Logger* m_pLogger;
 };

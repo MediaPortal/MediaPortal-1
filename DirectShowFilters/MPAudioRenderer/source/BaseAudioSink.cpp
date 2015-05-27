@@ -22,7 +22,7 @@
 #include <ks.h>
 #include <ksmedia.h>
 
-CBaseAudioSink::CBaseAudioSink(bool bHandleSampleRelease, AudioRendererSettings* pSettings) : 
+CBaseAudioSink::CBaseAudioSink(bool bHandleSampleRelease, AudioRendererSettings* pSettings, Logger* pLogger) :
   m_bHandleSampleRelease(bHandleSampleRelease),
   m_pNextSink(NULL),
   m_pInputFormat(NULL),
@@ -38,7 +38,8 @@ CBaseAudioSink::CBaseAudioSink(bool bHandleSampleRelease, AudioRendererSettings*
   m_nOutBufferSize(DEFAULT_OUT_BUFFER_SIZE),
   m_bNextFormatPassthru(false),
   m_bBitstreaming(false),
-  m_pSettings(pSettings)
+  m_pSettings(pSettings),
+  m_pLogger(pLogger)
 {
 }
 

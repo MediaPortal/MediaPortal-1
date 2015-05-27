@@ -33,8 +33,8 @@
     } \
   }
 
-CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings, CSyncClock* pClock) :
-  CQueuedAudioSink(pSettings),
+CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings, CSyncClock* pClock, Logger* pLogger) :
+  CQueuedAudioSink(pSettings, pLogger),
   m_Streams(NULL),
   m_fCurrentTempo(1.0),
   m_fNewAdjustment(1.0),
@@ -45,7 +45,8 @@ CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings, CSyncCl
   m_rtLastOuputStart(0),
   m_rtLastOuputEnd(-1),
   m_rtNextIncomingSampleTime(0),
-  m_pClock(pClock)
+  m_pClock(pClock),
+  m_pLogger(pLogger)
 {
 }
 

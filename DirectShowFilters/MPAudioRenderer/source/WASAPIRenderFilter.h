@@ -21,6 +21,7 @@
 #include "Settings.h"
 #include "queuedaudiosink.h"
 #include "SyncClock.h"
+#include "Logger.h"
 
 #define CLOCK_DATA_SIZE 10
 #define WASAPI_OUT_BUFFER_COUNT 10
@@ -30,7 +31,7 @@ using namespace std;
 class CWASAPIRenderFilter : public CQueuedAudioSink, public IRenderFilter
 {
 public:
-  CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSyncClock* pClock);
+  CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSyncClock* pClock, Logger* pLogger);
   virtual ~CWASAPIRenderFilter();
 
   // IAudioSink implementation
@@ -152,4 +153,6 @@ private:
 
   UINT32 m_nSampleOffset;
   UINT32 m_nDataLeftInSample;
+
+  Logger* m_pLogger;
 };

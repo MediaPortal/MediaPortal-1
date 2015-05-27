@@ -20,11 +20,10 @@
 
 #include "alloctracing.h"
 
-extern void Log(const char *fmt, ...);
-
-SynchCorrection::SynchCorrection(AudioRendererSettings* pSettings) :
+SynchCorrection::SynchCorrection(AudioRendererSettings* pSettings, Logger* pLogger) :
   m_pSettings(pSettings),
-  m_dAudioDelay(0.0) // audio delay is not reset on seek / pause
+  m_dAudioDelay(0.0), // audio delay is not reset on seek / pause
+  m_pLogger(pLogger)
 {
   Reset(false);
 }

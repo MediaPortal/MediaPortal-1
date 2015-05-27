@@ -119,6 +119,7 @@
     <ClCompile Include="source\SettingsProp.cpp">
       <Filter>Settings</Filter>
     </ClCompile>
+    <ClCompile Include="source\Logger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\dllsetup.h" />
@@ -252,6 +253,7 @@
     <ClInclude Include="source\IAVSyncClock.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
+    <ClInclude Include="source\Logger.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="source\MpAudioRenderer.rc" />

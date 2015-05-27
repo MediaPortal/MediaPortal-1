@@ -45,6 +45,7 @@
 #include "Settings.h"
 #include "VolumeHandler.h"
 #include "IMPAudioSettings.h"
+#include "Logger.h"
 
 // if you get a compilation error on AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED,
 // uncomment the #define below
@@ -161,4 +162,6 @@ private:
 
   CCritSec  m_csAudioRenderer;
   CCritSec  m_csInitLock;
+
+  Logger* m_pLogger;
 };

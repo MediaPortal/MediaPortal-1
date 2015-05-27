@@ -25,13 +25,14 @@
 #include "SoundTouchEx.h"
 #include "Globals.h"
 #include "SyncClock.h"
+#include "Logger.h"
 
 using namespace std;
 
 class CTimeStretchFilter : public CQueuedAudioSink, public ITimeStretch
 {
 public:
-  CTimeStretchFilter(AudioRendererSettings *pSettings, CSyncClock* pClock);
+  CTimeStretchFilter(AudioRendererSettings *pSettings, CSyncClock* pClock, Logger* pLogger);
   ~CTimeStretchFilter();
 
   // IAudioSink implementation
@@ -149,4 +150,6 @@ private:
   mutable CCritSec m_csStreamLock;  // allow const methods to use the lock
 
   CSyncClock* m_pClock;
+
+  Logger* m_pLogger;
 };
