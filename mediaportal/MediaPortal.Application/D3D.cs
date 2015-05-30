@@ -1752,7 +1752,7 @@ namespace MediaPortal
       }
 
       // don't update cursor status when not over client area or not focused
-      if (!isOverForm && !focused)
+      if (!isOverForm && !focused && !MouseCursor)
       {
         MouseTimeOutTimer = DateTime.Now;
         return;
