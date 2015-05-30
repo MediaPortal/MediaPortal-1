@@ -42,6 +42,7 @@ if (SUCCEEDED(continueParsing) && (tag == NULL) && (wcscmp(tempTag->GetTag(), ta
       tag = specificTag;                                                                                            \
       break;                                                                                                        \
     case E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE:                                                                       \
+    case E_M3U8_NOT_SUPPORTED_TAG:                                                                                  \
       break;                                                                                                        \
     default:                                                                                                        \
       continueParsing = res;                                                                                        \
