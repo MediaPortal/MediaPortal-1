@@ -216,7 +216,7 @@ namespace MediaPortal
       MinimizeOnGuiExit         = false;
       MinimizeOnFocusLoss       = false;
       ShuttingDown              = false;
-      AutoHideMouse             = false;
+      AutoHideMouse             = true;
       MouseCursor               = true;
       Windowed                  = true;
       Volume                    = -1;
