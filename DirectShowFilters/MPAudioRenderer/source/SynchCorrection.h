@@ -18,6 +18,7 @@
 
 #include "stdafx.h"
 #include "Settings.h"
+#include "Logger.h"
 
 #include <queue>
 
@@ -43,7 +44,7 @@ typedef struct stSampleTimeData
 class SynchCorrection
 {
 public:
-  SynchCorrection(AudioRendererSettings* pSettings);
+  SynchCorrection(AudioRendererSettings* pSettings, Logger* pLogger);
   ~SynchCorrection();
 
   void Flush();
@@ -118,4 +119,6 @@ private:
   bool m_rtAHwStartSet;
 
   AudioRendererSettings* m_pSettings;
+
+  Logger* m_pLogger;
 };

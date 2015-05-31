@@ -23,13 +23,14 @@
 #include "Settings.h"
 #include "IAVSyncClock.h"
 #include "SynchCorrection.h"
+#include "Logger.h"
 
 class CMPAudioRenderer;
 
 class CSyncClock: public CBaseReferenceClock
 {
 public:
-  CSyncClock(LPUNKNOWN pUnk, HRESULT* phr, CMPAudioRenderer* pRenderer, AudioRendererSettings* pSettings);
+  CSyncClock(LPUNKNOWN pUnk, HRESULT* phr, CMPAudioRenderer* pRenderer, AudioRendererSettings* pSettings, Logger* pLogger);
 
   void Flush();
 
@@ -96,4 +97,6 @@ private:
 
   // Debug data for the video presenter
   double m_dCurrentDrift;
+
+  Logger* m_pLogger;
 };

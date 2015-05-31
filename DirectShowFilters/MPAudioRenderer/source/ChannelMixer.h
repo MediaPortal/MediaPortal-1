@@ -20,11 +20,12 @@
 #include "BaseAudioSink.h"
 #include "..\AE_mixer\AERemap.h"
 #include "..\AE_mixer\AEChannelInfo.h"
+#include "Logger.h"
 
 class CChannelMixer : public CBaseAudioSink
 {
 public:
-  CChannelMixer(AudioRendererSettings* pSettings);
+  CChannelMixer(AudioRendererSettings* pSettings, Logger* pLogger);
   virtual ~CChannelMixer();
 
 // IAudioSink implementation
@@ -61,4 +62,6 @@ protected:
 
   REFERENCE_TIME m_rtNextIncomingSampleTime;
   REFERENCE_TIME m_rtInSampleTime;
+
+  Logger* m_pLogger;
 };

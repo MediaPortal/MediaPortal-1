@@ -89,12 +89,13 @@ static BitDepthConversionDescriptor gValidConversions[] =
 BitDepthDescriptor* FindConversion(const BitDepthDescriptor& source);
 
 
-CBitDepthAdapter::CBitDepthAdapter(AudioRendererSettings* pSettings) : 
-  CBaseAudioSink(true, pSettings),  
+CBitDepthAdapter::CBitDepthAdapter(AudioRendererSettings* pSettings, Logger* pLogger) :
+  CBaseAudioSink(true, pSettings, pLogger),  
   m_bPassThrough(false),
   m_rtInSampleTime(0),
   m_rtNextIncomingSampleTime(0),
-  m_pfnConvert(NULL)
+  m_pfnConvert(NULL),
+  m_pLogger(pLogger)
 {
   ResetDithering();
 }

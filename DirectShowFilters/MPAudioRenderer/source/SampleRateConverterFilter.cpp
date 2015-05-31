@@ -22,8 +22,8 @@
 
 extern unsigned int gAllowedSampleRates[7];
 
-CSampleRateConverter::CSampleRateConverter(AudioRendererSettings* pSettings) :
-  CBaseAudioSink(true, pSettings), 
+CSampleRateConverter::CSampleRateConverter(AudioRendererSettings* pSettings, Logger* pLogger) :
+  CBaseAudioSink(true, pSettings, pLogger), 
   m_bPassThrough(false),
   m_rtInSampleTime(0),
   m_pSrcState(NULL),
@@ -31,7 +31,8 @@ CSampleRateConverter::CSampleRateConverter(AudioRendererSettings* pSettings) :
   m_rtNextIncomingSampleTime(0),
   m_llFramesInput(0),
   m_llFramesOutput(0),
-  m_nFrameSize(0)
+  m_nFrameSize(0),
+  m_pLogger(pLogger)
 {
 }
 
