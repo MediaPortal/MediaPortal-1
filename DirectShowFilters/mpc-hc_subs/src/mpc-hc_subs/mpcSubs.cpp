@@ -6,6 +6,9 @@
 
 static CAutoPtr<CSubManager> g_subManager;
 
+// SetDevice stores device pointer here in case the sub manager is not yet instantiated
+static IDirect3DDevice9* g_d3DDev = NULL;  
+
 void SetDefaultStyle(const SubtitleStyle* s, BOOL overrideUserStyles)
 {
 	g_style.fontName = s->fontName;
@@ -45,6 +48,8 @@ BOOL SetDevice(IDirect3DDevice9* d3DDev)
     return TRUE;
   }
 
+  g_d3DDev = d3DDev;
+
   return FALSE;
 }
 
@@ -52,7 +57,7 @@ BOOL LoadSubtitles(IDirect3DDevice9* d3DDev, SIZE size, const wchar_t* fn, IGrap
 {
 	g_subManager.Free();
 	HRESULT hr = S_OK;
-	CAutoPtr<CSubManager> subManager(new CSubManager(d3DDev, size, hr));
+  CAutoPtr<CSubManager> subManager(new CSubManager(g_d3DDev ? g_d3DDev : d3DDev, size, hr));
 	if (FAILED(hr))
 	{
 		return FALSE;
