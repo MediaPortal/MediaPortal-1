@@ -43,7 +43,7 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev);
 
   private:
-    HRESULT RenderToTexture(IDirect3DTexture9* pTexture, IDirect3DSurface9* pSurface);
+    HRESULT RenderToTexture(IDirect3DTexture9* pTexture);
     HRESULT RenderTexture(IDirect3DVertexBuffer9* pVertexBuf, IDirect3DTexture9* pTexture);
 
     HRESULT SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf);
@@ -58,20 +58,14 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     
     IUnknown* m_pMad = nullptr;
 
-    IDirect3DSurface9* m_pRenderSurfaceGui = nullptr;
-    IDirect3DTexture9* m_pRenderTextureGui = nullptr;
+    CComQIPtr<IDirect3DTexture9> m_pRenderTextureGui = nullptr;
+    CComQIPtr<IDirect3DTexture9> m_pRenderTextureOsd = nullptr;
 
-    IDirect3DSurface9* m_pRenderSurfaceOsd = nullptr;
-    IDirect3DTexture9* m_pRenderTextureOsd = nullptr;
+    CComQIPtr<IDirect3DTexture9> m_pMPTextureGui = nullptr;
+    CComQIPtr<IDirect3DTexture9> m_pMPTextureOsd = nullptr;
 
-    IDirect3DSurface9* m_pMPSurfaceGui = nullptr;
-    IDirect3DTexture9* m_pMPTextureGui = nullptr;
-
-    IDirect3DSurface9* m_pMPSurfaceOsd = nullptr;
-    IDirect3DTexture9* m_pMPTextureOsd = nullptr;
-
-    IDirect3DVertexBuffer9* m_pMadGuiVertexBuffer = nullptr;
-    IDirect3DVertexBuffer9* m_pMadOsdVertexBuffer = nullptr;
+    CComQIPtr<IDirect3DVertexBuffer9> m_pMadGuiVertexBuffer = nullptr;
+    CComQIPtr<IDirect3DVertexBuffer9> m_pMadOsdVertexBuffer = nullptr;
 
     HANDLE m_hSharedGuiHandle = nullptr;
     HANDLE m_hSharedOsdHandle = nullptr;
