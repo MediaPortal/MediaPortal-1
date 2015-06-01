@@ -786,7 +786,8 @@ namespace MediaPortal.GUI.Music
       {
         try
         {
-          ImgCoverArt.SetFileName(GUIGraphicsContext.GetThemedSkinFile(@"\media\missing_coverart.png"));
+			if (!g_Player.ExternalController) // UPnPRenderer sets the image through a property
+				ImgCoverArt.SetFileName(GUIGraphicsContext.GetThemedSkinFile(@"\media\missing_coverart.png"));
         }
         catch (Exception ex)
         {
