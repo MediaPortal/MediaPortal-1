@@ -7,7 +7,7 @@
 static CAutoPtr<CSubManager> g_subManager;
 
 // SetDevice stores device pointer here in case the sub manager is not yet instantiated
-static IDirect3DDevice9* g_d3DDev = NULL;  
+static IDirect3DDevice9* g_d3DDev;
 
 void SetDefaultStyle(const SubtitleStyle* s, BOOL overrideUserStyles)
 {
@@ -43,14 +43,11 @@ void SetShowForcedOnly(BOOL onlyShowForcedSubs)
 BOOL SetDevice(IDirect3DDevice9* d3DDev)
 {
   if (g_subManager)
-  {
     g_subManager->SetDevice(d3DDev);
-    return TRUE;
-  }
 
   g_d3DDev = d3DDev;
 
-  return FALSE;
+  return TRUE;
 }
 
 BOOL LoadSubtitles(IDirect3DDevice9* d3DDev, SIZE size, const wchar_t* fn, IGraphBuilder* pGB, const wchar_t* paths, LCID lcidci)
@@ -144,5 +141,6 @@ BOOL IsModified()
 
 void FreeSubtitles()
 {
+  g_d3DDev = NULL;
 	g_subManager.Free();
 }
