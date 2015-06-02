@@ -106,6 +106,14 @@ HRESULT DeviceState::Restore()
   if (FAILED(hr))
     return hr;
 
+  hr = m_pD3DDev->SetPixelShader(m_pPix);
+
+  if (m_pPix)
+    m_pPix->Release();
+
+  if (FAILED(hr))
+    return hr;
+
   if (FAILED(hr = m_pD3DDev->SetFVF(m_dwFVF)))
     return hr;
 
