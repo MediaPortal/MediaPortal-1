@@ -56,6 +56,8 @@
 
 #define SECTION_MAX_SIZE                                              0x00001000
 
+#define SECTION_CRC32_UNDEFINED                                       0xFFFFFFFF
+
 class CSection : public CFlags
 {
 public:
@@ -83,6 +85,10 @@ public:
   // gets section data (with header and CRC32)
   // @return : section data (with header and CRC32) or NULL if error
   virtual const uint8_t *GetSection(void);
+
+  // gets section CRC32
+  // @return : section CRC32 or SECTION_CRC32_UNDEFINED if CRC32 is not known
+  virtual unsigned int GetCrc32(void);
 
   /* set methods */
 
@@ -163,6 +169,10 @@ protected:
   // calculates section CRC32
   // @return : number of bytes written into buffer, zero if not successful
   virtual unsigned int CalculateSectionCrc32(void);
+
+  // checks table ID against actual table ID
+  // @return : true if table ID is valid, false otherwise
+  virtual bool CheckTableId(void) = 0;
 };
 
 #endif

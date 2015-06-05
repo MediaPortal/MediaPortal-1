@@ -83,6 +83,14 @@ public:
   // @param format : the formating string
   void Log(unsigned int logLevel, const wchar_t *format, ...);
 
+  // log message with binary data to log file
+  // @param logLevel : the log level of message
+  // @param data : pointer to binary data to dump to file
+  // @param size : size of binary data to dump to file
+  // @param logLevel : the log level of message
+  // @param format : the formating string
+  void LogBinary(unsigned int logLevel, const unsigned char *data, unsigned int size, const wchar_t *format, ...);
+
   // registers module with specified file name
   // @param moduleFileName : the full path to module file to register
   // @return : true if successful, false otherwise
@@ -113,10 +121,10 @@ protected:
   // @return : the human-readable log level
   static const wchar_t *GetLogLevel(unsigned int level);
 
-  wchar_t *GetLogMessage(unsigned int logLevel, const wchar_t *format, va_list vl);
+  wchar_t *GetLogMessage(unsigned int logLevel, const unsigned char *data, unsigned int size, bool dataSpecified, const wchar_t *format, va_list vl);
 
   void LogMessage(unsigned int logLevel, const wchar_t *message);
-  void Log(unsigned int logLevel, const wchar_t *format, va_list vl);
+  void Log(unsigned int logLevel, const unsigned char *data, unsigned int size, bool dataSpecified, const wchar_t *format, va_list vl);
 };
 
 #endif

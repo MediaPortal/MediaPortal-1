@@ -31,4 +31,6 @@ using System.Security.Permissions;
 [assembly: CompilationRelaxations(8)]
 [assembly: ComVisible(true)]
 [assembly: RuntimeCompatibility(WrapNonExceptionThrows = true)]
+#pragma warning disable 612,618
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
+#pragma warning restore 612,618

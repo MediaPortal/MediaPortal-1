@@ -576,7 +576,7 @@ void CMPUrlSourceSplitter_Parser_Mshs::ClearSession(void)
 
 /* protected methods */
 
-wchar_t *CMPUrlSourceSplitter_Parser_Mshs::GetStoreFile(const wchar_t *extension)
+const wchar_t *CMPUrlSourceSplitter_Parser_Mshs::GetStoreFileNamePart(void)
 {
-  return NULL;
+  return PARSER_STORE_FILE_NAME_PART;
 }

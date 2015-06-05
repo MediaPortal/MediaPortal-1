@@ -247,9 +247,9 @@ protected:
   // @return : dump box or NULL if error
   virtual CDumpBox *CreateDumpBox(void);
 
-  // gets store file name
-  // @return : store file name or NULL if error
-  wchar_t *GetStoreFile(void);
+  // gets cache file name
+  // @return : cache file name or NULL if error
+  wchar_t *GetCacheFile(void);
 
   // gets dump file name
   // @return : dump file name or NULL if error

@@ -33,13 +33,16 @@
 #define SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_INCOMPLETE              (1 << (FLAGS_LAST + 1))
 #define SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_COMPLETE                (1 << (FLAGS_LAST + 2))
 #define SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_ERROR                   (1 << (FLAGS_LAST + 3))
+#define SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_IS_SECTION              (1 << (FLAGS_LAST + 4))
 
-#define SECTION_CONTEXT_FLAG_LAST                                     (FLAGS_LAST + 4)
+#define SECTION_CONTEXT_FLAG_LAST                                     (FLAGS_LAST + 5)
+
+class CParserContext;
 
 class CSectionContext : public CFlags
 {
 public:
-  CSectionContext(HRESULT *result);
+  CSectionContext(HRESULT *result, CParserContext *parserContext);
   virtual ~CSectionContext(void);
 
   /* get methods */
@@ -64,6 +67,10 @@ public:
   // @return : collection of MPEG2 TS packets
   CTsPacketCollection *GetPackets(void);
 
+  // gets parser context
+  // @return : parser context or NULL if error
+  virtual CParserContext *GetParserContext(void);
+
   /* set methods */
 
   // sets original section (only reference, section is not cloned, but section is released from memory in destructor)
@@ -86,6 +93,10 @@ public:
   // sets original section in error
   // @param sectionError : true if original section is in error, false otherwise
   void SetOriginalSectionError(bool sectionError);
+
+  // sets original section is section or not
+  // @param isSection : true if original section is section, false otherwise
+  void SetOriginalSectionIsSection(bool isSection);
 
   // sets MPEG2 TS packet count
   void SetPacketCount(unsigned int packetCount);
@@ -112,6 +123,10 @@ public:
   // @return : true if original section is in error, false otherwise
   bool IsOriginalSectionError(void);
 
+  // tests if original section is section or not
+  // @return : true if original section is section, false otherwise
+  bool IsOriginalSectionIsSection(void);
+
   // creates updated section by cloning original section
   // @return : true if successful, false otherwise
   virtual bool CreateUpdatedSection(void) = 0;
@@ -128,6 +143,8 @@ protected:
   unsigned int packetCount;
   // holds MPEG2 TS packets for replacing original section
   CTsPacketCollection *packets;
+  // holds reference to parser context
+  CParserContext *parserContext;
 
   /* methods */
 };

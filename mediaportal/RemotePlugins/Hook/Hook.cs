@@ -88,10 +88,7 @@ namespace MediaPortal.Hooks
       {
         if (value && _hookHandle == IntPtr.Zero)
         {
-          _hookHandle = Util.Win32API.SetWindowsHookEx(_hookType, _hookDelegate,
-                                                       Marshal.GetHINSTANCE(
-                                                         Assembly.GetExecutingAssembly().GetModules()[0]), 0
-            /* AppDomain.GetCurrentThreadId() */);
+          _hookHandle = Util.Win32API.SetWindowsHookEx(_hookType, _hookDelegate, IntPtr.Zero, 0 /* AppDomain.GetCurrentThreadId() */);
         }
         else if (value == false && _hookHandle != IntPtr.Zero)
         {

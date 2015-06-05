@@ -25,6 +25,7 @@
 
 #include "Section.h"
 #include "ProgramDefinitionCollection.h"
+#include "DescriptorCollection.h"
 
 #define TRANSPORT_STREAM_PROGRAM_MAP_SECTION_FLAG_NONE                                      SECTION_FLAG_NONE
 
@@ -44,8 +45,8 @@
 #define TRANSPORT_STREAM_PROGRAM_MAP_SECTION_PCR_PID_MASK                                   0x1FFF
 #define TRANSPORT_STREAM_PROGRAM_MAP_SECTION_PCR_PID_SHIFT                                  0
 
-#define TRANSPORT_STREAM_PROGRAM_MAP_SECTION_PROGRAM_INFO_SIZE_MASK                         0x0FFF
-#define TRANSPORT_STREAM_PROGRAM_MAP_SECTION_PROGRAM_INFO_SIZE_SHIFT                        0
+#define TRANSPORT_STREAM_PROGRAM_MAP_SECTION_DESCRIPTORS_SIZE_MASK                          0x0FFF
+#define TRANSPORT_STREAM_PROGRAM_MAP_SECTION_DESCRIPTORS_SIZE_SHIFT                         0
 
 #define TRANSPORT_STREAM_PROGRAM_MAP_SECTION_PROGRAM_DEFINITION_ELEMENTARY_PID_MASK         0x1FFF
 #define TRANSPORT_STREAM_PROGRAM_MAP_SECTION_PROGRAM_DEFINITION_ELEMENTARY_PID_SHIFT        0
@@ -81,13 +82,9 @@ public:
   // @return : PCR PID
   unsigned int GetPcrPID(void);
 
-  // gets program info size
-  // @return : program info size
-  unsigned int GetProgramInfoSize(void);
-
-  // gets program info descriptor
-  // @return : program info descriptor or NULL if GetProgramInfoSize() is zero
-  const uint8_t *GetProgramInfoDescriptor(void);
+  // gets descriptors
+  // @return : decriptor collections
+  CDescriptorCollection *GetDescriptors(void);
 
   // gets program definitions
   // @return : program definitions
@@ -142,10 +139,9 @@ protected:
   uint8_t sectionNumber;
   uint8_t lastSectionNumber;
   uint16_t pcrPID;
-  uint16_t programInfoSize;
-  uint8_t *programInfoDescriptor;
 
   CProgramDefinitionCollection *programDefinitions;
+  CDescriptorCollection *descriptors;
 
   /* methods */
 
@@ -166,6 +162,10 @@ protected:
   // gets whole section into payload
   // @return : number of bytes written into buffer, zero if not successful
   virtual unsigned int GetSectionInternal(void);
+
+  // checks table ID against actual table ID
+  // @return : true if table ID is valid, false otherwise
+  virtual bool CheckTableId(void);
 };
 
 #endif

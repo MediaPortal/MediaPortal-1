@@ -25,8 +25,9 @@
 extern void LogDebug(const char* fmt, ...);
 
 CBaseScteParser::CBaseScteParser(void)
-  : m_clvctParser(PID_SCTE_BASE_PID), m_tlvctParser(PID_ATSC_BASE_PID)
+  : m_clvctParser(PID_SCTE_BASE_PID), m_tlvctParser(PID_SCTE_BASE_PID)
 {
+  SetPid(PID_SCTE_BASE_PID);
 }
 
 CBaseScteParser::~CBaseScteParser(void)

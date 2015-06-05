@@ -125,3 +125,37 @@ rtp://@239.35.20.47:10000
 rtp://@239.35.20.59:10000
 #EXTINF:0,Deutsche Welle
 rtp://@239.35.20.44:10000
+#EXTINF:0,HR HD
+rtp://@239.35.10.60:10000
+#EXTINF:0,MDR HD
+rtp://@239.35.10.61:10000
+#EXTINF:0,rbb Berlin HD
+rtp://@239.35.10.62:10000
+#EXTINF:0,Einsfestival HD
+rtp://@239.35.10.58:10000
+#EXTINF:0,tagesschau24 HD
+rtp://@239.35.10.63:10000
+#EXTINF:0,EinsPlus HD
+rtp://@239.35.10.59:10000
+#EXTINF:0,Sat.1
+rtp://@239.35.20.20:10000
+#EXTINF:0,ProSieben
+rtp://@239.35.20.21:10000
+#EXTINF:0,Kabel 1
+rtp://@239.35.20.38:10000
+#EXTINF:0,Sat.1 Gold
+rtp://@239.35.20.24:10000
+#EXTINF:0,sixx
+rtp://@239.35.20.9:10000
+#EXTINF:0,ProSieben MAXX
+rtp://@239.35.20.33:10000
+#EXTINF:0,Sat.1 Bayern
+rtp://@239.35.20.8:10000
+#EXTINF:0,Sat.1 HH SH
+rtp://@239.35.20.12:10000
+#EXTINF:0,Sat.1 NDS Bremen
+rtp://@239.35.20.13:10000
+#EXTINF:0,Sat.1 NRW
+rtp://@239.35.20.14:10000
+#EXTINF:0,Sat.1 RhlPf Hessen
+rtp://@239.35.20.15:10000

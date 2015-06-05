@@ -52,6 +52,7 @@ namespace MediaPortal.Music.Database
     private static DateTime _lastImport;
     private static DateTime _currentDate = DateTime.Now;
     private static int _dateAddedValue;
+    private bool _dbHealth = false;
 
     #endregion
 
@@ -85,9 +86,34 @@ namespace MediaPortal.Music.Database
 
       LoadDBSettings();
       Open();
+
+      // Create Temp Folder, which we can use for all purposes. e.g. Storing temporary folder thumbs
+      var tmpFolder = Path.Combine(Path.GetTempPath(), "TeamMediaPortal");
+      if (!Directory.Exists(tmpFolder))
+      {
+        Directory.CreateDirectory(tmpFolder);
+      }
     }
 
-    ~MusicDatabase() {}
+    ~MusicDatabase()
+    {
+      // Cleanup Temp folder
+      var tmpFolder = Path.Combine(Path.GetTempPath(), "TeamMediaPortal");
+      if (Directory.Exists(tmpFolder))
+      {
+        foreach (var file in Directory.GetFiles(tmpFolder))
+        {
+          try
+          {
+            File.Delete(file);
+          }
+          catch (IOException)
+          {
+            // Don't need to report anything, if we couldn't delete a temp file
+          }
+        }
+      }
+    }
 
     public static void ReOpen()
     {
@@ -114,7 +140,7 @@ namespace MediaPortal.Music.Database
       {
         if (MusicDbClient == null)
         {
-          MusicDbClient = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV12.db3"));
+          MusicDbClient = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3"));
         }
 
         return MusicDbClient;
@@ -178,18 +204,35 @@ namespace MediaPortal.Music.Database
         }
         catch (Exception) {}
 
-        if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV12.db3")))
+        if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3")))
         {
           if (File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3")))
           {
             Log.Info("MusicDatabase: Found older version of database. Upgrade to new layout.");
             File.Copy(Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3"),
-                      Config.GetFile(Config.Dir.Database, "MusicDatabaseV12.db3"));
+                      Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3"));
 
             // Get the DB handle or create it if necessary
             MusicDbClient = DbConnection;
 
-            UpgradeDBV11_V12();
+            UpgradeDBV11_V13();
+
+            return;
+          }
+          if (File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV12.db3")))
+          {
+            // upgrade DB (add last fm user table)
+            File.Copy(Config.GetFile(Config.Dir.Database, "MusicDatabaseV12.db3"),
+                      Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3"));
+
+            // Get the DB handle or create it if necessary
+            MusicDbClient = DbConnection;
+
+            if (!CreateDatabase())
+            {
+              Log.Error("MusicDatabase: Error creating new database. aborting upgrade}");
+            }
+
             return;
           }
 
@@ -208,6 +251,8 @@ namespace MediaPortal.Music.Database
 
         // Get the DB handle or create it if necessary
         MusicDbClient = DbConnection;
+
+        _dbHealth = DatabaseUtility.IntegrityCheck(MusicDbClient);
       }
 
       catch (Exception ex)
@@ -217,7 +262,7 @@ namespace MediaPortal.Music.Database
       Log.Info("MusicDatabase: Database opened");
     }
 
-    private void UpgradeDBV11_V12()
+    private void UpgradeDBV11_V13()
     {
       try
       {
@@ -351,16 +396,10 @@ namespace MediaPortal.Music.Database
                                  "CREATE INDEX idxalbuminfo_idGenre ON albuminfo(idGenre ASC)");
         DatabaseUtility.AddIndex(MusicDbClient, "idxartistinfo_strArtist",
                                  "CREATE INDEX idxartistinfo_strArtist ON artistinfo(strArtist ASC)");
-
-        // Scrobble table
-        DatabaseUtility.AddTable(MusicDbClient, "scrobbleusers",
-                                 "CREATE TABLE scrobbleusers ( idScrobbleUser integer primary key, strUsername text, strPassword text)");
-        DatabaseUtility.AddTable(MusicDbClient, "scrobblesettings",
-                                 "CREATE TABLE scrobblesettings ( idScrobbleSettings integer primary key, idScrobbleUser integer, iAddArtists integer, iAddTracks integer, iNeighbourMode integer, iRandomness integer, iScrobbleDefault integer, iSubmitOn integer, iDebugLog integer, iOfflineMode integer, iPlaylistLimit integer, iPreferCount integer, iRememberStartArtist integer, iAnnounce integer)");
-        DatabaseUtility.AddTable(MusicDbClient, "scrobblemode",
-                                 "CREATE TABLE scrobblemode ( idScrobbleMode integer primary key, idScrobbleUser integer, iSortID integer, strModeName text)");
-        DatabaseUtility.AddTable(MusicDbClient, "scrobbletags",
-                                 "CREATE TABLE scrobbletags ( idScrobbleTag integer primary key, idScrobbleMode integer, iSortID integer, strTagName text)");
+        
+        // last.fm users
+        DatabaseUtility.AddTable(MusicDbClient, "lastfmusers",
+                         "CREATE TABLE lastfmusers ( idLastFMUser integer primary key, strUsername text, strSK text)");
 
         Log.Info("MusicDatabase: New Database created successfully");
         return true;
@@ -373,6 +412,14 @@ namespace MediaPortal.Music.Database
     }
 
     #endregion
+
+    public bool DbHealth
+    {
+      get
+      {
+        return _dbHealth;
+      }
+    }
 
     #region Transactions
 

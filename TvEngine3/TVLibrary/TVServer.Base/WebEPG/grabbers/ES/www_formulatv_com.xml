@@ -2,21 +2,22 @@
 <Grabber>
   <Info availableDays="4" timezone="W. Europe Standard Time" version="2.0" />
   <Channels>
+    <Channel id="FDF" siteId="fdf" />
+    <Channel id="La 1" siteId="la1" />
+    <Channel id="Tve1" siteId="la1" />
     <Channel id="Telecinco" siteId="1/telecinco" />
     <Channel id="Antena 3" siteId="2/antena-3-television" />
-    <Channel id="La 1" siteId="3/la-1" />
-    <Channel id="Tve1" siteId="3/la-1" />
     <Channel id="La 2" siteId="4/la-2" />
-    <Channel id="Canal+" siteId="5/canal-plus" />
+    <Channel id="Canal+1" siteId="5/canalplus1" />
     <Channel id="Telemadrid" siteId="6/telemadrid" />
     <Channel id="AXN" siteId="7/axn" />
-    <Channel id="ETB2" siteId="8/euskal-telebista-2" />
+    <Channel id="ETB2" siteId="8/etb2" />
     <Channel id="T. Canarias" siteId="9/tv-canaria" />
     <Channel id="Canal 9" siteId="10/canal-9" />
     <Channel id="TV3" siteId="13/tv3" />
-    <Channel id="Canal Sur" siteId="15/canal-sur" />
+    <Channel id="Canal Sur" siteId="15/canalsur" />
     <Channel id="TV Galicia" siteId="18/tvg" />
-    <Channel id="Calle 13" siteId="19/calle-13" />
+    <Channel id="Calle 13" siteId="19/calle13" />
     <Channel id="Par. Comedy" siteId="21/paramount-comedy" />
     <Channel id="Paramount Comedy" siteId="21/paramount-comedy" />
     <Channel id="Fox" siteId="22/fox-espana" />
@@ -24,7 +25,7 @@
     <Channel id="La Sexta" siteId="26/lasexta" />
     <Channel id="SyFy" siteId="28/syfy-espana" />
     <Channel id="Teledeporte" siteId="30/teledeporte" />
-    <Channel id="Clan TVE" siteId="32/clan-tve" />
+    <Channel id="Clan TVE" siteId="32/clan" />
     <Channel id="SONY TV" siteId="33/sony-entertainment-television" />
     <Channel id="Cosmopolitan" siteId="35/cosmopolitan" />
     <Channel id="Hollywood" siteId="36/canal-hollywood" />
@@ -34,33 +35,32 @@
     <Channel id="Eurosport" siteId="40/eurosport" />
     <Channel id="Nat Geograph" siteId="41/national-geographic" />
     <Channel id="Discovery Channel" siteId="42/discovery-channel" />
-    <Channel id="Bio" siteId="/43/the-biography-channel" />
-    <Channel id="Biography" siteId="/43/the-biography-channel" />
+    <Channel id="Bio" siteId="43/bio" />
+    <Channel id="Biography" siteId="43/bio" />
     <Channel id="Sportmania" siteId="44/sportmania" />
     <Channel id="Cartoon Net." siteId="46/cartoon-network" />
     <Channel id="VH1" siteId="47/vh1" />
-    <Channel id="Canal Historia" siteId="48/canal-de-historia" />
+    <Channel id="Canal Historia" siteId="48/canal-historia" />
     <Channel id="Canal Odisea" siteId="49/odisea" />
     <Channel id="Nickelodeon" siteId="50/nick" />
     <Channel id="Disney XD" siteId="51/disney-xd" />
     <Channel id="Canal Cocina" siteId="52/canal-cocina" />
     <Channel id="40 TV" siteId="53/40-tv" />
-    <Channel id="24horas" siteId="55/canal-24-horas" />
+    <Channel id="24horas" siteId="55/canal24horas" />
     <Channel id="Intereconomía" siteId="56/intereconomia" />
-    <Channel id="FDF" siteId="57/fdf" />
-    <Channel id="La Siete" siteId="58/la-siete" />
+    <Channel id="La Siete" siteId="58/lasiete" />
     <Channel id="Veo7" siteId="59/veo-tv" />
     <Channel id="MTV 2" siteId="62/mtv-2" />
     <Channel id="MTV Base" siteId="63/mtv-base" />
     <Channel id="MTV Hits" siteId="64/mtv-hits" />
+    <Channel id="Buzz18" siteId="65/buzz" />
     <Channel id="TCM" siteId="66/tcm" />
-    <Channel id="Extreme Teuve@teuve.com" siteId="67/extreme-teuve" />
+    <Channel id="Xtreme" siteId="67/xtrm" />
     <Channel id="MGM" siteId="68/mgm" />
     <Channel id="Somos" siteId="69/somos" />
     <Channel id="Cinematk" siteId="70/cinematk" />
-    <Channel id="Neox" siteId="71/antenaneox" />
-    <Channel id="Nova" siteId="72/antenanova" />
-    <Channel id="Disney Junior" siteId="73/playhouse-disney" />
+    <Channel id="Neox" siteId="71/neox" />
+    <Channel id="Nova" siteId="72/nova" />
     <Channel id="Discovery Science" siteId="75/discovery-science" />
     <Channel id="Discovery Civilization" siteId="76/discovery-civilization" />
     <Channel id="Discovery Turbo" siteId="77/discovery-turbo" />
@@ -69,19 +69,19 @@
     <Channel id="Sol Música" siteId="80/sol-musica" />
     <Channel id="R. Madrid TV" siteId="81/real-madrid-tv" />
     <Channel id="Barça TV" siteId="82/barca-tv" />
-    <Channel id="ESPN Classic@espnclassic.com" siteId="83/espn-classic" />
+    <Channel id="ESPN Classic" siteId="83/espn-classic" />
     <Channel id="TV5 Monde" siteId="84/tv5-monde" />
     <Channel id="TNT" siteId="85/tnt-espana" />
-    <Channel id="Canal+ Dos" siteId="86/canal-plus-2" />
+    <Channel id="Canal+ Dos" siteId="86/canalplus2" />
     <Channel id="Canal+ HD" siteId="87/canal-plus-hd" />
-    <Channel id="Castilla la Mancha" siteId="88/castilla-la-mancha-television" />
+    <Channel id="Castilla la Mancha" siteId="88/clm-television" />
     <Channel id="IB3" siteId="89/ib3-televisio" />
-    <Channel id="Aragontelevisión" siteId="90/aragon-television" />
-    <Channel id="Televisión Asturias" siteId="91/television-principado-de-asturias" />
+    <Channel id="Aragontelevisión" siteId="90/atv" />
+    <Channel id="Televisión Asturias" siteId="91/tpa" />
     <Channel id="C+ Acción" siteId="92/canal-plus-accion" />
     <Channel id="C+ Comedia" siteId="93/canal-plus-comedia" />
     <Channel id="C+ DCine" siteId="94/canal-plus-dcine" />
-    <Channel id="7 TV Murcia" siteId="96/7-region-de-murcia" />
+    <Channel id="7 TV Murcia" siteId="96/7rm" />
     <Channel id="Animax" siteId="97/animax" />
     <Channel id="Kidsco" siteId="101/kids-co" />
     <Channel id="Natura" siteId="102/canal-natura" />
@@ -90,34 +90,75 @@
     <Channel id="Canal Extremadura" siteId="113/canal-extremadura" />
     <Channel id="Gol TV" siteId="119/gol-television" />
     <Channel id="Gol Televisión" siteId="119/gol-television" />
+    <Channel id="Canal de las Estrellas" siteId="126/canal-de-las-estrellas" />
     <Channel id="Fox Crime" siteId="127/fox-crime" />
     <Channel id="La 10" siteId="130/la-10" />
     <Channel id="Nitro" siteId="136/nitro" />
     <Channel id="Boing" siteId="137/boing" />
     <Channel id="Marca TV" siteId="138/marca-tv" />
     <Channel id="La Sexta3" siteId="143/lasexta3" />
+    <Channel id="Canal+ 3D" siteId="144/canal-plus-3d" />
     <Channel id="13TV" siteId="145/13tv" />
-    <Channel id="CrimenInvestigación" siteId="148/crimen-and-investigacion" />
+    <Channel id="8Madrid TV" siteId="146/8madrid-tv" />
+    <Channel id="CrimenInvestigación" siteId="148/crimen-investigacion" />
     <Channel id="Divinity" siteId="153/divinity" />
+    <Channel id="Decasa" siteId="154/decasa" />
     <Channel id="Playboy TV" siteId="155/playboy-tv" />
+    <Channel id="Canal+ Toros" siteId="157/canal-plus-toros" />
+    <Channel id="Panda" siteId="162/canal-panda" />
     <Channel id="Paramount Channel" siteId="164/paramount-channel" />
     <Channel id="Cartoonito" siteId="167/cartoonito" />
+    <Channel id="Nat.Geo.Wild" siteId="168/nat-geo-wild" />
+    <Channel id="Canal+ Liga" siteId="169/canal-plus-liga" />
     <Channel id="Energy" siteId="171/energy" />
     <Channel id="Discovery MAX" siteId="173/discovery-max" />
     <Channel id="Xplora" siteId="182/xplora" />
+    <Channel id="AXN White" siteId="183/axnwhite" />
+    <Channel id="Nueve" siteId="201/nueve" />
+    <Channel id="Disney Junior" siteId="206/disney-junior" />
+    <Channel id="Disney Cinemagic" siteId="208/disney-cinemagic" />
+    <Channel id="Canal+1-30" siteId="209/canalplus1-30" />
+    <Channel id="Al Jazeera" siteId="210/al-jazeera" />
+    <Channel id="Canal+ Liga de campeones" siteId="214/canal-plus-liga-de-campeones" />
+    <Channel id="Canal+ Series" siteId="217/canal-plus-series" />
+    <Channel id="Canal+ Xtra" siteId="223/canal-plus-xtra" />
+    <Channel id="Ñ Dcine español" siteId="224/dcine-espanol" />
+    <Channel id="Trace Sports" siteId="225/trace-sports-stars" />
+    <Channel id="Caza y Pesca" siteId="227/caza-y-pesca" />
+    <Channel id="Nick Jr." siteId="228/nick-jr" />
+    <Channel id="BBC World" siteId="229/bbc-world" />
+    <Channel id="Bloomberg" siteId="230/bloomberg" />
+    <Channel id="Sundance Channel" siteId="231/sundance-channel" />
+    <Channel id="Iberalia" siteId="232/iberalia" />
+    <Channel id="Baby Tv" siteId="233/baby-tv/" />
+    <Channel id="Fox News" siteId="234/fox-news" />
+    <Channel id="Euronews" siteId="235/euronews" />
+    <Channel id="France24" siteId="236/france-24" />
+    <Channel id="Russia Today" siteId="237/russia-today" />
+    <Channel id="CNBC Europe" siteId="238/cnbc-europe" />
+    <Channel id="CCTV Español" siteId="239/cctv-espanol" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.formulatv.com/programacion/[ID]/[YYYY]-[MM]-[DD]/" post="" external="false" encoding="windows-1252" />
+    <Site url="http://www.formulatv.com/programacion/[ID]/[YYYY]-[MM]-[DD]/" post="" external="false" encoding="utf-8" />
     <Html>
-      <Template name="default" start="fecprgd" end="gderecho">
-        <SectionTemplate tags="D">
+      <Template name="default" start="contenido" end="cuadro">
+        <SectionTemplate tags="DP">
           <TemplateText>
-		&lt;div class="prglihora"&gt;&lt;#START&gt;&lt;/div&gt;
-		&lt;div class="prglicnt"&gt;&lt;div class="prglitit"&gt;&lt;#TITLE&gt;&lt;/div&gt;
-		&lt;z(&gt;
-		&lt;div class="prgliemi"&gt;&lt;#SUBTITLE&gt;&lt;/div&gt;
-		&lt;div class="prglidesc"&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;
+		&lt;div class="prg-item" id=""&gt;
+		&lt;div class="prg-hour"&gt;&lt;p&gt;&lt;#START&gt;&lt;/p&gt;&lt;/div&gt;
+		&lt;div class="prg-desc"&gt;
+		&lt;div class="prg-cnt"&gt;			&lt;z(&gt;
+		&lt;p class="flt"&gt;&lt;a href="" target="_blank"&gt;&lt;img alt="" src="" /&gt;&lt;/a&gt;&lt;/p&gt;
 		&lt;/z)?&gt;
+		&lt;p class="tit"&gt;&lt;#TITLE&gt;&lt;/p&gt;
+		&lt;z(&gt;
+		&lt;p class="subtit"&gt;&lt;a href="" target="_blank"&gt;&lt;#SUBTITLE&gt;&lt;/a&gt;&lt;/p&gt;
+		&lt;p class="info1"&gt;Año: 2000 | País: EE.UU. |  &lt;span class="dnm1"&gt;23&lt;/span&gt;&lt;/p&gt;
+		&lt;p class="info2"&gt;&lt;#ACTORS&gt;&lt;/p&gt;		&lt;p class="sinopsis"&gt;&lt;#DESCRIPTION&gt;&lt;a href="" target="_blank"&gt;Ficha y sinopsis completa&lt;/a&gt;&lt;/p&gt;
+		&lt;/z)?&gt;
+		&lt;p class="subtit"&gt;&lt;#SUBTITLE&gt;&lt;/p&gt;
+		&lt;/div&gt;
+		&lt;/div&gt;
           </TemplateText>	
       </SectionTemplate>
       </Template>

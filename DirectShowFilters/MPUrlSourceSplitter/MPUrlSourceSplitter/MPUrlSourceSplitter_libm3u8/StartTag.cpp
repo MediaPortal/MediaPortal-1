@@ -22,6 +22,7 @@
 
 #include "StartTag.h"
 #include "TimeOffsetAttribute.h"
+#include "ErrorCodes.h"
 
 CStartTag::CStartTag(HRESULT *result)
   : CTag(result)
@@ -58,29 +59,27 @@ bool CStartTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *n
   return false;
 }
 
-bool CStartTag::ParseTag(unsigned int version)
+HRESULT CStartTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
+  HRESULT result = __super::ParseTag(version);
+  CHECK_CONDITION_HRESULT(result, (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07), result, E_M3U8_NOT_SUPPORTED_TAG);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     // successful parsing of tag
     // compare it to our tag
-    result &= (wcscmp(this->tag, TAG_START) == 0);
+    CHECK_CONDITION_HRESULT(result, wcscmp(this->tag, TAG_START) == 0, result, E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE);
+    CHECK_POINTER_HRESULT(result, this->tagContent, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
 
-    if (result)
+    CHECK_CONDITION_HRESULT(result, this->ParseAttributes(version), result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
+
+    if (SUCCEEDED(result))
     {
-      result &= this->ParseAttributes(version);
-
-      if (result)
+      if ((version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07))
       {
-        if ((version == PLAYLIST_VERSION_06)  || (version == PLAYLIST_VERSION_07))
-        {
-          // TIME-OFFSET attribute is mandatory
-          CTimeOffsetAttribute *timeOffset = dynamic_cast<CTimeOffsetAttribute *>(this->GetAttributes()->GetAttribute(TIME_OFFSET_ATTRIBUTE_NAME, true));
-          result &= (timeOffset != NULL);
-        }
+        // TIME-OFFSET attribute is mandatory
+        CTimeOffsetAttribute *timeOffset = dynamic_cast<CTimeOffsetAttribute *>(this->GetAttributes()->GetAttribute(TIME_OFFSET_ATTRIBUTE_NAME, true));
+        CHECK_POINTER_HRESULT(result, timeOffset, result, E_M3U8_MISSING_REQUIRED_ATTRIBUTE);
       }
     }
   }

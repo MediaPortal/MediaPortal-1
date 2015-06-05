@@ -46,6 +46,8 @@
 
 #define PROGRAM_ASSOCIATION_SECTION_PROGRAM_MAP_PID_MASK              0x1FFF
 
+#define NETWORK_INFORMATION_TABLE_PID_UNDEFINED                       0xFFFF
+
 class CProgramAssociationSection : public CSection
 {
 public:
@@ -134,6 +136,7 @@ protected:
   uint8_t reservedVersionNumberCurrentNextIndicator;
   uint8_t sectionNumber;
   uint8_t lastSectionNumber;
+  uint16_t networkInformationTablePID;
 
   // holds programs
   CProgramAssociationSectionProgramCollection *programs;
@@ -157,6 +160,10 @@ protected:
   // gets whole section into payload
   // @return : number of bytes written into buffer, zero if not successful
   virtual unsigned int GetSectionInternal(void);
+
+  // checks table ID against actual table ID
+  // @return : true if table ID is valid, false otherwise
+  virtual bool CheckTableId(void);
 };
 
 #endif

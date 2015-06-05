@@ -257,6 +257,31 @@ namespace MediaPortal.GUI.Library
             if (iItem < _listItems.Count)
             {
               GUIListItem item = (GUIListItem)_listItems[iItem];
+              if (_font.containsOutOfBoundsChar(item.Label))
+              {
+                // Will hold clipped coordinates
+                float xpos = (float)dwPosX;
+                float ypos = (float)dwPosY;
+
+                // Get the clip rectangle.
+                Rectangle clipRect = new Rectangle(_positionX, _positionY, _width, _height);
+                float minX = clipRect.Left;
+                float minY = clipRect.Top;
+                float maxX = clipRect.Right;
+                float maxY = clipRect.Bottom;
+
+                // A clip rectangle is defined.  Determine if the character is inside the clip rectangle.
+                // If the character is inside the clip rectangle then clip it as necessary at the clip rectangle boundary.
+                // If the character is not inside the clip rectangle then move on to the next character (continue).
+                if (xpos < maxX && xpos >= minX && ypos < maxY && ypos >= minY)
+                {
+                }
+                else
+                {
+                  dwPosY += (int)(_itemHeight * _lineSpacing);
+                  continue;
+                }
+              }
               strLabel1 = item.Label;
               strLabel2 = item.Label2;
             }

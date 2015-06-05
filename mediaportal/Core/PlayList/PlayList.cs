@@ -72,6 +72,21 @@ namespace MediaPortal.Playlists
       NotifyChange();
     }
 
+    public void Add(PlayListItem item, bool finish)
+    {
+      if (item == null)
+      {
+        return;
+      }
+      //Log.Debug("Playlist: add {0}", item.FileName);
+      _listPlayListItems.Add(item);
+
+      if (finish)
+      {
+        NotifyChange();
+      }
+    }
+
     public bool Insert(PlayListItem item, int currentSong)
     {
       bool success = false;
@@ -149,6 +164,29 @@ namespace MediaPortal.Playlists
         {
           _listPlayListItems.RemoveAt(i);
           NotifyChange();
+          return i;
+        }
+      }
+      return -1;
+    }
+
+    public int Remove(string fileName, bool finish)
+    {
+      if (fileName == null)
+      {
+        return -1;
+      }
+
+      for (int i = 0; i < _listPlayListItems.Count; ++i)
+      {
+        PlayListItem item = _listPlayListItems[i];
+        if (item.FileName == fileName)
+        {
+          _listPlayListItems.RemoveAt(i);
+          if (finish)
+          {
+            NotifyChange();
+          }
           return i;
         }
       }

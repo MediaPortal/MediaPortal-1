@@ -65,7 +65,6 @@ namespace PowerScheduler.Setup
       this.buttonExpertMode = new System.Windows.Forms.Button();
       this.numericUpDownIdleTimeout = new System.Windows.Forms.NumericUpDown();
       this.checkBoxHomeOnly = new System.Windows.Forms.CheckBox();
-      this.checkBoxUmuteMasterVolume = new System.Windows.Forms.CheckBox();
       this.groupBoxProcesses = new System.Windows.Forms.GroupBox();
       this.groupBoxEPG = new System.Windows.Forms.GroupBox();
       this.flowLayoutPanelEPG = new System.Windows.Forms.FlowLayoutPanel();
@@ -131,8 +130,22 @@ namespace PowerScheduler.Setup
       this.tabControl = new System.Windows.Forms.TabControl();
       this.tabPageClient = new System.Windows.Forms.TabPage();
       this.groupBoxClient = new System.Windows.Forms.GroupBox();
+      this.tabPagePingMonitor = new System.Windows.Forms.TabPage();
+      this.groupBoxPingMonitor = new System.Windows.Forms.GroupBox();
+      this.buttonDelete = new System.Windows.Forms.Button();
+      this.buttonAdd = new System.Windows.Forms.Button();
+      this.listBoxHosts = new System.Windows.Forms.ListBox();
+      this.textBoxEditHost = new System.Windows.Forms.TextBox();
+      this.checkBoxPingMonitorEnabled = new System.Windows.Forms.CheckBox();
+      this.checkBoxPingMonitorAwayMode = new System.Windows.Forms.CheckBox();
       this.tabPageLegacy = new System.Windows.Forms.TabPage();
       this.groupBoxLegacy = new System.Windows.Forms.GroupBox();
+      this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+      this.label2 = new System.Windows.Forms.Label();
+      this.numericUpDownStandbyHoursOnWeekendFrom = new System.Windows.Forms.NumericUpDown();
+      this.label8 = new System.Windows.Forms.Label();
+      this.numericUpDownStandbyHoursOnWeekendTo = new System.Windows.Forms.NumericUpDown();
+      this.label9 = new System.Windows.Forms.Label();
       this.label4 = new System.Windows.Forms.Label();
       this.flowLayoutPanelStandbyHours = new System.Windows.Forms.FlowLayoutPanel();
       this.label5 = new System.Windows.Forms.Label();
@@ -175,8 +188,13 @@ namespace PowerScheduler.Setup
       this.tabControl.SuspendLayout();
       this.tabPageClient.SuspendLayout();
       this.groupBoxClient.SuspendLayout();
+      this.tabPagePingMonitor.SuspendLayout();
+      this.groupBoxPingMonitor.SuspendLayout();
       this.tabPageLegacy.SuspendLayout();
       this.groupBoxLegacy.SuspendLayout();
+      this.flowLayoutPanel1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStandbyHoursOnWeekendFrom)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStandbyHoursOnWeekendTo)).BeginInit();
       this.flowLayoutPanelStandbyHours.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStandbyHoursFrom)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStandbyHoursTo)).BeginInit();
@@ -193,8 +211,8 @@ namespace PowerScheduler.Setup
       this.textBoxCommand.Size = new System.Drawing.Size(329, 20);
       this.textBoxCommand.TabIndex = 2;
       this.toolTip.SetToolTip(this.textBoxCommand, "The command is executed on each system power state change. The\r\nargument (\"standb" +
-              "y\", \"wakeup\", \"awaymode\" or \"runmode\") will\r\nbe added by PowerScheduler at the t" +
-              "ime the command is executed.");
+        "y\", \"wakeup\", \"awaymode\" or \"runmode\") will\r\nbe added by PowerScheduler at the t" +
+        "ime the command is executed.");
       this.textBoxCommand.TextChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
       // checkBoxRebootWakeup
@@ -206,7 +224,7 @@ namespace PowerScheduler.Setup
       this.checkBoxRebootWakeup.TabIndex = 4;
       this.checkBoxRebootWakeup.Text = "Wakeup the computer for reboot";
       this.toolTip.SetToolTip(this.checkBoxRebootWakeup, "If unchecked, the reboot will be caught up when the system is running again.\r\nThe" +
-              " computer will reboot only when not busy with other tasks.");
+        " computer will reboot only when not busy with other tasks.");
       this.checkBoxRebootWakeup.UseVisualStyleBackColor = true;
       this.checkBoxRebootWakeup.CheckedChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
@@ -255,7 +273,7 @@ namespace PowerScheduler.Setup
       this.dataGridShares.Size = new System.Drawing.Size(348, 99);
       this.dataGridShares.TabIndex = 2;
       this.toolTip.SetToolTip(this.dataGridShares, "Enter share / client / user combinations that prevent standby\r\n(leave blank to ma" +
-              "tch any value)");
+        "tch any value)");
       this.dataGridShares.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.buttonApply_Enable);
       // 
       // Sharename
@@ -288,7 +306,7 @@ namespace PowerScheduler.Setup
       this.labelShares.TabIndex = 1;
       this.labelShares.Text = "Shares to prevent standby";
       this.toolTip.SetToolTip(this.labelShares, "Enter share / client / user combinations that prevent standby\r\n(blank fields matc" +
-              "h any value; empty list matches any active share)");
+        "h any value; empty list matches any active share)");
       // 
       // buttonSelectShare
       // 
@@ -311,7 +329,7 @@ namespace PowerScheduler.Setup
       this.checkBoxMPClientRunning.TabIndex = 2;
       this.checkBoxMPClientRunning.Text = "Do not put the computer to sleep while the MediaPortal client is not running";
       this.toolTip.SetToolTip(this.checkBoxMPClientRunning, "Prevents automatic standby while doing administrative work\r\n(only recommended for" +
-              " a single-seat HTPC).");
+        " a single-seat HTPC).");
       this.checkBoxMPClientRunning.UseVisualStyleBackColor = true;
       this.checkBoxMPClientRunning.CheckedChanged += new System.EventHandler(this.checkBoxMPClientRunning_CheckedChanged);
       // 
@@ -324,7 +342,7 @@ namespace PowerScheduler.Setup
       this.checkBoxProcessesAwayMode.TabIndex = 3;
       this.checkBoxProcessesAwayMode.Text = "Enter away mode when the user wants to put the computer to sleep";
       this.toolTip.SetToolTip(this.checkBoxProcessesAwayMode, "Not even a \"Power Off\" or \"Remote Control Off\"causes the\r\nsystem to go to standby" +
-              " while the selected processes are running.\r\n");
+        " while the selected processes are running.\r\n");
       this.checkBoxProcessesAwayMode.UseVisualStyleBackColor = true;
       this.checkBoxProcessesAwayMode.CheckedChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
@@ -347,7 +365,7 @@ namespace PowerScheduler.Setup
       this.textBoxProcesses.Size = new System.Drawing.Size(315, 20);
       this.textBoxProcesses.TabIndex = 0;
       this.toolTip.SetToolTip(this.textBoxProcesses, "Enter a comma-separated list of processes which prevent\r\nthe system from going to" +
-              " standby while they are active.");
+        " standby while they are active.");
       this.textBoxProcesses.TextChanged += new System.EventHandler(this.textBoxProcesses_TextChanged);
       // 
       // checkBoxEPGAwayMode
@@ -359,7 +377,7 @@ namespace PowerScheduler.Setup
       this.checkBoxEPGAwayMode.TabIndex = 6;
       this.checkBoxEPGAwayMode.Text = "Enter away mode when the user wants to put the computer to sleep";
       this.toolTip.SetToolTip(this.checkBoxEPGAwayMode, "Not even a \"Power Off\" or \"Remote Control Off\"causes the\r\nsystem to go to standby" +
-              " until EPG grabbing is completed.");
+        " until EPG grabbing is completed.");
       this.checkBoxEPGAwayMode.UseVisualStyleBackColor = true;
       this.checkBoxEPGAwayMode.CheckedChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
@@ -382,7 +400,7 @@ namespace PowerScheduler.Setup
       this.checkBoxEPGPreventStandby.TabIndex = 5;
       this.checkBoxEPGPreventStandby.Text = "Do not put the computer to sleep while grabbing EPG";
       this.toolTip.SetToolTip(this.checkBoxEPGPreventStandby, "The computer will not go to standby automatically until EPG grabbing is completed" +
-              ".");
+        ".");
       this.checkBoxEPGPreventStandby.UseVisualStyleBackColor = true;
       this.checkBoxEPGPreventStandby.CheckedChanged += new System.EventHandler(this.checkBoxEPGPreventStandby_CheckedChanged);
       // 
@@ -395,7 +413,7 @@ namespace PowerScheduler.Setup
       this.checkBoxNetworkAwayMode.TabIndex = 3;
       this.checkBoxNetworkAwayMode.Text = "Enter away mode when the user wants to put the computer to sleep";
       this.toolTip.SetToolTip(this.checkBoxNetworkAwayMode, "Not even a \"Power Off\" or \"Remote Control Off\"causes the\r\nsystem to go to standby" +
-              " while the network is active.\r\n");
+        " while the network is active.\r\n");
       this.checkBoxNetworkAwayMode.UseVisualStyleBackColor = true;
       this.checkBoxNetworkAwayMode.CheckedChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
@@ -408,7 +426,7 @@ namespace PowerScheduler.Setup
       this.checkBoxSharesAwayMode.TabIndex = 4;
       this.checkBoxSharesAwayMode.Text = "Enter away mode when the user wants to put the computer to sleep";
       this.toolTip.SetToolTip(this.checkBoxSharesAwayMode, "Not even a \"Power Off\" or \"Remote Control Off\"causes the\r\nsystem to go to standby" +
-              " while the selected shares are active.\r\n");
+        " while the selected shares are active.\r\n");
       this.checkBoxSharesAwayMode.UseVisualStyleBackColor = true;
       this.checkBoxSharesAwayMode.CheckedChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
@@ -464,8 +482,8 @@ namespace PowerScheduler.Setup
       this.checkBoxAutoPowerSettings.TabIndex = 13;
       this.checkBoxAutoPowerSettings.Text = "Apply recommended windows power settings for selected profile automatically";
       this.toolTip.SetToolTip(this.checkBoxAutoPowerSettings, "If checked, PowerScheduler will set the Windows Power Settings\r\nto some reasonabl" +
-              "e values depending on the selected profile.\r\nUncheck this option to configure th" +
-              "e Windows Power Settings manually.");
+        "e values depending on the selected profile.\r\nUncheck this option to configure th" +
+        "e Windows Power Settings manually.");
       this.checkBoxAutoPowerSettings.UseVisualStyleBackColor = true;
       this.checkBoxAutoPowerSettings.CheckedChanged += new System.EventHandler(this.checkBoxAutoPowerSettings_CheckedChanged);
       // 
@@ -491,7 +509,7 @@ namespace PowerScheduler.Setup
       this.checkBoxReinitializeController.TabIndex = 0;
       this.checkBoxReinitializeController.Text = "Reinitialize TV controller on wakeup (also reinitializes tuner)";
       this.toolTip.SetToolTip(this.checkBoxReinitializeController, "Reinitializes the internal TV controller and tuner setup (does not restart the TV" +
-              "-Server).");
+        "-Server).");
       this.checkBoxReinitializeController.UseVisualStyleBackColor = true;
       this.checkBoxReinitializeController.CheckedChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
@@ -555,7 +573,7 @@ namespace PowerScheduler.Setup
       this.checkBoxSharesEnabled.TabIndex = 0;
       this.checkBoxSharesEnabled.Text = "Do not put the computer to sleep while shares are active";
       this.toolTip.SetToolTip(this.checkBoxSharesEnabled, "The computer will not go to standby automatically while the selected shares are a" +
-              "ctive.");
+        "ctive.");
       this.checkBoxSharesEnabled.UseVisualStyleBackColor = true;
       this.checkBoxSharesEnabled.CheckedChanged += new System.EventHandler(this.checkBoxSharesEnabled_CheckedChanged);
       // 
@@ -600,7 +618,7 @@ namespace PowerScheduler.Setup
       this.numericUpDownIdleTimeout.Size = new System.Drawing.Size(41, 20);
       this.numericUpDownIdleTimeout.TabIndex = 11;
       this.toolTip.SetToolTip(this.numericUpDownIdleTimeout, "Adjust the time after which the system goes to standby when idle\r\n(\"0\" means \"nev" +
-              "er\").");
+        "er\").");
       this.numericUpDownIdleTimeout.ValueChanged += new System.EventHandler(this.numericUpDownIdleTimeout_ValueChanged);
       this.numericUpDownIdleTimeout.EnabledChanged += new System.EventHandler(this.numericUpDownIdleTimeout_EnabledChanged);
       // 
@@ -616,24 +634,10 @@ namespace PowerScheduler.Setup
       this.checkBoxHomeOnly.UseVisualStyleBackColor = true;
       this.checkBoxHomeOnly.CheckedChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
-      // checkBoxUmuteMasterVolume
-      // 
-      this.checkBoxUmuteMasterVolume.AutoSize = true;
-      this.checkBoxUmuteMasterVolume.Checked = true;
-      this.checkBoxUmuteMasterVolume.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxUmuteMasterVolume.Location = new System.Drawing.Point(12, 104);
-      this.checkBoxUmuteMasterVolume.Name = "checkBoxUmuteMasterVolume";
-      this.checkBoxUmuteMasterVolume.Size = new System.Drawing.Size(302, 17);
-      this.checkBoxUmuteMasterVolume.TabIndex = 3;
-      this.checkBoxUmuteMasterVolume.Text = "Unmute master volume on start and on leaving away mode";
-      this.toolTip.SetToolTip(this.checkBoxUmuteMasterVolume, "Unmutes master volume if muted wrongly (e.g. after leaving away mode)");
-      this.checkBoxUmuteMasterVolume.UseVisualStyleBackColor = true;
-      this.checkBoxUmuteMasterVolume.CheckedChanged += new System.EventHandler(this.buttonApply_Enable);
-      // 
       // groupBoxProcesses
       // 
-      this.groupBoxProcesses.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxProcesses.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxProcesses.Controls.Add(this.checkBoxMPClientRunning);
       this.groupBoxProcesses.Controls.Add(this.checkBoxProcessesAwayMode);
       this.groupBoxProcesses.Controls.Add(this.buttonSelectProcess);
@@ -647,8 +651,8 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxEPG
       // 
-      this.groupBoxEPG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxEPG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxEPG.Controls.Add(this.flowLayoutPanelEPG);
       this.groupBoxEPG.Controls.Add(this.checkBoxEPGAwayMode);
       this.groupBoxEPG.Controls.Add(this.buttonEPGCommand);
@@ -666,8 +670,8 @@ namespace PowerScheduler.Setup
       // 
       // flowLayoutPanelEPG
       // 
-      this.flowLayoutPanelEPG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelEPG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.flowLayoutPanelEPG.AutoSize = true;
       this.flowLayoutPanelEPG.Controls.Add(this.labelEPG1);
       this.flowLayoutPanelEPG.Controls.Add(this.textBoxEPG);
@@ -839,9 +843,9 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxStatus
       // 
-      this.groupBoxStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxStatus.BackColor = System.Drawing.SystemColors.Control;
       this.groupBoxStatus.Controls.Add(this.labelStandbyStatus);
       this.groupBoxStatus.Controls.Add(this.textBoxStandbyHandler);
@@ -868,9 +872,9 @@ namespace PowerScheduler.Setup
       // 
       // textBoxStandbyHandler
       // 
-      this.textBoxStandbyHandler.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxStandbyHandler.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxStandbyHandler.BackColor = System.Drawing.SystemColors.Control;
       this.textBoxStandbyHandler.BorderStyle = System.Windows.Forms.BorderStyle.None;
       this.textBoxStandbyHandler.Location = new System.Drawing.Point(132, 61);
@@ -928,8 +932,8 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxAdvanced
       // 
-      this.groupBoxAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxAdvanced.Controls.Add(this.checkBoxAutoPowerSettings);
       this.groupBoxAdvanced.Controls.Add(this.buttonPowerSettings);
       this.groupBoxAdvanced.Controls.Add(this.buttonCommand);
@@ -967,8 +971,8 @@ namespace PowerScheduler.Setup
       // 
       // flowLayoutPanelShutdownMode
       // 
-      this.flowLayoutPanelShutdownMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelShutdownMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.flowLayoutPanelShutdownMode.AutoSize = true;
       this.flowLayoutPanelShutdownMode.Controls.Add(this.labelShutdownMode);
       this.flowLayoutPanelShutdownMode.Controls.Add(this.comboBoxShutdownMode);
@@ -1000,8 +1004,8 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxReboot
       // 
-      this.groupBoxReboot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxReboot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxReboot.Controls.Add(this.flowLayoutPanelReboot);
       this.groupBoxReboot.Controls.Add(this.buttonRebootCommand);
       this.groupBoxReboot.Controls.Add(this.textBoxRebootCommand);
@@ -1017,8 +1021,8 @@ namespace PowerScheduler.Setup
       // 
       // flowLayoutPanelReboot
       // 
-      this.flowLayoutPanelReboot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelReboot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.flowLayoutPanelReboot.AutoSize = true;
       this.flowLayoutPanelReboot.Controls.Add(this.labelReboot1);
       this.flowLayoutPanelReboot.Controls.Add(this.textBoxReboot);
@@ -1172,8 +1176,8 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxNetwork
       // 
-      this.groupBoxNetwork.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxNetwork.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxNetwork.Controls.Add(this.flowLayoutPanelNetworkIdleLimit);
       this.groupBoxNetwork.Controls.Add(this.checkBoxNetworkAwayMode);
       this.groupBoxNetwork.Controls.Add(this.checkBoxNetworkEnabled);
@@ -1186,8 +1190,8 @@ namespace PowerScheduler.Setup
       // 
       // flowLayoutPanelNetworkIdleLimit
       // 
-      this.flowLayoutPanelNetworkIdleLimit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelNetworkIdleLimit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.flowLayoutPanelNetworkIdleLimit.AutoSize = true;
       this.flowLayoutPanelNetworkIdleLimit.Controls.Add(this.labelNetwork);
       this.flowLayoutPanelNetworkIdleLimit.Controls.Add(this.numericUpDownNetworkIdleLimit);
@@ -1219,8 +1223,8 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxShares
       // 
-      this.groupBoxShares.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxShares.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxShares.Controls.Add(this.buttonSelectShare);
       this.groupBoxShares.Controls.Add(this.checkBoxSharesAwayMode);
       this.groupBoxShares.Controls.Add(this.labelShares);
@@ -1268,8 +1272,8 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxGeneral
       // 
-      this.groupBoxGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxGeneral.Controls.Add(this.flowLayoutPanelGeneral);
       this.groupBoxGeneral.Controls.Add(this.labelExpertMode);
       this.groupBoxGeneral.Controls.Add(this.buttonExpertMode);
@@ -1282,8 +1286,8 @@ namespace PowerScheduler.Setup
       // 
       // flowLayoutPanelGeneral
       // 
-      this.flowLayoutPanelGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.flowLayoutPanelGeneral.AutoSize = true;
       this.flowLayoutPanelGeneral.Controls.Add(this.textBoxProfile);
       this.flowLayoutPanelGeneral.Controls.Add(this.comboBoxProfile);
@@ -1310,8 +1314,8 @@ namespace PowerScheduler.Setup
       // 
       // flowLayoutPanelIdleTimeout
       // 
-      this.flowLayoutPanelIdleTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelIdleTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.flowLayoutPanelIdleTimeout.AutoSize = true;
       this.flowLayoutPanelIdleTimeout.Controls.Add(this.labelIdleTimeout1);
       this.flowLayoutPanelIdleTimeout.Controls.Add(this.numericUpDownIdleTimeout);
@@ -1358,8 +1362,8 @@ namespace PowerScheduler.Setup
       // 
       // tabControl
       // 
-      this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl.Controls.Add(this.tabPageGeneral);
       this.tabControl.Controls.Add(this.tabPageClient);
       this.tabControl.Controls.Add(this.tabPageEPG);
@@ -1367,6 +1371,7 @@ namespace PowerScheduler.Setup
       this.tabControl.Controls.Add(this.tabPageProcesses);
       this.tabControl.Controls.Add(this.tabPageShares);
       this.tabControl.Controls.Add(this.tabPageNetwork);
+      this.tabControl.Controls.Add(this.tabPagePingMonitor);
       this.tabControl.Controls.Add(this.tabPageAdvanced);
       this.tabControl.Controls.Add(this.tabPageLegacy);
       this.tabControl.Location = new System.Drawing.Point(0, 0);
@@ -1391,9 +1396,8 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxClient
       // 
-      this.groupBoxClient.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxClient.Controls.Add(this.checkBoxUmuteMasterVolume);
+      this.groupBoxClient.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxClient.Controls.Add(this.checkBoxHomeOnly);
       this.groupBoxClient.Location = new System.Drawing.Point(6, 6);
       this.groupBoxClient.Name = "groupBoxClient";
@@ -1401,6 +1405,90 @@ namespace PowerScheduler.Setup
       this.groupBoxClient.TabIndex = 1;
       this.groupBoxClient.TabStop = false;
       this.groupBoxClient.Text = "Client settings";
+      // 
+      // tabPagePingMonitor
+      // 
+      this.tabPagePingMonitor.Controls.Add(this.groupBoxPingMonitor);
+      this.tabPagePingMonitor.Location = new System.Drawing.Point(4, 22);
+      this.tabPagePingMonitor.Name = "tabPagePingMonitor";
+      this.tabPagePingMonitor.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPagePingMonitor.Size = new System.Drawing.Size(476, 264);
+      this.tabPagePingMonitor.TabIndex = 9;
+      this.tabPagePingMonitor.Text = "Ping Monitor";
+      this.tabPagePingMonitor.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxPingMonitor
+      // 
+      this.groupBoxPingMonitor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxPingMonitor.Controls.Add(this.buttonDelete);
+      this.groupBoxPingMonitor.Controls.Add(this.buttonAdd);
+      this.groupBoxPingMonitor.Controls.Add(this.listBoxHosts);
+      this.groupBoxPingMonitor.Controls.Add(this.textBoxEditHost);
+      this.groupBoxPingMonitor.Controls.Add(this.checkBoxPingMonitorEnabled);
+      this.groupBoxPingMonitor.Controls.Add(this.checkBoxPingMonitorAwayMode);
+      this.groupBoxPingMonitor.Location = new System.Drawing.Point(6, 7);
+      this.groupBoxPingMonitor.Name = "groupBoxPingMonitor";
+      this.groupBoxPingMonitor.Size = new System.Drawing.Size(464, 250);
+      this.groupBoxPingMonitor.TabIndex = 6;
+      this.groupBoxPingMonitor.TabStop = false;
+      this.groupBoxPingMonitor.Text = "Active hosts which should prevent standby";
+      // 
+      // buttonDelete
+      // 
+      this.buttonDelete.Location = new System.Drawing.Point(153, 116);
+      this.buttonDelete.Name = "buttonDelete";
+      this.buttonDelete.Size = new System.Drawing.Size(75, 23);
+      this.buttonDelete.TabIndex = 5;
+      this.buttonDelete.Text = "Delete";
+      this.buttonDelete.UseVisualStyleBackColor = true;
+      this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
+      // 
+      // buttonAdd
+      // 
+      this.buttonAdd.Location = new System.Drawing.Point(153, 80);
+      this.buttonAdd.Name = "buttonAdd";
+      this.buttonAdd.Size = new System.Drawing.Size(75, 23);
+      this.buttonAdd.TabIndex = 4;
+      this.buttonAdd.Text = "Add";
+      this.buttonAdd.UseVisualStyleBackColor = true;
+      this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
+      // 
+      // listBoxHosts
+      // 
+      this.listBoxHosts.FormattingEnabled = true;
+      this.listBoxHosts.Location = new System.Drawing.Point(12, 116);
+      this.listBoxHosts.Name = "listBoxHosts";
+      this.listBoxHosts.Size = new System.Drawing.Size(120, 108);
+      this.listBoxHosts.TabIndex = 3;
+      // 
+      // textBoxEditHost
+      // 
+      this.textBoxEditHost.Location = new System.Drawing.Point(12, 80);
+      this.textBoxEditHost.Name = "textBoxEditHost";
+      this.textBoxEditHost.Size = new System.Drawing.Size(120, 20);
+      this.textBoxEditHost.TabIndex = 2;
+      // 
+      // checkBoxPingMonitorEnable
+      // 
+      this.checkBoxPingMonitorEnabled.AutoSize = true;
+      this.checkBoxPingMonitorEnabled.Location = new System.Drawing.Point(12, 22);
+      this.checkBoxPingMonitorEnabled.Name = "checkBoxPingMonitorEnable";
+      this.checkBoxPingMonitorEnabled.Size = new System.Drawing.Size(306, 17);
+      this.checkBoxPingMonitorEnabled.TabIndex = 1;
+      this.checkBoxPingMonitorEnabled.Text = "Do not put the computer to sleep while any hosts are active";
+      this.checkBoxPingMonitorEnabled.UseVisualStyleBackColor = true;
+      this.checkBoxPingMonitorEnabled.CheckedChanged += new System.EventHandler(this.checkBoxPingMonitorEnable_CheckedChanged);
+      // 
+      // checkBoxPingMonitorAwayMode
+      // 
+      this.checkBoxPingMonitorAwayMode.AutoSize = true;
+      this.checkBoxPingMonitorAwayMode.Location = new System.Drawing.Point(34, 47);
+      this.checkBoxPingMonitorAwayMode.Name = "checkBoxPingMonitorAwayMode";
+      this.checkBoxPingMonitorAwayMode.Size = new System.Drawing.Size(344, 17);
+      this.checkBoxPingMonitorAwayMode.TabIndex = 0;
+      this.checkBoxPingMonitorAwayMode.Text = "Enter away mode when the user wants to put the computer to sleep";
+      this.checkBoxPingMonitorAwayMode.UseVisualStyleBackColor = true;
       // 
       // tabPageLegacy
       // 
@@ -1415,8 +1503,9 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxLegacy
       // 
-      this.groupBoxLegacy.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxLegacy.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxLegacy.Controls.Add(this.flowLayoutPanel1);
       this.groupBoxLegacy.Controls.Add(this.label4);
       this.groupBoxLegacy.Controls.Add(this.flowLayoutPanelStandbyHours);
       this.groupBoxLegacy.Controls.Add(this.flowLayoutPanelPreNoStandbyTime);
@@ -1427,6 +1516,87 @@ namespace PowerScheduler.Setup
       this.groupBoxLegacy.TabIndex = 1;
       this.groupBoxLegacy.TabStop = false;
       this.groupBoxLegacy.Text = "Legacy settings";
+      // 
+      // flowLayoutPanel1
+      // 
+      this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanel1.AutoSize = true;
+      this.flowLayoutPanel1.Controls.Add(this.label2);
+      this.flowLayoutPanel1.Controls.Add(this.numericUpDownStandbyHoursOnWeekendFrom);
+      this.flowLayoutPanel1.Controls.Add(this.label8);
+      this.flowLayoutPanel1.Controls.Add(this.numericUpDownStandbyHoursOnWeekendTo);
+      this.flowLayoutPanel1.Controls.Add(this.label9);
+      this.flowLayoutPanel1.Location = new System.Drawing.Point(6, 147);
+      this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+      this.flowLayoutPanel1.Size = new System.Drawing.Size(448, 26);
+      this.flowLayoutPanel1.TabIndex = 30;
+      // 
+      // label2
+      // 
+      this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(3, 6);
+      this.label2.Name = "label2";
+      this.label2.Padding = new System.Windows.Forms.Padding(0, 0, 3, 0);
+      this.label2.Size = new System.Drawing.Size(142, 13);
+      this.label2.TabIndex = 0;
+      this.label2.Text = "Only allow standby between";
+      // 
+      // numericUpDownStandbyHoursOnWeekendFrom
+      // 
+      this.numericUpDownStandbyHoursOnWeekendFrom.Location = new System.Drawing.Point(151, 3);
+      this.numericUpDownStandbyHoursOnWeekendFrom.Maximum = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+      this.numericUpDownStandbyHoursOnWeekendFrom.Name = "numericUpDownStandbyHoursOnWeekendFrom";
+      this.numericUpDownStandbyHoursOnWeekendFrom.Size = new System.Drawing.Size(47, 20);
+      this.numericUpDownStandbyHoursOnWeekendFrom.TabIndex = 3;
+      this.numericUpDownStandbyHoursOnWeekendFrom.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+      this.numericUpDownStandbyHoursOnWeekendFrom.ValueChanged += new System.EventHandler(this.buttonApply_Enable);
+      // 
+      // label8
+      // 
+      this.label8.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this.label8.AutoSize = true;
+      this.label8.Location = new System.Drawing.Point(204, 6);
+      this.label8.Name = "label8";
+      this.label8.Padding = new System.Windows.Forms.Padding(0, 0, 3, 0);
+      this.label8.Size = new System.Drawing.Size(28, 13);
+      this.label8.TabIndex = 4;
+      this.label8.Text = "and";
+      // 
+      // numericUpDownStandbyHoursOnWeekendTo
+      // 
+      this.numericUpDownStandbyHoursOnWeekendTo.Location = new System.Drawing.Point(238, 3);
+      this.numericUpDownStandbyHoursOnWeekendTo.Maximum = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+      this.numericUpDownStandbyHoursOnWeekendTo.Name = "numericUpDownStandbyHoursOnWeekendTo";
+      this.numericUpDownStandbyHoursOnWeekendTo.Size = new System.Drawing.Size(47, 20);
+      this.numericUpDownStandbyHoursOnWeekendTo.TabIndex = 5;
+      this.numericUpDownStandbyHoursOnWeekendTo.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+      this.numericUpDownStandbyHoursOnWeekendTo.Value = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+      this.numericUpDownStandbyHoursOnWeekendTo.ValueChanged += new System.EventHandler(this.buttonApply_Enable);
+      // 
+      // label9
+      // 
+      this.label9.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this.label9.AutoSize = true;
+      this.label9.Location = new System.Drawing.Point(291, 6);
+      this.label9.Name = "label9";
+      this.label9.Padding = new System.Windows.Forms.Padding(0, 0, 3, 0);
+      this.label9.Size = new System.Drawing.Size(94, 13);
+      this.label9.TabIndex = 6;
+      this.label9.Text = "o\' clock weekend";
       // 
       // label4
       // 
@@ -1439,8 +1609,8 @@ namespace PowerScheduler.Setup
       // 
       // flowLayoutPanelStandbyHours
       // 
-      this.flowLayoutPanelStandbyHours.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelStandbyHours.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.flowLayoutPanelStandbyHours.AutoSize = true;
       this.flowLayoutPanelStandbyHours.Controls.Add(this.label5);
       this.flowLayoutPanelStandbyHours.Controls.Add(this.numericUpDownStandbyHoursFrom);
@@ -1514,14 +1684,14 @@ namespace PowerScheduler.Setup
       this.label7.Location = new System.Drawing.Point(291, 6);
       this.label7.Name = "label7";
       this.label7.Padding = new System.Windows.Forms.Padding(0, 0, 3, 0);
-      this.label7.Size = new System.Drawing.Size(47, 13);
+      this.label7.Size = new System.Drawing.Size(113, 13);
       this.label7.TabIndex = 6;
-      this.label7.Text = "o\' clock";
+      this.label7.Text = "o\' clock on weekdays";
       // 
       // flowLayoutPanelPreNoStandbyTime
       // 
-      this.flowLayoutPanelPreNoStandbyTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelPreNoStandbyTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.flowLayoutPanelPreNoStandbyTime.AutoSize = true;
       this.flowLayoutPanelPreNoStandbyTime.Controls.Add(this.label1);
       this.flowLayoutPanelPreNoStandbyTime.Controls.Add(this.numericUpDownPreNoStandbyTime);
@@ -1562,8 +1732,8 @@ namespace PowerScheduler.Setup
       // 
       // flowLayoutPanelPreWakeupTime
       // 
-      this.flowLayoutPanelPreWakeupTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelPreWakeupTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.flowLayoutPanelPreWakeupTime.AutoSize = true;
       this.flowLayoutPanelPreWakeupTime.Controls.Add(this.label3);
       this.flowLayoutPanelPreWakeupTime.Controls.Add(this.numericUpDownPreWakeupTime);
@@ -1656,9 +1826,16 @@ namespace PowerScheduler.Setup
       this.tabPageClient.ResumeLayout(false);
       this.groupBoxClient.ResumeLayout(false);
       this.groupBoxClient.PerformLayout();
+      this.tabPagePingMonitor.ResumeLayout(false);
+      this.groupBoxPingMonitor.ResumeLayout(false);
+      this.groupBoxPingMonitor.PerformLayout();
       this.tabPageLegacy.ResumeLayout(false);
       this.groupBoxLegacy.ResumeLayout(false);
       this.groupBoxLegacy.PerformLayout();
+      this.flowLayoutPanel1.ResumeLayout(false);
+      this.flowLayoutPanel1.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStandbyHoursOnWeekendFrom)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStandbyHoursOnWeekendTo)).EndInit();
       this.flowLayoutPanelStandbyHours.ResumeLayout(false);
       this.flowLayoutPanelStandbyHours.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStandbyHoursFrom)).EndInit();
@@ -1771,7 +1948,6 @@ namespace PowerScheduler.Setup
     private System.Windows.Forms.TabPage tabPageClient;
     private System.Windows.Forms.GroupBox groupBoxClient;
     private System.Windows.Forms.CheckBox checkBoxHomeOnly;
-    private System.Windows.Forms.CheckBox checkBoxUmuteMasterVolume;
     private System.Windows.Forms.TabPage tabPageLegacy;
     private System.Windows.Forms.GroupBox groupBoxLegacy;
     private System.Windows.Forms.Label label4;
@@ -1787,6 +1963,20 @@ namespace PowerScheduler.Setup
     private System.Windows.Forms.Label label6;
     private System.Windows.Forms.NumericUpDown numericUpDownStandbyHoursTo;
     private System.Windows.Forms.Label label7;
+    private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.NumericUpDown numericUpDownStandbyHoursOnWeekendFrom;
+    private System.Windows.Forms.Label label8;
+    private System.Windows.Forms.NumericUpDown numericUpDownStandbyHoursOnWeekendTo;
+    private System.Windows.Forms.Label label9;
+    private System.Windows.Forms.TabPage tabPagePingMonitor;
+    private System.Windows.Forms.GroupBox groupBoxPingMonitor;
+    private System.Windows.Forms.Button buttonDelete;
+    private System.Windows.Forms.Button buttonAdd;
+    private System.Windows.Forms.ListBox listBoxHosts;
+    private System.Windows.Forms.TextBox textBoxEditHost;
+    private System.Windows.Forms.CheckBox checkBoxPingMonitorEnabled;
+    private System.Windows.Forms.CheckBox checkBoxPingMonitorAwayMode;
 
   }
 }

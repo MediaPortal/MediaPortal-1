@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "PlaylistTypeTag.h"
+#include "ErrorCodes.h"
 
 CPlaylistTypeTag::CPlaylistTypeTag(HRESULT *result)
   : CTag(result)
@@ -57,23 +58,24 @@ bool CPlaylistTypeTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollec
   return false;
 }
 
-bool CPlaylistTypeTag::ParseTag(unsigned int version)
+HRESULT CPlaylistTypeTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
+  HRESULT result = __super::ParseTag(version);
+  CHECK_CONDITION_HRESULT(result, (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07), result, E_M3U8_NOT_SUPPORTED_TAG);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     // successful parsing of tag
     // compare it to our tag
-    result &= (wcscmp(this->tag, TAG_PLAYLIST_TYPE) == 0);
+    CHECK_CONDITION_HRESULT(result, wcscmp(this->tag, TAG_PLAYLIST_TYPE) == 0, result, E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE);
+    CHECK_POINTER_HRESULT(result, this->tagContent, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
 
-    if (result)
+    if (SUCCEEDED(result))
     {
       wchar_t *playlistType = CAttribute::GetEnumeratedString(this->tagContent);
-      result &= (playlistType != NULL);
+      CHECK_POINTER_HRESULT(result, playlistType, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
 
-      if (result)
+      if (SUCCEEDED(result))
       {
         this->flags |= (wcscmp(playlistType, PLAYLIST_TYPE_EVENT) == 0) ? PLAYLIST_TYPE_TAG_FLAG_EVENT : 0;
         this->flags |= (wcscmp(playlistType, PLAYLIST_TYPE_VOD) == 0) ? PLAYLIST_TYPE_TAG_FLAG_VOD : 0;

@@ -34,9 +34,19 @@ if (SUCCEEDED(continueParsing) && (tag == NULL) && (wcscmp(tempTag->GetTag(), ta
                                                                                                                     \
   if (SUCCEEDED(continueParsing))                                                                                   \
   {                                                                                                                 \
-    if (specificTag->ParseGeneralTag(tempTag, version))                                                             \
+    HRESULT res = specificTag->ParseGeneralTag(tempTag, version);                                                   \
+                                                                                                                    \
+    switch (res)                                                                                                    \
     {                                                                                                               \
+    case S_OK:                                                                                                      \
       tag = specificTag;                                                                                            \
+      break;                                                                                                        \
+    case E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE:                                                                       \
+    case E_M3U8_NOT_SUPPORTED_TAG:                                                                                  \
+      break;                                                                                                        \
+    default:                                                                                                        \
+      continueParsing = res;                                                                                        \
+      break;                                                                                                        \
     }                                                                                                               \
   }                                                                                                                 \
                                                                                                                     \

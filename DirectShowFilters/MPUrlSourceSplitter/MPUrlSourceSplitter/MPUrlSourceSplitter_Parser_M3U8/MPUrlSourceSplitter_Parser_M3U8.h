@@ -25,7 +25,9 @@
 
 #include "ParserPlugin.h"
 
-#define PARSER_NAME                                               L"PARSER_M3U8"
+#define PARSER_NAME                                                   L"PARSER_M3U8"
+
+#define PARSER_STORE_FILE_NAME_PART                                   L"mpurlsourcesplitter_parser_m3u8"
 
 class CMPUrlSourceSplitter_Parser_M3U8 : public CParserPlugin
 {
@@ -79,10 +81,9 @@ protected:
 
   /* methods */
 
-  // gets store file name
-  // @param extension : the extension of store file
-  // @return : store file name or NULL if error
-  virtual wchar_t *GetStoreFile(const wchar_t *extension);
+  // gets store file name part
+  // @return : store file name part or NULL if error
+  virtual const wchar_t *GetStoreFileNamePart(void);
 };
 
 #endif

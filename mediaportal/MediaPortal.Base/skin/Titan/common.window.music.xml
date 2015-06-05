@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 <controls>
-    <!--            :: BACKGROUNDS ::           	 -->
-    
-    <control>
-      <description>DEFAULT BACKGROUND</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>0</posX>
-      <posY>0</posY>
-      <width>1920</width>
-      <height>1080</height>
-      <texture>background.png</texture>
-      <shouldCache>true</shouldCache>
-    </control>
-
-		<!--            :: Fanart ::            -->	
-	
+	<!--            :: BACKGROUNDS ::           	 -->
+  <control>
+    <description>DEFAULT BACKGROUND</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1920</width>
+    <height>1080</height>
+    <texture>background.png</texture>
+    <shouldCache>true</shouldCache>
+  </control>
+	<!--            :: Fanart ::            -->	
 	<control>
 		<description>DUMMY CONTROLL FOR FANART VISIBILITY CONDITION</description>
 		<type>label</type>
@@ -25,7 +22,6 @@
 		<posY>0</posY>
 		<width>1</width>	
 	</control>
-
 	<control>
 		<description>DUMMY CONTROLL FOR FANART VISIBILITY CONDITION</description>
 		<type>label</type>
@@ -34,7 +30,6 @@
 		<posY>0</posY>
 		<width>1</width>	
 	</control>
-
 	<control>
 		<description>DUMMY CONTROLL FOR FANART AVAILABILITY CONDITION</description>
 		<type>label</type>
@@ -44,15 +39,14 @@
 		<width>1</width>	
 		<visible>no</visible>
 	</control>		   	   
-
 	<control>
 		<description>FANART BACKGROUND 1</description>
 		<id>897686</id>
 		<type>image</type>
-        <posX>0</posX>
-        <posY>0</posY>
-        <width>1920</width>
-        <height>1080</height>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1920</width>
+    <height>1080</height>
 		<keepaspectratio>no</keepaspectratio>
 		<centered>yes</centered>
 		<zoom>yes</zoom>
@@ -63,15 +57,14 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
-
 	<control>
 		<description>FANART BACKGROUND 2</description>
 		<id>897687</id>
 		<type>image</type>
-        <posX>0</posX>
-        <posY>0</posY>
-        <width>1920</width>
-        <height>1080</height>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1920</width>
+    <height>1080</height>
 		<keepaspectratio>no</keepaspectratio>
 		<centered>yes</centered>
 		<zoom>yes</zoom>
@@ -82,23 +75,20 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>		
-	
-		<!--            :: Overlays ::            -->	
-		
- 	<control>
+	<!--            :: Overlays ::            -->	
+	<control>
 		<description>fanart overlay</description>
 		<type>image</type>
 		<id>0</id>
 		<posX>0</posX>
-        <posY>0</posY>
+    <posY>0</posY>
 		<width>1920</width>
 		<height>1080</height>
 		<texture>fanart_overlay.png</texture>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
-        
-	<control>
+  <control>
 		<description>background listview</description>
 		<type>image</type>
 		<id>0</id>
@@ -111,7 +101,6 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
-	
 	<control>
 		<description>viewport thumbs</description>
 		<type>image</type>
@@ -125,7 +114,6 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>	
-	
 	<control>
 		<description>filmstrip overlay</description>
 		<type>image</type>
@@ -138,7 +126,6 @@
 		<visible>[facadeview.filmstrip|facadeview.coverflow] + Control.IsVisible(50)</visible>
 		<animation effect="fade" time="0">WindowClose</animation>
 	</control>
-	
 	<control>
 		<description>filmstrip overlay</description>
 		<type>image</type>
@@ -152,9 +139,7 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
-	
 	<!--            :: Selected Item ::            -->
-
 	<control Style="smallTitle">
 		<description>Selected item Label</description>
 		<type>fadelabel</type>
@@ -166,6 +151,5 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
-
 </controls>
 </window>

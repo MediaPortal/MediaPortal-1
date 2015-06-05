@@ -146,6 +146,18 @@ bool CAfhsCurlInstance::IsLockedCurlInstanceByOwner(void *owner)
   return (this->owner == owner);
 }
 
+void CAfhsCurlInstance::ClearSession(void)
+{
+  __super::ClearSession();
+
+  this->owner = NULL;
+  this->ownerLockCount = 0;
+  this->connectionState = None;
+
+  this->afhsDownloadRequest = NULL;
+  this->afhsDownloadResponse = NULL;
+}
+
 /* protected methods */
 
 CDownloadResponse *CAfhsCurlInstance::CreateDownloadResponse(void)

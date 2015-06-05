@@ -29,6 +29,8 @@
 #include "ParserPluginConfiguration.h"
 #include "Parameters.h"
 
+#include <Shlwapi.h>
+
 #pragma warning(pop)
 
 CParserPlugin::CParserPlugin(HRESULT *result, CLogger *logger, CParameterCollection *configuration)
@@ -214,6 +216,16 @@ void CParserPlugin::SetPauseSeekStopMode(unsigned int pauseSeekStopMode)
   this->protocolHoster->SetPauseSeekStopMode(pauseSeekStopMode);
 }
 
+unsigned int CParserPlugin::GetIptvSectionCount(void)
+{
+  return 0;
+}
+
+HRESULT CParserPlugin::GetIptvSection(unsigned int index, wchar_t **section)
+{
+  return E_NOTIMPL;
+}
+
 /* set methods */
 
 HRESULT CParserPlugin::SetConnectionParameters(const CParameterCollection *parameters)
@@ -225,14 +237,16 @@ HRESULT CParserPlugin::SetConnectionParameters(const CParameterCollection *param
 
   if (SUCCEEDED(result))
   {
-    this->flags &= ~(PARSER_PLUGIN_FLAG_DUMP_INPUT_DATA | PARSER_PLUGIN_FLAG_DUMP_OUTPUT_DATA);
+    this->flags &= ~(PARSER_PLUGIN_FLAG_DUMP_INPUT_DATA | PARSER_PLUGIN_FLAG_DUMP_OUTPUT_DATA | PLUGIN_FLAG_SPLITTER | PLUGIN_FLAG_IPTV);
 
+    this->flags |= this->connectionParameters->GetValueBool(PARAMETER_NAME_SPLITTER, true, PARAMETER_NAME_SPLITTER_DEFAULT) ? PLUGIN_FLAG_SPLITTER : PROTOCOL_PLUGIN_FLAG_NONE;
+    this->flags |= this->connectionParameters->GetValueBool(PARAMETER_NAME_IPTV, true, PARAMETER_NAME_IPTV_DEFAULT) ? PLUGIN_FLAG_IPTV : PROTOCOL_PLUGIN_FLAG_NONE;
     this->flags |= this->connectionParameters->GetValueBool(PARAMETER_NAME_DUMP_PARSER_INPUT_DATA, true, PARAMETER_NAME_DUMP_PARSER_INPUT_DATA_DEFAULT) ? PARSER_PLUGIN_FLAG_DUMP_INPUT_DATA : PARSER_PLUGIN_FLAG_NONE;
     this->flags |= this->connectionParameters->GetValueBool(PARAMETER_NAME_DUMP_PARSER_OUTPUT_DATA, true, PARAMETER_NAME_DUMP_PARSER_OUTPUT_DATA_DEFAULT) ? PARSER_PLUGIN_FLAG_DUMP_OUTPUT_DATA : PARSER_PLUGIN_FLAG_NONE;
 
-    if (this->IsSetAnyOfFlags(PARSER_PLUGIN_FLAG_DUMP_INPUT_DATA | PARSER_PLUGIN_FLAG_DUMP_OUTPUT_DATA))
+    if (this->IsDumpInputData() || this->IsDumpOutputData())
     {
-      wchar_t *storeFilePath = this->GetStoreFile(L"dump");
+      wchar_t *storeFilePath = this->GetDumpFile();
       CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->dumpFile->SetDumpFile(storeFilePath));
       FREE_MEM(storeFilePath);
     }
@@ -288,4 +302,75 @@ bool CParserPlugin::IsStreamIptvCompatible(void)
   return false;
 }
 
+bool CParserPlugin::IsDumpInputData(void)
+{
+  return this->IsSetFlags(PARSER_PLUGIN_FLAG_DUMP_INPUT_DATA);
+}
+
+bool CParserPlugin::IsDumpOutputData(void)
+{
+  return this->IsSetFlags(PARSER_PLUGIN_FLAG_DUMP_OUTPUT_DATA);
+}
+
 /* protected methods */
+
+wchar_t *CParserPlugin::GetCacheFile(const wchar_t *extra)
+{
+  wchar_t *result = NULL;
+  const wchar_t *folder = this->connectionParameters->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
+
+  if (folder != NULL)
+  {
+    wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
+
+    if (guid != NULL)
+    {
+      if (IsNullOrEmpty(extra))
+      {
+        result = FormatString(L"%s%s_%s.temp", folder, this->GetStoreFileNamePart(), guid);
+      }
+      else
+      {
+        result = FormatString(L"%s%s_%s_%s.temp", folder, this->GetStoreFileNamePart(), guid, extra);
+      }
+    }
+
+    FREE_MEM(guid);
+  }
+
+  return result;
+}
+
+wchar_t *CParserPlugin::GetDumpFile(const wchar_t *extra)
+{
+  wchar_t *result = NULL;
+  wchar_t *folder = Duplicate(this->connectionParameters->GetValue(PARAMETER_NAME_LOG_FILE_NAME, true, NULL));
+
+  if (folder != NULL)
+  {
+    PathRemoveFileSpec(folder);
+
+    wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
+    if (guid != NULL)
+    {
+      if (IsNullOrEmpty(extra))
+      {
+        result = FormatString(L"%s\\%s_%s.dump", folder, this->GetStoreFileNamePart(), guid);
+      }
+      else
+      {
+        result = FormatString(L"%s\\%s_%s_%s.dump", folder, this->GetStoreFileNamePart(), guid, extra);
+      }
+    }
+    FREE_MEM(guid);
+  }
+
+  FREE_MEM(folder);
+
+  return result;
+}
+
+wchar_t *CParserPlugin::GetDumpFile(void)
+{
+  return this->GetDumpFile(NULL);
+}

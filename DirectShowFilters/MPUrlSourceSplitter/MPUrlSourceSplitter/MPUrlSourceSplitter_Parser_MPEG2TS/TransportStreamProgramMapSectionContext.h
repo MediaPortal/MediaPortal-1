@@ -32,10 +32,12 @@
 
 #define TRANSPORT_STREAM_PROGRAM_MAP_PID_NOT_DEFINED                  0xFFFF
 
+class CTransportStreamProgramMapParserContext;
+
 class CTransportStreamProgramMapSectionContext : public CSectionContext
 {
 public:
-  CTransportStreamProgramMapSectionContext(HRESULT *result);
+  CTransportStreamProgramMapSectionContext(HRESULT *result, CTransportStreamProgramMapParserContext *parserContext);
   virtual ~CTransportStreamProgramMapSectionContext(void);
 
   /* get methods */
@@ -47,6 +49,10 @@ public:
   // gets updated section in section context
   // @return : updated section in section context (can be NULL if section is not complete)
   virtual CTransportStreamProgramMapSection *GetUpdatedSection(void);
+
+  // gets parser context
+  // @return : parser context or NULL if error
+  virtual CTransportStreamProgramMapParserContext *GetTransportStreamProgramMapParserContext(void);
 
   // gets transport stream program map PSI packet PID
   // @return : transport stream program map PSI packet PID

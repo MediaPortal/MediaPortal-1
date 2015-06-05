@@ -570,9 +570,10 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
 
             if (this->outputPinPackets->Count() > 0)
             {
-              if ((this->outputPinPackets->GetItem(0)->IsLoadedToMemory()) || (this->cacheFile->LoadItems(this->outputPinPackets, 0, true, this->outputPinPacketProcessed)))
+              COutputPinPacket *firstPacket = this->mediaPackets->GetItem(0);
+              if (firstPacket->IsEndOfStream() || firstPacket->IsLoadedToMemory() || (this->cacheFile->LoadItems(this->mediaPackets, 0, true, this->mediaPacketProcessed)))
               {
-                packet = this->outputPinPackets->GetItem(0);
+                packet = firstPacket;
 
                 // we don't want to remove content of output pin packet from memory
                 packet->SetNoCleanUpFromMemory(true, 0);
@@ -593,6 +594,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
 
               if (SUCCEEDED(result))
               {
+                this->logger->Log(LOGGER_INFO, L"%s: %s: pin '%s', delivered end of stream to connected pin", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName);
                 LOCK_MUTEX(this->outputPinPacketsLock, INFINITE)
 
                 // remove processed packet
@@ -729,7 +731,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
 
         if (this->cacheFile->GetCacheFile() == NULL)
         {
-          wchar_t *storeFilePath = this->GetStoreFile();
+          wchar_t *storeFilePath = this->GetCacheFile();
           CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->cacheFile->SetCacheFile(storeFilePath));
           FREE_MEM(storeFilePath);
         }
@@ -770,7 +772,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
   return S_OK;
 }
 
-wchar_t *CMPUrlSourceSplitterOutputPin::GetStoreFile(void)
+wchar_t *CMPUrlSourceSplitterOutputPin::GetCacheFile(void)
 {
   wchar_t *result = NULL;
   const wchar_t *folder = this->parameters->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);

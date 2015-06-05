@@ -32,7 +32,7 @@ namespace MediaPortal.InputDevices
   /// <summary>
   /// Summary description for FireDTVRemote.
   /// </summary>
-  public class FireDTVRemote
+  public class FireDTVRemote : IInputDevice
   {
     #region Private Variables
 
@@ -93,6 +93,7 @@ namespace MediaPortal.InputDevices
         {
           _enabled = ((xmlreader.GetValueAsBool("remote", "FireDTV", false)));
           _name = xmlreader.GetValueAsString("remote", "FireDTVDeviceName", string.Empty);
+          _logVerbose = xmlreader.GetValueAsBool("remote", "FireDTVVerboseLog", false);
           if (!_enabled)
           {
             return;
@@ -130,6 +131,26 @@ namespace MediaPortal.InputDevices
       {
         _fireDTV.CloseDrivers();
       }
+    }
+
+    /// <summary>
+    /// Get the mapping for this wndproc action
+    /// </summary>
+    /// <param name="msg"></param>
+    /// <returns></returns>
+    public MediaPortal.InputDevices.InputHandler.Mapping GetMapping(Message msg)
+    {
+      if (_enabled && ((FireDTVConstants.FireDTVWindowMessages) msg.Msg == FireDTVConstants.FireDTVWindowMessages.RemoteControlEvent))
+      {
+        int remoteKeyCode = msg.LParam.ToInt32();
+        if (_logVerbose)
+        {
+          Log.Info("FireDTVRemote: GetMapping {0}", remoteKeyCode);
+        }
+
+        return _inputHandler.GetMapping(remoteKeyCode.ToString());
+      }
+      return null;
     }
 
     public bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)

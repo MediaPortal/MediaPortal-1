@@ -128,6 +128,16 @@ public:
   // @return : true if stream is IPTV compatible, false otherwise
   bool IsStreamIptvCompatible(void);
 
+  // gets IPTV section count
+  // @return : IPTV section count
+  unsigned int GetIptvSectionCount(void);
+
+  // gets IPTV section with specified index
+  // @param index : the index of IPTV section to get
+  // @param section : the reference to string which holds section data in BASE64 encoding
+  // @return : S_OK if successful
+  HRESULT GetIptvSection(unsigned int index, wchar_t **section);
+
 protected:
   // hoster for all protocols
   CProtocolHoster *protocolHoster;

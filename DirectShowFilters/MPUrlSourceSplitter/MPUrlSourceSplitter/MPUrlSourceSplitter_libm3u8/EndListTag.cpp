@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "EndListTag.h"
+#include "ErrorCodes.h"
 
 CEndListTag::CEndListTag(HRESULT *result)
   : CTag(result)
@@ -57,15 +58,15 @@ bool CEndListTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection 
   return false;
 }
 
-bool CEndListTag::ParseTag(unsigned int version)
+HRESULT CEndListTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag(version);
+  HRESULT result = __super::ParseTag(version);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     // successful parsing of tag
     // compare it to our tag
-    result &= (wcscmp(this->tag, TAG_END_LIST) == 0);
+    CHECK_CONDITION_HRESULT(result, wcscmp(this->tag, TAG_END_LIST) == 0, result, E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE);
   }
 
   return result;

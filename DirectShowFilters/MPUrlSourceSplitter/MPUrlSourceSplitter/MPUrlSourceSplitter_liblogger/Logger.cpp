@@ -25,6 +25,8 @@
 #include "LockMutex.h"
 #include "StaticLogger.h"
 
+#include "hex.h"
+
 #include <assert.h>
 #include <stdio.h>
 
@@ -116,7 +118,17 @@ void CLogger::Log(unsigned int level, const wchar_t *format, ...)
   va_list vl;
   va_start(vl, format);
 
-  this->Log(level, format, vl);
+  this->Log(level, NULL, 0, false, format, vl);
+
+  va_end(vl);
+}
+
+void CLogger::LogBinary(unsigned int logLevel, const unsigned char *data, unsigned int size, const wchar_t *format, ...)
+{
+  va_list vl;
+  va_start(vl, format);
+
+  this->Log(logLevel, data, size, true, format, vl);
 
   va_end(vl);
 }
@@ -160,7 +172,7 @@ const wchar_t *CLogger::GetLogLevel(unsigned int level)
   }
 }
 
-wchar_t *CLogger::GetLogMessage(unsigned int level, const wchar_t *format, va_list vl)
+wchar_t *CLogger::GetLogMessage(unsigned int level, const unsigned char *data, unsigned int size, bool dataSpecified, const wchar_t *format, va_list vl)
 {
   SYSTEMTIME systemTime;
   GetLocalTime(&systemTime);
@@ -173,15 +185,62 @@ wchar_t *CLogger::GetLogMessage(unsigned int level, const wchar_t *format, va_li
   }
 
   wchar_t *guid = ConvertGuidToString(this->loggerInstance);
+  wchar_t *logRow = NULL;
 
-  wchar_t *logRow = FormatString(L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%4x] [%s] %s %s\r\n",
-    systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-    systemTime.wHour, systemTime.wMinute, systemTime.wSecond,
-    systemTime.wMilliseconds,
-    GetCurrentThreadId(),
-    guid,
-    CLogger::GetLogLevel(level),
-    buffer);
+  if (dataSpecified)
+  {
+    wchar_t *dumpData = NULL;
+
+    if ((data != NULL) && (size != 0))
+    {
+      // every byte is in HEX encoding plus space
+      // every 32 bytes is new line
+      // add one character for null terminating character
+      unsigned int dumpDataLength = size * 3 + ((size / 32) + 1) * 2 + 1;
+      dumpData = ALLOC_MEM_SET(dumpData, wchar_t, dumpDataLength, 0);
+
+      if (dumpData != NULL)
+      {
+        unsigned int outputPosition = 0;
+        for (unsigned int i = 0; i < size; i++)
+        {
+          dumpData[outputPosition++] = get_charW(data[i] >> 4);
+          dumpData[outputPosition++] = get_charW(data[i] & 0x0F);
+          dumpData[outputPosition++] = L' ';
+
+          if (((i % 32) == 0x1F) && (i != (size - 1)))
+          {
+            dumpData[outputPosition++] = L'\r';
+            dumpData[outputPosition++] = L'\n';
+          }
+        }
+      }
+    }
+    
+    logRow = FormatString(L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%4x] [%s] %s %s\r\nBinary data size: %u\r\n%s\r\n",
+      systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+      systemTime.wHour, systemTime.wMinute, systemTime.wSecond,
+      systemTime.wMilliseconds,
+      GetCurrentThreadId(),
+      guid,
+      CLogger::GetLogLevel(level),
+      buffer,
+      size,
+      (dumpData == NULL) ? L"NULL" : dumpData);
+
+    FREE_MEM(dumpData);
+  }
+  else
+  {
+    logRow = FormatString(L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%4x] [%s] %s %s\r\n",
+      systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+      systemTime.wHour, systemTime.wMinute, systemTime.wSecond,
+      systemTime.wMilliseconds,
+      GetCurrentThreadId(),
+      guid,
+      CLogger::GetLogLevel(level),
+      buffer);
+  }
 
   FREE_MEM(guid);
   FREE_MEM(buffer);
@@ -197,11 +256,11 @@ void CLogger::LogMessage(unsigned int logLevel, const wchar_t *message)
   }
 }
 
-void CLogger::Log(unsigned int level, const wchar_t *format, va_list vl)
+void CLogger::Log(unsigned int level, const unsigned char *data, unsigned int size, bool dataSpecified, const wchar_t *format, va_list vl)
 {
   if (level <= this->allowedLogVerbosity)
   {
-    wchar_t *logRow = this->GetLogMessage(level, format, vl);
+    wchar_t *logRow = this->GetLogMessage(level, data, size, dataSpecified, format, vl);
 
     if (logRow != NULL)
     {

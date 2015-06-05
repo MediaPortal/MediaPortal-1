@@ -48,6 +48,8 @@
 !define git_InstallScripts "${git_ROOT}\Tools\InstallationScripts"
 # common script init
 !include "${git_InstallScripts}\include\MediaPortalScriptInit.nsh"
+# NET4.0 Checking
+!include "${git_InstallScripts}\include\DotNetSearch.nsh"
 
 # additional path definitions
 !define TVSERVER.BASE "${git_TVServer}\TVServer.Base"
@@ -278,6 +280,54 @@ ShowUninstDetails show
   ${EndIf}
 !macroend
 
+!macro SecMpeInstaller
+  ${LOG_TEXT} "INFO" "MediaPortal Extension Manager..."
+
+  ; install files
+  SetOutPath "$INSTDIR"
+  File "${git_MP}\MPE\MpeCore\bin\${BUILD_TYPE}\MpeCore.dll"
+  File "${git_MP}\MPE\MpeInstaller\bin\${BUILD_TYPE}\MpeInstaller.exe"
+  ;File "${git_MP}\MPE\MpeMaker\bin\${BUILD_TYPE}\MpeMaker.exe"
+  File "${git_MP}\Utils\bin\${BUILD_TYPE}\Utils.dll"
+  File "${git_MP}\core\bin\${BUILD_TYPE}\Core.dll"
+  File "${git_MP}\MediaPortal.Base\CSScriptLibrary.dll"
+
+  ; create startmenu shortcuts
+  ${If} $noDesktopSC != 1
+    CreateShortCut "$DESKTOP\MediaPortal Extension Manager.lnk" "$INSTDIR\MpeInstaller.exe"  ""  "$INSTDIR\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager"
+  ${EndIf}
+  CreateDirectory "${STARTMENU_GROUP}"
+  CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk" "$INSTDIR\MpeInstaller.exe"  ""  "$INSTDIR\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager"
+
+  ; associate file extensions
+  ${RegisterExtension} "$INSTDIR\MpeInstaller.exe" ".mpe1" "MediaPortal extension"
+
+  ${RefreshShellIcons}
+!macroend
+
+!macro Remove_SecMpeInstaller
+  ${LOG_TEXT} "INFO" "Uninstalling MediaPortal Extension Manager..."
+
+  ; remove files
+  Delete "$INSTDIR\MpeCore.dll"
+  Delete "$INSTDIR\MpeInstaller.exe"
+  Delete "$INSTDIR\MpeMaker.exe"
+  Delete "$INSTDIR\Utils.dll"
+  Delete "$INSTDIR\Core.dll"
+  Delete "$INSTDIR\CSScriptLibrary.dll"
+
+  ; remove startmenu shortcuts
+  Delete "$DESKTOP\MediaPortal Extension Manager.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk"
+  ;Delete "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"
+
+  ; unassociate file extensions
+  ${UnRegisterExtension} ".mpe1" "MediaPortal extension"
+  ${UnRegisterExtension} ".xmp2"  "MediaPortal extension project"
+
+  ${RefreshShellIcons}
+!macroend
+
 Function RunUninstaller
 
   ${VersionCompare} 1.0.2.22779 $PREVIOUS_VERSION $R0
@@ -364,6 +414,10 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ${KillProcess} "SetupTv.exe"
   ; ffmpeg
   ${KillProcess} "ffmpeg.exe"
+  
+  ${IfNot} ${MPIsInstalled}
+    !insertmacro SecMpeInstaller
+  ${EndIf}
 
   SetOverwrite on
 
@@ -443,7 +497,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\MediaInfo.dll"
 
   ; thumbnail software
-  File "${TVSERVER.BASE}\ffmpeg.exe"
+  File "${git_ROOT}\Packages\ffmpeg.2.1.1\ffmpeg.exe"
   File "${git_TVServer}\TvThumbnails\bin\${BUILD_TYPE}\TvThumbnails.dll"
   
 
@@ -657,6 +711,11 @@ ${MementoSectionEnd}
   Delete "${STARTMENU_GROUP}\web site.url"
   ; remove Desktop shortcuts
   Delete "$DESKTOP\TV-Server Configuration.lnk"
+  
+  ${IfNot} ${MPIsInstalled}
+    !insertmacro Remove_SecMpeInstaller
+  ${EndIf}
+  
 !macroend
 
 ${MementoSection} "MediaPortal TV Client plugin" SecClient
@@ -936,6 +995,8 @@ Function .onInit
   ${LOG_OPEN}
   ${LOG_TEXT} "DEBUG" "FUNCTION .onInit"
 
+  !insertmacro MediaPortalNetFrameworkCheck
+  !insertmacro MediaPortalNet4FrameworkCheck
 
   #### check and parse cmdline parameter
   ; set default values for parameters ........

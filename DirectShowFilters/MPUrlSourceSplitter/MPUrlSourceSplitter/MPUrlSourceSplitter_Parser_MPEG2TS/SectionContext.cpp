@@ -22,7 +22,7 @@
 
 #include "SectionContext.h"
 
-CSectionContext::CSectionContext(HRESULT *result)
+CSectionContext::CSectionContext(HRESULT *result, CParserContext *parserContext)
   : CFlags()
 {
   this->flags = SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_EMPTY;
@@ -31,12 +31,19 @@ CSectionContext::CSectionContext(HRESULT *result)
   this->packetCount = 0;
   this->continuityCounter = 0;
   this->packets = NULL;
+  this->parserContext = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->packets = new CTsPacketCollection(result);
+    CHECK_POINTER_DEFAULT_HRESULT(*result, parserContext);
 
-    CHECK_POINTER_HRESULT(*result, this->packets, *result, E_OUTOFMEMORY);
+    if (SUCCEEDED(*result))
+    {
+      this->parserContext = parserContext;
+      this->packets = new CTsPacketCollection(result);
+
+      CHECK_POINTER_HRESULT(*result, this->packets, *result, E_OUTOFMEMORY);
+    }
   }
 }
 
@@ -74,6 +81,11 @@ CTsPacketCollection *CSectionContext::GetPackets(void)
   return this->packets;
 }
 
+CParserContext *CSectionContext::GetParserContext(void)
+{
+  return this->parserContext;
+}
+
 /* set methods */
 
 bool CSectionContext::SetOriginalSection(CSection *section)
@@ -108,6 +120,12 @@ void CSectionContext::SetOriginalSectionError(bool sectionError)
   this->flags |= sectionError ? SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_ERROR : SECTION_CONTEXT_FLAG_NONE;
 }
 
+void CSectionContext::SetOriginalSectionIsSection(bool isSection)
+{
+  this->flags &= ~SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_IS_SECTION;
+  this->flags |= isSection ? SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_IS_SECTION : SECTION_CONTEXT_FLAG_NONE;
+}
+
 void CSectionContext::SetPacketCount(unsigned int packetCount)
 {
   this->packetCount = packetCount;
@@ -138,6 +156,11 @@ bool CSectionContext::IsOriginalSectionComplete(void)
 bool CSectionContext::IsOriginalSectionError(void)
 {
   return this->IsSetFlags(SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_ERROR);
+}
+
+bool CSectionContext::IsOriginalSectionIsSection(void)
+{
+  return this->IsSetFlags(SECTION_CONTEXT_FLAG_ORIGINAL_SECTION_IS_SECTION);
 }
 
 /* protected methods */

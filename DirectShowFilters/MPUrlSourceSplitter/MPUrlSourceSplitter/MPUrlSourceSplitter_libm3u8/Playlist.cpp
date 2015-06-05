@@ -120,7 +120,6 @@ HRESULT CPlaylist::Parse(const wchar_t *buffer, unsigned int length)
       CHECK_POINTER_HRESULT(result, item, result, E_OUTOFMEMORY);
 
       // in playlist can be only tag or playlist item
-      // skip everything else (comments, empty lines, ...)
 
       if (SUCCEEDED(result) && (!this->IsSetFlags(PLAYLIST_FLAG_DETECTED_HEADER)) && item->IsTag())
       {
@@ -159,7 +158,15 @@ HRESULT CPlaylist::Parse(const wchar_t *buffer, unsigned int length)
     FREE_MEM_CLASS(factory);
   }
 
-  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->ParseItemsInternal());
+  if (SUCCEEDED(result) || IS_M3U8_PARSE_ERROR(result))
+  {
+    // parse internal items to get header and version (if possible)
+    // header is required to check if it is playlist or not
+    HRESULT res = this->ParseItemsInternal();
+
+    // preserve parse error
+    result = (SUCCEEDED(result)) ? res : result;
+  }
 
   return result;
 }

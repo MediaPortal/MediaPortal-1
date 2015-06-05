@@ -32,7 +32,7 @@
 
 #define PROGRAM_ASSOCIATION_PARSER_FLAG_LAST                          (PARSER_FLAG_LAST + 1)
 
-#define PROGRAM_ASSOCIATION_PARSER_PSI_PACKET_PID                    0x0000
+#define PROGRAM_ASSOCIATION_PARSER_PSI_PACKET_PID                     0x0000
 
 class CProgramAssociationParser : public CParser
 {

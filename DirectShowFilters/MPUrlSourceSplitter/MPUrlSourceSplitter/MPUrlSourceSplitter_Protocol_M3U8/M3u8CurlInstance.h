@@ -69,6 +69,9 @@ public:
   // @return : true if successful, false otherwise
   virtual HRESULT Initialize(CDownloadRequest *downloadRequest);
 
+  // clears session
+  virtual void ClearSession(void);
+
   // lock M3U8 CURL instance for specific owner
   // only owner can unlock instance for other use
   // @param owner : the requested owner to lock instance

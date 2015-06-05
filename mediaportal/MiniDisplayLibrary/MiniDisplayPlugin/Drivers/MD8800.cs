@@ -34,7 +34,7 @@ using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class MD8800 : BaseDisplay, IDisplay
+  public class MD8800 : BaseDisplay
   {
     private bool _BlankDisplayOnExit;
     private Thread _DisplayThread;
@@ -76,7 +76,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.Initialize();
     }
 
-    public void CleanUp()
+    public override void CleanUp()
     {
       AdvancedSettings.OnSettingsChanged -=
         new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
@@ -108,7 +108,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.MD.ClearDisplay();
     }
 
-    public void Configure()
+    public override void Configure()
     {
       Form form = new MD8800_AdvancedSetupForm();
       form.ShowDialog();
@@ -156,11 +156,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             Log.Info("iMONLCDg.UpdateIcons(): Checking TV Card status: IsAnyCardRecording = {0}, IsViewing = {1}",
                      new object[]
                        {
-                         MiniDisplayHelper.IsCaptureCardRecording().ToString(),
-                         MiniDisplayHelper.IsCaptureCardViewing().ToString()
+                         MiniDisplayHelper.MPStatus.Media_IsRecording.ToString(),
+                         MiniDisplayHelper.MPStatus.Media_IsTV.ToString()
                        });
           }
-          if (MiniDisplayHelper.IsCaptureCardRecording())
+          if (MiniDisplayHelper.MPStatus.Media_IsRecording)
           {
             iconBitmap |= 0x100;
             if (this.DoDebug)
@@ -168,7 +168,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Log.Info("iMONLCDg.UpdateIcons(): Setting RECORDING icon");
             }
           }
-          else if (MiniDisplayHelper.IsCaptureCardViewing())
+          else if (MiniDisplayHelper.MPStatus.Media_IsTV)
           {
             iconBitmap |= 0x20;
             if (this.DoDebug)
@@ -225,7 +225,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Log.Info("iMONLCDg.UpdateIcons(): Setting PAUSED icon");
             }
           }
-          if (!this.MPStatus.MediaPlayer_Playing & !MiniDisplayHelper.IsCaptureCardViewing())
+          if (!this.MPStatus.MediaPlayer_Playing & !MiniDisplayHelper.MPStatus.Media_IsTV)
           {
             iconBitmap |= 0x400;
           }
@@ -295,14 +295,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
       this.MD.CloseDisplay(this._BlankDisplayOnExit);
     }
 
-    public void DrawImage(Bitmap bitmap) {}
+    public override void DrawImage(Bitmap bitmap) { }
 
-    public void Initialize()
+    public override void Initialize()
     {
       if (this._IsDisabled)
       {
@@ -428,9 +428,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters) {}
+    public override void SetCustomCharacters(int[][] customCharacters) { }
 
-    public void SetLine(int line, string message)
+    public override void SetLine(int line, string message, ContentAlignment aAlignment)
     {
       if (this._IsDisabled)
       {
@@ -513,7 +513,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
+    public override void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
                       bool _backLight, int _backLightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit)
     {
       this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
@@ -565,7 +565,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private void ShowVolumeLevel()
     {
       this.volLevel = 0;
-      if (this.MPStatus.MediaPlayer_Playing || MiniDisplayHelper.IsCaptureCardViewing())
+      if (this.MPStatus.MediaPlayer_Playing || MiniDisplayHelper.MPStatus.Media_IsTV)
       {
         try
         {
@@ -620,32 +620,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public string Description
+    public override string Description
     {
       get { return "Medion MD8800 (Dritek) VFD driver v04_17_2008"; }
     }
 
-    public string ErrorMessage
+    public override string ErrorMessage
     {
       get { return this._ErrorMessage; }
     }
 
-    public bool IsDisabled
+    public override bool IsDisabled
     {
       get { return this._IsDisabled; }
     }
 
-    public string Name
+    public override string Name
     {
       get { return "MD8800"; }
     }
 
-    public bool SupportsGraphics
+    public override bool SupportsGraphics
     {
       get { return false; }
     }
 
-    public bool SupportsText
+    public override bool SupportsText
     {
       get { return true; }
     }

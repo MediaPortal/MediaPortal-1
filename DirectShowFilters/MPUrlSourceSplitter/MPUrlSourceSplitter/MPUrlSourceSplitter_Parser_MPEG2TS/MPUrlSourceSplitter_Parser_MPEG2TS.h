@@ -27,10 +27,10 @@
 #include "CacheFile.h"
 #include "Mpeg2tsStreamFragmentCollection.h"
 #include "DiscontinuityParser.h"
-#include "ProgramAssociationParser.h"
-#include "ProgramAssociationSectionContext.h"
-#include "TransportStreamProgramMapParser.h"
-#include "TransportStreamProgramMapSectionContext.h"
+#include "ProgramAssociationParserContext.h"
+#include "TransportStreamProgramMapParserContextCollection.h"
+#include "SectionCollection.h"
+#include "ConditionalAccessParserContext.h"
 
 #define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_NONE               PARSER_PLUGIN_FLAG_NONE
 
@@ -43,9 +43,20 @@
 #define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_NUMBER            (1 << (PARSER_PLUGIN_FLAG_LAST + 4))
 #define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID           (1 << (PARSER_PLUGIN_FLAG_LAST + 5))
 
-#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_LAST               (PARSER_PLUGIN_FLAG_LAST + 6)
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_SET_NOT_SCRAMBLED                (1 << (PARSER_PLUGIN_FLAG_LAST + 6))
+
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FILTER_PROGRAM_ELEMENTS          (1 << (PARSER_PLUGIN_FLAG_LAST + 7))
+
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_STREAM_ANALYSIS                  (1 << (PARSER_PLUGIN_FLAG_LAST + 8))
+
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FOUND_PAT                        (1 << (PARSER_PLUGIN_FLAG_LAST + 9))
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FOUND_PMT                        (1 << (PARSER_PLUGIN_FLAG_LAST + 10))
+
+#define MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_LAST               (PARSER_PLUGIN_FLAG_LAST + 11)
 
 #define PARSER_NAME                                                   L"PARSER_MPEG2TS"
+
+#define PARSER_STORE_FILE_NAME_PART                                   L"mpurlsourcesplitter_parser_mpeg2ts"
 
 class CMPUrlSourceSplitter_Parser_Mpeg2TS : public CParserPlugin
 {
@@ -91,9 +102,23 @@ public:
   // @return : true if end of stream reached, false otherwise
   virtual bool IsEndOfStreamReached(void);
 
+  // tests if connection was lost and can't be opened again
+  // @return : true if connection was lost and can't be opened again, false otherwise
+  virtual bool IsConnectionLostCannotReopen(void);
+
   // tests if stream is IPTV compatible
   // @return : true if stream is IPTV compatible, false otherwise
   virtual bool IsStreamIptvCompatible(void);
+
+  // gets IPTV section count
+  // @return : IPTV section count
+  virtual unsigned int GetIptvSectionCount(void);
+
+  // gets IPTV section with specified index
+  // @param index : the index of IPTV section to get
+  // @param section : the reference to string which holds section data in BASE64 encoding
+  // @return : S_OK if successful
+  virtual HRESULT GetIptvSection(unsigned int index, wchar_t **section);
 
   // CPlugin
 
@@ -185,20 +210,20 @@ protected:
   // holds discontinuity parser
   CDiscontinuityParser *discontinuityParser;
 
-  // holds program association (PAT) parser
-  CProgramAssociationParser *programAssociationParser;
-  // holds program association section context
-  CProgramAssociationSectionContext *programAssociationSectionContext;
-
-  // holds transport stream program map (PMT) parser
-  CTransportStreamProgramMapParser *transportStreamProgramMapParser;
-  // holds transport stream program map section context
-  CTransportStreamProgramMapSectionContext *transportStreamProgramMapSectionContext;
+  // holds program association (PAT) parser with program association section context
+  CProgramAssociationParserContext *programAssociationParserContext;
+  // holds collection of transport stream program map (PMT) parser with transport stream program map section context
+  CTransportStreamProgramMapParserContextCollection *transportStreamProgramMapParserContextCollection;
+  // holds conditional access (CA) parser with conditional access section context
+  CConditionalAccessParserContext *conditionalAccessParserContext;
 
   // holds new stream identification (transport stream ID, program number and program map PID)
   unsigned int transportStreamId;
   unsigned int programNumber;
   unsigned int programMapPID;
+
+  // holds sections
+  CSectionCollection *sections;
 
   /* received data worker */
 
@@ -207,10 +232,9 @@ protected:
 
   /* methods */
 
-  // gets store file name
-  // @param extension : the extension of store file
-  // @return : store file name or NULL if error
-  virtual wchar_t *GetStoreFile(const wchar_t *extension);
+  // gets store file name part
+  // @return : store file name part or NULL if error
+  virtual const wchar_t *GetStoreFileNamePart(void);
 
   // gets byte position in buffer
   // it is always reset on seek

@@ -555,6 +555,7 @@
       <height>70</height>
       <imagepath>Animations\LedVu</imagepath>
       <texture>#VUMeterL</texture>
+      <shouldCache>true</shouldCache>
       <visible>Player.HasAudio+Player.playing+!Player.paused</visible>
     </control>
     <control>
@@ -576,6 +577,7 @@
       <height>70</height>
       <imagepath>Animations\LedVu</imagepath>
       <texture>#VUMeterR</texture>
+      <shouldCache>true</shouldCache>
       <visible>Player.HasAudio+Player.playing+!Player.paused</visible>
     </control>
   </controls>

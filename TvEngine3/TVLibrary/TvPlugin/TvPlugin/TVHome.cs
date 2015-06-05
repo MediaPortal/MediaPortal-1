@@ -94,8 +94,9 @@ namespace TvPlugin
       CardChange = 2,
       SeekToEnd = 4,
       SeekToEndAfterPlayback = 8
-    }    
-    
+    }
+
+    private static readonly SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
     private Channel _resumeChannel = null;
     private Thread heartBeatTransmitterThread = null;
     private static DateTime _updateProgressTimer = DateTime.MinValue;
@@ -333,9 +334,6 @@ namespace TvPlugin
       g_Player.AudioTracksReady += new g_Player.AudioTracksReadyHandler(OnAudioTracksReady);
 
       GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
-
-      // replace g_player's ShowFullScreenWindowTV
-      g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
 
       // Delete tv thumbs from local thumbs folder and file existence cache
       Log.Debug("TVHome.OnAdded: Delete thumb files in {0}", Thumbs.TVRecorded);
@@ -852,6 +850,8 @@ namespace TvPlugin
         newSchedule.Persist();
         server.OnNewSchedule();
       }
+      GUIMessage msgManualRecord = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MANUAL_RECORDING_STARTED, 0, 0, 0, 0, 0, null);
+      GUIWindowManager.SendMessage(msgManualRecord);
     }
 
     public static bool UseRTSP()
@@ -918,19 +918,26 @@ namespace TvPlugin
         return;
       }
 
-      pDlgOK.Reset();
-      pDlgOK.SetHeading(257); //error
-      if (Navigator != null && Navigator.CurrentChannel != null && g_Player.IsTV)
+      try
       {
-        pDlgOK.SetText(Navigator.CurrentChannel);
+        pDlgOK.Reset();
+        pDlgOK.SetHeading(257); //error
+        if (Navigator != null && Navigator.CurrentChannel != null && g_Player.IsTV)
+        {
+          pDlgOK.SetText(Navigator.CurrentChannel);
+        }
+        else
+        {
+          pDlgOK.SetText("");
+        }
+        pDlgOK.SetText(GUILocalizeStrings.Get(1510)); //Connection to TV server lost
+        pDlgOK.TimeOut = 5;
+        pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
       }
-      else
+      catch (Exception)
       {
-        pDlgOK.SetText("");
+        Log.Debug("TVHome: GUIDialogNotify null value catched");
       }
-      pDlgOK.SetText(GUILocalizeStrings.Get(1510)); //Connection to TV server lost
-      pDlgOK.TimeOut = 5;
-      pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
     }
 
     public static void ShowDlgThread()
@@ -1636,7 +1643,10 @@ namespace TvPlugin
 
       if (!_playbackStopped)
       {
-        g_Player.ShowFullScreenWindow();
+        _mainThreadContext.Send(delegate
+        {
+          g_Player.ShowFullScreenWindow();
+        }, null);
       }
     }
 
@@ -2010,25 +2020,27 @@ namespace TvPlugin
             pDlgOK.Reset();
             pDlgOK.SetHeading(605); //my tv
             pDlgOK.AddLocalizedString(875); //current program
-            pDlgOK.AddLocalizedString(876); //till manual stop
+
+            bool doesManuelScheduleAlreadyExist = DoesManualScheduleAlreadyExist(channel);
+            if (!doesManuelScheduleAlreadyExist)
+            {
+              pDlgOK.AddLocalizedString(876); //till manual stop
+            }
             pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
             switch (pDlgOK.SelectedId)
             {
               case 875:
                 //record current program                  
                 TVProgramInfo.CreateProgram(prog, (int)ScheduleRecordingType.Once, dialogId);
+                GUIMessage msgManualRecord = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MANUAL_RECORDING_STARTED, 0, 0, 0, 0, 0, null);
+                GUIWindowManager.SendMessage(msgManualRecord);
                 return true;
 
               case 876:
                 //manual
-                bool doesManuelScheduleAlreadyExist = DoesManualScheduleAlreadyExist(channel);
-                if (!doesManuelScheduleAlreadyExist)
-                {
-                  StartRecordingSchedule(channel, true);
-                  return true;
-                }
-                break;
-            }
+                StartRecordingSchedule(channel, true);
+                return true;
+             }
           }
         }
         else
@@ -2058,7 +2070,7 @@ namespace TvPlugin
 
         if (s != null && idChannel > 0)
         {
-          TVUtil.DeleteRecAndSchedWithPrompt(s, idChannel);
+          TVUtil.StopRecAndSchedWithPrompt(s, idChannel);
         }
       }
       return false;
@@ -2110,63 +2122,6 @@ namespace TvPlugin
       GUIControl.HideControl(GetID, (int)Controls.LABEL_REC_INFO);
       GUIControl.HideControl(GetID, (int)Controls.IMG_REC_RECTANGLE);
       GUIControl.HideControl(GetID, (int)Controls.IMG_REC_CHANNEL);
-    }
-
-    /// <summary>
-    /// This function replaces g_player.ShowFullScreenWindowTV
-    /// </summary>
-    /// <returns></returns>
-    private static bool ShowFullScreenWindowTVHandler()
-    {
-      if ((g_Player.IsTV && Card.IsTimeShifting) || g_Player.IsTVRecording)
-      {
-        //push chapter and jumppoint information into the gui property manager
-        if (g_Player.IsTVRecording && g_Player.HasChapters)
-        {
-          double[] chapters = g_Player.Chapters;
-          double[] jumppoints = g_Player.JumpPoints;
-          
-          string strChapters = string.Empty;
-          string strJumpPoints = string.Empty;
-          
-          double duration = g_Player.Duration;
-          if (chapters != null)
-          {
-            foreach(double chapter in chapters)
-            {
-              double chapterPercent = chapter/duration*100.0d;
-              strChapters += String.Format("{0:0.00}", chapterPercent) + " ";
-            }
-          }
-          if (jumppoints != null)
-          {
-            foreach (double jump in jumppoints)
-            {
-              double jumpPercent = jump/duration*100.0d;
-              strJumpPoints += String.Format("{0:0.00}", jumpPercent) + " ";
-            }
-          }
-          GUIPropertyManager.SetProperty("#TV.Record.chapters", strChapters);
-          GUIPropertyManager.SetProperty("#TV.Record.jumppoints", strJumpPoints);
-          Log.Debug("TVHome.ShowFullScreenWindowTVHandler - setting chapters: " + strChapters);
-          Log.Debug("TVHome.ShowFUllScreenWindowTVHandler - setting jumppoints: " + strJumpPoints);
-        }
-        else
-        {
-          GUIPropertyManager.SetProperty("#TV.Record.chapters", string.Empty);
-          GUIPropertyManager.SetProperty("#TV.Record.jumppoints", string.Empty);
-        }
-        // watching TV
-        if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_TVFULLSCREEN)
-        {
-          return true;
-        }
-        Log.Info("TVHome: ShowFullScreenWindow switching to fullscreen tv");
-        GUIWindowManager.ActivateWindow((int)Window.WINDOW_TVFULLSCREEN);
-        GUIGraphicsContext.IsFullScreenVideo = true;
-        return true;
-      }
-      return g_Player.ShowFullScreenWindowTVDefault();
     }
 
     public static void UpdateTimeShift() { }
@@ -2619,8 +2574,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.View.subtitle", current.EpisodeName);
         GUIPropertyManager.SetProperty("#TV.View.episode", current.EpisodeNumber);
         GUIPropertyManager.SetProperty("#TV.View.genre", current.Genre);
-        GUIPropertyManager.SetProperty("#TV.View.remaining",
-                                       Utils.SecondsToHMSString(current.EndTime - current.StartTime));
+        GUIPropertyManager.SetProperty("#TV.View.remaining",Utils.SecondsToHMSString(current.CalculateTimeRemaining()));
         SetTvThumbProperty(ch);
 
         TimeSpan ts = current.EndTime - current.StartTime;
@@ -2654,9 +2608,6 @@ namespace TvPlugin
           percentLivePoint *= 100.0d;
           GUIPropertyManager.SetProperty("#TV.View.Percentage", percentLivePoint.ToString());
           GUIPropertyManager.SetProperty("#TV.Record.percent3", percentLivePoint.ToString());
-        
-          GUIPropertyManager.SetProperty("#TV.Record.chapters", string.Empty);
-          GUIPropertyManager.SetProperty("#TV.Record.jumppoints", string.Empty);
         }
       }
 
@@ -2688,8 +2639,6 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.Record.percent2", "0");
       GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");
       GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Record.chapters", string.Empty);
-      GUIPropertyManager.SetProperty("#TV.Record.jumppoints", string.Empty);
     }
 
     private static void UpdateNextEpgProperties(Channel ch)

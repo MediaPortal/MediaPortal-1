@@ -146,6 +146,18 @@ bool CCurlInstance::SetDumpFile(const wchar_t *dumpFile)
   return this->dumpFile->SetDumpFile(dumpFile);
 }
 
+void CCurlInstance::SetDumpInputData(bool dumpInputData)
+{
+  this->flags &= ~CURL_INSTANCE_FLAG_DUMP_INPUT_DATA;
+  this->flags |= (dumpInputData) ? CURL_INSTANCE_FLAG_DUMP_INPUT_DATA : CURL_INSTANCE_FLAG_NONE;
+}
+
+void CCurlInstance::SetDumpOutputData(bool dumpOutputData)
+{
+  this->flags &= ~CURL_INSTANCE_FLAG_DUMP_OUTPUT_DATA;
+  this->flags |= (dumpOutputData) ? CURL_INSTANCE_FLAG_DUMP_OUTPUT_DATA : CURL_INSTANCE_FLAG_NONE;
+}
+
 /* other methods */
 
 HRESULT CCurlInstance::Initialize(CDownloadRequest *downloadRequest)
@@ -305,6 +317,193 @@ HRESULT CCurlInstance::Initialize(CDownloadRequest *downloadRequest)
   return result;
 }
 
+HRESULT CCurlInstance::StartReceivingData(void)
+{
+  // set last receive time of any data to avoid timeout in CurlWorker()
+  this->lastReceiveTime = GetTickCount();
+
+  return this->CreateCurlWorker();
+}
+
+HRESULT CCurlInstance::StopReceivingData(void)
+{
+  return this->DestroyCurlWorker();
+}
+
+HRESULT CCurlInstance::SetString(CURL *curl, CURLoption option, const wchar_t *string)
+{
+  char *multiByteString = ConvertToMultiByteW(string);
+  HRESULT result = ((string == NULL) || ((multiByteString != NULL) && (string != NULL))) ? S_OK : E_CONVERT_STRING_ERROR;
+
+  CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(curl, option, multiByteString)), result);
+
+  FREE_MEM(multiByteString);
+  return result;
+}
+
+HRESULT CCurlInstance::SendData(const unsigned char *data, unsigned int length, unsigned int timeout)
+{
+  unsigned int receivedData = 0;
+  HRESULT result = HRESULT_FROM_CURL_CODE(curl_easy_send(this->curl, data, length, &receivedData));
+
+  CHECK_CONDITION_EXECUTE_RESULT(result == HRESULT_FROM_CURL_CODE(CURLE_AGAIN), this->Select(false, true, timeout), result);
+  CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending data: 0x%08X", this->protocolName, L"SendData()", result));
+  return result;
+}
+
+HRESULT CCurlInstance::ReadData(unsigned char *data, unsigned int length)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, data);
+  CHECK_CONDITION_HRESULT(result, length != 0, result, E_INVALIDARG);
+
+  if (SUCCEEDED(result))
+  {
+    unsigned int receivedData = 0;
+    result = HRESULT_FROM_CURL_CODE(curl_easy_recv(this->curl, data, length, &receivedData));
+
+    CHECK_CONDITION_EXECUTE(result == HRESULT_FROM_CURL_CODE(CURLE_AGAIN), result = S_OK);
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->totalReceivedBytes += receivedData);
+
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (HRESULT)receivedData);
+  }
+
+  return result;
+}
+
+HRESULT CCurlInstance::Select(bool read, bool write, unsigned int timeout)
+{
+  HRESULT result = S_OK;
+
+  CHECK_CONDITION_HRESULT(result, this->curl, result, E_NOT_VALID_STATE);
+  CHECK_CONDITION_HRESULT(result, read || write, result, E_INVALIDARG);
+
+  if (SUCCEEDED(result))
+  {
+    curl_socket_t socket = CURL_SOCKET_BAD;
+    curl_easy_getinfo(this->curl, CURLINFO_LASTSOCKET, &socket);
+
+    CHECK_CONDITION_HRESULT(result, socket != CURL_SOCKET_BAD, result, E_NOT_VALID_STATE);
+
+    if (SUCCEEDED(result))
+    {
+      fd_set readFD;
+      fd_set writeFD;
+      fd_set exceptFD;
+
+      FD_ZERO(&readFD);
+      FD_ZERO(&writeFD);
+      FD_ZERO(&exceptFD);
+
+      if (read)
+      {
+        // want to read from socket
+        FD_SET(socket, &readFD);
+      }
+      if (write)
+      {
+        // want to write to socket
+        FD_SET(socket, &writeFD);
+      }
+      // we want to receive errors
+      FD_SET(socket, &exceptFD);
+
+      timeval sendTimeout;
+      sendTimeout.tv_sec = (int)(timeout / 1000000);
+      sendTimeout.tv_usec = (int)(timeout % 1000000);
+
+      int selectResult = select(0, &readFD, &writeFD, &exceptFD, (timeout == UINT_MAX) ? NULL : &sendTimeout);
+      if (selectResult == 0)
+      {
+        // timeout occured
+        result = HRESULT_FROM_WIN32(WSAETIMEDOUT);
+      }
+      else if (selectResult == SOCKET_ERROR)
+      {
+        // socket error occured
+        result = HRESULT_FROM_WIN32(WSAGetLastError());
+      }
+
+      if (SUCCEEDED(result))
+      {
+        if (FD_ISSET(socket, &exceptFD))
+        {
+          // error occured on socket, select function was successful
+          int err;
+          int errlen = sizeof(err);
+
+          if (getsockopt(socket, SOL_SOCKET, SO_ERROR, (char *)&err, &errlen) == 0)
+          {
+            // successfully get error
+            result = HRESULT_FROM_WIN32(err);
+          }
+          else
+          {
+            // error occured while getting error
+            result = HRESULT_FROM_WIN32(WSAGetLastError());
+          }
+        }
+
+        if (result == 0)
+        {
+          if (read && (FD_ISSET(socket, &readFD) == 0))
+          {
+            result = E_NOT_VALID_STATE;
+          }
+
+          if (write && (FD_ISSET(socket, &writeFD) == 0))
+          {
+            result = E_NOT_VALID_STATE;
+          }
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
+bool CCurlInstance::IsDumpInputData(void)
+{
+  return this->IsSetFlags(CURL_INSTANCE_FLAG_DUMP_INPUT_DATA);
+}
+
+bool CCurlInstance::IsDumpOutputData(void)
+{
+  return this->IsSetFlags(CURL_INSTANCE_FLAG_DUMP_OUTPUT_DATA);
+}
+
+void CCurlInstance::ClearSession(void)
+{
+  this->StopReceivingData();
+
+  if (this->curl != NULL)
+  {
+    curl_easy_cleanup(this->curl);
+    this->curl = NULL;
+  }
+
+  if (this->multi_curl != NULL)
+  {
+    curl_multi_cleanup(this->multi_curl);
+    this->multi_curl = NULL;
+  }
+
+  FREE_MEM_CLASS(this->downloadRequest);
+  FREE_MEM_CLASS(this->downloadResponse);
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->dumpFile, this->dumpFile->FlushDumpBoxes());
+
+  this->state = CURL_STATE_CREATED;
+  this->startReceivingTicks = 0;
+  this->stopReceivingTicks = 0;
+  this->totalReceivedBytes = 0;
+  this->curlWorkerShouldExit = false;
+  this->lastReceiveTime = 0;
+  this->flags = CURL_INSTANCE_FLAG_NONE;
+}
+
+/* protected methods */
+
 HRESULT CCurlInstance::CreateCurlWorker(void)
 {
   HRESULT result = S_OK;
@@ -355,7 +554,7 @@ HRESULT CCurlInstance::DestroyCurlWorker(void)
   }
   this->curlWorkerShouldExit = false;
   this->hCurlWorkerThread = NULL;
-  
+
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, this->protocolName, METHOD_DESTROY_CURL_WORKER_NAME, result));
   return result;
 }
@@ -469,19 +668,6 @@ void CCurlInstance::SetWriteCallback(curl_write_callback writeCallback, void *wr
   this->writeData = writeData;
 }
 
-HRESULT CCurlInstance::StartReceivingData(void)
-{
-  // set last receive time of any data to avoid timeout in CurlWorker()
-  this->lastReceiveTime = GetTickCount();
-
-  return this->CreateCurlWorker();
-}
-
-HRESULT CCurlInstance::StopReceivingData(void)
-{
-  return this->DestroyCurlWorker();
-}
-
 size_t CCurlInstance::CurlReceiveDataCallback(char *buffer, size_t size, size_t nmemb, void *userdata)
 {
   CCurlInstance *caller = (CCurlInstance *)userdata;
@@ -494,29 +680,19 @@ size_t CCurlInstance::CurlReceiveDataCallback(char *buffer, size_t size, size_t 
 
   if (!caller->curlWorkerShouldExit)
   {
-    CHECK_CONDITION_NOT_NULL_EXECUTE(caller->dumpFile->GetDumpFile(), dumpBox = caller->CreateDumpBox());
-
-    result = caller->CurlReceiveData(dumpBox, (unsigned char *)buffer, (size_t)(size * nmemb));
-
-    CHECK_CONDITION_EXECUTE((dumpBox != NULL) && (!caller->dumpFile->AddDumpBox(dumpBox)), FREE_MEM_CLASS(dumpBox));
+    result = caller->CurlReceiveData((unsigned char *)buffer, (size_t)(size * nmemb));
   }
 
   return result;
 }
 
-size_t CCurlInstance::CurlReceiveData(CDumpBox *dumpBox, const unsigned char *buffer, size_t length)
+size_t CCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t length)
 {
   if (length != 0)
   {
     // lock access to receive data buffer
     // if mutex is NULL then access to received data buffer is not locked
     LOCK_MUTEX(this->mutex, INFINITE)
-
-    if (dumpBox != NULL)
-    {
-      dumpBox->SetTimeWithLocalTime();
-      dumpBox->SetPayload(buffer, length);
-    }
 
     this->totalReceivedBytes += length;
 
@@ -552,38 +728,54 @@ int CCurlInstance::CurlDebugCallback(CURL *handle, curl_infotype type, char *dat
   // warning: data ARE NOT terminated with null character !!
   if (size > 0)
   {
-    size_t length = size + 1;
-    ALLOC_MEM_DEFINE_SET(tempData, char, length, 0);
-    if (tempData != NULL)
-    {
-      memcpy(tempData, data, size);
-
-      // now convert data to used character set
-      wchar_t *curlData = ConvertToUnicodeA(tempData);
-
-      if (curlData != NULL)
-      {
-        // we have converted and null terminated data
-        caller->CurlDebug(type, curlData);
-      }
-
-      FREE_MEM(curlData);
-    }
-    FREE_MEM(tempData);
+    caller->CurlDebug(type, (const unsigned char *)data, size);
   }
 
   return 0;
 }
 
-void CCurlInstance::CurlDebug(curl_infotype type, const wchar_t *data)
+void CCurlInstance::CurlDebug(curl_infotype type, const unsigned char *data, size_t size)
 {
   if (type == CURLINFO_TEXT)
   {
-    wchar_t *text = Trim(data);
+    wchar_t *curlData = CCurlInstance::ConvertTextData(data, size);
+    wchar_t *text = Trim(curlData);
 
-    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: CURL message: '%s'", this->protocolName, METHOD_CURL_DEBUG_NAME, text);
+    if (text != NULL)
+    {
+      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: CURL message: '%s'", this->protocolName, METHOD_CURL_DEBUG_NAME, text);
+    }
 
     FREE_MEM(text);
+    FREE_MEM(curlData);
+  }
+  else if ((type == CURLINFO_DATA_IN) && (this->IsDumpInputData()))
+  {
+    CDumpBox *dumpBox = NULL;
+    CHECK_CONDITION_NOT_NULL_EXECUTE(this->dumpFile->GetDumpFile(), dumpBox = this->CreateDumpBox());
+
+    if (dumpBox != NULL)
+    {
+      dumpBox->SetInputData(true);
+      dumpBox->SetTimeWithLocalTime();
+      dumpBox->SetPayload(data, size);
+    }
+
+    CHECK_CONDITION_EXECUTE((dumpBox != NULL) && (!this->dumpFile->AddDumpBox(dumpBox)), FREE_MEM_CLASS(dumpBox));
+  }
+  else if ((type == CURLINFO_DATA_OUT) && (this->IsDumpOutputData()))
+  {
+    CDumpBox *dumpBox = NULL;
+    CHECK_CONDITION_NOT_NULL_EXECUTE(this->dumpFile->GetDumpFile(), dumpBox = this->CreateDumpBox());
+
+    if (dumpBox != NULL)
+    {
+      dumpBox->SetOutputData(true);
+      dumpBox->SetTimeWithLocalTime();
+      dumpBox->SetPayload(data, size);
+    }
+
+    CHECK_CONDITION_EXECUTE((dumpBox != NULL) && (!this->dumpFile->AddDumpBox(dumpBox)), FREE_MEM_CLASS(dumpBox));
   }
 }
 
@@ -592,134 +784,23 @@ HRESULT CCurlInstance::SetString(CURLoption option, const wchar_t *string)
   return CCurlInstance::SetString(this->curl, option, string);
 }
 
-HRESULT CCurlInstance::SetString(CURL *curl, CURLoption option, const wchar_t *string)
+wchar_t *CCurlInstance::ConvertTextData(const unsigned char *data, size_t size)
 {
-  char *multiByteString = ConvertToMultiByteW(string);
-  HRESULT result = ((string == NULL) || ((multiByteString != NULL) && (string != NULL))) ? S_OK : E_CONVERT_STRING_ERROR;
+  wchar_t *result = NULL;
 
-  CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(curl, option, multiByteString)), result);
-
-  FREE_MEM(multiByteString);
-  return result;
-}
-
-HRESULT CCurlInstance::Select(bool read, bool write, unsigned int timeout)
-{
-  HRESULT result = S_OK;
-
-  CHECK_CONDITION_HRESULT(result, this->curl, result, E_NOT_VALID_STATE);
-  CHECK_CONDITION_HRESULT(result, read || write, result, E_INVALIDARG);
-
-  if (SUCCEEDED(result))
+  // warning: data ARE NOT terminated with null character !!
+  if (size > 0)
   {
-    curl_socket_t socket = CURL_SOCKET_BAD;
-    curl_easy_getinfo(this->curl, CURLINFO_LASTSOCKET, &socket);
-    
-    CHECK_CONDITION_HRESULT(result, socket != CURL_SOCKET_BAD, result, E_NOT_VALID_STATE);
-
-    if (SUCCEEDED(result))
+    size_t length = size + 1;
+    ALLOC_MEM_DEFINE_SET(tempData, char, length, 0);
+    if (tempData != NULL)
     {
-      fd_set readFD;
-      fd_set writeFD;
-      fd_set exceptFD;
+      memcpy(tempData, data, size);
 
-      FD_ZERO(&readFD);
-      FD_ZERO(&writeFD);
-      FD_ZERO(&exceptFD);
-
-      if (read)
-      {
-        // want to read from socket
-        FD_SET(socket, &readFD);
-      }
-      if (write)
-      {
-        // want to write to socket
-        FD_SET(socket, &writeFD);
-      }
-      // we want to receive errors
-      FD_SET(socket, &exceptFD);
-
-      timeval sendTimeout;
-      sendTimeout.tv_sec = (int)(timeout / 1000000);
-      sendTimeout.tv_usec = (int)(timeout % 1000000);
-
-      int selectResult = select(0, &readFD, &writeFD, &exceptFD, (timeout == UINT_MAX) ? NULL : &sendTimeout);
-      if (selectResult == 0)
-      {
-        // timeout occured
-        result = HRESULT_FROM_WIN32(WSAETIMEDOUT);
-      }
-      else if (selectResult == SOCKET_ERROR)
-      {
-        // socket error occured
-        result = HRESULT_FROM_WIN32(WSAGetLastError());
-      }
-
-      if (SUCCEEDED(result))
-      {
-        if (FD_ISSET(socket, &exceptFD))
-        {
-          // error occured on socket, select function was successful
-          int err;
-          int errlen = sizeof(err);
-
-          if (getsockopt(socket, SOL_SOCKET, SO_ERROR, (char *)&err, &errlen) == 0)
-          {
-            // successfully get error
-            result = HRESULT_FROM_WIN32(err);
-          }
-          else
-          {
-            // error occured while getting error
-            result = HRESULT_FROM_WIN32(WSAGetLastError());
-          }
-        }
-
-        if (result == 0)
-        {
-          if (read && (FD_ISSET(socket, &readFD) == 0))
-          {
-            result = E_NOT_VALID_STATE;
-          }
-
-          if (write && (FD_ISSET(socket, &writeFD) == 0))
-          {
-            result = E_NOT_VALID_STATE;
-          }
-        }
-      }
+      // now convert data to used character set
+      result = ConvertToUnicodeA(tempData);
     }
-  }
-
-  return result;
-}
-
-HRESULT CCurlInstance::SendData(const unsigned char *data, unsigned int length, unsigned int timeout)
-{
-  unsigned int receivedData = 0;
-  HRESULT result = HRESULT_FROM_CURL_CODE(curl_easy_send(this->curl, data, length, &receivedData));
-
-  CHECK_CONDITION_EXECUTE_RESULT(result == HRESULT_FROM_CURL_CODE(CURLE_AGAIN), this->Select(false, true, timeout), result);
-  CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending data: 0x%08X", this->protocolName, L"SendData()", result));
-  return result;
-}
-
-HRESULT CCurlInstance::ReadData(unsigned char *data, unsigned int length)
-{
-  HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, data);
-  CHECK_CONDITION_HRESULT(result, length != 0, result, E_INVALIDARG);
-
-  if (SUCCEEDED(result))
-  {
-    unsigned int receivedData = 0;
-    result = HRESULT_FROM_CURL_CODE(curl_easy_recv(this->curl, data, length, &receivedData));
-
-    CHECK_CONDITION_EXECUTE(result == HRESULT_FROM_CURL_CODE(CURLE_AGAIN), result = S_OK);
-    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->totalReceivedBytes += receivedData);
-
-    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (HRESULT)receivedData);
+    FREE_MEM(tempData);
   }
 
   return result;

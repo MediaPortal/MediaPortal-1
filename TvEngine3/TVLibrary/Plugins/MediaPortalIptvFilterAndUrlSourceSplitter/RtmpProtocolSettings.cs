@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url;
 
 namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
 {
@@ -28,9 +29,9 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
         public RtmpProtocolSettings()
             : base()
         {
-            this.OpenConnectionTimeout = RtmpProtocolSettings.DefaultRtmpOpenConnectionTimeout;
-            this.OpenConnectionSleepTime = RtmpProtocolSettings.DefaultRtmpOpenConnectionSleepTime;
-            this.TotalReopenConnectionTimeout = RtmpProtocolSettings.DefaultRtmpTotalReopenConnectionTimeout;
+            this.OpenConnectionTimeout = RtmpUrl.DefaultRtmpOpenConnectionTimeout;
+            this.OpenConnectionSleepTime = RtmpUrl.DefaultRtmpOpenConnectionSleepTime;
+            this.TotalReopenConnectionTimeout = RtmpUrl.DefaultRtmpTotalReopenConnectionTimeout;
         }
 
         #endregion
@@ -103,14 +104,6 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
         #endregion
 
         #region Methods
-        #endregion
-
-        #region Constants
-
-        public static readonly int DefaultRtmpOpenConnectionTimeout = 20000;           // ms
-        public static readonly int DefaultRtmpOpenConnectionSleepTime = 0;             // ms
-        public static readonly int DefaultRtmpTotalReopenConnectionTimeout = 60000;    // ms
-
         #endregion
     }
 }

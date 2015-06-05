@@ -381,11 +381,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
 
       if (SUCCEEDED(result))
       {
-        if (this->configuration->GetValueBool(PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA, true, PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA_DEFAULT))
+        if (this->IsDumpInputData() || this->IsDumpOutputData())
         {
           wchar_t *storeFilePath = this->GetDumpFile();
           CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->mainCurlInstance->SetDumpFile(storeFilePath));
           FREE_MEM(storeFilePath);
+
+          this->mainCurlInstance->SetDumpInputData(this->IsDumpInputData());
+          this->mainCurlInstance->SetDumpOutputData(this->IsDumpOutputData());
         }
       }
 
@@ -534,11 +537,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
 
         if (SUCCEEDED(result))
         {
-          if (this->configuration->GetValueBool(PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA, true, PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA_DEFAULT))
+          if (this->IsDumpInputData() || this->IsDumpOutputData())
           {
             wchar_t *storeFilePath = this->GetDumpFile();
             CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->mainCurlInstance->SetDumpFile(storeFilePath));
             FREE_MEM(storeFilePath);
+
+            this->mainCurlInstance->SetDumpInputData(this->IsDumpInputData());
+            this->mainCurlInstance->SetDumpOutputData(this->IsDumpOutputData());
           }
         }
 
@@ -719,13 +725,17 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
                   // if not set fragment to download, then set fragment to download (get next not downloaded fragment from first fragment)
                   this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(0) : this->streamFragmentToDownload;
                   // fragment to download still can be UINT_MAX = no fragment to download
-
-                  if (this->streamFragmentToDownload == UINT_MAX)
-                  {
-                    // no stream fragment to download, we have all data
-                    this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
-                  }
                 }
+              }
+
+              // request to download next segment fragment after current downloaded fragment
+              this->streamFragmentToDownload = (this->streamFragmentToDownload != UINT_MAX) ? this->streamFragmentToDownload : this->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(this->streamFragmentDownloading + 1);
+              this->streamFragmentDownloading = UINT_MAX;
+
+              if (this->streamFragmentToDownload == UINT_MAX)
+              {
+                // no stream fragment to download, we have all data
+                this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
               }
             }
             else
@@ -750,14 +760,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
                     this->logger->Log(LOGGER_INFO, L"%s: %s: live stream, downloaded last stream fragment, requesting media playlist for update of stream fragments", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
                     this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_UPDATE_STREAM_FRAGMENTS | MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_STOP_RECEIVING_DATA;
                   }
+
+                  this->streamFragmentToDownload = UINT_MAX;
+                  this->streamFragmentDownloading = UINT_MAX;
                 }
               }
             }
           }
-
-          // request to download next segment fragment after current downloaded fragment
-          this->streamFragmentToDownload = this->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(this->streamFragmentDownloading + 1);
-          this->streamFragmentDownloading = UINT_MAX;
 
           this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE;
           this->flags |= (this->streamFragmentToDownload != UINT_MAX) ? MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_STOP_RECEIVING_DATA : MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_NONE;
@@ -1152,7 +1161,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
 
         if (this->cacheFile->GetCacheFile() == NULL)
         {
-          wchar_t *storeFilePath = this->GetStoreFile();
+          wchar_t *storeFilePath = this->GetCacheFile(NULL);
           CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->cacheFile->SetCacheFile(storeFilePath));
           FREE_MEM(storeFilePath);
         }
@@ -1274,7 +1283,8 @@ void CMPUrlSourceSplitter_Protocol_M3u8::ClearSession(void)
   __super::ClearSession();
  
   this->streamLength = 0;
-  this->mainCurlInstance->SetConnectionState(None);
+  this->mainCurlInstance->ClearSession();
+
   this->cacheFile->Clear();
   this->streamFragments->Clear();
   this->lastStoreTime = 0;
@@ -1429,21 +1439,14 @@ GUID CMPUrlSourceSplitter_Protocol_M3u8::GetInstanceId(void)
 
 HRESULT CMPUrlSourceSplitter_Protocol_M3u8::Initialize(CPluginConfiguration *configuration)
 {
+  HRESULT result = __super::Initialize(configuration);
   CProtocolPluginConfiguration *protocolConfiguration = (CProtocolPluginConfiguration *)configuration;
-  HRESULT result = ((this->lockMutex != NULL) && (this->configuration != NULL) && (this->logger != NULL)) ? S_OK : E_NOT_VALID_STATE;
   CHECK_POINTER_HRESULT(result, protocolConfiguration, result, E_INVALIDARG);
+  CHECK_POINTER_HRESULT(result, this->lockMutex, result, E_NOT_VALID_STATE);
 
   if (SUCCEEDED(result))
   {
-    this->configuration->Clear();
-
-    CHECK_CONDITION_HRESULT(result, this->configuration->Append(protocolConfiguration->GetConfiguration()), result, E_OUTOFMEMORY);
-
     this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, PARAMETER_NAME_LIVE_STREAM_DEFAULT) ? PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_SPECIFIED : PROTOCOL_PLUGIN_FLAG_NONE;
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_SPLITTER, true, PARAMETER_NAME_SPLITTER_DEFAULT) ? PLUGIN_FLAG_SPLITTER : PROTOCOL_PLUGIN_FLAG_NONE;
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_IPTV, true, PARAMETER_NAME_IPTV_DEFAULT) ? PLUGIN_FLAG_IPTV : PROTOCOL_PLUGIN_FLAG_NONE;
   }
 
   if (SUCCEEDED(result))
@@ -1482,44 +1485,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::Initialize(CPluginConfiguration *con
 
 /* protected methods */
 
-wchar_t *CMPUrlSourceSplitter_Protocol_M3u8::GetStoreFile(void)
+const wchar_t *CMPUrlSourceSplitter_Protocol_M3u8::GetStoreFileNamePart(void)
 {
-  wchar_t *result = NULL;
-  const wchar_t *folder = this->configuration->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
-
-  if (folder != NULL)
-  {
-    wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
-    if (guid != NULL)
-    {
-      result = FormatString(L"%smpurlsourcesplitter_protocol_m3u8_%s.temp", folder, guid);
-    }
-    FREE_MEM(guid);
-  }
-
-  return result;
-}
-
-wchar_t *CMPUrlSourceSplitter_Protocol_M3u8::GetDumpFile(void)
-{
-  wchar_t *result = NULL;
-  wchar_t *folder = Duplicate(this->configuration->GetValue(PARAMETER_NAME_LOG_FILE_NAME, true, NULL));
-
-  if (folder != NULL)
-  {
-    PathRemoveFileSpec(folder);
-
-    wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
-    if (guid != NULL)
-    {
-      result = FormatString(L"%s\\mpurlsourcesplitter_protocol_m3u8_%s.dump", folder, guid);
-    }
-    FREE_MEM(guid);
-  }
-
-  FREE_MEM(folder);
-
-  return result;
+  return PROTOCOL_STORE_FILE_NAME_PART;
 }
 
 int64_t CMPUrlSourceSplitter_Protocol_M3u8::GetBytePosition(void)

@@ -1,87 +1,78 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 <controls>
-
 	<!--            :: List Scrolling Popup ::            -->
-    
-    <control>
-        <description>listscroller bg</description>
-        <type>image</type>
-        <id>1</id>
-        <posX>297</posX>
-        <posY>540</posY>
-        <width>211</width>
-        <height>211</height>
-        <texture>listscroller_bg.png</texture>
-        <visible>facadeview.list+string.contains(#scrolling.up,yes)|string.contains(#scrolling.down,yes)</visible>
-        <animation effect="fade" time="250">Visible</animation>
-        <animation effect="fade" time="0">Hidden</animation>
-    </control>
-    
-    <control>
-        <type>label</type>
-        <id>1</id>
-        <posX>352</posX>
-        <posY>600</posY>
-        <width>96</width>
-        <height>96</height>
-        <font>TitanLight32</font>
-        <textcolor>ff000000</textcolor>
-        <label>#selecteditem.scrolllabel</label>
-        <visible>facadeview.list+string.contains(#scrolling.up,yes)|string.contains(#scrolling.down,yes)</visible>
-        <align>center</align>
-        <valign>middle</valign>
-        <animation effect="fade" time="250">Visible</animation>
-        <animation effect="fade" time="0">Hidden</animation>
-    </control>
-    
-	<!--            :: Count ::            -->
-
+  <control>
+    <description>listscroller bg</description>
+    <type>image</type>
+    <id>1</id>
+    <posX>297</posX>
+    <posY>540</posY>
+    <width>211</width>
+    <height>211</height>
+    <texture>listscroller_bg.png</texture>
+    <visible>facadeview.list+string.contains(#scrolling.up,yes)|string.contains(#scrolling.down,yes)</visible>
+    <animation effect="fade" time="250">Visible</animation>
+    <animation effect="fade" time="0">Hidden</animation>
+  </control>
+  <control>
+    <type>label</type>
+    <id>1</id>
+    <posX>352</posX>
+    <posY>600</posY>
+    <width>96</width>
+    <height>96</height>
+    <font>TitanLight32</font>
+    <textcolor>ff000000</textcolor>
+    <label>#selecteditem.scrolllabel</label>
+    <visible>facadeview.list+string.contains(#scrolling.up,yes)|string.contains(#scrolling.down,yes)</visible>
+    <align>center</align>
+    <valign>middle</valign>
+    <animation effect="fade" time="250">Visible</animation>
+    <animation effect="fade" time="0">Hidden</animation>
+  </control>
+  <!--            :: Count ::            -->
 	<control>
 		<description>Number of Files Label</description>
 		<type>label</type>
 		<id>1</id>
-        <posX>72</posX>
-        <posY>94</posY>
-        <align>left</align>
-        <font>fontB12</font>
-        <textcolor>ffffff</textcolor>
+	  <posX>96</posX>
+    <posY>998</posY>
+    <align>left</align>
+    <font>TitanLight12</font>
+    <textcolor>000000</textcolor>
 		<label>#(L(666)): #itemcount</label>
-	    <visible>control.isvisible(50)</visible>
-	    <animation effect="fade" time="250">WindowOpen</animation>
-	    <animation effect="fade" time="250">WindowClose</animation>
+	  <visible>control.isvisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
 	</control>
-
 	<!--            :: Listview Lines ::            -->
-
-    <control>
-        <description>List Lines</description>
-        <type>image</type>
-        <id>1</id>
+  <control>
+    <description>List Lines</description>
+    <type>image</type>
+    <id>1</id>
 		<posX>800</posX>
 		<posY>385</posY>
-        <width>1029</width>
-        <height>506</height>
-        <texture>list_lines_wide.png</texture>
-        <visible>facadeview.list + control.isvisible(50)</visible>
+    <width>1029</width>
+    <height>506</height>
+    <texture>list_lines_wide.png</texture>
+    <visible>facadeview.list + control.isvisible(50)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
-    </control>
-
-    <control>
-        <description>List Lines</description>
-        <type>image</type>
-        <id>1</id>
+  </control>
+	<control>
+    <description>List Lines</description>
+    <type>image</type>
+    <id>1</id>
 		<posX>800</posX>
 		<posY>475</posY>
-        <width>1029</width>
-        <height>333</height>
-        <texture>list_lines_big.png</texture>
-        <visible>facadeview.album + control.isvisible(50)</visible>
+    <width>1029</width>
+    <height>333</height>
+    <texture>list_lines_big.png</texture>
+    <visible>facadeview.album + control.isvisible(50)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
-    </control>
-
+  </control>
 	<control>
 		<description>group element</description>
 		<type>group</type>
@@ -91,7 +82,6 @@
 			<description>composite control consisting of a list control and a thumbnail panel</description>
 			<type>facadeview</type>
 			<id>50</id>
-			
 			<control>
 				<description>listcontrol</description>
 				<type>listcontrol</type>
@@ -100,41 +90,40 @@
 				<onright>50</onright>
 				<scrollOffset>1</scrollOffset>
 				<posX>745</posX>
-			    <posY>331</posY>
+			  <posY>331</posY>
 				<width>1113</width>
 				<height>700</height>
 				<textXOff>50</textXOff>
 				<dimColor>ffffffff</dimColor>
 				<textureFocus>listcontrol_item_selected_wide.png</textureFocus>
 				<textureNoFocus>-</textureNoFocus>
-                <spinPosX>1828</spinPosX>
-                <spinPosY>1000</spinPosY>
+        <spinPosX>1828</spinPosX>
+        <spinPosY>1000</spinPosY>
 			</control>
-
 			<control>
 				<description>Thumbnail Panel</description>
 				<type>thumbnailpanel</type>
 				<id>50</id>
 				<posX>102</posX>
 				<posY>356</posY>
-				<width>1716</width>
-				<height>600</height>
+				<width>1750</width>
+				<height>640</height>
 				<textureUp>page_up_nofocus.png</textureUp>
 				<textureDown>page_down_nofocus.png</textureDown>
 				<textureUpFocus>page_up_focus.png</textureUpFocus>
 				<textureDownFocus>page_down_focus.png</textureDownFocus>
 				<onleft>2</onleft>
 				<onright>50</onright>
-				<itemWidth>155</itemWidth>
-				<itemHeight>155</itemHeight>
-				<textureWidth>155</textureWidth>
-				<textureHeight>155</textureHeight>
-				<thumbWidth>155</thumbWidth>
-				<thumbHeight>155</thumbHeight>
+				<itemWidth>144</itemWidth>
+				<itemHeight>143</itemHeight>
+				<textureWidth>144</textureWidth>
+				<textureHeight>143</textureHeight>
+				<thumbWidth>144</thumbWidth>
+				<thumbHeight>143</thumbHeight>
 				<thumbPosX>0</thumbPosX>
 				<thumbPosY>0</thumbPosY>
 				<imageFolder>-</imageFolder>
-    			<imageFolderFocus>-</imageFolderFocus>
+	    	<imageFolderFocus>-</imageFolderFocus>
 				<suffix>|</suffix>
 				<itemWidthBig>286</itemWidthBig>
 				<itemHeightBig>284</itemHeightBig>
@@ -146,8 +135,8 @@
 				<thumbPosYBig>0</thumbPosYBig>
 				<thumbZoom>no</thumbZoom>
 				<enableFocusZoom>no</enableFocusZoom>
-				<zoomXPixels>40</zoomXPixels>
-				<zoomYPixels>40</zoomYPixels>
+				<zoomXPixels>0</zoomXPixels>
+				<zoomYPixels>0</zoomYPixels>
 				<hideUnfocusTexture>no</hideUnfocusTexture>
 				<renderFocusText>no</renderFocusText>
 				<renderUnfocusText>no</renderUnfocusText>
@@ -158,16 +147,14 @@
 				<textureUpFocus>-</textureUpFocus>
 				<textureDownFocus>-</textureDownFocus>
 				<frameNoFocus>-</frameNoFocus>
-				<frameFocus>-</frameFocus>
-				<textureMask></textureMask>
+				<frameFocus>music_thumb_focus.png</frameFocus>
+				<textureMask>music_thumb_mask.png</textureMask>
 				<keepaspectratio>no</keepaspectratio>
-                <spinPosX>1828</spinPosX>
-                <spinPosY>1000</spinPosY>
+	      <spinPosX>1828</spinPosX>
+	      <spinPosY>1000</spinPosY>
+				<unfocusedAlpha>100</unfocusedAlpha>
 			</control>
-
 		</control>
-
 	</control>
-
 </controls>
 </window>

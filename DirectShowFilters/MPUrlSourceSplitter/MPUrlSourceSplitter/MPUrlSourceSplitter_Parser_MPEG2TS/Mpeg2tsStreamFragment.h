@@ -26,6 +26,7 @@
 #include "StreamFragment.h"
 #include "ProgramAssociationSectionPacketContextCollection.h"
 #include "TransportStreamProgramMapSectionPacketContextCollection.h"
+#include "ConditionalAccessSectionPacketContextCollection.h"
 
 #define MPEG2TS_STREAM_FRAGMENT_FLAG_NONE                                                             STREAM_FRAGMENT_FLAG_NONE
 
@@ -35,16 +36,19 @@
 // 3. discontinuity processed
 // 4A. program association section detection finished
 // 4B. transport stream program map section detection finished
+// 4C. conditional access section detection finished
 // 5A. program association section updated
 // 5B. transport stream program map section updated
+// 5C. conditional access section updated
 // 6. processed, loaded to memory, ...
 
 // states 1, 2 and 3 are mutually exclusive, can be set only one of them
-// states 4A and 4B can be set both
-// states 5A and 5B can be set both
+// states 4A, 4B and 4C can be set both
+// states 5A, 5B and 5C can be set both
 // states 4A and 5A are mutually exclusive, can be set one of them
 // states 4B and 5B are mutually exclusive, can be set one of them
-// states 5A and 5B are exclusive with state 6, transition to state 6 can happen only from both states 5A and 5B
+// states 4C and 5C are mutually exclusive, can be set one of them
+// states 5A and 5B and 5C are exclusive with state 6, transition to state 6 can happen only from all states 5A, 5B and 5C
 
 #define MPEG2TS_STREAM_FRAGMENT_FLAG_READY_FOR_ALIGN                                                  (1 << (STREAM_FRAGMENT_FLAG_LAST + 0))
 #define MPEG2TS_STREAM_FRAGMENT_FLAG_ALIGNED                                                          (1 << (STREAM_FRAGMENT_FLAG_LAST + 1))
@@ -56,7 +60,10 @@
 #define MPEG2TS_STREAM_FRAGMENT_FLAG_TRANSPORT_STREAM_PROGRAM_MAP_SECTION_DETECTION_FINISHED          (1 << (STREAM_FRAGMENT_FLAG_LAST + 5))
 #define MPEG2TS_STREAM_FRAGMENT_FLAG_TRANSPORT_STREAM_PROGRAM_MAP_SECTION_UPDATED                     (1 << (STREAM_FRAGMENT_FLAG_LAST + 6))
 
-#define MPEG2TS_STREAM_FRAGMENT_FLAG_LAST                                                             (STREAM_FRAGMENT_FLAG_LAST + 7)
+#define MPEG2TS_STREAM_FRAGMENT_FLAG_CONDITIONAL_ACCESS_SECTION_DETECTION_FINISHED                    (1 << (STREAM_FRAGMENT_FLAG_LAST + 7))
+#define MPEG2TS_STREAM_FRAGMENT_FLAG_CONDITIONAL_ACCESS_SECTION_UPDATED                               (1 << (STREAM_FRAGMENT_FLAG_LAST + 8))
+
+#define MPEG2TS_STREAM_FRAGMENT_FLAG_LAST                                                             (STREAM_FRAGMENT_FLAG_LAST + 9)
 
 class CMpeg2tsStreamFragment : public CStreamFragment
 {
@@ -77,6 +84,10 @@ public:
   // gets transport stream program map section packet contexts
   // @return : transport stream program map section packet contexts
   CTransportStreamProgramMapSectionPacketContextCollection *GetTransportStreamProgramMapSectionPacketContexts(void);
+
+  // gets conditional access section packet contexts
+  // @return : conditional access section packet contexts
+  CConditionalAccessSectionPacketContextCollection *GetConditionalAccessSectionPacketContexts(void);
 
   /* set methods */
 
@@ -119,6 +130,16 @@ public:
   // @param streamFragmentIndex : the index of stream fragment (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
   void SetTransportStreamMapSectionUpdated(bool transportStreamMapSectionUpdated, unsigned int streamFragmentIndex);
 
+  // sets conditional access section detection finished flag
+  // @param conditionalAccessSectionDetectionFinished : true if conditional access section detection finished, false otherwise
+  // @param streamFragmentIndex : the index of stream fragment (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
+  void SetConditionalAccessSectionDetectionFinished(bool conditionalAccessSectionDetectionFinished, unsigned int streamFragmentIndex);
+
+  // sets conditional access section updated flag
+  // @param conditionalAccessSectionUpdated : true if conditional access section updated, false otherwise
+  // @param streamFragmentIndex : the index of stream fragment (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
+  void SetConditionalAccessSectionUpdated(bool conditionalAccessSectionUpdated, unsigned int streamFragmentIndex);
+
   /* other methods */
 
   // tests if fragment has set request start position (in protocol stream)
@@ -157,6 +178,14 @@ public:
   // @return : true if transport stream map section updated, false otherwise
   bool IsTransportStreamMapSectionUpdated(void);
 
+  // tests if conditional access section detection finished
+  // @return : true if conditional access section detection finished, false otherwise
+  bool IsConditionalAccessSectionDetectionFinished(void);
+
+  // tests if conditional access section updated
+  // @return : true if conditional access section updated, false otherwise
+  bool IsConditionalAccessSectionUpdated(void);
+
 protected:
   // holds request start position within protocol stream
   int64_t requestStartPosition;
@@ -164,6 +193,8 @@ protected:
   CProgramAssociationSectionPacketContextCollection *programAssociationSectionPacketContexts;
   // holds transport stream program map section packet contexts
   CTransportStreamProgramMapSectionPacketContextCollection *transportStreamProgramMapSectionPacketContexts;
+  // holds conditional access section packet contexts
+  CConditionalAccessSectionPacketContextCollection *conditionalAccessSectionPacketContexts;
 
   /* methods */
 

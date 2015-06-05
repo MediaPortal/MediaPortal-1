@@ -190,7 +190,12 @@ HRESULT CMPUrlSourceSplitter_Parser_M3U8::GetParserResult(void)
                       {
                         CMediaPlaylist *mediaPlaylist = factory->CreateMediaPlaylist(&this->parserResult, tempBuffer, tempBufferLength);
 
-                        if (SUCCEEDED(this->parserResult) || IS_M3U8_ERROR(this->parserResult))
+                        if (this->parserResult == E_M3U8_NOT_PLAYLIST)
+                        {
+                          // the received data surely not playlist
+                          this->parserResult = PARSER_RESULT_NOT_KNOWN;
+                        }
+                        else if (SUCCEEDED(this->parserResult) || IS_M3U8_ERROR(this->parserResult))
                         {
                           if ((mediaPlaylist != NULL) && (mediaPlaylist->IsSetFlags(PLAYLIST_FLAG_DETECTED_HEADER)))
                           {
@@ -331,7 +336,6 @@ HRESULT CMPUrlSourceSplitter_Parser_M3U8::GetParserResult(void)
                         FREE_MEM_CLASS(mediaPlaylist);
                       }
 
-
                       FREE_MEM_CLASS(factory);
                     }
                     else
@@ -423,7 +427,7 @@ void CMPUrlSourceSplitter_Parser_M3U8::ClearSession(void)
 
 /* protected methods */
 
-wchar_t *CMPUrlSourceSplitter_Parser_M3U8::GetStoreFile(const wchar_t *extension)
+const wchar_t *CMPUrlSourceSplitter_Parser_M3U8::GetStoreFileNamePart(void)
 {
-  return NULL;
+  return PARSER_STORE_FILE_NAME_PART;
 }

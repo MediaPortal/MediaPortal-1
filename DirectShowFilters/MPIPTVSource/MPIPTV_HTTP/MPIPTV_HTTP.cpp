@@ -834,7 +834,50 @@ void CMPIPTV_HTTP::ReceiveData(bool *shouldExit)
 
 unsigned int CMPIPTV_HTTP::FillBuffer(IMediaSample *pSamp, char *pData, long cbData)
 {
-  return FillBufferStandard(&this->logger, PROTOCOL_IMPLEMENTATION_NAME, METHOD_FILL_BUFFER_NAME, this->lockMutex, &this->buffer, pSamp, pData, cbData);
+  WaitForSingleObject(lockMutex, INFINITE);
+
+  unsigned int result = 0;
+  unsigned int length = this->buffer.GetBufferOccupiedSpace();
+
+  unsigned int start = 0;
+
+  if (length >= DVB_PACKET_SIZE)
+  {
+    // find start of MPEG TS packet and check few other packets if they are aligned
+
+    ALLOC_MEM_DEFINE_SET(temp, char, length, 0);
+    if (temp != NULL)
+    {
+      this->buffer.CopyFromBuffer(temp, length, 0, 0);
+
+      while (start < length)
+      {
+        unsigned int tempStart = start;
+        while (((tempStart + DVB_PACKET_SIZE) < length) && (temp[tempStart] == SYNC_BYTE))
+        {
+          tempStart += DVB_PACKET_SIZE;
+        }
+
+        if ((length - tempStart) <= DVB_PACKET_SIZE)
+        {
+          // if difference is less or equal to DVB_PACKET_SIZE (188 bytes)
+          // then we reached end of buffer and all packets were starting with SYNC_BYTE (0x47 byte)
+          break;
+        }
+
+        start++;
+      }
+
+      this->buffer.RemoveFromBuffer(start);
+    }
+    FREE_MEM(temp);
+
+    result = FillBufferStandard(&this->logger, PROTOCOL_IMPLEMENTATION_NAME, METHOD_FILL_BUFFER_NAME, this->lockMutex, &this->buffer, pSamp, pData, cbData);
+  }
+
+  ReleaseMutex(lockMutex);
+
+  return result;
 }
 
 unsigned int CMPIPTV_HTTP::GetReceiveDataTimeout(void)

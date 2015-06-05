@@ -25,7 +25,7 @@
 #include "ErrorCodes.h"
 #include "ProgramSpecificInformationPacket.h"
 
-CTransportStreamProgramMapParser::CTransportStreamProgramMapParser(HRESULT *result)
+CTransportStreamProgramMapParser::CTransportStreamProgramMapParser(HRESULT *result, uint16_t pid)
   : CParser(result)
 {
   this->transportStreamProgramMapSectionPID = TRANSPORT_STREAM_PROGRAM_MAP_PARSER_PID_NOT_DEFINED;
@@ -34,9 +34,15 @@ CTransportStreamProgramMapParser::CTransportStreamProgramMapParser(HRESULT *resu
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->currentSection = new CTransportStreamProgramMapSection(result);
+    CHECK_CONDITION_HRESULT(*result, pid < TS_PACKET_PID_COUNT, *result, E_INVALIDARG);
 
-    CHECK_POINTER_HRESULT(*result, this->currentSection, *result, E_OUTOFMEMORY);
+    if (SUCCEEDED(*result))
+    {
+      this->currentSection = new CTransportStreamProgramMapSection(result);
+      this->transportStreamProgramMapSectionPID = pid;
+
+      CHECK_POINTER_HRESULT(*result, this->currentSection, *result, E_OUTOFMEMORY);
+    }
   }
 }
 
@@ -63,11 +69,6 @@ uint16_t CTransportStreamProgramMapParser::GetTransportStreamProgramMapSectionPI
 }
 
 /* set methods */
-
-void CTransportStreamProgramMapParser::SetTransportStreamProgramMapSectionPID(uint16_t pid)
-{
-  this->transportStreamProgramMapSectionPID = pid;
-}
 
 /* other methods */
 
@@ -139,7 +140,6 @@ void CTransportStreamProgramMapParser::Clear(void)
 {
   __super::Clear();
 
-  this->transportStreamProgramMapSectionPID = TRANSPORT_STREAM_PROGRAM_MAP_PARSER_PID_NOT_DEFINED;
   this->transportStreamProgramMapSectionResult = S_FALSE;
   this->currentSection->Clear();
 }

@@ -140,6 +140,9 @@ bool CAudioSampleEntryBox::ParseInternal(const unsigned char *buffer, uint32_t l
 
     if (SUCCEEDED(continueParsing))
     {
+      // skip sample entry box bytes
+      position += SAMPLE_ENTRY_BOX_DATA_SIZE;
+
       // skip 2 x uint(32) reserved
       position += 8;
 

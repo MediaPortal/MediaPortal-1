@@ -20,6 +20,8 @@
  *
  ***************************************************************************/
 
+#define _WINSOCK_DEPRECATED_NO_WARNINGS								1
+
 #include "curl_setup.h"
 
 #ifdef HAVE_NETINET_IN_H
