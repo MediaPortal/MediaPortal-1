@@ -570,8 +570,8 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
 
             if (this->outputPinPackets->Count() > 0)
             {
-              COutputPinPacket *firstPacket = this->mediaPackets->GetItem(0);
-              if (firstPacket->IsEndOfStream() || firstPacket->IsLoadedToMemory() || (this->cacheFile->LoadItems(this->mediaPackets, 0, true, this->mediaPacketProcessed)))
+              COutputPinPacket *firstPacket = this->outputPinPackets->GetItem(0);
+              if (firstPacket->IsEndOfStream() || firstPacket->IsLoadedToMemory() || (this->cacheFile->LoadItems(this->outputPinPackets, 0, true, this->outputPinPacketProcessed)))
               {
                 packet = firstPacket;
 
