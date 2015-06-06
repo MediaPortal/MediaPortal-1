@@ -242,15 +242,13 @@ bool CDiskRecorder::Start()
 				CloseHandle(m_hFile);
 				m_hFile=INVALID_HANDLE_VALUE;
 			}
-			m_hFile = CreateFileW(	m_wszFileName,						// The filename
-									(DWORD) GENERIC_WRITE,				// File access
-									(DWORD) FILE_SHARE_READ,			// Share access
-									NULL,								// Security
+			m_hFile = CreateFileW(	m_wszFileName,	// The filename
+									(DWORD) GENERIC_WRITE,		  // File access
+									(DWORD) FILE_SHARE_READ,	  // Share access
+									NULL,								        // Security
 									(DWORD) OPEN_ALWAYS,				// Open flags
-//									(DWORD) FILE_FLAG_RANDOM_ACCESS,
-//									(DWORD) FILE_FLAG_WRITE_THROUGH,	// More flags
-									(DWORD) 0,							// More flags
-									NULL);								// Template
+									(DWORD) FILE_ATTRIBUTE_NORMAL,  // More flags
+									NULL);								      // Template
 			if (m_hFile == INVALID_HANDLE_VALUE)
 			{
 				LogDebug(L"Recorder:unable to create file:'%s' %d",m_wszFileName, GetLastError());
@@ -603,7 +601,7 @@ void CDiskRecorder::WriteToRecording(byte* buffer, int len)
                             (DWORD) FILE_SHARE_READ,            // Share access
                             NULL,                               // Security
                             (DWORD) OPEN_ALWAYS,                // Open flags
-                            (DWORD) 0,                          // More flags
+                            (DWORD) FILE_ATTRIBUTE_NORMAL,      // More flags
                             NULL);                              // Template
                 if (m_hFile == INVALID_HANDLE_VALUE)
                 {

@@ -158,9 +158,9 @@ HRESULT FileReader::OpenFile()
     }
     
 		// do not try to open a tsbuffer file without SHARE_WRITE so skip this try if we have a buffer file
-		if (wcsstr(pFileName, L".ts.tsbuffer") == NULL) 
+		if (wcsstr(pFileName, L".ts.tsbuffer") == NULL)   // not tsbuffer files
 		{
-			// Try to open the file
+			// Try to open the file in read-only mode (should fail for 'live' recordings)
 			m_hFile = ::CreateFileW(pFileName,      // The filename
 						 (DWORD) GENERIC_READ,        // File access
 						 (DWORD) FILE_SHARE_READ,     // Share access
@@ -168,25 +168,31 @@ HRESULT FileReader::OpenFile()
 						 (DWORD) OPEN_EXISTING,       // Open flags
 						 (DWORD) 0,                   // More flags
 						 NULL);                       // Template
-
 			if (m_hFile != INVALID_HANDLE_VALUE) break ;
+			  
+  		//This is in case file is being recorded to ('live' recordings)
+  		m_hFile = ::CreateFileW(pFileName,		// The filename
+  							(DWORD) GENERIC_READ,				// File access
+  							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE), // Share access
+  							NULL,						            // Security
+  							(DWORD) OPEN_EXISTING,		  // Open flags
+  							(DWORD) 0,	                // More flags
+  							NULL);						          // Template 
+  		if (m_hFile != INVALID_HANDLE_VALUE) break ;
 		}
-
-		//Test incase file is being recorded to
-		m_hFile = ::CreateFileW(pFileName,		// The filename
-							(DWORD) GENERIC_READ,				// File access
-							(DWORD) (FILE_SHARE_READ |
-							FILE_SHARE_WRITE),          // Share access
-							NULL,						            // Security
-							(DWORD) OPEN_EXISTING,		  // Open flags
-//							(DWORD) 0,
-							(DWORD) FILE_ATTRIBUTE_NORMAL,		// More flags
-//							FILE_ATTRIBUTE_NORMAL |
-//							FILE_FLAG_RANDOM_ACCESS,	      // More flags
-//							FILE_FLAG_SEQUENTIAL_SCAN,	    // More flags
-							NULL);						                // Template
-
-		if (m_hFile != INVALID_HANDLE_VALUE) break ;
+    else  //for tsbuffer files - open in random-access mode to workaround SMB caching problems
+    {
+  		//This is in case file is being recorded to
+  		m_hFile = ::CreateFileW(pFileName,		// The filename
+  							(DWORD) GENERIC_READ,				// File access
+  							(DWORD) (FILE_SHARE_READ |
+  							FILE_SHARE_WRITE),          // Share access
+  							NULL,						            // Security
+  							(DWORD) OPEN_EXISTING,		  // Open flags
+  							(DWORD) FILE_FLAG_RANDOM_ACCESS,	      // More flags
+  							NULL);						                // Template 
+  		if (m_hFile != INVALID_HANDLE_VALUE) break ;
+	  }
 
 		if ((wcsstr(pFileName, L".ts.tsbuffer") != NULL) && (Tmo<10)) //timeshift file only
 		{
@@ -227,7 +233,7 @@ HRESULT FileReader::OpenFile()
   							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE), // Share access
   							NULL,						            // Security
   							(DWORD) OPEN_EXISTING,		  // Open flags
-  							(DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_NO_BUFFERING),	// More flags
+  							(DWORD) FILE_FLAG_NO_BUFFERING,	// More flags
   							NULL);						          // Template
   
   		if (hFileUnbuff != INVALID_HANDLE_VALUE)
@@ -335,6 +341,11 @@ __int64 FileReader::GetFilePointer()
 	li.LowPart = ::SetFilePointer(m_hFile, 0, &li.HighPart, FILE_CURRENT);
 
 	return li.QuadPart;
+}
+
+HRESULT FileReader::ReadWithRefresh(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
+{
+  return Read(pbData, lDataLength, dwReadBytes);
 }
 
 HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)

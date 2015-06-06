@@ -49,6 +49,8 @@ public:
 protected:
 	HANDLE m_hFile;
 	LPWSTR m_pFileName;
+	BOOL   m_isAsyncIO;
+	HANDLE m_hIocp;
 
 	BOOL m_bChunkReserve;
 	__int64 m_chunkReserveFileSize;

@@ -1264,7 +1264,8 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
       //local timeshift buffer file file
       m_bTimeShifting = true;
       m_bLiveTv = true;
-      m_fileReader = new MultiFileReader(m_isUNCfile, m_isUNCfile, &m_multiFileReaderLock); //enable SMB2 'data cache' and 'file exists' workarounds for UNC
+      // m_fileReader = new MultiFileReader(m_isUNCfile, m_isUNCfile, &m_multiFileReaderLock); //enable SMB2 'data cache' and 'file exists' workarounds for UNC
+      m_fileReader = new MultiFileReader(false, m_isUNCfile, &m_multiFileReaderLock); //enable SMB2 'file exists' workarounds for UNC
       m_fileDuration = new MultiFileReader(false, m_isUNCfile, &m_multiFileReaderLock); //enable SMB2 'file exists' workaround for UNC
     }    
 

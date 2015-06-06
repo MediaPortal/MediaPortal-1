@@ -99,35 +99,45 @@ HRESULT FileWriter::OpenFile()
 		return ERROR_INVALID_NAME;
 	}
 
-	// See the file is being read.
-	m_hFile = CreateFileW(m_pFileName,                  // The filename
-						 (DWORD) GENERIC_WRITE,         // File access
-						 (DWORD) NULL,                  // Share access
-						 NULL,                          // Security
-						 (DWORD) OPEN_ALWAYS,           // Open flags
-						 (DWORD) 0,                     // More flags
-						 NULL);                         // Template
+	// Check if the file is being read by another process.
+	// (which should result in a 'sharing violation' error)
+	m_hFile = CreateFileW(m_pFileName,          // The filename
+						 (DWORD) GENERIC_WRITE,           // File access
+						 (DWORD) NULL,                    // Share access
+						 NULL,                            // Security
+						 (DWORD) OPEN_ALWAYS,             // Open flags
+						 (DWORD) 0,                       // More flags
+						 NULL);                           // Template
 	if (m_hFile == INVALID_HANDLE_VALUE)
 	{
 		DWORD dwErr = GetLastError();
-		if (dwErr == ERROR_SHARING_VIOLATION)
-		{
-			return HRESULT_FROM_WIN32(dwErr);
-		}
 		return HRESULT_FROM_WIN32(dwErr);
 	}
 	CloseHandle(m_hFile);
 
-	// Try to open the file
-	m_hFile = CreateFileW(m_pFileName,                  // The filename
-						 (DWORD) GENERIC_WRITE,         // File access
-						 (DWORD) FILE_SHARE_READ,       // Share access
-						 NULL,                          // Security
-						 (DWORD) OPEN_ALWAYS,           // Open flags
-//						 (DWORD) FILE_FLAG_RANDOM_ACCESS,
-//						 (DWORD) FILE_FLAG_WRITE_THROUGH,             // More flags
-						 (DWORD) 0,                     // More flags
-						 NULL);                         // Template
+	if (wcsstr(m_pFileName, L".ts.tsbuffer") == NULL)   // not tsbuffer files
+	{
+  	// Try to open the file in normal mode
+  	m_hFile = CreateFileW(m_pFileName,           // The filename
+  						 (DWORD) GENERIC_WRITE,            // File access
+  						 (DWORD) FILE_SHARE_READ,          // Share access
+  						 NULL,                             // Security
+  						 (DWORD) OPEN_ALWAYS,              // Open flags
+  						 (DWORD) FILE_ATTRIBUTE_NORMAL,    // More flags
+  						 NULL);                            // Template
+  }
+  else  // tsbuffer files
+  {
+  	// Try to open the file in random-access mode to workaround SMB caching problems
+  	m_hFile = CreateFileW(m_pFileName,           // The filename
+  						 (DWORD) GENERIC_WRITE,            // File access
+  						 (DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE),          // Share access
+  						 NULL,                             // Security
+  						 (DWORD) OPEN_ALWAYS,              // Open flags
+  						 // (DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS),  // More flags
+  						 (DWORD) FILE_ATTRIBUTE_NORMAL,  // More flags
+  						 NULL);                            // Template
+  }
 
 	if (m_hFile == INVALID_HANDLE_VALUE)
 	{
@@ -138,6 +148,8 @@ HRESULT FileWriter::OpenFile()
 	SetFilePointer(0, FILE_END);
 	m_chunkReserveFileSize = GetFilePointer();
 	SetFilePointer(0, FILE_BEGIN);
+
+  //LogDebug(L"FileWriter: OpenFile(), file %s: m_chunkReserveFileSize %I64d, m_maxFileSize: %I64d", m_pFileName, m_chunkReserveFileSize, m_maxFileSize);			  
 
 	return S_OK;
 }
@@ -152,18 +164,30 @@ HRESULT FileWriter::CloseFile()
 		return S_OK;
 	}
 
-	if (m_bChunkReserve)
-	{
-		__int64 currentPosition = GetFilePointer();
-		SetFilePointer(currentPosition, FILE_BEGIN);
-		SetEndOfFile(m_hFile);
-	}
+  //	if (m_bChunkReserve)
+  //	{
+  //		__int64 currentPosition = GetFilePointer();
+  //		SetFilePointer(currentPosition, FILE_BEGIN);
+  //		SetEndOfFile(m_hFile);
+  //	}
+  
+ 	__int64 currentPosition = GetFilePointer();
+ 	
+ 	if (m_bChunkReserve)
+ 	{
+ 		if (currentPosition < m_chunkReserveFileSize)
+ 		{
+   		SetFilePointer(currentPosition, FILE_BEGIN);
+   		SetEndOfFile(m_hFile);
+ 	  }
+ 	}
+
+  //LogDebug(L"FileWriter: CloseFile(), file %s: currentPosition %I64d, m_maxFileSize: %I64d, m_chunkReserveFileSize: %I64d, m_bChunkReserve: %d", m_pFileName, currentPosition, m_maxFileSize, m_chunkReserveFileSize, m_bChunkReserve);			  
 
 	CloseHandle(m_hFile);
 	m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
 
 	return S_OK;
-
 }
 
 BOOL FileWriter::IsFileInvalid()
@@ -194,9 +218,10 @@ HRESULT FileWriter::Write(PBYTE pbData, ULONG lDataLength)
 	if (m_hFile == INVALID_HANDLE_VALUE)
 		return S_FALSE;
 
+  __int64 currentPosition = GetFilePointer();
+
 	if (m_bChunkReserve)
 	{
-		__int64 currentPosition = GetFilePointer();
 		if ((currentPosition + lDataLength > m_chunkReserveFileSize) &&
 			(m_chunkReserveFileSize < m_maxFileSize))
 		{
@@ -208,22 +233,40 @@ HRESULT FileWriter::Write(PBYTE pbData, ULONG lDataLength)
 
 			SetFilePointer(m_chunkReserveFileSize, FILE_BEGIN);
 			SetEndOfFile(m_hFile);
-			SetFilePointer(currentPosition, FILE_BEGIN);
+			DWORD dwPtr = SetFilePointer(currentPosition, FILE_BEGIN);
+			if (dwPtr == INVALID_SET_FILE_POINTER)
+			{
+        LogDebug(L"FileWriter: Write() SetFilePointer() error, file %s: pointer %d, hr: %d", m_pFileName, currentPosition, dwPtr);			  
+			}
 		}
 	}
 
 	DWORD written = 0;
-	hr = WriteFile(m_hFile, (PVOID)pbData, (DWORD)lDataLength, &written, NULL);
-
-	if (FAILED(hr))
-		return hr;
-	if (written < (ULONG)lDataLength)
+  
+  for (int retryCnt = 0; retryCnt < 20; retryCnt++)
   {
-     LogDebug(L"!!!!!    Error writing to file %s: written %d of expected %d bytes", m_pFileName, written, lDataLength);
-		return S_FALSE;
+  	written = 0;
+	  hr = WriteFile(m_hFile, (PVOID)pbData, (DWORD)lDataLength, &written, NULL);
+  	if (hr && (written == (DWORD)lDataLength))
+    {
+      if (retryCnt > 0)
+      {
+        LogDebug(L"FileWriter: Write() retry, file %s: retries %d", m_pFileName, retryCnt);
+      }
+	    return S_OK;
+    }
+    
+    Sleep(50);
+	  DWORD dwPtr = SetFilePointer(currentPosition, FILE_BEGIN);
+		if (dwPtr == INVALID_SET_FILE_POINTER)
+		{
+      LogDebug(L"FileWriter: Write() retry, SetFilePointer() error, file %s: pointer %d, hr: %d", m_pFileName, currentPosition, dwPtr);			  
+		}		
   }
 
-	return S_OK;
+  //Failed to write after retries
+  LogDebug(L"FileWriter: Error writing to file %s: written %d of expected %d bytes, hr: %d", m_pFileName, written, lDataLength, hr);
+  return S_FALSE;
 }
 
 void FileWriter::SetChunkReserve(BOOL bEnable, __int64 chunkReserveSize, __int64 maxFileSize)
@@ -235,5 +278,6 @@ void FileWriter::SetChunkReserve(BOOL bEnable, __int64 chunkReserveSize, __int64
 		m_chunkReserveFileSize = 0;
 		m_maxFileSize = maxFileSize;
 	}
+  LogDebug(L"FileWriter: SetChunkReserve(), m_chunkReserveSize: %I64d, m_maxFileSize: %I64d, m_bChunkReserve: %d", m_chunkReserveSize, m_maxFileSize, m_bChunkReserve);			  
 }
 

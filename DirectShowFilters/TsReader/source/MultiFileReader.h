@@ -52,6 +52,7 @@ public:
 	virtual HRESULT CloseFile();
 	virtual HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
 	virtual HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod);
+	virtual HRESULT ReadWithRefresh(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
 
 	virtual BOOL IsFileInvalid();
 
@@ -66,7 +67,7 @@ public:
 protected:
 	HRESULT RefreshTSBufferFile();
 	HRESULT GetFileLength(LPWSTR pFilename, __int64 &length, bool doubleCheck);
-	HRESULT ReadNoLock(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
+	HRESULT ReadNoLock(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, bool refreshFile);
 
 //	SharedMemory* m_pSharedMemory;
 	FileReader m_TSBufferFile;

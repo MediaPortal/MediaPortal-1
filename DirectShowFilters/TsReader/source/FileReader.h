@@ -105,6 +105,7 @@ public:
 	virtual HRESULT OpenFile();
 	virtual HRESULT CloseFile();
 	virtual HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
+	virtual HRESULT ReadWithRefresh(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
 	virtual BOOL IsFileInvalid();
 	virtual DWORD SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
 	virtual __int64 GetFilePointer();
