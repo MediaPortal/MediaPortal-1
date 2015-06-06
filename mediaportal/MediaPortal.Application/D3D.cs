@@ -2222,8 +2222,11 @@ namespace MediaPortal
           _firstTimeWindowDisplayed = false;
         }
         // Set Cursor.Position to avoid mouse cursor show up itself (for ex on video)
-        Log.Info("D3D: Force mouse cursor to false");
-        ShowMouseCursor(false);
+        if (Cursor.Position != _lastCursorPosition)
+        {
+          Log.Info("D3D: Force mouse cursor to false");
+          ShowMouseCursor(false);
+        }
         _lastCursorPosition = Cursor.Position;
       }
     }
