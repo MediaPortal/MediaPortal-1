@@ -215,7 +215,7 @@ namespace MediaPortal
       MinimizeOnGuiExit         = false;
       MinimizeOnFocusLoss       = false;
       ShuttingDown              = false;
-      AutoHideMouse             = false;
+      AutoHideMouse             = true;
       MouseCursor               = true;
       Windowed                  = true;
       Volume                    = -1;
@@ -1732,7 +1732,7 @@ namespace MediaPortal
       }
 
       // don't update cursor status when not over client area or not focused
-      if (!isOverForm && !focused)
+      if (!isOverForm && !focused && !MouseCursor)
       {
         MouseTimeOutTimer = DateTime.Now;
         return;
@@ -2202,6 +2202,8 @@ namespace MediaPortal
           _firstTimeWindowDisplayed = false;
         }
         // Set Cursor.Position to avoid mouse cursor show up itself (for ex on video)
+        Log.Debug("D3D: Force mouse cursor to false");
+        ShowMouseCursor(false);
         _lastCursorPosition = Cursor.Position;
       }
     }
