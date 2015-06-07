@@ -1739,7 +1739,7 @@ namespace MediaPortal.GUI.Library
 
               InitControls();
               UpdateOverlayAllowed();
-              GUIGraphicsContext.Overlay = _isOverlayAllowed;
+              GUIGraphicsContext.Overlay = _isOverlayAllowed || GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR;
 
               // set topbar autohide 
               switch (_autoHideTopbarType)
