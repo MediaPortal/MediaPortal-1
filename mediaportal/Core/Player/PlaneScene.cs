@@ -371,7 +371,7 @@ namespace MediaPortal.Player
 
         //did the video window,aspect ratio change? if not
         //then we dont need to recalculate and just return the previous settings
-        if (!updateCrop && x == _rectPrevious.X && y == _rectPrevious.Y &&
+        if (!updateCrop && (int)x == _rectPrevious.X && (int)y == _rectPrevious.Y &&
             nw == _rectPrevious.Width && nh == _rectPrevious.Height &&
             GUIGraphicsContext.ARType == _aspectRatioType &&
             GUIGraphicsContext.Overlay == _lastOverlayVisible && _shouldRenderTexture &&
