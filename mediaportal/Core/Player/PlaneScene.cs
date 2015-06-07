@@ -367,7 +367,6 @@ namespace MediaPortal.Player
           return false;
         }
 
-        GUIGraphicsContext.VideoReceived();
         GUIGraphicsContext.ScaleVideoWindow(ref nw, ref nh, ref x, ref y);
 
         //did the video window,aspect ratio change? if not
