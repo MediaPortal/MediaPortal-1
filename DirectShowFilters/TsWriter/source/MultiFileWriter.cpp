@@ -109,10 +109,10 @@ HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 	// Try to open the file
 	m_hTSBufferFile = CreateFileW(m_pTSBufferFileName,              // The filename
 								 (DWORD) GENERIC_WRITE,             // File access
-								 (DWORD) FILE_SHARE_READ,           // Share access
+								 (DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE),           // Share access
 								 NULL,                              // Security
 								 (DWORD) CREATE_ALWAYS,             // Open flags
-								 (DWORD) 0,                         // More flags
+								 (DWORD) FILE_ATTRIBUTE_NORMAL,     // More flags
 								 NULL);                             // Template
 
 	if (m_hTSBufferFile == INVALID_HANDLE_VALUE)
@@ -510,13 +510,13 @@ HRESULT MultiFileWriter::CleanupFiles()
 BOOL MultiFileWriter::IsFileLocked(LPWSTR pFilename)
 {
 	HANDLE hFile;
-	hFile = CreateFileW(pFilename,                    // The filename
-					   (DWORD) GENERIC_READ,          // File access
-					   (DWORD) NULL,                  // Share access
-					   NULL,                          // Security
-					   (DWORD) OPEN_EXISTING,         // Open flags
-					   (DWORD) 0,                     // More flags
-					   NULL);                         // Template
+	hFile = CreateFileW(pFilename,               // The filename
+					   (DWORD) GENERIC_READ,             // File access
+					   (DWORD) NULL,                     // Share access
+					   NULL,                             // Security
+					   (DWORD) OPEN_EXISTING,            // Open flags
+					   (DWORD) 0,                        // More flags
+					   NULL);                            // Template
 
 	if (hFile == INVALID_HANDLE_VALUE)
 		return TRUE;

@@ -82,7 +82,7 @@ MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec
   m_pInfoFileBuffer1 = new byte[INFO_BUFF_SIZE];
   m_pInfoFileBuffer2 = new byte[INFO_BUFF_SIZE];
   
-  LogDebug("MultiFileReader::ctor, useFileNext = %d, useDummyWrites %d", m_bUseFileNext, useDummyWrites);
+  LogDebug("MultiFileReader::ctor, useFileNext = %d, useDummyWrites %d, pFilterLock %d", m_bUseFileNext, useDummyWrites, (pFilterLock != NULL));
 }
 
 MultiFileReader::~MultiFileReader()
@@ -224,17 +224,27 @@ DWORD MultiFileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMeth
 __int64 MultiFileReader::GetFilePointer()
 {
   CAutoLock rLock (m_pAccessLock);
-	return m_currentPosition;
+  __int64 currentPosition = m_currentPosition - m_startPosition; 
+ 
+  if (currentPosition < 0) 
+    currentPosition = 0;
+    
+	return currentPosition;
 }
-
 
 HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 {
   CAutoLock rLock (m_pAccessLock);
-  return ReadNoLock(pbData, lDataLength, dwReadBytes);
+  return ReadNoLock(pbData, lDataLength, dwReadBytes, false);
 }
 
-HRESULT MultiFileReader::ReadNoLock(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
+HRESULT MultiFileReader::ReadWithRefresh(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
+{
+  CAutoLock rLock (m_pAccessLock);
+  return ReadNoLock(pbData, lDataLength, dwReadBytes, true);
+}
+
+HRESULT MultiFileReader::ReadNoLock(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, bool refreshFile)
 {
 	HRESULT hr = S_OK;
 
@@ -302,6 +312,32 @@ HRESULT MultiFileReader::ReadNoLock(PBYTE pbData, ULONG lDataLength, ULONG *dwRe
 		m_TSFile.SetFileName(file->filename);
 		m_TSFile.OpenFile();
 		m_TSFileId = file->filePositionId;		
+  	if (m_TSFile.IsFileInvalid())
+  	{
+      LogDebug("MultiFileReader::new data file, OpenFile() failed");
+  		*dwReadBytes = 0;
+  		m_TSFileId = -1;
+  		return E_FAIL;
+  	}
+	}
+	
+	if (refreshFile)
+	{
+  	// try to clear local / remote SMB file cache. This should happen when we close the filehandle
+  	if (!m_TSFile.IsFileInvalid())
+  	{
+  		m_TSFile.CloseFile();
+  	}
+  	Sleep(5);
+		m_TSFile.OpenFile();
+  	if (m_TSFile.IsFileInvalid())
+  	{
+      LogDebug("MultiFileReader::data file refresh, OpenFile() failed");
+  		*dwReadBytes = 0;
+  		m_TSFileId = -1;
+  		return E_FAIL;
+  	}
+  	Sleep(5);
 	}
 
   //Start of 'file next' SMB data cache workaround processing
@@ -406,7 +442,7 @@ HRESULT MultiFileReader::ReadNoLock(PBYTE pbData, ULONG lDataLength, ULONG *dwRe
       return S_FALSE;
     }
 
-		hr = this->ReadNoLock(pbData + (ULONG)bytesToRead, lDataLength - (ULONG)bytesToRead, dwReadBytes);
+		hr = this->ReadNoLock(pbData + (ULONG)bytesToRead, lDataLength - (ULONG)bytesToRead, dwReadBytes, refreshFile);
     if (!SUCCEEDED(hr))
     {
       if (!m_bIsStopping)
@@ -726,7 +762,7 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   		m_filesAdded = filesAdded;
   		m_filesRemoved = filesRemoved;
   
-      //LogDebug("MultiFileReader m_filesAdded : %d, m_filesRemoved : %d, m_startPosition : %I64d, m_endPosition : %I64d, currentPosition = %I64d, LatestFileID = %d", m_filesAdded, m_filesRemoved, m_startPosition, m_endPosition, currentPosition, fileID) ;
+      LogDebug("MultiFileReader m_filesAdded : %d, m_filesRemoved : %d, m_startPosition : %I64d, m_endPosition : %I64d, currentPosition = %I64d, LatestFileID = %d", m_filesAdded, m_filesRemoved, m_startPosition, m_endPosition, currentPosition, fileID) ;
   	}
 
   } while ( Error && Loop ) ; // If Error is set, try again...until Loop reaches 0.
