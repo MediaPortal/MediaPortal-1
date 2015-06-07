@@ -577,7 +577,7 @@ namespace MediaPortal.Player
 
     private void RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
-      lock (GUIGraphicsContext.RenderLock)
+      //lock (GUIGraphicsContext.RenderLock)
       {
         if (width > 0 && height > 0)
         {
