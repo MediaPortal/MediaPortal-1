@@ -544,6 +544,9 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             // This should only happen when the stream enters into paused state
             LogDebug("vid: FillBuffer - DeliverEndOfStream");
             DeliverEndOfStream();
+            DeliverBeginFlush();
+            DeliverEndFlush();
+            DeliverNewSegment(m_rtStart, 0, 1.0);
             m_bClipEndingNotified = true;
           }
           else
