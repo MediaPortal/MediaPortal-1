@@ -70,6 +70,8 @@ CGeneralTag *CGeneralTagFactory::CreateTag(HRESULT *result, unsigned int version
           switch (*result)
           {
           case E_M3U8_NOT_VALID_TAG_FOUND:
+          case E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE:
+            // in both cases is there something missing, still it can be a comment
             *result = S_OK;
             break;
           default:

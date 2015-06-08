@@ -111,7 +111,6 @@ CTag *CTagFactory::CreateTag(HRESULT *result, unsigned int version, CGeneralTag 
       }
 
       CHECK_CONDITION_EXECUTE(FAILED(*result), FREE_MEM_CLASS(temp));
-
     }
 
     CHECK_CONDITION_EXECUTE(FAILED(*result), FREE_MEM_CLASS(tag));
