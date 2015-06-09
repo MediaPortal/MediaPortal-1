@@ -109,7 +109,7 @@
     </Reference>
     <Reference Include="SharpLibHid, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Packages\SharpLibHid.1.0.7\lib\net20\SharpLibHid.dll</HintPath>
+      <HintPath>..\..\Packages\SharpLibHid.1.1.0\lib\net20\SharpLibHid.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System">

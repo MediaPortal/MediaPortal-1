@@ -158,7 +158,8 @@
   <HidUsageAction UsagePage="WindowsMediaCenterRemoteControl" UsageCollection="WindowsMediaCenterRemoteControl" HandleHidEventsWhileInBackground="false">
 
     <button code="GreenStart">
-      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="115" sound="click.wav" focus="True" />
+      <!-- Go back to home screen. Note for further dev 0 is the first home screen and 35 is the second home screen. -->
+      <action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="0" sound="click.wav" focus="True" />
     </button>
 
     <button code="RecordedTv">
@@ -203,19 +204,23 @@
     <button code="TeletextRed">
       <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9975" sound="click.wav" />
       <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9975" sound="click.wav" />
+      <!-- Toggle GUI -->
       <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="18" sound="click.wav" />
     </button>
 
     <button code="TeletextGreen">
       <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9976" sound="click.wav" />
       <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9976" sound="click.wav" />
+      <!-- Switch to next possible audio stream -->
       <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="26" sound="click.wav" />
     </button>
 
     <button code="TeletextYellow">
       <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9977" sound="click.wav" />
       <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9977" sound="click.wav" />
+      <!-- Next subtitle -->
       <action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="119" sound="click.wav" />
+      <!-- Show info -->
       <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="11" sound="click.wav" />
     </button>
 
@@ -224,6 +229,7 @@
       <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9978" sound="click.wav" />
       <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="122" sound="click.wav" />
       <action layer="0" condition="WINDOW" conproperty="511" command="ACTION" cmdproperty="9886" />
+      <!-- Change Aspect Ratio -->
       <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="19" sound="click.wav" />
     </button>
 
@@ -254,16 +260,16 @@
   <!--GamePad setup-->
   <HidUsageAction UsagePage="GenericDesktopControls" UsageCollection="GamePad" HandleHidEventsWhileInBackground="false">
     <!--D-pad uses special codes from 1000/Up to 1007/Up-Left going clockwise-->
-    <button name="Left" code="1006">
+    <button name="Left" code="1006" repeat="true">
       <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="1" sound="cursor.wav"/>
     </button>
-    <button name="Down" code="1004">
+    <button name="Down" code="1004" repeat="true">
       <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="4" sound="cursor.wav"/>
     </button>
-    <button name="Right" code="1002">
+    <button name="Right" code="1002" repeat="true">
       <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="2" sound="cursor.wav"/>
     </button>
-    <button name="Up" code="1000">
+    <button name="Up" code="1000" repeat="true">
       <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="3" sound="cursor.wav"/>
     </button>
 
