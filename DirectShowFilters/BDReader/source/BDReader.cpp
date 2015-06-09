@@ -124,7 +124,7 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
 
   LogDebug("CBDReaderFilter::ctor");
   m_pAudioPin = new CAudioPin(GetOwner(), this, phr, &m_section, m_demultiplexer);
-  m_pVideoPin = new CVideoPin(GetOwner(), this, phr, &m_section, m_demultiplexer);
+  m_pVideoPin = new CVideoPin(GetOwner(), this, phr, &m_section, m_demultiplexer, *m_pAudioPin);
 
   if (!m_pAudioPin || !m_pVideoPin)
   {

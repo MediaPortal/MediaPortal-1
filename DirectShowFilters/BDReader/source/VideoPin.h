@@ -24,6 +24,8 @@
 #include "bdreader.h"
 #include <initguid.h>
 
+#include "AudioPin.h"
+
 // LAV Video Decoder
 // EE30215D-164F-4A92-A4EB-9D4C13390F9F
 DEFINE_GUID(CLSID_LAVVideo, 0xEE30215D, 0x164F, 0x4A92, 0xA4, 0xEB, 0x9D, 0x4C, 0x13, 0x39, 0x0F, 0x9F);
@@ -35,7 +37,7 @@ class CVideoPin : public CSourceStream, public CSourceSeeking
 {
 public:
 
-  CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCritSec* pSection, CDeMultiplexer& pDemux);
+  CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCritSec* pSection, CDeMultiplexer& pDemux, CAudioPin& pPin);
   ~CVideoPin();
 
   STDMETHODIMP NonDelegatingQueryInterface( REFIID riid, void ** ppv );
@@ -90,6 +92,7 @@ protected:
   CCritSec* m_section;
 
   IPin* m_pReceiver;
+  CAudioPin& m_pAudioPin;
 
   CMediaType m_mtInitial;
 
