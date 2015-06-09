@@ -127,12 +127,12 @@ HRESULT CDurationTitleFloatingTag::ParseTag(unsigned int version)
       unsigned int tagContentSize = wcslen(this->tagContent);
 
       // duration is required, must be present
+      // DURATION_TITLE_SEPARATOR is sometimes missing, assume that all tag content is duration
       int index = IndexOf(this->tagContent, tagContentSize, DURATION_TITLE_FLOATING_SEPARATOR, DURATION_TITLE_FLOATING_SEPARATOR_LENGTH);
-      CHECK_CONDITION_HRESULT(result, index != (-1), result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
 
       if (SUCCEEDED(result))
       {
-        wchar_t *durationValue = Substring(this->tagContent, 0, (unsigned int)index);
+        wchar_t *durationValue = Substring(this->tagContent, 0, (index >= 0) ? (unsigned int)index : tagContentSize);
         CHECK_POINTER_HRESULT(result, durationValue, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
 
         if (SUCCEEDED(result))
@@ -152,7 +152,7 @@ HRESULT CDurationTitleFloatingTag::ParseTag(unsigned int version)
       if (SUCCEEDED(result))
       {
         // title is optional
-        this->title = (tagContentSize == ((unsigned int)index + DURATION_TITLE_FLOATING_SEPARATOR_LENGTH)) ? Duplicate(L"") : Substring(this->tagContent, (unsigned int)index + DURATION_TITLE_FLOATING_SEPARATOR_LENGTH, tagContentSize - (unsigned int)index - DURATION_TITLE_FLOATING_SEPARATOR_LENGTH);
+        this->title = (index == (-1)) ? Duplicate(L"") : (tagContentSize == ((unsigned int)index + DURATION_TITLE_FLOATING_SEPARATOR_LENGTH)) ? Duplicate(L"") : Substring(this->tagContent, (unsigned int)index + DURATION_TITLE_FLOATING_SEPARATOR_LENGTH, tagContentSize - (unsigned int)index - DURATION_TITLE_FLOATING_SEPARATOR_LENGTH);
         CHECK_POINTER_HRESULT(result, this->title, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
       }
     }
