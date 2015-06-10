@@ -82,10 +82,9 @@ void LogMediaSample(IMediaSample * pSample, int iFrameNumber)
   }
 };
 
-CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCritSec* pSection, CDeMultiplexer& pDemux, CAudioPin& audioPin) :
+CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCritSec* pSection, CDeMultiplexer& pDemux) :
   CSourceStream(NAME("pinVideo"), phr, pFilter, L"Video"),
   m_pFilter(pFilter),
-  m_pAudioPin(audioPin),
   m_section(pSection),
   m_demux(pDemux),
   CSourceSeeking(NAME("pinVideo"), pUnk, phr, pSection),
@@ -547,13 +546,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             DeliverEndOfStream();
             DeliverBeginFlush();
             DeliverEndFlush();
-            DeliverNewSegment(0, 0, 1.0);
+            DeliverNewSegment(m_rtStart, 0, 1.0);
             m_bClipEndingNotified = true;
-
-            m_pAudioPin.DeliverEndOfStream();
-            m_pAudioPin.DeliverBeginFlush();
-            m_pAudioPin.DeliverEndFlush();
-            m_pAudioPin.DeliverNewSegment(0, 0, 1.0);
           }
           else
             Sleep(10);
