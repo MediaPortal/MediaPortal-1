@@ -590,8 +590,20 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *pHr)
   LogDebug("  Logging format: [Date Time] [InstanceID] [ThreadID] Message....  ");
   LogDebug("===================================================================");
   LogDebug("---------------------- v%d.%d.%d.0 --------------------------------", TSWRITER_MAJOR_VERSION,TSWRITER_MID_VERSION,TSWRITER_VERSION);
-  LogDebug("-- FILE_FLAG_RANDOM_ACCESS mods --");
+  LogDebug("-- Threaded timeshift file writing and FILE_FLAG_RANDOM_ACCESS mods --");
   LogDebug(" ");  
+
+  // Set timer resolution to 1 ms (if possible)
+  TIMECAPS tc; 
+  m_dwTimerResolution = 0; 
+  if (timeGetDevCaps(&tc, sizeof(TIMECAPS)) == MMSYSERR_NOERROR)
+  {
+    m_dwTimerResolution = min(max(tc.wPeriodMin, 1), tc.wPeriodMax);
+    if (m_dwTimerResolution)
+    {
+      timeBeginPeriod(m_dwTimerResolution);
+    }
+  }
 		
   b_dumpRawPackets = false;
   m_pFilter = new CMpTsFilter(this, GetOwner(), &m_filterLock, &m_receiveLock, pHr);
@@ -628,6 +640,13 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *pHr)
 CMpTs::~CMpTs()
 {
   LogDebug("CMpTs::dtor() ");
+
+  // Reset timer resolution (if we managed to set it originally)
+  if (m_dwTimerResolution)
+  {
+    timeEndPeriod(m_dwTimerResolution);
+  }
+
   delete m_pPin;
   delete m_pOobSiPin;
   delete m_pFilter;
