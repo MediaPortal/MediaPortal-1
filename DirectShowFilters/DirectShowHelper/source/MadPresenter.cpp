@@ -378,10 +378,7 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
       return hr;
   }
   else
-  {
-    m_pDevice = nullptr;
     m_pMadD3DDev = nullptr;
-  }
 
   return hr;
 }
