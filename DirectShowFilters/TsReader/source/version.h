@@ -18,15 +18,15 @@
 // Version numbers (used for resource and log display)
 #ifdef BITRATE_REPORT
 #define TSREADER_MAJOR_VERSION 4
-#define TSREADER_VERSION_STR "4.1.0.6\0"
+#define TSREADER_VERSION_STR "4.1.0.7\0"
 #else
 #define TSREADER_MAJOR_VERSION 3
-#define TSREADER_VERSION_STR "3.1.0.6\0"
+#define TSREADER_VERSION_STR "3.1.0.7\0"
 #endif
 
 #define TSREADER_MID_VERSION 1
 #define TSREADER_VERSION 0
-#define TSREADER_POINT_VERSION 6
+#define TSREADER_POINT_VERSION 7
 
 #define MP_VERSION 1,11,100,0
 #define MP_VERSION_STR "1.11.100.0\0"

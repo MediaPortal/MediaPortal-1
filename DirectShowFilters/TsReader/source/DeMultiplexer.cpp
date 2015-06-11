@@ -1233,31 +1233,41 @@ int CDeMultiplexer::ReadFromFile(ULONG lDataLength)
     HRESULT readResult = m_reader->Read(m_pFileReadBuffer, lDataLength, (DWORD*)&dwReadBytes);
 
     //check data integrity
-    for (int syncLoops=0; syncLoops < 3; syncLoops++)
+    if (m_filter.m_bEnableBufferLogging && (SUCCEEDED(readResult)) && (dwReadBytes > 0))
     {
-      int syncErrors = 0;
-      if ((SUCCEEDED(readResult)) && (dwReadBytes > 0))
-      {
-        syncErrors = OnRawDataCheck(m_pFileReadBuffer,(int)dwReadBytes);
-      }
-      
+      int syncErrors = OnRawDataCheck(m_pFileReadBuffer,(int)dwReadBytes);
       if (syncErrors != 0)
       {
         LogDebug("demux:ReadFromFile() syncErrors: %d, bufferSize: %d, filePointer: %d", syncErrors, dwReadBytes, filePointer);
-        if (!m_filter.IsTimeShifting())
-        {
-          break;
-        }
-        //wait a while and re-read the data block from disk
-        Sleep(50);
-        m_reader->SetFilePointer(filePointer, FILE_BEGIN);
-        readResult = m_reader->ReadWithRefresh(m_pFileReadBuffer, lDataLength, (DWORD*)&dwReadBytes);
       }
-      else
-      {
-        break; //good data or bad readResult/no data
-      }       
     }
+
+    //    //check data integrity and re-read a few times if errors...
+    //    for (int syncLoops=0; syncLoops < 3; syncLoops++)
+    //    {
+    //      int syncErrors = 0;
+    //      if ((SUCCEEDED(readResult)) && (dwReadBytes > 0))
+    //      {
+    //        syncErrors = OnRawDataCheck(m_pFileReadBuffer,(int)dwReadBytes);
+    //      }
+    //      
+    //      if (syncErrors != 0)
+    //      {
+    //        LogDebug("demux:ReadFromFile() syncErrors: %d, bufferSize: %d, filePointer: %d", syncErrors, dwReadBytes, filePointer);
+    //        if (!m_filter.IsTimeShifting())
+    //        {
+    //          break;
+    //        }
+    //        //wait a while and re-read the data block from disk
+    //        Sleep(50);
+    //        m_reader->SetFilePointer(filePointer, FILE_BEGIN);
+    //        readResult = m_reader->ReadWithRefresh(m_pFileReadBuffer, lDataLength, (DWORD*)&dwReadBytes);
+    //      }
+    //      else
+    //      {
+    //        break; //good data or bad readResult/no data
+    //      }       
+    //    }
 
     if (SUCCEEDED(readResult))
     {

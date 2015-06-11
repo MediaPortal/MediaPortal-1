@@ -163,13 +163,6 @@ HRESULT FileWriter::CloseFile()
 	{
 		return S_OK;
 	}
-
-  //	if (m_bChunkReserve)
-  //	{
-  //		__int64 currentPosition = GetFilePointer();
-  //		SetFilePointer(currentPosition, FILE_BEGIN);
-  //		SetEndOfFile(m_hFile);
-  //	}
   
  	__int64 currentPosition = GetFilePointer();
  	
@@ -182,7 +175,7 @@ HRESULT FileWriter::CloseFile()
  	  }
  	}
 
-  //LogDebug(L"FileWriter: CloseFile(), file %s: currentPosition %I64d, m_maxFileSize: %I64d, m_chunkReserveFileSize: %I64d, m_bChunkReserve: %d", m_pFileName, currentPosition, m_maxFileSize, m_chunkReserveFileSize, m_bChunkReserve);			  
+  // LogDebug(L"FileWriter: CloseFile(), file %s: currentPosition %I64d, m_maxFileSize: %I64d, m_chunkReserveFileSize: %I64d, m_bChunkReserve: %d", m_pFileName, currentPosition, m_maxFileSize, m_chunkReserveFileSize, m_bChunkReserve);			  
 
 	CloseHandle(m_hFile);
 	m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
