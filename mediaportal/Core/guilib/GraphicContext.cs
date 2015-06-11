@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Threading;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -108,7 +109,6 @@ namespace MediaPortal.GUI.Library
     private const int WM_SYSCOMMAND = 0x0112;
     private const int MONITOR_ON = -1;
     private const int MONITOR_OFF = 2;
-    private const int WM_NOTIFY_VIDEO_WINDOW = 0x0400 + 100; // WM_USER as base
 
     // ReSharper restore InconsistentNaming
     private static bool m_volumeOverlay = false; // Volume overlay
@@ -924,11 +924,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     private static void VideoWindowChanged()
     {
-     IntPtr hWnd = ActiveForm;
-      if (hWnd != IntPtr.Zero)
-      {
-        PostMessage(hWnd, WM_NOTIFY_VIDEO_WINDOW, IntPtr.Zero, IntPtr.Zero);
-      }
+      ThreadPool.QueueUserWorkItem(o => NotifyVideoWindowChanged());
     }
 
     /// <summary>

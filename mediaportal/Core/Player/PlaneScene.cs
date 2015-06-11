@@ -52,6 +52,7 @@ namespace MediaPortal.Player
   {
     #region variables
 
+    private static readonly SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
     private bool _stopPainting = false;
     private Surface _renderTarget = null;
     private long _diffuseColor = 0xFFFFFFFF;
@@ -568,38 +569,35 @@ namespace MediaPortal.Player
 
     private void RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
-      lock (GUIGraphicsContext.RenderLock)
+      if (width > 0 && height > 0)
       {
-        if (width > 0 && height > 0)
-        {
-          _vmr9Util.VideoWidth = width;
-          _vmr9Util.VideoHeight = height;
-          _vmr9Util.VideoAspectRatioX = arWidth;
-          _vmr9Util.VideoAspectRatioY = arHeight;
-          _arVideoWidth = arWidth;
-          _arVideoHeight = arHeight;
+        _vmr9Util.VideoWidth = width;
+        _vmr9Util.VideoHeight = height;
+        _vmr9Util.VideoAspectRatioX = arWidth;
+        _vmr9Util.VideoAspectRatioY = arHeight;
+        _arVideoWidth = arWidth;
+        _arVideoHeight = arHeight;
 
-          Size nativeSize = new Size(width, height);
-          _shouldRenderTexture = SetVideoWindow(nativeSize);
-        }
-
-        Device device = GUIGraphicsContext.DX9Device;
-
-        device.Clear(ClearFlags.Target, Color.FromArgb(0, 0, 0, 0), 1.0f, 0);
-        device.BeginScene();
-
-        if (layers == GUILayers.over)
-        {
-          SubtitleRenderer.GetInstance().Render();
-          BDOSDRenderer.GetInstance().Render();
-        }
-
-        GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers);
-        GUIFontManager.Present();
-
-        device.EndScene();
-        device.Present();
+        Size nativeSize = new Size(width, height);
+        _shouldRenderTexture = SetVideoWindow(nativeSize);
       }
+
+      Device device = GUIGraphicsContext.DX9Device;
+
+      device.Clear(ClearFlags.Target, Color.FromArgb(0, 0, 0, 0), 1.0f, 0);
+      device.BeginScene();
+
+      if (layers == GUILayers.over)
+      {
+        SubtitleRenderer.GetInstance().Render();
+        BDOSDRenderer.GetInstance().Render();
+      }
+
+      GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers);
+      GUIFontManager.Present();
+
+      device.EndScene();
+      device.Present();
     }
 
     public void SetRenderTarget(uint target)
