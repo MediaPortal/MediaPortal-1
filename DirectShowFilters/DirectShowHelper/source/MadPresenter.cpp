@@ -94,6 +94,17 @@ IBaseFilter* MPMadPresenter::Initialize()
   return baseFilter;
 }
 
+HRESULT MPMadPresenter::Shutdown()
+{
+  if (m_pMad)
+  {
+    m_pMad->Release();
+    m_pMad = nullptr;
+  }
+
+  return S_OK;
+}
+
 HRESULT MPMadPresenter::NonDelegatingQueryInterface(REFIID riid, void** ppv)
 {
   if (riid == __uuidof(IUnknown))
