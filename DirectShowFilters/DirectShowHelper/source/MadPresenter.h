@@ -29,6 +29,7 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     ~MPMadPresenter();
 
     IBaseFilter* Initialize();
+    HRESULT Shutdown();
 
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
     STDMETHODIMP QueryInterface(REFIID riid, void** ppvObject);

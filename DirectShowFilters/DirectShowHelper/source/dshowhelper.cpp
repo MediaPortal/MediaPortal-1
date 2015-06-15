@@ -870,6 +870,7 @@ void MadDeinit()
 {
   try
   {
+    m_madPresenter->Shutdown();
     m_pVMR9Filter->Release();
     m_pVMR9Filter = NULL;
   }

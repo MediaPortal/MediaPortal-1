@@ -64,6 +64,7 @@ namespace MediaPortal.GUI.Library
     public static event VideoReceivedHandler OnVideoReceived;
     
     private static readonly object RenderLoopLock = new object();  // Rendering loop lock - use this when removing any D3D resources
+    private static readonly object _videoWindowChangeLock = new Object();
     private static readonly List<Point> Cameras = new List<Point>();
     private static readonly List<TransformMatrix> GroupTransforms = new List<TransformMatrix>();
     private static TransformMatrix _guiTransform = new TransformMatrix();
@@ -995,17 +996,27 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     private static void VideoWindowChanged()
     {
-      ThreadPool.QueueUserWorkItem(o => NotifyVideoWindowChanged());
+      if (_videoRendererType == VideoRendererType.madVR)
+      {
+        ThreadPool.QueueUserWorkItem(o => NotifyVideoWindowChanged());
+      }
+      else if (OnVideoWindowChanged != null)
+      {
+        OnVideoWindowChanged();
+      }
     }
 
     /// <summary>
-    /// Notifies video window position/size change. Should be called only from the window owning thread
+    /// Notifies video window position/size change.
     /// </summary>
     public static void NotifyVideoWindowChanged()
     {
       if (OnVideoWindowChanged != null)
       {
-        OnVideoWindowChanged();
+        lock (_videoWindowChangeLock)
+        {
+          OnVideoWindowChanged();
+        }
       }
     }
 

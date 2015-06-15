@@ -311,6 +311,22 @@ namespace MediaPortal.Player
           return false;
         }
 
+        int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
+        if (hr < 0)
+        {
+          Error.SetError("Unable to play movie", "Can not set notifications");
+          m_strCurrentFile = "";
+          CloseInterfaces();
+          return false;
+        }
+        if (videoWin != null)
+        {
+          videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
+          videoWin.put_WindowStyle(
+            (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
+          videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
+        }
+
         #region FFDShowEngine and PostProcessingEngine Detection
 
         ISubEngine engine = SubEngine.GetInstance(true);
@@ -332,25 +348,6 @@ namespace MediaPortal.Player
         SelectAudioLanguage();
         OnInitialized();
 
-        int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
-        if (hr < 0)
-        {
-          Error.SetError("Unable to play movie", "Can not set notifications");
-          m_strCurrentFile = "";
-          CloseInterfaces();
-          return false;
-        }
-        if (videoWin != null)
-        {
-          videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
-          videoWin.put_WindowStyle(
-            (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
-          videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
-        }
-        if (basicVideo != null)
-        {
-          basicVideo.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
-        }
         /*
         GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target, Color.Black, 1.0f, 0);
         try
@@ -379,6 +376,12 @@ namespace MediaPortal.Player
           CloseInterfaces();
           return false;
         }
+
+        if (basicVideo != null)
+        {
+          basicVideo.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
+        }
+
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
         msg.Label = strFile;
         GUIWindowManager.SendThreadMessage(msg);
