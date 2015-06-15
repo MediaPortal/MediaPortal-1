@@ -925,7 +925,14 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     private static void VideoWindowChanged()
     {
-      ThreadPool.QueueUserWorkItem(o => NotifyVideoWindowChanged());
+      if (_videoRendererType == VideoRendererType.madVR)
+      {
+        ThreadPool.QueueUserWorkItem(o => NotifyVideoWindowChanged());
+      }
+      else if (OnVideoWindowChanged != null)
+      {
+        OnVideoWindowChanged();
+      }
     }
 
     /// <summary>
