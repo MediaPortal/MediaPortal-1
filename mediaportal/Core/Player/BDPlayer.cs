@@ -1270,6 +1270,7 @@ namespace MediaPortal.Player
         if (value != _positionX)
         {
           _positionX = value;
+          _updateNeeded = true;
         }
       }
     }
@@ -1282,6 +1283,7 @@ namespace MediaPortal.Player
         if (value != _positionY)
         {
           _positionY = value;
+          _updateNeeded = true;
         }
       }
     }
@@ -1294,6 +1296,7 @@ namespace MediaPortal.Player
         if (value != _width)
         {
           _width = value;
+          _updateNeeded = true;
         }
       }
     }
@@ -1306,6 +1309,7 @@ namespace MediaPortal.Player
         if (value != _height)
         {
           _height = value;
+          _updateNeeded = true;
         }
       }
     }
