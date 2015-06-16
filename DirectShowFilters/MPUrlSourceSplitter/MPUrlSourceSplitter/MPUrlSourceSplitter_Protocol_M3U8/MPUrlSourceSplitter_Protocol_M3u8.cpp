@@ -737,13 +737,39 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
                 // no stream fragment to download, we have all data
                 this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
               }
+
+              this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE;
+              this->flags |= (this->streamFragmentToDownload != UINT_MAX) ? MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_STOP_RECEIVING_DATA : MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_NONE;
             }
             else
             {
               // live stream, check if we downloaded last stream fragment
-              // if yes, then download bootstrap info and get new stream fragments or check if stream fragment has end of stream flag set
+              // if yes, then download new playlist and get new stream fragments or check if stream fragment has end of stream flag set
 
-              if (this->streamFragments->Count() != 0)
+              //if (this->streamFragments->Count() != 0)
+              //{
+              //  // at least one stream fragment
+              //  CM3u8StreamFragment *lastFragment = this->streamFragments->GetItem(this->streamFragments->Count() - 1);
+
+              //  if (lastFragment->IsDownloaded())
+              //  {
+              //    if (lastFragment->IsEndOfStream())
+              //    {
+              //      this->logger->Log(LOGGER_INFO, L"%s: %s: live stream, downloaded last stream fragment, end of stream reached", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+              //      this->flags |= PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
+              //    }
+              //    else
+              //    {
+              //      this->logger->Log(LOGGER_INFO, L"%s: %s: live stream, downloaded last stream fragment, requesting media playlist for update of stream fragments", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+              //      this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_UPDATE_STREAM_FRAGMENTS | MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_STOP_RECEIVING_DATA;
+              //    }
+
+              //    this->streamFragmentToDownload = UINT_MAX;
+              //    this->streamFragmentDownloading = UINT_MAX;
+              //  }
+              //}
+
+              if ((!this->IsSetFlags(PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED)) && (this->streamFragments->Count() != 0))
               {
                 // at least one stream fragment
                 CM3u8StreamFragment *lastFragment = this->streamFragments->GetItem(this->streamFragments->Count() - 1);
@@ -753,7 +779,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
                   if (lastFragment->IsEndOfStream())
                   {
                     this->logger->Log(LOGGER_INFO, L"%s: %s: live stream, downloaded last stream fragment, end of stream reached", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-                    this->flags |= PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
+                    this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
                   }
                   else
                   {
@@ -764,12 +790,20 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
                   this->streamFragmentToDownload = UINT_MAX;
                   this->streamFragmentDownloading = UINT_MAX;
                 }
+                else
+                {
+                  // request to download next segment fragment after current downloaded fragment
+                  this->streamFragmentToDownload = (this->streamFragmentToDownload != UINT_MAX) ? this->streamFragmentToDownload : this->streamFragments->GetFirstNotDownloadedStreamFragmentIndex(this->streamFragmentDownloading + 1);
+                  this->streamFragmentDownloading = UINT_MAX;
+
+                  CHECK_CONDITION_HRESULT(result, this->streamFragmentToDownload != UINT_MAX, result, E_M3U8_NO_STREAM_FRAGMENT_TO_DOWNLOAD);
+
+                  this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE;
+                  this->flags |= (this->streamFragmentToDownload != UINT_MAX) ? MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_STOP_RECEIVING_DATA : MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_NONE;
+                }
               }
             }
           }
-
-          this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE;
-          this->flags |= (this->streamFragmentToDownload != UINT_MAX) ? MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_STOP_RECEIVING_DATA : MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_NONE;
         }
         else
         {

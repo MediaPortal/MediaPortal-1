@@ -238,5 +238,6 @@ FORCEINLINE bool IS_M3U8_ERROR(HRESULT error) { return (IS_M3U8_PARSE_ERROR(erro
 // M3U8 protocol error codes
 
 #define E_M3U8_CANNOT_GET_STREAM_FRAGMENTS_FROM_MEDIA_PLAYLIST                  -210
+#define E_M3U8_NO_STREAM_FRAGMENT_TO_DOWNLOAD                                   -211
 
 #endif

@@ -234,6 +234,7 @@ ErrorMessage ERROR_MESSAGES[] = {
   // M3U8 protocol error codes
 
   { E_M3U8_CANNOT_GET_STREAM_FRAGMENTS_FROM_MEDIA_PLAYLIST, L"Cannot get stream fragments from media playlist." },
+  { E_M3U8_NO_STREAM_FRAGMENT_TO_DOWNLOAD, L"No stream fragment to download." },
 
   // last item
   { 0, NULL }
