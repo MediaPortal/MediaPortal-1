@@ -25,7 +25,7 @@ using namespace std;
 class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritSec
 {
   public:
-    MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, DWORD parent, IDirect3DDevice9* pDevice);
+    MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, OAHWND parent, IDirect3DDevice9* pDevice);
     ~MPMadPresenter();
 
     IBaseFilter* Initialize();
@@ -52,7 +52,7 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
 
     MadSubtitleProxy* m_subProxy = nullptr;
 
-    DWORD m_dwParent = 0;
+    OAHWND m_hParent = (OAHWND)nullptr;
 
     IDirect3DDevice9Ex* m_pDevice = nullptr;
     IDirect3DDevice9Ex* m_pMadD3DDev = nullptr;

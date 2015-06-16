@@ -849,7 +849,7 @@ double EVRGetDisplayFPS()
   return displayFPS;
 }
 
-BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, DWORD parent, IBaseFilter** madFilter)
+BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter)
 {
   m_RenderPrefix = _T("mad");
 
