@@ -321,7 +321,7 @@ namespace MediaPortal.Player
         }
         if (videoWin != null)
         {
-          videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
+          //videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
           videoWin.put_WindowStyle(
             (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
           videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
