@@ -39,11 +39,12 @@ struct VID_FRAME_VERTEX
   float v;
 };
 
-MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, IDirect3DDevice9* pDevice) :
+MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, OAHWND parent, IDirect3DDevice9* pDevice) :
   CUnknown(NAME("MPMadPresenter"), NULL),
   m_pCallback(pCallback),
   m_dwGUIWidth(width),
   m_dwGUIHeight(height),
+  m_hParent(parent),
   m_pDevice((IDirect3DDevice9Ex*)pDevice)
 {
   m_subProxy = new MadSubtitleProxy(pCallback);
@@ -77,8 +78,9 @@ IBaseFilter* MPMadPresenter::Initialize()
   CComQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad;
   CComQIPtr<ISubRender> pSubRender = m_pMad;
   CComQIPtr<IMadVRSeekbarControl> pSeekbarControl = m_pMad;
+  CComQIPtr<IVideoWindow> pWindow = m_pMad;
 
-  if (!baseFilter || !pOsdServices || !manager || !pSubclassReplacement || !pSubRender || !pSeekbarControl)
+  if (!baseFilter || !pOsdServices || !manager || !pSubclassReplacement || !pSubRender || !pSeekbarControl || !pWindow)
     return NULL;
 
   pOsdServices->OsdSetRenderCallback("MP-GUI", this);
@@ -87,6 +89,8 @@ IBaseFilter* MPMadPresenter::Initialize()
   pSubRender->SetCallback(m_subProxy);
 
   pSeekbarControl->DisableSeekbar(true);
+
+  pWindow->put_Owner(m_hParent);
 
   // TODO implement IMadVRSubclassReplacement
   //pSubclassReplacement->DisableSubclassing();

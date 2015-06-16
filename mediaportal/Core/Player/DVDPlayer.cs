@@ -307,14 +307,6 @@ namespace MediaPortal.Player
         {
           if (hr == 0)
           {
-            hr = _videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
-            if (hr != 0)
-            {
-              Log.Info("DVDPlayer:Unable to set window owner 0x{0:X}", hr);
-            }
-          }
-          if (hr == 0)
-          {
             hr = _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child +
                                                          (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
             if (hr != 0)
