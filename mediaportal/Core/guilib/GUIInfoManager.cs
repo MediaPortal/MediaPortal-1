@@ -2145,11 +2145,14 @@ namespace MediaPortal.GUI.Library
       }
       else if (condition == TOPBAR_HAS_FOCUS)
       {
-        GUIWindow wnd = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TOPBAR);
-        if (wnd != null)
+        if (PluginManager.IsPluginNameEnabled("Topbar"))
         {
-          if (!GUIGraphicsContext.TopBarHidden && wnd.GetFocusControlId() > 0)
-            return true;
+          GUIWindow wnd = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TOPBAR);
+          if (wnd != null)
+          {
+            if (!GUIGraphicsContext.TopBarHidden && wnd.GetFocusControlId() > 0)
+              return true;
+          }
         }
         return false;
       }
