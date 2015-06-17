@@ -839,9 +839,8 @@ namespace MediaPortal.Player
 
           if (_videoWin != null)
           {
-            hr = _videoWin.put_Visible(OABool.False);
-            Log.Info("TSReaderPlayer: Cleanup Get hr value {0}", hr);
-            hr = _videoWin.put_Owner(IntPtr.Zero);
+            _videoWin.put_Owner(IntPtr.Zero);
+            _videoWin.put_Visible(OABool.False);
             _videoWin = null;
           }
 
