@@ -360,11 +360,15 @@ namespace Databases.Folders.SqlServer
           return;
         }
 
-        var query = (from u in _connection.tblpaths
-                     join o in _connection.tblsettings
-                     on u.idPath equals o.idPath
-                     where u.strPath.StartsWith(strPath) && o.tagName == strKey
-                     select new { strPath = u.strPath }).ToList();
+        strPath = strPath.Replace("\\", "\\\\").Trim();
+        strPath = strPath.Replace("\\", "\\\\").Trim();
+        strPath = strPath.Replace("'", "\\'").Trim();
+
+        string strSQL = string.Format(
+          "SELECT * from tblPath where strPath like '{0}%' and idPath in (SELECT idPath from tblSetting where tblSetting.idPath = tblPath.idPath and tblSetting.tagName = '{1}')"
+          , strPath, strKey);
+
+        var query = _connection.ExecuteStoreQuery<Databases.tblpath>(strSQL).ToList();
 
         if (query.Count == 0)
         {
