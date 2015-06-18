@@ -2978,8 +2978,8 @@ namespace MediaPortal.Player
         _videoWin = _graphBuilder as IVideoWindow;
         if (_videoWin != null)
         {
-          hr = _videoWin.put_Visible(OABool.False);
-          hr = _videoWin.put_Owner(IntPtr.Zero);
+          _videoWin.put_Owner(IntPtr.Zero);
+          _videoWin.put_Visible(OABool.False);
           _videoWin = null;
         }
 
