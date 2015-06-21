@@ -1393,8 +1393,6 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                       {
                         isOwner = true;
 
-                        MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FOUND_PMT;
-
                         if (context->GetLastSectionCrc32() != context->GetParser()->GetTransportStreamProgramMapSection()->GetCrc32())
                         {
                           caller->logger->LogBinary(LOGGER_VERBOSE,
