@@ -81,6 +81,6 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
 
     DeviceState m_deviceState;
 
-    CComQIPtr<IMadVRCommand> m_pCommand = nullptr;
+    IMadVRCommand* m_pCommand = nullptr;
 };
 
