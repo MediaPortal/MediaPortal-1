@@ -248,9 +248,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
   if (SUCCEEDED(result))
   {
     LOCK_MUTEX(this->lockMutex, INFINITE)
-
-    if (SUCCEEDED(result) && (this->mainCurlInstance->IsLockedCurlInstanceByOwner(this)) && (this->mainCurlInstance->GetConnectionState() == Opening))
+      
+    if (SUCCEEDED(result) && (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_UPDATE_STREAM_FRAGMENTS)) && (this->mainCurlInstance->IsLockedCurlInstanceByOwner(this)) && (this->mainCurlInstance->GetConnectionState() == Opening))
     {
+      // in case of updating stream fragments (live stream) we don't set Opened state
+      // Opened state will be set after receiving all data to reset protocol hoster timeout
+      // after reseting protocol timeout will be connection closed and new stream fragment(s) will be donwloaded
+
       unsigned int bufferSize = 0;
       {
         // only check received data length to not block Load() method
@@ -577,9 +581,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
                 if (SUCCEEDED(this->mainCurlInstance->StartReceivingData()))
                 {
                   this->mainCurlInstance->SetConnectionState(Opening);
-
-                  this->streamFragmentDownloading = this->streamFragmentToDownload;
-                  this->streamFragmentToDownload = UINT_MAX;
                 }
                 else
                 {
@@ -620,66 +621,91 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
         {
           // successfully downloaded media playlist
           unsigned int mediaPlaylistSize = this->mainCurlInstance->GetM3u8DownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
-          bool addedNewStreamFragments = false;
           
-          if (mediaPlaylistSize > 0)
+          if (this->mainCurlInstance->GetConnectionState() == Opening)
           {
-            // we ignore zero length media playlist, in that case we request media playlist again
-            
-            ALLOC_MEM_DEFINE_SET(mediaPlaylistBuffer, unsigned char, mediaPlaylistSize + 1, 0);
-            CHECK_CONDITION_HRESULT(result, mediaPlaylistBuffer, result, E_OUTOFMEMORY);
-
-            if (SUCCEEDED(result))
+            if (mediaPlaylistSize > 0)
             {
-              this->mainCurlInstance->GetM3u8DownloadResponse()->GetReceivedData()->CopyFromBuffer(mediaPlaylistBuffer, mediaPlaylistSize);
+              // we ignore zero length media playlist, in that case we request media playlist again
 
-              CMediaPlaylistFactory *factory = new CMediaPlaylistFactory(&result);
-              CHECK_POINTER_HRESULT(result, factory, result, E_OUTOFMEMORY);
-
-              wchar_t *tempMediaPlaylistBuffer = ConvertToUnicodeA((char *)mediaPlaylistBuffer);
-              CHECK_POINTER_HRESULT(result, factory, result, E_OUTOFMEMORY);
+              ALLOC_MEM_DEFINE_SET(mediaPlaylistBuffer, unsigned char, mediaPlaylistSize + 1, 0);
+              CHECK_CONDITION_HRESULT(result, mediaPlaylistBuffer, result, E_OUTOFMEMORY);
 
               if (SUCCEEDED(result))
               {
-                CMediaPlaylist *tempPlaylist = factory->CreateMediaPlaylist(&result, tempMediaPlaylistBuffer, wcslen(tempMediaPlaylistBuffer));
+                this->mainCurlInstance->GetM3u8DownloadResponse()->GetReceivedData()->CopyFromBuffer(mediaPlaylistBuffer, mediaPlaylistSize);
+
+                CMediaPlaylistFactory *factory = new CMediaPlaylistFactory(&result);
+                CHECK_POINTER_HRESULT(result, factory, result, E_OUTOFMEMORY);
+
+                wchar_t *tempMediaPlaylistBuffer = ConvertToUnicodeA((char *)mediaPlaylistBuffer);
+                CHECK_POINTER_HRESULT(result, factory, result, E_OUTOFMEMORY);
 
                 if (SUCCEEDED(result))
                 {
-                  wchar_t *baseUrl = GetBaseUrl(this->configuration->GetValue(PARAMETER_NAME_M3U8_PLAYLIST_URL, true, NULL));
+                  CMediaPlaylist *tempPlaylist = factory->CreateMediaPlaylist(&result, tempMediaPlaylistBuffer, wcslen(tempMediaPlaylistBuffer));
 
-                  CM3u8StreamFragmentCollection *parsedStreamFragments = this->GetStreamFragmentsFromMediaPlaylist(baseUrl, tempPlaylist, this->streamFragments);
-                  CHECK_POINTER_HRESULT(result, parsedStreamFragments, result, E_M3U8_CANNOT_GET_STREAM_FRAGMENTS_FROM_MEDIA_PLAYLIST);
-
-                  CHECK_CONDITION_HRESULT(result, this->streamFragments->Append(parsedStreamFragments), result, E_OUTOFMEMORY);
-
-                  for (unsigned int i = 0; (SUCCEEDED(result) && (i < parsedStreamFragments->Count())); i++)
+                  if (SUCCEEDED(result))
                   {
-                    addedNewStreamFragments = true;
-                    CM3u8StreamFragment *fragment = parsedStreamFragments->GetItem(i);
+                    wchar_t *baseUrl = GetBaseUrl(this->configuration->GetValue(PARAMETER_NAME_M3U8_PLAYLIST_URL, true, NULL));
 
-                    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->logger->Log(LOGGER_VERBOSE, L"%s: %s: added new stream fragment, fragment %u, timestamp: %lld, duration: %u (ms)", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, fragment->GetFragment(), fragment->GetFragmentTimestamp(), fragment->GetDuration()));
-                    CHECK_CONDITION_HRESULT(result, !fragment->IsEncrypted(), result, E_DRM_PROTECTED);
+                    CM3u8StreamFragmentCollection *parsedStreamFragments = this->GetStreamFragmentsFromMediaPlaylist(baseUrl, tempPlaylist, this->streamFragments);
+                    CHECK_POINTER_HRESULT(result, parsedStreamFragments, result, E_M3U8_CANNOT_GET_STREAM_FRAGMENTS_FROM_MEDIA_PLAYLIST);
+
+                    CHECK_CONDITION_HRESULT(result, this->streamFragments->Append(parsedStreamFragments), result, E_OUTOFMEMORY);
+
+                    for (unsigned int i = 0; (SUCCEEDED(result) && (i < parsedStreamFragments->Count())); i++)
+                    {
+                      this->mainCurlInstance->SetConnectionState(Opened);
+                      CM3u8StreamFragment *fragment = parsedStreamFragments->GetItem(i);
+
+                      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->logger->Log(LOGGER_VERBOSE, L"%s: %s: added new stream fragment, fragment %u, timestamp: %lld, duration: %u (ms)", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, fragment->GetFragment(), fragment->GetFragmentTimestamp(), fragment->GetDuration()));
+                      CHECK_CONDITION_HRESULT(result, !fragment->IsEncrypted(), result, E_DRM_PROTECTED);
+                    }
+
+                    FREE_MEM_CLASS(parsedStreamFragments);
+                    FREE_MEM(baseUrl);
                   }
 
-                  FREE_MEM_CLASS(parsedStreamFragments);
-                  FREE_MEM(baseUrl);
+                  FREE_MEM_CLASS(tempPlaylist);
                 }
 
-                FREE_MEM_CLASS(tempPlaylist);
+                FREE_MEM(tempMediaPlaylistBuffer);
+                FREE_MEM_CLASS(factory);
               }
 
-              FREE_MEM(tempMediaPlaylistBuffer);
-              FREE_MEM_CLASS(factory);
+              FREE_MEM(mediaPlaylistBuffer);
             }
 
-            FREE_MEM(mediaPlaylistBuffer);
+            if (this->mainCurlInstance->GetConnectionState() == Opening)
+            {
+              // no new stream fragment, download playlist again
+              // stop receiving data and restart downloading of stream fragments
+              this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_STOP_RECEIVING_DATA;
+            }
           }
-          
-          CHECK_CONDITION_EXECUTE(addedNewStreamFragments, this->flags &= ~MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_UPDATE_STREAM_FRAGMENTS);
-        }
+          else if (this->mainCurlInstance->GetConnectionState() == Opened)
+          {
+            // new stream fragments were successfully added
+            // protocol hoster timeout was reseted
 
-        // stop receiving data and restart downloading of stream fragments
-        this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_STOP_RECEIVING_DATA;
+            // just download new stream fragments
+            this->flags &= ~MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_UPDATE_STREAM_FRAGMENTS;
+
+            // stop receiving data and restart downloading of stream fragments
+            this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_STOP_RECEIVING_DATA;
+          }
+          else
+          {
+            // stop receiving data and restart downloading of stream fragments
+            this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_STOP_RECEIVING_DATA;
+          }
+        }
+        else
+        {
+          // stop receiving data and restart downloading of stream fragments
+          this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_STOP_RECEIVING_DATA;
+        }
       }
       else
       {
@@ -745,29 +771,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
             {
               // live stream, check if we downloaded last stream fragment
               // if yes, then download new playlist and get new stream fragments or check if stream fragment has end of stream flag set
-
-              //if (this->streamFragments->Count() != 0)
-              //{
-              //  // at least one stream fragment
-              //  CM3u8StreamFragment *lastFragment = this->streamFragments->GetItem(this->streamFragments->Count() - 1);
-
-              //  if (lastFragment->IsDownloaded())
-              //  {
-              //    if (lastFragment->IsEndOfStream())
-              //    {
-              //      this->logger->Log(LOGGER_INFO, L"%s: %s: live stream, downloaded last stream fragment, end of stream reached", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-              //      this->flags |= PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
-              //    }
-              //    else
-              //    {
-              //      this->logger->Log(LOGGER_INFO, L"%s: %s: live stream, downloaded last stream fragment, requesting media playlist for update of stream fragments", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-              //      this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_UPDATE_STREAM_FRAGMENTS | MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_STOP_RECEIVING_DATA;
-              //    }
-
-              //    this->streamFragmentToDownload = UINT_MAX;
-              //    this->streamFragmentDownloading = UINT_MAX;
-              //  }
-              //}
 
               if ((!this->IsSetFlags(PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED)) && (this->streamFragments->Count() != 0))
               {
@@ -1082,7 +1085,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
               streamPackage->SetCompleted(E_NO_MORE_DATA_AVAILABLE);
             }
 
-            if ((fragment != NULL) && (!fragment->IsDownloaded()) && (fragmentIndex != this->streamFragmentDownloading) && ((this->mainCurlInstance->GetConnectionState() == None) || (this->mainCurlInstance->GetConnectionState() == Opened)))
+            if ((!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_UPDATE_STREAM_FRAGMENTS)) && (fragment != NULL) && (!fragment->IsDownloaded()) && (fragmentIndex != this->streamFragmentDownloading) && ((this->mainCurlInstance->GetConnectionState() == None) || (this->mainCurlInstance->GetConnectionState() == Opened)))
             {
               // fragment is not downloaded and also is not downloading currently
               this->streamFragmentDownloading = UINT_MAX;
