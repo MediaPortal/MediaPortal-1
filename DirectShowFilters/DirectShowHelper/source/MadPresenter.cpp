@@ -77,10 +77,11 @@ IBaseFilter* MPMadPresenter::Initialize()
   CComQIPtr<IMadVRDirect3D9Manager> manager = m_pMad;
   CComQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad;
   CComQIPtr<ISubRender> pSubRender = m_pMad;
-  CComQIPtr<IMadVRSeekbarControl> pSeekbarControl = m_pMad;
   CComQIPtr<IVideoWindow> pWindow = m_pMad;
 
-  if (!baseFilter || !pOsdServices || !manager || !pSubclassReplacement || !pSubRender || !pSeekbarControl || !pWindow)
+  m_pMad->QueryInterface(&m_pCommand);
+
+  if (!baseFilter || !pOsdServices || !manager || !pSubclassReplacement || !pSubRender || !m_pCommand || !pWindow)
     return NULL;
 
   pOsdServices->OsdSetRenderCallback("MP-GUI", this);
@@ -88,7 +89,7 @@ IBaseFilter* MPMadPresenter::Initialize()
 
   pSubRender->SetCallback(m_subProxy);
 
-  pSeekbarControl->DisableSeekbar(true);
+  m_pCommand->SendCommandBool("disableExclusiveMode", true);
 
   pWindow->put_Owner(m_hParent);
 
@@ -102,6 +103,12 @@ HRESULT MPMadPresenter::Shutdown()
 {
   if (m_pMad)
   {
+    if (m_pCommand)
+    {
+      m_pCommand->SendCommand("restoreDisplayModeNow");
+      m_pCommand->Release();
+    }
+
     m_pMad->Release();
     m_pMad = nullptr;
   }

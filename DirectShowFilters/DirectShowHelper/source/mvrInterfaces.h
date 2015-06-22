@@ -1,11 +1,12 @@
 // ***************************************************************
-//  mvrInterfaces.h           version: 1.0.7  ·  date: 2014-01-18
+//  mvrInterfaces.h           version: 1.0.8  ·  date: 2015-06-21
 //  -------------------------------------------------------------
 //  various interfaces exported by madVR
 //  -------------------------------------------------------------
-//  Copyright (C) 2011 - 2014 www.madshi.net, BSD license
+//  Copyright (C) 2011 - 2015 www.madshi.net, BSD license
 // ***************************************************************
 
+// 2015-06-21 1.0.8 added IMadVRCommand
 // 2014-01-18 1.0.7 added IMadVRSettings2
 // 2013-06-04 1.0.6 added IMadVRInfo
 // 2013-01-23 1.0.5 added IMadVRSubclassReplacement
@@ -73,6 +74,8 @@ interface IOsdRenderCallback : public IUnknown
   // fullOutputRect  = (0, 0, outputSurfaceWidth, outputSurfaceHeight)
   // activeVideoRect = active video rendering rect inside of fullOutputRect
   // background area = the part of fullOutputRect which isn't covered by activeVideoRect
+  // you can return ERROR_EMPTY to indicate that you didn't actually do anything
+  // in that case madVR will skip some Direct3D state changes to save performance
   STDMETHOD(ClearBackground)(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect) = 0;
   STDMETHOD(RenderOsd      )(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect) = 0;
 };
@@ -165,33 +168,6 @@ interface IMadVRSubclassReplacement : public IUnknown
 };
 
 // ---------------------------------------------------------------------------
-// IMadVRSeekbarControl
-// ---------------------------------------------------------------------------
-
-// if you draw your own seekbar and absolutely insist on disliking madVR's
-// own seekbar, you can forcefully hide it by using this interface
-// using this interface only affects the current madVR instance
-
-[uuid("D2D3A520-7CFA-46EB-BA3B-6194A028781C")]
-interface IMadVRSeekbarControl : public IUnknown
-{
-  STDMETHOD(DisableSeekbar)(BOOL disable) = 0;
-};
-
-// ---------------------------------------------------------------------------
-// IMadVRExclusiveModeControl
-// ---------------------------------------------------------------------------
-
-// you can use this interface to turn madVR's automatic exclusive mode on/off
-// using this interface only affects the current madVR instance
-
-[uuid("88A69329-3CD3-47D6-ADEF-89FA23AFC7F3")]
-interface IMadVRExclusiveModeControl : public IUnknown
-{
-  STDMETHOD(DisableExclusiveMode)(BOOL disable) = 0;
-};
-
-// ---------------------------------------------------------------------------
 // IMadVRExclusiveModeCallback
 // ---------------------------------------------------------------------------
 
@@ -208,36 +184,6 @@ interface IMadVRExclusiveModeCallback : public IUnknown
 {
   STDMETHOD(  Register)(EXCLUSIVEMODECALLBACK exclusiveModeCallback, LPVOID context) = 0;
   STDMETHOD(Unregister)(EXCLUSIVEMODECALLBACK exclusiveModeCallback, LPVOID context) = 0;
-};
-
-// ---------------------------------------------------------------------------
-// IMadVRDirect3D9Manager
-// ---------------------------------------------------------------------------
-
-// You can make madVR use your Direct3D9 device(s) instead of creating its
-// own. If you do that, madVR will not automatically switch between
-// fullscreen and windowed mode, anymore. It's your duty then to enter
-// fullscreen exclusive mode, if you want madVR to use it. madVR will still
-// reset the devices, though, if necessary (lost device etc).
-
-[uuid("1CAEE23B-D14B-4DB4-8AEA-F3528CB78922")]
-interface IMadVRDirect3D9Manager : public IUnknown
-{
-  // Creating 3 different devices for scanline reading, rendering and
-  // presentation can improve overall performance. If you don't like that
-  // idea, just feed madVR with the same device for all tasks.
-  // You can't create new devices if one device is already in fullscreen
-  // exclusive mode. So if you want to provide madVR with 3 different
-  // devices, while still using exclusive mode, make sure you create the
-  // scanline reading and rendering devices before setting the presentation
-  // device to fullscreen exclusive mode.
-  STDMETHOD(UseTheseDevices)(LPDIRECT3DDEVICE9 scanlineReading, LPDIRECT3DDEVICE9 rendering, LPDIRECT3DDEVICE9 presentation) = 0;
-
-  // madVR contains a display mode changer which, depending on the video
-  // size and frame rate, may decide to switch display modes. If you don't
-  // want madVR to change either resolution or refresh rates, you can
-  // disable this functionality partially or completely.
-  STDMETHOD(ConfigureDisplayModeChanger)(BOOL allowResolutionChanges, BOOL allowRefreshRateChanges) = 0;
 };
 
 // ---------------------------------------------------------------------------
@@ -297,6 +243,35 @@ interface IMadVRInfo : public IUnknown
 // dxvaScalingActive,       bool,      is DXVA2 scaling       being used at the moment?
 // ivtcActive,              bool,      is madVR's IVTC algorithm active at the moment?
 // osdLatency,              int,       how much milliseconds will pass for an OSD change to become visible?
+
+// ---------------------------------------------------------------------------
+// IMadVRCommand
+// ---------------------------------------------------------------------------
+
+// This interface allows you to give commands to madVR. These commands only
+// affect the current madVR instance. They don't change permanent settings.
+
+[uuid("5E9599D1-C5DB-4A84-98A9-09BC5F8F1B79")]
+interface IMadVRCommand : public IUnknown
+{
+  // Command names and LPWSTR values are treated case insensitive.
+  STDMETHOD(SendCommand         )(LPCSTR command) = 0;
+  STDMETHOD(SendCommandBool     )(LPCSTR command, bool      parameter) = 0;
+  STDMETHOD(SendCommandInt      )(LPCSTR command, int       parameter) = 0;
+  STDMETHOD(SendCommandSize     )(LPCSTR command, SIZE      parameter) = 0;
+  STDMETHOD(SendCommandRect     )(LPCSTR command, RECT      parameter) = 0;
+  STDMETHOD(SendCommandUlonglong)(LPCSTR command, ULONGLONG parameter) = 0;
+  STDMETHOD(SendCommandDouble   )(LPCSTR command, double    parameter) = 0;
+  STDMETHOD(SendCommandString   )(LPCSTR command, LPWSTR    parameter) = 0;
+  STDMETHOD(SendCommandBin      )(LPCSTR command, LPVOID    parameter,
+                                                  int       size     ) = 0;
+};
+
+// available commands:
+// -------------------
+// disableSeekbar,          bool,      turn madVR's automatic exclusive mode on/off
+// disableExclusiveMode,    bool,      turn madVR's automatic exclusive mode on/off
+// restoreDisplayModeNow,              makes madVR immediately restore the original display mode
 
 // ---------------------------------------------------------------------------
 // IMadVRSettings
@@ -471,6 +446,7 @@ interface IMadVRSettings2 : public IMadVRSettings
 //     nnediDLQuality,              NNEDI3 double Chroma quality,                                       integer, 0..4
 //     nnediDLQuality,              NNEDI3 quadruple Luma quality,                                      integer, 0..4
 //     nnediDLQuality,              NNEDI3 quadruple Chroma quality,                                    integer, 0..4
+//     amdInteropHack,              use alternative interop hack (not recommended, AMD only),           boolean
 //   lumaUp, image upscaling
 //     lumaUp,                      image upscaling,                                                    string,  Nearest Neighbor|Bilinear|Dxva|Mitchell-Netravali|Catmull-Rom|Bicubic50|Bicubic60|Bicubic75|Bicubic100|SoftCubic50|SoftCubic60|SoftCubic70|SoftCubic80|SoftCubic100|Lanczos3|Lanczos4|Lanczos8|Spline36|Spline64|Jinc3|Jinc4|Jinc8
 //     lumaUpAntiRinging,           activate anti-ringing filter for luma upsampling,                   boolean
@@ -715,6 +691,48 @@ interface IMadVRExclusiveModeInfo : public IUnknown
 interface IMadVRRefreshRateInfo : public IUnknown
 {
   STDMETHOD(GetRefreshRate)(double *refreshRate) = 0;
+};
+
+// ---------------------------------------------------------------------------
+// IMadVRSeekbarControl (obsolete)
+// ---------------------------------------------------------------------------
+
+// CAUTION: This interface is obsolete. Use IMadVRCommand instead:
+// IMadVRCommand::SendCommandBool("disableSeekbar", true)
+
+[uuid("D2D3A520-7CFA-46EB-BA3B-6194A028781C")]
+interface IMadVRSeekbarControl : public IUnknown
+{
+  STDMETHOD(DisableSeekbar)(BOOL disable) = 0;
+};
+
+// ---------------------------------------------------------------------------
+// IMadVRExclusiveModeControl (obsolete)
+// ---------------------------------------------------------------------------
+
+// CAUTION: This interface is obsolete. Use IMadVRCommand instead:
+// IMadVRCommand::SendCommandBool("disableExclusiveMode", true)
+
+[uuid("88A69329-3CD3-47D6-ADEF-89FA23AFC7F3")]
+interface IMadVRExclusiveModeControl : public IUnknown
+{
+  STDMETHOD(DisableExclusiveMode)(BOOL disable) = 0;
+};
+
+// ---------------------------------------------------------------------------
+// IMadVRDirect3D9Manager (obsolete)
+// ---------------------------------------------------------------------------
+
+// CAUTION: This interface is obsolete. Instead use texture/surface sharing,
+// so that both media player and madVR can render to their own devices. You
+// can then blend the media player's GUI on top of madVR's rendered video
+// frames in madVR's OSD callback function.
+
+[uuid("1CAEE23B-D14B-4DB4-8AEA-F3528CB78922")]
+interface IMadVRDirect3D9Manager : public IUnknown
+{
+  STDMETHOD(UseTheseDevices)(LPDIRECT3DDEVICE9 scanlineReading, LPDIRECT3DDEVICE9 rendering, LPDIRECT3DDEVICE9 presentation) = 0;
+  STDMETHOD(ConfigureDisplayModeChanger)(BOOL allowResolutionChanges, BOOL allowRefreshRateChanges) = 0;
 };
 
 // ---------------------------------------------------------------------------
