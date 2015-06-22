@@ -78,7 +78,8 @@ IBaseFilter* MPMadPresenter::Initialize()
   CComQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad;
   CComQIPtr<ISubRender> pSubRender = m_pMad;
   CComQIPtr<IVideoWindow> pWindow = m_pMad;
-  m_pCommand = m_pMad;
+
+  m_pMad->QueryInterface(&m_pCommand);
 
   if (!baseFilter || !pOsdServices || !manager || !pSubclassReplacement || !pSubRender || !m_pCommand || !pWindow)
     return NULL;
@@ -102,6 +103,12 @@ HRESULT MPMadPresenter::Shutdown()
 {
   if (m_pMad)
   {
+    if (m_pCommand)
+    {
+      m_pCommand->SendCommand("restoreDisplayModeNow");
+      m_pCommand->Release();
+    }
+
     m_pMad->Release();
     m_pMad = nullptr;
   }
