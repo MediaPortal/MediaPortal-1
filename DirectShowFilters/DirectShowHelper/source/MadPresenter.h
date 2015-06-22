@@ -80,5 +80,7 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     DWORD m_dwHeight = 0;
 
     DeviceState m_deviceState;
+
+    CComQIPtr<IMadVRCommand> m_pCommand = nullptr;
 };
 
