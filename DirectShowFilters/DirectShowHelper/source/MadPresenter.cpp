@@ -89,7 +89,7 @@ IBaseFilter* MPMadPresenter::Initialize()
 
   pSubRender->SetCallback(m_subProxy);
 
-  m_pCommand->SendCommandBool("disableExclusiveMode", true);
+  m_pCommand->SendCommandBool("disableSeekbar", true);
 
   pWindow->put_Owner(m_hParent);
 
