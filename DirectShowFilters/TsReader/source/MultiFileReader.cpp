@@ -762,7 +762,7 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   		m_filesAdded = filesAdded;
   		m_filesRemoved = filesRemoved;
   
-      //LogDebug("MultiFileReader m_filesAdded : %d, m_filesRemoved : %d, m_startPosition : %I64d, m_endPosition : %I64d, currentPosition = %I64d, LatestFileID = %d", m_filesAdded, m_filesRemoved, m_startPosition, m_endPosition, currentPosition, fileID) ;
+      LogDebug("MultiFileReader m_filesAdded : %d, m_filesRemoved : %d, m_startPosition : %I64d, m_endPosition : %I64d, currentPosition = %I64d, LatestFileID = %d", m_filesAdded, m_filesRemoved, m_startPosition, m_endPosition, currentPosition, fileID) ;
   	}
 
   } while ( Error && Loop ) ; // If Error is set, try again...until Loop reaches 0.
