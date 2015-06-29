@@ -25,11 +25,12 @@
 #include "BufferHelper.h"
 #include "Section.h"
 
-CProgramSpecificInformationPacket::CProgramSpecificInformationPacket(HRESULT *result, uint16_t pid)
+CProgramSpecificInformationPacket::CProgramSpecificInformationPacket(HRESULT *result, uint16_t pid, uint8_t tableId)
   : CTsPacket(result)
 {
   this->pid = pid;
   this->sectionPayloads = NULL;
+  this->tableId = tableId;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -46,11 +47,12 @@ CProgramSpecificInformationPacket::CProgramSpecificInformationPacket(HRESULT *re
   }
 }
 
-CProgramSpecificInformationPacket::CProgramSpecificInformationPacket(HRESULT *result, uint16_t pid, bool reference)
+CProgramSpecificInformationPacket::CProgramSpecificInformationPacket(HRESULT *result, uint16_t pid, uint8_t tableId, bool reference)
   : CTsPacket(result, reference)
 {
   this->pid = pid;
   this->sectionPayloads = NULL;
+  this->tableId = tableId;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -77,6 +79,11 @@ CProgramSpecificInformationPacket::~CProgramSpecificInformationPacket(void)
 CSectionPayloadCollection *CProgramSpecificInformationPacket::GetSectionPayloads(void)
 {
   return this->sectionPayloads;
+}
+
+uint8_t CProgramSpecificInformationPacket::GetTableId(void)
+{
+  return this->tableId;
 }
 
 /* set methods */
@@ -109,23 +116,50 @@ bool CProgramSpecificInformationPacket::Parse(const unsigned char *buffer, uint3
       
       if (this->IsPayloadUnitStart())
       {
+        // there are at least two section payloads
+
         RBE8INC_DEFINE(buffer, position, pointerField, unsigned int);
+
+        unsigned int payloadPosition = 1;
+        const unsigned char *payload = this->GetPayload();
+        unsigned int payloadSize = this->GetPayloadSize();
 
         if (pointerField != 0)
         {
-          // split payload into two section payloads
-          CSectionPayload *previousPayload = new CSectionPayload(&result, this->GetPayload() + 1, pointerField, false);
-          CHECK_POINTER_HRESULT(result, previousPayload, result, E_OUTOFMEMORY);
+            CSectionPayload *previousPayload = new CSectionPayload(&result, payload + payloadPosition, pointerField, false);
+            CHECK_POINTER_HRESULT(result, previousPayload, result, E_OUTOFMEMORY);
 
-          CHECK_CONDITION_HRESULT(result, this->sectionPayloads->Add(previousPayload), result, E_OUTOFMEMORY);
-          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(previousPayload));
+            CHECK_CONDITION_HRESULT(result, this->sectionPayloads->Add(previousPayload), result, E_OUTOFMEMORY);
+            CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(previousPayload));
+
+            payloadPosition += pointerField;
         }
 
-        CSectionPayload *payload = new CSectionPayload(&result, this->GetPayload() + 1 + pointerField, this->GetPayloadSize() - pointerField - 1, true);
-        CHECK_POINTER_HRESULT(result, payload, result, E_OUTOFMEMORY);
+        // there can be one or more section payloads
+        while (payloadPosition < payloadSize)
+        {
+          if (CSection::GetTableId(payload + payloadPosition, payloadSize - payloadPosition) == this->GetTableId())
+          {
+            unsigned int sectionPayloadSize = CSection::GetSectionSize(payload + payloadPosition, payloadSize - payloadPosition);
+            
+            // we have only (payloadSize - payloadPosition) bytes available
 
-        CHECK_CONDITION_HRESULT(result, this->sectionPayloads->Add(payload), result, E_OUTOFMEMORY);
-        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(payload));
+            sectionPayloadSize = min(sectionPayloadSize, (payloadSize - payloadPosition));
+
+            CSectionPayload *sectionPayload = new CSectionPayload(&result, payload + payloadPosition, sectionPayloadSize, true);
+            CHECK_POINTER_HRESULT(result, sectionPayload, result, E_OUTOFMEMORY);
+
+            CHECK_CONDITION_HRESULT(result, this->sectionPayloads->Add(sectionPayload), result, E_OUTOFMEMORY);
+            CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(sectionPayload));
+
+            payloadPosition += sectionPayloadSize;
+          }
+          else
+          {
+            // no section, we can finish
+            break;
+          }
+        }
       }
       else
       {
@@ -144,64 +178,66 @@ bool CProgramSpecificInformationPacket::Parse(const unsigned char *buffer, uint3
   return this->IsSetFlags(TS_PACKET_FLAG_PARSED);
 }
 
-unsigned int CProgramSpecificInformationPacket::ParseSectionData(const uint8_t *sectionData, unsigned int sectionDataSize)
-{
-  HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, sectionData);
-  CHECK_POINTER_DEFAULT_HRESULT(result, this->GetPayload());
-
-  unsigned int processed = 0;
-
-  if (SUCCEEDED(result))
-  {
-    // we allow only one section in PSI packet
-    this->sectionPayloads->Clear();
-
-    // if IsPayloadUnitStart() is true, than in this packet starts at least one section
-    // in that case we must set pointer field
-
-    unsigned int dataSize = this->GetPayloadSize();
-    unsigned int position = 0;
-    uint8_t *payload = (uint8_t *)this->GetPayload();
-    unsigned int pointerField = 0;
-
-    if (this->IsPayloadUnitStart())
-    {
-      // one byte for pointer field
-      WBE8INC(payload, position, pointerField);
-      dataSize--;
-    }
-
-    unsigned int stuffingSize = (dataSize > sectionDataSize) ? (dataSize - sectionDataSize) : 0;
-
-    // copy or fill data in packet
-    unsigned int copyDataSize = min(dataSize, sectionDataSize);
-    memcpy(payload + position, sectionData, copyDataSize);
-    position += copyDataSize;
-    processed += copyDataSize;
-
-    if (stuffingSize > 0)
-    {
-      memset(payload + position, TS_PACKET_STUFFING_BYTE, stuffingSize);
-      position += stuffingSize;
-    }
-
-    CSectionPayload *payloadSection = new CSectionPayload(&result, this->GetPayload() + 1 + pointerField, this->GetPayloadSize() - pointerField - 1, this->IsPayloadUnitStart());
-    CHECK_POINTER_HRESULT(result, payloadSection, result, E_OUTOFMEMORY);
-
-    CHECK_CONDITION_HRESULT(result, this->sectionPayloads->Add(payloadSection), result, E_OUTOFMEMORY);
-    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(payloadSection));
-  }
-
-  CHECK_CONDITION_EXECUTE(FAILED(result), processed = 0);
-  return processed;
-}
+//unsigned int CProgramSpecificInformationPacket::ParseSectionData(const uint8_t *sectionData, unsigned int sectionDataSize)
+//{
+//  HRESULT result = S_OK;
+//  CHECK_POINTER_DEFAULT_HRESULT(result, sectionData);
+//  CHECK_POINTER_DEFAULT_HRESULT(result, this->GetPayload());
+//
+//  unsigned int processed = 0;
+//
+//  if (SUCCEEDED(result))
+//  {
+//    // we allow only one section in PSI packet
+//    this->sectionPayloads->Clear();
+//
+//    // if IsPayloadUnitStart() is true, than in this packet starts at least one section
+//    // in that case we must set pointer field
+//
+//    unsigned int dataSize = this->GetPayloadSize();
+//    unsigned int position = 0;
+//    uint8_t *payload = (uint8_t *)this->GetPayload();
+//    unsigned int pointerField = 0;
+//
+//    if (this->IsPayloadUnitStart())
+//    {
+//      // one byte for pointer field
+//      WBE8INC(payload, position, pointerField);
+//      dataSize--;
+//    }
+//
+//    unsigned int stuffingSize = (dataSize > sectionDataSize) ? (dataSize - sectionDataSize) : 0;
+//
+//    // copy or fill data in packet
+//    unsigned int copyDataSize = min(dataSize, sectionDataSize);
+//    memcpy(payload + position, sectionData, copyDataSize);
+//    position += copyDataSize;
+//    processed += copyDataSize;
+//
+//    if (stuffingSize > 0)
+//    {
+//      memset(payload + position, TS_PACKET_STUFFING_BYTE, stuffingSize);
+//      position += stuffingSize;
+//    }
+//
+//    CSectionPayload *payloadSection = new CSectionPayload(&result, this->GetPayload() + 1 + pointerField, this->GetPayloadSize() - pointerField - 1, this->IsPayloadUnitStart());
+//    CHECK_POINTER_HRESULT(result, payloadSection, result, E_OUTOFMEMORY);
+//
+//    CHECK_CONDITION_HRESULT(result, this->sectionPayloads->Add(payloadSection), result, E_OUTOFMEMORY);
+//    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(payloadSection));
+//  }
+//
+//  CHECK_CONDITION_EXECUTE(FAILED(result), processed = 0);
+//  return processed;
+//}
 
 /* static methods */
 
 CTsPacketCollection *CProgramSpecificInformationPacket::SplitSectionInProgramSpecificInformationPackets(CSection *section, unsigned int packetPID, unsigned int continuityCounter)
 {
-  HRESULT result = S_OK;
+  return NULL;
+
+  /*HRESULT result = S_OK;
   CTsPacketCollection *packets = new CTsPacketCollection(&result);
   CHECK_POINTER_HRESULT(result, packets, result, E_OUTOFMEMORY);
   CHECK_POINTER_DEFAULT_HRESULT(result, section);
@@ -240,7 +276,7 @@ CTsPacketCollection *CProgramSpecificInformationPacket::SplitSectionInProgramSpe
   }
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(packets));
-  return packets;
+  return packets;*/
 }
 
 /* protected methods */
@@ -248,7 +284,7 @@ CTsPacketCollection *CProgramSpecificInformationPacket::SplitSectionInProgramSpe
 CTsPacket *CProgramSpecificInformationPacket::CreateItem(void)
 {
   HRESULT result = S_OK;
-  CProgramSpecificInformationPacket *packet = new CProgramSpecificInformationPacket(&result, this->pid, this->IsSetFlags(TS_PACKET_FLAG_REFERENCE));
+  CProgramSpecificInformationPacket *packet = new CProgramSpecificInformationPacket(&result, this->pid, this->tableId, this->IsSetFlags(TS_PACKET_FLAG_REFERENCE));
   CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(packet));

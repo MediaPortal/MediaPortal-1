@@ -49,13 +49,28 @@ public:
 
   /* set methods */
 
+  // sets section as known section
+  // @param section : the section to set as known
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT SetKnownSection(CSection *section);
+
   /* other methods */
+
+  // clears current parser context instance to default state
+  virtual void Clear(void);
 
   // creates new section context
   // @return : S_OK if successful, error code otherwise
   virtual HRESULT CreateSectionContext(void);
 
+  // check if section is known
+  // @param section : the section to check
+  // @return : true if section is known, false otherwise
+  virtual bool IsKnownSection(CSection *section);
+
 protected:
+  // holds last section CRC32
+  unsigned int lastSectionCrc32;
 
   /* methods */
 };

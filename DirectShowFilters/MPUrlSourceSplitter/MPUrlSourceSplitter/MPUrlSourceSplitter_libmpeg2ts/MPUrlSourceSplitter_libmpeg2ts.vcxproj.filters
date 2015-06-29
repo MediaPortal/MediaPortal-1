@@ -138,6 +138,12 @@
     <ClInclude Include="ConditionalAccessSection.h">
       <Filter>Sections\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PacketParser.h">
+      <Filter>Parsers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SectionPayloadParser.h">
+      <Filter>Parsers\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -219,6 +225,12 @@
       <Filter>Sections\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ConditionalAccessParser.cpp">
+      <Filter>Parsers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketParser.cpp">
+      <Filter>Parsers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SectionPayloadParser.cpp">
       <Filter>Parsers\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

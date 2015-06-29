@@ -189,6 +189,8 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TransportStreamProgramMapParserContext.h" />
     <ClInclude Include="TransportStreamProgramMapParserContextCollection.h" />
+    <ClInclude Include="TransportStreamProgramMapParserKnownSectionContext.h" />
+    <ClInclude Include="TransportStreamProgramMapParserKnownSectionContextCollection.h" />
     <ClInclude Include="TransportStreamProgramMapSectionContext.h" />
     <ClInclude Include="TransportStreamProgramMapSectionPacketContext.h" />
     <ClInclude Include="TransportStreamProgramMapSectionPacketContextCollection.h" />
@@ -228,6 +230,8 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     </ClCompile>
     <ClCompile Include="TransportStreamProgramMapParserContext.cpp" />
     <ClCompile Include="TransportStreamProgramMapParserContextCollection.cpp" />
+    <ClCompile Include="TransportStreamProgramMapParserKnownSectionContext.cpp" />
+    <ClCompile Include="TransportStreamProgramMapParserKnownSectionContextCollection.cpp" />
     <ClCompile Include="TransportStreamProgramMapSectionContext.cpp" />
     <ClCompile Include="TransportStreamProgramMapSectionPacketContext.cpp" />
     <ClCompile Include="TransportStreamProgramMapSectionPacketContextCollection.cpp" />

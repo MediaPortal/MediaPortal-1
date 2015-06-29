@@ -99,6 +99,12 @@
     <ClInclude Include="ConditionalAccessSectionPacketContextCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TransportStreamProgramMapParserKnownSectionContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TransportStreamProgramMapParserKnownSectionContextCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -180,6 +186,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ConditionalAccessSectionPacketContextCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TransportStreamProgramMapParserKnownSectionContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TransportStreamProgramMapParserKnownSectionContextCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -76,16 +76,16 @@ bool CConditionalAccessSection::IsCurrentNextIndicator(void)
   return (((this->reservedVersionNumberCurrentNextIndicator >> CONDITIONAL_ACCESS_SECTION_CURRENT_NEXT_INDICATOR_SHIFT) & CONDITIONAL_ACCESS_SECTION_CURRENT_NEXT_INDICATOR_MASK) != 0);
 }
 
-HRESULT CConditionalAccessSection::Parse(CProgramSpecificInformationPacket *psiPacket, unsigned int startFromSectionPayload)
+HRESULT CConditionalAccessSection::Parse(CSectionPayload *sectionPayload)
 {
   this->reservedVersionNumberCurrentNextIndicator = 0;
   this->sectionNumber = 0;
   this->lastSectionNumber = 0;
   this->descriptors->Clear();
 
-  HRESULT result = __super::Parse(psiPacket, startFromSectionPayload);
+  HRESULT result = __super::Parse(sectionPayload);
 
-  // S_OK is successfull, S_FALSE if more PSI packets are needed to complete section, error code otherwise
+  // S_OK is successfull, S_FALSE if more section payloads are needed to complete section, error code otherwise
   if (result == S_OK)
   {
     CHECK_CONDITION_HRESULT(result, this->GetTableId() == CONDITIONAL_ACCESS_SECTION_TABLE_ID, result, E_FAIL);
@@ -124,6 +124,7 @@ HRESULT CConditionalAccessSection::Parse(CProgramSpecificInformationPacket *psiP
         FREE_MEM_CLASS(factory);
       }
     }
+
   }
 
   return result;

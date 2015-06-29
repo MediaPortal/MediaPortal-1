@@ -26,20 +26,24 @@ CTransportStreamProgramMapParserContext::CTransportStreamProgramMapParserContext
   : CParserContext(result)
 {
   this->leaveProgramElements = NULL;
+  this->knownSections = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->parser = new CTransportStreamProgramMapParser(result, pid);
     this->leaveProgramElements = new CProgramElementCollection(result);
+    this->knownSections = new CTransportStreamProgramMapParserKnownSectionContextCollection(result);
 
     CHECK_POINTER_HRESULT(*result, this->parser, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->leaveProgramElements, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->knownSections, *result, E_OUTOFMEMORY);
   }
 }
 
 CTransportStreamProgramMapParserContext::~CTransportStreamProgramMapParserContext(void)
 {
   FREE_MEM_CLASS(this->leaveProgramElements);
+  FREE_MEM_CLASS(this->knownSections);
 }
 
 /* get methods */
@@ -61,6 +65,22 @@ CProgramElementCollection *CTransportStreamProgramMapParserContext::GetLeaveProg
 
 /* set methods */
 
+HRESULT CTransportStreamProgramMapParserContext::SetKnownSection(CSection *section)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, section);
+
+  if (SUCCEEDED(result))
+  {
+    CTransportStreamProgramMapSection *transportStreamProgramMapSection = dynamic_cast<CTransportStreamProgramMapSection *>(section);
+    CHECK_POINTER_HRESULT(result, transportStreamProgramMapSection, result, E_INVALIDARG);
+
+    CHECK_CONDITION_HRESULT(result, this->knownSections->Add((uint16_t)transportStreamProgramMapSection->GetProgramNumber(), transportStreamProgramMapSection->GetCrc32()), result, E_FAIL);
+  }
+
+  return result;
+}
+
 void CTransportStreamProgramMapParserContext::SetFilterProgramElements(bool filterProgramElements)
 {
   this->flags &= ~TRANSPORT_STREAM_PROGRAM_MAP_PARSER_CONTEXT_FLAG_FILTER_PROGRAM_ELEMENTS;
@@ -68,6 +88,24 @@ void CTransportStreamProgramMapParserContext::SetFilterProgramElements(bool filt
 }
 
 /* other methods */
+
+void CTransportStreamProgramMapParserContext::Clear(void)
+{
+  __super::Clear();
+}
+
+bool CTransportStreamProgramMapParserContext::IsKnownSection(CSection *section)
+{
+  CTransportStreamProgramMapSection *transportStreamProgramMapSection = dynamic_cast<CTransportStreamProgramMapSection *>(section);
+  bool result = (transportStreamProgramMapSection != NULL);
+
+  if (result)
+  {
+    result = this->knownSections->Contains((uint16_t)transportStreamProgramMapSection->GetProgramNumber(), transportStreamProgramMapSection->GetCrc32());
+  }
+
+  return result;
+}
 
 bool CTransportStreamProgramMapParserContext::IsFilterProgramElements(void)
 {

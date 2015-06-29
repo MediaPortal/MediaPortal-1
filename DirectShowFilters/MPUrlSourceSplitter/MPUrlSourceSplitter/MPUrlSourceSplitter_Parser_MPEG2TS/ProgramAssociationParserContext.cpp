@@ -25,6 +25,8 @@
 CProgramAssociationParserContext::CProgramAssociationParserContext(HRESULT *result)
   : CParserContext(result)
 {
+  this->lastSectionCrc32 = SECTION_CRC32_UNDEFINED;
+
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->parser = new CProgramAssociationParser(result);
@@ -51,6 +53,31 @@ CProgramAssociationSectionContext *CProgramAssociationParserContext::GetSectionC
 
 /* set methods */
 
+void CProgramAssociationParserContext::Clear(void)
+{
+  __super::Clear();
+  this->lastSectionCrc32 = SECTION_CRC32_UNDEFINED;
+}
+
+HRESULT CProgramAssociationParserContext::SetKnownSection(CSection *section)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, section);
+
+  if (SUCCEEDED(result))
+  {
+    CProgramAssociationSection *programAssociationSection = dynamic_cast<CProgramAssociationSection *>(section);
+    CHECK_POINTER_HRESULT(result, programAssociationSection, result, E_INVALIDARG);
+
+    if (SUCCEEDED(result))
+    {
+      this->lastSectionCrc32 = programAssociationSection->GetCrc32();
+    }
+  }
+
+  return result;
+}
+
 /* other methods */
 
 HRESULT CProgramAssociationParserContext::CreateSectionContext(void)
@@ -62,6 +89,19 @@ HRESULT CProgramAssociationParserContext::CreateSectionContext(void)
   CHECK_POINTER_HRESULT(result, this->sectionContext, result, E_OUTOFMEMORY);
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(this->sectionContext));
+  return result;
+}
+
+bool CProgramAssociationParserContext::IsKnownSection(CSection *section)
+{
+  CProgramAssociationSection *programAssociationSection = dynamic_cast<CProgramAssociationSection *>(section);
+  bool result = (programAssociationSection != NULL);
+
+  if (result)
+  {
+    result &= (programAssociationSection->GetCrc32() == this->lastSectionCrc32);
+  }
+
   return result;
 }
 

@@ -25,6 +25,8 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 CConditionalAccessParserContext::CConditionalAccessParserContext(HRESULT *result)
   : CParserContext(result)
 {
+  this->lastSectionCrc32 = SECTION_CRC32_UNDEFINED;
+
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->parser = new CConditionalAccessParser(result);
@@ -51,7 +53,32 @@ CConditionalAccessSectionContext *CConditionalAccessParserContext::GetSectionCon
 
 /* set methods */
 
+HRESULT CConditionalAccessParserContext::SetKnownSection(CSection *section)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, section);
+
+  if (SUCCEEDED(result))
+  {
+    CConditionalAccessSection *conditionalAccessSection = dynamic_cast<CConditionalAccessSection *>(section);
+    CHECK_POINTER_HRESULT(result, conditionalAccessSection, result, E_INVALIDARG);
+
+    if (SUCCEEDED(result))
+    {
+      this->lastSectionCrc32 = conditionalAccessSection->GetCrc32();
+    }
+  }
+
+  return result;
+}
+
 /* other methods */
+
+void CConditionalAccessParserContext::Clear(void)
+{
+  __super::Clear();
+  this->lastSectionCrc32 = SECTION_CRC32_UNDEFINED;
+}
 
 HRESULT CConditionalAccessParserContext::CreateSectionContext(void)
 {
@@ -62,6 +89,19 @@ HRESULT CConditionalAccessParserContext::CreateSectionContext(void)
   CHECK_POINTER_HRESULT(result, this->sectionContext, result, E_OUTOFMEMORY);
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(this->sectionContext));
+  return result;
+}
+
+bool CConditionalAccessParserContext::IsKnownSection(CSection *section)
+{
+  CConditionalAccessSection *conditionalAccessSection = dynamic_cast<CConditionalAccessSection *>(section);
+  bool result = (conditionalAccessSection != NULL);
+
+  if (result)
+  {
+    result &= (conditionalAccessSection->GetCrc32() == this->lastSectionCrc32);
+  }
+
   return result;
 }
 

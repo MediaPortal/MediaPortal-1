@@ -32,8 +32,8 @@ class CSection;
 class CProgramSpecificInformationPacket : public CTsPacket
 {
 public:
-  CProgramSpecificInformationPacket(HRESULT *result, uint16_t pid);
-  CProgramSpecificInformationPacket(HRESULT *result, uint16_t pid, bool reference);
+  CProgramSpecificInformationPacket(HRESULT *result, uint16_t pid, uint8_t tableId);
+  CProgramSpecificInformationPacket(HRESULT *result, uint16_t pid, uint8_t tableId, bool reference);
   virtual ~CProgramSpecificInformationPacket(void);
 
   /* get methods */
@@ -41,6 +41,10 @@ public:
   // gets section payloads
   // @return : section payloads
   CSectionPayloadCollection *GetSectionPayloads(void);
+
+  // gets table ID of section
+  // @return : table ID of section
+  uint8_t GetTableId(void);
 
   /* set methods */
 
@@ -56,7 +60,7 @@ public:
   // @param sectionData : the section data to parse
   // @param sectionDataSize : the section data size
   // @return : number of data processed from buffer, 0 means error
-  virtual unsigned int ParseSectionData(const uint8_t *sectionData, unsigned int sectionDataSize);
+  //virtual unsigned int ParseSectionData(const uint8_t *sectionData, unsigned int sectionDataSize);
 
   /* static methods */
 
@@ -65,6 +69,8 @@ public:
 protected:
   // holds MPEG2 TS packet PID, which is specified for program specific information packet (e.g. 0x0000 for PAT, 0x0001 for CAT, etc.)
   uint16_t pid;
+  // the section table ID to split content of PSI packet into section payloads
+  uint8_t tableId;
   // holds section payloads
   CSectionPayloadCollection *sectionPayloads;
 

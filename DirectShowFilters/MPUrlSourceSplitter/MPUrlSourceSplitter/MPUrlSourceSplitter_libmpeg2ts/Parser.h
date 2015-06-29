@@ -24,7 +24,7 @@
 #define __PARSER_DEFINED
 
 #include "Flags.h"
-#include "TsPacket.h"
+#include "SectionPayload.h"
 
 #define PARSER_FLAG_NONE                                              FLAGS_NONE
 
@@ -41,11 +41,6 @@ public:
   /* set methods */
 
   /* other methods */
-
-  // parses input MPEG2 TS packet
-  // @param packet : the MPEG2 TS packet to parse
-  // @return : S_OK if successful, error code otherwise
-  virtual HRESULT Parse(CTsPacket *packet) = 0;
 
   // clears instance to its default state
   virtual void Clear(void);

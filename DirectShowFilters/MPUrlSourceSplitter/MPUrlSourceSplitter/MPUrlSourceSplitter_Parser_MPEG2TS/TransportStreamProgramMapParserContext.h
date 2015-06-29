@@ -27,6 +27,7 @@
 #include "TransportStreamProgramMapParser.h"
 #include "TransportStreamProgramMapSectionContext.h"
 #include "ProgramElementCollection.h"
+#include "TransportStreamProgramMapParserKnownSectionContextCollection.h"
 
 #define TRANSPORT_STREAM_PROGRAM_MAP_PARSER_CONTEXT_FLAG_NONE                       PARSER_CONTEXT_FLAG_NONE
 
@@ -56,11 +57,19 @@ public:
 
   /* set methods */
 
+  // sets section as known section
+  // @param section : the section to set as known
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT SetKnownSection(CSection *section);
+
   // sets filter program elements flag
   // @param filterProgramElements : true if filter program elements, false otherwise
   virtual void SetFilterProgramElements(bool filterProgramElements);
 
   /* other methods */
+
+  // clears current parser context instance to default state
+  virtual void Clear(void);
 
   // tests if filter program elements flag is set
   // @return : true if filter program elements flag is set, false otherwise
@@ -70,9 +79,16 @@ public:
   // @return : S_OK if successful, error code otherwise
   virtual HRESULT CreateSectionContext(void);
 
+  // check if section is known
+  // @param section : the section to check
+  // @return : true if section is known, false otherwise
+  virtual bool IsKnownSection(CSection *section);
+
 protected:
   // holds program elements to leave in transport stream program map
   CProgramElementCollection *leaveProgramElements;
+  // holds known sections
+  CTransportStreamProgramMapParserKnownSectionContextCollection *knownSections;
 
   /* methods */
 };
