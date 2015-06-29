@@ -141,7 +141,7 @@ HRESULT FileReader::OpenFile()
       							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE), // Share access
       							NULL,						            // Security
       							(DWORD) CREATE_ALWAYS,		  // Open flags
-      							(DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_DELETE_ON_CLOSE), // | FILE_FLAG_WRITE_THROUGH),	// More flags
+      							(DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_DELETE_ON_CLOSE | FILE_FLAG_RANDOM_ACCESS),	// More flags
       							NULL);						          // Template
       
       		if (hFileUnbuff != INVALID_HANDLE_VALUE)

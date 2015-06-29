@@ -134,8 +134,7 @@ HRESULT FileWriter::OpenFile()
   						 (DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE),          // Share access
   						 NULL,                             // Security
   						 (DWORD) OPEN_ALWAYS,              // Open flags
-  						 // (DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS),  // More flags
-  						 (DWORD) FILE_ATTRIBUTE_NORMAL,  // More flags
+  						 (DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS),  // More flags
   						 NULL);                            // Template
   }
 
