@@ -3915,7 +3915,7 @@ void CDeMultiplexer::ThreadProc()
     }
 
     //File read prefetch
-    if (m_bReadAheadFromFile && (timeNow > lastFileReadTime) )
+    if (m_bReadAheadFromFile && (timeNow > (lastFileReadTime + pfLoopDelay - 1)) )
     {
       lastFileReadTime = timeNow; 
       int sizeReadTemp = ReadAheadFromFile((ULONG)(max(READ_SIZE-sizeRead, MIN_READ_SIZE))); 
@@ -3928,12 +3928,6 @@ void CDeMultiplexer::ThreadProc()
           )
       {
         m_bReadAheadFromFile = false;
-          // if (retryRead && m_filter.m_bEnableBufferLogging)
-          // {
-          //   int ACnt, VCnt;
-          //   GetBufferCounts(&ACnt, &VCnt);
-          //   LogDebug("CDeMultiplexer::ThreadProc - Retry read end, A/V/time = %d/%d/%d, sizeReadTemp=%d, sizeRead=%d", ACnt, VCnt, timeNow-lastRetryLoopTime, sizeReadTemp, sizeRead) ; 
-          // }
         sizeRead = 0;
         retryRead = false;
       }
@@ -3944,9 +3938,7 @@ void CDeMultiplexer::ThreadProc()
       }
     }
     
-    pfLoopDelay = retryRead ? (m_filter.IsRTSP() ? 2 : PF_LOOP_DELAY_MIN) : m_prefetchLoopDelay;
-              
-    //Sleep(1);
+    pfLoopDelay = retryRead ? (m_filter.IsRTSP() ? 2 : PF_LOOP_DELAY_MIN) : m_prefetchLoopDelay;              
   }
   while (!ThreadIsStopping(pfLoopDelay)) ;
   LogDebug("CDeMultiplexer::ThreadProc stopped()");
