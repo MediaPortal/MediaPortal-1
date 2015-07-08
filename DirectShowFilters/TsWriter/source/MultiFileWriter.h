@@ -29,9 +29,10 @@
 #include "FileWriter.h"
 #include <vector>
 
-//Buffers are sized for timeshifting use only
+//Normally variable size buffers are used - CDiskBuff::CDiskBuff(int size)
+//MAX_BUFFER_SIZE is only used for fixed size buffers - CDiskBuff::CDiskBuff()
 #define MAX_BUFFER_SIZE 65536
-#define MAX_BUFFERS 64
+#define MAX_BUFFERS 256
 
 typedef struct 
 {

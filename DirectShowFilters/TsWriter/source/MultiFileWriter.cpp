@@ -229,16 +229,14 @@ HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 //
 HRESULT MultiFileWriter::CloseFile()
 {
-	CAutoLock lock(&m_Lock);
-
 	if (m_hTSBufferFile == INVALID_HANDLE_VALUE)
 	{
 		return S_OK;
 	}
 
-  //Wait up to 5s for all buffers to be written to disk
+  //Wait for all buffers to be written to disk
   m_WakeThreadEvent.Set();
-  for (int i=0; i<5000; i++)
+  for (;;)
   { 
     {//Context for CAutoLock
       CAutoLock lock(&m_qLock);
@@ -249,6 +247,9 @@ HRESULT MultiFileWriter::CloseFile()
     }
     Sleep(1);
   }
+
+  //Don't lock before this point to avoid deadlock when m_writeQueue.size() > 0
+	CAutoLock lock(&m_Lock);
 
 	ClearBuffers();
 
@@ -843,25 +844,13 @@ HRESULT MultiFileWriter::Write(PBYTE pbData, ULONG lDataLength)
 	if (m_hTSBufferFile == INVALID_HANDLE_VALUE)
 		return S_FALSE;
 
-  //Check queue size, and wait a while if full before aborting
-  for (int i=0; ; i++)
-  { 
-    {//Context for CAutoLock
-      CAutoLock lock(&m_qLock);
-      if (m_writeQueue.size() < MAX_BUFFERS)
-      {
-        break;
-      }
-    }
-     
-    if (i > 5000) 
-    {     
-      //Queue getting too large, and we have waited > 5 sec        
-      LogDebug("MultiFileWriter::Write() buffer queue too large: %d", m_writeQueue.size());
+  {//Context for CAutoLock
+    CAutoLock lock(&m_qLock);
+    if (m_writeQueue.size() >= MAX_BUFFERS)
+    {
+      //queue too large - abort and discard data
 		  return S_FALSE;
     }
-    
-    Sleep(1);
   }
 
   //Copy data into new buffer and push pointer onto queue
