@@ -38,6 +38,7 @@ public:
 	HRESULT OpenFile();
 	HRESULT CloseFile();
 	HRESULT Write(PBYTE pbData, ULONG lDataLength);
+	HRESULT ParkFile();
 
 	BOOL IsFileInvalid();
 
@@ -49,8 +50,7 @@ public:
 protected:
 	HANDLE m_hFile;
 	LPWSTR m_pFileName;
-	BOOL   m_isAsyncIO;
-	HANDLE m_hIocp;
+	HANDLE m_hFileParked;
 
 	BOOL m_bChunkReserve;
 	__int64 m_chunkReserveFileSize;

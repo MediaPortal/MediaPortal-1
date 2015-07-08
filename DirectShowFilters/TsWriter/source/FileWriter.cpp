@@ -35,6 +35,7 @@ extern void LogDebug(const wchar_t *fmt, ...) ;
 
 FileWriter::FileWriter() :
 	m_hFile(INVALID_HANDLE_VALUE),
+	m_hFileParked(INVALID_HANDLE_VALUE),
 	m_pFileName(0),
 	m_bChunkReserve(FALSE),
 	m_chunkReserveSize(2000000),
@@ -154,33 +155,80 @@ HRESULT FileWriter::OpenFile()
 }
 
 //
-// CloseFile
+// CloseFile (close all files)
 //
 HRESULT FileWriter::CloseFile()
 {
-	if (m_hFile == INVALID_HANDLE_VALUE)
-	{
-		return S_OK;
-	}
+	if (m_hFileParked != INVALID_HANDLE_VALUE)
+	{  
+  	if (!CloseHandle(m_hFileParked))
+  	{
+  	  LogDebug(L"FileWriter: CloseFile(), CloseHandle(m_hFileParked) failed, m_hFileParked 0x%x", m_hFileParked);
+  	}
+  	m_hFileParked = INVALID_HANDLE_VALUE; // Invalidate the file
+  }
   
- 	__int64 currentPosition = GetFilePointer();
- 	
- 	if (m_bChunkReserve)
- 	{
- 		if (currentPosition < m_chunkReserveFileSize)
- 		{
-   		SetFilePointer(currentPosition, FILE_BEGIN);
-   		SetEndOfFile(m_hFile);
- 	  }
- 	}
-
-  // LogDebug(L"FileWriter: CloseFile(), file %s: currentPosition %I64d, m_maxFileSize: %I64d, m_chunkReserveFileSize: %I64d, m_bChunkReserve: %d", m_pFileName, currentPosition, m_maxFileSize, m_chunkReserveFileSize, m_bChunkReserve);			  
-
-	CloseHandle(m_hFile);
-	m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
+	if (m_hFile != INVALID_HANDLE_VALUE)
+	{  
+   	__int64 currentPosition = GetFilePointer();
+   	
+   	if (m_bChunkReserve)
+   	{
+   		if (currentPosition < m_chunkReserveFileSize)
+   		{
+     		SetFilePointer(currentPosition, FILE_BEGIN);
+     		SetEndOfFile(m_hFile);
+   	  }
+   	}
+  
+    // LogDebug(L"FileWriter: CloseFile(), file %s: currentPosition %I64d, m_maxFileSize: %I64d, m_chunkReserveFileSize: %I64d, m_bChunkReserve: %d", m_pFileName, currentPosition, m_maxFileSize, m_chunkReserveFileSize, m_bChunkReserve);			  
+  
+  	if (!CloseHandle(m_hFile))
+  	{
+  	  LogDebug(L"FileWriter: CloseFile(), CloseHandle(m_hFile) failed, m_hFile 0x%x", m_hFile);
+  	}
+  	m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
+	}
 
 	return S_OK;
 }
+
+//
+// ParkFile - close parked file and park current file
+//
+HRESULT FileWriter::ParkFile()
+{
+  LogDebug(L"FileWriter: ParkFile(), m_hFile 0x%x, m_hFileParked 0x%x", m_hFile, m_hFileParked);			  
+
+	if (m_hFileParked != INVALID_HANDLE_VALUE)
+	{  
+  	if (!CloseHandle(m_hFileParked))
+  	{
+  	  LogDebug(L"FileWriter: ParkFile(), CloseHandle(m_hFileParked) failed, m_hFileParked 0x%x", m_hFileParked);
+  	}
+  	m_hFileParked = INVALID_HANDLE_VALUE; // Invalidate the file
+  }
+
+	if (m_hFile != INVALID_HANDLE_VALUE)
+	{  
+   	__int64 currentPosition = GetFilePointer();
+   	
+   	if (m_bChunkReserve)
+   	{
+   		if (currentPosition < m_chunkReserveFileSize)
+   		{
+     		SetFilePointer(currentPosition, FILE_BEGIN);
+     		SetEndOfFile(m_hFile);
+   	  }
+   	}
+   
+  	m_hFileParked = m_hFile; // 'park' the file - closing it is delayed until ParkFile() is called again 
+  	m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file handle
+	}
+
+	return S_OK;
+}
+
 
 BOOL FileWriter::IsFileInvalid()
 {
