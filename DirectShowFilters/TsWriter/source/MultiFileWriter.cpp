@@ -236,14 +236,16 @@ HRESULT MultiFileWriter::CloseFile()
 		return S_OK;
 	}
 
-  //Wait up to 500ms for all buffers to be written to disk
+  //Wait up to 5s for all buffers to be written to disk
   m_WakeThreadEvent.Set();
-  UINT qsize = 1;
-  for (int i=0; (qsize>0 && i<500); i++)
+  for (int i=0; i<5000; i++)
   { 
     {//Context for CAutoLock
       CAutoLock lock(&m_qLock);
-      qsize = m_writeQueue.size();
+      if (m_writeQueue.size() == 0)
+      {
+        break;
+      }
     }
     Sleep(1);
   }
@@ -344,7 +346,10 @@ HRESULT MultiFileWriter::PrepareTSFile()
 	//LogDebug("PrepareTSFile()");
 
 	// Make sure the old file is closed
-	m_pCurrentTSFile->CloseFile();
+	//m_pCurrentTSFile->CloseFile();
+	
+	// Make sure the old file is parked
+	m_pCurrentTSFile->ParkFile();
 
 	__int64 llDiskSpaceAvailable = 0;
 	if (SUCCEEDED(GetAvailableDiskSpace(&llDiskSpaceAvailable)) && (__int64)llDiskSpaceAvailable < (__int64)(m_maxTSFileSize*2))
@@ -838,14 +843,25 @@ HRESULT MultiFileWriter::Write(PBYTE pbData, ULONG lDataLength)
 	if (m_hTSBufferFile == INVALID_HANDLE_VALUE)
 		return S_FALSE;
 
-  { //Context for CAutoLock
-    CAutoLock lock(&m_qLock);
-    if (m_writeQueue.size() > MAX_BUFFERS) 
+  //Check queue size, and wait a while if full before aborting
+  for (int i=0; ; i++)
+  { 
+    {//Context for CAutoLock
+      CAutoLock lock(&m_qLock);
+      if (m_writeQueue.size() < MAX_BUFFERS)
+      {
+        break;
+      }
+    }
+     
+    if (i > 5000) 
     {     
-      //Queue getting too large         
+      //Queue getting too large, and we have waited > 5 sec        
       LogDebug("MultiFileWriter::Write() buffer queue too large: %d", m_writeQueue.size());
 		  return S_FALSE;
     }
+    
+    Sleep(1);
   }
 
   //Copy data into new buffer and push pointer onto queue
@@ -923,16 +939,12 @@ unsigned __stdcall MultiFileWriter::ThreadProc()
       diskBuffer = NULL;
     }
     
-    if (qsize > 1) 
+    if (qsize < 2) //this is the pre 'pop' qsize value
     {
-      //More buffers available
-      Sleep(1);
+      //Sleep for 50ms, unless thread gets an event
+      m_WakeThreadEvent.Wait(50);
     }
-    else
-    {
-      //Sleep for 10ms, unless thread gets an event
-      m_WakeThreadEvent.Wait(10);
-    }
+    //else there are more buffers to process, so go round again
   }
   
   if (diskBuffer != NULL)
