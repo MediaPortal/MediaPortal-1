@@ -1072,6 +1072,10 @@ namespace DirectShowLib
     /// <summary> Not defined </summary>
     public static readonly Guid LTMMVideoProcessors = new Guid(0xE526D606, 0x22E7, 0x494C, 0xB8, 0x1E, 0xAC, 0x0A, 0x94,
                                                                0xBF, 0xE6, 0x03);
+
+    /// <summary> Not defined </summary>
+    public static readonly Guid AMKSVideoScreen = new Guid(0xe6f07b5f, 0xEE97, 0x4A90, 0xB0, 0x76, 0x33, 0xF5, 0x7B,
+                                                           0xF4, 0xEA, 0xa7);
   }
 
   public sealed class VMRClsId

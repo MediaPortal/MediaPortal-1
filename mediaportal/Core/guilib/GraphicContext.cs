@@ -132,7 +132,7 @@ namespace MediaPortal.GUI.Library
     private static bool _blankScreen;
     private static int _deviceAudioConnected = 0;
     private static VolumeHandler _initVolumeHandler;
-    private static bool _deviceVideoConnected;
+    private static int _deviceVideoConnected = 0;
     private static bool _idleTimePowerSaving;
     private static bool _turnOffMonitor;
     private static bool _vmr9Allowed = true;
@@ -274,20 +274,20 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Set/get video device connected or removed
     /// </summary>
-    public static bool DeviceVideoConnected
+    public static int DeviceVideoConnected
     {
       get { return _deviceVideoConnected; }
       set
       {
-        if (value == false)
+        if (value > _deviceVideoConnected)
         {
-          _deviceVideoConnected = false;
-          Log.Debug("GraphicContext: device video removed");
+          _deviceVideoConnected = value;
+          Log.Debug("GraphicContext: device video connected - Count {0}", _deviceVideoConnected);
         }
-        else
+        else if (value < _deviceVideoConnected)
         {
-          _deviceVideoConnected = true;
-          Log.Debug("GraphicContext: device video connected");
+          _deviceVideoConnected = value < 0 ? 0 : value;
+          Log.Debug("GraphicContext: device video removed - Count {0}", _deviceVideoConnected);
         }
       }
     }

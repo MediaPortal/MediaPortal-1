@@ -1141,7 +1141,7 @@ public class MediaPortalApp : D3D, IRender
     GUIGraphicsContext.RenderGUI = this;
     GUIGraphicsContext.Render3DMode = GUIGraphicsContext.eRender3DMode.None;
     GUIGraphicsContext.DeviceAudioConnected = 0;
-    GUIGraphicsContext.DeviceVideoConnected = true;
+    GUIGraphicsContext.DeviceVideoConnected = 0;
 
     using (Settings xmlreader = new MPSettings())
     {
@@ -2007,7 +2007,7 @@ public class MediaPortalApp : D3D, IRender
               Log.Info("Main: Video Device or Screen {0} removed", deviceName);
               try
               {
-                GUIGraphicsContext.DeviceVideoConnected = false;
+                GUIGraphicsContext.DeviceVideoConnected--;
               }
               catch (Exception exception)
               {
@@ -2019,7 +2019,7 @@ public class MediaPortalApp : D3D, IRender
               Log.Info("Main: Video Device or Screen {0} connected", deviceName);
               try
               {
-                GUIGraphicsContext.DeviceVideoConnected = true;
+                GUIGraphicsContext.DeviceVideoConnected++;
                 if (!_keepstartfullscreen)
                 {
                   OnDisplayChange(ref msg);
@@ -2920,6 +2920,30 @@ public class MediaPortalApp : D3D, IRender
     }
 
     Log.Debug("Main: audio renderer count at startup = {0}", GUIGraphicsContext.DeviceAudioConnected);
+
+    GUIGraphicsContext.DeviceVideoConnected = 0;
+    devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSVideo);    // KSCATEGORY_VIDEO
+    if (devices != null)
+    {
+      GUIGraphicsContext.DeviceVideoConnected += devices.Length;
+      foreach (DsDevice d in devices)
+      {
+        d.Dispose();
+      }
+    }
+    devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSVideoScreen);    // KSCATEGORY_SCREEN
+    if (devices != null)
+    {
+      GUIGraphicsContext.DeviceVideoConnected += devices.Length;
+      foreach (DsDevice d in devices)
+      {
+        d.Dispose();
+      }
+    }
+
+    Log.Debug("Main: video device count at startup = {0}", GUIGraphicsContext.DeviceVideoConnected);
+
+
 
     Log.Info("Main: Initializing volume handler");
     #pragma warning disable 168
