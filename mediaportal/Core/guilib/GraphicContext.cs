@@ -130,7 +130,7 @@ namespace MediaPortal.GUI.Library
     private static float _currentFPS;
     private static long _lasttime;
     private static bool _blankScreen;
-    private static bool _deviceAudioConnected;
+    private static int _deviceAudioConnected = 0;
     private static VolumeHandler _initVolumeHandler;
     private static bool _deviceVideoConnected;
     private static bool _idleTimePowerSaving;
@@ -253,20 +253,20 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Set/get audio device connected or removed
     /// </summary>
-    public static bool DeviceAudioConnected
+    public static int DeviceAudioConnected
     {
       get { return _deviceAudioConnected; }
       set
       {
-        if (value == false)
+        if (value > _deviceAudioConnected)
         {
-          _deviceAudioConnected = false;
-          Log.Debug("GraphicContext: device audio removed");
+          _deviceAudioConnected = value;
+          Log.Debug("GraphicContext: device audio connected - Count {0}", _deviceAudioConnected);
         }
-        else
+        else if (value < _deviceAudioConnected)
         {
-          _deviceAudioConnected = true;
-          Log.Debug("GraphicContext: device audio connected");
+          _deviceAudioConnected = value < 0 ? 0 : value;
+          Log.Debug("GraphicContext: device audio removed - Count {0}", _deviceAudioConnected);
         }
       }
     }

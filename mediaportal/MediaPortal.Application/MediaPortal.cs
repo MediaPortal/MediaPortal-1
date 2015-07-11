@@ -18,6 +18,8 @@
 
 #endregion
 
+using DirectShowLib;
+
 #region usings
 
 using System;
@@ -1138,7 +1140,7 @@ public class MediaPortalApp : D3D, IRender
     GUIGraphicsContext.graphics = null;
     GUIGraphicsContext.RenderGUI = this;
     GUIGraphicsContext.Render3DMode = GUIGraphicsContext.eRender3DMode.None;
-    GUIGraphicsContext.DeviceAudioConnected = true;
+    GUIGraphicsContext.DeviceAudioConnected = 0;
     GUIGraphicsContext.DeviceVideoConnected = true;
 
     using (Settings xmlreader = new MPSettings())
@@ -2076,7 +2078,7 @@ public class MediaPortalApp : D3D, IRender
               Log.Info("Main: Audio Renderer {0} removed", deviceName);
               try
               {
-                GUIGraphicsContext.DeviceAudioConnected = false;
+                GUIGraphicsContext.DeviceAudioConnected--;
                 if (_stopOnLostAudioRenderer)
                 {
                   g_Player.Stop();
@@ -2096,7 +2098,7 @@ public class MediaPortalApp : D3D, IRender
               Log.Info("Main: Audio Renderer {0} connected", deviceName);
               try
               {
-                GUIGraphicsContext.DeviceAudioConnected = true;
+                GUIGraphicsContext.DeviceAudioConnected++;
                 if (_stopOnLostAudioRenderer)
                 {
                   g_Player.Stop();
@@ -2887,6 +2889,37 @@ public class MediaPortalApp : D3D, IRender
 
     Log.Debug("Main: Auto play start listening");
     AutoPlay.StartListening();
+
+    GUIGraphicsContext.DeviceAudioConnected = 0;
+    DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSAudio);    // KSCATEGORY_AUDIO
+    if (devices != null)
+    {
+      GUIGraphicsContext.DeviceAudioConnected += devices.Length;
+      foreach (DsDevice d in devices)
+      {
+        d.Dispose();
+      }
+    }
+    devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSRender);    // KSCATEGORY_RENDER
+    if (devices != null)
+    {
+      GUIGraphicsContext.DeviceAudioConnected += devices.Length;
+      foreach (DsDevice d in devices)
+      {
+        d.Dispose();
+      }
+    }
+    devices = DsDevice.GetDevicesOfCat(RDP_REMOTE_AUDIO);
+    if (devices != null)
+    {
+      GUIGraphicsContext.DeviceAudioConnected += devices.Length;
+      foreach (DsDevice d in devices)
+      {
+        d.Dispose();
+      }
+    }
+
+    Log.Debug("Main: audio renderer count at startup = {0}", GUIGraphicsContext.DeviceAudioConnected);
 
     Log.Info("Main: Initializing volume handler");
     #pragma warning disable 168
