@@ -350,6 +350,7 @@ namespace OSInfo
           }
           break;
         case 6:
+        case 10:
           int strProductType;
           GetProductInfo(osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, 0, 0, out strProductType);
           switch (strProductType)
@@ -526,7 +527,14 @@ namespace OSInfo
                     case 3:
                       osName = OSProductType == NT_WORKSTATION ? "Windows 81" : "Windows 2012 R2";
                       break;
-                    case 4:
+                  }
+                  break;
+                }
+              case 10:
+                {
+                  switch (OSMinorVersion)
+                  {
+                    case 0:
                       osName = OSProductType == NT_WORKSTATION ? "Windows 10" : "Windows 2012 R2";
                       break;
                   }
@@ -569,7 +577,7 @@ namespace OSInfo
           return OSProductType == NT_WORKSTATION ? OSList.Windows8 : OSList.Windows2012;
         case 63:
           return OSProductType == NT_WORKSTATION ? OSList.Windows81 : OSList.Windows2012R2;
-        case 64:
+        case 10:
           return OSProductType == NT_WORKSTATION ? OSList.Windows10 : OSList.Windows2012R2;  
       }
       return OSList.Windows2000andPrevious;
@@ -619,9 +627,9 @@ namespace OSInfo
       { // Windows 8.1 RTM
         return OsSupport.FullySupported;
       }
-      if (VerifyDesktopOSMinRequirement(6, 4, 9841, NT_WORKSTATION, 0))
+      if (VerifyDesktopOSMinRequirement(10, 0, 10162, NT_WORKSTATION, 0))
       { // Windows 10 Preview
-        return OsSupport.NotSupported;
+        return OsSupport.FullySupported;
       }
       if (IsServer())
       { // any server OS
@@ -698,7 +706,7 @@ namespace OSInfo
     /// <returns>false means Win 8.1 or previous</returns>
     public static bool Win10OrLater()
     {
-      return VerifyVersionGreaterEqual(6, 4);
+      return VerifyVersionGreaterEqual(10, 0);
     }
     
     /// <summary>
@@ -707,7 +715,14 @@ namespace OSInfo
     /// <returns>(OSMajorVersion * 10 + OSMinorVersion)</returns>
     public static int OsVersionInt()
     {
-      return (OSMajorVersion * 10 + OSMinorVersion);
+      if (OSMajorVersion < 10)
+      {
+        return (OSMajorVersion * 10 + OSMinorVersion);
+      }
+      else
+      {
+        return (OSMajorVersion + OSMinorVersion);
+      }
     }
 
     #endregion
