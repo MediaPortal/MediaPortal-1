@@ -57,6 +57,11 @@ DEFINE_GUID(CLSID_madVR, 0xe1a8b82a, 0x32ce, 0x4b0d, 0xbe, 0x0d, 0xaa, 0x68, 0xc
 // if you want the mouse message to be "eaten" (instead of passed on)
 typedef void (__stdcall *OSDMOUSECALLBACK)(LPCSTR name, LPVOID context, UINT message, WPARAM wParam, int posX, int posY);
 
+// return values for IOsdRenderCallback::ClearBackground/RenderOsd callbacks
+const static HRESULT CALLBACK_EMPTY          = 4306;   // the render callback didn't do anything at all
+const static HRESULT CALLBACK_INFO_DISPLAY   = 0;      // info display, doesn't need low latency
+const static HRESULT CALLBACK_USER_INTERFACE = 77001;  // user interface, switches madVR into low latency mode
+
 // when using the (2) render callbacks method, you need to provide
 // madVR with an instance of the IOsdRenderCallback interface
 // it contains three callbacks you have to provide
@@ -74,11 +79,15 @@ interface IOsdRenderCallback : public IUnknown
   // fullOutputRect  = (0, 0, outputSurfaceWidth, outputSurfaceHeight)
   // activeVideoRect = active video rendering rect inside of fullOutputRect
   // background area = the part of fullOutputRect which isn't covered by activeVideoRect
-  // you can return ERROR_EMPTY to indicate that you didn't actually do anything
-  // in that case madVR will skip some Direct3D state changes to save performance
+  // possible return values: CALLBACK_EMPTY etc, see definitions above
   STDMETHOD(ClearBackground)(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect) = 0;
   STDMETHOD(RenderOsd      )(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect) = 0;
 };
+
+// flags for IMadVROsdServices::OsdSetBitmap
+const static int BITMAP_STRETCH_TO_OUTPUT = 1;  // stretch OSD bitmap to video/output rect
+const static int BITMAP_INFO_DISPLAY      = 2;  // info display, doesn't need low latency
+const static int BITMAP_USER_INTERFACE    = 4;  // user interface, switches madVR into low latency mode
 
 // this is the main interface which madVR provides to you
 [uuid("3AE03A88-F613-4BBA-AD3E-EE236976BF9A")]
@@ -95,7 +104,7 @@ interface IMadVROsdServices : public IUnknown
     bool posRelativeToVideoRect = false,   // draw relative to TRUE: the active video rect; FALSE: the full output rect
     int zOrder = 0,                        // high zOrder OSD elements are drawn on top of those with smaller zOrder values
     DWORD duration = 0,                    // how many milliseconds shall the OSD element be shown (0 = infinite)?
-    DWORD flags = 0,                       // 0x00000001 = stretch OSD bitmap to video/output rect
+    DWORD flags = 0,                       // see definitions above
     OSDMOUSECALLBACK callback = NULL,      // optional callback for mouse events
     LPVOID callbackContext = NULL,         // this context is passed to the callback
     LPVOID reserved = NULL                 // undefined - set to NULL
