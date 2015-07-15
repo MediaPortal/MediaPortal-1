@@ -176,6 +176,8 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
+  bool uiVisible = false;
+
   CAutoLock cAutoLock(this);
 
   m_dwHeight = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top;
@@ -189,6 +191,8 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 
   if (FAILED(hr = m_pCallback->RenderGui(videoWidth, videoHeight, videoWidth, videoHeight)))
     return hr;
+
+  uiVisible = hr == S_OK ? true : false;
 
   if (FAILED(hr = m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE)))
     return hr;
@@ -206,7 +210,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   if (FAILED(hr = m_deviceState.Restore()))
     return hr;
 
-  return hr;
+  return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_EMPTY;
 }
 
 HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* fullOutputRect, RECT* activeVideoRect)
@@ -215,6 +219,8 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
+
+  bool uiVisible = false;
 
   CAutoLock cAutoLock(this);
 
@@ -229,6 +235,8 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 
   if (FAILED(hr = m_pCallback->RenderOverlay(videoWidth, videoHeight, videoWidth, videoHeight)))
     return hr;
+
+  uiVisible = hr == S_OK ? true : false;
 
   if (FAILED(hr = m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE)))
     return hr;
@@ -246,7 +254,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   if (FAILED(hr = m_deviceState.Restore()))
     return hr;
 
-  return hr;
+  return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_EMPTY;
 }
 
 HRESULT MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture)

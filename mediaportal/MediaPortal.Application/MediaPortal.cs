@@ -2574,18 +2574,14 @@ public class MediaPortalApp : D3D, IRender
 
   #region RenderFrame()
 
-  /// <summary>
-  /// 
-  /// </summary>
-  /// <param name="timePassed"></param>
-  public void RenderFrame(float timePassed, GUILayers layers)
+  public void RenderFrame(float timePassed, GUILayers layers, ref bool uiVisible)
   {
     if (!_suspended && AppActive)
     {
       try
       {
         CreateStateBlock();
-        GUILayerManager.Render(timePassed, layers);
+        uiVisible = GUILayerManager.Render(timePassed, layers);
         RenderStats();
       }
       catch (Exception ex)
@@ -2594,6 +2590,12 @@ public class MediaPortalApp : D3D, IRender
         Log.Error("RenderFrame exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
       }
     }
+  }
+
+  public void RenderFrame(float timePassed, GUILayers layers)
+  {
+    bool uiVisible = false;
+    RenderFrame(timePassed, layers, ref uiVisible);
   }
 
   #endregion

@@ -557,17 +557,17 @@ namespace MediaPortal.Player
       return 0;
     }
 
-    public void RenderGui(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
+    public int RenderGui(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
-      RenderLayers(GUILayers.under, width, height, arWidth, arHeight);
+      return RenderLayers(GUILayers.under, width, height, arWidth, arHeight);
     }
 
-    public void RenderOverlay(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
+    public int RenderOverlay(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
-      RenderLayers(GUILayers.over, width, height, arWidth, arHeight);
+      return RenderLayers(GUILayers.over, width, height, arWidth, arHeight);
     }
 
-    private void RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
+    private int RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
       if (width > 0 && height > 0)
       {
@@ -593,14 +593,16 @@ namespace MediaPortal.Player
         BDOSDRenderer.GetInstance().Render();
       }
 
-      GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers);
+      bool visible = false;
+      GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref visible);
       GUIFontManager.Present();
-
       device.EndScene();
 
       // Present() call is done on C++ side so we are able to use DirectX 9 Ex device
       // which allows us to skip the v-sync wait. We don't want to wait with madVR
       // is it only increases the UI rendering time.
+
+      return visible ? 0 : 1;  // S_OK, S_FALSE
     }
 
     public void SetRenderTarget(uint target)

@@ -33,5 +33,6 @@ namespace MediaPortal.GUI.Library
   public interface IRender
   {
     void RenderFrame(float timePassed, GUILayers layers);
+    void RenderFrame(float timePassed, GUILayers layers, ref bool uiVisible);
   }
 }
