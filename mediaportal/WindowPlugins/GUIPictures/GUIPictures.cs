@@ -219,6 +219,7 @@ namespace MediaPortal.GUI.Pictures
           Filter(ref itemlist);
         }
         List<string> pictureList = new List<string>();
+
         foreach (GUIListItem subitem in itemlist)
         {
           if (!subitem.IsFolder)
@@ -230,6 +231,36 @@ namespace MediaPortal.GUI.Pictures
               {
                 break;
               }
+            }
+          }
+        }
+
+        // No picture in the folder. Try to find in the subfolders.
+        Log.Debug("CreateFolderThumb: No picture in the {0}", path);
+        if (pictureList.Count == 0)
+        {
+          foreach (GUIListItem subitem in itemlist)
+          {
+            if (subitem.IsFolder && subitem.Path.Length > path.Length)
+            {
+              List<GUIListItem> subFolderList = vDir.GetDirectoryUnProtectedExt(subitem.Path, true);
+              if (!recreateAll)
+              {
+                Filter(ref subFolderList);
+              }
+              foreach (GUIListItem subFolderItem in subFolderList)
+              {
+                if (!subFolderItem.IsFolder && !subFolderItem.IsRemote && Util.Utils.IsPicture(subFolderItem.Path))
+                {
+                  pictureList.Add(subFolderItem.Path);
+                  Log.Debug("CreateFolderThumb: Add file to folder.jpg {0}", subFolderItem.Path);
+                  break;
+                }
+              }
+            }
+            if (pictureList.Count >= 4)
+            {
+              break;
             }
           }
         }

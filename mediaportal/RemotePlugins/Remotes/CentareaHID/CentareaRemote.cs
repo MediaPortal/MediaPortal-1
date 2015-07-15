@@ -26,10 +26,11 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using Log = MediaPortal.ServiceImplementations.Log;
+using Mapping = MediaPortal.InputDevices.InputHandler.Mapping;
 
 namespace MediaPortal.InputDevices
 {
-  public class CentareaRemote
+  public class CentareaRemote : IInputDevice
   {
     private const int WM_KEYDOWN = 0x0100;
     private const int WM_SYSKEYDOWN = 0x0104;
@@ -54,7 +55,7 @@ namespace MediaPortal.InputDevices
     private int _lastMouseTick = 0; // When did the last mouse action occur
     private int _ignoreDupMsg = 0; // Offset to compensate the self-induced mouse movement
     private InputHandler _inputHandler; // Input Mapper
-
+    private bool _remoteConfigured = false;
     #region Constructor
 
     /// <summary>
@@ -66,17 +67,22 @@ namespace MediaPortal.InputDevices
 
     #region Init && Deinit
 
+    public void Init(IntPtr hwnd)
+    {
+      Init();
+    }
+
     public void Init()
     {
-      bool RemoteConfigured = false;
+     
       using (Settings xmlreader = new MPSettings())
       {
-        RemoteConfigured = xmlreader.GetValueAsBool("remote", "Centarea", false);
+          _remoteConfigured = xmlreader.GetValueAsBool("remote", "Centarea", false);
         _verboseLogging = xmlreader.GetValueAsBool("remote", "CentareaVerbose", false);
         _mapMouseButton = xmlreader.GetValueAsBool("remote", "CentareaMouseOkMap", true);
         _mapJoystick = xmlreader.GetValueAsBool("remote", "CentareaJoystickMap", false);
       }
-      if (!RemoteConfigured)
+      if (!_remoteConfigured)
       {
         return;
       }
@@ -123,149 +129,197 @@ namespace MediaPortal.InputDevices
     {
       if (_remoteActive)
       {
-        if (msg.Msg == WM_KEYDOWN || msg.Msg == WM_SYSKEYDOWN || msg.Msg == Win32.Const.WM_APPCOMMAND || msg.Msg == WM_LBUTTONDOWN ||
-            msg.Msg == WM_RBUTTONDOWN || msg.Msg == WM_MOUSEMOVE)
+        AppCommands appCommand = (AppCommands) Win32.Macro.GET_APPCOMMAND_LPARAM(msg.LParam);
+        // find out which request the MCE remote handled last
+        if ((appCommand == InputDevices.LastHidRequest) && (appCommand != AppCommands.VolumeDown) &&
+            (appCommand != AppCommands.VolumeUp))
         {
-          switch ((Keys)msg.WParam)
+          if (Enum.IsDefined(typeof (AppCommands), InputDevices.LastHidRequest))
           {
-            case Keys.ControlKey:
-              break;
-            case Keys.ShiftKey:
-              break;
-            case Keys.Menu:
-              break;
-            default:
-              int keycode = (int)msg.WParam;
-
-              AppCommands appCommand = (AppCommands)Win32.Macro.GET_APPCOMMAND_LPARAM(msg.LParam);
-              // find out which request the MCE remote handled last
-              if ((appCommand == InputDevices.LastHidRequest) && (appCommand != AppCommands.VolumeDown) &&
-                  (appCommand != AppCommands.VolumeUp))
-              {
-                if (Enum.IsDefined(typeof (AppCommands), InputDevices.LastHidRequest))
-                {
-                  // possible that it is the same request mapped to an app command?
-                  if (Environment.TickCount - InputDevices.LastHidRequestTick < 500)
-                  {
-                    return true;
-                  }
-                }
-              }
-              InputDevices.LastHidRequest = appCommand;
-
-              // Due to the non-perfect placement of the OK button we allow the user to remap the joystick to okay.
-              if (_mapMouseButton)
-              {
-                if (msg.Msg == WM_LBUTTONDOWN)
-                {
-                  if (_verboseLogging)
-                  {
-                    Log.Debug("Centarea: Command \"{0}\" mapped for left mouse button", keycode);
-                  }
-                  keycode = 13;
-                }
-                if (msg.Msg == WM_RBUTTONDOWN)
-                {
-                  if (_verboseLogging)
-                  {
-                    Log.Debug("Centarea: Command \"{0}\" mapped for right mouse button", keycode);
-                  }
-                  keycode = 10069;
-                }
-              }
-              // Since mouse support is semi optimal we have this option to use the joystick like cursor keys
-              if (_mapJoystick && GUIGraphicsContext.Fullscreen)
-              {
-                if (msg.Msg == WM_MOUSEMOVE)
-                {
-                  Point p = new Point(msg.LParam.ToInt32());
-                  _ignoreDupMsg++;
-                  // since our ResetCursor() triggers a mouse move MSG as well we ignore every second event
-                  if (_ignoreDupMsg % 2 == 0)
-                  {
-                    GUIGraphicsContext.ResetCursor(false);
-                  }
-                  // we ignore double actions for the configured time
-                  if (Environment.TickCount - _lastMouseTick < 400)
-                  {
-                    return false;
-                  }
-
-                  MouseDirection mmove = OnMouseMoved(p);
-                  _lastMouseTick = Environment.TickCount;
-                  _ignoreDupMsg = 0;
-
-                  switch (mmove)
-                  {
-                    case MouseDirection.Up:
-                      keycode = 38;
-                      break;
-                    case MouseDirection.Right:
-                      keycode = 39;
-                      break;
-                    case MouseDirection.Down:
-                      keycode = 40;
-                      break;
-                    case MouseDirection.Left:
-                      keycode = 37;
-                      break;
-                  }
-                  if (mmove != MouseDirection.None)
-                  {
-                    GUIGraphicsContext.ResetCursor(false);
-                    if (_verboseLogging)
-                    {
-                      Log.Debug("Centarea: Command \"{0}\" mapped for mouse movement", mmove.ToString());
-                    }
-                  }
-                }
-              }
-              // The Centarea Remote sends key combos. Therefore we use this trick to get a 1:1 mapping
-              if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift)
-              {
-                keycode += 1000;
-              }
-              if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
-              {
-                keycode += 10000;
-              }
-              if ((Control.ModifierKeys & Keys.Alt) == Keys.Alt)
-              {
-                keycode += 100000;
-              }
-
-              try
-              {
-                // Get & execute Mapping
-                if (_inputHandler.MapAction(keycode))
-                {
-                  if (_verboseLogging)
-                  {
-                    Log.Debug("Centarea: Command \"{0}\" mapped", keycode);
-                  }
-                }
-                else
-                {
-                  if (keycode > 0)
-                  {
-                    Log.Debug("Centarea: Command \"{0}\" not mapped", keycode);
-                  }
-                  return false;
-                }
-              }
-              catch (ApplicationException)
-              {
-                return false;
-              }
-              msg.Result = new IntPtr(1);
-              break;
+            // possible that it is the same request mapped to an app command?
+            if (Environment.TickCount - InputDevices.LastHidRequestTick < 500)
+            {
+              return true;
+            }
           }
-          return true;
         }
+
+        return MapWndProcMessage(msg) != null;
+
       }
       return false;
     }
 
+    /// <summary>
+    /// Map a WndProc message and optionally execute it
+    /// </summary>
+    /// <param name="msg"></param>
+    /// <returns></returns>
+    private Mapping MapWndProcMessage(Message msg, bool shouldRaiseAction = true)
+    {
+        Mapping result = null;
+
+        if (msg.Msg == WM_KEYDOWN || msg.Msg == WM_SYSKEYDOWN || msg.Msg == Win32.Const.WM_APPCOMMAND || msg.Msg == WM_LBUTTONDOWN ||
+                  msg.Msg == WM_RBUTTONDOWN || msg.Msg == WM_MOUSEMOVE)
+        {
+            switch ((Keys)msg.WParam)
+            {
+                case Keys.ControlKey:
+                    break;
+                case Keys.ShiftKey:
+                    break;
+                case Keys.Menu:
+                    break;
+                default:
+                    int keycode = (int)msg.WParam;
+
+                    AppCommands appCommand = (AppCommands)Win32.Macro.GET_APPCOMMAND_LPARAM(msg.LParam);
+                    InputDevices.LastHidRequest = appCommand;
+
+                    // Due to the non-perfect placement of the OK button we allow the user to remap the joystick to okay.
+                    if (_mapMouseButton)
+                    {
+                        if (msg.Msg == WM_LBUTTONDOWN)
+                        {
+                            if (_verboseLogging)
+                            {
+                                Log.Debug("Centarea: Command \"{0}\" mapped for left mouse button", keycode);
+                            }
+                            keycode = 13;
+                        }
+                        if (msg.Msg == WM_RBUTTONDOWN)
+                        {
+                            if (_verboseLogging)
+                            {
+                                Log.Debug("Centarea: Command \"{0}\" mapped for right mouse button", keycode);
+                            }
+                            keycode = 10069;
+                        }
+                    }
+                    // Since mouse support is semi optimal we have this option to use the joystick like cursor keys
+                    if (_mapJoystick && GUIGraphicsContext.Fullscreen)
+                    {
+                        if (msg.Msg == WM_MOUSEMOVE)
+                        {
+                            Point p = new Point(msg.LParam.ToInt32());
+                            _ignoreDupMsg++;
+                            // since our ResetCursor() triggers a mouse move MSG as well we ignore every second event
+                            if (_ignoreDupMsg % 2 == 0)
+                            {
+                                GUIGraphicsContext.ResetCursor(false);
+                            }
+                            // we ignore double actions for the configured time
+                            if (Environment.TickCount - _lastMouseTick < 400)
+                            {
+                              return null;
+                            }
+
+                            MouseDirection mmove = OnMouseMoved(p);
+                            _lastMouseTick = Environment.TickCount;
+                            _ignoreDupMsg = 0;
+
+                            switch (mmove)
+                            {
+                                case MouseDirection.Up:
+                                    keycode = 38;
+                                    break;
+                                case MouseDirection.Right:
+                                    keycode = 39;
+                                    break;
+                                case MouseDirection.Down:
+                                    keycode = 40;
+                                    break;
+                                case MouseDirection.Left:
+                                    keycode = 37;
+                                    break;
+                            }
+                            if (mmove != MouseDirection.None)
+                            {
+                                GUIGraphicsContext.ResetCursor(false);
+                                if (_verboseLogging)
+                                {
+                                    Log.Debug("Centarea: Command \"{0}\" mapped for mouse movement", mmove.ToString());
+                                }
+                            }
+                        }
+                    }
+                    // The Centarea Remote sends key combos. Therefore we use this trick to get a 1:1 mapping
+                    if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift)
+                    {
+                        keycode += 1000;
+                    }
+                    if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
+                    {
+                        keycode += 10000;
+                    }
+                    if ((Control.ModifierKeys & Keys.Alt) == Keys.Alt)
+                    {
+                        keycode += 100000;
+                    }
+
+                    try
+                    {
+                        result = _inputHandler.GetMapping(keycode.ToString());
+                        if (shouldRaiseAction)
+                        {
+                            // Get & execute Mapping
+                            if (_inputHandler.MapAction(keycode))
+                            {
+                                if (_verboseLogging)
+                                {
+                                    Log.Debug("Centarea: Command \"{0}\" mapped", keycode);
+                                }
+                            }
+                            else
+                            {
+                                if (keycode > 0)
+                                {
+                                    Log.Debug("Centarea: Command \"{0}\" not mapped", keycode);
+                                }
+                                return null;
+                            }
+                        }
+                    }
+                    catch (ApplicationException)
+                    {
+                      return null;
+                    }
+                    msg.Result = new IntPtr(1);
+                    break;
+            }
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Required for the IInputDevice interface
+    /// </summary>    
+    /// <param name="msg"></param>
+    /// <param name="action"></param>
+    /// <param name="key"></param>
+    /// <param name="keyCode"></param>
+    /// <returns></returns>
+    public bool WndProc(ref System.Windows.Forms.Message msg, out GUI.Library.Action action, out char key, out Keys keyCode)
+    {
+      action = null;
+      key = (char)0;
+      keyCode = Keys.A;
+      return WndProc(ref msg);
+    }
+
+    /// <summary>
+    /// Get the mapping for this wndproc action
+    /// </summary>
+    /// <param name="msg"></param>
+    /// <returns></returns>
+    public MediaPortal.InputDevices.InputHandler.Mapping GetMapping(Message msg)
+    {
+      if (_remoteConfigured)
+      {
+        return MapWndProcMessage(msg, false);
+      }
+      return null;
+    }
     #endregion
 
     #region Joystick handling

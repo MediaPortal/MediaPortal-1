@@ -47,7 +47,7 @@ namespace MediaPortal.Player
     protected ITeletextSource _teletextSource = null;
     
     //Set to false to use normal CoreCCParser - Set to true for using CoreCCParser H264 Build Test
-    protected bool CoreCCParserH264 = false;
+    protected bool CoreCCParserH264 = true;
 
     #endregion
 
@@ -551,9 +551,16 @@ namespace MediaPortal.Player
 
         using (MPSettings xmlreader = new MPSettings())
         {
-          int lastSubIndex = xmlreader.GetValueAsInt("tvservice", "lastsubtitleindex", 0);
-          Log.Debug("TSReaderPlayer: Last subtitle index: {0}", lastSubIndex);
-          CurrentSubtitleStream = lastSubIndex;
+          if (filterConfig.autoShowSubWhenTvStarts && SupportsCC && CurrentSubtitleStream == 0)
+          {
+            CurrentSubtitleStream = -1;
+          }
+          else
+          {
+            int lastSubIndex = xmlreader.GetValueAsInt("tvservice", "lastsubtitleindex", 0);
+            Log.Debug("TSReaderPlayer: Last subtitle index: {0}", lastSubIndex);
+            CurrentSubtitleStream = lastSubIndex;
+          }
         }
 
         if (filterConfig != null && !filterConfig.autoShowSubWhenTvStarts)

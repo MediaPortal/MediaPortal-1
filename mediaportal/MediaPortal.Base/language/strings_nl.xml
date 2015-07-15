@@ -2358,5 +2358,31 @@
     <String id="300230">Stop afspelen als audio renderer verwijderd word</String>
     <String id="300231">Verminder beeldsnelheid indien niet in focus</String>
     <String id="300232">Bestanden alleen updaten na {0}</String>
+	<String id="350001">Druk Info/F9 voor snelle instellingen...</String>
+	<String id="350002">Films</String>
+	<String id="350003">Speel Disk</String>
+	<String id="350004">Trakt</String>
+	<String id="350005">TvWishList</String>
+	<String id="350006">OnlineVideos</String>
+	<String id="350007">Extensies</String>
+	<String id="350008">SubCentral</String>
+	<String id="350009">IMDb+</String>
+	<String id="350010">LogoManager</String>
+	<String id="350011">Nieuws</String>
+	<String id="350012">Bing Images</String>
+	<String id="350013">MyLyrics</String>
+	<String id="350014">BrowseTheWeb</String>
+	<String id="350015">AirPlayer</String>
+	<String id="350016">Rockstar</String>
+	<String id="350017">ShowTimes</String>
+	<String id="350018">NoPlugin</String>
+	<String id="350019">Label instellingen...</String>
+	<String id="350020">Druk Info/F9 voor alle plugins...</String>
+	<String id="350021">Weer</String>
+	<String id="350022">MusicInfo Handler</String>
+	<String id="350023">Instellingen</String>
+	<String id="350024">TvGids</String>
+	<String id="350025">Red Bull TV</String>
+	<String id="350026">YouTube</String>
   </Section>
 </Language>
