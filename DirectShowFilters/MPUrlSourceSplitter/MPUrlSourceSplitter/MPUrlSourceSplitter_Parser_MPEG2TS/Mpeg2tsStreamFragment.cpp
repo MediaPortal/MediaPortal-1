@@ -27,27 +27,17 @@ CMpeg2tsStreamFragment::CMpeg2tsStreamFragment(HRESULT *result)
   : CStreamFragment(result)
 {
   this->requestStartPosition = STREAM_FRAGMENT_START_POSITION_NOT_SET;
-  this->programAssociationSectionPacketContexts = NULL;
-  this->transportStreamProgramMapSectionPacketContexts = NULL;
-  this->conditionalAccessSectionPacketContexts = NULL;
+  this->multiplexerProgramAssociationSectionReferenceCount = 0;
+  this->multiplexerTransportStreamProgramMapSectionReferenceCount = 0;
+  this->multiplexerConditionalAccessSectionReferenceCount = 0;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->programAssociationSectionPacketContexts = new CProgramAssociationSectionPacketContextCollection(result);
-    this->transportStreamProgramMapSectionPacketContexts = new CTransportStreamProgramMapSectionPacketContextCollection(result);
-    this->conditionalAccessSectionPacketContexts = new CConditionalAccessSectionPacketContextCollection(result);
-
-    CHECK_POINTER_HRESULT(*result, this->programAssociationSectionPacketContexts, *result, E_OUTOFMEMORY);
-    CHECK_POINTER_HRESULT(*result, this->transportStreamProgramMapSectionPacketContexts, *result, E_OUTOFMEMORY);
-    CHECK_POINTER_HRESULT(*result, this->conditionalAccessSectionPacketContexts, *result, E_OUTOFMEMORY);
   }
 }
 
 CMpeg2tsStreamFragment::~CMpeg2tsStreamFragment(void)
 {
-  FREE_MEM_CLASS(this->programAssociationSectionPacketContexts);
-  FREE_MEM_CLASS(this->transportStreamProgramMapSectionPacketContexts);
-  FREE_MEM_CLASS(this->conditionalAccessSectionPacketContexts);
 }
 
 /* get methods */
@@ -57,19 +47,19 @@ int64_t CMpeg2tsStreamFragment::GetRequestStartPosition(void)
   return this->requestStartPosition;
 }
 
-CProgramAssociationSectionPacketContextCollection *CMpeg2tsStreamFragment::GetProgramAssociationSectionPacketContexts(void)
+unsigned int CMpeg2tsStreamFragment::GetMultiplexerProgramAssociationSectionReferenceCount(void)
 {
-  return this->programAssociationSectionPacketContexts;
+  return this->multiplexerProgramAssociationSectionReferenceCount;
 }
 
-CTransportStreamProgramMapSectionPacketContextCollection *CMpeg2tsStreamFragment::GetTransportStreamProgramMapSectionPacketContexts(void)
+unsigned int CMpeg2tsStreamFragment::GetMultiplexerTransportStreamProgramMapSectionReferenceCount(void)
 {
-  return this->transportStreamProgramMapSectionPacketContexts;
+  return this->multiplexerTransportStreamProgramMapSectionReferenceCount;
 }
 
-CConditionalAccessSectionPacketContextCollection *CMpeg2tsStreamFragment::GetConditionalAccessSectionPacketContexts(void)
+unsigned int CMpeg2tsStreamFragment::GetMultiplexerConditionalAccessSectionReferenceCount(void)
 {
-  return this->conditionalAccessSectionPacketContexts;
+  return this->multiplexerConditionalAccessSectionReferenceCount;
 }
 
 /* set methods */
@@ -178,6 +168,21 @@ void CMpeg2tsStreamFragment::SetConditionalAccessSectionUpdated(bool conditional
   }
 }
 
+void CMpeg2tsStreamFragment::SetMultiplexerProgramAssociationSectionReferenceCount(unsigned int count)
+{
+  this->multiplexerProgramAssociationSectionReferenceCount = count;
+}
+
+void CMpeg2tsStreamFragment::SetMultiplexerTransportStreamProgramMapSectionReferenceCount(unsigned int count)
+{
+  this->multiplexerTransportStreamProgramMapSectionReferenceCount = count;
+}
+
+void CMpeg2tsStreamFragment::SetMultiplexerConditionalAccessSectionReferenceCount(unsigned int count)
+{
+  this->multiplexerConditionalAccessSectionReferenceCount = count;
+}
+
 /* other methods */
 
 bool CMpeg2tsStreamFragment::IsSetRequestStartPosition(void)
@@ -268,10 +273,8 @@ bool CMpeg2tsStreamFragment::InternalClone(CFastSearchItem *item)
     if (result)
     {
       fragment->requestStartPosition = this->requestStartPosition;
-      
-      // do not clone program association section packet contexts
-      // do not clone transport stream program map section packet contexts
-      // do not clone conditional access section packet contexts
+
+      // multiplexer reference counts are not cloned
     }
   }
 

@@ -178,106 +178,80 @@ bool CProgramSpecificInformationPacket::Parse(const unsigned char *buffer, uint3
   return this->IsSetFlags(TS_PACKET_FLAG_PARSED);
 }
 
-//unsigned int CProgramSpecificInformationPacket::ParseSectionData(const uint8_t *sectionData, unsigned int sectionDataSize)
-//{
-//  HRESULT result = S_OK;
-//  CHECK_POINTER_DEFAULT_HRESULT(result, sectionData);
-//  CHECK_POINTER_DEFAULT_HRESULT(result, this->GetPayload());
-//
-//  unsigned int processed = 0;
-//
-//  if (SUCCEEDED(result))
-//  {
-//    // we allow only one section in PSI packet
-//    this->sectionPayloads->Clear();
-//
-//    // if IsPayloadUnitStart() is true, than in this packet starts at least one section
-//    // in that case we must set pointer field
-//
-//    unsigned int dataSize = this->GetPayloadSize();
-//    unsigned int position = 0;
-//    uint8_t *payload = (uint8_t *)this->GetPayload();
-//    unsigned int pointerField = 0;
-//
-//    if (this->IsPayloadUnitStart())
-//    {
-//      // one byte for pointer field
-//      WBE8INC(payload, position, pointerField);
-//      dataSize--;
-//    }
-//
-//    unsigned int stuffingSize = (dataSize > sectionDataSize) ? (dataSize - sectionDataSize) : 0;
-//
-//    // copy or fill data in packet
-//    unsigned int copyDataSize = min(dataSize, sectionDataSize);
-//    memcpy(payload + position, sectionData, copyDataSize);
-//    position += copyDataSize;
-//    processed += copyDataSize;
-//
-//    if (stuffingSize > 0)
-//    {
-//      memset(payload + position, TS_PACKET_STUFFING_BYTE, stuffingSize);
-//      position += stuffingSize;
-//    }
-//
-//    CSectionPayload *payloadSection = new CSectionPayload(&result, this->GetPayload() + 1 + pointerField, this->GetPayloadSize() - pointerField - 1, this->IsPayloadUnitStart());
-//    CHECK_POINTER_HRESULT(result, payloadSection, result, E_OUTOFMEMORY);
-//
-//    CHECK_CONDITION_HRESULT(result, this->sectionPayloads->Add(payloadSection), result, E_OUTOFMEMORY);
-//    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(payloadSection));
-//  }
-//
-//  CHECK_CONDITION_EXECUTE(FAILED(result), processed = 0);
-//  return processed;
-//}
-
-/* static methods */
-
-CTsPacketCollection *CProgramSpecificInformationPacket::SplitSectionInProgramSpecificInformationPackets(CSection *section, unsigned int packetPID, unsigned int continuityCounter)
+HRESULT CProgramSpecificInformationPacket::ParseSectionData(const uint8_t *sectionData, unsigned int sectionDataSize, bool sectionStart, bool fillStuffingBytes, unsigned int *processedDataSize)
 {
-  return NULL;
-
-  /*HRESULT result = S_OK;
-  CTsPacketCollection *packets = new CTsPacketCollection(&result);
-  CHECK_POINTER_HRESULT(result, packets, result, E_OUTOFMEMORY);
-  CHECK_POINTER_DEFAULT_HRESULT(result, section);
-  CHECK_CONDITION_HRESULT(result, packetPID < TS_PACKET_PID_NULL, result, E_INVALIDARG);
-  CHECK_CONDITION_HRESULT(result, continuityCounter <= TS_PACKET_MAXIMUM_CONTINUITY_COUNTER, result, E_INVALIDARG);
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, sectionData);
+  CHECK_POINTER_DEFAULT_HRESULT(result, processedDataSize);
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->GetPayload());
+  CHECK_CONDITION_HRESULT(result, (!sectionStart) || (sectionStart && this->IsPayloadUnitStart()), result, E_INVALIDARG);
 
   if (SUCCEEDED(result))
   {
-    unsigned int sectionSize = section->GetSectionSize();
-    const uint8_t *sectionData = section->GetSection();
-    unsigned int processed = 0;
+    // if IsPayloadUnitStart() is true, than in this packet starts at least one section
+    // in that case we must set pointer field only if PROGRAM_SPECIFIC_INFORMATION_PACKET_FLAG_WRITTEN_POINTER_FIELD is not set; otherwise we just left pointer field intact
 
-    while (SUCCEEDED(result) && (processed < sectionSize))
+    unsigned int dataSize = this->GetPayloadSize();
+    unsigned int position = 0;
+    uint8_t *payload = (uint8_t *)this->GetPayload();
+    unsigned int pointerField = 0;
+
+    for (unsigned int i = 0; i < this->sectionPayloads->Count(); i++)
     {
-      CProgramSpecificInformationPacket *psiPacket = new CProgramSpecificInformationPacket(&result, packetPID);
-      CHECK_POINTER_HRESULT(result, psiPacket, result, E_OUTOFMEMORY);
+      CSectionPayload *sectionPayload = this->sectionPayloads->GetItem(i);
 
-      if (SUCCEEDED(result))
-      {
-        psiPacket->SetAdaptationFieldControl(TS_PACKET_ADAPTATION_FIELD_CONTROL_ONLY_PAYLOAD);
-        psiPacket->SetPayloadUnitStart(processed == 0);
-        psiPacket->SetContinuityCounter(continuityCounter);
+      pointerField += sectionPayload->GetPayloadSize();
+    }
 
-        continuityCounter++;
-        continuityCounter &= TS_PACKET_HEADER_CONTINUITY_COUNTER_MASK;
+    if (sectionStart && (!this->IsSetFlags(PROGRAM_SPECIFIC_INFORMATION_PACKET_FLAG_WRITTEN_POINTER_FIELD)))
+    {
+      // one byte for pointer field
+      WBE8(payload, position, pointerField);
+      this->flags |= PROGRAM_SPECIFIC_INFORMATION_PACKET_FLAG_WRITTEN_POINTER_FIELD;
+    }
 
-        unsigned int parsed = psiPacket->ParseSectionData(sectionData + processed, sectionSize - processed);
-        CHECK_CONDITION_HRESULT(result, parsed != 0, result, E_FAIL);
+    position += pointerField;
 
-        processed += parsed;
-      }
+    if (this->IsPayloadUnitStart())
+    {
+      position++;
+    }
 
-      CHECK_CONDITION_HRESULT(result, packets->Add(psiPacket), result, E_OUTOFMEMORY);
-      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(psiPacket));
+    unsigned int stuffingSize = ((dataSize - position) > sectionDataSize) ? (dataSize - position - sectionDataSize) : 0;
+
+    // copy or fill data in packet
+    unsigned int copyDataSize = min((dataSize - position), sectionDataSize);
+
+    if (copyDataSize > 0)
+    {
+      memcpy(payload + position, sectionData, copyDataSize);
+
+      CSectionPayload *payloadSection = new CSectionPayload(&result, payload + position, copyDataSize, sectionStart);
+      CHECK_POINTER_HRESULT(result, payloadSection, result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_HRESULT(result, this->sectionPayloads->Add(payloadSection), result, E_OUTOFMEMORY);
+      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(payloadSection));
+
+      position += copyDataSize;
+      *processedDataSize = copyDataSize;
+    }
+
+    if (fillStuffingBytes && SUCCEEDED(result) && (stuffingSize > 0))
+    {
+      memset(payload + position, TS_PACKET_STUFFING_BYTE, stuffingSize);
+      position += stuffingSize;
     }
   }
 
-  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(packets));
-  return packets;*/
+  return result;
 }
+
+bool CProgramSpecificInformationPacket::IsWrittenPointerField(void)
+{
+  return this->IsSetFlags(PROGRAM_SPECIFIC_INFORMATION_PACKET_FLAG_WRITTEN_POINTER_FIELD);
+}
+
+/* static methods */
 
 /* protected methods */
 

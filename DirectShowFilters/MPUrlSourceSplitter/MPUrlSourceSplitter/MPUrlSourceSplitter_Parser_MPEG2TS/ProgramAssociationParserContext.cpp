@@ -46,11 +46,6 @@ CProgramAssociationParser *CProgramAssociationParserContext::GetParser(void)
   return (CProgramAssociationParser *)__super::GetParser();
 }
 
-CProgramAssociationSectionContext *CProgramAssociationParserContext::GetSectionContext(void)
-{
-  return (CProgramAssociationSectionContext *)__super::GetSectionContext();
-}
-
 /* set methods */
 
 void CProgramAssociationParserContext::Clear(void)
@@ -79,18 +74,6 @@ HRESULT CProgramAssociationParserContext::SetKnownSection(CSection *section)
 }
 
 /* other methods */
-
-HRESULT CProgramAssociationParserContext::CreateSectionContext(void)
-{
-  HRESULT result = S_OK;
-  FREE_MEM_CLASS(this->sectionContext);
-
-  this->sectionContext = new CProgramAssociationSectionContext(&result, this);
-  CHECK_POINTER_HRESULT(result, this->sectionContext, result, E_OUTOFMEMORY);
-
-  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(this->sectionContext));
-  return result;
-}
 
 bool CProgramAssociationParserContext::IsKnownSection(CSection *section)
 {

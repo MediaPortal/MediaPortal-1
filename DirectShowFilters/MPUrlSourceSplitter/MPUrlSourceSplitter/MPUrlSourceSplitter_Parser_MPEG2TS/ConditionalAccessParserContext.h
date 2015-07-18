@@ -25,7 +25,6 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ParserContext.h"
 #include "ConditionalAccessParser.h"
-#include "ConditionalAccessSectionContext.h"
 
 #define CONDITIONAL_ACCESS_PARSER_CONTEXT_FLAG_NONE                   PARSER_CONTEXT_FLAG_NONE
 
@@ -43,10 +42,6 @@ public:
   // @return : parser or NULL if no parser
   virtual CConditionalAccessParser *GetParser(void);
 
-  // gets section context associated with parser context
-  // @return : section context or NULL if no section context
-  virtual CConditionalAccessSectionContext *GetSectionContext(void);
-
   /* set methods */
 
   // sets section as known section
@@ -58,10 +53,6 @@ public:
 
   // clears current parser context instance to default state
   virtual void Clear(void);
-
-  // creates new section context
-  // @return : S_OK if successful, error code otherwise
-  virtual HRESULT CreateSectionContext(void);
 
   // check if section is known
   // @param section : the section to check

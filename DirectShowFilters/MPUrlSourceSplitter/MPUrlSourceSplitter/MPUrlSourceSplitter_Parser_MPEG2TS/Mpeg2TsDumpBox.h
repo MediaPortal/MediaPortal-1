@@ -32,11 +32,11 @@
 
 #define MPEG2TS_DUMP_BOX_FLAG_LAST                                    (DUMP_BOX_FLAG_LAST + 0)
 
-class CMpeg2TsDumpBox : public CDumpBox
+class CMpeg2tsDumpBox : public CDumpBox
 {
 public:
-  CMpeg2TsDumpBox(HRESULT *result);
-  virtual ~CMpeg2TsDumpBox(void);
+  CMpeg2tsDumpBox(HRESULT *result);
+  virtual ~CMpeg2tsDumpBox(void);
 
   /* get methods */
 

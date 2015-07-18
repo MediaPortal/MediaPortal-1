@@ -53,11 +53,6 @@ CTransportStreamProgramMapParser *CTransportStreamProgramMapParserContext::GetPa
   return (CTransportStreamProgramMapParser *)__super::GetParser();
 }
 
-CTransportStreamProgramMapSectionContext *CTransportStreamProgramMapParserContext::GetSectionContext(void)
-{
-  return (CTransportStreamProgramMapSectionContext *)__super::GetSectionContext();
-}
-
 CProgramElementCollection *CTransportStreamProgramMapParserContext::GetLeaveProgramElements(void)
 {
   return this->leaveProgramElements;
@@ -110,18 +105,6 @@ bool CTransportStreamProgramMapParserContext::IsKnownSection(CSection *section)
 bool CTransportStreamProgramMapParserContext::IsFilterProgramElements(void)
 {
   return this->IsSetFlags(TRANSPORT_STREAM_PROGRAM_MAP_PARSER_CONTEXT_FLAG_FILTER_PROGRAM_ELEMENTS);
-}
-
-HRESULT CTransportStreamProgramMapParserContext::CreateSectionContext(void)
-{
-  HRESULT result = S_OK;
-  FREE_MEM_CLASS(this->sectionContext);
-
-  this->sectionContext = new CTransportStreamProgramMapSectionContext(&result, this);
-  CHECK_POINTER_HRESULT(result, this->sectionContext, result, E_OUTOFMEMORY);
-
-  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(this->sectionContext));
-  return result;
 }
 
 /* protected methods */

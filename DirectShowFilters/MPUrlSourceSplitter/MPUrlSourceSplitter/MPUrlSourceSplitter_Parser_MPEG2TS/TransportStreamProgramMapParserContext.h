@@ -25,7 +25,6 @@
 
 #include "ParserContext.h"
 #include "TransportStreamProgramMapParser.h"
-#include "TransportStreamProgramMapSectionContext.h"
 #include "ProgramElementCollection.h"
 #include "TransportStreamProgramMapParserKnownSectionContextCollection.h"
 
@@ -46,10 +45,6 @@ public:
   // gets parser associated with parser context
   // @return : parser or NULL if no parser
   virtual CTransportStreamProgramMapParser *GetParser(void);
-
-  // gets section context associated with parser context
-  // @return : section context or NULL if no section context
-  virtual CTransportStreamProgramMapSectionContext *GetSectionContext(void);
 
   // gets collection of program elements to leave in transport stream program map
   // @return : collection of program elements to leave in transport stream program map
@@ -74,10 +69,6 @@ public:
   // tests if filter program elements flag is set
   // @return : true if filter program elements flag is set, false otherwise
   virtual bool IsFilterProgramElements(void);
-
-  // creates new section context
-  // @return : S_OK if successful, error code otherwise
-  virtual HRESULT CreateSectionContext(void);
 
   // check if section is known
   // @param section : the section to check

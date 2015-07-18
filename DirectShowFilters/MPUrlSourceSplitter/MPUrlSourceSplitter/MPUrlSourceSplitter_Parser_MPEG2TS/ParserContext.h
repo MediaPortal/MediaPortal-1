@@ -25,7 +25,7 @@
 
 #include "Flags.h"
 #include "Parser.h"
-#include "SectionContext.h"
+#include "Section.h"
 
 #define PARSER_CONTEXT_FLAG_NONE                                      FLAGS_NONE
 
@@ -43,10 +43,6 @@ public:
   // @return : parser or NULL if no parser
   virtual CParser *GetParser(void);
 
-  // gets section context associated with parser context
-  // @return : section context or NULL if no section context
-  virtual CSectionContext *GetSectionContext(void);
-
   /* set methods */
 
   // sets section as known section
@@ -59,14 +55,6 @@ public:
   // clears current parser context instance to default state
   virtual void Clear(void);
 
-  // free section context from using
-  // it is not released from memory
-  virtual void FreeSectionContext(void);
-
-  // creates new section context
-  // @return : S_OK if successful, error code otherwise
-  virtual HRESULT CreateSectionContext(void) = 0;
-
   // check if section is known
   // @param section : the section to check
   // @return : true if section is known, false otherwise
@@ -75,8 +63,6 @@ public:
 protected:
   // holds parser
   CParser *parser;
-  // holds section context
-  CSectionContext *sectionContext;
 
   /* methods */
 };

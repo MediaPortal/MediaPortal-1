@@ -24,13 +24,10 @@
 #define __TS_PACKET_CONTEXT_DEFINED
 
 #include "Flags.h"
-#include "SectionContext.h"
 
 #define TS_PACKET_CONTEXT_FLAG_NONE                                     FLAGS_NONE
 
-#define TS_PACKET_CONTEXT_FLAG_SECTION_CONTEXT_OWNER                    (1 << (FLAGS_LAST + 0))
-
-#define TS_PACKET_CONTEXT_FLAG_LAST                                     (FLAGS_LAST + 1)
+#define TS_PACKET_CONTEXT_FLAG_LAST                                     (FLAGS_LAST + 0)
 
 #define TS_PACKET_INDEX_NOT_SET                                         UINT_MAX
 
@@ -46,9 +43,9 @@ public:
   // @return : TS packet index or TS_PACKET_INDEX_NOT_SET is not set
   unsigned int GetTsPacketIndex(void);
 
-  // gets section context
-  // @return : section context
-  virtual CSectionContext *GetSectionContext(void);
+  // gets section payload count in TS packet
+  // @return : section payload count
+  unsigned int GetSectionPayloadCount(void);
 
   /* set methods */
 
@@ -56,26 +53,17 @@ public:
   // @param tsPacketIndex : the TS packet index to set
   void SetTsPacketIndex(unsigned int tsPacketIndex);
 
-  // sets section context
-  // @param sectionContext : section context to set
-  // @return : true if successful, false otherwise (e.g. wrong section context type)
-  virtual bool SetSectionContext(CSectionContext *sectionContext);
-
-  // sets section owner flag
-  // @param isSectionOwner : flag specyfying that TS packet context is owner of section context
-  void SetSectionContextOwner(bool isSectionOwner);
+  // sets section payload count in TS packet
+  // @param sectionPayloadCount : the section payload count to set
+  void SetSectionPayloadCount(unsigned int sectionPayloadCount);
 
   /* other methods */
 
-  // tests if TS packet context is section context owner 
-  bool IsSectionContextOwner(void);
-
 protected:
-
   // holds TS packet index
   unsigned int tsPacketIndex;
-  // holds section context
-  CSectionContext *sectionContext;
+  // holds section payload count
+  unsigned int sectionPayloadCount;
 
   /* methods */
 };

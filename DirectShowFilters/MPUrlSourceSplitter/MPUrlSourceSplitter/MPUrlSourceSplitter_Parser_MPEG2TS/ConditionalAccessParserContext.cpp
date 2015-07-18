@@ -46,11 +46,6 @@ CConditionalAccessParser *CConditionalAccessParserContext::GetParser(void)
   return (CConditionalAccessParser *)__super::GetParser();
 }
 
-CConditionalAccessSectionContext *CConditionalAccessParserContext::GetSectionContext(void)
-{
-  return (CConditionalAccessSectionContext *)__super::GetSectionContext();
-}
-
 /* set methods */
 
 HRESULT CConditionalAccessParserContext::SetKnownSection(CSection *section)
@@ -78,18 +73,6 @@ void CConditionalAccessParserContext::Clear(void)
 {
   __super::Clear();
   this->lastSectionCrc32 = SECTION_CRC32_UNDEFINED;
-}
-
-HRESULT CConditionalAccessParserContext::CreateSectionContext(void)
-{
-  HRESULT result = S_OK;
-  FREE_MEM_CLASS(this->sectionContext);
-
-  this->sectionContext = new CConditionalAccessSectionContext(&result, this);
-  CHECK_POINTER_HRESULT(result, this->sectionContext, result, E_OUTOFMEMORY);
-
-  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(this->sectionContext));
-  return result;
 }
 
 bool CConditionalAccessParserContext::IsKnownSection(CSection *section)

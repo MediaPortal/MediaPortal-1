@@ -65,7 +65,7 @@ public:
   // inserts context to collection
   // @param position : zero-based position to insert new context
   // @param context : context to insert
-  // @return : true if successful, false otherwise
+  // @return : always false
   virtual bool Insert(unsigned int position, CTransportStreamProgramMapParserContext *context);
 
   // clear collection of items

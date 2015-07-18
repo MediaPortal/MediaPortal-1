@@ -26,13 +26,11 @@ CParserContext::CParserContext(HRESULT *result)
   : CFlags()
 {
   this->parser = NULL;
-  this->sectionContext = NULL;
 }
 
 CParserContext::~CParserContext(void)
 {
   FREE_MEM_CLASS(this->parser);
-  FREE_MEM_CLASS(this->sectionContext);
 }
 
 /* get methods */
@@ -42,11 +40,6 @@ CParser *CParserContext::GetParser(void)
   return this->parser;
 }
 
-CSectionContext *CParserContext::GetSectionContext(void)
-{
-  return this->sectionContext;
-}
-
 /* set methods */
 
 /* other methods */
@@ -54,12 +47,6 @@ CSectionContext *CParserContext::GetSectionContext(void)
 void CParserContext::Clear(void)
 {
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->parser, this->parser->Clear());
-  FREE_MEM_CLASS(this->sectionContext);
-}
-
-void CParserContext::FreeSectionContext(void)
-{
-  this->sectionContext = NULL;
 }
 
 /* protected methods */
