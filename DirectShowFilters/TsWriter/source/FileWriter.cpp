@@ -129,13 +129,12 @@ HRESULT FileWriter::OpenFile()
   }
   else  // tsbuffer files
   {
-  	// Try to open the file in random-access mode to workaround SMB caching problems
   	m_hFile = CreateFileW(m_pFileName,           // The filename
   						 (DWORD) GENERIC_WRITE,            // File access
   						 (DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE),          // Share access
   						 NULL,                             // Security
   						 (DWORD) OPEN_ALWAYS,              // Open flags
-  						 (DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS),  // More flags
+  						 (DWORD) FILE_ATTRIBUTE_NORMAL,    // More flags
   						 NULL);                            // Template
   }
 
@@ -190,6 +189,23 @@ HRESULT FileWriter::CloseFile()
   	m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
 	}
 
+	return S_OK;
+}
+
+//
+// CloseParked (close parked file)
+//
+HRESULT FileWriter::CloseParked()
+{
+	if (m_hFileParked != INVALID_HANDLE_VALUE)
+	{  
+  	if (!CloseHandle(m_hFileParked))
+  	{
+  	  LogDebug(L"FileWriter: CloseParked(), CloseHandle(m_hFileParked) failed, m_hFileParked 0x%x", m_hFileParked);
+  	}
+  	m_hFileParked = INVALID_HANDLE_VALUE; // Invalidate the file
+  }
+  
 	return S_OK;
 }
 
@@ -309,15 +325,23 @@ HRESULT FileWriter::Write(PBYTE pbData, ULONG lDataLength)
   return S_FALSE;
 }
 
-void FileWriter::SetChunkReserve(BOOL bEnable, __int64 chunkReserveSize, __int64 maxFileSize)
+void FileWriter::SetChunkReserve( __int64 chunkReserveSize, __int64 maxFileSize)
 {
-	m_bChunkReserve = bEnable;
+	m_bChunkReserve = (chunkReserveSize > 0);
+	
+  LogDebug(L"FileWriter: SetChunkReserve(), chunkReserveSize: %I64d, maxFileSize: %I64d, m_bChunkReserve: %d", chunkReserveSize, maxFileSize, m_bChunkReserve);		
+  	  
 	if (m_bChunkReserve)
 	{
 		m_chunkReserveSize = chunkReserveSize;
 		m_chunkReserveFileSize = 0;
-		m_maxFileSize = maxFileSize;
 	}
-  LogDebug(L"FileWriter: SetChunkReserve(), m_chunkReserveSize: %I64d, m_maxFileSize: %I64d, m_bChunkReserve: %d", m_chunkReserveSize, m_maxFileSize, m_bChunkReserve);			  
+	else
+	{
+	  m_chunkReserveSize = 2000000;
+		m_chunkReserveFileSize = 0;
+	}
+	
+	m_maxFileSize = maxFileSize;
 }
 

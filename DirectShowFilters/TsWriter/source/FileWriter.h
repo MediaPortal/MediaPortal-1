@@ -39,13 +39,14 @@ public:
 	HRESULT CloseFile();
 	HRESULT Write(PBYTE pbData, ULONG lDataLength);
 	HRESULT ParkFile();
+	HRESULT CloseParked();
 
 	BOOL IsFileInvalid();
 
 	DWORD SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
 	__int64 GetFilePointer();
 
-	void SetChunkReserve(BOOL bEnable, __int64 chunkReserveSize, __int64 maxFileSize);
+	void SetChunkReserve(__int64 chunkReserveSize, __int64 maxFileSize);
 
 protected:
 	HANDLE m_hFile;

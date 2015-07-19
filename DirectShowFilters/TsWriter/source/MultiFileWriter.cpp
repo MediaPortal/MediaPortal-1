@@ -37,12 +37,6 @@ extern void LogDebug(const wchar_t *fmt, ...) ;
 ///*******************************************
 ///Class which holds a single disk buffer
 ///
-CDiskBuff::CDiskBuff()
-{
-  m_iLength=0;
-  m_pBuffer = new byte[MAX_BUFFER_SIZE];
-  m_iSize = MAX_BUFFER_SIZE;
-}
 
 CDiskBuff::CDiskBuff(int size)
 {
@@ -58,24 +52,6 @@ CDiskBuff::~CDiskBuff()
   m_iLength=0;
 }
 
-// Adds data contained in pBuffer to this buffer
-void CDiskBuff::Add(CDiskBuff* pBuffer)
-{
-	if(pBuffer && ( m_iSize >= m_iLength + pBuffer->Length()))
-  {
-    memcpy(&m_pBuffer[m_iLength], pBuffer->Data(), pBuffer->Length());
-    m_iLength+=pBuffer->Length();
-  }
-  else
-  {
-    LogDebug("CDiskBuff::Add CDiskBuff - sanity check failed! MAX_BUFFER_SIZE %d length %d", m_iSize, pBuffer->Length()+m_iLength );
-    if(pBuffer == NULL)
-    {
-      LogDebug("  pBuffer was NULL!");
-    }
-  }
-}
-
 // Adds data contained to this buffer
 void CDiskBuff::Add(byte* data, int len)
 {
@@ -86,18 +62,12 @@ void CDiskBuff::Add(byte* data, int len)
   }
   else
   {
-    LogDebug("CDiskBuff::Add - sanity check failed! MAX_BUFFER_SIZE %d length %d", m_iSize, m_iLength + len );
+    LogDebug("CDiskBuff::Add - sanity check failed! Buffer size %d, data length %d", m_iSize, m_iLength + len );
     if(data == NULL)
     {
       LogDebug("  data was NULL!");
     }
   }
-}
-
-// Sets the length in bytes of the buffer
-void CDiskBuff::SetLength(int len)
-{
-  m_iLength=len;
 }
 
 // returns the length in bytes of the buffer
@@ -138,7 +108,7 @@ MultiFileWriter::MultiFileWriter(MultiFileWriterParam *pWriterParams) :
 	m_maxBuffersUsed(0)
 {
 	m_pCurrentTSFile = new FileWriter();
-	m_pCurrentTSFile->SetChunkReserve(TRUE, m_chunkReserve, m_maxTSFileSize);
+	m_pCurrentTSFile->SetChunkReserve(m_chunkReserve, m_maxTSFileSize);
 	StartThread();
 }
 
@@ -345,11 +315,8 @@ HRESULT MultiFileWriter::PrepareTSFile()
 	HRESULT hr;
 
 	//LogDebug("PrepareTSFile()");
-
-	// Make sure the old file is closed
-	//m_pCurrentTSFile->CloseFile();
 	
-	// Make sure the old file is parked
+	// Make sure the old file is parked (delayed closure, to work around some SMB caching problems - file will be closed next time PrepareTSFile() is called)
 	m_pCurrentTSFile->ParkFile();
 
 	__int64 llDiskSpaceAvailable = 0;
@@ -466,6 +433,11 @@ HRESULT MultiFileWriter::ReuseTSFile()
 		DeleteFileW(pFilename);	// Stupid function, return can be ok and file not deleted ( just tagged for deleting )!!!!
 		hr = m_pCurrentTSFile->OpenFile() ;
 		if (!FAILED(hr)) break ;
+		if (Tmo==2)
+		{
+		  //Just in case the 'parked' file is causing a problem, close it before looping for the last time
+		  m_pCurrentTSFile->CloseParked();
+		}
 		Sleep(20) ;
 	}
 	while (--Tmo) ;
@@ -788,7 +760,7 @@ void MultiFileWriter::setMaxTSFileSize(__int64 maxSize)
 {
 	CAutoLock lock(&m_Lock);
 	m_maxTSFileSize = maxSize;
-	m_pCurrentTSFile->SetChunkReserve(TRUE, m_chunkReserve, m_maxTSFileSize);
+	m_pCurrentTSFile->SetChunkReserve(m_chunkReserve, m_maxTSFileSize);
 }
 
 __int64 MultiFileWriter::getChunkReserve(void)
@@ -801,7 +773,7 @@ void MultiFileWriter::setChunkReserve(__int64 chunkSize)
 {
 	CAutoLock lock(&m_Lock);
 	m_chunkReserve = chunkSize;
-	m_pCurrentTSFile->SetChunkReserve(TRUE, m_chunkReserve, m_maxTSFileSize);
+	m_pCurrentTSFile->SetChunkReserve(m_chunkReserve, m_maxTSFileSize);
 }
 
 void MultiFileWriter::GetPosition(__int64 * position)
