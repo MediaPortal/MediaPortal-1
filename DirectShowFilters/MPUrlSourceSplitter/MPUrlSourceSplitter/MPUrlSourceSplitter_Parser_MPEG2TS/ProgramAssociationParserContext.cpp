@@ -25,6 +25,8 @@
 CProgramAssociationParserContext::CProgramAssociationParserContext(HRESULT *result)
   : CParserContext(result)
 {
+  this->lastSectionCrc32 = SECTION_CRC32_UNDEFINED;
+
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->parser = new CProgramAssociationParser(result);
@@ -44,24 +46,45 @@ CProgramAssociationParser *CProgramAssociationParserContext::GetParser(void)
   return (CProgramAssociationParser *)__super::GetParser();
 }
 
-CProgramAssociationSectionContext *CProgramAssociationParserContext::GetSectionContext(void)
+/* set methods */
+
+void CProgramAssociationParserContext::Clear(void)
 {
-  return (CProgramAssociationSectionContext *)__super::GetSectionContext();
+  __super::Clear();
+  this->lastSectionCrc32 = SECTION_CRC32_UNDEFINED;
 }
 
-/* set methods */
+HRESULT CProgramAssociationParserContext::SetKnownSection(CSection *section)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, section);
+
+  if (SUCCEEDED(result))
+  {
+    CProgramAssociationSection *programAssociationSection = dynamic_cast<CProgramAssociationSection *>(section);
+    CHECK_POINTER_HRESULT(result, programAssociationSection, result, E_INVALIDARG);
+
+    if (SUCCEEDED(result))
+    {
+      this->lastSectionCrc32 = programAssociationSection->GetCrc32();
+    }
+  }
+
+  return result;
+}
 
 /* other methods */
 
-HRESULT CProgramAssociationParserContext::CreateSectionContext(void)
+bool CProgramAssociationParserContext::IsKnownSection(CSection *section)
 {
-  HRESULT result = S_OK;
-  FREE_MEM_CLASS(this->sectionContext);
+  CProgramAssociationSection *programAssociationSection = dynamic_cast<CProgramAssociationSection *>(section);
+  bool result = (programAssociationSection != NULL);
 
-  this->sectionContext = new CProgramAssociationSectionContext(&result, this);
-  CHECK_POINTER_HRESULT(result, this->sectionContext, result, E_OUTOFMEMORY);
+  if (result)
+  {
+    result &= (programAssociationSection->GetCrc32() == this->lastSectionCrc32);
+  }
 
-  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(this->sectionContext));
   return result;
 }
 

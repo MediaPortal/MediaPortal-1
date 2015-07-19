@@ -25,14 +25,13 @@
 CTsPacketContext::CTsPacketContext(HRESULT *result)
   : CFlags()
 {
-  this->sectionContext = NULL;
-  this->tsPacketIndex = TS_PACKET_INDEX_NOT_SET;
+   this->tsPacketIndex = TS_PACKET_INDEX_NOT_SET;
+   this->sectionPayloadCount = 0;
 }
 
 CTsPacketContext::~CTsPacketContext(void)
 {
-  CHECK_CONDITION_EXECUTE(this->IsSectionContextOwner(), FREE_MEM_CLASS(this->sectionContext));
-}
+ }
 
 /* get methods */
 
@@ -41,9 +40,9 @@ unsigned int CTsPacketContext::GetTsPacketIndex(void)
   return this->tsPacketIndex;
 }
 
-CSectionContext *CTsPacketContext::GetSectionContext(void)
+unsigned int CTsPacketContext::GetSectionPayloadCount(void)
 {
-  return this->sectionContext;
+  return this->sectionPayloadCount;
 }
 
 /* set methods */
@@ -53,25 +52,11 @@ void CTsPacketContext::SetTsPacketIndex(unsigned int tsPacketIndex)
   this->tsPacketIndex = tsPacketIndex;
 }
 
-bool CTsPacketContext::SetSectionContext(CSectionContext *sectionContext)
+void CTsPacketContext::SetSectionPayloadCount(unsigned int sectionPayloadCount)
 {
-  CHECK_CONDITION_EXECUTE(this->IsSectionContextOwner(), FREE_MEM_CLASS(this->sectionContext));
-  this->sectionContext = sectionContext;
-
-  return true;
-}
-
-void CTsPacketContext::SetSectionContextOwner(bool isSectionOwner)
-{
-  this->flags &= ~TS_PACKET_CONTEXT_FLAG_SECTION_CONTEXT_OWNER;
-  this->flags |= isSectionOwner ? TS_PACKET_CONTEXT_FLAG_SECTION_CONTEXT_OWNER : TS_PACKET_CONTEXT_FLAG_NONE;
+  this->sectionPayloadCount = sectionPayloadCount;
 }
 
 /* other methods */
-
-bool CTsPacketContext::IsSectionContextOwner(void)
-{
-  return this->IsSetFlags(TS_PACKET_CONTEXT_FLAG_SECTION_CONTEXT_OWNER);
-}
 
 /* protected methods */

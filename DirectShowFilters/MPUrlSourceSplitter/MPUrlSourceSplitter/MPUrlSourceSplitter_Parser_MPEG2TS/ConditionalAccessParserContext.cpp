@@ -25,6 +25,8 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 CConditionalAccessParserContext::CConditionalAccessParserContext(HRESULT *result)
   : CParserContext(result)
 {
+  this->lastSectionCrc32 = SECTION_CRC32_UNDEFINED;
+
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->parser = new CConditionalAccessParser(result);
@@ -44,24 +46,45 @@ CConditionalAccessParser *CConditionalAccessParserContext::GetParser(void)
   return (CConditionalAccessParser *)__super::GetParser();
 }
 
-CConditionalAccessSectionContext *CConditionalAccessParserContext::GetSectionContext(void)
-{
-  return (CConditionalAccessSectionContext *)__super::GetSectionContext();
-}
-
 /* set methods */
+
+HRESULT CConditionalAccessParserContext::SetKnownSection(CSection *section)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, section);
+
+  if (SUCCEEDED(result))
+  {
+    CConditionalAccessSection *conditionalAccessSection = dynamic_cast<CConditionalAccessSection *>(section);
+    CHECK_POINTER_HRESULT(result, conditionalAccessSection, result, E_INVALIDARG);
+
+    if (SUCCEEDED(result))
+    {
+      this->lastSectionCrc32 = conditionalAccessSection->GetCrc32();
+    }
+  }
+
+  return result;
+}
 
 /* other methods */
 
-HRESULT CConditionalAccessParserContext::CreateSectionContext(void)
+void CConditionalAccessParserContext::Clear(void)
 {
-  HRESULT result = S_OK;
-  FREE_MEM_CLASS(this->sectionContext);
+  __super::Clear();
+  this->lastSectionCrc32 = SECTION_CRC32_UNDEFINED;
+}
 
-  this->sectionContext = new CConditionalAccessSectionContext(&result, this);
-  CHECK_POINTER_HRESULT(result, this->sectionContext, result, E_OUTOFMEMORY);
+bool CConditionalAccessParserContext::IsKnownSection(CSection *section)
+{
+  CConditionalAccessSection *conditionalAccessSection = dynamic_cast<CConditionalAccessSection *>(section);
+  bool result = (conditionalAccessSection != NULL);
 
-  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(this->sectionContext));
+  if (result)
+  {
+    result &= (conditionalAccessSection->GetCrc32() == this->lastSectionCrc32);
+  }
+
   return result;
 }
 

@@ -26,7 +26,7 @@
 #include "BoxCollection.h"
 #include "BufferHelper.h"
 
-CMpeg2TsDumpBox::CMpeg2TsDumpBox(HRESULT *result)
+CMpeg2tsDumpBox::CMpeg2tsDumpBox(HRESULT *result)
   : CDumpBox(result)
 {
   this->packageState = 0;
@@ -49,7 +49,7 @@ CMpeg2TsDumpBox::CMpeg2TsDumpBox(HRESULT *result)
   }
 }
 
-CMpeg2TsDumpBox::~CMpeg2TsDumpBox(void)
+CMpeg2tsDumpBox::~CMpeg2tsDumpBox(void)
 {
 }
 
@@ -57,7 +57,7 @@ CMpeg2TsDumpBox::~CMpeg2TsDumpBox(void)
 
 /* set methods */
 
-bool CMpeg2TsDumpBox::SetStreamPackage(CStreamPackage *streamPackage)
+bool CMpeg2tsDumpBox::SetStreamPackage(CStreamPackage *streamPackage)
 {
   CStreamPackageDataRequest *request = dynamic_cast<CStreamPackageDataRequest *>(streamPackage->GetRequest());
   CStreamPackageDataResponse *response = dynamic_cast<CStreamPackageDataResponse *>(streamPackage->GetResponse());
@@ -104,7 +104,7 @@ bool CMpeg2TsDumpBox::SetStreamPackage(CStreamPackage *streamPackage)
 
 /* protected methods */
 
-uint64_t CMpeg2TsDumpBox::GetBoxSize(void)
+uint64_t CMpeg2tsDumpBox::GetBoxSize(void)
 {
   uint64_t result = 37;
 
@@ -114,7 +114,7 @@ uint64_t CMpeg2TsDumpBox::GetBoxSize(void)
   return result;
 }
 
-uint32_t CMpeg2TsDumpBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+uint32_t CMpeg2tsDumpBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
 {
   uint32_t result = __super::GetBoxInternal(buffer, length, false);
 
@@ -142,7 +142,7 @@ uint32_t CMpeg2TsDumpBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool 
   return result;
 }
 
-unsigned int CMpeg2TsDumpBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes, bool checkType)
+unsigned int CMpeg2tsDumpBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes, bool checkType)
 {
   uint32_t position = __super::ParseInternal(buffer, length, false, false);
 

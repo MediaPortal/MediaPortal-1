@@ -26,7 +26,7 @@
 #include "ErrorCodes.h"
 
 CDiscontinuityParser::CDiscontinuityParser(HRESULT *result)
-  : CParser(result)
+  : CPacketParser(result)
 {
   this->pidCounters = NULL;
   this->lastDiscontinuityPid = DISCONTINUITY_PID_NOT_SPECIFIED;
@@ -74,8 +74,7 @@ bool CDiscontinuityParser::IsDiscontinuity(void)
 
 HRESULT CDiscontinuityParser::Parse(CTsPacket *packet)
 {
-  HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, packet);
+  HRESULT result = __super::Parse(packet);
 
   if (SUCCEEDED(result))
   {

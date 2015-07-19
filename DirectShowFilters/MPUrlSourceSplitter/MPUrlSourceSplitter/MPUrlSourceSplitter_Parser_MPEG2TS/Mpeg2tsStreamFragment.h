@@ -24,9 +24,6 @@
 #define __MPEG2TS_STREAM_FRAGMENT_DEFINED
 
 #include "StreamFragment.h"
-#include "ProgramAssociationSectionPacketContextCollection.h"
-#include "TransportStreamProgramMapSectionPacketContextCollection.h"
-#include "ConditionalAccessSectionPacketContextCollection.h"
 
 #define MPEG2TS_STREAM_FRAGMENT_FLAG_NONE                                                             STREAM_FRAGMENT_FLAG_NONE
 
@@ -77,17 +74,17 @@ public:
   // @return : request start position within protocol stream or STREAM_FRAGMENT_START_POSITION_NOT_SET if not set
   int64_t GetRequestStartPosition(void);
 
-  // gets program association section packet contexts
-  // @return : program association section packet contexts
-  CProgramAssociationSectionPacketContextCollection *GetProgramAssociationSectionPacketContexts(void);
+  // gets program association section multiplexer reference count
+  // @return : multiplexer reference count
+  unsigned int GetMultiplexerProgramAssociationSectionReferenceCount(void);
 
-  // gets transport stream program map section packet contexts
-  // @return : transport stream program map section packet contexts
-  CTransportStreamProgramMapSectionPacketContextCollection *GetTransportStreamProgramMapSectionPacketContexts(void);
+  // gets transport stream program map section multiplexer reference count
+  // @return : multiplexer reference count
+  unsigned int GetMultiplexerTransportStreamProgramMapSectionReferenceCount(void);
 
-  // gets conditional access section packet contexts
-  // @return : conditional access section packet contexts
-  CConditionalAccessSectionPacketContextCollection *GetConditionalAccessSectionPacketContexts(void);
+  // gets conditional access section multiplexer reference count
+  // @return : multiplexer reference count
+  unsigned int GetMultiplexerConditionalAccessSectionReferenceCount(void);
 
   /* set methods */
 
@@ -140,6 +137,18 @@ public:
   // @param streamFragmentIndex : the index of stream fragment (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
   void SetConditionalAccessSectionUpdated(bool conditionalAccessSectionUpdated, unsigned int streamFragmentIndex);
 
+  // sets program association section multiplexer reference count
+  // @param count : program association section multiplexer reference count to set
+  void SetMultiplexerProgramAssociationSectionReferenceCount(unsigned int count);
+
+  // sets transport stream program map section multiplexer reference count
+  // @param count : transport stream program map section multiplexer reference count
+  void SetMultiplexerTransportStreamProgramMapSectionReferenceCount(unsigned int count);
+
+  // sets conditional access section multiplexer reference count
+  // @param count : conditional access section multiplexer reference count
+  void SetMultiplexerConditionalAccessSectionReferenceCount(unsigned int count);
+
   /* other methods */
 
   // tests if fragment has set request start position (in protocol stream)
@@ -189,12 +198,12 @@ public:
 protected:
   // holds request start position within protocol stream
   int64_t requestStartPosition;
-  // holds program association section packet contexts
-  CProgramAssociationSectionPacketContextCollection *programAssociationSectionPacketContexts;
-  // holds transport stream program map section packet contexts
-  CTransportStreamProgramMapSectionPacketContextCollection *transportStreamProgramMapSectionPacketContexts;
-  // holds conditional access section packet contexts
-  CConditionalAccessSectionPacketContextCollection *conditionalAccessSectionPacketContexts;
+  // holds program association section multiplexer reference count
+  unsigned int multiplexerProgramAssociationSectionReferenceCount;
+  // holds transport stream program map section multiplexer reference count
+  unsigned int multiplexerTransportStreamProgramMapSectionReferenceCount;
+  // holds conditional access section multiplexer reference count
+  unsigned int multiplexerConditionalAccessSectionReferenceCount;
 
   /* methods */
 

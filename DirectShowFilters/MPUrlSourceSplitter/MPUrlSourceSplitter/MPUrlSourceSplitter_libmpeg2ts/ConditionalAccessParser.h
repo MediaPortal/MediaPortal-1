@@ -23,7 +23,7 @@
 #ifndef __CONDITIONAL_ACCESS_PARSER_DEFINED
 #define __CONDITIONAL_ACCESS_PARSER_DEFINED
 
-#include "Parser.h"
+#include "SectionPayloadParser.h"
 #include "ConditionalAccessSection.h"
 
 #define CONDITIONAL_ACCESS_PARSER_FLAG_NONE                           PARSER_FLAG_NONE
@@ -34,7 +34,7 @@
 
 #define CONDITIONAL_ACCESS_PARSER_PSI_PACKET_PID                      0x0001
 
-class CConditionalAccessParser : public CParser
+class CConditionalAccessParser : public CSectionPayloadParser
 {
 public:
   CConditionalAccessParser(HRESULT *result);
@@ -64,8 +64,8 @@ public:
   // @return : true if section is found, false otherwise
   bool IsSectionFound(void);
 
-  // parses input MPEG2 TS packet
-  // @param packet : the MPEG2 TS packet to parse
+  // parses section payload for section
+  // @param sectionPayload : the section payload to parse
   // @return :
   //  S_OK                                                        : complete conditional access section
   //  S_FALSE                                                     : incomplete conditional access section
@@ -74,7 +74,7 @@ public:
   //  E_MPEG2TS_INCOMPLETE_SECTION                                : section is incomplete
   //  E_MPEG2TS_SECTION_INVALID_CRC32                             : invalid section CRC32 (corrupted section)
   //  other error code                                            : another error
-  virtual HRESULT Parse(CTsPacket *packet);
+  virtual HRESULT Parse(CSectionPayload *sectionPayload);
 
   // clears instance to its default state
   virtual void Clear(void);

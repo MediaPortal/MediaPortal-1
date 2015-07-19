@@ -26,20 +26,24 @@ CTransportStreamProgramMapParserContext::CTransportStreamProgramMapParserContext
   : CParserContext(result)
 {
   this->leaveProgramElements = NULL;
+  this->knownSections = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->parser = new CTransportStreamProgramMapParser(result, pid);
     this->leaveProgramElements = new CProgramElementCollection(result);
+    this->knownSections = new CTransportStreamProgramMapParserKnownSectionContextCollection(result);
 
     CHECK_POINTER_HRESULT(*result, this->parser, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->leaveProgramElements, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->knownSections, *result, E_OUTOFMEMORY);
   }
 }
 
 CTransportStreamProgramMapParserContext::~CTransportStreamProgramMapParserContext(void)
 {
   FREE_MEM_CLASS(this->leaveProgramElements);
+  FREE_MEM_CLASS(this->knownSections);
 }
 
 /* get methods */
@@ -49,17 +53,28 @@ CTransportStreamProgramMapParser *CTransportStreamProgramMapParserContext::GetPa
   return (CTransportStreamProgramMapParser *)__super::GetParser();
 }
 
-CTransportStreamProgramMapSectionContext *CTransportStreamProgramMapParserContext::GetSectionContext(void)
-{
-  return (CTransportStreamProgramMapSectionContext *)__super::GetSectionContext();
-}
-
 CProgramElementCollection *CTransportStreamProgramMapParserContext::GetLeaveProgramElements(void)
 {
   return this->leaveProgramElements;
 }
 
 /* set methods */
+
+HRESULT CTransportStreamProgramMapParserContext::SetKnownSection(CSection *section)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, section);
+
+  if (SUCCEEDED(result))
+  {
+    CTransportStreamProgramMapSection *transportStreamProgramMapSection = dynamic_cast<CTransportStreamProgramMapSection *>(section);
+    CHECK_POINTER_HRESULT(result, transportStreamProgramMapSection, result, E_INVALIDARG);
+
+    CHECK_CONDITION_HRESULT(result, this->knownSections->Add((uint16_t)transportStreamProgramMapSection->GetProgramNumber(), transportStreamProgramMapSection->GetCrc32()), result, E_FAIL);
+  }
+
+  return result;
+}
 
 void CTransportStreamProgramMapParserContext::SetFilterProgramElements(bool filterProgramElements)
 {
@@ -69,21 +84,27 @@ void CTransportStreamProgramMapParserContext::SetFilterProgramElements(bool filt
 
 /* other methods */
 
+void CTransportStreamProgramMapParserContext::Clear(void)
+{
+  __super::Clear();
+}
+
+bool CTransportStreamProgramMapParserContext::IsKnownSection(CSection *section)
+{
+  CTransportStreamProgramMapSection *transportStreamProgramMapSection = dynamic_cast<CTransportStreamProgramMapSection *>(section);
+  bool result = (transportStreamProgramMapSection != NULL);
+
+  if (result)
+  {
+    result = this->knownSections->Contains((uint16_t)transportStreamProgramMapSection->GetProgramNumber(), transportStreamProgramMapSection->GetCrc32());
+  }
+
+  return result;
+}
+
 bool CTransportStreamProgramMapParserContext::IsFilterProgramElements(void)
 {
   return this->IsSetFlags(TRANSPORT_STREAM_PROGRAM_MAP_PARSER_CONTEXT_FLAG_FILTER_PROGRAM_ELEMENTS);
-}
-
-HRESULT CTransportStreamProgramMapParserContext::CreateSectionContext(void)
-{
-  HRESULT result = S_OK;
-  FREE_MEM_CLASS(this->sectionContext);
-
-  this->sectionContext = new CTransportStreamProgramMapSectionContext(&result, this);
-  CHECK_POINTER_HRESULT(result, this->sectionContext, result, E_OUTOFMEMORY);
-
-  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(this->sectionContext));
-  return result;
 }
 
 /* protected methods */

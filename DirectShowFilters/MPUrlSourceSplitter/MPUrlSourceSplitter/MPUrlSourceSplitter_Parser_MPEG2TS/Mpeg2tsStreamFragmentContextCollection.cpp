@@ -18,28 +18,28 @@ You should have received a copy of the GNU General Public License
 along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "StdAfx.h"
+#include "stdafx.h"
 
-#include "ConditionalAccessSectionPacketContextCollection.h"
+#include "Mpeg2tsStreamFragmentContextCollection.h"
 
-CConditionalAccessSectionPacketContextCollection::CConditionalAccessSectionPacketContextCollection(HRESULT *result)
-  : CTsPacketContextCollection(result)
+CMpeg2tsStreamFragmentContextCollection::CMpeg2tsStreamFragmentContextCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 
-CConditionalAccessSectionPacketContextCollection::~CConditionalAccessSectionPacketContextCollection(void)
+CMpeg2tsStreamFragmentContextCollection::~CMpeg2tsStreamFragmentContextCollection()
 {
 }
 
 /* get methods */
-
-CConditionalAccessSectionPacketContext *CConditionalAccessSectionPacketContextCollection::GetItem(unsigned int index)
-{
-  return (CConditionalAccessSectionPacketContext *)__super::GetItem(index);
-}
 
 /* set methods */
 
 /* other methods */
 
 /* protected methods */
+
+CMpeg2tsStreamFragmentContext *CMpeg2tsStreamFragmentContextCollection::Clone(CMpeg2tsStreamFragmentContext *item)
+{
+  return NULL;
+}

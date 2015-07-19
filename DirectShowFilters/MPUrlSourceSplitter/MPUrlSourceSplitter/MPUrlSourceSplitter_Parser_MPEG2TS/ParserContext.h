@@ -25,7 +25,7 @@
 
 #include "Flags.h"
 #include "Parser.h"
-#include "SectionContext.h"
+#include "Section.h"
 
 #define PARSER_CONTEXT_FLAG_NONE                                      FLAGS_NONE
 
@@ -43,40 +43,26 @@ public:
   // @return : parser or NULL if no parser
   virtual CParser *GetParser(void);
 
-  // gets section context associated with parser context
-  // @return : section context or NULL if no section context
-  virtual CSectionContext *GetSectionContext(void);
-
-  // gets last section CRC32
-  // @return : last section CRC32 or SECTION_CRC32_UNDEFINED if CRC32 is not known
-  virtual unsigned int GetLastSectionCrc32(void);
-
   /* set methods */
 
-  // sets last section CRC32
-  // @param crc32 : the last section CRC32 or SECTION_CRC32_UNDEFINED if CRC32 is not known
-  virtual void SetLastSectionCrc32(unsigned int crc32);
+  // sets section as known section
+  // @param section : the section to set as known
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT SetKnownSection(CSection *section) = 0;
 
   /* other methods */
 
   // clears current parser context instance to default state
   virtual void Clear(void);
 
-  // free section context from using
-  // it is not released from memory
-  virtual void FreeSectionContext(void);
-
-  // creates new section context
-  // @return : S_OK if successful, error code otherwise
-  virtual HRESULT CreateSectionContext(void) = 0;
+  // check if section is known
+  // @param section : the section to check
+  // @return : true if section is known, false otherwise
+  virtual bool IsKnownSection(CSection *section) = 0;
 
 protected:
   // holds parser
   CParser *parser;
-  // holds section context
-  CSectionContext *sectionContext;
-  // holds last section CRC32
-  unsigned int lastSectionCrc32;
 
   /* methods */
 };

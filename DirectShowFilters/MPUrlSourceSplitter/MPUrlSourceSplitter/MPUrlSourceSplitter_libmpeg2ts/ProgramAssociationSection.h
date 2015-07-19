@@ -100,11 +100,10 @@ public:
   // @return : true if current next indicator is set, false otherwise
   bool IsCurrentNextIndicator(void);
 
-  // parses specified PSI packet
-  // @param psiPacket : the PSI packet to parse
-  // @param startFromSectionPayload : the section payload index to start parsing
-  // @return : S_OK if successfull, S_FALSE if more PSI packets are needed to complete section, error code otherwise
-  virtual HRESULT Parse(CProgramSpecificInformationPacket *psiPacket, unsigned int startFromSectionPayload);
+  // parses specified section payload
+  // @param sectionPayload : the section payload to parse
+  // @return : S_OK if successfull, S_FALSE if more section payloads are needed to complete section, error code otherwise
+  virtual HRESULT Parse(CSectionPayload *sectionPayload);
 
   // clears current instance to its default state
   virtual void Clear(void);

@@ -26,7 +26,7 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 #include "ProgramSpecificInformationPacket.h"
 
 CConditionalAccessParser::CConditionalAccessParser(HRESULT *result)
-  : CParser(result)
+  : CSectionPayloadParser(result)
 {
   this->currentSection = NULL;
   this->conditionalAccessSectionResult = S_FALSE;
@@ -65,59 +65,49 @@ bool CConditionalAccessParser::IsSectionFound(void)
   return this->IsSetFlags(CONDITIONAL_ACCESS_PARSER_FLAG_SECTION_FOUND);
 }
 
-HRESULT CConditionalAccessParser::Parse(CTsPacket *packet)
+HRESULT CConditionalAccessParser::Parse(CSectionPayload *sectionPayload)
 {
-  HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, packet);
+  HRESULT result = __super::Parse(sectionPayload);
 
   if (SUCCEEDED(result))
   {
-    // program association section packets have always PID 0x0000
+    this->flags &= ~CONDITIONAL_ACCESS_PARSER_FLAG_SECTION_FOUND;
 
-    CProgramSpecificInformationPacket *psiPacket = dynamic_cast<CProgramSpecificInformationPacket *>(packet);
-    CHECK_POINTER_HRESULT(result, psiPacket, result, E_FAIL);
-    CHECK_CONDITION_HRESULT(result, psiPacket->GetPID() == CONDITIONAL_ACCESS_PARSER_PSI_PACKET_PID, result, E_FAIL);
+    // found program specific information packet with PID 0x0001
+    // parse it for program association section
 
-    if (SUCCEEDED(result))
+    this->conditionalAccessSectionResult = this->currentSection->Parse(sectionPayload);
+    result = this->conditionalAccessSectionResult;
+
+    if (this->conditionalAccessSectionResult == S_FALSE)
     {
-      this->flags &= ~CONDITIONAL_ACCESS_PARSER_FLAG_SECTION_FOUND;
+      // correct, we need to wait for more PSI packet(s)
 
-      // found program specific information packet with PID 0x0001
-      // parse it for program association section
+      this->flags |= CONDITIONAL_ACCESS_PARSER_FLAG_SECTION_FOUND;
+    }
+    else if (this->conditionalAccessSectionResult == S_OK)
+    {
+      // correct, whole conditional access section correctly received
 
-      this->conditionalAccessSectionResult = this->currentSection->Parse(psiPacket, 0);
-      result = this->conditionalAccessSectionResult;
+      this->flags |= CONDITIONAL_ACCESS_PARSER_FLAG_SECTION_FOUND;
+    }
+    else if (this->conditionalAccessSectionResult == E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION)
+    {
+      // current section is empty (no data received for current section), but in PSI packet is section data without new section data
 
-      if (this->conditionalAccessSectionResult == S_FALSE)
-      {
-        // correct, we need to wait for more PSI packet(s)
+      this->flags |= CONDITIONAL_ACCESS_PARSER_FLAG_SECTION_FOUND;
+    }
+    else if (this->conditionalAccessSectionResult == E_MPEG2TS_INCOMPLETE_SECTION)
+    {
+      // current section is not complete, but in PSI packet is started new section without completing current section
 
-        this->flags |= CONDITIONAL_ACCESS_PARSER_FLAG_SECTION_FOUND;
-      }
-      else if (this->conditionalAccessSectionResult == S_OK)
-      {
-        // correct, whole conditional access section correctly received
+      this->flags |= CONDITIONAL_ACCESS_PARSER_FLAG_SECTION_FOUND;
+    }
+    else if (this->conditionalAccessSectionResult == E_MPEG2TS_SECTION_INVALID_CRC32)
+    {
+      // current section is corrupted
 
-        this->flags |= CONDITIONAL_ACCESS_PARSER_FLAG_SECTION_FOUND;
-      }
-      else if (this->conditionalAccessSectionResult == E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION)
-      {
-        // current section is empty (no data received for current section), but in PSI packet is section data without new section data
-
-        this->flags |= CONDITIONAL_ACCESS_PARSER_FLAG_SECTION_FOUND;
-      }
-      else if (this->conditionalAccessSectionResult == E_MPEG2TS_INCOMPLETE_SECTION)
-      {
-        // current section is not complete, but in PSI packet is started new section without completing current section
-
-        this->flags |= CONDITIONAL_ACCESS_PARSER_FLAG_SECTION_FOUND;
-      }
-      else if (this->conditionalAccessSectionResult == E_MPEG2TS_SECTION_INVALID_CRC32)
-      {
-        // current section is corrupted
-
-        this->flags |= CONDITIONAL_ACCESS_PARSER_FLAG_SECTION_FOUND;
-      }
+      this->flags |= CONDITIONAL_ACCESS_PARSER_FLAG_SECTION_FOUND;
     }
   }
 

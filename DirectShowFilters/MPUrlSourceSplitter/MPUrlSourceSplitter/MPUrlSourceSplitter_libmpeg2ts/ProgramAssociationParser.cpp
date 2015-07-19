@@ -26,7 +26,7 @@
 #include "ProgramSpecificInformationPacket.h"
 
 CProgramAssociationParser::CProgramAssociationParser(HRESULT *result)
-  : CParser(result)
+  : CSectionPayloadParser(result)
 {
   this->currentSection = NULL;
   this->programAssociationSectionResult = S_FALSE;
@@ -65,59 +65,48 @@ bool CProgramAssociationParser::IsSectionFound(void)
   return this->IsSetFlags(PROGRAM_ASSOCIATION_PARSER_FLAG_SECTION_FOUND);
 }
 
-HRESULT CProgramAssociationParser::Parse(CTsPacket *packet)
+HRESULT CProgramAssociationParser::Parse(CSectionPayload *sectionPayload)
 {
-  HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, packet);
-  
+  HRESULT result = __super::Parse(sectionPayload);
+
   if (SUCCEEDED(result))
   {
-    // program association section packets have always PID 0x0000
+    this->flags &= ~PROGRAM_ASSOCIATION_PARSER_FLAG_SECTION_FOUND;
 
-    CProgramSpecificInformationPacket *psiPacket = dynamic_cast<CProgramSpecificInformationPacket *>(packet);
-    CHECK_POINTER_HRESULT(result, psiPacket, result, E_FAIL);
-    CHECK_CONDITION_HRESULT(result, psiPacket->GetPID() == PROGRAM_ASSOCIATION_PARSER_PSI_PACKET_PID, result, E_FAIL);
+    // parse section payload for program association section
+    
+    this->programAssociationSectionResult = this->currentSection->Parse(sectionPayload);
+    result = this->programAssociationSectionResult;
 
-    if (SUCCEEDED(result))
+    if (this->programAssociationSectionResult == S_FALSE)
     {
-      this->flags &= ~PROGRAM_ASSOCIATION_PARSER_FLAG_SECTION_FOUND;
+      // correct, we need to wait for more PSI packet(s)
 
-      // found program specific information packet with PID 0x0000
-      // parse it for program association section
+      this->flags |= PROGRAM_ASSOCIATION_PARSER_FLAG_SECTION_FOUND;
+    }
+    else if (this->programAssociationSectionResult == S_OK)
+    {
+      // correct, whole program association section correctly received
 
-      this->programAssociationSectionResult = this->currentSection->Parse(psiPacket, 0);
-      result = this->programAssociationSectionResult;
+      this->flags |= PROGRAM_ASSOCIATION_PARSER_FLAG_SECTION_FOUND;
+    }
+    else if (this->programAssociationSectionResult == E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION)
+    {
+      // current section is empty (no data received for current section), but in PSI packet is section data without new section data
 
-      if (this->programAssociationSectionResult == S_FALSE)
-      {
-        // correct, we need to wait for more PSI packet(s)
+      this->flags |= PROGRAM_ASSOCIATION_PARSER_FLAG_SECTION_FOUND;
+    }
+    else if (this->programAssociationSectionResult == E_MPEG2TS_INCOMPLETE_SECTION)
+    {
+      // current section is not complete, but in PSI packet is started new section without completing current section
 
-        this->flags |= PROGRAM_ASSOCIATION_PARSER_FLAG_SECTION_FOUND;
-      }
-      else if (this->programAssociationSectionResult == S_OK)
-      {
-        // correct, whole program association section correctly received
+      this->flags |= PROGRAM_ASSOCIATION_PARSER_FLAG_SECTION_FOUND;
+    }
+    else if (this->programAssociationSectionResult == E_MPEG2TS_SECTION_INVALID_CRC32)
+    {
+      // current section is corrupted
 
-        this->flags |= PROGRAM_ASSOCIATION_PARSER_FLAG_SECTION_FOUND;
-      }
-      else if (this->programAssociationSectionResult == E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION)
-      {
-        // current section is empty (no data received for current section), but in PSI packet is section data without new section data
-
-        this->flags |= PROGRAM_ASSOCIATION_PARSER_FLAG_SECTION_FOUND;
-      }
-      else if (this->programAssociationSectionResult == E_MPEG2TS_INCOMPLETE_SECTION)
-      {
-        // current section is not complete, but in PSI packet is started new section without completing current section
-
-        this->flags |= PROGRAM_ASSOCIATION_PARSER_FLAG_SECTION_FOUND;
-      }
-      else if (this->programAssociationSectionResult == E_MPEG2TS_SECTION_INVALID_CRC32)
-      {
-        // current section is corrupted
-
-        this->flags |= PROGRAM_ASSOCIATION_PARSER_FLAG_SECTION_FOUND;
-      }
+      this->flags |= PROGRAM_ASSOCIATION_PARSER_FLAG_SECTION_FOUND;
     }
   }
 

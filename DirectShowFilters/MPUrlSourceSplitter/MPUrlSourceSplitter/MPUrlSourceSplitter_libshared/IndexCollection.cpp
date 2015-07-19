@@ -90,32 +90,6 @@ bool CIndexCollection::Add(unsigned int item)
 
 bool CIndexCollection::Insert(unsigned int position, unsigned int item)
 {
-  //bool result = false;
-
-  //if ((position >= 0) && (position <= this->itemCount))
-  //{
-  //  // ensure that enough space is in collection
-  //  result = this->EnsureEnoughSpace(this->itemCount + 1);
-
-  //  if (result)
-  //  {
-  //    // move everything after insert position
-  //    unsigned int size = (this->itemCount - position) * sizeof(unsigned int);
-  //    if (size > 0)
-  //    {
-  //      void *source = (void *)(this->items + position);
-  //      void *destination = (void *)(this->items + position + 1);
-
-  //      memmove(destination, source, size);
-  //    }
-
-  //    *(this->items + position) = item;
-  //    this->itemCount++;
-  //  }
-  //}
-
-  //return result;
-
   return this->Insert(position, item, 1);
 }
 

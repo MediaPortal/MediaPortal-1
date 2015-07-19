@@ -26,7 +26,7 @@
 #include "ProgramSpecificInformationPacket.h"
 
 CTransportStreamProgramMapParser::CTransportStreamProgramMapParser(HRESULT *result, uint16_t pid)
-  : CParser(result)
+  : CSectionPayloadParser(result)
 {
   this->transportStreamProgramMapSectionPID = TRANSPORT_STREAM_PROGRAM_MAP_PARSER_PID_NOT_DEFINED;
   this->currentSection = NULL;
@@ -77,59 +77,49 @@ bool CTransportStreamProgramMapParser::IsSectionFound(void)
   return this->IsSetFlags(TRANSPORT_STREAM_PROGRAM_MAP_PARSER_FLAG_SECTION_FOUND);
 }
 
-HRESULT CTransportStreamProgramMapParser::Parse(CTsPacket *packet)
+HRESULT CTransportStreamProgramMapParser::Parse(CSectionPayload *sectionPayload)
 {
-  HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, packet);
-  
+  HRESULT result = __super::Parse(sectionPayload);
+
   if (SUCCEEDED(result))
   {
-    // transport stream program map section packets must have specified PID
+    this->flags &= ~TRANSPORT_STREAM_PROGRAM_MAP_PARSER_FLAG_SECTION_FOUND;
 
-    CProgramSpecificInformationPacket *psiPacket = dynamic_cast<CProgramSpecificInformationPacket *>(packet);
-    CHECK_POINTER_HRESULT(result, psiPacket, result, E_FAIL);
-    CHECK_CONDITION_HRESULT(result, psiPacket->GetPID() == this->GetTransportStreamProgramMapSectionPID(), result, E_FAIL);
+    // found program specific information packet with specified PID
+    // parse it for transport stream program map section
 
-    if (SUCCEEDED(result))
+    this->transportStreamProgramMapSectionResult = this->currentSection->Parse(sectionPayload);
+    result = this->transportStreamProgramMapSectionResult;
+
+    if (this->transportStreamProgramMapSectionResult == S_FALSE)
     {
-      this->flags &= ~TRANSPORT_STREAM_PROGRAM_MAP_PARSER_FLAG_SECTION_FOUND;
+      // correct, we need to wait for more PSI packet(s)
 
-      // found program specific information packet with specified PID
-      // parse it for transport stream program map section
+      this->flags |= TRANSPORT_STREAM_PROGRAM_MAP_PARSER_FLAG_SECTION_FOUND;
+    }
+    else if (this->transportStreamProgramMapSectionResult == S_OK)
+    {
+      // correct, whole transport stream program map section correctly received
 
-      this->transportStreamProgramMapSectionResult = this->currentSection->Parse(psiPacket, 0);
-      result = this->transportStreamProgramMapSectionResult;
+      this->flags |= TRANSPORT_STREAM_PROGRAM_MAP_PARSER_FLAG_SECTION_FOUND;
+    }
+    else if (this->transportStreamProgramMapSectionResult == E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION)
+    {
+      // current section is empty (no data received for current section), but in PSI packet is section data without new section data
 
-      if (this->transportStreamProgramMapSectionResult == S_FALSE)
-      {
-        // correct, we need to wait for more PSI packet(s)
+      this->flags |= TRANSPORT_STREAM_PROGRAM_MAP_PARSER_FLAG_SECTION_FOUND;
+    }
+    else if (this->transportStreamProgramMapSectionResult == E_MPEG2TS_INCOMPLETE_SECTION)
+    {
+      // current section is not complete, but in PSI packet is started new section without completing current section
 
-        this->flags |= TRANSPORT_STREAM_PROGRAM_MAP_PARSER_FLAG_SECTION_FOUND;
-      }
-      else if (this->transportStreamProgramMapSectionResult == S_OK)
-      {
-        // correct, whole transport stream program map section correctly received
+      this->flags |= TRANSPORT_STREAM_PROGRAM_MAP_PARSER_FLAG_SECTION_FOUND;
+    }
+    else if (this->transportStreamProgramMapSectionResult == E_MPEG2TS_SECTION_INVALID_CRC32)
+    {
+      // current section is corrupted
 
-        this->flags |= TRANSPORT_STREAM_PROGRAM_MAP_PARSER_FLAG_SECTION_FOUND;
-      }
-      else if (this->transportStreamProgramMapSectionResult == E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION)
-      {
-        // current section is empty (no data received for current section), but in PSI packet is section data without new section data
-
-        this->flags |= TRANSPORT_STREAM_PROGRAM_MAP_PARSER_FLAG_SECTION_FOUND;
-      }
-      else if (this->transportStreamProgramMapSectionResult == E_MPEG2TS_INCOMPLETE_SECTION)
-      {
-        // current section is not complete, but in PSI packet is started new section without completing current section
-
-        this->flags |= TRANSPORT_STREAM_PROGRAM_MAP_PARSER_FLAG_SECTION_FOUND;
-      }
-      else if (this->transportStreamProgramMapSectionResult == E_MPEG2TS_SECTION_INVALID_CRC32)
-      {
-        // current section is corrupted
-
-        this->flags |= TRANSPORT_STREAM_PROGRAM_MAP_PARSER_FLAG_SECTION_FOUND;
-      }
+      this->flags |= TRANSPORT_STREAM_PROGRAM_MAP_PARSER_FLAG_SECTION_FOUND;
     }
   }
 

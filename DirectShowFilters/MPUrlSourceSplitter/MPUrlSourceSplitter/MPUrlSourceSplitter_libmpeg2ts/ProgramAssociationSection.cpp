@@ -103,7 +103,7 @@ bool CProgramAssociationSection::IsCurrentNextIndicator(void)
   return (((this->reservedVersionNumberCurrentNextIndicator >> PROGRAM_ASSOCIATION_SECTION_CURRENT_NEXT_INDICATOR_SHIFT) & PROGRAM_ASSOCIATION_SECTION_CURRENT_NEXT_INDICATOR_MASK) != 0);
 }
 
-HRESULT CProgramAssociationSection::Parse(CProgramSpecificInformationPacket *psiPacket, unsigned int startFromSectionPayload)
+HRESULT CProgramAssociationSection::Parse(CSectionPayload *sectionPayload)
 {
   this->transportStreamId = 0;
   this->reservedVersionNumberCurrentNextIndicator = 0;
@@ -111,9 +111,9 @@ HRESULT CProgramAssociationSection::Parse(CProgramSpecificInformationPacket *psi
   this->lastSectionNumber = 0;
   this->programs->Clear();
 
-  HRESULT result = __super::Parse(psiPacket, startFromSectionPayload);
+  HRESULT result = __super::Parse(sectionPayload);
 
-  // S_OK is successfull, S_FALSE if more PSI packets are needed to complete section, error code otherwise
+  // S_OK is successfull, S_FALSE if more section payloads are needed to complete section, error code otherwise
   if (result == S_OK)
   {
     CHECK_CONDITION_HRESULT(result, this->GetTableId() == PROGRAM_ASSOCIATION_SECTION_TABLE_ID, result, E_FAIL);

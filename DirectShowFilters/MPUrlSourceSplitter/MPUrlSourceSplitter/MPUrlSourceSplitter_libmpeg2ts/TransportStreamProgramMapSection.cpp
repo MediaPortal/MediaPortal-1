@@ -102,7 +102,7 @@ bool CTransportStreamProgramMapSection::IsCurrentNextIndicator(void)
   return (((this->reservedVersionNumberCurrentNextIndicator >> TRANSPORT_STREAM_PROGRAM_MAP_SECTION_CURRENT_NEXT_INDICATOR_SHIFT) & TRANSPORT_STREAM_PROGRAM_MAP_SECTION_CURRENT_NEXT_INDICATOR_MASK) != 0);
 }
 
-HRESULT CTransportStreamProgramMapSection::Parse(CProgramSpecificInformationPacket *psiPacket, unsigned int startFromSectionPayload)
+HRESULT CTransportStreamProgramMapSection::Parse(CSectionPayload *sectionPayload)
 {
   this->programNumber = 0;
   this->reservedVersionNumberCurrentNextIndicator = 0;
@@ -112,9 +112,9 @@ HRESULT CTransportStreamProgramMapSection::Parse(CProgramSpecificInformationPack
   this->descriptors->Clear();
   this->programDefinitions->Clear();
 
-  HRESULT result = __super::Parse(psiPacket, startFromSectionPayload);
+  HRESULT result = __super::Parse(sectionPayload);
 
-  // S_OK is successfull, S_FALSE if more PSI packets are needed to complete section, error code otherwise
+  // S_OK is successfull, S_FALSE if more section payloads are needed to complete section, error code otherwise
   if (result == S_OK)
   {
     CHECK_CONDITION_HRESULT(result, this->GetTableId() == TRANSPORT_STREAM_PROGRAM_MAP_SECTION_TABLE_ID, result, E_FAIL);

@@ -18,33 +18,38 @@ You should have received a copy of the GNU General Public License
 along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "StdAfx.h"
+#include "stdafx.h"
 
-#include "ConditionalAccessSectionPacketContext.h"
+#include "TransportStreamProgramMapParserKnownSectionContext.h"
+#include "Section.h"
 
-CConditionalAccessSectionPacketContext::CConditionalAccessSectionPacketContext(HRESULT *result)
-  : CTsPacketContext(result)
+CTransportStreamProgramMapParserKnownSectionContext::CTransportStreamProgramMapParserKnownSectionContext(HRESULT *result, uint16_t programNumber, unsigned int crc32)
 {
+  this->programNumber = programNumber;
+  this->crc32 = crc32;
 }
 
-CConditionalAccessSectionPacketContext::~CConditionalAccessSectionPacketContext(void)
+CTransportStreamProgramMapParserKnownSectionContext::~CTransportStreamProgramMapParserKnownSectionContext()
 {
 }
 
 /* get methods */
 
-CConditionalAccessSectionContext *CConditionalAccessSectionPacketContext::GetSectionContext(void)
+uint16_t CTransportStreamProgramMapParserKnownSectionContext::GetProgramNumber(void)
 {
-  return (CConditionalAccessSectionContext *)__super::GetSectionContext();
+  return this->programNumber;
+}
+
+unsigned int CTransportStreamProgramMapParserKnownSectionContext::GetCrc32(void)
+{
+  return this->crc32;
 }
 
 /* set methods */
 
-bool CConditionalAccessSectionPacketContext::SetSectionContext(CSectionContext *sectionContext)
+void CTransportStreamProgramMapParserKnownSectionContext::SetCrc32(unsigned int crc32)
 {
-  CConditionalAccessSectionContext *conditionalAccessSectionContext = dynamic_cast<CConditionalAccessSectionContext *>(sectionContext);
-
-  return (conditionalAccessSectionContext == NULL) ? false : __super::SetSectionContext(conditionalAccessSectionContext);
+  this->crc32 = crc32;
 }
 
 /* other methods */

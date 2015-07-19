@@ -20,28 +20,32 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef __CONDITIONAL_ACCESS_SECTION_PACKET_CONTEXT_COLLECTION_DEFINED
-#define __CONDITIONAL_ACCESS_SECTION_PACKET_CONTEXT_COLLECTION_DEFINED
+#ifndef __PACKET_PARSER_DEFINED
+#define __PACKET_PARSER_DEFINED
 
-#include "TsPacketContextCollection.h"
-#include "ConditionalAccessSectionPacketContext.h"
+#include "Parser.h"
+#include "TsPacket.h"
 
-class CConditionalAccessSectionPacketContextCollection : public CTsPacketContextCollection
+#define PACKET_PARSER_FLAG_NONE                                       PARSER_FLAG_NONE
+
+#define PACKET_PARSER_FLAG_LAST                                       (PARSER_FLAG_LAST + 0)
+
+class CPacketParser : public CParser
 {
 public:
-  CConditionalAccessSectionPacketContextCollection(HRESULT *result);
-  virtual ~CConditionalAccessSectionPacketContextCollection(void);
+  CPacketParser(HRESULT *result);
+  virtual ~CPacketParser();
 
   /* get methods */
-
-  // get the item from collection with specified index
-  // @param index : the index of item to find
-  // @return : the reference to item or NULL if not find
-  virtual CConditionalAccessSectionPacketContext *GetItem(unsigned int index);
 
   /* set methods */
 
   /* other methods */
+
+  // parses input MPEG2 TS packet
+  // @param packet : the MPEG2 TS packet to parse
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT Parse(CTsPacket *packet);
 
 protected:
 
@@ -49,3 +53,4 @@ protected:
 };
 
 #endif
+
