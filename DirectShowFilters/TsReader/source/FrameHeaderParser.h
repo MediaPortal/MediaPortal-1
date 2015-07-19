@@ -345,7 +345,7 @@ struct pshdr
 		  pps = NULL;
 			spslen = 0;
 			ppslen = 0;
-			AvgTimePerFrame = 0;
+			AvgTimePerFrame = 370000;  //27 Hz
 			ar = 0;
 			arx = 0;
 			ary = 0;

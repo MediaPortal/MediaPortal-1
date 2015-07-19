@@ -591,6 +591,7 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *pHr)
   LogDebug("===================================================================");
   LogDebug("---------------------- v%d.%d.%d.%d --------------------------------", TSWRITER_MAJOR_VERSION,TSWRITER_MID_VERSION,TSWRITER_VERSION,TSWRITER_POINT_VERSION);
   LogDebug("-- Threaded timeshift file writing and FILE_FLAG_RANDOM_ACCESS mods --");
+  LogDebug("-- Timeshift file parking and no timeshift chunk reserve mods --");
   LogDebug(" ");  
 
   // Set timer resolution to 1 ms (if possible)
@@ -1072,7 +1073,8 @@ STDMETHODIMP CMpTs::TimeShiftSetParams(int handle, int minFiles, int maxFiles, U
   pChannel->m_pTimeShifting->SetMinTSFiles(minFiles);
   pChannel->m_pTimeShifting->SetMaxTSFiles(maxFiles);
   pChannel->m_pTimeShifting->SetMaxTSFileSize(chunkSize);
-  pChannel->m_pTimeShifting->SetChunkReserve(chunkSize);
+  //pChannel->m_pTimeShifting->SetChunkReserve(chunkSize);
+  pChannel->m_pTimeShifting->SetChunkReserve(0); //No chunk reserve
   return S_OK;
 }
 

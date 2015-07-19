@@ -1535,7 +1535,7 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 				}
 				else
 				{
-   				m_PcrSpeed += ((float)dt - m_PcrSpeed) * 0.1 ;                                // Time average between 2 PCR
+   				m_PcrSpeed += ((float)dt - m_PcrSpeed) * 0.1f ;                                // Time average between 2 PCR
 					if (m_JumpInProgress && verbose)
 					{
 						WriteLog("PCR jump aborted after %d confirmation.", m_JumpInProgress) ;

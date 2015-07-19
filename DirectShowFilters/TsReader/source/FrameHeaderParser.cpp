@@ -1302,7 +1302,7 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
     h.ppslen=0;
     h.height=0;
     h.width=0;
-    h.AvgTimePerFrame=0;
+    h.AvgTimePerFrame=370000; //27 Hz
   }
   
 	if (len > 4)
@@ -1503,8 +1503,13 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 		//Seek(next_nal);
 	}
 
+	//LogDebug("spslen = %I64d, ppslen = %I64d, height = %d, width = %d, AvgTimePerFrame = %I64d", h.spslen, h.ppslen, h.height, h.width, h.AvgTimePerFrame);
+
 	if(h.spslen<=0 || h.ppslen<=0 || h.height<100 || h.width<100 || h.AvgTimePerFrame<=0) 
+	{
+	  //Not found all the SPS and PPS information yet, or it's not a usable video stream
 		return(false);
+  }
 
 	if(!pmt) 
 	{

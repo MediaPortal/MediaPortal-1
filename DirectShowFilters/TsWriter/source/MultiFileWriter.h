@@ -29,9 +29,7 @@
 #include "FileWriter.h"
 #include <vector>
 
-//Normally variable size buffers are used - CDiskBuff::CDiskBuff(int size)
-//MAX_BUFFER_SIZE is only used for fixed size buffers - CDiskBuff::CDiskBuff()
-#define MAX_BUFFER_SIZE 65536
+//Variable size buffers are used - CDiskBuff::CDiskBuff(int size)
 #define MAX_BUFFERS 256
 
 typedef struct 
@@ -45,14 +43,11 @@ typedef struct
 class CDiskBuff
 {
 public:
-  CDiskBuff(void);
   CDiskBuff(int size);
   ~CDiskBuff(void);
   int    Length();
   byte*  Data();
-  void   Add(CDiskBuff* pBuffer);
   void   Add(byte* data, int len);
-  void   SetLength(int len);
 
 private:
   byte* m_pBuffer;
