@@ -101,6 +101,10 @@ IBaseFilter* MPMadPresenter::Initialize()
 
 HRESULT MPMadPresenter::Shutdown()
 {
+  CAutoLock lock(this);
+
+  m_pCallback = nullptr;
+
   if (m_pMad)
   {
     if (m_pCommand)
@@ -180,6 +184,9 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 
   CAutoLock cAutoLock(this);
 
+  if (!m_pCallback)
+    return S_OK;
+
   m_dwHeight = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top;
   m_dwWidth = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
 
@@ -223,6 +230,9 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   bool uiVisible = false;
 
   CAutoLock cAutoLock(this);
+
+  if (!m_pCallback)
+    return S_OK;
 
   m_dwHeight = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top;
   m_dwWidth = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
