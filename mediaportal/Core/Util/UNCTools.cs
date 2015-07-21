@@ -128,10 +128,7 @@ namespace MediaPortal.Util
                 {
                     return networkRoot;
                 }
-                else
-                {
-                    return driveletter + Path.DirectorySeparatorChar;
-                }
+                return driveletter + Path.DirectorySeparatorChar;
             }
         }
 
@@ -200,60 +197,66 @@ namespace MediaPortal.Util
             return Directory.GetDirectoryRoot(path).Replace(Path.DirectorySeparatorChar.ToString(), "");
         }
 
-        /// <summary>
-        /// Check if the host of an UNC file/folder is online and the given filesystem object exists (with user defined ping timeout)
-        /// On local files/folders (ex.: c:\temp\1.txt) will be returned true/// 
-        /// ex.: bolRes = UNCFileFolderExists("\\MYSERVER\VIDEOS\1.MKV");
-        /// ex.: bolRes = UNCFileFolderExists("\\MYSERVER\VIDEOS\");/// 
-        /// </summary>
-        /// <param name="strFile"></param>
-        /// <returns>BOOL</returns>
-        public static bool UNCFileFolderExists(string strFile)
+      /// <summary>
+      /// Check if the host of an UNC file/folder is online and the given filesystem object exists (with user defined ping timeout)
+      /// On local files/folders (ex.: c:\temp\1.txt) will be returned true/// 
+      /// ex.: bolRes = UNCFileFolderExists("\\MYSERVER\VIDEOS\1.MKV");
+      /// ex.: bolRes = UNCFileFolderExists("\\MYSERVER\VIDEOS\");/// 
+      /// </summary>
+      /// <param name="strFile"></param>
+      /// <returns>BOOL</returns>
+      public static bool UNCFileFolderExists(string strFile)
+      {
+        string strUNCPath;
+        bool bolExist = false;
+        string strType = "";
+        try
         {
-            string strUNCPath;
-            bool bolExist = false;
-            string strType = "";
+          //Check if the host of the file/folder is online
+          strUNCPath = UNCFileFolderOnline(strFile);
+          if (strUNCPath == "")
+          {
+            return false;
+          }
 
-            //Check if the host of the file/folder is online
-            strUNCPath = UNCFileFolderOnline(strFile);
-            if (strUNCPath == "")
-            {
-                return false;
-            }
+          // get the file attributes for file or directory
+          FileAttributes attr = File.GetAttributes(strUNCPath);
 
-            // get the file attributes for file or directory
-            FileAttributes attr = File.GetAttributes(strUNCPath);
-
-            //detect whether its a directory or file
-            if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
-            {
-                //its a folder
-                bolExist = Directory.Exists(strUNCPath);           //Does the folder exist?
-                strType = "Folder";
-            }
-            else
-            {
-                //its a file
-                bolExist = File.Exists(strUNCPath);                //Does the file exist?
-                strType = "File";
-            }
+          //detect whether its a directory or file
+          if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+          {
+            //its a folder
+            bolExist = Directory.Exists(strUNCPath);           //Does the folder exist?
+            strType = "Folder";
+          }
+          else
+          {
+            //its a file
+            bolExist = File.Exists(strUNCPath);                //Does the file exist?
+            strType = "File";
+          }
 
 
-            if (bolExist)
-            {
-                //File/Folder exists
-                Log.Debug("UNCFileFolderExists: " + strType + "'" + strFile + "' exists!");
-            }
-            else
-            {
-                //File/Folder doesnt exist
-                Log.Info("UNCTools: UNCFileFolderExists: " + strType + "'" + strFile + "' doesn't exists or isnt online!");
-            }
-
-            //Return the flag
-            return bolExist;
+          if (bolExist)
+          {
+            //File/Folder exists
+            Log.Debug("UNCFileFolderExists: " + strType + "'" + strFile + "' exists!");
+          }
+          else
+          {
+            //File/Folder doesnt exist
+            Log.Info("UNCTools: UNCFileFolderExists: " + strType + "'" + strFile + "' doesn't exists or isnt online!");
+          }
 
         }
+        catch (Exception ex)
+        {
+        }
+
+        //Return the flag
+        return bolExist;
+
+      }
 
         /// <summary>
         /// Check if the host of an UNC file/folder is online, (with user defined ping timeout)

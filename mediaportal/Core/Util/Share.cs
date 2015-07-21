@@ -58,6 +58,7 @@ namespace MediaPortal.Util
     public Layout DefaultLayout = Layout.List;
     private bool shareWakeOnLan = false;
     private bool donotFolderJpgIfPin = true;
+    private bool shareOffline = false;
 
     /// <summary>
     /// empty constructor
@@ -151,6 +152,15 @@ namespace MediaPortal.Util
     {
       get { return shareWakeOnLan; }
       set { shareWakeOnLan = value; }
+    }
+
+        /// <summary>
+    /// Property to get/set ShareOffline for server
+    /// </summary>
+    public bool ShareOffline
+    {
+      get { return shareOffline; }
+      set { shareOffline = value; }
     }
 
     /// <summary>
