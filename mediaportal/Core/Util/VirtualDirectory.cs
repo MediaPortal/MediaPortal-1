@@ -540,7 +540,7 @@ namespace MediaPortal.Util
             }
             catch (Exception ex)
             {
-                Log.Error("GetShare: exception on check if UNCFileFolderExists '{0}' exists, ex:{2} stack:{3}", strDir, ex.Message, ex.StackTrace);
+                Log.Error("GetShare: exception on check if UNCFileFolderExists: {0} exists, ex: {1} stack: {2}", strDir, ex.Message, ex.StackTrace);
             }
 
           }
