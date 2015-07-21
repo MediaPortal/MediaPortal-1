@@ -452,7 +452,19 @@ namespace MediaPortal.Configuration.Sections
           editShare.DonotFolderJpgIfPin = shareData.DonotFolderJpgIfPin;
 
           // CreateThumbs
-          int drivetype = Util.Utils.getDriveType(shareData.Folder);
+          int drivetype = 0;
+          if (!shareData.EnableWakeOnLan)
+          {
+            if (UNCTools.UNCFileFolderExists(shareData.Folder))
+            {
+              drivetype = Util.Utils.getDriveType(shareData.Folder);
+            }
+          }
+          else
+          {
+            drivetype = Util.Utils.getDriveType(shareData.Folder);
+          }
+
           if (selectedSection == "movies") // && 
                            //drivetype != 2 && 
                            //drivetype != 5)
