@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <profile>
   <section name="ChannelInfo">
-    <entry name="TotalChannels">1499</entry>
+    <entry name="TotalChannels">1501</entry>
   </section>
   <section name="0">
     <entry name="ChannelID">1@betv.be</entry>
@@ -5999,6 +5999,14 @@
     <entry name="ChannelID">foxhd@fox.com</entry>
     <entry name="FullName">FOX HD</entry>
   </section>
+  <section name="1499">
+    <entry name="ChannelID">brit@bbc.co.uk</entry>
+    <entry name="FullName">BBC Brit</entry>
+  </section>
+  <section name="1500">
+    <entry name="ChannelID">earth@bbc.co.uk</entry>
+    <entry name="FullName">BBC Earth</entry>
+  </section>
   <section name=".svn">
     <entry name="TotalChannels">0</entry>
   </section>
@@ -7451,7 +7459,7 @@
     <entry name="62">1218</entry>
   </section>
   <section name="SE">
-	<entry name="TotalChannels">233</entry>
+	<entry name="TotalChannels">235</entry>
 	<entry name="0">22</entry>
 	<entry name="1">24</entry>
 	<entry name="2">25</entry>
@@ -7686,6 +7694,8 @@
 	<entry name="230">1496</entry>
 	<entry name="231">1497</entry>
 	<entry name="232">1498</entry>
+	<entry name="232">1499</entry>
+	<entry name="232">1500</entry>
   </section>
   <section name="US">
     <entry name="TotalChannels">73</entry>

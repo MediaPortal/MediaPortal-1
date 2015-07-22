@@ -675,9 +675,9 @@
         </SectionTemplate>
       </Template>
      <Searches>
-	<Search match="Series [0-9]{1,3}" field="#EPISODE" remove="false" />
+	<Search match="Series [0-9]{1,3}" field="#SEASON" remove="false" />
 	<Search match="Part [0-9]{1,3}" field="#SEASON" remove="false" />
-	<Search match="episode [0-9]{1,3}" field="#SEASON" remove="false" />
+	<Search match="episode [0-9]{1,3}" field="#EPISODE" remove="false" />
 	<Search match=" Subtitles," field="#SUBTITLES" remove="true" />
 	<Search match=" Repeat," field="#REPEAT" remove="true" />
 	<Search match=" Widescreen," field="#WIDESCREEN" remove="true" /> 
