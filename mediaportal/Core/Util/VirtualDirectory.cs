@@ -487,6 +487,25 @@ namespace MediaPortal.Util
       return false;
     }
 
+        /// <summary>
+    /// This method checks if the specified at least one share is offline
+    /// </summary>
+    /// <returns>
+    /// true : if at least one share is offline
+    /// false: none share is offline
+    /// </returns>
+    public bool IsShareOfflineDetected()
+    {
+      foreach (var share in m_shares)
+      {
+        if (share.ShareOffline)
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+
     public void SetCurrentShare(string strDir)
     {
       //Setting current share;
