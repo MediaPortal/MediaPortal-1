@@ -1202,6 +1202,10 @@ namespace MediaPortal.GUI.Video
       {
         dlg.AddLocalizedString(868); // Reset virtual directory
       }
+      else if (item.IsRemote || (item.IsFolder) && (item.Label == "..") && _virtualDirectory.IsShareOfflineDetected())
+      {
+        dlg.AddLocalizedString(868); // Force reset virtual directory if user want to refresh offline share
+      }
       else if (item.IsRemote || (item.IsFolder) && (item.Label == ".."))
       {
         return;
@@ -1361,6 +1365,11 @@ namespace MediaPortal.GUI.Video
         #endregion
 
         dlg.AddLocalizedString(1299); // Refresh current directory
+
+        if (_virtualDirectory.IsShareOfflineDetected())
+        {
+          dlg.AddLocalizedString(868); // Force reset virtual directory if user want to refresh offline share
+        }
       }
 
       dlg.AddLocalizedString(1262); // Update grabber scripts
