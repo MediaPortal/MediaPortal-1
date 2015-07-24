@@ -1544,7 +1544,7 @@ namespace MediaPortal.Util
               Log.Debug("GetRootExt(): Path = {0}, IconImage = {1}", item.Path, item.IconImage);
             }
           }
-          if (!UNCTools.UNCFileFolderExists(item.Path) && !share.ShareWakeOnLan)
+          if (!UNCTools.UNCFileFolderExists(item.Path) && !share.ShareWakeOnLan && !Util.Utils.IsDVD(item.Path))
           {
             share.ShareOffline = true;
             Log.Debug("GetRootExt(): ShareOffline : '{0}' doesn't exists or host is offline, don't use it for later or enable WOL feature", share.Path);
