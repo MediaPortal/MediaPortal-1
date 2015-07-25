@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="labelDescription.Text" xml:space="preserve">
     <value>asfdjk asjdfhk asdfhk jkasfhdkj jasfhk jasdfh jasdfhk jasdfh asjkdfhs fjkashf asjkdfhas dfjkhasf asjfhs ,fjksh asdfjkasfas dfnasfn  fj aj asdfjk adjk ajkd jsadfhjkasd sjdfhk  sajf  asjkdfhn asjkfnsjdfn  sjkfd f asdf jkas df asdjkf a sdfjkask  asjklasf  asdf jk asfgkdgkl sdg  dgj dsg </value>
@@ -123,7 +123,10 @@
   <data name="labelForceStreamIdentification.Text" xml:space="preserve">
     <value>TV service identifies channel by transport stream ID, program number and program map PID. If at least one of these IDs is changed, TV service cannot tune channel. These options can be used to force IDs to have always same values.</value>
   </data>
-  <metadata name="errorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="errorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="errorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
 </root>

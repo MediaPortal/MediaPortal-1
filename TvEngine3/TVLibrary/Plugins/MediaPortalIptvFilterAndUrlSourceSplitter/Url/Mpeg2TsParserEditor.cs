@@ -20,7 +20,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 
             this.checkBoxAlignToMpeg2TsPacket_Enter(null, null);
             this.Sections = new StreamSectionCollection();
-            this.FilterProgramMapPIDs = new FilterProgramMapPIDCollection();
+            this.FilterProgramNumbers = new FilterProgramNumberCollection();
         }
 
         public Boolean AlignToMpeg2TSPacket { get; set; }
@@ -29,7 +29,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         public int TransportStreamID { get; set; }
         public int ProgramNumber { get; set; }
         public int ProgramMapPID { get; set; }
-        public FilterProgramMapPIDCollection FilterProgramMapPIDs { get; private set; }
+        public FilterProgramNumberCollection FilterProgramNumbers { get; private set; }
 
         internal StreamSectionCollection Sections { get; private set; }
 
@@ -59,27 +59,27 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 
                     for (int i = 0; i < pat.Programs.Count; i++)
                     {
-                        TreeNode temp = new TreeNode(TransportStreamProgramMapSection.GetShortName(pat.Programs[i].ProgramMapPID));
-                        temp.Name = TransportStreamProgramMapSection.GetShortName(pat.Programs[i].ProgramMapPID);
+                        TreeNode temp = new TreeNode(TransportStreamProgramMapSection.GetShortName(pat.Programs[i].ProgramMapPID, pat.Programs[i].ProgramNumber));
+                        temp.Name = TransportStreamProgramMapSection.GetShortName(pat.Programs[i].ProgramMapPID, pat.Programs[i].ProgramNumber);
 
                         node.Nodes.Add(temp);
 
                         Boolean found = false;
-                        foreach (var filterPID in this.FilterProgramMapPIDs)
+                        foreach (var filterProgramNumber in this.FilterProgramNumbers)
                         {
-                            if (filterPID.ProgramMapPID == (int)pat.Programs[i].ProgramMapPID)
+                            if (filterProgramNumber.ProgramNumber == (int)pat.Programs[i].ProgramNumber)
                             {
                                 found = true;
 
                                 foreach (var patInternalSection in section.StreamSections)
                                 {
                                     TransportStreamProgramMapSection pmt = patInternalSection.Section as TransportStreamProgramMapSection;
-                                    if ((pmt != null) && (pmt.ProgramMapPID == (uint)filterPID.ProgramMapPID))
+                                    if ((pmt != null) && (pmt.ProgramNumber == (uint)filterProgramNumber.ProgramNumber))
                                     {
                                         foreach (var programDefinition in pmt.Programs)
                                         {
                                             Boolean foundProgramElement = false;
-                                            foreach (var programElement in filterPID.ProgramElements)
+                                            foreach (var programElement in filterProgramNumber.ProgramElements)
                                             {
                                                 if (programElement.ProgramElementPID == (int)programDefinition.ElementaryPID)
                                                 {
@@ -90,10 +90,9 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 
                                             if (!foundProgramElement)
                                             {
-                                                filterPID.ProgramElements.Add(new ProgramElement() { ProgramElementPID = (int)programDefinition.ElementaryPID, LeaveProgramElement = false });
+                                                filterProgramNumber.ProgramElements.Add(new ProgramElement() { ProgramElementPID = (int)programDefinition.ElementaryPID, LeaveProgramElement = false });
                                             }
                                         }
-
                                     }
                                 }
 
@@ -103,22 +102,21 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 
                         if (!found)
                         {
-                            FilterProgramMapPID filterPID = new FilterProgramMapPID() { ProgramMapPID = (int)pat.Programs[i].ProgramMapPID };
+                            FilterProgramNumber filterProgramNumber = new FilterProgramNumber((int)pat.Programs[i].ProgramNumber);
 
                             foreach (var patInternalSection in section.StreamSections)
                             {
                                 TransportStreamProgramMapSection pmt = patInternalSection.Section as TransportStreamProgramMapSection;
-                                if ((pmt != null) && (pmt.ProgramMapPID == (uint)filterPID.ProgramMapPID))
+                                if ((pmt != null) && (pmt.ProgramNumber == (uint)filterProgramNumber.ProgramNumber))
                                 {
                                     foreach (var programDefinition in pmt.Programs)
                                     {
-                                        filterPID.ProgramElements.Add(new ProgramElement() { ProgramElementPID = (int)programDefinition.ElementaryPID, LeaveProgramElement = false });
+                                        filterProgramNumber.ProgramElements.Add(new ProgramElement() { ProgramElementPID = (int)programDefinition.ElementaryPID, LeaveProgramElement = false });
                                     }
-                                    
                                 }
                             }
 
-                            this.FilterProgramMapPIDs.Add(filterPID);
+                            this.FilterProgramNumbers.Add(filterProgramNumber);
                         }
                     }
 
@@ -314,21 +312,21 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            if (!String.IsNullOrEmpty(textBoxTransportStreamProgramMapSectionPID.Text))
+            if (!String.IsNullOrEmpty(textBoxTransportStreamProgramMapSectionProgramNumber.Text))
             {
                 try
                 {
-                    uint pmtPID = uint.Parse(textBoxTransportStreamProgramMapSectionPID.Text, CultureInfo.CurrentUICulture);
+                    int programNumber = int.Parse(textBoxTransportStreamProgramMapSectionProgramNumber.Text, CultureInfo.CurrentUICulture);
                     bool found = false;
 
-                    foreach (var filterPID in this.FilterProgramMapPIDs)
+                    foreach (var filterProgramNumber in this.FilterProgramNumbers)
                     {
-                        found |= (filterPID.ProgramMapPID == (int)pmtPID);
+                        found |= (filterProgramNumber.ProgramNumber == programNumber);
                     }
 
                     if (!found)
                     {
-                        this.FilterProgramMapPIDs.Add(new FilterProgramMapPID() { ProgramMapPID = (int)pmtPID });
+                        this.FilterProgramNumbers.Add(new FilterProgramNumber(programNumber));
 
                         this.RedrawFilterProgramMapPIDs(this.tabControlFilterProgramElements.SelectedIndex, true, false);
                     }
@@ -343,7 +341,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         {
             if (this.tabControlFilterProgramElements.SelectedIndex != (-1))
             {
-                this.FilterProgramMapPIDs.RemoveAt(this.tabControlFilterProgramElements.SelectedIndex);
+                this.FilterProgramNumbers.RemoveAt(this.tabControlFilterProgramElements.SelectedIndex);
 
                 this.RedrawFilterProgramMapPIDs(this.tabControlFilterProgramElements.SelectedIndex, false, true);
             }
@@ -353,24 +351,26 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         {
             if (adding)
             {
-                for (int i = 0; i < this.FilterProgramMapPIDs.Count; i++)
+                for (int i = 0; i < this.FilterProgramNumbers.Count; i++)
                 {
-                    FilterProgramMapPID filterPID = this.FilterProgramMapPIDs[i];
+                    FilterProgramNumber filterProgramNumber = this.FilterProgramNumbers[i];
                     if (i >= this.tabControlFilterProgramElements.TabPages.Count)
                     {
-                        TabPage addedPage = new TabPage(String.Format("PID {0} (0x{0:X4})", filterPID.ProgramMapPID));
+                        String name = String.Format("Program number {0} (0x{0:X4})", filterProgramNumber.ProgramNumber);
+                        TabPage addedPage = new TabPage(name);
 
+                        addedPage.Name = name;
                         addedPage.Padding = new System.Windows.Forms.Padding(3);
                         addedPage.Size = new System.Drawing.Size(571, 262);
                         addedPage.UseVisualStyleBackColor = true;
 
-                        FilterProgramMapPIDControl control = new FilterProgramMapPIDControl();
+                        FilterProgramNumberControl control = new FilterProgramNumberControl();
 
-                        control.Name = "PID";
+                        control.Name = "ProgramNumber";
                         control.Dock = System.Windows.Forms.DockStyle.Fill;
                         control.Location = new System.Drawing.Point(3, 3);
 
-                        control.FilterProgramMapPID = filterPID;
+                        control.FilterProgramNumber = filterProgramNumber;
                         addedPage.Controls.Add(control);
 
                         this.tabControlFilterProgramElements.TabPages.Add(addedPage);
@@ -380,7 +380,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 
             if (removing)
             {
-                this.tabControlFilterProgramElements.TabPages.RemoveAt(activeTab);
+                this.tabControlFilterProgramElements.TabPages.Remove(this.tabControlFilterProgramElements.TabPages[activeTab]);
             }
         }
     }

@@ -49,7 +49,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.checkBoxDetectDiscontinuity = new System.Windows.Forms.CheckBox();
             this.checkBoxAlignToMpeg2TsPacket = new System.Windows.Forms.CheckBox();
             this.tabPageFilteringProgramElements = new System.Windows.Forms.TabPage();
-            this.textBoxTransportStreamProgramMapSectionPID = new System.Windows.Forms.TextBox();
+            this.textBoxTransportStreamProgramMapSectionProgramNumber = new System.Windows.Forms.TextBox();
             this.labelTransportStreamProgramMapPID = new System.Windows.Forms.Label();
             this.buttonRemove = new System.Windows.Forms.Button();
             this.buttonAdd = new System.Windows.Forms.Button();
@@ -71,9 +71,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.groupBoxGeneral.SuspendLayout();
             this.tabPageFilteringProgramElements.SuspendLayout();
             this.tabPageStreamAnalysis.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerStreamAnalysis)).BeginInit();
             this.splitContainerStreamAnalysis.Panel1.SuspendLayout();
             this.splitContainerStreamAnalysis.Panel2.SuspendLayout();
             this.splitContainerStreamAnalysis.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerStreamAnalysisDetails)).BeginInit();
             this.splitContainerStreamAnalysisDetails.Panel1.SuspendLayout();
             this.splitContainerStreamAnalysisDetails.Panel2.SuspendLayout();
             this.splitContainerStreamAnalysisDetails.SuspendLayout();
@@ -84,7 +86,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(521, 338);
+            this.buttonCancel.Location = new System.Drawing.Point(674, 338);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 2;
@@ -96,7 +98,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             // 
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(440, 338);
+            this.buttonOK.Location = new System.Drawing.Point(593, 338);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 1;
@@ -116,7 +118,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.tabControl.Location = new System.Drawing.Point(12, 12);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(593, 320);
+            this.tabControl.Size = new System.Drawing.Size(746, 320);
             this.tabControl.TabIndex = 0;
             this.tabControl.Enter += new System.EventHandler(this.checkBoxAlignToMpeg2TsPacket_Enter);
             // 
@@ -128,7 +130,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.tabPageBasicSettings.Location = new System.Drawing.Point(4, 22);
             this.tabPageBasicSettings.Name = "tabPageBasicSettings";
             this.tabPageBasicSettings.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBasicSettings.Size = new System.Drawing.Size(585, 294);
+            this.tabPageBasicSettings.Size = new System.Drawing.Size(738, 294);
             this.tabPageBasicSettings.TabIndex = 0;
             this.tabPageBasicSettings.Text = "Basic settings";
             this.tabPageBasicSettings.UseVisualStyleBackColor = true;
@@ -297,7 +299,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             // 
             // tabPageFilteringProgramElements
             // 
-            this.tabPageFilteringProgramElements.Controls.Add(this.textBoxTransportStreamProgramMapSectionPID);
+            this.tabPageFilteringProgramElements.Controls.Add(this.textBoxTransportStreamProgramMapSectionProgramNumber);
             this.tabPageFilteringProgramElements.Controls.Add(this.labelTransportStreamProgramMapPID);
             this.tabPageFilteringProgramElements.Controls.Add(this.buttonRemove);
             this.tabPageFilteringProgramElements.Controls.Add(this.buttonAdd);
@@ -305,27 +307,27 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.tabPageFilteringProgramElements.Location = new System.Drawing.Point(4, 22);
             this.tabPageFilteringProgramElements.Name = "tabPageFilteringProgramElements";
             this.tabPageFilteringProgramElements.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageFilteringProgramElements.Size = new System.Drawing.Size(585, 294);
+            this.tabPageFilteringProgramElements.Size = new System.Drawing.Size(738, 294);
             this.tabPageFilteringProgramElements.TabIndex = 1;
             this.tabPageFilteringProgramElements.Text = "Filtering program elements";
             this.tabPageFilteringProgramElements.UseVisualStyleBackColor = true;
             this.tabPageFilteringProgramElements.Enter += new System.EventHandler(this.checkBoxAlignToMpeg2TsPacket_Enter);
             // 
-            // textBoxTransportStreamProgramMapSectionPID
+            // textBoxTransportStreamProgramMapSectionProgramNumber
             // 
-            this.textBoxTransportStreamProgramMapSectionPID.Location = new System.Drawing.Point(183, 9);
-            this.textBoxTransportStreamProgramMapSectionPID.Name = "textBoxTransportStreamProgramMapSectionPID";
-            this.textBoxTransportStreamProgramMapSectionPID.Size = new System.Drawing.Size(74, 20);
-            this.textBoxTransportStreamProgramMapSectionPID.TabIndex = 0;
+            this.textBoxTransportStreamProgramMapSectionProgramNumber.Location = new System.Drawing.Point(183, 9);
+            this.textBoxTransportStreamProgramMapSectionProgramNumber.Name = "textBoxTransportStreamProgramMapSectionProgramNumber";
+            this.textBoxTransportStreamProgramMapSectionProgramNumber.Size = new System.Drawing.Size(74, 20);
+            this.textBoxTransportStreamProgramMapSectionProgramNumber.TabIndex = 0;
             // 
             // labelTransportStreamProgramMapPID
             // 
             this.labelTransportStreamProgramMapPID.AutoSize = true;
             this.labelTransportStreamProgramMapPID.Location = new System.Drawing.Point(6, 12);
             this.labelTransportStreamProgramMapPID.Name = "labelTransportStreamProgramMapPID";
-            this.labelTransportStreamProgramMapPID.Size = new System.Drawing.Size(171, 13);
+            this.labelTransportStreamProgramMapPID.Size = new System.Drawing.Size(110, 13);
             this.labelTransportStreamProgramMapPID.TabIndex = 7;
-            this.labelTransportStreamProgramMapPID.Text = "Transport stream program map PID";
+            this.labelTransportStreamProgramMapPID.Text = "PMT Program number";
             // 
             // buttonRemove
             // 
@@ -355,7 +357,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.tabControlFilterProgramElements.Location = new System.Drawing.Point(6, 35);
             this.tabControlFilterProgramElements.Name = "tabControlFilterProgramElements";
             this.tabControlFilterProgramElements.SelectedIndex = 0;
-            this.tabControlFilterProgramElements.Size = new System.Drawing.Size(573, 253);
+            this.tabControlFilterProgramElements.Size = new System.Drawing.Size(726, 253);
             this.tabControlFilterProgramElements.TabIndex = 3;
             // 
             // tabPageStreamAnalysis
@@ -364,7 +366,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.tabPageStreamAnalysis.Location = new System.Drawing.Point(4, 22);
             this.tabPageStreamAnalysis.Name = "tabPageStreamAnalysis";
             this.tabPageStreamAnalysis.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageStreamAnalysis.Size = new System.Drawing.Size(585, 294);
+            this.tabPageStreamAnalysis.Size = new System.Drawing.Size(738, 294);
             this.tabPageStreamAnalysis.TabIndex = 2;
             this.tabPageStreamAnalysis.Text = "Stream analysis";
             this.tabPageStreamAnalysis.UseVisualStyleBackColor = true;
@@ -383,8 +385,8 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             // splitContainerStreamAnalysis.Panel2
             // 
             this.splitContainerStreamAnalysis.Panel2.Controls.Add(this.splitContainerStreamAnalysisDetails);
-            this.splitContainerStreamAnalysis.Size = new System.Drawing.Size(579, 288);
-            this.splitContainerStreamAnalysis.SplitterDistance = 183;
+            this.splitContainerStreamAnalysis.Size = new System.Drawing.Size(732, 288);
+            this.splitContainerStreamAnalysis.SplitterDistance = 344;
             this.splitContainerStreamAnalysis.TabIndex = 0;
             // 
             // labelDetectedSections
@@ -403,7 +405,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeViewSections.Location = new System.Drawing.Point(3, 20);
             this.treeViewSections.Name = "treeViewSections";
-            this.treeViewSections.Size = new System.Drawing.Size(177, 265);
+            this.treeViewSections.Size = new System.Drawing.Size(338, 265);
             this.treeViewSections.TabIndex = 0;
             this.treeViewSections.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewSections_AfterSelect);
             // 
@@ -423,7 +425,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             // 
             this.splitContainerStreamAnalysisDetails.Panel2.Controls.Add(this.labelRawSectionData);
             this.splitContainerStreamAnalysisDetails.Panel2.Controls.Add(this.textBoxRawSectionData);
-            this.splitContainerStreamAnalysisDetails.Size = new System.Drawing.Size(392, 288);
+            this.splitContainerStreamAnalysisDetails.Size = new System.Drawing.Size(384, 288);
             this.splitContainerStreamAnalysisDetails.SplitterDistance = 139;
             this.splitContainerStreamAnalysisDetails.TabIndex = 0;
             // 
@@ -436,7 +438,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.textBoxSectionData.Multiline = true;
             this.textBoxSectionData.Name = "textBoxSectionData";
             this.textBoxSectionData.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxSectionData.Size = new System.Drawing.Size(382, 115);
+            this.textBoxSectionData.Size = new System.Drawing.Size(374, 115);
             this.textBoxSectionData.TabIndex = 0;
             this.textBoxSectionData.WordWrap = false;
             // 
@@ -468,7 +470,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.textBoxRawSectionData.Multiline = true;
             this.textBoxRawSectionData.Name = "textBoxRawSectionData";
             this.textBoxRawSectionData.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxRawSectionData.Size = new System.Drawing.Size(382, 122);
+            this.textBoxRawSectionData.Size = new System.Drawing.Size(374, 122);
             this.textBoxRawSectionData.TabIndex = 0;
             this.textBoxRawSectionData.WordWrap = false;
             // 
@@ -482,7 +484,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(608, 373);
+            this.ClientSize = new System.Drawing.Size(761, 373);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.buttonCancel);
@@ -506,11 +508,13 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.splitContainerStreamAnalysis.Panel1.ResumeLayout(false);
             this.splitContainerStreamAnalysis.Panel1.PerformLayout();
             this.splitContainerStreamAnalysis.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerStreamAnalysis)).EndInit();
             this.splitContainerStreamAnalysis.ResumeLayout(false);
             this.splitContainerStreamAnalysisDetails.Panel1.ResumeLayout(false);
             this.splitContainerStreamAnalysisDetails.Panel1.PerformLayout();
             this.splitContainerStreamAnalysisDetails.Panel2.ResumeLayout(false);
             this.splitContainerStreamAnalysisDetails.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerStreamAnalysisDetails)).EndInit();
             this.splitContainerStreamAnalysisDetails.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.ResumeLayout(false);
@@ -552,6 +556,6 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         private System.Windows.Forms.Button buttonRemove;
         private System.Windows.Forms.Button buttonAdd;
         private System.Windows.Forms.Label labelTransportStreamProgramMapPID;
-        private System.Windows.Forms.TextBox textBoxTransportStreamProgramMapSectionPID;
+        private System.Windows.Forms.TextBox textBoxTransportStreamProgramMapSectionProgramNumber;
     }
 }

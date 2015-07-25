@@ -325,7 +325,8 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::SetConnectionParameters(const CPara
       MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FILTER_PROGRAM_ELEMENTS |
       MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_STREAM_ANALYSIS |
       MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FOUND_PAT |
-      MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FOUND_PMT);
+      MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FOUND_PMT |
+      MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_NO_MORE_PROTOCOL_DATA);
 
     this->flags |= this->connectionParameters->GetValueBool(PARAMETER_NAME_MPEG2TS_DETECT_DISCONTINUITY, true, MPEG2TS_DETECT_DISCONTINUITY_DEFAULT) ? MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_DETECT_DISCONTINUITY : MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_NONE;
     this->flags |= this->connectionParameters->GetValueBool(PARAMETER_NAME_MPEG2TS_ALIGN_TO_MPEG2TS_PACKET, true, MPEG2TS_ALIGN_TO_MPEG2TS_PACKET) ? MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_ALIGN_TO_MPEG2TS_PACKET : MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_NONE;
@@ -340,7 +341,7 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::SetConnectionParameters(const CPara
 
     this->flags |= this->connectionParameters->GetValueBool(PARAMETER_NAME_MPEG2TS_SET_NOT_SCRAMBLED, true, MPEG2TS_SET_NOT_SCRAMBLED_DEFAULT) ? MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_SET_NOT_SCRAMBLED : MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_NONE;
 
-    this->flags |= (this->connectionParameters->GetValueUnsignedInt(PARAMETER_NAME_MPEG2TS_FILTER_PROGRAM_MAP_PID_COUNT, true, MPEG2TS_FILTER_PROGRAM_MAP_PID_COUNT_DEFAULT) != MPEG2TS_FILTER_PROGRAM_MAP_PID_COUNT_DEFAULT) ? MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FILTER_PROGRAM_ELEMENTS : MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_NONE;
+    this->flags |= (this->connectionParameters->GetValueUnsignedInt(PARAMETER_NAME_MPEG2TS_FILTER_PROGRAM_NUMBER_COUNT, true, MPEG2TS_FILTER_PROGRAM_NUMBER_COUNT_DEFAULT) != MPEG2TS_FILTER_PROGRAM_NUMBER_COUNT_DEFAULT) ? MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FILTER_PROGRAM_ELEMENTS : MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_NONE;
 
     this->flags |= this->connectionParameters->GetValueBool(PARAMETER_NAME_MPEG2TS_STREAM_ANALYSIS, true, MPEG2TS_STREAM_ANALYSIS_DEFAULT) ? MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_STREAM_ANALYSIS : MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_NONE;
   }
@@ -449,7 +450,7 @@ int64_t CMPUrlSourceSplitter_Parser_Mpeg2TS::SeekToTime(unsigned int streamId, i
 
   if (result != (-1))
   {
-    this->flags &= ~(PARSER_PLUGIN_FLAG_SET_STREAM_LENGTH | PARSER_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PARSER_PLUGIN_FLAG_END_OF_STREAM_REACHED | PARSER_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN);
+    this->flags &= ~(PARSER_PLUGIN_FLAG_SET_STREAM_LENGTH | PARSER_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PARSER_PLUGIN_FLAG_END_OF_STREAM_REACHED | PARSER_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN | MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_NO_MORE_PROTOCOL_DATA);
     this->flags |= PARSER_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
 
     this->streamLength = 0;
@@ -1142,61 +1143,67 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
 
                               if (SUCCEEDED(result))
                               {
-                                unsigned int programMapPidCount = caller->connectionParameters->GetValueUnsignedInt(PARAMETER_NAME_MPEG2TS_FILTER_PROGRAM_MAP_PID_COUNT, true, MPEG2TS_FILTER_PROGRAM_MAP_PID_COUNT_DEFAULT);
+                                unsigned int filterProgramNumberCount = caller->connectionParameters->GetValueUnsignedInt(PARAMETER_NAME_MPEG2TS_FILTER_PROGRAM_NUMBER_COUNT, true, MPEG2TS_FILTER_PROGRAM_NUMBER_COUNT_DEFAULT);
 
-                                for (unsigned int j = 0; (SUCCEEDED(result) && (j < programMapPidCount)); j++)
+                                for (unsigned int j = 0; (SUCCEEDED(result) && (j < filterProgramNumberCount)); j++)
                                 {
-                                  wchar_t *filterProgramMapPidName = FormatString(PARAMETER_NAME_FORMAT_MPEG2TS_FILTER_PROGRAM_MAP_PID, j);
-                                  CHECK_POINTER_HRESULT(result, filterProgramMapPidName, result, E_OUTOFMEMORY);
+                                  wchar_t *filterProgramNumberName = FormatString(PARAMETER_NAME_FORMAT_MPEG2TS_FILTER_PROGRAM_NUMBER, j);
+                                  CHECK_POINTER_HRESULT(result, filterProgramNumberName, result, E_OUTOFMEMORY);
 
                                   if (SUCCEEDED(result))
                                   {
-                                    unsigned int filterProgramMapPid = caller->connectionParameters->GetValueUnsignedInt(filterProgramMapPidName, true, TS_PACKET_PID_COUNT);
+                                    unsigned int filterProgramNumber = caller->connectionParameters->GetValueUnsignedInt(filterProgramNumberName, true, UINT_MAX);
 
-                                    if (((uint16_t)filterProgramMapPid) == context->GetParser()->GetTransportStreamProgramMapSectionPID())
+                                    if ((filterProgramNumber != UINT_MAX) && (filterProgramNumber == program->GetProgramNumber()))
                                     {
-                                      // found same program map PID as in current transport stream program map parser context
-                                      caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: transport stream program map parser (PID: 0x%04X) has enabled filtering of program elements", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, program->GetProgramMapPID());
+                                      caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: transport stream program map parser (PID: 0x%04X) has enabled filtering of program elements for program number: 0x%04X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, program->GetProgramMapPID(), filterProgramNumber);
 
-                                      context->SetFilterProgramElements(true);
-
-                                      wchar_t *leaveProgramElementCountName = FormatString(PARAMETER_NAME_FORMAT_MPEG2TS_LEAVE_PROGRAM_ELEMENT_COUNT, filterProgramMapPid);
-                                      CHECK_POINTER_HRESULT(result, leaveProgramElementCountName, result, E_OUTOFMEMORY);
+                                      CFilterProgramNumber *filterProgram = new CFilterProgramNumber(&result, filterProgramNumber);
+                                      CHECK_POINTER_HRESULT(result, filterProgram, result, E_OUTOFMEMORY);
 
                                       if (SUCCEEDED(result))
                                       {
-                                        unsigned int leaveProgramElementCount = caller->connectionParameters->GetValueUnsignedInt(leaveProgramElementCountName, true, MPEG2TS_LEAVE_PROGRAM_ELEMENT_COUNT_DEFAULT);
+                                        wchar_t *leaveProgramElementCountName = FormatString(PARAMETER_NAME_FORMAT_MPEG2TS_LEAVE_PROGRAM_ELEMENT_COUNT, filterProgramNumber);
+                                        CHECK_POINTER_HRESULT(result, leaveProgramElementCountName, result, E_OUTOFMEMORY);
 
-                                        for (unsigned int k = 0; (SUCCEEDED(result) && (k < leaveProgramElementCount)); k++)
+                                        if (SUCCEEDED(result))
                                         {
-                                          wchar_t *leaveProgramElementName = FormatString(PARAMETER_NAME_FORMAT_MPEG2TS_LEAVE_PROGRAM_ELEMENT, filterProgramMapPid, k);
-                                          CHECK_POINTER_HRESULT(result, leaveProgramElementName, result, E_OUTOFMEMORY);
+                                          unsigned int leaveProgramElementCount = caller->connectionParameters->GetValueUnsignedInt(leaveProgramElementCountName, true, MPEG2TS_LEAVE_PROGRAM_ELEMENT_COUNT_DEFAULT);
 
-                                          if (SUCCEEDED(result))
+                                          for (unsigned int k = 0; (SUCCEEDED(result) && (k < leaveProgramElementCount)); k++)
                                           {
-                                            unsigned int leaveProgramElement = caller->connectionParameters->GetValueUnsignedInt(leaveProgramElementName, true, TS_PACKET_PID_COUNT);
+                                            wchar_t *leaveProgramElementName = FormatString(PARAMETER_NAME_FORMAT_MPEG2TS_LEAVE_PROGRAM_ELEMENT, filterProgramNumber, k);
+                                            CHECK_POINTER_HRESULT(result, leaveProgramElementName, result, E_OUTOFMEMORY);
 
-                                            if (leaveProgramElement < TS_PACKET_PID_COUNT)
+                                            if (SUCCEEDED(result))
                                             {
-                                              CProgramElement *programElement = new CProgramElement(&result, leaveProgramElement);
-                                              CHECK_POINTER_HRESULT(result, programElement, result, E_OUTOFMEMORY);
+                                              unsigned int leaveProgramElement = caller->connectionParameters->GetValueUnsignedInt(leaveProgramElementName, true, TS_PACKET_PID_COUNT);
 
-                                              CHECK_CONDITION_HRESULT(result, context->GetLeaveProgramElements()->Add(programElement), result, E_OUTOFMEMORY);
-                                              CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(programElement));
+                                              if (leaveProgramElement < TS_PACKET_PID_COUNT)
+                                              {
+                                                CProgramElement *programElement = new CProgramElement(&result, leaveProgramElement);
+                                                CHECK_POINTER_HRESULT(result, programElement, result, E_OUTOFMEMORY);
 
-                                              CHECK_CONDITION_EXECUTE(SUCCEEDED(result), caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: transport stream program map parser (PID: 0x%04X), leaving program element PID: 0x%04X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, program->GetProgramMapPID(), leaveProgramElement));
+                                                CHECK_CONDITION_HRESULT(result, filterProgram->GetLeaveProgramElements()->Add(programElement), result, E_OUTOFMEMORY);
+                                                CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(programElement));
+
+                                                CHECK_CONDITION_EXECUTE(SUCCEEDED(result), caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: transport stream program map parser (PID: 0x%04X), program number 0x%04X, leaving program element PID: 0x%04X", PARSER_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, program->GetProgramMapPID(), filterProgramNumber, leaveProgramElement));
+                                              }
                                             }
-                                          }
 
-                                          FREE_MEM(leaveProgramElementName);
+                                            FREE_MEM(leaveProgramElementName);
+                                          }
                                         }
+
+                                        FREE_MEM(leaveProgramElementCountName);
                                       }
 
-                                      FREE_MEM(leaveProgramElementCountName);
+                                      CHECK_CONDITION_HRESULT(result, context->GetFilterProgramNumbers()->Add(filterProgram), result, E_OUTOFMEMORY);
+                                      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(filterProgram));
                                     }
                                   }
 
-                                  FREE_MEM(filterProgramMapPidName);
+                                  FREE_MEM(filterProgramNumberName);
                                 }
                               }
 
@@ -1436,34 +1443,44 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                               }
 
                               // filter program elements (if needed)
-                              if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FILTER_PROGRAM_ELEMENTS) && (context->IsFilterProgramElements()))
+                              if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FILTER_PROGRAM_ELEMENTS))
                               {
-                                // filter program elements
-
-                                unsigned int k = 0;
-                                while (SUCCEEDED(result) && (k < section->GetProgramDefinitions()->Count()))
+                                for (unsigned int k = 0; (SUCCEEDED(result) && (k < context->GetFilterProgramNumbers()->Count())); k++)
                                 {
-                                  bool leaveProgramDefinition = false;
-                                  CProgramDefinition *programDefinition = section->GetProgramDefinitions()->GetItem(k);
+                                  CFilterProgramNumber *filterProgramNumber = context->GetFilterProgramNumbers()->GetItem(k);
 
-                                  for (unsigned int l = 0; (SUCCEEDED(result) && (l < context->GetLeaveProgramElements()->Count())); l++)
+                                  if ((unsigned int)filterProgramNumber->GetProgramNumber() == section->GetProgramNumber())
                                   {
-                                    CProgramElement *programElement = context->GetLeaveProgramElements()->GetItem(l);
+                                    // filter program elements
+                                    unsigned int m = 0;
 
-                                    if (programDefinition->GetElementaryPID() == programElement->GetPID())
+                                    while (SUCCEEDED(result) && (m < section->GetProgramDefinitions()->Count()))
                                     {
-                                      leaveProgramDefinition = true;
-                                      break;
-                                    }
-                                  }
+                                      bool leaveProgramDefinition = false;
+                                      CProgramDefinition *programDefinition = section->GetProgramDefinitions()->GetItem(m);
 
-                                  if (leaveProgramDefinition)
-                                  {
-                                    k++;
-                                  }
-                                  else
-                                  {
-                                    section->GetProgramDefinitions()->Remove(k);
+                                      for (unsigned int n = 0; (SUCCEEDED(result) && (n < filterProgramNumber->GetLeaveProgramElements()->Count())); n++)
+                                      {
+                                        CProgramElement *programElement = filterProgramNumber->GetLeaveProgramElements()->GetItem(n);
+
+                                        if (programDefinition->GetElementaryPID() == programElement->GetPID())
+                                        {
+                                          leaveProgramDefinition = true;
+                                          break;
+                                        }
+                                      }
+
+                                      if (leaveProgramDefinition)
+                                      {
+                                        m++;
+                                      }
+                                      else
+                                      {
+                                        section->GetProgramDefinitions()->Remove(m);
+                                      }
+                                    }
+
+                                    break;
                                   }
                                 }
                               }
@@ -1735,9 +1752,8 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
 
         result = multiplexer->MultiplexSections();
 
-        // in case of end of stream in protocol or connection problems we don't receive any more data, we must replace sections with NULL MPEG2 TS packets
-
-        if (SUCCEEDED(result) && (caller->protocolHoster->IsEndOfStreamReached() || caller->protocolHoster->IsConnectionLostCannotReopen()))
+        // in case of received all data from protocol and no stream fragment for aligning, we must replace sections with NULL MPEG2 TS packets
+        if (SUCCEEDED(result) && (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_NO_MORE_PROTOCOL_DATA)) && (!caller->streamFragments->HasReadyForAlignStreamFragments()))
         {
           result = multiplexer->FlushStreamFragmentContexts();
         }
@@ -1823,9 +1839,6 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
 
       CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = caller->streamFragments->GetConditionalAccessSectionDetectionFinishedStreamFragments(indexedConditionalAccessSectionDetectionFinishedStreamFragments));
 
-      CTsPacket *nullPacket = CTsPacket::CreateNullPacket();
-      CHECK_POINTER_HRESULT(result, nullPacket, result, E_OUTOFMEMORY);
-
       for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedConditionalAccessSectionDetectionFinishedStreamFragments->Count())); i++)
       {
         CIndexedMpeg2tsStreamFragment *indexedConditionalAccessSectionDetectionFinishedStreamFragment = indexedConditionalAccessSectionDetectionFinishedStreamFragments->GetItem(i);
@@ -1841,7 +1854,6 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
         }
       }
 
-      FREE_MEM_CLASS(nullPacket);
       FREE_MEM_CLASS(indexedConditionalAccessSectionDetectionFinishedStreamFragments);
 
       UNLOCK_MUTEX(caller->mutex)
@@ -2021,6 +2033,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
         {
           // connection lost, cannot reopen
           caller->flags |= response->IsConnectionLostCannotReopen() ? PARSER_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN : PARSER_PLUGIN_FLAG_NONE;
+          caller->flags |= MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_NO_MORE_PROTOCOL_DATA;
             
           // mark current downloading stream fragment as downloaded or remove it, if it has not any data
           if (currentDownloadingFragment != NULL)

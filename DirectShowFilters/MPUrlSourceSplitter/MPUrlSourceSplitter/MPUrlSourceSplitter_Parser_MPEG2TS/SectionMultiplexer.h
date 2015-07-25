@@ -26,6 +26,7 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 #include "Flags.h"
 #include "SectionCollection.h"
 #include "Mpeg2tsStreamFragmentContextCollection.h"
+#include "ProgramSpecificInformationPacket.h"
 
 #define SECTION_MULTIPLEXER_FLAG_NONE                                 FLAGS_NONE
 
@@ -80,6 +81,11 @@ protected:
   CMpeg2tsStreamFragmentContextCollection *streamFragmentContexts;
   // holds sections for multiplexing
   CSectionCollection *sections;
+
+  // holds unused section payload count
+  unsigned int sectionPayloadCount;
+  // holds current MPEG2 TS packet, if still some data can fit
+  CProgramSpecificInformationPacket *currentPacket;
 
   /* methods */
 

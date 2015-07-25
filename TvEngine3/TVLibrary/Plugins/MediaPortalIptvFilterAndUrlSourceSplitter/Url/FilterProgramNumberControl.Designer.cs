@@ -1,6 +1,6 @@
 ﻿namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 {
-    partial class FilterProgramMapPIDControl
+    partial class FilterProgramNumberControl
     {
         /// <summary> 
         /// Required designer variable.

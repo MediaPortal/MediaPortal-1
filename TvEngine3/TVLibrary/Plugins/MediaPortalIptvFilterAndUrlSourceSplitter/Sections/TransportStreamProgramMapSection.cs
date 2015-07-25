@@ -51,7 +51,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Sections
 
         public override string ShortName
         {
-            get { return TransportStreamProgramMapSection.GetShortName(this.ProgramMapPID); }
+            get { return TransportStreamProgramMapSection.GetShortName(this.ProgramMapPID, this.ProgramNumber); }
         }
 
         #endregion
@@ -175,9 +175,9 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Sections
             return result;
         }
 
-        public static String GetShortName(uint programMapPID)
+        public static String GetShortName(uint programMapPID, uint programNumber)
         {
-            return String.Format("PMT - PID {0} (0x{0:X4})", programMapPID);
+            return String.Format("PMT - PID {0} (0x{0:X4}) Program number {1} (0x{1:X4})", programMapPID, programNumber);
         }
 
         #endregion
