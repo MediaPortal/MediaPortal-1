@@ -32,6 +32,7 @@ namespace MediaPortal.Profile
   public class MPSettings : Settings
   {
     private static string _configPathName;
+    private static bool _alternateConfig;
 
     public static string ConfigPathName
     {
@@ -45,7 +46,7 @@ namespace MediaPortal.Profile
       }
       set
       {
-        if (string.IsNullOrEmpty(_configPathName))
+        if (string.IsNullOrEmpty(_configPathName) || AlternateConfig)
         {
           _configPathName = value;
           if (!Path.IsPathRooted(_configPathName))
@@ -58,6 +59,19 @@ namespace MediaPortal.Profile
           throw new InvalidOperationException("ConfigPathName already has a value.");
         }
       }
+    }
+
+    public static bool AlternateConfig
+    {
+      get
+      {
+        return _alternateConfig;
+      }
+      set
+      {
+        _alternateConfig = value;
+      }
+      
     }
 
     private static MPSettings _instance;

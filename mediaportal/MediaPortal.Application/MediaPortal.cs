@@ -561,7 +561,9 @@ public class MediaPortalApp : D3D, IRender
       {
         try
         {
+          MPSettings.AlternateConfig = true;
           MPSettings.ConfigPathName = _alternateConfig;
+          MPSettings.AlternateConfig = false;
           Log.BackupLogFiles();
           Log.Info("Using alternate configuration file: {0}", MPSettings.ConfigPathName);
         }
