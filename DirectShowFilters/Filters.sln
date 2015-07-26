@@ -504,8 +504,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Protoco
 		{69789CEA-823C-47DA-8564-B00FC383777B} = {69789CEA-823C-47DA-8564-B00FC383777B}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test01", "MPUrlSourceSplitter\MPUrlSourceSplitter\test01\test01.vcxproj", "{0A0E1F43-5D09-4016-A99B-A27A99BE4235}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -818,9 +816,6 @@ Global
 		{6D48ECD9-DDB1-4CA4-BCF2-26F5FE795136}.Debug|Win32.Build.0 = Debug|Win32
 		{6D48ECD9-DDB1-4CA4-BCF2-26F5FE795136}.Release|Win32.ActiveCfg = Release|Win32
 		{6D48ECD9-DDB1-4CA4-BCF2-26F5FE795136}.Release|Win32.Build.0 = Release|Win32
-		{0A0E1F43-5D09-4016-A99B-A27A99BE4235}.Debug|Win32.ActiveCfg = Debug|Win32
-		{0A0E1F43-5D09-4016-A99B-A27A99BE4235}.Debug|Win32.Build.0 = Debug|Win32
-		{0A0E1F43-5D09-4016-A99B-A27A99BE4235}.Release|Win32.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -883,7 +878,6 @@ Global
 		{69789CEA-823C-47DA-8564-B00FC383777B} = {1E5FA22A-F036-4BCC-9CE0-F81B913A80DD}
 		{8E389373-6E62-4E05-BBA8-24FCADD1F62D} = {1E5FA22A-F036-4BCC-9CE0-F81B913A80DD}
 		{6D48ECD9-DDB1-4CA4-BCF2-26F5FE795136} = {1E5FA22A-F036-4BCC-9CE0-F81B913A80DD}
-		{0A0E1F43-5D09-4016-A99B-A27A99BE4235} = {1E5FA22A-F036-4BCC-9CE0-F81B913A80DD}
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
