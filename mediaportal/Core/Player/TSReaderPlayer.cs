@@ -332,7 +332,7 @@ namespace MediaPortal.Player
 
         // does .ts file contain video?
         // default is _isRadio=false which prevents recorded radio file playing
-        if (!_videoFormat.IsValid)
+        if (!_videoFormat.IsValid && g_Player.AudioStreams == 1)
         {
           Log.Debug("TSReaderPlayer: Stream is Radio");
           _isRadio = true;
@@ -447,7 +447,7 @@ namespace MediaPortal.Player
 
         if (!_isRadio)
         {
-          if (filterConfig != null && filterConfig.enableDVBTtxtSubtitles || filterConfig.enableDVBBitmapSubtitles)
+          if (filterConfig != null && (filterConfig != null && filterConfig.enableDVBTtxtSubtitles || filterConfig.enableDVBBitmapSubtitles))
           {
             try
             {
