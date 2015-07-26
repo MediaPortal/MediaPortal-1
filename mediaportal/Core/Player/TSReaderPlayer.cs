@@ -340,9 +340,12 @@ namespace MediaPortal.Player
 
         if (!_isRadio)
         {
-          _vmr9 = new VMR9Util();
-          _vmr9.AddVMR9(_graphBuilder);
-          _vmr9.Enable(false);
+          if (_videoFormat.IsValid)
+          {
+            _vmr9 = new VMR9Util();
+            _vmr9.AddVMR9(_graphBuilder);
+            _vmr9.Enable(false);
+          }
 
           // Add preferred video filters
           UpdateFilters("Video");
@@ -382,7 +385,7 @@ namespace MediaPortal.Player
         #region render TsReader output pins
 
         Log.Info("TSReaderPlayer: Render TsReader outputs");
-        if (_isRadio)
+        if (_isRadio && g_Player.AudioStreams == 1)
         {
           IEnumPins enumPins;
           hr = _fileSource.EnumPins(out enumPins);
@@ -507,7 +510,7 @@ namespace MediaPortal.Player
         }
         if (!_isRadio)
         {
-          if (filterConfig != null && filterConfig.enableCCSubtitles)
+          if (_vmr9 != null && filterConfig != null && filterConfig.enableCCSubtitles)
           {
             CleanupCC();
             ReleaseCC();
@@ -525,14 +528,17 @@ namespace MediaPortal.Player
               Log.Debug("TSReaderPlayer: EnableCC2");
             }
           }
-          if (!_vmr9.IsVMR9Connected)
+          if (_vmr9 != null && !_vmr9.IsVMR9Connected)
           {
             Log.Error("TSReaderPlayer: Failed vmr9 not connected");
             Cleanup();
             return false;
           }
           DirectShowUtil.EnableDeInterlace(_graphBuilder);
-          _vmr9.SetDeinterlaceMode();
+          if (_vmr9 != null)
+          {
+            _vmr9.SetDeinterlaceMode();
+          }
         }
 
         using (MPSettings xmlreader = new MPSettings())

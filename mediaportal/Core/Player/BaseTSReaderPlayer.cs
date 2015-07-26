@@ -1901,7 +1901,7 @@ namespace MediaPortal.Player
           PostProcessFilterVideo.Clear();
           Log.Info("TSReaderPlayer: UpdateFilters Cleanup PostProcessVideo");
         }
-        if (filterConfig != null && filterConfig.enableCCSubtitles)
+        if (VMR9Util.g_vmr9 != null && filterConfig != null && filterConfig.enableCCSubtitles)
         {
           ReleaseCC();
           ReleaseCC2();
@@ -1994,7 +1994,7 @@ namespace MediaPortal.Player
         }
         filterCodec.VideoCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
 
-        if (filterConfig != null && selection == "Video" && filterConfig.enableCCSubtitles)
+        if (VMR9Util.g_vmr9 != null && filterConfig != null && selection == "Video" && filterConfig.enableCCSubtitles)
         {
           CoreCCPresent = false;
           CoreCCParserCheck();
