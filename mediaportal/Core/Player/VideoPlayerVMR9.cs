@@ -551,8 +551,15 @@ namespace MediaPortal.Player
         Vmr9 = new VMR9Util();
         if (File.Exists(m_strCurrentFile) && extension != ".dts" && extension != ".mp3" && extension != ".mka" && extension != ".ac3")
         {
-          Vmr9.AddVMR9(graphBuilder);
-          Vmr9.Enable(false);
+          if (g_Player._mediaInfo != null && !g_Player._mediaInfo.hasVideo)
+          {
+            AudioOnly = true;
+          }
+          else
+          {
+            Vmr9.AddVMR9(graphBuilder);
+            Vmr9.Enable(false);
+          }
         }
         else
         {
