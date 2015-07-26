@@ -96,14 +96,13 @@
     <Compile Include="FinishedWorkEventArgs.cs" />
     <Compile Include="HttpProtocolSettings.cs" />
     <Compile Include="Url\CacheFolderEditor.cs" />
-    <Compile Include="Url\FilterProgramMapPID.cs" />
-    <Compile Include="Url\FilterProgramMapPIDCollection.cs" />
-    <None Include="Url\FilterProgramMapPIDCollectionEditor.cs" />
-    <Compile Include="Url\FilterProgramMapPIDControl.cs">
+    <Compile Include="Url\FilterProgramNumber.cs" />
+    <Compile Include="Url\FilterProgramNumberCollection.cs" />
+    <Compile Include="Url\FilterProgramNumberControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Url\FilterProgramMapPIDControl.Designer.cs">
-      <DependentUpon>FilterProgramMapPIDControl.cs</DependentUpon>
+    <Compile Include="Url\FilterProgramNumberControl.Designer.cs">
+      <DependentUpon>FilterProgramNumberControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Url\HttpUrl.cs" />
     <Compile Include="Filter\IFilterState.cs" />
@@ -210,8 +209,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Url\FilterProgramMapPIDControl.resx">
-      <DependentUpon>FilterProgramMapPIDControl.cs</DependentUpon>
+    <EmbeddedResource Include="Url\FilterProgramNumberControl.resx">
+      <DependentUpon>FilterProgramNumberControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Url\Mpeg2TsParserEditor.resx">
       <DependentUpon>Mpeg2TsParserEditor.cs</DependentUpon>

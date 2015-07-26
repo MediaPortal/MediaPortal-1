@@ -96,6 +96,12 @@
     <ClInclude Include="TransportStreamProgramMapSectionMultiplexer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FilterProgramNumber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FilterProgramNumberCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -174,6 +180,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TransportStreamProgramMapSectionMultiplexer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FilterProgramNumber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FilterProgramNumberCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

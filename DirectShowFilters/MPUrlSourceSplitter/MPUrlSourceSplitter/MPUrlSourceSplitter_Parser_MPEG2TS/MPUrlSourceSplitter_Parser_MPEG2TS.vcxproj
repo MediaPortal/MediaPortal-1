@@ -168,6 +168,8 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
   <ItemGroup>
     <ClInclude Include="ConditionalAccessParserContext.h" />
     <ClInclude Include="ConditionalAccessSectionMutiplexer.h" />
+    <ClInclude Include="FilterProgramNumber.h" />
+    <ClInclude Include="FilterProgramNumberCollection.h" />
     <ClInclude Include="IndexedMpeg2tsStreamFragment.h" />
     <ClInclude Include="IndexedMpeg2tsStreamFragmentCollection.h" />
     <ClInclude Include="Mpeg2tsDumpBox.h" />
@@ -205,6 +207,8 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="FilterProgramNumber.cpp" />
+    <ClCompile Include="FilterProgramNumberCollection.cpp" />
     <ClCompile Include="IndexedMpeg2tsStreamFragment.cpp" />
     <ClCompile Include="IndexedMpeg2tsStreamFragmentCollection.cpp" />
     <ClCompile Include="Mpeg2tsDumpBox.cpp" />

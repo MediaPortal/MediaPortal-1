@@ -9,14 +9,14 @@ using System.Windows.Forms;
 
 namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 {
-    public partial class FilterProgramMapPIDControl : UserControl
+    public partial class FilterProgramNumberControl : UserControl
     {
-        public FilterProgramMapPIDControl()
+        public FilterProgramNumberControl()
         {
             InitializeComponent();
         }
 
-        internal FilterProgramMapPID FilterProgramMapPID { get; set; }
+        internal FilterProgramNumber FilterProgramNumber { get; set; }
 
         private void buttonAdd_Click(object sender, EventArgs e)
         {
@@ -32,7 +32,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                 this.errorProvider.SetError(this.textBoxProgramElementPID, String.Empty);
 
                 Boolean found = false;
-                foreach (var programElement in this.FilterProgramMapPID.ProgramElements)
+                foreach (var programElement in this.FilterProgramNumber.ProgramElements)
                 {
                     if (programElement.ProgramElementPID == pid)
                     {
@@ -43,7 +43,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 
                 if (!found)
                 {
-                    this.FilterProgramMapPID.ProgramElements.Add(new ProgramElement() { ProgramElementPID = pid, LeaveProgramElement = false });
+                    this.FilterProgramNumber.ProgramElements.Add(new ProgramElement() { ProgramElementPID = pid, LeaveProgramElement = false });
                     this.FilterProgramMapPIDControl_Load(null, null);
                 }
             }
@@ -55,10 +55,10 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 
         private void FilterProgramMapPIDControl_Load(object sender, EventArgs e)
         {
-            this.checkBoxAllowFilteringProgramElements.Checked = this.FilterProgramMapPID.AllowFilteringProgramElements;
+            this.checkBoxAllowFilteringProgramElements.Checked = this.FilterProgramNumber.AllowFilteringProgramElements;
             this.checkedListBoxLeaveProgramElements.Items.Clear();
 
-            foreach (var programElement in this.FilterProgramMapPID.ProgramElements)
+            foreach (var programElement in this.FilterProgramNumber.ProgramElements)
             {
                 this.checkedListBoxLeaveProgramElements.Items.Add(programElement.ProgramElementPID.ToString(), programElement.LeaveProgramElement ? CheckState.Checked : CheckState.Unchecked);
             }
@@ -66,12 +66,12 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 
         private void checkedListBoxLeaveProgramElements_ItemCheck(object sender, ItemCheckEventArgs e)
         {
-            this.FilterProgramMapPID.ProgramElements[e.Index].LeaveProgramElement = (e.NewValue == CheckState.Checked);
+            this.FilterProgramNumber.ProgramElements[e.Index].LeaveProgramElement = (e.NewValue == CheckState.Checked);
         }
 
         private void checkBoxAllowFilteringProgramElements_CheckedChanged(object sender, EventArgs e)
         {
-            this.FilterProgramMapPID.AllowFilteringProgramElements = this.checkBoxAllowFilteringProgramElements.Checked;
+            this.FilterProgramNumber.AllowFilteringProgramElements = this.checkBoxAllowFilteringProgramElements.Checked;
         }
     }
 }

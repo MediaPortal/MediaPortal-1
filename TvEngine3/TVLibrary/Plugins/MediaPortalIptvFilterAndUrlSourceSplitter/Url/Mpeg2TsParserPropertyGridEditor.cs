@@ -47,19 +47,18 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                             parserEditor.Sections.Add(section);
                         }
 
-                        foreach (var filterProgramMapPID in url.Mpeg2TsParser.FilterProgramMapPIDs)
+                        foreach (var filterProgramNumber in url.Mpeg2TsParser.FilterProgramNumbers)
                         {
-                            FilterProgramMapPID filterPID = new FilterProgramMapPID();
+                            FilterProgramNumber filter = new FilterProgramNumber(filterProgramNumber.ProgramNumber);
 
-                            filterPID.AllowFilteringProgramElements = true;
-                            filterPID.ProgramMapPID = filterProgramMapPID.ProgramMapPID;
+                            filter.AllowFilteringProgramElements = true;
 
-                            foreach (var leaveProgramElement in filterProgramMapPID.ProgramElements)
+                            foreach (var leaveProgramElement in filterProgramNumber.ProgramElements)
                             {
-                                filterPID.ProgramElements.Add(new ProgramElement() { ProgramElementPID = leaveProgramElement.ProgramElementPID, LeaveProgramElement = true });
+                                filter.ProgramElements.Add(new ProgramElement() { ProgramElementPID = leaveProgramElement.ProgramElementPID, LeaveProgramElement = true });
                             }
 
-                            parserEditor.FilterProgramMapPIDs.Add(filterPID);
+                            parserEditor.FilterProgramNumbers.Add(filter);
                         }
 
                         if (parserEditor.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -72,26 +71,25 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                             url.Mpeg2TsParser.ProgramNumber = parserEditor.ProgramNumber;
                             url.Mpeg2TsParser.ProgramMapPID = parserEditor.ProgramMapPID;
 
-                            url.Mpeg2TsParser.FilterProgramMapPIDs.Clear();
+                            url.Mpeg2TsParser.FilterProgramNumbers.Clear();
 
-                            foreach (var filterProgramMapPID in parserEditor.FilterProgramMapPIDs)
+                            foreach (var filterProgramNumber in parserEditor.FilterProgramNumbers)
                             {
-                                if (filterProgramMapPID.AllowFilteringProgramElements)
+                                if (filterProgramNumber.AllowFilteringProgramElements)
                                 {
-                                    FilterProgramMapPID filterPID = new FilterProgramMapPID();
+                                    FilterProgramNumber filter = new FilterProgramNumber(filterProgramNumber.ProgramNumber);
 
-                                    filterPID.AllowFilteringProgramElements = true;
-                                    filterPID.ProgramMapPID = filterProgramMapPID.ProgramMapPID;
+                                    filter.AllowFilteringProgramElements = true;
 
-                                    foreach (var programElement in filterProgramMapPID.ProgramElements)
+                                    foreach (var programElement in filterProgramNumber.ProgramElements)
                                     {
                                         if (programElement.LeaveProgramElement)
                                         {
-                                            filterPID.ProgramElements.Add(new ProgramElement() { ProgramElementPID = programElement.ProgramElementPID, LeaveProgramElement = true });
+                                            filter.ProgramElements.Add(new ProgramElement() { ProgramElementPID = programElement.ProgramElementPID, LeaveProgramElement = true });
                                         }
                                     }
 
-                                    url.Mpeg2TsParser.FilterProgramMapPIDs.Add(filterPID);
+                                    url.Mpeg2TsParser.FilterProgramNumbers.Add(filter);
                                 }
                             }
                         }

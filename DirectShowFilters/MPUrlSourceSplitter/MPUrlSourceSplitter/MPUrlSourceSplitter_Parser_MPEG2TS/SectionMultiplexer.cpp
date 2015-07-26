@@ -32,6 +32,8 @@ CSectionMultiplexer::CSectionMultiplexer(HRESULT *result, unsigned int pid, unsi
   this->continuityCounter = continuityCounter;
   this->streamFragmentContexts = NULL;
   this->sections = NULL;
+  this->sectionPayloadCount = UINT_MAX;
+  this->currentPacket = NULL;
 
   if ((result != NULL) && SUCCEEDED(*result))
   {
@@ -47,6 +49,7 @@ CSectionMultiplexer::~CSectionMultiplexer()
 {
   FREE_MEM_CLASS(this->streamFragmentContexts);
   FREE_MEM_CLASS(this->sections);
+  FREE_MEM_CLASS(this->currentPacket);
 }
 
 /* get methods */
@@ -133,18 +136,13 @@ HRESULT CSectionMultiplexer::MultiplexSections(void)
   {
     // there are some section ready to split to stream fragments
     // try to split sections into packets by packet contexts (maintain count of sections in packet)
-
-    // multiplexing always starts on packet boundary
     // whole section is splitted, there are not remaining data from previous section
 
     unsigned int streamFragmentContextIndex = 0;
     unsigned int packetContextIndex = 0;
-    unsigned int sectionPayloadCount = UINT_MAX;
 
     CTsPacketCollection *packetCollection = new CTsPacketCollection(&result);
     CHECK_POINTER_HRESULT(result, packetCollection, result, E_OUTOFMEMORY);
-
-    CProgramSpecificInformationPacket *currentPacket = NULL;
 
     for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->sections->Count())); i++)
     {
@@ -153,13 +151,13 @@ HRESULT CSectionMultiplexer::MultiplexSections(void)
 
       while (SUCCEEDED(result) && (processedSectionData < section->GetSectionSize()))
       {
-        if (currentPacket == NULL)
+        if (this->currentPacket == NULL)
         {
           // need to create PSI packet
 
           CMpeg2tsStreamFragmentContext *streamFragmentContext = this->streamFragmentContexts->GetItem(streamFragmentContextIndex);
           CTsPacketContext *packetContext = streamFragmentContext->GetPacketContexts()->GetItem(packetContextIndex);
-          sectionPayloadCount = (sectionPayloadCount == UINT_MAX) ? packetContext->GetSectionPayloadCount() : sectionPayloadCount;
+          this->sectionPayloadCount = (this->sectionPayloadCount == UINT_MAX) ? packetContext->GetSectionPayloadCount() : this->sectionPayloadCount;
 
           bool payloadUnitStartFlag = false;
 
@@ -185,35 +183,45 @@ HRESULT CSectionMultiplexer::MultiplexSections(void)
           }
 
           // table ID for PSI packet is not necessary
-          currentPacket = new CProgramSpecificInformationPacket(&result, this->pid, 0);
-          CHECK_POINTER_HRESULT(result, currentPacket, result, E_OUTOFMEMORY);
+          this->currentPacket = new CProgramSpecificInformationPacket(&result, this->pid, 0);
+          CHECK_POINTER_HRESULT(result, this->currentPacket, result, E_OUTOFMEMORY);
 
           if (SUCCEEDED(result))
           {
-            currentPacket->SetAdaptationFieldControl(TS_PACKET_ADAPTATION_FIELD_CONTROL_ONLY_PAYLOAD);
-            currentPacket->SetPayloadUnitStart(payloadUnitStartFlag);
-            currentPacket->SetContinuityCounter(this->continuityCounter);
+            this->currentPacket->SetAdaptationFieldControl(TS_PACKET_ADAPTATION_FIELD_CONTROL_ONLY_PAYLOAD);
+            this->currentPacket->SetPayloadUnitStart(payloadUnitStartFlag);
+            this->currentPacket->SetContinuityCounter(this->continuityCounter);
 
             this->continuityCounter++;
             this->continuityCounter &= TS_PACKET_HEADER_CONTINUITY_COUNTER_MASK;
           }
 
-          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(currentPacket));
+          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(this->currentPacket));
         }
 
         if (SUCCEEDED(result))
         {
           unsigned int payloadSize = 0;
 
-          result = currentPacket->ParseSectionData(section->GetSection() + processedSectionData, section->GetSectionSize() - processedSectionData, processedSectionData == 0, true, &payloadSize);
+          result = this->currentPacket->ParseSectionData(section->GetSection() + processedSectionData, section->GetSectionSize() - processedSectionData, processedSectionData == 0, true, &payloadSize);
 
           if (SUCCEEDED(result))
           {
             CMpeg2tsStreamFragmentContext *streamFragmentContext = this->streamFragmentContexts->GetItem(streamFragmentContextIndex);
-            sectionPayloadCount--;
+
+            if (payloadSize == 0)
+            {
+              // we finished with MPEG2 TS packet, it is full
+              this->sectionPayloadCount = 0;
+            }
+            else
+            {
+              // decrease section payload count, we used one payload
+              this->sectionPayloadCount--;
+            }
 
             // if section payload count is 0 then move indexes (streamFragmentContextIndex or packetContextIndex)
-            if (sectionPayloadCount == 0)
+            if (this->sectionPayloadCount == 0)
             {
               packetContextIndex++;
               if (packetContextIndex == streamFragmentContext->GetPacketContexts()->Count())
@@ -223,33 +231,22 @@ HRESULT CSectionMultiplexer::MultiplexSections(void)
               }
             }
 
-            if ((payloadSize == 0) || (sectionPayloadCount == 0) || (!currentPacket->IsPayloadUnitStart()))
+            if ((payloadSize == 0) || (this->sectionPayloadCount == 0) || (!this->currentPacket->IsPayloadUnitStart()))
             {
               // PSI packet is full or can't contain new section, store it in packet collection and create new one
-              CHECK_CONDITION_HRESULT(result, packetCollection->Add(currentPacket), result, E_OUTOFMEMORY);
-              CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(currentPacket));
+              CHECK_CONDITION_HRESULT(result, packetCollection->Add(this->currentPacket), result, E_OUTOFMEMORY);
+              CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(this->currentPacket));
 
               // if current packet is added, reset current packet
-              currentPacket = NULL;
+              this->currentPacket = NULL;
             }
 
-            sectionPayloadCount = (sectionPayloadCount == 0) ? UINT_MAX : sectionPayloadCount;
+            this->sectionPayloadCount = (this->sectionPayloadCount == 0) ? UINT_MAX : this->sectionPayloadCount;
 
             processedSectionData += payloadSize;
           }
         }
       }
-    }
-
-    if (currentPacket != NULL)
-    {
-      // there is packet with section data, but it is not stored in collection
-      // TS packet must have written pointer field if some section starts in current packet
-
-      CHECK_CONDITION_HRESULT(result, (!currentPacket->IsPayloadUnitStart()) || (currentPacket->IsPayloadUnitStart() && currentPacket->IsWrittenPointerField()), result, E_NOTIMPL);
-      
-      CHECK_CONDITION_HRESULT(result, packetCollection->Add(currentPacket), result, E_OUTOFMEMORY);
-      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(currentPacket));
     }
 
     if (SUCCEEDED(result))
@@ -270,7 +267,7 @@ HRESULT CSectionMultiplexer::MultiplexSections(void)
           unsigned char *buffer = streamFragmentContext->GetFragment()->GetBuffer()->GetInternalBuffer();
 
           memcpy(buffer + packetContext->GetTsPacketIndex() * TS_PACKET_SIZE, packetCollection->GetItem(packetIndex++)->GetPacket(), TS_PACKET_SIZE);
-
+          
           this->DecreaseReferenceCount(streamFragmentContext->GetFragment());
           streamFragmentContext->GetPacketContexts()->Remove(0);
         }

@@ -7,13 +7,13 @@ using System.ComponentModel;
 namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 {
     /// <summary>
-    /// Represents class for filtering program elements in transport stream program map with specified PID.
+    /// Represents class for filtering program elements in transport stream program map with specified program number.
     /// </summary>
-    internal class FilterProgramMapPID
+    internal class FilterProgramNumber
     {
         #region Private fields
 
-        private int programMapPID;
+        private int programNumber;
         private ProgramElementCollection programElements;
 
         #endregion
@@ -21,11 +21,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of <see cref="FilterProgramMapPID"/> class.
+        /// Initializes a new instance of <see cref="FilterProgramNumber"/> class.
         /// </summary>
-        public FilterProgramMapPID()
+        public FilterProgramNumber(int programNumber)
         {
-            this.ProgramMapPID = Mpeg2TsParser.DefaultMpeg2TsProgramMapPID;
+            this.ProgramNumber = programNumber;
             this.AllowFilteringProgramElements = false;
             this.programElements = new ProgramElementCollection();
         }
@@ -40,19 +40,19 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         public Boolean AllowFilteringProgramElements { get; set; }
 
         /// <summary>
-        /// Specifies the PID of packet containing transport stream program section (PMT).
+        /// Gets or sets the transport stream program map section program number.
         /// </summary>
-        public int ProgramMapPID
+        public int ProgramNumber
         {
-            get { return this.programMapPID; }
+            get { return this.programNumber; }
             set
             {
-                if (((value < 0) || (value > FilterProgramMapPID.MaximumProgramMapPID)) && (value != Mpeg2TsParser.DefaultMpeg2TsProgramMapPID))
+                if ((value < FilterProgramNumber.MinimumProgramNumber) || (value > FilterProgramNumber.MaximumProgramNumber))
                 {
-                    throw new ArgumentOutOfRangeException("ProgramMapPID", value, "Must be greater than or equal to zero and lower than 8192.");
+                    throw new ArgumentOutOfRangeException("ProgramNumber", value, "Must be greater than zero and lower than 65536.");
                 }
 
-                this.programMapPID = value;
+                this.programNumber = value;
             }
         }
 
@@ -69,9 +69,14 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         #region Constants
 
         /// <summary>
-        /// Maximum program map PID.
+        /// The minimum program number.
         /// </summary>
-        public const int MaximumProgramMapPID = 0x1FFF;
+        public const int MinimumProgramNumber = 0x0001;
+
+        /// <summary>
+        /// The maximum program number.
+        /// </summary>
+        public const int MaximumProgramNumber = 0xFFFF;
 
         #endregion
     }

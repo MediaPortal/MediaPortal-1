@@ -18,7 +18,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         private int transportStreamID;
         private int programNumber;
         private int programMapPID;
-        private FilterProgramMapPIDCollection filterProgramMapPIDs;
+        private FilterProgramNumberCollection filterProgramNumbers;
 
         #endregion
 
@@ -36,7 +36,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             this.ProgramNumber = Mpeg2TsParser.DefaultMpeg2TsProgramNumber;
             this.ProgramMapPID = Mpeg2TsParser.DefaultMpeg2TsProgramMapPID;
             this.SetNotScrambled = Mpeg2TsParser.DefaultMpeg2TsSetNotScrambled;
-            this.filterProgramMapPIDs = new FilterProgramMapPIDCollection();
+            this.filterProgramNumbers = new FilterProgramNumberCollection();
             this.Sections = new StreamSectionCollection();
             this.StreamAnalysis = Mpeg2TsParser.DefaultMpeg2TsStreamAnalysis;
         }
@@ -118,11 +118,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         public Boolean SetNotScrambled { get; set; }
 
         /// <summary>
-        /// Gets 
+        /// Gets filter program numbers.
         /// </summary>
-        public FilterProgramMapPIDCollection FilterProgramMapPIDs
+        public FilterProgramNumberCollection FilterProgramNumbers
         {
-            get { return this.filterProgramMapPIDs; }
+            get { return this.filterProgramNumbers; }
         }
 
         /// <summary>
@@ -179,29 +179,29 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                     this.SetNotScrambled = (String.CompareOrdinal(param.Value, SimpleUrl.DefaultTrue) == 0);
                 }
 
-                if (String.CompareOrdinal(param.Name, Mpeg2TsParser.ParameterMpeg2TsFilterProgramMapPIDCount) == 0)
+                if (String.CompareOrdinal(param.Name, Mpeg2TsParser.ParameterMpeg2TsFilterProgramNumberCount) == 0)
                 {
-                    int filterProgramMapPIDCount = int.Parse(param.Value);
+                    int filterProgramNumberCount = int.Parse(param.Value);
 
-                    for (int i = 0; i < filterProgramMapPIDCount; i++)
+                    for (int i = 0; i < filterProgramNumberCount; i++)
                     {
-                        FilterProgramMapPID filterPID = new FilterProgramMapPID();
-                        String parameterFilterProgramMapPID = String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsFilterProgramMapPID, i);
+                        FilterProgramNumber filterProgramNumber = null;
+                        String parameterFilterProgramNumber = String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsFilterProgramNumber, i);
                         int leaveProgramElementsCount = 0;
 
                         foreach (var param2 in parameters)
                         {
-                            if (String.CompareOrdinal(param2.Name, parameterFilterProgramMapPID) == 0)
+                            if (String.CompareOrdinal(param2.Name, parameterFilterProgramNumber) == 0)
                             {
-                                filterPID.AllowFilteringProgramElements = true;
-                                filterPID.ProgramMapPID = int.Parse(param2.Value);
+                                filterProgramNumber = new FilterProgramNumber(int.Parse(param2.Value));
+                                filterProgramNumber.AllowFilteringProgramElements = true;
                                 break;
                             }
                         }
 
-                        if (filterPID.AllowFilteringProgramElements)
+                        if (filterProgramNumber.AllowFilteringProgramElements)
                         {
-                            String parameterLeaveProgramElementsCount = String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsLeaveProgramElementCount, filterPID.ProgramMapPID);
+                            String parameterLeaveProgramElementsCount = String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsLeaveProgramElementCount, filterProgramNumber.ProgramNumber);
                             foreach (var param2 in parameters)
                             {
                                 if (String.CompareOrdinal(param2.Name, parameterLeaveProgramElementsCount) == 0)
@@ -213,7 +213,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 
                             for (int j = 0; j < leaveProgramElementsCount; j++)
                             {
-                                String parameterLeaveProgramElement = String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsLeaveProgramElement, filterPID.ProgramMapPID, j);
+                                String parameterLeaveProgramElement = String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsLeaveProgramElement, filterProgramNumber.ProgramNumber, j);
 
                                 foreach (var param2 in parameters)
                                 {
@@ -224,13 +224,13 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                                         programElement.ProgramElementPID = int.Parse(param2.Value);
                                         programElement.LeaveProgramElement = true;
 
-                                        filterPID.ProgramElements.Add(programElement);
+                                        filterProgramNumber.ProgramElements.Add(programElement);
                                         break;
                                     }
                                 }
                             }
 
-                            this.FilterProgramMapPIDs.Add(filterPID);
+                            this.FilterProgramNumbers.Add(filterProgramNumber);
                         }
                     }
                 }
@@ -276,32 +276,32 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                 parameters.Add(new Parameter(Mpeg2TsParser.ParameterMpeg2TsStreamAnalysis, this.StreamAnalysis ? SimpleUrl.DefaultTrue : SimpleUrl.DefaultFalse));
             }
 
-            if (this.FilterProgramMapPIDs.Count != 0)
+            if (this.FilterProgramNumbers.Count != 0)
             {
-                int filterProgramMapPIDCount = 0;
-                for (int i = 0; i < this.FilterProgramMapPIDs.Count; i++)
+                int filterProgramNumberCount = 0;
+                for (int i = 0; i < this.FilterProgramNumbers.Count; i++)
                 {
-                    FilterProgramMapPID filterPID = this.FilterProgramMapPIDs[i];
+                    FilterProgramNumber filterProgramNumber = this.FilterProgramNumbers[i];
 
-                    if (filterPID.AllowFilteringProgramElements)
+                    if (filterProgramNumber.AllowFilteringProgramElements)
                     {
-                        parameters.Add(new Parameter(String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsFilterProgramMapPID, filterProgramMapPIDCount), filterPID.ProgramMapPID.ToString()));
-                        parameters.Add(new Parameter(String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsLeaveProgramElementCount, filterPID.ProgramMapPID), filterPID.ProgramElements.Count.ToString()));
+                        parameters.Add(new Parameter(String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsFilterProgramNumber, filterProgramNumberCount), filterProgramNumber.ProgramNumber.ToString()));
+                        parameters.Add(new Parameter(String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsLeaveProgramElementCount, filterProgramNumber.ProgramNumber), filterProgramNumber.ProgramElements.Count.ToString()));
 
-                        for (int j = 0; j < filterPID.ProgramElements.Count; j++)
+                        for (int j = 0; j < filterProgramNumber.ProgramElements.Count; j++)
                         {
-                            ProgramElement programElement = filterPID.ProgramElements[j];
+                            ProgramElement programElement = filterProgramNumber.ProgramElements[j];
 
-                            parameters.Add(new Parameter(String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsLeaveProgramElement, filterPID.ProgramMapPID, j), programElement.ProgramElementPID.ToString()));
+                            parameters.Add(new Parameter(String.Format(Mpeg2TsParser.ParameterFormatMpeg2TsLeaveProgramElement, filterProgramNumber.ProgramNumber, j), programElement.ProgramElementPID.ToString()));
                         }                        
 
-                        filterProgramMapPIDCount++;
+                        filterProgramNumberCount++;
                     }
                 }
 
-                if (filterProgramMapPIDCount != 0)
+                if (filterProgramNumberCount != 0)
                 {
-                    parameters.Add(new Parameter(Mpeg2TsParser.ParameterMpeg2TsFilterProgramMapPIDCount, filterProgramMapPIDCount.ToString()));
+                    parameters.Add(new Parameter(Mpeg2TsParser.ParameterMpeg2TsFilterProgramNumberCount, filterProgramNumberCount.ToString()));
                 }
             }
 
@@ -345,13 +345,13 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// <summary>
         /// Specifies the count of transport stream program map to filter program elements.
         /// </summary>
-        protected static readonly String ParameterMpeg2TsFilterProgramMapPIDCount = "Mpeg2TsFilterProgramMapPIDCount";
+        protected static readonly String ParameterMpeg2TsFilterProgramNumberCount = "Mpeg2TsFilterProgramNumberCount";
 
-        protected static readonly String ParameterFormatMpeg2TsFilterProgramMapPID = "Mpeg2TsFilterProgramMapPID{0:00000000}";
+        protected static readonly String ParameterFormatMpeg2TsFilterProgramNumber = "Mpeg2TsFilterProgramNumber{0:00000000}";
 
-        protected static readonly String ParameterFormatMpeg2TsLeaveProgramElementCount = "Mpeg2TsFilterProgramMapPID{0:00000000}LeaveProgramElementCount";
+        protected static readonly String ParameterFormatMpeg2TsLeaveProgramElementCount = "Mpeg2TsFilterProgramNumber{0:00000000}LeaveProgramElementCount";
 
-        protected static readonly String ParameterFormatMpeg2TsLeaveProgramElement = "Mpeg2TsFilterProgramMapPID{0:00000000}LeaveProgramElement{1:00000000}";
+        protected static readonly String ParameterFormatMpeg2TsLeaveProgramElement = "Mpeg2TsFilterProgramNumber{0:00000000}LeaveProgramElement{1:00000000}";
 
         /// <summary>
         /// Specifies if MPEG2 TS parser have to analyse stream for known sections.
