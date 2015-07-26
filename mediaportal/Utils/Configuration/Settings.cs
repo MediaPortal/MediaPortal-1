@@ -32,7 +32,6 @@ namespace MediaPortal.Profile
   public class MPSettings : Settings
   {
     private static string _configPathName;
-    private static bool _alternateConfig;
 
     public static string ConfigPathName
     {
@@ -61,18 +60,7 @@ namespace MediaPortal.Profile
       }
     }
 
-    public static bool AlternateConfig
-    {
-      get
-      {
-        return _alternateConfig;
-      }
-      set
-      {
-        _alternateConfig = value;
-      }
-      
-    }
+    public static bool AlternateConfig { get; set; }
 
     private static MPSettings _instance;
 
