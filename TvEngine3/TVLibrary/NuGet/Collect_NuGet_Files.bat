@@ -73,6 +73,7 @@ xcopy "..\..\..\..\DirectShowFilters\MPWriter\bin\%TARGET%\MPFileWriter.ax" "con
 xcopy "..\..\..\..\DirectShowFilters\TsMuxer\bin\%TARGET%\TsMuxer.ax" "content\References" /R /Y
 xcopy "..\..\..\..\DirectShowFilters\StreamingServer\bin\%TARGET%\StreamingServer.dll" "content\References" /R /Y
 xcopy "..\..\..\..\DirectShowFilters\MPIPTVSource\bin\%TARGET%\*.*" "content\References" /R /Y
+xcopy "..\..\..\..\DirectShowFilters\MPIPTVSource\MPIPTVSource\MPIPTVSource.ini" "content\References" /R /Y
 xcopy "..\..\..\..\DirectShowFilters\TsReader\bin\%TARGET%\TsReader.ax" "content\References" /R /Y
 xcopy "..\..\..\..\DirectShowFilters\TsWriter\bin\%TARGET%\TsWriter.ax" "content\References" /R /Y
 xcopy "..\..\..\..\DirectShowFilters\bin\Release\PDMpgMux.ax" "content\References" /R /Y
@@ -99,7 +100,7 @@ REM 	ProgramData base files
 REM #######################################
 
 del content\References\ProgramData\ProgramData.zip
-"c:\Program Files\7-Zip\7z.exe" a -r content\References\ProgramData\ProgramData.zip "..\..\TvServer.Base\TuningParameters" "..\..\TvServer.Base\WebEPG" "..\..\TvServer.Base\xmltv"
+"c:\Program Files\7-Zip\7z.exe" a -r content\References\ProgramData\ProgramData.zip "..\..\TvServer.Base\TuningParameters" "..\..\TvServer.Base\WebEPG" "..\..\TvServer.Base\xmltv" "..\..\..\..\DirectShowFilters\MPIPTVSource\MPIPTVSource\MPIPTVSource.ini" ".\content\References\gentle.config"
 
 nuget pack MediaPortal.TvEngine.Core3.nuspec -OutputDirectory ..
 cd ..
