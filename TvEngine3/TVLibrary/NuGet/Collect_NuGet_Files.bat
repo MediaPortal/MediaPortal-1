@@ -28,7 +28,6 @@ xcopy "..\..\TvService\bin\%TARGET%\KNCBDACTRL.dll" "content\References" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\log4net.config" "content\References" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\log4net.dll" "content\References" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\MediaInfo.dll" "content\References" /R /Y
-xcopy "..\..\TvService\bin\%TARGET%\MediaPortal.Utilities.dll" "content\References" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\MySql.Data.dll" "content\References" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\PluginBase.dll" "content\References" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\PowerScheduler.Interfaces.dll" "content\References" /R /Y
@@ -49,7 +48,10 @@ xcopy "..\..\TvService\bin\%TARGET%\TvService.exe" "content\References" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\TvService.exe.config" "content\References" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\TvSetupLog.config" "content\References" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\TvThumbnails.dll" "content\References" /R /Y
-xcopy "..\..\TvService\bin\%TARGET%\UPnP.dll" "content\References" /R /Y
+
+rem Note: Following files are required by TVE3, but they are contained in the MP2 host already. So we exclude them here, as the package is intended for MP2 use only.
+rem xcopy "..\..\TvService\bin\%TARGET%\MediaPortal.Utilities.dll" "content\References" /R /Y
+rem xcopy "..\..\TvService\bin\%TARGET%\UPnP.dll" "content\References" /R /Y
 
 xcopy "..\..\TvService\bin\%TARGET%\Plugins\Blaster.exe" "content\References\Plugins\" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\Plugins\Blaster.exe.config" "content\References\Plugins\" /R /Y
