@@ -406,7 +406,20 @@ namespace MediaPortal.Configuration.Sections
       {
         using (Profile.Settings xmlreader = new MPSettings())
         {
-          listItem.SubItems[4].Text = xmlreader.GetValueAsString("macAddress", Util.Utils.GetServerNameFromUNCPath(shareData.Folder), null);
+          string detectedFolderName = "";
+          if (!Util.Utils.IsUNCNetwork(shareData.Folder))
+          {
+            // Check if letter drive is a network drive
+            detectedFolderName = Util.Utils.FindUNCPaths(shareData.Folder);
+          }
+          if (Util.Utils.IsUNCNetwork(detectedFolderName))
+          {
+            listItem.SubItems[4].Text = xmlreader.GetValueAsString("macAddress", Util.Utils.GetServerNameFromUNCPath(detectedFolderName), null);
+          }
+          else if (Util.Utils.IsUNCNetwork(shareData.Folder))
+          {
+            listItem.SubItems[4].Text = xmlreader.GetValueAsString("macAddress", Util.Utils.GetServerNameFromUNCPath(shareData.Folder), null);
+          }
         }
       }
 
@@ -439,7 +452,19 @@ namespace MediaPortal.Configuration.Sections
           editShare.DonotFolderJpgIfPin = shareData.DonotFolderJpgIfPin;
 
           // CreateThumbs
-          int drivetype = Util.Utils.getDriveType(shareData.Folder);
+          int drivetype = 0;
+          if (!shareData.EnableWakeOnLan)
+          {
+            if (UNCTools.UNCFileFolderExists(shareData.Folder))
+            {
+              drivetype = Util.Utils.getDriveType(shareData.Folder);
+            }
+          }
+          else
+          {
+            drivetype = Util.Utils.getDriveType(shareData.Folder);
+          }
+
           if (selectedSection == "movies") // && 
                            //drivetype != 2 && 
                            //drivetype != 5)
@@ -509,7 +534,20 @@ namespace MediaPortal.Configuration.Sections
             {
               using (Profile.Settings xmlreader = new MPSettings())
               {
-                selectedItem.SubItems[4].Text = xmlreader.GetValueAsString("macAddress", Util.Utils.GetServerNameFromUNCPath(shareData.Folder), null);
+                string detectedFolderName = "";
+                if (!Util.Utils.IsUNCNetwork(shareData.Folder))
+                {
+                  // Check if letter drive is a network drive
+                  detectedFolderName = Util.Utils.FindUNCPaths(shareData.Folder);
+                }
+                if (Util.Utils.IsUNCNetwork(detectedFolderName))
+                {
+                  selectedItem.SubItems[4].Text = xmlreader.GetValueAsString("macAddress", Util.Utils.GetServerNameFromUNCPath(detectedFolderName), null);
+                }
+                else if (Util.Utils.IsUNCNetwork(shareData.Folder))
+                {
+                  selectedItem.SubItems[4].Text = xmlreader.GetValueAsString("macAddress", Util.Utils.GetServerNameFromUNCPath(shareData.Folder), null);
+                }
               }
             }
 
