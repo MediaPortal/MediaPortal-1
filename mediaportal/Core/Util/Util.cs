@@ -1766,7 +1766,8 @@ namespace MediaPortal.Util
     public static bool IsISOImage(string fileName)
     {
       string extension = Path.GetExtension(fileName).ToLowerInvariant();
-      if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts"))
+      // check for "http" to prevent exception
+      if (string.IsNullOrEmpty(fileName) || fileName.StartsWith("http://") || !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts")) 
         return false;
 
       string vDrive = DaemonTools.GetVirtualDrive();

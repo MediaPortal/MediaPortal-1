@@ -889,7 +889,14 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public static string GetThemedSkinFile(string filename)
     {
-      return File.Exists(Theme + filename) ? Theme + filename : Skin + filename;
+      if (File.Exists(filename)) // sometimes filename is full path, don't know why
+      {
+        return filename;
+      }
+      else
+      {
+        return File.Exists(Theme + filename) ? Theme + filename : Skin + filename;
+      }
     }
 
     /// <summary>
