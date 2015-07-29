@@ -130,9 +130,9 @@ namespace MediaPortal.GUI.Library
     private static float _currentFPS;
     private static long _lasttime;
     private static bool _blankScreen;
-    private static bool _deviceAudioConnected;
+    private static int _deviceAudioConnected = 0;
     private static VolumeHandler _initVolumeHandler;
-    private static bool _deviceVideoConnected;
+    private static int _deviceVideoConnected = 0;
     private static bool _idleTimePowerSaving;
     private static bool _turnOffMonitor;
     private static bool _vmr9Allowed = true;
@@ -253,20 +253,20 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Set/get audio device connected or removed
     /// </summary>
-    public static bool DeviceAudioConnected
+    public static int DeviceAudioConnected
     {
       get { return _deviceAudioConnected; }
       set
       {
-        if (value == false)
+        if (value > _deviceAudioConnected)
         {
-          _deviceAudioConnected = false;
-          Log.Debug("GraphicContext: device audio removed");
+          _deviceAudioConnected = value;
+          Log.Debug("GraphicContext: device audio connected - Count {0}", _deviceAudioConnected);
         }
-        else
+        else if (value < _deviceAudioConnected)
         {
-          _deviceAudioConnected = true;
-          Log.Debug("GraphicContext: device audio connected");
+          _deviceAudioConnected = value < 0 ? 0 : value;
+          Log.Debug("GraphicContext: device audio removed - Count {0}", _deviceAudioConnected);
         }
       }
     }
@@ -274,20 +274,20 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Set/get video device connected or removed
     /// </summary>
-    public static bool DeviceVideoConnected
+    public static int DeviceVideoConnected
     {
       get { return _deviceVideoConnected; }
       set
       {
-        if (value == false)
+        if (value > _deviceVideoConnected)
         {
-          _deviceVideoConnected = false;
-          Log.Debug("GraphicContext: device video removed");
+          _deviceVideoConnected = value;
+          Log.Debug("GraphicContext: device video connected - Count {0}", _deviceVideoConnected);
         }
-        else
+        else if (value < _deviceVideoConnected)
         {
-          _deviceVideoConnected = true;
-          Log.Debug("GraphicContext: device video connected");
+          _deviceVideoConnected = value < 0 ? 0 : value;
+          Log.Debug("GraphicContext: device video removed - Count {0}", _deviceVideoConnected);
         }
       }
     }
