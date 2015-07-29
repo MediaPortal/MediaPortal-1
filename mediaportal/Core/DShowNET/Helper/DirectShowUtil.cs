@@ -931,7 +931,10 @@ namespace DShowNET.Helper
                 }
               }
 
-              ReleaseComObject(i.pGraph);
+              if (i.pGraph != null)
+              {
+                ReleaseComObject(i.pGraph);
+              }
               try
               {
                 if (pinName == "Audio")

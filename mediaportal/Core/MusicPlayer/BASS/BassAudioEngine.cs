@@ -2227,7 +2227,10 @@ namespace MediaPortal.MusicPlayer.BASS
       }
       else
       {
-        level = BassMix.BASS_Mixer_ChannelGetLevel(stream.BassStream);
+        if (stream != null)
+        {
+          level = BassMix.BASS_Mixer_ChannelGetLevel(stream.BassStream);
+        }
       }
 
       if (Config.MusicPlayer != AudioPlayer.Asio) // For Asio, we already got the peaklevel above

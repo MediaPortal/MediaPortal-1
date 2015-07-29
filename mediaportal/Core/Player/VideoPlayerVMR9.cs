@@ -546,11 +546,18 @@ namespace MediaPortal.Player
 
         // add the VMR9 in the graph
         // after enabeling exclusive mode, if done first it causes MediPortal to minimize if for example the "Windows key" is pressed while playing a video
-        Vmr9 = new VMR9Util();
         if (File.Exists(m_strCurrentFile) && extension != ".dts" && extension != ".mp3" && extension != ".mka" && extension != ".ac3")
         {
-          Vmr9.AddVMR9(graphBuilder);
-          Vmr9.Enable(false);
+          if (g_Player._mediaInfo != null && !g_Player._mediaInfo.hasVideo)
+          {
+            AudioOnly = true;
+          }
+          else
+          {
+            Vmr9 = new VMR9Util();
+            Vmr9.AddVMR9(graphBuilder);
+            Vmr9.Enable(false);
+          }
         }
         else
         {
@@ -840,7 +847,7 @@ namespace MediaPortal.Player
 
         //EnableClock();
 
-        if (Vmr9 == null || !Vmr9.IsVMR9Connected && !AudioOnly)
+        if ((Vmr9 == null || !Vmr9.IsVMR9Connected) && !AudioOnly)
         {
           Log.Error("VideoPlayer9: Failed to render file -> vmr9");
           mediaCtrl = null;
@@ -854,9 +861,12 @@ namespace MediaPortal.Player
         mediaPos = (IMediaPosition) graphBuilder;
         basicAudio = (IBasicAudio) graphBuilder;
         videoWin = (IVideoWindow) graphBuilder;
-        m_iVideoWidth = Vmr9.VideoWidth;
-        m_iVideoHeight = Vmr9.VideoHeight;
-        Vmr9.SetDeinterlaceMode();
+        if (Vmr9 != null)
+        {
+          m_iVideoWidth = Vmr9.VideoWidth;
+          m_iVideoHeight = Vmr9.VideoHeight;
+          Vmr9.SetDeinterlaceMode();
+        }
         return true;
       }
       catch (Exception ex)
@@ -1334,11 +1344,9 @@ namespace MediaPortal.Player
 
     protected override void OnProcess()
     {
-      if (Vmr9 != null)
-      {
-        m_iVideoWidth = Vmr9.VideoWidth;
-        m_iVideoHeight = Vmr9.VideoHeight;
-      }
+      if (Vmr9 == null) return;
+      m_iVideoWidth = Vmr9.VideoWidth;
+      m_iVideoHeight = Vmr9.VideoHeight;
     }
 
     /// <summary> do cleanup and release DirectShow. </summary>
