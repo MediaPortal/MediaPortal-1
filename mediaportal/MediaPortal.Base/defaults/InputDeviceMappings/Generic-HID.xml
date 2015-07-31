@@ -250,4 +250,99 @@
     </button>
 
   </HidUsageAction>
+
+  <!--GamePad setup-->
+  <HidUsageAction UsagePage="GenericDesktopControls" UsageCollection="GamePad" HandleHidEventsWhileInBackground="false">
+    <!--D-pad uses special codes from 1000/Up to 1007/Up-Left going clockwise-->
+    <button name="Left" code="1006">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="1" sound="cursor.wav"/>
+    </button>
+    <button name="Down" code="1004">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="4" sound="cursor.wav"/>
+    </button>
+    <button name="Right" code="1002">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="2" sound="cursor.wav"/>
+    </button>
+    <button name="Up" code="1000">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="3" sound="cursor.wav"/>
+    </button>
+
+    <!--
+    Now we setup our buttons with X-Box controller in mind.
+    Works just fine with Logitech Wireless Gamepad F710 and other X-Box like controllers.
+    This should work as well with older DirectInput devices such as Logitech Cordless Rumblepad 2.
+    Note however that the physical position of the logical buttons is different between X-Box and DirectInput hardware. 
+    -->
+
+    <!-- Enter for button One/A/Green-->
+    <button name="Enter" code="1">
+      <action layer="0" condition="WINDOW" conproperty="11" command="ACTION" cmdproperty="47" sound="click.wav"/>
+      <action layer="0" condition="WINDOW" conproperty="10" command="ACTION" cmdproperty="10" sound="back.wav"/>
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="7" sound="click.wav"/>
+    </button>
+
+    <!-- Back for button Two/B/Red-->
+    <button name="Back" code="2">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav"/>
+    </button>
+
+    <!-- AppCtrlProperties for button Four/X/Blue-->
+    <button name="AppCtrlProperties" code="3">
+      <action layer="0" condition="FULLSCREEN" conproperty="TRUE" command="ACTION" cmdproperty="24" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="106" sound="click.wav" />
+    </button>
+
+    <!-- TV EPG for button Three/Y/Yellow-->
+    <button name="MediaSelectProgramGuide" code="4">
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="10" sound="back.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="600" sound="click.wav" />
+    </button>
+
+    <!-- ScanPreviousTrack for button Five/LB -->
+    <button name="ScanPreviousTrack" code="5">
+      <action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="92" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="6" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="92" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="15" sound="cursor.wav" />
+    </button>
+
+    <!-- ScanNextTrack for button Six/RB -->
+    <button name="ScanNextTrack" code="6">
+      <action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="91" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="5" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="28" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="91" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="14" sound="cursor.wav" />
+    </button>
+
+    <!-- Pause/Stop for button Seven/Back -->
+    <button name="Pause" code="7" >
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="105" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="12" sound="click.wav" />
+    </button>
+
+    <!-- Play for button Height/Start -->
+    <button name="PlayPause" code="8">
+      <action layer="0" condition="PLAYER" conproperty="MEDIA" command="ACTION" cmdproperty="12" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="68" sound="click.wav" />
+    </button>
+
+    <!-- VolumeDecrement for button Nine/Left Joystick Button/Back -->
+    <button name="VolumeDecrement" code="09" repeat="true">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="102" sound="cursor.wav" />
+    </button>
+
+    <!-- VolumeIncrement for button Ten/Right Joystick Button/Back -->
+    <button name="VolumeIncrement" code="10" repeat="true">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="103" sound="cursor.wav" />
+    </button>
+
+    <!-- Mute for button Eleven/None/Left Joystick Button (Not on X-Box) -->
+    <button name="Mute" code="11" >
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="9982" sound="click.wav" />
+    </button>
+
+  </HidUsageAction>
+
 </HidHandler>
