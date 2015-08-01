@@ -25,7 +25,6 @@
 #include "..\shared\pcr.h" 
 #define MAX_CLOCK  95443.71768
 
-extern void LogDebug(const char *fmt, ...) ;
 
 /*****************
 *The TS packets contain clock synchronization information in fields called the Program Reference Clock (PCR), 
@@ -70,7 +69,7 @@ void CPcr::Reset()
   PcrReferenceExtension=0LL;
 }
 
-void CPcr::Decode(byte* data)
+void CPcr::Decode(unsigned char* data)
 {
   // pcr reference base       33 bits  [0]      [1]        [2]     [3]     [4]     [5] 
   // reserved                  6 bits pppppppp-pppppppp-pppppppp-pppppppp-prrrrrre-eeeeeeee
@@ -88,7 +87,7 @@ void CPcr::Decode(byte* data)
 	IsValid=true;
 }
 
-bool CPcr::DecodeFromPesHeader(byte* pesHeader,int payloadStart,CPcr& pts, CPcr& dts)
+bool CPcr::DecodeFromPesHeader(unsigned char* pesHeader,int payloadStart,CPcr& pts, CPcr& dts)
 {
   pts.Reset();
 	dts.Reset();

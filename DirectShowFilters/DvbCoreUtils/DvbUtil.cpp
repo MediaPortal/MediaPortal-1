@@ -1,27 +1,28 @@
-/* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+/*
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
 #include "..\shared\DvbUtil.h"
 
+
 /* CRC table for PSI sections */
-static DWORD crc_table[256] =
+static unsigned long CRC_TABLE[256] =
 {
   0x00000000, 0x04c11db7, 0x09823b6e, 0x0d4326d9, 0x130476dc, 0x17c56b6b,
   0x1a864db2, 0x1e475005, 0x2608edb8, 0x22c9f00f, 0x2f8ad6d6, 0x2b4bcb61,
@@ -68,126 +69,13 @@ static DWORD crc_table[256] =
   0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4
 };
 
-//*******************************************************************
-//* calculate crc for a data block
-//* data : block of data   
-//* len  : length of data
-//*******************************************************************
-DWORD crc32(char* data, int len)
+unsigned long CalculatCrc32(unsigned char* data, unsigned short dataLength)
 {
-	register int i;
-	DWORD crc = 0xffffffff;
-
-	for (i=0; i<len; i++)
-		crc = (crc << 8) ^ crc_table[((crc >> 24) ^ *data++) & 0xff];
-
-	return crc;
-}
-
-void getString468a(BYTE* buf, int bufLen, char* text, int textLen)
-{
-  if (buf == NULL || bufLen < 1 || text == NULL || textLen < 2)
+  unsigned long crc = 0xffffffff;
+  register unsigned short i;
+  for (i = 0; i < dataLength; i++)
   {
-    return;
+    crc = (crc << 8) ^ CRC_TABLE[((crc >> 24) ^ *data++) & 0xff];
   }
-  BYTE c;
-	int bufIndex = 0;
-  int textIndex = 0;
-
-  // Reserve a byte for NULL termination.
-  textLen--;
-  c = buf[bufIndex++];
-  if (c != 0x11)
-  {
-    text[textIndex++] = c;
-    // Encoding indicator byte - EN 300 468 Annex A table A.4.
-    if (c == 0x10)  // Table A.4.
-    {
-      if (bufLen < 3 || textLen < 3)
-      {
-        text[0] = 0;
-        return;
-      }
-      // Skip the zero byte to avoid premature NULL termination, and process
-      // the encoding indicator byte here because the loop below would throw
-      // it away.
-      bufIndex++;
-      text[textIndex++] = buf[bufIndex++];
-    }
-
-    while (bufIndex < bufLen && textIndex < textLen)
-    {
-      c = buf[bufIndex++];
-      if (c == 0x8a)
-      {
-        c = '\r';
-      }
-      else if (c <= 0x1f || (c >= 0x80 && c < 0x9f))
-      {
-        c = 0; // ignore
-      }
-
-      if (c != 0)
-      {
-        text[textIndex++] = c;
-      }
-    }
-  }
-  else
-  {
-    // Re-encode 2 byte Unicode characters to UTF-8 to avoid premature NULL termination.
-    text[textIndex++] = 0x15;
-    WORD w;
-    while (bufIndex + 1 < bufLen)
-    {
-      w = (buf[bufIndex++] << 8);
-      w |= buf[bufIndex++];
-      if (w == 0xe08a)
-      {
-        w = '\r';
-      }
-      else if (w <= 0x1f || (w >= 0xe080 && w < 0xe09f))
-      {
-        w = 0;
-      }
-
-      if (w != 0)
-      {
-        // How many bytes does this character require, and do we have enough buffer space?
-        if (w < 0x80)
-        {
-          c = 1;
-        }
-        else if (w < 0x800)
-        {
-          c = 2;
-        }
-        else
-        {
-          c = 3;
-        }
-        if (textIndex + c > textLen)
-        {
-          break;
-        }
-
-        if (w < 0x80)
-        {
-          text[textIndex++] = (char)w;
-        }
-        else if (w < 0x800)
-        {
-          text[textIndex++] = (char)((w >> 6) | 0xc0);
-          text[textIndex++] = (char)((w & 0x3f) | 0x80);
-        }
-        else
-        {
-          text[textIndex++] = (char)((w >> 12) | 0xe0);
-          text[textIndex++] = (char)(((w >> 6) & 0x3f) | 0x80);
-          text[textIndex++] = (char)((w & 0x3f) | 0x80);
-        }
-      }
-    }
-  }
-  text[textIndex] = 0;
+  return crc;
 }

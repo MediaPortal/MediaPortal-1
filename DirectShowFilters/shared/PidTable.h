@@ -19,8 +19,10 @@
  *
  */
 #pragma once
-#include <Windows.h>
+#include <cstddef>    // NULL
 #include <vector>
+
+using namespace std;
 
 
 // The strategy with these stream types is to use ISO standard stream types
@@ -36,8 +38,8 @@
 #define STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXG   0x1f  // SVC sub-bitstream
 #define STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXH   0x20  // MVC sub-bitstream
 #define STREAM_TYPE_VIDEO_JPEG                  0x21
-#define STREAM_TYPE_VIDEO_MPEG2_VIEW            0x22  // service-compatible 3DTV, MPEG 2 additional view
-#define STREAM_TYPE_VIDEO_MPEG4_PART10_VIEW     0x23  // service-compatible 3DTV, h.264/AVC additional view
+#define STREAM_TYPE_VIDEO_MPEG2_VIEW            0x22  // service-compatible stereoscopic 3DTV, MPEG 2 additional view
+#define STREAM_TYPE_VIDEO_MPEG4_PART10_VIEW     0x23  // service-compatible stereoscopic 3DTV, h.264/AVC additional view
 #define STREAM_TYPE_VIDEO_MPEGH_PART2           0x24  // h.265/HEVC
 #define STREAM_TYPE_VIDEO_VC1                   0xea  // this is the [SMPTE] standard stream type; DVB uses STREAM_TYPE_PES_PRIVATE_DATA with a registration descriptor
 
@@ -62,7 +64,7 @@
 class BasePid
 {
   public:
-    BasePid(unsigned short pid, byte streamType)
+    BasePid(unsigned short pid, unsigned char streamType)
     {
       Pid = pid;
       StreamType = streamType;
@@ -82,10 +84,12 @@ class BasePid
 
     bool operator == (const BasePid& other) const
     {
-      if (Pid != other.Pid ||
+      if (
+        Pid != other.Pid ||
         StreamType != other.StreamType ||
         LogicalStreamType != other.LogicalStreamType ||
-        DescriptorsLength != other.DescriptorsLength)
+        DescriptorsLength != other.DescriptorsLength
+      )
       {
         return false;
       }
@@ -93,16 +97,16 @@ class BasePid
     }
 
     unsigned short Pid;
-    byte StreamType;
-    byte LogicalStreamType;
+    unsigned char StreamType;
+    unsigned char LogicalStreamType;
     unsigned short DescriptorsLength;
-    byte* Descriptors;
+    unsigned char* Descriptors;
 };
 
 class VideoPid : public BasePid
 {
   public:
-    VideoPid(unsigned short pid, byte streamType) : BasePid(pid, streamType)
+    VideoPid(unsigned short pid, unsigned char streamType) : BasePid(pid, streamType)
     {
     }
 
@@ -115,7 +119,7 @@ class VideoPid : public BasePid
 class AudioPid : public BasePid
 {
   public:
-    AudioPid(unsigned short pid, byte streamType) : BasePid(pid, streamType)
+    AudioPid(unsigned short pid, unsigned char streamType) : BasePid(pid, streamType)
     {
       Lang[0] = 'U';
       Lang[1] = 'N';
@@ -135,13 +139,13 @@ class AudioPid : public BasePid
       return true;
     }
 
-    byte Lang[7];
+    unsigned char Lang[7];
 };
 
 class SubtitlePid : public BasePid
 {
   public:
-    SubtitlePid(unsigned short pid, byte streamType) : BasePid(pid, streamType)
+    SubtitlePid(unsigned short pid, unsigned char streamType) : BasePid(pid, streamType)
     {
       Lang[0] = 'U';
       Lang[1] = 'N';
@@ -158,73 +162,47 @@ class SubtitlePid : public BasePid
       return true;
     }
 
-    byte Lang[4];
-};
-
-class TeletextServiceInfo
-{
-  public:
-    TeletextServiceInfo()
-    {
-      Lang[0] = 'U';
-      Lang[1] = 'N';
-      Lang[2] = 'D';
-      Lang[3] = 0;
-      Type = -1;
-      Page = -1;
-    }
-
-    bool operator == (const TeletextServiceInfo& other) const
-    {
-      if (strcmp((char*)Lang, (char*)other.Lang) != 0 ||
-        Type != other.Type ||
-        Page != other.Page)
-      {
-        return false;
-      }
-      return true;
-    }
-
-    byte Lang[4];
-    short Type;
-    short Page;
+    unsigned char Lang[4];
 };
 
 class TeletextPid : public BasePid
 {
   public:
-    TeletextPid(unsigned short pid, byte streamType) : BasePid(pid, streamType)
+    TeletextPid(unsigned short pid, unsigned char streamType) : BasePid(pid, streamType)
     {
     }
 
     bool operator == (const TeletextPid& other) const
     {
-      if (!BasePid::operator == (other) || Services.size() != other.Services.size())
-      {
-        return false;
-      }
-      // Service details not checked.
-      return true;
+      return BasePid::operator == (other);
     }
-
-    bool HasTeletextPageInfo(int page)
-    {
-      std::vector<TeletextServiceInfo>::iterator it = Services.begin();
-      while (it != Services.end())
-      {
-        TeletextServiceInfo& service = *it;
-        if (service.Page == page)
-        {
-          return true;
-        }
-        it++;
-      }
-      return false;
-    }
-
-    std::vector<TeletextServiceInfo> Services;
 };
 
+class VbiPid : public BasePid
+{
+  public:
+    VbiPid(unsigned short pid, unsigned char streamType) : BasePid(pid, streamType)
+    {
+    }
+
+    bool operator == (const VbiPid& other) const
+    {
+      return BasePid::operator == (other);
+    }
+};
+
+class OtherPid : public BasePid
+{
+  public:
+    OtherPid(unsigned short pid, unsigned char streamType) : BasePid(pid, streamType)
+    {
+    }
+
+    bool operator == (const VbiPid& other) const
+    {
+      return BasePid::operator == (other);
+    }
+};
 
 
 class CPidTable
@@ -235,18 +213,28 @@ class CPidTable
 
     void Reset();
     void LogPids();
-    LPCTSTR StreamFormatAsString(byte streamType);
+
+    static const wchar_t* StreamFormatAsString(unsigned char streamType);
+    static bool IsVideoStream(unsigned char streamType);
+    static bool IsThreeDimensionalVideoStream(unsigned char streamType);
+    static bool IsAudioStream(unsigned char streamType);
+    static bool IsAudioLogicalStream(unsigned char logicalStreamType);
 
     unsigned short ProgramNumber;
     unsigned short PmtPid;
-    byte PmtVersion;
+    unsigned char PmtVersion;
     unsigned short PcrPid;
 
     unsigned short DescriptorsLength;
-    byte* Descriptors;
+    unsigned char* Descriptors;
 
-    std::vector<VideoPid*> VideoPids;
-    std::vector<AudioPid*> AudioPids;
-    std::vector<SubtitlePid*> SubtitlePids;
-    std::vector<TeletextPid*> TeletextPids;
+    vector<VideoPid*> VideoPids;
+    vector<AudioPid*> AudioPids;
+    vector<SubtitlePid*> SubtitlePids;
+    vector<TeletextPid*> TeletextPids;
+    vector<VbiPid*> VbiPids;
+    vector<OtherPid*> OtherPids;
+
+  private:
+    template<class T> void ClearPidSet(vector<T*>& pidSet);
 };

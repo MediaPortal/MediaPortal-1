@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,223 +18,211 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include <Windows.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include "..\shared\SectionDecoder.h"
-#include "..\shared\Tsheader.h"
+#include <cstddef>    // NULL
+#include "..\shared\DvbUtil.h"
+#include "..\shared\PacketSync.h"
+#include "..\shared\TsHeader.h"
+
+using namespace std;
+
+
+#define CONTINUITY_COUNTER_NOT_SET 0xff
+
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
 CSectionDecoder::CSectionDecoder(void)
 {
-  m_pid=-1;
-  m_iContinuityCounter=0;
+  m_pid = -1;
   m_section.Reset();
-	m_pCallback=NULL;
-  m_bLog=false;
-  m_bCrcCheck=true;
+  m_continuityCounter = CONTINUITY_COUNTER_NOT_SET;
+  m_isCrcCheckEnabled = true;
+  m_callback = NULL;
 }
 
 CSectionDecoder::~CSectionDecoder(void)
 { 
 }
 
-void CSectionDecoder::EnableLogging(bool onOff)
+void CSectionDecoder::Reset()
 {
-  m_bLog=onOff;
+  m_section.Reset();
+  m_continuityCounter = CONTINUITY_COUNTER_NOT_SET;
 }
-void CSectionDecoder::SetCallBack(ISectionCallback* callback)
+
+void CSectionDecoder::SetCallBack(ISectionCallback* callBack)
 {
-	m_pCallback=callback;
+  m_callback = callBack;
 }
 
 void CSectionDecoder::SetPid(int pid)
 {
-  m_pid=pid;
+  m_pid = pid;
 }
 
-int CSectionDecoder::GetPid()
+int CSectionDecoder::GetPid() const
 {
   return m_pid;
 }
 
-void CSectionDecoder::Reset()
+void CSectionDecoder::EnableCrcCheck(bool enable)
 {
-  m_section.Reset();
+  m_isCrcCheckEnabled = enable;
 }
 
-void CSectionDecoder::EnableCrcCheck(bool onOff)
+void CSectionDecoder::OnTsPacket(unsigned char* tsPacket)
 {
-  m_bCrcCheck=onOff;
-}
-
-void CSectionDecoder::OnTsPacket(byte* tsPacket)
-{
-  if (m_pid < 0) return;
-  if (tsPacket==NULL) return;
+  if (m_pid < 0 || tsPacket == NULL)
+  {
+    return;
+  }
 
   m_header.Decode(tsPacket);
-  OnTsPacket(m_header,tsPacket);
+  OnTsPacket(m_header, tsPacket);
 }
 
-int CSectionDecoder::StartNewSection(byte* tsPacket,int index,int sectionLen)
+void CSectionDecoder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
 {
-	int newstart=-1;
-  int len=-1;
-  if (sectionLen > -1)
+  try
   {
-		if (index + sectionLen < 185)
-    {
-			len = sectionLen + 3;
-      newstart = index + sectionLen + 3;
-    }
-    else
-    {
-			newstart = 188;
-      len = 188 - index;
-    }
-  }
-  else
-  {
-		newstart = 188;
-    len = 188 - index;
-  }
-  m_section.Reset();
-	memcpy(m_section.Data,&tsPacket[index],len);
-  m_section.BufferPos = len;
-  m_section.DecodeHeader();
-  return newstart;
-}
-
-int CSectionDecoder::AppendSection(byte* tsPacket, int index, int sectionLen)
-{
-	int newstart=-1;
-  int len=-1;
-  if (index+sectionLen < 185)
-  {
-		len=sectionLen+3;
-    newstart = index+sectionLen+3;
-  }
-  else
-  {
-		newstart = 188;
-    len=188-index;
-  }
-	memcpy(&m_section.Data[m_section.BufferPos],&tsPacket[index],len);
-  m_section.BufferPos += len;
-  return newstart;
-}
-
-int CSectionDecoder::SnapshotSectionLength(byte* tsPacket,int start)
-{
-	if (start >= 184)
-		return -1;
-  return (int)(((tsPacket[start+1] & 0xF) << 8) + tsPacket[start+2]);
-}
-
-void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
-{
-	try
-	{
     if (header.TransportError) 
-    { 
-      m_section.Reset(); // Will force us to wait for new PayloadUnitStart
+    {
+      // Give up on the current section.
+      m_section.Reset();
       return; 
-    } 
-		if (m_pid >= 0x1fff) return;
-		if (header.Pid != m_pid) return;
-		if (!header.HasPayload) return;
+    }
+    if (header.Pid != m_pid || !header.HasPayload)
+    {
+      return;
+    }
 
-		int start = header.PayLoadStart;
-		int pointer_field=0;
+    // Check the continuity counter is as expected.
+    if (m_continuityCounter != CONTINUITY_COUNTER_NOT_SET)
+    {
+      unsigned char expectedContinuityCounter = m_continuityCounter;
+      if (header.HasPayload)
+      {
+        expectedContinuityCounter = (m_continuityCounter + 1) & 0x0f;
+      }
+      if (header.ContinuityCounter != expectedContinuityCounter)
+      {
+        LogDebug(L"section %d: discontinuity, value = %hhu, previous = %hhu, expected = %hhu, signal quality, descrambling, or HDD load problem?",
+                  m_pid, header.ContinuityCounter, m_continuityCounter,
+                  expectedContinuityCounter);
+      }
+    }
+    m_continuityCounter = header.ContinuityCounter;
 
+    if (header.TScrambling != 0)
+    {
+      // We don't support decoding encrypted sections. This check helps to
+      // avoid collection of data that isn't actually section data. For
+      // example, the EPG grabber may create a section decoder for PID 0x300.
+      // That PID carries EPG for Dish Network... but may well be used for
+      // something else by other providers.
+      return;
+    }
+
+    unsigned char packetPointer = header.PayLoadStart;
     if (header.PayloadUnitStart)
     {
-      if(start >= 188)
+      if (packetPointer >= TS_PACKET_LEN)
+      {
+        LogDebug(L"section %d: invalid payload start, position = %hhu",
+                  m_pid, packetPointer);
         return;
+      }
 
-			pointer_field = start + tsPacket[start]+1;
       if (m_section.BufferPos == 0)
-				start += tsPacket[start] + 1;
+      {
+        packetPointer += tsPacket[packetPointer] + 1;   // Jump to the position referenced by the pointer field.
+      }
       else
-        start++;
+      {
+        packetPointer++;              // Skip over the pointer field.
+      }
     }
-	  int numloops=0;
-		while (start < 188)
+    unsigned char loopCount = 0;
+    while (packetPointer < TS_PACKET_LEN)
     {
-			numloops++;
-			if (m_section.BufferPos == 0)
+      loopCount++;
+      if (m_section.BufferPos == 0)
       {
-				if (!header.PayloadUnitStart) return;
-        if (tsPacket[start] == 0xFF) return;
-        int section_length = SnapshotSectionLength(tsPacket, start);
-        start = StartNewSection(tsPacket, start, section_length);
-      }
-      else
-      {
-        if (m_section.section_length == -1)
-          m_section.CalcSectionLength(tsPacket, start);
-				if (m_section.section_length==0)
-				{
-					if (m_bLog)
-						LogDebug(L"!!! CSectionDecoder::OnTsPacket got a section with section length: 0 on pid: 0x%X tableid: 0x%X bufferpos: %d start: %d - Discarding whole packet.",header.Pid,m_section.Data[0],m_section.BufferPos,start);
-					m_section.Reset();
-					return;
-				}
-        int len = m_section.section_length - m_section.BufferPos;
-        if (pointer_field != 0 && ((start + len) > pointer_field))
+        if (!header.PayloadUnitStart)
         {
-					// We have an incomplete section here
-          len = pointer_field - start;
-          start = AppendSection(tsPacket, start, len);
-          m_section.section_length = m_section.BufferPos - 1;
-          start = pointer_field;
-        }
-        else
-          start = AppendSection(tsPacket, start, len);
-      }
-      if (m_section.SectionComplete() && m_section.section_length > 0)
-      {
-				DWORD crc=0;
-        
-        // Only long syntax (section_syntax_indicator == 1) has a CRC
-        // Short syntax may have CRC e.g. TOT, but that is part of the specific section
-        if (m_section.section_syntax_indicator == 1 && m_bCrcCheck)
-          crc=crc32((char*)m_section.Data,m_section.section_length+3);
-
-				if (crc==0)
-				{
-					OnNewSection(m_section);
-					if (m_pCallback!=NULL)
-						m_pCallback->OnNewSection(header.Pid,m_section.table_id,m_section);
-				}
-        else
-        {
-          // If the section is complete and the CRC fails, then this section is crap!
-          m_section.Reset();
           return;
         }
+        if (tsPacket[packetPointer] == 0xff)
+        {
+          // No more section data remains in the packet.
+          return;
+        }
+      }
 
+      packetPointer += m_section.AppendData(&tsPacket[packetPointer], TS_PACKET_LEN - packetPointer);
+      if (m_section.IsSectionComplete())
+      {
+        // Sanity check: sections with table ID 0 should only ever be carried
+        // on PID 0 (PAT). This check helps managing non-section data that has
+        // been collected erroneously. It only works for unencrypted packetised
+        // elementary streams, which contain packets that start with the byte
+        // sequence: 00 00 01.
+        if (m_pid == 0 || m_section.Data[0] != 0)
+        {
+          // Check for errors in the section. Only sections with the syntax
+          // indicator set have a CRC.
+          unsigned long crc = 0;
+          if (m_section.SectionSyntaxIndicator && m_isCrcCheckEnabled)
+          {
+            // Is the CRC actually populated? Some providers fill the CRC with
+            // zeroes or ones instead of setting it correctly.
+            unsigned char* crcPointer = &(m_section.Data[m_section.section_length - 1]);
+            if (
+              (*crcPointer != 0 && *crcPointer != 0xff) ||
+              *crcPointer != *(crcPointer + 1) ||
+              *crcPointer != *(crcPointer + 2) ||
+              *crcPointer != *(crcPointer + 3)
+            )
+            {
+              crc = CalculatCrc32(m_section.Data, m_section.section_length + 3);
+            }
+          }
+
+          if (crc == 0)
+          {
+            OnNewSection(m_section);
+            if (m_callback != NULL)
+            {
+              m_callback->OnNewSection(header.Pid, m_section.table_id, m_section);
+            }
+          }
+          else
+          {
+            LogDebug(L"section %d: bad section CRC, table ID = 0x%hhx, table ID extension = %d, section length = %d, signal quality, descrambling, or HDD load problem?",
+                      m_pid, m_section.table_id, m_section.table_id_extension,
+                      m_section.section_length);
+          }
+        }
         m_section.Reset();
       }
-      pointer_field=0;
-			if (numloops>100)
-			{
-				LogDebug(L"!!! CSectionDecoder::OnTsPacket Entered infinite loop. pid: %X start: %d BufferPos: %d SectionLength: %d - Discarding section and moving to next packet",header.Pid,start,m_section.BufferPos,m_section.section_length);
-				m_section.Reset();
-				return;
-			}
+
+      if (loopCount > 100)
+      {
+        LogDebug(L"section %d: entered infinite loop, packet pointer = %hhu, buffer position = %hu, section length = %d, discarding packet/section",
+                  m_pid, packetPointer, m_section.BufferPos,
+                  m_section.section_length);
+        m_section.Reset();
+        return;
+      }
     }
-	}
-	catch(...)
-	{
-		LogDebug(L"exception in CSectionDecoder::OnTsPacket");
-	}
+  }
+  catch (...)
+  {
+    LogDebug(L"section %d: unhandled exception in OnTsPacket()", m_pid);
+  }
 }
 
 void CSectionDecoder::OnNewSection(CSection& section)
 {
 }
-
-

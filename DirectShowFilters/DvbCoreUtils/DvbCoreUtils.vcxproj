@@ -89,7 +89,6 @@
   <ItemGroup>
     <ClCompile Include="AdaptionField.cpp" />
     <ClCompile Include="BasePmtParser.cpp" />
-    <ClCompile Include="ChannelInfo.cpp" />
     <ClCompile Include="DvbUtil.cpp" />
     <ClCompile Include="FileWriter.cpp" />
     <ClCompile Include="PacketSync.cpp" />
@@ -102,7 +101,6 @@
   <ItemGroup>
     <ClInclude Include="..\shared\AdaptionField.h" />
     <ClInclude Include="..\shared\BasePmtParser.h" />
-    <ClInclude Include="..\shared\ChannelInfo.h" />
     <ClInclude Include="..\shared\DebugSettings.h" />
     <ClInclude Include="..\shared\DvbUtil.h" />
     <ClInclude Include="..\shared\FileWriter.h" />
@@ -113,6 +111,7 @@
     <ClInclude Include="..\shared\Section.h" />
     <ClInclude Include="..\shared\SectionDecoder.h" />
     <ClInclude Include="..\shared\stdafx.h" />
+    <ClInclude Include="..\shared\TimeUtils.h" />
     <ClInclude Include="..\shared\TsHeader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

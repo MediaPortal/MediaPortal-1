@@ -35,8 +35,6 @@
 #define TRANSPORT_PRIVATE_DATA_FLAG_BIT     0x2
 #define ADAPTION_FIELD_EXTENSION_FLAG_BIT   0x1
 
-extern void LogDebug(const char *fmt, ...) ;
-
 
 
 CAdaptionField::CAdaptionField()

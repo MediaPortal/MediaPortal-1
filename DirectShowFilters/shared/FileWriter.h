@@ -23,38 +23,59 @@
 *    http://forums.dvbowners.com/
 */
 
-#ifndef FILEWRITER
-#define FILEWRITER
-#include <Windows.h>
+#pragma once
+#include <Windows.h>  // OVERLAPPED, CloseHandle(), CreateFileW(), SetFilePointer(), SetEndOfFile(), SleepEx(), WriteFile(), WriteFileEx()
+#include <WinError.h> // HRESULT
+
 
 class FileWriter
 {
-public:
+  public:
+    FileWriter();
+    virtual ~FileWriter();
 
-  FileWriter();
-  virtual ~FileWriter();
+    HRESULT GetFileName(wchar_t** fileName);
+    HRESULT OpenFile(const wchar_t* fileName);
+    HRESULT OpenFile(const wchar_t* fileName, bool disableLogging);
+    HRESULT CloseFile();
 
-  HRESULT GetFileName(LPWSTR *lpszFileName);
-  HRESULT SetFileName(LPCWSTR pszFileName);
-  HRESULT OpenFile();
-  HRESULT CloseFile();
-  HRESULT Write(PBYTE pbData, ULONG lDataLength);
+    HRESULT Write(unsigned char* data, unsigned long dataLength);
+    HRESULT Write(unsigned char* data, unsigned long dataLength, bool disableLogging);
+    HRESULT Write(unsigned char* data,
+                  unsigned long dataLength,
+                  bool disableLogging,
+                  unsigned long long offset);
 
-  BOOL IsFileInvalid();
+    bool IsFileInvalid();
 
-  DWORD SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
-  __int64 GetFilePointer();
+    HRESULT SetFilePointer(long long distanceToMove, DWORD moveMethod);
+    HRESULT GetFilePointer(unsigned long long& pointer);
 
-  void SetChunkReserve(BOOL bEnable, __int64 chunkReserveSize, __int64 maxFileSize);
+    void SetReservationConfiguration(bool useReservations,
+                                      unsigned long long reservationChunkSize);
 
-protected:
-  HANDLE m_hFile;
-  LPWSTR m_pFileName;
+  protected:
+    HRESULT WriteInternal(unsigned char* data,
+                          unsigned long dataLength,
+                          bool disableLogging,
+                          bool isRecursive);
+    static void WINAPI AsyncWriteCompleted(DWORD errorCode,
+                                            DWORD transferredByteCount,
+                                            OVERLAPPED* overlapped);
 
-  BOOL m_bChunkReserve;
-  __int64 m_chunkReserveFileSize;
-  __int64 m_chunkReserveSize;
-  __int64 m_maxFileSize;
+    HANDLE m_fileHandle;
+    wchar_t* m_fileName;
+    unsigned char m_filePart;                   // For when file size exceeds file system limits (eg. FAT16, FAT32), and the file must be split.
+    bool m_useAsync;
+    unsigned long long m_asyncDataOffset;
+
+    bool m_useReservations;
+    unsigned long long m_reservedFileSize;      // unit = bytes
+    unsigned long long m_reservationChunkSize;  // unit = bytes
+
+    typedef struct OVERLAPPEDEX : public OVERLAPPED
+    {
+      unsigned long DataLength;
+      unsigned char* Data;
+    } OVERLAPPEDEX;
 };
-
-#endif

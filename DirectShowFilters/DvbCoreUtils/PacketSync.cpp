@@ -18,8 +18,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include <windows.h>
 #include "..\shared\PacketSync.h"
+#include <cstring>    // memcpy()
 
 
 CPacketSync::CPacketSync(void)
@@ -40,7 +40,7 @@ void CPacketSync::Reset(void)
 
 // Ambass : Now, need to have 2 consecutive TS_PACKET_SYNC to try avoiding bad synchronisation.  
 //          In case of data flow change ( Seek, tv Zap .... ) Reset() should be called first to flush buffer.
-void CPacketSync::OnRawData(byte* pData, int nDataLen)
+void CPacketSync::OnRawData(unsigned char* pData, int nDataLen)
 {
   int syncOffset=0;
   int tempBuffOffset=0;
@@ -165,7 +165,7 @@ void CPacketSync::OnRawData(byte* pData, int nDataLen)
 // Ambass : Now, need to have 2 consecutive TS_PACKET_SYNC to try avoiding bad synchronisation.  
 //          In case of data flow change ( Seek, tv Zap .... ) Reset() should be called first to flush buffer.
 // Owlsroost : This version will abandon a buffer if it fails to sync within 8 * TSpacket lengths
-void CPacketSync::OnRawData2(byte* pData, int nDataLen)
+void CPacketSync::OnRawData2(unsigned char* pData, int nDataLen)
 {
   int syncOffset=0;
   int tempBuffOffset=0;
@@ -287,10 +287,10 @@ void CPacketSync::OnRawData2(byte* pData, int nDataLen)
   }
 }
 
-void CPacketSync::OnTsPacket(byte* tsPacket)
+void CPacketSync::OnTsPacket(unsigned char* tsPacket)
 {
 }
 
-void CPacketSync::OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLength)
+void CPacketSync::OnTsPacket(unsigned char* tsPacket, int bufferOffset, int bufferLength)
 {
 }

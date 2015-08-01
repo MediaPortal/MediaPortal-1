@@ -18,11 +18,12 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include <Windows.h>
 #include "..\shared\Section.h"
+#include <cstring>    // memcpy()
 
 
-void LogDebug(const char *fmt, ...) ;
+#define SECTION_LENGTH_NOT_SET 0
+
 
 CSection::CSection(void)
 {
@@ -36,19 +37,72 @@ CSection::~CSection(void)
 void CSection::Reset()
 {
 	table_id = -1;
-  section_syntax_indicator = -1;
-  section_length = -1;
+  SectionSyntaxIndicator = true;
+  PrivateIndicator = true;
+  section_length = SECTION_LENGTH_NOT_SET;
   table_id_extension = -1;
   version_number = -1;
-  current_next_indicator = -1;
-  section_number = -1;
-  last_section_number = -1;
+  CurrentNextIndicator = true;
+  SectionNumber = -1;
+  LastSectionNumber = -1;
   BufferPos = 0;
 }
 
-CSection& CSection::operator = (const CSection &section)
+unsigned short CSection::AppendData(const unsigned char* data, unsigned long dataLength)
 {
-  if (&section==this)
+  if (section_length == SECTION_LENGTH_NOT_SET)
+  {
+    if (BufferPos + dataLength < 3)
+    {
+      memcpy(&Data[BufferPos], data, dataLength);
+      BufferPos += (unsigned short)dataLength;
+      return (unsigned short)dataLength;
+    }
+
+    if (BufferPos == 0)
+    {
+      section_length = ((data[1] & 0xf) << 8) | data[2];
+    }
+    else if (BufferPos == 1)
+    {
+      section_length = ((data[0] & 0xf) << 8) | data[1];
+    }
+    else if (BufferPos == 2)
+    {
+      section_length = ((Data[1] & 0xf) << 8) | data[0];
+    }
+  }
+
+  unsigned short copyByteCount = section_length + 3 - BufferPos;   // + 1 for table ID, + 2 for section length bytes
+  if (dataLength < copyByteCount)
+  {
+    copyByteCount = (unsigned short)dataLength;
+  }
+  memcpy(&Data[BufferPos], data, copyByteCount);
+  BufferPos += copyByteCount;
+
+  if (IsSectionComplete())
+  {
+    table_id = Data[0];
+    SectionSyntaxIndicator = (Data[1] & 0x80) != 0;
+    PrivateIndicator = (Data[1] & 0x40) != 0;
+    table_id_extension = (Data[3] << 8) | Data[4];
+    version_number = (Data[5] >> 1) & 0x1f;
+    CurrentNextIndicator = (Data[5] & 1) != 0;
+    SectionNumber = Data[6];
+    LastSectionNumber = Data[7];
+  }
+  return copyByteCount;
+}
+
+bool CSection::IsSectionComplete()
+{
+  return section_length != SECTION_LENGTH_NOT_SET && BufferPos >= section_length + 3;
+}
+
+CSection& CSection::operator = (const CSection& section)
+{
+  if (&section == this)
   {
     return *this;
   }
@@ -56,77 +110,17 @@ CSection& CSection::operator = (const CSection &section)
   return *this;
 }
 
-
 void CSection::Copy(const CSection &section)
 {
 	table_id = section.table_id;
-  table_id_extension = section.table_id_extension;
-  section_length = section.section_length;
-  section_number = section.section_number;
-  version_number = section.version_number;
-  section_syntax_indicator = section.section_syntax_indicator;
-
-	table_id = section.table_id;
-  section_syntax_indicator = section.section_syntax_indicator;
+  SectionSyntaxIndicator = section.SectionSyntaxIndicator;
+  PrivateIndicator = section.PrivateIndicator;
   section_length = section.section_length;
   table_id_extension = section.table_id_extension;
   version_number = section.version_number;
-  current_next_indicator = section.current_next_indicator;
-  section_number = section.section_number;
-  last_section_number = section.last_section_number;
+  CurrentNextIndicator = section.CurrentNextIndicator;
+  SectionNumber = section.SectionNumber;
+  LastSectionNumber = section.LastSectionNumber;
   memcpy(Data, section.Data, sizeof(Data));
-  BufferPos = 0;
-}
-
-int CSection::CalcSectionLength(byte* tsPacket,int start)
-{
-  if(start >= 188)
-    return 0;
-
-	if (BufferPos < 3)
-  {
-		byte bHi=0;
-    byte bLow=0;
-    if (BufferPos==1)
-		{
-			bHi=tsPacket[start];
-      bLow=tsPacket[start+1];
-    }
-    else if (BufferPos==2)
-    {
-			bHi=Data[1];
-      bLow=tsPacket[start];
-    }
-    section_length=(int)(((bHi & 0xF) << 8) + bLow);
-  }
-  else
-		section_length = (int)(((Data[1] & 0xF) << 8) + Data[2]);
-  return section_length;
-}
-
-bool CSection::DecodeHeader()
-{
-	if (BufferPos<8) return false;
-  table_id = Data[0];
-  section_syntax_indicator = ((Data[1] >> 7) & 1);
-  if (section_length == -1)
-  {
-		section_length = (((Data[1] & 0xF) << 8) + Data[2]);
-  }
-  table_id_extension = ((Data[3] << 8) + Data[4]);
-  version_number = ((Data[5] >> 1) & 0x1F);
-  current_next_indicator = (Data[5] & 1);
-  section_number = Data[6];
-  last_section_number = Data[7];
-  section_syntax_indicator = ((Data[1] >> 7) & 1);
-	return true;
-}
-
-bool CSection::SectionComplete()
-{
-	if (!DecodeHeader() && BufferPos-3 > section_length && section_length>0)
-		return true;
-  if (!DecodeHeader())
-		return false;
-  return (BufferPos-3 >= section_length);
+  BufferPos = section.BufferPos;
 }

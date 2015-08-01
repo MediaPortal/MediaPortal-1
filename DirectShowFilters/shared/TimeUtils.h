@@ -19,5 +19,16 @@
  *
  */
 #pragma once
+#include <ctime>
 
-unsigned long CalculatCrc32(unsigned char* data, unsigned short dataLength);
+using namespace std;
+
+
+class CTimeUtils
+{
+  public:
+    static unsigned long ElapsedMillis(clock_t start)
+    {
+      return (clock() - start) * 1000 / CLOCKS_PER_SEC;
+    }
+};
