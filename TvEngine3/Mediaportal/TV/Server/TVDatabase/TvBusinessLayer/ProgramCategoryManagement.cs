@@ -8,13 +8,14 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
   public static class ProgramCategoryManagement
   {
-
-    public static void AddCategory(ProgramCategory category)
+    public static ProgramCategory AddCategory(ProgramCategory programCategory)
     {
       using (IProgramCategoryRepository programCategoryRepository = new ProgramCategoryRepository())
       {
-        programCategoryRepository.Add<ProgramCategory>(category);
+        programCategoryRepository.Add<ProgramCategory>(programCategory);
         programCategoryRepository.UnitOfWork.SaveChanges();
+        programCategory.AcceptChanges();
+        return programCategory;
       }
     }
 
@@ -25,38 +26,55 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         IQueryable<ProgramCategory> query = programCategoryRepository.GetAll<ProgramCategory>();
         query = programCategoryRepository.IncludeAllRelations(query);
         return query.ToList();
-
       }
     }
 
-    public static ProgramCategory SaveProgramCategory(ProgramCategory category)
+    public static ProgramCategory SaveProgramCategory(ProgramCategory programCategory)
     {
       using (IProgramCategoryRepository programCategoryRepository = new ProgramCategoryRepository())
       {
-        programCategoryRepository.AttachEntityIfChangeTrackingDisabled(programCategoryRepository.ObjectContext.ProgramCategories, category);
-        programCategoryRepository.ApplyChanges(programCategoryRepository.ObjectContext.ProgramCategories, category);
+        programCategoryRepository.AttachEntityIfChangeTrackingDisabled(programCategoryRepository.ObjectContext.ProgramCategories, programCategory);
+        programCategoryRepository.ApplyChanges(programCategoryRepository.ObjectContext.ProgramCategories, programCategory);
         programCategoryRepository.UnitOfWork.SaveChanges();
-        category.AcceptChanges();
-        return category;
+        programCategory.AcceptChanges();
+        return programCategory;
       }
     }
 
-    public static TvGuideCategory AddTvGuideCategory(TvGuideCategory tvGuideCategorycategory)
-    {
-      using (var programCategoryRepository = new GenericRepository<Model>())
-      {
-        programCategoryRepository.Add<TvGuideCategory>(tvGuideCategorycategory);
-        programCategoryRepository.UnitOfWork.SaveChanges();
-        return tvGuideCategorycategory;
-      }
-    }
-
-    public static IList<TvGuideCategory> ListAllTvGuideCategories()
+    public static IList<ProgramCategory> SaveProgramCategories(IEnumerable<ProgramCategory> programCategories)
     {
       using (IProgramCategoryRepository programCategoryRepository = new ProgramCategoryRepository())
       {
-        IQueryable<TvGuideCategory> query = programCategoryRepository.GetAll<TvGuideCategory>();        
-        return query.ToList();
+        programCategoryRepository.AttachEntityIfChangeTrackingDisabled(programCategoryRepository.ObjectContext.ProgramCategories, programCategories);
+        programCategoryRepository.ApplyChanges(programCategoryRepository.ObjectContext.ProgramCategories, programCategories);
+        programCategoryRepository.UnitOfWork.SaveChanges();
+        // TODO gibman, AcceptAllChanges() doesn't seem to reset the change trackers
+        //programCategoryRepository.ObjectContext.AcceptAllChanges();
+        foreach (ProgramCategory category in programCategories)
+        {
+          category.AcceptChanges();
+        }
+        return programCategories.ToList();
+      }
+    }
+
+    public static IList<GuideCategory> ListAllGuideCategories()
+    {
+      using (IProgramCategoryRepository programCategoryRepository = new ProgramCategoryRepository())
+      {
+        return programCategoryRepository.GetAll<GuideCategory>().ToList();
+      }
+    }
+
+    public static GuideCategory SaveGuideCategory(GuideCategory guideCategory)
+    {
+      using (IProgramCategoryRepository programCategoryRepository = new ProgramCategoryRepository())
+      {
+        programCategoryRepository.AttachEntityIfChangeTrackingDisabled(programCategoryRepository.ObjectContext.GuideCategories, guideCategory);
+        programCategoryRepository.ApplyChanges(programCategoryRepository.ObjectContext.GuideCategories, guideCategory);
+        programCategoryRepository.UnitOfWork.SaveChanges();
+        guideCategory.AcceptChanges();
+        return guideCategory;
       }
     }
   }

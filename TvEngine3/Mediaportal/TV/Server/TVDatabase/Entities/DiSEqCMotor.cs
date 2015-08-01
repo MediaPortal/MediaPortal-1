@@ -18,53 +18,53 @@ using System.Runtime.Serialization;
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
     [DataContract(IsReference = true)]
-    [KnownType(typeof(Card))]
+    [KnownType(typeof(Tuner))]
     [KnownType(typeof(Satellite))]
-    public partial class DisEqcMotor: IObjectWithChangeTracker, INotifyPropertyChanged
+    public partial class DiseqcMotor: IObjectWithChangeTracker, INotifyPropertyChanged
     {
         #region Primitive Properties
     
         [DataMember]
-        public int IdDiSEqCMotor
+        public int IdDiseqcMotor
         {
-            get { return _idDiSEqCMotor; }
+            get { return _idDiseqcMotor; }
             set
             {
-                if (_idDiSEqCMotor != value)
+                if (_idDiseqcMotor != value)
                 {
                     if (ChangeTracker.ChangeTrackingEnabled && ChangeTracker.State != ObjectState.Added)
                     {
-                        throw new InvalidOperationException("The property 'IdDiSEqCMotor' is part of the object's key and cannot be changed. Changes to key properties can only be made when the object is not being tracked or is in the Added state.");
+                        throw new InvalidOperationException("The property 'IdDiseqcMotor' is part of the object's key and cannot be changed. Changes to key properties can only be made when the object is not being tracked or is in the Added state.");
                     }
-                    _idDiSEqCMotor = value;
-                    OnPropertyChanged("IdDiSEqCMotor");
+                    _idDiseqcMotor = value;
+                    OnPropertyChanged("IdDiseqcMotor");
                 }
             }
         }
-        private int _idDiSEqCMotor;
+        private int _idDiseqcMotor;
     
         [DataMember]
-        public int IdCard
+        public int IdTuner
         {
-            get { return _idCard; }
+            get { return _idTuner; }
             set
             {
-                if (_idCard != value)
+                if (_idTuner != value)
                 {
-                    ChangeTracker.RecordOriginalValue("IdCard", _idCard);
+                    ChangeTracker.RecordOriginalValue("IdTuner", _idTuner);
                     if (!IsDeserializing)
                     {
-                        if (Card != null && Card.IdCard != value)
+                        if (Tuner != null && Tuner.IdTuner != value)
                         {
-                            Card = null;
+                            Tuner = null;
                         }
                     }
-                    _idCard = value;
-                    OnPropertyChanged("IdCard");
+                    _idTuner = value;
+                    OnPropertyChanged("IdTuner");
                 }
             }
         }
-        private int _idCard;
+        private int _idTuner;
     
         [DataMember]
         public int IdSatellite
@@ -108,21 +108,21 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Navigation Properties
     
         [DataMember]
-        public Card Card
+        public Tuner Tuner
         {
-            get { return _card; }
+            get { return _tuner; }
             set
             {
-                if (!ReferenceEquals(_card, value))
+                if (!ReferenceEquals(_tuner, value))
                 {
-                    var previousValue = _card;
-                    _card = value;
-                    FixupCard(previousValue);
-                    OnNavigationPropertyChanged("Card");
+                    var previousValue = _tuner;
+                    _tuner = value;
+                    FixupTuner(previousValue);
+                    OnNavigationPropertyChanged("Tuner");
                 }
             }
         }
-        private Card _card;
+        private Tuner _tuner;
     
         [DataMember]
         public Satellite Satellite
@@ -229,48 +229,48 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
         protected virtual void ClearNavigationProperties()
         {
-            Card = null;
+            Tuner = null;
             Satellite = null;
         }
 
         #endregion
         #region Association Fixup
     
-        private void FixupCard(Card previousValue)
+        private void FixupTuner(Tuner previousValue)
         {
             if (IsDeserializing)
             {
                 return;
             }
     
-            if (previousValue != null && previousValue.DisEqcMotors.Contains(this))
+            if (previousValue != null && previousValue.DiseqcMotors.Contains(this))
             {
-                previousValue.DisEqcMotors.Remove(this);
+                previousValue.DiseqcMotors.Remove(this);
             }
     
-            if (Card != null)
+            if (Tuner != null)
             {
-                if (!Card.DisEqcMotors.Contains(this))
+                if (!Tuner.DiseqcMotors.Contains(this))
                 {
-                    Card.DisEqcMotors.Add(this);
+                    Tuner.DiseqcMotors.Add(this);
                 }
     
-                IdCard = Card.IdCard;
+                IdTuner = Tuner.IdTuner;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {
-                if (ChangeTracker.OriginalValues.ContainsKey("Card")
-                    && (ChangeTracker.OriginalValues["Card"] == Card))
+                if (ChangeTracker.OriginalValues.ContainsKey("Tuner")
+                    && (ChangeTracker.OriginalValues["Tuner"] == Tuner))
                 {
-                    ChangeTracker.OriginalValues.Remove("Card");
+                    ChangeTracker.OriginalValues.Remove("Tuner");
                 }
                 else
                 {
-                    ChangeTracker.RecordOriginalValue("Card", previousValue);
+                    ChangeTracker.RecordOriginalValue("Tuner", previousValue);
                 }
-                if (Card != null && !Card.ChangeTracker.ChangeTrackingEnabled)
+                if (Tuner != null && !Tuner.ChangeTracker.ChangeTrackingEnabled)
                 {
-                    Card.StartTracking();
+                    Tuner.StartTracking();
                 }
             }
         }
@@ -282,16 +282,16 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 return;
             }
     
-            if (previousValue != null && previousValue.DisEqcMotors.Contains(this))
+            if (previousValue != null && previousValue.DiseqcMotors.Contains(this))
             {
-                previousValue.DisEqcMotors.Remove(this);
+                previousValue.DiseqcMotors.Remove(this);
             }
     
             if (Satellite != null)
             {
-                if (!Satellite.DisEqcMotors.Contains(this))
+                if (!Satellite.DiseqcMotors.Contains(this))
                 {
-                    Satellite.DisEqcMotors.Add(this);
+                    Satellite.DiseqcMotors.Add(this);
                 }
     
                 IdSatellite = Satellite.IdSatellite;

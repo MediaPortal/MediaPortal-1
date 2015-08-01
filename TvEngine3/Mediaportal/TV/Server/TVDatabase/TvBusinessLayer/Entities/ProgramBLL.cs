@@ -1,6 +1,6 @@
 using System;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
 {

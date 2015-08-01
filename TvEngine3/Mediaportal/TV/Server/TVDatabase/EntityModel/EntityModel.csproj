@@ -51,29 +51,17 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ExternalBinaries\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.Entity" />
-    <Reference Include="System.Data.Entity.Design" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="..\..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="EntitySQLDebug.cs" />
     <Compile Include="DBaseContext\DbContextBuilder.cs" />
     <Compile Include="DBaseContext\DbContextInitializer.cs" />
     <Compile Include="DBaseContext\DbContextManager.cs" />
-    <Compile Include="Interfaces\ICardRepository.cs" />
+    <Compile Include="Interfaces\ITuningDetailRepository.cs.cs" />
+    <Compile Include="Interfaces\IAnalogTunerSettingsRepository.cs" />
+    <Compile Include="Interfaces\ITunerGroupRepository.cs" />
+    <Compile Include="Interfaces\IChannelGroupRepository.cs" />
     <Compile Include="Interfaces\IProgramCategoryRepository.cs" />
     <Compile Include="Interfaces\IRecordingRepository.cs" />
     <Compile Include="Interfaces\IScheduleRepository.cs" />
@@ -89,16 +77,19 @@
     <Compile Include="ObjContext\ObjectContextManager.cs" />
     <Compile Include="ObjContext\SimpleObjectContextStorage.cs" />
     <Compile Include="Repositories\ChannelGroupRepository.cs" />
-    <Compile Include="Interfaces\IChannelGroupRepository.cs" />
+    <Compile Include="Interfaces\ITunerRepository.cs" />
     <Compile Include="Interfaces\IChannelRepository.cs" />
     <Compile Include="Interfaces\IProgramRepository.cs" />
-    <Compile Include="Interfaces\ISettingsRepository.cs" />
-    <Compile Include="Repositories\CardRepository.cs" />
+    <Compile Include="Interfaces\ISettingRepository.cs" />
+    <Compile Include="Repositories\AnalogTunerSettingsRepository.cs" />
+    <Compile Include="Repositories\TuningDetailRepository.cs" />
+    <Compile Include="Repositories\TunerGroupRepository.cs" />
+    <Compile Include="Repositories\TunerRepository.cs" />
     <Compile Include="Repositories\ProgramCategoryRepository.cs" />
     <Compile Include="Repositories\LnbTypeRepository.cs" />
     <Compile Include="Repositories\ScheduleRepository.cs" />
     <Compile Include="Repositories\RecordingRepository.cs" />
-    <Compile Include="Repositories\SettingsRepository.cs" />
+    <Compile Include="Repositories\SettingRepository.cs" />
     <Compile Include="Repositories\ProgramRepository.cs" />
     <Compile Include="Repositories\GenericRepository.cs" />
     <Compile Include="DBaseContext\IDbContextStorage.cs" />
@@ -133,14 +124,46 @@
     <EmbeddedResource Include="Model.MSSQLCE.ssdl">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Model.SQLite.ssdl" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="how 2 auto generate poco classes.txt" />
+    <Content Include="Model.edmx.sql" />
+    <Content Include="Model_SQLite.edmx.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\..\Packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MySql.Data, Version=6.7.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\..\Packages\MySql.Data.6.7.5\lib\net40\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data.Entity, Version=6.7.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\..\Packages\MySql.Data.Entity.6.7.5\lib\net40\MySql.Data.Entity.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Data.Entity.Design" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
       <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
       <Name>Common.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common.Types\Common.Types.csproj">
+      <Project>{F9F4E5C1-9A6A-42F8-8452-4BDAFEA0E798}</Project>
+      <Name>Common.Types</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
@@ -150,11 +173,6 @@
       <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
       <Name>Entities</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="how 2 auto generate poco classes.txt" />
-    <Content Include="Model.edmx.sql" />
-    <Content Include="Model_MySQL.edmx.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

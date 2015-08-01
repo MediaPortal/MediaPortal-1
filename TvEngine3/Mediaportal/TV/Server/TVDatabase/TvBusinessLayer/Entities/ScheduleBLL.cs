@@ -1,17 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
 {
   public class ScheduleBLL
   {
- 
-
     private Schedule _entity;    
     public ScheduleBLL(Schedule entity)
     {      
@@ -34,9 +33,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
       }
     }
 
-    public VIDEOENCODER_BITRATE_MODE BitRateMode
+    public EncoderBitRateMode BitRateMode
     {
-      get { return (VIDEOENCODER_BITRATE_MODE)(_entity.Quality % 10); }
+      get { return (EncoderBitRateMode)(_entity.Quality % 10); }
       set
       {
         int mode = ((int)value);
@@ -214,13 +213,14 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     /// <returns>True if a common transponder exists</returns>
     public bool IsSameTransponder(Schedule schedule)
     {
-      IList<TuningDetail> tuningList1 = _entity.Channel.TuningDetails;
-      IList<TuningDetail> tuningList2 = schedule.Channel.TuningDetails;
-      foreach (TuningDetail tun1 in tuningList1)
+      IList<TuningDetail> tuningDetailList1 = _entity.Channel.TuningDetails;
+      IList<TuningDetail> tuningDetailList2 = schedule.Channel.TuningDetails;
+      foreach (TuningDetail td1 in tuningDetailList1)
       {
-        foreach (TuningDetail tun2 in tuningList2)
+        IChannel c1 = TuningDetailManagement.GetTuningChannel(td1);
+        foreach (TuningDetail td2 in tuningDetailList2)
         {
-          if (tun1.Frequency == tun2.Frequency)
+          if (!c1.IsDifferentTransmitter(TuningDetailManagement.GetTuningChannel(td2)))
           {
             return true;
           }
@@ -229,12 +229,12 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
       return false;
     }
 
-    public bool IsOverlapping(Schedule schedule)
+    public bool IsOverlapping(Schedule schedule, int defaultPreRecordInterval, int defaultPostRecordInterval)
     {
-      DateTime Start1 = _entity.StartTime.AddMinutes(-_entity.PreRecordInterval);
-      DateTime Start2 = schedule.StartTime.AddMinutes(-schedule.PreRecordInterval);
-      DateTime End1 = _entity.EndTime.AddMinutes(_entity.PostRecordInterval);
-      DateTime End2 = schedule.EndTime.AddMinutes(schedule.PostRecordInterval);
+      DateTime Start1 = _entity.StartTime.AddMinutes(-(_entity.PreRecordInterval ?? defaultPreRecordInterval));
+      DateTime Start2 = schedule.StartTime.AddMinutes(-(schedule.PreRecordInterval ?? defaultPreRecordInterval));
+      DateTime End1 = _entity.EndTime.AddMinutes(_entity.PostRecordInterval ?? defaultPostRecordInterval);
+      DateTime End2 = schedule.EndTime.AddMinutes(schedule.PostRecordInterval ?? defaultPostRecordInterval);
 
       // sch_1        s------------------------e
       // sch_2    ---------s-----------------------------

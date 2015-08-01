@@ -18,28 +18,29 @@ using System.Runtime.Serialization;
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
     [DataContract(IsReference = true)]
+    [KnownType(typeof(AnalogTunerSettings))]
     public partial class SoftwareEncoder: IObjectWithChangeTracker, INotifyPropertyChanged
     {
         #region Primitive Properties
     
         [DataMember]
-        public int IdEncoder
+        public int IdSoftwareEncoder
         {
-            get { return _idEncoder; }
+            get { return _idSoftwareEncoder; }
             set
             {
-                if (_idEncoder != value)
+                if (_idSoftwareEncoder != value)
                 {
                     if (ChangeTracker.ChangeTrackingEnabled && ChangeTracker.State != ObjectState.Added)
                     {
-                        throw new InvalidOperationException("The property 'IdEncoder' is part of the object's key and cannot be changed. Changes to key properties can only be made when the object is not being tracked or is in the Added state.");
+                        throw new InvalidOperationException("The property 'IdSoftwareEncoder' is part of the object's key and cannot be changed. Changes to key properties can only be made when the object is not being tracked or is in the Added state.");
                     }
-                    _idEncoder = value;
-                    OnPropertyChanged("IdEncoder");
+                    _idSoftwareEncoder = value;
+                    OnPropertyChanged("IdSoftwareEncoder");
                 }
             }
         }
-        private int _idEncoder;
+        private int _idSoftwareEncoder;
     
         [DataMember]
         public int Priority
@@ -87,19 +88,92 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _type;
     
         [DataMember]
-        public bool Reusable
+        public string ClassId
         {
-            get { return _reusable; }
+            get { return _classId; }
             set
             {
-                if (_reusable != value)
+                if (_classId != value)
                 {
-                    _reusable = value;
-                    OnPropertyChanged("Reusable");
+                    _classId = value;
+                    OnPropertyChanged("ClassId");
                 }
             }
         }
-        private bool _reusable;
+        private string _classId;
+
+        #endregion
+        #region Navigation Properties
+    
+        [DataMember]
+        public TrackableCollection<AnalogTunerSettings> AnalogTunerSettingsVideo
+        {
+            get
+            {
+                if (_analogTunerSettingsVideo == null)
+                {
+                    _analogTunerSettingsVideo = new TrackableCollection<AnalogTunerSettings>();
+                    _analogTunerSettingsVideo.CollectionChanged += FixupAnalogTunerSettingsVideo;
+                }
+                return _analogTunerSettingsVideo;
+            }
+            set
+            {
+                if (!ReferenceEquals(_analogTunerSettingsVideo, value))
+                {
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
+                    }
+                    if (_analogTunerSettingsVideo != null)
+                    {
+                        _analogTunerSettingsVideo.CollectionChanged -= FixupAnalogTunerSettingsVideo;
+                    }
+                    _analogTunerSettingsVideo = value;
+                    if (_analogTunerSettingsVideo != null)
+                    {
+                        _analogTunerSettingsVideo.CollectionChanged += FixupAnalogTunerSettingsVideo;
+                    }
+                    OnNavigationPropertyChanged("AnalogTunerSettingsVideo");
+                }
+            }
+        }
+        private TrackableCollection<AnalogTunerSettings> _analogTunerSettingsVideo;
+    
+        [DataMember]
+        public TrackableCollection<AnalogTunerSettings> AnalogTunerSettingsAudio
+        {
+            get
+            {
+                if (_analogTunerSettingsAudio == null)
+                {
+                    _analogTunerSettingsAudio = new TrackableCollection<AnalogTunerSettings>();
+                    _analogTunerSettingsAudio.CollectionChanged += FixupAnalogTunerSettingsAudio;
+                }
+                return _analogTunerSettingsAudio;
+            }
+            set
+            {
+                if (!ReferenceEquals(_analogTunerSettingsAudio, value))
+                {
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
+                    }
+                    if (_analogTunerSettingsAudio != null)
+                    {
+                        _analogTunerSettingsAudio.CollectionChanged -= FixupAnalogTunerSettingsAudio;
+                    }
+                    _analogTunerSettingsAudio = value;
+                    if (_analogTunerSettingsAudio != null)
+                    {
+                        _analogTunerSettingsAudio.CollectionChanged += FixupAnalogTunerSettingsAudio;
+                    }
+                    OnNavigationPropertyChanged("AnalogTunerSettingsAudio");
+                }
+            }
+        }
+        private TrackableCollection<AnalogTunerSettings> _analogTunerSettingsAudio;
 
         #endregion
         #region ChangeTracking
@@ -179,6 +253,89 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
         protected virtual void ClearNavigationProperties()
         {
+            AnalogTunerSettingsVideo.Clear();
+            AnalogTunerSettingsAudio.Clear();
+        }
+
+        #endregion
+        #region Association Fixup
+    
+        private void FixupAnalogTunerSettingsVideo(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (IsDeserializing)
+            {
+                return;
+            }
+    
+            if (e.NewItems != null)
+            {
+                foreach (AnalogTunerSettings item in e.NewItems)
+                {
+                    item.SoftwareEncoderVideo = this;
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        if (!item.ChangeTracker.ChangeTrackingEnabled)
+                        {
+                            item.StartTracking();
+                        }
+                        ChangeTracker.RecordAdditionToCollectionProperties("AnalogTunerSettingsVideo", item);
+                    }
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (AnalogTunerSettings item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.SoftwareEncoderVideo, this))
+                    {
+                        item.SoftwareEncoderVideo = null;
+                    }
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        ChangeTracker.RecordRemovalFromCollectionProperties("AnalogTunerSettingsVideo", item);
+                    }
+                }
+            }
+        }
+    
+        private void FixupAnalogTunerSettingsAudio(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (IsDeserializing)
+            {
+                return;
+            }
+    
+            if (e.NewItems != null)
+            {
+                foreach (AnalogTunerSettings item in e.NewItems)
+                {
+                    item.SoftwareEncoderAudio = this;
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        if (!item.ChangeTracker.ChangeTrackingEnabled)
+                        {
+                            item.StartTracking();
+                        }
+                        ChangeTracker.RecordAdditionToCollectionProperties("AnalogTunerSettingsAudio", item);
+                    }
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (AnalogTunerSettings item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.SoftwareEncoderAudio, this))
+                    {
+                        item.SoftwareEncoderAudio = null;
+                    }
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        ChangeTracker.RecordRemovalFromCollectionProperties("AnalogTunerSettingsAudio", item);
+                    }
+                }
+            }
         }
 
         #endregion

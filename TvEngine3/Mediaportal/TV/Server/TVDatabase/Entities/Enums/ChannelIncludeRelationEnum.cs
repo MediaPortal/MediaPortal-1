@@ -8,11 +8,11 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Enums
     None = 0,
     TuningDetails = 1,
     ChannelMaps = 2,
-    ChannelMapsCard = 4,
-    GroupMaps = 16,
-    GroupMapsChannelGroup = 32,
-    ChannelLinkMapsChannelLink = 64,
-    ChannelLinkMapsChannelPortal = 128,
-    Recordings = 256
-    } 
+    ChannelMapsTuner = 4,
+    GroupMaps = 8,
+    GroupMapsChannelGroup = 16,
+    ChannelLinkMapsChannelLink = 32,
+    ChannelLinkMapsChannelPortal = 64,
+    Recordings = 128
+  }
 }

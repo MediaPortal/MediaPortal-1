@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
 {

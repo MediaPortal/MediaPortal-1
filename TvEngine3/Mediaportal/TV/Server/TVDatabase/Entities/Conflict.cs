@@ -18,7 +18,7 @@ using System.Runtime.Serialization;
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
     [DataContract(IsReference = true)]
-    [KnownType(typeof(Card))]
+    [KnownType(typeof(Tuner))]
     [KnownType(typeof(Channel))]
     [KnownType(typeof(Schedule))]
     public partial class Conflict: IObjectWithChangeTracker, INotifyPropertyChanged
@@ -129,47 +129,47 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private System.DateTime _conflictDate;
     
         [DataMember]
-        public Nullable<int> IdCard
+        public Nullable<int> IdTuner
         {
-            get { return _idCard; }
+            get { return _idTuner; }
             set
             {
-                if (_idCard != value)
+                if (_idTuner != value)
                 {
-                    ChangeTracker.RecordOriginalValue("IdCard", _idCard);
+                    ChangeTracker.RecordOriginalValue("IdTuner", _idTuner);
                     if (!IsDeserializing)
                     {
-                        if (Card != null && Card.IdCard != value)
+                        if (Tuner != null && Tuner.IdTuner != value)
                         {
-                            Card = null;
+                            Tuner = null;
                         }
                     }
-                    _idCard = value;
-                    OnPropertyChanged("IdCard");
+                    _idTuner = value;
+                    OnPropertyChanged("IdTuner");
                 }
             }
         }
-        private Nullable<int> _idCard;
+        private Nullable<int> _idTuner;
 
         #endregion
         #region Navigation Properties
     
         [DataMember]
-        public Card Card
+        public Tuner Tuner
         {
-            get { return _card; }
+            get { return _tuner; }
             set
             {
-                if (!ReferenceEquals(_card, value))
+                if (!ReferenceEquals(_tuner, value))
                 {
-                    var previousValue = _card;
-                    _card = value;
-                    FixupCard(previousValue);
-                    OnNavigationPropertyChanged("Card");
+                    var previousValue = _tuner;
+                    _tuner = value;
+                    FixupTuner(previousValue);
+                    OnNavigationPropertyChanged("Tuner");
                 }
             }
         }
-        private Card _card;
+        private Tuner _tuner;
     
         [DataMember]
         public Channel Channel
@@ -310,7 +310,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
         protected virtual void ClearNavigationProperties()
         {
-            Card = null;
+            Tuner = null;
             Channel = null;
             Schedule = null;
             ConflictingSchedule = null;
@@ -319,7 +319,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #endregion
         #region Association Fixup
     
-        private void FixupCard(Card previousValue, bool skipKeys = false)
+        private void FixupTuner(Tuner previousValue, bool skipKeys = false)
         {
             if (IsDeserializing)
             {
@@ -331,34 +331,34 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 previousValue.Conflicts.Remove(this);
             }
     
-            if (Card != null)
+            if (Tuner != null)
             {
-                if (!Card.Conflicts.Contains(this))
+                if (!Tuner.Conflicts.Contains(this))
                 {
-                    Card.Conflicts.Add(this);
+                    Tuner.Conflicts.Add(this);
                 }
     
-                IdCard = Card.IdCard;
+                IdTuner = Tuner.IdTuner;
             }
             else if (!skipKeys)
             {
-                IdCard = null;
+                IdTuner = null;
             }
     
             if (ChangeTracker.ChangeTrackingEnabled)
             {
-                if (ChangeTracker.OriginalValues.ContainsKey("Card")
-                    && (ChangeTracker.OriginalValues["Card"] == Card))
+                if (ChangeTracker.OriginalValues.ContainsKey("Tuner")
+                    && (ChangeTracker.OriginalValues["Tuner"] == Tuner))
                 {
-                    ChangeTracker.OriginalValues.Remove("Card");
+                    ChangeTracker.OriginalValues.Remove("Tuner");
                 }
                 else
                 {
-                    ChangeTracker.RecordOriginalValue("Card", previousValue);
+                    ChangeTracker.RecordOriginalValue("Tuner", previousValue);
                 }
-                if (Card != null && !Card.ChangeTracker.ChangeTrackingEnabled)
+                if (Tuner != null && !Tuner.ChangeTracker.ChangeTrackingEnabled)
                 {
-                    Card.StartTracking();
+                    Tuner.StartTracking();
                 }
             }
         }

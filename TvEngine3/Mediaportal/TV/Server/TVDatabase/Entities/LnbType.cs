@@ -116,21 +116,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private bool _isBandStacked;
-    
-        [DataMember]
-        public bool IsToroidal
-        {
-            get { return _isToroidal; }
-            set
-            {
-                if (_isToroidal != value)
-                {
-                    _isToroidal = value;
-                    OnPropertyChanged("IsToroidal");
-                }
-            }
-        }
-        private bool _isToroidal;
 
         #endregion
         #region Navigation Properties

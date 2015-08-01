@@ -21,7 +21,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     [KnownType(typeof(Program))]
     [KnownType(typeof(Recording))]
     [KnownType(typeof(History))]
-    [KnownType(typeof(TvGuideCategory))]
+    [KnownType(typeof(GuideCategory))]
     public partial class ProgramCategory: IObjectWithChangeTracker, INotifyPropertyChanged
     {
         #region Primitive Properties
@@ -61,27 +61,27 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _category;
     
         [DataMember]
-        public Nullable<int> IdTvGuideCategory
+        public Nullable<int> IdGuideCategory
         {
-            get { return _idTvGuideCategory; }
+            get { return _idGuideCategory; }
             set
             {
-                if (_idTvGuideCategory != value)
+                if (_idGuideCategory != value)
                 {
-                    ChangeTracker.RecordOriginalValue("IdTvGuideCategory", _idTvGuideCategory);
+                    ChangeTracker.RecordOriginalValue("IdGuideCategory", _idGuideCategory);
                     if (!IsDeserializing)
                     {
-                        if (TvGuideCategory != null && TvGuideCategory.IdTvGuideCategory != value)
+                        if (GuideCategory != null && GuideCategory.IdGuideCategory != value)
                         {
-                            TvGuideCategory = null;
+                            GuideCategory = null;
                         }
                     }
-                    _idTvGuideCategory = value;
-                    OnPropertyChanged("IdTvGuideCategory");
+                    _idGuideCategory = value;
+                    OnPropertyChanged("IdGuideCategory");
                 }
             }
         }
-        private Nullable<int> _idTvGuideCategory;
+        private Nullable<int> _idGuideCategory;
 
         #endregion
         #region Navigation Properties
@@ -192,21 +192,21 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private TrackableCollection<History> _histories;
     
         [DataMember]
-        public TvGuideCategory TvGuideCategory
+        public GuideCategory GuideCategory
         {
-            get { return _tvGuideCategory; }
+            get { return _guideCategory; }
             set
             {
-                if (!ReferenceEquals(_tvGuideCategory, value))
+                if (!ReferenceEquals(_guideCategory, value))
                 {
-                    var previousValue = _tvGuideCategory;
-                    _tvGuideCategory = value;
-                    FixupTvGuideCategory(previousValue);
-                    OnNavigationPropertyChanged("TvGuideCategory");
+                    var previousValue = _guideCategory;
+                    _guideCategory = value;
+                    FixupGuideCategory(previousValue);
+                    OnNavigationPropertyChanged("GuideCategory");
                 }
             }
         }
-        private TvGuideCategory _tvGuideCategory;
+        private GuideCategory _guideCategory;
 
         #endregion
         #region ChangeTracking
@@ -289,13 +289,13 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             Programs.Clear();
             Recordings.Clear();
             Histories.Clear();
-            TvGuideCategory = null;
+            GuideCategory = null;
         }
 
         #endregion
         #region Association Fixup
     
-        private void FixupTvGuideCategory(TvGuideCategory previousValue, bool skipKeys = false)
+        private void FixupGuideCategory(GuideCategory previousValue, bool skipKeys = false)
         {
             if (IsDeserializing)
             {
@@ -307,34 +307,34 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 previousValue.ProgramCategories.Remove(this);
             }
     
-            if (TvGuideCategory != null)
+            if (GuideCategory != null)
             {
-                if (!TvGuideCategory.ProgramCategories.Contains(this))
+                if (!GuideCategory.ProgramCategories.Contains(this))
                 {
-                    TvGuideCategory.ProgramCategories.Add(this);
+                    GuideCategory.ProgramCategories.Add(this);
                 }
     
-                IdTvGuideCategory = TvGuideCategory.IdTvGuideCategory;
+                IdGuideCategory = GuideCategory.IdGuideCategory;
             }
             else if (!skipKeys)
             {
-                IdTvGuideCategory = null;
+                IdGuideCategory = null;
             }
     
             if (ChangeTracker.ChangeTrackingEnabled)
             {
-                if (ChangeTracker.OriginalValues.ContainsKey("TvGuideCategory")
-                    && (ChangeTracker.OriginalValues["TvGuideCategory"] == TvGuideCategory))
+                if (ChangeTracker.OriginalValues.ContainsKey("GuideCategory")
+                    && (ChangeTracker.OriginalValues["GuideCategory"] == GuideCategory))
                 {
-                    ChangeTracker.OriginalValues.Remove("TvGuideCategory");
+                    ChangeTracker.OriginalValues.Remove("GuideCategory");
                 }
                 else
                 {
-                    ChangeTracker.RecordOriginalValue("TvGuideCategory", previousValue);
+                    ChangeTracker.RecordOriginalValue("GuideCategory", previousValue);
                 }
-                if (TvGuideCategory != null && !TvGuideCategory.ChangeTracker.ChangeTrackingEnabled)
+                if (GuideCategory != null && !GuideCategory.ChangeTracker.ChangeTrackingEnabled)
                 {
-                    TvGuideCategory.StartTracking();
+                    GuideCategory.StartTracking();
                 }
             }
         }

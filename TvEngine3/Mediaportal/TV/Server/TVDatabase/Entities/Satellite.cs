@@ -18,7 +18,7 @@ using System.Runtime.Serialization;
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
     [DataContract(IsReference = true)]
-    [KnownType(typeof(DisEqcMotor))]
+    [KnownType(typeof(DiseqcMotor))]
     public partial class Satellite: IObjectWithChangeTracker, INotifyPropertyChanged
     {
         #region Primitive Properties
@@ -43,84 +43,84 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idSatellite;
     
         [DataMember]
-        public string SatelliteName
+        public int Longitude
         {
-            get { return _satelliteName; }
+            get { return _longitude; }
             set
             {
-                if (_satelliteName != value)
+                if (_longitude != value)
                 {
-                    _satelliteName = value;
-                    OnPropertyChanged("SatelliteName");
+                    _longitude = value;
+                    OnPropertyChanged("Longitude");
                 }
             }
         }
-        private string _satelliteName;
+        private int _longitude;
     
         [DataMember]
-        public string TransponderFileName
+        public string Name
         {
-            get { return _transponderFileName; }
+            get { return _name; }
             set
             {
-                if (_transponderFileName != value)
+                if (_name != value)
                 {
-                    _transponderFileName = value;
-                    OnPropertyChanged("TransponderFileName");
+                    _name = value;
+                    OnPropertyChanged("Name");
                 }
             }
         }
-        private string _transponderFileName;
+        private string _name;
 
         #endregion
         #region Navigation Properties
     
         [DataMember]
-        public TrackableCollection<DisEqcMotor> DisEqcMotors
+        public TrackableCollection<DiseqcMotor> DiseqcMotors
         {
             get
             {
-                if (_disEqcMotors == null)
+                if (_diseqcMotors == null)
                 {
-                    _disEqcMotors = new TrackableCollection<DisEqcMotor>();
-                    _disEqcMotors.CollectionChanged += FixupDisEqcMotors;
+                    _diseqcMotors = new TrackableCollection<DiseqcMotor>();
+                    _diseqcMotors.CollectionChanged += FixupDiseqcMotors;
                 }
-                return _disEqcMotors;
+                return _diseqcMotors;
             }
             set
             {
-                if (!ReferenceEquals(_disEqcMotors, value))
+                if (!ReferenceEquals(_diseqcMotors, value))
                 {
                     if (ChangeTracker.ChangeTrackingEnabled)
                     {
                         throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
                     }
-                    if (_disEqcMotors != null)
+                    if (_diseqcMotors != null)
                     {
-                        _disEqcMotors.CollectionChanged -= FixupDisEqcMotors;
+                        _diseqcMotors.CollectionChanged -= FixupDiseqcMotors;
                         // This is the principal end in an association that performs cascade deletes.
                         // Remove the cascade delete event handler for any entities in the current collection.
-                        foreach (DisEqcMotor item in _disEqcMotors)
+                        foreach (DiseqcMotor item in _diseqcMotors)
                         {
                             ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
                         }
                     }
-                    _disEqcMotors = value;
-                    if (_disEqcMotors != null)
+                    _diseqcMotors = value;
+                    if (_diseqcMotors != null)
                     {
-                        _disEqcMotors.CollectionChanged += FixupDisEqcMotors;
+                        _diseqcMotors.CollectionChanged += FixupDiseqcMotors;
                         // This is the principal end in an association that performs cascade deletes.
                         // Add the cascade delete event handler for any entities that are already in the new collection.
-                        foreach (DisEqcMotor item in _disEqcMotors)
+                        foreach (DiseqcMotor item in _diseqcMotors)
                         {
                             ChangeTracker.ObjectStateChanging += item.HandleCascadeDelete;
                         }
                     }
-                    OnNavigationPropertyChanged("DisEqcMotors");
+                    OnNavigationPropertyChanged("DiseqcMotors");
                 }
             }
         }
-        private TrackableCollection<DisEqcMotor> _disEqcMotors;
+        private TrackableCollection<DiseqcMotor> _diseqcMotors;
 
         #endregion
         #region ChangeTracking
@@ -200,13 +200,13 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
         protected virtual void ClearNavigationProperties()
         {
-            DisEqcMotors.Clear();
+            DiseqcMotors.Clear();
         }
 
         #endregion
         #region Association Fixup
     
-        private void FixupDisEqcMotors(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupDiseqcMotors(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (IsDeserializing)
             {
@@ -215,7 +215,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
             if (e.NewItems != null)
             {
-                foreach (DisEqcMotor item in e.NewItems)
+                foreach (DiseqcMotor item in e.NewItems)
                 {
                     item.Satellite = this;
                     if (ChangeTracker.ChangeTrackingEnabled)
@@ -224,7 +224,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                         {
                             item.StartTracking();
                         }
-                        ChangeTracker.RecordAdditionToCollectionProperties("DisEqcMotors", item);
+                        ChangeTracker.RecordAdditionToCollectionProperties("DiseqcMotors", item);
                     }
                     // This is the principal end in an association that performs cascade deletes.
                     // Update the event listener to refer to the new dependent.
@@ -234,7 +234,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
             if (e.OldItems != null)
             {
-                foreach (DisEqcMotor item in e.OldItems)
+                foreach (DiseqcMotor item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Satellite, this))
                     {
@@ -242,7 +242,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     }
                     if (ChangeTracker.ChangeTrackingEnabled)
                     {
-                        ChangeTracker.RecordRemovalFromCollectionProperties("DisEqcMotors", item);
+                        ChangeTracker.RecordRemovalFromCollectionProperties("DiseqcMotors", item);
                     }
                     // This is the principal end in an association that performs cascade deletes.
                     // Remove the previous dependent from the event listener.

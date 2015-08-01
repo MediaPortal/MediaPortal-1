@@ -82,10 +82,14 @@
     <Compile Include="..\..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="AnalogManagement.cs" />
     <Compile Include="ChannelManagement.cs" />
     <Compile Include="ChannelGroupManagement.cs" />
-    <Compile Include="CardManagement.cs" />
+    <Compile Include="AnalogTunerSettingsManagement.cs" />
+    <Compile Include="TuningDetailManagement.cs" />
+    <Compile Include="TunerPropertyManagement.cs" />
+    <Compile Include="SoftwareEncoderManagement.cs" />
+    <Compile Include="TunerGroupManagement.cs" />
+    <Compile Include="TunerManagement.cs" />
     <Compile Include="CanceledScheduleManagement.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="ConflictManagement.cs" />
@@ -95,8 +99,6 @@
     <Compile Include="Entities\ProgramBLL.cs" />
     <Compile Include="Entities\ScheduleBLL.cs" />
     <Compile Include="EPG\EpgDBUpdater.cs" />
-    <Compile Include="EPG\EpgHole.cs" />
-    <Compile Include="EPG\EpgHoleCollection.cs" />
     <Compile Include="LinqKit\PredicateBuilder.cs" />
     <Compile Include="LnbTypeManagement.cs" />
     <Compile Include="ScheduleManagement.cs" />
@@ -115,9 +117,9 @@
       <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
       <Name>Common.Utils</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
-      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
-      <Name>DirectShowLib</Name>
+    <ProjectReference Include="..\..\Common.Types\Common.Types.csproj">
+      <Project>{F9F4E5C1-9A6A-42F8-8452-4BDAFEA0E798}</Project>
+      <Name>Common.Types</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\TvControl\TvControl.csproj">
       <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>

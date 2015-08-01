@@ -89,19 +89,19 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idLinkedChannel;
     
         [DataMember]
-        public string DisplayName
+        public string Name
         {
-            get { return _displayName; }
+            get { return _name; }
             set
             {
-                if (_displayName != value)
+                if (_name != value)
                 {
-                    _displayName = value;
-                    OnPropertyChanged("DisplayName");
+                    _name = value;
+                    OnPropertyChanged("Name");
                 }
             }
         }
-        private string _displayName;
+        private string _name;
 
         #endregion
         #region Navigation Properties

@@ -67,6 +67,51 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idChannel;
     
         [DataMember]
+        public int MediaType
+        {
+            get { return _mediaType; }
+            set
+            {
+                if (_mediaType != value)
+                {
+                    _mediaType = value;
+                    OnPropertyChanged("MediaType");
+                }
+            }
+        }
+        private int _mediaType;
+    
+        [DataMember]
+        public int Priority
+        {
+            get { return _priority; }
+            set
+            {
+                if (_priority != value)
+                {
+                    _priority = value;
+                    OnPropertyChanged("Priority");
+                }
+            }
+        }
+        private int _priority;
+    
+        [DataMember]
+        public int BroadcastStandard
+        {
+            get { return _broadcastStandard; }
+            set
+            {
+                if (_broadcastStandard != value)
+                {
+                    _broadcastStandard = value;
+                    OnPropertyChanged("BroadcastStandard");
+                }
+            }
+        }
+        private int _broadcastStandard;
+    
+        [DataMember]
         public string Name
         {
             get { return _name; }
@@ -97,34 +142,229 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _provider;
     
         [DataMember]
-        public int ChannelType
+        public string LogicalChannelNumber
         {
-            get { return _channelType; }
+            get { return _logicalChannelNumber; }
             set
             {
-                if (_channelType != value)
+                if (_logicalChannelNumber != value)
                 {
-                    _channelType = value;
-                    OnPropertyChanged("ChannelType");
+                    _logicalChannelNumber = value;
+                    OnPropertyChanged("LogicalChannelNumber");
                 }
             }
         }
-        private int _channelType;
+        private string _logicalChannelNumber;
     
         [DataMember]
-        public int ChannelNumber
+        public bool IsEncrypted
         {
-            get { return _channelNumber; }
+            get { return _isEncrypted; }
             set
             {
-                if (_channelNumber != value)
+                if (_isEncrypted != value)
                 {
-                    _channelNumber = value;
-                    OnPropertyChanged("ChannelNumber");
+                    _isEncrypted = value;
+                    OnPropertyChanged("IsEncrypted");
                 }
             }
         }
-        private int _channelNumber;
+        private bool _isEncrypted;
+    
+        [DataMember]
+        public bool IsHighDefinition
+        {
+            get { return _isHighDefinition; }
+            set
+            {
+                if (_isHighDefinition != value)
+                {
+                    _isHighDefinition = value;
+                    OnPropertyChanged("IsHighDefinition");
+                }
+            }
+        }
+        private bool _isHighDefinition;
+    
+        [DataMember]
+        public bool IsThreeDimensional
+        {
+            get { return _isThreeDimensional; }
+            set
+            {
+                if (_isThreeDimensional != value)
+                {
+                    _isThreeDimensional = value;
+                    OnPropertyChanged("IsThreeDimensional");
+                }
+            }
+        }
+        private bool _isThreeDimensional;
+    
+        [DataMember]
+        public int OriginalNetworkId
+        {
+            get { return _originalNetworkId; }
+            set
+            {
+                if (_originalNetworkId != value)
+                {
+                    _originalNetworkId = value;
+                    OnPropertyChanged("OriginalNetworkId");
+                }
+            }
+        }
+        private int _originalNetworkId;
+    
+        [DataMember]
+        public int TransportStreamId
+        {
+            get { return _transportStreamId; }
+            set
+            {
+                if (_transportStreamId != value)
+                {
+                    _transportStreamId = value;
+                    OnPropertyChanged("TransportStreamId");
+                }
+            }
+        }
+        private int _transportStreamId;
+    
+        [DataMember]
+        public int ServiceId
+        {
+            get { return _serviceId; }
+            set
+            {
+                if (_serviceId != value)
+                {
+                    _serviceId = value;
+                    OnPropertyChanged("ServiceId");
+                }
+            }
+        }
+        private int _serviceId;
+    
+        [DataMember]
+        public int FreesatChannelId
+        {
+            get { return _freesatChannelId; }
+            set
+            {
+                if (_freesatChannelId != value)
+                {
+                    _freesatChannelId = value;
+                    OnPropertyChanged("FreesatChannelId");
+                }
+            }
+        }
+        private int _freesatChannelId;
+    
+        [DataMember]
+        public int OpenTvChannelId
+        {
+            get { return _openTvChannelId; }
+            set
+            {
+                if (_openTvChannelId != value)
+                {
+                    _openTvChannelId = value;
+                    OnPropertyChanged("OpenTvChannelId");
+                }
+            }
+        }
+        private int _openTvChannelId;
+    
+        [DataMember]
+        public int EpgOriginalNetworkId
+        {
+            get { return _epgOriginalNetworkId; }
+            set
+            {
+                if (_epgOriginalNetworkId != value)
+                {
+                    _epgOriginalNetworkId = value;
+                    OnPropertyChanged("EpgOriginalNetworkId");
+                }
+            }
+        }
+        private int _epgOriginalNetworkId;
+    
+        [DataMember]
+        public int EpgTransportStreamId
+        {
+            get { return _epgTransportStreamId; }
+            set
+            {
+                if (_epgTransportStreamId != value)
+                {
+                    _epgTransportStreamId = value;
+                    OnPropertyChanged("EpgTransportStreamId");
+                }
+            }
+        }
+        private int _epgTransportStreamId;
+    
+        [DataMember]
+        public int EpgServiceId
+        {
+            get { return _epgServiceId; }
+            set
+            {
+                if (_epgServiceId != value)
+                {
+                    _epgServiceId = value;
+                    OnPropertyChanged("EpgServiceId");
+                }
+            }
+        }
+        private int _epgServiceId;
+    
+        [DataMember]
+        public int SourceId
+        {
+            get { return _sourceId; }
+            set
+            {
+                if (_sourceId != value)
+                {
+                    _sourceId = value;
+                    OnPropertyChanged("SourceId");
+                }
+            }
+        }
+        private int _sourceId;
+    
+        [DataMember]
+        public int PmtPid
+        {
+            get { return _pmtPid; }
+            set
+            {
+                if (_pmtPid != value)
+                {
+                    _pmtPid = value;
+                    OnPropertyChanged("PmtPid");
+                }
+            }
+        }
+        private int _pmtPid;
+    
+        [DataMember]
+        public int PhysicalChannelNumber
+        {
+            get { return _physicalChannelNumber; }
+            set
+            {
+                if (_physicalChannelNumber != value)
+                {
+                    _physicalChannelNumber = value;
+                    OnPropertyChanged("PhysicalChannelNumber");
+                }
+            }
+        }
+        private int _physicalChannelNumber;
     
         [DataMember]
         public int Frequency
@@ -157,81 +397,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _countryId;
     
         [DataMember]
-        public int NetworkId
-        {
-            get { return _networkId; }
-            set
-            {
-                if (_networkId != value)
-                {
-                    _networkId = value;
-                    OnPropertyChanged("NetworkId");
-                }
-            }
-        }
-        private int _networkId;
-    
-        [DataMember]
-        public int TransportId
-        {
-            get { return _transportId; }
-            set
-            {
-                if (_transportId != value)
-                {
-                    _transportId = value;
-                    OnPropertyChanged("TransportId");
-                }
-            }
-        }
-        private int _transportId;
-    
-        [DataMember]
-        public int ServiceId
-        {
-            get { return _serviceId; }
-            set
-            {
-                if (_serviceId != value)
-                {
-                    _serviceId = value;
-                    OnPropertyChanged("ServiceId");
-                }
-            }
-        }
-        private int _serviceId;
-    
-        [DataMember]
-        public int PmtPid
-        {
-            get { return _pmtPid; }
-            set
-            {
-                if (_pmtPid != value)
-                {
-                    _pmtPid = value;
-                    OnPropertyChanged("PmtPid");
-                }
-            }
-        }
-        private int _pmtPid;
-    
-        [DataMember]
-        public bool FreeToAir
-        {
-            get { return _freeToAir; }
-            set
-            {
-                if (_freeToAir != value)
-                {
-                    _freeToAir = value;
-                    OnPropertyChanged("FreeToAir");
-                }
-            }
-        }
-        private bool _freeToAir;
-    
-        [DataMember]
         public int Modulation
         {
             get { return _modulation; }
@@ -262,19 +427,19 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _polarisation;
     
         [DataMember]
-        public int Symbolrate
+        public int SymbolRate
         {
-            get { return _symbolrate; }
+            get { return _symbolRate; }
             set
             {
-                if (_symbolrate != value)
+                if (_symbolRate != value)
                 {
-                    _symbolrate = value;
-                    OnPropertyChanged("Symbolrate");
+                    _symbolRate = value;
+                    OnPropertyChanged("SymbolRate");
                 }
             }
         }
-        private int _symbolrate;
+        private int _symbolRate;
     
         [DataMember]
         public int DiSEqC
@@ -307,36 +472,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _bandwidth;
     
         [DataMember]
-        public int MajorChannel
-        {
-            get { return _majorChannel; }
-            set
-            {
-                if (_majorChannel != value)
-                {
-                    _majorChannel = value;
-                    OnPropertyChanged("MajorChannel");
-                }
-            }
-        }
-        private int _majorChannel;
-    
-        [DataMember]
-        public int MinorChannel
-        {
-            get { return _minorChannel; }
-            set
-            {
-                if (_minorChannel != value)
-                {
-                    _minorChannel = value;
-                    OnPropertyChanged("MinorChannel");
-                }
-            }
-        }
-        private int _minorChannel;
-    
-        [DataMember]
         public int VideoSource
         {
             get { return _videoSource; }
@@ -367,21 +502,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _tuningSource;
     
         [DataMember]
-        public int Band
-        {
-            get { return _band; }
-            set
-            {
-                if (_band != value)
-                {
-                    _band = value;
-                    OnPropertyChanged("Band");
-                }
-            }
-        }
-        private int _band;
-    
-        [DataMember]
         public int SatIndex
         {
             get { return _satIndex; }
@@ -397,49 +517,64 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _satIndex;
     
         [DataMember]
-        public int InnerFecRate
+        public int FecCodeRate
         {
-            get { return _innerFecRate; }
+            get { return _fecCodeRate; }
             set
             {
-                if (_innerFecRate != value)
+                if (_fecCodeRate != value)
                 {
-                    _innerFecRate = value;
-                    OnPropertyChanged("InnerFecRate");
+                    _fecCodeRate = value;
+                    OnPropertyChanged("FecCodeRate");
                 }
             }
         }
-        private int _innerFecRate;
+        private int _fecCodeRate;
     
         [DataMember]
-        public int Pilot
+        public int PilotTonesState
         {
-            get { return _pilot; }
+            get { return _pilotTonesState; }
             set
             {
-                if (_pilot != value)
+                if (_pilotTonesState != value)
                 {
-                    _pilot = value;
-                    OnPropertyChanged("Pilot");
+                    _pilotTonesState = value;
+                    OnPropertyChanged("PilotTonesState");
                 }
             }
         }
-        private int _pilot;
+        private int _pilotTonesState;
     
         [DataMember]
-        public int RollOff
+        public int RollOffFactor
         {
-            get { return _rollOff; }
+            get { return _rollOffFactor; }
             set
             {
-                if (_rollOff != value)
+                if (_rollOffFactor != value)
                 {
-                    _rollOff = value;
-                    OnPropertyChanged("RollOff");
+                    _rollOffFactor = value;
+                    OnPropertyChanged("RollOffFactor");
                 }
             }
         }
-        private int _rollOff;
+        private int _rollOffFactor;
+    
+        [DataMember]
+        public int StreamId
+        {
+            get { return _streamId; }
+            set
+            {
+                if (_streamId != value)
+                {
+                    _streamId = value;
+                    OnPropertyChanged("StreamId");
+                }
+            }
+        }
+        private int _streamId;
     
         [DataMember]
         public string Url
@@ -457,21 +592,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _url;
     
         [DataMember]
-        public int Bitrate
-        {
-            get { return _bitrate; }
-            set
-            {
-                if (_bitrate != value)
-                {
-                    _bitrate = value;
-                    OnPropertyChanged("Bitrate");
-                }
-            }
-        }
-        private int _bitrate;
-    
-        [DataMember]
         public int AudioSource
         {
             get { return _audioSource; }
@@ -487,34 +607,19 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _audioSource;
     
         [DataMember]
-        public bool IsVCRSignal
+        public bool IsVcrSignal
         {
-            get { return _isVCRSignal; }
+            get { return _isVcrSignal; }
             set
             {
-                if (_isVCRSignal != value)
+                if (_isVcrSignal != value)
                 {
-                    _isVCRSignal = value;
-                    OnPropertyChanged("IsVCRSignal");
+                    _isVcrSignal = value;
+                    OnPropertyChanged("IsVcrSignal");
                 }
             }
         }
-        private bool _isVCRSignal;
-    
-        [DataMember]
-        public int MediaType
-        {
-            get { return _mediaType; }
-            set
-            {
-                if (_mediaType != value)
-                {
-                    _mediaType = value;
-                    OnPropertyChanged("MediaType");
-                }
-            }
-        }
-        private int _mediaType;
+        private bool _isVcrSignal;
     
         [DataMember]
         public Nullable<int> IdLnbType

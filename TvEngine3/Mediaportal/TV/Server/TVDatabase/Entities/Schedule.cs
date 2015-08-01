@@ -220,7 +220,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private Nullable<System.DateTime> _keepDate;
     
         [DataMember]
-        public int PreRecordInterval
+        public Nullable<int> PreRecordInterval
         {
             get { return _preRecordInterval; }
             set
@@ -232,10 +232,10 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 }
             }
         }
-        private int _preRecordInterval;
+        private Nullable<int> _preRecordInterval;
     
         [DataMember]
-        public int PostRecordInterval
+        public Nullable<int> PostRecordInterval
         {
             get { return _postRecordInterval; }
             set
@@ -247,7 +247,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 }
             }
         }
-        private int _postRecordInterval;
+        private Nullable<int> _postRecordInterval;
     
         [DataMember]
         public System.DateTime Canceled

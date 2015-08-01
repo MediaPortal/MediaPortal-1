@@ -62,22 +62,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="AnalogTunerSettings.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
     <Compile Include="CanceledSchedule.cs">
-      <DependentUpon>Model.tt</DependentUpon>
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Card.cs">
-      <DependentUpon>Model.tt</DependentUpon>
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="CardGroup.cs">
-      <DependentUpon>Model.tt</DependentUpon>
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="CardGroupMap.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
       </SubType>
@@ -110,53 +103,32 @@
       <SubType>
       </SubType>
     </Compile>
+    <Compile Include="SoftwareEncoderPartial.cs" />
+    <Compile Include="TuningDetailPartial.cs" />
+    <Compile Include="SatellitePartial.cs" />
     <Compile Include="Enums\ScheduleIncludeRelationEnum.cs" />
     <Compile Include="LnbTypePartial.cs" />
-    <Compile Include="DisEqcMotor.cs">
+    <Compile Include="DiseqcMotor.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
       </SubType>
     </Compile>
     <Compile Include="EntityExtensions.cs" />
-    <Compile Include="Enums\CardIncludeRelationEnum.cs" />
+    <Compile Include="Enums\TunerIncludeRelationEnum.cs" />
     <Compile Include="Enums\ChannelGroupIncludeRelationEnum.cs" />
     <Compile Include="Enums\ChannelIncludeRelationEnum.cs" />
-    <Compile Include="Enums\DbNetworkProvider.cs" />
-    <Compile Include="Enums\DeleteBeforeImportOption.cs" />
-    <Compile Include="Enums\KeepMethodType.cs" />
-    <Compile Include="Enums\MediaType.cs" />
-    <Compile Include="Enums\ProgramState.cs" />
-    <Compile Include="Enums\ScheduleRecordingType.cs" />
     <Compile Include="Enums\StringComparisonEnum.cs" />
-    <Compile Include="Enums\TuningDetailSearchEnum.cs" />
-    <Compile Include="Factories\ChannelFactory.cs" />
     <Compile Include="Factories\CloneHelper.cs" />
     <Compile Include="Factories\CanceledScheduleFactory.cs" />
-    <Compile Include="Factories\TuningDetailFactory.cs" />
     <Compile Include="Factories\RecordingFactory.cs" />
     <Compile Include="Factories\ProgramFactory.cs" />
     <Compile Include="Factories\ScheduleFactory.cs" />
-    <Compile Include="Favorite.cs">
-      <DependentUpon>Model.tt</DependentUpon>
-      <SubType>
-      </SubType>
-    </Compile>
     <Compile Include="GroupMap.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
       </SubType>
     </Compile>
     <Compile Include="History.cs">
-      <DependentUpon>Model.tt</DependentUpon>
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Keyword.cs">
-      <DependentUpon>Model.tt</DependentUpon>
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="KeywordMap.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
       </SubType>
@@ -191,11 +163,6 @@
       <SubType>
       </SubType>
     </Compile>
-    <Compile Include="PersonalTVGuideMap.cs">
-      <DependentUpon>Model.tt</DependentUpon>
-      <SubType>
-      </SubType>
-    </Compile>
     <Compile Include="Program.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
@@ -218,9 +185,6 @@
       </SubType>
     </Compile>
     <Compile Include="ProgramCreditPartial.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ProgramPartial.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -267,7 +231,18 @@
       <SubType>
       </SubType>
     </Compile>
-    <Compile Include="Timespan.cs">
+    <Compile Include="Tuner.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
+    <Compile Include="TunerGroup.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
+    <Compile Include="TunerPartial.cs" />
+    <Compile Include="TunerProperty.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
       </SubType>
@@ -277,12 +252,7 @@
       <SubType>
       </SubType>
     </Compile>
-    <Compile Include="TvGuideCategory.cs">
-      <DependentUpon>Model.tt</DependentUpon>
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="TvMovieMapping.cs">
+    <Compile Include="GuideCategory.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
       </SubType>
@@ -312,6 +282,10 @@
     <ProjectReference Include="..\..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
       <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
       <Name>Common.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common.Types\Common.Types.csproj">
+      <Project>{F9F4E5C1-9A6A-42F8-8452-4BDAFEA0E798}</Project>
+      <Name>Common.Types</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

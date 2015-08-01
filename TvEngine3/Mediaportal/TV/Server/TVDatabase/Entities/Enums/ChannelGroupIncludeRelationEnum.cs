@@ -7,8 +7,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Enums
   {
     None = 0,
     GroupMaps = 1,
-    KeywordMap = 2,
-    GroupMapsChannel = 4,
-    GroupMapsTuningDetails = 8,    
+    GroupMapsChannel = 2,
+    GroupMapsTuningDetails = 4
   }
 }

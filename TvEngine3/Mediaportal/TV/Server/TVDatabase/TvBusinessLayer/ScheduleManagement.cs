@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
@@ -252,34 +253,51 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
-
     public static IList<Schedule> GetConflictingSchedules(Schedule sched, out List<Schedule> notViewableSchedules)
     {
+      var conflicts = new List<Schedule>();
       notViewableSchedules = new List<Schedule>();
       sched.Channel = ChannelManagement.GetChannel(sched.IdChannel);
-      Log.Info("GetConflictingSchedules: Schedule = " + sched);
-      var conflicts = new List<Schedule>();
-      IEnumerable<Schedule> schedulesList = ListAllSchedules();
+      Log.Info("GetConflictingSchedules: schedule = {0}", sched);
 
-      IList<Card> cards = CardManagement.ListAllCards(CardIncludeRelationEnum.None).ToList(); //SEB
-      if (cards.Count == 0)
+      IList<Tuner> tuners = TunerManagement.ListAllTuners(TunerIncludeRelationEnum.ChannelMaps);
+      Log.Info("GetConflictingSchedules: tuner count = {0}", tuners.Count);
+      if (tuners.Count == 0)
       {
         return conflicts;
       }
-      Log.Info("GetConflictingSchedules: Cards.Count = {0}", cards.Count);
 
-      List<Schedule>[] cardSchedules = new List<Schedule>[cards.Count];
-      for (int i = 0; i < cards.Count; i++)
+      IDictionary<int, HashSet<int>> tunerGroups = new Dictionary<int, HashSet<int>>();
+      IDictionary<int, IList<Schedule>> tunerSchedules = new Dictionary<int, IList<Schedule>>(tuners.Count);
+      foreach (Tuner tuner in tuners)
       {
-        cardSchedules[i] = new List<Schedule>();
+        if (tuner.IsEnabled)
+        {
+          tunerSchedules[tuner.IdTuner] = new List<Schedule>();
+          if (tuner.IdTunerGroup.HasValue)
+          {
+            HashSet<int> tunerIds;
+            if (!tunerGroups.TryGetValue(tuner.IdTunerGroup.Value, out tunerIds))
+            {
+              tunerIds = new HashSet<int>();
+              tunerGroups[tuner.IdTunerGroup.Value] = tunerIds;
+            }
+            tunerIds.Add(tuner.IdTuner);
+          }
+        }
       }
 
-      // GEMX: Assign all already scheduled timers to cards. Assume that even possibly overlapping schedulues are ok to the user,
-      // as he decided to keep them before. That's why they are in the db
+      // GEMX: Assign all already scheduled "episodes" to tuners. Ignore
+      // existing conflicts. The user had the opportunity to deal with them
+      // when they created the schedule(s). The fact that the schedules are
+      // still in the DB means the user decided to keep the conflicts.
+      Log.Info("GetConflictingSchedules: assign existing schedules to tuners");
+      int defaultPreRecordInterval = SettingsManagement.GetValue("preRecordInterval", 7);
+      int defaultPostRecordInterval = SettingsManagement.GetValue("postRecordInterval", 10);
+      IEnumerable<Schedule> schedulesList = ListAllSchedules();
+      List<Schedule> newEpisodes = GetRecordingTimes(sched);
       foreach (Schedule schedule in schedulesList)
       {
-
-
         List<Schedule> episodes = GetRecordingTimes(schedule);
         foreach (Schedule episode in episodes)
         {
@@ -292,12 +310,35 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           {
             continue;
           }
-          IList<Schedule> overlapping;
-          AssignSchedulesToCard(episode, cardSchedules, out overlapping, out notViewableSchedules);
+
+          // Save effort: only assign existing episodes that overlap with one
+          // of the new episodes. These are the only episodes with potential
+          // for conflicts.
+          foreach (Schedule newEpisode in newEpisodes)
+          {
+            if (DateTime.Now > newEpisode.EndTime)
+            {
+              continue;
+            }
+            var newEpisodeBLL = new ScheduleBLL(newEpisode);
+            if (newEpisodeBLL.IsSerieIsCanceled(newEpisode.StartTime))
+            {
+              continue;
+            }
+            if (newEpisodeBLL.IsOverlapping(episode, defaultPreRecordInterval, defaultPostRecordInterval))
+            {
+              IList<Schedule> existingConflicts;
+              bool isTunable;
+              if (!AssignSchedulesToTuner(episode, tuners, tunerGroups, tunerSchedules, defaultPreRecordInterval, defaultPostRecordInterval, out existingConflicts, out isTunable))
+              {
+                Log.Warn("GetConflictingSchedules: existing episode cannot be assigned to a tuner, episode = {0}", episode);
+              }
+            }
+          }
         }
       }
 
-      List<Schedule> newEpisodes = GetRecordingTimes(sched);
+      Log.Info("GetConflictingSchedules: try to assign new schedule episodes to tuners");
       foreach (Schedule newEpisode in newEpisodes)
       {
         if (DateTime.Now > newEpisode.EndTime)
@@ -309,95 +350,99 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         {
           continue;
         }
-        IList<Schedule> overlapping;
-        List<Schedule> notViewable;
-        if (!AssignSchedulesToCardConflict(newEpisode, cardSchedules, out overlapping, out notViewable))
+        IList<Schedule> newConflicts;
+        bool isTunable;
+        if (!AssignSchedulesToTuner(newEpisode, tuners, tunerGroups, tunerSchedules, defaultPreRecordInterval, defaultPostRecordInterval, out newConflicts, out isTunable))
         {
-          Log.Info("GetConflictingSchedules: newEpisode can not be assigned to a card = " + newEpisode);
-          conflicts.AddRange(overlapping);
-          notViewableSchedules.AddRange(notViewable);
+          Log.Warn("GetConflictingSchedules: new episode cannot be assigned to a tuner, episode = {0}, is tunable = {1}", newEpisode, isTunable);
+          if (newConflicts.Count > 0)
+          {
+            Log.Warn("  {0} conflicts(s)...", newConflicts.Count);
+            foreach (Schedule s in newConflicts)
+            {
+              Log.Warn("    {0}", s);
+            }
+          }
+          conflicts.AddRange(newConflicts);
+          notViewableSchedules.Add(newEpisode);
         }
       }
       return conflicts;
     }
 
-    private static bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules, out IList<Schedule> overlappingSchedules, out List<Schedule> notViewabledSchedules)
+    private static bool AssignSchedulesToTuner(Schedule schedule, IList<Tuner> tuners, IDictionary<int, HashSet<int>> tunerGroups, IDictionary<int, IList<Schedule>> tunerSchedules,
+                                                int defaultPreRecordInterval, int defaultPostRecordInterval,
+                                                out IList<Schedule> conflictingSchedules, out bool isTunable)
     {
-      overlappingSchedules = new List<Schedule>();
-      notViewabledSchedules = new List<Schedule>();
-      Log.Info("AssignSchedulesToCard: schedule = " + schedule);
-      IEnumerable<Card> cards = CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
-      int count = 0;
-      foreach (Card card in cards)
-      {
-        if (card.Enabled && CardManagement.CanViewTvChannel(card, schedule.IdChannel))
-        {
-          Log.Info("AssignSchedulesToCard: free on card {0}, ID = {1}", count, card.IdCard);
-          cardSchedules[count].Add(schedule);
-          break;
-        }
-        count++;
-      }
-      return true;
-    }
+      conflictingSchedules = new List<Schedule>();
+      isTunable = false;
 
-    private static bool AssignSchedulesToCardConflict(Schedule schedule, List<Schedule>[] cardSchedules, out IList<Schedule> overlappingSchedules, out List<Schedule> notViewabledSchedules)
-    {
-      overlappingSchedules = new List<Schedule>();
-      notViewabledSchedules = new List<Schedule>();
-      Log.Info("AssignSchedulesToCard: schedule = " + schedule);
-      IEnumerable<Card> cards = CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
       bool assigned = false;
-      bool canView = false;
-      int count = 0;
-      foreach (Card card in cards)
+      foreach (Tuner tuner in tuners)
       {
         ScheduleBLL scheduleBll = new ScheduleBLL(schedule);
-        if (card.Enabled && CardManagement.CanViewTvChannel(card, schedule.IdChannel))
+        if (TunerManagement.CanTuneChannel(tuner, schedule.IdChannel))
         {
-          canView = true;
-          // checks if any schedule assigned to this cards overlaps current parsed schedule
+          isTunable = true;
+
+          // Check if any schedule which is already assigned to this tuner
+          // overlaps/conflicts with the schedule we've been asked to assign.
           bool free = true;
-          foreach (Schedule assignedSchedule in cardSchedules[count])
+          foreach (Schedule assignedSchedule in tunerSchedules[tuner.IdTuner])
           {
-            Log.Info("AssignSchedulesToCard: card {0}, ID = {1} has schedule = " + assignedSchedule, count, card.IdCard);
-            bool hasOverlappingSchedule = scheduleBll.IsOverlapping(assignedSchedule);
-            if (hasOverlappingSchedule)
+            if (scheduleBll.IsOverlapping(assignedSchedule, defaultPreRecordInterval, defaultPostRecordInterval) && !scheduleBll.IsSameTransponder(assignedSchedule))
             {
-              bool isSameTransponder = (scheduleBll.IsSameTransponder(assignedSchedule));
-              if (!isSameTransponder)
+              conflictingSchedules.Add(assignedSchedule);
+              free = false;
+              // Don't break here because we want to know about all the
+              // conflicts, not just the first.
+              //break;
+            }
+          }
+
+          // Apply the same check for any tuners which are in the same tuner
+          // group. By definition, only one tuner in each tuner group can be
+          // used at any given time. Therefore overlaps with schedules assigned
+          // to other tuners in the same group are also conflicts.
+          if (tuner.IdTunerGroup.HasValue)
+          {
+            HashSet<int> tunersInGroup;
+            if (tunerGroups.TryGetValue(tuner.IdTunerGroup.Value, out tunersInGroup))
+            {
+              foreach (int tunerIdOtherTunerInGroup in tunersInGroup)
               {
-                overlappingSchedules.Add(assignedSchedule);
-                Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule + " on card {0}, ID = {1}", count,
-                         card.IdCard);
-                free = false;
-                break;
+                if (tunerIdOtherTunerInGroup != tuner.IdTuner)
+                {
+                  foreach (Schedule assignedSchedule in tunerSchedules[tunerIdOtherTunerInGroup])
+                  {
+                    if (scheduleBll.IsOverlapping(assignedSchedule, defaultPreRecordInterval, defaultPostRecordInterval) && !scheduleBll.IsSameTransponder(assignedSchedule))
+                    {
+                      conflictingSchedules.Add(assignedSchedule);
+                      free = false;
+                      // Don't break here because we want to know about all the
+                      // conflicts, not just the first.
+                      //break;
+                    }
+                  }
+                }
               }
             }
           }
+
           if (free)
           {
-            Log.Info("AssignSchedulesToCard: free on card {0}, ID = {1}", count, card.IdCard);
-            cardSchedules[count].Add(schedule);
+            Log.Info("AssignSchedulesToTuner: assign schedule, tuner ID = {0}, schedule = {1}", tuner.IdTuner, schedule);
+            tunerSchedules[tuner.IdTuner].Add(schedule);
             assigned = true;
             break;
           }
         }
-        count++;
       }
-      if (!canView)
-      {
-        notViewabledSchedules.Add(schedule);
-      }
-      return (canView && assigned);
+
+      return (isTunable && assigned);
     }
 
-    public static List<Schedule> GetRecordingTimes(Schedule rec)
-    {
-      return GetRecordingTimes(rec, 10);
-    }
-
-    public static List<Schedule> GetRecordingTimes(Schedule rec, int days)
+    public static List<Schedule> GetRecordingTimes(Schedule rec, int days = 10)
     {
       var recordings = new List<Schedule>();
       var recBLL = new ScheduleBLL(rec);

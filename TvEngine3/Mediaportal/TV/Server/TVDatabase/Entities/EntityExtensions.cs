@@ -1,4 +1,24 @@
-﻿using System;
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +28,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
   public static class EntityExtensions
   {
-
-   
-
     private static bool IsAssignableToGenericType(Type givenType, Type genericType)
     {
       if (givenType.IsGenericType && givenType.GetGenericTypeDefinition() == genericType)
@@ -37,7 +54,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
 
       PropertyInfo[] properties = trackingItem.GetType().GetProperties();
       foreach (PropertyInfo propertyInfo in from oPropertyInfo in properties let type = oPropertyInfo.PropertyType let found = IsAssignableToGenericType(type, typeof(TrackableCollection<>)) where found select oPropertyInfo)
-      {        
+      {
         var changeTrackers = propertyInfo.GetValue(trackingItem, null) as IList;
         bool changeDetected = false;
 
@@ -64,14 +81,14 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             foreach (object changeTracker in markedForDeletions)
             {
               changeTrackers.Remove(changeTracker);
-            } 
-          }                  
-        }                  
+            }
+          }
+        }
 
         if (!changeDetected)
         {
           propertyInfo.SetValue(trackingItem, null, null); 
-        }      
+        }
       }
 
       if (trackingItem.ChangeTracker.State != ObjectState.Added)
@@ -85,11 +102,10 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
           {
             fieldInfo.SetValue(trackingItem, null);
           }
-        } 
-      }      
+        }
+      }
 
       trackingItem.StartTracking();
     }
-
   }
 }

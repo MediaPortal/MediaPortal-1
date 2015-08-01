@@ -21,7 +21,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     [KnownType(typeof(Channel))]
     [KnownType(typeof(ProgramCategory))]
     [KnownType(typeof(ProgramCredit))]
-    [KnownType(typeof(PersonalTVGuideMap))]
     public partial class Program: IObjectWithChangeTracker, INotifyPropertyChanged
     {
         #region Primitive Properties
@@ -129,96 +128,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _description;
     
         [DataMember]
-        public string SeriesNum
-        {
-            get { return _seriesNum; }
-            set
-            {
-                if (_seriesNum != value)
-                {
-                    _seriesNum = value;
-                    OnPropertyChanged("SeriesNum");
-                }
-            }
-        }
-        private string _seriesNum;
-    
-        [DataMember]
-        public string EpisodeNum
-        {
-            get { return _episodeNum; }
-            set
-            {
-                if (_episodeNum != value)
-                {
-                    _episodeNum = value;
-                    OnPropertyChanged("EpisodeNum");
-                }
-            }
-        }
-        private string _episodeNum;
-    
-        [DataMember]
-        public Nullable<System.DateTime> OriginalAirDate
-        {
-            get { return _originalAirDate; }
-            set
-            {
-                if (_originalAirDate != value)
-                {
-                    _originalAirDate = value;
-                    OnPropertyChanged("OriginalAirDate");
-                }
-            }
-        }
-        private Nullable<System.DateTime> _originalAirDate;
-    
-        [DataMember]
-        public string Classification
-        {
-            get { return _classification; }
-            set
-            {
-                if (_classification != value)
-                {
-                    _classification = value;
-                    OnPropertyChanged("Classification");
-                }
-            }
-        }
-        private string _classification;
-    
-        [DataMember]
-        public int StarRating
-        {
-            get { return _starRating; }
-            set
-            {
-                if (_starRating != value)
-                {
-                    _starRating = value;
-                    OnPropertyChanged("StarRating");
-                }
-            }
-        }
-        private int _starRating;
-    
-        [DataMember]
-        public int ParentalRating
-        {
-            get { return _parentalRating; }
-            set
-            {
-                if (_parentalRating != value)
-                {
-                    _parentalRating = value;
-                    OnPropertyChanged("ParentalRating");
-                }
-            }
-        }
-        private int _parentalRating;
-    
-        [DataMember]
         public string EpisodeName
         {
             get { return _episodeName; }
@@ -234,49 +143,109 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _episodeName;
     
         [DataMember]
-        public string EpisodePart
+        public string SeriesId
         {
-            get { return _episodePart; }
+            get { return _seriesId; }
             set
             {
-                if (_episodePart != value)
+                if (_seriesId != value)
                 {
-                    _episodePart = value;
-                    OnPropertyChanged("EpisodePart");
+                    _seriesId = value;
+                    OnPropertyChanged("SeriesId");
                 }
             }
         }
-        private string _episodePart;
+        private string _seriesId;
     
         [DataMember]
-        public int State
+        public Nullable<int> SeasonNumber
         {
-            get { return _state; }
+            get { return _seasonNumber; }
             set
             {
-                if (_state != value)
+                if (_seasonNumber != value)
                 {
-                    _state = value;
-                    OnPropertyChanged("State");
+                    _seasonNumber = value;
+                    OnPropertyChanged("SeasonNumber");
                 }
             }
         }
-        private int _state;
+        private Nullable<int> _seasonNumber;
     
         [DataMember]
-        public bool PreviouslyShown
+        public string EpisodeId
         {
-            get { return _previouslyShown; }
+            get { return _episodeId; }
             set
             {
-                if (_previouslyShown != value)
+                if (_episodeId != value)
                 {
-                    _previouslyShown = value;
-                    OnPropertyChanged("PreviouslyShown");
+                    _episodeId = value;
+                    OnPropertyChanged("EpisodeId");
                 }
             }
         }
-        private bool _previouslyShown;
+        private string _episodeId;
+    
+        [DataMember]
+        public Nullable<int> EpisodeNumber
+        {
+            get { return _episodeNumber; }
+            set
+            {
+                if (_episodeNumber != value)
+                {
+                    _episodeNumber = value;
+                    OnPropertyChanged("EpisodeNumber");
+                }
+            }
+        }
+        private Nullable<int> _episodeNumber;
+    
+        [DataMember]
+        public Nullable<int> EpisodePartNumber
+        {
+            get { return _episodePartNumber; }
+            set
+            {
+                if (_episodePartNumber != value)
+                {
+                    _episodePartNumber = value;
+                    OnPropertyChanged("EpisodePartNumber");
+                }
+            }
+        }
+        private Nullable<int> _episodePartNumber;
+    
+        [DataMember]
+        public Nullable<bool> IsPreviouslyShown
+        {
+            get { return _isPreviouslyShown; }
+            set
+            {
+                if (_isPreviouslyShown != value)
+                {
+                    _isPreviouslyShown = value;
+                    OnPropertyChanged("IsPreviouslyShown");
+                }
+            }
+        }
+        private Nullable<bool> _isPreviouslyShown;
+    
+        [DataMember]
+        public Nullable<System.DateTime> OriginalAirDate
+        {
+            get { return _originalAirDate; }
+            set
+            {
+                if (_originalAirDate != value)
+                {
+                    _originalAirDate = value;
+                    OnPropertyChanged("OriginalAirDate");
+                }
+            }
+        }
+        private Nullable<System.DateTime> _originalAirDate;
     
         [DataMember]
         public Nullable<int> IdProgramCategory
@@ -300,6 +269,156 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private Nullable<int> _idProgramCategory;
+    
+        [DataMember]
+        public string Classification
+        {
+            get { return _classification; }
+            set
+            {
+                if (_classification != value)
+                {
+                    _classification = value;
+                    OnPropertyChanged("Classification");
+                }
+            }
+        }
+        private string _classification;
+    
+        [DataMember]
+        public int Advisories
+        {
+            get { return _advisories; }
+            set
+            {
+                if (_advisories != value)
+                {
+                    _advisories = value;
+                    OnPropertyChanged("Advisories");
+                }
+            }
+        }
+        private int _advisories;
+    
+        [DataMember]
+        public Nullable<bool> IsHighDefinition
+        {
+            get { return _isHighDefinition; }
+            set
+            {
+                if (_isHighDefinition != value)
+                {
+                    _isHighDefinition = value;
+                    OnPropertyChanged("IsHighDefinition");
+                }
+            }
+        }
+        private Nullable<bool> _isHighDefinition;
+    
+        [DataMember]
+        public Nullable<bool> IsThreeDimensional
+        {
+            get { return _isThreeDimensional; }
+            set
+            {
+                if (_isThreeDimensional != value)
+                {
+                    _isThreeDimensional = value;
+                    OnPropertyChanged("IsThreeDimensional");
+                }
+            }
+        }
+        private Nullable<bool> _isThreeDimensional;
+    
+        [DataMember]
+        public Nullable<bool> IsLive
+        {
+            get { return _isLive; }
+            set
+            {
+                if (_isLive != value)
+                {
+                    _isLive = value;
+                    OnPropertyChanged("IsLive");
+                }
+            }
+        }
+        private Nullable<bool> _isLive;
+    
+        [DataMember]
+        public Nullable<int> ProductionYear
+        {
+            get { return _productionYear; }
+            set
+            {
+                if (_productionYear != value)
+                {
+                    _productionYear = value;
+                    OnPropertyChanged("ProductionYear");
+                }
+            }
+        }
+        private Nullable<int> _productionYear;
+    
+        [DataMember]
+        public string ProductionCountry
+        {
+            get { return _productionCountry; }
+            set
+            {
+                if (_productionCountry != value)
+                {
+                    _productionCountry = value;
+                    OnPropertyChanged("ProductionCountry");
+                }
+            }
+        }
+        private string _productionCountry;
+    
+        [DataMember]
+        public Nullable<decimal> StarRating
+        {
+            get { return _starRating; }
+            set
+            {
+                if (_starRating != value)
+                {
+                    _starRating = value;
+                    OnPropertyChanged("StarRating");
+                }
+            }
+        }
+        private Nullable<decimal> _starRating;
+    
+        [DataMember]
+        public Nullable<decimal> StarRatingMaximum
+        {
+            get { return _starRatingMaximum; }
+            set
+            {
+                if (_starRatingMaximum != value)
+                {
+                    _starRatingMaximum = value;
+                    OnPropertyChanged("StarRatingMaximum");
+                }
+            }
+        }
+        private Nullable<decimal> _starRatingMaximum;
+    
+        [DataMember]
+        public int State
+        {
+            get { return _state; }
+            set
+            {
+                if (_state != value)
+                {
+                    _state = value;
+                    OnPropertyChanged("State");
+                }
+            }
+        }
+        private int _state;
     
         [DataMember]
         public short StartTimeDayOfWeek
@@ -444,53 +563,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private TrackableCollection<ProgramCredit> _programCredits;
-    
-        [DataMember]
-        public TrackableCollection<PersonalTVGuideMap> PersonalTVGuideMaps
-        {
-            get
-            {
-                if (_personalTVGuideMaps == null)
-                {
-                    _personalTVGuideMaps = new TrackableCollection<PersonalTVGuideMap>();
-                    _personalTVGuideMaps.CollectionChanged += FixupPersonalTVGuideMaps;
-                }
-                return _personalTVGuideMaps;
-            }
-            set
-            {
-                if (!ReferenceEquals(_personalTVGuideMaps, value))
-                {
-                    if (ChangeTracker.ChangeTrackingEnabled)
-                    {
-                        throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
-                    }
-                    if (_personalTVGuideMaps != null)
-                    {
-                        _personalTVGuideMaps.CollectionChanged -= FixupPersonalTVGuideMaps;
-                        // This is the principal end in an association that performs cascade deletes.
-                        // Remove the cascade delete event handler for any entities in the current collection.
-                        foreach (PersonalTVGuideMap item in _personalTVGuideMaps)
-                        {
-                            ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
-                        }
-                    }
-                    _personalTVGuideMaps = value;
-                    if (_personalTVGuideMaps != null)
-                    {
-                        _personalTVGuideMaps.CollectionChanged += FixupPersonalTVGuideMaps;
-                        // This is the principal end in an association that performs cascade deletes.
-                        // Add the cascade delete event handler for any entities that are already in the new collection.
-                        foreach (PersonalTVGuideMap item in _personalTVGuideMaps)
-                        {
-                            ChangeTracker.ObjectStateChanging += item.HandleCascadeDelete;
-                        }
-                    }
-                    OnNavigationPropertyChanged("PersonalTVGuideMaps");
-                }
-            }
-        }
-        private TrackableCollection<PersonalTVGuideMap> _personalTVGuideMaps;
 
         #endregion
         #region ChangeTracking
@@ -583,7 +655,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             Channel = null;
             ProgramCategory = null;
             ProgramCredits.Clear();
-            PersonalTVGuideMaps.Clear();
         }
 
         #endregion
@@ -709,51 +780,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     if (ChangeTracker.ChangeTrackingEnabled)
                     {
                         ChangeTracker.RecordRemovalFromCollectionProperties("ProgramCredits", item);
-                    }
-                    // This is the principal end in an association that performs cascade deletes.
-                    // Remove the previous dependent from the event listener.
-                    ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
-                }
-            }
-        }
-    
-        private void FixupPersonalTVGuideMaps(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (IsDeserializing)
-            {
-                return;
-            }
-    
-            if (e.NewItems != null)
-            {
-                foreach (PersonalTVGuideMap item in e.NewItems)
-                {
-                    item.Program = this;
-                    if (ChangeTracker.ChangeTrackingEnabled)
-                    {
-                        if (!item.ChangeTracker.ChangeTrackingEnabled)
-                        {
-                            item.StartTracking();
-                        }
-                        ChangeTracker.RecordAdditionToCollectionProperties("PersonalTVGuideMaps", item);
-                    }
-                    // This is the principal end in an association that performs cascade deletes.
-                    // Update the event listener to refer to the new dependent.
-                    ChangeTracker.ObjectStateChanging += item.HandleCascadeDelete;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (PersonalTVGuideMap item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.Program, this))
-                    {
-                        item.Program = null;
-                    }
-                    if (ChangeTracker.ChangeTrackingEnabled)
-                    {
-                        ChangeTracker.RecordRemovalFromCollectionProperties("PersonalTVGuideMaps", item);
                     }
                     // This is the principal end in an association that performs cascade deletes.
                     // Remove the previous dependent from the event listener.

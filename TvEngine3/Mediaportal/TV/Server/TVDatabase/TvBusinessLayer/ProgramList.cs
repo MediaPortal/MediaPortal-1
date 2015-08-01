@@ -51,7 +51,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
   {
     #region variables
 
-    private bool _alreadySorted;
+    private bool _alreadySorted = false;
 
     #endregion
 
@@ -59,19 +59,16 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public ProgramList()
     {
-      //_alreadySorted = false;
     }
 
     public ProgramList(int capacity)
       : base(capacity)
     {
-      //_alreadySorted = false;
     }
 
     public ProgramList(IEnumerable<Program> source)
       : base(source)
     {
-      //_alreadySorted = false;
     }
 
     #endregion
@@ -89,7 +86,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     public bool AlreadySorted
     {
       get { return _alreadySorted; }
-      set { _alreadySorted = value; }
     }
 
     #endregion
@@ -101,6 +97,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       if (!_alreadySorted)
       {
         Sort(this);
+        _alreadySorted = true;
       }
     }
 
@@ -445,7 +442,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
       if (x.IdChannel != y.IdChannel)
       {
-        int res = String.Compare(x.Channel.DisplayName, y.Channel.DisplayName, true);
+        int res = String.Compare(x.Channel.Name, y.Channel.Name, true);
         if (res == 0)
         {
           if (x.IdChannel > y.IdChannel)

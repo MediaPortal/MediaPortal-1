@@ -16,7 +16,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         {
           Path.GetFullPath(recordingFolder);
         }
-        catch (Exception)
+        catch
         {
           hasFolder = false;
         }

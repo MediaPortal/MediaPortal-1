@@ -27,7 +27,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       var includeRelations = query.
         Include(r => r.GroupMaps.Select(c => c.Channel.TuningDetails)).
         Include(r => r.GroupMaps).
-        Include(r => r.KeywordMap).
         Include(r => r.GroupMaps.Select(c => c.Channel));
       return includeRelations;
     }
@@ -37,16 +36,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       bool groupMaps = includeRelations.HasFlag(ChannelGroupIncludeRelationEnum.GroupMaps);
       bool groupMapsChannel = includeRelations.HasFlag(ChannelGroupIncludeRelationEnum.GroupMapsChannel);
       bool groupMapsTuningDetails = includeRelations.HasFlag(ChannelGroupIncludeRelationEnum.GroupMapsTuningDetails);
-      bool keywordMap = includeRelations.HasFlag(ChannelGroupIncludeRelationEnum.KeywordMap);
 
       if (groupMaps)
       {
         query = query.Include(r => r.GroupMaps);
-      }
-
-      if (keywordMap)
-      {
-        query = query.Include(r => r.KeywordMap);
       }
 
       if (groupMapsChannel)

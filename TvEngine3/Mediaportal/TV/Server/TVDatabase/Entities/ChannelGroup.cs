@@ -19,7 +19,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
     [DataContract(IsReference = true)]
     [KnownType(typeof(GroupMap))]
-    [KnownType(typeof(KeywordMap))]
     public partial class ChannelGroup: IObjectWithChangeTracker, INotifyPropertyChanged
     {
         #region Primitive Properties
@@ -137,53 +136,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private TrackableCollection<GroupMap> _groupMaps;
-    
-        [DataMember]
-        public TrackableCollection<KeywordMap> KeywordMap
-        {
-            get
-            {
-                if (_keywordMap == null)
-                {
-                    _keywordMap = new TrackableCollection<KeywordMap>();
-                    _keywordMap.CollectionChanged += FixupKeywordMap;
-                }
-                return _keywordMap;
-            }
-            set
-            {
-                if (!ReferenceEquals(_keywordMap, value))
-                {
-                    if (ChangeTracker.ChangeTrackingEnabled)
-                    {
-                        throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
-                    }
-                    if (_keywordMap != null)
-                    {
-                        _keywordMap.CollectionChanged -= FixupKeywordMap;
-                        // This is the principal end in an association that performs cascade deletes.
-                        // Remove the cascade delete event handler for any entities in the current collection.
-                        foreach (KeywordMap item in _keywordMap)
-                        {
-                            ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
-                        }
-                    }
-                    _keywordMap = value;
-                    if (_keywordMap != null)
-                    {
-                        _keywordMap.CollectionChanged += FixupKeywordMap;
-                        // This is the principal end in an association that performs cascade deletes.
-                        // Add the cascade delete event handler for any entities that are already in the new collection.
-                        foreach (KeywordMap item in _keywordMap)
-                        {
-                            ChangeTracker.ObjectStateChanging += item.HandleCascadeDelete;
-                        }
-                    }
-                    OnNavigationPropertyChanged("KeywordMap");
-                }
-            }
-        }
-        private TrackableCollection<KeywordMap> _keywordMap;
 
         #endregion
         #region ChangeTracking
@@ -264,7 +216,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         protected virtual void ClearNavigationProperties()
         {
             GroupMaps.Clear();
-            KeywordMap.Clear();
         }
 
         #endregion
@@ -307,51 +258,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     if (ChangeTracker.ChangeTrackingEnabled)
                     {
                         ChangeTracker.RecordRemovalFromCollectionProperties("GroupMaps", item);
-                    }
-                    // This is the principal end in an association that performs cascade deletes.
-                    // Remove the previous dependent from the event listener.
-                    ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
-                }
-            }
-        }
-    
-        private void FixupKeywordMap(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (IsDeserializing)
-            {
-                return;
-            }
-    
-            if (e.NewItems != null)
-            {
-                foreach (KeywordMap item in e.NewItems)
-                {
-                    item.ChannelGroups = this;
-                    if (ChangeTracker.ChangeTrackingEnabled)
-                    {
-                        if (!item.ChangeTracker.ChangeTrackingEnabled)
-                        {
-                            item.StartTracking();
-                        }
-                        ChangeTracker.RecordAdditionToCollectionProperties("KeywordMap", item);
-                    }
-                    // This is the principal end in an association that performs cascade deletes.
-                    // Update the event listener to refer to the new dependent.
-                    ChangeTracker.ObjectStateChanging += item.HandleCascadeDelete;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (KeywordMap item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.ChannelGroups, this))
-                    {
-                        item.ChannelGroups = null;
-                    }
-                    if (ChangeTracker.ChangeTrackingEnabled)
-                    {
-                        ChangeTracker.RecordRemovalFromCollectionProperties("KeywordMap", item);
                     }
                     // This is the principal end in an association that performs cascade deletes.
                     // Remove the previous dependent from the event listener.

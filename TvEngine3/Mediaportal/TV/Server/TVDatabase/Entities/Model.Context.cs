@@ -83,23 +83,17 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         }
         private ObjectSet<CanceledSchedule> _canceledSchedules;
     
-        public ObjectSet<Card> Cards
+        public ObjectSet<Tuner> Tuners
         {
-            get { return _cards  ?? (_cards = CreateObjectSet<Card>("Cards")); }
+            get { return _tuners  ?? (_tuners = CreateObjectSet<Tuner>("Tuners")); }
         }
-        private ObjectSet<Card> _cards;
+        private ObjectSet<Tuner> _tuners;
     
-        public ObjectSet<CardGroup> CardGroups
+        public ObjectSet<TunerGroup> TunerGroups
         {
-            get { return _cardGroups  ?? (_cardGroups = CreateObjectSet<CardGroup>("CardGroups")); }
+            get { return _tunerGroups  ?? (_tunerGroups = CreateObjectSet<TunerGroup>("TunerGroups")); }
         }
-        private ObjectSet<CardGroup> _cardGroups;
-    
-        public ObjectSet<CardGroupMap> CardGroupMaps
-        {
-            get { return _cardGroupMaps  ?? (_cardGroupMaps = CreateObjectSet<CardGroupMap>("CardGroupMaps")); }
-        }
-        private ObjectSet<CardGroupMap> _cardGroupMaps;
+        private ObjectSet<TunerGroup> _tunerGroups;
     
         public ObjectSet<Channel> Channels
         {
@@ -131,17 +125,11 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         }
         private ObjectSet<Conflict> _conflicts;
     
-        public ObjectSet<DisEqcMotor> DisEqcMotors
+        public ObjectSet<DiseqcMotor> DiseqcMotors
         {
-            get { return _disEqcMotors  ?? (_disEqcMotors = CreateObjectSet<DisEqcMotor>("DisEqcMotors")); }
+            get { return _diseqcMotors  ?? (_diseqcMotors = CreateObjectSet<DiseqcMotor>("DiseqcMotors")); }
         }
-        private ObjectSet<DisEqcMotor> _disEqcMotors;
-    
-        public ObjectSet<Favorite> Favorites
-        {
-            get { return _favorites  ?? (_favorites = CreateObjectSet<Favorite>("Favorites")); }
-        }
-        private ObjectSet<Favorite> _favorites;
+        private ObjectSet<DiseqcMotor> _diseqcMotors;
     
         public ObjectSet<GroupMap> GroupMaps
         {
@@ -155,29 +143,11 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         }
         private ObjectSet<History> _histories;
     
-        public ObjectSet<Keyword> Keywords
-        {
-            get { return _keywords  ?? (_keywords = CreateObjectSet<Keyword>("Keywords")); }
-        }
-        private ObjectSet<Keyword> _keywords;
-    
-        public ObjectSet<KeywordMap> KeywordMaps
-        {
-            get { return _keywordMaps  ?? (_keywordMaps = CreateObjectSet<KeywordMap>("KeywordMaps")); }
-        }
-        private ObjectSet<KeywordMap> _keywordMaps;
-    
         public ObjectSet<PendingDeletion> PendingDeletions
         {
             get { return _pendingDeletions  ?? (_pendingDeletions = CreateObjectSet<PendingDeletion>("PendingDeletions")); }
         }
         private ObjectSet<PendingDeletion> _pendingDeletions;
-    
-        public ObjectSet<PersonalTVGuideMap> PersonalTVGuideMaps
-        {
-            get { return _personalTVGuideMaps  ?? (_personalTVGuideMaps = CreateObjectSet<PersonalTVGuideMap>("PersonalTVGuideMaps")); }
-        }
-        private ObjectSet<PersonalTVGuideMap> _personalTVGuideMaps;
     
         public ObjectSet<Program> Programs
         {
@@ -239,23 +209,11 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         }
         private ObjectSet<SoftwareEncoder> _softwareEncoders;
     
-        public ObjectSet<Timespan> Timespans
-        {
-            get { return _timespans  ?? (_timespans = CreateObjectSet<Timespan>("Timespans")); }
-        }
-        private ObjectSet<Timespan> _timespans;
-    
         public ObjectSet<TuningDetail> TuningDetails
         {
             get { return _tuningDetails  ?? (_tuningDetails = CreateObjectSet<TuningDetail>("TuningDetails")); }
         }
         private ObjectSet<TuningDetail> _tuningDetails;
-    
-        public ObjectSet<TvMovieMapping> TvMovieMappings
-        {
-            get { return _tvMovieMappings  ?? (_tvMovieMappings = CreateObjectSet<TvMovieMapping>("TvMovieMappings")); }
-        }
-        private ObjectSet<TvMovieMapping> _tvMovieMappings;
     
         public ObjectSet<Version> Versions
         {
@@ -275,11 +233,23 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         }
         private ObjectSet<RecordingCredit> _recordingCredits;
     
-        public ObjectSet<TvGuideCategory> TvGuideCategories
+        public ObjectSet<GuideCategory> GuideCategories
         {
-            get { return _tvGuideCategories  ?? (_tvGuideCategories = CreateObjectSet<TvGuideCategory>("TvGuideCategories")); }
+            get { return _guideCategories  ?? (_guideCategories = CreateObjectSet<GuideCategory>("GuideCategories")); }
         }
-        private ObjectSet<TvGuideCategory> _tvGuideCategories;
+        private ObjectSet<GuideCategory> _guideCategories;
+    
+        public ObjectSet<TunerProperty> TunerProperties
+        {
+            get { return _tunerProperties  ?? (_tunerProperties = CreateObjectSet<TunerProperty>("TunerProperties")); }
+        }
+        private ObjectSet<TunerProperty> _tunerProperties;
+    
+        public ObjectSet<AnalogTunerSettings> AnalogTunerSettings
+        {
+            get { return _analogTunerSettings  ?? (_analogTunerSettings = CreateObjectSet<AnalogTunerSettings>("AnalogTunerSettings")); }
+        }
+        private ObjectSet<AnalogTunerSettings> _analogTunerSettings;
 
         #endregion
     }

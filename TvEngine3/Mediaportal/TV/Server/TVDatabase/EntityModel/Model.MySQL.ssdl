@@ -1,23 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-    <Schema Namespace="TVDatabaseModel.Store" Alias="Self" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+<Schema Namespace="TVDatabaseModel.Store" Alias="Self" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
   <EntityContainer Name="TVDatabaseModelStoreContainer">
     <EntitySet Name="CanceledSchedules" EntityType="TVDatabaseModel.Store.CanceledSchedules" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="Cards" EntityType="TVDatabaseModel.Store.Cards" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="CardGroups" EntityType="TVDatabaseModel.Store.CardGroups" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="CardGroupMaps" EntityType="TVDatabaseModel.Store.CardGroupMaps" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Tuners" EntityType="TVDatabaseModel.Store.Tuners" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="TunerGroups" EntityType="TVDatabaseModel.Store.TunerGroups" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Channels" EntityType="TVDatabaseModel.Store.Channels" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="ChannelGroups" EntityType="TVDatabaseModel.Store.ChannelGroups" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="ChannelLinkageMaps" EntityType="TVDatabaseModel.Store.ChannelLinkageMaps" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="ChannelMaps" EntityType="TVDatabaseModel.Store.ChannelMaps" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Conflicts" EntityType="TVDatabaseModel.Store.Conflicts" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="DisEqcMotors" EntityType="TVDatabaseModel.Store.DisEqcMotors" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="Favorites" EntityType="TVDatabaseModel.Store.Favorites" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="DiseqcMotors" EntityType="TVDatabaseModel.Store.DiseqcMotors" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="GroupMaps" EntityType="TVDatabaseModel.Store.GroupMaps" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Histories" EntityType="TVDatabaseModel.Store.Histories" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="Keywords" EntityType="TVDatabaseModel.Store.Keywords" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="KeywordMaps" EntityType="TVDatabaseModel.Store.KeywordMaps" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="PendingDeletions" EntityType="TVDatabaseModel.Store.PendingDeletions" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="PersonalTVGuideMaps" EntityType="TVDatabaseModel.Store.PersonalTVGuideMaps" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Programs" EntityType="TVDatabaseModel.Store.Programs" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="ProgramCategories" EntityType="TVDatabaseModel.Store.ProgramCategories" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="ProgramCredits" EntityType="TVDatabaseModel.Store.ProgramCredits" store:Type="Tables" Schema="dbo" />
@@ -28,43 +23,35 @@
     <EntitySet Name="ScheduleRulesTemplates" EntityType="TVDatabaseModel.Store.ScheduleRulesTemplates" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Settings" EntityType="TVDatabaseModel.Store.Settings" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="SoftwareEncoders" EntityType="TVDatabaseModel.Store.SoftwareEncoders" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="Timespans" EntityType="TVDatabaseModel.Store.Timespans" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="TuningDetails" EntityType="TVDatabaseModel.Store.TuningDetails" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="TvMovieMappings" EntityType="TVDatabaseModel.Store.TvMovieMappings" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Versions" EntityType="TVDatabaseModel.Store.Versions" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="LnbTypes" EntityType="TVDatabaseModel.Store.LnbTypes" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="RecordingCredits" EntityType="TVDatabaseModel.Store.RecordingCredits" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="TvGuideCategories" EntityType="TVDatabaseModel.Store.TvGuideCategories" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="GuideCategories" EntityType="TVDatabaseModel.Store.GuideCategories" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="TunerProperties" EntityType="TVDatabaseModel.Store.TunerProperties" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="AnalogTunerSettings" EntityType="TVDatabaseModel.Store.AnalogTunerSettings" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="GroupMapChannelGroup" Association="TVDatabaseModel.Store.GroupMapChannelGroup">
-      <End Role="GroupMap" EntitySet="GroupMaps" />
       <End Role="ChannelGroup" EntitySet="ChannelGroups" />
+      <End Role="GroupMap" EntitySet="GroupMaps" />
     </AssociationSet>
     <AssociationSet Name="GroupMapChannel" Association="TVDatabaseModel.Store.GroupMapChannel">
-      <End Role="GroupMap" EntitySet="GroupMaps" />
       <End Role="Channel" EntitySet="Channels" />
+      <End Role="GroupMap" EntitySet="GroupMaps" />
     </AssociationSet>
-    <AssociationSet Name="CardGroupMapCard" Association="TVDatabaseModel.Store.CardGroupMapCard">
-      <End Role="CardGroupMap" EntitySet="CardGroupMaps" />
-      <End Role="Card" EntitySet="Cards" />
-    </AssociationSet>
-    <AssociationSet Name="DisEqcMotorCard" Association="TVDatabaseModel.Store.DisEqcMotorCard">
-      <End Role="DisEqcMotor" EntitySet="DisEqcMotors" />
-      <End Role="Card" EntitySet="Cards" />
+    <AssociationSet Name="DiseqcMotorTuner" Association="TVDatabaseModel.Store.DiseqcMotorTuner">
+      <End Role="Tuner" EntitySet="Tuners" />
+      <End Role="DiseqcMotor" EntitySet="DiseqcMotors" />
     </AssociationSet>
     <AssociationSet Name="ChannelRecording" Association="TVDatabaseModel.Store.ChannelRecording">
       <End Role="Channel" EntitySet="Channels" />
       <End Role="Recording" EntitySet="Recordings" />
     </AssociationSet>
-    <AssociationSet Name="CardGroupMapCardGroup" Association="TVDatabaseModel.Store.CardGroupMapCardGroup">
-      <End Role="CardGroupMap" EntitySet="CardGroupMaps" />
-      <End Role="CardGroup" EntitySet="CardGroups" />
-    </AssociationSet>
     <AssociationSet Name="ChannelProgram" Association="TVDatabaseModel.Store.ChannelProgram">
       <End Role="Channel" EntitySet="Channels" />
       <End Role="Program" EntitySet="Programs" />
     </AssociationSet>
-    <AssociationSet Name="CardChannelMap" Association="TVDatabaseModel.Store.CardChannelMap">
-      <End Role="Card" EntitySet="Cards" />
+    <AssociationSet Name="TunerChannelMap" Association="TVDatabaseModel.Store.TunerChannelMap">
+      <End Role="Tuner" EntitySet="Tuners" />
       <End Role="ChannelMap" EntitySet="ChannelMaps" />
     </AssociationSet>
     <AssociationSet Name="ChannelChannelMap" Association="TVDatabaseModel.Store.ChannelChannelMap">
@@ -95,33 +82,13 @@
       <End Role="Channel" EntitySet="Channels" />
       <End Role="TuningDetail" EntitySet="TuningDetails" />
     </AssociationSet>
-    <AssociationSet Name="ChannelTvMovieMapping" Association="TVDatabaseModel.Store.ChannelTvMovieMapping">
-      <End Role="Channel" EntitySet="Channels" />
-      <End Role="TvMovieMapping" EntitySet="TvMovieMappings" />
-    </AssociationSet>
-    <AssociationSet Name="DisEqcMotorSatellite" Association="TVDatabaseModel.Store.DisEqcMotorSatellite">
-      <End Role="DisEqcMotor" EntitySet="DisEqcMotors" />
+    <AssociationSet Name="DiseqcMotorSatellite" Association="TVDatabaseModel.Store.DiseqcMotorSatellite">
       <End Role="Satellite" EntitySet="Satellites" />
-    </AssociationSet>
-    <AssociationSet Name="ProgramPersonalTVGuideMap" Association="TVDatabaseModel.Store.ProgramPersonalTVGuideMap">
-      <End Role="Program" EntitySet="Programs" />
-      <End Role="PersonalTVGuideMap" EntitySet="PersonalTVGuideMaps" />
-    </AssociationSet>
-    <AssociationSet Name="KeywordPersonalTVGuideMap" Association="TVDatabaseModel.Store.KeywordPersonalTVGuideMap">
-      <End Role="Keyword" EntitySet="Keywords" />
-      <End Role="PersonalTVGuideMap" EntitySet="PersonalTVGuideMaps" />
+      <End Role="DiseqcMotor" EntitySet="DiseqcMotors" />
     </AssociationSet>
     <AssociationSet Name="ScheduleRecording" Association="TVDatabaseModel.Store.ScheduleRecording">
       <End Role="Schedule" EntitySet="Schedules" />
       <End Role="Recording" EntitySet="Recordings" />
-    </AssociationSet>
-    <AssociationSet Name="KeywordKeywordMap" Association="TVDatabaseModel.Store.KeywordKeywordMap">
-      <End Role="Keyword" EntitySet="Keywords" />
-      <End Role="KeywordMap" EntitySet="KeywordMaps" />
-    </AssociationSet>
-    <AssociationSet Name="KeywordMapChannelGroup" Association="TVDatabaseModel.Store.KeywordMapChannelGroup">
-      <End Role="KeywordMap" EntitySet="KeywordMaps" />
-      <End Role="ChannelGroup" EntitySet="ChannelGroups" />
     </AssociationSet>
     <AssociationSet Name="RecordingRecordingCredit" Association="TVDatabaseModel.Store.RecordingRecordingCredit">
       <End Role="Recording" EntitySet="Recordings" />
@@ -143,8 +110,8 @@
       <End Role="Recording" EntitySet="Recordings" />
       <End Role="ProgramCategory" EntitySet="ProgramCategories" />
     </AssociationSet>
-    <AssociationSet Name="CardConflict" Association="TVDatabaseModel.Store.CardConflict">
-      <End Role="Card" EntitySet="Cards" />
+    <AssociationSet Name="TunerConflict" Association="TVDatabaseModel.Store.TunerConflict">
+      <End Role="Tuner" EntitySet="Tuners" />
       <End Role="Conflict" EntitySet="Conflicts" />
     </AssociationSet>
     <AssociationSet Name="ChannelConflict" Association="TVDatabaseModel.Store.ChannelConflict">
@@ -167,9 +134,29 @@
       <End Role="LnbType" EntitySet="LnbTypes" />
       <End Role="TuningDetail" EntitySet="TuningDetails" />
     </AssociationSet>
-    <AssociationSet Name="TvGuideCategoryProgramCategory" Association="TVDatabaseModel.Store.TvGuideCategoryProgramCategory">
-      <End Role="TvGuideCategory" EntitySet="TvGuideCategories" />
+    <AssociationSet Name="GuideCategoryProgramCategory" Association="TVDatabaseModel.Store.GuideCategoryProgramCategory">
+      <End Role="GuideCategory" EntitySet="GuideCategories" />
       <End Role="ProgramCategory" EntitySet="ProgramCategories" />
+    </AssociationSet>
+    <AssociationSet Name="TunerTunerGroup" Association="TVDatabaseModel.Store.TunerTunerGroup">
+      <End Role="Tuner" EntitySet="Tuners" />
+      <End Role="TunerGroup" EntitySet="TunerGroups" />
+    </AssociationSet>
+    <AssociationSet Name="TunerTunerProperty" Association="TVDatabaseModel.Store.TunerTunerProperty">
+      <End Role="Tuner" EntitySet="Tuners" />
+      <End Role="TunerProperty" EntitySet="TunerProperties" />
+    </AssociationSet>
+    <AssociationSet Name="AnalogTunerSettingsSoftwareEncoderVideo" Association="TVDatabaseModel.Store.AnalogTunerSettingsSoftwareEncoderVideo">
+      <End Role="AnalogTunerSettings" EntitySet="AnalogTunerSettings" />
+      <End Role="SoftwareEncoder" EntitySet="SoftwareEncoders" />
+    </AssociationSet>
+    <AssociationSet Name="AnalogTunerSettingsSoftwareEncoderAudio" Association="TVDatabaseModel.Store.AnalogTunerSettingsSoftwareEncoderAudio">
+      <End Role="AnalogTunerSettings" EntitySet="AnalogTunerSettings" />
+      <End Role="SoftwareEncoder" EntitySet="SoftwareEncoders" />
+    </AssociationSet>
+    <AssociationSet Name="TunerAnalogTunerSettings" Association="TVDatabaseModel.Store.TunerAnalogTunerSettings">
+      <End Role="Tuner" EntitySet="Tuners" />
+      <End Role="AnalogTunerSettings" EntitySet="AnalogTunerSettings" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="CanceledSchedules">
@@ -181,46 +168,41 @@
     <Property Name="IdChannel" Type="int" Nullable="false" />
     <Property Name="CancelDateTime" Type="datetime" Nullable="false" />
   </EntityType>
-  <EntityType Name="Cards">
+  <EntityType Name="Tuners">
     <Key>
-      <PropertyRef Name="IdCard" />
+      <PropertyRef Name="IdTuner" />
     </Key>
-    <Property Name="IdCard" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="DevicePath" Type="mediumtext" Nullable="false" />
-    <Property Name="Name" Type="mediumtext" Nullable="false"  />
+    <Property Name="IdTuner" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ExternalId" Type="varchar" Nullable="false" MaxLength="200" />
+    <Property Name="Name" Type="varchar" Nullable="false" MaxLength="200" />
     <Property Name="Priority" Type="int" Nullable="false" />
-    <Property Name="GrabEPG" Type="bit" Nullable="false" />
-    <Property Name="LastEpgGrab" Type="datetime" Nullable="true" />
-    <Property Name="RecordingFolder" Type="mediumtext" Nullable="false"  />
-    <Property Name="Enabled" Type="bit" Nullable="false" />
+    <Property Name="IsEnabled" Type="bit" Nullable="false" />
+    <Property Name="UseForEpgGrabbing" Type="bit" Nullable="false" />
+    <Property Name="RecordingFolder" Type="varchar" Nullable="false" MaxLength="300" />
+    <Property Name="TimeshiftingFolder" Type="varchar" Nullable="false" MaxLength="300" />
+    <Property Name="SupportedBroadcastStandards" Type="int" Nullable="false" />
+    <Property Name="UseConditionalAccess" Type="bit" Nullable="false" />
     <Property Name="CamType" Type="int" Nullable="false" />
-    <Property Name="TimeshiftingFolder" Type="mediumtext" Nullable="false"  />    
     <Property Name="DecryptLimit" Type="int" Nullable="false" />
-    <Property Name="PreloadCard" Type="bit" Nullable="false" />    
-    <Property Name="NetProvider" Type="int" Nullable="false" />
-    <Property Name="IdleMode" Type="int" Nullable="false" />    
-   	<Property Name="MultiChannelDecryptMode" Type="int" Nullable="false" />
+    <Property Name="MultiChannelDecryptMode" Type="int" Nullable="false" />
+    <Property Name="ConditionalAccessProviders" Type="varchar" Nullable="false" MaxLength="1000" />
+    <Property Name="Preload" Type="bit" Nullable="false" />
+    <Property Name="BdaNetworkProvider" Type="int" Nullable="false" />
+    <Property Name="IdleMode" Type="int" Nullable="false" />
     <Property Name="AlwaysSendDiseqcCommands" Type="bit" Nullable="false" />
-    <Property Name="DiseqcCommandRepeatCount" Type="int" Nullable="false" />
     <Property Name="PidFilterMode" Type="int" Nullable="false" />
     <Property Name="UseCustomTuning" Type="bit" Nullable="false" />
-    <Property Name="UseConditionalAccess" Type="bit" Nullable="false" />
-    
+    <Property Name="IdTunerGroup" Type="int" Nullable="true" />
+    <Property Name="DumpTsWriterInputs" Type="int" Nullable="false" />
+    <Property Name="DumpTsMuxerInputs" Type="int" Nullable="false" />
+    <Property Name="DisableTsWriterCrcChecking" Type="bit" Nullable="false" />
   </EntityType>
-  <EntityType Name="CardGroups">
+  <EntityType Name="TunerGroups">
     <Key>
-      <PropertyRef Name="IdCardGroup" />
+      <PropertyRef Name="IdTunerGroup" />
     </Key>
-    <Property Name="IdCardGroup" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Name" Type="mediumtext" Nullable="false"  />
-  </EntityType>
-  <EntityType Name="CardGroupMaps">
-    <Key>
-      <PropertyRef Name="IdMapping" />
-    </Key>
-    <Property Name="IdMapping" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="IdCard" Type="int" Nullable="false" />
-    <Property Name="IdCardGroup" Type="int" Nullable="false" />
+    <Property Name="IdTunerGroup" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" Nullable="false" MaxLength="200" />
   </EntityType>
   <EntityType Name="Channels">
     <Key>
@@ -229,22 +211,19 @@
     <Property Name="IdChannel" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="TimesWatched" Type="int" Nullable="false" />
     <Property Name="TotalTimeWatched" Type="datetime" Nullable="true" />
-    <Property Name="GrabEpg" Type="bit" Nullable="false" />
     <Property Name="LastGrabTime" Type="datetime" Nullable="true" />
-    <Property Name="SortOrder" Type="int" Nullable="false" />
     <Property Name="VisibleInGuide" Type="bit" Nullable="false" />
-    <Property Name="ExternalId" Type="mediumtext" Nullable="true"  />
-    <Property Name="DisplayName" Type="mediumtext" Nullable="false"  />
-    <Property Name="EpgHasGaps" Type="bit" Nullable="false" />
+    <Property Name="ExternalId" Type="varchar" Nullable="true" MaxLength="200" />
+    <Property Name="Name" Type="varchar" Nullable="false" MaxLength="200" />
     <Property Name="MediaType" Type="int" Nullable="false" />
-    <Property Name="ChannelNumber" Type="int" Nullable="false" />
+    <Property Name="ChannelNumber" Type="varchar" Nullable="false" MaxLength="10" />
   </EntityType>
   <EntityType Name="ChannelGroups">
     <Key>
       <PropertyRef Name="IdGroup" />
     </Key>
     <Property Name="IdGroup" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="GroupName" Type="mediumtext" Nullable="false"  />
+    <Property Name="GroupName" Type="varchar" Nullable="false" MaxLength="200" />
     <Property Name="SortOrder" Type="int" Nullable="false" />
     <Property Name="MediaType" Type="int" Nullable="false" />
   </EntityType>
@@ -255,7 +234,7 @@
     <Property Name="IdMapping" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="IdPortalChannel" Type="int" Nullable="false" />
     <Property Name="IdLinkedChannel" Type="int" Nullable="false" />
-    <Property Name="DisplayName" Type="mediumtext" Nullable="false"  />
+    <Property Name="Name" Type="varchar" Nullable="false" MaxLength="200" />
   </EntityType>
   <EntityType Name="ChannelMaps">
     <Key>
@@ -263,8 +242,7 @@
     </Key>
     <Property Name="IdChannelMap" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="IdChannel" Type="int" Nullable="false" />
-    <Property Name="IdCard" Type="int" Nullable="false" />
-    <Property Name="EpgOnly" Type="bit" Nullable="false" />
+    <Property Name="IdTuner" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Conflicts">
     <Key>
@@ -275,25 +253,16 @@
     <Property Name="IdConflictingSchedule" Type="int" Nullable="false" />
     <Property Name="IdChannel" Type="int" Nullable="false" />
     <Property Name="ConflictDate" Type="datetime" Nullable="false" />
-    <Property Name="IdCard" Type="int" Nullable="true" />
+    <Property Name="IdTuner" Type="int" Nullable="true" />
   </EntityType>
-  <EntityType Name="DisEqcMotors">
+  <EntityType Name="DiseqcMotors">
     <Key>
-      <PropertyRef Name="IdDiSEqCMotor" />
+      <PropertyRef Name="IdDiseqcMotor" />
     </Key>
-    <Property Name="IdDiSEqCMotor" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="IdCard" Type="int" Nullable="false" />
+    <Property Name="IdDiseqcMotor" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="IdTuner" Type="int" Nullable="false" />
     <Property Name="IdSatellite" Type="int" Nullable="false" />
     <Property Name="Position" Type="int" Nullable="false" />
-  </EntityType>
-  <EntityType Name="Favorites">
-    <Key>
-      <PropertyRef Name="IdFavorite" />
-    </Key>
-    <Property Name="IdFavorite" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="IdProgram" Type="int" Nullable="false" />
-    <Property Name="Priority" Type="int" Nullable="false" />
-    <Property Name="TimesWatched" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="GroupMaps">
     <Key>
@@ -302,7 +271,7 @@
     <Property Name="IdMap" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="IdGroup" Type="int" Nullable="false" />
     <Property Name="IdChannel" Type="int" Nullable="false" />
-    <Property Name="SortOrder" Type="int" Nullable="false" />    
+    <Property Name="SortOrder" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Histories">
     <Key>
@@ -312,29 +281,11 @@
     <Property Name="IdChannel" Type="int" Nullable="false" />
     <Property Name="StartTime" Type="datetime" Nullable="false" />
     <Property Name="EndTime" Type="datetime" Nullable="false" />
-    <Property Name="Title" Type="mediumtext" Nullable="false"  />
-    <Property Name="Description" Type="mediumtext" Nullable="false"  />
+    <Property Name="Title" Type="varchar" Nullable="false" MaxLength="1000" />
+    <Property Name="Description" Type="varchar" Nullable="false" MaxLength="1000" />
     <Property Name="Recorded" Type="bit" Nullable="false" />
     <Property Name="Watched" Type="int" Nullable="false" />
     <Property Name="IdProgramCategory" Type="int" Nullable="true" />
-  </EntityType>
-  <EntityType Name="Keywords">
-    <Key>
-      <PropertyRef Name="IdKeyword" />
-    </Key>
-    <Property Name="IdKeyword" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="KeywordName" Type="mediumtext" Nullable="false"  />
-    <Property Name="Rating" Type="int" Nullable="false" />
-    <Property Name="AutoRecord" Type="bit" Nullable="false" />
-    <Property Name="SearchIn" Type="int" Nullable="false" />
-  </EntityType>
-  <EntityType Name="KeywordMaps">
-    <Key>
-      <PropertyRef Name="IdKeywordMap" />
-    </Key>
-    <Property Name="IdKeywordMap" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="IdKeyword" Type="int" Nullable="false" />
-    <Property Name="IdChannelGroup" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="PendingDeletions">
     <Key>
@@ -342,14 +293,6 @@
     </Key>
     <Property Name="IdPendingDeletion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="FileName" Type="longtext" Nullable="false" />
-  </EntityType>
-  <EntityType Name="PersonalTVGuideMaps">
-    <Key>
-      <PropertyRef Name="IdPersonalTVGuideMap" />
-    </Key>
-    <Property Name="IdPersonalTVGuideMap" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="IdKeyword" Type="int" Nullable="false" />
-    <Property Name="IdProgram" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Programs">
     <Key>
@@ -359,19 +302,27 @@
     <Property Name="IdChannel" Type="int" Nullable="false" />
     <Property Name="StartTime" Type="datetime" Nullable="false" />
     <Property Name="EndTime" Type="datetime" Nullable="false" />
-    <Property Name="Title" Type="mediumtext" Nullable="false"  />
-    <Property Name="Description" Type="mediumtext" Nullable="false"  />
-    <Property Name="SeriesNum" Type="mediumtext" Nullable="false"  />
-    <Property Name="EpisodeNum" Type="mediumtext" Nullable="false"  />
+    <Property Name="Title" Type="varchar" Nullable="false" MaxLength="2000" />
+    <Property Name="Description" Type="varchar" Nullable="false" MaxLength="8000" />
+    <Property Name="EpisodeName" Type="varchar" Nullable="true" MaxLength="2000" />
+    <Property Name="SeriesId" Type="varchar" Nullable="true" MaxLength="200" />
+    <Property Name="SeasonNumber" Type="int" Nullable="true" />
+    <Property Name="EpisodeId" Type="varchar" Nullable="true" MaxLength="200" />
+    <Property Name="EpisodeNumber" Type="int" Nullable="true" />
+    <Property Name="EpisodePartNumber" Type="int" Nullable="true" />
+    <Property Name="IsPreviouslyShown" Type="bit" Nullable="true" />
     <Property Name="OriginalAirDate" Type="datetime" Nullable="true" />
-    <Property Name="Classification" Type="mediumtext" Nullable="false"  />
-    <Property Name="StarRating" Type="int" Nullable="false" />
-    <Property Name="ParentalRating" Type="int" Nullable="false" />
-    <Property Name="EpisodeName" Type="longtext" Nullable="false" />
-    <Property Name="EpisodePart" Type="longtext" Nullable="false" />
-    <Property Name="State" Type="int" Nullable="false" />
-    <Property Name="PreviouslyShown" Type="bit" Nullable="false" />
     <Property Name="IdProgramCategory" Type="int" Nullable="true" />
+    <Property Name="Classification" Type="varchar" Nullable="true" MaxLength="200" />
+    <Property Name="Advisories" Type="int" Nullable="false" />
+    <Property Name="IsHighDefinition" Type="bit" Nullable="true" />
+    <Property Name="IsThreeDimensional" Type="bit" Nullable="true" />
+    <Property Name="IsLive" Type="bit" Nullable="true" />
+    <Property Name="ProductionYear" Type="int" Nullable="true" />
+    <Property Name="ProductionCountry" Type="varchar" Nullable="true" MaxLength="200" />
+    <Property Name="StarRating" Type="decimal" Nullable="true" />
+    <Property Name="StarRatingMaximum" Type="decimal" Nullable="true" />
+    <Property Name="State" Type="int" Nullable="false" />
     <Property Name="StartTimeDayOfWeek" Type="smallint" Nullable="false" />
     <Property Name="EndTimeDayOfWeek" Type="smallint" Nullable="false" />
     <Property Name="EndTimeOffset" Type="datetime" Nullable="false" />
@@ -382,8 +333,8 @@
       <PropertyRef Name="IdProgramCategory" />
     </Key>
     <Property Name="IdProgramCategory" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Category" Type="mediumtext" Nullable="false"  />
-    <Property Name="IdTvGuideCategory" Type="int" Nullable="true" />
+    <Property Name="Category" Type="varchar" Nullable="false" MaxLength="50" />
+    <Property Name="IdGuideCategory" Type="int" Nullable="true" />
   </EntityType>
   <EntityType Name="ProgramCredits">
     <Key>
@@ -391,8 +342,8 @@
     </Key>
     <Property Name="IdProgramCredit" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="IdProgram" Type="int" Nullable="false" />
-    <Property Name="Person" Type="mediumtext" Nullable="false"  />
-    <Property Name="Role" Type="mediumtext" Nullable="false"  />
+    <Property Name="Person" Type="varchar" Nullable="false" MaxLength="200" />
+    <Property Name="Role" Type="varchar" Nullable="false" MaxLength="50" />
   </EntityType>
   <EntityType Name="Recordings">
     <Key>
@@ -402,16 +353,16 @@
     <Property Name="IdChannel" Type="int" Nullable="true" />
     <Property Name="StartTime" Type="datetime" Nullable="false" />
     <Property Name="EndTime" Type="datetime" Nullable="false" />
-    <Property Name="Title" Type="mediumtext" Nullable="false"  />
-    <Property Name="Description" Type="mediumtext" Nullable="false"  />
-    <Property Name="FileName" Type="mediumtext" Nullable="false"  />
+    <Property Name="Title" Type="varchar" Nullable="false" MaxLength="2000" />
+    <Property Name="Description" Type="varchar" Nullable="false" MaxLength="8000" />
+    <Property Name="FileName" Type="varchar" Nullable="false" MaxLength="260" />
     <Property Name="KeepUntil" Type="int" Nullable="false" />
     <Property Name="KeepUntilDate" Type="datetime" Nullable="true" />
     <Property Name="TimesWatched" Type="int" Nullable="false" />
     <Property Name="StopTime" Type="int" Nullable="false" />
     <Property Name="EpisodeName" Type="longtext" Nullable="false" />
-    <Property Name="SeriesNum" Type="mediumtext" Nullable="false"  />
-    <Property Name="EpisodeNum" Type="mediumtext" Nullable="false"  />
+    <Property Name="SeriesNum" Type="varchar" Nullable="false" MaxLength="200" />
+    <Property Name="EpisodeNum" Type="varchar" Nullable="false" MaxLength="200" />
     <Property Name="EpisodePart" Type="longtext" Nullable="false" />
     <Property Name="IsRecording" Type="bit" Nullable="false" />
     <Property Name="IdSchedule" Type="int" Nullable="true" />
@@ -423,10 +374,10 @@
       <PropertyRef Name="IdRuleBasedSchedule" />
     </Key>
     <Property Name="IdRuleBasedSchedule" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="ScheduleName" Type="mediumtext" Nullable="false"  />
+    <Property Name="ScheduleName" Type="varchar" Nullable="false" MaxLength="256" />
     <Property Name="MaxAirings" Type="int" Nullable="false" />
     <Property Name="Priority" Type="int" Nullable="false" />
-    <Property Name="Directory" Type="mediumtext" Nullable="false"  />
+    <Property Name="Directory" Type="varchar" Nullable="false" MaxLength="1024" />
     <Property Name="Quality" Type="int" Nullable="false" />
     <Property Name="KeepMethod" Type="int" Nullable="false" />
     <Property Name="KeepDate" Type="datetime" Nullable="true" />
@@ -439,8 +390,8 @@
       <PropertyRef Name="IdSatellite" />
     </Key>
     <Property Name="IdSatellite" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="SatelliteName" Type="mediumtext" Nullable="false"  />
-    <Property Name="TransponderFileName" Type="mediumtext" Nullable="false"  />
+    <Property Name="Longitude" Type="int" Nullable="false" />
+    <Property Name="Name" Type="varchar" Nullable="false" MaxLength="200" />
   </EntityType>
   <EntityType Name="Schedules">
     <Key>
@@ -449,17 +400,17 @@
     <Property Name="IdSchedule" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="IdChannel" Type="int" Nullable="false" />
     <Property Name="ScheduleType" Type="int" Nullable="false" />
-    <Property Name="ProgramName" Type="mediumtext" Nullable="false"  />
+    <Property Name="ProgramName" Type="varchar" Nullable="false" MaxLength="256" />
     <Property Name="StartTime" Type="datetime" Nullable="false" />
     <Property Name="EndTime" Type="datetime" Nullable="false" />
     <Property Name="MaxAirings" Type="int" Nullable="false" />
     <Property Name="Priority" Type="int" Nullable="false" />
-    <Property Name="Directory" Type="mediumtext" Nullable="false"  />
+    <Property Name="Directory" Type="varchar" Nullable="false" MaxLength="1024" />
     <Property Name="Quality" Type="int" Nullable="false" />
     <Property Name="KeepMethod" Type="int" Nullable="false" />
     <Property Name="KeepDate" Type="datetime" Nullable="true" />
-    <Property Name="PreRecordInterval" Type="int" Nullable="false" />
-    <Property Name="PostRecordInterval" Type="int" Nullable="false" />
+    <Property Name="PreRecordInterval" Type="int" Nullable="true" />
+    <Property Name="PostRecordInterval" Type="int" Nullable="true" />
     <Property Name="Canceled" Type="datetime" Nullable="false" />
     <Property Name="Series" Type="bit" Nullable="false" />
     <Property Name="IdParentSchedule" Type="int" Nullable="true" />
@@ -469,7 +420,7 @@
       <PropertyRef Name="IdScheduleRulesTemplate" />
     </Key>
     <Property Name="IdScheduleRulesTemplate" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Name" Type="mediumtext" Nullable="false"  />
+    <Property Name="Name" Type="varchar" Nullable="false" MaxLength="50" />
     <Property Name="Rules" Type="longtext" Nullable="false" />
     <Property Name="Enabled" Type="bit" Nullable="false" />
     <Property Name="Usages" Type="int" Nullable="false" />
@@ -480,28 +431,18 @@
       <PropertyRef Name="IdSetting" />
     </Key>
     <Property Name="IdSetting" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Tag" Type="mediumtext" Nullable="false"  />
-    <Property Name="Value" Type="mediumtext" Nullable="false"  />
+    <Property Name="Tag" Type="varchar" Nullable="false" MaxLength="200" />
+    <Property Name="Value" Type="varchar" Nullable="false" MaxLength="4096" />
   </EntityType>
   <EntityType Name="SoftwareEncoders">
     <Key>
-      <PropertyRef Name="IdEncoder" />
+      <PropertyRef Name="IdSoftwareEncoder" />
     </Key>
-    <Property Name="IdEncoder" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="IdSoftwareEncoder" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Priority" Type="int" Nullable="false" />
-    <Property Name="Name" Type="mediumtext" Nullable="false"  />
+    <Property Name="Name" Type="varchar" Nullable="false" MaxLength="200" />
     <Property Name="Type" Type="int" Nullable="false" />
-    <Property Name="Reusable" Type="bit" Nullable="false" />
-  </EntityType>
-  <EntityType Name="Timespans">
-    <Key>
-      <PropertyRef Name="IdTimespan" />
-    </Key>
-    <Property Name="IdTimespan" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="StartTime" Type="datetime" Nullable="false" />
-    <Property Name="EndTime" Type="datetime" Nullable="false" />
-    <Property Name="DayOfWeek" Type="int" Nullable="false" />
-    <Property Name="IdKeyword" Type="int" Nullable="false" />
+    <Property Name="ClassId" Type="varchar" Nullable="false" MaxLength="50" />
   </EntityType>
   <EntityType Name="TuningDetails">
     <Key>
@@ -509,47 +450,44 @@
     </Key>
     <Property Name="IdTuning" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="IdChannel" Type="int" Nullable="false" />
-    <Property Name="Name" Type="mediumtext" Nullable="false"  />
-    <Property Name="Provider" Type="mediumtext" Nullable="false"  />
-    <Property Name="ChannelType" Type="int" Nullable="false" />
-    <Property Name="ChannelNumber" Type="int" Nullable="false" />
+    <Property Name="MediaType" Type="int" Nullable="false" />
+    <Property Name="Priority" Type="int" Nullable="false" />
+    <Property Name="BroadcastStandard" Type="int" Nullable="false" />
+    <Property Name="Name" Type="varchar" Nullable="false" MaxLength="200" />
+    <Property Name="Provider" Type="varchar" Nullable="false" MaxLength="200" />
+    <Property Name="LogicalChannelNumber" Type="varchar" Nullable="false" MaxLength="10" />
+    <Property Name="IsEncrypted" Type="bit" Nullable="false" />
+    <Property Name="IsHighDefinition" Type="bit" Nullable="false" />
+    <Property Name="IsThreeDimensional" Type="bit" Nullable="false" />
+    <Property Name="OriginalNetworkId" Type="int" Nullable="false" />
+    <Property Name="TransportStreamId" Type="int" Nullable="false" />
+    <Property Name="ServiceId" Type="int" Nullable="false" />
+    <Property Name="FreesatChannelId" Type="int" Nullable="false" />
+    <Property Name="OpenTvChannelId" Type="int" Nullable="false" />
+    <Property Name="EpgOriginalNetworkId" Type="int" Nullable="false" />
+    <Property Name="EpgTransportStreamId" Type="int" Nullable="false" />
+    <Property Name="EpgServiceId" Type="int" Nullable="false" />
+    <Property Name="SourceId" Type="int" Nullable="false" />
+    <Property Name="PmtPid" Type="int" Nullable="false" />
+    <Property Name="PhysicalChannelNumber" Type="int" Nullable="false" />
     <Property Name="Frequency" Type="int" Nullable="false" />
     <Property Name="CountryId" Type="int" Nullable="false" />
-    <Property Name="NetworkId" Type="int" Nullable="false" />
-    <Property Name="TransportId" Type="int" Nullable="false" />
-    <Property Name="ServiceId" Type="int" Nullable="false" />
-    <Property Name="PmtPid" Type="int" Nullable="false" />
-    <Property Name="FreeToAir" Type="bit" Nullable="false" />
     <Property Name="Modulation" Type="int" Nullable="false" />
     <Property Name="Polarisation" Type="int" Nullable="false" />
-    <Property Name="Symbolrate" Type="int" Nullable="false" />
-    <Property Name="DiSEqC" Type="int" Nullable="false" />    
+    <Property Name="SymbolRate" Type="int" Nullable="false" />
+    <Property Name="DiSEqC" Type="int" Nullable="false" />
     <Property Name="Bandwidth" Type="int" Nullable="false" />
-    <Property Name="MajorChannel" Type="int" Nullable="false" />
-    <Property Name="MinorChannel" Type="int" Nullable="false" />
     <Property Name="VideoSource" Type="int" Nullable="false" />
     <Property Name="TuningSource" Type="int" Nullable="false" />
-    <Property Name="Band" Type="int" Nullable="false" />
     <Property Name="SatIndex" Type="int" Nullable="false" />
-    <Property Name="InnerFecRate" Type="int" Nullable="false" />
-    <Property Name="Pilot" Type="int" Nullable="false" />
-    <Property Name="RollOff" Type="int" Nullable="false" />
-    <Property Name="Url" Type="mediumtext" Nullable="false"  />
-    <Property Name="Bitrate" Type="int" Nullable="false" />
+    <Property Name="FecCodeRate" Type="int" Nullable="false" />
+    <Property Name="PilotTonesState" Type="int" Nullable="false" />
+    <Property Name="RollOffFactor" Type="int" Nullable="false" />
+    <Property Name="StreamId" Type="int" Nullable="false" />
+    <Property Name="Url" Type="varchar" Nullable="false" MaxLength="200" />
     <Property Name="AudioSource" Type="int" Nullable="false" />
-    <Property Name="IsVCRSignal" Type="bit" Nullable="false" />
-    <Property Name="MediaType" Type="int" Nullable="false" />
+    <Property Name="IsVcrSignal" Type="bit" Nullable="false" />
     <Property Name="IdLnbType" Type="int" Nullable="true" />
-  </EntityType>
-  <EntityType Name="TvMovieMappings">
-    <Key>
-      <PropertyRef Name="IdMapping" />
-    </Key>
-    <Property Name="IdMapping" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="IdChannel" Type="int" Nullable="false" />
-    <Property Name="StationName" Type="mediumtext" Nullable="false"  />
-    <Property Name="TimeSharingStart" Type="mediumtext" Nullable="false"  />
-    <Property Name="TimeSharingEnd" Type="mediumtext" Nullable="false"  />
   </EntityType>
   <EntityType Name="Versions">
     <Key>
@@ -558,44 +496,83 @@
     <Property Name="IdVersion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="VersionNumber" Type="int" Nullable="false" />
   </EntityType>
+  <EntityType Name="LnbTypes">
+    <Key>
+      <PropertyRef Name="IdLnbType" />
+    </Key>
+    <Property Name="IdLnbType" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" Nullable="false" MaxLength="200" />
+    <Property Name="LowBandFrequency" Type="int" Nullable="false" />
+    <Property Name="HighBandFrequency" Type="int" Nullable="false" />
+    <Property Name="SwitchFrequency" Type="int" Nullable="false" />
+    <Property Name="IsBandStacked" Type="bit" Nullable="false" />
+  </EntityType>
   <EntityType Name="RecordingCredits">
     <Key>
       <PropertyRef Name="IdRecordingCredit" />
     </Key>
     <Property Name="IdRecordingCredit" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="IdRecording" Type="int" Nullable="false" />
-    <Property Name="Person" Type="mediumtext" Nullable="false"  />
-    <Property Name="Role" Type="mediumtext" Nullable="false"  />
+    <Property Name="Person" Type="varchar" Nullable="false" MaxLength="200" />
+    <Property Name="Role" Type="varchar" Nullable="false" MaxLength="50" />
   </EntityType>
-  
-  <EntityType Name="TvGuideCategories">
+  <EntityType Name="GuideCategories">
     <Key>
-      <PropertyRef Name="IdTvGuideCategory" />
+      <PropertyRef Name="IdGuideCategory" />
     </Key>
-    <Property Name="IdTvGuideCategory" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Name" Type="nvarchar" Nullable="false" />
+    <Property Name="IdGuideCategory" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" Nullable="false" />
     <Property Name="IsMovie" Type="bit" Nullable="false" />
     <Property Name="IsEnabled" Type="bit" Nullable="false" />
   </EntityType>
-  
-  <EntityType Name="LnbTypes">
+  <EntityType Name="TunerProperties">
     <Key>
-      <PropertyRef Name="IdLnbType" />
+      <PropertyRef Name="IdTunerProperty" />
     </Key>
-    <Property Name="IdLnbType" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Name" Type="mediumtext" Nullable="false" />
-    <Property Name="LowBandFrequency" Type="int" Nullable="false" />    
-    <Property Name="HighBandFrequency" Type="int" Nullable="false" />
-    <Property Name="SwitchFrequency" Type="int" Nullable="false" />
-    <Property Name="IsBandStacked" Type="bit" Nullable="false" />
-    <Property Name="IsToroidal" Type="bit" Nullable="false" />
+    <Property Name="IdTunerProperty" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PropertyId" Type="int" Nullable="false" />
+    <Property Name="Value" Type="int" Nullable="false" />
+    <Property Name="Default" Type="int" Nullable="false" />
+    <Property Name="Minimum" Type="int" Nullable="false" />
+    <Property Name="Maximum" Type="int" Nullable="false" />
+    <Property Name="Step" Type="int" Nullable="false" />
+    <Property Name="PossibleValueFlags" Type="int" Nullable="false" />
+    <Property Name="ValueFlags" Type="int" Nullable="false" />
+    <Property Name="IdTuner" Type="int" Nullable="false" />
   </EntityType>
-  
+  <EntityType Name="AnalogTunerSettings">
+    <Key>
+      <PropertyRef Name="IdAnalogTunerSettings" />
+    </Key>
+    <Property Name="IdAnalogTunerSettings" Type="int" Nullable="false" />
+    <Property Name="VideoStandard" Type="int" Nullable="false" />
+    <Property Name="SupportedVideoStandards" Type="int" Nullable="false" />
+    <Property Name="FrameSize" Type="int" Nullable="false" />
+    <Property Name="SupportedFrameSizes" Type="int" Nullable="false" />
+    <Property Name="FrameRate" Type="int" Nullable="false" />
+    <Property Name="SupportedFrameRates" Type="int" Nullable="false" />
+    <Property Name="IdSoftwareEncoderVideo" Type="int" Nullable="false" />
+    <Property Name="IdSoftwareEncoderAudio" Type="int" Nullable="false" />
+    <Property Name="EncoderBitRateModeTimeShifting" Type="int" Nullable="false" />
+    <Property Name="EncoderBitRateTimeShifting" Type="int" Nullable="false" />
+    <Property Name="EncoderBitRatePeakTimeShifting" Type="int" Nullable="false" />
+    <Property Name="EncoderBitRateModeRecording" Type="int" Nullable="false" />
+    <Property Name="EncoderBitRateRecording" Type="int" Nullable="false" />
+    <Property Name="EncoderBitRatePeakRecording" Type="int" Nullable="false" />
+    <Property Name="ExternalInputSourceVideo" Type="int" Nullable="false" />
+    <Property Name="ExternalInputSourceAudio" Type="int" Nullable="false" />
+    <Property Name="ExternalInputCountryId" Type="int" Nullable="false" />
+    <Property Name="ExternalInputPhysicalChannelNumber" Type="int" Nullable="false" />
+    <Property Name="ExternalTunerProgram" Type="varchar" Nullable="false" MaxLength="300" />
+    <Property Name="ExternalTunerProgramArguments" Type="varchar" Nullable="false" MaxLength="200" />
+    <Property Name="SupportedVideoSources" Type="int" Nullable="false" />
+    <Property Name="SupportedAudioSources" Type="int" Nullable="false" />
+  </EntityType>
   <Association Name="GroupMapChannelGroup">
-    <End Role="GroupMap" Type="TVDatabaseModel.Store.GroupMaps" Multiplicity="*" />
     <End Role="ChannelGroup" Type="TVDatabaseModel.Store.ChannelGroups" Multiplicity="1">
       <OnDelete Action="Cascade" />
     </End>
+    <End Role="GroupMap" Type="TVDatabaseModel.Store.GroupMaps" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="ChannelGroup">
         <PropertyRef Name="IdGroup" />
@@ -606,10 +583,10 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="GroupMapChannel">
-    <End Role="GroupMap" Type="TVDatabaseModel.Store.GroupMaps" Multiplicity="*" />
     <End Role="Channel" Type="TVDatabaseModel.Store.Channels" Multiplicity="1">
       <OnDelete Action="Cascade" />
     </End>
+    <End Role="GroupMap" Type="TVDatabaseModel.Store.GroupMaps" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Channel">
         <PropertyRef Name="IdChannel" />
@@ -619,31 +596,17 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="CardGroupMapCard">
-    <End Role="CardGroupMap" Type="TVDatabaseModel.Store.CardGroupMaps" Multiplicity="*" />
-    <End Role="Card" Type="TVDatabaseModel.Store.Cards" Multiplicity="1">
+  <Association Name="DiseqcMotorTuner">
+    <End Role="Tuner" Type="TVDatabaseModel.Store.Tuners" Multiplicity="1">
       <OnDelete Action="Cascade" />
     </End>
+    <End Role="DiseqcMotor" Type="TVDatabaseModel.Store.DiseqcMotors" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="Card">
-        <PropertyRef Name="IdCard" />
+      <Principal Role="Tuner">
+        <PropertyRef Name="IdTuner" />
       </Principal>
-      <Dependent Role="CardGroupMap">
-        <PropertyRef Name="IdCard" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="DisEqcMotorCard">
-    <End Role="DisEqcMotor" Type="TVDatabaseModel.Store.DisEqcMotors" Multiplicity="*" />
-    <End Role="Card" Type="TVDatabaseModel.Store.Cards" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
-    <ReferentialConstraint>
-      <Principal Role="Card">
-        <PropertyRef Name="IdCard" />
-      </Principal>
-      <Dependent Role="DisEqcMotor">
-        <PropertyRef Name="IdCard" />
+      <Dependent Role="DiseqcMotor">
+        <PropertyRef Name="IdTuner" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -656,20 +619,6 @@
       </Principal>
       <Dependent Role="Recording">
         <PropertyRef Name="IdChannel" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="CardGroupMapCardGroup">
-    <End Role="CardGroupMap" Type="TVDatabaseModel.Store.CardGroupMaps" Multiplicity="*" />
-    <End Role="CardGroup" Type="TVDatabaseModel.Store.CardGroups" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
-    <ReferentialConstraint>
-      <Principal Role="CardGroup">
-        <PropertyRef Name="IdCardGroup" />
-      </Principal>
-      <Dependent Role="CardGroupMap">
-        <PropertyRef Name="IdCardGroup" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -687,17 +636,17 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="CardChannelMap">
-    <End Role="Card" Type="TVDatabaseModel.Store.Cards" Multiplicity="1">
+  <Association Name="TunerChannelMap">
+    <End Role="Tuner" Type="TVDatabaseModel.Store.Tuners" Multiplicity="1">
       <OnDelete Action="Cascade" />
     </End>
     <End Role="ChannelMap" Type="TVDatabaseModel.Store.ChannelMaps" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="Card">
-        <PropertyRef Name="IdCard" />
+      <Principal Role="Tuner">
+        <PropertyRef Name="IdTuner" />
       </Principal>
       <Dependent Role="ChannelMap">
-        <PropertyRef Name="IdCard" />
+        <PropertyRef Name="IdTuner" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -795,59 +744,17 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="ChannelTvMovieMapping">
-    <End Role="Channel" Type="TVDatabaseModel.Store.Channels" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
-    <End Role="TvMovieMapping" Type="TVDatabaseModel.Store.TvMovieMappings" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Channel">
-        <PropertyRef Name="IdChannel" />
-      </Principal>
-      <Dependent Role="TvMovieMapping">
-        <PropertyRef Name="IdChannel" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="DisEqcMotorSatellite">
-    <End Role="DisEqcMotor" Type="TVDatabaseModel.Store.DisEqcMotors" Multiplicity="*" />
+  <Association Name="DiseqcMotorSatellite">
     <End Role="Satellite" Type="TVDatabaseModel.Store.Satellites" Multiplicity="1">
       <OnDelete Action="Cascade" />
     </End>
+    <End Role="DiseqcMotor" Type="TVDatabaseModel.Store.DiseqcMotors" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Satellite">
         <PropertyRef Name="IdSatellite" />
       </Principal>
-      <Dependent Role="DisEqcMotor">
+      <Dependent Role="DiseqcMotor">
         <PropertyRef Name="IdSatellite" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="ProgramPersonalTVGuideMap">
-    <End Role="Program" Type="TVDatabaseModel.Store.Programs" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
-    <End Role="PersonalTVGuideMap" Type="TVDatabaseModel.Store.PersonalTVGuideMaps" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Program">
-        <PropertyRef Name="IdProgram" />
-      </Principal>
-      <Dependent Role="PersonalTVGuideMap">
-        <PropertyRef Name="IdProgram" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="KeywordPersonalTVGuideMap">
-    <End Role="Keyword" Type="TVDatabaseModel.Store.Keywords" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
-    <End Role="PersonalTVGuideMap" Type="TVDatabaseModel.Store.PersonalTVGuideMaps" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Keyword">
-        <PropertyRef Name="IdKeyword" />
-      </Principal>
-      <Dependent Role="PersonalTVGuideMap">
-        <PropertyRef Name="IdKeyword" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -860,34 +767,6 @@
       </Principal>
       <Dependent Role="Recording">
         <PropertyRef Name="IdSchedule" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="KeywordKeywordMap">
-    <End Role="Keyword" Type="TVDatabaseModel.Store.Keywords" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
-    <End Role="KeywordMap" Type="TVDatabaseModel.Store.KeywordMaps" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Keyword">
-        <PropertyRef Name="IdKeyword" />
-      </Principal>
-      <Dependent Role="KeywordMap">
-        <PropertyRef Name="IdKeyword" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="KeywordMapChannelGroup">
-    <End Role="KeywordMap" Type="TVDatabaseModel.Store.KeywordMaps" Multiplicity="*" />
-    <End Role="ChannelGroup" Type="TVDatabaseModel.Store.ChannelGroups" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
-    <ReferentialConstraint>
-      <Principal Role="ChannelGroup">
-        <PropertyRef Name="IdGroup" />
-      </Principal>
-      <Dependent Role="KeywordMap">
-        <PropertyRef Name="IdChannelGroup" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -957,17 +836,17 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="CardConflict">
-    <End Role="Card" Type="TVDatabaseModel.Store.Cards" Multiplicity="0..1">
+  <Association Name="TunerConflict">
+    <End Role="Tuner" Type="TVDatabaseModel.Store.Tuners" Multiplicity="0..1">
       <OnDelete Action="Cascade" />
     </End>
     <End Role="Conflict" Type="TVDatabaseModel.Store.Conflicts" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="Card">
-        <PropertyRef Name="IdCard" />
+      <Principal Role="Tuner">
+        <PropertyRef Name="IdTuner" />
       </Principal>
       <Dependent Role="Conflict">
-        <PropertyRef Name="IdCard" />
+        <PropertyRef Name="IdTuner" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1021,7 +900,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  
   <Association Name="LnbTypeTuningDetail">
     <End Role="LnbType" Type="TVDatabaseModel.Store.LnbTypes" Multiplicity="0..1" />
     <End Role="TuningDetail" Type="TVDatabaseModel.Store.TuningDetails" Multiplicity="*" />
@@ -1034,15 +912,79 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="TvGuideCategoryProgramCategory">
-    <End Role="TvGuideCategory" Type="TVDatabaseModel.Store.TvGuideCategories" Multiplicity="0..1" />
+  <Association Name="GuideCategoryProgramCategory">
+    <End Role="GuideCategory" Type="TVDatabaseModel.Store.GuideCategories" Multiplicity="0..1" />
     <End Role="ProgramCategory" Type="TVDatabaseModel.Store.ProgramCategories" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="TvGuideCategory">
-        <PropertyRef Name="IdTvGuideCategory" />
+      <Principal Role="GuideCategory">
+        <PropertyRef Name="IdGuideCategory" />
       </Principal>
       <Dependent Role="ProgramCategory">
-        <PropertyRef Name="IdTvGuideCategory" />
+        <PropertyRef Name="IdGuideCategory" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="TunerTunerGroup">
+    <End Role="Tuner" Type="TVDatabaseModel.Store.Tuners" Multiplicity="*" />
+    <End Role="TunerGroup" Type="TVDatabaseModel.Store.TunerGroups" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="TunerGroup">
+        <PropertyRef Name="IdTunerGroup" />
+      </Principal>
+      <Dependent Role="Tuner">
+        <PropertyRef Name="IdTunerGroup" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="TunerTunerProperty">
+    <End Role="Tuner" Type="TVDatabaseModel.Store.Tuners" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="TunerProperty" Type="TVDatabaseModel.Store.TunerProperties" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Tuner">
+        <PropertyRef Name="IdTuner" />
+      </Principal>
+      <Dependent Role="TunerProperty">
+        <PropertyRef Name="IdTuner" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="AnalogTunerSettingsSoftwareEncoderVideo">
+    <End Role="AnalogTunerSettings" Type="TVDatabaseModel.Store.AnalogTunerSettings" Multiplicity="*" />
+    <End Role="SoftwareEncoder" Type="TVDatabaseModel.Store.SoftwareEncoders" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="SoftwareEncoder">
+        <PropertyRef Name="IdSoftwareEncoder" />
+      </Principal>
+      <Dependent Role="AnalogTunerSettings">
+        <PropertyRef Name="IdSoftwareEncoderVideo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="AnalogTunerSettingsSoftwareEncoderAudio">
+    <End Role="AnalogTunerSettings" Type="TVDatabaseModel.Store.AnalogTunerSettings" Multiplicity="*" />
+    <End Role="SoftwareEncoder" Type="TVDatabaseModel.Store.SoftwareEncoders" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="SoftwareEncoder">
+        <PropertyRef Name="IdSoftwareEncoder" />
+      </Principal>
+      <Dependent Role="AnalogTunerSettings">
+        <PropertyRef Name="IdSoftwareEncoderAudio" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="TunerAnalogTunerSettings">
+    <End Role="Tuner" Type="TVDatabaseModel.Store.Tuners" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="AnalogTunerSettings" Type="TVDatabaseModel.Store.AnalogTunerSettings" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="Tuner">
+        <PropertyRef Name="IdTuner" />
+      </Principal>
+      <Dependent Role="AnalogTunerSettings">
+        <PropertyRef Name="IdAnalogTunerSettings" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

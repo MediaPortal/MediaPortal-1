@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Mediaportal.Common.Utils;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
@@ -88,37 +89,36 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         progList.TryGetValue(nextPrg.IdChannel, out nowAndNext);
 
         int idChannel = nextPrg.IdChannel;
-        string titleNext = nextPrg.Title;
-        int idProgramNext = nextPrg.IdProgram;
-        string episodeNameNext = nextPrg.EpisodeName;
-        string seriesNumNext = nextPrg.SeriesNum;
-        string episodeNumNext = nextPrg.EpisodeNum;
-        string episodePartNext = nextPrg.EpisodePart;
+        int nextIdProgram = nextPrg.IdProgram;
+        string nextTitle = nextPrg.Title;
+        string nextEpisodeName = nextPrg.EpisodeName ?? string.Empty;
+        string nextSeasonNumber = nextPrg.SeasonNumber.HasValue ? nextPrg.SeasonNumber.ToString() : string.Empty;
+        string nextEpisodeNumber = nextPrg.EpisodeNumber.HasValue ? nextPrg.EpisodeNumber.ToString() : string.Empty;
+        string nextEpisodePartNumber = nextPrg.EpisodePartNumber.HasValue ? nextPrg.EpisodePartNumber.ToString() : string.Empty;
 
         if (nowAndNext == null)
         {
+          int idProgramNow = -1;
           DateTime nowStart = SqlDateTime.MinValue.Value;
           DateTime nowEnd = SqlDateTime.MinValue.Value;
-          ;
-          string titleNow = string.Empty;
-          int idProgramNow = -1;
-          string episodeNameNow = string.Empty;
-          string seriesNumNow = string.Empty;
-          string episodeNumNow = string.Empty;
-          string episodePartNow = string.Empty;
-          nowAndNext = new NowAndNext(idChannel, nowStart, nowEnd, titleNow, titleNext, idProgramNow,
-                                      idProgramNext, episodeNameNow, episodeNameNext, seriesNumNow,
-                                      seriesNumNext, episodeNumNow, episodeNumNext, episodePartNow,
-                                      episodePartNext);
+          string nowTitle = string.Empty;
+          string nowEpisodeName = string.Empty;
+          string nowSeasonNumber = string.Empty;
+          string nowEpisodeNumber = string.Empty;
+          string nowEpisodePartNumber = string.Empty;
+          nowAndNext = new NowAndNext(idChannel, nowStart, nowEnd, nowTitle, nextTitle, idProgramNow,
+                                      nextIdProgram, nowEpisodeName, nextEpisodeName, nowSeasonNumber,
+                                      nextSeasonNumber, nowEpisodeNumber, nextEpisodeNumber, nowEpisodePartNumber,
+                                      nextEpisodePartNumber);
         }
         else
         {
-          nowAndNext.TitleNext = titleNext;
-          nowAndNext.IdProgramNext = idProgramNext;
-          nowAndNext.EpisodeNameNext = episodeNameNext;
-          nowAndNext.SeriesNumNext = seriesNumNext;
-          nowAndNext.EpisodeNumNext = episodeNumNext;
-          nowAndNext.EpisodePartNext = episodePartNext;
+          nowAndNext.IdProgramNext = nextIdProgram;
+          nowAndNext.TitleNext = nextTitle;
+          nowAndNext.EpisodeNameNext = nextEpisodeName;
+          nowAndNext.SeriesNumNext = nextSeasonNumber;
+          nowAndNext.EpisodeNumNext = nextEpisodeNumber;
+          nowAndNext.EpisodePartNext = nextEpisodePartNumber;
         }
         progList[idChannel] = nowAndNext;
       }
@@ -129,43 +129,43 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       foreach (Program nowPrg in nowPrograms)
       {
         int idChannel = nowPrg.IdChannel;
-        string titleNext = string.Empty;
-        int idProgramNext = -1;
-        string episodeNameNext = string.Empty;
-        string seriesNumNext = string.Empty;
-        string episodeNumNext = string.Empty;
-        string episodePartNext = string.Empty;
+        string nextTitle = string.Empty;
+        int nextIdProgram = -1;
+        string nextEpisodeName = string.Empty;
+        string nextSeasonNumber = string.Empty;
+        string nextEpisodeNumber = string.Empty;
+        string nextEpisodePartNumber = string.Empty;
 
+        int nowIdProgram = nowPrg.IdProgram;
         DateTime nowStart = nowPrg.StartTime;
         DateTime nowEnd = nowPrg.EndTime;
-        string titleNow = nowPrg.Title;
-        int idProgramNow = nowPrg.IdProgram;
-        string episodeNameNow = nowPrg.EpisodeName;
-        string seriesNumNow = nowPrg.SeriesNum;
-        string episodeNumNow = nowPrg.EpisodeNum;
-        string episodePartNow = nowPrg.EpisodePart;
+        string nowTitle = nowPrg.Title;
+        string nowEpisodeName = nowPrg.EpisodeName ?? string.Empty;
+        string nowSeasonNumber = nowPrg.SeasonNumber.ToString();
+        string nowEpisodeNumber = nowPrg.EpisodeNumber.ToString();
+        string nowEpisodePartNumber = nowPrg.EpisodePartNumber.HasValue ? nowPrg.EpisodePartNumber.ToString() : string.Empty;
 
-        var nowAndNext = new NowAndNext(idChannel, nowStart, nowEnd, titleNow, titleNext, idProgramNow,
-                                        idProgramNext, episodeNameNow, episodeNameNext, seriesNumNow,
-                                        seriesNumNext, episodeNumNow, episodeNumNext, episodePartNow,
-                                        episodePartNext);
+        var nowAndNext = new NowAndNext(idChannel, nowStart, nowEnd, nowTitle, nextTitle, nowIdProgram,
+                                        nextIdProgram, nowEpisodeName, nextEpisodeName, nowSeasonNumber,
+                                        nextSeasonNumber, nowEpisodeNumber, nextEpisodeNumber, nowEpisodePartNumber,
+                                        nextEpisodePartNumber);
         progList[idChannel] = nowAndNext;
       }
     }
 
 
-    public void InsertPrograms(ImportParams importParams)
+    public static void InsertPrograms(ImportParams importParams)
     {
       using (IProgramRepository programRepository = new ProgramRepository(true))
       {
         programRepository.UnitOfWork.BeginTransaction();
         switch (importParams.ProgamsToDelete)
         {
-          case DeleteBeforeImportOption.OverlappingPrograms:
+          case EpgDeleteBeforeImportOption.OverlappingPrograms:
             IEnumerable<ProgramListPartition> partitions = importParams.ProgramList.GetPartitions();
             DeleteProgramsByPartitions(programRepository, partitions);
             break;
-          case DeleteBeforeImportOption.ProgramsOnSameChannel:
+          case EpgDeleteBeforeImportOption.ProgramsOnSameChannel:
             IEnumerable<int> channelIds = importParams.ProgramList.GetChannelIds();
             DeleteProgramsByIds(programRepository, channelIds);
             break;
@@ -182,12 +182,12 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       //no need to do a manual transaction rollback on UnitOfWork as it does this internally already in case of exceptions
     }
 
-    private void DeleteProgramsByIds(IProgramRepository programRepository, IEnumerable<int> channelIds)
+    private static void DeleteProgramsByIds(IProgramRepository programRepository, IEnumerable<int> channelIds)
     {
       programRepository.Delete<Program>(t => channelIds.Any(c => c == t.IdChannel));
     }
 
-    private void DeleteProgramsByPartitions(IProgramRepository programRepository, IEnumerable<ProgramListPartition> deleteProgramRanges)
+    private static void DeleteProgramsByPartitions(IProgramRepository programRepository, IEnumerable<ProgramListPartition> deleteProgramRanges)
     {
       /*sqlCmd.CommandText =
       "DELETE FROM Program WHERE idChannel = @idChannel AND ((endTime > @rangeStart AND startTime < @rangeEnd) OR (startTime = endTime AND startTime BETWEEN @rangeStart AND @rangeEnd))";
@@ -334,7 +334,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     /// The deletion is also performed in the same transaction as the inserts so that EPG will not be at any time empty.</para>
     /// <para>After all insert have completed and the background thread is idle for 60 seconds, the program states are
     /// automatically updated to reflect the changes.</para></remarks>
-    public int InsertPrograms(List<Program> aProgramList, DeleteBeforeImportOption progamsToDelete, ThreadPriority aThreadPriority)
+    public static int InsertPrograms(List<Program> aProgramList, EpgDeleteBeforeImportOption progamsToDelete, ThreadPriority aThreadPriority)
     {
       try
       {
@@ -386,7 +386,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
       catch (Exception ex)
       {
-        this.LogError("BusinessLayer: InsertPrograms error - {0}, {1}", ex.Message, ex.StackTrace);
+        Log.Error(ex, "BusinessLayer: InsertPrograms error");
         return 0;
       }
     }
@@ -398,25 +398,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         currentInsertThread.Join();
     }
 
-    /// <summary>
-    /// Batch inserts programs - intended for faster EPG import. You must make sure before that there are no duplicates 
-    /// (e.g. delete all program data of the current channel).
-    /// Also you MUST provide a true copy of "aProgramList". If you update it's reference in your own code the values will get overwritten
-    /// (possibly before they are written to disk)!
-    /// </summary>
-    /// <param name="aProgramList">A list of persistable gentle.NET Program objects mapping to the Programs table</param>
-    /// <param name="aThreadPriority">Use "Lowest" for Background imports allowing LiveTV, AboveNormal for full speed</param>
-    /// <returns>The record count of programs if successful, 0 on errors</returns>
-    public int InsertPrograms(List<Program> aProgramList, ThreadPriority aThreadPriority)
-    {
-      return InsertPrograms(aProgramList, DeleteBeforeImportOption.None, aThreadPriority);
-    }
-
-    private void InsertProgramsThreadStart()
+    private static void InsertProgramsThreadStart()
     {
       try
       {
-        this.LogDebug("BusinessLayer: InsertProgramsThread started");
+        Log.Debug("BusinessLayer: InsertProgramsThread started");
         DateTime lastImport = DateTime.Now;
         while (true)
         {
@@ -433,7 +419,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
               //  Has new work been queued in the meantime?
               if (_programInsertsQueue.Count == 0)
               {
-                this.LogDebug("BusinessLayer: InsertProgramsThread exiting");
+                Log.Debug("BusinessLayer: InsertProgramsThread exiting");
                 _insertProgramsThread = null;
                 break;
               }
@@ -452,21 +438,20 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
               }
               Thread.CurrentThread.Priority = importParams.Priority;
               InsertPrograms(importParams);
-              this.LogDebug("BusinessLayer: Inserted {0} programs to the database", importParams.ProgramList.Count);
+              Log.Debug("BusinessLayer: Inserted {0} programs to the database", importParams.ProgramList.Count);
               lastImport = DateTime.Now;
               Thread.CurrentThread.Priority = ThreadPriority.Lowest;
             }
             catch (Exception ex)
             {
-              this.LogError("BusinessLayer: InsertMySQL/InsertMSSQL caused an exception:");
-              this.LogError(ex);
+              Log.Error(ex, "BusinessLayer: InsertMySQL/InsertMSSQL caused an exception:");
             }
           }
         }
       }
       catch (Exception ex)
       {
-        this.LogError("BusinessLayer: InsertProgramsThread error - {0}, {1}", ex.Message, ex.StackTrace);
+        Log.Error(ex, "BusinessLayer: InsertProgramsThread error");
       }
     }
 
@@ -812,7 +797,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
-    public static IList<Program> GetProgramsByDescription(string searchCriteria, MediaTypeEnum mediaType, StringComparisonEnum stringComparison)
+    public static IList<Program> GetProgramsByDescription(string searchCriteria, MediaType mediaType, StringComparisonEnum stringComparison)
     {
       using (IProgramRepository programRepository = new ProgramRepository())
       {
@@ -860,7 +845,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
-    public static IList<Program> GetProgramsByTitle(string searchCriteria, MediaTypeEnum mediaType, StringComparisonEnum stringComparisonEnum)
+    public static IList<Program> GetProgramsByTitle(string searchCriteria, MediaType mediaType, StringComparisonEnum stringComparisonEnum)
     {
       using (IProgramRepository programRepository = new ProgramRepository())
       {
@@ -937,7 +922,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
-    public static IList<Program> GetProgramsByTitleAndCategoryAndMediaType(string categoryCriteriea, string titleCriteria, MediaTypeEnum mediaType, StringComparisonEnum stringComparisonCategory, StringComparisonEnum stringComparisonTitle)
+    public static IList<Program> GetProgramsByTitleAndCategoryAndMediaType(string categoryCriteriea, string titleCriteria, MediaType mediaType, StringComparisonEnum stringComparisonCategory, StringComparisonEnum stringComparisonTitle)
     {
       using (IProgramRepository programRepository = new ProgramRepository())
       {
@@ -1173,20 +1158,18 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void DeleteOldPrograms()
     {
-      DateTime dtYesterday = DateTime.Now.AddHours(-SettingsManagement.EpgKeepDuration);
       using (IProgramRepository programRepository = new ProgramRepository(true))
       {
-        programRepository.Delete<Program>(p => p.EndTime < dtYesterday);
+        programRepository.Delete<Program>(p => p.EndTime <= DateTime.Today);
         programRepository.UnitOfWork.SaveChanges();
       }
     }
 
     public static void DeleteOldPrograms(int idChannel)
     {
-      DateTime dtYesterday = DateTime.Now.AddHours(-SettingsManagement.EpgKeepDuration);
       using (IProgramRepository programRepository = new ProgramRepository(true))
       {
-        programRepository.Delete<Program>(p => p.EndTime < dtYesterday && p.IdChannel == idChannel);
+        programRepository.Delete<Program>(p => p.EndTime <= DateTime.Today && p.IdChannel == idChannel);
         programRepository.UnitOfWork.SaveChanges();
       }
     }

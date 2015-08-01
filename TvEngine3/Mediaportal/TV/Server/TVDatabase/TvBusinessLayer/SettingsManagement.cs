@@ -11,26 +11,12 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
   public static class SettingsManagement
   {
-    private static int _epgKeepDuration;
-    public static int EpgKeepDuration
-    {
-      get
-      {
-        if (_epgKeepDuration == 0)
-        {
-          // first time query settings, caching
-          _epgKeepDuration = GetValue("epgKeepDuration", 24);
-        }
-        return _epgKeepDuration;
-      }
-    }    
-
     public static Setting GetSetting(string tagName)
     {
       Setting setting = EntityCacheHelper.Instance.SettingCache.GetOrUpdateFromCache(tagName,
                   delegate
                     {
-                      using (ISettingsRepository settingsRepository = new SettingsRepository())
+                      using (ISettingRepository settingsRepository = new SettingRepository())
                       {
                         return settingsRepository.GetSetting(tagName);
                       }
@@ -41,7 +27,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void SaveSetting(string tagName, string value)
     {            
-      using (ISettingsRepository settingsRepository = new SettingsRepository(true))
+      using (ISettingRepository settingsRepository = new SettingRepository(true))
       {
         Setting setting = settingsRepository.SaveSetting(tagName, value);
         EntityCacheHelper.Instance.SettingCache.AddOrUpdateCache(tagName, setting);
@@ -79,7 +65,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
       if (setting == null)
       {
-        using (ISettingsRepository settingsRepository = new SettingsRepository(true))
+        using (ISettingRepository settingsRepository = new SettingRepository(true))
         {
           setting = settingsRepository.GetOrSaveSetting(tagName, defaultValue);
           EntityCacheHelper.Instance.SettingCache.AddOrUpdateCache(tagName, setting);
@@ -132,10 +118,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static IList<Setting> ListAllSettings()
     {
-      using (ISettingsRepository settingsRepository = new SettingsRepository(true))
+      using (ISettingRepository settingsRepository = new SettingRepository(true))
       {
-        IQueryable<Setting> settings = settingsRepository.GetAll<Setting>();        
-        return settings.ToList();
+        return settingsRepository.GetAll<Setting>().ToList();        
       }
     }
   }

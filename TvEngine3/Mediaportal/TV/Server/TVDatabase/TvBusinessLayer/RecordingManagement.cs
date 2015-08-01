@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
 
@@ -28,7 +28,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
-    public static IList<Recording> ListAllRecordingsByMediaType(MediaTypeEnum mediaType)
+    public static IList<Recording> ListAllRecordingsByMediaType(MediaType mediaType)
     {
       //lazy loading verified ok
       using (IRecordingRepository recordingRepository = new RecordingRepository())
@@ -85,13 +85,13 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
-    public static IList<Recording> ListAllActiveRecordingsByMediaType(MediaTypeEnum mediaType)
+    public static IList<Recording> ListAllActiveRecordingsByMediaType(MediaType mediaType)
     {
       //lazy loading verified ok
       using (IRecordingRepository recordingRepository = new RecordingRepository())
       {
         IQueryable<Recording> allActiveRecordingsByMediaType =
-          recordingRepository.GetQuery<Recording>(c => c.MediaType == (int) mediaType && c.IsRecording);
+          recordingRepository.GetQuery<Recording>(c => c.MediaType == (int)mediaType && c.IsRecording);
         allActiveRecordingsByMediaType = recordingRepository.IncludeAllRelations(allActiveRecordingsByMediaType);
         return allActiveRecordingsByMediaType.ToList();
       }

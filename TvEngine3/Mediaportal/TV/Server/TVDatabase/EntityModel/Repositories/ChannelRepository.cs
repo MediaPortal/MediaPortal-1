@@ -25,24 +25,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
     }
 
-    public IQueryable<Channel> GetAllChannelsByGroupIdAndMediaType(int groupId, MediaTypeEnum mediaType)
-    {
-      IQueryable<Channel> channels = GetQuery<GroupMap>().Where(gm => gm.IdGroup == groupId && gm.Channel.VisibleInGuide && gm.Channel.MediaType == (int)mediaType).OrderBy(gm => gm.SortOrder).Select(gm => gm.Channel);
-      return channels;
-    }
-
-    public IQueryable<Channel> GetAllChannelsByGroupId(int groupId)
-    {
-      IOrderedQueryable<Channel> channels = GetQuery<Channel>().Where(c => c.VisibleInGuide && c.GroupMaps.Count > 0 && c.GroupMaps.Any(gm => gm.ChannelGroup.IdGroup == groupId)).OrderBy(c => c.SortOrder);
-      return channels;
-    }
-
-    public IQueryable<TuningDetail> IncludeAllRelations(IQueryable<TuningDetail> query)
-    {
-      IQueryable<TuningDetail> includeRelations = query.Include(c => c.Channel).Include(c => c.Channel.GroupMaps);
-      return includeRelations;
-    }
-
     public IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query, ChannelIncludeRelationEnum includeRelations)
     {
       bool channelLinkMapsChannelLink = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelLinkMapsChannelLink);
@@ -75,9 +57,9 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       }
 
       //too slow, handle in LoadNavigationProperties instead
-      //if (channelMapsCard)
+      //if (channelMapsTuner)
       //{      
-      //query = query.Include(c => c.ChannelMaps.Select(card => card.Card));
+      //query = query.Include(c => c.ChannelMaps.Select(tuner => tuner.Tuner));
       //}
       if (groupMaps)
       {
@@ -109,15 +91,15 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       return groupsDict;
     }
 
-    private IDictionary<int, Card> GetCardsDictionary()
+    private IDictionary<int, Tuner> GetTunersDictionary()
     {
-      List<Card> cards = GetAll<Card>().ToList();
-      IDictionary<int, Card> cardsDict = new Dictionary<int, Card>();
-      foreach (Card card in cards)
+      List<Tuner> tuners = GetAll<Tuner>().ToList();
+      IDictionary<int, Tuner> tunersDict = new Dictionary<int, Tuner>();
+      foreach (Tuner tuner in tuners)
       {
-        cardsDict.Add(card.IdCard, card);
+        tunersDict.Add(tuner.IdTuner, tuner);
       }
-      return cardsDict;
+      return tunersDict;
     }
 
     private IDictionary<int, LnbType> GetLnbTypesDictionary()
@@ -146,22 +128,22 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     public IList<Channel> LoadNavigationProperties(IEnumerable<Channel> channels, ChannelIncludeRelationEnum includeRelations)
     {
       bool tuningDetails = includeRelations.HasFlag(ChannelIncludeRelationEnum.TuningDetails);
-      bool channelMapsCard = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelMapsCard);
+      bool channelMapsTuner = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelMapsTuner);
       bool groupMapsChannelGroup = includeRelations.HasFlag(ChannelIncludeRelationEnum.GroupMapsChannelGroup);
 
       IList<Channel> list = channels.ToList(); //fetch the basic/incomplete result from DB now.
 
       IDictionary<int, LnbType> lnbTypesDict = null;
-      IDictionary<int, Card> cardDict = null;
+      IDictionary<int, Tuner> tunerDict = null;
       IDictionary<int, ChannelGroup> groupDict = null;
 
       if (tuningDetails)
       {
         lnbTypesDict = GetLnbTypesDictionary();
       }
-      if (channelMapsCard)
+      if (channelMapsTuner)
       {
-        cardDict = GetCardsDictionary();
+        tunerDict = GetTunersDictionary();
       }
 
       if (groupMapsChannelGroup)
@@ -179,11 +161,11 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
             LoadTuningDetail(lnbTypesDict, tuningDetail);
           }
         }
-        if (channelMapsCard)
+        if (channelMapsTuner)
         {
           foreach (var channelMap in channel.ChannelMaps)
           {
-            LoadChannelMap(cardDict, channelMap);
+            LoadChannelMap(tunerDict, channelMap);
           }
         }
 
@@ -201,20 +183,20 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     public Channel LoadNavigationProperties(Channel channel, ChannelIncludeRelationEnum includeRelations)
     {
       bool tuningDetails = includeRelations.HasFlag(ChannelIncludeRelationEnum.TuningDetails);
-      bool channelMapsCard = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelMapsCard);
+      bool channelMapsTuner = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelMapsTuner);
       bool groupMapsChannelGroup = includeRelations.HasFlag(ChannelIncludeRelationEnum.GroupMapsChannelGroup);
 
       IDictionary<int, LnbType> lnbTypesDict = null;
-      IDictionary<int, Card> cardDict = null;
+      IDictionary<int, Tuner> tunerDict = null;
       IDictionary<int, ChannelGroup> groupDict = null;
 
       if (tuningDetails)
       {
         lnbTypesDict = GetLnbTypesDictionary();
       }
-      if (channelMapsCard)
+      if (channelMapsTuner)
       {
-        cardDict = GetCardsDictionary();
+        tunerDict = GetTunersDictionary();
       }
 
       if (groupMapsChannelGroup)
@@ -238,13 +220,13 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
           ,
           () =>
           {
-            if (channelMapsCard)
+            if (channelMapsTuner)
             {
               foreach (ChannelMap channelMap in channel.ChannelMaps)
               {
-                LoadChannelMap(cardDict, channelMap);
+                LoadChannelMap(tunerDict, channelMap);
               }
-              //Parallel.ForEach(channel.ChannelMaps, (channelMap) => LoadChannelMap(cardDict, channelMap));
+              //Parallel.ForEach(channel.ChannelMaps, (channelMap) => LoadChannelMap(tunerDict, channelMap));
             }
           }
           ,
@@ -274,14 +256,14 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       }
     }
 
-    private static void LoadChannelMap(IDictionary<int, Card> cardDict, ChannelMap channelmap)
+    private static void LoadChannelMap(IDictionary<int, Tuner> tunerDict, ChannelMap channelmap)
     {
-      if (channelmap.IdCard > 0)
+      if (channelmap.IdTuner > 0)
       {
-        Card card;
-        if (cardDict.TryGetValue(channelmap.IdCard, out card))
+        Tuner tuner;
+        if (tunerDict.TryGetValue(channelmap.IdTuner, out tuner))
         {
-          channelmap.Card = card;
+          channelmap.Tuner = tuner;
         }
       }
     }
@@ -310,7 +292,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     private static ChannelIncludeRelationEnum GetAllRelationsForChannel()
     {
       ChannelIncludeRelationEnum include = ChannelIncludeRelationEnum.TuningDetails;
-      include |= ChannelIncludeRelationEnum.ChannelMapsCard;
+      include |= ChannelIncludeRelationEnum.ChannelMapsTuner;
       include |= ChannelIncludeRelationEnum.GroupMaps;
       include |= ChannelIncludeRelationEnum.GroupMapsChannelGroup;
       include |= ChannelIncludeRelationEnum.ChannelMaps;
@@ -324,7 +306,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       IQueryable<ChannelMap> includeRelations =
         query.
           Include(c => c.Channel).
-          Include(c => c.Card);
+          Include(c => c.Tuner);
 
       return includeRelations;
     }

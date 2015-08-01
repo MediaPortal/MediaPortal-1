@@ -25,7 +25,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     [KnownType(typeof(Schedule))]
     [KnownType(typeof(History))]
     [KnownType(typeof(TuningDetail))]
-    [KnownType(typeof(TvMovieMapping))]
     [KnownType(typeof(ChannelLinkageMap))]
     [KnownType(typeof(Conflict))]
     public partial class Channel: IObjectWithChangeTracker, INotifyPropertyChanged
@@ -82,21 +81,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private Nullable<System.DateTime> _totalTimeWatched;
     
         [DataMember]
-        public bool GrabEpg
-        {
-            get { return _grabEpg; }
-            set
-            {
-                if (_grabEpg != value)
-                {
-                    _grabEpg = value;
-                    OnPropertyChanged("GrabEpg");
-                }
-            }
-        }
-        private bool _grabEpg;
-    
-        [DataMember]
         public Nullable<System.DateTime> LastGrabTime
         {
             get { return _lastGrabTime; }
@@ -110,21 +94,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private Nullable<System.DateTime> _lastGrabTime;
-    
-        [DataMember]
-        public int SortOrder
-        {
-            get { return _sortOrder; }
-            set
-            {
-                if (_sortOrder != value)
-                {
-                    _sortOrder = value;
-                    OnPropertyChanged("SortOrder");
-                }
-            }
-        }
-        private int _sortOrder;
     
         [DataMember]
         public bool VisibleInGuide
@@ -157,34 +126,19 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _externalId;
     
         [DataMember]
-        public string DisplayName
+        public string Name
         {
-            get { return _displayName; }
+            get { return _name; }
             set
             {
-                if (_displayName != value)
+                if (_name != value)
                 {
-                    _displayName = value;
-                    OnPropertyChanged("DisplayName");
+                    _name = value;
+                    OnPropertyChanged("Name");
                 }
             }
         }
-        private string _displayName;
-    
-        [DataMember]
-        public bool EpgHasGaps
-        {
-            get { return _epgHasGaps; }
-            set
-            {
-                if (_epgHasGaps != value)
-                {
-                    _epgHasGaps = value;
-                    OnPropertyChanged("EpgHasGaps");
-                }
-            }
-        }
-        private bool _epgHasGaps;
+        private string _name;
     
         [DataMember]
         public int MediaType
@@ -202,7 +156,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _mediaType;
     
         [DataMember]
-        public int ChannelNumber
+        public string ChannelNumber
         {
             get { return _channelNumber; }
             set
@@ -214,7 +168,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 }
             }
         }
-        private int _channelNumber;
+        private string _channelNumber;
 
         #endregion
         #region Navigation Properties
@@ -537,53 +491,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private TrackableCollection<TuningDetail> _tuningDetails;
     
         [DataMember]
-        public TrackableCollection<TvMovieMapping> TvMovieMappings
-        {
-            get
-            {
-                if (_tvMovieMappings == null)
-                {
-                    _tvMovieMappings = new TrackableCollection<TvMovieMapping>();
-                    _tvMovieMappings.CollectionChanged += FixupTvMovieMappings;
-                }
-                return _tvMovieMappings;
-            }
-            set
-            {
-                if (!ReferenceEquals(_tvMovieMappings, value))
-                {
-                    if (ChangeTracker.ChangeTrackingEnabled)
-                    {
-                        throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
-                    }
-                    if (_tvMovieMappings != null)
-                    {
-                        _tvMovieMappings.CollectionChanged -= FixupTvMovieMappings;
-                        // This is the principal end in an association that performs cascade deletes.
-                        // Remove the cascade delete event handler for any entities in the current collection.
-                        foreach (TvMovieMapping item in _tvMovieMappings)
-                        {
-                            ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
-                        }
-                    }
-                    _tvMovieMappings = value;
-                    if (_tvMovieMappings != null)
-                    {
-                        _tvMovieMappings.CollectionChanged += FixupTvMovieMappings;
-                        // This is the principal end in an association that performs cascade deletes.
-                        // Add the cascade delete event handler for any entities that are already in the new collection.
-                        foreach (TvMovieMapping item in _tvMovieMappings)
-                        {
-                            ChangeTracker.ObjectStateChanging += item.HandleCascadeDelete;
-                        }
-                    }
-                    OnNavigationPropertyChanged("TvMovieMappings");
-                }
-            }
-        }
-        private TrackableCollection<TvMovieMapping> _tvMovieMappings;
-    
-        [DataMember]
         public TrackableCollection<ChannelLinkageMap> ChannelLinkMaps
         {
             get
@@ -797,7 +704,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             Schedules.Clear();
             Histories.Clear();
             TuningDetails.Clear();
-            TvMovieMappings.Clear();
             ChannelLinkMaps.Clear();
             ChannelPortalMaps.Clear();
             Conflicts.Clear();
@@ -1107,51 +1013,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     if (ChangeTracker.ChangeTrackingEnabled)
                     {
                         ChangeTracker.RecordRemovalFromCollectionProperties("TuningDetails", item);
-                    }
-                    // This is the principal end in an association that performs cascade deletes.
-                    // Remove the previous dependent from the event listener.
-                    ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
-                }
-            }
-        }
-    
-        private void FixupTvMovieMappings(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (IsDeserializing)
-            {
-                return;
-            }
-    
-            if (e.NewItems != null)
-            {
-                foreach (TvMovieMapping item in e.NewItems)
-                {
-                    item.Channel = this;
-                    if (ChangeTracker.ChangeTrackingEnabled)
-                    {
-                        if (!item.ChangeTracker.ChangeTrackingEnabled)
-                        {
-                            item.StartTracking();
-                        }
-                        ChangeTracker.RecordAdditionToCollectionProperties("TvMovieMappings", item);
-                    }
-                    // This is the principal end in an association that performs cascade deletes.
-                    // Update the event listener to refer to the new dependent.
-                    ChangeTracker.ObjectStateChanging += item.HandleCascadeDelete;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (TvMovieMapping item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.Channel, this))
-                    {
-                        item.Channel = null;
-                    }
-                    if (ChangeTracker.ChangeTrackingEnabled)
-                    {
-                        ChangeTracker.RecordRemovalFromCollectionProperties("TvMovieMappings", item);
                     }
                     // This is the principal end in an association that performs cascade deletes.
                     // Remove the previous dependent from the event listener.
