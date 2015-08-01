@@ -483,7 +483,7 @@ HRESULT CMPIPTVSourceStream::FillBuffer(IMediaSample *pSamp)
     {
       unsigned int postedData = this->activeProtocol->FillBuffer(pSamp, pData, cbData);
 
-      if ((postedData > 0) && (this->keepPidValues != NULL))
+      if ((postedData > 0) && (this->keepPidValues != NULL) && (this->keepPidValues[PID_PAT] == KEEP_PID_IN_STREAM))
       {
         unsigned int expectedSize = (postedData / DVB_PACKET_SIZE) * DVB_PACKET_SIZE;
         if (expectedSize == postedData)
