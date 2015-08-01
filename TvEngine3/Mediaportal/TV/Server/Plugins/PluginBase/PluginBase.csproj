@@ -92,7 +92,7 @@
     </Compile>
     <Compile Include="Interfaces\IPowerEventHandler.cs" />
     <Compile Include="Interfaces\ITvServerPlugin.cs" />
-    <Compile Include="Interfaces\ITvServerPluginCommunciation.cs" />
+    <Compile Include="Interfaces\ITvServerPluginCommunication.cs" />
     <Compile Include="Interfaces\ITvServerPluginStartedAll.cs" />
     <Compile Include="PluginExceptionInterceptor.cs" />
     <Compile Include="PluginLoader.cs" />

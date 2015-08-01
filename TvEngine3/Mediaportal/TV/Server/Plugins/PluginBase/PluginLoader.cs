@@ -21,13 +21,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.Base
 {
@@ -59,12 +58,13 @@ namespace Mediaportal.TV.Server.Plugins.Base
     /// </summary>
     public virtual void Load()
     {
+      this.LogInfo("plugins: loading...");
       _plugins.Clear();
       _incompatiblePlugins.Clear();
       try
       {
-        // Load plugins from "plugins" subfolder, relative to calling assembly's location
-        string pluginFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location), "Plugins");
+        // Load plugins from "plugins" subfolder, relative to calling assembly's location.
+        string pluginFolder = PathManager.BuildAssemblyRelativePath("Plugins");
         var assemblyFilter = new AssemblyFilter(pluginFolder);
         IWindsorContainer container = Instantiator.Instance.Container();
         container.Register(
@@ -75,7 +75,11 @@ namespace Mediaportal.TV.Server.Plugins.Base
             LifestyleSingleton()
             );
 
-        assemblyFilter = new AssemblyFilter(Path.Combine(pluginFolder, "CustomDevices"));
+        // Load plugins that are also tuner extensions. Note the Configure() part is critical. Each
+        // of these extensions will eventually be registered in the container twice: once as a
+        // TV Server plugin, and once as a tuner extension. If we didn't have the Configure() part,
+        // the second registration wouldn't work properly.
+        assemblyFilter = new AssemblyFilter(Path.Combine(pluginFolder, "TunerExtensions"));
         container.Register(
           Classes.FromAssemblyInDirectory(assemblyFilter).
             BasedOn<ITvServerPlugin>().
@@ -89,12 +93,12 @@ namespace Mediaportal.TV.Server.Plugins.Base
 
         foreach (ITvServerPlugin plugin in _plugins)
         {
-          this.LogDebug("PluginManager: Loaded {0} version:{1} author:{2}", plugin.Name, plugin.Version, plugin.Author);
+          this.LogDebug("  name = {0}, version = {1}, author = {2}", plugin.Name, plugin.Version, plugin.Author);
         }
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "PluginManager: Error while loading DLLs.");
+        this.LogError(ex, "plugins: failed to load");
       }
     }
 
@@ -104,7 +108,7 @@ namespace Mediaportal.TV.Server.Plugins.Base
       if (!isPluginCompatible)
       {
         _incompatiblePlugins.Add(type);
-        this.LogDebug("PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!", type.FullName);
+        this.LogWarn("plugins: plugin {0} is not compatible and won't be loaded", type.FullName);
       }
       return isPluginCompatible;
     }
