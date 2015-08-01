@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F9F4E5C1-9A6A-42F8-8452-4BDAFEA0E798}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Mediaportal.TV.Server.Common.Types</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Common.Types</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="Country\Country.cs" />
+    <Compile Include="Country\CountryCollection.cs" />
+    <Compile Include="Enum\AnalogTunerSource.cs" />
+    <Compile Include="Enum\AnalogVideoStandard.cs" />
+    <Compile Include="Enum\CaptureSourceVideo.cs" />
+    <Compile Include="Enum\CaptureSourceAudio.cs" />
+    <Compile Include="Enum\BroadcastStandard.cs" />
+    <Compile Include="Enum\CamType.cs" />
+    <Compile Include="Enum\ContentAdvisory.cs" />
+    <Compile Include="Enum\RecordingThumbnailQuality.cs" />
+    <Compile Include="Enum\SoftwareEncoderType.cs" />
+    <Compile Include="Enum\FrameSize.cs" />
+    <Compile Include="Enum\FrameRate.cs" />
+    <Compile Include="Enum\VideoOrCameraPropertyFlag.cs" />
+    <Compile Include="Enum\VideoOrCameraProperty.cs" />
+    <Compile Include="Enum\TunerIdleMode.cs" />
+    <Compile Include="Enum\MultiChannelDecryptMode.cs" />
+    <Compile Include="Enum\PidFilterMode.cs" />
+    <Compile Include="Enum\ToneBurst.cs" />
+    <Compile Include="Enum\Tone22kState.cs" />
+    <Compile Include="Enum\DiseqcPort.cs" />
+    <Compile Include="Enum\FecCodeRate.cs" />
+    <Compile Include="Enum\Polarisation.cs" />
+    <Compile Include="Enum\RollOffFactor.cs" />
+    <Compile Include="Enum\PilotTonesState.cs" />
+    <Compile Include="Enum\ModulationSchemePsk.cs" />
+    <Compile Include="Enum\ModulationSchemeQam.cs" />
+    <Compile Include="Enum\ModulationSchemeVsb.cs" />
+    <Compile Include="Enum\BdaNetworkProvider.cs" />
+    <Compile Include="Enum\EpgDeleteBeforeImportOption.cs" />
+    <Compile Include="Enum\RecordingKeepMethod.cs" />
+    <Compile Include="Enum\ChannelMediaType.cs" />
+    <Compile Include="Enum\ProgramState.cs" />
+    <Compile Include="Enum\ScheduleRecordingType.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
