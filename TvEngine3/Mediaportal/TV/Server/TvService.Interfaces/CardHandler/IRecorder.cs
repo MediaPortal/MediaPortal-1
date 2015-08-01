@@ -49,5 +49,7 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// <param name="userName"> </param>
     /// <returns>DateTime containg the date/time when recording was started</returns>
     DateTime RecordingStarted(string userName);
+
+    void ReloadConfiguration();
   }
 }

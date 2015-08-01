@@ -1,9 +1,7 @@
-using System;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
@@ -24,12 +22,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     /// </summary>
     [DataMember]
     int Id { get; }
-
-    /// <summary>
-    /// gets the ip adress of the tvservice
-    /// </summary>
-    [DataMember]
-    string RemoteServer { get; set; }
 
     ///<summary>
     /// Gets/Set the recording format
@@ -54,7 +46,7 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     /// </summary>
     /// <value>cardtype</value>
     [DataMember]
-    CardType Type { get; }
+    BroadcastStandard SupportedBroadcastStandards { get; }
 
     /// <summary>
     /// Gets the name 
@@ -130,13 +122,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     string TimeShiftFileName { get; }
 
     /// <summary>
-    /// Returns if the tuner is locked onto a signal or not
-    /// </summary>
-    /// <returns>true if tuner is locked otherwise false</returns>
-    [DataMember]
-    bool IsTunerLocked { get; }
-
-    /// <summary>
     /// Gets the name of the tv/radio channel to which we are tuned
     /// </summary>
     /// <returns>channel name</returns>
@@ -152,20 +137,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     int IdChannel { get; }
 
     /// <summary>
-    /// Returns the signal level 
-    /// </summary>
-    /// <returns>signal level (0-100)</returns>
-    [XmlIgnore]
-    int SignalLevel { get; }
-
-    /// <summary>
-    /// Returns the signal quality 
-    /// </summary>
-    /// <returns>signal quality (0-100)</returns>
-    [XmlIgnore]
-    int SignalQuality { get; }
-
-    /// <summary>
     /// Gets/Sts the quality type
     /// </summary>
     QualityType QualityType { get; set; }
@@ -173,15 +144,24 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     /// <summary>
     /// Gets/Sts the bitrate mode
     /// </summary>
-    VIDEOENCODER_BITRATE_MODE BitRateMode { get; set; }
+    EncoderBitRateMode BitRateMode { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
     int NrOfOtherUsersTimeshiftingOnCard { get; set; }
 
-    MediaTypeEnum? MediaType { get; }
+    MediaType? MediaType { get; }
 
+    /// <summary>
+    /// Get the tuner's signal status.
+    /// </summary>
+    /// <param name="forceUpdate"><c>True</c> to force the signal status to be updated, and not use cached information.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
+    void GetSignalStatus(bool forceUpdate, out bool isLocked, out bool isPresent, out int strength, out int quality);
 
     /// <summary>
     /// Fetches the stream quality information

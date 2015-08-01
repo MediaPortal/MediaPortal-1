@@ -67,5 +67,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
 
     void OnBeforeTune();
     void OnAfterTune();
+    void ReloadConfiguration();
   }
 }

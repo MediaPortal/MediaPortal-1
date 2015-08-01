@@ -18,9 +18,10 @@
 
 #endregion
 
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
@@ -37,21 +38,11 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     ITimeShifter TimeShifter { get; }
     ICardTuner Tuner { get; }
     IConditionalAccessMenuActions CiMenuActions { get; }
-    bool IsConditionalAccessSupported { get; }
     bool CiMenuSupported { get; }
 
-    ITVCard Card { get; }    
+    ITuner Card { get; }    
     bool IsIdle { get; }
-    Card DataBaseCard { get; set; }
-    CardType Type { get; }
-    string CardName { get; }
-    string CardDevice();
-    int NumberOfChannelsDecrypting { get; }
-    
-    void UpdateSignalSate();
-    bool TunerLocked { get; }
-    int SignalQuality { get; }
-    int SignalLevel { get; }
+    Tuner DataBaseCard { get; set; }
 
     IChannel CurrentChannel(string userName, int idChannel);
     int CurrentDbChannel(string userName);

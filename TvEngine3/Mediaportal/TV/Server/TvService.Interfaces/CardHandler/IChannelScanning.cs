@@ -1,5 +1,5 @@
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail;
 
 namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
 {
@@ -18,6 +18,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// <returns>list of channels found</returns>
     IChannel[] Scan(IChannel channel);
 
-    IChannel[] ScanNIT(IChannel channel);
+    TuningDetail[] ScanNIT(IChannel channel);
   }
 }

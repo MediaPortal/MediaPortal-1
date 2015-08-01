@@ -1,4 +1,4 @@
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc.Enum;
 
 namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
 {
@@ -8,9 +8,10 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// returns the current diseqc motor position
     /// </summary>
     /// <param name="satellitePosition">The satellite position.</param>
+    /// <param name="satelliteLongitude">The satellite's longitude.</param>
     /// <param name="stepsAzimuth">The steps azimuth.</param>
     /// <param name="stepsElevation">The steps elevation.</param>
-    void GetPosition(out int satellitePosition, out int stepsAzimuth, out int stepsElevation);
+    void GetPosition(out int satellitePosition, out double satelliteLongitude, out int stepsAzimuth, out int stepsElevation);
 
     /// <summary>
     /// resets the diseqc motor.

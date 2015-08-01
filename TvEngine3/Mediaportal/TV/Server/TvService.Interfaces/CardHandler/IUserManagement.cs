@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
@@ -7,8 +7,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
 {
   public interface IUserManagement
   {
-
-
     IUser GetUserCopy(string name);
 
     /// <summary>
@@ -17,8 +15,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// <param name="user">The user.</param>
     /// <param name="idChannel"> </param>
     void RemoveUser(IUser user, int idChannel);
-
-    
 
     /// <summary>
     /// Gets the users for this card.
@@ -69,7 +65,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// </summary>
     /// <param name = "user">The user.</param>
     void RemoveUser(IUser user);
-    
 
     /// <summary>
     ///   Gets the user.
@@ -160,5 +155,7 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     IEnumerable<IUser> GetUsersCopy(UserType? userType = null);
     IList<IUser> GetAllRecordingUsersCopy();
     int GetChannelId(string userName, TvUsage tvUsage);
+
+    void UpdatePrioritiesForAllUsers();
   }
 }
