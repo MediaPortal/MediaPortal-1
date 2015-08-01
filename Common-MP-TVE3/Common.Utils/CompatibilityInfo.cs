@@ -77,6 +77,7 @@ using MediaPortal.Common.Utils;
 // TV Server subsystems' breaking versions
 
 [assembly: SubsystemVersion("TVE", "1.1.6.27644")]
+[assembly: SubsystemVersion("TVE.Common.Types", "1.2.3")]
 
 [assembly: SubsystemVersion("TVE.DB", "1.1.6.27644")]
 [assembly: SubsystemVersion("TVE.Controller", "1.1.6.27644")]
@@ -89,13 +90,13 @@ using MediaPortal.Common.Utils;
 [assembly: SubsystemVersion("TVE.Plugins.PowerScheduler", "1.1.6.27644")]
 [assembly: SubsystemVersion("TVE.Plugins.XmlTV", "1.1.6.27644")]
 [assembly: SubsystemVersion("TVE.Plugins.WebEPG", "1.1.6.27644")]
-[assembly: SubsystemVersion("TVE.Plugins.TvMoview", "1.1.6.27644")]
+[assembly: SubsystemVersion("TVE.Plugins.TvMovie", "1.1.6.27644")]
 [assembly: SubsystemVersion("TVE.Plugins.ServerBlaster", "1.1.6.27644")]
 
 // ITunerExtension interfaces.
-// A new subsystem should be added for each new interface which is created. This allows
-// fine-grained control for future interface changes. Plugins should register as compatible with
-// each individual subsystem/interface.
+// A new subsystem should be added for each new interface which is created.
+// This allows fine-grained control for future interface changes. Plugins
+// should register as compatible with each individual subsystem/interface.
 [assembly: SubsystemVersion("TVE.Plugins.TunerExtension", "1.2.3.0")]
 [assembly: SubsystemVersion("TVE.Plugins.TunerExtension.DirectShowAddOn", "1.2.3.0")]         // IDirectShowAddOnDevice
 [assembly: SubsystemVersion("TVE.Plugins.TunerExtension.ConditionalAccess", "1.2.3.0")]       // IConditionalAccessProvider
@@ -105,4 +106,5 @@ using MediaPortal.Common.Utils;
 [assembly: SubsystemVersion("TVE.Plugins.TunerExtension.Mpeg2PidFilter", "1.2.3.0")]          // IMpeg2PidFilter
 [assembly: SubsystemVersion("TVE.Plugins.TunerExtension.Power", "1.2.3.0")]                   // IPowerDevice
 [assembly: SubsystemVersion("TVE.Plugins.TunerExtension.RemoteControl", "1.2.3.0")]           // IRemoteControlListener
+[assembly: SubsystemVersion("TVE.Plugins.TunerExtension.StreamSelector", "1.2.3.0")]          // IStreamSelector
 [assembly: SubsystemVersion("TVE.Plugins.TunerExtension.Tuner", "1.2.3.0")]                   // ICustomTuner

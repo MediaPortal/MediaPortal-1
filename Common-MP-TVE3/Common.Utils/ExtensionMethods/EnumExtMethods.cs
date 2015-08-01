@@ -45,6 +45,10 @@ namespace MediaPortal.Common.Utils.ExtensionMethods
         return string.Empty;
       }
       FieldInfo fi = value.GetType().GetField(value.ToString());
+      if (fi == null)
+      {
+        return string.Empty;
+      }
       DescriptionAttribute[] attributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
 
       if (attributes != null && attributes.Length > 0)
@@ -99,7 +103,7 @@ namespace MediaPortal.Common.Utils.ExtensionMethods
       foreach (Enum e in enumValues)
       {
         int value = Convert.ToInt32(e);
-        if (filter == -1 || (value == 0 && includeZeroMember) || (value & filter) != 0)
+        if (filter == -1 || (value == 0 && includeZeroMember) || (value != 0 && (value & filter) == value))
         {
           toReturn.Add(GetDescription(e));
         }
@@ -123,7 +127,7 @@ namespace MediaPortal.Common.Utils.ExtensionMethods
         foreach (Enum e in enumValues)
         {
           int value = Convert.ToInt32(e);
-          if (filter == -1 || (value == 0 && includeZeroMember) || (value & filter) != 0)
+          if (filter == -1 || (value == 0 && includeZeroMember) || (value != 0 && (value & filter) == value))
           {
             toReturn.Add(new KeyValuePair<int, string>(value, GetDescription(e)));
           }

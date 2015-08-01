@@ -35,10 +35,10 @@ namespace MediaPortal.Common.Utils.Localisation
     /*
      * Does not include the following:
      * qaa = Original Audio [EN 300 468 annex F]
-     * qad = Audio Description [EN 300 468 annex J3.2]
-     * NAR = Audio Description [EN 300 468 annex J3.2]
+     * qad = Broadcast-Mixed Supplementary Audio [EN 300 468 annex J3.2]
+     * nar = Broadcast-Mixed Supplementary Audio [EN 300 468 annex J3.2]
      * 
-     * Includes the following (which might not be desirable???):
+     * Includes the following special codes (which might not be desirable???):
      * mis = uncoded languages
      * mul = multiple languages
      * und = undetermined
