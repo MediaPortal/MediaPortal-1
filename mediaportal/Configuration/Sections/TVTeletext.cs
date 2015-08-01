@@ -18,7 +18,6 @@
 
 #endregion
 
-using System.ComponentModel;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 
