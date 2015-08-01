@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (C) 2006-2008 Team MediaPortal
  *  http://www.team-mediaportal.com
  *
@@ -6,896 +6,1396 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#pragma warning(disable : 4995)
-#include <windows.h>
-#include <commdlg.h>
-#include <bdatypes.h>
-#include <time.h>
-#include <streams.h>
-#include <initguid.h>
-#include <shlobj.h>
-#include <tchar.h>
 #include "TsWriter.h"
-#include "..\..\shared\tsheader.h"
-#include "..\..\shared\DebugSettings.h"
+#include <algorithm>
+#include <iomanip>    // setfill(), setw()
+#include <shlobj.h>   // SHGetSpecialFolderPathW()
+#include <sstream>
+#include <stdio.h>    // _wfopen(), fclose()
+#include <Windows.h>  // MAX_PATH
+#include "Version.h"
 
-static wchar_t logFile[MAX_PATH];
-static WORD logFileParsed = -1;
 
-void GetLogFile(wchar_t *pLog)
+//-----------------------------------------------------------------------------
+// DIRECTSHOW CONFIGURATION
+//-----------------------------------------------------------------------------
+const AMOVIESETUP_PIN PIN_TYPE_INFORMATION[] =
 {
-  SYSTEMTIME systemTime;
-  GetLocalTime(&systemTime);
-  if(logFileParsed != systemTime.wDay)
   {
-    wchar_t folder[MAX_PATH];
-    ::SHGetSpecialFolderPathW(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-    swprintf_s(logFile,L"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\TsWriter-%04.4d-%02.2d-%02.2d.Log",folder, systemTime.wYear, systemTime.wMonth, systemTime.wDay);
-    logFileParsed=systemTime.wDay; // rec
-  }
-  wcscpy(pLog, &logFile[0]);
-}
-
-// Setup data
-const AMOVIESETUP_MEDIATYPE sudPinTypes =
-{
-  &MEDIATYPE_Stream,              // Major type
-  &MEDIASUBTYPE_MPEG2_TRANSPORT   // Minor type
-};
-
-const AMOVIESETUP_PIN sudPins =
-{
-    L"Input",                   // Pin string name
-    FALSE,                      // Is it rendered
-    FALSE,                      // Is it an output
-    FALSE,                      // Allowed none
-    FALSE,                      // Likewise many
-    &CLSID_NULL,                // Connects to filter
-    L"Output",                  // Connects to pin
-    1,                          // Number of types
-    &sudPinTypes                // Pin information
-};
-
-const AMOVIESETUP_FILTER sudDump =
-{
-    &CLSID_MpTsFilter,          // Filter CLSID
-    L"MediaPortal Ts Writer",   // String name
-    MERIT_DO_NOT_USE,           // Filter merit
-    1,                          // Number pins
-    &sudPins,                   // Pin details
-    CLSID_LegacyAmFilterCategory
-};
-
-void DumpTs(byte* tspacket)
-{
-  FILE* fp=fopen("dump.ts", "ab+");
-  fwrite(tspacket,1,188,fp);
-  fclose(fp);
-}
-
-DEFINE_TVE_DEBUG_SETTING(DisableCRCCheck)
-DEFINE_TVE_DEBUG_SETTING(DumpRawTS)
-
-static char logbuffer[2000]; 
-static wchar_t logbufferw[2000];
-void LogDebug(const wchar_t *fmt, ...)
-{
-//#ifdef DEBUG
-  va_list ap;
-  va_start(ap,fmt);
-
-  va_start(ap,fmt);
-  vswprintf_s(logbufferw, fmt, ap);
-  va_end(ap); 
-
-  wchar_t fileName[MAX_PATH];
-  GetLogFile(fileName);
-  FILE* fp = _wfopen(fileName,L"a+, ccs=UTF-8");
-  if (fp!=NULL)
+    L"TS Input",                    // [obsolete] the pin type name
+    FALSE,                          // does the filter render this pin type?
+    FALSE,                          // is this an output pin?
+    FALSE,                          // can the filter have zero instances of this pin type?
+    FALSE,                          // can the filter have multiple instances of this pin type?
+    &CLSID_NULL,                    // [obsolete] the CLSID of the filter that this pin type connects to
+    L"Output",                      // [obsolete] the name of the pin that this pin type connects to
+    INPUT_MEDIA_TYPE_COUNT_TS,      // the number of media types supported by this pin type
+    INPUT_MEDIA_TYPES_TS            // the media types supported by this pin type
+  },
   {
-  SYSTEMTIME systemTime;
-  GetLocalTime(&systemTime);
-    fwprintf(fp,L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%02.2d %s\n",
-      systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-      systemTime.wHour,systemTime.wMinute,systemTime.wSecond,systemTime.wMilliseconds,
-      logbufferw);
-    fclose(fp);
-    //::OutputDebugStringW(logbufferw);::OutputDebugStringW(L"\n");
+    L"OOB SI Input",                // [obsolete] the pin type name
+    FALSE,                          // [not applicable] does the filter render this pin type?
+    FALSE,                          // is this an output pin?
+    FALSE,                          // can the filter have zero instances of this pin type?
+    FALSE,                          // can the filter have multiple instances of this pin type?
+    &CLSID_NULL,                    // [obsolete] the CLSID of the filter that this pin type connects to
+    L"Output",                      // [obsolete] the name of the pin that this pin type connects to
+    INPUT_MEDIA_TYPE_COUNT_OOB_SI,  // the number of media types supported by this pin type
+    INPUT_MEDIA_TYPES_OOB_SI        // the media types supported by this pin type
   }
-//#endif
 };
 
-void LogDebug(const char *fmt, ...)
+const AMOVIESETUP_FILTER FILTER_INFORMATION =
 {
-  va_list ap;
-  va_start(ap,fmt);
-
-  va_start(ap,fmt);
-  vsprintf(logbuffer, fmt, ap);
-  va_end(ap); 
-
-  MultiByteToWideChar(CP_ACP, 0, logbuffer, -1,logbufferw, sizeof(logbuffer)/sizeof(wchar_t));
-  LogDebug(L"%s", logbufferw);
+  &CLSID_TS_WRITER,             // CLSID
+  L"MediaPortal TS Writer",     // name
+  MERIT_DO_NOT_USE,             // merit
+  2,                            // pin type count
+  PIN_TYPE_INFORMATION,         // pin type details
+  CLSID_LegacyAmFilterCategory  // category
 };
 
-//
-//  Object creation stuff
-//
-CFactoryTemplate g_Templates[]= {
-    L"MediaPortal Ts Writer", &CLSID_MpTsFilter, CMpTs::CreateInstance, NULL, &sudDump
+CFactoryTemplate g_Templates[] =
+{
+  L"MediaPortal TS Writer", &CLSID_TS_WRITER, CTsWriter::CreateInstance, NULL, &FILTER_INFORMATION
 };
 int g_cTemplates = 1;
 
-
-// Constructor
-
-CMpTsFilter::CMpTsFilter(CMpTs *pDump,LPUNKNOWN pUnk,CCritSec *pLock,HRESULT *phr) :
-    CBaseFilter(NAME("TsWriter"), pUnk, pLock, CLSID_MpTsFilter),
-    m_pWriterFilter(pDump)
-{
-}
-
-
-//
-// GetPin
-//
-CBasePin * CMpTsFilter::GetPin(int n)
-{
-  if (n == 0) 
-  {
-    return m_pWriterFilter->m_pPin;
-  } 
-  else 
-  {
-    return NULL;
-  }
-}
-
-
-//
-// GetPinCount
-//
-int CMpTsFilter::GetPinCount()
-{
-  return 1;
-}
-
-
-//
-// Stop
-//
-// Overriden to close the dump file
-//
-STDMETHODIMP CMpTsFilter::Stop()
-{
-  CAutoLock cObjectLock(m_pLock);
-  LogDebug("CMpTsFilter::Stop()");
-  return CBaseFilter::Stop();
-}
-
-
-//
-// Pause
-//
-// Overriden to open the dump file
-//
-STDMETHODIMP CMpTsFilter::Pause()
-{
-  LogDebug("CMpTsFilter::Pause()");
-  CAutoLock cObjectLock(m_pLock);
-
-  if (m_pWriterFilter)
-  {
-      // GraphEdit calls Pause() before calling Stop() for this filter.
-      // If we have encountered a write error (such as disk full),
-      // then stopping the graph could cause our log to be deleted
-      // (because the current log file handle would be invalid).
-      // 
-      // To preserve the log, don't open/create the log file on pause
-      // if we have previously encountered an error.  The write error
-      // flag gets cleared when setting a new log file name or
-      // when restarting the graph with Run().
-  }
-
-  return CBaseFilter::Pause();
-}
-
-
-//
-// Run
-//
-// Overriden to open the dump file
-//
-STDMETHODIMP CMpTsFilter::Run(REFERENCE_TIME tStart)
-{
-  LogDebug("CMpTsFilter::Run()");
-  CAutoLock cObjectLock(m_pLock);
-
-  return CBaseFilter::Run(tStart);
-}
-
-
-//
-//  Definition of CMpTsFilterPin
-//
-CMpTsFilterPin::CMpTsFilterPin(CMpTs *pDump,LPUNKNOWN pUnk,CBaseFilter *pFilter,CCritSec *pLock,CCritSec *pReceiveLock,HRESULT *phr) 
-:CRenderedInputPin(NAME("CMpTsFilterPin"),
-                  pFilter,                   // Filter
-                  pLock,                     // Locking
-                  phr,                       // Return code
-                  L"Input"),                 // Pin name
-    m_pReceiveLock(pReceiveLock),
-    m_pWriterFilter(pDump)
-{
-  LogDebug("CMpTsFilterPin:ctor");
-  m_rawPaketWriter=NULL;
-}
-
-
-//
-// CheckMediaType
-//
-// Check if the pin can support this specific proposed type and format
-//
-HRESULT CMpTsFilterPin::CheckMediaType(const CMediaType *)
-{
-  return S_OK;
-}
-
-
-//
-// BreakConnect
-//
-// Break a connection
-//
-HRESULT CMpTsFilterPin::BreakConnect()
-{
-  return CRenderedInputPin::BreakConnect();
-}
-
-
-//
-// ReceiveCanBlock
-//
-// We don't hold up source threads on Receive
-//
-STDMETHODIMP CMpTsFilterPin::ReceiveCanBlock()
-{
-  return S_FALSE;
-}
-
-
-//
-// Receive
-//
-// Do something with this media sample
-//
-STDMETHODIMP CMpTsFilterPin::Receive(IMediaSample *pSample)
-{
-  try
-  {
-    if (pSample==NULL) 
-    {
-      LogDebug("pin:receive sample=null");
-      return S_OK;
-    }
-    
-//    CheckPointer(pSample,E_POINTER);
-//    CAutoLock lock(m_pReceiveLock);
-    PBYTE pbData=NULL;
-
-    long sampleLen=pSample->GetActualDataLength();
-    if (sampleLen<=0)
-    {
-      //LogDebug("pin:receive samplelen:%d",sampleLen);
-      return S_OK;
-    }
-    
-    HRESULT hr = pSample->GetPointer(&pbData);
-    if (FAILED(hr)) 
-    {
-      LogDebug("pin:receive cannot get samplepointer");
-      return S_OK;
-    }
-    if (m_rawPaketWriter!=NULL)
-      if (!m_rawPaketWriter->IsFileInvalid())
-        m_rawPaketWriter->Write(pbData,sampleLen);
-    OnRawData(pbData, sampleLen);
-  }
-  catch(...)
-  {
-    LogDebug("pin:receive exception");
-  }
-  return S_OK;
-}
-
-void CMpTsFilterPin::OnTsPacket(byte* tsPacket)
-{
-  m_pWriterFilter->AnalyzeTsPacket(tsPacket);
-}
-
-STDMETHODIMP CMpTsFilterPin::EndOfStream(void)
-{
-    CAutoLock lock(m_pReceiveLock);
-    return CRenderedInputPin::EndOfStream();
-
-}
-
-void CMpTsFilterPin::Reset()
-{
-    LogDebug("CMpTsFilter::Reset()...");
-}
-
-//
-// NewSegment
-//
-// Called when we are seeked
-//
-STDMETHODIMP CMpTsFilterPin::NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate)
-{
-    return S_OK;
-}
-
-void CMpTsFilterPin::AssignRawPaketWriter(FileWriter *rawPaketWriter)
-{
-  m_rawPaketWriter=rawPaketWriter;
-}
-
-//
-//  CMpTs class
-//
-CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr) 
-:CUnknown(NAME("CMpTs"), pUnk),m_pFilter(NULL),m_pPin(NULL)
-{
-  m_id=0;
-
-  LogDebug("CMpTs::ctor()");
-  LogDebug("--------------- BUG-3782 fix v2 -------------------");
-    
-  b_dumpRawPakets=false;
-  m_pFilter = new CMpTsFilter(this, GetOwner(), &m_Lock, phr);
-  if (m_pFilter == NULL) 
-  {
-    if (phr)
-      *phr = E_OUTOFMEMORY;
-    return;
-  }
-
-  m_pPin = new CMpTsFilterPin(this,GetOwner(),m_pFilter,&m_Lock,&m_ReceiveLock,phr);
-  if (m_pPin == NULL) 
-  {
-    if (phr)
-      *phr = E_OUTOFMEMORY;
-    return;
-  }
-
-  m_pChannelScanner= new CChannelScan(GetOwner(),phr,m_pFilter);
-  m_pEpgScanner = new CEpgScanner(GetOwner(),phr);
-  m_pChannelLinkageScanner = new CChannelLinkageScanner(GetOwner(),phr);
-  m_rawPaketWriter=new FileWriter();
-  m_pPin->AssignRawPaketWriter(m_rawPaketWriter);
-}
-
-// Destructor
-CMpTs::~CMpTs()
-{
-  delete m_pPin;
-  delete m_pFilter;
-  delete m_pChannelScanner;
-  delete m_pEpgScanner;
-  delete m_pChannelLinkageScanner;
-  delete m_rawPaketWriter;
-  CAutoLock lock(&m_Lock);
-  for (int i=0; i < (int)m_vecChannels.size();++i)
-  {
-    delete m_vecChannels[i];
-  }
-  m_vecChannels.clear();
-}
-
-//
-// CreateInstance
-//
-// Provide the way for COM to create a dump filter
-//
-CUnknown * WINAPI CMpTs::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
-{
-  ASSERT(phr);
-
-  CMpTs *pNewObject = new CMpTs(punk, phr);
-  if (pNewObject == NULL) 
-  {
-    if (phr)
-      *phr = E_OUTOFMEMORY;
-  }
-
-  return pNewObject;
-}
-
-
-//
-// NonDelegatingQueryInterface
-//
-// Override this to say what interfaces we support where
-//
-STDMETHODIMP CMpTs::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
-{
-  CheckPointer(ppv,E_POINTER);
-  CAutoLock lock(&m_Lock);
-
-  // Do we have this interface
-  if (riid == IID_ITsChannelScan)
-  {
-    //LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITsChannelScan");
-    return GetInterface((ITsChannelScan*)m_pChannelScanner, ppv);
-  }
-  else if (riid == IID_ITsEpgScanner)
-  {
-    //LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITsEpgScanner");
-    return GetInterface((ITsEpgScanner*)m_pEpgScanner, ppv);
-  }
-  else if (riid == IID_TSFilter)
-  {
-    //LogDebug("CMpTs:NonDelegatingQueryInterface IID_TSFilter");
-    return GetInterface((ITSFilter*)this, ppv);
-  }
-  else if (riid == IID_ITsChannelLinkageScanner)
-  {
-    //LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITsChannelLinkageScanner");
-    return GetInterface((ITsChannelLinkageScanner*)m_pChannelLinkageScanner, ppv);
-  }
-  else if (riid == IID_IBaseFilter || riid == IID_IMediaFilter || riid == IID_IPersist) 
-  {
-    //LogDebug("CMpTs:NonDelegatingQueryInterface other");
-    return m_pFilter->NonDelegatingQueryInterface(riid, ppv);
-  } 
- 
-  return CUnknown::NonDelegatingQueryInterface(riid, ppv);
-}
-
-////////////////////////////////////////////////////////////////////////
-//
-// Exported entry points for registration and unregistration 
-// (in this case they only call through to default implementations).
-//
-////////////////////////////////////////////////////////////////////////
-
-//
-// DllRegisterSever
-//
-// Handle the registration of this filter
-//
 STDAPI DllRegisterServer()
 {
-  return AMovieDllRegisterServer2( TRUE );
+  return AMovieDllRegisterServer2(TRUE);
 }
 
-//
-// DllUnregisterServer
-//
 STDAPI DllUnregisterServer()
 {
-  return AMovieDllRegisterServer2( FALSE );
+  return AMovieDllRegisterServer2(FALSE);
 }
 
-//
-// DllEntryPoint
-//
 extern "C" BOOL WINAPI DllEntryPoint(HINSTANCE, ULONG, LPVOID);
 
-BOOL APIENTRY DllMain(HANDLE hModule, DWORD  dwReason, LPVOID lpReserved)
+BOOL APIENTRY DllMain(HANDLE module, DWORD reason, LPVOID reserved)
 {
-  return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
+  return DllEntryPoint((HINSTANCE)module, reason, reserved);
 }
 
-void CMpTs::AnalyzeTsPacket(byte* tsPacket)
+
+//-----------------------------------------------------------------------------
+// LOGGING
+//-----------------------------------------------------------------------------
+static CCritSec g_logLock;
+static CCritSec g_logFilePathLock;
+static wstringstream g_logFilePath;
+static wstringstream g_logFileName;
+static short g_currentDay = -1;
+static wchar_t g_logBuffer[2000];
+
+void LogDebug(const wchar_t* fmt, ...)
 {
-  try
+  CAutoLock lock(&g_logLock);
+  SYSTEMTIME systemTime;
+  GetLocalTime(&systemTime);
+  if (g_currentDay != systemTime.wDay)
   {
-    CAutoLock lock(&m_Lock);
-    for (int i=0; i < (int)m_vecChannels.size();++i)
+    CAutoLock lock(&g_logFilePathLock);
+    g_logFileName.str(wstring());
+    g_logFileName << g_logFilePath.str() << L"\\TsWriter-" <<
+                      systemTime.wYear << L"-" << setfill(L'0') << setw(2) <<
+                      systemTime.wMonth << L"-" << setw(2) <<
+                      systemTime.wDay << L".log";
+    g_currentDay = systemTime.wDay;
+  }
+
+  FILE* file = _wfopen(g_logFileName.str().c_str(), L"a+, ccs=UTF-8");
+  if (file != NULL)
+  {
+    va_list ap;
+    va_start(ap, fmt);
+    vswprintf(g_logBuffer, sizeof(g_logBuffer) / sizeof(g_logBuffer[0]), fmt, ap);
+    va_end(ap);
+    fwprintf(file, L"%04.4hd-%02.2hd-%02.2hd %02.2hd:%02.2hd:%02.2hd.%03.3hd %s\n",
+              systemTime.wYear, systemTime.wDay, systemTime.wMonth,
+              systemTime.wHour, systemTime.wMinute, systemTime.wSecond,
+              systemTime.wMilliseconds, g_logBuffer);
+    fclose(file);
+  }
+
+  //::OutputDebugStringW(g_logBuffer);
+  //::OutputDebugStringW(L"\n");
+};
+
+
+//-----------------------------------------------------------------------------
+// WRITER/ANALYSER CLASS
+//-----------------------------------------------------------------------------
+CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr) 
+  : CUnknown(NAME("TS Writer"), unk)
+{
+  wchar_t temp[MAX_PATH];
+  ::SHGetSpecialFolderPathW(NULL, temp, CSIDL_COMMON_APPDATA, FALSE);
+  g_logFilePath << temp << L"\\Team MediaPortal\\MediaPortal TV Server\\log";
+
+  LogDebug(L"--------------- v%d.%d.%d.0 ---------------", VERSION_TS_WRITER_MAJOR, VERSION_TS_WRITER_MINOR, VERSION_TS_WRITER_MICRO);
+  LogDebug(L"TVE 3.5 rewritten version");
+  LogDebug(L"writer: constructor");
+    
+  m_filter = new CTsWriterFilter(this,
+                                  g_logFilePath.str().c_str(),
+                                  GetOwner(),
+                                  &m_filterLock,
+                                  m_receiveLock,
+                                  hr);
+  if (m_filter == NULL || !SUCCEEDED(*hr)) 
+  {
+    if (SUCCEEDED(*hr))
     {
-      m_vecChannels[i]->OnTsPacket(tsPacket);
+      *hr = E_OUTOFMEMORY;
     }
-    m_pChannelScanner->OnTsPacket(tsPacket);
-    m_pEpgScanner->OnTsPacket(tsPacket);
-    m_pChannelLinkageScanner->OnTsPacket(tsPacket);
+    LogDebug(L"writer: failed to allocate filter, hr = 0x%x", *hr);
+    return;
   }
-  catch(...)
+
+  // electronic programme guide grabbers
+  m_grabberEpgAtsc = new CGrabberEpgAtsc(this, GetOwner(), hr);
+  if (m_grabberEpgAtsc == NULL || !SUCCEEDED(*hr)) 
   {
-    LogDebug("exception in AnalyzeTsPacket");
+    if (SUCCEEDED(*hr))
+    {
+      *hr = E_OUTOFMEMORY;
+    }
+    LogDebug(L"writer: failed to allocate ATSC EPG grabber, hr = 0x%x", *hr);
+    return;
   }
+  m_grabberEpgDvb = new CParserEitDvb(this, this, GetOwner(), hr);
+  if (m_grabberEpgDvb == NULL || !SUCCEEDED(*hr)) 
+  {
+    if (SUCCEEDED(*hr))
+    {
+      *hr = E_OUTOFMEMORY;
+    }
+    LogDebug(L"writer: failed to allocate DVB EPG grabber, hr = 0x%x", *hr);
+    return;
+  }
+  m_grabberEpgMhw = new CParserMhw(this, GetOwner(), hr);
+  if (m_grabberEpgMhw == NULL || !SUCCEEDED(*hr)) 
+  {
+    if (SUCCEEDED(*hr))
+    {
+      *hr = E_OUTOFMEMORY;
+    }
+    LogDebug(L"writer: failed to allocate MHW EPG grabber, hr = 0x%x", *hr);
+    return;
+  }
+  m_grabberEpgOpenTv = new CParserOpenTv(this, GetOwner(), hr);
+  if (m_grabberEpgOpenTv == NULL || !SUCCEEDED(*hr)) 
+  {
+    if (SUCCEEDED(*hr))
+    {
+      *hr = E_OUTOFMEMORY;
+    }
+    LogDebug(L"writer: failed to allocate OpenTV EPG grabber, hr = 0x%x", *hr);
+    return;
+  }
+  m_grabberEpgScte = new CParserAet(this, GetOwner(), hr);
+  if (m_grabberEpgScte == NULL || !SUCCEEDED(*hr)) 
+  {
+    if (SUCCEEDED(*hr))
+    {
+      *hr = E_OUTOFMEMORY;
+    }
+    LogDebug(L"writer: failed to allocate SCTE EPG grabber, hr = 0x%x", *hr);
+    return;
+  }
+
+  // service information grabbers
+  m_grabberSiAtsc = new CGrabberSiAtscScte(PID_ATSC_BASE, this, GetOwner(), hr);
+  if (m_grabberSiAtsc == NULL || !SUCCEEDED(*hr)) 
+  {
+    if (SUCCEEDED(*hr))
+    {
+      *hr = E_OUTOFMEMORY;
+    }
+    LogDebug(L"writer: failed to allocate ATSC SI grabber, hr = 0x%x", *hr);
+    return;
+  }
+  m_grabberSiDvb = new CGrabberSiDvb(this, GetOwner(), hr);
+  if (m_grabberSiDvb == NULL || !SUCCEEDED(*hr)) 
+  {
+    if (SUCCEEDED(*hr))
+    {
+      *hr = E_OUTOFMEMORY;
+    }
+    LogDebug(L"writer: failed to allocate DVB SI grabber, hr = 0x%x", *hr);
+    return;
+  }
+  m_grabberSiFreesat = new CGrabberSiDvb(this, GetOwner(), hr);
+  if (m_grabberSiFreesat == NULL || !SUCCEEDED(*hr)) 
+  {
+    if (SUCCEEDED(*hr))
+    {
+      *hr = E_OUTOFMEMORY;
+    }
+    LogDebug(L"writer: failed to allocate Freesat SI grabber, hr = 0x%x", *hr);
+    return;
+  }
+  m_grabberSiMpeg = new CGrabberSiMpeg(this, &m_encryptionAnalyser, GetOwner(), hr);
+  if (m_grabberSiMpeg == NULL || !SUCCEEDED(*hr)) 
+  {
+    if (SUCCEEDED(*hr))
+    {
+      *hr = E_OUTOFMEMORY;
+    }
+    LogDebug(L"writer: failed to allocate MPEG SI grabber, hr = 0x%x", *hr);
+    return;
+  }
+  m_grabberSiScte = new CGrabberSiAtscScte(PID_SCTE_BASE, this, GetOwner(), hr);
+  if (m_grabberSiScte == NULL || !SUCCEEDED(*hr)) 
+  {
+    if (SUCCEEDED(*hr))
+    {
+      *hr = E_OUTOFMEMORY;
+    }
+    LogDebug(L"writer: failed to allocate SCTE SI grabber, hr = 0x%x", *hr);
+    return;
+  }
+
+  m_nextChannelId = 0;
+  m_isRunning = false;
+  m_checkSectionCrcs = true;
+  m_isFreesatTransportStream = false;
+  m_openTvEpgServiceId = 0;
+  m_observer = NULL;
+  LogDebug(L"writer: completed");
 }
 
-
-STDMETHODIMP CMpTs::AddChannel( int* handle)
+CTsWriter::~CTsWriter()
 {
-  CAutoLock lock(&m_Lock);
-  HRESULT hr;
-  CTsChannel* channel = new CTsChannel(GetOwner(), &hr,m_id); 
-  *handle=m_id;
-  m_id++;
-  m_vecChannels.push_back(channel);
-  return S_OK;
+  LogDebug(L"writer: destructor");
+  DeleteAllChannels();
+
+  // electronic programme guide grabbers
+  if (m_grabberEpgAtsc != NULL)
+  {
+    delete m_grabberEpgAtsc;
+    m_grabberEpgAtsc = NULL;
+  }
+  if (m_grabberEpgDvb != NULL)
+  {
+    delete m_grabberEpgDvb;
+    m_grabberEpgDvb = NULL;
+  }
+  if (m_grabberEpgMhw != NULL)
+  {
+    delete m_grabberEpgMhw;
+    m_grabberEpgMhw = NULL;
+  }
+  if (m_grabberEpgOpenTv != NULL)
+  {
+    delete m_grabberEpgOpenTv;
+    m_grabberEpgOpenTv = NULL;
+  }
+  if (m_grabberEpgScte != NULL)
+  {
+    delete m_grabberEpgScte;
+    m_grabberEpgScte = NULL;
+  }
+
+  // service information grabbers
+  if (m_grabberSiAtsc != NULL)
+  {
+    delete m_grabberSiAtsc;
+    m_grabberSiAtsc = NULL;
+  }
+  if (m_grabberSiDvb != NULL)
+  {
+    delete m_grabberSiDvb;
+    m_grabberSiDvb = NULL;
+  }
+  if (m_grabberSiFreesat != NULL)
+  {
+    delete m_grabberSiFreesat;
+    m_grabberSiFreesat = NULL;
+  }
+  if (m_grabberSiMpeg != NULL)
+  {
+    delete m_grabberSiMpeg;
+    m_grabberSiMpeg = NULL;
+  }
+  if (m_grabberSiScte != NULL)
+  {
+    delete m_grabberSiScte;
+    m_grabberSiScte = NULL;
+  }
+
+  if (m_filter != NULL)
+  {
+    delete m_filter;
+    m_filter = NULL;
+  }
+  LogDebug(L"writer: completed");
 }
 
-STDMETHODIMP CMpTs::DeleteChannel( int handle)
+CUnknown* WINAPI CTsWriter::CreateInstance(LPUNKNOWN unk, HRESULT* hr)
 {
-  CAutoLock lock(&m_Lock);
+  ASSERT(hr);
+  CTsWriter* writer = new CTsWriter(unk, hr);
+  if (writer == NULL)
+  {
+    *hr = E_OUTOFMEMORY;
+  }
+  return writer;
+}
+
+void CTsWriter::AnalyseOobSiSection(CSection& section)
+{
+  if (!m_isRunning)
+  {
+    return;
+  }
+
+  if (section.table_id == TABLE_ID_AEIT || section.table_id == TABLE_ID_AETT)
+  {
+    m_grabberEpgScte->OnNewSection(PID_SCTE_BASE, section.table_id, section);
+    return;
+  }
+
+  m_grabberSiScte->OnNewSection(PID_SCTE_BASE, section.table_id, section);
+}
+
+void CTsWriter::AnalyseTsPacket(unsigned char* tsPacket)
+{
   try
   {
-    ivecChannels it = m_vecChannels.begin();
-    while (it != m_vecChannels.end())
+    if (!m_isRunning)
     {
-      if ((*it)->Handle()==handle)
+      return;
+    }
+
+    CTsHeader header;
+    header.Decode(tsPacket);
+
+    // These grabbers handle PIDs that should be unique and/or impossible to
+    // confuse with program PIDs. If a packet is handled by one of these
+    // grabbers, we don't have to pass the packet to other grabbers (ie. the
+    // packet is "consumed").
+    if (
+      // service information
+      m_grabberSiMpeg->OnTsPacket(header, tsPacket) ||   // For best compatibility, this must be first.
+      m_grabberSiAtsc->OnTsPacket(header, tsPacket) ||
+      m_grabberSiDvb->OnTsPacket(header, tsPacket) ||
+      (m_isFreesatTransportStream && m_grabberSiFreesat->OnTsPacket(header, tsPacket)) ||
+      m_grabberSiScte->OnTsPacket(header, tsPacket) ||
+
+      // electronic programme guide
+      m_grabberEpgAtsc->OnTsPacket(header, tsPacket) ||
+      m_grabberEpgScte->OnTsPacket(header, tsPacket)
+    )
+    {
+      return;
+    }
+
+    // These grabbers handle PIDs that may be used by programs. In other words,
+    // the packets could contain EPG data... or they could contain program
+    // data. Therefore, we pass all packets through all grabbers.
+
+    // electronic programme guide
+    m_grabberEpgDvb->OnTsPacket(header, tsPacket);
+    m_grabberEpgMhw->OnTsPacket(header, tsPacket);
+    m_grabberEpgOpenTv->OnTsPacket(header, tsPacket);
+
+    // If the packet content is not encrypted...
+    if (!m_encryptionAnalyser.OnTsPacket(header, tsPacket))
+    {
+      CAutoLock lock(&m_channelLock);
+      vector<CTsChannel*>::const_iterator it = m_channels.begin();
+      for ( ; it != m_channels.end(); it++)
       {
-        delete *it;
-        m_vecChannels.erase(it);
-        if (m_vecChannels.size()==0)
-        {
-          m_id=0;
-        }
-        return S_OK;
+        (*it)->OnTsPacket(header, tsPacket);
       }
-      ++it;
     }
   }
-  catch(...)
+  catch (...)
   {
-    LogDebug("exception in delete channel");
+    LogDebug(L"writer: unhandled exception in AnalyseTsPacket()");
   }
+}
+
+STDMETHODIMP CTsWriter::ConfigureLogging(wchar_t* path)
+{
+  LogDebug(L"writer: configure logging, path = %s", path == NULL ? L"" : path);
+  if (path == NULL)
+  {
+    return E_INVALIDARG;
+  }
+  HRESULT hr = m_filter->SetDumpFilePath(path);
+  CAutoLock lock(&g_logFilePathLock);
+  g_logFilePath.str(path);
+  return hr;
+}
+
+STDMETHODIMP_(void) CTsWriter::DumpInput(bool enableTs, bool enableOobSi)
+{
+  LogDebug(L"writer: dump input, TS = %d, OOB SI = %d", enableTs, enableOobSi);
+  m_filter->DumpInput(enableTs, enableOobSi);
+}
+
+STDMETHODIMP_(void) CTsWriter::CheckSectionCrcs(bool enable)
+{
+  LogDebug(L"writer: check section CRCs, enable = %d", enable);
+  m_checkSectionCrcs = enable;
+}
+
+STDMETHODIMP_(void) CTsWriter::SetObserver(IObserver* observer)
+{
+  LogDebug(L"writer: set observer, observer = %d", observer != NULL);
+  CAutoLock lock(&m_receiveLock);
+  m_observer = observer;
+}
+
+STDMETHODIMP_(void) CTsWriter::Start()
+{
+  LogDebug(L"writer: start");
+  CAutoLock lock(&m_receiveLock);
+  m_isRunning = true;
+}
+
+STDMETHODIMP_(void) CTsWriter::Stop()
+{
+  LogDebug(L"writer: stop");
+  CAutoLock lock(&m_receiveLock);
+  m_isRunning = false;
+
+  bool enableCrcCheck = m_checkSectionCrcs && !TsWriterDisableCrcCheck();
+  // electronic programme guide grabbers
+  m_grabberEpgAtsc->Reset(enableCrcCheck);
+  m_grabberEpgDvb->Reset(enableCrcCheck);
+  m_grabberEpgMhw->Reset(enableCrcCheck);
+  m_grabberEpgOpenTv->Reset(enableCrcCheck);
+  m_grabberEpgScte->Reset(enableCrcCheck);
+
+  // service information grabbers
+  m_grabberSiAtsc->Reset(enableCrcCheck);
+  m_grabberSiDvb->Reset(enableCrcCheck);
+  m_grabberSiFreesat->Reset(enableCrcCheck);
+  m_grabberSiMpeg->Reset();
+  m_grabberSiScte->Reset(enableCrcCheck);
+
+  m_openTvEpgServiceId = 0;
+  m_openTvEpgPidsEvent.clear();
+  m_openTvEpgPidsDescription.clear();
+
+  m_atscEpgPidsEit.clear();
+  m_atscEpgPidsEtt.clear();
+  m_scteEpgPids.clear();
+
+  m_isFreesatTransportStream = false;
+  m_encryptionAnalyser.Reset();
+}
+
+STDMETHODIMP CTsWriter::AddChannel(IChannelObserver* observer, long* handle)
+{
+  CAutoLock lock(&m_channelLock);
+  LogDebug(L"writer: add channel %ld, channel count = %llu",
+            m_nextChannelId, (unsigned long long)m_channels.size());
+  CTsChannel* channel = new CTsChannel(m_nextChannelId++);
+  if (channel == NULL)
+  {
+    LogDebug(L"writer: failed to allocate channel");
+    m_nextChannelId--;
+    return E_OUTOFMEMORY;
+  }
+
+  channel->Recorder.SetObserver(observer);
+  channel->TimeShifter.SetObserver(observer);
+  m_channels.push_back(channel);
+  *handle = channel->Id;
   return S_OK;
 }
 
-CTsChannel* CMpTs::GetTsChannel(int handle)
+STDMETHODIMP_(void) CTsWriter::DeleteChannel(long handle)
 {
-  CAutoLock lock(&m_Lock);
-  ivecChannels it = m_vecChannels.begin();
-  while (it != m_vecChannels.end())
+  CAutoLock lock(&m_channelLock);
+  LogDebug(L"writer: delete channel %ld, channel count = %llu",
+            handle, (unsigned long long)m_channels.size());
+  vector<CTsChannel*>::iterator it = m_channels.begin();
+  for ( ; it != m_channels.end(); it++)
   {
-    if ((*it)->Handle()==handle)
+    CTsChannel* channel = *it;
+    if (channel != NULL && channel->Id == handle)
     {
-      return *it;
+      delete channel;
+      *it = NULL;
+      m_channels.erase(it);
+      if (m_channels.size() == 0)
+      {
+        m_nextChannelId = 0;
+      }
+      return;
     }
-    ++it;
   }
+  LogDebug(L"writer: failed to find channel %ld to delete", handle);
+}
+
+STDMETHODIMP_(void) CTsWriter::DeleteAllChannels()
+{
+  CAutoLock lock(&m_channelLock);
+  LogDebug(L"writer: delete all channels, channel count = %llu",
+            (unsigned long long)m_channels.size());
+  vector<CTsChannel*>::iterator it = m_channels.begin();
+  for ( ; it != m_channels.end(); it++)
+  {
+    CTsChannel* channel = *it;
+    if (channel != NULL)
+    {
+      delete channel;
+      *it = NULL;
+    }
+  }
+  m_channels.clear();
+  m_nextChannelId = 0;
+}
+
+STDMETHODIMP CTsWriter::RecorderSetFileName(long handle, wchar_t* fileName)
+{
+  LogDebug(L"writer: set recorder file name, channel = %ld, name = %s",
+            handle, fileName == NULL ? L"" : fileName);
+  CAutoLock lock(&m_channelLock);
+  CTsChannel* channel = GetChannel(handle);
+  if (channel == NULL)
+  {
+    return E_FAIL;
+  }
+  return channel->Recorder.SetFileName(fileName);
+}
+
+STDMETHODIMP CTsWriter::RecorderSetPmt(long handle,
+                                        unsigned char* pmt,
+                                        unsigned short pmtSize,
+                                        bool isDynamicPmtChange)
+{
+  LogDebug(L"writer: set recorder PMT, channel = %ld, PMT size = %hu, is dynamic change = %d",
+            handle, pmtSize, isDynamicPmtChange);
+  CAutoLock lock(&m_channelLock);
+  CTsChannel* channel = GetChannel(handle);
+  if (channel == NULL)
+  {
+    return E_FAIL;
+  }
+  return channel->Recorder.SetPmt(pmt, pmtSize, isDynamicPmtChange);
+}
+
+STDMETHODIMP CTsWriter::RecorderStart(long handle)
+{
+  LogDebug(L"writer: start recorder, channel = %ld", handle);
+  CAutoLock lock(&m_channelLock);
+  CTsChannel* channel = GetChannel(handle);
+  if (channel == NULL)
+  {
+    return E_FAIL;
+  }
+  return channel->Recorder.Start();
+}
+
+STDMETHODIMP CTsWriter::RecorderGetStreamQuality(long handle,
+                                                  unsigned long long* countTsPackets,
+                                                  unsigned long long* countDiscontinuities,
+                                                  unsigned long long* countDroppedBytes)
+{
+  CAutoLock lock(&m_channelLock);
+  CTsChannel* channel = GetChannel(handle);
+  if (channel == NULL)
+  {
+    return E_FAIL;
+  }
+  channel->Recorder.GetStreamQualityCounters(*countTsPackets,
+                                              *countDiscontinuities,
+                                              *countDroppedBytes);
+  return S_OK;
+}
+
+STDMETHODIMP CTsWriter::RecorderStop(long handle)
+{
+  LogDebug(L"writer: stop recorder, channel = %ld", handle);
+  CAutoLock lock(&m_channelLock);
+  CTsChannel* channel = GetChannel(handle);
+  if (channel == NULL)
+  {
+    return E_FAIL;
+  }
+  channel->Recorder.Stop();
+  return S_OK;
+}
+
+STDMETHODIMP CTsWriter::TimeShifterSetFileName(long handle, wchar_t* fileName)
+{
+  LogDebug(L"writer: set time-shifter file name, channel = %ld, name = %s",
+            handle, fileName == NULL ? L"" : fileName);
+  CAutoLock lock(&m_channelLock);
+  CTsChannel* channel = GetChannel(handle);
+  if (channel == NULL)
+  {
+    return E_FAIL;
+  }
+  return channel->TimeShifter.SetFileName(fileName);
+}
+
+STDMETHODIMP CTsWriter::TimeShifterSetParameters(long handle,
+                                                  unsigned long fileCountMinimum,
+                                                  unsigned long fileCountMaximum,
+                                                  unsigned long long fileSizeBytes)
+{
+  LogDebug(L"writer: set time-shifter parameters, file count minimum = %lu, file count maximum = %lu, maximum file size = %llu",
+            fileCountMinimum, fileCountMaximum, fileSizeBytes);
+  CAutoLock lock(&m_channelLock);
+  CTsChannel* channel = GetChannel(handle);
+  if (channel == NULL)
+  {
+    return E_FAIL;
+  }
+  return channel->TimeShifter.SetTimeShiftingParameters(fileCountMinimum,
+                                                        fileCountMaximum,
+                                                        fileSizeBytes);
+}
+
+STDMETHODIMP CTsWriter::TimeShifterSetPmt(long handle,
+                                          unsigned char* pmt,
+                                          unsigned short pmtSize,
+                                          bool isDynamicPmtChange)
+{
+  LogDebug(L"writer: set time-shifter PMT, channel = %ld, PMT size = %hu, is dynamic change = %d",
+            handle, pmtSize, isDynamicPmtChange);
+  CAutoLock lock(&m_channelLock);
+  CTsChannel* channel = GetChannel(handle);
+  if (channel == NULL)
+  {
+    return E_FAIL;
+  }
+  return channel->TimeShifter.SetPmt(pmt, pmtSize, isDynamicPmtChange);
+}
+
+STDMETHODIMP CTsWriter::TimeShifterStart(long handle)
+{
+  LogDebug(L"writer: start time-shifter, channel = %ld", handle);
+  CAutoLock lock(&m_channelLock);
+  CTsChannel* channel = GetChannel(handle);
+  if (channel == NULL)
+  {
+    return E_FAIL;
+  }
+  return channel->TimeShifter.Start();
+}
+
+STDMETHODIMP CTsWriter::TimeShifterGetStreamQuality(long handle,
+                                                    unsigned long long* countTsPackets,
+                                                    unsigned long long* countDiscontinuities,
+                                                    unsigned long long* countDroppedBytes)
+{
+  CAutoLock lock(&m_channelLock);
+  CTsChannel* channel = GetChannel(handle);
+  if (channel == NULL)
+  {
+    return E_FAIL;
+  }
+  channel->TimeShifter.GetStreamQualityCounters(*countTsPackets,
+                                                *countDiscontinuities,
+                                                *countDroppedBytes);
+  return S_OK;
+}
+
+STDMETHODIMP CTsWriter::TimeShifterGetCurrentFilePosition(long handle,
+                                                          unsigned long long* position,
+                                                          unsigned long* bufferId)
+{
+  CAutoLock lock(&m_channelLock);
+  CTsChannel* channel = GetChannel(handle);
+  if (channel == NULL)
+  {
+    return E_FAIL;
+  }
+  channel->TimeShifter.GetTimeShiftingFilePosition(*position, *bufferId);
+  return S_OK;
+}
+
+STDMETHODIMP CTsWriter::TimeShifterStop(long handle)
+{
+  LogDebug(L"writer: stop time-shifter, channel = %ld", handle);
+  CAutoLock lock(&m_channelLock);
+  CTsChannel* channel = GetChannel(handle);
+  if (channel == NULL)
+  {
+    return E_FAIL;
+  }
+  channel->TimeShifter.Stop();
+  return S_OK;
+}
+
+STDMETHODIMP CTsWriter::NonDelegatingQueryInterface(REFIID iid, void ** ppv)
+{
+  if (ppv == NULL)
+  {
+    return E_POINTER;
+  }
+
+  // electronic programme guide
+  if (iid == IID_IGRABBER_EPG_ATSC)
+  {
+    return m_grabberEpgAtsc->NonDelegatingQueryInterface(iid, ppv);
+  }
+  if (iid == IID_IGRABBER_EPG_DVB)
+  {
+    return m_grabberEpgDvb->NonDelegatingQueryInterface(iid, ppv);
+  }
+  if (iid == IID_IGRABBER_EPG_MHW)
+  {
+    return m_grabberEpgMhw->NonDelegatingQueryInterface(iid, ppv);
+  }
+  if (iid == IID_IGRABBER_EPG_OPENTV)
+  {
+    return m_grabberEpgOpenTv->NonDelegatingQueryInterface(iid, ppv);
+  }
+  if (iid == IID_IGRABBER_EPG_SCTE)
+  {
+    return m_grabberEpgScte->NonDelegatingQueryInterface(iid, ppv);
+  }
+
+  // service information
+  if (iid == IID_IGRABBER_SI_ATSC)
+  {
+    return m_grabberSiAtsc->NonDelegatingQueryInterface(iid, ppv);
+  }
+  if (iid == IID_IGRABBER_SI_DVB)
+  {
+    return m_grabberSiDvb->NonDelegatingQueryInterface(iid, ppv);
+  }
+  if (iid == IID_IGRABBER_SI_FREESAT)
+  {
+    return m_grabberSiFreesat->NonDelegatingQueryInterface(iid, ppv);
+  }
+  if (iid == IID_IGRABBER_SI_MPEG)
+  {
+    return m_grabberSiMpeg->NonDelegatingQueryInterface(iid, ppv);
+  }
+  if (iid == IID_IGRABBER_SI_SCTE)
+  {
+    return m_grabberSiScte->NonDelegatingQueryInterface(iid, ppv);
+  }
+
+  // other
+  if (iid == IID_ITS_WRITER)
+  {
+    return GetInterface((ITsWriter*)this, ppv);
+  }
+  if (iid == IID_IBaseFilter || iid == IID_IMediaFilter || iid == IID_IPersist) 
+  {
+    return m_filter->NonDelegatingQueryInterface(iid, ppv);
+  } 
+ 
+  return CUnknown::NonDelegatingQueryInterface(iid, ppv);
+}
+
+CTsChannel* CTsWriter::GetChannel(long handle)
+{
+  vector<CTsChannel*>::const_iterator it = m_channels.begin();
+  for ( ; it != m_channels.end(); it++)
+  {
+    CTsChannel* channel = *it;
+    if (channel != NULL && channel->Id == handle)
+    {
+      return channel;
+    }
+  }
+  LogDebug(L"writer: failed to find channel %ld", handle);
   return NULL;
 }
 
-STDMETHODIMP CMpTs::DeleteAllChannels()
+bool CTsWriter::GetDefaultAuthority(unsigned short originalNetworkId,
+                                    unsigned short transportStreamId,
+                                    unsigned short serviceId,
+                                    char* defaultAuthority,
+                                    unsigned short& defaultAuthorityBufferSize) const
 {
-  CAutoLock lock(&m_Lock);
-  LogDebug("--delete all channels");
-  for (int i=0; i < (int)m_vecChannels.size();++i)
+  if (
+    m_isFreesatTransportStream &&
+    m_grabberSiFreesat->GetDefaultAuthority(originalNetworkId,
+                                            transportStreamId,
+                                            serviceId,
+                                            defaultAuthority,
+                                            defaultAuthorityBufferSize)
+  )
   {
-    delete m_vecChannels[i];
+    return true;
   }
-  m_vecChannels.clear();
-  m_id=0;
-  return S_OK;
+
+  return m_grabberSiDvb->GetDefaultAuthority(originalNetworkId,
+                                              transportStreamId,
+                                              serviceId,
+                                              defaultAuthority,
+                                              defaultAuthorityBufferSize);
 }
 
-
-STDMETHODIMP CMpTs::AnalyserAddPid(int handle, int pid)
+void CTsWriter::OnTableSeen(unsigned char tableId)
 {
-  CTsChannel* pChannel = GetTsChannel(handle);
-  if (pChannel == NULL)
+}
+
+void CTsWriter::OnTableComplete(unsigned char tableId)
+{
+  if (tableId != 0xc7)
   {
-    return S_FALSE;
+    return;
   }
-  return pChannel->m_pEncryptionAnalyser->AddPid(pid);
-}
 
-STDMETHODIMP CMpTs::AnalyserRemovePid(int handle, int pid)
-{
-  CTsChannel* pChannel = GetTsChannel(handle);
-  if (pChannel == NULL)
+  vector<unsigned short> pidsToRemove;
+  unsigned short tableType;
+  unsigned short pid;
+  unsigned char versionNumber;
+  unsigned long numberBytes;
+
+  // Update ATSC EPG grabber PIDs.
+  unsigned short tableCount = m_grabberSiAtsc->GetMasterGuideTableCount();
+  if (tableCount == 0)
   {
-    return S_FALSE;
+    if (m_atscEpgPidsEit.size() > 0)
+    {
+      m_grabberEpgAtsc->RemoveEitDecoders(m_atscEpgPidsEit);
+      m_atscEpgPidsEit.clear();
+    }
+    if (m_atscEpgPidsEtt.size() > 0)
+    {
+      m_grabberEpgAtsc->RemoveEttDecoders(m_atscEpgPidsEtt);
+      m_atscEpgPidsEtt.clear();
+    }
   }
-  return pChannel->m_pEncryptionAnalyser->RemovePid(pid);
-}
-
-STDMETHODIMP CMpTs::AnalyserGetPidCount(int handle, int* pidCount)
-{
-  CTsChannel* pChannel = GetTsChannel(handle);
-  if (pChannel == NULL)
-  {
-    return S_FALSE;
-  }
-  return pChannel->m_pEncryptionAnalyser->GetPidCount(pidCount);
-}
-
-STDMETHODIMP CMpTs::AnalyserGetPid(int handle, int pidIdx, int* pid, EncryptionState* encryptionState)
-{
-  CTsChannel* pChannel = GetTsChannel(handle);
-  if (pChannel == NULL)
-  {
-    return S_FALSE;
-  }
-  return pChannel->m_pEncryptionAnalyser->GetPidByIndex(pidIdx, pid, encryptionState);
-}
-
-STDMETHODIMP CMpTs::AnalyserSetCallBack(int handle, IEncryptionStateChangeCallBack* callBack)
-{
-  CTsChannel* pChannel = GetTsChannel(handle);
-  if (pChannel == NULL)
-  {
-    return S_FALSE;
-  }
-  return pChannel->m_pEncryptionAnalyser->SetCallBack(callBack);
-}
-
-STDMETHODIMP CMpTs::AnalyserReset(int handle)
-{
-  CTsChannel* pChannel = GetTsChannel(handle);
-  if (pChannel == NULL)
-  {
-    return S_FALSE;
-  }
-  return pChannel->m_pEncryptionAnalyser->Reset();
-}
-
-
-STDMETHODIMP CMpTs::PmtSetPmtPid(int handle, int pmtPid, int serviceId)
-{
-  CTsChannel* pChannel = GetTsChannel(handle);
-  if (pChannel == NULL)
-  {
-    return S_FALSE;
-  }
-  return pChannel->m_pPmtGrabber->SetPmtPid(pmtPid, serviceId);
-}
-
-STDMETHODIMP CMpTs::PmtSetCallBack(int handle, IPmtCallBack* callBack)
-{
-  CTsChannel* pChannel = GetTsChannel(handle);
-  if (pChannel == NULL)
-  {
-    return S_FALSE;
-  }
-  return pChannel->m_pPmtGrabber->SetCallBack(callBack);
-}
-
-STDMETHODIMP CMpTs::PmtGetPmtData(int handle, BYTE* pmtData)
-{
-  CTsChannel* pChannel = GetTsChannel(handle);
-  if (pChannel == NULL)
-  {
-    return S_FALSE;
-  }
-  return pChannel->m_pPmtGrabber->GetPmtData(pmtData);
-}
-
-
-STDMETHODIMP CMpTs::RecordSetRecordingFileNameW( int handle, wchar_t* pwszFileName)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-  pChannel->m_pRecorder->SetFileName(pwszFileName);
-  return S_OK;
-}
-
-STDMETHODIMP CMpTs::RecordStartRecord( int handle)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-  if (pChannel->m_pRecorder->Start())
-    return S_OK;
   else
-    return S_FALSE;
-}
-
-STDMETHODIMP CMpTs::RecordStopRecord( int handle)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-  pChannel->m_pRecorder->Stop(  );
-  return S_OK;
-}
-
-STDMETHODIMP CMpTs::RecordSetPmtPid(int handle,int mtPid, int serviceId,byte* pmtData,int pmtLength )
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-  pChannel->m_pRecorder->SetPmt(pmtData, pmtLength);
-  return S_OK;
-}
-
-STDMETHODIMP CMpTs::TimeShiftSetTimeShiftingFileNameW( int handle, wchar_t* pwszFileName)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-
-  b_dumpRawPakets=false;
-  if (DumpRawTS())
   {
-    b_dumpRawPakets=true;
-    wstring fileName=pwszFileName;
-    fileName=fileName.substr(0, fileName.rfind(L"\\"));
-    fileName.append(L"\\raw_packet_dump.ts");
+    vector<unsigned short> pidsToAddEit;
+    vector<unsigned short> pidsEit;
+    vector<unsigned short> pidsToAddEtt;
+    vector<unsigned short> pidsEtt;
+    for (unsigned short i = 0; i < tableCount; i++)
+    {
+      if (!m_grabberSiAtsc->GetMasterGuideTable(i, tableType, pid, versionNumber, numberBytes))
+      {
+        break;
+      }
+      if (tableType >= 0x100 && tableType <= 0x17f)       // EIT
+      {
+        if (find(m_atscEpgPidsEit.begin(), m_atscEpgPidsEit.end(), pid) == m_atscEpgPidsEit.end())
+        {
+          if (find(pidsToAddEit.begin(), pidsToAddEit.end(), pid) == pidsToAddEit.end())
+          {
+            pidsToAddEit.push_back(pid);
+          }
+        }
+        else
+        {
+          pidsEit.push_back(pid);
+        }
+      }
+      else if (tableType >= 0x200 && tableType <= 0x27f)  // ETT
+      {
+        if (find(m_atscEpgPidsEtt.begin(), m_atscEpgPidsEtt.end(), pid) == m_atscEpgPidsEtt.end())
+        {
+          if (find(pidsToAddEtt.begin(), pidsToAddEtt.end(), pid) == pidsToAddEtt.end())
+          {
+            pidsToAddEtt.push_back(pid);
+          }
+        }
+        else
+        {
+          pidsEtt.push_back(pid);
+        }
+      }
+    }
 
-    LogDebug(L"Setting name for raw packet dump file to %s", fileName.c_str());
-    m_rawPaketWriter->SetFileName(fileName.c_str());
+    vector<unsigned short>::iterator it = m_atscEpgPidsEit.begin();
+    while (it != m_atscEpgPidsEit.end())
+    {
+      if (find(pidsEit.begin(), pidsEit.end(), *it) == pidsEit.end())
+      {
+        pidsToRemove.push_back(*it);
+        it = m_atscEpgPidsEit.erase(it);
+      }
+      else
+      {
+        it++;
+      }
+    }
+    if (pidsToRemove.size() > 0)
+    {
+      m_grabberEpgAtsc->RemoveEitDecoders(pidsToRemove);
+      pidsToRemove.clear();
+    }
+    if (pidsToAddEit.size() > 0)
+    {
+      m_grabberEpgAtsc->AddEitDecoders(pidsToAddEit);
+      it = pidsToAddEit.begin();
+      for ( ; it != pidsToAddEit.end(); it++)
+      {
+        m_atscEpgPidsEit.push_back(*it);
+      }
+    }
+
+    it = m_atscEpgPidsEtt.begin();
+    while (it != m_atscEpgPidsEtt.end())
+    {
+      if (find(pidsEtt.begin(), pidsEtt.end(), *it) == pidsEtt.end())
+      {
+        pidsToRemove.push_back(*it);
+        it = m_atscEpgPidsEtt.erase(it);
+      }
+      else
+      {
+        it++;
+      }
+    }
+    if (pidsToRemove.size() > 0)
+    {
+      m_grabberEpgAtsc->RemoveEttDecoders(pidsToRemove);
+      pidsToRemove.clear();
+    }
+    if (pidsToAddEtt.size() > 0)
+    {
+      m_grabberEpgAtsc->AddEttDecoders(pidsToAddEtt);
+      it = pidsToAddEtt.begin();
+      for ( ; it != pidsToAddEtt.end(); it++)
+      {
+        m_atscEpgPidsEtt.push_back(*it);
+      }
+    }
   }
-  pChannel->m_pTimeShifting->SetFileName(pwszFileName);
-  return S_OK;
-}
-STDMETHODIMP CMpTs::TimeShiftStart( int handle )
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-  if (b_dumpRawPakets)
+
+  // Update SCTE EPG grabber PIDs.
+  tableCount = m_grabberSiScte->GetMasterGuideTableCount();
+  if (tableCount == 0)
   {
-    m_rawPaketWriter->OpenFile();
-    LogDebug("Raw packet dump file created. Now dumping raw packets to dump file");
+    if (m_scteEpgPids.size() > 0)
+    {
+      m_grabberEpgScte->RemoveDecoders(m_scteEpgPids);
+      m_scteEpgPids.clear();
+    }
   }
-  if (pChannel->m_pTimeShifting->Start())
-    return S_OK;
   else
-    return S_FALSE;
-}
-
-STDMETHODIMP CMpTs::TimeShiftStop( int handle )
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-  if (b_dumpRawPakets)
   {
-    m_rawPaketWriter->CloseFile();
-    LogDebug("Raw packet dump file closed");
+    vector<unsigned short> pidsToAdd;
+    vector<unsigned short> pids;
+    for (unsigned short i = 0; i < tableCount; i++)
+    {
+      if (!m_grabberSiScte->GetMasterGuideTable(i, tableType, pid, versionNumber, numberBytes))
+      {
+        break;
+      }
+      if (
+        (tableType >= 0x1000 && tableType <= 0x10ff) ||
+        (tableType >= 0x1100 && tableType <= 0x11ff)
+      )
+      {
+        if (find(m_scteEpgPids.begin(), m_scteEpgPids.end(), pid) == m_scteEpgPids.end())
+        {
+          if (find(pidsToAdd.begin(), pidsToAdd.end(), pid) == pidsToAdd.end())
+          {
+            pidsToAdd.push_back(pid);
+          }
+        }
+        else
+        {
+          pids.push_back(pid);
+        }
+      }
+    }
+
+    vector<unsigned short>::iterator it = m_scteEpgPids.begin();
+    while (it != m_scteEpgPids.end())
+    {
+      if (find(pids.begin(), pids.end(), *it) == pids.end())
+      {
+        pidsToRemove.push_back(*it);
+        it = m_scteEpgPids.erase(it);
+      }
+      else
+      {
+        it++;
+      }
+    }
+    if (pidsToRemove.size() > 0)
+    {
+      m_grabberEpgScte->RemoveDecoders(pidsToRemove);
+    }
+    if (pidsToAdd.size() > 0)
+    {
+      m_grabberEpgScte->AddDecoders(pidsToAdd);
+      it = pidsToAdd.begin();
+      for ( ; it != pidsToAdd.end(); it++)
+      {
+        m_scteEpgPids.push_back(*it);
+      }
+    }
   }
-  pChannel->m_pTimeShifting->Stop( );
-  return S_OK;
 }
 
-STDMETHODIMP CMpTs:: TimeShiftReset( int handle )
+void CTsWriter::OnTableChange(unsigned char tableId)
 {
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-  if (b_dumpRawPakets)
+}
+
+void CTsWriter::OnEncryptionStateChange(unsigned short pid,
+                                        EncryptionState statePrevious,
+                                        EncryptionState stateNew)
+{
+  if (m_observer != NULL && (statePrevious != EncryptionStateNotSet || stateNew == Encrypted))
   {
-    m_rawPaketWriter->CloseFile();
-    m_rawPaketWriter->OpenFile();
-    LogDebug("Raw packet dump file reset");
+    m_observer->OnPidEncryptionStateChange(pid, (unsigned long)stateNew);
   }
-  //pChannel->m_pTimeShifting->Reset( );
-  return S_OK;
 }
 
-STDMETHODIMP CMpTs:: TimeShiftGetBufferSize( int handle, __int64* size) 
+void CTsWriter::OnPidsRequired(unsigned short* pids, unsigned char pidCount, PidUsage usage)
 {
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-  pChannel->m_pTimeShifting->GetBufferSize( size);
-  return S_OK;
-}
-
-STDMETHODIMP CMpTs:: TimeShiftSetPmtPid( int handle, int pmtPid, int serviceId,byte* pmtData,int pmtLength) 
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-  pChannel->m_pTimeShifting->SetPmt(pmtData, pmtLength);
-  return S_OK;
-}
-
-STDMETHODIMP CMpTs:: TimeShiftPause( int handle, BYTE onOff) 
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-  //pChannel->m_pTimeShifting->Pause( onOff);
-  return S_OK;
-}
-
-STDMETHODIMP CMpTs::TimeShiftSetParams(int handle, int minFiles, int maxFiles, ULONG chunkSize) 
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-  pChannel->m_pTimeShifting->SetMinTsFiles(minFiles);
-  pChannel->m_pTimeShifting->SetMaxTsFiles(maxFiles);
-  pChannel->m_pTimeShifting->SetMaxTsFileSize(chunkSize);
-  pChannel->m_pTimeShifting->SetChunkReserve(chunkSize);
-  return S_OK;
-}
-
-STDMETHODIMP CMpTs::TimeShiftGetCurrentFilePosition(int handle,__int64 * position,long * bufferId)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-  pChannel->m_pTimeShifting->GetTimeShiftPosition(position,bufferId);
-  return S_OK;
-}
-
-STDMETHODIMP CMpTs::SetVideoAudioObserver(int handle, IVideoAudioObserver* callback)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_FALSE;
-  pChannel->m_pTimeShifting->SetVideoAudioObserver(callback);
-  return S_OK;
-}
-
-STDMETHODIMP CMpTs::RecordSetVideoAudioObserver(int handle, IVideoAudioObserver* callback)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_FALSE;
-  pChannel->m_pRecorder->SetVideoAudioObserver(callback);
-  return S_OK;
-}
-
-
-STDMETHODIMP CMpTs::CaReset(int handle)
-{
-  CTsChannel* pChannel = GetTsChannel(handle);
-  if (pChannel == NULL)
+  if (m_observer != NULL)
   {
-    return S_FALSE;
+    m_observer->OnPidsRequired(pids, pidCount, (unsigned long)usage);
   }
-  return pChannel->m_pCaGrabber->Reset();
 }
 
-STDMETHODIMP CMpTs::CaSetCallBack(int handle, ICaCallBack* callBack)
+void CTsWriter::OnPidsNotRequired(unsigned short* pids, unsigned char pidCount, PidUsage usage)
 {
-  CTsChannel* pChannel = GetTsChannel(handle);
-  if (pChannel == NULL)
+  if (m_observer != NULL)
   {
-    return S_FALSE;
+    m_observer->OnPidsNotRequired(pids, pidCount, (unsigned long)usage);
   }
-  return pChannel->m_pCaGrabber->SetCallBack(callBack);
 }
 
-STDMETHODIMP CMpTs::CaGetCaData(int handle, BYTE* caData)
+void CTsWriter::OnFreesatPids(unsigned short pidEitSchedule,
+                              unsigned short pidEitPresentFollowing,
+                              unsigned short pidSdt,
+                              unsigned short pidBat,
+                              unsigned short pidNit)
 {
-  CTsChannel* pChannel = GetTsChannel(handle);
-  if (pChannel == NULL)
+  m_isFreesatTransportStream = true;
+
+  m_grabberSiFreesat->SetPids(pidBat, pidNit, pidSdt);
+  if (m_observer != NULL)
   {
-    return S_FALSE;
-  }
-  return pChannel->m_pCaGrabber->GetCaData(caData);
-}
-
-
-STDMETHODIMP CMpTs::GetStreamQualityCounters(int handle, int* totalTsBytes, int* totalRecordingBytes, 
-      int* TsDiscontinuity, int* recordingDiscontinuity)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_FALSE;
-
-  if (pChannel->m_pTimeShifting)
-  {
-    pChannel->m_pTimeShifting->GetDiscontinuityCount(TsDiscontinuity);
-    pChannel->m_pTimeShifting->GetProcessedPacketCount(totalTsBytes);
+    unsigned short pids[3];
+    unsigned char pidCount = 0;
+    if (pidSdt != 0)
+    {
+      pids[pidCount++] = pidSdt;
+    }
+    if (pidBat != 0 && pidBat != pidSdt)
+    {
+      pids[pidCount++] = pidBat;
+    }
+    if (pidNit != 0 && pidNit != pidSdt && pidNit != pidBat)
+    {
+      pids[pidCount++] = pidNit;
+    }
+    if (pidCount != 0)
+    {
+      m_observer->OnPidsRequired(pids, pidCount, (unsigned long)Si);
+    }
   }
 
-  if (pChannel->m_pRecorder)
-  {
-    pChannel->m_pRecorder->GetDiscontinuityCount(recordingDiscontinuity);
-    pChannel->m_pRecorder->GetProcessedPacketCount(totalRecordingBytes);
-  }
-
-  if (pChannel->m_pRecorder || pChannel->m_pTimeShifting)
-    return S_OK;
-  else
-    return S_FALSE;
+  m_grabberEpgDvb->SetFreesatPids(pidBat, pidEitPresentFollowing, pidEitSchedule, pidNit, pidSdt);
 }
 
-
-STDMETHODIMP CMpTs::TimeShiftSetChannelType(int handle, int channelType)
+void CTsWriter::OnSdtRunningStatus(unsigned short serviceId, unsigned char runningStatus)
 {
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-  //pChannel->m_pRecorder->SetChannelType(channelType);
-  //pChannel->m_pTimeShifting->SetChannelType(channelType);
-  return S_OK;
+  // Don't bother notifying unless the service is not running. If the service
+  // is running PMT should be received shortly.
+  if ((runningStatus == 1 || runningStatus == 5) && m_observer != NULL)
+  {
+    m_observer->OnProgramDetail(serviceId, 0, false, NULL, 0);
+  }
+}
+
+void CTsWriter::OnOpenTvEpgService(unsigned short serviceId, unsigned short originalNetworkId)
+{
+  if (m_openTvEpgServiceId == serviceId || (serviceId != 0 && m_openTvEpgServiceId != 0))
+  {
+    // Duplicate nofication is odd. We don't ever expect to see 2 OpenTV EPG
+    // services in the same transport stream.
+    return;
+  }
+
+  if (serviceId == 0)
+  {
+    LogDebug(L"writer: OpenTV EPG service removed");
+    m_openTvEpgServiceId = 0;
+    if (m_openTvEpgPidsEvent.size() > 0)
+    {
+      m_grabberEpgOpenTv->RemoveEventDecoders(m_openTvEpgPidsEvent);
+      m_openTvEpgPidsEvent.clear();
+    }
+    if (m_openTvEpgPidsDescription.size() > 0)
+    {
+      m_grabberEpgOpenTv->RemoveDescriptionDecoders(m_openTvEpgPidsDescription);
+      m_openTvEpgPidsDescription.clear();
+    }
+    return;
+  }
+
+  m_grabberEpgOpenTv->SetOriginalNetworkId(originalNetworkId);
+  bool isOpenTvEpgService = false;
+  if (!m_grabberSiMpeg->GetOpenTvEpgPids(serviceId,
+                                          isOpenTvEpgService,
+                                          m_openTvEpgPidsEvent,
+                                          m_openTvEpgPidsDescription))
+  {
+    LogDebug(L"writer: OpenTV EPG service candidate identified, service ID = %hu, ONID = %hu",
+              serviceId, originalNetworkId);
+    m_openTvEpgServiceId = serviceId;
+    return;
+  }
+
+  if (isOpenTvEpgService)
+  {
+    LogDebug(L"writer: OpenTV EPG service identified, service ID = %hu, ONID = %hu",
+              serviceId, originalNetworkId);
+    m_openTvEpgServiceId = serviceId;
+    if (m_openTvEpgPidsEvent.size() > 0)
+    {
+      m_grabberEpgOpenTv->AddEventDecoders(m_openTvEpgPidsEvent);
+    }
+    if (m_openTvEpgPidsDescription.size() > 0)
+    {
+      m_grabberEpgOpenTv->AddDescriptionDecoders(m_openTvEpgPidsDescription);
+    }
+  }
+}
+
+void CTsWriter::OnCatReceived(const unsigned char* table, unsigned short tableSize)
+{
+  if (m_observer != NULL)
+  {
+    m_observer->OnConditionalAccessTable(table, tableSize);
+  }
+}
+
+void CTsWriter::OnCatChanged(const unsigned char* table, unsigned short tableSize)
+{
+  if (m_observer != NULL)
+  {
+    m_observer->OnConditionalAccessTable(table, tableSize);
+  }
+}
+
+void CTsWriter::OnEamReceived(unsigned short id,
+                              unsigned long originatorCode,
+                              const char* eventCode,
+                              const map<unsigned long, char*>& NatureOfActivationTexts,
+                              unsigned char alertMessageTimeRemaining,
+                              unsigned long eventStartTime,
+                              unsigned short eventDuration,
+                              unsigned char alertPriority,
+                              unsigned short detailsOobSourceId,
+                              unsigned short detailsMajorChannelNumber,
+                              unsigned short detailsMinorChannelNumber,
+                              unsigned char detailsRfChannel,
+                              unsigned short detailsProgramNumber,
+                              unsigned short audioOobSourceId,
+                              const map<unsigned long, char*>& alertTexts,
+                              const vector<unsigned long>& locationCodes,
+                              const vector<unsigned long>& exceptions,
+                              const vector<unsigned long>& alternativeExceptions)
+{
+}
+
+void CTsWriter::OnEamChanged(unsigned short id,
+                              unsigned long originatorCode,
+                              const char* eventCode,
+                              const map<unsigned long, char*>& NatureOfActivationTexts,
+                              unsigned char alertMessageTimeRemaining,
+                              unsigned long eventStartTime,
+                              unsigned short eventDuration,
+                              unsigned char alertPriority,
+                              unsigned short detailsOobSourceId,
+                              unsigned short detailsMajorChannelNumber,
+                              unsigned short detailsMinorChannelNumber,
+                              unsigned char detailsRfChannel,
+                              unsigned short detailsProgramNumber,
+                              unsigned short audioOobSourceId,
+                              const map<unsigned long, char*>& alertTexts,
+                              const vector<unsigned long>& locationCodes,
+                              const vector<unsigned long>& exceptions,
+                              const vector<unsigned long>& alternativeExceptions)
+{
+}
+
+void CTsWriter::OnEamRemoved(unsigned short id,
+                              unsigned long originatorCode,
+                              const char* eventCode,
+                              const map<unsigned long, char*>& NatureOfActivationTexts,
+                              unsigned char alertMessageTimeRemaining,
+                              unsigned long eventStartTime,
+                              unsigned short eventDuration,
+                              unsigned char alertPriority,
+                              unsigned short detailsOobSourceId,
+                              unsigned short detailsMajorChannelNumber,
+                              unsigned short detailsMinorChannelNumber,
+                              unsigned char detailsRfChannel,
+                              unsigned short detailsProgramNumber,
+                              unsigned short audioOobSourceId,
+                              const map<unsigned long, char*>& alertTexts,
+                              const vector<unsigned long>& locationCodes,
+                              const vector<unsigned long>& exceptions,
+                              const vector<unsigned long>& alternativeExceptions)
+{
+}
+
+void CTsWriter::OnMgtReceived(unsigned short tableType,
+                              unsigned short pid,
+                              unsigned char versionNumber,
+                              unsigned long numberBytes)
+{
+}
+
+void CTsWriter::OnMgtChanged(unsigned short tableType,
+                              unsigned short pid,
+                              unsigned char versionNumber,
+                              unsigned long numberBytes)
+{
+}
+
+void CTsWriter::OnMgtRemoved(unsigned short tableType,
+                              unsigned short pid,
+                              unsigned char versionNumber,
+                              unsigned long numberBytes)
+{
+}
+
+void CTsWriter::OnPatProgramReceived(unsigned short programNumber, unsigned short pmtPid)
+{
+  if (m_observer != NULL)
+  {
+    m_observer->OnProgramDetail(programNumber, pmtPid, true, NULL, 0);
+  }
+}
+
+void CTsWriter::OnPatProgramChanged(unsigned short programNumber, unsigned short pmtPid)
+{
+  if (m_observer != NULL)
+  {
+    m_observer->OnProgramDetail(programNumber, pmtPid, true, NULL, 0);
+  }
+}
+
+void CTsWriter::OnPatProgramRemoved(unsigned short programNumber, unsigned short pmtPid)
+{
+  if (m_observer != NULL)
+  {
+    m_observer->OnProgramDetail(programNumber, pmtPid, false, NULL, 0);
+  }
+}
+
+void CTsWriter::OnPatTsidChanged(unsigned short oldTransportStreamId,
+                                  unsigned short newTransportStreamId)
+{
+  // Currently nothing to do.
+}
+
+void CTsWriter::OnPatNetworkPidChanged(unsigned short oldNetworkPid, unsigned short newNetworkPid)
+{
+  if (m_observer == NULL)
+  {
+    return;
+  }
+
+  if (oldNetworkPid != 0 && oldNetworkPid != 0xffff)
+  {
+    m_observer->OnPidsNotRequired(&oldNetworkPid, 1, (unsigned long)Si);
+  }
+  m_observer->OnPidsRequired(&newNetworkPid, 1, (unsigned long)Si);
+
+  m_grabberSiDvb->SetPids(0, newNetworkPid, 0);
+}
+
+void CTsWriter::OnPmtReceived(unsigned short programNumber,
+                              unsigned short pid,
+                              const unsigned char* table,
+                              unsigned short tableSize)
+{
+  if (m_observer != NULL)
+  {
+    m_observer->OnProgramDetail(programNumber, pid, true, table, tableSize);
+  }
+
+  if (programNumber != m_openTvEpgServiceId)
+  {
+    return;
+  }
+
+  bool isOpenTvEpgService = false;
+  if (!m_grabberSiMpeg->GetOpenTvEpgPids(programNumber,
+                                          isOpenTvEpgService,
+                                          m_openTvEpgPidsEvent,
+                                          m_openTvEpgPidsDescription) || !isOpenTvEpgService)
+  {
+    LogDebug(L"writer: OpenTV EPG service candidate not valid");
+    m_openTvEpgServiceId = 0;
+    return;
+  }
+
+  LogDebug(L"writer: OpenTV EPG service identified, service ID = %hu",
+            programNumber);
+  if (m_openTvEpgPidsEvent.size() > 0)
+  {
+    m_grabberEpgOpenTv->AddEventDecoders(m_openTvEpgPidsEvent);
+  }
+  if (m_openTvEpgPidsDescription.size() > 0)
+  {
+    m_grabberEpgOpenTv->AddDescriptionDecoders(m_openTvEpgPidsDescription);
+  }
+}
+
+void CTsWriter::OnPmtChanged(unsigned short programNumber,
+                              unsigned short pid,
+                              const unsigned char* table,
+                              unsigned short tableSize)
+{
+  if (m_observer != NULL)
+  {
+    m_observer->OnProgramDetail(programNumber, pid, true, table, tableSize);
+  }
+
+  if (programNumber == m_openTvEpgServiceId)
+  {
+    // We can't get the new PIDs from here because this call-back is invoked
+    // before the grabber's new section data is saved.
+    LogDebug(L"writer: OpenTV EPG service changed, unsupported");
+  }
+}
+
+void CTsWriter::OnPmtRemoved(unsigned short programNumber, unsigned short pid)
+{
+  if (m_observer != NULL)
+  {
+    m_observer->OnProgramDetail(programNumber, pid, false, NULL, 0);
+  }
+
+  if (programNumber != m_openTvEpgServiceId)
+  {
+    return;
+  }
+
+  LogDebug(L"writer: OpenTV EPG service removed");
+  m_openTvEpgServiceId = 0;
+  if (m_openTvEpgPidsEvent.size() > 0)
+  {
+    m_grabberEpgOpenTv->RemoveEventDecoders(m_openTvEpgPidsEvent);
+    m_openTvEpgPidsEvent.clear();
+  }
+  if (m_openTvEpgPidsDescription.size() > 0)
+  {
+    m_grabberEpgOpenTv->RemoveDescriptionDecoders(m_openTvEpgPidsDescription);
+    m_openTvEpgPidsDescription.clear();
+  }
 }

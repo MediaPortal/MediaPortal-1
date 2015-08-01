@@ -1,0 +1,208 @@
+/*
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+#pragma once
+#include <InitGuid.h>   // DEFINE_GUID()
+#include "IGrabberSiDvb.h"
+
+
+// {29979b9f-36f2-4e26-981f-57ceb77fbfc2}
+DEFINE_GUID(IID_IGRABBER_SI_FREESAT,
+            0x29979b9f, 0x36f2, 0x4e26, 0x98, 0x1f, 0x57, 0xce, 0xb7, 0x7f, 0xbf, 0xc2);
+
+DECLARE_INTERFACE_(IGrabberSiFreesat, IGrabberSiDvb)
+{
+  // IGrabber
+  STDMETHOD_(void, SetCallBack)(THIS_ ICallBackGrabber* callBack)PURE;
+
+
+  // IGrabberSiDvb
+  STDMETHOD_(bool, IsSeenBat)(THIS)PURE;
+  STDMETHOD_(bool, IsSeenNitActual)(THIS)PURE;
+  STDMETHOD_(bool, IsSeenNitOther)(THIS)PURE;
+  STDMETHOD_(bool, IsSeenSdtActual)(THIS)PURE;
+  STDMETHOD_(bool, IsSeenSdtOther)(THIS)PURE;
+
+  STDMETHOD_(bool, IsReadyBat)(THIS)PURE;
+  STDMETHOD_(bool, IsReadyNitActual)(THIS)PURE;
+  STDMETHOD_(bool, IsReadyNitOther)(THIS)PURE;
+  STDMETHOD_(bool, IsReadySdtActual)(THIS)PURE;
+  STDMETHOD_(bool, IsReadySdtOther)(THIS)PURE;
+
+  STDMETHOD_(unsigned short, GetServiceCount)(THIS)PURE;
+  STDMETHOD_(bool, GetService)(THIS_ unsigned short index,
+                                unsigned short preferredLogicalChannelNumberBouquetId,
+                                unsigned short preferredLogicalChannelNumberRegionId,
+                                unsigned char* tableId,
+                                unsigned short* originalNetworkId,
+                                unsigned short* transportStreamId,
+                                unsigned short* serviceId,
+                                unsigned short* referenceServiceId,
+                                unsigned short* freesatChannelId,
+                                unsigned short* openTvChannelId,
+                                unsigned short* logicalChannelNumber,
+                                unsigned char* dishSubChannelNumber,
+                                bool* eitScheduleFlag,
+                                bool* eitPresentFollowingFlag,
+                                unsigned char* runningStatus,
+                                bool* freeCaMode,
+                                unsigned char* serviceType,
+                                unsigned char* serviceNameCount,
+                                bool* visibleInGuide,
+                                unsigned short* streamCountVideo,
+                                unsigned short* streamCountAudio,
+                                bool* isHighDefinition,
+                                bool* isThreeDimensional,
+                                unsigned long* audioLanguages,
+                                unsigned char* audioLanguageCount,
+                                unsigned long* subtitlesLanguages,
+                                unsigned char* subtitlesLanguageCount,
+                                unsigned short* networkIds,
+                                unsigned char* networkIdCount,
+                                unsigned short* bouquetIds,
+                                unsigned char* bouquetIdCount,
+                                unsigned long* availableInCountries,
+                                unsigned char* availableInCountryCount,
+                                unsigned long* unavailableInCountries,
+                                unsigned char* unavailableInCountryCount,
+                                unsigned long* availableInCells,
+                                unsigned char* availableInCellCount,
+                                unsigned long* unavailableInCells,
+                                unsigned char* unavailableInCellCount,
+                                unsigned long long* targetRegionIds,
+                                unsigned char* targetRegionIdCount,
+                                unsigned short* freesatRegionIds,
+                                unsigned char* freesatRegionIdCount,
+                                unsigned short* openTvRegionIds,
+                                unsigned char* openTvRegionIdCount,
+                                unsigned short* freesatChannelCategoryIds,
+                                unsigned char* freesatChannelCategoryIdCount,
+                                unsigned char* openTvChannelCategoryId,
+                                unsigned char* virginMediaChannelCategoryId,
+                                unsigned short* dishMarketId,
+                                unsigned char* norDigChannelListIds,
+                                unsigned char* norDigChannelListIdCount,
+                                unsigned short* previousOriginalNetworkId,
+                                unsigned short* previousTransportStreamId,
+                                unsigned short* previousServiceId,
+                                unsigned short* epgOriginalNetworkId,
+                                unsigned short* epgTransportStreamId,
+                                unsigned short* epgServiceId)PURE;
+  STDMETHOD_(bool, GetServiceNameByIndex)(THIS_ unsigned short serviceIndex,
+                                          unsigned char nameIndex,
+                                          unsigned long* language,
+                                          char* providerName,
+                                          unsigned short* providerNameBufferSize,
+                                          char* serviceName,
+                                          unsigned short* serviceNameBufferSize)PURE;
+  STDMETHOD_(bool, GetServiceNameByLanguage)(THIS_ unsigned short serviceIndex,
+                                              unsigned long language,
+                                              char* providerName,
+                                              unsigned short* providerNameBufferSize,
+                                              char* serviceName,
+                                              unsigned short* serviceNameBufferSize)PURE;
+
+  STDMETHOD_(unsigned char, GetNetworkNameCount)(THIS_ unsigned short networkId)PURE;
+  STDMETHOD_(bool, GetNetworkNameByIndex)(THIS_ unsigned short networkId,
+                                          unsigned char index,
+                                          unsigned long* language,
+                                          char* name,
+                                          unsigned short* nameBufferSize)PURE;
+  STDMETHOD_(bool, GetNetworkNameByLanguage)(THIS_ unsigned short networkId,
+                                              unsigned long language,
+                                              char* name,
+                                              unsigned short* nameBufferSize)PURE;
+
+  STDMETHOD_(unsigned char, GetBouquetNameCount)(THIS_ unsigned short bouquetId)PURE;
+  STDMETHOD_(bool, GetBouquetNameByIndex)(THIS_ unsigned short bouquetId,
+                                          unsigned char index,
+                                          unsigned long* language,
+                                          char* name,
+                                          unsigned short* nameBufferSize)PURE;
+  STDMETHOD_(bool, GetBouquetNameByLanguage)(THIS_ unsigned short bouquetId,
+                                              unsigned long language,
+                                              char* name,
+                                              unsigned short* nameBufferSize)PURE;
+
+  STDMETHOD_(unsigned char, GetTargetRegionNameCount)(THIS_ unsigned long long regionId)PURE;
+  STDMETHOD_(bool, GetTargetRegionNameByIndex)(THIS_ unsigned long long regionId,
+                                                unsigned char index,
+                                                unsigned long* language,
+                                                char* name,
+                                                unsigned short* nameBufferSize)PURE;
+  STDMETHOD_(bool, GetTargetRegionNameByLanguage)(THIS_ unsigned long long regionId,
+                                                  unsigned long language,
+                                                  char* name,
+                                                  unsigned short* nameBufferSize)PURE;
+
+  STDMETHOD_(unsigned char, GetFreesatRegionNameCount)(THIS_ unsigned short regionId)PURE;
+  STDMETHOD_(bool, GetFreesatRegionNameByIndex)(THIS_ unsigned short regionId,
+                                                unsigned char index,
+                                                unsigned long* language,
+                                                char* name,
+                                                unsigned short* nameBufferSize)PURE;
+  STDMETHOD_(bool, GetFreesatRegionNameByLanguage)(THIS_ unsigned short regionId,
+                                                    unsigned long language,
+                                                    char* name,
+                                                    unsigned short* nameBufferSize)PURE;
+
+  STDMETHOD_(unsigned char, GetFreesatChannelCategoryNameCount)(THIS_ unsigned short categoryId)PURE;
+  STDMETHOD_(bool, GetFreesatChannelCategoryNameByIndex)(THIS_ unsigned short categoryId,
+                                                          unsigned char index,
+                                                          unsigned long* language,
+                                                          char* name,
+                                                          unsigned short* nameBufferSize)PURE;
+  STDMETHOD_(bool, GetFreesatChannelCategoryNameByLanguage)(THIS_ unsigned short categoryId,
+                                                            unsigned long language,
+                                                            char* name,
+                                                            unsigned short* nameBufferSize)PURE;
+
+  STDMETHOD_(unsigned char, GetNorDigChannelListNameCount)(THIS_ unsigned char channelListId)PURE;
+  STDMETHOD_(bool, GetNorDigChannelListNameByIndex)(THIS_ unsigned char channelListId,
+                                                    unsigned char index,
+                                                    unsigned long* language,
+                                                    char* name,
+                                                    unsigned short* nameBufferSize)PURE;
+  STDMETHOD_(bool, GetNorDigChannelListNameByLanguage)(THIS_ unsigned char channelListId,
+                                                        unsigned long language,
+                                                        char* name,
+                                                        unsigned short* nameBufferSize)PURE;
+
+  STDMETHOD_(unsigned short, GetTransmitterCount)(THIS)PURE;
+  STDMETHOD_(bool, GetTransmitter)(THIS_ unsigned short index,
+                                    unsigned char* tableId,
+                                    unsigned short* networkId,
+                                    unsigned short* originalNetworkId,
+                                    unsigned short* transportStreamId,
+                                    bool* isHomeTransmitter,
+                                    unsigned long* broadcastStandard,
+                                    unsigned long* frequencies,
+                                    unsigned char* frequencyCount,
+                                    unsigned char* polarisation,
+                                    unsigned char* modulation,
+                                    unsigned long* symbolRate,
+                                    unsigned short* bandwidth,
+                                    unsigned char* innerFecRate,
+                                    unsigned char* rollOffFactor,
+                                    short* longitude,
+                                    unsigned short* cellId,
+                                    unsigned char* cellIdExtension,
+                                    unsigned char* plpId)PURE;
+};

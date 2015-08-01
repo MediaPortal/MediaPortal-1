@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (C) 2006-2008 Team MediaPortal
  *  http://www.team-mediaportal.com
  *
@@ -6,181 +6,170 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
 #pragma once
-#include "multifilewriter.h"
-#include "CriticalSection.h"
-#include "..\..\shared\TsHeader.h"
-#include "..\..\shared\adaptionfield.h"
-#include "..\..\shared\pcr.h"
-
+#include <ctime>
+#include <map>
+#include <sstream>
 #include "..\..\shared\BasePmtParser.h"
 #include "..\..\shared\PacketSync.h"
+#include "..\..\shared\Pcr.h"
+#include "..\..\shared\TsHeader.h"
+#include "CriticalSection.h"
+#include "EnterCriticalSection.h"
+#include "IChannelObserver.h"
+#include "MultiFileWriter.h"
+#include "RecorderMode.h"
 
-
-#include "videoaudioobserver.h"
-#include <vector>
-#include <map>
+using namespace MediaPortal;
 using namespace std;
-using namespace Mediaportal;
 
 
-
-//  Incremental buffer sizes
-#define NUMBER_THROTTLE_BUFFER_SIZES  20
 #define MAX_TS_PACKET_QUEUE 4
-#define MAX_PES_HEADER_BYTES 19
-
-
-//* enum which specified the timeshifting mode 
-enum RecordingMode
-{
-  TimeShift=0,
-  Recording=1
-};
-
-//* enum which specified the pid type 
-enum PidType
-{
-  Video=0,
-  Audio=1,
-  Other=2
-};
-
-typedef struct
-{
-  public:
-    int OriginalPid;
-    int FakePid;
-    bool IsStillPresent;
-    bool SeenStart;
-    byte PrevContinuityCounter;
-
-    // Used to patch and/or generate PCR.
-    // The main purpose is to be able to reassemble PES packet headers which
-    // are split over multiple TS packets.
-    int TsPacketQueueLength;
-    byte TsPacketQueue[MAX_TS_PACKET_QUEUE][TS_PACKET_LEN];
-    byte TsPacketPayloadStartQueue[MAX_TS_PACKET_QUEUE];
-    byte PesHeader[MAX_PES_HEADER_BYTES];
-    int PesHeaderLength;
-
-    __int64 PrevPts;
-    DWORD PrevPtsTimeStamp;
-    __int64 PrevDts;
-    DWORD PrevDtsTimeStamp;
-}PidInfo;
+#define MAX_PES_HEADER_BYTES 19     // The maximum number of bytes required to hold the contents of a PES packet up to and including the last DTS byte.
 
 class CDiskRecorder
 {
-public:
-  CDiskRecorder(RecordingMode mode);
-  ~CDiskRecorder(void);
+  public:
+    CDiskRecorder(RecorderMode mode);
+    ~CDiskRecorder(void);
   
-  void SetFileName(wchar_t* fileName);
-  HRESULT Start();
-  void Stop();
+    HRESULT SetPmt(unsigned char* pmt,
+                    unsigned short pmtSize,
+                    bool isDynamicPmtChange);
+    void SetObserver(IChannelObserver* observer);
+    HRESULT SetFileName(wchar_t* fileName);
+    HRESULT Start();
+    void GetStreamQualityCounters(unsigned long long& countTsPackets,
+                                  unsigned long long& countDiscontinuities,
+                                  unsigned long long& countDroppedBytes);
+    void Stop();
 
-  void GetRecordingMode(int* mode);
-  HRESULT SetPmt(byte* pmt, int pmtLength);
+    // time-shifting only
+    HRESULT SetTimeShiftingParameters(unsigned long fileCountMinimum,
+                                      unsigned long fileCountMaximum,
+                                      unsigned long long fileSizeBytes);
+    void GetTimeShiftingParameters(unsigned long& fileCountMinimum,
+                                    unsigned long& fileCountMaximum,
+                                    unsigned long long& fileSizeBytes);
+    void GetTimeShiftingFilePosition(unsigned long long& position, unsigned long& bufferId);
 
-  // Only needed for timeshifting
-  void SetVideoAudioObserver(IVideoAudioObserver* callBack);
-  void GetBufferSize(__int64* size);
+    void OnTsPacket(CTsHeader& header, unsigned char* tsPacket);
 
-  void SetMinTsFiles(WORD minFiles);
-  void SetMaxTsFiles(WORD maxFiles);
-  void SetMaxTsFileSize(__int64 maxSize);
-  void SetChunkReserve(__int64 chunkSize);
+  private:
+    typedef struct
+    {
+      public:
+        unsigned short OriginalPid;
+        unsigned short FakePid;
+        bool IsStillPresent;
+        bool SeenStart;
+        unsigned char PrevContinuityCounter;
 
-  void GetTimeShiftPosition(__int64* position, long* bufferId);
-  void GetDiscontinuityCount(int* count);
-  void GetProcessedPacketCount(int* count);
+        // Used to patch and/or generate PCR.
+        // The main purpose is to be able to reassemble PES packet headers which
+        // are split over multiple TS packets.
+        unsigned char TsPacketQueueLength;
+        unsigned char TsPacketQueue[MAX_TS_PACKET_QUEUE][TS_PACKET_LEN];
+        unsigned char TsPacketPayloadStartQueue[MAX_TS_PACKET_QUEUE];
+        unsigned char PesHeader[MAX_PES_HEADER_BYTES];
+        unsigned short PesHeaderLength;
 
-  void OnTsPacket(byte* tsPacket);
-  void Write(byte* buffer, int len);
+        long long PrevPts;
+        clock_t PrevPtsTimeStamp;
+        long long PrevDts;
+        clock_t PrevDtsTimeStamp;
+    }PidInfo;
 
-private:
-  void ClearPids();
-  void WriteToRecording(byte* buffer, int len);
-  void WriteToTimeshiftFile(byte* buffer, int len);
-  void WriteLog(const char* fmt, ...);
-  void WriteLog(const wchar_t* fmt, ...);
-  void Flush();
-  void InjectPcrFromPts(PidInfo& info);
-  void WritePacket(byte* tsPacket);
-  void CreateFakePat();
-  void CreateFakePmt(CPidTable& pidTable);
-  void AddPidToPmt(BasePid* pid, const string& pidType, int& nextFakePid, int& pmtOffset);
-  void WriteFakeServiceInfo();
+    void WriteLog(const wchar_t* fmt, ...);
+    void ClearPids();
 
-  void PatchPcr(byte* tsPacket,CTsHeader& header);
-  void HandlePcrInstability(CPcr& pcrNew, __int64 pcrChange);
-  void PatchPtsDts(byte* tsPacket, PidInfo& pidInfo);
+    void WritePacket(unsigned char* tsPacket);
+    void WritePacketDirect(unsigned char* tsPacket);
 
-  MultiFileWriterParam m_params;
-  RecordingMode m_recordingMode;
-  CBasePmtParser m_pmtParser;
-  bool m_isRunning;
-  wchar_t m_fileName[2048];
-  MultiFileWriter* m_pTimeShiftFile;
-  HANDLE m_hFile;
-  CCriticalSection m_section;
+    void CreateFakePat();
+    void CreateFakePmt(CPidTable& pidTable);
+    void AddPidToPmt(BasePid* pid,
+                      const string& pidType,
+                      unsigned short& nextFakePid,
+                      unsigned short& pmtOffset);
+    void WriteFakeServiceInfo();
 
+    void InjectPcrFromPts(PidInfo& info);
+    void PatchPcr(unsigned char* tsPacket, CTsHeader& header);
+    void HandlePcrInstability(CPcr& pcrNew, long long pcrChange);
+    void PatchPtsDts(unsigned char* tsPacket, PidInfo& pidInfo);
 
-  DWORD m_seenVideoOrAudio;
+    static unsigned char GetPesHeader(unsigned char* tsPacket, CTsHeader& header, PidInfo& info);
+    static void UpdatePesHeader(PidInfo& info);
+    static long long EcPcrTime(long long newTs, long long prevTs);
+    static void SetPcrBase(unsigned char* tsPacket, long long pcrBaseValue);
 
-  map<int, PidInfo*> m_pids;
-  unsigned long m_tsPacketCount;
-  int m_discontinuityCount;
+    CCriticalSection m_section;
+    RecorderMode m_recorderMode;
+    bool m_isRunning;
+    bool m_isDropping;
+    map<unsigned short, PidInfo*> m_pids;
+    IChannelObserver* m_observer;
+    clock_t m_videoAudioStartTimeStamp;
 
-  int m_nextFakePidVideo;
-  int m_nextFakePidAudio;
-  int m_nextFakePidSubtitles;
-  int m_nextFakePidTeletext;
-  
-  byte m_fakePat[TS_PACKET_LEN];
-  int m_patContinuityCounter;
-  int m_patVersion;
-  byte m_fakePmt[MAX_SECTION_LENGTH];
-  int m_pmtContinuityCounter;
-  int m_pmtVersion;
-  int m_serviceInfoPacketCounter;
+    unsigned long long m_tsPacketCount;
+    unsigned long long m_discontinuityCount;
+    unsigned long long m_droppedByteCount;
 
-  int m_originalPcrPid;
-  int m_substitutePcrSourcePid;
-  int m_fakePcrPid;
-  bool m_waitingForPcr;
-  CPcr m_prevPcr;
-  DWORD m_prevPcrReceiveTimeStamp;
-  float m_averagePcrSpeed;                    // Time average between PCR samples
-  __int64 m_pcrCompensation;             // Compensation from PCR/PTS/DTS to fake PCR/PTS/DTS ( 33 bits offset with PCR resoluion )
-  int m_pcrGapConfirmations;
-  __int64 m_pcrFutureCompensation;
-  bool m_generatePcrFromPts;
+    wstringstream m_fileName;
+    FileWriter* m_fileRecording;
+    MultiFileWriter* m_fileTimeShifting;
+    MultiFileWriterParams m_timeShiftingParameters;
 
-  int             m_iPart;
-  byte*           m_pWriteBuffer;
-  int             m_iWriteBufferPos;
-  int        m_iWriteBufferSize;
-  int      m_iThrottleBufferSizes[NUMBER_THROTTLE_BUFFER_SIZES];
-  int        m_writeBufferThrottle;
-  bool        m_throttleAtMax;
-  int         m_throttleMaxPacketCount;
-  CTsHeader       m_tsHeader;
+    // PIDs.
+    unsigned short m_nextFakePidVideo;
+    unsigned short m_nextFakePidAudio;
+    unsigned short m_nextFakePidSubtitles;
+    unsigned short m_nextFakePidTeletext;
+    unsigned short m_nextFakePidVbi;
 
-  bool            m_bClearTsQueue;
+    // PAT and PMT.
+    unsigned char m_fakePat[TS_PACKET_LEN];
+    unsigned char m_patContinuityCounter;
+    unsigned char m_patVersion;
+    unsigned char m_fakePmt[MAX_SECTION_LENGTH];
+    unsigned char m_pmtContinuityCounter;
+    unsigned char m_pmtVersion;
+    CBasePmtParser m_pmtParser;
+    unsigned char m_serviceInfoPacketCounter;
 
-  IVideoAudioObserver *m_pVideoAudioObserver;
+    // PCR.
+    unsigned short m_originalPcrPid;
+    unsigned short m_substitutePcrSourcePid;
+    unsigned short m_fakePcrPid;
+    bool m_waitingForPcr;
+    bool m_generatePcrFromPts;                // Used in the [rare] case that the stream does not contain PCR.
+    CPcr m_prevPcr;
+    clock_t m_prevPcrReceiveTimeStamp;
+    double m_averagePcrSpeed;                 // Time average between PCR samples.
+    long long m_pcrCompensation;              // Compensation from PCR/PTS/DTS to fake PCR/PTS/DTS (33 bit offset with PCR resoluion).
+    unsigned char m_pcrGapConfirmationCount;
+    long long m_pcrFutureCompensation;
+
+    // Write buffer.
+    unsigned char* m_writeBuffer;
+    unsigned long m_writeBufferSize;          // Byte count.
+    unsigned long m_writeBufferPosition;      // Byte index in m_writeBuffer.
+    unsigned char m_writeBufferThrottleStep;  // Index into WRITE_BUFFER_THROTTLE_STEP_PACKET_COUNTS.
+    bool m_isWriteBufferThrottleFullyOpen;
+    unsigned char m_writeBufferThrottleFullyOpenStep;
+
+    static const unsigned char WRITE_BUFFER_THROTTLE_STEP_PACKET_COUNTS[];
 };

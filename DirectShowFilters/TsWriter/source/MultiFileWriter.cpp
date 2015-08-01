@@ -24,663 +24,546 @@
 */
 #define _WIN32_WINNT 0x0502
 
-#pragma warning(disable : 4995)
-#pragma warning(disable : 4996)
-#include <streams.h>
 #include "MultiFileWriter.h"
-#include <atlbase.h>
-#include <windows.h>
-#include <stdio.h>
-extern void LogDebug(const char *fmt, ...) ;
-extern void LogDebug(const wchar_t *fmt, ...) ;
+#include <cstddef>      // NULL
+#include <cstring>      // memcpy()
+#include <Windows.h>    // CloseHandle(), CreateFileW(), GetDiskFreeSpaceEx(), MAX_PATH
 
-MultiFileWriter::MultiFileWriter(MultiFileWriterParam *pWriterParams) :
-  m_hTSBufferFile(INVALID_HANDLE_VALUE),
-  m_pTSBufferFileName(NULL),
-  m_pTSRegFileName(NULL),
-  m_pCurrentTSFile(NULL),
-  m_filesAdded(0),
-  m_filesRemoved(0),
-  m_currentFilenameId(0),
-  m_currentFileId(0),
-  m_minTSFiles(pWriterParams->minFiles),
-  m_maxTSFiles(pWriterParams->maxFiles),
-  m_maxTSFileSize(pWriterParams->maxSize),  
-  m_chunkReserve(pWriterParams->chunkSize) 
+using namespace std;
+
+
+extern void LogDebug(const wchar_t* fmt, ...);
+
+MultiFileWriter::MultiFileWriter()
 {
-  m_pCurrentTSFile = new FileWriter();
-  m_pCurrentTSFile->SetChunkReserve(TRUE, m_chunkReserve, m_maxTSFileSize);
+  m_fileRegister = NULL;
+  m_registerFileName = NULL;
+
+  m_fileData = NULL;
+  ResetDataFileProperties();
+
+  // Default configuration.
+  m_dataFileSizeMaximum = 268435456;   // 256 MB
+  m_dataFileReservationChunkSize = m_dataFileSizeMaximum;
+  m_dataFileCountMinimum = 6;
+  m_dataFileCountMaximum = 20;
 }
 
 MultiFileWriter::~MultiFileWriter()
 {
   CloseFile();
-  if (m_pTSBufferFileName)
-    delete[] m_pTSBufferFileName;
-
-  if (m_pTSRegFileName)
-    delete[] m_pTSRegFileName;
-
-  if (m_pCurrentTSFile)
-    delete[] m_pCurrentTSFile;
 }
 
-HRESULT MultiFileWriter::GetFileName(LPOLESTR *lpszFileName)
+HRESULT MultiFileWriter::GetFileName(wchar_t** fileName)
 {
-  *lpszFileName = m_pTSBufferFileName;
+  *fileName = m_registerFileName;
   return S_OK;
 }
 
-HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
+HRESULT MultiFileWriter::OpenFile(const wchar_t* fileName)
 {
-  // Is the file already opened
-  if (m_hTSBufferFile != INVALID_HANDLE_VALUE)
+  LogDebug(L"multi file writer: open file, name = %s",
+            fileName == NULL ? L"" : fileName);
+
+  // Is the file already open?
+  if (m_fileRegister != NULL || m_fileData != NULL)
   {
+    LogDebug(L"multi file writer: file already open, current = %s, requested = %s",
+              m_registerFileName == NULL ? L"" : m_registerFileName,
+              fileName == NULL ? L"" : fileName);
+    return S_FALSE;
+  }
+
+  // Check disk space. We need to be able to create at least 2 data files.
+  unsigned long long availableDiskSpace = 0;
+  if (
+    SUCCEEDED(GetAvailableDiskSpace(fileName, availableDiskSpace)) &&
+    availableDiskSpace < m_dataFileSizeMaximum * 2
+  )
+  {
+    LogDebug(L"multi file writer: failed to open file, available disk space = %llu, maximum data file size = %llu, name = %s",
+              availableDiskSpace, m_dataFileSizeMaximum,
+              fileName == NULL ? L"" : fileName);
     return E_FAIL;
   }
 
-  // Is this a valid filename supplied
-  CheckPointer(pszFileName,E_POINTER);
-
-  if(wcslen(pszFileName) > MAX_PATH)
+  m_fileRegister = new FileWriter();
+  if (m_fileRegister == NULL)
   {
-    LogDebug(L"MultiFileWriter: filename too long");
-    return ERROR_FILENAME_EXCED_RANGE;
-  }
-  // Take a copy of the filename
-  if (m_pTSBufferFileName)
-  {
-    delete[] m_pTSBufferFileName;
-    m_pTSBufferFileName = NULL;
-  }
-  m_pTSBufferFileName = new WCHAR[1+lstrlenW(pszFileName)];
-  if (m_pTSBufferFileName == NULL)
+    LogDebug(L"multi file writer: failed to allocate register file writer, name = %s",
+              fileName == NULL ? L"" : fileName);
     return E_OUTOFMEMORY;
-  wcscpy(m_pTSBufferFileName, pszFileName);
-  
-  //check disk space first
-  __int64 llDiskSpaceAvailable = 0;
-  if (SUCCEEDED(GetAvailableDiskSpace(&llDiskSpaceAvailable)) && (__int64)llDiskSpaceAvailable < (__int64)(m_maxTSFileSize*2))
+  }
+  HRESULT hr = m_fileRegister->OpenFile(fileName);
+  if (FAILED(hr))
   {
-    LogDebug("MultiFileWriter: not enough free diskspace");
-    return E_FAIL;
+    LogDebug(L"multi file writer: failed to open register file, hr = 0x%x, name = %s",
+              hr, fileName == NULL ? L"" : fileName);
+    delete m_fileRegister;
+    return hr;
   }
 
-  // Try to open the file
-  m_hTSBufferFile = CreateFileW(m_pTSBufferFileName,              // The filename
-                 (DWORD) GENERIC_WRITE,             // File access
-                 (DWORD) FILE_SHARE_READ,           // Share access
-                 NULL,                              // Security
-                 (DWORD) CREATE_ALWAYS,             // Open flags
-                 (DWORD) 0,                         // More flags
-                 NULL);                             // Template
-
-  if (m_hTSBufferFile == INVALID_HANDLE_VALUE)
+  m_fileData = new FileWriter();
+  if (m_fileData == NULL)
   {
-        LogDebug("MultiFileWriter: fail to create buffer file");
-        DWORD dwErr = GetLastError();
-        return HRESULT_FROM_WIN32(dwErr);
+    LogDebug(L"multi file writer: failed to allocate data file writer, name = %s",
+              fileName == NULL ? L"" : fileName);
+    m_fileRegister->CloseFile();
+    delete m_fileRegister;
+    m_fileRegister = NULL;
+    return E_OUTOFMEMORY;
   }
+  m_fileData->SetReservationConfiguration(true, m_dataFileReservationChunkSize);
+
+  // Take a copy of the file name.
+  unsigned long fileNameLength = wcslen(fileName);
+  if (m_registerFileName)
+  {
+    delete[] m_registerFileName;
+  }
+  m_registerFileName = new wchar_t[fileNameLength + 1];
+  if (m_registerFileName == NULL)
+  {
+    LogDebug(L"multi file writer: failed to allocate %lu bytes for a file name copy, name = %s",
+              fileNameLength, fileName);
+    CloseFile();
+    return E_OUTOFMEMORY;
+  }
+  wcscpy(m_registerFileName, fileName);
 
   return S_OK;
-
 }
 
-//
-// CloseFile
-//
 HRESULT MultiFileWriter::CloseFile()
 {
-  CAutoLock lock(&m_Lock);
-
-  if (m_hTSBufferFile == INVALID_HANDLE_VALUE)
+  LogDebug(L"multi file writer: close file, name = %s",
+            m_registerFileName == NULL ? L"" : m_registerFileName);
+  if (m_fileRegister != NULL)
   {
-    return S_OK;
+    m_fileRegister->CloseFile();
+    delete m_fileRegister;
+    m_fileRegister = NULL;
   }
 
-  CloseHandle(m_hTSBufferFile);
-  m_hTSBufferFile = INVALID_HANDLE_VALUE;
+  if (m_fileData != NULL)
+  {
+    m_fileData->CloseFile();
+    delete m_fileData;
+    m_fileData = NULL;
+  }
 
-  m_pCurrentTSFile->CloseFile();
+  CleanUpDataFiles();
 
-  CleanupFiles();
-
+  ResetDataFileProperties();
   return S_OK;
 }
 
-HRESULT MultiFileWriter::GetFileSize(__int64 *lpllsize)
+HRESULT MultiFileWriter::Write(unsigned char* data, unsigned long dataLength, bool disableLogging)
 {
-  if (m_hTSBufferFile == INVALID_HANDLE_VALUE)
-    *lpllsize = 0;
-  else
-    *lpllsize = max(0, (__int64)(((__int64)(m_filesAdded - m_filesRemoved - 1) * m_maxTSFileSize) + m_pCurrentTSFile->GetFilePointer()));
+  //LogDebug(L"multi file writer: write, data length = %lu, name = %s",
+  //          dataLength, m_registerFileName == NULL ? L"" : m_registerFileName);
 
-  return S_OK;
-}
-
-HRESULT MultiFileWriter::Write(PBYTE pbData, ULONG lDataLength)
-{
-  HRESULT hr;
-
-  CheckPointer(pbData,E_POINTER);
-  if (lDataLength == 0)
-    return S_OK;
-
-  // If the file has already been closed, don't continue
-  if (m_hTSBufferFile == INVALID_HANDLE_VALUE)
+  if (m_fileRegister == NULL || m_fileData == NULL)
+  {
+    if (!disableLogging)
+    {
+      LogDebug(L"multi file writer: failed to write to file, file not open");
+    }
     return S_FALSE;
-
-  if (m_pCurrentTSFile->IsFileInvalid())
-  {
-    //::LogDebug("Creating first file");
-    if FAILED(hr = PrepareTSFile())
-      return hr;
   }
 
-  //Get File Position
-  __int64 filePosition = m_pCurrentTSFile->GetFilePointer();
-
-  // See if we will need to create more ts files.
-  if (filePosition + lDataLength > m_maxTSFileSize)
+  HRESULT hr;
+  if (m_fileData->IsFileInvalid())
   {
-    __int64 dataToWrite = m_maxTSFileSize - filePosition;
+    return OpenDataFile(disableLogging);
+    if (FAILED(hr))
+    {
+      return hr;
+    }
+  }
 
-    // Write some data to the current file if it's not full
+  // Do we need to move to the next data file?
+  unsigned long long fileSpace = m_dataFileSizeMaximum - m_dataFileSize;
+  if (dataLength > fileSpace)
+  {
+    // Complete the current file.
+    unsigned long dataToWrite = (unsigned long)fileSpace - dataLength;
     if (dataToWrite > 0)
     {
-      m_pCurrentTSFile->Write(pbData, (ULONG)dataToWrite);
+      hr = m_fileData->Write(data, dataToWrite, disableLogging);
+      if (FAILED(hr))
+      {
+        return hr;
+      }
+      m_dataFileSize += dataToWrite;
     }
 
-    // Try to create a new file
-    if FAILED(hr = PrepareTSFile())
+    // Start a new file.
+    data += dataToWrite;
+    dataLength -= dataToWrite;
+    hr = OpenDataFile(disableLogging);
+    if (FAILED(hr))
     {
-      // Buffer is probably full and the oldest file is still locked.
-      // We'll just start dropping data
       return hr;
     }
-
-    // Try writing the remaining data now that a new file has been created.
-    pbData += dataToWrite;
-    lDataLength -= dataToWrite;
-    return Write(pbData, lDataLength);
+    hr = m_fileData->Write(data, dataLength, disableLogging);
+    if (FAILED(hr))
+    {
+      return hr;
+    }
   }
   else
   {
-    m_pCurrentTSFile->Write(pbData, lDataLength);
+    hr = m_fileData->Write(data, dataLength, disableLogging);
+    if (FAILED(hr))
+    {
+      return hr;
+    }
   }
 
-  WriteTSBufferFile();
-  
-  return S_OK;
+  m_dataFileSize += dataLength;
+  return WriteRegisterFile();
 }
 
-HRESULT MultiFileWriter::PrepareTSFile()
+void MultiFileWriter::GetCurrentFilePosition(unsigned long& currentFileId,
+                                              unsigned long long& currentFilePointer)
 {
-  USES_CONVERSION;
+  currentFileId = m_dataFileIdCurrent;
+  currentFilePointer = m_dataFileSize;
+}
+
+void MultiFileWriter::SetConfiguration(MultiFileWriterParams& parameters)
+{
+  LogDebug(L"multi file writer: set configuration, maximum file size = %llu (%llu), reservation chunk size = %llu (%llu), file count minimum = %lu (%lu), file count maximum = %lu (%lu), name = %s",
+            parameters.MaximumFileSize, m_dataFileSizeMaximum,
+            parameters.ReservationChunkSize, m_dataFileReservationChunkSize,
+            parameters.FileCountMinimum, m_dataFileCountMinimum,
+            parameters.FileCountMaximum, m_dataFileCountMaximum,
+            m_registerFileName == NULL ? L"" : m_registerFileName);
+
+  m_dataFileSizeMaximum = parameters.MaximumFileSize;
+  m_dataFileReservationChunkSize = parameters.ReservationChunkSize;
+  m_fileData->SetReservationConfiguration(true, m_dataFileReservationChunkSize);
+  m_dataFileCountMinimum = parameters.FileCountMinimum;
+  m_dataFileCountMaximum = parameters.FileCountMaximum;
+}
+
+HRESULT MultiFileWriter::OpenDataFile(bool disableLogging)
+{
+  m_fileData->CloseFile();
+  m_dataFileSize = 0;
+
   HRESULT hr;
-
-  //LogDebug("PrepareTSFile()");
-
-//  m_pCurrentTSFile->FlushFile())
-
-  // Make sure the old file is closed
-  m_pCurrentTSFile->CloseFile();
-
-
-  //TODO: disk space stuff
-  /*
-  if (m_diskSpaceLimit > 0)
+  unsigned long long availableDiskSpace = 0;
+  if (
+    SUCCEEDED(GetAvailableDiskSpace(m_registerFileName, availableDiskSpace)) &&
+    availableDiskSpace < m_dataFileSizeMaximum * 2
+  )
   {
-    diskSpaceAvailable = WhateverFunctionDoesThat();
-    if (diskSpaceAvailable < m_diskSpaceLimit)
+    if (!disableLogging)
     {
-      hr = ReuseTSFile();
+      LogDebug(L"multi file writer: not enough available disk space to create new data file, available disk space = %llu, maximum data file size = %llu, name = %s",
+                availableDiskSpace, m_dataFileSizeMaximum, m_registerFileName);
     }
-    else
-    {
-      hr = CreateNewTSFile();
-    }
-  }
-  else */
-
-  __int64 llDiskSpaceAvailable = 0;
-  if (SUCCEEDED(GetAvailableDiskSpace(&llDiskSpaceAvailable)) && (__int64)llDiskSpaceAvailable < (__int64)(m_maxTSFileSize*2))
-  {
-    hr = ReuseTSFile();
-  }
-  else
-  {
-    if (m_tsFileNames.size() >= (UINT)m_minTSFiles) 
-    {
-      if FAILED(hr = ReuseTSFile())
-      {
-        if (m_tsFileNames.size() < (UINT)m_maxTSFiles)
-        {
-          if (hr != 0x80070020) // ERROR_SHARING_VIOLATION
-            LogDebug("Failed to reopen old file. Unexpected reason. Trying to create a new file.");
-
-          hr = CreateNewTSFile();
-        }
-        else
-        {
-          if (hr != 0x80070020) // ERROR_SHARING_VIOLATION
-            LogDebug("Failed to reopen old file. Unexpected reason. Dropping data!");
-          else
-            LogDebug("Failed to reopen old file. It's currently in use. Dropping data!");
-
-          Sleep(500);
-        }
-      }
-    }  
-    else
-    {
-      hr = CreateNewTSFile();
-    }
+    return ReuseDataFile(disableLogging);
   }
 
+  // Build up to the minimum data file count.
+  if (m_dataFileNames.size() < m_dataFileCountMinimum) 
+  {
+    return CreateDataFile(disableLogging);
+  }
+
+  // If we already have the desired number of data files, prefer to reuse an
+  // existing file. That may not be possible if time-shifting is paused. In
+  // that case we try to create a new data file if configuration allows.
+  hr = ReuseDataFile(disableLogging);
+  if (FAILED(hr) && m_dataFileNames.size() < m_dataFileCountMaximum)
+  {
+    hr = CreateDataFile(disableLogging);
+  }
   return hr;
 }
 
-HRESULT MultiFileWriter::CreateNewTSFile()
+HRESULT MultiFileWriter::CreateDataFile(bool disableLogging)
 {
-  HRESULT hr;
+  // Determine the name of the next data file.
+  wchar_t* fileName = new wchar_t[MAX_PATH];
+  if (fileName == NULL)
+  {
+    if (!disableLogging)
+    {
+      LogDebug(L"multi file writer: failed to allocate %lu bytes for a file name copy",
+                MAX_PATH);
+    }
+    return E_OUTOFMEMORY;
+  }
 
-  LPWSTR pFilename = new wchar_t[MAX_PATH];
   WIN32_FIND_DATAW findData;
-  HANDLE handleFound = INVALID_HANDLE_VALUE;
-
-  //LogDebug("CreateNewTSFile.");
-  while (TRUE)
+  while (true)
   {
-    // Create new filename
-    m_currentFilenameId++;
-    swprintf(pFilename, L"%s%i.ts", m_pTSBufferFileName, m_currentFilenameId);
-
-    // Check if file already exists
-    handleFound = FindFirstFileW(pFilename, &findData);
-    if (handleFound == INVALID_HANDLE_VALUE)
+    swprintf(fileName, L"%s%lu.ts", MAX_PATH, m_registerFileName, m_dataFileIdNext++);
+    HANDLE handle = FindFirstFileW(fileName, &findData);
+    if (handle == INVALID_HANDLE_VALUE)
+    {
       break;
-
-    //LogDebug("Newly generated filename already exists.");
-
-    // If it exists we loop and try the next number
-    FindClose(handleFound);
+    }
+    FindClose(handle);
   }
-  
-  if FAILED(hr = m_pCurrentTSFile->SetFileName(pFilename))
+
+  // Create the file and update the list of data file names.
+  HRESULT hr = m_fileData->OpenFile(fileName, disableLogging);
+  if (FAILED(hr))
   {
-    LogDebug("Failed to set filename for new file.");
-    delete[] pFilename;
+    if (!disableLogging)
+    {
+      LogDebug(L"multi file writer: failed to create new data file, hr = 0x%x, name = %s",
+                hr, fileName);
+    }
+    delete[] fileName;
     return hr;
   }
 
-  if FAILED(hr = m_pCurrentTSFile->OpenFile())
-  {
-    LogDebug("Failed to open new file");
-    delete[] pFilename;
-    return hr;
-  }
-
-  m_tsFileNames.push_back(pFilename);
-  m_filesAdded++;
-
-  LPWSTR pos = pFilename + wcslen(m_pTSBufferFileName);
-  if (pos)
-    m_currentFileId = _wtoi(pos);
-  wchar_t msg[MAX_PATH];
-  swprintf(msg, L"New file created : %s\n", pFilename);
-  ::OutputDebugStringW(msg);
-
-  //LogDebug("new file created");
+  m_dataFileNames.push_back(fileName);
+  m_dataFileCountUsed++;
+  m_dataFileIdCurrent = m_dataFileIdNext;
+  LogDebug(L"multi file writer: created data file, file count = %llu, name = %s",
+            (unsigned long long)m_dataFileNames.size(), fileName);
   return S_OK;
 }
 
-HRESULT MultiFileWriter::ReuseTSFile()
+HRESULT MultiFileWriter::ReuseDataFile(bool disableLogging)
 {
+  // Try to reuse the oldest data file. The file may be locked:
+  // - temporarily, if TsReader is doing a duration calculation
+  // - indefinitely, if time-shifting is paused
+  wchar_t* fileName = m_dataFileNames.at(0);
   HRESULT hr;
-  DWORD Tmo=5 ;
-
-  LPWSTR pFilename = m_tsFileNames.at(0);
-
-  if FAILED(hr = m_pCurrentTSFile->SetFileName(pFilename))
+  unsigned char retryCount = 0;
+  for (retryCount = 0; retryCount < 5; retryCount++)
   {
-    LogDebug(L"Failed to set filename to reuse old file");
+    DeleteFileW(fileName);  // This function can return success when the file is only marked for deletion.
+    hr = m_fileData->OpenFile(fileName, disableLogging);
+    if (SUCCEEDED(hr))
+    {
+      break;
+    }
+    Sleep(20);
+  }
+
+  if (retryCount == 5)
+  {
+    if (!disableLogging)
+    {
+      LogDebug(L"multi file writer: failed to reuse data file (is time-shifting paused?), hr = 0x%x, name = %s",
+                hr, fileName);
+    }
     return hr;
   }
 
-  // Check if file is being read by something.
-  // Can be locked temporarily to update duration or definitely (!) if timeshift is paused.
-  do
-  {
-    DeleteFileW(pFilename);  // Stupid function, return can be ok and file not deleted ( just tagged for deleting )!!!!
-    hr = m_pCurrentTSFile->OpenFile() ;
-    if (!FAILED(hr)) break ;
-    Sleep(20) ;
-  }
-  while (--Tmo) ;
+  // Update the list of data file names.
+  m_dataFileNames.erase(m_dataFileNames.begin());
+  m_dataFileCountRemoved++;
 
-  if (Tmo)
-  {
-    if (Tmo<4) // 1 failed + 1 succeded is quasi-normal, more is a bit suspicious ( disk drive too slow or problem ? )
-      LogDebug(L"MultiFileWriter: %d tries to succeed deleting and re-opening %s.", 6-Tmo, pFilename);
-  }
-  else
-  {
-    LogDebug(L"MultiFileWriter: failed to create file %s", pFilename);
-    return hr ;
-  }
+  m_dataFileNames.push_back(fileName);
+  m_dataFileCountUsed++;
 
-  // if stuff worked then move the filename to the end of the files list
-  m_tsFileNames.erase(m_tsFileNames.begin());
-  m_filesRemoved++;
-
-  m_tsFileNames.push_back(pFilename);
-  m_filesAdded++;
-
-  LPWSTR pos = pFilename + wcslen(m_pTSBufferFileName);
-  if (pos)
-    m_currentFileId = _wtoi(pos);
-  wchar_t msg[MAX_PATH];
-  swprintf(msg, L"Old file reused : %s\n", pFilename);
-  ::OutputDebugStringW(msg);
-
-  //LogDebug("reuse old file");
+  m_dataFileIdCurrent = wcstol(fileName + wcslen(m_registerFileName), NULL, 10);
+  LogDebug(L"multi file writer: reusing data file, retry count = %hhu, file count = %llu, name = %s",
+            retryCount, (unsigned long long)m_dataFileNames.size(), fileName);
   return S_OK;
 }
 
-
-HRESULT MultiFileWriter::WriteTSBufferFile()
+HRESULT MultiFileWriter::WriteRegisterFile()
 {
-  LARGE_INTEGER li;
-  DWORD written = 0;
+  unsigned char* writePointer = m_registerFileWriteBuffer;
 
-  // Move to the start of the file
-  li.QuadPart = 0;
-  SetFilePointer(m_hTSBufferFile, li.LowPart, &li.HighPart, FILE_BEGIN);
+  // Current data file content length...
+  *((unsigned long long*)writePointer) = m_dataFileSize;
+  writePointer += sizeof(unsigned long long);
 
-  // Write current position of most recent file.
-  __int64 currentPointer = m_pCurrentTSFile->GetFilePointer();
-
-  BYTE* writeBuffer = new BYTE[65536];
-  BYTE* writePointer = writeBuffer;
-
-  *((__int64*)writePointer) = currentPointer;
-  writePointer += sizeof(__int64);
+  // Data file counts...
+  *((unsigned long*)writePointer) = m_dataFileCountUsed;
+  writePointer += sizeof(unsigned long);
   
-  *((long*)writePointer) = m_filesAdded;
-  writePointer += sizeof(long);
-  
-  *((long*)writePointer) = m_filesRemoved;
-  writePointer += sizeof(long);
+  *((unsigned long*)writePointer) = m_dataFileCountRemoved;
+  writePointer += sizeof(unsigned long);
 
-  // Write out all the filenames (null terminated)
-  std::vector<LPWSTR>::iterator it = m_tsFileNames.begin();
-  for ( ; it < m_tsFileNames.end() ; it++ )
+  // Data file names...
+  std::vector<wchar_t*>::const_iterator it = m_dataFileNames.begin();
+  for ( ; it < m_dataFileNames.end(); it++)
   {
-    LPWSTR pFilename = *it;
-    long length = wcslen(pFilename)+1;
-    length *= sizeof(wchar_t);
+    wchar_t* fileName = *it;
+    if (fileName == NULL)
+    {
+      continue;
+    }
 
-    memcpy(writePointer, pFilename, length);
+    unsigned long length = wcslen(fileName) + 1;
+    length *= sizeof(wchar_t);
+    memcpy(writePointer, fileName, length);
     writePointer += length;
 
-    if((writePointer - writeBuffer) > 60000)
+    if (writePointer - m_registerFileWriteBuffer > REGISTER_FILE_WRITE_BUFFER_SIZE - MAX_PATH)
     {
-      LogDebug("MultiFileWriter: TS buffer file has exceeded maximum length.  Reduce the number of timeshifting files");
-      delete[] writeBuffer;
+      LogDebug(L"multi file writer: failed to write register file, data file count = %llu",
+                (unsigned long long)m_dataFileNames.size());
       return S_FALSE;
     }
   }
 
-  // Finish up with a unicode null character in case we want to put stuff after this in the future.
-  wchar_t temp = 0;
-  *((wchar_t*)writePointer) = temp;
+  // Mark the end of the content with a Unicode null character.
+  *((wchar_t*)writePointer) = NULL;
   writePointer += sizeof(wchar_t);
   
+  // For backwards compatibility with TsReader's multi file reader...
+  *((unsigned long*)writePointer) = m_dataFileCountUsed;
+  writePointer += sizeof(unsigned long);
   
-  *((long*)writePointer) = m_filesAdded;
-  writePointer += sizeof(long);
-  
-  *((long*)writePointer) = m_filesRemoved;
-  writePointer += sizeof(long);
+  *((unsigned long*)writePointer) = m_dataFileCountRemoved;
+  writePointer += sizeof(unsigned long);
 
-  WriteFile(m_hTSBufferFile, writeBuffer, writePointer - writeBuffer, &written, NULL);
-  delete[] writeBuffer;
-
-
-  return S_OK;
+  return m_fileRegister->Write(m_registerFileWriteBuffer,
+                                writePointer - m_registerFileWriteBuffer,
+                                false,
+                                0);
 }
 
-HRESULT MultiFileWriter::CleanupFiles()
+void MultiFileWriter::CleanUpDataFiles()
 {
-  m_filesAdded = 0;
-  m_filesRemoved = 0;
-  m_currentFilenameId = 0;
-  m_currentFileId = 0;
+  LogDebug(L"multi file writer: clean up data files");
 
-  // Check if .tsbuffer file is being read by something.
-  if (IsFileLocked(m_pTSBufferFileName) == TRUE)
-    return S_OK;
-
-  std::vector<LPWSTR>::iterator it;
-  for (it = m_tsFileNames.begin() ; it < m_tsFileNames.end() ; it++ )
+  // Check if either the register file or any of the data files are in use. If
+  // one of the files is in use, don't even attempt to delete any of the files.
+  bool deleteFiles = true;
+  if (IsFileInUse(m_registerFileName))
   {
-    if (IsFileLocked(*it) == TRUE)
+    LogDebug(L"multi file writer: register file is in use, name = %s",
+              m_registerFileName);
+    deleteFiles = false;
+  }
+
+  std::vector<wchar_t*>::iterator it = m_dataFileNames.begin();
+  for ( ; it < m_dataFileNames.end(); it++)
+  {
+    wchar_t* fileName = *it;
+    if (IsFileInUse(fileName))
     {
-      // If any of the files are being read then we won't
-      // delete any so that the full buffer stays intact.
-      wchar_t msg[MAX_PATH];
-      swprintf(msg, L"CleanupFiles: A file is still locked : %s\n", *it);
-      ::OutputDebugStringW((LPWSTR)&msg);
-      LogDebug(L"CleanupFiles: A file is still locked");
-      return S_OK;
+      LogDebug(L"multi file writer: data file is in use, name = %s", fileName);
+      deleteFiles = false;
     }
   }
 
-  // Now we know we can delete all the files.
-
-  for (it = m_tsFileNames.begin() ; it < m_tsFileNames.end() ; it++ )
+  // Clean up the data file names, and delete the files if appropriate.
+  for (it = m_dataFileNames.begin(); it < m_dataFileNames.end(); it++)
   {
-    if (DeleteFileW(*it) == FALSE)
+    wchar_t* fileName = *it;
+    if (fileName != NULL)
     {
-      wchar_t msg[MAX_PATH];
-      swprintf(msg, L"Failed to delete file %s : 0x%x\n", *it, GetLastError());
-      ::OutputDebugStringW(msg);
-      LogDebug(L"CleanupFiles: Failed to delete file");
+      if (deleteFiles)
+      {
+        if (DeleteFileW(fileName) == FALSE)
+        {
+          DWORD errorCode = GetLastError();
+          HRESULT hr = HRESULT_FROM_WIN32(errorCode);
+          LogDebug(L"multi file writer: failed to delete data file, error = %lu, hr = 0x%x, name = %s",
+                    errorCode, hr, fileName);
+        }
+      }
+      delete[] fileName;
+      *it = NULL;
     }
-    delete[] *it;
   }
-  m_tsFileNames.clear();
+  m_dataFileNames.clear();
 
-  if (DeleteFileW(m_pTSBufferFileName) == FALSE)
+  if (m_registerFileName != NULL)
   {
-    wchar_t msg[MAX_PATH];
-    swprintf(msg, L"Failed to delete tsbuffer file : 0x%x\n", GetLastError());
-    ::OutputDebugStringW(msg);
-      LogDebug(L"CleanupFiles: Failed to delete tsbuffer file: 0x%x\n", GetLastError());
+    if (deleteFiles && DeleteFileW(m_registerFileName) == FALSE)
+    {
+      DWORD errorCode = GetLastError();
+      HRESULT hr = HRESULT_FROM_WIN32(errorCode);
+      LogDebug(L"multi file writer: failed to delete register file, error = %lu, hr = 0x%x, name = %s",
+                errorCode, hr, m_registerFileName);
+    }
 
+    delete[] m_registerFileName;
+    m_registerFileName = NULL;
   }
-  m_filesAdded = 0;
-  m_filesRemoved = 0;
-  m_currentFilenameId = 0;
-  m_currentFileId = 0;
-  return S_OK;
 }
 
-BOOL MultiFileWriter::IsFileLocked(LPWSTR pFilename)
+void MultiFileWriter::ResetDataFileProperties()
 {
-  HANDLE hFile;
-  hFile = CreateFileW(pFilename,                    // The filename
-             (DWORD) GENERIC_READ,          // File access
-             (DWORD) NULL,                  // Share access
-             NULL,                          // Security
-             (DWORD) OPEN_EXISTING,         // Open flags
-             (DWORD) 0,                     // More flags
-             NULL);                         // Template
+  m_dataFileSize = 0;
 
-  if (hFile == INVALID_HANDLE_VALUE)
-    return TRUE;
+  m_dataFileIdCurrent = 0;
+  m_dataFileIdNext = 1;
 
-  CloseHandle(hFile);
-  return FALSE;
+  m_dataFileCountUsed = 0;
+  m_dataFileCountRemoved = 0;
 }
 
-HRESULT MultiFileWriter::GetAvailableDiskSpace(__int64* llAvailableDiskSpace)
+HRESULT MultiFileWriter::GetAvailableDiskSpace(const wchar_t* path,
+                                                unsigned long long& availableDiskSpace)
 {
-  if (!llAvailableDiskSpace)
+  availableDiskSpace = 0;
+  if (path == NULL || wcslen(path) < 2)
+  {
+    LogDebug(L"multi file writer: failed to get available disk space, path not supplied");
     return E_INVALIDARG;
-
-  HRESULT hr;
-
-  wchar_t  *pszDrive = NULL;
-  wchar_t  szDrive[4];
-  if (m_pTSBufferFileName[1] == L':')
-  {
-    szDrive[0] = (wchar_t)m_pTSBufferFileName[0];
-    szDrive[1] = L':';
-    szDrive[2] = L'\\';
-    szDrive[3] = 0;
-    pszDrive = szDrive;
   }
 
-  ULARGE_INTEGER uliDiskSpaceAvailable;
-  ULARGE_INTEGER uliDiskSpaceTotal;
-  ULARGE_INTEGER uliDiskSpaceFree;
-  uliDiskSpaceAvailable.QuadPart= 0;
-  uliDiskSpaceTotal.QuadPart= 0;
-  uliDiskSpaceFree.QuadPart= 0;
-  hr = GetDiskFreeSpaceExW(pszDrive, &uliDiskSpaceAvailable, &uliDiskSpaceTotal, &uliDiskSpaceFree);
-  if SUCCEEDED(hr)
-    *llAvailableDiskSpace = uliDiskSpaceAvailable.QuadPart;
-  else
-    *llAvailableDiskSpace = 0;
+  if (path[1] != L':')
+  {
+    // TODO support shares
+    LogDebug(L"multi file writer: unable to get available disk space for share");
+    return E_FAIL;
+  }
 
+  wchar_t drive[4];
+  drive[0] = path[0];
+  drive[1] = L':';
+  drive[2] = L'\\';
+  drive[3] = NULL;
+
+  ULARGE_INTEGER diskSpaceAvailable;
+  diskSpaceAvailable.QuadPart = 0;
+  ULARGE_INTEGER diskSpaceTotal;
+  diskSpaceTotal.QuadPart = 0;
+  BOOL result = GetDiskFreeSpaceExW(&drive[0], &diskSpaceAvailable, &diskSpaceTotal, NULL);
+  if (result == TRUE)
+  {
+    LogDebug(L"multi file writer: disk space, free = %llu, total = %llu bytes",
+              diskSpaceAvailable.QuadPart, diskSpaceTotal.QuadPart);
+    availableDiskSpace = diskSpaceAvailable.QuadPart;
+    return S_OK;
+  }
+
+  DWORD errorCode = GetLastError();
+  HRESULT hr = HRESULT_FROM_WIN32(errorCode);
+  LogDebug(L"multi file writer: failed to get available disk space, error = %lu, hr = 0x%x",
+            errorCode, hr);
   return hr;
 }
 
-LPTSTR MultiFileWriter::getRegFileName(void)
+bool MultiFileWriter::IsFileInUse(wchar_t* fileName)
 {
-  return   m_pTSRegFileName;
-}
-
-void MultiFileWriter::setRegFileName(LPTSTR fileName)
-{
-//  CheckPointer(fileName,E_POINTER);
-
-  if(_tcslen(fileName) > MAX_PATH)
-    return;// ERROR_FILENAME_EXCED_RANGE;
-
-  // Take a copy of the filename
-  if (m_pTSRegFileName)
+  if (fileName == NULL)
   {
-    delete[] m_pTSRegFileName;
-    m_pTSRegFileName = NULL;
+    return false;
   }
-  m_pTSRegFileName = new TCHAR[1+lstrlen(fileName)];
-  if (m_pTSRegFileName == NULL)
-    return;// E_OUTOFMEMORY;
 
-  lstrcpy(m_pTSRegFileName, fileName);
-}
-
-LPWSTR MultiFileWriter::getBufferFileName(void)
-{
-  return   m_pTSBufferFileName;
-}
-
-void MultiFileWriter::setBufferFileName(LPWSTR fileName)
-{
-//  CheckPointer(fileName,E_POINTER);
-
-  if(wcslen(fileName) > MAX_PATH)
-    return;// ERROR_FILENAME_EXCED_RANGE;
-
-  // Take a copy of the filename
-  if (m_pTSBufferFileName)
+  HANDLE fileHandle = CreateFileW(fileName,       // file name
+                                  GENERIC_READ,   // file access
+                                  0,              // share access
+                                  0,              // security
+                                  OPEN_EXISTING,  // open flags
+                                  0,              // more flags
+                                  NULL);          // template
+  if (fileHandle == INVALID_HANDLE_VALUE)
   {
-    delete[] m_pTSBufferFileName;
-    m_pTSBufferFileName = NULL;
+    return true;
   }
-  m_pTSBufferFileName = new WCHAR[1+lstrlenW(fileName)];
-  if (m_pTSBufferFileName == NULL)
-    return;// E_OUTOFMEMORY;
 
-  wcscpy(m_pTSBufferFileName, fileName);
-}
-
-FileWriter* MultiFileWriter::getCurrentTSFile(void)
-{
-  return m_pCurrentTSFile;
-}
-
-long MultiFileWriter::getNumbFilesAdded(void)
-{
-  return m_filesAdded;
-}
-
-long MultiFileWriter::getNumbFilesRemoved(void)
-{
-  return m_filesRemoved;
-}
-
-long MultiFileWriter::getCurrentFileId(void)
-{
-  return m_currentFileId;//m_currentFilenameId;
-}
-
-long MultiFileWriter::getMinTSFiles(void)
-{
-  return m_minTSFiles;
-}
-
-void MultiFileWriter::setMinTSFiles(long minFiles)
-{
-  m_minTSFiles = minFiles;
-}
-
-long MultiFileWriter::getMaxTSFiles(void)
-{
-  return m_maxTSFiles;
-}
-
-void MultiFileWriter::setMaxTSFiles(long maxFiles)
-{
-  m_maxTSFiles = maxFiles;
-}
-
-__int64 MultiFileWriter::getMaxTSFileSize(void)
-{
-  return m_maxTSFileSize;
-}
-
-void MultiFileWriter::setMaxTSFileSize(__int64 maxSize)
-{
-  m_maxTSFileSize = maxSize;
-  m_pCurrentTSFile->SetChunkReserve(TRUE, m_chunkReserve, m_maxTSFileSize);
-}
-
-__int64 MultiFileWriter::getChunkReserve(void)
-{
-  return m_chunkReserve;
-}
-
-void MultiFileWriter::setChunkReserve(__int64 chunkSize)
-{
-  m_chunkReserve = chunkSize;
-  m_pCurrentTSFile->SetChunkReserve(TRUE, m_chunkReserve, m_maxTSFileSize);
-}
-
-void MultiFileWriter::GetPosition(__int64 * position)
-{
-  if (m_pCurrentTSFile==NULL)
-  {
-    *position=-1;
-    return;
-  }
-  if (m_pCurrentTSFile->IsFileInvalid())
-  {
-    *position=-1;
-    return;
-  }
-  *position=m_pCurrentTSFile->GetFilePointer();
+  CloseHandle(fileHandle);
+  return false;
 }

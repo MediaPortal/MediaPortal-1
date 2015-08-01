@@ -23,79 +23,69 @@
 *    http://forums.dvbowners.com/
 */
 
-#ifndef MULTIFILEWRITER
-#define MULTIFILEWRITER
-
-#include "FileWriter.h"
-#include <streams.h>
+#pragma once
 #include <vector>
+#include <WinError.h> // HRESULT
+#include "..\..\shared\FileWriter.h"
 
-typedef struct 
+
+#define REGISTER_FILE_WRITE_BUFFER_SIZE 65536
+
+
+typedef struct MultiFileWriterParams
 {
-  long   minFiles;
-  long   maxFiles;
-  __int64  maxSize;
-  __int64  chunkSize;
-} MultiFileWriterParam;
+  unsigned long long MaximumFileSize;       // unit = bytes
+  unsigned long long ReservationChunkSize;  // unit = bytes
+  unsigned long FileCountMinimum;
+  unsigned long FileCountMaximum;
+} MultiFileWriterParams;
 
 class MultiFileWriter
 {
-public:
-  MultiFileWriter(MultiFileWriterParam *pWriterParams);
-  virtual ~MultiFileWriter();
+  public:
+    MultiFileWriter();
+    virtual ~MultiFileWriter();
 
-  HRESULT GetFileName(LPWSTR *lpszFileName);
-  HRESULT OpenFile(LPCWSTR pszFileName);
-  HRESULT CloseFile();
-  HRESULT GetFileSize(__int64 *lpllsize);
+    HRESULT GetFileName(wchar_t** fileName);
+    HRESULT OpenFile(const wchar_t* fileName);
+    HRESULT CloseFile();
   
-  HRESULT Write(PBYTE pbData, ULONG lDataLength);
-  HRESULT GetAvailableDiskSpace(__int64* llAvailableDiskSpace);
+    HRESULT Write(unsigned char* data, unsigned long dataLength, bool disableLogging);
 
-  LPTSTR getRegFileName(void);
-  void setRegFileName(LPTSTR fileName);
-  LPWSTR getBufferFileName(void);
-  void setBufferFileName(LPWSTR fileName);
-  FileWriter* getCurrentTSFile(void);
-  long getNumbFilesAdded(void);
-  long getNumbFilesRemoved(void);
-  long getCurrentFileId(void);
-  long getMinTSFiles(void);
-  void setMinTSFiles(long minFiles);
-  long getMaxTSFiles(void);
-  void setMaxTSFiles(long maxFiles);
-  __int64 getMaxTSFileSize(void);
-  void setMaxTSFileSize(__int64 maxSize);
-  __int64 getChunkReserve(void);
-  void setChunkReserve(__int64 chunkSize);
-  void GetPosition(__int64 * position);
+    void GetCurrentFilePosition(unsigned long& currentFileId,
+                                unsigned long long& currentFilePointer);
+    void SetConfiguration(MultiFileWriterParams& parameters);
 
-protected:
-  HRESULT PrepareTSFile();
-  HRESULT CreateNewTSFile();
-  HRESULT ReuseTSFile();
+  protected:
+    HRESULT OpenDataFile(bool disableLogging);
+    HRESULT CreateDataFile(bool disableLogging);
+    HRESULT ReuseDataFile(bool disableLogging);
 
-  HRESULT WriteTSBufferFile();
-  HRESULT CleanupFiles();
-  BOOL IsFileLocked(LPWSTR pFilename);
+    HRESULT WriteRegisterFile();
+    void CleanUpDataFiles();
+    void ResetDataFileProperties();
 
-  HANDLE m_hTSBufferFile;
-  LPWSTR m_pTSBufferFileName;
-  LPTSTR m_pTSRegFileName;
+    static HRESULT GetAvailableDiskSpace(const wchar_t* path,
+                                          unsigned long long& availableDiskSpace);
+    static bool IsFileInUse(wchar_t* fileName);
 
-  CCritSec m_Lock;
+    FileWriter* m_fileRegister;
+    wchar_t* m_registerFileName;
+    unsigned char m_registerFileWriteBuffer[REGISTER_FILE_WRITE_BUFFER_SIZE];
 
-  FileWriter *m_pCurrentTSFile;
-  std::vector<LPWSTR> m_tsFileNames;
-  long m_filesAdded;
-  long m_filesRemoved;
-  long m_currentFilenameId;
-  long m_currentFileId;
+    FileWriter* m_fileData;
+    std::vector<wchar_t*> m_dataFileNames;
 
-  long m_minTSFiles;
-  long m_maxTSFiles;
-  __int64 m_maxTSFileSize;
-  __int64 m_chunkReserve;
+    unsigned long long m_dataFileSize;                  // unit = bytes
+    unsigned long long m_dataFileSizeMaximum;           // unit = bytes
+    unsigned long long m_dataFileReservationChunkSize;  // unit = bytes
+
+    unsigned long m_dataFileIdCurrent;
+    unsigned long m_dataFileIdNext;
+
+    unsigned long m_dataFileCountMinimum;
+    unsigned long m_dataFileCountMaximum;
+
+    unsigned long m_dataFileCountUsed;
+    unsigned long m_dataFileCountRemoved;
 };
-
-#endif

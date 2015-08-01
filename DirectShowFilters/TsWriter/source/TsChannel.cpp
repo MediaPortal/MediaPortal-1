@@ -1,4 +1,4 @@
-/* 
+/*
 *  Copyright (C) 2006-2008 Team MediaPortal
 *  http://www.team-mediaportal.com
 *
@@ -14,79 +14,36 @@
 *   
 *  You should have received a copy of the GNU General Public License
 *  along with GNU Make; see the file COPYING.  If not, write to
-*  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+*  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 *  http://www.gnu.org/copyleft/gpl.html
 *
 */
-
-#include <windows.h>
-#include <commdlg.h>
-#include <bdatypes.h>
-#include <time.h>
-#include <streams.h>
-#include <initguid.h>
-#include <shlobj.h>
 #include "TsChannel.h"
+#include "RecorderMode.h"
 
-extern void LogDebug(const char *fmt, ...) ;
 
-CTsChannel::CTsChannel(LPUNKNOWN pUnk, HRESULT *phr,int id) 
+extern void LogDebug(const wchar_t* fmt, ...);
+
+CTsChannel::CTsChannel(unsigned long id)
+  : Recorder(Record), TimeShifter(TimeShift)
 {
-  m_id=id;
-  m_pEncryptionAnalyser = new CEncryptionAnalyser(pUnk,phr);
-  m_pPmtGrabber = new CPmtGrabber(pUnk,phr);
-  m_pRecorder = new CDiskRecorder(RecordingMode::Recording);
-  m_pTimeShifting= new CDiskRecorder(RecordingMode::TimeShift);
-  m_pCaGrabber= new CCaGrabber(pUnk,phr);
+  Id = id;
 }
 
 CTsChannel::~CTsChannel(void)
 {
-  if (m_pEncryptionAnalyser!=NULL)
-  {
-    LogDebug("del m_pEncryptionAnalyser");
-    delete m_pEncryptionAnalyser;
-    m_pEncryptionAnalyser=NULL;
-  }
-  if (m_pPmtGrabber!=NULL)
-  {
-    LogDebug("del m_pPmtGrabber");
-    delete m_pPmtGrabber;
-    m_pPmtGrabber=NULL;
-  }
-  if (m_pRecorder!=NULL)
-  {
-    LogDebug("del m_pRecorder");
-    delete m_pRecorder;
-    m_pRecorder=NULL;
-  }
-  if (m_pTimeShifting!=NULL)
-  {
-    LogDebug("del m_pTimeShifting");
-    delete m_pTimeShifting;
-    m_pTimeShifting=NULL;
-  }
-  if (m_pCaGrabber!=NULL)
-  {
-    LogDebug("del m_pCaGrabber");
-    delete m_pCaGrabber;
-    m_pCaGrabber=NULL;
-  }
-  LogDebug("del done...");
 }
 
-void CTsChannel::OnTsPacket(byte* tsPacket)
+void CTsChannel::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
 {
   try
   {
-    m_pEncryptionAnalyser->OnTsPacket(tsPacket);
-    m_pPmtGrabber->OnTsPacket(tsPacket);
-    m_pRecorder->OnTsPacket(tsPacket);
-    m_pTimeShifting->OnTsPacket(tsPacket);
-    m_pCaGrabber->OnTsPacket(tsPacket);
+    Recorder.OnTsPacket(header, tsPacket);
+    TimeShifter.OnTsPacket(header, tsPacket);
   }
-  catch(...)
+  catch (...)
   {
-    LogDebug("exception in AnalyzeTsPacket");
+    LogDebug(L"TS channel: channel %lu unhandled exception in OnTsPacket()",
+              Id);
   }
 }

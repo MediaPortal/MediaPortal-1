@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (C) 2006-2008 Team MediaPortal
  *  http://www.team-mediaportal.com
  *
@@ -6,213 +6,266 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include "..\..\shared\packetsync.h"
-#include "ChannelScan.h"
-#include "EncryptionAnalyser.h"
-#include "epgscanner.h"
-#include "PmtGrabber.h"
-#include "DiskRecorder.h"
-#include "cagrabber.h"
-#include "channellinkagescanner.h"
-#include "TsChannel.h"
-#include "videoaudioobserver.h"
+#pragma once
 #include <map>
+#include <streams.h>    // AMovieDllRegisterServer2(), CCritSec, CFactoryTemplate, CUnknown (IUnknown, LPUNKNOWN)
 #include <vector>
+#include <WinError.h>   // HRESULT
+#include "..\..\shared\DebugSettings.h"
+#include "..\..\shared\Section.h"
+#include "EncryptionAnalyser.h"
+#include "GrabberEpgAtsc.h"
+#include "GrabberSiAtscScte.h"
+#include "GrabberSiDvb.h"
+#include "GrabberSiMpeg.h"
+#include "ICallBackEncryptionAnalyser.h"
+#include "ICallBackPidConsumer.h"
+#include "ICallBackSiAtscScte.h"
+#include "ICallBackSiDvb.h"
+#include "ICallBackSiMpeg.h"
+#include "IChannelObserver.h"
+#include "IDefaultAuthorityProvider.h"
+#include "IObserver.h"
+#include "ITsAnalyser.h"
+#include "ITsWriter.h"
+#include "ParserAet.h"
+#include "ParserEitDvb.h"
+#include "ParserMhw.h"
+#include "ParserOpenTv.h"
+#include "PidUsage.h"
+#include "TsChannel.h"
+#include "TsWriterFilter.h"
+
 using namespace std;
 
-class CMpTsFilterPin;
-class CMpTs;
-class CMpTsFilter;
 
-DEFINE_GUID(CLSID_MpTsFilter, 0xfc50bed6, 0xfe38, 0x42d3, 0xb8, 0x31, 0x77, 0x16, 0x90, 0x9, 0x1a, 0x6e);
+DEFINE_TVE_DEBUG_SETTING(TsWriterDisableCrcCheck)
+DEFINE_TVE_DEBUG_SETTING(TsWriterDumpInput)
 
-// {5EB9F392-E7FD-4071-8E44-3590E5E767BA}
-DEFINE_GUID(IID_TSFilter, 0x5eb9f392, 0xe7fd, 0x4071, 0x8e, 0x44, 0x35, 0x90, 0xe5, 0xe7, 0x67, 0xba);
 
-DECLARE_INTERFACE_(ITSFilter, IUnknown)
+class CTsWriter
+  : public CUnknown, ICallBackEncryptionAnalyser, ICallBackPidConsumer,
+    ICallBackSiAtscScte, ICallBackSiDvb, ICallBackSiMpeg,
+    IDefaultAuthorityProvider, public ITsAnalyser, public ITsWriter
 {
-  STDMETHOD(AddChannel)(THIS_ int* handle)PURE;
-  STDMETHOD(DeleteChannel)(THIS_ int handle)PURE;
-  STDMETHOD(DeleteAllChannels)()PURE;
+  public:
+    CTsWriter(LPUNKNOWN unk, HRESULT* hr);
+    ~CTsWriter();
 
-  STDMETHOD(AnalyserAddPid)(THIS_ int handle, int pid)PURE;
-  STDMETHOD(AnalyserRemovePid)(THIS_ int handle, int pid)PURE;
-  STDMETHOD(AnalyserGetPidCount)(THIS_ int handle, int* pidCount)PURE;
-  STDMETHOD(AnalyserGetPid)(THIS_ int handle, int pidIdx, int* pid, EncryptionState* encryptionState)PURE;
-  STDMETHOD(AnalyserSetCallBack)(THIS_ int handle, IEncryptionStateChangeCallBack* callBack)PURE;
-  STDMETHOD(AnalyserReset)(THIS_ int handle)PURE;
+    static CUnknown* WINAPI CreateInstance(LPUNKNOWN unk, HRESULT* hr);
 
-  STDMETHOD(PmtSetPmtPid)(THIS_ int handle, int pmtPid, int serviceId);
-  STDMETHOD(PmtSetCallBack)(THIS_ int handle, IPmtCallBack* callBack);
-  STDMETHOD(PmtGetPmtData)(THIS_ int handle, BYTE* pmtData);
-  
-  STDMETHOD(RecordSetRecordingFileNameW)(THIS_ int handle,wchar_t* pwszFileName)PURE;
-  STDMETHOD(RecordStartRecord)(THIS_ int handle)PURE;
-  STDMETHOD(RecordStopRecord)(THIS_ int handle)PURE;
-  STDMETHOD(RecordSetPmtPid)(THIS_ int handle,int mtPid,int serviceId,byte* pmtData,int pmtLength)PURE;
-  STDMETHOD(RecordSetVideoAudioObserver)(THIS_ int handle, IVideoAudioObserver* callback)PURE;
-
-  STDMETHOD(TimeShiftSetTimeShiftingFileNameW)(THIS_ int handle, wchar_t* pwszFileName)PURE;
-  STDMETHOD(TimeShiftStart)(THIS_ int handle )PURE;
-  STDMETHOD(TimeShiftStop)(THIS_ int handle )PURE;
-  STDMETHOD(TimeShiftReset)(THIS_ int handle )PURE;
-  STDMETHOD(TimeShiftGetBufferSize) (THIS_ int handle, __int64 * size) PURE;
-  STDMETHOD(TimeShiftSetPmtPid) (THIS_ int handle, int pmtPid,int serviceId,byte* pmtData,int pmtLength) PURE;
-  STDMETHOD(TimeShiftPause) (THIS_ int handle, BYTE onOff) PURE;
-  STDMETHOD(TimeShiftSetParams) (THIS_ int handle, int minFiles, int maxFiles, ULONG chunkSize) PURE;
-  STDMETHOD(TimeShiftGetCurrentFilePosition) (THIS_ int handle,__int64 * position, long * bufferId) PURE;
-  STDMETHOD(SetVideoAudioObserver)(THIS_ int handle, IVideoAudioObserver* callback)PURE;
-
-  STDMETHOD(CaReset)(THIS_ int handle)PURE;
-  STDMETHOD(CaSetCallBack)(THIS_ int handle, ICaCallBack* callBack)PURE;
-  STDMETHOD(CaGetCaData)(THIS_ int handle, BYTE* caData)PURE;
-
-  STDMETHOD(GetStreamQualityCounters)(THIS_ int handle, int* totalTsBytes, int* totalRecordingBytes, 
-      int* TsDiscontinuity, int* recordingDiscontinuity)PURE;
-  
-  STDMETHOD(TimeShiftSetChannelType)(THIS_ int handle, int channelType)PURE;
-};
-
-// Main filter object
-
-class CMpTsFilter : public CBaseFilter
-{
-    CMpTs * const m_pWriterFilter;
-
-public:
-
-    // Constructor
-    CMpTsFilter(CMpTs *pDump,LPUNKNOWN pUnk,CCritSec *pLock,HRESULT *phr);
-
-    // Pin enumeration
-    CBasePin * GetPin(int n);
-    int GetPinCount();
-
-    // Open and close the file as necessary
-    STDMETHODIMP Run(REFERENCE_TIME tStart);
-    STDMETHODIMP Pause();
-    STDMETHODIMP Stop();
-};
-
-
-//  Pin object
-
-class CMpTsFilterPin : public CRenderedInputPin,public CPacketSync
-{
-    CMpTs*  const  m_pWriterFilter;   // Main renderer object
-    CCritSec*    const  m_pReceiveLock;    // Sample critical section
-public:
-
-    CMpTsFilterPin(CMpTs *pDump,LPUNKNOWN pUnk,CBaseFilter *pFilter,CCritSec *pLock,CCritSec *pReceiveLock,HRESULT *phr);
-
-    // Do something with this media sample
-    STDMETHODIMP Receive(IMediaSample *pSample);
-    STDMETHODIMP EndOfStream(void);
-    STDMETHODIMP ReceiveCanBlock();
-
-    // Write detailed information about this sample to a file
-//    HRESULT WriteStringInfo(IMediaSample *pSample);
-
-    // Check if the pin can support this specific proposed type and format
-    HRESULT    CheckMediaType(const CMediaType *);
-    // Break connection
-    HRESULT    BreakConnect();
-    BOOL      IsReceiving();
-    void      Reset();
-    // Track NewSegment
-    STDMETHODIMP NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate);
-
-    //CPacketSync overrides
-    void OnTsPacket(byte* tsPacket);
-    void AssignRawPaketWriter(FileWriter *rawPaketWriter);
-private:
-  CCritSec    m_section;
-  FileWriter *m_rawPaketWriter;
-};
-
-
-//  CMpTs object which has filter and pin members
-
-class CMpTs : public CUnknown, public ITSFilter
-{
-
-    friend class CMpTsFilter;
-    friend class CMpTsFilterPin;
-    CMpTsFilter*  m_pFilter;       // Methods for filter interfaces
-    CMpTsFilterPin*  m_pPin;          // A simple rendered input pin
-    CCritSec     m_Lock;                // Main renderer critical section
-    CCritSec     m_ReceiveLock;         // Sublock for received samples
-public:
     DECLARE_IUNKNOWN
 
-    STDMETHODIMP AddChannel( int* handle);
-    STDMETHODIMP DeleteChannel( int handle);
-    STDMETHODIMP DeleteAllChannels();
+    void AnalyseOobSiSection(CSection& section);
+    void AnalyseTsPacket(unsigned char* tsPacket);
 
-    STDMETHODIMP AnalyserAddPid(int handle, int pid);
-    STDMETHODIMP AnalyserRemovePid(int handle, int pid);
-    STDMETHODIMP AnalyserGetPidCount(int handle, int* pidCount);
-    STDMETHODIMP AnalyserGetPid(int handle, int pidIdx, int* pid, EncryptionState* encryptionState);
-    STDMETHODIMP AnalyserSetCallBack(int handle, IEncryptionStateChangeCallBack* callBack);
-    STDMETHODIMP AnalyserReset(int handle);
+    STDMETHODIMP ConfigureLogging(wchar_t* path);
+    STDMETHODIMP_(void) DumpInput(bool enableTs, bool enableOobSi);
+    STDMETHODIMP_(void) CheckSectionCrcs(bool enable);
+    STDMETHODIMP_(void) SetObserver(IObserver* observer);
 
-    STDMETHODIMP PmtSetPmtPid(int handle, int pmtPid, int serviceId);
-    STDMETHODIMP PmtSetCallBack(int handle, IPmtCallBack* callBack);
-    STDMETHODIMP PmtGetPmtData(int handle, BYTE* pmtData);
+    STDMETHODIMP_(void) Start();
+    STDMETHODIMP_(void) Stop();
 
-    STDMETHODIMP RecordSetRecordingFileNameW( int handle,wchar_t* pszFileName);
-    STDMETHODIMP RecordStartRecord( int handle);
-    STDMETHODIMP RecordStopRecord( int handle);
-    STDMETHODIMP RecordSetPmtPid(int handle,int mtPid,int serviceId,byte* pmtData,int pmtLength );
-    STDMETHODIMP RecordSetVideoAudioObserver(int handle, IVideoAudioObserver* callback);
+    STDMETHODIMP AddChannel(IChannelObserver* observer, long* handle);
+    STDMETHODIMP_(void) DeleteChannel(long handle);
+    STDMETHODIMP_(void) DeleteAllChannels();
 
-    STDMETHODIMP TimeShiftSetTimeShiftingFileNameW( int handle, wchar_t* pwszFileName);
-    STDMETHODIMP TimeShiftStart( int handle );
-    STDMETHODIMP TimeShiftStop( int handle );
-    STDMETHODIMP TimeShiftReset( int handle );
-    STDMETHODIMP TimeShiftGetBufferSize( int handle, __int64 * size) ;
-    STDMETHODIMP TimeShiftSetPmtPid( int handle, int pmtPid, int serviceId,byte* pmtData,int pmtLength) ;
-    STDMETHODIMP TimeShiftPause( int handle, BYTE onOff) ;
-    STDMETHODIMP TimeShiftSetParams(int handle, int minFiles, int maxFiles, ULONG chunkSize) ;
-    STDMETHODIMP TimeShiftGetCurrentFilePosition(int handle,__int64 * position,long * bufferId);
-    STDMETHODIMP SetVideoAudioObserver(int handle, IVideoAudioObserver* callback);
+    STDMETHODIMP RecorderSetFileName(long handle, wchar_t* fileName);
+    STDMETHODIMP RecorderSetPmt(long handle,
+                                unsigned char* pmt,
+                                unsigned short pmtSize,
+                                bool isDynamicPmtChange);
+    STDMETHODIMP RecorderStart(long handle);
+    STDMETHODIMP RecorderGetStreamQuality(long handle,
+                                          unsigned long long* countTsPackets,
+                                          unsigned long long* countDiscontinuities,
+                                          unsigned long long* countDroppedBytes);
+    STDMETHODIMP RecorderStop(long handle);
 
-    STDMETHODIMP CaReset(int handle);
-    STDMETHODIMP CaSetCallBack(int handle, ICaCallBack* callBack);
-    STDMETHODIMP CaGetCaData(int handle, BYTE* caData);
+    STDMETHODIMP TimeShifterSetFileName(long handle, wchar_t* fileName);
+    STDMETHODIMP TimeShifterSetParameters(long handle,
+                                          unsigned long fileCountMinimum,
+                                          unsigned long fileCountMaximum,
+                                          unsigned long long fileSizeBytes);
+    STDMETHODIMP TimeShifterSetPmt(long handle,
+                                    unsigned char* pmt,
+                                    unsigned short pmtSize,
+                                    bool isDynamicPmtChange);
+    STDMETHODIMP TimeShifterStart(long handle);
+    STDMETHODIMP TimeShifterGetStreamQuality(long handle,
+                                              unsigned long long* countTsPackets,
+                                              unsigned long long* countDiscontinuities,
+                                              unsigned long long* countDroppedBytes);
+    STDMETHODIMP TimeShifterGetCurrentFilePosition(long handle,
+                                                    unsigned long long* position,
+                                                    unsigned long* bufferId);
+    STDMETHODIMP TimeShifterStop(long handle);
 
-    STDMETHODIMP GetStreamQualityCounters(int handle, int* totalTsBytes, int* totalRecordingBytes, 
-      int* TsDiscontinuity, int* recordingDiscontinuity);
+  private:
+    STDMETHODIMP NonDelegatingQueryInterface(REFIID iid, void** ppv);
+    CTsChannel* GetChannel(long handle);
 
-    STDMETHODIMP TimeShiftSetChannelType(int handle, int channelType);
+    bool GetDefaultAuthority(unsigned short originalNetworkId,
+                              unsigned short transportStreamId,
+                              unsigned short serviceId,
+                              char* defaultAuthority,
+                              unsigned short& defaultAuthorityBufferSize) const;
 
-    CMpTs(LPUNKNOWN pUnk, HRESULT *phr);
-    ~CMpTs();
-    static CUnknown * WINAPI CreateInstance(LPUNKNOWN punk, HRESULT *phr);
-    void AnalyzeTsPacket(byte* tsPacket);
+    void OnTableSeen(unsigned char tableId);
+    void OnTableComplete(unsigned char tableId);
+    void OnTableChange(unsigned char tableId);
 
-private:
-    // Overriden to say what interfaces we support where
-    CTsChannel* GetTsChannel(int handle);  
-    STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
-    CChannelScan*   m_pChannelScanner;
-    CEpgScanner*    m_pEpgScanner;
-    FileWriter* m_rawPaketWriter;
-    bool b_dumpRawPakets;
-    CChannelLinkageScanner* m_pChannelLinkageScanner;
-    vector<CTsChannel*> m_vecChannels;
-    typedef vector<CTsChannel*>::iterator ivecChannels;
-    int m_id;
+    void OnEncryptionStateChange(unsigned short pid,
+                                  EncryptionState statePrevious,
+                                  EncryptionState stateNew);
+
+    void OnPidsRequired(unsigned short* pids, unsigned char pidCount, PidUsage usage);
+    void OnPidsNotRequired(unsigned short* pids, unsigned char pidCount, PidUsage usage);
+
+    void OnFreesatPids(unsigned short pidEitSchedule,
+                        unsigned short pidEitPresentFollowing,
+                        unsigned short pidSdt,
+                        unsigned short pidBat,
+                        unsigned short pidNit);
+
+    void OnSdtRunningStatus(unsigned short serviceId, unsigned char runningStatus);
+    void OnOpenTvEpgService(unsigned short serviceId, unsigned short originalNetworkId);
+
+    void OnCatReceived(const unsigned char* table, unsigned short tableSize);
+    void OnCatChanged(const unsigned char* table, unsigned short tableSize);
+
+    void OnEamReceived(unsigned short id,
+                        unsigned long originatorCode,
+                        const char* eventCode,
+                        const map<unsigned long, char*>& NatureOfActivationTexts,
+                        unsigned char alertMessageTimeRemaining,
+                        unsigned long eventStartTime,
+                        unsigned short eventDuration,
+                        unsigned char alertPriority,
+                        unsigned short detailsOobSourceId,
+                        unsigned short detailsMajorChannelNumber,
+                        unsigned short detailsMinorChannelNumber,
+                        unsigned char detailsRfChannel,
+                        unsigned short detailsProgramNumber,
+                        unsigned short audioOobSourceId,
+                        const map<unsigned long, char*>& alertTexts,
+                        const vector<unsigned long>& locationCodes,
+                        const vector<unsigned long>& exceptions,
+                        const vector<unsigned long>& alternativeExceptions);
+    void OnEamChanged(unsigned short id,
+                        unsigned long originatorCode,
+                        const char* eventCode,
+                        const map<unsigned long, char*>& NatureOfActivationTexts,
+                        unsigned char alertMessageTimeRemaining,
+                        unsigned long eventStartTime,
+                        unsigned short eventDuration,
+                        unsigned char alertPriority,
+                        unsigned short detailsOobSourceId,
+                        unsigned short detailsMajorChannelNumber,
+                        unsigned short detailsMinorChannelNumber,
+                        unsigned char detailsRfChannel,
+                        unsigned short detailsProgramNumber,
+                        unsigned short audioOobSourceId,
+                        const map<unsigned long, char*>& alertTexts,
+                        const vector<unsigned long>& locationCodes,
+                        const vector<unsigned long>& exceptions,
+                        const vector<unsigned long>& alternativeExceptions);
+    void OnEamRemoved(unsigned short id,
+                        unsigned long originatorCode,
+                        const char* eventCode,
+                        const map<unsigned long, char*>& NatureOfActivationTexts,
+                        unsigned char alertMessageTimeRemaining,
+                        unsigned long eventStartTime,
+                        unsigned short eventDuration,
+                        unsigned char alertPriority,
+                        unsigned short detailsOobSourceId,
+                        unsigned short detailsMajorChannelNumber,
+                        unsigned short detailsMinorChannelNumber,
+                        unsigned char detailsRfChannel,
+                        unsigned short detailsProgramNumber,
+                        unsigned short audioOobSourceId,
+                        const map<unsigned long, char*>& alertTexts,
+                        const vector<unsigned long>& locationCodes,
+                        const vector<unsigned long>& exceptions,
+                        const vector<unsigned long>& alternativeExceptions);
+
+    void OnMgtReceived(unsigned short tableType,
+                        unsigned short pid,
+                        unsigned char versionNumber,
+                        unsigned long numberBytes);
+    void OnMgtChanged(unsigned short tableType,
+                        unsigned short pid,
+                        unsigned char versionNumber,
+                        unsigned long numberBytes);
+    void OnMgtRemoved(unsigned short tableType,
+                        unsigned short pid,
+                        unsigned char versionNumber,
+                        unsigned long numberBytes);
+
+    void OnPatProgramReceived(unsigned short programNumber, unsigned short pmtPid);
+    void OnPatProgramChanged(unsigned short programNumber, unsigned short pmtPid);
+    void OnPatProgramRemoved(unsigned short programNumber, unsigned short pmtPid);
+
+    void OnPatTsidChanged(unsigned short oldTransportStreamId,
+                          unsigned short newTransportStreamId);
+    void OnPatNetworkPidChanged(unsigned short oldNetworkPid, unsigned short newNetworkPid);
+
+    void OnPmtReceived(unsigned short programNumber,
+                        unsigned short pid,
+                        const unsigned char* table,
+                        unsigned short tableSize);
+    void OnPmtChanged(unsigned short programNumber,
+                        unsigned short pid,
+                        const unsigned char* table,
+                        unsigned short tableSize);
+    void OnPmtRemoved(unsigned short programNumber, unsigned short pid);
+
+    CTsWriterFilter* m_filter;
+    CCritSec m_filterLock;                  // filter control lock
+    CCritSec m_receiveLock;                 // sample receive lock
+
+    // electronic programme guide grabbers
+    CGrabberEpgAtsc* m_grabberEpgAtsc;
+    CParserEitDvb* m_grabberEpgDvb;
+    CParserMhw* m_grabberEpgMhw;
+    CParserOpenTv* m_grabberEpgOpenTv;
+    CParserAet* m_grabberEpgScte;
+
+    // service information grabbers
+    CGrabberSiAtscScte* m_grabberSiAtsc;
+    CGrabberSiDvb* m_grabberSiDvb;
+    CGrabberSiDvb* m_grabberSiFreesat;       // DVB on different PIDs
+    CGrabberSiMpeg* m_grabberSiMpeg;
+    CGrabberSiAtscScte* m_grabberSiScte;
+
+    vector<CTsChannel*> m_channels;
+    unsigned long m_nextChannelId;
+    CCritSec m_channelLock;
+
+    unsigned short m_openTvEpgServiceId;
+    vector<unsigned short> m_openTvEpgPidsEvent;
+    vector<unsigned short> m_openTvEpgPidsDescription;
+
+    vector<unsigned short> m_atscEpgPidsEit;
+    vector<unsigned short> m_atscEpgPidsEtt;
+    vector<unsigned short> m_scteEpgPids;
+
+    bool m_isRunning;
+    bool m_checkSectionCrcs;
+    bool m_isFreesatTransportStream;
+    CEncryptionAnalyser m_encryptionAnalyser;
+    IObserver* m_observer;
 };
