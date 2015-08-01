@@ -18,7 +18,8 @@
 
 #endregion
 
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Util;
@@ -35,7 +36,7 @@ namespace Mediaportal.TV.TvPlugin.Recorded
     protected override bool OnSelectedRecording(int iItem)
     {
       GUIListItem item;
-      bool toReturn = OnSelectedRecording(iItem, MediaTypeEnum.Radio, g_Player.MediaType.RadioRecording, out item);
+      bool toReturn = OnSelectedRecording(iItem, MediaType.Radio, g_Player.MediaType.RadioRecording, out item);
       if (item != null && toReturn)
       {
         GUIPropertyManager.RemovePlayerProperties();
@@ -44,6 +45,11 @@ namespace Mediaportal.TV.TvPlugin.Recorded
         GUIPropertyManager.SetProperty("#Play.Current.Thumb", item.ThumbnailImage);
       }
       return toReturn;
+    }
+
+    protected override string GetCachedRecordingFileName(Recording recording)
+    {
+      return Utils.GetCoverArt(Thumbs.Radio, GetChannelDisplayName(recording));
     }
 
     protected override string ThumbsType
@@ -62,11 +68,11 @@ namespace Mediaportal.TV.TvPlugin.Recorded
       }
     }
 
-    protected override MediaTypeEnum MediaType
+    protected override MediaType MediaType
     {
       get
       {
-        return MediaTypeEnum.Radio;
+        return MediaType.Radio;
       }
     }
 

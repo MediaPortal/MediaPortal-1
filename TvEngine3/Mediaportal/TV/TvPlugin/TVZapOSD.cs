@@ -20,12 +20,12 @@
 
 using System;
 using System.Globalization;
-using MediaPortal.GUI.Library;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.TvPlugin.Helper;
+using MediaPortal.GUI.Library;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace Mediaportal.TV.TvPlugin
@@ -309,9 +309,9 @@ namespace Mediaportal.TV.TvPlugin
     {
       if (LastError != null)
       {
-        return LastError.FailingChannel.DisplayName;
+        return LastError.FailingChannel.Name;
       }
-      return TVHome.Navigator.ZapChannel.DisplayName;
+      return TVHome.Navigator.ZapChannel.Name;
     }
 
     private string GetChannelNumber()
@@ -365,7 +365,7 @@ namespace Mediaportal.TV.TvPlugin
         lblEndTime.Label = "";
         if (LastError.FailingChannel != null)
         {
-          lblCurrentChannel.Label = LastError.FailingChannel.DisplayName;
+          lblCurrentChannel.Label = LastError.FailingChannel.Name;
         }
         if (LastError.Messages.Count > 0)
         {

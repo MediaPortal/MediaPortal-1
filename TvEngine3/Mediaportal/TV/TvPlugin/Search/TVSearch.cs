@@ -18,7 +18,7 @@
 
 #endregion
 
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using MediaPortal.Util;
 
 namespace Mediaportal.TV.TvPlugin.Search
@@ -46,11 +46,11 @@ namespace Mediaportal.TV.TvPlugin.Search
       }
     }
 
-    protected override MediaTypeEnum MediaType
+    protected override MediaType MediaType
     {
       get
       {
-        return MediaTypeEnum.TV;
+        return MediaType.Television;
       }
     }
 

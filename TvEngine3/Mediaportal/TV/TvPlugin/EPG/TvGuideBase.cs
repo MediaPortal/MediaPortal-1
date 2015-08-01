@@ -22,20 +22,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.TvPlugin.Helper;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Video;
 using MediaPortal.Player;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
-using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.Interfaces;
-using Mediaportal.TV.TvPlugin.Helper;
 
 #endregion
 
@@ -579,16 +577,9 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     }
     
-
-    protected override bool IsChannelTypeCorrect(Channel channel)
-    {
-      return (channel.MediaType == (int)MediaTypeEnum.TV);
-    }
-
     protected override IList<Channel> GetGuideChannelsForGroup()
     {
-      return
-        ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(TVHome.Navigator.CurrentGroup.IdGroup, MediaTypeEnum.TV).ToList();
+      return ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByGroupId(TVHome.Navigator.CurrentGroup.IdGroup, ChannelIncludeRelationEnum.None);
     }
 
     protected override bool HasSelectedGroup()
@@ -736,7 +727,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, false, false))
       {
         IList<Program> progs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByChannelAndStartEndTimes(_currentProgram.Entity.IdChannel,
-          _currentProgram.Entity.StartTime, _currentProgram.Entity.EndTime).ToList();
+          _currentProgram.Entity.StartTime, _currentProgram.Entity.EndTime);
 
         if (progs != null && progs.Count > 0)
         {
@@ -746,7 +737,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
           //todo gibman: handle new genre here.. simply add it.
           prog.ProgramCategory.Category = movieDetails.Genre;
 
-          prog.StarRating = (int)movieDetails.Rating;
+          prog.StarRating = (decimal)movieDetails.Rating;
           ServiceAgents.Instance.ProgramServiceAgent.SaveProgram(prog);
         }
         var videoInfo = (GUIVideoInfo)GUIWindowManager.GetWindow((int)Window.WINDOW_VIDEO_INFO);

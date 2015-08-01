@@ -21,16 +21,14 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
-using System.Windows.Forms;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.TvPlugin.Helper;
@@ -100,11 +98,8 @@ namespace Mediaportal.TV.TvPlugin
         Server.TVDatabase.Entities.Schedule parentSchedule = startedRec.Schedule;
         if (parentSchedule != null && parentSchedule.IdSchedule > 0)
         {
-          string endTime = string.Empty;
-          endTime = parentSchedule.EndTime.AddMinutes(parentSchedule.PostRecordInterval).ToString("t",
-                                                                                                  CultureInfo.
-                                                                                                    CurrentCulture.
-                                                                                                    DateTimeFormat);
+          int postRecordInterval = parentSchedule.PostRecordInterval ?? ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 10);
+          string endTime = parentSchedule.EndTime.AddMinutes(postRecordInterval).ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           string text = String.Format("{0} {1}-{2}",
                                       startedRec.Title,
                                       startedRec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
@@ -122,12 +117,12 @@ namespace Mediaportal.TV.TvPlugin
       {
         string textPrg;
         IList<Program> prgs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndTimesInterval(stoppedRec.Title, stoppedRec.StartTime,
-                                                                      stoppedRec.EndTime).ToList();        
+                                                                      stoppedRec.EndTime);
         Program prg = null;
         if (prgs != null && prgs.Count > 0)
         {
           prg = prgs[0];
-          }
+        }
         if (prg != null)
         {
           textPrg = String.Format("{0} {1}-{2}",
@@ -227,7 +222,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           if (preNotifySecs > program.Entity.StartTime)
           {
-            this.LogInfo("Notify {0} on {1} start {2}", program.Entity.Title, program.Entity.Channel.DisplayName,
+            this.LogInfo("Notify {0} on {1} start {2}", program.Entity.Title, program.Entity.Channel.Name,
                      program.Entity.StartTime);
             program.Notify = false;
             ServiceAgents.Instance.ProgramServiceAgent.SaveProgram(program.Entity);

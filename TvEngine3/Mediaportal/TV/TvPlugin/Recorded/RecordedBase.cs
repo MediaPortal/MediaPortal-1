@@ -27,9 +27,9 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Common.GUIPlugins;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
@@ -109,7 +109,7 @@ namespace Mediaportal.TV.TvPlugin.Recorded
 
     #region abstract
 
-    protected abstract MediaTypeEnum MediaType
+    protected abstract MediaType MediaType
     {
       get;
     }
@@ -140,6 +140,8 @@ namespace Mediaportal.TV.TvPlugin.Recorded
     }
 
     protected abstract bool OnSelectedRecording(int iItem);
+
+    protected abstract string GetCachedRecordingFileName(Recording recording);
 
     #endregion
 
@@ -287,10 +289,13 @@ namespace Mediaportal.TV.TvPlugin.Recorded
     {
       try
       {
-        Program paramProg = ProgramFactory.CreateProgram(rec.IdChannel.GetValueOrDefault(), rec.StartTime, rec.EndTime, rec.Title, rec.Description, rec.ProgramCategory,
-                                        ProgramState.None, DateTime.MinValue, String.Empty, String.Empty,
-                                        String.Empty, String.Empty, 0, String.Empty, 0);
-        TVProgramInfo.CurrentProgram = paramProg;
+        var prog = ProgramFactory.CreateEmptyProgram();
+        prog.IdChannel = rec.IdChannel.GetValueOrDefault();
+        prog.StartTime = rec.StartTime;
+        prog.EndTime = rec.EndTime;
+        prog.Title = rec.Title;
+        prog.Description = rec.Description;
+        TVProgramInfo.CurrentProgram = prog;
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV_PROGRAM_INFO);
       }
       catch (Exception ex)
@@ -674,7 +679,7 @@ namespace Mediaportal.TV.TvPlugin.Recorded
 
     #endregion
 
-    protected bool OnSelectedRecording(int iItem, MediaTypeEnum tveMediaType, g_Player.MediaType mpMediaType, out GUIListItem pItem)
+    protected bool OnSelectedRecording(int iItem, MediaType tveMediaType, g_Player.MediaType mpMediaType, out GUIListItem pItem)
     {
       pItem = GetItem(iItem);
       if (pItem == null)
@@ -791,7 +796,7 @@ namespace Mediaportal.TV.TvPlugin.Recorded
         return GUILocalizeStrings.Get(2014);
       }
 
-      return ch.DisplayName;
+      return ch.Name;
     }
 
     #endregion
@@ -970,9 +975,7 @@ namespace Mediaportal.TV.TvPlugin.Recorded
           smallThumb = stationLogo;
         }
 
-        string previewThumb = string.Format("{0}\\{1}{2}", ThumbsType,
-                                            Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null),
-                                            Utils.GetThumbExtension());
+        string previewThumb = GetCachedRecordingFileName(aRecording);
         if (Utils.FileExistsInCache(previewThumb))
         {
           // Search a larger one
@@ -1058,15 +1061,13 @@ namespace Mediaportal.TV.TvPlugin.Recorded
 
       try
       {
-        string thumbnailFilename = string.Format("{0}{1}", Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null), Utils.GetThumbExtension());
-        string previewThumb = string.Format("{0}\\{1}", ThumbsType, thumbnailFilename);
+        string previewThumb = GetCachedRecordingFileName(aRecording);
         if (!Utils.FileExistsInCache(previewThumb))
         {
           this.LogDebug("RecordedBase: thumbnail {0} does not exist in local thumbs folder - get it from TV server", previewThumb);
           try
           {
-            // TODO convert this to a WCF call
-            byte[] thumbData = new byte[0];//RemoteControl.Instance.GetRecordingThumbnail(thumbnailFilename);
+            byte[] thumbData = ServiceAgents.Instance.ControllerServiceAgent.GetThumbnailForRecording(aRecording.FileName);
             if (thumbData.Length > 0)
             {
               using (FileStream fs = new FileStream(previewThumb, FileMode.Create))
@@ -1079,12 +1080,12 @@ namespace Mediaportal.TV.TvPlugin.Recorded
             }
             else
             {
-              this.LogDebug("RecordedBase: thumbnail {0} not found on TV server", thumbnailFilename);
+              this.LogDebug("RecordedBase: thumbnail {0} not found on TV server", aRecording.FileName);
             }
           }
           catch (Exception ex)
           {
-            this.LogError(ex, "RecordedBase: error fetching thumbnail {0} from TV server", thumbnailFilename);
+            this.LogError(ex, "RecordedBase: error fetching thumbnail {0} from TV server", aRecording.FileName);
           }
         }
 
@@ -1563,11 +1564,11 @@ namespace Mediaportal.TV.TvPlugin.Recorded
 
         if (rec1.Channel != null)
         {
-          rec1DisplayName = rec1.Channel.DisplayName;
+          rec1DisplayName = rec1.Channel.Name;
         }
         if (rec2.Channel != null)
         {
-          rec2DisplayName = rec2.Channel.DisplayName;
+          rec2DisplayName = rec2.Channel.Name;
         }
         while (true) // starting with main sortmethod and sorting by secondary rules
         {
@@ -1700,7 +1701,7 @@ namespace Mediaportal.TV.TvPlugin.Recorded
       Recording rec = ServiceAgents.Instance.RecordingServiceAgent.GetRecordingByFileName(filename);
       if (rec != null)
       {
-        if (_deleteWatchedShows || rec.KeepUntil == (int)KeepMethodType.UntilWatched)
+        if (_deleteWatchedShows || rec.KeepUntil == (int)RecordingKeepMethod.UntilWatched)
         {
           ServiceAgents.Instance.ControllerServiceAgent.DeleteRecording(rec.IdRecording);
         }

@@ -20,22 +20,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using Common.GUIPlugins;
+using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace Mediaportal.TV.TvPlugin.Radio
@@ -62,10 +60,9 @@ namespace Mediaportal.TV.TvPlugin.Radio
     private string _currentFolder = null;
     private string _lastFolder = "..";
     private int _selectedItemIndex = -1;
-    private static bool _hideAllChannelsGroup = false;
     private string _rootGroup = "(none)";
     private static ChannelGroup _selectedGroup;
-    public static List<ChannelGroup> AllRadioGroups = new List<ChannelGroup>();
+    public static IList<ChannelGroup> AllRadioGroups = new List<ChannelGroup>();
     private static bool _settingsRadioLoaded = false;
 
     #endregion
@@ -157,7 +154,6 @@ namespace Mediaportal.TV.TvPlugin.Radio
         {
           _currentFolder = xmlreader.GetValueAsString("myradio", "lastgroup", null);
         }
-        _hideAllChannelsGroup = xmlreader.GetValueAsBool("myradio", "hideAllChannelsGroup", false);
         _rootGroup = xmlreader.GetValueAsString("myradio", "rootgroup", "(none)");
 
         _autoTurnOnRadio = xmlreader.GetValueAsBool("myradio", "autoturnonradio", false);
@@ -186,7 +182,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
         xmlwriter.SetValue("myradio", "lastgroup", _lastFolder);
         if (_currentChannel != null)
         {
-          xmlwriter.SetValue("myradio", "channel", _currentChannel.DisplayName);
+          xmlwriter.SetValue("myradio", "channel", _currentChannel.Name);
         }
       }
     }
@@ -303,10 +299,9 @@ namespace Mediaportal.TV.TvPlugin.Radio
       {
         ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
         include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;
-        AllRadioGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllCustomChannelGroups(include, MediaTypeEnum.Radio).ToList();        
+        AllRadioGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaType.Radio, include);
       }
     }
-
 
     private void SetLastChannel()
     {
@@ -399,15 +394,8 @@ namespace Mediaportal.TV.TvPlugin.Radio
       int totalItems = 0;
       if (_currentFolder == null || _currentFolder == "..")
       {
-        IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio).ToList();
-        foreach (ChannelGroup group in groups)
+        foreach (ChannelGroup group in AllRadioGroups)
         {
-          if (_hideAllChannelsGroup && group.GroupName.Equals(TvConstants.RadioGroupNames.AllChannels) &&
-              groups.Count > 1)
-          {
-            continue;
-          }
-
           if (group.GroupName == _rootGroup)
           {
             continue;
@@ -430,7 +418,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
         }
         if (_rootGroup != "(none)")
         {
-          ChannelGroup root = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(_rootGroup, MediaTypeEnum.Radio);
+          ChannelGroup root = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(_rootGroup, MediaType.Radio);
           if (root != null)
           {
             IList<GroupMap> maps = root.GroupMaps;
@@ -447,12 +435,12 @@ namespace Mediaportal.TV.TvPlugin.Radio
                 }
               }
 
-              item.Label = channel.DisplayName;
+              item.Label = channel.Name;
               item.IsFolder = false;
               item.MusicTag = channel;
               item.IconImageBig = "DefaultMyradioBig.png";
               item.IconImage = "DefaultMyradio.png";
-              string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
+              string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.Name);
               if (!string.IsNullOrEmpty(thumbnail))              
               {
                 item.IconImageBig = thumbnail;
@@ -468,7 +456,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       else
       {
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(_currentFolder, MediaTypeEnum.Radio);
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(_currentFolder, MediaType.Radio);
         if (group == null)
         {
           return;
@@ -490,13 +478,13 @@ namespace Mediaportal.TV.TvPlugin.Radio
           if (channel != null)
           {
             item = new GUIListItem();
-            item.Label = channel.DisplayName;
+            item.Label = channel.Name;
             item.IsFolder = false;
             item.MusicTag = channel;
             item.AlbumInfoTag = map;
             item.IconImageBig = "DefaultMyradioBig.png";
             item.IconImage = "DefaultMyradio.png";
-            string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
+            string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.Name);
             if (!string.IsNullOrEmpty(thumbnail))
             {
               item.IconImageBig = thumbnail;
@@ -707,11 +695,11 @@ namespace Mediaportal.TV.TvPlugin.Radio
     {
       // We have the Station Name in there to retrieve the correct Coverart for the station in the Vis Window
       GUIPropertyManager.RemovePlayerProperties();
-      GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", _currentChannel.DisplayName);
-      GUIPropertyManager.SetProperty("#Play.Current.Album", _currentChannel.DisplayName);
-      GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.DisplayName);
+      GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", _currentChannel.Name);
+      GUIPropertyManager.SetProperty("#Play.Current.Album", _currentChannel.Name);
+      GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.Name);
       
-      string strLogo = Utils.GetCoverArt(Thumbs.Radio, _currentChannel.DisplayName);
+      string strLogo = Utils.GetCoverArt(Thumbs.Radio, _currentChannel.Name);
       if (string.IsNullOrEmpty(strLogo))
       {
         strLogo = "defaultMyRadioBig.png";

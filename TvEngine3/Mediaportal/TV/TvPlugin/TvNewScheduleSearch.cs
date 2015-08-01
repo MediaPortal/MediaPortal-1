@@ -20,16 +20,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using MediaPortal.Dialogs;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.TvPlugin.Helper;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace Mediaportal.TV.TvPlugin
@@ -238,15 +238,15 @@ namespace Mediaportal.TV.TvPlugin
           StringComparisonEnum stringComparisonCategory = StringComparisonEnum.StartsWith;
             stringComparisonCategory |= StringComparisonEnum.EndsWith;
             listPrograms = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndCategoryAndMediaType(_searchKeyword, "",
-                                                                                      MediaTypeEnum.TV,
+                                                                                      MediaType.Television,
                                                                                       stringComparisonCategory,
-                                                                                      StringComparisonEnum.StartsWith).ToList();
+                                                                                      StringComparisonEnum.StartsWith);
           break;
         case SearchType.KeyWord:
-          listPrograms = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByDescription("%" + _searchKeyword, stringComparison).ToList();
+          listPrograms = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByDescription("%" + _searchKeyword, stringComparison);
           break;
         case SearchType.Title:
-          listPrograms = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitle(_searchKeyword, stringComparison).ToList();
+          listPrograms = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitle(_searchKeyword, stringComparison);
           break;
       }
       if (listPrograms == null)
@@ -262,7 +262,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         GUIListItem item = new GUIListItem();
         item.Label = TVUtil.GetDisplayTitle(program);
-        string logo = Utils.GetCoverArt(Thumbs.TVChannel, program.Channel.DisplayName);
+        string logo = Utils.GetCoverArt(Thumbs.TVChannel, program.Channel.Name);
         if (string.IsNullOrEmpty(logo))
         {
           logo = "defaultVideoBig.png";

@@ -22,11 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using MediaPortal.Dialogs;
-using MediaPortal.GUI.Library;
-using MediaPortal.Player;
-using MediaPortal.Util;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -34,6 +29,10 @@ using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.TvPlugin.Helper;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Util;
 
 #endregion
 
@@ -615,10 +614,10 @@ namespace Mediaportal.TV.TvPlugin.EPG
                       {
                         GUIPropertyManager.RemovePlayerProperties();
                         GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", recDB.Description);
-                        GUIPropertyManager.SetProperty("#Play.Current.Album", recDB.Channel.DisplayName);
+                        GUIPropertyManager.SetProperty("#Play.Current.Album", recDB.Channel.Name);
                         GUIPropertyManager.SetProperty("#Play.Current.Title", recDB.Description);
 
-                        string strLogo = Utils.GetCoverArt(Thumbs.Radio, recDB.Channel.DisplayName);
+                        string strLogo = Utils.GetCoverArt(Thumbs.Radio, recDB.Channel.Name);
                         if (string.IsNullOrEmpty(strLogo))
                         {
                           strLogo = "defaultMyRadioBig.png";
@@ -784,17 +783,12 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     protected override IList<Channel> GetGuideChannelsForGroup()
     {      
-      return ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(Radio.Radio.SelectedGroup.IdGroup, MediaTypeEnum.Radio).ToList();
+      return ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByGroupId(Radio.Radio.SelectedGroup.IdGroup, ChannelIncludeRelationEnum.None);
     }
 
     protected override bool HasSelectedGroup()
     {
       return (Radio.Radio.SelectedGroup != null);
-    }
-
-    protected override bool IsChannelTypeCorrect(Channel channel)
-    {
-      return (channel.MediaType == (int)MediaTypeEnum.Radio);
     }
 
     #endregion

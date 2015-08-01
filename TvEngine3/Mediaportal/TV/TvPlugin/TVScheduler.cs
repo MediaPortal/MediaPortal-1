@@ -21,22 +21,21 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Windows.Forms;
-using MediaPortal.Dialogs;
-using MediaPortal.GUI.Library;
-using MediaPortal.Player;
-using MediaPortal.Profile;
-using MediaPortal.Util;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.TvPlugin.Helper;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Profile;
+using MediaPortal.Util;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace Mediaportal.TV.TvPlugin
@@ -408,7 +407,7 @@ namespace Mediaportal.TV.TvPlugin
         case SortMethod.Channel:
           if (m_bSortAscending)
           {
-            iComp = String.Compare(rec1.Channel.DisplayName, rec2.Channel.DisplayName, true);
+            iComp = String.Compare(rec1.Channel.Name, rec2.Channel.Name, true);
             if (iComp == 0)
             {
               goto case SortMethod.Date;
@@ -420,7 +419,7 @@ namespace Mediaportal.TV.TvPlugin
           }
           else
           {
-            iComp = String.Compare(rec2.Channel.DisplayName, rec1.Channel.DisplayName, true);
+            iComp = String.Compare(rec2.Channel.Name, rec1.Channel.Name, true);
             if (iComp == 0)
             {
               goto case SortMethod.Date;
@@ -474,7 +473,7 @@ namespace Mediaportal.TV.TvPlugin
       item.Label = schedule.ProgramName;
 
       item.TVTag = schedule;
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.DisplayName);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.Name);
       
       if (string.IsNullOrEmpty(strLogo))                      
       {
@@ -517,7 +516,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void LoadDirectory()
     {
-      IList<Conflict> conflictsList = ServiceAgents.Instance.ConflictServiceAgent.ListAllConflicts().ToList();
+      IList<Conflict> conflictsList = ServiceAgents.Instance.ConflictServiceAgent.ListAllConflicts();
       btnConflicts.Visible = conflictsList.Count > 0;
       GUIControl.ClearControl(GetID, listSchedules.GetID);
       IList<ScheduleBLL> schedulesList = new List<ScheduleBLL>();
@@ -744,7 +743,7 @@ namespace Mediaportal.TV.TvPlugin
               item.Label2 = String.Format("{0} {1} {2}", strType, day, strTime);
               break;
             case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
-              item.Label2 = GUILocalizeStrings.Get(650, new object[] {rec.Channel.DisplayName});
+              item.Label2 = GUILocalizeStrings.Get(650, new object[] {rec.Channel.Name});
               break;
             case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
               item.Label2 = GUILocalizeStrings.Get(651);
@@ -774,7 +773,7 @@ namespace Mediaportal.TV.TvPlugin
                      day = GUILocalizeStrings.Get(17);
                      break;
           }
-             item.Label2 = GUILocalizeStrings.Get(990001, new object[] { day, rec.Channel.DisplayName });
+             item.Label2 = GUILocalizeStrings.Get(990001, new object[] { day, rec.Channel.Name });
              break;              
         }
         }
@@ -934,7 +933,7 @@ namespace Mediaportal.TV.TvPlugin
         case 981: //Cancel this show
           {
             // get the program that this episode is for
-            IList<Program> progs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByChannelAndStartEndTimes(rec.Entity.IdChannel, rec.Entity.StartTime, rec.Entity.EndTime).ToList();
+            IList<Program> progs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByChannelAndStartEndTimes(rec.Entity.IdChannel, rec.Entity.StartTime, rec.Entity.EndTime);
             // pick up the schedule that is actually used for recording
             // see TVUtil.GetRecordingTimes where schedules are all spawend as one off types
             // and this is what rec is (ie. it does not actually exist in the database)
@@ -1090,7 +1089,7 @@ namespace Mediaportal.TV.TvPlugin
     private void OnCleanup()
     {
       int iCleaned = 0;
-      IList<Schedule> itemlist = ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules().ToList();
+      IList<Schedule> itemlist = ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules();
       foreach (Schedule rec in itemlist)
       {
         ScheduleBLL scheduleBll = new ScheduleBLL(rec);
@@ -1130,7 +1129,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       else
       {
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel.DisplayName);
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel.Name);
         if (string.IsNullOrEmpty(strLogo))
         {
           GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");          
@@ -1173,8 +1172,8 @@ namespace Mediaportal.TV.TvPlugin
         }
         else
         {
-          GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", schedule.Channel.DisplayName);
-          string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.DisplayName);
+          GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", schedule.Channel.Name);
+          string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.Name);
           if (string.IsNullOrEmpty(logo))                                
           {
             GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", "defaultVideoBig.png");
@@ -1190,8 +1189,6 @@ namespace Mediaportal.TV.TvPlugin
     private void UpdateDescription()
     {
       Schedule rec = ScheduleFactory.CreateSchedule(-1, "", ScheduleFactory.MinSchedule, ScheduleFactory.MinSchedule);      
-      rec.PreRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 5);
-      rec.PostRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 5);
       SetProperties(rec);
       GUIListItem pItem = GetItem(GetSelectedItemNo());
       if (pItem == null)

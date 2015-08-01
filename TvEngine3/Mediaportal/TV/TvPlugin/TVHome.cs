@@ -33,20 +33,19 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Dialogs.Dialogs;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
@@ -593,7 +592,7 @@ namespace Mediaportal.TV.TvPlugin
       // start viewing tv... 
       GUIGraphicsContext.IsFullScreenVideo = false;
       Channel channel = Navigator.Channel.Entity;
-      if (channel == null || channel.MediaType == (int)MediaTypeEnum.Radio)
+      if (channel == null || channel.MediaType == (int)MediaType.Radio)
       {
         if (Navigator.CurrentGroup != null && Navigator.Groups.Count > 0)
         {
@@ -612,7 +611,7 @@ namespace Mediaportal.TV.TvPlugin
 
       if (channel != null)
       {
-        this.LogInfo("tv home init:{0}", channel.DisplayName);
+        this.LogInfo("tv home init:{0}", channel.Name);
         if (!_suspended)
         {
           AutoTurnOnTv(channel);
@@ -622,7 +621,7 @@ namespace Mediaportal.TV.TvPlugin
           _resumeChannel = channel;
         }
         GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.GroupName);
-        this.LogInfo("tv home init:{0} done", channel.DisplayName);
+        this.LogInfo("tv home init:{0} done", channel.Name);
       }
 
       if (!_suspended)
@@ -759,7 +758,7 @@ namespace Mediaportal.TV.TvPlugin
         }
 
         // turn tv on/off
-        if (Navigator.Channel != null && Navigator.Channel.Entity.MediaType == (int)MediaTypeEnum.TV)
+        if (Navigator.Channel != null && Navigator.Channel.Entity.MediaType == (int)MediaType.Television)
         {
           ViewChannelAndCheck(Navigator.Channel.Entity, 0);
         }
@@ -877,11 +876,9 @@ namespace Mediaportal.TV.TvPlugin
       if (manual) // until manual stop
       {
         Schedule newSchedule = ScheduleFactory.CreateSchedule(channel.Entity.IdChannel,
-                                                              GUILocalizeStrings.Get(413) + " (" + channel.Entity.DisplayName +
+                                                              GUILocalizeStrings.Get(413) + " (" + channel.Entity.Name +
                                                               ")",
                                                               DateTime.Now, DateTime.Now.AddDays(1));
-        newSchedule.PreRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 5);
-        newSchedule.PostRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 5);
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(newSchedule);
         ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
       }
@@ -907,8 +904,6 @@ namespace Mediaportal.TV.TvPlugin
         // ok, no existing schedule found with matching canceled schedules found. proceeding to add the schedule normally
         Schedule newSchedule = ScheduleFactory.CreateSchedule(channel.Entity.IdChannel, channel.CurrentProgram.Title,
                                             channel.CurrentProgram.StartTime, channel.CurrentProgram.EndTime);
-        newSchedule.PreRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 5);
-        newSchedule.PostRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 5);
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(newSchedule);
         ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
       }
@@ -1628,7 +1623,7 @@ namespace Mediaportal.TV.TvPlugin
         _notifyManager.Start();
         if (_resumeChannel != null)
         {
-          this.LogDebug("TVHome.OnResume() - automatically turning on TV: {0}", _resumeChannel.DisplayName);
+          this.LogDebug("TVHome.OnResume() - automatically turning on TV: {0}", _resumeChannel.Name);
           AutoTurnOnTv(_resumeChannel);
           AutoFullScreenTv();
           _resumeChannel = null;
@@ -1829,16 +1824,16 @@ namespace Mediaportal.TV.TvPlugin
             }
             tvNotifyDlg.SetLine(1, notify.Title);
             tvNotifyDlg.SetLine(2, notify.Description);
-            tvNotifyDlg.SetLine(4, String.Format(GUILocalizeStrings.Get(1207), notify.Channel.DisplayName));
+            tvNotifyDlg.SetLine(4, String.Format(GUILocalizeStrings.Get(1207), notify.Channel.Name));
             Channel c = notify.Channel;
             string strLogo = string.Empty;
-            if (c.MediaType == (int)MediaTypeEnum.TV)
+            if (c.MediaType == (int)MediaType.Television)
             {
-              strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, c.DisplayName);
+              strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, c.Name);
             }
-            else if (c.MediaType == (int)MediaTypeEnum.Radio)
+            else if (c.MediaType == (int)MediaType.Radio)
             {
-              strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, c.DisplayName);
+              strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, c.Name);
             }
 
             tvNotifyDlg.SetImage(strLogo);
@@ -1856,7 +1851,7 @@ namespace Mediaportal.TV.TvPlugin
               {
                 MediaPortal.Player.g_Player.Stop();
 
-                if (c.MediaType == (int)MediaTypeEnum.TV)
+                if (c.MediaType == (int)MediaType.Television)
                 {
                   MediaPortal.GUI.Library.GUIWindowManager.ActivateWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV);
                   TVHome.ViewChannelAndCheck(c, 0);
@@ -1865,7 +1860,7 @@ namespace Mediaportal.TV.TvPlugin
                     g_Player.ShowFullScreenWindow();
                   }
                 }
-                else if (c.MediaType == (int)MediaTypeEnum.Radio)
+                else if (c.MediaType == (int)MediaType.Radio)
                 {
                   MediaPortal.GUI.Library.GUIWindowManager.ActivateWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_RADIO);
                   Radio.Radio.CurrentChannel = c;
@@ -1874,7 +1869,7 @@ namespace Mediaportal.TV.TvPlugin
               }
               catch (Exception e)
               {
-                Log.Error(e, "TVHome: TVNotification: Error on starting channel {0} after notification", notify.Channel.DisplayName);
+                Log.Error(e, "TVHome: TVNotification: Error on starting channel {0} after notification", notify.Channel.Name);
               }
 
             }
@@ -2012,8 +2007,10 @@ namespace Mediaportal.TV.TvPlugin
             switch (pDlgOK.SelectedId)
             {
               case 875:
-                //record current program                  
-                TVProgramInfo.CreateProgram(prog.Entity, (int)ScheduleRecordingType.Once, dialogId);
+                //record current program
+                int defaultPreRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 7);
+                int defaultPostRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 10);
+                TVProgramInfo.CreateProgram(prog.Entity, (int)ScheduleRecordingType.Once, dialogId, defaultPreRecordInterval, defaultPostRecordInterval);
                 return true;
 
               case 876:
@@ -2122,7 +2119,7 @@ namespace Mediaportal.TV.TvPlugin
       dlg.SetHeading(200052); // Active Recordings      
 
       IList<Recording> activeRecordings =
-        ServiceAgents.Instance.RecordingServiceAgent.ListAllActiveRecordingsByMediaType(MediaTypeEnum.TV).ToList();
+        ServiceAgents.Instance.RecordingServiceAgent.ListAllActiveRecordingsByMediaType(MediaType.Television);
 
       if (activeRecordings != null && activeRecordings.Count > 0)
       {
@@ -2131,7 +2128,7 @@ namespace Mediaportal.TV.TvPlugin
           if (!ignoreActiveRecordings.Contains(activeRecording))
           {
             GUIListItem item = new GUIListItem();
-            string channelName = activeRecording.Channel.DisplayName;
+            string channelName = activeRecording.Channel.Name;
             string programTitle = activeRecording.Title.Trim(); // default is current EPG info
 
             item.Label = channelName;
@@ -2210,7 +2207,7 @@ namespace Mediaportal.TV.TvPlugin
           bool isParked = streaming.IsParked;
           bool isRecording = streaming.IsRecording;
           int idChannel = ch.IdChannel;
-          item.Label = ch.DisplayName;
+          item.Label = ch.Name;
 
           if (isParked)
           {
@@ -2218,7 +2215,7 @@ namespace Mediaportal.TV.TvPlugin
           }
 
           item.Label2 = user.Name;
-          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
+          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.Name);
           if (string.IsNullOrEmpty(strLogo))
           {
             strLogo = "defaultVideoBig.png";
@@ -2385,7 +2382,7 @@ namespace Mediaportal.TV.TvPlugin
         if (_status.IsSet(LiveTvStatus.WasPlaying))
         {
           if (card != null)
-            g_Player.OnZapping((int)card.Type);
+            g_Player.OnZapping((int)card.SupportedBroadcastStandards);
           else
             g_Player.OnZapping(-1);
         }
@@ -2595,7 +2592,7 @@ namespace Mediaportal.TV.TvPlugin
       if (Navigator.Channel != null && Navigator.Channel.Entity != null && !g_Player.IsRadio)
       {
         ChannelBLL infoChannel;
-        if (Navigator.Channel.Entity.MediaType == (int)MediaTypeEnum.TV)
+        if (Navigator.Channel.Entity.MediaType == (int)MediaType.Television)
         {
           infoChannel = Navigator.Channel;
         }
@@ -2717,13 +2714,13 @@ namespace Mediaportal.TV.TvPlugin
         }
         else
         {
-          GUIPropertyManager.SetProperty("#TV.View.channel", ch.Entity.DisplayName);
+          GUIPropertyManager.SetProperty("#TV.View.channel", ch.Entity.Name);
           SetTvThumbProperty(ch.Entity);
         }
       }
       else
       {
-        GUIPropertyManager.SetProperty("#TV.View.channel", ch.Entity.DisplayName);
+        GUIPropertyManager.SetProperty("#TV.View.channel", ch.Entity.Name);
         GUIPropertyManager.SetProperty("#TV.View.title", current.Title);
         GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(current));
         GUIPropertyManager.SetProperty("#TV.View.start",
@@ -2731,8 +2728,8 @@ namespace Mediaportal.TV.TvPlugin
         GUIPropertyManager.SetProperty("#TV.View.stop",
                                        current.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         GUIPropertyManager.SetProperty("#TV.View.description", current.Description);
-        GUIPropertyManager.SetProperty("#TV.View.subtitle", current.EpisodeName);
-        GUIPropertyManager.SetProperty("#TV.View.episode", current.EpisodeNum);
+        GUIPropertyManager.SetProperty("#TV.View.subtitle", current.EpisodeName ?? string.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.episode", current.EpisodeNumber > 0 ? current.EpisodeNumber.ToString() : string.Empty);
         GUIPropertyManager.SetProperty("#TV.View.genre", TVUtil.GetCategory(current.ProgramCategory));
         GUIPropertyManager.SetProperty("#TV.View.remaining",
                                        Utils.SecondsToHMSString(current.EndTime - current.StartTime));
@@ -2775,7 +2772,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private static void SetTvThumbProperty(Channel ch)
     {
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.Name);
       if (string.IsNullOrEmpty(strLogo))
       {
         strLogo = "defaultVideoBig.png";
@@ -2825,8 +2822,8 @@ namespace Mediaportal.TV.TvPlugin
         GUIPropertyManager.SetProperty("#TV.Next.stop",
                                        next.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         GUIPropertyManager.SetProperty("#TV.Next.description", next.Description);
-        GUIPropertyManager.SetProperty("#TV.Next.subtitle", next.EpisodeName);
-        GUIPropertyManager.SetProperty("#TV.Next.episode", next.EpisodeNum);
+        GUIPropertyManager.SetProperty("#TV.Next.subtitle", next.EpisodeName ?? string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Next.episode", next.EpisodeNumber > 0 ? next.EpisodeNumber.ToString() : string.Empty);
         GUIPropertyManager.SetProperty("#TV.Next.genre", TVUtil.GetCategory(next.ProgramCategory));
         GUIPropertyManager.SetProperty("#TV.Next.remaining", Utils.SecondsToHMSString(next.EndTime - next.StartTime));
       }
@@ -3058,7 +3055,7 @@ namespace Mediaportal.TV.TvPlugin
       }
 
       GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
-      string caption = GUILocalizeStrings.Get(605) + " - " + _lastError.FailingChannel.DisplayName;
+      string caption = GUILocalizeStrings.Get(605) + " - " + _lastError.FailingChannel.Name;
       pDlgNotify.SetHeading(caption); //my tv
       pDlgNotify.SetImage(TVUtil.GetChannelLogo(_lastError.FailingChannel));
       StringBuilder sbMessage = new StringBuilder();
@@ -3162,7 +3159,7 @@ namespace Mediaportal.TV.TvPlugin
         Log.Info("TVHome.ViewChannelAndCheck(): channel==null");
         return false;
       }
-      Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.DisplayName);
+      Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.Name);
 
       //if a channel is untunable, then there is no reason to carry on or even stop playback.
       ChannelState CurrentChanState = ServiceAgents.Instance.ControllerServiceAgent.GetChannelState(channel.IdChannel, Dns.GetHostName());
@@ -3175,7 +3172,7 @@ namespace Mediaportal.TV.TvPlugin
       }
 
       //BAV: fixing mantis bug 1263: TV starts with no video if Radio is previously ON & channel selected from TV guide
-      if ((channel.MediaType != (int)MediaTypeEnum.Radio && g_Player.IsRadio) || (channel.MediaType == (int)MediaTypeEnum.Radio && !g_Player.IsRadio))
+      if ((channel.MediaType != (int)MediaType.Radio && g_Player.IsRadio) || (channel.MediaType == (int)MediaType.Radio && !g_Player.IsRadio))
       {
         Log.Info("TVHome.ViewChannelAndCheck(): Stop g_Player");
         g_Player.Stop(true);
@@ -3209,7 +3206,7 @@ namespace Mediaportal.TV.TvPlugin
         _userChannelChanged = false;
         g_Player.Stop(true);
       }
-      else if ((channel.MediaType == (int)MediaTypeEnum.TV && g_Player.IsRadio) || (channel.MediaType == (int)MediaTypeEnum.Radio && g_Player.IsTV) || g_Player.IsCDA ||
+      else if ((channel.MediaType == (int)MediaType.Television && g_Player.IsRadio) || (channel.MediaType == (int)MediaType.Radio && g_Player.IsTV) || g_Player.IsCDA ||
                g_Player.IsMusic || g_Player.IsVideo)
       {
         g_Player.Stop(true);
@@ -3311,7 +3308,7 @@ namespace Mediaportal.TV.TvPlugin
         if (_status.IsSet(LiveTvStatus.WasPlaying))
         {
           if (card != null)
-            g_Player.OnZapping((int)card.Type);
+            g_Player.OnZapping((int)card.SupportedBroadcastStandards);
           else
             g_Player.OnZapping(-1);
         }
@@ -3457,7 +3454,7 @@ namespace Mediaportal.TV.TvPlugin
             }
 
             Channel channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(subchannel.IdChannel);
-            var displayName = channel.DisplayName;
+            var displayName = channel.Name;
             string subItemString = activeUser.Name + " - " + displayName;
 
             if (subchannel.TvUsage == TvUsage.Parked)
@@ -3579,23 +3576,18 @@ namespace Mediaportal.TV.TvPlugin
         Log.Info("tvhome:startplay card=null");
         return;
       }
-      if (Card.IsScrambled)
-      {
-        Log.Info("tvhome:startplay scrambled");
-        return;
-      }
       Log.Info("tvhome:startplay");
       string timeshiftFileName = Card.TimeShiftFileName;
       Log.Info("tvhome:file:{0}", timeshiftFileName);
 
-      MediaTypeEnum? mediaTypeCard = Card.MediaType;
+      MediaType? mediaTypeCard = Card.MediaType;
       if (!mediaTypeCard.HasValue)
       {
         Log.Info("tvhome:startplay channel=null");
         return;
       }
       g_Player.MediaType mediaType = g_Player.MediaType.TV;
-      if (mediaTypeCard.Value == MediaTypeEnum.Radio)
+      if (mediaTypeCard.Value == MediaType.Radio)
       {
         mediaType = g_Player.MediaType.Radio;
       }

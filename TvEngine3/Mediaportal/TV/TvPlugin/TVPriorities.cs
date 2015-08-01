@@ -22,19 +22,19 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
+using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.TvPlugin.Helper;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Util;
-using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVService.Interfaces;
-using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace Mediaportal.TV.TvPlugin
@@ -217,7 +217,7 @@ namespace Mediaportal.TV.TvPlugin
         GUIListItem item = new GUIListItem();
         item.Label = String.Format("{0}.{1}", total, rec.Entity.ProgramName);
         item.TVTag = rec;
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Entity.Channel.DisplayName);
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Entity.Channel.Name);
         if (string.IsNullOrEmpty(strLogo))
         {
           strLogo = "defaultVideoBig.png";
@@ -293,7 +293,7 @@ namespace Mediaportal.TV.TvPlugin
         IList<TuningDetail> details = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(rec.IdChannel).TuningDetails;
         foreach (TuningDetail detail in details)
         {
-          if (detail.ChannelType == 0)
+          if ((detail.BroadcastStandard & (int)BroadcastStandard.MaskAnalog) != 0)
           {
             dlg.AddLocalizedString(882); //Quality settings
             break;
@@ -659,7 +659,7 @@ namespace Mediaportal.TV.TvPlugin
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", "");
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", strTime);
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", "");
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel.DisplayName);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel.Name);
       if (string.IsNullOrEmpty(strLogo))                    
       {
         GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");
@@ -688,7 +688,7 @@ namespace Mediaportal.TV.TvPlugin
       GUIPropertyManager.SetProperty("#TV.Scheduled.Time", strTime);
       if (prog != null)
       {
-        GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", prog.Channel.DisplayName);
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", prog.Channel.Name);
         GUIPropertyManager.SetProperty("#TV.Scheduled.Description", prog.Description);
         GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", TVUtil.GetCategory(prog.ProgramCategory));
       }
@@ -699,7 +699,7 @@ namespace Mediaportal.TV.TvPlugin
       }
 
 
-      string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.DisplayName);
+      string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.Name);
       if (string.IsNullOrEmpty(logo))              
       {
         GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", "defaultVideoBig.png");
@@ -714,8 +714,6 @@ namespace Mediaportal.TV.TvPlugin
     private void UpdateDescription()
     {
       Schedule rec = ScheduleFactory.CreateSchedule(1, "", ScheduleFactory.MinSchedule, ScheduleFactory.MinSchedule);
-      rec.PreRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 5);
-      rec.PostRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 5);
 
       SetProperties(rec);
       GUIListItem pItem = GetItem(GetSelectedItemNo());
@@ -790,19 +788,19 @@ namespace Mediaportal.TV.TvPlugin
         dlg.AddLocalizedString(965);
         dlg.AddLocalizedString(966);
         dlg.AddLocalizedString(967);
-        VIDEOENCODER_BITRATE_MODE _newBitRate = recBLL.BitRateMode;
+        EncoderBitRateMode _newBitRate = recBLL.BitRateMode;
         switch (_newBitRate)
         {
-          case VIDEOENCODER_BITRATE_MODE.NotSet:
+          case EncoderBitRateMode.NotSet:
             dlg.SelectedLabel = 0;
             break;
-          case VIDEOENCODER_BITRATE_MODE.ConstantBitRate:
+          case EncoderBitRateMode.ConstantBitRate:
             dlg.SelectedLabel = 1;
             break;
-          case VIDEOENCODER_BITRATE_MODE.VariableBitRateAverage:
+          case EncoderBitRateMode.VariableBitRateAverage:
             dlg.SelectedLabel = 2;
             break;
-          case VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak:
+          case EncoderBitRateMode.VariableBitRatePeak:
             dlg.SelectedLabel = 3;
             break;
         }
@@ -816,19 +814,19 @@ namespace Mediaportal.TV.TvPlugin
         switch (dlg.SelectedLabel)
         {
           case 0: // Not Set
-            _newBitRate = VIDEOENCODER_BITRATE_MODE.NotSet;
+            _newBitRate = EncoderBitRateMode.NotSet;
             break;
 
           case 1: // CBR
-            _newBitRate = VIDEOENCODER_BITRATE_MODE.ConstantBitRate;
+            _newBitRate = EncoderBitRateMode.ConstantBitRate;
             break;
 
           case 2: // VBR
-            _newBitRate = VIDEOENCODER_BITRATE_MODE.VariableBitRateAverage;
+            _newBitRate = EncoderBitRateMode.VariableBitRateAverage;
             break;
 
           case 3: // VBR Peak
-            _newBitRate = VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak;
+            _newBitRate = EncoderBitRateMode.VariableBitRatePeak;
             break;
         }
 

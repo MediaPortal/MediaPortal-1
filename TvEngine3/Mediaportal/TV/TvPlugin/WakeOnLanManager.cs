@@ -25,7 +25,6 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 #endregion

@@ -21,14 +21,14 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace Mediaportal.TV.TvPlugin
@@ -141,7 +141,7 @@ namespace Mediaportal.TV.TvPlugin
       item.Label = schedule.ProgramName;
 
       item.TVTag = schedule;
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.DisplayName);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.Name);
       if (string.IsNullOrEmpty(strLogo))                    
       {
         strLogo = "defaultVideoBig.png";
@@ -307,11 +307,11 @@ namespace Mediaportal.TV.TvPlugin
             }
 
             item.Label = rec.ProgramName;
-            item.Label2 = GUILocalizeStrings.Get(990001, new object[] { day, rec.Channel.DisplayName });
+            item.Label2 = GUILocalizeStrings.Get(990001, new object[] { day, rec.Channel.Name });
             break;
           case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
             item.Label = rec.ProgramName;
-            item.Label2 = GUILocalizeStrings.Get(650, new object[] {rec.Channel.DisplayName});
+            item.Label2 = GUILocalizeStrings.Get(650, new object[] {rec.Channel.Name});
             break;
           case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
             item.Label = rec.ProgramName;
@@ -360,7 +360,7 @@ namespace Mediaportal.TV.TvPlugin
         if (null != dlgYesNo)
         {
           dlgYesNo.SetHeading(GUILocalizeStrings.Get(653)); //Delete this recording?
-          dlgYesNo.SetLine(1, schedule.Channel.DisplayName);
+          dlgYesNo.SetLine(1, schedule.Channel.Name);
           dlgYesNo.SetLine(2, schedule.ProgramName);
           dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
           dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);

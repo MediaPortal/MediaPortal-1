@@ -24,13 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
-using MediaPortal.Dialogs;
-using MediaPortal.GUI.Library;
-using MediaPortal.Player;
-using MediaPortal.Profile;
-using MediaPortal.Util;
 using Mediaportal.Common.Utils;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
@@ -38,6 +32,11 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.TvPlugin.Helper;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Profile;
+using MediaPortal.Util;
 using Action = MediaPortal.GUI.Library.Action;
 
 #endregion
@@ -71,9 +70,9 @@ namespace Mediaportal.TV.TvPlugin
     private int _parentWindowID = 0;
     private GUIWindow _parentWindow = null;
     */
-    private Dictionary<int, List<Channel>> _tvGroupChannelListCache = null;
+    private Dictionary<int, IList<Channel>> _tvGroupChannelListCache = null;
 
-    private List<ChannelGroup> _channelGroupList = null;
+    private IList<ChannelGroup> _channelGroupList = null;
     private Channel _selectedChannel;
     private bool _zap = true;
     private Stopwatch benchClock = null;
@@ -201,9 +200,9 @@ namespace Mediaportal.TV.TvPlugin
                 Server.TVDatabase.Entities.Channel changeChannel = null;
                 if (AutoZap)
                 {
-                  if ((TVHome.Navigator.Channel.Entity.IdChannel != SelectedChannel.IdChannel) || g_Player.IsTVRecording)
+                  if (TVHome.Navigator.Channel.Entity.IdChannel != SelectedChannel.IdChannel || !g_Player.IsTimeShifting || g_Player.IsTVRecording)
                   {
-                    List<Server.TVDatabase.Entities.Channel> tvChannelList = GetChannelListByGroup();
+                    IList<Server.TVDatabase.Entities.Channel> tvChannelList = GetChannelListByGroup();
                     if (tvChannelList != null)
                     {
                       changeChannel = tvChannelList[lstChannels.SelectedListItemIndex] as Server.TVDatabase.Entities.Channel;
@@ -369,16 +368,16 @@ namespace Mediaportal.TV.TvPlugin
       this.LogDebug("TvMiniGuide: FillGroupList finished after {0} ms", benchClock.ElapsedMilliseconds.ToString());
     }
 
-    private List<Server.TVDatabase.Entities.Channel> GetChannelListByGroup()
+    private IList<Server.TVDatabase.Entities.Channel> GetChannelListByGroup()
     {
       int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
 
       if (_tvGroupChannelListCache == null)
       {
-        _tvGroupChannelListCache = new Dictionary<int, List<Server.TVDatabase.Entities.Channel>>();
+        _tvGroupChannelListCache = new Dictionary<int, IList<Server.TVDatabase.Entities.Channel>>();
       }
 
-      List<Server.TVDatabase.Entities.Channel> channels = null;
+      IList<Server.TVDatabase.Entities.Channel> channels = null;
       if (_tvGroupChannelListCache.TryGetValue(idGroup, out channels))  //already in cache ? then return it.      
       {
         this.LogDebug("TvMiniGuide: GetChannelListByGroup returning cached version of channels.");
@@ -386,9 +385,8 @@ namespace Mediaportal.TV.TvPlugin
       }
       else //not in cache, fetch it and update cache, then return.
       {
-        List<Server.TVDatabase.Entities.Channel> tvChannelList =
-          ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(
-            TVHome.Navigator.CurrentGroup.IdGroup, MediaTypeEnum.TV, ChannelIncludeRelationEnum.TuningDetails).ToList();
+        IList<Server.TVDatabase.Entities.Channel> tvChannelList =
+          ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByGroupId(TVHome.Navigator.CurrentGroup.IdGroup, ChannelIncludeRelationEnum.TuningDetails);
 
         if (tvChannelList != null)
         {
@@ -470,8 +468,8 @@ namespace Mediaportal.TV.TvPlugin
           // store here as it is not needed right now - please beat me later..
           item.TVTag = currentChan;
 
-          sb.Append(currentChan.DisplayName);
-          ChannelLogo = Utils.GetCoverArt(Thumbs.TVChannel, currentChan.DisplayName);
+          sb.Append(currentChan.Name);
+          ChannelLogo = Utils.GetCoverArt(Thumbs.TVChannel, currentChan.Name);
 
           // if we are watching this channel mark it
           if (TVHome.Navigator != null && TVHome.Navigator.Channel.Entity != null &&
@@ -576,10 +574,7 @@ namespace Mediaportal.TV.TvPlugin
             sb.Append(" - ");
             if (!_byIndex)
             {
-              foreach (TuningDetail detail in tvChannelList[i].TuningDetails)
-              {
-                sb.Append(detail.ChannelNumber);
-              }
+              sb.Append(currentChan.ChannelNumber);
             }
             else
             {

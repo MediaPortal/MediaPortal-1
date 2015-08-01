@@ -21,11 +21,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVService.Interfaces;
@@ -83,7 +82,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
 
     public IList<Schedule> GetRecordingTimes(ScheduleBLL rec)
     {
-      IList<Program> programs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsForSchedule(rec.Entity).ToList();
+      IList<Program> programs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsForSchedule(rec.Entity);
       IList<Schedule> recordings = AddProgramsToSchedulesList(rec, programs);
       return recordings;
     }
@@ -144,7 +143,10 @@ namespace Mediaportal.TV.TvPlugin.Helper
     public static string GetDisplayTitle(Program prog)
     {
       StringBuilder strBuilder = new StringBuilder();
-      TitleDisplay(strBuilder, prog.Title, prog.EpisodeName, prog.SeriesNum, prog.EpisodeNum, prog.EpisodePart);
+      TitleDisplay(strBuilder, prog.Title, prog.EpisodeName,
+                    prog.SeasonNumber.HasValue ? prog.SeasonNumber.ToString() : string.Empty,
+                    prog.EpisodeNumber.HasValue ? prog.EpisodeNumber.ToString() : string.Empty,
+                    prog.EpisodePartNumber.HasValue ? prog.EpisodePartNumber.ToString() : string.Empty);
       return strBuilder.ToString();
     }
 
@@ -159,10 +161,10 @@ namespace Mediaportal.TV.TvPlugin.Helper
     {
       bool episodeInfoWritten = false;
 
-      bool hasSeriesNum = !(String.IsNullOrEmpty(seriesNum)) && (ShowEpisodeInfo == 1 || ShowEpisodeInfo == 3);      
-      bool hasEpisodeNum = !(String.IsNullOrEmpty(episodeNum)) && (ShowEpisodeInfo == 1 || ShowEpisodeInfo == 3);
-      bool hasEpisodePart = !(String.IsNullOrEmpty(episodePart)) && (ShowEpisodeInfo == 1 || ShowEpisodeInfo == 3);
-      bool hasEpisodeName = !(String.IsNullOrEmpty(episodeName)) && (ShowEpisodeInfo == 2 || ShowEpisodeInfo == 3);
+      bool hasSeriesNum = !string.IsNullOrEmpty(seriesNum) && (ShowEpisodeInfo == 1 || ShowEpisodeInfo == 3);      
+      bool hasEpisodeNum = !string.IsNullOrEmpty(episodeNum) && (ShowEpisodeInfo == 1 || ShowEpisodeInfo == 3);
+      bool hasEpisodePart = !string.IsNullOrEmpty(episodePart) && (ShowEpisodeInfo == 1 || ShowEpisodeInfo == 3);
+      bool hasEpisodeName = !string.IsNullOrEmpty(episodeName) && (ShowEpisodeInfo == 2 || ShowEpisodeInfo == 3);
 
       bool hasEpisodeInfo = (hasSeriesNum || hasEpisodeNum || hasEpisodePart || hasEpisodeName);
 
@@ -399,13 +401,13 @@ namespace Mediaportal.TV.TvPlugin.Helper
       string logo = String.Empty;
       if (channel != null)
       {
-        if (channel.MediaType == (int)MediaTypeEnum.TV)
+        if (channel.MediaType == (int)MediaType.Television)
         {
-          logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
+          logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.Name);
         }
-        else if (channel.MediaType == (int)MediaTypeEnum.Radio)
+        else if (channel.MediaType == (int)MediaType.Radio)
         {
-          logo = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
+          logo = Utils.GetCoverArt(Thumbs.Radio, channel.Name);
         }
       }
       return logo;

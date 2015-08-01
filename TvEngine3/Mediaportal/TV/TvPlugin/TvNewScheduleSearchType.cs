@@ -20,16 +20,16 @@
 
 using System;
 using System.Collections.Generic;
-using MediaPortal.Dialogs;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace Mediaportal.TV.TvPlugin
@@ -112,8 +112,8 @@ namespace Mediaportal.TV.TvPlugin
       IList<GroupMap> channels = TVHome.Navigator.CurrentGroup.GroupMaps;
       foreach (GroupMap chan in channels)
       {
-        GUIListItem item = new GUIListItem(chan.Channel.DisplayName);
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.Channel.DisplayName);
+        GUIListItem item = new GUIListItem(chan.Channel.Name);
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.Channel.Name);
         if (string.IsNullOrEmpty(strLogo))                      
         {
           strLogo = "defaultVideoBig.png";
@@ -140,8 +140,6 @@ namespace Mediaportal.TV.TvPlugin
       dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WeekendDays)));
 
       Schedule rec = ScheduleFactory.CreateSchedule(selectedChannel.IdChannel, "", ScheduleFactory.MinSchedule, ScheduleFactory.MinSchedule);
-      rec.PreRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 5);
-      rec.PostRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 5);
       rec.ScheduleType = (int)ScheduleRecordingType.Once;
 
       DateTime dtNow = DateTime.Now;
@@ -218,7 +216,7 @@ namespace Mediaportal.TV.TvPlugin
       dtNow = DateTime.Now.AddDays(day);
       rec.StartTime = new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0);
       rec.EndTime = rec.StartTime.AddMinutes(duration);
-      rec.ProgramName = GUILocalizeStrings.Get(413) + " (" + rec.Channel.DisplayName + ")";
+      rec.ProgramName = GUILocalizeStrings.Get(413) + " (" + rec.Channel.Name + ")";
 
       ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec);
 
@@ -239,8 +237,8 @@ namespace Mediaportal.TV.TvPlugin
       IList<GroupMap> channels = TVHome.Navigator.CurrentGroup.GroupMaps;
       foreach (GroupMap chan in channels)
       {
-        GUIListItem item = new GUIListItem(chan.Channel.DisplayName);
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.Channel.DisplayName);
+        GUIListItem item = new GUIListItem(chan.Channel.Name);
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.Channel.Name);
         if (string.IsNullOrEmpty(strLogo))
         {
           strLogo = "defaultVideoBig.png";
@@ -267,9 +265,6 @@ namespace Mediaportal.TV.TvPlugin
       dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WeekendDays)));
 
       Schedule rec = ScheduleFactory.CreateSchedule(selectedChannel.IdChannel, "", ScheduleFactory.MinSchedule, ScheduleFactory.MinSchedule);
-
-      rec.PreRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 5);
-      rec.PostRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 5);
 
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1)
@@ -398,7 +393,7 @@ namespace Mediaportal.TV.TvPlugin
       IList<TuningDetail> details = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(rec.IdChannel).TuningDetails;
       foreach (TuningDetail detail in details)
       {
-        if (detail.ChannelType == 0)
+        if ((detail.BroadcastStandard & (int)BroadcastStandard.MaskAnalog) != 0)
         {
           TvPriorities.OnSetQuality(rec);
           break;
@@ -409,7 +404,7 @@ namespace Mediaportal.TV.TvPlugin
       dtNow = DateTime.Now.AddDays(day);
       rec.StartTime = new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0);
       rec.EndTime = rec.StartTime.AddMinutes(duration);
-      rec.ProgramName = GUILocalizeStrings.Get(413) + " (" + rec.Channel.DisplayName + ")";      
+      rec.ProgramName = GUILocalizeStrings.Get(413) + " (" + rec.Channel.Name + ")";      
       ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec);
 
       ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();

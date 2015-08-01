@@ -1615,18 +1615,18 @@ namespace Mediaportal.TV.TvPlugin
       }
       else
       {
-        string tmpDisplayName = TVHome.Navigator.ZapChannel.DisplayName;
+        string tmpDisplayName = TVHome.Navigator.ZapChannel.Name;
         Channel tmpChannel = TVHome.Navigator.ZapChannel;
 
         if (tmpChannel != null)
         {
-          return TVHome.Navigator.ZapChannel.DisplayName;
+          return TVHome.Navigator.ZapChannel.Name;
         }
         else
         {
           TVHome.Navigator.ReLoad();
           // Let TvHome reload all channel information from the database. This makes sure that recently renamed linked subchannels handled the right way.
-          return TVHome.Navigator.ZapChannel.DisplayName;
+          return TVHome.Navigator.ZapChannel.Name;
         }
       }
     }
@@ -1728,7 +1728,7 @@ namespace Mediaportal.TV.TvPlugin
           }
           if (ch != null)
           {
-            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
+            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.Name);
             if (string.IsNullOrEmpty(strLogo))
             {
               strLogo = "defaultVideoBig.png";
@@ -1859,7 +1859,7 @@ namespace Mediaportal.TV.TvPlugin
         }
         if (updateProperties)
         {
-          GUIPropertyManager.SetProperty("#TV.View.channel", prog.Channel.DisplayName);
+          GUIPropertyManager.SetProperty("#TV.View.channel", prog.Channel.Name);
           GUIPropertyManager.SetProperty("#TV.View.start",
                                          prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           GUIPropertyManager.SetProperty("#TV.View.stop",
@@ -1868,9 +1868,9 @@ namespace Mediaportal.TV.TvPlugin
           GUIPropertyManager.SetProperty("#TV.View.genre", TVUtil.GetCategory(prog.ProgramCategory));
           GUIPropertyManager.SetProperty("#TV.View.title", prog.Title);
           GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(prog));
-          GUIPropertyManager.SetProperty("#TV.View.subtitle", prog.EpisodeName);
+          GUIPropertyManager.SetProperty("#TV.View.subtitle", prog.EpisodeName ?? string.Empty);
           GUIPropertyManager.SetProperty("#TV.View.description", prog.Description);
-          GUIPropertyManager.SetProperty("#TV.View.episode", prog.EpisodeNum);
+          GUIPropertyManager.SetProperty("#TV.View.episode", prog.EpisodeNumber > 0 ? prog.EpisodeNumber.ToString() : string.Empty);
         }
       }
 

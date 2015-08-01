@@ -30,8 +30,8 @@ using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using Mediaportal.TV.TvPlugin.Helper;
@@ -970,7 +970,7 @@ namespace Mediaportal.TV.TvPlugin
           {
             return true;
           }
-          string logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.Entity.DisplayName);
+          string logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.Entity.Name);
           dlgNotify.Reset();
           dlgNotify.ClearAll();
           dlgNotify.SetImage(logo);
@@ -1050,7 +1050,7 @@ namespace Mediaportal.TV.TvPlugin
           {
             return true;
           }
-          string logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.Entity.DisplayName);
+          string logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.Entity.Name);
           dlgNotify.Reset();
           dlgNotify.ClearAll();
           dlgNotify.SetImage(logo);
@@ -1345,12 +1345,9 @@ namespace Mediaportal.TV.TvPlugin
       if (!g_Player.IsTVRecording)
       {
         linkages = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(TVHome.Navigator.Channel.Entity.IdChannel).ChannelLinkMaps;        
-        if (linkages != null)
+        if (linkages != null && linkages.Count > 0)
         {
-          if (linkages.Count > 0)
-          {
-            dlg.AddLocalizedString(200042); // Linked Channels
-          }
+          dlg.AddLocalizedString(200042); // Linked Channels
         }
       }
 
@@ -1665,16 +1662,16 @@ namespace Mediaportal.TV.TvPlugin
         dlg.AddLocalizedString(965);
         dlg.AddLocalizedString(966);
         dlg.AddLocalizedString(967);
-        VIDEOENCODER_BITRATE_MODE _newBitRate = TVHome.Card.BitRateMode;
+        EncoderBitRateMode _newBitRate = TVHome.Card.BitRateMode;
         switch (_newBitRate)
         {
-          case VIDEOENCODER_BITRATE_MODE.ConstantBitRate:
+          case EncoderBitRateMode.ConstantBitRate:
             dlg.SelectedLabel = 0;
             break;
-          case VIDEOENCODER_BITRATE_MODE.VariableBitRateAverage:
+          case EncoderBitRateMode.VariableBitRateAverage:
             dlg.SelectedLabel = 1;
             break;
-          case VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak:
+          case EncoderBitRateMode.VariableBitRatePeak:
             dlg.SelectedLabel = 2;
             break;
         }
@@ -1690,15 +1687,15 @@ namespace Mediaportal.TV.TvPlugin
         switch (dlg.SelectedLabel)
         {
           case 0: // CBR
-            _newBitRate = VIDEOENCODER_BITRATE_MODE.ConstantBitRate;
+            _newBitRate = EncoderBitRateMode.ConstantBitRate;
             break;
 
           case 1: // VBR
-            _newBitRate = VIDEOENCODER_BITRATE_MODE.VariableBitRateAverage;
+            _newBitRate = EncoderBitRateMode.VariableBitRateAverage;
             break;
 
           case 2: // VBR Peak
-            _newBitRate = VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak;
+            _newBitRate = EncoderBitRateMode.VariableBitRatePeak;
             break;
         }
         this.LogInfo("Setting quality to: {0}", _newBitRate);
@@ -1968,7 +1965,7 @@ namespace Mediaportal.TV.TvPlugin
       int counter = 0;
       foreach (ChannelLinkageMap map in linkages)
       {
-        GUIListItem item = new GUIListItem(map.DisplayName);
+        GUIListItem item = new GUIListItem(map.Name);
         if (map.IdLinkedChannel == TVHome.Navigator.Channel.Entity.IdChannel)
         {
           selected = counter;

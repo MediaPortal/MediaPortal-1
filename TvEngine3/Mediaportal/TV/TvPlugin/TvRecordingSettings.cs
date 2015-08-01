@@ -18,9 +18,8 @@
 
 #endregion
 
-using System;
-using MediaPortal.GUI.Library;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
+using MediaPortal.GUI.Library;
 using Action = MediaPortal.GUI.Library.Action;
 
 //using MediaPortal.Utils.Services;
@@ -52,42 +51,23 @@ namespace Mediaportal.TV.TvPlugin
       spinPreRecord.SetRange(0, 30);
       spinPostRecord.SetRange(0, 30);
 
-      spinPreRecord.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 5);
-      spinPostRecord.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 5);
+      spinPreRecord.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 7);
+      spinPostRecord.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 10);
 
-      cbAutoDeleteRecordings.Selected = ServiceAgents.Instance.SettingServiceAgent.GetValue("autodeletewatchedrecordings", false);
+      cbAutoDeleteRecordings.Selected = false;  // obsolete setting, removed
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
-      if (control == cbAutoDeleteRecordings)
-      {
-        OnAutoDeleteRecordings();
-      }
       if (control == spinPreRecord)
       {
-        OnPreRecord();
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("preRecordInterval", spinPreRecord.Value);
       }
-      if (control == spinPostRecord)
+      else if (control == spinPostRecord)
       {
-        OnPostRecord();
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("postRecordInterval", spinPostRecord.Value);
       }
       base.OnClicked(controlId, control, actionType);
-    }
-
-    private void OnAutoDeleteRecordings()
-    {
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("autodeletewatchedrecordings", cbAutoDeleteRecordings.Selected);
-    }
-
-    private void OnPreRecord()
-    {
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("preRecordInterval", spinPreRecord.Value);
-    }
-
-    private void OnPostRecord()
-    {
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("postRecordInterval", spinPostRecord.Value);
     }
 
     public override void Process()

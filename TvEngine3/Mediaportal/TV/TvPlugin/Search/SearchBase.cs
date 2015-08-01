@@ -24,6 +24,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -127,7 +128,7 @@ namespace Mediaportal.TV.TvPlugin.Search
 
     #region abstract properties
 
-    protected abstract MediaTypeEnum MediaType
+    protected abstract MediaType MediaType
     {
       get;
     }
@@ -519,10 +520,6 @@ namespace Mediaportal.TV.TvPlugin.Search
 
         if (filterShow == String.Empty)
         {
-          listView.IsVisible = false;
-          titleView.IsVisible = true;
-          GUIControl.FocusControl(GetID, titleView.GetID);
-
           if (imgChannelLogo != null)
           {
             imgChannelLogo.IsVisible = false;
@@ -1190,7 +1187,7 @@ namespace Mediaportal.TV.TvPlugin.Search
       if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))
       {
         Channel channel = channelMap[prog.IdChannel];
-        strLogo = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
+        strLogo = Utils.GetCoverArt(Thumbs.Radio, channel.Name);
       }
 
       if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))
@@ -1236,8 +1233,6 @@ namespace Mediaportal.TV.TvPlugin.Search
         }
         Schedule rec = ScheduleFactory.CreateSchedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
 
-        rec.PreRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 5);
-        rec.PostRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 5);
         switch (dlg.SelectedLabel)
         {
           case 0: //none
@@ -1379,7 +1374,7 @@ namespace Mediaportal.TV.TvPlugin.Search
       GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Search.Time", strTime);
       GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Search.Description", prog.Description);
       GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Search.Genre", TVUtil.GetCategory(prog.ProgramCategory));
-      GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Search.Channel", prog.Channel.DisplayName);
+      GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Search.Channel", prog.Channel.Name);
 
       // see comment at top of method
       //lblProgramTitle.Label = TVUtil.GetDisplayTitle(prog);
@@ -1389,11 +1384,11 @@ namespace Mediaportal.TV.TvPlugin.Search
 
       if (lblChannel != null)
       {
-        lblChannel.Label = prog.Channel.DisplayName;
+        lblChannel.Label = prog.Channel.Name;
       }
 
       string strLogo = null;
-      strLogo = Utils.GetCoverArt(ThumbsType, prog.Channel.DisplayName);
+      strLogo = Utils.GetCoverArt(ThumbsType, prog.Channel.Name);
       if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))
       {
         strLogo = DefaultLogo;
@@ -1470,7 +1465,7 @@ namespace Mediaportal.TV.TvPlugin.Search
 
     private static Dictionary<int, Channel> GetChannelMap()
     {
-      IEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
+      IEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelIncludeRelationEnum.None);
       return channels.ToDictionary(channel => channel.IdChannel);
     }
 
@@ -1536,11 +1531,11 @@ namespace Mediaportal.TV.TvPlugin.Search
               Channel ch2 = channelMap[prog2.IdChannel];
               if (sortAscending)
               {
-                iComp = string.Compare(ch1.DisplayName, ch2.DisplayName, true);
+                iComp = string.Compare(ch1.Name, ch2.Name, true);
               }
               else
               {
-                iComp = string.Compare(ch2.DisplayName, ch1.DisplayName, true);
+                iComp = string.Compare(ch2.Name, ch1.Name, true);
               }
               return iComp;
             }

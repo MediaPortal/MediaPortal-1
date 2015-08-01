@@ -20,13 +20,13 @@
 
 using System;
 using System.Windows.Forms;
-using MediaPortal.Configuration;
-using MediaPortal.Player;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using MediaPortal.Configuration;
+using MediaPortal.Player;
 
 namespace Mediaportal.TV.TvPlugin
 {
@@ -187,7 +187,7 @@ namespace Mediaportal.TV.TvPlugin
         return;
       if (preRecordInterval == -1)
       {
-        preRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 5);
+        preRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 7);
       }
       Log.Debug("TvTimeShiftPositionWatcher: SetNewChannel(" + idChannel.ToString() + ")");
       idChannelToWatch = idChannel;

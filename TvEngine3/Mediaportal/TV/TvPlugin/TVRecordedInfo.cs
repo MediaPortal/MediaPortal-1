@@ -20,13 +20,13 @@
 
 using System;
 using System.Globalization;
+using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.TvPlugin.Helper;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace Mediaportal.TV.TvPlugin
@@ -111,18 +111,18 @@ namespace Mediaportal.TV.TvPlugin
       dlg.AddLocalizedString(1044); //Until space needed
       dlg.AddLocalizedString(1045); //Until date
       dlg.AddLocalizedString(1046); //Always
-      switch ((KeepMethodType)currentProgram.KeepUntil)
+      switch ((RecordingKeepMethod)currentProgram.KeepUntil)
       {
-        case KeepMethodType.UntilWatched:
+        case RecordingKeepMethod.UntilWatched:
           dlg.SelectedLabel = 0;
           break;
-        case KeepMethodType.UntilSpaceNeeded:
+        case RecordingKeepMethod.UntilSpaceNeeded:
           dlg.SelectedLabel = 1;
           break;
-        case KeepMethodType.TillDate:
+        case RecordingKeepMethod.UntilDate:
           dlg.SelectedLabel = 2;
           break;
-        case KeepMethodType.Always:
+        case RecordingKeepMethod.Always:
           dlg.SelectedLabel = 3;
           break;
       }
@@ -134,14 +134,14 @@ namespace Mediaportal.TV.TvPlugin
       switch (dlg.SelectedId)
       {
         case 1043:
-          currentProgram.KeepUntil = (int)KeepMethodType.UntilWatched;
+          currentProgram.KeepUntil = (int)RecordingKeepMethod.UntilWatched;
           break;
         case 1044:
-          currentProgram.KeepUntil = (int)KeepMethodType.UntilSpaceNeeded;
+          currentProgram.KeepUntil = (int)RecordingKeepMethod.UntilSpaceNeeded;
 
           break;
         case 1045:
-          currentProgram.KeepUntil = (int)KeepMethodType.TillDate;
+          currentProgram.KeepUntil = (int)RecordingKeepMethod.UntilDate;
           dlg.Reset();
           dlg.ShowQuickNumbers = false;
           dlg.SetHeading(1045);
@@ -181,7 +181,7 @@ namespace Mediaportal.TV.TvPlugin
           }
           break;
         case 1046:
-          currentProgram.KeepUntil = (int)KeepMethodType.Always;
+          currentProgram.KeepUntil = (int)RecordingKeepMethod.Always;
           break;
       }      
       ServiceAgents.Instance.RecordingServiceAgent.SaveRecording(currentProgram);

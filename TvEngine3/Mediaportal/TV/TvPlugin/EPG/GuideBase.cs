@@ -22,22 +22,20 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Windows.Media.Animation;
+using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.TvPlugin.Helper;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.Interfaces;
-using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace Mediaportal.TV.TvPlugin.EPG
@@ -130,7 +128,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
     protected long _guideColorProgramEnded = 0;
     protected long _guideColorProgramSelected = 0;
     protected long _guideColorBorderHighlight = 0;
-    protected List<TvGuideCategory> _mpGenres = null; // The list of MediaPortal genre objects
+    protected List<GuideCategory> _mpGenres = null; // The list of MediaPortal genre objects
     protected Dictionary<string, long> _genreColorsOnNow = new Dictionary<string, long>();
     protected Dictionary<string, long> _genreColorsOnLater = new Dictionary<string, long>();
 
@@ -175,7 +173,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       GUIImage imgGenreColor = (GUIImage)GetControl((int)Controls.GENRE_COLOR_KEY_PAIR);
       GUIFadeLabel labelGenreName = (GUIFadeLabel)GetControl((int)Controls.GENRE_COLOR_KEY_PAIR + 1);
 
-      TvGuideCategory genreObj = _mpGenres.Find(x => x.IsEnabled == true);
+      GuideCategory genreObj = _mpGenres.Find(x => x.IsEnabled == true);
 
       // Do not render the key if not required or the template controls are not present or there are no enabled mp genres.
       if (imgGenreColor == null || labelGenreName == null || genreObj == null)
@@ -719,7 +717,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
     {
       if (refresh)
       {
-        _recordingList = ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules().ToList();
+        _recordingList = ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules();
         return;
       }
     }
@@ -747,30 +745,14 @@ namespace Mediaportal.TV.TvPlugin.EPG
       {
         try
         {
-          bool hasSelectedGroup = HasSelectedGroup();
-          if (hasSelectedGroup)
+          if (HasSelectedGroup())
           {
             IList<Channel> channels = GetGuideChannelsForGroup();
             foreach (Channel chan in channels)
             {
               var tvGuidChannel = new GuideChannel { Channel = chan };
-
-              if (tvGuidChannel.Channel.VisibleInGuide && IsChannelTypeCorrect(tvGuidChannel.Channel))
-              {
-                if (_showChannelNumber)
-                {
-                  if (_byIndex)
-                  {
-                    tvGuidChannel.ChannelNum = _channelList.Count + 1;
-                  }
-                  else
-                  {
-                    tvGuidChannel.ChannelNum = chan.ChannelNumber;
-                  }
-                }
-                tvGuidChannel.StrLogo = GetChannelLogo(tvGuidChannel.Channel.DisplayName);
-                _channelList.Add(tvGuidChannel);
-              }
+              tvGuidChannel.StrLogo = GetChannelLogo(tvGuidChannel.Channel.Name);
+              _channelList.Add(tvGuidChannel);
             }
           }
         }
@@ -780,8 +762,11 @@ namespace Mediaportal.TV.TvPlugin.EPG
         {
           var tvGuidChannel = new GuideChannel
           {
-            Channel = ChannelFactory.CreateChannel(MediaTypeEnum.TV, 0, DateTime.MinValue, false,
-                                  DateTime.MinValue, 0, true, "", GUILocalizeStrings.Get(10000))
+            Channel = new Channel
+            {
+              Name = GUILocalizeStrings.Get(10000),
+              VisibleInGuide = true
+            }
           };
           for (int i = 0; i < 10; ++i)
           {
@@ -1124,7 +1109,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       {
         return;
       }
-      string strChannel = chan.DisplayName;
+      string strChannel = chan.Name;
 
       if (!_singleChannelView)
       {
@@ -1133,8 +1118,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.ChannelName", strChannel);
         if (_showChannelNumber)
         {
-          int channelNum = chan.ChannelNumber;
-          GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.ChannelNumber", channelNum + "");
+          GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.ChannelNumber", chan.ChannelNumber);
         }
         else
         {
@@ -1172,19 +1156,10 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
         // Lookup the MediaPortal genre for this program.  If found use it, if not found then use the program genre.
         string mpg = "";        
-        TvGuideCategory mpGenre = _mpGenres.Find(x => x.ProgramCategories.Contains(_currentProgram.Entity.ProgramCategory));
+        GuideCategory mpGenre = _mpGenres.Find(x => x.ProgramCategories.Contains(_currentProgram.Entity.ProgramCategory));
         if (mpGenre != null && mpGenre.IsEnabled)
         {
           mpg = mpGenre.Name;
-        }
-        // Try to apply the "movie" genre.
-        else if (IsMPAA(_currentProgram.Entity.Classification))
-        {
-          mpGenre = _mpGenres.Find(x => x.IsMovie == true);
-          if (mpGenre != null && mpGenre.IsEnabled)
-          {
-            mpg = mpGenre.Name;
-          }
         }
 
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Title", _currentProgram.Entity.Title);
@@ -1197,10 +1172,10 @@ namespace Mediaportal.TV.TvPlugin.EPG
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Duration", GetDuration(_currentProgram.Entity));
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.DurationMins", GetDurationAsMinutes(_currentProgram.Entity));
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.TimeFromNow", GetStartTimeFromNow(_currentProgram.Entity));
-        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Episode", _currentProgram.Entity.EpisodeNum);
-        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.SubTitle", _currentProgram.Entity.EpisodeName);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Episode", _currentProgram.Entity.EpisodeNumber > 0 ? _currentProgram.Entity.EpisodeNumber.ToString() : string.Empty);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.SubTitle", _currentProgram.Entity.EpisodeName ?? string.Empty);
 
-        if (_currentProgram.Entity.Classification == "")
+        if (string.IsNullOrEmpty(_currentProgram.Entity.Classification))
         {
           GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Classification", "No Rating");
         }
@@ -1304,7 +1279,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         {
           Channel tvChan = _channelList[chan].Channel;
 
-          strLogo = GetChannelLogo(tvChan.DisplayName);
+          strLogo = GetChannelLogo(tvChan.Name);
           var img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
           if (img != null)
           {
@@ -1312,7 +1287,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
             {
               img.TexutureIcon = strLogo;
             }
-            img.Label1 = tvChan.DisplayName;
+            img.Label1 = tvChan.Name;
             img.Data = tvChan;
             img.IsVisible = true;
 
@@ -1329,7 +1304,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       var channelLabel = GetControl((int)Controls.SINGLE_CHANNEL_LABEL) as GUILabelControl;
       var channelImage = GetControl((int)Controls.SINGLE_CHANNEL_IMAGE) as GUIImage;
 
-      strLogo = GetChannelLogo(channel.DisplayName);
+      strLogo = GetChannelLogo(channel.Name);
       if (channelImage == null)
       {
         if (strLogo.Length > 0)
@@ -1355,7 +1330,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
           channelLabel = new GUILabelControl(GetID, (int)Controls.SINGLE_CHANNEL_LABEL,
                                              channelImage.XPosition + 44,
                                              channelImage.YPosition + 10,
-                                             300, 40, "font16", channel.DisplayName, 4294967295, GUIControl.Alignment.Left,
+                                             300, 40, "font16", channel.Name, 4294967295, GUIControl.Alignment.Left,
                                              GUIControl.VAlignment.Top,
                                              true, 0, 0, 0xFF000000);
         }
@@ -1371,7 +1346,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
       if (channelLabel != null)
       {
-        channelLabel.Label = channel.DisplayName;
+        channelLabel.Label = channel.Name;
       }
       if (strLogo.Length > 0)
       {
@@ -1383,14 +1358,14 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
       if (channelLabel != null)
       {
-        channelLabel.Label = channel.DisplayName;
+        channelLabel.Label = channel.Name;
       }
       if (_recalculateProgramOffset)
       {
         DateTime dtStart = DateTime.Now;
         dtStart = dtStart.AddDays(-1);
         DateTime dtEnd = dtStart.AddDays(30);
-        _programs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByChannelAndStartEndTimes(channel.IdChannel, dtStart, dtEnd).ToList();
+        _programs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByChannelAndStartEndTimes(channel.IdChannel, dtStart, dtEnd);
 
         _totalProgramCount = _programs.Count;
         if (_totalProgramCount == 0)
@@ -1466,7 +1441,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
         int iTotalWidth = width * _numberOfBlocks;
 
-        ProgramBLL program;
+        ProgramBLL program = null;
         int offset = _programOffset;
         if (offset + ichan < _programs.Count)
         {
@@ -1475,33 +1450,24 @@ namespace Mediaportal.TV.TvPlugin.EPG
         else
         {
           // bugfix for 0 items
-          if (_programs.Count == 0)
-          {
-            program = new ProgramBLL(
-              ProgramFactory.CreateProgram(channel.IdChannel, _viewingTime, _viewingTime, "-", string.Empty,
-                                                   null,
-                                                   ProgramState.None,
-                                                   DateTime.MinValue, string.Empty, string.Empty, string.Empty,
-                                                   string.Empty, -1,
-                                                   string.Empty, -1));
-          }
-          else
+          var prog = ProgramFactory.CreateEmptyProgram();
+          prog.IdChannel = channel.IdChannel;
+          prog.Title = "-";
+          prog.StartTime = _viewingTime;
+          prog.EndTime = _viewingTime;
+          if (_programs.Count != 0)
           {
             program = new ProgramBLL(_programs[_programs.Count - 1]);
             if (program.Entity.EndTime.DayOfYear == _viewingTime.DayOfYear)
             {
-              program = new ProgramBLL(ProgramFactory.CreateProgram(channel.IdChannel, program.Entity.EndTime, program.Entity.EndTime, "-", "-", null,
-                                    ProgramState.None,
-                                    DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1,
-                                    string.Empty, -1));
+              prog.StartTime = program.Entity.EndTime;
+              prog.EndTime = program.Entity.EndTime;
             }
-            else
-            {
-              program = new ProgramBLL(ProgramFactory.CreateProgram(channel.IdChannel, _viewingTime, _viewingTime, "-", "-", null,
-                                    ProgramState.None,
-                                    DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1,
-                                    string.Empty, -1));
-            }
+            program = new ProgramBLL(prog);
+          }
+          else
+          {
+            program = new ProgramBLL(prog);
           }
         }
 
@@ -1903,17 +1869,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
                                  GuideChannel tvGuideChannel,
                                  long iStart, long iEnd, bool selectCurrentShow)
     {
-      int channelNum = 0;
       Channel channel = tvGuideChannel.Channel;
-
-      if (!_byIndex)
-      {
-        channelNum = channel.ChannelNumber;
-      }
-      else
-      {
-        channelNum = _channelList.IndexOf(tvGuideChannel) + 1;
-      }
 
       var img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
       if (img != null)
@@ -1922,13 +1878,22 @@ namespace Mediaportal.TV.TvPlugin.EPG
         {
           img.TexutureIcon = tvGuideChannel.StrLogo;
         }
-        if (channelNum > 0 && _showChannelNumber)
+        if (_showChannelNumber)
         {
-          img.Label1 = channelNum + " " + channel.DisplayName;
+          string channelNum;
+          if (_byIndex)
+          {
+            channelNum = (_channelList.IndexOf(tvGuideChannel) + 1).ToString();
+          }
+          else
+          {
+            channelNum = channel.ChannelNumber;
+          }
+          img.Label1 = string.Format("{0} {1}", channelNum, channel.Name);
         }
         else
         {
-          img.Label1 = channel.DisplayName;
+          img.Label1 = channel.Name;
         }
         img.Data = channel;
         img.IsVisible = true;
@@ -1936,9 +1901,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         {
           img.ColourDiffuse = _guideColorChannelButton;
         }
-
       }
-
 
       IList<ProgramBLL> programs = null;
       if (mapPrograms.ContainsKey(channel.IdChannel))
@@ -1949,12 +1912,11 @@ namespace Mediaportal.TV.TvPlugin.EPG
       bool noEPG = (programs == null || programs.Count == 0);
       if (noEPG)
       {
-        DateTime dt = Utils.longtodate(iEnd);
-        long iProgEnd = Utils.datetolong(dt);
-        var prog = ProgramFactory.CreateProgram(channel.IdChannel, Utils.longtodate(iStart), Utils.longtodate(iProgEnd),
-                               GUILocalizeStrings.Get(736), "", null, ProgramState.None, DateTime.MinValue,
-                               string.Empty,
-                               string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
+        var prog = ProgramFactory.CreateEmptyProgram();
+        prog.IdChannel = channel.IdChannel;
+        prog.StartTime = Utils.longtodate(iStart);
+        prog.EndTime = Utils.longtodate(Utils.datetolong(Utils.longtodate(iEnd)));  // WHY?!?
+        prog.Title = GUILocalizeStrings.Get(736);
         prog.Channel = channel;
         if (programs == null)
         {
@@ -2802,18 +2764,8 @@ namespace Mediaportal.TV.TvPlugin.EPG
         return defaultColor;
       }
 
-      // If the program has a movie rating then choose the user specified "movie" genre if it exists.
-      TvGuideCategory mpGenre = null;
-      if (IsMPAA(program.Classification))
-      {
-        mpGenre = _mpGenres.Find(x => x.IsMovie == true);
-      }
-      else
-      {
-        mpGenre = _mpGenres.Find(x => x.ProgramCategories.Contains(program.ProgramCategory));
-      }
-
       // If no mapped mp genre could be found or the found genre is disabled then return the default genre color.
+      GuideCategory mpGenre = _mpGenres.Find(x => x.ProgramCategories.Contains(program.ProgramCategory));
       if (mpGenre == null || !mpGenre.IsEnabled)
       {
         return defaultColor;
@@ -2855,19 +2807,13 @@ namespace Mediaportal.TV.TvPlugin.EPG
       return result;
     }
 
-    private bool IsMPAA(string classification)
-    {
-      return ",G,PG,PG-13,R,NC-17,AO,NR,".Contains("," + classification.Trim() + ",");
-    }
-
-
     private void SaveSettings()
     {
       using (Settings xmlwriter = new MPSettings())
       {
         if (_currentChannel != null)
         {
-          xmlwriter.SetValue(SettingsGuideSection, "channel", _currentChannel.DisplayName);
+          xmlwriter.SetValue(SettingsGuideSection, "channel", _currentChannel.Name);
         }
         xmlwriter.SetValue(SettingsGuideSection, "timeperblock", _timePerBlock);
       }
@@ -2930,7 +2876,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         // Load the genre map.
         if (_mpGenres == null)
         {
-          _mpGenres =  ServiceAgents.Instance.ProgramCategoryServiceAgent.ListAllTvGuideCategories().ToList();
+          _mpGenres = ServiceAgents.Instance.ProgramCategoryServiceAgent.ListAllGuideCategories().ToList();
         }
       }
 
@@ -2993,12 +2939,12 @@ namespace Mediaportal.TV.TvPlugin.EPG
       // If only one value is provided then that value is used for both.
       long color0;
       long color1;
-      TvGuideCategory genreObj;
+      GuideCategory genreObj;
 
       for (int i = 0; i < _mpGenres.Count; i++)
       {
         // If the genre is disabled then set the program colors to the default colors.
-        genreObj = _mpGenres[i];//.Find(x => x.IdTvGuideCategory == i);
+        genreObj = _mpGenres[i];//.Find(x => x.IdGuideCategory == i);
         if (!genreObj.IsEnabled)
         {
           _genreColorsOnNow.Add(_mpGenres[i].Name, _defaultGenreColorOnNow);
@@ -3433,17 +3379,20 @@ namespace Mediaportal.TV.TvPlugin.EPG
         while (iCounter < _channelList.Count && found == false)
         {
           Channel chan = _channelList[iCounter].Channel;
-          if (chan.ChannelNumber == searchChannel)
+          int channelNumber;
+          if (int.TryParse(chan.ChannelNumber, out channelNumber))
           {
-            iChannelNr = iCounter;
-            found = true;
-          } //find closest channel number
-          else if (Math.Abs(chan.ChannelNumber - searchChannel) < channelDistance)
-          {
-            channelDistance = Math.Abs(chan.ChannelNumber - searchChannel);
-            iChannelNr = iCounter;
+            if (channelNumber == searchChannel)
+            {
+              iChannelNr = iCounter;
+              found = true;
+            } //find closest channel number
+            else if (Math.Abs(channelNumber - searchChannel) < channelDistance)
+            {
+              channelDistance = Math.Abs(channelNumber - searchChannel);
+              iChannelNr = iCounter;
+            }
           }
-          
           iCounter++;
         }
       }
@@ -4683,7 +4632,6 @@ namespace Mediaportal.TV.TvPlugin.EPG
     protected abstract string SettingsGuideSection { get; }
     protected abstract string SettingsSection { get; }
     protected abstract bool HasSelectedGroup();
-    protected abstract bool IsChannelTypeCorrect(Channel channel);
     protected abstract IList<Channel> GetGuideChannelsForGroup();
     protected abstract void OnRecord();
     protected abstract bool OnSelectItem(bool isItemSelected);
@@ -4699,7 +4647,6 @@ namespace Mediaportal.TV.TvPlugin.EPG
     protected struct GuideChannel
     {
       public Channel Channel;
-      public int ChannelNum;
       public string StrLogo;
     }
 

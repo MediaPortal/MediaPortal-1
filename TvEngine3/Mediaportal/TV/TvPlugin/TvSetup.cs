@@ -22,15 +22,15 @@ using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.ServiceProcess;
-using MediaPortal.Dialogs;
-using MediaPortal.GUI.Library;
-using MediaPortal.Profile;
-using MediaPortal.Util;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using MediaPortal.Util;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace Mediaportal.TV.TvPlugin
@@ -91,31 +91,35 @@ namespace Mediaportal.TV.TvPlugin
 
     private bool CheckTcpPort(int port)
     {
-      TcpClient client = new TcpClient();
-      try
+      using (TcpClient client = new TcpClient())
       {
-        client.Connect(_hostName, port);
+        try
+        {
+          client.Connect(_hostName, port);
+        }
+        catch (Exception)
+        {
+          return false;
+        }
+        client.Close();
       }
-      catch (Exception)
-      {
-        return false;
-      }
-      client.Close();
       return true;
     }
 
     private bool CheckUdpPort(int port)
     {
-      UdpClient client = new UdpClient();
-      try
+      using (UdpClient client = new UdpClient())
       {
-        client.Connect(_hostName, port);
+        try
+        {
+          client.Connect(_hostName, port);
+        }
+        catch (Exception)
+        {
+          return false;
+        }
+        client.Close();
       }
-      catch (Exception)
-      {
-        return false;
-      }
-      client.Close();
       return true;
     }
 
@@ -125,13 +129,13 @@ namespace Mediaportal.TV.TvPlugin
 
       if (!CheckTcpPort(ServiceHelper.PortHttpService)) 
       {
-        portErrors.Add(ServiceHelper.PortHttpService + "(HTTP) Service");
+        portErrors.Add(ServiceHelper.PortHttpService + " (HTTP) Service");
         succeeded = false;
       }
 
       if (!CheckTcpPort(ServiceHelper.PortTcpService)) 
       {
-        portErrors.Add(ServiceHelper.PortTcpService + "(TCP) Service");
+        portErrors.Add(ServiceHelper.PortTcpService + " (TCP) Service");
         succeeded = false;
       }
 
@@ -141,8 +145,9 @@ namespace Mediaportal.TV.TvPlugin
         {
           int cards = ServiceAgents.Instance.ControllerServiceAgent.Cards;
         }
-        catch (Exception)
+        catch
         {
+          portErrors.Add("Service");
           succeeded = false;
         }
       }
@@ -151,63 +156,35 @@ namespace Mediaportal.TV.TvPlugin
 
     private bool CheckDatabaseConnection(List<string> portErrors)
     {
-      bool succeeded = true;
       try
       {
-        IEnumerable<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
+        IEnumerable<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
+        return true;
       }
-      catch (Exception)
+      catch
       {
-        succeeded = false;
+        portErrors.Add("Database");
+        return false;
       }
-      
-      return succeeded;
     }
 
-    private bool CheckStreamingConnection(bool tvServerAvailable, bool databaseAvailable, List<string> portErrors)
+    private bool CheckStreamingConnection(List<string> portErrors)
     {
-      bool succeeded = true;
-      int RtspPort = 0;
+      string rtspInterface = string.Empty;
+      ushort rtspPort = 0;
+      ServiceAgents.Instance.ControllerServiceAgent.GetStreamingServerInformation(out rtspInterface, out rtspPort);
 
-      if (tvServerAvailable)
+      if (rtspPort <= 0)
       {
-        RtspPort = ServiceAgents.Instance.ControllerServiceAgent.StreamingPort;
+        portErrors.Add("RTSP Server");
+        return false;
       }
-      if (RtspPort == 0 && databaseAvailable)
+      if (!CheckTcpPort(rtspPort))
       {
-        //todo gibman RTSP lookup removed for now, hardcoded to 554
-        try
-        {
-          /*IList<Server.TVDatabase.Entities.Server> servers = Server.TVDatabase.Gentle.Server.ListAll();
-          foreach (Server.TVDatabase.Entities.Server server in servers)
-          {
-            if (ServiceAgents.Instance.ControllerService.isMaster)
-            {
-              RtspPort = ServiceAgents.Instance.ControllerService.rtspPort;
-              break;
-            }
-          }*/
-          RtspPort = 554;
-        }
-        catch (Exception)
-        {
-          // do nothing
-        }
+        portErrors.Add(rtspPort.ToString() + " (TCP) RTSP Server");
+        return false;
       }
-
-      if (RtspPort > 0)
-      {
-        if (!CheckTcpPort(RtspPort)) // RTSP streaming
-        {
-          portErrors.Add(RtspPort.ToString() + " (TCP) RTSP streaming");
-          succeeded = false;
-        }
-      }
-      else
-      {
-        succeeded = false;
-      }
-      return succeeded;
+      return true;
     }
 
     private void CheckTvServiceStatus()
@@ -298,8 +275,16 @@ namespace Mediaportal.TV.TvPlugin
 
           List<string> portErrors = new List<string>();
           bool tvServerOk = CheckTvServerConnection(portErrors);
-          bool databaseOk = CheckDatabaseConnection(portErrors);
-          bool streamingOk = CheckStreamingConnection(tvServerOk, databaseOk, portErrors);
+          bool databaseOk = true;
+          bool streamingOk = true;
+          if (tvServerOk)
+          {
+            databaseOk = CheckDatabaseConnection(portErrors);
+            if (databaseOk)
+            {
+              streamingOk = CheckStreamingConnection(portErrors);
+            }
+          }
 
           //Show the check results dialog to the user
           GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);

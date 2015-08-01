@@ -26,7 +26,7 @@ namespace Mediaportal.TV.TvPlugin.EventHandlers
       }
       catch
       {
-        menu = new CiMenu("Remoting Exception", "Communication with server failed", null,
+        menu = new CiMenu("Remoting Exception", "Communication with server failed", string.Empty,
                           CiMenuState.Error);
         // pass menu to calling dialog
         TvPlugin.TVHome.ProcessCiMenu(menu);
