@@ -446,7 +446,6 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_DirectShowFilters}\Win7RefreshRateHelper\bin\${BUILD_TYPE}\Win7RefreshRateHelper.dll"
   File "${git_DirectShowFilters}\DxUtil\bin\${BUILD_TYPE}\dxutil.dll"
   File "${git_DirectShowFilters}\mpc-hc_subs\bin\${BUILD_TYPE}\mpcSubs.dll"
-  File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\Dxerr9.dll"
   File "${git_MP}\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
   ; iMON VFD/LCD
   File "${git_ROOT}\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll"
@@ -665,7 +664,6 @@ SectionEnd
   Delete "$MPdir.Base\dshowhelper.dll"
   Delete "$MPdir.Base\Win7RefreshRateHelper.dll"
   Delete "$MPdir.Base\dxutil.dll"
-  Delete "$MPdir.Base\Dxerr9.dll"
   Delete "$MPdir.Base\mpcSubs.dll"
   Delete "$MPdir.Base\MiniDisplayLibrary.dll"
   ; iMON VFD/LCD

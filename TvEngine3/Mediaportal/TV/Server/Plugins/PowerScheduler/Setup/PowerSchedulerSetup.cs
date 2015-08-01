@@ -133,6 +133,7 @@ namespace PowerScheduler.Setup
     #region Public Methods
 
     public PowerSchedulerSetup()
+      : base("PowerScheduler")
     {
       InitializeComponent();
 #if SERVER

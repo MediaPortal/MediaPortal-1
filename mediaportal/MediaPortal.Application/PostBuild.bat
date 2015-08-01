@@ -125,9 +125,6 @@ xcopy %1\..\DirectShowFilters\bin_Win32d\libbluray.dll . /Y /D
 
 ren libbluray.dll bluray.dll
 
-REM Copy one dll from DirectShowFilters folder
-xcopy %1\..\DirectShowFilters\DXErr9\bin\%2\dxerr9.dll . /Y /D
-
 REM Copy bluray dll from DirectShowFilters folder
 xcopy %1\..\DirectShowFilters\BDReader\libbluray\bluray.dll . /Y /D
 
