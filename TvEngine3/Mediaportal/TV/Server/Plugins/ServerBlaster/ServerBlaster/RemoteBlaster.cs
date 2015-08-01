@@ -24,15 +24,14 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
+using Microsoft.Win32.SafeHandles;
 
 //Logging
 
 namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 {
-
   #region Delegates
-
-  public delegate void RemoteEventHandler(RemoteButton button);
 
   public delegate void LearntEventHandler(LearnState state, byte[] data);
 
@@ -46,57 +45,6 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 
   #region Enums
 
-  public enum RemoteButton
-  {
-    None = 0,
-    Power1 = 165,
-    Power2 = 12,
-    Record = 23,
-    Stop = 25,
-    Pause = 24,
-    Rewind = 21,
-    Play = 22,
-    Forward = 20,
-    Replay = 27,
-    Skip = 26,
-    Back = 35,
-    Up = 30,
-    Info = 15,
-    Left = 32,
-    Ok = 34,
-    Right = 33,
-    Down = 31,
-    VolumeUp = 16,
-    VolumeDown = 17,
-    Start = 13,
-    ChannelUp = 18,
-    ChannelDown = 19,
-    Mute = 14,
-    RecordedTV = 72,
-    Guide = 38,
-    LiveTV = 37,
-    DVDMenu = 36,
-    NumPad1 = 1,
-    NumPad2 = 2,
-    NumPad3 = 3,
-    NumPad4 = 4,
-    NumPad5 = 5,
-    NumPad6 = 6,
-    NumPad7 = 7,
-    NumPad8 = 8,
-    NumPad9 = 9,
-    NumPad0 = 0,
-    Oem8 = 29,
-    OemGate = 28,
-    Clear = 10,
-    Enter = 11,
-    Teletext = 90,
-    Red = 91,
-    Green = 92,
-    Yellow = 93,
-    Blue = 94,
-  }
-
   public enum LearnState
   {
     Idle,
@@ -107,129 +55,6 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
   }
 
   #endregion Enums
-
-  #region Remote
-
-  /// <summary>
-  /// Summary description for Remote.
-  /// </summary>
-  internal sealed class Remote : Device
-  {
-
-    #region Constructor
-
-    static Remote()
-    {
-      _deviceSingleton = new Remote();
-      _deviceSingleton.Init();
-    }
-
-    #endregion Constructor
-
-    #region Implementation
-
-    private void Init()
-    {
-      try
-      {
-        // ask the OS for the class (GUID) that represents human input devices
-        HidD_GetHidGuid(ref _deviceClass);
-
-        _doubleClickTime = GetDoubleClickTime();
-        _deviceBuffer = new byte[256];
-        _notifyWindow = new NotifyWindow();
-        _notifyWindow.Create();
-        _notifyWindow.Class = _deviceClass;
-        _notifyWindow.DeviceArrival += OnDeviceArrival;
-        _notifyWindow.DeviceRemoval += OnDeviceRemoval;
-        _notifyWindow.SettingsChanged += OnSettingsChanged;
-        _notifyWindow.RegisterDeviceArrival();
-
-        Open();
-      }
-      catch (Exception e)
-      {
-        this.LogDebug("Remote.Init: {0}", e.Message);
-      }
-    }
-
-    protected override void Open()
-    {
-      string devicePath = FindDevice(_deviceClass);
-
-      if (devicePath == null) return;
-
-      IntPtr deviceHandle = CreateFile(devicePath, FileAccess.Read, FileShare.ReadWrite, 0, FileMode.Open,
-                                       FileFlag.Overlapped, 0);
-
-      if (deviceHandle.ToInt32() == -1)
-        throw new Exception(string.Format("Failed to open remote ({0})", GetLastError()));
-
-      _notifyWindow.RegisterDeviceRemoval(deviceHandle);
-
-      // open a stream from the device and begin an asynchronous read
-      _deviceStream = new FileStream(deviceHandle, FileAccess.Read, true, 128, true);
-      _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, OnReadComplete, null);
-    }
-
-    private void OnReadComplete(IAsyncResult asyncResult)
-    {
-      try
-      {
-        if (_deviceStream.EndRead(asyncResult) == 13)
-        {
-          if (_deviceBuffer[5] == (int)_doubleClickButton &&
-              Environment.TickCount - _doubleClickTick <= _doubleClickTime)
-          {
-            if (DoubleClick != null) DoubleClick(_doubleClickButton);
-          }
-          else
-          {
-            _doubleClickButton = (RemoteButton)_deviceBuffer[5];
-            _doubleClickTick = Environment.TickCount;
-
-            if (Click != null) Click(_doubleClickButton);
-          }
-        }
-
-        // begin another asynchronous read from the device
-        _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, OnReadComplete, null);
-      }
-      catch (Exception) {}
-    }
-
-    private void OnSettingsChanged()
-    {
-      _doubleClickTime = GetDoubleClickTime();
-    }
-
-    #endregion Implementation
-
-    #region Interop
-
-    [DllImport("user32")]
-    private static extern int GetDoubleClickTime();
-
-    #endregion Interop
-
-    #region Events
-
-    public static RemoteEventHandler Click = null;
-    public static RemoteEventHandler DoubleClick = null;
-
-    #endregion Events
-
-    #region Members
-
-    private static readonly Remote _deviceSingleton;
-    private int _doubleClickTime = -1;
-    private int _doubleClickTick;
-    private RemoteButton _doubleClickButton;
-
-    #endregion Members
-  }
-
-  #endregion Remote
 
   #region Blaster
 
@@ -370,16 +195,21 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 
       if (devicePath == null) return;
 
-      IntPtr deviceHandle = CreateFile(devicePath, FileAccess.ReadWrite, FileShare.ReadWrite, 0, FileMode.Open,
-                                       FileFlag.Overlapped, 0);
+      SafeFileHandle deviceHandle = NativeMethods.CreateFile(devicePath, NativeMethods.AccessMask.GENERIC_READ | NativeMethods.AccessMask.GENERIC_WRITE, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open,
+                                       (uint)NativeMethods.FileFlag.FILE_FLAG_OVERLAPPED, IntPtr.Zero);
 
-      if (deviceHandle.ToInt32() == -1)
-        throw new Exception(string.Format("Failed to open blaster ({0})", GetLastError()));
+      if (deviceHandle.IsInvalid)
+        throw new Exception(string.Format("Failed to open blaster ({0})", Marshal.GetLastWin32Error()));
 
-      _notifyWindow.RegisterDeviceRemoval(deviceHandle);
+      bool success = false;
+      deviceHandle.DangerousAddRef(ref success);
+      if (success)
+      {
+        _notifyWindow.RegisterDeviceRemoval(deviceHandle.DangerousGetHandle());
+      }
 
       // open a stream from the device and begin an asynchronous read
-      _deviceStream = new FileStream(deviceHandle, FileAccess.ReadWrite, true, _deviceBuffer.Length, true);
+      _deviceStream = new FileStream(deviceHandle, FileAccess.ReadWrite, _deviceBuffer.Length, true);
     }
 
     private void OnReadComplete(IAsyncResult asyncResult)
@@ -427,11 +257,6 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
     }
 
     private byte[] FinalizePacket()
-    {
-      return FinalizePacket3();
-    }
-
-    private byte[] FinalizePacket3()
     {
       int packetLength = 0;
       int packetOffset = 0;
@@ -530,176 +355,10 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 
     protected static string FindDevice(Guid classGuid)
     {
-      IntPtr handle = SetupDiGetClassDevs(ref classGuid, 0, 0, 0x12);
-      string devicePath = null;
-
-      if (handle.ToInt32() == -1)
-      {
-        throw new Exception(string.Format("Failed in call to SetupDiGetClassDevs ({0})", GetLastError()));
-      }
-
-      for (int deviceIndex = 0;; deviceIndex++)
-      {
-        DeviceInfoData deviceInfoData = new DeviceInfoData();
-        deviceInfoData.Size = Marshal.SizeOf(deviceInfoData);
-
-        if (SetupDiEnumDeviceInfo(handle, deviceIndex, ref deviceInfoData) == false)
-        {
-          // out of devices or do we have an error?
-          if (GetLastError() != 0x103 && GetLastError() != 0x7E)
-          {
-            SetupDiDestroyDeviceInfoList(handle);
-            throw new Exception(string.Format("Failed in call to SetupDiEnumDeviceInfo ({0})", GetLastError()));
-          }
-
-          SetupDiDestroyDeviceInfoList(handle);
-          break;
-        }
-
-        DeviceInterfaceData deviceInterfaceData = new DeviceInterfaceData();
-        deviceInterfaceData.Size = Marshal.SizeOf(deviceInterfaceData);
-
-        if (SetupDiEnumDeviceInterfaces(handle, ref deviceInfoData, ref classGuid, 0, ref deviceInterfaceData) == false)
-        {
-          SetupDiDestroyDeviceInfoList(handle);
-          throw new Exception(string.Format("Failed in call to SetupDiEnumDeviceInterfaces ({0})", GetLastError()));
-        }
-
-        uint cbData = 0;
-
-        if (SetupDiGetDeviceInterfaceDetail(handle, ref deviceInterfaceData, 0, 0, ref cbData, 0) == false &&
-            cbData == 0)
-        {
-          SetupDiDestroyDeviceInfoList(handle);
-          throw new Exception(string.Format("Failed in call to SetupDiGetDeviceInterfaceDetail ({0})", GetLastError()));
-        }
-
-        DeviceInterfaceDetailData deviceInterfaceDetailData = new DeviceInterfaceDetailData();
-        deviceInterfaceDetailData.Size = 5;
-
-        if (
-          SetupDiGetDeviceInterfaceDetail(handle, ref deviceInterfaceData, ref deviceInterfaceDetailData, cbData, 0, 0) ==
-          false)
-        {
-          SetupDiDestroyDeviceInfoList(handle);
-          throw new Exception(string.Format("Failed in call to SetupDiGetDeviceInterfaceDetail ({0})", GetLastError()));
-        }
-
-        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0471&pid_0815") != -1)
-        {
-          SetupDiDestroyDeviceInfoList(handle);
-          devicePath = deviceInterfaceDetailData.DevicePath;
-          break;
-        }
-
-        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_045e&pid_006d") != -1)
-        {
-          SetupDiDestroyDeviceInfoList(handle);
-          devicePath = deviceInterfaceDetailData.DevicePath;
-          break;
-        }
-
-        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_1460&pid_9150") != -1)
-        {
-          SetupDiDestroyDeviceInfoList(handle);
-          devicePath = deviceInterfaceDetailData.DevicePath;
-          break;
-        }
-
-        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0609&pid_031d") != -1)
-        {
-          SetupDiDestroyDeviceInfoList(handle);
-          devicePath = deviceInterfaceDetailData.DevicePath;
-          break;
-        }
-        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_03ee&pid_2501") != -1)
-        {
-          SetupDiDestroyDeviceInfoList(handle);
-          devicePath = deviceInterfaceDetailData.DevicePath;
-          break;
-        }
-      }
-
-      return devicePath;
+      return "";
     }
 
     #endregion Implementation
-
-    #region Interop
-
-    [DllImport("kernel32", SetLastError = true)]
-    protected static extern IntPtr CreateFile(string FileName, [MarshalAs(UnmanagedType.U4)] FileAccess DesiredAccess,
-                                              [MarshalAs(UnmanagedType.U4)] FileShare ShareMode, uint SecurityAttributes,
-                                              [MarshalAs(UnmanagedType.U4)] FileMode CreationDisposition,
-                                              FileFlag FlagsAndAttributes, int hTemplateFile);
-
-    [DllImport("kernel32", SetLastError = true)]
-    protected static extern bool CloseHandle(IntPtr hObject);
-
-    [DllImport("kernel32", SetLastError = true)]
-    protected static extern int GetLastError();
-
-    protected enum FileFlag
-    {
-      Overlapped = 0x40000000,
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    protected struct DeviceInfoData
-    {
-      public int Size;
-      public Guid Class;
-      public uint DevInst;
-      public uint Reserved;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    protected struct DeviceInterfaceData
-    {
-      public int Size;
-      public Guid Class;
-      public uint Flags;
-      public uint Reserved;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    protected struct DeviceInterfaceDetailData
-    {
-      public int Size;
-
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string DevicePath;
-    }
-
-    [DllImport("hid")]
-    protected static extern void HidD_GetHidGuid(ref Guid guid);
-
-    [DllImport("setupapi", SetLastError = true)]
-    protected static extern IntPtr SetupDiGetClassDevs(ref Guid guid, int Enumerator, int hwndParent, int Flags);
-
-    [DllImport("setupapi", SetLastError = true)]
-    protected static extern bool SetupDiEnumDeviceInfo(IntPtr handle, int Index, ref DeviceInfoData deviceInfoData);
-
-    [DllImport("setupapi", SetLastError = true)]
-    protected static extern bool SetupDiEnumDeviceInterfaces(IntPtr handle, ref DeviceInfoData deviceInfoData,
-                                                             ref Guid guidClass, int MemberIndex,
-                                                             ref DeviceInterfaceData deviceInterfaceData);
-
-    [DllImport("setupapi", SetLastError = true)]
-    protected static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr handle,
-                                                                 ref DeviceInterfaceData deviceInterfaceData,
-                                                                 int unused1, int unused2, ref uint requiredSize,
-                                                                 int unused3);
-
-    [DllImport("setupapi", SetLastError = true)]
-    protected static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr handle,
-                                                                 ref DeviceInterfaceData deviceInterfaceData,
-                                                                 ref DeviceInterfaceDetailData deviceInterfaceDetailData,
-                                                                 uint detailSize, int unused1, int unused2);
-
-    [DllImport("setupapi")]
-    protected static extern bool SetupDiDestroyDeviceInfoList(IntPtr handle);
-
-    #endregion Interop
 
     #region Events
 

@@ -30,8 +30,8 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 {
   public partial class BlasterSetup : SectionSettings
   {
-
     public BlasterSetup()
+      : base("ServerBlaster")
     {
       InitializeComponent();
     }
@@ -58,12 +58,11 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
       comboBoxBlaster1.Items.Add("None");
       comboBoxBlaster2.Items.Add("None");
 
-      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
-
-      foreach (Card card in cards)
+      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
+      foreach (Tuner tuner in tuners)
       {
-        comboBoxBlaster1.Items.Add(card.Name);
-        comboBoxBlaster2.Items.Add(card.Name);
+        comboBoxBlaster1.Items.Add(tuner.Name);
+        comboBoxBlaster2.Items.Add(tuner.Name);
       }
       this.LogDebug("CB1Size {0}, CB2Size {1}, BT1 {2}, BT2 {3}", comboBoxBlaster1.Items.Count,
                     comboBoxBlaster1.Items.Count, ServiceAgents.Instance.SettingServiceAgent.GetValue("SrvBlaster1Card", 0),
@@ -98,12 +97,6 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
           enabled = true;
           break;
 
-        case 2: // Hauppauge blasting
-          enabled = false;
-          checkBoxExtLog.Visible = true;
-          mpLabelAdditionalNotes.Text =
-            "To configure the Hauppauge IR Blaster, use the original Hauppauge IR configuration software.";
-          break;
         default:
           enabled = false;
           break;

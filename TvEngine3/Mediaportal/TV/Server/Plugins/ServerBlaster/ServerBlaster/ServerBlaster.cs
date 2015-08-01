@@ -24,7 +24,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using Castle.Core;
-using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.Events;
@@ -32,20 +32,15 @@ using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-
-// Modified to include Hauppauge Blasting
-// Uses code from prior MP versions for HCWIRBlaster
-// ralphy
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 {
   [Interceptor("PluginExceptionInterceptor")]
-  public class ServerBlaster : AnalogChannel, ITvServerPlugin
+  public class ServerBlaster : ITvServerPlugin
   {
-
-
     #region properties
 
     private const string _Author = "joboehl with ralphy mods";
@@ -53,12 +48,10 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 
     private const string _version = "1.1.1.0";
 
-    private HCWIRBlaster irblaster;
-
     /// <summary>
     /// returns the name of the plugin
     /// </summary>
-    public new string Name
+    public string Name
     {
       get { return _PluginName; }
     }
@@ -77,15 +70,6 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
     public string Author
     {
       get { return _Author; }
-    }
-
-    /// <summary>
-    /// returns if the plugin should only run on the master server
-    /// or also on slave servers
-    /// </summary>
-    public bool MasterOnly
-    {
-      get { return false; }
     }
 
     #endregion
@@ -138,19 +122,30 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
     private void events_OnTvServerEvent(object sender, EventArgs eventArgs)
     {
       TvServerEventArgs tvEvent = (TvServerEventArgs)eventArgs;
-      AnalogChannel analogChannel = tvEvent.channel as AnalogChannel;
-      if (analogChannel == null) return;
-      if (tvEvent.EventType == TvServerEventType.StartZapChannel)
+      ChannelAnalogTv analogTvChannel = tvEvent.channel as ChannelAnalogTv;
+      ChannelCapture captureChannel = tvEvent.channel as ChannelCapture;
+      if (
+        tvEvent.EventType != TvServerEventType.StartZapChannel ||
+        (analogTvChannel == null && captureChannel == null)
+      )
       {
-        this.LogDebug("ServerBlaster - CardId: {0}, Channel: {1} - Channel:{2} - VideoSource: {3}",
-                      tvEvent.Card.Id, analogChannel.ChannelNumber, analogChannel.Name,
-                      analogChannel.VideoSource.ToString());
-        _send = true;
-        _channel = analogChannel.ChannelNumber;
-        _card = tvEvent.Card.Id;
-        _videoInputType = analogChannel.VideoSource; // ralphy
-        this.LogDebug("ServerBlaster - Done");
+        return;
       }
+      if (!int.TryParse(tvEvent.channel.LogicalChannelNumber, out _channel))
+      {
+        return;
+      }
+
+      _videoInputType = CaptureSourceVideo.Tuner;
+      if (captureChannel != null)
+      {
+        _videoInputType = captureChannel.VideoSource;
+      }
+      _card = tvEvent.Card.Id;
+      this.LogDebug("ServerBlaster - CardId: {0}, Channel: {1} - Channel:{2} - VideoSource: {3}",
+                    _card, _channel, tvEvent.channel.Name, _videoInputType);
+      _send = true;
+      this.LogDebug("ServerBlaster - Done");
     }
 
     private static void OnDeviceArrival()
@@ -191,16 +186,14 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 
       try
       {
-        
         _sendSelect = SettingsManagement.GetValue("SrvBlasterSendSelect", false);
         _sleepTime = 100; //xmlreader.GetValueAsInt("ServerBlaster", "delay", 100);
-        _sendPort = 1; //xmlreader.GetValueAsInt("ServerBlaster", "forceport", 1);
+        _sendPort = 1;
         _blaster1Card = SettingsManagement.GetValue("SrvBlaster1Card", 0);
         _blaster2Card = SettingsManagement.GetValue("SrvBlaster2Card", 0);
         _deviceType = SettingsManagement.GetValue("SrvBlasterType", 0);
         _deviceSpeed = SettingsManagement.GetValue("SrvBlasterSpeed", 0);
         _advandeLogging = SettingsManagement.GetValue("SrvBlasterLog", false);
-        _sendPort = Math.Max(1, Math.Min(2, _sendPort));
 
         this.LogDebug("ServerBlaster.LoadRemoteCodes: Default port {0}", _sendPort);
         this.LogDebug("ServerBlaster.RemoteType {0}", _deviceType);
@@ -221,7 +214,6 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 
     private void Sender()
     {
-      irblaster = new HCWIRBlaster();
       while (_running)
       {
         if (_sending || !_send)
@@ -230,8 +222,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
           continue;
         }
         _sending = true;
-        this.LogDebug("Blaster Sending: Channel:{0}, Card:{1}, VideoInput:{2}", _channel, _card,
-                      _videoInputType.ToString());
+        this.LogDebug("Blaster Sending: Channel:{0}, Card:{1}, VideoInput:{2}", _channel, _card, _videoInputType);
         switch (_deviceType)
         {
           case 0:
@@ -239,18 +230,6 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
             break;
           case 1:
             Send(_channel, _card);
-            break;
-          case 2:
-            this.LogDebug("ServerBlaster.Send: Case 2");
-            if (_videoInputType.ToString() == "Tuner")
-            {
-              this.LogDebug("ServerBlaster.Send: Channel {0} not blasted}", _channel);
-            }
-            else
-            {
-              this.LogDebug("ServerBlaster.Send: Channel {0} blasted}", _channel);
-              Send(_channel); // Hauppauge blasting
-            }
             break;
           default:
             this.LogDebug("ServerBlaster: Invalid _deviceType {0}", _deviceType);
@@ -260,15 +239,6 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
         _send = false;
         this.LogDebug("ServerBlaster:Send Finished");
       }
-      irblaster = null;
-    }
-
-    /// <summary>
-    /// Overload for HCWIRBlasting
-    /// </summary>
-    private void Send(int externalChannel)
-    {
-      irblaster.blast(externalChannel.ToString(), _advandeLogging);
     }
 
     /// <summary>
