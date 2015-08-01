@@ -119,14 +119,16 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 
     private static void DeleteAllRelatedFiles(string fileNameForRec)
     {
-      string[] relatedFiles =
-        Directory.GetFiles(Path.GetDirectoryName(fileNameForRec),
-                           Path.GetFileNameWithoutExtension(fileNameForRec) + @".*");
-
+      string[] relatedFiles = Directory.GetFiles(Path.GetDirectoryName(fileNameForRec), Path.GetFileNameWithoutExtension(fileNameForRec) + @".*");
       foreach (string fileName in relatedFiles)
       {
         Log.Debug(" - deleting '{0}'", fileName);
-        // File.Delete will _not_ throw on "File does not exist"
+        File.Delete(fileName);
+      }
+      string thumbnailFileName = Thumbnailer.Thumbnailer.GetThumbnailPath(fileNameForRec);
+      foreach (string fileName in relatedFiles)
+      {
+        Log.Debug(" - deleting '{0}'", fileName);
         File.Delete(fileName);
       }
     }
@@ -287,8 +289,8 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
     {
       
       var recordingPaths = new List<string>();
-      IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
-      foreach (Card card in cards)
+      IList<Tuner> cards = TVDatabase.TVBusinessLayer.TunerManagement.ListAllTuners(TunerIncludeRelationEnum.None); //SEB
+      foreach (Tuner card in cards)
       {
         string currentCardPath = card.RecordingFolder;
         if (!recordingPaths.Contains(currentCardPath))

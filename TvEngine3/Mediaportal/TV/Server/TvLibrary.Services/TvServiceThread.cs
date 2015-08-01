@@ -6,20 +6,23 @@ using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.Base;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Services;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary
 {
   public class TvServiceThread : IPowerEventHandler
   {
+    #region constants
 
+    private const string INITIALISED_EVENT_NAME = @"Global\MPTVServiceInitializedEvent";
+
+    #endregion
 
     #region variables
 
@@ -52,7 +55,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       AddPowerEventHandler(OnPowerEventHandler);
       try
       {
-        this.LogDebug("Setting up EventWaitHandle with name: {0}", RemoteControl.InitializedEventName);
+        this.LogDebug("Setting up EventWaitHandle with name: {0}", INITIALISED_EVENT_NAME);
 
         EventWaitHandleAccessRule rule =
           new EventWaitHandleAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null),
@@ -60,11 +63,11 @@ namespace Mediaportal.TV.Server.TVLibrary
         EventWaitHandleSecurity sec = new EventWaitHandleSecurity();
         sec.AddAccessRule(rule);
         bool eventCreated;
-        _initializedEvent = new EventWaitHandle(false, EventResetMode.ManualReset, RemoteControl.InitializedEventName,
+        _initializedEvent = new EventWaitHandle(false, EventResetMode.ManualReset, INITIALISED_EVENT_NAME,
                                                 out eventCreated, sec);
         if (!eventCreated)
         {
-          this.LogInfo("{0} was not created", RemoteControl.InitializedEventName);
+          this.LogInfo("{0} was not created", INITIALISED_EVENT_NAME);
         }
       }
       catch (Exception ex)
@@ -389,64 +392,123 @@ namespace Mediaportal.TV.Server.TVLibrary
       return true;
     }
 
-
     #endregion
+
+    #region plugins
 
     private void StartPlugins()
     {
-      this.LogInfo("TV Service: Load plugins");
-
+      this.LogInfo("TV service: load plugins");
       _plugins = new PluginLoader();
       _plugins.Load();
 
-      this.LogInfo("TV Service: Plugins loaded");
-      // start plugins
+      this.LogInfo("TV service: start plugins");
       foreach (ITvServerPlugin plugin in _plugins.Plugins)
       {
-        bool setting = SettingsManagement.GetValue(String.Format("plugin{0}", plugin.Name), false);
-        if (setting)
+        if (SettingsManagement.GetValue(string.Format("pluginEnabled{0}", plugin.Name), false))
         {
-          if (plugin is ITvServerPluginCommunciation)
-          {
-            var tvServerPluginCommunciation = (plugin as ITvServerPluginCommunciation);
-            Type interfaceType = tvServerPluginCommunciation.GetServiceInterfaceForContractType;
-            object instance = tvServerPluginCommunciation.GetServiceInstance;
-
-            ServiceManager.Instance.AddService(interfaceType, instance);
-          }
-
-          this.LogInfo("TV Service: Plugin: {0} started", plugin.Name);
+          this.LogInfo("TV service: {0} is enabled, starting...", plugin.Name);
           try
           {
             plugin.Start(ServiceManager.Instance.InternalControllerService);
+            ITvServerPluginCommunication communicatorPlugin = plugin as ITvServerPluginCommunication;
+            if (communicatorPlugin != null)
+            {
+              this.LogInfo("TV service:   enabling communication...");
+              ServiceManager.Instance.AddService(communicatorPlugin.GetServiceInterfaceForContractType, communicatorPlugin.GetServiceInstance);
+            }
             _pluginsStarted.Add(plugin);
           }
           catch (Exception ex)
           {
-            this.LogError(ex, "TV Service:  Plugin: {0} failed to start", plugin.Name);
+            this.LogError(ex, "TV service: {0} failed to start", plugin.Name);
           }
         }
         else
         {
-          this.LogInfo("TV Service: Plugin: {0} disabled", plugin.Name);
+          this.LogInfo("TV service: {0} is disabled", plugin.Name);
         }
       }
 
-      this.LogInfo("TV Service: Plugins started");
-
-      // fire off startedAll on plugins
+      this.LogInfo("TV service: notify all plugins started");
       foreach (ITvServerPlugin plugin in _pluginsStarted)
       {
-        if (plugin is ITvServerPluginStartedAll)
+        ITvServerPluginStartedAll startedAllPlugin = plugin as ITvServerPluginStartedAll;
+        if (startedAllPlugin != null)
         {
-          this.LogInfo("TV Service: Plugin: {0} started all", plugin.Name);
+          this.LogInfo("TV service: notify {0}", plugin.Name);
           try
           {
-            (plugin as ITvServerPluginStartedAll).StartedAll();
+            startedAllPlugin.StartedAll();
           }
           catch (Exception ex)
           {
-            this.LogError(ex, "TV Service: Plugin: {0} failed to startedAll", plugin.Name);
+            this.LogWarn(ex, "TV service: {0} failed to handle all-started notification", plugin.Name);
+          }
+        }
+      }
+    }
+
+    private void UpdatePlugins()
+    {
+      this.LogInfo("TV service: update plugins");
+      foreach (ITvServerPlugin plugin in _plugins.Plugins)
+      {
+        bool shouldBeEnabled = SettingsManagement.GetValue(string.Format("pluginEnabled{0}", plugin.Name), false);
+        if (shouldBeEnabled && !_pluginsStarted.Contains(plugin))
+        {
+          this.LogInfo("TV service: {0} is enabled, starting...", plugin.Name);
+          try
+          {
+            plugin.Start(ServiceManager.Instance.InternalControllerService);
+            ITvServerPluginCommunication communicatorPlugin = plugin as ITvServerPluginCommunication;
+            if (communicatorPlugin != null)
+            {
+              this.LogInfo("TV service:   enabling communication...");
+              ServiceManager.Instance.AddService(communicatorPlugin.GetServiceInterfaceForContractType, communicatorPlugin.GetServiceInstance);
+            }
+            _pluginsStarted.Add(plugin);
+          }
+          catch (Exception ex)
+          {
+            this.LogError(ex, "TV service: {0} failed to start", plugin.Name);
+          }
+        }
+        else if (!shouldBeEnabled && _pluginsStarted.Contains(plugin))
+        {
+          this.LogInfo("TV service: {0} is disabled, stopping...", plugin.Name);
+          try
+          {
+            plugin.Stop();
+            ITvServerPluginCommunication communicatorPlugin = plugin as ITvServerPluginCommunication;
+            if (communicatorPlugin != null)
+            {
+              this.LogInfo("TV service:   disabling communication...");
+              ServiceManager.Instance.RemoveService(communicatorPlugin.GetServiceInterfaceForContractType, communicatorPlugin.GetServiceInstance);
+            }
+            _pluginsStarted.Remove(plugin);
+          }
+          catch (Exception ex)
+          {
+            this.LogError(ex, "TV service: {0} failed to stop", plugin.Name);
+          }
+        }
+      }
+
+      this.LogInfo("TV service: notify all plugins started");
+      foreach (ITvServerPlugin plugin in _pluginsStarted)
+      {
+        ITvServerPluginStartedAll startedAllPlugin = plugin as ITvServerPluginStartedAll;
+        if (startedAllPlugin != null)
+        {
+          this.LogInfo("TV service: notify {0}", plugin.Name);
+          try
+          {
+            startedAllPlugin.StartedAll();
+          }
+          catch (Exception ex)
+          {
+            this.LogWarn(ex, "TV service: {0} failed to handle all-started notification", plugin.Name);
           }
         }
       }
@@ -454,32 +516,27 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     private void StopPlugins()
     {
-      this.LogInfo("TV Service: Stop plugins");
-      if (_pluginsStarted != null)
+      this.LogInfo("TV service: stop plugins");
+      foreach (ITvServerPlugin plugin in _pluginsStarted)
       {
-        foreach (ITvServerPlugin plugin in _pluginsStarted)
+        try
         {
-          try
-          {
-            plugin.Stop();
-          }
-          catch (Exception ex)
-          {
-            this.LogError(ex, "TV Service: plugin: {0} failed to stop", plugin.Name);
-          }
+          plugin.Stop();
         }
-        _pluginsStarted = new List<ITvServerPlugin>();
+        catch (Exception ex)
+        {
+          this.LogError(ex, "TV service: {0} failed to stop", plugin.Name);
+        }
       }
-      this.LogInfo("TV Service: Plugins stopped");
     }
 
-
+    #endregion
 
     private void DoStop()
     {
       //if (!Started)
       //  return;
-      this.LogDebug("TV Service: stopping");
+      this.LogDebug("TV service: stopping");
 
       if (InitializedEvent != null)
       {
@@ -493,21 +550,21 @@ namespace Mediaportal.TV.Server.TVLibrary
       StopPlugins();
       if (_powerEventThreadId != 0)
       {
-        this.LogDebug("TV Service: OnStop asking PowerEventThread to exit");
+        this.LogDebug("TV service: DoStop asking PowerEventThread to exit");
         PostThreadMessage(_powerEventThreadId, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
         _powerEventThread.Join();
       }
       _powerEventThreadId = 0;
       _powerEventThread = null;
       _started = false;
-      this.LogDebug("TV Service: stopped");
+      this.LogDebug("TV service: stopped");
     }
 
     private void ApplyProcessPriority()
     {
       try
       {
-        int processPriority = SettingsManagement.GetValue("processPriority", 3);
+        int processPriority = SettingsManagement.GetValue("processPriority", (int)ProcessPriorityClass.Normal);
 
         switch (processPriority)
         {
@@ -574,7 +631,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         catch (Exception ex)
         {
-          this.LogError("OnStart: exception applying process priority: {0}", ex.StackTrace);
+          this.LogError(ex, "TV service: failed to apply process priority");
         }
       }
 
@@ -607,13 +664,13 @@ namespace Mediaportal.TV.Server.TVLibrary
       {
         if (!Started)
         {
-          this.LogInfo("TV service: Starting");
+          this.LogInfo("TV service: starting");
 
           Thread.CurrentThread.Name = "TVService";
 
           FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(_applicationPath);
 
-          this.LogDebug("TVService v" + versionInfo.FileVersion + " is starting up on " +
+          this.LogDebug("TV service v" + versionInfo.FileVersion + " is starting up on " +
                         OSInfo.OSInfo.GetOSDisplayVersion());
 
           //Check for unsupported operating systems
@@ -621,7 +678,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 
           _powerEventThread = new Thread(PowerEventThread) { Name = "PowerEventThread", IsBackground = true };
           _powerEventThread.Start();
-          ServiceManager.Instance.InternalControllerService.Init();
+          ServiceManager.Instance.InternalControllerService.Init(UpdatePlugins);
           StartPlugins();
 
           _started = true;
@@ -629,7 +686,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           {
             InitializedEvent.Set();
           }
-          this.LogInfo("TV service: Started");
+          this.LogInfo("TV service: started");
           _tvServiceThreadEvt.WaitOne();
           DoStop();
         }
@@ -637,7 +694,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       catch (Exception ex)
       {
         //wait for thread to exit. eg. when stopping tvservice       
-        this.LogError(ex, "TvService OnStart failed");
+        this.LogError(ex, "TvService DoStart failed");
         //_started = true; // otherwise the onstop code will not complete.
         DoStop();
         throw;

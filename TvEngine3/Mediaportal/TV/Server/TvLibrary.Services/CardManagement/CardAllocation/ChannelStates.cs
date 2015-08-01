@@ -24,14 +24,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 {
@@ -150,7 +150,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
               continue;
             }
 
-            ICollection<IChannel> tuningDetails = CardAllocationCache.GetTuningDetailsByChannelId(channel);
+            ICollection<IChannel> tuningDetails = CardAllocationCache.GetTuningDetailsByChannelId(channel.IdChannel);
             bool isValidTuningDetails = IsValidTuningDetails(tuningDetails);
             if (!isValidTuningDetails)
             {
@@ -163,7 +163,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
               foreach (ITvCardHandler cardHandler in cardHandlers)
               {
                 //check if card is enabled
-                if (!cardHandler.DataBaseCard.Enabled)
+                if (!cardHandler.Card.IsEnabled)
                 {
                   //not enabled, so skip the card
                   UpdateChannelStateUsers(allUsers, ChannelState.nottunable, channel.IdChannel);
@@ -178,14 +178,14 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
                 }
 
                 //check if channel is mapped to this card and that the mapping is not for "Epg Only"
-                bool isChannelMappedToCard = CardAllocationCache.IsChannelMappedToCard(channel.IdChannel, cardHandler.DataBaseCard.IdCard);
+                bool isChannelMappedToCard = CardAllocationCache.IsChannelMappedToCard(channel.IdChannel, cardHandler.Card.TunerId);
                 if (!isChannelMappedToCard)
                 {
                   UpdateChannelStateUsers(allUsers, ChannelState.nottunable, channel.IdChannel);
                   continue;
                 }
 
-                if (!tuningDetail.FreeToAir && !cardHandler.DataBaseCard.UseConditionalAccess)
+                if (tuningDetail.IsEncrypted && !cardHandler.Card.IsConditionalAccessSupported)
                 {
                   UpdateChannelStateUsers(allUsers, ChannelState.nottunable, channel.IdChannel);
                   continue;
@@ -193,7 +193,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 
                 //ok card could be used to tune to this channel
                 //now we check if its free...                              
-                CheckTransponderAllUsers(channel, allUsers, cardHandler, tuningDetail);
+                CheckTransponderAllUsers(channel.IdChannel, allUsers, cardHandler, tuningDetail);
               } //while card end
             } //foreach tuningdetail end              
 
@@ -294,7 +294,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
       }
     }
 
-    private void CheckTransponderAllUsers(Channel ch, IEnumerable<IUser> allUsers, ITvCardHandler tvcard,
+    private void CheckTransponderAllUsers(int channelId, IEnumerable<IUser> allUsers, ITvCardHandler tvcard,
                                                  IChannel tuningDetail)
     {
       Parallel.ForEach(allUsers, user =>
@@ -304,11 +304,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
                     bool checkTransponder = CheckTransponder(user, tvcard, tuningDetail);
                     if (checkTransponder)
                     {
-                      UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);
+                      UpdateChannelStateUser(user, ChannelState.tunable, channelId);
                     }
                     else
                     {
-                      UpdateChannelStateUser(user, ChannelState.nottunable, ch.IdChannel);
+                      UpdateChannelStateUser(user, ChannelState.nottunable, channelId);
                     }
                   }
                 }

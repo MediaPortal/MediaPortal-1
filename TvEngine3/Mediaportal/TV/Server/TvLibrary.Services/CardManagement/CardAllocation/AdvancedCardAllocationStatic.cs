@@ -17,7 +17,7 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 #endregion
 
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
@@ -40,7 +40,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
     protected override int NumberOfOtherUsersOnCurrentCard(ITvCardHandler card, IUser user)
     {
       return 0;
-    }   
+    }
 
     #endregion
   }

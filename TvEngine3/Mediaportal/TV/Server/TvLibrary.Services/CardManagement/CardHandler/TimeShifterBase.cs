@@ -1,36 +1,35 @@
 ﻿using System;
 using System.Threading;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using ISubChannel = Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.ISubChannel;
 
 namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public abstract class TimeShifterBase
   {
     protected ITvCardHandler _cardHandler;
-    protected bool _timeshiftingEpgGrabberEnabled;
     private TimeShiftingEpgGrabber _timeShiftingEpgGrabber = null;
-    private readonly int _waitForTimeshifting = 15;
+    private int _waitForVideoOrAudio = 15;
     protected readonly ManualResetEvent _eventAudio = new ManualResetEvent(false); // gets signaled when audio PID is seen
     protected readonly ManualResetEvent _eventVideo = new ManualResetEvent(false); // gets signaled when video PID is seen
     protected bool _cancelled;
     protected readonly ManualResetEvent _eventTimeshift = new ManualResetEvent(true);
-    protected ITvSubChannel _subchannel; // the active sub channel to record        
+    protected ISubChannel _subchannel; // the active sub channel to record        
 
-    protected TimeShifterBase()
+    protected TimeShifterBase(ITvCardHandler cardHandler)
     {
+      _cardHandler = cardHandler;
       _eventAudio.Reset();
       _eventVideo.Reset();
 
-      
-      _waitForTimeshifting = SettingsManagement.GetValue("timeshiftWaitForTimeshifting", 15);
+      ReloadConfiguration();
 
       if (_cardHandler != null)
       {
@@ -38,8 +37,14 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         {
           _cardHandler.Tuner.OnAfterCancelTuneEvent += new OnAfterCancelTuneDelegate(Tuner_OnAfterCancelTuneEvent);
         }
+
         _timeShiftingEpgGrabber = new TimeShiftingEpgGrabber(_cardHandler.Card);
       }
+    }
+
+    public virtual void ReloadConfiguration()
+    {
+      _waitForVideoOrAudio = SettingsManagement.GetValue("timeshiftWaitForTimeshifting", 15);
     }
 
     protected abstract void AudioVideoEventHandler(PidType pidType);
@@ -48,7 +53,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false)
+        if (_cardHandler.Card.IsEnabled == false)
         {
           return;
         }
@@ -56,7 +61,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         this.LogDebug("TimeShifterBase: tuning interrupted.");
         _cancelled = true;
 
-        ITvSubChannel subchannel = GetSubChannel(subchannelId);
+        ISubChannel subchannel = GetSubChannel(subchannelId);
         this.LogDebug("card {2}: Cancel Timeshifting sub:{1}", subchannel, _cardHandler.Card.Name);
         subchannel.AudioVideoEvent -= AudioVideoEventHandler;
         _eventAudio.Set();
@@ -78,10 +83,10 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       return _cancelled;
     }
 
-    protected ITvSubChannel GetSubChannel(string userName, int idChannel)
+    protected ISubChannel GetSubChannel(string userName, int idChannel)
     {
-      ITvSubChannel subchannel = null;
-      if (_cardHandler.DataBaseCard.Enabled)
+      ISubChannel subchannel = null;
+      if (_cardHandler.Card.IsEnabled)
       {
            
         //_cardHandler.UserManagement.RefreshUser(ref user, out userExists);
@@ -101,7 +106,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       //lets check if stream is initially scrambled, if it is and the card has no CA, then we are unable to decrypt stream.
       if (_cardHandler.IsScrambled(user.Name))
       {
-        if (!_cardHandler.IsConditionalAccessSupported)
+        if (!_cardHandler.Card.IsConditionalAccessSupported)
         {
           this.LogDebug("card: WaitForTimeShiftFile - return scrambled, since the device does not support conditional access");
           isScrambled = true;
@@ -120,7 +125,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       scrambled = false;
 
-      if (!_cardHandler.DataBaseCard.Enabled)
+      if (!_cardHandler.Card.IsEnabled)
       {
         return false;
       }
@@ -131,7 +136,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         return false;
       }
 
-      int waitForEvent = _waitForTimeshifting * 1000; // in ms           
+      int waitForEvent = _waitForVideoOrAudio * 1000; // in ms           
 
       DateTime timeStart = DateTime.Now;
 
@@ -139,7 +144,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         return false;
 
       IChannel channel = _subchannel.CurrentChannel;
-      bool isRadio = (channel.MediaType == MediaTypeEnum.Radio);
+      bool isRadio = (channel.MediaType == MediaType.Radio);
 
       if (isRadio)
       {
@@ -216,30 +221,19 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       return false;
     }
 
-    protected ITvSubChannel GetSubChannel(int subchannel)
+    protected ISubChannel GetSubChannel(int subchannel)
     {
       return _cardHandler.Card.GetSubChannel(subchannel);
     }
 
-    protected void StartTimeShiftingEPGgrabber(IUser user)
+    protected void StartTimeShiftingEpgGrabber(IUser user)
     {
-      if (_timeshiftingEpgGrabberEnabled)
-      {
-        Channel channel = ChannelManagement.GetChannel(_cardHandler.UserManagement.GetRecentChannelId(user.Name));
-        if (channel.GrabEpg && _timeShiftingEpgGrabber.StartGrab())
-        {
-          IEpgGrabber epgGrabber = _cardHandler.Card.EpgGrabberInterface;
-          if (epgGrabber != null)
-          {
-            epgGrabber.GrabEpg(_cardHandler.Card.CurrentTuningDetail, _timeShiftingEpgGrabber);
-          }
-        }
-        else
-        {
-          this.LogInfo("TimeshiftingEPG: channel {0} is not configured for grabbing epg",
-                   channel.DisplayName);
-        }
-      }
+      _timeShiftingEpgGrabber.StartGrab(_cardHandler.Card.CurrentTuningDetail);
+    }
+
+    protected void StopTimeShiftingEpgGrabber()
+    {
+      _timeShiftingEpgGrabber.StopGrab();
     }
 
     protected TvResult GetFailedTvResult(bool isScrambled)
@@ -260,12 +254,12 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       return result;
     }
 
-    protected void AttachAudioVideoEventHandler(ITvSubChannel subchannel)
+    protected void AttachAudioVideoEventHandler(ISubChannel subchannel)
     {
       subchannel.AudioVideoEvent += AudioVideoEventHandler;
     }
 
-    protected void DetachAudioVideoEventHandler(ITvSubChannel subchannel)
+    protected void DetachAudioVideoEventHandler(ISubChannel subchannel)
     {
       subchannel.AudioVideoEvent -= AudioVideoEventHandler;
     }

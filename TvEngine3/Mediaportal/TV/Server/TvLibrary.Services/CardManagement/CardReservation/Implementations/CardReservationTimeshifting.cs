@@ -18,7 +18,7 @@
 
 #endregion
 
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
@@ -26,19 +26,13 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
 {
   public class CardReservationTimeshifting : CardReservationBase
   {
-    #region Overrides of CardReservationBase    
+    #region Overrides of CardReservationBase
 
     protected override bool OnStartTune(ITvCardHandler tvcard, IUser user, int idChannel)
     {
       return true;
     }
 
-    protected override bool IsTunedToTransponder(ITvCardHandler cardHandler, IChannel tuningDetail)
-    {
-      return cardHandler.Tuner.IsTunedToTransponder(tuningDetail);
-    }
-
-
     #endregion
   }
- }
+}

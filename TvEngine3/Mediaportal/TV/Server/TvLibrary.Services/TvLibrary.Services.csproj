@@ -55,10 +55,14 @@
     <Reference Include="System.Management" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Data" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="CardManagement\CardAllocation\AdvancedCardAllocation.cs" />
     <Compile Include="CardManagement\CardAllocation\AdvancedCardAllocationStatic.cs" />
     <Compile Include="CardManagement\CardAllocation\AdvancedCardAllocationTicket.cs" />
@@ -110,7 +114,7 @@
     <Compile Include="Scheduler\RecordingDetail.cs" />
     <Compile Include="Scheduler\Scheduler.cs" />
     <Compile Include="Services\CanceledScheduleService.cs" />
-    <Compile Include="Services\CardService.cs" />
+    <Compile Include="Services\TunerService.cs" />
     <Compile Include="Services\ChannelGroupService.cs" />
     <Compile Include="Services\ChannelService.cs" />
     <Compile Include="Services\ConflictService.cs" />
@@ -123,7 +127,6 @@
     <Compile Include="Services\ScheduleService.cs" />
     <Compile Include="Services\ServiceManager.cs" />
     <Compile Include="Services\SettingsService.cs" />
-    <Compile Include="Services\ThumbnailService.cs" />
     <Compile Include="Services\TvControllerService.cs" />
     <Compile Include="TsCopier.cs" />
     <Compile Include="TvCardContext.cs" />
@@ -136,9 +139,17 @@
       <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
       <Name>Common.Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common.Types\Common.Types.csproj">
+      <Project>{F9F4E5C1-9A6A-42F8-8452-4BDAFEA0E798}</Project>
+      <Name>Common.Types</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Plugins\PluginBase\PluginBase.csproj">
       <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>
       <Name>PluginBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Thumbnailer\Thumbnailer.csproj">
+      <Project>{3AA18B4C-A3B5-49A9-A9B6-623A4722E21C}</Project>
+      <Name>Thumbnailer</Name>
     </ProjectReference>
     <ProjectReference Include="..\TvControl\TvControl.csproj">
       <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
@@ -163,10 +174,6 @@
     <ProjectReference Include="..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TvLibrary.Utils\TvLibrary.Utils.csproj">
-      <Project>{954F9929-7FDA-4F59-88E3-FD2B9A7B6E6E}</Project>
-      <Name>TvLibrary.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\TVLibrary\TVLibrary.csproj">
       <Project>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</Project>

@@ -18,7 +18,8 @@
 
 #endregion
 
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc.Enum;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 
 namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
@@ -42,18 +43,20 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// returns the current diseqc motor position
     /// </summary>
     /// <param name="satellitePosition">The satellite position.</param>
+    /// <param name="satelliteLongitude">The satellite's longitude.</param>
     /// <param name="stepsAzimuth">The steps azimuth.</param>
     /// <param name="stepsElevation">The steps elevation.</param>
-    public void GetPosition(out int satellitePosition, out int stepsAzimuth, out int stepsElevation)
+    public void GetPosition(out int satellitePosition, out double satelliteLongitude, out int stepsAzimuth, out int stepsElevation)
     {
       satellitePosition = -1;
+      satelliteLongitude = 0;
       stepsAzimuth = 0;
       stepsElevation = 0;
 
       IDiseqcController controller = _cardHandler.Card.DiseqcController;
       if (controller == null)
         return;
-      controller.GetPosition(out satellitePosition, out stepsAzimuth, out stepsElevation);
+      controller.GetPosition(out satellitePosition, out satelliteLongitude, out stepsAzimuth, out stepsElevation);
     }
 
     /// <summary>
@@ -145,7 +148,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       IDiseqcController controller = _cardHandler.Card.DiseqcController;
       if (controller == null)
         return;
-      controller.GotoReferencePosition();
+      controller.GoToReferencePosition();
     }
 
     /// <summary>
@@ -157,7 +160,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       IDiseqcController controller = _cardHandler.Card.DiseqcController;
       if (controller == null)
         return;
-      controller.GotoPosition(position);
+      controller.GoToStoredPosition(position);
     }
 
     #endregion

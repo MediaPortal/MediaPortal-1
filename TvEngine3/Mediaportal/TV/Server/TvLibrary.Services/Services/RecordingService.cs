@@ -1,25 +1,21 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 
 namespace Mediaportal.TV.Server.TVLibrary.Services
-{ 
+{
   public class RecordingService : IRecordingService
-  {    
-
+  {
     public Recording GetRecording(int idRecording)
     {
-      Recording recording = TVDatabase.TVBusinessLayer.RecordingManagement.GetRecording(idRecording);
-      return recording;
+      return RecordingManagement.GetRecording(idRecording);
     }
 
-    public IList<Recording> ListAllRecordingsByMediaType(MediaTypeEnum mediaType)
+    public IList<Recording> ListAllRecordingsByMediaType(MediaType mediaType)
     {
-      IEnumerable<Recording> recordings = RecordingManagement.ListAllRecordingsByMediaType(mediaType);
-      return recordings.ToList();
+      return RecordingManagement.ListAllRecordingsByMediaType(mediaType);
     }
 
     public Recording SaveRecording(Recording recording)
@@ -29,26 +25,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 
     public Recording GetRecordingByFileName(string fileName)
     {
-      var recordingByFileName = RecordingManagement.GetRecordingByFileName(fileName);
-      return recordingByFileName;
+      return RecordingManagement.GetRecordingByFileName(fileName);
     }
 
     public Recording GetActiveRecording(int scheduleId)
     {
-      var activeRecording = RecordingManagement.GetActiveRecording(scheduleId);
-      return activeRecording;
+      return RecordingManagement.GetActiveRecording(scheduleId);
     }
 
     public Recording GetActiveRecordingByTitleAndChannel(string title, int idChannel)
     {
-      var activeRecordingByTitleAndChannel = RecordingManagement.GetActiveRecordingByTitleAndChannel(title, idChannel);
-      return activeRecordingByTitleAndChannel;
+      return RecordingManagement.GetActiveRecordingByTitleAndChannel(title, idChannel);
     }
 
-    public IList<Recording> ListAllActiveRecordingsByMediaType(MediaTypeEnum mediaType)
+    public IList<Recording> ListAllActiveRecordingsByMediaType(MediaType mediaType)
     {
-      var listAllActiveRecordingsByMediaType = RecordingManagement.ListAllActiveRecordingsByMediaType(mediaType);
-      return listAllActiveRecordingsByMediaType;
+      return RecordingManagement.ListAllActiveRecordingsByMediaType(mediaType);
     }
 
     public void DeleteRecording(int idRecording)

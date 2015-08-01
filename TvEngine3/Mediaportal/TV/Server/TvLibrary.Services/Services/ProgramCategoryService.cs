@@ -7,22 +7,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 {
   public class ProgramCategoryService : IProgramCategoryService
   {
-
     public IList<ProgramCategory> ListAllProgramCategories()
     {
-      var listAllProgramCategories = ProgramCategoryManagement.ListAllProgramCategories();
-      return listAllProgramCategories;
-    }
-
-    public IList<TvGuideCategory> ListAllTvGuideCategories()
-    {
-      var listAllProgramCategories = ProgramCategoryManagement.ListAllTvGuideCategories();
-      return listAllProgramCategories;
-    }
-
-    public TvGuideCategory SaveTvGuideCategory(TvGuideCategory tvGuideCategory)
-    {
-      return ProgramCategoryManagement.AddTvGuideCategory(tvGuideCategory);      
+      return ProgramCategoryManagement.ListAllProgramCategories();
     }
 
     public ProgramCategory SaveProgramCategory(ProgramCategory programCategory)
@@ -30,5 +17,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       return ProgramCategoryManagement.SaveProgramCategory(programCategory);
     }
 
+    public IList<ProgramCategory> SaveProgramCategories(IEnumerable<ProgramCategory> programCategories)
+    {
+      return ProgramCategoryManagement.SaveProgramCategories(programCategories);
+    }
+
+    public IList<GuideCategory> ListAllGuideCategories()
+    {
+      return ProgramCategoryManagement.ListAllGuideCategories();
+    }
+
+    public GuideCategory SaveGuideCategory(GuideCategory guideCategory)
+    {
+      return ProgramCategoryManagement.SaveGuideCategory(guideCategory);      
+    }
   }
 }

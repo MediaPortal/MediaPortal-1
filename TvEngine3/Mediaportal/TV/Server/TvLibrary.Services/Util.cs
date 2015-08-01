@@ -464,34 +464,28 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     public static string MakeFileName(string strText)
     {
-      if (strText == null) return String.Empty;
-      if (strText.Length == 0) return String.Empty;
-      string strFName = strText.Replace(':', '_');
-      strFName = strFName.Replace('/', '_');
-      strFName = strFName.Replace('\\', '_');
-      strFName = strFName.Replace('*', '_');
-      strFName = strFName.Replace('?', '_');
-      strFName = strFName.Replace('\"', '_');
-      strFName = strFName.Replace('<', '_');
-      ;
-      strFName = strFName.Replace('>', '_');
-      strFName = strFName.Replace('|', '_');
-      return strFName;
+      if (string.IsNullOrEmpty(strText))
+      {
+        return string.Empty;
+      }
+      foreach (char c in Path.GetInvalidFileNameChars())
+      {
+        strText = strText.Replace(c, '_');
+      }
+      return strText;
     }
 
     public static string MakeDirectoryPath(string strText)
     {
-      if (strText == null) return String.Empty;
-      if (strText.Length == 0) return String.Empty;
-      string strFName = strText.Replace('*', '_');
-      strFName = strFName.Replace(':', '_');
-      strFName = strFName.Replace('?', '_');
-      strFName = strFName.Replace('\"', '_');
-      strFName = strFName.Replace('<', '_');
-      ;
-      strFName = strFName.Replace('>', '_');
-      strFName = strFName.Replace('|', '_');
-      return strFName;
+      if (string.IsNullOrEmpty(strText))
+      {
+        return string.Empty;
+      }
+      foreach (char c in Path.GetInvalidPathChars())
+      {
+        strText = strText.Replace(c, '_');
+      }
+      return strText;
     }
 
     public static bool FileDelete(string strFile)
@@ -588,22 +582,6 @@ namespace Mediaportal.TV.Server.TVLibrary
       U <<= 8;
 
       YUV = Y + U + V;
-    }
-
-    public static string FilterFileName(string strName)
-    {
-      if (strName == null) return String.Empty;
-      if (strName.Length == 0) return String.Empty;
-      strName = strName.Replace(@"\", "_");
-      strName = strName.Replace("/", "_");
-      strName = strName.Replace(":", "_");
-      strName = strName.Replace("*", "_");
-      strName = strName.Replace("?", "_");
-      strName = strName.Replace("\"", "_");
-      strName = strName.Replace("<", "_");
-      strName = strName.Replace(">", "_");
-      strName = strName.Replace("|", "_");
-      return strName;
     }
 
     public static string RemoveParenthesis(string name)

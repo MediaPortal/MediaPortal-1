@@ -9,11 +9,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 {
   public class ScheduleService : IScheduleService
   {
-
     public IList<Schedule> ListAllSchedules()
     {
-      var listAllSchedules = ScheduleManagement.ListAllSchedules().ToList();
-      return listAllSchedules;
+      return ScheduleManagement.ListAllSchedules().ToList();
     }
 
     public Schedule SaveSchedule(Schedule schedule)
@@ -23,14 +21,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 
     public Schedule GetSchedule(int idSchedule)
     {
-      var schedule = ScheduleManagement.GetSchedule(idSchedule);
-      return schedule;
+      return ScheduleManagement.GetSchedule(idSchedule);
     }
 
     public bool IsScheduleRecording(int idSchedule)
     {
-      var isScheduleRecording = ScheduleManagement.IsScheduleRecording(idSchedule);
-      return isScheduleRecording;
+      return ScheduleManagement.IsScheduleRecording(idSchedule);
     }
 
     /// <summary>
@@ -43,8 +39,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// <returns>schedule instance or null</returns>
     public Schedule RetrieveSeriesByStartEndTimes(int idChannel, string programName, DateTime startTime, DateTime endTime)
     {
-      var retrieveSeries = ScheduleManagement.RetrieveSeries(idChannel, programName, startTime, endTime);
-      return retrieveSeries;
+      return ScheduleManagement.RetrieveSeries(idChannel, programName, startTime, endTime);
     }
 
     /// <summary>
@@ -55,8 +50,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// <returns>schedule instance or null</returns>
     public Schedule RetrieveSeriesByProgramName(int idChannel, string programName)
     {
-      var retrieveSeries = ScheduleManagement.RetrieveSeries(idChannel, programName);
-      return retrieveSeries;
+      return ScheduleManagement.RetrieveSeries(idChannel, programName);
     }
 
     /// <summary>
@@ -68,8 +62,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// <returns>schedule instance or null</returns>
     public Schedule RetrieveSeries(int idChannel, DateTime startTime, DateTime endTime)
     {
-      var retrieveSeries = ScheduleManagement.RetrieveSeries(idChannel, startTime, endTime);
-      return retrieveSeries;
+      return ScheduleManagement.RetrieveSeries(idChannel, startTime, endTime);
     }
 
     public void DeleteSchedule(int idSchedule)
@@ -79,20 +72,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 
     public Schedule RetrieveSpawnedSchedule(int parentScheduleId, DateTime startTime)
     {
-      var retrieveSpawnedSchedule = ScheduleManagement.RetrieveSpawnedSchedule(parentScheduleId, startTime);
-      return retrieveSpawnedSchedule;
+      return ScheduleManagement.RetrieveSpawnedSchedule(parentScheduleId, startTime);
     }
 
     public bool IsScheduleRecordingProgram(int idSchedule, int idProgram)
     {
-      var isScheduleRecordingProgram = ScheduleManagement.IsScheduleRecording(idSchedule, idProgram);
-      return isScheduleRecordingProgram;
+      return ScheduleManagement.IsScheduleRecording(idSchedule, idProgram);
     }
 
     public Schedule GetScheduleWithNoEPG(int idChannel)
     {
-      var scheduleWithNoEpg = ScheduleManagement.GetScheduleWithNoEPG(idChannel);
-      return scheduleWithNoEpg;
+      return ScheduleManagement.GetScheduleWithNoEPG(idChannel);
     }
 
     public void UnCancelSerie(Schedule schedule, DateTime startTime, int idChannel)
@@ -100,16 +90,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       ScheduleManagement.UnCancelSerie(schedule, startTime, idChannel);
     }
 
-    public IList<Schedule> GetConflictingSchedules(Schedule schedule, out List<Schedule> notViewabledSchedules)
+    public IList<Schedule> GetConflictingSchedules(Schedule schedule, out List<Schedule> notViewableSchedules)
     {
-      var conflictingSchedules = ScheduleManagement.GetConflictingSchedules(schedule, out notViewabledSchedules);
-      return conflictingSchedules;
+      return ScheduleManagement.GetConflictingSchedules(schedule, out notViewableSchedules);
     }
 
     public IList<Schedule> GetRecordingTimes(Schedule schedule, int days)
     {
-      var recordingTimes = ScheduleManagement.GetRecordingTimes(schedule, days);
-      return recordingTimes;
+      return ScheduleManagement.GetRecordingTimes(schedule, days);
     }
 
     public IList<ScheduleRulesTemplate> ListAllScheduleRules()

@@ -22,19 +22,20 @@ using System;
 using System.IO;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.ChannelLinkage;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using IServiceSubChannel = Mediaportal.TV.Server.TVService.Interfaces.Services.ISubChannel;
+using ITvLibrarySubChannel = Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.ISubChannel;
 
 namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class TimeShifter : TimeShifterBase, ITimeShifter
   {
     private readonly ChannelLinkageGrabber _linkageGrabber;
-    private readonly bool _linkageScannerEnabled;
     private DateTime _timeAudioEvent;
     private DateTime _timeVideoEvent;
     private bool _tuneInProgress;
@@ -44,6 +45,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// </summary>
     /// <param name="cardHandler">The card handler.</param>
     public TimeShifter(ITvCardHandler cardHandler)
+      : base(cardHandler)
     {
       string timeshiftingFolder = cardHandler.DataBaseCard.TimeshiftingFolder;
 
@@ -66,12 +68,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
       }
 
-      _cardHandler = cardHandler;
-
-      _linkageScannerEnabled = SettingsManagement.GetValue("linkageScannerEnabled", false);
-
       _linkageGrabber = new ChannelLinkageGrabber(cardHandler.Card);
-      _timeshiftingEpgGrabberEnabled = SettingsManagement.GetValue("timeshiftingEpgGrabberEnabled", false);
 
       _timeAudioEvent = DateTime.MinValue;
       _timeVideoEvent = DateTime.MinValue;
@@ -87,12 +84,12 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false)
+        if (_cardHandler.Card.IsEnabled == false)
         {
           return "";
         }
                 
-        ITvSubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+        ITvLibrarySubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
         if (subchannel == null)
           return null;
         return subchannel.TimeShiftFileName + ".tsbuffer";
@@ -114,12 +111,12 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false)
+        if (_cardHandler.Card.IsEnabled == false)
         {
           return false;
         }
                 
-        ITvSubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
+        ITvLibrarySubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
         if (subchannel == null)
           return false;
         subchannel.TimeShiftGetCurrentFilePosition(ref position, ref bufferId);
@@ -157,9 +154,9 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
       try
       {
-        foreach (ISubChannel subch in user.SubChannels.Values)
+        foreach (IServiceSubChannel subch in user.SubChannels.Values)
         {
-          ITvSubChannel subchannel = GetSubChannel(user.Name, subch.IdChannel);
+          ITvLibrarySubChannel subchannel = GetSubChannel(user.Name, subch.IdChannel);
           if (subchannel != null && subchannel.IsTimeShifting)
             return true;
         }
@@ -181,7 +178,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       DateTime timeShiftStarted = DateTime.MinValue;
       try
       {
-        ITvSubChannel subchannel = GetSubChannel(userName, idChannel);
+        ITvLibrarySubChannel subchannel = GetSubChannel(userName, idChannel);
         if (subchannel != null)
         {
           timeShiftStarted = subchannel.StartOfTimeShift;
@@ -210,7 +207,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
 #if DEBUG
 
-        if (File.Exists(@"\failts_" + _cardHandler.DataBaseCard.IdCard))
+        if (File.Exists(@"\failts_" + _cardHandler.Card.TunerId))
         {
           throw new Exception("failed ts on purpose");
         }
@@ -221,7 +218,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           return result;
         }
         _eventTimeshift.Reset();
-        if (_cardHandler.DataBaseCard.Enabled)
+        if (_cardHandler.Card.IsEnabled)
         {
           // Let's verify if hard disk drive has enough free space before we start time shifting. The function automatically handles both local and UNC paths
           if (!IsTimeShifting(user) && !HasFreeDiskSpace(fileName))
@@ -230,15 +227,15 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           }
           else
           {
-            this.LogDebug("card: StartTimeShifting {0} {1} ", _cardHandler.DataBaseCard.IdCard, fileName);            
+            this.LogDebug("card: StartTimeShifting {0} {1} ", _cardHandler.Card.TunerId, fileName);            
             
             _cardHandler.UserManagement.RefreshUser(ref user);
-            ITvSubChannel subchannel = GetSubChannel(subChannelId);
+            ITvLibrarySubChannel subchannel = GetSubChannel(subChannelId);
 
             if (subchannel != null)
             {
               _subchannel = subchannel;
-              this.LogDebug("card: CAM enabled : {0}", _cardHandler.IsConditionalAccessSupported);
+              this.LogDebug("card: CAM enabled : {0}", _cardHandler.Card.IsConditionalAccessSupported);
               AttachAudioVideoEventHandler(subchannel);
               if (subchannel.IsTimeShifting)
               {
@@ -295,15 +292,19 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       bool stop = false;
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled)
+        if (_cardHandler.Card.IsEnabled)
         {
-          ITvSubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
+          ITvLibrarySubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
           DetachAudioVideoEventHandler(subchannel);
           this.LogDebug("card {2}: StopTimeShifting user:{0} sub:{1}", user.Name, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel),
                     _cardHandler.Card.Name);          
-          ResetLinkageScanner();          
+          ResetLinkageScanner();
           _cardHandler.UserManagement.RemoveUser(user, idChannel);
-          stop = true;          
+          if (_cardHandler.IsIdle)
+          {
+            StopTimeShiftingEpgGrabber();
+          }
+          stop = true;
         }
       }
       catch (Exception ex)
@@ -325,7 +326,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       totalTSpackets = 0;
       discontinuityCounter = 0;
 
-      ITvSubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
+      ITvLibrarySubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
       if (subchannel != null)
       {
         subchannel.GetStreamQualityCounters(out totalTSpackets, out discontinuityCounter);
@@ -355,7 +356,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       string timeshiftingFolder = TVDatabase.TVBusinessLayer.Common.GetDefaultTimeshiftingFolder();
       cardHandler.DataBaseCard.TimeshiftingFolder = timeshiftingFolder;
-      TVDatabase.TVBusinessLayer.CardManagement.SaveCard(cardHandler.DataBaseCard);
+      TVDatabase.TVBusinessLayer.TunerManagement.SaveTuner(cardHandler.DataBaseCard);
       return timeshiftingFolder;
     }
 
@@ -409,7 +410,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         _cardHandler.UserManagement.OnZap(user, _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
         StartLinkageScanner();
-        StartTimeShiftingEPGgrabber(user);
+        StartTimeShiftingEpgGrabber(user);
         result = TvResult.Succeeded;
       }
       else
@@ -421,9 +422,10 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     private void StartLinkageScanner()
     {
-      if (_linkageScannerEnabled)
+      IChannelLinkageScanner scanner = _cardHandler.Card.ChannelLinkageScanningInterface;
+      if (scanner != null)
       {
-        _cardHandler.Card.StartLinkageScanner(_linkageGrabber);
+        scanner.Start(_linkageGrabber);
       }
     }
 
@@ -442,9 +444,10 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     private void ResetLinkageScanner()
     {
-      if (_linkageScannerEnabled)
+      IChannelLinkageScanner scanner = _cardHandler.Card.ChannelLinkageScanningInterface;
+      if (scanner != null)
       {
-        _cardHandler.Card.ResetLinkageScanner();
+        scanner.Reset();
       }
     }
   }

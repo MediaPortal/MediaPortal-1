@@ -22,7 +22,6 @@ using System;
 using System.Text.RegularExpressions;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
@@ -79,7 +78,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
 
       if (isSerie)
       {
-        DateTime now = DateTime.Now.AddMinutes(schedule.PreRecordInterval);
+        DateTime now = DateTime.Now.AddMinutes(schedule.PreRecordInterval ?? SettingsManagement.GetValue("preRecordInterval", 7));
         startTime = new DateTime(now.Year, now.Month, now.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, 0);
       }
       else
@@ -92,10 +91,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       //no program? then treat this as a manual recording
       if (program == null)
       {
-        program = ProgramFactory.CreateProgram(0, DateTime.Now, endTime, "manual", "", null,
-                                                   ProgramState.None,
-                                                   System.Data.SqlTypes.SqlDateTime.MinValue.Value, string.Empty, string.Empty,
-                                                   string.Empty, string.Empty, -1, string.Empty, 0);        
+        program = ProgramFactory.CreateEmptyProgram();
+        program.IdChannel = 0;
+        program.StartTime = DateTime.Now;
+        program.EndTime = endTime;
+        program.Title = "manual";
       }
       _program = new ProgramBLL(program);
     }
@@ -174,27 +174,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     /// Property which returns true when recording is busy
     /// and false when recording should be stopped
     /// </summary>
-    public bool IsRecording
+    public bool IsRecording(int defaultPostRecordInterval)
     {
-      get
+      bool isRecording = false;
+      try
       {
-        bool isRecording = false;
-
-        try
+        Schedule _sched = ScheduleManagement.GetSchedule(_schedule.Entity.IdSchedule); // Refresh();
+        if (_sched != null)
         {
-          Schedule _sched = ScheduleManagement.GetSchedule(_schedule.Entity.IdSchedule); // Refresh();
-          if (_sched != null)
-          {
-            isRecording = (DateTime.Now < EndTime.AddMinutes(_sched.PostRecordInterval));
-          }
+          isRecording = (DateTime.Now < EndTime.AddMinutes(_sched.PostRecordInterval ?? defaultPostRecordInterval));
         }
-        catch (Exception e)
-        {
-          this.LogError("RecordingDetail: exception occured {0}", e);
-        }
-
-        return isRecording;
       }
+      catch (Exception e)
+      {
+        this.LogError("RecordingDetail: exception occured {0}", e);
+      }
+      return isRecording;
     }
 
     /// <summary>
@@ -270,14 +265,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       {
         programCategory = Program.Entity.ProgramCategory.Category.Trim();  
       }
-      
+
       string[] TagValues = {
-                             _schedule.Entity.Channel.DisplayName.Trim(),
-                             Program.Entity.Title.Trim(),
-                             Program.Entity.EpisodeName.Trim(),
-                             Program.Entity.SeriesNum.Trim(),
-                             Program.Entity.EpisodeNum.Trim(),
-                             Program.Entity.EpisodePart.Trim(),
+                             _schedule.Entity.Channel.Name.Trim(),
+                             Program.Entity.Title,
+                             Program.Entity.EpisodeName ?? string.Empty,
+                             Program.Entity.SeasonNumber.HasValue ? Program.Entity.SeasonNumber.ToString() : string.Empty,
+                             Program.Entity.EpisodeNumber.HasValue ? Program.Entity.EpisodeNumber.ToString() : string.Empty,
+                             Program.Entity.EpisodePartNumber.HasValue ? Program.Entity.EpisodePartNumber.ToString() : string.Empty,
                              Program.Entity.StartTime.ToString("yyyy-MM-dd"),
                              Program.Entity.StartTime.ToShortTimeString(),
                              Program.Entity.EndTime.ToShortTimeString(),
@@ -331,7 +326,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       {
         DateTime dt = Program.Entity.StartTime;
         fileName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}",
-                                 _schedule.Entity.Channel.DisplayName, Program.Entity.Title,
+                                 _schedule.Entity.Channel.Name, Program.Entity.Title,
                                  dt.Year, dt.Month, dt.Day,
                                  dt.Hour,
                                  dt.Minute,

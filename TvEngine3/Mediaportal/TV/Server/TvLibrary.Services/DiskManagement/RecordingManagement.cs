@@ -21,8 +21,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
@@ -55,7 +55,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
     /// </remarks>
     private static void DeleteOldRecordings()
     {
-      IList<Recording> recordings = TVDatabase.TVBusinessLayer.RecordingManagement.ListAllRecordingsByMediaType(MediaTypeEnum.TV);
+      IList<Recording> recordings = TVDatabase.TVBusinessLayer.RecordingManagement.ListAllRecordingsByMediaType(MediaType.Television);
       foreach (Recording recording in recordings.Where(ShouldBeDeleted))
       {
         Log.Debug("Recorder: delete old recording:{0} date:{1}",
@@ -69,7 +69,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 
     private static bool ShouldBeDeleted(Recording recording)
     {
-      if (recording.KeepUntil != (int)KeepMethodType.TillDate)
+      if (recording.KeepUntil != (int)RecordingKeepMethod.UntilDate)
       {
         return false;
       }

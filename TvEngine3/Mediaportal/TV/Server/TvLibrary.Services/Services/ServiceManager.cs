@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Description;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Services
 {
@@ -14,6 +14,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     private bool _netAclRun = false;
     private readonly object _lock = new object();
     private readonly IDictionary<Type, ServiceHost> _serviceHosts = new Dictionary<Type, ServiceHost>();
+    private readonly IDictionary<Type, object> _implementations = new Dictionary<Type, object>();
 
     ~ServiceManager()
     {
@@ -31,7 +32,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       {
         AddService<IProgramCategoryService, ProgramCategoryService>();
         AddService<IConflictService, ConflictService>();
-        AddService<ICardService, CardService>();
+        AddService<ITunerService, TunerService>();
         AddService<ICanceledScheduleService, CanceledScheduleService>();
         AddService<IChannelService, ChannelService>();
         AddService<IProgramService, ProgramService>();
@@ -39,7 +40,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
         AddService<IRecordingService, RecordingService>();
         AddService<IScheduleService, ScheduleService>();
         AddService<IChannelGroupService, ChannelGroupService>();
-        AddService<IThumbnailService, ThumbnailService>();
         AddService<IControllerService, TvControllerService>();
         GlobalServiceProvider.Add<IInternalControllerService>(new TvController());
         AddEventService<IEventService, EventService>();
@@ -172,9 +172,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       get { return GlobalServiceProvider.Get<IEventService>(); }
     }
 
-    public ICardService CardService
+    public ITunerService TunerService
     {
-      get { return GlobalServiceProvider.Get<ICardService>(); }
+      get { return GlobalServiceProvider.Get<ITunerService>(); }
     }
 
     public IProgramService ProgramService
@@ -222,11 +222,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       get { return GlobalServiceProvider.Get<IProgramCategoryService>(); }
     }
 
-    public IThumbnailService ThumbnailService
-    {
-      get { return GlobalServiceProvider.Get<IThumbnailService>(); }
-    }
-
     public IInternalControllerService InternalControllerService
     {
       get { return GlobalServiceProvider.Get<IInternalControllerService>(); }
@@ -246,7 +241,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       {
         GlobalServiceProvider.Add(interfaceType, instance);
         if (serviceHost != null)
+        {
           _serviceHosts.Add(implType, serviceHost);
+        }
       }
     }
 
@@ -261,7 +258,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
         var service = new T();
         GlobalServiceProvider.Add<I>(service);
         if (serviceHost != null)
+        {
           _serviceHosts.Add(implType, serviceHost);
+        }
       }
     }
 
@@ -272,6 +271,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
         if (_serviceHosts.ContainsKey(contractType))
         {
           throw new InvalidOperationException(contractType.Name + " already added to service.");
+        }
+      }
+    }
+
+    public void RemoveService(Type interfaceType, object instance)
+    {
+      Type implType = instance.GetType();
+      lock (_lock)
+      {
+        if (GlobalServiceProvider.IsRegistered(interfaceType))
+        {
+          GlobalServiceProvider.Remove(interfaceType);
+        }
+        ServiceHost serviceHost;
+        if (_serviceHosts.TryGetValue(implType, out serviceHost))
+        {
+          _serviceHosts.Remove(implType);
+          serviceHost.Close();
         }
       }
     }

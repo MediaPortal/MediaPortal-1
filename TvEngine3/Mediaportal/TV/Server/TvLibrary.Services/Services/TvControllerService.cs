@@ -18,14 +18,15 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
@@ -65,13 +66,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     }
 
     /// <summary>
-    /// Gets the type of card (analog,dvbc,dvbs,dvbt,atsc)
+    /// Get the broadcast standards supported by the tuner hardware.
     /// </summary>
     /// <param name="cardId">id of the card.</param>
-    /// <value>cardtype</value>
-    public CardType Type(int cardId)
+    public BroadcastStandard SupportedBroadcastStandards(int cardId)
     {
-      return Service.Type(cardId);
+      return Service.SupportedBroadcastStandards(cardId);
+    }
+
+    /// <summary>
+    /// Get the broadcast standards supported by the tuner code/class/type implementation.
+    /// </summary>
+    /// <param name="cardId">id of the card.</param>
+    public BroadcastStandard PossibleBroadcastStandards(int cardId)
+    {
+      return Service.PossibleBroadcastStandards(cardId);
     }
 
     /// <summary>
@@ -112,52 +121,35 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     }
 
     /// <summary>
-    /// Gets the device path for a card.
+    /// Reload the configuration for a tuner.
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    /// <returns>devicePath of card</returns>
-    public string CardDevice(int cardId)
+    /// <param name="tunerId">The tuner's identifier.</param>
+    public void ReloadTunerConfiguration(int tunerId)
     {
-      return Service.CardDevice(cardId);
+      Service.ReloadTunerConfiguration(tunerId);
     }
 
     /// <summary>
-    /// Returns if the tuner is locked onto a signal or not
+    /// Reload the configuration for a set of tuners.
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    /// <returns>true when tuner is locked to a signal otherwise false</returns>
-    public bool TunerLocked(int cardId)
+    /// <param name="tunerIds">The tuner identifiers.</param>
+    public void ReloadTunerConfiguration(IEnumerable<int> tunerIds)
     {
-      return Service.TunerLocked(cardId);
+      Service.ReloadTunerConfiguration(tunerIds);
     }
 
     /// <summary>
-    /// Returns the signal quality for a card
+    /// Get a tuner's signal status.
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    /// <returns>signal quality (0-100)</returns>
-    public int SignalQuality(int cardId)
+    /// <param name="cardId">The tuner's identifier.</param>
+    /// <param name="forceUpdate"><c>True</c> to force the signal status to be updated, and not use cached information.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
+    public void GetSignalStatus(int cardId, bool forceUpdate, out bool isLocked, out bool isPresent, out int strength, out int quality)
     {
-      return Service.SignalQuality(cardId);
-    }
-
-    /// <summary>
-    /// Returns the signal level for a card.
-    /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    /// <returns>signal level (0-100)</returns>
-    public int SignalLevel(int cardId)
-    {
-      return Service.SignalLevel(cardId);
-    }
-
-    /// <summary>
-    /// Updates the signal state for a card.
-    /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    public void UpdateSignalSate(int cardId)
-    {
-      Service.UpdateSignalSate(cardId);
+      Service.GetSignalStatus(cardId, forceUpdate, out isLocked, out isPresent, out strength, out quality);
     }
 
     /// <summary>
@@ -197,7 +189,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// <param name="cardId">id of the card.</param>
     /// <param name="channel">contains tuningdetails for the transponder.</param>
     /// <returns>list of all channels found</returns>
-    public IChannel[] ScanNIT(int cardId, IChannel channel)
+    public TuningDetail[] ScanNIT(int cardId, IChannel channel)
     {
       return Service.ScanNIT(cardId, channel);
     }
@@ -385,31 +377,40 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     }
 
     /// <summary>
-    /// Returns a list of all ip adresses on the server.
+    /// Returns a list of all IP addresses on the server.
     /// </summary>
-    /// <value>The server ip adresses.</value>
-    public IEnumerable<string> ServerIpAdresses
+    /// <value>The server IP addresses.</value>
+    public IEnumerable<string> ServerIpAddresses
     {
-      get { return Service.ServerIpAdresses; }
+      get { return Service.ServerIpAddresses; }
     }
 
     /// <summary>
-    /// Returns the port used for RTSP streaming.
-    /// If streaming is not initialized, returns 0.
+    /// Get the streaming server's information.
     /// </summary>
-    /// <value>The streaming port</value>
-    public int StreamingPort
+    /// <param name="boundInterface">The interface (IP address) that the server is bound to.</param>
+    /// <param name="port">The port that the server is listening on.</param>
+    public void GetStreamingServerInformation(out string boundInterface, out ushort port)
     {
-      get { return Service.StreamingPort; }
+      Service.GetStreamingServerInformation(out boundInterface, out port);
     }
 
     /// <summary>
     /// Gets a list of all streaming clients.
     /// </summary>
     /// <value>The streaming clients.</value>
-    public List<RtspClient> StreamingClients
+    public ICollection<RtspClient> StreamingClients
     {
       get { return Service.StreamingClients; }
+    }
+
+    /// <summary>
+    /// Disconnect a streaming client.
+    /// </summary>
+    /// <param name="sessionId">The client's session identifier.</param>
+    public void DisconnectStreamingClient(uint sessionId)
+    {
+      Service.DisconnectStreamingClient(sessionId);
     }
 
     private IInternalControllerService Service
@@ -505,9 +506,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// </summary>
     /// <param name="cardId">card id</param>
     /// <param name="position">position</param>
-    public void DiSEqCGotoPosition(int cardId, byte position)
+    public void DiSEqCGotoStoredPosition(int cardId, byte position)
     {
-      Service.DiSEqCGotoPosition(cardId, position);
+      Service.DiSEqCGotoStoredPosition(cardId, position);
     }
 
     /// <summary>
@@ -515,11 +516,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// </summary>
     /// <param name="cardId">card id</param>
     /// <param name="satellitePosition">satellite position</param>
+    /// <param name="satelliteLongitude">The satellite's longitude.</param>
     /// <param name="stepsAzimuth">azimuth</param>
     /// <param name="stepsElevation">elvation</param>
-    public void DiSEqCGetPosition(int cardId, out int satellitePosition, out int stepsAzimuth, out int stepsElevation)
+    public void DiSEqCGetPosition(int cardId, out int satellitePosition, out double satelliteLongitude, out int stepsAzimuth, out int stepsElevation)
     {
-      Service.DiSEqCGetPosition(cardId, out satellitePosition, out stepsAzimuth, out stepsElevation);
+      Service.DiSEqCGetPosition(cardId, out satellitePosition, out satelliteLongitude, out stepsAzimuth, out stepsElevation);
     }
 
     /// <summary>
@@ -883,15 +885,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     }
 
     /// <summary>
-    /// Reloads the configuration for the given card
-    /// </summary>
-    /// <param name="cardId">Unique id of the card</param>
-    public void ReloadCardConfiguration(int cardId)
-    {
-      Service.ReloadCardConfiguration(cardId);
-    }
-
-    /// <summary>
     /// Gets the current quality type
     /// </summary>
     /// <param name="cardId">Unique id of the card</param>
@@ -916,7 +909,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// </summary>
     /// <param name="cardId">Unique id of the card</param>
     /// <returns>QualityType</returns>
-    public VIDEOENCODER_BITRATE_MODE GetBitRateMode(int cardId)
+    public EncoderBitRateMode GetBitRateMode(int cardId)
     {
       return Service.GetBitRateMode(cardId);
     }
@@ -926,7 +919,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// </summary>
     /// <param name="cardId">Unique id of the card</param>
     /// <param name="bitRateMode">The new bitrate mdoe</param>
-    public void SetBitRateMode(int cardId, VIDEOENCODER_BITRATE_MODE bitRateMode)
+    public void SetBitRateMode(int cardId, EncoderBitRateMode bitRateMode)
     {
       Service.SetBitRateMode(cardId, bitRateMode);
     }
@@ -995,8 +988,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       return Service.SetCiMenuHandler(cardId, callbackHandler);
     }
 
-    public event CiMenuCallback OnCiMenu;
-
     /// <summary>
     /// Fetches the stream quality information
     /// </summary>
@@ -1039,15 +1030,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       Service.UnRegisterUserForTvServerEvents(username);
     }
 
-
     public IDictionary<string, byte[]> GetPluginBinaries()
     {
       return Service.GetPluginBinaries();
     }
 
-    public IDictionary<string, byte[]> GetPluginBinariesCustomDevices()
+    public IDictionary<string, byte[]> GetPluginBinariesTunerExtensions()
     {
-      return Service.GetPluginBinariesCustomDevices();
+      return Service.GetPluginBinariesTunerExtensions();
     }
 
     public IDictionary<string, byte[]> GetPluginBinariesResources()
@@ -1069,6 +1059,50 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     {
       return Service.ListAllCards();
     }
+
+    public void ReloadControllerConfiguration()
+    {
+      Service.ReloadControllerConfiguration();
+    }
+
+    public void GetBdaFixStatus(out bool isApplicable, out bool isNeeded)
+    {
+      Service.GetBdaFixStatus(out isApplicable, out isNeeded);
+    }
+
+    public void GetMceServiceStatus(out bool isServiceInstalled, out bool isServiceRunning, out bool isPolicyActive)
+    {
+      Service.GetMceServiceStatus(out isServiceInstalled, out isServiceRunning, out isPolicyActive);
+    }
+
+    public void ApplyMceServicePolicy()
+    {
+      Service.ApplyMceServicePolicy();
+    }
+
+    public void RemoveMceServicePolicy()
+    {
+      Service.RemoveMceServicePolicy();
+    }
+
+    #region thumbnails
+
+    public byte[] GetThumbnailForRecording(string recordingFileName)
+    {
+      return Service.GetThumbnailForRecording(recordingFileName);
+    }
+
+    public void CreateMissingThumbnails()
+    {
+      Service.CreateMissingThumbnails();
+    }
+
+    public void DeleteExistingThumbnails()
+    {
+      Service.DeleteExistingThumbnails();
+    }
+
+    #endregion
 
     #endregion
   }

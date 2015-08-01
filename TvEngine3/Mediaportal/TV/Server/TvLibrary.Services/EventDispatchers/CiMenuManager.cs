@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
@@ -59,7 +60,7 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
           // special workaround for AstonCrypt2 cam type (according to database CamType)
           // avoid unwanted CI menu callbacks if user has not opened CI menu interactively
 
-          if (ActiveCiMenuCard != -1 && ServiceManager.Instance.InternalControllerService.CardCollection[ActiveCiMenuCard].DataBaseCard.CamType == 1 && !IsCiMenuInteractive)
+          if (ActiveCiMenuCard != -1 && ServiceManager.Instance.InternalControllerService.CardCollection[ActiveCiMenuCard].Card.CamType == CamType.Astoncrypt2 && !IsCiMenuInteractive)
           {
             this.LogDebug("AstonCrypt2: unrequested CI menu received, no action done. Menu Title: {0}", _curMenu.Title);
             return;

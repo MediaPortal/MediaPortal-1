@@ -19,10 +19,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
@@ -52,7 +50,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       this.LogInfo("EpgGrabbing: Start");
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false)
+        if (_cardHandler.Card.IsEnabled == false)
         {
           return false;
         }
@@ -64,7 +62,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         IEpgGrabber epgGrabber = _cardHandler.Card.EpgGrabberInterface;
         if (epgGrabber == null)
         {
-          return true;
+          return false;
         }
         epgGrabber.GrabEpg(_cardHandler.Card.CurrentTuningDetail, grabber);
         return true;
@@ -84,7 +82,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       this.LogInfo("EpgGrabbing: Abort");
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false)
+        if (_cardHandler.Card.IsEnabled == false)
         {
           return;
         }
@@ -110,7 +108,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         try
         {
-          if (_cardHandler.DataBaseCard.Enabled == false)
+          if (_cardHandler.Card.IsEnabled == false)
           {
             return false;
           }
@@ -118,7 +116,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           IEpgGrabber epgGrabber = _cardHandler.Card.EpgGrabberInterface;
           if (epgGrabber != null)
           {
-            return epgGrabber.IsEpgGrabbing;
+            return epgGrabber.IsGrabbing;
           }
           return false;
         }

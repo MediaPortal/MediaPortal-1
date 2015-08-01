@@ -18,22 +18,16 @@
 
 #endregion
 
-#region usings 
-
 using System.Collections.Generic;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
-
-#endregion
 
 namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 {
   public abstract class CardAllocationBase
   {
-
-
     private bool _logEnabled = true;
 
     protected bool LogEnabled
@@ -42,44 +36,44 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
       set { _logEnabled = value; }
     }
 
-    #region protected members            
+    #region protected members
 
     private bool IsCamAbleToDecryptChannel(IUser user, ITvCardHandler tvcard, IChannel tuningDetail, int decryptLimit)
     {
-      if (!tuningDetail.FreeToAir)
+      if (!tuningDetail.IsEncrypted)
       {
-        bool isCamAbleToDecryptChannel = true;
-        if (decryptLimit > 0)
+        return true;
+      }
+
+      bool isCamAbleToDecryptChannel = true;
+      if (decryptLimit > 0)
+      {
+        int camDecrypting = NumberOfChannelsDecrypting(tvcard);
+
+        //Check if the user is currently occupying a decoding slot and subtract that from the number of channels it is decoding.
+        if (user.CardId == tvcard.Card.TunerId)
         {
-          int camDecrypting = NumberOfChannelsDecrypting(tvcard);
-
-          //Check if the user is currently occupying a decoding slot and subtract that from the number of channels it is decoding.
-          if (user.CardId == tvcard.DataBaseCard.IdCard)
+          //todo gibman - could be buggy, needs looking at.
+          //foreach(var subchannel in user.SubChannels.Values)
           {
-            //todo gibman - could be buggy, needs looking at.
-            //foreach(var subchannel in user.SubChannels.Values)
+            bool isFreeToAir = IsFreeToAir(tvcard, user.Name, tvcard.UserManagement.GetTimeshiftingChannelId(user.Name));
+            if (!isFreeToAir)
             {
-              bool isFreeToAir = IsFreeToAir(tvcard, user.Name, tvcard.UserManagement.GetTimeshiftingChannelId(user.Name));
-              if (!isFreeToAir)
-              {
-                int numberOfUsersOnCurrentChannel = GetNumberOfUsersOnCurrentChannel(tvcard, user.Name);
+              int numberOfUsersOnCurrentChannel = GetNumberOfUsersOnCurrentChannel(tvcard, user.Name);
 
-                //Only subtract the slot the user is currently occupying if he is the only user occupying the slot.
-                if (numberOfUsersOnCurrentChannel == 1)
-                {
-                  --camDecrypting;
-                }
+              //Only subtract the slot the user is currently occupying if he is the only user occupying the slot.
+              if (numberOfUsersOnCurrentChannel == 1)
+              {
+                --camDecrypting;
               }
             }
-            
           }
-          //check if cam is capable of descrambling an extra channel
-          isCamAbleToDecryptChannel = (camDecrypting < decryptLimit);
+            
         }
-
-        return isCamAbleToDecryptChannel;
+        //check if cam is capable of descrambling an extra channel
+        isCamAbleToDecryptChannel = (camDecrypting < decryptLimit);
       }
-      return true;
+      return isCamAbleToDecryptChannel;
     }
 
     protected virtual int GetNumberOfUsersOnCurrentChannel(ITvCardHandler tvcard, string userName) 
@@ -92,118 +86,98 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
     protected virtual bool IsFreeToAir(ITvCardHandler tvcard, string userName, int idChannel)
     {      
       IChannel currentUserCh = tvcard.CurrentChannel(userName, idChannel);
-      return (currentUserCh != null && currentUserCh.FreeToAir);
+      return (currentUserCh != null && !currentUserCh.IsEncrypted);
     }
 
     protected virtual int NumberOfChannelsDecrypting(ITvCardHandler tvcard)
     {
-      return tvcard.NumberOfChannelsDecrypting;
+      return tvcard.Card.NumberOfChannelsDecrypting;
     }
 
     protected virtual bool IsCamAlreadyDecodingChannel(ITvCardHandler tvcard, IChannel tuningDetail)
     {
-      bool isCamAlreadyDecodingChannel = tvcard.UserManagement.IsAnyUserOnTuningDetail(tuningDetail);      
-      return isCamAlreadyDecodingChannel;
+      return tvcard.UserManagement.IsAnyUserOnTuningDetail(tuningDetail);      
     }
-
-
 
     protected static bool IsValidTuningDetails(ICollection<IChannel> tuningDetails)
     {
-      bool isValid = (tuningDetails != null && tuningDetails.Count > 0);
-      return isValid;
+      return (tuningDetails != null && tuningDetails.Count > 0);
     }
 
     public virtual bool CheckTransponder(IUser user, ITvCardHandler tvcard, IChannel tuningDetail)
     {
-      int decryptLimit = tvcard.DataBaseCard.DecryptLimit;
-      int cardId = tvcard.DataBaseCard.IdCard;      
+      int cardId = tvcard.Card.TunerId;
 
-      bool checkTransponder = true;
-      bool isOwnerOfCard = IsOwnerOfCard(tvcard, user);
-
-      //TODO: Being card owner you can do whatever you want, but in case of decryptlimit that could mean kicking users. This is not handled in the code.
-      if (isOwnerOfCard)
+      // TODO: The tuner owner can do whatever they want, but taking control
+      // could require kicking users to stay within the decrypt limit. This is
+      // not handled in the code.
+      if (IsOwnerOfCard(tvcard, user))
       {
         if (LogEnabled)
         {
-          this.LogInfo("Controller:    card:{0} type:{1} is available", cardId, tvcard.Type);
+          this.LogInfo("Controller:    card:{0} type:{1} is available", cardId, tvcard.Card.SupportedBroadcastStandards);
         }
+        return true;
       }
-      else
+
+      if (!IsSameTransponder(tvcard, tuningDetail))
       {
-        bool isSameTransponder = IsSameTransponder(tvcard, tuningDetail);
-        if (isSameTransponder)
+        if (LogEnabled)
         {
-          //card is in use, but it is tuned to the same transponder.
-          //meaning.. we can use it.          
-          //if the channel is encrypted check cam decrypt limit.
-          if (!tuningDetail.FreeToAir)
-          {
-            //but we must check if cam can decode the extra channel as well
-            //first check if cam is already decrypting this channel          
-            bool canDecrypt = false;
-            bool isCamAlreadyDecodingChannel = IsCamAlreadyDecodingChannel(tvcard, tuningDetail);
-
-            if (!isCamAlreadyDecodingChannel)
-            {
-              //check if cam is capable of descrambling an extra channel                            
-              bool isCamAbleToDecrypChannel = IsCamAbleToDecryptChannel(user, tvcard, tuningDetail, decryptLimit);
-              if (isCamAbleToDecrypChannel)
-              {
-                canDecrypt = true;
-              }
-            }
-            else
-            {
-              canDecrypt = true;
-            }
-
-            if (canDecrypt)
-            {
-              if (decryptLimit > 0)
-              {
-                if (LogEnabled)
-                {
-                  this.LogInfo(
-                    "Controller:    card:{0} type:{1} is available, tuned to same transponder decrypting {2}/{3} channels",
-                    cardId, tvcard.Type, NumberOfChannelsDecrypting(tvcard), decryptLimit);
-                }
-              }
-              else
-              {
-                if (LogEnabled)
-                {
-                  this.LogInfo(
-                    "Controller:    card:{0} type:{1} is available, tuned to same transponder",
-                    cardId, tvcard.Type);
-                }
-              }
-            }
-            else
-            {
-              //it is not, skip this card
-              if (LogEnabled)
-              {
-                this.LogInfo(
-                  "Controller:    card:{0} type:{1} is not available, tuned to same transponder decrypting {2}/{3} channels (cam limit reached)",
-                  cardId, tvcard.Type, NumberOfChannelsDecrypting(tvcard), decryptLimit);
-              }
-              checkTransponder = false;
-            }
-          }
+          this.LogInfo("Controller:    card:{0} type:{1} is not available, tuned to different transmitter",
+                    cardId, tvcard.Card.SupportedBroadcastStandards);
         }
-        else
-        {
-          if (LogEnabled)
-          {
-            this.LogInfo("Controller:    card:{0} type:{1} is not available, tuned to different transponder",
-                     cardId, tvcard.Type);
-          }
-          checkTransponder = false;
-        }
+        return false;
       }
-      return checkTransponder;
+
+      // The tuner is in use, but it is tuned to the transmitter we need to
+      // tune so we can use it.
+      if (!tuningDetail.IsEncrypted)
+      {
+        if (LogEnabled)
+        {
+          this.LogInfo(
+            "Controller:    card:{0} type:{1} is available, tuned to same transmitter",
+            cardId, tvcard.Card.SupportedBroadcastStandards);
+        }
+        return true;
+      }
+
+      // If the channel is encrypted check the tuner's decrypt limit and
+      // decryptable provider list.
+      if (
+        tvcard.Card.ConditionalAccessProviders.Count > 0 &&
+        !string.IsNullOrEmpty(tuningDetail.Provider) &&
+        !tvcard.Card.ConditionalAccessProviders.Contains(tuningDetail.Provider)
+      )
+      {
+        if (LogEnabled)
+        {
+          this.LogInfo(
+            "Controller:    card:{0} type:{1} is not available, tuned to same transmitter but provider not decryptable",
+            cardId, tvcard.Card.SupportedBroadcastStandards);
+        }
+        return false;
+      }
+
+      // Does the decrypt limit prevent the tuner from decrypting the channel?
+      if (!IsCamAlreadyDecodingChannel(tvcard, tuningDetail) && !IsCamAbleToDecryptChannel(user, tvcard, tuningDetail, tvcard.Card.DecryptLimit))
+      {
+        if (LogEnabled)
+        {
+          this.LogInfo(
+            "Controller:    card:{0} type:{1} is not available, tuned to same transmitter but decrypt limit {2} reached",
+            cardId, tvcard.Card.SupportedBroadcastStandards, tvcard.Card.DecryptLimit);
+        }
+        return false;
+      }
+      if (LogEnabled)
+      {
+        this.LogInfo(
+          "Controller:    card:{0} type:{1} is available, tuned to same transmitter decrypting {2}/{3} channels",
+          cardId, tvcard.Card.SupportedBroadcastStandards, NumberOfChannelsDecrypting(tvcard), tvcard.Card.DecryptLimit);
+      }
+      return true;
     }
 
     private static bool HasEqualOrHigherPriority(ITvCardHandler tvcard, IUser user)

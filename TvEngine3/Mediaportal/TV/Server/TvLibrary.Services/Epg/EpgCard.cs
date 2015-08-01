@@ -29,11 +29,11 @@ using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG;
 using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation;
 using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Implementations;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Services;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.CardReservation;
@@ -44,11 +44,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
 {
   /// <summary>
   /// Class which will  grab the epg for for a specific card
+  /// </summary>
   public class EpgCard : IEpgGrabberCallBack, IDisposable
   {
     #region const
 
-    private int _epgTimeOut = (10*60); // 10 mins
+    private int _epgTimeOut = 10;   // minutes
 
     #endregion
 
@@ -57,6 +58,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     private enum EpgState
     {
       Idle,
+      Tuning,
       Grabbing,
       Updating
     }
@@ -71,27 +73,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     private bool _reEntrant;
 
     private DateTime _grabStartTime;
-    private bool _isRunning;
 
     private Transponder _currentTransponder;
 
     private readonly TvServerEventHandler _eventHandler;
     private bool _disposed;
-    private readonly Card _card;
+    private readonly ITvCardHandler _tuner;
     private IUser _user;
     private readonly EpgDBUpdater _dbUpdater;
 
     #endregion
 
-    #region ctor
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="card">The card</param>
-    public EpgCard(Card card)
+    public EpgCard(ITvCardHandler tuner)
     {      
-      _card = card;
+      _tuner = tuner;
       _user = UserFactory.CreateEpgUser();
 
       _grabStartTime = DateTime.MinValue;
@@ -100,37 +95,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       _epgTimer.Interval = 30000;
       _epgTimer.Elapsed += _epgTimer_Elapsed;
       _eventHandler = controller_OnTvServerEvent;
-      _dbUpdater = new EpgDBUpdater(ServiceManager.Instance.InternalControllerService.OnImportEpgPrograms, "IdleEpgGrabber", true);
+      _dbUpdater = new EpgDBUpdater(ServiceManager.Instance.InternalControllerService.OnImportEpgPrograms, "IdleEpgGrabber");
     }
-
-    #endregion
 
     #region properties
 
-    /// <summary>
-    /// Gets the card.
-    /// </summary>
-    /// <value>The card.</value>
-    public Card Card
+    public int IdTuner
     {
-      get { return _card; }
+      get { return _tuner.Card.TunerId; }
+    }
+
+    public bool IsGrabbingEnabled
+    {
+      get { return _tuner.DataBaseCard.UseForEpgGrabbing; }
     }
 
     /// <summary>
-    /// Property which returns true if EPG grabber is currently grabbing the epg
-    /// or false is epg grabber is idle
+    /// Get a value indicating whether this instance is grabbing.
     /// </summary>
-    public bool IsRunning
-    {
-      get { return _isRunning; }
-    }
-
-    /// <summary>
-    /// Gets a value indicating whether this instance is grabbing.
-    /// </summary>
-    /// <value>
-    /// 	<c>true</c> if this instance is grabbing; otherwise, <c>false</c>.
-    /// </value>
     public bool IsGrabbing
     {
       get { return (_state != EpgState.Idle); }
@@ -141,23 +123,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     #region epg callback
 
     /// <summary>
-    /// Gets called when epg has been cancelled
-    /// Should be overriden by the class
+    /// Called when electronic programme guide data grabbing is cancelled.
     /// </summary>
     public void OnEpgCancelled()
     {      
-      this.LogInfo("epg grabber:epg cancelled");
+      this.LogInfo("EPG grabber: grabbing cancelled");
       Stop();
-      return;
     }
 
     /// <summary>
-    /// Callback fired by the tvcontroller when EPG data has been received
-    /// The method checks if epg grabbing was in progress and ifso creates a new workerthread
-    /// to update the database with the new epg data
+    /// Called when electronic programme guide data grabbing is complete.
     /// </summary>
-    /// <param name="epg">The new EPG data.</param>
-    public void OnEpgReceived(IList<EpgChannel> epg)
+    /// <param name="tuningDetail">The tuning details of the transmitter from which the EPG was grabbed.</param>
+    /// <param name="epg">The grabbed data.</param>
+    public void OnEpgReceived(IChannel tuningDetail, ICollection<EpgChannel> epg)
     {
       try
       {
@@ -198,10 +177,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
         //create worker thread to update the database
         this.LogInfo("Epg: card:{0} received epg for {1} channels", cardId, epg.Count);
         _state = EpgState.Updating;
-        Thread workerThread = new Thread(new ParameterizedThreadStart(UpdateDatabaseThread));
+        ThreadStart starter = delegate { UpdateDatabaseThread(tuningDetail, epg); };
+        Thread workerThread = new Thread(starter);
         workerThread.IsBackground = true;
+        workerThread.Priority = ThreadPriority.Lowest;
         workerThread.Name = "EPG Update thread";
-        workerThread.Start(epg);
+        workerThread.Start();
       }
       catch (Exception ex)
       {
@@ -213,54 +194,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
 
     #region public members
 
-    /// <summary>
-    /// Grabs the epg.
-    /// </summary>
-    public void GrabEpg()
+    public void GrabEpg(Transponder transponder)
     {
+      this.LogInfo("EPG grabber: use tuner {0} to grab EPG from transmitter {1}{2}{3}", IdTuner, transponder.Index, Environment.NewLine, transponder.TuningChannel);
       ServiceManager.Instance.InternalControllerService.OnTvServerEvent += _eventHandler;
-      _epgTimeOut = SettingsManagement.GetValue("timeoutEPG", 10);
-      _currentTransponder = TransponderList.Instance.CurrentTransponder;
-      Channel channel = _currentTransponder.CurrentChannel;
-
-      this.LogInfo("EpgCard: grab epg on card: #{0} transponder: #{1} ch:{2} ", _card.IdCard,
-              TransponderList.Instance.CurrentIndex, channel.DisplayName);
-
+      _epgTimeOut = SettingsManagement.GetValue("timeOutEpg", 10);
+      _currentTransponder = transponder;
       _state = EpgState.Idle;
-      _isRunning = true;
-      _user = UserFactory.CreateEpgUser();      
-      if (GrabEpgForChannel(channel, _currentTransponder.Tuning, _card))
+
+      if (TuneEpgGrabber(transponder.CurrentChannel, transponder.TuningChannel, IdTuner))
       {
-        this.LogInfo("EpgCard: card: {0} starting to grab {1}", _user.CardId, _currentTransponder.Tuning.ToString());
-        _currentTransponder.InUse = true;
-        //succeeded, then wait for epg to be received
         _state = EpgState.Grabbing;
         _grabStartTime = DateTime.Now;
         _epgTimer.Enabled = true;
-        return;
       }
-      this.LogInfo("EpgCard: unable to grab epg transponder: {0} ch: {1} started on {2}",
-              TransponderList.Instance.CurrentIndex, channel.DisplayName, _user.CardId);
-      this.LogInfo("{0}", _currentTransponder.Tuning.ToString());
     }
 
-    /// <summary>
-    /// Stops this instance.
-    /// </summary>
     public void Stop()
     {
       if (_user.CardId >= 0)
       {
-        this.LogInfo("EpgCard: card: {0} stop grabbing", _user.CardId);
+        this.LogInfo("EPG grabber: tuner {0} stop grabbing", _user.CardId);
         ServiceManager.Instance.InternalControllerService.StopGrabbingEpg(_user);
-      }
-      if (_currentTransponder != null)
-      {
-        _currentTransponder.InUse = false;
       }
       ServiceManager.Instance.InternalControllerService.OnTvServerEvent -= _eventHandler;
       _epgTimer.Enabled = false;
-      _isRunning = false;
       _state = EpgState.Idle;
       _user.CardId = -1;
     }
@@ -291,44 +249,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
         {
           return;
         }
+        //if we are grabbing epg, then check if card is still idle
         else if (_state == EpgState.Grabbing)
         {
-          //if we are grabbing epg, then check if card is still idle
-          if (_user.CardId >= 0)
+          TimeSpan ts = DateTime.Now - _grabStartTime;
+          if (_user.CardId >= 0 && !IsCardIdle(_user))
           {
-            if (!IsCardIdle(_user))
+            //not idle? then cancel epg grabbing
+            if (_state != EpgState.Idle)
             {
-              //not idle? then cancel epg grabbing
-              if (_state != EpgState.Idle)
-              {
-                this.LogInfo("EpgCard: Canceled epg, card is not idle:{0}", _user.CardId);
-              }
-              ServiceManager.Instance.InternalControllerService.AbortEPGGrabbing(_user.CardId);
-              _state = EpgState.Idle;
-              _user.CardId = -1;
-              _currentTransponder.InUse = false;
-              return;
+              this.LogInfo("EpgCard: tuner {0} EPG grabbing cancelled after {1} minute(s), no longer idle", _user.CardId, ts.TotalMinutes);
             }
+            ServiceManager.Instance.InternalControllerService.AbortEPGGrabbing(_user.CardId);
+            _state = EpgState.Idle;
+            _user.CardId = -1;
+            return;
           }
 
-          //wait until grabbing has finished
-          TimeSpan ts = DateTime.Now - _grabStartTime;
+          //has grabbing run too long?
           if (ts.TotalMinutes > _epgTimeOut)
           {
-            //epg grabber timed out. Update database and go back to idle mode
-            this.LogInfo("EpgCard: card: {0} timeout after {1} mins", _user.CardId, ts.TotalMinutes);
+            this.LogInfo("EpgCard: tuner {0} EPG grabbing timed out after {1} minute(s), aborting", _user.CardId, ts.TotalMinutes);
             ServiceManager.Instance.InternalControllerService.AbortEPGGrabbing(_user.CardId);
-            this.LogInfo("EpgCard: Aborted epg grab");
           }
           else
           {
-            this.LogInfo("EpgCard: allow grabbing for {0} seconds on card {1}", ts.TotalSeconds, _user.CardId);
+            this.LogDebug("EpgCard: tuner {0} still EPG grabbing after {1} seconds...", _user.CardId, ts.TotalSeconds);
           }
         }
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "EpgCard: Error in EPG timer");
+        this.LogError(ex, "EpgCard: error in EPG timer");
       }
       finally
       {
@@ -336,188 +288,63 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       }
     }
 
-    /// <summary>
-    /// This method will try to start the epg grabber for the channel and tuning details specified
-    /// Epg grabbing can only be started if there is a card idle which can receive the channel specified
-    /// </summary>
-    /// <param name="channel">channel to grab/param>
-    /// <param name="tuning">tuning information</param>
-    /// <param name="card">card to use for grabbing</param>
-    /// <returns>true if grabbing has started else false</returns>
-    private bool GrabEpgForChannel(Channel channel, IChannel tuning, Card card)
+    private bool TuneEpgGrabber(Channel channel, IChannel tuningChannel, int idTuner)
     {
-      if (channel == null)
-      {
-        this.LogError("Epg: invalid channel");
-        return false;
-      }
-      if (tuning == null)
-      {
-        this.LogError("Epg: invalid tuning");
-        return false;
-      }
-      if (card == null)
-      {
-        this.LogError("Epg: invalid card");
-        return false;
-      }
-      if (ServiceManager.Instance.InternalControllerService == null)
-      {
-        this.LogError("Epg: invalid tvcontroller");
-        return false;
-      }
-      if (_user == null)
-      {
-        this.LogError("Epg: invalid user");
-        return false;
-      }
-      //remove following check to enable multi-card epg grabbing (still beta)
-      if (ServiceManager.Instance.InternalControllerService.AllCardsIdle == false)
-      {
-        this.LogInfo("Epg: card:{0} cards are not idle", card.IdCard);
-        return false;
-      }
-
-      TvResult result = TvResult.UnknownError;
-      //handle ATSC
-      ATSCChannel atscChannel = tuning as ATSCChannel;
-      if (atscChannel != null)
-      {
-        if (ServiceManager.Instance.InternalControllerService.Type(card.IdCard) == CardType.Atsc)
-        {
-          if (IsCardIdle(Card.IdCard) == false)
-          {
-            this.LogInfo("Epg: card:{0} atsc card is not idle", card.IdCard);
-            return false; //card is busy
-          }
-          return TuneEPGgrabber(channel, tuning, card, result);
-        }
-        this.LogInfo("Epg: card:{0} could not tune to atsc channel:{1}", card.IdCard, tuning.ToString());
-        return false;
-      }
-
-      //handle DVBC
-      DVBCChannel dvbcChannel = tuning as DVBCChannel;
-      if (dvbcChannel != null)
-      {
-        if (ServiceManager.Instance.InternalControllerService.Type(card.IdCard) == CardType.DvbC)
-        {
-          if (IsCardIdle(Card.IdCard) == false)
-          {
-            this.LogInfo("Epg: card:{0} dvbc card is not idle", card.IdCard);
-            return false; //card is busy
-          }
-          return TuneEPGgrabber(channel, tuning, card, result);
-        }
-        this.LogInfo("Epg: card:{0} could not tune to dvbc channel:{1}", card.IdCard, tuning.ToString());
-        return false;
-      }
-
-      //handle DVBS
-      DVBSChannel dvbsChannel = tuning as DVBSChannel;
-      if (dvbsChannel != null)
-      {
-        if (ServiceManager.Instance.InternalControllerService.Type(card.IdCard) == CardType.DvbS)
-        {
-          if (IsCardIdle(Card.IdCard) == false)
-          {
-            this.LogInfo("Epg: card:{0} dvbs card is not idle", card.IdCard);
-            return false; //card is busy
-          }
-          return TuneEPGgrabber(channel, tuning, card, result);
-        }
-        this.LogInfo("Epg: card:{0} could not tune to dvbs channel:{1}", card.IdCard, tuning.ToString());
-        return false;
-      }
-
-      //handle DVBT
-      DVBTChannel dvbtChannel = tuning as DVBTChannel;
-      if (dvbtChannel != null)
-      {
-        if (ServiceManager.Instance.InternalControllerService.Type(card.IdCard) == CardType.DvbT)
-        {
-          if (IsCardIdle(Card.IdCard) == false)
-          {
-            this.LogInfo("Epg: card:{0} dvbt card is not idle", card.IdCard);
-            return false; //card is busy
-          }
-
-          return TuneEPGgrabber(channel, tuning, card, result);
-        }
-        this.LogInfo("Epg: card:{0} could not tune to dvbt channel:{1}", card.IdCard, tuning.ToString());
-        return false;
-      }
-
-      //handle DVBIP
-      DVBIPChannel dvbipChannel = tuning as DVBIPChannel;
-      if (dvbipChannel != null)
-      {
-        if (ServiceManager.Instance.InternalControllerService.Type(card.IdCard) == CardType.DvbIP)
-        {
-          if (IsCardIdle(Card.IdCard) == false)
-          {
-            this.LogInfo("Epg: card:{0} dvbip card is not idle", card.IdCard);
-            return false; //card is busy
-          }
-          return TuneEPGgrabber(channel, tuning, card, result);
-        }
-        else
-        {
-          this.LogInfo("Epg: card:{0} could not tune to dvbip channel:{1}", card.IdCard, tuning.ToString());
-        }
-        return false;
-      }
-      this.LogInfo("Epg: card:{0} could not tune to channel:{1}", card.IdCard, tuning.ToString());
-      return false;
-    }
-
-    private bool TuneEPGgrabber(Channel channel, IChannel tuning, Card card, TvResult result)
-    {
+      bool started = false;
       try
       {
-        _user.CardId = Card.IdCard;
-        ITvCardHandler cardHandler;
-        if (ServiceManager.Instance.InternalControllerService.CardCollection.TryGetValue(card.IdCard, out cardHandler))
+        _user.CardId = idTuner;
+        _state = EpgState.Tuning;
+        ICardReservation cardReservationImpl = new CardReservationTimeshifting();
+        ICardTuneReservationTicket ticket = cardReservationImpl.RequestCardTuneReservation(_tuner, tuningChannel, _user, _tuner.UserManagement.GetRecentChannelId(_user.Name));
+        if (ticket == null)
         {
-          ICardTuneReservationTicket ticket = null;
-          try
+          this.LogWarn("EPG grabber: failed to acquire tune reservation ticket");
+          return false;
+        }
+        TvResult result = TvResult.UnknownError;
+        try
+        {
+          result = ServiceManager.Instance.InternalControllerService.Tune(ref _user, tuningChannel, channel.IdChannel, ticket);
+          if (result == TvResult.Succeeded)
           {
-            ICardReservation cardReservationImpl = new CardReservationTimeshifting();
-            ticket = cardReservationImpl.RequestCardTuneReservation(cardHandler, tuning, _user, cardHandler.UserManagement.GetRecentChannelId(_user.Name));
-
-            if (ticket != null)
+            if (_state == EpgState.Tuning && ServiceManager.Instance.InternalControllerService.GrabEpg(this, _user))
             {
-              result = ServiceManager.Instance.InternalControllerService.Tune(ref _user, tuning, channel.IdChannel,
-                                                                              ticket);
-              if (result == TvResult.Succeeded)
-              {
-                if (!_isRunning || false == ServiceManager.Instance.InternalControllerService.GrabEpg(this, _user))
-                {
-                  if (!_isRunning)
-                    this.LogInfo("Tuning finished but EpgGrabber no longer enabled");
-                  Stop();
-                  this.LogInfo("Epg: card:{0} could not start dvbt grabbing", card.IdCard);
-                  return false;
-                }
-                _user.CardId = Card.IdCard;
-                return true;
-              }
+              this.LogInfo("EPG grabber: started grabbing...");
+              started = true;
+              return true;
             }
-          }
-          catch (Exception)
-          {
-            CardReservationHelper.CancelCardReservation((ITvCardHandler) cardHandler, ticket);
-            throw;
+            if (_state != EpgState.Tuning)
+            {
+              this.LogInfo("EPG grabber: tuning finished but EPG grabbing cancelled");
+            }
+            else
+            {
+              this.LogError("EPG grabber: tuner {0} failed to start EPG grabbing", idTuner);
+            }
+            return false;
           }
         }
-        _user.CardId = -1;
-        this.LogInfo("Epg: card:{0} could not tune to channel:{1}", card.IdCard, result.ToString());
+        catch
+        {
+          CardReservationHelper.CancelCardReservation(_tuner, ticket);
+          throw;
+        }
+
+        this.LogError("EPG grabber: tuner {0} failed to tune channel, result = {1}", idTuner, result);
         return false;
       }
       catch (Exception ex)
       {
-        this.LogError(ex);
+        this.LogError(ex, "EPG grabber: tuner {0} failed to tune and start EPG grabbing{1}{2}", idTuner, Environment.NewLine, tuningChannel);
         throw;
+      }
+      finally
+      {
+        if (!started)
+        {
+          Stop();
+        }
       }
     }
 
@@ -526,15 +353,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// <summary>
     /// workerthread which will update the database with the new epg received
     /// </summary>
-    private void UpdateDatabaseThread(object epgObj)
+    private void UpdateDatabaseThread(IChannel tuningDetail, ICollection<EpgChannel> epg)
     {
-      IList<EpgChannel> epg = epgObj as IList<EpgChannel>;
-      if (epg == null)
-      {
-        return;
-      }
-      Thread.CurrentThread.Priority = ThreadPriority.Lowest;
-
       int cardId = _user.CardId;
       this.LogInfo("Epg: card:{0} Updating database with new programs", cardId);
       bool timeOut = false;
@@ -543,7 +363,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       {
         foreach (EpgChannel epgChannel in epg)
         {
-          _dbUpdater.UpdateEpgForChannel(epgChannel);
+          _dbUpdater.UpdateEpgForChannel(tuningDetail, epgChannel);
           if (_state != EpgState.Updating)
           {
             this.LogInfo("Epg: card:{0} stopped updating state changed", cardId);
@@ -590,45 +410,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// <summary>
     /// Method which returns if the card is idle or not
     /// </summary>
-    /// <param name="cardId">id of card</param>
-    /// <returns>true if card is idle, otherwise false</returns>
-    private bool IsCardIdle(int cardId)
-    {
-      if (_isRunning == false)
-        return false;
-      if (cardId < 0)
-        return false;
-      IUser user = new User();
-      user.CardId = cardId;
-      if (ServiceManager.Instance.InternalControllerService.IsRecording(ref user))
-        return false;
-      if (ServiceManager.Instance.InternalControllerService.IsTimeShifting(user.Name))
-        return false;
-      if (ServiceManager.Instance.InternalControllerService.IsScanning(user.CardId))
-        return false;
-      IUser cardUser;
-      if (ServiceManager.Instance.InternalControllerService.IsCardInUse(cardId, out cardUser))
-        return false;
-      if (ServiceManager.Instance.InternalControllerService.IsCardInUse(user.CardId, out cardUser))
-      {
-        if (cardUser != null)
-        {
-          return cardUser.Name == _user.Name;
-        }
-        return false;
-      }
-      return true;
-    }
-
-    /// <summary>
-    /// Method which returns if the card is idle or not
-    /// </summary>
     /// <param name="user">User</param>
     /// <returns>true if card is idle, otherwise false</returns>
     private bool IsCardIdle(IUser user)
     {
-      if (_isRunning == false)
-        return false;
       if (user.CardId < 0)
         return false;
       if (ServiceManager.Instance.InternalControllerService.IsRecording(ref _user))
@@ -653,7 +438,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
 
     #endregion
 
-    #region IDisposable Members    
+    #region IDisposable Members
 
     protected virtual void Dispose(bool disposing)
     {
@@ -688,23 +473,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     private void controller_OnTvServerEvent(object sender, EventArgs eventArgs)
     {
       if (_state == EpgState.Idle)
+      {
         return;
-      TvServerEventArgs tvArgs = eventArgs as TvServerEventArgs;
-      if (eventArgs == null)
+      }
+      TvServerEventArgs args = eventArgs as TvServerEventArgs;
+      if (args == null || args.Card.Id != IdTuner)
+      {
         return;
-      if (tvArgs != null)
-        switch (tvArgs.EventType)
-        {
-          case TvServerEventType.StartTimeShifting:
-            this.LogInfo("epg cancelled due to start timeshifting");
-            OnEpgCancelled();
-            break;
+      }
+      switch (args.EventType)
+      {
+        case TvServerEventType.StartTimeShifting:
+          this.LogInfo("EPG grabber: grabbing cancelled for timeshifting");
+          Stop();
+          break;
 
-          case TvServerEventType.StartRecording:
-            this.LogInfo("epg cancelled due to start recording");
-            OnEpgCancelled();
-            break;
-        }
+        case TvServerEventType.StartRecording:
+          this.LogInfo("EPG grabber: grabbing cancelled for recording");
+          Stop();
+          break;
+      }
     }
 
     #endregion

@@ -25,14 +25,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Scheduler;
 using Mediaportal.TV.Server.TVLibrary.Services;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using IServiceSubChannel = Mediaportal.TV.Server.TVService.Interfaces.Services.ISubChannel;
+using ITvLibrarySubChannel = Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.ISubChannel;
 
 #endregion
 
@@ -40,8 +41,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 {
   public class AdvancedCardAllocation : CardAllocationBase, ICardAllocation
   {
-
-
     #region private members
 
     public AdvancedCardAllocation()
@@ -50,7 +49,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 
     private static bool IsCardEnabled(ITvCardHandler cardHandler)
     {
-      return cardHandler.DataBaseCard.Enabled;
+      return cardHandler.Card.IsEnabled;
     }
 
     private bool IsCardPresent(int cardId)
@@ -77,7 +76,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 
       if (LogEnabled)
       {
-        this.LogInfo("Controller:    card:{0} type:{1} users: {2}", card.DataBaseCard.IdCard, card.Type, nrOfOtherUsers);
+        this.LogInfo("Controller:    card:{0} type:{1} users: {2}", card.Card.TunerId, card.Card.SupportedBroadcastStandards, nrOfOtherUsers);
       }
 
       return nrOfOtherUsers;
@@ -112,7 +111,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         //construct list of all cards we can use to tune to the new channel
         if (LogEnabled)
         {
-          this.LogInfo("Controller: find free card for channel {0}", dbChannel.DisplayName);
+          this.LogInfo("Controller: find free card for channel {0}", dbChannel.Name);
         }
         var cardsAvailable = new List<CardDetail>();
 
@@ -120,7 +119,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         List<CardDetail> cardDetails = GetAvailableCardsForChannel(cards, dbChannel, user, out cardsUnAvailable);
         foreach (CardDetail cardDetail in cardDetails)
         {
-          ITvCardHandler tvCardHandler = cards[cardDetail.Card.IdCard];
+          ITvCardHandler tvCardHandler = cards[cardDetail.Card.IdTuner];
           bool checkTransponder = CheckTransponder(user, tvCardHandler, cardDetail.TuningDetail);
           if (checkTransponder)
           {
@@ -138,6 +137,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         else
         {
           TvResult resultNoCards = GetResultNoCards(cardsUnAvailable);
+          // TODO gibman I think this is wrong; what about the cases where the channel is not mapped to any cards, or when the channel is encrypted but no cards can decrypt it?
           result = cardDetails.Count == 0 ? resultNoCards : TvResult.AllCardsBusy;
         }
         if (LogEnabled)
@@ -201,28 +201,29 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         var cardsAvailable = new List<CardDetail>();
         if (LogEnabled)
         {
-          this.LogInfo("Controller: find card for channel {0}", dbChannel.DisplayName);
+          this.LogInfo("Controller: find card for channel {0}", dbChannel.Name);
         }
         //get the tuning details for the channel
-        ICollection<IChannel> tuningDetails = CardAllocationCache.GetTuningDetailsByChannelId(dbChannel);
+        ICollection<IChannel> tuningDetails = CardAllocationCache.GetTuningDetailsByChannelId(dbChannel.IdChannel);
         bool isValidTuningDetails = IsValidTuningDetails(tuningDetails);
         if (!isValidTuningDetails)
         {
           //no tuning details??
           if (LogEnabled)
           {
-            this.LogInfo("Controller:  No tuning details for channel:{0}", dbChannel.DisplayName);
+            this.LogInfo("Controller:  No tuning details for channel:{0}", dbChannel.Name);
           }
           return cardsAvailable;
         }
 
         if (LogEnabled)
         {
-          this.LogInfo("Controller:   got {0} tuning details for {1}", tuningDetails.Count, dbChannel.DisplayName);
+          this.LogInfo("Controller:   got {0} tuning details for {1}", tuningDetails.Count, dbChannel.Name);
         }
         int number = 0;
         ICollection<ITvCardHandler> cardHandlers = cards.Values;
 
+        int tuningDetailPriority = 1;
         foreach (IChannel tuningDetail in tuningDetails)
         {
           cardsUnAvailable.Clear();
@@ -233,7 +234,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
           }
           foreach (ITvCardHandler cardHandler in cardHandlers)
           {
-            int cardId = cardHandler.DataBaseCard.IdCard;
+            int cardId = cardHandler.Card.TunerId;
 
             if (cardsUnAvailable.ContainsKey(cardId))
             {
@@ -259,13 +260,14 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
             bool isSameTransponder = IsSameTransponder(cardHandler, tuningDetail);
             if (LogEnabled)
             {
-              this.LogInfo("Controller:    card:{0} type:{1} can tune to channel", cardId, cardHandler.Type);
+              this.LogInfo("Controller:    card:{0} type:{1} can tune to channel", cardId, cardHandler.Card.SupportedBroadcastStandards);
             }
             int nrOfOtherUsers = NumberOfOtherUsersOnCurrentCard(cardHandler, user);
-            var cardInfo = new CardDetail(cardId, cardHandler.DataBaseCard, tuningDetail, isSameTransponder,
+            var cardInfo = new CardDetail(cardId, cardHandler.DataBaseCard, tuningDetail, tuningDetailPriority, isSameTransponder,
                                                  nrOfOtherUsers);
             cardsAvailable.Add(cardInfo);
           }
+          tuningDetailPriority++;
         }
 
 
@@ -293,10 +295,10 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
     private static bool CanCardDecodeChannel(ITvCardHandler cardHandler, IChannel tuningDetail)
     {
       bool canCardDecodeChannel = true;
-      int cardId = cardHandler.DataBaseCard.IdCard;
-      if (!tuningDetail.FreeToAir && !cardHandler.DataBaseCard.UseConditionalAccess)
+      int cardId = cardHandler.Card.TunerId;
+      if (tuningDetail.IsEncrypted && !cardHandler.Card.IsConditionalAccessSupported)
       {
-        Log.Info("Controller:    card:{0} type:{1} channel is encrypted but card has no CAM", cardId, cardHandler.Type);
+        Log.Info("Controller:    card:{0} type:{1} channel is encrypted but conditional access disabled or not supported", cardId, cardHandler.Card.SupportedBroadcastStandards);
         canCardDecodeChannel = false;
       }
       return canCardDecodeChannel;
@@ -304,14 +306,14 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 
     protected virtual bool CanCardTuneChannel(ITvCardHandler cardHandler, Channel dbChannel, IChannel tuningDetail)
     {
-      int cardId = cardHandler.DataBaseCard.IdCard;
+      int cardId = cardHandler.Card.TunerId;
       bool isCardEnabled = IsCardEnabled(cardHandler);
       if (!isCardEnabled)
       {
         //not enabled, so skip the card
         if (LogEnabled)
         {
-          this.LogInfo("Controller:    card:{0} type:{1} is disabled", cardId, cardHandler.Type);
+          this.LogInfo("Controller:    card:{0} type:{1} is disabled", cardId, cardHandler.Card.SupportedBroadcastStandards);
         }
         return false;
       }
@@ -327,18 +329,18 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         //card cannot tune to this channel, so skip it
         if (LogEnabled)
         {
-          this.LogInfo("Controller:    card:{0} type:{1} cannot tune to channel", cardId, cardHandler.Type);
+          this.LogInfo("Controller:    card:{0} type:{1} cannot tune to channel", cardId, cardHandler.Card.SupportedBroadcastStandards);
         }
         return false;
       }
 
       //check if channel is mapped to this card and that the mapping is not for "Epg Only"
-      bool isChannelMappedToCard = CardAllocationCache.IsChannelMappedToCard(dbChannel.IdChannel, cardHandler.DataBaseCard.IdCard);
+      bool isChannelMappedToCard = CardAllocationCache.IsChannelMappedToCard(dbChannel.IdChannel, cardHandler.Card.TunerId);
       if (!isChannelMappedToCard)
       {
         if (LogEnabled)
         {
-          this.LogInfo("Controller:    card:{0} type:{1} channel not mapped", cardId, cardHandler.Type);
+          this.LogInfo("Controller:    card:{0} type:{1} channel not mapped", cardId, cardHandler.Card.SupportedBroadcastStandards);
         }
         return false;
       }

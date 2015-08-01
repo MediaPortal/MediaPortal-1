@@ -28,18 +28,17 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using ITvLibrarySubChannel = Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.ISubChannel;
 
 namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class UserManagement : IUserManagement
   {
-
-
     private readonly ITvCardHandler _cardHandler;
     private readonly object _usersLock = new object();
     private readonly object _ownerLock = new object();
@@ -72,9 +71,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       return user;
     }
 
-    
-
-
     private IUser GetUser(string name)
     {
       IUser user;
@@ -84,7 +80,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       return user;
     }
-   
 
     /// <summary>
     /// Removes the user from this card
@@ -113,7 +108,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         {
           if (subchannel.IdChannel == idChannel)
           {
-            this.LogDebug("usermanagement.RemoveUser: {0}, subch: {1}, card: {2}", user.Name, subchannel.Id, _cardHandler.DataBaseCard.IdCard);
+            this.LogDebug("usermanagement.RemoveUser: {0}, subch: {1}, card: {2}", user.Name, subchannel.Id, _cardHandler.Card.TunerId);
             if (!ContainsUsersForSubchannel(subchannel.Id))
             {
               subchannelsId.Add(subchannel.Id);
@@ -126,7 +121,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       foreach (int subchannelId in subchannelsId)
       {
         //only remove subchannel if it exists.
-        ITvSubChannel subChannel = _cardHandler.Card.GetSubChannel(subchannelId);
+        ITvLibrarySubChannel subChannel = _cardHandler.Card.GetSubChannel(subchannelId);
         if (subChannel != null)
         {
           //_cardHandler.ParkedUserManagement.CancelAllParkedChannelsForUser(user.Name);//once
@@ -143,14 +138,13 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           _cardHandler.Card.FreeSubChannel(subchannelId);
           var cleanTimeshiftFilesThread =
             new CleanTimeshiftFilesThread(_cardHandler.DataBaseCard.TimeshiftingFolder,
-                                          String.Format("live{0}-{1}.ts", _cardHandler.DataBaseCard.IdCard,
+                                          String.Format("live{0}-{1}.ts", _cardHandler.Card.TunerId,
                                                         usedSubChannel));
           var cleanupThread = new Thread(cleanTimeshiftFilesThread.CleanTimeshiftFiles) { IsBackground = true, Name = "TS_File_Cleanup", Priority = ThreadPriority.Lowest };
           cleanupThread.Start();
         }
       }
     }
-
 
     /// <summary>
     /// Gets the users for this card.
@@ -235,7 +229,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       return channelId;
     }
 
-
     public int GetRecentChannelId(string userName)
     {
       lock (_usersLock)
@@ -281,7 +274,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         user.SubChannels.Add(id, new SubChannel(id, idChannel, tvUsage));
       }
     }
-
 
     public ISubChannel GetSubChannelByChannelId(string name, int idChannel)
     {
@@ -505,8 +497,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       return recUser;
     }
 
-  
-
     public int NumberOfOtherUsers(string name)
     {
       int nrOfOtherUsers = 0;
@@ -725,7 +715,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         throw new InvalidOperationException("subchannelid is invalid");
       }
-      user.CardId = _cardHandler.DataBaseCard.IdCard;
+      user.CardId = _cardHandler.Card.TunerId;
       this.LogInfo("user:{0} AddSubChannelOrUser", user.Name);
       lock (_usersLock)
       {
@@ -1213,8 +1203,24 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       
     }
 
+    /// <summary>
+    /// Update the priorities for all users based on configured defaults.
+    /// </summary>
+    /// <remarks>
+    /// This function is used when user priority configuration is updated and
+    /// we want to apply the changes without restarting the controller/service.
+    /// </remarks>
+    public void UpdatePrioritiesForAllUsers()
+    {
+      lock (_usersLock)
+      {
+        foreach (IUser user in Context.Users.Values)
+        {
+          user.Priority = UserFactory.GetDefaultPriority(user.Name);
+        }
+      }
+    }
+
     #endregion
-
-
   }
 }

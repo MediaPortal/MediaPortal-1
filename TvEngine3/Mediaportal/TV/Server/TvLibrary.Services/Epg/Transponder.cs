@@ -20,26 +20,26 @@
 
 using System;
 using System.Collections.Generic;
+using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Epg
 {
   /// <summary>
   /// Class which holds all channels for a transponder
+  /// </summary>
   public class Transponder
   {
-
-
     #region variables
 
-    private TuningDetail _detail;
-    private List<Channel> _channels;
+    private IList<Channel> _channels;
+    private TuningDetail _tuningDetail;
+    private IChannel _tuningChannel;
     private int _currentChannelIndex;
-    private bool _inUse;
 
     #endregion
 
@@ -48,28 +48,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// <summary>
     /// Initializes a new instance of the <see cref="Transponder"/> class.
     /// </summary>
-    /// <param name="detail">The detail.</param>
-    public Transponder(TuningDetail detail)
+    public Transponder(TuningDetail tuningDetail, IChannel tuningChannel)
     {
       _channels = new List<Channel>();
-      _detail = detail;
+      _tuningDetail = tuningDetail;
+      _tuningChannel = tuningChannel;
       _currentChannelIndex = -1;
-      _inUse = false;
     }
 
     #endregion
 
     #region properties
-
-    /// <summary>
-    /// Gets or sets a value indicating whether the transponder is in use or not
-    /// </summary>
-    /// <value><c>true</c> if in use; otherwise, <c>false</c>.</value>
-    public bool InUse
-    {
-      get { return _inUse; }
-      set { _inUse = value; }
-    }
 
     /// <summary>
     /// Gets or sets the current channel index.
@@ -97,39 +86,35 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     }
 
     /// <summary>
-    /// Gets or sets the channels for this transponder
+    /// Get the channels broadcast on this transponder
     /// </summary>
-    /// <value>The channels.</value>
-    public List<Channel> Channels
-    {
-      get { return _channels; }
-      set { _channels = value; }
-    }
-
-    /// <summary>
-    /// Gets or sets the tuning details for this transponder.
-    /// </summary>
-    /// <value>The tuning detail.</value>
-    public TuningDetail TuningDetail
-    {
-      get { return _detail; }
-      set { _detail = value; }
-    }
-
-    /// <summary>
-    /// Gets the tuning detail for the current channel.
-    /// </summary>
-    /// <value>The tuning detail.</value>
-    public IChannel Tuning
+    public IList<Channel> Channels
     {
       get
       {
-        if (Index < 0 || Index >= Channels.Count)
-        {
-          this.LogError("transponder index out of range:{0}/{1}", Index, Channels.Count);
-          return null;
-        }                
-        return ChannelManagement.GetTuningChannelByType(Channels[Index], TuningDetail.ChannelType);
+        return _channels;
+      }
+    }
+
+    /// <summary>
+    /// Get the tuning details for this transponder.
+    /// </summary>
+    public TuningDetail TuningDetail
+    {
+      get
+      {
+        return _tuningDetail;
+      }
+    }
+
+    /// <summary>
+    /// Get the tuning channel for this transponder.
+    /// </summary>
+    public IChannel TuningChannel
+    {
+      get
+      {
+        return _tuningChannel;
       }
     }
 
@@ -146,68 +131,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
         return;
       Channels[Index].LastGrabTime = DateTime.Now;
       ChannelManagement.SaveChannel(Channels[Index]);
-      this.LogDebug("EPG: database updated for #{0} {1}", Index, Channels[Index].DisplayName);
-    }
-
-    /// <summary>
-    /// Determines whether the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>.
-    /// </summary>
-    /// <param name="obj">The <see cref="T:System.Object"></see> to compare with the current <see cref="T:System.Object"></see>.</param>
-    /// <returns>
-    /// true if the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>; otherwise, false.
-    /// </returns>
-    public override bool Equals(object obj)
-    {
-      Transponder other = (Transponder)obj;
-      if (other.TuningDetail.ChannelType != TuningDetail.ChannelType)
-        return false;
-      if (other.TuningDetail.Frequency != TuningDetail.Frequency)
-        return false;
-      if (other.TuningDetail.Modulation != TuningDetail.Modulation)
-        return false;
-      if (other.TuningDetail.Symbolrate != TuningDetail.Symbolrate)
-        return false;
-      if (other.TuningDetail.Bandwidth != TuningDetail.Bandwidth)
-        return false;
-      if (other.TuningDetail.Polarisation != TuningDetail.Polarisation)
-        return false;
-      return true;
-    }
-
-    /// <summary>
-    /// Calculates a hashcode for comparing Transponder objects
-    /// </summary>
-    public override int GetHashCode()
-    {
-      return TuningDetail.Frequency + TuningDetail.ChannelType;
-    }
-
-    /// <summary>
-    /// Logs the transponder info to the log file.
-    /// </summary>
-    public void Dump()
-    {
-      this.LogDebug("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex, TuningDetail.ChannelType,
-                TuningDetail.Frequency, TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth,
-                TuningDetail.Polarisation);
-      foreach (Channel c in _channels)
-      {
-        this.LogDebug(" {0}", c.DisplayName);
-      }
-    }
-
-    /// <summary>
-    /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
-    /// </summary>
-    /// <returns>
-    /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
-    /// </returns>
-    public override string ToString()
-    {
-      return string.Format("type:{0} freq:{1} mod:{2} sr:{3} bw:{4} pol:{5}",
-                           TuningDetail.ChannelType, TuningDetail.Frequency,
-                           TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth,
-                           TuningDetail.Polarisation);
+      this.LogDebug("EPG: database updated for #{0} {1}", Index, Channels[Index].Name);
     }
 
     #endregion
@@ -240,22 +164,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     }
 
     /// <summary>
-    /// Clears the list
-    /// </summary>
-    public void Reset()
-    {
-      Clear();
-      _currentTransponder = null;
-      _currentTransponderIndex = -1;
-    }
-
-    /// <summary>
     /// Gets the a list of all transponders
     /// </summary>
     public void RefreshTransponders()
     {
-      ////Gentle.Common.CacheManager.Clear();
-      Reset();
+      Clear();
+      _currentTransponder = null;
+      _currentTransponderIndex = -1;
+
       //get all channels
       IList<Channel> channels = ChannelManagement.ListAllChannelsForEpgGrabbing(ChannelIncludeRelationEnum.TuningDetails);
       foreach (Channel channel in channels)
@@ -263,14 +179,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
         //for each tuning detail of the channel
         foreach (TuningDetail detail in channel.TuningDetails)
         {
-          //create a new transponder
-          Transponder t = new Transponder(detail);
+          IChannel tuningChannel = TuningDetailManagement.GetTuningChannel(detail);
           bool found = false;
-
-          //check if transonder already exists
           foreach (Transponder transponder in this)
           {
-            if (transponder.Equals(t))
+            if (!transponder.TuningChannel.IsDifferentTransmitter(tuningChannel))
             {
               //yes, then simply add the channel to this transponder
               found = true;
@@ -283,7 +196,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
           {
             //new transponder, add the channel to this transponder
             //and add the transponder to the transponder list
-            t.Channels.Add(channel);
+            IChannelSatellite satelliteChannel = tuningChannel as IChannelSatellite;
+            if (satelliteChannel != null)
+            {
+              satelliteChannel.LnbType = new LnbTypeBLL(detail.LnbType);
+            }
+            Transponder t = new Transponder(detail, tuningChannel);
             Add(t);
           }
         }

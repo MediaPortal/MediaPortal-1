@@ -20,11 +20,12 @@
 
 using System;
 using System.Threading;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 
@@ -32,12 +33,10 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class TvCardHandler : ITvCardHandler
   {
-
-
     #region variables
 
-    private ITVCard _card;
-    private Card _dbsCard;
+    private ITuner _card;
+    private Tuner _dbsCard;
     private readonly UserManagement _userManagement;
     private readonly IParkedUserManagement _parkedUserManagement;
 
@@ -54,10 +53,10 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     #region ctor
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ITVCard"/> class.
+    /// Initializes a new instance of the <see cref="ITuner"/> class.
     /// </summary>
-    public TvCardHandler(Card dbsCard, ITVCard card)
-    {      
+    public TvCardHandler(Tuner dbsCard, ITuner card)
+    {
       _dbsCard = dbsCard;
       _card = card;
       if (_card != null)
@@ -89,7 +88,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           return false;
         }
         IConditionalAccessProvider caProvider = menuInterface as IConditionalAccessProvider;
-        if (caProvider != null && caProvider.IsConditionalAccessInterfaceReady())
+        if (caProvider == null || caProvider.IsReady())
         {
           _ciMenu = menuInterface;
           return true;
@@ -109,12 +108,10 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     #endregion
 
-
     public IUserManagement UserManagement
     {
       get { return _userManagement; }
     }
-
 
     public IParkedUserManagement ParkedUserManagement
     {
@@ -159,7 +156,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// Gets or sets the reference to the ITVCard interface
     /// </summary>
     /// <value>The card.</value>
-    public ITVCard Card
+    public ITuner Card
     {
       get { return _card; }
     }
@@ -168,13 +165,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// Gets or sets the reference the Card database record 
     /// </summary>
     /// <value>The card record from the database.</value>
-    public Card DataBaseCard
+    public Tuner DataBaseCard
     {
       get { return _dbsCard; }
       set { _dbsCard = value; }
     }
-
-
 
     /// <summary>
     /// Gets a value indicating whether this instance is idle.
@@ -189,207 +184,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           return true;
         }
         return false;
-      }
-    }
-
-    /// <summary>
-    /// Does the tuner support conditional access?
-    /// </summary>
-    /// <value><c>true</c> if the tuner supports conditional access, otherwise <c>false</c></value>
-    public bool IsConditionalAccessSupported
-    {
-      get
-      {       
-        return _card.IsConditionalAccessSupported;
-      }
-    }
-
-    /// <summary>
-    /// Returns the number of channels the card is currently decrypting
-    /// </summary>
-    /// <value>The number of channels decrypting.</value>
-    public int NumberOfChannelsDecrypting
-    {
-      get
-      {       
-        return _card.NumberOfChannelsDecrypting;
-      }
-    }
-
-
-    /// <summary>
-    /// Gets the type of card.
-    /// </summary>
-    /// <value>cardtype (Analog,DvbS,DvbT,DvbC,Atsc,WebStream)</value>
-    public CardType Type
-    {
-      get
-      {
-        try
-        {         
-          return _card.TunerType;
-        }
-        catch (ThreadAbortException)
-        {
-          return CardType.Analog;
-        }
-        catch (Exception ex)
-        {
-          this.LogError(ex);
-          return CardType.Analog;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Gets the name for a card.
-    /// </summary>
-    /// <returns>name of card</returns>
-    public string CardName
-    {
-      get
-      {
-        try
-        {          
-          return _card.Name;
-        }
-        catch (ThreadAbortException)
-        {
-          return "";
-        }
-        catch (Exception ex)
-        {
-          this.LogError(ex);
-          return "";
-        }
-      }
-    }
-
-    /// <summary>
-    /// Gets the name for a card.
-    /// </summary>
-    /// <returns>device of card</returns>
-    public string CardDevice()
-    {
-      try
-      {      
-        return _dbsCard.DevicePath;
-      }
-      catch (ThreadAbortException)
-      {
-        return "";
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex);
-        return "";
-      }
-    }
-
-
-    /// <summary>
-    /// Returns if the tuner is locked onto a signal or not
-    /// </summary>
-    /// <returns>true when tuner is locked to a signal otherwise false</returns>
-    public bool TunerLocked
-    {
-      get
-      {
-        try
-        {
-          if (_dbsCard.Enabled == false)
-          {
-            return false;
-          }
-          return _card.IsTunerLocked;
-        }
-        catch (ThreadAbortException)
-        {
-          return false;
-        }
-        catch (Exception ex)
-        {
-          this.LogError(ex);
-          return false;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Returns the signal quality for a card
-    /// </summary>
-    /// <returns>signal quality (0-100)</returns>
-    public int SignalQuality
-    {
-      get
-      {
-        try
-        {
-          if (_dbsCard.Enabled == false)
-          {
-            return 0;
-          }
-          return _card.SignalQuality;
-        }
-        catch (ThreadAbortException)
-        {
-          return 0;
-        }
-        catch (Exception ex)
-        {
-          this.LogError(ex);
-          return 0;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Returns the signal level for a card.
-    /// </summary>
-    /// <returns>signal level (0-100)</returns>
-    public int SignalLevel
-    {
-      get
-      {
-        try
-        {
-          if (_dbsCard.Enabled == false)
-          {
-            return 0;
-          }         
-          return _card.SignalLevel;
-        }
-        catch (ThreadAbortException)
-        {
-          return 0;
-        }
-        catch (Exception ex)
-        {
-          this.LogError(ex);
-          return 0;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Updates the signal state for a card.
-    /// </summary>
-    public void UpdateSignalSate()
-    {
-      try
-      {
-        if (_dbsCard.Enabled == false)
-        {
-          return;
-        }       
-        _card.ResetSignalUpdate();
-      }
-      catch (ThreadAbortException)
-      {       
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex);
       }
     }
 
@@ -411,7 +205,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_dbsCard.Enabled == false)
+        if (_dbsCard.IsEnabled == false)
         {
           return null;
         }
@@ -421,7 +215,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           return null;
         }
         
-        ITvSubChannel subchannel = _card.GetSubChannel(_userManagement.GetSubChannelIdByChannelId(userName, idChannel));
+        ISubChannel subchannel = _card.GetSubChannel(_userManagement.GetSubChannelIdByChannelId(userName, idChannel));
         if (subchannel == null)
         {
           return null;
@@ -448,7 +242,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_dbsCard.Enabled == false)
+        if (_dbsCard.IsEnabled == false)
         {
           return -1;
         }
@@ -481,7 +275,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_dbsCard.Enabled == false)
+        if (_dbsCard.IsEnabled == false)
         {
           return "";
         }
@@ -491,7 +285,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           return "";
         }
         
-        ITvSubChannel subchannel = _card.GetSubChannel(_userManagement.GetSubChannelIdByChannelId(userName, idChannel));
+        ISubChannel subchannel = _card.GetSubChannel(_userManagement.GetSubChannelIdByChannelId(userName, idChannel));
         if (subchannel == null)
         {
           return "";
@@ -522,7 +316,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_dbsCard.Enabled == false)
+        if (_dbsCard.IsEnabled == false)
         {
           return true;
         }               
@@ -530,7 +324,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         {
           return false;
         }        
-        ITvSubChannel subchannel = _card.GetSubChannel(_userManagement.GetTimeshiftingSubChannel(userName));
+        ISubChannel subchannel = _card.GetSubChannel(_userManagement.GetTimeshiftingSubChannel(userName));
         if (subchannel == null)
         {
           return false;
@@ -552,7 +346,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_dbsCard.Enabled == false)
+        if (_dbsCard.IsEnabled == false)
         {
           return true;
         }
@@ -560,7 +354,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         if (Context == null)
           return false;
 
-        ITvSubChannel subchannel = _card.GetSubChannel(subchannelId);
+        ISubChannel subchannel = _card.GetSubChannel(subchannelId);
         if (subchannel == null)
           return false;
         return (false == subchannel.IsReceivingAudioVideo);
@@ -588,7 +382,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (!_dbsCard.Enabled)
+        if (!_dbsCard.IsEnabled)
         {
           return;
         }

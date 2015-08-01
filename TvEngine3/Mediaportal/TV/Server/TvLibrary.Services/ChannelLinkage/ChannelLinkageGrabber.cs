@@ -23,40 +23,37 @@ using System.Threading;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 
 namespace Mediaportal.TV.Server.TVLibrary.ChannelLinkage
 {
-  public class ChannelLinkageGrabber : BaseChannelLinkageScanner
+  public class ChannelLinkageGrabber : IChannelLinkageScannerCallBack
   {
-  
-
     #region variables
 
-    private readonly ITVCard _card;
+    private readonly ITuner _card;
 
     #endregion
 
     #region ctor
 
-    public ChannelLinkageGrabber(ITVCard card)
+    public ChannelLinkageGrabber(ITuner card)
     {
       _card = card;
     }
 
     #endregion
 
-    #region callback
+    #region IChannelLinkageScannerCallBack member
 
-    public override int OnLinkageReceived()
+    public void OnLinkageReceived()
     {
       this.LogInfo("OnLinkageReceived()");
       Thread workerThread = new Thread(UpdateDatabaseThread);
       workerThread.IsBackground = true;
       workerThread.Name = "Channel linkage update thread";
       workerThread.Start();
-      return 0;
     }
 
     #endregion
@@ -84,14 +81,14 @@ namespace Mediaportal.TV.Server.TVLibrary.ChannelLinkage
                    lChannel.Name, lChannel.NetworkId, lChannel.TransportId, lChannel.ServiceId);
           continue;
         }
-        dbLinkedChannnel.DisplayName = lChannel.Name;        
+        dbLinkedChannnel.Name = lChannel.Name;        
         ChannelManagement.SaveChannel(dbLinkedChannnel);
 
         var map = new ChannelLinkageMap
                                   {
                                     IdLinkedChannel = dbLinkedChannnel.IdChannel,
                                     IdPortalChannel = dbPortalChannel.IdChannel,
-                                    DisplayName = lChannel.Name
+                                    Name = lChannel.Name
                                   };
 
         ChannelManagement.SaveChannelLinkageMap(map);
@@ -101,7 +98,7 @@ namespace Mediaportal.TV.Server.TVLibrary.ChannelLinkage
     private void UpdateDatabaseThread()
     {
       Thread.CurrentThread.Priority = ThreadPriority.Lowest;
-      List<PortalChannel> linkages = _card.ChannelLinkages;
+      List<PortalChannel> linkages = _card.ChannelLinkageScanningInterface.ChannelLinkages;
       this.LogInfo("ChannelLinkage received. {0} portal channels read", linkages.Count);
       foreach (PortalChannel pChannel in linkages)
       {

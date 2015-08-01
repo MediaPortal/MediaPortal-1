@@ -25,8 +25,8 @@ using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Ticket;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Scheduler;
 using Mediaportal.TV.Server.TVLibrary.Services;
@@ -39,8 +39,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
 {
   public static class CardReservationHelper
   {
-   
-
     private static int _idCounter;
 
     public static int GetNextId
@@ -107,8 +105,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
       }
     }
 
-
-
     public static void SetCardStateBasedOnTVresult(ITvCardHandler tvcard, TvResult tvResult)
     {
       if (tvResult == TvResult.Succeeded)
@@ -126,8 +122,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
         SetFailedCardState(tvcard);
       }
     }
-
-    
 
     public static int GetNumberOfOtherUsersOnCurrentCard(IUser user, int numberOfOtherUsersOnCurrentCard)
     {
@@ -150,14 +144,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
 
     public static void AddUserIfTimeshifting(ITvCardHandler tvcard, ref IUser u, List<IUser> tsUsers)
     {
-      bool isUserTS = tvcard.TimeShifter.IsTimeShifting(u);
-
-      if (isUserTS)
+      if (tvcard.TimeShifter.IsTimeShifting(u))
       {
         tsUsers.Add(u);
       }
     }
-            
 
     public static void RemoveTuneTicket(ITvCardHandler tvcard, ICardTuneReservationTicket ticket, bool ticketFound)
     {
@@ -192,7 +183,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
         {
           //this.LogDebug("CardReservation.CancelCardReservation FAILED id={0}", ticket.Id);
         }
-
       }
     }
 
@@ -249,26 +239,10 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
       return isUserOnSameCurrentChannel;
     }
 
-    public static bool IsUserOnSameChannel(IChannel tuningDetail, DVBBaseChannel userDVBchannel)
-    {
-      bool isUserOnSameChannel = false;      
-      if (userDVBchannel != null)
-      {        
-        var currentDVBchannel = tuningDetail as DVBBaseChannel;
-        if (currentDVBchannel != null)
-        {
-          TuningDetail currentDVBtuningDetail = ChannelManagement.GetTuningDetail(currentDVBchannel);
-          TuningDetail userDVBtuningDetail = ChannelManagement.GetTuningDetail(userDVBchannel);
-          isUserOnSameChannel = (currentDVBtuningDetail != null && currentDVBtuningDetail.IdChannel == userDVBtuningDetail.IdChannel);
-        }        
-      }
-      return isUserOnSameChannel;
-    }
-
     public static bool IsFreeToAir(ITvCardHandler tvcard, string userName, int idChannel)
     {
       IChannel currentUserCh = tvcard.CurrentChannel(userName, idChannel);
-      return (currentUserCh != null && currentUserCh.FreeToAir);
+      return (currentUserCh != null && !currentUserCh.IsEncrypted);
     }
 
     public static bool GetIsTuningPending(ITvCardHandler tvcard, ICardTuneReservationTicket ticket, out bool ticketFound)
@@ -294,7 +268,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
             //_cardTuneState = CardTuneState.TunePending;            
           }
         }
-        
       }
 
       if (ticket == null)
@@ -411,7 +384,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
     public static ICardTuneReservationTicket RequestCardReservation(IUser user, CardDetail cardDetail, ICardReservation cardResImpl, int idChannel)
     {
       ICardTuneReservationTicket ticket = null;      
-      int idCard = cardDetail.Card.IdCard;
+      int idCard = cardDetail.Card.IdTuner;
       IUser userCopy = user.Clone() as User;
       if (userCopy != null)
       {
@@ -432,7 +405,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
       foreach (CardDetail cardDetail in availCardsForReservation)
       {
         ICardTuneReservationTicket ticket = null;
-        int idCard = cardDetail.Card.IdCard;
+        int idCard = cardDetail.Card.IdTuner;
         bool cardAlreadyHasTicket = cardIds.Contains(idCard);
         if (!cardAlreadyHasTicket)
         {
@@ -476,7 +449,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
 
         cardTuneState = tvcard.Tuner.CardTuneState;
         hasMoreStopReservations = (tvcard.Tuner.ReservationsForStop.Count > 0);
-
       }
 
       if (cardStopReservation != null)
@@ -530,7 +502,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
       {
         if (isStopPending && ticketFound)
         {
-          Log.Info("Stop cardid={0}, ticket={1}, tunestate={2}, stopstate={3}", tvcard.DataBaseCard.IdCard, ticket.Id, tvcard.Tuner.CardTuneState, tvcard.Tuner.CardStopState);
+          Log.Info("Stop cardid={0}, ticket={1}, tunestate={2}, stopstate={3}", tvcard.Card.TunerId, ticket.Id, tvcard.Tuner.CardTuneState, tvcard.Tuner.CardStopState);
 
           result = tvcard.TimeShifter.Stop(ref user, idChannel);
 
@@ -566,7 +538,5 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
 
       return result;
     }
-
-    
   }
 }

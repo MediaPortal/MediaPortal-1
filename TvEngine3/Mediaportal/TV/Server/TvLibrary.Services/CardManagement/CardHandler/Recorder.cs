@@ -23,13 +23,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using ISubChannel = Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.ISubChannel;
 
 namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
@@ -40,6 +40,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// </summary>
     /// <param name="cardHandler">The card handler.</param>
     public Recorder(ITvCardHandler cardHandler)
+      : base(cardHandler)
     {
       string recordingFolder = cardHandler.DataBaseCard.RecordingFolder;
 
@@ -62,19 +63,15 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           Directory.CreateDirectory(recordingFolder); //if it fails, then nothing works reliably.
         }
       }
-
-      _cardHandler = cardHandler;
-      _timeshiftingEpgGrabberEnabled = SettingsManagement.GetValue("timeshiftingEpgGrabberEnabled", false);
     }
 
     private static string SetDefaultRecordingFolder(ITvCardHandler cardHandler)
     {
       string recordingFolder = TVDatabase.TVBusinessLayer.Common.GetDefaultRecordingFolder();
       cardHandler.DataBaseCard.RecordingFolder = recordingFolder;
-      TVDatabase.TVBusinessLayer.CardManagement.SaveCard(cardHandler.DataBaseCard);
+      TVDatabase.TVBusinessLayer.TunerManagement.SaveTuner(cardHandler.DataBaseCard);
       return recordingFolder;
     }
-
 
     protected override void AudioVideoEventHandler(PidType pidType)
     {
@@ -104,7 +101,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       try
       {
 #if DEBUG
-        if (File.Exists(@"\failrec_" + _cardHandler.DataBaseCard.IdCard))
+        if (File.Exists(@"\failrec_" + _cardHandler.Card.TunerId))
         {
           throw new Exception("failed rec. on purpose");
         }
@@ -116,11 +113,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
 
         _eventTimeshift.Reset();
-        if (_cardHandler.DataBaseCard.Enabled)
+        if (_cardHandler.Card.IsEnabled)
         {                              
           _cardHandler.UserManagement.RefreshUser(ref user);
           int timeshiftingSubChannel = _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name);
-          ITvSubChannel subchannel = GetSubChannel(timeshiftingSubChannel);
+          ISubChannel subchannel = GetSubChannel(timeshiftingSubChannel);
           if (subchannel != null)
           {
             _subchannel = subchannel;
@@ -144,7 +141,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
               AttachAudioVideoEventHandler(subchannel);
             }
 
-            this.LogDebug("card: StartRecording {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
+            this.LogDebug("card: StartRecording {0} {1}", _cardHandler.Card.TunerId, fileName);
             bool recStarted = subchannel.StartRecording(fileName);
             if (recStarted)
             {
@@ -172,7 +169,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         if (result == TvResult.Succeeded)
         {
-          StartTimeShiftingEPGgrabber(user);
+          StartTimeShiftingEpgGrabber(user);
         }
       }
       catch (Exception ex)
@@ -194,7 +191,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     private void HandleFailedRecording(ref IUser user, string fileName)
     {
-      this.LogDebug("card: Recording failed! {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
+      this.LogDebug("card: Recording failed! {0} {1}", _cardHandler.Card.TunerId, fileName);
       string cardRecordingFolderName = _cardHandler.DataBaseCard.RecordingFolder;
       Stop(ref user);
       _cardHandler.UserManagement.RemoveUser(user, _cardHandler.UserManagement.GetTimeshiftingChannelId(user.Name));
@@ -221,9 +218,9 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       bool stop = false;
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled)
+        if (_cardHandler.Card.IsEnabled)
         {
-          this.LogDebug("card: StopRecording card={0}, user={1}", _cardHandler.DataBaseCard.IdCard, user.Name);
+          this.LogDebug("card: StopRecording card={0}, user={1}", _cardHandler.Card.TunerId, user.Name);
           if (user.UserType == UserType.Scheduler)
           {
             stop = StopRecording(ref user);
@@ -246,7 +243,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       bool stop = false;
       var recentSubChannelId = _cardHandler.UserManagement.GetRecentSubChannelId(user.Name);
       user = _cardHandler.UserManagement.GetUserCopy(recentSubChannelId);
-      ITvSubChannel subchannel = GetSubChannel(recentSubChannelId);
+      ISubChannel subchannel = GetSubChannel(recentSubChannelId);
       if (subchannel != null)
       {
         subchannel.StopRecording();
@@ -254,6 +251,10 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         if (subchannel.IsTimeShifting == false || _cardHandler.UserManagement.UsersCount() <= 1)
         {
           _cardHandler.UserManagement.RemoveUser(user, _cardHandler.UserManagement.GetTimeshiftingChannelId(user.Name));
+        }
+        if (_cardHandler.IsIdle)
+        {
+          StopTimeShiftingEpgGrabber();
         }
         stop = true;
       }
@@ -335,8 +336,8 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       string recordingFileName = "";
       try
-      {        
-        ITvSubChannel subchannel = GetSubChannel(userName, _cardHandler.UserManagement.GetRecentChannelId(userName));
+      {
+        ISubChannel subchannel = GetSubChannel(userName, _cardHandler.UserManagement.GetRecentChannelId(userName));
         if (subchannel != null)
         {
           recordingFileName = subchannel.RecordingFileName;
@@ -359,7 +360,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       DateTime recordingStarted = DateTime.MinValue;
       try
       {
-        ITvSubChannel subchannel = GetSubChannel(userName, _cardHandler.UserManagement.GetRecentChannelId(userName));
+        ISubChannel subchannel = GetSubChannel(userName, _cardHandler.UserManagement.GetRecentChannelId(userName));
         if (subchannel != null)
         {
           recordingStarted = subchannel.RecordingStarted;

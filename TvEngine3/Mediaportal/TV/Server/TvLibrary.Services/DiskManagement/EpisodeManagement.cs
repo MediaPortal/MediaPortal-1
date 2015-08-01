@@ -20,8 +20,8 @@
 
 using System;
 using System.Collections.Generic;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
@@ -80,7 +80,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       //check how many episodes we got
       while (true)
       {
-        IList<Recording> recordings = TVDatabase.TVBusinessLayer.RecordingManagement.ListAllRecordingsByMediaType(MediaTypeEnum.TV);
+        IList<Recording> recordings = TVDatabase.TVBusinessLayer.RecordingManagement.ListAllRecordingsByMediaType(MediaType.Television);
 
         List<Recording> episodes = GetEpisodes(program.Title, recordings);
         if (episodes.Count <= schedule.MaxAirings)

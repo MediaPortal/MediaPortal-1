@@ -20,17 +20,17 @@
 
 using System;
 using System.Collections.Generic;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 
 namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class ChannelScanning : IChannelScanning
   {
-
-
     private readonly ITvCardHandler _cardHandler;
 
     /// <summary>
@@ -52,7 +52,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         try
         {
-          if (_cardHandler.DataBaseCard.Enabled == false)
+          if (_cardHandler.Card.IsEnabled == false)
           {
             return false;
           }
@@ -80,11 +80,10 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false)
+        if (_cardHandler.Card.IsEnabled == false)
         {
           return new List<IChannel>().ToArray();
         }
-
         
         IChannelScanner scanner = _cardHandler.Card.ChannelScanningInterface;
         if (scanner == null)
@@ -106,19 +105,19 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
     }
 
-    public IChannel[] ScanNIT(IChannel channel)
+    public TuningDetail[] ScanNIT(IChannel channel)
     {
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false)
+        if (_cardHandler.Card.IsEnabled == false)
         {
-          return new List<IChannel>().ToArray();
+          return new List<TuningDetail>().ToArray();
         }
        
         IChannelScanner scanner = _cardHandler.Card.ChannelScanningInterface;
         if (scanner == null)
           return null;
-        List<IChannel> channelsFound = scanner.ScanNIT(channel);
+        List<TuningDetail> channelsFound = scanner.ScanNIT(channel);
         if (channelsFound == null)
           return null;
         return channelsFound.ToArray();

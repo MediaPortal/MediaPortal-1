@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
@@ -51,8 +52,8 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
     private static IEnumerable<string> GetDisks()
     {
       var drives = new List<string>();
-      IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
-      foreach (Card card in cards)
+      IList<Tuner> cards = TVDatabase.TVBusinessLayer.TunerManagement.ListAllTuners(TunerIncludeRelationEnum.None); //SEB
+      foreach (Tuner card in cards)
       {
         if (card.RecordingFolder.Length > 0)
         {
@@ -142,7 +143,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
     private static List<RecordingFileInfo> GetRecordingsOnDrive(string drive)
     {
       var recordings = new List<RecordingFileInfo>();
-      var recordedTvShows = TVDatabase.TVBusinessLayer.RecordingManagement.ListAllRecordingsByMediaType(MediaTypeEnum.TV);
+      var recordedTvShows = TVDatabase.TVBusinessLayer.RecordingManagement.ListAllRecordingsByMediaType(MediaType.Television);
 
       foreach (Recording recorded in recordedTvShows)
       {
@@ -203,7 +204,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       while (OutOfDiskSpace(drive) && recordings.Count > 0)
       {
         RecordingFileInfo fi = recordings[0];
-        if (fi.record.KeepUntil == (int)KeepMethodType.UntilSpaceNeeded)
+        if (fi.record.KeepUntil == (int)RecordingKeepMethod.UntilSpaceNeeded)
         {
           // Delete the file from disk and the recording entry from the database.          
           bool result = RecordingFileHandler.DeleteRecordingOnDisk(fi.record.FileName);

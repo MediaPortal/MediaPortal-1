@@ -19,7 +19,7 @@
 #endregion
 
 using System;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Scheduler;
 using Mediaportal.TV.Server.TVLibrary.Services;
@@ -31,16 +31,8 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
 {
   public class CardReservationRec : CardReservationBase
   {
- 
-
     private CardDetail _cardInfo;
     private RecordingDetail _recDetail;
-
-
-    protected override bool IsTunedToTransponder(ITvCardHandler tvcard, IChannel tuningDetail)
-    {
-      return tvcard.Tuner.IsTunedToTransponder(tuningDetail);
-    }
 
     public CardDetail CardInfo
     {
@@ -74,6 +66,5 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
 
       return startRecordingOnDisc;
     }
-
   }
 }

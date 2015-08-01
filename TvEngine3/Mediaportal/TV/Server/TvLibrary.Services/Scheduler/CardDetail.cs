@@ -22,8 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 
 namespace Mediaportal.TV.Server.TVLibrary.Scheduler
 {
@@ -44,15 +43,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       }
     }
   }
+
   /// <summary>
   /// Class which can be used to sort Cards bases on priority
   /// </summary>
   public class CardDetail : IComparable<CardDetail>
   {
     private readonly int _cardId;
-    private readonly Card _card;
+    private readonly Tuner _card;
+    private readonly int _cardPriority;
     private readonly IChannel _detail;
-    private readonly int _priority;
+    private readonly int _tuningDetailPriority;
     private bool _sameTransponder;
     private int _numberOfOtherUsers;
 
@@ -62,16 +63,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     /// <param name="id">card id</param>
     /// <param name="card">card dataaccess object</param>
     /// <param name="detail">tuning detail</param>
+    /// <param name="tuningDetailPriority">the priority for the database tuning detail record (higher is more important)</param>
     /// <param name="sameTransponder">indicates whether it is the same transponder</param>
     /// <param name="numberOfOtherUsers"></param>
-    /// <param name="isParked"> </param>
-    public CardDetail(int id, Card card, IChannel detail, bool sameTransponder, int numberOfOtherUsers)
+    public CardDetail(int id, Tuner card, IChannel detail, int tuningDetailPriority, bool sameTransponder, int numberOfOtherUsers)
     {
-      _sameTransponder = sameTransponder;
       _cardId = id;
       _card = card;
+      _cardPriority = _card.Priority;
       _detail = detail;
-      _priority = _card.Priority;
+      _tuningDetailPriority = tuningDetailPriority;
+      _sameTransponder = sameTransponder;
       _numberOfOtherUsers = numberOfOtherUsers;
     }
 
@@ -87,15 +89,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     /// gets/sets the priority
     /// </summary>
     /// <value>The priority.</value>
-    public int Priority
+    public int CardPriority
     {
-      get { return _priority; }
+      get { return _cardPriority; }
     }
 
     /// <summary>
     /// gets the card
     /// </summary>
-    public Card Card
+    public Tuner Card
     {
       get { return _card; }
     }
@@ -106,6 +108,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     public IChannel TuningDetail
     {
       get { return _detail; }
+    }
+
+    /// <summary>
+    /// gets the tuning detail priority
+    /// </summary>
+    public int TuningDetailPriority
+    {
+      get { return _tuningDetailPriority; }
     }
 
     /// <summary>
@@ -128,41 +138,42 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
 
     #region IComparable<CardInfo> Members
 
-    // higher priority means that this one should be more to the front of the list
+    /// <summary>
+    /// Compare two CardDetails.
+    /// </summary>
+    /// <remarks>
+    /// The preferred CardDetail is the one that should be tried earlier when
+    /// tuning. This decision is based on:
+    /// 1. Tuning detail priority [lower preferred, enables user to prefer HD tuning details].
+    /// 2. Tuner tuned to same transponder or not [same transponder preferred, minimises the number of tuners used].
+    /// 3. Number of users using the tuner [higher user count preferred, tends to minimise the number of tuners used].
+    /// 4. Tuner priority [lower preferred, user preference].
+    /// 
+    /// If this function is used to sort a list, the most preferred CardDetail
+    /// will be the first in the list.
+    /// </remarks>
     public int CompareTo(CardDetail other)
     {
-      if (SameTransponder == other.SameTransponder)
+      if (TuningDetailPriority != other.TuningDetailPriority)
       {
-        if (!SameTransponder && (NumberOfOtherUsers != other.NumberOfOtherUsers))
-        {
-          if (NumberOfOtherUsers > other.NumberOfOtherUsers)
-          {
-            return 1;
-          }
-          if (NumberOfOtherUsers < other.NumberOfOtherUsers)
-          {
-            return -1;
-          }
-          return 0;
-        }
+        return TuningDetailPriority - other.TuningDetailPriority;
+      }
 
-        if (Priority > other.Priority)
+      if (SameTransponder != other.SameTransponder)
+      {
+        if (SameTransponder)
         {
           return -1;
         }
-        if (Priority < other.Priority)
-        {
-          return 1;
-        }
-
-        return 0;
+        return 1;
       }
 
-      if (SameTransponder)
+      if (NumberOfOtherUsers != other.NumberOfOtherUsers)
       {
-        return -1;
+        return other.NumberOfOtherUsers - NumberOfOtherUsers;
       }
-      return 1;
+
+      return CardPriority - other.CardPriority;
     }
 
     #endregion

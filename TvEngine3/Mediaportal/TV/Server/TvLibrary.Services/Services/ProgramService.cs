@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 
 namespace Mediaportal.TV.Server.TVLibrary.Services
-{  
+{
   public class ProgramService : IProgramService
-  {    
-
+  {
     public ProgramService ()
     {
     }
@@ -101,7 +101,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       return programByTitleAndTimes;
     }
 
-    public IList<Program> GetProgramsByDescriptionAndMediaType(string searchCriteria, MediaTypeEnum mediaType, StringComparisonEnum stringComparison)
+    public IList<Program> GetProgramsByDescriptionAndMediaType(string searchCriteria, MediaType mediaType, StringComparisonEnum stringComparison)
     {
       var programsByDescriptionAndMediaType = ProgramManagement.GetProgramsByDescription(searchCriteria, mediaType, stringComparison);
       return programsByDescriptionAndMediaType;
@@ -119,7 +119,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       return programsByTitle;
     }
 
-    public IList<Program> GetProgramsByTitleAndMediaType(string searchCriteria, MediaTypeEnum mediaType, StringComparisonEnum stringComparison)
+    public IList<Program> GetProgramsByTitleAndMediaType(string searchCriteria, MediaType mediaType, StringComparisonEnum stringComparison)
     {
       var programsByTitleAndMediaType = ProgramManagement.GetProgramsByTitle(searchCriteria, mediaType, stringComparison);
       return programsByTitleAndMediaType;
@@ -137,7 +137,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       return programsForAllChannels;
     }
 
-    public IList<Program> GetProgramsByTitleAndCategoryAndMediaType(string categoryCriteriea, string titleCriteria, MediaTypeEnum mediaType, StringComparisonEnum stringComparisonCategory, StringComparisonEnum stringComparisonTitle)
+    public IList<Program> GetProgramsByTitleAndCategoryAndMediaType(string categoryCriteriea, string titleCriteria, MediaType mediaType, StringComparisonEnum stringComparisonCategory, StringComparisonEnum stringComparisonTitle)
     {
       var programsByTitleAndCategoryAndMediaType = ProgramManagement.GetProgramsByTitleAndCategoryAndMediaType(categoryCriteriea, titleCriteria, mediaType, stringComparisonCategory, stringComparisonTitle);
       return programsByTitleAndCategoryAndMediaType;
