@@ -19,15 +19,13 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using System.Security;
 using System.Text;
-using DirectShowLib.BDA;
-using DirectShowLib.Dvd;
-using System.Runtime.InteropServices.ComTypes;
-using System.Collections;
 using System.Text.RegularExpressions;
 
 /// <summary>
@@ -41,59 +39,6 @@ using System.Text.RegularExpressions;
 
 namespace DirectShowLib
 {
-  /// <summary>
-  /// From AnalogVideoStandard
-  /// </summary>
-  [Flags]
-  public enum AnalogVideoStandard
-  {
-    None = 0x00000000,
-    [Description("NTSC M")]
-    NTSC_M = 0x00000001,
-    [Description("NTSC J")]
-    NTSC_M_J = 0x00000002,
-    [Description("NTSC 4.43")]
-    NTSC_433 = 0x00000004,
-    [Description("PAL B")]
-    PAL_B = 0x00000010,
-    [Description("PAL D")]
-    PAL_D = 0x00000020,
-    [Description("PAL G")]
-    PAL_G = 0x00000040,
-    [Description("PAL H")]
-    PAL_H = 0x00000080,
-    [Description("PAL I")]
-    PAL_I = 0x00000100,
-    [Description("PAL M")]
-    PAL_M = 0x00000200,
-    [Description("PAL N")]
-    PAL_N = 0x00000400,
-    [Description("PAL 60")]
-    PAL_60 = 0x00000800,
-    [Description("SECAM B")]
-    SECAM_B = 0x00001000,
-    [Description("SECAM D")]
-    SECAM_D = 0x00002000,
-    [Description("SECAM G")]
-    SECAM_G = 0x00004000,
-    [Description("SECAM H")]
-    SECAM_H = 0x00008000,
-    [Description("SECAM K")]
-    SECAM_K = 0x00010000,
-    [Description("SECAM K1")]
-    SECAM_K1 = 0x00020000,
-    [Description("SECAM L")]
-    SECAM_L = 0x00040000,
-    [Description("SECAM L1")]
-    SECAM_L1 = 0x00080000,
-    [Description("PAL N Combo")]
-    PAL_N_COMBO = 0x00100000,
-
-    /*NTSCMask = 0x00000007,
-    PALMask = 0x00100FF0,
-    SECAMMask = 0x000FF000*/
-  }
-
   /// <summary>
   /// From TVAudioMode
   /// </summary>
@@ -126,7 +71,7 @@ namespace DirectShowLib
   /// </summary>
   public enum VideoProcAmpProperty
   {
-    Brightness,
+    Brightness = 0,
     Contrast,
     Hue,
     Saturation,
@@ -141,6 +86,34 @@ namespace DirectShowLib
     DigitalMultiplierLimit,
     WhiteBalanceComponent,
     PowerLineFrequency
+  }
+
+  /// <summary>
+  /// From CameraControlProperty
+  /// </summary>
+  public enum CameraControlProperty
+  {
+    Pan = 0,
+    Tilt,
+    Roll,
+    Zoom,
+    Exposure,
+    Iris,
+    Focus,
+    // Properties in KsMedia.h, missing in AXExtend.cs added here.
+    ScanMode,
+    Privacy,
+    PanTilt,
+    PanRelative,
+    TiltRelative,
+    RollRelative,
+    ZoomRelative,
+    ExposureRelative,
+    IrisRelative,
+    FocusRelative,
+    PanTiltRelative,
+    FocalLength,
+    AutoExposurePriority
   }
 
   [ComImport, SuppressUnmanagedCodeSecurity,
@@ -336,101 +309,6 @@ namespace DirectShowLib.BDA
 
   #endregion
 
-  #region BDATypes.cs
-
-namespace DirectShowLib.BDA
-{
-  /// <summary>
-  /// From RollOff
-  /// </summary>
-  public enum RollOff
-  {
-    [Description("Not Set")]
-    NotSet = -1,
-    [Description("Not Defined")]
-    NotDefined = 0,
-    [Description("0.20")]
-    Twenty = 1,
-    [Description("0.25")]
-    TwentyFive,
-    [Description("0.35")]
-    ThirtyFive
-  }
-
-  /// <summary>
-  /// From Pilot
-  /// </summary>
-  public enum Pilot
-  {
-    [Description("Not Set")]
-    NotSet = -1,
-    [Description("Not Defined")]
-    NotDefined = 0,
-    Off = 1,
-    On
-  }
-
-  /// <summary>
-  /// From BinaryConvolutionCodeRate
-  /// </summary>
-  public enum BinaryConvolutionCodeRate
-  {
-    [Description("Not Set")]
-    RateNotSet = -1,
-    [Description("Not Defined")]
-    RateNotDefined = 0,
-    [Description("1/2")]
-    Rate1_2 = 1,
-    [Description("2/3")]
-    Rate2_3,
-    [Description("3/4")]
-    Rate3_4,
-    [Description("3/5")]
-    Rate3_5,
-    [Description("4/5")]
-    Rate4_5,
-    [Description("5/6")]
-    Rate5_6,
-    [Description("5/11")]
-    Rate5_11,
-    [Description("7/8")]
-    Rate7_8,
-    [Description("1/4")]
-    Rate1_4,
-    [Description("1/3")]
-    Rate1_3,
-    [Description("2/5")]
-    Rate2_5,
-    [Description("6/7")]
-    Rate6_7,
-    [Description("8/9")]
-    Rate8_9,
-    [Description("9/10")]
-    Rate9_10
-  }
-
-  /// <summary>
-  /// From Polarisation
-  /// </summary>
-  public enum Polarisation
-  {
-    [Description("Not Set")]
-    NotSet = -1,
-    [Description("Not Defined")]
-    NotDefined = 0,
-    [Description("Linear Horizontal")]
-    LinearH = 1,
-    [Description("Linear Vertical")]
-    LinearV,
-    [Description("Circular Left")]
-    CircularL,
-    [Description("Circular Right")]
-    CircularR
-  }
-}
-
-  #endregion
-
   #region Control.cs
 
 namespace DirectShowLib
@@ -594,7 +472,7 @@ namespace DirectShowLib
     /// <param name="ulFlags">Not used, must be zero.</param>
     /// <returns>If the operation succeeds, the function returns CR_SUCCESS. Otherwise, it returns one of the CR_-prefixed error codes defined in Cfgmgr32.h.</returns>
     [DllImport("cfgmgr32.dll", CharSet = CharSet.Unicode)]
-    private static extern uint CM_Get_Device_IDW(uint dnDevInst, StringBuilder Buffer, uint BufferLen, uint ulFlags);
+    private static extern uint CM_Get_Device_ID(uint dnDevInst, StringBuilder Buffer, uint BufferLen, uint ulFlags);
 
     /// <summary>
     /// The CM_Get_Parent function obtains a device instance handle to the parent node of a specified device node (devnode) in the local machine's device tree.
@@ -679,7 +557,7 @@ namespace DirectShowLib
     /// <param name="Flags">A variable of type DWORD that specifies control options that filter the device information elements that are added to the device information set. This parameter can be a bitwise OR of zero or more of the following flags. For more information about combining these flags, see the following Remarks section.</param>
     /// <returns>If the operation succeeds, SetupDiGetClassDevs returns a handle to a device information set that contains all installed devices that matched the supplied parameters. If the operation fails, the function returns INVALID_HANDLE_VALUE. To get extended error information, call GetLastError.</returns>
     [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    private static extern IntPtr SetupDiGetClassDevsW(ref Guid ClassGuid, string Enumerator, IntPtr hwndParent, DiGetClassFlags Flags);
+    private static extern IntPtr SetupDiGetClassDevs(ref Guid ClassGuid, string Enumerator, IntPtr hwndParent, DiGetClassFlags Flags);
 
     /// <summary>
     /// The SetupDiGetDeviceInstanceId function retrieves the device instance ID that is associated with a device information element.
@@ -692,7 +570,7 @@ namespace DirectShowLib
     /// <returns>The function returns TRUE if it is successful. Otherwise, it returns FALSE and the logged error can be retrieved by making a call to GetLastError.</returns>
     [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool SetupDiGetDeviceInstanceIdW(IntPtr DeviceInfoSet, ref SP_DEVINFO_DATA DeviceInfoData, StringBuilder DeviceInstanceId, uint DeviceInstanceIdSize, out uint RequiredSize);
+    private static extern bool SetupDiGetDeviceInstanceId(IntPtr DeviceInfoSet, ref SP_DEVINFO_DATA DeviceInfoData, StringBuilder DeviceInstanceId, uint DeviceInstanceIdSize, out uint RequiredSize);
 
     #endregion
 
@@ -700,6 +578,42 @@ namespace DirectShowLib
     private string _productInstanceId = null;
     private bool _readTunerInstanceId = false;
     private int _tunerInstanceId = -1;
+
+    ~DsDevice()
+    {
+      Dispose(false);
+    }
+
+    #region IDisposable member
+
+    /// <summary>
+    /// Release and dispose all resources.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Release and dispose all resources.
+    /// </summary>
+    /// <param name="isDisposing"><c>True</c> if the device is being disposed.</param>
+    private void Dispose(bool isDisposing)
+    {
+      if (isDisposing)
+      {
+        if (Mon != null)
+        {
+          Marshal.ReleaseComObject(Mon);
+          m_Mon = null;
+        }
+
+        m_Name = null;
+      }
+    }
+
+    #endregion
 
     /// <summary>
     /// Get the product instance identifier.
@@ -844,8 +758,8 @@ namespace DirectShowLib
 
           // Enumerate installed and present media devices with stream class drivers.
           Guid classMedia = new Guid(0x4d36e96c, 0xe325, 0x11ce, 0xbf, 0xc1, 0x08, 0x00, 0x2b, 0xe1, 0x03, 0x18);
-          IntPtr devInfoSet = SetupDiGetClassDevsW(ref classMedia, pnpConnection.ToUpperInvariant(), IntPtr.Zero, DiGetClassFlags.DIGCF_PRESENT);
-          if (devInfoSet != IntPtr.Zero)
+          IntPtr devInfoSet = SetupDiGetClassDevs(ref classMedia, pnpConnection.ToUpperInvariant(), IntPtr.Zero, DiGetClassFlags.DIGCF_PRESENT);
+          if (devInfoSet != IntPtr.Zero && devInfoSet != new IntPtr(-1))
           {
             try
             {
@@ -858,14 +772,14 @@ namespace DirectShowLib
               {
                 // Get the device ID for the media device.
                 uint requiredSize;
-                if (SetupDiGetDeviceInstanceIdW(devInfoSet, ref devInfo, tempDeviceId, MAX_DEVICE_ID_LEN, out requiredSize))
+                if (SetupDiGetDeviceInstanceId(devInfoSet, ref devInfo, tempDeviceId, MAX_DEVICE_ID_LEN, out requiredSize))
                 {
                   // Is this the same device as represented by this DsDevice/moniker?
                   if (string.Equals(tempDeviceId.ToString(), targetDeviceId, StringComparison.InvariantCultureIgnoreCase))
                   {
                     // Yes, same device. Does it have a parent device?
                     uint parentDevInst;
-                    if (CM_Get_Parent(out parentDevInst, devInfo.DevInst, 0) == 0 && CM_Get_Device_IDW(parentDevInst, parentDeviceId, MAX_DEVICE_ID_LEN, 0) == 0)
+                    if (CM_Get_Parent(out parentDevInst, devInfo.DevInst, 0) == 0 && CM_Get_Device_ID(parentDevInst, parentDeviceId, MAX_DEVICE_ID_LEN, 0) == 0)
                     {
                       // Yes. The parent device ID should look something like:
                       // PCI\VEN_14F1&DEV_8800&SUBSYS_92020070&REV_05\4&CF81C54&0&10F0
@@ -1145,6 +1059,9 @@ namespace DirectShowLib
       return ret;
     }
 
+    /*
+     * Re-implemented above for proper dispose/finalise pattern.
+     * 
     public void Dispose()
     {
       if (Mon != null)
@@ -1153,7 +1070,7 @@ namespace DirectShowLib
         m_Mon = null;
       }
       m_Name = null;
-    }
+    }*/
   }
 }
 
@@ -1412,6 +1329,442 @@ namespace DirectShowLib.BDA
 
     int Clone([Out] out IEnumTuningSpaces ppEnum);
   }
+
+  // *** The methods in this interface had been converted to properties. ***
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+   Guid("6044634A-1733-4F99-B982-5FB12AFCE4F0"),
+   InterfaceType(ComInterfaceType.InterfaceIsDual)]
+  public interface IDVBSLocator2 : IDVBSLocator
+  {
+    #region ILocator Methods
+
+    [PreserveSig]
+    new int get_CarrierFrequency([Out] out int Frequency);
+
+    [PreserveSig]
+    new int put_CarrierFrequency([In] int Frequency);
+
+    [PreserveSig]
+    new int get_InnerFEC([Out] out FECMethod FEC);
+
+    [PreserveSig]
+    new int put_InnerFEC([In] FECMethod FEC);
+
+    [PreserveSig]
+    new int get_InnerFECRate([Out] out BinaryConvolutionCodeRate FEC);
+
+    [PreserveSig]
+    new int put_InnerFECRate([In] BinaryConvolutionCodeRate FEC);
+
+    [PreserveSig]
+    new int get_OuterFEC([Out] out FECMethod FEC);
+
+    [PreserveSig]
+    new int put_OuterFEC([In] FECMethod FEC);
+
+    [PreserveSig]
+    new int get_OuterFECRate([Out] out BinaryConvolutionCodeRate FEC);
+
+    [PreserveSig]
+    new int put_OuterFECRate([In] BinaryConvolutionCodeRate FEC);
+
+    [PreserveSig]
+    new int get_Modulation([Out] out ModulationType Modulation);
+
+    [PreserveSig]
+    new int put_Modulation([In] ModulationType Modulation);
+
+    [PreserveSig]
+    new int get_SymbolRate([Out] out int Rate);
+
+    [PreserveSig]
+    new int put_SymbolRate([In] int Rate);
+
+    [PreserveSig]
+    new int Clone([Out] out ILocator NewLocator);
+
+    #endregion
+
+    #region IDVBSLocator methods
+
+    [PreserveSig]
+    new int get_SignalPolarisation([Out] out Polarisation PolarisationVal);
+
+    [PreserveSig]
+    new int put_SignalPolarisation([In] Polarisation PolarisationVal);
+
+    [PreserveSig]
+    new int get_WestPosition([Out, MarshalAs(UnmanagedType.VariantBool)] out bool WestLongitude);
+
+    [PreserveSig]
+    new int put_WestPosition([In, MarshalAs(UnmanagedType.VariantBool)] bool WestLongitude);
+
+    [PreserveSig]
+    new int get_OrbitalPosition([Out] out int longitude);
+
+    [PreserveSig]
+    new int put_OrbitalPosition([In] int longitude);
+
+    [PreserveSig]
+    new int get_Azimuth([Out] out int Azimuth);
+
+    [PreserveSig]
+    new int put_Azimuth([In] int Azimuth);
+
+    [PreserveSig]
+    new int get_Elevation([Out] out int Elevation);
+
+    [PreserveSig]
+    new int put_Elevation([In] int Elevation);
+
+    #endregion
+
+    [PreserveSig]
+    int get_DiseqLNBSource([Out] out LNB_Source DiseqLNBSourceVal);
+
+    [PreserveSig]
+    int put_DiseqLNBSource([In] LNB_Source DiseqLNBSourceVal);
+
+    [PreserveSig]
+    int get_LocalOscillatorOverrideLow([Out] out int LocalOscillatorOverrideLowVal);
+
+    [PreserveSig]
+    int put_LocalOscillatorOverrideLow([In] int LocalOscillatorOverrideLowVal);
+
+    [PreserveSig]
+    int get_LocalOscillatorOverrideHigh([Out] out int LocalOscillatorOverrideHighVal);
+
+    [PreserveSig]
+    int put_LocalOscillatorOverrideHigh([In] int LocalOscillatorOverrideHighVal);
+
+    [PreserveSig]
+    int get_LocalLNBSwitchOverride([Out] out int LocalLNBSwitchOverrideVal);
+
+    [PreserveSig]
+    int put_LocalLNBSwitchOverride([In] int LocalLNBSwitchOverrideVal);
+
+    [PreserveSig]
+    int get_LocalSpectralInversionOverride([Out] out SpectralInversion LocalSpectralInversionOverrideVal);
+
+    [PreserveSig]
+    int put_LocalSpectralInversionOverride([In] SpectralInversion LocalSpectralInversionOverrideVal);
+
+    [PreserveSig]
+    int get_SignalRollOff([Out] out RollOff RollOffVal);
+
+    [PreserveSig]
+    int put_SignalRollOff([In] RollOff RollOffVal);
+
+    [PreserveSig]
+    int get_SignalPilot([Out] out Pilot PilotVal);
+
+    [PreserveSig]
+    int put_SignalPilot([In] Pilot PilotVal);
+  }
+
+  #region IESEvent* interfaces
+
+  // *** The Get***() methods in these interfaces incorrectly applied the PreserveSig attribute. ***
+
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+   Guid("6B80E96F-55E2-45AA-B754-0C23C8E7D5C1"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IESCloseMmiEvent : IESEvent
+  {
+    #region IESEvent Methods
+
+    [PreserveSig]
+    new int GetEventId([Out] out int pdwEventId);
+
+    [PreserveSig]
+    new int GetEventType([Out] out Guid pguidEventType);
+
+    [PreserveSig]
+    new int SetCompletionStatus([In] int dwResult);
+
+    [PreserveSig]
+    new int GetData([Out, MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UI1)] out byte[] pbData);
+
+    [PreserveSig]
+    new int GetStringData([Out, MarshalAs(UnmanagedType.BStr)] out string pbstrData);
+
+    #endregion
+
+    [PreserveSig]
+    int GetDialogNumber([Out] out int pDialogNumber);
+  }
+
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+   Guid("1F0E5357-AF43-44E6-8547-654C645145D2"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IESEvent
+  {
+    [PreserveSig]
+    int GetEventId([Out] out int pdwEventId);
+
+    [PreserveSig]
+    int GetEventType([Out] out Guid pguidEventType);
+
+    [PreserveSig]
+    int SetCompletionStatus([In] int dwResult);
+
+    [PreserveSig]
+    int GetData([Out, MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UI1)] out byte[] pbData);
+
+    [PreserveSig]
+    int GetStringData([Out, MarshalAs(UnmanagedType.BStr)] out string pbstrData);
+  }
+
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+   Guid("506A09B8-7F86-4E04-AC05-3303BFE8FC49"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IESEventFactory
+  {
+    [PreserveSig]
+    int CreateESEvent([In, MarshalAs(UnmanagedType.IUnknown)] object pServiceProvider, [In] int dwEventId, [In] Guid guidEventType, [In] int dwEventDataLength, [In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U1)] byte[] pEventData, [In, MarshalAs(UnmanagedType.BStr)] string bstrBaseUrl, [In, MarshalAs(UnmanagedType.IUnknown)] object pInitContext, [Out, MarshalAs(UnmanagedType.Interface)] out IESEvent ppESEvent);
+  }
+
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+   Guid("BA9EDCB6-4D36-4CFE-8C56-87A6B0CA48E1"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IESFileExpiryDateEvent : IESEvent
+  {
+    #region IESEvent Methods
+
+    [PreserveSig]
+    new int GetEventId([Out] out int pdwEventId);
+
+    [PreserveSig]
+    new int GetEventType([Out] out Guid pguidEventType);
+
+    [PreserveSig]
+    new int SetCompletionStatus([In] int dwResult);
+
+    [PreserveSig]
+    new int GetData([Out, MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UI1)] out byte[] pbData);
+
+    [PreserveSig]
+    new int GetStringData([Out, MarshalAs(UnmanagedType.BStr)] out string pbstrData);
+
+    #endregion
+
+    [PreserveSig]
+    int GetTunerId([Out] out Guid pguidTunerId);
+
+    [PreserveSig]
+    int GetExpiryDate([Out] out long pqwExpiryDate);
+
+    [PreserveSig]
+    int GetFinalExpiryDate([Out] out long pqwExpiryDate);
+
+    [PreserveSig]
+    int GetMaxRenewalCount([Out] out int dwMaxRenewalCount);
+
+    [PreserveSig]
+    int IsEntitlementTokenPresent([Out, MarshalAs(UnmanagedType.Bool)] out bool pfEntTokenPresent);
+
+    [PreserveSig]
+    int DoesExpireAfterFirstUse([Out, MarshalAs(UnmanagedType.Bool)] out bool pfExpireAfterFirstUse);
+  }
+
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+   Guid("2017CB03-DC0F-4C24-83CA-36307B2CD19F"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IESIsdbCasResponseEvent : IESEvent
+  {
+    #region IESEvent Methods
+
+    [PreserveSig]
+    new int GetEventId([Out] out int pdwEventId);
+
+    [PreserveSig]
+    new int GetEventType([Out] out Guid pguidEventType);
+
+    [PreserveSig]
+    new int SetCompletionStatus([In] int dwResult);
+
+    [PreserveSig]
+    new int GetData([Out, MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UI1)] out byte[] pbData);
+
+    [PreserveSig]
+    new int GetStringData([Out, MarshalAs(UnmanagedType.BStr)] out string pbstrData);
+
+    #endregion
+
+    [PreserveSig]
+    int GetRequestId([Out] out int pRequestId);
+
+    [PreserveSig]
+    int GetStatus([Out] out int pStatus);
+
+    [PreserveSig]
+    int GetDataLength([Out] out int pRequestLength);
+
+    [PreserveSig]
+    int GetResponseData([Out, MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UI1)] out byte[] pbData);
+  }
+
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+   Guid("D5A48EF5-A81B-4DF0-ACAA-5E35E7EA45D4"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IESLicenseRenewalResultEvent : IESEvent
+  {
+    #region IESEvent Methods
+
+    [PreserveSig]
+    new int GetEventId([Out] out int pdwEventId);
+
+    [PreserveSig]
+    new int GetEventType([Out] out Guid pguidEventType);
+
+    [PreserveSig]
+    new int SetCompletionStatus([In] int dwResult);
+
+    [PreserveSig]
+    new int GetData([Out, MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UI1)] out byte[] pbData);
+
+    [PreserveSig]
+    new int GetStringData([Out, MarshalAs(UnmanagedType.BStr)] out string pbstrData);
+
+    #endregion
+
+    [PreserveSig]
+    int GetCallersId([Out] out int pdwCallersId);
+
+    [PreserveSig]
+    int GetFileName([Out, MarshalAs(UnmanagedType.BStr)] out string pbstrFilename);
+
+    [PreserveSig]
+    int IsRenewalSuccessful([Out, MarshalAs(UnmanagedType.Bool)] out bool pfRenewalSuccessful);
+
+    [PreserveSig]
+    int IsCheckEntitlementCallRequired([Out, MarshalAs(UnmanagedType.Bool)] out bool pfCheckEntTokenCallNeeded);
+
+    [PreserveSig]
+    int GetDescrambledStatus([Out] out int pDescrambledStatus);
+
+    [PreserveSig]
+    int GetRenewalResultCode([Out] out int pdwRenewalResultCode);
+
+    [PreserveSig]
+    int GetCASFailureCode([Out] out int pdwCASFailureCode);
+
+    [PreserveSig]
+    int GetRenewalHResult([Out, MarshalAs(UnmanagedType.Error)] out int phr);
+
+    [PreserveSig]
+    int GetEntitlementTokenLength([Out] out int pdwLength);
+
+    [PreserveSig]
+    int GetEntitlementToken([Out, MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UI1)] out byte[] pbData);
+
+    [PreserveSig]
+    int GetExpiryDate([Out] out long pqwExpiryDate);
+  }
+
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+   Guid("BA4B6526-1A35-4635-8B56-3EC612746A8C"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IESOpenMmiEvent : IESEvent
+  {
+    #region IESEvent Methods
+
+    [PreserveSig]
+    new int GetEventId([Out] out int pdwEventId);
+
+    [PreserveSig]
+    new int GetEventType([Out] out Guid pguidEventType);
+
+    [PreserveSig]
+    new int SetCompletionStatus([In] int dwResult);
+
+    [PreserveSig]
+    new int GetData([Out, MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UI1)] out byte[] pbData);
+
+    [PreserveSig]
+    new int GetStringData([Out, MarshalAs(UnmanagedType.BStr)] out string pbstrData);
+
+    #endregion
+
+    [PreserveSig]
+    int GetDialogNumber([Out] out int pDialogRequest, [Out] out int pDialogNumber);
+
+    [PreserveSig]
+    int GetDialogType([Out] out Guid guidDialogType);
+
+    [PreserveSig]
+    int GetDialogData([Out, MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UI1)] out byte[] pbData);
+
+    [PreserveSig]
+    int GetDialogStringData([Out, MarshalAs(UnmanagedType.BStr)] out string pbstrBaseUrl, [Out, MarshalAs(UnmanagedType.BStr)] out string pbstrData);
+  }
+
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+   Guid("54C7A5E8-C3BB-4F51-AF14-E0E2C0E34C6D"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IESRequestTunerEvent : IESEvent
+  {
+    #region IESEvent Methods
+
+    [PreserveSig]
+    new int GetEventId([Out] out int pdwEventId);
+
+    [PreserveSig]
+    new int GetEventType([Out] out Guid pguidEventType);
+
+    [PreserveSig]
+    new int SetCompletionStatus([In] int dwResult);
+
+    [PreserveSig]
+    new int GetData([Out, MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UI1)] out byte[] pbData);
+
+    [PreserveSig]
+    new int GetStringData([Out, MarshalAs(UnmanagedType.BStr)] out string pbstrData);
+
+    #endregion
+
+    [PreserveSig]
+    int GetPriority([Out] out byte pbyPriority);
+
+    [PreserveSig]
+    int GetReason([Out] out byte pbyReason);
+
+    [PreserveSig]
+    int GetConsequences([Out] out byte pbyConsequences);
+
+    [PreserveSig]
+    int GetEstimatedTime([Out] out int pdwEstimatedTime);
+  }
+
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+   Guid("8A24C46E-BB63-4664-8602-5D9C718C146D"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IESValueUpdatedEvent : IESEvent
+  {
+    #region IESEvent Methods
+
+    [PreserveSig]
+    new int GetEventId([Out] out int pdwEventId);
+
+    [PreserveSig]
+    new int GetEventType([Out] out Guid pguidEventType);
+
+    [PreserveSig]
+    new int SetCompletionStatus([In] int dwResult);
+
+    [PreserveSig]
+    new int GetData([Out, MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UI1)] out byte[] pbData);
+
+    [PreserveSig]
+    new int GetStringData([Out, MarshalAs(UnmanagedType.BStr)] out string pbstrData);
+
+    #endregion
+
+    [PreserveSig]
+    int GetValueNames([Out, MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_BSTR)] out string[] pbstrNames);
+  }
+
+  #endregion
 }
 
   #endregion

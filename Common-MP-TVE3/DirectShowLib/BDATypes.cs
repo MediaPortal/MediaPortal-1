@@ -132,9 +132,6 @@ namespace DirectShowLib.BDA
     MCEAll_TV = unchecked((int) 0xffffffff),
   }
 
-  /*
-   * Redefined in MediaPortalCustomisations.
-   * 
   /// <summary>
   /// From RollOff
   /// </summary>
@@ -158,7 +155,7 @@ namespace DirectShowLib.BDA
     Off = 1,
     On,
     Max
-  }*/
+  }
 
   /// <summary>
   /// From ApplicationTypeType
@@ -191,9 +188,6 @@ namespace DirectShowLib.BDA
     Max,
   }
 
-  /*
-   * Redefined in MediaPortalCustomisations.
-   * 
   /// <summary>
   /// From BinaryConvolutionCodeRate
   /// </summary>
@@ -230,7 +224,7 @@ namespace DirectShowLib.BDA
     CircularL, // Circular left polarisation
     CircularR, // Circular right polarisation
     Max,
-  }*/
+  }
 
   /// <summary>
   /// From SpectralInversion

@@ -497,6 +497,9 @@ namespace DirectShowLib.BDA
     int AutoProgram();
   }
 
+  /*
+   * Interface redefined in MediaPortalCustomisations.
+   * 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("6044634A-1733-4F99-B982-5FB12AFCE4F0"),
    InterfaceType(ComInterfaceType.InterfaceIsDual)]
@@ -758,7 +761,7 @@ namespace DirectShowLib.BDA
     [return: MarshalAs(UnmanagedType.Interface)]
     [PreserveSig]
     IESEvent CreateESEvent([In, MarshalAs(UnmanagedType.IUnknown)] object pServiceProvider, [In] int dwEventId, [In] Guid guidEventType, [In] int dwEventDataLength, [In] ref byte pEventData, [In, MarshalAs(UnmanagedType.BStr)] string bstrBaseUrl, [In, MarshalAs(UnmanagedType.IUnknown)] object pInitContext);
-  }
+  }*/
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("ABD414BF-CFE5-4E5E-AF5B-4B4E49C5BFEB"),
@@ -802,6 +805,9 @@ namespace DirectShowLib.BDA
     int RemoveGraph([MarshalAs(UnmanagedType.Interface)] IFilterGraph pGraph);
   }
 
+  /*
+   * Interface redefined in MediaPortalCustomisations.
+   * 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("BA9EDCB6-4D36-4CFE-8C56-87A6B0CA48E1"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -1059,7 +1065,7 @@ namespace DirectShowLib.BDA
     [return: MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_BSTR)]
     [PreserveSig]
     string[] GetValueNames();
-  }
+  }*/
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("907E0B5C-E42D-4F04-91F0-26F401F36907"),
