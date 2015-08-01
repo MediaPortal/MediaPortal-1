@@ -81,28 +81,24 @@
     <Compile Include="..\..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="IXMLTVImportService.cs" />
+    <Compile Include="XmlTvImportId.cs" />
+    <Compile Include="ImportStats.cs" />
+    <Compile Include="XmlTvImportSetting.cs" />
+    <Compile Include="Service\IXmlTvImportService.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="util\IOUtil.cs" />
-    <Compile Include="util\TstDictionary.cs" />
-    <Compile Include="util\TstDictionaryEntry.cs" />
-    <Compile Include="util\TstDictionaryEntryEventArgs.cs" />
-    <Compile Include="util\TstDictionaryEnumerator.cs" />
-    <Compile Include="util\TstSynchronizedDictionary.cs" />
-    <Compile Include="util\TstTraverser.cs" />
-    <Compile Include="XMLTVImport.cs" />
-    <Compile Include="XmlTvImporter.cs" />
+    <Compile Include="Importer.cs" />
+    <Compile Include="XmlTvImport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XMLTVImportService.cs" />
-    <Compile Include="XmlTvSetup.cs">
+    <Compile Include="Service\XmlTvImportService.cs" />
+    <Compile Include="Config\XmlTvImportConfig.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="XmlTvSetup.designer.cs">
-      <DependentUpon>XmlTvSetup.cs</DependentUpon>
+    <Compile Include="Config\XmlTvImportConfig.designer.cs">
+      <DependentUpon>XmlTvImportConfig.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +109,10 @@
     <ProjectReference Include="..\..\..\..\..\..\Common-MP-TVE3\PowerScheduler.Interfaces\PowerScheduler.Interfaces.csproj">
       <Project>{7701AA79-18D4-4A18-BB52-16774FB7943D}</Project>
       <Name>PowerScheduler.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common.Types\Common.Types.csproj">
+      <Project>{F9F4E5C1-9A6A-42F8-8452-4BDAFEA0E798}</Project>
+      <Name>Common.Types</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\SetupControls\SetupControls.csproj">
       <Project>{A2792D3C-04C1-4A92-9383-A33D59C54D8D}</Project>
@@ -150,8 +150,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="XmlTvSetup.resx">
-      <DependentUpon>XmlTvSetup.cs</DependentUpon>
+    <EmbeddedResource Include="Config\XmlTvImportConfig.resx">
+      <DependentUpon>XmlTvImportConfig.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

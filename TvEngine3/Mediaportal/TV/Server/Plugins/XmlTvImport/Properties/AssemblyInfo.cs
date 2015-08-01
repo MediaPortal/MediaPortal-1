@@ -25,19 +25,18 @@ using MediaPortal.Common.Utils;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-
-[assembly: AssemblyTitle("XmlTvImport")]
+[assembly: AssemblyTitle("Plugin - XMLTV EPG Import")]
 [assembly: AssemblyDescription("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
-
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-
 [assembly: Guid("1e26215d-afdc-4916-aa72-2da88166b2c0")]
 
 [assembly: CompatibleVersion("Own")]
-[assembly: UsesSubsystem("TVE")]
+[assembly: UsesSubsystem("TVE.Common.Types")]
+[assembly: UsesSubsystem("TVE.DB")]
+[assembly: UsesSubsystem("TVE.Plugins")]
