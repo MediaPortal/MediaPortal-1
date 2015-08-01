@@ -32,15 +32,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Integration.MP1
       _logger = new Logger();
     }
 
-
     public IPathManager PathManager
     {
-      get { return _pathManager; }
+      get
+      {
+        return _pathManager;
+      }
     }
 
     public ILogger Logger
     {
-      get { return _logger; }
+      get
+      {
+        return _logger;
+      }
     }
   }
 }
