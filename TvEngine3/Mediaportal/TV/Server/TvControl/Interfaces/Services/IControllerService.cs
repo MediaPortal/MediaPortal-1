@@ -21,11 +21,14 @@
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
@@ -42,12 +45,21 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
   [ServiceKnownType(typeof(SubChannel))]
   [ServiceKnownType(typeof(VirtualCard))]
   [ServiceKnownType(typeof(TvResult))]
-  [ServiceKnownType(typeof(DVBTChannel))]
-  [ServiceKnownType(typeof(DVBCChannel))]
-  [ServiceKnownType(typeof(DVBSChannel))]
-  [ServiceKnownType(typeof(ATSCChannel))]
-  [ServiceKnownType(typeof(DVBIPChannel))]
-  [ServiceKnownType(typeof(AnalogChannel))]
+  [ServiceKnownType(typeof(ChannelAnalogTv))]
+  [ServiceKnownType(typeof(ChannelAtsc))]
+  [ServiceKnownType(typeof(ChannelCapture))]
+  [ServiceKnownType(typeof(ChannelDigiCipher2))]
+  [ServiceKnownType(typeof(ChannelDvbC))]
+  [ServiceKnownType(typeof(ChannelDvbC2))]
+  [ServiceKnownType(typeof(ChannelDvbS))]
+  [ServiceKnownType(typeof(ChannelDvbS2))]
+  [ServiceKnownType(typeof(ChannelDvbT))]
+  [ServiceKnownType(typeof(ChannelDvbT2))]
+  [ServiceKnownType(typeof(ChannelFmRadio))]
+  [ServiceKnownType(typeof(ChannelSatelliteTurboFec))]
+  [ServiceKnownType(typeof(ChannelScte))]
+  [ServiceKnownType(typeof(ChannelStream))]
+  [ServiceKnownType(typeof(LnbTypeBLL))]
   public interface IControllerService
   {
     #region internal interface
@@ -64,15 +76,23 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     ///<value>Number which indicates the cards installed</value>
     int Cards { [OperationContract] get; }
 
-
+    /// <summary>
+    /// Get the broadcast standards supported by the tuner hardware.
+    /// </summary>
+    /// <remarks>
+    /// This property is configurable.
+    /// </remarks>
+    [OperationContract]
+    BroadcastStandard SupportedBroadcastStandards(int cardId);
 
     /// <summary>
-    /// Gets the type of card (analog,dvbc,dvbs,dvbt,atsc)
+    /// Get the broadcast standards supported by the tuner code/class/type implementation.
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    /// <value>cardtype</value>
+    /// <remarks>
+    /// This property is based on detected limitations and hard code capabilities.
+    /// </remarks>
     [OperationContract]
-    CardType Type(int cardId);
+    BroadcastStandard PossibleBroadcastStandards(int cardId);
 
     /// <summary>
     /// Gets the name for a card.
@@ -104,43 +124,30 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     void CardRemove(int cardId);
 
     /// <summary>
-    /// Gets the device path for a card.
+    /// Reload the configuration for a tuner.
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    /// <returns>devicePath of card</returns>
+    /// <param name="tunerId">The tuner's identifier.</param>
     [OperationContract]
-    string CardDevice(int cardId);
+    void ReloadTunerConfiguration(int tunerId);
 
     /// <summary>
-    /// Returns if the tuner is locked onto a signal or not
+    /// Reload the configuration for a set of tuners.
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    /// <returns>true when tuner is locked to a signal otherwise false</returns>
-    [OperationContract]
-    bool TunerLocked(int cardId);
+    /// <param name="tunerIds">The tuner identifiers.</param>
+    [OperationContract(Name = "ReloadTunerConfigurationMultiple")]
+    void ReloadTunerConfiguration(IEnumerable<int> tunerIds);
 
     /// <summary>
-    /// Returns the signal quality for a card
+    /// Get a tuner's signal status.
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    /// <returns>signal quality (0-100)</returns>
+    /// <param name="cardId">The tuner's identifier.</param>
+    /// <param name="forceUpdate"><c>True</c> to force the signal status to be updated, and not use cached information.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
     [OperationContract]
-    int SignalQuality(int cardId);
-
-    /// <summary>
-    /// Returns the signal level for a card.
-    /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    /// <returns>signal level (0-100)</returns>
-    [OperationContract]
-    int SignalLevel(int cardId);
-
-    /// <summary>
-    /// Updates the signal state for a card.
-    /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    [OperationContract]
-    void UpdateSignalSate(int cardId);
+    void GetSignalStatus(int cardId, bool forceUpdate, out bool isLocked, out bool isPresent, out int strength, out int quality);
 
     /// <summary>
     /// Returns if the card is currently scanning for channels or not
@@ -174,7 +181,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <param name="channel">contains tuningdetails for the transponder.</param>
     /// <returns>list of all channels found</returns>
     [OperationContract]
-    IChannel[] ScanNIT(int cardId, IChannel channel);
+    TuningDetail[] ScanNIT(int cardId, IChannel channel);
 
     /// <summary>
     /// returns which schedule the card specified is currently recording
@@ -184,8 +191,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <returns>id of Schedule or -1 if  card not recording</returns>
     [OperationContract]
     int GetRecordingSchedule(int cardId, string userName);
-
-
 
     /// <summary>
     /// Returns the URL for the RTSP stream on which the client can find the
@@ -210,7 +215,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <param name="idRecording">The id recording.</param>
     [OperationContract]
     bool DeleteRecording(int idRecording);
-
 
     /// <summary>
     /// Deletes invalid recordings from database. A recording is invalid if the corresponding file no longer exists.
@@ -296,7 +300,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// </summary>
     bool EpgGrabberEnabled { [OperationContract] get; [OperationContract] set; }
 
-
     /// <summary>
     /// Restarts the service.
     /// </summary>
@@ -331,27 +334,35 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     ChannelState GetChannelState(int idChannel, string userName);
 
     /// <summary>
-    /// Returns a list of all ip adresses on the server.
+    /// Returns a list of all IP addresses on the server.
     /// </summary>
-    /// <value>The server ip adresses.</value>
-    IEnumerable<string> ServerIpAdresses { [OperationContract] get; }
+    /// <value>The server IP addresses.</value>
+    IEnumerable<string> ServerIpAddresses { [OperationContract] get; }
 
     #endregion
 
     #region streaming
 
     /// <summary>
-    /// Returns the port used for RTSP streaming.
-    /// If streaming is not initialized, returns 0.
+    /// Get the streaming server's information.
     /// </summary>
-    /// <value>The streaming port</value>
-    int StreamingPort { [OperationContract] get; }
+    /// <param name="boundInterface">The interface (IP address) that the server is bound to.</param>
+    /// <param name="port">The port that the server is listening on.</param>
+    [OperationContract]
+    void GetStreamingServerInformation(out string boundInterface, out ushort port);
 
     /// <summary>
     /// Gets a list of all streaming clients.
     /// </summary>
     /// <value>The streaming clients.</value>
-    List<RtspClient> StreamingClients { [OperationContract] get; }
+    ICollection<RtspClient> StreamingClients { [OperationContract] get; }
+
+    /// <summary>
+    /// Disconnect a streaming client.
+    /// </summary>
+    /// <param name="sessionId">The client's session identifier.</param>
+    [OperationContract]
+    void DisconnectStreamingClient(uint sessionId);
 
     #endregion
 
@@ -423,17 +434,18 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <param name="cardId">card id</param>
     /// <param name="position">position</param>
     [OperationContract]
-    void DiSEqCGotoPosition(int cardId, byte position);
+    void DiSEqCGotoStoredPosition(int cardId, byte position);
 
     /// <summary>
     /// Gets the DiSEqC position for the given card
     /// </summary>
     /// <param name="cardId">card id</param>
     /// <param name="satellitePosition">satellite position</param>
+    /// <param name="satelliteLongitude">The satellite's longitude.</param>
     /// <param name="stepsAzimuth">azimuth</param>
     /// <param name="stepsElevation">elvation</param>
     [OperationContract]
-    void DiSEqCGetPosition(int cardId, out int satellitePosition, out int stepsAzimuth, out int stepsElevation);
+    void DiSEqCGetPosition(int cardId, out int satellitePosition, out double satelliteLongitude, out int stepsAzimuth, out int stepsElevation);
 
     #endregion
 
@@ -694,7 +706,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     [OperationContract(Name = "ScanByUser")]
     TvResult Scan(string userName, int idCard, out IUser user, IChannel channel, int idChannel);
 
-
     /// <summary>
     /// Tunes the the specified card to the channel.
     /// </summary>
@@ -706,7 +717,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <returns>true if succeeded</returns>
     [OperationContract]
     TvResult Tune(string userName, int idCard, out IUser user, IChannel channel, int idChannel);
-
 
     /// <summary>
     /// Gets the users for card.
@@ -726,9 +736,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// </returns>
     [OperationContract]
     bool IsOwner(int cardId, string userName);
-
-
-
 
     #endregion
 
@@ -767,13 +774,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     bool SupportsBitRate(int cardId);
 
     /// <summary>
-    /// Reloads the configuration for the given card
-    /// </summary>
-    /// <param name="cardId">Unique id of the card</param>
-    [OperationContract]
-    void ReloadCardConfiguration(int cardId);
-
-    /// <summary>
     /// Gets the current quality type
     /// </summary>
     /// <param name="cardId">Unique id of the card</param>
@@ -795,7 +795,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <param name="cardId">Unique id of the card</param>
     /// <returns>QualityType</returns>
     [OperationContract]
-    VIDEOENCODER_BITRATE_MODE GetBitRateMode(int cardId);
+    EncoderBitRateMode GetBitRateMode(int cardId);
 
     /// <summary>
     /// Sets the bitrate mode
@@ -803,7 +803,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <param name="cardId">Unique id of the card</param>
     /// <param name="bitRateMode">The new bitrate mdoe</param>
     [OperationContract]
-    void SetBitRateMode(int cardId, VIDEOENCODER_BITRATE_MODE bitRateMode);
+    void SetBitRateMode(int cardId, EncoderBitRateMode bitRateMode);
 
     #endregion
 
@@ -861,8 +861,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     [OperationContract]
     bool SetCiMenuHandler(int cardId, IConditionalAccessMenuCallBack callbackHandler);
 
-    
-
     #endregion
 
     #region stream quality / statistics
@@ -901,7 +899,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     IDictionary<string, byte[]> GetPluginBinaries();
 
     [OperationContract]
-    IDictionary<string, byte[]> GetPluginBinariesCustomDevices();
+    IDictionary<string, byte[]> GetPluginBinariesTunerExtensions();
 
     [OperationContract]
     IDictionary<string, byte[]> GetPluginBinariesResources();
@@ -914,5 +912,33 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 
     [OperationContract]
     IList<CardPresentation> ListAllCards();
+
+    [OperationContract]
+    void ReloadControllerConfiguration();
+
+    [OperationContract]
+    void GetBdaFixStatus(out bool isApplicable, out bool isNeeded);
+
+    [OperationContract]
+    void GetMceServiceStatus(out bool isServiceInstalled, out bool isServiceRunning, out bool isPolicyActive);
+
+    [OperationContract]
+    void ApplyMceServicePolicy();
+
+    [OperationContract]
+    void RemoveMceServicePolicy();
+
+    #region thumbnails
+
+    [OperationContract]
+    byte[] GetThumbnailForRecording(string recordingFileName);
+
+    [OperationContract]
+    void CreateMissingThumbnails();
+
+    [OperationContract]
+    void DeleteExistingThumbnails();
+
+    #endregion
   }
 }

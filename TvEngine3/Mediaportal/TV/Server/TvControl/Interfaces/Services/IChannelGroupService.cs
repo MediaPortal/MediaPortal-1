@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ServiceModel;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
@@ -15,30 +16,27 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     IList<ChannelGroup> ListAllChannelGroups(ChannelGroupIncludeRelationEnum includeRelations);
 
     [OperationContract]
-    IList<ChannelGroup> ListAllCustomChannelGroups(ChannelGroupIncludeRelationEnum includeRelations, MediaTypeEnum mediaType);
+    IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaType mediaType);
 
     [OperationContract(Name = "ListAllChannelGroupsByMediaTypeWithSpecificRelations")]
-    IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaTypeEnum mediaType, ChannelGroupIncludeRelationEnum includeRelations);
-
-    [OperationContract]    
-    IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaTypeEnum mediaType);
-
-    [OperationContract]    
-    ChannelGroup GetChannelGroupByNameAndMediaType(string groupName, MediaTypeEnum mediaType);
-    
-    [OperationContract]
-    ChannelGroup GetOrCreateGroup(string groupName, MediaTypeEnum mediaType);
-
-    
+    IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaType mediaType, ChannelGroupIncludeRelationEnum includeRelations);
 
     [OperationContract]
-    void DeleteChannelGroupMap(int idMap);
+    ChannelGroup GetChannelGroupByNameAndMediaType(string groupName, MediaType mediaType);
+
+    [OperationContract]
+    ChannelGroup GetOrCreateGroup(string groupName, MediaType mediaType);
+
     [OperationContract]
     ChannelGroup GetChannelGroup(int id);
+
+    [OperationContract(Name = "GetChannelGroupWithSpecificRelations")]
+    ChannelGroup GetChannelGroup(int id, ChannelGroupIncludeRelationEnum includeRelations);
+
     [OperationContract]
     ChannelGroup SaveGroup(ChannelGroup @group);
+
     [OperationContract]
-    void DeleteChannelGroup(int idGroup);    
-        
+    void DeleteChannelGroup(int idGroup);
   }
 }

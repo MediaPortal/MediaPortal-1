@@ -69,51 +69,24 @@ namespace Mediaportal.TV.Server.TVControl
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
     /// </summary>
-    public User()
-    {
-      _userType = UserType.Normal;
-      _priority = null;
-      _hostName = Dns.GetHostName();
-      _cardId = -1;
-      _failedCardId = -1;
-      _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
-      _channelStates = new Dictionary<int, ChannelState>();
-      _subChannels = new SortedDictionary<int, ISubChannel>();
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="User"/> class.
-    /// </summary>
-    /// <param name="name">The name.</param>
-    /// <param name="userType"> </param>    
-    public User(string name, UserType userType) : this()
-    {      
-      _hostName = name;
-      _userType = userType;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="User"/> class.
-    /// </summary>
-    /// <param name="name">The name.</param>    
-    /// <param name="userType"> </param>
-    /// <param name="cardId">The card id.</param>
-    public User(string name, UserType userType, int cardId) : this(name, userType)
-    {      
-      _cardId = cardId;     
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="User"/> class.
-    /// </summary>
     /// <param name="name">The name.</param>
     /// <param name="userType"> </param>
     /// <param name="cardId">The card id.</param>
     /// <param name="priority">card lock priority</param>
-    public User(string name, UserType userType, int cardId, int priority)
-      : this(name, userType, cardId)
-    {     
-      _priority = priority;           
+    public User(string name = null, UserType userType = UserType.Normal, int cardId = -1, int? priority = null)
+    {
+      _hostName = name;
+      if (name == null)
+      {
+        _hostName = Dns.GetHostName();
+      }
+      _userType = userType;
+      _cardId = cardId;
+      _priority = priority;
+      _failedCardId = -1;
+      _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
+      _channelStates = new Dictionary<int, ChannelState>();
+      _subChannels = new SortedDictionary<int, ISubChannel>();          
     }
 
     #endregion    

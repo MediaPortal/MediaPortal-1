@@ -16,21 +16,30 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       return _channel.ListAllProgramCategories();
     }
 
-    public IList<TvGuideCategory> ListAllTvGuideCategories()
-    {
-      return _channel.ListAllTvGuideCategories();
-    }
-
-    public TvGuideCategory SaveTvGuideCategory(TvGuideCategory tvGuideCategory)
-    {
-      tvGuideCategory.UnloadAllUnchangedRelationsForEntity();
-      return _channel.SaveTvGuideCategory(tvGuideCategory);
-    }
-
     public ProgramCategory SaveProgramCategory(ProgramCategory programCategory)
     {
       programCategory.UnloadAllUnchangedRelationsForEntity();
       return _channel.SaveProgramCategory(programCategory);
+    }
+
+    public IList<ProgramCategory> SaveProgramCategories(IEnumerable<ProgramCategory> programCategories)
+    {
+      foreach (ProgramCategory programCategory in programCategories)
+      {
+        programCategory.UnloadAllUnchangedRelationsForEntity();
+      }
+      return _channel.SaveProgramCategories(programCategories);
+    }
+
+    public IList<GuideCategory> ListAllGuideCategories()
+    {
+      return _channel.ListAllGuideCategories();
+    }
+
+    public GuideCategory SaveGuideCategory(GuideCategory guideCategory)
+    {
+      guideCategory.UnloadAllUnchangedRelationsForEntity();
+      return _channel.SaveGuideCategory(guideCategory);
     }
   }
 }

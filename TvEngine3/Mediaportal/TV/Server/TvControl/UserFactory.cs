@@ -20,163 +20,115 @@
 
 using System;
 using System.Collections.Generic;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
-using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVControl
 {
   public static class UserFactory
   {
+    public const int DEFAULT_PRIORITY_SCHEDULER = 100;
+    public const int DEFAULT_PRIORITY_EPG_GRABBER = 1;    
+    public const int DEFAULT_PRIORITY_OTHER = 2;
 
+    public const string SETTING_NAME_PRIORITY_SCHEDULER = "userPriorityScheduler";
+    public const string SETTING_NAME_PRIORITY_EPG_GRABBER = "userPriorityEpgGrabber";
+    public const string SETTING_NAME_PRIORITY_OTHER_DEFAULT = "userPriorityOtherDefault";
+    public const string SETTING_NAME_PRIORITIES_OTHER_CUSTOM = "userPrioritiesOtherCustom";
 
-    public const int EPG_PRIORITY = 1;    
-    public const int USER_PRIORITY = 2;
-    public const int SCHEDULER_PRIORITY = 101;
-    public const string EPG_TAGNAME = "PriorityEPG";
-    public const string USER_TAGNAME = "PriorityUser";
-    public const string SCHEDULER_TAGNAME = "PriorityScheduler";
-    public const string CUSTOM_TAGNAME = "PrioritiesCustom";
+    private const string NAME_EPG = "epg";
+    private const string NAME_SCHEDULER = "scheduler";
 
-    public const string NAME_EPG = "epg";
-    //private const bool IS_ADMIN_EPG = false;
-
-    public const string NAME_SCHEDULER = "scheduler";
-    
-    private const int PRIORITY_MAX_VALUE = 100;
-    private const int PRIORITY_MIN_VALUE = 1;
-
-    //private const bool IS_ADMIN_SCHEDULER = true;
-    //private const bool IS_ADMIN_USER = false;    
-
-    private static readonly int _priorityEpg;
-    private static readonly int _priorityUser;
-    private static readonly int _priorityScheduler;
-    private static readonly IDictionary<string, int> _priorityCustomUsers = new Dictionary<string, int>();
-
-    private static decimal ValueSanityCheck(decimal value, int min, int max)
-    {
-      if (value < min)
-        return min;
-      if (value > max)
-        return max;
-      return value;
-    }
+    private static int _priorityScheduler = -1;
+    private static int _priorityEpgGrabber = -1;
+    private static int _priorityOtherDefault = -1;
+    private static readonly IDictionary<string, int> _prioritiesOtherCustom = new Dictionary<string, int>();
 
     static UserFactory()
     {
-        
-      
-      try
+      ReloadConfiguration();
+    }
+
+    public static void ReloadConfiguration()
+    {
+      Log.Debug("user factory: reload configuration");
+
+      var settingService = GlobalServiceProvider.Get<ISettingService>();
+      _priorityScheduler = settingService.GetValue(SETTING_NAME_PRIORITY_SCHEDULER, DEFAULT_PRIORITY_SCHEDULER);
+      _priorityEpgGrabber = settingService.GetValue(SETTING_NAME_PRIORITY_EPG_GRABBER, DEFAULT_PRIORITY_EPG_GRABBER);
+      _priorityOtherDefault = settingService.GetValue(SETTING_NAME_PRIORITY_OTHER_DEFAULT, DEFAULT_PRIORITY_OTHER);
+      Log.Debug("  scheduler = {0}", _priorityScheduler);
+      Log.Debug("  EPG       = {0}", _priorityEpgGrabber);
+      Log.Debug("  default   = {0}", _priorityOtherDefault);
+
+      _prioritiesOtherCustom.Clear();
+      string[] users = settingService.GetValue(SETTING_NAME_PRIORITIES_OTHER_CUSTOM, string.Empty).Split(';');
+      foreach (string user in users)
       {
-        var settingService = GlobalServiceProvider.Get<ISettingService>();
-        _priorityEpg = (int)ValueSanityCheck(settingService.GetValue(EPG_TAGNAME, EPG_PRIORITY), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);
-
-        Log.Debug("UserFactory setting PriorityEPG : {0}", _priorityEpg);
-
-        _priorityUser = (int)ValueSanityCheck(settingService.GetValue(USER_TAGNAME, USER_PRIORITY), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);
-        Log.Debug("UserFactory setting PriorityUser : {0}", _priorityUser);
-
-        _priorityScheduler = (int)ValueSanityCheck(settingService.GetValue(SCHEDULER_TAGNAME, SCHEDULER_PRIORITY), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);
-        Log.Debug("UserFactory setting PriorityScheduler : {0}", _priorityScheduler);
-
-        string setting = settingService.GetValue(CUSTOM_TAGNAME, "");
-        string[] users = setting.Split(';');
-        foreach (string user in users)
+        int lastCommaIndex = user.LastIndexOf(",");
+        if (lastCommaIndex < 0)
         {
-          string[] shareItem = user.Split(',');
-          bool hasItems = shareItem.Length.Equals(2);
-          if (hasItems)
-          {
-            string host = shareItem[0].Trim();
-            int priority;
-            if (host.Length > 0 && Int32.TryParse(shareItem[1].Trim(), out priority))
-            {
-              Log.Debug("UserFactory setting PriorityCustomUser : {0} - {1}", host, priority);
-              _priorityCustomUsers[host] = priority;
-            }
-          }
+          continue;
+        }
+        string host = user.Substring(0, lastCommaIndex).Trim();
+        string priorityString = user.Substring(lastCommaIndex + 1);
+        int priority;
+        if (!string.IsNullOrEmpty(host) && int.TryParse(priorityString, out priority))
+        {
+          Log.Debug("  {0,-9} = {1}", host, priority);
+          _prioritiesOtherCustom[host] = priority;
         }
       }
-      catch (Exception ex)
-      {
-        Log.Error("UserFactory - error reading priority settings from database", ex);        
-      }
-      
     }
 
-    public static IUser CreateEpgUser()
+    public static IUser CreateSchedulerUser(int scheduleId, int cardId = -1)
     {
-      IUser egpUser = new User(NAME_EPG, UserType.EPG, -1, _priorityEpg);
-      return egpUser;
-    }
-
-    public static IUser CreateSchedulerUser(int scheduleId, int cardId)
-    {
-      string name = NAME_SCHEDULER + scheduleId;
-      IUser schedulerUser = new User(name, UserType.Scheduler, cardId, _priorityScheduler);
-      return schedulerUser;  
+      return new User(NAME_SCHEDULER + scheduleId, UserType.Scheduler, cardId, _priorityScheduler);
     }
 
     public static IUser CreateSchedulerUser()
     {
-      IUser schedulerUser = new User("", UserType.Scheduler);
-      schedulerUser.Priority = _priorityScheduler;
-      return schedulerUser;
+      return new User(string.Empty, UserType.Scheduler, -1, _priorityScheduler);
     }
 
-    public static IUser CreateSchedulerUser(int scheduleId)
+    public static IUser CreateEpgUser()
     {
-      return CreateSchedulerUser(scheduleId, -1);
+      return new User(NAME_EPG, UserType.EPG, -1, _priorityEpgGrabber);
     }
 
-    public static IUser CreateBasicUser(string name, int cardId, int? defaultPriority)
+    public static IUser CreateBasicUser(string name, int? overridePriority = null, int cardId = -1)
     {
-      return CreateBasicUser(name, cardId, defaultPriority, UserType.Normal); //used by setuptv-testchannels
+      return new User(name, UserType.Normal, cardId, overridePriority.HasValue ? overridePriority : GetDefaultPriority(name));
     }
 
-    public static IUser CreateBasicUser(string name, int cardId, int? defaultPriority, UserType userType)
+    public static IUser CreateCustomUser(string name, int priority, int cardId, UserType userType)
     {
-      int priorityCustomUser = GetDefaultPriority(name, defaultPriority);
-      IUser basicUser = new User(name, userType, cardId, priorityCustomUser);
-      return basicUser;  
+      return new User(name, userType, cardId, priority);
     }
 
-    public static IUser CreateBasicUser(string name)
+    public static int GetDefaultPriority(string name)
     {
-      return CreateBasicUser(name, -1, USER_PRIORITY);
-    }
-
-    public static IUser CreateBasicUser(string name, int? defaultPriority)
-    {
-      return CreateBasicUser(name, -1, defaultPriority);
-    }
-
-    public static int? GetDefaultPriority(string name)
-    {
-      return GetDefaultPriority(name, USER_PRIORITY);
-    }
-
-    public static int GetDefaultPriority(string name, int? defaultPriority)
-    {
-      int priorityCustomUser;
-      if (!_priorityCustomUsers.TryGetValue(name, out priorityCustomUser))
+      if (string.IsNullOrEmpty(name))
       {
-        if (defaultPriority.HasValue)
-        {
-          priorityCustomUser = defaultPriority.GetValueOrDefault(-1);
-        }
-        else
-        {
-          priorityCustomUser = USER_PRIORITY;
-        }
+        return _priorityOtherDefault;
       }
-      return priorityCustomUser;
+      if (name.Equals(NAME_EPG))
+      {
+        return _priorityEpgGrabber;
+      }
+      if (name.StartsWith(NAME_SCHEDULER))
+      {
+        return _priorityScheduler;
+      }
+      int priority;
+      if (!_prioritiesOtherCustom.TryGetValue(name, out priority))
+      {
+        return _priorityOtherDefault;
+      }
+      return priority;
     }
-
-    
   }
 }

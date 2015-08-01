@@ -2,17 +2,15 @@ using System;
 using System.Net;
 using System.ServiceModel;
 using System.ServiceModel.Description;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVControl.Interfaces.ServiceAgents;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 {
-
   public class ServiceAgents : Singleton<ServiceAgents>, IDisposable
   {
-
     public delegate void ServiceAgentRemovedDelegate(Type service);
     private static string _hostname = Dns.GetHostName();
 
@@ -35,7 +33,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       // most WCF agents have a specific agent that does additional stuff like stripping away unneeded data before sending it over the wire.
       // this is often done on save related methods.
       GetOrCreateCustomServiceAgent<IProgramCategoryService, ProgramCategoryAgent>();
-      GetOrCreateCustomServiceAgent<ICardService, CardServiceAgent>();
+      GetOrCreateCustomServiceAgent<ITunerService, TunerServiceAgent>();
       GetOrCreateCustomServiceAgent<IProgramService, ProgramServiceAgent>();
       GetOrCreateCustomServiceAgent<IRecordingService, RecordingServiceAgent>();
       GetOrCreateCustomServiceAgent<IChannelGroupService, ChannelGroupServiceAgent>();
@@ -43,11 +41,9 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       GetOrCreateCustomServiceAgent<IScheduleService, ScheduleServiceAgent>();
       GetOrCreateCustomServiceAgent<ICanceledScheduleService, CanceledScheduleServiceAgent>();
       GetOrCreateCustomServiceAgent<IConflictService, ConflictServiceAgent>();
-      GetOrCreateCustomServiceAgent<IThumbnailService, ThumbnailServiceAgent>();
 
       GetOrCreateEventServiceAgent();
       GetOrCreateDiscovererServiceAgent();
-
     }
 
     private void AddServices()
@@ -59,7 +55,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       // most WCF agents have a specific agent that does additional stuff like stripping away unneeded data before sending it over the wire.
       // this is often done on save related methods.
 
-      AddCustomService<ICardService, CardServiceAgent>();
+      AddCustomService<ITunerService, TunerServiceAgent>();
       AddCustomService<IProgramService, ProgramServiceAgent>();
       AddCustomService<IRecordingService, RecordingServiceAgent>();
       AddCustomService<IChannelGroupService, ChannelGroupServiceAgent>();
@@ -67,7 +63,6 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       AddCustomService<IScheduleService, ScheduleServiceAgent>();
       AddCustomService<ICanceledScheduleService, CanceledScheduleServiceAgent>();
       AddCustomService<IConflictService, ConflictServiceAgent>();
-      AddCustomService<IThumbnailService, ThumbnailServiceAgent>();
       
       AddEventService();
       AddDiscoveryService();
@@ -223,11 +218,11 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       }
     }
 
-    public ICardService CardServiceAgent
+    public ITunerService TunerServiceAgent
     {
       get
       {
-        return GetOrCreateCustomServiceAgent<ICardService, CardServiceAgent>();
+        return GetOrCreateCustomServiceAgent<ITunerService, TunerServiceAgent>();
       }
     }
 
@@ -252,14 +247,6 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       get
       {
         return GetOrCreateCustomServiceAgent<IProgramCategoryService, ProgramCategoryAgent>();
-      }
-    }
-
-    public IThumbnailService ThumbnailServiceAgent
-    {
-      get
-      {
-        return GetOrCreateCustomServiceAgent<IThumbnailService, ThumbnailServiceAgent>();
       }
     }
 
@@ -415,8 +402,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 
     public void Disconnect()
     {
-      DisposeCustomServiceProxy<ICardService>();
-      DisposeCustomServiceProxy<ICardService>();
+      DisposeCustomServiceProxy<ITunerService>();
       DisposeCustomServiceProxy<IProgramService>();
       DisposeCustomServiceProxy<IRecordingService>();
       DisposeCustomServiceProxy<IChannelGroupService>();
@@ -425,11 +411,9 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       DisposeCustomServiceProxy<ICanceledScheduleService>();
       DisposeCustomServiceProxy<IConflictService>();
       DisposeCustomServiceProxy<IProgramCategoryService>();
-      DisposeCustomServiceProxy<IThumbnailService>();
 
       DisposeGenericServiceProxy<ISettingService>();
       DisposeGenericServiceProxy<IControllerService>();
-
     }
 
     #region Implementation of IDisposable

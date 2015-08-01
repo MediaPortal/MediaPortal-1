@@ -66,15 +66,15 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
           clientChannel.Abort();
         }
       }
-      catch (CommunicationException ce)
+      catch (CommunicationException)
       {
         clientChannel.Abort();
       }
-      catch (TimeoutException toe)
+      catch (TimeoutException)
       {
         clientChannel.Abort();
       }
-      catch (Exception e)
+      catch (Exception)
       {
         clientChannel.Abort();        
       }

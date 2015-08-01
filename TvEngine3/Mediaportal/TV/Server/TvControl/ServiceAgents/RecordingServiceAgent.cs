@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
 namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 {
@@ -16,7 +16,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       return _channel.GetRecording(idRecording);
     }
 
-    public IList<Recording> ListAllRecordingsByMediaType(MediaTypeEnum mediaType)
+    public IList<Recording> ListAllRecordingsByMediaType(MediaType mediaType)
     {
       return _channel.ListAllRecordingsByMediaType(mediaType);
     }
@@ -42,7 +42,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       return _channel.GetActiveRecordingByTitleAndChannel(title, idChannel);
     }
 
-    public IList<Recording> ListAllActiveRecordingsByMediaType(MediaTypeEnum mediaType)
+    public IList<Recording> ListAllActiveRecordingsByMediaType(MediaType mediaType)
     {
       return _channel.ListAllActiveRecordingsByMediaType(mediaType);
     }

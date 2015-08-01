@@ -1,5 +1,5 @@
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 
 namespace Mediaportal.TV.Server.TVControl.Interfaces.ServiceAgents
 {

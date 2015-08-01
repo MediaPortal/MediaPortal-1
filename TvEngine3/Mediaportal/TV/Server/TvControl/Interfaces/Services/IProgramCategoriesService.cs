@@ -12,12 +12,15 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     IList<ProgramCategory> ListAllProgramCategories();
 
     [OperationContract]
-    IList<TvGuideCategory> ListAllTvGuideCategories();
-
-    [OperationContract]
-    TvGuideCategory SaveTvGuideCategory(TvGuideCategory tvGuideCategory);
-
-    [OperationContract]
     ProgramCategory SaveProgramCategory(ProgramCategory programCategory);
+
+    [OperationContract]
+    IList<ProgramCategory> SaveProgramCategories(IEnumerable<ProgramCategory> programCategories);
+
+    [OperationContract]
+    IList<GuideCategory> ListAllGuideCategories();
+
+    [OperationContract]
+    GuideCategory SaveGuideCategory(GuideCategory guideCategory);
   }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
@@ -52,7 +53,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     Program GetProgramByTitleAndTimes(string programName, DateTime startTime, DateTime endTime);
 
     [OperationContract]
-    IList<Program> GetProgramsByDescriptionAndMediaType(string descriptionCriteria, MediaTypeEnum mediaType, StringComparisonEnum stringComparison);
+    IList<Program> GetProgramsByDescriptionAndMediaType(string descriptionCriteria, MediaType mediaType, StringComparisonEnum stringComparison);
 
     [OperationContract]
     IList<Program> GetProgramsByDescription(string descriptionCriteria, StringComparisonEnum stringComparison);
@@ -61,7 +62,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     IList<Program> GetProgramsByTitle(string titleCriteria, StringComparisonEnum stringComparison);
 
     [OperationContract]
-    IList<Program> GetProgramsByTitleAndMediaType(string titleCriteria, MediaTypeEnum mediaType, StringComparisonEnum stringComparison);
+    IList<Program> GetProgramsByTitleAndMediaType(string titleCriteria, MediaType mediaType, StringComparisonEnum stringComparison);
 
     [OperationContract]
     Program GetProgram(int idProgram);
@@ -70,7 +71,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     IDictionary<int, IList<Program>> GetProgramsForAllChannels(DateTime startTime, DateTime endTime, IEnumerable<Channel> channels);
 
     [OperationContract]
-    IList<Program> GetProgramsByTitleAndCategoryAndMediaType(string categoryCriteriea, string titleCriteria, MediaTypeEnum mediaType, StringComparisonEnum stringComparisonCategory, StringComparisonEnum stringComparisonTitle);
+    IList<Program> GetProgramsByTitleAndCategoryAndMediaType(string categoryCriteriea, string titleCriteria, MediaType mediaType, StringComparisonEnum stringComparisonCategory, StringComparisonEnum stringComparisonTitle);
 
     [OperationContract]
     IList<Program> GetProgramsByTimesInterval(DateTime startTime, DateTime endTime);

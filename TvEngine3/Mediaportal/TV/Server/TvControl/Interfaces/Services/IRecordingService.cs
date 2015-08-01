@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.ServiceModel;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
 namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 {
@@ -13,7 +13,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     Recording GetRecording(int idRecording);
 
     [OperationContract]
-    IList<Recording> ListAllRecordingsByMediaType(MediaTypeEnum mediaType);
+    IList<Recording> ListAllRecordingsByMediaType(MediaType mediaType);
 
     [OperationContract]
     Recording SaveRecording(Recording recording);
@@ -28,7 +28,8 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     Recording GetActiveRecordingByTitleAndChannel(string title, int idChannel);
 
     [OperationContract]
-    IList<Recording> ListAllActiveRecordingsByMediaType(MediaTypeEnum mediaType);
+    IList<Recording> ListAllActiveRecordingsByMediaType(MediaType mediaType);
+
     [OperationContract]
     void DeleteRecording(int idRecording);
   }

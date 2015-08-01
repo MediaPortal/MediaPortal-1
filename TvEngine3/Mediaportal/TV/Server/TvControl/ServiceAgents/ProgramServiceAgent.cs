@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -88,7 +89,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       return _channel.GetProgramByTitleAndTimes(programName, startTime, endTime);
     }
 
-    public IList<Program> GetProgramsByDescriptionAndMediaType(string descriptionCriteria, MediaTypeEnum mediaType, StringComparisonEnum stringComparison)
+    public IList<Program> GetProgramsByDescriptionAndMediaType(string descriptionCriteria, MediaType mediaType, StringComparisonEnum stringComparison)
     {
       return _channel.GetProgramsByDescriptionAndMediaType(descriptionCriteria, mediaType, stringComparison);
     }
@@ -103,7 +104,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       return _channel.GetProgramsByTitle(titleCriteria, stringComparison);
     }
 
-    public IList<Program> GetProgramsByTitleAndMediaType(string titleCriteria, MediaTypeEnum mediaType, StringComparisonEnum stringComparison)
+    public IList<Program> GetProgramsByTitleAndMediaType(string titleCriteria, MediaType mediaType, StringComparisonEnum stringComparison)
     {
       return _channel.GetProgramsByTitleAndMediaType(titleCriteria, mediaType, stringComparison);
     }
@@ -118,7 +119,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       return _channel.GetProgramsForAllChannels(startTime, endTime, channels);
     }
 
-    public IList<Program> GetProgramsByTitleAndCategoryAndMediaType(string categoryCriteriea, string titleCriteria, MediaTypeEnum mediaType, StringComparisonEnum stringComparisonCategory, StringComparisonEnum stringComparisonTitle)
+    public IList<Program> GetProgramsByTitleAndCategoryAndMediaType(string categoryCriteriea, string titleCriteria, MediaType mediaType, StringComparisonEnum stringComparisonCategory, StringComparisonEnum stringComparisonTitle)
     {
       return _channel.GetProgramsByTitleAndCategoryAndMediaType(categoryCriteriea, titleCriteria, mediaType, stringComparisonCategory, stringComparisonTitle);
     }

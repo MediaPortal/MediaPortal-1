@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
@@ -11,6 +12,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 {
 
   public delegate void TvServerEventHandler(object sender, EventArgs eventArgs);
+  public delegate void OnPluginStatesChanged();
 
   public interface IInternalControllerService : IControllerService
   {
@@ -31,11 +33,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// </returns>    
     bool IsRecording(ref IUser user);
 
-    /// <summary>
-    /// Determines the number of active streams on the server
-    /// </summary>
-    int ActiveStreams { get; }
-
     bool CanSuspend { get; }
 
     /// <summary>
@@ -53,6 +50,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     void DeInit();
 
     void Init();
+    void Init(OnPluginStatesChanged pluginStateChangeHandler);
     event TvServerEventHandler OnTvServerEvent;
     IDictionary<int, ChannelState> GetAllChannelStatesForIdleUserCached();
     IDictionary<int, ITvCardHandler> CardCollection { get; }
