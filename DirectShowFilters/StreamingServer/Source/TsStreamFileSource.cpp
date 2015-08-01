@@ -31,8 +31,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #include "TsFileSeek.h"
 
-extern void LogDebug(const char *fmt, ...) ;
-extern void LogDebug(const wchar_t *fmt, ...) ;
+extern void LogDebug(const wchar_t* fmt, ...);
 
 
 TsStreamFileSource*
@@ -58,7 +57,7 @@ TsStreamFileSource::createNew(UsageEnvironment& env, wchar_t const* fileName,
 	Boolean deleteFidOnClose = true;
 	TsStreamFileSource* newSource = new TsStreamFileSource(env, (FILE*)reader, deleteFidOnClose, preferredFrameSize, playTimePerFrame, channelType);
 	newSource->fFileSize = reader->GetFileSize();
-	LogDebug("ts:size %d",(DWORD)newSource->fFileSize);  
+	LogDebug(L"ts:size %d",(DWORD)newSource->fFileSize);  
 	return newSource;
 }
 
@@ -73,14 +72,14 @@ TsStreamFileSource::createNew(UsageEnvironment& env, FILE* fid,
 								  TsStreamFileSource* newSource = new TsStreamFileSource(env, fid, deleteFidOnClose, preferredFrameSize, playTimePerFrame, channelType);
 								  MultiFileReader* reader = (MultiFileReader*)fid;
 								  newSource->fFileSize = reader->GetFileSize();
-								  LogDebug("ts:createNew size %d",(DWORD)newSource->fFileSize);  
+								  LogDebug(L"ts:createNew size %d",(DWORD)newSource->fFileSize);  
 
 								  return newSource;
 }
 
 void TsStreamFileSource::seekToByteAbsolute(u_int64_t byteNumber) 
 {
-	LogDebug("ts:seek %d",(DWORD)byteNumber);  
+	LogDebug(L"ts:seek %d",(DWORD)byteNumber);  
 	MultiFileReader* reader = (MultiFileReader*)fFid;
 	byteNumber/=188LL;
 	byteNumber*=188LL;
@@ -93,7 +92,7 @@ void TsStreamFileSource::seekToTimeAbsolute(CRefTime& seekTime, CTsDuration& dur
   	MultiFileReader* reader = (MultiFileReader*)fFid;
     double startTime = seekTime.Millisecs();
     startTime /= 1000.0f;
-    LogDebug("StreamingServer::  Seek-> %f/%f", startTime, duration.Duration().Millisecs()/1000.0f);
+    LogDebug(L"StreamingServer::  Seek-> %f/%f", startTime, duration.Duration().Millisecs()/1000.0f);
     CTsFileSeek seek(duration);
     seek.SetFileReader(reader);
     seek.Seek(seekTime);
@@ -109,7 +108,7 @@ void TsStreamFileSource::seekToTimeAbsolute(CRefTime& seekTime, CTsDuration& dur
 void TsStreamFileSource::seekToByteRelative(int64_t offset) 
 {
 	MultiFileReader* reader = (MultiFileReader*)fFid;
-	LogDebug("ts:seek rel %d/%d",(DWORD)offset, (DWORD)reader->GetFileSize());  
+	LogDebug(L"ts:seek rel %d/%d",(DWORD)offset, (DWORD)reader->GetFileSize());  
 	offset/=188LL;
 	offset*=188LL;
 	reader->SetFilePointer((int64_t)offset, FILE_CURRENT);
@@ -125,7 +124,7 @@ TsStreamFileSource::TsStreamFileSource(UsageEnvironment& env, FILE* fid,
 									   fPlayTimePerFrame(playTimePerFrame), fLastPlayTime(0), fFileSize(0),
 									   fDeleteFidOnClose(deleteFidOnClose) 
 {
-	LogDebug("ts:ctor:%x",this);  
+	LogDebug(L"ts:ctor:%x",this);  
 	MultiFileReader* reader = (MultiFileReader*)fFid;
 	m_buffer.Clear();
 	m_buffer.SetChannelType(channelType);
@@ -135,7 +134,7 @@ TsStreamFileSource::TsStreamFileSource(UsageEnvironment& env, FILE* fid,
 
 TsStreamFileSource::~TsStreamFileSource() 
 {
-	LogDebug("ts:dtor:%x",this);  
+	LogDebug(L"ts:dtor:%x",this);  
 	if (fDeleteFidOnClose && fFid != NULL) 
 	{
 		MultiFileReader* reader = (MultiFileReader*)fFid;
@@ -159,7 +158,7 @@ void TsStreamFileSource::doGetNextFrame() {
 	}
 	if (m_buffer.Require(fMaxSize)!=S_OK)
 	{
-		LogDebug("ts:eof reached");  
+		LogDebug(L"ts:eof reached");  
 		handleClosure(this);
 		return;
 	}
@@ -167,7 +166,7 @@ void TsStreamFileSource::doGetNextFrame() {
 	{
 		if (m_buffer.DequeFromBuffer(fTo,fMaxSize)!=S_OK)
 		{
-			LogDebug("ts:eof reached");  
+			LogDebug(L"ts:eof reached");  
 			handleClosure(this);
 			return;
 		}

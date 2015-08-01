@@ -31,7 +31,8 @@
 const float SEEKING_ACCURACY = (float)0.08; // 1/25 *2 (2 frames in PAL)
 const int MAX_SEEKING_ITERATIONS = 50;
 
-extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const wchar_t* fmt, ...);
+
 CTsFileSeek::CTsFileSeek( CTsDuration& duration)
 :m_duration(duration)
 {
@@ -83,7 +84,7 @@ void CTsFileSeek::Seek(CRefTime refTime)
   seekTimeStamp /= 1000.0f; // convert to seconds.
 
   m_seekPid=m_duration.GetPid();
-  LogDebug("seek to %f filepos:%x pid:%x", seekTimeStamp,(DWORD)filePos, m_seekPid);
+  LogDebug(L"seek to %f filepos:%x pid:%x", seekTimeStamp,(DWORD)filePos, m_seekPid);
   
   byte buffer[188*10];
   if (filePos<=0)
@@ -139,11 +140,11 @@ void CTsFileSeek::Seek(CRefTime refTime)
       if( m_useBinarySearch )
       {
         double diff = fabs( seekTimeStamp - clockFound );
-        //LogDebug(" got %f at filepos %x diff %f ( %I64x, %I64x )", clockFound, (DWORD)filePos, diff, binaryMin, binaryMax);
+        //LogDebug(L" got %f at filepos %x diff %f ( %I64x, %I64x )", clockFound, (DWORD)filePos, diff, binaryMin, binaryMax);
           
         if( diff < SEEKING_ACCURACY )
         {
-          LogDebug(" stop seek: %f at %x - target: %f, diff: %f", 
+          LogDebug(L" stop seek: %f at %x - target: %f, diff: %f", 
             clockFound, (DWORD)filePos, seekTimeStamp, diff);
           m_reader->SetFilePointer(filePos,FILE_BEGIN);
           return;
@@ -152,7 +153,7 @@ void CTsFileSeek::Seek(CRefTime refTime)
         seekingIteration++;
         if( seekingIteration > MAX_SEEKING_ITERATIONS )
         {
-          LogDebug(" stop seek max iterations reached (%d): %f at %x - target: %f, diff: %f", 
+          LogDebug(L" stop seek max iterations reached (%d): %f at %x - target: %f, diff: %f", 
             MAX_SEEKING_ITERATIONS, clockFound, (DWORD)filePos, seekTimeStamp, diff);
           m_reader->SetFilePointer(filePos,FILE_BEGIN);
           return;
@@ -170,7 +171,7 @@ void CTsFileSeek::Seek(CRefTime refTime)
 
         if (lastFilePos==filePos)
         {
-          LogDebug(" stop seek closer target found : %f at %x - target: %f, diff: %f", 
+          LogDebug(L" stop seek closer target found : %f at %x - target: %f, diff: %f", 
             clockFound, (DWORD)filePos, seekTimeStamp, diff);
           m_reader->SetFilePointer(filePos,FILE_BEGIN);
           return;
@@ -192,13 +193,13 @@ void CTsFileSeek::Seek(CRefTime refTime)
             // pcr found is too low, move forward in file and seek next pcr
             state=FindNextPcr;
           
-            //LogDebug(" got %f at filepos %x ->find next", clockFound, (DWORD)filePos);
+            //LogDebug(L" got %f at filepos %x ->find next", clockFound, (DWORD)filePos);
             filePos += sizeof(buffer);
           }
           else if (clockFound > seekTimeStamp)
           {
             // pcr found is too high, move backward in file and seek previous pcr
-            //LogDebug(" got %f at filepos %x ->find prev", clockFound, (DWORD)filePos);
+            //LogDebug(L" got %f at filepos %x ->find prev", clockFound, (DWORD)filePos);
             state=FindPreviousPcr;
             filePos -= sizeof(buffer);
             Reset() ;   // Backward jump, Reset "PacketSync"
@@ -206,7 +207,7 @@ void CTsFileSeek::Seek(CRefTime refTime)
           else
           {
             //pcr is correct, just return
-            //LogDebug(" got %f", clockFound);
+            //LogDebug(L" got %f", clockFound);
             m_reader->SetFilePointer(filePos,FILE_BEGIN);
             return;
           }
@@ -216,12 +217,12 @@ void CTsFileSeek::Seek(CRefTime refTime)
           //pcr found, check state
           if (state==FindNextPcr)
           {
-            //LogDebug(" got %f at filepos %x", clockFound, (DWORD)filePos);
+            //LogDebug(L" got %f at filepos %x", clockFound, (DWORD)filePos);
             //looking for a pcr > seektime
             if (clockFound > seekTimeStamp)
             {
               //found it..
-              //LogDebug(" stop seek too big: %f at %x", clockFound, (DWORD)filePos);
+              //LogDebug(L" stop seek too big: %f at %x", clockFound, (DWORD)filePos);
               m_reader->SetFilePointer(prevfilePos,FILE_BEGIN);
               return;
             }
@@ -230,12 +231,12 @@ void CTsFileSeek::Seek(CRefTime refTime)
           }
           else if (state==FindPreviousPcr)
           {
-            //LogDebug(" got %f at filepos %x", clockFound, (DWORD)filePos);
+            //LogDebug(L" got %f at filepos %x", clockFound, (DWORD)filePos);
             //looking for a pcr < seektime
             if (clockFound < seekTimeStamp)
             {
               //found it...
-              //LogDebug(" stop seek too small: %f at %x", clockFound, (DWORD)filePos);
+              //LogDebug(L" stop seek too small: %f at %x", clockFound, (DWORD)filePos);
               m_reader->SetFilePointer(filePos,FILE_BEGIN);
               return;
             }

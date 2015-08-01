@@ -26,7 +26,8 @@
 #include <streams.h>
 #include "TsDuration.h"
 #include "..\..\shared\AdaptionField.h"
-extern void LogDebug(const char *fmt, ...) ;
+
+extern void LogDebug(const wchar_t* fmt, ...);
 
 CTsDuration::CTsDuration()
 {
@@ -135,7 +136,7 @@ void CTsDuration::UpdateDuration()
     if(m_endPcr.PcrReferenceBase < m_startPcr.PcrReferenceBase)
 		{
 			if (Loop < 4)		// Show log on 2nd wrong detection.
-				LogDebug("Abnormal start PCR, endPcr %I64d, startPcr %I64d",m_endPcr.PcrReferenceBase, m_startPcr.PcrReferenceBase);
+				LogDebug(L"Abnormal start PCR, endPcr %I64d, startPcr %I64d",m_endPcr.PcrReferenceBase, m_startPcr.PcrReferenceBase);
 			Sleep(20) ;
 		}
   }
@@ -148,11 +149,11 @@ void CTsDuration::UpdateDuration()
     // The startPcr read can also failed when it occurs between deleting and reusing the ts buffer.
     // This abort the method. Duration will be updated on next call.
   if (Loop==0)
-    LogDebug("PCR rollover normally found ! endPcr %I64d, startPcr %I64d",m_endPcr.PcrReferenceBase, m_startPcr.PcrReferenceBase);
+    LogDebug(L"PCR rollover normally found ! endPcr %I64d, startPcr %I64d",m_endPcr.PcrReferenceBase, m_startPcr.PcrReferenceBase);
   else
   {
     if(Loop<3)  // 1 failed + 1 succeded is quasi-normal, more is a bit suspicious ( disk drive too slow or problem ? )
-      LogDebug("Recovered wrong start PCR, seek to 'begin' on reused file ! ( Retried %d times )",4-Loop) ;
+      LogDebug(L"Recovered wrong start PCR, seek to 'begin' on reused file ! ( Retried %d times )",4-Loop) ;
   }
 
   //When the last pcr < first pcr then a pcr roll over occured
@@ -232,7 +233,7 @@ CRefTime CTsDuration::Duration()
     double duration= m_endPcr.ToClock() + (m_maxPcr.ToClock()- m_startPcr.ToClock());
     CPcr pcr;
     pcr.FromClock(duration);
-    //LogDebug("Duration:%f %s", duration, pcr.ToString());
+    //LogDebug(L"Duration:%f %S", duration, pcr.ToString());
     CRefTime refTime((LONG)(duration*1000.0f));
     return refTime;
   }
@@ -241,7 +242,7 @@ CRefTime CTsDuration::Duration()
     double duration= m_endPcr.ToClock() - m_startPcr.ToClock();
     CPcr pcr;
     pcr.FromClock(duration);
-    //LogDebug("Duration:%f %s", duration, pcr.ToString());
+    //LogDebug(L"Duration:%f %S", duration, pcr.ToString());
     CRefTime refTime((LONG)(duration*1000.0f));
     return refTime;
   }
@@ -259,7 +260,7 @@ CRefTime CTsDuration::TotalDuration()
     double duration= m_endPcr.ToClock() + (m_maxPcr.ToClock()- m_firstStartPcr.ToClock());
     CPcr pcr;
     pcr.FromClock(duration);
-    //LogDebug("Duration:%f %s", duration, pcr.ToString());
+    //LogDebug(L"Duration:%f %S", duration, pcr.ToString());
     CRefTime refTime((LONG)(duration*1000.0f));
     return refTime;
   }
@@ -268,7 +269,7 @@ CRefTime CTsDuration::TotalDuration()
     double duration= m_endPcr.ToClock() - m_firstStartPcr.ToClock();
     CPcr pcr;
     pcr.FromClock(duration);
-    //LogDebug("Duration:%f %s", duration, pcr.ToString());
+    //LogDebug(L"Duration:%f %S", duration, pcr.ToString());
     CRefTime refTime((LONG)(duration*1000.0f));
     return refTime;
   }

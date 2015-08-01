@@ -10,238 +10,271 @@
 #include "TsMPEG2TransportFileServerMediaSubsession.h" 
 #include "MPEG1or2FileServerDemux.hh" 
 #include "MPRTSPServer.h"
+#include <sstream>
+#include <iomanip>  // setfill(), setw()
 //#include "RTSPOverHTTPServer.hh"
 
-static char logbuffer[2000]; 
-static wchar_t logbufferw[2000];
-void LogDebug(const wchar_t *fmt, ...)
+//-----------------------------------------------------------------------------
+// LOGGING
+//-----------------------------------------------------------------------------
+static CCritSec g_logLock;
+static CCritSec g_logFilePathLock;
+static wstringstream g_logFilePath;
+static wstringstream g_logFileName;
+static WORD g_currentDay = -1;
+static wchar_t g_logBuffer[2000];
+
+void LogDebug(const wchar_t* fmt, ...)
 {
-	va_list ap;
-	va_start(ap,fmt);
-
-	va_start(ap,fmt);
-	vswprintf_s(logbufferw, fmt, ap);
-	va_end(ap); 
-
-	wchar_t folder[MAX_PATH];
-	wchar_t fileName[MAX_PATH];
-	::SHGetSpecialFolderPathW(NULL, folder, CSIDL_COMMON_APPDATA, FALSE);
-	swprintf_s(fileName, L"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\streaming server.Log", folder);
-
-	FILE* fp = _wfopen(fileName,L"a+, ccs=UTF-8");
-	if (fp!=NULL)
-	{
-		SYSTEMTIME systemTime;
-		GetLocalTime(&systemTime);
-		fwprintf(fp,L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%02.2d %s\n",
-			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,systemTime.wMilliseconds,
-			logbufferw);
-		fclose(fp);
-	}
-};
-
-void LogDebug(const char *fmt, ...)
-{
-	va_list ap;
-	va_start(ap,fmt);
-
-	va_start(ap,fmt);
-	vsprintf(logbuffer, fmt, ap);
-	va_end(ap); 
-
-	MultiByteToWideChar(CP_ACP, 0, logbuffer, -1, logbufferw, sizeof(logbuffer)/sizeof(wchar_t));
-	LogDebug(L"%s", logbufferw);
-};
-
-const char* STREAM_NAME = "testStream";
-const char* STREAM_DESCRIPTION = "Session streamed by \"MediaPortal Tv Server v1.2 Beta 1\"";
-const char* FILE_NAME = "C:\\temp\\testApp\\live.ts.tsbuffer";
-const int	DEFAULT_RTSP_PORT = 554;
-
-UsageEnvironment* m_env;
-MPRTSPServer*			m_rtspServer;
-
-void StreamSetup(char* ipAdress);
-int  StreamSetupEx(char* ipAdress, int port);
-void StreamShutdown();
-void StreamRun();
-void announceStream(RTSPServer* rtspServer, ServerMediaSession* sms, char * streamName, wchar_t * inputFileName); // fwd
-void StreamAddTimeShiftFile(char* streamName, wchar_t* fileName,bool isProgramStream,int channelType);
-void StreamAddMpegFile(char* streamName, wchar_t* fileName, int channelType);
-void StreamRemove(char* streamName);
-
-extern netAddressBits SendingInterfaceAddr ;
-extern netAddressBits ReceivingInterfaceAddr ;
-
-#if _DEBUG
-
-int main(int argc, char* argv[])
-{
-	StreamSetup("192.168.1.130");
-	StreamAddTimeShiftFile("test1", L"C:\\1\\live5-0.ts.tsbuffer",false,0);
-	//StreamAddMpegFile("test2", "C:\\media\\movies\\NED 1.mpg");
-	//StreamAddMpegFile("test3", "C:\\media\\movies\\PREMIERE 420070201-1146.ts");
-	while (true)
-	{
-		StreamRun();
-	}
-	StreamRemove("test");
-	return 0;
-}
-
-#endif
-
-
-//**************************************************************************************
-void StreamGetClientCount(int* clients)
-{
-	*clients=0;
-	if (m_rtspServer==NULL) return ;
-	*clients= m_rtspServer->Clients().size();
-}
-
-//**************************************************************************************
-void StreamGetClientDetail(unsigned int clientNr, char** ipAdres, char** streamName, int* isActive, long* ticks)
-{
-	static char szipAdres[50];
-	static char szstreamName[150];
-	*ipAdres=NULL;
-	*streamName=NULL;
-	*isActive=0;
-	*ticks=0;
-	vector<MPRTSPServer::MPRTSPClientSession*> clients=m_rtspServer->Clients();
-	if (clientNr>=clients.size()) return;
-	MPRTSPServer::MPRTSPClientSession* client = clients[clientNr];
-	sprintf(szipAdres,"%d.%d.%d.%d", client->getClientAddr().sin_addr.S_un.S_un_b.s_b1,
-		client->getClientAddr().sin_addr.S_un.S_un_b.s_b2,
-		client->getClientAddr().sin_addr.S_un.S_un_b.s_b3,
-		client->getClientAddr().sin_addr.S_un.S_un_b.s_b4);
-	*isActive=client->IsSessionIsActive();
-  ServerMediaSession * clientMediaSession = client->getOurServerMediaSession();
-  if (clientMediaSession)
+  CAutoLock lock(&g_logLock);
+  SYSTEMTIME systemTime;
+  GetLocalTime(&systemTime);
+  if (g_currentDay != systemTime.wDay)
   {
-    strcpy(szstreamName,clientMediaSession->streamName());
+    CAutoLock lock(&g_logFilePathLock);
+    g_logFileName.str(wstring());
+    g_logFileName << g_logFilePath.str() << L"\\StreamingServer-" << systemTime.wYear << L"-" << setfill(L'0') << setw(2) << systemTime.wMonth << L"-" << setw(2) << systemTime.wDay << L".log";
+    g_currentDay = systemTime.wDay;
   }
-	*streamName=&szstreamName[0];
-	*ipAdres=&szipAdres[0];
-	*ticks=client->getStartDateTime();
-}
+  FILE* file = _wfopen(g_logFileName.str().c_str(), L"a+, ccs=UTF-8");
+  if (file != NULL)
+  {
+    va_list ap;
+    va_start(ap, fmt);
+    vswprintf_s(g_logBuffer, fmt, ap);
+    va_end(ap);
+    fwprintf(file, L"%04.4d-%02.2d-%02.2d %02.2d:%02.2d:%02.2d.%03.3d %s\n",
+      systemTime.wYear, systemTime.wDay, systemTime.wMonth,
+      systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds,
+      g_logBuffer);
+    fclose(file);
+  }
 
-//**************************************************************************************
-void StreamSetup(char* ipAdress)
-{
-	if (StreamSetupEx(ipAdress, DEFAULT_RTSP_PORT) == 1)
-	{
-		LogDebug("Exiting process after error");
-		exit(1);
-	}
-}
-//**************************************************************************************
-int StreamSetupEx(char* ipAdress, int port)
-{
-	wchar_t folder[MAX_PATH];
-	wchar_t fileName[MAX_PATH];
-	::SHGetSpecialFolderPathW(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-	swprintf(fileName, MAX_PATH, L"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\streaming server.Log", folder);
-	::DeleteFileW(fileName);
+  //::OutputDebugStringW(g_logBuffer);
+  //::OutputDebugStringW(L"\n");
+};
 
-	LogDebug("-------------- v1.0.5 ---------------");
-  StreamShutdown();
-	if (port == DEFAULT_RTSP_PORT) {
-		LogDebug("Stream server:Setup stream server for ip: %s", ipAdress);
-	}
-	else
-	{
-		LogDebug("Stream server:Setup stream server for ip: %s:%d", ipAdress, port);
-	}
+const char* STREAM_DESCRIPTION = "Session streamed by \"MediaPortal TV Server\"";
 
-	ReceivingInterfaceAddr=inet_addr(ipAdress );
-	SendingInterfaceAddr=inet_addr(ipAdress );
+UsageEnvironment* m_env = NULL;
+MPRTSPServer* m_rtspServer = NULL;
 
-	TaskScheduler* scheduler = MPTaskScheduler::createNew();
-	m_env = BasicUsageEnvironment::createNew(*scheduler);
-	m_rtspServer = MPRTSPServer::createNew(*m_env, port);
-	if (m_rtspServer == NULL) 
-	{
-		LogDebug("Stream server:Failed to create RTSP server: %s",m_env->getResultMsg());
-		return 1;
-	}
-	return 0; // ok
-}
-//**************************************************************************************
-void StreamShutdown()
+extern netAddressBits SendingInterfaceAddr;
+extern netAddressBits ReceivingInterfaceAddr;
+
+
+long ServerSetup(char* ipAddress, unsigned short port)
 {
   if (m_rtspServer != NULL)
   {
-    LogDebug("Stream server:Shutting down RTSP server");
-    MPRTSPServer *server = m_rtspServer;
+    // Must shutdown before setting up again.
+    LogDebug(L"stream server: server is already running");
+    return 0;
+  }
+
+  wchar_t temp[MAX_PATH];
+  ::SHGetSpecialFolderPathW(NULL, temp, CSIDL_COMMON_APPDATA, FALSE);
+  g_logFilePath << temp << L"\\Team MediaPortal\\MediaPortal TV Server\\log";
+
+  LogDebug(L"--------------- v1.0.6 ---------------");
+  LogDebug(L"stream server: setup server, IP address = %S, port = %hu", ipAddress, port);
+
+  ReceivingInterfaceAddr = inet_addr(ipAddress);
+  SendingInterfaceAddr = inet_addr(ipAddress);
+
+  TaskScheduler* scheduler = MPTaskScheduler::createNew();
+  if (scheduler == NULL) 
+  {
+    LogDebug(L"stream server: failed to create task scheduler");
+    return 1;
+  }
+
+  m_env = BasicUsageEnvironment::createNew(*scheduler);
+  if (m_env == NULL) 
+  {
+    LogDebug(L"stream server: failed to create usage environment");
+    delete scheduler;
+    return 2;
+  }
+
+  m_rtspServer = MPRTSPServer::createNew(*m_env, port);
+  if (m_rtspServer == NULL) 
+  {
+    LogDebug(L"stream server: failed to create RTSP server, error = %S", m_env->getResultMsg());
+    m_env->reclaim();
+    m_env = NULL;
+    delete scheduler;
+    return 3;
+  }
+
+  return 0;
+}
+
+void ServerShutdown()
+{
+  if (m_rtspServer != NULL)
+  {
+    LogDebug(L"stream server: shutting down RTSP server");
+    MPRTSPServer* server = m_rtspServer;
     m_rtspServer = NULL;
     Medium::close(server);
   }
 
   if (m_env != NULL)
   {
-    LogDebug("Stream server:Cleaning up environment");
-    UsageEnvironment *env = m_env;
+    LogDebug(L"stream server: cleaning up environment");
+    UsageEnvironment* env = m_env;
     m_env = NULL;
-    TaskScheduler *scheduler = &env->taskScheduler();
+    TaskScheduler* scheduler = &env->taskScheduler();
     env->reclaim();
     delete scheduler;
   }
 }
-//**************************************************************************************
+
+void StreamAdd(char* id, wchar_t* fileName, unsigned char channelType, bool isStaticFile)
+{
+  if (m_rtspServer == NULL || m_env == NULL)
+  {
+    LogDebug(L"stream server: failed to add stream, server is not running");
+    return;
+  }
+  try
+  {
+    LogDebug(L"stream server: add stream, ID = %S, channel type = %hhu, is static file = %d, file name = %s", id, channelType, isStaticFile, fileName);
+    ServerMediaSession* sms = ServerMediaSession::createNew(*m_env, id, id, STREAM_DESCRIPTION, false);
+    sms->addSubsession(TsMPEG2TransportFileServerMediaSubsession::createNew(*m_env, fileName, false, !isStaticFile, channelType));
+    m_rtspServer->addServerMediaSession(sms);
+    LogDebug(L"  URL = %S", m_rtspServer->rtspURL(sms));
+  }
+  catch (...)
+  {
+    LogDebug(L"stream server: failed to add stream, ID = %S, channel type = %hhu, is static file = %d, file name = %s", id, channelType, isStaticFile, fileName);
+  }
+}
+
 void StreamRun()
 {
-	for (int i=0; i < 10;++i)
-		m_env->taskScheduler().doEventLoop(); 
+  if (m_env == NULL)
+  {
+    return;
+  }
+  for (unsigned char i = 0; i < 10; ++i)
+  {
+    m_env->taskScheduler().doEventLoop();
+  }
 }
 
-//**************************************************************************************
-void StreamRemove( char* streamName)
+void StreamRemove(char* id)
 {
-	LogDebug("Stream server:Stream server: remove stream %s", streamName);
-	m_rtspServer->removeServerMediaSession(streamName);
+  if (m_rtspServer == NULL)
+  {
+    LogDebug(L"stream server: failed to remove stream, server is not running");
+    return;
+  }
+
+  LogDebug(L"stream server: remove stream, ID = %S", id);
+  m_rtspServer->removeServerMediaSession(id);
 }
 
-//**************************************************************************************
-void StreamAddTimeShiftFile(char* streamName, wchar_t* fileName,bool isProgramStream,int channelType)
+void StreamGetClientCount(unsigned short* clientCount)
 {
-	try
-	{
-		LogDebug(L"Stream server: add timeshift  mpeg-2 transport stream %S filename:%s", streamName,fileName);
-		ServerMediaSession* sms= ServerMediaSession::createNew(*m_env, streamName, streamName,STREAM_DESCRIPTION,false);
-		sms->addSubsession(TsMPEG2TransportFileServerMediaSubsession::createNew(*m_env, fileName, false,true,channelType));
-		m_rtspServer->addServerMediaSession(sms);
-
-		announceStream(m_rtspServer, sms, streamName, fileName);
-	}
-	catch(...)
-	{
-		LogDebug(L"Stream server: unable to add stream %S filename:%s", streamName,fileName);
-	}
+  if (m_rtspServer != NULL)
+  {
+    *clientCount = m_rtspServer->Clients().size();
+    return;
+  }
+  *clientCount = 0;
 }
 
-//**************************************************************************************
-void StreamAddMpegFile(char* streamName, wchar_t* fileName, int channelType)
+void StreamGetClientDetail(unsigned short index, unsigned long* sessionId, char** ipAddress, char** streamId, long* connectionTickCount, bool* isActive)
 {
-	try
-	{
-		LogDebug(L"Stream server: add mpeg-2 ts stream %S filename:%s", streamName,fileName);
-		ServerMediaSession* sms= ServerMediaSession::createNew(*m_env, streamName, streamName,STREAM_DESCRIPTION,false);
-		sms->addSubsession(TsMPEG2TransportFileServerMediaSubsession::createNew(*m_env, fileName, false,false,channelType));
-		m_rtspServer->addServerMediaSession(sms);
-		announceStream(m_rtspServer, sms, streamName, fileName);
-	}
-	catch(...)
-	{
-		LogDebug(L"Stream server: unable to add stream %S filename:%s", streamName,fileName);
-	}
+  static char szIpAddress[50];
+  static char szStreamId[150];
+  *sessionId = 0;
+  *ipAddress = NULL;
+  *streamId = NULL;
+  *connectionTickCount = 0;
+  *isActive = false;
+
+  if (m_rtspServer == NULL)
+  {
+    return;
+  }
+  vector<MPRTSPServer::MPRTSPClientSession*> clients = m_rtspServer->Clients();
+  if (index >= clients.size())
+  {
+    return;
+  }
+  MPRTSPServer::MPRTSPClientSession* client = clients[index];
+  if (client == NULL)
+  {
+    return;
+  }
+
+  *sessionId = client->sessionId();
+
+  sprintf(szIpAddress, "%d.%d.%d.%d",
+    client->getClientAddr().sin_addr.S_un.S_un_b.s_b1,
+    client->getClientAddr().sin_addr.S_un.S_un_b.s_b2,
+    client->getClientAddr().sin_addr.S_un.S_un_b.s_b3,
+    client->getClientAddr().sin_addr.S_un.S_un_b.s_b4);
+  *ipAddress = &szIpAddress[0];
+
+  ServerMediaSession* clientMediaSession = client->getOurServerMediaSession();
+  if (clientMediaSession != NULL)
+  {
+    strcpy(szStreamId, clientMediaSession->streamName());
+  }
+  *streamId = &szStreamId[0];
+
+  *connectionTickCount = client->getStartDateTime();
+  if (client->IsSessionIsActive() != 0)
+  {
+    *isActive = true;
+  }
 }
 
-//**************************************************************************************
-void announceStream(RTSPServer* rtspServer, ServerMediaSession* sms, char * streamName, wchar_t * inputFileName) 
+void StreamRemoveClient(unsigned long sessionId)
 {
-	char* url = rtspServer->rtspURL(sms);
-	LogDebug("Stream server: url for stream is %s", url);
+  if (m_rtspServer != NULL)
+  {
+    LogDebug(L"stream server: failed to remove client, server is not running");
+    return;
+  }
+  vector<MPRTSPServer::MPRTSPClientSession*> clients = m_rtspServer->Clients();
+  vector<MPRTSPServer::MPRTSPClientSession*>::iterator it = clients.begin();
+  for ( ; it != clients.end(); it++)
+  {
+    MPRTSPServer::MPRTSPClientSession* client = *it;
+    if (client != NULL && client->sessionId() == sessionId)
+    {
+      LogDebug(L"stream server: remove client, ID = %lu", sessionId);
+      m_rtspServer->RemoveClient(client);
+      delete client;
+      break;
+    }
+  }
 }
+
+#if _DEBUG
+
+int main(int argc, char* argv[])
+{
+  int result = StreamSetup("192.168.1.130");
+  if (result != 0)
+  {
+    return result;
+  }
+
+  StreamAdd("test1", L"C:\\1\\live5-0.ts.tsbuffer", 0, false);
+  //StreamAdd("test2", L"C:\\media\\movies\\NED 1.mpg", true);
+  //StreamAdd("test3", L"C:\\media\\movies\\PREMIERE 420070201-1146.ts", true);
+  while (true)
+  {
+    StreamRun();
+  }
+  StreamRemove("test1");
+  return 0;
+}
+
+#endif

@@ -36,7 +36,8 @@
 #define TV_BUFFER_ITEM_SIZE	32336
 #define RADIO_BUFFER_ITEM_SIZE	1880
 
-extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const wchar_t* fmt, ...);
+
 CTSBuffer::CTSBuffer()
 {
 	m_pFileReader = NULL;
@@ -101,7 +102,7 @@ void CTSBuffer::SetChannelType(int channelType)
 	//	Tv
 	if(channelType == 0)
 	{
-		LogDebug("CTSBuffer::SetChannelType() - Buffer size set to TV (%d)", TV_BUFFER_ITEM_SIZE);
+		LogDebug(L"CTSBuffer::SetChannelType() - Buffer size set to TV (%d)", TV_BUFFER_ITEM_SIZE);
 		m_lTSBufferItemSize = TV_BUFFER_ITEM_SIZE;
 		m_eChannelType = TV;
 	}
@@ -109,7 +110,7 @@ void CTSBuffer::SetChannelType(int channelType)
 	//	Radio
 	else
 	{
-		LogDebug("CTSBuffer::SetChannelType() - Buffer size set to radio (%d)", RADIO_BUFFER_ITEM_SIZE);
+		LogDebug(L"CTSBuffer::SetChannelType() - Buffer size set to radio (%d)", RADIO_BUFFER_ITEM_SIZE);
 		m_lTSBufferItemSize = RADIO_BUFFER_ITEM_SIZE;
 		m_eChannelType = Radio;
 	}
@@ -158,7 +159,7 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 
 		if(FAILED(hr) || iteration >= 20)
 		{
-			LogDebug("TSBuffer::Require() - Failed to read buffer file");
+			LogDebug(L"TSBuffer::Require() - Failed to read buffer file");
 			
 			delete[] readBuffer;
 

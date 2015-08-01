@@ -134,7 +134,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\StreamingServer.def" />
-    <None Include="Source\ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\TSBuffer.h" />

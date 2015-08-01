@@ -6,7 +6,7 @@
 #include "TsStreamFileSource.h"
 #include "TsMPEG2TransportStreamFramer.h"
 
-extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const wchar_t* fmt, ...);
 
 TsMPEG2TransportFileServerMediaSubsession* TsMPEG2TransportFileServerMediaSubsession::createNew(UsageEnvironment& env,wchar_t const* fileName,Boolean reuseFirstSource, Boolean timeshifting, int channelType) 
 {
@@ -78,7 +78,7 @@ void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* i
 
 //	source->seekToByteAbsolute(newPos);
   source->seekToTimeAbsolute(CRefTime((LONG)(seekNPT*1000.0)), *m_pDuration) ;
-	LogDebug("ts seekStreamSource %f / %f ->%d", seekNPT,fileDuration, (DWORD)newPos);
+	LogDebug(L"ts seekStreamSource %f / %f ->%d", seekNPT,fileDuration, (DWORD)newPos);
 }
 
 float TsMPEG2TransportFileServerMediaSubsession::duration() const

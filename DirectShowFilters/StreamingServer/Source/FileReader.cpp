@@ -26,9 +26,9 @@
 #include <windows.h>
 #include "FileReader.h"
 //#include "global.h"
-extern void LogDebug(const char *fmt, ...) ;
-extern void LogDebug(const wchar_t *fmt, ...) ;
-extern void LogDebug(const wchar_t *fmt, ...) ;
+
+extern void LogDebug(const wchar_t* fmt, ...);
+
 FileReader::FileReader() :
 	m_hFile(INVALID_HANDLE_VALUE),
 	m_pFileName(0),
@@ -97,14 +97,14 @@ HRESULT FileReader::OpenFile()
 	// Is the file already opened
 	if (m_hFile != INVALID_HANDLE_VALUE) 
   {
-    LogDebug("FileReader::OpenFile() file already open");
+    LogDebug(L"FileReader::OpenFile() file already open");
 		return NOERROR;
 	}
 
 	// Has a filename been set yet
 	if (m_pFileName == NULL) 
   {
-    LogDebug("FileReader::OpenFile() no filename");
+    LogDebug(L"FileReader::OpenFile() no filename");
 		return ERROR_INVALID_NAME;
 	}
 
@@ -160,18 +160,18 @@ HRESULT FileReader::OpenFile()
 	if (Tmo)
 	{
     if (Tmo<4) // 1 failed + 1 succeded is quasi-normal, more is a bit suspicious ( disk drive too slow or problem ? )
-  			LogDebug(L"FileReader::OpenFile(), %d tries to succeed opening %s.", 6-Tmo, pFileName);
+  			LogDebug(L"FileReader::OpenFile(), %d tries to succeed opening %S.", 6-Tmo, pFileName);
 	}
 	else
 	{
 		DWORD dwErr = GetLastError();
-		LogDebug(L"FileReader::OpenFile(), open file %s failed. Error code %d", pFileName, dwErr);
+		LogDebug(L"FileReader::OpenFile(), open file %S failed. Error code %d", pFileName, dwErr);
 		return HRESULT_FROM_WIN32(dwErr);
 	}
 
 
 
-  //LogDebug("FileReader::OpenFile() handle %i %ws", m_hFile, pFileName );
+  //LogDebug(L"FileReader::OpenFile() handle %i %s", m_hFile, pFileName );
 
 	WCHAR infoName[512];
 	wcscpy(infoName, pFileName);
@@ -190,7 +190,7 @@ HRESULT FileReader::OpenFile()
 //			FILE_FLAG_RANDOM_ACCESS,	        // More flags
 			NULL);
 
-  //LogDebug("FileReader::OpenFile() info file handle %i", m_hInfoFile);
+  //LogDebug(L"FileReader::OpenFile() info file handle %i", m_hInfoFile);
 
 	SetFilePointer(0, FILE_BEGIN);
 	m_llBufferPointer = 0;	
@@ -211,12 +211,12 @@ HRESULT FileReader::CloseFile()
 
 	if (m_hFile == INVALID_HANDLE_VALUE) 
   {
-//    LogDebug("FileReader::CloseFile() no open file");
+//    LogDebug(L"FileReader::CloseFile() no open file");
 		return S_OK;
 	}
 
-  //LogDebug("FileReader::CloseFile() handle %i %ws", m_hFile, m_pFileName);
-  //LogDebug("FileReader::CloseFile() info file handle %i", m_hInfoFile);
+  //LogDebug(L"FileReader::CloseFile() handle %i %s", m_hFile, m_pFileName);
+  //LogDebug(L"FileReader::CloseFile() info file handle %i", m_hInfoFile);
 
 //	BoostThread Boost;
 
@@ -442,7 +442,7 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 	// If the file has already been closed, don't continue
 	if (m_hFile == INVALID_HANDLE_VALUE)
   {
-    LogDebug("FileReader::Read() no open file");
+    LogDebug(L"FileReader::Read() no open file");
 		return E_FAIL;
   }
 //	BoostThread Boost;
@@ -454,7 +454,7 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 	DWORD dwErr = ::GetLastError();
 	if ((DWORD)li.LowPart == (DWORD)0xFFFFFFFF && dwErr)
 	{
-    LogDebug("FileReader::Read() seek failed");
+    LogDebug(L"FileReader::Read() seek failed");
 		return E_FAIL;
 	}
 	__int64 m_filecurrent = li.QuadPart;
@@ -526,13 +526,13 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 
 	if (!hr)
 	{
-    LogDebug("FileReader::Read() read failed - error = %d",  HRESULT_FROM_WIN32(GetLastError()));
+    LogDebug(L"FileReader::Read() read failed - error = %d",  HRESULT_FROM_WIN32(GetLastError()));
 		return E_FAIL;
 	}
 
 	if (*dwReadBytes < (ULONG)lDataLength)
   {
-    LogDebug("FileReader::Read() read to less bytes");
+    LogDebug(L"FileReader::Read() read to less bytes");
 		return S_FALSE;
   }
 	return S_OK;

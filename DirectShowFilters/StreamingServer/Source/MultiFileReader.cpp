@@ -30,8 +30,8 @@
 //Maximum time in msec to wait for the buffer file to become available - Needed for DVB radio (this sometimes takes some time)
 #define MAX_BUFFER_TIMEOUT	1500
 
-extern void LogDebug(const char *fmt, ...) ;
-extern void LogDebug(const wchar_t *fmt, ...) ;
+extern void LogDebug(const wchar_t* fmt, ...);
+
 MultiFileReader::MultiFileReader():
 	m_TSBufferFile(),
 	m_TSFile()
@@ -97,7 +97,7 @@ HRESULT MultiFileReader::OpenFile()
 	{
 		if (GetTickCount()-tc>MAX_BUFFER_TIMEOUT)
 		{
-			LogDebug("MultiFileReader: timedout while waiting for buffer file to become available");
+			LogDebug(L"MultiFileReader: timedout while waiting for buffer file to become available");
 			return S_FALSE;
 		}
 	}
@@ -158,7 +158,7 @@ DWORD MultiFileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMeth
 		m_currentPosition = m_startPosition;
 
 	if (m_currentPosition > m_endPosition) {
-		LogDebug("Seeking beyond the end position: %I64d > %I64d", m_currentPosition, m_endPosition);
+		LogDebug(L"Seeking beyond the end position: %I64d > %I64d", m_currentPosition, m_endPosition);
 		m_currentPosition = m_endPosition;
 	}
 
@@ -198,7 +198,7 @@ HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadByte
 
 	if(!file)
   {
-    LogDebug("MultiFileReader::no file");
+    LogDebug(L"MultiFileReader::no file");
 		return S_FALSE;
   }
 	if (m_currentPosition < (file->startPosition + file->length))
@@ -226,7 +226,7 @@ HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadByte
     __int64 posSeeked=m_TSFile.GetFilePointer();
     if (posSeeked!=seekPosition)
     {
-      LogDebug("SEEK FAILED");
+      LogDebug(L"SEEK FAILED");
     }
 
 		ULONG bytesRead = 0;
@@ -237,14 +237,14 @@ HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadByte
 			hr = m_TSFile.Read(pbData, (ULONG)bytesToRead, &bytesRead);
       if (FAILED(hr))
       {
-        LogDebug("READ FAILED1");
+        LogDebug(L"READ FAILED1");
       }
 			m_currentPosition += bytesToRead;
 
 			hr = this->Read(pbData + bytesToRead, lDataLength - (ULONG)bytesToRead, dwReadBytes);
       if (FAILED(hr))
       {
-        LogDebug("READ FAILED2");
+        LogDebug(L"READ FAILED2");
       }
 			*dwReadBytes += bytesRead;
 		}
@@ -253,7 +253,7 @@ HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadByte
 			hr = m_TSFile.Read(pbData, lDataLength, dwReadBytes);
       if (FAILED(hr))
       {
-        LogDebug("READ FAILED2");
+        LogDebug(L"READ FAILED2");
       }
 			m_currentPosition += lDataLength;
 		}
@@ -381,7 +381,7 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
     {
       Error = 0x80;
 
-	  LogDebug("MultiFileReader has error 0x80 in Loop %d. Try to clear SMB Cache.", 10-Loop);
+	  LogDebug(L"MultiFileReader has error 0x80 in Loop %d. Try to clear SMB Cache.", 10-Loop);
 	  
 	  // try to clear local / remote SMB file cache. This should happen when we close the filehandle
       m_TSBufferFile.CloseFile();
@@ -396,11 +396,11 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
  
   if (Loop < 8)
   {
-    LogDebug("MultiFileReader has waited %d times for TSbuffer integrity.", 10-Loop) ;
+    LogDebug(L"MultiFileReader has waited %d times for TSbuffer integrity.", 10-Loop) ;
 
     if(Error)
     {
-      LogDebug("MultiFileReader has failed for TSbuffer integrity. Error : %x", Error) ;
+      LogDebug(L"MultiFileReader has failed for TSbuffer integrity. Error : %x", Error) ;
       return E_FAIL ;
     }
   }
