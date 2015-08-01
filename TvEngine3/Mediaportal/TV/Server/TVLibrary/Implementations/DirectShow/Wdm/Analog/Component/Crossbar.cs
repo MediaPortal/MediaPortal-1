@@ -21,11 +21,13 @@
 using System;
 using System.Collections.Generic;
 using DirectShowLib;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaType = Mediaportal.TV.Server.Common.Types.Enum.MediaType;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component
 {
@@ -60,11 +62,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// A map linking each audio source to its corresponding pin index.
     /// </summary>
     private IDictionary<CaptureSourceAudio, int> _pinMapAudio = new Dictionary<CaptureSourceAudio, int>();
-
-    /// <summary>
-    /// A list of channels, one per source.
-    /// </summary>
-    private IList<AnalogChannel> _sourceChannels = new List<AnalogChannel>();
 
     /// <summary>
     /// The video output pin index.
@@ -102,13 +99,34 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     }
 
     /// <summary>
-    /// Get the source channel list.
+    /// Get the video capture sources supported by the crossbar.
     /// </summary>
-    public IList<AnalogChannel> SourceChannels
+    public CaptureSourceVideo SupportedVideoSources
     {
       get
       {
-        return _sourceChannels;
+        CaptureSourceVideo sources = CaptureSourceVideo.None;
+        foreach (CaptureSourceVideo source in _pinMapVideo.Keys)
+        {
+          sources |= source;
+        }
+        return sources;
+      }
+    }
+
+    /// <summary>
+    /// Get the audio capture sources supported by the crossbar.
+    /// </summary>
+    public CaptureSourceAudio SupportedAudioSources
+    {
+      get
+      {
+        CaptureSourceAudio sources = CaptureSourceAudio.None;
+        foreach (CaptureSourceAudio source in _pinMapAudio.Keys)
+        {
+          sources |= source;
+        }
+        return sources;
       }
     }
 
@@ -200,7 +218,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       catch (Exception ex)
       {
         DevicesInUse.Instance.Remove(_device);
-        throw new TvException("Failed to add filter for main crossbar component to graph.", ex);
+        throw new TvException(ex, "Failed to add filter for main crossbar component to graph.");
       }
 
       CheckCapabilities();
@@ -220,14 +238,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       int countOutput = 0;
       int countInput = 0;
       int hr = crossbar.get_PinCounts(out countOutput, out countInput);
-      HResult.ThrowException(hr, "Failed to get pin counts.");
+      TvExceptionDirectShowError.Throw(hr, "Failed to get pin counts.");
 
       int relatedPinIndex;
       PhysicalConnectorType connectorType;
       for (int i = 0; i < countOutput; i++)
       {
         hr = crossbar.get_CrossbarPinInfo(false, i, out relatedPinIndex, out connectorType);
-        HResult.ThrowException(hr, string.Format("Failed to get pin information for output pin {0}.", i));
+        TvExceptionDirectShowError.Throw(hr, "Failed to get pin information for output pin {0}.", i);
         this.LogDebug("WDM analog crossbar: output pin {0}, type = {1}, related = {2}", i, connectorType, relatedPinIndex);
         if (connectorType == PhysicalConnectorType.Video_VideoDecoder && _pinIndexOutputVideo == -1)
         {
@@ -255,7 +273,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       for (int i = 0; i < countInput; i++)
       {
         hr = crossbar.get_CrossbarPinInfo(true, i, out relatedPinIndex, out connectorType);
-        HResult.ThrowException(hr, string.Format("Failed to get pin information for input pin {0}.", i));
+        TvExceptionDirectShowError.Throw(hr, "Failed to get pin information for input pin {0}.", i);
         this.LogDebug("WDM analog crossbar: input pin {0}, type = {1}, related = {2}", i, connectorType, relatedPinIndex);
         switch (connectorType)
         {
@@ -462,44 +480,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
             break;
         }
       }
-
-      // Build a list of channels - one per source.
-      _sourceChannels.Clear();
-      if (_pinMapVideo.Count > 0)
-      {
-        foreach (CaptureSourceVideo source in _pinMapVideo.Keys)
-        {
-          if (source != CaptureSourceVideo.Tuner)
-          {
-            AnalogChannel channel = new AnalogChannel();
-            channel.AudioSource = CaptureSourceAudio.Automatic;
-            channel.MediaType = MediaTypeEnum.TV;
-            channel.VideoSource = source;
-            _sourceChannels.Add(channel);
-          }
-        }
-      }
-      else if (_pinMapAudio.Count > 0)
-      {
-        foreach (CaptureSourceAudio source in _pinMapAudio.Keys)
-        {
-          if (source != CaptureSourceAudio.Tuner)
-          {
-            AnalogChannel channel = new AnalogChannel();
-            channel.AudioSource = source;
-            channel.MediaType = MediaTypeEnum.Radio;
-            channel.VideoSource = CaptureSourceVideo.None;
-            _sourceChannels.Add(channel);
-          }
-        }
-      }
     }
 
     /// <summary>
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    public void PerformTuning(AnalogChannel channel)
+    public void PerformTuning(IChannel channel)
     {
       this.LogDebug("WDM analog crossbar: perform tuning");
       IAMCrossbar crossbar = _filter as IAMCrossbar;
@@ -508,26 +495,35 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         throw new TvException("Failed to find crossbar interface on filter.");
       }
 
+      CaptureSourceVideo sourceVideo = CaptureSourceVideo.Tuner;
+      CaptureSourceAudio sourceAudio = CaptureSourceAudio.Tuner;
+      ChannelCapture captureChannel = channel as ChannelCapture;
+      if (captureChannel != null)
+      {
+        sourceVideo = captureChannel.VideoSource;
+        sourceAudio = captureChannel.AudioSource;
+      }
+
       bool updateAudio = false;   // For compatibility we force re-routing of audio if/when video is routed.
       int hr;
       if (_pinIndexOutputVideo != -1)
       {
-        if (channel.VideoSource == CaptureSourceVideo.None)
+        if (sourceVideo == CaptureSourceVideo.None)
         {
           this.LogDebug("WDM analog crossbar: no video");
         }
         else
         {
           int pinIndexRoutedVideoNew = -1;
-          if (!_pinMapVideo.TryGetValue(channel.VideoSource, out pinIndexRoutedVideoNew))
+          if (!_pinMapVideo.TryGetValue(sourceVideo, out pinIndexRoutedVideoNew))
           {
-            this.LogWarn("WDM analog crossbar: requested video source {0} is not available", channel.VideoSource);
+            this.LogWarn("WDM analog crossbar: requested video source {0} is not available", sourceVideo);
           }
           else if (pinIndexRoutedVideoNew != _pinIndexRoutedVideo)
           {
-            this.LogDebug("WDM analog crossbar: route video -> {0}", channel.VideoSource);
+            this.LogDebug("WDM analog crossbar: route video -> {0}", sourceVideo);
             hr = crossbar.Route(_pinIndexOutputVideo, pinIndexRoutedVideoNew);
-            HResult.ThrowException(hr, string.Format("Failed to route video from input pin {0} to output pin {1}.", pinIndexRoutedVideoNew, _pinIndexOutputVideo));
+            TvExceptionDirectShowError.Throw(hr, "Failed to route video from input pin {0} to output pin {1}.", pinIndexRoutedVideoNew, _pinIndexOutputVideo);
             _pinIndexRoutedVideo = pinIndexRoutedVideoNew;
             updateAudio = true;
           }
@@ -536,7 +532,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
 
       if (_pinIndexOutputAudio != -1)
       {
-        if (channel.AudioSource == CaptureSourceAudio.None)
+        if (sourceAudio == CaptureSourceAudio.None)
         {
           this.LogDebug("WDM analog crossbar: no audio");
         }
@@ -544,23 +540,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         {
           int pinIndexRoutedAudioNew = -1;
           bool gotIndex = false;
-          if (channel.AudioSource == CaptureSourceAudio.Automatic)
+          if (sourceAudio == CaptureSourceAudio.Automatic)
           {
-            gotIndex = _pinMapVideoDefaultAudio.TryGetValue(channel.VideoSource, out pinIndexRoutedAudioNew);
+            gotIndex = _pinMapVideoDefaultAudio.TryGetValue(sourceVideo, out pinIndexRoutedAudioNew);
           }
           else
           {
-            gotIndex = _pinMapAudio.TryGetValue(channel.AudioSource, out pinIndexRoutedAudioNew);
+            gotIndex = _pinMapAudio.TryGetValue(sourceAudio, out pinIndexRoutedAudioNew);
           }
           if (!gotIndex)
           {
-            this.LogWarn("WDM analog crossbar: requested audio source {0} is not available", channel.AudioSource);
+            this.LogWarn("WDM analog crossbar: requested audio source {0} is not available", sourceAudio);
           }
           else if (updateAudio || pinIndexRoutedAudioNew != _pinIndexRoutedAudio)
           {
-            this.LogDebug("WDM analog crossbar: route audio -> {0}", channel.AudioSource);
+            this.LogDebug("WDM analog crossbar: route audio -> {0}", sourceAudio);
             hr = crossbar.Route(_pinIndexOutputAudio, pinIndexRoutedAudioNew);
-            HResult.ThrowException(hr, string.Format("Failed to route audio from input pin {0} to output pin {1}.", pinIndexRoutedAudioNew, _pinIndexOutputAudio));
+            TvExceptionDirectShowError.Throw(hr, "Failed to route audio from input pin {0} to output pin {1}.", pinIndexRoutedAudioNew, _pinIndexOutputAudio);
             _pinIndexRoutedAudio = pinIndexRoutedAudioNew;
           }
         }

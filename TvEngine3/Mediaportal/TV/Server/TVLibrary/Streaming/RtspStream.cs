@@ -18,56 +18,62 @@
 
 #endregion
 
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 
 namespace Mediaportal.TV.Server.TVLibrary.Streaming
 {
   /// <summary>
-  /// Class describing a single rtsp stream
+  /// A class describing a single RTSP stream.
   /// </summary>
   public class RtspStream
   {
     #region variables
 
+    private readonly string _id;
     private readonly string _fileName;
-    private readonly string _streamName;
-    private readonly ITVCard _card;
-    private readonly string _recording;
-    private readonly MediaTypeEnum _mediaType;
+    private readonly MediaType _mediaType;
+    private readonly ITuner _tuner;
+    private readonly int _subChannelId;
+    private readonly string _name;
 
     #endregion
 
     #region constructors
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="RtspStream"/> class.
+    /// Initialise a new instance of the <see cref="RtspStream"/> class for a time-shifting session.
     /// </summary>
-    /// <param name="streamName">Name of the stream.</param>
-    /// <param name="fileName">Name of the file.</param>
-    /// <param name="card">The card.</param>
-    /// <param name="mediaType">The type of the stream (eg. video + audio, audio only).</param>
-    public RtspStream(string streamName, string fileName, ITVCard card, MediaTypeEnum mediaType)
+    /// <param name="id">The identifier for the stream.</param>
+    /// <param name="fileName">The time-shifting register file name.</param>
+    /// <param name="mediaType">The type of the stream.</param>
+    /// <param name="tuner">The tuner that the session is associated with.</param>
+    /// <param name="subChannelId">The identifier of the tuner sub-channel that the session is associated with.</param>
+    public RtspStream(string id, string fileName, MediaType mediaType, ITuner tuner, int subChannelId)
     {
-      _streamName = streamName;
-      _fileName = fileName;
-      _recording = string.Empty;
-      _card = card;
+      _id = id ?? string.Empty;
+      _fileName = fileName ?? string.Empty;
       _mediaType = mediaType;
+      _tuner = tuner;
+      _subChannelId = subChannelId;
+      _name = string.Empty;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="RtspStream"/> class.
+    /// Initialise a new instance of the <see cref="RtspStream"/> class for a static file (eg. recording).
     /// </summary>
-    /// <param name="streamName">Name of the stream.</param>
-    /// <param name="fileName">Name of the file.</param>
-    /// <param name="recording">The recording.</param>
-    public RtspStream(string streamName, string fileName, string recording)
+    /// <param name="id">The identifier for the stream.</param>
+    /// <param name="fileName">The name of the file to stream.</param>
+    /// <param name="mediaType">The type of the stream.</param>
+    /// <param name="name">A human-readable name for the stream.</param>
+    public RtspStream(string id, string fileName, MediaType mediaType, string name)
     {
-      _streamName = streamName;
-      _fileName = fileName;
-      _recording = recording;
-      _card = null;
+      _id = id ?? string.Empty;
+      _fileName = fileName ?? string.Empty;
+      _mediaType = mediaType;
+      _tuner = null;
+      _subChannelId = -1;
+      _name = name ?? string.Empty;
     }
 
     #endregion
@@ -75,48 +81,54 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
     #region properties
 
     /// <summary>
-    /// Gets the stream name.
+    /// Get the stream's name.
     /// </summary>
-    /// <value>The name.</value>
-    public string Name
+    public string Id
     {
-      get { return _streamName; }
+      get { return _id; }
     }
 
     /// <summary>
-    /// Gets the name of the file.
+    /// Get the name of the stream's source file.
     /// </summary>
-    /// <value>The name of the file.</value>
     public string FileName
     {
       get { return _fileName; }
     }
 
     /// <summary>
-    /// Gets the recording.
+    /// Get the stream's media type.
     /// </summary>
-    /// <value>The recording.</value>
-    public string Recording
+    public MediaType MediaType
     {
-      get { return _recording; }
+      get { return _mediaType; }
     }
 
     /// <summary>
-    /// Gets the card.
+    /// Get the stream's name.
     /// </summary>
-    /// <value>The card.</value>
-    public ITVCard Card
+    public string Name
     {
-      get { return _card; }
+      get
+      {
+        if (_tuner != null)
+        {
+          ISubChannel subChannel = _tuner.GetSubChannel(_subChannelId);
+          if (subChannel != null && subChannel.CurrentChannel != null)
+          {
+            return subChannel.CurrentChannel.Name ?? string.Empty;
+          }
+        }
+        return _name;
+      }
     }
-   
+
     /// <summary>
-    /// Gets the stream media type.
+    /// Is the stream a time-shifting stream?
     /// </summary>
-    /// <value>The media type.</value>
-    public MediaTypeEnum MediaType
+    public bool IsTimeShifting
     {
-      get { return _mediaType; }      
+      get { return _tuner != null; }
     }
 
     #endregion

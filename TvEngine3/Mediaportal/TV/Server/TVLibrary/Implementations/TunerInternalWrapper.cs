@@ -19,10 +19,13 @@
 #endregion
 
 using System.Collections.Generic;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension.Enum;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
@@ -34,7 +37,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
   {
     private ITunerInternal _tuner = null;
     private IChannel _currentTuningDetail = null;
-    private IList<ICustomDevice> _extensions = new List<ICustomDevice>();
+    private IList<ITunerExtension> _extensions = new List<ITunerExtension>();
     private IList<TunerExtensionWrapper> _wrappedExtensions = new List<TunerExtensionWrapper>();
 
     /// <summary>
@@ -77,14 +80,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Actually load the tuner.
     /// </summary>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public IList<ICustomDevice> PerformLoading()
+    public IList<ITunerExtension> PerformLoading()
     {
       _extensions = _tuner.PerformLoading();
       _wrappedExtensions = new List<TunerExtensionWrapper>(_extensions.Count);
-      IList<ICustomDevice> extensions = new List<ICustomDevice>(_extensions.Count);
-      foreach (ICustomDevice e in _extensions)
+      IList<ITunerExtension> extensions = new List<ITunerExtension>(_extensions.Count);
+      foreach (ITunerExtension e in _extensions)
       {
-        TunerExtensionWrapper we = new TunerExtensionWrapper(e, (ITVCard)_tuner);
+        TunerExtensionWrapper we = new TunerExtensionWrapper(e, (ITuner)_tuner);
         _wrappedExtensions.Add(we);
         extensions.Add(we);
       }
@@ -95,8 +98,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Actually set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    public void PerformSetTunerState(TunerState state)
+    /// <param name="isFinalising"><c>True</c> if the tuner is being finalised.</param>
+    public void PerformSetTunerState(TunerState state, bool isFinalising = false)
     {
+      if (isFinalising)
+      {
+        return;
+      }
       _tuner.PerformSetTunerState(state);
 
       // We assume that the wrapped tuner is configured to stop when idle.
@@ -113,9 +121,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Actually unload the tuner.
     /// </summary>
-    public void PerformUnloading()
+    /// <param name="isFinalising"><c>True</c> if the tuner is being finalised.</param>
+    public void PerformUnloading(bool isFinalising = false)
     {
-      _tuner.PerformUnloading();
+      if (!isFinalising)
+      {
+        _tuner.PerformUnloading();
+      }
     }
 
     #endregion
@@ -138,22 +150,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="channel">The channel to tune to.</param>
     public void PerformTuning(IChannel channel)
     {
-      if (_currentTuningDetail != null && !_currentTuningDetail.IsDifferentTransponder(channel))
+      if (_currentTuningDetail != null && !_currentTuningDetail.IsDifferentTransmitter(channel))
       {
         return;
       }
 
-      IChannel tuneChannel = channel.GetTuningChannel();
+      IChannel tuneChannel = (IChannel)channel.Clone();
 
       // Extension OnBeforeTune().
-      foreach (ICustomDevice extension in _extensions)
+      foreach (ITunerExtension extension in _extensions)
       {
         // Notify the extension about the channel change for its tuner so it
         // has a real chance to modify the tuning parameters. Right now we
         // don't support actions... but that could be added in future if really
         // necessary.
         TunerAction extensionAction;
-        extension.OnBeforeTune(_tuner as ITVCard, _currentTuningDetail, ref tuneChannel, out extensionAction);
+        extension.OnBeforeTune(_tuner as ITuner, _currentTuningDetail, ref tuneChannel, out extensionAction);
         if (extensionAction != TunerAction.Default)
         {
           this.LogWarn("tuner internal wrapper: extension \"{0}\" wants to perform action {1}, not implemented", extension.Name, extensionAction);
@@ -162,7 +174,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       // If the extension implements custom tuning, assume it should be used.
       bool tuned = false;
-      foreach (ICustomDevice extension in _extensions)
+      foreach (ITunerExtension extension in _extensions)
       {
         ICustomTuner customTuner = extension as ICustomTuner;
         if (customTuner != null && customTuner.CanTuneChannel(channel))
@@ -183,9 +195,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
 
       // Extension OnAfterTune().
-      foreach (ICustomDevice extension in _extensions)
+      foreach (ITunerExtension extension in _extensions)
       {
-        extension.OnAfterTune(_tuner as ITVCard, channel);
+        extension.OnAfterTune(_tuner as ITuner, channel);
       }
 
       foreach (TunerExtensionWrapper we in _wrappedExtensions)
@@ -200,7 +212,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     /// <param name="id">The identifier for the sub-channel.</param>
     /// <returns>the new sub-channel instance</returns>
-    public ITvSubChannel CreateNewSubChannel(int id)
+    public ISubChannelInternal CreateNewSubChannel(int id)
     {
       return _tuner.CreateNewSubChannel(id);
     }
@@ -212,19 +224,30 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Get the tuner's signal status.
     /// </summary>
-    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
     /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
     /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
     /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
     /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
-    public void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    public void GetSignalStatus(out bool isLocked, out bool isPresent, out int strength, out int quality, bool onlyGetLock)
     {
-      _tuner.GetSignalStatus(onlyGetLock, out isLocked, out isPresent, out strength, out quality);
+      _tuner.GetSignalStatus(out isLocked, out isPresent, out strength, out quality, onlyGetLock);
     }
 
     #endregion
 
     #region interfaces
+
+    /// <summary>
+    /// Get the tuner's channel linkage scanning interface.
+    /// </summary>
+    public IChannelLinkageScanner InternalChannelLinkageScanningInterface
+    {
+      get
+      {
+        return _tuner.InternalChannelLinkageScanningInterface;
+      }
+    }
 
     /// <summary>
     /// Get the tuner's channel scanning interface.

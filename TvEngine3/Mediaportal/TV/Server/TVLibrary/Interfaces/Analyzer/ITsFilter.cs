@@ -24,11 +24,54 @@ using System.Runtime.InteropServices;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
   /// <summary>
-  /// The MediaPortal TS writer/analyser filter class.
+  /// TsWriter PMT grabber call back interface.
   /// </summary>
-  [Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
-  internal class MediaPortalTsWriter
+  [Guid("37a1c1e3-4760-49fe-ab59-6688ada54923"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  internal interface IPmtCallBack
   {
+    /// <summary>
+    /// Called by an ITsPmtGrabber instance when it receives a new PMT section for a program.
+    /// </summary>
+    /// <param name="pmtPid">The PID of the elementary stream from which the PMT section was received.</param>
+    /// <param name="programNumber">The identifier associated with the program which the PMT section is associated with.</param>
+    /// <param name="isProgramRunning">Indicates whether the program that the grabber is monitoring is active.
+    ///   The grabber will not wait for PMT to be received if it thinks the program is not running.</param>
+    /// <returns>an HRESULT indicating whether the PMT section was successfully handled</returns>
+    [PreserveSig]
+    int OnPmtReceived(int pmtPid, int programNumber, [MarshalAs(UnmanagedType.I1)] bool isProgramRunning);
+  }
+
+  /// <summary>
+  /// TsWriter CAT grabber call back interface.
+  /// </summary>
+  [Guid("38536ab6-7a41-404f-917F-c47dd8b639c7"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  internal interface ICaCallBack
+  {
+    /// <summary>
+    /// Called by an ITsCaGrabber instance when it receives a new CAT section.
+    /// </summary>
+    /// <returns>an HRESULT indicating whether the CAT section was successfully handled</returns>
+    [PreserveSig]
+    int OnCaReceived();
+  }
+
+  /// <summary>
+  /// TsWriter encryption analyser call back interface.
+  /// </summary>
+  [Guid("7b42a7b1-0f93-44f4-9f0f-57b3a424d882"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  internal interface IEncryptionStateChangeCallBack
+  {
+    /// <summary>
+    /// Called by an ITsEncryptionAnalyser instance when the encryption state of any of the elementary streams it is monitoring changes.
+    /// </summary>
+    /// <param name="pid">The PID associated with the elementary stream that changed state.</param>
+    /// <param name="encryptionState">The current encryption state of the elementary stream.</param>
+    /// <returns>an HRESULT indicating whether the notification was successfully handled</returns>
+    [PreserveSig]
+    int OnEncryptionStateChange(int pid, EncryptionState encryptionState);
   }
 
   /// <summary>
@@ -44,7 +87,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="handle">Handle of the channel</param>
     /// <returns></returns>
     [PreserveSig]
-    int AddChannel(ref int handle);
+    int AddChannel(out int handle);
 
     /// <summary>
     /// Deletes the given sub-channel
@@ -123,14 +166,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     #region PMT grabber
 
     /// <summary>
-    /// Set the PID and service for the PMT grabber for a sub-channel to monitor.
+    /// Set the PID and program number for the PMT grabber for a sub-channel to monitor.
     /// </summary>
     /// <param name="handle">The sub-channel handle.</param>
     /// <param name="pmtPid">The PID that the grabber should monitor.</param>
-    /// <param name="serviceId">The ID of the service that the grabber should monitor.</param>
+    /// <param name="programNumber">The identifier of the program that the grabber should monitor.</param>
     /// <returns>an HRESULT indicating whether the grabber parameters were successfully registered</returns>
     [PreserveSig]
-    int PmtSetPmtPid(int handle, int pmtPid, int serviceId);
+    int PmtSetPmtPid(int handle, int pmtPid, int programNumber);
 
     /// <summary>
     /// Set the delegate for the PMT grabber for a sub-channel to notify when a new PMT section is received.
@@ -182,13 +225,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// </summary>
     /// <param name="handle">Handle of the sub-channel</param>
     /// <param name="pmtPid">The PMT pid</param>
-    /// <param name="serviceId">The service id</param>
+    /// <param name="programNumber">The program number</param>
     /// <param name="pmtData">The PMT data</param>
     /// <param name="pmtLength">The length of the PMT</param>
+    /// <param name="isDynamicPmtChange"><c>True</c> if the call results from a dynamic PMT change.</param>
     /// <returns></returns>
     [PreserveSig]
-    int RecordSetPmtPid(int handle, int pmtPid, int serviceId, [MarshalAs(UnmanagedType.LPArray)] byte[] pmtData,
-                        int pmtLength);
+    int RecordSetPmtPid(int handle, int pmtPid, int programNumber, [MarshalAs(UnmanagedType.LPArray)] byte[] pmtData,
+                        int pmtLength, [MarshalAs(UnmanagedType.I1)] bool isDynamicPmtChange);
 
     /// <summary>
     /// Sets the video/audio observer call back for recorder
@@ -197,7 +241,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="observer">Oberserver call back</param>
     /// <returns></returns>
     [PreserveSig]
-    int RecorderSetVideoAudioObserver(int handle, IVideoAudioObserver observer);
+    int RecorderSetVideoAudioObserver(int handle, IChannelObserver observer);
 
     /// <summary>
     /// Sets the timeshifting filename
@@ -246,13 +290,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// </summary>
     /// <param name="handle">Handle of the sub-channel</param>
     /// <param name="pmtPid">The PMT pid</param>
-    /// <param name="serviceId">The service id</param>
+    /// <param name="programNumber">The program number</param>
     /// <param name="pmtData">The PMT data</param>
     /// <param name="pmtLength">The length of the PMT</param>
+    /// <param name="isDynamicPmtChange"><c>True</c> if the call results from a dynamic PMT change.</param>
     /// <returns></returns>
     [PreserveSig]
-    int TimeShiftSetPmtPid(int handle, int pmtPid, int serviceId, [MarshalAs(UnmanagedType.LPArray)] byte[] pmtData,
-                           int pmtLength);
+    int TimeShiftSetPmtPid(int handle, int pmtPid, int programNumber, [MarshalAs(UnmanagedType.LPArray)] byte[] pmtData,
+                           int pmtLength, [MarshalAs(UnmanagedType.I1)] bool isDynamicPmtChange);
 
     /// <summary>
     /// Pauses/Continues timeshifting on the given sub-channel
@@ -290,7 +335,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="observer">Oberserver call back</param>
     /// <returns></returns>
     [PreserveSig]
-    int SetVideoAudioObserver(int handle, IVideoAudioObserver observer);
+    int SetVideoAudioObserver(int handle, IChannelObserver observer);
 
     #region CAT grabber
 
@@ -334,14 +379,5 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     [PreserveSig]
     int GetStreamQualityCounters(int handle, out int totalTsBytes, out int totalRecordingBytes,
                                  out int TsDiscontinuity, out int recordingDiscontinuity);
-
-    /// <summary>
-    /// Sets the channel type of the sub-channel
-    /// </summary>
-    /// <param name="handle">Handle of the sub-channel</param>
-    /// <param name="channelType">Type of the channel (tv=0, radio=1)</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int TimeShiftSetChannelType(int handle, int channelType);
   }
 }

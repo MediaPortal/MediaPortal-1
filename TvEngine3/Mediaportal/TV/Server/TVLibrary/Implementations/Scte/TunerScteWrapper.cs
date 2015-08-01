@@ -1,10 +1,12 @@
 ﻿
 using System.Collections.Generic;
-using DirectShowLib.BDA;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
@@ -73,6 +75,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
 
     #endregion
 
+    #region constructor & finaliser
+
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerScteWrapper"/> class.
     /// </summary>
@@ -80,9 +84,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     /// <param name="externalId">The external identifier for the tuner.</param>
     /// <param name="dvbcTuner">The internal tuner implementation.</param>
     public TunerScteWrapper(string name, string externalId, ITunerInternal dvbcTuner)
-      : base(name, externalId, CardType.Atsc)
+      : base(name, externalId, null, null, BroadcastStandard.Scte)
     {
-      DVBCChannel dvbChannel = new DVBCChannel();
+      ChannelDvbC dvbChannel = new ChannelDvbC();
       if (dvbcTuner == null || !dvbcTuner.CanTune(dvbChannel))
       {
         throw new TvException("Internal tuner implementation is not usable.");
@@ -90,6 +94,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
 
       _dvbcTuner = new TunerInternalWrapper(dvbcTuner);
     }
+
+    ~TunerScteWrapper()
+    {
+      Dispose(false);
+    }
+
+    #endregion
 
     #region ITunerInternal members
 
@@ -112,9 +123,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     /// Actually load the tuner.
     /// </summary>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public override IList<ICustomDevice> PerformLoading()
+    public override IList<ITunerExtension> PerformLoading()
     {
-      IList<ICustomDevice> extensions = _dvbcTuner.PerformLoading();
+      IList<ITunerExtension> extensions = _dvbcTuner.PerformLoading();
 
       _channelScanner = _dvbcTuner.InternalChannelScanningInterface;
       if (_channelScanner != null)
@@ -129,18 +140,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     /// Actually set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    public override void PerformSetTunerState(TunerState state)
+    /// <param name="isFinalising"><c>True</c> if the tuner is being finalised.</param>
+    public override void PerformSetTunerState(TunerState state, bool isFinalising = false)
     {
-      _dvbcTuner.PerformSetTunerState(state);
+      if (!isFinalising)
+      {
+        _dvbcTuner.PerformSetTunerState(state);
+      }
     }
 
     /// <summary>
     /// Actually unload the tuner.
     /// </summary>
-    public override void PerformUnloading()
+    /// <param name="isFinalising"><c>True</c> if the tuner is being finalised.</param>
+    public override void PerformUnloading(bool isFinalising = false)
     {
-      _channelScanner = null;
-      _dvbcTuner.PerformUnloading();
+      if (!isFinalising)
+      {
+        _channelScanner = null;
+        _dvbcTuner.PerformUnloading();
+      }
     }
 
     #endregion
@@ -154,13 +173,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      ATSCChannel atscChannel = channel as ATSCChannel;
-      if (atscChannel != null && atscChannel.Frequency > 0 &&
-        (atscChannel.ModulationType == ModulationType.Mod64Qam || atscChannel.ModulationType == ModulationType.Mod256Qam))
+      if (!base.CanTune(channel))
       {
-        return true;
+        return false;
       }
-      return false;
+
+      // Channels delivered using switched digital video are not supported.
+      ChannelScte scteChannel = channel as ChannelScte;
+      if (scteChannel == null || scteChannel.Frequency <= 1750)
+      {
+        return false;
+      }
+      return true;
     }
 
     /// <summary>
@@ -169,29 +193,29 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     /// <param name="channel">The channel to tune to.</param>
     public override void PerformTuning(IChannel channel)
     {
-      ATSCChannel atscChannel = channel as ATSCChannel;
-      if (atscChannel == null)
+      ChannelScte scteChannel = channel as ChannelScte;
+      if (scteChannel == null)
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
 
-      DVBCChannel dvbChannel = new DVBCChannel();
-      dvbChannel.Frequency = atscChannel.Frequency;
-      dvbChannel.ModulationType = atscChannel.ModulationType;
-      dvbChannel.SymbolRate = 6900;   // fake
+      ChannelDvbC dvbcChannel = new ChannelDvbC();
+      dvbcChannel.Frequency = scteChannel.Frequency - 1750;   // BDA convention: use analog video carrier frequency
+      dvbcChannel.ModulationScheme = scteChannel.ModulationScheme;
+      dvbcChannel.SymbolRate = scteChannel.SymbolRate;
 
       // The rest of these parameters are almost certainly irrelevant.
-      dvbChannel.FreeToAir = atscChannel.FreeToAir;
-      dvbChannel.LogicalChannelNumber = atscChannel.LogicalChannelNumber;
-      dvbChannel.MediaType = atscChannel.MediaType;
-      dvbChannel.Name = atscChannel.Name;
-      dvbChannel.NetworkId = atscChannel.NetworkId;
-      dvbChannel.PmtPid = atscChannel.PmtPid;
-      dvbChannel.Provider = atscChannel.Provider;
-      dvbChannel.ServiceId = atscChannel.ServiceId;
-      dvbChannel.TransportId = atscChannel.TransportId;
+      dvbcChannel.IsEncrypted = scteChannel.IsEncrypted;
+      dvbcChannel.LogicalChannelNumber = scteChannel.LogicalChannelNumber;
+      dvbcChannel.MediaType = scteChannel.MediaType;
+      dvbcChannel.Name = scteChannel.Name;
+      dvbcChannel.OriginalNetworkId = -1;  // fake
+      dvbcChannel.PmtPid = scteChannel.PmtPid;
+      dvbcChannel.Provider = scteChannel.Provider;
+      dvbcChannel.ProgramNumber = scteChannel.ProgramNumber;
+      dvbcChannel.TransportStreamId = scteChannel.TransportStreamId;
 
-      _dvbcTuner.PerformTuning(dvbChannel);
+      _dvbcTuner.PerformTuning(dvbcChannel);
     }
 
     /// <summary>
@@ -199,7 +223,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     /// </summary>
     /// <param name="id">The identifier for the sub-channel.</param>
     /// <returns>the new sub-channel instance</returns>
-    public override ITvSubChannel CreateNewSubChannel(int id)
+    public override ISubChannelInternal CreateNewSubChannel(int id)
     {
       return _dvbcTuner.CreateNewSubChannel(id);
     }
@@ -211,14 +235,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     /// <summary>
     /// Get the tuner's signal status.
     /// </summary>
-    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
     /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
     /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
     /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
     /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
-    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    public override void GetSignalStatus(out bool isLocked, out bool isPresent, out int strength, out int quality, bool onlyGetLock)
     {
-      _dvbcTuner.GetSignalStatus(onlyGetLock, out isLocked, out isPresent, out strength, out quality);
+      _dvbcTuner.GetSignalStatus(out isLocked, out isPresent, out strength, out quality, onlyGetLock);
     }
 
     #endregion
@@ -245,10 +269,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     /// <summary>
     /// Release and dispose all resources.
     /// </summary>
-    public override void Dispose()
+    /// <param name="isDisposing"><c>True</c> if the tuner is being disposed.</param>
+    protected override void Dispose(bool isDisposing)
     {
-      base.Dispose();
-      if (_dvbcTuner != null)
+      base.Dispose(isDisposing);
+      if (isDisposing && _dvbcTuner != null)
       {
         _dvbcTuner.Dispose();
         _dvbcTuner = null;

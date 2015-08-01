@@ -21,29 +21,42 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using DirectShowLib;
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 {
   /// <summary>
-  /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for tuners with BDA
-  /// drivers.
+  /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for
+  /// tuners with BDA drivers.
   /// </summary>
-  internal abstract class TunerBdaBase : TunerDirectShowBase
+  internal abstract class TunerBdaBase : TunerDirectShowBase, IESEvents
   {
+    #region constants
+
+    private static readonly Guid PBDA_PT_FILTER_CLSID = new Guid(0x89c2e132, 0xc29b, 0x11db, 0x96, 0xfa, 0x00, 0x50, 0x56, 0xc0, 0x00, 0x08);
+
+    #endregion
+
     #region variables
 
     /// <summary>
@@ -60,6 +73,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// The [optional] BDA capture/receiver device.
     /// </summary>
     private DsDevice _deviceCapture = null;
+
+    /// <summary>
+    /// The [optional] PBDA PT filter.
+    /// </summary>
+    private IBaseFilter _filterPbdaPt = null;
 
     #region compatibility filters
 
@@ -125,6 +143,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
     #endregion
 
+    /// <summary>
+    /// A dictionary of PBDA event registrations.
+    /// </summary>
+    /// <remarks>
+    /// event ID => [cookie, connection point]
+    /// </remarks>
+    private IDictionary<Guid, KeyValuePair<int, IConnectionPoint>> _eventRegistrations = new Dictionary<Guid, KeyValuePair<int, IConnectionPoint>>();
+
     #endregion
 
     #region constructor
@@ -133,13 +159,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// Initialise a new instance of the <see cref="TunerBdaBase"/> class.
     /// </summary>
     /// <param name="device">The <see cref="DsDevice"/> instance to encapsulate.</param>
-    /// <param name="externalId">The unique external identifier for the tuner.</param>
-    /// <param name="type">The tuner type.</param>
-    protected TunerBdaBase(DsDevice device, string externalId, CardType type)
-      : base(device.Name, externalId, type)
+    /// <param name="externalId">The tuner's unique external identifier.</param>
+    /// <param name="supportedBroadcastStandards">The broadcast standards supported by the hardware.</param>
+    protected TunerBdaBase(DsDevice device, string externalId, BroadcastStandard supportedBroadcastStandards)
+      : base(device.Name, externalId, device.TunerInstanceIdentifier >= 0 ? device.TunerInstanceIdentifier.ToString() : null, device.ProductInstanceIdentifier, supportedBroadcastStandards)
     {
       _deviceMain = device;
-      SetProductAndTunerInstanceIds(_deviceMain);
     }
 
     #endregion
@@ -152,9 +177,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <param name="subChannelId">The ID of the sub-channel associated with the channel that is being tuned.</param>
     /// <param name="channel">The channel to tune to.</param>
     /// <returns>the sub-channel associated with the tuned channel</returns>
-    public override ITvSubChannel Tune(int subChannelId, IChannel channel)
+    public override ISubChannel Tune(int subChannelId, IChannel channel)
     {
-      ITvSubChannel subChannel = base.Tune(subChannelId, channel);
+      ISubChannel subChannel = base.Tune(subChannelId, channel);
       if (_filterTransportInformation != null)
       {
         _filterTransportInformation.Stop();
@@ -185,7 +210,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <summary>
     /// Add the appropriate BDA network provider filter to the graph.
     /// </summary>
-    protected void AddNetworkProviderFilterToGraph()
+    private void AddNetworkProviderFilterToGraph()
     {
       this.LogDebug("BDA base: add network provider filter");
 
@@ -252,7 +277,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
         IEnumTuningSpaces enumTuningSpaces;
         int hr = container.get_EnumTuningSpaces(out enumTuningSpaces);
-        HResult.ThrowException(hr, "Failed to get tuning space enumerator from tuning space container.");
+        TvExceptionDirectShowError.Throw(hr, "Failed to get tuning space enumerator from tuning space container.");
         try
         {
           // Enumerate...
@@ -265,7 +290,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
               // Is this the one we're looking for?
               string name;
               hr = spaces[0].get_UniqueName(out name);
-              HResult.ThrowException(hr, "Failed to get tuning space unique name.");
+              TvExceptionDirectShowError.Throw(hr, "Failed to get tuning space unique name.");
               if (name.Equals(TuningSpaceName))
               {
                 this.LogDebug("BDA base: found correct tuning space");
@@ -276,7 +301,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
                 Release.ComObject("base BDA tuner tuning space", ref spaces[0]);
               }
             }
-            catch (Exception)
+            catch
             {
               Release.ComObject("base BDA tuner tuning space", ref spaces[0]);
               throw;
@@ -305,7 +330,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// Add and connect the appropriate BDA capture/receiver filter into the graph.
     /// </summary>
     /// <param name="lastFilter">The upstream filter to connect the capture filter to.</param>
-    protected virtual void AddAndConnectCaptureFilterIntoGraph(ref IBaseFilter lastFilter)
+    private void AddAndConnectCaptureFilterIntoGraph(ref IBaseFilter lastFilter)
     {
       this.LogDebug("BDA base: add capture filter");
 
@@ -327,12 +352,75 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
       catch (Exception ex)
       {
-        throw new TvException("Failed to add and connect capture filter.", ex);
+        throw new TvException(ex, "Failed to add and connect capture filter.");
       }
       finally
       {
         Release.ComObject("base BDA tuner output pin", ref tunerOutputPin);
       }
+    }
+
+    /// <summary>
+    /// Add and connect a PBDA PT filter into the graph if required.
+    /// </summary>
+    /// <param name="lastFilter">The upstream filter to connect the PBDA PT filter to.</param>
+    private void AddAndConnectPbdaPtFilterIntoGraph(ref IBaseFilter lastFilter)
+    {
+      this.LogDebug("BDA base: add PBDA PT filter");
+
+      IPin lastFilterOutputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
+      if (lastFilterOutputPin == null)
+      {
+        throw new TvException("Failed to add and connect PBDA PT filter. Last upstream filter does not have an output pin.");
+      }
+
+      bool isPtFilterRequired = false;
+      try
+      {
+        IEnumMediaTypes mediaTypeEnum;
+        int hr = lastFilterOutputPin.EnumMediaTypes(out mediaTypeEnum);
+        TvExceptionDirectShowError.Throw(hr, "Failed to obtain media type enumerator for pin.");
+        try
+        {
+          // For each pin media type...
+          int mediaTypeCount;
+          AMMediaType[] mediaTypes = new AMMediaType[2];
+          while (mediaTypeEnum.Next(1, mediaTypes, out mediaTypeCount) == (int)NativeMethods.HResult.S_OK && mediaTypeCount == 1)
+          {
+            AMMediaType mediaType = mediaTypes[0];
+            try
+            {
+              if (mediaType.majorType == DirectShowLib.MediaType.Mpeg2Sections)
+              {
+                isPtFilterRequired = true;
+                break;
+              }
+            }
+            finally
+            {
+              Release.AmMediaType(ref mediaType);
+            }
+          }
+        }
+        finally
+        {
+          Release.ComObject("base BDA tuner PBDA test pin media type enumerator", ref mediaTypeEnum);
+        }
+      }
+      finally
+      {
+        Release.ComObject("base BDA tuner PBDA test pin", ref lastFilterOutputPin);
+      }
+
+      if (!isPtFilterRequired)
+      {
+        this.LogDebug("BDA base: PBDA PT filter not required");
+        return;
+      }
+
+      _filterPbdaPt = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, PBDA_PT_FILTER_CLSID, "PBDA PT Filter");
+      FilterGraphTools.ConnectFilters(_graph, lastFilter, 0, _filterPbdaPt, 0);
+      lastFilter = _filterPbdaPt;
     }
 
     /// <summary>
@@ -388,7 +476,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       int nodeTypeCount;
       int[] nodeTypes = new int[33];
       int hr = topology.GetNodeTypes(out nodeTypeCount, 32, nodeTypes);
-      HResult.ThrowException(hr, "Failed to get topology node types.");
+      TvExceptionDirectShowError.Throw(hr, "Failed to get topology node types.");
 
       IList<IBDA_SignalStatistics> statistics = new List<IBDA_SignalStatistics>(2);
       int interfaceCount;
@@ -396,14 +484,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       for (int i = 0; i < nodeTypeCount; ++i)
       {
         hr = topology.GetNodeInterfaces(nodeTypes[i], out interfaceCount, 32, interfaces);
-        HResult.ThrowException(hr, string.Format("Failed to get topology node interfaces for node type {0} ({1}).", nodeTypes[i], i));
+        TvExceptionDirectShowError.Throw(hr, "Failed to get topology node interfaces for node type {0} ({1}).", nodeTypes[i], i);
         for (int j = 0; j < interfaceCount; j++)
         {
           if (interfaces[j] == typeof(IBDA_SignalStatistics).GUID)
           {
             object controlNode;
             hr = topology.GetControlNode(0, 1, nodeTypes[i], out controlNode);
-            HResult.ThrowException(hr, string.Format("Failed to get topology control node for node type {0} ({1}).", nodeTypes[i], i));
+            TvExceptionDirectShowError.Throw(hr, "Failed to get topology control node for node type {0} ({1}).", nodeTypes[i], i);
             statistics.Add(controlNode as IBDA_SignalStatistics);
           }
         }
@@ -415,6 +503,148 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       this.LogDebug("BDA base: found {0} interface(s)", statistics.Count);
       return statistics;
     }
+
+    #region events
+
+    /// <summary>
+    /// Register to receive PBDA events from the graph.
+    /// </summary>
+    /// <remarks>
+    /// http://msdn.microsoft.com/en-us/library/windows/desktop/dd758062%28v=vs.85%29.aspx
+    /// </remarks>
+    private void RegisterForEvents()
+    {
+      this.LogDebug("BDA base: register for events");
+
+      DirectShowLib.IServiceProvider serviceProvider = _graph as DirectShowLib.IServiceProvider;
+      if (serviceProvider == null)
+      {
+        this.LogWarn("BDA base: failed to register for events, graph is not a service provider");
+        return;
+      }
+
+      int hr;
+      object obj = null;
+      #region debug/testing
+
+      List<KeyValuePair<string, Guid>> servicesToTest = new List<KeyValuePair<string, Guid>>()
+      {
+        new KeyValuePair<string, Guid>("EAS", typeof(IBDA_EasMessage).GUID),
+        new KeyValuePair<string, Guid>("conditional access", typeof(IBDA_ConditionalAccess).GUID),
+        new KeyValuePair<string, Guid>("diagnostic properties", typeof(IBDA_DiagnosticProperties).GUID),
+        new KeyValuePair<string, Guid>("DRM interface", typeof(IBDA_DRM).GUID),
+        new KeyValuePair<string, Guid>("name-value", typeof(IBDA_NameValueService).GUID),
+        new KeyValuePair<string, Guid>("extended conditional access", typeof(IBDA_ConditionalAccessEx).GUID),
+        new KeyValuePair<string, Guid>("ISDB conditional access", typeof(IBDA_ISDBConditionalAccess).GUID),
+        new KeyValuePair<string, Guid>("eventing", typeof(IBDA_EventingService).GUID),
+        new KeyValuePair<string, Guid>("aux", typeof(IBDA_AUX).GUID),
+        new KeyValuePair<string, Guid>("encoder", typeof(IBDA_Encoder).GUID),
+        new KeyValuePair<string, Guid>("FDC", typeof(IBDA_FDC).GUID),
+        new KeyValuePair<string, Guid>("guide data delivery", typeof(IBDA_GuideDataDeliveryService).GUID),
+        new KeyValuePair<string, Guid>("DRM service", typeof(IBDA_DRMService).GUID),
+        new KeyValuePair<string, Guid>("WMDRM session", typeof(IBDA_WMDRMSession).GUID),
+        new KeyValuePair<string, Guid>("WMDRM tuner", typeof(IBDA_WMDRMTuner).GUID),
+        new KeyValuePair<string, Guid>("DRI DRM", typeof(IBDA_DRIDRMService).GUID),
+        new KeyValuePair<string, Guid>("DRI DRM session", typeof(IBDA_DRIWMDRMSession).GUID),
+        new KeyValuePair<string, Guid>("mux", typeof(IBDA_MUX).GUID),
+        new KeyValuePair<string, Guid>("transport stream selector", typeof(IBDA_TransportStreamSelector).GUID),
+        new KeyValuePair<string, Guid>("user activity", typeof(IBDA_UserActivityService).GUID)
+      };
+
+      this.LogDebug("BDA base: enumerate services...");
+      foreach (KeyValuePair<string, Guid> service in servicesToTest)
+      {
+        hr = serviceProvider.QueryService(service.Value, service.Value, out obj);
+        if (hr == (int)NativeMethods.HResult.S_OK)
+        {
+          this.LogDebug("  {0}, is CP = {1}, is CP container = {2}", service.Key, obj is IConnectionPoint, obj is IConnectionPointContainer);
+          Release.ComObject(string.Format("base BDA tuner {0} service", service.Key), ref obj);
+        }
+      }
+
+      #endregion
+
+      hr = serviceProvider.QueryService(typeof(ESEventService).GUID, typeof(IESEventService).GUID, out obj);
+      if (hr != (int)NativeMethods.HResult.S_OK)
+      {
+        this.LogDebug("BDA base: event service not available");
+        return;
+      }
+
+      IConnectionPointContainer connectionPointContainer = obj as IConnectionPointContainer;
+      if (connectionPointContainer == null)
+      {
+        this.LogWarn("BDA base: failed to register for events, service is not a connection point container");
+        return;
+      }
+
+      this.LogDebug("BDA base: advise event service connection points...");
+      try
+      {
+        IEnumConnectionPoints connectionPointEnum;
+        connectionPointContainer.EnumConnectionPoints(out connectionPointEnum);
+        IConnectionPoint[] connectionPoints = new IConnectionPoint[2];
+        IntPtr fetchCount = Marshal.AllocHGlobal(sizeof(int));
+        try
+        {
+          while (connectionPointEnum.Next(1, connectionPoints, fetchCount) == (int)NativeMethods.HResult.S_OK && Marshal.ReadInt32(fetchCount, 0) == 1)
+          {
+            IConnectionPoint connectionPoint = connectionPoints[0];
+            Guid iid = Guid.Empty;
+            int cookie;
+            connectionPoint.GetConnectionInterface(out iid);
+            if (
+              iid == typeof(IESCloseMmiEvent).GUID ||
+              iid == typeof(IESFileExpiryDateEvent).GUID ||
+              iid == typeof(IESIsdbCasResponseEvent).GUID ||
+              iid == typeof(IESLicenseRenewalResultEvent).GUID ||
+              iid == typeof(IESOpenMmiEvent).GUID ||
+              iid == typeof(IESRequestTunerEvent).GUID ||
+              iid == typeof(IESValueUpdatedEvent).GUID
+            )
+            {
+              this.LogDebug("  {0}", iid);
+              connectionPoint.Advise((IESEvents)this, out cookie);
+              _eventRegistrations.Add(iid, new KeyValuePair<int, IConnectionPoint>(cookie, connectionPoint));
+            }
+            else
+            {
+              // These events might be interesting but we can't register if we
+              // don't implement the call back interface.
+              this.LogDebug("  other, IID = {0}", iid);
+              Release.ComObject(string.Format("base BDA tuner event service connection point {0}", iid), ref connectionPoint);
+            }
+          }
+        }
+        finally
+        {
+          Marshal.FreeHGlobal(fetchCount);
+        }
+      }
+      catch (Exception ex)
+      {
+        this.LogWarn(ex, "BDA base: failed to register for events");
+      }
+      finally
+      {
+        Release.ComObject("base BDA tuner event service", ref obj);
+      }
+    }
+
+    private void UnregisterForEvents()
+    {
+      this.LogDebug("BDA base: unregister for events");
+
+      foreach (KeyValuePair<int, IConnectionPoint> registration in _eventRegistrations.Values)
+      {
+        registration.Value.Unadvise(registration.Key);
+        IConnectionPoint connectionPoint = registration.Value;
+        Release.ComObject("base BDA tuner event registration connection point", ref connectionPoint);
+      }
+      _eventRegistrations.Clear();
+    }
+
+    #endregion
 
     #endregion
 
@@ -430,15 +660,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       base.ReloadConfiguration();
 
       this.LogDebug("BDA base: reload configuration");
+      Tuner tuner = TunerManagement.GetTuner(TunerId, TunerIncludeRelationEnum.None);
+      this.LogDebug("  network provider = {0}", (BdaNetworkProvider)tuner.BdaNetworkProvider);
+
       bool save = false;
-      Card tuner = CardManagement.GetCard(TunerId, CardIncludeRelationEnum.None);
       _networkProviderClsid = NetworkProviderClsid; // specific network provider
-      if (tuner.NetProvider == (int)DbNetworkProvider.MediaPortal)
+      if (tuner.BdaNetworkProvider == (int)BdaNetworkProvider.MediaPortal)
       {
         if (!File.Exists(PathManager.BuildAssemblyRelativePath("NetworkProvider.ax")))
         {
           this.LogWarn("BDA base: MediaPortal network provider is not available, try Microsoft generic network provider");
-          tuner.NetProvider = (int)DbNetworkProvider.Generic;
+          tuner.BdaNetworkProvider = (int)BdaNetworkProvider.Generic;
           save = true;
         }
         else
@@ -446,12 +678,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           _networkProviderClsid = typeof(MediaPortalNetworkProvider).GUID;
         }
       }
-      if (tuner.NetProvider == (int)DbNetworkProvider.Generic)
+      if (tuner.BdaNetworkProvider == (int)BdaNetworkProvider.Generic)
       {
         if (!FilterGraphTools.IsThisComObjectInstalled(typeof(NetworkProvider).GUID))
         {
-          this.LogWarn("BDA base: MediaPortal network provider is not available, try Microsoft specific network provider");
-          tuner.NetProvider = (int)DbNetworkProvider.Specific;
+          this.LogWarn("BDA base: Microsoft generic network provider is not available, try Microsoft specific network provider");
+          tuner.BdaNetworkProvider = (int)BdaNetworkProvider.Specific;
           save = true;
         }
         else
@@ -461,7 +693,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
       if (save)
       {
-        CardManagement.SaveCard(tuner);
+        TunerManagement.SaveTuner(tuner);
       }
     }
 
@@ -473,13 +705,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// Actually load the tuner.
     /// </summary>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public override IList<ICustomDevice> PerformLoading()
+    public override IList<ITunerExtension> PerformLoading()
     {
       this.LogDebug("BDA base: perform loading");
       InitialiseGraph();
       AddNetworkProviderFilterToGraph();
 
-      int hr = (int)HResult.Severity.Success;
+      int hr = (int)NativeMethods.HResult.S_OK;
       if (_networkProviderClsid != typeof(MediaPortalNetworkProvider).GUID)
       {
         // Initialise the tuning space for Microsoft network providers.
@@ -495,13 +727,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         // (E_INVALIDARG) if you try put_TuningSpace().
         if (_networkProviderClsid == NetworkProviderClsid)
         {
-          ITuner tuner = _filterNetworkProvider as ITuner;
+          DirectShowLib.BDA.ITuner tuner = _filterNetworkProvider as DirectShowLib.BDA.ITuner;
           if (tuner == null)
           {
             throw new TvException("Failed to find tuner interface on network provider.");
           }
           hr = tuner.put_TuningSpace(_tuningSpace);
-          HResult.ThrowException(hr, "Failed to apply tuning space on tuner.");
+          TvExceptionDirectShowError.Throw(hr, "Failed to apply tuning space on tuner.");
         }
       }
 
@@ -510,9 +742,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
       IBaseFilter lastFilter = _filterMain;
       AddAndConnectCaptureFilterIntoGraph(ref lastFilter);
+      AddAndConnectPbdaPtFilterIntoGraph(ref lastFilter);
 
       // Check for and load extensions, adding any additional filters to the graph.
-      IList<ICustomDevice> extensions = LoadExtensions(_filterMain, ref lastFilter);
+      IList<ITunerExtension> extensions = LoadExtensions(_filterMain, ref lastFilter);
 
       // If using a Microsoft network provider and configured to do so, add an
       // infinite tee, MPEG 2 demultiplexer and transport information filter in
@@ -533,6 +766,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
 
       CompleteGraph();
+      RegisterForEvents();
       _signalStatisticsInterfaces = GetTunerSignalStatisticsInterfaces();
       return extensions;
     }
@@ -540,9 +774,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <summary>
     /// Actually unload the tuner.
     /// </summary>
-    public override void PerformUnloading()
+    /// <param name="isFinalising"><c>True</c> if the tuner is being finalised.</param>
+    public override void PerformUnloading(bool isFinalising = false)
     {
       this.LogDebug("BDA base: perform unloading");
+      if (isFinalising)
+      {
+        CleanUpGraph(isFinalising);
+        return;
+      }
+
+      if (_signalStatisticsInterfaces != null)
+      {
+        for (int i = 0; i < _signalStatisticsInterfaces.Count; i++)
+        {
+          IBDA_SignalStatistics s = _signalStatisticsInterfaces[i];
+          Release.ComObject(string.Format("base BDA tuner signal statistics interface {0}", i), ref s);
+        }
+        _signalStatisticsInterfaces.Clear();
+      }
+
+      UnregisterForEvents();
+
       if (_graph != null)
       {
         _graph.RemoveFilter(_filterNetworkProvider);
@@ -556,6 +809,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       Release.ComObject("base BDA tuner transport information filter", ref _filterTransportInformation);
       Release.ComObject("base BDA tuner tuning space", ref _tuningSpace);
 
+      if (_filterPbdaPt != null)
+      {
+        if (_graph != null)
+        {
+          _graph.RemoveFilter(_filterPbdaPt);
+        }
+        Release.ComObject("base BDA tuner PBDA PT filter", ref _filterPbdaPt);
+      }
+
       if (_filterCapture != null)
       {
         if (_graph != null)
@@ -568,17 +830,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         _deviceCapture.Dispose();
         _deviceCapture = null;
       }
-      if (_signalStatisticsInterfaces != null)
-      {
-        for (int i = 0; i < _signalStatisticsInterfaces.Count; i++)
-        {
-          IBDA_SignalStatistics s = _signalStatisticsInterfaces[i];
-          Release.ComObject(string.Format("base BDA tuner signal statistics interface {0}", i), ref s);
-        }
-        _signalStatisticsInterfaces.Clear();
-      }
 
-      CleanUpGraph();
+      CleanUpGraph(isFinalising);
     }
 
     #endregion
@@ -591,7 +844,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <param name="channel">The channel to tune to.</param>
     public override void PerformTuning(IChannel channel)
     {
-      int hr = (int)HResult.Severity.Success;
+      int hr = (int)NativeMethods.HResult.S_OK;
       if (_networkProviderClsid == typeof(MediaPortalNetworkProvider).GUID)
       {
         this.LogDebug("BDA base: perform tuning, MediaPortal network provider tuning");
@@ -607,16 +860,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         this.LogDebug("BDA base: perform tuning, standard BDA tuning");
         ITuneRequest tuneRequest = AssembleTuneRequest(_tuningSpace, channel);
         this.LogDebug("BDA base: apply tuning parameters");
-        hr = (_filterNetworkProvider as ITuner).put_TuneRequest(tuneRequest);
+        hr = (_filterNetworkProvider as DirectShowLib.BDA.ITuner).put_TuneRequest(tuneRequest);
         this.LogDebug("BDA base: parameters applied, hr = 0x{0:x}", hr);
         Release.ComObject("base BDA tuner tune request", ref tuneRequest);
       }
 
       // TerraTec tuners return a positive HRESULT value when already tuned with the required
       // parameters. See mantis 3469 for more details.
-      if (hr < (int)HResult.Severity.Success)
+      if (hr < (int)NativeMethods.HResult.S_OK)
       {
-        HResult.ThrowException(hr, "Failed to tune channel.");
+        TvExceptionDirectShowError.Throw(hr, "Failed to tune channel.");
       }
     }
 
@@ -627,12 +880,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <summary>
     /// Get the tuner's signal status.
     /// </summary>
-    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
     /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
     /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
     /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
     /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
-    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    public override void GetSignalStatus(out bool isLocked, out bool isPresent, out int strength, out int quality, bool onlyGetLock)
     {
       isLocked = false;
       isPresent = false;
@@ -649,14 +902,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       int tempQuality = 0;
       int strengthCount = 0;
       int qualityCount = 0;
-      int hr = (int)HResult.Severity.Success;
+      int hr = (int)NativeMethods.HResult.S_OK;
       for (int i = 0; i < _signalStatisticsInterfaces.Count; i++)
       {
         IBDA_SignalStatistics statisticsInterface = _signalStatisticsInterfaces[i];
         try
         {
           hr = statisticsInterface.get_SignalLocked(out tempIsLocked);
-          if (hr == (int)HResult.Severity.Success)
+          if (hr == (int)NativeMethods.HResult.S_OK)
           {
             isLocked |= tempIsLocked;
           }
@@ -670,7 +923,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           }
 
           hr = statisticsInterface.get_SignalPresent(out tempIsPresent);
-          if (hr == (int)HResult.Severity.Success)
+          if (hr == (int)NativeMethods.HResult.S_OK)
           {
             isPresent |= tempIsPresent;
           }
@@ -680,7 +933,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           }
 
           hr = statisticsInterface.get_SignalStrength(out tempStrength);
-          if (hr == (int)HResult.Severity.Success)
+          if (hr == (int)NativeMethods.HResult.S_OK)
           {
             if (tempStrength != 0)
             {
@@ -694,7 +947,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           }
 
           hr = statisticsInterface.get_SignalQuality(out tempQuality);
-          if (hr == (int)HResult.Severity.Success)
+          if (hr == (int)NativeMethods.HResult.S_OK)
           {
             if (tempQuality != 0)
             {
@@ -753,104 +1006,47 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
     #endregion
 
-    #region Channel linkage handling
+    #region IESEvents member
 
-    private static bool SameAsPortalChannel(PortalChannel pChannel, LinkedChannel lChannel)
+    /// <summary>
+    /// Handler for PBDA events.
+    /// </summary>
+    public int OnESEventReceived(Guid eventType, IESEvent esEvent)
     {
-      return ((pChannel.NetworkId == lChannel.NetworkId) && (pChannel.TransportId == lChannel.TransportId) &&
-              (pChannel.ServiceId == lChannel.ServiceId));
-    }
+      this.LogDebug("BDA base: received ES event, type = {0}", eventType);
 
-    private static bool IsNewLinkedChannel(PortalChannel pChannel, LinkedChannel lChannel)
-    {
-      bool bRet = true;
-      foreach (LinkedChannel lchan in pChannel.LinkedChannels)
+      int id;
+      int hr = esEvent.GetEventId(out id);
+      if (hr == (int)NativeMethods.HResult.S_OK)
       {
-        if ((lchan.NetworkId == lChannel.NetworkId) && (lchan.TransportId == lChannel.TransportId) &&
-            (lchan.ServiceId == lChannel.ServiceId))
-        {
-          bRet = false;
-          break;
-        }
+        this.LogDebug("  ID = {0}", id);
       }
-      return bRet;
-    }
-
-    /// <summary>
-    /// Starts scanning for linkage info
-    /// </summary>
-    public override void StartLinkageScanner(BaseChannelLinkageScanner callBack)
-    {
-      ITsChannelLinkageScanner linkageScanner = _filterTsWriter as ITsChannelLinkageScanner;
-      linkageScanner.SetCallBack(callBack);
-      linkageScanner.Start();
-    }
-
-    /// <summary>
-    /// Stops/Resets the linkage scanner
-    /// </summary>
-    public override void ResetLinkageScanner()
-    {
-      (_filterTsWriter as ITsChannelLinkageScanner).Reset();
-    }
-
-    /// <summary>
-    /// Returns the EPG grabbed or null if epg grabbing is still busy
-    /// </summary>
-    public override List<PortalChannel> ChannelLinkages
-    {
-      get
+      else
       {
-        ITsChannelLinkageScanner linkageScanner = _filterTsWriter as ITsChannelLinkageScanner;
-        try
-        {
-          uint channelCount;
-          List<PortalChannel> portalChannels = new List<PortalChannel>();
-          linkageScanner.GetChannelCount(out channelCount);
-          if (channelCount == 0)
-            return portalChannels;
-          for (uint i = 0; i < channelCount; i++)
-          {
-            ushort network_id = 0;
-            ushort transport_id = 0;
-            ushort service_id = 0;
-            linkageScanner.GetChannel(i, out network_id, out transport_id, out service_id);
-            PortalChannel pChannel = new PortalChannel();
-            pChannel.NetworkId = network_id;
-            pChannel.TransportId = transport_id;
-            pChannel.ServiceId = service_id;
-            uint linkCount;
-            linkageScanner.GetLinkedChannelsCount(i, out linkCount);
-            if (linkCount > 0)
-            {
-              for (uint j = 0; j < linkCount; j++)
-              {
-                ushort nid = 0;
-                ushort tid = 0;
-                ushort sid = 0;
-                IntPtr ptrName;
-                linkageScanner.GetLinkedChannel(i, j, out nid, out tid, out sid, out ptrName);
-                LinkedChannel lChannel = new LinkedChannel();
-                lChannel.NetworkId = nid;
-                lChannel.TransportId = tid;
-                lChannel.ServiceId = sid;
-                lChannel.Name = DvbTextConverter.Convert(ptrName);
-                if ((!SameAsPortalChannel(pChannel, lChannel)) && (IsNewLinkedChannel(pChannel, lChannel)))
-                  pChannel.LinkedChannels.Add(lChannel);
-              }
-            }
-            if (pChannel.LinkedChannels.Count > 0)
-              portalChannels.Add(pChannel);
-          }
-          linkageScanner.Reset();
-          return portalChannels;
-        }
-        catch (Exception ex)
-        {
-          this.LogError(ex);
-          return new List<PortalChannel>();
-        }
+        this.LogWarn("BDA base: failed to get event ID, hr = 0x{0:x}", hr);
       }
+
+      byte[] data;
+      hr = esEvent.GetData(out data);
+      if (hr == (int)NativeMethods.HResult.S_OK)
+      {
+        this.LogDebug("  data...");
+        Dump.DumpBinary(data);
+      }
+      else
+      {
+        this.LogWarn("BDA base: failed to get event data, hr = 0x{0:x}", hr);
+      }
+
+      // The PBDA specification defines error codes in the core services
+      // document. Zero is success.
+      hr = esEvent.SetCompletionStatus(0);
+      if (hr != (int)NativeMethods.HResult.S_OK)
+      {
+        this.LogWarn("BDA base: failed to set event completion status, hr = 0x{0:x}", hr);
+      }
+
+      return (int)NativeMethods.HResult.S_OK;
     }
 
     #endregion

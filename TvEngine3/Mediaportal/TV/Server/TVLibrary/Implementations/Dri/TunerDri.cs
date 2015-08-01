@@ -24,19 +24,22 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
-using DirectShowLib.BDA;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using UPnP.Infrastructure.Common;
 using UPnP.Infrastructure.CP;
@@ -50,6 +53,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     #region constants
 
     private static readonly Regex REGEX_SIGNAL_INFO = new Regex(@"^(\d+(\.\d+)?)[^\d]");
+    private const int CONNECTION_ID_NOT_CONNECTED = -1;
 
     #endregion
 
@@ -83,7 +87,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     private string _serverIpAddress = string.Empty;
 
     // UPnP AV
-    private int _connectionId = -1;
+    private int _connectionId = CONNECTION_ID_NOT_CONNECTED;
     private int _avTransportId = -1;
 
     // These variables are used to ensure we don't interrupt another
@@ -105,7 +109,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     private int _currentFrequency = -1;
     private readonly bool _isCetonDevice = false;
     private bool _canPause = false;
-    private int _programNumberTimeOut = 2000;   // unit = ms
+    private ICollection<TunerModulation> _supportedModulationSchemes = null;
+    private int _programNumberTimeOut = 2500;   // unit = milliseconds
 
     /// <summary>
     /// Internal stream tuner, used to receive the RTP stream. This allows us
@@ -122,20 +127,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// <summary>
     /// The tuner's current tuning parameter values.
     /// </summary>
-    private ATSCChannel _currentTuningDetail = null;
+    private IChannel _currentTuningDetail = null;
 
     #endregion
+
+    #region constructor & finaliser
 
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerDri"/> class.
     /// </summary>
     /// <param name="descriptor">The UPnP device description.</param>
+    /// <param name="tunerInstanceId">The identifier shared by all <see cref="ITuner"/> instances derived from a single tuner.</param>
+    /// <param name="productInstanceId">The identifier shared by all <see cref="ITuner"/> instances derived from a single product.</param>
+    /// <param name="supportedBroadcastStandards">The broadcast standards supported by the hardware.</param>
+    /// <param name="supportedModulationSchemes">The modulation schemes supported by the hardware.</param>
     /// <param name="controlPoint">The control point to use to connect to the device.</param>
     /// <param name="streamTuner">An internal tuner implementation, used for RTP stream reception.</param>
-    public TunerDri(DeviceDescriptor descriptor, UPnPControlPoint controlPoint, ITunerInternal streamTuner)
-      : base(descriptor.FriendlyName, descriptor.DeviceUUID, CardType.Atsc)
+    public TunerDri(DeviceDescriptor descriptor, string tunerInstanceId, string productInstanceId, BroadcastStandard supportedBroadcastStandards, ICollection<TunerModulation> supportedModulationSchemes, UPnPControlPoint controlPoint, ITunerInternal streamTuner)
+      : base(descriptor.FriendlyName, descriptor.DeviceUUID, tunerInstanceId, productInstanceId, supportedBroadcastStandards)
     {
-      DVBIPChannel streamChannel = new DVBIPChannel();
+      ChannelStream streamChannel = new ChannelStream();
       streamChannel.Url = "rtp://127.0.0.1";
       if (streamTuner == null || !streamTuner.CanTune(streamChannel))
       {
@@ -144,6 +155,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
       _descriptor = descriptor;
       _controlPoint = controlPoint;
+      _supportedModulationSchemes = supportedModulationSchemes;
       _streamTuner = new TunerInternalWrapper(streamTuner);
       _isCetonDevice = descriptor.FriendlyName.Contains("Ceton");
       _caMenuHandler = new CableCardMmiHandler(EnterMenu, CloseDialog);
@@ -157,28 +169,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       // MPEG-TS in RTP packets according to [RTSP] and [RTP].
       // - OpenCable DRI I04 specification, 10 September 2010
       _supportsSubChannels = false;
-
-      if (descriptor.FriendlyName.Contains("Ceton"))
-      {
-        // Example: Ceton InfiniTV PCIe (00-80-75-05) Tuner 1 (00-00-22-00-00-80-75-05)
-        Match m = Regex.Match(descriptor.FriendlyName, @"\s+\(([^\s]+)\)\s+Tuner\s+(\d+)", RegexOptions.IgnoreCase);
-        if (m.Success)
-        {
-          _productInstanceId = m.Groups[1].Captures[0].Value;
-          _tunerInstanceId = m.Groups[2].Captures[0].Value;
-        }
-      }
-      else
-      {
-        // Examples: HDHomeRun Prime Tuner 1316890F-1, Hauppauge OpenCable Receiver 201200AA-1
-        Match m = Regex.Match(descriptor.FriendlyName, @"\s+([^\s]+)-(\d)$", RegexOptions.IgnoreCase);
-        if (m.Success)
-        {
-          _productInstanceId = m.Groups[1].Captures[0].Value;
-          _tunerInstanceId = m.Groups[2].Captures[0].Value;
-        }
-      }
     }
+
+    ~TunerDri()
+    {
+      Dispose(false);
+    }
+
+    #endregion
 
     private void ReadDeviceInfo()
     {
@@ -253,24 +251,39 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       return true;
     }
 
-    private void TuneCableCard(ATSCChannel atscChannel, out bool isSignalLocked)
+    private void TuneWithCableCard(IChannel channel, out bool isSignalLocked)
     {
       _currentFrequency = -1;
       try
       {
-        if (atscChannel.MajorChannel > 0)
+        uint virtualChannelNumber;
+        if (uint.TryParse(channel.LogicalChannelNumber, out virtualChannelNumber))
         {
           this.LogDebug("DRI CableCARD: tuning by channel number");
-          _serviceCas.SetChannel((uint)atscChannel.MajorChannel, 0, CasCaptureMode.Live, out isSignalLocked);
-        }
-        else if (atscChannel.NetworkId > 0)
-        {
-          this.LogDebug("DRI CableCARD: tuning by source ID");
-          _serviceCas.SetChannel(0, (uint)atscChannel.NetworkId, CasCaptureMode.Live, out isSignalLocked);
+          _serviceCas.SetChannel(virtualChannelNumber, 0, CasCaptureMode.Live, out isSignalLocked);
         }
         else
         {
-          throw new TvException("Not able to tune encrypted channel without both channel number and source ID.");
+          int sourceId = 0;
+          ChannelAtsc atscChannel = channel as ChannelAtsc;
+          if (atscChannel != null)
+          {
+            sourceId = atscChannel.SourceId;
+          }
+          else
+          {
+            ChannelScte scteChannel = channel as ChannelScte;
+            sourceId = scteChannel.SourceId;
+          }
+          if (sourceId > 0)
+          {
+            this.LogDebug("DRI CableCARD: tuning by source ID");
+            _serviceCas.SetChannel(0, (uint)sourceId, CasCaptureMode.Live, out isSignalLocked);
+          }
+          else
+          {
+            throw new TvException("Not able to tune using CableCARD without either channel number or source ID.");
+          }
         }
 
         // When switched digital video (SDV) is active - ie. the tuner uses a
@@ -282,21 +295,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         // program number to 0. However Ceton tuners deliver the PAT and PMT
         // for all the programs in the full transport stream, only excluding
         // extra video and audio streams. Therefore we have to do this...
-        if (atscChannel.ServiceId != 0)
+        ChannelMpeg2Base mpeg2Channel = channel as ChannelMpeg2Base;
+        if (_isCetonDevice || mpeg2Channel.ProgramNumber == 0)
         {
-          DateTime now = DateTime.Now;
-          int originalProgramNumber = atscChannel.ServiceId;
-          while ((DateTime.Now - now).TotalMilliseconds < _programNumberTimeOut)
+          DateTime start = DateTime.Now;
+          while ((DateTime.Now - start).TotalMilliseconds < _programNumberTimeOut)
           {
             try
             {
-              atscChannel.ServiceId = (int)_serviceMux.QueryStateVariable("ProgramNumber");
-              if (atscChannel.ServiceId != 0)
+              mpeg2Channel.ProgramNumber = (int)_serviceMux.QueryStateVariable("ProgramNumber");
+              if (mpeg2Channel.ProgramNumber != 0)
               {
-                if (atscChannel.ServiceId != originalProgramNumber)
-                {
-                  this.LogDebug("DRI CableCARD: actual program number is {0}", atscChannel.ServiceId);
-                }
+                this.LogDebug("DRI CableCARD: actual program number is {0}", mpeg2Channel.ProgramNumber);
                 break;
               }
               System.Threading.Thread.Sleep(20);
@@ -321,36 +331,52 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
     }
 
-    private void TuneAtscOrClearQam(ATSCChannel atscChannel, out bool isSignalLocked)
+    private void TuneWithoutCableCard(IChannel channel, out bool isSignalLocked)
     {
-      if (atscChannel.Frequency <= 0)
+      int frequency;
+      IList<TunerModulation> modulationSchemes = new List<TunerModulation>(2);
+      ChannelAtsc atscChannel = channel as ChannelAtsc;
+      if (atscChannel != null)
       {
-        throw new TvException("Not able to tune non-encrypted channel without frequency.");
-      }
-      this.LogDebug("DRI CableCARD: tuning by frequency");
-      IList<TunerModulation> moduations = new List<TunerModulation>();
-      if (atscChannel.ModulationType == ModulationType.Mod256Qam)
-      {
-        moduations.Add(TunerModulation.Qam256);
-      }
-      else if (atscChannel.ModulationType == ModulationType.Mod64Qam)
-      {
-        moduations.Add(TunerModulation.Qam64);
-      }
-      else if (atscChannel.ModulationType == ModulationType.Mod8Vsb)
-      {
-        moduations.Add(TunerModulation.Vsb8);
+        this.LogDebug("DRI CableCARD: tuning ATSC by frequency");
+        frequency = atscChannel.Frequency;
+        if (atscChannel.ModulationScheme == ModulationSchemeVsb.Vsb8 && _supportedModulationSchemes.Contains(TunerModulation.Vsb8))
+        {
+          modulationSchemes.Add(TunerModulation.Vsb8);
+          modulationSchemes.Add(TunerModulation.Vsb8_2);
+        }
+        else
+        {
+          this.LogWarn("DRI CableCARD: unsupported ATSC modulation scheme {0}, allowing tuner to use any supported modulation scheme", atscChannel.ModulationScheme);
+          modulationSchemes.Add(TunerModulation.All);
+        }
       }
       else
       {
-        this.LogWarn("DRI CableCARD: unsupported modulation {0}, allowing tuner to use any supported modulation", atscChannel.ModulationType);
-        moduations.Add(TunerModulation.All);
+        this.LogDebug("DRI CableCARD: tuning SCTE by frequency");
+        ChannelScte scteChannel = channel as ChannelScte;
+        frequency = scteChannel.Frequency;
+        if (scteChannel.ModulationScheme == ModulationSchemeQam.Qam256 && _supportedModulationSchemes.Contains(TunerModulation.Qam256))
+        {
+          modulationSchemes.Add(TunerModulation.Qam256);
+          modulationSchemes.Add(TunerModulation.Qam256_2);
+        }
+        else if (scteChannel.ModulationScheme == ModulationSchemeQam.Qam64 && _supportedModulationSchemes.Contains(TunerModulation.Qam64))
+        {
+          modulationSchemes.Add(TunerModulation.Qam64);
+          modulationSchemes.Add(TunerModulation.Qam64_2);
+        }
+        else
+        {
+          this.LogWarn("DRI CableCARD: unsupported SCTE modulation scheme {0}, allowing tuner to use any supported modulation scheme", scteChannel.ModulationScheme);
+          modulationSchemes.Add(TunerModulation.All);
+        }
       }
 
       _currentFrequency = -1;
       uint currentFrequency;
       TunerModulation currentModulation;
-      _serviceTuner.SetTunerParameters((uint)atscChannel.Frequency, moduations, out currentFrequency, out currentModulation, out isSignalLocked);
+      _serviceTuner.SetTunerParameters((uint)frequency, modulationSchemes, out currentFrequency, out currentModulation, out isSignalLocked);
     }
 
     #endregion
@@ -364,14 +390,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         return;
       }
       this.LogDebug("DRI CableCARD: start streaming");
-      Uri uri = new Uri(_rtspUri);
-      if (uri.IsDefaultPort)
+      if (_rtspClient == null)
       {
-        _rtspClient = new Rtsp.RtspClient(uri.Host);
-      }
-      else
-      {
-        _rtspClient = new Rtsp.RtspClient(uri.Host, uri.Port);
+        Uri uri = new Uri(_rtspUri);
+        if (uri.IsDefaultPort)
+        {
+          _rtspClient = new Rtsp.RtspClient(uri.Host);
+        }
+        else
+        {
+          _rtspClient = new Rtsp.RtspClient(uri.Host, uri.Port);
+        }
       }
 
       // Find a free port for receiving the RTP stream.
@@ -397,15 +426,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       RtspRequest request = new RtspRequest(RtspMethod.Setup, _rtspUri);
       request.Headers.Add("Transport", string.Format("RTP/AVP;unicast;client_port={0}-{1}", rtpClientPort, rtpClientPort + 1));
       Rtsp.RtspResponse response;
-      _rtspClient.SendRequest(request, out response);
       if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
       {
-        throw new TvException("Failed to start streaming, non-OK RTSP SETUP status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+        throw new TvException("Failed to start streaming, non-OK RTSP SETUP status code {0} {1}.", response.StatusCode, response.ReasonPhrase);
       }
 
       if (!response.Headers.TryGetValue("Session", out _rtspSessionId))
       {
-        throw new TvException("Failed to start streaming, not able to find session header in RTSP SETUP response");
+        throw new TvException("Failed to start streaming, not able to find session header in RTSP SETUP response.");
       }
 
       bool foundRtpTransport = false;
@@ -413,7 +441,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       string transportHeader;
       if (!response.Headers.TryGetValue("Transport", out transportHeader))
       {
-        throw new TvException("Failed to start streaming, not able to find transport header in RTSP SETUP response");
+        throw new TvException("Failed to start streaming, not able to find transport header in RTSP SETUP response.");
       }
       string[] transports = transportHeader.Split(',');
       foreach (string transport in transports)
@@ -444,9 +472,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
       if (!foundRtpTransport)
       {
-        throw new TvException("Failed to start streaming, not able to find RTP transport details in RTSP SETUP response transport header");
+        throw new TvException("Failed to start streaming, not able to find RTP transport details in RTSP SETUP response transport header \"{0}\".", transportHeader);
       }
-      DVBIPChannel streamChannel = new DVBIPChannel();
+      ChannelStream streamChannel = new ChannelStream();
       if (string.IsNullOrEmpty(rtpServerPort) || rtpServerPort.Equals("0"))
       {
         streamChannel.Url = string.Format("rtp://{0}@{1}:{2}", _serverIpAddress, _localIpAddress, rtpClientPort);
@@ -462,21 +490,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       request.Headers.Add("Session", _rtspSessionId);
       if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
       {
-        throw new TvException("Failed to start streaming, non-OK RTSP PLAY status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+        throw new TvException("Failed to start streaming, non-OK RTSP PLAY status code {0} {1}.", response.StatusCode, response.ReasonPhrase);
       }
       this.LogDebug("DRI CableCARD: RTSP PLAY response okay");
 
       // Copy the other channel parameters from the original channel.
-      streamChannel.FreeToAir = _currentTuningDetail.FreeToAir;
-      streamChannel.Frequency = _currentTuningDetail.Frequency;
+      streamChannel.IsEncrypted = _currentTuningDetail.IsEncrypted;
       streamChannel.LogicalChannelNumber = _currentTuningDetail.LogicalChannelNumber;
       streamChannel.MediaType = _currentTuningDetail.MediaType;
       streamChannel.Name = _currentTuningDetail.Name;
-      streamChannel.NetworkId = _currentTuningDetail.NetworkId;
-      streamChannel.PmtPid = _currentTuningDetail.PmtPid;
-      streamChannel.Provider = _currentTuningDetail.Provider;
-      streamChannel.ServiceId = _currentTuningDetail.ServiceId;
-      streamChannel.TransportId = _currentTuningDetail.TransportId;
+      streamChannel.OriginalNetworkId = -1;
+
+      ChannelMpeg2Base mpeg2Channel = _currentTuningDetail as ChannelMpeg2Base;
+      if (mpeg2Channel != null)
+      {
+        streamChannel.PmtPid = mpeg2Channel.PmtPid;
+        streamChannel.Provider = mpeg2Channel.Provider;
+        streamChannel.ProgramNumber = mpeg2Channel.ProgramNumber;
+        streamChannel.TransportStreamId = mpeg2Channel.TransportStreamId;
+      }
 
       _streamTuner.PerformTuning(streamChannel);
     }
@@ -634,8 +666,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     {
       base.ReloadConfiguration();
 
-      // Use the "tune" time out as a limit on the program number query time.
-      _programNumberTimeOut = SettingsManagement.GetValue("timeoutTune", 10) * 1000;
+      // Use the PMT time out as a limit on the program number query time.
+      _programNumberTimeOut = SettingsManagement.GetValue("timeOutProgramMapTable", 5000);
 
       _streamTuner.ReloadConfiguration();
     }
@@ -648,7 +680,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// Actually load the tuner.
     /// </summary>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public override IList<ICustomDevice> PerformLoading()
+    public override IList<ITunerExtension> PerformLoading()
     {
       this.LogDebug("DRI CableCARD: perform loading");
 
@@ -684,17 +716,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
       int rcsId = -1;
       _serviceConnectionManager.PrepareForConnection(string.Empty, string.Empty, -1, ConnectionDirection.Output, out _connectionId, out _avTransportId, out rcsId);
-      this.LogDebug("DRI CableCARD: PrepareForConnection, connection ID = {0}, AV transport ID = {1}", _connectionId, _avTransportId);
+      this.LogDebug("DRI CableCARD: connected, connection ID = {0}, AV transport ID = {1}", _connectionId, _avTransportId);
 
       ReadDeviceInfo();
       TunerExtensionLoader loader = new TunerExtensionLoader();
-      IList<ICustomDevice> extensions = loader.Load(this, _descriptor);
+      IList<ITunerExtension> extensions = loader.Load(this, _descriptor);
 
       // Add the stream tuner extensions to our extensions, but don't re-sort
       // by priority afterwards. This ensures that our extensions are always
       // given first consideration.
-      IList<ICustomDevice> streamTunerExtensions = _streamTuner.PerformLoading();
-      foreach (ICustomDevice e in streamTunerExtensions)
+      IList<ITunerExtension> streamTunerExtensions = _streamTuner.PerformLoading();
+      foreach (ITunerExtension e in streamTunerExtensions)
       {
         extensions.Add(e);
       }
@@ -707,12 +739,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// Actually set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    public override void PerformSetTunerState(TunerState state)
+    /// <param name="isFinalising"><c>True</c> if the tuner is being finalised.</param>
+    public override void PerformSetTunerState(TunerState state, bool isFinalising = false)
     {
       this.LogDebug("DRI CableCARD: perform set tuner state");
+      if (isFinalising)
+      {
+        return;
+      }
 
-      ATSCChannel atscChannel = _currentTuningDetail as ATSCChannel;
-      if (InternalChannelScanningInterface != null && InternalChannelScanningInterface.IsScanning && atscChannel != null && atscChannel.PhysicalChannel == 0)
+      ChannelAtsc atscChannel = _currentTuningDetail as ChannelAtsc;
+      if (InternalChannelScanningInterface != null && InternalChannelScanningInterface.IsScanning && atscChannel != null && atscChannel.PhysicalChannelNumber == 0)
       {
         // Scanning with a CableCARD doesn't require streaming. The channel
         // info is evented via the forward data channel service.
@@ -744,27 +781,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         }
       }
 
-      try
-      {
-        _streamTuner.PerformSetTunerState(state);
-      }
-      catch
-      {
-        // It isn't possible to start the stream tuner if there is no stream.
-        // No signal => no stream.
-        if (state != TunerState.Started)
-        {
-          throw;
-        }
-      }
+      _streamTuner.PerformSetTunerState(state);
     }
 
     /// <summary>
     /// Actually unload the tuner.
     /// </summary>
-    public override void PerformUnloading()
+    /// <param name="isFinalising"><c>True</c> if the tuner is being finalised.</param>
+    public override void PerformUnloading(bool isFinalising = false)
     {
       this.LogDebug("DRI CableCARD: perform unloading");
+      if (isFinalising)
+      {
+        return;
+      }
 
       _channelScanner = null;
       if (_serviceTuner != null)
@@ -829,6 +859,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         {
           this.LogWarn("DRI CableCARD: failed to complete connection manager connection");
         }
+        _connectionId = CONNECTION_ID_NOT_CONNECTED;
         _serviceConnectionManager.Dispose();
         _serviceConnectionManager = null;
       }
@@ -836,6 +867,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       if (_deviceConnection != null)
       {
         _deviceConnection.Disconnect();
+        _deviceConnection.Dispose();
         _deviceConnection = null;
       }
 
@@ -853,7 +885,60 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      return channel is ATSCChannel;
+      if (!base.CanTune(channel))
+      {
+        return false;
+      }
+
+      ChannelAtsc atscChannel = channel as ChannelAtsc;
+      if (atscChannel != null && atscChannel.ModulationScheme == ModulationSchemeVsb.Vsb8 && _supportedModulationSchemes.Contains(TunerModulation.Vsb8))
+      {
+        return true;
+      }
+
+      ChannelScte scteChannel = channel as ChannelScte;
+      if (scteChannel == null)
+      {
+        return false;
+      }
+
+      // Tuning physically possible?
+      if (
+        scteChannel.ModulationScheme == ModulationSchemeQam.Automatic ||  // switched digital video - modulation unknown, assume supported
+        (scteChannel.ModulationScheme == ModulationSchemeQam.Qam64 && _supportedModulationSchemes.Contains(TunerModulation.Qam64)) ||
+        (scteChannel.ModulationScheme == ModulationSchemeQam.Qam256 && _supportedModulationSchemes.Contains(TunerModulation.Qam256))
+      )
+      {
+        // Tune request can be assembled and could succeed?
+        uint virtualChannelNumber;
+        if (
+          // SCTE channels can be tuned with or without a CableCARD as long as
+          // the channel frequency is specified (ie. not switched digital
+          // video).
+          (!scteChannel.IsEncrypted && scteChannel.Frequency > 0) ||
+          // ...otherwise, for encrypted and/or SDV channels:
+          (
+            // CableCARD must be present...
+            (_connectionId == CONNECTION_ID_NOT_CONNECTED || _cardStatus == CasCardStatus.Inserted) &&
+            // ...and we must have a valid source ID and/or virtual channel number.
+            (
+              scteChannel.SourceId > 0 ||
+              (
+                uint.TryParse(channel.LogicalChannelNumber, out virtualChannelNumber) &&
+                (
+                  virtualChannelNumber > 0 ||
+                  // Special case: scanning using the CableCARD.
+                  (InternalChannelScanningInterface != null && InternalChannelScanningInterface.IsScanning)
+                )
+              )
+            )
+          )
+        )
+        {
+          return true;
+        }
+      }
+      return false;
     }
 
     /// <summary>
@@ -863,15 +948,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("DRI CableCARD: perform tuning");
-      ATSCChannel atscChannel = channel as ATSCChannel;
-      if (atscChannel == null)
+      ChannelAtsc atscChannel = channel as ChannelAtsc;
+      ChannelScte scteChannel = channel as ChannelScte;
+      if (atscChannel == null && scteChannel == null)
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
 
-      // Is a CableCARD required?
+      // Is a CableCARD required? (CableCARD scan, encrypted channel, or SDV channel)
+      IChannelPhysical physicalChannel = channel as IChannelPhysical;
       bool isSignalLocked;
-      if (!atscChannel.FreeToAir || (InternalChannelScanningInterface.IsScanning && atscChannel.PhysicalChannel == 0))
+      bool isCableCardRequired = false;
+      if (channel.IsEncrypted || physicalChannel.Frequency <= 0)
       {
         if (_cardStatus != CasCardStatus.Inserted)
         {
@@ -881,7 +969,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         // We only need the OOB tuner when scanning with the CableCARD. We
         // don't even have to start a stream so we don't interrupt other
         // applications. Just check that the OOB tuner is locked.
-        if (InternalChannelScanningInterface.IsScanning)
+        if (InternalChannelScanningInterface.IsScanning && physicalChannel.Frequency <= 0)
         {
           this.LogDebug("DRI CableCARD: check out-of-band tuner lock");
           uint bitrate = 0;
@@ -892,13 +980,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           _isSignalLocked = isSignalLocked;
           if (isSignalLocked)
           {
-            throw new TvExceptionNoSignal("Out-of-band tuner not locked.");
+            throw new TvExceptionNoSignal(TunerId, channel, "Out-of-band tuner not locked.");
           }
           this.LogDebug("  frequency = {0} kHz", frequency);
           this.LogDebug("  bitrate   = {0} kbps", bitrate);
           this.LogDebug("  PIDs      = {0}", string.Join(", ", pids.Select(x => x.ToString())));
           return;
         }
+
+        isCableCardRequired = true;
       }
 
       if (IsTunerInUse())
@@ -909,21 +999,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
       // CableCARD tuners don't forget the tuned channel after they're stopped,
       // and they reject tune requests for the current channel.
-      if (_currentTuningDetail != null && _currentTuningDetail.IsDifferentTransponder(atscChannel))
+      if (_currentTuningDetail != null && _currentTuningDetail.IsDifferentTransmitter(channel))
       {
         this.LogDebug("DRI CableCARD: already tuned");
         return;
       }
 
-      if (!atscChannel.FreeToAir)
+      // Prefer CableCARD tuning. The other tuning method has not been tested.
+      if (isCableCardRequired || _cardStatus == CasCardStatus.Inserted)
       {
-        TuneCableCard(atscChannel, out isSignalLocked);
+        TuneWithCableCard(channel, out isSignalLocked);
       }
       else
       {
-        TuneAtscOrClearQam(atscChannel, out isSignalLocked);
+        TuneWithoutCableCard(channel, out isSignalLocked);
       }
-      _currentTuningDetail = atscChannel;
+      _currentTuningDetail = channel;
       _isSignalLocked = isSignalLocked;
     }
 
@@ -932,7 +1023,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// </summary>
     /// <param name="id">The identifier for the sub-channel.</param>
     /// <returns>the new sub-channel instance</returns>
-    public override ITvSubChannel CreateNewSubChannel(int id)
+    public override ISubChannelInternal CreateNewSubChannel(int id)
     {
       return _streamTuner.CreateNewSubChannel(id);
     }
@@ -944,12 +1035,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// <summary>
     /// Get the tuner's signal status.
     /// </summary>
-    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
     /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
     /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
     /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
     /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
-    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    public override void GetSignalStatus(out bool isLocked, out bool isPresent, out int strength, out int quality, bool onlyGetLock)
     {
       isLocked = false;
       isPresent = false;
@@ -970,10 +1061,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         uint frequency = 0;
         if (InternalChannelScanningInterface != null && InternalChannelScanningInterface.IsScanning)
         {
-          ATSCChannel atscChannel = _currentTuningDetail as ATSCChannel;
-          if (atscChannel != null && atscChannel.PhysicalChannel == 0)
+          // If scanning with the out-of-band tuner...
+          IChannelPhysical physicalChannel = _currentTuningDetail as IChannelPhysical;
+          if (physicalChannel != null && physicalChannel.Frequency <= 0)
           {
-            // If scanning with the out-of-band tuner...
             if (_serviceFdc == null)
             {
               return;
@@ -1088,7 +1179,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// Set the menu call back delegate.
     /// </summary>
     /// <param name="callBack">The call back delegate.</param>
-    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
+    void IConditionalAccessMenuActions.SetCallBack(IConditionalAccessMenuCallBack callBack)
     {
       lock (_caMenuCallBackLock)
       {
@@ -1100,7 +1191,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// Send a request from the user to the CAM to open the menu.
     /// </summary>
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool EnterMenu()
+    bool IConditionalAccessMenuActions.Enter()
+    {
+      return EnterMenu();
+    }
+
+    private bool EnterMenu()
     {
       this.LogDebug("DRI CableCARD: enter menu");
 
@@ -1161,7 +1257,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// Send a request from the user to the CAM to close the menu.
     /// </summary>
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool CloseMenu()
+    bool IConditionalAccessMenuActions.Close()
     {
       this.LogDebug("DRI CableCARD: close menu");
       CloseDialog(0);
@@ -1173,7 +1269,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// </summary>
     /// <param name="dialogNumber">The identifier for the dialog that has been closed.</param>
     /// <returns><c>true</c> if the CableCARD is successfully notified, otherwise <c>false</c></returns>
-    public bool CloseDialog(byte dialogNumber)
+    private bool CloseDialog(byte dialogNumber)
     {
       this.LogDebug("DRI CableCARD: close dialog, dialog number = {0}", dialogNumber);
 
@@ -1200,12 +1296,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// </summary>
     /// <param name="choice">The index of the selection as an unsigned byte value.</param>
     /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool SelectMenuEntry(byte choice)
+    bool IConditionalAccessMenuActions.SelectEntry(byte choice)
     {
       this.LogDebug("DRI CableCARD: select menu entry, choice = {0}", choice);
       lock (_caMenuCallBackLock)
       {
-        return _caMenuHandler.SelectEntry(choice, _caMenuCallBack);
+        return _caMenuHandler.SelectMenuEntry(choice, _caMenuCallBack);
       }
     }
 
@@ -1215,7 +1311,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// <param name="cancel"><c>True</c> to cancel the enquiry.</param>
     /// <param name="answer">The user's answer to the enquiry.</param>
     /// <returns><c>true</c> if the answer is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool AnswerEnquiry(bool cancel, string answer)
+    bool IConditionalAccessMenuActions.AnswerEnquiry(bool cancel, string answer)
     {
       if (answer == null)
       {
@@ -1234,13 +1330,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// <summary>
     /// Release and dispose all resources.
     /// </summary>
-    public override void Dispose()
+    /// <param name="isDisposing"><c>True</c> if the tuner is being disposed.</param>
+    protected override void Dispose(bool isDisposing)
     {
-      base.Dispose();
-      if (_streamTuner != null)
+      base.Dispose(isDisposing);
+      if (isDisposing)
       {
-        _streamTuner.Dispose();
-        _streamTuner = null;
+        if (_streamTuner != null)
+        {
+          _streamTuner.Dispose();
+          _streamTuner = null;
+        }
+        if (_rtspClient != null)
+        {
+          _rtspClient.Dispose();
+          _rtspClient = null;
+        }
       }
     }
 

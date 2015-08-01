@@ -19,10 +19,10 @@
 #endregion
 
 using System.Text.RegularExpressions;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
 {
@@ -37,20 +37,36 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
     /// <param name="channel">The channel.</param>
     public virtual void UpdateChannel(ref IChannel channel)
     {
-      // Fill in missing names.
+      ChannelAnalogTv analogTvChannel = channel as ChannelAnalogTv;
+      ChannelFmRadio fmRadioChannel = channel as ChannelFmRadio;
+      if (analogTvChannel == null && fmRadioChannel == null)
+      {
+        return;
+      }
+
+      string logicalChannelNumber = channel.LogicalChannelNumber;
+      if (string.IsNullOrWhiteSpace(logicalChannelNumber))
+      {
+        if (analogTvChannel != null)
+        {
+          logicalChannelNumber = analogTvChannel.PhysicalChannelNumber.ToString();
+        }
+        else
+        {
+          logicalChannelNumber = string.Format("{0:#.#}", (float)fmRadioChannel.Frequency / 1000);
+        }
+        channel.LogicalChannelNumber = logicalChannelNumber;
+      }
+
       if (string.IsNullOrWhiteSpace(channel.Name))
       {
-        AnalogChannel analogChannel = channel as AnalogChannel;
-        if (analogChannel != null)
+        if (analogTvChannel != null)
         {
-          if (analogChannel.MediaType == MediaTypeEnum.TV)
-          {
-            analogChannel.Name = string.Format("Analog TV {0}", analogChannel.ChannelNumber);
-          }
-          else if (analogChannel.MediaType == MediaTypeEnum.Radio)
-          {
-            analogChannel.Name = string.Format("FM {0}", ((float)analogChannel.Frequency / 1000000).ToString("F1"));
-          }
+          channel.Name = string.Format("Analog TV {0}", logicalChannelNumber);
+        }
+        else
+        {
+          channel.Name = string.Format("FM {0}", logicalChannelNumber);
         }
       }
       else
@@ -71,15 +87,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
     /// <param name="serviceType">The service type.</param>
     /// <param name="videoStreamCount">The number of video streams associated with the service.</param>
     /// <param name="audioStreamCount">The number of audio streams associated with the service.</param>
-    public virtual MediaTypeEnum? GetMediaType(int serviceType, int videoStreamCount, int audioStreamCount)
+    public virtual MediaType? GetMediaType(int serviceType, int videoStreamCount, int audioStreamCount)
     {
       if (videoStreamCount > 0)
       {
-        return MediaTypeEnum.TV;
+        return MediaType.Television;
       }
       if (audioStreamCount > 0)
       {
-        return MediaTypeEnum.Radio;
+        return MediaType.Radio;
       }
       return null;
     }

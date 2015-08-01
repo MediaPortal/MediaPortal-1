@@ -20,25 +20,28 @@
 
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using DirectShowLib.BDA;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension.Enum;
+using MediaPortal.Common.Utils;
 using B2c2DiseqcPort = Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum.DiseqcPort;
 using B2c2Polarisation = Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum.Polarisation;
+using MpPolarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 {
   /// <summary>
-  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for TechniSat satellite tuners with B2C2 chipsets and WDM drivers.
+  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for
+  /// TechniSat satellite tuners with B2C2 chipsets and WDM drivers.
   /// </summary>
-  internal class TunerB2c2Satellite : TunerB2c2Base, IDiseqcDevice
+  internal class TunerB2c2Satellite : TunerB2c2Base, IDiseqcDevice, IPowerDevice
   {
     #region constants
 
@@ -60,7 +63,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// </summary>
     /// <param name="info">The B2C2-specific information (<see cref="DeviceInfo"/>) about the tuner.</param>
     public TunerB2c2Satellite(DeviceInfo info)
-      : base(info, CardType.DvbS)
+      : base(info, BroadcastStandard.DvbS)
     {
     }
 
@@ -68,24 +71,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// Actually load the tuner.
     /// </summary>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public override IList<ICustomDevice> PerformLoading()
+    public override IList<ITunerExtension> PerformLoading()
     {
-      IList<ICustomDevice> extensions = base.PerformLoading();
+      IList<ITunerExtension> extensions = base.PerformLoading();
       _isRawDiseqcSupported = _capabilities.AcquisitionCapabilities.HasFlag(AcquisitionCapability.RawDiseqc);
       return extensions;
     }
 
     #region tuning
-
-    /// <summary>
-    /// Check if the tuner can tune to a specific channel.
-    /// </summary>
-    /// <param name="channel">The channel to check.</param>
-    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
-    public override bool CanTune(IChannel channel)
-    {
-      return channel is DVBSChannel;
-    }
 
     /// <summary>
     /// Actually tune to a channel.
@@ -94,59 +87,134 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("B2C2 satellite: set tuning parameters");
-      DVBSChannel dvbsChannel = channel as DVBSChannel;
-      if (dvbsChannel == null)
+      IChannelSatellite satelliteChannel = channel as IChannelSatellite;
+      if (satelliteChannel == null)
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
 
       lock (_tunerAccessLock)
       {
-        HResult.ThrowException(_interfaceData.SelectDevice(_deviceInfo.DeviceId), "Failed to select device.");
-        HResult.ThrowException(_interfaceTuner.SetFrequency((int)dvbsChannel.Frequency / 1000), "Failed to set frequency.");
-        HResult.ThrowException(_interfaceTuner.SetSymbolRate(dvbsChannel.SymbolRate), "Failed to set symbol rate.");
+        TvExceptionDirectShowError.Throw(_interfaceData.SelectDevice(_deviceInfo.DeviceId), "Failed to select device.");
+        TvExceptionDirectShowError.Throw(_interfaceTuner.SetFrequency(satelliteChannel.Frequency / 1000), "Failed to set frequency.");
+        TvExceptionDirectShowError.Throw(_interfaceTuner.SetSymbolRate(satelliteChannel.SymbolRate), "Failed to set symbol rate.");
 
-        FecRate fec = FecRate.Auto;
-        switch (dvbsChannel.InnerFecRate)
+        FecRate fecCodeRate;
+        switch (satelliteChannel.FecCodeRate)
         {
-          case BinaryConvolutionCodeRate.Rate1_2:
-            fec = FecRate.Rate1_2;
+          case FecCodeRate.Rate1_2:
+            fecCodeRate = FecRate.Rate1_2;
             break;
-          case BinaryConvolutionCodeRate.Rate2_3:
-            fec = FecRate.Rate2_3;
+          case FecCodeRate.Rate2_3:
+            fecCodeRate = FecRate.Rate2_3;
             break;
-          case BinaryConvolutionCodeRate.Rate3_4:
-            fec = FecRate.Rate3_4;
+          case FecCodeRate.Rate3_4:
+            fecCodeRate = FecRate.Rate3_4;
             break;
-          case BinaryConvolutionCodeRate.Rate5_6:
-            fec = FecRate.Rate5_6;
+          case FecCodeRate.Rate5_6:
+            fecCodeRate = FecRate.Rate5_6;
             break;
-          case BinaryConvolutionCodeRate.Rate7_8:
-            fec = FecRate.Rate7_8;
+          case FecCodeRate.Rate7_8:
+            fecCodeRate = FecRate.Rate7_8;
+            break;
+          default:
+            this.LogWarn("B2C2 satellite: falling back to automatic FEC code rate");
+            fecCodeRate = FecRate.Auto;
             break;
         }
-        HResult.ThrowException(_interfaceTuner.SetFec(fec), "Failed to set FEC rate.");
+        TvExceptionDirectShowError.Throw(_interfaceTuner.SetFec(fecCodeRate), "Failed to set FEC rate.");
 
-        B2c2Polarisation b2c2Polarisation = B2c2Polarisation.Horizontal;
-        if (dvbsChannel.Polarisation == DirectShowLib.BDA.Polarisation.LinearV || dvbsChannel.Polarisation == DirectShowLib.BDA.Polarisation.CircularR)
-        {
-          b2c2Polarisation = B2c2Polarisation.Vertical;
-        }
-        HResult.ThrowException(_interfaceTuner.SetPolarity(b2c2Polarisation), "Failed to set polarisation.");
+        int lnbLof;
+        Tone22kState bandSelectionTone;
+        MpPolarisation bandSelectionPolarisation;
+        satelliteChannel.LnbType.GetTuningParameters(satelliteChannel.Frequency, satelliteChannel.Polarisation, Tone22kState.Automatic, out lnbLof, out bandSelectionTone, out bandSelectionPolarisation);
 
-        int hr = (int)HResult.Severity.Success;
-        if (dvbsChannel.Frequency > dvbsChannel.LnbType.SwitchFrequency)
+        B2c2Polarisation polarisation;
+        switch (bandSelectionPolarisation)
         {
-          hr = _interfaceTuner.SetLnbFrequency(dvbsChannel.LnbType.HighBandFrequency / 1000);
+          case MpPolarisation.LinearHorizontal:
+          case MpPolarisation.CircularLeft:
+            polarisation = B2c2Polarisation.Horizontal;
+            break;
+          case MpPolarisation.LinearVertical:
+          case MpPolarisation.CircularRight:
+            polarisation = B2c2Polarisation.Vertical;
+            break;
+          case MpPolarisation.Automatic:
+            this.LogWarn("B2C2 satellite: falling back to linear vertical polarisation");
+            polarisation = B2c2Polarisation.Vertical;
+            break;
+          default:
+            polarisation = (B2c2Polarisation)bandSelectionPolarisation;
+            break;
         }
-        else
-        {
-          hr = _interfaceTuner.SetLnbFrequency(dvbsChannel.LnbType.LowBandFrequency / 1000);
-        }
-        HResult.ThrowException(hr, "Failed to set LNB LOF frequency.");
+        TvExceptionDirectShowError.Throw(_interfaceTuner.SetPolarity(polarisation), "Failed to set polarisation.");
+
+        TvExceptionDirectShowError.Throw(_interfaceTuner.SetLnbFrequency(lnbLof / 1000), "Failed to set LNB LOF frequency.");
 
         base.PerformTuning(channel);
       }
+    }
+
+    /// <summary>
+    /// Get the broadcast standards supported by the tuner code/class/type implementation.
+    /// </summary>
+    public override BroadcastStandard PossibleBroadcastStandards
+    {
+      get
+      {
+        return BroadcastStandard.DvbDsng | BroadcastStandard.DvbS | BroadcastStandard.DvbS2;
+      }
+    }
+
+    #endregion
+
+    #region IPowerDevice member
+
+    /// <summary>
+    /// Set the tuner power state.
+    /// </summary>
+    /// <param name="state">The power state to apply.</param>
+    /// <returns><c>true</c> if the power state is set successfully, otherwise <c>false</c></returns>
+    public bool SetPowerState(PowerState state)
+    {
+      this.LogDebug("B2C2 satellite: set power state, state = {0}", state);
+      if (_interfaceTuner == null)
+      {
+        this.LogWarn("B2C2 satellite: not initialised or interface not supported");
+        return false;
+      }
+
+      if (state == PowerState.On)
+      {
+        // Power will be turned on automatically during tuning.
+        this.LogDebug("B2C2 satellite: result = success");
+        return true;
+      }
+
+      int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
+      if (hr != (int)NativeMethods.HResult.S_OK)
+      {
+        this.LogError("B2C2 satellite: failed to select device to set power state, hr = 0x{0:x}", hr);
+        return false;
+      }
+
+      hr = _interfaceTuner.SetPolarity(B2c2Polarisation.PowerOff);
+      if (hr != (int)NativeMethods.HResult.S_OK)
+      {
+        this.LogError("B2C2 satellite: failed to set power state, hr = 0x{0:x}", hr);
+        return false;
+      }
+
+      hr = _interfaceTuner.SetTunerStatusEx(1);
+      if (hr != (int)NativeMethods.HResult.S_OK && hr != (int)Error.NotLockedOnSignal)
+      {
+        this.LogError("B2C2 satellite: failed to apply power state, hr = 0x{0:x}", hr);
+        return false;
+      }
+
+      this.LogDebug("B2C2 satellite: result = success");
+      return true;
     }
 
     #endregion
@@ -154,71 +222,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     #region IDiseqcDevice members
 
     /// <summary>
-    /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.
-    /// </summary>
-    /// <param name="toneBurstState">The tone/data burst command to send, if any.</param>
-    /// <param name="tone22kState">The 22 kHz continuous tone state to set.</param>
-    /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
-    public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
-    {
-      this.LogDebug("B2C2 satellite: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
-      if (_interfaceTuner == null)
-      {
-        this.LogError("B2C2 satellite: not initialised or interface not supported");
-        return false;
-      }
-
-      bool success = true;
-      int hr = (int)HResult.Severity.Success;
-
-      B2c2DiseqcPort burst = B2c2DiseqcPort.None;
-      if (toneBurstState == ToneBurst.ToneBurst)
-      {
-        burst = B2c2DiseqcPort.SimpleA;
-      }
-      else if (toneBurstState == ToneBurst.DataBurst)
-      {
-        burst = B2c2DiseqcPort.SimpleB;
-      }
-      if (burst != B2c2DiseqcPort.None)
-      {
-        hr = _interfaceTuner.SetDiseqc(burst);
-        if (hr == (int)HResult.Severity.Success)
-        {
-          this.LogDebug("B2C2 satellite: burst result = success");
-        }
-        else
-        {
-          this.LogDebug("B2C2 satellite: failed to send tone burst command, hr = 0x{0:x}", hr);
-          success = false;
-        }
-      }
-
-      Tone tone = Tone.Off;
-      if (tone22kState == Tone22k.On)
-      {
-        tone = Tone.Tone22k;
-      }
-      hr = _interfaceTuner.SetLnbKHz(tone);
-      if (hr == (int)HResult.Severity.Success)
-      {
-        this.LogDebug("B2C2 satellite: 22 kHz result = success");
-      }
-      else
-      {
-        this.LogDebug("B2C2 satellite: failed to set 22 kHz state, hr = 0x{0:x}", hr);
-        success = false;
-      }
-
-      return success;
-    }
-
-    /// <summary>
     /// Send an arbitrary DiSEqC command.
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public bool SendDiseqcCommand(byte[] command)
+    bool IDiseqcDevice.SendCommand(byte[] command)
     {
       this.LogDebug("B2C2 satellite: send DiSEqC command");
 
@@ -238,13 +246,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         return true;
       }
 
-      int hr = (int)HResult.Severity.Success;
+      int hr = (int)NativeMethods.HResult.S_OK;
       if (_isRawDiseqcSupported)
       {
         try
         {
           hr = _interfaceTuner.SendDiSEqCCommand(command.Length, command);
-          if (hr == (int)HResult.Severity.Success)
+          if (hr == (int)NativeMethods.HResult.S_OK)
           {
             this.LogDebug("B2C2 satellite: result = success");
             return true;
@@ -281,7 +289,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       // Port A = 3, Port B = 4 etc.
       B2c2DiseqcPort port = (B2c2DiseqcPort)((command[3] & 0xc) >> 2) + 3;
       hr = _interfaceTuner.SetDiseqc(port);
-      if (hr == (int)HResult.Severity.Success)
+      if (hr == (int)NativeMethods.HResult.S_OK)
       {
         this.LogDebug("B2C2 satellite: result = success");
         return true;
@@ -292,12 +300,82 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     }
 
     /// <summary>
+    /// Send a tone/data burst command.
+    /// </summary>
+    /// <param name="command">The command to send.</param>
+    /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
+    bool IDiseqcDevice.SendCommand(ToneBurst command)
+    {
+      this.LogDebug("B2C2 satellite: send tone burst command, command = {0}", command);
+
+      if (_interfaceTuner == null)
+      {
+        this.LogWarn("B2C2 satellite: not initialised or interface not supported");
+        return false;
+      }
+
+      B2c2DiseqcPort burstCommand = B2c2DiseqcPort.None;
+      if (command == ToneBurst.ToneBurst)
+      {
+        burstCommand = B2c2DiseqcPort.SimpleA;
+      }
+      else if (command == ToneBurst.DataBurst)
+      {
+        burstCommand = B2c2DiseqcPort.SimpleB;
+      }
+      int hr = _interfaceTuner.SetDiseqc(burstCommand);
+      if (hr == (int)NativeMethods.HResult.S_OK)
+      {
+        this.LogDebug("B2C2 satellite: result = success");
+        return true;
+      }
+
+      this.LogError("B2C2 satellite: failed to send tone burst command, hr = 0x{0:x}", hr);
+      return false;
+    }
+
+    /// <summary>
+    /// Set the 22 kHz continuous tone state.
+    /// </summary>
+    /// <param name="state">The state to set.</param>
+    /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
+    bool IDiseqcDevice.SetToneState(Tone22kState state)
+    {
+      this.LogDebug("B2C2 satellite: set tone state, state = {0}", state);
+
+      if (_interfaceTuner == null)
+      {
+        this.LogWarn("B2C2 satellite: not initialised or interface not supported");
+        return false;
+      }
+
+      Tone tone = Tone.Off;
+      if (state == Tone22kState.On)
+      {
+        tone = Tone.Tone22k;
+      }
+      else if (state == Tone22kState.Off)
+      {
+        tone = Tone.Off;
+      }
+      int hr = _interfaceTuner.SetLnbKHz(tone);
+      if (hr == (int)NativeMethods.HResult.S_OK)
+      {
+        this.LogDebug("B2C2 satellite: result = success");
+        return true;
+      }
+
+      this.LogError("B2C2 satellite: failed to set tone state, hr = 0x{0:x}", hr);
+      return false;
+    }
+
+    /// <summary>
     /// Retrieve the response to a previously sent DiSEqC command (or alternatively, check for a command
     /// intended for this tuner).
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadDiseqcResponse(out byte[] response)
+    bool IDiseqcDevice.ReadResponse(out byte[] response)
     {
       // Not supported.
       response = null;

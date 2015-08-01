@@ -57,17 +57,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Multiplexer
     /// started.
     /// </remarks>
     /// <param name="pinMask">A bit mask specifying the pins to enable/disable.</param>
-    /// <returns>an HRESULT indicating whether the function succeeded</returns>
     [PreserveSig]
-    int DumpInput(int pinMask);
+    void DumpInput(int pinMask);
 
     /// <summary>
     /// Enable or disable output stream dumping.
     /// </summary>
     /// <param name="enable"><c>True</c> to enable dumping.</param>
-    /// <returns>an HRESULT indicating whether the function succeeded</returns>
     [PreserveSig]
-    int DumpOutput([MarshalAs(UnmanagedType.I1)] bool enable);
+    void DumpOutput([MarshalAs(UnmanagedType.I1)] bool enable);
 
     /// <summary>
     /// Set the components for the multiplexer to operate on.
@@ -75,8 +73,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Multiplexer
     /// <param name="video"><c>True</c> if video streams should be multiplexed into the output transport stream.</param>
     /// <param name="audio"><c>True</c> if audio streams should be multiplexed into the output transport stream.</param>
     /// <param name="teletext"><c>True</c> if teletext streams should be multiplexed into the output transport stream.</param>
+    /// <param name="vps"><c>True</c> if VPS streams should be multiplexed into the output transport stream.</param>
+    /// <param name="wss"><c>True</c> if WSS streams should be multiplexed into the output transport stream.</param>
     /// <returns>an HRESULT indicating whether the function succeeded</returns>
     [PreserveSig]
-    int SetActiveComponents([MarshalAs(UnmanagedType.I1)] bool video, [MarshalAs(UnmanagedType.I1)] bool audio, [MarshalAs(UnmanagedType.I1)] bool teletext);
+    int SetActiveComponents([MarshalAs(UnmanagedType.I1)] bool video, [MarshalAs(UnmanagedType.I1)] bool audio, [MarshalAs(UnmanagedType.I1)] bool teletext, [MarshalAs(UnmanagedType.I1)] bool vps, [MarshalAs(UnmanagedType.I1)] bool wss);
   }
 }

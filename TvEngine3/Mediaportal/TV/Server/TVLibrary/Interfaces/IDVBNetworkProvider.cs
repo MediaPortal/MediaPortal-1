@@ -41,11 +41,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider
     /// <returns>Complete filename of the configuration file</returns>
     public static string GetFileName(string devicePath)
     {
-      string hash = GetHash(devicePath);
-      string pathName = PathManager.GetDataPath;
-      string fileName = string.Format(@"{0}\Log\NetworkProvider-{1}.log", pathName, hash);
+      string pathName = Path.Combine(PathManager.GetDataPath, "Log");
+      string fileName = Path.Combine(pathName, string.Format("NetworkProvider-{0}.log", GetHash(devicePath)));
       Log.Debug("NetworkProvider logfilename: " + fileName);
-      Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+      Directory.CreateDirectory(pathName);
       return fileName;
     }
 
@@ -209,9 +208,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider
     Off = 60000
   }
 
-  ///<summary>
-  /// Channel scanning call back
-  ///</summary>
   [Guid("4564675E-C69B-4e05-853D-30870988DEB9"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   internal interface IDvbNetworkProvider

@@ -18,10 +18,11 @@
 
 #endregion
 
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 {
@@ -36,26 +37,49 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <param name="channel">The channel.</param>
     public virtual void UpdateChannel(ref IChannel channel)
     {
-      // Fill in missing names.
       if (string.IsNullOrWhiteSpace(channel.Name))
       {
-        DVBIPChannel streamChannel = channel as DVBIPChannel;
+        ChannelStream streamChannel = channel as ChannelStream;
         if (streamChannel != null)
         {
-          // Streams often don't have meaningful PSI. Just use the URL in those cases.
+          // Streams often don't have meaningful PSI. Just use the URL in those
+          // cases.
           streamChannel.Name = streamChannel.Url;
         }
         else
         {
-          DVBBaseChannel dvbChannel = channel as DVBBaseChannel;
-          if (dvbChannel == null)
+          // Try to use "Unknown <frequency>.<service ID>". At least that way
+          // people can often tell which transmitter the service came from.
+          ChannelMpeg2Base mpeg2Channel = channel as ChannelMpeg2Base;
+          IChannelPhysical physicalChannel = channel as IChannelPhysical;
+          if (mpeg2Channel != null && physicalChannel != null)
           {
-            return;
+            channel.Name = string.Format("Unknown {0}.{1}", (int)(physicalChannel.Frequency / 1000), mpeg2Channel.ProgramNumber);
           }
-          // Default: use "Unknown <frequency>-<service ID>". At least that way people can often
-          // tell which transponder the service came from.
-          dvbChannel.Name = "Unknown " + (dvbChannel.Frequency / 1000) + "-" + dvbChannel.ServiceId;
+          else if (mpeg2Channel != null)
+          {
+            channel.Name = string.Format("Unknown {0}", mpeg2Channel.ProgramNumber);
+          }
+          else if (physicalChannel != null)
+          {
+            channel.Name = string.Format("Unknown {0}", (int)(physicalChannel.Frequency / 1000));
+          }
+          else
+          {
+            channel.Name = "Unknown Non MPEG 2";
+          }
         }
+      }
+
+      // Logical channel number not available.
+      // Assumption: such channels are not mainstream/popular.
+      // If we use default value zero or empty string, sorting by
+      // channel number will list the less popular channels first,
+      // which is not what we want. Setting default channel number as
+      // below ensures these channels are listed last.
+      if (string.IsNullOrWhiteSpace(channel.LogicalChannelNumber))
+      {
+        channel.LogicalChannelNumber = "10000";
       }
     }
 
@@ -65,38 +89,42 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <param name="serviceType">The service type.</param>
     /// <param name="videoStreamCount">The number of video streams associated with the service.</param>
     /// <param name="audioStreamCount">The number of audio streams associated with the service.</param>
-    public virtual MediaTypeEnum? GetMediaType(int serviceType, int videoStreamCount, int audioStreamCount)
+    public virtual MediaType? GetMediaType(int serviceType, int videoStreamCount, int audioStreamCount)
     {
       if (serviceType <= 0)
       {
         if (videoStreamCount != 0)
         {
-          return MediaTypeEnum.TV;
+          return MediaType.Television;
         }
         else if (audioStreamCount != 0)
         {
-          return MediaTypeEnum.Radio;
+          return MediaType.Radio;
         }
         return null;
       }
 
       if (
-        serviceType == (int)DvbServiceType.DigitalRadio ||
-        serviceType == (int)DvbServiceType.FmRadio ||
-        serviceType == (int)DvbServiceType.AdvancedCodecDigitalRadio)
+        serviceType == (int)ServiceType.DigitalRadio ||
+        serviceType == (int)ServiceType.FmRadio ||
+        serviceType == (int)ServiceType.AdvancedCodecDigitalRadio)
       {
-        return MediaTypeEnum.Radio;
+        return MediaType.Radio;
       }
 
       if (
-        serviceType == (int)DvbServiceType.DigitalTelevision ||
-        serviceType == (int)DvbServiceType.Mpeg2HdDigitalTelevision ||
-        serviceType == (int)DvbServiceType.AdvancedCodecSdDigitalTelevision ||
-        serviceType == (int)DvbServiceType.AdvancedCodecHdDigitalTelevision ||
-        serviceType == (int)DvbServiceType.AdvancedCodecFrameCompatiblePlanoStereoscopicHdDigitalTelevision ||
-        serviceType == (int)DvbServiceType.SkyGermanyOptionChannel)
+        serviceType == (int)ServiceType.DigitalTelevision ||
+        serviceType == (int)ServiceType.NvodTimeShifted ||
+        serviceType == (int)ServiceType.Mpeg2HdDigitalTelevision ||
+        serviceType == (int)ServiceType.AdvancedCodecSdDigitalTelevision ||
+        serviceType == (int)ServiceType.AdvancedCodecSdNvodTimeShifted ||
+        serviceType == (int)ServiceType.AdvancedCodecHdDigitalTelevision ||
+        serviceType == (int)ServiceType.AdvancedCodecHdNvodTimeShifted ||
+        serviceType == (int)ServiceType.AdvancedCodecFrameCompatiblePlanoStereoscopicHdDigitalTelevision ||
+        serviceType == (int)ServiceType.AdvancedCodecFrameCompatiblePlanoStereoscopicHdNvodTimeShifted ||
+        serviceType == (int)ServiceType.SkyGermanyOptionChannel)
       {
-        return MediaTypeEnum.TV;
+        return MediaType.Television;
       }
 
       return null;

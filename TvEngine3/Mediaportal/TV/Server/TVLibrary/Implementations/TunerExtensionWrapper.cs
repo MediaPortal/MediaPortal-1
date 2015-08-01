@@ -18,27 +18,35 @@
 
 #endregion
 
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using System;
+using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension.Enum;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
-  internal class TunerExtensionWrapper : ICustomDevice
+  internal class TunerExtensionWrapper : ITunerExtension
   {
-    private ICustomDevice _extension = null;
-    private ITVCard _tuner = null;
+    private ITunerExtension _extension = null;
+    private ITuner _tuner = null;
     private IChannel _currentChannel = null;
 
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerExtensionWrapper"/> class.
     /// </summary>
-    /// <param name="extension">The <see cref="ICustomDevice"/> instance to wrap.</param>
-    /// <param name="tuner">The <see cref="ITVCard"/> instance that the extension is associated with.</param>
-    public TunerExtensionWrapper(ICustomDevice extension, ITVCard tuner)
+    /// <param name="extension">The <see cref="ITunerExtension"/> instance to wrap.</param>
+    /// <param name="tuner">The <see cref="ITuner"/> instance that the extension is associated with.</param>
+    public TunerExtensionWrapper(ITunerExtension extension, ITuner tuner)
     {
       _extension = extension;
       _tuner = tuner;
+    }
+
+    ~TunerExtensionWrapper()
+    {
+      Dispose(false);
     }
 
     public IChannel CurrentChannel
@@ -49,10 +57,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
     }
 
-    #region ICustomDevice members
+    #region ITunerExtension members
 
     /// <summary>
-    /// The loading priority for this extension.
+    /// The loading priority for the extension.
     /// </summary>
     public byte Priority
     {
@@ -63,8 +71,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     /// <summary>
-    /// A human-readable name for the extension. This could be a manufacturer or reseller name, or
-    /// even a model name and/or number.
+    /// A human-readable name for the extension.
     /// </summary>
     public string Name
     {
@@ -75,27 +82,36 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     /// <summary>
-    /// Attempt to initialise the extension-specific interfaces used by the class. If
-    /// the ICustomDevice instance should be disposed
-    /// immediately.
+    /// Does the extension control some part of the tuner hardware?
     /// </summary>
-    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
-    /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="context">Context required to initialise the interface.</param>
-    /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public bool Initialise(string tunerExternalId, CardType tunerType, object context)
+    public bool ControlsTunerHardware
     {
-      return _extension.Initialise(tunerExternalId, tunerType, context);
+      get
+      {
+        return _extension.ControlsTunerHardware;
+      }
     }
 
-    #region device state change call backs
+    /// <summary>
+    /// Attempt to initialise the interfaces used by the extension.
+    /// </summary>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
+    /// <param name="tunerSupportedBroadcastStandards">The broadcast standards supported by the tuner (eg. DVB-T, DVB-T2... etc.).</param>
+    /// <param name="context">Context required to initialise the interfaces.</param>
+    /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
+    public bool Initialise(string tunerExternalId, BroadcastStandard tunerSupportedBroadcastStandards, object context)
+    {
+      return _extension.Initialise(tunerExternalId, tunerSupportedBroadcastStandards, context);
+    }
+
+    #region tuner state change call backs
 
     /// <summary>
     /// This call back is invoked when the tuner has been successfully loaded.
     /// </summary>
     /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="action">The action to take, if any.</param>
-    public void OnLoaded(ITVCard tuner, out TunerAction action)
+    public void OnLoaded(ITuner tuner, out TunerAction action)
     {
       _extension.OnLoaded(_tuner, out action);
     }
@@ -107,7 +123,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
-    public void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
+    public void OnBeforeTune(ITuner tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
     {
       // Do not pass this call on. The extension should not have to handle tune
       // requests for channel types that don't match the tuner type.
@@ -115,22 +131,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     /// <summary>
-    /// This call back is invoked after a tune request is submitted but before the device is started.
+    /// This call back is invoked after a tune request is submitted but before
+    /// the tuner is started.
     /// </summary>
     /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
-    public void OnAfterTune(ITVCard tuner, IChannel currentChannel)
+    public void OnAfterTune(ITuner tuner, IChannel currentChannel)
     {
       // As with OnBeforeTune().
     }
 
     /// <summary>
-    /// This call back is invoked after a tune request is submitted, when the tuner is started but
-    /// before signal lock is checked.
+    /// This call back is invoked after a tune request is submitted, when the
+    /// tuner is started but before signal lock is checked.
     /// </summary>
     /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
-    public void OnStarted(ITVCard tuner, IChannel currentChannel)
+    public void OnStarted(ITuner tuner, IChannel currentChannel)
     {
       _extension.OnStarted(_tuner, _currentChannel);
     }
@@ -140,7 +157,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="action">As an input, the action that the TV Engine wants to take; as an output, the action to take.</param>
-    public void OnStop(ITVCard tuner, ref TunerAction action)
+    public void OnStop(ITuner tuner, ref TunerAction action)
     {
       _extension.OnStop(_tuner, ref action);
     }
@@ -156,7 +173,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public void Dispose()
     {
-      _extension.Dispose();
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Release and dispose all resources.
+    /// </summary>
+    /// <param name="isDisposing"><c>True</c> if the instance is being disposed.</param>
+    private void Dispose(bool isDisposing)
+    {
+      if (isDisposing)
+      {
+        IDisposable d = _extension as IDisposable;
+        if (d != null)
+        {
+          d.Dispose();
+        }
+      }
     }
 
     #endregion

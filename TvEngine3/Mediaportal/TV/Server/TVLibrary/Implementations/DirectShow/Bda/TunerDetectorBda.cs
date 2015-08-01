@@ -22,12 +22,14 @@ using System;
 using System.Collections.Generic;
 using DirectShowLib;
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider;
+using MediaPortal.Common.Utils;
+using IBdaTuner = DirectShowLib.BDA.ITuner;
+using IMpTuner = Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.ITuner;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 {
@@ -48,7 +50,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     private DsROTEntry _rotEntry = null;
 
     // key = device path
-    private IDictionary<string, ICollection<ITVCard>> _knownTuners = new Dictionary<string, ICollection<ITVCard>>();
+    private IDictionary<string, ICollection<IMpTuner>> _knownTuners = new Dictionary<string, ICollection<IMpTuner>>();
 
     #endregion
 
@@ -68,6 +70,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
     }
 
+    ~TunerDetectorBda()
+    {
+      Dispose(false);
+    }
+
     #region IDisposable member
 
     /// <summary>
@@ -75,23 +82,37 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// </summary>
     public void Dispose()
     {
-      _knownTuners.Clear();
-      if (_rotEntry != null)
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Release and dispose all resources.
+    /// </summary>
+    /// <param name="isDisposing"><c>True</c> if the detector is being disposed.</param>
+    private void Dispose(bool isDisposing)
+    {
+      if (isDisposing)
       {
-        _rotEntry.Dispose();
+        _knownTuners.Clear();
+        if (_rotEntry != null)
+        {
+          _rotEntry.Dispose();
+          _rotEntry = null;
+        }
+        if (_graph != null)
+        {
+          _graph.RemoveFilter(_atscNp);
+          _graph.RemoveFilter(_dvbcNp);
+          _graph.RemoveFilter(_dvbsNp);
+          _graph.RemoveFilter(_dvbtNp);
+          Release.ComObject("BDA detector graph", ref _graph);
+        }
+        Release.ComObject("BDA detector ATSC network provider", ref _atscNp);
+        Release.ComObject("BDA detector DVB-C network provider", ref _dvbcNp);
+        Release.ComObject("BDA detector DVB-S network provider", ref _dvbsNp);
+        Release.ComObject("BDA detector DVB-T network provider", ref _dvbtNp);
       }
-      if (_graph != null)
-      {
-        _graph.RemoveFilter(_atscNp);
-        _graph.RemoveFilter(_dvbcNp);
-        _graph.RemoveFilter(_dvbsNp);
-        _graph.RemoveFilter(_dvbtNp);
-        Release.ComObject("BDA detector graph", ref _graph);
-      }
-      Release.ComObject("BDA detector ATSC network provider", ref _atscNp);
-      Release.ComObject("BDA detector DVB-C network provider", ref _dvbcNp);
-      Release.ComObject("BDA detector DVB-S network provider", ref _dvbsNp);
-      Release.ComObject("BDA detector DVB-T network provider", ref _dvbtNp);
     }
 
     #endregion
@@ -113,11 +134,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// Detect and instanciate the compatible tuners connected to the system.
     /// </summary>
     /// <returns>the tuners that are currently available</returns>
-    public ICollection<ITVCard> DetectTuners()
+    public ICollection<IMpTuner> DetectTuners()
     {
       this.LogDebug("BDA detector: detect tuners");
-      List<ITVCard> tuners = new List<ITVCard>();
-      IDictionary<string, ICollection<ITVCard>> knownTuners = new Dictionary<string, ICollection<ITVCard>>();
+      List<IMpTuner> tuners = new List<IMpTuner>();
+      IDictionary<string, ICollection<IMpTuner>> knownTuners = new Dictionary<string, ICollection<IMpTuner>>();
 
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
       foreach (DsDevice device in devices)
@@ -131,7 +152,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         }
 
         // Is this a new device?
-        ICollection<ITVCard> deviceTuners;
+        ICollection<IMpTuner> deviceTuners;
         if (_knownTuners.TryGetValue(devicePath, out deviceTuners))
         {
           device.Dispose();
@@ -139,9 +160,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           knownTuners.Add(devicePath, deviceTuners);
           continue;
         }
-        deviceTuners = new List<ITVCard>(4);
+        deviceTuners = new List<IMpTuner>(4);
 
-        this.LogDebug("BDA detector: tuner {0} {1}", name, devicePath);
+        this.LogDebug("BDA detector: tuner, name = {0}, device path = {1}", name, devicePath);
         IBaseFilter tunerFilter;
         try
         {
@@ -149,70 +170,98 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         }
         catch (Exception ex)
         {
-          this.LogError(ex, "BDA detector: failed to add BDA source filter to determine tuner type for {0} {1}", name, devicePath);
+          this.LogError(ex, "BDA detector: failed to add BDA source filter to determine tuner type, name = {0}, device path = {1}", name, devicePath);
           device.Dispose();
           continue;
         }
 
-        bool isAtsc = false;
-        bool isCable = false;
-        bool isSatellite = false;
-        bool isTerrestrial = false;
+        bool isVsbSupported = false;
+        bool isQamSupported = false;
+        bool isQamDvbSupported = false;
+        bool isPskSupported = false;
+        bool isPsk8Supported = false;
+        bool isOfdmSupported = false;
         try
         {
           // We shouldn't need network providers to detect the tuner type.
           this.LogDebug("  check type with topology node descriptors");
-          DetectSourceTypeInternal(tunerFilter, out isAtsc, out isCable, out isSatellite, out isTerrestrial);
+          DetectSourceTypeInternal(tunerFilter, out isVsbSupported, out isQamSupported, out isPskSupported, out isPsk8Supported, out isOfdmSupported);
 
           // If we couldn't detect the type with the topology info, try network
-          // providers starting with the MediaPortal network provider.
-          if (!isAtsc && !isCable && !isSatellite && !isTerrestrial)
-          {
-            this.LogDebug("  check type with MediaPortal network provider");
-            DetectSourceTypeMediaPortalNetworkProvider(tunerFilter, devicePath, out isAtsc, out isCable, out isSatellite, out isTerrestrial);
-          }
-          // Try the Microsoft network provider next if the MediaPortal network provider failed and
-          // the MS generic NP is available.
-          if (!isAtsc && !isCable && !isSatellite && !isTerrestrial && _isMicrosoftGenericNpAvailable)
+          // providers. Try the Microsoft network provider first if available.
+          if (!isVsbSupported && !isQamSupported && !isPskSupported && !isOfdmSupported && _isMicrosoftGenericNpAvailable)
           {
             this.LogDebug("  check type with Microsoft generic network provider");
-            DetectSourceTypeMicrosoftGenericNetworkProvider(tunerFilter, out isAtsc, out isCable, out isSatellite, out isTerrestrial);
+            DetectSourceTypeMicrosoftGenericNetworkProvider(tunerFilter, out isVsbSupported, out isQamSupported, out isQamDvbSupported, out isPskSupported, out isOfdmSupported);
           }
           // Last shot is the old style Microsoft network providers.
-          if (!isAtsc && !isCable && !isSatellite && !isTerrestrial)
+          if (!isVsbSupported && !isQamSupported && !isPskSupported && !isOfdmSupported)
           {
             this.LogDebug("  check type with specific Microsoft network providers");
-            DetectSourceTypeMicrosoftSpecificNetworkProvider(tunerFilter, out isAtsc, out isCable, out isSatellite, out isTerrestrial);
+            DetectSourceTypeMicrosoftSpecificNetworkProvider(tunerFilter, out isVsbSupported, out isQamSupported, out isPskSupported, out isOfdmSupported);
           }
-          if (!isAtsc && !isCable && !isSatellite && !isTerrestrial)
+          if (!isVsbSupported && !isQamSupported && !isPskSupported && !isOfdmSupported)
           {
-            this.LogError("BDA detector: failed to determine tuner type for {0} {1}", name, devicePath);
+            this.LogError("BDA detector: failed to determine tuner type, name = {0}, device path = {1}", name, devicePath);
             device.Dispose();
             continue;
           }
 
-          if (isAtsc)
+          if (isVsbSupported)
           {
-            if (tunerFilter is IBDA_ConditionalAccess)
+            BroadcastStandard supportedBroadcastStandards = BroadcastStandard.Atsc;
+            if (isQamSupported)
+            {
+              supportedBroadcastStandards |= BroadcastStandard.Scte;
+            }
+
+            deviceTuners.Add(new TunerBdaAtsc(device, supportedBroadcastStandards));
+          }
+          else if (isQamSupported)
+          {
+            if (isQamDvbSupported)
+            {
+              deviceTuners.Add(new TunerBdaQam(device));
+            }
+            else if (tunerFilter is IBDA_ConditionalAccess)
             {
               deviceTuners.Add(new TunerPbdaCableCard(device));
             }
             else
             {
-              deviceTuners.Add(new TunerBdaAtsc(device));
+              string countryName = System.Globalization.RegionInfo.CurrentRegion.EnglishName;
+              if (countryName != null && (countryName.Equals("United States") || countryName.Equals("Canada")))
+              {
+                deviceTuners.Add(new TunerBdaAtsc(device, BroadcastStandard.Scte));
+              }
+              else
+              {
+                deviceTuners.Add(new TunerBdaQam(device));
+              }
             }
           }
-          if (isCable)
+
+          if (isPskSupported)
           {
-            deviceTuners.Add(new TunerBdaCable(device));
+            if (isPsk8Supported || device.Name.ToLowerInvariant().Contains("s2"))
+            {
+              deviceTuners.Add(new TunerBdaPsk(device, BroadcastStandard.DvbS | BroadcastStandard.DvbS2));
+            }
+            else
+            {
+              deviceTuners.Add(new TunerBdaPsk(device, BroadcastStandard.DvbS));
+            }
           }
-          if (isSatellite)
+          if (isOfdmSupported)
           {
-            deviceTuners.Add(new TunerBdaSatellite(device));
-          }
-          if (isTerrestrial)
-          {
-            deviceTuners.Add(new TunerBdaTerrestrial(device));
+            if (device.Name.ToLowerInvariant().Contains("t2"))
+            {
+              deviceTuners.Add(new TunerBdaOfdm(device, BroadcastStandard.DvbT | BroadcastStandard.DvbT2));
+            }
+            else
+            {
+              deviceTuners.Add(new TunerBdaOfdm(device, BroadcastStandard.DvbT));
+            }
           }
 
           tuners.AddRange(deviceTuners);
@@ -271,7 +320,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         ((IATSCLocator)locator).put_PhysicalChannel(-1);
         ((IATSCLocator)locator).put_TSID(-1);
         tuningSpace.put_DefaultLocator(locator);
-        ((ITuner)_atscNp).put_TuningSpace(tuningSpace);
+        ((IBdaTuner)_atscNp).put_TuningSpace(tuningSpace);
 
         // DVB-C
         _dvbcNp = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, typeof(DVBCNetworkProvider).GUID, "DVB-C Network Provider");
@@ -289,7 +338,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
         locator.put_SymbolRate(-1);
         tuningSpace.put_DefaultLocator(locator);
-        ((ITuner)_dvbcNp).put_TuningSpace(tuningSpace);
+        ((IBdaTuner)_dvbcNp).put_TuningSpace(tuningSpace);
 
         // DVB-S
         _dvbsNp = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, typeof(DVBSNetworkProvider).GUID, "DVB-S Network Provider");
@@ -307,7 +356,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
         locator.put_SymbolRate(-1);
         tuningSpace.put_DefaultLocator(locator);
-        ((ITuner)_dvbsNp).put_TuningSpace(tuningSpace);
+        ((IBdaTuner)_dvbsNp).put_TuningSpace(tuningSpace);
 
         // DVB-T
         _dvbtNp = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, typeof(DVBTNetworkProvider).GUID, "DVB-T Network Provider");
@@ -325,7 +374,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
         locator.put_SymbolRate(-1);
         tuningSpace.put_DefaultLocator(locator);
-        ((ITuner)_dvbtNp).put_TuningSpace(tuningSpace);
+        ((IBdaTuner)_dvbtNp).put_TuningSpace(tuningSpace);
       }
       catch (Exception ex)
       {
@@ -346,12 +395,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
     }
 
-    private void DetectSourceTypeInternal(IBaseFilter filter, out bool isAtsc, out bool isCable, out bool isSatellite, out bool isTerrestrial)
+    private void DetectSourceTypeInternal(IBaseFilter filter, out bool isVsbSupported, out bool isQamSupported, out bool isPskSupported, out bool isPsk8Supported, out bool isOfdmSupported)
     {
-      isAtsc = false;
-      isCable = false;
-      isSatellite = false;
-      isTerrestrial = false;
+      isVsbSupported = false;
+      isQamSupported = false;
+      isPskSupported = false;
+      isPsk8Supported = false;
+      isOfdmSupported = false;
+
       IBDA_Topology topology = filter as IBDA_Topology;
       if (topology == null)
       {
@@ -361,7 +412,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       BDANodeDescriptor[] descriptors = new BDANodeDescriptor[21];
       int descriptorCount = 0;
       int hr = topology.GetNodeDescriptors(out descriptorCount, 20, descriptors);
-      if (hr != (int)HResult.Severity.Success)
+      if (hr != (int)NativeMethods.HResult.S_OK)
       {
         this.LogError("BDA detector: failed to get node descriptors from topology, hr = 0x{0:x}", hr);
         return;
@@ -373,121 +424,42 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         this.LogDebug("    function {0} = {1}", d, function);
         if (function == BDANodeCategory.EightVSBDemodulator)
         {
-          isAtsc = true;
+          isVsbSupported = true;
         }
         else if (function == BDANodeCategory.QAMDemodulator)
         {
-          if (filter is IBDA_ConditionalAccess)
-          {
-            isAtsc = true;
-          }
-          else
-          {
-            isCable = true;
-          }
+          isQamSupported = true;
         }
         else if (function == BDANodeCategory.COFDMDemodulator ||
           function == MediaPortalGuid.KS_NODE_BDA_ISDB_T_DEMODULATOR)
         {
-          isTerrestrial = true;
+          isOfdmSupported = true;
         }
-        else if (function == BDANodeCategory.QPSKDemodulator ||
-          function == MediaPortalGuid.KS_NODE_BDA_8PSK_DEMODULATOR ||
+        else if (function == BDANodeCategory.QPSKDemodulator)
+        {
+          isPskSupported = true;
+        }
+        else if (function == MediaPortalGuid.KS_NODE_BDA_8PSK_DEMODULATOR ||
           function == MediaPortalGuid.KS_NODE_BDA_ISDB_S_DEMODULATOR)
         {
-          isSatellite = true;
+          isPskSupported = true;
+          isPsk8Supported = true;
         }
       }
 
-      if (isCable && isAtsc)
-      {
-        isCable = false;
-      }
-      else if (!isAtsc && !isCable && !isSatellite && !isTerrestrial)
+      if (!isVsbSupported && !isQamSupported && !isPskSupported && !isOfdmSupported)
       {
         this.LogDebug("  traversed topology but type not recognised");
       }
     }
 
-    private void DetectSourceTypeMediaPortalNetworkProvider(IBaseFilter filter, string devicePath, out bool isAtsc, out bool isCable, out bool isSatellite, out bool isTerrestrial)
+    private void DetectSourceTypeMicrosoftGenericNetworkProvider(IBaseFilter filter, out bool isVsbSupported, out bool isQamSupported, out bool isQamDvbSupported, out bool isPskSupported, out bool isOfdmSupported)
     {
-      isAtsc = false;
-      isCable = false;
-      isSatellite = false;
-      isTerrestrial = false;
-      IBaseFilter mpNp = null;
-      try
-      {
-        mpNp = FilterGraphTools.AddFilterFromFile(_graph, "NetworkProvider.ax", typeof(MediaPortalNetworkProvider).GUID, "MediaPortal Network Provider");
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "BDA detector: failed to add MediaPortal network provider to detection graph");
-        return;
-      }
-
-      try
-      {
-        IDvbNetworkProvider interfaceNetworkProvider = mpNp as IDvbNetworkProvider;
-        string hash = MediaPortalNetworkProvider.GetHash(devicePath);
-        interfaceNetworkProvider.ConfigureLogging(MediaPortalNetworkProvider.GetFileName(devicePath), hash, LogLevelOption.Debug);
-        if (!ConnectFilter(_graph, mpNp, filter))
-        {
-          this.LogDebug("  failed to connect to MediaPortal network provider");
-          return;
-        }
-
-        TuningType tuningTypes;
-        int hr = interfaceNetworkProvider.GetAvailableTuningTypes(out tuningTypes);
-        if (hr != (int)HResult.Severity.Success)
-        {
-          this.LogError("BDA detector: connected to MediaPortal network provider but failed to get available tuning types, hr = 0x{0:x}", hr);
-          return;
-        }
-
-        this.LogDebug("  tuning types = {0}, hash = {1}", tuningTypes, hash);
-        if (tuningTypes.HasFlag(TuningType.Atsc))
-        {
-          isAtsc = true;
-        }
-        if (tuningTypes.HasFlag(TuningType.DvbC))
-        {
-          if (filter is IBDA_ConditionalAccess)
-          {
-            isAtsc = true;
-          }
-          else
-          {
-            isCable = true;
-          }
-        }
-        if (tuningTypes.HasFlag(TuningType.DvbT) || tuningTypes.HasFlag(TuningType.IsdbT))
-        {
-          isTerrestrial = true;
-        }
-        if (tuningTypes.HasFlag(TuningType.DvbS) || tuningTypes.HasFlag(TuningType.DvbS2) || tuningTypes.HasFlag(TuningType.IsdbS))
-        {
-          isSatellite = true;
-        }
-
-        if (!isAtsc && !isCable && !isSatellite && !isTerrestrial)
-        {
-          this.LogDebug("  connected to MediaPortal network provider but type not recognised");
-        }
-      }
-      finally
-      {
-        _graph.RemoveFilter(mpNp);
-        Release.ComObject("BDA detector MediaPortal network provider", ref mpNp);
-      }
-    }
-
-    private void DetectSourceTypeMicrosoftGenericNetworkProvider(IBaseFilter filter, out bool isAtsc, out bool isCable, out bool isSatellite, out bool isTerrestrial)
-    {
-      isAtsc = false;
-      isCable = false;
-      isSatellite = false;
-      isTerrestrial = false;
+      isVsbSupported = false;
+      isQamSupported = false;
+      isQamDvbSupported = false;
+      isPskSupported = false;
+      isOfdmSupported = false;
       IBaseFilter genericNp = null;
       try
       {
@@ -511,40 +483,41 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         int networkTypeCount;
         Guid[] networkTypes = new Guid[networkTypesMax];
         int hr = (genericNp as ITunerCap).get_SupportedNetworkTypes(networkTypesMax, out networkTypeCount, networkTypes);
-        if (hr != (int)HResult.Severity.Success)
+        if (hr != (int)NativeMethods.HResult.S_OK)
         {
           this.LogError("BDA detector: connected to Microsoft generic network provider but failed to get supported network types, hr = 0x{0:x}", hr);
           return;
         }
 
         this.LogDebug("  network type count = {0}", networkTypeCount);
-        bool isLocalDigitalCableSupported = false;
         for (int n = 0; n < networkTypeCount; n++)
         {
           Guid networkType = networkTypes[n];
           this.LogDebug("    network type {0} = {1}", n, networkType);
           if (networkType == NetworkType.DIGITAL_CABLE)
           {
-            // BDA hybrid ATSC/QAM, BDA DVB-C and PBDA CableCARD tuners all advertise this network
-            // type. ATSC and DVB-C tuners usually advertise additional types which allow us to
-            // identifiy them. If we don't see those types, we assume this is a QAM or CableCARD
-            // tuner.
-            isLocalDigitalCableSupported = true;
+            // BDA hybrid ATSC/QAM, BDA DVB-C and PBDA CableCARD tuners all
+            // advertise this network type. ATSC and DVB-C tuners usually
+            // advertise additional types which allow us to identifiy them.
+            // If we don't see those types, we assume this is a QAM or
+            // CableCARD tuner.
+            isQamSupported = true;
           }
           else if (networkType == NetworkType.ATSC_TERRESTRIAL)
           {
-            isAtsc = true;
+            isVsbSupported = true;
           }
           else if (networkType == NetworkType.DVB_CABLE ||
             networkType == NetworkType.ISDB_CABLE)
           {
-            isCable = true;
+            isQamSupported = true;
+            isQamDvbSupported = true;
           }
           else if (networkType == NetworkType.DVB_TERRESTRIAL ||
             networkType == NetworkType.ISDB_TERRESTRIAL ||
             networkType == NetworkType.ISDB_T)
           {
-            isTerrestrial = true;
+            isOfdmSupported = true;
           }
           else if (networkType == NetworkType.DVB_SATELLITE ||
             networkType == NetworkType.DIRECTV_SATELLITE ||
@@ -552,15 +525,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
             networkType == NetworkType.ISDB_SATELLITE ||
             networkType == NetworkType.ISDB_S)
           {
-            isSatellite = true;
+            isPskSupported = true;
           }
         }
 
-        if (isLocalDigitalCableSupported && !isAtsc && !isCable)
-        {
-          isAtsc = true;
-        }
-        else if (!isAtsc && !isCable && !isSatellite && !isTerrestrial)
+        if (!isVsbSupported && !isQamSupported && !isPskSupported && !isOfdmSupported)
         {
           this.LogDebug("  connected to Microsoft generic network provider but type not recognised");
         }
@@ -572,39 +541,29 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
     }
 
-    private void DetectSourceTypeMicrosoftSpecificNetworkProvider(IBaseFilter filter, out bool isAtsc, out bool isCable, out bool isSatellite, out bool isTerrestrial)
+    private void DetectSourceTypeMicrosoftSpecificNetworkProvider(IBaseFilter filter, out bool isVsbSupported, out bool isQamSupported, out bool isPskSupported, out bool isOfdmSupported)
     {
-      isAtsc = false;
-      isCable = false;
-      isSatellite = false;
-      isTerrestrial = false;
+      isVsbSupported = false;
+      isQamSupported = false;
+      isPskSupported = false;
+      isOfdmSupported = false;
       if (ConnectFilter(_graph, _dvbtNp, filter))
       {
-        isTerrestrial = true;
+        isOfdmSupported = true;
       }
       else if (ConnectFilter(_graph, _dvbcNp, filter))
       {
-        // PBDA CableCARD tuners connect with the DVB-C network provider because they advertise the
-        // local cable tuning type.
-        if (filter is IBDA_ConditionalAccess)
-        {
-          isAtsc = true;
-        }
-        else
-        {
-          isCable = true;
-        }
+        isQamSupported = true;
       }
       else if (ConnectFilter(_graph, _dvbsNp, filter))
       {
-        isSatellite = true;
+        isPskSupported = true;
       }
       else if (ConnectFilter(_graph, _atscNp, filter))
       {
-        isAtsc = true;
+        isVsbSupported = true;
       }
-
-      if (!isAtsc && !isCable && !isSatellite && !isTerrestrial)
+      else
       {
         this.LogDebug("  failed to connect to specific Microsoft network provider");
       }

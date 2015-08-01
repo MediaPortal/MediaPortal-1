@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -18,23 +18,16 @@
 
 #endregion
 
-using System.Runtime.InteropServices;
-
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Enum
 {
-  ///<summary>
-  /// TsWriter video/audio observer
-  ///</summary>
-  [Guid("08177EB2-65D6-4d0a-A2A8-E7B7280A95A3"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  internal interface IVideoAudioObserver
+  // See ATSC A/56 or SCTE 57 table 5.6, SCTE 65 table 5.7.
+  internal enum TransmissionSystem
   {
-    ///<summary>
-    /// Called when a pid is detected
-    ///</summary>
-    ///<param name="pidType">The pid type</param>
-    ///<returns>Error code</returns>
-    [PreserveSig]
-    int OnNotify(PidType pidType);
+    Unknown = 0,
+    ItutAnnex1,     // ITU ETSI cable (DVB-C); SCTE 65 reserved ETSI
+    ItutAnnex2,     // ITU North American cable (SCTE)
+    ItuR,           // ITU ETSI satellite; SCTE 65 defined for use in other systems
+    Atsc,
+    DigiCipher      // DC II satellite; SCTE 65 reserved satellite
   }
 }

@@ -23,21 +23,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using System.Xml.XPath;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
+using MediaPortal.Common.Utils;
 using UPnP.Infrastructure;
 using UPnP.Infrastructure.CP;
 using UPnP.Infrastructure.CP.Description;
 using UPnP.Infrastructure.CP.SSDP;
+using DbTunerGroup = Mediaportal.TV.Server.TVDatabase.Entities.TunerGroup;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
@@ -46,8 +51,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
   /// </summary>
   public class TunerDetector : IDisposable
   {
+    #region private classes
+
+    private class DeviceInfo
+    {
+      public string Id;
+      public string HardwareId;
+      public string Name;
+      public string Description;
+      public string Manufacturer;
+      public string Location;
+      public string PhysicalDeviceObjectName;
+      public NativeMethods.SP_DRVINFO_DATA DriverInfo;
+    }
+
+    #endregion
+
     #region constants
 
+    private Guid SYSTEM_DEVICE_CLASS_MEDIA = new Guid(0x4d36e96c, 0xe325, 0x11ce, 0xbf, 0xc1, 0x08, 0x00, 0x2b, 0xe1, 0x03, 0x18);
     private static readonly Regex REGEX_DRIVER_DATE = new Regex(@"^(\d{4})(\d{2})(\d{2})");
 
     #endregion
@@ -65,29 +87,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     // Used for detecting and communicating with devices that are directly
     // connected to the system.
     private ManagementEventWatcher _systemDeviceChangeEventWatcher = null;
-    private ManagementObjectSearcher _systemDeviceInfoSearcher = null;
-    private ManagementObjectCollection _systemDeviceDriverInfo = null;
-    private List<KeyValuePair<string, string>> _systemDeviceInterestingProperties = new List<KeyValuePair<string, string>>();
-    private DateTime _previousSystemDeviceChange = DateTime.MinValue;
-    private List<ITunerDetectorSystem> _systemDetectors = new List<ITunerDetectorSystem>();
+    private DateTime _previousSystemDeviceChangeEvent = DateTime.MinValue;
+    private IList<DeviceInfo> _systemDeviceDriverInfo = null;
+    private IList<ITunerDetectorSystem> _systemDetectors = new List<ITunerDetectorSystem>();
+
+    // Used for detecting power management events.
+    private ManagementEventWatcher _systemPowerManagementEventWatcher = null;
+    private DateTime _previousSystemPowerManagementEvent = DateTime.MinValue;
 
     private HashSet<string> _firstDetectionTuners = new HashSet<string>();  // external IDs
     private HashSet<string> _knownUpnpRootDevices = new HashSet<string>();  // UUIDs
     private HashSet<string> _knownSystemTuners = new HashSet<string>();     // external IDs
 
     // tuner external ID => tuner
-    private Dictionary<string, ITVCard> _tuners = new Dictionary<string, ITVCard>();
+    private IDictionary<string, ITuner> _tuners = new Dictionary<string, ITuner>();
     // UPnP device UUID => [tuner external IDs] (used to implement UPnP tuner removal)
-    private Dictionary<string, HashSet<string>> _upnpDeviceTuners = new Dictionary<string, HashSet<string>>();
+    private IDictionary<string, HashSet<string>> _upnpDeviceTuners = new Dictionary<string, HashSet<string>>();
     // product instance ID => tuner instance ID => tuner external IDs
-    private Dictionary<string, Dictionary<string, HashSet<string>>> _naturalTunerGroups = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+    private IDictionary<string, Dictionary<string, HashSet<string>>> _naturalTunerGroups = new Dictionary<string, Dictionary<string, HashSet<string>>>();
     // database group ID => group
-    private Dictionary<int, TunerGroup> _configuredTunerGroups = new Dictionary<int, TunerGroup>();
+    private IDictionary<int, TunerGroup> _configuredTunerGroups = new Dictionary<int, TunerGroup>();
 
     // The listener that we notify when tuner changes are detected.
     private ITunerDetectionEventListener _eventListener = null;
 
     #endregion
+
+    #region constructor & finaliser
 
     /// <summary>
     /// Constructor.
@@ -96,6 +122,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     public TunerDetector(ITunerDetectionEventListener listener)
     {
       _eventListener = listener;
+
+      // Setup power event handling.
+      _systemPowerManagementEventWatcher = new ManagementEventWatcher();
+      _systemPowerManagementEventWatcher.Query = new WqlEventQuery("SELECT * FROM Win32_PowerManagementEvent");
+      _systemPowerManagementEventWatcher.EventArrived += OnSystemPowerManagementEvent;
+      _systemPowerManagementEventWatcher.Start();
 
       // Setup UPnP tuner detection.
       UPnPConfiguration.LOGGER = new Logger();
@@ -106,20 +138,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _upnpControlPoint = new UPnPControlPoint(_upnpAgent);
 
       // Setup system tuner detection.
-      _systemDeviceInterestingProperties.Add(new KeyValuePair<string, string>("DeviceName", "name    "));
-      _systemDeviceInterestingProperties.Add(new KeyValuePair<string, string>("DriverProviderName", "provider"));
-      _systemDeviceInterestingProperties.Add(new KeyValuePair<string, string>("DriverVersion", "version "));
-      _systemDeviceInterestingProperties.Add(new KeyValuePair<string, string>("DriverDate", "date    "));
-      _systemDeviceInterestingProperties.Add(new KeyValuePair<string, string>("Location", "location"));
-      _systemDeviceInterestingProperties.Add(new KeyValuePair<string, string>("PDO", "PDO     "));
-      string[] queryProperties = new string[_systemDeviceInterestingProperties.Count];
-      int i = 0;
-      foreach (KeyValuePair<string, string> p in _systemDeviceInterestingProperties)
-      {
-        queryProperties[i++] = p.Key;
-      }
-      _systemDeviceInfoSearcher = new ManagementObjectSearcher(string.Format("SELECT DeviceID, {0} FROM Win32_PnPSignedDriver WHERE DeviceClass = 'MEDIA'", string.Join(", ", queryProperties)));
-
       // EventType 2 and 3 are device arrival and removal. See:
       // http://msdn.microsoft.com/en-us/library/windows/desktop/aa394124%28v=vs.85%29.aspx
       // You'd think checking for arrival and removal would be enough, but in
@@ -130,7 +148,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       // installed.
       _systemDeviceChangeEventWatcher = new ManagementEventWatcher();
       _systemDeviceChangeEventWatcher.Query = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent");
-      _systemDeviceChangeEventWatcher.EventArrived += OnSystemDeviceConnectedOrDisconnected;
+      _systemDeviceChangeEventWatcher.EventArrived += OnSystemDeviceChangeEvent;
 
       this.LogInfo("detector: loading detectors");
       Assembly a = Assembly.GetExecutingAssembly();
@@ -156,42 +174,275 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
     }
 
+    ~TunerDetector()
+    {
+      Dispose(false);
+    }
+
+    #endregion
+
+    #region detector control
+
     /// <summary>
     /// Start tuner detection.
     /// </summary>
     public void Start()
     {
-      if (_isStarted)
+      lock (_tuners)
       {
-        return;
-      }
-      this.LogInfo("detector: starting tuner detection");
-      // Start detecting tuners connected directly to the system.
-      DetectSystemTuners();
+        if (_isStarted)
+        {
+          return;
+        }
+        _isStarted = true;
 
-      try
-      {
-        _systemDeviceChangeEventWatcher.Start();
-      }
-      catch
-      {
-        // Fails on Windows Media Center 2005 (ManagementException "unsupported", despite MS documentation).
-        this.LogWarn("detector: failed to start device change event watcher, you'll have to restart the TV Engine to detect new tuners");
-      }
+        this.LogInfo("detector: starting tuner detection");
 
-      // Start detecting UPnP tuners.
-      // IMPORTANT: this parameter must be set to allow devices with many sub-devices
-      // and/or services to be detected. The timer interval specifies how long the
-      // SSDP controller has from first detection of the root device SSDP packet
-      // until descriptions for all devices and services have been requested, received
-      // and processed. DRI tuners normally take about 5 seconds.
-      SSDPClientController.EXPIRATION_TIMER_INTERVAL = 60000;
-      // IMPORTANT: you should start the control point before the network tracker.
-      _upnpControlPoint.Start();
-      _upnpAgent.Start();
-      _upnpAgent.SharedControlPointData.SSDPController.SearchDeviceByDeviceTypeVersion("schemas-opencable-com:service:Tuner", "1", null);
-      _upnpAgent.SharedControlPointData.SSDPController.SearchDeviceByDeviceTypeVersion("urn:ses-com:device:SatIPServer", "1", null);
-      _isStarted = true;
+        // Start detecting tuners connected directly to the system.
+        ThreadPool.QueueUserWorkItem(
+          delegate
+          {
+            DoDelayedSystemTunerDetection();
+          }
+        );
+        try
+        {
+          _systemDeviceChangeEventWatcher.Start();
+        }
+        catch
+        {
+          // Fails on Windows Media Center 2005 (ManagementException "unsupported", despite MS documentation).
+          this.LogWarn("detector: failed to start device change event watcher, you'll have to restart the TV Engine to detect new tuners");
+        }
+
+        // Start detecting UPnP tuners.
+        // IMPORTANT: this parameter must be set to allow devices with many
+        // sub-devices and/or services to be detected. The timer interval
+        // specifies how long the SSDP controller has from first detection
+        // of the root device SSDP packet until descriptions for all devices
+        // and services have been requested, received and processed. DRI
+        // tuners normally take about 5 seconds.
+        SSDPClientController.EXPIRATION_TIMER_INTERVAL = 60000;
+        // IMPORTANT: you should start the control point before the network
+        // tracker.
+        _upnpControlPoint.Start();
+        _upnpAgent.Start();
+        SearchForSupportedUpnpDevices();
+      }
+    }
+
+    /// <summary>
+    /// Reload the detector's configuration.
+    /// </summary>
+    public void ReloadConfiguration()
+    {
+      lock (_tuners)
+      {
+        if (!_isStarted)
+        {
+          return;
+        }
+        this.LogDebug("detector: reload configuration");
+
+        // Order of operations is important.
+
+        // 1. Force-detect tuner changes.
+        DetectSystemTuners();
+
+        // 2. Remove old groups.
+        HashSet<int> currentGroupIds = new HashSet<int>(_configuredTunerGroups.Keys);
+        HashSet<int> unchangedGroupIds = new HashSet<int>();
+        List<DbTunerGroup> newGroups = new List<DbTunerGroup>();
+        IList<DbTunerGroup> dbGroups = TunerGroupManagement.ListAllTunerGroups();
+        foreach (DbTunerGroup dbGroup in dbGroups)
+        {
+          unchangedGroupIds.Add(dbGroup.IdTunerGroup);
+          if (!_configuredTunerGroups.ContainsKey(dbGroup.IdTunerGroup))
+          {
+            newGroups.Add(dbGroup);
+          }
+        }
+        currentGroupIds.ExceptWith(unchangedGroupIds);
+        foreach (int groupId in currentGroupIds)
+        {
+          TunerGroup group;
+          if (_configuredTunerGroups.TryGetValue(groupId, out group))
+          {
+            this.LogInfo("detector: removing tuner group, name = {0}, product instance ID = {1}, tuner instance ID = {2}...", group.Name, group.ProductInstanceId ?? "[null]", group.TunerInstanceId ?? "[null]");
+            foreach (ITuner tuner in group.Tuners)
+            {
+              this.LogInfo("  tuner, name = {0}, product instance ID = {1}, tuner instance ID = {2}", tuner.Name, tuner.ProductInstanceId ?? "[null]", tuner.TunerInstanceId ?? "[null]");
+              ITunerInternal internalTuner = tuner as ITunerInternal;
+              if (internalTuner != null)
+              {
+                internalTuner.Group = null;
+              }
+            }
+            _configuredTunerGroups.Remove(groupId);
+          }
+        }
+
+        // 3. Update groups that we already knew about but have changed.
+        HashSet<int> changedGroupIds = new HashSet<int>();
+        Dictionary<string, int> newGroupMembers = new Dictionary<string, int>();
+        foreach (DbTunerGroup dbGroup in dbGroups)
+        {
+          TunerGroup group;
+          if (_configuredTunerGroups.TryGetValue(dbGroup.IdTunerGroup, out group))
+          {
+            // Collect the external IDs for current members.
+            HashSet<string> currentGroupMembers = new HashSet<string>();
+            foreach (ITuner tuner in group.Tuners)
+            {
+              currentGroupMembers.Add(tuner.ExternalId);
+            }
+
+            // Record new and unchanged members.
+            HashSet<string> unchangedGroupMembers = new HashSet<string>();
+            foreach (Tuner dbTuner in dbGroup.Tuners)
+            {
+              string externalId = dbTuner.ExternalId;
+              ITuner tuner;
+              if (_tuners.TryGetValue(externalId, out tuner))
+              {
+                if (currentGroupMembers.Contains(externalId))
+                {
+                  unchangedGroupMembers.Add(externalId);
+                }
+                else
+                {
+                  changedGroupIds.Add(dbGroup.IdTunerGroup);
+                  newGroupMembers.Add(externalId, dbGroup.IdTunerGroup);
+                }
+              }
+            }
+
+            // 3a. Remove old members.
+            currentGroupMembers.ExceptWith(unchangedGroupMembers);
+            foreach (string externalId in currentGroupMembers)
+            {
+              ITuner tuner;
+              if (_tuners.TryGetValue(externalId, out tuner))
+              {
+                this.LogInfo("detector: removing tuner from group...");
+                this.LogInfo("  group, name = {0}, product instance ID = {1}, tuner instance ID = {2}", group.Name, group.ProductInstanceId ?? "[null]", group.TunerInstanceId ?? "[null]");
+                this.LogInfo("  tuner, name = {0}, product instance ID = {1}, tuner instance ID = {2}", tuner.Name, tuner.ProductInstanceId ?? "[null]", tuner.TunerInstanceId ?? "[null]");
+                changedGroupIds.Add(dbGroup.IdTunerGroup);
+                group.Remove(tuner);
+                ITunerInternal internalTuner = tuner as ITunerInternal;
+                if (internalTuner != null)
+                {
+                  internalTuner.Group = null;
+                }
+              }
+            }
+          }
+        }
+
+        // 3b. Add new members.
+        foreach (KeyValuePair<string, int> newGroupMember in newGroupMembers)
+        {
+          TunerGroup group;
+          ITuner tuner;
+          if (_tuners.TryGetValue(newGroupMember.Key, out tuner) && _configuredTunerGroups.TryGetValue(newGroupMember.Value, out group))
+          {
+            this.LogInfo("detector: adding tuner to group...");
+            this.LogInfo("  group, name = {0}, product instance ID = {1}, tuner instance ID = {2}", group.Name, group.ProductInstanceId ?? "[null]", group.TunerInstanceId ?? "[null]");
+            this.LogInfo("  tuner, name = {0}, product instance ID = {1}, tuner instance ID = {2}", tuner.Name, tuner.ProductInstanceId ?? "[null]", tuner.TunerInstanceId ?? "[null]");
+            group.Add(tuner);
+            ITunerInternal internalTuner = tuner as ITunerInternal;
+            if (internalTuner != null)
+            {
+              internalTuner.Group = group;
+            }
+          }
+        }
+
+        // 3c. Update the group details.
+        foreach (int groupId in changedGroupIds)
+        {
+          TunerGroup group;
+          if (_configuredTunerGroups.TryGetValue(groupId, out group))
+          {
+            bool isFirst = true;
+            string commonProductInstanceId = null;
+            string commonTunerInstanceId = null;
+            foreach (ITuner tuner in group.Tuners)
+            {
+              if (isFirst)
+              {
+                isFirst = false;
+                if (tuner.ProductInstanceId == null || tuner.TunerInstanceId == null)
+                {
+                  break;
+                }
+                commonProductInstanceId = tuner.ProductInstanceId;
+                commonTunerInstanceId = tuner.TunerInstanceId;
+              }
+              if (!string.Equals(commonProductInstanceId, tuner.ProductInstanceId) || !string.Equals(commonTunerInstanceId, tuner.TunerInstanceId))
+              {
+                commonProductInstanceId = null;
+                commonTunerInstanceId = null;
+                break;
+              }
+            }
+            if (!string.Equals(commonProductInstanceId, group.ProductInstanceId) || !string.Equals(commonTunerInstanceId, group.TunerInstanceId))
+            {
+              this.LogInfo("detector: updating identifiers for tuner group {0}...", group.Name);
+              this.LogInfo("  previous, product instance ID = {0}, tuner instance ID = {1}", group.ProductInstanceId ?? "[null]", group.TunerInstanceId ?? "[null]");
+              this.LogInfo("  new, product instance ID = {0}, tuner instance ID = {1}", commonProductInstanceId ?? "[null]", commonTunerInstanceId ?? "[null]");
+              group.ProductInstanceId = commonProductInstanceId;
+              group.TunerInstanceId = commonTunerInstanceId;
+            }
+          }
+        }
+
+        // 4. Construct new groups for the groups we didn't already know about.
+        foreach (DbTunerGroup dbGroup in newGroups)
+        {
+          TunerGroup group = new TunerGroup(dbGroup);
+          bool isFirst = true;
+          string commonProductInstanceId = null;
+          string commonTunerInstanceId = null;
+          foreach (Tuner dbTuner in dbGroup.Tuners)
+          {
+            ITuner tuner;
+            if (_tuners.TryGetValue(dbTuner.ExternalId, out tuner))
+            {
+              if (isFirst)
+              {
+                isFirst = false;
+                if (tuner.ProductInstanceId != null && tuner.TunerInstanceId != null)
+                {
+                  commonProductInstanceId = tuner.ProductInstanceId;
+                  commonTunerInstanceId = tuner.TunerInstanceId;
+                }
+              }
+              else if (!string.Equals(commonProductInstanceId, tuner.ProductInstanceId) || !string.Equals(commonTunerInstanceId, tuner.TunerInstanceId))
+              {
+                commonProductInstanceId = null;
+                commonTunerInstanceId = null;
+              }
+              group.Add(tuner);
+              ITunerInternal internalTuner = tuner as ITunerInternal;
+              if (internalTuner != null)
+              {
+                internalTuner.Group = group;
+              }
+            }
+          }
+
+          if (group.Tuners.Count > 0)
+          {
+            this.LogInfo("detector: adding tuner group, name = {0}, product instance ID = {1}, tuner instance ID = {2}...", group.Name, group.ProductInstanceId ?? "[null]", group.TunerInstanceId ?? "[null]");
+            foreach (ITuner tuner in group.Tuners)
+            {
+              this.LogInfo("  tuner, name = {0}, product instance ID = {1}, tuner instance ID = {2}", tuner.Name, tuner.ProductInstanceId ?? "[null]", tuner.TunerInstanceId ?? "[null]");
+            }
+            _configuredTunerGroups.Add(dbGroup.IdTunerGroup, group);
+          }
+        }
+      }
     }
 
     /// <summary>
@@ -199,18 +450,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public void Reset()
     {
-      Stop();
-      _firstDetectionTuners.Clear();
-      _knownUpnpRootDevices.Clear();
-      _knownSystemTuners.Clear();
-      _upnpDeviceTuners.Clear();
-
-      // TODO should these be disposed?
-      _tuners.Clear();
-
-      _naturalTunerGroups.Clear();
-      _configuredTunerGroups.Clear();
-      Start();
+      lock (_tuners)
+      {
+        Stop();
+        RemoveAllTuners();
+        Start();
+      }
     }
 
     /// <summary>
@@ -218,15 +463,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public void Stop()
     {
-      if (!_isStarted)
+      lock (_tuners)
       {
-        return;
+        if (!_isStarted)
+        {
+          return;
+        }
+        this.LogInfo("detector: stopping tuner detection...");
+        _upnpAgent.Close();
+        _upnpControlPoint.Close();
+        _systemDeviceChangeEventWatcher.Stop();
+        _isStarted = false;
       }
-      this.LogInfo("detector: stopping tuner detection...");
-      _upnpAgent.Close();
-      _upnpControlPoint.Close();
-      _systemDeviceChangeEventWatcher.Stop();
     }
+
+    #endregion
 
     #region IDisposable member
 
@@ -235,6 +486,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public void Dispose()
     {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Release and dispose all resources.
+    /// </summary>
+    /// <param name="isDisposing"><c>True</c> if the detector is being disposed.</param>
+    private void Dispose(bool isDisposing)
+    {
+      if (!isDisposing)
+      {
+        return;
+      }
+
       Stop();
 
       foreach (ITunerDetectorUpnp detector in _upnpDetectors)
@@ -270,10 +536,50 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         _systemDeviceChangeEventWatcher.Dispose();
         _systemDeviceChangeEventWatcher = null;
       }
-      if (_systemDeviceInfoSearcher != null)
+      if (_systemPowerManagementEventWatcher != null)
       {
-        _systemDeviceInfoSearcher.Dispose();
-        _systemDeviceInfoSearcher = null;
+        _systemPowerManagementEventWatcher.Stop();
+        _systemPowerManagementEventWatcher.Dispose();
+        _systemPowerManagementEventWatcher = null;
+      }
+    }
+
+    #endregion
+
+    #region power event handling
+
+    private void OnSystemPowerManagementEvent(object sender, EventArrivedEventArgs e)
+    {
+      foreach (PropertyData property in e.NewEvent.Properties)
+      {
+        if (string.Equals(property.Name, "EventType"))
+        {
+          int eventType = (ushort)property.Value;
+          if (eventType == 4)       // suspend
+          {
+            ThreadPool.QueueUserWorkItem(
+              delegate
+              {
+                this.LogInfo("detector: suspending...");
+                Stop();
+                RemoveAllTuners();
+              }
+            );
+          }
+          else if (eventType == 18) // resume automatic
+          {
+            ThreadPool.QueueUserWorkItem(
+              delegate
+              {
+                this.LogInfo("detector: resuming...");
+                Start();
+                Thread.Sleep(10000);
+                SearchForSupportedUpnpDevices();
+              }
+            );
+          }
+          break;
+        }
       }
     }
 
@@ -281,34 +587,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     #region system device detection
 
-    private void OnSystemDeviceConnectedOrDisconnected(object sender, EventArrivedEventArgs e)
+    private void OnSystemDeviceChangeEvent(object sender, EventArrivedEventArgs e)
     {
       // Often several events will be triggered within a very short period of
-      // time when a device is added/removed. We only want to check for new
-      // tuners once per burst.
-      if ((DateTime.Now - _previousSystemDeviceChange).TotalMilliseconds < 10000)
+      // time when a device is added/removed. Those events are probably related
+      // to device interfaces. We only want to check for new tuners once per
+      // burst.
+      if ((DateTime.Now - _previousSystemDeviceChangeEvent).TotalMilliseconds < 10000)
       {
         return;
       }
-      _previousSystemDeviceChange = DateTime.Now;
+      _previousSystemDeviceChangeEvent = DateTime.Now;
 
       // Do our processing in a different thread to ensure we don't cause
       // problems like this:
       // http://www.codeproject.com/Articles/35212/WM-DEVICECHANGE-problem
-      Thread t = new Thread(DoDelayedSystemTunerDetection);
-      t.Start();
+      ThreadPool.QueueUserWorkItem(
+        delegate
+        {
+          // Give the driver time to load. Hopefully 10 seconds will be enough.
+          Thread.Sleep(10000);
+          DoDelayedSystemTunerDetection();
+        }
+      );
     }
 
     private void DoDelayedSystemTunerDetection()
     {
-      // Give the tuner time to load. Hopefully 10 seconds will be enough.
-      Thread.Sleep(10000);
-
-      // Configurable extra delay...
-      int delayDetect = SettingsManagement.GetValue("delayCardDetect", 0);
+      // Configurable extra delay for slow-loading drivers.
+      int delayDetect = SettingsManagement.GetValue("tunerDetectionDelay", 0);
       if (delayDetect >= 1)
       {
-        Thread.Sleep(delayDetect * 1000);
+        Thread.Sleep(delayDetect);
       }
       DetectSystemTuners();
     }
@@ -317,14 +627,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       lock (_tuners)
       {
+        if (!_isStarted)
+        {
+          return;
+        }
         this.LogDebug("detector: detecting system tuners...");
-        _systemDeviceDriverInfo = _systemDeviceInfoSearcher.Get();
+        UpdateSystemDeviceInfo();
 
         HashSet<string> currentSystemTuners = new HashSet<string>();
         foreach (ITunerDetectorSystem detector in _systemDetectors)
         {
-          ICollection<ITVCard> tuners = detector.DetectTuners();
-          foreach (ITVCard tuner in tuners)
+          ICollection<ITuner> tuners = detector.DetectTuners();
+          foreach (ITuner tuner in tuners)
           {
             currentSystemTuners.Add(tuner.ExternalId);
             if (_tuners.ContainsKey(tuner.ExternalId))
@@ -340,7 +654,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         _knownSystemTuners.ExceptWith(currentSystemTuners);
         foreach (string removedTunerExternalId in _knownSystemTuners)
         {
-          ITVCard tuner;
+          ITuner tuner;
           if (_tuners.TryGetValue(removedTunerExternalId, out tuner))
           {
             OnTunerRemoved(tuner);
@@ -355,33 +669,46 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     #region UPnP device detection
 
+    private void SearchForSupportedUpnpDevices()
+    {
+      _upnpAgent.SharedControlPointData.SSDPController.SearchDeviceByDeviceTypeVersion("schemas-opencable-com:service:Tuner", "1", null);
+      _upnpAgent.SharedControlPointData.SSDPController.SearchDeviceByDeviceTypeVersion("urn:ses-com:device:SatIPServer", "1", null);
+    }
+
     private void OnUpnpRootDeviceAdded(RootDescriptor rootDescriptor)
     {
-      if (rootDescriptor == null || rootDescriptor.State != RootDescriptorState.Ready)
+      if (rootDescriptor == null || rootDescriptor.SSDPRootEntry == null || rootDescriptor.SSDPRootEntry.RootDeviceUUID == null || rootDescriptor.State != RootDescriptorState.Ready)
       {
         return;
       }
       lock (_tuners)
       {
+        if (!_isStarted)
+        {
+          return;
+        }
         if (!_knownUpnpRootDevices.Add(rootDescriptor.SSDPRootEntry.RootDeviceUUID))
         {
           this.LogWarn("detector: re-detecting known root device {0}", rootDescriptor.SSDPRootEntry.RootDeviceUUID);
         }
 
         DeviceDescriptor rootDeviceDescriptor = DeviceDescriptor.CreateRootDeviceDescriptor(rootDescriptor);
-        foreach (ITunerDetectorUpnp detector in _upnpDetectors)
+        if (rootDeviceDescriptor != null)
         {
-          ICollection<ITVCard> tuners = detector.DetectTuners(rootDeviceDescriptor, _upnpControlPoint);
-          if (tuners.Count > 0)
+          foreach (ITunerDetectorUpnp detector in _upnpDetectors)
           {
-            LogUpnpDeviceInfo(rootDeviceDescriptor);
-            HashSet<string> tunerExternalIds = new HashSet<string>();
-            foreach (ITVCard tuner in tuners)
+            ICollection<ITuner> tuners = detector.DetectTuners(rootDeviceDescriptor, _upnpControlPoint);
+            if (tuners.Count > 0)
             {
-              OnTunerDetected(tuner);
-              tunerExternalIds.Add(tuner.ExternalId);
+              LogUpnpDeviceInfo(rootDeviceDescriptor);
+              HashSet<string> tunerExternalIds = new HashSet<string>();
+              foreach (ITuner tuner in tuners)
+              {
+                OnTunerDetected(tuner);
+                tunerExternalIds.Add(tuner.ExternalId);
+              }
+              _upnpDeviceTuners.Add(rootDeviceDescriptor.DeviceUUID, tunerExternalIds);
             }
-            _upnpDeviceTuners.Add(rootDeviceDescriptor.DeviceUUID, tunerExternalIds);
           }
         }
       }
@@ -389,13 +716,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     private void OnUpnpRootDeviceRemoved(RootDescriptor rootDescriptor)
     {
-      if (rootDescriptor == null)
+      if (rootDescriptor == null || rootDescriptor.SSDPRootEntry == null || rootDescriptor.SSDPRootEntry.RootDeviceUUID == null)
       {
         return;
       }
 
       lock (_tuners)
       {
+        if (!_isStarted)
+        {
+          return;
+        }
         if (!_knownUpnpRootDevices.Remove(rootDescriptor.SSDPRootEntry.RootDeviceUUID))
         {
           this.LogWarn("detector: detecting removal of unknown root device {0}", rootDescriptor.SSDPRootEntry.RootDeviceUUID);
@@ -403,13 +734,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
         DeviceDescriptor rootDeviceDescriptor = DeviceDescriptor.CreateRootDeviceDescriptor(rootDescriptor);
         HashSet<string> tunerExternalIds;
-        if (_upnpDeviceTuners.TryGetValue(rootDeviceDescriptor.DeviceUUID, out tunerExternalIds))
+        if (rootDeviceDescriptor != null && _upnpDeviceTuners.TryGetValue(rootDeviceDescriptor.DeviceUUID, out tunerExternalIds))
         {
           this.LogInfo("detector: UPnP device removed");
           LogUpnpDeviceInfo(rootDeviceDescriptor);
           foreach (string t in tunerExternalIds)
           {
-            ITVCard tuner;
+            ITuner tuner;
             if (_tuners.TryGetValue(t, out tuner))
             {
               OnTunerRemoved(tuner);
@@ -462,14 +793,157 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     #endregion
 
+    #region system device information
+
+    private void UpdateSystemDeviceInfo()
+    {
+      // This information can be retrieved with a ManagementObjectSearcher
+      // and query:
+      // SELECT * FROM Win32_PnPSignedDriver WHERE DeviceClass = 'MEDIA'
+      // However that method seems to be significantly slower (5+ seconds
+      // sometimes) particularly on XP.
+      _systemDeviceDriverInfo = new List<DeviceInfo>(20);
+
+      Guid mediaClass = NativeMethods.GUID_DEVCLASS_MEDIA;
+      IntPtr devInfoSet = NativeMethods.SetupDiGetClassDevs(ref mediaClass, null, IntPtr.Zero, NativeMethods.DiGetClassFlags.DIGCF_PRESENT);
+      if (devInfoSet == IntPtr.Zero || devInfoSet == new IntPtr(-1))  // If INVALID_HANDLE_VALUE...
+      {
+        this.LogError("detector: failed to get system device information set, error = {0}", Marshal.GetLastWin32Error());
+        return;
+      }
+
+      try
+      {
+        int error;
+        uint index = 0;
+        NativeMethods.SP_DEVINFO_DATA devInfo = new NativeMethods.SP_DEVINFO_DATA();
+        devInfo.cbSize = (uint)Marshal.SizeOf(typeof(NativeMethods.SP_DEVINFO_DATA));
+        while (NativeMethods.SetupDiEnumDeviceInfo(devInfoSet, index++, ref devInfo))
+        {
+          // Read device info.
+          StringBuilder deviceId = new StringBuilder((int)NativeMethods.MAX_DEVICE_ID_LEN);
+          uint requiredSize;
+          if (!NativeMethods.SetupDiGetDeviceInstanceId(devInfoSet, ref devInfo, deviceId, NativeMethods.MAX_DEVICE_ID_LEN, out requiredSize))
+          {
+            this.LogWarn("detector: failed to get system device instance ID, error = {0}, dev inst = {1}", Marshal.GetLastWin32Error(), devInfo.DevInst);
+            continue;
+          }
+
+          DeviceInfo deviceInfo = new DeviceInfo();
+          deviceInfo.Id = deviceId.ToString();
+          deviceInfo.HardwareId = GetSystemDeviceProperty(devInfoSet, devInfo, NativeMethods.DeviceProperty.SPDRP_HARDWAREID);
+          deviceInfo.Name = GetSystemDeviceProperty(devInfoSet, devInfo, NativeMethods.DeviceProperty.SPDRP_FRIENDLYNAME);
+          deviceInfo.Description = GetSystemDeviceProperty(devInfoSet, devInfo, NativeMethods.DeviceProperty.SPDRP_DEVICEDESC);
+          deviceInfo.Manufacturer = GetSystemDeviceProperty(devInfoSet, devInfo, NativeMethods.DeviceProperty.SPDRP_MFG);
+          deviceInfo.Location = GetSystemDeviceProperty(devInfoSet, devInfo, NativeMethods.DeviceProperty.SPDRP_LOCATION_INFORMATION);
+          deviceInfo.PhysicalDeviceObjectName = GetSystemDeviceProperty(devInfoSet, devInfo, NativeMethods.DeviceProperty.SPDRP_PHYSICAL_DEVICE_OBJECT_NAME);
+          _systemDeviceDriverInfo.Add(deviceInfo);
+
+          // Read driver info.
+          NativeMethods.SP_DEVINSTALL_PARAMS installParams = new NativeMethods.SP_DEVINSTALL_PARAMS();
+          installParams.cbSize = (uint)Marshal.SizeOf(typeof(NativeMethods.SP_DEVINSTALL_PARAMS));
+          installParams.Flags = 0;
+          installParams.FlagsEx = NativeMethods.DeviceInstallFlagsEx.DI_FLAGSEX_INSTALLEDDRIVER;
+          installParams.hwndParent = IntPtr.Zero;
+          installParams.InstallMsgHandler = IntPtr.Zero;
+          installParams.InstallMsgHandlerContext = IntPtr.Zero;
+          installParams.FileQueue = IntPtr.Zero;
+          installParams.ClassInstallReserved = UIntPtr.Zero;
+          installParams.Reserved = 0;
+          installParams.DriverPath = null;
+          if (!NativeMethods.SetupDiSetDeviceInstallParams(devInfoSet, ref devInfo, ref installParams))
+          {
+            this.LogError("detector: failed to set system device install parameters, error = {0}, device ID = {1}, device name = {2}", Marshal.GetLastWin32Error(), deviceInfo.Id, deviceInfo.Name ?? deviceInfo.Description ?? "[null]");
+            continue;
+          }
+
+          if (!NativeMethods.SetupDiBuildDriverInfoList(devInfoSet, ref devInfo, NativeMethods.DriverType.SPDIT_COMPATDRIVER))
+          {
+            this.LogError("detector: failed to get system device driver information set, error = {0}, device ID = {1}, device name = {2}", Marshal.GetLastWin32Error(), deviceInfo.Id, deviceInfo.Name ?? deviceInfo.Description ?? "[null]");
+            continue;
+          }
+
+          try
+          {
+            NativeMethods.SP_DRVINFO_DATA driverInfo = new NativeMethods.SP_DRVINFO_DATA();
+            driverInfo.cbSize = (uint)Marshal.SizeOf(typeof(NativeMethods.SP_DRVINFO_DATA));
+            if (!NativeMethods.SetupDiEnumDriverInfo(devInfoSet, ref devInfo, NativeMethods.DriverType.SPDIT_COMPATDRIVER, 0, ref driverInfo))
+            {
+              this.LogError("detector: failed to get system device driver information, error = {0}, device ID = {1}, device name = {2}", Marshal.GetLastWin32Error(), deviceInfo.Id, deviceInfo.Name ?? deviceInfo.Description ?? "[null]");
+              driverInfo.cbSize = 0;
+              continue;
+            }
+            deviceInfo.DriverInfo = driverInfo;
+          }
+          finally
+          {
+            NativeMethods.SetupDiDestroyDriverInfoList(devInfoSet, ref devInfo, NativeMethods.DriverType.SPDIT_COMPATDRIVER);
+          }
+        }
+
+        error = Marshal.GetLastWin32Error();
+        if (error != (int)NativeMethods.SystemErrorCode.ERROR_NO_MORE_ITEMS)
+        {
+          this.LogError("detector: failed to get next system device information, error = {0}", error);
+        }
+      }
+      finally
+      {
+        NativeMethods.SetupDiDestroyDeviceInfoList(devInfoSet);
+      }
+    }
+
+    private static string GetSystemDeviceProperty(IntPtr devInfoSet, NativeMethods.SP_DEVINFO_DATA devInfo, NativeMethods.DeviceProperty property)
+    {
+      uint dataType;
+      uint requiredSize;
+      if (NativeMethods.SetupDiGetDeviceRegistryProperty(devInfoSet, ref devInfo, property, out dataType, IntPtr.Zero, 0, out requiredSize))
+      {
+        Log.Error("detector: failed to get system device property data length, error = {0}, property = {1}, required size = {2}, dev inst = {3}", Marshal.GetLastWin32Error(), property, requiredSize, devInfo.DevInst);
+        return null;
+      }
+
+      int error = Marshal.GetLastWin32Error();
+      if (error == (int)NativeMethods.SystemErrorCode.ERROR_INVALID_DATA)
+      {
+        // property does not exist
+        return null;
+      }
+      else if (error != (int)NativeMethods.SystemErrorCode.ERROR_INSUFFICIENT_BUFFER || requiredSize == 0)
+      {
+        // ERROR_INSUFFICIENT_BUFFER is the ***SUCCESS*** result when
+        // retrieving the property data length.
+        Log.Error("detector: failed to get system device property data length, error = {0}, property = {1}, required size = {2}, dev inst = {3}", Marshal.GetLastWin32Error(), property, requiredSize, devInfo.DevInst);
+        return null;
+      }
+
+      IntPtr buffer = Marshal.AllocHGlobal((int)requiredSize);
+      try
+      {
+        uint dummy;
+        if (!NativeMethods.SetupDiGetDeviceRegistryProperty(devInfoSet, ref devInfo, property, out dataType, buffer, requiredSize, out dummy))
+        {
+          Log.Error("detector: failed to get system device property value, error = {0}, property = {1}, required size = {2}, dev inst = {3}", Marshal.GetLastWin32Error(), property, requiredSize, devInfo.DevInst);
+          return null;
+        }
+        return Marshal.PtrToStringUni(buffer);
+      }
+      finally
+      {
+        Marshal.FreeHGlobal(buffer);
+      }
+    }
+
+    #endregion
+
     #region common tuner add/remove logic
 
-    private void OnTunerDetected(ITVCard tuner)
+    private void OnTunerDetected(ITuner tuner)
     {
       this.LogInfo("  add...");
       this.LogInfo("    name        = {0}", tuner.Name);
       this.LogInfo("    external ID = {0}", tuner.ExternalId);
-      this.LogInfo("    type        = {0}", tuner.TunerType);
+      this.LogInfo("    standards   = {0}", tuner.SupportedBroadcastStandards);
       this.LogInfo("    product ID  = {0}", tuner.ProductInstanceId ?? "[null]");
       this.LogInfo("    tuner ID    = {0}", tuner.TunerInstanceId ?? "[null]");
       string productName = string.Empty;
@@ -477,43 +951,46 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         productName = string.Format("Product Instance {0}", tuner.ProductInstanceId);
 
-        List<ManagementObject> objects = new List<ManagementObject>();
-        foreach (ManagementObject o in _systemDeviceDriverInfo)
+        IList<DeviceInfo> possibleInfoMatches = new List<DeviceInfo>();
+        foreach (DeviceInfo info in _systemDeviceDriverInfo)
         {
-          if (o.Properties["DeviceID"].Value.ToString().ToLowerInvariant().Contains(tuner.ProductInstanceId))
+          if (info.Id.ToLowerInvariant().Contains(tuner.ProductInstanceId))
           {
-            objects.Add(o);
+            possibleInfoMatches.Add(info);
           }
         }
-        if (objects.Count == 1)
+        if (possibleInfoMatches.Count == 1)
         {
-          this.LogInfo("    driver...");
-          ManagementObject o = objects[0];
-          foreach (KeyValuePair<string, string> p in _systemDeviceInterestingProperties)
+          DeviceInfo info = possibleInfoMatches[0];
+          if (!string.IsNullOrEmpty(info.Name))
           {
-            object pVal = o.Properties[p.Key].Value;
-            if (pVal != null)
+            productName = info.Name;
+          }
+          else if (!string.IsNullOrEmpty(info.Description))
+          {
+            productName = info.Description;
+          }
+          this.LogInfo("    device...");
+          this.LogInfo("      ID           = {0}", info.Id);
+          this.LogInfo("      hardware ID  = {0}", info.HardwareId ?? "[null]");
+          this.LogInfo("      name         = {0}", info.Name ?? "[null]");
+          this.LogInfo("      description  = {0}", info.Description ?? "[null]");
+          this.LogInfo("      manufacturer = {0}", info.Manufacturer ?? "[null]");
+          this.LogInfo("      location     = {0}", info.Location ?? "[null]");
+          this.LogInfo("      PDO name     = {0}", info.PhysicalDeviceObjectName ?? "[null]");
+
+          if (info.DriverInfo.cbSize > 0)
+          {
+            NativeMethods.SP_DRVINFO_DATA driverInfo = info.DriverInfo;
+            this.LogInfo("    driver...");
+            this.LogInfo("      description  = {0}", driverInfo.Description ?? "[null]");
+            this.LogInfo("      manufacturer = {0}", driverInfo.MfgName ?? "[null]");
+            this.LogInfo("      provider     = {0}", driverInfo.ProviderName ?? "[null]");
+            this.LogInfo("      version      = {0}.{1}.{2}.{3}", ((driverInfo.DriverVersion >> 48) & 0xffff), ((driverInfo.DriverVersion >> 32) & 0xffff), ((driverInfo.DriverVersion >> 16) & 0xffff), (driverInfo.DriverVersion & 0xffff));
+            NativeMethods.SYSTEMTIME systemTime;
+            if (NativeMethods.FileTimeToSystemTime(ref driverInfo.DriverDate, out systemTime))
             {
-              if (p.Key.Equals("DriverDate"))
-              {
-                Match m = REGEX_DRIVER_DATE.Match(pVal.ToString());
-                if (m.Success)
-                {
-                  this.LogInfo("      {0} = {1}-{2}-{3}", p.Value, m.Groups[1].Captures[0], m.Groups[2].Captures[0], m.Groups[3].Captures[0]);
-                }
-                else
-                {
-                  this.LogInfo("      {0} = {1}", p.Value, pVal.ToString());
-                }
-              }
-              else
-              {
-                this.LogInfo("      {0} = {1}", p.Value, pVal.ToString());
-              }
-              if (p.Key.Equals("DeviceName"))
-              {
-                productName = pVal.ToString();
-              }
+              this.LogInfo("      date         = {0}-{1:d2}-{2:d2}", systemTime.wYear, systemTime.wMonth, systemTime.wDay);
             }
           }
         }
@@ -526,35 +1003,34 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       // Find or create a group for the tuner if appropriate.
       TunerGroup group = null;
-      Card tunerDbSettings = CardManagement.GetCardByDevicePath(tuner.ExternalId, CardIncludeRelationEnum.None);
+      Tuner tunerDbSettings = TunerManagement.GetTunerByExternalId(tuner.ExternalId, TunerIncludeRelationEnum.None);
       if (tunerDbSettings == null)
       {
         // First ever detection. Create the tuner settings.
         this.LogInfo("    new tuner...");
         _firstDetectionTuners.Add(tuner.ExternalId);
-        tunerDbSettings = new Card
+        tunerDbSettings = new Tuner
         {
           TimeshiftingFolder = string.Empty,
           RecordingFolder = string.Empty,
-          DevicePath = tuner.ExternalId,
+          ExternalId = tuner.ExternalId,
           Name = tuner.Name,
+          IsEnabled = true,
           Priority = 1,
-          GrabEPG = (tuner.TunerType != CardType.Analog && tuner.TunerType != CardType.Atsc),   // analog signals don't carry EPG, ATSC EPG not supported
-          Enabled = true,
-          PreloadCard = false,
+          UseForEpgGrabbing = (tuner.SupportedBroadcastStandards & (BroadcastStandard.Atsc | BroadcastStandard.MaskDvb)) != 0,
+          Preload = false,
           AlwaysSendDiseqcCommands = false,
-          DiseqcCommandRepeatCount = 0,
-          UseConditionalAccess = true,
+          UseConditionalAccess = (tuner.SupportedBroadcastStandards & BroadcastStandard.MaskDigital) != 0,
+          ConditionalAccessProviders = string.Empty,    // any
           CamType = (int)CamType.Default,
-          DecryptLimit = 0,
+          DecryptLimit = 1,
           MultiChannelDecryptMode = (int)MultiChannelDecryptMode.List,
-          NetProvider = (int)DbNetworkProvider.Generic,
-          PidFilterMode = (int)PidFilterMode.Auto,
-          IdleMode = (int)IdleMode.Stop
+          IdleMode = (int)TunerIdleMode.Stop,
+          BdaNetworkProvider = (int)BdaNetworkProvider.Generic,
+          PidFilterMode = (int)PidFilterMode.Automatic,
+          UseCustomTuning = false,
+          SupportedBroadcastStandards = (int)tuner.SupportedBroadcastStandards
         };
-        tunerDbSettings = CardManagement.SaveCard(tunerDbSettings);
-        // Configuration loading is necessary before group detection.
-        tuner.ReloadConfiguration();
 
         // If we have product/tuner instance information and detected the tuner is a member of a
         // natural group...
@@ -562,7 +1038,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {
           // Automatically add the tuner to an existing tuner group if the group product and tuner
           // instance information matches.
-          group = AddNewTunerToExistingNaturalGroup(tuner);
+          group = FindExistingNaturalGroup(tuner.ProductInstanceId, tuner.TunerInstanceId);
 
           // ...or if that doesn't apply, automatically add the tuner to an existing tuner group if
           // the group contains *all* the naturally related tuners. The assumption in this case is
@@ -570,22 +1046,30 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           bool foundAnyRelatedTunerInAnyGroup = false;
           if (group == null)
           {
-            group = AddNewTunerToExistingExtendedNaturalGroup(tuner, relatedTuners, out foundAnyRelatedTunerInAnyGroup);
+            group = FindExistingExtendedNaturalGroup(tuner.ExternalId, relatedTuners, out foundAnyRelatedTunerInAnyGroup);
           }
 
           // Finally, if all of the tuners in the natural group are new and not in any other group
           // then create a new group.
           if (group == null && !foundAnyRelatedTunerInAnyGroup)
           {
-            group = CreateNewGroupOnFirstDetection(tuner, relatedTuners, productName);
+            group = CreateNewGroupOnFirstDetection(tuner.ExternalId, relatedTuners, productName);
+          }
+
+          if (group != null)
+          {
+            group.Add(tuner);
+            tunerDbSettings.IdTunerGroup = group.TunerGroupId;
           }
         }
+
+        tunerDbSettings = TunerManagement.SaveTuner(tunerDbSettings);
       }
       else
       {
         // This tuner has been detected previously. Check if it is a member of an existing tuner
         // group.
-        this.LogInfo("    existing tuner...");
+        this.LogInfo("    existing tuner, ID = {0}...", tunerDbSettings.IdTuner);
         group = AddExistingTunerToConfiguredGroup(tuner);
       }
 
@@ -595,18 +1079,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         internalTuner.Group = group;
       }
 
-      if (!_firstDetectionTuners.Contains(tuner.ExternalId))
-      {
-        // Load configuration for existing tuners. This triggers preloading.
-        tuner.ReloadConfiguration();
-      }
+      // Load the tuner's configuration. This also triggers preloading.
+      tuner.ReloadConfiguration();
 
       _eventListener.OnTunerAdded(tuner);
     }
 
     #region tuner group handling
 
-    private HashSet<string> FindRelatedTuners(ITVCard tuner)
+    private HashSet<string> FindRelatedTuners(ITuner tuner)
     {
       HashSet<string> relatedTuners = null;
       if (tuner.ProductInstanceId != null && tuner.TunerInstanceId != null)
@@ -632,8 +1113,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             this.LogInfo("    detected naturally related tuners...");
             foreach (string id in relatedTuners)
             {
-              ITVCard t = _tuners[id];
-              this.LogInfo("      name = {0}, type = {1}, external ID = {2}", t.Name, t.TunerType, id);
+              ITuner t = _tuners[id];
+              this.LogInfo("      name = {0}, standards = [{1}], external ID = {2}", t.Name, t.SupportedBroadcastStandards, id);
             }
           }
           relatedTuners.Add(tuner.ExternalId);
@@ -642,7 +1123,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       return relatedTuners;
     }
 
-    private TunerGroup AddNewTunerToExistingNaturalGroup(ITVCard tuner)
+    private TunerGroup FindExistingNaturalGroup(string productInstanceId, string tunerInstanceId)
     {
       // This could incorrectly match or miss an existing group depending on
       // the order of tuner detection.
@@ -654,33 +1135,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       // IDs may be set when they shouldn't be.
       foreach (TunerGroup group in _configuredTunerGroups.Values)
       {
-        if (group.ProductInstanceId == tuner.ProductInstanceId && group.TunerInstanceId == tuner.TunerInstanceId)
+        if (string.Equals(group.ProductInstanceId, productInstanceId) && string.Equals(group.TunerInstanceId, tunerInstanceId))
         {
           this.LogInfo("    detected existing tuner group with matching information, name = {0}...", group.Name);
-          group.Add(tuner);
-          CardGroupMap map = new CardGroupMap();
-          map.IdCard = tuner.TunerId;
-          map.IdCardGroup = group.TunerGroupId;
-          CardManagement.SaveCardGroupMap(map);
           return group;
         }
       }
       return null;
     }
 
-    private TunerGroup AddNewTunerToExistingExtendedNaturalGroup(ITVCard tuner, HashSet<string> relatedTuners, out bool foundAnyRelatedTunerInAnyGroup)
+    private TunerGroup FindExistingExtendedNaturalGroup(string externalId, HashSet<string> relatedTuners, out bool foundAnyRelatedTunerInAnyGroup)
     {
       foundAnyRelatedTunerInAnyGroup = false;
       foreach (TunerGroup group in _configuredTunerGroups.Values)
       {
-        // Only look at mixed product/tuner instance groups. AddNewTunerToExistingNaturalGroup() already
+        // Only look at mixed product/tuner instance groups. FindExistingNaturalGroup() already
         // checked and failed to find a non-extended/pure group.
         if (group.ProductInstanceId == null && group.TunerInstanceId == null)
         {
           // For each naturally related tuner that is not this tuner...
           foreach (string relatedTunerExternalId1 in relatedTuners)
           {
-            if (!relatedTunerExternalId1.Equals(tuner.ExternalId))
+            if (!relatedTunerExternalId1.Equals(externalId))
             {
               if (group.Tuners.Any(x => relatedTunerExternalId1.Equals(x.ExternalId)))
               {
@@ -690,7 +1166,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
                 foundAnyRelatedTunerInAnyGroup = true;
                 foreach (string relatedTunerExternalId2 in relatedTuners)
                 {
-                  if (!relatedTunerExternalId2.Equals(tuner.ExternalId) && !relatedTunerExternalId2.Equals(relatedTunerExternalId1))
+                  if (!relatedTunerExternalId2.Equals(externalId) && !relatedTunerExternalId2.Equals(relatedTunerExternalId1))
                   {
                     if (!group.Tuners.Any(x => relatedTunerExternalId2.Equals(x.ExternalId)))
                     {
@@ -701,11 +1177,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
                 }
                 // All tuners are in the group!
                 this.LogInfo("    detected existing tuner group containing all related tuners, name = {0}...", group.Name);
-                group.Add(tuner);
-                CardGroupMap map = new CardGroupMap();
-                map.IdCard = tuner.TunerId;
-                map.IdCardGroup = group.TunerGroupId;
-                CardManagement.SaveCardGroupMap(map);
                 return group;
               }
             }
@@ -715,54 +1186,67 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       return null;
     }
 
-    private TunerGroup CreateNewGroupOnFirstDetection(ITVCard tuner, HashSet<string> relatedTuners, string productName)
+    private TunerGroup CreateNewGroupOnFirstDetection(string externalId, HashSet<string> relatedTuners, string productName)
     {
+      // Check that this is the first time all the related tuners have been
+      // detected.
+      string anyRelatedTunerExternalId = null;
       foreach (string relatedTunerExternalId in relatedTuners)
       {
+        anyRelatedTunerExternalId = relatedTunerExternalId;
         if (!_firstDetectionTuners.Contains(relatedTunerExternalId))
         {
           return null;
         }
       }
+      ITuner anyRelatedTuner = _tuners[anyRelatedTunerExternalId];
 
-      CardGroup dbGroup = new CardGroup();
-      dbGroup.Name = string.Format("{0} Tuner {1}", productName, tuner.TunerInstanceId);
-      dbGroup = CardManagement.SaveCardGroup(dbGroup);
+      // Create the new group.
+      DbTunerGroup dbGroup = new DbTunerGroup();
+      dbGroup.Name = string.Format("{0} Tuner {1}", productName, anyRelatedTuner.TunerInstanceId);
+      dbGroup = TunerGroupManagement.SaveTunerGroup(dbGroup);
       TunerGroup group = new TunerGroup(dbGroup);
-      group.ProductInstanceId = tuner.ProductInstanceId;
-      group.TunerInstanceId = tuner.TunerInstanceId;
+      group.ProductInstanceId = anyRelatedTuner.ProductInstanceId;
+      group.TunerInstanceId = anyRelatedTuner.TunerInstanceId;
       _configuredTunerGroups.Add(group.TunerGroupId, group);
+
+      // Link all the related tuners except this tuner to the new group.
       foreach (string relatedTunerExternalId in relatedTuners)
       {
-        ITVCard relatedTuner = _tuners[relatedTunerExternalId];
-        CardGroupMap map = new CardGroupMap();
-        map.IdCard = relatedTuner.TunerId;
-        map.IdCardGroup = group.TunerGroupId;
-        CardManagement.SaveCardGroupMap(map);
-        group.Add(relatedTuner);
+        if (!string.Equals(externalId, relatedTunerExternalId))
+        {
+          Tuner relatedTuner = TunerManagement.GetTunerByExternalId(relatedTunerExternalId, TunerIncludeRelationEnum.None);
+          if (relatedTuner != null)
+          {
+            relatedTuner.IdTunerGroup = dbGroup.IdTunerGroup;
+            TunerManagement.SaveTuner(relatedTuner);
+          }
+          group.Add(_tuners[relatedTunerExternalId]);
+        }
       }
       this.LogInfo("    creating new tuner group, name = {0}...", group.Name);
       return group;
     }
 
-    private TunerGroup AddExistingTunerToConfiguredGroup(ITVCard tuner)
+    private TunerGroup AddExistingTunerToConfiguredGroup(ITuner tuner)
     {
-      IList<CardGroup> dbGroups = CardManagement.ListAllCardGroups();
-      foreach (CardGroup dbGroup in dbGroups)
+      foreach (DbTunerGroup dbGroup in TunerGroupManagement.ListAllTunerGroups())
       {
-        TrackableCollection<CardGroupMap> groupMaps = dbGroup.CardGroupMaps;
-        foreach (CardGroupMap map in groupMaps)
+        foreach (Tuner dbTuner in dbGroup.Tuners)
         {
           // Does the tuner belong to this group?
-          if (map.IdCard == tuner.TunerId)
+          if (string.Equals(dbTuner.ExternalId, tuner.ExternalId))
           {
             // Find and update our local group info.
             TunerGroup group;
-            if (!_configuredTunerGroups.TryGetValue(dbGroup.IdCardGroup, out group))
+            if (!_configuredTunerGroups.TryGetValue(dbGroup.IdTunerGroup, out group))
             {
               group = new TunerGroup(dbGroup);
-              group.ProductInstanceId = tuner.ProductInstanceId;
-              group.TunerInstanceId = tuner.TunerInstanceId;
+              if (tuner.ProductInstanceId != null && tuner.TunerInstanceId != null)
+              {
+                group.ProductInstanceId = tuner.ProductInstanceId;
+                group.TunerInstanceId = tuner.TunerInstanceId;
+              }
               _configuredTunerGroups.Add(group.TunerGroupId, group);
               this.LogInfo("    detected existing tuner group, name = {0}, product instance ID = {1}, tuner instance ID = {2}...", group.Name, group.ProductInstanceId ?? "[null]", group.TunerInstanceId ?? "[null]");
             }
@@ -771,18 +1255,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
               this.LogInfo("    detected existing tuner group, name = {0}, product instance ID = {1}, tuner instance ID = {2}...", group.Name, group.ProductInstanceId ?? "[null]", group.TunerInstanceId ?? "[null]");
               // Does the product/tuner instance info indicate that this is a natural group?
               if (group.ProductInstanceId != null && group.TunerInstanceId != null &&
-                tuner.ProductInstanceId != null && tuner.TunerInstanceId != null &&
-                (group.ProductInstanceId != tuner.ProductInstanceId || group.TunerInstanceId != tuner.TunerInstanceId))
+                (!string.Equals(group.ProductInstanceId, tuner.ProductInstanceId) || !string.Equals(group.TunerInstanceId, tuner.TunerInstanceId)))
               {
+                this.LogInfo("      group is no longer natural");
                 group.ProductInstanceId = null;
                 group.TunerInstanceId = null;
               }
             }
             if (group.Tuners.Count > 0)
             {
-              foreach (ITVCard t in group.Tuners)
+              foreach (ITuner t in group.Tuners)
               {
-                this.LogInfo("      name = {0}, type = {1}, external ID = {2}", t.Name, t.TunerType, t.ExternalId);
+                this.LogInfo("      name = {0}, standards = [{1}], external ID = {2}", t.Name, t.SupportedBroadcastStandards, t.ExternalId);
               }
             }
             group.Add(tuner);
@@ -796,12 +1280,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     #endregion
 
-    private void OnTunerRemoved(ITVCard tuner)
+    private void OnTunerRemoved(ITuner tuner)
     {
       this.LogInfo("  remove...");
       this.LogInfo("    name        = {0}", tuner.Name);
       this.LogInfo("    external ID = {0}", tuner.ExternalId);
-      this.LogInfo("    type        = {0}", tuner.TunerType);
+      this.LogInfo("    standards   = {0}", tuner.SupportedBroadcastStandards);
       this.LogInfo("    product ID  = {0}", tuner.ProductInstanceId ?? "[null]");
       this.LogInfo("    tuner ID    = {0}", tuner.TunerInstanceId ?? "[null]");
       _eventListener.OnTunerRemoved(tuner);
@@ -822,6 +1306,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _firstDetectionTuners.Remove(tuner.ExternalId);
       _tuners.Remove(tuner.ExternalId);
       tuner.Dispose();
+    }
+
+    private void RemoveAllTuners()
+    {
+      lock (_tuners)
+      {
+        _firstDetectionTuners.Clear();
+        _knownSystemTuners.Clear();
+        _knownUpnpRootDevices.Clear();
+        _upnpDeviceTuners.Clear();
+        _naturalTunerGroups.Clear();
+        _configuredTunerGroups.Clear();
+
+        List<ITuner> tuners = new List<ITuner>(_tuners.Values);
+        foreach (ITuner tuner in tuners)
+        {
+          OnTunerRemoved(tuner);
+        }
+        _tuners.Clear();
+      }
     }
 
     #endregion

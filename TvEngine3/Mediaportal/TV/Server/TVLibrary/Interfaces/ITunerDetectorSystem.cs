@@ -19,7 +19,7 @@
 #endregion
 
 using System.Collections.Generic;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
@@ -40,6 +40,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// Detect and instanciate the compatible tuners connected to the system.
     /// </summary>
     /// <returns>the tuners that are currently available</returns>
-    ICollection<ITVCard> DetectTuners();
+    ICollection<ITuner> DetectTuners();
   }
 }

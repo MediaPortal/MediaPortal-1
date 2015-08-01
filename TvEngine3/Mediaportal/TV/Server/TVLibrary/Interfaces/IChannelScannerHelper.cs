@@ -18,8 +18,8 @@
 
 #endregion
 
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
@@ -40,6 +40,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <param name="serviceType">The service type.</param>
     /// <param name="videoStreamCount">The number of video streams associated with the service.</param>
     /// <param name="audioStreamCount">The number of audio streams associated with the service.</param>
-    MediaTypeEnum? GetMediaType(int serviceType, int videoStreamCount, int audioStreamCount);
+    MediaType? GetMediaType(int serviceType, int videoStreamCount, int audioStreamCount);
   }
 }

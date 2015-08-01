@@ -20,21 +20,14 @@
 
 using System;
 using System.Collections.Generic;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
 {
-  internal enum ChannelType
-  {
-    Normal,
-    Hidden,
-    LocalAccess,
-    NvodAccess
-  }
-
-  internal delegate void SvctChannelDetailDelegate(AtscTransmissionMedium transmissionMedium, int vctId, int virtualChannelNumber, bool applicationVirtualChannel,
-    int bitstreamSelect, int pathSelect, ChannelType channelType, int sourceId, byte cdsReference, int programNumber, byte mmsReference);
+  internal delegate void SvctChannelDetailDelegate(TransmissionMedium transmissionMedium, ushort vctId, ushort virtualChannelNumber, bool applicationVirtualChannel,
+    byte bitstreamSelect, byte pathSelect, ChannelType channelType, ushort sourceId, byte cdsReference, ushort programNumber, byte mmsReference);
 
   internal class ParserSvct : ParserBase
   {
@@ -60,8 +53,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
       Mac
     }
 
-    private HashSet<int> _definedChannels = null;
-    private HashSet<int> _channelDefinitions = null;
+    private HashSet<int> _definedChannels = null;     // channel numbers
+    private HashSet<int> _channelDefinitions = null;  // channel numbers
+    private HashSet<int> _hiddenChannels = null;      // channel numbers
     private TableCompleteDelegate _tableCompleteEventDelegate = null;
     private SvctChannelDetailDelegate _channelDetailEventDelegate = null;
 
@@ -102,10 +96,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
     }
 
     public ParserSvct()
-      : base(0, 2)
+      : base((int)TableSubtype.VirtualChannelMap, (int)TableSubtype.InverseChannelMap)
     {
       _definedChannels = new HashSet<int>();
       _channelDefinitions = new HashSet<int>();
+      _hiddenChannels = new HashSet<int>();
+    }
+
+    public HashSet<int> DefinedChannels
+    {
+      get
+      {
+        return _definedChannels;
+      }
     }
 
     public override void Reset()
@@ -115,6 +118,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         base.Reset();
         _definedChannels.Clear();
         _channelDefinitions.Clear();
+        _hiddenChannels.Clear();
       }
     }
 
@@ -137,16 +141,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         {
           return;
         }
-        int sectionLength = ((section[3] & 0x0f) << 8) + section[4];
+        int sectionLength = ((section[3] & 0x0f) << 8) | section[4];
         if (section.Length != 2 + sectionLength + 3)  // 2 for section length bytes, 3 for table ID and PID
         {
           this.LogError("S-VCT: invalid section length = {0}, byte count = {1}", sectionLength, section.Length);
           return;
         }
         byte protocolVersion = (byte)(section[5] & 0x1f);
-        AtscTransmissionMedium transmissionMedium = (AtscTransmissionMedium)(section[6] >> 4);
+        TransmissionMedium transmissionMedium = (TransmissionMedium)(section[6] >> 4);
         TableSubtype tableSubtype = (TableSubtype)(section[6] & 0x0f);
-        int vctId = (section[7] << 8) + section[8];
+        ushort vctId = (ushort)((section[7] << 8) | section[8]);
         this.LogDebug("S-VCT: section length = {0}, protocol version = {1}, transmission medium = {2}, table subtype = {3}, VCT ID = {4}",
           sectionLength, protocolVersion, transmissionMedium, tableSubtype, vctId);
 
@@ -201,27 +205,43 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
           return;
         }
 
-        // Two methods for detecting S-VCT VCM completion:
-        // 1. Revision detection descriptors.
-        // 2. DCM channel count equals VCM channel count.
+        // Two methods for detecting S-VCT completion to handle profiles 1 and
+        // 2. See SCTE 65 annex A.
         if (
+          _tableCompleteEventDelegate != null &&
           (
-            tableSubtype == TableSubtype.VirtualChannelMap &&
-            _currentVersions[(int)TableSubtype.VirtualChannelMap] != -1 &&
+            // VCM and DCM complete by revision descriptors. Note both VCM and
+            // DCM are mandatory.
+            _currentVersions[(int)TableSubtype.VirtualChannelMap] != VERSION_NOT_DEFINED &&
             _unseenSections[(int)TableSubtype.VirtualChannelMap].Count == 0 &&
-            _tableCompleteEventDelegate != null
+            _currentVersions[(int)TableSubtype.DefinedChannelMap] != VERSION_NOT_DEFINED &&
+            _unseenSections[(int)TableSubtype.DefinedChannelMap].Count == 0
           ) ||
           (
-            (tableSubtype == TableSubtype.DefinedChannelMap || tableSubtype == TableSubtype.VirtualChannelMap) &&
-            _currentVersions[(int)TableSubtype.VirtualChannelMap] == -1 &&
-            _channelDefinitions.Count == _definedChannels.Count &&
-            _tableCompleteEventDelegate != null
+            // VCMs received for all defined channels.
+            // The meaning of "defined" doesn't seem to be specified by the
+            // standard. We support two meanings:
+            // 1. DCM set matches VCM set.
+            // 2. VCM set is a superset of the DCM and hidden VCM sets.
+            _definedChannels.Count > 0 &&
+            _currentVersions[(int)TableSubtype.VirtualChannelMap] == VERSION_NOT_DEFINED &&
+            _currentVersions[(int)TableSubtype.DefinedChannelMap] == VERSION_NOT_DEFINED &&
+            (
+              _definedChannels.Count == _channelDefinitions.Count ||
+              _definedChannels.Count == _channelDefinitions.Count - _hiddenChannels.Count
+            )
           )
         )
         {
-          _tableCompleteEventDelegate(MgtTableType.SvctVcm);
-          _tableCompleteEventDelegate = null;
-          _channelDetailEventDelegate = null;
+          HashSet<int> channelDefinitions = new HashSet<int>(_channelDefinitions);
+          channelDefinitions.ExceptWith(_definedChannels);
+          channelDefinitions.ExceptWith(_hiddenChannels);
+          if (channelDefinitions.Count == 0)
+          {
+            _tableCompleteEventDelegate(MgtTableType.SvctVcm);
+            _tableCompleteEventDelegate = null;
+            _channelDetailEventDelegate = null;
+          }
         }
       }
     }
@@ -233,23 +253,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         throw new TvException("S-VCT: corruption detected at defined channel map, pointer = {0}, end of section = {1}", pointer, endOfSection);
       }
 
-      int firstVirtualChannel = ((section[pointer] & 0x0f) << 8) + section[pointer + 1];
+      ushort firstVirtualChannel = (ushort)(((section[pointer] & 0x0f) << 8) | section[pointer + 1]);
       pointer += 2;
-      int dcmDataLength = (section[pointer++] & 0x7f);
+      byte dcmDataLength = (byte)(section[pointer++] & 0x7f);
       if (pointer + dcmDataLength > endOfSection)
       {
         throw new TvException("S-VCT: invalid defined channel map data length {0}, pointer = {1}, end of section = {2}", dcmDataLength, pointer, endOfSection);
       }
       this.LogDebug("S-VCT: defined channel map, first virtual channel = {0}, DCM data length = {1}", firstVirtualChannel, dcmDataLength);
-      int currentChannel = firstVirtualChannel;
-      for (int i = 0; i < dcmDataLength; i++)
+      ushort currentChannel = firstVirtualChannel;
+      for (byte i = 0; i < dcmDataLength; i++)
       {
-        bool rangeDefined = ((section[pointer] & 0x80) != 0);
-        int channelsCount = (section[pointer++] & 0x7f);
+        bool rangeDefined = (section[pointer] & 0x80) != 0;
+        byte channelsCount = (byte)(section[pointer++] & 0x7f);
         this.LogDebug("S-VCT: range defined = {0}, channels count = {1}", rangeDefined, channelsCount);
         if (rangeDefined)
         {
-          for (int c = 0; c < channelsCount; c++)
+          for (byte c = 0; c < channelsCount; c++)
           {
             _definedChannels.Add(currentChannel++);
           }
@@ -261,7 +281,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
       }
     }
 
-    private void DecodeVirtualChannelMap(byte[] section, int endOfSection, ref int pointer, AtscTransmissionMedium transmissionMedium, int vctId)
+    private void DecodeVirtualChannelMap(byte[] section, int endOfSection, ref int pointer, TransmissionMedium transmissionMedium, ushort vctId)
     {
       // Virtual channel formats depend on transmission medium.
       if (pointer + 7 > endOfSection)
@@ -269,15 +289,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         throw new TvException("S-VCT: corruption detected at virtual channel map, pointer = {0}, end of section = {1}", pointer, endOfSection);
       }
 
-      bool freqSpecIncluded = ((section[pointer] & 0x80) != 0);
-      bool symbolRateIncluded = ((section[pointer] & 0x40) != 0);
-      bool descriptorsIncluded = ((section[pointer++] & 0x20) != 0);
-      bool splice = ((section[pointer++] & 0x80) != 0);
+      bool freqSpecIncluded = (section[pointer] & 0x80) != 0;
+      bool symbolRateIncluded = (section[pointer] & 0x40) != 0;
+      bool descriptorsIncluded = (section[pointer++] & 0x20) != 0;
+      bool splice = (section[pointer++] & 0x80) != 0;
       uint activationTime = 0;
       for (byte b = 0; b < 4; b++)
       {
         activationTime = activationTime << 8;
-        activationTime = section[pointer++];
+        activationTime |= section[pointer++];
       }
       byte numberOfVcRecords = section[pointer++];
       this.LogDebug("S-VCT: virtual channel map, transmission medium = {0}, freq. spec. included = {1}, symbol rate included = {2}, descriptors included = {3}, splice = {4}, activation time = {5}, number of VC records = {6}",
@@ -290,28 +310,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
           throw new TvException("S-VCT: detected number of virtual channel records {0} is invalid, pointer = {1}, end of section = {2}, loop = {3}", numberOfVcRecords, pointer, endOfSection, i);
         }
 
-        int virtualChannelNumber = ((section[pointer] & 0x0f) << 8) + section[pointer + 1];
+        ushort virtualChannelNumber = (ushort)(((section[pointer] & 0x0f) << 8) | section[pointer + 1]);
         pointer += 2;
-        _channelDefinitions.Add(virtualChannelNumber);
-        bool applicationVirtualChannel = ((section[pointer] & 0x80) != 0);
-        int bitstreamSelect = ((section[pointer] & 0x40) >> 6);   // broadcast reserved
-        int pathSelect = ((section[pointer] & 0x20) >> 5);        // satellite, SMATV, broadcast reserved
+        bool applicationVirtualChannel = (section[pointer] & 0x80) != 0;
+        byte bitstreamSelect = (byte)((section[pointer] & 0x40) >> 6);  // broadcast reserved
+        byte pathSelect = (byte)((section[pointer] & 0x20) >> 5);       // satellite, SMATV, broadcast reserved
         TransportType transportType = (TransportType)((section[pointer] & 0x10) >> 4);
         ChannelType channelType = (ChannelType)(section[pointer++] & 0x0f);
-        int sourceId = (section[pointer] << 8) + section[pointer + 1];
+        ushort sourceId = (ushort)((section[pointer] << 8) | section[pointer + 1]);
         pointer += 2;
         this.LogDebug("S-VCT: virtual channel number = {0}, application virtual channel = {1}, bitstream select = {2}, path select = {3}, transport type = {4}, channel type = {5}, source ID = {6}",
           virtualChannelNumber, applicationVirtualChannel, bitstreamSelect, pathSelect, transportType, channelType, sourceId);
 
+        _channelDefinitions.Add(virtualChannelNumber);
+        if (channelType == ChannelType.Hidden)
+        {
+          _hiddenChannels.Add(virtualChannelNumber);
+        }
+
         if (channelType == ChannelType.NvodAccess)
         {
-          int nvodChannelBase = ((section[pointer] & 0x0f) << 8) + section[pointer + 1];
+          ushort nvodChannelBase = (ushort)(((section[pointer] & 0x0f) << 8) | section[pointer + 1]);
           pointer += 2;
-          if (transmissionMedium == AtscTransmissionMedium.Smatv)
+          if (transmissionMedium == TransmissionMedium.Smatv)
           {
             pointer += 3;
           }
-          else if (transmissionMedium != AtscTransmissionMedium.OverTheAir)
+          else if (transmissionMedium != TransmissionMedium.OverTheAir)
           {
             pointer += 2;
           }
@@ -321,28 +346,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         {
           switch (transmissionMedium)
           {
-            case AtscTransmissionMedium.Satellite:
+            case TransmissionMedium.Satellite:
               if (transportType == TransportType.Mpeg2)
               {
                 byte satellite = section[pointer++];
-                int transponder = (section[pointer++] & 0x3f);
-                int programNumber = (section[pointer] << 8) + section[pointer + 1];
+                byte transponder = (byte)(section[pointer++] & 0x3f);
+                ushort programNumber = (ushort)((section[pointer] << 8) | section[pointer + 1]);
                 pointer += 2;
                 this.LogDebug("S-VCT: satellite = {0}, transponder = {1}, program number = {2}", satellite, transponder, programNumber);
               }
               else
               {
                 byte satellite = section[pointer++];
-                int transponder = (section[pointer++] & 0x3f);
+                byte transponder = (byte)(section[pointer++] & 0x3f);
                 pointer += 2;
                 this.LogDebug("S-VCT: satellite = {0}, transponder = {1}", satellite, transponder);
               }
               break;
-            case AtscTransmissionMedium.Smatv:
+            case TransmissionMedium.Smatv:
               if (transportType == TransportType.Mpeg2)
               {
                 byte cdsReference = section[pointer++];
-                int programNumber = (section[pointer] << 8) + section[pointer + 1];
+                ushort programNumber = (ushort)((section[pointer] << 8) | section[pointer + 1]);
                 pointer += 2;
                 byte mmsReference = section[pointer++];
                 pointer++;
@@ -351,43 +376,41 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
               else
               {
                 byte cdsReference = section[pointer++];
-                bool scrambled = ((section[pointer] & 0x80) != 0);
+                bool scrambled = (section[pointer] & 0x80) != 0;
                 VideoStandard videoStandard = (VideoStandard)(section[pointer++] & 0x0f);
-                bool isWideBandwidthVideo = ((section[pointer] & 0x80) != 0);
-                WaveformStandard waveformStandard = (WaveformStandard)(section[pointer++] & 0x1f);
-                bool isWideBandwidthAudio = ((section[pointer] & 0x80) != 0);
-                bool isCompandedAudio = ((section[pointer] & 0x40) != 0);
+                bool isWideBandwidthAudio = (section[pointer] & 0x80) != 0;
+                bool isCompandedAudio = (section[pointer] & 0x40) != 0;
                 MatrixMode matrixMode = (MatrixMode)((section[pointer] >> 4) & 0x03);
-                int subcarrier2Offset = 10 * (((section[pointer] & 0x0f) << 6) + (section[pointer + 1] >> 2));  // kHz
+                int subcarrier2Offset = 10 * (((section[pointer] & 0x0f) << 6) | (section[pointer + 1] >> 2));  // kHz
                 pointer++;
-                int subcarrier1Offset = 10 * (((section[pointer] & 0x03) << 8) + section[pointer + 1]);
+                int subcarrier1Offset = 10 * (((section[pointer] & 0x03) << 8) | section[pointer + 1]);
                 pointer += 2;
-                this.LogDebug("S-VCT: CDS reference = {0}, scrambled = {1}, video standard = {2}, is WB video = {3}, waveform standard = {4}, is WB audio = {5}, is companded audio = {6}, matrix mode = {7}, subcarrier 2 offset = {8} kHz, subcarrier 1 offset = {9} kHz",
-                  cdsReference, scrambled, videoStandard, isWideBandwidthVideo, waveformStandard, isWideBandwidthAudio,
+                this.LogDebug("S-VCT: CDS reference = {0}, scrambled = {1}, video standard = {2}, is WB audio = {3}, is companded audio = {4}, matrix mode = {5}, subcarrier 2 offset = {6} kHz, subcarrier 1 offset = {7} kHz",
+                  cdsReference, scrambled, videoStandard, isWideBandwidthAudio,
                   isCompandedAudio, matrixMode, subcarrier2Offset, subcarrier1Offset);
               }
               break;
-            case AtscTransmissionMedium.OverTheAir:
+            case TransmissionMedium.OverTheAir:
               if (transportType == TransportType.Mpeg2)
               {
-                int programNumber = (section[pointer] << 8) + section[pointer + 1];
+                ushort programNumber = (ushort)((section[pointer] << 8) | section[pointer + 1]);
                 pointer += 2;
                 this.LogDebug("S-VCT: program number = {0}", programNumber);
               }
               else
               {
-                bool scrambled = ((section[pointer] & 0x80) != 0);
+                bool scrambled = (section[pointer] & 0x80) != 0;
                 VideoStandard videoStandard = (VideoStandard)(section[pointer++] & 0x0f);
                 pointer++;
                 this.LogDebug("S-VCT: scrambled = {0}, video standard = {1}", scrambled, videoStandard);
               }
               break;
-            case AtscTransmissionMedium.Cable:
-            case AtscTransmissionMedium.Mmds:
+            case TransmissionMedium.Cable:
+            case TransmissionMedium.Mmds:
               if (transportType == TransportType.Mpeg2)
               {
                 byte cdsReference = section[pointer++];
-                int programNumber = (section[pointer] << 8) + section[pointer + 1];
+                ushort programNumber = (ushort)((section[pointer] << 8) | section[pointer + 1]);
                 pointer += 2;
                 byte mmsReference = section[pointer++];
                 this.LogDebug("S-VCT: CDS reference = {0}, program number = {1}, MMS reference = {2}", cdsReference, programNumber, mmsReference);
@@ -400,7 +423,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
               else
               {
                 byte cdsReference = section[pointer++];
-                bool scrambled = ((section[pointer] & 0x80) != 0);
+                bool scrambled = (section[pointer] & 0x80) != 0;
                 VideoStandard videoStandard = (VideoStandard)(section[pointer++] & 0x0f);
                 pointer += 2;
                 this.LogDebug("S-VCT: CDS reference = {0}, scrambled = {1}, video standard = {2}", cdsReference, scrambled, videoStandard);
@@ -411,21 +434,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
           }
         }
 
-        if (freqSpecIncluded || transmissionMedium == AtscTransmissionMedium.OverTheAir)
+        if (freqSpecIncluded || transmissionMedium == TransmissionMedium.OverTheAir)
         {
           int frequencyUnit = 10; // kHz
           if ((section[pointer] & 0x80) != 0)
           {
             frequencyUnit = 125;  // kHz
           }
-          int carrierFrequency = frequencyUnit * (((section[pointer] & 0x7f) << 8) + section[pointer + 1]);  // kHz
+          int carrierFrequency = frequencyUnit * (((section[pointer] & 0x7f) << 8) | section[pointer + 1]);  // kHz
           pointer += 2;
           this.LogDebug("S-VCT: frequency, unit = {0} kHz, carrier = {1} kHz", frequencyUnit, carrierFrequency);
         }
-        if (symbolRateIncluded && transmissionMedium != AtscTransmissionMedium.OverTheAir)
+        if (symbolRateIncluded && transmissionMedium != TransmissionMedium.OverTheAir)
         {
           // s/s
-          int symbolRate = ((section[pointer] & 0x0f) << 24) + (section[pointer + 1] << 16) + (section[pointer + 2] << 8) + section[pointer + 3];
+          int symbolRate = ((section[pointer] & 0x0f) << 24) | (section[pointer + 1] << 16) | (section[pointer + 2] << 8) | section[pointer + 3];
           pointer += 4;
           this.LogDebug("S-VCT: symbol rate = {0} s/s", symbolRate);
         }
@@ -462,19 +485,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         throw new TvException("S-VCT: corruption detected at inverse channel map, pointer = {0}, end of section = {1}", pointer, endOfSection);
       }
 
-      int firstMapIndex = ((section[pointer] & 0x0f) << 8) + section[pointer + 1];
+      ushort firstMapIndex = (ushort)(((section[pointer] & 0x0f) << 8) | section[pointer + 1]);
       pointer += 2;
-      int recordCount = (section[pointer++] & 0x7f);
+      byte recordCount = (byte)(section[pointer++] & 0x7f);
       if (pointer + (recordCount * 4) > endOfSection)
       {
         throw new TvException("S-VCT: invalid inverse channel map record count {0}, pointer = {1}, end of section = {2}", recordCount, pointer, endOfSection);
       }
       this.LogDebug("S-VCT: inverse channel map, first map index = {0}, record count = {1}", firstMapIndex, recordCount);
-      for (int i = 0; i < recordCount; i++)
+      for (byte i = 0; i < recordCount; i++)
       {
-        int sourceId = (section[pointer] << 8) + section[pointer + 1];
+        ushort sourceId = (ushort)((section[pointer] << 8) | section[pointer + 1]);
         pointer += 2;
-        int virtualChannelNumber = ((section[pointer] & 0x0f) << 8) + section[pointer + 1];
+        ushort virtualChannelNumber = (ushort)(((section[pointer] & 0x0f) << 8) | section[pointer + 1]);
         pointer += 2;
         this.LogDebug("S-VCT: source ID = {0}, virtual channel number = {1}", sourceId, virtualChannelNumber);
       }

@@ -18,11 +18,18 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Enum;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using UPnP.Infrastructure.CP;
 using UPnP.Infrastructure.CP.Description;
 using UPnP.Infrastructure.CP.SSDP;
@@ -34,6 +41,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
   /// </summary>
   internal class TunerDetectorDri : ITunerDetectorUpnp
   {
+    private static readonly HashSet<TunerModulation> MANDATORY_MODULATION_SCHEMES = new HashSet<TunerModulation> { TunerModulation.Qam64, TunerModulation.Qam256 };
+
     /// <summary>
     /// Get the detector's name.
     /// </summary>
@@ -51,9 +60,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// <param name="descriptor">The UPnP device's root descriptor.</param>
     /// <param name="controlPoint">The control point that the device is attached to.</param>
     /// <returns>the compatible tuners exposed by the device</returns>
-    public ICollection<ITVCard> DetectTuners(DeviceDescriptor descriptor, UPnPControlPoint controlPoint)
+    public ICollection<ITuner> DetectTuners(DeviceDescriptor descriptor, UPnPControlPoint controlPoint)
     {
-      List<ITVCard> tuners = new List<ITVCard>();
+      List<ITuner> tuners = new List<ITuner>();
 
       IEnumerator<DeviceEntry> childDeviceEn = descriptor.RootDescriptor.SSDPRootEntry.Devices.Values.GetEnumerator();
       while (childDeviceEn.MoveNext())
@@ -64,7 +73,51 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           if (serviceUrn.Equals("urn:schemas-opencable-com:service:Tuner:1"))
           {
             string uuid = childDeviceEn.Current.UUID;
-            tuners.Add(new TunerDri(descriptor.FindDevice(uuid), controlPoint, new TunerStream(string.Format("MediaPortal DRI {0} Stream Source", uuid), 1)));
+            DeviceDescriptor deviceDescriptor = descriptor.FindDevice(uuid);
+
+            ICollection<TunerModulation> supportedModulationSchemes;
+            GetDriDeviceSupportedModulationSchemes(deviceDescriptor, controlPoint, out supportedModulationSchemes);
+
+            BroadcastStandard supportedBroadcastStandards = BroadcastStandard.Unknown;
+            if (supportedModulationSchemes.Contains(TunerModulation.Vsb8))
+            {
+              supportedBroadcastStandards |= BroadcastStandard.Atsc;
+            }
+            if (supportedModulationSchemes.Contains(TunerModulation.Qam64) || supportedModulationSchemes.Contains(TunerModulation.Qam256))
+            {
+              supportedBroadcastStandards |= BroadcastStandard.Scte;
+            }
+
+            if (supportedBroadcastStandards == BroadcastStandard.Unknown)
+            {
+              this.LogWarn("DRI detector: tuner {0} does not support any supported modulation schemes for tuner", uuid);
+              break;
+            }
+
+            string tunerInstanceId = null;
+            string productInstanceId = null;
+            if (deviceDescriptor.FriendlyName.Contains("Ceton"))
+            {
+              // Example: Ceton InfiniTV PCIe (00-80-75-05) Tuner 1 (00-00-22-00-00-80-75-05)
+              Match m = Regex.Match(descriptor.FriendlyName, @"\s+\(([^\s]+)\)\s+Tuner\s+(\d+)", RegexOptions.IgnoreCase);
+              if (m.Success)
+              {
+                productInstanceId = m.Groups[1].Captures[0].Value;
+                tunerInstanceId = m.Groups[2].Captures[0].Value;
+              }
+            }
+            else
+            {
+              // Examples: HDHomeRun Prime Tuner 1316890F-1, Hauppauge OpenCable Receiver 201200AA-1
+              Match m = Regex.Match(descriptor.FriendlyName, @"\s+([^\s]+)-(\d)$", RegexOptions.IgnoreCase);
+              if (m.Success)
+              {
+                productInstanceId = m.Groups[1].Captures[0].Value;
+                tunerInstanceId = m.Groups[2].Captures[0].Value;
+              }
+            }
+
+            tuners.Add(new TunerDri(deviceDescriptor, tunerInstanceId, productInstanceId, supportedBroadcastStandards, supportedModulationSchemes, controlPoint, new TunerStream(string.Format("MediaPortal DRI {0} Stream Source", uuid), 1)));
             break;
           }
         }
@@ -74,6 +127,86 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         this.LogInfo("DRI detector: tuner added");
       }
       return tuners;
+    }
+
+    private static void GetDriDeviceSupportedModulationSchemes(DeviceDescriptor deviceDescriptor, UPnPControlPoint controlPoint, out ICollection<TunerModulation> supportedModulationSchemes)
+    {
+      supportedModulationSchemes = new HashSet<TunerModulation>();
+
+      try
+      {
+        DeviceConnection connection = controlPoint.Connect(deviceDescriptor.RootDescriptor, deviceDescriptor.DeviceUUID, null, true);
+        try
+        {
+          int connectionId = 0;
+          ServiceTuner serviceTuner = new ServiceTuner(connection.Device);
+          ServiceConnectionManager serviceConnectionManager = new ServiceConnectionManager(connection.Device);
+          try
+          {
+            int avTransportId;
+            int rcsId;
+            serviceConnectionManager.PrepareForConnection(string.Empty, string.Empty, -1, ConnectionDirection.Output, out connectionId, out avTransportId, out rcsId);
+
+            string csvTunerModulations = (string)serviceTuner.QueryStateVariable("ModulationList");
+            if (string.IsNullOrEmpty(csvTunerModulations))
+            {
+              supportedModulationSchemes = new HashSet<TunerModulation>(MANDATORY_MODULATION_SCHEMES);
+            }
+            else
+            {
+              foreach (string modulation in csvTunerModulations.Split(','))
+              {
+                TunerModulation tm = (TunerModulation)modulation.Trim();
+                if (tm == null)
+                {
+                  Log.Warn("DRI detector: tuner supports unrecognised modulation scheme {0}", modulation);
+                }
+                else if (tm == TunerModulation.Qam64 || tm == TunerModulation.Qam64_2)
+                {
+                  supportedModulationSchemes.Add(TunerModulation.Qam64);
+                }
+                else if (tm == TunerModulation.Qam256 || tm == TunerModulation.Qam256_2)
+                {
+                  supportedModulationSchemes.Add(TunerModulation.Qam256);
+                }
+                else if (tm == TunerModulation.Vsb8 || tm == TunerModulation.Vsb8_2)
+                {
+                  supportedModulationSchemes.Add(TunerModulation.Vsb8);
+                }
+                else if (tm == TunerModulation.All)
+                {
+                  supportedModulationSchemes.Add(TunerModulation.Qam64);
+                  supportedModulationSchemes.Add(TunerModulation.Qam256);
+                  supportedModulationSchemes.Add(TunerModulation.Vsb8);
+                }
+                else
+                {
+                  Log.Warn("DRI detector: tuner supports unsupported modulation scheme {0}", tm);
+                }
+              }
+            }
+          }
+          finally
+          {
+            serviceTuner.Dispose();
+            if (connectionId > 0)
+            {
+              serviceConnectionManager.ConnectionComplete(connectionId);
+            }
+            serviceConnectionManager.Dispose();
+          }
+        }
+        finally
+        {
+          connection.Disconnect();
+          connection.Dispose();
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Warn(ex, "DRI detector: failed to determine supported modulation schemes for tuner {0}, assuming only mandatory schemes supported", deviceDescriptor.DeviceUUID);
+        supportedModulationSchemes = new HashSet<TunerModulation>(MANDATORY_MODULATION_SCHEMES);
+      }
     }
   }
 }

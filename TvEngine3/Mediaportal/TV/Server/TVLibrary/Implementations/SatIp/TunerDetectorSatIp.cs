@@ -23,11 +23,12 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.XPath;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using UPnP.Infrastructure.CP;
 using UPnP.Infrastructure.CP.Description;
 using RtspClient = Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp.RtspClient;
@@ -56,9 +57,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <param name="descriptor">The UPnP device's root descriptor.</param>
     /// <param name="controlPoint">The control point that the device is attached to.</param>
     /// <returns>the compatible tuners exposed by the device</returns>
-    public ICollection<ITVCard> DetectTuners(DeviceDescriptor descriptor, UPnPControlPoint controlPoint)
+    public ICollection<ITuner> DetectTuners(DeviceDescriptor descriptor, UPnPControlPoint controlPoint)
     {
-      List<ITVCard> tuners = new List<ITVCard>();
+      List<ITuner> tuners = new List<ITuner>();
 
       // Is the UPnP device a SAT>IP server?
       if (!descriptor.TypeVersion_URN.Equals("urn:ses-com:device:SatIPServer:1"))
@@ -131,8 +132,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
           RtspRequest request = new RtspRequest(RtspMethod.Describe, string.Format("rtsp://{0}/", remoteHost));
           request.Headers.Add("Accept", "application/sdp");
           request.Headers.Add("Connection", "close");
-          RtspClient client = new RtspClient(remoteHost, 554);
-          client.SendRequest(request, out response);
+          using (RtspClient client = new RtspClient(remoteHost, 554))
+          {
+            client.SendRequest(request, out response);
+          }
         }
         catch (Exception ex)
         {
@@ -205,6 +208,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       j += feCountC;
       for (; i <= feCountC2 + j; i++)
       {
+        // Note: DVB-C2 not supported for now.
         tuners.Add(new TunerSatIpCable(descriptor, i, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-C/C2 Stream Source", descriptor.DeviceUUID), i)));
       }
       j += feCountC2;
@@ -221,12 +225,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 
       for (; i <= feCountT + j; i++)
       {
-        tuners.Add(new TunerSatIpTerrestrial(descriptor, i, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-T Stream Source", descriptor.DeviceUUID), i)));
+        tuners.Add(new TunerSatIpTerrestrial(descriptor, i, BroadcastStandard.DvbT, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-T Stream Source", descriptor.DeviceUUID), i)));
       }
       j += feCountT;
       for (; i <= feCountT2 + j; i++)
       {
-        tuners.Add(new TunerSatIpTerrestrial(descriptor, i, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-T/T2 Stream Source", descriptor.DeviceUUID), i)));
+        tuners.Add(new TunerSatIpTerrestrial(descriptor, i, BroadcastStandard.DvbT | BroadcastStandard.DvbT2, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-T/T2 Stream Source", descriptor.DeviceUUID), i)));
       }
       j += feCountT2;
 

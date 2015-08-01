@@ -22,8 +22,9 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
@@ -34,13 +35,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     private IList<IEncoder> _encoders = new List<IEncoder>();
     private QualityType _bitRateProfile = QualityType.Custom;
-    private VIDEOENCODER_BITRATE_MODE _bitRateMode = VIDEOENCODER_BITRATE_MODE.ConstantBitRate;
+    private EncoderBitRateMode _bitRateMode = EncoderBitRateMode.ConstantBitRate;
 
     #endregion
 
-    public EncoderController(IList<ICustomDevice> tunerExtensions)
+    public EncoderController(IList<ITunerExtension> tunerExtensions)
     {
-      foreach (ICustomDevice extension in tunerExtensions)
+      foreach (ITunerExtension extension in tunerExtensions)
       {
         IEncoder encoder = extension as IEncoder;
         if (encoder != null)
@@ -54,22 +55,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     public bool SupportsBitRateModes()
     {
-      // TODO the IQuality interface is annoying. It needs a complete redo... but that would be a
-      // lot of work due to the configuration and plugin user interfaces. We'll come back to this
-      // later.
-      return true;
+      foreach (IEncoder encoder in _encoders)
+      {
+        if (encoder.IsParameterSupported(PropSetID.ENCAPIPARAM_BitRateMode))
+        {
+          return true;
+        }
+      }
+      return false;
     }
 
     public bool SupportsPeakBitRateMode()
     {
-      // TODO
-      return true;
+      foreach (IEncoder encoder in _encoders)
+      {
+        if (encoder.IsParameterSupported(PropSetID.ENCAPIPARAM_PeakBitRate))
+        {
+          return true;
+        }
+      }
+      return false;
     }
 
     public bool SupportsBitRate()
     {
-      // TODO
-      return true;
+      foreach (IEncoder encoder in _encoders)
+      {
+        if (encoder.IsParameterSupported(PropSetID.ENCAPIPARAM_BitRate))
+        {
+          return true;
+        }
+      }
+      return false;
     }
 
     public QualityType QualityType
@@ -104,7 +121,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             success = SetParameterByDefault(PropSetID.ENCAPIPARAM_BitRate);
             break;
         }
-        if (_bitRateMode == VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak)
+        if (_bitRateMode == EncoderBitRateMode.VariableBitRatePeak)
         {
           switch (value)
           {
@@ -137,7 +154,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
     }
 
-    public VIDEOENCODER_BITRATE_MODE BitRateMode
+    public EncoderBitRateMode BitRateMode
     {
       get
       {

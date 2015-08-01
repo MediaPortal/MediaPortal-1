@@ -19,57 +19,16 @@
 #endregion
 
 using System;
-using DirectShowLib.BDA;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
 {
-  // See ATSC A/56 or SCTE 57 table 5.1.
-  internal enum AtscTransmissionMedium
-  {
-    Cable = 0,
-    Satellite,
-    Mmds,
-    Smatv,
-    OverTheAir
-  }
-
-  internal enum WaveformStandard
-  {
-    Ntsc = 1,
-    Pal625,
-    Pal525,
-    Secam,
-    D2Mac,
-    Bmac,
-    Cmac,
-    Dci,       // DigiCipher I
-    VideoCipher,
-    RcaDss,
-    Orion,
-    Leitch
-  }
-
-  internal enum MatrixMode
-  {
-    Mono = 0,
-    DiscreteStereo,
-    MatrixStereo
-  }
-
-  internal enum TransmissionSystem
-  {
-    ItutAnnex1 = 1, // ITU ETSI cable (DVB-C)
-    ItutAnnex2,     // ITU North American cable (SCTE)
-    ItuR,           // ITU ETSI satellite
-    Atsc,
-    DigiCipher      // DC II satellite
-  }
-
-  internal delegate void NitCarrierDefinitionDelegate(AtscTransmissionMedium transmissionMedium, byte index, int carrierFrequency);
-  internal delegate void NitModulationModeDelegate(AtscTransmissionMedium transmissionMedium, byte index, TransmissionSystem transmissionSystem,
-    BinaryConvolutionCodeRate innerCodingMode, bool isSplitBitstreamMode, ModulationType modulationFormat, int symbolRate);
+  internal delegate void NitCarrierDefinitionDelegate(TransmissionMedium transmissionMedium, byte index, int carrierFrequency);
+  internal delegate void NitModulationModeDelegate(TransmissionMedium transmissionMedium, byte index, TransmissionSystem transmissionSystem,
+    FecCodeRate innerCodingMode, bool isSplitBitstreamMode, ModulationMode modulationFormat, int symbolRate);
 
   /// <summary>
   /// ATSC/SCTE network information table parser. Refer to ATSC A/56 and SCTE 65.
@@ -150,7 +109,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
     }
 
     public ParserNit()
-      : base(1, 4)
+      : base((int)TableSubtype.CarrierDefinition, (int)TableSubtype.TransponderData)
     {
     }
 
@@ -173,16 +132,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         {
           return;
         }
-        int sectionLength = ((section[3] & 0xf) << 8) + section[4];
+        int sectionLength = ((section[3] & 0xf) << 8) | section[4];
         if (section.Length != 2 + sectionLength + 3)  // 2 for section length bytes, 3 for table ID and PID
         {
           this.LogError("NIT: invalid section length = {0}, byte count = {1}", sectionLength, section.Length);
           return;
         }
-        int protocolVersion = (section[5] & 0x1f);
+        byte protocolVersion = (byte)(section[5] & 0x1f);
         byte firstIndex = section[6];
         byte numberOfRecords = section[7];
-        AtscTransmissionMedium transmissionMedium = (AtscTransmissionMedium)(section[8] >> 4);
+        TransmissionMedium transmissionMedium = (TransmissionMedium)(section[8] >> 4);
         TableSubtype tableSubtype = (TableSubtype)(section[8] & 0x0f);
         if ((tableSubtype != TableSubtype.CarrierDefinition || _carrierDefinitionEventDelegate == null) &&
           (tableSubtype != TableSubtype.ModulationMode || _modulationModeEventDelegate == null))
@@ -288,11 +247,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
 
         if (tableSubtype == TableSubtype.CarrierDefinition &&
           (
-            _currentVersions[(int)TableSubtype.CarrierDefinition] == -1 ||
+            _currentVersions[(int)TableSubtype.CarrierDefinition] == VERSION_NOT_DEFINED ||
             _unseenSections[(int)TableSubtype.CarrierDefinition].Count == 0
           ) &&
           _carrierDefinitionEventDelegate != null)
         {
+          // carrier definitions complete
           _carrierDefinitionEventDelegate = null;
           if (_modulationModeEventDelegate == null && _tableCompleteEventDelegate != null)
           {
@@ -302,11 +262,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         }
         else if (tableSubtype == TableSubtype.ModulationMode &&
           (
-            _currentVersions[(int)TableSubtype.ModulationMode] == -1 ||
+            _currentVersions[(int)TableSubtype.ModulationMode] == VERSION_NOT_DEFINED ||
             _unseenSections[(int)TableSubtype.ModulationMode].Count == 0
           ) &&
           _modulationModeEventDelegate != null)
         {
+          // modulation modes complete
           _modulationModeEventDelegate = null;
           if (_carrierDefinitionEventDelegate == null && _tableCompleteEventDelegate != null)
           {
@@ -317,7 +278,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
       }
     }
 
-    private void DecodeCarrierDefinition(byte[] section, int endOfSection, ref int pointer, ref byte firstIndex, AtscTransmissionMedium transmissionMedium)
+    private void DecodeCarrierDefinition(byte[] section, int endOfSection, ref int pointer, ref byte firstIndex, TransmissionMedium transmissionMedium)
     {
       if (pointer + 5 > endOfSection)
       {
@@ -329,7 +290,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
       {
         spacingUnit = 125;    // kHz
       }
-      int frequencySpacing = spacingUnit * (((section[pointer] & 0x3f) << 8) + section[pointer + 1]);   // kHz
+      int frequencySpacing = spacingUnit * (((section[pointer] & 0x3f) << 8) | section[pointer + 1]);   // kHz
       pointer += 2;
 
       int frequencyUnit = 10; // kHz
@@ -337,7 +298,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
       {
         frequencyUnit = 125;  // kHz
       }
-      int firstCarrierFrequency = frequencyUnit * (((section[pointer] & 0x7f) << 8) + section[pointer + 1]);  // kHz
+      int firstCarrierFrequency = frequencyUnit * (((section[pointer] & 0x7f) << 8) | section[pointer + 1]);  // kHz
       pointer += 2;
       this.LogDebug("NIT: carrier definition, number of carriers = {0}, spacing unit = {1} kHz, frequency spacing = {2} kHz, frequency unit = {3} kHz, first carrier frequency = {4} kHz",
         numberOfCarriers, spacingUnit, frequencySpacing, frequencyUnit, firstCarrierFrequency);
@@ -353,129 +314,99 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
       }
     }
 
-    private void DecodeModulationMode(byte[] section, int endOfSection, ref int pointer, ref byte firstIndex, AtscTransmissionMedium transmissionMedium)
+    private void DecodeModulationMode(byte[] section, int endOfSection, ref int pointer, ref byte firstIndex, TransmissionMedium transmissionMedium)
     {
       if (pointer + 6 > endOfSection)
       {
         throw new TvException("NIT: corruption detected at modulation mode, pointer = {0}, end of section = {1}", pointer, endOfSection);
       }
       TransmissionSystem transmissionSystem = (TransmissionSystem)(section[pointer] >> 4);
-      BinaryConvolutionCodeRate innerCodingMode = BinaryConvolutionCodeRate.RateNotDefined;
+      FecCodeRate innerCodingMode = FecCodeRate.Automatic;
       switch (section[pointer] & 0x0f)
       {
         case 0:
-          innerCodingMode = BinaryConvolutionCodeRate.Rate5_11;
+          innerCodingMode = FecCodeRate.Rate5_11;
           break;
         case 1:
-          innerCodingMode = BinaryConvolutionCodeRate.Rate1_2;
+          innerCodingMode = FecCodeRate.Rate1_2;
           break;
         case 3:
-          innerCodingMode = BinaryConvolutionCodeRate.Rate3_5;
+          innerCodingMode = FecCodeRate.Rate3_5;
           break;
         case 5:
-          innerCodingMode = BinaryConvolutionCodeRate.Rate2_3;
+          innerCodingMode = FecCodeRate.Rate2_3;
           break;
         case 7:
-          innerCodingMode = BinaryConvolutionCodeRate.Rate3_4;
+          innerCodingMode = FecCodeRate.Rate3_4;
           break;
         case 8:
-          innerCodingMode = BinaryConvolutionCodeRate.Rate4_5;
+          innerCodingMode = FecCodeRate.Rate4_5;
           break;
         case 9:
-          innerCodingMode = BinaryConvolutionCodeRate.Rate5_6;
+          innerCodingMode = FecCodeRate.Rate5_6;
           break;
         case 11:
-          innerCodingMode = BinaryConvolutionCodeRate.Rate7_8;
+          innerCodingMode = FecCodeRate.Rate7_8;
           break;
         case 15:
           // concatenated coding not used
-          innerCodingMode = BinaryConvolutionCodeRate.RateNotSet;
+          innerCodingMode = FecCodeRate.Automatic;
+          break;
+        default:
+          this.LogWarn("NIT: unhandled inner coding mode value {0}", section[pointer] & 0x0f);
           break;
       }
       pointer++;
 
       // Comes from SCTE 65. Don't be confused by ATSC A/56 or SCTE 57.
       bool isSplitBitstreamMode = ((section[pointer] & 0x80) != 0);
-      ModulationType modulationFormat = ModulationType.ModNotSet;
+      ModulationMode modulationFormat = ModulationMode.PrivateDescriptor;
       switch (section[pointer] & 0x1f)
       {
-        case 1:
-          modulationFormat = ModulationType.ModQpsk;
-          break;
-        case 2:
-          modulationFormat = ModulationType.ModBpsk;
-          break;
-        case 3:
-          modulationFormat = ModulationType.ModOqpsk;
-          break;
         case 4:
-          modulationFormat = ModulationType.Mod8Vsb;
+          modulationFormat = ModulationMode.Atsc8Vsb;
           break;
         case 5:
-          modulationFormat = ModulationType.Mod16Vsb;
-          break;
-        case 6:
-          modulationFormat = ModulationType.Mod16Qam;
-          break;
-        case 7:
-          modulationFormat = ModulationType.Mod32Qam;
+          modulationFormat = ModulationMode.Atsc16Vsb;
           break;
         case 8:
-          modulationFormat = ModulationType.Mod64Qam;
-          break;
-        case 9:
-          modulationFormat = ModulationType.Mod80Qam;
-          break;
-        case 10:
-          modulationFormat = ModulationType.Mod96Qam;
-          break;
-        case 11:
-          modulationFormat = ModulationType.Mod112Qam;
-          break;
-        case 12:
-          modulationFormat = ModulationType.Mod128Qam;
-          break;
-        case 13:
-          modulationFormat = ModulationType.Mod160Qam;
-          break;
-        case 14:
-          modulationFormat = ModulationType.Mod192Qam;
-          break;
-        case 15:
-          modulationFormat = ModulationType.Mod224Qam;
+          modulationFormat = ModulationMode.ScteMode1;
           break;
         case 16:
-          modulationFormat = ModulationType.Mod256Qam;
+          modulationFormat = ModulationMode.ScteMode2;
           break;
-        case 17:
-          modulationFormat = ModulationType.Mod320Qam;
+
+        case 1:   // QPSK
+        case 2:   // BPSK
+        case 3:   // OQPSK
+        case 6:   // 16 QAM
+        case 7:   // 32 QAM
+        case 9:   // 80 QAM
+        case 10:  // 96 QAM
+        case 11:  // 112 QAM
+        case 12:  // 128 QAM
+        case 13:  // 160 QAM
+        case 14:  // 192 QAM
+        case 15:  // 224 QAM
+        case 17:  // 320 QAM
+        case 18:  // 384 QAM
+        case 19:  // 448 QAM
+        case 20:  // 512 QAM
+        case 21:  // 640 QAM
+        case 22:  // 768 QAM
+        case 23:  // 896 QAM
+        case 24:  // 1024 QAM
+          this.LogWarn("NIT: unsupported modulation format value {0}", section[pointer] & 0x1f);
           break;
-        case 18:
-          modulationFormat = ModulationType.Mod384Qam;
-          break;
-        case 19:
-          modulationFormat = ModulationType.Mod448Qam;
-          break;
-        case 20:
-          modulationFormat = ModulationType.Mod512Qam;
-          break;
-        case 21:
-          modulationFormat = ModulationType.Mod640Qam;
-          break;
-        case 22:
-          modulationFormat = ModulationType.Mod768Qam;
-          break;
-        case 23:
-          modulationFormat = ModulationType.Mod896Qam;
-          break;
-        case 24:
-          modulationFormat = ModulationType.Mod1024Qam;
+
+        default:
+          this.LogWarn("NIT: unhandled modulation format value {0}", section[pointer] & 0x1f);
           break;
       }
       pointer++;
 
       // s/s
-      int symbolRate = ((section[pointer] & 0x0f) << 24) + (section[pointer + 1] << 16) + (section[pointer + 2] << 8) + section[pointer + 3];
+      int symbolRate = ((section[pointer] & 0x0f) << 24) | (section[pointer + 1] << 16) | (section[pointer + 2] << 8) | section[pointer + 3];
       pointer += 4;
       this.LogDebug("NIT: modulation mode, transmission system = {0}, inner coding mode = {1}, is split bitstream mode = {2}, modulation format = {3}, symbol rate = {4} s/s",
         transmissionSystem, innerCodingMode, isSplitBitstreamMode, modulationFormat, symbolRate);
@@ -493,14 +424,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         throw new TvException("NIT: corruption detected at satellite information, pointer = {0}, end of section = {1}", pointer, endOfSection);
       }
       byte satelliteId = section[pointer++];
-      bool youAreHere = ((section[pointer] & 0x80) != 0);
+      bool youAreHere = (section[pointer] & 0x80) != 0;
       FrequencyBand frequencyBand = (FrequencyBand)((section[pointer] >> 5) & 0x03);
-      bool outOfService = ((section[pointer] & 0x10) != 0);
-      bool isEasternHemisphere = ((section[pointer] & 0x08) != 0);
-      int orbitalPosition = ((section[pointer] & 0x03) << 8) + section[pointer + 1];
+      bool outOfService = (section[pointer] & 0x10) != 0;
+      bool isEasternHemisphere = (section[pointer] & 0x08) != 0;
+      ushort orbitalPosition = (ushort)(((section[pointer] & 0x07) << 8) | section[pointer + 1]);
       pointer += 2;
-      bool isCircularPolarisation = ((section[pointer] & 0x80) != 0);
-      int numberOfTransponders = (section[pointer++] & 0x3f) + 1;
+      bool isCircularPolarisation = (section[pointer] & 0x80) != 0;
+      byte numberOfTransponders = (byte)((section[pointer++] & 0x3f) + 1);
       this.LogDebug("NIT: satellite information, satellite ID = {0}, you are here = {1}, frequency band = {2}, out of service = {3}, is Eastern hemisphere = {4}, orbital position = {5}, is circular polarisation = {6}, number of transponders = {7}",
         satelliteId, youAreHere, frequencyBand, outOfService, isEasternHemisphere, orbitalPosition, isCircularPolarisation, numberOfTransponders);
     }
@@ -511,30 +442,30 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
       {
         throw new TvException("NIT: corruption detected at transponder data, pointer = {0}, end of section = {1}", pointer, endOfSection);
       }
-      bool isMpeg2Transport = ((section[pointer] & 0x80) == 0);
-      bool isVerticalRightPolarisation = ((section[pointer] & 0x40) != 0);
-      int transponderNumber = (section[pointer++] & 0x3f);
+      bool isMpeg2Transport = (section[pointer] & 0x80) == 0;
+      bool isVerticalRightPolarisation = (section[pointer] & 0x40) != 0;
+      byte transponderNumber = (byte)(section[pointer++] & 0x3f);
       byte cdsReference = section[pointer++];
       this.LogDebug("NIT: transponder data, is MPEG 2 transport = {0}, is vertical/right polarisation = {1}, transponder number = {2}, CDS reference = {3}",
         isMpeg2Transport, isVerticalRightPolarisation, transponderNumber, cdsReference);
       if (isMpeg2Transport)
       {
         byte mmsReference = section[pointer++];
-        int vctId = (section[pointer] << 8) + section[pointer + 1];
+        ushort vctId = (ushort)((section[pointer] << 8) | section[pointer + 1]);
         pointer += 2;
-        bool isRootTransponder = ((section[pointer++] & 0x80) != 0);
+        bool isRootTransponder = (section[pointer++] & 0x80) != 0;
         this.LogDebug("NIT: MPEG 2 transponder data, MMS reference = {0}, VCT ID = {1}, is root transponder = {2}", mmsReference, vctId, isRootTransponder);
       }
       else
       {
-        bool isWideBandwidthVideo = ((section[pointer] & 0x80) != 0);
+        bool isWideBandwidthVideo = (section[pointer] & 0x80) != 0;
         WaveformStandard waveformStandard = (WaveformStandard)(section[pointer++] & 0x1f);
-        bool isWideBandwidthAudio = ((section[pointer] & 0x80) != 0);
-        bool isCompandedAudio = ((section[pointer] & 0x40) != 0);
+        bool isWideBandwidthAudio = (section[pointer] & 0x80) != 0;
+        bool isCompandedAudio = (section[pointer] & 0x40) != 0;
         MatrixMode matrixMode = (MatrixMode)((section[pointer] >> 4) & 0x03);
-        int subcarrier2Offset = 10 * (((section[pointer] & 0x0f) << 6) + (section[pointer + 1] >> 2));  // kHz
+        int subcarrier2Offset = 10 * (((section[pointer] & 0x0f) << 6) | (section[pointer + 1] >> 2));  // kHz
         pointer++;
-        int subcarrier1Offset = 10 * (((section[pointer] & 0x03) << 8) + section[pointer + 1]);
+        int subcarrier1Offset = 10 * (((section[pointer] & 0x03) << 8) | section[pointer + 1]);
         pointer += 2;
         this.LogDebug("NIT: non-MPEG 2 transponder data, is WB video = {0}, waveform standard = {1}, is WB audio = {2}, is companded audio = {3}, matrix mode = {4}, subcarrier 2 offset = {5} kHz, subcarrier 1 offset = {6} kHz",
           isWideBandwidthVideo, waveformStandard, isWideBandwidthAudio, isCompandedAudio, matrixMode, subcarrier2Offset, subcarrier1Offset);

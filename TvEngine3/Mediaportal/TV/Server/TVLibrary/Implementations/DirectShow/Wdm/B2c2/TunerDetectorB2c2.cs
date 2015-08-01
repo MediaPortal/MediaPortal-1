@@ -1,4 +1,24 @@
-﻿using System;
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
@@ -6,8 +26,9 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Interface;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 {
@@ -20,7 +41,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     private static readonly int DEVICE_INFO_SIZE = Marshal.SizeOf(typeof(DeviceInfo));                // 416
 
     // key = device path
-    private IDictionary<uint, ITVCard> _knownTuners = new Dictionary<uint, ITVCard>();
+    private IDictionary<uint, ITuner> _knownTuners = new Dictionary<uint, ITuner>();
 
     /// <summary>
     /// Get the detector's name.
@@ -37,11 +58,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// Detect and instanciate the compatible tuners connected to the system.
     /// </summary>
     /// <returns>the tuners that are currently available</returns>
-    public ICollection<ITVCard> DetectTuners()
+    public ICollection<ITuner> DetectTuners()
     {
       this.LogDebug("B2C2 detector: detect tuners");
-      List<ITVCard> tuners = new List<ITVCard>();
-      IDictionary<uint, ITVCard> knownTuners = new Dictionary<uint, ITVCard>();
+      List<ITuner> tuners = new List<ITuner>();
+      IDictionary<uint, ITuner> knownTuners = new Dictionary<uint, ITuner>();
 
       // Instanciate a data interface so we can check how many tuners are installed.
       IBaseFilter b2c2Source = null;
@@ -71,7 +92,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         int size = DEVICE_INFO_SIZE * Constants.MAX_DEVICE_COUNT;
         int deviceCount = Constants.MAX_DEVICE_COUNT;
         int hr = dataInterface.GetDeviceList(info, ref size, ref deviceCount);
-        if (hr != (int)HResult.Severity.Success)
+        if (hr != (int)NativeMethods.HResult.S_OK)
         {
           this.LogError("B2C2 detector: failed to get device list, hr = 0x{0:x}", hr);
         }
@@ -83,7 +104,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
             DeviceInfo d = info[i];
 
             // Is this a new tuner?
-            ITVCard t;
+            ITuner t;
             if (_knownTuners.TryGetValue(d.DeviceId, out t))
             {
               tuners.Add(t);

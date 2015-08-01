@@ -19,26 +19,25 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Threading;
-using DirectShowLib.BDA;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using BroadcastStandard = Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer.BroadcastStandard;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 {
   /// <summary>
-  /// A base implementation of <see cref="T:TvLibrary.Interfaces.IChannelScanner"/> for MPEG 2
+  /// A base implementation of <see cref="IChannelScanner"/> for MPEG 2
   /// transport streams.
   /// </summary>
   internal class ChannelScannerDirectShowBase : IChannelScannerInternal, IChannelScanCallBack
@@ -46,11 +45,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     #region variables
 
     private bool _isScanning = false;
-    private int _scanTimeOut = 20000;   // milliseconds
+    private int _scanTimeOut = 20000;   // unit = milliseconds
     private IChannelScannerHelper _scanHelper = null;
-    private ITsChannelScan _analyser;
-    protected ITVCard _tuner;
-    private ManualResetEvent _event;
+    private ITsChannelScan _analyser = null;
+    protected ITuner _tuner = null;
+    private ManualResetEvent _event = null;
+    private volatile bool _cancelScan = false;
 
     #endregion
 
@@ -62,7 +62,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// <param name="tuner">The tuner associated with this scanner.</param>
     /// <param name="helper">The helper to use for channel logic.</param>
     /// <param name="analyser">The stream analyser instance to use for scanning.</param>
-    public ChannelScannerDirectShowBase(ITVCard tuner, IChannelScannerHelper helper, ITsChannelScan analyser)
+    public ChannelScannerDirectShowBase(ITuner tuner, IChannelScannerHelper helper, ITsChannelScan analyser)
     {
       _tuner = tuner;
       _scanHelper = helper;
@@ -85,12 +85,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
     #endregion
 
-    #region IChannelScannerInternal member
+    #region IChannelScannerInternal members
 
     /// <summary>
     /// Set the scanner's tuner.
     /// </summary>
-    public ITVCard Tuner
+    public ITuner Tuner
     {
       set
       {
@@ -118,8 +118,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// </summary>
     public void ReloadConfiguration()
     {
-      this.LogDebug("Scan: reload configuration");
-      _scanTimeOut = SettingsManagement.GetValue("timeoutSDT", 20) * 1000;
+      this.LogDebug("scan: reload configuration");
+      _scanTimeOut = SettingsManagement.GetValue("timeOutScan", 20000);
     }
 
     /// <summary>
@@ -139,14 +139,29 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// </summary>
     public void AbortScanning()
     {
-      // TODO
+      this.LogInfo("scan: abort");
+      _cancelScan = true;
+      try
+      {
+        if (_tuner != null)
+        {
+          _tuner.CancelTune(0);
+        }
+        if (_event != null)
+        {
+          _event.Set();
+        }
+      }
+      catch
+      {
+      }
     }
 
     /// <summary>
-    /// Scans the specified transponder.
+    /// Tune to a specified channel and scan for channel information.
     /// </summary>
-    /// <param name="channel">The channel.</param>
-    /// <returns></returns>
+    /// <param name="channel">The channel to tune to.</param>
+    /// <returns>the channel information found</returns>
     public virtual List<IChannel> Scan(IChannel channel)
     {
       try
@@ -154,13 +169,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         _isScanning = true;
         // An exception is thrown here if signal is not locked.
         _tuner.Tune(0, channel);
-
-        this.LogDebug("Scan: tuner locked:{0} signal:{1} quality:{2}", _tuner.IsTunerLocked, _tuner.SignalLevel,
-                          _tuner.SignalQuality);
-
         if (_analyser == null)
         {
-          this.LogError("Scan: analyser interface not available, not possible to scan");
+          this.LogError("scan: analyser interface not available, not possible to scan");
           return new List<IChannel>();
         }
 
@@ -170,22 +181,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
           _analyser.SetCallBack(this);
 
           // Determine the broadcast standard that the stream conforms to.
-          BroadcastStandard standard = BroadcastStandard.Dvb; // default
-          ATSCChannel atscChannel = channel as ATSCChannel;
-          if (atscChannel != null)
+          ServiceInformationFormat format = ServiceInformationFormat.Dvb; // default
+          if (channel is ChannelAtsc)
           {
-            if (atscChannel.ModulationType == ModulationType.Mod8Vsb || atscChannel.ModulationType == ModulationType.Mod16Vsb)
-            {
-              standard = BroadcastStandard.Atsc;
-            }
-            else
-            {
-              standard = BroadcastStandard.Scte;
-            }
+            format = ServiceInformationFormat.Atsc;
+          }
+          else if (channel is ChannelScte)
+          {
+            format = ServiceInformationFormat.Scte;
           }
 
           // Start scanning, then wait for TsWriter to tell us that scanning is complete.
-          _analyser.ScanStream(standard);
+          _analyser.ScanStream(format);
           _event.WaitOne(_scanTimeOut, true);
 
           int found = 0;
@@ -196,6 +203,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
           for (int i = 0; i < serviceCount; i++)
           {
+            if (_cancelScan)
+            {
+              return new List<IChannel>();
+            }
             int originalNetworkId;
             int transportStreamId;
             int serviceId;
@@ -289,9 +300,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             this.LogDebug("    available in country count = {0}, countries = {1}", availableInCountryCount, string.Join(", ", availableInCountries ?? new Iso639Code[0]));
             this.LogDebug("    unavailable in country count = {0}, countries = {1}", unavailableInCountryCount, string.Join(", ", unavailableInCountries ?? new Iso639Code[0]));
 
-            // The SDT/VCT service type is unfortunately not sufficient for service type identification. Many DVB-IP
-            // and some ATSC and North American cable broadcasters in particular do not set the service type.
-            MediaTypeEnum? mediaType = _scanHelper.GetMediaType(serviceType, videoStreamCount, audioStreamCount);
+            // The SDT/VCT service type is unfortunately not sufficient for
+            // service type identification. Many DVB-IP and some ATSC and North
+            // American cable broadcasters in particular do not set the service
+            // type.
+            MediaType? mediaType = _scanHelper.GetMediaType(serviceType, videoStreamCount, audioStreamCount);
             if (!mediaType.HasValue)
             {
               this.LogDebug("Service type is not supported.");
@@ -301,76 +314,35 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
             IChannel newChannel = (IChannel)channel.Clone();
             newChannel.Name = serviceName;
-            newChannel.FreeToAir = !isEncrypted;
+            newChannel.Provider = providerName;
+            newChannel.MediaType = mediaType.Value;
+            newChannel.IsEncrypted = isEncrypted;
+            newChannel.LogicalChannelNumber = logicalChannelNumber;
 
             // Set non-tuning parameters (ie. parameters determined by scanning).
-            DVBBaseChannel digitalChannel = newChannel as DVBBaseChannel;
-            if (digitalChannel != null)
+            ChannelMpeg2Base mpeg2Channel = newChannel as ChannelMpeg2Base;
+            if (mpeg2Channel != null)
             {
-              digitalChannel.Provider = providerName;
-              digitalChannel.NetworkId = originalNetworkId;
-              digitalChannel.TransportId = transportStreamId;
-              digitalChannel.ServiceId = serviceId;
-              digitalChannel.PmtPid = pmtPid;
-
-              // TODO this case should be moved to a separate ATSC scanner after adding a TsWriter ATSC/SCTE scan interface
-              if (standard == BroadcastStandard.Atsc || standard == BroadcastStandard.Scte)
-              {
-                ATSCChannel newAtscChannel = newChannel as ATSCChannel;
-                if (string.IsNullOrEmpty(logicalChannelNumber))
-                {
-                  newAtscChannel.MajorChannel = newAtscChannel.PhysicalChannel;
-                  newAtscChannel.MinorChannel = newAtscChannel.ServiceId;
-                }
-                else
-                {
-                  // ATSC x.y LCNs
-                  // TODO LCN should be a string in the DB so that we don't have to do this, and then we could remove major and minor channel
-                  Match m = Regex.Match(logicalChannelNumber, @"^(\d+)(\.(\d+))?$");
-                  if (m.Success)
-                  {
-                    newAtscChannel.MajorChannel = int.Parse(m.Groups[1].Captures[0].Value);
-                    if (m.Groups[2].Captures.Count > 0)
-                    {
-                      newAtscChannel.MinorChannel = int.Parse(m.Groups[3].Captures[0].Value);
-                    }
-                    else
-                    {
-                      newAtscChannel.MinorChannel = 0;
-                    }
-                  }
-                }
-                if (newAtscChannel.MajorChannel > 0)
-                {
-                  if (newAtscChannel.MinorChannel > 0)
-                  {
-                    digitalChannel.LogicalChannelNumber = (newAtscChannel.MajorChannel * 1000) + newAtscChannel.MinorChannel;
-                  }
-                  else
-                  {
-                    digitalChannel.LogicalChannelNumber = newAtscChannel.MajorChannel;
-                  }
-                }
-                else
-                {
-                  digitalChannel.LogicalChannelNumber = 10000;
-                }
-              }
-              else
-              {
-                int lcn = 10000;
-                if (!string.IsNullOrEmpty(logicalChannelNumber) && int.TryParse(logicalChannelNumber, out lcn))
-                {
-                  digitalChannel.LogicalChannelNumber = lcn;
-                }
-                else
-                {
-                  digitalChannel.LogicalChannelNumber = 10000;
-                }
-              }
+              mpeg2Channel.TransportStreamId = transportStreamId;
+              mpeg2Channel.ProgramNumber = serviceId;
+              mpeg2Channel.PmtPid = pmtPid;
             }
-
-            newChannel.MediaType = mediaType.Value;
+            ChannelDvbBase dvbChannel = newChannel as ChannelDvbBase;
+            if (dvbChannel != null)
+            {
+              dvbChannel.OriginalNetworkId = originalNetworkId;
+            }
+            // TODO remove this hacky code!!!
+            ChannelAtsc atscChannel = newChannel as ChannelAtsc;
+            if (atscChannel != null)
+            {
+              atscChannel.SourceId = originalNetworkId;
+            }
+            ChannelScte scteChannel = newChannel as ChannelScte;
+            if (scteChannel != null)
+            {
+              scteChannel.SourceId = originalNetworkId;
+            }
 
             _scanHelper.UpdateChannel(ref newChannel);
             this.LogDebug("Found: {0}", newChannel);
@@ -388,6 +360,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             _analyser.StopStreamScan();
           }
           _event.Close();
+          _event = null;
         }
       }
       finally
@@ -396,12 +369,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       }
     }
 
-    ///<summary>
-    /// Scan NIT channel
-    ///</summary>
-    ///<param name="channel">Channel</param>
-    ///<returns>Found channels</returns>
-    public List<IChannel> ScanNIT(IChannel channel)
+    /// <summary>
+    /// Tune to a specified channel and scan for network information.
+    /// </summary>
+    /// <param name="channel">The channel to tune to.</param>
+    /// <returns>the network information found</returns>
+    public List<TuningDetail> ScanNIT(IChannel channel)
     {
       try
       {
@@ -411,8 +384,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
         if (_analyser == null)
         {
-          this.LogError("Scan: analyser interface not available, not possible to scan");
-          return new List<IChannel>();
+          this.LogError("scan NIT: analyser interface not available, not possible to scan");
+          return new List<TuningDetail>();
         }
 
         try
@@ -420,9 +393,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
           _event = new ManualResetEvent(false);
           _analyser.SetCallBack(this);
           _analyser.ScanNetwork();
-
-          this.LogDebug("ScanNIT: tuner locked:{0} signal:{1} quality:{2}", _tuner.IsTunerLocked, _tuner.SignalLevel,
-                            _tuner.SignalQuality);
 
           // Start scanning, then wait for TsWriter to tell us that scanning is complete.
           _event.WaitOne(_scanTimeOut, true); //TODO: timeout SDT should be "max scan time"
@@ -438,16 +408,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
           _analyser.GetMultiplexCount(out multiplexCount);
           this.LogDebug("Found {0} multiplex(es), service information available = {1}...", multiplexCount, isServiceInfoAvailable);
 
-          // Channels found will contain a distinct list of multiplex tuning details.
-          List<IChannel> channelsFound = new List<IChannel>();
+          // This list will contain a distinct list of transmitter tuning details.
+          List<TuningDetail> tuningDetailsFound = new List<TuningDetail>();
           // Multiplexes found will contain a dictionary of ONID + TSID => multiplex tuning details.
-          Dictionary<uint, IChannel> multiplexesFound = new Dictionary<uint, IChannel>();
+          Dictionary<uint, TuningDetail> multiplexesFound = new Dictionary<uint, TuningDetail>();
 
           for (int i = 0; i < multiplexCount; ++i)
           {
+            if (_cancelScan)
+            {
+              return new List<TuningDetail>();
+            }
             int originalNetworkId;
             int transportStreamId;
-            int type;   // This is as-per the TVE channel types.
+            BroadcastStandard broadcastStandard;
             int frequency;
             int polarisation;
             int modulation;
@@ -460,76 +434,158 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             int cellIdExtension;
             int plpId;
             _analyser.GetMultiplexDetail(i,
-                          out originalNetworkId, out transportStreamId, out type,
-                          out frequency, out polarisation, out modulation, out symbolRate, out bandwidth, out innerFecRate, out rollOff,
-                          out longitude, out cellId, out cellIdExtension, out plpId);
+                          out originalNetworkId, out transportStreamId,
+                          out broadcastStandard, out frequency,
+                          out polarisation, out modulation, out symbolRate,
+                          out bandwidth, out innerFecRate, out rollOff,
+                          out longitude, out cellId, out cellIdExtension,
+                          out plpId);
 
-            DVBBaseChannel ch;
-            if (type == 2)
+            TuningDetail tuningDetail = new TuningDetail();
+            tuningDetail.BroadcastStandard = broadcastStandard;
+            tuningDetail.Frequency = frequency;
+            tuningDetail.SymbolRate = symbolRate;
+            tuningDetail.Bandwidth = bandwidth;
+            tuningDetail.StreamId = plpId;
+            if (broadcastStandard == BroadcastStandard.DvbC)
             {
-              DVBCChannel dvbcChannel = new DVBCChannel();
-              dvbcChannel.ModulationType = (ModulationType)modulation;
-              dvbcChannel.SymbolRate = symbolRate;
-              ch = dvbcChannel;
-            }
-            else if (type == 3)
-            {
-              DVBSChannel dvbsChannel = new DVBSChannel();
-              dvbsChannel.RollOff = (RollOff)rollOff;
-              dvbsChannel.ModulationType = ModulationType.ModNotSet;
+              ModulationSchemeQam modulationScheme;
               switch (modulation)
               {
                 case 1:
-                  // Modulation not set indicates DVB-S; QPSK is DVB-S2 QPSK.
-                  if (dvbsChannel.RollOff != RollOff.NotSet)
-                  {
-                    dvbsChannel.ModulationType = ModulationType.ModQpsk;
-                  }
+                  modulationScheme = ModulationSchemeQam.Qam16;
                   break;
                 case 2:
-                  dvbsChannel.ModulationType = ModulationType.Mod8Psk;
+                  modulationScheme = ModulationSchemeQam.Qam32;
                   break;
                 case 3:
-                  dvbsChannel.ModulationType = ModulationType.Mod16Qam;
+                  modulationScheme = ModulationSchemeQam.Qam64;
+                  break;
+                case 4:
+                  modulationScheme = ModulationSchemeQam.Qam128;
+                  break;
+                case 5:
+                  modulationScheme = ModulationSchemeQam.Qam256;
+                  break;
+                default:
+                  this.LogWarn("scan NIT: unsupported DVB-C modulation scheme {0}, falling back to automatic", modulation);
+                  modulationScheme = ModulationSchemeQam.Automatic;
                   break;
               }
-              dvbsChannel.SymbolRate = symbolRate;
-              dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)innerFecRate;
-              dvbsChannel.Polarisation = (Polarisation)polarisation;
-
-              // We're missing an all important detail for the channel - the LNB type.
-              DVBSChannel currentChannel = channel as DVBSChannel;
-              if (currentChannel != null)
-              {
-                dvbsChannel.LnbType = currentChannel.LnbType.Clone();
-              }
-              else
-              {
-
-                // todo gibman : ILnbType cast will fail, for now, but it will compile
-                // why do we need an interface for this ?
-                // why not just have the lnbtype changed to the entity type ?                
-                dvbsChannel.LnbType = LnbTypeManagement.GetLnbType(1);  // default: universal LNB
-              }
-
-              ch = dvbsChannel;
+              tuningDetail.ModulationScheme = modulationScheme.ToString();
             }
-            else if (type == 4)
+            else if (broadcastStandard == BroadcastStandard.DvbS2)
             {
-              DVBTChannel dvbtChannel = new DVBTChannel();
-              dvbtChannel.Bandwidth = bandwidth;
-              ch = dvbtChannel;
+              switch (rollOff)
+              {
+                case 0:
+                  tuningDetail.RollOffFactor = RollOffFactor.ThirtyFive;
+                  break;
+                case 1:
+                  tuningDetail.RollOffFactor = RollOffFactor.TwentyFive;
+                  break;
+                case 2:
+                  tuningDetail.RollOffFactor = RollOffFactor.Twenty;
+                  break;
+                default:
+                  this.LogWarn("scan NIT: unsupported DVB-S2 roll-off factor {0}, falling back to automatic", rollOff);
+                  tuningDetail.RollOffFactor = RollOffFactor.Automatic;
+                  break;
+              }
             }
-            else
+            else if (
+              broadcastStandard != BroadcastStandard.DvbC2 &&
+              broadcastStandard != BroadcastStandard.DvbS &&
+              broadcastStandard != BroadcastStandard.DvbT &&
+              broadcastStandard != BroadcastStandard.DvbT2
+            )
             {
-              throw new TvException("ScannerDirectShowBase: unsupported channel type " + type + " returned from TsWriter network scan");
+              throw new TvException("ScannerDirectShowBase: unsupported broadcast standard {0} returned from TsWriter network scan", broadcastStandard);
             }
-            ch.Frequency = frequency;
+
+            if ((broadcastStandard & BroadcastStandard.MaskSatellite) != 0)
+            {
+              ModulationSchemePsk modulationScheme;
+              switch (modulation)
+              {
+                case 0:
+                  modulationScheme = ModulationSchemePsk.Automatic;
+                  this.LogWarn("scan NIT: automatic satellite modulation specified, not supported by all hardware");
+                  break;
+                case 1:
+                  modulationScheme = ModulationSchemePsk.Psk4;
+                  break;
+                case 2:
+                  modulationScheme = ModulationSchemePsk.Psk8;
+                  break;
+                default:
+                  // 16 QAM and any other unsupported value
+                  this.LogWarn("scan NIT: unsupported DVB-S/S2 modulation scheme {0}, falling back to automatic", modulation);
+                  modulationScheme = ModulationSchemePsk.Automatic;
+                  break;
+              }
+              tuningDetail.ModulationScheme = modulationScheme.ToString();
+
+              switch (innerFecRate)
+              {
+                case 1:
+                  tuningDetail.FecCodeRate = FecCodeRate.Rate1_2;
+                  break;
+                case 2:
+                  tuningDetail.FecCodeRate = FecCodeRate.Rate2_3;
+                  break;
+                case 3:
+                  tuningDetail.FecCodeRate = FecCodeRate.Rate3_4;
+                  break;
+                case 4:
+                  tuningDetail.FecCodeRate = FecCodeRate.Rate5_6;
+                  break;
+                case 5:
+                  tuningDetail.FecCodeRate = FecCodeRate.Rate7_8;
+                  break;
+                case 6:
+                  tuningDetail.FecCodeRate = FecCodeRate.Rate8_9;
+                  break;
+                case 7:
+                  tuningDetail.FecCodeRate = FecCodeRate.Rate3_5;
+                  break;
+                case 8:
+                  tuningDetail.FecCodeRate = FecCodeRate.Rate4_5;
+                  break;
+                case 9:
+                  tuningDetail.FecCodeRate = FecCodeRate.Rate9_10;
+                  break;
+                default:
+                  this.LogWarn("scan NIT: unsupported DVB-S/S2 FEC code rate {0}, falling back to automatic", modulation);
+                  tuningDetail.FecCodeRate = FecCodeRate.Automatic;
+                  break;
+              }
+
+              switch (polarisation)
+              {
+                case 0:
+                  tuningDetail.Polarisation = Polarisation.LinearHorizontal;
+                  break;
+                case 1:
+                  tuningDetail.Polarisation = Polarisation.LinearVertical;
+                  break;
+                case 2:
+                  tuningDetail.Polarisation = Polarisation.CircularLeft;
+                  break;
+                case 3:
+                  tuningDetail.Polarisation = Polarisation.CircularRight;
+                  break;
+                default:
+                  this.LogWarn("scan NIT: unsupported DVB-S/S2 polarisation {0}, falling back to automatic", polarisation);
+                  tuningDetail.Polarisation = Polarisation.Automatic;
+                  break;
+              }
+            }
 
             bool isUniqueTuning = true;
-            foreach (IChannel mux in channelsFound)
+            foreach (TuningDetail td in tuningDetailsFound)
             {
-              if (mux.Equals(ch))
+              if (td.Equals(tuningDetail))
               {
                 isUniqueTuning = false;
                 break;
@@ -537,7 +593,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             }
             if (isUniqueTuning)
             {
-              channelsFound.Add(ch);
+              tuningDetailsFound.Add(tuningDetail);
             }
 
             if (isServiceInfoAvailable)
@@ -545,24 +601,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
               uint key = (uint)((uint)originalNetworkId << 16) + (uint)transportStreamId;
               if (multiplexesFound.ContainsKey(key))
               {
-                this.LogDebug("Tuning details for ONID {0} and TSID {1} are ambiguous, disregarding service information", originalNetworkId, transportStreamId);
+                this.LogDebug("scan NIT: tuning details for ONID {0} and TSID {1} are ambiguous, disregarding service information", originalNetworkId, transportStreamId);
                 isServiceInfoAvailable = false;
               }
               else
               {
-                multiplexesFound.Add(key, ch);
+                multiplexesFound.Add(key, tuningDetail);
               }
             }
           }
 
           // TODO implement support for fast scan channel handling.
-          return channelsFound;
+          return tuningDetailsFound;
 
           // If service information is not available or the corresponding tuning details are ambiguous then we return
           // a set of multiplex tuning details.
           if (!isServiceInfoAvailable)
           {
-            return channelsFound;
+            return tuningDetailsFound;
           }
 
           // We're going to attempt to return a set of services.
@@ -666,9 +722,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             this.LogDebug("    available in country count = {0}, countries = {1}", availableInCountryCount, string.Join(", ", availableInCountries ?? new Iso639Code[0]));
             this.LogDebug("    unavailable in country count = {0}, countries = {1}", unavailableInCountryCount, string.Join(", ", unavailableInCountries ?? new Iso639Code[0]));
 
-            // The SDT/VCT service type is unfortunately not sufficient for service type identification. Many DVB-IP
-            // and some ATSC and North American cable broadcasters in particular do not set the service type.
-            MediaTypeEnum? mediaType = _scanHelper.GetMediaType(serviceType, videoStreamCount, audioStreamCount);
+            // The SDT/VCT service type is unfortunately not sufficient for
+            // service type identification. Many DVB-IP and some ATSC and North
+            // American cable broadcasters in particular do not set the service
+            // type.
+            MediaType? mediaType = _scanHelper.GetMediaType(serviceType, videoStreamCount, audioStreamCount);
             if (!mediaType.HasValue)
             {
               this.LogDebug("Service type is not supported.");
@@ -684,34 +742,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             }
             found++;
 
-            // If this service comes from another multiplex then we won't know what the PMT PID
-            // is. The current value should be set to zero. We set the value to negative one here
-            // so that the TV library will determine and set the PMT PID the first time the channel
-            // is tuned.
-            if (pmtPid == 0)
-            {
-              pmtPid = -1;
-            }
-
-            DVBBaseChannel newChannel = (DVBBaseChannel)multiplexesFound[key].Clone();
-
-            // Set non-tuning parameters (ie. parameters determined by scanning).
+            ChannelDvbBase newChannel = (ChannelDvbBase)multiplexesFound[key].GetTuningChannel();
             newChannel.Name = serviceName;
             newChannel.Provider = providerName;
-            newChannel.NetworkId = originalNetworkId;
-            newChannel.TransportId = transportStreamId;
-            newChannel.ServiceId = serviceId;
-            newChannel.PmtPid = pmtPid;
             newChannel.MediaType = mediaType.Value;
-            try
-            {
-              newChannel.LogicalChannelNumber = int.Parse(logicalChannelNumber); //TODO this won't work for ATSC x.y LCNs. LCN must be a string.
-            }
-            catch (Exception)
-            {
-              newChannel.LogicalChannelNumber = 10000;
-            }
-            newChannel.FreeToAir = !isEncrypted;
+            newChannel.IsEncrypted = isEncrypted;
+            newChannel.LogicalChannelNumber = logicalChannelNumber;
+            newChannel.OriginalNetworkId = originalNetworkId;
+            newChannel.TransportStreamId = transportStreamId;
+            newChannel.ProgramNumber = serviceId;
+            newChannel.PmtPid = pmtPid;   // Important: this should be zero when not known, otherwise tuning will fail.
 
             IChannel c = newChannel as IChannel;
             _scanHelper.UpdateChannel(ref c);
@@ -720,7 +760,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
           }
 
           this.LogDebug("Scan found {0} channels from {1} services", found, serviceCount);
-          return servicesFound;
+          //return servicesFound;
         }
         finally
         {
@@ -729,6 +769,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             _analyser.SetCallBack(null);
           }
           _event.Close();
+          _event = null;
         }
       }
       finally

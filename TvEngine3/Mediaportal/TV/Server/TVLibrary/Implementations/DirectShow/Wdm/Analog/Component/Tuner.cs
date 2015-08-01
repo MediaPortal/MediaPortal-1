@@ -21,12 +21,15 @@
 using System;
 using System.Collections.Generic;
 using DirectShowLib;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Microsoft.Win32;
+using MediaType = Mediaportal.TV.Server.Common.Types.Enum.MediaType;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component
 {
@@ -77,7 +80,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <summary>
     /// The current tuning parameters.
     /// </summary>
-    private AnalogChannel _currentChannel = null;
+    private IChannel _currentChannel = null;
 
     /// <summary>
     /// The maximum signal strength reading that we expect the tuner to report.
@@ -300,7 +303,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       if (tuner != null)
       {
         int hr = tuner.GetAvailableModes(out _supportedTuningModes);
-        HResult.ThrowException(hr, "Failed to read supported tuning modes.");
+        TvExceptionDirectShowError.Throw(hr, "Failed to read supported tuning modes.");
         this.LogDebug("WDM analog tuner: supported tuning modes = {0}", _supportedTuningModes);
       }
 
@@ -312,7 +315,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       if (tvAudio != null)
       {
         int hr = tvAudio.GetHardwareSupportedTVAudioModes(out _supportedTvAudioModes);
-        HResult.ThrowException(hr, "Failed to read supported TV audio modes.");
+        TvExceptionDirectShowError.Throw(hr, "Failed to read supported TV audio modes.");
         this.LogDebug("WDM analog tuner: supported TV audio modes = {0}", _supportedTvAudioModes);
       }
       else
@@ -338,7 +341,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
 
       AMTunerSignalStrength signalStrength;
       int hr = tuner.SignalPresent(out signalStrength);
-      if (hr != (int)HResult.Severity.Success)
+      if (hr != (int)NativeMethods.HResult.S_OK)
       {
         this.LogWarn("WDM analog tuner: potential error updating signal status, hr = 0x{0:x}", hr);
       }
@@ -349,9 +352,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         // report values outside the documented range when they are locked.
         // This seems to be an attempt to give a better indication of signal
         // strength/quality. We try to show that extra information.
-        isLocked = (signalStrength != AMTunerSignalStrength.NoSignal);
+        isLocked = signalStrength != AMTunerSignalStrength.NoSignal;
 
         strength = (int)signalStrength;
+        if (strength < 0)
+        {
+          strength = 0;
+        }
         if (strength > _maxSignalStrength)
         {
           this.LogDebug("WDM analog tuner: adjusting maximum signal strength, current = {0}, new = {1}", _maxSignalStrength, strength);
@@ -381,7 +388,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    public void PerformTuning(AnalogChannel channel)
+    public void PerformTuning(IChannel channel)
     {
       this.LogDebug("WDM analog tuner: perform tuning");
       IAMTVTuner tuner = _filterTuner as IAMTVTuner;
@@ -389,89 +396,99 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       {
         throw new TvException("Failed to find tuner interface on filter.");
       }
-      if (channel.MediaType == MediaTypeEnum.TV)
+
+      // No need to tune if this tune request was only triggered due to use of
+      // a blaster.
+      ChannelAnalogTv analogTvChannel = channel as ChannelAnalogTv;
+      if (
+        analogTvChannel != null &&
+        !analogTvChannel.IsDifferentTransmitter(_currentChannel, false)
+      )
       {
-        UpdateFrequencyOverride(channel);
+        this.LogDebug("WDM analog tuner: tuning not required");
+        _currentChannel = channel;
+        return;
+      }
+
+      if (analogTvChannel != null && channel.MediaType == MediaType.Television)
+      {
+        UpdateFrequencyOverride(analogTvChannel);
       }
 
       // Set tuning parameters.
-      int hr = (int)HResult.Severity.Success;
-      if (_currentChannel == null ||
-        _currentChannel.MediaType != channel.MediaType ||
-        _currentChannel.Country.Id != channel.Country.Id ||
-        _currentChannel.TunerSource != channel.TunerSource ||
-        (channel.MediaType == MediaTypeEnum.TV &&
-          (
-            _currentChannel.ChannelNumber != channel.ChannelNumber ||
-            (channel.Frequency > 0 && _currentChannel.Frequency != channel.Frequency)
-          )
-        ) ||
-        (channel.MediaType == MediaTypeEnum.Radio && _currentChannel.Frequency != channel.Frequency))
+      ChannelFmRadio fmRadioChannel = channel as ChannelFmRadio;
+      int hr = (int)NativeMethods.HResult.S_OK;
+      if (fmRadioChannel != null)
       {
-        this.LogDebug("WDM analog tuner: setting tuning parameters");
-        if (channel.MediaType == MediaTypeEnum.Radio)
+        bool isSupportedMode = false;
+        if (fmRadioChannel.Frequency < 30000000)
         {
-          if (channel.Frequency < 30000000)
+          if (!_supportedTuningModes.HasFlag(AMTunerModeType.AMRadio))
           {
-            if (!_supportedTuningModes.HasFlag(AMTunerModeType.AMRadio))
-            {
-              this.LogWarn("WDM analog tuner: requested tuning mode AM radio is not supported");
-            }
-            else
-            {
-              hr |= tuner.put_Mode(AMTunerModeType.AMRadio);
-            }
+            this.LogWarn("WDM analog tuner: requested tuning mode AM radio is not supported");
           }
           else
           {
-            if (!_supportedTuningModes.HasFlag(AMTunerModeType.FMRadio))
-            {
-              this.LogWarn("WDM analog tuner: requested tuning mode FM radio is not supported");
-            }
-            else
-            {
-              hr |= tuner.put_Mode(AMTunerModeType.FMRadio);
-            }
+            hr |= tuner.put_Mode(AMTunerModeType.AMRadio);
+            isSupportedMode = true;
           }
-        }
-        else if (channel.MediaType == MediaTypeEnum.TV)
-        {
-          if (!_supportedTuningModes.HasFlag(AMTunerModeType.TV))
-          {
-            this.LogWarn("WDM analog tuner: requested tuning mode analog TV is not supported");
-          }
-          else
-          {
-            hr |= tuner.put_Mode(AMTunerModeType.TV);
-          }
-        }
-        hr |= tuner.put_TuningSpace(channel.Country.Id);
-        hr |= tuner.put_CountryCode(channel.Country.Id);
-        hr |= tuner.put_InputType(0, channel.TunerSource);
-        if (channel.MediaType == MediaTypeEnum.Radio)
-        {
-          hr |= tuner.put_Channel((int)channel.Frequency, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
         }
         else
         {
-          hr |= tuner.put_Channel(channel.ChannelNumber, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
+          if (!_supportedTuningModes.HasFlag(AMTunerModeType.FMRadio))
+          {
+            this.LogWarn("WDM analog tuner: requested tuning mode FM radio is not supported");
+          }
+          else
+          {
+            hr |= tuner.put_Mode(AMTunerModeType.FMRadio);
+            isSupportedMode = true;
+          }
         }
 
-        if (hr != (int)HResult.Severity.Success)
+        if (isSupportedMode)
         {
-          this.LogWarn("WDM analog tuner: potential error setting tuning parameters, hr = 0x{0:x}", hr);
+          hr |= tuner.put_TuningSpace(1);   // USA
+          hr |= tuner.put_CountryCode(1);   // USA
+          hr |= tuner.put_InputType(0, TunerInputType.Antenna);
+          hr |= tuner.put_Channel(fmRadioChannel.Frequency * 1000, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
         }
+      }
+      else if (analogTvChannel != null)
+      {
+        if (!_supportedTuningModes.HasFlag(AMTunerModeType.TV))
+        {
+          this.LogWarn("WDM analog tuner: requested tuning mode analog TV is not supported");
+        }
+        else
+        {
+          hr |= tuner.put_Mode(AMTunerModeType.TV);
+          hr |= tuner.put_TuningSpace(analogTvChannel.Country.ItuCode);
+          hr |= tuner.put_CountryCode(analogTvChannel.Country.ItuCode);
+          TunerInputType inputType = TunerInputType.Cable;
+          if (analogTvChannel.TunerSource == AnalogTunerSource.Antenna)
+          {
+            inputType = TunerInputType.Antenna;
+          }
+          hr |= tuner.put_InputType(0, inputType);
+          hr |= tuner.put_Channel(analogTvChannel.PhysicalChannelNumber, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
+        }
+      }
+
+      if (hr != (int)NativeMethods.HResult.S_OK)
+      {
+        this.LogWarn("WDM analog tuner: potential error setting tuning parameters, hr = 0x{0:x}", hr);
       }
 
       int frequencyVideo = 0;
       int frequencyAudio = 0;
-      if (channel.MediaType == MediaTypeEnum.TV)
+      if (channel.MediaType == MediaType.Television)
       {
         hr = tuner.get_VideoFrequency(out frequencyVideo);
-        HResult.ThrowException(hr, "Failed to read current video frequency.");
+        TvExceptionDirectShowError.Throw(hr, "Failed to read current video frequency.");
       }
       hr = tuner.get_AudioFrequency(out frequencyAudio);
-      HResult.ThrowException(hr, "Failed to read current audio frequency.");
+      TvExceptionDirectShowError.Throw(hr, "Failed to read current audio frequency.");
 
       this.LogDebug("WDM analog tuner: tuned to frequency, video = {0} Hz, audio = {1} Hz", frequencyVideo, frequencyAudio);
 
@@ -487,7 +504,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         {
           TVAudioMode availableTvAudioModes;
           hr = tvAudio.GetAvailableTVAudioModes(out availableTvAudioModes);
-          if (hr == (int)HResult.Severity.Success)
+          if (hr == (int)NativeMethods.HResult.S_OK)
           {
             // TODO: add TV audio mode to analog tuning details
             this.LogDebug("WDM analog tuner: available TV audio modes = {0}", availableTvAudioModes);
@@ -498,7 +515,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
             else
             {
               hr = tvAudio.put_TVAudioMode(TVAudioMode.Stereo);
-              if (hr != (int)HResult.Severity.Success)
+              if (hr != (int)NativeMethods.HResult.S_OK)
               {
                 this.LogWarn("WDM analog tuner: potential error setting TV audio mode, hr = 0x{0:x}", hr);
               }
@@ -515,19 +532,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     }
 
     /// <summary>
-    /// Set or unset an override for the DirectShow channel to frequency mapping used for analog
-    /// tuning.
+    /// Set or unset an override for the DirectShow channel to frequency
+    /// mapping used for analog tuning.
     /// </summary>
     /// <remarks>
     /// Refer to MSDN Frequency Overrides:
     /// http://msdn.microsoft.com/en-us/library/windows/desktop/dd375809%28v=vs.85%29.aspx
     /// </remarks>
     /// <param name="channel">A channel instance populated with the required override parameters.</param>
-    private static void UpdateFrequencyOverride(AnalogChannel channel)
+    private static void UpdateFrequencyOverride(ChannelAnalogTv channel)
     {
-      int countryCode = channel.Country.Id;
       int broadcastOrCable = 0;
-      if (channel.TunerSource == TunerInputType.Cable)
+      if (channel.TunerSource == AnalogTunerSource.Cable)
       {
         broadcastOrCable = 1;
       }
@@ -535,7 +551,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       string[] registryLocations = new string[2]
       {
         string.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS0-{0}", broadcastOrCable),
-        string.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-{1}", countryCode, broadcastOrCable)
+        string.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-{1}", channel.Country.ItuCode, broadcastOrCable)
       };
 
       foreach (string location in registryLocations)
@@ -550,11 +566,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
               {
                 if (channel.Frequency <= 0)
                 {
-                  key.DeleteValue(channel.ChannelNumber.ToString(), false);
+                  key.DeleteValue(channel.PhysicalChannelNumber.ToString(), false);
                 }
                 else
                 {
-                  key.SetValue(channel.ChannelNumber.ToString(), (int)channel.Frequency, RegistryValueKind.DWord);
+                  key.SetValue(channel.PhysicalChannelNumber.ToString(), channel.Frequency, RegistryValueKind.DWord);
                 }
                 key.Close();
               }

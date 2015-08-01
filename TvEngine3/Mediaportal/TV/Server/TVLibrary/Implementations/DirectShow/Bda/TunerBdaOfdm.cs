@@ -21,28 +21,31 @@
 using System;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 {
   /// <summary>
-  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles DVB-T, DVB-T2
-  /// and ISDB-T tuners with BDA drivers.
+  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which
+  /// handles DVB-T, DVB-T2 and ISDB-T tuners with BDA drivers.
   /// </summary>
-  internal class TunerBdaTerrestrial : TunerBdaBase
+  internal class TunerBdaOfdm : TunerBdaBase
   {
     #region constructor
 
     /// <summary>
-    /// Initialise a new instance of the <see cref="TunerBdaTerrestrial"/> class.
+    /// Initialise a new instance of the <see cref="TunerBdaOfdm"/> class.
     /// </summary>
     /// <param name="device">The <see cref="DsDevice"/> instance to encapsulate.</param>
-    public TunerBdaTerrestrial(DsDevice device)
-      : base(device, device.DevicePath + "T", CardType.DvbT)
+    /// <param name="supportedBroadcastStandards">The broadcast standards supported by the hardware.</param>
+    public TunerBdaOfdm(DsDevice device, BroadcastStandard supportedBroadcastStandards)
+      : base(device, device.DevicePath + "OFDM", supportedBroadcastStandards)
     {
     }
 
@@ -56,7 +59,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <returns>the tuning space that was created</returns>
     protected override ITuningSpace CreateTuningSpace()
     {
-      this.LogDebug("BDA terrestrial: create tuning space");
+      this.LogDebug("BDA OFDM: create tuning space");
 
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
       IDVBTuningSpace tuningSpace = null;
@@ -76,34 +79,41 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         hr |= tuningSpace.put_SystemType(DVBSystemType.Terrestrial);
 
         locator = (IDVBTLocator)new DVBTLocator();
+        hr |= locator.put_Bandwidth(-1);
         hr |= locator.put_CarrierFrequency(-1);
-        hr |= locator.put_SymbolRate(-1);
-        hr |= locator.put_Modulation(ModulationType.ModNotSet);
+        hr |= locator.put_Guard(GuardInterval.GuardNotSet);
+        hr |= locator.put_HAlpha(HierarchyAlpha.HAlphaNotSet);
         hr |= locator.put_InnerFEC(FECMethod.MethodNotSet);
         hr |= locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
+        hr |= locator.put_LPInnerFEC(FECMethod.MethodNotSet);
+        hr |= locator.put_LPInnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
+        hr |= locator.put_Mode(TransmissionMode.ModeNotSet);
+        hr |= locator.put_Modulation(ModulationType.ModNotSet);
+        hr |= locator.put_OtherFrequencyInUse(false);
         hr |= locator.put_OuterFEC(FECMethod.MethodNotSet);
         hr |= locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
+        hr |= locator.put_SymbolRate(-1);
 
         hr |= tuningSpace.put_DefaultLocator(locator);
-        if (hr != (int)HResult.Severity.Success)
+        if (hr != (int)NativeMethods.HResult.S_OK)
         {
-          this.LogWarn("BDA terrestrial: potential error creating tuning space, hr = 0x{0:x}", hr);
+          this.LogWarn("BDA OFDM: potential error creating tuning space, hr = 0x{0:x}", hr);
         }
 
         object index;
         hr = container.Add(tuningSpace, out index);
-        HResult.ThrowException(hr, "Failed to add new tuning space to tuning space container.");
+        TvExceptionDirectShowError.Throw(hr, "Failed to add new tuning space to tuning space container.");
         return tuningSpace;
       }
-      catch (Exception)
+      catch
       {
-        Release.ComObject("BDA terrestrial tuner tuning space", ref tuningSpace);
-        Release.ComObject("BDA terrestrial tuner locator", ref locator);
+        Release.ComObject("BDA OFDM tuner tuning space", ref tuningSpace);
+        Release.ComObject("BDA OFDM tuner locator", ref locator);
         throw;
       }
       finally
       {
-        Release.ComObject("BDA terrestrial tuner tuning space container", ref systemTuningSpaces);
+        Release.ComObject("BDA OFDM tuner tuning space container", ref systemTuningSpaces);
       }
     }
 
@@ -125,7 +135,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     {
       get
       {
-        return "MediaPortal Terrestrial Tuning Space";
+        return "MediaPortal OFDM Tuning Space";
       }
     }
 
@@ -141,15 +151,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <returns>a tune request instance</returns>
     protected override ITuneRequest AssembleTuneRequest(ITuningSpace tuningSpace, IChannel channel)
     {
-      DVBTChannel terrestrialChannel = channel as DVBTChannel;
-      if (terrestrialChannel == null)
+      IChannelOfdm ofdmChannel = channel as IChannelOfdm;
+      if (ofdmChannel == null)
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
 
       ILocator locator;
       int hr = tuningSpace.get_DefaultLocator(out locator);
-      HResult.ThrowException(hr, "Failed to get the default locator for the tuning space.");
+      TvExceptionDirectShowError.Throw(hr, "Failed to get the default locator for the tuning space.");
       try
       {
         IDVBTLocator dvbtLocator = locator as IDVBTLocator;
@@ -157,12 +167,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         {
           throw new TvException("Failed to find DVB-T locator interface on locator.");
         }
-        hr = dvbtLocator.put_CarrierFrequency((int)terrestrialChannel.Frequency);
-        hr |= dvbtLocator.put_Bandwidth(terrestrialChannel.Bandwidth / 1000);
+        hr = dvbtLocator.put_CarrierFrequency(ofdmChannel.Frequency);
+        hr |= dvbtLocator.put_Bandwidth(ofdmChannel.Bandwidth / 1000);
 
         ITuneRequest tuneRequest;
         hr = tuningSpace.CreateTuneRequest(out tuneRequest);
-        HResult.ThrowException(hr, "Failed to create tuning request from tuning space.");
+        TvExceptionDirectShowError.Throw(hr, "Failed to create tuning request from tuning space.");
         try
         {
           IDVBTuneRequest dvbTuneRequest = tuneRequest as IDVBTuneRequest;
@@ -170,27 +180,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           {
             throw new TvException("Failed to find DVB tune request interface on tune request.");
           }
-          hr |= dvbTuneRequest.put_ONID(terrestrialChannel.NetworkId);
-          hr |= dvbTuneRequest.put_TSID(terrestrialChannel.TransportId);
-          hr |= dvbTuneRequest.put_SID(terrestrialChannel.ServiceId);
+
+          ChannelDvbBase dvbChannel = channel as ChannelDvbBase;
+          if (dvbChannel != null)
+          {
+            hr |= dvbTuneRequest.put_ONID(dvbChannel.OriginalNetworkId);
+            hr |= dvbTuneRequest.put_TSID(dvbChannel.TransportStreamId);
+            hr |= dvbTuneRequest.put_SID(dvbChannel.ServiceId);
+          }
           hr |= dvbTuneRequest.put_Locator(locator);
 
-          if (hr != (int)HResult.Severity.Success)
+          if (hr != (int)NativeMethods.HResult.S_OK)
           {
-            this.LogWarn("BDA terrestrial: potential error assembling tune request, hr = 0x{0:x}", hr);
+            this.LogWarn("BDA OFDM: potential error assembling tune request, hr = 0x{0:x}", hr);
           }
 
           return dvbTuneRequest;
         }
-        catch (Exception)
+        catch
         {
-          Release.ComObject("BDA terrestrial tuner tune request", ref tuneRequest);
+          Release.ComObject("BDA OFDM tuner tune request", ref tuneRequest);
           throw;
         }
       }
       finally
       {
-        Release.ComObject("BDA terrestrial tuner locator", ref locator);
+        Release.ComObject("BDA OFDM tuner locator", ref locator);
       }
     }
 
@@ -202,31 +217,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <returns>an HRESULT indicating whether the tuning parameters were applied successfully</returns>
     protected override int PerformMediaPortalNetworkProviderTuning(IDvbNetworkProvider networkProvider, IChannel channel)
     {
-      DVBTChannel terrestrialChannel = channel as DVBTChannel;
-      if (terrestrialChannel == null)
+      IChannelOfdm ofdmChannel = channel as IChannelOfdm;
+      if (ofdmChannel == null)
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
 
       FrequencySettings frequencySettings = new FrequencySettings
       {
+        Frequency = (uint)ofdmChannel.Frequency,
         Multiplier = 1000,
-        Frequency = (uint)(terrestrialChannel.Frequency),
-        Bandwidth = (uint)terrestrialChannel.Bandwidth,
-        Polarity = Polarisation.NotSet,
+        Bandwidth = (uint)ofdmChannel.Bandwidth,
+        Polarity = DirectShowLib.BDA.Polarisation.NotSet,
         Range = uint.MaxValue
       };
       return networkProvider.TuneDVBT(frequencySettings);
     }
 
     /// <summary>
-    /// Check if the tuner can tune to a specific channel.
+    /// Get the broadcast standards supported by the tuner code/class/type implementation.
     /// </summary>
-    /// <param name="channel">The channel to check.</param>
-    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
-    public override bool CanTune(IChannel channel)
+    public override BroadcastStandard PossibleBroadcastStandards
     {
-      return channel is DVBTChannel;
+      get
+      {
+        return BroadcastStandard.DvbT | BroadcastStandard.DvbT2;
+      }
     }
 
     #endregion

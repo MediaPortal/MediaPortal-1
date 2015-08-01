@@ -19,18 +19,20 @@
 #endregion
 
 using System;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
   /// <summary>
   /// Base class for a sub-channel of a tv card
   /// </summary>
-  internal abstract class SubChannelBase : ITvSubChannel
+  internal abstract class SubChannelBase : ISubChannelInternal
   {
     #region events
 
@@ -224,7 +226,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns></returns>
     public bool StartTimeShifting(string fileName)
     {
-      this.LogDebug("sub-channel base: sub-channel {0} start timeshifting to {1}", _subChannelId, fileName);
+      this.LogDebug("sub-channel base: {0} start timeshifting to {1}", _subChannelId, fileName);
       try
       {
         OnStartTimeShifting(fileName);
@@ -247,7 +249,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns></returns>
     public bool StopTimeShifting()
     {
-      this.LogDebug("sub-channel base: sub-channel {0} stop timeshifting", _subChannelId);
+      this.LogDebug("sub-channel base: {0} stop timeshifting", _subChannelId);
       OnStopTimeShifting();
       _timeshiftFileName = string.Empty;
       _dateTimeShiftStarted = DateTime.MinValue;
@@ -261,7 +263,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns></returns>
     public bool StartRecording(string fileName)
     {
-      this.LogDebug("sub-channel base: sub-channel {0} start recording to {1}", _subChannelId, fileName);
+      this.LogDebug("sub-channel base: {0} start recording to {1}", _subChannelId, fileName);
       try
       {
         OnStartRecording(fileName);
@@ -284,7 +286,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns></returns>
     public bool StopRecording()
     {
-      this.LogDebug("sub-channel base: sub-channel {0} stop recording", _subChannelId);
+      this.LogDebug("sub-channel base: {0} stop recording", _subChannelId);
       OnStopRecording();
       _recordingFileName = string.Empty;
       _dateRecordingStarted = DateTime.MinValue;
@@ -306,7 +308,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public virtual void CancelTune()
     {
-      this.LogDebug("sub-channel base: sub-channel {0} cancel tune", _subChannelId);
+      this.LogDebug("sub-channel base: {0} cancel tune", _subChannelId);
       _cancelTune = true;
     }
 
@@ -323,28 +325,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     #endregion
 
-    #region IAnalogVideoAudioObserver
-
-    /// <summary>
-    /// Called when tswriter.ax has seen the video / audio data for the first time
-    /// </summary>
-    /// <returns></returns>
-    public int OnNotify(PidType pidType)
-    {
-      try
-      {
-        this.LogDebug("PID seen - type = {0}", pidType);
-        OnAudioVideoEvent(pidType);
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex);
-      }
-      return 0;
-    }
-
-    #endregion
-
     #region public helper
 
     /// <summary>
@@ -352,7 +332,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public void Decompose()
     {
-      this.LogDebug("sub-channel base: sub-channel {0} decompose", _subChannelId);
+      this.LogDebug("sub-channel base: {0} decompose", _subChannelId);
 
       if (IsRecording)
       {
@@ -363,6 +343,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         StopTimeShifting();
       }
       OnDecompose();
+      _currentChannel = null;
     }
 
     #endregion

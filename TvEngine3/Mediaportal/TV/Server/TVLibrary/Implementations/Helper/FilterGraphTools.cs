@@ -24,10 +24,11 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using DirectShowLib;
-using Mediaportal.TV.Server.TvLibrary.Utils.Util;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using HResult = MediaPortal.Common.Utils.NativeMethods.HResult;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 {
@@ -56,7 +57,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         filter = Activator.CreateInstance(type) as IBaseFilter;
 
         int hr = graph.AddFilter(filter, name);
-        HResult.ThrowException(hr, "Failed to add the new filter to the graph.");
+        TvExceptionDirectShowError.Throw(hr, "Failed to add the new filter to the graph.");
       }
       catch
       {
@@ -83,7 +84,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         filter = ComHelper.LoadComObjectFromFile(fileName, clsid, typeof(IBaseFilter).GUID) as IBaseFilter;
 
         int hr = graph.AddFilter(filter, filterName);
-        HResult.ThrowException(hr, "Failed to add the new filter to the graph.");
+        TvExceptionDirectShowError.Throw(hr, "Failed to add the new filter to the graph.");
       }
       catch
       {
@@ -112,7 +113,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       try
       {
         int hr = graph.AddSourceFilterForMoniker(device.Mon, null, name ?? device.Name, out filter);
-        HResult.ThrowException(hr, "Failed to add the new filter to the graph.");
+        TvExceptionDirectShowError.Throw(hr, "Failed to add the new filter to the graph.");
       }
       catch
       {
@@ -145,8 +146,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 
       try
       {
+        foreach (char c in Path.GetInvalidFileNameChars())
+        {
+          fileName = fileName.Replace(c, '_');
+        }
         int hr = NativeMethods.StgCreateDocfile(
-          Path.Combine(PathManager.GetDataPath, FileUtils.MakeFileName(fileName)),
+          Path.Combine(PathManager.GetDataPath, fileName),
           STGM.Create | STGM.Transacted | STGM.ReadWrite | STGM.ShareExclusive,
           0,
           out storage
@@ -342,18 +347,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     }
 
     /// <summary>
-    /// increment the ComObject referencecount of the object.
-    /// </summary>
-    /// <param name="o">The object.</param>
-    private static object incRefCountCOM(object o)
-    {
-      IntPtr pUnk = Marshal.GetIUnknownForObject(o);
-      object oCom = Marshal.GetObjectForIUnknown(pUnk);
-      Marshal.Release(pUnk);
-      return oCom;
-    }
-
-    /// <summary>
     /// Get the name of a filter.
     /// </summary>
     /// <param name="filter">The filter.</param>
@@ -362,7 +355,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     {
       FilterInfo filterInfo;
       int hr = filter.QueryFilterInfo(out filterInfo);
-      HResult.ThrowException(hr, "Failed to query filter information.");
+      TvExceptionDirectShowError.Throw(hr, "Failed to query filter information.");
       Release.FilterInfo(ref filterInfo);
       return filterInfo.achName;
     }
@@ -376,8 +369,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     {
       PinInfo pinInfo;
       int hr = pin.QueryPinInfo(out pinInfo);
-      HResult.ThrowException(hr, "Failed to query pin information.");
-      Release.ComObject("filter graph tools pin name filter", ref pinInfo.filter);
+      TvExceptionDirectShowError.Throw(hr, "Failed to query pin information.");
+      Release.PinInfo(ref pinInfo);
       return pinInfo.name;
     }
 
@@ -398,7 +391,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       }
 
       int hr = graph.AddFilter(newFilter, filterName);
-      HResult.ThrowException(hr, "Failed to add the new filter to the graph.");
+      TvExceptionDirectShowError.Throw(hr, "Failed to add the new filter to the graph.");
 
       try
       {
@@ -427,9 +420,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       IntPtr ksMultiple = IntPtr.Zero;
       int hr = ksPin.KsQueryMediums(out ksMultiple);
       // Can return 1 (S_FALSE) for non-error scenarios.
-      if (hr < (int)HResult.Severity.Success)
+      if (hr < (int)HResult.S_OK)
       {
-        HResult.ThrowException(hr, "Failed to query pin mediums.");
+        TvExceptionDirectShowError.Throw(hr, "Failed to query pin mediums.");
       }
       try
       {
@@ -493,7 +486,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         try
         {
           int hr = graph.ConnectDirect(upstreamPin, downstreamPin, null);
-          HResult.ThrowException(hr, "Failed to connect filters, pins won't connect.");
+          TvExceptionDirectShowError.Throw(hr, "Failed to connect filters, pins won't connect.");
         }
         finally
         {
@@ -532,7 +525,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       }
       catch (Exception ex)
       {
-        throw new TvException("Failed to find medium on hardware filter, can't instanciate filter from moniker.", ex);
+        throw new TvException(ex, "Failed to find medium on hardware filter, can't instanciate filter from moniker.");
       }
 
       filter = obj as IBaseFilter;
@@ -540,18 +533,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       {
         IEnumPins pinEnum;
         int hr = filter.EnumPins(out pinEnum);
-        HResult.ThrowException(hr, "Failed to find medium on hardware filter, can't get filter pin enumerator.");
+        TvExceptionDirectShowError.Throw(hr, "Failed to find medium on hardware filter, can't get filter pin enumerator.");
 
         IPin[] pins = new IPin[2];
         int pinCount;
-        while (pinEnum.Next(1, pins, out pinCount) == (int)HResult.Severity.Success && pinCount == 1)
+        while (pinEnum.Next(1, pins, out pinCount) == (int)HResult.S_OK && pinCount == 1)
         {
           IPin p = pins[0];
           try
           {
             PinDirection d;
             hr = p.QueryDirection(out d);
-            HResult.ThrowException(hr, "Failed to find medium on hardware filter, can't get pin direction.");
+            TvExceptionDirectShowError.Throw(hr, "Failed to find medium on hardware filter, can't get pin direction.");
 
             if (d != direction)
             {
@@ -671,7 +664,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
               int hr = graph.AddFilter(filter, deviceName);
               if (hr != 0x4022d)  // VFW_S_DUPLICATE_NAME
               {
-                HResult.ThrowException(hr, string.Format("Failed to add matching filter {0} {1} into the graph.", deviceName, devicePath));
+                TvExceptionDirectShowError.Throw(hr, "Failed to add matching filter {0} {1} into the graph.", deviceName, devicePath);
               }
               if (pinToConnectDirection == PinDirection.Input)
               {
@@ -681,7 +674,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
               {
                 hr = graph.ConnectDirect(pinToConnect, pin2, null);
               }
-              HResult.ThrowException(hr, string.Format("Failed to connect matching filter {0} {1} into the graph.", deviceName, devicePath));
+              TvExceptionDirectShowError.Throw(hr, "Failed to connect matching filter {0} {1} into the graph.", deviceName, devicePath);
             }
             catch
             {
@@ -731,7 +724,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     public static bool ConnectFilterWithPin(IFilterGraph2 graph, IPin pinToConnect, PinDirection pinToConnectDirection, IBaseFilter filter)
     {
       Log.Debug("FGT: connect filter with pin");
-      int hr = (int)HResult.Severity.Success;
+      int hr = (int)HResult.S_OK;
       int pinCount = 0;
       int pinIndex = 0;
 
@@ -743,11 +736,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 
       IEnumPins pinEnum = null;
       hr = filter.EnumPins(out pinEnum);
-      HResult.ThrowException(hr, "Failed to obtain pin enumerator for filter.");
+      TvExceptionDirectShowError.Throw(hr, "Failed to obtain pin enumerator for filter.");
       try
       {
         IPin[] pinsTemp = new IPin[2];
-        while (pinEnum.Next(1, pinsTemp, out pinCount) == (int)HResult.Severity.Success && pinCount == 1)
+        while (pinEnum.Next(1, pinsTemp, out pinCount) == (int)HResult.S_OK && pinCount == 1)
         {
           IPin pinToTry = pinsTemp[0];
           try
@@ -755,7 +748,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
             // We're not interested in pins unless they're the right direction.
             PinDirection direction;
             hr = pinToTry.QueryDirection(out direction);
-            HResult.ThrowException(hr, "Failed to query pin direction for filter pin.");
+            TvExceptionDirectShowError.Throw(hr, "Failed to query pin direction for filter pin.");
             if (direction == pinToConnectDirection)
             {
               Log.Debug("FGT:   pin {0} is the wrong direction", pinIndex++);
@@ -765,7 +758,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
             // We can't use pins that are already connected.
             IPin tempPin = null;
             hr = pinToTry.ConnectedTo(out tempPin);
-            if (hr == (int)HResult.Severity.Success && tempPin != null)
+            if (hr == (int)HResult.S_OK && tempPin != null)
             {
               Log.Debug("FGT:   pin {0} is already connected", pinIndex++);
               Release.ComObject("filter graph tools connect-filter-with-pin filter connected pin", ref tempPin);
@@ -812,7 +805,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
               {
                 hr = graph.ConnectDirect(pinToConnect, pinToTry, null);
               }
-              HResult.ThrowException(hr, "Failed to connect pins.");
+              TvExceptionDirectShowError.Throw(hr, "Failed to connect pins.");
               Log.Debug("FGT:   pin {0} connected!", pinIndex);
               return true;
             }
@@ -835,53 +828,52 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 
       return false;
     }
-  }
 
-  #region Unmanaged Code declarations
+    #region Unmanaged Code declarations
 
-  [Flags]
-  internal enum STGM
-  {
-    Read = 0x00000000,
-    Write = 0x00000001,
-    ReadWrite = 0x00000002,
-    ShareDenyNone = 0x00000040,
-    ShareDenyRead = 0x00000030,
-    ShareDenyWrite = 0x00000020,
-    ShareExclusive = 0x00000010,
-    Priority = 0x00040000,
-    Create = 0x00001000,
-    Convert = 0x00020000,
-    FailIfThere = 0x00000000,
-    Direct = 0x00000000,
-    Transacted = 0x00010000,
-    NoScratch = 0x00100000,
-    NoSnapShot = 0x00200000,
-    Simple = 0x08000000,
-    DirectSWMR = 0x00400000,
-    DeleteOnRelease = 0x04000000,
-  }
+    [Flags]
+    internal enum STGM
+    {
+      Read = 0x00000000,
+      Write = 0x00000001,
+      ReadWrite = 0x00000002,
+      ShareDenyNone = 0x00000040,
+      ShareDenyRead = 0x00000030,
+      ShareDenyWrite = 0x00000020,
+      ShareExclusive = 0x00000010,
+      Priority = 0x00040000,
+      Create = 0x00001000,
+      Convert = 0x00020000,
+      FailIfThere = 0x00000000,
+      Direct = 0x00000000,
+      Transacted = 0x00010000,
+      NoScratch = 0x00100000,
+      NoSnapShot = 0x00200000,
+      Simple = 0x08000000,
+      DirectSWMR = 0x00400000,
+      DeleteOnRelease = 0x04000000,
+    }
 
-  [Flags]
-  internal enum STGC
-  {
-    Default = 0,
-    Overwrite = 1,
-    OnlyIfCurrent = 2,
-    DangerouslyCommitMerelyToDiskCache = 4,
-    Consolidate = 8
-  }
+    [Flags]
+    internal enum STGC
+    {
+      Default = 0,
+      Overwrite = 1,
+      OnlyIfCurrent = 2,
+      DangerouslyCommitMerelyToDiskCache = 4,
+      Consolidate = 8
+    }
 
-  [Guid("0000000b-0000-0000-C000-000000000046"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  internal interface IStorage
-  {
-    [PreserveSig]
-    int CreateStream(
-      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
-      [In] STGM grfMode,
-      [In] int reserved1,
-      [In] int reserved2,
+    [Guid("0000000b-0000-0000-C000-000000000046"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    internal interface IStorage
+    {
+      [PreserveSig]
+      int CreateStream(
+        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
+        [In] STGM grfMode,
+        [In] int reserved1,
+        [In] int reserved2,
 #if USING_NET11
 			[Out] out UCOMIStream ppstm
 #else
@@ -889,12 +881,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 #endif
 );
 
-    [PreserveSig]
-    int OpenStream(
-      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
-      [In] IntPtr reserved1,
-      [In] STGM grfMode,
-      [In] int reserved2,
+      [PreserveSig]
+      int OpenStream(
+        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
+        [In] IntPtr reserved1,
+        [In] STGM grfMode,
+        [In] int reserved2,
 #if USING_NET11
 			[Out] out UCOMIStream ppstm
 #else
@@ -902,67 +894,67 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 #endif
 );
 
-    [PreserveSig]
-    int CreateStorage(
-      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
-      [In] STGM grfMode,
-      [In] int reserved1,
-      [In] int reserved2,
-      [Out] out IStorage ppstg
-      );
+      [PreserveSig]
+      int CreateStorage(
+        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
+        [In] STGM grfMode,
+        [In] int reserved1,
+        [In] int reserved2,
+        [Out] out IStorage ppstg
+        );
 
-    [PreserveSig]
-    int OpenStorage(
-      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
-      [In] IStorage pstgPriority,
-      [In] STGM grfMode,
-      [In] int snbExclude,
-      [In] int reserved,
-      [Out] out IStorage ppstg
-      );
+      [PreserveSig]
+      int OpenStorage(
+        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
+        [In] IStorage pstgPriority,
+        [In] STGM grfMode,
+        [In] int snbExclude,
+        [In] int reserved,
+        [Out] out IStorage ppstg
+        );
 
-    [PreserveSig]
-    int CopyTo(
-      [In] int ciidExclude,
-      [In] Guid[] rgiidExclude,
-      [In] string[] snbExclude,
-      [In] IStorage pstgDest
-      );
+      [PreserveSig]
+      int CopyTo(
+        [In] int ciidExclude,
+        [In] Guid[] rgiidExclude,
+        [In] string[] snbExclude,
+        [In] IStorage pstgDest
+        );
 
-    [PreserveSig]
-    int MoveElementTo(
-      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
-      [In] IStorage pstgDest,
-      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsNewName,
-      [In] STGM grfFlags
-      );
+      [PreserveSig]
+      int MoveElementTo(
+        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
+        [In] IStorage pstgDest,
+        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsNewName,
+        [In] STGM grfFlags
+        );
 
-    [PreserveSig]
-    int Commit([In] STGC grfCommitFlags);
+      [PreserveSig]
+      int Commit([In] STGC grfCommitFlags);
 
-    [PreserveSig]
-    int Revert();
+      [PreserveSig]
+      int Revert();
 
-    [PreserveSig]
-    int EnumElements(
-      [In] int reserved1,
-      [In] IntPtr reserved2,
-      [In] int reserved3,
-      [Out, MarshalAs(UnmanagedType.Interface)] out object ppenum
-      );
+      [PreserveSig]
+      int EnumElements(
+        [In] int reserved1,
+        [In] IntPtr reserved2,
+        [In] int reserved3,
+        [Out, MarshalAs(UnmanagedType.Interface)] out object ppenum
+        );
 
-    [PreserveSig]
-    int DestroyElement([In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName);
+      [PreserveSig]
+      int DestroyElement([In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName);
 
-    [PreserveSig]
-    int RenameElement(
-      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsOldName,
-      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsNewName
-      );
+      [PreserveSig]
+      int RenameElement(
+        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsOldName,
+        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsNewName
+        );
 
-    [PreserveSig]
-    int SetElementTimes(
-      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
+      [PreserveSig]
+      int SetElementTimes(
+        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
 #if USING_NET11
 			[In] FILETIME pctime,
 			[In] FILETIME patime,
@@ -974,17 +966,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 #endif
 );
 
-    [PreserveSig]
-    int SetClass([In, MarshalAs(UnmanagedType.LPStruct)] Guid clsid);
+      [PreserveSig]
+      int SetClass([In, MarshalAs(UnmanagedType.LPStruct)] Guid clsid);
 
-    [PreserveSig]
-    int SetStateBits(
-      [In] int grfStateBits,
-      [In] int grfMask
-      );
+      [PreserveSig]
+      int SetStateBits(
+        [In] int grfStateBits,
+        [In] int grfMask
+        );
 
-    [PreserveSig]
-    int Stat(
+      [PreserveSig]
+      int Stat(
 #if USING_NET11
 			[Out] out STATSTG pStatStg,
 #else
@@ -992,61 +984,62 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 #endif
  [In] int grfStatFlag
  );
-  }
+    }
 
-  internal static class NativeMethods
-  {
-    [DllImport("ole32.dll")]
+    private static class NativeMethods
+    {
+      [DllImport("ole32.dll")]
 #if USING_NET11
 		public static extern int CreateBindCtx(int reserved, out UCOMIBindCtx ppbc);
 #else
-    public static extern int CreateBindCtx(int reserved, out IBindCtx ppbc);
+      public static extern int CreateBindCtx(int reserved, out IBindCtx ppbc);
 #endif
 
-    [DllImport("ole32.dll")]
+      [DllImport("ole32.dll")]
 #if USING_NET11
 		public static extern int MkParseDisplayName(UCOMIBindCtx pcb, [MarshalAs(UnmanagedType.LPWStr)] string szUserName, out int pchEaten, out UCOMIMoniker ppmk);
 #else
-    public static extern int MkParseDisplayName(IBindCtx pcb, [MarshalAs(UnmanagedType.LPWStr)] string szUserName,
-                                                out int pchEaten, out IMoniker ppmk);
+      public static extern int MkParseDisplayName(IBindCtx pcb, [MarshalAs(UnmanagedType.LPWStr)] string szUserName,
+                                                  out int pchEaten, out IMoniker ppmk);
 #endif
 
-    [DllImport("olepro32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
-    public static extern int OleCreatePropertyFrame(
-      [In] IntPtr hwndOwner,
-      [In] int x,
-      [In] int y,
-      [In, MarshalAs(UnmanagedType.LPWStr)] string lpszCaption,
-      [In] int cObjects,
-      [In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.IUnknown)] object[] ppUnk,
-      [In] int cPages,
-      [In] IntPtr pPageClsID,
-      [In] int lcid,
-      [In] int dwReserved,
-      [In] IntPtr pvReserved
-      );
+      [DllImport("olepro32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+      public static extern int OleCreatePropertyFrame(
+        [In] IntPtr hwndOwner,
+        [In] int x,
+        [In] int y,
+        [In, MarshalAs(UnmanagedType.LPWStr)] string lpszCaption,
+        [In] int cObjects,
+        [In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.IUnknown)] object[] ppUnk,
+        [In] int cPages,
+        [In] IntPtr pPageClsID,
+        [In] int lcid,
+        [In] int dwReserved,
+        [In] IntPtr pvReserved
+        );
 
-    [DllImport("ole32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
-    public static extern int StgCreateDocfile(
-      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
-      [In] STGM grfMode,
-      [In] int reserved,
-      [Out] out IStorage ppstgOpen
-      );
+      [DllImport("ole32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+      public static extern int StgCreateDocfile(
+        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
+        [In] STGM grfMode,
+        [In] int reserved,
+        [Out] out IStorage ppstgOpen
+        );
 
-    [DllImport("ole32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
-    public static extern int StgIsStorageFile([In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName);
+      [DllImport("ole32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+      public static extern int StgIsStorageFile([In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName);
 
-    [DllImport("ole32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
-    public static extern int StgOpenStorage(
-      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
-      [In] IStorage pstgPriority,
-      [In] STGM grfMode,
-      [In] IntPtr snbExclude,
-      [In] int reserved,
-      [Out] out IStorage ppstgOpen
-      );
+      [DllImport("ole32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+      public static extern int StgOpenStorage(
+        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
+        [In] IStorage pstgPriority,
+        [In] STGM grfMode,
+        [In] IntPtr snbExclude,
+        [In] int reserved,
+        [Out] out IStorage ppstgOpen
+        );
+    }
+
+    #endregion
   }
-
-  #endregion
 }

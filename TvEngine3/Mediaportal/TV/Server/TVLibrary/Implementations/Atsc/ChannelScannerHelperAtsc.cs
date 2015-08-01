@@ -18,10 +18,11 @@
 
 #endregion
 
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Atsc.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
 {
@@ -36,28 +37,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
     /// <param name="channel">The channel.</param>
     public virtual void UpdateChannel(ref IChannel channel)
     {
-      // Fill in missing names.
-      if (string.IsNullOrWhiteSpace(channel.Name))
+      ChannelAtsc atscChannel = channel as ChannelAtsc;
+      ChannelScte scteChannel = channel as ChannelScte;
+      if (atscChannel == null && scteChannel == null)
       {
-        ATSCChannel atscChannel = channel as ATSCChannel;
-        if (atscChannel == null)
-        {
-          return;
-        }
+        return;
+      }
 
-        // North America has strange service naming conventions. Services have a callsign (eg. WXYZ) and/or name,
-        // and a virtual channel number (eg. 21.2). The callsign is a historical thing - if available, it is usually
-        // found in the short name field in the VCT. Virtual channel numbers were introduced in the analog (NTSC)
-        // switch-off. They don't necessarily have any relationship to the physical channel number (6 MHz frequency
-        // slot - in TVE, ATSCChannel.PhysicalChannel) that the service is transmitted in.
-        if (atscChannel.MinorChannel >= 0)
+      if (string.IsNullOrWhiteSpace(channel.LogicalChannelNumber))
+      {
+        if (atscChannel != null)
         {
-          atscChannel.Name = "Unknown " + atscChannel.MajorChannel + "-" + atscChannel.MinorChannel;
+          channel.LogicalChannelNumber = string.Format("{0}.{1}", atscChannel.PhysicalChannelNumber, atscChannel.ProgramNumber);
         }
         else
         {
-          atscChannel.Name = "Unknown " + atscChannel.MajorChannel;
+          channel.LogicalChannelNumber = string.Format("{0}.{1}", scteChannel.PhysicalChannelNumber, scteChannel.ProgramNumber);
         }
+      }
+
+      if (string.IsNullOrWhiteSpace(channel.Name))
+      {
+        channel.Name = string.Format("Unknown {0}", channel.LogicalChannelNumber);
       }
     }
 
@@ -67,31 +68,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
     /// <param name="serviceType">The service type.</param>
     /// <param name="videoStreamCount">The number of video streams associated with the service.</param>
     /// <param name="audioStreamCount">The number of audio streams associated with the service.</param>
-    public virtual MediaTypeEnum? GetMediaType(int serviceType, int videoStreamCount, int audioStreamCount)
+    public virtual MediaType? GetMediaType(int serviceType, int videoStreamCount, int audioStreamCount)
     {
       if (serviceType <= 0)
       {
         if (videoStreamCount != 0)
         {
-          return MediaTypeEnum.TV;
+          return MediaType.Television;
         }
         else if (audioStreamCount != 0)
         {
-          return MediaTypeEnum.Radio;
+          return MediaType.Radio;
         }
         return null;
       }
 
-      if (serviceType == (int)AtscServiceType.Audio)
+      if (serviceType == (int)ServiceType.Audio)
       {
-        return MediaTypeEnum.Radio;
+        return MediaType.Radio;
       }
 
       if (
-        serviceType == (int)AtscServiceType.AnalogTelevision ||
-        serviceType == (int)AtscServiceType.DigitalTelevision)
+        serviceType == (int)ServiceType.AnalogTelevision ||
+        serviceType == (int)ServiceType.DigitalTelevision)
       {
-        return MediaTypeEnum.TV;
+        return MediaType.Television;
       }
 
       return null;

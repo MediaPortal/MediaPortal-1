@@ -20,13 +20,15 @@
 
 using System;
 using System.Collections.Generic;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
   /// <summary>
-  /// This interface defines extensions to the <see cref="ITVCard"/> interface
+  /// This interface defines extensions to the <see cref="ITuner"/> interface
   /// that we don't want to publicly expose.
   /// </summary>
   internal interface ITunerInternal : IDisposable
@@ -62,18 +64,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// Actually load the tuner.
     /// </summary>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    IList<ICustomDevice> PerformLoading();
+    IList<ITunerExtension> PerformLoading();
 
     /// <summary>
     /// Actually set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    void PerformSetTunerState(TunerState state);
+    /// <param name="isFinalising"><c>True</c> if the tuner is being finalised.</param>
+    void PerformSetTunerState(TunerState state, bool isFinalising = false);
 
     /// <summary>
     /// Actually unload the tuner.
     /// </summary>
-    void PerformUnloading();
+    /// <param name="isFinalising"><c>True</c> if the tuner is being finalised.</param>
+    void PerformUnloading(bool isFinalising = false);
 
     #endregion
 
@@ -97,7 +101,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     /// <param name="id">The identifier for the sub-channel.</param>
     /// <returns>the new sub-channel instance</returns>
-    ITvSubChannel CreateNewSubChannel(int id);
+    ISubChannelInternal CreateNewSubChannel(int id);
 
     #endregion
 
@@ -110,16 +114,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// The <paramref name="onlyGetLock"/> parameter exists as a speed
     /// optimisation. Getting strength and quality readings can be slow.
     /// </remarks>
-    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
     /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
     /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
     /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
     /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
-    void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality);
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    void GetSignalStatus(out bool isLocked, out bool isPresent, out int strength, out int quality, bool onlyGetLock);
 
     #endregion
 
     #region interfaces
+
+    /// <summary>
+    /// Get the tuner's channel linkage scanning interface.
+    /// </summary>
+    IChannelLinkageScanner InternalChannelLinkageScanningInterface
+    {
+      get;
+    }
 
     /// <summary>
     /// Get the tuner's channel scanning interface.

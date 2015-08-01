@@ -18,7 +18,7 @@
 
 #endregion
 
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
@@ -31,7 +31,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <summary>
     /// Set the scanner's tuner.
     /// </summary>
-    ITVCard Tuner
+    ITuner Tuner
     {
       set;
     }

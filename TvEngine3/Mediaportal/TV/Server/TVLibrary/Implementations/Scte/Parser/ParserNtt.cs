@@ -19,13 +19,14 @@
 #endregion
 
 using System;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
 {
-  internal delegate void NttSourceNameDelegate(AtscTransmissionMedium transmissionMedium, bool applicationType, int sourceId, string name);
+  internal delegate void NttSourceNameDelegate(TransmissionMedium transmissionMedium, bool applicationType, ushort sourceId, string name);
 
   /// <summary>
   /// ATSC/SCTE network text table parser. Refer to ATSC A/56 and SCTE 65.
@@ -83,7 +84,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
     }
 
     public ParserNtt()
-      : base(1, 7)
+      : base((int)TableSubtype.TransponderName, (int)TableSubtype.MapName)
     {
     }
 
@@ -106,15 +107,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         {
           return;
         }
-        int sectionLength = ((section[3] & 0x0f) << 8) + section[4];
+        int sectionLength = ((section[3] & 0x0f) << 8) | section[4];
         if (section.Length != 2 + sectionLength + 3)  // 2 for section length bytes, 3 for table ID and PID
         {
           this.LogError("NTT: invalid section length = {0}, byte count = {1}", sectionLength, section.Length);
           return;
         }
-        int protocolVersion = (section[5] & 0x1f);
+        byte protocolVersion = (byte)(section[5] & 0x1f);
         string isoLangCode = System.Text.Encoding.ASCII.GetString(section, 6, 3);
-        AtscTransmissionMedium transmissionMedium = (AtscTransmissionMedium)(section[9] >> 4);
+        TransmissionMedium transmissionMedium = (TransmissionMedium)(section[9] >> 4);
         TableSubtype tableSubtype = (TableSubtype)(section[9] & 0x0f);
         this.LogDebug("NTT: section length = {0}, protocol version = {1}, ISO language code = {2}, transmission medium = {3}, table subtype = {4}",
           sectionLength, protocolVersion, isoLangCode, transmissionMedium, tableSubtype);
@@ -184,7 +185,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         }
 
         if (tableSubtype == TableSubtype.SourceName &&
-          _currentVersions[(int)TableSubtype.SourceName] != -1 &&
+          _currentVersions[(int)TableSubtype.SourceName] != VERSION_NOT_DEFINED &&
           _unseenSections[(int)TableSubtype.SourceName].Count == 0 &&
           _tableCompleteEventDelegate != null)
         {
@@ -213,8 +214,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         {
           throw new TvException("NTT: detected transponder name table number of TNT records {0} is invalid, pointer = {1}, end of section = {2}", numberOfTntRecords, pointer, endOfSection, i);
         }
-        int transponderNumber = (section[pointer++] & 0x3f);
-        int transponderNameLength = (section[pointer++] & 0x1f);
+        byte transponderNumber = (byte)(section[pointer++] & 0x3f);
+        byte transponderNameLength = (byte)(section[pointer++] & 0x1f);
         if (pointer + transponderNameLength > endOfSection)
         {
           throw new TvException("NTT: invalid transponder name table transponder name length {0}, pointer = {1}, end of section = {2}, loop = {3}", transponderNameLength, pointer, endOfSection, i);
@@ -264,7 +265,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
           throw new TvException("NTT: detected satellite text table number of STT records {0} is invalid, pointer = {1}, end of section = {2}, loop = {3}", numberOfSttRecords, pointer, endOfSection, i);
         }
         byte satelliteId = section[pointer++];
-        int satelliteReferenceNameLength = (section[pointer++] & 0x0f);
+        byte satelliteReferenceNameLength = (byte)(section[pointer++] & 0x0f);
         if (pointer + satelliteReferenceNameLength > endOfSection)
         {
           throw new TvException("NTT: invalid satellite text table satellite reference name length {0}, pointer = {1}, end of section = {2}, loop = {3}", satelliteReferenceNameLength, pointer, endOfSection, i);
@@ -275,7 +276,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         {
           throw new TvException("NTT: corruption detected at satellite text table full satellite name, pointer = {0}, end of section = {1}, loop = {2}", pointer, endOfSection, i);
         }
-        int fullSatelliteNameLength = (section[pointer++] & 0x1f);
+        byte fullSatelliteNameLength = (byte)(section[pointer++] & 0x1f);
         if (pointer + fullSatelliteNameLength > endOfSection)
         {
           throw new TvException("NTT: invalid satellite text table full satellite name length {0}, pointer = {1}, end of section = {2}, loop = {3}", fullSatelliteNameLength, pointer, endOfSection, i);
@@ -446,7 +447,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
       }
     }
 
-    private void DecodeSourceName(byte[] section, int endOfSection, ref int pointer, AtscTransmissionMedium transmissionMedium)
+    private void DecodeSourceName(byte[] section, int endOfSection, ref int pointer, TransmissionMedium transmissionMedium)
     {
       if (pointer >= endOfSection)
       {
@@ -461,7 +462,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
           throw new TvException("NTT: detected source name table number of SNT records {0} is invalid, pointer = {1}, end of section = {2}, loop = {3}", numberOfSntRecords, pointer, endOfSection, i);
         }
         bool applicationType = ((section[pointer++] & 0x80) != 0);
-        int sourceId = (section[pointer] << 8) + section[pointer + 1];
+        ushort sourceId = (ushort)((section[pointer] << 8) | section[pointer + 1]);
         pointer += 2;
         byte nameLength = section[pointer++];
         if (pointer + nameLength > endOfSection)
@@ -513,7 +514,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         {
           throw new TvException("NTT: detected map name table number of MNT records {0} is invalid, pointer = {1}, end of section = {2}, loop = {3}", numberOfMntRecords, pointer, endOfSection, i);
         }
-        int vctId = (section[pointer] << 8) + section[pointer + 1];
+        ushort vctId = (ushort)((section[pointer] << 8) | section[pointer + 1]);
         pointer += 2;
         byte mapNameLength = section[pointer++];
         if (pointer + mapNameLength > endOfSection)

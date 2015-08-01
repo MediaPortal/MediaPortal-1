@@ -18,12 +18,11 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using UPnP.Infrastructure.CP.DeviceTree;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
@@ -81,7 +80,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
         int expectedByteCount = (videoProfileSize * numberVideoCompressionFormat) + 1;
         if (bytes.Length != expectedByteCount)
         {
-          throw new TvException(string.Format("GetEncoderCapabilities videoProfile has {0} profile(s), but the byte count is {1} (expected {2}).", numberVideoCompressionFormat, bytes.Length, expectedByteCount));
+          throw new TvException("GetEncoderCapabilities videoProfile has {0} profile(s), but the byte count is {1} (expected {2}).", numberVideoCompressionFormat, bytes.Length, expectedByteCount);
         }
         else
         {

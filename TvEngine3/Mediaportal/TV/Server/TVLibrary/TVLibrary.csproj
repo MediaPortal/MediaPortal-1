@@ -99,8 +99,9 @@
     </Compile>
     <Compile Include="Implementations\Analog\ChannelScannerHelperAnalog.cs" />
     <Compile Include="Implementations\Atsc\ChannelScannerHelperAtsc.cs" />
+    <Compile Include="Implementations\Atsc\EpgGrabberAtsc.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerDetectorBda.cs" />
-    <Compile Include="Implementations\DirectShow\EpgGrabberDirectShow.cs" />
+    <Compile Include="Implementations\Dvb\EpgGrabberDvb.cs" />
     <Compile Include="Implementations\DirectShow\Stream\TunerDetectorStream.cs" />
     <Compile Include="Implementations\DirectShow\TsWriterWrapper.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Analog\TunerDetectorAnalog.cs" />
@@ -140,6 +141,8 @@
     <Compile Include="Implementations\Dri\TunerDri.cs" />
     <Compile Include="Implementations\DirectShow\Pbda\TunerPbdaCableCard.cs" />
     <Compile Include="Implementations\Dvb\ChannelScannerHelperDvb.cs" />
+    <Compile Include="Implementations\Enum\TunerState.cs" />
+    <Compile Include="Implementations\Mpeg2Ts\NewSubChannelMpeg2Ts.cs" />
     <Compile Include="Implementations\SatIp\TunerDetectorSatIp.cs" />
     <Compile Include="Implementations\SatIp\TunerSatIpCable.cs" />
     <Compile Include="Implementations\SatIp\TunerSatIpBase.cs" />
@@ -184,6 +187,14 @@
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\TunerB2c2Terrestrial.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\TunerB2c2Satellite.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Analog\TunerAnalog.cs" />
+    <Compile Include="Implementations\Scte\Enum\ChannelType.cs" />
+    <Compile Include="Implementations\Scte\Enum\MgtTableType.cs" />
+    <Compile Include="Implementations\Scte\Enum\EtmLocation.cs" />
+    <Compile Include="Implementations\Scte\Enum\ModulationMode.cs" />
+    <Compile Include="Implementations\Scte\Enum\TransmissionMedium.cs" />
+    <Compile Include="Implementations\Scte\Enum\TransmissionSystem.cs" />
+    <Compile Include="Implementations\Scte\Enum\MatrixMode.cs" />
+    <Compile Include="Implementations\Scte\Enum\WaveformStandard.cs" />
     <Compile Include="Implementations\SubChannelBase.cs" />
     <Compile Include="Implementations\Helper\TunerExtensionLoader.cs" />
     <Compile Include="Implementations\DiseqcController.cs" />
@@ -204,17 +215,17 @@
     <Compile Include="Implementations\Scte\Parser\ParserNtt.cs" />
     <Compile Include="Implementations\Scte\Parser\ParserSvct.cs" />
     <Compile Include="Implementations\Scte\TunerScteWrapper.cs" />
+    <Compile Include="Implementations\SystemInformation.cs" />
     <Compile Include="Implementations\TunerDetector.cs" />
     <Compile Include="Implementations\Mpeg2Ts\SubChannelMpeg2Ts.cs" />
     <Compile Include="Implementations\Helper\DevicesInUse.cs" />
     <Compile Include="Implementations\DirectShow\ChannelScannerDirectShowAnalog.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaAtsc.cs" />
-    <Compile Include="Implementations\DirectShow\Bda\TunerBdaCable.cs" />
-    <Compile Include="Implementations\DirectShow\Bda\TunerBdaSatellite.cs" />
+    <Compile Include="Implementations\DirectShow\Bda\TunerBdaQam.cs" />
+    <Compile Include="Implementations\DirectShow\Bda\TunerBdaPsk.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\TunerB2c2Base.cs" />
-    <Compile Include="Implementations\DirectShow\Bda\TunerBdaTerrestrial.cs" />
+    <Compile Include="Implementations\DirectShow\Bda\TunerBdaOfdm.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaBase.cs" />
-    <Compile Include="Implementations\Helper\EncodersInUse.cs" />
     <Compile Include="Implementations\Helper\FilterGraphTools.cs" />
     <Compile Include="Implementations\TunerExtensionWrapper.cs" />
     <Compile Include="Implementations\TunerGroup.cs" />
@@ -233,25 +244,36 @@
     <Compile Include="Implementations\Upnp\Service\ServiceAvTransport.cs" />
     <Compile Include="Implementations\Upnp\Service\ServiceBase.cs" />
     <Compile Include="Implementations\Upnp\Service\ServiceConnectionManager.cs" />
+    <Compile Include="Interfaces\Analyzer\PidUsage.cs" />
+    <Compile Include="Interfaces\Analyzer\EncryptionState.cs" />
+    <Compile Include="Interfaces\Analyzer\IObserver.cs" />
+    <Compile Include="Interfaces\Analyzer\ITsWriter.cs" />
+    <Compile Include="Interfaces\Analyzer\IGrabberSiScte.cs" />
+    <Compile Include="Interfaces\Analyzer\IGrabberSiAtsc.cs" />
+    <Compile Include="Interfaces\Analyzer\IGrabberSiFreesat.cs" />
+    <Compile Include="Interfaces\Analyzer\IGrabberSiDvb.cs" />
+    <Compile Include="Interfaces\Analyzer\IGrabberSiMpeg.cs" />
+    <Compile Include="Interfaces\Analyzer\IGrabberEpgDvb.cs" />
+    <Compile Include="Interfaces\Analyzer\IGrabberEpgMhw.cs" />
+    <Compile Include="Interfaces\Analyzer\IGrabberEpgScte.cs" />
+    <Compile Include="Interfaces\Analyzer\ICallBackGrabber.cs" />
+    <Compile Include="Interfaces\Analyzer\IGrabberEpgAtsc.cs" />
+    <Compile Include="Interfaces\Analyzer\IGrabberEpgOpenTv.cs" />
+    <Compile Include="Interfaces\ISubChannelInternal.cs" />
     <Compile Include="Interfaces\ITunerDetectorSystem.cs" />
     <Compile Include="Interfaces\IChannelScannerHelper.cs" />
     <Compile Include="Interfaces\IDVBNetworkProvider.cs" />
-    <Compile Include="Interfaces\Analyzer\ITsCaGrabber.cs" />
-    <Compile Include="Interfaces\Analyzer\ITsChannelLinkageScanner.cs" />
-    <Compile Include="Interfaces\Analyzer\ITsEncryptionAnalyser.cs" />
     <Compile Include="Interfaces\Analyzer\ITsEpgScanner.cs" />
     <Compile Include="Interfaces\Analyzer\ITsFilter.cs" />
     <Compile Include="Interfaces\Analyzer\ITsChannelScan.cs" />
     <Compile Include="Interfaces\IChannelScannerInternal.cs" />
-    <Compile Include="Interfaces\IChannelScannerMpeg2Ts.cs" />
     <Compile Include="Interfaces\ITsMultiplexer.cs" />
-    <Compile Include="Interfaces\Analyzer\ITsPmtGrabber.cs" />
-    <Compile Include="Interfaces\Analyzer\IVideoAudioObserver.cs" />
+    <Compile Include="Interfaces\Analyzer\IChannelObserver.cs" />
     <Compile Include="Interfaces\ITunerDetectorUpnp.cs" />
     <Compile Include="Interfaces\ITunerInternal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Streaming\RtspStream.cs" />
-    <Compile Include="Streaming\RtspStreaming.cs" />
+    <Compile Include="Streaming\RtspServer.cs" />
     <Compile Include="Implementations\TunerInternalWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -262,6 +284,10 @@
     <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common.Types\Common.Types.csproj">
+      <Project>{F9F4E5C1-9A6A-42F8-8452-4BDAFEA0E798}</Project>
+      <Name>Common.Types</Name>
     </ProjectReference>
     <ProjectReference Include="..\TVDatabase\Entities\Entities.csproj">
       <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
@@ -274,10 +300,6 @@
     <ProjectReference Include="..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TvLibrary.Utils\TvLibrary.Utils.csproj">
-      <Project>{954F9929-7FDA-4F59-88E3-FD2B9A7B6E6E}</Project>
-      <Name>TvLibrary.Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

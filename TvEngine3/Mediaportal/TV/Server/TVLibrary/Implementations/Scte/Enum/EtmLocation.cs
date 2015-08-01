@@ -18,15 +18,13 @@
 
 #endregion
 
-using System.Collections.Generic;
-
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Enum
 {
-  internal interface IChannelScannerMpeg2Ts
+  // See ATSC A/65 table 6.6.
+  internal enum EtmLocation : byte
   {
-    HashSet<ushort> Pids
-    {
-      get;
-    }
+    None,
+    PhysicalChannelThis,
+    PhysicalChannelTsid
   }
 }

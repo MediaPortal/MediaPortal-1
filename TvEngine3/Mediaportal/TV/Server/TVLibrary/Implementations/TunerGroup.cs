@@ -20,24 +20,23 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
+using DbTunerGroup = Mediaportal.TV.Server.TVDatabase.Entities.TunerGroup;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
   /// <summary>
-  /// An implementation of <see cref="ITunerGroup"/>, used to support multi-mode and hybrid
-  /// tuners.
+  /// An implementation of <see cref="ITunerGroup"/>, used to support
+  /// multi-mode (hybrid and combo) tuners.
   /// </summary>
   internal class TunerGroup : ITunerGroup
   {
     #region variables
 
-    private CardGroup _databaseTunerGroup = null;
+    private DbTunerGroup _databaseTunerGroup = null;
     private string _productInstanceId = null;
     private string _tunerInstanceId = null;
-    private IList<ITVCard> _tuners = new List<ITVCard>();
+    private IList<ITuner> _tuners = new List<ITuner>();
 
     #endregion
 
@@ -45,7 +44,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Initialise a new instance of the <see cref="TunerGroup"/> class.
     /// </summary>
     /// <param name="dbGroup">The database settings for the group.</param>
-    public TunerGroup(CardGroup dbGroup)
+    public TunerGroup(DbTunerGroup dbGroup)
     {
       _databaseTunerGroup = dbGroup;
     }
@@ -54,7 +53,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Add a tuner to the group.
     /// </summary>
     /// <param name="tuner">The tuner to add.</param>
-    public void Add(ITVCard tuner)
+    public void Add(ITuner tuner)
     {
       _tuners.Add(tuner);
     }
@@ -64,7 +63,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     /// <param name="tuner">The tuner to remove.</param>
     /// <returns><c>true</c> if the tuner was in the group and was removed, otherwise <c>false</c></returns>
-    public bool Remove(ITVCard tuner)
+    public bool Remove(ITuner tuner)
     {
       bool toReturn = false;
       for (int i = _tuners.Count - 1; i >= 0; i--)
@@ -87,7 +86,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       get
       {
-        return _databaseTunerGroup.IdCardGroup;
+        return _databaseTunerGroup.IdTunerGroup;
       }
     }
 
@@ -135,11 +134,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Get the tuner group's members.
     /// </summary>
-    public ReadOnlyCollection<ITVCard> Tuners
+    public ReadOnlyCollection<ITuner> Tuners
     {
       get
       {
-        return new ReadOnlyCollection<ITVCard>(_tuners);
+        return new ReadOnlyCollection<ITuner>(_tuners);
       }
     }
 

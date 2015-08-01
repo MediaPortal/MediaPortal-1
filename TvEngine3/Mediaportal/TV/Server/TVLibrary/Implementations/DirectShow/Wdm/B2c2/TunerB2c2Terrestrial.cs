@@ -18,11 +18,12 @@
 
 #endregion
 
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
@@ -37,21 +38,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// </summary>
     /// <param name="info">The B2C2-specific information (<see cref="DeviceInfo"/>) about the tuner.</param>
     public TunerB2c2Terrestrial(DeviceInfo info)
-      : base(info, CardType.DvbT)
+      : base(info, BroadcastStandard.DvbT)
     {
     }
 
     #region tuning
-
-    /// <summary>
-    /// Check if the tuner can tune to a specific channel.
-    /// </summary>
-    /// <param name="channel">The channel to check.</param>
-    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
-    public override bool CanTune(IChannel channel)
-    {
-      return channel is DVBTChannel;
-    }
 
     /// <summary>
     /// Actually tune to a channel.
@@ -60,7 +51,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("B2C2 terrestrial: set tuning parameters");
-      DVBTChannel dvbtChannel = channel as DVBTChannel;
+      ChannelDvbT dvbtChannel = channel as ChannelDvbT;
       if (dvbtChannel == null)
       {
         throw new TvException("Received request to tune incompatible channel.");
@@ -68,13 +59,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
       lock (_tunerAccessLock)
       {
-        HResult.ThrowException(_interfaceData.SelectDevice(_deviceInfo.DeviceId), "Failed to select device.");
-        HResult.ThrowException(_interfaceTuner.SetFrequency((int)dvbtChannel.Frequency / 1000), "Failed to set frequency.");
-        HResult.ThrowException(_interfaceTuner.SetBandwidth(dvbtChannel.Bandwidth / 1000), "Failed to set bandwidth.");
+        TvExceptionDirectShowError.Throw(_interfaceData.SelectDevice(_deviceInfo.DeviceId), "Failed to select device.");
+        TvExceptionDirectShowError.Throw(_interfaceTuner.SetFrequency(dvbtChannel.Frequency / 1000), "Failed to set frequency.");
 
-        // Note: it is not guaranteed that guard interval auto detection is supported, but if it isn't
-        // then we can't tune - we have no idea what the actual value should be.
-        HResult.ThrowException(_interfaceTuner.SetGuardInterval(GuardInterval.Auto), "Failed to use automatic guard interval detection.");
+        // It is possible that only certain values are supported. Refer to the
+        // AcquisitionCapabilities enum.
+        TvExceptionDirectShowError.Throw(_interfaceTuner.SetBandwidth(dvbtChannel.Bandwidth / 1000), "Failed to set bandwidth.");
+
+        // Note: it is not guaranteed that guard interval auto detection is
+        // supported, but if it isn't then we can't tune (because we have no
+        // idea what the actual value should be).
+        TvExceptionDirectShowError.Throw(_interfaceTuner.SetGuardInterval(GuardInterval.Auto), "Failed to use automatic guard interval detection.");
         base.PerformTuning(channel);
       }
     }

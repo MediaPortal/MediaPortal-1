@@ -18,13 +18,14 @@
 
 #endregion
 
-using DirectShowLib.BDA;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using UPnP.Infrastructure.CP.Description;
 
@@ -54,7 +55,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
     /// <param name="streamTuner">An internal tuner implementation, used for RTP stream reception.</param>
     public TunerSatIpSatellite(DeviceDescriptor serverDescriptor, int sequenceNumber, ITunerInternal streamTuner)
-      : base(serverDescriptor, sequenceNumber, streamTuner, CardType.DvbS)
+      : base(serverDescriptor, sequenceNumber, "S", BroadcastStandard.DvbS | BroadcastStandard.DvbS2, streamTuner)
     {
     }
 
@@ -69,144 +70,131 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("SAT>IP satellite: construct URL");
-      DVBSChannel satelliteChannel = channel as DVBSChannel;
-      if (satelliteChannel == null)
+      ChannelDvbS dvbsChannel = channel as ChannelDvbS;
+      ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
+      if (dvbsChannel == null && dvbs2Channel == null)
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
 
-      string frequency = ((int)(satelliteChannel.Frequency / 1000)).ToString();
+      IChannelSatellite satelliteChannel = channel as IChannelSatellite;
+      string frequency = (satelliteChannel.Frequency / 1000).ToString();
 
-      string polarisation = "v";
-      if (satelliteChannel.Polarisation == Polarisation.LinearH)
+      string polarisation;
+      switch (satelliteChannel.Polarisation)
       {
-        polarisation = "h";
-      }
-      else if (satelliteChannel.Polarisation == Polarisation.LinearV)
-      {
-        polarisation = "v";
-      }
-      else if (satelliteChannel.Polarisation == Polarisation.CircularL)
-      {
-        polarisation = "l";
-      }
-      else if (satelliteChannel.Polarisation == Polarisation.CircularR)
-      {
-        polarisation = "r";
-      }
-      else
-      {
-        this.LogWarn("SAT>IP satellite: unsupported polarisation {0}, assuming linear vertical", satelliteChannel.Polarisation);
-      }
-
-      string fecRate = "34";
-      if (satelliteChannel.InnerFecRate == BinaryConvolutionCodeRate.Rate1_2)
-      {
-        fecRate = "12";
-      }
-      else if (satelliteChannel.InnerFecRate == BinaryConvolutionCodeRate.Rate2_3)
-      {
-        fecRate = "23";
-      }
-      else if (satelliteChannel.InnerFecRate == BinaryConvolutionCodeRate.Rate3_4)
-      {
-        fecRate = "34";
-      }
-      else if (satelliteChannel.InnerFecRate == BinaryConvolutionCodeRate.Rate5_6)
-      {
-        fecRate = "56";
-      }
-      else if (satelliteChannel.InnerFecRate == BinaryConvolutionCodeRate.Rate7_8)
-      {
-        fecRate = "78";
-      }
-      else if (satelliteChannel.InnerFecRate == BinaryConvolutionCodeRate.Rate8_9)
-      {
-        fecRate = "89";
-      }
-      else if (satelliteChannel.InnerFecRate == BinaryConvolutionCodeRate.Rate3_5)
-      {
-        fecRate = "35";
-      }
-      else if (satelliteChannel.InnerFecRate == BinaryConvolutionCodeRate.Rate4_5)
-      {
-        fecRate = "45";
-      }
-      else if (satelliteChannel.InnerFecRate == BinaryConvolutionCodeRate.Rate9_10)
-      {
-        fecRate = "910";
-      }
-      else
-      {
-        this.LogWarn("SAT>IP satellite: unsupported inner FEC rate {0}, assuming 3/4", satelliteChannel.InnerFecRate);
+        case Polarisation.CircularLeft:
+          polarisation = "l";
+          break;
+        case Polarisation.CircularRight:
+          polarisation = "r";
+          break;
+        case Polarisation.LinearHorizontal:
+          polarisation = "h";
+          break;
+        case Polarisation.LinearVertical:
+          polarisation = "v";
+          break;
+        default:
+          this.LogWarn("SAT>IP satellite: unsupported polarisation {0}, falling back to linear vertical", satelliteChannel.Polarisation);
+          polarisation = "v";
+          break;
       }
 
-      string parameters = string.Format("src={0}&freq={1}&pol={2}&sr={3}&fec={4}&msys=dvbs", _currentSource, frequency, polarisation, satelliteChannel.SymbolRate, fecRate);
+      string fecCodeRate;
+      switch (satelliteChannel.FecCodeRate)
+      {
+        case FecCodeRate.Rate1_2:
+          fecCodeRate = "12";
+          break;
+        case FecCodeRate.Rate2_3:
+          fecCodeRate = "23";
+          break;
+        case FecCodeRate.Rate3_4:
+          fecCodeRate = "34";
+          break;
+        case FecCodeRate.Rate5_6:
+          fecCodeRate = "56";
+          break;
+        case FecCodeRate.Rate7_8:
+          fecCodeRate = "78";
+          break;
+        case FecCodeRate.Rate8_9:
+          fecCodeRate = "89";
+          break;
+        case FecCodeRate.Rate3_5:
+          fecCodeRate = "35";
+          break;
+        case FecCodeRate.Rate4_5:
+          fecCodeRate = "45";
+          break;
+        case FecCodeRate.Rate9_10:
+          fecCodeRate = "910";
+          break;
+        default:
+          this.LogWarn("SAT>IP satellite: unsupported FEC code rate {0}, falling back to 3/4", satelliteChannel.FecCodeRate);
+          fecCodeRate = "34";
+          break;
+      }
+
+      string parameters = string.Format("src={0}&freq={1}&pol={2}&sr={3}&fec={4}&msys=dvbs", _currentSource, frequency, polarisation, satelliteChannel.SymbolRate, fecCodeRate);
 
       // DVB-S2 or DVB-S?
-      if (satelliteChannel.ModulationType == ModulationType.ModNotSet)
+      if (dvbs2Channel == null)
       {
-        PerformTuning(satelliteChannel, parameters);
+        PerformTuning(dvbsChannel, parameters);
         return;
       }
 
-      string modulation = "8psk";
-      if (satelliteChannel.ModulationType == ModulationType.ModQpsk)
+      string modulation;
+      switch (dvbs2Channel.ModulationScheme)
       {
-        modulation = "qpsk";
-      }
-      else if (satelliteChannel.ModulationType == ModulationType.Mod8Psk)
-      {
-        modulation = "8psk";
-      }
-      else
-      {
-        this.LogWarn("SAT>IP satellite: unsupported modulation type {0}, assuming 8 PSK", satelliteChannel.ModulationType);
-      }
-
-      string pilots = "on";
-      if (satelliteChannel.Pilot == Pilot.Off)
-      {
-        pilots = "off";
-      }
-      else if (satelliteChannel.Pilot == Pilot.On)
-      {
-        pilots = "on";
-      }
-      else
-      {
-        this.LogWarn("SAT>IP satellite: unsupported pilots setting {0}, assuming pilots on", satelliteChannel.Pilot);
+        case ModulationSchemePsk.Psk4:
+          modulation = "qpsk";
+          break;
+        case ModulationSchemePsk.Psk8:
+          modulation = "8psk";
+          break;
+        default:
+          this.LogWarn("SAT>IP satellite: unsupported modulation scheme {0}, falling back to 8 PSK", dvbs2Channel.ModulationScheme);
+          modulation = "8psk";
+          break;
       }
 
-      string rollOff = "0.35";
-      if (satelliteChannel.RollOff == RollOff.Twenty)
+      string pilotTonesState;
+      switch (dvbs2Channel.PilotTonesState)
       {
-        rollOff = "0.20";
-      }
-      else if (satelliteChannel.RollOff == RollOff.TwentyFive)
-      {
-        rollOff = "0.25";
-      }
-      else if (satelliteChannel.RollOff == RollOff.ThirtyFive)
-      {
-        rollOff = "0.35";
-      }
-      else
-      {
-        this.LogWarn("SAT>IP satellite: unsupported roll-off {0}, assuming 0.35", satelliteChannel.RollOff);
+        case PilotTonesState.Off:
+          pilotTonesState = "off";
+          break;
+        case PilotTonesState.On:
+          pilotTonesState = "on";
+          break;
+        default:
+          this.LogWarn("SAT>IP satellite: unsupported pilot tones state {0}, falling back to on", dvbs2Channel.PilotTonesState);
+          pilotTonesState = "on";
+          break;
       }
 
-      PerformTuning(satelliteChannel, parameters + string.Format("2&mtype={0}&plts={1}&ro={2}", modulation, pilots, rollOff));
-    }
+      string rollOffFactor;
+      switch (dvbs2Channel.RollOffFactor)
+      {
+        case RollOffFactor.ThirtyFive:
+          rollOffFactor = "0.35";
+          break;
+        case RollOffFactor.TwentyFive:
+          rollOffFactor = "0.25";
+          break;
+        case RollOffFactor.Twenty:
+          rollOffFactor = "0.20";
+          break;
+        default:
+          this.LogWarn("SAT>IP satellite: unsupported roll-off factor {0}, falling back to 0.35", dvbs2Channel.RollOffFactor);
+          rollOffFactor = "0.35";
+          break;
+      }
 
-    /// <summary>
-    /// Check if the tuner can tune to a specific channel.
-    /// </summary>
-    /// <param name="channel">The channel to check.</param>
-    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
-    public override bool CanTune(IChannel channel)
-    {
-      return channel is DVBSChannel;
+      PerformTuning(dvbs2Channel, string.Format("{0}2&mtype={1}&plts={2}&ro={3}", parameters, modulation, pilotTonesState, rollOffFactor));
     }
 
     #endregion
@@ -214,23 +202,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     #region IDiseqcDevice members
 
     /// <summary>
-    /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.
-    /// </summary>
-    /// <param name="toneBurstState">The tone/data burst command to send, if any.</param>
-    /// <param name="tone22kState">The 22 kHz continuous tone state to set.</param>
-    /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
-    public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
-    {
-      // Not supported.
-      return false;
-    }
-
-    /// <summary>
     /// Send an arbitrary DiSEqC command.
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public bool SendDiseqcCommand(byte[] command)
+    bool IDiseqcDevice.SendCommand(byte[] command)
     {
       this.LogDebug("SAT>IP satellite: send DiSEqC command");
 
@@ -261,12 +237,34 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     }
 
     /// <summary>
+    /// Send a tone/data burst command.
+    /// </summary>
+    /// <param name="command">The command to send.</param>
+    /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
+    bool IDiseqcDevice.SendCommand(ToneBurst command)
+    {
+      // Not supported.
+      return false;
+    }
+
+    /// <summary>
+    /// Set the 22 kHz continuous tone state.
+    /// </summary>
+    /// <param name="state">The state to set.</param>
+    /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
+    bool IDiseqcDevice.SetToneState(Tone22kState state)
+    {
+      // Set by SAT>IP server configuration.
+      return true;
+    }
+
+    /// <summary>
     /// Retrieve the response to a previously sent DiSEqC command (or alternatively, check for a command
     /// intended for this tuner).
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadDiseqcResponse(out byte[] response)
+    bool IDiseqcDevice.ReadResponse(out byte[] response)
     {
       // Not supported.
       response = null;

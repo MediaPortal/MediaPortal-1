@@ -27,7 +27,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
   /// <summary>
   /// A simple implementation of an RTSP client.
   /// </summary>
-  internal class RtspClient
+  internal class RtspClient : IDisposable
   {
     #region variables
 
@@ -52,14 +52,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
 
     ~RtspClient()
     {
-      lock (_lockObject)
-      {
-        if (_client != null)
-        {
-          _client.Close();
-          _client = null;
-        }
-      }
+      Dispose(false);
     }
 
     /// <summary>
@@ -83,10 +76,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
             {
               _client = new TcpClient(_serverHost, _serverPort);
             }
+            else if (!_client.Connected)
+            {
+              _client.Connect(_serverHost, _serverPort);
+            }
           }
           catch (Exception ex)
           {
-            this.LogError(ex, "RTSP: failed to connect to server");
+            this.LogError(ex, "RTSP: failed to connect to server, host = {0}, port = {1}", _serverHost, _serverPort);
             return RtspStatusCode.RequestTimeOut;
           }
           try
@@ -104,7 +101,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
             _client = null;
             if (retryCount == 1)
             {
-              this.LogError(ex, "RTSP: failed to open stream to server");
+              this.LogError(ex, "RTSP: failed to open stream to server, host = {0}, port = {1}", _serverHost, _serverPort);
               return RtspStatusCode.RequestTimeOut;
             }
             retryCount++;
@@ -146,8 +143,41 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
         finally
         {
           stream.Close();
+          stream.Dispose();
         }
       }
     }
+
+    #region IDisposable member
+
+    /// <summary>
+    /// Release and dispose all resources.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Release and dispose all resources.
+    /// </summary>
+    /// <param name="isDisposing"><c>True</c> if the instance is being disposed.</param>
+    private void Dispose(bool isDisposing)
+    {
+      if (isDisposing)
+      {
+        lock (_lockObject)
+        {
+          if (_client != null)
+          {
+            _client.Close();
+            _client = null;
+          }
+        }
+      }
+    }
+
+    #endregion
   }
 }

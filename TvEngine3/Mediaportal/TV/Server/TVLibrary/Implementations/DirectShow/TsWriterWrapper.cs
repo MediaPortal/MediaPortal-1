@@ -19,23 +19,25 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using BroadcastStandard = Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer.BroadcastStandard;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 {
-  internal delegate int TsWriterSubChannelMethodDelegate(string methodName, ref object[] parameters);
-  internal delegate int TsWriterScanMethodDelegate(string methodName, ref object[] parameters);
+  internal delegate object TsWriterMethodDelegateITsWriter(string methodName, ref object[] parameters);
+  internal delegate object TsWriterMethodDelegateIGrabberSiDvb(string methodName, ref object[] parameters);
+  internal delegate object TsWriterMethodDelegateIGrabberSiMpeg(string methodName, ref object[] parameters);
 
   /// <summary>
   /// A wrapper class for TsWriter. This class makes it easy to proxy all interaction with TsWriter
   /// through an extra layer of logic or translation. In particular, this wrapper is useful when
   /// TsWriter is hosted in a single threaded COM apartment.
   /// </summary>
-  internal class TsWriterWrapper : ITsFilter, ITsChannelScan, IEncryptionStateChangeCallBack, IPmtCallBack, IVideoAudioObserver, ICaCallBack, IChannelScanCallBack
+  internal class TsWriterWrapper : ITsWriter, IGrabberSiDvb, IGrabberSiMpeg, ICallBackGrabber, IObserver
   {
     private class CallBackJob
     {
@@ -45,508 +47,983 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       public object[] Parameters;
     }
 
+    private class ChannelObserverWrapper : IChannelObserver
+    {
+      public IChannelObserver Observer = null;
+
+      public void OnSeen(ushort pid, PidType pidType)
+      {
+        if (Observer == null)
+        {
+          this.LogError("TsWriter wrapper: failed to invoke IChannelObserver OnSeen() call back, target is null");
+          return;
+        }
+
+        CallBackJob job = new CallBackJob();
+        job.TargetType = typeof(IEncryptionStateChangeCallBack);
+        job.MethodName = "OnEncryptionStateChange";
+        job.TargetInstance = Observer;
+        job.Parameters = new object[2] { pid, pidType };
+
+        Thread t = new Thread(InvokeCallBack);
+        t.Name = "TsWriter channel observer wrapper call back";
+        t.Start(job);
+
+        Observer.OnSeen(pid, pidType);
+      }
+
+      private void InvokeCallBack(object param)
+      {
+        try
+        {
+          CallBackJob job = (CallBackJob)param;
+          job.TargetType.GetMethod(job.MethodName).Invoke(job.TargetInstance, job.Parameters);
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "TsWriter channel observer wrapper: call back thread exception");
+        }
+      }
+    }
+
     #region variables
 
-    private TsWriterSubChannelMethodDelegate _delegateSubChannel = null;
-    private TsWriterScanMethodDelegate _delegateScan = null;
+    private TsWriterMethodDelegateITsWriter _delegateTsWriter = null;
+    private TsWriterMethodDelegateIGrabberSiDvb _delegateGrabberSiDvb = null;
+    private TsWriterMethodDelegateIGrabberSiMpeg _delegateGrabberSiMpeg = null;
 
-    private IEncryptionStateChangeCallBack _callBackEncryptionStateChange = null;
-    private IPmtCallBack _callBackPmt = null;
-    private IVideoAudioObserver _callBackVideoAudioObserverRecorder = null;
-    private IVideoAudioObserver _callBackVideoAudioObserverTimeShifter = null;
-    private ICaCallBack _callBackCat = null;
-    private IChannelScanCallBack _callBackChannelScan = null;
+    private ICallBackGrabber _callBackGrabber = null;
+    private IObserver _observer = null;
+    private IDictionary<int, ChannelObserverWrapper> _channelObservers = new Dictionary<int, ChannelObserverWrapper>();
 
     #endregion
 
-    public TsWriterWrapper(TsWriterSubChannelMethodDelegate delegateSubChannel, TsWriterScanMethodDelegate delegateScan)
+    public TsWriterWrapper(TsWriterMethodDelegateITsWriter delegateTsWriter, TsWriterMethodDelegateIGrabberSiDvb delegateGrabberSiDvb, TsWriterMethodDelegateIGrabberSiMpeg delegateGrabberSiMpeg)
     {
-      _delegateSubChannel = delegateSubChannel;
-      _delegateScan = delegateScan;
+      _delegateTsWriter = delegateTsWriter;
+      _delegateGrabberSiDvb = delegateGrabberSiDvb;
+      _delegateGrabberSiMpeg = delegateGrabberSiMpeg;
     }
 
-    #region sub-channel delegation
+    #region ITsWriter delegation
 
-    public int AddChannel(ref int handle)
+    public int ConfigureLogging(string path)
     {
-      object[] parameters = new object[1] { handle };
-      int hr = _delegateSubChannel("AddChannel", ref parameters);
-      handle = (int)parameters[0];
-      return hr;
+      object[] parameters = new object[1] { path };
+      return (int)_delegateTsWriter("ConfigureLogging", ref parameters);
     }
 
-    public int DeleteChannel(int handle)
+    public void DumpInput(bool enableTs, bool enableOobSi)
     {
-      object[] parameters = new object[1] { handle };
-      return _delegateSubChannel("DeleteChannel", ref parameters);
+      object[] parameters = new object[2] { enableTs, enableOobSi };
+      _delegateTsWriter("DumpInput", ref parameters);
     }
 
-    public int DeleteAllChannels()
+    public void CheckSectionCrcs(bool enable)
     {
-      object[] parameters = null;
-      return _delegateSubChannel("DeleteAllChannels", ref parameters);
+      object[] parameters = new object[1] { enable };
+      _delegateTsWriter("CheckSectionCrcs", ref parameters);
     }
 
-    public int AnalyserAddPid(int handle, int pid)
+    public void SetObserver(IObserver observer)
     {
-      object[] parameters = new object[2] { handle, pid };
-      return _delegateSubChannel("AnalyserAddPid", ref parameters);
-    }
-
-    public int AnalyserRemovePid(int handle, int pid)
-    {
-      object[] parameters = new object[2] { handle, pid };
-      return _delegateSubChannel("AnalyserRemovePid", ref parameters);
-    }
-
-    public int AnalyserGetPidCount(int handle, out int pidCount)
-    {
-      pidCount = 0;
-      object[] parameters = new object[2] { handle, pidCount };
-      int hr = _delegateSubChannel("AnalyserGetPidCount", ref parameters);
-      pidCount = (int)parameters[1];
-      return hr;
-    }
-
-    public int AnalyserGetPid(int handle, int pidIndex, out int pid, out EncryptionState encryptionState)
-    {
-      pid = 0;
-      encryptionState = EncryptionState.NotSet;
-      object[] parameters = new object[4] { handle, pidIndex, pid, encryptionState };
-      int hr = _delegateSubChannel("AnalyserGetPid", ref parameters);
-      pid = (int)parameters[2];
-      encryptionState = (EncryptionState)parameters[3];
-      return hr;
-    }
-
-    public int AnalyserSetCallBack(int handle, IEncryptionStateChangeCallBack callBack)
-    {
-      _callBackEncryptionStateChange = callBack;
-      if (callBack != null)
-      {
-        callBack = this;
-      }
-      object[] parameters = new object[2] { handle, callBack };
-      return _delegateSubChannel("AnalyserSetCallBack", ref parameters);
-    }
-
-    public int AnalyserReset(int handle)
-    {
-      object[] parameters = new object[1] { handle };
-      return _delegateSubChannel("AnalyserReset", ref parameters);
-    }
-
-    public int PmtSetPmtPid(int handle, int pmtPid, int serviceId)
-    {
-      object[] parameters = new object[3] { handle, pmtPid, serviceId };
-      return _delegateSubChannel("PmtSetPmtPid", ref parameters);
-    }
-
-    public int PmtSetCallBack(int handle, IPmtCallBack callBack)
-    {
-      _callBackPmt = callBack;
-      if (callBack != null)
-      {
-        callBack = this;
-      }
-      object[] parameters = new object[2] { handle, callBack };
-      return _delegateSubChannel("PmtSetCallBack", ref parameters);
-    }
-
-    public int PmtGetPmtData(int handle, IntPtr pmtData)
-    {
-      object[] parameters = new object[2] { handle, pmtData };
-      return _delegateSubChannel("PmtGetPmtData", ref parameters);
-    }
-
-    public int RecordSetRecordingFileNameW(int handle, string fileName)
-    {
-      object[] parameters = new object[2] { handle, fileName };
-      return _delegateSubChannel("RecordSetRecordingFileNameW", ref parameters);
-    }
-
-    public int RecordStartRecord(int handle)
-    {
-      object[] parameters = new object[1] { handle };
-      return _delegateSubChannel("RecordStartRecord", ref parameters);
-    }
-
-    public int RecordStopRecord(int handle)
-    {
-      object[] parameters = new object[1] { handle };
-      return _delegateSubChannel("RecordStopRecord", ref parameters);
-    }
-
-    public int RecordSetPmtPid(int handle, int pmtPid, int serviceId, byte[] pmtData, int pmtLength)
-    {
-      object[] parameters = new object[5] { handle, pmtPid, serviceId, pmtData, pmtLength };
-      return _delegateSubChannel("RecordSetPmtPid", ref parameters);
-    }
-
-    public int RecorderSetVideoAudioObserver(int handle, IVideoAudioObserver observer)
-    {
-      _callBackVideoAudioObserverRecorder = observer;
+      _observer = observer;
       if (observer != null)
       {
         observer = this;
       }
-      object[] parameters = new object[2] { handle, observer };
-      return _delegateSubChannel("RecorderSetVideoAudioObserver", ref parameters);
+      object[] parameters = new object[1] { observer };
+      _delegateTsWriter("SetObserver", ref parameters);
     }
 
-    public int TimeShiftSetTimeShiftingFileNameW(int handle, string fileName)
+    public void Start()
     {
-      object[] parameters = new object[2] { handle, fileName };
-      return _delegateSubChannel("TimeShiftSetTimeShiftingFileNameW", ref parameters);
+      object[] parameters = null;
+      _delegateTsWriter("Start", ref parameters);
     }
 
-    public int TimeShiftStart(int handle)
+    public void Stop()
     {
-      object[] parameters = new object[1] { handle };
-      return _delegateSubChannel("TimeShiftStart", ref parameters);
+      object[] parameters = null;
+      _delegateTsWriter("Stop", ref parameters);
     }
 
-    public int TimeShiftStop(int handle)
+    public int AddChannel(IChannelObserver observer, out int handle)
     {
-      object[] parameters = new object[1] { handle };
-      return _delegateSubChannel("TimeShiftStop", ref parameters);
-    }
-
-    public int TimeShiftReset(int handle)
-    {
-      object[] parameters = new object[1] { handle };
-      return _delegateSubChannel("TimeShiftReset", ref parameters);
-    }
-
-    public int TimeShiftGetBufferSize(int handle, out long size)
-    {
-      size = 0;
-      object[] parameters = new object[2] { handle, size };
-      int hr = _delegateSubChannel("TimeShiftGetBufferSize", ref parameters);
-      size = (long)parameters[1];
+      ChannelObserverWrapper observerWrapper = new ChannelObserverWrapper();
+      observerWrapper.Observer = observer;
+      handle = -1;
+      object[] parameters = new object[2] { observerWrapper, handle };
+      int hr = (int)_delegateTsWriter("AddChannel", ref parameters);
+      handle = (int)parameters[1];
+      if (hr == (int)MediaPortal.Common.Utils.NativeMethods.HResult.S_OK)
+      {
+        _channelObservers[handle] = observerWrapper;
+      }
       return hr;
     }
 
-    public int TimeShiftSetPmtPid(int handle, int pmtPid, int serviceId, byte[] pmtData, int pmtLength)
+    public void DeleteChannel(int handle)
     {
-      object[] parameters = new object[5] { handle, pmtPid, serviceId, pmtData, pmtLength };
-      return _delegateSubChannel("TimeShiftSetPmtPid", ref parameters);
+      object[] parameters = new object[1] { handle };
+      _delegateTsWriter("DeleteChannel", ref parameters);
+      _channelObservers.Remove(handle);
     }
 
-    public int TimeShiftPause(int handle, byte onOff)
+    public void DeleteAllChannels()
     {
-      object[] parameters = new object[2] { handle, onOff };
-      return _delegateSubChannel("TimeShiftPause", ref parameters);
+      object[] parameters = null;
+      _delegateTsWriter("DeleteAllChannels", ref parameters);
+      _channelObservers.Clear();
     }
 
-    public int TimeShiftSetParams(int handle, int minFiles, int maxFiles, uint chunkSize)
+    public int RecorderSetFileName(int handle, string fileName)
     {
-      object[] parameters = new object[4] { handle, minFiles, maxFiles, chunkSize };
-      return _delegateSubChannel("TimeShiftSetParams", ref parameters);
+      object[] parameters = new object[2] { handle, fileName };
+      return (int)_delegateTsWriter("RecorderSetFileName", ref parameters);
     }
 
-    public int TimeShiftGetCurrentFilePosition(int handle, out long position, out long bufferId)
+    public int RecorderSetPmt(int handle, byte[] pmt, ushort pmtSize, bool isDynamicPmtChange)
+    {
+      object[] parameters = new object[4] { handle, pmt, pmtSize, isDynamicPmtChange };
+      return (int)_delegateTsWriter("RecorderSetPmt", ref parameters);
+    }
+
+    public int RecorderStart(int handle)
+    {
+      object[] parameters = new object[1] { handle };
+      return (int)_delegateTsWriter("RecorderStart", ref parameters);
+    }
+
+    public int RecorderGetStreamQuality(int handle,
+                                        out ulong countTsPackets,
+                                        out ulong countDiscontinuities,
+                                        out ulong countDroppedBytes)
+    {
+      countTsPackets = 0;
+      countDiscontinuities = 0;
+      countDroppedBytes = 0;
+      object[] parameters = new object[4] { handle, countTsPackets, countDiscontinuities, countDroppedBytes };
+      int hr = (int)_delegateTsWriter("RecorderGetStreamQuality", ref parameters);
+      countTsPackets = (ulong)parameters[1];
+      countDiscontinuities = (ulong)parameters[2];
+      countDroppedBytes = (ulong)parameters[3];
+      return hr;
+    }
+
+    public int RecorderStop(int handle)
+    {
+      object[] parameters = new object[1] { handle };
+      return (int)_delegateTsWriter("RecorderStop", ref parameters);
+    }
+
+    public int TimeShifterSetFileName(int handle, string fileName)
+    {
+      object[] parameters = new object[2] { handle, fileName };
+      return (int)_delegateTsWriter("TimeShifterSetFileName", ref parameters);
+    }
+
+    public int TimeShifterSetParameters(int handle,
+                                        uint fileCountMinimum,
+                                        uint fileCountMaximum,
+                                        ulong fileSizeBytes)
+    {
+      object[] parameters = new object[4] { handle, fileCountMinimum, fileCountMaximum, fileSizeBytes };
+      return (int)_delegateTsWriter("TimeShifterSetParameters", ref parameters);
+    }
+
+    public int TimeShifterSetPmt(int handle, byte[] pmt, ushort pmtSize, bool isDynamicPmtChange)
+    {
+      object[] parameters = new object[4] { handle, pmt, pmtSize, isDynamicPmtChange };
+      return (int)_delegateTsWriter("TimeShifterSetPmt", ref parameters);
+    }
+
+    public int TimeShifterStart(int handle)
+    {
+      object[] parameters = new object[1] { handle };
+      return (int)_delegateTsWriter("TimeShifterStart", ref parameters);
+    }
+
+    public int TimeShifterGetStreamQuality(int handle,
+                                            out ulong countTsPackets,
+                                            out ulong countDiscontinuities,
+                                            out ulong countDroppedBytes)
+    {
+      countTsPackets = 0;
+      countDiscontinuities = 0;
+      countDroppedBytes = 0;
+      object[] parameters = new object[4] { handle, countTsPackets, countDiscontinuities, countDroppedBytes };
+      int hr = (int)_delegateTsWriter("TimeShifterGetStreamQuality", ref parameters);
+      countTsPackets = (ulong)parameters[1];
+      countDiscontinuities = (ulong)parameters[2];
+      countDroppedBytes = (ulong)parameters[3];
+      return hr;
+    }
+
+    public int TimeShifterGetCurrentFilePosition(int handle, out ulong position, out uint bufferId)
     {
       position = 0;
       bufferId = 0;
       object[] parameters = new object[3] { handle, position, bufferId };
-      int hr = _delegateSubChannel("TimeShiftGetCurrentFilePosition", ref parameters);
-      position = (long)parameters[1];
-      bufferId = (long)parameters[2];
+      int hr = (int)_delegateTsWriter("TimeShifterGetCurrentFilePosition", ref parameters);
+      position = (ulong)parameters[1];
+      bufferId = (uint)parameters[2];
       return hr;
     }
 
-    public int SetVideoAudioObserver(int handle, IVideoAudioObserver observer)
-    {
-      _callBackVideoAudioObserverTimeShifter = observer;
-      if (observer != null)
-      {
-        observer = this;
-      }
-      object[] parameters = new object[2] { handle, observer };
-      return _delegateSubChannel("SetVideoAudioObserver", ref parameters);
-    }
-
-    public int CaReset(int handle)
+    public int TimeShifterStop(int handle)
     {
       object[] parameters = new object[1] { handle };
-      return _delegateSubChannel("CaReset", ref parameters);
-    }
-
-    public int CaSetCallBack(int handle, ICaCallBack callBack)
-    {
-      _callBackCat = callBack;
-      if (callBack != null)
-      {
-        callBack = this;
-      }
-      object[] parameters = new object[2] { handle, callBack };
-      return _delegateSubChannel("CaSetCallBack", ref parameters);
-    }
-
-    public int CaGetCaData(int handle, IntPtr caData)
-    {
-      object[] parameters = new object[2] { handle, caData };
-      return _delegateSubChannel("CaGetCaData", ref parameters);
-    }
-
-    public int GetStreamQualityCounters(int handle, out int timeShiftByteCount, out int recordByteCount, out int timeShiftDiscontinuityCount, out int recordDiscontinuityCount)
-    {
-      timeShiftByteCount = 0;
-      recordByteCount = 0;
-      timeShiftDiscontinuityCount = 0;
-      recordDiscontinuityCount = 0;
-      object[] parameters = new object[5] { handle, timeShiftByteCount, recordByteCount, timeShiftDiscontinuityCount, recordDiscontinuityCount };
-      int hr = _delegateSubChannel("GetStreamQualityCounters", ref parameters);
-      timeShiftByteCount = (int)parameters[1];
-      recordByteCount = (int)parameters[2];
-      timeShiftDiscontinuityCount = (int)parameters[3];
-      recordDiscontinuityCount = (int)parameters[4];
-      return hr;
-    }
-
-    public int TimeShiftSetChannelType(int handle, int channelType)
-    {
-      object[] parameters = new object[2] { handle, channelType };
-      return _delegateSubChannel("TimeShiftSetChannelType", ref parameters);
+      return (int)_delegateTsWriter("TimeShifterStop", ref parameters);
     }
 
     #endregion
 
-    #region scan delegation
-
-    public int SetCallBack(IChannelScanCallBack callBack)
+    /// <remarks>
+    /// The same signature is used for both the DVB and MPEG SI grabbers. So, for us calls to
+    /// SetCallBack() for those 2 interfaces are indistinguishable. This means that the same
+    /// delegate must handle the call backs for both interfaces.
+    /// </remarks>
+    public void SetCallBack(ICallBackGrabber callBack)
     {
-      _callBackChannelScan = callBack;
+      _callBackGrabber = callBack;
       if (callBack != null)
       {
         callBack = this;
       }
       object[] parameters = new object[1] { callBack };
-      return _delegateScan("SetCallBack", ref parameters);
+      _delegateGrabberSiDvb("SetCallBack", ref parameters);
+      _delegateGrabberSiMpeg("SetCallBack", ref parameters);
     }
 
-    public int ScanStream(BroadcastStandard broadcastStandard)
-    {
-      object[] parameters = new object[1] { broadcastStandard };
-      return _delegateScan("ScanStream", ref parameters);
-    }
+    #region IGrabberSiDvb delegation
 
-    public int StopStreamScan()
+    public bool IsSeenBat()
     {
       object[] parameters = null;
-      return _delegateScan("StopStreamScan", ref parameters);
+      return (bool)_delegateGrabberSiDvb("IsSeenBat", ref parameters);
     }
 
-    public int GetServiceCount(out int serviceCount)
+    public bool IsSeenNitActual()
     {
-      serviceCount = 0;
-      object[] parameters = new object[1] { serviceCount };
-      int hr = _delegateScan("GetServiceCount", ref parameters);
-      serviceCount = (int)parameters[0];
-      return hr;
+      object[] parameters = null;
+      return (bool)_delegateGrabberSiDvb("IsSeenNitActual", ref parameters);
     }
 
-    public int GetServiceDetail(int index,
-                        out int originalNetworkId,
-                        out int transportStreamId,
-                        out int serviceId,
-                        out IntPtr serviceName,
-                        out IntPtr providerName,
-                        out IntPtr logicalChannelNumber,
-                        out int serviceType,
-                        out int videoStreamCount,
-                        out int audioStreamCount,
-                        out bool isHighDefinition,
-                        out bool isEncrypted,
-                        out bool isRunning,
-                        out int pmtPid,
-                        out int previousOriginalNetworkId,
-                        out int previousTransportStreamId,
-                        out int previousServiceId,
-                        ref int networkIdCount,
-                        ref ushort[] networkIds,
-                        ref int bouquetIdCount,
-                        ref ushort[] bouquetIds,
-                        ref int languageCount,
-                        ref Iso639Code[] languages,
-                        ref int availableInCellCount,
-                        ref uint[] availableInCells,
-                        ref int unavailableInCellCount,
-                        ref uint[] unavailableInCells,
-                        ref int targetRegionCount,
-                        ref long[] targetRegions,
-                        ref int availableInCountryCount,
-                        ref Iso639Code[] availableInCountries,
-                        ref int unavailableInCountryCount,
-                        ref Iso639Code[] unavailableInCountries)
+    public bool IsSeenNitOther()
     {
+      object[] parameters = null;
+      return (bool)_delegateGrabberSiDvb("IsSeenNitOther", ref parameters);
+    }
+
+    public bool IsSeenSdtActual()
+    {
+      object[] parameters = null;
+      return (bool)_delegateGrabberSiDvb("IsSeenSdtActual", ref parameters);
+    }
+
+    public bool IsSeenSdtOther()
+    {
+      object[] parameters = null;
+      return (bool)_delegateGrabberSiDvb("IsSeenSdtOther", ref parameters);
+    }
+
+    public bool IsReadyBat()
+    {
+      object[] parameters = null;
+      return (bool)_delegateGrabberSiDvb("IsReadyBat", ref parameters);
+    }
+
+    public bool IsReadyNitActual()
+    {
+      object[] parameters = null;
+      return (bool)_delegateGrabberSiDvb("IsReadyNitActual", ref parameters);
+    }
+
+    public bool IsReadyNitOther()
+    {
+      object[] parameters = null;
+      return (bool)_delegateGrabberSiDvb("IsReadyNitOther", ref parameters);
+    }
+
+    public bool IsReadySdtActual()
+    {
+      object[] parameters = null;
+      return (bool)_delegateGrabberSiDvb("IsReadySdtActual", ref parameters);
+    }
+
+    public bool IsReadySdtOther()
+    {
+      object[] parameters = null;
+      return (bool)_delegateGrabberSiDvb("IsReadySdtOther", ref parameters);
+    }
+
+    public ushort GetServiceCount()
+    {
+      object[] parameters = null;
+      return (ushort)_delegateGrabberSiDvb("GetServiceCount", ref parameters);
+    }
+
+    public bool GetService(ushort index,
+                            ushort preferredLogicalChannelNumberBouquetId,
+                            ushort preferredLogicalChannelNumberRegionId,
+                            out byte tableId,
+                            out ushort originalNetworkId,
+                            out ushort transportStreamId,
+                            out ushort serviceId,
+                            out ushort referenceServiceId,
+                            out ushort freesatChannelId,
+                            out ushort openTvChannelId,
+                            out ushort logicalChannelNumber,
+                            out byte dishSubChannelNumber,
+                            out bool eitScheduleFlag,
+                            out bool eitPresentFollowingFlag,
+                            out byte runningStatus,
+                            out bool freeCaMode,
+                            out byte serviceType,
+                            out byte serviceNameCount,
+                            out bool visibleInGuide,
+                            out ushort streamCountVideo,
+                            out ushort streamCountAudio,
+                            out bool isHighDefinition,
+                            out bool isThreeDimensional,
+                            Iso639Code[] audioLanguages,
+                            ref byte audioLanguageCount,
+                            Iso639Code[] subtitlesLanguages,
+                            ref byte subtitlesLanguageCount,
+                            ushort[] networkIds,
+                            ref byte networkIdCount,
+                            ushort[] bouquetIds,
+                            ref byte bouquetIdCount,
+                            Iso639Code[] availableInCountries,
+                            ref byte availableInCountryCount,
+                            Iso639Code[] unavailableInCountries,
+                            ref byte unavailableInCountryCount,
+                            uint[] availableInCells,
+                            ref byte availableInCellCount,
+                            uint[] unavailableInCells,
+                            ref byte unavailableInCellCount,
+                            ulong[] targetRegionIds,
+                            ref byte targetRegionIdCount,
+                            ushort[] freesatRegionIds,
+                            ref byte freesatRegionIdCount,
+                            ushort[] openTvRegionIds,
+                            ref byte openTvRegionIdCount,
+                            ushort[] freesatChannelCategoryIds,
+                            ref byte freesatChannelCategoryIdCount,
+                            out byte virginMediaChannelCategoryId,
+                            out ushort dishMarketId,
+                            byte[] norDigChannelListIds,
+                            ref byte norDigChannelListIdCount,
+                            out ushort previousOriginalNetworkId,
+                            out ushort previousTransportStreamId,
+                            out ushort previousServiceId,
+                            out ushort epgOriginalNetworkId,
+                            out ushort epgTransportStreamId,
+                            out ushort epgServiceId)
+    {
+      tableId = 0;
       originalNetworkId = 0;
       transportStreamId = 0;
       serviceId = 0;
-      serviceName = IntPtr.Zero;
-      providerName = IntPtr.Zero;
-      logicalChannelNumber = IntPtr.Zero;
+      referenceServiceId = 0;
+      freesatChannelId = 0;
+      openTvChannelId = 0;
+      logicalChannelNumber = 0;
+      dishSubChannelNumber = 0;
+      eitScheduleFlag = false;
+      eitPresentFollowingFlag = false;
+      runningStatus = 0;
+      freeCaMode = false;
       serviceType = 0;
-      videoStreamCount = 0;
-      audioStreamCount = 0;
+      serviceNameCount = 0;
+      visibleInGuide = true;
+      streamCountVideo = 0;
+      streamCountAudio = 0;
       isHighDefinition = false;
-      isEncrypted = false;
-      isRunning = false;
-      pmtPid = 0;
+      isThreeDimensional = false;
+      virginMediaChannelCategoryId = 0;
+      dishMarketId = 0;
       previousOriginalNetworkId = 0;
       previousTransportStreamId = 0;
       previousServiceId = 0;
-      object[] parameters = new object[33] { index, originalNetworkId, transportStreamId,
-                                              serviceId, serviceName, providerName,
-                                              logicalChannelNumber, serviceType, videoStreamCount,
-                                              audioStreamCount, isHighDefinition, isEncrypted,
-                                              isRunning, pmtPid, previousOriginalNetworkId,
-                                              previousTransportStreamId, previousServiceId,
-                                              networkIdCount, networkIds, bouquetIdCount,
-                                              bouquetIds, languageCount, languages,
-                                              availableInCellCount, availableInCells,
-                                              unavailableInCellCount, unavailableInCells,
-                                              targetRegionCount, targetRegions,
-                                              availableInCountryCount, availableInCountries,
-                                              unavailableInCountryCount, unavailableInCountries };
-      int hr = _delegateScan("GetServiceDetail", ref parameters);
-      originalNetworkId = (int)parameters[1];
-      transportStreamId = (int)parameters[2];
-      serviceId = (int)parameters[3];
-      serviceName = (IntPtr)parameters[4];
-      providerName = (IntPtr)parameters[5];
-      logicalChannelNumber = (IntPtr)parameters[6];
-      serviceType = (int)parameters[7];
-      videoStreamCount = (int)parameters[8];
-      audioStreamCount = (int)parameters[9];
-      isHighDefinition = (bool)parameters[10];
-      isEncrypted = (bool)parameters[11];
-      isRunning = (bool)parameters[12];
-      pmtPid = (int)parameters[13];
-      previousOriginalNetworkId = (int)parameters[14];
-      previousTransportStreamId = (int)parameters[15];
-      previousServiceId = (int)parameters[16];
-      networkIdCount = (int)parameters[17];
-      networkIds = (ushort[])parameters[18];
-      bouquetIdCount = (int)parameters[19];
-      bouquetIds = (ushort[])parameters[20];
-      languageCount = (int)parameters[21];
-      languages = (Iso639Code[])parameters[22];
-      availableInCellCount = (int)parameters[23];
-      availableInCells = (uint[])parameters[24];
-      unavailableInCellCount = (int)parameters[25];
-      unavailableInCells = (uint[])parameters[26];
-      targetRegionCount = (int)parameters[27];
-      targetRegions = (long[])parameters[28];
-      availableInCountryCount = (int)parameters[29];
-      availableInCountries = (Iso639Code[])parameters[30];
-      unavailableInCountryCount = (int)parameters[31];
-      unavailableInCountries = (Iso639Code[])parameters[32];
-      return hr;
+      epgOriginalNetworkId = 0;
+      epgTransportStreamId = 0;
+      epgServiceId = 0;
+      object[] parameters = new object[57]
+      {
+        index,
+        preferredLogicalChannelNumberBouquetId,
+        preferredLogicalChannelNumberRegionId,
+        tableId,
+        originalNetworkId,
+        transportStreamId,
+        serviceId,
+        referenceServiceId,
+        freesatChannelId,
+        openTvChannelId,
+        logicalChannelNumber,
+        dishSubChannelNumber,
+        eitScheduleFlag,
+        eitPresentFollowingFlag,
+        runningStatus,
+        freeCaMode,
+        serviceType,
+        serviceNameCount,
+        visibleInGuide,
+        streamCountVideo,
+        streamCountAudio,
+        isHighDefinition,
+        isThreeDimensional,
+        audioLanguages,
+        audioLanguageCount,
+        subtitlesLanguages,
+        subtitlesLanguageCount,
+        networkIds,
+        networkIdCount,
+        bouquetIds,
+        bouquetIdCount,
+        availableInCountries,
+        availableInCountryCount,
+        unavailableInCountries,
+        unavailableInCountryCount,
+        availableInCells,
+        availableInCellCount,
+        unavailableInCells,
+        unavailableInCellCount,
+        targetRegionIds,
+        targetRegionIdCount,
+        freesatRegionIds,
+        freesatRegionIdCount,
+        openTvRegionIds,
+        openTvRegionIdCount,
+        freesatChannelCategoryIds,
+        freesatChannelCategoryIdCount,
+        virginMediaChannelCategoryId,
+        dishMarketId,
+        norDigChannelListIds,
+        norDigChannelListIdCount,
+        previousOriginalNetworkId,
+        previousTransportStreamId,
+        previousServiceId,
+        epgOriginalNetworkId,
+        epgTransportStreamId,
+        epgServiceId
+      };
+      bool result = (bool)_delegateGrabberSiDvb("GetService", ref parameters);
+      tableId = (byte)parameters[3];
+      originalNetworkId = (ushort)parameters[4];
+      transportStreamId = (ushort)parameters[5];
+      serviceId = (ushort)parameters[6];
+      referenceServiceId = (ushort)parameters[7];
+      freesatChannelId = (ushort)parameters[8];
+      openTvChannelId = (ushort)parameters[9];
+      logicalChannelNumber = (ushort)parameters[10];
+      dishSubChannelNumber = (byte)parameters[11];
+      eitScheduleFlag = (bool)parameters[12];
+      eitPresentFollowingFlag = (bool)parameters[13];
+      runningStatus = (byte)parameters[14];
+      freeCaMode = (bool)parameters[15];
+      serviceType = (byte)parameters[16];
+      serviceNameCount = (byte)parameters[17];
+      visibleInGuide = (bool)parameters[18];
+      streamCountVideo = (ushort)parameters[19];
+      streamCountAudio = (ushort)parameters[20];
+      isHighDefinition = (bool)parameters[21];
+      isThreeDimensional = (bool)parameters[22];
+      audioLanguageCount = (byte)parameters[24];
+      subtitlesLanguageCount = (byte)parameters[26];
+      networkIdCount = (byte)parameters[28];
+      bouquetIdCount = (byte)parameters[30];
+      availableInCountryCount = (byte)parameters[32];
+      unavailableInCountryCount = (byte)parameters[34];
+      availableInCellCount = (byte)parameters[36];
+      unavailableInCellCount = (byte)parameters[38];
+      targetRegionIdCount = (byte)parameters[40];
+      freesatRegionIdCount = (byte)parameters[42];
+      openTvRegionIdCount = (byte)parameters[44];
+      freesatChannelCategoryIdCount = (byte)parameters[46];
+      virginMediaChannelCategoryId = (byte)parameters[47];
+      dishMarketId = (ushort)parameters[48];
+      norDigChannelListIdCount = (byte)parameters[50];
+      previousOriginalNetworkId = (ushort)parameters[51];
+      previousTransportStreamId = (ushort)parameters[52];
+      previousServiceId = (ushort)parameters[53];
+      epgOriginalNetworkId = (ushort)parameters[54];
+      epgTransportStreamId = (ushort)parameters[55];
+      epgServiceId = (ushort)parameters[56];
+      return result;
     }
 
-    public int ScanNetwork()
+    public bool GetServiceNameByIndex(ushort serviceIndex,
+                                      byte nameIndex,
+                                      out Iso639Code language,
+                                      IntPtr providerName,
+                                      ref ushort providerNameBufferSize,
+                                      IntPtr serviceName,
+                                      ref ushort serviceNameBufferSize)
+    {
+      language = new Iso639Code();
+      object[] parameters = new object[7]
+      {
+        serviceIndex,
+        nameIndex,
+        language,
+        providerName,
+        providerNameBufferSize,
+        serviceName,
+        serviceNameBufferSize
+      };
+      bool result = (bool)_delegateGrabberSiDvb("GetServiceNameByIndex", ref parameters);
+      language = (Iso639Code)parameters[2];
+      providerNameBufferSize = (ushort)parameters[4];
+      serviceNameBufferSize = (ushort)parameters[6];
+      return result;
+    }
+
+    public bool GetServiceNameByLanguage(ushort serviceIndex,
+                                          Iso639Code language,
+                                          IntPtr providerName,
+                                          ref ushort providerNameBufferSize,
+                                          IntPtr serviceName,
+                                          ref ushort serviceNameBufferSize)
+    {
+      object[] parameters = new object[6]
+      {
+        serviceIndex,
+        language,
+        providerName,
+        providerNameBufferSize,
+        serviceName,
+        serviceNameBufferSize
+      };
+      bool result = (bool)_delegateGrabberSiDvb("GetServiceNameByLanguage", ref parameters);
+      providerNameBufferSize = (ushort)parameters[3];
+      serviceNameBufferSize = (ushort)parameters[5];
+      return result;
+    }
+
+    public byte GetNetworkNameCount(ushort networkId)
+    {
+      object[] parameters = new object[1] { networkId };
+      return (byte)_delegateGrabberSiDvb("GetNetworkNameCount", ref parameters);
+    }
+
+    public bool GetNetworkNameByIndex(ushort networkId,
+                                      byte index,
+                                      out Iso639Code language,
+                                      IntPtr name,
+                                      ref ushort nameBufferSize)
+    {
+      language = new Iso639Code();
+      object[] parameters = new object[5] { networkId, index, language, name, nameBufferSize };
+      bool result = (bool)_delegateGrabberSiDvb("GetNetworkNameByIndex", ref parameters);
+      language = (Iso639Code)parameters[2];
+      nameBufferSize = (ushort)parameters[4];
+      return result;
+    }
+
+    public bool GetNetworkNameByLanguage(ushort networkId,
+                                          Iso639Code language,
+                                          IntPtr name,
+                                          ref ushort nameBufferSize)
+    {
+      object[] parameters = new object[4] { networkId, language, name, nameBufferSize };
+      bool result = (bool)_delegateGrabberSiDvb("GetNetworkNameByLanguage", ref parameters);
+      nameBufferSize = (ushort)parameters[3];
+      return result;
+    }
+
+    public byte GetBouquetNameCount(ushort bouquetId)
+    {
+      object[] parameters = new object[1] { bouquetId };
+      return (byte)_delegateGrabberSiDvb("GetBouquetNameCount", ref parameters);
+    }
+
+    public bool GetBouquetNameByIndex(ushort bouquetId,
+                                      byte index,
+                                      out Iso639Code language,
+                                      IntPtr name,
+                                      ref ushort nameBufferSize)
+    {
+      language = new Iso639Code();
+      object[] parameters = new object[5] { bouquetId, index, language, name, nameBufferSize };
+      bool result = (bool)_delegateGrabberSiDvb("GetBouquetNameByIndex", ref parameters);
+      language = (Iso639Code)parameters[2];
+      nameBufferSize = (ushort)parameters[4];
+      return result;
+    }
+
+    public bool GetBouquetNameByLanguage(ushort bouquetId,
+                                          Iso639Code language,
+                                          IntPtr name,
+                                          ref ushort nameBufferSize)
+    {
+      object[] parameters = new object[4] { bouquetId, language, name, nameBufferSize };
+      bool result = (bool)_delegateGrabberSiDvb("GetBouquetNameByLanguage", ref parameters);
+      nameBufferSize = (ushort)parameters[3];
+      return result;
+    }
+
+    public byte GetTargetRegionNameCount(ulong regionId)
+    {
+      object[] parameters = new object[1] { regionId };
+      return (byte)_delegateGrabberSiDvb("GetTargetRegionNameCount", ref parameters);
+    }
+
+    public bool GetTargetRegionNameByIndex(ulong regionId,
+                                            byte index,
+                                            out Iso639Code language,
+                                            IntPtr name,
+                                            ref ushort nameBufferSize)
+    {
+      language = new Iso639Code();
+      object[] parameters = new object[5] { regionId, index, language, name, nameBufferSize };
+      bool result = (bool)_delegateGrabberSiDvb("GetTargetRegionNameByIndex", ref parameters);
+      language = (Iso639Code)parameters[2];
+      nameBufferSize = (ushort)parameters[4];
+      return result;
+    }
+
+    public bool GetTargetRegionNameByLanguage(ulong regionId,
+                                              Iso639Code language,
+                                              IntPtr name,
+                                              ref ushort nameBufferSize)
+    {
+      object[] parameters = new object[4] { regionId, language, name, nameBufferSize };
+      bool result = (bool)_delegateGrabberSiDvb("GetTargetRegionNameByLanguage", ref parameters);
+      nameBufferSize = (ushort)parameters[3];
+      return result;
+    }
+
+    public byte GetFreesatRegionNameCount(ushort regionId)
+    {
+      object[] parameters = new object[1] { regionId };
+      return (byte)_delegateGrabberSiDvb("GetFreesatRegionNameCount", ref parameters);
+    }
+
+    public bool GetFreesatRegionNameByIndex(ushort regionId,
+                                            byte index,
+                                            out Iso639Code language,
+                                            IntPtr name,
+                                            ref ushort nameBufferSize)
+    {
+      language = new Iso639Code();
+      object[] parameters = new object[5] { regionId, index, language, name, nameBufferSize };
+      bool result = (bool)_delegateGrabberSiDvb("GetFreesatRegionNameByIndex", ref parameters);
+      language = (Iso639Code)parameters[2];
+      nameBufferSize = (ushort)parameters[4];
+      return result;
+    }
+
+    public bool GetFreesatRegionNameByLanguage(ushort regionId,
+                                                Iso639Code language,
+                                                IntPtr name,
+                                                ref ushort nameBufferSize)
+    {
+      object[] parameters = new object[4] { regionId, language, name, nameBufferSize };
+      bool result = (bool)_delegateGrabberSiDvb("GetFreesatRegionNameByLanguage", ref parameters);
+      nameBufferSize = (ushort)parameters[3];
+      return result;
+    }
+
+    public byte GetFreesatChannelCategoryNameCount(ushort categoryId)
+    {
+      object[] parameters = new object[1] { categoryId };
+      return (byte)_delegateGrabberSiDvb("GetFreesatChannelCategoryNameCount", ref parameters);
+    }
+
+    public bool GetFreesatChannelCategoryNameByIndex(ushort categoryId,
+                                                      byte index,
+                                                      out Iso639Code language,
+                                                      IntPtr name,
+                                                      ref ushort nameBufferSize)
+    {
+      language = new Iso639Code();
+      object[] parameters = new object[5] { categoryId, index, language, name, nameBufferSize };
+      bool result = (bool)_delegateGrabberSiDvb("GetFreesatChannelCategoryNameByIndex", ref parameters);
+      language = (Iso639Code)parameters[2];
+      nameBufferSize = (ushort)parameters[4];
+      return result;
+    }
+
+    public bool GetFreesatChannelCategoryNameByLanguage(ushort categoryId,
+                                                        Iso639Code language,
+                                                        IntPtr name,
+                                                        ref ushort nameBufferSize)
+    {
+      object[] parameters = new object[4] { categoryId, language, name, nameBufferSize };
+      bool result = (bool)_delegateGrabberSiDvb("GetFreesatChannelCategoryNameByLanguage", ref parameters);
+      nameBufferSize = (ushort)parameters[3];
+      return result;
+    }
+
+    public byte GetNorDigChannelListNameCount(byte channelListId)
+    {
+      object[] parameters = new object[1] { channelListId };
+      return (byte)_delegateGrabberSiDvb("GetNorDigChannelListNameCount", ref parameters);
+    }
+
+    public bool GetNorDigChannelListNameByIndex(byte channelListId,
+                                                byte index,
+                                                out Iso639Code language,
+                                                IntPtr name,
+                                                ref ushort nameBufferSize)
+    {
+      language = new Iso639Code();
+      object[] parameters = new object[5] { channelListId, index, language, name, nameBufferSize };
+      bool result = (bool)_delegateGrabberSiDvb("GetNorDigChannelListNameByIndex", ref parameters);
+      language = (Iso639Code)parameters[2];
+      nameBufferSize = (ushort)parameters[4];
+      return result;
+    }
+
+    public bool GetNorDigChannelListNameByLanguage(byte channelListId,
+                                                    Iso639Code language,
+                                                    IntPtr name,
+                                                    ref ushort nameBufferSize)
+    {
+      object[] parameters = new object[4] { channelListId, language, name, nameBufferSize };
+      bool result = (bool)_delegateGrabberSiDvb("GetNorDigChannelListNameByLanguage", ref parameters);
+      nameBufferSize = (ushort)parameters[3];
+      return result;
+    }
+
+    public ushort GetTransmitterCount()
     {
       object[] parameters = null;
-      return _delegateScan("ScanNetwork", ref parameters);
+      return (ushort)_delegateGrabberSiDvb("GetTransmitterCount", ref parameters);
     }
 
-    public int StopNetworkScan(out bool isOtherMuxServiceInfoAvailable)
+    public bool GetTransmitter(ushort index,
+                                out ushort tableId,
+                                out ushort networkId,
+                                out ushort originalNetworkId,
+                                out ushort transportStreamId,
+                                out bool isHomeTransmitter,
+                                out BroadcastStandard broadcastStandard,
+                                uint[] frequencies,
+                                ref byte frequencyCount,
+                                out byte polarisation,
+                                out byte modulation,
+                                out uint symbolRate,
+                                out ushort bandwidth,
+                                out byte innerFecRate,
+                                out byte rollOffFactor,
+                                out short longitude,
+                                out ushort cellId,
+                                out byte cellIdExtension,
+                                out byte plpId)
     {
-      isOtherMuxServiceInfoAvailable = false;
-      object[] parameters = new object[1] { isOtherMuxServiceInfoAvailable };
-      int hr = _delegateScan("StopNetworkScan", ref parameters);
-      isOtherMuxServiceInfoAvailable = (bool)parameters[0];
-      return hr;
-    }
-
-    public int GetMultiplexCount(out int multiplexCount)
-    {
-      multiplexCount = 0;
-      object[] parameters = new object[1] { multiplexCount };
-      int hr = _delegateScan("GetMultiplexCount", ref parameters);
-      multiplexCount = (int)parameters[0];
-      return hr;
-    }
-
-    public int GetMultiplexDetail(int index,
-                            out int originalNetworkId,
-                            out int transportStreamId,
-                            out int type,
-                            out int frequency,
-                            out int polarisation,
-                            out int modulation,
-                            out int symbolRate,
-                            out int bandwidth,
-                            out int innerFecRate,
-                            out int rollOff,
-                            out int longitude,
-                            out int cellId,
-                            out int cellIdExtension,
-                            out int plpId)
-    {
+      tableId = 0;
+      networkId = 0;
       originalNetworkId = 0;
       transportStreamId = 0;
-      type = 0;
-      frequency = 0;
+      isHomeTransmitter = false;
+      broadcastStandard = BroadcastStandard.Unknown;
       polarisation = 0;
       modulation = 0;
       symbolRate = 0;
       bandwidth = 0;
       innerFecRate = 0;
-      rollOff = 0;
+      rollOffFactor = 0;
       longitude = 0;
       cellId = 0;
       cellIdExtension = 0;
       plpId = 0;
-      object[] parameters = new object[15] { index, originalNetworkId, transportStreamId, type,
-                                              frequency, polarisation, modulation, symbolRate,
-                                              bandwidth, innerFecRate, rollOff, longitude, cellId,
-                                              cellIdExtension, plpId };
-      int hr = _delegateScan("GetMultiplexDetail", ref parameters);
-      originalNetworkId = (int)parameters[1];
-      transportStreamId = (int)parameters[2];
-      type = (int)parameters[3];
-      frequency = (int)parameters[4];
-      polarisation = (int)parameters[5];
-      modulation = (int)parameters[6];
-      symbolRate = (int)parameters[7];
-      bandwidth = (int)parameters[8];
-      innerFecRate = (int)parameters[9];
-      rollOff = (int)parameters[10];
-      longitude = (int)parameters[11];
-      cellId = (int)parameters[12];
-      cellIdExtension = (int)parameters[13];
-      plpId = (int)parameters[14];
-      return hr;
+      object[] parameters = new object[19]
+      {
+        index,
+        tableId,
+        networkId,
+        originalNetworkId,
+        transportStreamId,
+        isHomeTransmitter,
+        broadcastStandard,
+        frequencies,
+        frequencyCount,
+        polarisation,
+        modulation,
+        symbolRate,
+        bandwidth,
+        innerFecRate,
+        rollOffFactor,
+        longitude,
+        cellId,
+        cellIdExtension,
+        plpId
+      };
+      bool result = (bool)_delegateGrabberSiDvb("GetTransmitter", ref parameters);
+      tableId = (byte)parameters[1];
+      networkId = (ushort)parameters[2];
+      originalNetworkId = (ushort)parameters[3];
+      transportStreamId = (ushort)parameters[4];
+      isHomeTransmitter = (bool)parameters[5];
+      broadcastStandard = (BroadcastStandard)parameters[6];
+      frequencyCount = (byte)parameters[8];
+      polarisation = (byte)parameters[9];
+      modulation = (byte)parameters[10];
+      symbolRate = (uint)parameters[11];
+      bandwidth = (ushort)parameters[12];
+      innerFecRate = (byte)parameters[13];
+      rollOffFactor = (byte)parameters[14];
+      longitude = (short)parameters[15];
+      cellId = (ushort)parameters[16];
+      cellIdExtension = (byte)parameters[17];
+      plpId = (byte)parameters[18];
+      return result;
     }
 
-    public int GetTargetRegionName(long targetRegionId, out IntPtr name)
+    #endregion
+
+    #region IGrabberSiMpeg delegation
+
+    public bool IsReadyPat()
     {
-      name = IntPtr.Zero;
-      object[] parameters = new object[2] { targetRegionId, name };
-      int hr = _delegateScan("GetTargetRegionName", ref parameters);
-      name = (IntPtr)parameters[1];
-      return hr;
+      object[] parameters = null;
+      return (bool)_delegateGrabberSiMpeg("IsReadyPat", ref parameters);
     }
 
-    public int GetBouquetName(int bouquetId, out IntPtr name)
+    public bool IsReadyCat()
     {
-      name = IntPtr.Zero;
-      object[] parameters = new object[2] { bouquetId, name };
-      int hr = _delegateScan("GetBouquetName", ref parameters);
-      name = (IntPtr)parameters[1];
-      return hr;
+      object[] parameters = null;
+      return (bool)_delegateGrabberSiMpeg("IsReadyCat", ref parameters);
     }
 
-    public int GetNetworkName(int networkId, out IntPtr name)
+    public bool IsReadyPmt()
     {
-      name = IntPtr.Zero;
-      object[] parameters = new object[2] { networkId, name };
-      int hr = _delegateScan("GetNetworkName", ref parameters);
-      name = (IntPtr)parameters[1];
-      return hr;
+      object[] parameters = null;
+      return (bool)_delegateGrabberSiMpeg("IsReadyPmt", ref parameters);
+    }
+
+    public void GetTransportStreamDetail(out ushort transportStreamId,
+                                          out ushort networkPid,
+                                          out ushort programCount)
+    {
+      transportStreamId = 0;
+      networkPid = 0;
+      programCount = 0;
+      object[] parameters = new object[3] { transportStreamId, networkPid, programCount };
+      _delegateGrabberSiMpeg("GetTransportStreamDetail", ref parameters);
+      transportStreamId = (ushort)parameters[0];
+      networkPid = (ushort)parameters[1];
+      programCount = (ushort)parameters[2];
+    }
+
+    public bool GetProgramByIndex(uint index,
+                                  out ushort programNumber,
+                                  out ushort pmtPid,
+                                  out bool isPmtReceived,
+                                  out ushort streamCountVideo,
+                                  out ushort streamCountAudio,
+                                  out bool isEncrypted,
+                                  out bool isEncryptionDetectionAccurate,
+                                  out bool isThreeDimensional,
+                                  Iso639Code[] audioLanguages,
+                                  ref byte audioLanguageCount,
+                                  Iso639Code[] subtitlesLanguages,
+                                  ref byte subtitlesLanguageCount)
+    {
+      programNumber = 0;
+      pmtPid = 0;
+      isPmtReceived = false;
+      streamCountVideo = 0;
+      streamCountAudio = 0;
+      isEncrypted = false;
+      isEncryptionDetectionAccurate = false;
+      isThreeDimensional = false;
+      object[] parameters = new object[13]
+      {
+        index,
+        programNumber,
+        pmtPid,
+        isPmtReceived,
+        streamCountVideo,
+        streamCountAudio,
+        isEncrypted,
+        isEncryptionDetectionAccurate,
+        isThreeDimensional,
+        audioLanguages,
+        audioLanguageCount,
+        subtitlesLanguages,
+        subtitlesLanguageCount
+      };
+      bool result = (bool)_delegateGrabberSiMpeg("GetProgramByIndex", ref parameters);
+      programNumber = (ushort)parameters[1];
+      pmtPid = (ushort)parameters[2];
+      isPmtReceived = (bool)parameters[3];
+      streamCountVideo = (ushort)parameters[4];
+      streamCountAudio = (ushort)parameters[5];
+      isEncrypted = (bool)parameters[6];
+      isEncryptionDetectionAccurate = (bool)parameters[7];
+      isThreeDimensional = (bool)parameters[8];
+      audioLanguageCount = (byte)parameters[10];
+      subtitlesLanguageCount = (byte)parameters[12];
+      return result;
+    }
+
+    public bool GetProgramByNumber(ushort programNumber,
+                                    out ushort pmtPid,
+                                    out bool isPmtReceived,
+                                    out ushort streamCountVideo,
+                                    out ushort streamCountAudio,
+                                    out bool isEncrypted,
+                                    out bool isEncryptionDetectionAccurate,
+                                    out bool isThreeDimensional,
+                                    Iso639Code[] audioLanguages,
+                                    ref byte audioLanguageCount,
+                                    Iso639Code[] subtitlesLanguages,
+                                    ref byte subtitlesLanguageCount)
+    {
+      pmtPid = 0;
+      isPmtReceived = false;
+      streamCountVideo = 0;
+      streamCountAudio = 0;
+      isEncrypted = false;
+      isEncryptionDetectionAccurate = false;
+      isThreeDimensional = false;
+      object[] parameters = new object[12]
+      {
+        programNumber,
+        pmtPid,
+        isPmtReceived,
+        streamCountVideo,
+        streamCountAudio,
+        isEncrypted,
+        isEncryptionDetectionAccurate,
+        isThreeDimensional,
+        audioLanguages,
+        audioLanguageCount,
+        subtitlesLanguages,
+        subtitlesLanguageCount
+      };
+      bool result = (bool)_delegateGrabberSiMpeg("GetProgramByNumber", ref parameters);
+      pmtPid = (ushort)parameters[1];
+      isPmtReceived = (bool)parameters[2];
+      streamCountVideo = (ushort)parameters[3];
+      streamCountAudio = (ushort)parameters[4];
+      isEncrypted = (bool)parameters[5];
+      isEncryptionDetectionAccurate = (bool)parameters[6];
+      isThreeDimensional = (bool)parameters[7];
+      audioLanguageCount = (byte)parameters[9];
+      subtitlesLanguageCount = (byte)parameters[11];
+      return result;
+    }
+
+    public bool GetCat(byte[] table, ref ushort tableBufferSize)
+    {
+      object[] parameters = new object[2] { table, tableBufferSize };
+      bool result = (bool)_delegateGrabberSiMpeg("GetCat", ref parameters);
+      tableBufferSize = (ushort)parameters[1];
+      return result;
+    }
+
+    public bool GetPmt(ushort programNumber, byte[] table, ref ushort tableBufferSize)
+    {
+      object[] parameters = new object[3] { programNumber, table, tableBufferSize };
+      bool result = (bool)_delegateGrabberSiMpeg("GetPmt", ref parameters);
+      tableBufferSize = (ushort)parameters[2];
+      return result;
     }
 
     #endregion
@@ -578,93 +1055,94 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       }
     }
 
-    #region IEncryptionStateChangeCallBack member
+    #region ICallBackGrabber members
 
-    public int OnEncryptionStateChange(int pid, EncryptionState encryptionState)
+    public void OnTableSeen(ushort pid, byte tableId)
     {
       CallBackJob job = new CallBackJob();
-      job.TargetType = typeof(IEncryptionStateChangeCallBack);
-      job.MethodName = "OnEncryptionStateChange";
-      job.TargetInstance = _callBackEncryptionStateChange;
-      job.Parameters = new object[2] { pid, encryptionState };
+      job.TargetType = typeof(ICallBackGrabber);
+      job.MethodName = "OnTableSeen";
+      job.TargetInstance = _callBackGrabber;
+      job.Parameters = new object[2] { pid, tableId };
       StartCallBackThread(job);
-      return 0;
     }
 
-    #endregion
-
-    #region IPmtCallBack member
-
-    public int OnPmtReceived(int pmtPid, int serviceId, bool isServiceRunning)
+    public void OnTableComplete(ushort pid, byte tableId)
     {
       CallBackJob job = new CallBackJob();
-      job.TargetType = typeof(IPmtCallBack);
-      job.MethodName = "OnPmtReceived";
-      job.TargetInstance = _callBackPmt;
-      job.Parameters = new object[3] { pmtPid, serviceId, isServiceRunning };
+      job.TargetType = typeof(ICallBackGrabber);
+      job.MethodName = "OnTableComplete";
+      job.TargetInstance = _callBackGrabber;
+      job.Parameters = new object[2] { pid, tableId };
       StartCallBackThread(job);
-      return 0;
     }
 
-    #endregion
-
-    #region IVideoAudioObserver member
-
-    public int OnNotify(PidType pidType)
+    public void OnTableChange(ushort pid, byte tableId)
     {
       CallBackJob job = new CallBackJob();
-      job.TargetType = typeof(IVideoAudioObserver);
-      job.MethodName = "OnNotify";
-      job.Parameters = new object[1] { pidType };
-      if (_callBackVideoAudioObserverTimeShifter == _callBackVideoAudioObserverRecorder)
-      {
-        job.TargetInstance = _callBackVideoAudioObserverTimeShifter;
-      }
-      else if (_callBackVideoAudioObserverTimeShifter != null && _callBackVideoAudioObserverRecorder != null)
-      {
-        this.LogWarn("TsWriter wrapper: target for IVideoAudioObserver OnNotify call back is ambiguous, selecting recorder");
-        job.TargetInstance = _callBackVideoAudioObserverRecorder;
-      }
-      else
-      {
-        job.TargetInstance = _callBackVideoAudioObserverRecorder ?? _callBackVideoAudioObserverTimeShifter;
-      }
+      job.TargetType = typeof(ICallBackGrabber);
+      job.MethodName = "OnTableChange";
+      job.TargetInstance = _callBackGrabber;
+      job.Parameters = new object[2] { pid, tableId };
       StartCallBackThread(job);
-      return 0;
     }
 
     #endregion
 
-    #region ICaCallBack member
+    #region IObserver members
 
-    public int OnCaReceived()
+    public void OnConditionalAccessTable(byte[] cat, ushort catBufferSize)
     {
-      if (_callBackCat != null)
-      {
-        CallBackJob job = new CallBackJob();
-        job.TargetType = typeof(ICaCallBack);
-        job.MethodName = "OnCaReceived";
-        job.TargetInstance = _callBackCat;
-        StartCallBackThread(job);
-      }
-      return 0;
+      CallBackJob job = new CallBackJob();
+      job.TargetType = typeof(IObserver);
+      job.MethodName = "OnConditionalAccessTable";
+      job.TargetInstance = _observer;
+      job.Parameters = new object[2] { cat, catBufferSize };
+      StartCallBackThread(job);
     }
 
-    #endregion
-
-    #region IChannelScanCallBack member
-
-    public int OnScannerDone()
+    public void OnProgramDetail(ushort programNumber,
+                                ushort pmtPid,
+                                bool isRunning,
+                                byte[] pmt,
+                                ushort pmtBufferSize)
     {
-      if (_callBackChannelScan != null)
-      {
-        CallBackJob job = new CallBackJob();
-        job.TargetType = typeof(IChannelScanCallBack);
-        job.MethodName = "OnScannerDone";
-        job.TargetInstance = _callBackChannelScan;
-        StartCallBackThread(job);
-      }
-      return 0;
+      CallBackJob job = new CallBackJob();
+      job.TargetType = typeof(IObserver);
+      job.MethodName = "OnProgramDetail";
+      job.TargetInstance = _observer;
+      job.Parameters = new object[5] { programNumber, pmtPid, isRunning, pmt, pmtBufferSize };
+      StartCallBackThread(job);
+    }
+
+    public void OnPidEncryptionStateChange(ushort pid, EncryptionState state)
+    {
+      CallBackJob job = new CallBackJob();
+      job.TargetType = typeof(IObserver);
+      job.MethodName = "OnPidEncryptionStateChange";
+      job.TargetInstance = _observer;
+      job.Parameters = new object[2] { pid, state };
+      StartCallBackThread(job);
+    }
+
+    public void OnPidsRequired(ushort[] pids, byte pidCount, PidUsage usage)
+    {
+      CallBackJob job = new CallBackJob();
+      job.TargetType = typeof(IObserver);
+      job.MethodName = "OnPidsRequired";
+      job.TargetInstance = _observer;
+      job.Parameters = new object[3] { pids, pidCount, usage };
+      StartCallBackThread(job);
+    }
+
+    public void OnPidsNotRequired(ushort[] pids, byte pidCount, PidUsage usage)
+    {
+      CallBackJob job = new CallBackJob();
+      job.TargetType = typeof(IObserver);
+      job.MethodName = "OnPidsNotRequired";
+      job.TargetInstance = _observer;
+      job.Parameters = new object[3] { pids, pidCount, usage };
+      StartCallBackThread(job);
     }
 
     #endregion

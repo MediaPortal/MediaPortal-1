@@ -22,35 +22,26 @@ using System;
 using System.Collections.Generic;
 using DirectShowLib;
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
 {
   /// <summary>
-  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles North
-  /// American CableCARD tuners with PBDA drivers.
+  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which
+  /// handles North American CableCARD tuners with PBDA drivers.
   /// </summary>
   internal class TunerPbdaCableCard : TunerBdaAtsc, IConditionalAccessMenuActions
   {
-    #region constants
-
-    private static readonly Guid PBDA_PT_FILTER_CLSID = new Guid(0x89c2e132, 0xc29b, 0x11db, 0x96, 0xfa, 0x00, 0x50, 0x56, 0xc0, 0x00, 0x08);
-
-    #endregion
-
     #region variables
-
-    /// <summary>
-    /// The PBDA PT filter.
-    /// </summary>
-    private IBaseFilter _filterPbdaPt = null;
 
     /// <summary>
     /// The PBDA conditional access interface, used for tuning and conditional
@@ -72,7 +63,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// </summary>
     /// <param name="device">The <see cref="DsDevice"/> instance to encapsulate.</param>
     public TunerPbdaCableCard(DsDevice device)
-      : base(device)
+      : base(device, BroadcastStandard.Scte)
     {
       _caMenuHandler = new CableCardMmiHandler(EnterMenu, CloseDialog);
 
@@ -86,28 +77,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
 
     #endregion
 
-    /// <summary>
-    /// Add and connect the appropriate BDA capture/receiver filter into the graph.
-    /// </summary>
-    /// <param name="lastFilter">The upstream filter to connect the capture filter to.</param>
-    protected override void AddAndConnectCaptureFilterIntoGraph(ref IBaseFilter lastFilter)
-    {
-      // PBDA graphs don't require a capture filter. Expect problems if you try to connect anything
-      // other than the PBDA PT filter to the tuner filter output.
-      this.LogDebug("PBDA CableCARD: add PBDA PT filter");
-      try
-      {
-        _filterPbdaPt = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, PBDA_PT_FILTER_CLSID, "PBDA PT Filter");
-      }
-      catch (Exception ex)
-      {
-        throw new TvException("Failed to add PBDA PT filter, are you using Windows 7+?", ex);
-      }
-
-      FilterGraphTools.ConnectFilters(_graph, lastFilter, 0, _filterPbdaPt, 0);
-      lastFilter = _filterPbdaPt;
-    }
-
     #region ITunerInternal members
 
     #region state control
@@ -116,10 +85,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// Actually load the tuner.
     /// </summary>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public override IList<ICustomDevice> PerformLoading()
+    public override IList<ITunerExtension> PerformLoading()
     {
       this.LogDebug("PBDA CableCARD: perform loading");
-      IList<ICustomDevice> extensions = base.PerformLoading();
+      IList<ITunerExtension> extensions = base.PerformLoading();
 
       // Connect the tuner filter OOB info into TsWriter.
       this.LogDebug("PBDA CableCARD: connect out-of-band stream");
@@ -130,44 +99,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       {
         throw new TvException("Failed to find BDA conditional access interface on tuner filter.");
       }
-      return extensions;
-    }
 
-    /// <summary>
-    /// Actually unload the tuner.
-    /// </summary>
-    public override void PerformUnloading()
-    {
-      this.LogDebug("PBDA CableCARD: perform unloading");
-      if (_graph != null)
+      // The EPG grabber currently supports ATSC and SCTE EPG formats, but in
+      // practise it seems cable providers do not broadcast EPG with standard
+      // formats.
+      if (!SupportedBroadcastStandards.HasFlag(BroadcastStandard.Atsc))
       {
-        _graph.RemoveFilter(_filterPbdaPt);
+        _epgGrabber = null;
       }
-      Release.ComObject("PBDA CableCARD tuner PBDA PT filter", ref _filterPbdaPt);
-
-      base.PerformUnloading();
+      return extensions;
     }
 
     #endregion
 
     #region tuning
-
-    /// <summary>
-    /// Check if the tuner can tune to a specific channel.
-    /// </summary>
-    /// <param name="channel">The channel to check.</param>
-    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
-    public override bool CanTune(IChannel channel)
-    {
-      ATSCChannel atscChannel = channel as ATSCChannel;
-      // Tuning without a CableCARD (clear QAM) is currently not supported.
-      // Major channel holds the virtual channel number that we use for tuning.
-      if (atscChannel == null || atscChannel.MajorChannel <= 0 || atscChannel.MinorChannel >= 0)
-      {
-        return false;
-      }
-      return true;
-    }
 
     /// <summary>
     /// Actually tune to a channel.
@@ -176,8 +121,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("PBDA CableCARD: perform tuning");
-      ATSCChannel atscChannel = channel as ATSCChannel;
-      if (atscChannel == null)
+      ChannelScte scteChannel = channel as ChannelScte;
+      short virtualChannelNumber;
+      if (scteChannel == null || !short.TryParse(scteChannel.LogicalChannelNumber, out virtualChannelNumber))
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
@@ -188,7 +134,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       string error;
       bool isOutOfBandTunerLocked = false;
       int hr = _caInterface.get_SmartCardStatus(out status, out association, out error, out isOutOfBandTunerLocked);
-      HResult.ThrowException(hr, "Failed to read smart card status.");
+      TvExceptionDirectShowError.Throw(hr, "Failed to read smart card status.");
       if (status != SmartCardStatusType.CardInserted || (ChannelScanningInterface.IsScanning && !isOutOfBandTunerLocked) || !string.IsNullOrEmpty(error))
       {
         this.LogError("PBDA CableCARD: smart card status");
@@ -196,15 +142,41 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
         this.LogError("  association = {0}", association);
         this.LogError("  OOB locked  = {0}", isOutOfBandTunerLocked);
         this.LogError("  error       = {0}", error);
-        throw new TvExceptionNoSignal();
+        throw new TvException("CableCARD or out-of-band tuner error.");
       }
 
       if (!ChannelScanningInterface.IsScanning)
       {
-        // Note: SDV not explicitly supported.
-        hr = _caInterface.TuneByChannel((short)atscChannel.MajorChannel);
-        HResult.ThrowException(hr, "Failed to tune channel.");
+        // Note: SDV not explicitly supported. We can't request the program
+        // number from the tuner like we can when interacting directly with the
+        // DRI interface. Therefore tuning SDV channels might fail.
+        hr = _caInterface.TuneByChannel(virtualChannelNumber);
+        TvExceptionDirectShowError.Throw(hr, "Failed to tune channel.");
       }
+    }
+
+    /// <summary>
+    /// Check if the tuner can tune to a specific channel.
+    /// </summary>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
+    public override bool CanTune(IChannel channel)
+    {
+      // Tuning without a CableCARD (ATSC or clear QAM) is currently not supported.
+      ChannelScte scteChannel = channel as ChannelScte;
+      short virtualChannelNumber;
+      if (
+        scteChannel == null ||
+        !SupportedBroadcastStandards.HasFlag(BroadcastStandard.Scte) ||
+        (
+          (_channelScanner == null || !_channelScanner.IsScanning) &&
+          !short.TryParse(scteChannel.LogicalChannelNumber, out virtualChannelNumber)
+        )
+      )
+      {
+        return false;
+      }
+      return true;
     }
 
     #endregion
@@ -214,12 +186,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// <summary>
     /// Get the tuner's signal status.
     /// </summary>
-    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
     /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
     /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
     /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
     /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
-    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    public override void GetSignalStatus(out bool isLocked, out bool isPresent, out int strength, out int quality, bool onlyGetLock)
     {
       if (ChannelScanningInterface != null && ChannelScanningInterface.IsScanning)
       {
@@ -241,7 +213,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
               SmartCardAssociationType association;
               string error;
               int hr = _caInterface.get_SmartCardStatus(out status, out association, out error, out isLocked);
-              if (hr != (int)HResult.Severity.Success)
+              if (hr != (int)NativeMethods.HResult.S_OK)
               {
                 this.LogWarn("PBDA CableCARD: potential error updating signal status, hr = 0x{0:x}", hr);
               }
@@ -266,7 +238,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
         }
       }
 
-      base.GetSignalStatus(onlyGetLock, out isLocked, out isPresent, out strength, out quality);
+      base.GetSignalStatus(out isLocked, out isPresent, out strength, out quality, onlyGetLock);
     }
 
     #endregion
@@ -279,7 +251,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// Set the menu call back delegate.
     /// </summary>
     /// <param name="callBack">The call back delegate.</param>
-    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
+    void IConditionalAccessMenuActions.SetCallBack(IConditionalAccessMenuCallBack callBack)
     {
       lock (_caMenuCallBackLock)
       {
@@ -291,7 +263,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// Send a request from the user to the CAM to open the menu.
     /// </summary>
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool EnterMenu()
+    bool IConditionalAccessMenuActions.Enter()
+    {
+      return EnterMenu();
+    }
+
+    private bool EnterMenu()
     {
       this.LogDebug("PBDA CableCARD: enter menu");
 
@@ -311,7 +288,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       string lang;
       EALocationCodeType locationCode;
       int hr = _caInterface.get_SmartCardInfo(out cardName, out cardManufacturer, out isDaylightSavings, out ratingRegion, out timeOffset, out lang, out locationCode);
-      if (hr != (int)HResult.Severity.Success)
+      if (hr != (int)NativeMethods.HResult.S_OK)
       {
         this.LogError("PBDA CableCARD: failed to read smart card information, hr = 0x{0:x}");
         return false;
@@ -332,7 +309,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       int maxAppCount = 32;
       SmartCardApplication[] applicationDetails = new SmartCardApplication[33];
       hr = _caInterface.get_SmartCardApplications(out appCount, maxAppCount, applicationDetails);
-      if (hr != (int)HResult.Severity.Success)
+      if (hr != (int)NativeMethods.HResult.S_OK)
       {
         this.LogError("PBDA CableCARD: failed to read smart card application list, hr = 0x{0:x}");
         return false;
@@ -371,7 +348,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// Send a request from the user to the CAM to close the menu.
     /// </summary>
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool CloseMenu()
+    bool IConditionalAccessMenuActions.Close()
     {
       this.LogDebug("PBDA CableCARD: close menu");
       return CloseDialog(0);
@@ -382,7 +359,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// </summary>
     /// <param name="dialogNumber">The identifier for the dialog that has been closed.</param>
     /// <returns><c>true</c> if the CableCARD is successfully notified, otherwise <c>false</c></returns>
-    public bool CloseDialog(byte dialogNumber)
+    private bool CloseDialog(byte dialogNumber)
     {
       this.LogDebug("PBDA CableCARD: close dialog, dialog number = {0}", dialogNumber);
 
@@ -393,7 +370,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       }
 
       int hr = _caInterface.InformUIClosed(dialogNumber, UICloseReasonType.UserClosed);
-      if (hr == (int)HResult.Severity.Success)
+      if (hr == (int)NativeMethods.HResult.S_OK)
       {
         this.LogDebug("PBDA CableCARD: result = success");
         return true;
@@ -408,12 +385,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// </summary>
     /// <param name="choice">The index of the selection as an unsigned byte value.</param>
     /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool SelectMenuEntry(byte choice)
+    bool IConditionalAccessMenuActions.SelectEntry(byte choice)
     {
       this.LogDebug("PBDA CableCARD: select menu entry, choice = {0}", choice);
       lock (_caMenuCallBackLock)
       {
-        return _caMenuHandler.SelectEntry(choice, _caMenuCallBack);
+        return _caMenuHandler.SelectMenuEntry(choice, _caMenuCallBack);
       }
     }
 
@@ -423,7 +400,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// <param name="cancel"><c>True</c> to cancel the enquiry.</param>
     /// <param name="answer">The user's answer to the enquiry.</param>
     /// <returns><c>true</c> if the answer is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool AnswerEnquiry(bool cancel, string answer)
+    bool IConditionalAccessMenuActions.AnswerEnquiry(bool cancel, string answer)
     {
       if (answer == null)
       {

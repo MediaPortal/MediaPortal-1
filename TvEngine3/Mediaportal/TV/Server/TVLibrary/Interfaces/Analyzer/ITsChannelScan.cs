@@ -20,6 +20,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using Mediaportal.TV.Server.Common.Types.Enum;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
@@ -52,9 +53,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   }
 
   /// <summary>
-  /// Broadcast standards supported by the TsWriter scanner.
+  /// Service information formats supported by the TsWriter scanner.
   /// </summary>
-  internal enum BroadcastStandard
+  internal enum ServiceInformationFormat
   {
     /// <summary>
     /// DVB - EN 300 468.
@@ -92,10 +93,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <summary>
     /// Start scanning for services in the stream that is currently being received.
     /// </summary>
-    /// <param name="broadcastStandard">The broadcast standard that the stream conforms with.</param>
+    /// <param name="serviceInformationFormat">The format of the service information contained in the stream.</param>
     /// <returns>an HRESULT indicating whether scanning is successfully started</returns>
     [PreserveSig]
-    int ScanStream(BroadcastStandard broadcastStandard);
+    int ScanStream(ServiceInformationFormat serviceInformationFormat);
 
     /// <summary>
     /// Stop stream scanning.
@@ -231,7 +232,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="index">The multiplex index. The value of this parameter should be in the range 0..[GetMultiplexCount() - 1] (inclusive).</param>
     /// <param name="originalNetworkId">The multiplex's network ID.</param>
     /// <param name="transportStreamId">The multiplex's transport stream ID.</param>
-    /// <param name="type">The multiplex type (eg. cable, satellite, terrestrial), as per the TV database tuning detail type.</param>
+    /// <param name="broadcastStandard">The multiplex broadcast standard.</param>
     /// <param name="frequency">The multiplex frequency, in kHz.</param>
     /// <param name="polarisation">The multiplex polarisation. Only applicable for DVB-S/2 multiplexes.</param>
     /// <param name="modulation">The multiplex modulation scheme. Only applicable for DVB-S/2 and DVB-C multiplexes.</param>
@@ -250,7 +251,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     int GetMultiplexDetail(int index,
                             out int originalNetworkId,
                             out int transportStreamId,
-                            out int type,
+                            out BroadcastStandard broadcastStandard,
                             out int frequency,
                             out int polarisation,
                             out int modulation,

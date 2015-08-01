@@ -24,16 +24,19 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Xml;
-using DirectShowLib.BDA;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Atsc.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 {
@@ -48,12 +51,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       Ntt
     }
 
-    private struct PhysicalChannel
-    {
-      public int Channel;
-      public int Frequency;   // unit = kHz
-    }
-
     public delegate void RequestFdcTablesDelegate(List<byte> tableIds);
 
     #region constants
@@ -64,15 +61,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
     #region variables
 
-    private ITVCard _tuner = null;
+    private ITuner _tuner = null;
     private string _tunerIpAddress = null;
     private RequestFdcTablesDelegate _requestFdcTables = null;
     private IChannelScannerHelper _scanHelper = null;
     private bool _isScanning = false;
-    private int _scanTimeOut = 20000;   // milliseconds
+    private int _scanTimeOut = 20000;   // unit = milliseconds
 
     private volatile ScanStage _scanStage = ScanStage.NotScanning;
     private ManualResetEvent _event = null;
+    private volatile bool _cancelScan = false;
 
     // parsers
     private ParserMgt _parserMgt = new ParserMgt();
@@ -81,14 +79,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     private ParserLvct _parserLvct = new ParserLvct();
     private ParserSvct _parserSvct = new ParserSvct();
 
-    IList<ModulationType> _modulationModes = null;
-    IList<PhysicalChannel> _carrierFrequencies = null;
-    IDictionary<int, ATSCChannel> _channels = new Dictionary<int, ATSCChannel>();
-    HashSet<int> _sourcesWithoutNames = new HashSet<int>();
+    IList<ModulationMode> _modulationModes = null;
+    IList<int> _carrierFrequencies = null;
+    IDictionary<string, IChannel> _channels = new Dictionary<string, IChannel>();                       // channel number => channel
+    IDictionary<ushort, HashSet<string>> _sourceChannels = new Dictionary<ushort, HashSet<string>>();   // source ID => channel numbers
+    HashSet<string> _hiddenChannels = new HashSet<string>();        // channel numbers
+    HashSet<string> _ignoredChannels = new HashSet<string>();       // channel numbers
+    HashSet<ushort> _sourcesWithoutNames = new HashSet<ushort>();   // source IDs
 
     #endregion
 
-    public ChannelScannerDri(ITVCard tuner, string tunerIpAddress, RequestFdcTablesDelegate requestFdcTables)
+    public ChannelScannerDri(ITuner tuner, string tunerIpAddress, RequestFdcTablesDelegate requestFdcTables)
     {
       _tuner = tuner;
       _tunerIpAddress = tunerIpAddress;
@@ -162,92 +163,102 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
     }
 
-    public void OnCarrierDefinition(AtscTransmissionMedium transmissionMedium, byte index, int carrierFrequency)
+    public void OnCarrierDefinition(TransmissionMedium transmissionMedium, byte index, int carrierFrequency)
     {
-      if (transmissionMedium != AtscTransmissionMedium.Cable)
+      if (transmissionMedium != TransmissionMedium.Cable && transmissionMedium != TransmissionMedium.OverTheAir)
       {
         return;
       }
-      if (carrierFrequency > 1750)
+      if (carrierFrequency >= 997250)
       {
-        // Convert from centre frequency to the analog video carrier frequency.
-        // This is a BDA convention.
-        PhysicalChannel channel = new PhysicalChannel();
-        channel.Frequency = carrierFrequency - 1750;
-        channel.Channel = ATSCChannel.GetPhysicalChannelFromCableFrequency(carrierFrequency);
-        _carrierFrequencies[index] = channel;
+        // Charter includes SDV channels in the CableCARD channel map, but
+        // assigns them to physical channel 158 (which isn't actually used).
+        this.LogDebug("DRI scan: recognised physical channel 158 for Charter SDV handling");
+        carrierFrequency = 0;
       }
+      _carrierFrequencies[index] = carrierFrequency;    // standard centre frequency
     }
 
-    public void OnModulationMode(AtscTransmissionMedium transmissionMedium, byte index, TransmissionSystem transmissionSystem,
-      BinaryConvolutionCodeRate innerCodingMode, bool isSplitBitstreamMode, ModulationType modulationFormat, int symbolRate)
+    public void OnModulationMode(TransmissionMedium transmissionMedium, byte index, TransmissionSystem transmissionSystem,
+      FecCodeRate innerCodingMode, bool isSplitBitstreamMode, ModulationMode modulationFormat, int symbolRate)
     {
-      if (transmissionMedium != AtscTransmissionMedium.Cable)
+      if (transmissionMedium != TransmissionMedium.Cable && transmissionMedium != TransmissionMedium.OverTheAir)
       {
         return;
       }
       _modulationModes[index] = modulationFormat;
     }
 
-    public void OnLvctChannelDetail(MgtTableType tableType, string shortName, int majorChannelNumber, int minorChannelNumber,
-      ModulationMode modulationMode, uint carrierFrequency, int channelTsid, int programNumber, EtmLocation etmLocation,
-      bool accessControlled, bool hidden, int pathSelect, bool outOfBand, bool hideGuide, AtscServiceType serviceType, int sourceId)
+    public void OnLvctChannelDetail(MgtTableType tableType, string shortName, ushort majorChannelNumber, ushort minorChannelNumber,
+      ModulationMode modulationMode, uint carrierFrequency, ushort channelTsid, ushort programNumber, EtmLocation etmLocation,
+      bool accessControlled, bool hidden, byte pathSelect, bool outOfBand, bool hideGuide, ServiceType serviceType, ushort sourceId)
     {
-      if (programNumber == 0 || outOfBand || modulationMode == ModulationMode.Analog || modulationMode == ModulationMode.PrivateDescriptor ||
-        (serviceType != AtscServiceType.Audio && serviceType != AtscServiceType.DigitalTelevision) || sourceId == 0)
-      {
-        // Not tunable/supported.
-        return;
-      }
-
-      ATSCChannel channel = null;
-      if (_channels.TryGetValue(sourceId, out channel))
-      {
-        return;
-      }
-
-      channel = new ATSCChannel();
-      _channels.Add(sourceId, channel);
-
-      carrierFrequency /= 1000; // Hz => kHz
-      if (carrierFrequency > 1750)
-      {
-        // Convert from centre frequency to the analog video carrier
-        // frequency. This is a BDA convention.
-        channel.Frequency = carrierFrequency - 1750;
-      }
-      channel.PhysicalChannel = ATSCChannel.GetPhysicalChannelFromCableFrequency((int)carrierFrequency);
-
-      switch (modulationMode)
-      {
-        case ModulationMode.Atsc8Vsb:
-          channel.ModulationType = ModulationType.Mod8Vsb;
-          break;
-        case ModulationMode.Atsc16Vsb:
-          channel.ModulationType = ModulationType.Mod16Vsb;
-          break;
-        case ModulationMode.ScteMode1:
-          channel.ModulationType = ModulationType.Mod64Qam;
-          break;
-        default:
-          channel.ModulationType = ModulationType.Mod256Qam;
-          break;
-      }
-      channel.FreeToAir = !accessControlled;
-      channel.MediaType = _scanHelper.GetMediaType((int)serviceType, 0, 0).Value;
-
-      // TODO these two lines should be removed when ATSC channel gets a real LCN field
-      channel.MajorChannel = majorChannelNumber;
-      channel.MinorChannel = minorChannelNumber;
-
+      string logicalChannelNumber;
       if (minorChannelNumber == 0)
       {
-        channel.LogicalChannelNumber = majorChannelNumber;
+        logicalChannelNumber = majorChannelNumber.ToString();
       }
       else
       {
-        channel.LogicalChannelNumber = (majorChannelNumber * 1000) + minorChannelNumber;
+        logicalChannelNumber = string.Format("{0}.{1}", majorChannelNumber, minorChannelNumber);
       }
+
+      if (outOfBand || (serviceType != ServiceType.Audio && serviceType != ServiceType.DigitalTelevision))
+      {
+        // Not tunable/supported.
+        this.LogWarn("DRI scan: ignoring untunable L-VCT channel entry, out of band = {0}, service type = {1}", outOfBand, serviceType);
+        _ignoredChannels.Add(logicalChannelNumber);
+        return;
+      }
+
+      IChannel channel = null;
+      if (_channels.TryGetValue(logicalChannelNumber, out channel))
+      {
+        return;
+      }
+
+      // record the channel details
+      int frequency = (int)carrierFrequency / 1000;   // Hz => kHz, standard centre frequency
+      if (modulationMode == ModulationMode.Atsc8Vsb || modulationMode == ModulationMode.Atsc16Vsb)
+      {
+        ChannelAtsc atscChannel = new ChannelAtsc();
+        atscChannel.SourceId = sourceId;
+        atscChannel.Frequency = frequency;
+        switch (modulationMode)
+        {
+          case ModulationMode.Atsc8Vsb:
+            atscChannel.ModulationScheme = ModulationSchemeVsb.Vsb8;
+            break;
+          case ModulationMode.Atsc16Vsb:
+            atscChannel.ModulationScheme = ModulationSchemeVsb.Vsb16;
+            break;
+        }
+        channel = atscChannel;
+      }
+      else if (modulationMode == ModulationMode.ScteMode1 || modulationMode == ModulationMode.ScteMode2)
+      {
+        ChannelScte scteChannel = new ChannelScte();
+        scteChannel.SourceId = sourceId;
+        scteChannel.Frequency = frequency;
+        switch (modulationMode)
+        {
+          case ModulationMode.ScteMode1:
+            scteChannel.ModulationScheme = ModulationSchemeQam.Qam64;
+            break;
+          case ModulationMode.ScteMode2:
+            scteChannel.ModulationScheme = ModulationSchemeQam.Qam256;
+            break;
+        }
+        channel = scteChannel;
+      }
+      else
+      {
+        this.LogWarn("DRI scan: ignoring L-VCT channel definition, unsupported modulation mode {0}", modulationMode);
+        return;
+      }
+
+      _channels.Add(logicalChannelNumber, channel);
+
       channel.Name = shortName;
       if (tableType == MgtTableType.TvctCurrentNext1 || tableType == MgtTableType.TvctCurrentNext0)
       {
@@ -257,62 +268,147 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       {
         channel.Provider = "Cable";
       }
-      channel.NetworkId = sourceId;
-      channel.PmtPid = -1;  // The engine will automatically lookup and save the correct PID from the PAT when the channel is tuned.
-      channel.ServiceId = programNumber;
-      channel.TransportId = channelTsid;
+      channel.LogicalChannelNumber = logicalChannelNumber;
+      channel.MediaType = _scanHelper.GetMediaType((int)serviceType, 0, 0).Value;
+      channel.IsEncrypted = accessControlled;
+
+      ChannelMpeg2Base mpeg2Channel = channel as ChannelMpeg2Base;
+      mpeg2Channel.TransportStreamId = channelTsid;
+      mpeg2Channel.ProgramNumber = programNumber;
+      mpeg2Channel.PmtPid = 0;   // The engine will automatically lookup the correct PID from the PAT when the channel is tuned.
+
+      // progress tracking...
+      if (sourceId > 0)
+      {
+        HashSet<string> sourceChannels;
+        if (!_sourceChannels.TryGetValue(sourceId, out sourceChannels))
+        {
+          sourceChannels = new HashSet<string>();
+          _sourceChannels[sourceId] = sourceChannels;
+        }
+        sourceChannels.Add(logicalChannelNumber);
+      }
+      if (hidden)
+      {
+        _hiddenChannels.Add(logicalChannelNumber);
+      }
     }
 
-    public void OnSvctChannelDetail(AtscTransmissionMedium transmissionMedium, int vctId, int virtualChannelNumber, bool applicationVirtualChannel,
-      int bitstreamSelect, int pathSelect, ChannelType channelType, int sourceId, byte cdsReference, int programNumber, byte mmsReference)
+    public void OnSvctChannelDetail(TransmissionMedium transmissionMedium, ushort vctId, ushort virtualChannelNumber, bool applicationVirtualChannel,
+      byte bitstreamSelect, byte pathSelect, ChannelType channelType, ushort sourceId, byte cdsReference, ushort programNumber, byte mmsReference)
     {
-      if (transmissionMedium != AtscTransmissionMedium.Cable || applicationVirtualChannel || programNumber == 0 || sourceId == 0)
+      string logicalChannelNumber = virtualChannelNumber.ToString();
+
+      if ((transmissionMedium != TransmissionMedium.Cable && transmissionMedium != TransmissionMedium.OverTheAir) || applicationVirtualChannel)
       {
         // Not tunable/supported.
+        this.LogWarn("DRI scan: ignoring untunable S-VCT channel entry, transmission medium = {0}, application virtual channel = {1}", transmissionMedium, applicationVirtualChannel);
+        _ignoredChannels.Add(logicalChannelNumber);
         return;
       }
 
-      ATSCChannel channel = null;
-      if (_channels.TryGetValue(sourceId, out channel))
+      IChannel channel = null;
+      if (_channels.TryGetValue(logicalChannelNumber, out channel))
       {
         return;
       }
 
-      channel = new ATSCChannel();
-      _channels.Add(sourceId, channel);
+      // record the channel details
+      ModulationMode modulationMode = _modulationModes[mmsReference];
+      int frequency = _carrierFrequencies[cdsReference];
+      if (modulationMode == ModulationMode.Atsc8Vsb || modulationMode == ModulationMode.Atsc16Vsb)
+      {
+        ChannelAtsc atscChannel = new ChannelAtsc();
+        atscChannel.Provider = "Terrestrial";
+        atscChannel.SourceId = sourceId;
+        atscChannel.Frequency = frequency;
+        switch (modulationMode)
+        {
+          case ModulationMode.Atsc8Vsb:
+            atscChannel.ModulationScheme = ModulationSchemeVsb.Vsb8;
+            break;
+          case ModulationMode.Atsc16Vsb:
+            atscChannel.ModulationScheme = ModulationSchemeVsb.Vsb16;
+            break;
+        }
+        channel = atscChannel;
+      }
+      else if (modulationMode == ModulationMode.ScteMode1 || modulationMode == ModulationMode.ScteMode2)
+      {
+        ChannelScte scteChannel = new ChannelScte();
+        scteChannel.Provider = "Cable";
+        scteChannel.SourceId = sourceId;
+        scteChannel.Frequency = frequency;
+        switch (modulationMode)
+        {
+          case ModulationMode.ScteMode1:
+            scteChannel.ModulationScheme = ModulationSchemeQam.Qam64;
+            break;
+          case ModulationMode.ScteMode2:
+            scteChannel.ModulationScheme = ModulationSchemeQam.Qam256;
+            break;
+        }
+        channel = scteChannel;
+      }
+      else
+      {
+        this.LogWarn("DRI scan: ignoring S-VCT channel definition, unsupported modulation format {0}", modulationMode);
+        return;
+      }
 
-      channel.LogicalChannelNumber = virtualChannelNumber;
-      channel.MediaType = MediaTypeEnum.TV;
-      channel.FreeToAir = false;
-      channel.Frequency = _carrierFrequencies[cdsReference].Frequency;
-      channel.MajorChannel = virtualChannelNumber;
-      channel.MinorChannel = 0;
-      channel.ModulationType = _modulationModes[mmsReference];
-      channel.NetworkId = sourceId;
-      channel.PhysicalChannel = _carrierFrequencies[cdsReference].Channel;
-      channel.PmtPid = -1;  // The engine will automatically lookup and save the correct PID from the PAT when the channel is tuned.
-      channel.Provider = "Cable";
-      channel.ServiceId = programNumber;
-      channel.TransportId = 0;  // We don't have these details.
-      _sourcesWithoutNames.Add(sourceId);
+      _channels.Add(logicalChannelNumber, channel);
+
+      channel.LogicalChannelNumber = logicalChannelNumber;
+      channel.MediaType = MediaType.Television;
+      channel.IsEncrypted = true;
+
+      ChannelMpeg2Base mpeg2Channel = channel as ChannelMpeg2Base;
+      mpeg2Channel.TransportStreamId = 0;   // We don't have this information.
+      mpeg2Channel.ProgramNumber = programNumber;
+      mpeg2Channel.PmtPid = 0;              // The engine will automatically lookup the correct PID from the PAT when the channel is tuned.
+
+      // progress tracking...
+      if (sourceId > 0)
+      {
+        HashSet<string> sourceChannels;
+        if (!_sourceChannels.TryGetValue(sourceId, out sourceChannels))
+        {
+          sourceChannels = new HashSet<string>();
+          _sourceChannels[sourceId] = sourceChannels;
+        }
+        sourceChannels.Add(logicalChannelNumber);
+        _sourcesWithoutNames.Add(sourceId);
+      }
+      if (channelType == ChannelType.Hidden)
+      {
+        _hiddenChannels.Add(logicalChannelNumber);
+      }
     }
 
-    public void OnSourceName(AtscTransmissionMedium transmissionMedium, bool applicationType, int sourceId, string name)
+    public void OnSourceName(TransmissionMedium transmissionMedium, bool applicationType, ushort sourceId, string name)
     {
-      if (transmissionMedium != AtscTransmissionMedium.Cable || applicationType)
+      if ((transmissionMedium != TransmissionMedium.Cable && transmissionMedium != TransmissionMedium.OverTheAir) || applicationType || sourceId <= 0)
       {
         return;
       }
-      ATSCChannel channel = null;
-      if (_channels.TryGetValue(sourceId, out channel))
+
+      // Set the name for all channels linked to the source.
+      HashSet<string> sourceChannels;
+      if (_sourceChannels.TryGetValue(sourceId, out sourceChannels))
       {
-        channel.Name = name;
-        channel.NetworkId = sourceId;
-        _sourcesWithoutNames.Remove(sourceId);
-        if (_sourcesWithoutNames.Count == 0)
+        foreach (string logicalChannelNumber in sourceChannels)
         {
-          this.LogInfo("DRI scan: all sources now have names, assuming NTT is complete");
-          OnTableComplete(MgtTableType.NttSns);
+          IChannel channel = null;
+          if (_channels.TryGetValue(logicalChannelNumber, out channel))
+          {
+            channel.Name = name;
+            _sourcesWithoutNames.Remove(sourceId);
+            if (_sourcesWithoutNames.Count == 0)
+            {
+              this.LogInfo("DRI scan: all sources now have names, assuming NTT is complete");
+              OnTableComplete(MgtTableType.NttSns);
+            }
+          }
         }
       }
     }
@@ -323,12 +419,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
     #endregion
 
-    #region IScannerInternal member
+    #region IChannelScannerInternal members
 
     /// <summary>
     /// Set the scanner's tuner.
     /// </summary>
-    public virtual ITVCard Tuner
+    public virtual ITuner Tuner
     {
       set
       {
@@ -355,7 +451,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     public void ReloadConfiguration()
     {
       this.LogDebug("DRI scan: reload configuration");
-      _scanTimeOut = SettingsManagement.GetValue("timeoutSDT", 20) * 1000;
+      _scanTimeOut = SettingsManagement.GetValue("timeOutScan", 20000);
     }
 
     /// <summary>
@@ -375,15 +471,39 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// </summary>
     public void AbortScanning()
     {
-      // TODO
+      this.LogInfo("DRI scan: abort");
+      try
+      {
+        _cancelScan = true;
+        if (_tuner != null)
+        {
+          _tuner.CancelTune(0);
+        }
+        if (_event != null)
+        {
+          _event.Set();
+        }
+      }
+      catch
+      {
+      }
     }
 
+    /// <summary>
+    /// Tune to a specified channel and scan for channel information.
+    /// </summary>
+    /// <param name="channel">The channel to tune to.</param>
+    /// <returns>the channel information found</returns>
     public List<IChannel> Scan(IChannel channel)
     {
+      _cancelScan = false;
       _channels.Clear();
+      _sourceChannels.Clear();
+      _hiddenChannels.Clear();
+      _ignoredChannels.Clear();
       _sourcesWithoutNames.Clear();
-      _modulationModes = new ModulationType[255];
-      _carrierFrequencies = new PhysicalChannel[255];
+      _modulationModes = new ModulationMode[255];
+      _carrierFrequencies = new int[255];
       _event = new ManualResetEvent(false);
       try
       {
@@ -407,7 +527,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         _event.Reset();
         int availableTimeMilliseconds = _scanTimeOut;
         bool completedStage = false;
-        while (availableTimeMilliseconds > 0)
+        while (!_cancelScan && availableTimeMilliseconds > 0)
         {
           _requestFdcTables(new List<byte> { 0xc2, 0xc7 });
           int waitTime = Math.Min(TABLE_REREQUEST_TIMEOUT, availableTimeMilliseconds);
@@ -421,7 +541,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
         if (!completedStage)
         {
-          this.LogError("DRI scan: failed to complete NIT scan stage, check firewall permissions and consider increasing SDT/VCT timeout");
+          this.LogError("DRI scan: failed to complete NIT scan stage, check firewall(s) allow full access to your tuner and consider increasing SDT/VCT timeout");
           return new List<IChannel>();
         }
 
@@ -434,7 +554,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         _parserLvct.OnTableComplete += OnTableComplete;
         _event.Reset();
         completedStage = false;
-        while (availableTimeMilliseconds > 0)
+        while (!_cancelScan && availableTimeMilliseconds > 0)
         {
           _requestFdcTables(new List<byte> { 0xc4, 0xc7, 0xc8, 0xc9 });
           int waitTime = Math.Min(TABLE_REREQUEST_TIMEOUT, availableTimeMilliseconds);
@@ -458,7 +578,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         _parserNtt.OnTableComplete += OnTableComplete;
         _event.Reset();
         completedStage = false;
-        while (availableTimeMilliseconds > 0)
+        while (!_cancelScan && availableTimeMilliseconds > 0)
         {
           _requestFdcTables(new List<byte> { 0xc3, 0xc7 });
           int waitTime = Math.Min(TABLE_REREQUEST_TIMEOUT, availableTimeMilliseconds);
@@ -470,13 +590,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           availableTimeMilliseconds -= waitTime;
         }
 
-        _scanStage = ScanStage.NotScanning;
-
         if (!completedStage)
         {
           this.LogWarn("DRI scan: failed to complete NTT scan stage, consider increasing SDT/VCT timeout");
         }
-        this.LogInfo("DRI scan: scanned channel count = {0}, without names = {1}", _channels.Count, _sourcesWithoutNames.Count);
+        else if (_cancelScan)
+        {
+          return new List<IChannel>();
+        }
+
+        _scanStage = ScanStage.NotScanning;
+        this.LogInfo("DRI scan: stats...");
+        this.LogInfo("  scanned = {0}", _channels.Count);
+        this.LogInfo("  no name = {0} [{1}]", _sourcesWithoutNames.Count, string.Join(", ", _sourcesWithoutNames));
+        this.LogInfo("  hidden  = {0} [{1}]", _hiddenChannels.Count, string.Join(", ", _hiddenChannels));
+        this.LogInfo("  ignored = {0} [{1}]", _ignoredChannels.Count, string.Join(", ", _ignoredChannels));
 
         // Get the SiliconDust proprietary channel list.
         // We use this for two purposes:
@@ -496,27 +624,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         // with the TA/TR, and we have no way to ask the tuner to ask the TA/TR
         // to give us the information. Therefore we have to use the proprietary
         // list.
-        IDictionary<int, string> subscribedAccessible;
-        IDictionary<int, string> notSubscribed;
-        IDictionary<int, string> notAccessible;
-        GetSiliconDustChannelList(out subscribedAccessible, out notSubscribed, out notAccessible);
+        this.LogDebug("DRI scan: merge with SiliconDust lineup info...");
+        IDictionary<string, string> subscribedAccessible;
+        IDictionary<string, string> notSubscribed;
+        IDictionary<string, string> notAccessible;
+        bool gotSiliconDustInfo = GetSiliconDustChannelSets(out subscribedAccessible, out notSubscribed, out notAccessible);
 
         // Build/filter the final channel list.
         List<IChannel> channels = new List<IChannel>();
-        foreach (ATSCChannel atscChannel in _channels.Values)
+        foreach (IChannel scannedChannel in _channels.Values)
         {
           // If the SiliconDust list is available, filter to subscribed and
           // accessible channels only.
-          if (subscribedAccessible.Count == 0 || subscribedAccessible.Remove(atscChannel.LogicalChannelNumber))
+          if (!gotSiliconDustInfo || subscribedAccessible.Remove(scannedChannel.LogicalChannelNumber))
           {
-            IChannel c = atscChannel as IChannel;
+            IChannel c = scannedChannel;
             _scanHelper.UpdateChannel(ref c);
             channels.Add(c);
           }
-          else if (!notSubscribed.Remove(atscChannel.LogicalChannelNumber) && !notAccessible.Remove(atscChannel.LogicalChannelNumber))
+          else if (!notSubscribed.Remove(channel.LogicalChannelNumber) && !notAccessible.Remove(scannedChannel.LogicalChannelNumber))
           {
-            this.LogWarn("DRI scan: unknown channel accessibility, channel number = {0}, name = {1}", atscChannel.LogicalChannelNumber, atscChannel.Name ?? "[unknown]");
-            IChannel c = atscChannel as IChannel;
+            this.LogWarn("DRI scan: unknown channel accessibility, number = {0}, name = {1}", scannedChannel.LogicalChannelNumber, scannedChannel.Name ?? "[unknown]");
+            IChannel c = scannedChannel;
             _scanHelper.UpdateChannel(ref c);
             channels.Add(c);
           }
@@ -524,82 +653,110 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
         // Any channels remaining in the SiliconDust subscribed and accessible
         // list are switched digital video channels that weren't in the
-        // CableCARD's channel list. Add them...
-        if (subscribedAccessible.Count > 0)
+        // CableCARD's channel list. Add them. Note these channels won't be
+        // tunable by clear QAM tuners even if they're actually not encrypted,
+        // because we can't get the physical tuning details.
+        if (gotSiliconDustInfo && subscribedAccessible.Count > 0)
         {
-          this.LogInfo("DRI scan: SDV channel count = {0}", subscribedAccessible.Count);
-          foreach (KeyValuePair<int, string> pair in subscribedAccessible)
+          this.LogInfo("  switched digital   = {0}", subscribedAccessible.Count);
+          foreach (KeyValuePair<string, string> pair in subscribedAccessible)
           {
-            ATSCChannel c = new ATSCChannel();
-            c.Name = pair.Value;
-            c.LogicalChannelNumber = pair.Key;
-            c.Provider = "Cable";
-            c.MajorChannel = pair.Key;
-            c.MinorChannel = 0;
-            c.MediaType = MediaTypeEnum.TV;
-            c.FreeToAir = false;
-            c.Frequency = 0;
-            c.PhysicalChannel = 0;
-            c.ModulationType = ModulationType.ModNotDefined;
-            c.NetworkId = 0;    // ideally we should have this in order to update channel details correctly
-            c.TransportId = 0;  // doesn't matter
-            c.ServiceId = 1;    // must be non-zero in order to tune successfully with a Ceton tuner
-            c.PmtPid = 0;       // must be zero so we lookup the correct PMT PID when tuning
-            channels.Add(c);
+            channels.Add(CreateSdvChannel(pair.Value, pair.Key));
           }
         }
+        else if (!gotSiliconDustInfo)
+        {
+          // This may or may not catch SDV channels.
+          HashSet<string> sdvChannels = new HashSet<string>();
+          foreach (int lcn in _parserSvct.DefinedChannels)
+          {
+            sdvChannels.Add(lcn.ToString());
+          }
+          sdvChannels.ExceptWith(_channels.Keys);
+          sdvChannels.ExceptWith(_ignoredChannels);
+          if (sdvChannels.Count > 0)
+          {
+            this.LogInfo("  switched digital   = {0}", sdvChannels.Count);
+            foreach (string channelNumber in sdvChannels)
+            {
+              channels.Add(CreateSdvChannel(channelNumber));
+            }
+          }
+        }
+
         return channels;
       }
       finally
       {
         _event.Close();
+        _event = null;
         _isScanning = false;
       }
     }
 
-    public List<IChannel> ScanNIT(IChannel channel)
+    /// <summary>
+    /// Tune to a specified channel and scan for network information.
+    /// </summary>
+    /// <param name="channel">The channel to tune to.</param>
+    /// <returns>the network information found</returns>
+    public List<TuningDetail> ScanNIT(IChannel channel)
     {
-      throw new NotImplementedException("DRI scan: NIT scanning not implemented");
+      throw new NotImplementedException();
     }
 
-    private void GetSiliconDustChannelList(out IDictionary<int, string> subscribedAccessible, out IDictionary<int, string> notSubscribed, out IDictionary<int, string> notAccessible)
+    private bool GetSiliconDustChannelSets(out IDictionary<string, string> subscribedAccessible, out IDictionary<string, string> notSubscribed, out IDictionary<string, string> notAccessible)
     {
-      subscribedAccessible = new Dictionary<int, string>();
-      notSubscribed = new SortedDictionary<int, string>();
-      notAccessible = new Dictionary<int, string>();
+      subscribedAccessible = new Dictionary<string, string>();  // channel number => name
+      notSubscribed = new SortedDictionary<string, string>();   // channel number => name
+      notAccessible = new Dictionary<string, string>();         // channel number => name
 
-      if (GetSiliconDustChannelList(new Uri(new Uri(_tunerIpAddress), "lineup.xml"), out subscribedAccessible, out notAccessible))
+      IDictionary<string, string> subscribedInaccessible;
+      if (!GetSiliconDustChannelLineUp(new Uri(new Uri(_tunerIpAddress), "lineup.xml"), out subscribedAccessible, out subscribedInaccessible))
       {
-        this.LogInfo("DRI scan: subscribed channel count = {0}, inaccessible = {1}", subscribedAccessible.Count + notAccessible.Count, notAccessible.Count);
-        IDictionary<int, string> allAccessibleIncludingNotSubscribed;
-        if (GetSiliconDustChannelList(new Uri(new Uri(_tunerIpAddress), "lineup.xml?show=all"), out allAccessibleIncludingNotSubscribed, out notAccessible))
-        {
-          this.LogInfo("DRI scan: total channel count = {0}, inaccessible = {1}", allAccessibleIncludingNotSubscribed.Count + notAccessible.Count, notAccessible.Count);
-          foreach (KeyValuePair<int, string> channel in notAccessible)
-          {
-            this.LogDebug("  {0:-4} = {1}", channel.Key, channel.Value);
-          }
-
-          HashSet<int> temp = new HashSet<int>(allAccessibleIncludingNotSubscribed.Keys);
-          temp.ExceptWith(subscribedAccessible.Keys);
-          this.LogInfo("DRI scan: not subscribed channel count = {0}", temp.Count);
-          foreach (int i in temp)
-          {
-            string name = allAccessibleIncludingNotSubscribed[i];
-            notSubscribed.Add(i, name);
-            this.LogDebug("  {0:-4} = {1}", i, name);
-          }
-        }
+        return false;
       }
+
+      int subscribedCount = subscribedAccessible.Count + notAccessible.Count;
+      this.LogInfo("  subscribed         = {0}", subscribedCount);
+      this.LogInfo("  subscribed DRM     = {0}", subscribedInaccessible.Count);
+      foreach (KeyValuePair<string, string> channel in subscribedInaccessible)
+      {
+        this.LogDebug("  {0:-6} = {1}", channel.Key, channel.Value);
+      }
+
+      IDictionary<string, string> allAccessibleIncludingNotSubscribed;
+      if (!GetSiliconDustChannelLineUp(new Uri(new Uri(_tunerIpAddress), "lineup.xml?show=all"), out allAccessibleIncludingNotSubscribed, out notAccessible))
+      {
+        return false;
+      }
+
+      HashSet<string> temp = new HashSet<string>(allAccessibleIncludingNotSubscribed.Keys);
+      temp.ExceptWith(subscribedAccessible.Keys);
+      this.LogInfo("  not subscribed     = {0}", temp.Count);
+      foreach (string channelNumber in temp)
+      {
+        string name = allAccessibleIncludingNotSubscribed[channelNumber];
+        notSubscribed.Add(channelNumber, name);
+        this.LogDebug("  {0:-6} = {1}", channelNumber, name);
+      }
+
+      temp = new HashSet<string>(notAccessible.Keys);
+      temp.ExceptWith(subscribedInaccessible.Keys);
+      this.LogInfo("  not subscribed DRM = {0}", temp.Count);
+      foreach (string channelNumber in temp)
+      {
+        this.LogDebug("  {0:-6} = {1}", channelNumber, notAccessible[channelNumber]);
+      }
+      return true;
     }
 
-    private bool GetSiliconDustChannelList(Uri uri, out IDictionary<int, string> channelsAccessible, out IDictionary<int, string> channelsInaccessible)
+    private bool GetSiliconDustChannelLineUp(Uri uri, out IDictionary<string, string> channelsAccessible, out IDictionary<string, string> channelsInaccessible)
     {
-      channelsAccessible = new SortedDictionary<int, string>();
-      channelsInaccessible = new SortedDictionary<int, string>();
+      channelsAccessible = new SortedDictionary<string, string>();    // channel number => name
+      channelsInaccessible = new SortedDictionary<string, string>();  // channel number => name
 
       // Request.
-      HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+      HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(uri);
       request.Timeout = 5000;
       HttpWebResponse response = null;
       try
@@ -608,7 +765,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "DRI scan: failed to get XML lineup from tuner, URI = ", uri);
+        this.LogWarn(ex, "DRI scan: failed to get SiliconDust XML lineup from tuner, URI = ", uri);
         request.Abort();
         return false;
       }
@@ -623,14 +780,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           {
             using (XmlReader xmlReader = XmlReader.Create(textReader))
             {
-              int number = 0;
+              string number = string.Empty;
               string name = string.Empty;
               bool isCopyFreely = true;
               while (!xmlReader.EOF)
               {
                 if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name.Equals("Program"))
                 {
-                  if (number != 0)
+                  if (string.IsNullOrEmpty(number))
                   {
                     if (!isCopyFreely)
                     {
@@ -641,7 +798,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
                       channelsAccessible.Add(number, name);
                     }
                   }
-                  number = 0;
+                  number = string.Empty;
                   name = string.Empty;
                   isCopyFreely = true;
                 }
@@ -649,7 +806,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
                 {
                   if (xmlReader.Name.Equals("GuideNumber"))
                   {
-                    number = xmlReader.ReadElementContentAsInt();
+                    // I don't know whether SiliconDust would have two-part
+                    // channel numbers in this list, or what format they would
+                    // have (eg. X.Y or X-Y) if they did. For now assume they
+                    // either don't have them or use our format (X.Y).
+                    number = xmlReader.ReadElementContentAsString();
                   }
                   else if (xmlReader.Name.Equals("GuideName"))
                   {
@@ -678,7 +839,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "DRI scan: failed to handle XML lineup response from tuner, URI = {0}", uri);
+        this.LogError(ex, "DRI scan: failed to handle SiliconDust XML lineup response from tuner, URI = {0}", uri);
         return false;
       }
       finally
@@ -688,6 +849,30 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           response.Close();
         }
       }
+    }
+
+    private IChannel CreateSdvChannel(string number, string name = null)
+    {
+      ChannelScte channel = new ChannelScte();
+      if (string.IsNullOrEmpty(name))
+      {
+        channel.Name = string.Format("Unknown SDV {0}", number);
+      }
+      else
+      {
+        channel.Name = name;
+      }
+      channel.LogicalChannelNumber = number;
+      channel.Provider = "Cable";
+      channel.MediaType = MediaType.Television;
+      channel.IsEncrypted = true;
+      channel.TransportStreamId = 0;    // doesn't really matter
+      channel.SourceId = 0;             // ideally we should have this in order to update channel details
+      channel.ProgramNumber = 1;        // must be non-zero in order to tune successfully with a Ceton tuner (which delivers a single-program TS... with PAT and PMT for all channels in the mux)
+      channel.PmtPid = 0;               // lookup the correct PID from the PAT when the channel is tuned
+      channel.Frequency = 0;
+      channel.ModulationScheme = ModulationSchemeQam.Automatic;
+      return channel;
     }
   }
 }

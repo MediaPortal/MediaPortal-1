@@ -25,7 +25,7 @@ using System.Net;
 using System.Net.Cache;
 using System.Text;
 using System.Xml;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using UPnP.Infrastructure;
 using UPnP.Infrastructure.Common;
@@ -55,9 +55,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
       }
     }
 
+    ~ServiceBase()
+    {
+      Dispose(false);
+    }
+
     public void Dispose()
     {
-      UnsubscribeStateVariables();
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    private void Dispose(bool isDisposing)
+    {
+      if (isDisposing)
+      {
+        UnsubscribeStateVariables();
+      }
     }
 
     public void SubscribeStateVariables(StateVariableChangedDlgt svChangeDlg, EventSubscriptionFailedDlgt esFailDlg = null)
@@ -144,7 +158,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
         }
       }
       LinkData preferredLink = serviceDescriptor.RootDescriptor.SSDPRootEntry.PreferredLink;
-      HttpWebRequest request = (HttpWebRequest)WebRequest.Create(new Uri(
+      HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(new Uri(
         new Uri(preferredLink.DescriptionLocation), serviceDescriptor.ControlURL)
       );
       request.ServicePoint.BindIPEndPointDelegate = (servicePoint, remoteEndPoint, retryCount) =>
@@ -173,6 +187,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
             sw.Write(action.ToString());
             sw.Close();
           }
+          requestStream.Close();
         }
       }
       catch

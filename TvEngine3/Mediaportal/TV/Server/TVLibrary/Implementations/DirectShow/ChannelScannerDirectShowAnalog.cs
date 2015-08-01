@@ -21,10 +21,10 @@
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Analog;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 {
@@ -38,7 +38,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// </summary>
     /// <param name="tuner">The tuner associated with this scanner.</param>
     /// <param name="analyser">The stream analyser instance to use for scanning.</param>
-    public ChannelScannerDirectShowAnalog(ITVCard tuner, ITsChannelScan analyser)
+    public ChannelScannerDirectShowAnalog(ITuner tuner, ITsChannelScan analyser)
       : base(tuner, new ChannelScannerHelperAnalog(), analyser)
     {
     }
@@ -50,8 +50,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// <returns></returns>
     public override List<IChannel> Scan(IChannel channel)
     {
-      AnalogChannel analogChannel = channel as AnalogChannel;
-      if (analogChannel != null && analogChannel.VideoSource != CaptureSourceVideo.Tuner)
+      ChannelCapture captureChannel = channel as ChannelCapture;
+      if (captureChannel != null)
       {
         TunerAnalog analogTuner = _tuner as TunerAnalog;
         if (analogTuner != null)

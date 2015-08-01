@@ -19,21 +19,21 @@
 #endregion
 
 using System.Collections.Generic;
-using DirectShowLib.BDA;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 {
   /// <summary>
-  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for TechniSat ATSC tuners
-  /// with B2C2 chipsets and WDM drivers.
+  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for
+  /// TechniSat ATSC tuners with B2C2 chipsets and WDM drivers.
   /// </summary>
   internal class TunerB2c2Atsc : TunerB2c2Base
   {
@@ -42,7 +42,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// </summary>
     /// <param name="info">The B2C2-specific information (<see cref="DeviceInfo"/>) about the tuner.</param>
     public TunerB2c2Atsc(DeviceInfo info)
-      : base(info, CardType.Atsc)
+      : base(info, BroadcastStandard.Atsc | BroadcastStandard.Scte)
     {
     }
 
@@ -55,9 +55,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      ATSCChannel atscChannel = channel as ATSCChannel;
+      if (!base.CanTune(channel))
+      {
+        return false;
+      }
+
       // Channels delivered using switched digital video are not supported.
-      if (atscChannel == null || (atscChannel.PhysicalChannel <= 0 && atscChannel.Frequency <= 0))
+      ChannelScte scteChannel = channel as ChannelScte;
+      if (scteChannel != null && scteChannel.Frequency <= 0)
       {
         return false;
       }
@@ -71,37 +76,78 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("B2C2 ATSC: set tuning parameters");
-      ATSCChannel atscChannel = channel as ATSCChannel;
-      if (atscChannel == null)
+      ChannelAtsc atscChannel = channel as ChannelAtsc;
+      ChannelScte scteChannel = channel as ChannelScte;
+      if (atscChannel == null && scteChannel == null)
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
 
       lock (_tunerAccessLock)
       {
-        HResult.ThrowException(_interfaceData.SelectDevice(_deviceInfo.DeviceId), "Failed to select device.");
+        TvExceptionDirectShowError.Throw(_interfaceData.SelectDevice(_deviceInfo.DeviceId), "Failed to select device.");
 
-        // If the channel modulation scheme is 8 VSB then it is an over-the-air ATSC channel,
-        // otherwise it is a cable (SCTE ITU-T annex B) channel.
         int frequency;
-        Modulation modulation = Modulation.Vsb8;
-        if (atscChannel.ModulationType == ModulationType.Mod8Vsb)
+        Modulation modulation;
+        if (atscChannel != null)
         {
-          frequency = ATSCChannel.GetTerrestrialFrequencyFromPhysicalChannel(atscChannel.PhysicalChannel);
-          this.LogDebug("B2C2 ATSC: translated ATSC physical channel number {0} to {1} kHz", atscChannel.PhysicalChannel, frequency);
+          frequency = atscChannel.Frequency;
+          switch (atscChannel.ModulationScheme)
+          {
+            case ModulationSchemeVsb.Vsb8:
+              modulation = Modulation.Vsb8;
+              break;
+            case ModulationSchemeVsb.Vsb16:
+              modulation = Modulation.Vsb16;
+              break;
+            case ModulationSchemeVsb.Automatic:
+              this.LogWarn("B2C2 ATSC: falling back to unknown modulation scheme");
+              modulation = Modulation.Unknown;
+              break;
+            default:
+              modulation = (Modulation)atscChannel.ModulationScheme;
+              break;
+          }
         }
         else
         {
-          frequency = (int)atscChannel.Frequency;
-          modulation = Modulation.Qam256AnnexB;
-          if (atscChannel.ModulationType == ModulationType.Mod64Qam)
+          frequency = scteChannel.Frequency;
+          switch (scteChannel.ModulationScheme)
           {
-            modulation = Modulation.Qam64AnnexB;
+            case ModulationSchemeQam.Qam16:
+              modulation = Modulation.Qam16;
+              break;
+            case ModulationSchemeQam.Qam32:
+              modulation = Modulation.Qam32;
+              break;
+            case ModulationSchemeQam.Qam64:
+              modulation = Modulation.Qam64AnnexB;
+              break;
+            case ModulationSchemeQam.Qam128:
+              modulation = Modulation.Qam128;
+              break;
+            case ModulationSchemeQam.Qam256:
+              modulation = Modulation.Qam256AnnexB;
+              break;
+            case ModulationSchemeQam.Qam512:
+            case ModulationSchemeQam.Qam1024:
+            case ModulationSchemeQam.Qam2048:
+            case ModulationSchemeQam.Qam4096:
+              this.LogWarn("B2C2 ATSC: unsupported modulation scheme {0}, falling back to unknown", scteChannel.ModulationScheme);
+              modulation = Modulation.Unknown;
+              break;
+            case ModulationSchemeQam.Automatic:
+              this.LogWarn("B2C2 ATSC: falling back to unknown modulation scheme");
+              modulation = Modulation.Unknown;
+              break;
+            default:
+              modulation = (Modulation)scteChannel.ModulationScheme;
+              break;
           }
         }
 
-        HResult.ThrowException(_interfaceTuner.SetFrequency(frequency / 1000), "Failed to set frequency.");
-        HResult.ThrowException(_interfaceTuner.SetModulation(modulation), "Failed to set modulation.");
+        TvExceptionDirectShowError.Throw(_interfaceTuner.SetFrequency(frequency / 1000), "Failed to set frequency.");
+        TvExceptionDirectShowError.Throw(_interfaceTuner.SetModulation(modulation), "Failed to set modulation.");
         base.PerformTuning(channel);
       }
     }
@@ -114,12 +160,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// Actually load the tuner.
     /// </summary>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public override IList<ICustomDevice> PerformLoading()
+    public override IList<ITunerExtension> PerformLoading()
     {
-      IList<ICustomDevice> extensions = base.PerformLoading();
+      IList<ITunerExtension> extensions = base.PerformLoading();
 
-      // ATSC/SCTE EPG grabbing currently not supported.
-      _epgGrabber = null;
+      _epgGrabber = null;   // ATSC/SCTE EPG grabbing currently not supported.
 
       if (_channelScanner != null)
       {

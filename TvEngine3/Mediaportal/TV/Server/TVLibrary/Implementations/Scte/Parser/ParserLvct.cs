@@ -19,31 +19,15 @@
 #endregion
 
 using System.Collections.Generic;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Atsc.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
 {
-  internal enum ModulationMode : byte
-  {
-    Analog = 0x01,
-    ScteMode1 = 0x02, // 64 QAM
-    ScteMode2 = 0x03, // 256 QAM
-    Atsc8Vsb = 0x04,
-    Atsc16Vsb = 0x05,
-    PrivateDescriptor = 0x80
-  }
-
-  internal enum EtmLocation : byte
-  {
-    None,
-    PhysicalChannelThis,
-    PhysicalChannelTsid
-  }
-
-  internal delegate void LvctChannelDetailDelegate(MgtTableType tableType, string shortName, int majorChannelNumber, int minorChannelNumber,
-      ModulationMode modulationMode, uint carrierFrequency, int channelTsid, int programNumber, EtmLocation etmLocation,
-      bool accessControlled, bool hidden, int pathSelect, bool outOfBand, bool hideGuide, AtscServiceType serviceType, int sourceId);
+  internal delegate void LvctChannelDetailDelegate(MgtTableType tableType, string shortName, ushort majorChannelNumber, ushort minorChannelNumber,
+      ModulationMode modulationMode, uint carrierFrequency, ushort channelTsid, ushort programNumber, EtmLocation etmLocation,
+      bool accessControlled, bool hidden, byte pathSelect, bool outOfBand, bool hideGuide, ServiceType serviceType, ushort sourceId);
 
   /// <summary>
   /// ATSC/SCTE long form virtual channel table parser. Refer to ATSC A/65 and SCTE 65.
@@ -129,17 +113,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         {
           tableType = MgtTableType.TvctCurrentNext1;
         }
-        bool sectionSyntaxIndicator = ((section[3] & 0x80) != 0);
-        bool privateIndicator = ((section[3] & 0x40) != 0);
-        int sectionLength = ((section[3] & 0x0f) << 8) + section[4];
+        bool sectionSyntaxIndicator = (section[3] & 0x80) != 0;
+        bool privateIndicator = (section[3] & 0x40) != 0;
+        int sectionLength = ((section[3] & 0x0f) << 8) | section[4];
         if (section.Length != 2 + sectionLength + 3)  // 2 for section length bytes, 3 for table ID and PID
         {
           this.LogError("L-VCT: invalid section length = {0}, byte count = {1}", sectionLength, section.Length);
           return;
         }
-        int transportStreamId = (section[5] << 8) + section[6];
-        int versionNumber = ((section[7] >> 1) & 0x1f);
-        bool currentNextIndicator = ((section[7] & 0x80) != 0);
+        ushort transportStreamId = (ushort)((section[5] << 8) | section[6]);
+        byte versionNumber = (byte)((section[7] >> 1) & 0x1f);
+        bool currentNextIndicator = (section[7] & 0x80) != 0;
         if (!currentNextIndicator)
         {
           // Not applicable yet.
@@ -147,7 +131,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         }
         byte sectionNumber = section[8];
         byte lastSectionNumber = section[9];
-        int sectionKey = (tableId << 8) + sectionNumber;
+        int sectionKey = (tableId << 8) | sectionNumber;
         if (versionNumber > _currentVersion || (_currentVersion == 31 && versionNumber < _currentVersion))
         {
           _currentVersion = versionNumber;
@@ -164,13 +148,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         }
 
         byte protocolVersion = section[10];
-        int numChannelsInSection = section[11];
+        byte numChannelsInSection = section[11];
         this.LogDebug("L-VCT: section length = {0}, transport stream ID = {1}, version number = {2}, section number = {3}, last section number {4}, protocol version = {5}, number of channels in section = {6}",
           sectionLength, transportStreamId, versionNumber, sectionNumber, lastSectionNumber, protocolVersion, numChannelsInSection);
 
         int pointer = 12;
         int endOfSection = section.Length - 4;
-        for (int i = 0; i < numChannelsInSection; i++)
+        for (byte i = 0; i < numChannelsInSection; i++)
         {
           if (pointer + 32 + 2 > endOfSection)  // + 2 for the fixed bytes after the loop
           {
@@ -186,13 +170,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
           // ATSC supports only two-part channel numbers where the major range is
           // 1..99 and the minor range is 0..999.
           // When the minor channel number is 0 it indicates an analog channel.
-          int majorChannelNumber = ((section[pointer] & 0x0f) << 6) + (section[pointer + 1] >> 2);
+          ushort majorChannelNumber = (ushort)(((section[pointer] & 0x0f) << 6) | (section[pointer + 1] >> 2));
           pointer++;
-          int minorChannelNumber = ((section[pointer] & 0x03) << 8) + section[pointer + 1];
+          ushort minorChannelNumber = (ushort)(((section[pointer] & 0x03) << 8) | section[pointer + 1]);
           pointer += 2;
           if ((majorChannelNumber & 0x03f0) == 0x03f0)
           {
-            majorChannelNumber = ((majorChannelNumber & 0x0f) << 10) + minorChannelNumber;
+            majorChannelNumber = (ushort)(((majorChannelNumber & 0x0f) << 10) | minorChannelNumber);
             minorChannelNumber = 0;
           }
 
@@ -201,20 +185,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
           for (byte b = 0; b < 4; b++)
           {
             carrierFrequency = carrierFrequency << 8;
-            carrierFrequency = section[pointer++];
+            carrierFrequency |= section[pointer++];
           }
-          int channelTsid = (section[pointer] << 8) + section[pointer + 1];
+          ushort channelTsid = (ushort)((section[pointer] << 8) | section[pointer + 1]);
           pointer += 2;
-          int programNumber = (section[pointer] << 8) + section[pointer + 1];
+          ushort programNumber = (ushort)((section[pointer] << 8) | section[pointer + 1]);
           pointer += 2;
           EtmLocation etmLocation = (EtmLocation)(section[pointer] >> 6);   // ATSC only, SCTE reserved
-          bool accessControlled = ((section[pointer] & 0x20) != 0);
-          bool hidden = ((section[pointer] & 0x10) != 0);
-          int pathSelect = ((section[pointer] & 0x08) >> 3);                // SCTE only, ATSC reserved
-          bool outOfBand = ((section[pointer] & 0x04) != 0);                // SCTE only, ATSC reserved
-          bool hideGuide = ((section[pointer++] & 0x02) != 0);
-          AtscServiceType serviceType = (AtscServiceType)(section[pointer++] & 0x3f);
-          int sourceId = (section[pointer] << 8) + section[pointer + 1];
+          bool accessControlled = (section[pointer] & 0x20) != 0;
+          bool hidden = (section[pointer] & 0x10) != 0;
+          byte pathSelect = (byte)((section[pointer] & 0x08) >> 3);         // SCTE only, ATSC reserved
+          bool outOfBand = (section[pointer] & 0x04) != 0;                  // SCTE only, ATSC reserved
+          bool hideGuide = (section[pointer++] & 0x02) != 0;
+          ServiceType serviceType = (ServiceType)(section[pointer++] & 0x3f);
+          ushort sourceId = (ushort)((section[pointer] << 8) | section[pointer + 1]);
           pointer += 2;
           this.LogDebug("L-VCT: channel, short name = {0}, major channel number = {1}, minor channel number = {2}, modulation mode = {3}, carrier frequency = {4} Hz, TSID = {5}, program number = {6}, ETM location = {7}, access controlled = {8}, hidden = {9}, path select = {10}, out of band = {11}, hide guide = {12}, service type = {13}, source ID = {14}",
             shortName, majorChannelNumber, minorChannelNumber, modulationMode, carrierFrequency, channelTsid, programNumber,
@@ -227,7 +211,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
               hideGuide, serviceType, sourceId);
           }
 
-          int descriptorsLength = ((section[pointer] & 0x03) << 8) + section[pointer + 1];
+          int descriptorsLength = ((section[pointer] & 0x03) << 8) | section[pointer + 1];
           pointer += 2;
           int endOfDescriptors = pointer + descriptorsLength;
           if (endOfDescriptors > endOfSection)
@@ -254,7 +238,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
           }
         }
 
-        int additionalDescriptorsLength = ((section[pointer] & 0x03) << 8) + section[pointer + 1];
+        int additionalDescriptorsLength = ((section[pointer] & 0x03) << 8) | section[pointer + 1];
         pointer += 2;
         if (pointer + additionalDescriptorsLength != endOfSection)
         {

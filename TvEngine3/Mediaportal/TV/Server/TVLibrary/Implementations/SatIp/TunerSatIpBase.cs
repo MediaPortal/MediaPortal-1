@@ -25,15 +25,20 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension.Enum;
 using UPnP.Infrastructure.CP.Description;
 using RtspClient = Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp.RtspClient;
 
@@ -149,19 +154,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 
     #endregion
 
-    #region constructor
+    #region constructor & finaliser
 
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerSatIpBase"/> class.
     /// </summary>
     /// <param name="serverDescriptor">The server's UPnP device description.</param>
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
+    /// <param name="typeIndicator">A character identifying the tuner type.</param>
+    /// <param name="supportedBroadcastStandards">The broadcast standards supported by the hardware.</param>
     /// <param name="streamTuner">An internal tuner implementation, used for RTP stream reception.</param>
-    /// <param name="type">The tuner type.</param>
-    public TunerSatIpBase(DeviceDescriptor serverDescriptor, int sequenceNumber, ITunerInternal streamTuner, CardType type)
-      : base(serverDescriptor.FriendlyName + " Tuner " + sequenceNumber, serverDescriptor.DeviceUUID + sequenceNumber + type.ToString()[type.ToString().Length - 1], type)
+    public TunerSatIpBase(DeviceDescriptor serverDescriptor, int sequenceNumber, string typeIndicator, BroadcastStandard supportedBroadcastStandards, ITunerInternal streamTuner)
+      : base(serverDescriptor.FriendlyName + " Tuner " + typeIndicator + sequenceNumber, serverDescriptor.DeviceUUID + typeIndicator + sequenceNumber, sequenceNumber.ToString(), serverDescriptor.DeviceUUID, supportedBroadcastStandards)
     {
-      DVBIPChannel streamChannel = new DVBIPChannel();
+      ChannelStream streamChannel = new ChannelStream();
       streamChannel.Url = "rtp://127.0.0.1";
       if (streamTuner == null || !streamTuner.CanTune(streamChannel))
       {
@@ -172,8 +178,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       _streamTuner = new TunerInternalWrapper(streamTuner);
       _localIpAddress = serverDescriptor.RootDescriptor.SSDPRootEntry.PreferredLink.Endpoint.EndPointIPAddress;
       _serverIpAddress = new Uri(serverDescriptor.RootDescriptor.SSDPRootEntry.PreferredLink.DescriptionLocation).Host;
-      _productInstanceId = serverDescriptor.DeviceUUID;
-      _tunerInstanceId = sequenceNumber.ToString();
+    }
+
+    ~TunerSatIpBase()
+    {
+      Dispose(false);
     }
 
     #endregion
@@ -185,24 +194,34 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
     /// <param name="parameters">A URI section specifying the tuning parameters.</param>
-    protected void PerformTuning(DVBBaseChannel channel, string parameters)
+    protected void PerformTuning(ChannelDvbBase channel, string parameters)
     {
       this.LogDebug("SAT>IP base: perform tuning");
 
       RtspRequest request;
       RtspResponse response = null;
+      string rtspUri = null;
       string rtpUrl = null;
+
+      if (_isPidFilterDisabled)
+      {
+        parameters += "&pids=all";
+      }
+      else
+      {
+        parameters += "&pids=0";
+      }
 
       if (!string.IsNullOrEmpty(_satIpStreamId))
       {
         // Change channel = RTSP PLAY.
-        this.LogDebug("SAT>IP base: send RTSP PLAY");
-        string uri = string.Format("rtsp://{0}/stream={1}?{2}", _serverIpAddress, _satIpStreamId, parameters);
-        request = new RtspRequest(RtspMethod.Play, uri);
+        rtspUri = string.Format("rtsp://{0}/stream={1}?{2}", _serverIpAddress, _satIpStreamId, parameters);
+        this.LogDebug("SAT>IP base: send RTSP PLAY, URI = {0}", rtspUri);
+        request = new RtspRequest(RtspMethod.Play, rtspUri);
         request.Headers.Add("Session", _rtspSessionId);
         if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
         {
-          throw new TvException("Failed to tune, non-OK RTSP PLAY status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+          throw new TvException("Failed to tune, non-OK RTSP PLAY status code {0} {1}.", response.StatusCode, response.ReasonPhrase);
         }
         this.LogDebug("SAT>IP base: RTSP PLAY response okay");
         return;
@@ -231,34 +250,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
           break;
         }
       }
-      this.LogDebug("SAT>IP base: send RTSP SETUP, RTP client port = {0}", rtpClientPort);
 
       // SETUP a session.
-      _rtspClient = new RtspClient(_serverIpAddress);
-      request = new RtspRequest(RtspMethod.Setup, string.Format("rtsp://{0}/?{1}", _serverIpAddress, parameters));
+      rtspUri = string.Format("rtsp://{0}/?{1}", _serverIpAddress, parameters);
+      this.LogDebug("SAT>IP base: send RTSP SETUP, URI = {0}, RTP client port = {1}", rtspUri, rtpClientPort);
+      if (_rtspClient == null)
+      {
+        _rtspClient = new RtspClient(_serverIpAddress);
+      }
+      request = new RtspRequest(RtspMethod.Setup, rtspUri);
       request.Headers.Add("Transport", string.Format("RTP/AVP;unicast;client_port={0}-{1}", rtpClientPort, rtpClientPort + 1));
       if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
       {
-        throw new TvException("Failed to tune, non-OK RTSP SETUP status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+        throw new TvException("Failed to tune, non-OK RTSP SETUP status code {0} {1}.", response.StatusCode, response.ReasonPhrase);
       }
 
       // Handle the SETUP response.
       // Find the SAT>IP stream ID.
       if (!response.Headers.TryGetValue("com.ses.streamID", out _satIpStreamId))
       {
-        throw new TvException("Failed to tune, not able to find stream ID header in RTSP SETUP response");
+        throw new TvException("Failed to tune, not able to find stream ID header in RTSP SETUP response.");
       }
 
       // Find the RTSP session ID and timeout.
       string sessionHeader;
       if (!response.Headers.TryGetValue("Session", out sessionHeader))
       {
-        throw new TvException("Failed to tune, not able to find session header in RTSP SETUP response");
+        throw new TvException("Failed to tune, not able to find session header in RTSP SETUP response.");
       }
       Match m = REGEX_RTSP_SESSION_HEADER.Match(sessionHeader);
       if (!m.Success)
       {
-        throw new TvException("Failed to tune, RTSP SETUP response session header {0} format not recognised");
+        throw new TvException("Failed to tune, RTSP SETUP response session header \"{0}\" format not recognised.", sessionHeader);
       }
       _rtspSessionId = m.Groups[1].Captures[0].Value;
       if (m.Groups[3].Captures.Count == 1)
@@ -274,10 +297,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       // preferred local port.
       bool foundRtpTransport = false;
       string rtpServerPort = null;
+      _rtcpClientPort = 0;    // If not specified: any available.
       string transportHeader;
       if (!response.Headers.TryGetValue("Transport", out transportHeader))
       {
-        throw new TvException("Failed to tune, not able to find transport header in RTSP SETUP response");
+        throw new TvException("Failed to tune, not able to find transport header in RTSP SETUP response.");
       }
       string[] transports = transportHeader.Split(',');
       foreach (string transport in transports)
@@ -314,7 +338,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       }
       if (!foundRtpTransport)
       {
-        throw new TvException("Failed to tune, not able to find RTP transport details in RTSP SETUP response transport header");
+        throw new TvException("Failed to tune, not able to find RTP transport details in RTSP SETUP response transport header.");
       }
 
       // Construct the RTP URL.
@@ -335,20 +359,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 
       // Configure the stream source filter to receive the RTP stream.
       this.LogDebug("SAT>IP base: configure stream source filter");
-      DVBIPChannel streamChannel = new DVBIPChannel();
+      ChannelStream streamChannel = new ChannelStream();
       streamChannel.Url = rtpUrl;
 
       // Copy the other channel parameters from the original channel.
-      streamChannel.FreeToAir = channel.FreeToAir;
-      streamChannel.Frequency = channel.Frequency;
+      streamChannel.IsEncrypted = channel.IsEncrypted;
       streamChannel.LogicalChannelNumber = channel.LogicalChannelNumber;
       streamChannel.MediaType = channel.MediaType;
       streamChannel.Name = channel.Name;
-      streamChannel.NetworkId = channel.NetworkId;
+      streamChannel.OriginalNetworkId = channel.OriginalNetworkId;
       streamChannel.PmtPid = channel.PmtPid;
       streamChannel.Provider = channel.Provider;
-      streamChannel.ServiceId = channel.ServiceId;
-      streamChannel.TransportId = channel.TransportId;
+      streamChannel.ProgramNumber = channel.ProgramNumber;
+      streamChannel.TransportStreamId = channel.TransportStreamId;
 
       _streamTuner.PerformTuning(streamChannel);
     }
@@ -493,7 +516,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
           IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse(_serverIpAddress), _rtcpServerPort);
           while (!receivedGoodBye && !_rtcpListenerThreadStopEvent.WaitOne(1))
           {
-            byte[] packets = udpClient.Receive(ref serverEndPoint);
+            byte[] packets = null;
+            try
+            {
+              packets = udpClient.Receive(ref serverEndPoint);
+            }
+            catch (Exception ex)
+            {
+              this.LogWarn(ex, "SAT>IP base: failed to receive RTCP packets");
+            }
             if (packets == null)
             {
               continue;
@@ -606,16 +637,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// Actually load the tuner.
     /// </summary>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public override IList<ICustomDevice> PerformLoading()
+    public override IList<ITunerExtension> PerformLoading()
     {
       TunerExtensionLoader loader = new TunerExtensionLoader();
-      IList<ICustomDevice> extensions = loader.Load(this, _serverDescriptor);
+      IList<ITunerExtension> extensions = loader.Load(this, _serverDescriptor);
 
       // Add the stream tuner extensions to our extensions, but don't re-sort
       // by priority afterwards. This ensures that our extensions are always
       // given first consideration.
-      IList<ICustomDevice> streamTunerExtensions = _streamTuner.PerformLoading();
-      foreach (ICustomDevice e in streamTunerExtensions)
+      IList<ITunerExtension> streamTunerExtensions = _streamTuner.PerformLoading();
+      foreach (ITunerExtension e in streamTunerExtensions)
       {
         extensions.Add(e);
       }
@@ -633,9 +664,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// Actually set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    public override void PerformSetTunerState(TunerState state)
+    /// <param name="isFinalising"><c>True</c> if the tuner is being finalised.</param>
+    public override void PerformSetTunerState(TunerState state, bool isFinalising = false)
     {
       this.LogDebug("SAT>IP base: perform set tuner state");
+      if (isFinalising)
+      {
+        return;
+      }
 
       RtspRequest request = null;
       RtspResponse response = null;
@@ -644,19 +680,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       {
         if (state == TunerState.Started)
         {
-          // PLAY to start a previously SETUP stream.
-          string pidFilterPhrase = "0";   // If you use "none" the source filter will not receive data => fail to start graph.
-          if (_isPidFilterDisabled)
-          {
-            pidFilterPhrase = "all";
-          }
-          string uri = string.Format("rtsp://{0}/stream={1}?pids={2}", _serverIpAddress, _satIpStreamId, pidFilterPhrase);
-          request = new RtspRequest(RtspMethod.Play, uri);
+          request = new RtspRequest(RtspMethod.Play, string.Format("rtsp://{0}/stream={1}", _serverIpAddress, _satIpStreamId));
           request.Headers.Add("Session", _rtspSessionId);
           if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
           {
-            throw new TvException("Failed to start tuner, non-OK RTSP PLAY status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+            throw new TvException("Failed to start tuner, non-OK RTSP PLAY status code {0} {1}.", response.StatusCode, response.ReasonPhrase);
           }
+
           StartStreamingKeepAliveThread();
           StartRtcpListenerThread();
         }
@@ -672,36 +702,29 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
             throw new TvException("Failed to stop tuner, non-OK RTSP TEARDOWN status code {0} {1}.", response.StatusCode, response.ReasonPhrase);
           }
 
+          _rtspClient.Dispose();
           _rtspClient = null;
           _satIpStreamId = string.Empty;
           _rtspSessionId = string.Empty;
         }
       }
 
-      try
-      {
-        _streamTuner.PerformSetTunerState(state);
-      }
-      catch
-      {
-        // It isn't possible to start the stream tuner if there is no stream.
-        // No signal => no stream.
-        if (state != TunerState.Started)
-        {
-          throw;
-        }
-      }
+      _streamTuner.PerformSetTunerState(state);
     }
 
     /// <summary>
     /// Actually unload the tuner.
     /// </summary>
-    public override void PerformUnloading()
+    /// <param name="isFinalising"><c>True</c> if the tuner is being finalised.</param>
+    public override void PerformUnloading(bool isFinalising = false)
     {
-      _channelScanner = null;
-      if (_streamTuner != null)
+      if (!isFinalising)
       {
-        _streamTuner.PerformUnloading();
+        _channelScanner = null;
+        if (_streamTuner != null)
+        {
+          _streamTuner.PerformUnloading();
+        }
       }
     }
 
@@ -714,7 +737,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// </summary>
     /// <param name="id">The identifier for the sub-channel.</param>
     /// <returns>the new sub-channel instance</returns>
-    public override ITvSubChannel CreateNewSubChannel(int id)
+    public override ISubChannelInternal CreateNewSubChannel(int id)
     {
       return _streamTuner.CreateNewSubChannel(id);
     }
@@ -726,12 +749,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <summary>
     /// Get the tuner's signal status.
     /// </summary>
-    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
     /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
     /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
     /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
     /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
-    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    public override void GetSignalStatus(out bool isLocked, out bool isPresent, out int strength, out int quality, bool onlyGetLock)
     {
       isLocked = _isSignalLocked;
       isPresent = _isSignalLocked;
@@ -742,6 +765,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     #endregion
 
     #region interfaces
+
+    /// <summary>
+    /// Get the tuner's channel linkage scanning interface.
+    /// </summary>
+    public override IChannelLinkageScanner InternalChannelLinkageScanningInterface
+    {
+      get
+      {
+        return _streamTuner.InternalChannelLinkageScanningInterface;
+      }
+    }
 
     /// <summary>
     /// Get the tuner's channel scanning interface.
@@ -769,10 +803,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 
     #endregion
 
-    #region ICustomDevice members
+    #region ITunerExtension members
 
     /// <summary>
-    /// The loading priority for this extension.
+    /// The loading priority for the extension.
     /// </summary>
     public byte Priority
     {
@@ -783,28 +817,37 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     }
 
     /// <summary>
-    /// Attempt to initialise the extension-specific interfaces used by the class. If
-    /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
-    /// immediately.
+    /// Does the extension control some part of the tuner hardware?
+    /// </summary>
+    public bool ControlsTunerHardware
+    {
+      get
+      {
+        return true;
+      }
+    }
+
+    /// <summary>
+    /// Attempt to initialise the interfaces used by the extension.
     /// </summary>
     /// <param name="tunerExternalId">The external identifier for the tuner.</param>
-    /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="context">Context required to initialise the interface.</param>
+    /// <param name="tunerSupportedBroadcastStandards">The broadcast standards supported by the tuner (eg. DVB-T, DVB-T2... etc.).</param>
+    /// <param name="context">Context required to initialise the interfaces.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public bool Initialise(string tunerExternalId, CardType tunerType, object context)
+    public bool Initialise(string tunerExternalId, BroadcastStandard tunerSupportedBroadcastStandards, object context)
     {
       // This is a "special" implementation. We do initialisation in other functions.
       return true;
     }
 
-    #region device state change call backs
+    #region tuner state change call backs
 
     /// <summary>
     /// This call back is invoked when the tuner has been successfully loaded.
     /// </summary>
     /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="action">The action to take, if any.</param>
-    public virtual void OnLoaded(ITVCard tuner, out TunerAction action)
+    public virtual void OnLoaded(ITuner tuner, out TunerAction action)
     {
       action = TunerAction.Default;
     }
@@ -816,27 +859,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
-    public virtual void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
+    public virtual void OnBeforeTune(ITuner tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
     {
       action = TunerAction.Default;
     }
 
     /// <summary>
-    /// This call back is invoked after a tune request is submitted but before the device is started.
+    /// This call back is invoked after a tune request is submitted but before
+    /// the tuner is started.
     /// </summary>
     /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
-    public virtual void OnAfterTune(ITVCard tuner, IChannel currentChannel)
+    public virtual void OnAfterTune(ITuner tuner, IChannel currentChannel)
     {
     }
 
     /// <summary>
-    /// This call back is invoked after a tune request is submitted, when the tuner is started but
-    /// before signal lock is checked.
+    /// This call back is invoked after a tune request is submitted, when the
+    /// tuner is started but before signal lock is checked.
     /// </summary>
     /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
-    public virtual void OnStarted(ITVCard tuner, IChannel currentChannel)
+    public virtual void OnStarted(ITuner tuner, IChannel currentChannel)
     {
     }
 
@@ -845,7 +889,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// </summary>
     /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="action">As an input, the action that the TV Engine wants to take; as an output, the action to take.</param>
-    public virtual void OnStop(ITVCard tuner, ref TunerAction action)
+    public virtual void OnStop(ITuner tuner, ref TunerAction action)
     {
     }
 
@@ -860,7 +904,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// </summary>
     /// <param name="tuningDetail">The current multiplex/transponder tuning parameters.</param>
     /// <returns><c>true</c> if the filter should be enabled, otherwise <c>false</c></returns>
-    public bool ShouldEnableFilter(IChannel tuningDetail)
+    bool IMpeg2PidFilter.ShouldEnable(IChannel tuningDetail)
     {
       // SAT>IP tuners are networked tuners. It is desirable to enable PID filtering in order to
       // reduce the network bandwidth used.
@@ -871,7 +915,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// Disable the filter.
     /// </summary>
     /// <returns><c>true</c> if the filter is successfully disabled, otherwise <c>false</c></returns>
-    public bool DisableFilter()
+    bool IMpeg2PidFilter.Disable()
     {
       if (!_isPidFilterDisabled)
       {
@@ -889,7 +933,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <summary>
     /// Get the maximum number of streams that the filter can allow.
     /// </summary>
-    public int MaximumPidCount
+    int IMpeg2PidFilter.MaximumPidCount
     {
       get
       {
@@ -902,7 +946,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// </summary>
     /// <param name="pids">A collection of stream identifiers.</param>
     /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
-    public bool AllowStreams(ICollection<ushort> pids)
+    bool IMpeg2PidFilter.AllowStreams(ICollection<ushort> pids)
     {
       _pidFilterPidsToAdd.UnionWith(pids);
       _pidFilterPidsToRemove.ExceptWith(pids);
@@ -914,7 +958,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// </summary>
     /// <param name="pids">A collection of stream identifiers.</param>
     /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
-    public bool BlockStreams(ICollection<ushort> pids)
+    bool IMpeg2PidFilter.BlockStreams(ICollection<ushort> pids)
     {
       _pidFilterPidsToAdd.ExceptWith(pids);
       _pidFilterPidsToRemove.UnionWith(pids);
@@ -925,7 +969,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// Apply the current filter configuration.
     /// </summary>
     /// <returns><c>true</c> if the filter configuration is successfully applied, otherwise <c>false</c></returns>
-    public bool ApplyFilter()
+    bool IMpeg2PidFilter.ApplyConfiguration()
     {
       string uri = null;
       if (_pidFilterPidsToAdd.Count > 0 && _pidFilterPidsToRemove.Count > 0)
@@ -944,7 +988,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       {
         return true;
       }
-      this.LogDebug("SAT>IP base: apply PID filter");
+      this.LogDebug("SAT>IP base: apply PID filter configuration");
       bool result = ConfigurePidFilter(uri);
       if (result)
       {
@@ -985,13 +1029,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <summary>
     /// Release and dispose all resources.
     /// </summary>
-    public override void Dispose()
+    /// <param name="isDisposing"><c>True</c> if the tuner is being disposed.</param>
+    protected override void Dispose(bool isDisposing)
     {
-      base.Dispose();
-      if (_streamTuner != null)
+      base.Dispose(isDisposing);
+      if (isDisposing)
       {
-        _streamTuner.Dispose();
-        _streamTuner = null;
+        if (_streamTuner != null)
+        {
+          _streamTuner.Dispose();
+          _streamTuner = null;
+        }
+        if (_rtspClient != null)
+        {
+          _rtspClient.Dispose();
+          _rtspClient = null;
+        }
       }
     }
 

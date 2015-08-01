@@ -24,8 +24,8 @@ using System.IO;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using MediaPortal.Common.Utils;
 
@@ -33,13 +33,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 {
   internal class TunerExtensionLoader
   {
-    private List<ICustomDevice> _extensions = new List<ICustomDevice>();
+    private List<ITunerExtension> _extensions = new List<ITunerExtension>();
     private List<Type> _incompatibleExtensions = new List<Type>();
     private string _extensionDirectory = null;
 
     public TunerExtensionLoader()
     {
-      _extensionDirectory = PathManager.BuildAssemblyRelativePath("plugins\\CustomDevices");
+      _extensionDirectory = PathManager.BuildAssemblyRelativePath("plugins\\TunerExtensions");
       if (!Directory.Exists(_extensionDirectory))
       {
         this.LogError("tuner extension loader: directory doesn't exist or is not accessible");
@@ -50,7 +50,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// <summary>
     /// Get the set of extensions which were successfully loaded.
     /// </summary>
-    public IList<ICustomDevice> Extensions
+    public IList<ITunerExtension> Extensions
     {
       get
       {
@@ -72,7 +72,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// <summary>
     /// Load all extensions.
     /// </summary>
-    public IList<ICustomDevice> Load(ITVCard tuner, object loadContext)
+    public IList<ITunerExtension> Load(ITuner tuner, object loadContext)
     {
       this.LogDebug("tuner extension loader: load extensions");
       if (_extensions.Count > 0 || _incompatibleExtensions.Count > 0)
@@ -94,14 +94,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         var assemblyFilter = new AssemblyFilter(_extensionDirectory);
         GlobalServiceProvider.Instance.Get<IWindsorContainer>().Register(
           Classes.FromAssemblyInDirectory(assemblyFilter).
-            BasedOn<ICustomDevice>().
+            BasedOn<ITunerExtension>().
             If(IsExtensionCompatible).
             WithServiceBase().
             LifestyleTransient()
         );
 
-        List<ICustomDevice> extensions = new List<ICustomDevice>(GlobalServiceProvider.Instance.Get<IWindsorContainer>().ResolveAll<ICustomDevice>());
-        ICustomDevice x = tuner as ICustomDevice;
+        List<ITunerExtension> extensions = new List<ITunerExtension>(GlobalServiceProvider.Instance.Get<IWindsorContainer>().ResolveAll<ITunerExtension>());
+        ITunerExtension x = tuner as ITunerExtension;
         if (x != null)
         {
           this.LogDebug("tuner extension loader: add tuner instance as extension");
@@ -110,7 +110,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 
         // There is a well defined loading/checking order for extensions: priority, name.
         extensions.Sort(
-          delegate(ICustomDevice e1, ICustomDevice e2)
+          delegate(ITunerExtension e1, ITunerExtension e2)
           {
             int priorityCompare = e2.Priority.CompareTo(e1.Priority);
             if (priorityCompare != 0)
@@ -122,7 +122,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         );
 
         // Log the name, priority and capabilities for each extension.
-        foreach (ICustomDevice e in extensions)
+        foreach (ITunerExtension e in extensions)
         {
           Type[] interfaces = e.GetType().GetInterfaces();
           string[] interfaceNames = new string[interfaces.Length];
@@ -135,26 +135,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         }
 
         this.LogDebug("tuner extension loader: checking for supported extensions");
-        HashSet<string> foundInterfaces = new HashSet<string>();
-        foreach (ICustomDevice e in extensions)
+        HashSet<Type> foundInterfaces = new HashSet<Type>();
+        foreach (ITunerExtension e in extensions)
         {
-          // We only support one implementation of each interface, unless the
-          // extension is a DirectShow add-on.
+          // We only support one implementation of each interface for features
+          // that are tied to hardware.
           Type[] interfaces = new Type[0];
-          if (!(e is IDirectShowAddOnDevice))
+          if (e.ControlsTunerHardware)
           {
             bool foundInterface = false;
             interfaces = e.GetType().GetInterfaces();
             foreach (Type i in interfaces)
             {
-              // TODO this could pick up interfaces that we don't care about...
-              // but we don't want an explicit list of interfaces we care about.
-              // Need to be smarter!
-              if (i != typeof(ICustomDevice) &&
-                i != typeof(IEncoder) &&
-                i != typeof(IRemoteControlListener) &&
-                i != typeof(IDisposable) &&
-                foundInterfaces.Contains(i.Name))
+              // TODO can we avoid using an explicit list of interfaces?
+              // TODO this will not support Hauppauge ECP for hardware that doesn't actually have an encoder + any other encoder
+              if (
+                foundInterfaces.Contains(i) &&
+                (
+                  i == typeof(IConditionalAccessProvider) ||
+                  i == typeof(ICustomTuner) ||
+                  i == typeof(IDiseqcDevice) ||
+                  i == typeof(IEncoder) ||
+                  i == typeof(IMpeg2PidFilter) ||
+                  i == typeof(IPowerDevice) ||
+                  i == typeof(IRemoteControlListener) ||
+                  i == typeof(IStreamSelector)
+                )
+              )
               {
                 this.LogDebug("tuner extension loader: extension \"{0}\" supports already found interface {1}, won't use", e.Name, i.Name);
                 foundInterface = true;
@@ -168,17 +175,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
           }
 
           this.LogDebug("tuner extension loader: try extension \"{0}\"", e.Name);
-          if (!e.Initialise(tuner.ExternalId, tuner.TunerType, loadContext))
+          if (!e.Initialise(tuner.ExternalId, tuner.SupportedBroadcastStandards, loadContext))
           {
-            e.Dispose();
+            IDisposable d = e as IDisposable;
+            if (d != null)
+            {
+              d.Dispose();
+            }
             continue;
           }
 
           _extensions.Add(e);
-          foreach (Type i in interfaces)
-          {
-            foundInterfaces.Add(i.Name);
-          }
+          foundInterfaces.UnionWith(interfaces);
         }
 
         this.LogDebug("tuner extension loader: {0} extension(s) supported", _extensions.Count);

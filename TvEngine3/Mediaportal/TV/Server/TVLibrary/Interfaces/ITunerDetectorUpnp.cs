@@ -19,9 +19,9 @@
 #endregion
 
 using System.Collections.Generic;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using UPnP.Infrastructure.CP.Description;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using UPnP.Infrastructure.CP;
+using UPnP.Infrastructure.CP.Description;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
@@ -44,6 +44,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <param name="descriptor">The UPnP device's root descriptor.</param>
     /// <param name="controlPoint">The control point that the device is attached to.</param>
     /// <returns>the compatible tuners exposed by the device</returns>
-    ICollection<ITVCard> DetectTuners(DeviceDescriptor descriptor, UPnPControlPoint controlPoint);
+    ICollection<ITuner> DetectTuners(DeviceDescriptor descriptor, UPnPControlPoint controlPoint);
   }
 }

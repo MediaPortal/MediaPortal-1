@@ -22,13 +22,21 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.Common.Types.Country;
+using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Countries;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
+using MediaPortal.Common.Utils.ExtensionMethods;
+using TveAnalogVideoStandard = Mediaportal.TV.Server.Common.Types.Enum.AnalogVideoStandard;
+using TveMediaType = Mediaportal.TV.Server.Common.Types.Enum.MediaType;
+using WdmAnalogVideoStandard = DirectShowLib.AnalogVideoStandard;
+using WdmMediaType = DirectShowLib.MediaType;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component
 {
@@ -52,24 +60,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       internal uint dwSequenceHeader;
     }
     #pragma warning restore 649, 169, 0649
-
-    private struct VideoProcAmpPropertyDetail
-    {
-      public int ValueMinimum;
-      public int ValueMaximum;
-      public int SteppingDelta;
-      public int ValueDefault;
-      public VideoProcAmpFlags Flags;
-
-      internal VideoProcAmpPropertyDetail(int valueMinimum, int valueMaximum, int steppingDelta, int valueDefault, VideoProcAmpFlags flags)
-      {
-        ValueMinimum = valueMinimum;
-        ValueMaximum = valueMaximum;
-        SteppingDelta = steppingDelta;
-        ValueDefault = valueDefault;
-        Flags = flags;
-      }
-    }
 
     #endregion
 
@@ -118,44 +108,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     private IAMStreamConfig _interfaceStreamConfiguration = null;
 
     /// <summary>
-    /// A set of flags indicating which video standards the capture source supports.
+    /// The current analog video settings and their limits.
     /// </summary>
-    private AnalogVideoStandard _supportedVideoStandards = AnalogVideoStandard.None;
+    private AnalogTunerSettings _currentVideoSettings = new AnalogTunerSettings();
 
     /// <summary>
-    /// A map containing the supported video processing amplifier properties,
-    /// their default values, and their limits.
+    /// A map containing the supported video processing amplifier and camera
+    /// control properties, their current and default values, and their limits.
     /// </summary>
-    private Dictionary<VideoProcAmpProperty, VideoProcAmpPropertyDetail> _supportedVideoProcAmpProperties = new Dictionary<VideoProcAmpProperty, VideoProcAmpPropertyDetail>();
-
-    #region configuration
-
-    /// <summary>
-    /// The configured video standard.
-    /// </summary>
-    private AnalogVideoStandard _currentVideoStandard = AnalogVideoStandard.PAL_B;
-
-    /// <summary>
-    /// The configured video processing amplifier property settings.
-    /// </summary>
-    private Dictionary<VideoProcAmpProperty, double> _currentVideoProcAmpPropertyValues = new Dictionary<VideoProcAmpProperty, double>();
-
-    /// <summary>
-    /// The configured frame width measured in pixels.
-    /// </summary>
-    private int _currentFrameWidth = 720;
-
-    /// <summary>
-    /// The configured frame height measured in pixels.
-    /// </summary>
-    private int _currentFrameHeight = 576;
-
-    /// <summary>
-    /// The configured frame rate measured in frames per second.
-    /// </summary>
-    private double _currentFrameRate = 25.0;
-
-    #endregion
+    private Dictionary<VideoOrCameraProperty, TunerProperty> _currentVideoOrCameraPropertySettings = new Dictionary<VideoOrCameraProperty, TunerProperty>();
 
     #endregion
 
@@ -211,7 +172,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <param name="graph">The tuner's DirectShow graph.</param>
     /// <param name="productInstanceId">A common identifier shared by the tuner's components.</param>
     /// <param name="crossbar">The crossbar component.</param>
-    public void PerformLoading(IFilterGraph2 graph, string productInstanceId, Crossbar crossbar)
+    /// <param name="settings">The tuner's settings.</param>
+    public void PerformLoading(IFilterGraph2 graph, string productInstanceId, Crossbar crossbar, AnalogTunerSettings settings)
     {
       if (_deviceMain != null)
       {
@@ -227,7 +189,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         catch (Exception ex)
         {
           DevicesInUse.Instance.Remove(_deviceMain);
-          throw new TvException("Failed to add filter for main capture component to graph.", ex);
+          throw new TvException(ex, "Failed to add filter for main capture component to graph.");
         }
         bool isVideoSource;
         bool isAudioSource;
@@ -298,8 +260,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
 
       CheckCapabilitiesAnalogVideoDecoder();
       CheckCapabilitiesVideoProcessingAmplifier();
-      ConfigureAnalogVideoDecoder(_currentVideoStandard);
-      ConfigureVideoProcessingAmplifier(_currentVideoProcAmpPropertyValues);
+      CheckCapabilitiesCameraControl();
     }
 
     /// <summary>
@@ -315,36 +276,36 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
 
       IEnumPins pinEnum;
       int hr = _filterVideo.EnumPins(out pinEnum);
-      HResult.ThrowException(hr, "Failed to obtain pin enumerator for filter.");
+      TvExceptionDirectShowError.Throw(hr, "Failed to obtain pin enumerator for filter.");
       try
       {
         int pinIndex = 0;
         int pinCount = 0;
         IPin[] pins = new IPin[2];
-        while (pinEnum.Next(1, pins, out pinCount) == (int)HResult.Severity.Success && pinCount == 1)
+        while (pinEnum.Next(1, pins, out pinCount) == (int)NativeMethods.HResult.S_OK && pinCount == 1)
         {
           IPin pin = pins[0];
           try
           {
             IEnumMediaTypes mediaTypeEnum;
             hr = pin.EnumMediaTypes(out mediaTypeEnum);
-            HResult.ThrowException(hr, "Failed to obtain media type enumerator for pin.");
+            TvExceptionDirectShowError.Throw(hr, "Failed to obtain media type enumerator for pin.");
             try
             {
               // For each pin media type...
               int mediaTypeCount;
               AMMediaType[] mediaTypes = new AMMediaType[2];
-              while (mediaTypeEnum.Next(1, mediaTypes, out mediaTypeCount) == (int)HResult.Severity.Success && mediaTypeCount == 1)
+              while (mediaTypeEnum.Next(1, mediaTypes, out mediaTypeCount) == (int)NativeMethods.HResult.S_OK && mediaTypeCount == 1)
               {
                 AMMediaType mediaType = mediaTypes[0];
                 try
                 {
-                  if (mediaType.majorType == MediaType.AnalogVideo || mediaType.majorType == MediaType.Video)
+                  if (mediaType.majorType == WdmMediaType.AnalogVideo || mediaType.majorType == WdmMediaType.Video)
                   {
                     this.LogDebug("WDM analog capture: pin {0} is a video pin", pinIndex);
                     isVideoSource = true;
                   }
-                  else if (mediaType.majorType == MediaType.AnalogAudio || mediaType.majorType == MediaType.Audio)
+                  else if (mediaType.majorType == WdmMediaType.AnalogAudio || mediaType.majorType == WdmMediaType.Audio)
                   {
                     this.LogDebug("WDM analog capture: pin {0} is an audio pin", pinIndex);
                     isAudioSource = true;
@@ -414,7 +375,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       if (streamConfig != null)
       {
         this.LogDebug("WDM analog capture: found stream configuration interface");
-        ConfigureStream(_currentFrameWidth, _currentFrameHeight, _currentFrameRate);
+        CheckCapabilitiesStream();
       }
       else if (_filterVideo != null)
       {
@@ -429,26 +390,121 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// </summary>
     private void CheckCapabilitiesAnalogVideoDecoder()
     {
-      if (_filterVideo != null)
+      if (_filterVideo == null)
       {
-        IAMAnalogVideoDecoder analogVideoDecoder = _filterVideo as IAMAnalogVideoDecoder;
-        if (analogVideoDecoder != null)
+        return;
+      }
+
+      IAMAnalogVideoDecoder analogVideoDecoder = _filterVideo as IAMAnalogVideoDecoder;
+      if (analogVideoDecoder == null)
+      {
+        this.LogWarn("WDM analog capture: failed to find analog video decoder interface on capture filter, not able to check video decoder capabilities");
+      }
+
+      WdmAnalogVideoStandard videoStandard;
+      int hr = analogVideoDecoder.get_AvailableTVFormats(out videoStandard);
+      if (hr != (int)NativeMethods.HResult.S_OK)
+      {
+        _currentVideoSettings.SupportedVideoStandards = (int)TveAnalogVideoStandard.None;
+        this.LogWarn("WDM analog capture: failed to get supported video standards, hr = 0x{0:x}", hr);
+      }
+      else
+      {
+        this.LogDebug("WDM analog capture: supported video standards = {0}", videoStandard);
+        _currentVideoSettings.SupportedVideoStandards = (int)GetTveVideoStandards(videoStandard);
+      }
+
+      hr = analogVideoDecoder.get_TVFormat(out videoStandard);
+      if (hr != (int)NativeMethods.HResult.S_OK)
+      {
+        _currentVideoSettings.VideoStandard = (int)TveAnalogVideoStandard.None;
+        this.LogWarn("WDM analog capture: failed to get current video standard, hr = 0x{0:x}", hr);
+      }
+      else
+      {
+        this.LogDebug("WDM analog capture: current video standard = {0}", videoStandard);
+        _currentVideoSettings.VideoStandard = (int)GetTveVideoStandards(videoStandard);
+      }
+    }
+
+    /// <summary>
+    /// Check the capabilites of the stream configuration interface.
+    /// </summary>
+    private void CheckCapabilitiesStream()
+    {
+      if (_interfaceStreamConfiguration == null)
+      {
+        return;
+      }
+
+      int countCapabilities;
+      int streamConfigCapabilitiesSize;
+      int hr = _interfaceStreamConfiguration.GetNumberOfCapabilities(out countCapabilities, out streamConfigCapabilitiesSize);
+      if (hr != (int)NativeMethods.HResult.S_OK)
+      {
+        TvExceptionDirectShowError.Throw(hr, "Failed to get stream configuration capability count.");
+      }
+      this.LogDebug("WDM analog capture: supported stream configuration capability count = {0}", countCapabilities);
+
+      AMMediaType format;
+      FrameSize frameSize;
+      FrameRate frameRate;
+      IntPtr configBuffer = Marshal.AllocCoTaskMem(streamConfigCapabilitiesSize);
+      try
+      {
+        for (int i = 0; i < countCapabilities; i++)
         {
-          int hr = analogVideoDecoder.get_AvailableTVFormats(out _supportedVideoStandards);
-          if (hr != (int)HResult.Severity.Success)
+          hr = _interfaceStreamConfiguration.GetStreamCaps(i, out format, configBuffer);
+          TvExceptionDirectShowError.Throw(hr, "Failed to get stream configuration format {0} information.", i);
+
+          try
           {
-            _supportedVideoStandards = AnalogVideoStandard.None;
-            this.LogWarn("WDM analog capture: failed to get supported video standards, hr = 0x{0:x}", hr);
+            GetTveFrameDetails(format, out frameSize, out frameRate);
+            if (frameSize != FrameSize.Automatic || frameRate != FrameRate.Automatic)
+            {
+              this.LogDebug("WDM analog capture: frame size = {0}, frame rate = {1}", frameSize, frameRate);
+              _currentVideoSettings.SupportedFrameSizes |= (int)frameSize;
+              _currentVideoSettings.SupportedFrameRates |= (int)frameRate;
+            }
           }
-          else
+          finally
           {
-            this.LogDebug("WDM analog capture: supported video standards = {0}", _supportedVideoStandards);
+            Release.AmMediaType(ref format);
           }
         }
-        else
-        {
-          this.LogWarn("WDM analog capture: failed to find analog video decoder interface on capture filter, not able to check video decoder capabilities");
-        }
+      }
+      finally
+      {
+        Marshal.FreeCoTaskMem(configBuffer);
+      }
+
+      hr = _interfaceStreamConfiguration.GetFormat(out format);
+      TvExceptionDirectShowError.Throw(hr, "Failed to get current stream configuration format information.");
+      try
+      {
+        GetTveFrameDetails(format, out frameSize, out frameRate);
+        this.LogDebug("WDM analog capture: current stream configuration, frame size = {0}, frame rate = {1}, format = {2}", frameSize, frameRate, format.formatType);
+        _currentVideoSettings.FrameSize = (int)frameSize;
+        _currentVideoSettings.FrameRate = (int)frameRate;
+      }
+      finally
+      {
+        Release.AmMediaType(ref format);
+      }
+    }
+
+    private static void ReadBmiHeader(ref BitmapInfoHeader bmiHeader, out int width, out int height)
+    {
+      if (bmiHeader == null || bmiHeader.Size < 8)
+      {
+        Log.Warn("WDM analog capture: not possible to read frame size");
+        width = -1;
+        height = -1;
+      }
+      else
+      {
+        width = bmiHeader.Width;
+        height = bmiHeader.Height;
       }
     }
 
@@ -457,36 +513,148 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// </summary>
     private void CheckCapabilitiesVideoProcessingAmplifier()
     {
-      if (_filterVideo != null)
+      if (_filterVideo == null)
       {
-        IAMVideoProcAmp videoProcAmp = _filterVideo as IAMVideoProcAmp;
-        if (videoProcAmp != null)
+        return;
+      }
+
+      IAMVideoProcAmp videoProcAmp = _filterVideo as IAMVideoProcAmp;
+      if (videoProcAmp == null)
+      {
+        this.LogWarn("WDM analog capture: failed to find video processing amplifier interface on capture filter, not able to check video processing amplifier capabilities");
+        return;
+      }
+
+      int value = 0;
+      int valueMinimum = 0;
+      int valueMaximum = 0;
+      int steppingDelta = 1;
+      int valueDefault = 0;
+      VideoProcAmpFlags flagsSupported = VideoProcAmpFlags.None;
+      VideoProcAmpFlags flagsValue = VideoProcAmpFlags.None;
+      int hr = (int)NativeMethods.HResult.S_OK;
+      foreach (VideoProcAmpProperty property in System.Enum.GetValues(typeof(VideoProcAmpProperty)))
+      {
+        hr = videoProcAmp.GetRange(property, out valueMinimum, out valueMaximum, out steppingDelta, out valueDefault, out flagsSupported);
+        if (hr != (int)NativeMethods.HResult.S_OK)
         {
-          int valueMinimum = 0;
-          int valueMaximum = 0;
-          int steppingDelta = 1;
-          int valueDefault = 0;
-          VideoProcAmpFlags flags = VideoProcAmpFlags.None;
-          int hr = (int)HResult.Severity.Success;
-          foreach (VideoProcAmpProperty property in Enum.GetValues(typeof(VideoProcAmpProperty)))
+          this.LogDebug("WDM analog capture: video processing amplifier property {0} is not supported by the hardware", property);
+          continue;
+        }
+
+        this.LogDebug("WDM analog capture: video processing amplifier property {0} is supported, min = {1}, max = {2}, step = {3}, default = {4}, flags = {5}", property, valueMinimum, valueMaximum, steppingDelta, valueDefault, flagsSupported);
+        VideoOrCameraProperty? mpProperty = GetTveVideoOrCameraProperty(property);
+        if (!mpProperty.HasValue)
+        {
+          this.LogWarn("WDM analog capture: video processing amplifier property {0} is not supported by TV Server", property);
+          continue;
+        }
+
+        hr = videoProcAmp.Get(property, out value, out flagsValue);
+        if (hr != (int)NativeMethods.HResult.S_OK)
+        {
+          this.LogWarn("WDM analog capture: failed to get current value for supported video processing amplifier property {0}", property);
+          value = valueDefault;
+          if (flagsSupported.HasFlag(VideoProcAmpFlags.Auto))
           {
-            hr = videoProcAmp.GetRange(property, out valueMinimum, out valueMaximum, out steppingDelta, out valueDefault, out flags);
-            if (hr == (int)HResult.Severity.Success)
-            {
-              this.LogDebug("WDM analog capture: processing amplifier property {0} is supported, min = {1}, max = {2}, step = {3}, default = {4}, flags = {5}", property, valueMinimum, valueMaximum, steppingDelta, valueDefault, flags);
-              VideoProcAmpPropertyDetail propertyLimits = new VideoProcAmpPropertyDetail(valueMinimum, valueMaximum, steppingDelta, valueDefault, flags);
-              _supportedVideoProcAmpProperties.Add(property, propertyLimits);
-            }
-            else
-            {
-              this.LogDebug("WDM analog capture: processing amplifier property {0} is not supported", property);
-            }
+            flagsValue = VideoProcAmpFlags.Auto;
+          }
+          else if (flagsSupported.HasFlag(VideoProcAmpFlags.Manual))
+          {
+            flagsValue = VideoProcAmpFlags.Manual;
           }
         }
         else
         {
-          this.LogWarn("WDM analog capture: failed to find video processing amplifier interface on capture filter, not able to check video processing amplifier capabilities");
+          this.LogDebug("WDM analog capture: current property value = {0}, flag = {1}", value, flagsValue);
         }
+
+        _currentVideoOrCameraPropertySettings.Add(mpProperty.Value, new TunerProperty
+        {
+          PropertyId = (int)mpProperty.Value,
+          Value = value,
+          Default = valueDefault,
+          Minimum = valueMinimum,
+          Maximum = valueMaximum,
+          Step = steppingDelta,
+          PossibleValueFlags = (int)GetTveVideoOrCameraPropertyFlags(flagsSupported),
+          ValueFlags = (int)GetTveVideoOrCameraPropertyFlags(flagsValue)
+        });
+      }
+    }
+
+    /// <summary>
+    /// Check the capabilites of the camera control interface.
+    /// </summary>
+    private void CheckCapabilitiesCameraControl()
+    {
+      if (_filterVideo == null)
+      {
+        return;
+      }
+
+      IAMCameraControl cameraControl = _filterVideo as IAMCameraControl;
+      if (cameraControl == null)
+      {
+        this.LogWarn("WDM analog capture: failed to find camera control interface on capture filter, not able to check camera control capabilities");
+        return;
+      }
+
+      int value = 0;
+      int valueMinimum = 0;
+      int valueMaximum = 0;
+      int steppingDelta = 1;
+      int valueDefault = 0;
+      CameraControlFlags flagsSupported = CameraControlFlags.None;
+      CameraControlFlags flagsValue = CameraControlFlags.None;
+      int hr = (int)NativeMethods.HResult.S_OK;
+      foreach (CameraControlProperty property in System.Enum.GetValues(typeof(CameraControlProperty)))
+      {
+        hr = cameraControl.GetRange(property, out valueMinimum, out valueMaximum, out steppingDelta, out valueDefault, out flagsSupported);
+        if (hr != (int)NativeMethods.HResult.S_OK)
+        {
+          this.LogDebug("WDM analog capture: camera control property {0} is not supported by the hardware", property);
+          continue;
+        }
+
+        this.LogDebug("WDM analog capture: camera control property {0} is supported, min = {1}, max = {2}, step = {3}, default = {4}, flags = {5}", property, valueMinimum, valueMaximum, steppingDelta, valueDefault, flagsSupported);
+        VideoOrCameraProperty? mpProperty = GetMpVideoOrCameraProperty(property);
+        if (!mpProperty.HasValue)
+        {
+          this.LogWarn("WDM analog capture: camera control property {0} is not supported by TV Server", property);
+          continue;
+        }
+
+        hr = cameraControl.Get(property, out value, out flagsValue);
+        if (hr != (int)NativeMethods.HResult.S_OK)
+        {
+          this.LogWarn("WDM analog capture: failed to get current value for supported camera control property {0}", property);
+          value = valueDefault;
+          if (flagsSupported.HasFlag(CameraControlFlags.Auto))
+          {
+            flagsValue = CameraControlFlags.Auto;
+          }
+          else if (flagsSupported.HasFlag(CameraControlFlags.Manual))
+          {
+            flagsValue = CameraControlFlags.Manual;
+          }
+        }
+        else
+        {
+          this.LogDebug("WDM analog capture: current property value = {0}, flag = {1}", value, flagsValue);
+        }
+
+        _currentVideoOrCameraPropertySettings.Add(mpProperty.Value, new TunerProperty
+        {
+          PropertyId = (int)mpProperty.Value,
+          Value = value,
+          Default = valueDefault,
+          Minimum = valueMinimum,
+          Maximum = valueMaximum,
+          Step = steppingDelta,
+          PossibleValueFlags = (int)GetTveVideoOrCameraPropertyFlags(flagsSupported),
+          ValueFlags = (int)GetTveVideoOrCameraPropertyFlags(flagsValue)
+        });
       }
     }
 
@@ -497,131 +665,419 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <summary>
     /// Reload the component's configuration.
     /// </summary>
-    /// <param name="tunerId">The identifier for the associated tuner.</param>
-    public void ReloadConfiguration(int tunerId)
+    /// <param name="newSettings">The tuner's settings.</param>
+    public void ReloadConfiguration(AnalogTunerSettings newSettings)
     {
+      if (_filterVideo == null)
+      {
+        return;
+      }
       this.LogDebug("WDM analog capture: reload configuration");
 
-      // Do we have existing settings? If not, try to set sensible defaults.
-      int settingCheck = SettingsManagement.GetValue("tuner" + tunerId + "VideoStandard", -1);
-      if (settingCheck == -1)   // first load
+      if (newSettings.VideoStandard != _currentVideoSettings.VideoStandard)
       {
-        this.LogDebug("WDM analog capture: first load, setting defaults");
-        CountryCollection collection = new CountryCollection();
-        string countryName = System.Globalization.RegionInfo.CurrentRegion.EnglishName;
-        Country country = collection.GetTunerCountry(countryName);
-        if (country == null)
+        ConfigureAnalogVideoDecoder((TveAnalogVideoStandard)newSettings.VideoStandard);
+      }
+
+      if (newSettings.FrameSize != _currentVideoSettings.FrameSize || newSettings.FrameRate != _currentVideoSettings.FrameRate)
+      {
+        ConfigureStream((FrameSize)newSettings.FrameSize, (FrameRate)newSettings.FrameRate);
+      }
+
+      ICollection<TunerProperty> newProperties = TunerPropertyManagement.ListAllTunerPropertiesByTuner(newSettings.IdAnalogTunerSettings);
+      if (newProperties != null && newProperties.Count > 0)
+      {
+        ConfigureVideoProcessingAmplifier(newProperties);
+        ConfigureCameraControl(newProperties);
+      }
+    }
+
+    public void OnGraphCompleted(AnalogTunerSettings newSettings)
+    {
+      // If the device doesn't support video or we already have video capabilities...
+      if (_filterVideo == null || newSettings.SupportedVideoStandards != 0 || newSettings.SupportedFrameSizes != 0 || newSettings.SupportedFrameRates != 0)
+      {
+        ReloadConfiguration(newSettings);
+        return;
+      }
+
+      this.LogDebug("WDM analog capture: first load, setting defaults");
+      TveAnalogVideoStandard currentVideoStandard = (TveAnalogVideoStandard)_currentVideoSettings.VideoStandard;
+      string countryName = System.Globalization.RegionInfo.CurrentRegion.EnglishName;
+      Country country = CountryCollection.Instance.GetCountryByName(countryName);
+      if (country == null)
+      {
+        this.LogWarn("WDM analog capture: failed to get details for country {0}, using defaults for current standard {1}", countryName ?? "[null]", currentVideoStandard);
+        newSettings.VideoStandard = _currentVideoSettings.VideoStandard;
+      }
+      else if (!((TveAnalogVideoStandard)_currentVideoSettings.SupportedVideoStandards).HasFlag(country.VideoStandard))
+      {
+        this.LogWarn("WDM analog capture: recognised country {0} but standard {1} not supported, using defaults for current standard {2}", countryName, country.VideoStandard, currentVideoStandard);
+        newSettings.VideoStandard = _currentVideoSettings.VideoStandard;
+      }
+      else
+      {
+        this.LogDebug("WDM analog capture: recognised country {0}, using {1} defaults", countryName, country.VideoStandard);
+        newSettings.VideoStandard = (int)country.VideoStandard;
+        currentVideoStandard = country.VideoStandard;
+      }
+      newSettings.SupportedVideoStandards = _currentVideoSettings.SupportedVideoStandards;
+
+      bool isNtscStandard = (
+        currentVideoStandard == TveAnalogVideoStandard.NtscM ||
+        currentVideoStandard == TveAnalogVideoStandard.NtscMj ||
+        currentVideoStandard == TveAnalogVideoStandard.Ntsc433 ||
+        currentVideoStandard == TveAnalogVideoStandard.PalM
+      );
+      FrameSize supportedFrameSizes = (FrameSize)_currentVideoSettings.SupportedFrameSizes;
+      FrameRate supportedFrameRates = (FrameRate)_currentVideoSettings.SupportedFrameRates;
+      if (supportedFrameSizes.HasFlag(FrameSize.Fs1920_1080) || supportedFrameSizes.HasFlag(FrameSize.Fs1280_720))
+      {
+        // Probably a capture device. Prefer high resolution.
+        if (supportedFrameSizes.HasFlag(FrameSize.Fs1920_1080))
         {
-          this.LogWarn("WDM analog capture: failed to get country details for country {0}, using PAL/SECAM defaults", countryName ?? "[null]");
-          _currentVideoStandard = AnalogVideoStandard.PAL_B;
+          newSettings.FrameSize = (int)FrameSize.Fs1920_1080;
         }
         else
         {
-          this.LogDebug("WDM analog capture: recognised country {0}, using {1} defaults", countryName, country.VideoStandard);
-          _currentVideoStandard = country.VideoStandard;
+          newSettings.FrameSize = (int)FrameSize.Fs1280_720;
         }
-        SettingsManagement.SaveValue("tuner" + tunerId + "VideoStandard", (int)_currentVideoStandard);
-
-        _currentFrameWidth = 720;
-        if (_currentVideoStandard == AnalogVideoStandard.NTSC_M || _currentVideoStandard == AnalogVideoStandard.NTSC_M_J || _currentVideoStandard == AnalogVideoStandard.NTSC_433 || _currentVideoStandard == AnalogVideoStandard.PAL_M)
+        if (isNtscStandard)
         {
-          _currentFrameHeight = 480;
-          _currentFrameRate = 29.97;
+          if (supportedFrameRates.HasFlag(FrameRate.Fr60))
+          {
+            newSettings.FrameRate = (int)FrameRate.Fr60;
+          }
+          else if (supportedFrameRates.HasFlag(FrameRate.Fr59_94))
+          {
+            newSettings.FrameRate = (int)FrameRate.Fr59_94;
+          }
+          else if (supportedFrameRates.HasFlag(FrameRate.Fr30))
+          {
+            newSettings.FrameRate = (int)FrameRate.Fr30;
+          }
+          else if (supportedFrameRates.HasFlag(FrameRate.Fr29_97))
+          {
+            newSettings.FrameRate = (int)FrameRate.Fr29_97;
+          }
+          else
+          {
+            newSettings.FrameRate = GetMaxFlagValue(_currentVideoSettings.SupportedFrameRates);
+          }
         }
         else
         {
-          _currentFrameHeight = 576;
-          _currentFrameRate = 25;
-        }
-        SettingsManagement.SaveValue("tuner" + tunerId + "FrameWidth", _currentFrameWidth);
-        SettingsManagement.SaveValue("tuner" + tunerId + "FrameHeight", _currentFrameHeight);
-        SettingsManagement.SaveValue("tuner" + tunerId + "FrameRate", _currentFrameRate);
-
-        SettingsManagement.SaveValue("tuner" + tunerId + "SupportedVideoStandards", (int)_supportedVideoStandards);
-
-        foreach (KeyValuePair<VideoProcAmpProperty, VideoProcAmpPropertyDetail> p in _supportedVideoProcAmpProperties)
-        {
-          // The value is stored as a percentage.
-          double propertyValuePercentage = p.Value.ValueDefault * 100 / (p.Value.ValueMaximum - p.Value.ValueMinimum);
-          SettingsManagement.SaveValue("tuner" + tunerId + "VideoProcAmpProperty" + p.Key + "Value", propertyValuePercentage);
-          SettingsManagement.SaveValue("tuner" + tunerId + "VideoProcAmpProperty" + p.Key + "DefaultValue", propertyValuePercentage);
+          if (supportedFrameRates.HasFlag(FrameRate.Fr50))
+          {
+            newSettings.FrameRate = (int)FrameRate.Fr50;
+          }
+          else if (supportedFrameRates.HasFlag(FrameRate.Fr25))
+          {
+            newSettings.FrameRate = (int)FrameRate.Fr25;
+          }
+          else
+          {
+            newSettings.FrameRate = GetMaxFlagValue(_currentVideoSettings.SupportedFrameRates);
+          }
         }
       }
-
-      AnalogVideoStandard newVideoStandard = (AnalogVideoStandard)SettingsManagement.GetValue("tuner" + tunerId + "VideoStandard", (int)_currentVideoStandard);
-      if (newVideoStandard != _currentVideoStandard)
+      else
       {
-        ConfigureAnalogVideoDecoder(newVideoStandard);
-      }
-
-      Dictionary<VideoProcAmpProperty, double> newVideoProcAmpSettings = new Dictionary<VideoProcAmpProperty, double>();
-      foreach (VideoProcAmpProperty property in Enum.GetValues(typeof(VideoProcAmpProperty)))
-      {
-        double currentPropertyValuePercentage = -1;
-        if (!_currentVideoProcAmpPropertyValues.TryGetValue(property, out currentPropertyValuePercentage))
+        if (isNtscStandard && supportedFrameSizes.HasFlag(FrameSize.Fs720_480))
         {
-          currentPropertyValuePercentage = -1;
+          newSettings.FrameSize = (int)FrameSize.Fs720_480;
+          if (supportedFrameRates.HasFlag(FrameRate.Fr29_97))
+          {
+            newSettings.FrameRate = (int)FrameRate.Fr29_97;
+          }
+          else
+          {
+            newSettings.FrameRate = GetMaxFlagValue(_currentVideoSettings.SupportedFrameRates);
+          }
         }
-
-        double newPropertyValuePercentage = SettingsManagement.GetValue("tuner" + tunerId + "VideoProcAmpProperty" + property + "Value", currentPropertyValuePercentage);
-        if (newPropertyValuePercentage != -1 && newPropertyValuePercentage != currentPropertyValuePercentage)
+        else if (!isNtscStandard && supportedFrameSizes.HasFlag(FrameSize.Fs720_576))
         {
-          newVideoProcAmpSettings.Add(property, newPropertyValuePercentage);
+          newSettings.FrameSize = (int)FrameSize.Fs720_576;
+          if (supportedFrameRates.HasFlag(FrameRate.Fr25))
+          {
+            newSettings.FrameRate = (int)FrameRate.Fr25;
+          }
+          else
+          {
+            newSettings.FrameRate = GetMaxFlagValue(_currentVideoSettings.SupportedFrameRates);
+          }
+        }
+        else
+        {
+          newSettings.FrameSize = GetMaxFlagValue(_currentVideoSettings.SupportedFrameSizes);
+          newSettings.FrameRate = GetMaxFlagValue(_currentVideoSettings.SupportedFrameRates);
         }
       }
-      ConfigureVideoProcessingAmplifier(newVideoProcAmpSettings);
+      this.LogDebug("WDM analog capture: frame size = {0}, frame rate = {1}", (FrameSize)newSettings.FrameSize, (FrameRate)newSettings.FrameRate);
+      newSettings.SupportedFrameSizes = _currentVideoSettings.SupportedFrameSizes;
+      newSettings.SupportedFrameRates = _currentVideoSettings.SupportedFrameRates;
+      newSettings = AnalogTunerSettingsManagement.SaveAnalogTunerSettings(newSettings);
 
-      int newFrameWidth = SettingsManagement.GetValue("tuner" + tunerId + "FrameWidth", _currentFrameWidth);
-      int newFrameHeight = SettingsManagement.GetValue("tuner" + tunerId + "FrameHeight", _currentFrameHeight);
-      double newFrameRate = SettingsManagement.GetValue("tuner" + tunerId + "FrameRate", _currentFrameRate);
-      if (newFrameWidth != _currentFrameWidth || newFrameHeight != _currentFrameHeight || newFrameRate != _currentFrameRate)
+      if (_currentVideoOrCameraPropertySettings.Count > 0)
       {
-        ConfigureStream(newFrameWidth, newFrameHeight, newFrameRate);
+        foreach (TunerProperty p in _currentVideoOrCameraPropertySettings.Values)
+        {
+          p.IdTuner = newSettings.IdAnalogTunerSettings;
+        }
+        TunerPropertyManagement.SaveTunerProperties(_currentVideoOrCameraPropertySettings.Values);
       }
+
+      ReloadConfiguration(newSettings);
     }
 
     /// <summary>
     /// Configure the analog video decoder interface.
     /// </summary>
     /// <param name="videoStandard">The decoder video standard.</param>
-    private void ConfigureAnalogVideoDecoder(AnalogVideoStandard videoStandard)
+    private void ConfigureAnalogVideoDecoder(TveAnalogVideoStandard videoStandard)
     {
-      if (_filterVideo == null || videoStandard == AnalogVideoStandard.None)
+      if (_filterVideo == null || videoStandard == TveAnalogVideoStandard.None)
       {
         return;
       }
 
-      this.LogDebug("WDM analog capture: configure analog video decoder, standard = {0}", videoStandard);
       IAMAnalogVideoDecoder analogVideoDecoder = _filterVideo as IAMAnalogVideoDecoder;
-      if (analogVideoDecoder != null)
+      if (analogVideoDecoder == null)
       {
-        if (!_supportedVideoStandards.HasFlag(videoStandard))
-        {
-          this.LogWarn("WDM analog capture: requested video standard {0} is not supported", videoStandard);
-          return;
-        }
+        this.LogWarn("WDM analog capture: failed to find analog video decoder interface on capture filter, not able to configure decoder");
+        return;
+      }
 
-        int hr = analogVideoDecoder.put_TVFormat(videoStandard);
-        if (hr != (int)HResult.Severity.Success)
-        {
-          this.LogError("WDM analog capture: failed to set video standard, hr = 0x{0:x}", hr);
-        }
-        else
-        {
-          _currentVideoStandard = videoStandard;
-        }
+      if (!((TveAnalogVideoStandard)_currentVideoSettings.SupportedVideoStandards).HasFlag(videoStandard))
+      {
+        this.LogWarn("WDM analog capture: requested video standard {0} is not supported", videoStandard);
+        return;
+      }
+
+      this.LogDebug("WDM analog capture: configure analog video decoder, standard = {0}", videoStandard);
+      int hr = analogVideoDecoder.put_TVFormat(GetWdmVideoStandard(videoStandard));
+      if (hr != (int)NativeMethods.HResult.S_OK)
+      {
+        this.LogError("WDM analog capture: failed to set video standard, hr = 0x{0:x}, standard = {1}", hr, videoStandard);
       }
       else
       {
-        this.LogWarn("WDM analog capture: failed to find analog video decoder interface on capture filter, not able to configure decoder");
+        _currentVideoSettings.VideoStandard = (int)videoStandard;
+      }
+    }
+
+    /// <summary>
+    /// Configure the stream configuration interface.
+    /// </summary>
+    /// <param name="frameSize">The video frame size.</param>
+    /// <param name="frameRate">The video frame rate.</param>
+    private void ConfigureStream(FrameSize frameSize, FrameRate frameRate)
+    {
+      if (_interfaceStreamConfiguration == null)
+      {
+        return;
+      }
+
+      if (!((FrameSize)_currentVideoSettings.SupportedFrameSizes).HasFlag(frameSize))
+      {
+        this.LogWarn("WDM analog capture: requested frame size {0} is not supported", frameSize);
+        return;
+      }
+      if (!((FrameRate)_currentVideoSettings.SupportedFrameRates).HasFlag(frameRate))
+      {
+        this.LogWarn("WDM analog capture: requested frame rate {0} is not supported", frameRate);
+        return;
+      }
+
+      // Get the current format information.
+      AMMediaType format;
+      int hr = _interfaceStreamConfiguration.GetFormat(out format);
+      try
+      {
+        TvExceptionDirectShowError.Throw(hr, "Failed to get stream configuration format information.");
+
+        this.LogDebug("WDM analog capture: configure stream, frame size = {0}, frame rate = {1}, format = {2}", frameSize, frameRate, format.formatType);
+        double rawFrameRate = 50;
+        switch (frameRate)
+        {
+          case FrameRate.Fr15:
+            rawFrameRate = 15;
+            break;
+          case FrameRate.Fr23_976:
+            rawFrameRate = 23.976;
+            break;
+          case FrameRate.Fr24:
+            rawFrameRate = 24;
+            break;
+          case FrameRate.Fr25:
+            rawFrameRate = 25;
+            break;
+          case FrameRate.Fr29_97:
+            rawFrameRate = 29.97;
+            break;
+          case FrameRate.Fr30:
+            rawFrameRate = 30;
+            break;
+          case FrameRate.Fr50:
+            rawFrameRate = 50;
+            break;
+          case FrameRate.Fr59_94:
+            rawFrameRate = 59.94;
+            break;
+          case FrameRate.Fr60:
+            rawFrameRate = 60;
+            break;
+        }
+        long averageTimePerFrame = (long)(10000000d / rawFrameRate);
+
+        // The structure of the content of formatPtr depends on formatType.
+        object formatStruct = null;
+        if (format.formatType == FormatType.VideoInfo)
+        {
+          VideoInfoHeader temp = new VideoInfoHeader();
+          Marshal.PtrToStructure(format.formatPtr, temp);
+          UpdateBmiHeader(ref temp.BmiHeader, frameSize);
+          if (frameRate != FrameRate.Automatic)
+          {
+            temp.AvgTimePerFrame = averageTimePerFrame;
+          }
+          formatStruct = temp;
+        }
+        else if (format.formatType == FormatType.VideoInfo2)
+        {
+          VideoInfoHeader2 temp = new VideoInfoHeader2();
+          Marshal.PtrToStructure(format.formatPtr, temp);
+          UpdateBmiHeader(ref temp.BmiHeader, frameSize);
+          if (frameRate != FrameRate.Automatic)
+          {
+            temp.AvgTimePerFrame = averageTimePerFrame;
+          }
+          formatStruct = temp;
+        }
+        else if (format.formatType == FormatType.Mpeg2Video)
+        {
+          MPEG2VideoInfo temp = new MPEG2VideoInfo();
+          Marshal.PtrToStructure(format.formatPtr, temp);
+          UpdateBmiHeader(ref temp.hdr.BmiHeader, frameSize);
+          if (frameRate != FrameRate.Automatic)
+          {
+            temp.hdr.AvgTimePerFrame = averageTimePerFrame;
+          }
+          formatStruct = temp;
+        }
+        else if (format.formatType == FormatType.MpegVideo)
+        {
+          MPEG1VideoInfo temp = new MPEG1VideoInfo();
+          Marshal.PtrToStructure(format.formatPtr, temp);
+          UpdateBmiHeader(ref temp.hdr.BmiHeader, frameSize);
+          if (frameRate != FrameRate.Automatic)
+          {
+            temp.hdr.AvgTimePerFrame = averageTimePerFrame;
+          }
+          formatStruct = temp;
+        }
+        else
+        {
+          this.LogWarn("WDM analog capture: format type {0} is not supported, not possible to configure stream", format.formatType);
+        }
+
+        if (formatStruct != null && (frameSize != FrameSize.Automatic || frameRate != FrameRate.Automatic))
+        {
+          Marshal.StructureToPtr(formatStruct, format.formatPtr, false);
+          hr = _interfaceStreamConfiguration.SetFormat(format);
+          TvExceptionDirectShowError.Throw(hr, "Failed to set stream configuration format information, frame size = {0}, frame rate = {1}, format type = {2}.", frameSize, frameRate, format.formatType);
+          _currentVideoSettings.FrameSize = (int)frameSize;
+          _currentVideoSettings.FrameRate = (int)frameRate;
+        }
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "WDM analog capture: failed to configure stream, frame size = {0}, frame rate = {1}, format type = {2}", frameSize, frameRate, format.formatType);
+      }
+      finally
+      {
+        Release.AmMediaType(ref format);
+      }
+    }
+
+    private void UpdateBmiHeader(ref BitmapInfoHeader bmiHeader, FrameSize frameSize)
+    {
+      if (bmiHeader == null || bmiHeader.Size < 8)
+      {
+        this.LogWarn("WDM analog capture: not possible to set frame size");
+        return;
+      }
+
+      switch (frameSize)
+      {
+        case FrameSize.Fs320_240:
+          bmiHeader.Width = 320;
+          bmiHeader.Height = 240;
+          break;
+        case FrameSize.Fs352_240:
+          bmiHeader.Width = 352;
+          bmiHeader.Height = 240;
+          break;
+        case FrameSize.Fs352_288:
+          bmiHeader.Width = 352;
+          bmiHeader.Height = 288;
+          break;
+        case FrameSize.Fs384_288:
+          bmiHeader.Width = 384;
+          bmiHeader.Height = 288;
+          break;
+        case FrameSize.Fs480_360:
+          bmiHeader.Width = 480;
+          bmiHeader.Height = 360;
+          break;
+        case FrameSize.Fs640_360:
+          bmiHeader.Width = 640;
+          bmiHeader.Height = 360;
+          break;
+        case FrameSize.Fs640_480:
+          bmiHeader.Width = 640;
+          bmiHeader.Height = 480;
+          break;
+        case FrameSize.Fs704_480:
+          bmiHeader.Width = 704;
+          bmiHeader.Height = 480;
+          break;
+        case FrameSize.Fs704_576:
+          bmiHeader.Width = 704;
+          bmiHeader.Height = 576;
+          break;
+        case FrameSize.Fs720_480:
+          bmiHeader.Width = 720;
+          bmiHeader.Height = 480;
+          break;
+        case FrameSize.Fs720_576:
+          bmiHeader.Width = 720;
+          bmiHeader.Height = 576;
+          break;
+        case FrameSize.Fs768_480:
+          bmiHeader.Width = 768;
+          bmiHeader.Height = 480;
+          break;
+        case FrameSize.Fs768_576:
+          bmiHeader.Width = 768;
+          bmiHeader.Height = 576;
+          break;
+        case FrameSize.Fs1280_720:
+          bmiHeader.Width = 1280;
+          bmiHeader.Height = 720;
+          break;
+        case FrameSize.Fs1920_1080:
+          bmiHeader.Width = 1920;
+          bmiHeader.Height = 1080;
+          break;
       }
     }
 
     /// <summary>
     /// Configure the video processing amplifier.
     /// </summary>
-    /// <param name="propertySettings">The amplifier property settings.</param>
-    private void ConfigureVideoProcessingAmplifier(IDictionary<VideoProcAmpProperty, double> propertySettings)
+    /// <param name="newPropertySettings">The amplifier property settings.</param>
+    private void ConfigureVideoProcessingAmplifier(ICollection<TunerProperty> newPropertySettings)
     {
       if (_filterVideo == null)
       {
@@ -635,143 +1091,153 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         return;
       }
 
-      foreach (VideoProcAmpProperty property in propertySettings.Keys)
+      bool isVideoProcAmpProperty;
+      VideoProcAmpProperty wdmProperty;
+      TunerProperty propertyLimits;
+      foreach (TunerProperty property in newPropertySettings)
       {
-        VideoProcAmpPropertyDetail propertyLimits;
-        if (_supportedVideoProcAmpProperties.TryGetValue(property, out propertyLimits))
+        VideoOrCameraProperty mpProperty = (VideoOrCameraProperty)property.PropertyId;
+        VideoOrCameraPropertyFlag mpValueFlag = (VideoOrCameraPropertyFlag)property.ValueFlags;
+        GetWdmVideoProcAmpProperty(mpProperty, out isVideoProcAmpProperty, out wdmProperty);
+        if (!isVideoProcAmpProperty)
         {
-          // The value is stored as a percentage. Convert it back to an absolute
-          // value in the permitted range and quantise to the step size for the
-          // property.
-          double propertyValuePercentage = propertySettings[property];
-          int propertyValueAbsolute = (int)Math.Round(propertyLimits.ValueMinimum + ((propertyValuePercentage * (propertyLimits.ValueMaximum - propertyLimits.ValueMinimum)) / 100), 0, MidpointRounding.AwayFromZero);
-          int stepOffset = propertyValueAbsolute % propertyLimits.SteppingDelta;
-          if (stepOffset > 0)
-          {
-            propertyValueAbsolute -= stepOffset;
-            if (Math.Round((double)(stepOffset / propertyLimits.SteppingDelta), 0, MidpointRounding.AwayFromZero) == 1)
-            {
-              propertyValueAbsolute += propertyLimits.SteppingDelta;
-            }
-          }
+          continue;
+        }
+        if (!_currentVideoOrCameraPropertySettings.TryGetValue(mpProperty, out propertyLimits))
+        {
+          this.LogWarn("WDM analog capture: requested video processing amplifier property {0} is not supported", mpProperty);
+          continue;
+        }
+        if ((property.ValueFlags & propertyLimits.PossibleValueFlags) == 0)
+        {
+          this.LogWarn("WDM analog capture: requested video processing amplifier property flag {0} for property {1} is not supported", mpValueFlag, mpProperty);
+          continue;
+        }
+        if (property.Value == propertyLimits.Value && property.ValueFlags == propertyLimits.ValueFlags)
+        {
+          continue;
+        }
 
-          this.LogDebug("WDM analog capture: configure video processing amplifier property {0}, percentage = {1} %, value = {2}", property, propertyValuePercentage, propertyValueAbsolute);
-          if (propertyLimits.ValueMinimum <= propertyValueAbsolute && propertyLimits.ValueMaximum >= propertyValueAbsolute)
+        // Confine to supported range and steps.
+        int newValue = property.Value;
+        VideoProcAmpFlags newFlag = GetWdmVideoProcAmpPropertyFlag((VideoOrCameraPropertyFlag)property.ValueFlags);
+        int stepOffset = (newValue - propertyLimits.Minimum) % propertyLimits.Step;
+        if (stepOffset > 0)
+        {
+          newValue -= stepOffset;
+          if (stepOffset / propertyLimits.Step > 0.5)
           {
-            int hr = videoProcAmp.Set(property, propertyValueAbsolute, VideoProcAmpFlags.Manual);
-            if (hr != (int)HResult.Severity.Success)
-            {
-              this.LogError("WDM analog capture: failed to set video standard, hr = 0x{0:x}", hr);
-            }
-            else
-            {
-              _currentVideoProcAmpPropertyValues[property] = propertyValuePercentage;
-            }
+            newValue += propertyLimits.Step;
           }
-          else
-          {
-            this.LogWarn("WDM analog capture: value {0} calculated from percentage {1} for processing amplifier property {2} is outside the allowed bounds, min = {2}, max = {3}", propertyValueAbsolute, propertyValuePercentage, property, propertyLimits.ValueMinimum, propertyLimits.ValueMaximum);
-          }
+        }
+        if (newValue > propertyLimits.Maximum)
+        {
+          newValue = propertyLimits.Maximum;
+        }
+        else if (newValue < propertyLimits.Minimum)
+        {
+          newValue = propertyLimits.Minimum;
+        }
+        if (newValue == propertyLimits.Value && property.ValueFlags == propertyLimits.ValueFlags)
+        {
+          continue;
+        }
+
+        this.LogDebug("WDM analog capture: configure video processing amplifier property {0}, value = {1}, flag = {2}", mpProperty, newValue, mpValueFlag);
+        int hr = videoProcAmp.Set(wdmProperty, newValue, newFlag);
+        if (hr != (int)NativeMethods.HResult.S_OK)
+        {
+          this.LogError("WDM analog capture: failed to set video processing amplifier property, hr = 0x{0:x}, property = {1}, value = {2}, flag = {3}", hr, wdmProperty, newValue, newFlag);
         }
         else
         {
-          this.LogDebug("WDM analog capture: requested processing amplifier property {0} is not supported", property);
+          propertyLimits.Value = newValue;
+          propertyLimits.ValueFlags = (int)mpValueFlag;
         }
       }
     }
 
     /// <summary>
-    /// Configure the stream configuration interface.
+    /// Configure the camera control.
     /// </summary>
-    /// <param name="frameWidth">The video frame width in pixels.</param>
-    /// <param name="frameHeight">The video frame height in pixels.</param>
-    /// <param name="frameRate">The video frame rate.</param>
-    private void ConfigureStream(int frameWidth, int frameHeight, double frameRate)
+    /// <param name="newPropertySettings">The control property settings.</param>
+    private void ConfigureCameraControl(ICollection<TunerProperty> newPropertySettings)
     {
-      if (_interfaceStreamConfiguration == null)
+      if (_filterVideo == null)
       {
         return;
       }
 
-      // Get the current format information.
-      AMMediaType format;
-      int hr = _interfaceStreamConfiguration.GetFormat(out format);
-      try
+      IAMCameraControl cameraControl = _filterVideo as IAMCameraControl;
+      if (cameraControl == null)
       {
-        HResult.ThrowException(hr, "Failed to get format information.");
+        this.LogWarn("WDM analog capture: failed to find camera control interface on capture filter, not able to configure control");
+        return;
+      }
 
-        this.LogDebug("WDM analog capture: configure stream, width = {0}, height = {1}, rate = {2}, format = {3}", frameWidth, frameHeight, frameRate, format.formatType);
-        long averageTimePerFrame = (long)(10000000d / frameRate);
+      bool isCameraControlProperty;
+      CameraControlProperty wdmProperty;
+      TunerProperty propertyLimits;
+      foreach (TunerProperty property in newPropertySettings)
+      {
+        VideoOrCameraProperty mpProperty = (VideoOrCameraProperty)property.PropertyId;
+        VideoOrCameraPropertyFlag mpValueFlag = (VideoOrCameraPropertyFlag)property.ValueFlags;
+        GetWdmCameraControlProperty(mpProperty, out isCameraControlProperty, out wdmProperty);
+        if (!isCameraControlProperty)
+        {
+          continue;
+        }
+        if (!_currentVideoOrCameraPropertySettings.TryGetValue(mpProperty, out propertyLimits))
+        {
+          this.LogWarn("WDM analog capture: requested camera control property {0} is not supported", mpProperty);
+          continue;
+        }
+        if ((property.ValueFlags & propertyLimits.PossibleValueFlags) == 0)
+        {
+          this.LogWarn("WDM analog capture: requested camera control property flag {0} for property {1} is not supported", mpValueFlag, mpProperty);
+          continue;
+        }
+        if (property.Value == propertyLimits.Value && property.ValueFlags == propertyLimits.ValueFlags)
+        {
+          continue;
+        }
 
-        // The structure of the content of formatPtr depends on formatType.
-        object formatStruct = null;
-        if (format.formatType == FormatType.VideoInfo)
+        // Confine to supported range and steps.
+        int newValue = property.Value;
+        CameraControlFlags newFlag = GetWdmCameraControlPropertyFlag((VideoOrCameraPropertyFlag)property.ValueFlags);
+        int stepOffset = (newValue - propertyLimits.Minimum) % propertyLimits.Step;
+        if (stepOffset > 0)
         {
-          VideoInfoHeader temp = new VideoInfoHeader();
-          Marshal.PtrToStructure(format.formatPtr, temp);
-          UpdateBmiHeader(ref temp.BmiHeader, frameWidth, frameHeight);
-          temp.AvgTimePerFrame = averageTimePerFrame;
-          formatStruct = temp;
+          newValue -= stepOffset;
+          if (stepOffset / propertyLimits.Step > 0.5)
+          {
+            newValue += propertyLimits.Step;
+          }
         }
-        else if (format.formatType == FormatType.VideoInfo2)
+        if (newValue > propertyLimits.Maximum)
         {
-          VideoInfoHeader2 temp = new VideoInfoHeader2();
-          Marshal.PtrToStructure(format.formatPtr, temp);
-          UpdateBmiHeader(ref temp.BmiHeader, frameWidth, frameHeight);
-          temp.AvgTimePerFrame = averageTimePerFrame;
-          formatStruct = temp;
+          newValue = propertyLimits.Maximum;
         }
-        else if (format.formatType == FormatType.Mpeg2Video)
+        else if (newValue < propertyLimits.Minimum)
         {
-          MPEG2VideoInfo temp = new MPEG2VideoInfo();
-          Marshal.PtrToStructure(format.formatPtr, temp);
-          UpdateBmiHeader(ref temp.hdr.BmiHeader, frameWidth, frameHeight);
-          temp.hdr.AvgTimePerFrame = averageTimePerFrame;
-          formatStruct = temp;
+          newValue = propertyLimits.Minimum;
         }
-        else if (format.formatType == FormatType.MpegVideo)
+        if (newValue == propertyLimits.Value && property.ValueFlags == propertyLimits.ValueFlags)
         {
-          MPEG1VideoInfo temp = new MPEG1VideoInfo();
-          Marshal.PtrToStructure(format.formatPtr, temp);
-          UpdateBmiHeader(ref temp.hdr.BmiHeader, frameWidth, frameHeight);
-          temp.hdr.AvgTimePerFrame = averageTimePerFrame;
-          formatStruct = temp;
+          continue;
+        }
+
+        this.LogDebug("WDM analog capture: configure camera control property {0}, value = {1}, flag = {2}", mpProperty, newValue, mpValueFlag);
+        int hr = cameraControl.Set(wdmProperty, newValue, newFlag);
+        if (hr != (int)NativeMethods.HResult.S_OK)
+        {
+          this.LogError("WDM analog capture: failed to set camera control property, hr = 0x{0:x}, property = {1}, value = {2}, flag = {3}", hr, wdmProperty, newValue, newFlag);
         }
         else
         {
-          this.LogWarn("WDM analog capture: format type {0} is not supported, not possible to configure stream", format.formatType);
+          propertyLimits.Value = newValue;
+          propertyLimits.ValueFlags = (int)mpValueFlag;
         }
-
-        if (formatStruct != null)
-        {
-          Marshal.StructureToPtr(formatStruct, format.formatPtr, false);
-          hr = _interfaceStreamConfiguration.SetFormat(format);
-          HResult.ThrowException(hr, "Failed to set format information.");
-          _currentFrameWidth = frameWidth;
-          _currentFrameHeight = frameHeight;
-          _currentFrameRate = frameRate;
-        }
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "WDM analog capture: failed to configure stream");
-      }
-      finally
-      {
-        Release.AmMediaType(ref format);
-      }
-    }
-
-    private void UpdateBmiHeader(ref BitmapInfoHeader bmiHeader, int width, int height)
-    {
-      if (bmiHeader == null || bmiHeader.Size < 8)
-      {
-        this.LogWarn("WDM analog capture: not possible to set frame size");
-      }
-      else
-      {
-        bmiHeader.Width = width;
-        bmiHeader.Height = height;
       }
     }
 
@@ -781,17 +1247,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    public void PerformTuning(AnalogChannel channel)
+    public void PerformTuning(IChannel channel)
     {
-      if (channel.MediaType == MediaTypeEnum.TV && _filterVideo != null)
+      ChannelCapture captureChannel = channel as ChannelCapture;
+      if (captureChannel != null && channel.MediaType == TveMediaType.Television && _filterVideo != null)
       {
         this.LogDebug("WDM analog capture: perform tuning");
         IAMAnalogVideoDecoder analogVideoDecoder = _filterVideo as IAMAnalogVideoDecoder;
         if (analogVideoDecoder != null)
         {
           // This property is not always supported, so don't throw an exception on failure.
-          int hr = analogVideoDecoder.put_VCRHorizontalLocking(channel.IsVcrSignal);
-          if (hr != (int)HResult.Severity.Success)
+          int hr = analogVideoDecoder.put_VCRHorizontalLocking(captureChannel.IsVcrSignal);
+          if (hr != (int)NativeMethods.HResult.S_OK)
           {
             this.LogWarn("WDM analog capture: failed to set VCR horizontal locking, hr = 0x{0:x}", hr);
           }
@@ -811,11 +1278,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     {
       this.LogDebug("WDM analog capture: perform unloading");
 
-      _supportedVideoStandards = AnalogVideoStandard.None;
-      _supportedVideoProcAmpProperties.Clear();
+      _currentVideoSettings = new AnalogTunerSettings();
+      _currentVideoOrCameraPropertySettings.Clear();
 
-      // The stream interface is found on an output pin, so we must release
-      // the reference to avoid a leak.
+      // The stream interface is found on an output pin, so we must release the
+      // reference to avoid a leak.
       Release.ComObject("WDM analog capture stream format interface", ref _interfaceStreamConfiguration);
 
       if (_filterVideo == null && _filterAudio == null)
@@ -860,5 +1327,578 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         }
       }
     }
+
+    #region parameter translation
+
+    private static int GetMaxFlagValue(int flags)
+    {
+      if (flags < 2)
+      {
+        return flags;
+      }
+      int value = 1;
+      while (flags > 1)
+      {
+        flags >>= 1;
+        value <<= 1;
+      }
+      return value;
+    }
+
+    private static WdmAnalogVideoStandard GetWdmVideoStandard(TveAnalogVideoStandard videoStandard)
+    {
+      switch (videoStandard)
+      {
+        case TveAnalogVideoStandard.NtscM:
+          return WdmAnalogVideoStandard.NTSC_M;
+        case TveAnalogVideoStandard.NtscMj:
+          return WdmAnalogVideoStandard.NTSC_M_J;
+        case TveAnalogVideoStandard.Ntsc433:
+          return WdmAnalogVideoStandard.NTSC_433;
+        case TveAnalogVideoStandard.PalB:
+          return WdmAnalogVideoStandard.PAL_B;
+        case TveAnalogVideoStandard.PalD:
+          return WdmAnalogVideoStandard.PAL_D;
+        case TveAnalogVideoStandard.PalG:
+          return WdmAnalogVideoStandard.PAL_G;
+        case TveAnalogVideoStandard.PalH:
+          return WdmAnalogVideoStandard.PAL_H;
+        case TveAnalogVideoStandard.PalI:
+          return WdmAnalogVideoStandard.PAL_I;
+        case TveAnalogVideoStandard.PalM:
+          return WdmAnalogVideoStandard.PAL_M;
+        case TveAnalogVideoStandard.PalN:
+          return WdmAnalogVideoStandard.PAL_N;
+        case TveAnalogVideoStandard.Pal60:
+          return WdmAnalogVideoStandard.PAL_60;
+        case TveAnalogVideoStandard.SecamB:
+          return WdmAnalogVideoStandard.SECAM_B;
+        case TveAnalogVideoStandard.SecamD:
+          return WdmAnalogVideoStandard.SECAM_D;
+        case TveAnalogVideoStandard.SecamG:
+          return WdmAnalogVideoStandard.SECAM_G;
+        case TveAnalogVideoStandard.SecamH:
+          return WdmAnalogVideoStandard.SECAM_H;
+        case TveAnalogVideoStandard.SecamK:
+          return WdmAnalogVideoStandard.SECAM_K;
+        case TveAnalogVideoStandard.SecamK1:
+          return WdmAnalogVideoStandard.SECAM_K1;
+        case TveAnalogVideoStandard.SecamL:
+          return WdmAnalogVideoStandard.SECAM_L;
+        case TveAnalogVideoStandard.SecamL1:
+          return WdmAnalogVideoStandard.SECAM_L1;
+        case TveAnalogVideoStandard.PalNCombo:
+          return WdmAnalogVideoStandard.PAL_N_COMBO;
+        default:
+          Log.Warn("WDM analog capture: unsupported analog video standard {0}, falling back to PAL B", videoStandard);
+          return WdmAnalogVideoStandard.PAL_B;
+      }
+    }
+
+    private static TveAnalogVideoStandard GetTveVideoStandards(WdmAnalogVideoStandard videoStandards)
+    {
+      TveAnalogVideoStandard tveAvs = TveAnalogVideoStandard.None;
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.NTSC_M))
+      {
+        tveAvs |= TveAnalogVideoStandard.NtscM;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.NTSC_M_J))
+      {
+        tveAvs |= TveAnalogVideoStandard.NtscMj;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.NTSC_433))
+      {
+        tveAvs |= TveAnalogVideoStandard.Ntsc433;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.PAL_B))
+      {
+        tveAvs |= TveAnalogVideoStandard.PalB;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.PAL_D))
+      {
+        tveAvs |= TveAnalogVideoStandard.PalD;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.PAL_G))
+      {
+        tveAvs |= TveAnalogVideoStandard.PalG;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.PAL_H))
+      {
+        tveAvs |= TveAnalogVideoStandard.PalH;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.PAL_I))
+      {
+        tveAvs |= TveAnalogVideoStandard.PalI;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.PAL_M))
+      {
+        tveAvs |= TveAnalogVideoStandard.PalM;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.PAL_N))
+      {
+        tveAvs |= TveAnalogVideoStandard.PalN;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.PAL_60))
+      {
+        tveAvs |= TveAnalogVideoStandard.Pal60;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.SECAM_B))
+      {
+        tveAvs |= TveAnalogVideoStandard.SecamB;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.SECAM_D))
+      {
+        tveAvs |= TveAnalogVideoStandard.SecamD;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.SECAM_G))
+      {
+        tveAvs |= TveAnalogVideoStandard.SecamG;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.SECAM_H))
+      {
+        tveAvs |= TveAnalogVideoStandard.SecamH;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.SECAM_K))
+      {
+        tveAvs |= TveAnalogVideoStandard.SecamK;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.SECAM_K1))
+      {
+        tveAvs |= TveAnalogVideoStandard.SecamK1;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.SECAM_L))
+      {
+        tveAvs |= TveAnalogVideoStandard.SecamL;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.SECAM_L1))
+      {
+        tveAvs |= TveAnalogVideoStandard.SecamL1;
+      }
+      if (videoStandards.HasFlag(WdmAnalogVideoStandard.PAL_N_COMBO))
+      {
+        tveAvs |= TveAnalogVideoStandard.PalNCombo;
+      }
+      return tveAvs;
+    }
+
+    private static void GetWdmVideoProcAmpProperty(VideoOrCameraProperty property, out bool isVideoProcAmpProperty, out VideoProcAmpProperty videoProcAmpProperty)
+    {
+      isVideoProcAmpProperty = true;
+      videoProcAmpProperty = VideoProcAmpProperty.BacklightCompensation;
+      switch (property)
+      {
+        case VideoOrCameraProperty.Brightness:
+          videoProcAmpProperty = VideoProcAmpProperty.Brightness;
+          return;
+        case VideoOrCameraProperty.Contrast:
+          videoProcAmpProperty = VideoProcAmpProperty.Contrast;
+          return;
+        case VideoOrCameraProperty.Hue:
+          videoProcAmpProperty = VideoProcAmpProperty.Hue;
+          return;
+        case VideoOrCameraProperty.Saturation:
+          videoProcAmpProperty = VideoProcAmpProperty.Saturation;
+          return;
+        case VideoOrCameraProperty.Sharpness:
+          videoProcAmpProperty = VideoProcAmpProperty.Sharpness;
+          return;
+        case VideoOrCameraProperty.Gamma:
+          videoProcAmpProperty = VideoProcAmpProperty.Gamma;
+          return;
+        case VideoOrCameraProperty.ColorEnable:
+          videoProcAmpProperty = VideoProcAmpProperty.ColorEnable;
+          return;
+        case VideoOrCameraProperty.WhiteBalance:
+          videoProcAmpProperty = VideoProcAmpProperty.WhiteBalance;
+          return;
+        case VideoOrCameraProperty.BacklightCompensation:
+          videoProcAmpProperty = VideoProcAmpProperty.BacklightCompensation;
+          return;
+        case VideoOrCameraProperty.Gain:
+          videoProcAmpProperty = VideoProcAmpProperty.Gain;
+          return;
+        case VideoOrCameraProperty.DigitalMultiplier:
+          videoProcAmpProperty = VideoProcAmpProperty.DigitalMultiplier;
+          return;
+        case VideoOrCameraProperty.DigitalMultiplierLimit:
+          videoProcAmpProperty = VideoProcAmpProperty.DigitalMultiplierLimit;
+          return;
+        case VideoOrCameraProperty.WhiteBalanceComponent:
+          videoProcAmpProperty = VideoProcAmpProperty.WhiteBalanceComponent;
+          return;
+        case VideoOrCameraProperty.PowerLineFrequency:
+          videoProcAmpProperty = VideoProcAmpProperty.PowerLineFrequency;
+          return;
+        default:
+          isVideoProcAmpProperty = false;
+          return;
+      }
+    }
+
+    private static VideoOrCameraProperty? GetTveVideoOrCameraProperty(VideoProcAmpProperty property)
+    {
+      switch (property)
+      {
+        case VideoProcAmpProperty.Brightness:
+          return VideoOrCameraProperty.Brightness;
+        case VideoProcAmpProperty.Contrast:
+          return VideoOrCameraProperty.Contrast;
+        case VideoProcAmpProperty.Hue:
+          return VideoOrCameraProperty.Hue;
+        case VideoProcAmpProperty.Saturation:
+          return VideoOrCameraProperty.Saturation;
+        case VideoProcAmpProperty.Sharpness:
+          return VideoOrCameraProperty.Sharpness;
+        case VideoProcAmpProperty.Gamma:
+          return VideoOrCameraProperty.Gamma;
+        case VideoProcAmpProperty.ColorEnable:
+          return VideoOrCameraProperty.ColorEnable;
+        case VideoProcAmpProperty.WhiteBalance:
+          return VideoOrCameraProperty.WhiteBalance;
+        case VideoProcAmpProperty.BacklightCompensation:
+          return VideoOrCameraProperty.BacklightCompensation;
+        case VideoProcAmpProperty.Gain:
+          return VideoOrCameraProperty.Gain;
+        case VideoProcAmpProperty.DigitalMultiplier:
+          return VideoOrCameraProperty.DigitalMultiplier;
+        case VideoProcAmpProperty.DigitalMultiplierLimit:
+          return VideoOrCameraProperty.DigitalMultiplierLimit;
+        case VideoProcAmpProperty.WhiteBalanceComponent:
+          return VideoOrCameraProperty.WhiteBalanceComponent;
+        case VideoProcAmpProperty.PowerLineFrequency:
+          return VideoOrCameraProperty.PowerLineFrequency;
+      }
+      return null;
+    }
+
+    private static VideoProcAmpFlags GetWdmVideoProcAmpPropertyFlag(VideoOrCameraPropertyFlag flag)
+    {
+      switch (flag)
+      {
+        case VideoOrCameraPropertyFlag.None:
+          return VideoProcAmpFlags.None;
+        case VideoOrCameraPropertyFlag.Manual:
+          return VideoProcAmpFlags.Manual;
+        case VideoOrCameraPropertyFlag.Auto:
+          return VideoProcAmpFlags.Auto;
+        default:
+        Log.Warn("WDM analog capture: unsupported property flag {0}, falling back to none", flag);
+        return VideoProcAmpFlags.None;
+      }
+    }
+
+    private static VideoOrCameraPropertyFlag GetTveVideoOrCameraPropertyFlags(VideoProcAmpFlags flags)
+    {
+      VideoOrCameraPropertyFlag tveFlags = VideoOrCameraPropertyFlag.None;
+      if (flags.HasFlag(VideoProcAmpFlags.Auto))
+      {
+        tveFlags |= VideoOrCameraPropertyFlag.Auto;
+      }
+      if (flags.HasFlag(VideoProcAmpFlags.Manual))
+      {
+        tveFlags |= VideoOrCameraPropertyFlag.Manual;
+      }
+      return tveFlags;
+    }
+
+    private static void GetWdmCameraControlProperty(VideoOrCameraProperty property, out bool isCameraControlProperty, out CameraControlProperty cameraControlProperty)
+    {
+      isCameraControlProperty = true;
+      cameraControlProperty = CameraControlProperty.AutoExposurePriority;
+      switch (property)
+      {
+        case VideoOrCameraProperty.Pan:
+          cameraControlProperty = CameraControlProperty.Pan;
+          return;
+        case VideoOrCameraProperty.Tilt:
+          cameraControlProperty = CameraControlProperty.Tilt;
+          return;
+        case VideoOrCameraProperty.Roll:
+          cameraControlProperty = CameraControlProperty.Roll;
+          return;
+        case VideoOrCameraProperty.Zoom:
+          cameraControlProperty = CameraControlProperty.Zoom;
+          return;
+        case VideoOrCameraProperty.Exposure:
+          cameraControlProperty = CameraControlProperty.Exposure;
+          return;
+        case VideoOrCameraProperty.Iris:
+          cameraControlProperty = CameraControlProperty.Iris;
+          return;
+        case VideoOrCameraProperty.Focus:
+          cameraControlProperty = CameraControlProperty.Focus;
+          return;
+        case VideoOrCameraProperty.ScanMode:
+          cameraControlProperty = CameraControlProperty.ScanMode;
+          return;
+        case VideoOrCameraProperty.Privacy:
+          cameraControlProperty = CameraControlProperty.Privacy;
+          return;
+        case VideoOrCameraProperty.PanTilt:
+          cameraControlProperty = CameraControlProperty.PanTilt;
+          return;
+        case VideoOrCameraProperty.PanRelative:
+          cameraControlProperty = CameraControlProperty.PanRelative;
+          return;
+        case VideoOrCameraProperty.TiltRelative:
+          cameraControlProperty = CameraControlProperty.TiltRelative;
+          return;
+        case VideoOrCameraProperty.RollRelative:
+          cameraControlProperty = CameraControlProperty.RollRelative;
+          return;
+        case VideoOrCameraProperty.ZoomRelative:
+          cameraControlProperty = CameraControlProperty.ZoomRelative;
+          return;
+        case VideoOrCameraProperty.ExposureRelative:
+          cameraControlProperty = CameraControlProperty.ExposureRelative;
+          return;
+        case VideoOrCameraProperty.IrisRelative:
+          cameraControlProperty = CameraControlProperty.IrisRelative;
+          return;
+        case VideoOrCameraProperty.FocusRelative:
+          cameraControlProperty = CameraControlProperty.FocusRelative;
+          return;
+        case VideoOrCameraProperty.PanTiltRelative:
+          cameraControlProperty = CameraControlProperty.PanTiltRelative;
+          return;
+        case VideoOrCameraProperty.AutoExposurePriority:
+          cameraControlProperty = CameraControlProperty.AutoExposurePriority;
+          return;
+        default:
+          isCameraControlProperty = false;
+          return;
+      }
+    }
+
+    private static VideoOrCameraProperty? GetMpVideoOrCameraProperty(CameraControlProperty property)
+    {
+      switch (property)
+      {
+        case CameraControlProperty.Pan:
+          return VideoOrCameraProperty.Pan;
+        case CameraControlProperty.Tilt:
+          return VideoOrCameraProperty.Tilt;
+        case CameraControlProperty.Roll:
+          return VideoOrCameraProperty.Roll;
+        case CameraControlProperty.Zoom:
+          return VideoOrCameraProperty.Zoom;
+        case CameraControlProperty.Exposure:
+          return VideoOrCameraProperty.Exposure;
+        case CameraControlProperty.Iris:
+          return VideoOrCameraProperty.Iris;
+        case CameraControlProperty.Focus:
+          return VideoOrCameraProperty.Focus;
+        case CameraControlProperty.ScanMode:
+          return VideoOrCameraProperty.ScanMode;
+        case CameraControlProperty.Privacy:
+          return VideoOrCameraProperty.Privacy;
+        case CameraControlProperty.PanTilt:
+          return VideoOrCameraProperty.PanTilt;
+        case CameraControlProperty.PanRelative:
+          return VideoOrCameraProperty.PanRelative;
+        case CameraControlProperty.TiltRelative:
+          return VideoOrCameraProperty.TiltRelative;
+        case CameraControlProperty.RollRelative:
+          return VideoOrCameraProperty.RollRelative;
+        case CameraControlProperty.ZoomRelative:
+          return VideoOrCameraProperty.ZoomRelative;
+        case CameraControlProperty.ExposureRelative:
+          return VideoOrCameraProperty.ExposureRelative;
+        case CameraControlProperty.IrisRelative:
+          return VideoOrCameraProperty.IrisRelative;
+        case CameraControlProperty.FocusRelative:
+          return VideoOrCameraProperty.FocusRelative;
+        case CameraControlProperty.PanTiltRelative:
+          return VideoOrCameraProperty.PanTiltRelative;
+        case CameraControlProperty.FocalLength:
+          return null;    // not supported - read only, unusual structure
+        case CameraControlProperty.AutoExposurePriority:
+          return VideoOrCameraProperty.AutoExposurePriority;
+      }
+      return null;
+    }
+
+    private static CameraControlFlags GetWdmCameraControlPropertyFlag(VideoOrCameraPropertyFlag flag)
+    {
+      switch (flag)
+      {
+        case VideoOrCameraPropertyFlag.None:
+          return CameraControlFlags.None;
+        case VideoOrCameraPropertyFlag.Manual:
+          return CameraControlFlags.Manual;
+        case VideoOrCameraPropertyFlag.Auto:
+          return CameraControlFlags.Auto;
+        default:
+        Log.Warn("WDM analog capture: unsupported property flag {0}, falling back to none", flag);
+        return CameraControlFlags.None;
+      }
+    }
+
+    private static VideoOrCameraPropertyFlag GetTveVideoOrCameraPropertyFlags(CameraControlFlags flags)
+    {
+      VideoOrCameraPropertyFlag tveFlags = VideoOrCameraPropertyFlag.None;
+      if (flags.HasFlag(CameraControlFlags.Auto))
+      {
+        tveFlags |= VideoOrCameraPropertyFlag.Auto;
+      }
+      if (flags.HasFlag(CameraControlFlags.Manual))
+      {
+        tveFlags |= VideoOrCameraPropertyFlag.Manual;
+      }
+      return tveFlags;
+    }
+
+    private static void GetTveFrameDetails(AMMediaType format, out FrameSize frameSize, out FrameRate frameRate)
+    {
+      frameSize = FrameSize.Automatic;
+      frameRate = FrameRate.Automatic;
+
+      int frameWidth;
+      int frameHeight;
+      long averageTimePerFrame;
+      if (format.formatType == FormatType.VideoInfo)
+      {
+        VideoInfoHeader temp = new VideoInfoHeader();
+        Marshal.PtrToStructure(format.formatPtr, temp);
+        ReadBmiHeader(ref temp.BmiHeader, out frameWidth, out frameHeight);
+        averageTimePerFrame = temp.AvgTimePerFrame;
+      }
+      else if (format.formatType == FormatType.VideoInfo2)
+      {
+        VideoInfoHeader2 temp = new VideoInfoHeader2();
+        Marshal.PtrToStructure(format.formatPtr, temp);
+        ReadBmiHeader(ref temp.BmiHeader, out frameWidth, out frameHeight);
+        averageTimePerFrame = temp.AvgTimePerFrame;
+      }
+      else if (format.formatType == FormatType.Mpeg2Video)
+      {
+        MPEG2VideoInfo temp = new MPEG2VideoInfo();
+        Marshal.PtrToStructure(format.formatPtr, temp);
+        ReadBmiHeader(ref temp.hdr.BmiHeader, out frameWidth, out frameHeight);
+        averageTimePerFrame = temp.hdr.AvgTimePerFrame;
+      }
+      else if (format.formatType == FormatType.MpegVideo)
+      {
+        MPEG1VideoInfo temp = new MPEG1VideoInfo();
+        Marshal.PtrToStructure(format.formatPtr, temp);
+        ReadBmiHeader(ref temp.hdr.BmiHeader, out frameWidth, out frameHeight);
+        averageTimePerFrame = temp.hdr.AvgTimePerFrame;
+      }
+      else
+      {
+        Log.Warn("WDM analog capture: format type {0} is not supported", format.formatType);
+        return;
+      }
+
+      if (frameWidth < 0 || frameHeight < 0)
+      {
+        return;
+      }
+
+      if (frameWidth == 320 && frameHeight == 240)
+      {
+        frameSize = FrameSize.Fs320_240;
+      }
+      else if (frameWidth == 352 && frameHeight == 288)
+      {
+        frameSize = FrameSize.Fs352_288;
+      }
+      else if (frameWidth == 384 && frameHeight == 288)
+      {
+        frameSize = FrameSize.Fs384_288;
+      }
+      else if (frameWidth == 480 && frameHeight == 360)
+      {
+        frameSize = FrameSize.Fs480_360;
+      }
+      else if (frameWidth == 640 && frameHeight == 360)
+      {
+        frameSize = FrameSize.Fs640_360;
+      }
+      else if (frameWidth == 640 && frameHeight == 480)
+      {
+        frameSize = FrameSize.Fs640_480;
+      }
+      else if (frameWidth == 704 && frameHeight == 480)
+      {
+        frameSize = FrameSize.Fs704_480;
+      }
+      else if (frameWidth == 704 && frameHeight == 576)
+      {
+        frameSize = FrameSize.Fs704_576;
+      }
+      else if (frameWidth == 720 && frameHeight == 480)
+      {
+        frameSize = FrameSize.Fs720_480;
+      }
+      else if (frameWidth == 720 && frameHeight == 576)
+      {
+        frameSize = FrameSize.Fs720_576;
+      }
+      else if (frameWidth == 768 && frameHeight == 480)
+      {
+        frameSize = FrameSize.Fs768_480;
+      }
+      else if (frameWidth == 768 && frameHeight == 576)
+      {
+        frameSize = FrameSize.Fs768_576;
+      }
+      else if (frameWidth == 1280 && frameHeight == 720)
+      {
+        frameSize = FrameSize.Fs1280_720;
+      }
+      else if (frameWidth == 1920 && frameHeight == 1080)
+      {
+        frameSize = FrameSize.Fs1920_1080;
+      }
+      else
+      {
+        Log.Warn("WDM analog capture: unsupported frame size, width = {0} px, height = {1} px", frameWidth, frameHeight);
+      }
+
+      double rawFrameRate = 10000000d / averageTimePerFrame;
+      if (rawFrameRate > 14.9 && rawFrameRate < 15.1)
+      {
+        frameRate = FrameRate.Fr15;
+      }
+      else if (rawFrameRate > 23.97 && rawFrameRate < 23.98)
+      {
+        frameRate = FrameRate.Fr23_976;
+      }
+      else if (rawFrameRate > 23.98 && rawFrameRate < 24.02)
+      {
+        frameRate = FrameRate.Fr24;
+      }
+      else if (rawFrameRate > 24.9 && rawFrameRate < 25.1)
+      {
+        frameRate = FrameRate.Fr25;
+      }
+      else if (rawFrameRate > 29.96 && rawFrameRate < 29.98)
+      {
+        frameRate = FrameRate.Fr29_97;
+      }
+      else if (rawFrameRate > 29.98 && rawFrameRate < 30.02)
+      {
+        frameRate = FrameRate.Fr30;
+      }
+      else if (rawFrameRate > 49 && rawFrameRate < 51)
+      {
+        frameRate = FrameRate.Fr50;
+      }
+      else if (rawFrameRate > 59.93 && rawFrameRate < 59.95)
+      {
+        frameRate = FrameRate.Fr59_94;
+      }
+      else if (rawFrameRate > 59.95 && rawFrameRate < 60.05)
+      {
+        frameRate = FrameRate.Fr60;
+      }
+      else
+      {
+        Log.Warn("WDM analog capture: unsupported frame rate, raw rate = {0} fps", rawFrameRate);
+      }
+    }
+
+    #endregion
   }
 }

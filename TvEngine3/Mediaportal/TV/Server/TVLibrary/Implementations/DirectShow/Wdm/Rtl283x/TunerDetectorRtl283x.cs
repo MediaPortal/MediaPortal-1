@@ -24,8 +24,9 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 {
@@ -115,7 +116,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     #region variables
 
     // key = device path
-    private IDictionary<string, ICollection<ITVCard>> _knownTuners = new Dictionary<string, ICollection<ITVCard>>();
+    private IDictionary<string, ICollection<ITuner>> _knownTuners = new Dictionary<string, ICollection<ITuner>>();
 
     #endregion
 
@@ -134,11 +135,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// Detect and instanciate the compatible tuners connected to the system.
     /// </summary>
     /// <returns>the tuners that are currently available</returns>
-    public ICollection<ITVCard> DetectTuners()
+    public ICollection<ITuner> DetectTuners()
     {
       this.LogDebug("RTL283x detector: detect tuners");
-      List<ITVCard> tuners = new List<ITVCard>();
-      IDictionary<string, ICollection<ITVCard>> knownTuners = new Dictionary<string, ICollection<ITVCard>>();
+      List<ITuner> tuners = new List<ITuner>();
+      IDictionary<string, ICollection<ITuner>> knownTuners = new Dictionary<string, ICollection<ITuner>>();
 
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
       foreach (DsDevice device in devices)
@@ -152,7 +153,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         }
 
         // Is this a new device?
-        ICollection<ITVCard> deviceTuners;
+        ICollection<ITuner> deviceTuners;
         if (_knownTuners.TryGetValue(devicePath, out deviceTuners))
         {
           device.Dispose();
@@ -160,10 +161,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
           knownTuners.Add(devicePath, deviceTuners);
           continue;
         }
-        deviceTuners = new List<ITVCard>(4);
+        deviceTuners = new List<ITuner>(4);
 
         // Check if we have an RTL283x based tuner.
-        this.LogDebug("RTL283x detector: check tuner {0} {1}", name, devicePath);
+        this.LogDebug("RTL283x detector: check tuner, name = {0}, device path = {1}", name, devicePath);
         Guid filterClsid = typeof(IBaseFilter).GUID;
         object obj = null;
         try
@@ -172,7 +173,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         }
         catch (Exception ex)
         {
-          this.LogError(ex, "RTL283x detector: failed to create filter instance for {0} {1}", name, devicePath);
+          this.LogError(ex, "RTL283x detector: failed to create filter instance, name = {0}, device path = {1}", name, devicePath);
           device.Dispose();
           continue;
         }
@@ -188,9 +189,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
           }
           KSPropertySupport support;
           int hr = ps.QuerySupported(BDA_EXTENSION_FILTER_MODE_PROPERTY_SET, (int)BdaExtensionFilterModeProperty.GetDemodSupportedModes, out support);
-          if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Get))
+          if (hr != (int)NativeMethods.HResult.S_OK || !support.HasFlag(KSPropertySupport.Get))
           {
-            this.LogDebug("RTL283x detector: property set not supported, hr = 0x{0:x}", hr);
+            this.LogDebug("RTL283x detector: property set not supported, hr = 0x{0:x}, support = {1}", hr, support);
             device.Dispose();
             continue;
           }
@@ -202,13 +203,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
           {
             int returnedByteCount;
             hr = ps.Get(BDA_EXTENSION_FILTER_MODE_PROPERTY_SET, (int)BdaExtensionFilterModeProperty.GetDemodSupportedModes, IntPtr.Zero, 0, buffer, 4, out returnedByteCount);
-            if (hr != (int)HResult.Severity.Success || returnedByteCount != 4)
+            if (hr != (int)NativeMethods.HResult.S_OK || returnedByteCount != 4)
             {
               this.LogError("RTL283x detector: failed to read supported modes, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
               device.Dispose();
               continue;
             }
-            supportedModes = (Rtl283xBroadcastStandard)Marshal.ReadInt32(buffer);
+            supportedModes = (Rtl283xBroadcastStandard)Marshal.ReadInt32(buffer, 0);
           }
           finally
           {

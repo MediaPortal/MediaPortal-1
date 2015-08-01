@@ -18,18 +18,19 @@
 
 #endregion
 
-using DirectShowLib.BDA;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using UPnP.Infrastructure.CP.Description;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 {
   /// <summary>
-  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles SAT>IP DVB-C
-  /// tuners.
+  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which
+  /// handles SAT>IP DVB-C tuners.
   /// </summary>
   internal class TunerSatIpCable : TunerSatIpBase
   {
@@ -42,7 +43,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
     /// <param name="streamTuner">An internal tuner implementation, used for RTP stream reception.</param>
     public TunerSatIpCable(DeviceDescriptor serverDescriptor, int sequenceNumber, ITunerInternal streamTuner)
-      : base(serverDescriptor, sequenceNumber, streamTuner, CardType.DvbC)
+      : base(serverDescriptor, sequenceNumber, "C", BroadcastStandard.DvbC, streamTuner)
     {
     }
 
@@ -57,65 +58,37 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("SAT>IP cable: construct URL");
-      DVBCChannel cableChannel = channel as DVBCChannel;
-      if (cableChannel == null)
+      ChannelDvbC dvbcChannel = channel as ChannelDvbC;
+      if (dvbcChannel == null)
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
 
-      string modulation = "256qam";
-      if (cableChannel.ModulationType == ModulationType.Mod64Qam)
+      string modulation;
+      switch (dvbcChannel.ModulationScheme)
       {
-        modulation = "64qam";
-      }
-      else if (cableChannel.ModulationType == ModulationType.Mod80Qam)
-      {
-        modulation = "80qam";
-      }
-      else if (cableChannel.ModulationType == ModulationType.Mod96Qam)
-      {
-        modulation = "96qam";
-      }
-      else if (cableChannel.ModulationType == ModulationType.Mod112Qam)
-      {
-        modulation = "112qam";
-      }
-      else if (cableChannel.ModulationType == ModulationType.Mod128Qam)
-      {
-        modulation = "128qam";
-      }
-      else if (cableChannel.ModulationType == ModulationType.Mod160Qam)
-      {
-        modulation = "160qam";
-      }
-      else if (cableChannel.ModulationType == ModulationType.Mod192Qam)
-      {
-        modulation = "192qam";
-      }
-      else if (cableChannel.ModulationType == ModulationType.Mod224Qam)
-      {
-        modulation = "224qam";
-      }
-      else if (cableChannel.ModulationType == ModulationType.Mod256Qam)
-      {
-        modulation = "256qam";
-      }
-      else
-      {
-        this.LogWarn("SAT>IP cable: unsupported modulation type {0}, assuming 256 QAM", cableChannel.ModulationType);
+        case ModulationSchemeQam.Qam16:
+          modulation = "16qam";
+          break;
+        case ModulationSchemeQam.Qam32:
+          modulation = "32qam";
+          break;
+        case ModulationSchemeQam.Qam64:
+          modulation = "64qam";
+          break;
+        case ModulationSchemeQam.Qam128:
+          modulation = "128qam";
+          break;
+        case ModulationSchemeQam.Qam256:
+          modulation = "256qam";
+          break;
+        default:
+          this.LogWarn("SAT>IP cable: unsupported modulation scheme {0}, falling back to 256 QAM", dvbcChannel.ModulationScheme);
+          modulation = "256qam";
+          break;
       }
 
-      PerformTuning(cableChannel, string.Format("msys=dvbc&freq={0}&mtype={1}&sr={2}", cableChannel.Frequency / 1000, modulation, cableChannel.SymbolRate));
-    }
-
-    /// <summary>
-    /// Check if the tuner can tune to a specific channel.
-    /// </summary>
-    /// <param name="channel">The channel to check.</param>
-    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
-    public override bool CanTune(IChannel channel)
-    {
-      return channel is DVBCChannel;
+      PerformTuning(dvbcChannel, string.Format("msys=dvbc&freq={0}&mtype={1}&sr={2}", dvbcChannel.Frequency / 1000, modulation, dvbcChannel.SymbolRate));
     }
 
     #endregion

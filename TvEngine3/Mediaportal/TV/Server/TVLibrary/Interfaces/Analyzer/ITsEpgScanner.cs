@@ -94,16 +94,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="channel">The channel.</param>
     /// <param name="eventid">The eventid.</param>
     /// <param name="languageCount">The language count.</param>
-    /// <param name="date">The date.</param>
-    /// <param name="time">The time.</param>
+    /// <param name="startDateTimeEpoch">The start date/time.</param>
     /// <param name="duration">The duration.</param>
     /// <param name="genre">The genre.</param>
     /// <param name="starRating">The star rating</param>
     /// <param name="classification">The classification</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetEPGEvent(uint channel, uint eventid, out uint languageCount, out uint date,
-                    out uint time, out uint duration, out IntPtr genre, out int starRating,
+    int GetEPGEvent(uint channel, uint eventid, out uint languageCount, out ulong startDateTimeEpoch,
+                    out ushort duration, out IntPtr genre, out int starRating,
                     out IntPtr classification);
 
     /// <summary>
@@ -122,81 +121,102 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                        out IntPtr eventText, out IntPtr eventDescription, out int parentalRating);
 
     /// <summary>
-    /// Start grabbing MGW
+    /// Start grabbing Media Highway EPG data.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>an HRESULT indicating whether grabbing was started successfully</returns>
     [PreserveSig]
-    int GrabMHW();
+    int GrabMhw();
 
     /// <summary>
-    /// Determines whether MHW has been received or not
+    /// Determine whether Media Highway EPG data grabbing is complete.
     /// </summary>
-    /// <param name="yesNo">if MHW has been received then <c>true</c> .</param>
-    /// <returns></returns>
+    /// <param name="yesNo"><c>True</c> if EPG data grabbing is complete.</param>
+    /// <returns>an HRESULT indicating whether the grab state was retrieved successfully</returns>
     [PreserveSig]
-    int IsMHWReady([MarshalAs(UnmanagedType.Bool)] out bool yesNo);
+    int IsMhwReady([MarshalAs(UnmanagedType.I1)] out bool yesNo);
 
     /// <summary>
-    /// Gets the number of MHW titles received.
+    /// Get the number of Media Highway EPG programs that are available.
     /// </summary>
-    /// <param name="count">The count.</param>
-    /// <returns></returns>
+    /// <param name="count">The number of available programs.</param>
+    /// <returns>an HRESULT indicating whether the program count was retrieved successfully</returns>
     [PreserveSig]
-    int GetMHWTitleCount(out uint count);
+    int GetMhwProgramCount(out uint count);
 
     /// <summary>
-    /// Gets the details for a MHW title.
+    /// Get the details for a Media Highway EPG program.
     /// </summary>
-    /// <param name="program">The program.</param>
-    /// <param name="id">The id.</param>
-    /// <param name="transportId">The transport id.</param>
-    /// <param name="networkId">The network id.</param>
-    /// <param name="channelId">The channel id.</param>
-    /// <param name="programId">The program id.</param>
-    /// <param name="themeId">The theme id.</param>
-    /// <param name="PPV">The PPV.</param>
-    /// <param name="Summaries">The summaries.</param>
-    /// <param name="duration">The duration.</param>
-    /// <param name="dateStart">The date start.</param>
-    /// <param name="timeStart">The time start.</param>
-    /// <param name="title">The title.</param>
-    /// <param name="programName">Name of the program.</param>
-    /// <returns></returns>
+    /// <param name="index">The program's index.</param>
+    /// <param name="id">The program's identifier.</param>
+    /// <param name="channelIndex">The index of the channel which the program is associated with.</param>
+    /// <param name="themeId">The identifier of the theme associated with the program.</param>
+    /// <param name="subThemeId">The identifier of the sub-theme associated with the program.</param>
+    /// <param name="startDateTimeEpoch">The program's start date/time epoch.</param>
+    /// <param name="hasSummary"><c>True</c> if the program has a summary.</param>
+    /// <param name="duration">The duration of the program, in minutes.</param>
+    /// <param name="title">The program's title (name).</param>
+    /// <param name="payPerViewId">The pay-per-view identifier associated with the program.</param>
+    /// <returns>an HRESULT indicating whether the program details were retrieved successfully</returns>
     [PreserveSig]
-    int GetMHWTitle(uint program, out uint id, out uint transportId, out uint networkId, out uint channelId,
-                    out uint programId, out uint themeId, out uint PPV, out byte Summaries, out uint duration,
-                    out uint dateStart, out uint timeStart, out IntPtr title, out IntPtr programName);
+    int GetMhwProgram(uint index, out uint id, out byte channelIndex,
+                      out byte themeId, out byte subThemeId,
+                      out ulong startDateTimeEpoch,
+                      [MarshalAs(UnmanagedType.I1)] out bool hasSummary,
+                      out ushort duration, out IntPtr title,
+                      out uint payPerViewId);
 
     /// <summary>
-    /// Gets the details for a MHW channel.
+    /// Gets the details for a Media Highway EPG channel.
     /// </summary>
-    /// <param name="channelNr">The channel nr.</param>
-    /// <param name="channelId">The channel id.</param>
-    /// <param name="networkId">The network id.</param>
-    /// <param name="transportId">The transport id.</param>
-    /// <param name="channelName">Name of the channel.</param>
-    /// <returns></returns>
+    /// <param name="index">The channel's index.</param>
+    /// <param name="originalNetworkId">The channel's original network identifier.</param>
+    /// <param name="transportStreamId">The channel's transport stream identifier.</param>
+    /// <param name="serviceId">The channel's service identifier.</param>
+    /// <param name="name">The channel's name.</param>
+    /// <returns>an HRESULT indicating whether the channel details were retrieved successfully</returns>
     [PreserveSig]
-    int GetMHWChannel(uint channelNr, out uint channelId, out uint networkId, out uint transportId,
-                      out IntPtr channelName);
+    int GetMhwChannel(byte index, out ushort originalNetworkId,
+                      out ushort transportStreamId, out ushort serviceId,
+                      out IntPtr name);
 
     /// <summary>
-    /// Gets the MHW summary.
+    /// Get the summary for a Media Highway EPG program.
     /// </summary>
-    /// <param name="programId">The program id.</param>
-    /// <param name="summary">The summary.</param>
-    /// <returns></returns>
+    /// <param name="programId">The program's identifier.</param>
+    /// <param name="summary">The program's summary.</param>
+    /// <param name="lineCount">The number of lines available as part of the summary.</param>
+    /// <returns>an HRESULT indicating whether the summary was retrieved successfully</returns>
     [PreserveSig]
-    int GetMHWSummary(uint programId, out IntPtr summary);
+    int GetMhwSummary(uint programId, out IntPtr summary, out byte lineCount);
 
     /// <summary>
-    /// Gets the MHW theme.
+    /// Get a summary line for a Media Highway EPG program.
     /// </summary>
-    /// <param name="themeId">The theme id.</param>
-    /// <param name="theme">The theme.</param>
-    /// <returns></returns>
+    /// <param name="programId">The program's identifier.</param>
+    /// <param name="index">The line's index.</param>
+    /// <param name="line">The summary line.</param>
+    /// <returns>an HRESULT indicating whether the summary line was retrieved successfully</returns>
     [PreserveSig]
-    int GetMHWTheme(uint themeId, out IntPtr theme);
+    int GetMhwSummaryLine(uint programId, byte index, out IntPtr line);
+
+    /// <summary>
+    /// Get the name for a Media Highway EPG program theme.
+    /// </summary>
+    /// <param name="id">The theme's identifier.</param>
+    /// <param name="name">The name of the theme.</param>
+    /// <returns>an HRESULT indicating whether the theme name was retrieved successfully</returns>
+    [PreserveSig]
+    int GetMhwThemeName(byte id, out IntPtr name);
+
+    /// <summary>
+    /// Get the name for a Media Highway EPG program sub-theme.
+    /// </summary>
+    /// <param name="themeId">The theme's identifier.</param>
+    /// <param name="subThemeId">The sub-theme's identifier.</param>
+    /// <param name="name">The name of the sub-theme.</param>
+    /// <returns>an HRESULT indicating whether the sub-theme name was retrieved successfully</returns>
+    [PreserveSig]
+    int GetMhwSubThemeName(byte themeId, byte subThemeId, out IntPtr name);
 
     /// <summary>
     /// Resets this MHW grabber.

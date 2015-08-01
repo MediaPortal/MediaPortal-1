@@ -18,12 +18,12 @@
 
 #endregion
 
-using DirectShowLib.BDA;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
@@ -38,21 +38,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// </summary>
     /// <param name="info">The B2C2-specific information (<see cref="DeviceInfo"/>) about the tuner.</param>
     public TunerB2c2Cable(DeviceInfo info)
-      : base(info, CardType.DvbC)
+      : base(info, BroadcastStandard.DvbC)
     {
     }
 
     #region tuning
-
-    /// <summary>
-    /// Check if the tuner can tune to a specific channel.
-    /// </summary>
-    /// <param name="channel">The channel to check.</param>
-    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
-    public override bool CanTune(IChannel channel)
-    {
-      return channel is DVBCChannel;
-    }
 
     /// <summary>
     /// Actually tune to a channel.
@@ -61,7 +51,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("B2C2 cable: set tuning parameters");
-      DVBCChannel dvbcChannel = channel as DVBCChannel;
+      ChannelDvbC dvbcChannel = channel as ChannelDvbC;
       if (dvbcChannel == null)
       {
         throw new TvException("Received request to tune incompatible channel.");
@@ -69,27 +59,45 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
       lock (_tunerAccessLock)
       {
-        HResult.ThrowException(_interfaceData.SelectDevice(_deviceInfo.DeviceId), "Failed to select device.");
-        HResult.ThrowException(_interfaceTuner.SetFrequency((int)dvbcChannel.Frequency / 1000), "Failed to set frequency.");
-        HResult.ThrowException(_interfaceTuner.SetSymbolRate(dvbcChannel.SymbolRate), "Failed to set symbol rate.");
+        TvExceptionDirectShowError.Throw(_interfaceData.SelectDevice(_deviceInfo.DeviceId), "Failed to select device.");
+        TvExceptionDirectShowError.Throw(_interfaceTuner.SetFrequency(dvbcChannel.Frequency / 1000), "Failed to set frequency.");
+        TvExceptionDirectShowError.Throw(_interfaceTuner.SetSymbolRate(dvbcChannel.SymbolRate), "Failed to set symbol rate.");
 
-        Modulation modulation = Modulation.Qam64;
-        switch (dvbcChannel.ModulationType)
+        Modulation modulation;
+        switch (dvbcChannel.ModulationScheme)
         {
-          case ModulationType.Mod16Qam:
+          case ModulationSchemeQam.Qam16:
             modulation = Modulation.Qam16;
             break;
-          case ModulationType.Mod32Qam:
+          case ModulationSchemeQam.Qam32:
             modulation = Modulation.Qam32;
             break;
-          case ModulationType.Mod128Qam:
+          case ModulationSchemeQam.Qam64:
+            modulation = Modulation.Qam64;
+            break;
+          case ModulationSchemeQam.Qam128:
             modulation = Modulation.Qam128;
             break;
-          case ModulationType.Mod256Qam:
+          case ModulationSchemeQam.Qam256:
             modulation = Modulation.Qam256;
             break;
+          case ModulationSchemeQam.Qam512:
+          case ModulationSchemeQam.Qam1024:
+          case ModulationSchemeQam.Qam2048:
+          case ModulationSchemeQam.Qam4096:
+            this.LogWarn("B2C2 cable: unsupported modulation scheme {0}, falling back to unknown", dvbcChannel.ModulationScheme);
+            modulation = Modulation.Unknown;
+            break;
+          case ModulationSchemeQam.Automatic:
+            this.LogWarn("B2C2 cable: falling back to unknown modulation scheme");
+            modulation = Modulation.Unknown;
+            break;
+          default:
+            modulation = (Modulation)dvbcChannel.ModulationScheme;
+            break;
         }
-        HResult.ThrowException(_interfaceTuner.SetModulation(modulation), "Failed to set modulation.");
+        TvExceptionDirectShowError.Throw(_interfaceTuner.SetModulation(modulation), "Failed to set modulation.");
+
         base.PerformTuning(channel);
       }
     }

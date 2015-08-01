@@ -19,6 +19,7 @@
 #endregion
 
 using System.Collections.Generic;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
@@ -96,17 +97,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         {
           return;
         }
-        bool sectionSyntaxIndicator = ((section[3] & 0x80) != 0);
-        bool privateIndicator = ((section[3] & 0x40) != 0);
-        int sectionLength = ((section[3] & 0x0f) << 8) + section[4];
+        bool sectionSyntaxIndicator = (section[3] & 0x80) != 0;
+        bool privateIndicator = (section[3] & 0x40) != 0;
+        int sectionLength = ((section[3] & 0x0f) << 8) | section[4];
         if (section.Length != 2 + sectionLength + 3)
         {
           this.LogError("MGT: invalid section length = {0}, byte count = {1}", sectionLength, section.Length);
           return;
         }
-        int mapId = (section[5] << 8) + section[6];
-        int versionNumber = ((section[7] >> 1) & 0x1f);
-        bool currentNextIndicator = ((section[7] & 0x80) != 0);
+        ushort mapId = (ushort)((section[5] << 8) | section[6]);
+        byte versionNumber = (byte)((section[7] >> 1) & 0x1f);
+        bool currentNextIndicator = (section[7] & 0x80) != 0;
         if (!currentNextIndicator)
         {
           // Not applicable yet. Technically this should never happen.
@@ -131,7 +132,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         }
 
         byte protocolVersion = section[10];
-        int tablesDefined = (section[11] << 8) + section[12];
+        ushort tablesDefined = (ushort)((section[11] << 8) | section[12]);
         this.LogDebug("MGT: section length = {0}, map ID = {1}, version number = {2}, section number = {3}, last section number {4}, protocol version = {5}, tables defined = {6}",
           sectionLength, mapId, versionNumber, sectionNumber, lastSectionNumber, protocolVersion, tablesDefined);
 
@@ -144,16 +145,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
             this.LogError("MGT: detected tables defined {0} is invalid, pointer = {1}, end of section = {2}, loop = {3}", tablesDefined, pointer, endOfSection, i);
             return;
           }
-          MgtTableType tableType = (MgtTableType)((section[pointer] << 8) + section[pointer + 1]);
+          MgtTableType tableType = (MgtTableType)((section[pointer] << 8) | section[pointer + 1]);
           pointer += 2;
-          int tableTypePid = ((section[pointer] & 0x1f) << 8) + section[pointer + 1];
+          ushort tableTypePid = (ushort)(((section[pointer] & 0x1f) << 8) | section[pointer + 1]);
           pointer += 2;
-          int tableTypeVersionNumber = (section[pointer++] & 0x1f);
+          byte tableTypeVersionNumber = (byte)(section[pointer++] & 0x1f);
           uint numberBytes = 0;
           for (byte b = 0; b < 4; b++)
           {
             numberBytes = numberBytes << 8;
-            numberBytes = section[pointer++];
+            numberBytes |= section[pointer++];
           }
           this.LogDebug("MGT: table type = {0}, PID = {1}, version number = {2}", tableType, tableTypePid, tableTypeVersionNumber);
           if (_tableDetailEventDelegate != null)
@@ -161,7 +162,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
             _tableDetailEventDelegate(tableType, tableTypePid, tableTypeVersionNumber, numberBytes);
           }
 
-          int tableTypeDescriptorsLength = ((section[pointer] & 0x0f) << 8) + section[pointer + 1];
+          int tableTypeDescriptorsLength = ((section[pointer] & 0x0f) << 8) | section[pointer + 1];
           pointer += 2;
           int endOfTableTypeDescriptors = pointer + tableTypeDescriptorsLength;
           if (endOfTableTypeDescriptors > endOfSection)
@@ -188,7 +189,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
           }
         }
 
-        int descriptorsLength = ((section[pointer] & 0x0f) << 8) + section[pointer + 1];
+        int descriptorsLength = ((section[pointer] & 0x0f) << 8) | section[pointer + 1];
         pointer += 2;
         if (pointer + descriptorsLength != endOfSection)
         {
