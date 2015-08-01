@@ -34,6 +34,7 @@ namespace Mediaportal.TV.Server.SetupControls
     public SectionTreeNode(SectionSettings section)
     {
       this.section = section;
+      Name = section.Text;
       Text = section.Text;
     }
 

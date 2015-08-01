@@ -71,12 +71,6 @@
     <Compile Include="ComboBoxEx .cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="FormTuningDetailCommon.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormTuningDetailCommon.Designer.cs">
-      <DependentUpon>FormTuningDetailCommon.cs</DependentUpon>
-    </Compile>
     <Compile Include="MPForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -87,12 +81,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="SettingsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SettingsForm.Designer.cs">
-      <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SectionTreeNode.cs" />
@@ -105,7 +93,6 @@
     <Compile Include="UserInterfaceControls\DataGridBooleanNoNull.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UserInterfaceControls\EventArgs.cs" />
     <Compile Include="UserInterfaceControls\ImageTextComparer.cs" />
     <Compile Include="UserInterfaceControls\ListViewItemComparer.cs" />
     <Compile Include="UserInterfaceControls\MPBeveledLine.cs">
@@ -155,18 +142,8 @@
     <Compile Include="UserInterfaceControls\MPToolTip.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UserInterfaceControls\MWCommon.cs" />
-    <Compile Include="UserInterfaceControls\MWEnums.cs" />
-    <Compile Include="UserInterfaceControls\MWTreeNodeWrapper.cs" />
-    <Compile Include="UserInterfaceControls\MWTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="FormTuningDetailCommon.resx">
-      <DependentUpon>FormTuningDetailCommon.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="MPForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MPForm.cs</DependentUpon>
@@ -175,10 +152,6 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SettingsForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserInterfaceControls\DataGridBooleanNoNull.resx">
       <DependentUpon>DataGridBooleanNoNull.cs</DependentUpon>
@@ -200,10 +173,6 @@
       <DependentUpon>MPNumericTextBox.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UserInterfaceControls\MWTreeView.resx">
-      <DependentUpon>MWTreeView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\SetupTv.ico" />
@@ -212,12 +181,6 @@
     <Content Include="Resources\icon_folder.png" />
     <Content Include="Resources\icon_help.png" />
     <Content Include="Resources\icon_refresh.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TVDatabase\Entities\Entities.csproj">
-      <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
-      <Name>Entities</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

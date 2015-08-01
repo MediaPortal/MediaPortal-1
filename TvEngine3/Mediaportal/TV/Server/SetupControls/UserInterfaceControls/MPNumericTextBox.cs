@@ -27,15 +27,24 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
   /// <summary>
   /// Define a TextBox that allow only integer numbers.
   /// </summary>
-  public class MPNumericTextBox : TextBox
+  public class MPNumericTextBox : MPTextBox
   {
+    private int _minimumValue = int.MinValue;
+    private int _maximumValue = int.MaxValue;
+    private string _previousVal = string.Empty;
+
     protected override void OnKeyPress(KeyPressEventArgs e)
     {
       base.OnKeyPress(e);
-      if ((!e.Handled) && ("1234567890\b".IndexOf(e.KeyChar) < 0))
+      if (!e.Handled)
       {
-        // Yeti.Sys.Win32.MessageBeep(Yeti.Sys.BeepType.SimpleBeep);
-        e.Handled = true;
+        if (
+          "1234567890\b".IndexOf(e.KeyChar) < 0 &&
+          (_minimumValue >= 0 || !string.Equals(e.KeyChar.ToString(), CultureInfo.CurrentCulture.NumberFormat.NegativeSign))
+        )
+        {
+          e.Handled = true;
+        }
       }
     }
 
@@ -58,29 +67,78 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
       }
     }
 
-    protected override void OnTextChanged(EventArgs e)
+    protected override void OnGotFocus(EventArgs e)
+    {
+      _previousVal = Text;
+      base.OnGotFocus(e);
+    }
+
+    protected override void OnLostFocus(EventArgs e)
     {
       try
       {
-        int.Parse(Text, NumberStyles.Integer);
-        OnFormatValid(e);
+        int value;
+        if (
+          !int.TryParse(Text, NumberStyles.Integer, CultureInfo.InvariantCulture.NumberFormat, out value) ||
+          value < _minimumValue ||
+          value > _maximumValue
+        )
+        {
+          OnFormatError(e);
+          Text = _previousVal;
+        }
+        else
+        {
+          OnFormatValid(e);
+          Text = value.ToString();
+        }
       }
       catch
       {
         OnFormatError(e);
       }
-      base.OnTextChanged(e);
+      base.OnLostFocus(e);
+    }
+
+    public int MinimumValue
+    {
+      get
+      {
+        return _minimumValue;
+      }
+      set
+      {
+        _minimumValue = value;
+      }
+    }
+
+    public int MaximumValue
+    {
+      get
+      {
+        return _maximumValue;
+      }
+      set
+      {
+        _maximumValue = value;
+      }
     }
 
     public int Value
     {
       get
       {
-        int val = 0;
-        int.TryParse(Text, out val);
+        int val;
+        if (!int.TryParse(Text, out val))
+        {
+          val = _minimumValue;
+        }
         return val;
       }
-      set { Text = value.ToString(); }
+      set
+      {
+        Text = value.ToString();
+      }
     }
   }
 }

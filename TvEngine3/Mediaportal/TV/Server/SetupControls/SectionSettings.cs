@@ -18,99 +18,58 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Xml;
+using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.SetupControls
 {
+  public delegate void ServerConfigurationChangedEventHandler(object sender, bool restartController, bool reloadConfigController, HashSet<int> reloadConfigTuners);
+  public delegate void PluginEnabledOrDisabledEventHandler(object sender, object plugin, bool isEnabled);
+
   public partial class SectionSettings : System.Windows.Forms.UserControl
   {
+    public const string MESSAGE_CAPTION = "MediaPortal TV Server";
+    public const string SENTENCE_CHECK_LOG_FILES = "Please check the log files for more details.";
+    private event ServerConfigurationChangedEventHandler _onServerConfigurationChanged = null;
+
     public SectionSettings()
     {
-      Init();
-      InitializeComponent();
+      // For design view. Do not delete.
     }
 
-    public SectionSettings(string text)
+    public SectionSettings(string name)
     {
-      Init(text);
+      Init(name);
     }
 
-    private void Init()
+    public SectionSettings(string name, ServerConfigurationChangedEventHandler handler)
     {
-      AutoScroll = true;
+      Init(name);
+      if (handler != null)
+      {
+        _onServerConfigurationChanged += handler;
+      }
     }
 
     private void Init(string text)
     {
-      Init();
+      AutoScroll = true;
       Text = text;
+    }
+
+    protected virtual void OnServerConfigurationChanged(object sender, bool restartController, bool reloadConfigController, HashSet<int> reloadConfigTuners)
+    {
+      if (_onServerConfigurationChanged != null)
+      {
+        _onServerConfigurationChanged(sender, restartController, reloadConfigController, reloadConfigTuners);
+      }
     }
 
     public virtual void SaveSettings() {}
 
     public virtual void LoadSettings() {}
 
-    public virtual void LoadWizardSettings(XmlNode node) {}
-
-
-    /// <summary>
-    /// Returns the current setting for the given setting name
-    /// </summary>
-    /// <param name="name"></param>
-    /// <returns></returns>
-    public virtual object GetSetting(string name)
-    {
-      return null;
-    }
-
-    public static SectionSettings GetSection(string name)
-    {
-      SectionSettings sectionSettings = null;
-      SectionTreeNode sectionTreeNode = SettingsForm.SettingSections[name] as SectionTreeNode;
-
-      if (sectionTreeNode != null)
-      {
-        sectionSettings = sectionTreeNode.Section;
-      }
-      else
-      {
-        //
-        // Failed to locate the specified section, loop through and try to match
-        // a section against the type name instead, as this is the way the wizard names
-        // its sections.
-        //
-        IDictionaryEnumerator enumerator = SettingsForm.SettingSections.GetEnumerator();
-
-        while (enumerator.MoveNext())
-        {
-          SectionTreeNode treeNode = enumerator.Value as SectionTreeNode;
-
-          if (treeNode != null)
-          {
-            Type sectionType = treeNode.Section.GetType();
-
-            if (sectionType.Name.Equals(name))
-            {
-              sectionSettings = treeNode.Section;
-              break;
-            }
-          }
-        }
-      }
-
-      return sectionSettings;
-    }
-
-
     public virtual void OnSectionActivated() {}
 
     public virtual void OnSectionDeActivated() {}
-
-    public virtual bool CanActivate
-    {
-      get { return true; }
-    }
   }
 }

@@ -18,10 +18,23 @@
 
 #endregion
 
+using System.Windows.Forms;
+
 namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
   /// <summary>
   /// Summary description for MPTextBox.
   /// </summary>
-  public class MPTextBox : System.Windows.Forms.TextBox {}
+  public class MPTextBox : System.Windows.Forms.TextBox
+  {
+    protected override void OnPreviewKeyDown(PreviewKeyDownEventArgs e)
+    {
+      // Prevent enter and escape from closing the form.
+      if (e.KeyCode == Keys.Return || e.KeyCode == Keys.Enter || e.KeyCode == Keys.Escape)
+      {
+        e.IsInputKey = true;
+      }
+      base.OnPreviewKeyDown(e);
+    }
+  }
 }
