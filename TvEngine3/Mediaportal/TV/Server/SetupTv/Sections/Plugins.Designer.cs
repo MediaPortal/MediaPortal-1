@@ -30,120 +30,80 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Available plugins", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Available Plugins", System.Windows.Forms.HorizontalAlignment.Left);
       System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Incompatible Plugins", System.Windows.Forms.HorizontalAlignment.Left);
-      this.listView1 = new System.Windows.Forms.ListView();
-      this.clmnEnabled = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.clmnName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.clmnAuthor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.clmnVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.mpLabelChannelCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.tabControl1.SuspendLayout();
-      this.tabPage1.SuspendLayout();
+      this.listViewPlugins = new System.Windows.Forms.ListView();
+      this.columnHeaderEnabled = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderAuthor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.SuspendLayout();
       // 
-      // listView1
+      // listViewPlugins
       // 
-      this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.listViewPlugins.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.listView1.CheckBoxes = true;
-      this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.clmnEnabled,
-            this.clmnName,
-            this.clmnAuthor,
-            this.clmnVersion});
-      listViewGroup1.Header = "Available plugins";
+      this.listViewPlugins.CheckBoxes = true;
+      this.listViewPlugins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderEnabled,
+            this.columnHeaderName,
+            this.columnHeaderAuthor,
+            this.columnHeaderVersion});
+      listViewGroup1.Header = "Available Plugins";
       listViewGroup1.Name = "listViewGroupAvailable";
       listViewGroup2.Header = "Incompatible Plugins";
       listViewGroup2.Name = "listViewGroupIncompatible";
-      this.listView1.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+      this.listViewPlugins.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
             listViewGroup1,
             listViewGroup2});
-      this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-      this.listView1.Location = new System.Drawing.Point(0, 0);
-      this.listView1.Name = "listView1";
-      this.listView1.Size = new System.Drawing.Size(472, 394);
-      this.listView1.TabIndex = 0;
-      this.listView1.UseCompatibleStateImageBehavior = false;
-      this.listView1.View = System.Windows.Forms.View.Details;
-      this.listView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.listView1_ItemChecked);
+      this.listViewPlugins.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+      this.listViewPlugins.Location = new System.Drawing.Point(6, 6);
+      this.listViewPlugins.Name = "listViewPlugins";
+      this.listViewPlugins.Size = new System.Drawing.Size(468, 408);
+      this.listViewPlugins.TabIndex = 0;
+      this.listViewPlugins.UseCompatibleStateImageBehavior = false;
+      this.listViewPlugins.View = System.Windows.Forms.View.Details;
+      this.listViewPlugins.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.listViewPlugins_ItemChecked);
       // 
-      // clmnEnabled
+      // columnHeaderEnabled
       // 
-      this.clmnEnabled.Text = "Enabled";
+      this.columnHeaderEnabled.Text = "Enabled";
       // 
-      // clmnName
+      // columnHeaderName
       // 
-      this.clmnName.Text = "Name";
-      this.clmnName.Width = 140;
+      this.columnHeaderName.Text = "Name";
+      this.columnHeaderName.Width = 140;
       // 
-      // clmnAuthor
+      // columnHeaderAuthor
       // 
-      this.clmnAuthor.Text = "Author";
-      this.clmnAuthor.Width = 120;
+      this.columnHeaderAuthor.Text = "Author";
+      this.columnHeaderAuthor.Width = 141;
       // 
-      // clmnVersion
+      // columnHeaderVersion
       // 
-      this.clmnVersion.Text = "Version";
-      // 
-      // tabControl1
-      // 
-      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Location = new System.Drawing.Point(0, 0);
-      this.tabControl1.Name = "tabControl1";
-      this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(480, 420);
-      this.tabControl1.TabIndex = 10;
-      // 
-      // tabPage1
-      // 
-      this.tabPage1.Controls.Add(this.mpLabelChannelCount);
-      this.tabPage1.Controls.Add(this.listView1);
-      this.tabPage1.Location = new System.Drawing.Point(4, 22);
-      this.tabPage1.Name = "tabPage1";
-      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(472, 394);
-      this.tabPage1.TabIndex = 0;
-      this.tabPage1.Text = "Plugins";
-      this.tabPage1.UseVisualStyleBackColor = true;
-      // 
-      // mpLabelChannelCount
-      // 
-      this.mpLabelChannelCount.AutoSize = true;
-      this.mpLabelChannelCount.Location = new System.Drawing.Point(13, 14);
-      this.mpLabelChannelCount.Name = "mpLabelChannelCount";
-      this.mpLabelChannelCount.Size = new System.Drawing.Size(0, 13);
-      this.mpLabelChannelCount.TabIndex = 2;
+      this.columnHeaderVersion.Text = "Version";
+      this.columnHeaderVersion.Width = 98;
       // 
       // Plugins
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.tabControl1);
+      this.BackColor = System.Drawing.SystemColors.Window;
+      this.Controls.Add(this.listViewPlugins);
       this.Name = "Plugins";
       this.Size = new System.Drawing.Size(480, 420);
-      this.tabControl1.ResumeLayout(false);
-      this.tabPage1.ResumeLayout(false);
-      this.tabPage1.PerformLayout();
       this.ResumeLayout(false);
 
     }
 
     #endregion
 
-    private System.Windows.Forms.ListView listView1;
-    private System.Windows.Forms.ColumnHeader clmnEnabled;
-    private System.Windows.Forms.ColumnHeader clmnName;
-    private System.Windows.Forms.ColumnHeader clmnAuthor;
-    private System.Windows.Forms.ColumnHeader clmnVersion;
-		private System.Windows.Forms.TabControl tabControl1;
-		private System.Windows.Forms.TabPage tabPage1;
-		private MPLabel mpLabelChannelCount;
+    private System.Windows.Forms.ListView listViewPlugins;
+    private System.Windows.Forms.ColumnHeader columnHeaderEnabled;
+    private System.Windows.Forms.ColumnHeader columnHeaderName;
+    private System.Windows.Forms.ColumnHeader columnHeaderAuthor;
+    private System.Windows.Forms.ColumnHeader columnHeaderVersion;
+
   }
 }

@@ -22,74 +22,106 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
-using Mediaportal.TV.Server.SetupTV.Sections;
-using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.SetupTV.Sections.Helpers;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormPreview : MPForm
   {
-
-    private Channel _channel;
-    private IVirtualCard _card;
-    private Player _player;
+    private IVirtualCard _tuner = null;
+    private Player _player = null;
 
     public FormPreview()
     {
       InitializeComponent();
     }
 
-    public Channel Channel
+    public bool SetChannel(Channel channel)
     {
-      get { return _channel; }
-      set { _channel = value; }
-    }
-
-    public new DialogResult ShowDialog(IWin32Window owner)
-    {
-      Text = "Preview " + _channel.DisplayName;
-      
-      IUser user = UserFactory.CreateBasicUser("setuptv");
-      TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, _channel.IdChannel, out _card, out user);
-      if (result != TvResult.Succeeded)
+      if (channel == null)
       {
-        MessageBox.Show("Preview failed:" + result);
-        Close();
-        return DialogResult.None;
+        this.LogError("preview: channel not set");
+        return false;
       }
 
-      this.LogInfo("preview {0} user:{1} {2} {3} {4}", _channel.DisplayName, user.CardId, "n/a", user.Name,
-               _card.TimeShiftFileName);
-      _player = new Player();
-      _player.Play(_card.TimeShiftFileName, this);
+      this.LogInfo("preview: set channel, ID = {0}, name = {1}", channel.IdChannel, channel.Name);
+      Text = "Preview " + channel.Name;
+      
+      IUser user;
+      TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting("TV Server Configuration preview", channel.IdChannel, out _tuner, out user);
+      if (result != TvResult.Succeeded)
+      {
+        MessageBox.Show("Preview result: " + result.GetDescription() + ".", SectionSettings.MESSAGE_CAPTION);
+        return false;
+      }
 
-      return base.ShowDialog(owner);
+      this.LogDebug("preview: time shifting, tuner ID = {0}, file name = {1}", _tuner.Id, _tuner.TimeShiftFileName);
+      _player = new Player();
+      bool success = false;
+      try
+      {
+        success = _player.Play(_tuner.TimeShiftFileName, this);
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "preview: failed to start player");
+        success = false;
+      }
+      finally
+      {
+        if (!success)
+        {
+          StopPlayer();
+          MessageBox.Show("Failed to show channel. " + SectionSettings.SENTENCE_CHECK_LOG_FILES, SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+      }
+      return success;
     }
 
-    protected override void OnClosing(CancelEventArgs e)
+    public void StopPlayer()
     {
       if (_player != null)
       {
         _player.Stop();
         _player = null;
       }
-      if (_card != null)
+      if (_tuner != null)
       {
-        _card.StopTimeShifting();
+        _tuner.StopTimeShifting();
       }
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+      StopPlayer();
       base.OnClosing(e);
     }
 
     private void FormPreview_Resize(object sender, EventArgs e)
     {
       if (_player != null)
+      {
         _player.ResizeToParent();
+      }
+    }
+
+    private void FormPreview_DoubleClick(object sender, EventArgs e)
+    {
+      if (this.WindowState == FormWindowState.Normal)
+      {
+        this.WindowState = FormWindowState.Maximized;
+      }
+      else if (this.WindowState == FormWindowState.Maximized)
+      {
+        this.WindowState = FormWindowState.Normal;
+      }
     }
   }
 }

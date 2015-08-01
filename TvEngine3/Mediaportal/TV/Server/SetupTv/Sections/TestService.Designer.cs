@@ -64,7 +64,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.subchannels = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.owner = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.buttonRestart = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.mpButtonReGrabEpg = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.mpComboBoxChannels = new Mediaportal.TV.Server.SetupControls.ComboBoxEx();
       this.comboBoxGroups = new Mediaportal.TV.Server.SetupControls.ComboBoxEx();
@@ -192,6 +191,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.txtDisc.AcceptsReturn = true;
       this.txtDisc.Location = new System.Drawing.Point(353, 123);
+      this.txtDisc.MaximumValue = 2147483647;
+      this.txtDisc.MinimumValue = -2147483648;
       this.txtDisc.Name = "txtDisc";
       this.txtDisc.ReadOnly = true;
       this.txtDisc.Size = new System.Drawing.Size(80, 20);
@@ -202,6 +203,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // txtBytes
       // 
       this.txtBytes.Location = new System.Drawing.Point(145, 123);
+      this.txtBytes.MaximumValue = 2147483647;
+      this.txtBytes.MinimumValue = -2147483648;
       this.txtBytes.Name = "txtBytes";
       this.txtBytes.ReadOnly = true;
       this.txtBytes.Size = new System.Drawing.Size(118, 20);
@@ -308,7 +311,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             this.owner});
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.HideSelection = false;
-      this.mpListView1.IsChannelListView = false;
       this.mpListView1.Location = new System.Drawing.Point(12, 284);
       this.mpListView1.MultiSelect = false;
       this.mpListView1.Name = "mpListView1";
@@ -362,24 +364,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // buttonRestart
       // 
       this.buttonRestart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonRestart.Location = new System.Drawing.Point(241, 394);
+      this.buttonRestart.Location = new System.Drawing.Point(12, 394);
       this.buttonRestart.Name = "buttonRestart";
-      this.buttonRestart.Size = new System.Drawing.Size(95, 23);
+      this.buttonRestart.Size = new System.Drawing.Size(115, 23);
       this.buttonRestart.TabIndex = 59;
       this.buttonRestart.Text = "Restart Service";
       this.buttonRestart.UseVisualStyleBackColor = true;
       this.buttonRestart.Click += new System.EventHandler(this.buttonRestart_Click);
-      // 
-      // mpButtonReGrabEpg
-      // 
-      this.mpButtonReGrabEpg.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonReGrabEpg.Location = new System.Drawing.Point(353, 394);
-      this.mpButtonReGrabEpg.Name = "mpButtonReGrabEpg";
-      this.mpButtonReGrabEpg.Size = new System.Drawing.Size(115, 23);
-      this.mpButtonReGrabEpg.TabIndex = 60;
-      this.mpButtonReGrabEpg.Text = "Refresh DVB EPG";
-      this.mpButtonReGrabEpg.UseVisualStyleBackColor = true;
-      this.mpButtonReGrabEpg.Click += new System.EventHandler(this.mpButtonReGrabEpg_Click);
       // 
       // imageList1
       // 
@@ -453,8 +444,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // mpCheckBoxAdvMode
       // 
       this.mpCheckBoxAdvMode.AutoSize = true;
-      this.mpCheckBoxAdvMode.Checked = true;
-      this.mpCheckBoxAdvMode.CheckState = System.Windows.Forms.CheckState.Checked;
       this.mpCheckBoxAdvMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpCheckBoxAdvMode.Location = new System.Drawing.Point(9, 198);
       this.mpCheckBoxAdvMode.Name = "mpCheckBoxAdvMode";
@@ -544,7 +533,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.Controls.Add(this.mpButtonPark);
       this.Controls.Add(this.mpLabel2);
       this.Controls.Add(this.comboBoxGroups);
-      this.Controls.Add(this.mpButtonReGrabEpg);
       this.Controls.Add(this.buttonRestart);
       this.Controls.Add(this.mpListView1);
       this.Controls.Add(this.mpButtonRec);
@@ -583,7 +571,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private System.Windows.Forms.ColumnHeader columnHeader3;
     private System.Windows.Forms.ColumnHeader columnHeader4;
     private MPButton buttonRestart;
-    private MPButton mpButtonReGrabEpg;
     private System.Windows.Forms.ColumnHeader columnHeader5;
     private System.Windows.Forms.ColumnHeader User;
     private System.Windows.Forms.ColumnHeader cardName;

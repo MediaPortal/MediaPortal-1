@@ -18,9 +18,9 @@
 
 #endregion
 
-using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
@@ -37,26 +37,20 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     public override void OnSectionActivated()
     {
+      this.LogDebug("debug options: activating");
+      checkBoxTsWriterDumpInputs.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tsWriterDumpInputs", false);
+      checkBoxTsMuxerDumpInputs.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tsMuxerDumpInputs", false);
+      checkBoxTsWriterDisableCrcCheck.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tsWriterDisableCrcCheck", true);
       base.OnSectionActivated();
     }
 
     public override void OnSectionDeActivated()
     {
+      this.LogDebug("debug options: deactivating");
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tsWriterDumpInputs", checkBoxTsWriterDumpInputs.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tsMuxerDumpInputs", checkBoxTsMuxerDumpInputs.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tsWriterDisableCrcCheck", checkBoxTsWriterDisableCrcCheck.Checked);
       base.OnSectionDeActivated();
-    }
-
-    public override void LoadSettings()
-    {
-      base.LoadSettings();
-      mpCheckBoxTsWriterDumpInputs.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tsWriterDumpInputs", false);
-      mpCheckBoxTsMuxerDumpInputs.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tsMuxerDumpInputs", false);
-    }
-
-    public override void SaveSettings()
-    {
-      base.SaveSettings();
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tsWriterDumpInputs", mpCheckBoxTsWriterDumpInputs.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tsMuxerDumpInputs", mpCheckBoxTsMuxerDumpInputs.Checked);
     }
   }
 }

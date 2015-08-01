@@ -33,24 +33,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChannelMapping));
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.mpCheckBoxMapForEpgOnly = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.pictureBox1 = new System.Windows.Forms.PictureBox();
-      this.mpButtonUnmap = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.mpButtonMap = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.mpLabel3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpListViewMapped = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
+      this.pictureBoxTuner = new System.Windows.Forms.PictureBox();
+      this.buttonUnmap = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.buttonMapAll = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.labelMapped = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.listViewMapped = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
       this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.mpLabel2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpListViewChannels = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
+      this.labelNotMapped = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.listViewNotMapped = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
       this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpComboBoxCard = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpLabelChannelCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.tabControl1.SuspendLayout();
-      this.tabPage1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+      this.labelTuner = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.comboBoxTuner = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+      this.buttonUnmapAll = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.buttonMap = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTuner)).BeginInit();
+      this.tableLayoutPanel.SuspendLayout();
       this.SuspendLayout();
       // 
       // imageList1
@@ -64,212 +62,226 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.imageList1.Images.SetKeyName(4, "tv_scrambled.png");
       this.imageList1.Images.SetKeyName(5, "icon.tv_scrambled_and_fta.png");
       // 
-      // tabControl1
+      // pictureBoxTuner
       // 
-      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Location = new System.Drawing.Point(0, 0);
-      this.tabControl1.Name = "tabControl1";
-      this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(480, 420);
-      this.tabControl1.TabIndex = 18;
+      this.pictureBoxTuner.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxTuner.Image")));
+      this.pictureBoxTuner.Location = new System.Drawing.Point(9, 6);
+      this.pictureBoxTuner.Name = "pictureBoxTuner";
+      this.pictureBoxTuner.Size = new System.Drawing.Size(33, 23);
+      this.pictureBoxTuner.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+      this.pictureBoxTuner.TabIndex = 35;
+      this.pictureBoxTuner.TabStop = false;
       // 
-      // tabPage1
+      // buttonUnmap
       // 
-      this.tabPage1.Controls.Add(this.mpCheckBoxMapForEpgOnly);
-      this.tabPage1.Controls.Add(this.pictureBox1);
-      this.tabPage1.Controls.Add(this.mpButtonUnmap);
-      this.tabPage1.Controls.Add(this.mpButtonMap);
-      this.tabPage1.Controls.Add(this.mpLabel3);
-      this.tabPage1.Controls.Add(this.mpListViewMapped);
-      this.tabPage1.Controls.Add(this.mpLabel2);
-      this.tabPage1.Controls.Add(this.mpListViewChannels);
-      this.tabPage1.Controls.Add(this.mpLabel1);
-      this.tabPage1.Controls.Add(this.mpComboBoxCard);
-      this.tabPage1.Controls.Add(this.mpLabelChannelCount);
-      this.tabPage1.Location = new System.Drawing.Point(4, 22);
-      this.tabPage1.Name = "tabPage1";
-      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(472, 394);
-      this.tabPage1.TabIndex = 0;
-      this.tabPage1.Text = "Channel Mapping";
-      this.tabPage1.UseVisualStyleBackColor = true;
+      this.buttonUnmap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonUnmap.Location = new System.Drawing.Point(226, 75);
+      this.buttonUnmap.Name = "buttonUnmap";
+      this.buttonUnmap.Size = new System.Drawing.Size(27, 23);
+      this.buttonUnmap.TabIndex = 5;
+      this.buttonUnmap.Text = "<";
+      this.buttonUnmap.UseVisualStyleBackColor = true;
+      this.buttonUnmap.Click += new System.EventHandler(this.buttonUnmap_Click);
       // 
-      // mpCheckBoxMapForEpgOnly
+      // buttonMapAll
       // 
-      this.mpCheckBoxMapForEpgOnly.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpCheckBoxMapForEpgOnly.AutoSize = true;
-      this.mpCheckBoxMapForEpgOnly.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxMapForEpgOnly.Location = new System.Drawing.Point(6, 371);
-      this.mpCheckBoxMapForEpgOnly.Name = "mpCheckBoxMapForEpgOnly";
-      this.mpCheckBoxMapForEpgOnly.Size = new System.Drawing.Size(355, 17);
-      this.mpCheckBoxMapForEpgOnly.TabIndex = 27;
-      this.mpCheckBoxMapForEpgOnly.Text = "Perform mapping for EPG grabbing only (you can also use doubleclick)";
-      this.mpCheckBoxMapForEpgOnly.UseVisualStyleBackColor = true;
+      this.buttonMapAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonMapAll.Location = new System.Drawing.Point(226, 125);
+      this.buttonMapAll.Name = "buttonMapAll";
+      this.buttonMapAll.Size = new System.Drawing.Size(27, 23);
+      this.buttonMapAll.TabIndex = 4;
+      this.buttonMapAll.Text = ">>";
+      this.buttonMapAll.UseVisualStyleBackColor = true;
+      this.buttonMapAll.Click += new System.EventHandler(this.buttonMapAll_Click);
       // 
-      // pictureBox1
+      // labelMapped
       // 
-      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-      this.pictureBox1.Location = new System.Drawing.Point(3, 2);
-      this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(33, 23);
-      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.pictureBox1.TabIndex = 26;
-      this.pictureBox1.TabStop = false;
-      // 
-      // mpButtonUnmap
-      // 
-      this.mpButtonUnmap.Location = new System.Drawing.Point(211, 103);
-      this.mpButtonUnmap.Name = "mpButtonUnmap";
-      this.mpButtonUnmap.Size = new System.Drawing.Size(27, 23);
-      this.mpButtonUnmap.TabIndex = 25;
-      this.mpButtonUnmap.Text = "<<";
-      this.mpButtonUnmap.UseVisualStyleBackColor = true;
-      this.mpButtonUnmap.Click += new System.EventHandler(this.mpButtonUnmap_Click);
-      // 
-      // mpButtonMap
-      // 
-      this.mpButtonMap.Location = new System.Drawing.Point(211, 74);
-      this.mpButtonMap.Name = "mpButtonMap";
-      this.mpButtonMap.Size = new System.Drawing.Size(27, 23);
-      this.mpButtonMap.TabIndex = 24;
-      this.mpButtonMap.Text = ">>";
-      this.mpButtonMap.UseVisualStyleBackColor = true;
-      this.mpButtonMap.Click += new System.EventHandler(this.mpButtonMap_Click);
-      // 
-      // mpLabel3
-      // 
-      this.mpLabel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.labelMapped.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(250, 32);
-      this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(131, 13);
-      this.mpLabel3.TabIndex = 23;
-      this.mpLabel3.Text = "Channels mapped to card:";
+      this.labelMapped.AutoSize = true;
+      this.labelMapped.Location = new System.Drawing.Point(259, 5);
+      this.labelMapped.Name = "labelMapped";
+      this.labelMapped.Size = new System.Drawing.Size(134, 13);
+      this.labelMapped.TabIndex = 6;
+      this.labelMapped.Text = "Channels mapped to tuner:";
       // 
-      // mpListViewMapped
+      // listViewMapped
       // 
-      this.mpListViewMapped.AllowDrop = true;
-      this.mpListViewMapped.AllowRowReorder = false;
-      this.mpListViewMapped.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.listViewMapped.AllowDrop = true;
+      this.listViewMapped.AllowRowReorder = false;
+      this.listViewMapped.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpListViewMapped.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+      this.listViewMapped.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2});
-      this.mpListViewMapped.IsChannelListView = false;
-      this.mpListViewMapped.LargeImageList = this.imageList1;
-      this.mpListViewMapped.Location = new System.Drawing.Point(246, 50);
-      this.mpListViewMapped.Name = "mpListViewMapped";
-      this.mpListViewMapped.Size = new System.Drawing.Size(219, 318);
-      this.mpListViewMapped.SmallImageList = this.imageList1;
-      this.mpListViewMapped.TabIndex = 22;
-      this.mpListViewMapped.UseCompatibleStateImageBehavior = false;
-      this.mpListViewMapped.View = System.Windows.Forms.View.Details;
-      this.mpListViewMapped.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListViewMapped_ColumnClick);
-      this.mpListViewMapped.DoubleClick += new System.EventHandler(this.mpListViewMapped_DoubleClick);
+      this.listViewMapped.LargeImageList = this.imageList1;
+      this.listViewMapped.Location = new System.Drawing.Point(259, 21);
+      this.listViewMapped.Name = "listViewMapped";
+      this.tableLayoutPanel.SetRowSpan(this.listViewMapped, 5);
+      this.listViewMapped.Size = new System.Drawing.Size(213, 356);
+      this.listViewMapped.SmallImageList = this.imageList1;
+      this.listViewMapped.TabIndex = 7;
+      this.listViewMapped.UseCompatibleStateImageBehavior = false;
+      this.listViewMapped.View = System.Windows.Forms.View.Details;
+      this.listViewMapped.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewMapped_ColumnClick);
+      this.listViewMapped.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listViewMapped_ItemDrag);
+      this.listViewMapped.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewMapped_DragDrop);
+      this.listViewMapped.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewMapped_DragEnter);
+      this.listViewMapped.DragOver += new System.Windows.Forms.DragEventHandler(this.listViewMapped_DragOver);
+      this.listViewMapped.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewMapped_MouseDoubleClick);
       // 
       // columnHeader2
       // 
       this.columnHeader2.Text = "Name";
       this.columnHeader2.Width = 180;
       // 
-      // mpLabel2
+      // labelNotMapped
       // 
-      this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(0, 32);
-      this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(99, 13);
-      this.mpLabel2.TabIndex = 21;
-      this.mpLabel2.Text = "Available channels:";
+      this.labelNotMapped.AutoSize = true;
+      this.labelNotMapped.Location = new System.Drawing.Point(8, 5);
+      this.labelNotMapped.Name = "labelNotMapped";
+      this.labelNotMapped.Size = new System.Drawing.Size(152, 13);
+      this.labelNotMapped.TabIndex = 2;
+      this.labelNotMapped.Text = "Channels not mapped to tuner:";
       // 
-      // mpListViewChannels
+      // listViewNotMapped
       // 
-      this.mpListViewChannels.AllowDrop = true;
-      this.mpListViewChannels.AllowRowReorder = false;
-      this.mpListViewChannels.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpListViewChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+      this.listViewNotMapped.AllowDrop = true;
+      this.listViewNotMapped.AllowRowReorder = false;
+      this.listViewNotMapped.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewNotMapped.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader4});
-      this.mpListViewChannels.IsChannelListView = false;
-      this.mpListViewChannels.LargeImageList = this.imageList1;
-      this.mpListViewChannels.Location = new System.Drawing.Point(3, 50);
-      this.mpListViewChannels.Name = "mpListViewChannels";
-      this.mpListViewChannels.Size = new System.Drawing.Size(193, 318);
-      this.mpListViewChannels.SmallImageList = this.imageList1;
-      this.mpListViewChannels.TabIndex = 20;
-      this.mpListViewChannels.UseCompatibleStateImageBehavior = false;
-      this.mpListViewChannels.View = System.Windows.Forms.View.Details;
-      this.mpListViewChannels.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListViewChannels_ColumnClick);
+      this.listViewNotMapped.LargeImageList = this.imageList1;
+      this.listViewNotMapped.Location = new System.Drawing.Point(8, 21);
+      this.listViewNotMapped.Name = "listViewNotMapped";
+      this.tableLayoutPanel.SetRowSpan(this.listViewNotMapped, 5);
+      this.listViewNotMapped.Size = new System.Drawing.Size(212, 356);
+      this.listViewNotMapped.SmallImageList = this.imageList1;
+      this.listViewNotMapped.TabIndex = 3;
+      this.listViewNotMapped.UseCompatibleStateImageBehavior = false;
+      this.listViewNotMapped.View = System.Windows.Forms.View.Details;
+      this.listViewNotMapped.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewNotMapped_ColumnClick);
+      this.listViewNotMapped.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listViewNotMapped_ItemDrag);
+      this.listViewNotMapped.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewNotMapped_DragDrop);
+      this.listViewNotMapped.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewNotMapped_DragEnter);
+      this.listViewNotMapped.DragOver += new System.Windows.Forms.DragEventHandler(this.listViewNotMapped_DragOver);
+      this.listViewNotMapped.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewNotMapped_MouseDoubleClick);
       // 
       // columnHeader4
       // 
       this.columnHeader4.Text = "Name";
       this.columnHeader4.Width = 180;
       // 
-      // mpLabel1
+      // labelTuner
       // 
-      this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(42, 9);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(32, 13);
-      this.mpLabel1.TabIndex = 19;
-      this.mpLabel1.Text = "Card:";
+      this.labelTuner.AutoSize = true;
+      this.labelTuner.Location = new System.Drawing.Point(48, 11);
+      this.labelTuner.Name = "labelTuner";
+      this.labelTuner.Size = new System.Drawing.Size(38, 13);
+      this.labelTuner.TabIndex = 0;
+      this.labelTuner.Text = "Tuner:";
       // 
-      // mpComboBoxCard
+      // comboBoxTuner
       // 
-      this.mpComboBoxCard.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.comboBoxTuner.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpComboBoxCard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBoxCard.FormattingEnabled = true;
-      this.mpComboBoxCard.Location = new System.Drawing.Point(80, 6);
-      this.mpComboBoxCard.Name = "mpComboBoxCard";
-      this.mpComboBoxCard.Size = new System.Drawing.Size(386, 21);
-      this.mpComboBoxCard.TabIndex = 18;
-      this.mpComboBoxCard.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxCard_SelectedIndexChanged);
+      this.comboBoxTuner.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxTuner.FormattingEnabled = true;
+      this.comboBoxTuner.Location = new System.Drawing.Point(92, 8);
+      this.comboBoxTuner.Name = "comboBoxTuner";
+      this.comboBoxTuner.Size = new System.Drawing.Size(380, 21);
+      this.comboBoxTuner.TabIndex = 1;
+      this.comboBoxTuner.SelectedIndexChanged += new System.EventHandler(this.comboBoxTuner_SelectedIndexChanged);
       // 
-      // mpLabelChannelCount
+      // tableLayoutPanel
       // 
-      this.mpLabelChannelCount.AutoSize = true;
-      this.mpLabelChannelCount.Location = new System.Drawing.Point(13, 14);
-      this.mpLabelChannelCount.Name = "mpLabelChannelCount";
-      this.mpLabelChannelCount.Size = new System.Drawing.Size(0, 13);
-      this.mpLabelChannelCount.TabIndex = 2;
+      this.tableLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tableLayoutPanel.ColumnCount = 3;
+      this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+      this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+      this.tableLayoutPanel.Controls.Add(this.buttonUnmapAll, 1, 5);
+      this.tableLayoutPanel.Controls.Add(this.listViewNotMapped, 0, 1);
+      this.tableLayoutPanel.Controls.Add(this.labelNotMapped, 0, 0);
+      this.tableLayoutPanel.Controls.Add(this.labelMapped, 2, 0);
+      this.tableLayoutPanel.Controls.Add(this.listViewMapped, 2, 1);
+      this.tableLayoutPanel.Controls.Add(this.buttonMapAll, 1, 4);
+      this.tableLayoutPanel.Controls.Add(this.buttonMap, 1, 2);
+      this.tableLayoutPanel.Controls.Add(this.buttonUnmap, 1, 3);
+      this.tableLayoutPanel.Location = new System.Drawing.Point(0, 35);
+      this.tableLayoutPanel.Name = "tableLayoutPanel";
+      this.tableLayoutPanel.Padding = new System.Windows.Forms.Padding(5);
+      this.tableLayoutPanel.RowCount = 6;
+      this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+      this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
+      this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+      this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
+      this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+      this.tableLayoutPanel.Size = new System.Drawing.Size(480, 385);
+      this.tableLayoutPanel.TabIndex = 36;
+      // 
+      // buttonUnmapAll
+      // 
+      this.buttonUnmapAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonUnmapAll.Location = new System.Drawing.Point(226, 156);
+      this.buttonUnmapAll.Name = "buttonUnmapAll";
+      this.buttonUnmapAll.Size = new System.Drawing.Size(27, 23);
+      this.buttonUnmapAll.TabIndex = 9;
+      this.buttonUnmapAll.Text = "<<";
+      this.buttonUnmapAll.UseVisualStyleBackColor = true;
+      this.buttonUnmapAll.Click += new System.EventHandler(this.buttonUnmapAll_Click);
+      // 
+      // buttonMap
+      // 
+      this.buttonMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonMap.Location = new System.Drawing.Point(226, 44);
+      this.buttonMap.Name = "buttonMap";
+      this.buttonMap.Size = new System.Drawing.Size(27, 23);
+      this.buttonMap.TabIndex = 8;
+      this.buttonMap.Text = ">";
+      this.buttonMap.UseVisualStyleBackColor = true;
+      this.buttonMap.Click += new System.EventHandler(this.buttonMap_Click);
       // 
       // ChannelMapping
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.tabControl1);
+      this.BackColor = System.Drawing.SystemColors.Window;
+      this.Controls.Add(this.tableLayoutPanel);
+      this.Controls.Add(this.pictureBoxTuner);
+      this.Controls.Add(this.labelTuner);
+      this.Controls.Add(this.comboBoxTuner);
       this.Name = "ChannelMapping";
       this.Size = new System.Drawing.Size(480, 420);
-      this.tabControl1.ResumeLayout(false);
-      this.tabPage1.ResumeLayout(false);
-      this.tabPage1.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTuner)).EndInit();
+      this.tableLayoutPanel.ResumeLayout(false);
+      this.tableLayoutPanel.PerformLayout();
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
 
     #endregion
 
-		private System.Windows.Forms.ImageList imageList1;
-		private System.Windows.Forms.TabControl tabControl1;
-		private System.Windows.Forms.TabPage tabPage1;
-		private MPLabel mpLabelChannelCount;
-		private System.Windows.Forms.PictureBox pictureBox1;
-		private MPButton mpButtonUnmap;
-		private MPButton mpButtonMap;
-		private MPLabel mpLabel3;
-		private MPListView mpListViewMapped;
-		private System.Windows.Forms.ColumnHeader columnHeader2;
-		private MPLabel mpLabel2;
-		private MPListView mpListViewChannels;
-		private System.Windows.Forms.ColumnHeader columnHeader4;
-		private MPLabel mpLabel1;
-      private MPComboBox mpComboBoxCard;
-      private MPCheckBox mpCheckBoxMapForEpgOnly;
+    private System.Windows.Forms.ImageList imageList1;
+    private System.Windows.Forms.PictureBox pictureBoxTuner;
+    private MPButton buttonUnmap;
+    private MPButton buttonMapAll;
+    private MPLabel labelMapped;
+    private MPListView listViewMapped;
+    private System.Windows.Forms.ColumnHeader columnHeader2;
+    private MPLabel labelNotMapped;
+    private MPListView listViewNotMapped;
+    private System.Windows.Forms.ColumnHeader columnHeader4;
+    private MPLabel labelTuner;
+    private MPComboBox comboBoxTuner;
+    private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
+    private MPButton buttonMap;
+    private MPButton buttonUnmapAll;
   }
 }

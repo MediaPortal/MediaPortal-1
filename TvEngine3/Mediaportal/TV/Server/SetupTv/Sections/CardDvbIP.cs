@@ -20,340 +20,182 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
-using System.Threading;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.SetupControls;
-using Mediaportal.TV.Server.SetupTV.PlaylistSupport;
-using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.SetupTV.Sections.Helpers;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using DbTuningDetail = Mediaportal.TV.Server.TVDatabase.Entities.TuningDetail;
+using FileTuningDetail = Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail.TuningDetail;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class CardDvbIP : SectionSettings
   {
+    private readonly int _tunerId;
+    private TuningDetailFilter _tuningDetailFilter;
+    private ChannelScanHelper _scanHelper = null;
+    private IDictionary<string, ChannelStream> _m3uChannels;
 
-
-
-    private int _cardNumber;
-    private bool _isScanning = false;
-    private bool _stopScanning = false;
-
-    public CardDvbIP()
-      : this("DvbIP") {}
-
-    public CardDvbIP(string name)
-      : base(name) {}
-
-    public CardDvbIP(string name, int cardNumber)
+    public CardDvbIP(string name, int tunerId)
       : base(name)
     {
-      _cardNumber = cardNumber;
+      _tunerId = tunerId;
       InitializeComponent();
       base.Text = name;
-      Init();
-    }
-
-    private void Init()
-    {
-      mpComboBoxService.Items.Clear();
-      mpComboBoxService.Items.Add("SAP Announcements");
-      String tuningFolder = String.Format(@"{0}\TuningParameters\dvbip", PathManager.GetDataPath);
-      if (Directory.Exists(tuningFolder))
-      {
-        string[] files = Directory.GetFiles(tuningFolder, "*.m3u");
-        foreach (string f in files)
-        {
-          mpComboBoxService.Items.Add(Path.GetFileNameWithoutExtension(f));
-        }
-      }
-      mpComboBoxService.SelectedIndex = 0;
-    }
-
-    private void UpdateStatus()
-    {
-      progressBarLevel.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalLevel(_cardNumber));
-      progressBarQuality.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalQuality(_cardNumber));
     }
 
     public override void OnSectionActivated()
     {
+      this.LogDebug("stream: activating, tuner ID = {0}", _tunerId);
+
+      _tuningDetailFilter = new TuningDetailFilter("dvbip", comboBoxService);
+      comboBoxService.SelectedItem = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbip" + _tunerId + "Service", string.Empty);
+      if (comboBoxService.SelectedItem == null)
+      {
+        comboBoxService.SelectedIndex = 0;
+      }
+
       base.OnSectionActivated();
-      UpdateStatus();
-      
-      int index = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbip" + _cardNumber.ToString() + "Service", 0);
-      if (index < mpComboBoxService.Items.Count) mpComboBoxService.SelectedIndex = index;
-      
-      checkBoxCreateGroups.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbip" + _cardNumber.ToString() + "creategroups", false);
     }
 
     public override void OnSectionDeActivated()
     {
+      this.LogDebug("stream: deactivating, tuner ID = {0}", _tunerId);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbip" + _tunerId + "Service", ((CustomFileName)comboBoxService.SelectedItem).ToString());
       base.OnSectionDeActivated();
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbip" + _cardNumber.ToString() + "Service", mpComboBoxService.SelectedIndex);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbip" + _cardNumber.ToString() + "creategroups", checkBoxCreateGroups.Checked);
     }
 
-    private void CardDvbIP_Load(object sender, EventArgs e) {}
-
-    private void mpButtonScanTv_Click(object sender, EventArgs e)
+    private void buttonScan_Click(object sender, EventArgs e)
     {
-      if (_isScanning == false)
+      if (_scanHelper != null)
       {
-        
-        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
-        if (card.Enabled == false)
-        {
-          MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
-          return;
-        }
-        else if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard))
-        {
-          MessageBox.Show(this, "Tuner is not found. Please make sure the tuner is present before scanning.");
-          return;
-        }
-        // Check if the card is locked for scanning.
-        IUser user;
-        if (ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(_cardNumber, out user))
-        {
-          MessageBox.Show(this,
-                          "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid card?");
-          return;
-        }
-        Thread scanThread = new Thread(new ThreadStart(DoScan));
-        scanThread.Name = "DVB-IP scan thread";
-        scanThread.Start();
+        buttonScan.Text = "Cancelling...";
+        _scanHelper.StopScan();
+        return;
       }
-      else
+
+      _m3uChannels = ReadM3uPlaylist(((CustomFileName)comboBoxService.SelectedItem).FileName);
+      List<FileTuningDetail> tuningDetails = new List<FileTuningDetail>(_m3uChannels.Count);
+      foreach (ChannelStream channel in _m3uChannels.Values)
       {
-        _stopScanning = true;
+        tuningDetails.Add(new FileTuningDetail
+        {
+          BroadcastStandard = BroadcastStandard.DvbIp,
+          Url = channel.Url
+        });
+      }
+      if (tuningDetails.Count == 0)
+      {
+        return;
+      }
+
+      listViewProgress.Items.Clear();
+      ListViewItem item = listViewProgress.Items.Add(string.Format("start scanning {0}...", comboBoxService.SelectedItem));
+      item.EnsureVisible();
+      this.LogInfo("stream: start scanning {0}...", comboBoxService.SelectedItem);
+
+      _scanHelper = new ChannelScanHelper(_tunerId);
+      if (_scanHelper.StartScan(tuningDetails, listViewProgress, progressBarProgress, OnGetDbExistingTuningDetailCandidates, null, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality))
+      {
+        comboBoxService.Enabled = false;
+        buttonScan.Text = "Cancel...";
       }
     }
 
-    private void DoScan()
+    private IDictionary<string, ChannelStream> ReadM3uPlaylist(string fileName)
     {
-      int tvChannelsNew = 0;
-      int radioChannelsNew = 0;
-      int tvChannelsUpdated = 0;
-      int radioChannelsUpdated = 0;
+      IDictionary<string, ChannelStream> channels = new Dictionary<string, ChannelStream>(50);
 
-      string buttonText = mpButtonScanTv.Text;
-      IUser user = new User();
-      user.CardId = _cardNumber;
       try
       {
-        // First lock the card, because so that other parts of a hybrid card can't be used at the same time
-        _isScanning = true;
-        _stopScanning = false;
-        mpButtonScanTv.Text = "Cancel...";
-        ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
-        listViewStatus.Items.Clear();
-
-        PlayList playlist = new PlayList();
-        if (mpComboBoxService.SelectedIndex == 0)
+        ChannelStream channel = new ChannelStream();
+        foreach (string line in File.ReadLines(fileName))
         {
-          //TODO read SAP announcements
-        }
-        else
-        {
-          IPlayListIO playlistIO =
-            PlayListFactory.CreateIO(String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", PathManager.GetDataPath,
-                                                   mpComboBoxService.SelectedItem));
-          playlistIO.Load(playlist,
-                          String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", PathManager.GetDataPath,
-                                        mpComboBoxService.SelectedItem));
-        }
-        if (playlist.Count == 0) return;
-
-        mpComboBoxService.Enabled = false;
-        checkBoxCreateGroups.Enabled = false;
-        checkBoxEnableChannelMoveDetection.Enabled = false;
-        
-        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
-
-        int index = -1;
-        IEnumerator<PlayListItem> enumerator = playlist.GetEnumerator();
-
-        while (enumerator.MoveNext())
-        {
-          if (_stopScanning) return;
-          index++;
-          float percent = ((float)(index)) / playlist.Count;
-          percent *= 100f;
-          if (percent > 100f) percent = 100f;
-          progressBar1.Value = (int)percent;
-
-          string url = enumerator.Current.FileName.Substring(enumerator.Current.FileName.LastIndexOf('\\') + 1);
-          string name = enumerator.Current.Description;
-
-          DVBIPChannel tuneChannel = new DVBIPChannel();
-          tuneChannel.Url = url;
-          tuneChannel.Name = name;
-          string line = String.Format("{0}- {1} - {2}", 1 + index, tuneChannel.Name, tuneChannel.Url);
-          ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
-          item.EnsureVisible();
-          if (index == 0)
+          if (!string.IsNullOrWhiteSpace(line))
           {
-            ServiceAgents.Instance.ControllerServiceAgent.Scan(user.Name, user.CardId, out user, tuneChannel, -1);
-            UpdateStatus();
-          }
-          IChannel[] channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardNumber, tuneChannel);
-          UpdateStatus();
-          if (channels == null || channels.Length == 0)
-          {
-            if (ServiceAgents.Instance.ControllerServiceAgent.TunerLocked(_cardNumber) == false)
+            Match m = Regex.Match(line, @"^\s*#EXTINF\s*:\s*(\d+)\s*,\s*([^\s].*?)\s*$");
+            if (m.Success)
             {
-              line = String.Format("{0}- {1} - {2} :No Signal", 1 + index, tuneChannel.Url, tuneChannel.Name);
-              item.Text = line;
-              item.ForeColor = Color.Red;
-              continue;
+              if (!string.IsNullOrEmpty(channel.Url))
+              {
+                channels.Add(channel.Url, channel);
+                channel = new ChannelStream();
+              }
+              string lcn = m.Groups[1].Captures[0].Value;
+              if (!string.Equals(lcn, "0"))
+              {
+                channel.LogicalChannelNumber = lcn;
+              }
+              channel.Name = m.Groups[2].Captures[0].Value;
             }
             else
             {
-              line = String.Format("{0}- {1} - {2} :Nothing found", 1 + index, tuneChannel.Url, tuneChannel.Name);
-              item.Text = line;
-              item.ForeColor = Color.Red;
-              continue;
+              string l = line.Trim();
+              if (!l.StartsWith("#"))
+              {
+                channel.Url = l;
+              }
             }
           }
-
-          int newChannels = 0;
-          int updatedChannels = 0;
-
-          for (int i = 0; i < channels.Length; ++i)
-          {
-            Channel dbChannel;
-            DVBIPChannel channel = (DVBIPChannel)channels[i];
-            if (channels.Length > 1)
-            {
-              if (channel.Name.IndexOf("Unknown") == 0)
-              {
-                channel.Name = name + (i + 1);
-              }
-            }
-            else
-            {
-              channel.Name = name;
-            }
-            bool exists;
-            TuningDetail currentDetail;
-            //Check if we already have this tuningdetail. According to DVB-IP specifications there are two ways to identify DVB-IP
-            //services: one ONID + SID based, the other domain/URL based. At this time we don't fully and properly implement the DVB-IP
-            //specifications, so the safest method for service identification is the URL. The user has the option to enable the use of
-            //ONID + SID identification and channel move detection...
-            if (checkBoxEnableChannelMoveDetection.Checked)
-            {
-              TuningDetailSearchEnum tuningDetailSearchEnum = TuningDetailSearchEnum.NetworkId;
-              tuningDetailSearchEnum |= TuningDetailSearchEnum.ServiceId;
-              currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailCustom(channel, tuningDetailSearchEnum);              
-            }
-            else
-            {
-              currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailByURL(channel, channel.Url);
-            }
-
-            if (currentDetail == null)
-            {
-              //add new channel
-              exists = false;
-              dbChannel = ChannelFactory.CreateChannel(channel.Name);
-              dbChannel.SortOrder = channel.LogicalChannelNumber;
-              dbChannel.ChannelNumber = channel.LogicalChannelNumber;
-              dbChannel.MediaType = (int) channel.MediaType;
-              dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-              dbChannel.AcceptChanges();
-            }
-            else
-            {
-              exists = true;
-              dbChannel = currentDetail.Channel;
-            }
-
-            ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, channel.MediaType);
-            MappingHelper.AddChannelToGroup(ref dbChannel, @group);                                          
-
-            if (checkBoxCreateGroups.Checked)
-            {
-              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(channel.Provider, channel.MediaType);
-              MappingHelper.AddChannelToGroup(ref dbChannel, @group);
-            }
-            if (currentDetail == null)
-            {
-              ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
-            }
-            else
-            {
-              //update tuning details...
-              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.IdTuning, channel);            
-            }
-
-            if (channel.MediaType == MediaTypeEnum.TV)
-            {
-              if (exists)
-              {
-                tvChannelsUpdated++;
-                updatedChannels++;
-              }
-              else
-              {
-                tvChannelsNew++;
-                newChannels++;
-              }
-            }
-            if (channel.MediaType == MediaTypeEnum.Radio)
-            {
-              if (exists)
-              {
-                radioChannelsUpdated++;
-                updatedChannels++;
-              }
-              else
-              {
-                radioChannelsNew++;
-                newChannels++;
-              }
-            }            
-            MappingHelper.AddChannelToCard(dbChannel, card, false);
-            line = String.Format("{0}- {1} :New:{2} Updated:{3}", 1 + index, tuneChannel.Name, newChannels,
-                                 updatedChannels);
-            item.Text = line;
-          }
         }
-        //DatabaseManager.Instance.SaveChanges();
+        if (!string.IsNullOrEmpty(channel.Url))
+        {
+          channels.Add(channel.Url, channel);
+        }
       }
       catch (Exception ex)
       {
-        this.LogError(ex);
+        this.LogError(ex, "stream: failed to parse \"{0}\"", fileName);
       }
-      finally
+      return channels;
+    }
+
+    private IList<DbTuningDetail> OnGetDbExistingTuningDetailCandidates(FileTuningDetail tuningDetail, IChannel tuneChannel, IChannel foundChannel, bool useChannelMovementDetection)
+    {
+      // Most sources are single program transport streams (SPTSs), so we can
+      // simply lookup the tuning detail by URL. However, also support MPTSs
+      // with "safe" DVB ONID + TSID + SID lookup.
+      ChannelStream streamChannel = foundChannel as ChannelStream;
+      if (streamChannel == null)
       {
-        ServiceAgents.Instance.ControllerServiceAgent.StopCard(user.CardId);
-        ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
-        progressBar1.Value = 100;
-        mpComboBoxService.Enabled = true;
-        checkBoxCreateGroups.Enabled = true;
-        checkBoxEnableChannelMoveDetection.Enabled = true;
-        mpButtonScanTv.Text = buttonText;
-        _isScanning = false;
+        return null;
       }
-      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
-      lastItem =
-        listViewStatus.Items.Add(
-          new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew,
-                                         radioChannelsUpdated)));
-      lastItem =
-        listViewStatus.Items.Add(
-          new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));
-      lastItem.EnsureVisible();
+
+      // Set name and/or LCN from M3U if not found in the stream.
+      ChannelStream m3uChannel;
+      if (_m3uChannels.TryGetValue(streamChannel.Url, out m3uChannel))
+      {
+        if (!string.IsNullOrEmpty(m3uChannel.Name) && string.Equals(streamChannel.Name, streamChannel.Url))
+        {
+          streamChannel.Name = m3uChannel.Name;
+        }
+        if (!string.IsNullOrEmpty(m3uChannel.LogicalChannelNumber) && string.Equals(streamChannel.LogicalChannelNumber, "10000"))
+        {
+          streamChannel.LogicalChannelNumber = m3uChannel.LogicalChannelNumber;
+        }
+      }
+
+      if (useChannelMovementDetection)
+      {
+        return ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(BroadcastStandard.DvbIp, streamChannel.OriginalNetworkId, streamChannel.ServiceId, streamChannel.TransportStreamId);
+      }
+      return ServiceAgents.Instance.ChannelServiceAgent.GetStreamTuningDetails(streamChannel.Url);
+    }
+
+    private void OnScanCompleted()
+    {
+      this.Invoke((MethodInvoker)delegate
+      {
+        buttonScan.Text = "Scan for channels";
+        comboBoxService.Enabled = true;
+      });
+      _scanHelper = null;
     }
   }
 }

@@ -30,146 +30,124 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.progressBarQuality = new System.Windows.Forms.ProgressBar();
-      this.progressBarLevel = new System.Windows.Forms.ProgressBar();
-      this.label2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.label1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.progressBar1 = new System.Windows.Forms.ProgressBar();
-      this.mpButtonScanTv = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.listViewStatus = new System.Windows.Forms.ListView();
-      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpComboBoxFrequencies = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpTabControl1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
+      this.progressBarSignalQuality = new System.Windows.Forms.ProgressBar();
+      this.progressBarSignalStrength = new System.Windows.Forms.ProgressBar();
+      this.labelSignalQuality = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelSignalStrength = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.progressBarProgress = new System.Windows.Forms.ProgressBar();
+      this.buttonScan = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.listViewProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
+      this.columnHeaderStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.tabControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
       this.tabPageScan = new System.Windows.Forms.TabPage();
-      this.mpLabel2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpComboBoxTuningMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.tabPageCaMenu = new System.Windows.Forms.TabPage();
-      this.mpTabControl1.SuspendLayout();
+      this.labelScanMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.comboBoxScanMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.tabControl.SuspendLayout();
       this.tabPageScan.SuspendLayout();
       this.SuspendLayout();
       // 
-      // progressBarQuality
+      // progressBarSignalQuality
       // 
-      this.progressBarQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.progressBarSignalQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBarQuality.Location = new System.Drawing.Point(121, 159);
-      this.progressBarQuality.Name = "progressBarQuality";
-      this.progressBarQuality.Size = new System.Drawing.Size(324, 10);
-      this.progressBarQuality.TabIndex = 8;
+      this.progressBarSignalQuality.Location = new System.Drawing.Point(105, 102);
+      this.progressBarSignalQuality.Name = "progressBarSignalQuality";
+      this.progressBarSignalQuality.Size = new System.Drawing.Size(340, 10);
+      this.progressBarSignalQuality.TabIndex = 6;
       // 
-      // progressBarLevel
+      // progressBarSignalStrength
       // 
-      this.progressBarLevel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.progressBarSignalStrength.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBarLevel.Location = new System.Drawing.Point(121, 139);
-      this.progressBarLevel.Name = "progressBarLevel";
-      this.progressBarLevel.Size = new System.Drawing.Size(324, 10);
-      this.progressBarLevel.TabIndex = 6;
+      this.progressBarSignalStrength.Location = new System.Drawing.Point(105, 86);
+      this.progressBarSignalStrength.Name = "progressBarSignalStrength";
+      this.progressBarSignalStrength.Size = new System.Drawing.Size(340, 10);
+      this.progressBarSignalStrength.TabIndex = 4;
       // 
-      // label2
+      // labelSignalQuality
       // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(19, 158);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(72, 13);
-      this.label2.TabIndex = 7;
-      this.label2.Text = "Signal quality:";
+      this.labelSignalQuality.AutoSize = true;
+      this.labelSignalQuality.Location = new System.Drawing.Point(19, 99);
+      this.labelSignalQuality.Name = "labelSignalQuality";
+      this.labelSignalQuality.Size = new System.Drawing.Size(72, 13);
+      this.labelSignalQuality.TabIndex = 5;
+      this.labelSignalQuality.Text = "Signal quality:";
       // 
-      // label1
+      // labelSignalStrength
       // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(19, 138);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(64, 13);
-      this.label1.TabIndex = 5;
-      this.label1.Text = "Signal level:";
+      this.labelSignalStrength.AutoSize = true;
+      this.labelSignalStrength.Location = new System.Drawing.Point(19, 83);
+      this.labelSignalStrength.Name = "labelSignalStrength";
+      this.labelSignalStrength.Size = new System.Drawing.Size(80, 13);
+      this.labelSignalStrength.TabIndex = 3;
+      this.labelSignalStrength.Text = "Signal strength:";
       // 
-      // progressBar1
+      // progressBarProgress
       // 
-      this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.progressBarProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBar1.Location = new System.Drawing.Point(22, 189);
-      this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(423, 10);
-      this.progressBar1.TabIndex = 9;
+      this.progressBarProgress.Location = new System.Drawing.Point(22, 118);
+      this.progressBarProgress.Name = "progressBarProgress";
+      this.progressBarProgress.Size = new System.Drawing.Size(423, 10);
+      this.progressBarProgress.TabIndex = 7;
       // 
-      // mpButtonScanTv
+      // buttonScan
       // 
-      this.mpButtonScanTv.Location = new System.Drawing.Point(308, 69);
-      this.mpButtonScanTv.Name = "mpButtonScanTv";
-      this.mpButtonScanTv.Size = new System.Drawing.Size(131, 23);
-      this.mpButtonScanTv.TabIndex = 4;
-      this.mpButtonScanTv.Text = "Scan for channels";
-      this.mpButtonScanTv.UseVisualStyleBackColor = true;
-      this.mpButtonScanTv.Click += new System.EventHandler(this.mpButtonScanTv_Click);
+      this.buttonScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonScan.Location = new System.Drawing.Point(335, 42);
+      this.buttonScan.Name = "buttonScan";
+      this.buttonScan.Size = new System.Drawing.Size(110, 23);
+      this.buttonScan.TabIndex = 2;
+      this.buttonScan.Text = "Scan for channels";
+      this.buttonScan.UseVisualStyleBackColor = true;
+      this.buttonScan.Click += new System.EventHandler(this.buttonScan_Click);
       // 
-      // listViewStatus
+      // listViewProgress
       // 
-      this.listViewStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.listViewProgress.AllowRowReorder = false;
+      this.listViewProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.listViewStatus.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1});
-      this.listViewStatus.Location = new System.Drawing.Point(22, 218);
-      this.listViewStatus.Name = "listViewStatus";
-      this.listViewStatus.Size = new System.Drawing.Size(423, 155);
-      this.listViewStatus.TabIndex = 10;
-      this.listViewStatus.UseCompatibleStateImageBehavior = false;
-      this.listViewStatus.View = System.Windows.Forms.View.Details;
+      this.listViewProgress.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderStatus});
+      this.listViewProgress.Location = new System.Drawing.Point(22, 134);
+      this.listViewProgress.Name = "listViewProgress";
+      this.listViewProgress.Size = new System.Drawing.Size(423, 239);
+      this.listViewProgress.TabIndex = 8;
+      this.listViewProgress.UseCompatibleStateImageBehavior = false;
+      this.listViewProgress.View = System.Windows.Forms.View.Details;
       // 
-      // columnHeader1
+      // columnHeaderStatus
       // 
-      this.columnHeader1.Text = "Status";
-      this.columnHeader1.Width = 350;
+      this.columnHeaderStatus.Text = "Status";
+      this.columnHeaderStatus.Width = 388;
       // 
-      // mpLabel1
+      // tabControl
       // 
-      this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(19, 45);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(124, 13);
-      this.mpLabel1.TabIndex = 2;
-      this.mpLabel1.Text = "QAM tuning frequencies:";
-      // 
-      // mpComboBoxFrequencies
-      // 
-      this.mpComboBoxFrequencies.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBoxFrequencies.FormattingEnabled = true;
-      this.mpComboBoxFrequencies.Location = new System.Drawing.Point(176, 42);
-      this.mpComboBoxFrequencies.Name = "mpComboBoxFrequencies";
-      this.mpComboBoxFrequencies.Size = new System.Drawing.Size(263, 21);
-      this.mpComboBoxFrequencies.TabIndex = 3;
-      // 
-      // mpTabControl1
-      // 
-      this.mpTabControl1.AllowDrop = true;
-      this.mpTabControl1.AllowReorderTabs = false;
-      this.mpTabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.tabControl.AllowDrop = true;
+      this.tabControl.AllowReorderTabs = false;
+      this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpTabControl1.Controls.Add(this.tabPageScan);
-      this.mpTabControl1.Controls.Add(this.tabPageCaMenu);
-      this.mpTabControl1.Location = new System.Drawing.Point(0, 0);
-      this.mpTabControl1.Name = "mpTabControl1";
-      this.mpTabControl1.SelectedIndex = 0;
-      this.mpTabControl1.Size = new System.Drawing.Size(480, 420);
-      this.mpTabControl1.TabIndex = 0;
+      this.tabControl.Controls.Add(this.tabPageScan);
+      this.tabControl.Location = new System.Drawing.Point(0, 0);
+      this.tabControl.Name = "tabControl";
+      this.tabControl.SelectedIndex = 0;
+      this.tabControl.Size = new System.Drawing.Size(480, 420);
+      this.tabControl.TabIndex = 0;
       // 
       // tabPageScan
       // 
-      this.tabPageScan.BackColor = System.Drawing.SystemColors.Control;
-      this.tabPageScan.Controls.Add(this.mpLabel2);
-      this.tabPageScan.Controls.Add(this.mpComboBoxTuningMode);
-      this.tabPageScan.Controls.Add(this.progressBarLevel);
-      this.tabPageScan.Controls.Add(this.mpLabel1);
-      this.tabPageScan.Controls.Add(this.progressBar1);
-      this.tabPageScan.Controls.Add(this.mpComboBoxFrequencies);
-      this.tabPageScan.Controls.Add(this.progressBarQuality);
-      this.tabPageScan.Controls.Add(this.mpButtonScanTv);
-      this.tabPageScan.Controls.Add(this.listViewStatus);
-      this.tabPageScan.Controls.Add(this.label2);
-      this.tabPageScan.Controls.Add(this.label1);
+      this.tabPageScan.BackColor = System.Drawing.Color.Transparent;
+      this.tabPageScan.Controls.Add(this.labelScanMode);
+      this.tabPageScan.Controls.Add(this.comboBoxScanMode);
+      this.tabPageScan.Controls.Add(this.progressBarSignalStrength);
+      this.tabPageScan.Controls.Add(this.progressBarProgress);
+      this.tabPageScan.Controls.Add(this.progressBarSignalQuality);
+      this.tabPageScan.Controls.Add(this.buttonScan);
+      this.tabPageScan.Controls.Add(this.listViewProgress);
+      this.tabPageScan.Controls.Add(this.labelSignalQuality);
+      this.tabPageScan.Controls.Add(this.labelSignalStrength);
       this.tabPageScan.Location = new System.Drawing.Point(4, 22);
       this.tabPageScan.Name = "tabPageScan";
       this.tabPageScan.Padding = new System.Windows.Forms.Padding(3);
@@ -177,46 +155,35 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageScan.TabIndex = 0;
       this.tabPageScan.Text = "Scanning";
       // 
-      // mpLabel2
+      // labelScanMode
       // 
-      this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(19, 18);
-      this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(72, 13);
-      this.mpLabel2.TabIndex = 0;
-      this.mpLabel2.Text = "Tuning mode:";
+      this.labelScanMode.AutoSize = true;
+      this.labelScanMode.Location = new System.Drawing.Point(19, 18);
+      this.labelScanMode.Name = "labelScanMode";
+      this.labelScanMode.Size = new System.Drawing.Size(64, 13);
+      this.labelScanMode.TabIndex = 0;
+      this.labelScanMode.Text = "Scan mode:";
       // 
-      // mpComboBoxTuningMode
+      // comboBoxScanMode
       // 
-      this.mpComboBoxTuningMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBoxTuningMode.FormattingEnabled = true;
-      this.mpComboBoxTuningMode.Items.AddRange(new object[] {
-            "ATSC Digital Terrestrial",
-            "Clear QAM Cable",
-            "Digital Cable"});
-      this.mpComboBoxTuningMode.Location = new System.Drawing.Point(176, 15);
-      this.mpComboBoxTuningMode.Name = "mpComboBoxTuningMode";
-      this.mpComboBoxTuningMode.Size = new System.Drawing.Size(263, 21);
-      this.mpComboBoxTuningMode.TabIndex = 1;
-      // 
-      // tabPageCaMenu
-      // 
-      this.tabPageCaMenu.Location = new System.Drawing.Point(4, 22);
-      this.tabPageCaMenu.Name = "tabPageCaMenu";
-      this.tabPageCaMenu.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageCaMenu.Size = new System.Drawing.Size(466, 388);
-      this.tabPageCaMenu.TabIndex = 1;
-      this.tabPageCaMenu.Text = "CI Menu";
-      this.tabPageCaMenu.UseVisualStyleBackColor = true;
+      this.comboBoxScanMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxScanMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxScanMode.FormattingEnabled = true;
+      this.comboBoxScanMode.Location = new System.Drawing.Point(105, 15);
+      this.comboBoxScanMode.Name = "comboBoxScanMode";
+      this.comboBoxScanMode.Size = new System.Drawing.Size(340, 21);
+      this.comboBoxScanMode.TabIndex = 1;
       // 
       // CardAtsc
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.mpTabControl1);
+      this.BackColor = System.Drawing.Color.Transparent;
+      this.Controls.Add(this.tabControl);
       this.Name = "CardAtsc";
       this.Size = new System.Drawing.Size(480, 420);
-      this.mpTabControl1.ResumeLayout(false);
+      this.tabControl.ResumeLayout(false);
       this.tabPageScan.ResumeLayout(false);
       this.tabPageScan.PerformLayout();
       this.ResumeLayout(false);
@@ -225,20 +192,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     #endregion
 
-    private System.Windows.Forms.ProgressBar progressBarQuality;
-    private System.Windows.Forms.ProgressBar progressBarLevel;
-    private MPLabel label2;
-    private MPLabel label1;
-    private System.Windows.Forms.ProgressBar progressBar1;
-    private MPButton mpButtonScanTv;
-    private System.Windows.Forms.ListView listViewStatus;
-    private System.Windows.Forms.ColumnHeader columnHeader1;
-    private MPLabel mpLabel1;
-    private MPComboBox mpComboBoxFrequencies;
-    private MPTabControl mpTabControl1;
+    private System.Windows.Forms.ProgressBar progressBarSignalQuality;
+    private System.Windows.Forms.ProgressBar progressBarSignalStrength;
+    private MPLabel labelSignalQuality;
+    private MPLabel labelSignalStrength;
+    private System.Windows.Forms.ProgressBar progressBarProgress;
+    private MPButton buttonScan;
+    private MPListView listViewProgress;
+    private System.Windows.Forms.ColumnHeader columnHeaderStatus;
+    private MPTabControl tabControl;
     private System.Windows.Forms.TabPage tabPageScan;
-    private System.Windows.Forms.TabPage tabPageCaMenu;
-    private MPLabel mpLabel2;
-    private MPComboBox mpComboBoxTuningMode;
+    private MPLabel labelScanMode;
+    private MPComboBox comboBoxScanMode;
   }
 }

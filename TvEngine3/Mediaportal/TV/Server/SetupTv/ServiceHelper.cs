@@ -21,10 +21,9 @@
 using System;
 using System.Net;
 using System.ServiceProcess;
-using MediaPortal.Common.Utils;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Microsoft.Win32;
 
 namespace Mediaportal.TV.Server.SetupTV
@@ -34,8 +33,7 @@ namespace Mediaportal.TV.Server.SetupTV
   /// </summary>
   public static class ServiceHelper
   {
-
-    public const string SERVICENAME_TVSERVICE = @"TvService";
+    public const string SERVICE_NAME_TV_SERVICE = @"TvService";
     private static bool _isRestrictedMode;
     private static bool _ignoreDisconnections;
 
@@ -62,7 +60,7 @@ namespace Mediaportal.TV.Server.SetupTV
     /// <returns>number of seconds</returns>
     public static int DefaultInitTimeOut()
     {
-      return Singleton<ServiceAgents>.Instance.SettingServiceAgent.GetValue("delayCardDetect", 0) + 10;
+      return 10;
     }
 
     /// <summary>
@@ -75,17 +73,10 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
-        Log.Error("serviceToFind ={0}, hostname={1}", serviceToFind, hostname);
-
         ServiceController[] services = ServiceController.GetServices(hostname);
-
-        Log.Error("services count = {0}", services.Length);
-        
-
         foreach (ServiceController service in services)
         {
-          Log.Error("services name= {0}", service.ServiceName);
-          if (String.Compare(service.ServiceName, serviceToFind, true) == 0)
+          if (string.Compare(service.ServiceName, serviceToFind, true) == 0)
           {
             return true;
           }
@@ -94,10 +85,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
-        //_isRestrictedMode = !Network.IsSingleSeat();
-
-        Log.Error(
-          "ServiceHelper: Check hostname the tvservice is running failed. Try another hostname. {0}", ex);
+        Log.Error(ex, "ServiceHelper: Check hostname the tvservice is running failed. Try another hostname.");
         return false;
       }
     }
@@ -121,7 +109,7 @@ namespace Mediaportal.TV.Server.SetupTV
       {
         try
         {
-          using (ServiceController sc = new ServiceController("TvService", Singleton<ServiceAgents>.Instance.Hostname))
+          using (ServiceController sc = new ServiceController(SERVICE_NAME_TV_SERVICE, Singleton<ServiceAgents>.Instance.Hostname))
           {
             return sc.Status == ServiceControllerStatus.Running;
           }
@@ -163,53 +151,16 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
-        using (ServiceController sc = new ServiceController("TvService", Singleton<ServiceAgents>.Instance.Hostname))
+        using (ServiceController sc = new ServiceController(SERVICE_NAME_TV_SERVICE, Singleton<ServiceAgents>.Instance.Hostname))
         {
           sc.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 0, 0, millisecondsTimeout));
           return (sc.Status == ServiceControllerStatus.Running);
         }
-        /*
-        EventWaitHandle initialized = EventWaitHandle.OpenExisting(RemoteControl.InitializedEventName,
-                                                                    EventWaitHandleRights.Synchronize);
-        return initialized.WaitOne(millisecondsTimeout);*/
       }
-      catch (Exception ex) // either we have no right, or the event does not exist
+      catch (Exception ex)
       {
-        Log.Error(ex, "Failed to wait for {0}", RemoteControl.InitializedEventName);        
+        Log.Error(ex, "ServiceHelper: Failed to wait for TV service to start.");
       }
-
-      /*
-      // Fall back: try to call a method on the server (for earlier versions of TvService)
-      DateTime expires = millisecondsTimeout == -1
-                           ? DateTime.MaxValue
-                           : DateTime.Now.AddMilliseconds(millisecondsTimeout);
-
-      // Note if millisecondsTimeout = 0, we never enter the loop and always return false
-      // There is no way to determine if TvService is initialized without waiting
-      while (DateTime.Now < expires)
-      {
-        try
-        {
-          int cards = ServiceAgents.Instance.ControllerServiceAgent.Cards;
-          return true;
-        }
-        catch (System.Runtime.Remoting.RemotingException)
-        {
-          this.LogInfo("ServiceHelper: Waiting for tvserver to initialize. (remoting not initialized)");
-        }
-        catch (System.Net.Sockets.SocketException)
-        {
-          this.LogInfo("ServiceHelper: Waiting for tvserver to initialize. (socket not initialized)");
-        }
-        catch (Exception ex)
-        {
-          this.LogError(
-            "ServiceHelper: Could not check whether the tvservice is running. Please check your network as well. \nError: {0}",
-            ex.ToString());
-          break;
-        }
-        Thread.Sleep(250);
-      }*/
       return false;
     }
 
@@ -222,7 +173,7 @@ namespace Mediaportal.TV.Server.SetupTV
       {
         try
         {
-          using (ServiceController sc = new ServiceController("TvService", Singleton<ServiceAgents>.Instance.Hostname))
+          using (ServiceController sc = new ServiceController(SERVICE_NAME_TV_SERVICE, Singleton<ServiceAgents>.Instance.Hostname))
           {
             return sc.Status == ServiceControllerStatus.Stopped; // should we consider Stopping as stopped?
           }
@@ -250,7 +201,7 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
-        using (ServiceController sc = new ServiceController("TvService", Singleton<ServiceAgents>.Instance.Hostname))
+        using (ServiceController sc = new ServiceController(SERVICE_NAME_TV_SERVICE, Singleton<ServiceAgents>.Instance.Hostname))
         {
           switch (sc.Status)
           {
@@ -282,7 +233,7 @@ namespace Mediaportal.TV.Server.SetupTV
     /// <returns></returns>
     public static bool Start()
     {
-      return Start("TvService");
+      return Start(SERVICE_NAME_TV_SERVICE);
     }
 
     public static bool Start(string aServiceName)
@@ -321,7 +272,7 @@ namespace Mediaportal.TV.Server.SetupTV
     /// <returns>Always true</returns>
     public static bool Restart()
     {
-      if (!IsInstalled(SERVICENAME_TVSERVICE, Singleton<ServiceAgents>.Instance.Hostname))
+      if (!IsInstalled(SERVICE_NAME_TV_SERVICE, Singleton<ServiceAgents>.Instance.Hostname))
       {
         return false;
       }
@@ -358,9 +309,7 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
-        using (
-          RegistryKey rKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\" + aServiceName, true)
-          )
+        using (RegistryKey rKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\" + aServiceName, true))
         {
           if (rKey != null)
           {
@@ -392,8 +341,7 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
-        using (RegistryKey rKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\TVService", true)
-          )
+        using (RegistryKey rKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\TVService", true))
         {
           if (rKey != null)
           {

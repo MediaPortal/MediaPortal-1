@@ -50,7 +50,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private DateTime _lastTune;
     private readonly Dictionary<string, bool> _users = new Dictionary<string, bool>();
     private double _avg;
-    private IList<Card> _cards;
+    private IList<Tuner> _tuners;
     private Dictionary<int, string> _channelNames;
     private int _concurrentTunes;
     private int _failed;
@@ -69,10 +69,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private bool _rndPrio;
 
     public TestChannels()
-      : this("TestChannels") {}
-
-    public TestChannels(string name)
-      : base(name)
+      : base("Test Channels")
     {
       InitializeComponent();
       Init();
@@ -85,9 +82,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     public override void OnSectionActivated()
     {
-      _cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
+      _tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
       base.OnSectionActivated();
-      ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
 
       comboBoxGroups.Items.Clear();
       IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
@@ -106,7 +102,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelIncludeRelationEnum.None);
       foreach (Channel ch in channels)
       {
-        _channelNames.Add(ch.IdChannel, ch.DisplayName);
+        _channelNames.Add(ch.IdChannel, ch.Name);
       }
 
       _rndFrom = txtRndFrom.Value;
@@ -119,10 +115,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       base.OnSectionDeActivated();
       timer1.Enabled = false;
-      if (RemoteControl.IsConnected)
-      {
-        ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
-      }
     }
 
     /// <summary>
@@ -247,7 +239,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       else
       {
-        rndPrio = UserFactory.USER_PRIORITY;  
+        rndPrio = UserFactory.DEFAULT_PRIORITY_OTHER;  
       }
       return rndPrio;
     }
@@ -272,23 +264,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         _firstFail = 0;
         UpdateCounters();
 
-        IEnumerable<Channel> channels = new List<Channel>();
         ComboBoxExItem idItem = (ComboBoxExItem)comboBoxGroups.Items[comboBoxGroups.SelectedIndex];
-
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroup(idItem.Id);
-        IList<GroupMap> maps = group.GroupMaps;
-
-        List<Channel> channelsO = null;
-        Thread channelTestThread = new Thread(new ParameterizedThreadStart(delegate { ChannelTestThread(channelsO); }));
+        List<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByGroupId(idItem.Id, ChannelIncludeRelationEnum.None).ToList();
+        Thread channelTestThread = new Thread(new ParameterizedThreadStart(delegate { ChannelTestThread(channels); }));
         channelTestThread.Name = "Channel Test Thread";
         channelTestThread.IsBackground = true;
         channelTestThread.Priority = ThreadPriority.Lowest;
-        channelsO = channels as List<Channel>;
-        channelsO.AddRange(maps.Select(map => map.Channel).Where(ch => ch.MediaType == (int)MediaTypeEnum.TV));
         _usersShareChannels = chkShareChannels.Checked;
         _tunedelay = txtTuneDelay.Value;
         _concurrentTunes = txtConcurrentTunes.Value;
-        channelTestThread.Start(channelsO);
+        channelTestThread.Start(channels);
       }
     }
 
@@ -397,7 +382,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             {
               cardId = card.Id;
             }
-            nextRowIndexForDiscUpdate = Add2Log("OK", channel.DisplayName, mSecsElapsed, user.Name,
+            nextRowIndexForDiscUpdate = Add2Log("OK", channel.Name, mSecsElapsed, user.Name,
                                                 Convert.ToString(cardId), "");
             user.CardId = cardId;
             _succeeded++;
@@ -412,7 +397,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             string err = GetErrMsgFromTVResult(result);
             nextRowIndexForDiscUpdate = -1;
-            nextRowIndexForDiscUpdate = Add2Log("INF", channel.DisplayName, mSecsElapsed, user.Name, "N/A", err);
+            nextRowIndexForDiscUpdate = Add2Log("INF", channel.Name, mSecsElapsed, user.Name, "N/A", err);
             _ignored++;
           }
           else
@@ -423,14 +408,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             {
               _firstFail = mpListViewLog.Items.Count + 1;
             }
-            nextRowIndexForDiscUpdate = Add2Log("ERR", channel.DisplayName, mSecsElapsed, user.Name,
+            nextRowIndexForDiscUpdate = Add2Log("ERR", channel.Name, mSecsElapsed, user.Name,
                                                 Convert.ToString(user.FailedCardId), err);
             _failed++;
           }
         }
         catch (Exception e)
         {
-          nextRowIndexForDiscUpdate = Add2Log("EXC", channel.DisplayName, mSecsElapsed, user.Name,
+          nextRowIndexForDiscUpdate = Add2Log("EXC", channel.Name, mSecsElapsed, user.Name,
                                               Convert.ToString(user.FailedCardId), e.Message);
           _ignored++;
           if (_firstFail == 0 && _running)
@@ -626,11 +611,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void UpdateCardStatus()
     {
-      if (_cards == null)
+      if (_tuners == null)
       {
         return;
       }
-      if (_cards.Count == 0)
+      if (_tuners.Count == 0)
       {
         return;
       }
@@ -638,16 +623,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       Utils.UpdateCardStatus(mpListView1);      
     }
 
-    private void ColorLine(Card card, ListViewItem item)
+    private void ColorLine(Tuner tuner, ListViewItem item)
     {
       Color lineColor = Color.White;
       int subchannels = 0;
       IUser user;
-      bool cardInUse = ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(card.IdCard, out user);
+      bool cardInUse = ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(tuner.IdTuner, out user);
 
       if (!cardInUse)
       {
-        subchannels = ServiceAgents.Instance.ControllerServiceAgent.GetSubChannels(card.IdCard);
+        subchannels = ServiceAgents.Instance.ControllerServiceAgent.GetSubChannels(tuner.IdTuner);
         if (subchannels > 0)
         {
           lineColor = Color.Red;
@@ -666,7 +651,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       item.SubItems[3].Text = "";
       item.SubItems[4].Text = "";
       item.SubItems[5].Text = "";
-      item.SubItems[6].Text = card.Name;
+      item.SubItems[6].Text = tuner.Name;
       item.SubItems[7].Text = Convert.ToString(subchannels);
     }
 

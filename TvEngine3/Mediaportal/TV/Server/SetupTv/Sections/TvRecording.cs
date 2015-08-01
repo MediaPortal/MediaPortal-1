@@ -18,8 +18,6 @@
 
 #endregion
 
-#region Usings
-
 using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
@@ -27,6 +25,7 @@ using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 using Mediaportal.TV.Server.SetupTV.Dialogs;
@@ -37,8 +36,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-
-#endregion
+using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
@@ -47,25 +45,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     #region constants
 
     private const int MIN_DISK_QUOTA_MB = 500;
-
-    #endregion
-
-    #region CardInfo class
-
-    public class CardInfo
-    {
-      public Card card;
-
-      public CardInfo(Card newcard)
-      {
-        card = newcard;
-      }
-
-      public override string ToString()
-      {
-        return card.Name;
-      }
-    }
 
     #endregion
 
@@ -181,33 +160,33 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     #endregion
 
-    #region Constructors
-
-    public TvRecording()
-      : this("Recording") {}
-
-    public TvRecording(string name)
-      : base(name)
+    public TvRecording(ServerConfigurationChangedEventHandler handler)
+      : base("Recording", handler)
     {
       InitializeComponent();
     }
 
-    #endregion
-
     #region Serialization
 
-    public override void LoadSettings()
+    public override void OnSectionActivated()
     {
-      numericUpDownPreRec.Value = 5;
-      numericUpDownPostRec.Value = 5;
-      
+      MatroskaTagHandler.OnTagLookupCompleted += OnLookupCompleted;
 
-      numericUpDownMaxFreeCardsToTry.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("recordMaxFreeCardsToTry", 0), 0, 100);
+      _needRestart = false;
+      comboBoxCards.Items.Clear();
+      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
+      foreach (Tuner tuner in tuners)
+      {
+        comboBoxCards.Items.Add(tuner);
+      }
+      if (comboBoxCards.Items.Count > 0)
+        comboBoxCards.SelectedIndex = 0;
+      UpdateDriveInfo(false);
 
-      comboBoxWeekend.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue("FirstDayOfWeekend", 0);
-      //default is Saturday=0
+      numericUpDownMaxFreeCardsToTry.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("recordMaxFreeCardsToTry", 0);
 
-      checkBoxAutoDelete.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("autodeletewatchedrecordings", false));
+      comboBoxWeekend.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue("FirstDayOfWeekend", 0);  // 0 = Saturday
+
       checkBoxPreventDupes.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("PreventDuplicates", false));
       comboBoxEpisodeKey.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue("EpisodeKey", 0);
       // default EpisodeName
@@ -245,31 +224,25 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       LoadComboBoxDrive();
 
-      checkBoxTVThumbs.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("thumbnailerEnabled", true);
-      checkBoxShareThumb.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("thumbnailerLeaveShareThumb", false);
-      numericUpDownThumbColumns.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("thumbnailerColumns", 1);
-      numericUpDownThumbRows.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("thumbnailerRows", 1);
-      trackBarQuality.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("thumbnailerQuality", 4);
-      numericUpDownTimeOffset.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("thumbnailerTimeOffset", 0);
+      // thumbnails
+      checkBoxThumbnailerEnable.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("thumbnailerEnabled", true);
+      if (comboBoxThumbnailerQualitySpeed.Items.Count == 0)
+      {
+        comboBoxThumbnailerQualitySpeed.Items.AddRange(typeof(RecordingThumbnailQuality).GetDescriptions());
+      }
+      comboBoxThumbnailerQualitySpeed.SelectedItem = ((RecordingThumbnailQuality)ServiceAgents.Instance.SettingServiceAgent.GetValue("thumbnailerQuality", (int)RecordingThumbnailQuality.Highest)).GetDescription();
+      numericUpDownThumbnailerColumnCount.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("thumbnailerColumnCount", 1);
+      numericUpDownThumbnailerRowCount.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("thumbnailerRowCount", 1);
+      numericUpDownThumbnailerTimeOffset.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("thumbnailerTimeOffset", 3);
+      checkBoxThumbnailerCopyToRecordingFolder.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("thumbnailerCopyToRecordingFolder", false);
+
+      base.OnSectionActivated();
     }
 
-    private static decimal ValueSanityCheck(int value, int min, int max)
+    public override void OnSectionDeActivated()
     {
-      if (value < min)
-      {
-        return min;
-      }
+      MatroskaTagHandler.OnTagLookupCompleted -= OnLookupCompleted;
 
-      if (value > max)
-      {
-        return max;
-      }
-
-      return value;
-    }
-
-    public override void SaveSettings()
-    {
       ISettingService s = ServiceAgents.Instance.SettingServiceAgent;
       s.SaveValue("preRecordInterval", (int) numericUpDownPreRec.Value);
       s.SaveValue("postRecordInterval", (int) numericUpDownPostRec.Value);
@@ -287,19 +260,26 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       s.SaveValue("seriesformatindex", _formatIndex[1]);
       s.SaveValue("FirstDayOfWeekend", comboBoxWeekend.SelectedIndex); //default is Saturday=0      
-      s.SaveValue("autodeletewatchedrecordings", checkBoxAutoDelete.Checked);
       s.SaveValue("PreventDuplicates", checkBoxPreventDupes.Checked);
       s.SaveValue("EpisodeKey", comboBoxEpisodeKey.SelectedIndex);
       s.SaveValue("recordMaxFreeCardsToTry", (int) numericUpDownMaxFreeCardsToTry.Value);      
 
       UpdateDriveInfo(true);
 
-      s.SaveValue("thumbnailerEnabled", checkBoxTVThumbs.Checked);
-      s.SaveValue("thumbnailerLeaveShareThumb", checkBoxShareThumb.Checked);
-      s.SaveValue("thumbnailerColumns", (int)numericUpDownThumbColumns.Value);
-      s.SaveValue("thumbnailerRows", (int)numericUpDownThumbRows.Value);
-      s.SaveValue("thumbnailerQuality", trackBarQuality.Value);
-      s.SaveValue("thumbnailerTimeOffset", (int)numericUpDownTimeOffset.Value);
+      // thumbnails
+      s.SaveValue("thumbnailerEnabled", checkBoxThumbnailerEnable.Checked);
+      s.SaveValue("thumbnailerQuality", Convert.ToInt32(typeof(RecordingThumbnailQuality).GetEnumFromDescription((string)comboBoxThumbnailerQualitySpeed.SelectedItem)));
+      s.SaveValue("thumbnailerColumnCount", (int)numericUpDownThumbnailerColumnCount.Value);
+      s.SaveValue("thumbnailerRowCount", (int)numericUpDownThumbnailerRowCount.Value);
+      s.SaveValue("thumbnailerTimeOffset", (int)numericUpDownThumbnailerTimeOffset.Value);
+      s.SaveValue("thumbnailerCopyToRecordingFolder", checkBoxThumbnailerCopyToRecordingFolder.Checked);
+
+      if (_needRestart)
+      {
+        OnServerConfigurationChanged(this, true, false, null);
+      }
+
+      base.OnSectionDeActivated();
     }
 
     #endregion
@@ -353,8 +333,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void comboBoxCards_SelectedIndexChanged(object sender, EventArgs e)
     {
-      CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-      textBoxFolder.Text = info.card.RecordingFolder;
+      Tuner tuner = (Tuner)comboBoxCards.SelectedItem;
+      textBoxFolder.Text = tuner.RecordingFolder;
       if (String.IsNullOrEmpty(textBoxFolder.Text))
       {
         var recPath = TVDatabase.TVBusinessLayer.Common.GetDefaultRecordingFolder();
@@ -365,19 +345,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         textBoxFolder.Text = recPath;
         _needRestart = true;
       }
-      /*
-       * Mantis #0001991: disable mpg recording  (part I: force TS recording format)
-       * 
-      switch (info.card.RecordingFormat)
-      {
-        case 0:
-          comboBoxRecordingFormat.SelectedIndex = 0;
-          break;
-        case 1:
-          comboBoxRecordingFormat.SelectedIndex = 1;
-          break;
-      }
-      */
     }   
 
     // Browse Recording folder
@@ -390,65 +357,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
         textBoxFolder.Text = dlg.SelectedPath;
-        CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-        if (info.card.RecordingFolder != textBoxFolder.Text)
-        {
-          _needRestart = true;
-          info.card.RecordingFolder = textBoxFolder.Text;
-          ServiceAgents.Instance.CardServiceAgent.SaveCard(info.card);
-          LoadComboBoxDrive();
-        }
-      }
-    }
-
-    public override void OnSectionActivated()
-    {
-      MatroskaTagHandler.OnTagLookupCompleted += OnLookupCompleted;
-
-      _needRestart = false;
-      comboBoxCards.Items.Clear();
-      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
-      foreach (Card card in cards)
-      {
-        comboBoxCards.Items.Add(new CardInfo(card));
-      }
-      if (comboBoxCards.Items.Count > 0)
-        comboBoxCards.SelectedIndex = 0;
-      UpdateDriveInfo(false);
-
-      base.OnSectionActivated();
-    }
-
-    public override void OnSectionDeActivated()
-    {
-      base.OnSectionDeActivated();
-
-      MatroskaTagHandler.OnTagLookupCompleted -= OnLookupCompleted;
-
-      SaveSettings();
-      if (_needRestart)
-      {
-        if (MessageBox.Show(this, "Changes made require TvService to restart. Restart it now?", "TvService",
-            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-        {
-          var dlgNotify = new NotifyForm("Restart TvService...", "This can take some time\n\nPlease be patient...");
-          dlgNotify.Show();
-          dlgNotify.WaitForDisplay();
-
-          ServiceAgents.Instance.ControllerServiceAgent.Restart();
-
-          dlgNotify.Close();
-        }
       }
     }
 
     private void textBoxFolder_TextChanged(object sender, EventArgs e)
     {
-      CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-      if (info.card.RecordingFolder != textBoxFolder.Text)
+      Tuner tuner = (Tuner)comboBoxCards.SelectedItem;
+      if (tuner.RecordingFolder != textBoxFolder.Text)
       {
-        info.card.RecordingFolder = textBoxFolder.Text;
-        ServiceAgents.Instance.CardServiceAgent.SaveCard(info.card);
+        tuner.RecordingFolder = textBoxFolder.Text;
+        ServiceAgents.Instance.TunerServiceAgent.SaveTuner(tuner);
         _needRestart = true;
         LoadComboBoxDrive();
       }
@@ -460,11 +378,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // Change RecordingFolder for all cards
       for (int iIndex = 0; iIndex < comboBoxCards.Items.Count; iIndex++)
       {
-        CardInfo info = (CardInfo)comboBoxCards.Items[iIndex];
-        if (info.card.RecordingFolder != textBoxFolder.Text)
+        Tuner tuner = (Tuner)comboBoxCards.Items[iIndex];
+        if (tuner.RecordingFolder != textBoxFolder.Text)
         {
-          info.card.RecordingFolder = textBoxFolder.Text;
-          ServiceAgents.Instance.CardServiceAgent.SaveCard(info.card);
+          tuner.RecordingFolder = textBoxFolder.Text;
+          ServiceAgents.Instance.TunerServiceAgent.SaveTuner(tuner);
           _needRestart = true;
         }
       }
@@ -488,42 +406,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         LoadDbImportSettings();
       }
-    }
-
-    private void comboBoxWeekend_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      this.LogDebug("Weekend Updated to : {0}", comboBoxWeekend.SelectedItem);
-      _needRestart = true;
-    }
-
-    private void buttonClearTVThumbs_Click(object sender, EventArgs e)
-    {
-      this.LogDebug("recording config: delete thumbnails");
-      ServiceAgents.Instance.ThumbnailServiceAgent.DeleteAllThumbnails();
-    }
-
-    private void trackBarQuality_ValueChanged(object sender, EventArgs e)
-    {
-      switch (trackBarQuality.Value)
-      {
-        case 0:
-          labelThumbnailRecommendation.Text = "small CRTs";
-          break;
-        case 1:
-          labelThumbnailRecommendation.Text = "medium CRTs";
-          break;
-        case 2:
-          labelThumbnailRecommendation.Text = "large CRTs, small LCDs";
-          break;
-        case 3:
-          labelThumbnailRecommendation.Text = "LCDs, plasmas";
-          break;
-        case 4:
-          labelThumbnailRecommendation.Text = "projectors, very large LCDs and plasmas";
-          break;
-      }
-
-      _needRestart = true;
     }
 
     #endregion
@@ -569,7 +451,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           long quota = ServiceAgents.Instance.SettingServiceAgent.GetValue(settingName, MIN_DISK_QUOTA_MB * 1024);
           mpNumericTextBoxDiskQuota.Value = (int)(quota / 1024);
         }
-        catch (Exception)
+        catch
         {
           mpNumericTextBoxDiskQuota.Value = 0;
         }
@@ -611,17 +493,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void LoadComboBoxDrive()
     {
       comboBoxDrive.Items.Clear();
-      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
-      foreach (Card card in cards)
+      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
+      foreach (Tuner tuner in tuners)
       {
-        if (card.RecordingFolder.Length > 0)
+        if (tuner.RecordingFolder.Length > 0)
         {
-          string driveLetter = String.Format("{0}:", card.RecordingFolder[0]);
-          if (card.RecordingFolder.StartsWith(@"\"))
+          string driveLetter = String.Format("{0}:", tuner.RecordingFolder[0]);
+          if (tuner.RecordingFolder.StartsWith(@"\"))
           {
             if (!comboBoxDrive.Items.Contains(driveLetter))
             {
-              comboBoxDrive.Items.Add(card.RecordingFolder);
+              comboBoxDrive.Items.Add(tuner.RecordingFolder);
             }
           }
           else if (Utils.getDriveType(driveLetter) == 3)
@@ -658,7 +540,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           result = string.Compare(tx.Text, ty.Text, StringComparison.CurrentCulture);
         }
-        catch (Exception) {}
+        catch {}
 
         return result;
       }
@@ -694,11 +576,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       GetRecordingsFromDb();
       try
       {
-        IList<Card> allCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
-        foreach (Card tvCard in allCards)
+        IList<Tuner> allTuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
+        foreach (Tuner tuner in allTuners)
         {
-          if (!string.IsNullOrEmpty(tvCard.RecordingFolder) && !cbRecPaths.Items.Contains(tvCard.RecordingFolder))
-            cbRecPaths.Items.Add(tvCard.RecordingFolder);
+          if (!string.IsNullOrEmpty(tuner.RecordingFolder) && !cbRecPaths.Items.Contains(tuner.RecordingFolder))
+            cbRecPaths.Items.Add(tuner.RecordingFolder);
         }
         if (cbRecPaths.Items.Count > 0)
         {
@@ -707,7 +589,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (Exception ex)
       {
-        MessageBox.Show(string.Format("Error gathering recording folders of all tv cards: \n{0}", ex.Message));
+        MessageBox.Show(string.Format("Error gathering recording folders of all tuners: \n{0}", ex.Message));
       }
     }
 
@@ -767,7 +649,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       try
       {
         tvDbRecs.Clear();
-        IList<Recording> recordings = ServiceAgents.Instance.RecordingServiceAgent.ListAllRecordingsByMediaType(MediaTypeEnum.TV);
+        IList<Recording> recordings = ServiceAgents.Instance.RecordingServiceAgent.ListAllRecordingsByMediaType(MediaType.Television);
         foreach (Recording rec in recordings)
         {
           TreeNode RecNode = BuildNodeFromRecording(rec);
@@ -807,7 +689,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         Invoke(new MethodTreeViewTags(AddTagFiles), new object[] {FoundTags});
       }
-      catch (Exception) {}
+      catch {}
     }
 
     /// <summary>
@@ -870,7 +752,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         //}
         SetImportButton();
       }
-      catch (Exception)
+      catch
       {
         // just in case the GUI controls could be null due to timing problems on thread callback
         if (btnImport != null)
@@ -899,11 +781,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           lookupChannel = aRec.Channel;
           if (lookupChannel != null)
           {
-            channelName = lookupChannel.DisplayName;
+            channelName = lookupChannel.Name;
             lookupChannel.IdChannel.ToString();
           }
         }
-        catch (Exception) {}
+        catch {}
 
         //TreeNode[] subitems = new TreeNode[] { 
         //                                       new TreeNode("Channel name: " + channelName), 
@@ -950,7 +832,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           e.Node.Checked = e.Node.IsSelected;
         }
       }
-      catch (Exception) {}
+      catch {}
     }
 
     #endregion
@@ -965,11 +847,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         string physicalFile = GetRecordingFilename(aFileName);
         if (aTag.startTime.Equals(SqlDateTime.MinValue.Value))
         {
-          aTag.startTime = GetRecordingStartTime(physicalFile);
-        }
-        if (aTag.endTime.Equals(SqlDateTime.MinValue.Value))
-        {
-          aTag.endTime = GetRecordingEndTime(physicalFile);
+          GetRecordingTimes(physicalFile, out aTag.startTime, out aTag.endTime);
         }
 
         ProgramCategory category =  ServiceAgents.Instance.ProgramServiceAgent.GetProgramCategoryByName(aTag.genre);
@@ -1009,26 +887,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       return tagRec;
     }
 
-    private static DateTime GetRecordingStartTime(string aFileName)
+    private static void GetRecordingTimes(string aFileName, out DateTime startTime, out DateTime endTime)
     {
-      DateTime startTime = SqlDateTime.MinValue.Value;
+      startTime = SqlDateTime.MinValue.Value;
+      endTime = SqlDateTime.MinValue.Value;
       if (File.Exists(aFileName))
       {
         FileInfo fi = new FileInfo(aFileName);
         startTime = fi.CreationTime;
-      }
-      return startTime;
-    }
-
-    private static DateTime GetRecordingEndTime(string aFileName)
-    {
-      DateTime endTime = SqlDateTime.MinValue.Value;
-      if (File.Exists(aFileName))
-      {
-        FileInfo fi = new FileInfo(aFileName);
         endTime = fi.LastWriteTime;
       }
-      return endTime;
     }
 
     /*
@@ -1055,7 +923,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           }
         }
       }
-      catch (Exception) {}
+      catch {}
       return recordingFile;
     }
 
@@ -1197,6 +1065,27 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     }
 
     #endregion
+
+    #endregion
+
+    #region thumbnails
+
+    private void checkBoxThumbnailerEnable_CheckedChanged(object sender, EventArgs e)
+    {
+      groupBoxThumbnailer.Enabled = checkBoxThumbnailerEnable.Checked;
+    }
+
+    private void buttonThumbnailerCreateMissing_Click(object sender, EventArgs e)
+    {
+      this.LogInfo("recordings: create missing thumbnails");
+      ServiceAgents.Instance.ControllerServiceAgent.CreateMissingThumbnails();
+    }
+
+    private void buttonThumbnailerDeleteExisting_Click(object sender, EventArgs e)
+    {
+      this.LogInfo("recordings: delete existing thumbnails");
+      ServiceAgents.Instance.ControllerServiceAgent.DeleteExistingThumbnails();
+    }
 
     #endregion
   }

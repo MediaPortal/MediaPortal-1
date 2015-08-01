@@ -30,295 +30,231 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StreamingServer));
-      this.timer1 = new System.Windows.Forms.Timer(this.components);
-      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.SettingsGroupBox = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.ApplyButton = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.PortNoNumericUpDown = new System.Windows.Forms.NumericUpDown();
-      this.mpLabel2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.IpAddressComboBox = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpLabelChannelCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.ClientsGroupBox = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.listView1 = new System.Windows.Forms.ListView();
-      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-      this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-      this.mpButtonKick = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.tabControl1.SuspendLayout();
-      this.tabPage1.SuspendLayout();
-      this.SettingsGroupBox.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.PortNoNumericUpDown)).BeginInit();
-      this.ClientsGroupBox.SuspendLayout();
-      this.contextMenuStrip1.SuspendLayout();
+      this.numericUpDownPort = new System.Windows.Forms.NumericUpDown();
+      this.labelPort = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.comboBoxInterface = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.labelInterface = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBoxClients = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.listViewClients = new System.Windows.Forms.ListView();
+      this.columnHeaderStreamId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderClientIpAddress = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderClientConnectedSince = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderStreamDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderStreamUrl = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.buttonKick = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.groupBoxSettings = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.labelStatusValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelStatus = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.columnHeaderClientSessionId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderClientIsActive = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPort)).BeginInit();
+      this.groupBoxClients.SuspendLayout();
+      this.groupBoxSettings.SuspendLayout();
       this.SuspendLayout();
       // 
-      // timer1
+      // numericUpDownPort
       // 
-      this.timer1.Interval = 1000;
-      this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-      // 
-      // imageList1
-      // 
-      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-      this.imageList1.Images.SetKeyName(0, "user.ico");
-      // 
-      // tabControl1
-      // 
-      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Location = new System.Drawing.Point(0, 0);
-      this.tabControl1.Name = "tabControl1";
-      this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(480, 420);
-      this.tabControl1.TabIndex = 10;
-      // 
-      // tabPage1
-      // 
-      this.tabPage1.Controls.Add(this.SettingsGroupBox);
-      this.tabPage1.Controls.Add(this.mpLabelChannelCount);
-      this.tabPage1.Controls.Add(this.ClientsGroupBox);
-      this.tabPage1.Location = new System.Drawing.Point(4, 22);
-      this.tabPage1.Name = "tabPage1";
-      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(472, 394);
-      this.tabPage1.TabIndex = 0;
-      this.tabPage1.Text = "Streaming server";
-      this.tabPage1.UseVisualStyleBackColor = true;
-      // 
-      // SettingsGroupBox
-      // 
-      this.SettingsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.SettingsGroupBox.Controls.Add(this.ApplyButton);
-      this.SettingsGroupBox.Controls.Add(this.PortNoNumericUpDown);
-      this.SettingsGroupBox.Controls.Add(this.mpLabel2);
-      this.SettingsGroupBox.Controls.Add(this.IpAddressComboBox);
-      this.SettingsGroupBox.Controls.Add(this.mpLabel1);
-      this.SettingsGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.SettingsGroupBox.Location = new System.Drawing.Point(6, 6);
-      this.SettingsGroupBox.Name = "SettingsGroupBox";
-      this.SettingsGroupBox.Size = new System.Drawing.Size(460, 108);
-      this.SettingsGroupBox.TabIndex = 5;
-      this.SettingsGroupBox.TabStop = false;
-      this.SettingsGroupBox.Text = "Settings";
-      // 
-      // ApplyButton
-      // 
-      this.ApplyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.ApplyButton.Location = new System.Drawing.Point(373, 74);
-      this.ApplyButton.Name = "ApplyButton";
-      this.ApplyButton.Size = new System.Drawing.Size(81, 22);
-      this.ApplyButton.TabIndex = 10;
-      this.ApplyButton.Text = "Apply";
-      this.ApplyButton.UseVisualStyleBackColor = true;
-      this.ApplyButton.Click += new System.EventHandler(this.ApplyButton_Click);
-      // 
-      // PortNoNumericUpDown
-      // 
-      this.PortNoNumericUpDown.Location = new System.Drawing.Point(6, 76);
-      this.PortNoNumericUpDown.Maximum = new decimal(new int[] {
+      this.numericUpDownPort.Location = new System.Drawing.Point(341, 20);
+      this.numericUpDownPort.Maximum = new decimal(new int[] {
             65535,
             0,
             0,
             0});
-      this.PortNoNumericUpDown.Minimum = new decimal(new int[] {
+      this.numericUpDownPort.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownPort.Name = "numericUpDownPort";
+      this.numericUpDownPort.Size = new System.Drawing.Size(55, 20);
+      this.numericUpDownPort.TabIndex = 3;
+      this.numericUpDownPort.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownPort.Value = new decimal(new int[] {
             554,
             0,
             0,
             0});
-      this.PortNoNumericUpDown.Name = "PortNoNumericUpDown";
-      this.PortNoNumericUpDown.Size = new System.Drawing.Size(100, 20);
-      this.PortNoNumericUpDown.TabIndex = 9;
-      this.PortNoNumericUpDown.Value = new decimal(new int[] {
-            554,
-            0,
-            0,
-            0});
       // 
-      // mpLabel2
+      // labelPort
       // 
-      this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(3, 60);
-      this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(307, 13);
-      this.mpLabel2.TabIndex = 8;
-      this.mpLabel2.Text = "Port for RTSP streaming (valid range: 554 - 65535, default 554):";
+      this.labelPort.AutoSize = true;
+      this.labelPort.Location = new System.Drawing.Point(306, 22);
+      this.labelPort.Name = "labelPort";
+      this.labelPort.Size = new System.Drawing.Size(29, 13);
+      this.labelPort.TabIndex = 2;
+      this.labelPort.Text = "Port:";
       // 
-      // IpAddressComboBox
+      // comboBoxInterface
       // 
-      this.IpAddressComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.IpAddressComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.IpAddressComboBox.FormattingEnabled = true;
-      this.IpAddressComboBox.Location = new System.Drawing.Point(6, 32);
-      this.IpAddressComboBox.Name = "IpAddressComboBox";
-      this.IpAddressComboBox.Size = new System.Drawing.Size(334, 21);
-      this.IpAddressComboBox.TabIndex = 6;
+      this.comboBoxInterface.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxInterface.FormattingEnabled = true;
+      this.comboBoxInterface.Location = new System.Drawing.Point(64, 19);
+      this.comboBoxInterface.Name = "comboBoxInterface";
+      this.comboBoxInterface.Size = new System.Drawing.Size(222, 21);
+      this.comboBoxInterface.TabIndex = 1;
       // 
-      // mpLabel1
+      // labelInterface
       // 
-      this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(3, 16);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(245, 13);
-      this.mpLabel1.TabIndex = 7;
-      this.mpLabel1.Text = "IP address used by the server for RTSP streaming:";
+      this.labelInterface.AutoSize = true;
+      this.labelInterface.Location = new System.Drawing.Point(6, 22);
+      this.labelInterface.Name = "labelInterface";
+      this.labelInterface.Size = new System.Drawing.Size(52, 13);
+      this.labelInterface.TabIndex = 0;
+      this.labelInterface.Text = "Interface:";
       // 
-      // mpLabelChannelCount
+      // groupBoxClients
       // 
-      this.mpLabelChannelCount.AutoSize = true;
-      this.mpLabelChannelCount.Location = new System.Drawing.Point(13, 14);
-      this.mpLabelChannelCount.Name = "mpLabelChannelCount";
-      this.mpLabelChannelCount.Size = new System.Drawing.Size(0, 13);
-      this.mpLabelChannelCount.TabIndex = 2;
-      // 
-      // ClientsGroupBox
-      // 
-      this.ClientsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.groupBoxClients.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.ClientsGroupBox.Controls.Add(this.listView1);
-      this.ClientsGroupBox.Controls.Add(this.mpButtonKick);
-      this.ClientsGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ClientsGroupBox.Location = new System.Drawing.Point(6, 120);
-      this.ClientsGroupBox.Name = "ClientsGroupBox";
-      this.ClientsGroupBox.Size = new System.Drawing.Size(460, 271);
-      this.ClientsGroupBox.TabIndex = 6;
-      this.ClientsGroupBox.TabStop = false;
-      this.ClientsGroupBox.Text = "Clients";
+      this.groupBoxClients.Controls.Add(this.listViewClients);
+      this.groupBoxClients.Controls.Add(this.buttonKick);
+      this.groupBoxClients.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxClients.Location = new System.Drawing.Point(6, 82);
+      this.groupBoxClients.Name = "groupBoxClients";
+      this.groupBoxClients.Size = new System.Drawing.Size(468, 328);
+      this.groupBoxClients.TabIndex = 1;
+      this.groupBoxClients.TabStop = false;
+      this.groupBoxClients.Text = "Clients";
       // 
-      // listView1
+      // listViewClients
       // 
-      this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.listViewClients.AllowColumnReorder = true;
+      this.listViewClients.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4,
-            this.columnHeader5});
-      this.listView1.ContextMenuStrip = this.contextMenuStrip1;
-      this.listView1.FullRowSelect = true;
-      this.listView1.Location = new System.Drawing.Point(6, 19);
-      this.listView1.Name = "listView1";
-      this.listView1.Size = new System.Drawing.Size(448, 220);
-      this.listView1.SmallImageList = this.imageList1;
-      this.listView1.TabIndex = 3;
-      this.listView1.UseCompatibleStateImageBehavior = false;
-      this.listView1.View = System.Windows.Forms.View.Details;
+      this.listViewClients.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderStreamId,
+            this.columnHeaderClientSessionId,
+            this.columnHeaderClientIpAddress,
+            this.columnHeaderStreamDescription,
+            this.columnHeaderClientConnectedSince,
+            this.columnHeaderClientIsActive,
+            this.columnHeaderStreamUrl});
+      this.listViewClients.FullRowSelect = true;
+      this.listViewClients.Location = new System.Drawing.Point(9, 19);
+      this.listViewClients.Name = "listViewClients";
+      this.listViewClients.Size = new System.Drawing.Size(450, 274);
+      this.listViewClients.TabIndex = 0;
+      this.listViewClients.UseCompatibleStateImageBehavior = false;
+      this.listViewClients.View = System.Windows.Forms.View.Details;
       // 
-      // columnHeader1
+      // columnHeaderStreamId
       // 
-      this.columnHeader1.Text = "Stream";
-      this.columnHeader1.Width = 50;
+      this.columnHeaderStreamId.Text = "Stream";
+      this.columnHeaderStreamId.Width = 50;
       // 
-      // columnHeader2
+      // columnHeaderClientIpAddress
       // 
-      this.columnHeader2.Text = "IP Adress";
-      this.columnHeader2.Width = 100;
+      this.columnHeaderClientIpAddress.Text = "IP Address";
+      this.columnHeaderClientIpAddress.Width = 100;
       // 
-      // columnHeader3
+      // columnHeaderClientConnectedSince
       // 
-      this.columnHeader3.Text = "Active";
-      this.columnHeader3.Width = 50;
+      this.columnHeaderClientConnectedSince.Text = "Connected Since";
+      this.columnHeaderClientConnectedSince.Width = 120;
       // 
-      // columnHeader4
+      // columnHeaderStreamDescription
       // 
-      this.columnHeader4.Text = "Connected since";
-      this.columnHeader4.Width = 120;
+      this.columnHeaderStreamDescription.Text = "Description";
+      this.columnHeaderStreamDescription.Width = 120;
       // 
-      // columnHeader5
+      // columnHeaderStreamUrl
       // 
-      this.columnHeader5.Text = "Description";
-      this.columnHeader5.Width = 120;
+      this.columnHeaderStreamUrl.DisplayIndex = 5;
+      this.columnHeaderStreamUrl.Width = 100;
       // 
-      // contextMenuStrip1
+      // buttonKick
       // 
-      this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.deleteToolStripMenuItem,
-            this.toolStripMenuItem1});
-      this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(104, 32);
+      this.buttonKick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonKick.Location = new System.Drawing.Point(9, 299);
+      this.buttonKick.Name = "buttonKick";
+      this.buttonKick.Size = new System.Drawing.Size(55, 23);
+      this.buttonKick.TabIndex = 1;
+      this.buttonKick.Text = "&Kick";
+      this.buttonKick.UseVisualStyleBackColor = true;
+      this.buttonKick.Click += new System.EventHandler(this.buttonKick_Click);
       // 
-      // deleteToolStripMenuItem
+      // groupBoxSettings
       // 
-      this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-      this.deleteToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
-      this.deleteToolStripMenuItem.Text = "Kick";
-      this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+      this.groupBoxSettings.Controls.Add(this.labelStatusValue);
+      this.groupBoxSettings.Controls.Add(this.labelStatus);
+      this.groupBoxSettings.Controls.Add(this.numericUpDownPort);
+      this.groupBoxSettings.Controls.Add(this.labelPort);
+      this.groupBoxSettings.Controls.Add(this.comboBoxInterface);
+      this.groupBoxSettings.Controls.Add(this.labelInterface);
+      this.groupBoxSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxSettings.Location = new System.Drawing.Point(6, 6);
+      this.groupBoxSettings.Name = "groupBoxSettings";
+      this.groupBoxSettings.Size = new System.Drawing.Size(425, 70);
+      this.groupBoxSettings.TabIndex = 0;
+      this.groupBoxSettings.TabStop = false;
+      this.groupBoxSettings.Text = "Settings";
       // 
-      // toolStripMenuItem1
+      // labelStatusValue
       // 
-      this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-      this.toolStripMenuItem1.Size = new System.Drawing.Size(100, 6);
+      this.labelStatusValue.AutoSize = true;
+      this.labelStatusValue.ForeColor = System.Drawing.Color.Red;
+      this.labelStatusValue.Location = new System.Drawing.Point(61, 46);
+      this.labelStatusValue.Name = "labelStatusValue";
+      this.labelStatusValue.Size = new System.Drawing.Size(346, 13);
+      this.labelStatusValue.TabIndex = 5;
+      this.labelStatusValue.Text = "Server is not running. Check configured interface and port are available.";
       // 
-      // mpButtonKick
+      // labelStatus
       // 
-      this.mpButtonKick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonKick.Location = new System.Drawing.Point(6, 245);
-      this.mpButtonKick.Name = "mpButtonKick";
-      this.mpButtonKick.Size = new System.Drawing.Size(55, 23);
-      this.mpButtonKick.TabIndex = 4;
-      this.mpButtonKick.Text = "Kick";
-      this.mpButtonKick.UseVisualStyleBackColor = true;
-      this.mpButtonKick.Click += new System.EventHandler(this.mpButtonKick_Click);
+      this.labelStatus.AutoSize = true;
+      this.labelStatus.Location = new System.Drawing.Point(6, 46);
+      this.labelStatus.Name = "labelStatus";
+      this.labelStatus.Size = new System.Drawing.Size(40, 13);
+      this.labelStatus.TabIndex = 4;
+      this.labelStatus.Text = "Status:";
+      // 
+      // columnHeaderClientSessionId
+      // 
+      this.columnHeaderClientSessionId.Text = "Session";
+      // 
+      // columnHeaderClientIsActive
+      // 
+      this.columnHeaderClientIsActive.DisplayIndex = 6;
+      this.columnHeaderClientIsActive.Text = "Active?";
+      this.columnHeaderClientIsActive.Width = 50;
       // 
       // StreamingServer
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.tabControl1);
+      this.BackColor = System.Drawing.SystemColors.Window;
+      this.Controls.Add(this.groupBoxSettings);
+      this.Controls.Add(this.groupBoxClients);
       this.Name = "StreamingServer";
       this.Size = new System.Drawing.Size(480, 420);
-      this.tabControl1.ResumeLayout(false);
-      this.tabPage1.ResumeLayout(false);
-      this.tabPage1.PerformLayout();
-      this.SettingsGroupBox.ResumeLayout(false);
-      this.SettingsGroupBox.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.PortNoNumericUpDown)).EndInit();
-      this.ClientsGroupBox.ResumeLayout(false);
-      this.contextMenuStrip1.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPort)).EndInit();
+      this.groupBoxClients.ResumeLayout(false);
+      this.groupBoxSettings.ResumeLayout(false);
+      this.groupBoxSettings.PerformLayout();
       this.ResumeLayout(false);
 
     }
 
     #endregion
 
-		private System.Windows.Forms.Timer timer1;
-    private System.Windows.Forms.ImageList imageList1;
-		private System.Windows.Forms.TabControl tabControl1;
-		private System.Windows.Forms.TabPage tabPage1;
-		private System.Windows.Forms.ListView listView1;
-		private System.Windows.Forms.ColumnHeader columnHeader1;
-		private System.Windows.Forms.ColumnHeader columnHeader2;
-		private System.Windows.Forms.ColumnHeader columnHeader3;
-		private System.Windows.Forms.ColumnHeader columnHeader4;
-		private System.Windows.Forms.ColumnHeader columnHeader5;
-		private MPLabel mpLabelChannelCount;
-		private MPButton mpButtonKick;
-		private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-		private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
-    private MPGroupBox SettingsGroupBox;
-    private MPGroupBox ClientsGroupBox;
-    private MPButton ApplyButton;
-    private System.Windows.Forms.NumericUpDown PortNoNumericUpDown;
-    private MPLabel mpLabel2;
-    private MPComboBox IpAddressComboBox;
-    private MPLabel mpLabel1;
+    private System.Windows.Forms.NumericUpDown numericUpDownPort;
+    private MPLabel labelPort;
+    private MPComboBox comboBoxInterface;
+    private MPLabel labelInterface;
+    private MPGroupBox groupBoxClients;
+    private System.Windows.Forms.ListView listViewClients;
+    private System.Windows.Forms.ColumnHeader columnHeaderStreamId;
+    private System.Windows.Forms.ColumnHeader columnHeaderClientIpAddress;
+    private System.Windows.Forms.ColumnHeader columnHeaderClientConnectedSince;
+    private System.Windows.Forms.ColumnHeader columnHeaderStreamDescription;
+    private MPButton buttonKick;
+    private MPGroupBox groupBoxSettings;
+    private MPLabel labelStatusValue;
+    private MPLabel labelStatus;
+    private System.Windows.Forms.ColumnHeader columnHeaderStreamUrl;
+    private System.Windows.Forms.ColumnHeader columnHeaderClientSessionId;
+    private System.Windows.Forms.ColumnHeader columnHeaderClientIsActive;
   }
 }

@@ -26,7 +26,6 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -36,7 +35,6 @@ namespace Mediaportal.TV.Server.SetupTV
   public enum StartupMode
   {
     Normal,
-    Wizard,
     DbCleanup,
     DbConfig,
     DeployMode
@@ -71,15 +69,11 @@ namespace Mediaportal.TV.Server.SetupTV
       switch (_startupMode)
       {
         case StartupMode.Normal:
-          applicationForm = new SetupTvSettingsForm(_debugOptions);
-          break;
-
-        case StartupMode.Wizard:
-          applicationForm = new WizardForm(_sectionsConfiguration);
+          applicationForm = new SettingsForm(_debugOptions);
           break;
 
         case StartupMode.DbCleanup:
-          applicationForm = new SetupTvSettingsForm(_debugOptions);
+          applicationForm = new SettingsForm(_debugOptions);
           break;
       }
 
@@ -91,71 +85,42 @@ namespace Mediaportal.TV.Server.SetupTV
 
     public static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
     {
-      Log.Error(e.Exception, "Exception in setuptv");
+      Log.Error(e.Exception, "Unhandled exception in TV Server Configuration.");
     }
 
     [STAThread]
     public static void Main(string[] arguments)
     {
-      // Initialize hosting environment, check for provider inside "Integration" subfolder. This helps to avoid assembly version conflicts.
-      IntegrationProviderHelper.Register(PathManager.BuildAssemblyRelativePath("Integration"));
-
       if (System.IO.File.Exists("c:\\debug_setuptv.txt"))
       {
         System.Diagnostics.Debugger.Launch();
       }
+      Application.ThreadException += Application_ThreadException;
+
+      // Initialise hosting environment, check for provider inside "Integration" subfolder. This helps to avoid assembly version conflicts.
+      IntegrationProviderHelper.Register(PathManager.BuildAssemblyRelativePath("Integration"));
+
+      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
+      Log.Info("---- TV Server Configuration v{0} is starting up on {1} ----", versionInfo.FileVersion, OSInfo.OSInfo.GetOSDisplayVersion());
 
       Thread.CurrentThread.Name = "SetupTv";
       Application.SetCompatibleTextRenderingDefault(false);
 
-      if (ConfigurationManager.AppSettings.Count > 0)
-      {
-        string appSetting = ConfigurationManager.AppSettings["tvserver"];
-        if (appSetting != null)
-        {
-          ServiceAgents.Instance.Hostname = appSetting;
-        }
-      }
-      
-      bool tvserviceInstalled = WaitAndQueryForTvServiceUntilFound();
-      if (tvserviceInstalled)
-      {
-        Log.Info("---- check if tvservice is running ----");
-        if (!ServiceHelper.IsRestrictedMode && !ServiceHelper.IsRunning)
-        {
-          Log.Info("---- tvservice is not running ----");
-          if (_startupMode != StartupMode.DeployMode && PromptStartTvService() != DialogResult.Yes)
-          {
-            Environment.Exit(0);
-          }
-          Log.Info("---- start tvservice----");
-          ServiceHelper.Start();
-        }
-        ServiceHelper.WaitInitialized();
-      }
+      // Check for unsupported operating systems.
+      OSPrerequisites.OSPrerequisites.OsCheck(true);
 
+      // Set the working directory based on the EXE location.
+      string applicationPath = Application.ExecutablePath;
+      applicationPath = System.IO.Path.GetFullPath(applicationPath);
+      applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
+      System.IO.Directory.SetCurrentDirectory(applicationPath);
 
-      Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-      config.AppSettings.Settings.Remove("tvserver");
-      config.AppSettings.Settings.Add("tvserver", ServiceAgents.Instance.Hostname);
-      config.Save(ConfigurationSaveMode.Modified);
-      ConfigurationManager.RefreshSection("appSettings");
-
-      _serverMonitor.OnServerConnected += new ServerMonitor.ServerConnectedDelegate(_serverMonitor_OnServerConnected);
-      _serverMonitor.OnServerDisconnected += new ServerMonitor.ServerDisconnectedDelegate(_serverMonitor_OnServerDisconnected);
-      _serverMonitor.Start();
-
-      /*Process[] p = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
-      if (p.Length > 1)
-      {
-        System.Environment.Exit(0);
-      }*/
-
-      string DeploySql = string.Empty;
-      string DeployPwd = string.Empty;
-
+      // Handle command line parameters.
+      string deploySql = string.Empty;
+      string deployPwd = string.Empty;
       foreach (string param in arguments)
       {
+        Log.Info("---- param: {0} ----", param);
         switch (param.ToLowerInvariant())
         {
           case "/delete-db":
@@ -176,37 +141,36 @@ namespace Mediaportal.TV.Server.SetupTV
           switch (param.Substring(0, 12))
           {
             case "--DeployMode":
-              Log.Debug("---- started in Deploy mode ----");
               _startupMode = StartupMode.DeployMode;
               break;
 
             case "--DeploySql:":
-              DeploySql = param.Split(':')[1].ToLower();
+              deploySql = param.Split(':')[1].ToLower();
               break;
 
             case "--DeployPwd:":
-              DeployPwd = param.Split(':')[1];
+              deployPwd = param.Split(':')[1];
               break;
           }
         }
       }
 
-      // set working dir from application.exe
-      string applicationPath = Application.ExecutablePath;
-      applicationPath = System.IO.Path.GetFullPath(applicationPath);
-      applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
-      System.IO.Directory.SetCurrentDirectory(applicationPath);
+      // Start and/or connect to the TV service.
+      if (ConfigurationManager.AppSettings.Count > 0)
+      {
+        string appSetting = ConfigurationManager.AppSettings["tvserver"];
+        if (appSetting != null)
+        {
+          ServiceAgents.Instance.Hostname = appSetting;
+        }
+      }
+      Log.Info("---- TV service host is {0} ----", ServiceAgents.Instance.Hostname ?? "[null]");
+      bool tvserviceInstalled = WaitAndQueryForTvServiceUntilFound();
+      EnsureTvServiceRunningOrDie(tvserviceInstalled && _startupMode != StartupMode.DeployMode);
 
-      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-
-      Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
-
-      //Check for unsupported operating systems
-      OSPrerequisites.OSPrerequisites.OsCheck(true);
-
-      Application.ThreadException += Application_ThreadException;
-
-
+      _serverMonitor.OnServerConnected += new ServerMonitor.ServerConnectedDelegate(_serverMonitor_OnServerConnected);
+      _serverMonitor.OnServerDisconnected += new ServerMonitor.ServerDisconnectedDelegate(_serverMonitor_OnServerDisconnected);
+      _serverMonitor.Start();
 
       /*this.LogInfo("---- check if database needs to be updated/created ----");
       int currentSchemaVersion = dlg.GetCurrentShemaVersion(startupMode);
@@ -241,7 +205,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       */
 
-      // Avoid the visual part of SetupTv if in DeployMode
+      // Avoid the visual part of SetupTv if in deploy mode.
       if (_startupMode == StartupMode.DeployMode)
       {
         return;
@@ -264,124 +228,152 @@ namespace Mediaportal.TV.Server.SetupTV
 
     private static DialogResult PromptStartTvService()
     {
-      DialogResult result = MessageBox.Show("The TV service is not running.\rStart it now?",
-                                            "MediaPortal TV Server", MessageBoxButtons.YesNo);
+      DialogResult result = MessageBox.Show("The TV service is not running." + Environment.NewLine + "Start it now?",
+                                            SetupControls.SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.YesNo);
       return result;
     }
 
     private static bool WaitAndQueryForTvServiceUntilFound()
     {
+      bool updateConfig = false;
       bool tvServiceInstalled = false;
       while (!tvServiceInstalled)
       {
-        //maybe tvservice is started as a console app or as MP2TV server ?
-        try
-        {
-          IEnumerable<string> ipAdresses = ServiceAgents.Instance.ControllerServiceAgent.ServerIpAdresses;
-          ServiceHelper.IsRestrictedMode = true;
-          break;
-        }
-        catch (Exception)
-        {
-        }
-        
-        tvServiceInstalled = ServiceHelper.IsInstalled(ServiceHelper.SERVICENAME_TVSERVICE, ServiceAgents.Instance.Hostname);
+        tvServiceInstalled = ServiceHelper.IsInstalled(ServiceHelper.SERVICE_NAME_TV_SERVICE, ServiceAgents.Instance.Hostname);
         if (!tvServiceInstalled)
         {
-          if (ServiceHelper.IsRestrictedMode)
+          // The TV service may be running as a console application or as a
+          // plugin within the MP2 Server. In that case it won't be registered
+          // as a Windows service, and the only way to detect it is simply to
+          // try to connect to it.
+          if (!string.IsNullOrEmpty(ServiceAgents.Instance.Hostname))
           {
-            break;
-          }
-          if (!String.IsNullOrEmpty(ServiceAgents.Instance.Hostname))
-          {
-            string hostName;
-            if (PromptHostName(out hostName) != DialogResult.OK)
+            try
             {
-              Environment.Exit(0);
+              IEnumerable<string> ipAdresses = ServiceAgents.Instance.ControllerServiceAgent.ServerIpAddresses;
+              ServiceHelper.IsRestrictedMode = true;
+              Log.Info("---- restricted mode active ----");
+              return false;
             }
-            UpdateTvServerConfiguration(hostName);
+            catch
+            {
+            }
           }
+
+          // Service not registered and/or not connectable => wrong configuration?
+          string hostName;
+          if (PromptHostName(out hostName) != DialogResult.OK)
+          {
+            Environment.Exit(0);
+          }
+          ServiceAgents.Instance.Hostname = hostName;
+          updateConfig = true;
         }
       }
 
-      int cardCount = -1;
-      while (cardCount == -1)
+      if (updateConfig)
       {
-        try
-        {
-          cardCount = ServiceAgents.Instance.ControllerServiceAgent.Cards;
-        }
-        catch (Exception)
-        {
-          if (tvServiceInstalled)
-          {
-            Log.Info("---- restart tvservice----");
-            if (PromptStartTvService() != DialogResult.Yes)
-            {
-              Environment.Exit(0);
-            }
-
-            try
-            {
-              ServiceHelper.Restart();
-              ServiceHelper.WaitInitialized();
-            }
-            catch (Exception ex)
-            {
-              Log.Error("SetupTV: failed to start tvservice : {0}", ex);
-            }
-          }
-          else
-          {
-            HandleRestrictiveMode();
-          }
-        }
+        UpdateTvServerConfiguration(ServiceAgents.Instance.Hostname);
       }
       return tvServiceInstalled;
     }
 
-    private static void HandleRestrictiveMode()
+    private static void EnsureTvServiceRunningOrDie(bool promptToStart = true)
     {
-      Log.Info("---- unable to restart tvservice, possible multiseat setup with no access to remote windows service ----");
-      string hostName;
-      if (PromptHostName(out hostName) != DialogResult.OK)
+      bool isRunning = false;
+      if (!ServiceHelper.IsRestrictedMode)
       {
-        Environment.Exit(0);
+        Log.Info("---- check if TV service is running ----");
+        isRunning = ServiceHelper.IsRunning;
+        if (isRunning)
+        {
+          Log.Info("---- TV service is already running ----");
+        }
+        else
+        {
+          Log.Info("---- TV service is not running ----");
+          if (promptToStart && PromptStartTvService() != DialogResult.Yes)
+          {
+            Environment.Exit(0);
+          }
+          Log.Info("---- start TV service ----");
+          if (!ServiceHelper.Start())
+          {
+            Log.Warn("---- possible failure to start TV service ----");
+            isRunning = false;
+          }
+        }
+        if (!ServiceHelper.WaitInitialized())
+        {
+          Log.Warn("---- TV service not started or non-communicative ----");
+          isRunning = false;
+        }
       }
-      UpdateTvServerConfiguration(hostName);
+
+      // Dummy call to confirm the service is running/available.
+      try
+      {
+        Log.Info("---- check connection to TV service ----");
+        int tunerCount = ServiceAgents.Instance.ControllerServiceAgent.Cards;
+        Log.Info("---- TV service connection seems to be okay ----");
+      }
+      catch (Exception ex)
+      {
+        if (ServiceHelper.IsRestrictedMode)
+        {
+          WaitAndQueryForTvServiceUntilFound();
+        }
+        else
+        {
+          Log.Error(ex, "Failed to start and/or communicate with the TV service.");
+          if (isRunning)
+          {
+            MessageBox.Show("The TV service seems to be running but is not responding. This can happen when an older version of TV Server is active. Please check log files for errors.", SetupControls.SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+          }
+          else
+          {
+            MessageBox.Show("Failed to start the TV service. Please check log files for errors.", SetupControls.SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+          }
+          Environment.Exit(-1);
+        }
+      }
     }
 
     private static void UpdateTvServerConfiguration(string newHostName)
     {
-      Log.Info("UpdateTvServerConfiguration newHostName = {0}", newHostName);
+      Log.Info("---- update TV service host name to {0} ----", newHostName ?? "[null]");
       Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-      ServiceAgents.Instance.Hostname = newHostName;
-      ConfigurationManager.AppSettings["tvserver"] = newHostName;
+      config.AppSettings.Settings.Remove("tvserver");
+      config.AppSettings.Settings.Add("tvserver", ServiceAgents.Instance.Hostname);
       config.Save(ConfigurationSaveMode.Modified);
       ConfigurationManager.RefreshSection("appSettings");
     }
 
     static void _serverMonitor_OnServerDisconnected()
     {
+      Log.Info("---- TV service connection disconnected, host name = {0} ----", ServiceAgents.Instance.Hostname ?? "[null]");
       if (!ServiceHelper.IgnoreDisconnections)
       {
         WaitAndQueryForTvServiceUntilFound();
+        EnsureTvServiceRunningOrDie();
       }
     }
 
     private static DialogResult PromptHostName(out string hostName)
     {
       InputBoxResult result = InputBox.Show(
-        "The TV service could not be found.\n\n" +
-        "Please confirm the name of the computer on which the TV service is running.\n\n" +
-        "If the TV service is installed on a different computer, check your network connectivity and security.",
+        "The TV service could not be found." + Environment.NewLine + Environment.NewLine +
+        "Please confirm the name of the computer on which the TV service is running." + Environment.NewLine + Environment.NewLine +
+        "If the TV service is installed on a different computer, check your network connectivity and security configuration.",
         "MediaPortal TV Server", ConfigurationManager.AppSettings["tvserver"]);
       hostName = result.Text;
+      Log.Info("---- ask for new host name, response = {0}, host name = {1} ----", result.ReturnCode, result.Text ?? "[null]");
       return result.ReturnCode;
     }
 
     static void _serverMonitor_OnServerConnected()
     {
+      Log.Info("---- TV service connection connected, host name = {0} ----", ServiceAgents.Instance.Hostname ?? "[null]");
     }
 
     private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
@@ -392,8 +384,8 @@ namespace Mediaportal.TV.Server.SetupTV
         return null;
       MessageBox.Show(
         "Failed to locate assembly '" + args.Name + "'." + Environment.NewLine +
-        "Note that the configuration program must be executed from/reside in the MediaPortal folder, the execution will now end.",
-        "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        "TV Server Configuration will close now.",
+        SetupControls.SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
       Application.Exit();
       return null;
     }

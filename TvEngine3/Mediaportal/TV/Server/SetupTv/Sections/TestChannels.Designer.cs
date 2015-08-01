@@ -237,7 +237,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             this.columnHeader11});
       this.mpListViewLog.FullRowSelect = true;
       this.mpListViewLog.HideSelection = false;
-      this.mpListViewLog.IsChannelListView = false;
       this.mpListViewLog.Location = new System.Drawing.Point(7, 19);
       this.mpListViewLog.MultiSelect = false;
       this.mpListViewLog.Name = "mpListViewLog";
@@ -540,7 +539,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             this.owner});
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.HideSelection = false;
-      this.mpListView1.IsChannelListView = false;
       this.mpListView1.Location = new System.Drawing.Point(12, 295);
       this.mpListView1.MultiSelect = false;
       this.mpListView1.Name = "mpListView1";

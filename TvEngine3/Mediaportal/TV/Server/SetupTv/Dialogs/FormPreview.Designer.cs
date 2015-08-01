@@ -37,9 +37,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.ClientSize = new System.Drawing.Size(360, 266);
       this.Name = "FormPreview";
       this.Text = "FormPreview";
+      this.DoubleClick += new System.EventHandler(this.FormPreview_DoubleClick);
       this.Resize += new System.EventHandler(this.FormPreview_Resize);
       this.ResumeLayout(false);
-
     }
 
     #endregion

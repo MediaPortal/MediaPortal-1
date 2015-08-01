@@ -142,9 +142,9 @@ namespace Mediaportal.TV.Server.SetupTV
 
       int n = 0;
       int Index = 0;
-      while (PrompText.IndexOf("\n", Index) > -1)
+      while (PrompText.IndexOf(Environment.NewLine, Index) > -1)
       {
-        Index = PrompText.IndexOf("\n", Index) + 1;
+        Index = PrompText.IndexOf(Environment.NewLine, Index) + 1;
         n++;
       }
 

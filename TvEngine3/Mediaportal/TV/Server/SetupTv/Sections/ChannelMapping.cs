@@ -20,385 +20,533 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class ChannelMapping : SectionSettings
   {
-
-    private MediaTypeEnum _mediaTypeEnum = MediaTypeEnum.TV;
-
-    public class CardInfo
+    private class ChannelInfo
     {
-      protected Card _card;
-
-      public Card Card
-      {
-        get { return _card; }
-      }
-
-      public CardInfo(Card card)
-      {
-        _card = card;
-      }
+      public int Id;
+      public string Name;
+      public int ImageIndex;
 
       public override string ToString()
       {
-        return _card.IdCard + " - " + _card.Name;
+        return Name;
       }
     }
 
-    
+    private MediaType _mediaType = MediaType.Television;
+    // broadcast standard -> [channel info]
+    private IDictionary<BroadcastStandard, IList<ChannelInfo>> _channelInfoByBroadcastStandard = new Dictionary<BroadcastStandard, IList<ChannelInfo>>(10);
+    // tuner ID -> channel ID -> mapping ID
+    private IDictionary<int, IDictionary<int, int>> _tunerMappings = new Dictionary<int, IDictionary<int, int>>(50);
 
-    private readonly MPListViewStringColumnSorter lvwColumnSorter1;
-    private readonly MPListViewStringColumnSorter lvwColumnSorter2;
+    private readonly MPListViewStringColumnSorter _listViewColumnSorterMapped;
+    private readonly MPListViewStringColumnSorter _listViewColumnSorterNotMapped;
 
-    public ChannelMapping(string name, MediaTypeEnum mediaType)
+    public ChannelMapping(string name, MediaType mediaType)
       : base(name)
     {
-      _mediaTypeEnum = mediaType;
+      _mediaType = mediaType;
       InitializeComponent();
-      //mpListViewChannels.ListViewItemSorter = new MPListViewSortOnColumn(1);
-      lvwColumnSorter1 = new MPListViewStringColumnSorter();
-      lvwColumnSorter1.Order = SortOrder.Ascending;
-      mpListViewChannels.ListViewItemSorter = lvwColumnSorter1;
-      lvwColumnSorter2 = new MPListViewStringColumnSorter();
-      lvwColumnSorter2.Order = SortOrder.Ascending;
-      mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
-    }
-
-    public MediaTypeEnum MediaTypeEnum
-    {
-      get { return _mediaTypeEnum; }
-      set { _mediaTypeEnum = value; }
+      _listViewColumnSorterMapped = new MPListViewStringColumnSorter();
+      _listViewColumnSorterMapped.Order = SortOrder.Ascending;
+      listViewNotMapped.ListViewItemSorter = _listViewColumnSorterMapped;
+      _listViewColumnSorterNotMapped = new MPListViewStringColumnSorter();
+      _listViewColumnSorterNotMapped.Order = SortOrder.Ascending;
+      listViewMapped.ListViewItemSorter = _listViewColumnSorterNotMapped;
     }
 
     public override void OnSectionActivated()
-    {                 
-      mpComboBoxCard.Items.Clear();
-      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
-      foreach (Card card in cards)
-      {
-        if (card.Enabled == false)
-          continue;
-        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard))
-          continue;
-        mpComboBoxCard.Items.Add(new CardInfo(card));
-      }
-      if (mpComboBoxCard.Items.Count > 0)
-        mpComboBoxCard.SelectedIndex = 0;
-    }
-
-    private void mpButtonMap_Click(object sender, EventArgs e)
     {
-      NotifyForm dlg = new NotifyForm("Mapping selected channels to TV-Card...",
-                                      "This can take some time\n\nPlease be patient...");
-      dlg.Show(this);
-      dlg.WaitForDisplay();
-      Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
-      mpListViewChannels.BeginUpdate();
-      mpListViewMapped.BeginUpdate();
-      try
+      this.LogDebug("mapping: activating, media type = {0}", _mediaType);
+      _tunerMappings.Clear();
+
+      // Build a dictionary of channel info keyed on broadcast standard. This
+      // saves getting the channel list each time the tuner selection changes.
+      _channelInfoByBroadcastStandard.Clear();
+      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(_mediaType, ChannelIncludeRelationEnum.TuningDetails);
+      foreach (Channel c in channels)
       {
-        ListView.SelectedListViewItemCollection selectedItems = mpListViewChannels.SelectedItems;
-        
-        foreach (ListViewItem item in selectedItems)
+        ChannelInfo info = new ChannelInfo
         {
-          Channel channel = (Channel)item.Tag;
-          ChannelMap map = MappingHelper.AddChannelToCard(channel, card, mpCheckBoxMapForEpgOnly.Checked);          
-          mpListViewChannels.Items.Remove(item);
-          string displayName = channel.DisplayName;
-          if (mpCheckBoxMapForEpgOnly.Checked)
-            displayName = channel.DisplayName + " (EPG Only)";
-          ListViewItem newItem = mpListViewMapped.Items.Add(displayName, item.ImageIndex);
-          newItem.Tag = map;
-        }
-        mpListViewMapped.Sort();
-        dlg.Close();
-      }
-      finally
-      {
-        mpListViewChannels.EndUpdate();
-        mpListViewMapped.EndUpdate();
-      }
-      //DatabaseManager.Instance.SaveChanges();
-    }
-
-    private void mpButtonUnmap_Click(object sender, EventArgs e)
-    {
-      NotifyForm dlg = new NotifyForm("Unmapping selected channels from TV-Card...",
-                                      "This can take some time\n\nPlease be patient...");
-      dlg.Show(this);
-      dlg.WaitForDisplay();
-      mpListViewChannels.BeginUpdate();
-      mpListViewMapped.BeginUpdate();
-
-      try
-      {
-        ListView.SelectedListViewItemCollection selectedItems = mpListViewMapped.SelectedItems;
-
-        foreach (ListViewItem item in selectedItems)
+          Id = c.IdChannel,
+          Name = c.Name,
+          ImageIndex = GetImageIndex(c.TuningDetails)
+        };
+        BroadcastStandard seenTuningDetailBroadcastStandards = 0;
+        foreach (TuningDetail td in c.TuningDetails)
         {
-          ChannelMap map = (ChannelMap)item.Tag;
-          mpListViewMapped.Items.Remove(item);
-          Channel referencedChannel = map.Channel;
-          ListViewItem newItem = mpListViewChannels.Items.Add(referencedChannel.DisplayName, item.ImageIndex);
-          newItem.Tag = referencedChannel;
-
-          ServiceAgents.Instance.ChannelServiceAgent.DeleteChannelMap(map.IdChannelMap);          
-        }
-        mpListViewChannels.Sort();
-        mpListViewMapped.Sort();
-        dlg.Close();
-      }
-      finally
-      {
-        mpListViewChannels.EndUpdate();
-        mpListViewMapped.EndUpdate();
-      }
-      // DatabaseManager.Instance.SaveChanges();
-    }
-
-    private void mpComboBoxCard_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      //DatabaseManager.Instance.SaveChanges();
-
-      mpListViewChannels.BeginUpdate();
-      mpListViewMapped.BeginUpdate();
-      try
-      {
-        mpListViewMapped.Items.Clear();
-        mpListViewChannels.Items.Clear();
-
-        List<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(_mediaTypeEnum, ChannelIncludeRelationEnum.TuningDetails).ToList();
-
-        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(((CardInfo)mpComboBoxCard.SelectedItem).Card.IdCard);        
-        IList<ChannelMap> maps = card.ChannelMaps;
-
-        // get cardtype, dvb, analogue etc.		
-        CardType cardType = ServiceAgents.Instance.ControllerServiceAgent.Type(card.IdCard);
-        //Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(card.idCard);
-        
-        bool enableDVBS2 = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbs" + card.IdCard + "enabledvbs2", false);
-
-
-        List<ListViewItem> items = new List<ListViewItem>();
-        foreach (ChannelMap map in maps)
-        {
-          Channel channel = null;
-          try
+          BroadcastStandard tuningDetailBroadcastStandard = (BroadcastStandard)td.BroadcastStandard;
+          if (!seenTuningDetailBroadcastStandards.HasFlag(tuningDetailBroadcastStandard))
           {
-            channel = map.Channel;
-          }
-          catch (Exception) {}
-          if (channel == null)
-            continue;
-          if (channel.MediaType != (decimal)_mediaTypeEnum)
-            continue;
-
-
-          List<TuningDetail> tuningDetails = GetTuningDetailsByCardType(channel, cardType, enableDVBS2);
-          bool foundValidTuningDetail = tuningDetails.Count > 0;
-          if (foundValidTuningDetail)
-          {
-            int imageIndex = GetImageIndex(tuningDetails);
-            string displayName = channel.DisplayName;
-            if (map.EpgOnly)
-              displayName = channel.DisplayName + " (EPG Only)";
-            ListViewItem item = new ListViewItem(displayName, imageIndex);
-            item.Tag = map;
-            items.Add(item);
-
-            foreach (Channel ch in channels)
+            IList<ChannelInfo> channelsByBroadcastStandard;
+            if (!_channelInfoByBroadcastStandard.TryGetValue(tuningDetailBroadcastStandard, out channelsByBroadcastStandard))
             {
-              if (ch.IdChannel == channel.IdChannel)
+              channelsByBroadcastStandard = new List<ChannelInfo>(channels.Count);
+              _channelInfoByBroadcastStandard.Add(tuningDetailBroadcastStandard, channelsByBroadcastStandard);
+            }
+            channelsByBroadcastStandard.Add(info);
+
+            seenTuningDetailBroadcastStandards |= tuningDetailBroadcastStandard;
+          }
+        }
+      }
+
+      // Populate the tuner list.
+      comboBoxTuner.Items.Clear();
+      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
+      foreach (Tuner tuner in tuners)
+      {
+        if (tuner.IsEnabled && ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(tuner.IdTuner))
+        {
+          comboBoxTuner.Items.Add(tuner);
+        }
+      }
+      if (comboBoxTuner.Items.Count > 0)
+      {
+        comboBoxTuner.SelectedIndex = 0;
+      }
+      this.LogDebug("mapping: channel count = {0}, tuner count = {1}", channels.Count, tuners.Count);
+
+      base.OnSectionActivated();
+    }
+
+    private void comboBoxTuner_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      listViewNotMapped.BeginUpdate();
+      listViewNotMapped.ListViewItemSorter = null;
+      listViewMapped.BeginUpdate();
+      listViewMapped.ListViewItemSorter = null;
+      try
+      {
+        listViewMapped.Items.Clear();
+        listViewNotMapped.Items.Clear();
+
+        Tuner tuner = comboBoxTuner.SelectedItem as Tuner;
+        if (tuner == null)
+        {
+          return;
+        }
+
+        IDictionary<int, int> tunerMappings;
+        if (!_tunerMappings.TryGetValue(tuner.IdTuner, out tunerMappings))
+        {
+          Tuner t = ServiceAgents.Instance.TunerServiceAgent.GetTuner(tuner.IdTuner, TunerIncludeRelationEnum.ChannelMaps);
+          this.LogDebug("mapping: loading mappings, tuner ID = {0}, name = {1}, mapping count = {2}", tuner.IdTuner, tuner.Name, t.ChannelMaps.Count);
+          tunerMappings = new Dictionary<int, int>(t.ChannelMaps.Count);
+          foreach (ChannelMap map in t.ChannelMaps)
+          {
+            tunerMappings.Add(map.IdChannel, map.IdChannelMap);
+          }
+          _tunerMappings.Add(tuner.IdTuner, tunerMappings);
+        }
+        else
+        {
+          this.LogDebug("mapping: loading cached mappings, tuner ID = {0}, name = {1}, mapping count = {2}", tuner.IdTuner, tuner.Name, tunerMappings.Count);
+        }
+
+        BroadcastStandard tunerSupportedBroadcastStandards = (BroadcastStandard)tuner.SupportedBroadcastStandards;
+        if (tunerSupportedBroadcastStandards == BroadcastStandard.Unknown)
+        {
+          this.LogError("mapping: tuner has no supported broadcast standards, ID = {0}, name = {1}", tuner.IdTuner, tuner.Name);
+          return;
+        }
+
+        HashSet<int> seenChannels = new HashSet<int>();
+        List<ListViewItem> itemsNotMapped = new List<ListViewItem>();
+        List<ListViewItem> itemsMapped = new List<ListViewItem>();
+        foreach (KeyValuePair<BroadcastStandard, IList<ChannelInfo>> broadcastStandardChannels in _channelInfoByBroadcastStandard)
+        {
+          if (tunerSupportedBroadcastStandards.HasFlag(broadcastStandardChannels.Key))
+          {
+            foreach (ChannelInfo channel in broadcastStandardChannels.Value)
+            {
+              if (!seenChannels.Contains(channel.Id))
               {
-                //No risk of concurrent modification so remove it directly.
-                channels.Remove(ch);
-                break;
+                seenChannels.Add(channel.Id);
+
+                ListViewItem item = new ListViewItem(channel.Name, channel.ImageIndex);
+                if (tunerMappings.ContainsKey(channel.Id))
+                {
+                  itemsNotMapped.Add(item);
+                }
+                else
+                {
+                  itemsMapped.Add(item);
+                }
+                item.Tag = channel;
               }
             }
           }
-          else
-          {
-            ServiceAgents.Instance.ChannelServiceAgent.DeleteChannelMap(map.IdChannelMap);            
-          }
         }
-        mpListViewMapped.Items.AddRange(items.ToArray());
-        items = new List<ListViewItem>();
-        foreach (Channel channel in channels)
-        {
-          if (channel.MediaType != (decimal)_mediaTypeEnum)
-            continue;
-          List<TuningDetail> tuningDetails = GetTuningDetailsByCardType(channel, cardType, enableDVBS2);
-          // only add channel that is tuneable on the device selected.
-          bool foundValidTuningDetail = tuningDetails.Count > 0;
-          if (foundValidTuningDetail)
-          {
-            int imageIndex = GetImageIndex(tuningDetails);
-            ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
-            item.Tag = channel;
-            items.Add(item);
-          }
-        }
-        mpListViewChannels.Items.AddRange(items.ToArray());
-        mpListViewChannels.Sort();
+        this.LogDebug("mapping: broadcast standard(s) = [{0}], mapped = {1}, not mapped = {2}", tunerSupportedBroadcastStandards, itemsMapped.Count, itemsNotMapped.Count);
+
+        listViewNotMapped.Items.AddRange(itemsNotMapped.ToArray());
+        listViewMapped.Items.AddRange(itemsMapped.ToArray());
       }
       finally
       {
-        mpListViewChannels.EndUpdate();
-        mpListViewMapped.EndUpdate();
+        listViewNotMapped.ListViewItemSorter = _listViewColumnSorterNotMapped;
+        listViewNotMapped.Sort();
+        listViewNotMapped.EndUpdate();
+        listViewMapped.ListViewItemSorter = _listViewColumnSorterMapped;
+        listViewMapped.Sort();
+        listViewMapped.EndUpdate();
       }
     }
 
-    private void mpListViewChannels_ColumnClick(object sender, ColumnClickEventArgs e)
-    {
-      if (e.Column == lvwColumnSorter1.SortColumn)
-      {
-        // Reverse the current sort direction for this column.
-        lvwColumnSorter1.Order = lvwColumnSorter1.Order == SortOrder.Ascending
-                                   ? SortOrder.Descending
-                                   : SortOrder.Ascending;
-      }
-      else
-      {
-        // Set the column number that is to be sorted; default to ascending.
-        lvwColumnSorter1.SortColumn = e.Column;
-        lvwColumnSorter1.Order = SortOrder.Ascending;
-      }
-
-      // Perform the sort with these new sort options.
-      mpListViewChannels.Sort();
-    }
-
-    private void mpListViewMapped_ColumnClick(object sender, ColumnClickEventArgs e)
-    {
-      if (e.Column == lvwColumnSorter2.SortColumn)
-      {
-        // Reverse the current sort direction for this column.
-        lvwColumnSorter2.Order = lvwColumnSorter2.Order == SortOrder.Ascending
-                                   ? SortOrder.Descending
-                                   : SortOrder.Ascending;
-      }
-      else
-      {
-        // Set the column number that is to be sorted; default to ascending.
-        lvwColumnSorter2.SortColumn = e.Column;
-        lvwColumnSorter2.Order = SortOrder.Ascending;
-      }
-
-      // Perform the sort with these new sort options.
-      mpListViewMapped.Sort();
-    }
-
-    private void mpListViewMapped_DoubleClick(object sender, EventArgs e)
-    {
-      if (mpListViewMapped.SelectedItems.Count == 0)
-        return;
-      ListViewItem item = mpListViewMapped.SelectedItems[0];
-      ChannelMap map = (ChannelMap)item.Tag;
-      Channel channel = map.Channel;
-      if (map.EpgOnly)
-      {
-        item.Text = channel.DisplayName;
-        map.EpgOnly = false;
-      }
-      else
-      {
-        item.Text = channel.DisplayName + " (EPG Only)";
-        map.EpgOnly = true;
-      }
-      ServiceAgents.Instance.ChannelServiceAgent.SaveChannelMap(map);
-    }
-
-    private static List<TuningDetail> GetTuningDetailsByCardType(Channel channel, CardType cardType, bool enableDVBS2)
-    {
-      List<TuningDetail> result = new List<TuningDetail>();
-      foreach (TuningDetail tDetail in channel.TuningDetails)
-      {
-        switch (cardType)
-        {
-          case CardType.Analog:
-            if (tDetail.ChannelType == 0)
-              result.Add(tDetail);
-            break;
-          case CardType.Atsc:
-            if (tDetail.ChannelType == 1)
-              result.Add(tDetail);
-            break;
-          case CardType.DvbC:
-            if (tDetail.ChannelType == 2)
-              result.Add(tDetail);
-            break;
-          case CardType.DvbS:
-            if (tDetail.ChannelType == 3)
-            {
-              if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
-              {
-                Log.Debug(String.Format(
-                  "Imported channel {0} detected as DVB-S2. Skipped! \n Enable \"DVB-S2 tuning\" option in your TV-Card properties to be able to map these channels.",
-                  tDetail.Name));
-              }
-              else
-              {
-                result.Add(tDetail);
-              }
-            }
-            break;
-          case CardType.DvbT:
-            if (tDetail.ChannelType == 4)
-              result.Add(tDetail);
-            break;
-          case CardType.DvbIP:
-            if (tDetail.ChannelType == 7)
-              result.Add(tDetail);
-            break;
-          default:
-            break;
-        }
-      }
-      return result;
-    }
-
-    private static int GetImageIndex(IList<TuningDetail> tuningDetails)
+    private int GetImageIndex(IList<TuningDetail> tuningDetails)
     {
       bool hasFta = false;
       bool hasScrambled = false;
       foreach (TuningDetail detail in tuningDetails)
       {
-        if (detail.FreeToAir)
-        {
-          hasFta = true;
-        }
-        if (!detail.FreeToAir)
+        if (detail.IsEncrypted)
         {
           hasScrambled = true;
         }
+        else
+        {
+          hasFta = true;
+        }
+        if (hasFta && hasScrambled)
+        {
+          break;
+        }
       }
 
-      int imageIndex;
-      if (hasFta && hasScrambled)
+      int imageIndex = 0;
+      if (_mediaType == MediaType.Television)
       {
-        imageIndex = 5;
+        if (hasFta && hasScrambled)
+        {
+          imageIndex = 5;
+        }
+        else if (hasScrambled)
+        {
+          imageIndex = 4;
+        }
+        else
+        {
+          imageIndex = 3;
+        }
       }
-      else if (hasScrambled)
+      else if (_mediaType == MediaType.Radio)
       {
-        imageIndex = 4;
-      }
-      else
-      {
-        imageIndex = 3;
+        if (hasFta && hasScrambled)
+        {
+          imageIndex = 2;
+        }
+        else if (hasScrambled)
+        {
+          imageIndex = 1;
+        }
+        else
+        {
+          imageIndex = 0;
+        }
       }
       return imageIndex;
     }
+
+    #region button and mouse event handlers
+
+    private void buttonMap_Click(object sender, EventArgs e)
+    {
+      ListView.SelectedListViewItemCollection selectedItems = listViewNotMapped.SelectedItems;
+      if (selectedItems == null || selectedItems.Count == 0)
+      {
+        return;
+      }
+
+      NotifyForm dlg = null;
+      if (selectedItems.Count > 10)
+      {
+        dlg = new NotifyForm("Mapping selected channels to tuner...",
+                                        "This can take some time." + Environment.NewLine + Environment.NewLine + "Please be patient...");
+        dlg.Show(this);
+        dlg.WaitForDisplay();
+      }
+
+      try
+      {
+        Tuner tuner = comboBoxTuner.SelectedItem as Tuner;
+        this.LogDebug("mapping: mapping {0} channel(s) to tuner {1}", selectedItems.Count, tuner.IdTuner);
+        IDictionary<int, int> tunerMappings;
+        if (!_tunerMappings.TryGetValue(tuner.IdTuner, out tunerMappings))
+        {
+          tunerMappings = new Dictionary<int, int>(selectedItems.Count);
+          _tunerMappings.Add(tuner.IdTuner, tunerMappings);
+        }
+
+        listViewNotMapped.BeginUpdate();
+        listViewNotMapped.ListViewItemSorter = null;
+        listViewMapped.BeginUpdate();
+        listViewMapped.ListViewItemSorter = null;
+        try
+        {
+          ListViewItem[] items = new ListViewItem[selectedItems.Count];
+          IList<int> oldMappingIds = new List<int>(selectedItems.Count);
+          int i = 0;
+          foreach (ListViewItem item in selectedItems)
+          {
+            ChannelInfo info = item.Tag as ChannelInfo;
+            int mappingId;
+            if (tunerMappings.TryGetValue(info.Id, out mappingId))
+            {
+              oldMappingIds.Add(mappingId);
+              tunerMappings.Remove(info.Id);
+            }
+            listViewNotMapped.Items.Remove(item);
+            items[i++] = item;
+          }
+
+          ServiceAgents.Instance.ChannelServiceAgent.DeleteChannelMaps(oldMappingIds);
+          listViewMapped.Items.AddRange(items);
+        }
+        finally
+        {
+          listViewNotMapped.ListViewItemSorter = _listViewColumnSorterNotMapped;
+          listViewNotMapped.EndUpdate();
+          listViewMapped.ListViewItemSorter = _listViewColumnSorterMapped;
+          listViewMapped.Sort();
+          listViewMapped.EndUpdate();
+        }
+      }
+      finally
+      {
+        if (dlg != null)
+        {
+          dlg.Close();
+          dlg.Dispose();
+        }
+      }
+
+      listViewMapped.Focus();
+    }
+
+    private void buttonUnmap_Click(object sender, EventArgs e)
+    {
+      ListView.SelectedListViewItemCollection selectedItems = listViewMapped.SelectedItems;
+      if (selectedItems == null || selectedItems.Count == 0)
+      {
+        return;
+      }
+
+      NotifyForm dlg = null;
+      if (selectedItems.Count > 10)
+      {
+        dlg = new NotifyForm("Unmapping selected channels from tuner...",
+                                        "This can take some time." + Environment.NewLine + Environment.NewLine + "Please be patient...");
+        dlg.Show(this);
+        dlg.WaitForDisplay();
+      }
+
+      try
+      {
+        Tuner tuner = comboBoxTuner.SelectedItem as Tuner;
+        this.LogDebug("mapping: unmapping {0} channel(s) from tuner {1}", selectedItems.Count, tuner.IdTuner);
+        IDictionary<int, int> tunerMappings;
+        if (!_tunerMappings.TryGetValue(tuner.IdTuner, out tunerMappings))
+        {
+          tunerMappings = new Dictionary<int, int>(selectedItems.Count);
+          _tunerMappings.Add(tuner.IdTuner, tunerMappings);
+        }
+
+        listViewNotMapped.BeginUpdate();
+        listViewNotMapped.ListViewItemSorter = null;
+        listViewMapped.BeginUpdate();
+        listViewMapped.ListViewItemSorter = null;
+        try
+        {
+          ListViewItem[] items = new ListViewItem[selectedItems.Count];
+          IList<ChannelMap> newMappings = new List<ChannelMap>(selectedItems.Count);
+          int i = 0;
+          foreach (ListViewItem item in selectedItems)
+          {
+            ChannelInfo info = item.Tag as ChannelInfo;
+            newMappings.Add(new ChannelMap()
+            {
+              IdChannel = info.Id,
+              IdTuner = tuner.IdTuner
+            });
+            listViewMapped.Items.Remove(item);
+            items[i++] = item;
+          }
+
+          newMappings = ServiceAgents.Instance.ChannelServiceAgent.SaveChannelMaps(newMappings);
+          foreach (ChannelMap mapping in newMappings)
+          {
+            tunerMappings.Add(mapping.IdChannel, mapping.IdChannelMap);
+          }
+          listViewNotMapped.Items.AddRange(items);
+        }
+        finally
+        {
+          listViewNotMapped.ListViewItemSorter = _listViewColumnSorterNotMapped;
+          listViewNotMapped.Sort();
+          listViewNotMapped.EndUpdate();
+          listViewMapped.ListViewItemSorter = _listViewColumnSorterMapped;
+          listViewMapped.EndUpdate();
+        }
+      }
+      finally
+      {
+        if (dlg != null)
+        {
+          dlg.Close();
+          dlg.Dispose();
+        }
+      }
+
+      listViewNotMapped.Focus();
+    }
+
+    private void buttonMapAll_Click(object sender, EventArgs e)
+    {
+      foreach (ListViewItem item in listViewNotMapped.Items)
+      {
+        item.Selected = true;
+      }
+      buttonMap_Click(sender, e);
+    }
+
+    private void buttonUnmapAll_Click(object sender, EventArgs e)
+    {
+      foreach (ListViewItem item in listViewMapped.Items)
+      {
+        item.Selected = true;
+      }
+      buttonUnmap_Click(sender, e);
+    }
+
+    private void listViewMapped_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+      buttonUnmap_Click(null, null);
+    }
+
+    private void listViewNotMapped_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+      buttonMap_Click(null, null);
+    }
+
+    #endregion
+
+    #region sorting
+
+    private void listViewNotMapped_ColumnClick(object sender, ColumnClickEventArgs e)
+    {
+      if (e.Column == _listViewColumnSorterNotMapped.SortColumn)
+      {
+        // Reverse the current sort direction for this column.
+        _listViewColumnSorterNotMapped.Order = _listViewColumnSorterNotMapped.Order == SortOrder.Ascending
+                                   ? SortOrder.Descending
+                                   : SortOrder.Ascending;
+      }
+      else
+      {
+        // Set the column number that is to be sorted; default to ascending.
+        _listViewColumnSorterNotMapped.SortColumn = e.Column;
+        _listViewColumnSorterNotMapped.Order = SortOrder.Ascending;
+      }
+
+      // Perform the sort with these new sort options.
+      listViewNotMapped.Sort();
+    }
+
+    private void listViewMapped_ColumnClick(object sender, ColumnClickEventArgs e)
+    {
+      if (e.Column == _listViewColumnSorterMapped.SortColumn)
+      {
+        // Reverse the current sort direction for this column.
+        _listViewColumnSorterMapped.Order = _listViewColumnSorterMapped.Order == SortOrder.Ascending
+                                   ? SortOrder.Descending
+                                   : SortOrder.Ascending;
+      }
+      else
+      {
+        // Set the column number that is to be sorted; default to ascending.
+        _listViewColumnSorterMapped.SortColumn = e.Column;
+        _listViewColumnSorterMapped.Order = SortOrder.Ascending;
+      }
+
+      // Perform the sort with these new sort options.
+      listViewMapped.Sort();
+    }
+
+    #endregion
+
+    #region drag and drop
+
+    private bool IsValidDragDropData(DragEventArgs e, MPListView expectListView)
+    {
+      MPListView listView = e.Data.GetData(typeof(MPListView)) as MPListView;
+      if (listView == null || listView != expectListView)
+      {
+        e.Effect = DragDropEffects.None;
+        return false;
+      }
+      e.Effect = DragDropEffects.Move;
+      return true;
+    }
+
+    private void listViewNotMapped_ItemDrag(object sender, ItemDragEventArgs e)
+    {
+      listViewNotMapped.DoDragDrop(listViewNotMapped, DragDropEffects.Move);
+    }
+
+    private void listViewNotMapped_DragOver(object sender, DragEventArgs e)
+    {
+      IsValidDragDropData(e, listViewMapped);
+    }
+
+    private void listViewNotMapped_DragEnter(object sender, DragEventArgs e)
+    {
+      IsValidDragDropData(e, listViewMapped);
+    }
+
+    private void listViewNotMapped_DragDrop(object sender, DragEventArgs e)
+    {
+      if (IsValidDragDropData(e, listViewMapped))
+      {
+        buttonUnmap_Click(null, null);
+      }
+    }
+
+    private void listViewMapped_ItemDrag(object sender, ItemDragEventArgs e)
+    {
+      listViewMapped.DoDragDrop(listViewMapped, DragDropEffects.Move);
+    }
+
+    private void listViewMapped_DragOver(object sender, DragEventArgs e)
+    {
+      IsValidDragDropData(e, listViewNotMapped);
+    }
+
+    private void listViewMapped_DragEnter(object sender, DragEventArgs e)
+    {
+      IsValidDragDropData(e, listViewNotMapped);
+    }
+
+    private void listViewMapped_DragDrop(object sender, DragEventArgs e)
+    {
+      if (IsValidDragDropData(e, listViewNotMapped))
+      {
+        buttonMap_Click(null, null);
+      }
+    }
+
+    #endregion
   }
 }

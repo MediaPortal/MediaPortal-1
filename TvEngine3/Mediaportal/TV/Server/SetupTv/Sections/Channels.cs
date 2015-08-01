@@ -20,284 +20,503 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 using Mediaportal.TV.Server.SetupTV.Dialogs;
 using Mediaportal.TV.Server.SetupTV.Sections.Helpers;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVService.Interfaces;
-using Mediaportal.TV.Server.TVService.Interfaces.Enums;
-using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class Channels : SectionSettings
   {
-    private MediaTypeEnum _mediaType = MediaTypeEnum.TV;
-    private bool _ignoreItemCheckedEvent = false;
+    private const ChannelIncludeRelationEnum REQUIRED_CHANNEL_RELATIONS = ChannelIncludeRelationEnum.TuningDetails | ChannelIncludeRelationEnum.GroupMaps;
 
-    private readonly MPListViewStringColumnSorter lvwColumnSorter;
-    private readonly MPListViewStringColumnSorter lvwColumnSorter2;
-    private ChannelListViewHandler _lvChannelHandler;
+    #region variables
 
-    private bool _suppressRefresh = false;
-    private bool _isScanning = false;
-    private bool _abortScanning = false;
-    private Thread _scanThread;
+    private MediaType _mediaType = MediaType.Television;
 
-    private Dictionary<int, CardType> _cards = null;
-    private IList<Channel> _allChannels = null;
-    
+    #region channels
 
-    public Channels(string name, MediaTypeEnum mediaType)
+    // Channel name and number inline editing.
+    private int _channelInlineEditSubItemIndex = -1;
+    private ListViewItem.ListViewSubItem _channelInlineEditSubItem = null;
+    private Point _channelInlineEditTriggerMouseLocation = Point.Empty;
+
+    private IDictionary<int, FormEditChannel> _channelEditDialogs = new Dictionary<int, FormEditChannel>(5);
+    private int _newChannelFakeId = -1;
+
+    private IList<Channel> _channelVisibleInGuideChanges = new List<Channel>();
+    private NotifyForm _channelVisibleInGuideNotifyForm = null;
+
+    private bool _channelTestRunning = false;
+    private bool _channelTestAbort = false;
+    private Thread _channelTestThread;
+
+    private readonly MPListViewStringColumnSorter _listViewChannelsColumnSorter = null;
+    private ChannelListViewHandler _listViewChannelsHandler = null;
+
+    #endregion
+
+    #region channel groups
+
+    private ChannelGroup _currentChannelGroup = null;
+    private readonly MPListViewStringColumnSorter _listViewChannelsInGroupColumnSorter = null;
+    private SortOrder _channelsInGroupLastSortOrder = SortOrder.None;
+
+    // channel ID => item
+    private IDictionary<int, ListViewItem> _listViewChannelsInGroupItemCache = null;
+    // group ID => [ordered mappings]
+    private IDictionary<int, List<GroupMap>> _channelsInGroupMappingCache = null;
+
+    #endregion
+
+    #endregion
+
+    public Channels(string name, MediaType mediaType)
       : base(name)
     {
       _mediaType = mediaType;
+
       InitializeComponent();
-      lvwColumnSorter = new MPListViewStringColumnSorter();
-      lvwColumnSorter.Order = SortOrder.None;
-      lvwColumnSorter2 = new MPListViewStringColumnSorter();
-      lvwColumnSorter2.Order = SortOrder.Descending;
-      lvwColumnSorter2.OrderType = MPListViewStringColumnSorter.OrderTypes.AsValue;
-      mpListView1.ListViewItemSorter = lvwColumnSorter;
-    }
 
-    public MediaTypeEnum MediaType
-    {
-      get { return _mediaType; }
-      set { _mediaType = value; }
-    }
+      _listViewChannelsColumnSorter = new MPListViewStringColumnSorter();
+      _listViewChannelsColumnSorter.Order = SortOrder.Ascending;
+      listViewChannels.ListViewItemSorter = _listViewChannelsColumnSorter;
 
-    public override void OnSectionDeActivated()
-    {
-      ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
-      base.OnSectionDeActivated();
+      _listViewChannelsInGroupColumnSorter = new MPListViewStringColumnSorter();
+      _listViewChannelsInGroupColumnSorter.Order = SortOrder.None;
+      listViewChannelsInGroup.ListViewItemSorter = _listViewChannelsInGroupColumnSorter;
     }
 
     public override void OnSectionActivated()
     {
-      base.OnSectionActivated();
+      this.LogDebug("channels: activating, type = {0}", _mediaType);
 
-      RefreshAll();
-    }
+      IList<Channel> allChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(_mediaType, REQUIRED_CHANNEL_RELATIONS);
+      IList<ChannelGroup> allGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(_mediaType, ChannelGroupIncludeRelationEnum.None);
 
-    private void RefreshAll()
-    {
-      RefreshTabs();
-      RefreshContextMenu();
+      this.LogDebug("channels: channel count = {0}, group count = {1}", allChannels.Count, allGroups.Count);
 
-      Application.DoEvents();
-
-      RefreshAllChannels();
-    }
-
-    private void RefreshTabs()
-    {
-      // bugfix for tab removal, RemoveAt fails sometimes
-      tabControl1.TabPages.Clear();
-      tabControl1.TabPages.Add(tabPage1);
-
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(_mediaType, ChannelGroupIncludeRelationEnum.None);
-
-      foreach (ChannelGroup group in groups)
+      // channel group channel items and mappings
+      _listViewChannelsInGroupItemCache = new Dictionary<int, ListViewItem>(allChannels.Count);
+      _channelsInGroupMappingCache = new Dictionary<int, List<GroupMap>>(allGroups.Count);
+      foreach (Channel channel in allChannels)
       {
-        TabPage page = new TabPage(group.GroupName);
-        page.SuspendLayout();
+        _listViewChannelsInGroupItemCache.Add(channel.IdChannel, CreateChannelsInGroupItemForChannel(channel));
 
-        ChannelsInGroupControl channelsInRadioGroupControl = new ChannelsInGroupControl(_mediaType);        
-        channelsInRadioGroupControl.Location = new System.Drawing.Point(9, 9);
-        channelsInRadioGroupControl.Anchor = ((AnchorStyles.Top | AnchorStyles.Bottom)
-                                              | AnchorStyles.Left)
-                                             | AnchorStyles.Right;
-
-        page.Controls.Add(channelsInRadioGroupControl);
-
-        page.Tag = group;
-        page.Location = new System.Drawing.Point(4, 22);
-        page.Padding = new Padding(3);
-        page.Size = new System.Drawing.Size(457, 374);
-        page.UseVisualStyleBackColor = true;
-        page.PerformLayout();
-        page.ResumeLayout(false);
-
-        tabControl1.TabPages.Add(page);
-      }
-    }
-
-    private void RefreshContextMenu()
-    {
-      addToFavoritesToolStripMenuItem.DropDownItems.Clear();
-
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(_mediaType, ChannelGroupIncludeRelationEnum.None);
-
-      foreach (ChannelGroup group in groups)
-      {
-        ToolStripMenuItem item = new ToolStripMenuItem(group.GroupName);
-
-        item.Tag = group;
-        item.Click += OnAddToFavoritesMenuItem_Click;
-
-        addToFavoritesToolStripMenuItem.DropDownItems.Add(item);
-      }
-
-      ToolStripMenuItem itemNew = new ToolStripMenuItem("New...");
-      itemNew.Click += OnAddToFavoritesMenuItem_Click;
-      addToFavoritesToolStripMenuItem.DropDownItems.Add(itemNew);
-    }
-
-    /// <summary>
-    /// Get all channels from the database
-    /// </summary>
-    private void RefreshAllChannels()
-    {
-      Cursor.Current = Cursors.WaitCursor;
-      IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
-      _cards = new Dictionary<int, CardType>();
-      foreach (Card card in dbsCards)
-      {
-        _cards[card.IdCard] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.IdCard);
-      }
-
-      //ChannelIncludeRelationEnum include = ChannelIncludeRelationEnum.None;
-      ChannelIncludeRelationEnum include = ChannelIncludeRelationEnum.TuningDetails;
-      include |= ChannelIncludeRelationEnum.ChannelMaps;
-      include |= ChannelIncludeRelationEnum.GroupMaps;
-      include |= ChannelIncludeRelationEnum.GroupMapsChannelGroup;
-
-      _allChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(_mediaType, include);
-
-      tabControl1.TabPages[0].Text = string.Format("Channels ({0})", _allChannels.Count);
-
-      _lvChannelHandler = new ChannelListViewHandler(mpListView1, _allChannels, _cards, txtFilterString, _mediaType);
-      _lvChannelHandler.FilterListView("");
-    }
-
-    /// <summary>
-    /// Text of the filter has changed
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void txtFilterString_TextChanged(object sender, EventArgs e)
-    {
-      //Filter the listview so only items that contain the text of txtFilterString are shown
-      _lvChannelHandler.FilterListView(txtFilterString.Text);
-    }
-
-    private void OnAddToFavoritesMenuItem_Click(object sender, EventArgs e)
-    {
-      ChannelGroup group;
-      ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
-      if (menuItem.Tag == null)
-      {
-        GroupNameForm dlg = new GroupNameForm();
-        if (dlg.ShowDialog(this) != DialogResult.OK)
+        foreach (GroupMap mapping in channel.GroupMaps)
         {
-          return;
+          List<GroupMap> mappings;
+          if (!_channelsInGroupMappingCache.TryGetValue(mapping.IdGroup, out mappings))
+          {
+            mappings = new List<GroupMap>(allChannels.Count);
+            _channelsInGroupMappingCache[mapping.IdGroup] = mappings;
+          }
+          mappings.Add(mapping);
         }
-        group = new ChannelGroup {GroupName = dlg.GroupName, SortOrder = 9999, MediaType = (int)_mediaType};
-        group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
-        group.AcceptChanges();
+      }
 
-        RefreshContextMenu();
+      foreach (List<GroupMap> mappings in _channelsInGroupMappingCache.Values)
+      {
+        mappings.Sort(delegate(GroupMap m1, GroupMap m2)
+        {
+          return m1.SortOrder.CompareTo(m2.SortOrder);
+        });
+      }
+
+      // channel group combo box
+      _currentChannelGroup = null;
+      ChannelGroup[] groups = new ChannelGroup[allGroups.Count];
+      allGroups.CopyTo(groups, 0);
+      comboBoxChannelGroup.BeginUpdate();
+      try
+      {
+        comboBoxChannelGroup.Items.Clear();
+        comboBoxChannelGroup.Items.AddRange(groups);
+        comboBoxChannelGroup.DisplayMember = "GroupName";
+        comboBoxChannelGroup.SelectedIndex = 0;
+      }
+      finally
+      {
+        comboBoxChannelGroup.EndUpdate();
+      }
+      buttonGroupDelete.Enabled = allGroups.Count > 1;
+      buttonGroupOrder.Enabled = buttonGroupDelete.Enabled;
+
+      // channels tab
+      _listViewChannelsHandler = new ChannelListViewHandler(listViewChannels, OnFilteringCompleted);
+      foreach (ChannelGroup group in allGroups)
+      {
+        _listViewChannelsHandler.AddGroup(group);
+      }
+      _listViewChannelsHandler.FilterListView(textBoxFilter.Text);
+      _listViewChannelsHandler.AddOrUpdateChannels(allChannels);
+      listViewChannels_SelectedIndexChanged(null, null);
+      toolTip.SetToolTip(textBoxFilter,
+        "Properties: visible, name, number, group, provider, type, encryption" + Environment.NewLine +
+        "Operators: ! (conditional NOT), & (conditional AND), | (conditional OR), : (contains), < (less than), <= (less than or equal), == (equal), != (not equal), >= (greater than or equal), > (greater than)" + Environment.NewLine +
+        "Example: provider == \"Freesat\" & !name : \"BBC\" (find all Freesat channels that don't have \"BBC\" in their name)"
+      );
+
+
+      // debug
+      ThreadPool.QueueUserWorkItem(delegate(object context)
+      {
+        try
+        {
+          this.LogDebug("channels: channels...");
+          foreach (Channel channel in allChannels)
+          {
+            this.LogDebug("  ID = {0, -4}, name = {1, -30}, number = {2, -5}, tuning detail count = {3}, group count = {4}", channel.IdChannel, channel.Name, channel.ChannelNumber, channel.TuningDetails.Count, channel.GroupMaps.Count);
+          }
+          this.LogDebug("channels: groups...");
+          foreach (ChannelGroup group in allGroups)
+          {
+            List<GroupMap> mappings = _channelsInGroupMappingCache[group.IdGroup];
+            this.LogDebug("  ID = {0, -3}, name = {1, -30}, channel count = {2, -4}, channels = [{3}]", group.IdGroup, group.GroupName, mappings.Count, string.Join(", ", from mapping in mappings select mapping.IdChannel));
+          }
+        }
+        catch
+        {
+        }
+      });
+
+      base.OnSectionActivated();
+    }
+
+    public override void OnSectionDeActivated()
+    {
+      this.LogDebug("channels: deactivating, type = {0}", _mediaType);
+
+      CancelChannelEditing();
+      SaveChannelsInGroupOrder();
+
+      base.OnSectionDeActivated();
+    }
+
+    private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      CancelChannelEditing();
+    }
+
+    private void CancelChannelEditing()
+    {
+      // Careful! Looping over _channelEditDialogs would result in an invalid
+      // operation exception (collection modified) in
+      // OnAddOrEditChannelFormClosed().
+      List<FormEditChannel> openDialogs = new List<FormEditChannel>(_channelEditDialogs.Values);
+      foreach (FormEditChannel dlg in openDialogs)
+      {
+        dlg.DialogResult = DialogResult.Cancel;
+        dlg.Close();
+        dlg.Dispose();
+      }
+    }
+
+    private Channel SaveChannel(Channel channel)
+    {
+      channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
+      // We need to re-query in order to get the channel relations which are
+      // removed during the save process.
+      return ServiceAgents.Instance.ChannelServiceAgent.GetChannel(channel.IdChannel, REQUIRED_CHANNEL_RELATIONS);
+    }
+
+    #region channels
+
+    #region list view
+
+    private void listViewChannels_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      ListView.SelectedListViewItemCollection items = listViewChannels.SelectedItems;
+      buttonChannelEdit.Enabled = items.Count > 0 && !_channelTestRunning;
+      buttonChannelDelete.Enabled = buttonChannelEdit.Enabled && _channelEditDialogs.Count == 0;
+
+      buttonChannelAddToGroup.Enabled = buttonChannelDelete.Enabled;
+
+      buttonChannelMerge.Enabled = items.Count > 1 && !_channelTestRunning && _channelEditDialogs.Count == 0;
+      bool isSplitEnabled = buttonChannelDelete.Enabled;
+      if (isSplitEnabled)
+      {
+        isSplitEnabled = false;
+        foreach (ListViewItem item in listViewChannels.SelectedItems)
+        {
+          Channel channel = _listViewChannelsHandler.GetChannelForItem(item);
+          if (channel.TuningDetails != null && channel.TuningDetails.Count > 1)
+          {
+            isSplitEnabled = true;
+            break;
+          }
+        }
+      }
+      buttonChannelSplit.Enabled = isSplitEnabled;
+
+      buttonChannelPreview.Enabled = items.Count == 1;
+      buttonChannelTest.Enabled = _channelEditDialogs.Count == 0;
+    }
+
+    private void listViewChannels_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+      buttonChannelEdit_Click(null, null);
+    }
+
+    private void listViewChannels_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Delete)
+      {
+        buttonChannelDelete_Click(null, null);
+        e.Handled = true;
+      }
+    }
+
+    private void listViewChannels_ColumnClick(object sender, ColumnClickEventArgs e)
+    {
+      if (e.Column == _listViewChannelsColumnSorter.SortColumn)
+      {
+        // Reverse the current sort direction for this column.
+        _listViewChannelsColumnSorter.Order = _listViewChannelsColumnSorter.Order == SortOrder.Ascending
+                                              ? SortOrder.Descending
+                                              : SortOrder.Ascending;
       }
       else
       {
-        group = (ChannelGroup)menuItem.Tag;
+        // Set the column number that is to be sorted; default to ascending.
+        _listViewChannelsColumnSorter.SortColumn = e.Column;
+        _listViewChannelsColumnSorter.Order = SortOrder.Ascending;
       }
 
-      ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0)
-        return;
-      for (int i = 0; i < indexes.Count; ++i)
+      // Perform the sort with these new sort options.
+      listViewChannels.Sort();
+    }
+
+    private void listViewChannels_ItemCheck(object sender, ItemCheckEventArgs e)
+    {
+      // Prevent channel editing via checkbox at the same time
+      if (_channelEditDialogs.Count > 0)
       {
-        ListViewItem item = mpListView1.Items[indexes[i]];
+        e.NewValue = e.CurrentValue;
+      }
+    }
 
-        Channel channel = (Channel)item.Tag;
-        MappingHelper.AddChannelToGroup(ref channel, @group);
+    private void listViewChannels_ItemChecked(object sender, ItemCheckedEventArgs e)
+    {
+      if (_listViewChannelsHandler.IsFilling)
+      {
+        return;
+      }
 
-        string groupString = item.SubItems[1].Text;
-        if (groupString == string.Empty)
+      if (_channelVisibleInGuideNotifyForm == null && listViewChannels.SelectedItems.Count > 10)
+      {
+        _channelVisibleInGuideNotifyForm = new NotifyForm("Toggling visible-in-guide state...",
+                                        "This can take some time." + Environment.NewLine + Environment.NewLine + "Please be patient...");
+        _channelVisibleInGuideNotifyForm.Show(this);
+        _channelVisibleInGuideNotifyForm.WaitForDisplay();
+      }
+
+      Channel channel = _listViewChannelsHandler.GetChannelForItem(e.Item);
+      if (channel != null)
+      {
+        this.LogInfo("channels: channel {0} visible in guide changed from {1} to {2}", channel.IdChannel, channel.VisibleInGuide, e.Item.Checked);
+        channel.VisibleInGuide = e.Item.Checked;
+        channel = SaveChannel(channel);
+        bool selected = e.Item.Selected;
+        if (!selected)
         {
-          groupString = group.GroupName;
+          // User only un/checked one channel.
+          UpdateAllViewsOnAddOrEditChannels(new List<Channel> { channel });
+
+          // Undo the selection caused by UpdateAllViewsForChannels().
+          ListViewItem item = _listViewChannelsHandler.GetItemForChannel(channel);
+          if (item != null)
+          {
+            item.Selected = false;
+          }
         }
         else
         {
-          groupString += ", " + group.GroupName;
+          // User un/checked multiple channels.
+          _channelVisibleInGuideChanges.Add(channel);
+
+          // Check if this is the last ItemChecked event that we're expecting.
+          // If it is, update the list views. This saves refiltering for each
+          // item that is un/checked, which is slow.
+          bool updateListViews = true;
+          foreach (ListViewItem item in listViewChannels.SelectedItems)
+          {
+            if (item.Checked != e.Item.Checked && item != e.Item)
+            {
+              updateListViews = false;
+              break;
+            }
+          }
+          if (updateListViews)
+          {
+            UpdateAllViewsOnAddOrEditChannels(_channelVisibleInGuideChanges);
+            _channelVisibleInGuideChanges.Clear();
+            if (_channelVisibleInGuideNotifyForm != null)
+            {
+              _channelVisibleInGuideNotifyForm.Close();
+              _channelVisibleInGuideNotifyForm.Dispose();
+              _channelVisibleInGuideNotifyForm = null;
+            }
+          }
         }
-
-        item.SubItems[1].Text = groupString;
       }
-
-      mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-      
-      RefreshTabs();
     }
 
-    
+    #endregion
 
-    private void mpButtonClear_Click(object sender, EventArgs e)
+    #region filtering
+
+    private void textBoxFilter_TextChanged(object sender, EventArgs e)
     {
-      string holder = String.Format("Are you sure you want to clear all channels?");
+      _listViewChannelsHandler.FilterListView(textBoxFilter.Text);
+    }
 
-      if (MessageBox.Show(holder, "", MessageBoxButtons.YesNo) == DialogResult.No)
+    private void OnFilteringCompleted()
+    {
+      tabControl.Invoke(new MethodInvoker(delegate()
+      {
+        tabControl.TabPages[0].Text = string.Format("Channels ({0})", listViewChannels.Items.Count);
+      }));
+    }
+
+    #endregion
+
+    #region button actions
+
+    private void buttonChannelAdd_Click(object sender, EventArgs e)
+    {
+      FormEditChannel dlg = new FormEditChannel(_newChannelFakeId, _mediaType);
+      dlg.Tag = _newChannelFakeId;
+      dlg.Text = "Add Channel";
+      dlg.FormClosed += new FormClosedEventHandler(OnAddOrEditChannelFormClosed);
+      _channelEditDialogs.Add(_newChannelFakeId--, dlg);
+      dlg.Show();
+      listViewChannels_SelectedIndexChanged(null, null);
+    }
+
+    private void buttonChannelEdit_Click(object sender, EventArgs e)
+    {
+      foreach (ListViewItem item in listViewChannels.SelectedItems)
+      {
+        Channel channel = _listViewChannelsHandler.GetChannelForItem(item);
+        FormEditChannel dlg = null;
+        if (channel == null || _channelEditDialogs.TryGetValue(channel.IdChannel, out dlg))
+        {
+          if (dlg != null)
+          {
+            dlg.BringToFront();
+            dlg.Focus();
+          }
+          continue;
+        }
+
+        dlg = new FormEditChannel(channel.IdChannel, _mediaType);
+        dlg.Tag = channel.IdChannel;
+        dlg.Text = "Edit Channel";
+        dlg.FormClosed += new FormClosedEventHandler(OnAddOrEditChannelFormClosed);
+        _channelEditDialogs.Add(channel.IdChannel, dlg);
+        dlg.Show();
+        listViewChannels_SelectedIndexChanged(null, null);
+      }
+    }
+
+    private void OnAddOrEditChannelFormClosed(object sender, FormClosedEventArgs e)
+    {
+      FormEditChannel dlg = sender as FormEditChannel;
+      if (dlg == null)
       {
         return;
       }
 
-      NotifyForm dlg = new NotifyForm("Clearing all channels...", "This can take some time.\n\nPlease be patient...");
-      dlg.Show(this);
-      dlg.WaitForDisplay();
-      ChannelIncludeRelationEnum include = ChannelIncludeRelationEnum.TuningDetails;
-      include |= ChannelIncludeRelationEnum.ChannelMaps;
-      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(_mediaType, include);
-      foreach (Channel channel in channels)
-      {
-        if (channel.MediaType == (int)_mediaType)
-        {
-          //Broker.Execute("delete from TvMovieMappings WHERE idChannel=" + channel.idChannel);
-          ServiceAgents.Instance.ChannelServiceAgent.DeleteChannel(channel.IdChannel);
-        }
-      }
-      dlg.Close();
-      
-      OnSectionActivated();
-    }
-
-    private void mpButtonDel_Click(object sender, EventArgs e)
-    {
-      mpListView1.BeginUpdate();
+      int channelId = (int)dlg.Tag;
+      _channelEditDialogs.Remove(channelId);
       try
       {
-        IList<Schedule> schedules = ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules();        
-
-        //Since it takes a very long time to add channels, make sure the user really wants to delete them
-        if (mpListView1.SelectedItems.Count > 0)
+        if (dlg.DialogResult != DialogResult.OK)
         {
-          string holder = String.Format("Are you sure you want to delete these {0:d} channels?",
-                                        mpListView1.SelectedItems.Count);
-
-          if (MessageBox.Show(holder, "", MessageBoxButtons.YesNo) == DialogResult.No)
-          {
-            //mpListView1.EndUpdate();
-            return;
-          }
+          return;
         }
-        NotifyForm dlg = new NotifyForm("Deleting selected channels...",
-                                        "This can take some time.\n\nPlease be patient...");
-        dlg.Show(this);
-        dlg.WaitForDisplay();
 
-        foreach (ListViewItem item in mpListView1.SelectedItems)
+        Channel channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(dlg.IdChannel, REQUIRED_CHANNEL_RELATIONS);
+        UpdateAllViewsOnAddOrEditChannels(new List<Channel> { channel });
+      }
+      finally
+      {
+        dlg.Dispose();
+        listViewChannels_SelectedIndexChanged(null, null);
+      }
+    }
+
+    private void UpdateAllViewsOnAddOrEditChannels(IEnumerable<Channel> channels)
+    {
+      _listViewChannelsHandler.AddOrUpdateChannels(channels);
+      tabControl.TabPages[0].Text = string.Format("Channels ({0})", listViewChannels.Items.Count);
+
+      // Select the new/modified items.
+      foreach (Channel channel in channels)
+      {
+        ListViewItem item = _listViewChannelsHandler.GetItemForChannel(channel);
+        if (item != null && item.ListView != null)
         {
-          Channel channel = (Channel)item.Tag;
+          item.EnsureVisible();
+          item.Selected = true;
+        }
+      }
+      listViewChannels.Focus();
 
-          //also delete any still active schedules
+      UpdateChannelsInGroupViewOnAddOrEditChannels(channels);
+    }
+
+    private void UpdateAllViewsOnDeleteChannels(IEnumerable<ListViewItem> items, out ICollection<Channel> channels)
+    {
+      _listViewChannelsHandler.DeleteChannels(items, out channels);
+      tabControl.TabPages[0].Text = string.Format("Channels ({0})", listViewChannels.Items.Count);
+      listViewChannels.Focus();
+      UpdateChannelsInGroupViewOnDeleteChannels(channels);
+    }
+
+    private void buttonChannelDelete_Click(object sender, EventArgs e)
+    {
+      if (listViewChannels.SelectedItems.Count == 0 || _channelEditDialogs.Count > 0)
+      {
+        return;
+      }
+
+      // It is not easy to undo deleting channels so always confirm.
+      if (MessageBox.Show(string.Format("Are you sure you want to delete the {0} selected channel(s)?", listViewChannels.SelectedItems.Count, MessageBoxButtons.YesNo, MessageBoxIcon.Question),
+        MESSAGE_CAPTION, MessageBoxButtons.YesNo) != DialogResult.Yes)
+      {
+        return;
+      }
+      NotifyForm dlg = null;
+      try
+      {
+        if (listViewChannels.SelectedItems.Count > 10)
+        {
+          dlg = new NotifyForm("Deleting selected channels...", "This can take some time." + Environment.NewLine + Environment.NewLine + "Please be patient...");
+          dlg.Show(this);
+          dlg.WaitForDisplay();
+        }
+
+        ICollection<Channel> channels;
+        UpdateAllViewsOnDeleteChannels(listViewChannels.SelectedItems.Cast<ListViewItem>(), out channels);
+
+        // TODO IMO schedule deletion should go to the server side; better to have central logic
+        IList<Schedule> schedules = ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules();
+        foreach (Channel channel in channels)
+        {
           if (schedules != null)
           {
             for (int i = schedules.Count - 1; i > -1; i--)
@@ -312,720 +531,1142 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             }
           }
 
+          this.LogInfo("channels: channel {0} deleted", channel.IdChannel);
           ServiceAgents.Instance.ChannelServiceAgent.DeleteChannel(channel.IdChannel);
-          mpListView1.Items.Remove(item);
         }
-
-        dlg.Close();
-        ReOrder();
-        mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
       }
       finally
       {
-        mpListView1.EndUpdate();
-        RefreshAll();
-      }
-    }
-
-    private void ReOrder()
-    {
-      _ignoreItemCheckedEvent = true;
-      try
-      {
-        IList<Channel> channels = new List<Channel>();
-        for (int i = 0; i < mpListView1.Items.Count; ++i)
+        if (dlg != null)
         {
-          Channel channel = (Channel)mpListView1.Items[i].Tag;
-          if (channel.SortOrder != i)
-          {
-            channel.SortOrder = i;
-            channel.UnloadAllUnchangedRelationsForEntity();
-            channels.Add(channel);
-            channel.AcceptChanges();
-            mpListView1.Items[i].Tag = channel;
-          }
-        }
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannels(channels);
-      }
-      finally
-      {
-        _ignoreItemCheckedEvent = false;        
-      }      
-    }
-
-    private void ReOrderGroups()
-    {
-      for (int i = 1; i < tabControl1.TabPages.Count; i++)
-      {
-        ChannelGroup group = (ChannelGroup)tabControl1.TabPages[i].Tag;
-        group.SortOrder = i - 1;
-        group.MediaType = (int) _mediaType;
-        group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
-        group.AcceptChanges();
-      }
-      RefreshAll();
-    }
-
-    private void mpListView1_AfterLabelEdit(object sender, LabelEditEventArgs e)
-    {
-      if (e.Label != null)
-      {
-        Channel channel = (Channel)mpListView1.Items[e.Item].Tag;
-        channel.DisplayName = e.Label;
-        channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
-        channel.AcceptChanges();
-      }
-    }
-
-    private void mpListView1_ItemChecked(object sender, ItemCheckedEventArgs e)
-    {
-      if (!_ignoreItemCheckedEvent)
-      {
-        Channel ch = (Channel) e.Item.Tag;
-        if (ch.VisibleInGuide != e.Item.Checked && !_lvChannelHandler.PopulateRunning)
-        {
-          ch.VisibleInGuide = e.Item.Checked;
-          ch = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(ch);
-          ch.AcceptChanges();
+          dlg.Close();
+          dlg.Dispose();
         }
       }
     }
 
-    private void mpButtonEdit_Click(object sender, EventArgs e)
+    private void buttonChannelAddToGroup_Click(object sender, EventArgs e)
     {
-      ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0)
+      int groupCount = comboBoxChannelGroup.Items.Count;
+      ChannelGroup[] groups = new ChannelGroup[groupCount + 1];
+      groups[0] = new ChannelGroup
+      {
+        IdGroup = -1,
+        GroupName = "[New]"
+      };
+      int i = 1;
+      foreach (ChannelGroup g in comboBoxChannelGroup.Items)
+      {
+        groups[i++] = g;
+      }
+
+      ChannelGroup group = null;
+      using (FormSelectItems dlg = new FormSelectItems("Add Channel(s) To Group", "Please select the group to add to:", groups, "GroupName", false))
+      {
+        if (dlg.ShowDialog() != DialogResult.OK || dlg.Items == null || dlg.Items.Count != 1)
+        {
+          return;
+        }
+        group = dlg.Items[0] as ChannelGroup;
+      }
+      if (group == null)
+      {
         return;
-      Channel channel = (Channel)mpListView1.Items[indexes[0]].Tag;
-      FormEditChannel dlg = new FormEditChannel(channel, _mediaType);
-      if (dlg.ShowDialog(this) == DialogResult.OK)
-      {
-        channel = dlg.Channel;
-        mpListView1.Items[indexes[0]].Tag = channel;
-        mpListView1.BeginUpdate();
-        try
-        {
-          _ignoreItemCheckedEvent = true;
-          mpListView1.Items[indexes[0]].Text = channel.DisplayName;
-          mpListView1.Items[indexes[0]].SubItems[5].Text = channel.TuningDetails.Count.ToString();
-          mpListView1.Sort();
-          ReOrder();
-          txtFilterString_TextChanged(null, null);
-        }
-        finally
-        {          
-          mpListView1.EndUpdate();
-          RefreshAll();
-          _ignoreItemCheckedEvent = false;
-        }
       }
-    }
 
-    private void mpListView1_ColumnClick(object sender, ColumnClickEventArgs e)
-    {
-      if (e.Column == lvwColumnSorter.SortColumn)
+      IList<Channel> channels;
+      if (group.IdGroup == -1)
       {
-        // Reverse the current sort direction for this column.
-        lvwColumnSorter.Order = lvwColumnSorter.Order == SortOrder.Ascending
-                                  ? SortOrder.Descending
-                                  : SortOrder.Ascending;
+        // new group
+        group = CreateNewChannelGroup();
+        if (group == null)
+        {
+          return;
+        }
+        channels = new List<Channel>(listViewChannels.SelectedItems.Count);
+        foreach (ListViewItem item in listViewChannels.SelectedItems)
+        {
+          channels.Add(_listViewChannelsHandler.GetChannelForItem(item));
+        }
       }
       else
       {
-        // Set the column number that is to be sorted; default to ascending.
-        lvwColumnSorter.SortColumn = e.Column;
-        lvwColumnSorter.Order = SortOrder.Ascending;
+        channels = new List<Channel>(listViewChannels.SelectedItems.Count);
+        foreach (ListViewItem item in listViewChannels.SelectedItems)
+        {
+          if (!_listViewChannelsHandler.IsChannelInGroup(item, group))
+          {
+            channels.Add(_listViewChannelsHandler.GetChannelForItem(item));
+          }
+        }
+        if (channels.Count == 0)
+        {
+          MessageBox.Show(string.Format("The selected channel(s) are already in group {0}.", group.GroupName), MESSAGE_CAPTION);
+          return;
+        }
       }
 
-      // Perform the sort with these new sort options.
-      mpListView1.Sort();
-      ReOrder();
+      AddChannelsToGroup(group, channels);
     }
 
-    private void mpButtonPreview_Click(object sender, EventArgs e)
+    private void buttonChannelMerge_Click(object sender, EventArgs e)
     {
-      ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0)
+      if (listViewChannels.SelectedItems == null || listViewChannels.SelectedItems.Count < 2)
+      {
         return;
-      Channel channel = (Channel)mpListView1.Items[indexes[0]].Tag;
+      }
+
+      ICollection<Channel> channels;
+      UpdateAllViewsOnDeleteChannels(listViewChannels.SelectedItems.Cast<ListViewItem>(), out channels);
+
+      Channel mergedChannel = ServiceAgents.Instance.ChannelServiceAgent.MergeChannels(channels, REQUIRED_CHANNEL_RELATIONS);
+      this.LogInfo("channels: channels {0} merged to channel {1}", string.Join(", ", channels.Select(c => c.IdChannel)), mergedChannel.IdChannel);
+
+      UpdateAllViewsOnAddOrEditChannels(new List<Channel> { mergedChannel });
+    }
+
+    private void buttonChannelSplit_Click(object sender, EventArgs e)
+    {
+      if (listViewChannels.SelectedItems == null)
+      {
+        return;
+      }
+
+      IList<Channel> modifiedChannels = new List<Channel>();
+      foreach (ListViewItem item in listViewChannels.SelectedItems)
+      {
+        Channel channel = _listViewChannelsHandler.GetChannelForItem(item);
+        if (channel != null && channel.TuningDetails.Count > 1)
+        {
+          this.LogInfo("channels: splitting channel {0}...", channel.IdChannel);
+          for (int i = channel.TuningDetails.Count - 1; i > 0; i--)
+          {
+            TuningDetail tuningDetail = channel.TuningDetails[i];
+            channel.TuningDetails.RemoveAt(i);
+
+            Channel newChannel = new Channel();
+            newChannel.Name = tuningDetail.Name;
+            newChannel.ChannelNumber = tuningDetail.LogicalChannelNumber;
+            newChannel.MediaType = (int)_mediaType;
+            newChannel.VisibleInGuide = true;
+            newChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(newChannel);
+
+            tuningDetail.IdChannel = newChannel.IdChannel;
+            tuningDetail.Priority = 1;
+            tuningDetail = ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(tuningDetail);
+
+            newChannel.TuningDetails.Add(tuningDetail);
+            newChannel.AcceptChanges();
+            this.LogInfo("channels: channel {0} created from tuning detail {1}", newChannel.IdChannel, tuningDetail.IdTuning);
+            modifiedChannels.Add(newChannel);
+          }
+          channel.AcceptChanges();
+          modifiedChannels.Add(channel);
+        }
+      }
+      if (modifiedChannels.Count > 0)
+      {
+        UpdateAllViewsOnAddOrEditChannels(modifiedChannels);
+      }
+    }
+
+    private void buttonChannelPreview_Click(object sender, EventArgs e)
+    {
+      ListView.SelectedListViewItemCollection items = listViewChannels.SelectedItems;
+      if (items == null || items.Count < 1)
+      {
+        return;
+      }
+      Channel channel = _listViewChannelsHandler.GetChannelForItem(items[0]);
+      if (channel == null)
+      {
+        return;
+      }
       FormPreview previewWindow = new FormPreview();
-      previewWindow.Channel = channel;
+      if (!previewWindow.SetChannel(channel))
+      {
+        return;
+      }
       previewWindow.ShowDialog(this);
     }
 
-    private void mpListView1_ItemDrag(object sender, ItemDragEventArgs e)
+    private void buttonChannelTest_Click(object sender, EventArgs e)
     {
-      if (e.Item is ListViewItem)
+      if (_channelTestRunning)
       {
-        ReOrder();
+        StopChannelTestThread();
+      }
+      else if (!_channelTestAbort)
+      {
+        StartChannelTestThread();
       }
     }
 
-    private void mpListView1_MouseDoubleClick(object sender, MouseEventArgs e)
+    private void StartChannelTestThread()
     {
-      mpButtonEdit_Click(null, null);
+      _channelTestThread = new Thread(TestChannels);
+      _channelTestThread.Name = "channel testing";
+      _channelTestThread.Start();
+      buttonChannelTest.Text = "S&top";
     }
 
-    private void deleteThisChannelToolStripMenuItem_Click(object sender, EventArgs e)
+    private void StopChannelTestThread()
     {
-      mpButtonDel_Click(null, null);
+      _channelTestAbort = true;
     }
 
-    private void editChannelToolStripMenuItem_Click(object sender, EventArgs e)
+    private void TestChannels()
     {
-      mpButtonEdit_Click(null, null);
-    }
+      _channelTestAbort = false;
+      _channelTestRunning = true;
+      NotifyForm dlg = null;
 
-    private void mpButtonAdd_Click(object sender, EventArgs e)
-    {
-      FormEditChannel dlg = new FormEditChannel(null, _mediaType);
-      if (dlg.ShowDialog(this) == DialogResult.OK)
+      try
       {
-        IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
-        Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
-        foreach (Card card in dbsCards)
-        {
-          cards[card.IdCard] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.IdCard);
-        }
-        mpListView1.BeginUpdate();
-        try
-        {
-          mpListView1.Items.Add(_lvChannelHandler.CreateListViewItemForChannel(dlg.Channel, cards));
-          mpListView1.Sort();
-          ReOrder();
-        }
-        finally
-        {
-          mpListView1.EndUpdate();
-          RefreshTabs();
-        }
-      }
-    }
+        dlg = new NotifyForm("Testing all checked channels...", "Please be patient...");
+        dlg.Show();
+        dlg.WaitForDisplay();
+        Thread.Sleep(10000);
 
-    private void mpButtonUncheckEncrypted_Click(object sender, EventArgs e)
-    {
-      NotifyForm dlg = new NotifyForm("Unchecking all scrambled channels...",
-                                      "This can take some time.\n\nPlease be patient...");
-      dlg.Show(this);
-      dlg.WaitForDisplay();
-      foreach (ListViewItem item in mpListView1.Items)
-      {
-        Channel channel = (Channel)item.Tag;
-        bool hasFTA = false;
-        foreach (TuningDetail tuningDetail in channel.TuningDetails)
+        // TODO
+        /*IVirtualCard tuner;
+        IUser user = new User();
+        foreach (ListViewItem item in listViewChannels.Items)
         {
-          if (tuningDetail.FreeToAir)
+          if (item.Checked == false)
           {
-            hasFTA = true;
+            continue; // do not test "un-checked" channels
+          }
+          Channel channel = (Channel)item.Tag; // get channel
+          dlg.SetMessage(
+            string.Format("Please be patient...{0}{0}Testing channel {1} ({2} of {3})",
+                          Environment.NewLine, channel.DisplayName, item.Index + 1, listViewChannels.Items.Count));
+          Application.DoEvents();
+
+          TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, channel.IdChannel, out tuner, out user);
+          if (result == TvResult.Succeeded)
+          {
+            tuner.StopTimeShifting();
+          }
+          else
+          {
+            item.Checked = false;
+            channel.VisibleInGuide = false;
+            channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
+            channel.AcceptChanges();
+          }
+          if (_channelTestAbort)
+          {
             break;
           }
-        }
-        if (!hasFTA)
-        {
-          item.Checked = false;
-        }
+        }*/
       }
-      dlg.Close();
+      finally
+      {
+        buttonChannelTest.Invoke(new MethodInvoker(delegate()
+        {
+          buttonChannelTest.Text = "&Test";
+        }));
+        dlg.Close();
+        dlg.Dispose();
+        _channelTestRunning = false;
+        _channelTestAbort = false;
+      }
     }
 
-    private void mpButtonDeleteEncrypted_Click(object sender, EventArgs e)
+    #endregion
+
+    #region channel name and number inline editing and tab behaviour
+
+    private void listViewChannels_MouseClick(object sender, MouseEventArgs e)
     {
-      NotifyForm dlg = new NotifyForm("Deleting all scrambled channels...",
-                                      "This can take some time.\n\nPlease be patient...");
-      dlg.Show(this);
-      dlg.WaitForDisplay();
-      List<ListViewItem> itemsToRemove = new List<ListViewItem>();
-      foreach (ListViewItem item in mpListView1.Items)
+      // Record the location of clicks for triggering editing of the correct sub item.
+      if (e.Clicks == 1 && e.Button == MouseButtons.Left && Control.ModifierKeys == Keys.None)
       {
-        Channel channel = (Channel)item.Tag;
-        bool hasFTA = false;
-        foreach (TuningDetail tuningDetail in channel.TuningDetails)
+        _channelInlineEditTriggerMouseLocation = e.Location;
+      }
+    }
+
+    private void listViewChannels_BeforeLabelEdit(object sender, LabelEditEventArgs e)
+    {
+      if (_channelEditDialogs.Count > 0)
+      {
+        // Prevent inline editing when any add/edit channel dialog is open.
+        e.CancelEdit = true;
+        return;
+      }
+
+      ListViewItem item = listViewChannels.Items[e.Item];
+      _channelInlineEditSubItem = item.GetSubItemAt(_channelInlineEditTriggerMouseLocation.X, _channelInlineEditTriggerMouseLocation.Y);
+      _channelInlineEditSubItemIndex = item.SubItems.IndexOf(_channelInlineEditSubItem);
+      if (_channelInlineEditSubItemIndex == ChannelListViewHandler.SUBITEM_INDEX_NAME)
+      {
+        // Clicking on the channel name (which is the item label) triggers
+        // normal label editing.
+        return;
+      }
+
+      // Prevent normal edit behaviour when clicking on any other sub item.
+      e.CancelEdit = true;
+
+      // Custom editing for the channel number...
+      if (_channelInlineEditSubItemIndex != ChannelListViewHandler.SUBITEM_INDEX_NUMBER)
+      {
+        _channelInlineEditSubItemIndex = -1;
+        return;
+      }
+
+      Rectangle subItemBounds = _channelInlineEditSubItem.Bounds;
+      textBoxChannelNumber.SetBounds(
+        subItemBounds.Left + listViewChannels.Left + 5,
+        subItemBounds.Top + listViewChannels.Top + 1,
+        subItemBounds.Width - 6,
+        subItemBounds.Height
+      );
+      textBoxChannelNumber.Text = _channelInlineEditSubItem.Text;
+      textBoxChannelNumber.Show();
+      textBoxChannelNumber.Focus();
+
+      // Force redrawing the item to prevent a bug: the text in the first
+      // sub item is blanked after tabbing from one channel number to the next.
+      item.BackColor = Color.Black;
+      item.BackColor = Color.White;
+    }
+
+    private void listViewChannels_AfterLabelEdit(object sender, LabelEditEventArgs e)
+    {
+      try
+      {
+        if (e.Label == null)
         {
-          if (tuningDetail.FreeToAir)
+          // No change.
+          return;
+        }
+        ListViewItem item = listViewChannels.SelectedItems[0];
+        if (item == null)
+        {
+          return;
+        }
+        Channel channel = _listViewChannelsHandler.GetChannelForItem(item);
+        if (channel == null)
+        {
+          return;
+        }
+
+        // Always cancel the edit. We handle the label update as part of the
+        // save process. If we allow the edit to be commited as normal we get
+        // multiple items with the same label if the label change causes an
+        // order position change.
+        e.CancelEdit = true;
+
+        // Save the change.
+        if (_channelInlineEditSubItemIndex == ChannelListViewHandler.SUBITEM_INDEX_NAME)
+        {
+          if (string.IsNullOrWhiteSpace(e.Label))
           {
-            hasFTA = true;
-            break;
+            return;
           }
+          this.LogInfo("channels: channel {0} renamed, old name = {1}, new name = {2}", channel.IdChannel, channel.Name, e.Label);
+          channel.Name = e.Label;
         }
-        if (!hasFTA)
+        else if (_channelInlineEditSubItemIndex == ChannelListViewHandler.SUBITEM_INDEX_NUMBER)
         {
-          ServiceAgents.Instance.ChannelServiceAgent.DeleteChannel(channel.IdChannel);
-          itemsToRemove.Add(item);
+          int intChannelNumber;
+          float floatChannelNumber;
+          if (
+            string.IsNullOrWhiteSpace(e.Label) ||
+            (
+              !int.TryParse(e.Label, NumberStyles.None, CultureInfo.InvariantCulture.NumberFormat, out intChannelNumber) &&
+              !float.TryParse(e.Label, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture.NumberFormat, out floatChannelNumber)
+            )
+          )
+          {
+            return;
+          }
+          this.LogInfo("channels: channel {0} renumbered, old number = {1}, new number = {2}", channel.IdChannel, channel.ChannelNumber, e.Label);
+          channel.ChannelNumber = e.Label;
         }
+
+        channel = SaveChannel(channel);
+        UpdateAllViewsOnAddOrEditChannels(new List<Channel> { channel });
       }
-      foreach (ListViewItem item in itemsToRemove)
-        mpListView1.Items.Remove(item);
-      dlg.Close();
-      ReOrder();
-      ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
-      mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-    }
-
-    private void StartScanThread()
-    {
-      _scanThread = new Thread(ScanForUsableChannels);
-      _scanThread.Name = "Channels test thread";
-      _scanThread.Start();
-      mpButtonTestAvailable.Text = "Stop";
-    }
-
-    private void StopScanThread()
-    {
-      _abortScanning = true;
-    }
-
-    private void mpButtonTestAvailable_Click(object sender, EventArgs e)
-    {
-      if (_isScanning)
+      finally
       {
-        StopScanThread();
-      }
-      else if (!_abortScanning) // cancel in progress
-      {
-        StartScanThread();
+        // Revert to normal tab behaviour (select next control instead of next item).
+        _channelInlineEditSubItemIndex = -1;
       }
     }
 
-    private void ScanForUsableChannels()
+    private void listViewChannels_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
     {
-      _abortScanning = false;
-      _isScanning = true;
-      NotifyForm dlg = new NotifyForm("Testing all checked channels...", "Please be patient...");
-      dlg.Show(this);
-      dlg.WaitForDisplay();
-
-      // Create tunning objects Server, User and Card
-     
-      IUser _user = new User();
-
-      foreach (ListViewItem item in mpListView1.Items)
+      // Tab to edit next item.
+      if (e.KeyCode == Keys.Tab && _channelInlineEditSubItemIndex >= 0 && listViewChannels.SelectedItems.Count > 0)
       {
-        if (item.Checked == false)
+        // Prevent normal tab behaviour (select next item instead of next control).
+        e.IsInputKey = true;
+
+        // Begin editing the next item. If editing a name then start editing
+        // the next item's name; if editing a number then start editing the
+        // next item's number.
+        ListViewItem item = listViewChannels.SelectedItems[0];
+        if (e.Shift)
         {
-          continue; // do not test "un-checked" channels
-        }
-        Channel _channel = (Channel)item.Tag; // get channel
-        dlg.SetMessage(
-          string.Format("Please be patient...\n\nTesting channel {0} ({1} of {2})",
-                        _channel.DisplayName, item.Index + 1, mpListView1.Items.Count));
-        Application.DoEvents();
-        IVirtualCard _card;
-        TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(_user.Name, _channel.IdChannel, out _card, out _user);
-        if (result == TvResult.Succeeded)
-        {
-          _card.StopTimeShifting();
+          item = listViewChannels.Items[(listViewChannels.SelectedItems[0].Index + listViewChannels.Items.Count - 1) % listViewChannels.Items.Count];
         }
         else
         {
-          item.Checked = false;
-          _channel.VisibleInGuide = false;
-          _channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(_channel);
-          _channel.AcceptChanges();
+          item = listViewChannels.Items[(listViewChannels.SelectedItems[0].Index + 1) % listViewChannels.Items.Count];
         }
-        if (_abortScanning)
-        {
-          break;
-        }
+
+        // The first BeginEdit() completes editing on the previous item; the
+        // second is needed to actually start editing the new item, because
+        // completing editing on the first item filters the the list.
+        int subItemIndex = _channelInlineEditSubItemIndex;
+        item.BeginEdit();
+        item.EnsureVisible();
+        _channelInlineEditTriggerMouseLocation = item.SubItems[subItemIndex].Bounds.Location;
+        item.BeginEdit();
+        item.Selected = true;
       }
-      mpButtonTestAvailable.Text = "Test";
-      dlg.Close();
-      _isScanning = false;
-      _abortScanning = false;
     }
 
-    private void mpButtonUp_Click(object sender, EventArgs e)
+    private void textBoxChannelNumber_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
     {
-      mpListView1.BeginUpdate();
+      // Catch tab to edit the next channel number.
+      listViewChannels_PreviewKeyDown(sender, e);
+    }
+
+    private void textBoxChannelNumber_KeyDown(object sender, KeyEventArgs e)
+    {
+      // Catch key presses that complete/finish channel number editing.
+      if (e.KeyCode == Keys.Return || e.KeyCode == Keys.Enter || e.KeyCode == Keys.Escape)
+      {
+        if (e.KeyCode == Keys.Escape)
+        {
+          _channelInlineEditSubItem = null;        // Avoid saving the change.
+        }
+        e.Handled = true;
+        textBoxChannelNumber_Leave(textBoxChannelNumber, null);
+      }
+    }
+
+    private void textBoxChannelNumber_Leave(object sender, EventArgs e)
+    {
+      // Trigger saving, mimicing normal list view label after edit behaviour.
+      string newNumberAsString = textBoxChannelNumber.Text;
+      if (_channelInlineEditSubItem != null && !string.Equals(newNumberAsString, _channelInlineEditSubItem.Text))
+      {
+        LabelEditEventArgs lee = new LabelEditEventArgs(-1, newNumberAsString);
+        listViewChannels_AfterLabelEdit(sender, lee);
+        if (!lee.CancelEdit)
+        {
+          _channelInlineEditSubItem.Text = lee.Label;
+        }
+      }
+      else
+      {
+        listViewChannels_AfterLabelEdit(sender, new LabelEditEventArgs(-1, null));
+      }
+      textBoxChannelNumber.Hide();
+    }
+
+    #endregion
+
+    #endregion
+
+    #region channel groups
+
+    private void comboBoxChannelGroup_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      ChannelGroup group = comboBoxChannelGroup.SelectedItem as ChannelGroup;
+      if (group == null)
+      {
+        return;
+      }
+
+      this.LogDebug("channels: selecting channel group, ID = {0}, name = {1}", group.IdGroup, group.GroupName);
+      if (_currentChannelGroup != null)
+      {
+        SaveChannelsInGroupOrder();
+      }
+      _currentChannelGroup = group;
+
+      listViewChannelsInGroup.BeginUpdate();
       try
       {
-        ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-        if (indexes.Count == 0)
-          return;
-        for (int i = 0; i < indexes.Count; ++i)
+        listViewChannelsInGroup.Items.Clear();
+        List<GroupMap> mappings;
+        if (_channelsInGroupMappingCache.TryGetValue(group.IdGroup, out mappings))
         {
-          int index = indexes[i];
-          if (index > 0)
+          ListViewItem[] items = new ListViewItem[mappings.Count];
+          int i = 0;
+          foreach (GroupMap mapping in mappings)
           {
-            ListViewItem item = mpListView1.Items[index];
-            mpListView1.Items.RemoveAt(index);
-            mpListView1.Items.Insert(index - 1, item);
+            ListViewItem item;
+            if (_listViewChannelsInGroupItemCache.TryGetValue(mapping.IdChannel, out item))
+            {
+              item.Tag = mapping;
+              items[i++] = item;
+            }
+          }
+          listViewChannelsInGroup.Items.AddRange(items);
+        }
+      }
+      finally
+      {
+        listViewChannelsInGroup.EndUpdate();
+      }
+
+      listViewChannelsInGroup_SelectedIndexChanged(null, null);
+    }
+
+    private void listViewChannelsInGroup_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      ListView.SelectedListViewItemCollection items = listViewChannelsInGroup.SelectedItems;
+      buttonGroupChannelsRemove.Enabled = items.Count > 0;
+      buttonGroupOrderByNumber.Enabled = listViewChannelsInGroup.Items.Count > 1;
+      buttonGroupOrderByName.Enabled = buttonGroupOrderByNumber.Enabled;
+      buttonGroupOrderUp.Enabled = items.Count > 1 || (items.Count == 1 && items[0].Index != 0);
+      buttonGroupOrderDown.Enabled = items.Count > 1 || (items.Count == 1 && items[0].Index != listViewChannelsInGroup.Items.Count - 1);
+    }
+
+    private void listViewChannelsInGroup_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Delete)
+      {
+        buttonGroupChannelsRemove_Click(null, null);
+        e.Handled = true;
+      }
+    }
+
+    private ListViewItem CreateChannelsInGroupItemForChannel(Channel channel)
+    {
+      ListViewItem item = new ListViewItem(channel.Name);
+      ListViewItem.ListViewSubItem subItem = item.SubItems.Add(channel.ChannelNumber.ToString());
+      subItem.Tag = channel;
+      return item;
+    }
+
+    private void UpdateChannelsInGroupViewOnAddOrEditChannels(IEnumerable<Channel> channels)
+    {
+      listViewChannelsInGroup.BeginUpdate();
+      try
+      {
+        foreach (Channel channel in channels)
+        {
+          ListViewItem newItem = CreateChannelsInGroupItemForChannel(channel);
+          ListViewItem oldItem;
+          if (_listViewChannelsInGroupItemCache.TryGetValue(channel.IdChannel, out oldItem) && oldItem.Index >= 0)
+          {
+            newItem.Tag = oldItem.Tag;
+            int index = oldItem.Index;
+            oldItem.Remove();
+            listViewChannelsInGroup.Items.Insert(index, newItem);
+          }
+          _listViewChannelsInGroupItemCache[channel.IdChannel] = newItem;
+        }
+      }
+      finally
+      {
+        listViewChannelsInGroup.EndUpdate();
+      }
+    }
+
+    private void UpdateChannelsInGroupViewOnDeleteChannels(IEnumerable<Channel> channels)
+    {
+      HashSet<int> channelIds = new HashSet<int>();
+      listViewChannelsInGroup.BeginUpdate();
+      try
+      {
+        foreach (Channel channel in channels)
+        {
+          channelIds.Add(channel.IdChannel);
+
+          ListViewItem item;
+          if (_listViewChannelsInGroupItemCache.TryGetValue(channel.IdChannel, out item))
+          {
+            item.Remove();
+            _listViewChannelsInGroupItemCache.Remove(channel.IdChannel);
           }
         }
-        ReOrder();
       }
       finally
       {
-        mpListView1.EndUpdate();
+        listViewChannelsInGroup.EndUpdate();
+      }
+
+      foreach (KeyValuePair<int, List<GroupMap>> groupMappings in _channelsInGroupMappingCache)
+      {
+        groupMappings.Value.RemoveAll(mapping => channelIds.Contains(mapping.IdChannel));
       }
     }
 
-    private void mpButtonDown_Click(object sender, EventArgs e)
+    #region group buttons
+
+    private void buttonGroupAdd_Click(object sender, EventArgs e)
     {
-      mpListView1.BeginUpdate();
-      try
+      CreateNewChannelGroup();
+    }
+
+    private ChannelGroup CreateNewChannelGroup()
+    {
+      FormEnterText dlg = new FormEnterText("New Channel Group", "Please enter a name for the new channel group:", "channel group");
+      while (true)
       {
-        ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-        if (indexes.Count == 0)
-          return;
-        if (mpListView1.Items.Count < 2)
-          return;
-        for (int i = indexes.Count - 1; i >= 0; i--)
+        if (dlg.ShowDialog() != DialogResult.OK)
         {
-          int index = indexes[i];
-          ListViewItem item = mpListView1.Items[index];
-          mpListView1.Items.RemoveAt(index);
-          if (index + 1 < mpListView1.Items.Count)
-            mpListView1.Items.Insert(index + 1, item);
-          else
-            mpListView1.Items.Add(item);
+          dlg.Dispose();
+          return null;
         }
-        ReOrder();
-      }
-      finally
-      {
-        mpListView1.EndUpdate();
-      }
-    }
 
-    private void mpButtonAddGroup_Click(object sender, EventArgs e)
-    {
-      GroupNameForm dlg = new GroupNameForm();
-      if (dlg.ShowDialog(this) != DialogResult.OK)
-      {
-        return;
-      }
-
-      var group = new ChannelGroup { GroupName = dlg.GroupName, SortOrder = 9999, MediaType = (int)_mediaType};
-
-      group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
-      group.AcceptChanges();
-
-      RefreshContextMenu();
-      RefreshTabs();
-    }
-
-    private void mpButtonRenameGroup_Click(object sender, EventArgs e)
-    {
-      GroupSelectionForm dlgGrpSel = new GroupSelectionForm();
-      dlgGrpSel.Selection = GroupSelectionForm.SelectionType.ForRenaming;
-
-      if (dlgGrpSel.ShowDialog(typeof (ChannelGroup), this) != DialogResult.OK)
-      {
-        return;
-      }
-
-      ChannelGroup group = dlgGrpSel.Group as ChannelGroup;
-      if (group == null)
-      {
-        return;
-      }
-
-      GroupNameForm dlgGrpName = new GroupNameForm(group.GroupName);
-      if (dlgGrpName.ShowDialog(this) != DialogResult.OK)
-      {
-        return;
-      }
-
-      group.GroupName = dlgGrpName.GroupName;
-      group.MediaType = (int) _mediaType;
-      group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
-      group.AcceptChanges();
-
-      if (group.GroupMaps.Count > 0)
-      {
-        RefreshAll();
-      }
-      else
-      {
-        RefreshContextMenu();
-        RefreshTabs();
-      }
-    }
-
-    private void mpButtonDelGroup_Click(object sender, EventArgs e)
-    {
-      GroupSelectionForm dlgGrpSel = new GroupSelectionForm();
-
-      if (dlgGrpSel.ShowDialog(typeof (ChannelGroup), this) != DialogResult.OK)
-      {
-        return;
-      }
-
-      ChannelGroup group = dlgGrpSel.Group as ChannelGroup;
-      if (group == null)
-      {
-        return;
-      }
-
-      DialogResult result = MessageBox.Show(string.Format("Are you sure you want to delete the group '{0}'?",
-                                                          group.GroupName), "", MessageBoxButtons.YesNo);
-
-      if (result == DialogResult.No)
-      {
-        return;
-      }
-
-      bool isGroupEmpty = (group.GroupMaps.Count <= 0);
-
-      ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroup(group.IdGroup);      
-            
-
-      if (!isGroupEmpty)
-      {
-        RefreshAll();
-      }
-      else
-      {
-        RefreshContextMenu();
-        RefreshTabs();
-      }
-    }
-
-    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      if (_suppressRefresh)
-      {
-        return;
-      }
-
-      if (tabControl1.SelectedIndex == 0)
-      {
-        OnSectionActivated();
-      }
-      else
-      {
-        if (tabControl1.TabCount > 0)
+        bool found = false;
+        int lastGroupSortOrder = 0;
+        foreach (ChannelGroup g in comboBoxChannelGroup.Items)
         {
-          TabPage page = tabControl1.TabPages[tabControl1.SelectedIndex];
-          foreach (Control control in page.Controls)
+          if (string.Equals(g.GroupName, dlg.TextValue))
           {
-            ChannelsInGroupControl groupCnt = control as ChannelsInGroupControl;
-            if (groupCnt != null)
+            MessageBox.Show(string.Format("There is already a group named {0}. Please choose a different name.", g.GroupName), MESSAGE_CAPTION);
+            found = true;
+            break;
+          }
+          lastGroupSortOrder = g.SortOrder;
+        }
+
+        if (!found)
+        {
+          ChannelGroup group = new ChannelGroup();
+          group.GroupName = dlg.TextValue;
+          group.MediaType = (int)_mediaType;
+          group.SortOrder = lastGroupSortOrder + 1;
+          group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
+          this.LogInfo("channels: channel group {0} added, name = {1}", group.IdGroup, group.GroupName);
+
+          _listViewChannelsHandler.AddGroup(group);
+          _channelsInGroupMappingCache[group.IdGroup] = new List<GroupMap>(_listViewChannelsHandler.AllItems.Count);
+          comboBoxChannelGroup.BeginUpdate();
+          try
+          {
+            comboBoxChannelGroup.Items.Add(group);
+            comboBoxChannelGroup.SelectedIndex = comboBoxChannelGroup.Items.Count - 1;
+          }
+          finally
+          {
+            comboBoxChannelGroup.EndUpdate();
+          }
+
+          buttonGroupDelete.Enabled = comboBoxChannelGroup.Items.Count > 1;
+          buttonGroupOrder.Enabled = buttonGroupDelete.Enabled;
+
+          dlg.Dispose();
+          return group;
+        }
+      }
+    }
+
+    private void buttonGroupRename_Click(object sender, EventArgs e)
+    {
+      FormEnterText dlg = new FormEnterText("Rename Channel Group", "Please enter a new name for the channel group:", _currentChannelGroup.GroupName);
+      while (true)
+      {
+        if (dlg.ShowDialog() != DialogResult.OK)
+        {
+          dlg.Dispose();
+          return;
+        }
+
+        bool found = false;
+        foreach (ChannelGroup g in comboBoxChannelGroup.Items)
+        {
+          if (string.Equals(g.GroupName, dlg.TextValue) && g.IdGroup != _currentChannelGroup.IdGroup)
+          {
+            found = true;
+            MessageBox.Show(string.Format("There is already a group named {0}. Please choose a different name.", g.GroupName), MESSAGE_CAPTION);
+            break;
+          }
+        }
+
+        if (!found)
+        {
+          this.LogInfo("channels: channel group {0} renamed, old name = {1}, new name = {2}", _currentChannelGroup.IdGroup, _currentChannelGroup.GroupName, dlg.TextValue);
+          _currentChannelGroup.GroupName = dlg.TextValue;
+          _currentChannelGroup = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(_currentChannelGroup);
+
+          int index = comboBoxChannelGroup.SelectedIndex;
+          comboBoxChannelGroup.BeginUpdate();
+          comboBoxChannelGroup.SelectedIndexChanged -= comboBoxChannelGroup_SelectedIndexChanged;
+          try
+          {
+            comboBoxChannelGroup.Items.RemoveAt(index);
+            comboBoxChannelGroup.Items.Insert(index, _currentChannelGroup);
+            comboBoxChannelGroup.SelectedIndex = index;
+          }
+          finally
+          {
+            comboBoxChannelGroup.SelectedIndexChanged += comboBoxChannelGroup_SelectedIndexChanged;
+            comboBoxChannelGroup.EndUpdate();
+          }
+
+          _listViewChannelsHandler.AddOrUpdateGroup(_currentChannelGroup);
+
+          dlg.Dispose();
+          return;
+        }
+      }
+    }
+
+    private void buttonGroupDelete_Click(object sender, EventArgs e)
+    {
+      // We must ensure that at least one group always exists so that plugins etc. function correctly.
+      if (comboBoxChannelGroup.Items.Count < 2)
+      {
+        return;
+      }
+
+      // Prompt if one or more channels are in the group.
+      List<GroupMap> mappings;
+      if (!_channelsInGroupMappingCache.TryGetValue(_currentChannelGroup.IdGroup, out mappings))
+      {
+        mappings = new List<GroupMap>(0);
+      }
+      if (mappings.Count > 0)
+      {
+        DialogResult result = MessageBox.Show("Are you sure you want to delete this group?", MESSAGE_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+        if (result != DialogResult.Yes)
+        {
+          return;
+        }
+      }
+
+      this.LogInfo("channels: channel group {0} deleted, channels = [{1}]", _currentChannelGroup.IdGroup, string.Join(", ", from mapping in mappings select mapping.IdChannel));
+      _listViewChannelsHandler.DeleteGroup(_currentChannelGroup);
+      ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroup(_currentChannelGroup.IdGroup);
+      _channelsInGroupMappingCache.Remove(_currentChannelGroup.IdGroup);
+      comboBoxChannelGroup.Items.Remove(_currentChannelGroup);
+      comboBoxChannelGroup.SelectedIndex = 0;
+
+      buttonGroupDelete.Enabled = comboBoxChannelGroup.Items.Count > 1;
+      buttonGroupOrder.Enabled = buttonGroupDelete.Enabled;
+    }
+
+    private void buttonGroupOrder_Click(object sender, EventArgs e)
+    {
+      ListViewItem[] items = new ListViewItem[comboBoxChannelGroup.Items.Count];
+      int i = 0;
+      foreach (ChannelGroup group in comboBoxChannelGroup.Items)
+      {
+        ListViewItem item = new ListViewItem(group.GroupName);
+        item.Tag = group;
+        items[i++] = item;
+      }
+
+      using (FormOrderItems dlg = new FormOrderItems("Order Channel Groups", "Please set the order of the channel groups:", items))
+      {
+        i = 0;
+        if (dlg.ShowDialog() == DialogResult.OK)
+        {
+          bool isOrderChanged = false;
+          int selectedIndex = 0;
+          ChannelGroup[] groups = new ChannelGroup[comboBoxChannelGroup.Items.Count];
+          foreach (ListViewItem item in dlg.Items)
+          {
+            ChannelGroup group = item.Tag as ChannelGroup;
+            if (group == null)
             {
-              groupCnt.Group = (ChannelGroup)page.Tag;
-              groupCnt.OnActivated();
+              continue;
+            }
+
+            if (group.IdGroup == _currentChannelGroup.IdGroup)
+            {
+              selectedIndex = i;
+            }
+            if (group.SortOrder != ++i)
+            {
+              isOrderChanged = true;
+              this.LogInfo("channels: channel group {0} sort order changed from {1} to {2}", group.IdGroup, group.SortOrder, i);
+              group.SortOrder = i;
+              group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
+            }
+            groups[i - 1] = group;
+          }
+
+          if (isOrderChanged)
+          {
+            comboBoxChannelGroup.BeginUpdate();
+            comboBoxChannelGroup.SelectedIndexChanged -= comboBoxChannelGroup_SelectedIndexChanged;
+            try
+            {
+              comboBoxChannelGroup.Items.Clear();
+              comboBoxChannelGroup.Items.AddRange(groups);
+              comboBoxChannelGroup.SelectedIndex = selectedIndex;
+            }
+            finally
+            {
+              comboBoxChannelGroup.SelectedIndexChanged += comboBoxChannelGroup_SelectedIndexChanged;
+              comboBoxChannelGroup.EndUpdate();
             }
           }
         }
       }
     }
 
-    private void tabControl1_DragOver(object sender, DragEventArgs e)
+    #endregion
+
+    #region channel buttons
+
+    private void buttonGroupChannelsAdd_Click(object sender, EventArgs e)
     {
-      //means a channel group assignment is going to be performed
-      if (e.Data.GetData(typeof (MPListView)) != null)
+      List<GroupMap> channelsInGroup;
+      if (!_channelsInGroupMappingCache.TryGetValue(_currentChannelGroup.IdGroup, out channelsInGroup))
       {
-        for (int i = 0; i < tabControl1.TabPages.Count; i++)
+        channelsInGroup = new List<GroupMap>(0);
+      }
+      List<Channel> availableChannels = new List<Channel>(_listViewChannelsHandler.AllItems.Count);
+      foreach (ListViewItem item in _listViewChannelsHandler.AllItems)
+      {
+        Channel channel = _listViewChannelsHandler.GetChannelForItem(item);
+        if (channel != null && !channelsInGroup.Exists(mapping => mapping.IdChannel == channel.IdChannel))
         {
-          if (i == tabControl1.SelectedIndex)
+          availableChannels.Add(channel);
+        }
+      }
+      if (availableChannels.Count == 0)
+      {
+        MessageBox.Show("All channels are already in this group.", MESSAGE_CAPTION);
+        return;
+      }
+
+      using (FormSelectItems dlg = new FormSelectItems("Add Channel(s) To Group", "Please select one or more channels to add:", availableChannels.ToArray(), "DisplayName", true))
+      {
+        if (dlg.ShowDialog() != DialogResult.OK || dlg.Items == null || dlg.Items.Count == 0)
+        {
+          return;
+        }
+
+        IList<Channel> channelsToAdd = new List<Channel>(dlg.Items.Count);
+        foreach (Channel channel in dlg.Items)
+        {
+          channelsToAdd.Add(channel);
+        }
+        AddChannelsToGroup(_currentChannelGroup, channelsToAdd);
+      }
+    }
+
+    private void AddChannelsToGroup(ChannelGroup group, ICollection<Channel> channels)
+    {
+      if (group == null || channels == null || channels.Count == 0)
+      {
+        return;
+      }
+
+      NotifyForm dlg = null;
+      if (channels.Count > 10)
+      {
+        dlg = new NotifyForm("Adding selected channels to group...",
+                                        "This can take some time." + Environment.NewLine + Environment.NewLine + "Please be patient...");
+        dlg.Show(this);
+        dlg.WaitForDisplay();
+      }
+
+      try
+      {
+        List<GroupMap> existingMappings;
+        if (!_channelsInGroupMappingCache.TryGetValue(group.IdGroup, out existingMappings))
+        {
+          existingMappings = new List<GroupMap>(channels.Count);
+          _channelsInGroupMappingCache[group.IdGroup] = existingMappings;
+        }
+
+        int lastMappingSortOrder = existingMappings.Count + 1;
+        IList<GroupMap> mappings = new List<GroupMap>(channels.Count);
+        IDictionary<int, Channel> channelDictionary = new Dictionary<int, Channel>(channels.Count);
+        foreach (Channel channel in channels)
+        {
+          channelDictionary.Add(channel.IdChannel, channel);
+          GroupMap mapping = new GroupMap();
+          mapping.IdChannel = channel.IdChannel;
+          mapping.IdGroup = group.IdGroup;
+          mapping.SortOrder = lastMappingSortOrder++;
+          mappings.Add(mapping);
+        }
+        this.LogInfo("channels: {0} channel(s) added to group {1}, channels = [{2}]", channelDictionary.Count, group.IdGroup, string.Join(", ", channelDictionary.Keys));
+        mappings = ServiceAgents.Instance.ChannelServiceAgent.SaveChannelGroupMaps(mappings);
+
+        existingMappings.AddRange(mappings);
+        _listViewChannelsHandler.AddChannelsToGroup(mappings);
+
+        // If the group that we're adding to is currently selected on the
+        // channel groups tab then add the items.
+        if (comboBoxChannelGroup.SelectedItem == group)
+        {
+          ListViewItem[] items = new ListViewItem[mappings.Count];
+          int i = 0;
+          foreach (GroupMap mapping in mappings)
           {
-            continue;
+            ListViewItem item;
+            if (_listViewChannelsInGroupItemCache.TryGetValue(mapping.IdChannel, out item))
+            {
+              item.Tag = mapping;
+              items[i++] = item;
+            }
           }
 
-          if (tabControl1.GetTabRect(i).Contains(PointToClient(new System.Drawing.Point(e.X, e.Y))))
+          listViewChannelsInGroup.BeginUpdate();
+          listViewChannelsInGroup.Items.AddRange(items);
+          listViewChannelsInGroup.EndUpdate();
+
+          listViewChannelsInGroup_SelectedIndexChanged(null, null);
+        }
+      }
+      finally
+      {
+        if (dlg != null)
+        {
+          dlg.Close();
+          dlg.Dispose();
+        }
+      }
+    }
+
+    private void buttonGroupChannelsRemove_Click(object sender, EventArgs e)
+    {
+      ListView.SelectedListViewItemCollection items = listViewChannelsInGroup.SelectedItems;
+      if (items == null || items.Count == 0)
+      {
+        return;
+      }
+
+      NotifyForm dlg = null;
+      if (items.Count > 10)
+      {
+        dlg = new NotifyForm("Removing selected channels from group...",
+                                        "This can take some time." + Environment.NewLine + Environment.NewLine + "Please be patient...");
+        dlg.Show(this);
+        dlg.WaitForDisplay();
+      }
+
+      try
+      {
+        List<GroupMap> mappings = new List<GroupMap>(items.Count);
+        HashSet<int> mappingIds = new HashSet<int>();
+        IList<int> channelIds = new List<int>(items.Count);
+        listViewChannelsInGroup.BeginUpdate();
+        try
+        {
+          foreach (ListViewItem item in items)
           {
-            tabControl1.SelectedIndex = i;
+            GroupMap mapping = item.Tag as GroupMap;
+            if (mapping != null)
+            {
+              mappings.Add(mapping);
+              mappingIds.Add(mapping.IdMap);
+              channelIds.Add(mapping.IdChannel);
+            }
+            listViewChannelsInGroup.Items.Remove(item);
+          }
+        }
+        finally
+        {
+          listViewChannelsInGroup.EndUpdate();
+        }
+
+        this.LogInfo("channels: {0} channel(s) removed from group {1}, channels = [{2}]", channelIds.Count, _currentChannelGroup.IdGroup, string.Join(", ", channelIds));
+        ServiceAgents.Instance.ChannelServiceAgent.DeleteChannelGroupMaps(mappingIds);
+
+        _listViewChannelsHandler.RemoveChannelsFromGroup(mappings);
+        if (_channelsInGroupMappingCache.TryGetValue(_currentChannelGroup.IdGroup, out mappings))
+        {
+          mappings.RemoveAll(mapping => mappingIds.Contains(mapping.IdMap));
+        }
+      }
+      finally
+      {
+        listViewChannelsInGroup_SelectedIndexChanged(null, null);
+        if (dlg != null)
+        {
+          dlg.Close();
+          dlg.Dispose();
+        }
+      }
+    }
+
+    #endregion
+
+    #region order
+
+    private void listViewChannelsInGroup_ColumnClick(object sender, ColumnClickEventArgs e)
+    {
+      MPButton buttonSort = null;
+      MPButton buttonOther = null;
+      switch (e.Column)
+      {
+        case 0:
+          buttonSort = buttonGroupOrderByName;
+          buttonOther = buttonGroupOrderByNumber;
+          break;
+        case 1:
+          buttonSort = buttonGroupOrderByNumber;
+          buttonOther = buttonGroupOrderByName;
+          break;
+      }
+
+      if (e.Column == _listViewChannelsInGroupColumnSorter.SortColumn)
+      {
+        // Reverse the current sort direction for this column.
+        _listViewChannelsInGroupColumnSorter.Order = _channelsInGroupLastSortOrder == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+      }
+      else
+      {
+        // Set the column number that is to be sorted; default to ascending.
+        _listViewChannelsInGroupColumnSorter.SortColumn = e.Column;
+        _listViewChannelsInGroupColumnSorter.Order = SortOrder.Ascending;
+      }
+
+      _channelsInGroupLastSortOrder = _listViewChannelsInGroupColumnSorter.Order;
+
+      // Perform the sort with these new sort options.
+      listViewChannelsInGroup.Sort();
+
+      if (buttonSort != null)
+      {
+        switch (_listViewChannelsInGroupColumnSorter.Order)
+        {
+          // Ascending and descending icons reversed intentionally. Having the
+          // arrows point the opposite way to the sort sequence was confusing.
+          case SortOrder.Ascending:
+            buttonSort.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_sort_dsc;
             break;
+          case SortOrder.Descending:
+            buttonSort.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_sort_asc;
+            break;
+          case SortOrder.None:
+            buttonSort.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_sort_none;
+            break;
+        }
+      }
+
+      buttonOther.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_sort_none;
+
+      // Reset sort order to enable manual re-ordering.
+      _listViewChannelsInGroupColumnSorter.Order = SortOrder.None;
+    }
+
+    private void buttonGroupOrderByName_Click(object sender, EventArgs e)
+    {
+      listViewChannelsInGroup_ColumnClick(null, new ColumnClickEventArgs(0));
+    }
+
+    private void buttonGroupOrderByNumber_Click(object sender, EventArgs e)
+    {
+      listViewChannelsInGroup_ColumnClick(null, new ColumnClickEventArgs(1));
+    }
+
+    private void buttonGroupOrderUp_Click(object sender, EventArgs e)
+    {
+      ListView.SelectedListViewItemCollection items = listViewChannelsInGroup.SelectedItems;
+      if (items == null || listViewChannelsInGroup.Items.Count < 2)
+      {
+        return;
+      }
+      listViewChannelsInGroup.BeginUpdate();
+      try
+      {
+        foreach (ListViewItem item in items)
+        {
+          int index = item.Index;
+          if (index > 0)
+          {
+            listViewChannelsInGroup.Items.RemoveAt(index);
+            listViewChannelsInGroup.Items.Insert(index - 1, item);
           }
         }
       }
+      finally
+      {
+        listViewChannelsInGroup.EndUpdate();
+      }
+
+      listViewChannelsInGroup.Focus();
     }
 
-    private void tabControl1_DragDrop(object sender, DragEventArgs e)
+    private void buttonGroupOrderDown_Click(object sender, EventArgs e)
     {
-      TabPage droppedTabPage = e.Data.GetData(typeof (TabPage)) as TabPage;
-      if (droppedTabPage == null)
+      ListView.SelectedListViewItemCollection items = listViewChannelsInGroup.SelectedItems;
+      if (items == null || listViewChannelsInGroup.Items.Count < 2)
       {
         return;
       }
-
-      int targetIndex = -1;
-
-      System.Drawing.Point pt = new System.Drawing.Point(e.X, e.Y);
-
-      pt = PointToClient(pt);
-
-      for (int i = 0; i < tabControl1.TabPages.Count; i++)
+      listViewChannelsInGroup.BeginUpdate();
+      try
       {
-        if (tabControl1.GetTabRect(i).Contains(pt))
+        for (int i = items.Count - 1; i >= 0; i--)
         {
-          targetIndex = i;
-          break;
+          ListViewItem item = items[i];
+          int index = item.Index;
+          if (index + 1 < listViewChannelsInGroup.Items.Count)
+          {
+            listViewChannelsInGroup.Items.RemoveAt(index);
+            listViewChannelsInGroup.Items.Insert(index + 1, item);
+          }
         }
       }
-
-      if (targetIndex < 0)
+      finally
       {
-        return;
+        listViewChannelsInGroup.EndUpdate();
       }
 
-      _suppressRefresh = true;
-
-      int sourceIndex = tabControl1.TabPages.IndexOf(droppedTabPage);
-
-      //it looks a bit ugly when the first tab gets the focus, due to the other design
-      if (sourceIndex == tabControl1.TabPages.Count - 1)
-      {
-        tabControl1.SelectedIndex = sourceIndex - 1;
-      }
-      else
-      {
-        tabControl1.DeselectTab(sourceIndex);
-      }
-
-      tabControl1.TabPages.RemoveAt(sourceIndex);
-
-      tabControl1.TabPages.Insert(targetIndex, droppedTabPage);
-      tabControl1.SelectedIndex = targetIndex;
-
-      _suppressRefresh = false;
-
-      ReOrderGroups();
+      listViewChannelsInGroup.Focus();
     }
 
-    private void tabControl1_MouseClick(object sender, MouseEventArgs e)
+    private void SaveChannelsInGroupOrder()
     {
-      if (e.Button != MouseButtons.Right)
+      List<GroupMap> existingMappings;
+      if (!_channelsInGroupMappingCache.TryGetValue(_currentChannelGroup.IdGroup, out existingMappings))
       {
+        // This can happen when we delete the channel group.
         return;
       }
 
-      int targetIndex = -1;
-      System.Drawing.Point pt = new System.Drawing.Point(e.X, e.Y);
-
-      for (int i = 0; i < tabControl1.TabPages.Count; i++)
+      existingMappings.Clear();
+      IList<GroupMap> mappings = new List<GroupMap>(listViewChannelsInGroup.Items.Count);
+      IList<int> channelIds = new List<int>(listViewChannelsInGroup.Items.Count);
+      int i = 1;
+      foreach (ListViewItem item in listViewChannelsInGroup.Items)
       {
-        if (tabControl1.GetTabRect(i).Contains(pt))
+        GroupMap mapping = item.Tag as GroupMap;
+        if (mapping == null)
         {
-          targetIndex = i;
-          break;
+          continue;
         }
+        if (mapping.SortOrder != i)
+        {
+          mapping.SortOrder = i;
+          mappings.Add(mapping);
+          channelIds.Add(mapping.IdChannel);
+        }
+        existingMappings.Add(mapping);
+        i++;
       }
-
-      //first tab isn't a group tab
-      if (targetIndex < 1)
+      if (mappings.Count > 0)
       {
-        return;
-      }
+        this.LogInfo("channels: {0} channel(s) reordered in group {1}, channels = [{2}]", mappings.Count, _currentChannelGroup.IdGroup, string.Join(", ", channelIds));
+        ServiceAgents.Instance.ChannelServiceAgent.SaveChannelGroupMaps(mappings);
 
-      ChannelGroup group = tabControl1.TabPages[targetIndex].Tag as ChannelGroup;
-      if (group == null)
-      {
-        return;
-      }
-
-      bool isFixedGroupName = (
-                                group.GroupName == TvConstants.TvGroupNames.AllChannels ||
-                                group.GroupName == TvConstants.TvGroupNames.Analog ||
-                                group.GroupName == TvConstants.TvGroupNames.DVBC ||
-                                group.GroupName == TvConstants.TvGroupNames.DVBS ||
-                                group.GroupName == TvConstants.TvGroupNames.DVBT
-                              );
-
-      bool isGlobalChannelsGroup = (
-                                     group.GroupName == TvConstants.TvGroupNames.AllChannels
-                                   );
-
-      renameGroupToolStripMenuItem.Tag = tabControl1.TabPages[targetIndex];
-      deleteGroupToolStripMenuItem.Tag = renameGroupToolStripMenuItem.Tag;
-
-      renameGroupToolStripMenuItem.Enabled = !isFixedGroupName;
-      deleteGroupToolStripMenuItem.Enabled = !isGlobalChannelsGroup;
-
-      pt = tabControl1.PointToScreen(pt);
-
-      groupTabContextMenuStrip.Show(pt);
-    }
-
-    private void renameGroupToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-      ToolStripDropDownItem menuItem = sender as ToolStripDropDownItem;
-      if (menuItem == null)
-      {
-        return;
-      }
-
-      TabPage tab = menuItem.Tag as TabPage;
-      if (tab == null)
-      {
-        return;
-      }
-
-      ChannelGroup group = tab.Tag as ChannelGroup;
-      if (group == null)
-      {
-        return;
-      }
-
-      GroupNameForm dlg = new GroupNameForm(group.GroupName);
-
-      dlg.ShowDialog(this);
-
-      if (dlg.GroupName.Length == 0)
-      {
-        return;
-      }
-
-      group.GroupName = dlg.GroupName;
-      group.MediaType = (int)_mediaType;
-      group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
-      group.AcceptChanges();
-
-      tab.Text = dlg.GroupName;
-
-      if (group.GroupMaps.Count > 0 && tabControl1.SelectedIndex == 0)
-      {
-        RefreshContextMenu();
-        RefreshAllChannels();
-      }
-      else
-      {
-        RefreshContextMenu();
+        // We're not creating new mappings here, so no need to bother
+        // integrating the mappings returned by Save(). Also, since this
+        // function is called on group or section change there is no need to
+        // touch the items in the list view. This means we can get away with
+        // simply reseting the change trackers, which is easier than searching
+        // and replacing each saved mapping.
+        foreach (GroupMap mapping in existingMappings)
+        {
+          mapping.AcceptChanges();
+        }
+        this.LogDebug("channels: new order for group {0}, channels = [{1}]", _currentChannelGroup.IdGroup, string.Join(", ", from mapping in existingMappings select mapping.IdChannel));
       }
     }
 
-    private void deleteGroupToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-      ToolStripDropDownItem menuItem = sender as ToolStripDropDownItem;
-      if (menuItem == null)
-      {
-        return;
-      }
+    #endregion
 
-      TabPage tab = menuItem.Tag as TabPage;
-      if (tab == null)
-      {
-        return;
-      }
-
-      ChannelGroup group = tab.Tag as ChannelGroup;
-      if (group == null)
-      {
-        return;
-      }
-
-      DialogResult result = MessageBox.Show(string.Format("Are you sure you want to delete the group '{0}'?",
-                                                          group.GroupName), "", MessageBoxButtons.YesNo);
-
-      if (result == DialogResult.No)
-      {
-        return;
-      }
-
-      bool groupIsEmpty = (group.GroupMaps.Count <= 0);
-
-      ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroup(group.IdGroup);      
-      tabControl1.TabPages.Remove(tab);
-
-      if (!groupIsEmpty && tabControl1.SelectedIndex == 0)
-      {
-        RefreshContextMenu();
-        RefreshAllChannels();
-      }
-      else
-      {
-        RefreshContextMenu();
-      }
-    }
+    #endregion
   }
 }

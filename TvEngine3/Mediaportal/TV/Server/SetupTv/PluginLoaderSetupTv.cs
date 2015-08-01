@@ -68,22 +68,22 @@ namespace Mediaportal.TV.Server.SetupTV
           fileStream.Write(stream.Value, 0, stream.Value.Length);
         }
       }
-      IDictionary<string, byte[]> streamListCustomDevices = ServiceAgents.Instance.ControllerServiceAgent.GetPluginBinariesCustomDevices();
-      string customDevicesFolder = Path.Combine(pluginsFolder, "CustomDevices");
-      if (!Directory.Exists(customDevicesFolder))
+      IDictionary<string, byte[]> streamListTunerExtensions = ServiceAgents.Instance.ControllerServiceAgent.GetPluginBinariesTunerExtensions();
+      string tunerExtensionsFolder = Path.Combine(pluginsFolder, "TunerExtensions");
+      if (!Directory.Exists(tunerExtensionsFolder))
       {
-        Directory.CreateDirectory(customDevicesFolder);
+        Directory.CreateDirectory(tunerExtensionsFolder);
       }
-      foreach (KeyValuePair<string, byte[]> stream in streamListCustomDevices)
+      foreach (KeyValuePair<string, byte[]> stream in streamListTunerExtensions)
       {
-        string fileFullPath = Path.Combine(customDevicesFolder, stream.Key);
+        string fileFullPath = Path.Combine(tunerExtensionsFolder, stream.Key);
         using (FileStream fileStream = File.Create(fileFullPath, stream.Value.Length))
         {
           fileStream.Write(stream.Value, 0, stream.Value.Length);
         }
       }
       IDictionary<string, byte[]> streamListResources = ServiceAgents.Instance.ControllerServiceAgent.GetPluginBinariesResources();
-      string resourceFolder = Path.Combine(customDevicesFolder, "Resources");
+      string resourceFolder = Path.Combine(tunerExtensionsFolder, "Resources");
       if (!Directory.Exists(resourceFolder))
       {
         Directory.CreateDirectory(resourceFolder);

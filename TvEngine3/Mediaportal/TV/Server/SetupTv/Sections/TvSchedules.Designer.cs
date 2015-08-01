@@ -70,7 +70,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader16 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader17 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader18 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader19 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -333,7 +332,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             this.columnHeader13,
             this.columnHeader14,
             this.columnHeader15,
-            this.columnHeader16,
             this.columnHeader17,
             this.columnHeader18,
             this.columnHeader19});
@@ -387,10 +385,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // columnHeader15
       // 
       this.columnHeader15.Text = "StarRating";
-      // 
-      // columnHeader16
-      // 
-      this.columnHeader16.Text = "ParentalRating";
       // 
       // columnHeader17
       // 
@@ -526,7 +520,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPLabel label25;
     private System.Windows.Forms.ColumnHeader columnHeader14;
     private System.Windows.Forms.ColumnHeader columnHeader15;
-    private System.Windows.Forms.ColumnHeader columnHeader16;
     private System.Windows.Forms.ColumnHeader columnHeader17;
     private System.Windows.Forms.ColumnHeader columnHeader18;
     private System.Windows.Forms.ColumnHeader columnHeader19;

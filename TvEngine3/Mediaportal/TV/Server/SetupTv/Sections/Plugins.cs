@@ -23,87 +23,114 @@ using System.Windows.Forms;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class Plugins : SectionSettings
   {
-    private readonly PluginLoaderSetupTv _loader;
-    private bool _needRestart;
+    private readonly PluginEnabledOrDisabledEventHandler _handler = null;
+    private readonly PluginLoaderSetupTv _pluginLoader;
     private bool _ignoreEvents;
 
-    public delegate void ChangedEventHandler(object sender, EventArgs e);
-
-    public event ChangedEventHandler ChangedActivePlugins;
-
-
-    public Plugins(string name, PluginLoaderSetupTv loader)
-      : base(name)
+    public Plugins(PluginEnabledOrDisabledEventHandler handler, PluginLoaderSetupTv pluginLoader)
+      : base("Plugins")
     {
-      _loader = loader;
+      _handler = handler;
+      _pluginLoader = pluginLoader;
       InitializeComponent();
     }
 
     public override void OnSectionActivated()
     {
-      _needRestart = false;
+      this.LogDebug("plugins: activating");
+
       _ignoreEvents = true;
-      
+      listViewPlugins.BeginUpdate();
+      try
+      {
+        listViewPlugins.AutoResizeColumns(ColumnHeaderAutoResizeStyle.None);
+        listViewPlugins.Items.Clear();
+
+        this.LogDebug("plugins: available plugins...");
+        ListViewGroup listGroup = listViewPlugins.Groups["listViewGroupAvailable"];
+        foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
+        {
+          bool isEnabled = ServiceAgents.Instance.SettingServiceAgent.GetValue(GetPluginEnabledSettingName(plugin), false);
+          this.LogDebug("  plugin...");
+          this.LogDebug("    name     = {0}", plugin.Name);
+          this.LogDebug("    enabled? = {0}", isEnabled);
+          this.LogDebug("    version  = {0}", plugin.Version);
+          this.LogDebug("    author   = {0}", plugin.Author);
+
+          ListViewItem item = listViewPlugins.Items.Add(string.Empty);
+          item.Group = listGroup;
+          item.SubItems.Add(plugin.Name);
+          item.SubItems.Add(plugin.Author);
+          item.SubItems.Add(plugin.Version);
+          item.Tag = plugin;
+          item.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue(GetPluginEnabledSettingName(plugin), false);
+        }
+
+        this.LogDebug("plugins: incompatible plugins...");
+        listGroup = listViewPlugins.Groups["listViewGroupIncompatible"];
+        foreach (Type plugin in _pluginLoader.IncompatiblePlugins)
+        {
+          string version = plugin.Assembly.GetName().Version.ToString();
+          this.LogDebug("  plugin...");
+          this.LogDebug("    name     = {0}", plugin.Name);
+          this.LogDebug("    version  = {0}", version);
+
+          ListViewItem item = listViewPlugins.Items.Add(string.Empty);
+          item.Group = listGroup;
+          item.SubItems.Add(plugin.Name);
+          item.SubItems.Add("Unknown");
+          item.SubItems.Add(version);
+          item.Checked = false;
+        }
+
+        listViewPlugins.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+      }
+      finally
+      {
+        listViewPlugins.EndUpdate();
+        _ignoreEvents = false;
+      }
+
       base.OnSectionActivated();
-      listView1.Items.Clear();
-      ListViewGroup listGroup = listView1.Groups["listViewGroupAvailable"];
-      foreach (ITvServerPlugin plugin in _loader.Plugins)
-      {
-        ListViewItem item = listView1.Items.Add("");
-        item.Group = listGroup;
-        item.SubItems.Add(plugin.Name);
-        item.SubItems.Add(plugin.Author);
-        item.SubItems.Add(plugin.Version);
-        item.Tag = string.Format("plugin{0}", plugin.Name);
-        item.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue((string)item.Tag, false);
-      }
-      listGroup = listView1.Groups["listViewGroupIncompatible"];
-      foreach (Type plugin in _loader.IncompatiblePlugins)
-      {
-        ListViewItem item = listView1.Items.Add("");
-        item.Group = listGroup;
-        item.SubItems.Add(plugin.Name);
-        item.SubItems.Add("Unknown");
-        item.SubItems.Add(plugin.Assembly.GetName().Version.ToString());
-        item.Checked = false;
-      }
-      listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-      _ignoreEvents = false;
     }
 
-    public override void OnSectionDeActivated()
-    {
-      if (_needRestart)
-      {
-        MessageBox.Show(this, "The activated plugins will be started after you restart the TVService manually",
-          "Plugin activation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-      }
-      base.OnSectionDeActivated();
-    }
-
-    private void listView1_ItemChecked(object sender, ItemCheckedEventArgs e)
+    private void listViewPlugins_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
       if (_ignoreEvents)
+      {
         return;
+      }
+      ITvServerPlugin plugin = e.Item.Tag as ITvServerPlugin;
+      if (plugin == null)
+      {
+        return;
+      }
 
-      string settingName = (string)e.Item.Tag;
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue(settingName, e.Item.Checked);
-      _needRestart = true;
+      if (e.Item.Checked)
+      {
+        this.LogInfo("plugins: enable {0}", plugin.Name);
+      }
+      else
+      {
+        this.LogInfo("plugins: disable {0}", plugin.Name);
+      }
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue(GetPluginEnabledSettingName(plugin), e.Item.Checked);
 
-      OnChanged(settingName, EventArgs.Empty);
+      if (_handler != null)
+      {
+        _handler(this, plugin, e.Item.Checked);
+      }
     }
 
-    //Pass on the information for the plugin that was changed
-    protected virtual void OnChanged(object sender, EventArgs e)
+    public static string GetPluginEnabledSettingName(ITvServerPlugin plugin)
     {
-      if (ChangedActivePlugins != null)
-        ChangedActivePlugins(sender, e);
+      return string.Format("pluginEnabled{0}", plugin.Name);
     }
   }
 }

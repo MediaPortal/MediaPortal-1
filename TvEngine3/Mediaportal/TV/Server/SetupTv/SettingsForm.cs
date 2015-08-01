@@ -21,9 +21,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupTV.Sections;
@@ -33,171 +32,74 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using PluginsSection = Mediaportal.TV.Server.SetupTV.Sections.Plugins;
 
 namespace Mediaportal.TV.Server.SetupTV
 {
-  /// <summary>
-  /// Summary description for Settings.
-  /// </summary>
-  public class SetupTvSettingsForm : SettingsForm
+  public partial class SettingsForm : MPForm
   {
-
+    private SectionSettings _currentSection = null;
+    private static IDictionary<string, SectionTreeNode> _sections = new Dictionary<string, SectionTreeNode>(100);
     private readonly PluginLoaderSetupTv _pluginLoader = new PluginLoaderSetupTv();
-    private Sections.Plugins pluginsRoot;
-    private Servers servers;
-    private TvCards cardPage;
-    private bool showAdvancedSettings;
+    private Tuners _sectionTuners = null;
+    private Mediaportal.TV.Server.SetupTV.Sections.Plugins _sectionPlugins = null;
 
-    public SetupTvSettingsForm()
-      : this(false)
+    public SettingsForm(bool showAdvancedSettings)
     {
-      
-    }
-
-    public SetupTvSettingsForm(bool ShowAdvancedSettings)
-      : base(ServiceHelper.IsRestrictedMode)
-    {
-      showAdvancedSettings = ShowAdvancedSettings;
       InitializeComponent();
-      try
-      {
-        Init();
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "Failed to startup cause of exception");
-      }
-    }
-
-    private void Init()
-    {
-      CheckForIllegalCrossThreadCalls = false;
-      //
-      // Set caption
-      //
-      Text = "MediaPortal - TV Server Configuration";
-
-      //
-      // Build options tree
-      //    
 
       try
       {
-        ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
-      }
-      catch (Exception ex)
-      {
-        MessageBox.Show("Failed to open WCF connection to server");
-        this.LogError("Unable to get list of servers");
-        this.LogError(ex);
-      }
+        // TODO remove this when we don't have bad code doing cross thread calls
+        CheckForIllegalCrossThreadCalls = false;
 
-      Project project = new Project();
-      AddSection(project);
-      
-      servers = new Servers();
-      AddSection(servers);
+        Text = "MediaPortal - TV Server Configuration";
+        linkLabelDonate.Links.Add(0, linkLabelDonate.Text.Length, "http://www.team-mediaportal.com/donate.html");
 
-      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
-      
-      bool connected = false;
-      while (!connected)
-      {
-        RemoteControl.HostName = ServiceAgents.Instance.SettingServiceAgent.GetValue("hostname", "localhost");
+        // Build the tree on the left hand side.
+        AddSection(new Project());
+        AddSection(new General());
 
-        if (cards.Count > 0)
-        {
-          try
-          {
-            Card c = cards.First();
-            ServiceAgents.Instance.ControllerServiceAgent.Type(c.IdCard);
-            connected = true;
-          }
-          catch (Exception ex)
-          {
-            string localHostname = Dns.GetHostName();
-            if (localHostname != RemoteControl.HostName)
-            {
-              DialogResult dlg = MessageBox.Show(String.Format("Unable to connect to <{0}>.\n" +
-                                                                "Do you want to try the current computer name ({1}) instead?",
-                                                                RemoteControl.HostName, localHostname),
-                                                  "Wrong config detected",
-                                                  MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-              if (dlg == DialogResult.Yes)
-              {
-                this.LogInfo("Controller: server {0} changed to {1}", RemoteControl.HostName, localHostname);                      
-                ServiceAgents.Instance.SettingServiceAgent.SaveValue("hostname", localHostname);
-                if (!ServiceHelper.IsRestrictedMode)
-                {
-                  ServiceHelper.Restart();
-                  ServiceHelper.WaitInitialized(); 
-                }                
-              }
-              else
-              {
-                MessageBox.Show("Setup will now close");
-                Environment.Exit(-1);
-              }
-            }
-            else
-            {
-              this.LogError("Cannot connect to server {0}", RemoteControl.HostName);
-              this.LogError(ex);
-              DialogResult dlg = MessageBox.Show("Unable to connect to <" + RemoteControl.HostName + ">.\n" +
-                                                  "Please check the TV Server logs for details.\n\n" +
-                                                  "Setup will now close.");
-              Environment.Exit(-1);
-            }
-          }
-        }
-        
-        AddServerTvCards(RemoteControl.HostName, false);
+        _sectionTuners = new Tuners(OnServerConfigurationChanged);
+        AddSection(_sectionTuners);
+        AddServerTuners(false);
 
-        Channels channels = new Channels("TV Channels", MediaTypeEnum.TV);            
+        Channels channels = new Channels("TV Channels", MediaType.Television);
         AddSection(channels);
-        AddChildSection(channels, new ChannelCombinations("TV Combinations", MediaTypeEnum.TV));
-        AddChildSection(channels, new ChannelMapping("TV Mapping", MediaTypeEnum.TV));
+        AddChildSection(channels, new ChannelMapping("Mapping", MediaType.Television));
 
-        Channels radioChannels = new Channels("Radio Channels", MediaTypeEnum.Radio);        
+        Channels radioChannels = new Channels("Radio Channels", MediaType.Radio);
         AddSection(radioChannels);
-        AddChildSection(radioChannels, new ChannelCombinations("Radio Combinations", MediaTypeEnum.Radio));
-        AddChildSection(radioChannels, new ChannelMapping("Radio Mapping", MediaTypeEnum.Radio));
+        AddChildSection(radioChannels, new ChannelMapping("Mapping ", MediaType.Radio));
 
-        Epg EpgSection = new Epg();
-        AddSection(EpgSection);
-        AddChildSection(EpgSection, new EpgGrabber("TV Epg grabber", "epgLanguages", "epgStoreOnlySelected", MediaTypeEnum.TV));
-        AddChildSection(EpgSection, new EpgGrabber("Radio Epg grabber", "radioLanguages", "epgRadioStoreOnlySelected", MediaTypeEnum.Radio));
-        AddChildSection(EpgSection, new EpgGenreMap());
-
-        AddSection(new ScanSettings());
-        AddSection(new TvRecording());
-        AddSection(new TvTimeshifting());
+        AddSection(new Epg());
+        AddSection(new TvRecording(OnServerConfigurationChanged));
+        AddSection(new TvTimeshifting(OnServerConfigurationChanged));
         AddSection(new TvSchedules());
-        AddSection(new StreamingServer());
-        AddSection(new UserPriorities());
+        AddSection(new StreamingServer(OnServerConfigurationChanged));
+        AddSection(new UserPriorities(OnServerConfigurationChanged));
 
-        AddSection(new TestService("Manual Control"));
-        AddSection(new TestChannels("Test Channels"));
+        AddSection(new TestService());
+        AddSection(new TestChannels());
 
         _pluginLoader.Load();
-        pluginsRoot = new Sections.Plugins("Plugins", _pluginLoader);
-        AddSection(pluginsRoot);
-
-        pluginsRoot.ChangedActivePlugins += SectChanged;
+        _sectionPlugins = new PluginsSection(OnPluginEnabledOrDisabled, _pluginLoader);
+        AddSection(_sectionPlugins);
 
         foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
         {
           SectionSettings settings = plugin.Setup;
           if (settings != null)
           {
-            bool isActive = ServiceAgents.Instance.SettingServiceAgent.GetValue(String.Format("plugin{0}", plugin.Name), false);
+            bool isActive = ServiceAgents.Instance.SettingServiceAgent.GetValue(PluginsSection.GetPluginEnabledSettingName(plugin), false);
             settings.Text = plugin.Name;
             if (isActive)
             {
-              AddChildSection(pluginsRoot, settings);
+              AddChildSection(_sectionPlugins, settings);
             }
           }
         }
+
         if (showAdvancedSettings)
         {
           AddSection(new DebugOptions());
@@ -206,134 +108,119 @@ namespace Mediaportal.TV.Server.SetupTV
         AddSection(new ThirdPartyChecks());
 
         sectionTree.SelectedNode = sectionTree.Nodes[0];
-        // make sure window is in front of mediaportal
+
+        BringToFront();
       }
-      BringToFront();
+      catch (Exception ex)
+      {
+        this.LogError(ex, "settings form: failed to initialise sections");
+        MessageBox.Show("Initialisation failed." + Environment.NewLine + SectionSettings.SENTENCE_CHECK_LOG_FILES, SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
     }
 
-    private void AddServerTvCards(string hostName,  bool reloaded)
+    private void AddServerTuners(bool reloaded)
     {
-      //foreach (TVDatabase.Gentle.Server server in dbsServers)
+      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
+      foreach (Tuner tuner in tuners)
       {
-        bool isLocal = (hostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() ||
-                        hostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() + "."
-                        +
-                        System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName.
-                          ToLowerInvariant());
-        cardPage = new TvCards(hostName);
-        cardPage.TvCardsChanged += OnTvCardsChanged;
-        AddChildSection(servers, cardPage, 0);
-        IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
-        foreach (Card dbsCard in cards)
+        if (tuner.IsEnabled && ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(tuner.IdTuner))
         {
-          if (dbsCard.Enabled && ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(dbsCard.IdCard))
+          if ((tuner.SupportedBroadcastStandards & (int)(BroadcastStandard.MaskAnalog | BroadcastStandard.ExternalInput)) != 0)
           {
-            CardType type = ServiceAgents.Instance.ControllerServiceAgent.Type(dbsCard.IdCard);
-            int cardId = dbsCard.IdCard;
-            string cardName = dbsCard.Name;
-            switch (type)
-            {
-              case CardType.Analog:
-                cardName = String.Format("{0} Analog {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.DvbT:
-                cardName = String.Format("{0} DVB-T {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardDvbT(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.DvbC:
-                cardName = String.Format("{0} DVB-C {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardDvbC(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.DvbS:
-                cardName = String.Format("{0} DVB-S {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.Atsc:
-                cardName = String.Format("{0} ATSC {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.DvbIP:
-                cardName = String.Format("{0} DVB-IP {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardDvbIP(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.Unknown:
-                cardName = String.Format("{0} Unknown {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
-                break;
-            }
+            AddChildSection(_sectionTuners, new CardAnalog(string.Format("{0} Analog {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
+          }
+          else if ((tuner.SupportedBroadcastStandards & (int)BroadcastStandard.MaskDvb & (int)BroadcastStandard.MaskTerrestrial) != 0)
+          {
+            AddChildSection(_sectionTuners, new CardDvbT(string.Format("{0} DVB-T/T2 {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
+          }
+          else if ((tuner.SupportedBroadcastStandards & (int)BroadcastStandard.MaskDvb & (int)BroadcastStandard.MaskCable) != 0)
+          {
+            AddChildSection(_sectionTuners, new CardDvbC(string.Format("{0} DVB-C {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
+          }
+          else if ((tuner.SupportedBroadcastStandards & (int)BroadcastStandard.MaskSatellite) != 0)
+          {
+            AddChildSection(_sectionTuners, new CardDvbS(string.Format("{0} Satellite {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
+          }
+          else if ((tuner.SupportedBroadcastStandards & (int)(BroadcastStandard.Atsc | BroadcastStandard.Scte)) != 0)
+          {
+            AddChildSection(_sectionTuners, new CardAtsc(string.Format("{0} ATSC {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
+          }
+          else if (tuner.SupportedBroadcastStandards == (int)BroadcastStandard.DvbIp)
+          {
+            AddChildSection(_sectionTuners, new CardDvbIP(string.Format("{0} Stream {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
           }
         }
-        if (isLocal)
+      }
+      if (reloaded)
+      {
+        SectionTreeNode activeNode = _sections[_sectionTuners.Text];
+        if (activeNode != null)
         {
-          Utils.CheckForDvbHotfix();
-        }
-        if (reloaded)
-        {
-          SectionTreeNode activeNode = (SectionTreeNode)settingSections[hostName];
-          if (activeNode != null)
-          {
-            activeNode.Expand();
-          }
+          activeNode.Expand();
         }
       }
     }
 
-    /// <summary>
-    /// called when tvcards were changed (add, remove, enable, disable)
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    public void OnTvCardsChanged(object sender, EventArgs e)
+    public void AddSection(SectionSettings section, int imageIndex = -1)
     {
-      bool isAnyUserTS;
-      bool isRec;
-      bool isUserTS;
-      bool isRecOrTS = ServiceAgents.Instance.ControllerServiceAgent.IsAnyCardRecordingOrTimeshifting(new User().Name, out isUserTS, out isAnyUserTS,
-                                                                               out isRec);
+      AddChildSection(null, section, imageIndex);
+    }
 
-      if (!isAnyUserTS && !isRec && !isRecOrTS && !isUserTS)
+    public void AddChildSection(SectionSettings parentSection, SectionSettings section, int imageIndex = -1)
+    {
+      SectionTreeNode node = new SectionTreeNode(section);
+      if (imageIndex >= 0)
       {
-        NotifyForm dlgNotify = new NotifyForm("Restart TvService...", "This can take some time\n\nPlease be patient...");
-        try
-        {
-          dlgNotify.Show();
-          dlgNotify.WaitForDisplay();
-
-          ServiceAgents.Instance.ControllerServiceAgent.Restart();
-
-          // remove all tv servers / cards, add current ones back later
-          RemoveAllChildSections((SectionTreeNode)settingSections[servers.Text]);
-
-          // re-add tvservers and cards to tree          
-          AddServerTvCards(ServiceAgents.Instance.SettingServiceAgent.GetValue("hostname", "localhost"), true);
-        }
-        finally
-        {
-          dlgNotify.Close();
-        }
+        node.ImageIndex = imageIndex;
+        node.SelectedImageIndex = imageIndex;
+      }
+      if (parentSection == null)
+      {
+        // Add to the root.
+        sectionTree.Nodes.Add(node);
       }
       else
       {
-        MessageBox.Show(this,
-                        "In order to apply new settings - please restart tvservice manually when done timeshifting / recording.");
+        // Add to the parent node.
+        _sections[parentSection.Text].Nodes.Add(node);
+      }
+
+      _sections.Add(section.Text, node);
+    }
+
+    public void RemoveChildSection(SectionSettings parentSection, SectionSettings section)
+    {
+      if (parentSection != null)
+      {
+        SectionTreeNode parentTreeNode = (SectionTreeNode)_sections[parentSection.Text];
+        TreeNode nodeToRemove = null;
+        foreach (TreeNode node in parentTreeNode.Nodes)
+        {
+          if (node.Name == section.Text)
+          {
+            nodeToRemove = node;
+            break;
+          }
+        }
+        if (nodeToRemove != null)
+        {
+          _sections.Remove(section.Text);
+          parentTreeNode.Nodes.Remove(nodeToRemove);
+        }
       }
     }
 
     public void RemoveAllChildSections(SectionTreeNode parentTreeNode)
     {
-      // Remove section from tree
       if (parentTreeNode != null)
       {
         foreach (SectionTreeNode childNode in parentTreeNode.Nodes)
         {
-          // recursive delete all children
-          RemoveAllChildSections(childNode);
-
-          //Remove the section from the hashtable in case we add it again
-          settingSections.Remove(childNode.Text);
+          RemoveAllChildSections(childNode);  // recursive
+          _sections.Remove(childNode.Text);
         }
-        // first remove all children and sections, then nodes themself (otherwise collection changes during iterate)
+
+        // Remove all children and sections before the nodes (avoids collection changes during iteration).
         foreach (SectionTreeNode childNode in parentTreeNode.Nodes)
         {
           if (childNode != null)
@@ -344,350 +231,65 @@ namespace Mediaportal.TV.Server.SetupTV
       }
     }
 
-    public void RemoveAllChildSections(SectionSettings parentSection)
+    public void sectionTree_BeforeSelect(object sender, TreeViewCancelEventArgs e)
     {
-      // Remove section from tree
-      if (parentSection != null)
+      if (!ServiceHelper.IsAvailable)
       {
-        SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
-        foreach (SectionTreeNode childNode in parentTreeNode.Nodes)
-        {
-          // recursive delete all children
-          RemoveAllChildSections(childNode);
-
-          //Remove the section from the hashtable in case we add it again
-          settingSections.Remove(childNode.Text);
-          parentTreeNode.Nodes.Remove(childNode);
-        }
+        MessageBox.Show("The TV service is not running.", SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        e.Cancel = true;
       }
     }
 
-    public void RemoveChildSection(SectionSettings parentSection, SectionSettings section)
+    public void sectionTree_AfterSelect(object sender, TreeViewEventArgs e)
     {
-      // Remove section from tree
-      if (parentSection != null)
+      SectionTreeNode treeNode = e.Node as SectionTreeNode;
+      if (treeNode == null || treeNode.Section == null)
       {
-        SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
-
-        for (int i = 0; i < parentTreeNode.GetNodeCount(true); i++)
-        {
-          if (parentTreeNode.Nodes[i].Name == section.Text)
-          {
-            //Remove the section from the hashtable in case we add it again
-            settingSections.Remove(section.Text);
-            parentTreeNode.Nodes.Remove(parentTreeNode.Nodes[i]);
-          }
-        }
-      }
-    }
-
-
-    public void AddSection(SectionSettings section, int imageIndex)
-    {
-      AddChildSection(null, section, imageIndex);
-    }
-
-    public void AddChildSection(SectionSettings parentSection, SectionSettings section, int imageIndex)
-    {
-      //
-      // Make sure this section doesn't already exist
-      //
-
-      //
-      // Add section to tree
-      //
-      SectionTreeNode treeNode = new SectionTreeNode(section);
-
-      if (parentSection == null)
-      {
-        //
-        // Add to the root
-        //
-        treeNode.ImageIndex = imageIndex;
-        treeNode.SelectedImageIndex = imageIndex;
-        sectionTree.Nodes.Add(treeNode);
-      }
-      else
-      {
-        //
-        // Add to the parent node
-        //
-        SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
-
-        treeNode.ImageIndex = imageIndex;
-        treeNode.SelectedImageIndex = imageIndex;
-        parentTreeNode.Nodes.Add(treeNode);
+        return;
       }
 
-      settingSections.Add(section.Text, treeNode);
-
-      //treeNode.EnsureVisible();
-    }
-
-
-    public override void AddSection(SectionSettings section)
-    {
-      AddChildSection(null, section);
-    }
-
-    /// <summary>
-    /// Called when a plugin is selected or deselected for activation in the plugins setting
-    /// </summary>
-    /// <param name="sender">a Setting parameter passed as object</param>
-    /// <param name="e">eventarg will always retrun empty</param>
-    public void SectChanged(object sender, EventArgs e)
-    {
-      string settingName = ((string)sender);
-      string pluginName = settingName.Substring(6);
-
-      foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
-      {
-        SectionSettings settings = plugin.Setup;
-        if (settings != null && plugin.Name == pluginName)
-        {
-          bool isActive = ServiceAgents.Instance.SettingServiceAgent.GetValue(settingName, false);
-          settings.Text = pluginName;
-
-          if (isActive)
-          {
-            AddChildSection(pluginsRoot, settings);
-            LoadChildSettingsFromNode(pluginsRoot, settings);
-          }
-          else
-          {
-            RemoveChildSection(pluginsRoot, settings);
-            SaveChildSettingsFromNode(pluginsRoot, settings);
-          }
-
-          break;
-        }
-      }
-    }
-
-    public override void AddChildSection(SectionSettings parentSection, SectionSettings section)
-    {
-      //
-      // Make sure this section doesn't already exist
-      //
-
-      //
-      // Add section to tree
-      //
-      SectionTreeNode treeNode = new SectionTreeNode(section);
-
-      if (parentSection == null)
-      {
-        //
-        // Add to the root
-        //
-        sectionTree.Nodes.Add(treeNode);
-      }
-      else
-      {
-        //
-        // Add to the parent node
-        //
-        SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
-        treeNode.Name = section.Text;
-        parentTreeNode.Nodes.Add(treeNode);
-      }
-
-      settingSections.Add(section.Text, treeNode);
-
-      //treeNode.EnsureVisible();
-    }
-
-    public override void sectionTree_BeforeSelect(object sender, TreeViewCancelEventArgs e)
-    {
-      base.sectionTree_BeforeSelect(sender, e);
-
-      if (!e.Cancel)
-      {
-        if (!ServiceHelper.IsAvailable)
-        {
-          MessageBox.Show("TvService not started.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-          e.Cancel = true;
-        } 
-      }        
-    }
-
-    public override bool ActivateSection(SectionSettings section)
-    {
+      SectionSettings section = treeNode.Section;
       try
       {
-        if (section.CanActivate == false)
-        {
-          return false;
-        }
-        try
-        {
-          ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
-        }
-        catch (Exception) {}
-        //DatabaseManager.Instance.SaveChanges();
-        //DatabaseManager.Instance.ClearQueryCache();
         Cursor = Cursors.WaitCursor;
         section.Dock = DockStyle.Fill;
-        
-        holderPanel.Controls.Clear();
-        holderPanel.Controls.Add(section);
 
         // Deactive the previous section before activating a new one. Some code
         // (eg. CA menu handling) relies on the order.
-        if (section != _previousSection && _previousSection != null)
+        if (section != _currentSection && _currentSection != null)
         {
-          _previousSection.OnSectionDeActivated();
+          _currentSection.SaveSettings();
+          _currentSection.OnSectionDeActivated();
         }
+
+        holderPanel.Controls.Clear();
+        holderPanel.Controls.Add(section);
+
         section.OnSectionActivated();
-        _previousSection = section;
+        section.LoadSettings();
+        headerLabel.Caption = section.Text;
+        _currentSection = section;
       }
       catch (Exception ex)
       {
-        this.LogError(ex);
+        this.LogError(ex, "settings form: failed to load section {0}", section.Text);
+        MessageBox.Show("Failed to load section." + Environment.NewLine + SectionSettings.SENTENCE_CHECK_LOG_FILES, SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       finally
       {
         Cursor = Cursors.Default;
       }
-      return true;
     }
 
-
-    public override void SettingsForm_Closed(object sender, EventArgs e)
+    public void closeButton_Click(object sender, EventArgs e)
     {
       try
       {
-        if (RemoteControl.IsConnected)
+        if (ServiceHelper.IsAvailable && _currentSection != null)
         {
-          ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
-          ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
-        }
-      }
-      catch (Exception) {}
-    }
-
-    public override void SettingsForm_Load(object sender, EventArgs e)
-    {
-      foreach (TreeNode treeNode in sectionTree.Nodes)
-      {
-        //
-        // Load settings for all sections
-        //
-
-        LoadSectionSettings(treeNode);
-      }
-    }
-
-    public SectionTreeNode GetChildNode(SectionSettings parentSection, SectionSettings section)
-    {
-      SectionTreeNode treeNode = new SectionTreeNode(section);
-      SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
-
-      for (int i = 0; i < parentTreeNode.GetNodeCount(true); i++)
-      {
-        if (parentTreeNode.Nodes[i].Name == section.Text)
-          return treeNode;
-      }
-      return null;
-    }
-
-    public void LoadChildSettingsFromNode(SectionSettings parentSection, SectionSettings section)
-    {
-      if (parentSection != null)
-        LoadSectionSettings(GetChildNode(parentSection, section));
-    }
-
-    public void SaveChildSettingsFromNode(SectionSettings parentSection, SectionSettings section)
-    {
-      if (parentSection != null)
-        SaveSectionSettings(GetChildNode(parentSection, section));
-    }
-
-    public override void LoadSectionSettings(TreeNode currentNode)
-    {
-      if (currentNode != null)
-      {
-        //
-        // Load settings for current node
-        //
-        SectionTreeNode treeNode = currentNode as SectionTreeNode;
-
-        if (treeNode != null)
-        {
-          treeNode.Section.LoadSettings();
-        }
-
-        //
-        // Load settings for all child nodes
-        //
-        if (treeNode != null)
-          foreach (TreeNode childNode in treeNode.Nodes)
-          {
-            LoadSectionSettings(childNode);
-          }
-      }
-    }
-
-    public override void SaveSectionSettings(TreeNode currentNode)
-    {
-      if (currentNode != null)
-      {
-        //
-        // Save settings for current node
-        //
-        SectionTreeNode treeNode = currentNode as SectionTreeNode;
-
-        if (treeNode != null)
-        {
-          treeNode.Section.SaveSettings();
-        }
-
-        //
-        // Load settings for all child nodes
-        //
-        if (treeNode != null)
-          foreach (TreeNode childNode in treeNode.Nodes)
-          {
-            SaveSectionSettings(childNode);
-          }
-      }
-    }
-
-    public override void SaveAllSettings()
-    {
-      foreach (TreeNode treeNode in sectionTree.Nodes)
-      {
-        //
-        // Save settings for all sections
-        //
-        SaveSectionSettings(treeNode);
-      }
-    }
-
-
-    public override void cancelButton_Click(object sender, EventArgs e)
-    {
-      if (null != _previousSection)
-      {
-        _previousSection.OnSectionDeActivated();
-        _previousSection = null;
-      }
-      Close();
-    }
-
-    public override void okButton_Click(object sender, EventArgs e)
-    {
-      try
-      {
-        if (!ServiceHelper.IsStopped)
-        {
-          applyButton_Click(sender, e);
-
-          if (null != _previousSection)
-          {
-            _previousSection.OnSectionDeActivated();
-            _previousSection = null;
-          }
+          _currentSection.SaveSettings();
+          _currentSection.OnSectionDeActivated();
+          _currentSection = null;
         }
         Close();
       }
@@ -697,17 +299,17 @@ namespace Mediaportal.TV.Server.SetupTV
       }
     }
 
-    public override void applyButton_Click(object sender, EventArgs e)
+    private void linkLabelDonate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      SaveAllSettings();
+      Process.Start((string)e.Link.LinkData);
     }
 
-    public override void helpToolStripSplitButton_ButtonClick(object sender, EventArgs e)
+    public void helpToolStripSplitButton_ButtonClick(object sender, EventArgs e)
     {
-      HelpSystem.ShowHelp(_previousSection.ToString());
+      HelpSystem.ShowHelp(_currentSection.ToString());
     }
 
-    public override void configToolStripSplitButton_ButtonClick(object sender, EventArgs e)
+    public void configToolStripSplitButton_ButtonClick(object sender, EventArgs e)
     {
       Process process = new Process();
       process.StartInfo.FileName = "explorer.exe";
@@ -716,32 +318,75 @@ namespace Mediaportal.TV.Server.SetupTV
       process.Start();
     }
 
-    #region Windows Form Designer generated code
-
-    private new void InitializeComponent()
+    public void OnServerConfigurationChanged(object sender, bool restartController, bool reloadConfigController, ICollection<int> reloadConfigTuners)
     {
-      this.SuspendLayout();
-      // 
-      // sectionTree
-      // 
-      this.sectionTree.LineColor = System.Drawing.Color.Black;
-      this.sectionTree.Size = new System.Drawing.Size(184, 464);
-      // 
-      // holderPanel
-      // 
-      this.holderPanel.Size = new System.Drawing.Size(485, 434);
-      // 
-      // SetupTvSettingsForm
-      // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.ClientSize = new System.Drawing.Size(717, 546);
-      this.MinimumSize = new System.Drawing.Size(725, 580);
-      this.Name = "SetupTvSettingsForm";
-      this.ResumeLayout(false);
-      this.PerformLayout();
+      if (restartController)
+      {
+        bool isUserTimeShifting;
+        bool isAnyUserTimeShifting;
+        bool isAnyUserRecording;
+        bool isAnyTunerTimeShiftingOrRecording = ServiceAgents.Instance.ControllerServiceAgent.IsAnyCardRecordingOrTimeshifting(
+                                                  new User().Name, out isUserTimeShifting, out isAnyUserTimeShifting, out isAnyUserRecording);
+        if (!isAnyTunerTimeShiftingOrRecording && !isAnyUserTimeShifting && !isAnyUserRecording && !isUserTimeShifting)
+        {
+          this.LogInfo("settings form: restarting controller");
+          NotifyForm dlgNotify = new NotifyForm("Restarting TV service...", "This can take some time." + Environment.NewLine + Environment.NewLine + "Please be patient...");
+          try
+          {
+            dlgNotify.Show();
+            dlgNotify.WaitForDisplay();
 
+            ServiceAgents.Instance.ControllerServiceAgent.Restart();
+
+            // remove all cards, add current ones back later
+            RemoveAllChildSections(_sections[_sectionTuners.Text]);
+
+            // re-add cards to tree
+            AddServerTuners(true);
+          }
+          finally
+          {
+            dlgNotify.Close();
+            dlgNotify.Dispose();
+          }
+        }
+        else
+        {
+          MessageBox.Show("TV Server is currently timeshifting and/or recording. Please restart the TV service manually to apply your changes.", SectionSettings.MESSAGE_CAPTION);
+        }
+      }
+      else if (reloadConfigController)
+      {
+        this.LogInfo("settings form: reloading controller configuration");
+        ServiceAgents.Instance.ControllerServiceAgent.ReloadControllerConfiguration();
+      }
+      else if (reloadConfigTuners != null && reloadConfigTuners.Count > 0)
+      {
+        this.LogInfo("settings form: reloading configuration for tuners {0}", string.Join(", ", reloadConfigTuners));
+        ServiceAgents.Instance.ControllerServiceAgent.ReloadTunerConfiguration(reloadConfigTuners);
+      }
     }
 
-    #endregion
+    public void OnPluginEnabledOrDisabled(object sender, object pluginObject, bool isEnabled)
+    {
+      ITvServerPlugin plugin = pluginObject as ITvServerPlugin;
+      if (plugin != null)
+      {
+        SectionSettings settings = plugin.Setup;
+        if (settings != null)
+        {
+          settings.Text = plugin.Name;
+          if (isEnabled)
+          {
+            AddChildSection(_sectionPlugins, settings);
+          }
+          else
+          {
+            RemoveChildSection(_sectionPlugins, settings);
+          }
+        }
+      }
+      OnServerConfigurationChanged(sender, false, true, null);
+    }
   }
 }

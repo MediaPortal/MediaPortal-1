@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.RuleBasedScheduler;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
@@ -126,11 +127,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
         listView1.Items.Clear();
+        int defaultPreRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 7);
+        int defaultPostRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 10);
         IList<Schedule> schedules = ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules();
         foreach (Schedule schedule in schedules)
         {
           ListViewItem item = new ListViewItem(schedule.Priority.ToString());
-          item.SubItems.Add(schedule.Channel.DisplayName);
+          item.SubItems.Add(schedule.Channel.Name);
           item.Tag = schedule;
           switch ((ScheduleRecordingType)schedule.ScheduleType)
           {
@@ -177,8 +180,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               break;
           }
           item.SubItems.Add(schedule.ProgramName);
-          item.SubItems.Add(String.Format("{0} mins", schedule.PreRecordInterval));
-          item.SubItems.Add(String.Format("{0} mins", schedule.PostRecordInterval));
+          item.SubItems.Add(String.Format("{0} mins", schedule.PreRecordInterval ?? defaultPreRecordInterval));
+          item.SubItems.Add(String.Format("{0} mins", schedule.PostRecordInterval ?? defaultPostRecordInterval));
 
           if (schedule.MaxAirings.ToString() == int.MaxValue.ToString())
             item.SubItems.Add("Keep all");
@@ -336,18 +339,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             item.SubItems.Add(prg.EndTime.ToString("HH:mm:ss", mmddFormat));
             item.SubItems.Add(prg.Description);
 
-            item.SubItems.Add(prg.SeriesNum);
-            item.SubItems.Add(prg.EpisodeNum);
+            item.SubItems.Add(prg.SeasonNumber.HasValue ? prg.SeasonNumber.ToString() : string.Empty);
+            item.SubItems.Add(prg.EpisodeNumber.HasValue ? prg.EpisodeNumber.ToString() : string.Empty);
             if (prg.ProgramCategory != null)
             {
               item.SubItems.Add(prg.ProgramCategory.Category); 
             }            
-            item.SubItems.Add(prg.OriginalAirDate.GetValueOrDefault(DateTime.MinValue).ToString("HH:mm:ss", mmddFormat));
-            item.SubItems.Add(prg.Classification);
-            item.SubItems.Add(Convert.ToString(prg.StarRating));
-            item.SubItems.Add(Convert.ToString(prg.ParentalRating));
-            item.SubItems.Add(prg.EpisodeName);
-            item.SubItems.Add(prg.EpisodePart);
+            item.SubItems.Add(prg.OriginalAirDate.HasValue ? prg.OriginalAirDate.Value.ToString("HH:mm:ss", mmddFormat) : string.Empty);
+            item.SubItems.Add(prg.Classification ?? string.Empty);
+            item.SubItems.Add(prg.StarRating.HasValue ? string.Format("{0}/{1}", prg.StarRating, prg.StarRatingMaximum) : string.Empty);
+            item.SubItems.Add(prg.EpisodeName ?? string.Empty);
+            item.SubItems.Add(prg.EpisodePartNumber.HasValue ? prg.EpisodePartNumber.ToString() : string.Empty);
             item.SubItems.Add("state");
 
             listView2.Items.Add(item);
@@ -383,19 +385,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelIncludeRelationEnum.TuningDetails);
         foreach (Channel ch in channels)
         {
-          if (ch.MediaType != (decimal) MediaTypeEnum.TV) continue;
+          if (ch.MediaType != (int)MediaType.Television) continue;
           bool hasFta = false;
           bool hasScrambled = false;
           IList<TuningDetail> tuningDetails = ch.TuningDetails;
           foreach (TuningDetail detail in tuningDetails)
           {
-            if (detail.FreeToAir)
-            {
-              hasFta = true;
-            }
-            if (!detail.FreeToAir)
+            if (detail.IsEncrypted)
             {
               hasScrambled = true;
+            }
+            else
+            {
+              hasFta = true;
             }
           }
 
@@ -412,7 +414,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             imageIndex = 3;
           }
-          ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
+          ComboBoxExItem item = new ComboBoxExItem(ch.Name, imageIndex, ch.IdChannel);
 
           comboBoxChannels.Items.Add(item);
         }
@@ -426,18 +428,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           Channel ch = map.Channel;
           bool hasFta = false;
-          if (ch.MediaType != (decimal) MediaTypeEnum.TV)          
+          if (ch.MediaType != (int)MediaType.Television)          
           hasScrambled = false;
           IList<TuningDetail> tuningDetails = ch.TuningDetails;
           foreach (TuningDetail detail in tuningDetails)
           {
-            if (detail.FreeToAir)
-            {
-              hasFta = true;
-            }
-            if (!detail.FreeToAir)
+            if (detail.IsEncrypted)
             {
               hasScrambled = true;
+            }
+            else
+            {
+              hasFta = true;
             }
           }
 
@@ -454,7 +456,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             imageIndex = 3;
           }
-          ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
+          ComboBoxExItem item = new ComboBoxExItem(ch.Name, imageIndex, ch.IdChannel);
           comboBoxChannels.Items.Add(item);
         }
       }

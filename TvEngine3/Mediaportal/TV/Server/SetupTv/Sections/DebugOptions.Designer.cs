@@ -31,71 +31,95 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DebugOptions));
-      this.mpLabelGeneralWarning = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpCheckBoxTsWriterDumpInputs = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.mpCheckBoxTsMuxerDumpInputs = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.mpLabelTsWriterDumpInputsWarning = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpLabelTsMuxerDumpInputsWarning = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelGeneralWarning = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.checkBoxTsWriterDumpInputs = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxTsMuxerDumpInputs = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.labelTsWriterDumpInputsWarning = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelTsMuxerDumpInputsWarning = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.checkBoxTsWriterDisableCrcCheck = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.labelTsWriterDisableCrcCheckWarning = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.SuspendLayout();
       // 
-      // mpLabelGeneralWarning
+      // labelGeneralWarning
       // 
-      this.mpLabelGeneralWarning.ForeColor = System.Drawing.Color.Red;
-      this.mpLabelGeneralWarning.Location = new System.Drawing.Point(9, 6);
-      this.mpLabelGeneralWarning.Name = "mpLabelGeneralWarning";
-      this.mpLabelGeneralWarning.Size = new System.Drawing.Size(464, 39);
-      this.mpLabelGeneralWarning.TabIndex = 0;
-      this.mpLabelGeneralWarning.Text = "This section provides access to test and debug settings. Some are experimental an" +
+      this.labelGeneralWarning.ForeColor = System.Drawing.Color.Red;
+      this.labelGeneralWarning.Location = new System.Drawing.Point(9, 6);
+      this.labelGeneralWarning.Name = "labelGeneralWarning";
+      this.labelGeneralWarning.Size = new System.Drawing.Size(464, 39);
+      this.labelGeneralWarning.TabIndex = 0;
+      this.labelGeneralWarning.Text = "This section provides access to test and debug settings. Some are experimental an" +
           "d may cause unexpected problems. Please don\'t modify anything here unless you kn" +
           "ow what you are doing.";
       // 
-      // mpCheckBoxTsWriterDumpInputs
+      // checkBoxTsWriterDumpInputs
       // 
-      this.mpCheckBoxTsWriterDumpInputs.AutoSize = true;
-      this.mpCheckBoxTsWriterDumpInputs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxTsWriterDumpInputs.Location = new System.Drawing.Point(12, 48);
-      this.mpCheckBoxTsWriterDumpInputs.Name = "mpCheckBoxTsWriterDumpInputs";
-      this.mpCheckBoxTsWriterDumpInputs.Size = new System.Drawing.Size(124, 17);
-      this.mpCheckBoxTsWriterDumpInputs.TabIndex = 1;
-      this.mpCheckBoxTsWriterDumpInputs.Text = "dump TsWriter inputs";
-      this.mpCheckBoxTsWriterDumpInputs.UseVisualStyleBackColor = true;
+      this.checkBoxTsWriterDumpInputs.AutoSize = true;
+      this.checkBoxTsWriterDumpInputs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxTsWriterDumpInputs.Location = new System.Drawing.Point(12, 48);
+      this.checkBoxTsWriterDumpInputs.Name = "checkBoxTsWriterDumpInputs";
+      this.checkBoxTsWriterDumpInputs.Size = new System.Drawing.Size(129, 17);
+      this.checkBoxTsWriterDumpInputs.TabIndex = 1;
+      this.checkBoxTsWriterDumpInputs.Text = "Dump TsWriter inputs.";
+      this.checkBoxTsWriterDumpInputs.UseVisualStyleBackColor = true;
       // 
-      // mpCheckBoxTsMuxerDumpInputs
+      // checkBoxTsMuxerDumpInputs
       // 
-      this.mpCheckBoxTsMuxerDumpInputs.AutoSize = true;
-      this.mpCheckBoxTsMuxerDumpInputs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxTsMuxerDumpInputs.Location = new System.Drawing.Point(12, 123);
-      this.mpCheckBoxTsMuxerDumpInputs.Name = "mpCheckBoxTsMuxerDumpInputs";
-      this.mpCheckBoxTsMuxerDumpInputs.Size = new System.Drawing.Size(125, 17);
-      this.mpCheckBoxTsMuxerDumpInputs.TabIndex = 3;
-      this.mpCheckBoxTsMuxerDumpInputs.Text = "dump TsMuxer inputs";
-      this.mpCheckBoxTsMuxerDumpInputs.UseVisualStyleBackColor = true;
+      this.checkBoxTsMuxerDumpInputs.AutoSize = true;
+      this.checkBoxTsMuxerDumpInputs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxTsMuxerDumpInputs.Location = new System.Drawing.Point(12, 123);
+      this.checkBoxTsMuxerDumpInputs.Name = "checkBoxTsMuxerDumpInputs";
+      this.checkBoxTsMuxerDumpInputs.Size = new System.Drawing.Size(130, 17);
+      this.checkBoxTsMuxerDumpInputs.TabIndex = 3;
+      this.checkBoxTsMuxerDumpInputs.Text = "Dump TsMuxer inputs.";
+      this.checkBoxTsMuxerDumpInputs.UseVisualStyleBackColor = true;
       // 
-      // mpLabelTsWriterDumpInputsWarning
+      // labelTsWriterDumpInputsWarning
       // 
-      this.mpLabelTsWriterDumpInputsWarning.Location = new System.Drawing.Point(9, 68);
-      this.mpLabelTsWriterDumpInputsWarning.Name = "mpLabelTsWriterDumpInputsWarning";
-      this.mpLabelTsWriterDumpInputsWarning.Size = new System.Drawing.Size(450, 41);
-      this.mpLabelTsWriterDumpInputsWarning.TabIndex = 2;
-      this.mpLabelTsWriterDumpInputsWarning.Text = resources.GetString("mpLabelTsWriterDumpInputsWarning.Text");
+      this.labelTsWriterDumpInputsWarning.Location = new System.Drawing.Point(9, 68);
+      this.labelTsWriterDumpInputsWarning.Name = "labelTsWriterDumpInputsWarning";
+      this.labelTsWriterDumpInputsWarning.Size = new System.Drawing.Size(450, 41);
+      this.labelTsWriterDumpInputsWarning.TabIndex = 2;
+      this.labelTsWriterDumpInputsWarning.Text = resources.GetString("labelTsWriterDumpInputsWarning.Text");
       // 
-      // mpLabelTsMuxerDumpInputsWarning
+      // labelTsMuxerDumpInputsWarning
       // 
-      this.mpLabelTsMuxerDumpInputsWarning.Location = new System.Drawing.Point(9, 143);
-      this.mpLabelTsMuxerDumpInputsWarning.Name = "mpLabelTsMuxerDumpInputsWarning";
-      this.mpLabelTsMuxerDumpInputsWarning.Size = new System.Drawing.Size(450, 46);
-      this.mpLabelTsMuxerDumpInputsWarning.TabIndex = 4;
-      this.mpLabelTsMuxerDumpInputsWarning.Text = resources.GetString("mpLabelTsMuxerDumpInputsWarning.Text");
+      this.labelTsMuxerDumpInputsWarning.Location = new System.Drawing.Point(9, 143);
+      this.labelTsMuxerDumpInputsWarning.Name = "labelTsMuxerDumpInputsWarning";
+      this.labelTsMuxerDumpInputsWarning.Size = new System.Drawing.Size(450, 46);
+      this.labelTsMuxerDumpInputsWarning.TabIndex = 4;
+      this.labelTsMuxerDumpInputsWarning.Text = resources.GetString("labelTsMuxerDumpInputsWarning.Text");
+      // 
+      // checkBoxTsWriterDisableCrcCheck
+      // 
+      this.checkBoxTsWriterDisableCrcCheck.AutoSize = true;
+      this.checkBoxTsWriterDisableCrcCheck.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxTsWriterDisableCrcCheck.Location = new System.Drawing.Point(12, 201);
+      this.checkBoxTsWriterDisableCrcCheck.Name = "checkBoxTsWriterDisableCrcCheck";
+      this.checkBoxTsWriterDisableCrcCheck.Size = new System.Drawing.Size(177, 17);
+      this.checkBoxTsWriterDisableCrcCheck.TabIndex = 5;
+      this.checkBoxTsWriterDisableCrcCheck.Text = "Disable TsWriter CRC checking.";
+      this.checkBoxTsWriterDisableCrcCheck.UseVisualStyleBackColor = true;
+      // 
+      // labelTsWriterDisableCrcCheckWarning
+      // 
+      this.labelTsWriterDisableCrcCheckWarning.Location = new System.Drawing.Point(9, 221);
+      this.labelTsWriterDisableCrcCheckWarning.Name = "labelTsWriterDisableCrcCheckWarning";
+      this.labelTsWriterDisableCrcCheckWarning.Size = new System.Drawing.Size(450, 57);
+      this.labelTsWriterDisableCrcCheckWarning.TabIndex = 6;
+      this.labelTsWriterDisableCrcCheckWarning.Text = resources.GetString("labelTsWriterDisableCrcCheckWarning.Text");
       // 
       // DebugOptions
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.mpLabelTsMuxerDumpInputsWarning);
-      this.Controls.Add(this.mpLabelTsWriterDumpInputsWarning);
-      this.Controls.Add(this.mpCheckBoxTsMuxerDumpInputs);
-      this.Controls.Add(this.mpCheckBoxTsWriterDumpInputs);
-      this.Controls.Add(this.mpLabelGeneralWarning);
+      this.BackColor = System.Drawing.Color.Transparent;
+      this.Controls.Add(this.labelTsWriterDisableCrcCheckWarning);
+      this.Controls.Add(this.checkBoxTsWriterDisableCrcCheck);
+      this.Controls.Add(this.labelTsMuxerDumpInputsWarning);
+      this.Controls.Add(this.labelTsWriterDumpInputsWarning);
+      this.Controls.Add(this.checkBoxTsMuxerDumpInputs);
+      this.Controls.Add(this.checkBoxTsWriterDumpInputs);
+      this.Controls.Add(this.labelGeneralWarning);
       this.Name = "DebugOptions";
       this.Padding = new System.Windows.Forms.Padding(6);
       this.Size = new System.Drawing.Size(480, 420);
@@ -106,10 +130,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     #endregion
 
-    private MPLabel mpLabelGeneralWarning;
-    private MPCheckBox mpCheckBoxTsWriterDumpInputs;
-    private MPCheckBox mpCheckBoxTsMuxerDumpInputs;
-    private MPLabel mpLabelTsWriterDumpInputsWarning;
-    private MPLabel mpLabelTsMuxerDumpInputsWarning;
+    private MPLabel labelGeneralWarning;
+    private MPCheckBox checkBoxTsWriterDumpInputs;
+    private MPCheckBox checkBoxTsMuxerDumpInputs;
+    private MPLabel labelTsWriterDumpInputsWarning;
+    private MPLabel labelTsMuxerDumpInputsWarning;
+    private MPCheckBox checkBoxTsWriterDisableCrcCheck;
+    private MPLabel labelTsWriterDisableCrcCheckWarning;
   }
 }

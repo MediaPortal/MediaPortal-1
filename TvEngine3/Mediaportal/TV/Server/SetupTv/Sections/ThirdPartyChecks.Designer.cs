@@ -30,207 +30,133 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.mpGroupBoxMCS = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.mpButtonMCS = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.mpLabelStatusMCS = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpLabelStatus1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpGroupBox2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.linkLabelDVBHotfix = new System.Windows.Forms.LinkLabel();
-      this.mpLabelStatusDVBHotfix = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpLabelStatus2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpGroupBoxStreamingPort = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.mpLabelWindowsMediaSharingServiceStatus = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpLabelStatus4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.linkLabelStreamingPort = new System.Windows.Forms.LinkLabel();
-      this.mpLabelStatusStreamingPort = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpLabelStatus3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpGroupBoxMCS.SuspendLayout();
-      this.mpGroupBox2.SuspendLayout();
-      this.mpGroupBoxStreamingPort.SuspendLayout();
+      this.groupBoxMcs = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.buttonMcs = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.labelMcsStatusValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelMcsStatus = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBoxBdaHotFix = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.linkLabelBdaHotFix = new System.Windows.Forms.LinkLabel();
+      this.labelBdaHotFixStatusValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelBdaHotFixStatus = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBoxMcs.SuspendLayout();
+      this.groupBoxBdaHotFix.SuspendLayout();
       this.SuspendLayout();
       // 
-      // mpGroupBoxMCS
+      // groupBoxMcs
       // 
-      this.mpGroupBoxMCS.Controls.Add(this.mpButtonMCS);
-      this.mpGroupBoxMCS.Controls.Add(this.mpLabelStatusMCS);
-      this.mpGroupBoxMCS.Controls.Add(this.mpLabelStatus1);
-      this.mpGroupBoxMCS.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBoxMCS.Location = new System.Drawing.Point(12, 11);
-      this.mpGroupBoxMCS.Name = "mpGroupBoxMCS";
-      this.mpGroupBoxMCS.Size = new System.Drawing.Size(445, 112);
-      this.mpGroupBoxMCS.TabIndex = 0;
-      this.mpGroupBoxMCS.TabStop = false;
-      this.mpGroupBoxMCS.Text = "Microsoft Media Center Services";
+      this.groupBoxMcs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxMcs.Controls.Add(this.buttonMcs);
+      this.groupBoxMcs.Controls.Add(this.labelMcsStatusValue);
+      this.groupBoxMcs.Controls.Add(this.labelMcsStatus);
+      this.groupBoxMcs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxMcs.Location = new System.Drawing.Point(6, 6);
+      this.groupBoxMcs.Name = "groupBoxMcs";
+      this.groupBoxMcs.Size = new System.Drawing.Size(468, 87);
+      this.groupBoxMcs.TabIndex = 0;
+      this.groupBoxMcs.TabStop = false;
+      this.groupBoxMcs.Text = "Microsoft Media Center Services";
       // 
-      // mpButtonMCS
+      // buttonMcs
       // 
-      this.mpButtonMCS.Location = new System.Drawing.Point(102, 69);
-      this.mpButtonMCS.Name = "mpButtonMCS";
-      this.mpButtonMCS.Size = new System.Drawing.Size(258, 23);
-      this.mpButtonMCS.TabIndex = 2;
-      this.mpButtonMCS.Text = "Enable policy to prevent services startup";
-      this.mpButtonMCS.UseVisualStyleBackColor = true;
-      this.mpButtonMCS.Click += new System.EventHandler(this.mpButtonMCS_Click);
+      this.buttonMcs.Location = new System.Drawing.Point(9, 46);
+      this.buttonMcs.Name = "buttonMcs";
+      this.buttonMcs.Size = new System.Drawing.Size(120, 23);
+      this.buttonMcs.TabIndex = 2;
+      this.buttonMcs.Text = "Re-enable Services";
+      this.buttonMcs.UseVisualStyleBackColor = true;
+      this.buttonMcs.Click += new System.EventHandler(this.buttonMcs_Click);
       // 
-      // mpLabelStatusMCS
+      // labelMcsStatusValue
       // 
-      this.mpLabelStatusMCS.AutoSize = true;
-      this.mpLabelStatusMCS.ForeColor = System.Drawing.Color.Red;
-      this.mpLabelStatusMCS.Location = new System.Drawing.Point(142, 32);
-      this.mpLabelStatusMCS.Name = "mpLabelStatusMCS";
-      this.mpLabelStatusMCS.Size = new System.Drawing.Size(45, 13);
-      this.mpLabelStatusMCS.TabIndex = 1;
-      this.mpLabelStatusMCS.Text = "stopped";
+      this.labelMcsStatusValue.AutoSize = true;
+      this.labelMcsStatusValue.ForeColor = System.Drawing.Color.Red;
+      this.labelMcsStatusValue.Location = new System.Drawing.Point(52, 21);
+      this.labelMcsStatusValue.Name = "labelMcsStatusValue";
+      this.labelMcsStatusValue.Size = new System.Drawing.Size(45, 13);
+      this.labelMcsStatusValue.TabIndex = 1;
+      this.labelMcsStatusValue.Text = "stopped";
       // 
-      // mpLabelStatus1
+      // labelMcsStatus
       // 
-      this.mpLabelStatus1.AutoSize = true;
-      this.mpLabelStatus1.Location = new System.Drawing.Point(75, 32);
-      this.mpLabelStatus1.Name = "mpLabelStatus1";
-      this.mpLabelStatus1.Size = new System.Drawing.Size(40, 13);
-      this.mpLabelStatus1.TabIndex = 0;
-      this.mpLabelStatus1.Text = "Status:";
+      this.labelMcsStatus.AutoSize = true;
+      this.labelMcsStatus.Location = new System.Drawing.Point(6, 21);
+      this.labelMcsStatus.Name = "labelMcsStatus";
+      this.labelMcsStatus.Size = new System.Drawing.Size(40, 13);
+      this.labelMcsStatus.TabIndex = 0;
+      this.labelMcsStatus.Text = "Status:";
       // 
-      // mpGroupBox2
+      // groupBoxBdaHotFix
       // 
-      this.mpGroupBox2.Controls.Add(this.linkLabelDVBHotfix);
-      this.mpGroupBox2.Controls.Add(this.mpLabelStatusDVBHotfix);
-      this.mpGroupBox2.Controls.Add(this.mpLabelStatus2);
-      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox2.Location = new System.Drawing.Point(13, 129);
-      this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(445, 112);
-      this.mpGroupBox2.TabIndex = 1;
-      this.mpGroupBox2.TabStop = false;
-      this.mpGroupBox2.Text = "Microsoft DVB hotfix";
+      this.groupBoxBdaHotFix.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxBdaHotFix.Controls.Add(this.linkLabelBdaHotFix);
+      this.groupBoxBdaHotFix.Controls.Add(this.labelBdaHotFixStatusValue);
+      this.groupBoxBdaHotFix.Controls.Add(this.labelBdaHotFixStatus);
+      this.groupBoxBdaHotFix.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxBdaHotFix.Location = new System.Drawing.Point(6, 99);
+      this.groupBoxBdaHotFix.Name = "groupBoxBdaHotFix";
+      this.groupBoxBdaHotFix.Size = new System.Drawing.Size(468, 71);
+      this.groupBoxBdaHotFix.TabIndex = 1;
+      this.groupBoxBdaHotFix.TabStop = false;
+      this.groupBoxBdaHotFix.Text = "Microsoft BDA Hot Fix";
       // 
-      // linkLabelDVBHotfix
+      // linkLabelBdaHotFix
       // 
-      this.linkLabelDVBHotfix.AutoSize = true;
-      this.linkLabelDVBHotfix.Location = new System.Drawing.Point(113, 79);
-      this.linkLabelDVBHotfix.Name = "linkLabelDVBHotfix";
-      this.linkLabelDVBHotfix.Size = new System.Drawing.Size(229, 13);
-      this.linkLabelDVBHotfix.TabIndex = 3;
-      this.linkLabelDVBHotfix.TabStop = true;
-      this.linkLabelDVBHotfix.Text = "How to download and install ? Learn more here";
-      this.linkLabelDVBHotfix.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDVBHotfix_LinkClicked);
+      this.linkLabelBdaHotFix.AutoSize = true;
+      this.linkLabelBdaHotFix.Location = new System.Drawing.Point(6, 42);
+      this.linkLabelBdaHotFix.Name = "linkLabelBdaHotFix";
+      this.linkLabelBdaHotFix.Size = new System.Drawing.Size(87, 13);
+      this.linkLabelBdaHotFix.TabIndex = 2;
+      this.linkLabelBdaHotFix.TabStop = true;
+      this.linkLabelBdaHotFix.Text = "Learn more here.";
+      this.linkLabelBdaHotFix.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelBdaHotFix_LinkClicked);
       // 
-      // mpLabelStatusDVBHotfix
+      // labelBdaHotFixStatusValue
       // 
-      this.mpLabelStatusDVBHotfix.AutoSize = true;
-      this.mpLabelStatusDVBHotfix.ForeColor = System.Drawing.Color.Red;
-      this.mpLabelStatusDVBHotfix.Location = new System.Drawing.Point(142, 43);
-      this.mpLabelStatusDVBHotfix.Name = "mpLabelStatusDVBHotfix";
-      this.mpLabelStatusDVBHotfix.Size = new System.Drawing.Size(138, 13);
-      this.mpLabelStatusDVBHotfix.TabIndex = 2;
-      this.mpLabelStatusDVBHotfix.Text = "not needed on Vista and up";
+      this.labelBdaHotFixStatusValue.AutoSize = true;
+      this.labelBdaHotFixStatusValue.ForeColor = System.Drawing.Color.Red;
+      this.labelBdaHotFixStatusValue.Location = new System.Drawing.Point(52, 21);
+      this.labelBdaHotFixStatusValue.Name = "labelBdaHotFixStatusValue";
+      this.labelBdaHotFixStatusValue.Size = new System.Drawing.Size(61, 13);
+      this.labelBdaHotFixStatusValue.TabIndex = 1;
+      this.labelBdaHotFixStatusValue.Text = "not needed";
       // 
-      // mpLabelStatus2
+      // labelBdaHotFixStatus
       // 
-      this.mpLabelStatus2.AutoSize = true;
-      this.mpLabelStatus2.Location = new System.Drawing.Point(75, 43);
-      this.mpLabelStatus2.Name = "mpLabelStatus2";
-      this.mpLabelStatus2.Size = new System.Drawing.Size(40, 13);
-      this.mpLabelStatus2.TabIndex = 1;
-      this.mpLabelStatus2.Text = "Status:";
-      // 
-      // mpGroupBoxStreamingPort
-      // 
-      this.mpGroupBoxStreamingPort.Controls.Add(this.mpLabelWindowsMediaSharingServiceStatus);
-      this.mpGroupBoxStreamingPort.Controls.Add(this.mpLabelStatus4);
-      this.mpGroupBoxStreamingPort.Controls.Add(this.linkLabelStreamingPort);
-      this.mpGroupBoxStreamingPort.Controls.Add(this.mpLabelStatusStreamingPort);
-      this.mpGroupBoxStreamingPort.Controls.Add(this.mpLabelStatus3);
-      this.mpGroupBoxStreamingPort.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBoxStreamingPort.Location = new System.Drawing.Point(13, 247);
-      this.mpGroupBoxStreamingPort.Name = "mpGroupBoxStreamingPort";
-      this.mpGroupBoxStreamingPort.Size = new System.Drawing.Size(445, 145);
-      this.mpGroupBoxStreamingPort.TabIndex = 2;
-      this.mpGroupBoxStreamingPort.TabStop = false;
-      this.mpGroupBoxStreamingPort.Text = "Streaming port";
-      // 
-      // mpLabelWindowsMediaSharingServiceStatus
-      // 
-      this.mpLabelWindowsMediaSharingServiceStatus.AutoSize = true;
-      this.mpLabelWindowsMediaSharingServiceStatus.Location = new System.Drawing.Point(284, 71);
-      this.mpLabelWindowsMediaSharingServiceStatus.Name = "mpLabelWindowsMediaSharingServiceStatus";
-      this.mpLabelWindowsMediaSharingServiceStatus.Size = new System.Drawing.Size(42, 13);
-      this.mpLabelWindowsMediaSharingServiceStatus.TabIndex = 6;
-      this.mpLabelWindowsMediaSharingServiceStatus.Text = "running";
-      // 
-      // mpLabelStatus4
-      // 
-      this.mpLabelStatus4.AutoSize = true;
-      this.mpLabelStatus4.Location = new System.Drawing.Point(73, 71);
-      this.mpLabelStatus4.Name = "mpLabelStatus4";
-      this.mpLabelStatus4.Size = new System.Drawing.Size(203, 13);
-      this.mpLabelStatus4.TabIndex = 5;
-      this.mpLabelStatus4.Text = "Windows Media Network Sharing startup:";
-      // 
-      // linkLabelStreamingPort
-      // 
-      this.linkLabelStreamingPort.AutoSize = true;
-      this.linkLabelStreamingPort.Location = new System.Drawing.Point(74, 109);
-      this.linkLabelStreamingPort.Name = "linkLabelStreamingPort";
-      this.linkLabelStreamingPort.Size = new System.Drawing.Size(298, 13);
-      this.linkLabelStreamingPort.TabIndex = 4;
-      this.linkLabelStreamingPort.TabStop = true;
-      this.linkLabelStreamingPort.Text = "Please check with TCPVIEW which program is using that port";
-      this.linkLabelStreamingPort.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelStreamingPort_LinkClicked);
-      // 
-      // mpLabelStatusStreamingPort
-      // 
-      this.mpLabelStatusStreamingPort.AutoSize = true;
-      this.mpLabelStatusStreamingPort.ForeColor = System.Drawing.Color.Red;
-      this.mpLabelStatusStreamingPort.Location = new System.Drawing.Point(141, 39);
-      this.mpLabelStatusStreamingPort.Name = "mpLabelStatusStreamingPort";
-      this.mpLabelStatusStreamingPort.Size = new System.Drawing.Size(126, 13);
-      this.mpLabelStatusStreamingPort.TabIndex = 3;
-      this.mpLabelStatusStreamingPort.Text = "port 554 is already bound";
-      // 
-      // mpLabelStatus3
-      // 
-      this.mpLabelStatus3.AutoSize = true;
-      this.mpLabelStatus3.Location = new System.Drawing.Point(74, 39);
-      this.mpLabelStatus3.Name = "mpLabelStatus3";
-      this.mpLabelStatus3.Size = new System.Drawing.Size(40, 13);
-      this.mpLabelStatus3.TabIndex = 2;
-      this.mpLabelStatus3.Text = "Status:";
+      this.labelBdaHotFixStatus.AutoSize = true;
+      this.labelBdaHotFixStatus.Location = new System.Drawing.Point(6, 21);
+      this.labelBdaHotFixStatus.Name = "labelBdaHotFixStatus";
+      this.labelBdaHotFixStatus.Size = new System.Drawing.Size(40, 13);
+      this.labelBdaHotFixStatus.TabIndex = 0;
+      this.labelBdaHotFixStatus.Text = "Status:";
       // 
       // ThirdPartyChecks
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.mpGroupBoxStreamingPort);
-      this.Controls.Add(this.mpGroupBox2);
-      this.Controls.Add(this.mpGroupBoxMCS);
+      this.BackColor = System.Drawing.SystemColors.Window;
+      this.Controls.Add(this.groupBoxBdaHotFix);
+      this.Controls.Add(this.groupBoxMcs);
       this.Name = "ThirdPartyChecks";
       this.Size = new System.Drawing.Size(480, 420);
-      this.mpGroupBoxMCS.ResumeLayout(false);
-      this.mpGroupBoxMCS.PerformLayout();
-      this.mpGroupBox2.ResumeLayout(false);
-      this.mpGroupBox2.PerformLayout();
-      this.mpGroupBoxStreamingPort.ResumeLayout(false);
-      this.mpGroupBoxStreamingPort.PerformLayout();
+      this.groupBoxMcs.ResumeLayout(false);
+      this.groupBoxMcs.PerformLayout();
+      this.groupBoxBdaHotFix.ResumeLayout(false);
+      this.groupBoxBdaHotFix.PerformLayout();
       this.ResumeLayout(false);
 
     }
 
     #endregion
 
-    private MPGroupBox mpGroupBoxMCS;
-    private MPGroupBox mpGroupBox2;
-    private MPLabel mpLabelStatus1;
-    private MPLabel mpLabelStatus2;
-    private MPLabel mpLabelStatusMCS;
-    private MPLabel mpLabelStatusDVBHotfix;
-    private MPButton mpButtonMCS;
-    private System.Windows.Forms.LinkLabel linkLabelDVBHotfix;
-    private MPGroupBox mpGroupBoxStreamingPort;
-    private MPLabel mpLabelStatus3;
-    private System.Windows.Forms.LinkLabel linkLabelStreamingPort;
-    private MPLabel mpLabelStatusStreamingPort;
-    private MPLabel mpLabelWindowsMediaSharingServiceStatus;
-    private MPLabel mpLabelStatus4;
+    private MPGroupBox groupBoxMcs;
+    private MPGroupBox groupBoxBdaHotFix;
+    private MPLabel labelMcsStatus;
+    private MPLabel labelBdaHotFixStatus;
+    private MPLabel labelMcsStatusValue;
+    private MPLabel labelBdaHotFixStatusValue;
+    private MPButton buttonMcs;
+    private System.Windows.Forms.LinkLabel linkLabelBdaHotFix;
   }
 }

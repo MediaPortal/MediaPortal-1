@@ -348,7 +348,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.numericUpDownWaitTimeshifting.Location = new System.Drawing.Point(153, 97);
       this.numericUpDownWaitTimeshifting.Maximum = new decimal(new int[] {
-            30,
+            120,
             0,
             0,
             0});
@@ -505,7 +505,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tpTimeshifingFolders.Controls.Add(this.groupBoxTimeshiftSettings);
       this.tpTimeshifingFolders.Location = new System.Drawing.Point(4, 22);
       this.tpTimeshifingFolders.Name = "tpTimeshifingFolders";
-      this.tpTimeshifingFolders.Size = new System.Drawing.Size(457, 374);
+      this.tpTimeshifingFolders.Size = new System.Drawing.Size(472, 394);
       this.tpTimeshifingFolders.TabIndex = 3;
       this.tpTimeshifingFolders.Text = "Folders";
       this.tpTimeshifingFolders.UseVisualStyleBackColor = true;

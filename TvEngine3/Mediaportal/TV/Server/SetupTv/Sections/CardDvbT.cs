@@ -20,728 +20,310 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Threading;
 using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Serialization;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.SetupControls;
-using Mediaportal.TV.Server.SetupTV.Sections.CIMenu;
 using Mediaportal.TV.Server.SetupTV.Sections.Helpers;
-using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.SetupTV.Sections.Helpers.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using MediaPortal.Common.Utils.ExtensionMethods;
+using DbTuningDetail = Mediaportal.TV.Server.TVDatabase.Entities.TuningDetail;
+using FileTuningDetail = Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail.TuningDetail;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class CardDvbT : SectionSettings
   {
-    #region Member variables
+    #region variables
 
-    private readonly int _cardNumber;
-
-    private List<DVBTTuning> _dvbtChannels = new List<DVBTTuning>();
-    private String buttonText;
-
-    private FileFilters fileFilters;
-
-    private CI_Menu_Dialog ciMenuDialog; // ci menu dialog object
-
-    private ScanState scanState; // scan state
-
-    private bool _isScanning
-    {
-      get { return scanState == ScanState.Scanning || scanState == ScanState.Cancel; }
-    }
+    private readonly int _tunerId;
+    private BroadcastStandard _tunerSupportedBroadcastStandards;
+    private TuningDetailFilter _tuningDetailFilter;
+    private ChannelScanHelper _scanHelper = null;
+    private ScanState _scanState = ScanState.Initialized;
 
     #endregion
 
-    #region Properties
+    #region properties
 
-    /// <summary>
-    /// Returns active scan type
-    /// </summary>
-    private ScanTypes ActiveScanType
+    private ScanType ActiveScanType
     {
       get
       {
-        if (checkBoxAdvancedTuning.Checked == false)
+        if (!checkBoxUseAdvancedOptions.Checked)
         {
-          return ScanTypes.Predefined;
+          return ScanType.PredefinedProvider;
         }
-        if (scanPredefProvider.Checked == true)
-        {
-          return ScanTypes.Predefined;
-        }
-        if (scanSingleTransponder.Checked == true)
-        {
-          return ScanTypes.SingleTransponder;
-        }
-        if (scanNIT.Checked == true)
-        {
-          return ScanTypes.NIT;
-        }
-        return ScanTypes.Predefined;
+        return (ScanType)typeof(ScanType).GetEnumFromDescription((string)comboBoxScanType.SelectedItem);
       }
     }
 
     #endregion
 
-    #region Constructors
-
-    private void EnableSections() {}
-
-    public CardDvbT()
-      : this("DVBT") {}
-
-    public CardDvbT(string name)
-      : base(name) {}
-
-    public CardDvbT(string name, int cardNumber)
+    public CardDvbT(string name, int tunerId)
       : base(name)
     {
-      _cardNumber = cardNumber;
+      _tunerId = tunerId;
       InitializeComponent();
-      //insert complete ci menu dialog to tab
-      Card dbCard = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber, CardIncludeRelationEnum.None);
-      if (dbCard.UseConditionalAccess == true)
-      {
-        ciMenuDialog = new CI_Menu_Dialog(_cardNumber);
-        tabPageCIMenu.Controls.Add(ciMenuDialog);
-      }
-      else
-      {
-        tabPageCIMenu.Dispose();
-      }
       base.Text = name;
-      Init();
     }
 
-    #endregion
-
-    #region Init and Section (de-)Activate
-
-    private void Init()
-    {
-      // set to same positions as progress
-      mpGrpAdvancedTuning.Top = mpGrpScanProgress.Top;
-      mpComboBoxCountry.Items.Clear();
-      try
-      {
-        fileFilters = new FileFilters("DVBT", ref mpComboBoxCountry, ref mpComboBoxRegion);
-      }
-      catch (Exception)
-      {
-        MessageBox.Show(@"Unable to open TuningParameters\dvbt\*.xml");
-        return;
-      }
-      SetButtonState();
-      SetDefaults();
-
-      buttonText = mpButtonScanTv.Text;
-
-      checkBoxCreateSignalGroup.Text = "Create \"" + TvConstants.TvGroupNames.DVBT + "\" group";
-
-      scanState = ScanState.Initialized;
-    }
+    #region activate/deactivate
 
     public override void OnSectionActivated()
     {
-      base.OnSectionActivated();
-      UpdateStatus();
-      SetDefaults();
+      this.LogDebug("DVB-T: activating, tuner ID = {0}", _tunerId);
 
-      if (ciMenuDialog != null)
+      // First activation.
+      if (comboBoxScanType.Items.Count == 0)
       {
-        ciMenuDialog.OnSectionActivated();
+        groupBoxAdvancedOptions.Top = groupBoxProgress.Top;
+        comboBoxScanType.Items.AddRange(typeof(ScanType).GetDescriptions());
+        comboBoxScanType.SelectedIndex = 0;
       }
+
+      Tuner tuner = ServiceAgents.Instance.TunerServiceAgent.GetTuner(_tunerId, TunerIncludeRelationEnum.None);
+
+      _tuningDetailFilter = new TuningDetailFilter("dvbt", comboBoxCountry, comboBoxRegionProvider);
+
+      comboBoxBroadcastStandard.Items.Clear();
+      _tunerSupportedBroadcastStandards = (BroadcastStandard)tuner.SupportedBroadcastStandards;
+      comboBoxBroadcastStandard.Items.AddRange(typeof(BroadcastStandard).GetDescriptions(tuner.SupportedBroadcastStandards, false));
+
+      comboBoxCountry.SelectedItem = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _tunerId + "Country", System.Globalization.RegionInfo.CurrentRegion.EnglishName);
+      if (comboBoxCountry.SelectedItem == null)
+      {
+        comboBoxCountry.SelectedIndex = 0;
+      }
+      comboBoxRegionProvider.SelectedItem = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _tunerId + "Region", string.Empty);
+      if (comboBoxRegionProvider.SelectedItem == null)
+      {
+        comboBoxRegionProvider.SelectedIndex = 0;
+      }
+      comboBoxBroadcastStandard.SelectedItem = ((BroadcastStandard)ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _tunerId + "BroadcastStandard", (int)BroadcastStandard.DvbT)).GetDescription();
+      if (comboBoxBroadcastStandard.SelectedItem == null)
+      {
+        comboBoxBroadcastStandard.SelectedIndex = 0;
+      }
+      numericTextBoxFrequency.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _tunerId + "Frequency", 163000);
+      numericTextBoxBandwidth.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _tunerId + "Bandwidth", 8000);
+
+      base.OnSectionActivated();
     }
 
     public override void OnSectionDeActivated()
     {
+      this.LogDebug("DVB-T: deactivating, tuner ID = {0}", _tunerId);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbt" + _tunerId + "Country", (string)comboBoxCountry.SelectedItem);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbt" + _tunerId + "Region", ((CustomFileName)comboBoxRegionProvider.SelectedItem).ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbt" + _tunerId + "BroadcastStandard", Convert.ToInt32(typeof(BroadcastStandard).GetEnumFromDescription((string)comboBoxBroadcastStandard.SelectedItem)));
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbt" + _tunerId + "Frequency", numericTextBoxFrequency.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbt" + _tunerId + "Bandwidth", numericTextBoxBandwidth.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbt" + _tunerId + "PlpId", numericTextBoxPlpId.Value);
       base.OnSectionDeActivated();
-      PersistState();
-
-      if (ciMenuDialog != null)
-      {
-        ciMenuDialog.OnSectionDeActivated();
-      }
     }
 
     #endregion
 
-    #region Loading and Saving functions
+    #region scan handling
 
-    /// <summary>
-    /// Saves current transponder list
-    /// </summary>
-    private void SaveTransponderList()
+    private FileTuningDetail GetManualTuning()
     {
-      if (_dvbtChannels.Count != 0)
+      FileTuningDetail tuningDetail = new FileTuningDetail();
+      tuningDetail.BroadcastStandard = (BroadcastStandard)typeof(BroadcastStandard).GetEnumFromDescription((string)comboBoxBroadcastStandard.SelectedItem);
+      tuningDetail.Frequency = numericTextBoxFrequency.Value;
+      tuningDetail.Bandwidth = numericTextBoxBandwidth.Value;
+      if (tuningDetail.BroadcastStandard == BroadcastStandard.DvbT2)
       {
-        String filePath = String.Format(@"{0}\TuningParameters\dvbt\Manual_Scans.{1}.xml", PathManager.GetDataPath,
-                                        DateTime.Now.ToString("yyyy-MM-dd"));
-        SaveList(filePath);
-        PersistState();
-        Init(); // refresh list
+        tuningDetail.StreamId = numericTextBoxPlpId.Value;
       }
+      return tuningDetail;
     }
 
-    /// <summary>
-    /// Saves a new list with found transponders
-    /// </summary>
-    /// <param name="fileName">Path for output filename</param>
-    private void SaveList(string fileName)
+    private void buttonScan_Click(object sender, EventArgs e)
     {
-      try
-      {
-        System.IO.TextWriter parFileXML = System.IO.File.CreateText(fileName);
-        XmlSerializer xmlSerializer = new XmlSerializer(typeof (List<DVBTTuning>));
-        xmlSerializer.Serialize(parFileXML, _dvbtChannels);
-        parFileXML.Close();
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "Error saving tuningdetails");
-        MessageBox.Show("Transponder list could not be saved, check error.log for details.");
-      }
-    }
-
-    /// <summary>
-    /// Load existing list from xml file 
-    /// </summary>
-    /// <param name="fileName">Path for input filen</param>
-    private void LoadList(string fileName)
-    {
-      try
-      {
-        XmlReader parFileXML = XmlReader.Create(fileName);
-        XmlSerializer xmlSerializer = new XmlSerializer(typeof (List<DVBTTuning>));
-        _dvbtChannels = (List<DVBTTuning>)xmlSerializer.Deserialize(parFileXML);
-        parFileXML.Close();
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "Error loading tuningdetails");
-        MessageBox.Show("Transponder list could not be loaded, check error.log for details.");
-      }
-    }
-
-    /// <summary>
-    /// Reads previous settings and assign them to controls
-    /// </summary>
-    private void SetDefaults()
-    {
-      int index = Math.Max(ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "Country", 0), 0);
-      // limit to >= 0
-      if (index < mpComboBoxCountry.Items.Count)
-      {
-        mpComboBoxCountry.SelectedIndex = index;
-      }
-
-      index = Math.Max(ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "Region", 0), 0); // limit to >= 0
-      if (index < mpComboBoxRegion.Items.Count)
-      {
-        mpComboBoxRegion.SelectedIndex = index;
-      }
-
-      textBoxFreq.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "Freq", "306000");
-      textBoxBandwidth.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "Bandwidth", "8000");
-
-      checkBoxCreateGroups.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "creategroups", false));
-      checkBoxCreateSignalGroup.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "createsignalgroup", false));
-    }
-
-    /// <summary>
-    /// Saves control status
-    /// </summary>
-    private void PersistState()
-    {
-      
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbt" + _cardNumber + "Country", mpComboBoxCountry.SelectedIndex);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbt" + _cardNumber + "Region", mpComboBoxRegion.SelectedIndex);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbt" + _cardNumber + "Freq", textBoxFreq.Text);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbt" + _cardNumber + "Bandwidth", textBoxBandwidth.Text);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbt" + _cardNumber + "creategroups", checkBoxCreateGroups.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbt" + _cardNumber + "createsignalgroup", checkBoxCreateSignalGroup.Checked);      
-    }
-
-    /// <summary>
-    /// Get Tuning details from manual scan section
-    /// </summary>
-    /// <returns></returns>
-    private DVBTChannel GetManualTuning()
-    {
-      DVBTChannel tuneChannel = new DVBTChannel();
-      tuneChannel.Frequency = Int32.Parse(textBoxFreq.Text);
-      tuneChannel.Bandwidth = Int32.Parse(textBoxBandwidth.Text);
-      return tuneChannel;
-    }
-
-    #endregion
-
-    #region Scan handling
-
-    private void InitScanProcess()
-    {
-      // once completed reset to new beginning
-      switch (scanState)
+      switch (_scanState)
       {
         case ScanState.Done:
-          scanState = ScanState.Initialized;
-          listViewStatus.Items.Clear();
-          SetButtonState();
+          buttonScan.Text = "Scan for channels";
+          _scanState = ScanState.Initialized;
+          ShowOrHideScanProgress(false);
           return;
-
+        case ScanState.Scanning:
+          buttonScan.Text = "Cancelling...";
+          _scanState = ScanState.Cancel;
+          if (_scanHelper != null)
+          {
+            _scanHelper.StopScan();
+          }
+          break;
         case ScanState.Initialized:
-          // common checks
-          Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
-          if (card.Enabled == false)
-          {
-            MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
-            return;
-          }
-          if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard))
-          {
-            MessageBox.Show(this, "Tuner is not found. Please make sure the tuner is present before scanning.");
-            return;
-          }
-          // Check if the card is locked for scanning.
-          IUser user;
-          if (ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(_cardNumber, out user))
-          {
-            MessageBox.Show(this,
-                            "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid card?");
-            return;
-          }
-          SetButtonState();
-          ShowActiveGroup(1); // force progess visible
-          // End common checks
-
-          listViewStatus.Items.Clear();
-
-          // Scan type dependent handling
-          _dvbtChannels.Clear();
+          List<FileTuningDetail> tuningDetails = null;
+          bool isNitScan = false;
           switch (ActiveScanType)
           {
-              // use tuning details from file
-            case ScanTypes.Predefined:
-              CustomFileName tuningFile = (CustomFileName)mpComboBoxRegion.SelectedItem;
-              _dvbtChannels = (List<DVBTTuning>)fileFilters.LoadList(tuningFile.FileName, typeof (List<DVBTTuning>));
-              if (_dvbtChannels == null)
+            case ScanType.PredefinedProvider:
+              CustomFileName tuningFile = (CustomFileName)comboBoxRegionProvider.SelectedItem;
+              this.LogInfo("DVB-T: start scanning, country = {0}, region = {1}...", comboBoxCountry.SelectedItem, tuningFile);
+              tuningDetails = new List<FileTuningDetail>(20);
+              foreach (FileTuningDetail td in _tuningDetailFilter.LoadList(tuningFile.FileName))
               {
-                _dvbtChannels = new List<DVBTTuning>();
-              }
-              break;
-
-              // scan Network Information Table for transponder info
-            case ScanTypes.NIT:
-              _dvbtChannels.Clear();
-              DVBTChannel tuneChannel = GetManualTuning();
-
-              listViewStatus.Items.Clear();
-              string line = String.Format("Scan freq:{0} bandwidth:{1} ...", tuneChannel.Frequency,
-                                          tuneChannel.Bandwidth);
-              ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
-              item.EnsureVisible();
-
-              IChannel[] channels = ServiceAgents.Instance.ControllerServiceAgent.ScanNIT(_cardNumber, tuneChannel);
-              if (channels != null)
-              {
-                for (int i = 0; i < channels.Length; ++i)
+                if (_tunerSupportedBroadcastStandards.HasFlag(td.BroadcastStandard))
                 {
-                  DVBTChannel ch = (DVBTChannel)channels[i];
-                  _dvbtChannels.Add(ch.TuningInfo);
-                  item = listViewStatus.Items.Add(new ListViewItem(ch.TuningInfo.ToString()));
-                  item.EnsureVisible();
+                  tuningDetails.Add(td);
                 }
               }
-
-              ListViewItem lastItem =
-                listViewStatus.Items.Add(
-                  new ListViewItem(String.Format("Scan done, found {0} transponders...", _dvbtChannels.Count)));
-              lastItem.EnsureVisible();
-
-              // automatically save list for re-use
-              SaveTransponderList();
               break;
-
-              // scan only single inputted transponder
-            case ScanTypes.SingleTransponder:
-              DVBTChannel singleTuneChannel = GetManualTuning();
-              _dvbtChannels.Add(singleTuneChannel.TuningInfo);
+            case ScanType.FullNetworkInformationTable:
+              isNitScan = true;
+              tuningDetails = new List<FileTuningDetail> { GetManualTuning() };
+              break;
+            case ScanType.SingleTransmitter:
+              tuningDetails = new List<FileTuningDetail> { GetManualTuning() };
               break;
           }
-          if (_dvbtChannels.Count != 0)
+          if (tuningDetails == null || tuningDetails.Count == 0)
           {
-            StartScanThread();
+            return;
+          }
+
+          _scanHelper = new ChannelScanHelper(_tunerId);
+          bool result;
+          if (isNitScan)
+          {
+            result = _scanHelper.StartNitScan(tuningDetails[0], listViewProgress, progressBarProgress, OnNitScanFoundTransmitters, OnGetDbExistingTuningDetailCandidates, null, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality);
           }
           else
           {
-            scanState = ScanState.Done;
-            SetButtonState();
+            result = _scanHelper.StartScan(tuningDetails, listViewProgress, progressBarProgress, OnGetDbExistingTuningDetailCandidates, null, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality);
+          }
+          if (result)
+          {
+            _scanState = ScanState.Scanning;
+            buttonScan.Text = "Cancel...";
+            ShowOrHideScanProgress(true);
           }
           break;
-
-        case ScanState.Scanning:
-          scanState = ScanState.Cancel;
-          SetButtonState();
-          break;
-
-        case ScanState.Cancel:
-          return;
       }
     }
 
-    private void StartScanThread()
+    private IList<FileTuningDetail> OnNitScanFoundTransmitters(IList<FileTuningDetail> transmitters)
     {
-      Thread scanThread = new Thread(DoScan);
-      scanThread.Name = "DVB-T scan thread";
-      scanThread.Start();
-    }
-
-    /// <summary>
-    /// Updates signal level info
-    /// </summary>
-    private void UpdateStatus()
-    {
-      progressBarLevel.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalLevel(_cardNumber));
-      progressBarQuality.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalQuality(_cardNumber));
-    }
-
-    #region Scan Thread
-
-    /// <summary>
-    /// Scan Thread
-    /// </summary>
-    private void DoScan()
-    {
-      suminfo tv = new suminfo();
-      suminfo radio = new suminfo();
-      IUser user = new User();
-      user.CardId = _cardNumber;
-      try
+      this.Invoke((MethodInvoker)delegate
       {
-        scanState = ScanState.Scanning;
-        if (_dvbtChannels.Count == 0)
-          return;
+        _tuningDetailFilter.SaveList(string.Format("NIT Scans.{0}.xml", DateTime.Now.ToString("yyyy-MM-dd")), transmitters);
+      });
 
-        ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
-
-        SetButtonState();
-        
-        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
-
-        for (int index = 0; index < _dvbtChannels.Count; ++index)
+      IList<FileTuningDetail> tunableTransmitters = new List<FileTuningDetail>(transmitters.Count);
+      foreach (FileTuningDetail transmitter in transmitters)
+      {
+        if (_tunerSupportedBroadcastStandards.HasFlag(transmitter.BroadcastStandard))
         {
-          if (scanState == ScanState.Cancel)
-            return;
-
-          float percent = ((float)(index)) / _dvbtChannels.Count;
-          percent *= 100f;
-          if (percent > 100f)
-            percent = 100f;
-          progressBar1.Value = (int)percent;
-
-          Application.DoEvents();
-
-          DVBTTuning curTuning = _dvbtChannels[index];
-          DVBTChannel tuneChannel = new DVBTChannel(curTuning);
-          string line = String.Format("{0}tp- {1}", 1 + index, tuneChannel.TuningInfo.ToString());
-          ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
-          item.EnsureVisible();
-
-          UpdateStatus();
-          if (index == 0)
-          {
-            ServiceAgents.Instance.ControllerServiceAgent.Scan(user.Name, user.CardId, out user, tuneChannel, -1);
-            UpdateStatus();
-          }
-
-          IChannel[] channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardNumber, tuneChannel);
-          UpdateStatus();
-          if ((channels == null || channels.Length == 0) && curTuning.Offset != 0)
-          {
-            /// try frequency - offset
-            tuneChannel.Frequency = curTuning.Frequency - curTuning.Offset;
-            item.Text = String.Format("{0}tp- {1} {2}kHz ", 1 + index, tuneChannel.Frequency, tuneChannel.Bandwidth);
-            channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardNumber, tuneChannel);
-            if (channels == null || channels.Length == 0)
-            {
-              /// try frequency + offset
-              tuneChannel.Frequency = curTuning.Frequency + curTuning.Offset;
-              item.Text = String.Format("{0}tp- {1} {2}kHz ", 1 + index, tuneChannel.Frequency, tuneChannel.Bandwidth);
-              channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardNumber, tuneChannel);
-            }
-          }
-
-          if (channels == null || channels.Length == 0)
-          {
-            if (ServiceAgents.Instance.ControllerServiceAgent.TunerLocked(_cardNumber) == false)
-            {
-              line = String.Format("{0}tp- {1} {2}:No signal", 1 + index, tuneChannel.Frequency, tuneChannel.Bandwidth);
-              item.Text = line;
-              item.ForeColor = Color.Red;
-              continue;
-            }
-            line = String.Format("{0}tp- {1} {2}:Nothing found", 1 + index, tuneChannel.Frequency, tuneChannel.Bandwidth);
-            item.Text = line;
-            item.ForeColor = Color.Red;
-            continue;
-          }
-
-          radio.newChannel = 0;
-          radio.updChannel = 0;
-          tv.newChannel = 0;
-          tv.updChannel = 0;
-          for (int i = 0; i < channels.Length; ++i)
-          {
-            Channel dbChannel;
-            DVBTChannel channel = (DVBTChannel)channels[i];
-            bool exists;
-            TuningDetail currentDetail;
-            //Check if we already have this tuningdetail. The user has the option to enable channel move detection...
-            if (checkBoxEnableChannelMoveDetection.Checked)
-            {
-              //According to the DVB specs ONID + SID is unique, therefore we do not need to use the TSID to identify a service.
-              //The DVB spec recommends that the SID should not change if a service moves. This theoretically allows us to
-              //track channel movements.
-              TuningDetailSearchEnum tuningDetailSearchEnum = TuningDetailSearchEnum.NetworkId;
-              tuningDetailSearchEnum |= TuningDetailSearchEnum.ServiceId;
-              currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailCustom(channel, tuningDetailSearchEnum);   
-              
-            }
-            else
-            {
-              //There are certain providers that do not maintain unique ONID + SID combinations.
-              //In those cases, ONID + TSID + SID is generally unique. The consequence of using the TSID to identify
-              //a service is that channel movement tracking won't work (each transponder/mux should have its own TSID).
-              currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetail(channel);
-            }
-
-            if (currentDetail == null)
-            {
-              //add new channel
-              exists = false;
-              dbChannel = ChannelFactory.CreateChannel(channel.Name);
-              dbChannel.SortOrder = channel.LogicalChannelNumber;
-              dbChannel.ChannelNumber = channel.LogicalChannelNumber;
-              dbChannel.MediaType = (int) channel.MediaType;
-              dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-              dbChannel.AcceptChanges();
-            }
-            else
-            {
-              exists = true;
-              dbChannel = currentDetail.Channel;
-            }
-
-
-            if (dbChannel.MediaType == (int)MediaTypeEnum.TV)
-            {
-              ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
-              MappingHelper.AddChannelToGroup(ref dbChannel, @group);
-              if (checkBoxCreateSignalGroup.Checked)
-              {
-                group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.DVBT, MediaTypeEnum.TV);
-                MappingHelper.AddChannelToGroup(ref dbChannel, @group);
-              }
-              if (checkBoxCreateGroups.Checked)
-              {
-                group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(channel.Provider, MediaTypeEnum.TV);
-                MappingHelper.AddChannelToGroup(ref dbChannel, @group);
-              }
-            }
-            else if (dbChannel.MediaType == (int)MediaTypeEnum.Radio)
-            {
-              ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);
-              MappingHelper.AddChannelToGroup(ref dbChannel, @group);
-              if (checkBoxCreateSignalGroup.Checked)
-              {
-                group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.DVBT, MediaTypeEnum.Radio);
-                MappingHelper.AddChannelToGroup(ref dbChannel, @group);
-              }
-              if (checkBoxCreateGroups.Checked)
-              {
-                group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(channel.Provider, MediaTypeEnum.Radio);
-                MappingHelper.AddChannelToGroup(ref dbChannel, @group);
-              }
-            }
-
-            if (currentDetail == null)
-            {
-              ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
-            }
-            else
-            {
-              //update tuning details...
-              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.IdTuning, channel);
-            }
-
-            if (channel.MediaType == MediaTypeEnum.TV)
-            {
-              if (exists)
-              {
-                tv.updChannel++;
-              }
-              else
-              {
-                tv.newChannel++;
-                tv.newChannels.Add(channel);
-              }
-            }
-            if (channel.MediaType == MediaTypeEnum.Radio)
-            {
-              if (exists)
-              {
-                radio.updChannel++;
-              }
-              else
-              {
-                radio.newChannel++;
-                radio.newChannels.Add(channel);
-              }
-            }
-            MappingHelper.AddChannelToCard(dbChannel, card, false);
-            line = String.Format("{0}tp- {1} {2}:New TV/Radio:{3}/{4} Updated TV/Radio:{5}/{6}", 1 + index,
-                                 tuneChannel.Frequency, tuneChannel.Bandwidth, tv.newChannel, radio.newChannel,
-                                 tv.updChannel, radio.updChannel);
-            item.Text = line;
-          }
-          tv.updChannelSum += tv.updChannel;
-          radio.updChannelSum += radio.updChannel;
+          tunableTransmitters.Add(transmitter);
         }
       }
-      catch (Exception ex)
-      {
-        this.LogError(ex);
-      }
-      finally
-      {
-        ServiceAgents.Instance.ControllerServiceAgent.StopCard(user.CardId);
-        ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
-        progressBar1.Value = 100;
-
-        scanState = ScanState.Done;
-        SetButtonState();
-      }
-      listViewStatus.Items.Add(
-        new ListViewItem(String.Format("Total radio channels updated:{0}, new:{1}", radio.updChannelSum,
-                                       radio.newChannelSum)));
-      foreach (IChannel newChannel in radio.newChannels)
-      {
-        listViewStatus.Items.Add(new ListViewItem(String.Format("  -> new channel: {0}", newChannel.Name)));
-      }
-
-      listViewStatus.Items.Add(
-        new ListViewItem(String.Format("Total tv channels updated:{0}, new:{1}", tv.updChannelSum, tv.newChannelSum)));
-      foreach (IChannel newChannel in tv.newChannels)
-      {
-        listViewStatus.Items.Add(new ListViewItem(String.Format("  -> new channel: {0}", newChannel.Name)));
-      }
-      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
-      lastItem.EnsureVisible();
+      return tunableTransmitters;
     }
 
-    #endregion
+    private IList<DbTuningDetail> OnGetDbExistingTuningDetailCandidates(FileTuningDetail tuningDetail, IChannel tuneChannel, IChannel foundChannel, bool useChannelMovementDetection)
+    {
+      // According to the DVB specifications ONID + SID should be a sufficient
+      // channel identifier. The specification also recommends that the SID
+      // should not change if a service moves. This theoretically allows us to
+      // track channel movements.
+      // Unlike with satellite, most DVB-T/T2 broadcasters maintain unique ONID
+      // + SID combinations. We provide an ONID + TSID + SID fall-back option
+      // for the exceptions.
+      ChannelDvbBase dvbChannel = foundChannel as ChannelDvbBase;
+      if (dvbChannel == null)
+      {
+        return null;
+      }
+      if (useChannelMovementDetection)
+      {
+        return ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(tuningDetail.BroadcastStandard, dvbChannel.OriginalNetworkId, dvbChannel.ServiceId);
+      }
+      return ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(tuningDetail.BroadcastStandard, dvbChannel.OriginalNetworkId, dvbChannel.ServiceId, dvbChannel.TransportStreamId);
+    }
+
+    private void OnScanCompleted()
+    {
+      _scanState = ScanState.Done;
+      buttonScan.Invoke((MethodInvoker)delegate
+      {
+        buttonScan.Text = "New scan";
+      });
+      _scanHelper = null;
+    }
 
     #endregion
 
     #region GUI handling
 
-    /// <summary>
-    /// Sets correct button state 
-    /// </summary>
-    private void SetButtonState()
+    private void ShowOrHideScanProgress(bool showScanProgress)
     {
-      mpComboBoxCountry.Enabled = !_isScanning && ActiveScanType == ScanTypes.Predefined;
-      mpComboBoxRegion.Enabled = !_isScanning && ActiveScanType == ScanTypes.Predefined;
-
-      textBoxFreq.Enabled = ActiveScanType != ScanTypes.Predefined;
-      textBoxBandwidth.Enabled = ActiveScanType != ScanTypes.Predefined;
-
-      int forceProgress = 0;
-      switch (scanState)
+      EnableOrDisablePredefinedScanFields();
+      if (showScanProgress)
       {
-        default:
-        case ScanState.Initialized:
-          mpButtonScanTv.Text = "Scan for channels";
-          break;
-
-        case ScanState.Scanning:
-          mpButtonScanTv.Text = "Cancel...";
-          break;
-
-        case ScanState.Cancel:
-          mpButtonScanTv.Text = "Cancelling...";
-          break;
-
-        case ScanState.Done:
-          mpButtonScanTv.Text = "New scan";
-          forceProgress = 1; // leave window open
-          break;
-      }
-
-      ShowActiveGroup(forceProgress);
-    }
-
-    /// <summary>
-    /// Show either scan option or progress
-    /// </summary>
-    /// <param name="ForceShowProgress">1 to force progress visible</param>
-    private void ShowActiveGroup(int ForceShowProgress)
-    {
-      if (ForceShowProgress == 1)
-      {
-        mpGrpAdvancedTuning.Visible = false;
-        mpGrpScanProgress.Visible = true;
-        checkBoxCreateGroups.Enabled = false;
-        checkBoxCreateSignalGroup.Enabled = false;
-        checkBoxEnableChannelMoveDetection.Enabled = false;
-        checkBoxAdvancedTuning.Enabled = false;
+        checkBoxUseAdvancedOptions.Enabled = false;
+        groupBoxAdvancedOptions.Visible = false;
+        listViewProgress.Items.Clear();
+        groupBoxProgress.Visible = true;
+        groupBoxProgress.BringToFront();
+        UpdateZOrder();
       }
       else
       {
-        mpGrpAdvancedTuning.Visible = checkBoxAdvancedTuning.Checked && !_isScanning;
-        mpGrpScanProgress.Visible = _isScanning;
-        checkBoxCreateGroups.Enabled = !_isScanning;
-        checkBoxCreateSignalGroup.Enabled = !_isScanning;
-        checkBoxEnableChannelMoveDetection.Enabled = !_isScanning;
-        checkBoxAdvancedTuning.Enabled = !_isScanning;
+        checkBoxUseAdvancedOptions.Enabled = true;
+        groupBoxAdvancedOptions.Visible = checkBoxUseAdvancedOptions.Checked;
+        groupBoxProgress.Visible = false;
+        if (groupBoxAdvancedOptions.Visible)
+        {
+          groupBoxAdvancedOptions.BringToFront();
+          UpdateZOrder();
+        }
       }
-
-      if (mpGrpAdvancedTuning.Visible)
-      {
-        mpGrpAdvancedTuning.BringToFront();
-      }
-      if (mpGrpScanProgress.Visible)
-      {
-        mpGrpScanProgress.BringToFront();
-      }
-      UpdateZOrder();
-      Application.DoEvents();
-      Thread.Sleep(100);
     }
 
-    #endregion
-
-    #region GUI event handlers
-
-    private void mpButtonScanTv_Click_1(object sender, EventArgs e)
+    private void EnableOrDisablePredefinedScanFields()
     {
-      InitScanProcess();
+      bool enableFields = _scanState == ScanState.Initialized && ActiveScanType == ScanType.PredefinedProvider;
+      comboBoxCountry.Enabled = enableFields;
+      comboBoxRegionProvider.Enabled = enableFields;
     }
 
-    private void UpdateGUIControls(object sender, EventArgs e)
+    private void checkBoxUseAdvancedScanningOptions_CheckedChanged(object sender, EventArgs e)
     {
-      SetButtonState();
+      groupBoxAdvancedOptions.Visible = !groupBoxAdvancedOptions.Visible;
+      EnableOrDisablePredefinedScanFields();
+    }
+
+    private void comboBoxScanType_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      EnableOrDisablePredefinedScanFields();
+
+      bool isPredefinedScan = ActiveScanType == ScanType.PredefinedProvider;
+      comboBoxBroadcastStandard.Enabled = !isPredefinedScan;
+      numericTextBoxFrequency.Enabled = !isPredefinedScan;
+      numericTextBoxBandwidth.Enabled = !isPredefinedScan;
+
+      comboBoxBroadcastStandard_SelectedIndexChanged(null, null);
+    }
+
+    private void comboBoxBroadcastStandard_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (comboBoxBroadcastStandard.SelectedItem == null)
+      {
+        return;
+      }
+      BroadcastStandard broadcastStandard = (BroadcastStandard)typeof(BroadcastStandard).GetEnumFromDescription((string)comboBoxBroadcastStandard.SelectedItem);
+      bool enableFields = ActiveScanType != ScanType.PredefinedProvider && broadcastStandard == BroadcastStandard.DvbT2;
+      numericTextBoxPlpId.Enabled = enableFields;
     }
 
     #endregion

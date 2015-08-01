@@ -20,231 +20,208 @@
 
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.Interfaces.Enums;
-using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class StreamingServer : SectionSettings
   {
-    private int _rtspPort = ServiceAgents.Instance.SettingServiceAgent.GetValue("rtspport", 554);
-    private string _hostname = ServiceAgents.Instance.SettingServiceAgent.GetValue("hostname", "localhost");
+    private string _interface = null;
+    private int _port = 0;
+    private Timer _clientListUpdateTimer = null;
 
-    private class IpAddressOption
+    private class ComboBoxInterface
     {
-   
-      public string DisplayString;
-      public string HostName;
+      public string DisplayName;
+      public string Interface;
 
-      public IpAddressOption(string displayString, string hostName)
+      public ComboBoxInterface(string displayString, string hostName)
       {
-        DisplayString = displayString;
-        HostName = hostName;
+        DisplayName = displayString;
+        Interface = hostName;
       }
 
       public override string ToString()
       {
-        return DisplayString;
+        return DisplayName;
       }
     }
     
-
-    public StreamingServer()
-      : this("Streaming Server") {}
-
-    public StreamingServer(string name)
-      : base(name)
+    public StreamingServer(ServerConfigurationChangedEventHandler handler)
+      : base("Streaming Server", handler)
     {
       InitializeComponent();
-
-      
     }
 
     public override void OnSectionActivated()
     {
-      timer1.Enabled = true;      
+      this.LogDebug("streamer: activating");
 
+      _interface = ServiceAgents.Instance.SettingServiceAgent.GetValue("rtspServerInterface", string.Empty);
+      _port = ServiceAgents.Instance.SettingServiceAgent.GetValue("rtspServerPort", 554);
+      this.LogDebug("streamer: configured interface = {0}, port = {1}", _interface, _port);
+
+      string actualInterface;
+      ushort actualPort;
+      ServiceAgents.Instance.ControllerServiceAgent.GetStreamingServerInformation(out actualInterface, out actualPort);
+      this.LogDebug("streamer: actual interface = {0}, port = {1}", actualInterface, actualPort);
+
+      IEnumerable<string> ipAdresses = ServiceAgents.Instance.ControllerServiceAgent.ServerIpAddresses;
+      int selectedIndex = 0;
+      int index = 1;
+      comboBoxInterface.BeginUpdate();
       try
       {
-        _hostname = Dns.GetHostEntry(_hostname).HostName;
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "Failed to get our server host name");
-      }
-      IEnumerable<string> ipAdresses = ServiceAgents.Instance.ControllerServiceAgent.ServerIpAdresses;
-      IpAddressComboBox.Items.Clear();
-      IpAddressComboBox.Items.Add(new IpAddressOption("(auto)", _hostname));
-      int selected = 0;
-      int counter = 1;
-      foreach (string ipAdress in ipAdresses)
-      {
-        IpAddressComboBox.Items.Add(new IpAddressOption(ipAdress, ipAdress));
-        if (String.Compare(ipAdress, _hostname, true) == 0)
+        comboBoxInterface.Items.Clear();
+        comboBoxInterface.Items.Add(new ComboBoxInterface("(auto)", string.Empty));
+        foreach (string ipAddress in ipAdresses)
         {
-          selected = counter;
+          comboBoxInterface.Items.Add(new ComboBoxInterface(ipAddress, ipAddress));
+          if (string.Equals(ipAddress, _interface))
+          {
+            selectedIndex = index;
+          }
+          index++;
         }
-        counter++;
+        comboBoxInterface.SelectedIndex = selectedIndex;
       }
-      IpAddressComboBox.SelectedIndex = selected;
-      
-      if (_rtspPort >= PortNoNumericUpDown.Minimum && _rtspPort <= PortNoNumericUpDown.Maximum)
+      finally
       {
-        PortNoNumericUpDown.Value = _rtspPort;
-        PortNoNumericUpDown.Text = _rtspPort.ToString(); // in case value is the same but text is empty
+        comboBoxInterface.EndUpdate();
       }
+
+      numericUpDownPort.Value = _port;
+
+      if (string.IsNullOrEmpty(actualInterface) || actualPort <= 0)
+      {
+        labelStatusValue.Text = "Server is not running. Check configured interface and port are available.";
+        labelStatusValue.ForeColor = System.Drawing.Color.Red;
+      }
+      else
+      {
+        labelStatusValue.Text = string.Format("Server is running on interface {0} port {1}.", actualInterface, actualPort);
+        labelStatusValue.ForeColor = System.Drawing.Color.Green;
+      }
+
+      _clientListUpdateTimer = new Timer();
+      _clientListUpdateTimer.Interval = 3000;
+      _clientListUpdateTimer.Tick += new EventHandler(OnClientListUpdateTimerTick);
+      _clientListUpdateTimer.Enabled = true;
+      _clientListUpdateTimer.Start();
+
+      base.OnSectionActivated();
     }
 
     public override void OnSectionDeActivated()
     {
-      timer1.Enabled = false;
+      this.LogDebug("streamer: deactivating");
+
+      _clientListUpdateTimer.Enabled = false;
+      _clientListUpdateTimer.Stop();
+      _clientListUpdateTimer.Dispose();
+      _clientListUpdateTimer = null;
+
+      string newInterface = ((ComboBoxInterface)comboBoxInterface.SelectedItem).Interface;
+      if (string.Equals(_interface, newInterface) && _port == numericUpDownPort.Value)
+      {
+        base.OnSectionDeActivated();
+        return;
+      }
+
+      if (listViewClients.Items.Count > 0)
+      {
+        DialogResult result = MessageBox.Show("Clients will be disconnected. Are you sure you want to continue?", MESSAGE_CAPTION, MessageBoxButtons.YesNo);
+        if (result == DialogResult.No)
+        {
+          base.OnSectionDeActivated();
+          return;
+        }
+      }
+
+      if (!string.Equals(_interface, newInterface))
+      {
+        this.LogInfo("streamer: interface changed from {0} to {1}", _interface, newInterface);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("rtspServerInterface", newInterface);
+      }
+      if (_port != numericUpDownPort.Value)
+      {
+        this.LogInfo("streamer: port changed from {0} to {1}", _port, numericUpDownPort.Value);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("rtspServerPort", (int)numericUpDownPort.Value);
+      }
+      OnServerConfigurationChanged(this, false, true, null);
+
       base.OnSectionDeActivated();
-
-      ApplyStreamingSettings();
     }
 
-    private void ApplyStreamingSettings()
+    private void OnClientListUpdateTimerTick(object sender, EventArgs e)
     {
-      string newHostName = ((IpAddressOption)IpAddressComboBox.SelectedItem).HostName;
-      int newRtspPort = (int)PortNoNumericUpDown.Value;
-      bool needRestart = false;
-      //int.TryParse(PortNoNumericUpDown.Text, out newRtspPort);
-      if (_hostname != newHostName ||
-          _rtspPort != newRtspPort)
+      // Update the client list. Take care to do it on the UI thread.
+      this.Invoke((MethodInvoker)delegate
       {
-        _hostname = newHostName;
-        _rtspPort = newRtspPort;
-        needRestart = true;
-      }
-     
-      if (needRestart)
-      {
-
-        ServiceAgents.Instance.SettingServiceAgent.SaveValue("rtspport", _rtspPort);
-        ServiceAgents.Instance.SettingServiceAgent.SaveValue("hostname", _hostname);
-
-        ServiceNeedsToRestart();
-      }
+        UpdateClientList();
+      });
     }
 
-    private void ServiceNeedsToRestart()
+    private void UpdateClientList()
     {
-      if (
-        MessageBox.Show(this, "Changes made require TvService to restart. Restart it now?", "TvService",
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+      bool log = false;
+      ICollection<RtspClient> clients = ServiceAgents.Instance.ControllerServiceAgent.StreamingClients;
+      if (clients.Count != listViewClients.Items.Count)
       {
-        NotifyForm dlgNotify = new NotifyForm("Restart TvService...", "This can take some time\n\nPlease be patient...");
-        dlgNotify.Show();
-        dlgNotify.WaitForDisplay();
-
-        ServiceAgents.Instance.ControllerServiceAgent.Restart();
-
-        dlgNotify.Close();
+        this.LogDebug("streamer: client list update...");
+        log = true;
       }
-    }
-
-    private void timer1_Tick(object sender, EventArgs e)
-    {
-      List<RtspClient> clients = ServiceAgents.Instance.ControllerServiceAgent.StreamingClients;
-      for (int i = 0; i < clients.Count; ++i)
+      List<ListViewItem> items = new List<ListViewItem>(clients.Count);
+      foreach (RtspClient client in clients)
       {
-        RtspClient client = clients[i];
-        if (i >= listView1.Items.Count)
+        ListViewItem item = new ListViewItem(client.StreamId);
+        item.Tag = client;
+        item.SubItems.Add(client.ClientSessionId.ToString());
+        item.SubItems.Add(client.ClientIpAddress);
+        item.SubItems.Add(client.StreamDescription);
+        item.SubItems.Add(client.ClientConnectionDateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+        item.SubItems.Add(client.IsClientActive ? "yes" : "no");
+        item.SubItems.Add(client.StreamUrl);
+        listViewClients.Items.Add(item);
+
+        if (log)
         {
-          ListViewItem item = new ListViewItem(client.StreamName);
-          item.Tag = client;
-          item.SubItems.Add(client.IpAdress);
-          if (client.IsActive)
-            item.SubItems.Add("yes");
-          else
-            item.SubItems.Add("no");
-          item.SubItems.Add(client.DateTimeStarted.ToString("yyyy-MM-dd HH:mm:ss"));
-          item.SubItems.Add(client.Description);
-          item.ImageIndex = 0;
-          listView1.Items.Add(item);
-        }
-        else
-        {
-          ListViewItem item = listView1.Items[i];
-          item.Text = client.StreamName;
-          item.SubItems[1].Text = client.IpAdress;
-          item.SubItems[2].Text = client.IsActive ? "yes" : "no";
-          item.SubItems[3].Text = client.DateTimeStarted.ToString("yyyy-MM-dd HH:mm:ss");
-          item.SubItems[4].Text = client.Description;
-          item.ImageIndex = 0;
+          this.LogDebug("  client...");
+          this.LogDebug("    IP address      = {0}", client.ClientIpAddress);
+          this.LogDebug("    active?         = {0}", client.IsClientActive);
+          this.LogDebug("    connection time = {0}", client.ClientConnectionDateTime);
+          this.LogDebug("    stream ID       = {0}", client.StreamId);
+          this.LogDebug("    description     = {0}", client.StreamDescription);
+          this.LogDebug("    stream URL      = {0}", client.StreamUrl);
         }
       }
-      while (listView1.Items.Count > clients.Count)
-        listView1.Items.RemoveAt(listView1.Items.Count - 1);
 
-      listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+      listViewClients.BeginUpdate();
+      try
+      {
+        listViewClients.AutoResizeColumns(ColumnHeaderAutoResizeStyle.None);
+        listViewClients.Items.Clear();
+        listViewClients.Items.AddRange(items.ToArray());
+        listViewClients.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+      }
+      finally
+      {
+        listViewClients.EndUpdate();
+      }
     }
 
-    private void mpButtonKick_Click(object sender, EventArgs e)
+    private void buttonKick_Click(object sender, EventArgs e)
     {
-      foreach (ListViewItem item in listView1.SelectedItems)
+      foreach (ListViewItem item in listViewClients.SelectedItems)
       {
         RtspClient client = (RtspClient)item.Tag;
-
-        IUser user = new User();
-        user.Name = System.Net.Dns.GetHostEntry(client.IpAdress).HostName;
-
-        IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
-
-        foreach (Card card in dbsCards)
-        {
-          if (!card.Enabled)
-            continue;
-          if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard))
-            continue;
-
-          IDictionary<string, IUser> users = ServiceAgents.Instance.ControllerServiceAgent.GetUsersForCard(card.IdCard);
-          foreach (KeyValuePair<string, IUser> u in users)
-          {
-            if (u.Value.Name == user.Name || u.Value.Name == "setuptv")
-            {
-              foreach(var subchannel in u.Value.SubChannels.Values)
-              {
-                Channel ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(subchannel.IdChannel);
-                if (ch.DisplayName == client.Description)
-                {
-                  user.CardId = card.IdCard;
-                  break;
-                } 
-              }              
-            }
-          }
-          if (user.CardId > -1)
-            break;
-        }
-
-        bool res = ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(user.Name, out user, TvStoppedReason.KickedByAdmin);
-
-        if (res)
-        {
-          listView1.Items.Remove(item);
-        }
+        this.LogInfo("streamer: kick client, session ID = {0}", client.ClientSessionId);
+        ServiceAgents.Instance.ControllerServiceAgent.DisconnectStreamingClient(client.ClientSessionId);
       }
-      listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-    }
-
-    private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-      mpButtonKick_Click(sender, e);
-    }
-
-    private void ApplyButton_Click(object sender, EventArgs e)
-    {
-      ApplyStreamingSettings();
     }
   }
 }

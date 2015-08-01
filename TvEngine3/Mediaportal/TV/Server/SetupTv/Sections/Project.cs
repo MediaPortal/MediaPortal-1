@@ -22,17 +22,12 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
 
-#pragma warning disable 108
-
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class Project : SectionSettings
   {
     public Project()
-      : this("Project") {}
-
-    public Project(string name)
-      : base(name)
+      : base("Project")
     {
       InitializeComponent();
     }
@@ -46,46 +41,33 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      if (linkLabelHomepage.Text == null)
-        return;
-      if (linkLabelHomepage.Text.Length > 0)
+      if (!string.IsNullOrEmpty(linkLabelHomepage.Text))
       {
-        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelHomepage.Text);
-        System.Diagnostics.Process.Start(sInfo);
+        Process.Start(new ProcessStartInfo(linkLabelHomepage.Text));
       }
     }
 
     private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      if (linkLabelForums.Text == null)
-        return;
-      if (linkLabelForums.Text.Length > 0)
+      if (!string.IsNullOrEmpty(linkLabelForums.Text))
       {
-        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelForums.Text);
-        System.Diagnostics.Process.Start(sInfo);
+        Process.Start(new ProcessStartInfo(linkLabelForums.Text));
       }
     }
 
     private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      if (linkLabelOnlineDocumentation.Text == null)
-        return;
-      if (linkLabelOnlineDocumentation.Text.Length > 0)
+      if (!string.IsNullOrEmpty(linkLabelOnlineDocumentation.Text))
       {
-        System.Diagnostics.ProcessStartInfo sInfo =
-          new System.Diagnostics.ProcessStartInfo(linkLabelOnlineDocumentation.Text);
-        System.Diagnostics.Process.Start(sInfo);
+        Process.Start(new ProcessStartInfo(linkLabelOnlineDocumentation.Text));
       }
     }
 
     private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      if (linkLabelSourceforge.Text == null)
-        return;
-      if (linkLabelSourceforge.Text.Length > 0)
+      if (!string.IsNullOrEmpty(linkLabelSourceforge.Text))
       {
-        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelSourceforge.Text);
-        System.Diagnostics.Process.Start(sInfo);
+        Process.Start(new ProcessStartInfo(linkLabelSourceforge.Text));
       }
     }
 
@@ -95,7 +77,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         Process.Start("http://www.team-mediaportal.com/donate.html");
       }
-      catch {}
+      catch
+      {
+      }
     }
   }
 }

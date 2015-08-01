@@ -35,20 +35,28 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class TvTimeshifting : SectionSettings
   {
-    #region CardInfo class
+    #region TunerInfo class
 
-    public class CardInfo
+    public class TunerInfo
     {
-      public Card card;
+      public Tuner _tuner;
 
-      public CardInfo(Card newcard)
+      public TunerInfo(Tuner tuner)
       {
-        card = newcard;
+        _tuner = tuner;
+      }
+
+      public Tuner Tuner
+      {
+        get
+        {
+          return _tuner;
+        }
       }
 
       public override string ToString()
       {
-        return card.Name;
+        return _tuner.Name;
       }
     }
 
@@ -60,51 +68,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     #endregion
 
-    #region Constructors
-
-    public TvTimeshifting()
-      : this("Timeshifting") {}
-
-    public TvTimeshifting(string name)
-      : base(name)
+    public TvTimeshifting(ServerConfigurationChangedEventHandler handler)
+      : base("Timeshifting", handler)
     {
       InitializeComponent();
     }
-
-    #endregion
-
-    #region Serialization
-
-    public override void LoadSettings()
-    {
-      
-
-      numericUpDownMinFiles.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftMinFiles", 6), 3, 100);
-      numericUpDownMaxFiles.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftMaxFiles", 20), 3, 100);
-      numericUpDownMaxFileSize.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftMaxFileSize", 256), 20, 1024);
-      numericUpDownWaitTimeshifting.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftWaitForTimeshifting", 15), 1, 30);
-      numericUpDownMaxFreeCardsToTry.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftMaxFreeCardsToTry", 0), 0, 100);
-      numericParkedStreamTimeout.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("parkedStreamTimeout", 5), 1, 300);
-    }
-
-    public override void SaveSettings()
-    {
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftMinFiles", (int)numericUpDownMinFiles.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftMaxFiles", (int)numericUpDownMaxFiles.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftMaxFileSize", (int)numericUpDownMaxFileSize.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftWaitForTimeshifting", (int) numericUpDownWaitTimeshifting.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftMaxFreeCardsToTry", (int) numericUpDownMaxFreeCardsToTry.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("parkedStreamTimeout", (int) numericParkedStreamTimeout.Value);
-    }
-
-    #endregion
 
     #region GUI-Events
 
     private void comboBoxCards_SelectedIndexChanged(object sender, EventArgs e)
     {
-      CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-      textBoxTimeShiftFolder.Text = info.card.TimeshiftingFolder;
+      TunerInfo info = (TunerInfo)comboBoxCards.SelectedItem;
+      textBoxTimeShiftFolder.Text = info.Tuner.TimeshiftingFolder;
 
       if (String.IsNullOrEmpty(textBoxTimeShiftFolder.Text))
       {
@@ -117,16 +92,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
-  
-
     public override void OnSectionActivated()
     {
       _needRestart = false;
       comboBoxCards.Items.Clear();
-      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
-      foreach (Card card in cards)
+      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
+      foreach (Tuner tuner in tuners)
       {
-        comboBoxCards.Items.Add(new CardInfo(card));
+        comboBoxCards.Items.Add(new TunerInfo(tuner));
       }
 
       if (comboBoxCards.Items.Count > 0)
@@ -136,6 +109,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       TimeshiftSpaceAdditionalInfo();
 
+      numericUpDownMinFiles.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftMinFiles", 6), 3, 100);
+      numericUpDownMaxFiles.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftMaxFiles", 20), 3, 100);
+      numericUpDownMaxFileSize.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftMaxFileSize", 256), 20, 1024);
+      numericUpDownWaitTimeshifting.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftWaitForTimeshifting", 15), 1, 30);
+      numericUpDownMaxFreeCardsToTry.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftMaxFreeCardsToTry", 0), 0, 100);
+      numericParkedStreamTimeout.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("parkedStreamTimeout", 5), 1, 300);
+
       base.OnSectionActivated();
     }
 
@@ -143,10 +123,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       base.OnSectionDeActivated();
 
-      SaveSettings();
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftMinFiles", (int)numericUpDownMinFiles.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftMaxFiles", (int)numericUpDownMaxFiles.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftMaxFileSize", (int)numericUpDownMaxFileSize.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftWaitForTimeshifting", (int)numericUpDownWaitTimeshifting.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftMaxFreeCardsToTry", (int)numericUpDownMaxFreeCardsToTry.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("parkedStreamTimeout", (int)numericParkedStreamTimeout.Value);
+
       if (_needRestart)
-      {        
-        ServiceAgents.Instance.ControllerServiceAgent.Restart();
+      {
+        OnServerConfigurationChanged(this, true, false, null);
       }
     }
 
@@ -166,11 +152,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     // When TimeShift folder has been changed
     private void textBoxTimeShiftFolder_TextChanged(object sender, EventArgs e)
     {
-      CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-      if (info.card.TimeshiftingFolder != textBoxTimeShiftFolder.Text)
+      TunerInfo info = (TunerInfo)comboBoxCards.SelectedItem;
+      if (info.Tuner.TimeshiftingFolder != textBoxTimeShiftFolder.Text)
       {
-        info.card.TimeshiftingFolder = textBoxTimeShiftFolder.Text;
-        ServiceAgents.Instance.CardServiceAgent.SaveCard(info.card);
+        info.Tuner.TimeshiftingFolder = textBoxTimeShiftFolder.Text;
+        ServiceAgents.Instance.TunerServiceAgent.SaveTuner(info.Tuner);
         _needRestart = true;
       }
     }
@@ -181,11 +167,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // Change timeshiftFolder for all cards
       for (int iIndex = 0; iIndex < comboBoxCards.Items.Count; iIndex++)
       {
-        CardInfo info = (CardInfo)comboBoxCards.Items[iIndex];
-        if (info.card.TimeshiftingFolder != textBoxTimeShiftFolder.Text)
+        TunerInfo info = (TunerInfo)comboBoxCards.Items[iIndex];
+        if (info.Tuner.TimeshiftingFolder != textBoxTimeShiftFolder.Text)
         {
-          info.card.TimeshiftingFolder = textBoxTimeShiftFolder.Text;
-          ServiceAgents.Instance.CardServiceAgent.SaveCard(info.card);
+          info.Tuner.TimeshiftingFolder = textBoxTimeShiftFolder.Text;
+          ServiceAgents.Instance.TunerServiceAgent.SaveTuner(info.Tuner);
           if (!_needRestart)
           {
             _needRestart = true;

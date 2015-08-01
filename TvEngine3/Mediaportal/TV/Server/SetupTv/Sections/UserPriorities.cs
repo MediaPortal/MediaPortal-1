@@ -18,162 +18,142 @@
 
 #endregion
 
-#region Usings
-
-using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-
-#endregion
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class UserPriorities : SectionSettings
   {
-    #region CardInfo class
+    private int _priorityScheduler = -1;
+    private int _priorityEpgGrabber = -1;
+    private int _priorityOtherDefault = -1;
+    private readonly IDictionary<string, int> _prioritiesOtherCustom = new Dictionary<string, int>();
 
-    public class CardInfo
-    {
-      public Card card;
-
-      public CardInfo(Card newcard)
-      {
-        card = newcard;
-      }
-
-      public override string ToString()
-      {
-        return card.Name;
-      }
-    }
-
-    #endregion
-
-    #region Vars
-
-    private bool _needRestart;
-
-    #endregion
-
-    #region Constructors
-
-    public UserPriorities()
-      : this("User Priorities") { }
-
-    public UserPriorities(string name)
-      : base(name)
+    public UserPriorities(ServerConfigurationChangedEventHandler handler)
+      : base("User Priorities", handler)
     {
       InitializeComponent();
     }
 
-    #endregion
-
-    #region Serialization
-
-    public override void LoadSettings()
-    {
-            
-      numEpgGrabber.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue(UserFactory.EPG_TAGNAME, UserFactory.EPG_PRIORITY), 1, 100);
-
-      numDefaultUser.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue(UserFactory.USER_TAGNAME, UserFactory.USER_PRIORITY), 1, 100);
-
-      numScheduler.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue(UserFactory.SCHEDULER_TAGNAME, UserFactory.SCHEDULER_PRIORITY), 1, 100);
-
-      string setting = ServiceAgents.Instance.SettingServiceAgent.GetValue(UserFactory.CUSTOM_TAGNAME, "");
-      gridUserPriorities.Rows.Clear();
-      string[] users = setting.Split(';');
-      foreach (string user in users)
-      {
-        string[] shareItem = user.Split(',');
-        if ((shareItem.Length.Equals(2)) &&
-            ((shareItem[0].Trim().Length > 0) ||
-             (shareItem[1].Trim().Length > 0)))
-        {
-          gridUserPriorities.Rows.Add(shareItem);
-        }
-      }
-    }
-
-    public override void SaveSettings()
-    {
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("PriorityEPG", (int)numEpgGrabber.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("PriorityUser", (int)numDefaultUser.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("PriorityScheduler", (int)numScheduler.Value);
-      
-
-      
-      var shares = new StringBuilder();
-      foreach (DataGridViewRow row in gridUserPriorities.Rows)
-      {
-        shares.AppendFormat("{0},{1};", row.Cells[0].Value, row.Cells[1].Value);
-      }
-
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("PrioritiesCustom", shares.ToString());
-    }
-
-    #endregion
-
-    #region GUI-Events
-
     public override void OnSectionActivated()
     {
-      _needRestart = false;
-      
-      LoadSettings();
+      this.LogDebug("user priorities: activating");
+
+      _priorityScheduler = ServiceAgents.Instance.SettingServiceAgent.GetValue(UserFactory.SETTING_NAME_PRIORITY_SCHEDULER, UserFactory.DEFAULT_PRIORITY_SCHEDULER);
+      numericUpDownScheduler.Value = _priorityScheduler;
+      _priorityEpgGrabber = ServiceAgents.Instance.SettingServiceAgent.GetValue(UserFactory.SETTING_NAME_PRIORITY_EPG_GRABBER, UserFactory.DEFAULT_PRIORITY_EPG_GRABBER);
+      numericUpDownEpgGrabber.Value = _priorityEpgGrabber;
+      _priorityOtherDefault = ServiceAgents.Instance.SettingServiceAgent.GetValue(UserFactory.SETTING_NAME_PRIORITY_OTHER_DEFAULT, UserFactory.DEFAULT_PRIORITY_OTHER);
+      numericUpDownOtherDefault.Value = _priorityOtherDefault;
+      this.LogDebug("  scheduler     = {0}", _priorityScheduler);
+      this.LogDebug("  EPG grabber   = {0}", _priorityEpgGrabber);
+      this.LogDebug("  other default = {0}", _priorityOtherDefault);
+
+      _prioritiesOtherCustom.Clear();
+      dataGridViewUserPriorities.Rows.Clear();
+      string[] users = ServiceAgents.Instance.SettingServiceAgent.GetValue(UserFactory.SETTING_NAME_PRIORITIES_OTHER_CUSTOM, string.Empty).Split(';');
+      foreach (string user in users)
+      {
+        int lastCommaIndex = user.LastIndexOf(",");
+        if (lastCommaIndex < 0)
+        {
+          continue;
+        }
+        string userName = user.Substring(0, lastCommaIndex).Trim();
+        string priorityString = user.Substring(lastCommaIndex + 1);
+        int priority;
+        if (!string.IsNullOrEmpty(userName) && int.TryParse(priorityString, out priority))
+        {
+          this.LogDebug("  {0,-13} = {1}", userName, priority);
+          _prioritiesOtherCustom[userName] = priority;
+          dataGridViewUserPriorities.Rows.Add(new string[2] { userName.Trim(), priority.ToString() });
+        }
+      }
+
       base.OnSectionActivated();
     }
 
     public override void OnSectionDeActivated()
     {
-      base.OnSectionDeActivated();
+      this.LogDebug("user priorities: deactivating");
 
-      SaveSettings();
-      if (_needRestart)
+      bool needReload = false;
+      if (_priorityScheduler != numericUpDownScheduler.Value)
       {
-        ServiceAgents.Instance.ControllerServiceAgent.Restart();
+        this.LogInfo("user priorities: scheduler priority changed from {0} to {1}", _priorityScheduler, numericUpDownScheduler.Value);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue(UserFactory.SETTING_NAME_PRIORITY_SCHEDULER, (int)numericUpDownScheduler.Value);
+        needReload = true;
       }
+      if (_priorityEpgGrabber == numericUpDownEpgGrabber.Value)
+      {
+        this.LogInfo("user priorities: EPG grabber priority changed from {0} to {1}", _priorityEpgGrabber, numericUpDownEpgGrabber.Value);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue(UserFactory.SETTING_NAME_PRIORITY_EPG_GRABBER, (int)numericUpDownEpgGrabber.Value);
+        needReload = true;
+      }
+      if (_priorityOtherDefault == numericUpDownOtherDefault.Value)
+      {
+        this.LogInfo("user priorities: other default priority changed from {0} to {1}", _priorityOtherDefault, numericUpDownOtherDefault.Value);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue(UserFactory.SETTING_NAME_PRIORITY_OTHER_DEFAULT, (int)numericUpDownOtherDefault.Value);
+        needReload = true;
+      }
+
+      List<string> parts = new List<string>(dataGridViewUserPriorities.Rows.Count);
+      bool customPrioritiesChanged = false;
+      foreach (DataGridViewRow row in dataGridViewUserPriorities.Rows)
+      {
+        string userName = row.Cells["dataGridViewColumnUser"].Value as string;
+        string priorityString = row.Cells["dataGridViewColumnPriority"].Value as string;
+        int priority;
+        if (!string.IsNullOrWhiteSpace(userName) && int.TryParse(priorityString, out priority))
+        {
+          userName = userName.Trim();
+          if (priority < 1)
+          {
+            priority = 1;
+          }
+          else if (priority > 100)
+          {
+            priority = 100;
+          }
+          int currentPriority;
+          if (!_prioritiesOtherCustom.TryGetValue(userName, out currentPriority))
+          {
+            this.LogInfo("user priorities: added custom priority, user name = {0}, priority = {1}", userName, priority);
+            customPrioritiesChanged = true;
+          }
+          else if (priority != currentPriority)
+          {
+            this.LogInfo("user priorities: changed custom priority, user name = {0}, old priority = {1}, new priority = {2}", userName, currentPriority, priority);
+            customPrioritiesChanged = true;
+            _prioritiesOtherCustom.Remove(userName);
+          }
+          parts.Add(string.Format("{0},{1}", userName, priority));
+        }
+      }
+      foreach (KeyValuePair<string, int> user in _prioritiesOtherCustom)
+      {
+        this.LogInfo("user priorities: deleted custom priority, user name = {0}, priority = {1}", user.Key, user.Value);
+        customPrioritiesChanged = true;
+      }
+
+      if (customPrioritiesChanged)
+      {
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue(UserFactory.SETTING_NAME_PRIORITIES_OTHER_CUSTOM, string.Join(";", parts));
+        needReload = true;
+      }
+
+      if (needReload)
+      {
+        OnServerConfigurationChanged(this, false, true, null);
+      }
+
+      base.OnSectionDeActivated();
     }
-    
-    private static decimal ValueSanityCheck(decimal Value, int Min, int Max)
-    {
-      if (Value < Min)
-        return Min;
-      if (Value > Max)
-        return Max;
-      return Value;
-    }
-
-
-    #endregion
-
-    private void numEpgGrabber_ValueChanged(object sender, EventArgs e)
-    {
-      _needRestart = true;
-    }
-
-    private void numDefaultUser_ValueChanged(object sender, EventArgs e)
-    {
-      _needRestart = true;
-    }
-
-    private void numScheduler_ValueChanged(object sender, EventArgs e)
-    {
-      _needRestart = true;
-    }
-
-    private void gridUserPriorities_UserAddedRow(object sender, DataGridViewRowEventArgs e)
-    {
-      _needRestart = true;
-    }
-
-    private void gridUserPriorities_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
-    {
-      _needRestart = true;
-    }
-
   }
 }

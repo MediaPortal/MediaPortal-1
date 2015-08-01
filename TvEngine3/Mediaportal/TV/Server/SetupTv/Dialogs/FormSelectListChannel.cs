@@ -20,8 +20,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -48,7 +48,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           Channel selectedChannel = listViewChannels.SelectedItems[0].Tag as Channel;
           if (selectedChannel.IdChannel > -1)
           {
-            this.LogDebug("SelectListChannel: Channel '{0}' has been selected. ID = {1}", selectedChannel.DisplayName,
+            this.LogDebug("SelectListChannel: Channel '{0}' has been selected. ID = {1}", selectedChannel.Name,
                       selectedChannel.IdChannel);
             return selectedChannel.IdChannel;
           }
@@ -73,19 +73,17 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         
         if (checkBoxGuideChannels.Checked)
         {
-          channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByMediaType(MediaTypeEnum.TV);
+          channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByMediaType(MediaType.Television, ChannelIncludeRelationEnum.None);
         }
         else
         {
-          channels =
-            ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV).OrderBy(c => c.SortOrder).
-              OrderBy(c => c.DisplayName).ToList();
-        }                
+          channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaType.Television, ChannelIncludeRelationEnum.None);
+        }
 
         foreach (Channel t in channels)
         {
           // TODO: add imagelist with channel logos from MP :)
-          ListViewItem curItem = new ListViewItem(t.DisplayName) {Tag = t};
+          ListViewItem curItem = new ListViewItem(t.Name) {Tag = t};
           listViewChannels.Items.Add(curItem);
         }
       }

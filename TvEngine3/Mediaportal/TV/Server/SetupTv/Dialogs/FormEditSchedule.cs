@@ -26,6 +26,7 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.RuleBasedScheduler;
 using Mediaportal.TV.Server.RuleBasedScheduler.ScheduleConditions;
 using Mediaportal.TV.Server.SetupControls;
@@ -161,7 +162,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       mpComboBoxChannelsGroup.Items.Clear();
       ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;      
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.TV, include);      
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaType.Television, include);      
       foreach (ChannelGroup group in groups)
         mpComboBoxChannelsGroup.Items.Add(new ComboBoxExItem(group.GroupName, -1, group.IdGroup));
       if (mpComboBoxChannelsGroup.Items.Count == 0)
@@ -183,7 +184,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void PopulateKeepMethodsComboBox()
     {
-      foreach (string name in Enum.GetNames(typeof (KeepMethodType)))
+      foreach (string name in Enum.GetNames(typeof(RecordingKeepMethod)))
       {
         mpComboBoxKeepMethods.Items.Add(name);
       }
@@ -272,7 +273,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void mpButtonSave_Click(object sender, EventArgs e)
     {
-      KeepMethodType enumKeepMethodType;
+      RecordingKeepMethod enumKeepMethodType;
       Enum.TryParse((string)mpComboBoxKeepMethods.SelectedItem, out enumKeepMethodType);
       var schedule = new RuleBasedSchedule
                        {
@@ -468,19 +469,19 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
         foreach (Channel ch in channels)
         {
-          if (ch.MediaType != (decimal) MediaTypeEnum.TV) continue;
+          if (ch.MediaType != (int)MediaType.Television) continue;
           bool hasFta = false;
           bool hasScrambled = false;
           IList<TuningDetail> tuningDetails = ch.TuningDetails;
           foreach (TuningDetail detail in tuningDetails)
           {
-            if (detail.FreeToAir)
-            {
-              hasFta = true;
-            }
-            if (!detail.FreeToAir)
+            if (detail.IsEncrypted)
             {
               hasScrambled = true;
+            }
+            else
+            {
+              hasFta = true;
             }
           }
 
@@ -505,19 +506,19 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         foreach (GroupMap map in maps)
         {
           Channel ch = map.Channel;
-          if (ch.MediaType != (decimal) MediaTypeEnum.TV)
+          if (ch.MediaType != (int)MediaType.Television)
           hasFta = false;
           bool hasScrambled = false;
           IList<TuningDetail> tuningDetails = ch.TuningDetails;
           foreach (TuningDetail detail in tuningDetails)
           {
-            if (detail.FreeToAir)
-            {
-              hasFta = true;
-            }
-            if (!detail.FreeToAir)
+            if (detail.IsEncrypted)
             {
               hasScrambled = true;
+            }
+            else
+            {
+              hasFta = true;
             }
           }
 
@@ -651,7 +652,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       var channel = mpComboBoxChannels.SelectedItem as TVDatabase.Entities.Channel;
       if (channel != null)
       {
-        AddToListBox(channel, channel.DisplayName, listBoxChannels);
+        AddToListBox(channel, channel.Name, listBoxChannels);
       }
     }
 

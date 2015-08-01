@@ -19,310 +19,101 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.ServiceProcess;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Microsoft.Win32;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class ThirdPartyChecks : SectionSettings
   {
-    private static int STREAMING_PORT;
-
-    private static McsPolicyStatus _mcsServices;
-    private static Version _dvbVersion;
-    private static bool _isStreamingOk;
-    private static WmpServiceStatus _wmpServices;
+    private bool _isMcsInstalled = false;
+    private bool _isMcsRunning = false;
+    private bool _isMcsPolicyActive = false;
 
     public ThirdPartyChecks()
-      : this("Additional 3rd party checks") {}
-
-    public ThirdPartyChecks(string name)
-      : base(name)
+      : base("Third Party Checks")
     {
       InitializeComponent();
     }
 
     public override void OnSectionActivated()
     {
-      _mcsServices = McsPolicyCheck();
-      _dvbVersion = GetDvbhotFixVersion();
-      _isStreamingOk = IsStreamingPortAvailable();
-      if (!_isStreamingOk)
-      {
-        CheckWindowsMediaSharingService();
-      }
+      this.LogDebug("checks: activating");
 
-      RefreshForm();
-    }
+      ServiceAgents.Instance.ControllerServiceAgent.GetMceServiceStatus(out _isMcsInstalled, out _isMcsRunning, out _isMcsPolicyActive);
+      this.LogDebug("checks: Media Center services, installed = {0}, running = {1}, policy active = {2}", _isMcsInstalled, _isMcsRunning, _isMcsPolicyActive);
+      UpdateMcsFields();
 
-    private void RefreshForm()
-    {
-      switch (_mcsServices)
+      bool isApplicable = false;
+      bool isNeeded = false;
+      ServiceAgents.Instance.ControllerServiceAgent.GetBdaFixStatus(out isApplicable, out isNeeded);
+      this.LogDebug("checks: BDA hot fix, applicable = {0}, needed = {1}", isApplicable, isNeeded);
+      if (isApplicable && isNeeded)
       {
-        case McsPolicyStatus.PolicyInPlace:
-          mpLabelStatusMCS.Text = "services disabled by policy";
-          mpLabelStatusMCS.ForeColor = System.Drawing.Color.Green;
-          mpButtonMCS.Text = "Re-enable services";
-          mpButtonMCS.Visible = true;
-          mpButtonMCS.Enabled = true;
-          break;
-        case McsPolicyStatus.ServicesStopped:
-          mpLabelStatusMCS.Text = "services stopped";
-          mpLabelStatusMCS.ForeColor = System.Drawing.Color.Green;
-          mpButtonMCS.Text = "Enable policy to prevent services startup";
-          mpButtonMCS.Visible = true;
-          mpButtonMCS.Enabled = true;
-          break;
-        case McsPolicyStatus.NotAMceSystem:
-          mpLabelStatusMCS.Text = "services not installed";
-          mpLabelStatusMCS.ForeColor = System.Drawing.Color.Green;
-          mpButtonMCS.Visible = false;
-          mpButtonMCS.Enabled = false;
-          break;
-        default:
-          mpLabelStatusMCS.Text = "services running";
-          mpLabelStatusMCS.ForeColor = System.Drawing.Color.Red;
-          mpButtonMCS.Text = "Enable policy to prevent services startup";
-          mpButtonMCS.Visible = true;
-          mpButtonMCS.Enabled = true;
-          break;
-      }
-
-      if (_dvbVersion < new Version(6, 5, 2710, 2732))
-      {
-        mpLabelStatusDVBHotfix.Text = "not installed";
-        mpLabelStatusDVBHotfix.ForeColor = System.Drawing.Color.Red;
-        linkLabelDVBHotfix.Enabled = true;
-        linkLabelDVBHotfix.Visible = true;
+        labelBdaHotFixStatusValue.Text = "not installed";
+        labelBdaHotFixStatusValue.ForeColor = System.Drawing.Color.Red;
+        linkLabelBdaHotFix.Enabled = true;
+        linkLabelBdaHotFix.Visible = true;
       }
       else
       {
-        mpLabelStatusDVBHotfix.Text = OSInfo.OSInfo.VistaOrLater() ? "not needed on Vista and up" : "installed";
-        mpLabelStatusDVBHotfix.ForeColor = System.Drawing.Color.Green;
-        linkLabelDVBHotfix.Enabled = false;
-        linkLabelDVBHotfix.Visible = false;
+        labelBdaHotFixStatusValue.Text = !isApplicable ? "not needed" : "installed";
+        labelBdaHotFixStatusValue.ForeColor = System.Drawing.Color.Green;
+        linkLabelBdaHotFix.Enabled = false;
+        linkLabelBdaHotFix.Visible = false;
       }
 
-      if (_isStreamingOk)
+      base.OnSectionActivated();
+    }
+
+    private void UpdateMcsFields()
+    {
+      buttonMcs.Enabled = _isMcsInstalled;
+      buttonMcs.Text = "Disable Services";
+      labelMcsStatusValue.ForeColor = _isMcsRunning ? System.Drawing.Color.Red : System.Drawing.Color.Green;
+      if (_isMcsPolicyActive)
       {
-        mpLabelStatusStreamingPort.Text = "port " + STREAMING_PORT + " is available";
-        mpLabelStatusStreamingPort.ForeColor = System.Drawing.Color.Green;
-        linkLabelStreamingPort.Enabled = false;
-        linkLabelStreamingPort.Visible = false;
-        mpLabelWindowsMediaSharingServiceStatus.Visible = false;
-        mpLabelStatus4.Visible = false;
+        labelMcsStatusValue.Text = "services disabled by policy";
+        buttonMcs.Text = "Re-enable Services";
+      }
+      else if (_isMcsRunning)
+      {
+        labelMcsStatusValue.Text = "services running";
+      }
+      else if (_isMcsInstalled)
+      {
+        labelMcsStatusValue.Text = "services stopped";
       }
       else
       {
-        mpLabelStatusStreamingPort.Text = "port " + STREAMING_PORT + " is already bound";
-        mpLabelStatusStreamingPort.ForeColor = System.Drawing.Color.Red;
-        linkLabelStreamingPort.Enabled = true;
-        linkLabelStreamingPort.Visible = true;
-        mpLabelWindowsMediaSharingServiceStatus.Visible = true;
-        mpLabelStatus4.Visible = true;
-        switch (_wmpServices)
-        {
-          case WmpServiceStatus.StartupAutomatic:
-            mpLabelWindowsMediaSharingServiceStatus.Text = "automatic";
-            mpLabelWindowsMediaSharingServiceStatus.ForeColor = System.Drawing.Color.Red;
-            break;
-          case WmpServiceStatus.StartupManual:
-            mpLabelWindowsMediaSharingServiceStatus.Text = "manual";
-            mpLabelWindowsMediaSharingServiceStatus.ForeColor = System.Drawing.Color.Red;
-            break;
-          case WmpServiceStatus.StartupDisabled:
-            mpLabelWindowsMediaSharingServiceStatus.Text = "disabled";
-            mpLabelWindowsMediaSharingServiceStatus.ForeColor = System.Drawing.Color.Green;
-            break;
-          case WmpServiceStatus.NotInstalled:
-            mpLabelWindowsMediaSharingServiceStatus.Text = "not installed";
-            mpLabelWindowsMediaSharingServiceStatus.ForeColor = System.Drawing.Color.Green;
-            break;
-        }
+        labelMcsStatusValue.Text = "services not installed";
+        buttonMcs.Text = "Not Applicable";
       }
     }
 
-    #region MCS Policy Check
-
-    private static McsPolicyStatus McsPolicyCheck()
+    private void buttonMcs_Click(object sender, EventArgs e)
     {
-      // Check for status of MCE services
-      bool mceSystem = false;
-      ServiceController[] services = ServiceController.GetServices();
-      foreach (ServiceController srv in services)
+      if (_isMcsPolicyActive)
       {
-        if (srv.ServiceName == "ehRecvr" || srv.ServiceName == "ehSched")
-        {
-          mceSystem = true;
-          if (srv.Status == ServiceControllerStatus.Running)
-          {
-            return McsPolicyStatus.ServicesRunning;
-          }
-        }
-      }
-
-      // If services are not found, then this is not a MCE system
-      if (!mceSystem)
-      {
-        return McsPolicyStatus.NotAMceSystem;
-      }
-
-      // Check for policy registry key
-      if (McsPolicyManipulation(true) == McsPolicyStatus.PolicyInPlace)
-      {
-        return McsPolicyStatus.PolicyInPlace;
-      }
-      // No MCE services running and no policy: services are stopped
-      return McsPolicyStatus.ServicesStopped;
-    }
-
-    private static McsPolicyStatus McsPolicyManipulation(bool checkonly)
-    {
-      const string keyPath = "SOFTWARE\\Policies\\Microsoft\\WindowsMediaCenter";
-
-      RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath, !checkonly);
-
-      if (checkonly)
-      {
-        if (key != null)
-        {
-          object objValue = key.GetValue("MediaCenter");
-          key.Close();
-          if (objValue != null && objValue.ToString() == "1")
-          {
-            _mcsServices = McsPolicyStatus.PolicyInPlace;
-          }
-        }
+        this.LogInfo("checks: remove Media Center services policy");
+        ServiceAgents.Instance.ControllerServiceAgent.RemoveMceServicePolicy();
       }
       else
       {
-        if (_mcsServices == McsPolicyStatus.PolicyInPlace)
-        {
-          key.DeleteValue("MediaCenter");
-          key.Close();
-          _mcsServices = McsPolicyStatus.ServicesStopped;
-        }
-        else
-        {
-          if (key == null)
-          {
-            key = Registry.LocalMachine.CreateSubKey(keyPath);
-          }
-          key.SetValue("MediaCenter", "1", RegistryValueKind.DWord);
-          key.Close();
-          _mcsServices = McsPolicyStatus.PolicyInPlace;
-        }
+        this.LogInfo("checks: apply Media Center services policy");
+        ServiceAgents.Instance.ControllerServiceAgent.ApplyMceServicePolicy();
       }
-      return _mcsServices;
+      _isMcsPolicyActive = !_isMcsPolicyActive;
+      UpdateMcsFields();
     }
 
-    private enum McsPolicyStatus
+    private void linkLabelBdaHotFix_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
     {
-      NotAMceSystem,
-      ServicesRunning,
-      ServicesStopped,
-      PolicyInPlace
+      // BDA hot fix download link
+      Process.Start(@"http://forum.team-mediaportal.com/threads/patch-tuner-issue-and-channel-scan-crash-windows-xp.6344/");
+      // http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/11_Preparing_Your_System/XP_User_Guide#BDA_.2F_DVB_hotfix
     }
-
-    private void mpButtonMCS_Click(object sender, EventArgs e)
-    {
-      McsPolicyManipulation(false);
-      RefreshForm();
-    }
-
-    #endregion
-
-    #region DVB HotFix Check
-
-    private static Version GetDvbhotFixVersion()
-    {
-      List<string> dllPaths = Utils.GetRegisteredAssemblyPaths("PsisDecd");
-      var aParamVersion = new Version(0, 0, 0, 0);
-      Version mostRecentVer = aParamVersion;
-      foreach (string dllPath in dllPaths)
-      {
-        Utils.CheckFileVersion(dllPath, "6.5.2710.2732", out aParamVersion);
-        if (File.Exists(dllPath) && aParamVersion > mostRecentVer)
-        {
-          mostRecentVer = aParamVersion;
-        }
-      }
-      return mostRecentVer;
-    }
-
-    #endregion
-
-    #region Streaming Port Check
-
-    private static bool IsStreamingPortAvailable()
-    {
-      STREAMING_PORT = ServiceAgents.Instance.ControllerServiceAgent.StreamingPort;
-      if (STREAMING_PORT == 0)
-      {        
-        STREAMING_PORT = ServiceAgents.Instance.SettingServiceAgent.GetValue("rtspport", 554);
-        return false;
-      }
-
-      return true;
-    }
-
-    private static void CheckWindowsMediaSharingService()
-    {
-      const string keyPath = "SYSTEM\\CurrentControlSet\\Services\\WMPNetworkSvc";
-      RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath);
-
-      if (key != null)
-      {
-        string strUninstall = key.GetValue("Start").ToString();
-        key.Close();
-        switch (strUninstall)
-        {
-          case "1":
-            _wmpServices = WmpServiceStatus.StartupAutomatic;
-            break;
-          case "2":
-            _wmpServices = WmpServiceStatus.StartupManual;
-            break;
-          case "4":
-            _wmpServices = WmpServiceStatus.StartupDisabled;
-            break;
-        }
-      }
-      else
-      {
-        _wmpServices = WmpServiceStatus.NotInstalled;
-      }
-    }
-
-    private enum WmpServiceStatus
-    {
-      NotInstalled,
-      StartupAutomatic,
-      StartupManual,
-      StartupDisabled
-    }
-
-    #endregion
-
-    #region Link labels
-
-    private void linkLabelDVBHotfix_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
-    {
-      // DVB hotfix download link
-      Process.Start(@"http://wiki.team-mediaportal.com/GeneralRequirements");
-    }
-
-    private void linkLabelStreamingPort_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
-    {
-      // TCPView download link
-      Process.Start(@"http://technet.microsoft.com/en-us/sysinternals/bb897437.aspx");
-    }
-
-    #endregion
   }
 }

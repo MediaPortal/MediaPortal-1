@@ -32,261 +32,402 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEditChannel));
-      this.mpButtonOk = new MPButton();
-      this.checkBoxVisibleInTvGuide = new MPCheckBox();
-      this.textBoxName = new MPTextBox();
-      this.label25 = new MPLabel();
-      this.mpButtonCancel = new MPButton();
-      this.mpListView1 = new MPListView();
-      this.id = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.provider = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.type = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.details = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.tuningDetailContextMenu = new MPContextMenuStrip();
-      this.menuButtonAdd = new System.Windows.Forms.ToolStripMenuItem();
-      this.menuButtonEdit = new System.Windows.Forms.ToolStripMenuItem();
-      this.menuButtonRemove = new System.Windows.Forms.ToolStripMenuItem();
+      this.buttonOkay = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.checkBoxVisibleInGuide = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.textBoxName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.labelName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.buttonCancel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.listViewTuningDetails = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
+      this.columnHeaderId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderNumber = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderProvider = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderBroadcastStandard = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderDetails = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.gbTuningdetails = new MPGroupBox();
-      this.btnRemoveTuningDetail = new MPButton();
-      this.btnEditTuningDetail = new MPButton();
-      this.btnAddTuningDetail = new MPButton();
-      this.tuningDetailContextMenu.SuspendLayout();
-      this.gbTuningdetails.SuspendLayout();
+      this.groupBoxTuningDetails = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.labelPriority = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.buttonTuningDetailPriorityUp = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.buttonTuningDetailPriorityDown = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.buttonTuningDetailDelete = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.buttonTuningDetailEdit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.buttonTuningDetailAdd = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.labelNumber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelIdValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelExternalId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.textBoxExternalId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+      this.textBoxNumber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.groupBoxTuningDetails.SuspendLayout();
+      this.tableLayoutPanel.SuspendLayout();
       this.SuspendLayout();
       // 
-      // mpButtonOk
+      // buttonOkay
       // 
-      this.mpButtonOk.Location = new System.Drawing.Point(278, 351);
-      this.mpButtonOk.Name = "mpButtonOk";
-      this.mpButtonOk.Size = new System.Drawing.Size(75, 23);
-      this.mpButtonOk.TabIndex = 49;
-      this.mpButtonOk.Text = "OK";
-      this.mpButtonOk.UseVisualStyleBackColor = true;
-      this.mpButtonOk.Click += new System.EventHandler(this.buttonOk_Click);
+      this.buttonOkay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonOkay.Location = new System.Drawing.Point(346, 289);
+      this.buttonOkay.Name = "buttonOkay";
+      this.buttonOkay.Size = new System.Drawing.Size(75, 23);
+      this.buttonOkay.TabIndex = 2;
+      this.buttonOkay.Text = "&OK";
+      this.buttonOkay.UseVisualStyleBackColor = true;
+      this.buttonOkay.Click += new System.EventHandler(this.buttonOkay_Click);
       // 
-      // checkBoxVisibleInTvGuide
+      // checkBoxVisibleInGuide
       // 
-      this.checkBoxVisibleInTvGuide.AutoSize = true;
-      this.checkBoxVisibleInTvGuide.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxVisibleInTvGuide.Location = new System.Drawing.Point(31, 38);
-      this.checkBoxVisibleInTvGuide.Name = "checkBoxVisibleInTvGuide";
-      this.checkBoxVisibleInTvGuide.Size = new System.Drawing.Size(106, 17);
-      this.checkBoxVisibleInTvGuide.TabIndex = 1;
-      this.checkBoxVisibleInTvGuide.Text = "Visible in tv guide";
-      this.checkBoxVisibleInTvGuide.TextAlign = System.Drawing.ContentAlignment.TopRight;
-      this.checkBoxVisibleInTvGuide.UseVisualStyleBackColor = true;
+      this.checkBoxVisibleInGuide.AutoSize = true;
+      this.tableLayoutPanel.SetColumnSpan(this.checkBoxVisibleInGuide, 2);
+      this.checkBoxVisibleInGuide.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxVisibleInGuide.Location = new System.Drawing.Point(266, 55);
+      this.checkBoxVisibleInGuide.Name = "checkBoxVisibleInGuide";
+      this.checkBoxVisibleInGuide.Size = new System.Drawing.Size(172, 17);
+      this.checkBoxVisibleInGuide.TabIndex = 8;
+      this.checkBoxVisibleInGuide.Text = "Show this channel in the guide.";
+      this.checkBoxVisibleInGuide.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.checkBoxVisibleInGuide.UseVisualStyleBackColor = true;
       // 
       // textBoxName
       // 
-      this.textBoxName.Location = new System.Drawing.Point(106, 12);
+      this.textBoxName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxName.Location = new System.Drawing.Point(56, 29);
+      this.textBoxName.MaxLength = 200;
       this.textBoxName.Name = "textBoxName";
-      this.textBoxName.Size = new System.Drawing.Size(100, 20);
-      this.textBoxName.TabIndex = 0;
-      this.textBoxName.Text = "4";
+      this.textBoxName.Size = new System.Drawing.Size(184, 20);
+      this.textBoxName.TabIndex = 3;
       // 
-      // label25
+      // labelName
       // 
-      this.label25.AutoSize = true;
-      this.label25.Location = new System.Drawing.Point(28, 15);
-      this.label25.Name = "label25";
-      this.label25.Size = new System.Drawing.Size(35, 13);
-      this.label25.TabIndex = 8;
-      this.label25.Text = "Name";
+      this.labelName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelName.AutoSize = true;
+      this.labelName.Location = new System.Drawing.Point(3, 26);
+      this.labelName.Name = "labelName";
+      this.labelName.Size = new System.Drawing.Size(38, 26);
+      this.labelName.TabIndex = 2;
+      this.labelName.Text = "Name:";
+      this.labelName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
-      // mpButtonCancel
+      // buttonCancel
       // 
-      this.mpButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.mpButtonCancel.Location = new System.Drawing.Point(377, 351);
-      this.mpButtonCancel.Name = "mpButtonCancel";
-      this.mpButtonCancel.Size = new System.Drawing.Size(75, 23);
-      this.mpButtonCancel.TabIndex = 50;
-      this.mpButtonCancel.Text = "Cancel";
-      this.mpButtonCancel.UseVisualStyleBackColor = true;
-      this.mpButtonCancel.Click += new System.EventHandler(this.mpButtonCancel_Click);
+      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.buttonCancel.Location = new System.Drawing.Point(453, 289);
+      this.buttonCancel.Name = "buttonCancel";
+      this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+      this.buttonCancel.TabIndex = 3;
+      this.buttonCancel.Text = "&Cancel";
+      this.buttonCancel.UseVisualStyleBackColor = true;
+      this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
       // 
-      // mpListView1
+      // listViewTuningDetails
       // 
-      this.mpListView1.AllowDrop = true;
-      this.mpListView1.AllowRowReorder = true;
-      this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.id,
-            this.name,
-            this.provider,
-            this.type,
-            this.details});
-      this.mpListView1.ContextMenuStrip = this.tuningDetailContextMenu;
-      this.mpListView1.FullRowSelect = true;
-      this.mpListView1.IsChannelListView = false;
-      this.mpListView1.LargeImageList = this.imageList1;
-      this.mpListView1.Location = new System.Drawing.Point(6, 19);
-      this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(432, 206);
-      this.mpListView1.SmallImageList = this.imageList1;
-      this.mpListView1.TabIndex = 51;
-      this.mpListView1.UseCompatibleStateImageBehavior = false;
-      this.mpListView1.View = System.Windows.Forms.View.Details;
-      this.mpListView1.SelectedIndexChanged += new System.EventHandler(this.mpListView1_SelectedIndexChanged);
-      this.mpListView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mpListView1_MouseDoubleClick);
+      this.listViewTuningDetails.AllowColumnReorder = true;
+      this.listViewTuningDetails.AllowDrop = true;
+      this.listViewTuningDetails.AllowRowReorder = false;
+      this.listViewTuningDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewTuningDetails.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderId,
+            this.columnHeaderName,
+            this.columnHeaderNumber,
+            this.columnHeaderProvider,
+            this.columnHeaderBroadcastStandard,
+            this.columnHeaderDetails});
+      this.listViewTuningDetails.FullRowSelect = true;
+      this.listViewTuningDetails.LargeImageList = this.imageList1;
+      this.listViewTuningDetails.Location = new System.Drawing.Point(6, 19);
+      this.listViewTuningDetails.Name = "listViewTuningDetails";
+      this.listViewTuningDetails.Size = new System.Drawing.Size(510, 132);
+      this.listViewTuningDetails.SmallImageList = this.imageList1;
+      this.listViewTuningDetails.TabIndex = 0;
+      this.listViewTuningDetails.UseCompatibleStateImageBehavior = false;
+      this.listViewTuningDetails.View = System.Windows.Forms.View.Details;
+      this.listViewTuningDetails.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listViewTuningDetails_ItemDrag);
+      this.listViewTuningDetails.SelectedIndexChanged += new System.EventHandler(this.listViewTuningDetails_SelectedIndexChanged);
+      this.listViewTuningDetails.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewTuningDetails_DragDrop);
+      this.listViewTuningDetails.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewTuningDetails_DragEnter);
+      this.listViewTuningDetails.DragOver += new System.Windows.Forms.DragEventHandler(this.listViewTuningDetails_DragOver);
+      this.listViewTuningDetails.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewTuningDetails_MouseDoubleClick);
       // 
-      // id
+      // columnHeaderId
       // 
-      this.id.Text = "Id";
+      this.columnHeaderId.Text = "ID";
+      this.columnHeaderId.Width = 40;
       // 
-      // name
+      // columnHeaderName
       // 
-      this.name.Text = "Name";
-      this.name.Width = 140;
+      this.columnHeaderName.Text = "Name";
+      this.columnHeaderName.Width = 120;
       // 
-      // provider
+      // columnHeaderNumber
       // 
-      this.provider.Text = "Provider";
-      this.provider.Width = 123;
+      this.columnHeaderNumber.Text = "#";
+      this.columnHeaderNumber.Width = 50;
       // 
-      // type
+      // columnHeaderProvider
       // 
-      this.type.Text = "Type";
-      this.type.Width = 76;
+      this.columnHeaderProvider.Text = "Provider";
+      this.columnHeaderProvider.Width = 80;
       // 
-      // details
+      // columnHeaderBroadcastStandard
       // 
-      this.details.Text = "Details";
+      this.columnHeaderBroadcastStandard.Text = "Standard";
+      this.columnHeaderBroadcastStandard.Width = 65;
       // 
-      // tuningDetailContextMenu
+      // columnHeaderDetails
       // 
-      this.tuningDetailContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuButtonAdd,
-            this.menuButtonEdit,
-            this.menuButtonRemove});
-      this.tuningDetailContextMenu.Name = "tuningDetailContextMenu";
-      this.tuningDetailContextMenu.Size = new System.Drawing.Size(153, 92);
-      // 
-      // menuButtonAdd
-      // 
-      this.menuButtonAdd.Name = "menuButtonAdd";
-      this.menuButtonAdd.Size = new System.Drawing.Size(152, 22);
-      this.menuButtonAdd.Text = "Add";
-      this.menuButtonAdd.Click += new System.EventHandler(this.menuButtonAdd_Click);
-      // 
-      // menuButtonEdit
-      // 
-      this.menuButtonEdit.Name = "menuButtonEdit";
-      this.menuButtonEdit.Size = new System.Drawing.Size(152, 22);
-      this.menuButtonEdit.Text = "Edit";
-      this.menuButtonEdit.Click += new System.EventHandler(this.menuButtonEdit_Click);
-      // 
-      // menuButtonRemove
-      // 
-      this.menuButtonRemove.Name = "menuButtonRemove";
-      this.menuButtonRemove.Size = new System.Drawing.Size(152, 22);
-      this.menuButtonRemove.Text = "Remove";
-      this.menuButtonRemove.Click += new System.EventHandler(this.menuButtonRemove_Click);
+      this.columnHeaderDetails.Text = "Details";
+      this.columnHeaderDetails.Width = 125;
       // 
       // imageList1
       // 
       this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
       this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-      this.imageList1.Images.SetKeyName(0, "radio_scrambled.png");
-      this.imageList1.Images.SetKeyName(1, "tv_fta_.png");
-      this.imageList1.Images.SetKeyName(2, "tv_scrambled.png");
-      this.imageList1.Images.SetKeyName(3, "radio_fta_.png");
+      this.imageList1.Images.SetKeyName(0, "tv_fta_.png");
+      this.imageList1.Images.SetKeyName(1, "tv_scrambled.png");
+      this.imageList1.Images.SetKeyName(2, "radio_fta_.png");
+      this.imageList1.Images.SetKeyName(3, "radio_scrambled.png");
       // 
-      // gbTuningdetails
+      // groupBoxTuningDetails
       // 
-      this.gbTuningdetails.Controls.Add(this.btnRemoveTuningDetail);
-      this.gbTuningdetails.Controls.Add(this.btnEditTuningDetail);
-      this.gbTuningdetails.Controls.Add(this.btnAddTuningDetail);
-      this.gbTuningdetails.Controls.Add(this.mpListView1);
-      this.gbTuningdetails.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.gbTuningdetails.Location = new System.Drawing.Point(12, 78);
-      this.gbTuningdetails.Name = "gbTuningdetails";
-      this.gbTuningdetails.Size = new System.Drawing.Size(440, 267);
-      this.gbTuningdetails.TabIndex = 52;
-      this.gbTuningdetails.TabStop = false;
-      this.gbTuningdetails.Text = "Tuningdetails";
+      this.groupBoxTuningDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxTuningDetails.Controls.Add(this.labelPriority);
+      this.groupBoxTuningDetails.Controls.Add(this.buttonTuningDetailPriorityUp);
+      this.groupBoxTuningDetails.Controls.Add(this.buttonTuningDetailPriorityDown);
+      this.groupBoxTuningDetails.Controls.Add(this.buttonTuningDetailDelete);
+      this.groupBoxTuningDetails.Controls.Add(this.buttonTuningDetailEdit);
+      this.groupBoxTuningDetails.Controls.Add(this.buttonTuningDetailAdd);
+      this.groupBoxTuningDetails.Controls.Add(this.listViewTuningDetails);
+      this.groupBoxTuningDetails.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxTuningDetails.Location = new System.Drawing.Point(12, 85);
+      this.groupBoxTuningDetails.Name = "groupBoxTuningDetails";
+      this.groupBoxTuningDetails.Size = new System.Drawing.Size(522, 189);
+      this.groupBoxTuningDetails.TabIndex = 1;
+      this.groupBoxTuningDetails.TabStop = false;
+      this.groupBoxTuningDetails.Text = "Tuning Details";
       // 
-      // btnRemoveTuningDetail
+      // labelPriority
       // 
-      this.btnRemoveTuningDetail.Enabled = false;
-      this.btnRemoveTuningDetail.Location = new System.Drawing.Point(168, 231);
-      this.btnRemoveTuningDetail.Name = "btnRemoveTuningDetail";
-      this.btnRemoveTuningDetail.Size = new System.Drawing.Size(75, 23);
-      this.btnRemoveTuningDetail.TabIndex = 54;
-      this.btnRemoveTuningDetail.Text = "Remove";
-      this.btnRemoveTuningDetail.UseVisualStyleBackColor = true;
-      this.btnRemoveTuningDetail.Click += new System.EventHandler(this.menuButtonRemove_Click);
+      this.labelPriority.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelPriority.AutoSize = true;
+      this.labelPriority.Location = new System.Drawing.Point(402, 162);
+      this.labelPriority.Name = "labelPriority";
+      this.labelPriority.Size = new System.Drawing.Size(41, 13);
+      this.labelPriority.TabIndex = 4;
+      this.labelPriority.Text = "Priority:";
       // 
-      // btnEditTuningDetail
+      // buttonTuningDetailPriorityUp
       // 
-      this.btnEditTuningDetail.Enabled = false;
-      this.btnEditTuningDetail.Location = new System.Drawing.Point(87, 231);
-      this.btnEditTuningDetail.Name = "btnEditTuningDetail";
-      this.btnEditTuningDetail.Size = new System.Drawing.Size(75, 23);
-      this.btnEditTuningDetail.TabIndex = 53;
-      this.btnEditTuningDetail.Text = "Edit";
-      this.btnEditTuningDetail.UseVisualStyleBackColor = true;
-      this.btnEditTuningDetail.Click += new System.EventHandler(this.menuButtonEdit_Click);
+      this.buttonTuningDetailPriorityUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonTuningDetailPriorityUp.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_up;
+      this.buttonTuningDetailPriorityUp.Location = new System.Drawing.Point(450, 157);
+      this.buttonTuningDetailPriorityUp.Name = "buttonTuningDetailPriorityUp";
+      this.buttonTuningDetailPriorityUp.Size = new System.Drawing.Size(30, 23);
+      this.buttonTuningDetailPriorityUp.TabIndex = 5;
+      this.buttonTuningDetailPriorityUp.UseVisualStyleBackColor = true;
+      this.buttonTuningDetailPriorityUp.Click += new System.EventHandler(this.buttonTuningDetailPriorityUp_Click);
       // 
-      // btnAddTuningDetail
+      // buttonTuningDetailPriorityDown
       // 
-      this.btnAddTuningDetail.Location = new System.Drawing.Point(6, 231);
-      this.btnAddTuningDetail.Name = "btnAddTuningDetail";
-      this.btnAddTuningDetail.Size = new System.Drawing.Size(75, 23);
-      this.btnAddTuningDetail.TabIndex = 52;
-      this.btnAddTuningDetail.Text = "Add";
-      this.btnAddTuningDetail.UseVisualStyleBackColor = true;
-      this.btnAddTuningDetail.Click += new System.EventHandler(this.menuButtonAdd_Click);
+      this.buttonTuningDetailPriorityDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonTuningDetailPriorityDown.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_down;
+      this.buttonTuningDetailPriorityDown.Location = new System.Drawing.Point(486, 157);
+      this.buttonTuningDetailPriorityDown.Name = "buttonTuningDetailPriorityDown";
+      this.buttonTuningDetailPriorityDown.Size = new System.Drawing.Size(30, 23);
+      this.buttonTuningDetailPriorityDown.TabIndex = 6;
+      this.buttonTuningDetailPriorityDown.UseVisualStyleBackColor = true;
+      this.buttonTuningDetailPriorityDown.Click += new System.EventHandler(this.buttonTuningDetailPriorityDown_Click);
+      // 
+      // buttonTuningDetailDelete
+      // 
+      this.buttonTuningDetailDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonTuningDetailDelete.Enabled = false;
+      this.buttonTuningDetailDelete.Location = new System.Drawing.Point(128, 157);
+      this.buttonTuningDetailDelete.Name = "buttonTuningDetailDelete";
+      this.buttonTuningDetailDelete.Size = new System.Drawing.Size(55, 23);
+      this.buttonTuningDetailDelete.TabIndex = 3;
+      this.buttonTuningDetailDelete.Text = "&Delete";
+      this.buttonTuningDetailDelete.UseVisualStyleBackColor = true;
+      this.buttonTuningDetailDelete.Click += new System.EventHandler(this.buttonTuningDetailDelete_Click);
+      // 
+      // buttonTuningDetailEdit
+      // 
+      this.buttonTuningDetailEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonTuningDetailEdit.Enabled = false;
+      this.buttonTuningDetailEdit.Location = new System.Drawing.Point(67, 157);
+      this.buttonTuningDetailEdit.Name = "buttonTuningDetailEdit";
+      this.buttonTuningDetailEdit.Size = new System.Drawing.Size(55, 23);
+      this.buttonTuningDetailEdit.TabIndex = 2;
+      this.buttonTuningDetailEdit.Text = "&Edit";
+      this.buttonTuningDetailEdit.UseVisualStyleBackColor = true;
+      this.buttonTuningDetailEdit.Click += new System.EventHandler(this.buttonTuningDetailEdit_Click);
+      // 
+      // buttonTuningDetailAdd
+      // 
+      this.buttonTuningDetailAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonTuningDetailAdd.Location = new System.Drawing.Point(6, 157);
+      this.buttonTuningDetailAdd.Name = "buttonTuningDetailAdd";
+      this.buttonTuningDetailAdd.Size = new System.Drawing.Size(55, 23);
+      this.buttonTuningDetailAdd.TabIndex = 1;
+      this.buttonTuningDetailAdd.Text = "&Add";
+      this.buttonTuningDetailAdd.UseVisualStyleBackColor = true;
+      this.buttonTuningDetailAdd.Click += new System.EventHandler(this.buttonTuningDetailAdd_Click);
+      // 
+      // labelNumber
+      // 
+      this.labelNumber.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelNumber.AutoSize = true;
+      this.labelNumber.Location = new System.Drawing.Point(3, 52);
+      this.labelNumber.Name = "labelNumber";
+      this.labelNumber.Size = new System.Drawing.Size(47, 26);
+      this.labelNumber.TabIndex = 4;
+      this.labelNumber.Text = "Number:";
+      this.labelNumber.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // labelId
+      // 
+      this.labelId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelId.AutoSize = true;
+      this.labelId.Location = new System.Drawing.Point(3, 0);
+      this.labelId.Name = "labelId";
+      this.labelId.Size = new System.Drawing.Size(21, 26);
+      this.labelId.TabIndex = 0;
+      this.labelId.Text = "ID:";
+      this.labelId.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // labelIdValue
+      // 
+      this.labelIdValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelIdValue.AutoSize = true;
+      this.labelIdValue.Location = new System.Drawing.Point(56, 0);
+      this.labelIdValue.Name = "labelIdValue";
+      this.labelIdValue.Size = new System.Drawing.Size(43, 26);
+      this.labelIdValue.TabIndex = 1;
+      this.labelIdValue.Text = "123456";
+      this.labelIdValue.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // labelExternalId
+      // 
+      this.labelExternalId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelExternalId.AutoSize = true;
+      this.labelExternalId.Location = new System.Drawing.Point(266, 26);
+      this.labelExternalId.Name = "labelExternalId";
+      this.labelExternalId.Size = new System.Drawing.Size(62, 26);
+      this.labelExternalId.TabIndex = 6;
+      this.labelExternalId.Text = "External ID:";
+      this.labelExternalId.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // textBoxExternalId
+      // 
+      this.textBoxExternalId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxExternalId.Location = new System.Drawing.Point(334, 29);
+      this.textBoxExternalId.MaxLength = 200;
+      this.textBoxExternalId.Name = "textBoxExternalId";
+      this.textBoxExternalId.Size = new System.Drawing.Size(185, 20);
+      this.textBoxExternalId.TabIndex = 7;
+      // 
+      // tableLayoutPanel
+      // 
+      this.tableLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tableLayoutPanel.ColumnCount = 5;
+      this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+      this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+      this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+      this.tableLayoutPanel.Controls.Add(this.labelExternalId, 3, 1);
+      this.tableLayoutPanel.Controls.Add(this.labelNumber, 0, 2);
+      this.tableLayoutPanel.Controls.Add(this.textBoxExternalId, 4, 1);
+      this.tableLayoutPanel.Controls.Add(this.labelId, 0, 0);
+      this.tableLayoutPanel.Controls.Add(this.labelIdValue, 1, 0);
+      this.tableLayoutPanel.Controls.Add(this.labelName, 0, 1);
+      this.tableLayoutPanel.Controls.Add(this.textBoxName, 1, 1);
+      this.tableLayoutPanel.Controls.Add(this.checkBoxVisibleInGuide, 3, 2);
+      this.tableLayoutPanel.Controls.Add(this.textBoxNumber, 1, 2);
+      this.tableLayoutPanel.Location = new System.Drawing.Point(12, 1);
+      this.tableLayoutPanel.Name = "tableLayoutPanel";
+      this.tableLayoutPanel.RowCount = 3;
+      this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+      this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+      this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+      this.tableLayoutPanel.Size = new System.Drawing.Size(522, 78);
+      this.tableLayoutPanel.TabIndex = 0;
+      // 
+      // textBoxNumber
+      // 
+      this.textBoxNumber.Location = new System.Drawing.Point(56, 55);
+      this.textBoxNumber.MaxLength = 10;
+      this.textBoxNumber.Name = "textBoxNumber";
+      this.textBoxNumber.Size = new System.Drawing.Size(70, 20);
+      this.textBoxNumber.TabIndex = 4;
       // 
       // FormEditChannel
       // 
-      this.AcceptButton = this.mpButtonOk;
+      this.AcceptButton = this.buttonOkay;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.CancelButton = this.mpButtonCancel;
-      this.ClientSize = new System.Drawing.Size(464, 387);
-      this.Controls.Add(this.gbTuningdetails);
-      this.Controls.Add(this.checkBoxVisibleInTvGuide);
-      this.Controls.Add(this.textBoxName);
-      this.Controls.Add(this.label25);
-      this.Controls.Add(this.mpButtonCancel);
-      this.Controls.Add(this.mpButtonOk);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+      this.CancelButton = this.buttonCancel;
+      this.ClientSize = new System.Drawing.Size(546, 327);
+      this.Controls.Add(this.tableLayoutPanel);
+      this.Controls.Add(this.groupBoxTuningDetails);
+      this.Controls.Add(this.buttonCancel);
+      this.Controls.Add(this.buttonOkay);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+      this.MinimumSize = new System.Drawing.Size(400, 300);
       this.Name = "FormEditChannel";
       this.ShowIcon = false;
       this.ShowInTaskbar = false;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Edit Channel";
       this.Shown += new System.EventHandler(this.FormEditChannel_Load);
-      this.tuningDetailContextMenu.ResumeLayout(false);
-      this.gbTuningdetails.ResumeLayout(false);
+      this.groupBoxTuningDetails.ResumeLayout(false);
+      this.groupBoxTuningDetails.PerformLayout();
+      this.tableLayoutPanel.ResumeLayout(false);
+      this.tableLayoutPanel.PerformLayout();
       this.ResumeLayout(false);
-      this.PerformLayout();
 
     }
 
     #endregion
 
-    private MPButton mpButtonOk;
+    private MPButton buttonOkay;
     private MPTextBox textBoxName;
-    private MPLabel label25;
-    private MPCheckBox checkBoxVisibleInTvGuide;
-    private MPButton mpButtonCancel;
-    private MPListView mpListView1;
-    private System.Windows.Forms.ColumnHeader id;
-    private System.Windows.Forms.ColumnHeader name;
-    private System.Windows.Forms.ColumnHeader provider;
-    private System.Windows.Forms.ColumnHeader type;
+    private MPLabel labelName;
+    private MPCheckBox checkBoxVisibleInGuide;
+    private MPButton buttonCancel;
+    private MPListView listViewTuningDetails;
+    private System.Windows.Forms.ColumnHeader columnHeaderId;
+    private System.Windows.Forms.ColumnHeader columnHeaderName;
+    private System.Windows.Forms.ColumnHeader columnHeaderProvider;
+    private System.Windows.Forms.ColumnHeader columnHeaderBroadcastStandard;
     private System.Windows.Forms.ImageList imageList1;
-    private MPContextMenuStrip tuningDetailContextMenu;
-    private System.Windows.Forms.ToolStripMenuItem menuButtonAdd;
-    private System.Windows.Forms.ToolStripMenuItem menuButtonRemove;
-    private System.Windows.Forms.ToolStripMenuItem menuButtonEdit;
-    private System.Windows.Forms.ColumnHeader details;
-    private MPGroupBox gbTuningdetails;
-    private MPButton btnRemoveTuningDetail;
-    private MPButton btnEditTuningDetail;
-    private MPButton btnAddTuningDetail;
+    private System.Windows.Forms.ColumnHeader columnHeaderDetails;
+    private MPGroupBox groupBoxTuningDetails;
+    private MPButton buttonTuningDetailDelete;
+    private MPButton buttonTuningDetailEdit;
+    private MPButton buttonTuningDetailAdd;
+    private MPLabel labelNumber;
+    private System.Windows.Forms.ColumnHeader columnHeaderNumber;
+    private MPLabel labelId;
+    private MPLabel labelIdValue;
+    private MPLabel labelExternalId;
+    private MPTextBox textBoxExternalId;
+    private MPButton buttonTuningDetailPriorityUp;
+    private MPButton buttonTuningDetailPriorityDown;
+    private MPLabel labelPriority;
+    private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
+    private MPTextBox textBoxNumber;
 
   }
 }
