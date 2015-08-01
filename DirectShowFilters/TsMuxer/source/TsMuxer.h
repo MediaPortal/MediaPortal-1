@@ -6,22 +6,23 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
 #pragma once
-#include <streams.h>
-#include <InitGuid.h>
-#include <Windows.h>
+#include <ctime>
+#include <DShow.h>      // REFERENCE_TIME
+#include <streams.h>    // AMovieDllRegisterServer2(), CCritSec, CFactoryTemplate, CUnknown (IUnknown, LPUNKNOWN)
+#include <WinError.h>   // HRESULT
 #include <map>
 #include "..\..\shared\DebugSettings.h"
 #include "..\..\shared\PacketSync.h"
@@ -29,72 +30,21 @@
 #include "CniRegister.h"
 #include "IMuxInputPin.h"
 #include "IStreamMultiplexer.h"
+#include "ITsMuxer.h"
 #include "TsMuxerFilter.h"
 
 using namespace std;
 
 
 // This has to be large enough to contain the longest string in the CNI
-// register, and the longest possible string from a VBI line (29 characters).
-#define SERVICE_NAME_LENGTH 50
+// register (currently 60), and the longest possible string from a VBI line (29
+// characters). Be generous, because there are UTF-8 characters in these
+// strings (...which means that some characters require more than 1 byte).
+#define SERVICE_NAME_LENGTH 100
 
 
 DEFINE_TVE_DEBUG_SETTING(TsMuxerDumpInput)
 DEFINE_TVE_DEBUG_SETTING(TsMuxerDumpOutput)
-
-
-// {8533d2d1-1be1-4262-b70a-432df592b903}
-DEFINE_GUID(IID_ITS_MUXER, 0x8533d2d1, 0x1be1, 0x4262, 0xb7, 0xa, 0x43, 0x2d, 0xf5, 0x92, 0xb9, 0x3);
-
-DECLARE_INTERFACE_(ITsMuxer, IUnknown)
-{
-  STDMETHOD(ConfigureLogging)(THIS_ wchar_t* fileName)PURE;
-  STDMETHOD(DumpInput)(THIS_ long mask)PURE;
-  STDMETHOD(DumpOutput)(THIS_ bool enable)PURE;
-  STDMETHOD(SetActiveComponents)(THIS_ bool video, bool audio, bool teletext)PURE;
-};
-
-
-struct StreamInfo
-{
-  byte pinId;
-  byte originalStreamId;
-  unsigned short originalPid;
-
-  bool isIgnored;
-  bool isCompatible;
-  DWORD prevReceiveTickCount;
-
-  unsigned short pid;
-  byte streamId;
-  byte streamType;
-  byte continuityCounter;
-
-  byte* pmtDescriptorBytes;
-  unsigned short pmtDescriptorLength;
-};
-
-struct ProgramStreamInfo
-{
-  byte pinId;
-  bool isCompatible;
-  byte videoBound;
-  byte audioBound;
-  byte currentMapVersion;
-};
-
-struct TransportStreamInfo
-{
-  byte pinId;
-  bool isCompatible;
-  unsigned short transportStreamId;
-  unsigned short serviceId;
-  unsigned short pmtPid;
-  unsigned short pcrPid;
-  byte streamCount;
-  byte patVersion;
-  byte pmtVersion;
-};
 
 
 class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
@@ -109,37 +59,125 @@ class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
 
     HRESULT BreakConnect(IMuxInputPin* pin);
     HRESULT CompleteConnect(IMuxInputPin* pin);
-    bool IsStarted();
-    HRESULT Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERENCE_TIME dataStartTime);
+    bool IsStarted() const;
+    HRESULT Receive(IMuxInputPin* pin,
+                    unsigned char* data,
+                    long dataLength,
+                    REFERENCE_TIME dataStartTime);
     HRESULT Reset();
-    HRESULT StreamTypeChange(IMuxInputPin* pin, byte oldStreamType, byte newStreamType);
+    HRESULT StreamTypeChange(IMuxInputPin* pin,
+                              unsigned char oldStreamType,
+                              unsigned char newStreamType);
 
     STDMETHODIMP ConfigureLogging(wchar_t* path);
-    STDMETHODIMP DumpInput(long mask);
-    STDMETHODIMP DumpOutput(bool enable);
-    STDMETHODIMP SetActiveComponents(bool video, bool audio, bool teletext);
+    STDMETHODIMP_(void) DumpInput(long mask);
+    STDMETHODIMP_(void) DumpOutput(bool enable);
+    STDMETHODIMP SetActiveComponents(bool video, bool audio, bool teletext, bool vps, bool wss);
 
   private:
+    typedef struct StreamInfo
+    {
+      unsigned char PinId;
+      unsigned char OriginalStreamId;
+      unsigned short OriginalPid;
+
+      bool IsIgnored;
+      bool IsCompatible;
+      clock_t PrevReceiveTime;
+
+      unsigned short Pid;
+      unsigned char StreamId;
+      unsigned char StreamType;
+      unsigned char ContinuityCounter;
+
+      unsigned char* PmtDescriptorBytes;
+      unsigned short PmtDescriptorLength;
+    } StreamInfo;
+
+    typedef struct ProgramStreamInfo
+    {
+      unsigned char PinId;
+      bool IsCompatible;
+      unsigned char VideoBound;
+      unsigned char AudioBound;
+      unsigned char CurrentMapVersion;
+    } ProgramStreamInfo;
+
+    typedef struct TransportStreamInfo
+    {
+      unsigned char PinId;
+      bool IsCompatible;
+      unsigned short TransportStreamId;
+      unsigned short ServiceId;
+      unsigned short PmtPid;
+      unsigned short PcrPid;
+      unsigned char StreamCount;
+      unsigned char PatVersion;
+      unsigned char PmtVersion;
+    } TransportStreamInfo;
+
     STDMETHODIMP NonDelegatingQueryInterface(REFIID iid, void** ppv);
     bool CanDeliver();
-    HRESULT ReceiveTransportStream(IMuxInputPin* pin, PBYTE data, long dataLength, REFERENCE_TIME dataStartTime);
-    HRESULT ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, long dataLength, REFERENCE_TIME dataStartTime);
-    HRESULT ReadProgramAssociationTable(PBYTE data, long dataLength, TransportStreamInfo* info);
-    HRESULT ReadProgramMapTable(PBYTE data, long dataLength, TransportStreamInfo* info);
-    HRESULT CreateOrUpdateTsPmtEs(TransportStreamInfo* info, BasePid* pid, bool isIgnored);
-    HRESULT ReadProgramOrSystemPack(PBYTE data, long dataLength, ProgramStreamInfo* info, bool isFirstReceive, unsigned short* length, REFERENCE_TIME* systemClockReference);
-    HRESULT ReadProgramOrSystemHeader(PBYTE data, long dataLength, ProgramStreamInfo* info, bool isFirstReceive);
-    HRESULT ReadProgramStreamMap(PBYTE data, long dataLength, ProgramStreamInfo* info);
-    HRESULT ReadVideoStreamInfo(PBYTE data, long dataLength, StreamInfo* info);
-    HRESULT ReadAudioStreamInfo(PBYTE data, long dataLength, StreamInfo* info);
-    HRESULT UpdatePat();
+    HRESULT ReceiveTransportStream(IMuxInputPin* pin,
+                                    unsigned char* data,
+                                    long dataLength,
+                                    REFERENCE_TIME dataStartTime);
+    HRESULT ReceiveProgramOrSystemStream(IMuxInputPin* pin,
+                                          unsigned char* data,
+                                          long dataLength,
+                                          REFERENCE_TIME dataStartTime);
+    static HRESULT ReadProgramAssociationTable(unsigned char* data,
+                                                long dataLength,
+                                                TransportStreamInfo& info);
+    HRESULT ReadProgramMapTable(unsigned char* data,
+                                long dataLength,
+                                TransportStreamInfo& info);
+    HRESULT CreateOrUpdateTsPmtEs(TransportStreamInfo& info, BasePid* pid, bool isIgnored);
+    static HRESULT ReadProgramOrSystemPack(unsigned char* data,
+                                            long dataLength,
+                                            const ProgramStreamInfo& info,
+                                            bool isFirstReceive,
+                                            unsigned short& length,
+                                            long long& systemClockReference);
+    static HRESULT ReadProgramOrSystemHeader(unsigned char* data,
+                                              long dataLength,
+                                              ProgramStreamInfo& info,
+                                              bool isFirstReceive);
+    static HRESULT ReadProgramStreamMap(unsigned char* data,
+                                        long dataLength,
+                                        ProgramStreamInfo& info);
+    static HRESULT ReadVideoStreamInfo(unsigned char* data,
+                                        long dataLength,
+                                        StreamInfo& info);
+    static HRESULT ReadAudioStreamInfo(unsigned char* data,
+                                        long dataLength,
+                                        StreamInfo& info);
+    void UpdatePat();
     HRESULT UpdatePmt();
+    void ResetSdtInfo();
     HRESULT UpdateSdt();
-    HRESULT WrapVbiTeletextData(StreamInfo* info, PBYTE inputData, long inputDataLength, REFERENCE_TIME systemClockReference, PBYTE* outputData, long* outputDataLength);
-    HRESULT ReadChannelNameFromVbiTeletextData(PBYTE inputData, long inputDataLength);
-    HRESULT WrapElementaryStreamData(StreamInfo* info, PBYTE inputData, long inputDataLength, REFERENCE_TIME systemClockReference, PBYTE* outputData, long* outputDataLength);
-    HRESULT WrapPacketisedElementaryStreamData(StreamInfo* info, PBYTE inputData, long inputDataLength, REFERENCE_TIME systemClockReference, PBYTE* outputData, long* outputDataLength);
-    HRESULT DeliverTransportStreamData(PBYTE inputData, long inputDataLength);
+    HRESULT WrapVbiData(const StreamInfo& info,
+                        unsigned char* inputData,
+                        long inputDataLength,
+                        long long systemClockReference,
+                        unsigned char** outputData,
+                        long& outputDataLength);
+    HRESULT ReadChannelNameFromVbiTeletextData(unsigned char* inputData, long inputDataLength);
+    HRESULT ReadChannelNameFromVbiVpsData(unsigned char* inputData, long inputDataLength);
+    static HRESULT WrapElementaryStreamData(const StreamInfo& info,
+                                            unsigned char* inputData,
+                                            long inputDataLength,
+                                            long long systemClockReference,
+                                            unsigned char** outputData,
+                                            long& outputDataLength);
+    static HRESULT WrapPacketisedElementaryStreamData(StreamInfo& info,
+                                                      unsigned char* inputData,
+                                                      long inputDataLength,
+                                                      long long systemClockReference,
+                                                      unsigned short pcrPid,
+                                                      unsigned char** outputData,
+                                                      long& outputDataLength);
+    HRESULT DeliverTransportStreamData(unsigned char* inputData, long inputDataLength);
 
     CTsMuxerFilter* m_filter;
     CCritSec m_filterLock;                  // filter control lock
@@ -149,31 +187,33 @@ class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
     bool m_isVideoActive;
     bool m_isAudioActive;
     bool m_isTeletextActive;
+    bool m_isVpsActive;
+    bool m_isWssActive;
 
-    byte m_patPacket[TS_PACKET_LEN];
-    byte m_patContinuityCounter;
+    unsigned char m_patPacket[TS_PACKET_LEN];
+    unsigned char m_patContinuityCounter;
 
-    byte m_pmtPacket[TS_PACKET_LEN];
-    byte m_pmtContinuityCounter;
+    unsigned char m_pmtPacket[TS_PACKET_LEN];
+    unsigned char m_pmtContinuityCounter;
     unsigned short m_pmtPid;
-    byte m_pmtVersion;
+    unsigned char m_pmtVersion;
 
-    byte m_sdtPacket[TS_PACKET_LEN];
-    byte m_sdtContinuityCounter;
-    byte m_sdtVersion;
-    CCniRegister m_cniRegister;
+    unsigned char m_sdtPacket[TS_PACKET_LEN];
+    unsigned char m_sdtContinuityCounter;
+    unsigned char m_sdtVersion;
+    static CCniRegister m_cniRegister;
     bool m_isCniName;
     char m_serviceName[SERVICE_NAME_LENGTH + 1];
-    byte m_serviceType;
-    DWORD m_sdtResetTime;
+    unsigned char m_serviceType;
+    clock_t m_sdtResetTime;
 
-    int m_packetCounter;
+    unsigned short m_packetCounter;
     unsigned short m_pcrPid;
     unsigned short m_nextStreamPid;
-    byte m_nextVideoStreamId;
-    byte m_nextAudioStreamId;
+    unsigned char m_nextVideoStreamId;
+    unsigned char m_nextAudioStreamId;
 
-    map<unsigned long, StreamInfo*> m_streamInfo;           // key = (original PID << 16) | (original stream ID << 8) | pin ID
-    map<byte, ProgramStreamInfo*> m_programStreamInfo;      // key = pin ID
-    map<byte, TransportStreamInfo*> m_transportStreamInfo;  // key = pin ID
+    map<unsigned long, StreamInfo*> m_streamInfo;                     // key = (original PID << 16) | (original stream ID << 8) | pin ID
+    map<unsigned char, ProgramStreamInfo*> m_programStreamInfo;       // key = pin ID
+    map<unsigned char, TransportStreamInfo*> m_transportStreamInfo;   // key = pin ID
 };

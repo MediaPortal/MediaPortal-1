@@ -6,20 +6,22 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
 #pragma once
-#include <streams.h>
+#include <DShow.h>    // (media types), ALLOCATOR_PROPERTIES, IMemAllocator
+#include <streams.h>  // CAutoLock, CBaseFilter, CBaseOutputPin, CCritSec, CMediaType
+#include <WinError.h> // HRESULT
 #include "..\..\shared\FileWriter.h"
 
 
@@ -27,7 +29,7 @@ const AMOVIESETUP_MEDIATYPE OUTPUT_MEDIA_TYPES[] =
 {
   { &MEDIATYPE_Stream, &MEDIASUBTYPE_MPEG2_TRANSPORT }
 };
-const int OUTPUT_MEDIA_TYPE_COUNT = 1;
+const unsigned char OUTPUT_MEDIA_TYPE_COUNT = 1;
 
 class CTsOutputPin : public CBaseOutputPin
 {
@@ -37,11 +39,10 @@ class CTsOutputPin : public CBaseOutputPin
 
     HRESULT CheckMediaType(const CMediaType* mediaType);
     HRESULT DecideBufferSize(IMemAllocator* allocator, ALLOCATOR_PROPERTIES* properties);
-    HRESULT Deliver(PBYTE data, long dataLength);
-    HRESULT DeliverEndOfStream();
+    HRESULT Deliver(unsigned char* data, long dataLength);
     HRESULT GetMediaType(int position, CMediaType* mediaType);
 
-    HRESULT StartDumping(wchar_t* fileName);
+    HRESULT StartDumping(const wchar_t* fileName);
     HRESULT StopDumping();
 
   private:

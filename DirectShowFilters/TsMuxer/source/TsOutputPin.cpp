@@ -6,19 +6,23 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
 #include "TsOutPutPin.h"
+#include <cstddef>      // NULL
+#include <cstring>      // memcpy()
+
+using namespace std;
 
 
 extern void LogDebug(const wchar_t* fmt, ...);
@@ -36,22 +40,25 @@ CTsOutputPin::~CTsOutputPin(void)
 
 HRESULT CTsOutputPin::CheckMediaType(const CMediaType* mediaType)
 {
-  /*for (int i = 0; i < OUTPUT_MEDIA_TYPE_COUNT; i++)
+  for (unsigned char i = 0; i < OUTPUT_MEDIA_TYPE_COUNT; i++)
   {
-    if (*OUTPUT_MEDIA_TYPES[i].clsMajorType == mediaType->majortype &&
-      *OUTPUT_MEDIA_TYPES[i].clsMinorType == mediaType->subtype)
+    if (
+      *OUTPUT_MEDIA_TYPES[i].clsMajorType == mediaType->majortype &&
+      *OUTPUT_MEDIA_TYPES[i].clsMinorType == mediaType->subtype
+    )
     {
       return S_OK;
     }
   }
-  return VFW_E_TYPE_NOT_ACCEPTED;*/
-  return S_OK;
+  return VFW_E_TYPE_NOT_ACCEPTED;
 }
 
 HRESULT CTsOutputPin::DecideBufferSize(IMemAllocator* allocator, ALLOCATOR_PROPERTIES* properties)
 {
-  CheckPointer(allocator, E_POINTER);
-  CheckPointer(properties, E_POINTER);
+  if (allocator == NULL || properties == NULL)
+  {
+    return E_INVALIDARG;
+  }
 
   if (properties->cBuffers == 0)
   {
@@ -75,34 +82,34 @@ HRESULT CTsOutputPin::DecideBufferSize(IMemAllocator* allocator, ALLOCATOR_PROPE
   return S_OK;
 }
 
-HRESULT CTsOutputPin::Deliver(PBYTE data, long dataLength)
+HRESULT CTsOutputPin::Deliver(unsigned char* data, long dataLength)
 {
   if (m_isDumpEnabled)
   {
     CAutoLock lock(&m_dumpLock);
     if (!m_dumpFileWriter.IsFileInvalid())
     {
-      LogDebug(L"TS output: dumping %d bytes", dataLength);
+      LogDebug(L"TS output: dumping %ld bytes", dataLength);
       m_dumpFileWriter.Write(data, dataLength);
     }
   }
 
   IMediaSample* sample;
   HRESULT hr = GetDeliveryBuffer(&sample, NULL, NULL, 0);
-  if (!SUCCEEDED(hr))
+  if (FAILED(hr))
   {
     LogDebug(L"TS output: failed to get delivery buffer, hr = 0x%x", hr);
     return hr;
   }
   hr = sample->SetActualDataLength(dataLength);
-  if (!SUCCEEDED(hr))
+  if (FAILED(hr))
   {
     LogDebug(L"TS output: failed to set actual data length, hr = 0x%x", hr);
     return hr;
   }
-  PBYTE sampleBuffer;
+  unsigned char* sampleBuffer;
   hr = sample->GetPointer(&sampleBuffer);
-  if (!SUCCEEDED(hr))
+  if (FAILED(hr))
   {
     LogDebug(L"TS output: failed to get sample pointer, hr = 0x%x", hr);
     return hr;
@@ -116,11 +123,6 @@ HRESULT CTsOutputPin::Deliver(PBYTE data, long dataLength)
     LogDebug(L"TS output: failed to deliver sample, hr = 0x%x", hr);
   }
   return hr;
-}
-
-HRESULT CTsOutputPin::DeliverEndOfStream()
-{
-  return S_OK;
 }
 
 HRESULT CTsOutputPin::GetMediaType(int position, CMediaType* mediaType)
@@ -142,22 +144,18 @@ HRESULT CTsOutputPin::GetMediaType(int position, CMediaType* mediaType)
   return S_OK;
 }
 
-HRESULT CTsOutputPin::StartDumping(wchar_t* fileName)
+HRESULT CTsOutputPin::StartDumping(const wchar_t* fileName)
 {
   if (!m_isDumpEnabled)
   {
-    LogDebug(L"TS output: start dumping");
+    LogDebug(L"TS output: start dumping, file name = %s",
+              fileName == NULL ? L"" : fileName);
     CAutoLock lock(&m_dumpLock);
-    HRESULT hr = m_dumpFileWriter.SetFileName(fileName);
-    if (!SUCCEEDED(hr))
+    HRESULT hr = m_dumpFileWriter.OpenFile(fileName);
+    if (FAILED(hr))
     {
-      LogDebug(L"TS output: failed to set dump file name, path/name = %s, hr = 0x%x", fileName, hr);
-      return hr;
-    }
-    hr = m_dumpFileWriter.OpenFile();
-    if (!SUCCEEDED(hr))
-    {
-      LogDebug(L"TS output: failed to open dump file, hr = 0x%x", hr);
+      LogDebug(L"TS output: failed to open dump file, hr = 0x%x, path/name = %s",
+                hr, fileName == NULL ? L"" : fileName);
       return hr;
     }
     m_isDumpEnabled = true;
@@ -172,7 +170,7 @@ HRESULT CTsOutputPin::StopDumping()
     LogDebug(L"TS output: stop dumping");
     CAutoLock lock(&m_dumpLock);
     HRESULT hr = m_dumpFileWriter.CloseFile();
-    if (!SUCCEEDED(hr))
+    if (FAILED(hr))
     {
       LogDebug(L"TS output: failed to close dump file, hr = 0x%x", hr);
       return hr;

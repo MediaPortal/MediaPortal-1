@@ -6,24 +6,23 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
 #pragma once
-#include <Windows.h>
 
 // 8/4 Hamming decoding table
 // transmission order: [LSB] P1 D1 P2 D2 P3 D3 P4 D4 [MSB]
-const byte UNHAM_TABLE[256] =
+const unsigned char UNHAM_TABLE[256] =
 {
   0x01, 0xff, 0x81, 0x01, 0xff, 0x00, 0x01, 0xff,
   0xff, 0x02, 0x01, 0xff, 0x0a, 0xff, 0xff, 0x07,
@@ -60,30 +59,30 @@ const byte UNHAM_TABLE[256] =
 };
 
 // Decode two 8/4 Hamming encoded bytes into one byte.
-bool UnhamWord(byte low, byte high, byte* unhammedByte)
+bool UnhamWord(unsigned char low, unsigned char high, unsigned char& unhammedByte)
 {
-  byte highPart = UNHAM_TABLE[high];
+  unsigned char highPart = UNHAM_TABLE[high];
   if (highPart == 0xff)
   {
     return false;
   }
-  byte lowPart = UNHAM_TABLE[low];
+  unsigned char lowPart = UNHAM_TABLE[low];
   if (lowPart == 0xff)
   {
     return false;
   }
-  *unhammedByte = (highPart << 4) | (lowPart & 0x0f);
+  unhammedByte = (highPart << 4) | (lowPart & 0x0f);
   return true;
 }
 
 // Decode one 8/4 Hamming encoded byte into one nibble (4 bits).
-bool UnhamByte(byte b, byte* unhammedNibble)
+bool UnhamByte(unsigned char b, unsigned char& unhammedNibble)
 {
-  *unhammedNibble = UNHAM_TABLE[b];
-  if (*unhammedNibble == 0xff)
+  unhammedNibble = UNHAM_TABLE[b];
+  if (unhammedNibble == 0xff)
   {
     return false;
   }
-  *unhammedNibble &= 0x0f;
+  unhammedNibble &= 0x0f;
   return true;
 }

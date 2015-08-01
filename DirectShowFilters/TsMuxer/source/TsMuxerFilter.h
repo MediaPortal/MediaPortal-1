@@ -6,22 +6,24 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
 #pragma once
-#include <streams.h>
-#include <InitGuid.h>
-#include <Windows.h>
+#include <DShow.h>    // REFERENCE_TIME
+#include <streams.h>  // CAutoLock, CBaseFilter, CBasePin, CCritSec, CUnknown (IUnknown, LPUNKNOWN)
+#include <InitGuid.h> // DEFINE_GUID()
+#include <WinError.h> // HRESULT
+#include <sstream>
 #include <vector>
 #include "IStreamMultiplexer.h"
 #include "MuxInputPin.h"
@@ -39,13 +41,18 @@ DEFINE_GUID(CLSID_TS_MUXER, 0x511d13f0, 0x8a56, 0x42fa, 0xb1, 0x51, 0xb7, 0x2a, 
 class CTsMuxerFilter : public CBaseFilter
 {
   public:
-    CTsMuxerFilter(IStreamMultiplexer* multiplexer, wchar_t* debugPath, LPUNKNOWN unk, CCritSec* filterLock, CCritSec* receiveLock, HRESULT* hr);
+    CTsMuxerFilter(IStreamMultiplexer* multiplexer,
+                    const wchar_t* debugPath,
+                    LPUNKNOWN unk,
+                    CCritSec* filterLock,
+                    CCritSec& receiveLock,
+                    HRESULT* hr);
     virtual ~CTsMuxerFilter(void);
 
     CBasePin* GetPin(int n);
     HRESULT AddPin();
     int GetPinCount();
-    HRESULT Deliver(PBYTE data, long dataLength);
+    HRESULT Deliver(unsigned char* data, long dataLength);
 
     STDMETHODIMP Pause();
     STDMETHODIMP Run(REFERENCE_TIME startTime);
@@ -54,20 +61,20 @@ class CTsMuxerFilter : public CBaseFilter
     static void __cdecl StreamingMonitorThreadFunction(void* arg);
 
     STDMETHODIMP SetDumpFilePath(wchar_t* path);
-    STDMETHODIMP DumpInput(long mask);
-    STDMETHODIMP DumpOutput(bool enable);
+    STDMETHODIMP_(void) DumpInput(long mask);
+    STDMETHODIMP_(void) DumpOutput(bool enable);
 
   private:
     IStreamMultiplexer* m_multiplexer;
     CTsOutputPin* m_outputPin;          // MPEG 2 transport stream output pin
     vector<CMuxInputPin*> m_inputPins;  // input pins
     CCritSec m_inputPinsLock;           // input pins vector lock
-    CCritSec* m_receiveLock;            // sample receive lock
+    CCritSec& m_receiveLock;            // sample receive lock
 
     HANDLE m_streamingMonitorThread;
     HANDLE m_streamingMonitorThreadStopEvent;
 
-    wchar_t m_debugPath[MAX_PATH];
+    wstringstream m_debugPath;
     long m_inputPinDebugMask;
     bool m_isOutputDebugEnabled;
 };

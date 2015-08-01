@@ -8,8 +8,8 @@
 
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 1 VERSIONINFO
-    FILEVERSION     TSMUXER_MAJOR_VERSION,TSMUXER_MID_VERSION,TSMUXER_VERSION,0
-    PRODUCTVERSION  MP_VERSION
+    FILEVERSION     VERSION_TS_MUXER_MAJOR,VERSION_TS_MUXER_MINOR,VERSION_TS_MUXER_MICRO,0
+    PRODUCTVERSION  VERSION_TVE
     FILEOS          VOS_UNKNOWN
     FILETYPE        VFT_UNKNOWN
     FILESUBTYPE     VFT2_UNKNOWN
@@ -23,12 +23,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Team MediaPortal"
             VALUE "FileDescription", "TsMuxer.ax"
-            VALUE "FileVersion", TSMUXER_VERSION_STR
+            VALUE "FileVersion", VERSION_TS_MUXER_STR
             VALUE "InternalName", "TsMuxer.ax"
             VALUE "LegalCopyright", "Copyright © 2005-2013 Team MediaPortal"
             VALUE "OriginalFilename", "TsMuxer.ax"
-            VALUE "ProductName", "MediaPortal"
-            VALUE "ProductVersion", MP_VERSION_STR
+            VALUE "ProductName", "TV Engine"
+            VALUE "ProductVersion", VERSION_TVE_STR
         END
     END
     BLOCK "VarFileInfo"
