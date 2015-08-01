@@ -22,7 +22,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Xml;
-using Mediaportal.TV.Server.TvLibrary.Utils.Time;
+using WebEpg.Utils.Time;
 using WebEPG.Parser;
 
 namespace WebEPG.Utils

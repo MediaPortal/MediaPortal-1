@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser;
+using WebEpg.Utils.Web.Parser;
 
 namespace WebEPG.config.Grabber
 {

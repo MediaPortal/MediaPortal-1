@@ -20,7 +20,7 @@
 
 using System.Collections;
 using System.Text.RegularExpressions;
-using Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser;
+using WebEpg.Utils.Web.Parser;
 
 namespace WebEPG.Parser
 {

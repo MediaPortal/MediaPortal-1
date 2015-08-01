@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C1BD9855-79D6-4ED8-8FC1-E9A7ECE6B173}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.WebEpg.Utils</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.WebEpg.Utils</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Time\BasicTime.cs" />
+    <Compile Include="Time\TimeZoneDate.cs" />
+    <Compile Include="Time\TimeZoneInfo.cs" />
+    <Compile Include="Time\TimeRange.cs" />
+    <Compile Include="Time\WorldDateTime.cs" />
+    <Compile Include="Time\WorldTimeZone.cs" />
+    <Compile Include="Web\Check\CheckConnections.cs" />
+    <Compile Include="Web\html\MatchTagCollection.cs" />
+    <Compile Include="Web\html\HtmlString.cs" />
+    <Compile Include="Web\html\MatchTag.cs" />
+    <Compile Include="Web\http\AsyncGetRequest.cs" />
+    <Compile Include="Web\http\IHttpStatistics.cs" />
+    <Compile Include="Web\http\HTTPRequest.cs" />
+    <Compile Include="Web\http\HTTPAuth.cs" />
+    <Compile Include="Web\http\HTMLCache.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Web\http\HTMLPage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Web\http\HttpStatistics.cs" />
+    <Compile Include="Web\http\HTTPTransaction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Web\http\IHtmlCache.cs" />
+    <Compile Include="Web\http\IHttpAuthentication.cs" />
+    <Compile Include="Web\http\SiteStatistics.cs" />
+    <Compile Include="Web\Parser\HtmlSectionMatch.cs" />
+    <Compile Include="Web\Parser\HtmlSectionTemplate.cs" />
+    <Compile Include="Web\Parser\HtmlParserTemplate.cs" />
+    <Compile Include="Web\Parser\HtmlParser.cs" />
+    <Compile Include="Web\Parser\HtmlProfiler.cs" />
+    <Compile Include="Web\Parser\IParserData.cs" />
+    <Compile Include="Web\Parser\ParserData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Web\Parser\HtmlSectionParser.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
+      <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
+      <Name>TvLibrary.Interfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

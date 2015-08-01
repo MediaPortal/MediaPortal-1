@@ -20,8 +20,8 @@
 
 using System;
 using System.Globalization;
-using Mediaportal.TV.Server.TvLibrary.Utils.Time;
-using Mediaportal.TV.Server.TvLibrary.Utils.Web.http;
+using WebEpg.Utils.Time;
+using WebEpg.Utils.Web.http;
 using WebEPG.config.Grabber;
 
 namespace WebEPG

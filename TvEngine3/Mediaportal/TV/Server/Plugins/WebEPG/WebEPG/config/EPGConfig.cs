@@ -30,8 +30,6 @@ namespace WebEPG.config
   /// </summary>
   public class EPGConfig
   {
- 
-
     #region Variables
 
     private ArrayList _ConfigList;

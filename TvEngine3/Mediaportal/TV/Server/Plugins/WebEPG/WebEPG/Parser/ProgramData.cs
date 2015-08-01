@@ -23,13 +23,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using WebEpg.Utils.Time;
+using WebEpg.Utils.Web.http;
+using WebEpg.Utils.Web.Parser;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TvLibrary.Utils.Time;
-using Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser;
-using Mediaportal.TV.Server.TvLibrary.Utils.Web.http;
 using WebEPG.config.Grabber;
 
 namespace WebEPG.Parser
@@ -295,8 +294,8 @@ namespace WebEPG.Parser
         _genre = "";
       }
       _subTitle = dbProgram.EpisodeName;
-      int.TryParse(dbProgram.EpisodeNum, out _episode);
-      int.TryParse(dbProgram.SeriesNum, out _season);
+      _episode = dbProgram.EpisodeNumber.HasValue ? dbProgram.EpisodeNumber.Value : -1;
+      _season = dbProgram.SeasonNumber.HasValue ? dbProgram.SeasonNumber.Value : -1;
     }
 
     //public Program ToTvProgram(string channelName)
@@ -319,27 +318,35 @@ namespace WebEPG.Parser
       {
         category = new ProgramCategory();
         category.Category = _genre;
+        category = ProgramCategoryManagement.AddCategory(category);
       }
 
-      WorldDateTime endTime = _endTime ?? _startTime;
-      Program program = ProgramFactory.CreateProgram(dbIdChannel, _startTime.ToLocalTime(), endTime.ToLocalTime(), _title, _description,
-                                    category,
-                                    ProgramState.None, System.Data.SqlTypes.SqlDateTime.MinValue.Value,
-                                    String.Empty, String.Empty,
-                                    _subTitle, String.Empty, -1, String.Empty, 0);
-      if (_episode > 0)
+      Program program = ProgramFactory.CreateEmptyProgram();
+      program.IdChannel = dbIdChannel;
+      program.StartTime = _startTime.ToLocalTime();
+      if (_endTime == null)
       {
-        program.EpisodeNum = _episode.ToString();
+        program.EndTime = program.StartTime;
       }
-      if (_season > 0)
+      else
       {
-        program.SeriesNum = _season.ToString();
+        program.EndTime = _endTime.ToLocalTime();
       }
-      //if (_repeat)
-      //{
-      //  program.Repeat = "Repeat";
-      //}
+      program.Title = _title;
+      program.Description = _description;
+      if (!string.IsNullOrEmpty(_subTitle))
+      {
+        program.EpisodeName = _subTitle;
+      }
+      program.SeasonNumber = _season;
+      program.EpisodeNumber = _episode;
+      program.IsPreviouslyShown = _repeat;
+      if (category != null)
+      {
+        program.IdProgramCategory = category.IdProgramCategory;
+      }
 
+      // TODO what about _actors
       return program;
     }
 

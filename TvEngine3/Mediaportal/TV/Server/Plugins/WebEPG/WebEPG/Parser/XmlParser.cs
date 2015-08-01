@@ -20,8 +20,8 @@
 
 using System;
 using System.Xml;
-using Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser;
-using Mediaportal.TV.Server.TvLibrary.Utils.Web.http;
+using WebEpg.Utils.Web.Parser;
+using WebEpg.Utils.Web.http;
 using WebEPG.config.Grabber;
 
 namespace WebEPG.Parser

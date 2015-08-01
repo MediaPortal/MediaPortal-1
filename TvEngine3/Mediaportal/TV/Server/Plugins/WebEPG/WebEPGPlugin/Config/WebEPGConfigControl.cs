@@ -28,13 +28,12 @@ using System.Xml.Serialization;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using WebEPG.MPCode;
 using WebEPG.config;
 using WebEPG.config.Grabber;
 using WebEPG.config.WebEPG;
+using WebEPG.MPCode;
 using ChannelMap = WebEPG.config.WebEPG.ChannelMap;
 
 namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config

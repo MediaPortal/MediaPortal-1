@@ -21,11 +21,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TvLibrary.Utils.Time;
+using WebEpg.Utils.Time;
 using WebEPG.Parser;
 using WebEPG.Utils;
 
@@ -205,7 +205,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
 
       if (_channels.TryGetValue(channelKey, out _currentChannels))
       {
-        _channelPrograms = new ProgramList {AlreadySorted = false};
+        _channelPrograms = new ProgramList();
         return true;
       }
       else
@@ -239,7 +239,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
 
       // Sort programs
       _channelPrograms.SortIfNeeded();
-      _channelPrograms.AlreadySorted = true;
 
       // Fix end times
       _channelPrograms.FixEndTimes();
@@ -260,12 +259,12 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
         ProgramManagement.DeleteOldPrograms(chan.IdChannel);
       }
 
-      DeleteBeforeImportOption programsToDelete = _deleteExisting
-                                                    ? DeleteBeforeImportOption.OverlappingPrograms
-                                                    : DeleteBeforeImportOption.None;
-
-      var prgManagement = new ProgramManagement();
-      prgManagement.InsertPrograms(_channelPrograms, programsToDelete, ThreadPriority.BelowNormal);
+      EpgDeleteBeforeImportOption programsToDelete = EpgDeleteBeforeImportOption.ProgramsOnSameChannel;
+      if (!_deleteExisting)
+      {
+        programsToDelete = EpgDeleteBeforeImportOption.OverlappingPrograms;
+      }
+      ProgramManagement.InsertPrograms(_channelPrograms, programsToDelete, ThreadPriority.BelowNormal);
 
       _channelPrograms = null;
       _currentChannels = null;

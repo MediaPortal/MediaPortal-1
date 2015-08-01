@@ -25,11 +25,11 @@ using System.Xml.Serialization;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TvLibrary.Utils.Time;
-using Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser;
-using Mediaportal.TV.Server.TvLibrary.Utils.Web.http;
-using WebEPG.Parser;
+using WebEpg.Utils.Time;
+using WebEpg.Utils.Web.http;
+using WebEpg.Utils.Web.Parser;
 using WebEPG.config.Grabber;
+using WebEPG.Parser;
 
 namespace WebEPG
 {

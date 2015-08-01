@@ -24,17 +24,16 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Castle.Core;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.Plugins.WebEPGImport.Config;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
-using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using WebEPG.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.WebEPGImport
@@ -43,8 +42,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
   [ComponentProxyBehavior(AdditionalInterfaces = new[] { typeof(ITvServerPluginStartedAll) })]
   public class WebEPGImport : ITvServerPlugin, ITvServerPluginStartedAll, IWakeupHandler 
   {
-
-
     #region constants
 
     private const string _wakeupHandlerName = "WebEPGWakeupHandler";
@@ -55,6 +52,8 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
 
     private bool _workerThreadRunning = false;
     private System.Timers.Timer _scheduleTimer;
+    private bool _isRegisteredForPowerSchedulerTrigger = false;
+    private bool _isRegisteredForWakeUpHandling = false;
 
     #endregion
 
@@ -93,15 +92,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
       get { return "Arion_p - James"; }
     }
 
-    /// <summary>
-    /// returns if the plugin should only run on the master server
-    /// or also on slave servers
-    /// </summary>
-    public bool MasterOnly
-    {
-      get { return true; }
-    }
-
     #endregion
 
     #region public methods
@@ -124,6 +114,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
     public void Stop()
     {
       this.LogDebug("plugin: webepg stopped");
+      UnregisterForEPGSchedule();
       UnregisterWakeupHandler();
       if (_scheduleTimer != null)
       {
@@ -231,8 +222,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
             }
             if (xmltvDirectory == string.Empty)
             {
-              // Do not use XmlTvImporter.DefaultOutputFolder to avoid reference to XmlTvImport
-              xmltvDirectory = SettingsManagement.GetValue("xmlTv", PathManager.GetDataPath + @"\xmltv");
+              xmltvDirectory = SettingsManagement.GetValue("xmlTvFolder", string.Empty);
             }
             this.LogInfo("Writing to tvguide.xml in {0}", xmltvDirectory);
             // Open XMLTV output file
@@ -305,6 +295,10 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
     {
       // Register with the EPGScheduleDue event so we are informed when
       // the EPG wakeup schedule is due.
+      if (_isRegisteredForPowerSchedulerTrigger)
+      {
+        return;
+      }
       if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
       {
         IEpgHandler handler = GlobalServiceProvider.Instance.Get<IEpgHandler>();
@@ -312,29 +306,58 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
         {
           handler.EPGScheduleDue += new EPGScheduleHandler(EPGScheduleDue);
           this.LogDebug("WebEPGImporter: registered with PowerScheduler EPG handler");
+          _isRegisteredForPowerSchedulerTrigger = true;
           return;
         }
       }
       this.LogDebug("WebEPGImporter: NOT registered with PowerScheduler EPG handler");
     }
 
+    private void UnregisterForEPGSchedule()
+    {
+      if (_isRegisteredForPowerSchedulerTrigger && GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
+      {
+        IEpgHandler handler = GlobalServiceProvider.Instance.Get<IEpgHandler>();
+        if (handler != null)
+        {
+          handler.EPGScheduleDue -= new EPGScheduleHandler(EPGScheduleDue);
+          this.LogDebug("WebEPGImporter: unregistered with PowerScheduler EPG handler");
+          _isRegisteredForPowerSchedulerTrigger = false;
+        }
+      }
+    }
+
     private void RegisterWakeupHandler()
     {
+      if (_isRegisteredForWakeUpHandling)
+      {
+        return;
+      }
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
       {
-        GlobalServiceProvider.Instance.Get<IPowerScheduler>().Register(this as IWakeupHandler);
-        this.LogDebug("WebEPGImporter: registered WakeupHandler with PowerScheduler ");
-        return;
+        IPowerScheduler scheduler = GlobalServiceProvider.Instance.Get<IPowerScheduler>();
+        if (scheduler != null)
+        {
+          scheduler.Register(this as IWakeupHandler);
+          this.LogDebug("WebEPGImporter: registered WakeupHandler with PowerScheduler ");
+          _isRegisteredForWakeUpHandling = true;
+          return;
+        }
       }
       this.LogDebug("WebEPGImporter: NOT registered WakeupHandler with PowerScheduler ");
     }
 
     private void UnregisterWakeupHandler()
     {
-      if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
+      if (_isRegisteredForWakeUpHandling && GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
       {
-        GlobalServiceProvider.Instance.Get<IPowerScheduler>().Unregister(this as IWakeupHandler);
-        this.LogDebug("WebEPGImporter: unregistered WakeupHandler with PowerScheduler ");
+        IPowerScheduler scheduler = GlobalServiceProvider.Instance.Get<IPowerScheduler>();
+        if (scheduler != null)
+        {
+          scheduler.Unregister(this as IWakeupHandler);
+          this.LogDebug("WebEPGImporter: unregistered WakeupHandler with PowerScheduler ");
+          _isRegisteredForWakeUpHandling = false;
+        }
       }
     }
 
@@ -342,8 +365,12 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
     {
       if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
       {
-        this.LogDebug("plugin:webepg: Telling PowerScheduler standby is allowed: {0}, timeout is one hour", allowed);
-        GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed, 3600);
+        IEpgHandler handler = GlobalServiceProvider.Instance.Get<IEpgHandler>();
+        if (handler != null)
+        {
+          this.LogDebug("plugin:webepg: Telling PowerScheduler standby is allowed: {0}, timeout is one hour", allowed);
+          handler.SetStandbyAllowed(this, allowed, 3600);
+        }
       }
     }
 

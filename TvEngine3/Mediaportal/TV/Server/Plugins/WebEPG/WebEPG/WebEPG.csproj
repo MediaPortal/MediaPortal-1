@@ -158,6 +158,10 @@
       <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
       <Name>Common.Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Common.Types\Common.Types.csproj">
+      <Project>{F9F4E5C1-9A6A-42F8-8452-4BDAFEA0E798}</Project>
+      <Name>Common.Types</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\TVDatabase\Entities\Entities.csproj">
       <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
       <Name>Entities</Name>
@@ -171,10 +175,9 @@
       <Name>TvLibrary.Interfaces</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\TvLibrary.Utils\TvLibrary.Utils.csproj">
-      <Project>{954F9929-7FDA-4F59-88E3-FD2B9A7B6E6E}</Project>
-      <Name>TvLibrary.Utils</Name>
-      <Private>False</Private>
+    <ProjectReference Include="..\WebEpg.Utils\WebEpg.Utils.csproj">
+      <Project>{C1BD9855-79D6-4ED8-8FC1-E9A7ECE6B173}</Project>
+      <Name>WebEpg.Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
