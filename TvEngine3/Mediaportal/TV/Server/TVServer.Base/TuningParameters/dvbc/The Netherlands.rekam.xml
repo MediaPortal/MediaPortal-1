@@ -1,48 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfDVBCTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <DVBCTuning>
+<ArrayOfTuningDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>155000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>163000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>490000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>498000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>139000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>147000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>698000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>706000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>522000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-</ArrayOfDVBCTuning>
+  </TuningDetail>
+</ArrayOfTuningDetail>

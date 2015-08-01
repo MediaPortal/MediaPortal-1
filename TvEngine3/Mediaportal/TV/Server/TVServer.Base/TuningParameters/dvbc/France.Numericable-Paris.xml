@@ -1,478 +1,573 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfDVBCTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <DVBCTuning>
+<ArrayOfTuningDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>115125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>123125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>131125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>139125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>147125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>155125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>163125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>171125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>179125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>187125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>195125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>203125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>211125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>219125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>227125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>235125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>243125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>251125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>259125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>267125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>275125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>283125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>291125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>299125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>307125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>315125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>323125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>331125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>339125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>347125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>355125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>363125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>371125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>379125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>387125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>395125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>403125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>411125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>419125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>427125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>435125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>443125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>451125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>459125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>467125</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>474375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>482375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>490375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>498375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>506375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>514375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>522375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>530375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>538375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>546375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>554375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>562375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>570375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>578375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>586375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>594375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>602375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>610375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>618375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>626375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>634375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>642375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>650375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>658375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>666375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>674375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>682375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>690375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>698375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>706375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>714375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>725375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>730375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>738375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>746375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>754375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>762375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>780375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>788375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>796375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>804375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>812375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>820375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>828375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>832375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>840375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>848375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>856375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>862375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>880375</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationScheme>Qam64</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-</ArrayOfDVBCTuning>
+  </TuningDetail>
+</ArrayOfTuningDetail>

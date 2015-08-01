@@ -1,58 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfDVBCTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <DVBCTuning>
+<ArrayOfTuningDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>170000</Frequency>
-    <ModulationType>Mod128Qam</ModulationType>
+    <ModulationScheme>Qam128</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>370000</Frequency>
-    <ModulationType>Mod128Qam</ModulationType>
+    <ModulationScheme>Qam128</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>362000</Frequency>
-    <ModulationType>Mod128Qam</ModulationType>
+    <ModulationScheme>Qam128</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>354000</Frequency>
-    <ModulationType>Mod128Qam</ModulationType>
+    <ModulationScheme>Qam128</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>346000</Frequency>
-    <ModulationType>Mod128Qam</ModulationType>
+    <ModulationScheme>Qam128</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>338000</Frequency>
-    <ModulationType>Mod128Qam</ModulationType>
+    <ModulationScheme>Qam128</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>322000</Frequency>
-    <ModulationType>Mod128Qam</ModulationType>
+    <ModulationScheme>Qam128</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>314000</Frequency>
-    <ModulationType>Mod128Qam</ModulationType>
+    <ModulationScheme>Qam128</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>162000</Frequency>
-    <ModulationType>Mod128Qam</ModulationType>
+    <ModulationScheme>Qam128</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>306000</Frequency>
-    <ModulationType>Mod128Qam</ModulationType>
+    <ModulationScheme>Qam128</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>154000</Frequency>
-    <ModulationType>Mod128Qam</ModulationType>
+    <ModulationScheme>Qam128</ModulationScheme>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-</ArrayOfDVBCTuning>
+  </TuningDetail>
+</ArrayOfTuningDetail>

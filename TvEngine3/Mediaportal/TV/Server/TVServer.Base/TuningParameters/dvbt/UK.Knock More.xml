@@ -1,57 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<ArrayOfTuningDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <!-- PSB1; BBC TV and Radio channels (SD) -->
-  <DVBTTuning>
+  <TuningDetail>
+    <BroadcastStandard>DvbT</BroadcastStandard>
     <Frequency>514000</Frequency>
+    <FrequencyOffset>167</FrequencyOffset>
     <Bandwidth>8000</Bandwidth>
-    <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
+  </TuningDetail>
   <!-- PSB2; STV/+1 (SD) ITV2, Channel 4/+1 (SD), More4, E4, Channel 5 -->
-  <DVBTTuning>
+  <TuningDetail>
+    <BroadcastStandard>DvbT</BroadcastStandard>
     <Frequency>490000</Frequency>
+    <FrequencyOffset>167</FrequencyOffset>
     <Bandwidth>8000</Bandwidth>
-    <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
+  </TuningDetail>
   <!-- PSB3; DVBT2/Freeview HD multiplex -->
-  <DVBTTuning>
+  <TuningDetail>
+    <BroadcastStandard>DvbT</BroadcastStandard>
     <Frequency>538000</Frequency>
+    <FrequencyOffset>167</FrequencyOffset>
     <Bandwidth>8000</Bandwidth>
-    <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
+  </TuningDetail>
   <!-- COM4 -->
-  <DVBTTuning>
+  <TuningDetail>
+    <BroadcastStandard>DvbT</BroadcastStandard>
     <Frequency>730000</Frequency>
+    <FrequencyOffset>167</FrequencyOffset>
     <Bandwidth>8000</Bandwidth>
-    <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
+  </TuningDetail>
   <!-- COM5 -->
-  <DVBTTuning>
+  <TuningDetail>
+    <BroadcastStandard>DvbT</BroadcastStandard>
     <Frequency>762000</Frequency>
+    <FrequencyOffset>167</FrequencyOffset>
     <Bandwidth>8000</Bandwidth>
-    <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
+  </TuningDetail>
   <!-- COM6 -->
-  <DVBTTuning>
+  <TuningDetail>
+    <BroadcastStandard>DvbT</BroadcastStandard>
     <Frequency>786000</Frequency>
+    <FrequencyOffset>167</FrequencyOffset>
     <Bandwidth>8000</Bandwidth>
-    <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-</ArrayOfDVBTTuning>
+  </TuningDetail>
+</ArrayOfTuningDetail>

@@ -1,39 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfTransponder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Transponder>
-    <CarrierFrequency>12732000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
-    <SymbolRate>30000</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate2_3</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>11535000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
-    <SymbolRate>45000</SymbolRate>
-    <Modulation>Mod8Psk</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>On</Pilot>
-    <Rolloff>ThirtyFive</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>11592000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
+<ArrayOfTuningDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TuningDetail>
+    <BroadcastStandard>DvbS2</BroadcastStandard>
+    <SatellitePosition>1195</SatellitePosition>
+    <Frequency>11542000</Frequency>
+    <SymbolRate>15533</SymbolRate>
+    <Polarisation>LinearVertical</Polarisation>
+    <ModulationScheme>Psk4</ModulationScheme>
+    <FecCodeRate>Rate3_4</FecCodeRate>
+    <PilotTonesState>Off</PilotTonesState>
+    <RollOffFactor>ThirtyFive</RollOffFactor>
+    <StreamId>0</StreamId>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbS2</BroadcastStandard>
+    <SatellitePosition>1195</SatellitePosition>
+    <Frequency>11592000</Frequency>
     <SymbolRate>25000</SymbolRate>
-    <Modulation>ModQpsk</Modulation>
-    <InnerFecRate>Rate1_2</InnerFecRate>
-    <Pilot>Off</Pilot>
-    <Rolloff>ThirtyFive</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>12696000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
+    <Polarisation>LinearVertical</Polarisation>
+    <ModulationScheme>Psk4</ModulationScheme>
+    <FecCodeRate>Rate1_2</FecCodeRate>
+    <PilotTonesState>Off</PilotTonesState>
+    <RollOffFactor>ThirtyFive</RollOffFactor>
+    <StreamId>0</StreamId>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbS2</BroadcastStandard>
+    <SatellitePosition>1195</SatellitePosition>
+    <Frequency>12696000</Frequency>
     <SymbolRate>30000</SymbolRate>
-    <Modulation>ModQpsk</Modulation>
-    <InnerFecRate>Rate2_3</InnerFecRate>
-    <Pilot>Off</Pilot>
-    <Rolloff>ThirtyFive</Rolloff>
-  </Transponder>
-</ArrayOfTransponder>
+    <Polarisation>LinearVertical</Polarisation>
+    <ModulationScheme>Psk4</ModulationScheme>
+    <FecCodeRate>Rate2_3</FecCodeRate>
+    <PilotTonesState>Off</PilotTonesState>
+    <RollOffFactor>ThirtyFive</RollOffFactor>
+    <StreamId>0</StreamId>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbS</BroadcastStandard>
+    <SatellitePosition>1195</SatellitePosition>
+    <Frequency>12732000</Frequency>
+    <SymbolRate>30000</SymbolRate>
+    <Polarisation>LinearVertical</Polarisation>
+    <ModulationScheme>Psk4</ModulationScheme>
+    <FecCodeRate>Rate2_3</FecCodeRate>
+  </TuningDetail>
+</ArrayOfTuningDetail>

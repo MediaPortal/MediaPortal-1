@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <DVBTTuning>
+<ArrayOfTuningDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TuningDetail>
+    <BroadcastStandard>DvbT</BroadcastStandard>
     <Frequency>732500</Frequency>
+    <FrequencyOffset>125</FrequencyOffset>
     <Bandwidth>7000</Bandwidth>
-    <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbT</BroadcastStandard>
     <Frequency>746500</Frequency>
+    <FrequencyOffset>125</FrequencyOffset>
     <Bandwidth>7000</Bandwidth>
-    <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbT</BroadcastStandard>
     <Frequency>767500</Frequency>
+    <FrequencyOffset>125</FrequencyOffset>
     <Bandwidth>7000</Bandwidth>
-    <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbT</BroadcastStandard>
     <Frequency>788500</Frequency>
+    <FrequencyOffset>125</FrequencyOffset>
     <Bandwidth>7000</Bandwidth>
-    <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbT</BroadcastStandard>
     <Frequency>809500</Frequency>
+    <FrequencyOffset>125</FrequencyOffset>
     <Bandwidth>7000</Bandwidth>
-    <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-</ArrayOfDVBTTuning>
+  </TuningDetail>
+</ArrayOfTuningDetail>

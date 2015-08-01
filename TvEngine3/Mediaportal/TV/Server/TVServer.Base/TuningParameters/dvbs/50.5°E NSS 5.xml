@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfTransponder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Transponder>
-    <CarrierFrequency>4172000</CarrierFrequency>
-    <Polarisation>CircularR</Polarisation>
+<ArrayOfTuningDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TuningDetail>
+    <BroadcastStandard>DvbS</BroadcastStandard>
+    <SatellitePosition>505</SatellitePosition>
+    <Frequency>4172000</Frequency>
     <SymbolRate>13330</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>12710000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
+    <Polarisation>CircularRight</Polarisation>
+    <ModulationScheme>Psk4</ModulationScheme>
+    <FecCodeRate>Rate3_4</FecCodeRate>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbS</BroadcastStandard>
+    <SatellitePosition>505</SatellitePosition>
+    <Frequency>12710000</Frequency>
     <SymbolRate>26670</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-</ArrayOfTransponder>
+    <Polarisation>LinearVertical</Polarisation>
+    <ModulationScheme>Psk4</ModulationScheme>
+    <FecCodeRate>Rate3_4</FecCodeRate>
+  </TuningDetail>
+</ArrayOfTuningDetail>

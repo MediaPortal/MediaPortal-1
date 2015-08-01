@@ -1,43 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfDVBCTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <DVBCTuning>
+<ArrayOfTuningDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>129000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
+    <ModulationScheme>Qam256</ModulationScheme>
     <SymbolRate>5217</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>477000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
+    <ModulationScheme>Qam256</ModulationScheme>
     <SymbolRate>5217</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>483000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
+    <ModulationScheme>Qam256</ModulationScheme>
     <SymbolRate>5217</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>489000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
+    <ModulationScheme>Qam256</ModulationScheme>
     <SymbolRate>5217</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>519000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
+    <ModulationScheme>Qam256</ModulationScheme>
     <SymbolRate>5217</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>525000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
+    <ModulationScheme>Qam256</ModulationScheme>
     <SymbolRate>5217</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>549000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
+    <ModulationScheme>Qam256</ModulationScheme>
     <SymbolRate>5217</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbC</BroadcastStandard>
     <Frequency>555000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
+    <ModulationScheme>Qam256</ModulationScheme>
     <SymbolRate>5217</SymbolRate>
-  </DVBCTuning>
-</ArrayOfDVBCTuning>
+  </TuningDetail>
+</ArrayOfTuningDetail>

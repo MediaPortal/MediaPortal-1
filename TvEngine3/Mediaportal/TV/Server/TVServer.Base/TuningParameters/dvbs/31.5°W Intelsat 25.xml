@@ -1,39 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfTransponder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Transponder>
-    <CarrierFrequency>4114000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
+<ArrayOfTuningDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TuningDetail>
+    <BroadcastStandard>DvbS</BroadcastStandard>
+    <SatellitePosition>-315</SatellitePosition>
+    <Frequency>4114000</Frequency>
     <SymbolRate>5300</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>12341000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
+    <Polarisation>LinearVertical</Polarisation>
+    <ModulationScheme>Psk4</ModulationScheme>
+    <FecCodeRate>Rate3_4</FecCodeRate>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbS</BroadcastStandard>
+    <SatellitePosition>-315</SatellitePosition>
+    <Frequency>12341000</Frequency>
     <SymbolRate>2120</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate7_8</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>12344000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
+    <Polarisation>LinearVertical</Polarisation>
+    <ModulationScheme>Psk4</ModulationScheme>
+    <FecCodeRate>Rate7_8</FecCodeRate>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbS</BroadcastStandard>
+    <SatellitePosition>-315</SatellitePosition>
+    <Frequency>12344000</Frequency>
     <SymbolRate>2120</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate7_8</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>3677000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
-    <SymbolRate>1482</SymbolRate>
-    <Modulation>ModQpsk</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>Off</Pilot>
-    <Rolloff>ThirtyFive</Rolloff>
-  </Transponder>
-</ArrayOfTransponder>
+    <Polarisation>LinearVertical</Polarisation>
+    <ModulationScheme>Psk4</ModulationScheme>
+    <FecCodeRate>Rate7_8</FecCodeRate>
+  </TuningDetail>
+</ArrayOfTuningDetail>

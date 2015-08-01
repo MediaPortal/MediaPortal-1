@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfTuningDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TuningDetail>
+    <BroadcastStandard>DvbS</BroadcastStandard>
+    <SatellitePosition>480</SatellitePosition>
+    <Frequency>11231000</Frequency>
+    <SymbolRate>27500</SymbolRate>
+    <Polarisation>LinearVertical</Polarisation>
+    <ModulationScheme>Psk4</ModulationScheme>
+    <FecCodeRate>Rate5_6</FecCodeRate>
+  </TuningDetail>
+</ArrayOfTuningDetail>

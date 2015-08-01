@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<ArrayOfTuningDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <!-- Freeview World TV -->
-  <DVBTTuning>
+  <TuningDetail>
+    <BroadcastStandard>DvbT</BroadcastStandard>
     <Frequency>530000</Frequency>
+    <FrequencyOffset>0</FrequencyOffset>
     <Bandwidth>8000</Bandwidth>
-    <Offset>0</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
+  </TuningDetail>
   <!-- Igloo (Sky) -->
-  <DVBTTuning>
+  <TuningDetail>
+    <BroadcastStandard>DvbT</BroadcastStandard>
     <Frequency>546000</Frequency>
+    <FrequencyOffset>0</FrequencyOffset>
     <Bandwidth>8000</Bandwidth>
-    <Offset>0</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
+  </TuningDetail>
   <!-- Freeview MediaWorks -->
-  <DVBTTuning>
+  <TuningDetail>
+    <BroadcastStandard>DvbT</BroadcastStandard>
     <Frequency>562000</Frequency>
+    <FrequencyOffset>0</FrequencyOffset>
     <Bandwidth>8000</Bandwidth>
-    <Offset>0</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
+  </TuningDetail>
   <!-- Freeview TVNZ -->
-  <DVBTTuning>
+  <TuningDetail>
+    <BroadcastStandard>DvbT</BroadcastStandard>
     <Frequency>578000</Frequency>
+    <FrequencyOffset>0</FrequencyOffset>
     <Bandwidth>8000</Bandwidth>
-    <Offset>0</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
+  </TuningDetail>
   <!-- Freeview Kordia -->
-  <DVBTTuning>
+  <TuningDetail>
+    <BroadcastStandard>DvbT</BroadcastStandard>
     <Frequency>594000</Frequency>
+    <FrequencyOffset>0</FrequencyOffset>
     <Bandwidth>8000</Bandwidth>
-    <Offset>0</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-</ArrayOfDVBTTuning>
+  </TuningDetail>
+</ArrayOfTuningDetail>
