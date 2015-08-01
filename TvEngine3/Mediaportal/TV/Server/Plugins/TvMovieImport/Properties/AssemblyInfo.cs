@@ -25,19 +25,18 @@ using MediaPortal.Common.Utils;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-
-[assembly: AssemblyTitle("TvMovie")]
-[assembly: AssemblyDescription("Imports TV Guide data from an existing Clickfinder database")]
+[assembly: AssemblyTitle("Plugin - TV Movie ClickFinder EPG Import")]
+[assembly: AssemblyDescription("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
-
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-
 [assembly: Guid("880c5315-7940-4e83-8f15-f8f29269c0e4")]
 
 [assembly: CompatibleVersion("Own")]
-[assembly: UsesSubsystem("TVE")]
+[assembly: UsesSubsystem("TVE.Common.Types")]
+[assembly: UsesSubsystem("TVE.DB")]
+[assembly: UsesSubsystem("TVE.Plugins")]
