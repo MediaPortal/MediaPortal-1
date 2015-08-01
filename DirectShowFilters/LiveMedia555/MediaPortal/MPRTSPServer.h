@@ -58,6 +58,7 @@ public:
 		struct sockaddr_in getClientAddr() {return fClientAddr;}
 		LONG getStartDateTime() {return startDateTime;}
 		bool isPaused() {return m_bPaused;}
+		unsigned sessionId() {return fOurSessionId;}
 
 	protected:
 		LONG startDateTime;

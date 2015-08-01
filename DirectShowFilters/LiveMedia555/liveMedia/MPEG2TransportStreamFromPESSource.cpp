@@ -27,15 +27,6 @@ MPEG2TransportStreamFromPESSource* MPEG2TransportStreamFromPESSource
   return new MPEG2TransportStreamFromPESSource(env, inputSource);
 }
 
-void MPEG2TransportStreamFromPESSource::SetSourceType(int sourceType) {
-  if (sourceType == 0) {  // Video
-    fHaveVideoStreams = true;
-  }
-  else {                  // Audio
-    fHaveVideoStreams = false;
-  }
-}
-
 MPEG2TransportStreamFromPESSource
 ::MPEG2TransportStreamFromPESSource(UsageEnvironment& env,
 				    MPEG1or2DemuxedElementaryStream* inputSource)

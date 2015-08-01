@@ -34,7 +34,7 @@
 
 ////////// RTSPServer //////////
 
-extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const wchar_t* fmt, ...);
 MPRTSPServer*
 MPRTSPServer::createNew(UsageEnvironment& env, Port ourPort,
 						UserAuthenticationDatabase* authDatabase,
@@ -126,16 +126,16 @@ void MPRTSPServer::MPRTSPClientSession
 ::livenessTimeoutTaskMP(MPRTSPClientSession* clientSession) {
 	if (clientSession->m_bPaused) 
 	{
-		LogDebug("livenessTimeoutTask - Paused returning");
+		LogDebug(L"livenessTimeoutTask - Paused returning");
 		return;
 	}
-	LogDebug("livenessTimeoutTask");
+	LogDebug(L"livenessTimeoutTask");
 	RTSPServer::RTSPClientSession::livenessTimeoutTask(clientSession);
 }
 
 void MPRTSPServer::MPRTSPClientSession::noteLiveness() {
 	if (fOurMPServer.fMPReclamationTestSeconds > 0) {
-		//LogDebug("noteLiveness::RescheduleDelayedTask");
+		//LogDebug(L"noteLiveness::RescheduleDelayedTask");
 		envir().taskScheduler()
 			.rescheduleDelayedTask(fLivenessCheckTask,
 			fOurMPServer.fMPReclamationTestSeconds*1000000,

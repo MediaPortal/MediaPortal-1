@@ -387,12 +387,6 @@ void MPEGProgramStreamParser::parsePackHeader() {
 
     // We're supposed to have a pack header here, but check also for
     // a system header or a PES packet, just in case:
-	// MEDIAPORTAL MODIFICATION: The following if statement is needed to get MPFILEWRITER working.
-    if ( (first4Bytes&0xffffff00) == 0x0001ba00)
-    {
-      skipBytes(3);
-      break;
-    }
     if (first4Bytes == PACK_START_CODE) {
       skipBytes(4);
       break;

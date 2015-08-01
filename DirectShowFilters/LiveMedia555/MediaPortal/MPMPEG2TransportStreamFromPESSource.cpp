@@ -19,7 +19,7 @@
 *
 */
 
-extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const wchar_t* fmt, ...);
 #include "MPMPEG2TransportStreamFromPESSource.h"
 
 
@@ -33,12 +33,12 @@ MPMPEG2TransportStreamFromPESSource
 									  MPEG1or2DemuxedElementaryStream* inputSource)
 									  : MPEG2TransportStreamFromPESSource(env,inputSource),
 									  fMPInputSource(inputSource) {
-										  LogDebug("MPEG2TransportStreamFromPESSource::ctor:%x",this);
+										  LogDebug(L"MPEG2TransportStreamFromPESSource::ctor:%x",this);
 }
 
 MPMPEG2TransportStreamFromPESSource::~MPMPEG2TransportStreamFromPESSource() 
 {
-	LogDebug("MPEG2TransportStreamFromPESSource::dtor:%x",this);
+	LogDebug(L"MPEG2TransportStreamFromPESSource::dtor:%x",this);
 	fMPInputSource=NULL;
 }
 
