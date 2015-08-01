@@ -20,8 +20,10 @@
 
 #region Usings
 
+using System.Collections.Generic;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 
 #endregion
 
@@ -51,7 +53,21 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 
     public bool DisAllowShutdown
     {
-      get { return (_controllerService.ActiveStreams > 0); }
+      get
+      {
+        ICollection<RtspClient> clients = _controllerService.StreamingClients;
+        if (clients != null)
+        {
+          foreach (RtspClient client in clients)
+          {
+            if (client.IsClientActive)
+            {
+              return true;
+            }
+          }
+        }
+        return false;
+      }
     }
 
     public void UserShutdownNow() {}

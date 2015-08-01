@@ -34,8 +34,8 @@ using PowerScheduler.Setup;
 namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 {
   [Interceptor("PluginExceptionInterceptor")]
-  [ComponentProxyBehavior(AdditionalInterfaces = new[] { typeof(ITvServerPluginCommunciation) })]
-  public class PowerSchedulerPlugin : ITvServerPlugin, ITvServerPluginCommunciation
+  [ComponentProxyBehavior(AdditionalInterfaces = new[] { typeof(ITvServerPluginCommunication) })]
+  public class PowerSchedulerPlugin : ITvServerPlugin, ITvServerPluginCommunication
   {
     #region Variables
 
@@ -75,14 +75,6 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     public string Author
     {
       get { return "michael_t (based on the work of micheloe and others)"; }
-    }
-
-    /// <summary>
-    /// Should this plugin run only on a master tvserver?
-    /// </summary>
-    public bool MasterOnly
-    {
-      get { return false; }
     }
 
     /// <summary>
