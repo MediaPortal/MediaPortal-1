@@ -93,7 +93,6 @@
     <Compile Include="Time\TimeRange.cs" />
     <Compile Include="Time\WorldDateTime.cs" />
     <Compile Include="Time\WorldTimeZone.cs" />
-    <Compile Include="Util\Util.cs" />
     <Compile Include="Web\Check\CheckConnections.cs" />
     <Compile Include="Web\html\MatchTagCollection.cs" />
     <Compile Include="Web\html\HtmlString.cs" />
@@ -125,7 +124,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Web\Parser\HtmlSectionParser.cs" />
-    <Compile Include="Xml\XmlNoNamespaceWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
