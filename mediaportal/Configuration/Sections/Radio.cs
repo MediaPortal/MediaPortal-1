@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -39,7 +40,6 @@ namespace MediaPortal.Configuration.Sections
   {
     #region Variables
 
-    private bool _hideAllChannelsGroup = false;
     private bool _rememberLastGroup = true;
     private string _rootGroup = "(none)";
     private bool _autoTurnOnRadio = false;
@@ -67,14 +67,12 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new MPSettings())
       {
-        _hideAllChannelsGroup = xmlreader.GetValueAsBool("myradio", "hideAllChannelsGroup", false);
         _rememberLastGroup = xmlreader.GetValueAsBool("myradio", "rememberlastgroup", true);
         _rootGroup = xmlreader.GetValueAsString("myradio", "rootgroup", "(none)");
         _autoTurnOnRadio = xmlreader.GetValueAsBool("myradio", "autoturnonradio", false);
       }
 
       cbTurnOnRadio.Checked = _autoTurnOnRadio;
-      cbHideAllChannelsGroup.Checked = _hideAllChannelsGroup;
       cbRememberLastGroup.Checked = _rememberLastGroup;
       comboBoxGroups.Items.Clear();
       comboBoxGroups.Items.Add(_rootGroup);
@@ -88,7 +86,6 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new MPSettings())
       {
-        xmlreader.SetValueAsBool("myradio", "hideAllChannelsGroup", _hideAllChannelsGroup);
         xmlreader.SetValueAsBool("myradio", "rememberlastgroup", _rememberLastGroup);
         xmlreader.SetValue("myradio", "rootgroup", _rootGroup);
         xmlreader.SetValueAsBool("myradio", "autoturnonradio", _autoTurnOnRadio);
@@ -100,7 +97,6 @@ namespace MediaPortal.Configuration.Sections
     #region Designer generated code
 
     private MPGroupBox groupBoxChannelGroups;
-    private MPCheckBox cbHideAllChannelsGroup;
     private MPCheckBox cbRememberLastGroup;
     private MPLabel label1;
     private MPComboBox comboBoxGroups;
@@ -119,7 +115,6 @@ namespace MediaPortal.Configuration.Sections
       this.cbRememberLastGroup = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.comboBoxGroups = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cbHideAllChannelsGroup = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxRadioScreen.SuspendLayout();
       this.groupBoxChannelGroups.SuspendLayout();
       this.SuspendLayout();
@@ -131,10 +126,10 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxRadioScreen.Controls.Add(this.cbTurnOnRadio);
       this.groupBoxRadioScreen.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxRadioScreen.Location = new System.Drawing.Point(6, 126);
+      this.groupBoxRadioScreen.Location = new System.Drawing.Point(6, 100);
       this.groupBoxRadioScreen.Name = "groupBoxRadioScreen";
       this.groupBoxRadioScreen.Size = new System.Drawing.Size(462, 46);
-      this.groupBoxRadioScreen.TabIndex = 12;
+      this.groupBoxRadioScreen.TabIndex = 1;
       this.groupBoxRadioScreen.TabStop = false;
       this.groupBoxRadioScreen.Text = "When entering the Radio screen:";
       // 
@@ -157,12 +152,11 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxChannelGroups.Controls.Add(this.cbRememberLastGroup);
       this.groupBoxChannelGroups.Controls.Add(this.comboBoxGroups);
       this.groupBoxChannelGroups.Controls.Add(this.label1);
-      this.groupBoxChannelGroups.Controls.Add(this.cbHideAllChannelsGroup);
       this.groupBoxChannelGroups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxChannelGroups.Location = new System.Drawing.Point(6, 0);
       this.groupBoxChannelGroups.Name = "groupBoxChannelGroups";
-      this.groupBoxChannelGroups.Size = new System.Drawing.Size(462, 120);
-      this.groupBoxChannelGroups.TabIndex = 11;
+      this.groupBoxChannelGroups.Size = new System.Drawing.Size(462, 94);
+      this.groupBoxChannelGroups.TabIndex = 0;
       this.groupBoxChannelGroups.TabStop = false;
       this.groupBoxChannelGroups.Text = "Channel groups";
       // 
@@ -170,10 +164,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbRememberLastGroup.AutoSize = true;
       this.cbRememberLastGroup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbRememberLastGroup.Location = new System.Drawing.Point(13, 42);
+      this.cbRememberLastGroup.Location = new System.Drawing.Point(13, 19);
       this.cbRememberLastGroup.Name = "cbRememberLastGroup";
       this.cbRememberLastGroup.Size = new System.Drawing.Size(124, 17);
-      this.cbRememberLastGroup.TabIndex = 1;
+      this.cbRememberLastGroup.TabIndex = 0;
       this.cbRememberLastGroup.Text = "Remember last group";
       this.cbRememberLastGroup.UseVisualStyleBackColor = true;
       this.cbRememberLastGroup.CheckedChanged += new System.EventHandler(this.cbRememberLastGroup_CheckedChanged);
@@ -185,7 +179,7 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxGroups.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxGroups.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxGroups.FormattingEnabled = true;
-      this.comboBoxGroups.Location = new System.Drawing.Point(13, 83);
+      this.comboBoxGroups.Location = new System.Drawing.Point(13, 60);
       this.comboBoxGroups.Name = "comboBoxGroups";
       this.comboBoxGroups.Size = new System.Drawing.Size(431, 21);
       this.comboBoxGroups.TabIndex = 2;
@@ -195,23 +189,11 @@ namespace MediaPortal.Configuration.Sections
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(10, 67);
+      this.label1.Location = new System.Drawing.Point(10, 44);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(140, 13);
-      this.label1.TabIndex = 3;
+      this.label1.TabIndex = 1;
       this.label1.Text = "Group to show in root menu:";
-      // 
-      // cbHideAllChannelsGroup
-      // 
-      this.cbHideAllChannelsGroup.AutoSize = true;
-      this.cbHideAllChannelsGroup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbHideAllChannelsGroup.Location = new System.Drawing.Point(13, 19);
-      this.cbHideAllChannelsGroup.Name = "cbHideAllChannelsGroup";
-      this.cbHideAllChannelsGroup.Size = new System.Drawing.Size(164, 17);
-      this.cbHideAllChannelsGroup.TabIndex = 0;
-      this.cbHideAllChannelsGroup.Text = "Hide the \"All channels group\"";
-      this.cbHideAllChannelsGroup.UseVisualStyleBackColor = true;
-      this.cbHideAllChannelsGroup.Click += new System.EventHandler(this.cbHideAllChannelsGroup_Click);
       // 
       // Radio
       // 
@@ -230,11 +212,6 @@ namespace MediaPortal.Configuration.Sections
     #endregion
 
     #region Private methods
-
-    private void cbHideAllChannelsGroup_Click(object sender, EventArgs e)
-    {
-      _hideAllChannelsGroup = cbHideAllChannelsGroup.Checked;
-    }
 
     private void cbRememberLastGroup_CheckedChanged(object sender, EventArgs e)
     {
@@ -270,7 +247,7 @@ namespace MediaPortal.Configuration.Sections
       }
       else
       {
-        IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio, ChannelGroupIncludeRelationEnum.None);
+        IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaType.Radio, ChannelGroupIncludeRelationEnum.None);
         foreach (ChannelGroup group in groups)
         {
           int idx = comboBoxGroups.Items.Add(group.GroupName);

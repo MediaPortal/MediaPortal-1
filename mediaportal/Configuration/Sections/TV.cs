@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows.Forms;
 using MediaPortal.Common.Utils.Localisation;
 using MediaPortal.Profile;
@@ -99,7 +98,6 @@ namespace MediaPortal.Configuration.Sections
         mpCheckBoxEnableCCSub.Checked = xmlreader.GetValueAsBool("tvservice", "ccsubtitles", false);
         mpCheckBoxAutoShowSubWhenTvStarts.Checked = xmlreader.GetValueAsBool("tvservice", "autoshowsubwhentvstarts", true);
         enableAudioDualMonoModes.Checked = xmlreader.GetValueAsBool("tvservice", "audiodualmono", false);
-        cbHideAllChannels.Checked = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
         cbShowChannelStateIcons.Checked = xmlreader.GetValueAsBool("mytv", "showChannelStateIcons", true);
         cbContinuousScrollGuide.Checked = xmlreader.GetValueAsBool("mytv", "continuousScrollGuide", false);
         cbRelaxTsReader.Checked = xmlreader.GetValueAsBool("mytv", "relaxTsReader", false);
@@ -206,7 +204,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("tvservice", "ccsubtitles", mpCheckBoxEnableCCSub.Checked);
         xmlwriter.SetValueAsBool("tvservice", "autoshowsubwhentvstarts", mpCheckBoxAutoShowSubWhenTvStarts.Checked);
         xmlwriter.SetValueAsBool("tvservice", "audiodualmono", enableAudioDualMonoModes.Checked);
-        xmlwriter.SetValueAsBool("mytv", "hideAllChannelsGroup", cbHideAllChannels.Checked);
         xmlwriter.SetValueAsBool("mytv", "showChannelStateIcons", cbShowChannelStateIcons.Checked);
         xmlwriter.SetValueAsBool("mytv", "continuousScrollGuide", cbContinuousScrollGuide.Checked);
         xmlwriter.SetValueAsBool("mytv", "relaxTsReader", cbRelaxTsReader.Checked);
@@ -278,8 +275,6 @@ namespace MediaPortal.Configuration.Sections
     private ColumnHeader columnHeader1;
     private ColumnHeader columnHeader2;
     private ColumnHeader columnHeader4;
-    private MPGroupBox mpGroupBox5;
-    private MPCheckBox cbHideAllChannels;
     private MPGroupBox mpGroupBox6;
     private MPCheckBox cbShowChannelStateIcons;
     private MPCheckBox enableAudioDualMonoModes;
@@ -342,8 +337,6 @@ namespace MediaPortal.Configuration.Sections
       this.cbShowChannelStateIcons = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.labelShowEpisodeinfo = new MediaPortal.UserInterface.Controls.MPLabel();
       this.comboboxShowEpisodeInfo = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpGroupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.cbHideAllChannels = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabPageAudioLanguages = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -396,7 +389,6 @@ namespace MediaPortal.Configuration.Sections
       ((System.ComponentModel.ISupportInitialize)(this.channelNumberMaxLengthNumUpDn)).BeginInit();
       this.grpTsReader.SuspendLayout();
       this.mpGroupBox6.SuspendLayout();
-      this.mpGroupBox5.SuspendLayout();
       this.tabPageAudioLanguages.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.tabPageSubtitles.SuspendLayout();
@@ -469,7 +461,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlTVGeneral.Name = "tabControlTVGeneral";
       this.tabControlTVGeneral.SelectedIndex = 0;
       this.tabControlTVGeneral.Size = new System.Drawing.Size(472, 445);
-      this.tabControlTVGeneral.TabIndex = 11;
+      this.tabControlTVGeneral.TabIndex = 0;
       // 
       // tabPageGeneralSettings
       // 
@@ -478,7 +470,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageGeneralSettings.Controls.Add(this.groupBox3);
       this.tabPageGeneralSettings.Controls.Add(this.grpTsReader);
       this.tabPageGeneralSettings.Controls.Add(this.mpGroupBox6);
-      this.tabPageGeneralSettings.Controls.Add(this.mpGroupBox5);
       this.tabPageGeneralSettings.Location = new System.Drawing.Point(4, 22);
       this.tabPageGeneralSettings.Name = "tabPageGeneralSettings";
       this.tabPageGeneralSettings.Padding = new System.Windows.Forms.Padding(3);
@@ -492,10 +483,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBoxAdditional.Controls.Add(this.cbDeinterlace);
       this.mpGroupBoxAdditional.Controls.Add(this.label8);
       this.mpGroupBoxAdditional.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBoxAdditional.Location = new System.Drawing.Point(16, 322);
+      this.mpGroupBoxAdditional.Location = new System.Drawing.Point(16, 271);
       this.mpGroupBoxAdditional.Name = "mpGroupBoxAdditional";
       this.mpGroupBoxAdditional.Size = new System.Drawing.Size(431, 63);
-      this.mpGroupBoxAdditional.TabIndex = 19;
+      this.mpGroupBoxAdditional.TabIndex = 4;
       this.mpGroupBoxAdditional.TabStop = false;
       this.mpGroupBoxAdditional.Text = "Additional settings";
       // 
@@ -513,14 +504,14 @@ namespace MediaPortal.Configuration.Sections
       this.cbDeinterlace.Location = new System.Drawing.Point(166, 19);
       this.cbDeinterlace.Name = "cbDeinterlace";
       this.cbDeinterlace.Size = new System.Drawing.Size(259, 21);
-      this.cbDeinterlace.TabIndex = 0;
+      this.cbDeinterlace.TabIndex = 1;
       // 
       // label8
       // 
       this.label8.Location = new System.Drawing.Point(6, 23);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(146, 17);
-      this.label8.TabIndex = 14;
+      this.label8.TabIndex = 0;
       this.label8.Text = "Fallback de-interlace mode:";
       // 
       // groupBox5
@@ -530,10 +521,10 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox5.Controls.Add(this.cbAutoFullscreen);
       this.groupBox5.Controls.Add(this.cbTurnOnTv);
       this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox5.Location = new System.Drawing.Point(258, 169);
+      this.groupBox5.Location = new System.Drawing.Point(258, 118);
       this.groupBox5.Name = "groupBox5";
       this.groupBox5.Size = new System.Drawing.Size(189, 94);
-      this.groupBox5.TabIndex = 18;
+      this.groupBox5.TabIndex = 2;
       this.groupBox5.TabStop = false;
       this.groupBox5.Text = "When entering the TV screen:";
       // 
@@ -569,10 +560,10 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Controls.Add(this.channelNumberMaxLengthNumUpDn);
       this.groupBox3.Controls.Add(this.lblChanNumMaxLen);
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox3.Location = new System.Drawing.Point(16, 169);
+      this.groupBox3.Location = new System.Drawing.Point(16, 118);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(233, 94);
-      this.groupBox3.TabIndex = 17;
+      this.groupBox3.TabIndex = 1;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Channel numbers";
       // 
@@ -614,7 +605,7 @@ namespace MediaPortal.Configuration.Sections
             0});
       this.channelNumberMaxLengthNumUpDn.Name = "channelNumberMaxLengthNumUpDn";
       this.channelNumberMaxLengthNumUpDn.Size = new System.Drawing.Size(42, 20);
-      this.channelNumberMaxLengthNumUpDn.TabIndex = 2;
+      this.channelNumberMaxLengthNumUpDn.TabIndex = 3;
       this.channelNumberMaxLengthNumUpDn.Value = new decimal(new int[] {
             3,
             0,
@@ -634,10 +625,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.grpTsReader.Controls.Add(this.cbRelaxTsReader);
       this.grpTsReader.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.grpTsReader.Location = new System.Drawing.Point(16, 269);
+      this.grpTsReader.Location = new System.Drawing.Point(16, 218);
       this.grpTsReader.Name = "grpTsReader";
       this.grpTsReader.Size = new System.Drawing.Size(431, 47);
-      this.grpTsReader.TabIndex = 12;
+      this.grpTsReader.TabIndex = 3;
       this.grpTsReader.TabStop = false;
       this.grpTsReader.Text = "TsReader options";
       // 
@@ -661,10 +652,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox6.Controls.Add(this.labelShowEpisodeinfo);
       this.mpGroupBox6.Controls.Add(this.comboboxShowEpisodeInfo);
       this.mpGroupBox6.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox6.Location = new System.Drawing.Point(16, 67);
+      this.mpGroupBox6.Location = new System.Drawing.Point(16, 16);
       this.mpGroupBox6.Name = "mpGroupBox6";
       this.mpGroupBox6.Size = new System.Drawing.Size(431, 96);
-      this.mpGroupBox6.TabIndex = 12;
+      this.mpGroupBox6.TabIndex = 0;
       this.mpGroupBox6.TabStop = false;
       this.mpGroupBox6.Text = "Guide";
       // 
@@ -698,7 +689,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelShowEpisodeinfo.Location = new System.Drawing.Point(19, 68);
       this.labelShowEpisodeinfo.Name = "labelShowEpisodeinfo";
       this.labelShowEpisodeinfo.Size = new System.Drawing.Size(97, 13);
-      this.labelShowEpisodeinfo.TabIndex = 1;
+      this.labelShowEpisodeinfo.TabIndex = 2;
       this.labelShowEpisodeinfo.Text = "Show episode info:";
       // 
       // comboboxShowEpisodeInfo
@@ -709,29 +700,7 @@ namespace MediaPortal.Configuration.Sections
       this.comboboxShowEpisodeInfo.Location = new System.Drawing.Point(126, 64);
       this.comboboxShowEpisodeInfo.Name = "comboboxShowEpisodeInfo";
       this.comboboxShowEpisodeInfo.Size = new System.Drawing.Size(229, 21);
-      this.comboboxShowEpisodeInfo.TabIndex = 2;
-      // 
-      // mpGroupBox5
-      // 
-      this.mpGroupBox5.Controls.Add(this.cbHideAllChannels);
-      this.mpGroupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox5.Location = new System.Drawing.Point(16, 16);
-      this.mpGroupBox5.Name = "mpGroupBox5";
-      this.mpGroupBox5.Size = new System.Drawing.Size(431, 45);
-      this.mpGroupBox5.TabIndex = 11;
-      this.mpGroupBox5.TabStop = false;
-      this.mpGroupBox5.Text = "Group options";
-      // 
-      // cbHideAllChannels
-      // 
-      this.cbHideAllChannels.AutoSize = true;
-      this.cbHideAllChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbHideAllChannels.Location = new System.Drawing.Point(22, 19);
-      this.cbHideAllChannels.Name = "cbHideAllChannels";
-      this.cbHideAllChannels.Size = new System.Drawing.Size(149, 17);
-      this.cbHideAllChannels.TabIndex = 0;
-      this.cbHideAllChannels.Text = "Hide \"All Channels\" Group";
-      this.cbHideAllChannels.UseVisualStyleBackColor = true;
+      this.comboboxShowEpisodeInfo.TabIndex = 3;
       // 
       // tabPageAudioLanguages
       // 
@@ -1126,8 +1095,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox7
       // 
-      this.mpGroupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox7.Controls.Add(this.cbConfirmTimeshiftStop);
       this.mpGroupBox7.Controls.Add(this.txtNotifyAfter);
       this.mpGroupBox7.Controls.Add(this.labelNotifyTimeout);
@@ -1177,8 +1146,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxNotifyPlaySound
       // 
-      this.checkBoxNotifyPlaySound.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.checkBoxNotifyPlaySound.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxNotifyPlaySound.AutoSize = true;
       this.checkBoxNotifyPlaySound.Checked = true;
       this.checkBoxNotifyPlaySound.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -1229,8 +1198,6 @@ namespace MediaPortal.Configuration.Sections
       this.grpTsReader.PerformLayout();
       this.mpGroupBox6.ResumeLayout(false);
       this.mpGroupBox6.PerformLayout();
-      this.mpGroupBox5.ResumeLayout(false);
-      this.mpGroupBox5.PerformLayout();
       this.tabPageAudioLanguages.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
