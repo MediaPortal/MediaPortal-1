@@ -93,7 +93,7 @@ namespace MediaPortal.Configuration.Sections
     protected long _guideColorProgramEnded = 0;
     protected long _guideColorProgramSelected = 0;
     protected long _guideColorBorderHighlight = 0;
-    protected List<TvGuideCategory> _mpGenres = null;
+    protected List<GuideCategory> _mpGenres = null;
     protected IDictionary<string, long> _genreColorsOnNow = new Dictionary<string, long>();
     protected IDictionary<string, long> _genreColorsOnLater = new Dictionary<string, long>();
     private Button mpButtonOk;
@@ -981,7 +981,7 @@ namespace MediaPortal.Configuration.Sections
       }
 
       // Get the MediaPortal genres from the TV server.
-      _mpGenres = ServiceAgents.Instance.ProgramCategoryServiceAgent.ListAllTvGuideCategories().ToList();
+      _mpGenres = ServiceAgents.Instance.ProgramCategoryServiceAgent.ListAllGuideCategories().ToList();
 
       // Load tv guide colors.
       using (Settings xmlreader = new SKSettings())
