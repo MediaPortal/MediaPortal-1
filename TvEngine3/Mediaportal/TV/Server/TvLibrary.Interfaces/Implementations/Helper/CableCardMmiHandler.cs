@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
-using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
@@ -65,6 +64,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       Overlay = 1,
       NewWindow = 2
       // 0x03..0xff reserved
+    }
+
+    // Refer to CableLabs specification OC-SP-CCIF2.0.
+    private enum MmiApplicationType : byte
+    {
+      ConditionalAccess = 0,
+      CableCardBindingInformation,
+      IpService,
+      NetworkInterfaceScte55_2,
+      NetworkInterfaceScte55_1,
+      CopyProtection,
+      Diagnostic,
+      Undesignated,
+      NetworkInterfaceDsg,
+      ConditionalAccessNetworkHandler
+    }
+
+    #endregion
+
+    #region structs
+
+    private struct SmartCardApplication
+    {
+      public MmiApplicationType Type;
+      public short Version;
+      public string Name;
+      public string Url;
     }
 
     #endregion
@@ -137,28 +163,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
         {
           this.LogDebug("  application #{0}", i + 1);
           SmartCardApplication application = new SmartCardApplication();
-          application.ApplicationType = (ApplicationTypeType)applicationList[offset++];
-          this.LogDebug("    type    = {0}", application.ApplicationType);
-          application.ApplicationVersion = (short)((applicationList[offset] << 8) + applicationList[offset + 1]);
-          this.LogDebug("    version = {0}", application.ApplicationVersion);
+          application.Type = (MmiApplicationType)applicationList[offset++];
+          this.LogDebug("    type    = {0}", application.Type);
+          application.Version = (short)((applicationList[offset] << 8) + applicationList[offset + 1]);
+          this.LogDebug("    version = {0}", application.Version);
           offset += 2;
 
           byte applicationNameLength = applicationList[offset++];
-          application.pbstrApplicationName = System.Text.Encoding.ASCII.GetString(applicationList, offset, applicationNameLength - 1);  // - 1 for NULL termination
+          application.Name = System.Text.Encoding.ASCII.GetString(applicationList, offset, applicationNameLength - 1);  // - 1 for NULL termination
           offset += applicationNameLength;
-          this.LogDebug("    name    = {0}", application.pbstrApplicationName);
+          this.LogDebug("    name    = {0}", application.Name);
 
           ushort applicationUrlLength = (ushort)((applicationList[offset] << 8) + applicationList[offset + 1]);
           string url = CompleteUri(System.Text.Encoding.ASCII.GetString(applicationList, offset, applicationUrlLength));  // URLs don't seem to be NULL terminated
           offset += applicationUrlLength;
 
-          application.pbstrApplicationURL = url;
+          application.Url = url;
           this.LogDebug("    URL     = {0}", url);
 
           applications.Add(application);
         }
       }
-      catch (Exception ex)
+      catch (System.Exception ex)
       {
         this.LogError(ex, "CableCARD MMI: failed to parse application list");
         Dump.DumpBinary(applicationList);
@@ -176,8 +202,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       for (int i = 0; i < applications.Count; i++)
       {
         SmartCardApplication application = applications[i];
-        callBack.OnCiMenuChoice(i, application.pbstrApplicationName);
-        _currentMenuUris.Add(application.pbstrApplicationURL);
+        callBack.OnCiMenuChoice(i, application.Name);
+        _currentMenuUris.Add(application.Url);
       }
       this.LogDebug("CableCARD MMI: result = true");
       return true;
@@ -190,7 +216,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     /// <param name="choice">The index of the selection as an unsigned byte value.</param>
     /// <param name="callBack">The call back delegate.</param>
     /// <returns><c>true</c> if the selection is completed successfully, otherwise <c>false</c></returns>
-    public bool SelectEntry(byte choice, IConditionalAccessMenuCallBack callBack)
+    public bool SelectMenuEntry(byte choice, IConditionalAccessMenuCallBack callBack)
     {
       this.LogDebug("CableCARD MMI: select entry, choice = {0}", choice);
 
@@ -338,7 +364,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
         int uriLength = (data[3] << 8) + data[4] - 1;   // URI seems to be NULL terminated
         uri = CompleteUri(System.Text.Encoding.ASCII.GetString(data, 5, uriLength));
       }
-      catch (Exception ex)
+      catch (System.Exception ex)
       {
         this.LogError(ex, "CableCARD MMI: failed to parse dialog message");
         Dump.DumpBinary(data);
@@ -353,17 +379,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       this.LogDebug("CableCARD MMI: retrieving menu from URI {0}", uri);
 
       // Request.
-      HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-      request.Timeout = 5000;
+      HttpWebRequest request = null;
       HttpWebResponse response = null;
       try
       {
+        request = (HttpWebRequest)HttpWebRequest.Create(uri);
+        request.Timeout = 5000;
         response = (HttpWebResponse)request.GetResponse();
       }
-      catch (Exception ex)
+      catch (System.Exception ex)
       {
         this.LogError(ex, "CableCARD MMI: failed to send HTTP menu request to URI {0}", uri);
-        request.Abort();
+        if (request != null)
+        {
+          request.Abort();
+        }
         return false;
       }
 
@@ -381,7 +411,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
           s.Close();
         }
       }
-      catch (Exception ex)
+      catch (System.Exception ex)
       {
         this.LogError(ex, "CableCARD MMI: failed to receive HTTP menu response from URI {0}", uri);
         return false;
@@ -439,7 +469,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
           entryUris.Add(entryUri);
         }
       }
-      catch (Exception ex)
+      catch (System.Exception ex)
       {
         this.LogError(ex, "CableCARD MMI: failed to handle menu HTML\r\n{0}", content);
         return false;

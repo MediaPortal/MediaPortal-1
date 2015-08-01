@@ -24,9 +24,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Simmetrics
 {
   // Referenced classes of package api:
   //            InterfaceStringMetric
-  ///<summary>
+  /// <summary>
   /// Abstradct String MEtric
-  ///</summary>
+  /// </summary>
   public abstract class AbstractStringMetric : InterfaceStringMetric
   {
     /// <summary>

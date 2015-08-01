@@ -20,7 +20,7 @@
 
 using System;
 using System.Collections.Generic;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Epg
 {
@@ -37,17 +37,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Epg
 
     #endregion
 
-    #region ctor
-
     /// <summary>
-    /// Initializes a new instance of the <see cref="EpgChannel"/> class.
+    /// Initialise a new instance of the <see cref="EpgChannel"/> class.
     /// </summary>
     public EpgChannel()
     {
       _programs = new List<EpgProgram>();
     }
-
-    #endregion
 
     #region properties
 
@@ -72,13 +68,5 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Epg
     }
 
     #endregion
-
-    /// <summary>
-    /// Sorts all programs for this channel on time/date.
-    /// </summary>
-    public void Sort()
-    {
-      _programs.Sort();
-    }
   }
 }

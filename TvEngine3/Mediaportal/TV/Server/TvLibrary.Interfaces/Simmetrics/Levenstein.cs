@@ -22,9 +22,9 @@ using System;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Simmetrics
 {
-  ///<summary>
+  /// <summary>
   /// Levenstein metric
-  ///</summary>
+  /// </summary>
   [Serializable]
   public sealed class Levenstein : AbstractStringMetric //, System.Runtime.Serialization.ISerializable
   {
@@ -49,9 +49,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Simmetrics
       get { return "Implements the basic Levenstein algorithm providing a similarity measure between two strings"; }
     }
 
-    ///<summary>
+    /// <summary>
     /// Constructor
-    ///</summary>
+    /// </summary>
     public Levenstein()
     {
       InitBlock();

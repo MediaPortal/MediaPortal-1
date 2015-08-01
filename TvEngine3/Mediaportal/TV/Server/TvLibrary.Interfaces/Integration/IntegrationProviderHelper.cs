@@ -21,8 +21,8 @@
 using System;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Integration
 {

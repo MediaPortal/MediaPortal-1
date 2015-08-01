@@ -26,7 +26,8 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using DirectShowLib;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
 {
@@ -101,23 +102,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     /// <returns>the COM object instance if successful, otherwise <c>null</c></returns>
     public static object LoadComObjectFromFile(string fileName, Guid clsid, Guid iid, bool useAssemblyRelativeLocation = true)
     {
-      IClassFactory classFactory = null;
+      IClassFactory classFactory = ComHelper.GetClassFactory(fileName, clsid, useAssemblyRelativeLocation);
+      if (classFactory == null)
+      {
+        throw new TvException("Failed to obtain class factory for COM class {0} and interface {1}.", clsid, iid);
+      }
       try
       {
-        classFactory = ComHelper.GetClassFactory(fileName, clsid, useAssemblyRelativeLocation);
-        if (classFactory == null)
-        {
-          throw new TvException("Failed to obtain class factory for COM class {0} and interface {1}.", clsid, iid);
-        }
         object obj;
         Guid interfaceId = iid;
         int hr = classFactory.CreateInstance(null, ref interfaceId, out obj);
-        HResult.ThrowException(hr, string.Format("Failed to obtain instance from class factory for COM class {0} and interface {1}.", clsid, iid));
+        if (hr != (int)NativeMethods.HResult.S_OK)
+        {
+          throw new TvException(Marshal.GetExceptionForHR(hr), "Failed to obtain instance from class factory for COM class {0} and interface {1} (HRESULT 0x{2:x}).", clsid, iid, hr);
+        }
         return obj;
       }
       finally
       {
-        Release.ComObject("COM helper class factory", ref classFactory);
+        Marshal.ReleaseComObject(classFactory);
       }
     }
 
@@ -154,7 +157,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       Guid classFactoryClsid = typeof(IClassFactory).GUID;
       object comObjectClassFactory;
       int hr = dllGetClassObject(ref comObjectClsid, ref classFactoryClsid, out comObjectClassFactory);
-      HResult.ThrowException(hr, string.Format("Failed to obtain class factory for COM class {0}.", clsid));
+      TvExceptionDirectShowError.Throw(hr, "Failed to obtain class factory for COM class {0}.", clsid);
       return comObjectClassFactory as IClassFactory;
     }
   }

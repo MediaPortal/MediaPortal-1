@@ -95,54 +95,105 @@
     <Compile Include="CiMenu\CiMenu.cs" />
     <Compile Include="CiMenu\CiMenuEventCallbackSink.cs" />
     <Compile Include="CiMenu\CiMenuEntry.cs" />
-    <Compile Include="DvbConditionalAccess.cs" />
-    <Compile Include="HResult.cs" />
+    <Compile Include="CiMenu\CiMenuState.cs" />
+    <Compile Include="Implementations\Atsc\Enum\ServiceType.cs" />
+    <Compile Include="Implementations\Channel\ChannelBase.cs" />
+    <Compile Include="Implementations\Channel\ChannelDvbBase.cs" />
+    <Compile Include="Implementations\Channel\ChannelDvbT2.cs" />
+    <Compile Include="Implementations\Channel\ChannelDvbC2.cs" />
+    <Compile Include="Implementations\Channel\ChannelDvbS.cs" />
+    <Compile Include="Implementations\Channel\ChannelFmRadio.cs" />
+    <Compile Include="Implementations\Channel\ChannelCapture.cs" />
+    <Compile Include="Implementations\Channel\ChannelSatelliteTurboFec.cs" />
+    <Compile Include="Implementations\Channel\ChannelDigiCipher2.cs" />
+    <Compile Include="Implementations\Channel\ChannelScte.cs" />
+    <Compile Include="Implementations\Dvb\Enum\CaPmtCommand.cs" />
+    <Compile Include="Implementations\Dvb\Enum\CaPmtListManagementAction.cs" />
+    <Compile Include="Implementations\Dvb\Enum\ExtensionDescriptorTag.cs" />
+    <Compile Include="Implementations\Dvb\Enum\ServiceType.cs" />
+    <Compile Include="Implementations\Dvb\Enum\MmiTag.cs" />
+    <Compile Include="Implementations\Dvb\Enum\MmiApplicationType.cs" />
+    <Compile Include="Implementations\Dvb\Enum\MmiResponseType.cs" />
+    <Compile Include="Implementations\Dvb\Enum\MmiCloseType.cs" />
+    <Compile Include="Implementations\Exception\TvExceptionDirectShowError.cs" />
+    <Compile Include="Implementations\Exception\TvExceptionNeedSoftwareEncoder.cs" />
+    <Compile Include="Implementations\Exception\TvExceptionTuneCancelled.cs" />
+    <Compile Include="Implementations\Exception\TvExceptionServiceNotFound.cs" />
+    <Compile Include="Implementations\Exception\TvExceptionNoSignal.cs" />
+    <Compile Include="Implementations\Exception\TvExceptionTunerLoadFailed.cs" />
+    <Compile Include="Implementations\Exception\TvExceptionServiceNotRunning.cs" />
     <Compile Include="Implementations\Helper\CableCardMmiHandler.cs" />
     <Compile Include="Implementations\Helper\ComHelper.cs" />
     <Compile Include="Implementations\Helper\Dump.cs" />
-    <Compile Include="Implementations\Helper\DvbMmiHandler.cs" />
+    <Compile Include="Implementations\Dvb\DvbMmiHandler.cs" />
+    <Compile Include="Implementations\Mpeg2Ts\TableConditionalAccess.cs" />
+    <Compile Include="Implementations\Mpeg2Ts\ConditionalAccessDescriptor.cs" />
+    <Compile Include="Implementations\Mpeg2Ts\StreamTypeHelper.cs" />
+    <Compile Include="Implementations\Mpeg2Ts\IDescriptor.cs" />
+    <Compile Include="Implementations\Mpeg2Ts\Enum\LogicalStreamType.cs" />
+    <Compile Include="Implementations\Mpeg2Ts\PmtElementaryStream.cs" />
+    <Compile Include="Implementations\Mpeg2Ts\Descriptor.cs" />
+    <Compile Include="Implementations\Mpeg2Ts\Enum\StreamType.cs" />
+    <Compile Include="Implementations\Mpeg2Ts\Enum\DescriptorTag.cs" />
+    <Compile Include="Implementations\Mpeg2Ts\TableProgramMap.cs" />
+    <Compile Include="Implementations\SetTopBoxProfile.cs" />
+    <Compile Include="Implementations\TuningDetail.cs" />
     <Compile Include="Instantiator.cs" />
     <Compile Include="Integration\IntegrationProviderHelper.cs" />
-    <Compile Include="Interfaces\Device\IEncoder.cs" />
-    <Compile Include="Interfaces\Device\IDirectShowAddOnDevice.cs" />
-    <Compile Include="Interfaces\Device\IConditionalAccessProvider.cs" />
-    <Compile Include="Interfaces\Device\ICustomDevice.cs" />
-    <Compile Include="Interfaces\Device\ICustomTuner.cs" />
-    <Compile Include="Interfaces\Device\IDiseqcController.cs" />
-    <Compile Include="Interfaces\Device\IDiseqcDevice.cs" />
-    <Compile Include="Interfaces\Device\IMpeg2PidFilter.cs" />
-    <Compile Include="Interfaces\Device\IPowerDevice.cs" />
-    <Compile Include="Interfaces\Device\IRemoteControlListener.cs" />
-    <Compile Include="Interfaces\ICiMenuEventCallback.cs" />
-    <Compile Include="Implementations\Helper\DvbTextConverter.cs" />
-    <Compile Include="Implementations\Channels\DVBIPChannel.cs" />
-    <Compile Include="Interfaces\Device\IConditionalAccessMenuActions.cs" />
-    <Compile Include="Interfaces\Device\IConditionalAccessMenuCallBack.cs" />
-    <Compile Include="Interfaces\IEpgGrabber.cs" />
-    <Compile Include="Interfaces\ITunerDetectionEventListener.cs" />
-    <Compile Include="Interfaces\ITunerGroup.cs" />
-    <Compile Include="Interfaces\ITVChannelLinkage.cs" />
-    <Compile Include="Interfaces\ITvSubChannel.cs" />
+    <Compile Include="Interfaces\Channel\IChannelOfdm.cs" />
+    <Compile Include="Interfaces\Channel\IChannelPhysical.cs" />
+    <Compile Include="Interfaces\Channel\IChannelSatellite.cs" />
+    <Compile Include="Interfaces\Channel\ILnbType.cs" />
+    <Compile Include="Interfaces\TunerExtension\Enum\PowerState.cs" />
+    <Compile Include="Interfaces\TunerExtension\Enum\TunerAction.cs" />
+    <Compile Include="Interfaces\TunerExtension\IStreamSelector.cs" />
+    <Compile Include="Interfaces\TunerExtension\IEncoder.cs" />
+    <Compile Include="Interfaces\TunerExtension\IDirectShowAddOnDevice.cs" />
+    <Compile Include="Interfaces\TunerExtension\IConditionalAccessProvider.cs" />
+    <Compile Include="Interfaces\TunerExtension\ITunerExtension.cs" />
+    <Compile Include="Interfaces\TunerExtension\ICustomTuner.cs" />
+    <Compile Include="Interfaces\Tuner\IChannelLinkageScanner.cs" />
+    <Compile Include="Interfaces\Tuner\Diseqc\Enum\DiseqcPositionerStatus.cs" />
+    <Compile Include="Interfaces\Tuner\Diseqc\Enum\DiseqcDirection.cs" />
+    <Compile Include="Interfaces\Tuner\Diseqc\Enum\DiseqcCommand.cs" />
+    <Compile Include="Interfaces\Tuner\Diseqc\Enum\DiseqcAddress.cs" />
+    <Compile Include="Interfaces\Tuner\Diseqc\Enum\DiseqcFrame.cs" />
+    <Compile Include="Interfaces\Tuner\Diseqc\IDiseqcController.cs" />
+    <Compile Include="Interfaces\TunerExtension\IDiseqcDevice.cs" />
+    <Compile Include="Interfaces\TunerExtension\IMpeg2PidFilter.cs" />
+    <Compile Include="Interfaces\TunerExtension\IPowerDevice.cs" />
+    <Compile Include="Interfaces\TunerExtension\IRemoteControlListener.cs" />
+    <Compile Include="CiMenu\ICiMenuEventCallback.cs" />
+    <Compile Include="Implementations\Dvb\DvbTextConverter.cs" />
+    <Compile Include="Implementations\Channel\ChannelStream.cs" />
+    <Compile Include="Interfaces\TunerExtension\IConditionalAccessMenuActions.cs" />
+    <Compile Include="Interfaces\TunerExtension\IConditionalAccessMenuCallBack.cs" />
+    <Compile Include="Interfaces\Tuner\Enum\EncoderBitRateMode.cs" />
+    <Compile Include="Interfaces\Tuner\Enum\QualityType.cs" />
+    <Compile Include="Interfaces\Tuner\Enum\PidType.cs" />
+    <Compile Include="Interfaces\Tuner\IEpgGrabber.cs" />
+    <Compile Include="Interfaces\Tuner\ITunerDetectionEventListener.cs" />
+    <Compile Include="Interfaces\Tuner\ITunerGroup.cs" />
+    <Compile Include="Interfaces\Tuner\IChannelLinkageScannerCallBack.cs" />
+    <Compile Include="Interfaces\Tuner\ISubChannel.cs" />
     <Compile Include="Logging\Log.cs" />
     <Compile Include="Logging\LogExtensions.cs" />
     <Compile Include="PathManager.cs" />
     <Compile Include="RtspClient.cs" />
-    <Compile Include="Implementations\Channels\AnalogChannel.cs" />
-    <Compile Include="Implementations\Channels\ATSCChannel.cs" />
-    <Compile Include="Implementations\Channels\DVBBaseChannel.cs" />
-    <Compile Include="Implementations\Channels\DVBCChannel.cs" />
-    <Compile Include="Implementations\Channels\DVBSChannel.cs" />
-    <Compile Include="Implementations\Channels\DVBTChannel.cs" />
-    <Compile Include="Countries\Country.cs" />
-    <Compile Include="Countries\CountryCollection.cs" />
+    <Compile Include="Implementations\Channel\ChannelAnalogTv.cs" />
+    <Compile Include="Implementations\Channel\ChannelAtsc.cs" />
+    <Compile Include="Implementations\Channel\ChannelMpeg2Base.cs" />
+    <Compile Include="Implementations\Channel\ChannelDvbC.cs" />
+    <Compile Include="Implementations\Channel\ChannelDvbS2.cs" />
+    <Compile Include="Implementations\Channel\ChannelDvbT.cs" />
     <Compile Include="Epg\EpgChannel.cs" />
     <Compile Include="Epg\EpgLanguageText.cs" />
     <Compile Include="Epg\EpgProgram.cs" />
-    <Compile Include="Interfaces\IChannel.cs" />
-    <Compile Include="Interfaces\IQuality.cs" />
-    <Compile Include="Interfaces\ITVCard.cs" />
-    <Compile Include="Interfaces\IEpgGrabberCallBack.cs" />
-    <Compile Include="Interfaces\IChannelScanner.cs" />
+    <Compile Include="Interfaces\Channel\IChannel.cs" />
+    <Compile Include="Interfaces\Tuner\IQuality.cs" />
+    <Compile Include="Interfaces\Tuner\ITuner.cs" />
+    <Compile Include="Interfaces\Tuner\IEpgGrabberCallBack.cs" />
+    <Compile Include="Interfaces\Tuner\IChannelScanner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Simmetrics\AbstractStringMetric.cs" />
     <Compile Include="Simmetrics\AbstractSubstitutionCost.cs" />
@@ -151,9 +202,7 @@
     <Compile Include="Simmetrics\Levenstein.cs" />
     <Compile Include="Simmetrics\MathFuncs.cs" />
     <Compile Include="Simmetrics\SubCost01.cs" />
-    <Compile Include="TvConstants.cs" />
-    <Compile Include="TvEnums.cs" />
-    <Compile Include="TvException.cs" />
+    <Compile Include="Implementations\Exception\TvException.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -181,9 +230,9 @@
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TVDatabase\Entities\Entities.csproj">
-      <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
-      <Name>Entities</Name>
+    <ProjectReference Include="..\Common.Types\Common.Types.csproj">
+      <Project>{F9F4E5C1-9A6A-42F8-8452-4BDAFEA0E798}</Project>
+      <Name>Common.Types</Name>
     </ProjectReference>
     <ProjectReference Include="..\TvLibrary.IntegrationProvider.Interfaces\TvLibrary.IntegrationProvider.Interfaces.csproj">
       <Project>{34BCC448-B298-463E-B3B1-C031EBF0B4DB}</Project>
@@ -193,6 +242,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

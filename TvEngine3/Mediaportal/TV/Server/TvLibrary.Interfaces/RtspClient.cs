@@ -23,38 +23,47 @@ using System;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
   /// <summary>
-  ///class holding the details about a single rtsp streaming client
+  /// A class that holds the details for a single RTSP stream client.
   /// </summary>
   [Serializable]
   public class RtspClient
   {
     #region variables
 
-    private readonly bool _isActive;
-    private readonly string _ipAdress;
-    private readonly string _streamName;
-    private readonly DateTime _dateTimeStarted;
-    private readonly string _description;
+    // client properties
+    private readonly uint _clientSessionId;
+    private readonly string _clientIpAddress;
+    private readonly DateTime _clientConnectionDateTime;
+    private readonly bool _isClientActive;
+
+    // properties for the stream that the client is connected to
+    private readonly string _streamId;
+    private readonly string _streamDescription;
+    private readonly string _streamUrl;
 
     #endregion
 
     #region ctor
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="RtspClient"/> class.
+    /// Initialise a new instance of the <see cref="RtspClient"/> class.
     /// </summary>
-    /// <param name="isActive">if set to <c>true</c> [is active].</param>
-    /// <param name="ipadress">The ipadress.</param>
-    /// <param name="streamName">Name of the stream.</param>
-    /// <param name="started">The time the client connected.</param>
-    /// <param name="description">The description.</param>
-    public RtspClient(bool isActive, string ipadress, string streamName, string description, DateTime started)
+    /// <param name="clientSessionId">The identifier for the client's session.</param>
+    /// <param name="clientIpAddress">The client's IP address.</param>
+    /// <param name="clientConnectionDateTime">The date/time the client connected.</param>
+    /// <param name="isClientActive">An indication of whether the client is active.</param>
+    /// <param name="streamId">The identifier of the stream that the client is connected to.</param>
+    /// <param name="streamDescription">The description of the stream that the client is connected to.</param>
+    /// <param name="streamUrl">The URL of the stream that the client is connected to.</param>
+    public RtspClient(uint clientSessionId, string clientIpAddress, DateTime clientConnectionDateTime, bool isClientActive, string streamId, string streamDescription, string streamUrl)
     {
-      _isActive = isActive;
-      _ipAdress = ipadress;
-      _streamName = streamName;
-      _dateTimeStarted = started;
-      _description = description;
+      _clientSessionId = clientSessionId;
+      _clientIpAddress = clientIpAddress;
+      _clientConnectionDateTime = clientConnectionDateTime;
+      _isClientActive = isClientActive;
+      _streamId = streamId;
+      _streamDescription = streamDescription;
+      _streamUrl = streamUrl;
     }
 
     #endregion
@@ -62,48 +71,59 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     #region properties
 
     /// <summary>
-    /// Gets the description.
+    /// Get identifier for the client's session.
     /// </summary>
-    /// <value>The description.</value>
-    public string Description
+    public uint ClientSessionId
     {
-      get { return _description; }
+      get { return _clientSessionId; }
     }
 
     /// <summary>
-    /// Gets the date and time this client has connected.
+    /// Get the client's IP address.
     /// </summary>
-    /// <value>The date time started.</value>
-    public DateTime DateTimeStarted
+    public string ClientIpAddress
     {
-      get { return _dateTimeStarted; }
+      get { return _clientIpAddress; }
     }
 
     /// <summary>
-    /// Gets a value indicating whether user is is active.
+    /// Get the date/time that the client connected to its stream.
     /// </summary>
-    /// <value><c>true</c> if this user is active; otherwise, <c>false</c>.</value>
-    public bool IsActive
+    public DateTime ClientConnectionDateTime
     {
-      get { return _isActive; }
+      get { return _clientConnectionDateTime; }
     }
 
     /// <summary>
-    /// Gets the ip adress.
+    /// Get an indication of whether the client is active.
     /// </summary>
-    /// <value>The ip adress.</value>
-    public string IpAdress
+    public bool IsClientActive
     {
-      get { return _ipAdress; }
+      get { return _isClientActive; }
     }
 
     /// <summary>
-    /// Gets the name of the stream.
+    /// Get the identifier of the stream that the client is connected to.
     /// </summary>
-    /// <value>The name of the stream.</value>
-    public string StreamName
+    public string StreamId
     {
-      get { return _streamName; }
+      get { return _streamId; }
+    }
+
+    /// <summary>
+    /// Get the description of the stream that the client is connected to.
+    /// </summary>
+    public string StreamDescription
+    {
+      get { return _streamDescription; }
+    }
+
+    /// <summary>
+    /// Get the URL of the stream that the client is connected to.
+    /// </summary>
+    public string StreamUrl
+    {
+      get { return _streamUrl; }
     }
 
     #endregion
