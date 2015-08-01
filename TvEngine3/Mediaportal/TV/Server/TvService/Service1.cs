@@ -120,7 +120,7 @@ namespace Mediaportal.TV.Server.TVService
         opt = args[0];
       }
 
-      if (opt != null && opt.ToUpperInvariant() == "-CONSOLE")
+      if (opt != null && opt.ToUpperInvariant() == "/CONSOLE")
       {
         var tvServiceThread = new TvServiceThread(Application.ExecutablePath);
         tvServiceThread.Start();

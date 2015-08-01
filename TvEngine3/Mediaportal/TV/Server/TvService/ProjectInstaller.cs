@@ -18,7 +18,6 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
 using System.Configuration.Install;
 using Microsoft.Win32;
