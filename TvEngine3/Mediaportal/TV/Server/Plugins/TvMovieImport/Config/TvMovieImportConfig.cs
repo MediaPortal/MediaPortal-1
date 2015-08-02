@@ -355,7 +355,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
         }
 
         // Populate the grid.
-        Levenstein matcher = new Levenstein();
         progressBarMappingsProgress.Minimum = 0;
         progressBarMappingsProgress.Maximum = databaseChannels.Count;
         progressBarMappingsProgress.Value = 0;
@@ -421,7 +420,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
               float bestSimilarity = 0.5f;
               foreach (KeyValuePair<string, string> match in matchingDictionary)
               {
-                float similarity = matcher.getSimilarity(match.Key, channel.Name);
+                float similarity = Levenshtein.GetSimilarity(match.Key, channel.Name);
                 if (similarity > bestSimilarity)
                 {
                   bestMatchId = match.Value;
@@ -448,7 +447,10 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
           }
 
           this.LogDebug("TV Movie import config: DB channel, ID = {0}, name = {1}, external ID = {2}, match type = {3}, best match = {4}", channel.IdChannel, channel.Name, channel.ExternalId ?? string.Empty, matchType, bestMatchId);
-          guideChannelComboBox.Value = comboBoxValueLookup[bestMatchId];
+          if (!string.IsNullOrEmpty(bestMatchId))
+          {
+            guideChannelComboBox.Value = comboBoxValueLookup[bestMatchId];
+          }
 
           // Note the mapping cell values are set so that the grid can be
           // sorted by mapping state without actually showing text in the

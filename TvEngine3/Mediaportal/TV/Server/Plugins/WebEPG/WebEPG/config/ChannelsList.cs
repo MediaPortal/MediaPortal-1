@@ -155,7 +155,6 @@ namespace WebEPG.config
 
       ChannelGrabberInfo ch;
 
-      Levenstein comparer = new Levenstein();
       float similarity;
       int mostSimilarChan = -1;
 
@@ -176,7 +175,7 @@ namespace WebEPG.config
           retChan = i;
         }
 
-        similarity = comparer.getSimilarity(Name, ch.FullName);
+        similarity = Levenshtein.GetSimilarity(Name, ch.FullName);
 
         if (similarity > bestSimilarity)
         {
@@ -204,7 +203,6 @@ namespace WebEPG.config
 
       ChannelGrabberInfo ch;
 
-      Levenstein comparer = new Levenstein();
       float bestSimilarity;
       float similarity;
 
@@ -226,7 +224,7 @@ namespace WebEPG.config
             break;
           }
 
-          similarity = comparer.getSimilarity(NameList[k], ch.FullName);
+          similarity = Levenshtein.GetSimilarity(NameList[k], ch.FullName);
 
           if (similarity > bestSimilarity)
           {

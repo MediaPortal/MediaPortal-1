@@ -195,13 +195,7 @@
     <Compile Include="Interfaces\Tuner\IEpgGrabberCallBack.cs" />
     <Compile Include="Interfaces\Tuner\IChannelScanner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Simmetrics\AbstractStringMetric.cs" />
-    <Compile Include="Simmetrics\AbstractSubstitutionCost.cs" />
-    <Compile Include="Simmetrics\InterfaceStringMetric.cs" />
-    <Compile Include="Simmetrics\InterfaceSubstitutionCost.cs" />
-    <Compile Include="Simmetrics\Levenstein.cs" />
-    <Compile Include="Simmetrics\MathFuncs.cs" />
-    <Compile Include="Simmetrics\SubCost01.cs" />
+    <Compile Include="Simmetrics\Levenshtein.cs" />
     <Compile Include="Implementations\Exception\TvException.cs" />
   </ItemGroup>
   <ItemGroup>
