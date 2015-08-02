@@ -144,7 +144,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.BackColor = System.Drawing.Color.Transparent;
+      this.BackColor = System.Drawing.SystemColors.Window;
       this.Controls.Add(this.labelDescription);
       this.Controls.Add(this.pictureBoxLogo);
       this.Controls.Add(this.buttonTest);

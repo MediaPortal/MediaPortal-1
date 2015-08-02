@@ -48,19 +48,35 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi.Config
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SmarDtvUsbCiConfig));
+      this.pictureBoxTuner = new System.Windows.Forms.PictureBox();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTuner)).BeginInit();
       this.SuspendLayout();
+      // 
+      // pictureBoxTuner
+      // 
+      this.pictureBoxTuner.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxTuner.Image")));
+      this.pictureBoxTuner.Location = new System.Drawing.Point(33, 3);
+      this.pictureBoxTuner.Name = "pictureBoxTuner";
+      this.pictureBoxTuner.Size = new System.Drawing.Size(100, 50);
+      this.pictureBoxTuner.TabIndex = 0;
+      this.pictureBoxTuner.TabStop = false;
       // 
       // SmarDtvUsbCiConfig
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.BackColor = System.Drawing.Color.Transparent;
+      this.BackColor = System.Drawing.SystemColors.Window;
+      this.Controls.Add(this.pictureBoxTuner);
       this.Name = "SmarDtvUsbCiConfig";
       this.Size = new System.Drawing.Size(480, 420);
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTuner)).EndInit();
       this.ResumeLayout(false);
 
     }
 
     #endregion
+
+    private System.Windows.Forms.PictureBox pictureBoxTuner;
   }
 }

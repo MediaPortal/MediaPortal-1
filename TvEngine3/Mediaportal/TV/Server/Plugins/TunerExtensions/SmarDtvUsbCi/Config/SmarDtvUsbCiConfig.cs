@@ -97,16 +97,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi.Config
       }
 
       SuspendLayout();
+      pictureBoxTuner.Visible = false;
       foreach (Control c in Controls)
       {
-        c.Dispose();
+        if (!c.Name.Equals("pictureBoxTuner"))
+        {
+          c.Dispose();
+        }
       }
       Controls.Clear();
 
       int groupHeight = 103;
       int groupPadding = 10;
       int componentCount = 5;
-      ComponentResourceManager resources = new ComponentResourceManager(typeof(SmarDtvUsbCiConfig));
       for (int i = 0; i < _productContexts.Count; i++)
       {
         int tabIndexBase = i * componentCount;
@@ -121,7 +124,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi.Config
         groupBoxCiProduct.Size = new Size(473, groupHeight);
         groupBoxCiProduct.TabIndex = tabIndexBase + 1;
         groupBoxCiProduct.TabStop = false;
-        groupBoxCiProduct.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+        groupBoxCiProduct.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
         groupBoxCiProduct.Text = context.Name;
 
         // CI product install state label.
@@ -161,7 +164,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi.Config
         // Tuner icon.
         PictureBox pictureBoxTunerSelection = new PictureBox();
         ((ISupportInitialize)pictureBoxTunerSelection).BeginInit();
-        pictureBoxTunerSelection.Image = (Image)resources.GetObject("tunerSelectionPicture.Image");
+        pictureBoxTunerSelection.Image = pictureBoxTuner.Image;
         pictureBoxTunerSelection.Location = new Point(24, 68);
         pictureBoxTunerSelection.Name = "pictureBoxTunerSelection" + i;
         pictureBoxTunerSelection.Size = new Size(33, 23);
@@ -224,7 +227,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi.Config
       labelTips.Name = "labelTips";
       labelTips.Size = new Size(466, 105);
       labelTips.TabIndex = (_productContexts.Count * componentCount) + 2;
-      labelTips.Text = resources.GetString("tipsLabel.Text");
+      labelTips.Text =
+        "- It is only possible to have one CI device of each type connected to a computer - this is a driver limitation." + System.Environment.NewLine +
+        "- Each CI device can only be used with one tuner at any given time - this is a driver limitation." + System.Environment.NewLine +
+        "- A TV Server restart is required to link a CI device with a different tuner." + System.Environment.NewLine +
+        "- Each CI device is only designed to work with tuner products from the CI reseller." + System.Environment.NewLine +
+        "- The BDA driver is required; the WDM driver is not supported." + System.Environment.NewLine +
+        "- Disconnecting a CI device while TV Server is running will cause a system crash.";
       Controls.Add(labelTips);
 
       PerformLayout();
