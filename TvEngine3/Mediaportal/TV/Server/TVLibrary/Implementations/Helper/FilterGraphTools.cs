@@ -434,7 +434,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         {
           RegPinMedium m = (RegPinMedium)Marshal.PtrToStructure(mediumPtr, typeof(RegPinMedium));
           // Exclude invalid and non-meaningful mediums.
-          if (m.clsMedium != Guid.Empty && m.clsMedium != MediaPortalGuid.KS_MEDIUM_SET_ID_STANDARD)
+          if (m.clsMedium != Guid.Empty && m.clsMedium != TveGuid.KS_MEDIUM_SET_ID_STANDARD)
           {
             mediums.Add(m);
           }

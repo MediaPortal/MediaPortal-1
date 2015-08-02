@@ -431,7 +431,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           isQamSupported = true;
         }
         else if (function == BDANodeCategory.COFDMDemodulator ||
-          function == MediaPortalGuid.KS_NODE_BDA_ISDB_T_DEMODULATOR)
+          function == TveGuid.KS_NODE_BDA_ISDB_T_DEMODULATOR)
         {
           isOfdmSupported = true;
         }
@@ -439,8 +439,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         {
           isPskSupported = true;
         }
-        else if (function == MediaPortalGuid.KS_NODE_BDA_8PSK_DEMODULATOR ||
-          function == MediaPortalGuid.KS_NODE_BDA_ISDB_S_DEMODULATOR)
+        else if (function == TveGuid.KS_NODE_BDA_8PSK_DEMODULATOR ||
+          function == TveGuid.KS_NODE_BDA_ISDB_S_DEMODULATOR)
         {
           isPskSupported = true;
           isPsk8Supported = true;

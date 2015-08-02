@@ -658,7 +658,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     {
       this.LogDebug("WDM analog encoder: add and connect VBI splitter");
       filter = null;
-      DsDevice[] devices1 = DsDevice.GetDevicesOfCat(MediaPortalGuid.AM_KS_CATEGORY_MULTI_VBI_CODEC);
+      DsDevice[] devices1 = DsDevice.GetDevicesOfCat(TveGuid.AM_KS_CATEGORY_MULTI_VBI_CODEC);
       DsDevice[] devices2 = DsDevice.GetDevicesOfCat(FilterCategory.AMKSVBICodec);
       DsDevice[] devices = new DsDevice[devices1.Length + devices2.Length];
       devices1.CopyTo(devices, 0);

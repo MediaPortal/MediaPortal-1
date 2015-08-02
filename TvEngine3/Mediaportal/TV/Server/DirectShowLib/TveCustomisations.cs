@@ -29,10 +29,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 /// <summary>
-/// This file holds the MediaPortal and TV Server interface customisations of
-/// the DirectShow.NET library. We keep customisations separate from the
-/// original library code wherever possible to reduce maintenance and merging
-/// issues when it comes to upgrading the DirectShow.NET library.
+/// This file holds the TV Server interface customisations of the
+/// DirectShow.NET library. We keep customisations separate from the original
+/// library code wherever possible to reduce maintenance and merging issues
+/// when it comes to upgrading the DirectShow.NET library.
 /// </summary>
 
   #region AXExtend.cs
@@ -304,66 +304,6 @@ namespace DirectShowLib.BDA
       [In] byte byDialogNumber,
       [In] UICloseReasonType CloseReason
       );
-  }
-}
-
-  #endregion
-
-  #region Control.cs
-
-namespace DirectShowLib
-{
-  [ComImport, SuppressUnmanagedCodeSecurity,
-   Guid("56a868c0-0ad4-11ce-b03a-0020af0ba770"),
-   InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  public interface IMediaEventEx : IMediaEvent
-  {
-    #region IMediaEvent Methods
-
-    [PreserveSig]
-    new int GetEventHandle([Out] out IntPtr hEvent); // HEVENT
-
-    [PreserveSig]
-    int GetEvent(
-      [Out] out EventCode lEventCode,
-      [Out] out int lParam1,  // *** Changed from IntPtr to int. ***
-      [Out] out int lParam2,  // *** Changed from IntPtr to int. ***
-      [In] int msTimeout
-      );
-
-    [PreserveSig]
-    new int WaitForCompletion(
-      [In] int msTimeout,
-      [Out] out EventCode pEvCode
-      );
-
-    [PreserveSig]
-    new int CancelDefaultHandling([In] EventCode lEvCode);
-
-    [PreserveSig]
-    new int RestoreDefaultHandling([In] EventCode lEvCode);
-
-    [PreserveSig]
-    int FreeEventParams(
-      [In] EventCode lEvCode,
-      [In] int lParam1,       // *** Changed from IntPtr to int. ***
-      [In] int lParam2        // *** Changed from IntPtr to int. ***
-      );
-
-    #endregion
-
-    [PreserveSig]
-    int SetNotifyWindow(
-      [In] IntPtr hwnd, // HWND *
-      [In] int lMsg,
-      [In] IntPtr lInstanceData // PVOID
-      );
-
-    [PreserveSig]
-    int SetNotifyFlags([In] NotifyFlags lNoNotifyFlags);
-
-    [PreserveSig]
-    int GetNotifyFlags([Out] out NotifyFlags lplNoNotifyFlags);
   }
 }
 
@@ -1076,238 +1016,6 @@ namespace DirectShowLib
 
   #endregion
 
-  #region DVDIf.cs
-
-namespace DirectShowLib.Dvd
-{
-  [ComImport, SuppressUnmanagedCodeSecurity,
-   Guid("34151510-EEC0-11D2-8201-00A0C9D74842"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IDvdInfo2
-  {
-    [PreserveSig]
-    int GetCurrentDomain([Out] out DvdDomain pDomain);
-
-    [PreserveSig]
-    int GetCurrentLocation([Out] out DvdPlaybackLocation2 pLocation);
-
-    [PreserveSig]
-    int GetTotalTitleTime(
-      [Out] DvdHMSFTimeCode pTotalTime,
-      [Out] out DvdTimeCodeFlags ulTimeCodeFlags
-      );
-
-    [PreserveSig]
-    int GetCurrentButton(
-      [Out] out int pulButtonsAvailable,
-      [Out] out int pulCurrentButton
-      );
-
-    [PreserveSig]
-    int GetCurrentAngle(
-      [Out] out int pulAnglesAvailable,
-      [Out] out int pulCurrentAngle
-      );
-
-    [PreserveSig]
-    int GetCurrentAudio(
-      [Out] out int pulStreamsAvailable,
-      [Out] out int pulCurrentStream
-      );
-
-    [PreserveSig]
-    int GetCurrentSubpicture(
-      [Out] out int pulStreamsAvailable,
-      [Out] out int pulCurrentStream,
-      [Out, MarshalAs(UnmanagedType.Bool)] out bool pbIsDisabled
-      );
-
-    [PreserveSig]
-    int GetCurrentUOPS([Out] out ValidUOPFlag pulUOPs);
-
-    [PreserveSig]
-    int GetAllSPRMs([Out] out SPRMArray pRegisterArray);
-
-    [PreserveSig]
-    int GetAllGPRMs([Out] out GPRMArray pRegisterArray);
-
-    [PreserveSig]
-    int GetAudioLanguage(
-      [In] int ulStream,
-      [Out] out int pLanguage
-      );
-
-    [PreserveSig]
-    int GetSubpictureLanguage(
-      [In] int ulStream,
-      [Out] out int pLanguage
-      );
-
-    [PreserveSig]
-    int GetTitleAttributes(
-      [In] int ulTitle,
-      [Out] out DvdMenuAttributes pMenu,
-      [In, Out, MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(DTAMarshaler))] DvdTitleAttributes
-        pTitle
-      );
-
-    [PreserveSig]
-    int GetVMGAttributes([Out] out DvdMenuAttributes pATR);
-
-    [PreserveSig]
-    int GetCurrentVideoAttributes([Out] out DvdVideoAttributes pATR);
-
-    [PreserveSig]
-    int GetAudioAttributes(
-      [In] int ulStream,
-      [Out] out DvdAudioAttributes pATR
-      );
-
-    [PreserveSig]
-    int GetKaraokeAttributes(
-      [In] int ulStream,
-      [In, Out, MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(DKAMarshaler))] DvdKaraokeAttributes
-        pAttributes
-      );
-
-    [PreserveSig]
-    int GetSubpictureAttributes(
-      [In] int ulStream,
-      [Out] out DvdSubpictureAttributes pATR
-      );
-
-    [PreserveSig]
-    int GetDVDVolumeInfo(
-      [Out] out int pulNumOfVolumes,
-      [Out] out int pulVolume,
-      [Out] out DvdDiscSide pSide,
-      [Out] out int pulNumOfTitles
-      );
-
-    [PreserveSig]
-    int GetDVDTextNumberOfLanguages([Out] out int pulNumOfLangs);
-
-    [PreserveSig]
-    int GetDVDTextLanguageInfo(
-      [In] int ulLangIndex,
-      [Out] out int pulNumOfStrings,
-      [Out] out int pLangCode,
-      [Out] out DvdTextCharSet pbCharacterSet
-      );
-
-    [PreserveSig]
-    int GetDVDTextStringAsNative(
-      [In] int ulLangIndex,
-      [In] int ulStringIndex,
-      [MarshalAs(UnmanagedType.LPStr)] StringBuilder pbBuffer,
-      [In] int ulMaxBufferSize,
-      [Out] out int pulActualSize,
-      [Out] out DvdTextStringType pType
-      );
-
-    [PreserveSig]
-    int GetDVDTextStringAsUnicode(
-      [In] int ulLangIndex,
-      [In] int ulStringIndex,
-      StringBuilder pchwBuffer,
-      [In] int ulMaxBufferSize,
-      [Out] out int pulActualSize,
-      [Out] out DvdTextStringType pType
-      );
-
-    [PreserveSig]
-    int GetPlayerParentalLevel(
-      [Out] out int pulParentalLevel,
-      [Out, MarshalAs(UnmanagedType.LPArray, SizeConst = 2)] byte[] pbCountryCode
-      );
-
-    [PreserveSig]
-    int GetNumberOfChapters(
-      [In] int ulTitle,
-      [Out] out int pulNumOfChapters
-      );
-
-    [PreserveSig]
-    int GetTitleParentalLevels(
-      [In] int ulTitle,
-      [Out] out DvdParentalLevel pulParentalLevels
-      );
-
-    [PreserveSig]
-    int GetDVDDirectory(
-      StringBuilder pszwPath,
-      [In] int ulMaxSize,
-      [Out] out int pulActualSize
-      );
-
-    [PreserveSig]
-    int IsAudioStreamEnabled(
-      [In] int ulStreamNum,
-      [Out, MarshalAs(UnmanagedType.Bool)] out bool pbEnabled
-      );
-
-    [PreserveSig]
-    int GetDiscID(
-      [In, MarshalAs(UnmanagedType.LPWStr)] string pszwPath,
-      [Out] out long pullDiscID
-      );
-
-    [PreserveSig]
-    int GetState([Out] out IDvdState pStateData);
-
-    [PreserveSig]
-    int GetMenuLanguages(
-      [MarshalAs(UnmanagedType.LPArray)] int[] pLanguages,
-      [In] int ulMaxLanguages,
-      [Out] out int pulActualLanguages
-      );
-
-    [PreserveSig]
-    int GetButtonAtPosition(
-      [In] Point point,
-      [Out] out int pulButtonIndex
-      );
-
-    [PreserveSig]
-    int GetCmdFromEvent(
-      [In] int lParam1,         // *** Changed from IntPtr to int. ***
-      [Out] out IDvdCmd pCmdObj
-      );
-
-    [PreserveSig]
-    int GetDefaultMenuLanguage([Out] out int pLanguage);
-
-    [PreserveSig]
-    int GetDefaultAudioLanguage(
-      [Out] out int pLanguage,
-      [Out] out DvdAudioLangExt pAudioExtension
-      );
-
-    [PreserveSig]
-    int GetDefaultSubpictureLanguage(
-      [Out] out int pLanguage,
-      [Out] out DvdSubPictureLangExt pSubpictureExtension
-      );
-
-    [PreserveSig]
-    int GetDecoderCaps(ref DvdDecoderCaps pCaps);
-
-    [PreserveSig]
-    int GetButtonRect(
-      [In] int ulButton,
-      [Out] DsRect pRect
-      );
-
-    [PreserveSig]
-    int IsSubpictureStreamEnabled(
-      [In] int ulStreamNum,
-      [Out, MarshalAs(UnmanagedType.Bool)] out bool pbEnabled
-      );
-  }
-}
-
-  #endregion
-
   #region Tuner.cs
 
 namespace DirectShowLib.BDA
@@ -1782,7 +1490,7 @@ namespace DirectShowLib
   /// <summary>
   /// A collection of GUID definitions not found elsewhere in DirectShow.NET.
   /// </summary>
-  public static class MediaPortalGuid
+  public static class TveGuid
   {
     /// <summary> AM_KSCATEGORY_MULTIVBICODEC </summary>
     public static readonly Guid AM_KS_CATEGORY_MULTI_VBI_CODEC = new Guid(0x9c24a977, 0x0951, 0x451a, 0x80, 0x06, 0x0e, 0x49, 0xbd, 0x28, 0xcd, 0x5f);
@@ -1796,9 +1504,6 @@ namespace DirectShowLib
 
     /// <summary> KSMEDIUMSETID_Standard </summary>
     public static readonly Guid KS_MEDIUM_SET_ID_STANDARD = new Guid(0x4747b320, 0x62ce, 0x11cf, 0xa5, 0xd6, 0x28, 0xdb, 0x04, 0xc1, 0x00, 0x00);
-
-    /// <summary> MEDIATYPE_Subtitle 'subs' </summary>
-    public static readonly Guid Subtitle = new Guid(0xE487EB08, 0x6B26, 0x4be9, 0x9D, 0xD3, 0x99, 0x34, 0x34, 0xD3, 0x13, 0xFD);
   }
 
   /// <summary>
@@ -1866,54 +1571,6 @@ namespace DirectShowLib
     PeakConstrainedVBR = 1,
     UnconstrainedVBR = 2,
     Quality = 3
-  }
-
-  /// <summary>
-  /// A collection of MEDIATYPE definitions not found elsewhere in DirectShow.NET.
-  /// </summary>
-  public static class MpMediaSubType
-  {
-    public static readonly Guid AAC = new Guid(0x00000FF, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
-
-    public static readonly Guid DDPLUS = new Guid(0xa7fb87af, 0x2d02, 0x42fb,0xa4, 0xd4, 0x05, 0xcd, 0x93, 0x84, 0x3b, 0xdd);
-
-    public static readonly Guid DVD_LPCM_AUDIO = new Guid(0xe06d8032, 0xdb46, 0x11cf, 0xb4, 0xd1, 0x00, 0x80, 0x05f, 0x6c, 0xbb, 0xea);
-
-    /// <summary> MEDIASUBTYPE_BDA_MPEG2_TRANSPORT </summary>
-    public static readonly Guid BdaMpeg2Transport = new Guid(0xF4AEB342, 0x0329, 0x4fdd, 0xA8, 0xFD, 0x4A, 0xFF, 0x49, 0x26, 0xC9, 0x78);
-
-    /// <summary> MEDIASUBTYPE_VC1 </summary>
-    public static readonly Guid VC1 = new Guid(0x31435657, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71);
-
-    /// <summary> MEDIASUBTYPE_VC1_Cyberlink </summary>
-    public static readonly Guid CyberlinkVC1 = new Guid(0xD979F77B, 0xDBEA, 0x4BF6, 0x9E, 0x6D, 0x1D, 0x7E, 0x57, 0xFB, 0xAD, 0x53);
-
-    /// <summary> MEDIASUBTYPE_AVC1 </summary>
-    public static readonly Guid AVC1 = new Guid(0x31435641, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
-
-    // 44495658-0000-0010-8000-00AA00389B71
-    public static readonly Guid XVID1 = new Guid(0x44495658, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71);
-
-    // 64697678-0000-0010-8000-00AA00389B71
-    public static readonly Guid XVID2 = new Guid(0x64697678, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71);
-
-    // 30355844-0000-0010-8000-00aa00389b71
-    public static readonly Guid DX50_1 = new Guid(0x30355844, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71);
-
-    // 30357864-0000-0010-8000-00AA00389B71
-    public static readonly Guid DX50_2 = new Guid(0x30357864, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71);
-
-    // 58564944-0000-0010-8000-00AA00389B71
-    public static readonly Guid DIVX1 = new Guid(0x58564944, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71);
-
-    // 78766964-0000-0010-8000-00AA00389B71
-    public static readonly Guid DIVX2 = new Guid(0x78766964, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71);
-
-    /// <summary> MEDIASUBTYPE_LATM_AAC </summary>
-    public static readonly Guid LATMAAC = new Guid(0x00001FF, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
-
-    /// <summary> MEDIASUBTYPE_LATM_AAC_LAVF_SPLITTER </summary>
-    public static readonly Guid LATMAACLAVF = new Guid(0x53544441, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71);
   }
 
   #region IKsControl

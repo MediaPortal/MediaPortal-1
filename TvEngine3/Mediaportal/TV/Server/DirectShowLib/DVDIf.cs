@@ -1307,9 +1307,6 @@ namespace DirectShowLib.Dvd
       );
   }
 
-  /*
-   * Interface redefined in MediaPortalCustomisations.
-   * 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("34151510-EEC0-11D2-8201-00A0C9D74842"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -1533,7 +1530,7 @@ namespace DirectShowLib.Dvd
       [In] int ulStreamNum,
       [Out, MarshalAs(UnmanagedType.Bool)] out bool pbEnabled
       );
-  }*/
+  }
 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("5a4a97e4-94ee-4a55-9751-74b5643aa27d"),
