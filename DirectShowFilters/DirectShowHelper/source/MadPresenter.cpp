@@ -103,6 +103,8 @@ HRESULT MPMadPresenter::Shutdown()
 {
   CAutoLock lock(this);
 
+  Log("MPMadPresenter::Shutdown()");
+
   m_pCallback = nullptr;
 
   if (m_pMad)
@@ -400,6 +402,9 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
   HRESULT hr = S_FALSE;
 
   CAutoLock cAutoLock(this);
+
+  Log("MPMadPresenter::SetDevice() pD3DDev 0x:%x", pD3DDev);
+
   m_pMadD3DDev = (IDirect3DDevice9Ex*)pD3DDev;
   m_deviceState.SetDevice(pD3DDev);
 
