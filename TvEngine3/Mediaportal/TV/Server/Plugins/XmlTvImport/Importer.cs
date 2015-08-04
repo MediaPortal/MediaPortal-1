@@ -31,6 +31,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils.Localisation;
 
 namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 {
@@ -375,6 +376,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       List<ProgramCredit> credits = new List<ProgramCredit>(10);
       int productionYear = -1;
       List<string> categories = new List<string>(10);
+      List<string> audioLanguages = new List<string>(10);
       List<string> countries = new List<string>(5);
       int seasonNumber = -1;
       int episodeNumber = -1;
@@ -382,6 +384,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       string episodeId = null;
       bool? isHighDefinition = null;
       bool? isPreviouslyShown = null;
+      List<string> subtitlesLanguages = new List<string>(10);
       string classification = null;
       int priorityClassification = -1;
       decimal starRating = -1;
@@ -469,68 +472,35 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           case "category":
             categories.Add(xmlProg.ReadString());
             break;
+          case "language":
+            string languageCode = ParseLanguage(xmlProg.ReadString());
+            if (!audioLanguages.Contains(languageCode))
+            {
+              audioLanguages.Add(languageCode);
+            }
+            break;
           case "country":
             countries.Add(xmlProg.ReadString());
             break;
           case "episode-num":
-            if (seasonNumber > 0 && episodeNumber > 0 && !string.IsNullOrEmpty(episodeId))
+            int tempSeasonNumber;
+            int tempEpisodeNumber;
+            int tempEpisodePartNumber;
+            string tempEpisodeId;
+            ParseEpisodeNumber(xmlProg.GetAttribute("system"),
+                                xmlProg.ReadString(),
+                                out tempSeasonNumber,
+                                out tempEpisodeNumber,
+                                out tempEpisodePartNumber,
+                                out tempEpisodeId);
+            if ((seasonNumber < 0 || episodeNumber < 0) && (tempSeasonNumber > 0 || tempEpisodeNumber > 0))
             {
-              xmlProg.Skip();
+              seasonNumber = tempSeasonNumber;
+              episodeNumber = tempEpisodeNumber;
             }
-            else
+            else if (string.IsNullOrEmpty(episodeId) && !string.IsNullOrEmpty(tempEpisodeId))
             {
-              string episodeNumberSystem = xmlProg.GetAttribute("system");
-              string episodeNumberString = ConvertHtmlToAnsi(xmlProg.ReadString().Replace(" ", ""));
-
-              int tempCount;
-              if (string.Equals(episodeNumberSystem, "xmltv_ns"))
-              {
-                if (seasonNumber < 0 || episodeNumber < 0)
-                {
-                  int dot1Idx = episodeNumberString.IndexOf(".", 0);
-                  int dot2Idx = episodeNumberString.IndexOf(".", dot1Idx + 1);
-                  if (dot1Idx < 0 || dot2Idx < 0)
-                  {
-                    Log.Warn("XMLTV import: failed to interpret xmltv_ns episode number, number = {0}", episodeNumberString);
-                  }
-                  else
-                  {
-                    ParseEpisodeNumberSection(episodeNumberString.Substring(0, dot1Idx), 1, out seasonNumber, out tempCount);
-                    ParseEpisodeNumberSection(episodeNumberString.Substring(dot1Idx + 1, dot2Idx - (dot1Idx + 1)), 1, out episodeNumber, out tempCount);
-                    ParseEpisodeNumberSection(episodeNumberString.Substring(dot2Idx + 1), 1, out episodePartNumber, out tempCount);
-                    if (episodePartNumber == 0 && tempCount <= 1)
-                    {
-                      // Episode part number should not be stored unless there are actually parts.
-                      episodePartNumber = -1;
-                    }
-                  }
-                }
-              }
-              else
-              {
-                int idx = 0;
-                if (episodeNumberSystem != null && episodeNumberSystem == "onscreen")
-                {
-                  // example: 'Episode #1234' 
-                  idx = episodeNumberString.IndexOf("#") + 1;
-                }
-
-                // Assumption: if the value is a number, it's the human readable episode
-                // number. Otherwise it must be the episode's identifier.
-                string episodeIdCandidate = episodeNumberString.Substring(idx);
-                int episodeNumberCandidate;
-                if (!int.TryParse(episodeIdCandidate, out episodeNumberCandidate))
-                {
-                  if (string.IsNullOrEmpty(episodeId))
-                  {
-                    episodeId = episodeIdCandidate;
-                  }
-                }
-                else if (episodeNumber < 0)
-                {
-                  episodeNumber = episodeNumberCandidate;
-                }
-              }
+              episodeId = tempEpisodeId;
             }
             break;
           case "video":
@@ -546,6 +516,21 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           case "new":
             isPreviouslyShown = false;
             xmlProg.Skip();
+            break;
+          case "subtitles":
+            string subtitlesLanguage = ExtractValueWithOptionalElement(xmlProg.ReadInnerXml(), "language");
+            if (string.IsNullOrEmpty(subtitlesLanguage))
+            {
+              subtitlesLanguage = "und";
+            }
+            else
+            {
+              subtitlesLanguage = ParseLanguage(subtitlesLanguage);
+            }
+            if (!subtitlesLanguages.Contains(subtitlesLanguage))
+            {
+              subtitlesLanguages.Add(subtitlesLanguage);
+            }
             break;
           case "rating":
             int classificationSystemPriority = -1;
@@ -572,7 +557,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
             string ratingSystem = xmlProg.GetAttribute("system");
             if (!string.IsNullOrEmpty(ratingSystem))
             {
-              ratingSystemPriority = preferredClassificationSystems.IndexOf(ratingSystem);
+              ratingSystemPriority = preferredRatingSystems.IndexOf(ratingSystem);
             }
             if (starRating < 0 || (ratingSystemPriority >= 0 && (priorityStarRating < 0 || (priorityStarRating >= 0 && ratingSystemPriority < priorityStarRating))))
             {
@@ -660,6 +645,14 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         if (isHighDefinition.HasValue)
         {
           program.IsHighDefinition = isHighDefinition.Value;
+        }
+        if (audioLanguages != null && audioLanguages.Count > 0)
+        {
+          program.AudioLanguages = string.Join(",", audioLanguages);
+        }
+        if (subtitlesLanguages != null && subtitlesLanguages.Count > 0)
+        {
+          program.SubtitlesLanguages = string.Join(",", subtitlesLanguages);
         }
         if (productionYear > 0)
         {
@@ -787,6 +780,31 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       return null;
     }
 
+    private static string ParseLanguage(string language)
+    {
+      if (language.Length == 2)
+      {
+        foreach (Iso639Language l in Iso639LanguageCollection.Instance.Languages)
+        {
+          if (string.Equals(language, l.TwoLetterCode))
+          {
+            return l.BibliographicCode;
+          }
+        }
+      }
+      else
+      {
+        foreach (Iso639Language l in Iso639LanguageCollection.Instance.Languages)
+        {
+          if (string.Equals(language, l.Name))  // name is English, so may not match (eg. Deutch vs. German, or Allemand vs. French)
+          {
+            return l.BibliographicCode;
+          }
+        }
+      }
+      return "und";
+    }
+
     private static void ParseStarRating(string ratingString, out decimal rating, out decimal ratingMaximum)
     {
       string originalRatingString = ratingString;
@@ -844,6 +862,59 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       {
         Log.Error(ex, "XMLTV import: failed to parse star-rating \"{0}\"", originalRatingString);
       }
+    }
+
+    private static void ParseEpisodeNumber(string system, string number,
+                                            out int seasonNumber, out int episodeNumber, out int episodePartNumber,
+                                            out string episodeId)
+    {
+      number = ConvertHtmlToAnsi(number).Replace(" ", string.Empty);
+      seasonNumber = -1;
+      episodeNumber = -1;
+      episodePartNumber = -1;
+      episodeId = null;
+
+      int tempCount;
+      if (string.Equals(system, "xmltv_ns"))
+      {
+        int dot1Idx = number.IndexOf(".", 0);
+        int dot2Idx = number.IndexOf(".", dot1Idx + 1);
+        if (dot1Idx < 0 || dot2Idx < 0)
+        {
+          Log.Warn("XMLTV import: failed to interpret xmltv_ns episode number, number = {0}", number);
+        }
+        else
+        {
+          ParseEpisodeNumberSection(number.Substring(0, dot1Idx), 1, out seasonNumber, out tempCount);
+          ParseEpisodeNumberSection(number.Substring(dot1Idx + 1, dot2Idx - (dot1Idx + 1)), 1, out episodeNumber, out tempCount);
+          ParseEpisodeNumberSection(number.Substring(dot2Idx + 1), 1, out episodePartNumber, out tempCount);
+          if (episodePartNumber == 0 && tempCount <= 1)
+          {
+            // Episode part number should not be stored unless there are actually parts.
+            episodePartNumber = -1;
+          }
+        }
+        return;
+      }
+
+      int idx = 0;
+      if (string.Equals(system, "onscreen"))
+      {
+        // example: 'Episode #1234' 
+        idx = number.IndexOf("#") + 1;
+      }
+
+      // Assumption: if the value is a number, it's the human readable episode
+      // number. Otherwise it must be the episode's identifier.
+      string episodeIdCandidate = number.Substring(idx);
+      int episodeNumberCandidate;
+      if (!int.TryParse(episodeIdCandidate, out episodeNumberCandidate))
+      {
+        episodeId = episodeIdCandidate;
+        return;
+      }
+
+      episodeNumber = episodeNumberCandidate;
     }
 
     private static void ParseEpisodeNumberSection(string section, int numberBase, out int sectionNumber, out int sectionCount)
