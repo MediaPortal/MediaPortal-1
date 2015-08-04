@@ -38,6 +38,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
   internal class Importer
   {
     private static readonly Regex REGEX_MC2XML_ID_FORMAT = new Regex(@"^I\d+\.([^\.]+)\.microsoft.com$");
+    private static readonly Regex REGEX_COMMON_SEASON_EPISODE_FORMAT = new Regex(@"^S(\d+)E(\d+)$");
 
     private bool _isImportRunning = false;
     private bool _isImportCancelled = false;
@@ -381,6 +382,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       int seasonNumber = -1;
       int episodeNumber = -1;
       int episodePartNumber = -1;
+      string seriesId = null;
       string episodeId = null;
       bool? isHighDefinition = null;
       bool? isPreviouslyShown = null;
@@ -486,12 +488,14 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
             int tempSeasonNumber;
             int tempEpisodeNumber;
             int tempEpisodePartNumber;
+            string tempSeriesId;
             string tempEpisodeId;
             ParseEpisodeNumber(xmlProg.GetAttribute("system"),
                                 xmlProg.ReadString(),
                                 out tempSeasonNumber,
                                 out tempEpisodeNumber,
                                 out tempEpisodePartNumber,
+                                out tempSeriesId,
                                 out tempEpisodeId);
             if ((seasonNumber < 0 || episodeNumber < 0) && (tempSeasonNumber > 0 || tempEpisodeNumber > 0))
             {
@@ -500,6 +504,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
             }
             else if (string.IsNullOrEmpty(episodeId) && !string.IsNullOrEmpty(tempEpisodeId))
             {
+              seriesId = tempSeriesId;
               episodeId = tempEpisodeId;
             }
             break;
@@ -617,6 +622,10 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         if (!string.IsNullOrEmpty(episodeName))
         {
           program.EpisodeName = episodeName;
+        }
+        if (!string.IsNullOrEmpty(seriesId))
+        {
+          program.SeriesId = seriesId;
         }
         if (seasonNumber > 0)
         {
@@ -866,12 +875,13 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
     private static void ParseEpisodeNumber(string system, string number,
                                             out int seasonNumber, out int episodeNumber, out int episodePartNumber,
-                                            out string episodeId)
+                                            out string seriesId, out string episodeId)
     {
       number = ConvertHtmlToAnsi(number).Replace(" ", string.Empty);
       seasonNumber = -1;
       episodeNumber = -1;
       episodePartNumber = -1;
+      seriesId = null;
       episodeId = null;
 
       int tempCount;
@@ -885,14 +895,64 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         }
         else
         {
-          ParseEpisodeNumberSection(number.Substring(0, dot1Idx), 1, out seasonNumber, out tempCount);
-          ParseEpisodeNumberSection(number.Substring(dot1Idx + 1, dot2Idx - (dot1Idx + 1)), 1, out episodeNumber, out tempCount);
-          ParseEpisodeNumberSection(number.Substring(dot2Idx + 1), 1, out episodePartNumber, out tempCount);
-          if (episodePartNumber == 0 && tempCount <= 1)
+          ParseXmlTvNsEpisodeNumberSection(number.Substring(0, dot1Idx), out seasonNumber, out tempCount);
+          ParseXmlTvNsEpisodeNumberSection(number.Substring(dot1Idx + 1, dot2Idx - (dot1Idx + 1)), out episodeNumber, out tempCount);
+          ParseXmlTvNsEpisodeNumberSection(number.Substring(dot2Idx + 1), out episodePartNumber, out tempCount);
+          if (episodePartNumber <= 1 && tempCount <= 1)
           {
             // Episode part number should not be stored unless there are actually parts.
             episodePartNumber = -1;
           }
+        }
+        return;
+      }
+
+      if (string.Equals(system, "dd_progid"))
+      {
+        // Tribune Media Services
+        // http://developer.tmsapi.com/docs/data_v1_1/
+        // We should be compatible with the Dish Network series and episode IDs
+        // produced by TsWriter (which are also sourced from TMS).
+        // Examples:
+        // series/episode = EP00316978.0051
+        // movie = MV00022473.0000
+        // show = SH01110845.0000
+        // sport = SP00319125.0000
+        if (
+          number.Length != 15 ||
+          !(
+            number.StartsWith("EP") ||
+            number.StartsWith("MV") ||
+            number.StartsWith("SH") ||
+            number.StartsWith("SP")
+          )
+        )
+        {
+          Log.Warn("XMLTV import: failed to interpret dd_progid episode number, number = {0}", number);
+        }
+        else
+        {
+          episodeId = number.Remove(10, 1);
+          if (episodeId.StartsWith("EP"))
+          {
+            seriesId = number.Substring(0, 10);
+          }
+        }
+        return;
+      }
+
+      if (string.Equals(system, "common"))
+      {
+        // Example: S02E02
+        Match m = REGEX_COMMON_SEASON_EPISODE_FORMAT.Match(number);
+        if (!m.Success)
+        {
+          Log.Warn("XMLTV import: failed to interpret common episode number, number = {0}", number);
+        }
+        else
+        {
+          seasonNumber = int.Parse(m.Groups[1].Captures[0].Value);
+          episodeNumber = int.Parse(m.Groups[2].Captures[0].Value);
         }
         return;
       }
@@ -917,7 +977,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       episodeNumber = episodeNumberCandidate;
     }
 
-    private static void ParseEpisodeNumberSection(string section, int numberBase, out int sectionNumber, out int sectionCount)
+    private static void ParseXmlTvNsEpisodeNumberSection(string section, out int sectionNumber, out int sectionCount)
     {
       sectionNumber = -1;
       sectionCount = -1;
@@ -933,11 +993,11 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         // No slash found => should be just a plain number.
         try
         {
-          sectionNumber = Convert.ToInt32(section) + numberBase;
+          sectionNumber = Convert.ToInt32(section) + 1;
         }
         catch (Exception)
         {
-          Log.Debug("XMLTV import: failed to convert plain episode number section \"{0}\" to an integer", section);
+          Log.Debug("XMLTV import: failed to convert xmltv_ns episode number section, section = {0}", section);
         }
         return;
       }
@@ -945,12 +1005,12 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       try
       {
         // Slash found => assume it's formatted as <number>/<count>.
-        sectionNumber = Convert.ToInt32(section.Substring(0, slashPos)) + numberBase;
+        sectionNumber = Convert.ToInt32(section.Substring(0, slashPos)) + 1;
         sectionCount = Convert.ToInt32(section.Substring(slashPos + 1));
       }
       catch (Exception)
       {
-        Log.Debug("XMLTV import: failed to interpret episode number section \"{0}\"", section);
+        Log.Debug("XMLTV import: failed to interpret 2 part xmltv_ns episode number section, section = {0}", section);
       }
     }
 
