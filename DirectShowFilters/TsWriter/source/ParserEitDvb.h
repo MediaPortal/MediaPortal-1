@@ -335,6 +335,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
           FreeCaMode = false;
           ReferenceServiceId = 0;
           ReferenceEventId = 0;
+          AreSeriesAndEpisodeIdsCrids = false;
           SeriesId = NULL;
           EpisodeId = NULL;
           IsHighDefinition = false;
@@ -508,6 +509,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
         bool FreeCaMode;
         unsigned short ReferenceServiceId;
         unsigned long long ReferenceEventId;
+        bool AreSeriesAndEpisodeIdsCrids;
         char* SeriesId;
         char* EpisodeId;
         bool IsHighDefinition;

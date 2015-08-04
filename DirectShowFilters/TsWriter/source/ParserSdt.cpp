@@ -20,7 +20,7 @@
  */
 #include "ParserSdt.h"
 #include <algorithm>
-#include <cstring>      // strcmp()
+#include <cstring>      // strcmp(), strncmp(), strncpy()
 #include "..\..\shared\TimeUtils.h"
 #include "EnterCriticalSection.h"
 #include "TextUtil.h"
@@ -1586,6 +1586,27 @@ bool CParserSdt::DecodeDefaultAuthorityDescriptor(unsigned char* data,
     if (*defaultAuthority == NULL)
     {
       LogDebug(L"SDT: failed to allocate a default authority");
+    }
+    else if (
+      strncmp(*defaultAuthority, "crid://", 7) != 0 &&
+      strncmp(*defaultAuthority, "CRID://", 7) != 0
+    )
+    {
+      // Prepend the "crid://" part if necessary.
+      unsigned char byteCount = 7 + strlen(*defaultAuthority) + 1;
+      char* temp = new char[7 + strlen(*defaultAuthority) + 1];
+      if (temp == NULL)
+      {
+        LogDebug(L"SDT: failed to allocate %hhu bytes for a fully qualified default authority",
+                  byteCount);
+      }
+      else
+      {
+        strncpy(temp, "crid://", 8);
+        strncpy(&temp[7], *defaultAuthority, byteCount - 7);
+      }
+      delete[] *defaultAuthority;
+      *defaultAuthority = temp;
     }
     return true;
   }

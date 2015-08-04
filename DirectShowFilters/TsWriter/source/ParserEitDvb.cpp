@@ -573,33 +573,35 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEvent(unsigned short serviceIndex,
   char* seriesIdSource = recordEvent->SeriesId;
   char* episodeIdSource = recordEvent->EpisodeId;
   unsigned short requiredBufferSize = 0;
-  if (
-    m_defaultAuthorityProvider != NULL &&
-    (
-      (seriesIdSource != NULL && seriesIdSource[0] == '/') ||
-      (episodeIdSource != NULL && episodeIdSource[0] == '/')
-    )
-  )
+  if (recordEvent->AreSeriesAndEpisodeIdsCrids)
   {
+    // Default authorities already have the CRID prefix.
     unsigned short authorityBufferSize = 100;
-    char* authority = new char[authorityBufferSize];
-    if (authority == NULL)
+    char* authority = NULL;
+    if (
+      m_defaultAuthorityProvider != NULL &&
+      (
+        (seriesIdSource != NULL && seriesIdSource[0] == '/') ||
+        (episodeIdSource != NULL && episodeIdSource[0] == '/')
+      )
+    )
     {
-      LogDebug(L"EIT DVB: failed to allocate %hu bytes for a CRID authority, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu",
-                authorityBufferSize, serviceIndex,
-                m_currentService->OriginalNetworkId,
-                m_currentService->TransportStreamId,
-                m_currentService->ServiceId, eventIndex,
-                m_currentEvent->EventId, m_currentEvent->ReferenceServiceId,
-                m_currentEvent->ReferenceEventId);
-    }
-    else
-    {
-      if (!m_defaultAuthorityProvider->GetDefaultAuthority(m_currentService->OriginalNetworkId,
-                                                            m_currentService->TransportStreamId,
-                                                            recordEvent->ServiceId,
-                                                            authority,
-                                                            authorityBufferSize))
+      authority = new char[authorityBufferSize];
+      if (authority == NULL)
+      {
+        LogDebug(L"EIT DVB: failed to allocate %hu bytes for a CRID authority, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu",
+                  authorityBufferSize, serviceIndex,
+                  m_currentService->OriginalNetworkId,
+                  m_currentService->TransportStreamId,
+                  m_currentService->ServiceId, eventIndex,
+                  m_currentEvent->EventId, m_currentEvent->ReferenceServiceId,
+                  m_currentEvent->ReferenceEventId);
+      }
+      else if (!m_defaultAuthorityProvider->GetDefaultAuthority(m_currentService->OriginalNetworkId,
+                                                                m_currentService->TransportStreamId,
+                                                                recordEvent->ServiceId,
+                                                                authority,
+                                                                authorityBufferSize))
       {
         LogDebug(L"EIT DVB: missing CRID authority, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu",
                   serviceIndex, m_currentService->OriginalNetworkId,
@@ -608,57 +610,111 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEvent(unsigned short serviceIndex,
                   m_currentEvent->EventId, m_currentEvent->ReferenceServiceId,
                   m_currentEvent->ReferenceEventId);
       }
-      else
+    }
+
+    unsigned short availableBufferSize = 0;
+    if (seriesIdSource != NULL)
+    {
+      requiredBufferSize = 0;
+      if (seriesIdSource[0] == '/')
       {
-        if (seriesIdSource != NULL && seriesIdSource[0] == '/')
+        if (authority != NULL)
         {
           requiredBufferSize = authorityBufferSize + strlen(seriesIdSource) + 1;
-          seriesIdSource = new char[requiredBufferSize];
-          if (seriesIdSource == NULL)
-          {
-            LogDebug(L"EIT DVB: failed to allocate %hu bytes for a full series ID, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu",
-                      requiredBufferSize, serviceIndex,
-                      m_currentService->OriginalNetworkId,
-                      m_currentService->TransportStreamId,
-                      m_currentService->ServiceId, eventIndex,
-                      m_currentEvent->EventId,
-                      m_currentEvent->ReferenceServiceId,
-                      m_currentEvent->ReferenceEventId);
-          }
-          else
-          {
-            strncpy(seriesIdSource, authority, requiredBufferSize);
-            strncat(seriesIdSource,
-                    recordEvent->SeriesId,
-                    requiredBufferSize - authorityBufferSize);
-            seriesIdSource[requiredBufferSize - 1] = NULL;
-          }
-        }
-        if (episodeIdSource != NULL && episodeIdSource[0] == '/')
-        {
-          requiredBufferSize = authorityBufferSize + strlen(episodeIdSource) + 1;
-          episodeIdSource = new char[requiredBufferSize];
-          if (episodeIdSource == NULL)
-          {
-            LogDebug(L"EIT DVB: failed to allocate %hu bytes for a full episode ID, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu",
-                      requiredBufferSize, serviceIndex,
-                      m_currentService->OriginalNetworkId,
-                      m_currentService->TransportStreamId,
-                      m_currentService->ServiceId, eventIndex,
-                      m_currentEvent->EventId,
-                      m_currentEvent->ReferenceServiceId,
-                      m_currentEvent->ReferenceEventId);
-          }
-          else
-          {
-            strncpy(episodeIdSource, authority, requiredBufferSize);
-            strncat(episodeIdSource,
-                    recordEvent->EpisodeId,
-                    requiredBufferSize - authorityBufferSize);
-            episodeIdSource[requiredBufferSize - 1] = NULL;
-          }
+          availableBufferSize = requiredBufferSize - authorityBufferSize;
         }
       }
+      else if (
+        strncmp(seriesIdSource, "crid://", 7) != 0 &&
+        strncmp(seriesIdSource, "CRID://", 7) != 0
+      )
+      {
+        requiredBufferSize = 7 + strlen(seriesIdSource) + 1;
+        availableBufferSize = requiredBufferSize - 7;
+      }
+
+      if (requiredBufferSize != 0)
+      {
+        seriesIdSource = new char[requiredBufferSize];
+        if (seriesIdSource == NULL)
+        {
+          LogDebug(L"EIT DVB: failed to allocate %hu bytes for a full series ID, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu",
+                    requiredBufferSize, serviceIndex,
+                    m_currentService->OriginalNetworkId,
+                    m_currentService->TransportStreamId,
+                    m_currentService->ServiceId, eventIndex,
+                    m_currentEvent->EventId,
+                    m_currentEvent->ReferenceServiceId,
+                    m_currentEvent->ReferenceEventId);
+        }
+        else
+        {
+          if (seriesIdSource[0] == '/')
+          {
+            strncpy(seriesIdSource, authority, requiredBufferSize);
+          }
+          else
+          {
+            strncpy(seriesIdSource, "crid://", requiredBufferSize);
+          }
+          strncat(seriesIdSource, recordEvent->SeriesId, availableBufferSize);
+          seriesIdSource[requiredBufferSize - 1] = NULL;
+        }
+      }
+    }
+
+    if (episodeIdSource != NULL)
+    {
+      requiredBufferSize = 0;
+      if (episodeIdSource[0] == '/')
+      {
+        if (authority != NULL)
+        {
+          requiredBufferSize = authorityBufferSize + strlen(episodeIdSource) + 1;
+          availableBufferSize = requiredBufferSize - authorityBufferSize;
+        }
+      }
+      else if (
+        strncmp(episodeIdSource, "crid://", 7) != 0 &&
+        strncmp(episodeIdSource, "CRID://", 7) != 0
+      )
+      {
+        requiredBufferSize = 7 + strlen(episodeIdSource) + 1;
+        availableBufferSize = requiredBufferSize - 7;
+      }
+
+      if (requiredBufferSize != 0)
+      {
+        episodeIdSource = new char[requiredBufferSize];
+        if (episodeIdSource == NULL)
+        {
+          LogDebug(L"EIT DVB: failed to allocate %hu bytes for a full episode ID, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu",
+                    requiredBufferSize, serviceIndex,
+                    m_currentService->OriginalNetworkId,
+                    m_currentService->TransportStreamId,
+                    m_currentService->ServiceId, eventIndex,
+                    m_currentEvent->EventId,
+                    m_currentEvent->ReferenceServiceId,
+                    m_currentEvent->ReferenceEventId);
+        }
+        else
+        {
+          if (episodeIdSource[0] == '/')
+          {
+            strncpy(episodeIdSource, authority, requiredBufferSize);
+          }
+          else
+          {
+            strncpy(episodeIdSource, "crid://", requiredBufferSize);
+          }
+          strncat(episodeIdSource, recordEvent->EpisodeId, availableBufferSize);
+          episodeIdSource[requiredBufferSize - 1] = NULL;
+        }
+      }
+    }
+
+    if (authority != NULL)
+    {
       delete[] authority;
       authority = NULL;
     }
@@ -2365,6 +2421,8 @@ bool CParserEitDvb::DecodeEventDescriptors(unsigned char* sectionData,
       result = DecodeContentIdentifierDescriptor(&sectionData[pointer], length, crids);
       if (result)
       {
+        event.AreSeriesAndEpisodeIdsCrids = true;
+
         map<unsigned char, char*>::const_iterator it = crids.begin();
         for ( ; it != crids.end(); it++)
         {
@@ -2522,6 +2580,8 @@ bool CParserEitDvb::DecodeEventDescriptors(unsigned char* sectionData,
                                                 event.IsPreviouslyShown);
         if (result)
         {
+          event.AreSeriesAndEpisodeIdsCrids = false;
+
           if (seriesId != NULL)
           {
             if (event.SeriesId != NULL)
@@ -3471,6 +3531,7 @@ bool CParserEitDvb::DecodeDishBevSeriesDescriptor(unsigned char* data,
       }
     }
 
+    // Note: episode ID is expected to be 0 except for EP shows.
     stringstream ss;
     ss << prefix << setfill('0') << setw(8) << seriesIdNumber << setw(4) << episodeIdNumber;
     CopyString(ss.str().c_str(), episodeId, L"a Dish episode ID");
