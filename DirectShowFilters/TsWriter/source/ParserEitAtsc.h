@@ -65,7 +65,7 @@ class CParserEitAtsc : public CSectionDecoder
                   unsigned char& genreIdCount,
                   unsigned char& vchipRating,
                   unsigned char& mpaaClassification,
-                  unsigned short& advisory);
+                  unsigned short& advisories);
     bool GetEventTitleByIndex(unsigned long eventIndex,
                               unsigned char titleIndex,
                               unsigned long& language,
@@ -90,7 +90,7 @@ class CParserEitAtsc : public CSectionDecoder
           Duration = 0; 
           VchipRating = 0xff;         // default: [not available]
           MpaaClassification = 0xff;  // default: [not available]
-          Advisory = 0;               // default: [not available]
+          Advisories = 0;             // default: [not available]
         }
 
         ~CRecordEit(void)
@@ -114,7 +114,7 @@ class CParserEitAtsc : public CSectionDecoder
             !CUtils::CompareVectors(GenreIds, recordEit->GenreIds) ||
             VchipRating != recordEit->VchipRating ||
             MpaaClassification != recordEit->MpaaClassification ||
-            Advisory != recordEit->Advisory
+            Advisories != recordEit->Advisories
           )
           {
             return false;
@@ -134,13 +134,13 @@ class CParserEitAtsc : public CSectionDecoder
 
         void Debug(const wchar_t* situation) const
         {
-          LogDebug(L"ATSC EIT: event %s, source ID = %hu, event ID = %hu, start date/time = %llu, duration = %hu m, ETM location = %hhu, title count = %llu, audio language count = %llu, captions language count = %llu, genre count = %llu, V-CHIP rating = %hhu, MPAA classification = %hhu, advisory = %hu",
+          LogDebug(L"ATSC EIT: event %s, source ID = %hu, event ID = %hu, start date/time = %llu, duration = %hu m, ETM location = %hhu, title count = %llu, audio language count = %llu, captions language count = %llu, genre count = %llu, V-CHIP rating = %hhu, MPAA classification = %hhu, advisories = %hu",
                     situation, SourceId, EventId, StartDateTime, Duration,
                     EtmLocation, (unsigned long long)Titles.size(),
                     (unsigned long long)AudioLanguages.size(),
                     (unsigned long long)CaptionsLanguages.size(),
                     (unsigned long long)GenreIds.size(), VchipRating,
-                    MpaaClassification, Advisory);
+                    MpaaClassification, Advisories);
 
           CUtils::DebugStringMap(Titles, L"title(s)", L"language", L"title");
           CUtils::DebugVector(AudioLanguages, L"audio language(s)", true);
@@ -159,7 +159,7 @@ class CParserEitAtsc : public CSectionDecoder
         vector<unsigned char> GenreIds;
         unsigned char VchipRating;
         unsigned char MpaaClassification;
-        unsigned short Advisory;
+        unsigned short Advisories;
     };
 
     bool SelectEventRecordByIndex(unsigned long index);
@@ -179,7 +179,7 @@ class CParserEitAtsc : public CSectionDecoder
                                                 unsigned char dataLength,
                                                 unsigned char& vchipRating,
                                                 unsigned char& mpaaClassification,
-                                                unsigned short& advisory);
+                                                unsigned short& advisories);
     static bool DecodeGenreDescriptor(unsigned char* data,
                                       unsigned char dataLength,
                                       vector<unsigned char>& genreIds);

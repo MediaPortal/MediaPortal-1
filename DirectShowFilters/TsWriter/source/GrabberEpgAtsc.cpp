@@ -432,7 +432,7 @@ STDMETHODIMP_(bool) CGrabberEpgAtsc::GetEvent(unsigned long index,
                                               unsigned char* genreIdCount,
                                               unsigned char* vchipRating,
                                               unsigned char* mpaaClassification,
-                                              unsigned short* advisory)
+                                              unsigned short* advisories)
 {
   CEnterCriticalSection lock(m_section);
   if (!SelectEventByIndex(index))
@@ -454,7 +454,7 @@ STDMETHODIMP_(bool) CGrabberEpgAtsc::GetEvent(unsigned long index,
                                         *genreIdCount,
                                         *vchipRating,
                                         *mpaaClassification,
-                                        *advisory);
+                                        *advisories);
 }
 
 STDMETHODIMP_(bool) CGrabberEpgAtsc::GetEventTextByIndex(unsigned long eventIndex,

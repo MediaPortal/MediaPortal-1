@@ -81,7 +81,7 @@ class CGrabberEpgAtsc
                                   unsigned char* genreIdCount,
                                   unsigned char* vchipRating,
                                   unsigned char* mpaaClassification,
-                                  unsigned short* advisory);
+                                  unsigned short* advisories);
     STDMETHODIMP_(bool) GetEventTextByIndex(unsigned long eventIndex,
                                             unsigned char textIndex,
                                             unsigned long* language,

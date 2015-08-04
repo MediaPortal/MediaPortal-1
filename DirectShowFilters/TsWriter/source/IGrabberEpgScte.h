@@ -55,7 +55,7 @@ DECLARE_INTERFACE_(IGrabberEpgScte, IGrabberEpgAtsc)
                               unsigned char* genreIdCount,
                               unsigned char* vchipRating,
                               unsigned char* mpaaClassification,
-                              unsigned short* advisory)PURE;
+                              unsigned short* advisories)PURE;
   STDMETHOD_(bool, GetEventTextByIndex)(THIS_ unsigned long eventIndex,
                                         unsigned char textIndex,
                                         unsigned long* language,

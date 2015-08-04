@@ -395,6 +395,7 @@ STDMETHODIMP_(bool) CParserOpenTv::GetEvent(unsigned long index,
                                             unsigned char* categoryId,
                                             unsigned char* subCategoryId,
                                             bool* isHighDefinition,
+                                            bool* hasSubtitles,
                                             unsigned char* parentalRating,
                                             unsigned short* seriesLinkId)
 {
@@ -421,6 +422,7 @@ STDMETHODIMP_(bool) CParserOpenTv::GetEvent(unsigned long index,
   *categoryId = recordEvent->CategoryId;
   *subCategoryId = recordEvent->SubCategoryId;
   *isHighDefinition = recordEvent->IsHighDefinition;
+  *hasSubtitles = recordEvent->HasSubtitles;
   *parentalRating = recordEvent->ParentalRating;
 
   unsigned short requiredBufferSize = 0;
@@ -867,6 +869,7 @@ bool CParserOpenTv::DecodeEventRecord(unsigned char* sectionData,
                                                             record.CategoryId,
                                                             record.SubCategoryId,
                                                             record.IsHighDefinition,
+                                                            record.HasSubtitles,
                                                             record.ParentalRating,
                                                             &title);
         record.StartDateTime += startDateTimeOffset;
@@ -1021,6 +1024,7 @@ bool CParserOpenTv::DecodeOpenTvEventDescriptor(unsigned char* data,
                                                 unsigned char& categoryId,
                                                 unsigned char& subCategoryId,
                                                 bool& isHighDefinition,
+                                                bool& hasSubtitles,
                                                 unsigned char& parentalRating,
                                                 char** title)
 {
@@ -1040,7 +1044,7 @@ bool CParserOpenTv::DecodeOpenTvEventDescriptor(unsigned char* data,
 
     unsigned char audioMode = data[5] >> 6;           // 1 = stereo, 2 = surround, 3 = Dolby Digital
     bool unknown1 = (data[5] & 0x20) != 0;
-    bool hasSubtitles = (data[5] & 0x10) != 0;
+    hasSubtitles = (data[5] & 0x10) != 0;
     bool isWideScreen = (data[5] & 0x8) != 0;
     isHighDefinition = (data[5] & 0x4) != 0;
     bool isCopyProtected = (data[5] & 0x2) != 0;

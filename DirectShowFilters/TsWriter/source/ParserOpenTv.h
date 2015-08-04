@@ -114,6 +114,7 @@ class CParserOpenTv
                                   unsigned char* categoryId,
                                   unsigned char* subCategoryId,
                                   bool* isHighDefinition,
+                                  bool* hasSubtitles,
                                   unsigned char* parentalRating,
                                   unsigned short* seriesLinkId);
 
@@ -133,6 +134,7 @@ class CParserOpenTv
           CategoryId = 0;
           SubCategoryId = 0;
           IsHighDefinition = false;
+          HasSubtitles = false;
           ParentalRating = 0;
         }
 
@@ -160,6 +162,7 @@ class CParserOpenTv
             CategoryId != recordEvent->CategoryId ||
             SubCategoryId != recordEvent->SubCategoryId ||
             IsHighDefinition != recordEvent->IsHighDefinition ||
+            HasSubtitles != recordEvent->HasSubtitles ||
             ParentalRating != recordEvent->ParentalRating
           )
           {
@@ -180,10 +183,10 @@ class CParserOpenTv
 
         void Debug(const wchar_t* situation) const
         {
-          LogDebug(L"OpenTV: event %s, PID = %hu, table ID = 0x%hhx, channel ID = %hu, event ID = %hu, start date/time = %llu, duration = %hu m, category ID = %hhu, sub-category ID = %hhu, is HD = %d, parental rating = %hhu, title = %S",
+          LogDebug(L"OpenTV: event %s, PID = %hu, table ID = 0x%hhx, channel ID = %hu, event ID = %hu, start date/time = %llu, duration = %hu m, category ID = %hhu, sub-category ID = %hhu, is HD = %d, has subtitles = %d, parental rating = %hhu, title = %S",
                     situation, Pid, TableId, ChannelId, EventId, StartDateTime,
                     Duration, CategoryId, SubCategoryId, IsHighDefinition,
-                    ParentalRating, Title == NULL ? "" : Title);
+                    HasSubtitles, ParentalRating, Title == NULL ? "" : Title);
         }
 
         unsigned short Pid;
@@ -196,6 +199,7 @@ class CParserOpenTv
         unsigned char CategoryId;
         unsigned char SubCategoryId;
         bool IsHighDefinition;
+        bool HasSubtitles;
         unsigned char ParentalRating;
     };
 
@@ -298,6 +302,7 @@ class CParserOpenTv
                                             unsigned char& categoryId,
                                             unsigned char& subCategoryId,
                                             bool& isHighDefinition,
+                                            bool& hasSubtitles,
                                             unsigned char& parentalRating,
                                             char** title);
     static bool DecodeOpenTvEventDescriptionDescriptor(unsigned char* data,

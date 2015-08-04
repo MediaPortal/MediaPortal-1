@@ -87,7 +87,7 @@ class CParserAet
                                   unsigned char* genreIdCount,
                                   unsigned char* vchipRating,
                                   unsigned char* mpaaClassification,
-                                  unsigned short* advisory);
+                                  unsigned short* advisories);
     STDMETHODIMP_(bool) GetEventTextByIndex(unsigned long eventIndex,
                                             unsigned char textIndex,
                                             unsigned long* language,
@@ -117,7 +117,7 @@ class CParserAet
           Duration = 0;
           VchipRating = 0xff;         // default: [not available]
           MpaaClassification = 0xff;  // default: [not available]
-          Advisory = 0;               // default: [not available]
+          Advisories = 0;               // default: [not available]
         }
 
         ~CRecordAeit(void)
@@ -143,7 +143,7 @@ class CParserAet
             !CUtils::CompareVectors(GenreIds, recordAeit->GenreIds) ||
             VchipRating != recordAeit->VchipRating ||
             MpaaClassification != recordAeit->MpaaClassification ||
-            Advisory != recordAeit->Advisory
+            Advisories != recordAeit->Advisories
           )
           {
             return false;
@@ -163,13 +163,13 @@ class CParserAet
 
         void Debug(const wchar_t* situation) const
         {
-          LogDebug(L"AEIT: event %s, PID = %hu, MGT tag = %hhu, source ID = %hu, event ID = %hu, start date/time = %llu, duration = %hu m, ETM present = %hhu, title count = %llu, audio language count = %llu, captions language count = %llu, genre count = %llu, V-CHIP rating = %hhu, MPAA classification = %hhu, advisory = %hu",
+          LogDebug(L"AEIT: event %s, PID = %hu, MGT tag = %hhu, source ID = %hu, event ID = %hu, start date/time = %llu, duration = %hu m, ETM present = %hhu, title count = %llu, audio language count = %llu, captions language count = %llu, genre count = %llu, V-CHIP rating = %hhu, MPAA classification = %hhu, advisories = %hu",
                     situation, Pid, MgtTag, SourceId, EventId, StartDateTime,
                     Duration, EtmPresent, (unsigned long long)Titles.size(),
                     (unsigned long long)AudioLanguages.size(),
                     (unsigned long long)CaptionsLanguages.size(),
                     (unsigned long long)GenreIds.size(), VchipRating,
-                    MpaaClassification, Advisory);
+                    MpaaClassification, Advisories);
 
           CUtils::DebugStringMap(Titles, L"title(s)", L"language", L"title");
           CUtils::DebugVector(AudioLanguages, L"audio language(s)", true);
@@ -190,7 +190,7 @@ class CParserAet
         vector<unsigned char> GenreIds;
         unsigned char VchipRating;
         unsigned char MpaaClassification;
-        unsigned short Advisory;
+        unsigned short Advisories;
     };
 
     class CRecordAett : public IRecord
@@ -275,7 +275,7 @@ class CParserAet
                                                 unsigned char dataLength,
                                                 unsigned char& vchipRating,
                                                 unsigned char& mpaaClassification,
-                                                unsigned short& advisory);
+                                                unsigned short& advisories);
     static bool DecodeGenreDescriptor(unsigned char* data,
                                       unsigned char dataLength,
                                       vector<unsigned char>& genreIds);

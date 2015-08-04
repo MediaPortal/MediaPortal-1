@@ -283,7 +283,7 @@ STDMETHODIMP_(bool) CParserAet::GetEvent(unsigned long index,
                                           unsigned char* genreIdCount,
                                           unsigned char* vchipRating,
                                           unsigned char* mpaaClassification,
-                                          unsigned short* advisory)
+                                          unsigned short* advisories)
 {
   CEnterCriticalSection lock(m_section);
   if (!SelectEventRecordByIndex(index))
@@ -298,7 +298,7 @@ STDMETHODIMP_(bool) CParserAet::GetEvent(unsigned long index,
   *titleCount = m_currentRecordAeit->Titles.size();
   *vchipRating = m_currentRecordAeit->VchipRating;
   *mpaaClassification = m_currentRecordAeit->MpaaClassification;
-  *advisory = m_currentRecordAeit->Advisory;
+  *advisories = m_currentRecordAeit->Advisories;
 
   unsigned char requiredCount = 0;
   if (!CUtils::CopyVectorToArray(m_currentRecordAeit->AudioLanguages,
@@ -911,7 +911,7 @@ bool CParserAet::DecodeAeitRecord(unsigned char* sectionData,
                                                                 length,
                                                                 record.VchipRating,
                                                                 record.MpaaClassification,
-                                                                record.Advisory);
+                                                                record.Advisories);
       }
       else if (tag == 0xab) // genre descriptor
       {
@@ -1189,7 +1189,7 @@ bool CParserAet::DecodeContentAdvisoryDescriptor(unsigned char* data,
                                                   unsigned char dataLength,
                                                   unsigned char& vchipRating,
                                                   unsigned char& mpaaClassification,
-                                                  unsigned short& advisory)
+                                                  unsigned short& advisories)
 {
   if (dataLength == 0)
   {
@@ -1260,28 +1260,28 @@ bool CParserAet::DecodeContentAdvisoryDescriptor(unsigned char* data,
             // "Dialogue"
             // 0 = 
             // 1 = D
-            advisory |= 0x8000;
+            advisories |= 0x8000;
           }
           else if (ratingDimension == 2 && ratingValue == 1)
           {
             // "Language"
             // 0 = 
             // 1 = L
-            advisory |= 0x02;
+            advisories |= 0x02;
           }
           else if (ratingDimension == 3 && ratingValue == 1)
           {
             // "Sex"
             // 0 = 
             // 1 = S
-            advisory |= 0x01;
+            advisories |= 0x01;
           }
           else if (ratingDimension == 4 && ratingValue == 1)
           {
             // "Violence"
             // 0 = 
             // 1 = V
-            advisory |= 0x10;
+            advisories |= 0x10;
           }
           else if (ratingDimension == 5)
           {
@@ -1299,7 +1299,7 @@ bool CParserAet::DecodeContentAdvisoryDescriptor(unsigned char* data,
             // "FantasyViolence"
             // 0 = 
             // 1 = FV
-            advisory |= 0x08;
+            advisories |= 0x08;
           }
           else if (ratingDimension == 7)
           {

@@ -55,6 +55,7 @@ DECLARE_INTERFACE_(IGrabberEpgOpenTv, IGrabber)
                               unsigned char* categoryId,
                               unsigned char* subCategoryId,
                               bool* isHighDefinition,
+                              bool* hasSubtitles,
                               unsigned char* parentalRating,
                               unsigned short* seriesLinkId)PURE;
 };

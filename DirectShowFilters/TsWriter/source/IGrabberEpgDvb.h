@@ -78,7 +78,7 @@ DECLARE_INTERFACE_(IGrabberEpgDvb, IGrabber)
                               unsigned char* dvbParentalRatingCount,
                               unsigned char* starRating,
                               unsigned char* mpaaClassification,
-                              unsigned short* dishBevAdvisory,
+                              unsigned short* dishBevAdvisories,
                               unsigned char* vchipRating,
                               unsigned char* textCount)PURE;
   STDMETHOD_(bool, GetEventText)(THIS_ unsigned short serviceIndex,

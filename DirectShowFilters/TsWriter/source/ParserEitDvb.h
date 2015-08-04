@@ -131,7 +131,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
                                   unsigned char* dvbParentalRatingCount,
                                   unsigned char* starRating,
                                   unsigned char* mpaaClassification,
-                                  unsigned short* dishBevAdvisory,
+                                  unsigned short* dishBevAdvisories,
                                   unsigned char* vchipRating,
                                   unsigned char* textCount);
     STDMETHODIMP_(bool) GetEventText(unsigned short serviceIndex,
@@ -341,7 +341,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
           IsPreviouslyShown = false;
           StarRating = 0;             // default: [not available]
           MpaaClassification = 0xff;  // default: [not available]
-          DishBevAdvisory = 0;        // default: [not available]
+          DishBevAdvisories = 0;      // default: [not available]
           VchipRating = 0xff;         // default: [not available]
         }
 
@@ -394,7 +394,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
             DvbParentalRatings.size() != recordEvent->DvbParentalRatings.size() ||
             StarRating != recordEvent->StarRating ||
             MpaaClassification != recordEvent->MpaaClassification ||
-            DishBevAdvisory != recordEvent->DishBevAdvisory ||
+            DishBevAdvisories != recordEvent->DishBevAdvisories ||
             VchipRating != recordEvent->VchipRating ||
             Texts.size() != recordEvent->Texts.size()
           )
@@ -447,7 +447,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
 
         void Debug(const wchar_t* situation) const
         {
-          LogDebug(L"EIT DVB: event %s, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, event ID = %llu, start date/time = %llu, duration = %hu m, running status = %hhu, free CA mode = %d, reference service ID = %hu, reference event ID = %llu, series ID = %S, episode ID = %S, is HD = %d, is 3D = %d, is previously shown = %d, audio language count = %llu, subtitles language count = %llu, DVB content type count = %llu, DVB parental rating count = %llu, star rating = %hhu, MPAA classification = %hhu, Dish/BEV advisory = %hu, V-CHIP rating = %hhu, text count = %llu",
+          LogDebug(L"EIT DVB: event %s, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, event ID = %llu, start date/time = %llu, duration = %hu m, running status = %hhu, free CA mode = %d, reference service ID = %hu, reference event ID = %llu, series ID = %S, episode ID = %S, is HD = %d, is 3D = %d, is previously shown = %d, audio language count = %llu, subtitles language count = %llu, DVB content type count = %llu, DVB parental rating count = %llu, star rating = %hhu, MPAA classification = %hhu, Dish/BEV advisories = %hu, V-CHIP rating = %hhu, text count = %llu",
                     situation, TableId, OriginalNetworkId, TransportStreamId,
                     ServiceId, EventId, StartDateTime, Duration, RunningStatus,
                     FreeCaMode, ReferenceServiceId, ReferenceEventId,
@@ -458,7 +458,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
                     (unsigned long long)SubtitlesLanguages.size(),
                     (unsigned long long)DvbContentTypeIds.size(),
                     (unsigned long long)DvbParentalRatings.size(), StarRating,
-                    MpaaClassification, DishBevAdvisory, VchipRating,
+                    MpaaClassification, DishBevAdvisories, VchipRating,
                     (unsigned long long)Texts.size());
 
           CUtils::DebugVector(AudioLanguages, L"audio language(s)", true);
@@ -515,7 +515,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
         map<unsigned long, unsigned char> DvbParentalRatings;   // country code => rating
         unsigned char StarRating;
         unsigned char MpaaClassification;
-        unsigned short DishBevAdvisory;
+        unsigned short DishBevAdvisories;
         unsigned char VchipRating;
         map<unsigned long, CRecordEitEventText*> Texts;
     };
@@ -629,7 +629,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
                                               unsigned char dataLength,
                                               unsigned char& starRating,
                                               unsigned char& mpaaClassification,
-                                              unsigned short& advisory);
+                                              unsigned short& advisories);
     static bool DecodeDishTextDescriptor(unsigned char* data,
                                           unsigned char dataLength,
                                           unsigned char tableId,
@@ -641,7 +641,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
     static bool DecodeDishVchipDescriptor(unsigned char* data,
                                           unsigned char dataLength,
                                           unsigned char& vchipRating,
-                                          unsigned short& advisory);
+                                          unsigned short& advisories);
     static bool DecodeDishBevSeriesDescriptor(unsigned char* data,
                                               unsigned char dataLength,
                                               char** seriesId,

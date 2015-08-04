@@ -528,7 +528,7 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEvent(unsigned short serviceIndex,
                                             unsigned char* dvbParentalRatingCount,
                                             unsigned char* starRating,
                                             unsigned char* mpaaClassification,
-                                            unsigned short* dishBevAdvisory,
+                                            unsigned short* dishBevAdvisories,
                                             unsigned char* vchipRating,
                                             unsigned char* textCount)
 {
@@ -563,7 +563,7 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEvent(unsigned short serviceIndex,
   *isPreviouslyShown = recordEvent->IsPreviouslyShown;
   *starRating = recordEvent->StarRating;
   *mpaaClassification = recordEvent->MpaaClassification;
-  *dishBevAdvisory = recordEvent->DishBevAdvisory;
+  *dishBevAdvisories = recordEvent->DishBevAdvisories;
   *vchipRating = recordEvent->VchipRating;
   *textCount = (unsigned char)recordEvent->Texts.size();
 
@@ -1825,7 +1825,7 @@ void CParserEitDvb::CreatePremiereEvents(CRecordEitEvent& eventTemplate,
       e->DvbParentalRatings = eventTemplate.DvbParentalRatings; // map copy
       e->StarRating = eventTemplate.StarRating;
       e->MpaaClassification = eventTemplate.MpaaClassification;
-      e->DishBevAdvisory = eventTemplate.DishBevAdvisory;
+      e->DishBevAdvisories = eventTemplate.DishBevAdvisories;
       e->VchipRating = eventTemplate.VchipRating;
 
       CopyString(eventTemplate.SeriesId, &(e->SeriesId), L"a Premiere event series ID");
@@ -2434,7 +2434,7 @@ bool CParserEitDvb::DecodeEventDescriptors(unsigned char* sectionData,
                                                 length,
                                                 event.StarRating,
                                                 event.MpaaClassification,
-                                                event.DishBevAdvisory);
+                                                event.DishBevAdvisories);
       }
       else if (tag == 0x91 || tag == 0x92)  // Dish event name/description descriptor
       {
@@ -2503,7 +2503,7 @@ bool CParserEitDvb::DecodeEventDescriptors(unsigned char* sectionData,
         result = DecodeDishVchipDescriptor(&sectionData[pointer],
                                             length,
                                             event.VchipRating,
-                                            event.DishBevAdvisory);
+                                            event.DishBevAdvisories);
       }
       else if (tag == 0x96) // Dish/BEV series descriptor
       {
@@ -3219,7 +3219,7 @@ bool CParserEitDvb::DecodeDishBevRatingDescriptor(unsigned char* data,
                                                   unsigned char dataLength,
                                                   unsigned char& starRating,
                                                   unsigned char& mpaaClassification,
-                                                  unsigned short& advisory)
+                                                  unsigned short& advisories)
 {
   if (dataLength != 2)
   {
@@ -3258,10 +3258,10 @@ bool CParserEitDvb::DecodeDishBevRatingDescriptor(unsigned char* data,
     // bit 7 = mQ
     // bit 8 = L [coarse or crude language]
     // bit 9 (LSB) = S [sexual situations]
-    unsigned short dishBevAdvisory = ((data[0] & 3) << 8) | data[1];
-    advisory |= dishBevAdvisory;
-    //LogDebug(L"EIT DVB: Dish/BEV rating descriptor, star rating = %hhu, MPAA classification = %hhu, advisory = %hu",
-    //          starRating, mpaaClassification, dishBevAdvisory);
+    unsigned short dishBevAdvisories = ((data[0] & 3) << 8) | data[1];
+    advisories |= dishBevAdvisories;
+    //LogDebug(L"EIT DVB: Dish/BEV rating descriptor, star rating = %hhu, MPAA classification = %hhu, advisories = %hu",
+    //          starRating, mpaaClassification, dishBevAdvisories);
     return true;
   }
   catch (...)
@@ -3349,7 +3349,7 @@ bool CParserEitDvb::DecodeDishEpisodeInformationDescriptor(unsigned char* data,
 bool CParserEitDvb::DecodeDishVchipDescriptor(unsigned char* data,
                                               unsigned char dataLength,
                                               unsigned char& vchipRating,
-                                              unsigned short& advisory)
+                                              unsigned short& advisories)
 {
   if (dataLength != 2)
   {
@@ -3378,32 +3378,32 @@ bool CParserEitDvb::DecodeDishVchipDescriptor(unsigned char* data,
     // bit 5 = S [sexual situations]
     // bit 6 = V [violence]
     // bit 7 (LSB) = FV [fantasy violence]
-    unsigned char vchipAdvisory = data[1];
+    unsigned char vchipAdvisories = data[1];
 
-    // Translate the VCHIP advisory to be compatible with Dish/BEV.
-    if (vchipAdvisory & 1)
+    // Translate the VCHIP advisories to be compatible with Dish/BEV.
+    if (vchipAdvisories & 1)
     {
-      advisory |= 0x08;   // FV
+      advisories |= 0x08;   // FV
     }
-    if (vchipAdvisory & 2)
+    if (vchipAdvisories & 2)
     {
-      advisory |= 0x10;   // V
+      advisories |= 0x10;   // V
     }
-    if (vchipAdvisory & 4)
+    if (vchipAdvisories & 4)
     {
-      advisory |= 0x01;   // S
+      advisories |= 0x01;   // S
     }
-    if (vchipAdvisory & 8)
+    if (vchipAdvisories & 8)
     {
-      advisory |= 0x02;   // L
+      advisories |= 0x02;   // L
     }
-    if (vchipAdvisory & 0x10)
+    if (vchipAdvisories & 0x10)
     {
-      advisory |= 0x8000; // D is unique to VCHIP
+      advisories |= 0x8000; // D is unique to VCHIP
     }
 
-    //LogDebug(L"EIT DVB: Dish VCHIP descriptor, rating = %hhu, advisory = %hhu",
-    //          vchipRating, vchipAdvisory);
+    //LogDebug(L"EIT DVB: Dish VCHIP descriptor, rating = %hhu, advisories = %hhu",
+    //          vchipRating, vchipAdvisories);
     return true;
   }
   catch (...)
