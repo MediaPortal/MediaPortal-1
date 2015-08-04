@@ -22,11 +22,13 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -54,7 +56,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       { 0x08, "Social/Political/Economics" },
       { 0x09, "Education/Science/Factual" },
       { 0x0a, "Leisure/Hobbies" },
-      { 0x0b, "Special Characteristic" },
+      //{ 0x0b, "Special Characteristic" },
       { 0x0f, "User Defined" }
     };
 
@@ -133,14 +135,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       { 0xa4, "Fitness & Health" },
       { 0xa5, "Cooking" },
       { 0xa6, "Advertisement/Shopping" },
-      { 0xa7, "Gardening" },
+      { 0xa7, "Gardening" }
 
-      { 0xb0, "Original Language" },
+      /*{ 0xb0, "Original Language" },
       { 0xb1, "Black & White" },
       { 0xb2, "Unpublished" },
       { 0xb3, "Live Broadcast" },
       { 0xb4, "Plano-Stereoscopic" },
-      { 0xb5, "Local Or Regional" }
+      { 0xb5, "Local Or Regional" }*/
     };
           
     private static readonly IDictionary<byte, string> MAPPING_CONTENT_TYPES_DISH = new Dictionary<byte, string>(16)
@@ -968,7 +970,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// </summary>
     private void CollectEpgData()
     {
-      ICollection<EpgChannel> epgChannels = null;
+      IDictionary<IChannel, IList<EpgProgram>> epgChannels = null;
       try
       {
         try
@@ -986,11 +988,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           }
           else if (_isSeenDvb && _grabberDvb != null)
           {
-            epgChannels = CollectDvbData();
+            epgChannels = CollectEitData();
           }
           else
           {
-            epgChannels = new List<EpgChannel>(0);
+            epgChannels = new Dictionary<IChannel, IList<EpgProgram>>(0);
           }
         }
         catch (Exception ex)
@@ -998,10 +1000,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           this.LogError(ex, "EPG DVB: failed to collect data");
         }
 
-        foreach (EpgChannel c in epgChannels)
-        {
-          c.Programs.Sort();
-        }
         if (_callBack != null)
         {
           _callBack.OnEpgReceived(_currentTuningDetail, epgChannels);
@@ -1017,11 +1015,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       }
     }
 
-    private ICollection<EpgChannel> CollectMediaHighwayData()
+    private IDictionary<IChannel, IList<EpgProgram>> CollectMediaHighwayData()
     {
       uint eventCount = _grabberMhw.GetEventCount();
       this.LogDebug("EPG DVB: MediaHighway, initial event count = {0}", eventCount);
-      IDictionary<ulong, EpgChannel> epgChannels = new Dictionary<ulong, EpgChannel>();
+      IDictionary<ulong, List<EpgProgram>> channels = new Dictionary<ulong, List<EpgProgram>>(100);
 
       const ushort BUFFER_SIZE_SERVICE_NAME = 300;
       IntPtr bufferServiceName = Marshal.AllocCoTaskMem(BUFFER_SIZE_SERVICE_NAME);
@@ -1043,7 +1041,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         ushort duration;
         uint payPerViewId;
         byte descriptionLineCount;
-        uint validEventCount = 0;
         for (uint i = 0; i < eventCount; i++)
         {
           ushort bufferSizeServiceName = BUFFER_SIZE_SERVICE_NAME;
@@ -1077,26 +1074,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           }
 
           string title = TidyString(DvbTextConverter.Convert(bufferTitle, bufferSizeTitle));
-          if (string.IsNullOrEmpty(title) || title.Equals("."))
+          if (string.IsNullOrEmpty(title))
           {
             // Placeholder or dummy event => discard.
             continue;
           }
 
-          ulong channelKey = ((ulong)originalNetworkId << 32) | ((ulong)transportStreamId << 16) | serviceId;
-          EpgChannel epgChannel;
-          if (!epgChannels.TryGetValue(channelKey, out epgChannel))
-          {
-            // We need to use channel type that matches the tuned channel
-            // because the EPG data storage logic locates the corresponding
-            // channel record by type.
-            ChannelDvbBase dvbChannel = _currentTuningDetail.Clone() as ChannelDvbBase;
-            dvbChannel.OriginalNetworkId = (int)originalNetworkId;
-            dvbChannel.TransportStreamId = (int)transportStreamId;
-            dvbChannel.ServiceId = (int)serviceId;
-            epgChannel = new EpgChannel { Channel = dvbChannel };
-            epgChannels.Add(channelKey, epgChannel);
-          }
+          DateTime programStartTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+          programStartTime.AddSeconds(startDateTimeEpoch);
+          programStartTime = programStartTime.ToLocalTime();
+          EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
+          program.Titles.Add("und", title);
 
           string description = TidyString(DvbTextConverter.Convert(bufferDescription, bufferSizeDescription));
           for (byte j = 0; j < descriptionLineCount; j++)
@@ -1112,6 +1100,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
               description = string.Format("{0} {1}", description, TidyString(DvbTextConverter.Convert(bufferDescription, bufferSizeDescription)));
             }
           }
+          program.Descriptions.Add("und", description);
 
           string themeName = TidyString(DvbTextConverter.Convert(bufferThemeName, bufferSizeThemeName));
           if (!string.IsNullOrEmpty(themeName))
@@ -1121,19 +1110,35 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             {
               themeName = string.Format("{0}: {1}", themeName, subThemeName);
             }
+            program.Categories.Add(themeName);
           }
 
-          DateTime programStartTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-          programStartTime.AddSeconds(startDateTimeEpoch);
-          programStartTime = programStartTime.ToLocalTime();
-          EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
-          program.Text.Add(new EpgLanguageText("ALL", title, description, themeName, 0, string.Empty, -1));
-          epgChannel.Programs.Add(program);
-          validEventCount++;
+          ulong channelKey = ((ulong)originalNetworkId << 32) | ((ulong)transportStreamId << 16) | serviceId;
+          List<EpgProgram> programs;
+          if (!channels.TryGetValue(channelKey, out programs))
+          {
+            programs = new List<EpgProgram>(100);
+            channels.Add(channelKey, programs);
+          }
+          programs.Add(program);
         }
 
-        this.LogDebug("EPG DVB: MediaHighway, channel count = {0}, event count = {1}", epgChannels.Count, validEventCount);
-        return epgChannels.Values;
+        IDictionary<IChannel, IList<EpgProgram>> epgChannels = new Dictionary<IChannel, IList<EpgProgram>>(channels.Count);
+        int validEventCount = 0;
+        foreach (var channel in channels)
+        {
+          ChannelDvbBase dvbChannel = _currentTuningDetail.Clone() as ChannelDvbBase;
+          dvbChannel.OriginalNetworkId = (int)(channel.Key >> 32);
+          dvbChannel.TransportStreamId = (int)((channel.Key >> 16) & 0xffff);
+          dvbChannel.ServiceId = (int)channel.Key & 0xffff;
+          dvbChannel.OpenTvChannelId = 0;
+          channel.Value.Sort();
+          epgChannels.Add(dvbChannel, channel.Value);
+          validEventCount += channel.Value.Count;
+        }
+
+        this.LogDebug("EPG DVB: MediaHighway, channel count = {0}, event count = {1}", channels.Count, validEventCount);
+        return epgChannels;
       }
       finally
       {
@@ -1160,11 +1165,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       }
     }
 
-    private ICollection<EpgChannel> CollectOpenTvData()
+    private IDictionary<IChannel, IList<EpgProgram>> CollectOpenTvData()
     {
       uint eventCount = _grabberOpenTv.GetEventCount();
       this.LogDebug("EPG DVB: OpenTV, initial event count = {0}", eventCount);
-      IDictionary<ushort, EpgChannel> epgChannels = new Dictionary<ushort, EpgChannel>();
+      IDictionary<ushort, List<EpgProgram>> channels = new Dictionary<ushort, List<EpgProgram>>(100);
 
       const ushort BUFFER_SIZE_TITLE = 300;
       IntPtr bufferTitle = Marshal.AllocCoTaskMem(BUFFER_SIZE_TITLE);
@@ -1180,10 +1185,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         ushort duration;
         byte categoryId;
         byte subCategoryId;
-        bool isHighDefinition;  // TODO
-        byte parentalRating;    // TODO
-        ushort seriesLinkId;    // TODO
-        uint validEventCount = 0;
+        bool isHighDefinition;
+        bool hasSubtitles;
+        byte parentalRating;
+        ushort seriesLinkId;
         for (uint i = 0; i < eventCount; i++)
         {
           ushort bufferSizeTitle = BUFFER_SIZE_TITLE;
@@ -1203,6 +1208,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
                                                 out categoryId,
                                                 out subCategoryId,
                                                 out isHighDefinition,
+                                                out hasSubtitles,
                                                 out parentalRating,
                                                 out seriesLinkId);
           if (!result)
@@ -1218,22 +1224,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             continue;
           }
 
-          EpgChannel epgChannel;
-          if (!epgChannels.TryGetValue(channelId, out epgChannel))
+          DateTime programStartTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+          programStartTime.AddSeconds(startDateTimeEpoch);
+          programStartTime = programStartTime.ToLocalTime();
+          EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
+          string language = "eng";
+          if (string.Equals(RegionInfo.CurrentRegion.EnglishName, "Italy"))
           {
-            // We need to use channel type that matches the tuned channel
-            // because the EPG data storage logic locates the corresponding
-            // channel record by type.
-            ChannelDvbBase dvbChannel = _currentTuningDetail.Clone() as ChannelDvbBase;
-            dvbChannel.OpenTvChannelId = channelId;
-            epgChannel = new EpgChannel { Channel = dvbChannel };
-            epgChannels.Add(channelId, epgChannel);
+            language = "ita";
+          }
+
+          program.Titles.Add(language, title);
+          program.Categories.Add(GetOpenTvProgramCategoryDescription(categoryId, subCategoryId));
+          program.IsHighDefinition = isHighDefinition;
+          if (hasSubtitles)
+          {
+            // assumption: subtitles language matches the country
+            program.SubtitlesLanguages.Add(language);
+          }
+          string classification = GetOpenTvParentalRatingDescription(parentalRating);
+          if (!string.IsNullOrEmpty(classification))
+          {
+            program.Classifications.Add("OpenTV", classification);
+          }
+          if (seriesLinkId != 0 && seriesLinkId != 0xffff)
+          {
+            program.SeriesId = string.Format("OpenTV:{0}", seriesLinkId);
           }
 
           // When available, extended description seems to contain various event attributes.
           string description = TidyString(DvbTextConverter.Convert(bufferShortDescription, bufferSizeShortDescription));
           string extendedDescription = TidyString(DvbTextConverter.Convert(bufferExtendedDescription, bufferSizeExtendedDescription));
-          if (string.IsNullOrEmpty(description))
+          if (string.IsNullOrEmpty(description) || string.Equals(title, description))
           {
             description = extendedDescription;
           }
@@ -1248,18 +1270,30 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
               description += Environment.NewLine + extendedDescription;
             }
           }
+          program.Descriptions.Add(language, description);
 
-          DateTime programStartTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-          programStartTime.AddSeconds(startDateTimeEpoch);
-          programStartTime = programStartTime.ToLocalTime();
-          EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
-          program.Text.Add(new EpgLanguageText("ALL", title, description, GetOpenTvProgramCategoryDescription(categoryId, subCategoryId), 0, string.Empty, -1));
-          epgChannel.Programs.Add(program);
-          validEventCount++;
+          List<EpgProgram> programs;
+          if (!channels.TryGetValue(channelId, out programs))
+          {
+            programs = new List<EpgProgram>(100);
+            channels.Add(channelId, programs);
+          }
+          programs.Add(program);
         }
 
-        this.LogDebug("EPG DVB: OpenTV, channel count = {0}, event count = {1}", epgChannels.Count, validEventCount);
-        return epgChannels.Values;
+        IDictionary<IChannel, IList<EpgProgram>> epgChannels = new Dictionary<IChannel, IList<EpgProgram>>(channels.Count);
+        int validEventCount = 0;
+        foreach (var channel in channels)
+        {
+          ChannelDvbBase dvbChannel = _currentTuningDetail.Clone() as ChannelDvbBase;
+          dvbChannel.OpenTvChannelId = channel.Key;
+          channel.Value.Sort();
+          epgChannels.Add(dvbChannel, channel.Value);
+          validEventCount += channel.Value.Count;
+        }
+
+        this.LogDebug("EPG DVB: OpenTV, channel count = {0}, event count = {1}", channels.Count, validEventCount);
+        return epgChannels;
       }
       finally
       {
@@ -1278,89 +1312,321 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       }
     }
 
-    private ICollection<EpgChannel> CollectDvbData()
+    private IDictionary<IChannel, IList<EpgProgram>> CollectEitData()
     {
-      IDictionary<uint, EpgChannel> epgChannels = new Dictionary<uint, EpgChannel>();
-      /*ushort originalNetworkId = 0;
-      ushort transportStreamId = 0;
-      ushort serviceId = 0;
-      uint channelCount = 0;
-      for (uint x = 0; x < channelCount; ++x)
+      ushort serviceCount = _grabberDvb.GetServiceCount();
+      this.LogDebug("EPG DVB: EIT, initial service count = {0}", serviceCount);
+      IDictionary<IChannel, IList<EpgProgram>> channels = new Dictionary<IChannel, IList<EpgProgram>>(serviceCount);
+
+      const ushort BUFFER_SIZE_SERIES_ID = 300;
+      IntPtr bufferSeriesId = Marshal.AllocCoTaskMem(BUFFER_SIZE_SERIES_ID);
+      const ushort BUFFER_SIZE_EPISODE_ID = 300;
+      IntPtr bufferEpisodeId = Marshal.AllocCoTaskMem(BUFFER_SIZE_EPISODE_ID);
+      const byte ARRAY_SIZE_AUDIO_LANGUAGES = 20;
+      const byte ARRAY_SIZE_SUBTITLES_LANGUAGES = 20;
+      const byte ARRAY_SIZE_DVB_CONTENT_TYPE_IDS = 10;
+      const byte ARRAY_SIZE_DVB_PARENTAL_RATINGS = 10;
+      const ushort BUFFER_SIZE_TITLE = 300;
+      IntPtr bufferTitle = Marshal.AllocCoTaskMem(BUFFER_SIZE_TITLE);
+      const ushort BUFFER_SIZE_SHORT_DESCRIPTION = 1000;
+      IntPtr bufferShortDescription = Marshal.AllocCoTaskMem(BUFFER_SIZE_SHORT_DESCRIPTION);
+      const ushort BUFFER_SIZE_EXTENDED_DESCRIPTION = 1000;
+      IntPtr bufferExtendedDescription = Marshal.AllocCoTaskMem(BUFFER_SIZE_EXTENDED_DESCRIPTION);
+      try
       {
-        //_grabber.GetEPGChannel(x, out originalNetworkId, out transportStreamId, out serviceId);
-        // We need to use a matching channel type per card, because tuning details will be looked up with cardtype as filter.
-        ChannelDvbBase dvbChannel = (ChannelDvbBase)_currentTuningDetail.Clone();
-        dvbChannel.OriginalNetworkId = originalNetworkId;
-        dvbChannel.TransportStreamId = transportStreamId;
-        dvbChannel.ServiceId = serviceId;
-        EpgChannel epgChannel = new EpgChannel { Channel = dvbChannel };
-        uint eventCount = 0;
-        //_grabber.GetEPGEventCount(x, out eventCount);
-        for (uint i = 0; i < eventCount; ++i)
+        ulong eventId;
+        ulong startDateTimeEpoch;
+        ushort duration;
+        byte runningStatus;
+        bool freeCaMode;
+        ushort referenceServiceId;
+        ulong referenceEventId;
+        bool isHighDefinition;
+        bool isStandardDefinition;
+        bool isThreeDimensional;
+        bool isPreviouslyShown;
+        Iso639Code[] audioLanguages = new Iso639Code[ARRAY_SIZE_AUDIO_LANGUAGES];
+        Iso639Code[] subtitlesLanguages = new Iso639Code[ARRAY_SIZE_SUBTITLES_LANGUAGES];
+        ushort[] dvbContentTypeIds = new ushort[ARRAY_SIZE_DVB_CONTENT_TYPE_IDS];
+        Iso639Code[] dvbParentalRatingCountryCodes = new Iso639Code[ARRAY_SIZE_DVB_PARENTAL_RATINGS];
+        byte[] dvbParentalRatings = new byte[ARRAY_SIZE_DVB_PARENTAL_RATINGS];
+        byte starRating;
+        byte mpaaClassification;
+        ushort dishBevAdvisories;
+        byte vchipRating;
+        byte textCount;
+        Iso639Code language;
+        byte descriptionItemCount;
+        int validEventCount = 0;
+        for (ushort i = 0; i < serviceCount; i++)
         {
-          ulong startDateTimeEpoch;
-          ushort duration;
-          uint languageCount;
-          IntPtr ptrGenre;
-          int starRating;
-          IntPtr ptrClassification;
-          //_grabber.GetEPGEvent(x, i, out languageCount, out startDateTimeEpoch,
-          //                                  out duration, out ptrGenre, out starRating, out ptrClassification);
-          string genre = TidyString(DvbTextConverter.Convert(ptrGenre));
-          string classification = TidyString(DvbTextConverter.Convert(ptrClassification));
-
-          if (starRating < 1 || starRating > 7)
-            starRating = 0;
-
-          try
+          ushort originalNetworkId;
+          ushort transportStreamId;
+          ushort serviceId;
+          ushort eventCount;
+          if (!_grabberDvb.GetService(i, out originalNetworkId, out transportStreamId, out serviceId, out eventCount))
           {
+            this.LogWarn("EPG DVB: failed to get EIT service, service index = {0}, service count = {1}", i, serviceCount);
+            continue;
+          }
+
+          List<EpgProgram> programs = new List<EpgProgram>(eventCount);
+          for (ushort j = 0; j < eventCount; j++)
+          {
+            ushort bufferSizeSeriesId = BUFFER_SIZE_SERIES_ID;
+            ushort bufferSizeEpisodeId = BUFFER_SIZE_EPISODE_ID;
+            byte countAudioLanguages = ARRAY_SIZE_AUDIO_LANGUAGES;
+            byte countSubtitlesLanguages = ARRAY_SIZE_SUBTITLES_LANGUAGES;
+            byte countDvbContentTypeIds = ARRAY_SIZE_DVB_CONTENT_TYPE_IDS;
+            byte countDvbParentalRatings = ARRAY_SIZE_DVB_PARENTAL_RATINGS;
+            bool result = _grabberDvb.GetEvent(i, j,
+                                                out eventId,
+                                                out startDateTimeEpoch,
+                                                out duration,
+                                                out runningStatus,
+                                                out freeCaMode,
+                                                out referenceServiceId,
+                                                out referenceEventId,
+                                                bufferSeriesId,
+                                                ref bufferSizeSeriesId,
+                                                bufferEpisodeId,
+                                                ref bufferSizeEpisodeId,
+                                                out isHighDefinition,
+                                                out isStandardDefinition,
+                                                out isThreeDimensional,
+                                                out isPreviouslyShown,
+                                                audioLanguages,
+                                                ref countAudioLanguages,
+                                                subtitlesLanguages,
+                                                ref countSubtitlesLanguages,
+                                                dvbContentTypeIds,
+                                                ref countDvbContentTypeIds,
+                                                dvbParentalRatingCountryCodes,
+                                                dvbParentalRatings,
+                                                ref countDvbParentalRatings,
+                                                out starRating,
+                                                out mpaaClassification,
+                                                out dishBevAdvisories,
+                                                out vchipRating,
+                                                out textCount);
+            if (!result)
+            {
+              this.LogWarn("EPG DVB: failed to get EIT event, service index = {0}, service count = {1}, event index = {2}, event count = {3}", i, serviceCount, j, eventCount);
+              continue;
+            }
+
             DateTime programStartTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             programStartTime.AddSeconds(startDateTimeEpoch);
-            programStartTime.ToLocalTime();
-            EpgProgram epgProgram = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
-            for (int z = 0; z < languageCount; ++z)
+            programStartTime = programStartTime.ToLocalTime();
+            EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
+
+            for (byte k = 0; k < textCount; k++)
             {
-              uint languageId;
-              IntPtr ptrTitle;
-              IntPtr ptrDesc;
-              int parentalRating;
-              //_grabber.GetEPGLanguage(x, i, (uint)z, out languageId, out ptrTitle, out ptrDesc, out parentalRating);
-              string title = TidyString(DvbTextConverter.Convert(ptrTitle));
-              if (string.IsNullOrEmpty(title) || title.Equals("."))
+              ushort bufferSizeTitle = BUFFER_SIZE_TITLE;
+              ushort bufferSizeShortDescription = BUFFER_SIZE_SHORT_DESCRIPTION;
+              ushort bufferSizeExtendedDescription = BUFFER_SIZE_EXTENDED_DESCRIPTION;
+              result = _grabberDvb.GetEventText(i, j, k,
+                                                out language,
+                                                bufferTitle,
+                                                ref bufferSizeTitle,
+                                                bufferShortDescription,
+                                                ref bufferSizeShortDescription,
+                                                bufferExtendedDescription,
+                                                ref bufferSizeExtendedDescription,
+                                                out descriptionItemCount);
+              if (!result)
               {
-                // Placeholder or dummy program (eg. New Zealand DVB-T) => discard.
+                this.LogWarn("EPG DVB: failed to get EIT event text, service index = {0}, service count = {1}, event index = {2}, event count = {3}, text index = {4}, text count = {5}",
+                              i, serviceCount, j, eventCount, k, textCount);
                 continue;
               }
-              string language = "ALL";
-              if (languageId > 0)
+
+              string title = TidyString(DvbTextConverter.Convert(bufferTitle, bufferSizeTitle));
+              if (string.IsNullOrEmpty(title) || title.Equals("."))
               {
-                language += (char)((languageId >> 16) & 0xff);
-                language += (char)((languageId >> 8) & 0xff);
-                language += (char)((languageId) & 0xff);
-                language = TidyString(language);
+                // Placeholder or dummy event => discard.
+                continue;
               }
-              string description = TidyString(DvbTextConverter.Convert(ptrDesc));
-              EpgLanguageText epgLangague = new EpgLanguageText(language, title, description, genre, starRating,
-                                                                classification, parentalRating);
-              epgProgram.Text.Add(epgLangague);
+              program.Titles.Add(language.Code, title);
+
+              // When available, extended description seems to contain various event attributes.
+              string description = TidyString(DvbTextConverter.Convert(bufferShortDescription, bufferSizeShortDescription));
+              string extendedDescription = TidyString(DvbTextConverter.Convert(bufferExtendedDescription, bufferSizeExtendedDescription));
+              if (string.IsNullOrEmpty(description) || string.Equals(title, description))
+              {
+                description = extendedDescription;
+              }
+              else if (!string.IsNullOrEmpty(extendedDescription) && !description.Contains(extendedDescription))
+              {
+                if (extendedDescription.Contains(description))
+                {
+                  description = extendedDescription;
+                }
+                else
+                {
+                  description += Environment.NewLine + extendedDescription;
+                }
+              }
+
+              // Dish Network
+              if (originalNetworkId >= 4097 && originalNetworkId <= 4107)
+              {
+                description = ParseDishDescription(description, program);
+              }
+
+              Dictionary<string, string> premiereItems = new Dictionary<string, string>(5);
+              for (byte l = 0; l < descriptionItemCount; l++)
+              {
+                // Note: reusing buffers here.
+                ushort bufferSizeDescription = BUFFER_SIZE_SHORT_DESCRIPTION;
+                ushort bufferSizeText = BUFFER_SIZE_EXTENDED_DESCRIPTION;
+                result = _grabberDvb.GetEventDescriptionItem(i, j, k, l, bufferShortDescription, ref bufferSizeDescription, bufferExtendedDescription, ref bufferSizeText);
+                if (!result)
+                {
+                  this.LogWarn("EPG DVB: failed to get EIT event description item, service index = {0}, service count = {1}, event index = {2}, event count = {3}, text index = {4}, text count = {5}, item index = {6}, item count = {7}",
+                                i, serviceCount, j, eventCount, k, textCount, l, descriptionItemCount);
+                  continue;
+                }
+
+                string itemDescription = TidyString(DvbTextConverter.Convert(bufferShortDescription, bufferSizeDescription));
+                string itemText = TidyString(DvbTextConverter.Convert(bufferExtendedDescription, bufferSizeText));
+                if (itemDescription.StartsWith("Premiere order "))
+                {
+                  premiereItems.Add(itemDescription, itemText);
+                }
+                else
+                {
+                  HandleDescriptionItem(itemDescription, itemText, program, ref description);
+                }
+              }
+
+              // Handle Premiere order items separately for display order consistency.
+              if (premiereItems.Count > 0)
+              {
+                if (!string.IsNullOrEmpty(description))
+                {
+                  description += Environment.NewLine;
+                }
+                description += string.Format("Bestellnummer: {0}", premiereItems["Premiere order number"]);
+                description += string.Format("{0}Preis: {1}", Environment.NewLine, premiereItems["Premiere order price"]);
+                description += string.Format("{0}Telefonnummer: {1}", Environment.NewLine, premiereItems["Premiere order phone number"]);
+                description += string.Format("{0}SMS: {1}", Environment.NewLine, premiereItems["Premiere order SMS number"]);
+                description += string.Format("{0}URL: {1}", Environment.NewLine, premiereItems["Premiere order URL"]);
+              }
+
+              program.Descriptions.Add(language.Code, description);
             }
-            if (epgProgram.Text.Count > 0)
+
+            if (isHighDefinition)
             {
-              epgChannel.Programs.Add(epgProgram);
+              program.IsHighDefinition = true;
             }
+            else if (isStandardDefinition)
+            {
+              program.IsHighDefinition = false;
+            }
+            if (isThreeDimensional)
+            {
+              program.IsThreeDimensional = true;
+            }
+            if (isPreviouslyShown)
+            {
+              program.IsPreviouslyShown = true;
+            }
+            if (bufferSizeSeriesId > 0)
+            {
+              program.SeriesId = DvbTextConverter.Convert(bufferSeriesId, bufferSizeSeriesId);
+            }
+            if (bufferSizeEpisodeId > 0)
+            {
+              program.EpisodeId = DvbTextConverter.Convert(bufferEpisodeId, bufferSizeEpisodeId);
+            }
+            for (byte x = 0; x < countAudioLanguages; x++)
+            {
+              program.AudioLanguages.Add(audioLanguages[x].Code);
+            }
+            for (byte x = 0; x < countSubtitlesLanguages; x++)
+            {
+              program.SubtitlesLanguages.Add(subtitlesLanguages[x].Code);
+            }
+            for (byte x = 0; x < countDvbContentTypeIds; x++)
+            {
+              bool? tempIsLive;
+              bool? tempIsThreeDimensional;
+              program.Categories.Add(GetContentTypeDescription(dvbContentTypeIds[x], originalNetworkId, out tempIsLive, out tempIsThreeDimensional));
+              if (tempIsLive.HasValue)
+              {
+                program.IsLive = tempIsLive;
+              }
+              if (tempIsThreeDimensional.HasValue)
+              {
+                program.IsThreeDimensional |= tempIsThreeDimensional;
+              }
+            }
+            for (byte x = 0; x < countDvbParentalRatings; x++)
+            {
+              string parentalRating = GetParentalRatingDescription(dvbParentalRatings[x]);
+              if (parentalRating != null)
+              {
+                program.Classifications.Add(dvbParentalRatingCountryCodes[x].Code, parentalRating);
+              }
+            }
+            if (starRating > 0 && starRating < 8)
+            {
+              program.StarRating = (starRating + 1) / 2;    // 1 = 1 star, 2 = 1.5 stars etc.; max. value = 7
+              program.StarRatingMaximum = 4;
+            }
+            string mpaaClassificationDescription = GetMpaaClassificationDescription(mpaaClassification);
+            if (mpaaClassificationDescription != null)
+            {
+              program.Classifications.Add("MPAA", mpaaClassificationDescription);
+            }
+            program.Advisories = GetContentAdvisories(dishBevAdvisories);
+            string vchipRatingDescription = GetVchipRatingDescription(vchipRating);
+            if (vchipRatingDescription != null)
+            {
+              program.Classifications.Add("V-Chip", vchipRatingDescription);
+            }
+
+            programs.Add(program);
           }
-          catch (Exception ex)
-          {
-            this.LogError(ex);
-          }
+
+          ChannelDvbBase dvbChannel = _currentTuningDetail.Clone() as ChannelDvbBase;
+          dvbChannel.OriginalNetworkId = originalNetworkId;
+          dvbChannel.TransportStreamId = transportStreamId;
+          dvbChannel.ServiceId = serviceId;
+          dvbChannel.OpenTvChannelId = 0;
+          programs.Sort();
+          channels.Add(dvbChannel, programs);
+          validEventCount += programs.Count;
         }
 
-        if (epgChannel.Programs.Count > 0)
+        this.LogDebug("EPG DVB: EIT, channel count = {0}, event count = {1}", channels.Count, validEventCount);
+        return channels;
+      }
+      finally
+      {
+        if (bufferSeriesId != IntPtr.Zero)
         {
-          epgChannels.Add(x, epgChannel);
+          Marshal.FreeCoTaskMem(bufferSeriesId);
         }
-      }*/
-      return epgChannels.Values;
+        if (bufferEpisodeId != IntPtr.Zero)
+        {
+          Marshal.FreeCoTaskMem(bufferEpisodeId);
+        }
+        if (bufferTitle != IntPtr.Zero)
+        {
+          Marshal.FreeCoTaskMem(bufferTitle);
+        }
+        if (bufferShortDescription != IntPtr.Zero)
+        {
+          Marshal.FreeCoTaskMem(bufferShortDescription);
+        }
+        if (bufferExtendedDescription != IntPtr.Zero)
+        {
+          Marshal.FreeCoTaskMem(bufferExtendedDescription);
+        }
+      }
     }
 
     private static string TidyString(string s)
@@ -1372,8 +1638,206 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       return s.Trim();
     }
 
-    private static string GetContentTypeDescription(ushort contentTypeId, ushort originalNetworkId)
+    private static void HandleDescriptionItem(string itemName, string itemText, EpgProgram program, ref string description)
     {
+      // Fake items added by TsWriter.
+      if (string.Equals(itemName, "Dish episode info"))
+      {
+        // Example: {0}{1|Don't Worry, Speed Racer}{31|Charlie Sheen}{32|Jon Cryer}{33|Angus T. Jones}{5|When Jake tells Charlie and Alan that he often overhears Judith and Herb (Ryan Stiles) making out, it triggers a repressed memory for Charlie.}{6|CC}{7|Stereo}
+        foreach (string section in itemText.Split(new char[] { '}', '{' }, StringSplitOptions.RemoveEmptyEntries))
+        {
+          string[] parts = section.Split('|');
+          int sectionType;
+          if (int.TryParse(parts[0], out sectionType))
+          {
+            if (sectionType == 0)
+            {
+              // unknown meaning
+            }
+            else if (parts.Length > 1)
+            {
+              if (sectionType == 1)
+              {
+                program.EpisodeName = parts[1];
+              }
+              else if (sectionType >= 31 && sectionType <= 49)  // Note: only seen 31, 32 and 33. Assuming 34-49 are the same.
+              {
+                if (!program.Actors.Contains(parts[1]))
+                {
+                  program.Actors.Add(parts[1]);
+                }
+              }
+              else if (sectionType == 5)
+              {
+                string shortDescription = parts[1];
+                if (shortDescription.EndsWith(" (HD)"))
+                {
+                  program.IsHighDefinition = true;
+                  shortDescription.Substring(0, shortDescription.Length - " (HD)".Length);
+                }
+                if (shortDescription.EndsWith(" New."))
+                {
+                  program.IsPreviouslyShown = false;
+                  shortDescription.Substring(0, shortDescription.Length - " New.".Length);
+                }
+                if (!description.Contains(shortDescription))
+                {
+                  description = shortDescription + Environment.NewLine + description;
+                }
+              }
+              else if (sectionType == 6)
+              {
+                if (parts[1].Equals("CC") && !program.SubtitlesLanguages.Contains("eng"))
+                {
+                  program.SubtitlesLanguages.Add("eng");
+                }
+              }
+              else if (sectionType == 7)
+              {
+                // nothing valuable
+              }
+              else
+              {
+                Log.Warn("EPG DVB: failed to interpret Dish Network episode detail, section type = {0}, section content = {1}", sectionType, section);
+              }
+            }
+            else
+            {
+              Log.Warn("EPG DVB: failed to interpret Dish Network episode detail, section type = {0}", sectionType);
+            }
+          }
+          else
+          {
+            Log.Warn("EPG DVB: failed to interpret Dish Network episode detail, section = {0}", section);
+          }
+        }
+        return;
+      }
+
+      if (
+        string.Equals(itemName, "actors", StringComparison.InvariantCultureIgnoreCase) ||
+        string.Equals(itemName, "int", StringComparison.InvariantCultureIgnoreCase)
+      )
+      {
+        foreach (string actor in itemText.Split(','))
+        {
+          string actorTemp = actor.Trim();
+          if (!string.IsNullOrEmpty(actorTemp) && !program.Actors.Contains(actorTemp))
+          {
+            program.Actors.Add(actorTemp);
+          }
+        }
+        return;
+      }
+
+      if (
+        itemName.StartsWith("director", StringComparison.InvariantCultureIgnoreCase) ||
+        string.Equals(itemName, "dir", StringComparison.InvariantCultureIgnoreCase)
+      )
+      {
+        foreach (string director in itemText.Split(','))
+        {
+          string directorTemp = director.Trim();
+          if (!string.IsNullOrEmpty(directorTemp) && !program.Directors.Contains(directorTemp))
+          {
+            program.Directors.Add(directorTemp);
+          }
+        }
+        return;
+      }
+
+      if (string.Equals(itemName, "gui", StringComparison.InvariantCultureIgnoreCase))
+      {
+        foreach (string writer in itemText.Split(','))
+        {
+          string writerTemp = writer.Trim();
+          if (!string.IsNullOrEmpty(writerTemp) && !program.Writers.Contains(writerTemp))
+          {
+            program.Writers.Add(writerTemp);
+          }
+        }
+        return;
+      }
+
+      if (
+        string.Equals(itemName, "production year", StringComparison.InvariantCultureIgnoreCase) ||
+        string.Equals(itemName, "year", StringComparison.InvariantCultureIgnoreCase) ||
+        string.Equals(itemName, "año", StringComparison.InvariantCultureIgnoreCase)
+      )
+      {
+        ushort year;
+        if (ushort.TryParse(itemText, out year))
+        {
+          program.ProductionYear = year;
+        }
+        else
+        {
+          Log.Warn("EPG DVB: failed to interpret production year description item, item name = {0}, item text = {1}", itemName, itemText);
+        }
+        return;
+      }
+
+      if (
+        string.Equals(itemName, "country", StringComparison.InvariantCultureIgnoreCase) ||
+        string.Equals(itemName, "nac", StringComparison.InvariantCultureIgnoreCase)
+      )
+      {
+        program.ProductionCountry = itemText;
+        return;
+      }
+
+      if (string.Equals(itemName, "episode", StringComparison.InvariantCultureIgnoreCase))
+      {
+        program.EpisodeName = itemText;
+        return;
+      }
+
+      if (string.Equals(itemName, "tep", StringComparison.InvariantCultureIgnoreCase))
+      {
+        string[] parts = itemText.Split(':');
+        if (parts.Length == 2)
+        {
+          int seasonNumber;
+          int episodeNumber;
+          if (int.TryParse(parts[0], out seasonNumber) && int.TryParse(parts[1], out episodeNumber))
+          {
+            program.SeasonNumber = seasonNumber;
+            program.EpisodeNumber = episodeNumber;
+            return;
+          }
+        }
+        Log.Warn("EPG DVB: failed to interpret season/episode number description item, item text = {0}", itemText);
+        return;
+      }
+
+      if (string.Equals(itemName, "seriesid", StringComparison.InvariantCultureIgnoreCase))
+      {
+        program.SeriesId = itemText;
+        return;
+      }
+
+      if (string.Equals(itemName, "seasonid", StringComparison.InvariantCultureIgnoreCase))
+      {
+        if (string.IsNullOrEmpty(program.SeriesId))   // Prefer series ID over season ID.
+        {
+          program.SeriesId = itemText;
+        }
+        return;
+      }
+
+      if (string.Equals(itemName, "episodeid", StringComparison.InvariantCultureIgnoreCase))
+      {
+        program.EpisodeId = itemText;
+        return;
+      }
+
+      Log.Warn("EPG DVB: failed to interpret description item, item name = {0}, item text = {1}", itemName, itemText);
+    }
+
+    private static string GetContentTypeDescription(ushort contentTypeId, ushort originalNetworkId, out bool? isLive, out bool? isThreeDimensional)
+    {
+      isLive = null;
+      isThreeDimensional = null;
       byte level1Id = (byte)(contentTypeId >> 12);
       if (level1Id == 0xf)  // user defined
       {
@@ -1396,6 +1860,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       }
 
       byte level2Id = (byte)((contentTypeId >> 8) & 0x0f);
+
+      // special characteristics
+      if (level1Id == 0xb)
+      {
+        if (level2Id == 3)
+        {
+          isLive = true;
+        }
+        else if (level2Id == 4)
+        {
+          isThreeDimensional = true;
+        }
+        return null;
+      }
 
       string level1Text;
       if (!MAPPING_CONTENT_TYPES_DVB.TryGetValue(level1Id, out level1Text))
@@ -1565,9 +2043,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             case 12:
               return "MA15+";   // formerly MA
             case 14:
-              return "R18+";    // formerly AV (suitable for adult viewers only - violent content); may no longer be used, or merged with MA15+
+              return "AV15+";   // formerly AV (suitable for adult viewers only - violent content); may no longer be used, or merged with MA15+... or may be R18+ if 15 is X18+
             case 15:
-              return "X18+";    // formerly R; may be R18+
+              return "R18+";    // formerly R; may be X18+
           }
         }
         else if (countryName.Equals("Italy"))
@@ -1640,118 +2118,177 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       return string.Format("Min. age {0}", rating + 3);
     }
 
-    private static string GetDishBevRatingDescription(byte mpaaClassification, byte vchipRating, ushort advisory)
+    private static string GetMpaaClassificationDescription(byte classification)
     {
-      string rating = null;
-      if (mpaaClassification >= 0 && mpaaClassification <= 7)
+      // Note: there is some uncertainty about values 5, 6 and 7. Our old
+      // code differs with MythTV, and this code differs from the ATSC RRT.
+      switch (classification)
       {
-        // Note: there is some uncertainty about values 5, 6 and 7. Our old
-        // code differs with MythTV. This code follows the ATSC RRT for rating
-        // region 1.
-        switch (mpaaClassification)
-        {
-          case 0:
-            rating = "N/A";     // not applicable
-            break;
-          case 1:
-            rating = "G";       // general
-            break;
-          case 2:
-            rating = "PG";      // parental guidance
-            break;
-          case 3:
-            rating = "PG-13";   // parental guidance under 13
-            break;
-          case 4:
-            rating = "R";       // restricted
-            break;
-          case 5:
-            rating = "NC-17";   // nobody 17 and under
-            break;
-          case 6:
-            rating = "X";       // nobody 17 and under (explicit)
-            break;
-          case 7:
-            rating = "NR";      // not rated
-            break;
-        }
+        case 1:
+          return "G";       // general
+        case 2:
+          return "PG";      // parental guidance
+        case 3:
+          return "PG-13";   // parental guidance under 13
+        case 4:
+          return "R";       // restricted
+        case 5:
+          return "NC-17";   // nobody 17 and under
+        case 6:
+          return "NR";      // not rated
       }
-      if (vchipRating >= 0 && vchipRating <= 6)
+      return null;
+    }
+
+    private static ContentAdvisory GetContentAdvisories(ushort advisories)
+    {
+      ContentAdvisory advisoryFlags = ContentAdvisory.None;
+      if ((advisories & 0x01) != 0)
       {
-        string rating2 = string.Empty;
-        switch (vchipRating)
-        {
-          case 0:
-            rating2 = "None";   // not rated/applicable
-            break;
-          case 1:
-            rating2 = "TV-Y";   // all children
-            break;
-          case 2:
-            rating2 = "TV-Y7";  // children 7 and older
-            break;
-          case 3:
-            rating2 = "TV-G";   // general audience
-            break;
-          case 4:
-            rating2 = "TV-PG";  // parental guidance
-            break;
-          case 5:
-            rating2 = "TV-14";  // adults 14 and older
-            break;
-          case 6:
-            rating2 = "TV-MA";  // mature audience
-            break;
-        }
-        if (rating != null)
-        {
-          rating = string.Format("{0} {1}", rating, rating2);
-        }
-        else
-        {
-          rating = rating2;
-        }
+        advisoryFlags |= ContentAdvisory.SexualSituations;
       }
-      if (rating == null || advisory == 0 || advisory == 0xffff)
+      if ((advisories & 0x02) != 0)
       {
-        return rating;
+        advisoryFlags |= ContentAdvisory.CourseOrCrudeLanguage;
+      }
+      if ((advisories & 0x04) != 0)
+      {
+        advisoryFlags |= ContentAdvisory.MildSensuality;
+      }
+      if ((advisories & 0x08) != 0)
+      {
+        advisoryFlags |= ContentAdvisory.FantasyViolence;
+      }
+      if ((advisories & 0x10) != 0)
+      {
+        advisoryFlags |= ContentAdvisory.Violence;
+      }
+      if ((advisories & 0x20) != 0)
+      {
+        advisoryFlags |= ContentAdvisory.MildPeril;
+      }
+      if ((advisories & 0x40) != 0)
+      {
+        advisoryFlags |= ContentAdvisory.Nudity;
+      }
+      if ((advisories & 0x8000) != 0)
+      {
+        advisoryFlags |= ContentAdvisory.SuggestiveDialogue;
+      }
+      return advisoryFlags;
+    }
+
+    private static string GetVchipRatingDescription(byte rating)
+    {
+      switch (rating)
+      {
+        case 1:
+          return "TV-Y";    // all children
+        case 2:
+          return "TV-Y7";   // children 7 and older
+        case 3:
+          return "TV-G";    // general audience
+        case 4:
+          return "TV-PG";   // parental guidance
+        case 5:
+          return "TV-14";   // adults 14 and older
+        case 6:
+          return "TV-MA";   // mature audience
+      }
+      return null;
+    }
+
+    private static string ParseDishDescription(string description, EpgProgram program)
+    {
+      // (<episode name>\r)? <category name>. (<CSV actors>.  \(<year>\))? <description>
+      // <description> may end with zero or more of:
+      // - New.
+      // - Season Premiere.
+      // - Series Premiere.
+      // - Premiere.
+      // - Season Finale.
+      // - Series Finale.
+      // - Finale.
+      // - (HD)
+      // - (DD)
+      // - (SAP)
+      // - (<PPV ID>) eg. (CE79D)
+      // - (CC)
+      // - (Stereo)
+      int index = description.IndexOf((char)0xd);
+      if (index > 0)
+      {
+        program.EpisodeName = description.Substring(0, index);
+        description = description.Substring(index);
+      }
+      description = description.Trim();
+
+      foreach (string contentType in MAPPING_CONTENT_TYPES_DISH.Values)
+      {
+        if (description.StartsWith(contentType + ". "))
+        {
+          description = description.Substring(contentType.Length + 2);
+          break;
+        }
       }
 
-      List<string> advisories = new List<string>(10);
-      if ((advisory & 0x01) != 0)
+      Match m = Regex.Match(description, @"(  \(([12][0-9]{3})\) )");
+      if (m.Success)
       {
-        advisories.Add("S");    // sexual situations
+        program.ProductionYear = ushort.Parse(m.Groups[2].Captures[0].Value);
+        index = description.IndexOf(m.Groups[1].Captures[0].Value);
+        if (index > 0)
+        {
+          string people = description.Substring(0, index - 1);
+          foreach (string person in people.Split(new string[] { ", " }, StringSplitOptions.None))
+          {
+            if (person.StartsWith("Voice of: "))
+            {
+              program.Actors.Add(person.Substring("Voice of: ".Length));
+              continue;
+            }
+            program.Actors.Add(person);
+          }
+        }
+        description = description.Substring(index + 8);
       }
-      if ((advisory & 0x02) != 0)
+
+      index = description.IndexOf(" (HD)");
+      if (index >= 0)
       {
-        advisories.Add("L");    // coarse or crude language
+        program.IsHighDefinition = true;
+        description = description.Remove(index, " (HD)".Length);
       }
-      if ((advisory & 0x04) != 0)
+
+      index = description.IndexOf(" (CC)");
+      if (index >= 0)
       {
-        advisories.Add("mQ");   // ???
+        // assumption: language is English
+        if (!program.SubtitlesLanguages.Contains("eng"))
+        {
+          program.SubtitlesLanguages.Add("eng");
+        }
+        description = description.Remove(index, " (CC)".Length);
       }
-      if ((advisory & 0x08) != 0)
+
+      index = description.IndexOf(" New.");
+      if (index >= 0)
       {
-        advisories.Add("FV");   // fantasy violence
+        program.IsPreviouslyShown = false;
+        description = description.Remove(index, " New.".Length);
       }
-      if ((advisory & 0x10) != 0)
+
+      if (description.Contains(" Series Premiere."))
       {
-        advisories.Add("V");    // violence
+        program.SeasonNumber = 1;
+        program.EpisodeNumber = 1;
       }
-      if ((advisory & 0x20) != 0)
+      else if (description.Contains(" Season Premiere."))
       {
-        advisories.Add("mK");   // ???
+        program.EpisodeNumber = 1;
       }
-      if ((advisory & 0x40) != 0)
-      {
-        advisories.Add("N");    // nudity
-      }
-      if ((advisory & 0x8000) != 0)
-      {
-        // VCHIP only
-        advisories.Add("D");    // suggestive dialogue
-      }
-      return string.Format("{0} {1}", rating, string.Join(", ", advisories));
+
+      return description;
     }
 
     #region ICallBackGrabber members

@@ -88,7 +88,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="extendedDescriptionBufferSize">As an input, the size of the <paramref name="extendedDescription">extended description buffer</paramref>; as an output, the consumed buffer size.</param>
     /// <param name="categoryId">The identifier of the programme category that the event is associated with, if any.</param>
     /// <param name="subCategoryId">The identifier of the programme category sub-category that the event is associated with, if any.</param>
-    /// <param name="isHighDefinition">An indication of whether the event's video will by high definition.</param>
+    /// <param name="isHighDefinition">An indication of whether the event's video will be high definition.</param>
     /// <param name="hasSubtitles">An indication of whether the event will have subtitles available.</param>
     /// <param name="parentalRating">The event's parental rating (classification), if any.</param>
     /// <param name="seriesLinkId">The identifier that links this event to other events from the same series. Value is <c>0xffff</c> if not available.</param>

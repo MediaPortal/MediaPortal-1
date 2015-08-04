@@ -30,8 +30,7 @@ using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG;
 using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation;
 using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Services;
@@ -136,7 +135,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// </summary>
     /// <param name="tuningDetail">The tuning details of the transmitter from which the EPG was grabbed.</param>
     /// <param name="epg">The grabbed data.</param>
-    public void OnEpgReceived(IChannel tuningDetail, ICollection<EpgChannel> epg)
+    public void OnEpgReceived(IChannel tuningDetail, IDictionary<IChannel, IList<EpgProgram>> epg)
     {
       try
       {
@@ -353,7 +352,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// <summary>
     /// workerthread which will update the database with the new epg received
     /// </summary>
-    private void UpdateDatabaseThread(IChannel tuningDetail, ICollection<EpgChannel> epg)
+    private void UpdateDatabaseThread(IChannel tuningDetail, IDictionary<IChannel, IList<EpgProgram>> epg)
     {
       int cardId = _user.CardId;
       this.LogInfo("Epg: card:{0} Updating database with new programs", cardId);
@@ -361,7 +360,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       _dbUpdater.ReloadConfig();
       try
       {
-        foreach (EpgChannel epgChannel in epg)
+        foreach (var epgChannel in epg)
         {
           _dbUpdater.UpdateEpgForChannel(tuningDetail, epgChannel);
           if (_state != EpgState.Updating)

@@ -115,8 +115,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="seriesIdBufferSize">As an input, the size of the <paramref name="seriesId">series identifier buffer</paramref>; as an output, the consumed buffer size.</param>
     /// <param name="episodeId">A buffer containing the event's episode identifier, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="episodeIdBufferSize">As an input, the size of the <paramref name="episodeId">episode identifier buffer</paramref>; as an output, the consumed buffer size.</param>
-    /// <param name="isHighDefinition">An indication of whether the event's video will by high definition.</param>
-    /// <param name="isThreeDimensional">An indication of whether the event's video will by three dimensional.</param>
+    /// <param name="isHighDefinition">An indication of whether the event's video will be high definition.</param>
+    /// <param name="isStandardDefinition">An indication of whether the event's video will be standard definition.</param>
+    /// <param name="isThreeDimensional">An indication of whether the event's video will be three dimensional.</param>
     /// <param name="isPreviouslyShown">An indication of whether the event has previously been shown.</param>
     /// <param name="audioLanguages">The languages in which the event's audio will be available. The caller must allocate this array.</param>
     /// <param name="audioLanguageCount">As an input, the size of the <paramref name="audioLanguages">audio languages array</paramref>; as an output, the consumed array size.</param>
@@ -149,6 +150,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                   IntPtr episodeId,
                   ref ushort episodeIdBufferSize,
                   [MarshalAs(UnmanagedType.I1)] out bool isHighDefinition,
+                  [MarshalAs(UnmanagedType.I1)] out bool isStandardDefinition,
                   [MarshalAs(UnmanagedType.I1)] out bool isThreeDimensional,
                   [MarshalAs(UnmanagedType.I1)] out bool isPreviouslyShown,
                   [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 17)] Iso639Code[] audioLanguages,

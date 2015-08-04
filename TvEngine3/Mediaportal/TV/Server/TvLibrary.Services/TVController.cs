@@ -50,7 +50,6 @@ using Mediaportal.TV.Server.TVLibrary.EventDispatchers;
 using Mediaportal.TV.Server.TVLibrary.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc.Enum;
@@ -3514,11 +3513,11 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// <summary>
     /// This method will be called by the EPG grabber.
     /// </summary>
-    public void OnImportEpgPrograms(EpgChannel epgChannel)
+    public void OnImportEpgPrograms(int channelId)
     {
       try
       {
-        TvServerEventArgs eventArgs = new TvServerEventArgs(TvServerEventType.ImportEpgPrograms, epgChannel);
+        TvServerEventArgs eventArgs = new TvServerEventArgs(TvServerEventType.ImportEpgPrograms, channelId);
         Fire(this, eventArgs);
       }
       catch (Exception ex)

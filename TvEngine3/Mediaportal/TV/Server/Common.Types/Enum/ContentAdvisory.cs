@@ -62,6 +62,16 @@ namespace Mediaportal.TV.Server.Common.Types.Enum
     /// Suggestive dialogue.
     /// </summary>
     [Description("D")]
-    SuggestiveDialog = 32
+    SuggestiveDialogue = 32,
+    /// <summary>
+    /// Mild sensuality.
+    /// </summary>
+    [Description("mQ")]
+    MildSensuality = 64,
+    /// <summary>
+    /// Mild peril.
+    /// </summary>
+    [Description("mK")]
+    MildPeril = 128
   }
 }

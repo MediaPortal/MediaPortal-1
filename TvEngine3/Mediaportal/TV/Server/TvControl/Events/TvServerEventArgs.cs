@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
@@ -39,35 +38,35 @@ namespace Mediaportal.TV.Server.TVControl.Events
     [DataMember]
     private readonly IUser _user;
 
-    [DataMember] 
+    [DataMember]
     private readonly IVirtualCard _card;
 
     [NonSerialized]
     private readonly IChannel _channel;
 
-    [DataMember] 
+    [DataMember]
     private readonly int _schedule;
 
-    [DataMember] 
+    [DataMember]
     private readonly int _recording;
 
-    [DataMember] 
+    [DataMember]
     private int _conflict;
 
     // Added by Broce for exchanges between TVPlugin & ConflictsManager
-    [DataMember] 
+    [DataMember]
     private IList<int> _schedules;
 
-    [DataMember] 
+    [DataMember]
     private IList<int> _conflicts;
 
-    [DataMember] 
+    [DataMember]
     private object _argsUpdatedState;
 
-    [NonSerialized]
-    private EpgChannel _epgChannel;
+    [DataMember]
+    private int _epgChannelId;
 
-    [DataMember] 
+    [DataMember]
     private readonly TvServerEventType _eventType;
 
     #endregion
@@ -125,7 +124,6 @@ namespace Mediaportal.TV.Server.TVControl.Events
       _eventType = eventType;
       _card = card;
       _user = user;
-      _channel = channel;
       _schedule = scheduleId;
       _recording = recordingId;
     }
@@ -142,7 +140,6 @@ namespace Mediaportal.TV.Server.TVControl.Events
       _eventType = eventType;
       _card = card;
       _user = user;
-      _channel = channel;
       _conflict = conflictId;
     }
 
@@ -166,11 +163,11 @@ namespace Mediaportal.TV.Server.TVControl.Events
     /// Initializes a new instance of the <see cref="TvServerEventArgs"/> class.
     /// </summary>
     /// <param name="eventType">Type of the event.</param>
-    /// <param name="epgChannel">The epg channel</param>
-    public TvServerEventArgs(TvServerEventType eventType, EpgChannel epgChannel)
+    /// <param name="channelId">The identifer of the channel whose EPG has been updated.</param>
+    public TvServerEventArgs(TvServerEventType eventType, int channelId)
     {
       _eventType = eventType;
-      _epgChannel = epgChannel;
+      _epgChannelId = channelId;
     }
 
     #endregion
@@ -199,7 +196,7 @@ namespace Mediaportal.TV.Server.TVControl.Events
     /// Gets the channel.
     /// </summary>
     /// <value>The channel.</value>    
-    public IChannel channel
+    public IChannel Channel
     {
       get { return _channel; }
     }
@@ -254,11 +251,10 @@ namespace Mediaportal.TV.Server.TVControl.Events
     /// <summary>
     /// The received epgChannel
     /// </summary>
-    [System.Xml.Serialization.XmlIgnore]
-    public EpgChannel EpgChannel
+    public int EpgChannelId
     {
-      get { return _epgChannel; }
-      set { _epgChannel = value; }
+      get { return _epgChannelId; }
+      set { _epgChannelId = value; }
     }
 
     //

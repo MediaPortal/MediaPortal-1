@@ -20,7 +20,7 @@
 
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
 {
@@ -39,6 +39,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     /// </summary>
     /// <param name="tuningDetail">The tuning details of the transmitter from which the EPG was grabbed.</param>
     /// <param name="epg">The grabbed data.</param>
-    void OnEpgReceived(IChannel tuningDetail, ICollection<EpgChannel> epg);
+    void OnEpgReceived(IChannel tuningDetail, IDictionary<IChannel, IList<EpgProgram>> epg);
   }
 }

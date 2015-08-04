@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   internal struct Iso639Code
   {
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 4)]
-    string Code;
+    public string Code;
 
     public override string ToString()
     {

@@ -186,9 +186,7 @@
     <Compile Include="Implementations\Channel\ChannelDvbC.cs" />
     <Compile Include="Implementations\Channel\ChannelDvbS2.cs" />
     <Compile Include="Implementations\Channel\ChannelDvbT.cs" />
-    <Compile Include="Epg\EpgChannel.cs" />
-    <Compile Include="Epg\EpgLanguageText.cs" />
-    <Compile Include="Epg\EpgProgram.cs" />
+    <Compile Include="Implementations\EpgProgram.cs" />
     <Compile Include="Interfaces\Channel\IChannel.cs" />
     <Compile Include="Interfaces\Tuner\IQuality.cs" />
     <Compile Include="Interfaces\Tuner\ITuner.cs" />

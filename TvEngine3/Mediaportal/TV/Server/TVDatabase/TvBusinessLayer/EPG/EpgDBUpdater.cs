@@ -20,13 +20,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities.Cache;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
@@ -34,7 +33,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
 {
   public class EpgDBUpdater
   {
-    public delegate void OnImportProgramsForChannel(EpgChannel channel);
+    public delegate void OnImportProgramsForChannel(int channelId);
 
     #region Variables
 
@@ -62,7 +61,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       _epgLanguages = SettingsManagement.GetValue("epgLanguages", string.Empty);
     }
 
-    public void UpdateEpgForChannel(IChannel tuningDetail, EpgChannel epgChannel)
+    public void UpdateEpgForChannel(IChannel tuningDetail, KeyValuePair<IChannel, IList<EpgProgram>> epgChannel)
     {
       Channel dbChannel = IsInsertAllowed(tuningDetail, epgChannel);
       if (dbChannel == null)
@@ -76,10 +75,10 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       int countDeleted = 0;
 
       ProgramManagement.DeleteOldPrograms(dbChannel.IdChannel);
-      IList<Program> existingPrograms = ProgramManagement.GetPrograms(dbChannel.IdChannel, epgChannel.Programs[0].StartTime);
+      IList<Program> existingPrograms = ProgramManagement.GetPrograms(dbChannel.IdChannel, epgChannel.Value[0].StartTime);
       IList<Program> programsToAdd = new List<Program>();
       int existingProgramIndex = 0;
-      foreach (EpgProgram program in epgChannel.Programs)
+      foreach (EpgProgram program in epgChannel.Value)
       {
         if (existingProgramIndex >= existingPrograms.Count)
         {
@@ -143,7 +142,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       // Raise an event with the data so that other plugins can handle the data on their own.
       if (_importDelegate != null)
       {
-        _importDelegate(epgChannel);
+        _importDelegate(dbChannel.IdChannel);
       }
     }
 
@@ -151,16 +150,16 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
 
     #region private functions
 
-    private Channel IsInsertAllowed(IChannel sourceTuningDetail, EpgChannel epgChannel)
+    private Channel IsInsertAllowed(IChannel sourceTuningDetail, KeyValuePair<IChannel, IList<EpgProgram>> epgChannel)
     {
-      ChannelDvbBase dvbChannel = epgChannel.Channel as ChannelDvbBase;
+      ChannelDvbBase dvbChannel = epgChannel.Key as ChannelDvbBase;
       if (dvbChannel == null)
       {
         this.LogError("{0}: failed assumption, grabbing not supported for non-DVB channels");
         return null;
       }
 
-      if (epgChannel.Programs.Count == 0)
+      if (epgChannel.Value.Count == 0)
       {
         this.LogInfo("{0}: no info found for service, ONID = {1}, TSID = {2}, service ID = {3}",
                       _grabberName, dvbChannel.OriginalNetworkId, dvbChannel.TransportStreamId, dvbChannel.ServiceId);
@@ -168,7 +167,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       }
 
       int? satelliteId = null;
-      IChannelSatellite satelliteChannel = epgChannel.Channel as IChannelSatellite;
+      IChannelSatellite satelliteChannel = epgChannel.Key as IChannelSatellite;
       if (satelliteChannel != null)
       {
         // TODO this isn't the real satellite ID that we want
@@ -176,7 +175,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       }
 
       //do we have a channel with these service details?
-      BroadcastStandard broadcastStandard = TuningDetailManagement.GetBroadcastStandardFromChannelInstance(epgChannel.Channel);
+      BroadcastStandard broadcastStandard = TuningDetailManagement.GetBroadcastStandardFromChannelInstance(epgChannel.Key);
       IList<TuningDetail> tuningDetails = TuningDetailManagement.GetDvbTuningDetails(
         broadcastStandard,
         dvbChannel.OriginalNetworkId,
@@ -194,7 +193,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       if (tuningDetails.Count != 1)
       {
         this.LogInfo("{0}: discard {1} program(s) for service which matches {2} tuning details, broadcast standard = {3}, ONID = {4}, TSID = {5}, service ID = {6}",
-                      _grabberName, epgChannel.Programs.Count, tuningDetails.Count, broadcastStandard, dvbChannel.OriginalNetworkId, dvbChannel.TransportStreamId, dvbChannel.ServiceId);
+                      _grabberName, epgChannel.Value.Count, tuningDetails.Count, broadcastStandard, dvbChannel.OriginalNetworkId, dvbChannel.TransportStreamId, dvbChannel.ServiceId);
         return null;
       }
 
@@ -202,63 +201,46 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       Channel dbChannel = tuningDetails[0].Channel;
       if (!string.IsNullOrEmpty(dbChannel.ExternalId))
       {
-        this.LogInfo("{0}: discard {1} program(s) for channel {2} ({3}), handled by plugin", _grabberName, epgChannel.Programs.Count, dbChannel.IdChannel, dbChannel.Name);
+        this.LogInfo("{0}: discard {1} program(s) for channel {2} ({3}), handled by plugin", _grabberName, epgChannel.Value.Count, dbChannel.IdChannel, dbChannel.Name);
         return null;
       }
 
       return dbChannel;
     }
 
-    private void GetPreferredText(IList<EpgLanguageText> texts, out string title, out string description, out string genre,
-                                  out int starRating, out string classification, out int parentalRating)
+    private void GetPreferredText(IDictionary<string, string> text, out string selectedText)
     {
-      title = string.Empty;
-      description = string.Empty;
-      genre = string.Empty;
-      starRating = 0;
-      classification = string.Empty;
-      parentalRating = -1;
+      selectedText = string.Empty;
 
-      if (texts.Count == 0)
+      if (text.Count == 0)
       {
         return;
       }
 
-      int offset = -1;
-      for (int i = 0; i < texts.Count; ++i)
+      int priority = -1;
+      foreach (var t in text)
       {
-        if (texts[0].Language.ToLowerInvariant() == "all")
+        if (string.IsNullOrWhiteSpace(_epgLanguages))
         {
-          offset = i;
+          selectedText = t.Value;
           break;
         }
-        if (_epgLanguages.Length == 0 || _epgLanguages.ToLowerInvariant().IndexOf(texts[i].Language.ToLowerInvariant()) >= 0)
+        int index = _epgLanguages.ToLowerInvariant().IndexOf(t.Key.ToLowerInvariant());
+        if (priority < 0 || (index >= 0 && index < priority))
         {
-          offset = i;
-          break;
+          selectedText = t.Value;
+          priority = index;
         }
       }
-      if (offset == -1)
-      {
-        offset = 0;
-      }
-      title = texts[offset].Title;
-      description = texts[offset].Description;
-      genre = texts[offset].Genre;
-      starRating = texts[offset].StarRating;
-      classification = texts[offset].Classification;
-      parentalRating = texts[offset].ParentalRating;
     }
 
     private Program CreateOrReplaceProgram(Channel dbChannel, EpgProgram epgProgram, Program dbProgram = null)
     {
       string title;
       string description;
-      string genre;
-      int starRating;
-      string classification;
-      int parentRating;
-      GetPreferredText(epgProgram.Text, out title, out description, out genre, out starRating, out classification, out parentRating);
+
+      GetPreferredText(epgProgram.Titles, out title);
+      GetPreferredText(epgProgram.Descriptions, out description);
 
       if (
         dbProgram != null &&
@@ -273,15 +255,24 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       }
 
       // Create a new program.
-      ProgramCategory programCategory = null;
-      if (!string.IsNullOrEmpty(genre))
+      int idCategory = -1;
+      bool isCategoryMapped = false;
+      foreach (string c in epgProgram.Categories)
       {
-        programCategory = EntityCacheHelper.Instance.ProgramCategoryCache.GetFromCache(genre);
+        // If this is a new category, add it to the DB.
+        ProgramCategory programCategory = EntityCacheHelper.Instance.ProgramCategoryCache.GetFromCache(c);
         if (programCategory == null)
         {
-          programCategory = new ProgramCategory { Category = genre };
+          programCategory = new ProgramCategory { Category = c };
           programCategory = ProgramCategoryManagement.SaveProgramCategory(programCategory);
-          EntityCacheHelper.Instance.ProgramCategoryCache.AddOrUpdateCache(programCategory.Category, programCategory);
+          EntityCacheHelper.Instance.ProgramCategoryCache.AddOrUpdateCache(c, programCategory);
+        }
+
+        // We can only link the program to one category. Prefer a category that is mapped to a guide category.
+        if (idCategory <= 0 || (!isCategoryMapped && programCategory.IdGuideCategory.HasValue))
+        {
+          idCategory = programCategory.IdProgramCategory;
+          isCategoryMapped = programCategory.IdGuideCategory.HasValue;
         }
       }
 
@@ -291,17 +282,19 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       program.EndTime = epgProgram.EndTime;
       program.Title = title;
       program.Description = description;
-      if (programCategory != null)
+      if (idCategory != -1)
       {
-        program.IdProgramCategory = programCategory.IdProgramCategory;
+        program.IdProgramCategory = idCategory;
       }
-      if (!string.IsNullOrEmpty(classification))
+      foreach (var c in epgProgram.Classifications)
       {
-        program.Classification = classification;
+        program.Classification = c.Value;
+        break;    // TODO we want to use the preferred classification system
       }
+
       // TODO ensure star rating doesn't get assigned unless it has a value
-      program.StarRating = starRating;
-      program.StarRatingMaximum = 4;
+      //program.StarRating = starRating;
+      //program.StarRatingMaximum = 4;
       return program;
     }
 

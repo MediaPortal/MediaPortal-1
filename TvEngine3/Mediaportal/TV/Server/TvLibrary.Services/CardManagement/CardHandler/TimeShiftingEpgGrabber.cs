@@ -24,7 +24,7 @@ using System.Threading;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Services;
@@ -152,7 +152,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// </summary>
     /// <param name="tuningDetail">The tuning details of the transmitter from which the EPG was grabbed.</param>
     /// <param name="epg">The grabbed data.</param>
-    public void OnEpgReceived(IChannel tuningDetail, ICollection<EpgChannel> epg)
+    public void OnEpgReceived(IChannel tuningDetail, IDictionary<IChannel, IList<EpgProgram>> epg)
     {
       if (epg == null || epg.Count == 0)
       {
@@ -175,13 +175,13 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     #region Database update routines
 
-    private void UpdateDatabaseThread(IChannel tuningDetail, ICollection<EpgChannel> epg)
+    private void UpdateDatabaseThread(IChannel tuningDetail, IDictionary<IChannel, IList<EpgProgram>> epg)
     {
       try
       {
         _updateThreadRunning = true;
         _dbUpdater.ReloadConfig();
-        foreach (EpgChannel epgChannel in epg)
+        foreach (var epgChannel in epg)
         {
           _dbUpdater.UpdateEpgForChannel(tuningDetail, epgChannel);
         }

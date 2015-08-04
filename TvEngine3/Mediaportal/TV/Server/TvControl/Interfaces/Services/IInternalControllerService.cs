@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
@@ -103,8 +102,8 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <summary>
     /// Call back invoked by EPG grabbers when import for a channel is completed.
     /// </summary>
-    /// <param name="channel">The imported channel.</param>
-    void OnImportEpgPrograms(EpgChannel channel);
+    /// <param name="channelId">The imported channel's identifier.</param>
+    void OnImportEpgPrograms(int channelId);
 
     TvResult StartTimeShifting(ref IUser user, ref string timeshiftFileName, int idChannel);
 

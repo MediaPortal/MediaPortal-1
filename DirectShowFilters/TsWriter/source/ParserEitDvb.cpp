@@ -2562,7 +2562,7 @@ bool CParserEitDvb::DecodeEventDescriptors(unsigned char* sectionData,
                                 information);
         }
       }
-      else if (tag == 0x95) // Dish VCHIP descriptor
+      else if (tag == 0x95) // Dish V-Chip descriptor
       {
         result = DecodeDishVchipDescriptor(&sectionData[pointer],
                                             length,
@@ -3324,10 +3324,10 @@ bool CParserEitDvb::DecodeDishBevRatingDescriptor(unsigned char* data,
     // bit 1 = ?
     // bit 2 = ?
     // bit 3 = N [nudity]
-    // bit 4 = mK
+    // bit 4 = mK [mild peril?]
     // bit 5 = V [violence]
     // bit 6 = FV [fantasy violence]
-    // bit 7 = mQ
+    // bit 7 = mQ [mild sensuality]
     // bit 8 = L [coarse or crude language]
     // bit 9 (LSB) = S [sexual situations]
     unsigned short dishBevAdvisories = ((data[0] & 3) << 8) | data[1];
@@ -3425,7 +3425,7 @@ bool CParserEitDvb::DecodeDishVchipDescriptor(unsigned char* data,
 {
   if (dataLength != 2)
   {
-    LogDebug(L"EIT DVB: invalid Dish VCHIP descriptor, length = %hhu",
+    LogDebug(L"EIT DVB: invalid Dish V-Chip descriptor, length = %hhu",
               dataLength);
     return false;
   }
@@ -3452,7 +3452,7 @@ bool CParserEitDvb::DecodeDishVchipDescriptor(unsigned char* data,
     // bit 7 (LSB) = FV [fantasy violence]
     unsigned char vchipAdvisories = data[1];
 
-    // Translate the VCHIP advisories to be compatible with Dish/BEV.
+    // Translate the V-Chip advisories to be compatible with Dish/BEV.
     if (vchipAdvisories & 1)
     {
       advisories |= 0x08;   // FV
@@ -3471,10 +3471,10 @@ bool CParserEitDvb::DecodeDishVchipDescriptor(unsigned char* data,
     }
     if (vchipAdvisories & 0x10)
     {
-      advisories |= 0x8000; // D is unique to VCHIP
+      advisories |= 0x8000; // D is unique to V-Chip
     }
 
-    //LogDebug(L"EIT DVB: Dish VCHIP descriptor, rating = %hhu, advisories = %hhu",
+    //LogDebug(L"EIT DVB: Dish V-Chip descriptor, rating = %hhu, advisories = %hhu",
     //          vchipRating, vchipAdvisories);
     return true;
   }

@@ -122,8 +122,8 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
     private void events_OnTvServerEvent(object sender, EventArgs eventArgs)
     {
       TvServerEventArgs tvEvent = (TvServerEventArgs)eventArgs;
-      ChannelAnalogTv analogTvChannel = tvEvent.channel as ChannelAnalogTv;
-      ChannelCapture captureChannel = tvEvent.channel as ChannelCapture;
+      ChannelAnalogTv analogTvChannel = tvEvent.Channel as ChannelAnalogTv;
+      ChannelCapture captureChannel = tvEvent.Channel as ChannelCapture;
       if (
         tvEvent.EventType != TvServerEventType.StartZapChannel ||
         (analogTvChannel == null && captureChannel == null)
@@ -131,7 +131,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
       {
         return;
       }
-      if (!int.TryParse(tvEvent.channel.LogicalChannelNumber, out _channel))
+      if (!int.TryParse(tvEvent.Channel.LogicalChannelNumber, out _channel))
       {
         return;
       }
@@ -143,7 +143,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
       }
       _card = tvEvent.Card.Id;
       this.LogDebug("ServerBlaster - CardId: {0}, Channel: {1} - Channel:{2} - VideoSource: {3}",
-                    _card, _channel, tvEvent.channel.Name, _videoInputType);
+                    _card, _channel, tvEvent.Channel.Name, _videoInputType);
       _send = true;
       this.LogDebug("ServerBlaster - Done");
     }
