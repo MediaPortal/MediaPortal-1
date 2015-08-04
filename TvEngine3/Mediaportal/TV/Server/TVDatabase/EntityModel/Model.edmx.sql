@@ -267,6 +267,8 @@ CREATE TABLE `Programs`(
 	`Advisories` int NOT NULL, 
 	`IsHighDefinition` bit, 
 	`IsThreeDimensional` bit, 
+	`AudioLanguages` varchar (50), 
+	`SubtitlesLanguages` varchar (50), 
 	`IsLive` bit, 
 	`ProductionYear` int, 
 	`ProductionCountry` varchar (200), 

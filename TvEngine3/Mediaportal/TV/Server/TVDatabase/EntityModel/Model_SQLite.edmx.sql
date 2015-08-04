@@ -320,6 +320,8 @@ CREATE TABLE "Programs"  (
     "Advisories" int NOT NULL,
     "IsHighDefinition" bit NULL,
     "IsThreeDimensional" bit NULL,
+    "AudioLanguages" varchar(50) NULL COLLATE NOCASE,
+    "SubtitlesLanguages" varchar(50) NULL COLLATE NOCASE,
     "IsLive" bit NULL,
     "ProductionYear" int NULL,
     "ProductionCountry" varchar(200) NULL COLLATE NOCASE,

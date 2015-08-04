@@ -317,6 +317,8 @@
     <Property Name="Advisories" Type="int" Nullable="false" />
     <Property Name="IsHighDefinition" Type="bit" Nullable="true" />
     <Property Name="IsThreeDimensional" Type="bit" Nullable="true" />
+    <Property Name="AudioLanguages" Type="nvarchar" Nullable="true" MaxLength="50" />
+    <Property Name="SubtitlesLanguages" Type="nvarchar" Nullable="true" MaxLength="50" />
     <Property Name="IsLive" Type="bit" Nullable="true" />
     <Property Name="ProductionYear" Type="int" Nullable="true" />
     <Property Name="ProductionCountry" Type="nvarchar" Nullable="true" MaxLength="200" />

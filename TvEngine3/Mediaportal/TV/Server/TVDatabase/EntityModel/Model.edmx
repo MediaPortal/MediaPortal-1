@@ -322,6 +322,8 @@
     <Property Name="Advisories" Type="int" Nullable="false" />
     <Property Name="IsHighDefinition" Type="bit" Nullable="true" />
     <Property Name="IsThreeDimensional" Type="bit" Nullable="true" />
+    <Property Name="AudioLanguages" Type="varchar" Nullable="true" MaxLength="50" />
+    <Property Name="SubtitlesLanguages" Type="varchar" Nullable="true" MaxLength="50" />
     <Property Name="IsLive" Type="bit" Nullable="true" />
     <Property Name="ProductionYear" Type="int" Nullable="true" />
     <Property Name="ProductionCountry" Type="varchar" Nullable="true" MaxLength="200" />
@@ -1347,6 +1349,8 @@
           <Property Type="Int32" Name="Advisories" Nullable="false" />
           <Property Type="Boolean" Name="IsHighDefinition" Nullable="true" />
           <Property Type="Boolean" Name="IsThreeDimensional" Nullable="true" />
+          <Property Type="String" Name="AudioLanguages" Nullable="true" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Type="String" Name="SubtitlesLanguages" Nullable="true" MaxLength="50" Unicode="false" FixedLength="false" />
           <Property Type="Boolean" Name="IsLive" Nullable="true" />
           <Property Type="Int32" Name="ProductionYear" Nullable="true" />
           <Property Type="String" Name="ProductionCountry" Nullable="true" MaxLength="200" Unicode="false" FixedLength="false" />
@@ -2224,6 +2228,8 @@
           <ScalarProperty Name="Advisories" ColumnName="Advisories" />
           <ScalarProperty Name="IsHighDefinition" ColumnName="IsHighDefinition" />
           <ScalarProperty Name="IsThreeDimensional" ColumnName="IsThreeDimensional" />
+          <ScalarProperty Name="AudioLanguages" ColumnName="AudioLanguages" />
+          <ScalarProperty Name="SubtitlesLanguages" ColumnName="SubtitlesLanguages" />
           <ScalarProperty Name="IsLive" ColumnName="IsLive" />
           <ScalarProperty Name="ProductionYear" ColumnName="ProductionYear" />
           <ScalarProperty Name="ProductionCountry" ColumnName="ProductionCountry" />

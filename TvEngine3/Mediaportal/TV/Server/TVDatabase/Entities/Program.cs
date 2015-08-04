@@ -331,6 +331,36 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private Nullable<bool> _isThreeDimensional;
     
         [DataMember]
+        public string AudioLanguages
+        {
+          get { return _audioLanguages; }
+          set
+          {
+            if (_audioLanguages != value)
+            {
+              _audioLanguages = value;
+              OnPropertyChanged("AudioLanguages");
+            }
+          }
+        }
+        private string _audioLanguages;
+    
+        [DataMember]
+        public string SubtitlesLanguages
+        {
+          get { return _subtitlesLanguages; }
+          set
+          {
+            if (_subtitlesLanguages != value)
+            {
+              _subtitlesLanguages = value;
+              OnPropertyChanged("SubtitlesLanguages");
+            }
+          }
+        }
+        private string _subtitlesLanguages;
+    
+        [DataMember]
         public Nullable<bool> IsLive
         {
             get { return _isLive; }

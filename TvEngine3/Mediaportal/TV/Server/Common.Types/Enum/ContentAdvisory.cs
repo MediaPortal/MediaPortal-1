@@ -30,6 +30,10 @@ namespace Mediaportal.TV.Server.Common.Types.Enum
   public enum ContentAdvisory
   {
     /// <summary>
+    /// None.
+    /// </summary>
+    None = 0,
+    /// <summary>
     /// Sexual situations.
     /// </summary>
     [Description("S")]
