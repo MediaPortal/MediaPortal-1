@@ -89,6 +89,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="categoryId">The identifier of the programme category that the event is associated with, if any.</param>
     /// <param name="subCategoryId">The identifier of the programme category sub-category that the event is associated with, if any.</param>
     /// <param name="isHighDefinition">An indication of whether the event's video will by high definition.</param>
+    /// <param name="hasSubtitles">An indication of whether the event will have subtitles available.</param>
     /// <param name="parentalRating">The event's parental rating (classification), if any.</param>
     /// <param name="seriesLinkId">The identifier that links this event to other events from the same series. Value is <c>0xffff</c> if not available.</param>
     /// <returns><c>true</c> if the event's details are successfully retrieved, otherwise <c>false</c></returns>
@@ -108,6 +109,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                   out byte categoryId,
                   out byte subCategoryId,
                   [MarshalAs(UnmanagedType.I1)] out bool isHighDefinition,
+                  [MarshalAs(UnmanagedType.I1)] out bool hasSubtitles,
                   out byte parentalRating,
                   out ushort seriesLinkId);
   }

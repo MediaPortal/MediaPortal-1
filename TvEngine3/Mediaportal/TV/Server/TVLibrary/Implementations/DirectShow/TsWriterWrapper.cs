@@ -386,6 +386,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
                             out ushort streamCountVideo,
                             out ushort streamCountAudio,
                             out bool isHighDefinition,
+                            out bool isStandardDefinition,
                             out bool isThreeDimensional,
                             Iso639Code[] audioLanguages,
                             ref byte audioLanguageCount,
@@ -441,6 +442,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       streamCountVideo = 0;
       streamCountAudio = 0;
       isHighDefinition = false;
+      isStandardDefinition = false;
       isThreeDimensional = false;
       virginMediaChannelCategoryId = 0;
       dishMarketId = 0;
@@ -450,7 +452,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       epgOriginalNetworkId = 0;
       epgTransportStreamId = 0;
       epgServiceId = 0;
-      object[] parameters = new object[57]
+      object[] parameters = new object[58]
       {
         index,
         preferredLogicalChannelNumberBouquetId,
@@ -474,6 +476,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         streamCountVideo,
         streamCountAudio,
         isHighDefinition,
+        isStandardDefinition,
         isThreeDimensional,
         audioLanguages,
         audioLanguageCount,
@@ -530,28 +533,29 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       streamCountVideo = (ushort)parameters[19];
       streamCountAudio = (ushort)parameters[20];
       isHighDefinition = (bool)parameters[21];
-      isThreeDimensional = (bool)parameters[22];
-      audioLanguageCount = (byte)parameters[24];
-      subtitlesLanguageCount = (byte)parameters[26];
-      networkIdCount = (byte)parameters[28];
-      bouquetIdCount = (byte)parameters[30];
-      availableInCountryCount = (byte)parameters[32];
-      unavailableInCountryCount = (byte)parameters[34];
-      availableInCellCount = (byte)parameters[36];
-      unavailableInCellCount = (byte)parameters[38];
-      targetRegionIdCount = (byte)parameters[40];
-      freesatRegionIdCount = (byte)parameters[42];
-      openTvRegionIdCount = (byte)parameters[44];
-      freesatChannelCategoryIdCount = (byte)parameters[46];
-      virginMediaChannelCategoryId = (byte)parameters[47];
-      dishMarketId = (ushort)parameters[48];
-      norDigChannelListIdCount = (byte)parameters[50];
-      previousOriginalNetworkId = (ushort)parameters[51];
-      previousTransportStreamId = (ushort)parameters[52];
-      previousServiceId = (ushort)parameters[53];
-      epgOriginalNetworkId = (ushort)parameters[54];
-      epgTransportStreamId = (ushort)parameters[55];
-      epgServiceId = (ushort)parameters[56];
+      isStandardDefinition = (bool)parameters[22];
+      isThreeDimensional = (bool)parameters[23];
+      audioLanguageCount = (byte)parameters[25];
+      subtitlesLanguageCount = (byte)parameters[27];
+      networkIdCount = (byte)parameters[29];
+      bouquetIdCount = (byte)parameters[31];
+      availableInCountryCount = (byte)parameters[33];
+      unavailableInCountryCount = (byte)parameters[35];
+      availableInCellCount = (byte)parameters[37];
+      unavailableInCellCount = (byte)parameters[39];
+      targetRegionIdCount = (byte)parameters[41];
+      freesatRegionIdCount = (byte)parameters[43];
+      openTvRegionIdCount = (byte)parameters[45];
+      freesatChannelCategoryIdCount = (byte)parameters[47];
+      virginMediaChannelCategoryId = (byte)parameters[48];
+      dishMarketId = (ushort)parameters[49];
+      norDigChannelListIdCount = (byte)parameters[51];
+      previousOriginalNetworkId = (ushort)parameters[52];
+      previousTransportStreamId = (ushort)parameters[53];
+      previousServiceId = (ushort)parameters[54];
+      epgOriginalNetworkId = (ushort)parameters[55];
+      epgTransportStreamId = (ushort)parameters[56];
+      epgServiceId = (ushort)parameters[57];
       return result;
     }
 

@@ -515,6 +515,7 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEvent(unsigned short serviceIndex,
                                             char* episodeId,
                                             unsigned short* episodeIdBufferSize,
                                             bool* isHighDefinition,
+                                            bool* isStandardDefinition,
                                             bool* isThreeDimensional,
                                             bool* isPreviouslyShown,
                                             unsigned long* audioLanguages,
@@ -559,6 +560,7 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEvent(unsigned short serviceIndex,
     recordEvent = m_referenceEvent;
   }
   *isHighDefinition = recordEvent->IsHighDefinition;
+  *isStandardDefinition = recordEvent->IsStandardDefinition;
   *isThreeDimensional = recordEvent->IsThreeDimensional;
   *isPreviouslyShown = recordEvent->IsPreviouslyShown;
   *starRating = recordEvent->StarRating;
@@ -1817,6 +1819,7 @@ void CParserEitDvb::CreatePremiereEvents(CRecordEitEvent& eventTemplate,
       e->ReferenceServiceId = eventTemplate.ReferenceServiceId;
       e->ReferenceEventId = eventTemplate.ReferenceEventId;
       e->IsHighDefinition = eventTemplate.IsHighDefinition;
+      e->IsStandardDefinition = eventTemplate.IsStandardDefinition;
       e->IsThreeDimensional = eventTemplate.IsThreeDimensional;
       e->IsPreviouslyShown = isPreviouslyShown;
       e->AudioLanguages = eventTemplate.AudioLanguages;
@@ -2306,6 +2309,7 @@ bool CParserEitDvb::DecodeEventDescriptors(unsigned char* sectionData,
       bool isAudio;
       bool isSubtitles;
       bool isHighDefinition;
+      bool isStandardDefinition;
       bool isThreeDimensional;
       unsigned long language;
       result = DecodeComponentDescriptor(&sectionData[pointer],
@@ -2313,11 +2317,13 @@ bool CParserEitDvb::DecodeEventDescriptors(unsigned char* sectionData,
                                           isAudio,
                                           isSubtitles,
                                           isHighDefinition,
+                                          isStandardDefinition,
                                           isThreeDimensional,
                                           language);
       if (result)
       {
         event.IsHighDefinition |= isHighDefinition;
+        event.IsStandardDefinition |= isStandardDefinition;
         event.IsThreeDimensional |= isThreeDimensional;
         if (
           isAudio &&
@@ -2967,6 +2973,7 @@ bool CParserEitDvb::DecodeComponentDescriptor(unsigned char* data,
                                               bool& isAudio,
                                               bool& isSubtitles,
                                               bool& isHighDefinition,
+                                              bool& isStandardDefinition,
                                               bool& isThreeDimensional,
                                               unsigned long& language)
 {
@@ -2981,6 +2988,7 @@ bool CParserEitDvb::DecodeComponentDescriptor(unsigned char* data,
     isAudio = false;
     isSubtitles = false;
     isHighDefinition = false;
+    isStandardDefinition = false;
     isThreeDimensional = false;
 
     unsigned char streamContent = data[0] & 0x0f;
@@ -2994,7 +3002,11 @@ bool CParserEitDvb::DecodeComponentDescriptor(unsigned char* data,
 
     if (streamContent == 1 || streamContent == 5)
     {
-      if (componentType >= 0x09 && componentType <= 0x10)
+      if (componentType >= 1 && componentType <= 8)
+      {
+        isStandardDefinition = true;
+      }
+      else if (componentType >= 0x09 && componentType <= 0x10)
       {
         isHighDefinition = true;
       }

@@ -73,6 +73,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                       bool& visibleInGuide,
                       unsigned short& referenceServiceId,
                       bool& isHighDefinition,
+                      bool& isStandardDefinition,
                       bool& isThreeDimensional,
                       unsigned short& streamCountVideo,
                       unsigned short& streamCountAudio,
@@ -138,6 +139,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
           VisibleInGuide = true;
           ReferenceServiceId = 0;
           IsHighDefinition = false;
+          IsStandardDefinition = false;
           IsThreeDimensional = false;
           StreamCountVideo = 0;
           StreamCountAudio = 0;
@@ -186,6 +188,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
             VisibleInGuide != recordSdt->VisibleInGuide ||
             ReferenceServiceId != recordSdt->ReferenceServiceId ||
             IsHighDefinition != recordSdt->IsHighDefinition ||
+            IsStandardDefinition != recordSdt->IsStandardDefinition ||
             IsThreeDimensional != recordSdt->IsThreeDimensional ||
             StreamCountVideo != recordSdt->StreamCountVideo ||
             StreamCountAudio != recordSdt->StreamCountAudio ||
@@ -225,15 +228,15 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
 
         void Debug(const wchar_t* situation) const
         {
-          LogDebug(L"SDT: service %s, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, EIT schedule flag = %d, EIT present following flag = %d, running status = %hhu, free CA mode = %d, service type = %hhu, provider name count = %llu, service name count = %llu, LCN = %hu, Dish sub-channel number = %hhu, visible in guide = %d, reference service ID = %hu, is HD = %d, is 3D = %d, video stream count = %hu, audio stream count = %hu, audio language count = %llu, subtitles language count = %llu, OpenTV category ID = %hhu, Virgin Media category ID = %hhu, Dish market ID = %hu, country counts = %llu / %llu, cell counts = %llu / %llu, target region count = %llu, prev. ONID = %hu, prev. TSID = %hu, prev. service ID = %hu, EPG ONID = %hu, EPG TSID = %hu, EPG service ID = %hu, default authority = %S",
+          LogDebug(L"SDT: service %s, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, EIT schedule flag = %d, EIT present following flag = %d, running status = %hhu, free CA mode = %d, service type = %hhu, provider name count = %llu, service name count = %llu, LCN = %hu, Dish sub-channel number = %hhu, visible in guide = %d, reference service ID = %hu, is HD = %d, is SD = %d, is 3D = %d, video stream count = %hu, audio stream count = %hu, audio language count = %llu, subtitles language count = %llu, OpenTV category ID = %hhu, Virgin Media category ID = %hhu, Dish market ID = %hu, country counts = %llu / %llu, cell counts = %llu / %llu, target region count = %llu, prev. ONID = %hu, prev. TSID = %hu, prev. service ID = %hu, EPG ONID = %hu, EPG TSID = %hu, EPG service ID = %hu, default authority = %S",
                     situation, TableId, OriginalNetworkId, TransportStreamId,
                     ServiceId, EitScheduleFlag, EitPresentFollowingFlag,
                     RunningStatus, FreeCaMode, ServiceType,
                     (unsigned long long)ProviderNames.size(),
                     (unsigned long long)ServiceNames.size(),
                     LogicalChannelNumber, DishSubChannelNumber, VisibleInGuide,
-                    ReferenceServiceId, IsHighDefinition, IsThreeDimensional,
-                    StreamCountVideo, StreamCountAudio,
+                    ReferenceServiceId, IsHighDefinition, IsStandardDefinition,
+                    IsThreeDimensional, StreamCountVideo, StreamCountAudio,
                     (unsigned long long)AudioLanguages.size(),
                     (unsigned long long)SubtitlesLanguages.size(),
                     OpenTvCategoryId, VirginMediaCategoryId, DishMarketId,
@@ -279,6 +282,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                                         VisibleInGuide,
                                         ReferenceServiceId,
                                         IsHighDefinition,
+                                        IsStandardDefinition,
                                         IsThreeDimensional,
                                         StreamCountVideo,
                                         StreamCountAudio,
@@ -323,6 +327,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                                         VisibleInGuide,
                                         ReferenceServiceId,
                                         IsHighDefinition,
+                                        IsStandardDefinition,
                                         IsThreeDimensional,
                                         StreamCountVideo,
                                         StreamCountAudio,
@@ -367,6 +372,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                                         VisibleInGuide,
                                         ReferenceServiceId,
                                         IsHighDefinition,
+                                        IsStandardDefinition,
                                         IsThreeDimensional,
                                         StreamCountVideo,
                                         StreamCountAudio,
@@ -406,6 +412,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
         bool VisibleInGuide;
         unsigned short ReferenceServiceId;
         bool IsHighDefinition;
+        bool IsStandardDefinition;
         bool IsThreeDimensional;
         unsigned short StreamCountVideo;
         unsigned short StreamCountAudio;
@@ -457,6 +464,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                                           bool& isAudio,
                                           bool& isSubtitles,
                                           bool& isHighDefinition,
+                                          bool& isStandardDefinition,
                                           bool& isThreeDimensional,
                                           unsigned long& language);
     static bool DecodeMultilingualServiceNameDescriptor(unsigned char* data,

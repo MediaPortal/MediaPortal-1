@@ -118,6 +118,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
                                   char* episodeId,
                                   unsigned short* episodeIdBufferSize,
                                   bool* isHighDefinition,
+                                  bool* isStandardDefinition,
                                   bool* isThreeDimensional,
                                   bool* isPreviouslyShown,
                                   unsigned long* audioLanguages,
@@ -337,6 +338,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
           SeriesId = NULL;
           EpisodeId = NULL;
           IsHighDefinition = false;
+          IsStandardDefinition = false;
           IsThreeDimensional = false;
           IsPreviouslyShown = false;
           StarRating = 0;             // default: [not available]
@@ -386,6 +388,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
             !CUtils::CompareStrings(SeriesId, recordEvent->SeriesId) ||
             !CUtils::CompareStrings(EpisodeId, recordEvent->EpisodeId) ||
             IsHighDefinition != recordEvent->IsHighDefinition ||
+            IsStandardDefinition != recordEvent->IsStandardDefinition ||
             IsThreeDimensional != recordEvent->IsThreeDimensional ||
             IsPreviouslyShown != recordEvent->IsPreviouslyShown ||
             !CUtils::CompareVectors(AudioLanguages, recordEvent->AudioLanguages) ||
@@ -447,13 +450,14 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
 
         void Debug(const wchar_t* situation) const
         {
-          LogDebug(L"EIT DVB: event %s, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, event ID = %llu, start date/time = %llu, duration = %hu m, running status = %hhu, free CA mode = %d, reference service ID = %hu, reference event ID = %llu, series ID = %S, episode ID = %S, is HD = %d, is 3D = %d, is previously shown = %d, audio language count = %llu, subtitles language count = %llu, DVB content type count = %llu, DVB parental rating count = %llu, star rating = %hhu, MPAA classification = %hhu, Dish/BEV advisories = %hu, V-CHIP rating = %hhu, text count = %llu",
+          LogDebug(L"EIT DVB: event %s, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, event ID = %llu, start date/time = %llu, duration = %hu m, running status = %hhu, free CA mode = %d, reference service ID = %hu, reference event ID = %llu, series ID = %S, episode ID = %S, is HD = %d, is SD = %d, is 3D = %d, is previously shown = %d, audio language count = %llu, subtitles language count = %llu, DVB content type count = %llu, DVB parental rating count = %llu, star rating = %hhu, MPAA classification = %hhu, Dish/BEV advisories = %hu, V-CHIP rating = %hhu, text count = %llu",
                     situation, TableId, OriginalNetworkId, TransportStreamId,
                     ServiceId, EventId, StartDateTime, Duration, RunningStatus,
                     FreeCaMode, ReferenceServiceId, ReferenceEventId,
                     SeriesId == NULL ? "" : SeriesId,
                     EpisodeId == NULL ? "" : EpisodeId, IsHighDefinition,
-                    IsThreeDimensional, IsPreviouslyShown,
+                    IsStandardDefinition, IsThreeDimensional,
+                    IsPreviouslyShown,
                     (unsigned long long)AudioLanguages.size(),
                     (unsigned long long)SubtitlesLanguages.size(),
                     (unsigned long long)DvbContentTypeIds.size(),
@@ -507,6 +511,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
         char* SeriesId;
         char* EpisodeId;
         bool IsHighDefinition;
+        bool IsStandardDefinition;
         bool IsThreeDimensional;
         bool IsPreviouslyShown;
         vector<unsigned long> AudioLanguages;
@@ -611,6 +616,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
                                           bool& isAudio,
                                           bool& isSubtitles,
                                           bool& isHighDefinition,
+                                          bool& isStandardDefinition,
                                           bool& isThreeDimensional,
                                           unsigned long& language);
     static bool DecodeContentDescriptor(unsigned char* data,

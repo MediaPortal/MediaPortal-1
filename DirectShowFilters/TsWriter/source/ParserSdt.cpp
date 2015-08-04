@@ -381,6 +381,7 @@ bool CParserSdt::GetService(unsigned short index,
                             bool& visibleInGuide,
                             unsigned short& referenceServiceId,
                             bool& isHighDefinition,
+                            bool& isStandardDefinition,
                             bool& isThreeDimensional,
                             unsigned short& streamCountVideo,
                             unsigned short& streamCountAudio,
@@ -448,6 +449,7 @@ bool CParserSdt::GetService(unsigned short index,
   visibleInGuide = m_currentRecord->VisibleInGuide;
   referenceServiceId = m_currentRecord->ReferenceServiceId;
   isHighDefinition = m_currentRecord->IsHighDefinition;
+  isStandardDefinition = m_currentRecord->IsStandardDefinition;
   isThreeDimensional = m_currentRecord->IsThreeDimensional;
   streamCountVideo = m_currentRecord->StreamCountVideo;
   streamCountAudio = m_currentRecord->StreamCountAudio;
@@ -933,6 +935,7 @@ bool CParserSdt::DecodeServiceDescriptors(unsigned char* sectionData,
       bool isAudio;
       bool isSubtitles;
       bool isHighDefinition;
+      bool isStandardDefinition;
       bool isThreeDimensional;
       unsigned long language;
       descriptorParseResult = DecodeComponentDescriptor(&sectionData[pointer],
@@ -941,6 +944,7 @@ bool CParserSdt::DecodeServiceDescriptors(unsigned char* sectionData,
                                                         isAudio,
                                                         isSubtitles,
                                                         isHighDefinition,
+                                                        isStandardDefinition,
                                                         isThreeDimensional,
                                                         language);
       if (descriptorParseResult)
@@ -969,6 +973,7 @@ bool CParserSdt::DecodeServiceDescriptors(unsigned char* sectionData,
           record.SubtitlesLanguages.push_back(language);
         }
         record.IsHighDefinition |= isHighDefinition;
+        record.IsStandardDefinition |= isStandardDefinition;
         record.IsThreeDimensional |= isThreeDimensional;
       }
     }
@@ -1080,9 +1085,10 @@ bool CParserSdt::DecodeServiceDescriptors(unsigned char* sectionData,
                                                                 isHighDefinition,
                                                                 record.LogicalChannelNumber,
                                                                 record.DishSubChannelNumber);
-        if (descriptorParseResult && isHighDefinition)
+        if (descriptorParseResult)
         {
-          record.IsHighDefinition = true;
+          record.IsHighDefinition = isHighDefinition;
+          record.IsStandardDefinition = !isHighDefinition;
         }
       }
     }
@@ -1294,6 +1300,7 @@ bool CParserSdt::DecodeComponentDescriptor(unsigned char* data,
                                             bool& isAudio,
                                             bool& isSubtitles,
                                             bool& isHighDefinition,
+                                            bool& isStandardDefinition,
                                             bool& isThreeDimensional,
                                             unsigned long& language)
 {
@@ -1308,6 +1315,7 @@ bool CParserSdt::DecodeComponentDescriptor(unsigned char* data,
     isAudio = false;
     isSubtitles = false;
     isHighDefinition = false;
+    isStandardDefinition = false;
     isThreeDimensional = false;
 
     unsigned char streamContent = data[0] & 0x0f;
@@ -1322,7 +1330,11 @@ bool CParserSdt::DecodeComponentDescriptor(unsigned char* data,
     if (streamContent == 1 || streamContent == 5)
     {
       isVideo = true;
-      if (componentType >= 0x09 && componentType <= 0x10)
+      if (componentType >= 1 && componentType <= 8)
+      {
+        isStandardDefinition = true;
+      }
+      else if (componentType >= 0x09 && componentType <= 0x10)
       {
         isHighDefinition = true;
       }

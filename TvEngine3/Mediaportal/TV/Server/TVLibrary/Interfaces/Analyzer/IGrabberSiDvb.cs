@@ -150,6 +150,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="streamCountVideo">The number of video streams associated with the service.</param>
     /// <param name="streamCountAudio">The number of audio streams associated with the service.</param>
     /// <param name="isHighDefinition">An indication of whether the service's video is high definition.</param>
+    /// <param name="isStandardDefinition">An indication of whether the service's video is standard definition.</param>
     /// <param name="isThreeDimensional">An indication of whether the service's video is three dimensional.</param>
     /// <param name="audioLanguages">The languages in which the service's audio will be available. The caller must allocate this array.</param>
     /// <param name="audioLanguageCount">As an input, the size of the <paramref name="audioLanguages">audio languages array</paramref>; as an output, the consumed array size.</param>
@@ -210,6 +211,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                     out ushort streamCountVideo,
                     out ushort streamCountAudio,
                     [MarshalAs(UnmanagedType.I1)] out bool isHighDefinition,
+                    [MarshalAs(UnmanagedType.I1)] out bool isStandardDefinition,
                     [MarshalAs(UnmanagedType.I1)] out bool isThreeDimensional,
                     [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 22)] Iso639Code[] audioLanguages,
                     ref byte audioLanguageCount,

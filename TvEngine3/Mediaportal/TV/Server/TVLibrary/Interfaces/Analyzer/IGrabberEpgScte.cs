@@ -89,7 +89,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="genreIdCount">As an input, the size of the <paramref name="genreIds">genre identifier array</paramref>; as an output, the consumed array size.</param>
     /// <param name="vchipRating">The event's V-CHIP rating. Value is <c>0xff</c> if not available.</param>
     /// <param name="mpaaClassification">The event's MPAA classification. Value is <c>0xff</c> if not available.</param>
-    /// <param name="advisory">The event's advisories, encoded as flags.</param>
+    /// <param name="advisories">The event's advisories, encoded as flags.</param>
     /// <returns><c>true</c> if the event's details are successfully retrieved, otherwise <c>false</c></returns>
     [PreserveSig]
     [return: MarshalAs(UnmanagedType.I1)]
@@ -107,7 +107,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                       ref byte genreIdCount,
                       out byte vchipRating,
                       out byte mpaaClassification,
-                      out ushort advisory);
+                      out ushort advisories);
 
     /// <summary>
     /// Retrieve an SCTE event's text from the grabber.

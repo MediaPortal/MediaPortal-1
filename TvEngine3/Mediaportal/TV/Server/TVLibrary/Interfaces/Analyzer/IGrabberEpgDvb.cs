@@ -100,13 +100,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                     out ushort eventCount);
 
     /// <summary>
-    /// Get the number of events received by the grabber.
-    /// </summary>
-    /// <returns>the number of MediaHighway events received by the grabber</returns>
-    [PreserveSig]
-    ushort GetEventCount();
-
-    /// <summary>
     /// Retrieve an event's details from the grabber.
     /// </summary>
     /// <param name="serviceIndex">The event's service's index. Should be in the range 0 to GetServiceCount() - 1.</param>
@@ -136,7 +129,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="dvbParentalRatingCount">As an input, the size of the parental ratings <paramref name="dvbParentalRatingCountryCodes">country codes</paramref> and <paramref name="dvbParentalRatings">ratings</paramref> arrays; as an output, the consumed array size (same for both arrays).</param>
     /// <param name="starRating">The event's star rating, if any.</param>
     /// <param name="mpaaClassification">The event's MPAA classification. Value is <c>0xff</c> if not available.</param>
-    /// <param name="dishBevAdvisory">The event's advisories, encoded as flags.</param>
+    /// <param name="dishBevAdvisories">The event's advisories, encoded as flags.</param>
     /// <param name="vchipRating">The event's V-CHIP rating. Value is <c>0xff</c> if not available.</param>
     /// <param name="textCount">The number of languages in which the event's text is available.</param>
     /// <returns><c>true</c> if the event's details are successfully retrieved, otherwise <c>false</c></returns>
@@ -169,9 +162,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                   ref byte dvbParentalRatingCount,
                   out byte starRating,
                   out byte mpaaClassification,
-                  out ushort dishBevAdvisory,
+                  out ushort dishBevAdvisories,
                   out byte vchipRating,
-                  out char textCount);
+                  out byte textCount);
 
     /// <summary>
     /// Retrieve an event's text from the grabber.

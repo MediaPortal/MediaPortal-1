@@ -65,6 +65,7 @@ DECLARE_INTERFACE_(IGrabberEpgDvb, IGrabber)
                               char* episodeId,
                               unsigned short* episodeIdBufferSize,
                               bool* isHighDefinition,
+                              bool* isStandardDefinition,
                               bool* isThreeDimensional,
                               bool* isPreviouslyShown,
                               unsigned long* audioLanguages,

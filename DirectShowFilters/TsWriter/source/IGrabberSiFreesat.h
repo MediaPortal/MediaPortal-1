@@ -69,6 +69,7 @@ DECLARE_INTERFACE_(IGrabberSiFreesat, IGrabberSiDvb)
                                 unsigned short* streamCountVideo,
                                 unsigned short* streamCountAudio,
                                 bool* isHighDefinition,
+                                bool* isStandardDefinition,
                                 bool* isThreeDimensional,
                                 unsigned long* audioLanguages,
                                 unsigned char* audioLanguageCount,
