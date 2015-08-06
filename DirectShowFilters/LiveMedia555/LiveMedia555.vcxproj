@@ -364,7 +364,6 @@
     <ClCompile Include="groupsock\IOHandlers.cpp" />
     <ClCompile Include="groupsock\NetAddress.cpp" />
     <ClCompile Include="groupsock\NetInterface.cpp" />
-    <ClCompile Include="MediaPortal\MPMPEG2TransportStreamFromPESSource.cpp" />
     <ClCompile Include="MediaPortal\MPRTSPServer.cpp" />
     <ClCompile Include="MediaPortal\MPTaskScheduler.cpp" />
   </ItemGroup>
@@ -372,7 +371,6 @@
     <ClInclude Include="liveMedia\include\our_md5.h" />
     <ClInclude Include="liveMedia\include\rtcp_from_spec.h" />
     <ClInclude Include="groupsock\include\NetCommon.h" />
-    <ClInclude Include="MediaPortal\MPMPEG2TransportStreamFromPESSource.h" />
     <ClInclude Include="MediaPortal\MPRTSPServer.h" />
     <ClInclude Include="MediaPortal\MPTaskScheduler.h" />
   </ItemGroup>
