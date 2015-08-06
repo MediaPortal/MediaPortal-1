@@ -35,11 +35,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.listViewProgramCategoriesMapped = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
       this.columnHeaderMappedProgramCategories = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.listViewLanguagesPreferred = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeaderPreferredLanguageName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderPreferredLanguageId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.listViewLanguages = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeaderLanguageName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderLanguageId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderLanguagesPreferredName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderLanguagesPreferredId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.listViewLanguagesAvailable = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
+      this.columnHeaderLanguagesAvailableName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderLanguagesAvailableId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.textBoxPreferredRatingSystems = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.textBoxPreferredClassificationSystems = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.labelPreferredRatingSystems = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -168,8 +168,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewLanguagesPreferred.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeaderPreferredLanguageName,
-            this.columnHeaderPreferredLanguageId});
+            this.columnHeaderLanguagesPreferredName,
+            this.columnHeaderLanguagesPreferredId});
       this.listViewLanguagesPreferred.FullRowSelect = true;
       this.listViewLanguagesPreferred.Location = new System.Drawing.Point(234, 3);
       this.listViewLanguagesPreferred.Name = "listViewLanguagesPreferred";
@@ -178,58 +178,58 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.listViewLanguagesPreferred.TabIndex = 3;
       this.listViewLanguagesPreferred.UseCompatibleStateImageBehavior = false;
       this.listViewLanguagesPreferred.View = System.Windows.Forms.View.Details;
-      this.listViewLanguagesPreferred.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewPreferredLanguages_ColumnClick);
+      this.listViewLanguagesPreferred.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewLanguagesPreferred_ColumnClick);
       this.listViewLanguagesPreferred.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listViewLanguagesPreferred_ItemDrag);
       this.listViewLanguagesPreferred.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewLanguagesPreferred_DragDrop);
       this.listViewLanguagesPreferred.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewLanguagesPreferred_DragEnter);
       this.listViewLanguagesPreferred.DragOver += new System.Windows.Forms.DragEventHandler(this.listViewLanguagesPreferred_DragOver);
       this.listViewLanguagesPreferred.DoubleClick += new System.EventHandler(this.listViewLanguagesPreferred_DoubleClick);
       // 
-      // columnHeaderPreferredLanguageName
+      // columnHeaderLanguagesPreferredName
       // 
-      this.columnHeaderPreferredLanguageName.Text = "Preferred Language";
-      this.columnHeaderPreferredLanguageName.Width = 126;
+      this.columnHeaderLanguagesPreferredName.Text = "Preferred Languages";
+      this.columnHeaderLanguagesPreferredName.Width = 126;
       // 
-      // columnHeaderPreferredLanguageId
+      // columnHeaderLanguagesPreferredId
       // 
-      this.columnHeaderPreferredLanguageId.Text = "ID";
-      this.columnHeaderPreferredLanguageId.Width = 36;
+      this.columnHeaderLanguagesPreferredId.Text = "ID";
+      this.columnHeaderLanguagesPreferredId.Width = 36;
       // 
-      // listViewLanguages
+      // listViewLanguagesAvailable
       // 
-      this.listViewLanguages.AllowColumnReorder = true;
-      this.listViewLanguages.AllowDrop = true;
-      this.listViewLanguages.AllowRowReorder = false;
-      this.listViewLanguages.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.listViewLanguagesAvailable.AllowColumnReorder = true;
+      this.listViewLanguagesAvailable.AllowDrop = true;
+      this.listViewLanguagesAvailable.AllowRowReorder = false;
+      this.listViewLanguagesAvailable.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.listViewLanguages.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeaderLanguageName,
-            this.columnHeaderLanguageId});
-      this.listViewLanguages.FullRowSelect = true;
-      this.listViewLanguages.Location = new System.Drawing.Point(3, 3);
-      this.listViewLanguages.Name = "listViewLanguages";
-      this.tableLayoutPanelPreferredLanguages.SetRowSpan(this.listViewLanguages, 3);
-      this.listViewLanguages.Size = new System.Drawing.Size(192, 105);
-      this.listViewLanguages.TabIndex = 0;
-      this.listViewLanguages.UseCompatibleStateImageBehavior = false;
-      this.listViewLanguages.View = System.Windows.Forms.View.Details;
-      this.listViewLanguages.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewLanguages_ColumnClick);
-      this.listViewLanguages.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listViewLanguages_ItemDrag);
-      this.listViewLanguages.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewLanguages_DragDrop);
-      this.listViewLanguages.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewLanguages_DragEnter);
-      this.listViewLanguages.DragOver += new System.Windows.Forms.DragEventHandler(this.listViewLanguages_DragOver);
-      this.listViewLanguages.DoubleClick += new System.EventHandler(this.listViewLanguages_DoubleClick);
+      this.listViewLanguagesAvailable.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderLanguagesAvailableName,
+            this.columnHeaderLanguagesAvailableId});
+      this.listViewLanguagesAvailable.FullRowSelect = true;
+      this.listViewLanguagesAvailable.Location = new System.Drawing.Point(3, 3);
+      this.listViewLanguagesAvailable.Name = "listViewLanguagesAvailable";
+      this.tableLayoutPanelPreferredLanguages.SetRowSpan(this.listViewLanguagesAvailable, 3);
+      this.listViewLanguagesAvailable.Size = new System.Drawing.Size(192, 105);
+      this.listViewLanguagesAvailable.TabIndex = 0;
+      this.listViewLanguagesAvailable.UseCompatibleStateImageBehavior = false;
+      this.listViewLanguagesAvailable.View = System.Windows.Forms.View.Details;
+      this.listViewLanguagesAvailable.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewLanguagesAvailable_ColumnClick);
+      this.listViewLanguagesAvailable.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listViewLanguages_ItemDrag);
+      this.listViewLanguagesAvailable.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewLanguages_DragDrop);
+      this.listViewLanguagesAvailable.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewLanguages_DragEnter);
+      this.listViewLanguagesAvailable.DragOver += new System.Windows.Forms.DragEventHandler(this.listViewLanguages_DragOver);
+      this.listViewLanguagesAvailable.DoubleClick += new System.EventHandler(this.listViewLanguagesAvailable_DoubleClick);
       // 
-      // columnHeaderLanguageName
+      // columnHeaderLanguagesAvailableName
       // 
-      this.columnHeaderLanguageName.Text = "Language";
-      this.columnHeaderLanguageName.Width = 128;
+      this.columnHeaderLanguagesAvailableName.Text = "Available Languages";
+      this.columnHeaderLanguagesAvailableName.Width = 128;
       // 
-      // columnHeaderLanguageId
+      // columnHeaderLanguagesAvailableId
       // 
-      this.columnHeaderLanguageId.Text = "ID";
-      this.columnHeaderLanguageId.Width = 36;
+      this.columnHeaderLanguagesAvailableId.Text = "ID";
+      this.columnHeaderLanguagesAvailableId.Width = 36;
       // 
       // textBoxPreferredRatingSystems
       // 
@@ -288,7 +288,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tableLayoutPanelPreferredLanguages.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
       this.tableLayoutPanelPreferredLanguages.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
       this.tableLayoutPanelPreferredLanguages.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 31F));
-      this.tableLayoutPanelPreferredLanguages.Controls.Add(this.listViewLanguages, 0, 0);
+      this.tableLayoutPanelPreferredLanguages.Controls.Add(this.listViewLanguagesAvailable, 0, 0);
       this.tableLayoutPanelPreferredLanguages.Controls.Add(this.listViewLanguagesPreferred, 2, 0);
       this.tableLayoutPanelPreferredLanguages.Controls.Add(this.buttonPreferredLanguageAdd, 1, 1);
       this.tableLayoutPanelPreferredLanguages.Controls.Add(this.buttonPreferredLanguageRemove, 1, 2);
@@ -835,11 +835,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPListView listViewProgramCategoriesMapped;
     private System.Windows.Forms.ColumnHeader columnHeaderMappedProgramCategories;
     private MPListView listViewLanguagesPreferred;
-    private System.Windows.Forms.ColumnHeader columnHeaderPreferredLanguageName;
-    private System.Windows.Forms.ColumnHeader columnHeaderPreferredLanguageId;
-    private MPListView listViewLanguages;
-    private System.Windows.Forms.ColumnHeader columnHeaderLanguageName;
-    private System.Windows.Forms.ColumnHeader columnHeaderLanguageId;
+    private System.Windows.Forms.ColumnHeader columnHeaderLanguagesPreferredName;
+    private System.Windows.Forms.ColumnHeader columnHeaderLanguagesPreferredId;
+    private MPListView listViewLanguagesAvailable;
+    private System.Windows.Forms.ColumnHeader columnHeaderLanguagesAvailableName;
+    private System.Windows.Forms.ColumnHeader columnHeaderLanguagesAvailableId;
     private System.Windows.Forms.TableLayoutPanel tableLayoutPanelPreferredLanguages;
     private MPButton buttonPreferredLanguageAdd;
     private MPButton buttonPreferredLanguageRemove;

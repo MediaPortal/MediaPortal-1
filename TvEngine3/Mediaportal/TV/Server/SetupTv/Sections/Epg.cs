@@ -38,7 +38,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private string _previousPreferredLanguages = null;
     private SortOrder _previousPreferredLanguageSortOrder = SortOrder.None;
 
-    private MPListViewStringColumnSorter _listViewColumnSorterLanguages = null;
+    private MPListViewStringColumnSorter _listViewColumnSorterLanguagesAvailable = null;
     private MPListViewStringColumnSorter _listViewColumnSorterLanguagesPreferred = null;
     private MPListViewStringColumnSorter _listViewColumnSorterProgramCategoriesUnmapped = null;
     private MPListViewStringColumnSorter _listViewColumnSorterProgramCategoriesMapped = null;
@@ -53,9 +53,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       InitializeComponent();
 
-      _listViewColumnSorterLanguages = new MPListViewStringColumnSorter();
-      _listViewColumnSorterLanguages.Order = SortOrder.Ascending;
-      listViewLanguages.ListViewItemSorter = _listViewColumnSorterLanguages;
+      _listViewColumnSorterLanguagesAvailable = new MPListViewStringColumnSorter();
+      _listViewColumnSorterLanguagesAvailable.Order = SortOrder.Ascending;
+      listViewLanguagesAvailable.ListViewItemSorter = _listViewColumnSorterLanguagesAvailable;
       _listViewColumnSorterLanguagesPreferred = new MPListViewStringColumnSorter();
       _listViewColumnSorterLanguagesPreferred.Order = SortOrder.None;
       listViewLanguagesPreferred.ListViewItemSorter = _listViewColumnSorterLanguagesPreferred;
@@ -92,13 +92,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.LogDebug("  preferred languages = {0}", preferredLanguageCodes);
       if (!string.Equals(_previousPreferredLanguages, preferredLanguageCodes))
       {
-        listViewLanguages.BeginUpdate();
+        listViewLanguagesAvailable.BeginUpdate();
         listViewLanguagesPreferred.BeginUpdate();
-        SortOrder previousSortOrder = _listViewColumnSorterLanguages.Order;
-        _listViewColumnSorterLanguages.Order = SortOrder.None;
+        SortOrder previousSortOrder = _listViewColumnSorterLanguagesAvailable.Order;
+        _listViewColumnSorterLanguagesAvailable.Order = SortOrder.None;
         try
         {
-          listViewLanguages.Items.Clear();
+          listViewLanguagesAvailable.Items.Clear();
           listViewLanguagesPreferred.Items.Clear();
 
           SortedDictionary<int, ListViewItem> preferredLanguageItems = new SortedDictionary<int, ListViewItem>();
@@ -111,7 +111,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             }
             else
             {
-              listViewLanguages.Items.Add(item);
+              listViewLanguagesAvailable.Items.Add(item);
             }
           }
 
@@ -120,12 +120,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             listViewLanguagesPreferred.Items.Add(item);
           }
 
-          _listViewColumnSorterLanguages.Order = previousSortOrder;
-          listViewLanguages.Sort();
+          _listViewColumnSorterLanguagesAvailable.Order = previousSortOrder;
+          listViewLanguagesAvailable.Sort();
         }
         finally
         {
-          listViewLanguages.EndUpdate();
+          listViewLanguagesAvailable.EndUpdate();
           listViewLanguagesPreferred.EndUpdate();
         }
       }
@@ -452,14 +452,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void buttonPreferredLanguageAdd_Click(object sender, System.EventArgs e)
     {
-      ListView.SelectedListViewItemCollection selectedItems = listViewLanguages.SelectedItems;
+      ListView.SelectedListViewItemCollection selectedItems = listViewLanguagesAvailable.SelectedItems;
       if (selectedItems == null || selectedItems.Count == 0)
       {
         return;
       }
 
-      listViewLanguages.BeginUpdate();
-      listViewLanguages.ListViewItemSorter = null;
+      listViewLanguagesAvailable.BeginUpdate();
+      listViewLanguagesAvailable.ListViewItemSorter = null;
       listViewLanguagesPreferred.BeginUpdate();
       listViewLanguagesPreferred.ListViewItemSorter = null;
       try
@@ -468,15 +468,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         int i = 0;
         foreach (ListViewItem item in selectedItems)
         {
-          listViewLanguages.Items.Remove(item);
+          listViewLanguagesAvailable.Items.Remove(item);
           items[i++] = item;
         }
         listViewLanguagesPreferred.Items.AddRange(items);
       }
       finally
       {
-        listViewLanguages.ListViewItemSorter = _listViewColumnSorterLanguages;
-        listViewLanguages.EndUpdate();
+        listViewLanguagesAvailable.ListViewItemSorter = _listViewColumnSorterLanguagesAvailable;
+        listViewLanguagesAvailable.EndUpdate();
         listViewLanguagesPreferred.ListViewItemSorter = _listViewColumnSorterLanguagesPreferred;
         listViewLanguagesPreferred.Sort();
         listViewLanguagesPreferred.EndUpdate();
@@ -493,8 +493,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return;
       }
 
-      listViewLanguages.BeginUpdate();
-      listViewLanguages.ListViewItemSorter = null;
+      listViewLanguagesAvailable.BeginUpdate();
+      listViewLanguagesAvailable.ListViewItemSorter = null;
       listViewLanguagesPreferred.BeginUpdate();
       listViewLanguagesPreferred.ListViewItemSorter = null;
       try
@@ -506,18 +506,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           listViewLanguagesPreferred.Items.Remove(item);
           items[i++] = item;
         }
-        listViewLanguages.Items.AddRange(items);
+        listViewLanguagesAvailable.Items.AddRange(items);
       }
       finally
       {
-        listViewLanguages.ListViewItemSorter = _listViewColumnSorterLanguages;
-        listViewLanguages.Sort();
-        listViewLanguages.EndUpdate();
+        listViewLanguagesAvailable.ListViewItemSorter = _listViewColumnSorterLanguagesAvailable;
+        listViewLanguagesAvailable.Sort();
+        listViewLanguagesAvailable.EndUpdate();
         listViewLanguagesPreferred.ListViewItemSorter = _listViewColumnSorterLanguagesPreferred;
         listViewLanguagesPreferred.EndUpdate();
       }
 
-      listViewLanguages.Focus();
+      listViewLanguagesAvailable.Focus();
     }
 
     private void buttonPreferredLanguagePriorityUp_Click(object sender, System.EventArgs e)
@@ -577,24 +577,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       listViewLanguagesPreferred.Focus();
     }
 
-    private void listViewLanguages_ColumnClick(object sender, ColumnClickEventArgs e)
+    private void listViewLanguagesAvailable_ColumnClick(object sender, ColumnClickEventArgs e)
     {
-      if (e.Column == _listViewColumnSorterLanguages.SortColumn)
+      if (e.Column == _listViewColumnSorterLanguagesAvailable.SortColumn)
       {
-        _listViewColumnSorterLanguages.Order = _listViewColumnSorterLanguages.Order == SortOrder.Ascending
+        _listViewColumnSorterLanguagesAvailable.Order = _listViewColumnSorterLanguagesAvailable.Order == SortOrder.Ascending
                                                         ? SortOrder.Descending
                                                         : SortOrder.Ascending;
       }
       else
       {
-        _listViewColumnSorterLanguages.SortColumn = e.Column;
-        _listViewColumnSorterLanguages.Order = SortOrder.Ascending;
+        _listViewColumnSorterLanguagesAvailable.SortColumn = e.Column;
+        _listViewColumnSorterLanguagesAvailable.Order = SortOrder.Ascending;
       }
 
-      listViewLanguages.Sort();
+      listViewLanguagesAvailable.Sort();
     }
 
-    private void listViewPreferredLanguages_ColumnClick(object sender, ColumnClickEventArgs e)
+    private void listViewLanguagesPreferred_ColumnClick(object sender, ColumnClickEventArgs e)
     {
       if (e.Column == _listViewColumnSorterLanguagesPreferred.SortColumn)
       {
@@ -613,7 +613,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       _listViewColumnSorterLanguagesPreferred.Order = SortOrder.None;
     }
 
-    private void listViewLanguages_DoubleClick(object sender, System.EventArgs e)
+    private void listViewLanguagesAvailable_DoubleClick(object sender, System.EventArgs e)
     {
       buttonPreferredLanguageAdd_Click(null, null);
     }
@@ -629,14 +629,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void listViewLanguages_ItemDrag(object sender, ItemDragEventArgs e)
     {
-      listViewLanguages.DoDragDrop(listViewLanguages, DragDropEffects.Move);
+      listViewLanguagesAvailable.DoDragDrop(listViewLanguagesAvailable, DragDropEffects.Move);
     }
 
     private void listViewLanguages_DragOver(object sender, DragEventArgs e)
     {
       if (IsValidDragDropData(e, listViewLanguagesPreferred))
       {
-        listViewLanguages.DefaultDragOverHandler(e);
+        listViewLanguagesAvailable.DefaultDragOverHandler(e);
       }
     }
 
@@ -654,12 +654,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       // Determine where we're going to insert the dragged item(s).
-      Point cp = listViewLanguages.PointToClient(new Point(e.X, e.Y));
-      ListViewItem dragToItem = listViewLanguages.GetItemAt(cp.X, cp.Y);
+      Point cp = listViewLanguagesAvailable.PointToClient(new Point(e.X, e.Y));
+      ListViewItem dragToItem = listViewLanguagesAvailable.GetItemAt(cp.X, cp.Y);
       int dropIndex;
       if (dragToItem == null)
       {
-        if (listViewLanguages.Items.Count != 0)
+        if (listViewLanguagesAvailable.Items.Count != 0)
         {
           return;
         }
@@ -672,7 +672,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         dropIndex++;
       }
 
-      listViewLanguages.BeginUpdate();
+      listViewLanguagesAvailable.BeginUpdate();
       listViewLanguagesPreferred.BeginUpdate();
       try
       {
@@ -680,12 +680,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         foreach (ListViewItem item in listViewLanguagesPreferred.SelectedItems)
         {
           listViewLanguagesPreferred.Items.RemoveAt(item.Index);
-          listViewLanguages.Items.Insert(dropIndex++, item);
+          listViewLanguagesAvailable.Items.Insert(dropIndex++, item);
         }
       }
       finally
       {
-        listViewLanguages.EndUpdate();
+        listViewLanguagesAvailable.EndUpdate();
         listViewLanguagesPreferred.EndUpdate();
       }
     }
@@ -697,7 +697,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void listViewLanguagesPreferred_DragOver(object sender, DragEventArgs e)
     {
-      if (IsValidDragDropData(e, listViewLanguages) || IsValidDragDropData(e, listViewLanguagesPreferred))
+      if (IsValidDragDropData(e, listViewLanguagesAvailable) || IsValidDragDropData(e, listViewLanguagesPreferred))
       {
         listViewLanguagesPreferred.DefaultDragOverHandler(e);
       }
@@ -705,7 +705,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void listViewLanguagesPreferred_DragEnter(object sender, DragEventArgs e)
     {
-      if (!IsValidDragDropData(e, listViewLanguages))
+      if (!IsValidDragDropData(e, listViewLanguagesAvailable))
       {
         IsValidDragDropData(e, listViewLanguagesPreferred);
       }
@@ -719,7 +719,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         listViewLanguagesPreferred.DefaultDragDropHandler(e);
         return;
       }
-      else if (!IsValidDragDropData(e, listViewLanguages))
+      else if (!IsValidDragDropData(e, listViewLanguagesAvailable))
       {
         // (Unsupported drag/drop source.)
         return;
@@ -744,20 +744,20 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         dropIndex++;
       }
 
-      listViewLanguages.BeginUpdate();
+      listViewLanguagesAvailable.BeginUpdate();
       listViewLanguagesPreferred.BeginUpdate();
       try
       {
         // Move the items.
-        foreach (ListViewItem item in listViewLanguages.SelectedItems)
+        foreach (ListViewItem item in listViewLanguagesAvailable.SelectedItems)
         {
-          listViewLanguages.Items.RemoveAt(item.Index);
+          listViewLanguagesAvailable.Items.RemoveAt(item.Index);
           listViewLanguagesPreferred.Items.Insert(dropIndex++, item);
         }
       }
       finally
       {
-        listViewLanguages.EndUpdate();
+        listViewLanguagesAvailable.EndUpdate();
         listViewLanguagesPreferred.EndUpdate();
       }
     }
@@ -873,7 +873,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       finally
       {
-        listViewProgramCategoriesUnmapped.ListViewItemSorter = _listViewColumnSorterLanguages;
+        listViewProgramCategoriesUnmapped.ListViewItemSorter = _listViewColumnSorterLanguagesAvailable;
         listViewProgramCategoriesUnmapped.EndUpdate();
         listViewProgramCategoriesMapped.ListViewItemSorter = _listViewColumnSorterLanguagesPreferred;
         listViewProgramCategoriesMapped.Sort();
