@@ -6,8 +6,9 @@
 // Copyright (c) 1992-2001 Microsoft Corporation.  All rights reserved.
 //------------------------------------------------------------------------------
 
+#pragma once
 
-#include <streams.h>
+#include "stdafx.h"
 #include <strsafe.h>
 
 //---------------------------------------------------------------------------
@@ -51,9 +52,9 @@ EliminateSubKey( HKEY hkey, LPCTSTR strSubKey )
                              , MAXIMUM_ALLOWED
                              , &hk );
 
-  ASSERT(    lreturn == ERROR_SUCCESS
+  /*ASSERT(    lreturn == ERROR_SUCCESS
           || lreturn == ERROR_FILE_NOT_FOUND
-          || lreturn == ERROR_INVALID_HANDLE );
+          || lreturn == ERROR_INVALID_HANDLE );*/
 
   if( ERROR_SUCCESS == lreturn )
   {
@@ -75,8 +76,8 @@ EliminateSubKey( HKEY hkey, LPCTSTR strSubKey )
                             , NULL
                             , &ft);
 
-      ASSERT(    lreturn == ERROR_SUCCESS
-              || lreturn == ERROR_NO_MORE_ITEMS );
+      //ASSERT(    lreturn == ERROR_SUCCESS
+      //        || lreturn == ERROR_NO_MORE_ITEMS );
 
       if( ERROR_SUCCESS == lreturn )
       {
@@ -125,7 +126,11 @@ AMovieSetupRegisterServer( CLSID   clsServer
   HRESULT hr = StringFromGUID2( clsServer
                               , szCLSID
                               , CHARS_IN_GUID );
-  ASSERT( SUCCEEDED(hr) );
+
+  if (FAILED(hr))
+    return hr;
+
+  //ASSERT( SUCCEEDED(hr) );
 
   // create key
   //
@@ -225,7 +230,7 @@ AMovieSetupUnregisterServer( CLSID clsServer )
   HRESULT hr = StringFromGUID2( clsServer
                               , szCLSID
                               , CHARS_IN_GUID );
-  ASSERT( SUCCEEDED(hr) );
+  //ASSERT( SUCCEEDED(hr) );
 
   TCHAR achBuffer[MAX_KEY_LEN];
   (void)StringCchPrintf( achBuffer, NUMELMS(achBuffer), TEXT("CLSID\\%ls"), szCLSID );
@@ -234,7 +239,7 @@ AMovieSetupUnregisterServer( CLSID clsServer )
   //
 
   hr = EliminateSubKey( HKEY_CLASSES_ROOT, achBuffer );
-  ASSERT( SUCCEEDED(hr) );
+  //ASSERT( SUCCEEDED(hr) );
 
   // return
   //
@@ -253,7 +258,7 @@ AMovieSetupRegisterFilter2( const AMOVIESETUP_FILTER * const psetupdata
                           , IFilterMapper2 *                 pIFM2
                           , BOOL                             bRegister  )
 {
-  DbgLog((LOG_TRACE, 3, TEXT("= AMovieSetupRegisterFilter")));
+  //DbgLog((LOG_TRACE, 3, TEXT("= AMovieSetupRegisterFilter")));
 
   // check we've got data
   //
@@ -264,7 +269,7 @@ AMovieSetupRegisterFilter2( const AMOVIESETUP_FILTER * const psetupdata
   // (as pins are subkeys of filter's CLSID key
   // they do not need to be removed separately).
   //
-  DbgLog((LOG_TRACE, 3, TEXT("= = unregister filter")));
+  //DbgLog((LOG_TRACE, 3, TEXT("= = unregister filter")));
   HRESULT hr = pIFM2->UnregisterFilter(
       0,                        // default category
       0,                        // default instance name
@@ -279,16 +284,14 @@ AMovieSetupRegisterFilter2( const AMOVIESETUP_FILTER * const psetupdata
     rf2.cPins = psetupdata->nPins;
     rf2.rgPins = psetupdata->lpPin;
 
-    const CLSID *filterCategory=&psetupdata->filterCategory;
-    
     // register filter
     //
-    DbgLog((LOG_TRACE, 3, TEXT("= = register filter")));
+    //DbgLog((LOG_TRACE, 3, TEXT("= = register filter")));
     hr = pIFM2->RegisterFilter(*psetupdata->clsID
                              , psetupdata->strName
                              , 0 // moniker
-                             ,filterCategory // category
-                             , NULL // instance
+                             , &CLSID_AudioRendererCategory // category
+                             , _T('\0') // instance
                              , &rf2);
   }
 
@@ -321,8 +324,8 @@ RegisterAllServers( LPCWSTR szFileName, BOOL bRegister )
     //
     const CFactoryTemplate *pT = &g_Templates[i];
 
-    DbgLog((LOG_TRACE, 2, TEXT("- - register %ls"),
-           (LPCWSTR)pT->m_Name ));
+    //DbgLog((LOG_TRACE, 2, TEXT("- - register %ls"),
+    //       (LPCWSTR)pT->m_Name ));
 
     // register CLSID and InprocServer32
     //
@@ -371,7 +374,7 @@ AMovieDllRegisterServer2( BOOL bRegister )
 {
   HRESULT hr = NOERROR;
 
-  DbgLog((LOG_TRACE, 2, TEXT("AMovieDllRegisterServer2()")));
+  //DbgLog((LOG_TRACE, 2, TEXT("AMovieDllRegisterServer2()")));
 
   // get file name (where g_hInst is the
   // instance handle of the filter dll)
@@ -383,11 +386,11 @@ AMovieDllRegisterServer2( BOOL bRegister )
   {
     char achTemp[MAX_PATH];
 
-    DbgLog((LOG_TRACE, 2, TEXT("- get module file name")));
+    //DbgLog((LOG_TRACE, 2, TEXT("- get module file name")));
 
     // g_hInst handle is set in our dll entry point. Make sure
     // DllEntryPoint in dllentry.cpp is called
-    ASSERT(g_hInst != 0);
+    //ASSERT(g_hInst != 0);
 
     if( 0 == GetModuleFileNameA( g_hInst
                               , achTemp
@@ -411,7 +414,7 @@ AMovieDllRegisterServer2( BOOL bRegister )
   //
   if( bRegister )
   {
-    DbgLog((LOG_TRACE, 2, TEXT("- register OLE Servers")));
+    //DbgLog((LOG_TRACE, 2, TEXT("- register OLE Servers")));
     hr = RegisterAllServers( achFileName, TRUE );
   }
 
@@ -424,13 +427,13 @@ AMovieDllRegisterServer2( BOOL bRegister )
     // init is ref counted so call just in case
     // we're being called cold.
     //
-    DbgLog((LOG_TRACE, 2, TEXT("- CoInitialize")));
+    //DbgLog((LOG_TRACE, 2, TEXT("- CoInitialize")));
     hr = CoInitialize( (LPVOID)NULL );
-    ASSERT( SUCCEEDED(hr) );
+    //ASSERT( SUCCEEDED(hr) );
 
     // get hold of IFilterMapper2
     //
-    DbgLog((LOG_TRACE, 2, TEXT("- obtain IFilterMapper2")));
+    //DbgLog((LOG_TRACE, 2, TEXT("- obtain IFilterMapper2")));
     IFilterMapper2 *pIFM2 = 0;
     IFilterMapper *pIFM = 0;
     hr = CoCreateInstance( CLSID_FilterMapper2
@@ -440,7 +443,7 @@ AMovieDllRegisterServer2( BOOL bRegister )
                          , (void **)&pIFM2       );
     if(FAILED(hr))
     {
-        DbgLog((LOG_TRACE, 2, TEXT("- trying IFilterMapper instead")));
+        //DbgLog((LOG_TRACE, 2, TEXT("- trying IFilterMapper instead")));
 
         hr = CoCreateInstance(
             CLSID_FilterMapper,
@@ -454,7 +457,7 @@ AMovieDllRegisterServer2( BOOL bRegister )
       // scan through array of CFactoryTemplates
       // registering servers and filters.
       //
-      DbgLog((LOG_TRACE, 2, TEXT("- register Filters")));
+      //DbgLog((LOG_TRACE, 2, TEXT("- register Filters")));
       for( int i = 0; i < g_cTemplates; i++ )
       {
         // get i'th template
@@ -463,7 +466,7 @@ AMovieDllRegisterServer2( BOOL bRegister )
 
         if( NULL != pT->m_pAMovieSetup_Filter )
         {
-          DbgLog((LOG_TRACE, 2, TEXT("- - register %ls"), (LPCWSTR)pT->m_Name ));
+          //DbgLog((LOG_TRACE, 2, TEXT("- - register %ls"), (LPCWSTR)pT->m_Name ));
 
           if(pIFM2)
           {
@@ -502,11 +505,11 @@ AMovieDllRegisterServer2( BOOL bRegister )
   //
   if( SUCCEEDED(hr) && !bRegister )
   {
-    DbgLog((LOG_TRACE, 2, TEXT("- register OLE Servers")));
+    //DbgLog((LOG_TRACE, 2, TEXT("- register OLE Servers")));
     hr = RegisterAllServers( achFileName, FALSE );
   }
 
-  DbgLog((LOG_TRACE, 2, TEXT("- return %0x"), hr));
+  //DbgLog((LOG_TRACE, 2, TEXT("- return %0x"), hr));
   return hr;
 }
 
