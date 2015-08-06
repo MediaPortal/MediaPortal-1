@@ -12,7 +12,7 @@ rem %DeployVersionGIT% /git="%GIT_ROOT%" /path="%MediaPortal%" >> %log%
 
 echo.
 echo Building Libbluray Java...
-call ant -f %LibblurayJAR% -Dsrc_awt=:java-j2se
+call %ant_home%\bin\ant -f %LibblurayJAR% -Dsrc_awt=:java-j2se
 
 echo.
 echo Building native components...
