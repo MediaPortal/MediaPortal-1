@@ -32,8 +32,14 @@ using Message = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Message;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
-  [PluginIcons("ProcessPlugins.MiniDisplay.MiniDisplay.lcd.gif",
-    "ProcessPlugins.MiniDisplay.MiniDisplay.lcd_deactivated.gif")]
+  [PluginIcons
+    (
+    //Activated icon
+    "MiniDisplayPlugin.MiniDisplay.lcd.gif",
+    //Deactivated icon
+    "MiniDisplayPlugin.MiniDisplay.lcd_deactivated.gif"
+    )
+  ]
   public class MiniDisplay : IPlugin, ISetupForm
   {
     #region variables
