@@ -1803,6 +1803,13 @@ HRESULT CTsMuxer::ReadProgramOrSystemHeader(unsigned char* data,
                                             ProgramStreamInfo& info,
                                             bool isFirstReceive)
 {
+  if (dataLength < 11)
+  {
+    LogDebug(L"muxer: pin %hhu system stream packet with length %ld is too small to contain a header",
+              info.PinId, dataLength);
+    return E_NOT_SUFFICIENT_BUFFER;
+  }
+
   long rateBound = ((data[6] & 0x7f) << 15);
   rateBound += (data[7] << 7);
   rateBound += ((data[8] & 0xfe) >> 1);
@@ -1848,6 +1855,13 @@ HRESULT CTsMuxer::ReadProgramStreamMap(unsigned char* data,
                                         long dataLength,
                                         ProgramStreamInfo& info)
 {
+  if (dataLength < 16)
+  {
+    LogDebug(L"muxer: pin %hhu system stream packet with length %ld is too small to contain a program stream map",
+              info.PinId, dataLength);
+    return E_NOT_SUFFICIENT_BUFFER;
+  }
+
   bool currentNextIndicator = (data[6] & 0x80) != 0;
   unsigned char programStreamMapVersion = data[6] & 0x1f;
   if (programStreamMapVersion == info.CurrentMapVersion)
@@ -1861,6 +1875,13 @@ HRESULT CTsMuxer::ReadProgramStreamMap(unsigned char* data,
   unsigned short programStreamInfoLength = (data[8] << 8) | data[9];
   long offset = 10;
   long endOfDescriptors = offset + programStreamInfoLength;
+  if (endOfDescriptors + 6 > dataLength)
+  {
+    LogDebug(L"muxer: pin %hhu program stream map is invalid, data length = %ld, program stream info length = %hu",
+              info.PinId, dataLength, programStreamInfoLength);
+    return E_NOT_SUFFICIENT_BUFFER;
+  }
+
   while (offset + 1 < endOfDescriptors)
   {
     unsigned char tag = data[offset++];
@@ -1870,9 +1891,25 @@ HRESULT CTsMuxer::ReadProgramStreamMap(unsigned char* data,
               tag, length);
   }
 
+  if (offset + 6 > dataLength)
+  {
+    LogDebug(L"muxer: pin %hhu program stream map is invalid, offset = %ld, data length = %ld, program stream info length = %hu",
+              info.PinId, offset, dataLength, programStreamInfoLength);
+    return E_NOT_SUFFICIENT_BUFFER;
+  }
+
   unsigned short elementaryStreamMapLength = (data[offset] << 8) | data[offset + 1];
   offset += 2;
   long endOfStreams = offset + elementaryStreamMapLength;
+
+  if (endOfStreams + 4 > dataLength)
+  {
+    LogDebug(L"muxer: pin %hhu program stream map is invalid, offset = %ld, data length = %ld, program stream info length = %hu, elementary stream map length = %hu",
+              info.PinId, offset, dataLength, programStreamInfoLength,
+              elementaryStreamMapLength);
+    return E_NOT_SUFFICIENT_BUFFER;
+  }
+
   while (offset + 3 < endOfStreams)
   {
     unsigned char streamType = data[offset++];
@@ -1882,6 +1919,16 @@ HRESULT CTsMuxer::ReadProgramStreamMap(unsigned char* data,
     unsigned short elementaryStreamInfoLength = (data[offset] << 8) | data[offset + 1];
     offset += 2;
     endOfDescriptors = offset + elementaryStreamInfoLength;
+
+    if (endOfDescriptors > endOfStreams)
+    {
+      LogDebug(L"muxer: pin %hhu program stream map is invalid, offset = %ld, data length = %ld, program stream info length = %hu, elementary stream map length = %hu, elementary stream ID = %hhu, elementary stream info length = %hu",
+                info.PinId, offset, dataLength, programStreamInfoLength,
+                elementaryStreamMapLength, elementaryStreamId,
+                elementaryStreamInfoLength);
+      return E_NOT_SUFFICIENT_BUFFER;
+    }
+
     while (offset + 1 < endOfDescriptors)
     {
       unsigned char tag = data[offset++];
