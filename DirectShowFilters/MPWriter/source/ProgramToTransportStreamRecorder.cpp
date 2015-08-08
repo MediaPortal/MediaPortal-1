@@ -3,6 +3,7 @@
 #include <streams.h>
 #include "ProgramToTransportStreamRecorder.h"
 #include "MemoryStreamSource.h"
+#include "MPMPEG2TransportStreamFromPESSource.h"
 extern void LogDebug(const char *fmt, ...) ;
 extern void LogDebug(const wchar_t *fmt, ...) ;
 
@@ -26,8 +27,8 @@ CProgramToTransportStreamRecorder::~CProgramToTransportStreamRecorder(void)
 void afterPlayingRecorder(void* clientData) 
 {
 	LogDebug("CProgramToTransportStreamRecorder afterPlaying");
-	MPEG2TransportStreamFromPESSource* outputSink=(MPEG2TransportStreamFromPESSource*)clientData;
 }
+
 void CProgramToTransportStreamRecorder::Initialize(wchar_t* fileNameOut)
 {
 	LogDebug(L"CProgramToTransportStreamRecorder::Initialize %s", fileNameOut);
@@ -49,8 +50,7 @@ void CProgramToTransportStreamRecorder::Initialize(wchar_t* fileNameOut)
 	MPEG1or2DemuxedElementaryStream* pesSource = baseDemultiplexor->newRawPESStream();
 
 	// And, from this, a filter that converts to MPEG-2 Transport Stream frames:
-	m_tsFrames  = MPEG2TransportStreamFromPESSource::createNew(*m_env, pesSource);
-	((MPEG2TransportStreamFromPESSource*) m_tsFrames)->SetSourceType(m_iProgramType);
+	m_tsFrames  = MPMPEG2TransportStreamFromPESSource::createNew(*m_env, pesSource, m_iProgramType == 0);
 
 	m_outputSink = CFileSinkRecorder::createNew(*m_env, fileNameOut);
 	if (m_outputSink == NULL) 

@@ -315,6 +315,7 @@
     <ClCompile Include="liveMedia\VP8VideoRTPSource.cpp" />
     <ClCompile Include="liveMedia\VP9VideoRTPSink.cpp" />
     <ClCompile Include="liveMedia\VP9VideoRTPSource.cpp" />
+    <ClCompile Include="MediaPortal\MPMPEG2TransportStreamFromPESSource.cpp" />
     <ClCompile Include="MediaPortal\MPRTSPClient.cpp" />
     <ClCompile Include="UsageEnvironment\HashTable.cpp" />
     <ClCompile Include="UsageEnvironment\strDup.cpp" />
@@ -457,6 +458,7 @@
     <ClInclude Include="liveMedia\include\our_md5.h" />
     <ClInclude Include="liveMedia\include\rtcp_from_spec.h" />
     <ClInclude Include="groupsock\include\NetCommon.h" />
+    <ClInclude Include="MediaPortal\MPMPEG2TransportStreamFromPESSource.h" />
     <ClInclude Include="MediaPortal\MPRTSPClient.h" />
     <ClInclude Include="MediaPortal\MPRTSPServer.h" />
     <ClInclude Include="MediaPortal\MPTaskScheduler.h" />
