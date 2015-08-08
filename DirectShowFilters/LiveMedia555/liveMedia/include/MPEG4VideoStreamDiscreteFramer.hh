@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // A simplified version of "MPEG4VideoStreamFramer" that takes only complete,
 // discrete frames (rather than an arbitrary byte stream) as input.
 // This avoids the parsing and data copying overhead of the full
@@ -31,11 +31,11 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 class MPEG4VideoStreamDiscreteFramer: public MPEG4VideoStreamFramer {
 public:
   static MPEG4VideoStreamDiscreteFramer*
-  createNew(UsageEnvironment& env, FramedSource* inputSource);
+  createNew(UsageEnvironment& env, FramedSource* inputSource, Boolean leavePresentationTimesUnmodified = False);
 
 protected:
   MPEG4VideoStreamDiscreteFramer(UsageEnvironment& env,
-				 FramedSource* inputSource);
+				 FramedSource* inputSource, Boolean leavePresentationTimesUnmodified);
       // called only by createNew()
   virtual ~MPEG4VideoStreamDiscreteFramer();
 
@@ -59,6 +59,7 @@ protected:
   void analyzeVOLHeader();
 
 protected:
+  Boolean fLeavePresentationTimesUnmodified;
   u_int32_t vop_time_increment_resolution;
   unsigned fNumVTIRBits;
   // # of bits needed to count to "vop_time_increment_resolution"

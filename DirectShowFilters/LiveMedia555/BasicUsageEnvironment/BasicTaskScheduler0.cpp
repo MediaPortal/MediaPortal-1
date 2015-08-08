@@ -13,7 +13,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // Basic Usage Environment: for a simple, non-scripted, console application
 // Implementation
 
@@ -44,12 +44,16 @@ private:
 ////////// BasicTaskScheduler0 //////////
 
 BasicTaskScheduler0::BasicTaskScheduler0()
-  : fLastHandledSocketNum(-1) {
-  fReadHandlers = new HandlerSet;
+  : fLastHandledSocketNum(-1), fTriggersAwaitingHandling(0), fLastUsedTriggerMask(1), fLastUsedTriggerNum(MAX_NUM_EVENT_TRIGGERS-1) {
+  fHandlers = new HandlerSet;
+  for (unsigned i = 0; i < MAX_NUM_EVENT_TRIGGERS; ++i) {
+    fTriggeredEventHandlers[i] = NULL;
+    fTriggeredEventClientDatas[i] = NULL;
+  }
 }
 
 BasicTaskScheduler0::~BasicTaskScheduler0() {
-  delete fReadHandlers;
+  delete fHandlers;
 }
 
 TaskToken BasicTaskScheduler0::scheduleDelayedTask(int64_t microseconds,
@@ -64,12 +68,12 @@ TaskToken BasicTaskScheduler0::scheduleDelayedTask(int64_t microseconds,
 }
 
 void BasicTaskScheduler0::unscheduleDelayedTask(TaskToken& prevTask) {
-  DelayQueueEntry* alarmHandler = fDelayQueue.removeEntry((long)prevTask);
+  DelayQueueEntry* alarmHandler = fDelayQueue.removeEntry((intptr_t)prevTask);
   prevTask = NULL;
   delete alarmHandler;
 }
 
-void BasicTaskScheduler0::doEventLoop(char* watchVariable) {
+void BasicTaskScheduler0::doEventLoop(char volatile* watchVariable) {
   // Repeatedly loop, handling readble sockets and timed events:
   while (1) {
     if (watchVariable != NULL && *watchVariable != 0) break;
@@ -77,10 +81,72 @@ void BasicTaskScheduler0::doEventLoop(char* watchVariable) {
   }
 }
 
+EventTriggerId BasicTaskScheduler0::createEventTrigger(TaskFunc* eventHandlerProc) {
+  unsigned i = fLastUsedTriggerNum;
+  EventTriggerId mask = fLastUsedTriggerMask;
+
+  do {
+    i = (i+1)%MAX_NUM_EVENT_TRIGGERS;
+    mask >>= 1;
+    if (mask == 0) mask = 0x80000000;
+
+    if (fTriggeredEventHandlers[i] == NULL) {
+      // This trigger number is free; use it:
+      fTriggeredEventHandlers[i] = eventHandlerProc;
+      fTriggeredEventClientDatas[i] = NULL; // sanity
+
+      fLastUsedTriggerMask = mask;
+      fLastUsedTriggerNum = i;
+
+      return mask;
+    }
+  } while (i != fLastUsedTriggerNum);
+
+  // All available event triggers are allocated; return 0 instead:
+  return 0;
+}
+
+void BasicTaskScheduler0::deleteEventTrigger(EventTriggerId eventTriggerId) {
+  fTriggersAwaitingHandling &=~ eventTriggerId;
+
+  if (eventTriggerId == fLastUsedTriggerMask) { // common-case optimization:
+    fTriggeredEventHandlers[fLastUsedTriggerNum] = NULL;
+    fTriggeredEventClientDatas[fLastUsedTriggerNum] = NULL;
+  } else {
+    // "eventTriggerId" should have just one bit set.
+    // However, we do the reasonable thing if the user happened to 'or' together two or more "EventTriggerId"s:
+    EventTriggerId mask = 0x80000000;
+    for (unsigned i = 0; i < MAX_NUM_EVENT_TRIGGERS; ++i) {
+      if ((eventTriggerId&mask) != 0) {
+	fTriggeredEventHandlers[i] = NULL;
+	fTriggeredEventClientDatas[i] = NULL;
+      }
+      mask >>= 1;
+    }
+  }
+}
+
+void BasicTaskScheduler0::triggerEvent(EventTriggerId eventTriggerId, void* clientData) {
+  // First, record the "clientData".  (Note that we allow "eventTriggerId" to be a combination of bits for multiple events.)
+  EventTriggerId mask = 0x80000000;
+  for (unsigned i = 0; i < MAX_NUM_EVENT_TRIGGERS; ++i) {
+    if ((eventTriggerId&mask) != 0) {
+      fTriggeredEventClientDatas[i] = clientData;
+    }
+    mask >>= 1;
+  }
+
+  // Then, note this event as being ready to be handled.
+  // (Note that because this function (unlike others in the library) can be called from an external thread, we do this last, to
+  //  reduce the risk of a race condition.)
+  fTriggersAwaitingHandling |= eventTriggerId;
+}
+
 
 ////////// HandlerSet (etc.) implementation //////////
 
-HandlerDescriptor::HandlerDescriptor(HandlerDescriptor* nextHandler) {
+HandlerDescriptor::HandlerDescriptor(HandlerDescriptor* nextHandler)
+  : conditionSet(0), handlerProc(NULL) {
   // Link this descriptor into a doubly-linked list:
   if (nextHandler == this) { // initialization
     fNextHandler = fPrevHandler = this;
@@ -111,33 +177,38 @@ HandlerSet::~HandlerSet() {
 }
 
 void HandlerSet
-::assignHandler(int socketNum,
-		TaskScheduler::BackgroundHandlerProc* handlerProc,
-		void* clientData) {
+::assignHandler(int socketNum, int conditionSet, TaskScheduler::BackgroundHandlerProc* handlerProc, void* clientData) {
   // First, see if there's already a handler for this socket:
-  HandlerDescriptor* handler;
-  HandlerIterator iter(*this);
-  while ((handler = iter.next()) != NULL) {
-    if (handler->socketNum == socketNum) break;
-  }
+  HandlerDescriptor* handler = lookupHandler(socketNum);
   if (handler == NULL) { // No existing handler, so create a new descr:
     handler = new HandlerDescriptor(fHandlers.fNextHandler);
     handler->socketNum = socketNum;
   }
 
+  handler->conditionSet = conditionSet;
   handler->handlerProc = handlerProc;
   handler->clientData = clientData;
 }
 
-void HandlerSet::removeHandler(int socketNum) {
+void HandlerSet::clearHandler(int socketNum) {
+  HandlerDescriptor* handler = lookupHandler(socketNum);
+  delete handler;
+}
+
+void HandlerSet::moveHandler(int oldSocketNum, int newSocketNum) {
+  HandlerDescriptor* handler = lookupHandler(oldSocketNum);
+  if (handler != NULL) {
+    handler->socketNum = newSocketNum;
+  }
+}
+
+HandlerDescriptor* HandlerSet::lookupHandler(int socketNum) {
   HandlerDescriptor* handler;
   HandlerIterator iter(*this);
   while ((handler = iter.next()) != NULL) {
-    if (handler->socketNum == socketNum) {
-      delete handler;
-      break;
-    }
+    if (handler->socketNum == socketNum) break;
   }
+  return handler;
 }
 
 HandlerIterator::HandlerIterator(HandlerSet& handlerSet)

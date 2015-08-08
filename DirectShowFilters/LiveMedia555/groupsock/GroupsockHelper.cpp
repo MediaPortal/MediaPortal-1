@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "mTunnel" multicast access service
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // Helper routines to implement 'group sockets'
 // Implementation
 
@@ -29,6 +29,11 @@ extern "C" int initializeWinsockIfNecessary();
 #include <fcntl.h>
 #define initializeWinsockIfNecessary() 1
 #endif
+#if defined(__WIN32__) || defined(_WIN32) || defined(_QNX4)
+#else
+#include <signal.h>
+#define USE_SIGNALS 1
+#endif
 #include <stdio.h>
 
 // By default, use INADDR_ANY for the sending and receiving interfaces:
@@ -36,37 +41,71 @@ netAddressBits SendingInterfaceAddr = INADDR_ANY;
 netAddressBits ReceivingInterfaceAddr = INADDR_ANY;
 
 static void socketErr(UsageEnvironment& env, char const* errorMsg) {
-	env.setResultErrMsg(errorMsg);
+  env.setResultErrMsg(errorMsg);
 }
 
-static int reuseFlag = 1;
-
-NoReuse::NoReuse() {
-  reuseFlag = 0;
+NoReuse::NoReuse(UsageEnvironment& env)
+  : fEnv(env) {
+  groupsockPriv(fEnv)->reuseFlag = 0;
 }
 
 NoReuse::~NoReuse() {
-  reuseFlag = 1;
+  groupsockPriv(fEnv)->reuseFlag = 1;
+  reclaimGroupsockPriv(fEnv);
 }
 
-int setupDatagramSocket(UsageEnvironment& env, Port port,
-#ifdef IP_MULTICAST_LOOP
-			Boolean setLoopback
-#else
-			Boolean
+
+_groupsockPriv* groupsockPriv(UsageEnvironment& env) {
+  if (env.groupsockPriv == NULL) { // We need to create it
+    _groupsockPriv* result = new _groupsockPriv;
+    result->socketTable = NULL;
+    result->reuseFlag = 1; // default value => allow reuse of socket numbers
+    env.groupsockPriv = result;
+  }
+  return (_groupsockPriv*)(env.groupsockPriv);
+}
+
+void reclaimGroupsockPriv(UsageEnvironment& env) {
+  _groupsockPriv* priv = (_groupsockPriv*)(env.groupsockPriv);
+  if (priv->socketTable == NULL && priv->reuseFlag == 1/*default value*/) {
+    // We can delete the structure (to save space); it will get created again, if needed:
+    delete priv;
+    env.groupsockPriv = NULL;
+  }
+}
+
+static int createSocket(int type) {
+  // Call "socket()" to create a (IPv4) socket of the specified type.
+  // But also set it to have the 'close on exec' property (if we can)
+  int sock;
+
+#ifdef SOCK_CLOEXEC
+  sock = socket(AF_INET, type|SOCK_CLOEXEC, 0);
+  if (sock != -1 || errno != EINVAL) return sock;
+  // An "errno" of EINVAL likely means that the system wasn't happy with the SOCK_CLOEXEC; fall through and try again without it:
 #endif
-) {
+
+  sock = socket(AF_INET, type, 0);
+#ifdef FD_CLOEXEC
+  if (sock != -1) fcntl(sock, F_SETFD, FD_CLOEXEC);
+#endif
+  return sock;
+}
+
+int setupDatagramSocket(UsageEnvironment& env, Port port) {
   if (!initializeWinsockIfNecessary()) {
     socketErr(env, "Failed to initialize 'winsock': ");
     return -1;
   }
 
-  int newSocket = socket(AF_INET, SOCK_DGRAM, 0);
+  int newSocket = createSocket(SOCK_DGRAM);
   if (newSocket < 0) {
     socketErr(env, "unable to create datagram socket: ");
     return newSocket;
   }
 
+  int reuseFlag = groupsockPriv(env)->reuseFlag;
+  reclaimGroupsockPriv(env);
   if (setsockopt(newSocket, SOL_SOCKET, SO_REUSEADDR,
 		 (const char*)&reuseFlag, sizeof reuseFlag) < 0) {
     socketErr(env, "setsockopt(SO_REUSEADDR) error: ");
@@ -87,7 +126,7 @@ int setupDatagramSocket(UsageEnvironment& env, Port port,
 #endif
 
 #ifdef IP_MULTICAST_LOOP
-  const u_int8_t loop = (u_int8_t)setLoopback;
+  const u_int8_t loop = 1;
   if (setsockopt(newSocket, IPPROTO_IP, IP_MULTICAST_LOOP,
 		 (const char*)&loop, sizeof loop) < 0) {
     socketErr(env, "setsockopt(IP_MULTICAST_LOOP) error: ");
@@ -135,7 +174,7 @@ int setupDatagramSocket(UsageEnvironment& env, Port port,
 }
 
 Boolean makeSocketNonBlocking(int sock) {
-#if defined(__WIN32__) || defined(_WIN32) || defined(IMN_PIM)
+#if defined(__WIN32__) || defined(_WIN32)
   unsigned long arg = 1;
   return ioctlsocket(sock, FIONBIO, &arg) == 0;
 #elif defined(VXWORKS)
@@ -147,6 +186,31 @@ Boolean makeSocketNonBlocking(int sock) {
 #endif
 }
 
+Boolean makeSocketBlocking(int sock, unsigned writeTimeoutInMilliseconds) {
+  Boolean result;
+#if defined(__WIN32__) || defined(_WIN32)
+  unsigned long arg = 0;
+  result = ioctlsocket(sock, FIONBIO, &arg) == 0;
+#elif defined(VXWORKS)
+  int arg = 0;
+  result = ioctl(sock, FIONBIO, (int)&arg) == 0;
+#else
+  int curFlags = fcntl(sock, F_GETFL, 0);
+  result = fcntl(sock, F_SETFL, curFlags&(~O_NONBLOCK)) >= 0;
+#endif
+
+  if (writeTimeoutInMilliseconds > 0) {
+#ifdef SO_SNDTIMEO
+    struct timeval tv;
+    tv.tv_sec = writeTimeoutInMilliseconds/1000;
+    tv.tv_usec = (writeTimeoutInMilliseconds%1000)*1000;
+    setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv, sizeof tv);
+#endif
+  }
+
+  return result;
+}
+
 int setupStreamSocket(UsageEnvironment& env,
                       Port port, Boolean makeNonBlocking) {
   if (!initializeWinsockIfNecessary()) {
@@ -154,12 +218,14 @@ int setupStreamSocket(UsageEnvironment& env,
     return -1;
   }
 
-  int newSocket = socket(AF_INET, SOCK_STREAM, 0);
+  int newSocket = createSocket(SOCK_STREAM);
   if (newSocket < 0) {
     socketErr(env, "unable to create stream socket: ");
     return newSocket;
   }
 
+  int reuseFlag = groupsockPriv(env)->reuseFlag;
+  reclaimGroupsockPriv(env);
   if (setsockopt(newSocket, SOL_SOCKET, SO_REUSEADDR,
 		 (const char*)&reuseFlag, sizeof reuseFlag) < 0) {
     socketErr(env, "setsockopt(SO_REUSEADDR) error: ");
@@ -215,144 +281,91 @@ int setupStreamSocket(UsageEnvironment& env,
   return newSocket;
 }
 
-#ifndef IMN_PIM
-static int blockUntilReadable(UsageEnvironment& env,
-			      int socket, struct timeval* timeout) {
-  int result = -1;
-  do {
-    fd_set rd_set;
-    FD_ZERO(&rd_set);
-    if (socket < 0) break;
-    FD_SET((unsigned) socket, &rd_set);
-    const unsigned numFds = socket+1;
-
-    result = select(numFds, &rd_set, NULL, NULL, timeout);
-    if (timeout != NULL && result == 0) {
-      break; // this is OK - timeout occurred
-    } else if (result <= 0) {
-      int err = env.getErrno();
-      if (err == EINTR || err == EAGAIN || err == EWOULDBLOCK) continue;
-      socketErr(env, "select() error: ");
-      break;
-    }
-
-    if (!FD_ISSET(socket, &rd_set)) {
-      socketErr(env, "select() error - !FD_ISSET");
-      break;
-    }
-  } while (0);
-
-  return result;
-}
-#else
-extern int blockUntilReadable(UsageEnvironment& env,
-			      int socket, struct timeval* timeout);
-#endif
-
 int readSocket(UsageEnvironment& env,
 	       int socket, unsigned char* buffer, unsigned bufferSize,
-	       struct sockaddr_in& fromAddress,
-	       struct timeval* timeout) {
-  int bytesRead = -1;
-  do {
-    int result = blockUntilReadable(env, socket, timeout);
-    if (timeout != NULL && result == 0) {
-      bytesRead = 0;
-      break;
-    } else if (result <= 0) {
-      break;
-    }
-
-    SOCKLEN_T addressSize = sizeof fromAddress;
-    bytesRead = recvfrom(socket, (char*)buffer, bufferSize, 0,
-			 (struct sockaddr*)&fromAddress,
-			 &addressSize);
-    if (bytesRead < 0) {
-      //##### HACK to work around bugs in Linux and Windows:
-      int err = env.getErrno();
-      if (err == 111 /*ECONNREFUSED (Linux)*/
+	       struct sockaddr_in& fromAddress) {
+  SOCKLEN_T addressSize = sizeof fromAddress;
+  int bytesRead = recvfrom(socket, (char*)buffer, bufferSize, 0,
+			   (struct sockaddr*)&fromAddress,
+			   &addressSize);
+  if (bytesRead < 0) {
+    //##### HACK to work around bugs in Linux and Windows:
+    int err = env.getErrno();
+    if (err == 111 /*ECONNREFUSED (Linux)*/
 #if defined(__WIN32__) || defined(_WIN32)
-	  // What a piece of crap Windows is.  Sometimes
-	  // recvfrom() returns -1, but with an 'errno' of 0.
-	  // This appears not to be a real error; just treat
-	  // it as if it were a read of zero bytes, and hope
-	  // we don't have to do anything else to 'reset'
-	  // this alleged error:
-	  || err == 0
+	// What a piece of crap Windows is.  Sometimes
+	// recvfrom() returns -1, but with an 'errno' of 0.
+	// This appears not to be a real error; just treat
+	// it as if it were a read of zero bytes, and hope
+	// we don't have to do anything else to 'reset'
+	// this alleged error:
+	|| err == 0 || err == EWOULDBLOCK
 #else
-	  || err == EAGAIN
+	|| err == EAGAIN
 #endif
-	  || err == 113 /*EHOSTUNREACH (Linux)*/) {
-			        //Why does Linux return this for datagram sock?
-	fromAddress.sin_addr.s_addr = 0;
-	return 0;
-      }
-      //##### END HACK
-      socketErr(env, "recvfrom() error: ");
-      break;
+	|| err == 113 /*EHOSTUNREACH (Linux)*/) { // Why does Linux return this for datagram sock?
+      fromAddress.sin_addr.s_addr = 0;
+      return 0;
     }
-  } while (0);
+    //##### END HACK
+    socketErr(env, "recvfrom() error: ");
+  } else if (bytesRead == 0) {
+    // "recvfrom()" on a stream socket can return 0 if the remote end has closed the connection.  Treat this as an error:
+    return -1;
+  }
 
   return bytesRead;
 }
 
-
-int readSocketExact(UsageEnvironment& env,
-		    int socket, unsigned char* buffer, unsigned bufferSize,
-		    struct sockaddr_in& fromAddress,
-		    struct timeval* timeout) {
-  /* read EXACTLY bufferSize bytes from the socket into the buffer.
-     fromaddress is address of last read.
-     return the number of bytes actually read when an error occurs
-  */
-  int bsize = bufferSize;
-  int bytesRead = 0;
-  int totBytesRead =0;
-  do {
-    bytesRead = readSocket (env, socket, buffer + totBytesRead, bsize,
-                            fromAddress, timeout);
-    if (bytesRead <= 0) break;
-    totBytesRead += bytesRead;
-    bsize -= bytesRead;
-  } while (bsize != 0);
-
-  return totBytesRead;
-}
-
 Boolean writeSocket(UsageEnvironment& env,
-		    int socket, struct in_addr address, Port port,
+		    int socket, struct in_addr address, portNumBits portNum,
 		    u_int8_t ttlArg,
 		    unsigned char* buffer, unsigned bufferSize) {
-	do {
-		if (ttlArg != 0) {
-			// Before sending, set the socket's TTL:
+  // Before sending, set the socket's TTL:
 #if defined(__WIN32__) || defined(_WIN32)
 #define TTL_TYPE int
 #else
 #define TTL_TYPE u_int8_t
 #endif
-			TTL_TYPE ttl = (TTL_TYPE)ttlArg;
-			if (setsockopt(socket, IPPROTO_IP, IP_MULTICAST_TTL,
-				       (const char*)&ttl, sizeof ttl) < 0) {
-				socketErr(env, "setsockopt(IP_MULTICAST_TTL) error: ");
-				break;
-			}
-		}
+  TTL_TYPE ttl = (TTL_TYPE)ttlArg;
+  if (setsockopt(socket, IPPROTO_IP, IP_MULTICAST_TTL,
+		 (const char*)&ttl, sizeof ttl) < 0) {
+    socketErr(env, "setsockopt(IP_MULTICAST_TTL) error: ");
+    return False;
+  }
 
-		MAKE_SOCKADDR_IN(dest, address.s_addr, port.num());
-		int bytesSent = sendto(socket, (char*)buffer, bufferSize, 0,
-			               (struct sockaddr*)&dest, sizeof dest);
-		if (bytesSent != (int)bufferSize) {
-			char tmpBuf[100];
-			sprintf(tmpBuf, "writeSocket(%d), sendTo() error: wrote %d bytes instead of %u: ", socket, bytesSent, bufferSize);
-			socketErr(env, tmpBuf);
-			break;
-		}
+  return writeSocket(env, socket, address, portNum, buffer, bufferSize);
+}
 
-		return True;
-	} while (0);
+Boolean writeSocket(UsageEnvironment& env,
+		    int socket, struct in_addr address, portNumBits portNum,
+		    unsigned char* buffer, unsigned bufferSize) {
+  do {
+    MAKE_SOCKADDR_IN(dest, address.s_addr, portNum);
+    int bytesSent = sendto(socket, (char*)buffer, bufferSize, 0,
+			   (struct sockaddr*)&dest, sizeof dest);
+    if (bytesSent != (int)bufferSize) {
+      char tmpBuf[100];
+      sprintf(tmpBuf, "writeSocket(%d), sendTo() error: wrote %d bytes instead of %u: ", socket, bytesSent, bufferSize);
+      socketErr(env, tmpBuf);
+      break;
+    }
+    
+    return True;
+  } while (0);
 
-	return False;
+  return False;
+}
+
+void ignoreSigPipeOnSocket(int socketNum) {
+  #ifdef USE_SIGNALS
+  #ifdef SO_NOSIGPIPE
+  int set_option = 1;
+  setsockopt(socketNum, SOL_SOCKET, SO_NOSIGPIPE, &set_option, sizeof set_option);
+  #else
+  signal(SIGPIPE, SIG_IGN);
+  #endif
+  #endif
 }
 
 static unsigned getBufferSize(UsageEnvironment& env, int bufOptName,
@@ -420,6 +433,17 @@ unsigned increaseReceiveBufferTo(UsageEnvironment& env,
   return increaseBufferTo(env, SO_RCVBUF, socket, requestedSize);
 }
 
+static void clearMulticastAllSocketOption(int socket) {
+#ifdef IP_MULTICAST_ALL
+  // This option is defined in modern versions of Linux to overcome a bug in the Linux kernel's default behavior.
+  // When set to 0, it ensures that we receive only packets that were sent to the specified IP multicast address,
+  // even if some other process on the same system has joined a different multicast group with the same port number.
+  int multicastAll = 0;
+  (void)setsockopt(socket, IPPROTO_IP, IP_MULTICAST_ALL, (void*)&multicastAll, sizeof multicastAll);
+  // Ignore the call's result.  Should it fail, we'll still receive packets (just perhaps more than intended)
+#endif
+}
+
 Boolean socketJoinGroup(UsageEnvironment& env, int socket,
 			netAddressBits groupAddress){
   if (!IsMulticastAddress(groupAddress)) return True; // ignore this case
@@ -440,6 +464,8 @@ Boolean socketJoinGroup(UsageEnvironment& env, int socket,
     }
 #endif
   }
+
+  clearMulticastAllSocketOption(socket);
 
   return True;
 }
@@ -462,16 +488,7 @@ Boolean socketLeaveGroup(UsageEnvironment&, int socket,
 // The source-specific join/leave operations require special setsockopt()
 // commands, and a special structure (ip_mreq_source).  If the include files
 // didn't define these, we do so here:
-#if !defined(IP_ADD_SOURCE_MEMBERSHIP) || defined(__CYGWIN32__)
-// NOTE TO CYGWIN DEVELOPERS:
-//    The "defined(__CYGWIN32__)" test was added above, because - as of January 2007 - the Cygwin header files
-//    define IP_ADD_SOURCE_MEMBERSHIP (and IP_DROP_SOURCE_MEMBERSHIP), but do not define ip_mreq_source.
-//    This has been acknowledged as a bug (see <http://cygwin.com/ml/cygwin/2007-01/msg00516.html>), but it's
-//    not clear when it is going to be fixed.  When the Cygwin header files finally define "ip_mreq_source",
-//    this code will no longer compile, due to "ip_mreq_source" being defined twice.  When this happens, please
-//    let us know, by sending email to the "live-devel" mailing list.
-//    (See <http://lists.live555.com/mailman/listinfo/live-devel/> to subscribe to that mailing list.)
-// END NOTE TO CYGWIN DEVELOPERS
+#if !defined(IP_ADD_SOURCE_MEMBERSHIP)
 struct ip_mreq_source {
   struct  in_addr imr_multiaddr;  /* IP multicast address of group */
   struct  in_addr imr_sourceaddr; /* IP address of source */
@@ -497,14 +514,22 @@ Boolean socketJoinGroupSSM(UsageEnvironment& env, int socket,
   if (!IsMulticastAddress(groupAddress)) return True; // ignore this case
 
   struct ip_mreq_source imr;
-  imr.imr_multiaddr.s_addr = groupAddress;
-  imr.imr_sourceaddr.s_addr = sourceFilterAddr;
-  imr.imr_interface.s_addr = ReceivingInterfaceAddr;
+#ifdef __ANDROID__
+    imr.imr_multiaddr = groupAddress;
+    imr.imr_sourceaddr = sourceFilterAddr;
+    imr.imr_interface = ReceivingInterfaceAddr;
+#else
+    imr.imr_multiaddr.s_addr = groupAddress;
+    imr.imr_sourceaddr.s_addr = sourceFilterAddr;
+    imr.imr_interface.s_addr = ReceivingInterfaceAddr;
+#endif
   if (setsockopt(socket, IPPROTO_IP, IP_ADD_SOURCE_MEMBERSHIP,
 		 (const char*)&imr, sizeof (struct ip_mreq_source)) < 0) {
     socketErr(env, "setsockopt(IP_ADD_SOURCE_MEMBERSHIP) error: ");
     return False;
   }
+
+  clearMulticastAllSocketOption(socket);
 
   return True;
 }
@@ -515,9 +540,15 @@ Boolean socketLeaveGroupSSM(UsageEnvironment& /*env*/, int socket,
   if (!IsMulticastAddress(groupAddress)) return True; // ignore this case
 
   struct ip_mreq_source imr;
-  imr.imr_multiaddr.s_addr = groupAddress;
-  imr.imr_sourceaddr.s_addr = sourceFilterAddr;
-  imr.imr_interface.s_addr = ReceivingInterfaceAddr;
+#ifdef __ANDROID__
+    imr.imr_multiaddr = groupAddress;
+    imr.imr_sourceaddr = sourceFilterAddr;
+    imr.imr_interface = ReceivingInterfaceAddr;
+#else
+    imr.imr_multiaddr.s_addr = groupAddress;
+    imr.imr_sourceaddr.s_addr = sourceFilterAddr;
+    imr.imr_interface.s_addr = ReceivingInterfaceAddr;
+#endif
   if (setsockopt(socket, IPPROTO_IP, IP_DROP_SOURCE_MEMBERSHIP,
 		 (const char*)&imr, sizeof (struct ip_mreq_source)) < 0) {
     return False;
@@ -552,12 +583,12 @@ Boolean getSourcePort(UsageEnvironment& env, int socket, Port& port) {
   return True;
 }
 
-static Boolean badAddress(netAddressBits addr) {
+static Boolean badAddressForUs(netAddressBits addr) {
   // Check for some possible erroneous addresses:
-  netAddressBits hAddr = ntohl(addr);
-  return (hAddr == 0x7F000001 /* 127.0.0.1 */
-	  || hAddr == 0
-	  || hAddr == (netAddressBits)(~0));
+  netAddressBits nAddr = htonl(addr);
+  return (nAddr == 0x7F000001 /* 127.0.0.1 */
+	  || nAddr == 0
+	  || nAddr == (netAddressBits)(~0));
 }
 
 Boolean loopbackWorks = 1;
@@ -566,6 +597,12 @@ netAddressBits ourIPAddress(UsageEnvironment& env) {
   static netAddressBits ourAddress = 0;
   int sock = -1;
   struct in_addr testAddr;
+
+  if (ReceivingInterfaceAddr != INADDR_ANY) {
+    // Hack: If we were told to receive on a specific interface address, then 
+    // define this to be our ip address:
+    ourAddress = ReceivingInterfaceAddr;
+  }
 
   if (ourAddress == 0) {
     // We need to find our source address
@@ -590,88 +627,78 @@ netAddressBits ourIPAddress(UsageEnvironment& env) {
       unsigned char testString[] = "hostIdTest";
       unsigned testStringLength = sizeof testString;
 
-      if (!writeSocket(env, sock, testAddr, testPort, 0,
+      if (!writeSocket(env, sock, testAddr, testPort.num(), 0,
 		       testString, testStringLength)) break;
 
-      unsigned char readBuffer[20];
+      // Block until the socket is readable (with a 5-second timeout):
+      fd_set rd_set;
+      FD_ZERO(&rd_set);
+      FD_SET((unsigned)sock, &rd_set);
+      const unsigned numFds = sock+1;
       struct timeval timeout;
       timeout.tv_sec = 5;
       timeout.tv_usec = 0;
+      int result = select(numFds, &rd_set, NULL, NULL, &timeout);
+      if (result <= 0) break;
+
+      unsigned char readBuffer[20];
       int bytesRead = readSocket(env, sock,
 				 readBuffer, sizeof readBuffer,
-				 fromAddr, &timeout);
-      if (bytesRead == 0 // timeout occurred
-	  || bytesRead != (int)testStringLength
-	  || strncmp((char*)readBuffer, (char*)testString,
-		     testStringLength) != 0) {
+				 fromAddr);
+      if (bytesRead != (int)testStringLength
+	  || strncmp((char*)readBuffer, (char*)testString, testStringLength) != 0) {
 	break;
       }
 
-      loopbackWorks = 1;
+      // We use this packet's source address, if it's good:
+      loopbackWorks = !badAddressForUs(fromAddr.sin_addr.s_addr);
     } while (0);
-
-    if (!loopbackWorks) do {
-      // We couldn't find our address using multicast loopback
-      // so try instead to look it up directly.
-      char hostname[100];
-      hostname[0] = '\0';
-#ifndef CRIS
-      gethostname(hostname, sizeof hostname);
-#endif
-      if (hostname[0] == '\0') {
-	env.setResultErrMsg("initial gethostname() failed");
-	break;
-      }
-
-#if defined(VXWORKS)
-#include <hostLib.h>
-      if (ERROR == (ourAddress = hostGetByName( hostname ))) break;
-#else
-      struct hostent* hstent
-	= (struct hostent*)gethostbyname(hostname);
-      if (hstent == NULL || hstent->h_length != 4) {
-	env.setResultErrMsg("initial gethostbyname() failed");
-	break;
-      }
-      // Take the first address that's not bad
-      // (This code, like many others, won't handle IPv6)
-      netAddressBits addr = 0;
-      for (unsigned i = 0; ; ++i) {
-	char* addrPtr = hstent->h_addr_list[i];
-	if (addrPtr == NULL) break;
-
-	netAddressBits a = *(netAddressBits*)addrPtr;
-	if (!badAddress(a)) {
-	  addr = a;
-	  break;
-	}
-      }
-      if (addr != 0) {
-	fromAddr.sin_addr.s_addr = addr;
-      } else {
-	env.setResultMsg("no address");
-	break;
-      }
-    } while (0);
-
-    // Make sure we have a good address:
-    netAddressBits from = fromAddr.sin_addr.s_addr;
-    if (badAddress(from)) {
-      char tmp[100];
-      sprintf(tmp,
-	      "This computer has an invalid IP address: 0x%x",
-	      (netAddressBits)(ntohl(from)));
-      env.setResultMsg(tmp);
-      from = 0;
-    }
-
-    ourAddress = from;
-#endif
 
     if (sock >= 0) {
       socketLeaveGroup(env, sock, testAddr.s_addr);
       closeSocket(sock);
     }
+
+    if (!loopbackWorks) do {
+      // We couldn't find our address using multicast loopback,
+      // so try instead to look it up directly - by first getting our host name, and then resolving this host name
+      char hostname[100];
+      hostname[0] = '\0';
+      int result = gethostname(hostname, sizeof hostname);
+      if (result != 0 || hostname[0] == '\0') {
+	env.setResultErrMsg("initial gethostname() failed");
+	break;
+      }
+
+      // Try to resolve "hostname" to an IP address:
+      NetAddressList addresses(hostname);
+      NetAddressList::Iterator iter(addresses);
+      NetAddress const* address;
+
+      // Take the first address that's not bad:
+      netAddressBits addr = 0;
+      while ((address = iter.nextAddress()) != NULL) {
+	netAddressBits a = *(netAddressBits*)(address->data());
+	if (!badAddressForUs(a)) {
+	  addr = a;
+	  break;
+	}
+      }
+
+      // Assign the address that we found to "fromAddr" (as if the 'loopback' method had worked), to simplify the code below: 
+      fromAddr.sin_addr.s_addr = addr;
+    } while (0);
+
+    // Make sure we have a good address:
+    netAddressBits from = fromAddr.sin_addr.s_addr;
+    if (badAddressForUs(from)) {
+      char tmp[100];
+      sprintf(tmp, "This computer has an invalid IP address: %s", AddressString(from).val());
+      env.setResultMsg(tmp);
+      from = 0;
+    }
+
+    ourAddress = from;
 
     // Use our newly-discovered IP address, and the current time,
     // to initialize the random number generator's seed:
@@ -692,7 +719,7 @@ netAddressBits chooseRandomIPv4SSMAddress(UsageEnvironment& env) {
   netAddressBits const first = 0xE8000100, lastPlus1 = 0xE8FFFFFF;
   netAddressBits const range = lastPlus1 - first;
 
-  return htonl(first + ((netAddressBits)our_random())%range);
+  return ntohl(first + ((netAddressBits)our_random())%range);
 }
 
 char const* timestampString() {
@@ -701,13 +728,19 @@ char const* timestampString() {
 
 #if !defined(_WIN32_WCE)
   static char timeString[9]; // holds hh:mm:ss plus trailing '\0'
-  char const* ctimeResult = ctime((time_t*)&tvNow.tv_sec);
-  char const* from = &ctimeResult[11];
-  int i;
-  for (i = 0; i < 8; ++i) {
-    timeString[i] = from[i];
+
+  time_t tvNow_t = tvNow.tv_sec;
+  char const* ctimeResult = ctime(&tvNow_t);
+  if (ctimeResult == NULL) {
+    sprintf(timeString, "??:??:??");
+  } else {
+    char const* from = &ctimeResult[11];
+    int i;
+    for (i = 0; i < 8; ++i) {
+      timeString[i] = from[i];
+    }
+    timeString[i] = '\0';
   }
-  timeString[i] = '\0';
 #else
   // WinCE apparently doesn't have "ctime()", so instead, construct
   // a timestamp string just using the integer and fractional parts
@@ -719,60 +752,87 @@ char const* timestampString() {
   return (char const*)&timeString;
 }
 
-#if (defined(__WIN32__) || defined(_WIN32)) && !defined(IMN_PIM)
+#if defined(__WIN32__) || defined(_WIN32)
 // For Windoze, we need to implement our own gettimeofday()
+
+// used to make sure that static variables in gettimeofday() aren't initialized simultaneously by multiple threads
+static LONG initializeLock_gettimeofday = 0;  
+
 #if !defined(_WIN32_WCE)
 #include <sys/timeb.h>
 #endif
 
 int gettimeofday(struct timeval* tp, int* /*tz*/) {
-#if defined(_WIN32_WCE)
-  /* FILETIME of Jan 1 1970 00:00:00. */
-  static const unsigned __int64 epoch = 116444736000000000L;
-
-  FILETIME    file_time;
-  SYSTEMTIME  system_time;
-  ULARGE_INTEGER ularge;
-
-  GetSystemTime(&system_time);
-  SystemTimeToFileTime(&system_time, &file_time);
-  ularge.LowPart = file_time.dwLowDateTime;
-  ularge.HighPart = file_time.dwHighDateTime;
-
-  tp->tv_sec = (long) ((ularge.QuadPart - epoch) / 10000000L);
-  tp->tv_usec = (long) (system_time.wMilliseconds * 1000);
-#else
   static LARGE_INTEGER tickFrequency, epochOffset;
 
-  // For our first call, use "ftime()", so that we get a time with a proper epoch.
-  // For subsequent calls, use "QueryPerformanceCount()", because it's more fine-grain.
-  static Boolean isFirstCall = True;
+  static Boolean isInitialized = False;
 
   LARGE_INTEGER tickNow;
+
+#if !defined(_WIN32_WCE)
   QueryPerformanceCounter(&tickNow);
-
-  if (isFirstCall) {
-    struct timeb tb;
-    ftime(&tb);
-    tp->tv_sec = tb.time;
-    tp->tv_usec = 1000*tb.millitm;
-
-    // Also get our counter frequency:
-    QueryPerformanceFrequency(&tickFrequency);
-
-    // And compute an offset to add to subsequent counter times, so we get a proper epoch:
-    epochOffset.QuadPart
-      = tb.time*tickFrequency.QuadPart + (tb.millitm*tickFrequency.QuadPart)/1000 - tickNow.QuadPart;
-
-    isFirstCall = False; // for next time
-  } else {
-    // Adjust our counter time so that we get a proper epoch:
-    tickNow.QuadPart += epochOffset.QuadPart;
-
-    tp->tv_sec = (long) (tickNow.QuadPart / tickFrequency.QuadPart);
-    tp->tv_usec = (long) (((tickNow.QuadPart % tickFrequency.QuadPart) * 1000000L) / tickFrequency.QuadPart);
-  }
+#else
+  tickNow.QuadPart = GetTickCount();
 #endif
+ 
+  if (!isInitialized) {
+    if(1 == InterlockedIncrement(&initializeLock_gettimeofday)) {
+#if !defined(_WIN32_WCE)
+      // For our first call, use "ftime()", so that we get a time with a proper epoch.
+      // For subsequent calls, use "QueryPerformanceCount()", because it's more fine-grain.
+      struct timeb tb;
+      ftime(&tb);
+      tp->tv_sec = tb.time;
+      tp->tv_usec = 1000*tb.millitm;
+
+      // Also get our counter frequency:
+      QueryPerformanceFrequency(&tickFrequency);
+#else
+      /* FILETIME of Jan 1 1970 00:00:00. */
+      const LONGLONG epoch = 116444736000000000LL;
+      FILETIME fileTime;
+      LARGE_INTEGER time;
+      GetSystemTimeAsFileTime(&fileTime);
+
+      time.HighPart = fileTime.dwHighDateTime;
+      time.LowPart = fileTime.dwLowDateTime;
+
+      // convert to from 100ns time to unix timestamp in seconds, 1000*1000*10
+      tp->tv_sec = (long)((time.QuadPart - epoch) / 10000000L);
+
+      /*
+        GetSystemTimeAsFileTime has just a seconds resolution,
+        thats why wince-version of gettimeofday is not 100% accurate, usec accuracy would be calculated like this:
+        // convert 100 nanoseconds to usec
+        tp->tv_usec= (long)((time.QuadPart - epoch)%10000000L) / 10L;
+      */
+      tp->tv_usec = 0;
+
+      // resolution of GetTickCounter() is always milliseconds
+      tickFrequency.QuadPart = 1000;
+#endif     
+      // compute an offset to add to subsequent counter times, so we get a proper epoch:
+      epochOffset.QuadPart
+          = tp->tv_sec * tickFrequency.QuadPart + (tp->tv_usec * tickFrequency.QuadPart) / 1000000L - tickNow.QuadPart;
+      
+      // next caller can use ticks for time calculation
+      isInitialized = True; 
+      return 0;
+    } else {
+        InterlockedDecrement(&initializeLock_gettimeofday);
+        // wait until first caller has initialized static values
+        while(!isInitialized){
+          Sleep(1);
+        }
+    }
+  }
+
+  // adjust our tick count so that we get a proper epoch:
+  tickNow.QuadPart += epochOffset.QuadPart;
+
+  tp->tv_sec =  (long)(tickNow.QuadPart / tickFrequency.QuadPart);
+  tp->tv_usec = (long)(((tickNow.QuadPart % tickFrequency.QuadPart) * 1000000L) / tickFrequency.QuadPart);
+
   return 0;
 }
 #endif

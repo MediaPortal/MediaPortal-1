@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // A generic SIP client
 // C++ header
 
@@ -67,8 +67,10 @@ public:
   static Boolean parseSIPURLUsernamePassword(char const* url,
 					     char*& username,
 					     char*& password);
+  char const* getInviteSdpReply() const { return fInviteSDPDescriptionReturned; }
 
-  unsigned inviteStatus() const { return fInviteStatusCode; }
+  void setUserAgentString(char const* userAgentName);
+       // sets an alternative string to be used in SIP "User-Agent:" headers
 
 protected:
   virtual ~SIPClient();
@@ -110,39 +112,38 @@ private:
   // Set for all calls:
   unsigned char fDesiredAudioRTPPayloadFormat;
   char* fMIMESubtype;
-      unsigned fMIMESubtypeSize;
+  unsigned fMIMESubtypeSize;
   int fVerbosityLevel;
   unsigned fCSeq; // sequence number, used in consecutive requests
   char const* fApplicationName;
-      unsigned fApplicationNameSize;
+  unsigned fApplicationNameSize;
   char const* fOurAddressStr;
-      unsigned fOurAddressStrSize;
+  unsigned fOurAddressStrSize;
   portNumBits fOurPortNum;
   Groupsock* fOurSocket;
   char* fUserAgentHeaderStr;
-      unsigned fUserAgentHeaderStrSize;
+  unsigned fUserAgentHeaderStrLen;
 
   // Set for each call:
   char const* fURL;
-      unsigned fURLSize;
+  unsigned fURLSize;
   struct in_addr fServerAddress;
   portNumBits fServerPortNum; // in host order
   portNumBits fClientStartPortNum; // in host order
   unsigned fCallId, fFromTag; // set by us
   char const* fToTagStr; // set by the responder
-      unsigned fToTagStrSize;
+  unsigned fToTagStrSize;
   Authenticator fValidAuthenticator;
   char const* fUserName; // 'user' name used in "From:" & "Contact:" lines
-      unsigned fUserNameSize;
+  unsigned fUserNameSize;
 
   char* fInviteSDPDescription;
+  char* fInviteSDPDescriptionReturned;
   char* fInviteCmd;
-      unsigned fInviteCmdSize;
+  unsigned fInviteCmdSize;
   Authenticator* fWorkingAuthenticator;
   inviteClientState fInviteClientState;
   char fEventLoopStopFlag;
-  unsigned fInviteStatusCode;
-  // 0: OK; 1: connection failed; 2: stream unavailable
 };
 
 #endif

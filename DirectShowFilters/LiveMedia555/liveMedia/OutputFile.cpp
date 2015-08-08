@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // Common routines for opening/closing named output files
 // Implementation
 
@@ -35,12 +35,12 @@ FILE* OpenOutputFile(UsageEnvironment& env, char const* fileName) {
   // Check for special case 'file names': "stdout" and "stderr"
   if (strcmp(fileName, "stdout") == 0) {
     fid = stdout;
-#if defined(__WIN32__) || defined(_WIN32)
+#if (defined(__WIN32__) || defined(_WIN32)) && !defined(_WIN32_WCE)
     _setmode(_fileno(stdout), _O_BINARY);       // convert to binary mode
 #endif
   } else if (strcmp(fileName, "stderr") == 0) {
     fid = stderr;
-#if defined(__WIN32__) || defined(_WIN32)
+#if (defined(__WIN32__) || defined(_WIN32)) && !defined(_WIN32_WCE)
     _setmode(_fileno(stderr), _O_BINARY);       // convert to binary mode
 #endif
   } else {

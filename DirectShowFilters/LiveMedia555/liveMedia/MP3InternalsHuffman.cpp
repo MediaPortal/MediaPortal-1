@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // MP3 internal implementation details (Huffman encoding)
 // Implementation
 
@@ -83,16 +83,6 @@ void updateSideInfoForHuffman(MP3SideInfo& sideInfo, Boolean isMPEG2,
 	    hei.reg2Start/8, hei.reg2Start%8,
 	    hei.bigvalStart/8, hei.bigvalStart%8,
 	    origTotABsize/8, origTotABsize%8);
-#ifdef undef
-    {
-      unsigned k;
-      for (k = 0; k < hei.numSamples; ++k) {
-	fprintf(stderr, " %d:%d",
-		hei.allBitOffsets[k]/8, hei.allBitOffsets[k]%8);
-      }
-      fprintf(stderr, "\n");
-    }
-#endif
 #endif
     if (p23L0 < sfLength) {
       /* We can't use this, so give it all to the next granule: */
@@ -206,16 +196,6 @@ void updateSideInfoForHuffman(MP3SideInfo& sideInfo, Boolean isMPEG2,
 	    hei.reg2Start/8, hei.reg2Start%8,
 	    hei.bigvalStart/8, hei.bigvalStart%8,
 	    origTotABsize/8, origTotABsize%8);
-#ifdef undef
-    {
-      unsigned k;
-      for (k = 0; k < hei.numSamples; ++k) {
-	fprintf(stderr, " %d:%d",
-		hei.allBitOffsets[k]/8, hei.allBitOffsets[k]%8);
-      }
-      fprintf(stderr, "\n");
-    }
-#endif
 #endif
     if (p23L1 < sfLength) {
       /* We can't use this, so give up on this granule: */
@@ -417,7 +397,7 @@ static int read_decoder_table(unsigned char* fi) {
 #ifdef DEBUG
     	fprintf(stderr, "heaperror at table %d\n",n);
 #endif
-    	exit (-10);
+	return -1;
       }
       for (i=0;(unsigned)i<rsf_ht[n].treelen; i++) {
         rsfscanf(&fi, &v0);
@@ -446,7 +426,7 @@ static void initialize_huffman() {
 #ifdef DEBUG
       fprintf(stderr,"decoder table read error\n");
 #endif
-      exit(4);
+      return;
       }
    huffman_initialized = True;
 }
@@ -526,12 +506,7 @@ static unsigned rsf_get_scale_factors_2(MP3SideInfo::gr_info_s_t *gr_info) {
   int n = 0;
   int numbits = 0;
 
-#ifdef undef
-  if(i_stereo) /* i_stereo AND second channel -> do_layer3() checks this */
-    slen = i_slen2[gr_info->scalefac_compress>>1];
-  else
-#endif
-    slen = n_slen2[gr_info->scalefac_compress];
+  slen = n_slen2[gr_info->scalefac_compress];
 
   gr_info->preflag = (slen>>15) & 0x1;
 
@@ -563,7 +538,7 @@ static int rsf_huffman_decoder(BitVector& bv,
 			       struct huffcodetab const* h,
 			       int* x, int* y, int* v, int* w); // forward
 
-void MP3HuffmanDecode(MP3SideInfo::gr_info_s_t* gr, int isMPEG2,
+void MP3HuffmanDecode(MP3SideInfo::gr_info_s_t* gr, Boolean isMPEG2,
 		      unsigned char const* fromBasePtr,
 		      unsigned fromBitOffset, unsigned fromLength,
 		      unsigned& scaleFactorsLength,
@@ -997,43 +972,5 @@ static void rsf_huffman_encoder(BitVector& bv,
       if (y) bv.put1Bit(yIsNeg);
     }
   }
-}
-#endif
-
-#ifdef undef
-/* The system uses a variety of data files.  By opening them via this
-   function, we can accommodate various locations. */
-
-FILE *OpenTableFile(name)
-char *name;
-{
-char fulname[80];
-FILE *f;
-
-     fulname[0] = '\0';
-
-    strcat(fulname, name);
-    if( (f=fopen(fulname,"r"))==NULL ) {
-        fprintf(stderr,"OpenTable: could not find %s\n", fulname);
-    }
-
-/* The following was used to generate an internal version of the file #####*/
-    {
-FILE *testfd = fopen("rsf_hufftab.c", "w");
-unsigned char buf[100];
-unsigned i;
-for (i = 0; i < 100; ++i) buf[i] = '\0';
-while (fgets(buf, 100, f) != NULL) {
-  unsigned j;
-  for (j = 0; buf[j] != '\0'; ++j) {
-    fprintf(testfd, "0x%02x, ", buf[j]);
-  }
-  for (i = 0; i < 100; ++i) buf[i] = '\0';
-}
-fclose(testfd);
-exit(0);
-    }
-/*#####*/
-    return f;
 }
 #endif

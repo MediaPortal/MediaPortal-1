@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // A simple RTP sink that packs frames into each outgoing
 //     packet, without any fragmentation or special headers.
 // C++ header
@@ -37,9 +37,12 @@ public:
 	    unsigned numChannels = 1,
 	    Boolean allowMultipleFramesPerPacket = True,
 	    Boolean doNormalMBitRule = True);
-  // "doNormalMBitRule" means: If the medium is video, set the RTP "M"
-  // bit on each outgoing packet iff it contains the last (or only)
-  // fragment of a frame.  (Otherwise, leave the "M" bit unset.)
+  // "doNormalMBitRule" means: If the medium (i.e., "sdpMediaTypeString") is other than "audio", set the RTP "M" bit
+  // on each outgoing packet iff it contains the last (or only) fragment of a frame.
+  // Otherwise (i.e., if "doNormalMBitRule" is False, or the medium is "audio"), leave the "M" bit unset.
+
+  void setMBitOnNextPacket() { fSetMBitOnNextPacket = True; } // hack for optionally setting the RTP 'M' bit from outside the class
+
 protected:
   SimpleRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
 		unsigned char rtpPayloadFormat,
@@ -57,7 +60,7 @@ protected: // redefined virtual functions
   virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
                                       unsigned char* frameStart,
                                       unsigned numBytesInFrame,
-                                      struct timeval frameTimestamp,
+                                      struct timeval framePresentationTime,
                                       unsigned numRemainingBytes);
   virtual
   Boolean frameCanAppearAfterPacketStart(unsigned char const* frameStart,
@@ -67,7 +70,7 @@ protected: // redefined virtual functions
 private:
   char const* fSDPMediaTypeString;
   Boolean fAllowMultipleFramesPerPacket;
-  Boolean fSetMBitOnLastFrames;
+  Boolean fSetMBitOnLastFrames, fSetMBitOnNextPacket;
 };
 
 #endif

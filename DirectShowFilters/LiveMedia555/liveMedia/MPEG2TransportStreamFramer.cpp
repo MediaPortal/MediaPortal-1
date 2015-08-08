@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // A filter that passes through (unchanged) chunks that contain an integral number
 // of MPEG-2 Transport Stream packets, but returning (in "fDurationInMicroseconds")
 // an updated estimate of the time gap between chunks.
@@ -24,15 +24,29 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include <GroupsockHelper.hh> // for "gettimeofday()"
 
 #define TRANSPORT_PACKET_SIZE 188
+
+////////// Definitions of constants that control the behavior of this code /////////
+
+#if !defined(NEW_DURATION_WEIGHT)
 #define NEW_DURATION_WEIGHT 0.5
   // How much weight to give to the latest duration measurement (must be <= 1)
+#endif
+
+#if !defined(TIME_ADJUSTMENT_FACTOR)
 #define TIME_ADJUSTMENT_FACTOR 0.8
   // A factor by which to adjust the duration estimate to ensure that the overall
   // packet transmission times remains matched with the PCR times (which will be the
   // times that we expect receivers to play the incoming packets).
   // (must be <= 1)
+#endif
+
+#if !defined(MAX_PLAYOUT_BUFFER_DURATION)
 #define MAX_PLAYOUT_BUFFER_DURATION 0.1 // (seconds)
+#endif
+
+#if !defined(PCR_PERIOD_VARIATION_RATIO)
 #define PCR_PERIOD_VARIATION_RATIO 0.5
+#endif
 
 ////////// PIDStatus //////////
 
@@ -45,7 +59,7 @@ public:
   }
 
   double firstClock, lastClock, firstRealTime, lastRealTime;
-  unsigned lastPacketNum;
+  u_int64_t lastPacketNum;
 };
 
 
@@ -59,7 +73,9 @@ MPEG2TransportStreamFramer* MPEG2TransportStreamFramer
 MPEG2TransportStreamFramer
 ::MPEG2TransportStreamFramer(UsageEnvironment& env, FramedSource* inputSource)
   : FramedFilter(env, inputSource),
-    fTSPacketCount(0), fTSPacketDurationEstimate(0.0), fTSPCRCount(0) {
+    fTSPacketCount(0), fTSPacketDurationEstimate(0.0), fTSPCRCount(0),
+    fLimitNumTSPacketsToStream(False), fNumTSPacketsToStream(0),
+    fLimitTSPacketsToStreamByPCR(False), fPCRLimit(0.0) {
   fPIDStatusTable = HashTable::create(ONE_WORD_HASH_KEYS);
 }
 
@@ -75,7 +91,27 @@ void MPEG2TransportStreamFramer::clearPIDStatusTable() {
   }
 }
 
+void MPEG2TransportStreamFramer::setNumTSPacketsToStream(unsigned long numTSRecordsToStream) {
+  fNumTSPacketsToStream = numTSRecordsToStream;
+  fLimitNumTSPacketsToStream = numTSRecordsToStream > 0;
+}
+
+void MPEG2TransportStreamFramer::setPCRLimit(float pcrLimit) {
+  fPCRLimit = pcrLimit;
+  fLimitTSPacketsToStreamByPCR = pcrLimit != 0.0;
+}
+
 void MPEG2TransportStreamFramer::doGetNextFrame() {
+  if (fLimitNumTSPacketsToStream) {
+    if (fNumTSPacketsToStream == 0) {
+      handleClosure();
+      return;
+    }
+    if (fNumTSPacketsToStream*TRANSPORT_PACKET_SIZE < fMaxSize) {
+      fMaxSize = fNumTSPacketsToStream*TRANSPORT_PACKET_SIZE;
+    }
+  }
+
   // Read directly from our input source into our client's buffer:
   fFrameSize = 0;
   fInputSource->getNextFrame(fTo, fMaxSize,
@@ -106,10 +142,11 @@ void MPEG2TransportStreamFramer::afterGettingFrame1(unsigned frameSize,
 						    struct timeval presentationTime) {
   fFrameSize += frameSize;
   unsigned const numTSPackets = fFrameSize/TRANSPORT_PACKET_SIZE;
+  fNumTSPacketsToStream -= numTSPackets;
   fFrameSize = numTSPackets*TRANSPORT_PACKET_SIZE; // an integral # of TS packets
   if (fFrameSize == 0) {
     // We didn't read a complete TS packet; assume that the input source has closed.
-    handleClosure(this);
+    handleClosure();
     return;
   }
 
@@ -120,7 +157,7 @@ void MPEG2TransportStreamFramer::afterGettingFrame1(unsigned frameSize,
   }
   if (syncBytePosition == fFrameSize) {
     envir() << "No Transport Stream sync byte in data.";
-    handleClosure(this);
+    handleClosure();
     return;
   } else if (syncBytePosition > 0) {
     // There's a sync byte, but not at the start of the data.  Move the good data
@@ -141,7 +178,11 @@ void MPEG2TransportStreamFramer::afterGettingFrame1(unsigned frameSize,
   gettimeofday(&tvNow, NULL);
   double timeNow = tvNow.tv_sec + tvNow.tv_usec/1000000.0;
   for (unsigned i = 0; i < numTSPackets; ++i) {
-    updateTSPacketDurationEstimate(&fTo[i*TRANSPORT_PACKET_SIZE], timeNow);
+    if (!updateTSPacketDurationEstimate(&fTo[i*TRANSPORT_PACKET_SIZE], timeNow)) {
+      // We hit a preset limit (based on PCR) within the stream.  Handle this as if the input source has closed:
+      handleClosure();
+      return;
+    }
   }
 
   fDurationInMicroseconds
@@ -151,27 +192,26 @@ void MPEG2TransportStreamFramer::afterGettingFrame1(unsigned frameSize,
   afterGetting(this);
 }
 
-void MPEG2TransportStreamFramer
-::updateTSPacketDurationEstimate(unsigned char* pkt, double timeNow) {
+Boolean MPEG2TransportStreamFramer::updateTSPacketDurationEstimate(unsigned char* pkt, double timeNow) {
   // Sanity check: Make sure we start with the sync byte:
   if (pkt[0] != TRANSPORT_SYNC_BYTE) {
     envir() << "Missing sync byte!\n";
-    return;
+    return True;
   }
 
   ++fTSPacketCount;
 
   // If this packet doesn't contain a PCR, then we're not interested in it:
   u_int8_t const adaptation_field_control = (pkt[3]&0x30)>>4;
-  if (adaptation_field_control != 2 && adaptation_field_control != 3) return;
+  if (adaptation_field_control != 2 && adaptation_field_control != 3) return True;
       // there's no adaptation_field
 
   u_int8_t const adaptation_field_length = pkt[4];
-  if (adaptation_field_length == 0) return;
+  if (adaptation_field_length == 0) return True;
 
   u_int8_t const discontinuity_indicator = pkt[5]&0x80;
   u_int8_t const pcrFlag = pkt[5]&0x10;
-  if (pcrFlag == 0) return; // no PCR
+  if (pcrFlag == 0) return True; // no PCR
 
   // There's a PCR.  Get it, and the PID:
   ++fTSPCRCount;
@@ -180,6 +220,12 @@ void MPEG2TransportStreamFramer
   if ((pkt[10]&0x80) != 0) clock += 1/90000.0; // add in low-bit (if set)
   unsigned short pcrExt = ((pkt[10]&0x01)<<8) | pkt[11];
   clock += pcrExt/27000000.0;
+  if (fLimitTSPacketsToStreamByPCR) {
+    if (clock > fPCRLimit) {
+      // We've hit a preset limit within the stream:
+      return False;
+    }
+  }
 
   unsigned pid = ((pkt[1]&0x1F)<<8) | pkt[2];
 
@@ -195,15 +241,18 @@ void MPEG2TransportStreamFramer
 #endif
   } else {
     // We've seen this PID's PCR before; update our per-packet duration estimate:
-    double durationPerPacket
-      = (clock - pidStatus->lastClock)/(fTSPacketCount - pidStatus->lastPacketNum);
+    int64_t packetsSinceLast = (int64_t)(fTSPacketCount - pidStatus->lastPacketNum);
+      // it's "int64_t" because some compilers can't convert "u_int64_t" -> "double"
+    double durationPerPacket = (clock - pidStatus->lastClock)/packetsSinceLast;
 
     // Hack (suggested by "Romain"): Don't update our estimate if this PCR appeared unusually quickly.
     // (This can produce more accurate estimates for wildly VBR streams.)
     double meanPCRPeriod = 0.0;
     if (fTSPCRCount > 0) {
-      meanPCRPeriod=(double)fTSPacketCount/fTSPCRCount;
-      if (fTSPacketCount - pidStatus->lastPacketNum < meanPCRPeriod*PCR_PERIOD_VARIATION_RATIO) return;
+      double tsPacketCount = (double)(int64_t)fTSPacketCount;
+      double tsPCRCount = (double)(int64_t)fTSPCRCount;
+      meanPCRPeriod = tsPacketCount/tsPCRCount;
+      if (packetsSinceLast < meanPCRPeriod*PCR_PERIOD_VARIATION_RATIO) return True;
     }
 
     if (fTSPacketDurationEstimate == 0.0) { // we've just started
@@ -236,4 +285,6 @@ void MPEG2TransportStreamFramer
   pidStatus->lastClock = clock;
   pidStatus->lastRealTime = timeNow;
   pidStatus->lastPacketNum = fTSPacketCount;
+
+  return True;
 }
