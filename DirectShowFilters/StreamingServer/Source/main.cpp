@@ -5,12 +5,10 @@
 #include "liveMedia.hh"
 #include "BasicUsageEnvironment.hh"
 #include "MPTaskScheduler.h"
-#include "GroupsockHelper.hh"
-#include "TsStreamFileSource.h"
 #include "TsMPEG2TransportFileServerMediaSubsession.h" 
-#include "MPEG1or2FileServerDemux.hh" 
 #include "MPRTSPServer.h"
-//#include "RTSPOverHTTPServer.hh"
+#include <sstream>
+#include <iomanip>  // setfill(), setw()
 
 static char logbuffer[2000]; 
 static wchar_t logbufferw[2000];
@@ -98,34 +96,45 @@ void StreamGetClientCount(int* clients)
 {
 	*clients=0;
 	if (m_rtspServer==NULL) return ;
-	*clients= m_rtspServer->Clients().size();
+	*clients = m_rtspServer->GetSessionCount();
 }
 
 //**************************************************************************************
-void StreamGetClientDetail(unsigned int clientNr, char** ipAdres, char** streamName, int* isActive, long* ticks)
+void StreamGetClientDetail(unsigned short index, char** ipAddress, char** streamId, int* isActive, long* connectionTickCount)
 {
-	static char szipAdres[50];
-	static char szstreamName[150];
-	*ipAdres=NULL;
-	*streamName=NULL;
-	*isActive=0;
-	*ticks=0;
-	vector<MPRTSPServer::MPRTSPClientSession*> clients=m_rtspServer->Clients();
-	if (clientNr>=clients.size()) return;
-	MPRTSPServer::MPRTSPClientSession* client = clients[clientNr];
-	sprintf(szipAdres,"%d.%d.%d.%d", client->getClientAddr().sin_addr.S_un.S_un_b.s_b1,
-		client->getClientAddr().sin_addr.S_un.S_un_b.s_b2,
-		client->getClientAddr().sin_addr.S_un.S_un_b.s_b3,
-		client->getClientAddr().sin_addr.S_un.S_un_b.s_b4);
-	*isActive=client->IsSessionIsActive();
-  ServerMediaSession * clientMediaSession = client->getOurServerMediaSession();
-  if (clientMediaSession)
+  static char szIpAddress[50];
+  static char szStreamId[260];
+  *ipAddress = NULL;
+  *streamId = NULL;
+  *isActive = 0;
+  *connectionTickCount = 0;
+
+  if (m_rtspServer == NULL)
   {
-    strcpy(szstreamName,clientMediaSession->streamName());
+    return;
   }
-	*streamName=&szstreamName[0];
-	*ipAdres=&szipAdres[0];
-	*ticks=client->getStartDateTime();
+  MPRTSPServer::MPRTSPClientSession* client = m_rtspServer->GetSessionByIndex(index);
+  if (client == NULL)
+  {
+    return;
+  }
+
+  struct sockaddr_in clientAddress = client->ClientAddress();
+  sprintf(szIpAddress, "%d.%d.%d.%d",
+          clientAddress.sin_addr.S_un.S_un_b.s_b1,
+          clientAddress.sin_addr.S_un.S_un_b.s_b2,
+          clientAddress.sin_addr.S_un.S_un_b.s_b3,
+          clientAddress.sin_addr.S_un.S_un_b.s_b4);
+  *ipAddress = &szIpAddress[0];
+
+  const char* sid = client->StreamId();
+  if (sid != NULL)
+  {
+    strcpy(szStreamId, sid);
+  }
+  *streamId = &szStreamId[0];
+  *isActive = client->IsPaused() ? 1 : 0;
+  *connectionTickCount = client->StartDateTime();
 }
 
 //**************************************************************************************

@@ -1,10 +1,10 @@
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <streams.h>
 #include "TsMPEG2TransportFileServerMediaSubsession.h"
+#ifndef _SIMPLE_RTP_SINK_HH
 #include "SimpleRTPSink.hh"
+#endif
 #include "TsStreamFileSource.h"
 #include "TsMPEG2TransportStreamFramer.h"
+#include "MultiFileReader.h"
 
 extern void LogDebug(const char *fmt, ...) ;
 

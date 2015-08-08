@@ -1,10 +1,16 @@
-#ifndef _TSMPEG2_TRANSPORT_FILE_SERVER_MEDIA_SUBSESSION_HH
-#define _TSMPEG2_TRANSPORT_FILE_SERVER_MEDIA_SUBSESSION_HH
+#pragma once
 
 #ifndef _FILE_SERVER_MEDIA_SUBSESSION_HH
 #include "FileServerMediaSubsession.hh"
 #endif
+#ifndef _FRAMED_SOURCE_HH
+#include "FramedSource.hh"
+#endif
+#ifndef _RTP_SINK_HH
+#include "RTPSink.h"
+#endif
 #include "TsDuration.h"
+#include "FileReader.h"
 
 class TsMPEG2TransportFileServerMediaSubsession: public FileServerMediaSubsession{
 public:
@@ -35,5 +41,3 @@ private: // redefined virtual functions
 	Boolean m_bTimeshifting;
 	int m_iChannelType;
 };
-
-#endif
