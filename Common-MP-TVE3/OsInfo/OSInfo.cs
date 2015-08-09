@@ -627,8 +627,8 @@ namespace OSInfo
       { // Windows 8.1 RTM
         return OsSupport.FullySupported;
       }
-      if (VerifyDesktopOSMinRequirement(10, 0, 10166, NT_WORKSTATION, 0))
-      { // Windows 10 Preview
+      if (VerifyDesktopOSMinRequirement(10, 0, 10240, NT_WORKSTATION, 0))
+      { // Windows 10 RTM
         return OsSupport.FullySupported;
       }
       if (IsServer())
