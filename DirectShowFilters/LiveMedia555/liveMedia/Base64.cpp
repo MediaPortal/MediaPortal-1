@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // Base64 encoding and decoding
 // implementation
 
@@ -37,24 +37,33 @@ static void initBase64DecodeTable() {
   base64DecodeTable[(unsigned char)'='] = 0;
 }
 
-unsigned char* base64Decode(char* in, unsigned& resultSize,
+unsigned char* base64Decode(char const* in, unsigned& resultSize,
 			    Boolean trimTrailingZeros) {
-  static Boolean haveInitedBase64DecodeTable = False;
-  if (!haveInitedBase64DecodeTable) {
+  if (in == NULL) return NULL; // sanity check
+  return base64Decode(in, strlen(in), resultSize, trimTrailingZeros);
+}
+
+unsigned char* base64Decode(char const* in, unsigned inSize,
+			    unsigned& resultSize,
+			    Boolean trimTrailingZeros) {
+  static Boolean haveInitializedBase64DecodeTable = False;
+  if (!haveInitializedBase64DecodeTable) {
     initBase64DecodeTable();
-    haveInitedBase64DecodeTable = True;
+    haveInitializedBase64DecodeTable = True;
   }
 
   unsigned char* out = (unsigned char*)strDupSize(in); // ensures we have enough space
   int k = 0;
-  int const jMax = strlen(in) - 3;
-     // in case "in" is not a multiple of 4 bytes (although it should be)
+  int paddingCount = 0;
+  int const jMax = inSize - 3;
+     // in case "inSize" is not a multiple of 4 (although it should be)
   for (int j = 0; j < jMax; j += 4) {
     char inTmp[4], outTmp[4];
     for (int i = 0; i < 4; ++i) {
       inTmp[i] = in[i+j];
+      if (inTmp[i] == '=') ++paddingCount;
       outTmp[i] = base64DecodeTable[(unsigned char)inTmp[i]];
-      if ((outTmp[i]&0x80) != 0) outTmp[i] = 0; // pretend the input was 'A'
+      if ((outTmp[i]&0x80) != 0) outTmp[i] = 0; // this happens only if there was an invalid character; pretend that it was 'A'
     }
 
     out[k++] = (outTmp[0]<<2) | (outTmp[1]>>4);
@@ -63,7 +72,7 @@ unsigned char* base64Decode(char* in, unsigned& resultSize,
   }
 
   if (trimTrailingZeros) {
-    while (k > 0 && out[k-1] == '\0') --k;
+    while (paddingCount > 0 && k > 0 && out[k-1] == '\0') { --k; --paddingCount; }
   }
   resultSize = k;
   unsigned char* result = new unsigned char[resultSize];

@@ -21,7 +21,10 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "TsMPEG2TransportStreamFramer.h"
-#include <GroupsockHelper.hh> // for "gettimeofday()"
+
+#ifndef _GROUPSOCK_HELPER_HH
+#include <GroupsockHelper.hh>   // gettimeofday()
+#endif
 
 #define TRANSPORT_PACKET_SIZE 188
 #define NEW_DURATION_WEIGHT 0.5

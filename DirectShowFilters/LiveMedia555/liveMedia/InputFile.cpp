@@ -14,20 +14,12 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // Common routines for opening/closing named input files
 // Implementation
 
-#if (defined(__WIN32__) || defined(_WIN32)) && !defined(_WIN32_WCE)
-#include <io.h>
-#include <fcntl.h>
-#endif
-#ifndef _WIN32_WCE
-#include <sys/stat.h>
-#endif
-#include <string.h>
-
 #include "InputFile.hh"
+#include <string.h>
 
 FILE* OpenInputFile(UsageEnvironment& env, char const* fileName) {
   FILE* fid;
@@ -35,7 +27,7 @@ FILE* OpenInputFile(UsageEnvironment& env, char const* fileName) {
   // Check for a special case file name: "stdin"
   if (strcmp(fileName, "stdin") == 0) {
     fid = stdin;
-#if defined(__WIN32__) || defined(_WIN32)
+#if (defined(__WIN32__) || defined(_WIN32)) && !defined(_WIN32_WCE)
     _setmode(_fileno(stdin), _O_BINARY); // convert to binary mode
 #endif
   } else {
@@ -79,6 +71,8 @@ u_int64_t GetFileSize(char const* fileName, FILE* fid) {
 }
 
 int64_t SeekFile64(FILE *fid, int64_t offset, int whence) {
+  if (fid == NULL) return -1;
+
   clearerr(fid);
   fflush(fid);
 #if (defined(__WIN32__) || defined(_WIN32)) && !defined(_WIN32_WCE)
@@ -93,6 +87,8 @@ int64_t SeekFile64(FILE *fid, int64_t offset, int whence) {
 }
 
 int64_t TellFile64(FILE *fid) {
+  if (fid == NULL) return -1;
+
   clearerr(fid);
   fflush(fid);
 #if (defined(__WIN32__) || defined(_WIN32)) && !defined(_WIN32_WCE)
@@ -104,4 +100,13 @@ int64_t TellFile64(FILE *fid) {
   return ftello(fid);
 #endif
 #endif
+}
+
+Boolean FileIsSeekable(FILE *fid) {
+  if (SeekFile64(fid, 1, SEEK_CUR) < 0) {
+    return False;
+  }
+
+  SeekFile64(fid, -1, SEEK_CUR); // seek back to where we were
+  return True;
 }

@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // A class that encapsulates MPEG-2 Transport Stream 'index files'/
 // These index files are used to implement 'trick play' operations
 // (seek-by-time, fast forward, reverse play) on Transport Stream files.
@@ -27,7 +27,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 MPEG2TransportStreamIndexFile
 ::MPEG2TransportStreamIndexFile(UsageEnvironment& env, char const* indexFileName)
   : Medium(env),
-    fFileName(strDup(indexFileName)), fFid(NULL), fCurrentIndexRecordNum(0),
+    fFileName(strDup(indexFileName)), fFid(NULL), fMPEGVersion(0), fCurrentIndexRecordNum(0),
     fCachedPCR(0.0f), fCachedTSPacketNumber(0), fNumIndexRecords(0) {
   // Get the file size, to determine how many index records it contains:
   u_int64_t indexFileSize = GetFileSize(indexFileName, NULL);
@@ -109,7 +109,7 @@ void MPEG2TransportStreamIndexFile
 
     ixFound = ixRight;
     // "Rewind' until we reach the start of a Video Sequence or GOP header:
-    success = rewindToVSH(ixFound);
+    success = rewindToCleanPoint(ixFound);
   } while (0);
 
   if (success && readIndexRecord(ixFound)) {
@@ -126,7 +126,7 @@ void MPEG2TransportStreamIndexFile
 }
 
 void MPEG2TransportStreamIndexFile
-::lookupPCRFromTSPacketNum(unsigned long& tsPacketNumber, Boolean reverseToPreviousVSH,
+::lookupPCRFromTSPacketNum(unsigned long& tsPacketNumber, Boolean reverseToPreviousCleanPoint,
 			   float& pcr, unsigned long& indexRecordNumber) {
   if (tsPacketNumber == 0 || fNumIndexRecords == 0) { // Fast-track a common case:
     pcr = 0.0f;
@@ -173,9 +173,9 @@ void MPEG2TransportStreamIndexFile
     if (ixRight-ixLeft > 1 || tsPacketNumber <= tsLeft || tsPacketNumber > tsRight) break; // bad PCR values in index file?
 
     ixFound = ixRight;
-    if (reverseToPreviousVSH) {
+    if (reverseToPreviousCleanPoint) {
       // "Rewind' until we reach the start of a Video Sequence or GOP header:
-      success = rewindToVSH(ixFound);
+      success = rewindToCleanPoint(ixFound);
     } else {
       success = True;
     }
@@ -185,7 +185,7 @@ void MPEG2TransportStreamIndexFile
     // Return (and cache) information from record "ixFound":
     pcr = fCachedPCR = pcrFromBuf();
     fCachedTSPacketNumber = tsPacketNumFromBuf();
-    if (reverseToPreviousVSH) tsPacketNumber = fCachedTSPacketNumber;
+    if (reverseToPreviousCleanPoint) tsPacketNumber = fCachedTSPacketNumber;
     indexRecordNumber = fCachedIndexRecordNumber = ixFound;
   } else {
     // An error occurred: Return the default values, for tsPacketNumber == 0:
@@ -213,6 +213,16 @@ float MPEG2TransportStreamIndexFile::getPlayingDuration() {
   if (fNumIndexRecords == 0 || !readOneIndexRecord(fNumIndexRecords-1)) return 0.0f;
 
   return pcrFromBuf();
+}
+
+int MPEG2TransportStreamIndexFile::mpegVersion() {
+  if (fMPEGVersion != 0) return fMPEGVersion; // we already know it
+
+  // Read the first index record, and figure out the MPEG version from its type:
+  if (!readOneIndexRecord(0)) return 0; // unknown; perhaps the indecx file is empty?	
+
+  setMPEGVersionFromRecordType(recordTypeFromBuf());
+  return fMPEGVersion;
 }
 
 Boolean MPEG2TransportStreamIndexFile::openFid() {
@@ -271,33 +281,66 @@ unsigned long MPEG2TransportStreamIndexFile::tsPacketNumFromBuf() {
   return (fBuf[10]<<24) | (fBuf[9]<<16) | (fBuf[8]<<8) | fBuf[7];
 }
 
-Boolean MPEG2TransportStreamIndexFile::rewindToVSH(unsigned long&ixFound) {
-  Boolean success = False;
+void MPEG2TransportStreamIndexFile::setMPEGVersionFromRecordType(u_int8_t recordType) {
+  if (fMPEGVersion != 0) return; // we already know it
+ 
+  u_int8_t const recordTypeWithoutStartBit = recordType&~0x80;
+  if (recordTypeWithoutStartBit >= 1 && recordTypeWithoutStartBit <= 4) fMPEGVersion = 2;
+  else if (recordTypeWithoutStartBit >= 5 && recordTypeWithoutStartBit <= 10) fMPEGVersion = 5;
+      // represents H.264
+  else if (recordTypeWithoutStartBit >= 11 && recordTypeWithoutStartBit <= 16) fMPEGVersion = 6;
+      // represents H.265
+}
+
+Boolean MPEG2TransportStreamIndexFile::rewindToCleanPoint(unsigned long&ixFound) {
+  Boolean success = False; // until we learn otherwise
 
   while (ixFound > 0) {
     if (!readIndexRecord(ixFound)) break;
 
     u_int8_t recordType = recordTypeFromBuf();
-    if ((recordType&0x80) != 0 && (recordType&0x7F) <= 2/*GOP*/) {
-      if ((recordType&0x7F) == 2) {
-	// This is a GOP.  Hack: If the preceding record is for a Video Sequence Header,
-	// then use it instead:
-	unsigned long newIxFound = ixFound;
+    setMPEGVersionFromRecordType(recordType);
 
-	while (--newIxFound > 0) {
-	  if (!readIndexRecord(newIxFound)) break;
-	  recordType = recordTypeFromBuf();
-	  if ((recordType&0x7F) != 1) break; // not a Video Sequence Header
-	  if ((recordType&0x80) != 0) { // this is the start of the VSH; use it
-	    ixFound = newIxFound;
-	    break;
-	  }
+    // A 'clean point' is the start of a 'frame' from which a decoder can cleanly resume
+    // handling the stream.  For H.264, this is a SPS.  For H.265, this is a VPS.
+    // For MPEG-2, this is a Video Sequence Header, or a GOP. 
+
+    if ((recordType&0x80) != 0) { // This is the start of a 'frame'
+      recordType &=~ 0x80; // remove the 'start of frame' bit
+      if (fMPEGVersion == 5) { // H.264
+        if (recordType == 5/*SPS*/) {
+	  success = True;
+	  break;
 	}
+      } else if (fMPEGVersion == 6) { // H.265
+        if (recordType == 11/*VPS*/) {
+	  success = True;
+	  break;
+	}
+      } else { // MPEG-1, 2, or 4
+	if (recordType == 1/*VSH*/) {
+	  success = True;
+	  break;
+	} else if (recordType == 2/*GOP*/) {
+	  // Hack: If the preceding record is for a Video Sequence Header, then use it instead:
+	  unsigned long newIxFound = ixFound;
+
+	  while (--newIxFound > 0) {
+	    if (!readIndexRecord(newIxFound)) break;
+	    recordType = recordTypeFromBuf();
+	    if ((recordType&0x7F) != 1) break; // not a Video Sequence Header
+	    if ((recordType&0x80) != 0) { // this is the start of the VSH; use it
+	      ixFound = newIxFound;
+	      break;
+	    }
+	  }
+        }
+        success = True;
+        break;
       }
-      // Record 'ixFound' as appropriate to return:
-      success = True;
-      break;
     }
+
+    // Keep checking, from the previous record:
     --ixFound;
   }
   if (ixFound == 0) success = True; // use record 0 anyway

@@ -23,12 +23,8 @@
 *  bear and nate can be reached on the forums at
 *    http://forums.dvbowners.com/
 */
-
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <streams.h>
 #include "TSThread.h"
-#include <process.h>
+#include <process.h>  // _beginthread()
 
 /*
 void TSThreadThreadProc(void *pParam)

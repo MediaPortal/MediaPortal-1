@@ -23,13 +23,14 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include <fcntl.h>
 #endif
 
-#include <streams.h>
-
 #include "TsStreamFileSource.h"
-#include "InputFile.hh"
-#include "GroupsockHelper.hh"
-
+#include "FileReader.h"
+#include "MultiFileReader.h"
 #include "TsFileSeek.h"
+
+#ifndef _GROUPSOCK_HELPER_HH
+#include <GroupsockHelper.hh>   // gettimeofday()
+#endif
 
 extern void LogDebug(const char *fmt, ...) ;
 extern void LogDebug(const wchar_t *fmt, ...) ;

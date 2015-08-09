@@ -14,36 +14,12 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // Media
 // Implementation
 
 #include "Media.hh"
 #include "HashTable.hh"
-
-// A data structure for looking up a Medium by its string name
-class MediaLookupTable {
-public:
-  static MediaLookupTable* ourMedia(UsageEnvironment& env);
-
-  Medium* lookup(char const* name) const;
-      // Returns NULL if none already exists
-
-  void addNew(Medium* medium, char* mediumName);
-  void remove(char const* name);
-
-  void generateNewName(char* mediumName, unsigned maxLen);
-
-protected:
-  MediaLookupTable(UsageEnvironment& env);
-  virtual ~MediaLookupTable();
-
-private:
-  UsageEnvironment& fEnv;
-  HashTable* fTable;
-  unsigned fNameGenerator;
-};
-
 
 ////////// Medium //////////
 
@@ -111,15 +87,11 @@ Boolean Medium::isServerMediaSession() const {
   return False; // default implementation
 }
 
-Boolean Medium::isDarwinInjector() const {
-  return False; // default implementation
-}
-
 
 ////////// _Tables implementation //////////
 
-_Tables* _Tables::getOurTables(UsageEnvironment& env) {
-  if (env.liveMediaPriv == NULL) {
+_Tables* _Tables::getOurTables(UsageEnvironment& env, Boolean createIfNotPresent) {
+  if (env.liveMediaPriv == NULL && createIfNotPresent) {
     env.liveMediaPriv = new _Tables(env);
   }
   return (_Tables*)(env.liveMediaPriv);
@@ -149,7 +121,7 @@ MediaLookupTable* MediaLookupTable::ourMedia(UsageEnvironment& env) {
     // this environment:
     ourTables->mediaTable = new MediaLookupTable(env);
   }
-  return (MediaLookupTable*)(ourTables->mediaTable);
+  return ourTables->mediaTable;
 }
 
 Medium* MediaLookupTable::lookup(char const* name) const {

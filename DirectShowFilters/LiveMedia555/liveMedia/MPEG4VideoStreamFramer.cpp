@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // A filter that breaks up an MPEG-4 video elementary stream into
 //   frames for:
 // - Visual Object Sequence (VS) Header + Visual Object (VO) Header
@@ -25,6 +25,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #include "MPEG4VideoStreamFramer.hh"
 #include "MPEGVideoStreamParser.hh"
+#include "MPEG4LATMAudioRTPSource.hh" // for "parseGeneralConfigStr()"
 #include <string.h>
 
 ////////// MPEG4VideoStreamParser definition //////////
@@ -97,6 +98,14 @@ unsigned char* MPEG4VideoStreamFramer
 ::getConfigBytes(unsigned& numBytes) const {
   numBytes = fNumConfigBytes;
   return fConfigBytes;
+}
+
+void MPEG4VideoStreamFramer
+::setConfigInfo(u_int8_t profileAndLevelIndication, char const* configStr) {
+  fProfileAndLevelIndication = profileAndLevelIndication;
+
+  delete[] fConfigBytes;
+  fConfigBytes = parseGeneralConfigStr(configStr, fNumConfigBytes);
 }
 
 MPEG4VideoStreamFramer::MPEG4VideoStreamFramer(UsageEnvironment& env,

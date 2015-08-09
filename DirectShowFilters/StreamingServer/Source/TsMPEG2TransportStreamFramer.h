@@ -20,16 +20,19 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // an updated estimate of the time gap between chunks.
 // C++ header
 
-#ifndef _TSMPEG2_TRANSPORT_STREAM_FRAMER_HH
-#define _TSMPEG2_TRANSPORT_STREAM_FRAMER_HH
+#pragma once
 
 #ifndef _FRAMED_FILTER_HH
 #include "FramedFilter.hh"
+#endif
+#ifndef _FRAMED_SOURCE_HH
+#include "FramedSource.hh"
 #endif
 
 #ifndef _HASH_TABLE_HH
 #include "HashTable.hh"
 #endif
+
 
 class TsMPEG2TransportStreamFramer: public FramedFilter {
 public:
@@ -68,5 +71,3 @@ private:
 	HashTable* fPIDStatusTable;
 	unsigned long fTSPCRCount;
 };
-
-#endif
