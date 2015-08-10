@@ -133,7 +133,7 @@ void StreamGetClientDetail(unsigned short index, char** ipAddress, char** stream
     strcpy(szStreamId, sid);
   }
   *streamId = &szStreamId[0];
-  *isActive = client->IsPaused() ? 1 : 0;
+  *isActive = client->IsPaused() ? 0 : 1;
   *connectionTickCount = client->StartDateTime();
 }
 
