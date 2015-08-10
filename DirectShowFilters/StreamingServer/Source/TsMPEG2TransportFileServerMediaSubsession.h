@@ -31,7 +31,7 @@ protected:
   CTsDuration *m_pDuration;
 
 private: // redefined virtual functions
-	virtual void seekStreamSource(FramedSource* inputSource, double seekNPT);
+	virtual void seekStreamSource(FramedSource* inputSource, double& seekNPT, double streamDuration, u_int64_t& numBytes);
 	virtual FramedSource* createNewStreamSource(unsigned clientSessionId,
 		unsigned& estBitrate);
 	virtual RTPSink* createNewRTPSink(Groupsock* rtpGroupsock,
