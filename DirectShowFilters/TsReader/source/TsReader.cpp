@@ -335,7 +335,6 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   }
   wcscpy(m_fileName,L"");
   m_dwGraphRegister = 0;
-  m_rtspClient.Initialize();
 
   //Read (and create if needed) debug registry settings
   HKEY key;
