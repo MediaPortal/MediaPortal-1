@@ -11,467 +11,298 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
+
 extern void LogDebug(const char *fmt, ...) ;
 extern DWORD m_tGTStartTime;
 
+
+#define TIMEOUT_GENERIC_RTSP_RESPONSE 500   // unit = milliseconds
+
+
 CRTSPClient::CRTSPClient(CMemoryBuffer& buffer)
-:m_buffer(buffer)
+  : m_buffer(buffer)
 {
   LogDebug("CRTSPClient::CRTSPClient()");
-  allowProxyServers = False;
-  controlConnectionUsesTCP = True;
-  supportCodecSelection = False;
-  clientProtocolName = "RTSP";
-  tunnelOverHTTPPortNum = 0;
-  statusCode = 0;
-  singleMedium = NULL;
-  desiredPortNum = 0;
-  createReceivers = True;
-  simpleRTPoffsetArg = -1;
-  socketInputBufferSize = 0;
-  streamUsingTCP = False;
-  fileSinkBufferSize = 20000;
-  oneFilePerFrame = False;
-  m_BufferThreadActive=false;
-  m_duration=7200*1000;
-  m_fStart=0.0f;
-  m_session=NULL;
-  m_ourClient=NULL;
-  m_bPaused=false;
+  m_isBufferThreadActive = false;
+  m_duration = 7200 * 1000;
+  m_session = NULL;
+  m_ourClient = NULL;
+  m_isPaused = false;
+
+  m_genericResponseEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+  m_durationDescribeResponseEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+
+  TaskScheduler* scheduler = MPTaskScheduler::createNew();
+  if (scheduler == NULL) 
+  {
+    LogDebug("CRTSPClient::CRTSPClient(): failed to create task scheduler");
+    return;
+  }
+
+  m_env = BasicUsageEnvironment::createNew(*scheduler);
+  if (m_env == NULL) 
+  {
+    LogDebug("CRTSPClient::CRTSPClient(): failed to create usage environment");
+    delete scheduler;
+    return;
+  }
 }
 
 CRTSPClient::~CRTSPClient()
 {
   LogDebug("CRTSPClient::~CRTSPClient()");
-  Medium::close(m_ourClient);
-  m_ourClient = NULL;
+  Shutdown();
   if (m_env)
   {
-    TaskScheduler *scheduler = &m_env->taskScheduler();
+    TaskScheduler* scheduler = &m_env->taskScheduler();
     m_env->reclaim();
     m_env = NULL;
     delete scheduler;
   }
-}
-
-
-Medium* CRTSPClient::createClient(UsageEnvironment& env,int verbosityLevel, char const* applicationName) 
-{
-  LogDebug("CRTSPClient::createClient()");
-  return RTSPClient::createNew(env, verbosityLevel, applicationName,tunnelOverHTTPPortNum);
-}
-
-char* CRTSPClient::getOptionsResponse(Medium* client, char const* url,char* username, char* password) 
-{
-  LogDebug("CRTSPClient::getOptionsResponse()");
-  RTSPClient* rtspClient = (RTSPClient*)client;
-  return rtspClient->sendOptionsCmd(url, username, password);
-}
-
-char* CRTSPClient::getSDPDescriptionFromURL(Medium* client, char const* url,
-			       char const* username, char const* password,
-			       char const* /*proxyServerName*/,
-			       unsigned short /*proxyServerPortNum*/,
-			       unsigned short /*clientStartPort*/) 
-{
-  LogDebug("CRTSPClient::getSDPDescriptionFromURL()");
-  RTSPClient* rtspClient = (RTSPClient*)client;
-  char* result;
-  if (username != NULL && password != NULL) 
+  if (m_genericResponseEvent != NULL)
   {
-    result = rtspClient->describeWithPassword(url, username, password);
-  } 
-  else 
-  {
-    result = rtspClient->describeURL(url);
+    CloseHandle(m_genericResponseEvent);
+    m_genericResponseEvent = NULL;
   }
-
-  statusCode = rtspClient->describeStatus();
-  return result;
-}
-
-char* CRTSPClient::getSDPDescription() 
-{
-//	LogDebug("CRTSPClient::getSDPDescription()");
-  if (m_ourClient == NULL)
-    return NULL;
-
-  RTSPClient *client = (RTSPClient*)m_ourClient;
-  RTSPClient *rtspClient = RTSPClient::createNew(client->envir(), 0, "TSFileSource", tunnelOverHTTPPortNum);
-  char* result;
-  result = rtspClient->describeURL(m_url);
-
-//  LogDebug("CRTSPClient::getSDPDescription() statusCode = %d", rtspClient->describeStatus());
-  Medium::close(rtspClient);
-
-  return result;
-}
-
-Boolean CRTSPClient::clientSetupSubsession(Medium* client, MediaSubsession* subsession,Boolean streamUsingTCP) 
-{
-  LogDebug("CRTSPClient::clientSetupSubsession()");
-  if (client == NULL || subsession == NULL) return False;
-  RTSPClient* rtspClient = (RTSPClient*)client;
-  return rtspClient->setupMediaSubsession(*subsession,False, streamUsingTCP);
-}
-
-Boolean CRTSPClient::clientStartPlayingSession(Medium* client,MediaSession* session) 
-{
-  LogDebug("CRTSPClient::clientStartPlayingSession()");
-  if (client == NULL || session == NULL) return False;
-  RTSPClient* rtspClient = (RTSPClient*)client;
-
-  long dur=m_duration/1000;
-  double fStart = m_fStart ;
-  double fStartToEnd ;
-  if (m_fDuration > 0.0)
+  if (m_durationDescribeResponseEvent != NULL)
   {
-    fStartToEnd = m_fDuration-m_fStart ;
-    if (fStartToEnd<0) fStartToEnd=0 ;
-    fStart = dur - fStartToEnd ;
-    if (fStart<0) fStart=0 ;
+    CloseHandle(m_durationDescribeResponseEvent);
+    m_durationDescribeResponseEvent = NULL;
   }
-
-  long diff=abs(dur-m_fStart);
-//  if (diff <20 && m_fStart>1 )
-//  {
-//    m_fStart=dur+5;
-//  }
-  LogDebug("CRTSPClient::clientStartPlayingSession() play from %.3f / %.3f",fStart,(float)m_duration/1000);
-  return rtspClient->playMediaSession(*session,fStart);
 }
 
-Boolean CRTSPClient::clientTearDownSession(Medium* client,MediaSession* session) 
+void SubsessionAfterPlaying(void* clientData) 
 {
-  LogDebug("CRTSPClient::clientTearDownSession()");
-  if (client == NULL || session == NULL) return False;
-  RTSPClient* rtspClient = (RTSPClient*)client;
-  return rtspClient->teardownMediaSession(*session);
+  LogDebug("CRTSPClient::SubsessionAfterPlaying()");
 }
 
-void subsessionAfterPlaying(void* clientData) 
+void SubsessionByeHandler(void* clientData) 
 {
-  LogDebug("CRTSPClient::subsessionAfterPlaying()");
-}
-void subsessionByeHandler(void* clientData) 
-{
-  LogDebug("CRTSPClient::subsessionByeHandler()");
+  LogDebug("CRTSPClient::SubsessionByeHandler()");
 }
 
-void CRTSPClient::closeMediaSinks() 
+bool CRTSPClient::SetupStreams()
 {
-  if (m_session == NULL) return;
-  LogDebug("CRTSPClient::closeMediaSinks()");
+  LogDebug("CRTSPClient::SetupStreams()");
+  bool result = false;
   MediaSubsessionIterator iter(*m_session);
   MediaSubsession* subsession;
   while ((subsession = iter.next()) != NULL) 
   {
-    Medium::close(subsession->sink);
-    subsession->sink = NULL;
-  }
-}
-
-void CRTSPClient::tearDownStreams() 
-{
-  if (m_session == NULL) return;
-  LogDebug("CRTSPClient::tearDownStreams()");
-
-  clientTearDownSession(m_ourClient, m_session);
-}
-bool CRTSPClient::setupStreams()
-{
-  //setup streams
-  LogDebug("CRTSPClient::setupStreams()");
-  Boolean madeProgress=False;
-  MediaSubsessionIterator iter(*m_session);
-  MediaSubsession *subsession;
-
-  while ((subsession = iter.next()) != NULL) 
-  {
     if (subsession->clientPortNum() == 0) continue; // port # was not set
 
-    if (!clientSetupSubsession(m_ourClient, subsession, streamUsingTCP)) 
+    LogDebug("CRTSPClient::SetupStreams(): send RTSP SETUP");
+    ResetEvent(m_genericResponseEvent);
+    m_ourClient->sendSetupCommand(*subsession, &CRTSPClient::OnGenericResponseReceived);
+    if (WaitForSingleObject(m_genericResponseEvent, TIMEOUT_GENERIC_RTSP_RESPONSE) == WAIT_TIMEOUT)
     {
-      LogDebug( "Failed to setup %s %s %s" ,subsession->mediumName(),subsession->codecName(),m_env->getResultMsg() );;
-    } 
-    else 
+      LogDebug("CRTSPClient::SetupStreams(): RTSP SETUP timed out");
+    }
+    else if (m_genericResponseResultCode != 0)
+	  {
+      LogDebug("CRTSPClient::SetupStreams(): RTSP SETUP failed, result code = %d, message = %s", m_genericResponseResultCode, m_env->getResultMsg());
+    }
+    else
     {
-      LogDebug( "Setup %s %s %d %d" ,subsession->mediumName(),subsession->codecName(),subsession->clientPortNum(),subsession->clientPortNum()+1);;
-      madeProgress = True;
+      LogDebug("CRTSPClient::SetupStreams(): RTSP SETUP succeeded, port = %d", subsession->clientPortNum());
+      result = true;
     }
   }
-  if (!madeProgress) 
-  {
-    shutdown();
-    return false;
-  }
-  return true;
+  return result;
 }
 
-bool CRTSPClient::startPlayingStreams() 
+void CRTSPClient::Shutdown()
 {
-  LogDebug("CRTSPClient::startPlayingStreams()");
-  if (!clientStartPlayingSession(m_ourClient, m_session)) 
-  {
-    LogDebug("Failed to start playing session:%s " ,m_env ->getResultMsg() );
-    shutdown();
-    return false;
-  } 
-  else 
-  {
-    LogDebug("Started playing session");
-  }
-  return true;
-}
-
-void CRTSPClient::shutdown()
-{
-  LogDebug("CRTSPClient::shutdown()");
-  if (m_env != NULL) 
-  {
-    //m_env->taskScheduler().unscheduleDelayedTask(sessionTimerTask);
-    //m_env->taskScheduler().unscheduleDelayedTask(arrivalCheckTimerTask);
-    //m_env->taskScheduler().unscheduleDelayedTask(interPacketGapCheckTimerTask);
-    //m_env->taskScheduler().unscheduleDelayedTask(qosMeasurementTimerTask);
-  }
-  // Close our output files:
-  closeMediaSinks();
+  LogDebug("CRTSPClient::Shutdown()");
 
   // Teardown, then shutdown, any outstanding RTP/RTCP subsessions
-  tearDownStreams();
-  Medium::close(m_session);
+  if (m_session != NULL)
+  {
+    if (m_ourClient != NULL)
+    {
+      LogDebug("CRTSPClient::Shutdown(): send RTSP TEARDOWN");
+      m_ourClient->sendTeardownCommand(*m_session, NULL);   // There's nothing we can do if this doesn't succeed => no response handler.
+    }
+
+    MediaSubsessionIterator iter(*m_session);
+    MediaSubsession* subsession;
+    while ((subsession = iter.next()) != NULL) 
+    {
+      Medium::close(subsession->sink);
+      subsession->sink = NULL;
+    }
+
+    Medium::close(m_session);
+    m_session = NULL;
+  }
 
   // Finally, shut down our client:
-  Medium::close(m_ourClient);;
-  m_session=NULL;;
-  m_ourClient=NULL;
-}
-
-
-bool CRTSPClient::Initialize()
-{
-  LogDebug("CRTSPClient::Initialize()");
-  m_duration=7200*1000;
-  TaskScheduler* scheduler = MPTaskScheduler::createNew();
-  m_env = BasicUsageEnvironment::createNew(*scheduler);
-	
-  m_ourClient = createClient(*m_env, 0/*verbosityLevel*/, "TSFileSource");
-  if (m_ourClient == NULL) 
+  if (m_ourClient != NULL)
   {
-    LogDebug("Failed to create %s %s" ,clientProtocolName,m_env->getResultMsg() );
-    shutdown();
-    return false;
+    Medium::close(m_ourClient);
+    m_ourClient = NULL;
   }
-  return true;
+
+  StopBufferThread();
+
+  m_buffer.Clear();
 }
 
 bool CRTSPClient::OpenStream(char* url)
 {
   LogDebug("CRTSPClient::OpenStream()");
-  m_session=NULL;
-	
-  strcpy(m_url,url);
-  // Open the URL, to get a SDP description: 
-  char* sdpDescription= getSDPDescriptionFromURL(m_ourClient, url, ""/*username*/, ""/*password*/,""/*proxyServerName*/, 0/*proxyServerPortNum*/,1234/*desiredPortNum*/);
-  if (sdpDescription == NULL) 
+  if (m_env == NULL)
   {
-    LogDebug("Failed to get a SDP description from URL %s %s",url ,m_env->getResultMsg() );
-    shutdown();
+    LogDebug("CRTSPClient::OpenStream(): environment is NULL");
     return false;
   }
-  //LogDebug("Opened URL %s %s",url,sdpDescription);
-
-  char* range=strstr(sdpDescription,"a=range:npt=");
-  if (range!=NULL)
+	
+  strcpy(m_url, url);
+  if (m_ourClient != NULL)
   {
-    char *pStart = range+strlen("a=range:npt=");
-    char *pEnd = strstr(range,"-") ;
-    if (pEnd!=NULL)
-    {
-      pEnd++ ;
-      double Start=atof(pStart) ;
-      double End=atof(pEnd) ;
-
-      LogDebug("rangestart:%f rangeend:%f", Start,End);
-      m_duration=((End-Start)*1000.0);
-    }
+    Shutdown();
   }
-  // Create a media session object from this SDP description:
-  m_session = MediaSession::createNew(*m_env, sdpDescription);
-  delete[] sdpDescription;
+  LogDebug("CRTSPClient::OpenStream(): create RTSP client");
+  m_ourClient = MPRTSPClient::createNew(this, *m_env, m_url, 0/*verbosity level*/, "TSFileSource");
+  if (m_ourClient == NULL) 
+  {
+    LogDebug("CRTSPClient::OpenStream(): failed to create RTSP client, message = %s", m_env->getResultMsg());
+    return false;
+  }
+
+  // Thread has to be running so that LIVE555 can handle RTSP command
+  // responses in the background.
+  StartBufferThread();
+
+  if (!InternalUpdateDuration(m_ourClient))
+  {
+    Shutdown();
+    return false;
+  }
+  LogDebug("CRTSPClient::OpenStream(): duration = %d", m_duration);
+
+  // Create a media session object from the SDP description:
+  m_session = MediaSession::createNew(*m_env, m_durationDescribeResponseResultString);
   if (m_session == NULL) 
   {
-    LogDebug("Failed to create a MediaSession object from the SDP description:%s ",m_env->getResultMsg());
-    shutdown();
+    LogDebug("CRTSPClient::OpenStream(): failed to create media session from RTSP DESCRIBE response, message = %s", m_env->getResultMsg());
+    Shutdown();
     return false;
   } 
   else if (!m_session->hasSubsessions()) 
   {
-    LogDebug("This session has no media subsessions");
-    shutdown();
+    LogDebug("CRTSPClient::OpenStream(): media session has no sub-sessions");
+    Shutdown();
     return false;
   }
 
-  // Then, setup the "RTPSource"s for the session:
+  // Then, setup the RTP sources for the session:
   MediaSubsessionIterator iter(*m_session);
-  MediaSubsession *subsession;
+  MediaSubsession* subsession;
   Boolean madeProgress = False;
-  char const* singleMediumToTest = singleMedium;
+  int desiredPortNum = 0;
   while ((subsession = iter.next()) != NULL) 
   {
-    // If we've asked to receive only a single medium, then check this now:
-    if (singleMediumToTest != NULL) 
-    {
-      if (strcmp(subsession->mediumName(), singleMediumToTest) != 0) 
-      {
-        LogDebug("Ignoring %s %s %s" , subsession->mediumName(),subsession->codecName(),singleMedium);
-        continue;
-      } 
-      else 
-      {
-        // Receive this subsession only
-        singleMediumToTest = "xxxxx";
-        // this hack ensures that we get only 1 subsession of this type
-      }
-    }
     if (desiredPortNum != 0) 
     {
       subsession->setClientPortNum(desiredPortNum);
       desiredPortNum += 2;
     }
 
-    if (createReceivers) 
+    if (!subsession->initiate(-1)) 
     {
-      if (!subsession->initiate(simpleRTPoffsetArg)) 
-      {
-        LogDebug("Unable to create receiver for %s %s %s" ,subsession->mediumName(),subsession->codecName(),m_env->getResultMsg());
-      } 
-      else 
-      {
-        LogDebug("Created receiver for %s %s %d %d " ,subsession->mediumName(),subsession->codecName(),subsession->clientPortNum(),subsession->clientPortNum()+1 );
-        madeProgress = True;
+      LogDebug("CRTSPClient::OpenStream(): failed to create receiver for sub-session, medium name = %s, codec name = %s, message = %s", subsession->mediumName(), subsession->codecName(), m_env->getResultMsg());
+      continue;
+    }
 
-        if (subsession->rtpSource() != NULL) 
-        {
-          // Because we're saving the incoming data, rather than playing
-          // it in real time, allow an especially large time threshold
-          // (0.5 second) for reordering misordered incoming packets:
-          
-          int socketNum= subsession->rtpSource()->RTPgs()->socketNum();
-          LogDebug("rtsp:increaseReceiveBufferTo to 2000000 for s:%d",socketNum);
-          increaseReceiveBufferTo( *m_env, socketNum, 2000000 );
+    LogDebug("CRTSPClient::OpenStream(): created receiver for sub-session, medium name = %s, codec name = %s, port = %d", subsession->mediumName(), subsession->codecName(), subsession->clientPortNum());
+    madeProgress = True;
 
-          unsigned const thresh = 500000; // 0.5 second 
-          subsession->rtpSource()->setPacketReorderingThresholdTime(thresh);
-
-          if (socketInputBufferSize > 0) 
-          {
-            // Set the RTP source's input buffer size as specified:
-            int socketNum= subsession->rtpSource()->RTPgs()->socketNum();
-            unsigned curBufferSize= getReceiveBufferSize(*m_env, socketNum);
-            unsigned newBufferSize= setReceiveBufferTo(*m_env, socketNum, socketInputBufferSize);
-            LogDebug( "Changed socket receive buffer size for the %s %s %d %d",
-            subsession->mediumName(),subsession->codecName(),curBufferSize,newBufferSize);
-          }
-        }
-      }
-    } 
-    else 
+    if (subsession->rtpSource() != NULL) 
     {
-      if (subsession->clientPortNum() == 0) 
-      {
-        LogDebug("No client port was specified for the %s %s",subsession->mediumName(),subsession->codecName());
-      } 
-      else 
-      {	
-        madeProgress = True;
-      }
+      // Because we're saving the incoming data, rather than playing
+      // it in real time, allow an especially large time threshold
+      // (500 milliseconds) for reordering misordered incoming packets:
+      int socketNum = subsession->rtpSource()->RTPgs()->socketNum();
+      increaseReceiveBufferTo(*m_env, socketNum, 2000000);
+
+      subsession->rtpSource()->setPacketReorderingThresholdTime(500000);  // 500 milliseconds
     }
   }
-  if (!madeProgress) 
+
+  if (!madeProgress || !SetupStreams()) 
   {
-    shutdown();
+    Shutdown();
     return false;
   }
 	
-  // Perform additional 'setup' on each subsession, before playing them:
-  if (!setupStreams())
-  {
-    return false;
-  }
-
-  // Create output files:
-  // Create and start "FileSink"s for each subsession:
-  madeProgress = False;
+  // Create output files (file sinks) for each sub-session:
   iter.reset();
   while ((subsession = iter.next()) != NULL) 
   {
-    if (subsession->readSource() == NULL) continue; // was not initiated
+    if (subsession->readSource() == NULL)
+    {
+      continue;
+    }
 		
-    CMemorySink* fileSink= CMemorySink::createNew(*m_env,m_buffer,fileSinkBufferSize);
+    CMemorySink* fileSink= CMemorySink::createNew(*m_env, m_buffer, 20000/*buffer size*/);
     subsession->sink = fileSink;
     if (subsession->sink == NULL) 
     {
-      LogDebug("Failed to create FileSink %s",m_env->getResultMsg());
-      shutdown();
+      LogDebug("CRTSPClient::OpenStream(): failed to create file sink, message = %s", m_env->getResultMsg());
+      Shutdown();
       return false;
-    } 
-    LogDebug("Created output sink:");;
-    subsession->sink->startPlaying(*(subsession->readSource()),subsessionAfterPlaying,subsession);
-				  
-    // Also set a handler to be called if a RTCP "BYE" arrives
-    // for this subsession:
+    }
+
+    LogDebug("CRTSPClient::OpenStream(): created file sink");
+
+    // Set handlers and start playing.
+    subsession->sink->startPlaying(*(subsession->readSource()), SubsessionAfterPlaying, subsession);
     if (subsession->rtcpInstance() != NULL) 
     {
-      subsession->rtcpInstance()->setByeHandler(subsessionByeHandler,subsession);
+      subsession->rtcpInstance()->setByeHandler(SubsessionByeHandler,subsession);
     }
-    madeProgress = True;
   }
-
   return true;
 }
 
-
 void CRTSPClient::Stop()
 {
-  LogDebug("CRTSPClient:Stop");
-  
-  if (m_BufferThreadActive) 
-  {
-    StopBufferThread();
-  }
-  shutdown();
-  m_buffer.Clear();
-  LogDebug("CRTSPClient:Stop done");
+  LogDebug("CRTSPClient:Stop()");
+  StopBufferThread();
+  Shutdown();
+  LogDebug("CRTSPClient:Stop(): done");
 }
 
 void CRTSPClient::StartBufferThread()
 {
-  LogDebug("CRTSPClient::StartBufferThread");
-  if (!m_BufferThreadActive)
+  if (!m_isBufferThreadActive)
   {
+    LogDebug("CRTSPClient::StartBufferThread()");
     StartThread();
-    m_BufferThreadActive = true;
+    m_isBufferThreadActive = true;
+    LogDebug("CRTSPClient::StartBufferThread(): done");
   }
-  LogDebug("CRTSPClient::StartBufferThread done");
 }
 
 void CRTSPClient::StopBufferThread()
 {
-  LogDebug("CRTSPClient::StopBufferThread");
-  m_bRunning=false;
-  if (!m_BufferThreadActive)
+  m_isRunning = false;
+  if (!m_isBufferThreadActive)
+  {
     return;
+  }
 
+  LogDebug("CRTSPClient::StopBufferThread()");
   StopThread(20000);
 
-  m_BufferThreadActive = false;
-  LogDebug("CRTSPClient::StopBufferThread done");
+  m_isBufferThreadActive = false;
+  LogDebug("CRTSPClient::StopBufferThread(): done");
 }
 
 bool CRTSPClient::IsRunning()
 {
-  return m_BufferThreadActive;
+  return m_isBufferThreadActive;
 }
 
 long CRTSPClient::Duration()
@@ -481,145 +312,234 @@ long CRTSPClient::Duration()
 
 void CRTSPClient::FillBuffer(DWORD byteCount)
 {	
-  LogDebug("CRTSPClient::Fillbuffer...%d\n",byteCount);
-  DWORD tickCount=GET_TIME_NOW();
-  while ( IsRunning() && m_buffer.Size() < byteCount)
+  LogDebug("CRTSPClient::FillBuffer(): byte count = %d", byteCount);
+  DWORD tickCount = GET_TIME_NOW();
+  while (IsRunning() && (unsigned long)m_buffer.Size() < byteCount)
   {
     Sleep(5);
-    if (GET_TIME_NOW()-tickCount > 3000) break;
+    if (GET_TIME_NOW() - tickCount > 3000)
+    {
+      break;
+    }
   }
-  LogDebug("CRTSPClient::Fillbuffer...%d/%d\n",byteCount,m_buffer.Size() );
+  LogDebug("CRTSPClient::FillBuffer(): byte count = %d, buffer size = %d", byteCount, m_buffer.Size());
 }
 
 void CRTSPClient::ThreadProc()
 {
   HRESULT hr = S_OK;
-  m_BufferThreadActive = TRUE;
-  m_bRunning=true;
-  ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_ABOVE_NORMAL);
-  LogDebug("CRTSPClient:: thread started:%d", GetCurrentThreadId());
-  while (m_env!=NULL && !ThreadIsStopping(1))
+  m_isBufferThreadActive = true;
+  m_isRunning = true;
+  ::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
+  LogDebug("CRTSPClient::ThreadProc(): thread started, thread ID = %d", GetCurrentThreadId());
+  while (m_env != NULL && !ThreadIsStopping(1))
   {
-    for (int i=0; i < 10;++i)
+    for (int i = 0; i < 10; ++i)
     {
-      if (m_bRunning==false) break;
+      if (!m_isRunning)
+      {
+        break;
+      }
       m_env->taskScheduler().doEventLoop(); 
     }
-    if (m_bRunning==false) break;
+    if (!m_isRunning)
+    {
+      break;
+    }
   }
-  LogDebug("CRTSPClient:: thread stopped:%d", GetCurrentThreadId());
-  m_BufferThreadActive = false;
+  LogDebug("CRTSPClient::ThreadProc(): thread stopping, thread ID = %d", GetCurrentThreadId());
+  m_isBufferThreadActive = false;
   return;
 }
 
-bool CRTSPClient::Run()
+bool CRTSPClient::Play(double start, double duration)
 {
-  LogDebug("CRTSPClient::Run()");
+  if (m_ourClient == NULL || m_session == NULL)
+  {
+    if (!OpenStream(m_url))
+    {
+      Shutdown();
+      return false;
+    }
+  }
 
+  long dur = m_duration / 1000;
+  if (duration > 0.0)
+  {
+    double remainingDuration = duration - start;
+    if (remainingDuration < 0)
+    {
+      remainingDuration = 0;
+    }
+    start = dur - remainingDuration;
+    if (start < 0)
+    {
+      start = 0;
+    }
+  }
+
+  LogDebug("CRTSPClient::Play(): start = %f, duration = %f", (float)start, (float)duration);
+  StartBufferThread();  // Note: thread expected to be running already. This is for "safety".
+  if (!InternalPlay(start)) 
+  {
+    Shutdown();
+    return false;
+  }
   return true;
 }
+
 void CRTSPClient::Continue()
 {
-  if (m_ourClient!=NULL && m_session!=NULL)
+  if (m_ourClient != NULL && m_session != NULL)
   {
-    RTSPClient* rtspClient=(RTSPClient*)m_ourClient;
-    rtspClient->playMediaSession(*m_session,-1.0);
     StartBufferThread();
-    m_bPaused=false;
-    int x=1;
+    if (!InternalPlay(-1.0))
+    {
+      StopBufferThread();
+    }
   }
+}
+
+bool CRTSPClient::InternalPlay(double startPoint)
+{
+  LogDebug("CRTSPClient::Play()");
+  if (m_ourClient != NULL && m_session != NULL)
+  {
+    ResetEvent(m_genericResponseEvent);
+    m_ourClient->sendPlayCommand(*m_session, &CRTSPClient::OnGenericResponseReceived, startPoint);
+    if (WaitForSingleObject(m_genericResponseEvent, TIMEOUT_GENERIC_RTSP_RESPONSE) == WAIT_TIMEOUT)
+    {
+      LogDebug("CRTSPClient::Play(): RTSP PLAY timed out");
+      return false;
+    }
+    if (m_genericResponseResultCode != 0)
+	  {
+      LogDebug("CRTSPClient::Play(): RTSP PLAY failed, result code = %d, message = %s", m_genericResponseResultCode, m_env->getResultMsg());
+      return false;
+    }
+
+    m_isPaused = false;
+  }
+  LogDebug("CRTSPClient::Play(): done");
+  return true;
 }
 
 bool CRTSPClient::IsPaused()
 {
-  return m_bPaused;
+  return m_isPaused;
 }
+
 bool CRTSPClient::Pause()
 {
   LogDebug("CRTSPClient::Pause()");
-  if (m_ourClient!=NULL && m_session!=NULL)
+  if (m_ourClient != NULL && m_session != NULL)
   {
-    LogDebug("CRTSPClient::Pause() stopthread");
-    StopThread(10000);                           // Ambass : sometimes 100mS ( prev value ) is not enough and thread is not stopped.  
-	                                               //          now stopping takes around 5 secs ?!?! why ????         
-    LogDebug("CRTSPClient::Pause() thread stopped");
-    RTSPClient* rtspClient=(RTSPClient*)m_ourClient;
-    rtspClient->pauseMediaSession(*m_session);
-    m_bPaused=true;
-    int x=1;
+    ResetEvent(m_genericResponseEvent);
+    m_ourClient->sendPauseCommand(*m_session, &CRTSPClient::OnGenericResponseReceived);
+    if (WaitForSingleObject(m_genericResponseEvent, TIMEOUT_GENERIC_RTSP_RESPONSE) == WAIT_TIMEOUT)
+    {
+      LogDebug("CRTSPClient::Pause(): RTSP PAUSE timed out");
+      return false;
+    }
+    if (m_genericResponseResultCode != 0)
+	  {
+      LogDebug("CRTSPClient::Pause(): RTSP PAUSE failed, result code = %d, message = %s", m_genericResponseResultCode, m_env->getResultMsg());
+      return false;
+    }
+
+    m_isPaused = true;
+    StopBufferThread();
   }
-  LogDebug("CRTSPClient::Pause() done");
+  LogDebug("CRTSPClient::Pause(): done");
   return true;
 }
-bool CRTSPClient::Play(double fStart,double fDuration)
+
+void CRTSPClient::OnGenericResponseReceived(RTSPClient* client, int resultCode, char* resultString)
 {
-  LogDebug("CRTSPClient::Play from %f / %f", (float)fStart,(float)fDuration);
-  m_bPaused=false;
-  m_fStart=fStart;
-  m_fDuration=fDuration;
-  if (m_BufferThreadActive)
+  LogDebug("CRTSPClient::OnGenericResponseReceived(): result code = %d", resultCode);
+  if (resultString != NULL)
   {
-    Stop();
-    m_buffer.Clear();
-    if (Initialize()==false) 
-    {
-      shutdown();
-      return false;
-    }
-    if (OpenStream(m_url)==false) 
-    {
-      shutdown();
-      return false;
-    }
+    delete[] resultString;
   }
-  if (m_ourClient==NULL||m_session==NULL)
-  {
-    m_buffer.Clear();
-    if (Initialize()==false) 
-    {
-      shutdown();
-      return false;
-    }
-    if (OpenStream(m_url)==false) 
-    {
-      shutdown();
-      return false;
-    }
-  }
-  if (!startPlayingStreams()) 
-  {			
-    shutdown();
-    return false;
-  }
-  StartBufferThread();
-  return true;
+  CRTSPClient* rtspClient = (CRTSPClient*)((MPRTSPClient*)client)->Context();
+  rtspClient->m_genericResponseResultCode = resultCode;
+  SetEvent(rtspClient->m_genericResponseEvent);
 }
 
 bool CRTSPClient::UpdateDuration()
 {
-  char* sdpDescription= getSDPDescription();
-  if (sdpDescription == NULL) 
-	{
-    LogDebug("UpdateStreamDuration: Failed to get a SDP description from URL %s %s", m_url ,m_env->getResultMsg() );
+  //LogDebug("CRTSPClient::UpdateDuration()");
+  if (m_env == NULL)
+  {
+    LogDebug("CRTSPClient::UpdateDuration(): environment is NULL");
     return false;
   }
-  //LogDebug("Opened URL %s %s",url,sdpDescription);
 
-  char* range=strstr(sdpDescription,"a=range:npt=");
-  if (range!=NULL)
+  MPRTSPClient* client = MPRTSPClient::createNew(this, *m_env, m_url, 0/*verbosity level*/, "TSFileSource");
+  if (client == NULL)
   {
-    char *pStart = range+strlen("a=range:npt=");
-    char *pEnd = strstr(range,"-") ;
-    if (pEnd!=NULL)
-    {
-      pEnd++ ;
-      double Start=atof(pStart) ;
-      double End=atof(pEnd) ;
+    LogDebug("CRTSPClient::UpdateDuration(): failed to create RTSP client");
+    return false;
+  }
 
-      //LogDebug("rangestart:%f rangeend:%f", Start,End);
-      m_duration=((End-Start)*1000.0);
+  bool result = InternalUpdateDuration(client);
+  Medium::close(client);
+  return result;
+}
+
+bool CRTSPClient::InternalUpdateDuration(MPRTSPClient* client)
+{
+  ResetEvent(m_durationDescribeResponseEvent);
+  client->sendDescribeCommand(&CRTSPClient::OnDurationDescribeResponseReceived);
+
+  // Wait for a response. Don't wait longer than the calling period (currently ~1000 ms).
+  if (WaitForSingleObject(m_durationDescribeResponseEvent, 500) == WAIT_TIMEOUT)
+  {
+    LogDebug("CRTSPClient::UpdateDuration(): RTSP DESCRIBE timed out");
+    return false;
+  }
+
+  //LogDebug("CRTSPClient::UpdateDuration(): result code = %d", m_durationDescribeResponseResultCode);
+  if (m_durationDescribeResponseResultCode != 0)
+	{
+    LogDebug("CRTSPClient::UpdateDuration(): RTSP DESCRIBE failed, result code = %d, message = %s", m_durationDescribeResponseResultCode, m_env->getResultMsg());
+    return false;
+  }
+  //LogDebug("CRTSPClient::UpdateDuration(): RTSP DESCRIBE response = %s", m_durationDescribeResponseResultString);
+
+  char* rangeSection = strstr(m_durationDescribeResponseResultString, "a=range:npt=");
+  if (rangeSection != NULL)
+  {
+    char* startString = rangeSection + strlen("a=range:npt=");
+    char* endString = strstr(rangeSection, "-");
+    if (endString != NULL)
+    {
+      endString++;
+      double start = atof(startString);
+      double end = atof(endString);
+
+      //LogDebug("CRTSPClient::UpdateDuration(): range start = %f, range end = %f", start, end);
+      m_duration = (end - start) * 1000.0;
       return true;
     }
   }
   return false;
+}
+
+void CRTSPClient::OnDurationDescribeResponseReceived(RTSPClient* client, int resultCode, char* resultString)
+{
+  //LogDebug("CRTSPClient::OnDurationDescribeResponseReceived(): result code = %d", resultCode);
+  CRTSPClient* rtspClient = (CRTSPClient*)((MPRTSPClient*)client)->Context();
+  rtspClient->m_durationDescribeResponseResultCode = resultCode;
+  if (resultString == NULL)
+  {
+    rtspClient->m_durationDescribeResponseResultString[0] = NULL;
+  }
+  else
+  {
+    strncpy(rtspClient->m_durationDescribeResponseResultString, resultString, MAX_DURATION_DESCRIBE_RESPONSE_BYTE_COUNT);
+    rtspClient->m_durationDescribeResponseResultString[MAX_DURATION_DESCRIBE_RESPONSE_BYTE_COUNT - 1] = NULL;
+    delete[] resultString;
+  }
+  SetEvent(rtspClient->m_durationDescribeResponseEvent);
 }
