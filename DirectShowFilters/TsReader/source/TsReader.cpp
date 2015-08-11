@@ -936,7 +936,7 @@ STDMETHODIMP CTsReaderFilter::Pause()
         if (!IsSeeking())
         {
           //not seeking, is rtsp streaming at the moment?
-          if (m_rtspClient.IsPaused())
+          if (m_rtspClient.IsPaused() || !m_rtspClient.IsSetup())
           {
             //not streaming atm
             double startTime=m_seekTime.Millisecs();

@@ -19,6 +19,7 @@ class CRTSPClient: public TSThread
 
 	  long Duration();
 
+    bool IsSetup();
     bool OpenStream(char* url);
     bool Play(double fStart,double fDuration);
 	  void Continue();
@@ -27,15 +28,10 @@ class CRTSPClient: public TSThread
     bool UpdateDuration();
     void Stop();
 
-  protected:
+  private:
     bool SetupStreams();
     bool InternalPlay(double startPoint);
     void Shutdown();
-
-    CMemoryBuffer& m_buffer;
-	  UsageEnvironment* m_env;
-	  MPRTSPClient* m_ourClient;
-	  MediaSession* m_session;
 
     // Synchronous commands only!
     HANDLE m_genericResponseEvent;
@@ -49,14 +45,17 @@ class CRTSPClient: public TSThread
     static void OnDurationDescribeResponseReceived(RTSPClient* client, int resultCode, char* resultString);
     bool InternalUpdateDuration(MPRTSPClient* client);
 	
-  private:
-    //thread
 	  void StartBufferThread();
 	  void StopBufferThread();
 	  virtual void ThreadProc();
-    bool m_isBufferThreadActive;
+
+    CMemoryBuffer& m_buffer;
+	  UsageEnvironment* m_env;
+	  MPRTSPClient* m_client;
+	  MediaSession* m_session;
 	  long m_duration;
 	  char m_url[2048];
-	  bool m_isRunning;
+    bool m_isSetup;
+    bool m_isBufferThreadActive;
     bool m_isPaused;
 };
