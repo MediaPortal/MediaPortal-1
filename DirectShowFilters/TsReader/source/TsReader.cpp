@@ -936,7 +936,7 @@ STDMETHODIMP CTsReaderFilter::Pause()
         if (!IsSeeking())
         {
           //not seeking, is rtsp streaming at the moment?
-          if (!m_rtspClient.IsRunning())
+          if (m_rtspClient.IsPaused())
           {
             //not streaming atm
             double startTime=m_seekTime.Millisecs();
@@ -1087,8 +1087,9 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     m_demultiplexer.Start();
     m_buffer.Run(false);
 
-    LogDebug("close rtsp:%s", url);
-    m_rtspClient.Stop();
+    // Pause. This will result in faster startup and channel change times,
+    // because we don't have to SETUP a whole new session with the server.
+    m_rtspClient.Pause();
 
     m_tickCount = GET_TIME_NOW()-m_rtspClient.Duration();   // Will be ready to update "virtual end Pcr" on recording in progress.
 
@@ -1130,9 +1131,9 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     m_demultiplexer.Start();
     m_buffer.Run(false);
 
-    // stop streaming
-    LogDebug("close rtsp:%s", url);
-    m_rtspClient.Stop();
+    // Pause. This will result in faster startup and channel change times,
+    // because we don't have to SETUP a whole new session with the server.
+    m_rtspClient.Pause();
 
     m_tickCount = GET_TIME_NOW()-m_rtspClient.Duration();
 
@@ -1279,9 +1280,6 @@ bool CTsReaderFilter::Seek(CRefTime& seekTime)
   else
   {
     //yes, we're playing a RTSP stream
-    //stop the RTSP steam
-    LogDebug("CTsReaderFilter::  Seek->stop rtsp");
-    m_rtspClient.Stop();
     double startTime = m_seekTime.Millisecs();
     startTime /= 1000.0;
     double milli = m_duration.Duration().Millisecs();

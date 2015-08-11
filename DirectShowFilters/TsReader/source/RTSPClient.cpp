@@ -245,7 +245,7 @@ bool CRTSPClient::OpenStream(char* url)
       continue;
     }
 		
-    CMemorySink* fileSink= CMemorySink::createNew(*m_env, m_buffer, 20000/*buffer size*/);
+    CMemorySink* fileSink = CMemorySink::createNew(*m_env, m_buffer, 20000/*buffer size*/);
     subsession->sink = fileSink;
     if (subsession->sink == NULL) 
     {
@@ -269,7 +269,6 @@ bool CRTSPClient::OpenStream(char* url)
 void CRTSPClient::Stop()
 {
   LogDebug("CRTSPClient:Stop()");
-  StopBufferThread();
   Shutdown();
   LogDebug("CRTSPClient:Stop(): done");
 }
@@ -280,7 +279,6 @@ void CRTSPClient::StartBufferThread()
   {
     LogDebug("CRTSPClient::StartBufferThread()");
     StartThread();
-    m_isBufferThreadActive = true;
     LogDebug("CRTSPClient::StartBufferThread(): done");
   }
 }
@@ -300,29 +298,9 @@ void CRTSPClient::StopBufferThread()
   LogDebug("CRTSPClient::StopBufferThread(): done");
 }
 
-bool CRTSPClient::IsRunning()
-{
-  return m_isBufferThreadActive;
-}
-
 long CRTSPClient::Duration()
 {
   return m_duration;
-}
-
-void CRTSPClient::FillBuffer(DWORD byteCount)
-{	
-  LogDebug("CRTSPClient::FillBuffer(): byte count = %d", byteCount);
-  DWORD tickCount = GET_TIME_NOW();
-  while (IsRunning() && (unsigned long)m_buffer.Size() < byteCount)
-  {
-    Sleep(5);
-    if (GET_TIME_NOW() - tickCount > 3000)
-    {
-      break;
-    }
-  }
-  LogDebug("CRTSPClient::FillBuffer(): byte count = %d, buffer size = %d", byteCount, m_buffer.Size());
 }
 
 void CRTSPClient::ThreadProc()
@@ -342,10 +320,6 @@ void CRTSPClient::ThreadProc()
       }
       m_env->taskScheduler().doEventLoop(); 
     }
-    if (!m_isRunning)
-    {
-      break;
-    }
   }
   LogDebug("CRTSPClient::ThreadProc(): thread stopping, thread ID = %d", GetCurrentThreadId());
   m_isBufferThreadActive = false;
@@ -354,12 +328,23 @@ void CRTSPClient::ThreadProc()
 
 bool CRTSPClient::Play(double start, double duration)
 {
+  // I think this clause is here to support use of TsReader outside
+  // MediaPortal. For example, cases where the graph is stopped and then
+  // restarted. Within MP that never happens. The graph will be paused and
+  // restarted, or completely rebuilt.
   if (m_ourClient == NULL || m_session == NULL)
   {
-    if (!OpenStream(m_url))
+    char* url = new char[strlen(m_url) + 1];
+    if (url != NULL)
     {
-      Shutdown();
-      return false;
+      strcpy(url, m_url);
+      bool openResult = OpenStream(url);
+      delete[] url;
+      if (!openResult)
+      {
+        Shutdown();
+        return false;
+      }
     }
   }
 
