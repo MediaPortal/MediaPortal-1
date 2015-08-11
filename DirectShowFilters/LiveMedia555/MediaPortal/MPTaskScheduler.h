@@ -34,5 +34,5 @@ class MPTaskScheduler : public BasicTaskScheduler
     // called only by "createNew()"
     MPTaskScheduler();
 
-    virtual void doEventLoop(char* watchVariable);
+    virtual void doEventLoop(volatile char* watchVariable);
 };
