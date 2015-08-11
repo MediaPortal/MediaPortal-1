@@ -17,7 +17,6 @@ class CRTSPClient: public TSThread
     CRTSPClient(CMemoryBuffer& buffer);
     virtual ~CRTSPClient(void);
 
-	  bool IsRunning();
 	  long Duration();
 
     bool OpenStream(char* url);
@@ -27,8 +26,6 @@ class CRTSPClient: public TSThread
     bool Pause();
     bool UpdateDuration();
     void Stop();
-
-	  void FillBuffer(DWORD byteCount);
 
   protected:
     bool SetupStreams();
