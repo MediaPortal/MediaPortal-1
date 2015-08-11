@@ -1344,11 +1344,6 @@ namespace TvPlugin
         {
           GUIPropertyManager.SetProperty("#selectedthumb", String.Empty);
           SetProperties(null);
-          if (pItem.IsFolder && pItem.Label == "..")
-          {
-            MediaPortal.Util.Utils.SetDefaultIcons(pItem);
-            GUIPropertyManager.SetProperty("#selectedthumb", pItem.IconImageBig);
-          }
           return;
         }
         rec = pItem.TVTag as Recording;
