@@ -35,7 +35,7 @@ MPTaskScheduler::~MPTaskScheduler()
 {
 }
 
-void MPTaskScheduler::doEventLoop(char* watchVariable)
+void MPTaskScheduler::doEventLoop(volatile char* watchVariable)
 {
   // Handle readble sockets and timed events:
   SingleStep(1000000LL);  // unit = micro seconds
