@@ -320,6 +320,10 @@ void CRTSPClient::ThreadProc()
       }
       m_env->taskScheduler().doEventLoop(); 
     }
+    if (!m_isRunning)
+    {
+      break;
+    }
   }
   LogDebug("CRTSPClient::ThreadProc(): thread stopping, thread ID = %d", GetCurrentThreadId());
   m_isBufferThreadActive = false;
