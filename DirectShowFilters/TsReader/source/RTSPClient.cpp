@@ -150,11 +150,6 @@ void CRTSPClient::Shutdown()
   m_buffer.Clear();
 }
 
-bool CRTSPClient::IsSetup()
-{
-  return m_isSetup;
-}
-
 bool CRTSPClient::OpenStream(char* url)
 {
   LogDebug("CRTSPClient::OpenStream()");
@@ -337,10 +332,8 @@ void CRTSPClient::ThreadProc()
 
 bool CRTSPClient::Play(double start, double duration)
 {
-  // I think this clause is here to support use of TsReader outside
-  // MediaPortal. For example, cases where the graph is stopped and then
-  // restarted. Within MP that never happens. The graph will be paused and
-  // restarted, or completely rebuilt.
+  // This clause is here to handle the Stop() -> Play() sequence. Currently
+  // TsReader never uses Stop(), so it shouldn't be needed.
   if (m_client == NULL || m_session == NULL)
   {
     char* url = new char[strlen(m_url) + 1];

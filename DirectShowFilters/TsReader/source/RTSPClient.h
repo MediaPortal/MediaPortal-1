@@ -19,7 +19,6 @@ class CRTSPClient: public TSThread
 
 	  long Duration();
 
-    bool IsSetup();
     bool OpenStream(char* url);
     bool Play(double fStart,double fDuration);
 	  void Continue();
