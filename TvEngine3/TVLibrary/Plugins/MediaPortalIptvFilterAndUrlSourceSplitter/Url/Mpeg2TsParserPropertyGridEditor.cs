@@ -63,15 +63,17 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 
                         if (parserEditor.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                         {
-                            url.Mpeg2TsParser.AlignToMpeg2TSPacket = parserEditor.AlignToMpeg2TSPacket;
-                            url.Mpeg2TsParser.DetectDiscontinuity = parserEditor.DetectDiscontinuity;
-                            url.Mpeg2TsParser.SetNotScrambled = parserEditor.SetNotScrambled;
+                            Mpeg2TsParser parser = new Mpeg2TsParser();
 
-                            url.Mpeg2TsParser.TransportStreamID = parserEditor.TransportStreamID;
-                            url.Mpeg2TsParser.ProgramNumber = parserEditor.ProgramNumber;
-                            url.Mpeg2TsParser.ProgramMapPID = parserEditor.ProgramMapPID;
+                            parser.AlignToMpeg2TSPacket = parserEditor.AlignToMpeg2TSPacket;
+                            parser.DetectDiscontinuity = parserEditor.DetectDiscontinuity;
+                            parser.SetNotScrambled = parserEditor.SetNotScrambled;
 
-                            url.Mpeg2TsParser.FilterProgramNumbers.Clear();
+                            parser.TransportStreamID = parserEditor.TransportStreamID;
+                            parser.ProgramNumber = parserEditor.ProgramNumber;
+                            parser.ProgramMapPID = parserEditor.ProgramMapPID;
+
+                            parser.FilterProgramNumbers.Clear();
 
                             foreach (var filterProgramNumber in parserEditor.FilterProgramNumbers)
                             {
@@ -89,9 +91,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                                         }
                                     }
 
-                                    url.Mpeg2TsParser.FilterProgramNumbers.Add(filter);
+                                    parser.FilterProgramNumbers.Add(filter);
                                 }
                             }
+
+                            value = parser;
                         }
                     }
                 }
