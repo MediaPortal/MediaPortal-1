@@ -51,9 +51,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
       /// From c:\Windows\irremote.ini. Compatible with 35/36 and 45/46 button remotes.
       /// </remarks>
       Pvr2_Unknown = 0x1c,
+      Pvr2_Unknown2 = 0x2040,
+
       Pvr2_35Button = 0x1d,
       Pvr2_45Button = 0x1e,
-      Pvr_34Button = 0x1f
+      Pvr_34Button = 0x1f,
+
+      Mce = 0x800f
     }
 
     /// <remarks>
@@ -243,6 +247,74 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
       Go = 59,
       FullScreen,               // [untested credit card remote]
       Power
+    }
+
+    /// <remarks>
+    /// Image:
+    ///   black = http://www.hauppauge.com/site/press/presspictures/Remote_MCE-black.jpg
+    ///   grey 1 = http://www.hauppauge.com/pics/remote_mce.gif
+    ///   grey 2 = http://www.hauppauge.com/site/press/presspictures/Remote_MCE-2_angle.jpg
+    /// Testing: untested, based on default c:\Windows\irremote.ini.
+    /// Comments are labels above the buttons.
+    /// </remarks>
+    private enum HcwRemoteCodeMce
+    {
+      Zero = 0,                 // space
+      One,
+      Two,                      // ABC
+      Three,                    // DEF
+      Four,                     // GHI
+      Five,                     // JKL
+      Six,                      // MNO
+      Seven,                    // PQRS
+      Eight,                    // TUV
+      Nine,                     // WXYZ
+      Clear,  // 10
+      Enter,
+      Power,
+      Logo,                     // the button with the Windows logo on it ("green button")
+      Mute,
+      Info,                     // more
+      VolumeUp,
+      VolumeDown,
+      ChannelUp,
+      ChannelDown,
+      FastForward,  // 20
+      Rewind,
+      Play,
+      Record,
+      Pause,
+      Stop,
+      SkipForward,              // skip
+      SkipBack,                 // replay
+      Hash,                     // #
+      Asterix,                  // *
+      Up,   // 30
+      Down,
+      Left,
+      Right,
+      Okay,
+      BackExit,
+      DvdMenu,
+      Tv,
+      Epg,  // 38               // guide
+
+      TvNew = 70,
+      Music,
+      RecordedTv,
+      Pictures,
+      Videos,
+      Print,
+      Radio,
+
+      Teletext = 90,
+      Red,
+      Green,
+      Yellow,
+      Blue,
+
+      Mce128 = 128,
+      Mce129
     }
 
     #endregion
@@ -490,7 +562,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
           if (IR_GetSystemKeyCode(ref _repeatCount, out remoteType, out code))
           {
             string codeName;
-            if (remoteType == HcwRemoteType.Pvr2_35Button || remoteType == HcwRemoteType.Pvr2_45Button || remoteType == HcwRemoteType.Pvr2_Unknown)
+            if (
+              remoteType == HcwRemoteType.Pvr2_35Button ||
+              remoteType == HcwRemoteType.Pvr2_45Button ||
+              remoteType == HcwRemoteType.Pvr2_Unknown ||
+              remoteType == HcwRemoteType.Pvr2_Unknown2
+            )
             {
               codeName = ((HcwRemoteCodePvr2)code).ToString();
             }
@@ -505,6 +582,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
             else if (remoteType == HcwRemoteType.Pctv)
             {
               codeName = ((HcwRemoteCodePctv)code).ToString();
+            }
+            else if (remoteType == HcwRemoteType.Mce)
+            {
+              codeName = ((HcwRemoteCodeMce)code).ToString();
             }
             else
             {
