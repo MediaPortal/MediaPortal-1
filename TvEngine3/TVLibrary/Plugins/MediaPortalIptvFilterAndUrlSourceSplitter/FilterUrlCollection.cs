@@ -6,11 +6,7 @@ using System.Collections.ObjectModel;
 
 namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
 {
-    internal sealed class FilterUrlCollection : KeyedCollection<String, FilterUrl>
+    internal sealed class FilterUrlCollection : Collection<FilterUrl>
     {
-        protected override string GetKeyForItem(FilterUrl item)
-        {
-            return item.ChannelName;
-        }
     }
 }

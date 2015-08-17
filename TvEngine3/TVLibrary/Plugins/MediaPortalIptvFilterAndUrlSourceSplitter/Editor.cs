@@ -1212,10 +1212,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
             }
 
             this.buttonUpdateDatabase.Visible = urlLengthTooShort;
-            if (urlLengthTooShort)
-            {
-                this.buttonStoreChanges.Enabled = false;
-            }
+            this.buttonStoreChanges.Enabled = !urlLengthTooShort;
 
             this.UpdateGridViewDatabase();
             this.dataGridViewDatabase.Refresh();
