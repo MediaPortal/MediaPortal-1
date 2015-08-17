@@ -255,6 +255,51 @@
       <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="19" sound="click.wav" />
     </button>
 
+    <button code="DvdAudio">
+      <!-- Switch to next possible audio stream -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="26" sound="click.wav" />
+    </button>
+
+    <button code="DvdSubtitle">
+      <!-- Next subtitle -->
+      <action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="119" sound="click.wav" />
+    </button>
+
+    <button code="ClosedCaptioning">
+      <!-- Next subtitle -->
+      <action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="119" sound="click.wav" />
+    </button>
+
+    <!-- Providing empty buttons so that they can be customized through our UI -->    
+    <button code="Extras" />
+    <button code="ExtrasApp" />
+    <button code="DvdAngle" />    
+    <button code="Eject" />
+    <button code="DvdTopMenu" />
+    <button name="Visualization" code="Ext0" />
+    <button name="SlideShow" code="Ext1" />
+    <button name="HpEject" code="Ext2" />
+    <button name="InputSelection" code="Ext3" />
+    <button code="Ext4" />
+    <button code="Ext5" />
+    <button code="Ext6" />
+    <button code="Ext7" />
+    <button code="Ext8" />
+    <button code="Ext9" />
+    <button code="Ext10" />
+    <button code="Ext11" />
+    <button code="ChannelInput" />
+    <button code="SubAudio" />
+    <button code="Channel10" />
+    <button code="Channel11" />
+    <button code="Channel12" />
+    <button code="Display" />
+    <button code="Kiosk" />
+    <button code="NetworkSelection" />
+    <button code="BlueRayTool" />
+    <button code="ChannelInfo" />
+    <button code="VideoSelection" />
+
   </HidUsageAction>
 
   <!--GamePad setup-->
