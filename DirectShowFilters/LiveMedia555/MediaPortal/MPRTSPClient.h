@@ -40,6 +40,16 @@ class MPRTSPClient : public RTSPClient
       return m_context;
     }
 
+    void SetDeleteFlag()
+    {
+      m_deleteWhenResponseReceived = true;
+    }
+
+    bool GetDeleteFlag()
+    {
+      return m_deleteWhenResponseReceived;
+    }
+
   protected:
     // called only by createNew();
     MPRTSPClient(void* context,
@@ -53,4 +63,5 @@ class MPRTSPClient : public RTSPClient
 
   private:
     void* m_context;
+    bool m_deleteWhenResponseReceived;
 };
