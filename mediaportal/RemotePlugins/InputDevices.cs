@@ -177,8 +177,7 @@ namespace MediaPortal.InputDevices
 
     private static ReadOnlyCollection<IInputDevice> _devices = new List<IInputDevice> { 
                                                                     new HidListener(),
-                                                                    new AppCommandListener(),
-                                                                    new MCE2005Remote(),
+                                                                    new AppCommandListener(),                                                                    
                                                                     new HcwRemote(),
                                                                     new X10Remote(),
                                                                     new IrTrans(),

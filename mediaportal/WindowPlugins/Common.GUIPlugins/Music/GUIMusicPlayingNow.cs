@@ -67,6 +67,7 @@ namespace MediaPortal.GUI.Music
       LBL_UP_NEXT = 20,
       VUMETER_LEFT = 999,
       VUMETER_RIGHT = 998,
+      LABEL_ROW1 = 10,
     }
 
     #endregion
@@ -389,6 +390,35 @@ namespace MediaPortal.GUI.Music
               //default:
               //  UpdateCurrentTrackRating(-1);
               //  break;
+          }
+          break;
+
+        case Action.ActionType.ACTION_NEXT_AUDIO:
+          {
+            if (g_Player.AudioStreams > 1)
+            {
+              //_showStatus = true;
+              //_timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
+                                              (int)ControlIDs.LABEL_ROW1, 0, 0, null);
+              g_Player.SwitchToNextAudio();
+
+              String language = g_Player.AudioLanguage(g_Player.CurrentAudioStream);
+              String languageType = g_Player.AudioType(g_Player.CurrentAudioStream);
+              if (languageType == Strings.Unknown || string.IsNullOrEmpty(languageType))
+              {
+                msg.Label = string.Format("{0} ({1}/{2})", language,
+                                          g_Player.CurrentAudioStream + 1, g_Player.AudioStreams);
+              }
+              else
+              {
+                msg.Label = string.Format("{0} [{1}] ({2}/{3})", language, languageType.TrimEnd(),
+                                          g_Player.CurrentAudioStream + 1, g_Player.AudioStreams);
+              }
+
+              OnMessage(msg);
+              Log.Info("GUIMusicPlayingNow: switched audio to {0}", msg.Label);
+            }
           }
           break;
       }
