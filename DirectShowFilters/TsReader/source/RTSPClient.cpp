@@ -12,7 +12,7 @@
 #include "..\..\alloctracing.h"
 
 
-extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const char* fmt, ...);
 extern DWORD m_tGTStartTime;
 
 
@@ -30,8 +30,13 @@ CRTSPClient::CRTSPClient(CMemoryBuffer& buffer)
   m_isBufferThreadActive = false;
   m_isPaused = false;
 
-  m_genericResponseEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-  m_durationDescribeResponseEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+  m_genericResponseEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+  m_durationDescribeResponseEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+  if (m_genericResponseEvent == NULL || m_durationDescribeResponseEvent == NULL) 
+  {
+    LogDebug("CRTSPClient::CRTSPClient(): failed to create events");
+    return;
+  }
 
   TaskScheduler* scheduler = MPTaskScheduler::createNew();
   if (scheduler == NULL) 
@@ -138,14 +143,16 @@ void CRTSPClient::Shutdown()
   }
   m_isSetup = false;
 
-  // Finally, shut down our client:
+  // Stop the buffer thread to ensure we can safely shut it down. If we attempt
+  // to shut it down while it's processing a response it could cause a crash.
+  StopBufferThread();
+
+  // Finally, shut down our client.
   if (m_client != NULL)
   {
     Medium::close(m_client);
     m_client = NULL;
   }
-
-  StopBufferThread();
 
   m_buffer.Clear();
 }
@@ -443,14 +450,20 @@ bool CRTSPClient::Pause()
 
 void CRTSPClient::OnGenericResponseReceived(RTSPClient* client, int resultCode, char* resultString)
 {
-  LogDebug("CRTSPClient::OnGenericResponseReceived(): result code = %d", resultCode);
+  CRTSPClient* rtspClient = (CRTSPClient*)((MPRTSPClient*)client)->Context();
+  if (rtspClient != NULL)
+  {
+    rtspClient->m_genericResponseResultCode = resultCode;
+    SetEvent(rtspClient->m_genericResponseEvent);
+  }
+  else
+  {
+    LogDebug("CRTSPClient::OnGenericResponseReceived(): unhandled response, code = %d, response = %s", resultCode, resultString == NULL ? "" : resultString);
+  }
   if (resultString != NULL)
   {
     delete[] resultString;
   }
-  CRTSPClient* rtspClient = (CRTSPClient*)((MPRTSPClient*)client)->Context();
-  rtspClient->m_genericResponseResultCode = resultCode;
-  SetEvent(rtspClient->m_genericResponseEvent);
 }
 
 bool CRTSPClient::UpdateDuration()
@@ -470,7 +483,10 @@ bool CRTSPClient::UpdateDuration()
   }
 
   bool result = InternalUpdateDuration(client);
-  Medium::close(client);
+  if (!client->GetDeleteFlag())
+  {
+    Medium::close(client);
+  }
   return result;
 }
 
@@ -482,7 +498,14 @@ bool CRTSPClient::InternalUpdateDuration(MPRTSPClient* client)
   // Wait for a response. Don't wait longer than the calling period (currently ~1000 ms).
   if (WaitForSingleObject(m_durationDescribeResponseEvent, 500) == WAIT_TIMEOUT)
   {
-    LogDebug("CRTSPClient::UpdateDuration(): RTSP DESCRIBE timed out");
+    LogDebug("CRTSPClient::UpdateDuration(): RTSP DESCRIBE timed out, message = %s", m_env->getResultMsg());
+    // If this update request comes directly from TsReader, the client is a
+    // throw-away. It should be destroyed when the response is eventually
+    // received.
+    if (client != m_client)
+    {
+      client->SetDeleteFlag();
+    }
     return false;
   }
 
@@ -515,18 +538,52 @@ bool CRTSPClient::InternalUpdateDuration(MPRTSPClient* client)
 
 void CRTSPClient::OnDurationDescribeResponseReceived(RTSPClient* client, int resultCode, char* resultString)
 {
-  //LogDebug("CRTSPClient::OnDurationDescribeResponseReceived(): result code = %d", resultCode);
-  CRTSPClient* rtspClient = (CRTSPClient*)((MPRTSPClient*)client)->Context();
-  rtspClient->m_durationDescribeResponseResultCode = resultCode;
-  if (resultString == NULL)
+  //LogDebug("CRTSPClient::OnDurationDescribeResponseReceived(): code = %d, response = %s", resultCode, resultString == NULL ? "" : resultString);
+
+  MPRTSPClient* rtspClient = (MPRTSPClient*)client;
+  CRTSPClient* tsReaderRtspClient = (CRTSPClient*)(rtspClient)->Context();
+  if (tsReaderRtspClient == NULL)
   {
-    rtspClient->m_durationDescribeResponseResultString[0] = NULL;
+    // This can happen if the client attempted to send a command, the command
+    // was assumed to have timed out after some time, and the client was
+    // subsequently destroyed as a result. This is the response to the command.
+    // We can't do anything more than clean up.
+    LogDebug("CRTSPClient::OnDurationDescribeResponseReceived(): RTSP client is NULL, code = %d, response = %s", resultCode, resultString == NULL ? "" : resultString);
+    if (resultString != NULL)
+    {
+      delete[] resultString;
+    }
+  }
+  else if (rtspClient->GetDeleteFlag())
+  {
+    // Caller assumed timeout. We have to clean up the client.
+    if (resultCode != 0)
+    {
+      LogDebug("CRTSPClient::OnDurationDescribeResponseReceived(): received late error response, code = %d, response = %s", resultCode, resultString == NULL ? "" : resultString);
+    }
+    else
+    {
+      LogDebug("CRTSPClient::OnDurationDescribeResponseReceived(): received late response");
+    }
+    Medium::close(rtspClient);
+    if (resultString != NULL)
+    {
+      delete[] resultString;
+    }
   }
   else
   {
-    strncpy(rtspClient->m_durationDescribeResponseResultString, resultString, MAX_DURATION_DESCRIBE_RESPONSE_BYTE_COUNT);
-    rtspClient->m_durationDescribeResponseResultString[MAX_DURATION_DESCRIBE_RESPONSE_BYTE_COUNT - 1] = NULL;
-    delete[] resultString;
+    tsReaderRtspClient->m_durationDescribeResponseResultCode = resultCode;
+    if (resultString == NULL)
+    {
+      tsReaderRtspClient->m_durationDescribeResponseResultString[0] = NULL;
+    }
+    else
+    {
+      strncpy(tsReaderRtspClient->m_durationDescribeResponseResultString, resultString, MAX_DURATION_DESCRIBE_RESPONSE_BYTE_COUNT);
+      tsReaderRtspClient->m_durationDescribeResponseResultString[MAX_DURATION_DESCRIBE_RESPONSE_BYTE_COUNT - 1] = NULL;
+      delete[] resultString;
+    }
+    SetEvent(tsReaderRtspClient->m_durationDescribeResponseEvent);
   }
-  SetEvent(rtspClient->m_durationDescribeResponseEvent);
 }
