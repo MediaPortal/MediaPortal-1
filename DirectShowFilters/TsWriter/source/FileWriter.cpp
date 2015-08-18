@@ -1,3 +1,19 @@
+// Copyright (C) 2006-2015 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
 /**
 *  FileWriter.cpp
 *  Copyright (C) 2006-2007      nate
@@ -40,7 +56,8 @@ FileWriter::FileWriter() :
 	m_bChunkReserve(FALSE),
 	m_chunkReserveSize(2000000),
 	m_chunkReserveFileSize(0),
-	m_maxFileSize(0)
+	m_maxFileSize(0),
+	m_bWriteFailed(FALSE)
 {
 }
 
@@ -147,6 +164,7 @@ HRESULT FileWriter::OpenFile()
 	SetFilePointer(0, FILE_END);
 	m_chunkReserveFileSize = GetFilePointer();
 	SetFilePointer(0, FILE_BEGIN);
+  m_bWriteFailed = FALSE;
 
   //LogDebug(L"FileWriter: OpenFile(), file %s: m_chunkReserveFileSize %I64d, m_maxFileSize: %I64d", m_pFileName, m_chunkReserveFileSize, m_maxFileSize);			  
 
@@ -214,7 +232,6 @@ HRESULT FileWriter::CloseParked()
 //
 HRESULT FileWriter::ParkFile()
 {
-  LogDebug(L"FileWriter: ParkFile(), m_hFile 0x%x, m_hFileParked 0x%x", m_hFile, m_hFileParked);			  
 
 	if (m_hFileParked != INVALID_HANDLE_VALUE)
 	{  
@@ -240,8 +257,13 @@ HRESULT FileWriter::ParkFile()
    
   	m_hFileParked = m_hFile; // 'park' the file - closing it is delayed until ParkFile() is called again 
   	m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file handle
+  	
+  	if (m_pFileName)
+  	{
+      LogDebug(L"FileWriter: ParkFile() : %s", m_pFileName);			  
+    }
 	}
-
+	
 	return S_OK;
 }
 
@@ -309,6 +331,7 @@ HRESULT FileWriter::Write(PBYTE pbData, ULONG lDataLength)
       {
         LogDebug(L"FileWriter: Write() retry, file %s: retries %d", m_pFileName, retryCnt);
       }
+      m_bWriteFailed = FALSE;
 	    return S_OK;
     }
     
@@ -321,7 +344,12 @@ HRESULT FileWriter::Write(PBYTE pbData, ULONG lDataLength)
   }
 
   //Failed to write after retries
-  LogDebug(L"FileWriter: Error writing to file %s: written %d of expected %d bytes, hr: %d", m_pFileName, written, lDataLength, hr);
+  if (!m_bWriteFailed) //Only log the first failure in a series...
+  {
+    LogDebug(L"FileWriter: Error writing to file %s: written %d of expected %d bytes, hr: %d", m_pFileName, written, lDataLength, hr);
+  }    
+  m_bWriteFailed = TRUE;
+  
   return S_FALSE;
 }
 

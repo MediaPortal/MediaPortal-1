@@ -34,9 +34,9 @@ class MultiFileReaderFile
 {
 public:
 	LPWSTR filename;
-	__int64 startPosition;
-	__int64 length;
-	long filePositionId;
+	__int64 startPosition = 0;
+	__int64 length = 0;
+	long filePositionId = 0;
 };
 
 class MultiFileReader : public FileReader
