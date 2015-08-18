@@ -50,6 +50,7 @@ MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec
 {
   if (pFilterLock != NULL)
   {
+    //We may be using 'shared' locking between MultiFileReader instances
     m_pAccessLock = pFilterLock;
   }
   else
@@ -623,14 +624,13 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   		long fileID = filesRemoved;
   		__int64 nextStartPosition = 0;
   
-  		// Removed files that aren't present anymore.
+  		// Remove files that aren't present anymore.
   		while ((filesToRemove > 0) && (m_tsFiles.size() > 0))
-  		{
-  			MultiFileReaderFile *file = m_tsFiles.at(0);
-  			
+  		{  			
+  			file = m_tsFiles.at(0);  			
   			delete file;
-  			m_tsFiles.erase(m_tsFiles.begin());
-  
+  			m_tsFiles.erase(m_tsFiles.begin()); 
+  			m_filesRemoved++;  
   			filesToRemove--;
   		}  
   
@@ -645,7 +645,9 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   				// so we need update it.
   				result = GetFileLength(file->filename, file->length, true);
   				if (!SUCCEEDED(result)) 
+  				{
 		        Error |= 0x10;
+          }
   			}
   
   			nextStartPosition = file->startPosition + file->length;
@@ -701,14 +703,13 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   	  {
         LogDebug("MultiFileReader: expected file count incorrect") ;
   		  Error |= 0x200;
-        continue;
   	  }  	   
   
   		// Go through files
   		std::vector<MultiFileReaderFile *>::iterator itFiles = m_tsFiles.begin();
   		std::vector<LPWSTR>::iterator itFilenames = filenames.begin();
   
-  		while (itFiles < m_tsFiles.end())
+  		while ((itFiles < m_tsFiles.end()) && !Error)
   		{
   			file = *itFiles;
   
@@ -724,11 +725,10 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   			{
           LogDebug("MultiFileReader has missing files!!") ;
     		  Error |= 0x400;
-          continue;
   			}
   		}
-  
-  		while (itFilenames < filenames.end())
+  		  
+  		while ((itFilenames < filenames.end()) && !Error)
   		{
   			LPWSTR pFilename = *itFilenames;
   
@@ -736,33 +736,37 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   			file->filename = pFilename;
   			file->startPosition = nextStartPosition;
   
+    	  itFilenames++;
   			fileID++;
   			file->filePositionId = fileID;
   
-  			result = GetFileLength(pFilename, file->length, true);
+        //Don't 'double check' the length of the latest file (which is constantly increasing)
+  			result = GetFileLength(pFilename, file->length, (itFilenames < filenames.end()));
   		  if (!SUCCEEDED(result)) 
+  		  {
 		      Error |= 0x100;
-  
-        //LogDebug("MultiFileReader: Update file list, filePositionId = %d, length = %d", file->filePositionId, file->length) ;
-
-  			m_tsFiles.push_back(file);
-  
-  			nextStartPosition = file->startPosition + file->length;
-  
-  			itFilenames++;
+		      delete file;
+		    }
+        else
+        {
+          //LogDebug("MultiFileReader: Update file list, filePositionId = %d, length = %d", file->filePositionId, file->length) ;          
+    			m_tsFiles.push_back(file);   
+    			m_filesAdded++;
+    
+    			nextStartPosition = file->startPosition + file->length;    
+  		  }
   		}
   		
-  	  if (m_tsFiles.size() != filenames.size())
+  	  if ((m_tsFiles.size() != filenames.size()) && !Error)
   	  {
         LogDebug("MultiFileReader: files to filenames mismatch") ;
   		  Error |= 0x800;
-        continue;
   	  }
-  	    
-  		m_filesAdded = filesAdded;
-  		m_filesRemoved = filesRemoved;
-  
-      LogDebug("MultiFileReader m_filesAdded : %d, m_filesRemoved : %d, m_startPosition : %I64d, m_endPosition : %I64d, currentPosition = %I64d, LatestFileID = %d", m_filesAdded, m_filesRemoved, m_startPosition, m_endPosition, currentPosition, fileID) ;
+  	      
+  		if (!Error)
+  		{
+        LogDebug("MultiFileReader m_filesAdded : %d, m_filesRemoved : %d, file->startPosition : %I64d, currentPosition = %I64d, LatestFileID = %d", m_filesAdded, m_filesRemoved, file->startPosition, currentPosition, fileID) ;
+  	  }
   	}
 
   } while ( Error && Loop ) ; // If Error is set, try again...until Loop reaches 0.
@@ -810,13 +814,14 @@ HRESULT MultiFileReader::GetFileLength(LPWSTR pFilename, __int64 &length, bool d
 	HRESULT hr = S_OK;
 
   long Error=0;
-  long Loop=10 ;
+  long Loop=10 ;  
+  __int64 origLength = length;
   	
   do
   {
     if (m_bIsStopping)
     {
-      length = 0;
+      length = origLength;
       return E_FAIL ;
     }
     
@@ -863,7 +868,7 @@ HRESULT MultiFileReader::GetFileLength(LPWSTR pFilename, __int64 &length, bool d
     if(Error)
     {
       LogDebug("MultiFileReader::GetFileLength() has failed. Error : %x", Error) ;
-      length = 0;
+      length = origLength; //Don't change the existing length - it's the safest thing to do.
       return E_FAIL ;
     }
   }

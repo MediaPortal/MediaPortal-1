@@ -344,7 +344,7 @@ private:
   CCritSec        m_GetTimeLock;
   CCritSec        m_GetCompLock;
   CCritSec        m_DurationThreadLock;
-  CCritSec        m_multiFileReaderLock;
+  CCritSec        m_multiFileReaderLock; //for MultiFileReader shared locking - not used at present
   FileReader*     m_fileReader;
   FileReader*     m_fileDuration;
   CTsDuration     m_updateThreadDuration;

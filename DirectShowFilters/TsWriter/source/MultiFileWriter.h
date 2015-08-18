@@ -30,7 +30,8 @@
 #include <vector>
 
 //Variable size buffers are used - CDiskBuff::CDiskBuff(int size)
-#define MAX_BUFFERS 256
+#define FULL_BUFFERS 256
+#define NOT_FULL_BUFFERS 192
 
 typedef struct 
 {
@@ -118,6 +119,8 @@ protected:
 	__int64 m_chunkReserve;
 	
 	UINT m_maxBuffersUsed;
+	BOOL m_bDiskFull;
+	BOOL m_bBufferFull;
 
 	CCritSec m_qLock;	
   std::vector<CDiskBuff*> m_writeQueue;
