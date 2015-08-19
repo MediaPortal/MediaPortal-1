@@ -48,7 +48,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;./usageenvironment/include;./basicusageenvironment/include;./groupsock/include;./livemedia;./livemedia/include;../streamingserver/Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;./usageenvironment/include;./basicusageenvironment/include;./groupsock/include;./livemedia;./livemedia/include;./MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32;WINNT;__MINGW32__;__GNUC__=4;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
       <MinimalRebuild>false</MinimalRebuild>
@@ -69,7 +69,7 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;./usageenvironment/include;./basicusageenvironment/include;./groupsock/include;./livemedia;./livemedia/include;../streamingserver/Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;./usageenvironment/include;./basicusageenvironment/include;./groupsock/include;./livemedia;./livemedia/include;./MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;_WIN32;__MINGW32__;__GNUC__=4;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
