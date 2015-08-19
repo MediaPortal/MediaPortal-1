@@ -29,6 +29,7 @@ CRTSPClient::CRTSPClient(CMemoryBuffer& buffer)
   m_isSetup = false;
   m_isBufferThreadActive = false;
   m_isPaused = false;
+  m_updateDuration = false;
 
   m_genericResponseEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
   m_durationDescribeResponseEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
@@ -122,14 +123,28 @@ void CRTSPClient::Shutdown()
   LogDebug("CRTSPClient::Shutdown()");
 
   // Teardown, then shutdown, any outstanding RTP/RTCP subsessions
+  if (m_session != NULL && m_client != NULL && m_isSetup)
+  {
+    LogDebug("CRTSPClient::Shutdown(): send RTSP TEARDOWN");
+    ResetEvent(m_genericResponseEvent);
+    m_client->sendTeardownCommand(*m_session, &CRTSPClient::OnGenericResponseReceived);
+    if (WaitForSingleObject(m_genericResponseEvent, TIMEOUT_GENERIC_RTSP_RESPONSE) == WAIT_TIMEOUT)
+    {
+      LogDebug("CRTSPClient::Shutdown(): RTSP TEARDOWN timed out");
+    }
+    else if (m_genericResponseResultCode != 0)
+	  {
+      LogDebug("CRTSPClient::Shutdown(): RTSP TEARDOWN failed, result code = %d, message = %s", m_genericResponseResultCode, m_env->getResultMsg());
+    }
+  }
+
+  // LIVE555 will abort() the process if we cause it to try to read a socket
+  // after the socket is closed. Since we're about to close all our sockets, we
+  // therefore need to stop the LIVE555 thread now.
+  StopBufferThread();
+
   if (m_session != NULL)
   {
-    if (m_client != NULL && m_isSetup)
-    {
-      LogDebug("CRTSPClient::Shutdown(): send RTSP TEARDOWN");
-      m_client->sendTeardownCommand(*m_session, NULL);   // There's nothing we can do if this doesn't succeed => no response handler.
-    }
-
     MediaSubsessionIterator iter(*m_session);
     MediaSubsession* subsession;
     while ((subsession = iter.next()) != NULL) 
@@ -141,11 +156,8 @@ void CRTSPClient::Shutdown()
     Medium::close(m_session);
     m_session = NULL;
   }
-  m_isSetup = false;
 
-  // Stop the buffer thread to ensure we can safely shut it down. If we attempt
-  // to shut it down while it's processing a response it could cause a crash.
-  StopBufferThread();
+  m_isSetup = false;
 
   // Finally, shut down our client.
   if (m_client != NULL)
@@ -171,7 +183,7 @@ bool CRTSPClient::OpenStream(char* url)
   {
     Shutdown();
   }
-  LogDebug("CRTSPClient::OpenStream(): create RTSP client");
+  LogDebug("CRTSPClient::OpenStream(): create RTSP client, url = %s", m_url);
   m_client = MPRTSPClient::createNew(this, *m_env, m_url, 0/*verbosity level*/, "TSFileSource");
   if (m_client == NULL) 
   {
@@ -180,10 +192,10 @@ bool CRTSPClient::OpenStream(char* url)
   }
 
   // Thread has to be running so that LIVE555 can handle RTSP command
-  // responses in the background.
+  // responses and duration updates in the background.
   StartBufferThread();
 
-  if (!InternalUpdateDuration(m_client))
+  if (!UpdateDuration())
   {
     Shutdown();
     return false;
@@ -231,10 +243,8 @@ bool CRTSPClient::OpenStream(char* url)
     {
       // Because we're saving the incoming data, rather than playing
       // it in real time, allow an especially large time threshold
-      // (500 milliseconds) for reordering misordered incoming packets:
-      int socketNum = subsession->rtpSource()->RTPgs()->socketNum();
-      increaseReceiveBufferTo(*m_env, socketNum, 2000000);
-
+      // for reordering misordered incoming packets:
+      increaseReceiveBufferTo(*m_env, subsession->rtpSource()->RTPgs()->socketNum(), 2000000);
       subsession->rtpSource()->setPacketReorderingThresholdTime(500000);  // 500 milliseconds
     }
   }
@@ -317,8 +327,25 @@ void CRTSPClient::ThreadProc()
   m_isBufferThreadActive = true;
   ::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
   LogDebug("CRTSPClient::ThreadProc(): thread started, thread ID = %d", GetCurrentThreadId());
+  MPRTSPClient* client = MPRTSPClient::createNew(this, *m_env, m_url, 0/*verbosity level*/, "TSFileSource");
+  if (client == NULL)
+  {
+    LogDebug("CRTSPClient::UpdateDuration(): failed to create RTSP client");
+    return;
+  }
+
   while (m_env != NULL && !ThreadIsStopping(1))
   {
+    if (m_updateDuration)
+    {
+      // Unfortunately we must reset the URL before each request. LIVE55
+      // updates the URL from the DESCRIBE response Content-Base header. That
+      // header contains an undesirable trailing slash.
+      client->SetUrl(m_url);
+
+      client->sendDescribeCommand(&CRTSPClient::OnDurationDescribeResponseReceived);
+      m_updateDuration = false;
+    }
     for (int i = 0; i < 10; ++i)
     {
       if (!m_isBufferThreadActive)
@@ -332,7 +359,9 @@ void CRTSPClient::ThreadProc()
       break;
     }
   }
+
   LogDebug("CRTSPClient::ThreadProc(): thread stopping, thread ID = %d", GetCurrentThreadId());
+  Medium::close(client);
   m_isBufferThreadActive = false;
   return;
 }
@@ -386,11 +415,7 @@ void CRTSPClient::Continue()
 {
   if (m_client != NULL && m_session != NULL)
   {
-    StartBufferThread();
-    if (!InternalPlay(-1.0))
-    {
-      StopBufferThread();
-    }
+    InternalPlay(-1.0);
   }
 }
 
@@ -442,7 +467,6 @@ bool CRTSPClient::Pause()
     }
 
     m_isPaused = true;
-    StopBufferThread();
   }
   LogDebug("CRTSPClient::Pause(): done");
   return true;
@@ -469,43 +493,16 @@ void CRTSPClient::OnGenericResponseReceived(RTSPClient* client, int resultCode, 
 bool CRTSPClient::UpdateDuration()
 {
   //LogDebug("CRTSPClient::UpdateDuration()");
-  if (m_env == NULL)
-  {
-    LogDebug("CRTSPClient::UpdateDuration(): environment is NULL");
-    return false;
-  }
-
-  MPRTSPClient* client = MPRTSPClient::createNew(this, *m_env, m_url, 0/*verbosity level*/, "TSFileSource");
-  if (client == NULL)
-  {
-    LogDebug("CRTSPClient::UpdateDuration(): failed to create RTSP client");
-    return false;
-  }
-
-  bool result = InternalUpdateDuration(client);
-  if (!client->GetDeleteFlag())
-  {
-    Medium::close(client);
-  }
-  return result;
-}
-
-bool CRTSPClient::InternalUpdateDuration(MPRTSPClient* client)
-{
   ResetEvent(m_durationDescribeResponseEvent);
-  client->sendDescribeCommand(&CRTSPClient::OnDurationDescribeResponseReceived);
 
-  // Wait for a response. Don't wait longer than the calling period (currently ~1000 ms).
+  // Setting this variable triggers the "buffer" thread to send a DESCRIBE
+  // command.
+  m_updateDuration = true;
+
+  // Wait for a response. Don't wait longer than the calling period (currently ~5000 ms).
   if (WaitForSingleObject(m_durationDescribeResponseEvent, 500) == WAIT_TIMEOUT)
   {
     LogDebug("CRTSPClient::UpdateDuration(): RTSP DESCRIBE timed out, message = %s", m_env->getResultMsg());
-    // If this update request comes directly from TsReader, the client is a
-    // throw-away. It should be destroyed when the response is eventually
-    // received.
-    if (client != m_client)
-    {
-      client->SetDeleteFlag();
-    }
     return false;
   }
 
@@ -539,10 +536,8 @@ bool CRTSPClient::InternalUpdateDuration(MPRTSPClient* client)
 void CRTSPClient::OnDurationDescribeResponseReceived(RTSPClient* client, int resultCode, char* resultString)
 {
   //LogDebug("CRTSPClient::OnDurationDescribeResponseReceived(): code = %d, response = %s", resultCode, resultString == NULL ? "" : resultString);
-
-  MPRTSPClient* rtspClient = (MPRTSPClient*)client;
-  CRTSPClient* tsReaderRtspClient = (CRTSPClient*)(rtspClient)->Context();
-  if (tsReaderRtspClient == NULL)
+  CRTSPClient* rtspClient = (CRTSPClient*)((MPRTSPClient*)client)->Context();
+  if (rtspClient == NULL)
   {
     // This can happen if the client attempted to send a command, the command
     // was assumed to have timed out after some time, and the client was
@@ -553,37 +548,19 @@ void CRTSPClient::OnDurationDescribeResponseReceived(RTSPClient* client, int res
     {
       delete[] resultString;
     }
+    return;
   }
-  else if (rtspClient->GetDeleteFlag())
+
+  rtspClient->m_durationDescribeResponseResultCode = resultCode;
+  if (resultString == NULL)
   {
-    // Caller assumed timeout. We have to clean up the client.
-    if (resultCode != 0)
-    {
-      LogDebug("CRTSPClient::OnDurationDescribeResponseReceived(): received late error response, code = %d, response = %s", resultCode, resultString == NULL ? "" : resultString);
-    }
-    else
-    {
-      LogDebug("CRTSPClient::OnDurationDescribeResponseReceived(): received late response");
-    }
-    Medium::close(rtspClient);
-    if (resultString != NULL)
-    {
-      delete[] resultString;
-    }
+    rtspClient->m_durationDescribeResponseResultString[0] = NULL;
   }
   else
   {
-    tsReaderRtspClient->m_durationDescribeResponseResultCode = resultCode;
-    if (resultString == NULL)
-    {
-      tsReaderRtspClient->m_durationDescribeResponseResultString[0] = NULL;
-    }
-    else
-    {
-      strncpy(tsReaderRtspClient->m_durationDescribeResponseResultString, resultString, MAX_DURATION_DESCRIBE_RESPONSE_BYTE_COUNT);
-      tsReaderRtspClient->m_durationDescribeResponseResultString[MAX_DURATION_DESCRIBE_RESPONSE_BYTE_COUNT - 1] = NULL;
-      delete[] resultString;
-    }
-    SetEvent(tsReaderRtspClient->m_durationDescribeResponseEvent);
+    strncpy(rtspClient->m_durationDescribeResponseResultString, resultString, MAX_DURATION_DESCRIBE_RESPONSE_BYTE_COUNT);
+    rtspClient->m_durationDescribeResponseResultString[MAX_DURATION_DESCRIBE_RESPONSE_BYTE_COUNT - 1] = NULL;
+    delete[] resultString;
   }
+  SetEvent(rtspClient->m_durationDescribeResponseEvent);
 }
