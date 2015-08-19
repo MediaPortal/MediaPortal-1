@@ -367,14 +367,14 @@ HRESULT MultiFileWriter::PrepareTSFile()
 			{
 				if (m_tsFileNames.size() < (UINT)m_maxTSFiles)
 				{
-					if (hr != 0x80070020) // ERROR_SHARING_VIOLATION
+					if (hr != HRESULT_FROM_WIN32(ERROR_SHARING_VIOLATION)) // ERROR_SHARING_VIOLATION means file is being read by another process
 						LogDebug("MultiFileWriter: Failed to reopen old file. Unexpected reason. Trying to create a new file.");
 
 					hr = CreateNewTSFile();
 				}
 				else
 				{
-					if (hr != 0x80070020) // ERROR_SHARING_VIOLATION
+					if (hr != HRESULT_FROM_WIN32(ERROR_SHARING_VIOLATION)) // ERROR_SHARING_VIOLATION means file is being read by another process
 					{
 						LogDebug("MultiFileWriter: Failed to reopen old file. Unexpected reason. Dropping data!");
 				  }
@@ -482,7 +482,7 @@ HRESULT MultiFileWriter::ReuseTSFile()
 {
 	CAutoLock lock(&m_Lock);
 	HRESULT hr;
-	DWORD Tmo=5 ;
+	DWORD Tmo=10 ;
 
 	LPWSTR pFilename = m_tsFileNames.at(0);
 
@@ -496,9 +496,14 @@ HRESULT MultiFileWriter::ReuseTSFile()
 	// Can be locked temporarily to update duration or definitely (!) if timeshift is paused.
 	do
 	{
-		DeleteFileW(pFilename);	// Stupid function, return can be ok and file not deleted ( just tagged for deleting )!!!!
-		hr = m_pCurrentTSFile->OpenFile() ;
-		if (!FAILED(hr)) break ;
+	  hr = HRESULT_FROM_WIN32(ERROR_SHARING_VIOLATION);
+	  if (IsFileLocked(pFilename) == FALSE)
+	  {
+  		DeleteFileW(pFilename);	// Stupid function, return can be ok and file not deleted ( just tagged for deleting )!!!!
+  		hr = m_pCurrentTSFile->OpenFile() ;
+  		if (!FAILED(hr)) break ;
+	  }
+	  
 		if (Tmo==2)
 		{
 		  //Just in case the 'parked' file is causing a problem, close it before looping for the last time
