@@ -111,6 +111,7 @@ public:
 	virtual __int64 GetFilePointer();
 
 	virtual void SetDummyWrites(BOOL useDummyWrites);
+	virtual void SetRandomAccess(BOOL useRandomAccess);
 
 	virtual __int64 GetFileSize();
 	
@@ -139,6 +140,7 @@ protected:
 	LPOLESTR m_pFileName;           // The filename where we stream
 
 	BOOL     m_bUseDummyWrites;
+	BOOL     m_bUseRandomAccess;
 	BOOL     m_bIsStopping;
 	BOOL     m_bIsVistaOrLater;
 	DWORD    m_dwLastThreadID;

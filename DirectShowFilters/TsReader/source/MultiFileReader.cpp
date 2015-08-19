@@ -72,8 +72,13 @@ MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec
   
   m_TSBufferFile.SetDummyWrites(useDummyWrites);
   m_TSFile.SetDummyWrites(useDummyWrites);
-  m_TSFileNext.SetDummyWrites(false);
-  m_TSFileGetLength.SetDummyWrites(false);
+  m_TSFileNext.SetDummyWrites(FALSE);
+  m_TSFileGetLength.SetDummyWrites(FALSE);
+
+  m_TSBufferFile.SetRandomAccess(TRUE);
+  m_TSFile.SetRandomAccess(FALSE);
+  m_TSFileNext.SetRandomAccess(FALSE);
+  m_TSFileGetLength.SetRandomAccess(FALSE);
 
   m_pFileReadNextBuffer = NULL;
   m_pInfoFileBuffer1 = NULL;
