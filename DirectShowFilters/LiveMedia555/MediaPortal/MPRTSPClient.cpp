@@ -43,7 +43,6 @@ MPRTSPClient::MPRTSPClient(void* context,
   : RTSPClient(env, rtspURL, verbosityLevel, applicationName, tunnelOverHTTPPortNum, socketNumToServer)
 {
   m_context = context;
-  m_deleteWhenResponseReceived = false;
 }
 
 MPRTSPClient::~MPRTSPClient()

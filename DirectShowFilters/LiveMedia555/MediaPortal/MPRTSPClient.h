@@ -40,14 +40,9 @@ class MPRTSPClient : public RTSPClient
       return m_context;
     }
 
-    void SetDeleteFlag()
+    void SetUrl(const char* url)
     {
-      m_deleteWhenResponseReceived = true;
-    }
-
-    bool GetDeleteFlag()
-    {
-      return m_deleteWhenResponseReceived;
+      setBaseURL(url);
     }
 
   protected:
@@ -63,5 +58,4 @@ class MPRTSPClient : public RTSPClient
 
   private:
     void* m_context;
-    bool m_deleteWhenResponseReceived;
 };

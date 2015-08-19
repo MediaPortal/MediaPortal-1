@@ -20,7 +20,7 @@ class CRTSPClient: public TSThread
 	  long Duration();
 
     bool OpenStream(char* url);
-    bool Play(double fStart,double fDuration);
+    bool Play(double start,double duration);
 	  void Continue();
     bool IsPaused();
     bool Pause();
@@ -42,7 +42,6 @@ class CRTSPClient: public TSThread
     int m_durationDescribeResponseResultCode;
     char m_durationDescribeResponseResultString[MAX_DURATION_DESCRIBE_RESPONSE_BYTE_COUNT];
     static void OnDurationDescribeResponseReceived(RTSPClient* client, int resultCode, char* resultString);
-    bool InternalUpdateDuration(MPRTSPClient* client);
 	
 	  void StartBufferThread();
 	  void StopBufferThread();
@@ -55,6 +54,7 @@ class CRTSPClient: public TSThread
 	  long m_duration;
 	  char m_url[2048];
     bool m_isSetup;
-    bool m_isBufferThreadActive;
+    volatile bool m_isBufferThreadActive;
     bool m_isPaused;
+    volatile bool m_updateDuration;
 };
