@@ -37,6 +37,7 @@ FileReader::FileReader() :
 	m_hFile(INVALID_HANDLE_VALUE),
 	m_pFileName(0),
   m_bUseDummyWrites(FALSE),
+  m_bUseRandomAccess(FALSE),
   m_bIsStopping(FALSE)
 {
   IsVistaOrLater();
@@ -100,6 +101,9 @@ HRESULT FileReader::OpenFile()
 	DWORD Tmo=14 ;
   HANDLE hFileUnbuff = INVALID_HANDLE_VALUE;
   
+  //Can be used to open files in random-access mode to workaround SMB caching problems
+  DWORD accessModeFlags = (m_bUseRandomAccess ? FILE_FLAG_RANDOM_ACCESS : 0);     
+  
 	// Is the file already opened
 	if (m_hFile != INVALID_HANDLE_VALUE) 
   {
@@ -141,7 +145,7 @@ HRESULT FileReader::OpenFile()
       							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE), // Share access
       							NULL,						            // Security
       							(DWORD) CREATE_ALWAYS,		  // Open flags
-      							(DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_DELETE_ON_CLOSE | FILE_FLAG_RANDOM_ACCESS),	// More flags
+      							(DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_DELETE_ON_CLOSE),	// More flags
       							NULL);						          // Template
       
       		if (hFileUnbuff != INVALID_HANDLE_VALUE)
@@ -166,7 +170,7 @@ HRESULT FileReader::OpenFile()
 						 (DWORD) FILE_SHARE_READ,     // Share access
 						 NULL,                        // Security
 						 (DWORD) OPEN_EXISTING,       // Open flags
-						 (DWORD) 0,                   // More flags
+						 (DWORD) accessModeFlags,     // More flags
 						 NULL);                       // Template
 			if (m_hFile != INVALID_HANDLE_VALUE) break ;
 			  
@@ -176,20 +180,19 @@ HRESULT FileReader::OpenFile()
   							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE), // Share access
   							NULL,						            // Security
   							(DWORD) OPEN_EXISTING,		  // Open flags
-  							(DWORD) 0,	                // More flags
+  							(DWORD) accessModeFlags,	                // More flags
   							NULL);						          // Template 
   		if (m_hFile != INVALID_HANDLE_VALUE) break ;
 		}
-    else  //for tsbuffer files - open in random-access mode to workaround SMB caching problems
+    else  //for tsbuffer files
     {
   		//This is in case file is being recorded to
   		m_hFile = ::CreateFileW(pFileName,		// The filename
   							(DWORD) GENERIC_READ,				// File access
-  							(DWORD) (FILE_SHARE_READ |
-  							FILE_SHARE_WRITE),          // Share access
+  							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE), // Share access
   							NULL,						            // Security
   							(DWORD) OPEN_EXISTING,		  // Open flags
-  							(DWORD) FILE_FLAG_RANDOM_ACCESS,	      // More flags
+  							(DWORD) accessModeFlags,	  // More flags
   							NULL);						                // Template 
   		if (m_hFile != INVALID_HANDLE_VALUE) break ;
 	  }
@@ -429,7 +432,15 @@ void FileReader::SetDummyWrites(BOOL useDummyWrites)
 {
   CAutoLockFR rLock (&m_accessLock);
 	m_bUseDummyWrites = useDummyWrites;
-	//LogDebug("FileReader::SetDummyWrites, useDummyWrites = %d", useDummyWrites);
+	LogDebug("FileReader::SetDummyWrites, useDummyWrites = %d", useDummyWrites);
+}
+
+//Enable 'random access' mode when opening files
+void FileReader::SetRandomAccess(BOOL useRandomAccess)
+{
+  CAutoLockFR rLock (&m_accessLock);
+	m_bUseRandomAccess = useRandomAccess;
+	LogDebug("FileReader::SetRandomAccess, useRandomAccess = %d", useRandomAccess);
 }
 
 //for MultiFileReader() compatibility only

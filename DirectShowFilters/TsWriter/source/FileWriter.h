@@ -57,6 +57,7 @@ protected:
 	__int64 m_chunkReserveFileSize;
 	__int64 m_chunkReserveSize;
 	__int64 m_maxFileSize;
+	BOOL m_bWriteFailed;
 };
 
 #endif
