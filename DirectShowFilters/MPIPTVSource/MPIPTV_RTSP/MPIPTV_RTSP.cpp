@@ -400,7 +400,7 @@ int CMPIPTV_RTSP::OpenConnection(void)
       }
     }
 
-    if (SendRtspCommand(METHOD_OPEN_CONNECTION_NAME, _T("SETUP")) != STATUS_OK, subsession)
+    if (SendRtspCommand(METHOD_OPEN_CONNECTION_NAME, _T("SETUP"), subsession) != STATUS_OK)
     {
       CloseConnection();
       return STATUS_ERROR;
@@ -728,7 +728,7 @@ bool CMPIPTV_RTSP::TeardownMediaSession(bool forceTeardown)
 
   if (this->rtspClient != NULL && this->rtspSession != NULL)
   {
-    result = SendRtspCommand(_T("TEARDOWN"), METHOD_TEARDOWN_MEDIA_SESSION_NAME) == STATUS_OK;
+    result = SendRtspCommand(METHOD_TEARDOWN_MEDIA_SESSION_NAME, _T("TEARDOWN")) == STATUS_OK;
   }
 
   if (forceTeardown || result)
