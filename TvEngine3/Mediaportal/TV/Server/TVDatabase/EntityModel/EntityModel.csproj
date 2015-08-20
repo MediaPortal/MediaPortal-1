@@ -55,9 +55,6 @@
       <Link>SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="EntitySQLDebug.cs" />
-    <Compile Include="DBaseContext\DbContextBuilder.cs" />
-    <Compile Include="DBaseContext\DbContextInitializer.cs" />
-    <Compile Include="DBaseContext\DbContextManager.cs" />
     <Compile Include="Interfaces\ITuningDetailRepository.cs.cs" />
     <Compile Include="Interfaces\IAnalogTunerSettingsRepository.cs" />
     <Compile Include="Interfaces\ITunerGroupRepository.cs" />
@@ -71,11 +68,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="ObjContext\EntityFrameworkExtension.cs" />
-    <Compile Include="ObjContext\IObjectContextStorage.cs" />
-    <Compile Include="ObjContext\ObjectContextBuilder.cs" />
-    <Compile Include="ObjContext\ObjectContextInitializer.cs" />
     <Compile Include="ObjContext\ObjectContextManager.cs" />
-    <Compile Include="ObjContext\SimpleObjectContextStorage.cs" />
     <Compile Include="Repositories\ChannelGroupRepository.cs" />
     <Compile Include="Interfaces\ITunerRepository.cs" />
     <Compile Include="Interfaces\IChannelRepository.cs" />
@@ -92,22 +85,11 @@
     <Compile Include="Repositories\SettingRepository.cs" />
     <Compile Include="Repositories\ProgramRepository.cs" />
     <Compile Include="Repositories\GenericRepository.cs" />
-    <Compile Include="DBaseContext\IDbContextStorage.cs" />
-    <Compile Include="DBaseContext\SimpleDbContextStorage.cs" />
     <Compile Include="Repositories\UnitOfWork.cs" />
-    <Compile Include="Extensions\ExpressionExtension.cs" />
-    <Compile Include="Extensions\ExpressionVisitor.cs" />
-    <Compile Include="Extensions\ParameterRebinder .cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\ChannelRepository.cs" />
-    <Compile Include="ObjContext\IObjectContext.cs" />
     <Compile Include="Interfaces\IRepository.cs" />
     <Compile Include="Repositories\IUnitOfWork.cs" />
-    <Compile Include="Specification\AndSpecification.cs" />
-    <Compile Include="Specification\CompositeSpecification.cs" />
-    <Compile Include="Specification\ISpecification.cs" />
-    <Compile Include="Specification\OrSpecification.cs" />
-    <Compile Include="Specification\Specification.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config">

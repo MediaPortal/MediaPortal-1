@@ -8,11 +8,10 @@ using System.Data.Objects;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
-using MediaPortal.Common.Utils.ExtensionMethods;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext;
-using Mediaportal.TV.Server.TVDatabase.EntityModel.Specification;
+using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {
@@ -22,7 +21,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
   public class GenericRepository<TEntity> : IRepository<TEntity> where TEntity : ObjectContext
   {
     private IUnitOfWork _unitOfWork;
-    private readonly string _connectionStringName;
     private TEntity _objectContext;
     private readonly PluralizationService _pluralizer = PluralizationService.CreateService(CultureInfo.GetCultureInfo("en"));
     private bool _disposed;
@@ -86,11 +84,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       return GetQuery<TEntity>().Where(predicate);
     }
 
-    public IQueryable<TEntity> GetQuery<TEntity>(ISpecification<TEntity> specification) where TEntity : class
-    {
-      return specification.SatisfyingEntitiesFrom(GetQuery<TEntity>());
-    }
-
     public IQueryable<TEntity> Get<TEntity>(Expression<Func<TEntity, string>> orderBy, int pageIndex, int pageSize, SortOrder sortOrder = SortOrder.Ascending) where TEntity : class
     {
       if (sortOrder == SortOrder.Ascending)
@@ -109,33 +102,14 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       return GetQuery<TEntity>().Where(predicate).OrderByDescending(orderBy).Skip(pageIndex).Take(pageSize);//.AsEnumerable();
     }
 
-    public IQueryable<TEntity> Get<TEntity>(ISpecification<TEntity> specification, Expression<Func<TEntity, string>> orderBy, int pageIndex, int pageSize, SortOrder sortOrder = SortOrder.Ascending) where TEntity : class
-    {
-      if (sortOrder == SortOrder.Ascending)
-      {
-        return specification.SatisfyingEntitiesFrom(GetQuery<TEntity>()).OrderBy(orderBy).Skip(pageIndex).Take(pageSize);//.AsEnumerable();
-      }
-      return specification.SatisfyingEntitiesFrom(GetQuery<TEntity>()).OrderByDescending(orderBy).Skip(pageIndex).Take(pageSize);//.AsEnumerable();
-    }
-
     public TEntity Single<TEntity>(Expression<Func<TEntity, bool>> criteria) where TEntity : class
     {
       return GetQuery<TEntity>().SingleOrDefault<TEntity>(criteria);
     }
 
-    public TEntity Single<TEntity>(ISpecification<TEntity> criteria) where TEntity : class
-    {
-      return criteria.SatisfyingEntityFrom(GetQuery<TEntity>());
-    }
-
     public TEntity First<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : class
     {
       return GetQuery<TEntity>().FirstOrDefault(predicate);
-    }
-
-    public TEntity First<TEntity>(ISpecification<TEntity> criteria) where TEntity : class
-    {
-      return criteria.SatisfyingEntitiesFrom(GetQuery<TEntity>()).FirstOrDefault();
     }
 
     public void Add<TEntity>(TEntity entity) where TEntity : class
@@ -262,15 +236,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       }
     }
 
-    public void Delete<TEntity>(ISpecification<TEntity> criteria) where TEntity : class
-    {
-      IEnumerable<TEntity> records = Find(criteria);
-      foreach (TEntity record in records)
-      {
-        Delete(record);
-      }
-    }
-
     public IQueryable<TEntity> GetAll<TEntity>() where TEntity : class
     {
       return GetQuery<TEntity>();
@@ -306,16 +271,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       return GetQuery<TEntity>().Where(criteria).FirstOrDefault();
     }
 
-    public TEntity FindOne<TEntity>(ISpecification<TEntity> criteria) where TEntity : class
-    {
-      return criteria.SatisfyingEntityFrom(GetQuery<TEntity>());
-    }
-
-    public IQueryable<TEntity> Find<TEntity>(ISpecification<TEntity> criteria) where TEntity : class
-    {
-      return criteria.SatisfyingEntitiesFrom(GetQuery<TEntity>());
-    }
-
     public int Count<TEntity>() where TEntity : class
     {
       return GetQuery<TEntity>().Count();
@@ -324,11 +279,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     public int Count<TEntity>(Expression<Func<TEntity, bool>> criteria) where TEntity : class
     {
       return GetQuery<TEntity>().Count(criteria);
-    }
-
-    public int Count<TEntity>(ISpecification<TEntity> criteria) where TEntity : class
-    {
-      return criteria.SatisfyingEntitiesFrom(GetQuery<TEntity>()).Count();
     }
 
     public IUnitOfWork UnitOfWork
