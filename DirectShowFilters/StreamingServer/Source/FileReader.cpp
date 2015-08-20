@@ -23,9 +23,8 @@
 *  nate can be reached on the forums at
 *    http://forums.dvbowners.com/
 */
-#include <windows.h>
 #include "FileReader.h"
-//#include "global.h"
+#include <windows.h>
 
 extern void LogDebug(const wchar_t* fmt, ...);
 

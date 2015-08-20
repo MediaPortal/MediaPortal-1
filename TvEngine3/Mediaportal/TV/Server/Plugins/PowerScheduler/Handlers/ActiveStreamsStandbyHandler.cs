@@ -56,17 +56,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
       get
       {
         ICollection<RtspClient> clients = _controllerService.StreamingClients;
-        if (clients != null)
-        {
-          foreach (RtspClient client in clients)
-          {
-            if (client.IsClientActive)
-            {
-              return true;
-            }
-          }
-        }
-        return false;
+        return clients != null && clients.Count > 0;
       }
     }
 

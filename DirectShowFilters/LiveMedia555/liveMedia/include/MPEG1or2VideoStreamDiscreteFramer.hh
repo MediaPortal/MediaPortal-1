@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // A simplified version of "MPEG1or2VideoStreamFramer" that takes only
 // complete, discrete frames (rather than an arbitrary byte stream) as input.
 // This avoids the parsing and data copying overhead of the full
@@ -34,21 +34,22 @@ class MPEG1or2VideoStreamDiscreteFramer: public MPEG1or2VideoStreamFramer {
 public:
   static MPEG1or2VideoStreamDiscreteFramer*
   createNew(UsageEnvironment& env, FramedSource* inputSource,
-            Boolean iFramesOnly = False,
-            double vshPeriod = 5.0); // see MPEG1or2VideoStreamFramer.hh
+            Boolean iFramesOnly = False, // see MPEG1or2VideoStreamFramer.hh
+            double vshPeriod = 5.0, // see MPEG1or2VideoStreamFramer.hh
+	    Boolean leavePresentationTimesUnmodified = False);
 
-private:
+protected:
   MPEG1or2VideoStreamDiscreteFramer(UsageEnvironment& env,
                                     FramedSource* inputSource,
-                                    Boolean iFramesOnly, double vshPeriod);
+                                    Boolean iFramesOnly, double vshPeriod, Boolean leavePresentationTimesUnmodified);
   // called only by createNew()
   virtual ~MPEG1or2VideoStreamDiscreteFramer();
 
-private:
+protected:
   // redefined virtual functions:
   virtual void doGetNextFrame();
 
-private:
+protected:
   static void afterGettingFrame(void* clientData, unsigned frameSize,
                                 unsigned numTruncatedBytes,
                                 struct timeval presentationTime,
@@ -58,7 +59,8 @@ private:
                           struct timeval presentationTime,
                           unsigned durationInMicroseconds);
 
-private:
+protected:
+  Boolean fLeavePresentationTimesUnmodified;
   struct timeval fLastNonBFramePresentationTime;
   unsigned fLastNonBFrameTemporal_reference;
 

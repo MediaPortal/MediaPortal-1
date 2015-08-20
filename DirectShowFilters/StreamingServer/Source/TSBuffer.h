@@ -23,13 +23,11 @@
 *  nate can be reached on the forums at
 *    http://forums.dvbowners.com/
 */
-
-#ifndef TSBUFFER_H
-#define TSBUFFER_H
-
+#pragma once
 #include <vector>
 #include "FileReader.h"
 #include "CriticalSection.h"
+
 
 enum ChannelType
 {
@@ -64,5 +62,3 @@ protected:
 	int m_ParserLock;
 
 };
-
-#endif

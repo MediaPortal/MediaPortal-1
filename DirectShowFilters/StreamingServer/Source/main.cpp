@@ -5,14 +5,13 @@
 #include "liveMedia.hh"
 #include "BasicUsageEnvironment.hh"
 #include "MPTaskScheduler.h"
-#include "GroupsockHelper.hh"
-#include "TsStreamFileSource.h"
 #include "TsMPEG2TransportFileServerMediaSubsession.h" 
-#include "MPEG1or2FileServerDemux.hh" 
 #include "MPRTSPServer.h"
 #include <sstream>
 #include <iomanip>  // setfill(), setw()
-//#include "RTSPOverHTTPServer.hh"
+
+using namespace std;
+
 
 //-----------------------------------------------------------------------------
 // LOGGING
@@ -176,20 +175,19 @@ void StreamRemove(char* id)
   m_rtspServer->removeServerMediaSession(id);
 }
 
-void StreamGetClientCount(unsigned short* clientCount)
+unsigned short ClientGetCount()
 {
   if (m_rtspServer != NULL)
   {
-    *clientCount = m_rtspServer->Clients().size();
-    return;
+    return m_rtspServer->GetSessionCount();
   }
-  *clientCount = 0;
+  return 0;
 }
 
-void StreamGetClientDetail(unsigned short index, unsigned long* sessionId, char** ipAddress, char** streamId, long* connectionTickCount, bool* isActive)
+void ClientGetDetail(unsigned short index, unsigned long* sessionId, char** ipAddress, char** streamId, unsigned long long* connectionTickCount, bool* isActive)
 {
   static char szIpAddress[50];
-  static char szStreamId[150];
+  static char szStreamId[260];
   *sessionId = 0;
   *ipAddress = NULL;
   *streamId = NULL;
@@ -200,59 +198,43 @@ void StreamGetClientDetail(unsigned short index, unsigned long* sessionId, char*
   {
     return;
   }
-  vector<MPRTSPServer::MPRTSPClientSession*> clients = m_rtspServer->Clients();
-  if (index >= clients.size())
-  {
-    return;
-  }
-  MPRTSPServer::MPRTSPClientSession* client = clients[index];
+  MPRTSPServer::MPRTSPClientSession* client = m_rtspServer->GetSessionByIndex(index);
   if (client == NULL)
   {
     return;
   }
 
-  *sessionId = client->sessionId();
+  *sessionId = client->SessionId();
 
+  struct sockaddr_in clientAddress = client->ClientAddress();
   sprintf(szIpAddress, "%d.%d.%d.%d",
-    client->getClientAddr().sin_addr.S_un.S_un_b.s_b1,
-    client->getClientAddr().sin_addr.S_un.S_un_b.s_b2,
-    client->getClientAddr().sin_addr.S_un.S_un_b.s_b3,
-    client->getClientAddr().sin_addr.S_un.S_un_b.s_b4);
+          clientAddress.sin_addr.S_un.S_un_b.s_b1,
+          clientAddress.sin_addr.S_un.S_un_b.s_b2,
+          clientAddress.sin_addr.S_un.S_un_b.s_b3,
+          clientAddress.sin_addr.S_un.S_un_b.s_b4);
   *ipAddress = &szIpAddress[0];
 
-  ServerMediaSession* clientMediaSession = client->getOurServerMediaSession();
-  if (clientMediaSession != NULL)
+  const char* sid = client->StreamId();
+  if (sid != NULL)
   {
-    strcpy(szStreamId, clientMediaSession->streamName());
+    strcpy(szStreamId, sid);
   }
   *streamId = &szStreamId[0];
 
-  *connectionTickCount = client->getStartDateTime();
-  if (client->IsSessionIsActive() != 0)
-  {
-    *isActive = true;
-  }
+  *connectionTickCount = client->StartDateTime();
+  *isActive = !client->IsPaused();
 }
 
-void StreamRemoveClient(unsigned long sessionId)
+void ClientRemove(unsigned long sessionId)
 {
   if (m_rtspServer != NULL)
   {
     LogDebug(L"stream server: failed to remove client, server is not running");
     return;
   }
-  vector<MPRTSPServer::MPRTSPClientSession*> clients = m_rtspServer->Clients();
-  vector<MPRTSPServer::MPRTSPClientSession*>::iterator it = clients.begin();
-  for ( ; it != clients.end(); it++)
+  if (m_rtspServer->RemoveSessionById(sessionId))
   {
-    MPRTSPServer::MPRTSPClientSession* client = *it;
-    if (client != NULL && client->sessionId() == sessionId)
-    {
-      LogDebug(L"stream server: remove client, ID = %lu", sessionId);
-      m_rtspServer->RemoveClient(client);
-      delete client;
-      break;
-    }
+    LogDebug(L"stream server: remove client, ID = %lu", sessionId);
   }
 }
 
@@ -260,7 +242,7 @@ void StreamRemoveClient(unsigned long sessionId)
 
 int main(int argc, char* argv[])
 {
-  int result = StreamSetup("192.168.1.130");
+  int result = ServerSetup("192.168.1.130", 554);
   if (result != 0)
   {
     return result;

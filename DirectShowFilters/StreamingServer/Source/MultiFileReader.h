@@ -23,12 +23,12 @@
 *  nate can be reached on the forums at
 *    http://forums.dvbowners.com/
 */
-
-#ifndef MULTIFILEREADER
-#define MULTIFILEREADER
-
+#pragma once
 #include "FileReader.h"
+#include <WinError.h>   // HRESULT
+#include <Windows.h>    // LPOLESTR, LPCOLESTR
 #include <vector>
+
 
 class MultiFileReaderFile
 {
@@ -96,5 +96,3 @@ protected:
   __int64  m_cachedFileSize;
 
 };
-
-#endif

@@ -63,18 +63,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
 
 
     [DllImport("StreamingServer.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern void StreamGetClientCount(out ushort clientCount);
+    private static extern ushort ClientGetCount();
 
     [DllImport("StreamingServer.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern void StreamGetClientDetail(ushort index,
+    private static extern void ClientGetDetail(ushort index,
                                                       out uint sessionId,
                                                       out IntPtr ipAddress,
                                                       out IntPtr streamId,
-                                                      out int connectionTickCount,
+                                                      out ulong connectionTickCount,
                                                       [MarshalAs(UnmanagedType.I1)] out bool isActive);
 
     [DllImport("StreamingServer.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern void StreamRemoveClient(uint sessionId);
+    private static extern void ClientRemove(uint sessionId);
 
     #endregion
 
@@ -117,16 +117,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
       get
       {
         List<RtspClient> clients = new List<RtspClient>();
-        ushort count = 0;
-        StreamGetClientCount(out count);
+        ushort count = ClientGetCount();
         for (ushort i = 0; i < count; ++i)
         {
           uint sessionId;
           IntPtr ipAddressBuffer;
           IntPtr streamIdBuffer;
-          int connectionTickCount;
+          ulong connectionTickCount;
           bool isActive;
-          StreamGetClientDetail(i, out sessionId, out ipAddressBuffer, out streamIdBuffer, out connectionTickCount, out isActive);
+          ClientGetDetail(i, out sessionId, out ipAddressBuffer, out streamIdBuffer, out connectionTickCount, out isActive);
           if (ipAddressBuffer == IntPtr.Zero || streamIdBuffer == IntPtr.Zero)
           {
             continue;
@@ -206,13 +205,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
           return;
         }
 
-        // Restarting the server will kill streaming sessions with active
-        // clients. TV Server Configuration will warn if the streamer has any
-        // clients. If the user chooses to ignore the warning then that is
-        // their business. All we can do is restore the active streams.
-        ushort clientCount;
-        StreamGetClientCount(out clientCount);
-        this.LogInfo("RTSP: reconfiguring server, client count = {0}", clientCount);
+        // Restarting the server will kill all streaming sessions. TV Server
+        // Configuration will warn if the streamer has any clients. If the user
+        // chooses to ignore the warning then that is their business. All we
+        // can do is restore the streams after restarting.
+        this.LogInfo("RTSP: reconfiguring server, client count = {0}", ClientGetCount());
         try
         {
           List<RtspStream> streams = new List<RtspStream>(_streams.Values);
@@ -488,7 +485,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
           return;
         }
         this.LogDebug("RTSP: disconnect stream client, session ID = {0}", sessionId);
-        StreamRemoveClient(sessionId);
+        ClientRemove(sessionId);
       }
     }
 

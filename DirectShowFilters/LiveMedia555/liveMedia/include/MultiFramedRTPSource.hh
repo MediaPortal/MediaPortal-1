@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // RTP source for a common kind of payload format: Those which pack multiple,
 // complete codec frames (as many as possible) into each RTP packet.
 // C++ header
@@ -65,9 +65,10 @@ private:
   void doGetNextFrame1();
 
   static void networkReadHandler(MultiFramedRTPSource* source, int /*mask*/);
-  friend void networkReadHandler(MultiFramedRTPSource*, int);
+  void networkReadHandler1();
 
   Boolean fAreDoingNetworkReads;
+  BufferedPacket* fPacketReadInProgress;
   Boolean fNeedDelivery;
   Boolean fPacketLossInFragmentedFrame;
   unsigned char* fSavedTo;
@@ -90,7 +91,7 @@ public:
   Boolean hasUsableData() const { return fTail > fHead; }
   unsigned useCount() const { return fUseCount; }
 
-  Boolean fillInData(RTPInterface& rtpInterface);
+  Boolean fillInData(RTPInterface& rtpInterface, struct sockaddr_in& fromAddress, Boolean& packetReadWasIncomplete);
   void assignMiscParams(unsigned short rtpSeqNo, unsigned rtpTimestamp,
 			struct timeval presentationTime,
 			Boolean hasBeenSyncedUsingRTCP,
@@ -113,6 +114,7 @@ public:
   unsigned dataSize() const { return fTail-fHead; }
   Boolean rtpMarkerBit() const { return fRTPMarkerBit; }
   Boolean& isFirstPacket() { return fIsFirstPacket; }
+  unsigned bytesAvailable() const { return fPacketSize - fTail; }
 
 protected:
   virtual void reset();

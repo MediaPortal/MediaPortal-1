@@ -191,6 +191,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         if (log)
         {
           this.LogDebug("  client...");
+          this.LogDebug("    session ID      = {0}", client.ClientSessionId);
           this.LogDebug("    IP address      = {0}", client.ClientIpAddress);
           this.LogDebug("    active?         = {0}", client.IsClientActive);
           this.LogDebug("    connection time = {0}", client.ClientConnectionDateTime);

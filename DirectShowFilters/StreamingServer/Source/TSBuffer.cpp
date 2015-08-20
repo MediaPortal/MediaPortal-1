@@ -23,18 +23,13 @@
 *  nate can be reached on the forums at
 *    http://forums.dvbowners.com/
 */
-
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <streams.h>
 #include "TSBuffer.h"
-#include <crtdbg.h>
-#include <math.h>
-#include "global.h"
 #include "entercriticalsection.h"
+
 
 #define TV_BUFFER_ITEM_SIZE	32336
 #define RADIO_BUFFER_ITEM_SIZE	1880
+
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
@@ -173,7 +168,7 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 
 
 	//	Success! Copy all bytes to data items
-	for(int i = 0; i < dataItemsRequired; i++)
+	for(UINT i = 0; i < dataItemsRequired; i++)
 	{
 		BYTE* newDataItem = new BYTE[m_lTSBufferItemSize];
 		memcpy(newDataItem, readBuffer + (i * m_lTSBufferItemSize), m_lTSBufferItemSize);

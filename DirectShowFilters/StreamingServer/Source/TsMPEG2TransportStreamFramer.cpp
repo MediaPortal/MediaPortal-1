@@ -21,7 +21,10 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "TsMPEG2TransportStreamFramer.h"
-#include <GroupsockHelper.hh> // for "gettimeofday()"
+
+#ifndef _GROUPSOCK_HELPER_HH
+#include <GroupsockHelper.hh>   // gettimeofday()
+#endif
 
 #define TRANSPORT_PACKET_SIZE 188
 #define NEW_DURATION_WEIGHT 0.5
@@ -139,9 +142,12 @@ struct timeval presentationTime) {
   else if (dataGoingToBeLost>0)// there is a problem in the buffer somewhere
   {
     unsigned badPacket;
-    for (int badPacket=0;badPacket<numTSPackets;badPacket++)
+    for (badPacket = 0; badPacket < numTSPackets; badPacket++)
     {
-      if (fTo[badPacket*TRANSPORT_PACKET_SIZE]!=TRANSPORT_SYNC_BYTE && badPacket*TRANSPORT_PACKET_SIZE<frameSize) break;
+      if (fTo[badPacket * TRANSPORT_PACKET_SIZE] != TRANSPORT_SYNC_BYTE && badPacket * TRANSPORT_PACKET_SIZE < frameSize)
+      {
+        break;
+      }
     }
     //we know it's the previous one...
     if (badPacket!=0)

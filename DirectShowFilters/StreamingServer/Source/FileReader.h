@@ -24,8 +24,9 @@
 *    http://forums.dvbowners.com/
 */
 
-#ifndef FILEREADER
-#define FILEREADER
+#pragma once
+#include <WinError.h>   // HRESULT
+#include <Windows.h>    // LPOLESTR, LPCOLESTR
 
 class FileReader
 {
@@ -79,5 +80,3 @@ protected:
 
 	BOOL     m_bDebugOutput;
 };
-
-#endif

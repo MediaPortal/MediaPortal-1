@@ -13,7 +13,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // Basic Hash Table implementation
 // Implementation
 
@@ -95,7 +95,7 @@ unsigned BasicHashTable::numEntries() const {
   return fNumEntries;
 }
 
-BasicHashTable::Iterator::Iterator(BasicHashTable& table)
+BasicHashTable::Iterator::Iterator(BasicHashTable const& table)
   : fTable(table), fNextIndex(0), fNextEntry(NULL) {
 }
 
@@ -119,9 +119,9 @@ HashTable* HashTable::create(int keyType) {
   return new BasicHashTable(keyType);
 }
 
-HashTable::Iterator* HashTable::Iterator::create(HashTable& hashTable) {
+HashTable::Iterator* HashTable::Iterator::create(HashTable const& hashTable) {
   // "hashTable" is assumed to be a BasicHashTable
-  return new BasicHashTable::Iterator((BasicHashTable&)hashTable);
+  return new BasicHashTable::Iterator((BasicHashTable const&)hashTable);
 }
 
 ////////// Implementation of internal member functions //////////
@@ -263,10 +263,10 @@ unsigned BasicHashTable::hashIndexFromKey(char const* key) const {
     }
     result &= fMask;
   } else if (fKeyType == ONE_WORD_HASH_KEYS) {
-    result = randomIndex((unsigned long)key);
+    result = randomIndex((uintptr_t)key);
   } else {
     unsigned* k = (unsigned*)key;
-    unsigned long sum = 0;
+    uintptr_t sum = 0;
     for (int i = 0; i < fKeyType; ++i) {
       sum += k[i];
     }
@@ -275,4 +275,3 @@ unsigned BasicHashTable::hashIndexFromKey(char const* key) const {
 
   return result;
 }
-

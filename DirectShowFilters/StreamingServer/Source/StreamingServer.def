@@ -6,6 +6,6 @@ ServerShutdown			@2
 StreamAdd				@3
 StreamRun				@4
 StreamRemove			@5
-StreamGetClientCount	@6
-StreamGetClientDetail	@7
-StreamRemoveClient		@8
+ClientGetCount			@6
+ClientGetDetail			@7
+ClientRemove			@8

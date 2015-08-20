@@ -1,9 +1,9 @@
 #pragma once
 #include "..\..\shared\packetSync.h"
 #include "FileReader.h"
-#include "..\..\shared\tsheader.h"
 #include "TsDuration.h"
 #include "..\..\shared\Pcr.h"
+#include <streams.h>  // CRefTime
 
 class CTsFileSeek: public CPacketSync
 {

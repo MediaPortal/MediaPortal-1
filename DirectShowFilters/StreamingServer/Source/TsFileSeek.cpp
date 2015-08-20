@@ -18,15 +18,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-//#include <afx.h>
-//#include <afxwin.h>
-
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <streams.h>
-#include <math.h>
 #include "TsFileSeek.h"
 #include "..\..\shared\adaptionfield.h"
+#include <math.h>   // fabs()
 
 const float SEEKING_ACCURACY = (float)0.08; // 1/25 *2 (2 frames in PAL)
 const int MAX_SEEKING_ITERATIONS = 50;

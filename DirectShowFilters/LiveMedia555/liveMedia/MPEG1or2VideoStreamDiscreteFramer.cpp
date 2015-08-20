@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // A simplified version of "MPEG1or2VideoStreamFramer" that takes only
 // complete, discrete frames (rather than an arbitrary byte stream) as input.
 // This avoids the parsing and data copying overhead of the full
@@ -27,18 +27,20 @@ MPEG1or2VideoStreamDiscreteFramer*
 MPEG1or2VideoStreamDiscreteFramer::createNew(UsageEnvironment& env,
                                              FramedSource* inputSource,
                                              Boolean iFramesOnly,
-                                             double vshPeriod) {
+                                             double vshPeriod,
+					     Boolean leavePresentationTimesUnmodified) {
   // Need to add source type checking here???  #####
   return new MPEG1or2VideoStreamDiscreteFramer(env, inputSource,
-                                               iFramesOnly, vshPeriod);
+                                               iFramesOnly, vshPeriod, leavePresentationTimesUnmodified);
 }
 
 MPEG1or2VideoStreamDiscreteFramer
 ::MPEG1or2VideoStreamDiscreteFramer(UsageEnvironment& env,
                                     FramedSource* inputSource,
-                                    Boolean iFramesOnly, double vshPeriod)
+                                    Boolean iFramesOnly, double vshPeriod, Boolean leavePresentationTimesUnmodified)
   : MPEG1or2VideoStreamFramer(env, inputSource, iFramesOnly, vshPeriod,
                               False/*don't create a parser*/),
+    fLeavePresentationTimesUnmodified(leavePresentationTimesUnmodified),
     fLastNonBFrameTemporal_reference(0),
     fSavedVSHSize(0), fSavedVSHTimestamp(0.0),
     fIFramesOnly(iFramesOnly), fVSHPeriod(vshPeriod) {
@@ -159,7 +161,7 @@ void MPEG1or2VideoStreamDiscreteFramer
       }
 
       // If this is a "B" frame, then we have to tweak "presentationTime":
-      if (picture_coding_type == 3/*B*/
+      if (!fLeavePresentationTimesUnmodified && picture_coding_type == 3/*B*/
 	  && (fLastNonBFramePresentationTime.tv_usec > 0 ||
 	      fLastNonBFramePresentationTime.tv_sec > 0)) {
 	int trIncrement
