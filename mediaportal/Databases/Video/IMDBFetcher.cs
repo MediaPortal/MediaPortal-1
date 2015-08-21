@@ -317,57 +317,61 @@ namespace MediaPortal.Video.Database
             // No local or scraper thumb
             if (_movieDetails.ThumbURL == string.Empty)
             {
-              // **Progress bar message cover search IMPAw start
-              line1 = GUILocalizeStrings.Get(928) + ": IMP Awards";
+              // **Progress bar message cover search TMDB start
+              line1 = GUILocalizeStrings.Get(928) + ": TMDB";
               OnProgress(line1, _url.Title, string.Empty, 20);
+              TMDBCoverSearch tmdbSearch = new TMDBCoverSearch();
+              line1 = GUILocalizeStrings.Get(928) + ": TMDB"; // **Progress bar message for TMDB start
+              OnProgress(line1, _url.Title, string.Empty, 20);
+              tmdbSearch.SearchCovers(_movieDetails.Title, _movieDetails.IMDBNumber);
 
-              // Added IMDBNumber parameter for movie cover check
-              // This number is checked on HTML cover source page, if it's equal then this is the cover for our movie
-
-              // IMPAwards
-              IMPAwardsSearch impSearch = new IMPAwardsSearch();
-              impSearch.SearchCovers(_movieDetails.Title, _movieDetails.IMDBNumber);
-
-              if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
+              if ((tmdbSearch.Count > 0) && (tmdbSearch[0] != string.Empty))
               {
-                _movieDetails.ThumbURL = impSearch[0];
-
-                // **Progress bar message for IMPAw end
+                _movieDetails.ThumbURL = tmdbSearch[0];
+                // **Progress bar message for TMDB end
                 OnProgress(line1, _url.Title, string.Empty, 40);
               }
 
-              // If no IMPAwards lets try TMDB 
-              TMDBCoverSearch tmdbSearch = new TMDBCoverSearch();
-
-              if (impSearch.Count == 0)
+              if (tmdbSearch.Count == 0)
               {
-                line1 = GUILocalizeStrings.Get(928) + ": TMDB"; // **Progress bar message for TMDB start
+                // IMPAwards
+                IMPAwardsSearch impSearch = new IMPAwardsSearch();
+                line1 = GUILocalizeStrings.Get(928) + ": IMPAwards"; // **Progress bar message for IMPAwards start
                 OnProgress(line1, _url.Title, string.Empty, 20);
 
-                tmdbSearch.SearchCovers(_movieDetails.Title, _movieDetails.IMDBNumber);
-
-                if ((tmdbSearch.Count > 0) && (tmdbSearch[0] != string.Empty))
+                if (_movieDetails.Year > 1900)
                 {
-                  _movieDetails.ThumbURL = tmdbSearch[0];
-                  // **Progress bar message for TMDB end
+                  impSearch.SearchCovers(_movieDetails.Title + " " + _movieDetails.Year, _movieDetails.IMDBNumber);
+                }
+                else
+                {
+                  impSearch.SearchCovers(_movieDetails.Title, _movieDetails.IMDBNumber);
+                }
+
+                if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
+                {
+                  _movieDetails.ThumbURL = impSearch[0];
+
+                  // **Progress bar message for IMPAw end
                   OnProgress(line1, _url.Title, string.Empty, 40);
                 }
-              }
-              // All fail, last try IMDB
-              if (impSearch.Count == 0 && tmdbSearch.Count == 0)
-              {
-                // **Progress bar message for IMDB start
-                line1 = GUILocalizeStrings.Get(928) + ": IMDB";
-                OnProgress(line1, _url.Title, string.Empty, 20);
-
-                IMDBSearch imdbSearch = new IMDBSearch();
-                imdbSearch.SearchCovers(_movieDetails.IMDBNumber, true);
-
-                if ((imdbSearch.Count > 0) && (imdbSearch[0] != string.Empty))
+                
+                // All fail, last try IMDB
+                if (impSearch.Count == 0 && tmdbSearch.Count == 0)
                 {
-                  _movieDetails.ThumbURL = imdbSearch[0];
-                  // **Progress bar message for IMDB end
-                  OnProgress(line1, _url.Title, string.Empty, 40);
+                  // **Progress bar message for IMDB start
+                  line1 = GUILocalizeStrings.Get(928) + ": IMDB";
+                  OnProgress(line1, _url.Title, string.Empty, 20);
+
+                  IMDBSearch imdbSearch = new IMDBSearch();
+                  imdbSearch.SearchCovers(_movieDetails.IMDBNumber, true);
+
+                  if ((imdbSearch.Count > 0) && (imdbSearch[0] != string.Empty))
+                  {
+                    _movieDetails.ThumbURL = imdbSearch[0];
+                    // **Progress bar message for IMDB end
+                    OnProgress(line1, _url.Title, string.Empty, 40);
+                  }
                 }
               }
             }
@@ -456,7 +460,9 @@ namespace MediaPortal.Video.Database
           {
             line1 = GUILocalizeStrings.Get(344); // **Progress bar actors start sets actual value to 0
             OnProgress(line1, _url.Title, string.Empty, 60);
-            FetchActorsInMovie();
+            // Do not save movieinfo to database when fetching actors (false paramater) beacuse we don't have all
+            // movie metadata yet
+            FetchActorsInMovie(false);
           }
 
           #endregion
@@ -602,7 +608,7 @@ namespace MediaPortal.Video.Database
     {
       try
       {
-        FetchActorsInMovie();
+        FetchActorsInMovie(true);
       }
       catch (ThreadAbortException) { }
       finally
@@ -619,7 +625,7 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    private void FetchActorsInMovie()
+    private void FetchActorsInMovie(bool updateMovieInfo)
     {
       ArrayList actors = new ArrayList();
       
@@ -632,8 +638,8 @@ namespace MediaPortal.Video.Database
       if (VideoDatabase.CheckMovieImdbId(_movieDetails.IMDBNumber))
       {
         // Returns nm1234567 as actor name (IMDB actorID)
-        IMDBSearch imdbActors = new IMDBSearch();
-        imdbActors.SearchActors(_movieDetails.IMDBNumber, ref actors);
+        IMDB imdbActors = new IMDB();
+        imdbActors.GetIMDBMovieActorsList(_movieDetails.IMDBNumber, ref actors);
       }
       else
       {
@@ -681,7 +687,11 @@ namespace MediaPortal.Video.Database
           {
             _movieDetails.DirectorID = actorId;
             _movieDetails.Director = actorName;
-            VideoDatabase.SetMovieInfoById(_movieDetails.ID, ref _movieDetails);
+
+            if (updateMovieInfo)
+            {
+              VideoDatabase.SetMovieInfoById(_movieDetails.ID, ref _movieDetails);
+            }
           }
         }
       }

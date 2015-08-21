@@ -24,6 +24,7 @@
 #include "TypeAttribute.h"
 #include "GroupIdAttribute.h"
 #include "NameAttribute.h"
+#include "ErrorCodes.h"
 
 CMediaTag::CMediaTag(HRESULT *result)
   : CTag(result)
@@ -59,37 +60,35 @@ bool CMediaTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *n
   return false;
 }
 
-bool CMediaTag::ParseTag(unsigned int version)
+HRESULT CMediaTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
+  HRESULT result = __super::ParseTag(version);
+  CHECK_CONDITION_HRESULT(result, (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07), result, E_M3U8_NOT_SUPPORTED_TAG);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     // successful parsing of tag
     // compare it to our tag
-    result &= (wcscmp(this->tag, TAG_MEDIA) == 0);
+    CHECK_CONDITION_HRESULT(result, wcscmp(this->tag, TAG_MEDIA) == 0, result, E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE);
+    CHECK_POINTER_HRESULT(result, this->tagContent, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG;)
 
-    if (result)
+    CHECK_CONDITION_HRESULT(result, this->ParseAttributes(version), result, E_M3U8_INCOMPLETE_PLAYLIST_TAG;)
+
+    if (SUCCEEDED(result))
     {
-      result &= this->ParseAttributes(version);
-
-      if (result)
+      if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07))
       {
-        if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07))
-        {
-          // TYPE attribute is mandatory
-          CTypeAttribute *type = dynamic_cast<CTypeAttribute *>(this->GetAttributes()->GetAttribute(TYPE_ATTRIBUTE_NAME, true));
-          result &= (type != NULL);
+        // TYPE attribute is mandatory
+        CTypeAttribute *type = dynamic_cast<CTypeAttribute *>(this->GetAttributes()->GetAttribute(TYPE_ATTRIBUTE_NAME, true));
+        CHECK_POINTER_HRESULT(result, type, result, E_M3U8_MISSING_REQUIRED_ATTRIBUTE);
 
-          // GROUP-ID attribute is mandatory
-          CGroupIdAttribute *groupId = dynamic_cast<CGroupIdAttribute *>(this->GetAttributes()->GetAttribute(GROUP_ID_ATTRIBUTE_NAME, true));
-          result &= (groupId != NULL);
+        // GROUP-ID attribute is mandatory
+        CGroupIdAttribute *groupId = dynamic_cast<CGroupIdAttribute *>(this->GetAttributes()->GetAttribute(GROUP_ID_ATTRIBUTE_NAME, true));
+        CHECK_POINTER_HRESULT(result, groupId, result, E_M3U8_MISSING_REQUIRED_ATTRIBUTE);
 
-          // NAME attribute is mandatory
-          CNameAttribute *name = dynamic_cast<CNameAttribute *>(this->GetAttributes()->GetAttribute(NAME_ATTRIBUTE_NAME, true));
-          result &= (name != NULL);
-        }
+        // NAME attribute is mandatory
+        CNameAttribute *name = dynamic_cast<CNameAttribute *>(this->GetAttributes()->GetAttribute(NAME_ATTRIBUTE_NAME, true));
+        CHECK_POINTER_HRESULT(result, name, result, E_M3U8_MISSING_REQUIRED_ATTRIBUTE);
       }
     }
   }

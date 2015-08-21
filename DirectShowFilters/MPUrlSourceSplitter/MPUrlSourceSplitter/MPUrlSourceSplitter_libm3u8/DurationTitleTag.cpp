@@ -24,6 +24,7 @@
 #include "ItemCollection.h"
 #include "PlaylistItemCollection.h"
 #include "PlaylistItem.h"
+#include "ErrorCodes.h"
 
 CDurationTitleTag::CDurationTitleTag(HRESULT *result)
   : CTag(result)
@@ -109,37 +110,38 @@ void CDurationTitleTag::Clear(void)
   FREE_MEM(this->title);
 }
 
-bool CDurationTitleTag::ParseTag(unsigned int version)
+HRESULT CDurationTitleTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02));
+  HRESULT result = __super::ParseTag(version);
+  CHECK_CONDITION_HRESULT(result, (version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02), result, E_M3U8_NOT_SUPPORTED_TAG);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     // successful parsing of tag
     // compare it to our tag
-    result &= (wcscmp(this->tag, TAG_DURATION_TITLE) == 0);
+    CHECK_CONDITION_HRESULT(result, wcscmp(this->tag, TAG_DURATION_TITLE) == 0, result, E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE);
+    CHECK_POINTER_HRESULT(result, this->tagContent, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
 
-    if (result)
+    if (SUCCEEDED(result))
     {
       unsigned int tagContentSize = wcslen(this->tagContent);
 
       // duration is required, must be present
+      // DURATION_TITLE_SEPARATOR is sometimes missing, assume that all tag content is duration
       int index = IndexOf(this->tagContent, tagContentSize, DURATION_TITLE_SEPARATOR, DURATION_TITLE_SEPARATOR_LENGTH);
-      result &= (index != (-1));
 
-      if (result)
+      if (SUCCEEDED(result))
       {
-        wchar_t *durationValue = Substring(this->tagContent, 0, (unsigned int)index);
-        result &= (durationValue != NULL);
+        wchar_t *durationValue = Substring(this->tagContent, 0, (index >= 0) ? (unsigned int)index : tagContentSize);
+        CHECK_POINTER_HRESULT(result, durationValue, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
 
-        if (result)
+        if (SUCCEEDED(result))
         {
           this->duration = CAttribute::GetDecimalInteger(durationValue);
-          result &= (this->duration != DECIMAL_INTEGER_NOT_SPECIFIED);
+          CHECK_CONDITION_HRESULT(result, this->duration != DECIMAL_INTEGER_NOT_SPECIFIED, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
         }
 
-        if (result)
+        if (SUCCEEDED(result))
         {
           this->duration *= 1000;
         }
@@ -147,11 +149,11 @@ bool CDurationTitleTag::ParseTag(unsigned int version)
         FREE_MEM(durationValue);
       }
 
-      if (result)
+      if (SUCCEEDED(result))
       {
         // title is optional
-        this->title = (tagContentSize == ((unsigned int)index + DURATION_TITLE_SEPARATOR_LENGTH)) ? Duplicate(L"") : Substring(this->tagContent, (unsigned int)index + DURATION_TITLE_SEPARATOR_LENGTH, tagContentSize - (unsigned int)index - DURATION_TITLE_SEPARATOR_LENGTH);
-        result &= (this->title != NULL);
+        this->title = (index == (-1)) ? Duplicate(L"") : (tagContentSize == ((unsigned int)index + DURATION_TITLE_SEPARATOR_LENGTH)) ? Duplicate(L"") : Substring(this->tagContent, (unsigned int)index + DURATION_TITLE_SEPARATOR_LENGTH, tagContentSize - (unsigned int)index - DURATION_TITLE_SEPARATOR_LENGTH);
+        CHECK_POINTER_HRESULT(result, this->title, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
       }
     }
   }

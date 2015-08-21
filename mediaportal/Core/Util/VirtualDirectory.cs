@@ -77,23 +77,21 @@ namespace MediaPortal.Util
           string sharePort = String.Format("shareport{0}", i);
           string remoteFolder = String.Format("shareremotepath{0}", i);
           string shareViewPath = String.Format("shareview{0}", i);
-
+          string sharewakeonlan = String.Format("sharewakeonlan{0}", i);
+          string sharedonotfolderjpgifpin = String.Format("sharedonotfolderjpgifpin{0}", i);
           Share share = new Share();
           share.Name = xmlreader.GetValueAsString(section, strShareName, string.Empty);
           share.Path = xmlreader.GetValueAsString(section, strSharePath, string.Empty);
-          string pinCode = Utils.DecryptPin(xmlreader.GetValueAsString(section, strPincode, string.Empty));
-          if (pinCode != string.Empty)
-            share.Pincode = Convert.ToInt32(pinCode);
-          else
-            share.Pincode = -1;
-
+          share.Pincode = Utils.DecryptPassword(xmlreader.GetValueAsString(section, strPincode, string.Empty));
           share.IsFtpShare = xmlreader.GetValueAsBool(section, shareType, false);
           share.FtpServer = xmlreader.GetValueAsString(section, shareServer, string.Empty);
           share.FtpLoginName = xmlreader.GetValueAsString(section, shareLogin, string.Empty);
-          share.FtpPassword = xmlreader.GetValueAsString(section, sharePwd, string.Empty);
+          share.FtpPassword = Utils.DecryptPassword(xmlreader.GetValueAsString(section, sharePwd, string.Empty));
           share.FtpPort = xmlreader.GetValueAsInt(section, sharePort, 21);
           share.FtpFolder = xmlreader.GetValueAsString(section, remoteFolder, "/");
           share.DefaultLayout = (Layout)xmlreader.GetValueAsInt(section, shareViewPath, (int)Layout.List);
+          share.ShareWakeOnLan = xmlreader.GetValueAsBool(section, sharewakeonlan, false);
+          share.DonotFolderJpgIfPin = xmlreader.GetValueAsBool(section, sharedonotfolderjpgifpin, true);
 
           if (share.Name.Length > 0)
           {
@@ -108,6 +106,42 @@ namespace MediaPortal.Util
             Add(share);
           }
           else break;
+        }
+
+        List<string> usbHdd = Utils.GetAvailableUsbHardDisks();
+
+        if (usbHdd.Count > 0)
+        {
+          foreach (string drive in usbHdd)
+          {
+            bool driveFound = false;
+            string driveName = Utils.GetDriveName(drive);
+
+            if (driveName.Length == 0)
+            {
+              driveName = String.Format("({0}:) Removable", drive.Substring(0, 1).ToUpper());
+            }
+            else
+            {
+              driveName = String.Format("({0}:) {1}", drive.Substring(0, 1).ToUpper(), driveName);
+            }
+
+            foreach (var share in m_shares)
+            {
+              if (share.Path.StartsWith(drive))
+              {
+                driveFound = true;
+                break;
+              }
+            }
+
+            if (driveFound == false)
+            {
+              Share removableShare = new Share(driveName, drive);
+              removableShare.RuntimeAdded = true;
+              Add(removableShare);
+            }
+          }
         }
       }
     }
@@ -156,7 +190,8 @@ namespace MediaPortal.Util
 
     public bool RequestPin(string folder)
     {
-      int iPincodeCorrect;
+      string iPincodeCorrect;
+
       if (IsProtectedShare(folder, out iPincodeCorrect))
       {
         bool retry = true;
@@ -166,15 +201,10 @@ namespace MediaPortal.Util
             //no, then ask user to enter the pincode
             GUIMessage msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
             GUIWindowManager.SendMessage(msgGetPassword);
-            int iPincode = -1;
-            try
+
+            if (msgGetPassword.Label != iPincodeCorrect)
             {
-              iPincode = Int32.Parse(msgGetPassword.Label);
-            }
-            catch (Exception) {}
-            if (iPincode != iPincodeCorrect)
-            {
-              GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0,
+              var msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0,
                                                            0);
               GUIWindowManager.SendMessage(msgWrongPassword);
 
@@ -184,7 +214,9 @@ namespace MediaPortal.Util
               }
             }
             else
+            {
               retry = false;
+            }
           }
         }
       }
@@ -236,7 +268,7 @@ namespace MediaPortal.Util
       bool driveFound = false;
       foreach (Share share in m_shares)
       {
-        if (share.Path == path)
+        if (share.Path.StartsWith(path))
         {
           driveFound = true;
           break;
@@ -416,18 +448,22 @@ namespace MediaPortal.Util
     /// This method checks if the specified folder is protected by a pincode
     /// </summary>
     /// <param name="strDir">folder to check</param>
-    /// <param name="iPincode">on return: pincode to use or -1 when no pincode is needed</param>
+    /// <param name="iPincode">on return: pincode to use or string.Empty when no pincode is needed</param>
     /// <returns>
     /// true : folder is protected by a pincode
     /// false: folder is not protected
     /// </returns>
-    public bool IsProtectedShare(string strDir, out int iPincode)
+    public bool IsProtectedShare(string strDir, out string iPincode)
     {
-      iPincode = -1;
+      iPincode = string.Empty;
       Share share = GetShare(strDir);
-      if (share == null) return false;
+
+      if (share == null) 
+        return false;
+
       iPincode = share.Pincode;
-      if (share.Pincode >= 0)
+
+      if (share.Pincode != string.Empty)
       {
         if (share.IsFtpShare)
         {
@@ -573,6 +609,14 @@ namespace MediaPortal.Util
       if (folder == null) return false;
       if (folder.IndexOf("remote:") == 0) return true;
       return false;
+    }
+
+    public bool IsWakeOnLanEnabled(Share shareName)
+    {
+      if (shareName == null) 
+        return false;
+      
+      return shareName.ShareWakeOnLan;
     }
 
     public string GetShareRemoteURL(Share shareName)
@@ -916,7 +960,7 @@ namespace MediaPortal.Util
       }
 
       //is this directory protected
-      int iPincodeCorrect;
+      string iPincodeCorrect;
       if (IsProtectedShare(strDir, out iPincodeCorrect))
       {
         #region Pin protected
@@ -928,13 +972,8 @@ namespace MediaPortal.Util
             //no, then ask user to enter the pincode
             GUIMessage msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
             GUIWindowManager.SendMessage(msgGetPassword);
-            int iPincode = -1;
-            try
-            {
-              iPincode = Int32.Parse(msgGetPassword.Label);
-            }
-            catch (Exception) {}
-            if (iPincode != iPincodeCorrect)
+
+            if (msgGetPassword.Label != iPincodeCorrect)
             {
               GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0,
                                                            0);
@@ -1078,7 +1117,7 @@ namespace MediaPortal.Util
               item.IsRemote = true;
               item.FileInfo = null;
               Utils.SetDefaultIcons(item);
-              int pin;
+              string pin;
               if (!IsProtectedShare(item.Path, out pin))
               {
                 Utils.SetThumbnails(ref item);
@@ -1291,7 +1330,7 @@ namespace MediaPortal.Util
               item.IsRemote = true;
               item.FileInfo = null;
               Utils.SetDefaultIcons(item);
-              int pin;
+              string pin;
               if (!IsProtectedShare(item.Path, out pin))
               {
                 Utils.SetThumbnails(ref item);
@@ -1436,7 +1475,18 @@ namespace MediaPortal.Util
           item.IsRemote = true;
         }
         Utils.SetDefaultIcons(item);
-        if (share.Pincode < 0)// && !Utils.IsNetwork(share.Path))
+
+        bool pathOnline = Util.Utils.CheckServerStatus(item.Path);
+
+        if (Util.Utils.IsUNCNetwork(item.Path) && !pathOnline && Util.Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile("\\Media\\defaultNetworkOffline.png")))
+        {
+          item.IconImage = "defaultNetworkOffline.png";
+          item.IconImageBig = "defaultNetworkBigOffline.png";
+          item.ThumbnailImage = "defaultNetworkBigOffline.png";
+          Log.Debug("GetRootExt(): Path = {0}, IconImage = {1}", item.Path, item.IconImage);
+        }
+
+        if ((share.Pincode == string.Empty || !share.DonotFolderJpgIfPin) && pathOnline)
         {
           string coverArt = Utils.GetCoverArtName(item.Path, "folder");
           string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
@@ -1458,6 +1508,7 @@ namespace MediaPortal.Util
             item.ThumbnailImage = coverArt;
           }
         }
+
         items.Add(item);
       }
 
@@ -1471,13 +1522,12 @@ namespace MediaPortal.Util
           string driveName = Utils.GetDriveName(drive);
           string driveLetter = drive.Substring(0, 1).ToUpperInvariant() + ":";
           if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
-
           //
           // Check if the share already exists
           //
           foreach (Share share in m_shares)
           {
-            if (share.Path == driveLetter)
+            if (share.Path.StartsWith(driveLetter))
             {
               driveFound = true;
               break;
@@ -1579,7 +1629,7 @@ namespace MediaPortal.Util
 
               Utils.SetDefaultIcons(item);
 
-              int pin;
+              string pin;
               if (!IsProtectedShare(item.Path, out pin))
               {
                 Utils.SetThumbnails(ref item);
@@ -2069,7 +2119,7 @@ namespace MediaPortal.Util
           if (driveType == (int)DriveType.CDRom)
           {
             string driveName = String.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpperInvariant());
-            Share share = new Share(driveName, drive, -1);
+            Share share = new Share(driveName, drive, string.Empty);
             sharesMusic.Add(share);
             sharesPhotos.Add(share);
             sharesVideos.Add(share);
@@ -2081,21 +2131,21 @@ namespace MediaPortal.Util
       string MusicProfilePath = Win32API.GetFolderPath(Win32API.CSIDL_MYMUSIC);
       if (addMusic)
       {
-        Share MusicShare = new Share(GetShareNameDefault(MusicProfilePath), MusicProfilePath, -1);
+        Share MusicShare = new Share(GetShareNameDefault(MusicProfilePath), MusicProfilePath, string.Empty);
         sharesMusic.Add(MusicShare);
       }
 
       string PicturesProfilePath = Win32API.GetFolderPath(Win32API.CSIDL_MYPICTURES);
       if (addPictures)
       {
-        Share PicShare = new Share(GetShareNameDefault(PicturesProfilePath), PicturesProfilePath, -1);
+        Share PicShare = new Share(GetShareNameDefault(PicturesProfilePath), PicturesProfilePath, string.Empty);
         sharesPhotos.Add(PicShare);
       }
 
       string VideoProfilePath = Win32API.GetFolderPath(Win32API.CSIDL_MYVIDEO);
       if (addVideos)
       {
-        Share VidShare = new Share(GetShareNameDefault(VideoProfilePath), VideoProfilePath, -1);
+        Share VidShare = new Share(GetShareNameDefault(VideoProfilePath), VideoProfilePath, string.Empty);
         sharesVideos.Add(VidShare);
       }
 
@@ -2149,7 +2199,7 @@ namespace MediaPortal.Util
 
           string shareNameData = string.Empty;
           string sharePathData = string.Empty;
-          int sharePinData = -1;
+          string sharePinData = string.Empty;
 
           bool shareTypeData = false;
           string shareServerData = string.Empty;
@@ -2179,12 +2229,12 @@ namespace MediaPortal.Util
 
           xmlwriter.SetValue(mediaType, shareName, shareNameData);
           xmlwriter.SetValue(mediaType, sharePath, sharePathData);
-          xmlwriter.SetValue(mediaType, sharePin, sharePinData);
+          xmlwriter.SetValue(mediaType, sharePin, Util.Utils.EncryptPassword(sharePinData));
 
           xmlwriter.SetValueAsBool(mediaType, shareType, shareTypeData);
           xmlwriter.SetValue(mediaType, shareServer, shareServerData);
           xmlwriter.SetValue(mediaType, shareLogin, shareLoginData);
-          xmlwriter.SetValue(mediaType, sharePwd, sharePwdData);
+          xmlwriter.SetValue(mediaType, sharePwd, Util.Utils.EncryptPassword(sharePwdData));
           xmlwriter.SetValue(mediaType, sharePort, sharePortData.ToString());
           xmlwriter.SetValue(mediaType, shareRemotePath, shareRemotePathData);
         }

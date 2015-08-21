@@ -35,6 +35,7 @@ extern bool DisableCRCCheck();
 
 CAtscNitParser::CAtscNitParser(void)
 {
+  SetPid(0x1ffc);
   if (DisableCRCCheck())
   {
     EnableCrcCheck(false);
@@ -99,9 +100,7 @@ void CAtscNitParser::OnNewSection(CSection& sections)
   {
     return;
   }
-  // Here sections.section_length contains the full section size, not the
-  // section length field value.
-  if (sections.section_length < 11)
+  if (sections.section_length < 8)
   {
     LogDebug("AtscNitParser: invalid section size %d, expected at least 11 bytes", sections.section_length);
     return;
@@ -111,7 +110,7 @@ void CAtscNitParser::OnNewSection(CSection& sections)
   try
   {
     int sectionLength = ((section[1] & 0xf) << 8) + section[2];
-    if (sections.section_length != 3 + sectionLength) // 2 for section length bytes, 1 for table ID
+    if (sections.section_length != sectionLength)
     {
       LogDebug("AtscNitParser: invalid section length = %d, byte count = %d", sectionLength, sections.section_length);
       return;
@@ -123,7 +122,7 @@ void CAtscNitParser::OnNewSection(CSection& sections)
     int tableSubtype = (section[6] & 0x0f);
 
     int pointer = 7;
-    int endOfSection = sections.section_length - 4;
+    int endOfSection = sectionLength - 1;
 
     byte satelliteId = 0;
     if (tableSubtype == TRANSPONDER_DATA_STID)

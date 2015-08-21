@@ -34,6 +34,7 @@ using System.Xml;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
+using MediaPortal.Util;
 
 #endregion
 
@@ -54,6 +55,8 @@ namespace MediaPortal.Configuration.Sections
     /// The hostname from the settings
     /// </summary>
     private string _settingsHostname;
+
+    private static string _textBoxHostname;
 
     public int pluginVersion;
 
@@ -151,6 +154,11 @@ namespace MediaPortal.Configuration.Sections
     public static string Hostname
     {
       get { return _verifiedHostname; }
+    }
+
+    public static string TextBoxHostname
+    {
+      get { return _textBoxHostname; }
     }
 
     #endregion
@@ -703,6 +711,7 @@ namespace MediaPortal.Configuration.Sections
     {
       mpTextBoxHostname.BackColor = mpTextBoxMacAddress.BackColor;
       _verifiedHostname = string.Empty;
+      _textBoxHostname = mpTextBoxHostname.Text;
     }
 
     private void mpComboBoxHostname_DropDown(object sender, EventArgs e)

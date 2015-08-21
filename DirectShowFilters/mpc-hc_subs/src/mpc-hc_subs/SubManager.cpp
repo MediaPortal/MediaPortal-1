@@ -461,6 +461,14 @@ void CSubManager::InitInternalSubs(IBaseFilter* pBF, LCID lcidci)
 					{
 						TrackElement trackElement;
 						memset(&trackElement, 0, sizeof(trackElement));
+						int lcidciTrad = -1;
+						int LCIDSpaInt = 3082;
+						int LCIDSpaTrad = 1034;
+						// Try to compare LCID for spanish international (Modern Sort) and traditional (Traditional Sort)
+						if (lcidci == LCIDSpaInt)
+						{
+							lcidciTrad = LCIDSpaTrad;
+						}
 						pTrackInfo->GetTrackInfo(i, &trackElement);
 						if (trackElement.FlagForced) {
 							langForced = pszName;
@@ -468,7 +476,7 @@ void CSubManager::InitInternalSubs(IBaseFilter* pBF, LCID lcidci)
 							{
 								m_forcedSubIndex = m_intSubs.GetCount() - 1;
 							}
-							else if (lcid == lcidci && langForced.Find(L"Forced Subtitles (auto)") <= 0)
+							else if (((lcid == lcidci) || (lcid == lcidciTrad)) && langForced.Find(L"Forced Subtitles (auto)") <= 0)
 							{
 								m_forcedSubIndex = m_intSubs.GetCount() - 1;
 								ATLTRACE("subtitle track %d is forced", i);

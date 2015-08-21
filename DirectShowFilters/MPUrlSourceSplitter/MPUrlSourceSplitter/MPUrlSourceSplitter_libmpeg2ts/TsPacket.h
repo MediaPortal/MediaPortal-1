@@ -28,9 +28,10 @@
 
 #define TS_PACKET_FLAG_NONE                                           FLAGS_NONE
 
-#define TS_PACKET_FLAG_PARSED                                         (1 << (FLAGS_LAST + 0))
+#define TS_PACKET_FLAG_REFERENCE                                      (1 << (FLAGS_LAST + 0))
+#define TS_PACKET_FLAG_PARSED                                         (1 << (FLAGS_LAST + 1))
 
-#define TS_PACKET_FLAG_LAST                                           (FLAGS_LAST + 1)
+#define TS_PACKET_FLAG_LAST                                           (FLAGS_LAST + 2)
 
 #define TS_PACKET_FIND_RESULT_NOT_FOUND                               -1
 #define TS_PACKET_FIND_RESULT_NOT_ENOUGH_DATA_FOR_HEADER              -2
@@ -68,6 +69,7 @@ class CTsPacket : public CFlags
 {
 public:
   CTsPacket(HRESULT *result);
+  CTsPacket(HRESULT *result, bool reference);
   virtual ~CTsPacket(void);
 
   /* get methods */
@@ -163,6 +165,13 @@ public:
   // @return : true if parsed successfully, false otherwise
   virtual bool Parse(const unsigned char *buffer, uint32_t length);
 
+  // parses data in buffer
+  // @param buffer : buffer with MPEG2 TS data for parsing
+  // @param length : the length of data in buffer
+  // @param onlyHeader : only header of MPEG2 TS packet is parsed
+  // @return : true if parsed successfully, false otherwise
+  virtual bool Parse(const unsigned char *buffer, uint32_t length, bool onlyHeader);
+
   // deeply clones current instance
   // @return : deep clone of current instance or NULL if error
   virtual CTsPacket *Clone(void);
@@ -222,12 +231,13 @@ protected:
 
   /* methods */
 
-  // parses data in buffer
-  // @param buffer : buffer with MPEG2 TS data for parsing
-  // @param length : the length of data in buffer
-  // @param onlyHeader : only header of MPEG2 TS packet is parsed
-  // @return : true if parsed successfully, false otherwise
-  virtual bool Parse(const unsigned char *buffer, uint32_t length, bool onlyHeader);
+  // gets MPEG2 TS packet header
+  // @return : MPEG2 TS packet header
+  virtual uint32_t GetHeader(void);
+
+  // sets MPEG2 TS packet header
+  // @param header : MPEG2 TS packet header to set
+  virtual void SetHeader(uint32_t header);
 
   // gets new instance of MPEG2 TS packet
   // @return : new MPEG2 TS packet instance or NULL if error

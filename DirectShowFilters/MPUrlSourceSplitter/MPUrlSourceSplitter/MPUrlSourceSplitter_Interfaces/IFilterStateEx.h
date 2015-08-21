@@ -64,6 +64,17 @@ public:
   // @param compatible : reference to variable that holds result
   // @return : S_OK if successful
   virtual STDMETHODIMP IsStreamIptvCompatible(bool *compatible) = 0;
+
+  // gets IPTV section count
+  // @param count : reference to variable that holds section count
+  // @return : S_OK if successful
+  virtual STDMETHODIMP GetIptvSectionCount(unsigned int *count) = 0;
+
+  // gets IPTV section with specified index
+  // @param index : the index of IPTV section to get
+  // @param section : the reference to string which holds section data in BASE64 encoding
+  // @return : S_OK if successful
+  virtual STDMETHODIMP GetIptvSection(unsigned int index, wchar_t **section) = 0;
 };
 
 #endif

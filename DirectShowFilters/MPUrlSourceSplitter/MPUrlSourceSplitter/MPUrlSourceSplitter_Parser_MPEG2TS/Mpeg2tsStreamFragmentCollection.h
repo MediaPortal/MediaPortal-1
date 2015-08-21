@@ -65,10 +65,15 @@ public:
   // @return : S_OK if successful, error code otherwise
   HRESULT GetTransportStreamMapSectionDetectionFinishedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection);
 
-  // gets collection of indexed stream fragments which have program association sections and transport stream map sections updated
+  // gets collection of indexed stream fragments which are parsed for conditional access sections
   // @param collection : the collection to fill in indexed stream fragments
   // @return : S_OK if successful, error code otherwise
-  HRESULT GetBothSectionsUpdatedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection);
+  HRESULT GetConditionalAccessSectionDetectionFinishedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection);
+
+  // gets collection of indexed stream fragments which have all sections updated
+  // @param collection : the collection to fill in indexed stream fragments
+  // @return : S_OK if successful, error code otherwise
+  HRESULT GetAllSectionsUpdatedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection);
 
   /* set methods */
 
@@ -94,9 +99,13 @@ public:
   // @return : true if collection has such fragments, false otherwise
   bool HasTransportStreamMapSectionDetectionFinishedStreamFragments(void);
 
-  // tests if collection has some stream fragments, which have program association sections and transport stream map sections updated
+  // tests if collection has some stream fragments, which are partially processed
   // @return : true if collection has such fragments, false otherwise
-  bool HasBothSectionsUpdatedStreamFragments(void);
+  bool HasConditionalAccessSectionDetectionFinishedStreamFragments(void);
+
+    // tests if collection has some stream fragments, which have all sections updated
+  // @return : true if collection has such fragments, false otherwise
+  bool HasAllSectionsUpdatedStreamFragments(void);
 
   // recalculate aligned stream fragments start positions based on previous aligned stream fragments
   // @param startIndex : the index of first aligned stream fragment to recalculate start position
@@ -138,14 +147,16 @@ protected:
   // third index : item->IsDiscontinuityProcessed()
   // fourth index : item->IsProgramAssociationSectionDetectionFinished()
   // fifth index : item->IsTransportStreamMapSectionDetectionFinished()
-  // sixth index : item->IsProgramAssociationSectionUpdated() && item->IsTransportStreamMapSectionUpdated()
+  // sixth index: item->IsConditionalAccessSectionDetectionFinished()
+  // seventh index : item->IsProgramAssociationSectionUpdated() && item->IsTransportStreamMapSectionUpdated() && item->IsConditionalAccessSectionUpdated()
 
   CIndexCollection *indexReadyForAlign;
   CIndexCollection *indexAligned;
   CIndexCollection *indexDiscontinuityProcessed;
   CIndexCollection *indexProgramAssociationSectionDetectionFinished;
   CIndexCollection *indexTransportStreamMapSectionDetectionFinished;
-  CIndexCollection *indexBothSectionsUpdated;
+  CIndexCollection *indexConditionalAccessSectionDetectionFinished;
+  CIndexCollection *indexAllSectionsUpdated;
 
   /* methods */
 };

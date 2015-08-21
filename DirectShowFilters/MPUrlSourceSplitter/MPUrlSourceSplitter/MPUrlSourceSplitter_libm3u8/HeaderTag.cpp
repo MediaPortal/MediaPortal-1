@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "HeaderTag.h"
+#include "ErrorCodes.h"
 
 CHeaderTag::CHeaderTag(HRESULT *result)
   : CTag(result)
@@ -57,15 +58,15 @@ bool CHeaderTag::ApplyTagToPlaylistItems(unsigned int version, CItemCollection *
   return false;
 }
 
-bool CHeaderTag::ParseTag(unsigned int version)
+HRESULT CHeaderTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag(version);
+  HRESULT result = __super::ParseTag(version);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     // successful parsing of tag
     // compare it to our tag
-    result &= (wcscmp(this->tag, TAG_HEADER) == 0);
+    CHECK_CONDITION_HRESULT(result, wcscmp(this->tag, TAG_HEADER) == 0, result, E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE);
   }
 
   return result;

@@ -85,9 +85,7 @@ void CSvctParser::OnNewSection(CSection& sections)
   {
     return;
   }
-  // Here sections.section_length contains the full section size, not the
-  // section length field value.
-  if (sections.section_length < 11)
+  if (sections.section_length < 8)
   {
     LogDebug("SvctParser: invalid section size %d, expected at least 11 bytes", sections.section_length);
   }
@@ -96,7 +94,7 @@ void CSvctParser::OnNewSection(CSection& sections)
   try
   {
     int sectionLength = ((section[1] & 0x0f) << 8) + section[2];
-    if (sections.section_length != 3 + sectionLength) // 2 for section length bytes, 1 for table ID
+    if (sections.section_length != sectionLength)
     {
       LogDebug("SvctParser: invalid section length = %d, byte count = %d", sectionLength, sections.section_length);
       return;

@@ -15,6 +15,9 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
     public class Settings
     {
         #region Private field
+
+        private int streamAnalysisTimeout;
+
         #endregion
 
         #region Constructors
@@ -48,6 +51,9 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
             this.Rtmp = new RtmpProtocolSettings();
             this.Rtsp = new RtspProtocolSettings();
             this.UdpRtp = new UdpRtpProtocolSettings();
+
+            this.StreamAnalysis = Settings.DefaultStreamAnalysis;
+            this.StreamAnalysisTimeout = Settings.DefaultStreamAnalysisTimeout;
         }
 
         #endregion
@@ -73,6 +79,31 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
         /// Gets or sets UDP or RTP protocol settings.
         /// </summary>
         public UdpRtpProtocolSettings UdpRtp { get; set; }
+
+        /// <summary>
+        /// Specifies if stream analysis is allowed or not.
+        /// </summary>
+        public Boolean StreamAnalysis { get; set; }
+
+        /// <summary>
+        /// Gets or sets the stream analysis timeout in milliseconds.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <para>The <see cref="StreamAnalysisTimeout"/> is lower than zero.</para>
+        /// </exception>
+        public int StreamAnalysisTimeout
+        {
+            get { return this.streamAnalysisTimeout; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException("StreamAnalysisTimeout", value, "Cannot be less than zero.");
+                }
+
+                this.streamAnalysisTimeout = value;
+            }
+        }
 
         #endregion
 
@@ -115,6 +146,10 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
         public static readonly String ConfigurationFileName = "MediaPortalIptvFilterAndUrlSourceSplitter.xml";
 
         public static readonly Hashtable SupportedProtocols = null;
+
+        public static readonly Boolean DefaultStreamAnalysis = true;
+
+        public static readonly int DefaultStreamAnalysisTimeout = 10000;    // ms
 
         #endregion
     }

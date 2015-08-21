@@ -22,27 +22,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using Common.GUIPlugins;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Picture.Database;
-using MediaPortal.Playlists;
-using MediaPortal.Profile;
+using MediaPortal.Player;
 using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.Util;
-using MediaPortal.Player;
+using MediaPortal.Profile;
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
-using WindowPlugins;
 using ThreadPool = System.Threading.ThreadPool;
 
 namespace MediaPortal.GUI.Pictures
@@ -50,7 +48,7 @@ namespace MediaPortal.GUI.Pictures
   /// <summary>
   /// Displays pictures and offers methods for exif and rotation
   /// </summary>
-  [PluginIcons("WindowPlugins.GUIPictures.Pictures.gif", "WindowPlugins.GUIPictures.PicturesDisabled.gif")]
+  [PluginIcons("GUIPictures.Pictures.gif", "GUIPictures.PicturesDisabled.gif")]
   public class GUIPictures : WindowPluginBase, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
     #region ThumbCacher class
@@ -64,16 +62,22 @@ namespace MediaPortal.GUI.Pictures
       private bool _recreateWithoutCheck = false;
       private Work work;
 
-      public MissingThumbCacher(string Filepath, bool CreateLargeThumbs, bool ReCreateThumbs)
+      public MissingThumbCacher(string Filepath, bool CreateLargeThumbs, bool ReCreateThumbs, bool Thread)
       {
         _filepath = Filepath;
         _createLarge = CreateLargeThumbs;
         _recreateWithoutCheck = ReCreateThumbs;
-        //_hideFileExtensions = HideExtensions;
 
-        work = new Work(new DoWorkHandler(this.PerformRequest));
-        work.ThreadPriority = ThreadPriority.Lowest;
-        GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
+        if (Thread)
+        {
+          work = new Work(new DoWorkHandler(this.PerformRequest));
+          work.ThreadPriority = ThreadPriority.Lowest;
+          GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
+        }
+        else
+        {
+          PerformRequest();
+        }
       }
 
       /// <summary>
@@ -98,6 +102,17 @@ namespace MediaPortal.GUI.Pictures
 
           foreach (GUIListItem item in itemlist)
           {
+            if (ThumbnailsThreadAbort)
+            {
+              return;
+            }
+
+            while (g_Player.Playing || g_Player.Starting)
+            {
+              Thread.Sleep(5000);
+              Log.Debug("RefreshThumbnailsThread: g_Player is Playing, waiting for the end.");
+            }
+
             if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
             {
               return;
@@ -138,44 +153,41 @@ namespace MediaPortal.GUI.Pictures
                     {
                       Thread.Sleep(5);
 
-                      iRotate = Util.Picture.GetRotateByExif(item.Path);
-                      Log.Debug("Picture.GetRotateByExif = {0} for {1}", iRotate, item.Path);
-
-                      if (autocreateLargeThumbs && !File.Exists(thumbnailImageL))
+                      if (autocreateLargeThumbs && (!File.Exists(thumbnailImageL) || recreateThumbs))
                       {
-                        thumbRet = Util.Picture.CreateThumbnail(item.Path, thumbnailImageL,
+                        thumbRet = Util.Picture.ReCreateThumbnail(item.Path, thumbnailImageL,
                                                                 (int) Thumbs.ThumbLargeResolution,
                                                                 (int) Thumbs.ThumbLargeResolution, iRotate,
                                                                 Thumbs.SpeedThumbsLarge,
-                                                                true, false);
+                                                                true, false, recreateThumbs);
                       }
-                      if (!File.Exists(thumbnailImage))
+                      if (!File.Exists(thumbnailImage) || recreateThumbs)
                       {
-                        thumbRet = Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int) Thumbs.ThumbResolution,
+                        thumbRet = Util.Picture.ReCreateThumbnail(item.Path, thumbnailImage, (int) Thumbs.ThumbResolution,
                                                                 (int) Thumbs.ThumbResolution, iRotate,
                                                                 Thumbs.SpeedThumbsSmall,
-                                                                false, false);
+                                                                false, false, recreateThumbs);
                       }
                     }
 
-                    if (thumbRet && autocreateLargeThumbs)
+                    if (thumbRet && (autocreateLargeThumbs || recreateThumbs))
                     {
                       item.ThumbnailImage = thumbnailImageL;
                       item.IconImage = thumbnailImage;
-                      Log.Debug("GUIPictures: Creation of missing large thumb successful for {0}", item.Path);
+                      Log.Debug("GUIPictures: Creation of large thumb successful for {0}", item.Path);
                     }
-                    else if (thumbRet)
+                    else if (thumbRet || recreateThumbs)
                     {
                       item.ThumbnailImage = thumbnailImage;
                       item.IconImage = thumbnailImage;
-                      Log.Debug("GUIPictures: Creation of missing thumb successful for {0}", item.Path);
+                      Log.Debug("GUIPictures: Creation of thumb successful for {0}", item.Path);
                     }
                   }
                 }
               }
               else
               {
-                int pin;
+                string pin;
                 if ((item.Label != "..") && (!vDir.IsProtectedShare(item.Path, out pin)))
                 {
                   string thumbnailImage = item.Path + @"\folder.jpg";
@@ -207,6 +219,7 @@ namespace MediaPortal.GUI.Pictures
           Filter(ref itemlist);
         }
         List<string> pictureList = new List<string>();
+
         foreach (GUIListItem subitem in itemlist)
         {
           if (!subitem.IsFolder)
@@ -218,6 +231,36 @@ namespace MediaPortal.GUI.Pictures
               {
                 break;
               }
+            }
+          }
+        }
+
+        // No picture in the folder. Try to find in the subfolders.
+        Log.Debug("CreateFolderThumb: No picture in the {0}", path);
+        if (pictureList.Count == 0)
+        {
+          foreach (GUIListItem subitem in itemlist)
+          {
+            if (subitem.IsFolder && subitem.Path.Length > path.Length)
+            {
+              List<GUIListItem> subFolderList = vDir.GetDirectoryUnProtectedExt(subitem.Path, true);
+              if (!recreateAll)
+              {
+                Filter(ref subFolderList);
+              }
+              foreach (GUIListItem subFolderItem in subFolderList)
+              {
+                if (!subFolderItem.IsFolder && !subFolderItem.IsRemote && Util.Utils.IsPicture(subFolderItem.Path))
+                {
+                  pictureList.Add(subFolderItem.Path);
+                  Log.Debug("CreateFolderThumb: Add file to folder.jpg {0}", subFolderItem.Path);
+                  break;
+                }
+              }
+            }
+            if (pictureList.Count >= 4)
+            {
+              break;
             }
           }
         }
@@ -276,11 +319,6 @@ namespace MediaPortal.GUI.Pictures
           if (recreateThumbs || !File.Exists(thumbnailImage) || !Util.Utils.FileExistsInCache(thumbnailImage) ||
               !File.Exists(thumbnailImageL) || !Util.Utils.FileExistsInCache(thumbnailImageL))
           {
-
-            iRotate = Util.Picture.GetRotateByExif(item);
-            Log.Debug("Picture.GetRotateByExif = {0} for {1}", iRotate, item);
-            Thread.Sleep(5);
-
             if (autocreateLargeThumbs && !File.Exists(thumbnailImageL))
             {
               thumbRet = Util.Picture.CreateThumbnail(item, thumbnailImageL, (int) Thumbs.ThumbLargeResolution,
@@ -390,7 +428,7 @@ namespace MediaPortal.GUI.Pictures
     private static string currentFolder = string.Empty;
     private string m_strDirectoryStart = string.Empty;
     private string destinationFolder = string.Empty;
-    private static VirtualDirectory virtualDirectory = new VirtualDirectory();
+    private static VirtualDirectory _virtualDirectory;
     private MapSettings mapSettings = new MapSettings();
     private bool isFileMenuEnabled = false;
     private string fileMenuPinCode = string.Empty;
@@ -406,6 +444,19 @@ namespace MediaPortal.GUI.Pictures
     public static string fileNameCheck = string.Empty;
     protected PictureSort.SortMethod currentSortMethod = PictureSort.SortMethod.Name;
     public static List<string> _thumbnailFolderItem = new List<string>();
+    private static string _prevServerName = string.Empty;
+    private static DateTime _prevWolTime;
+    private static int _wolTimeout;
+    private static int _wolResendTime;
+    private static bool returnFromSlideshow = false;
+    private bool _autoShuffle = false;
+    private bool _ageConfirmed = false;
+    private ArrayList _protectedShares = new ArrayList();
+    private string _currentPin = string.Empty;
+    private ArrayList _currentProtectedShare = new ArrayList();
+    private Thread _refreshThumbnailsThread;
+    private GUIDialogProgress _progressDialogForRefreshThumbnails;
+    private static bool _refreshThumbnailsThreadAbort = false;
 
     #endregion
 
@@ -429,71 +480,31 @@ namespace MediaPortal.GUI.Pictures
         _enableVideoPlayback = xmlreader.GetValueAsBool("pictures", "enableVideoPlayback", false);
         _playVideosInSlideshows = xmlreader.GetValueAsBool("pictures", "playVideosInSlideshows", false);
         isFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
-        string strDefault = xmlreader.GetValueAsString("pictures", "default", string.Empty);
-        virtualDirectory.Clear();
-        for (int i = 0; i < VirtualDirectory.MaxSharesCount; i++)
+        fileMenuPinCode = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+        //string strDefault = xmlreader.GetValueAsString("pictures", "default", string.Empty);
+        _wolTimeout = xmlreader.GetValueAsInt("WOL", "WolTimeout", 10);
+        _wolResendTime = xmlreader.GetValueAsInt("WOL", "WolResendTime", 1);
+        _virtualDirectory = VirtualDirectories.Instance.Pictures;
+        _autoShuffle = xmlreader.GetValueAsBool("pictures", "autoShuffle", false);
+        
+        if (currentFolder == string.Empty)
         {
-          string shareName = String.Format("sharename{0}", i);
-          string sharePath = String.Format("sharepath{0}", i);
-          string strPincode = String.Format("pincode{0}", i);
-
-          string shareType = String.Format("sharetype{0}", i);
-          string shareServer = String.Format("shareserver{0}", i);
-          string shareLogin = String.Format("sharelogin{0}", i);
-          string sharePwd = String.Format("sharepassword{0}", i);
-          string sharePort = String.Format("shareport{0}", i);
-          string remoteFolder = String.Format("shareremotepath{0}", i);
-          string shareViewPath = String.Format("shareview{0}", i);
-
-          Share share = new Share();
-          share.Name = xmlreader.GetValueAsString("pictures", shareName, string.Empty);
-          share.Path = xmlreader.GetValueAsString("pictures", sharePath, string.Empty);
-          string pinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("pictures", strPincode, string.Empty));
-          if (pinCode != string.Empty)
+          if (_virtualDirectory.DefaultShare != null)
           {
-            share.Pincode = Convert.ToInt32(pinCode);
-          }
-          else
-          {
-            share.Pincode = -1;
-          }
-
-          share.IsFtpShare = xmlreader.GetValueAsBool("pictures", shareType, false);
-          share.FtpServer = xmlreader.GetValueAsString("pictures", shareServer, string.Empty);
-          share.FtpLoginName = xmlreader.GetValueAsString("pictures", shareLogin, string.Empty);
-          share.FtpPassword = xmlreader.GetValueAsString("pictures", sharePwd, string.Empty);
-          share.FtpPort = xmlreader.GetValueAsInt("pictures", sharePort, 21);
-          share.FtpFolder = xmlreader.GetValueAsString("pictures", remoteFolder, "/");
-          share.DefaultLayout = (Layout)xmlreader.GetValueAsInt("pictures", shareViewPath, (int)Layout.List);
-
-          if (share.Name.Length > 0)
-          {
-            if (strDefault == share.Name)
+            if (_virtualDirectory.DefaultShare.IsFtpShare)
             {
-              share.Default = true;
-              if (currentFolder.Length == 0)
-              {
-                if (share.IsFtpShare)
-                {
-                  //remote:hostname?port?login?password?folder
-                  currentFolder = virtualDirectory.GetShareRemoteURL(share);
-                  m_strDirectoryStart = currentFolder;
-                }
-                else
-                {
-                  currentFolder = share.Path;
-                  m_strDirectoryStart = share.Path;
-                }
-              }
+              //remote:hostname?port?login?password?folder
+              currentFolder = _virtualDirectory.GetShareRemoteURL(_virtualDirectory.DefaultShare);
+              m_strDirectoryStart = currentFolder;
             }
-            virtualDirectory.Add(share);
-          }
-          else
-          {
-            break;
+            else
+            {
+              currentFolder = _virtualDirectory.DefaultShare.Path;
+              m_strDirectoryStart = _virtualDirectory.DefaultShare.Path;
+            }
           }
         }
+
         if (xmlreader.GetValueAsBool("pictures", "rememberlastfolder", false))
         {
           string lastFolder = xmlreader.GetValueAsString("pictures", "lastfolder", currentFolder);
@@ -511,7 +522,7 @@ namespace MediaPortal.GUI.Pictures
       {
         VirtualDirectory vDir = new VirtualDirectory();
         vDir.LoadSettings("pictures");
-        int pincode = 0;
+        string pincode = string.Empty;
         bool FolderPinProtected = vDir.IsProtectedShare(currentFolder, out pincode);
         if (FolderPinProtected)
         {
@@ -553,22 +564,39 @@ namespace MediaPortal.GUI.Pictures
     public override void OnAdded()
     {
       base.OnAdded();
-      virtualDirectory.AddDrives();
-      virtualDirectory.SetExtensions(Util.Utils.PictureExtensions);
       currentFolder = string.Empty;
+      LoadSettings();
+      _virtualDirectory.AddDrives();
+      _virtualDirectory.SetExtensions(Util.Utils.PictureExtensions);
       destinationFolder = string.Empty;
       thumbCreationPaths.Clear();
-      LoadSettings();
       if (_enableVideoPlayback)
       {
         foreach (string ext in Util.Utils.VideoExtensions)
-          virtualDirectory.AddExtension(ext);
+          _virtualDirectory.AddExtension(ext);
       }
       GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_OnNewMessage);
+
+      RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
     }
 
     public override void OnAction(Action action)
     {
+      if (action.wID == Action.ActionType.ACTION_STOP)
+      {
+        if (g_Player.IsPicture)
+        {
+          GUIPictureSlideShow._slideDirection = 0;
+        }
+      }
+      if (action.wID == Action.ActionType.ACTION_SWITCH_HOME)
+      {
+        if (g_Player.IsPicture)
+        {
+          GUIPictureSlideShow._slideDirection = 0;
+          g_Player.Stop();
+        }
+      }
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
         if (facadeLayout.Focus)
@@ -578,11 +606,8 @@ namespace MediaPortal.GUI.Pictures
           {
             if (item.IsFolder && item.Label == "..")
             {
-              if (currentFolder != m_strDirectoryStart)
-              {
-                LoadDirectory(item.Path);
-                return;
-              }
+              LoadDirectory(item.Path);
+              return;
             }
           }
         }
@@ -645,6 +670,28 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
+    // Get all shares and pins for protected pictures folders
+    private void GetProtectedShares(ref ArrayList shares)
+    {
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      {
+        shares = new ArrayList();
+
+        for (int index = 0; index < 128; index++)
+        {
+          string sharePin = String.Format("pincode{0}", index);
+          string sharePath = String.Format("sharepath{0}", index);
+          string sharePinData = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("pictures", sharePin, string.Empty));
+          string sharePathData = xmlreader.GetValueAsString("pictures", sharePath, string.Empty);
+
+          if (!string.IsNullOrEmpty(sharePinData))
+          {
+            shares.Add(sharePinData + "|" + sharePathData);
+          }
+        }
+      }
+    }
+
     protected override void OnPageLoad()
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
@@ -652,27 +699,55 @@ namespace MediaPortal.GUI.Pictures
         _tempLeaveThumbsInFolder = xmlreader.GetValueAsBool("thumbnails", "videosharepreview", false);
         xmlreader.SetValueAsBool("thumbnails", "videosharepreview", false);
       }
+      base.OnPageLoad();
+
+      if (!PictureDatabase.DbHealth)
+      {
+        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+        pDlgOK.SetHeading(315);
+        pDlgOK.SetLine(1, string.Empty);
+        pDlgOK.SetLine(2, GUILocalizeStrings.Get(190010, new object[] { GUILocalizeStrings.Get(1) }));
+        pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+      }
+      if (!FolderSettings.DbHealth)
+      {
+        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+        pDlgOK.SetHeading(315);
+        pDlgOK.SetLine(1, string.Empty);
+        pDlgOK.SetLine(2, GUILocalizeStrings.Get(190010, new object[] { GUILocalizeStrings.Get(190011) }));
+        pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+      }
+
       if (!KeepVirtualDirectory(PreviousWindowId))
       {
-        virtualDirectory.Reset();
+        _virtualDirectory.Reset();
       }
-      base.OnPageLoad();
       InitViewSelections();
       UpdateButtonStates();
 
       GUITextureManager.CleanupThumbs();
       // LoadSettings();
+
+      if (!IsPictureWindow(PreviousWindowId))
+      {
+        _ageConfirmed = false;
+        _currentPin = string.Empty;
+        _currentProtectedShare.Clear();
+        _protectedShares.Clear();
+        GetProtectedShares(ref _protectedShares);
+      }
+
       LoadFolderSettings(currentFolder);
       ShowThumbPanel();
       LoadDirectory(currentFolder);
-      if (selectedItemIndex >= 0)
+      if (selectedItemIndex >= 0 && (PreviousWindowId == (int)Window.WINDOW_SLIDESHOW || PreviousWindowId == (int)Window.WINDOW_PICTURES))
       {
         GUISlideShow SlideShow = (GUISlideShow) GUIWindowManager.GetWindow((int) Window.WINDOW_SLIDESHOW);
         Log.Debug("GUIPictures: currentSlideIndex {0}", SlideShow._currentSlideIndex);
         /*if (SlideShow._currentSlideIndex != -1)
           selectedItemIndex += SlideShow._currentSlideIndex+1;*/
-        int direction = GUISlideShow.SlideDirection;
-        GUISlideShow.SlideDirection = 0;
+        int direction = GUIPictureSlideShow.SlideDirection;
+        GUIPictureSlideShow.SlideDirection = 0;
         g_Player.IsPicture = false;
 
         if (SlideShow._returnedFromVideoPlayback && !SlideShow._loadVideoPlayback)
@@ -718,16 +793,52 @@ namespace MediaPortal.GUI.Pictures
           SlideShow._showRecursive = false;
         }
 
+        returnFromSlideshow = true;
+
         // Select latest item played from slideshow/slideshow recursive (random or not)
         if (disp == Display.Files)
         {
           string strSelectedItemExt = Util.Utils.GetFileNameWithExtension(SlideShow._folderCurrentItem);
           string strSelectedItem = Util.Utils.GetFilename(SlideShow._folderCurrentItem, true);
-          SlideShow._folderCurrentItem = Path.GetDirectoryName(SlideShow._folderCurrentItem);
-          if (selectedItemIndex >= 0 && !String.IsNullOrEmpty(SlideShow._folderCurrentItem))
+          string directoryName = Path.GetDirectoryName(SlideShow._folderCurrentItem);
+          string directoryNameCheck = Path.GetDirectoryName(SlideShow._folderCurrentItem);
+          if (selectedItemIndex >= 0 && !String.IsNullOrEmpty(directoryName))
           {
-            LoadFolderSettings(SlideShow._folderCurrentItem);
-            LoadDirectory(SlideShow._folderCurrentItem);
+            // Set root directory
+            string rootFolder = _virtualDirectory.GetShare(directoryName).Name;
+            string rootFolderPath = _virtualDirectory.GetShare(directoryName).Path;
+            currentFolder = directoryName;
+
+            while (true)
+            {
+              if (!string.IsNullOrEmpty(rootFolderPath) && !string.IsNullOrEmpty(directoryNameCheck))
+              {
+                if (rootFolderPath == directoryNameCheck)
+                {
+                  folderHistory.Set(strSelectedItem, directoryName);
+                  break;
+                }
+                string sourceFolder = directoryNameCheck;
+                if (rootFolderPath != directoryNameCheck)
+                {
+                  string sourceCurrentFolder = Path.GetDirectoryName(sourceFolder);
+                  string destinationItem = Path.GetFileName(sourceFolder);
+                  folderHistory.Set(destinationItem, sourceCurrentFolder);
+                }
+                else
+                {
+                  string destinationItem = Path.GetFileName(sourceFolder);
+                  folderHistory.Set(destinationItem, sourceFolder);
+                }
+                directoryNameCheck = Path.GetDirectoryName(sourceFolder);
+              }
+              break;
+            }
+
+            folderHistory.Set(rootFolder, "");
+
+            LoadFolderSettings(directoryName);
+            LoadDirectory(directoryName);
             int totalItemCount = facadeLayout.Count;
             for (int i = 0; i < totalItemCount; i++)
             {
@@ -743,10 +854,38 @@ namespace MediaPortal.GUI.Pictures
           {
             GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
           }
+          returnFromSlideshow = false;
         }
         else
         {
+          bool foundSelectedItem = false;
+          int totalItemCount = facadeLayout.Count;
+          string strSelectedItem = Util.Utils.GetFilename(SlideShow._folderCurrentItem, true);
           GUIControl.SelectItemControl(GetID, facadeLayout.GetID, 0);
+          for (int i = 0; i < totalItemCount; i++)
+          {
+            string strSelectedItemcheck = LoadDateViewSelect(facadeLayout[i].Path, SlideShow._folderCurrentItem);
+            if (strSelectedItemcheck == SlideShow._folderCurrentItem)
+            {
+              foundSelectedItem = true;
+              break;
+            }
+          }
+          if (foundSelectedItem)
+          {
+            for (int i = 0; i < facadeLayout.Count; i++)
+            {
+              if (facadeLayout[i].Label == strSelectedItem)
+              {
+                GUIControl.SelectItemControl(GetID, facadeLayout.GetID, i);
+                break;
+              }
+            }
+          }
+          else
+          {
+            GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
+          }
         }
       }
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
@@ -797,6 +936,18 @@ namespace MediaPortal.GUI.Pictures
             }
           }
           break;
+
+        case GUIMessage.MessageType.GUI_MSG_ONRESUME:
+          using (Settings xmlreader = new MPSettings())
+          {
+            if (!xmlreader.GetValueAsBool("general", "showlastactivemodule", false))
+            {
+              currentFolder = string.Empty;
+      }
+    }
+
+          Log.Debug("{0}:{1}", SerializeName, message.Message);
+          break;
       }
     }
 
@@ -826,16 +977,17 @@ namespace MediaPortal.GUI.Pictures
             currentFolder = message.Label;
             if (!Util.Utils.IsRemovable(message.Label))
             {
-              virtualDirectory.AddRemovableDrive(message.Label, message.Label2);
+              _virtualDirectory.AddRemovableDrive(message.Label, message.Label2);
             }
           }
+          RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
           LoadDirectory(currentFolder);
           break;
 
         case GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE:
           if (!Util.Utils.IsRemovable(message.Label))
           {
-            virtualDirectory.Remove(message.Label);
+            _virtualDirectory.Remove(message.Label);
           }
           if (currentFolder.Contains(message.Label))
           {
@@ -872,6 +1024,11 @@ namespace MediaPortal.GUI.Pictures
             SetView(btnViews.SelectedItemValue);
             GUIControl.FocusControl(GetID, btnViews.GetID);
           }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_LAYOUT_CHANGED:
+          FolderSetting folderSetting = new FolderSetting();
+          folderSetting.UpdateFolders(-1, CurrentSortAsc, (int)currentLayout);
           break;
       }
       return base.OnMessage(message);
@@ -939,21 +1096,64 @@ namespace MediaPortal.GUI.Pictures
       }
       else
       {
-        //dlg.AddLocalizedString(200046); //Generate Thumbnails
-        //dlg.AddLocalizedString(200047); //Recursive Generate Thumbnails
+        if (_refreshThumbnailsThread != null && _refreshThumbnailsThread.IsAlive)
+        {
+          dlg.AddLocalizedString(190000); //Abort thumbnail creation thread
+        }
+        else
+        {
+          dlg.AddLocalizedString(200047); //Recreate thumbnails (incl. subfolders)
+          dlg.AddLocalizedString(190001); //Create missing thumbnails (incl. subfolders)
+        }
         dlg.AddLocalizedString(200048); //Regenerate Thumbnails
       }
-      dlg.AddLocalizedString(457); //Switch View
-      int iPincodeCorrect;
-      if (!virtualDirectory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && isFileMenuEnabled)
+
+      string iPincodeCorrect;
+      
+      if (!_virtualDirectory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && isFileMenuEnabled)
       {
         dlg.AddLocalizedString(500); // FileMenu      
       }
-      if (Util.Utils.IsRemovable(item.Path))
+
+      #region Eject/Load
+
+      // CD/DVD/BD
+      if (Util.Utils.getDriveType(item.Path) == 5)
+      {
+        if (item.Path != null)
+        {
+          var driveInfo = new DriveInfo(Path.GetPathRoot(item.Path));
+
+          // There is no easy way in NET to detect open tray so we will check
+          // if media is inside (load will be visible also in case that tray is closed but
+          // media is not loaded)
+          if (!driveInfo.IsReady)
+          {
+            dlg.AddLocalizedString(607); //Load  
+          }
+
+          dlg.AddLocalizedString(654); //Eject  
+        }
+      }
+
+      if (Util.Utils.IsRemovable(item.Path) || Util.Utils.IsUsbHdd(item.Path))
       {
         dlg.AddLocalizedString(831);
       }
 
+      #endregion
+
+      if (_protectedShares.Count > 0)
+      {
+        if (_ageConfirmed)
+        {
+          dlg.AddLocalizedString(1240); //Lock content
+        }
+        else
+        {
+          dlg.AddLocalizedString(1241); //Unlock content
+        }
+      }
 
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1)
@@ -962,6 +1162,10 @@ namespace MediaPortal.GUI.Pictures
       }
       switch (dlg.SelectedId)
       {
+        case 457: //Switch View
+          ;
+          break;
+        
         case 735: // rotate
           OnRotatePicture(90);
           break;
@@ -1001,27 +1205,59 @@ namespace MediaPortal.GUI.Pictures
             OnShowFileMenu();
           }
           break;
-        case 200046: // Generate Thumbnails
-          if (item.IsFolder)
+
+        case 1240: // Protected content
+        case 1241: // Protected content
+          OnContentLock();
+          break;
+
+        case 190000: // Abort thumbnail creation thread
+          if (_refreshThumbnailsThread != null && _refreshThumbnailsThread.IsAlive)
           {
-            OnCreateAllThumbs(item.Path, false, false);
+            _refreshThumbnailsThreadAbort = true;
           }
           break;
-        case 200047: // Revursive Generate Thumbnails
+        case 190001: // Create missing thumbnails (incl. subfolders)
           if (item.IsFolder)
           {
-            OnCreateAllThumbs(item.Path, false, true);
+            OnCreateAllThumbs(item, false, true);
+          }
+          break;
+        case 200047: // Recreate all thumbnails (incl. subfolders)
+          if (item.IsFolder)
+          {
+            OnCreateAllThumbs(item, true, true);
           }
           break;
         case 200048: // Regenerate Thumbnails
           if (item.IsFolder)
           {
-            OnCreateAllThumbs(item.Path, true, true);
+            OnCreateAllThumbs(item, true, false);
           }
           break;
         case 831:
-          string message;
-          if (!RemovableDriveHelper.EjectDrive(item.Path, out message))
+          string message = string.Empty;
+
+          if (Util.Utils.IsUsbHdd(item.Path) || Util.Utils.IsRemovableUsbDisk(item.Path))
+          {
+            if (!RemovableDriveHelper.EjectDrive(item.Path, out message))
+            {
+              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+              pDlgOK.SetHeading(831);
+              pDlgOK.SetLine(1, GUILocalizeStrings.Get(832));
+              pDlgOK.SetLine(2, string.Empty);
+              pDlgOK.SetLine(3, message);
+              pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+            }
+            else
+            {
+              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+              pDlgOK.SetHeading(831);
+              pDlgOK.SetLine(1, GUILocalizeStrings.Get(833));
+              pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+            }
+          }
+          else if (!RemovableDriveHelper.EjectMedia(item.Path, out message))
           {
             GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
             pDlgOK.SetHeading(831);
@@ -1038,7 +1274,104 @@ namespace MediaPortal.GUI.Pictures
             pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
           }
           break;
+        case 607: // Load (only CDROM)
+          Util.Utils.CloseCDROM(Path.GetPathRoot(item.Path));
+          break;
+        case 654: // Eject
+          if (Util.Utils.getDriveType(item.Path) != 5)
+          {
+            Util.Utils.EjectCDROM();
+          }
+          else
+          {
+            if (item.Path != null)
+            {
+              var driveInfo = new DriveInfo(Path.GetPathRoot(item.Path));
+
+              if (!driveInfo.IsReady)
+              {
+                Util.Utils.CloseCDROM(Path.GetPathRoot(item.Path));
+              }
+              else
+              {
+                Util.Utils.EjectCDROM(Path.GetPathRoot(item.Path));
+              }
+            }
+          }
+          LoadDirectory(string.Empty);
+          break;
       }
+    }
+
+    // Show or hide protected content
+    private void OnContentLock()
+    {
+      if (!_ageConfirmed)
+      {
+        if (RequestPin())
+        {
+          _ageConfirmed = true;
+          LoadDirectory(currentFolder);
+        }
+        return;
+      }
+      _ageConfirmed = false;
+      LoadDirectory(currentFolder);
+    }
+
+    // Protected content PIN validation (any PIN from pics protected folders is valid)
+    private bool RequestPin()
+    {
+      bool retry = true;
+      bool sucess = false;
+      _currentProtectedShare.Clear();
+
+      while (retry)
+      {
+        GUIMessage msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+        GUIWindowManager.SendMessage(msgGetPassword);
+        string iPincode = string.Empty;
+
+        iPincode = msgGetPassword.Label;
+
+        foreach (string p in _protectedShares)
+        {
+          char[] splitter = { '|' };
+          string[] pin = p.Split(splitter);
+
+          if (iPincode != pin[0])
+          {
+            _currentPin = iPincode;
+            continue;
+          }
+
+          if (iPincode == pin[0])
+          {
+            _currentPin = iPincode;
+            _currentProtectedShare.Add(pin[1]);
+            sucess = true;
+          }
+        }
+
+        if (sucess)
+          return true;
+
+        GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0,
+                                                     0);
+        GUIWindowManager.SendMessage(msgWrongPassword);
+
+        if (!(bool)msgWrongPassword.Object)
+        {
+          retry = false;
+        }
+        else
+        {
+          retry = true;
+        }
+      }
+
+      _currentPin = string.Empty;
+      return false;
     }
 
     protected virtual PictureSort.SortMethod CurrentSortMethod
@@ -1097,6 +1430,11 @@ namespace MediaPortal.GUI.Pictures
     private int GetItemCount()
     {
       return facadeLayout.Count;
+    }
+
+    protected override string SerializeName
+    {
+      get { return "mypicture"; }
     }
 
     protected override void UpdateButtonStates()
@@ -1204,7 +1542,7 @@ namespace MediaPortal.GUI.Pictures
       }
       else
       {
-        Share share = virtualDirectory.GetShare(folderName);
+        Share share = _virtualDirectory.GetShare(folderName);
         if (share != null)
         {
           if (mapSettings == null)
@@ -1266,7 +1604,7 @@ namespace MediaPortal.GUI.Pictures
       }
       if (item2.IsFolder && item2.Label == "..")
       {
-        return -1;
+        return 1;
       }
       if (item1.IsFolder && !item2.IsFolder)
       {
@@ -1415,8 +1753,8 @@ namespace MediaPortal.GUI.Pictures
       {
         if (item.Label != "..")
         {
-          int pin;
-          if (!virtualDirectory.IsProtectedShare(item.Path, out pin))
+          string pin;
+          if (!_virtualDirectory.IsProtectedShare(item.Path, out pin))
           {
             Util.Utils.SetThumbnails(ref item);
           }
@@ -1444,7 +1782,7 @@ namespace MediaPortal.GUI.Pictures
                                              {
                                                GetThumbnailfile(ref item);
                                              }
-                                             catch (Exception ex)
+                                             catch (Exception)
                                              {
                                                Log.Error(
                                                  "GUIPictures - Error loading next item (OnRetrieveThumbnailFiles)");
@@ -1475,8 +1813,8 @@ namespace MediaPortal.GUI.Pictures
       {
         if (item.Label != "..")
         {
-          int pin;
-          if (!virtualDirectory.IsProtectedShare(item.Path, out pin))
+          string pin;
+          if (!_virtualDirectory.IsProtectedShare(item.Path, out pin))
           {
             Util.Utils.SetThumbnails(ref item);
           }
@@ -1535,7 +1873,7 @@ namespace MediaPortal.GUI.Pictures
         if (item.Label != "..")
         {
           List<GUIListItem> items = new List<GUIListItem>();
-          items = virtualDirectory.GetDirectoryUnProtectedExt(item.Path, false);
+          items = _virtualDirectory.GetDirectoryUnProtectedExt(item.Path, false);
           foreach (GUIListItem subItem in items)
           {
             DoDeleteItem(subItem);
@@ -1551,7 +1889,7 @@ namespace MediaPortal.GUI.Pictures
 
     protected override void OnInfo(int itemNumber)
     {
-      if (virtualDirectory.IsRemote(currentFolder))
+      if (_virtualDirectory.IsRemote(currentFolder))
       {
         return;
       }
@@ -1640,7 +1978,7 @@ namespace MediaPortal.GUI.Pictures
                                            (int)Thumbs.ThumbLargeResolution, rotate,
                                            Thumbs.SpeedThumbsLarge))
             Log.Debug("GUIPictures: Recreation of thumbnails after rotation successful for {0}", aPicturePath);
-      }
+        }
       }
       catch (Exception ex)
       {
@@ -1669,15 +2007,15 @@ namespace MediaPortal.GUI.Pictures
       }
       else
       {
-        if (virtualDirectory.IsRemote(item.Path))
+        if (_virtualDirectory.IsRemote(item.Path))
         {
-          if (!virtualDirectory.IsRemoteFileDownloaded(item.Path, item.FileInfo.Length))
+          if (!_virtualDirectory.IsRemoteFileDownloaded(item.Path, item.FileInfo.Length))
           {
-            if (!virtualDirectory.ShouldWeDownloadFile(item.Path))
+            if (!_virtualDirectory.ShouldWeDownloadFile(item.Path))
             {
               return;
             }
-            if (!virtualDirectory.DownloadRemoteFile(item.Path, item.FileInfo.Length))
+            if (!_virtualDirectory.DownloadRemoteFile(item.Path, item.FileInfo.Length))
             {
               //show message that we are unable to download the file
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING, 0, 0, 0, 0, 0, 0);
@@ -1705,6 +2043,12 @@ namespace MediaPortal.GUI.Pictures
       {
         return;
       }
+
+      if (!WakeUpSrv(item.Path))
+      {
+        return;
+      }
+
       if (item.IsFolder)
       {
         selectedItemIndex = -1;
@@ -1712,15 +2056,15 @@ namespace MediaPortal.GUI.Pictures
       }
       else
       {
-        if (virtualDirectory.IsRemote(item.Path))
+        if (_virtualDirectory.IsRemote(item.Path))
         {
-          if (!virtualDirectory.IsRemoteFileDownloaded(item.Path, item.FileInfo.Length))
+          if (!_virtualDirectory.IsRemoteFileDownloaded(item.Path, item.FileInfo.Length))
           {
-            if (!virtualDirectory.ShouldWeDownloadFile(item.Path))
+            if (!_virtualDirectory.ShouldWeDownloadFile(item.Path))
             {
               return;
             }
-            if (!virtualDirectory.DownloadRemoteFile(item.Path, item.FileInfo.Length))
+            if (!_virtualDirectory.DownloadRemoteFile(item.Path, item.FileInfo.Length))
             {
               //show message that we are unable to download the file
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING, 0, 0, 0, 0, 0, 0);
@@ -1755,6 +2099,12 @@ namespace MediaPortal.GUI.Pictures
       {
         return;
       }
+
+      if (!WakeUpSrv(item.Path))
+      {
+        return;
+      }
+
       if (item.IsFolder)
       {
         i++;
@@ -1764,15 +2114,15 @@ namespace MediaPortal.GUI.Pictures
       }
       else
       {
-        if (virtualDirectory.IsRemote(item.Path))
+        if (_virtualDirectory.IsRemote(item.Path))
         {
-          if (!virtualDirectory.IsRemoteFileDownloaded(item.Path, item.FileInfo.Length))
+          if (!_virtualDirectory.IsRemoteFileDownloaded(item.Path, item.FileInfo.Length))
           {
-            if (!virtualDirectory.ShouldWeDownloadFile(item.Path))
+            if (!_virtualDirectory.ShouldWeDownloadFile(item.Path))
             {
               return;
             }
-            if (!virtualDirectory.DownloadRemoteFile(item.Path, item.FileInfo.Length))
+            if (!_virtualDirectory.DownloadRemoteFile(item.Path, item.FileInfo.Length))
             {
               //show message that we are unable to download the file
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING, 0, 0, 0, 0, 0, 0);
@@ -1794,6 +2144,11 @@ namespace MediaPortal.GUI.Pictures
 
     private void OnShowPicture(string strFile)
     {
+      // Stop video playback before starting show picture to avoid MP freezing
+      if (g_Player.MediaInfo != null && g_Player.MediaInfo.hasVideo || g_Player.IsTV || g_Player.IsVideo)
+      {
+        g_Player.Stop();
+      }
       GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
       if (SlideShow == null)
       {
@@ -1826,7 +2181,7 @@ namespace MediaPortal.GUI.Pictures
 
     public void AddDir(GUISlideShow SlideShow, string strDir)
     {
-      List<GUIListItem> itemlist = virtualDirectory.GetDirectoryExt(strDir);
+      List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(strDir);
       itemlist.Sort(new PictureSort(CurrentSortMethod, CurrentSortAsc));
       Filter(ref itemlist);
       foreach (GUIListItem item in itemlist)
@@ -1862,6 +2217,11 @@ namespace MediaPortal.GUI.Pictures
 
     private void OnSlideShowRecursive()
     {
+      // Stop video playback before starting show picture to avoid MP freezing
+      if (g_Player.MediaInfo != null && g_Player.MediaInfo.hasVideo || g_Player.IsTV || g_Player.IsVideo)
+      {
+        g_Player.Stop();
+      }
       GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
       if (SlideShow == null)
       {
@@ -1882,8 +2242,12 @@ namespace MediaPortal.GUI.Pictures
         {
           SlideShow.Add(pic);
         }
+        if (_autoShuffle)
+        {
+          SlideShow.Shuffle(false, false);
+        }
       }
-      if (SlideShow.Count > 0 || SlideShow._slideFolder.Count > 0)
+      if (SlideShow.Count > 0 || SlideShow._slideFolder.Count > 0 && SlideShow._slideList.Count > 0)
       {
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_SLIDESHOW);
         SlideShow.StartSlideShow(currentFolder);
@@ -1895,28 +2259,13 @@ namespace MediaPortal.GUI.Pictures
       OnClickSlideShow(0);
     }
 
-    private void OnSlideShowRecursive(string strFile)
-    {
-      GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
-      if (SlideShow == null)
-      {
-        return;
-      }
-      if (SlideShow._returnedFromVideoPlayback)
-      {
-        SlideShow._returnedFromVideoPlayback = false;
-      }
-
-      if (SlideShow.Count > 0)
-      {
-        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SLIDESHOW);
-        SlideShow.SelectShowRecursive(strFile);
-        SlideShow.StartSlideShow(currentFolder);
-      }
-    }
-
     private void OnSlideShow (string strFile)
     {
+      // Stop video playback before starting show picture to avoid MP freezing
+      if (g_Player.MediaInfo != null && g_Player.MediaInfo.hasVideo || g_Player.IsTV || g_Player.IsVideo)
+      {
+        g_Player.Stop();
+      }
       GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
       if (SlideShow == null)
       {
@@ -1955,12 +2304,99 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private void CreateAllThumbs(string strDir, bool Regenerate, bool Recursive)
+    private void UpdateThumbnailsInFolder(GUIListItem item, bool Regenerate)
     {
-      // int Count = 0;
+      List<GUIListItem> itemlist = new List<GUIListItem>();
+
+      ListFilesForUpdateThumbnails(item, ref itemlist);
+      Log.Debug("UpdateThumbnailsInFolder: Folder count {0}, regenerate all thumbs {1}", itemlist.Count, Regenerate);
+
+      _progressDialogForRefreshThumbnails =
+       (GUIDialogProgress)GUIWindowManager.GetWindow(101); //(int)Window.WINDOW_DIALOG_PROGRESS
+      _progressDialogForRefreshThumbnails.Reset();
+      _progressDialogForRefreshThumbnails.SetHeading(GUILocalizeStrings.Get(200047));
+      _progressDialogForRefreshThumbnails.ShowProgressBar(true);
+      _progressDialogForRefreshThumbnails.SetLine(1, itemlist[0].Path.Replace("\\", "/"));
+      _progressDialogForRefreshThumbnails.SetLine(2, string.Empty);
+      _progressDialogForRefreshThumbnails.SetLine(3, "Folder count: " + itemlist.Count + "/0");
+      _progressDialogForRefreshThumbnails.StartModal(GUIWindowManager.ActiveWindow);
+
+
+      if (_refreshThumbnailsThread != null && _refreshThumbnailsThread.IsAlive)
+      {
+        _refreshThumbnailsThread.Abort();
+      }
+
+      _refreshThumbnailsThreadAbort = false;
+      _refreshThumbnailsThread = new Thread(() => RefreshThumbnailsThread(itemlist, Regenerate));
+      _refreshThumbnailsThread.Priority = ThreadPriority.Lowest;
+      _refreshThumbnailsThread.IsBackground = true;
+      _refreshThumbnailsThread.Name = "RefreshThumbnailsThread";
+      _refreshThumbnailsThread.Start();
+    }
+
+    private void RefreshThumbnailsThread(List<GUIListItem> itemlist, bool Regenerate)
+    {
+      try
+      {
+        for (int i = 0; i < itemlist.Count; i++)
+        {
+          if (_refreshThumbnailsThreadAbort)
+          {
+            Log.Info("RefreshThumbnailsThread: Aborted by the user.");
+            return;
+          }
+          int perc = (i * 100) / itemlist.Count;
+          _progressDialogForRefreshThumbnails.SetPercentage(perc);
+          _progressDialogForRefreshThumbnails.SetLine(1, itemlist[i].Path.Replace("\\", "/"));
+          _progressDialogForRefreshThumbnails.SetLine(3, "Folder count: " + itemlist.Count + "/" + i);
+          _progressDialogForRefreshThumbnails.Progress();
+
+          Thread.Sleep(50);
+
+          MissingThumbCacher ManualThumbBuilder = new MissingThumbCacher(itemlist[i].Path, _autocreateLargeThumbs, Regenerate, false);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("RefreshThumbnailsThread: {0}", ex);
+      }
+      finally
+      {
+        _progressDialogForRefreshThumbnails.Close();
+      }
+      Log.Info("RefreshThumbnailsThread: Finished.");
+    }
+
+    private void ListFilesForUpdateThumbnails(GUIListItem item, ref List<GUIListItem> Itemist)
+    {
+      if (item != null)
+      {
+        Itemist.Add(item);
+
+        VirtualDirectory virtualDirectory = new VirtualDirectory();
+        virtualDirectory.SetExtensions(Util.Utils.VideoExtensions);
+        List<GUIListItem> inertItemlist = virtualDirectory.GetDirectoryUnProtectedExt(item.Path, true);
+        foreach (GUIListItem subItem in inertItemlist)
+        {
+          if (subItem.IsFolder && subItem.Label != "..")
+          {
+            ListFilesForUpdateThumbnails(subItem, ref Itemist);
+          }
+        }
+      }
+    }
+
+    private void CreateAllThumbs(GUIListItem item, bool Regenerate, bool Recursive)
+    {
       if (disp == Display.Files)
       {
-        MissingThumbCacher ManualThumbBuilder = new MissingThumbCacher(strDir, _autocreateLargeThumbs, Regenerate);
+        if (Recursive)
+        {
+          UpdateThumbnailsInFolder(item, Regenerate);
+          return;
+        }
+        MissingThumbCacher ManualThumbBuilder = new MissingThumbCacher(item.Path, _autocreateLargeThumbs, Regenerate, true);
       }
       else if (disp == Display.Date)
       {
@@ -1968,9 +2404,9 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private void OnCreateAllThumbs(string strDir, bool Regenerate, bool Recursive)
+    private void OnCreateAllThumbs(GUIListItem item, bool Regenerate, bool Recursive)
     {
-      CreateAllThumbs(strDir, Regenerate, Recursive);
+      CreateAllThumbs(item, Regenerate, Recursive);
 
       GUITextureManager.CleanupThumbs();
       GUIWaitCursor.Hide();
@@ -2025,6 +2461,8 @@ namespace MediaPortal.GUI.Pictures
 
       OnSort();
       GUIControl.FocusControl(GetID, btnSortBy.GetID);
+      FolderSetting folderSetting = new FolderSetting();
+      folderSetting.UpdateFolders(mapSettings.SortBy, CurrentSortAsc, -1);
     }
 
     private void OnShowFileMenu()
@@ -2050,7 +2488,7 @@ namespace MediaPortal.GUI.Pictures
       dlgFile.SetSourceItem(item);
       dlgFile.SetSourceDir(currentFolder);
       dlgFile.SetDestinationDir(destinationFolder);
-      dlgFile.SetDirectoryStructure(virtualDirectory);
+      dlgFile.SetDirectoryStructure(_virtualDirectory);
       dlgFile.DoModal(GetID);
       destinationFolder = dlgFile.GetDestinationDir();
 
@@ -2110,6 +2548,45 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
+    private bool WakeUpSrv(string newFolderName)
+    {
+      if (!Util.Utils.IsUNCNetwork(newFolderName))
+      {
+        return true;
+      }
+
+      string serverName = string.Empty;
+      bool wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
+
+      if (wakeOnLanEnabled)
+      {
+        serverName = Util.Utils.GetServerNameFromUNCPath(newFolderName);
+      }
+
+      DateTime now = DateTime.Now;
+      TimeSpan ts = now - _prevWolTime;
+
+      if (serverName == _prevServerName && _wolResendTime * 60 > ts.TotalSeconds)
+      {
+        return true;
+      }
+
+      _prevWolTime = DateTime.Now;
+      _prevServerName = serverName;
+
+      try
+      {
+        Log.Debug("WakeUpSrv: FolderName = {0}, ShareName = {1}, WOL enabled = {2}", newFolderName, _virtualDirectory.GetShare(newFolderName).Name, wakeOnLanEnabled);
+      }
+      catch { };
+
+      if (!string.IsNullOrEmpty(serverName))
+      {
+        return WakeupUtils.HandleWakeUpServer(serverName, _wolTimeout);
+      }
+      return true;
+    }
+
     public static void Filter(ref List<GUIListItem> itemlist)
     {
       itemlist.RemoveAll(ContainsFolderThumb);
@@ -2120,14 +2597,22 @@ namespace MediaPortal.GUI.Pictures
       List<GUIListItem> itemlist;
       string objectCount = string.Empty;
 
+      if (!WakeUpSrv(strNewDirectory))
+      {
+        return;
+      }
+
       GUIWaitCursor.Show();
 
-      GUIListItem SelectedItem = GetSelectedItem();
-      if (SelectedItem != null)
+      if (!returnFromSlideshow)
       {
-        if (SelectedItem.IsFolder && SelectedItem.Label != "..")
+        GUIListItem SelectedItem = GetSelectedItem();
+        if (SelectedItem != null)
         {
-          folderHistory.Set(SelectedItem.Label, currentFolder);
+          if (SelectedItem.IsFolder && SelectedItem.Label != "..")
+          {
+            folderHistory.Set(SelectedItem.Label, currentFolder);
+          }
         }
       }
 
@@ -2147,9 +2632,15 @@ namespace MediaPortal.GUI.Pictures
 
       if (disp == Display.Files)
       {
-        itemlist = virtualDirectory.GetDirectoryExt(currentFolder);
+        itemlist = _virtualDirectory.GetDirectoryExt(currentFolder);
+
+        if (currentFolder == string.Empty)
+        {
+          RemovableDrivesHandler.FilterDrives(ref itemlist);
+        }
+
         Filter(ref itemlist);
-        MissingThumbCacher ThumbWorker = new MissingThumbCacher(currentFolder, _autocreateLargeThumbs, false);
+        MissingThumbCacher ThumbWorker = new MissingThumbCacher(currentFolder, _autocreateLargeThumbs, false, true);
         // int itemIndex = 0;
         CountOfNonImageItems = 0;
         foreach (GUIListItem item in itemlist)
@@ -2175,7 +2666,7 @@ namespace MediaPortal.GUI.Pictures
       GUIControl.SelectItemControl(GetID, facadeLayout.GetID, 0);
       for (int i = 0; i < totalItemCount; i++)
       {
-        if (facadeLayout[i].Label == strSelectedItem)
+        if (facadeLayout[i].Label == strSelectedItem || facadeLayout[i].Path == strSelectedItem)
         {
           GUIControl.SelectItemControl(GetID, facadeLayout.GetID, i);
           break;
@@ -2196,6 +2687,55 @@ namespace MediaPortal.GUI.Pictures
       ShowThumbPanel();
 
       GUIWaitCursor.Hide();
+    }
+
+    // Check if item is pin protected and if it exists within unlocked shares
+    // Returns true if item is valid or if item is not within protected shares
+    private bool IsItemPinProtected(GUIListItem item, VirtualDirectory vDir)
+    {
+      string directory = Path.GetDirectoryName(item.Path); // item path
+
+      if (directory != null)
+      {
+        // Check if item belongs to protected shares
+        string pincode = string.Empty;
+        bool folderPinProtected = vDir.IsProtectedShare(directory, out pincode);
+
+        bool success = false;
+
+        // User unlocked share/shares with PIN and item is within protected shares
+        if (folderPinProtected && _ageConfirmed)
+        {
+          // Iterate unlocked shares against current item path
+          foreach (string share in _currentProtectedShare)
+          {
+            if (!directory.ToUpperInvariant().Contains(share.ToUpperInvariant()))
+            {
+              continue;
+            }
+            success = true;
+            break;
+          }
+
+          // current item is not within unlocked shares, 
+          // don't show item and go to the next item
+          if (!success)
+          {
+            return false;
+          }
+          return true;
+        }
+
+        // Nothing unlocked and item belongs to protected shares,
+        // don't show item and go to the next item
+        if (folderPinProtected && !_ageConfirmed)
+        {
+          return false;
+        }
+      }
+
+      // Item is not inside protected shares, show it
+      return true;
     }
 
     private void LoadDateView(string strNewDirectory)
@@ -2299,14 +2839,28 @@ namespace MediaPortal.GUI.Pictures
 
             List<string> pics = new List<string>();
             int Count = PictureDatabase.ListPicsByDate(year + "-" + month + "-" + day, ref pics);
+
+            VirtualDirectory vDir = new VirtualDirectory();
+            vDir.LoadSettings("pictures");
+
             foreach (string pic in pics)
             {
               item = new GUIListItem(Path.GetFileNameWithoutExtension(pic));
               item.Path = pic;
               item.IsFolder = false;
+
+              if (!IsItemPinProtected(item, vDir))
+                continue;
+                
               Util.Utils.SetDefaultIcons(item);
               item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
               item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+
+              if (!WakeUpSrv(pic))
+              {
+                return;
+              }
+
               item.FileInfo = new FileInformation(pic, false);
               facadeLayout.Add(item);
             }
@@ -2331,6 +2885,10 @@ namespace MediaPortal.GUI.Pictures
 
             List<string> pics = new List<string>();
             int Count = PictureDatabase.ListPicsByDate(year + "-" + month, ref pics);
+
+            VirtualDirectory vDir = new VirtualDirectory();
+            vDir.LoadSettings("pictures");
+
             foreach (string pic in pics)
             {
               try
@@ -2338,9 +2896,19 @@ namespace MediaPortal.GUI.Pictures
                 item = new GUIListItem(Path.GetFileNameWithoutExtension(pic));
                 item.Path = pic;
                 item.IsFolder = false;
+
+                if (!IsItemPinProtected(item, vDir))
+                  continue;
+               
                 Util.Utils.SetDefaultIcons(item);
                 item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
                 item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+
+                if (!WakeUpSrv(pic))
+                {
+                  return;
+                }
+
                 item.FileInfo = new FileInformation(pic, false);
                 facadeLayout.Add(item);
               }
@@ -2363,6 +2931,215 @@ namespace MediaPortal.GUI.Pictures
       {
         Log.Error("GUIPictures: Error loading date view - {0}", ex.ToString());
       }
+    }
+
+    private string LoadDateViewSelect(string strNewDirectory, string selectedItem)
+    {
+      try
+      {
+        returnFromSlideshow = true;
+        string strSelectedItem = Util.Utils.GetFilename(selectedItem, true);
+        if (strNewDirectory.Length == 4 && !_useDayGrouping)
+        {
+          // Months
+          string year = strNewDirectory.Substring(0, 4);
+          List<string> Months = new List<string>();
+          int CountMonths = PictureDatabase.ListMonths(year, ref Months);
+          foreach (string month in Months)
+          {
+            List<string> pics = new List<string>();
+            int CountPics = PictureDatabase.ListPicsByDate(year + "-" + month, ref pics);
+            foreach (string pic in pics)
+            {
+              try
+              {
+                if (pic == selectedItem)
+                {
+                  string strFreshNewDirectory = strNewDirectory + "\\" + month;
+                  // Set root directory
+                  folderHistory.Set(year, "");
+                  folderHistory.Set(strFreshNewDirectory, year);
+                  folderHistory.Set(strSelectedItem, strFreshNewDirectory);
+                  // Reset facadeLayout
+                  facadeLayout.Clear();
+                  // Reload fresh view
+                  LoadDateView(strFreshNewDirectory);
+                  returnFromSlideshow = false;
+                  return selectedItem;
+                }
+              }
+              catch (Exception)
+              {
+                Log.Warn("GUIPictures: can't match item in date view");
+              }
+            }
+          }
+        }
+
+        // check if day grouping is enabled
+        if (_useDayGrouping)
+        {
+          if (strNewDirectory.Length == 4)
+          {
+            // Months
+            string year = strNewDirectory.Substring(0, 4);
+            List<string> Months = new List<string>();
+            int CountMonths = PictureDatabase.ListMonths(year, ref Months);
+            foreach (string month in Months)
+            {
+              List<string> Days = new List<string>();
+              int CountDays = PictureDatabase.ListDays(month, year, ref Days);
+              foreach (string day in Days)
+              {
+                List<string> pics = new List<string>();
+                int CountPics = PictureDatabase.ListPicsByDate(year + "-" + month + "-" + day, ref pics);
+                foreach (string pic in pics)
+                {
+                  try
+                  {
+                    if (pic == selectedItem)
+                    {
+                      // Set root directory
+                      string strFreshNewDirectory = strNewDirectory + "\\" + month + "\\" + day;
+                      // Set root directory
+                      folderHistory.Set(year, "");
+                      folderHistory.Set(strFreshNewDirectory.Substring(0, 7), year);
+                      folderHistory.Set(strFreshNewDirectory, strFreshNewDirectory.Substring(0, 7));
+                      folderHistory.Set(strSelectedItem, strFreshNewDirectory);
+                      // Reset facadeLayout
+                      facadeLayout.Clear();
+                      // Reload fresh view
+                      LoadDateView(strFreshNewDirectory);
+                      returnFromSlideshow = false;
+                      return selectedItem;
+                    }
+                  }
+                  catch (Exception)
+                  {
+                    Log.Warn("GUIPictures: can't match item in date view");
+                    returnFromSlideshow = false;
+                  }
+                }
+              }
+            }
+          }
+          else if (strNewDirectory.Length == 7)
+          {
+            // Days
+            string year = strNewDirectory.Substring(0, 4);
+            string month = strNewDirectory.Substring(5, 2);
+
+            List<string> Days = new List<string>();
+            int CountDays = PictureDatabase.ListDays(month, year, ref Days);
+            foreach (string day in Days)
+            {
+              List<string> pics = new List<string>();
+              int CountPics = PictureDatabase.ListPicsByDate(year + "-" + month + "-" + day, ref pics);
+              foreach (string pic in pics)
+              {
+                try
+                {
+                  if (pic == selectedItem)
+                  {
+                    string strFreshNewDirectory = strNewDirectory + "\\" + day;
+                    // Set root directory
+                    folderHistory.Set(year, "");
+                    folderHistory.Set(strFreshNewDirectory.Substring(0, 7), year);
+                    folderHistory.Set(strFreshNewDirectory, strFreshNewDirectory.Substring(0, 7));
+                    folderHistory.Set(strSelectedItem, strFreshNewDirectory);
+                    // Reset facadeLayout
+                    facadeLayout.Clear();
+                    // Reload fresh view
+                    LoadDateView(strFreshNewDirectory);
+                    returnFromSlideshow = false;
+                    return selectedItem;
+                  }
+                }
+                catch (Exception)
+                {
+                  Log.Warn("GUIPictures: can't match item in date view");
+                  returnFromSlideshow = false;
+                }
+              }
+            }
+          }
+          else if (strNewDirectory.Length == 10)
+          {
+            // Pics from one day
+            string year = strNewDirectory.Substring(0, 4);
+            string month = strNewDirectory.Substring(5, 2);
+            string day = strNewDirectory.Substring(8, 2);
+
+            List<string> pics = new List<string>();
+            int CountPics = PictureDatabase.ListPicsByDate(year + "-" + month + "-" + day, ref pics);
+            foreach (string pic in pics)
+            {
+              if (pic == selectedItem)
+              {
+                // Set root directory
+                folderHistory.Set(year, "");
+                folderHistory.Set(strNewDirectory, year);
+                folderHistory.Set(day, strNewDirectory);
+                folderHistory.Set(strSelectedItem, strNewDirectory);
+
+                //folderHistory.Set(strFreshNewDirectory.Substring(0, 7), year);
+                //folderHistory.Set(strFreshNewDirectory, strFreshNewDirectory.Substring(0, 7));
+                //folderHistory.Set(strSelectedItem, strFreshNewDirectory);
+
+                // Reset facadeLayout
+                facadeLayout.Clear();
+                // Reload fresh view
+                LoadDateView(strNewDirectory);
+                returnFromSlideshow = false;
+                return selectedItem;
+              }
+            }
+          }
+        }
+        else
+        {
+          if (strNewDirectory.Length == 7)
+          {
+            // Pics from one month
+            string year = strNewDirectory.Substring(0, 4);
+            string month = strNewDirectory.Substring(5, 2);
+
+            List<string> pics = new List<string>();
+            int CountPics = PictureDatabase.ListPicsByDate(year + "-" + month, ref pics);
+            foreach (string pic in pics)
+            {
+              try
+              {
+                if (pic == selectedItem)
+                {
+                  // Set root directory
+                  folderHistory.Set(year, "");
+                  folderHistory.Set(strNewDirectory, year);
+                  folderHistory.Set(strSelectedItem, strNewDirectory);
+                  // Reset facadeLayout
+                  facadeLayout.Clear();
+                  // Reload fresh view
+                  LoadDateView(strNewDirectory);
+                  returnFromSlideshow = false;
+                  return selectedItem;
+                }
+              }
+              catch (Exception)
+              {
+                Log.Warn("GUIPictures: can't match item in date view");
+                returnFromSlideshow = false;
+              }
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GUIPictures: Error loading date view - {0}", ex.ToString());
+        returnFromSlideshow = false;
+      }
+      returnFromSlideshow = false;
+      return String.Empty;
     }
 
     public static string GetThumbnail(string fileName)
@@ -2432,31 +3209,51 @@ namespace MediaPortal.GUI.Pictures
 
     public static void ResetShares()
     {
-      virtualDirectory.Reset();
-      virtualDirectory.DefaultShare = null;
-      virtualDirectory.LoadSettings("pictures");
+      _virtualDirectory.Reset();
+      _virtualDirectory.DefaultShare = null;
+      _virtualDirectory.LoadSettings("pictures");
 
-      if (virtualDirectory.DefaultShare != null)
+      if (_virtualDirectory.DefaultShare != null)
       {
-        int pincode;
-        bool folderPinProtected = virtualDirectory.IsProtectedShare(virtualDirectory.DefaultShare.Path, out pincode);
+        string pincode;
+        bool folderPinProtected = _virtualDirectory.IsProtectedShare(_virtualDirectory.DefaultShare.Path, out pincode);
         if (folderPinProtected)
         {
           currentFolder = string.Empty;
         }
         else
         {
-          currentFolder = virtualDirectory.DefaultShare.Path;
+          currentFolder = _virtualDirectory.DefaultShare.Path;
         }
       }
     }
 
     public static void ResetExtensions(ArrayList extensions)
     {
-      virtualDirectory.SetExtensions(extensions);
+      _virtualDirectory.SetExtensions(extensions);
     }
 
     #endregion
+
+    public static bool ThumbnailsThreadAbort
+    {
+      get { return _refreshThumbnailsThreadAbort; }
+    }
+
+    public static bool IsPictureWindow(int windowId)
+    {
+      if (windowId == (int)Window.WINDOW_PICTURES)
+      {
+        return true;
+      }
+
+      if (windowId == (int)Window.WINDOW_SLIDESHOW)
+      {
+        return true;
+      }
+
+      return false;
+    }
 
     #region callback events
 
@@ -2555,5 +3352,10 @@ namespace MediaPortal.GUI.Pictures
     }
 
     #endregion
+
+    public static string GetCurrentFolder
+    {
+      get { return currentFolder; }
+    }
   }
 }

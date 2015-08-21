@@ -28,6 +28,8 @@
 
 #define PARSER_NAME                                                   L"PARSER_MSHS"
 
+#define PARSER_STORE_FILE_NAME_PART                                   L"mpurlsourcesplitter_parser_mshs"
+
 #define TOTAL_SUPPORTED_VIDEO_TRACKS                                  1
 wchar_t *SUPPORTED_VIDEO_TRACKS[TOTAL_SUPPORTED_VIDEO_TRACKS] =       { MSHS_FOURCC_H264 };
 
@@ -86,10 +88,9 @@ protected:
 
   /* methods */
 
-  // gets store file name
-  // @param extension : the extension of store file
-  // @return : store file name or NULL if error
-  virtual wchar_t *GetStoreFile(const wchar_t *extension);
+  // gets store file name part
+  // @return : store file name part or NULL if error
+  virtual const wchar_t *GetStoreFileNamePart(void);
 };
 
 #endif

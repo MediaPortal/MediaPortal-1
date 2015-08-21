@@ -45,6 +45,11 @@ CLinearBuffer::~CLinearBuffer(void)
   this->DeleteBuffer();
 }
 
+unsigned char *CLinearBuffer::GetInternalBuffer(void)
+{
+  return this->buffer;
+}
+
 CLinearBuffer *CLinearBuffer::Clone(void)
 {
   HRESULT result = S_OK;

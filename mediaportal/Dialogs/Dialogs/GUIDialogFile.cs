@@ -370,7 +370,7 @@ namespace MediaPortal.Dialogs
       }
 
       // Check protected share
-      int iPincodeCorrect;
+      string iPincodeCorrect;
       if (m_directory.IsProtectedShare(item.Path, out iPincodeCorrect))
       {
         ShowError(513, item.Path);
@@ -589,7 +589,7 @@ namespace MediaPortal.Dialogs
     public void ShowFileMenu(GUIListItem item)
     {
       m_bReload = false;
-      int iPincodeCorrect;
+      string iPincodeCorrect;
 
       if (item == null)
       {
@@ -607,7 +607,24 @@ namespace MediaPortal.Dialogs
       }
       if (m_preselectDelete)
       {
-        OnDeleteItem(item);
+        bool readOnly;
+        if (Directory.Exists(item.Path))
+        {
+          readOnly = CheckDirectoryReadOnlyAttributes(item.Path);
+        }
+        else
+        {
+          FileAttributes attributes = File.GetAttributes(item.Path);
+          readOnly = ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly);
+        }
+        if (readOnly)
+        {
+          OnDeleteReadOnlyItem(item);
+        }
+        else
+        {
+          OnDeleteItem(item);
+        }
         return;
       }
 
@@ -658,7 +675,24 @@ namespace MediaPortal.Dialogs
       switch (dlg.SelectedId)
       {
         case 117: // delete
-          OnDeleteItem(item);
+          bool readOnly;
+          if (Directory.Exists(item.Path))
+          {
+            readOnly = CheckDirectoryReadOnlyAttributes(item.Path);
+          }
+          else
+          {
+            FileAttributes attributes = File.GetAttributes(item.Path);
+            readOnly = ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly);
+          }
+          if (readOnly)
+          {
+            OnDeleteReadOnlyItem(item);
+          }
+          else
+          {
+            OnDeleteItem(item);
+          }
           break;
 
         case 118: // rename
@@ -749,6 +783,46 @@ namespace MediaPortal.Dialogs
           }
           break;
       }
+    }
+
+    private void CleanDirectoryReadOnlyAttributes(string targetDirectory)
+    {
+      // Process the list of files found in the directory.
+      string[] fileEntries = Directory.GetFiles(targetDirectory);
+      foreach (string fileName in fileEntries)
+      {
+        File.SetAttributes(fileName, File.GetAttributes(fileName) & ~FileAttributes.ReadOnly);
+      }
+
+      // Recurse into subdirectories of this directory.
+      string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
+      foreach (string subdirectory in subdirectoryEntries)
+      {
+        CleanDirectoryReadOnlyAttributes(subdirectory);
+      }
+    }
+
+    private bool CheckDirectoryReadOnlyAttributes(string targetDirectory)
+    {
+      // Process the list of files found in the directory.
+      string[] fileEntries = Directory.GetFiles(targetDirectory);
+      foreach (string fileName in fileEntries)
+      {
+        FileAttributes attributes = File.GetAttributes(fileName);
+        if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+        {
+          return true;
+        }
+      }
+
+      // Recurse into subdirectories of this directory.
+      bool result = false;
+      string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
+      foreach (string subdirectory in subdirectoryEntries)
+      {
+        result = result || CheckDirectoryReadOnlyAttributes(subdirectory);
+      }
+      return result;
     }
 
     private void FileItemDialog()
@@ -884,6 +958,66 @@ namespace MediaPortal.Dialogs
       m_bReload = true;
       DoDeleteItem(item);
     }
+
+    private void OnDeleteReadOnlyItem(GUIListItem item)
+    {
+      if (item.IsRemote)
+      {
+        return;
+      }
+
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
+      if (null == dlgYesNo)
+      {
+        return;
+      }
+      string strFileName = Path.GetFileName(item.Path);
+      if (!item.IsFolder)
+      {
+        if (Util.Utils.IsAudio(item.Path))
+        {
+          dlgYesNo.SetHeading(2000); // Audio
+        }
+        else if (Util.Utils.IsVideo(item.Path))
+        {
+          dlgYesNo.SetHeading(2002); // Movie
+        }
+        else if (Util.Utils.IsPicture(item.Path))
+        {
+          dlgYesNo.SetHeading(2001); // Picture
+        }
+        else
+        {
+          dlgYesNo.SetHeading(2003); // Unknown file
+        }
+      }
+      else
+      {
+        dlgYesNo.SetHeading(1989);
+      }
+      dlgYesNo.SetLine(1, 2004);
+      dlgYesNo.SetLine(2, strFileName);
+      dlgYesNo.SetLine(3, "");
+      dlgYesNo.DoModal(GetID);
+
+      if (!dlgYesNo.IsConfirmed)
+      {
+        return;
+      }
+      m_bReload = true;
+
+      if (Directory.Exists(item.Path))
+      {
+        CleanDirectoryReadOnlyAttributes(item.Path);
+      }
+      else
+      {
+        File.SetAttributes(item.Path, File.GetAttributes(item.Path) & ~FileAttributes.ReadOnly);
+      }
+
+      DoDeleteItem(item);
+    }
+
 
     private void DoDeleteItem(GUIListItem item)
     {

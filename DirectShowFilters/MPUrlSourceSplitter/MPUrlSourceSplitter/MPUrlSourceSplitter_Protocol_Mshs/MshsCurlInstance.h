@@ -90,6 +90,9 @@ public:
   // @return : true if instance is locked by owner, false otherwise
   bool IsLockedCurlInstanceByOwner(void *owner);
 
+  // clears session
+  virtual void ClearSession(void);
+
 protected:
   // holds MSHS download request
   // never created and never destroyed, it's only dynamic cast

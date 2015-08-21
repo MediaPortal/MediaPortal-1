@@ -121,6 +121,18 @@ const uint8_t *CSection::GetSection(void)
   return (size != 0) ? this->payload : NULL;
 }
 
+unsigned int CSection::GetCrc32(void)
+{
+  unsigned int result = SECTION_CRC32_UNDEFINED;
+
+  if (this->IsSetFlags(SECTION_FLAG_COMPLETE_SECTION) && (this->GetSectionSize() >= (SECTION_HEADER_SIZE + SECTION_CRC32_SIZE)))
+  {
+    result = RBE32(this->payload, this->GetSectionSize() - SECTION_CRC32_SIZE);
+  }
+
+  return result;
+}
+
 /* set methods */
 
 void CSection::SetTableId(unsigned int tableId)
@@ -163,63 +175,29 @@ bool CSection::IsPrivateIndicator(void)
   return (((header >> SECTION_HEADER_PRIVATE_INDICATOR_SHIFT) & SECTION_HEADER_PRIVATE_INDICATOR_MASK) != 0);
 }
 
-HRESULT CSection::Parse(CProgramSpecificInformationPacket *psiPacket, unsigned int startFromSectionPayload)
+HRESULT CSection::Parse(CSectionPayload *sectionPayload)
 {
   HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, psiPacket);
+  CHECK_POINTER_DEFAULT_HRESULT(result, sectionPayload);
 
   if (SUCCEEDED(result))
   {
-    if (this->IsSetFlags(SECTION_FLAG_EMPTY_SECTION) && (!psiPacket->IsPayloadUnitStart()))
+    if (this->IsSetFlags(SECTION_FLAG_EMPTY_SECTION) && (!sectionPayload->IsPayloadUnitStart()))
     {
       result = E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION;
     }
 
-    if (this->IsSetFlags(SECTION_FLAG_INCOMPLETE_SECTION))
+    if (SUCCEEDED(result) && this->IsSetAnyOfFlags(SECTION_FLAG_INCOMPLETE_SECTION))
     {
-      // check PSI packet for section end
+      // if empty or incomplete section, just copy data and check size
 
-      for (unsigned int i = startFromSectionPayload; i < psiPacket->GetSectionPayloads()->Count(); i++)
-      {
-        CSectionPayload *sectionPayload = psiPacket->GetSectionPayloads()->GetItem(i);
-
-        if (sectionPayload->IsPayloadUnitStart())
-        {
-          // started new section, following data are for new section
-          // check size of section
-          if ((this->currentPayloadSize >= SECTION_HEADER_SIZE) && this->IsSetFlags(SECTION_FLAG_INCOMPLETE_SECTION) && (this->GetSectionSize() <= this->currentPayloadSize))
-          {
-            this->flags &= ~SECTION_FLAG_INCOMPLETE_SECTION;
-            this->flags |= SECTION_FLAG_COMPLETE_SECTION;
-          }
-          else
-          {
-            result = E_MPEG2TS_INCOMPLETE_SECTION;
-          }
-          break;
-        }
-
-        memcpy(this->payload + this->currentPayloadSize, sectionPayload->GetPayload(), sectionPayload->GetPayloadSize());
-        this->currentPayloadSize += sectionPayload->GetPayloadSize();
-      }
+      memcpy(this->payload + this->currentPayloadSize, sectionPayload->GetPayload(), sectionPayload->GetPayloadSize());
+      this->currentPayloadSize += sectionPayload->GetPayloadSize();
     }
 
-    if (SUCCEEDED(result) && this->IsSetFlags(SECTION_FLAG_EMPTY_SECTION) && psiPacket->IsPayloadUnitStart())
+    if (SUCCEEDED(result) && this->IsSetFlags(SECTION_FLAG_EMPTY_SECTION) && sectionPayload->IsPayloadUnitStart())
     {
-      // there is at least one section in PSI packet
-      // current section instance is empty, we can read PSI section
-
-      CSectionPayload *sectionPayload = NULL;
-      for (unsigned int i = startFromSectionPayload; i < psiPacket->GetSectionPayloads()->Count(); i++)
-      {
-        CSectionPayload *temp = psiPacket->GetSectionPayloads()->GetItem(i);
-
-        if (temp->IsPayloadUnitStart())
-        {
-          sectionPayload = temp;
-          break;
-        }
-      }
+      // current section instance is empty, we can read section payload
 
       this->currentPayloadSize = 0;
 
@@ -235,6 +213,12 @@ HRESULT CSection::Parse(CProgramSpecificInformationPacket *psiPacket, unsigned i
     {
       this->flags &= ~SECTION_FLAG_INCOMPLETE_SECTION;
       this->flags |= SECTION_FLAG_COMPLETE_SECTION;
+    }
+
+    if (SUCCEEDED(result) && this->IsSetFlags(SECTION_FLAG_COMPLETE_SECTION))
+    {
+      // complete section, check table ID
+      CHECK_CONDITION_HRESULT(result, this->CheckTableId(), result, E_MPEG2TS_SECTION_INVALID_TABLE_ID);
     }
 
     if (SUCCEEDED(result) && this->IsSetFlags(SECTION_FLAG_COMPLETE_SECTION | SECTION_FLAG_CHECK_CRC32))
@@ -292,6 +276,35 @@ void CSection::ResetSize(void)
 
     WBE24(this->payload, 0, header);
   }  
+}
+
+/* static methods */
+
+unsigned int CSection::GetTableId(const unsigned char *buffer, uint32_t length)
+{
+  if (length >= SECTION_TABLE_ID_SIZE)
+  {
+    unsigned int header = RBE8(buffer, 0);
+
+    return header;
+  }
+
+  return UINT_MAX;
+}
+
+unsigned int CSection::GetSectionSize(const unsigned char *buffer, uint32_t length)
+{
+  if (length >= SECTION_HEADER_SIZE)
+  {
+    unsigned int header = RBE24(buffer, 0);
+    header = ((header >> SECTION_HEADER_SECTION_LENGTH_SHIFT) & SECTION_HEADER_SECTION_LENGTH_MASK);
+
+    header += (header != 0) ? SECTION_HEADER_SIZE : 0;
+
+    return header;
+  }
+
+  return UINT_MAX;
 }
 
 /* protected methods */

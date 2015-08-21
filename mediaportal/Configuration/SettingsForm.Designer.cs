@@ -5,7 +5,6 @@
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.IContainer components = null;
     private System.Windows.Forms.LinkLabel linkLabel1;
     private System.Windows.Forms.ToolStrip toolStrip1;
     private System.Windows.Forms.ToolStripButton helpToolStripSplitButton;

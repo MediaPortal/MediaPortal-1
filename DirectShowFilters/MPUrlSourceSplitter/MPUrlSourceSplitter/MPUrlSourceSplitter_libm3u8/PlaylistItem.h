@@ -68,8 +68,8 @@ public:
 
   // parses item data
   // @param item : the item to parse
-  // @return : true if successful, false otherwise
-  virtual bool ParsePlaylistItem(CItem *item);
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT ParsePlaylistItem(CItem *item);
 
 protected:
 

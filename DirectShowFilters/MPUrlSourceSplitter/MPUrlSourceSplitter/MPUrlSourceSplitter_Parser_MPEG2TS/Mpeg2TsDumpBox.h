@@ -30,16 +30,13 @@
 
 #define MPEG2TS_DUMP_BOX_FLAG_NONE                                    DUMP_BOX_FLAG_NONE
 
-#define MPEG2TS_DUMP_BOX_FLAG_INPUT_DATA                              (1 << (DUMP_BOX_FLAG_LAST + 0))
-#define MPEG2TS_DUMP_BOX_FLAG_OUTPUT_DATA                             (1 << (DUMP_BOX_FLAG_LAST + 1))
+#define MPEG2TS_DUMP_BOX_FLAG_LAST                                    (DUMP_BOX_FLAG_LAST + 0)
 
-#define MPEG2TS_DUMP_BOX_FLAG_LAST                                    (DUMP_BOX_FLAG_LAST + 2)
-
-class CMpeg2TsDumpBox : public CDumpBox
+class CMpeg2tsDumpBox : public CDumpBox
 {
 public:
-  CMpeg2TsDumpBox(HRESULT *result);
-  virtual ~CMpeg2TsDumpBox(void);
+  CMpeg2tsDumpBox(HRESULT *result);
+  virtual ~CMpeg2tsDumpBox(void);
 
   /* get methods */
 
@@ -50,23 +47,7 @@ public:
   // @return : true if successful, false otherwise
   bool SetStreamPackage(CStreamPackage *streamPackage);
 
-  // sets if dump box contains input data
-  // @param inputData : true if dump box contains input data, false otherwise
-  void SetInputData(bool inputData);
-
-  // sets if dump box contains output data
-  // @param inputData : true if dump box contains output data, false otherwise
-  void SetOutputData(bool outputData);
-
   /* other methods */
-
-  // tests if dump box contains input data
-  // @return : true if dump box contains input data, false otherwise
-  bool IsInputData(void);
-
-  // tests if dump box contains output data
-  // @return : true if dump box contains output data, false otherwise
-  bool IsOutputData(void);
 
 protected:
 

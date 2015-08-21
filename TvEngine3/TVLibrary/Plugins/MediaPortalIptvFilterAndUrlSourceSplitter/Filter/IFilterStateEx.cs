@@ -64,7 +64,6 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Filter
         [return: MarshalAs(UnmanagedType.I4)]
         int GetErrorDescription([In, MarshalAs(UnmanagedType.I4)] int error, [Out, MarshalAs(UnmanagedType.LPWStr)] out String description);
 
-
         /// <summary>
         /// Loads stream into file.
         /// </summary>
@@ -83,7 +82,6 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Filter
         [return: MarshalAs(UnmanagedType.I4)]
         int IsStreamOpened([Out, MarshalAs(UnmanagedType.Bool)] out Boolean opened);
 
-
         /// <summary>
         /// Tests if stream is IPTV compatible.
         /// </summary>
@@ -92,5 +90,26 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Filter
         [PreserveSig]
         [return: MarshalAs(UnmanagedType.I4)]
         int IsStreamIptvCompatible([Out, MarshalAs(UnmanagedType.Bool)] out Boolean compatible);
+
+        /* filter version higher than 5510 */
+
+        /// <summary>
+        /// Gets IPTV section count.
+        /// </summary>
+        /// <param name="count">The reference to variable to get IPTV section count.</param>
+        /// <returns>0 if successful, error code otherwise</returns>
+        [PreserveSig]
+        [return: MarshalAs(UnmanagedType.I4)]
+        int GetIptvSectionCount([Out, MarshalAs(UnmanagedType.U4)] out uint count);
+
+        /// <summary>
+        /// Gets IPTV section with specified index.
+        /// </summary>
+        /// <param name="index">The index of IPTV section to get.</param>
+        /// <param name="section">The reference to string to get section data with specified index in BASE64 encoding.</param>
+        /// <returns></returns>
+        [PreserveSig]
+        [return: MarshalAs(UnmanagedType.I4)]
+        int GetIptvSection([In, MarshalAs(UnmanagedType.U4)] uint index, [Out, MarshalAs(UnmanagedType.LPWStr)] out String section);
     }
 }

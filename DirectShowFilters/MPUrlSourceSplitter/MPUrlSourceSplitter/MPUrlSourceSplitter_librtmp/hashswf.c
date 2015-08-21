@@ -20,6 +20,8 @@
  *  http://www.gnu.org/copyleft/lgpl.html
  */
 
+#define _WINSOCK_DEPRECATED_NO_WARNINGS								1
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

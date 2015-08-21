@@ -5,9 +5,7 @@
 <allowoverlay>no</allowoverlay>
 <define>#header.label:1</define>
 <controls>
-
 	<import>common.window.pictures.xml</import>
-    
   <control>
 		<id>0</id>
     <type>image</type>
@@ -20,7 +18,6 @@
 	  <animation effect="fade" time="250">WindowOpen</animation>
 	  <animation effect="fade" time="250">WindowClose</animation>
   </control>
-    
   <control>
    	<id>0</id>
     <type>label</type>
@@ -35,8 +32,7 @@
 	  <animation effect="fade" time="250">WindowOpen</animation>
 	  <animation effect="fade" time="250">WindowClose</animation>
   </control>
-      
-	<control>
+ 	<control>
   	<id>0</id>
     <type>label</type>
     <posX>1848</posX>
@@ -50,7 +46,6 @@
 	  <animation effect="fade" time="250">WindowOpen</animation>
 	  <animation effect="fade" time="250">WindowClose</animation>
   </control>
-		
 	<control>
   	<description>Date / Weather</description>
     <id>0</id>
@@ -65,7 +60,6 @@
 	  <animation effect="fade" time="250">WindowOpen</animation>
 	  <animation effect="fade" time="250">WindowClose</animation>
  	</control>
-      
 	<control>
   	<description>Date</description>
     <id>0</id>
@@ -80,22 +74,19 @@
 	  <animation effect="fade" time="250">WindowOpen</animation>
 	  <animation effect="fade" time="250">WindowClose</animation>
   </control>
-		
 	<control>
 		<description>Cover Art</description>
 		<type>image</type>
 		<id>500</id>
 		<posX>121</posX>
 		<posY>362</posY>
-		<width>556</width>
-		<height>371</height>
+		<width>565</width>
+		<height>376</height>
 		<texture>#selectedthumb</texture>
-		<keepaspectratio>yes</keepaspectratio>
 		<visible>facadeview.list+Control.IsVisible(50)</visible>
 	  <animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
-    
 	<control>
 		<id>1</id>
 		<type>image</type>
@@ -108,7 +99,6 @@
 		<animation effect="slide" start="-60,0" end="0,0" tween="quadratic" easing="in" time="250" delay="400">WindowOpen</animation>
 		<animation effect="slide" start="0,0" end="-60,0" tween="quadratic" easing="in" time="250" delay="100">WindowClose</animation>
 	</control>
-		
 	<control>
 		<id>1</id>
 		<type>image</type>
@@ -119,7 +109,6 @@
 		<animation effect="slide" start="0,-60" end="0,0" tween="quadratic" easing="in" time="250" delay="400">WindowOpen</animation>
 		<animation effect="slide" start="0,0" end="0,-60" tween="quadratic" easing="in" time="250" delay="100">WindowClose</animation>
 	</control>
-	
 	<import>common.facade.pictures.xml</import>
 	<import>mypics.hiddenmenu.xml</import>
 	<import>common.overlay.xml</import>

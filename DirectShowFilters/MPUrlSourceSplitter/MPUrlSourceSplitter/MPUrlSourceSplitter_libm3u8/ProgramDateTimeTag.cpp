@@ -24,6 +24,7 @@
 #include "ItemCollection.h"
 #include "PlaylistItemCollection.h"
 #include "PlaylistItem.h"
+#include "ErrorCodes.h"
 
 CProgramDateTimeTag::CProgramDateTimeTag(HRESULT *result)
   : CTag(result)
@@ -88,16 +89,16 @@ bool CProgramDateTimeTag::ApplyTagToPlaylistItems(unsigned int version, CItemCol
   }
 }
 
-bool CProgramDateTimeTag::ParseTag(unsigned int version)
+HRESULT CProgramDateTimeTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
+  HRESULT result = __super::ParseTag(version);
+  CHECK_CONDITION_HRESULT(result, (version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07), result, E_M3U8_NOT_SUPPORTED_TAG);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     // successful parsing of tag
     // compare it to our tag
-    result &= (wcscmp(this->tag, TAG_PROGRAM_DATE_TIME) == 0);
+    CHECK_CONDITION_HRESULT(result, wcscmp(this->tag, TAG_PROGRAM_DATE_TIME) == 0, result, E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE);
 
     // we do not interpret date and time
   }

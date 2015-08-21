@@ -37,6 +37,11 @@ public:
   // destructor
   ~CLinearBuffer(void);
 
+  // gets reference to internal buffer
+  // can be used for direct buffer manipulation
+  // @return : reference to internal buffer or NULL if error
+  unsigned char *GetInternalBuffer(void);
+
   // deeply clones current instance of linear buffer
   // @return : deep clone of current instance or NULL if error
   CLinearBuffer *Clone(void);

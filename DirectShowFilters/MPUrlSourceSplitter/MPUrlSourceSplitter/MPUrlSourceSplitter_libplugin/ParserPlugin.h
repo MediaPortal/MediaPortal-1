@@ -182,6 +182,16 @@ public:
   // @return : one of Action values
   virtual Action GetAction(void) = 0;
 
+  // gets IPTV section count
+  // @return : IPTV section count
+  virtual unsigned int GetIptvSectionCount(void);
+
+  // gets IPTV section with specified index
+  // @param index : the index of IPTV section to get
+  // @param section : the reference to string which holds section data in BASE64 encoding
+  // @return : S_OK if successful
+  virtual HRESULT GetIptvSection(unsigned int index, wchar_t **section);
+
   /* set methods */
 
   // sets current connection url and parameters
@@ -227,6 +237,14 @@ public:
   // @return : true if stream is IPTV compatible, false otherwise
   virtual bool IsStreamIptvCompatible(void);
 
+  // tests if dump input data flags is set
+  // @return : true if dump input data is set, false otherwise
+  virtual bool IsDumpInputData(void);
+
+  // tests if dump output data flags is set
+  // @return : true if dump output data is set, false otherwise
+  virtual bool IsDumpOutputData(void);
+
 protected:
   // holds logger instance
   CLogger *logger;
@@ -246,11 +264,23 @@ protected:
 
   /* methods */
 
-  // gets store file name
-  // @param extension : the extension of store file
-  // @return : store file name or NULL if error
-  virtual wchar_t *GetStoreFile(const wchar_t *extension) = 0;
+  // gets store file name part
+  // @return : store file name part or NULL if error
+  virtual const wchar_t *GetStoreFileNamePart(void) = 0;
 
+  // gets cache file name
+  // @param extra : the extra string to be added to dump file name (NULL or empty string if no extra string is added)
+  // @return : cache file name or NULL if error
+  virtual wchar_t *GetCacheFile(const wchar_t *extra);
+
+  // gets dump file name
+  // @param extra : the extra string to be added to dump file name (NULL or empty string if no extra string is added)
+  // @return : dump file name or NULL if error
+  virtual wchar_t *GetDumpFile(const wchar_t *extra);
+
+  // gets dump file name for input data
+  // @return : dump file name or NULL if error
+  virtual wchar_t *GetDumpFile(void);
 };
 
 #endif

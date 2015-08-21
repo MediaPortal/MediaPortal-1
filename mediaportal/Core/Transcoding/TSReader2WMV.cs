@@ -43,7 +43,7 @@ namespace MediaPortal.Core.Transcoding
 
     #region imports
 
-    [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dvblib.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern int SetWmvProfile(DirectShowLib.IBaseFilter filter, int bitrate, int fps, int screenX,
                                             int screenY);
 

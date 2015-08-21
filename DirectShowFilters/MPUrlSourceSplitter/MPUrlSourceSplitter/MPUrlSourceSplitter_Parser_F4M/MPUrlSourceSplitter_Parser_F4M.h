@@ -25,7 +25,9 @@
 
 #include "ParserPlugin.h"
 
-#define PARSER_NAME                                               L"PARSER_F4M"
+#define PARSER_NAME                                                   L"PARSER_F4M"
+
+#define PARSER_STORE_FILE_NAME_PART                                   L"mpurlsourcesplitter_parser_f4m"
 
 class CMPUrlSourceSplitter_Parser_F4M : public CParserPlugin
 {
@@ -79,10 +81,9 @@ protected:
 
   /* methods */
 
-  // gets store file name
-  // @param extension : the extension of store file
-  // @return : store file name or NULL if error
-  virtual wchar_t *GetStoreFile(const wchar_t *extension);
+  // gets store file name part
+  // @return : store file name part or NULL if error
+  virtual const wchar_t *GetStoreFileNamePart(void);
 };
 
 #endif

@@ -486,11 +486,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
 
         this->mainCurlInstance->SetIgnoreRtpPayloadType(this->configuration->GetValueBool(PARAMETER_NAME_RTSP_IGNORE_RTP_PAYLOAD_TYPE, true, RTSP_IGNORE_RTP_PAYLOAD_TYPE_DEFAULT));
 
-        if (this->configuration->GetValueBool(PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA, true, PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA_DEFAULT))
+        if (this->IsDumpInputData() || this->IsDumpOutputData())
         {
-          wchar_t *storeFilePath = this->GetDumpFile(0);
+          wchar_t *storeFilePath = this->GetDumpFile();
           CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->mainCurlInstance->SetDumpFile(storeFilePath));
           FREE_MEM(storeFilePath);
+
+          this->mainCurlInstance->SetDumpInputData(this->IsDumpInputData());
+          this->mainCurlInstance->SetDumpOutputData(this->IsDumpOutputData());
         }
       }
 
@@ -1310,9 +1313,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
 
           if (track->GetCacheFile()->GetCacheFile() == NULL)
           {
-            wchar_t *storeFilePath = this->GetStoreFile(i);
-            CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, track->GetCacheFile()->SetCacheFile(storeFilePath));
-            FREE_MEM(storeFilePath);
+            wchar_t *extra = FormatString(L"track_%02u", i);
+            if (extra != NULL)
+            {
+              wchar_t *storeFilePath = this->GetCacheFile(extra);
+              CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, track->GetCacheFile()->SetCacheFile(storeFilePath));
+              FREE_MEM(storeFilePath);
+            }
+            FREE_MEM(extra);
           }
 
           // store all stream fragments (which are not stored) to file
@@ -1667,21 +1675,14 @@ GUID CMPUrlSourceSplitter_Protocol_Rtsp::GetInstanceId(void)
 
 HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::Initialize(CPluginConfiguration *configuration)
 {
+  HRESULT result = __super::Initialize(configuration);
   CProtocolPluginConfiguration *protocolConfiguration = (CProtocolPluginConfiguration *)configuration;
-  HRESULT result = ((this->lockMutex != NULL) && (this->configuration != NULL) && (this->logger != NULL)) ? S_OK : E_NOT_VALID_STATE;
   CHECK_POINTER_HRESULT(result, protocolConfiguration, result, E_INVALIDARG);
+  CHECK_POINTER_HRESULT(result, this->lockMutex, result, E_NOT_VALID_STATE);
 
   if (SUCCEEDED(result))
   {
-    this->configuration->Clear();
-
-    CHECK_CONDITION_HRESULT(result, this->configuration->Append(protocolConfiguration->GetConfiguration()), result, E_OUTOFMEMORY);
-
     this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, PARAMETER_NAME_LIVE_STREAM_DEFAULT) ? PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_SPECIFIED : PROTOCOL_PLUGIN_FLAG_NONE;
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_SPLITTER, true, PARAMETER_NAME_SPLITTER_DEFAULT) ? PLUGIN_FLAG_SPLITTER : PROTOCOL_PLUGIN_FLAG_NONE;
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_IPTV, true, PARAMETER_NAME_IPTV_DEFAULT) ? PLUGIN_FLAG_IPTV : PROTOCOL_PLUGIN_FLAG_NONE;
   }
 
   return result;
@@ -1689,42 +1690,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::Initialize(CPluginConfiguration *con
 
 /* protected methods */
 
-wchar_t *CMPUrlSourceSplitter_Protocol_Rtsp::GetStoreFile(unsigned int trackId)
+const wchar_t *CMPUrlSourceSplitter_Protocol_Rtsp::GetStoreFileNamePart(void)
 {
-  wchar_t *result = NULL;
-  const wchar_t *folder = this->configuration->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
-
-  if (folder != NULL)
-  {
-    wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
-    if (guid != NULL)
-    {
-      result = FormatString(L"%smpurlsourcesplitter_protocol_rtsp_%s_track_%02u.temp", folder, guid, trackId);
-    }
-    FREE_MEM(guid);
-  }
-
-  return result;
-}
-
-wchar_t *CMPUrlSourceSplitter_Protocol_Rtsp::GetDumpFile(unsigned int trackId)
-{
-  wchar_t *result = NULL;
-  wchar_t *folder = Duplicate(this->configuration->GetValue(PARAMETER_NAME_LOG_FILE_NAME, true, NULL));
-
-  if (folder != NULL)
-  {
-    PathRemoveFileSpec(folder);
-
-    wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
-    if (guid != NULL)
-    {
-      result = FormatString(L"%s\\mpurlsourcesplitter_protocol_rtsp_%s_track_%02u.dump", folder, guid, trackId);
-    }
-    FREE_MEM(guid);
-  }
-
-  FREE_MEM(folder);
-
-  return result;
+  return PROTOCOL_STORE_FILE_NAME_PART;
 }

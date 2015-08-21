@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url;
 
 namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
 {
@@ -28,9 +29,9 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
         public HttpProtocolSettings()
             : base()
         {
-            this.OpenConnectionTimeout = HttpProtocolSettings.DefaultHttpOpenConnectionTimeout;
-            this.OpenConnectionSleepTime = HttpProtocolSettings.DefaultHttpOpenConnectionSleepTime;
-            this.TotalReopenConnectionTimeout = HttpProtocolSettings.DefaultHttpTotalReopenConnectionTimeout;
+            this.OpenConnectionTimeout = HttpUrl.DefaultHttpOpenConnectionTimeout;
+            this.OpenConnectionSleepTime = HttpUrl.DefaultHttpOpenConnectionSleepTime;
+            this.TotalReopenConnectionTimeout = HttpUrl.DefaultHttpTotalReopenConnectionTimeout;
         }
 
         #endregion
@@ -103,14 +104,6 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
         #endregion
 
         #region Methods
-        #endregion
-
-        #region Constants
-
-        public static readonly int DefaultHttpOpenConnectionTimeout = 20000;           // ms
-        public static readonly int DefaultHttpOpenConnectionSleepTime = 0;             // ms
-        public static readonly int DefaultHttpTotalReopenConnectionTimeout = 60000;    // ms
-
         #endregion
     }
 }

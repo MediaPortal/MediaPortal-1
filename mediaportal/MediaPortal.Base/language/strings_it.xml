@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Language name="Italian" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="I miei ">Programmi</String>
@@ -1183,6 +1183,7 @@
     <String id="1976">RPM</String>
     <String id="1977">File System</String>
     <String id="1978">Memoria Virtuale</String>
+    <String id="1984">Aggiorna miniature video</String>
     <String id="2005">Cancella</String>
     <String id="2006">Titolo</String>
     <String id="2007">Resa</String>
@@ -2219,7 +2220,7 @@
     <String id="300116">Classico (lineare)</String>
     <String id="300117">Logaritmico</String>
     <String id="300118">Windows Vista/Win7</String>
-    <String id="300119">Mostra OSD volume predefinito a tutto schermo</String>
+    <String id="300119">Attiva indicatore del volume</String>
     <String id="300120">Skin</String>
     <String id="300121">On Screen Display</String>
     <String id="300122">Consenti salvataggio ultimo elemento selezionato</String>

@@ -140,15 +140,7 @@ namespace TvService
     public override void OnEpgCancelled()
     {
       Log.Epg("epg grabber:epg cancelled");
-
-      if (_state == EpgState.Idle)
-      {
-        return;
-      }
-      _state = EpgState.Idle;
-      _tvController.StopGrabbingEpg(_user);
-      _user.CardId = -1;
-      _currentTransponder.InUse = false;
+      Stop();
       return;
     }
 
@@ -175,14 +167,17 @@ namespace TvService
           return 0;
         }
 
+        // It is not safe to stop the tuner graph from here because we're in
+        // a callback that has been triggered during sample processing. Start
+        // a thread to stop the graph safely...
         //is the card still idle?
         if (IsCardIdle(_user) == false)
         {
           Log.Epg("Epg: card:{0} OnEpgReceived but card is not idle", _user.CardId);
-          _state = EpgState.Idle;
-          _tvController.StopGrabbingEpg(_user);
-          _user.CardId = -1;
-          _currentTransponder.InUse = false;
+          Thread stopThread = new Thread(Stop);
+          stopThread.IsBackground = true;
+          stopThread.Name = "EPG grabber stop thread";
+          stopThread.Start();
           return 0;
         }
 
@@ -192,14 +187,11 @@ namespace TvService
         {
           //no epg found for this transponder
           Log.Epg("Epg: card:{0} no epg found", _user.CardId);
-          _currentTransponder.InUse = false;
           _currentTransponder.OnTimeOut();
-
-          _state = EpgState.Idle;
-          _tvController.StopGrabbingEpg(_user);
-          _tvController.PauseCard(_user);
-          _user.CardId = -1;
-          _currentTransponder.InUse = false;
+          Thread stopThread = new Thread(Stop);
+          stopThread.IsBackground = true;
+          stopThread.Name = "EPG grabber stop thread";
+          stopThread.Start();
           return 0;
         }
 
@@ -276,6 +268,8 @@ namespace TvService
       _tvController.OnTvServerEvent -= _eventHandler;
       _epgTimer.Enabled = false;
       _isRunning = false;
+      _state = EpgState.Idle;
+      _user.CardId = -1;
     }
 
     #endregion
@@ -506,9 +500,8 @@ namespace TvService
                 if (!_isRunning || false == _tvController.GrabEpg(this, Card.IdCard))
                 {
                   if (!_isRunning)
-                    Log.Epg("Tuning finished but EpgGrabber no longer enabled");
-                  _tvController.StopGrabbingEpg(_user);
-                  _user.CardId = -1;
+                  Log.Epg("Tuning finished but EpgGrabber no longer enabled");
+                  Stop();
                   Log.Epg("Epg: card:{0} could not start dvbt grabbing", Card.IdCard);
                   return false;
                 }
@@ -544,12 +537,6 @@ namespace TvService
     {
       Thread.CurrentThread.Priority = ThreadPriority.Lowest;
 
-      //if card is not idle anymore we return
-      if (IsCardIdle(_user) == false)
-      {
-        _currentTransponder.InUse = false;
-        return;
-      }
       Log.Epg("Epg: card:{0} Updating database with new programs", _user.CardId);
       bool timeOut = false;
       _dbUpdater.ReloadConfig();
@@ -585,14 +572,7 @@ namespace TvService
         {
           _currentTransponder.OnTimeOut();
         }
-        if (_state != EpgState.Idle && _user.CardId >= 0)
-        {
-          _tvController.StopGrabbingEpg(_user);
-          _tvController.PauseCard(_user);
-        }
-        _currentTransponder.InUse = false;
-        _state = EpgState.Idle;
-        _user.CardId = -1;
+        Stop();
         _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.ProgramUpdated));
       }
     }

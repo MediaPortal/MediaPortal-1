@@ -30,11 +30,30 @@
 #define PARAMETER_NAME_MPEG2TS_PROGRAM_NUMBER                         L"Mpeg2TsProgramNumber"
 #define PARAMETER_NAME_MPEG2TS_PROGRAM_MAP_PID                        L"Mpeg2TsProgramMapPID"
 
+#define PARAMETER_NAME_MPEG2TS_SET_NOT_SCRAMBLED                      L"Mpeg2TsSetNotScrambled"
+
+#define PARAMETER_NAME_MPEG2TS_FILTER_PROGRAM_NUMBER_COUNT            L"Mpeg2TsFilterProgramNumberCount"
+
+#define PARAMETER_NAME_FORMAT_MPEG2TS_FILTER_PROGRAM_NUMBER           L"Mpeg2TsFilterProgramNumber%08u"
+
+#define PARAMETER_NAME_FORMAT_MPEG2TS_LEAVE_PROGRAM_ELEMENT_COUNT     L"Mpeg2TsFilterProgramNumber%08uLeaveProgramElementCount"
+
+#define PARAMETER_NAME_FORMAT_MPEG2TS_LEAVE_PROGRAM_ELEMENT           L"Mpeg2TsFilterProgramNumber%08uLeaveProgramElement%08u"
+
+#define PARAMETER_NAME_MPEG2TS_STREAM_ANALYSIS                        L"Mpeg2TsStreamAnalysis"
+
 #define MPEG2TS_DETECT_DISCONTINUITY_DEFAULT                          true
 #define MPEG2TS_ALIGN_TO_MPEG2TS_PACKET                               true
 
 #define MPEG2TS_TRANSPORT_STREAM_ID_DEFAULT                           UINT_MAX
 #define MPEG2TS_PROGRAM_NUMBER_DEFAULT                                UINT_MAX
 #define MPEG2TS_PROGRAM_MAP_PID_DEFAULT                               UINT_MAX
+
+#define MPEG2TS_SET_NOT_SCRAMBLED_DEFAULT                             false
+
+#define MPEG2TS_FILTER_PROGRAM_NUMBER_COUNT_DEFAULT                   0
+#define MPEG2TS_LEAVE_PROGRAM_ELEMENT_COUNT_DEFAULT                   0
+
+#define MPEG2TS_STREAM_ANALYSIS_DEFAULT                               false
 
 #endif

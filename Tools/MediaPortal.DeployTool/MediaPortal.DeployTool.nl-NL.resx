@@ -518,4 +518,22 @@ Ga a.u.b. pas verder met de met de installatie van MediaPortal na de herstart.</
   <data name="SkinChoice_labelSectionHeader" xml:space="preserve">
     <value>Kies Skin</value>
   </data>
+   <data name="ExtensionChoice_MoreInfo" xml:space="preserve">
+    <value>Meer Info</value>
+  </data>
+  <data name="ExtensionChoice_OtherExtensions" xml:space="preserve">
+    <value>Bekijk andere Extensions</value>
+  </data>
+  <data name="ExtensionChoice_Titan" xml:space="preserve">
+    <value>Installeer deze Extension om ondersteuning voor populaire plugins te krijgen</value>
+  </data>
+  <data name="ExtensionChoice_Title" xml:space="preserve">
+    <value>Aanbevolen Extensions</value>
+  </data>
+  <data name="DeployXmlDelete_Failed" xml:space="preserve">
+    <value>Kon deploy.xml niet verwijderen\nWil je doorgaan?\nDe instellingen zijn misschien niet goed opgeslagen</value>
+  </data>
+  <data name="Reinstall" xml:space="preserve">
+    <value>Herinstalleer huidige installatie naar {0}</value>
+  </data>
 </root>

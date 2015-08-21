@@ -47,6 +47,132 @@ CHttpCurlInstance::~CHttpCurlInstance(void)
   this->ClearHeaders();
 }
 
+/* get methods */
+
+CHttpDownloadRequest *CHttpCurlInstance::GetHttpDownloadRequest(void)
+{
+  return this->httpDownloadRequest;
+}
+
+CHttpDownloadResponse *CHttpCurlInstance::GetHttpDownloadResponse(void)
+{
+  return this->httpDownloadResponse;
+}
+
+double CHttpCurlInstance::GetDownloadContentLength(void)
+{
+  double result = -1;
+
+  if (this->curl != NULL)
+  {
+    CURLcode errorCode = curl_easy_getinfo(this->curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &result);
+    result = (errorCode == CURLE_OK) ? result : (-1);
+  }
+
+  return result;
+}
+
+CParameterCollection *CHttpCurlInstance::GetCurrentCookies(void)
+{
+  HRESULT result = S_OK;
+  CParameterCollection *currentCookies = new CParameterCollection(&result);
+  CHECK_POINTER_HRESULT(result, currentCookies, result, E_OUTOFMEMORY);
+
+  if (this->curl != NULL)
+  {
+    curl_slist *cookieList = NULL;
+    CURLcode errorCode = curl_easy_getinfo(this->curl, CURLINFO_COOKIELIST, &cookieList);
+
+    if ((errorCode == CURLE_OK) && (cookieList != NULL))
+    {
+      for (curl_slist *cookie = cookieList; cookie != NULL; cookie = cookie->next)
+      {
+        wchar_t *convertedValue = ConvertToUnicodeA(cookie->data);
+
+        if (convertedValue != NULL)
+        {
+          CParameter *parameter = new CParameter(&result, L"", convertedValue);
+          CHECK_POINTER_HRESULT(result, parameter, result, E_OUTOFMEMORY);
+
+          CHECK_CONDITION_HRESULT(result, currentCookies->CCollection::Add(parameter), result, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(parameter));
+        }
+
+        FREE_MEM(convertedValue);
+      }
+
+      curl_slist_free_all(cookieList);
+      cookieList = NULL;
+    }
+  }
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(currentCookies));
+  return currentCookies;
+}
+
+/* set methods */
+
+bool CHttpCurlInstance::AddCookies(CParameterCollection *cookies)
+{
+  bool result = (cookies != NULL);
+
+  if (result)
+  {
+    // convert cookies collection to CURL list
+    for (unsigned int i = 0; (result && (i < cookies->Count())); i++)
+    {
+      CParameter *cookie = cookies->GetItem(i);
+
+      char *convertedValue = ConvertToMultiByteW(cookie->GetValue());
+      result &= (convertedValue != NULL);
+
+      if (result)
+      {
+        this->cookies = curl_slist_append(this->cookies, convertedValue);
+        result &= (this->cookies != NULL);
+      }
+      FREE_MEM(convertedValue);
+    }
+  }
+
+  return result;
+}
+
+bool CHttpCurlInstance::SetCurrentCookies(CParameterCollection *cookies)
+{
+  bool result = (cookies != NULL);
+
+  if (result)
+  {
+    // release previous cookies (if exist)
+    if (this->cookies != NULL)
+    {
+      curl_slist_free_all(this->cookies);
+      this->cookies = NULL;
+    }
+
+    // convert cookies collection to CURL list
+    for (unsigned int i = 0; (result && (i < cookies->Count())); i++)
+    {
+      CParameter *cookie = cookies->GetItem(i);
+
+      char *convertedValue = ConvertToMultiByteW(cookie->GetValue());
+      result &= (convertedValue != NULL);
+
+      if (result)
+      {
+        this->cookies = curl_slist_append(this->cookies, convertedValue);
+        result &= (this->cookies != NULL);
+      }
+      FREE_MEM(convertedValue);
+    }
+  }
+
+  return result;
+}
+
+/* other methods */
+
 HRESULT CHttpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 {
   HRESULT result = __super::Initialize(downloadRequest);
@@ -199,47 +325,56 @@ HRESULT CHttpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
   return result;
 }
 
-size_t CHttpCurlInstance::CurlReceiveData(CDumpBox *dumpBox, const unsigned char *buffer, size_t length)
+void CHttpCurlInstance::ClearSession(void)
 {
-  size_t result = __super::CurlReceiveData(dumpBox, buffer, length);
-  if (result == length)
-  {
-    long responseCode;
-    if (curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK)
-    {
-      this->httpDownloadResponse->SetResponseCode(responseCode);
-    }
+  __super::ClearSession();
 
-    responseCode = this->httpDownloadResponse->GetResponseCode();
-    if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
-    {
-      // response code 200 - 299 = OK
-      // response code 300 - 399 = redirect (OK)
-      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: error response code: %u", this->protocolName, METHOD_CURL_RECEIVE_DATA_NAME, responseCode);
-      // return error
-      result = 0;
-    }
+  if (this->cookies != NULL)
+  {
+    curl_slist_free_all(this->cookies);
+    this->cookies = NULL;
   }
 
-  return result;
+  this->ClearHeaders();
+
+  this->httpDownloadRequest = NULL;
+  this->httpDownloadResponse = NULL;
 }
 
-void CHttpCurlInstance::CurlDebug(curl_infotype type, const wchar_t *data)
+/* protected methods */
+
+void CHttpCurlInstance::CurlDebug(curl_infotype type, const unsigned char *data, size_t size)
 {
+  __super::CurlDebug(type, data, size);
+
   if (type == CURLINFO_HEADER_OUT)
   {
-    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: sent HTTP header: '%s'", this->protocolName, METHOD_CURL_DEBUG_CALLBACK, data);
+    __super::CurlDebug(CURLINFO_DATA_OUT, data, size);
+
+    wchar_t *curlData = CCurlInstance::ConvertTextData(data, size);
+    if (curlData != NULL)
+    {
+      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: sent HTTP header: '%s'", this->protocolName, METHOD_CURL_DEBUG_CALLBACK, curlData);
+    }
+    FREE_MEM(curlData);
   }
   else if (type == CURLINFO_HEADER_IN)
   {
-    wchar_t *trimmed = Trim(data);
-    // we are just interested in headers comming in from peer
-    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received HTTP header: '%s'", this->protocolName, METHOD_CURL_DEBUG_NAME, (trimmed != NULL) ? trimmed : data);
-    CHECK_CONDITION_NOT_NULL_EXECUTE(trimmed, this->httpDownloadResponse->GetHeaders()->Add(trimmed));
+    __super::CurlDebug(CURLINFO_DATA_IN, data, size);
+
+    wchar_t *curlData = CCurlInstance::ConvertTextData(data, size);
+    wchar_t *trimmed = Trim(curlData);
+
+    if ((trimmed != NULL) || (curlData != NULL))
+    {
+      // we are just interested in headers comming in from peer
+      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received HTTP header: '%s'", this->protocolName, METHOD_CURL_DEBUG_NAME, (trimmed != NULL) ? trimmed : curlData);
+      CHECK_CONDITION_NOT_NULL_EXECUTE(trimmed, this->httpDownloadResponse->GetHeaders()->Add(trimmed));
+    }
     FREE_MEM(trimmed);
 
     // check for accept-ranges header
-    wchar_t *lowerBuffer = Duplicate(data);
+    wchar_t *lowerBuffer = Duplicate(curlData);
     if (lowerBuffer != NULL)
     {
       size_t length = wcslen(lowerBuffer);
@@ -296,11 +431,33 @@ void CHttpCurlInstance::CurlDebug(curl_infotype type, const wchar_t *data)
     }
 
     FREE_MEM(lowerBuffer);
+    FREE_MEM(curlData);
   }
-  else
+}
+
+size_t CHttpCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t length)
+{
+  size_t result = __super::CurlReceiveData(buffer, length);
+  if (result == length)
   {
-    __super::CurlDebug(type, data);
+    long responseCode;
+    if (curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK)
+    {
+      this->httpDownloadResponse->SetResponseCode(responseCode);
+    }
+
+    responseCode = this->httpDownloadResponse->GetResponseCode();
+    if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
+    {
+      // response code 200 - 299 = OK
+      // response code 300 - 399 = redirect (OK)
+      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: error response code: %u", this->protocolName, METHOD_CURL_RECEIVE_DATA_NAME, responseCode);
+      // return error
+      result = 0;
+    }
   }
+
+  return result;
 }
 
 bool CHttpCurlInstance::AppendToHeaders(CHttpHeader *header)
@@ -333,16 +490,6 @@ void CHttpCurlInstance::ClearHeaders(void)
   this->httpHeaders = NULL;
 }
 
-CHttpDownloadRequest *CHttpCurlInstance::GetHttpDownloadRequest(void)
-{
-  return this->httpDownloadRequest;
-}
-
-CHttpDownloadResponse *CHttpCurlInstance::GetHttpDownloadResponse(void)
-{
-  return this->httpDownloadResponse;
-}
-
 CDownloadResponse *CHttpCurlInstance::CreateDownloadResponse(void)
 {
   HRESULT result = S_OK;
@@ -351,116 +498,6 @@ CDownloadResponse *CHttpCurlInstance::CreateDownloadResponse(void)
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(response));
   return response;
-}
-
-double CHttpCurlInstance::GetDownloadContentLength(void)
-{
-  double result = -1;
-
-  if (this->curl != NULL)
-  {
-    CURLcode errorCode = curl_easy_getinfo(this->curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &result);
-    result = (errorCode == CURLE_OK) ? result : (-1);
-  }
-
-  return result;
-}
-
-CParameterCollection *CHttpCurlInstance::GetCurrentCookies(void)
-{
-  HRESULT result = S_OK;
-  CParameterCollection *currentCookies = new CParameterCollection(&result);
-  CHECK_POINTER_HRESULT(result, currentCookies, result, E_OUTOFMEMORY);
-
-  if (this->curl != NULL)
-  {
-    curl_slist *cookieList = NULL;
-    CURLcode errorCode = curl_easy_getinfo(this->curl, CURLINFO_COOKIELIST, &cookieList);
-
-    if ((errorCode == CURLE_OK) && (cookieList != NULL))
-    {
-      for (curl_slist *cookie = cookieList; cookie != NULL; cookie = cookie->next)
-      {
-        wchar_t *convertedValue = ConvertToUnicodeA(cookie->data);
-
-        if (convertedValue != NULL)
-        {
-          CParameter *parameter = new CParameter(&result, L"", convertedValue);
-          CHECK_POINTER_HRESULT(result, parameter, result, E_OUTOFMEMORY);
-
-          CHECK_CONDITION_HRESULT(result, currentCookies->CCollection::Add(parameter), result, E_OUTOFMEMORY);
-          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(parameter));
-        }
-
-        FREE_MEM(convertedValue);
-      }
-
-      curl_slist_free_all(cookieList);
-      cookieList = NULL;
-    }
-  }
-
-  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(currentCookies));
-  return currentCookies;
-}
-
-bool CHttpCurlInstance::AddCookies(CParameterCollection *cookies)
-{
-  bool result = (cookies != NULL);
-
-  if (result)
-  {
-    // convert cookies collection to CURL list
-    for (unsigned int i = 0; (result && (i < cookies->Count())); i++)
-    {
-      CParameter *cookie = cookies->GetItem(i);
-
-      char *convertedValue = ConvertToMultiByteW(cookie->GetValue());
-      result &= (convertedValue != NULL);
-
-      if (result)
-      {
-        this->cookies = curl_slist_append(this->cookies, convertedValue);
-        result &= (this->cookies != NULL);
-      }
-      FREE_MEM(convertedValue);
-    }
-  }
-
-  return result;
-}
-
-bool CHttpCurlInstance::SetCurrentCookies(CParameterCollection *cookies)
-{
-  bool result = (cookies != NULL);
-
-  if (result)
-  {
-    // release previous cookies (if exist)
-    if (this->cookies != NULL)
-    {
-      curl_slist_free_all(this->cookies);
-      this->cookies = NULL;
-    }
-
-    // convert cookies collection to CURL list
-    for (unsigned int i = 0; (result && (i < cookies->Count())); i++)
-    {
-      CParameter *cookie = cookies->GetItem(i);
-
-      char *convertedValue = ConvertToMultiByteW(cookie->GetValue());
-      result &= (convertedValue != NULL);
-
-      if (result)
-      {
-        this->cookies = curl_slist_append(this->cookies, convertedValue);
-        result &= (this->cookies != NULL);
-      }
-      FREE_MEM(convertedValue);
-    }
-  }
-
-  return result;
 }
 
 HRESULT CHttpCurlInstance::DestroyCurlWorker(void)

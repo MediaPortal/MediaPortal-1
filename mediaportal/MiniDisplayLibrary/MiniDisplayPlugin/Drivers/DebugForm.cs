@@ -783,7 +783,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public void SetCustomCharacters(int[][] customCharacters) {}
 
-    public void SetLine(int _line, string _message)
+    public void SetLine(int _line, string _message, ContentAlignment aAlignment)
     {
       if (base.InvokeRequired)
       {
@@ -1168,6 +1168,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       public delegate void OnSettingsChangedHandler();
     }
 
-    public delegate void SetLineDelegate(int _line, string message);
+    public delegate void SetLineDelegate(int _line, string message, ContentAlignment aAlignment);
   }
 }

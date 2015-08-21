@@ -117,6 +117,7 @@ bool CMediaInformationBox::ParseInternal(const unsigned char *buffer, uint32_t l
         }
 
         FREE_MEM_CLASS(factory);
+        position += (uint32_t)processedSize;
       }
 
       if (SUCCEEDED(continueParsing) && processAdditionalBoxes)

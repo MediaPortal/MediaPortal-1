@@ -31,6 +31,8 @@
 
 #define PROTOCOL_NAME                                                         L"RTMP"
 
+#define PROTOCOL_STORE_FILE_NAME_PART                                         L"mpurlsourcesplitter_protocol_rtmp"
+
 #define TOTAL_SUPPORTED_PROTOCOLS                                             6
 wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { L"RTMP", L"RTMPT", L"RTMPE", L"RTMPTE", L"RTMPS", L"RTMPTS" };
 
@@ -203,13 +205,9 @@ protected:
 
   /* methods */
 
-  // gets store file name
-  // @return : store file name or NULL if error
-  wchar_t *GetStoreFile(void);
-
-  // gets dump file name
-  // @return : dump file name or NULL if error
-  wchar_t *GetDumpFile(void);
+  // gets store file name part
+  // @return : store file name part or NULL if error
+  const wchar_t *GetStoreFileNamePart(void);
 
   // gets byte position in buffer
   // it is always reset on seek

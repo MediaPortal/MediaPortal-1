@@ -510,10 +510,31 @@ Abilitando AERO si ridurrà anche l'uso della CPU, e il vostro HTPC sarà silenz
     <value>E' richiesto un riavvio da un componente Microsoft.
 Procedere con tale operazione prima di continuare l'installazione di MediaPortal.</value>
   </data>
-  <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
-    <value>Usa Skin esistente (ne sarà verificata la compatibilità)</value>
+  <data name="ExtensionChoice_LAV" xml:space="preserve">
+    <value>Installa LAV Filters per abilitare la riproduzione di molti dei più comuni formati audio e video</value>
   </data>
   <data name="SkinChoice_labelSectionHeader" xml:space="preserve">
     <value>Scegli una Skin</value>
+  </data>
+  <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
+    <value>Usa Skin esistente (ne sarà verificata la compatibilità)</value>
+  </data>
+  <data name="ExtensionChoice_MoreInfo" xml:space="preserve">
+    <value>Più Info</value>
+  </data>
+  <data name="ExtensionChoice_OtherExtensions" xml:space="preserve">
+    <value>Sfoglia altre estensioni</value>
+  </data>
+  <data name="ExtensionChoice_Titan" xml:space="preserve">
+    <value>Aggiunge il supporto per i più popolari plugin di terze parti</value>
+  </data>
+  <data name="ExtensionChoice_Title" xml:space="preserve">
+    <value>Estensioni raccomandate</value>
+  </data>
+  <data name="DeployXmlDelete_Failed" xml:space="preserve">
+    <value>Impossibile cancellare deploy.xml\nVuoi continuare?\nLe impostazione protrebbero non venire aggiornate correttamente</value>
+  </data>
+  <data name="Reinstall" xml:space="preserve">
+    <value>Reinstalla l'installazione corrente su {0}</value>
   </data>
 </root>

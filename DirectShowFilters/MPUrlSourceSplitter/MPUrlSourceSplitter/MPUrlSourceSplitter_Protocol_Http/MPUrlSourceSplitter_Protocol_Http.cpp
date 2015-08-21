@@ -362,11 +362,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
           CHECK_CONDITION_HRESULT(result, this->mainCurlInstance->SetCurrentCookies(this->currentCookies), result, E_HTTP_CANNOT_SET_COOKIES);
         }
 
-        if (this->configuration->GetValueBool(PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA, true, PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA_DEFAULT))
+        if (this->IsDumpInputData() || this->IsDumpOutputData())
         {
           wchar_t *storeFilePath = this->GetDumpFile();
           CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->mainCurlInstance->SetDumpFile(storeFilePath));
           FREE_MEM(storeFilePath);
+
+          this->mainCurlInstance->SetDumpInputData(this->IsDumpInputData());
+          this->mainCurlInstance->SetDumpOutputData(this->IsDumpOutputData());
         }
       }
 
@@ -391,6 +394,33 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
           request->SetUserAgent(this->configuration->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL));
           request->SetStartPosition(this->IsLiveStreamDetected() ? 0 : startStreamPosition);
           request->SetEndPosition(this->IsLiveStreamDetected() ? 0 : endStreamPosition);
+
+          // apply custom headers (if any)
+
+          unsigned int headersCount = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_HEADERS_COUNT, true, 0);
+
+          for (unsigned int i = 0; (SUCCEEDED(result) && (i < headersCount)); i++)
+          {
+            wchar_t *httpHeaderName = FormatString(HTTP_HEADER_FORMAT_PARAMETER_NAME, i);
+            wchar_t *httpHeaderValue = FormatString(HTTP_HEADER_FORMAT_PARAMETER_VALUE, i);
+
+            CHECK_POINTER_HRESULT(result, httpHeaderName, result, E_OUTOFMEMORY);
+            CHECK_POINTER_HRESULT(result, httpHeaderValue, result, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(result))
+            {
+              const wchar_t *name = this->configuration->GetValue(httpHeaderName, true, NULL);
+              const wchar_t *value = this->configuration->GetValue(httpHeaderValue, true, NULL);
+
+              CHECK_POINTER_HRESULT(result, name, result, E_OUTOFMEMORY);
+              CHECK_POINTER_HRESULT(result, value, result, E_OUTOFMEMORY);
+
+              CHECK_CONDITION_HRESULT(result, request->GetHeaders()->Add(name, value), result, E_OUTOFMEMORY);
+            }
+
+            FREE_MEM(httpHeaderName);
+            FREE_MEM(httpHeaderValue);
+          }
 
           // set finish time, all methods must return before finish time
           request->SetFinishTime(finishTime);
@@ -949,7 +979,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
 
       if (this->cacheFile->GetCacheFile() == NULL)
       {
-        wchar_t *storeFilePath = this->GetStoreFile();
+        wchar_t *storeFilePath = this->GetCacheFile(NULL);
         CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->cacheFile->SetCacheFile(storeFilePath));
         FREE_MEM(storeFilePath);
       }
@@ -1227,21 +1257,14 @@ GUID CMPUrlSourceSplitter_Protocol_Http::GetInstanceId(void)
 
 HRESULT CMPUrlSourceSplitter_Protocol_Http::Initialize(CPluginConfiguration *configuration)
 {
+  HRESULT result = __super::Initialize(configuration);
   CProtocolPluginConfiguration *protocolConfiguration = (CProtocolPluginConfiguration *)configuration;
-  HRESULT result = ((this->lockMutex != NULL) && (this->configuration != NULL) && (this->logger != NULL)) ? S_OK : E_NOT_VALID_STATE;
   CHECK_POINTER_HRESULT(result, protocolConfiguration, result, E_INVALIDARG);
+  CHECK_POINTER_HRESULT(result, this->lockMutex, result, E_NOT_VALID_STATE);
 
   if (SUCCEEDED(result))
   {
-    this->configuration->Clear();
-
-    CHECK_CONDITION_HRESULT(result, this->configuration->Append(protocolConfiguration->GetConfiguration()), result, E_OUTOFMEMORY);
-
     this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, PARAMETER_NAME_LIVE_STREAM_DEFAULT) ? PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_SPECIFIED : PROTOCOL_PLUGIN_FLAG_NONE;
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_SPLITTER, true, PARAMETER_NAME_SPLITTER_DEFAULT) ? PLUGIN_FLAG_SPLITTER : PROTOCOL_PLUGIN_FLAG_NONE;
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_IPTV, true, PARAMETER_NAME_IPTV_DEFAULT) ? PLUGIN_FLAG_IPTV : PROTOCOL_PLUGIN_FLAG_NONE;
 
     this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_HTTP_SEEKING_SUPPORT_DETECTION, true, HTTP_SEEKING_SUPPORT_DETECTION_DEFAULT) ? MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_SEEKING_SUPPORT_DETECTION : MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_NONE;
   }
@@ -1251,42 +1274,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::Initialize(CPluginConfiguration *con
 
 /* protected methods */
 
-wchar_t *CMPUrlSourceSplitter_Protocol_Http::GetStoreFile(void)
+const wchar_t *CMPUrlSourceSplitter_Protocol_Http::GetStoreFileNamePart(void)
 {
-  wchar_t *result = NULL;
-  const wchar_t *folder = this->configuration->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
-
-  if (folder != NULL)
-  {
-    wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
-    if (guid != NULL)
-    {
-      result = FormatString(L"%smpurlsourcesplitter_protocol_http_%s.temp", folder, guid);
-    }
-    FREE_MEM(guid);
-  }
-
-  return result;
-}
-
-wchar_t *CMPUrlSourceSplitter_Protocol_Http::GetDumpFile(void)
-{
-  wchar_t *result = NULL;
-  wchar_t *folder = Duplicate(this->configuration->GetValue(PARAMETER_NAME_LOG_FILE_NAME, true, NULL));
-
-  if (folder != NULL)
-  {
-    PathRemoveFileSpec(folder);
-
-    wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
-    if (guid != NULL)
-    {
-      result = FormatString(L"%s\\mpurlsourcesplitter_protocol_http_%s.dump", folder, guid);
-    }
-    FREE_MEM(guid);
-  }
-
-  FREE_MEM(folder);
-
-  return result;
+  return PROTOCOL_STORE_FILE_NAME_PART;
 }

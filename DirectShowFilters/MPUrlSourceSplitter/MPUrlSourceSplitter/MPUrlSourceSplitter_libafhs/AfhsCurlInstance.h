@@ -90,6 +90,9 @@ public:
   // @return : true if instance is locked by owner, false otherwise
   bool IsLockedCurlInstanceByOwner(void *owner);
 
+  // clears session
+  virtual void ClearSession(void);
+
 protected:
   // holds AFHS download request
   // never created and never destroyed

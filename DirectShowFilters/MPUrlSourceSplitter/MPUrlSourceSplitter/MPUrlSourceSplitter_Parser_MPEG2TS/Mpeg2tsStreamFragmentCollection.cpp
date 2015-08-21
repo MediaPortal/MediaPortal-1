@@ -35,8 +35,10 @@
 #define AFFECTED_INDEX_PROGRAM_ASSOCIATION_SECTION_DETECTION_FINISHED_INC                   (1 << (FLAGS_LAST + 8))
 #define AFFECTED_INDEX_TRANSPORT_STREAM_MAP_SECTION_DETECTION_FINISHED_ADD                  (1 << (FLAGS_LAST + 9))
 #define AFFECTED_INDEX_TRANSPORT_STREAM_MAP_SECTION_DETECTION_FINISHED_INC                  (1 << (FLAGS_LAST + 10))
-#define AFFECTED_INDEX_BOTH_SECTIONS_UPDATED_ADD                                            (1 << (FLAGS_LAST + 11))
-#define AFFECTED_INDEX_BOTH_SECTIONS_UPDATED_INC                                            (1 << (FLAGS_LAST + 12))
+#define AFFECTED_INDEX_CONDITIONAL_ACCESS_SECTION_DETECTION_FINISHED_ADD                    (1 << (FLAGS_LAST + 11))
+#define AFFECTED_INDEX_CONDITIONAL_ACCESS_SECTION_DETECTION_FINISHED_INC                    (1 << (FLAGS_LAST + 12))
+#define AFFECTED_INDEX_ALL_SECTIONS_UPDATED_ADD                                             (1 << (FLAGS_LAST + 13))
+#define AFFECTED_INDEX_ALL_SECTIONS_UPDATED_INC                                             (1 << (FLAGS_LAST + 14))
 
 CMpeg2tsStreamFragmentCollection::CMpeg2tsStreamFragmentCollection(HRESULT *result)
   : CStreamFragmentCollection(result)
@@ -46,7 +48,8 @@ CMpeg2tsStreamFragmentCollection::CMpeg2tsStreamFragmentCollection(HRESULT *resu
   this->indexDiscontinuityProcessed = NULL;
   this->indexProgramAssociationSectionDetectionFinished = NULL;
   this->indexTransportStreamMapSectionDetectionFinished = NULL;
-  this->indexBothSectionsUpdated = NULL;
+  this->indexConditionalAccessSectionDetectionFinished = NULL;
+  this->indexAllSectionsUpdated = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -55,14 +58,16 @@ CMpeg2tsStreamFragmentCollection::CMpeg2tsStreamFragmentCollection(HRESULT *resu
     this->indexDiscontinuityProcessed = new CIndexCollection(result);
     this->indexProgramAssociationSectionDetectionFinished = new CIndexCollection(result);
     this->indexTransportStreamMapSectionDetectionFinished = new CIndexCollection(result);
-    this->indexBothSectionsUpdated = new CIndexCollection(result);
+    this->indexConditionalAccessSectionDetectionFinished = new CIndexCollection(result);
+    this->indexAllSectionsUpdated = new CIndexCollection(result);
 
     CHECK_POINTER_HRESULT(*result, this->indexReadyForAlign, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->indexAligned, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->indexDiscontinuityProcessed, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->indexProgramAssociationSectionDetectionFinished, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->indexTransportStreamMapSectionDetectionFinished, *result, E_OUTOFMEMORY);
-    CHECK_POINTER_HRESULT(*result, this->indexBothSectionsUpdated, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->indexConditionalAccessSectionDetectionFinished, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->indexAllSectionsUpdated, *result, E_OUTOFMEMORY);
   }
 }
 
@@ -73,7 +78,8 @@ CMpeg2tsStreamFragmentCollection::~CMpeg2tsStreamFragmentCollection(void)
   FREE_MEM_CLASS(this->indexDiscontinuityProcessed);
   FREE_MEM_CLASS(this->indexProgramAssociationSectionDetectionFinished);
   FREE_MEM_CLASS(this->indexTransportStreamMapSectionDetectionFinished);
-  FREE_MEM_CLASS(this->indexBothSectionsUpdated);
+  FREE_MEM_CLASS(this->indexConditionalAccessSectionDetectionFinished);
+  FREE_MEM_CLASS(this->indexAllSectionsUpdated);
 }
 
 /* get methods */
@@ -188,16 +194,37 @@ HRESULT CMpeg2tsStreamFragmentCollection::GetTransportStreamMapSectionDetectionF
   return result;
 }
 
-HRESULT CMpeg2tsStreamFragmentCollection::GetBothSectionsUpdatedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection)
+HRESULT CMpeg2tsStreamFragmentCollection::GetConditionalAccessSectionDetectionFinishedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection)
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, collection);
 
-  CHECK_CONDITION_HRESULT(result, collection->EnsureEnoughSpace(this->indexReadyForAlign->Count()), result, E_OUTOFMEMORY);
+  CHECK_CONDITION_HRESULT(result, collection->EnsureEnoughSpace(this->indexConditionalAccessSectionDetectionFinished->Count()), result, E_OUTOFMEMORY);
 
-  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->indexBothSectionsUpdated->Count())); i++)
+  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->indexConditionalAccessSectionDetectionFinished->Count())); i++)
   {
-    unsigned int index = this->indexBothSectionsUpdated->GetItem(i);
+    unsigned int index = this->indexConditionalAccessSectionDetectionFinished->GetItem(i);
+
+    CIndexedMpeg2tsStreamFragment *item = new CIndexedMpeg2tsStreamFragment(&result, this->GetItem(index), index);
+    CHECK_POINTER_HRESULT(result, item, result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_HRESULT(result, collection->Add(item), result, E_OUTOFMEMORY);
+    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(item));
+  }
+
+  return result;
+}
+
+HRESULT CMpeg2tsStreamFragmentCollection::GetAllSectionsUpdatedStreamFragments(CIndexedMpeg2tsStreamFragmentCollection *collection)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, collection);
+
+  CHECK_CONDITION_HRESULT(result, collection->EnsureEnoughSpace(this->indexAllSectionsUpdated->Count()), result, E_OUTOFMEMORY);
+
+  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->indexAllSectionsUpdated->Count())); i++)
+  {
+    unsigned int index = this->indexAllSectionsUpdated->GetItem(i);
 
     CIndexedMpeg2tsStreamFragment *item = new CIndexedMpeg2tsStreamFragment(&result, this->GetItem(index), index);
     CHECK_POINTER_HRESULT(result, item, result, E_OUTOFMEMORY);
@@ -238,9 +265,14 @@ bool CMpeg2tsStreamFragmentCollection::HasTransportStreamMapSectionDetectionFini
   return (this->indexTransportStreamMapSectionDetectionFinished->Count() != 0);
 }
 
-bool CMpeg2tsStreamFragmentCollection::HasBothSectionsUpdatedStreamFragments(void)
+bool CMpeg2tsStreamFragmentCollection::HasConditionalAccessSectionDetectionFinishedStreamFragments(void)
 {
-  return (this->indexBothSectionsUpdated->Count() != 0);
+  return (this->indexConditionalAccessSectionDetectionFinished->Count() != 0);
+}
+
+bool CMpeg2tsStreamFragmentCollection::HasAllSectionsUpdatedStreamFragments(void)
+{
+  return (this->indexAllSectionsUpdated->Count() != 0);
 }
 
 void CMpeg2tsStreamFragmentCollection::RecalculateAlignedStreamFragmentStartPosition(unsigned int startIndex)
@@ -282,7 +314,8 @@ bool CMpeg2tsStreamFragmentCollection::InsertIndexes(unsigned int itemIndex)
   unsigned int indexDiscontinuityProcessedItemIndex = UINT_MAX;
   unsigned int indexProgramAssociationSectionDetectionFinishedItemIndex = UINT_MAX;
   unsigned int indexTransportStreamMapSectionDetectionFinishedItemIndex = UINT_MAX;
-  unsigned int indexBothSectionsUpdatedItemIndex = UINT_MAX;
+  unsigned int indexConditionalAccessSectionDetectionFinishedItemIndex = UINT_MAX;
+  unsigned int indexAllSectionsUpdatedItemIndex = UINT_MAX;
 
   if (result)
   {
@@ -424,20 +457,45 @@ bool CMpeg2tsStreamFragmentCollection::InsertIndexes(unsigned int itemIndex)
       unsigned int startIndex = 0;
       unsigned int endIndex = 0;
 
-      result &= this->indexBothSectionsUpdated->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
+      result &= this->indexConditionalAccessSectionDetectionFinished->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
 
       if (result)
       {
-        indexBothSectionsUpdatedItemIndex = min(endIndex, this->indexBothSectionsUpdated->Count());
+        indexConditionalAccessSectionDetectionFinishedItemIndex = min(endIndex, this->indexConditionalAccessSectionDetectionFinished->Count());
 
         // update (increase) values in index
-        CHECK_CONDITION_EXECUTE(result, this->indexBothSectionsUpdated->Increase(indexBothSectionsUpdatedItemIndex));
-        CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_BOTH_SECTIONS_UPDATED_INC);
+        CHECK_CONDITION_EXECUTE(result, this->indexConditionalAccessSectionDetectionFinished->Increase(indexConditionalAccessSectionDetectionFinishedItemIndex));
+        CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_CONDITIONAL_ACCESS_SECTION_DETECTION_FINISHED_INC);
 
-        if (item->IsProgramAssociationSectionUpdated() && item->IsTransportStreamMapSectionUpdated())
+        if (item->IsConditionalAccessSectionDetectionFinished())
         {
-          result &= this->indexBothSectionsUpdated->Insert(indexBothSectionsUpdatedItemIndex, itemIndex);
-          CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_BOTH_SECTIONS_UPDATED_ADD);
+          result &= this->indexConditionalAccessSectionDetectionFinished->Insert(indexConditionalAccessSectionDetectionFinishedItemIndex, itemIndex);
+          CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_CONDITIONAL_ACCESS_SECTION_DETECTION_FINISHED_ADD);
+        }
+      }
+    }
+
+    // seventh index
+    if (result)
+    {
+      // get position to insert item index
+      unsigned int startIndex = 0;
+      unsigned int endIndex = 0;
+
+      result &= this->indexAllSectionsUpdated->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
+
+      if (result)
+      {
+        indexAllSectionsUpdatedItemIndex = min(endIndex, this->indexAllSectionsUpdated->Count());
+
+        // update (increase) values in index
+        CHECK_CONDITION_EXECUTE(result, this->indexAllSectionsUpdated->Increase(indexAllSectionsUpdatedItemIndex));
+        CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_ALL_SECTIONS_UPDATED_INC);
+
+        if (item->IsProgramAssociationSectionUpdated() && item->IsTransportStreamMapSectionUpdated() && item->IsConditionalAccessSectionUpdated())
+        {
+          result &= this->indexAllSectionsUpdated->Insert(indexAllSectionsUpdatedItemIndex, itemIndex);
+          CHECK_CONDITION_EXECUTE(result, flags |= AFFECTED_INDEX_ALL_SECTIONS_UPDATED_ADD);
         }
       }
     }
@@ -466,8 +524,12 @@ bool CMpeg2tsStreamFragmentCollection::InsertIndexes(unsigned int itemIndex)
     CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_TRANSPORT_STREAM_MAP_SECTION_DETECTION_FINISHED_INC), this->indexTransportStreamMapSectionDetectionFinished->Decrease(indexTransportStreamMapSectionDetectionFinishedItemIndex, 1));
 
     // revert sixth index
-    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_BOTH_SECTIONS_UPDATED_ADD), this->indexBothSectionsUpdated->Remove(indexBothSectionsUpdatedItemIndex));
-    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_BOTH_SECTIONS_UPDATED_INC), this->indexBothSectionsUpdated->Decrease(indexBothSectionsUpdatedItemIndex, 1));
+    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_CONDITIONAL_ACCESS_SECTION_DETECTION_FINISHED_ADD), this->indexConditionalAccessSectionDetectionFinished->Remove(indexConditionalAccessSectionDetectionFinishedItemIndex));
+    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_CONDITIONAL_ACCESS_SECTION_DETECTION_FINISHED_INC), this->indexConditionalAccessSectionDetectionFinished->Decrease(indexConditionalAccessSectionDetectionFinishedItemIndex, 1));
+
+    // revert seventh index
+    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_ALL_SECTIONS_UPDATED_ADD), this->indexAllSectionsUpdated->Remove(indexAllSectionsUpdatedItemIndex));
+    CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_ALL_SECTIONS_UPDATED_INC), this->indexAllSectionsUpdated->Decrease(indexAllSectionsUpdatedItemIndex, 1));
 
     // revert base indexes
     CHECK_CONDITION_EXECUTE(CFlags::IsSetFlags(flags, AFFECTED_INDEX_BASE), __super::RemoveIndexes(itemIndex, 1));
@@ -548,15 +610,27 @@ void CMpeg2tsStreamFragmentCollection::RemoveIndexes(unsigned int startIndex, un
 
 
   // sixth index
-  this->indexBothSectionsUpdated->GetItemInsertPosition(startIndex, &start, &end);
-  indexStart = min(end, this->indexBothSectionsUpdated->Count());
+  this->indexConditionalAccessSectionDetectionFinished->GetItemInsertPosition(startIndex, &start, &end);
+  indexStart = min(end, this->indexConditionalAccessSectionDetectionFinished->Count());
 
-  this->indexBothSectionsUpdated->GetItemInsertPosition(startIndex + count, &start, &end);
-  indexCount = min(end, this->indexBothSectionsUpdated->Count()) - indexStart;
+  this->indexConditionalAccessSectionDetectionFinished->GetItemInsertPosition(startIndex + count, &start, &end);
+  indexCount = min(end, this->indexConditionalAccessSectionDetectionFinished->Count()) - indexStart;
 
-  CHECK_CONDITION_EXECUTE(indexCount > 0, this->indexBothSectionsUpdated->Remove(indexStart, indexCount));
+  CHECK_CONDITION_EXECUTE(indexCount > 0, this->indexConditionalAccessSectionDetectionFinished->Remove(indexStart, indexCount));
   // update (decrease) values in index
-  this->indexBothSectionsUpdated->Decrease(indexStart, count);
+  this->indexConditionalAccessSectionDetectionFinished->Decrease(indexStart, count);
+
+
+  // seventh index
+  this->indexAllSectionsUpdated->GetItemInsertPosition(startIndex, &start, &end);
+  indexStart = min(end, this->indexAllSectionsUpdated->Count());
+
+  this->indexAllSectionsUpdated->GetItemInsertPosition(startIndex + count, &start, &end);
+  indexCount = min(end, this->indexAllSectionsUpdated->Count()) - indexStart;
+
+  CHECK_CONDITION_EXECUTE(indexCount > 0, this->indexAllSectionsUpdated->Remove(indexStart, indexCount));
+  // update (decrease) values in index
+  this->indexAllSectionsUpdated->Decrease(indexStart, count);
 }
 
 bool CMpeg2tsStreamFragmentCollection::UpdateIndexes(unsigned int itemIndex, unsigned int count)
@@ -690,8 +764,8 @@ bool CMpeg2tsStreamFragmentCollection::UpdateIndexes(unsigned int itemIndex, uns
     // sixth index
     if (result)
     {
-      bool test = item->IsProgramAssociationSectionUpdated() && item->IsTransportStreamMapSectionUpdated();
-      unsigned int indexIndex = this->indexBothSectionsUpdated->GetItemIndex(itemIndex);
+      bool test = item->IsConditionalAccessSectionDetectionFinished();
+      unsigned int indexIndex = this->indexConditionalAccessSectionDetectionFinished->GetItemIndex(itemIndex);
 
       if (result && test && (indexIndex == UINT_MAX))
       {
@@ -699,15 +773,39 @@ bool CMpeg2tsStreamFragmentCollection::UpdateIndexes(unsigned int itemIndex, uns
         unsigned int startIndex = 0;
         unsigned int endIndex = 0;
 
-        result &= this->indexBothSectionsUpdated->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
+        result &= this->indexConditionalAccessSectionDetectionFinished->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
 
         // insert into index
-        CHECK_CONDITION_EXECUTE(result, result &= this->indexBothSectionsUpdated->Insert(min(endIndex, this->indexBothSectionsUpdated->Count()), itemIndex, count));
+        CHECK_CONDITION_EXECUTE(result, result &= this->indexConditionalAccessSectionDetectionFinished->Insert(min(endIndex, this->indexConditionalAccessSectionDetectionFinished->Count()), itemIndex, count));
       }
       else if (result && (!test) && (indexIndex != UINT_MAX))
       {
         // remove from index
-        this->indexBothSectionsUpdated->Remove(indexIndex, count);
+        this->indexConditionalAccessSectionDetectionFinished->Remove(indexIndex, count);
+      }
+    }
+
+    // seventh index
+    if (result)
+    {
+      bool test = item->IsProgramAssociationSectionUpdated() && item->IsTransportStreamMapSectionUpdated() && item->IsConditionalAccessSectionUpdated();
+      unsigned int indexIndex = this->indexAllSectionsUpdated->GetItemIndex(itemIndex);
+
+      if (result && test && (indexIndex == UINT_MAX))
+      {
+        // get position to insert item index
+        unsigned int startIndex = 0;
+        unsigned int endIndex = 0;
+
+        result &= this->indexAllSectionsUpdated->GetItemInsertPosition(itemIndex, &startIndex, &endIndex);
+
+        // insert into index
+        CHECK_CONDITION_EXECUTE(result, result &= this->indexAllSectionsUpdated->Insert(min(endIndex, this->indexAllSectionsUpdated->Count()), itemIndex, count));
+      }
+      else if (result && (!test) && (indexIndex != UINT_MAX))
+      {
+        // remove from index
+        this->indexAllSectionsUpdated->Remove(indexIndex, count);
       }
     }
   }
@@ -726,7 +824,8 @@ bool CMpeg2tsStreamFragmentCollection::EnsureEnoughSpaceIndexes(unsigned int add
     result &= this->indexDiscontinuityProcessed->EnsureEnoughSpace(this->indexDiscontinuityProcessed->Count() + addingCount);
     result &= this->indexProgramAssociationSectionDetectionFinished->EnsureEnoughSpace(this->indexProgramAssociationSectionDetectionFinished->Count() + addingCount);
     result &= this->indexTransportStreamMapSectionDetectionFinished->EnsureEnoughSpace(this->indexTransportStreamMapSectionDetectionFinished->Count() + addingCount);
-    result &= this->indexBothSectionsUpdated->EnsureEnoughSpace(this->indexBothSectionsUpdated->Count() + addingCount);
+    result &= this->indexConditionalAccessSectionDetectionFinished->EnsureEnoughSpace(this->indexConditionalAccessSectionDetectionFinished->Count() + addingCount);
+    result &= this->indexAllSectionsUpdated->EnsureEnoughSpace(this->indexAllSectionsUpdated->Count() + addingCount);
   }
 
   return result;
@@ -741,7 +840,8 @@ void CMpeg2tsStreamFragmentCollection::ClearIndexes(void)
   this->indexDiscontinuityProcessed->Clear();
   this->indexProgramAssociationSectionDetectionFinished->Clear();
   this->indexTransportStreamMapSectionDetectionFinished->Clear();
-  this->indexBothSectionsUpdated->Clear();
+  this->indexConditionalAccessSectionDetectionFinished->Clear();
+  this->indexAllSectionsUpdated->Clear();
 }
 
 

@@ -64,8 +64,9 @@ namespace MediaPortal.Configuration.Sections
       {
         // If the user selects another language the amount of chars in the character table might have changed.
         // Delete the font cache to trigger a recreation
-        string fontCache = String.Format(@"{0}\fonts",
-                                         String.Format(@"{0}\{1}", Config.GetFolder(Config.Dir.Cache), Config.Dir.Skin));
+        string fontCache = String.Format(@"{0}\fonts", String.Format(@"{0}\{1}", Config.GetFolder(Config.Dir.Cache), Config.SkinName));
+
+        Log.Debug("Delete the font cache to trigger a recreation: {0}", fontCache);
         MediaPortal.Util.Utils.DirectoryDelete(fontCache, true);
       }
       catch (Exception) {}

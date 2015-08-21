@@ -1,135 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="fi" availableDays="14" timezone="FLE Standard Time" version="2.0" />
+  <Info language="fi" availableDays="14" timezone="FLE Standard Time" version="2.2" />
   <Channels>
-    <Channel id="Al Jazeera" siteId="67" />
-    <Channel id="Animal Planet HD" siteId="102" />
-    <Channel id="Animal Planet" siteId="52" />
-    <Channel id="AVA" siteId="17" />
-    <Channel id="Barnkanalen" siteId="99" />
-    <Channel id="BBC Entertainment" siteId="75" />
-    <Channel id="BBC HD" siteId="107" />
-    <Channel id="BBC Knowledge" siteId="76" />
-    <Channel id="BBC Lifestyle" siteId="74" />
-    <Channel id="BBC World" siteId="68" />
-    <Channel id="Bloomberg Television" siteId="69" />
-    <Channel id="CANAL+ Action" siteId="30" />
-    <Channel id="CANAL+ Aitio" siteId="111" />
-    <Channel id="CANAL+ Emotion" siteId="27" />
-    <Channel id="CANAL+ Family" siteId="117" />
-    <Channel id="CANAL+ FILM HD" siteId="37" />
-    <Channel id="CANAL+ First" siteId="28" />
-    <Channel id="CANAL+ Hits" siteId="29" />
-    <Channel id="CANAL+ Series" siteId="31" />
-    <Channel id="CANAL+ SF-kanalen" siteId="32" />
-    <Channel id="CANAL+ SPORT HD" siteId="36" />
-    <Channel id="CANAL+ SPORT2" siteId="34" />
-    <Channel id="CANAL+ URHEILU" siteId="33" />
-    <Channel id="Cartoon Network" siteId="57" />
-    <Channel id="CNBC" siteId="70" />
-    <Channel id="CNN" siteId="71" />
-    <Channel id="Deutsche Welle" siteId="80" />
-    <Channel id="Discovery Channel" siteId="51" />
-    <Channel id="Discovery HD Showcase " siteId="109" />
-    <Channel id="Discovery Science" siteId="55" />
-    <Channel id="Discovery Travel &amp; Living" siteId="56" />
-    <Channel id="Discovery World" siteId="54" />
-    <Channel id="Disney Channel" siteId="58" />
-    <Channel id="Disney Junior" siteId="60" />
-    <Channel id="Disney XD" siteId="59" />
-    <Channel id="ESPN America" siteId="23" />
-    <Channel id="ESPN Classic" siteId="26" />
-    <Channel id="EuroNews" siteId="73" />
-    <Channel id="Eurosport 2" siteId="21" />
-    <Channel id="Eurosport" siteId="20" />
-    <Channel id="Extreme Sports" siteId="22" />
-    <Channel id="Fashion TV" siteId="89" />
-    <Channel id="FST5" siteId="6" />
-    <Channel id="Investigation Discovery" siteId="101" />
-    <Channel id="JIM" siteId="7" />
-    <Channel id="Kanal5" siteId="95" />
-    <Channel id="Liv" siteId="11" />
-    <Channel id="Motors TV" siteId="118" />
-    <Channel id="MTV Dance" siteId="64" />
-    <Channel id="MTV Finland" siteId="62" />
-    <Channel id="MTV HD LIVE" siteId="105" />
-    <Channel id="MTV ROCKS" siteId="63" />
-    <Channel id="MTV3 Fakta" siteId="15" />
-    <Channel id="MTV3 Juniori" siteId="16" />
-    <Channel id="MTV3 Komedia" siteId="110" />
-    <Channel id="MTV3 Leffa" siteId="14" />
-    <Channel id="MTV3 MAX" siteId="13" />
-    <Channel id="MTV3 Sarja" siteId="18" />
-    <Channel id="MTV3 Scifi" siteId="19" />
-    <Channel id="MTV3" siteId="3" />
-    <Channel id="National Geographic" siteId="53" />
-    <Channel id="Nelonen Kino" siteId="84" />
-    <Channel id="Nelonen Maailma" siteId="114" />
-    <Channel id="Nelonen Perhe" siteId="113" />
-    <Channel id="Nelonen Pro 1" siteId="24" />
-    <Channel id="Nelonen Pro 2" siteId="8" />
-    <Channel id="Nelonen" siteId="4" />
-    <Channel id="Nickelodeon" siteId="61" />
-    <Channel id="Playboy TV" siteId="90" />
-    <Channel id="RTL" siteId="100" />
-    <Channel id="Showtime" siteId="86" />
-    <Channel id="Silver HD" siteId="106" />
-    <Channel id="Silver" siteId="79" />
-    <Channel id="Sky News" siteId="72" />
-    <Channel id="Star!" siteId="77" />
-    <Channel id="Sub" siteId="5" />
-    <Channel id="SuomiTV" siteId="12" />
-    <Channel id="SVT 1" siteId="91" />
-    <Channel id="SVT 2" siteId="92" />
-    <Channel id="SVT World" siteId="97" />
-    <Channel id="SVT24" siteId="103" />
-    <Channel id="SVT24" siteId="96" />
-    <Channel id="TCM" siteId="81" />
-    <Channel id="The History Channel HD" siteId="104" />
-    <Channel id="The History Channel" siteId="85" />
-    <Channel id="The Voice" siteId="115" />
-    <Channel id="TNT7" siteId="116" />
-    <Channel id="Travel Channel" siteId="78" />
-    <Channel id="TV Finland" siteId="82" />
-    <Channel id="TV1" siteId="1" />
-    <Channel id="TV1000 Action" siteId="39" />
-    <Channel id="TV1000 Classic" siteId="42" />
-    <Channel id="TV1000 Drama" siteId="43" />
-    <Channel id="TV1000 Family" siteId="41" />
-    <Channel id="TV1000 Nordic" siteId="40" />
-    <Channel id="TV1000" siteId="38" />
-    <Channel id="TV2" siteId="2" />
-    <Channel id="TV3" siteId="93" />
-    <Channel id="TV4" siteId="94" />
-    <Channel id="TV5 Monde" siteId="88" />
-    <Channel id="TV5" siteId="9" />
-    <Channel id="TV6" siteId="98" />
-    <Channel id="TV7" siteId="83" />
-    <Channel id="URHOtv" siteId="25" />
-    <Channel id="VH1 Classic" siteId="66" />
-    <Channel id="VH1" siteId="65" />
-    <Channel id="Viasat Explorer" siteId="48" />
-    <Channel id="Viasat Golf" siteId="45" />
-    <Channel id="Viasat History" siteId="50" />
-    <Channel id="Viasat Hockey" siteId="46" />
-    <Channel id="Viasat Nature/Crime" siteId="49" />
-    <Channel id="Viasat Sport 1" siteId="44" />
-    <Channel id="Viron ETV" siteId="87" />
-    <Channel id="YLE Teema" siteId="10" />
+    	<Channel id="AVA" siteId="17" />
+		<Channel id="Al Jazeera" siteId="67" />
+		<Channel id="Animal Planet" siteId="52" />
+		<Channel id="Animal Planet HD" siteId="102" />
+		<Channel id="BBC Entertainment" siteId="75" />
+		<Channel id="BBC HD" siteId="107" />
+		<Channel id="BBC Knowledge" siteId="76" />
+		<Channel id="BBC Lifestyle" siteId="74" />
+		<Channel id="BBC World" siteId="68" />
+		<Channel id="Barnkanalen" siteId="99" />
+		<Channel id="Bloomberg Television" siteId="69" />
+		<Channel id="C More Action" siteId="30" />
+		<Channel id="C More Emotion" siteId="27" />
+		<Channel id="C More Extreme" siteId="124" />
+		<Channel id="C More First" siteId="28" />
+		<Channel id="C More First HD" siteId="37" />
+		<Channel id="C More Hits" siteId="29" />
+		<Channel id="C More Hits HD" siteId="121" />
+		<Channel id="C More Kids" siteId="117" />
+		<Channel id="C More Series" siteId="31" />
+		<Channel id="C More Series HD" siteId="122" />
+		<Channel id="C More Sport HD" siteId="36" />
+		<Channel id="C More Tennis" siteId="34" />
+		<Channel id="CNBC" siteId="70" />
+		<Channel id="CNN" siteId="71" />
+		<Channel id="Cartoon Network" siteId="57" />
+		<Channel id="Deutsche Welle" siteId="80" />
+		<Channel id="Discovery Channel" siteId="51" />
+		<Channel id="Discovery HD Showcase " siteId="109" />
+		<Channel id="Discovery Science" siteId="55" />
+		<Channel id="Discovery World" siteId="54" />
+		<Channel id="Disney Channel" siteId="58" />
+		<Channel id="Disney Junior" siteId="60" />
+		<Channel id="Disney XD" siteId="59" />
+		<Channel id="ESPN America" siteId="23" />
+		<Channel id="ESPN Classic" siteId="26" />
+		<Channel id="EuroNews" siteId="73" />
+		<Channel id="Eurosport" siteId="20" />
+		<Channel id="Eurosport 2" siteId="21" />
+		<Channel id="Extreme Sports" siteId="22" />
+		<Channel id="FOX" siteId="12" />
+		<Channel id="Fashion TV" siteId="89" />
+		<Channel id="Investigation Discovery" siteId="101" />
+		<Channel id="JIM" siteId="7" />
+		<Channel id="Kanal5" siteId="95" />
+		<Channel id="Kutonen" siteId="115" />
+		<Channel id="Liv" siteId="11" />
+		<Channel id="MTV Dance" siteId="64" />
+		<Channel id="MTV Finland" siteId="62" />
+		<Channel id="MTV HD LIVE" siteId="105" />
+		<Channel id="MTV ROCKS" siteId="63" />
+		<Channel id="MTV3" siteId="3" />
+		<Channel id="MTV3 Fakta" siteId="15" />
+		<Channel id="MTV3 Fakta XL" siteId="19" />
+		<Channel id="MTV3 Juniori" siteId="16" />
+		<Channel id="MTV3 Komedia" siteId="110" />
+		<Channel id="MTV3 Leffa" siteId="14" />
+		<Channel id="MTV3 MAX" siteId="13" />
+		<Channel id="MTV3 MAX Premier HD" siteId="119" />
+		<Channel id="MTV3 MAX Sport 1" siteId="33" />
+		<Channel id="MTV3 MAX Sport 1 HD" siteId="123" />
+		<Channel id="MTV3 MAX Sport 2" siteId="111" />
+		<Channel id="MTV3 Sarja" siteId="18" />
+		<Channel id="Motors TV " siteId="118" />
+		<Channel id="National Geographic" siteId="53" />
+		<Channel id="Nelonen" siteId="4" />
+		<Channel id="Nelonen Maailma" siteId="114" />
+		<Channel id="Nelonen Nappula" siteId="113" />
+		<Channel id="Nelonen Prime" siteId="84" />
+		<Channel id="Nelonen Pro 1" siteId="24" />
+		<Channel id="Nelonen Pro 2" siteId="8" />
+		<Channel id="Nickelodeon" siteId="61" />
+		<Channel id="Playboy TV" siteId="90" />
+		<Channel id="RTL" siteId="100" />
+		<Channel id="SF-kanalen" siteId="32" />
+		<Channel id="SVT 1" siteId="91" />
+		<Channel id="SVT 2" siteId="92" />
+		<Channel id="SVT World" siteId="97" />
+		<Channel id="SVT24" siteId="103" />
+		<Channel id="Showtime" siteId="86" />
+		<Channel id="Silver" siteId="79" />
+		<Channel id="Silver HD" siteId="106" />
+		<Channel id="Sky News" siteId="72" />
+		<Channel id="Star!" siteId="77" />
+		<Channel id="Sub" siteId="5" />
+		<Channel id="TCM" siteId="81" />
+		<Channel id="TLC" siteId="56" />
+		<Channel id="TNT" siteId="116" />
+		<Channel id="TV Finland" siteId="82" />
+		<Channel id="TV3" siteId="93" />
+		<Channel id="TV4" siteId="94" />
+		<Channel id="TV5" siteId="9" />
+		<Channel id="TV5 Monde" siteId="88" />
+		<Channel id="TV6" siteId="98" />
+		<Channel id="TV7" siteId="83" />
+		<Channel id="The History Channel" siteId="85" />
+		<Channel id="The History Channel HD" siteId="104" />
+		<Channel id="Travel Channel" siteId="78" />
+		<Channel id="URHOtv" siteId="25" />
+		<Channel id="VH1" siteId="65" />
+		<Channel id="VH1 Classic" siteId="66" />
+		<Channel id="Viasat Explorer" siteId="48" />
+		<Channel id="Viasat Film" siteId="38" />
+		<Channel id="Viasat Film Action" siteId="39" />
+		<Channel id="Viasat Film Classic" siteId="42" />
+		<Channel id="Viasat Film Drama" siteId="43" />
+		<Channel id="Viasat Film Family" siteId="41" />
+		<Channel id="Viasat Film Nordic" siteId="40" />
+		<Channel id="Viasat Golf" siteId="45" />
+		<Channel id="Viasat History" siteId="50" />
+		<Channel id="Viasat Hockey" siteId="46" />
+		<Channel id="Viasat Hockey Finland" siteId="128" />
+		<Channel id="Viasat Nature/Crime" siteId="49" />
+		<Channel id="Viasat Sport" siteId="44" />
+		<Channel id="Viron ETV" siteId="87" />
+		<Channel id="YLE Teema" siteId="10" />
+		<Channel id="Yle Fem" siteId="6" />
+		<Channel id="Yle HD" siteId="129" />
+		<Channel id="YLE TV1" siteId="1" />
+		<Channel id="YLE TV2" siteId="2" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.telkku.com/channel/list/[ID]/[YYYY][MM][DD]" post="" external="false" encoding="" />
+    <Site url="http://www.telkku.com/channel/list/[ID]/[YYYY][MM][DD]" post="" external="false" encoding="utf-8" />
     <Html>
-      <Template name="default" start="programList" end="contentAndAdDivider">
-        <SectionTemplate tags="S">
+      <Template name="default" start="programList" end="section">
+        <SectionTemplate tags="D">
           <TemplateText>
-&lt;li&gt;
-						&lt;span class=&quot;programDate&quot;&gt;&lt;a href=&quot;http://www.telkku.com/program/show/2011051007501&quot;&gt;&lt;#START&gt;&amp;nbsp;&lt;#TITLE&gt;&lt;/a&gt;&lt;/span&gt;&lt;br /&gt;
-						&lt;span class=&quot;programDescription&quot;&gt;&lt;#DESCRIPTION&gt;&lt;/span&gt;
-					&lt;/li&gt;
+&lt;div&gt;&lt;#START&gt; &lt;#TITLE&gt;&lt;/div&gt;
+&lt;div &gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
+	  <Searches>
+		<Search match="[Oo]hjaaja:" field="#GENRE" remove="false"/>
+		<Search match="[Oo]hjaus:" field="#GENRE" remove="false"/>
+		<Search match="[Oo]:" field="#GENRE" remove="false"/>
+		<Search match="[Pp]ääosissa:" field="#GENRE" remove="false"/>
+		<Search match="[Pp]:" field="#GENRE" remove="false"/>
+	  </Searches>
     </Html>
   </Listing>
+  <Actions>
+	<Modify field="#GENRE" action="Replace" channel="*" search="[Oo]hjaaja:">Movie</Modify>
+	<Modify field="#GENRE" action="Replace" channel="*" search="[Oo]:">Movie</Modify>
+	<Modify field="#GENRE" action="Replace" channel="*" search="[Oo]hjaus:">Movie</Modify>
+	<Modify field="#GENRE" action="Replace" channel="*" search="[Pp]ääosissa:">Movie</Modify>
+	<Modify field="#GENRE" action="Replace" channel="*" search="[Pp]:">Movie</Modify>
+  </Actions>
 </Grabber>

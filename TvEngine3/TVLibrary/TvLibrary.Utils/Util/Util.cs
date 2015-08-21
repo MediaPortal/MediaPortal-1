@@ -19,6 +19,7 @@
 #endregion
 
 using System.IO;
+using System;
 
 namespace Mediaportal.Util
 {
@@ -39,6 +40,9 @@ namespace Mediaportal.Util
       strFName = strFName.Replace('<', '_');
       strFName = strFName.Replace('>', '_');
       strFName = strFName.Replace('|', '_');
+      strFName = strFName.Replace('\t', '_');
+      strFName = strFName.Replace("\r", String.Empty);
+      strFName = strFName.Replace("\n", String.Empty);
 
       bool unclean = true;
       char[] invalids = Path.GetInvalidFileNameChars();

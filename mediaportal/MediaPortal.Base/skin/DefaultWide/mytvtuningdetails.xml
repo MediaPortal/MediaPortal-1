@@ -291,6 +291,14 @@
         <label>Network ID:</label>
         <font>font12</font>
       </control>
+      <control>
+		    <description>RawResolution</description>
+		    <type>label</type>
+		    <id>21</id>
+		    <textcolor>ff6FAFE1</textcolor>
+		    <label>Video Resolution:</label>
+        <font>font12</font>
+	     </control>
     </control>
     <control>
       <type>group</type>
@@ -361,6 +369,13 @@
         <label>#TV.TuningDetails.NetworkId</label>
         <font>font12</font>
       </control>
+      <control>
+		    <description>Video Resolution value</description>
+		    <type>label</type>
+		    <id>5</id>
+		    <label>#Play.Current.VideoFormat.RawResolution</label>
+        <font>font12</font>
+  	  </control>
     </control>
     <control>
       <type>group</type>
@@ -440,6 +455,14 @@
         <font>font12</font>
         <textcolor>ff6FAFE1</textcolor>
       </control>
+      <control>
+		    <description>TS BitRate</description>
+		    <type>label</type>
+		    <id>21</id>
+		    <textcolor>ff6FAFE1</textcolor>
+		    <label>Stream BitRate:</label>
+        <font>font12</font>
+	     </control>
     </control>
     <control>
       <type>group</type>
@@ -510,6 +533,13 @@
         <label>#TV.TuningDetails.HasCiMenuSupport</label>
         <font>font12</font>
       </control>
+      <control>
+		    <description>TS BitRate value</description>
+		    <type>label</type>
+		    <id>5</id>
+		    <label>#Play.Current.TSBitRate</label>
+        <font>font12</font><textcolor>ivory</textcolor>
+	    </control>
     </control>
   </controls>
 </window>

@@ -398,6 +398,34 @@ namespace MediaPortal.Database
       return strTxt;
     }
 
+    public static bool IntegrityCheck(SQLiteClient m_db)
+    {
+      SQLiteResultSet results;
+      if (m_db == null)
+      {
+        return false;
+      }
+
+      results = m_db.Execute("PRAGMA integrity_check;");
+      if (results != null)
+      {
+        if (results.Rows.Count == 1)
+        {
+          SQLiteResultSet.Row arr = results.Rows[0];
+          if (arr.fields.Count == 1)
+          {
+            if (arr.fields[0] == "ok")
+            {
+              Log.Debug("IntegrityCheck: the {0} is OK", m_db.DatabaseName);
+              return true;
+            }
+          }
+        }
+      }
+      Log.Error("IntegrityCheck: the {0} is corrupt.", m_db.DatabaseName);
+      return false;
+    }
+
     public static void Split(string strFileNameAndPath, out string strPath, out string strFileName)
     {
       strFileNameAndPath = strFileNameAndPath.Trim();

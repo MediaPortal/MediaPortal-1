@@ -59,6 +59,11 @@
 #define     PID_COUNT                                   0x2000
 #define     DVB_PACKET_SIZE                             188
 
+#define     SYNC_BYTE                                                 0x47
+#define     PID_PAT                                                   0x0000
+#define     PID_NULL                                                  0x1FFF
+#define     MAX_RESERVED_PID                                          0x000F
+
 // defines interface for stream protocol implementation
 // each stream protocol implementation will be in separate library
 struct IProtocol

@@ -23,18 +23,18 @@
 #ifndef __DISCONTINUITY_PARSER_DEFINED
 #define __DISCONTINUITY_PARSER_DEFINED
 
-#include "Parser.h"
+#include "PacketParser.h"
 #include "PidCounterCollection.h"
 
-#define DISCONTINUITY_PARSER_FLAG_NONE                                PARSER_FLAG_NONE
+#define DISCONTINUITY_PARSER_FLAG_NONE                                PACKET_PARSER_FLAG_NONE
 
-#define DISCONTINUITY_PARSER_FLAG_DISCONTINUITY                       (1 << (PARSER_FLAG_LAST + 0))
+#define DISCONTINUITY_PARSER_FLAG_DISCONTINUITY                       (1 << (PACKET_PARSER_FLAG_LAST + 0))
 
-#define DISCONTINUITY_PARSER_FLAG_LAST                                (PARSER_FLAG_LAST + 1)
+#define DISCONTINUITY_PARSER_FLAG_LAST                                (PACKET_PARSER_FLAG_LAST + 1)
 
 #define DISCONTINUITY_PID_NOT_SPECIFIED                               0xFFFF
 
-class CDiscontinuityParser : public CParser
+class CDiscontinuityParser : public CPacketParser
 {
 public:
   CDiscontinuityParser(HRESULT *result);

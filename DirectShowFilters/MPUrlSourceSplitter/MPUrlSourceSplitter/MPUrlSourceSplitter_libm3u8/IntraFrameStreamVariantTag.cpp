@@ -24,6 +24,7 @@
 #include "PlaylistItem.h"
 #include "BandwidthAttribute.h"
 #include "UriAttribute.h"
+#include "ErrorCodes.h"
 
 CIntraFrameStreamVariantTag::CIntraFrameStreamVariantTag(HRESULT *result)
   : CTag(result)
@@ -60,34 +61,32 @@ bool CIntraFrameStreamVariantTag::ApplyTagToPlaylistItems(unsigned int version, 
   return false;
 }
 
-bool CIntraFrameStreamVariantTag::ParseTag(unsigned int version)
+HRESULT CIntraFrameStreamVariantTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
+  HRESULT result = __super::ParseTag(version);
+  CHECK_CONDITION_HRESULT(result, (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07), result, E_M3U8_NOT_SUPPORTED_TAG);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     // successful parsing of tag
     // compare it to our tag
-    result &= (wcscmp(this->tag, TAG_INTRA_FRAME_STREAM_VARIANT) == 0);
+    CHECK_CONDITION_HRESULT(result, wcscmp(this->tag, TAG_INTRA_FRAME_STREAM_VARIANT) == 0, result, E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE);
+    CHECK_POINTER_HRESULT(result, this->tagContent, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
+    
+    CHECK_CONDITION_HRESULT(result, this->ParseAttributes(version), result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
 
-    if (result)
+    if (SUCCEEDED(result))
     {
-      result &= this->ParseAttributes(version);
-
-      if (result)
+      if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07))
       {
-        if ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07))
-        {
-          // BANDWIDTH attribute is mandatory
+        // BANDWIDTH attribute is mandatory
 
-          CBandwidthAttribute *bandwidth = dynamic_cast<CBandwidthAttribute *>(this->GetAttributes()->GetAttribute(BANDWIDTH_ATTRIBUTE_NAME, true));
-          result &= (bandwidth != NULL);
+        CBandwidthAttribute *bandwidth = dynamic_cast<CBandwidthAttribute *>(this->GetAttributes()->GetAttribute(BANDWIDTH_ATTRIBUTE_NAME, true));
+        CHECK_POINTER_HRESULT(result, bandwidth, result, E_M3U8_MISSING_REQUIRED_ATTRIBUTE);
 
-          // URI attribute is mandatory
-          CUriAttribute *uri = dynamic_cast<CUriAttribute *>(this->GetAttributes()->GetAttribute(URI_ATTRIBUTE_NAME, true));
-          result &= (uri != NULL);
-        }
+        // URI attribute is mandatory
+        CUriAttribute *uri = dynamic_cast<CUriAttribute *>(this->GetAttributes()->GetAttribute(URI_ATTRIBUTE_NAME, true));
+        CHECK_POINTER_HRESULT(result, uri, result, E_M3U8_MISSING_REQUIRED_ATTRIBUTE);
       }
     }
   }

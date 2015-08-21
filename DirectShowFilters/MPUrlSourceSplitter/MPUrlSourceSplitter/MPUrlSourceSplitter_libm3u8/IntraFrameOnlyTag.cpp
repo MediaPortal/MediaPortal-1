@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "IntraFrameOnlyTag.h"
+#include "ErrorCodes.h"
 
 CIntraFrameOnlyTag::CIntraFrameOnlyTag(HRESULT *result)
   : CTag(result)
@@ -57,16 +58,16 @@ bool CIntraFrameOnlyTag::ApplyTagToPlaylistItems(unsigned int version, CItemColl
   return false;
 }
 
-bool CIntraFrameOnlyTag::ParseTag(unsigned int version)
+HRESULT CIntraFrameOnlyTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
+  HRESULT result = __super::ParseTag(version);
+  CHECK_CONDITION_HRESULT(result, (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07), result, E_M3U8_NOT_SUPPORTED_TAG);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     // successful parsing of tag
     // compare it to our tag
-    result &= (wcscmp(this->tag, TAG_INTRA_FRAME_ONLY) == 0);
+    CHECK_CONDITION_HRESULT(result, wcscmp(this->tag, TAG_INTRA_FRAME_ONLY) == 0, result, E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE);
   }
 
   return result;

@@ -5,6 +5,21 @@ The purpose of this document is to remark all changes made in libcurl by any dev
 Changes in libcurl 7.37.0:
 
 --------------------------------------------
+File: \src\easy.c
+Comment: in curl_easy_recv() method add after block 'if(ret != CURLE_OK) return ret;'
+Code:
+
+if (data->set.verbose)
+    Curl_debug(data, CURLINFO_DATA_IN, (char *)buffer, (size_t)n1, c);
+
+--------------------------------------------
+Comment: in curl_easy_send() method add after block 'if(n1 == -1) return CURLE_SEND_ERROR;'
+Code:
+
+if (data->set.verbose)
+    Curl_debug(data, CURLINFO_DATA_OUT, (char *)buffer, (size_t)n1, c);
+
+--------------------------------------------
 File: \src\http.c
 Comment: in Curl_http_readwrite_headers() method add on end of block of code started with 'if(conn->handler->protocol & CURLPROTO_RTSP)'
 Code:

@@ -177,7 +177,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// <exception cref="ArgumentNullException">
         /// <para>The <see cref="Mpeg2TsParser"/> is <see langword="null"/>.</para>
         /// </exception>
-        [TypeConverter(typeof(Mpeg2TsParserConverter))]
+        [Editor(typeof(Mpeg2TsParserPropertyGridEditor), typeof(UITypeEditor))]
         [Category("MPEG2 Transport Stream parser"), Description("The settings for MPEG2 Transport Stream parser.")]
         public Mpeg2TsParser Mpeg2TsParser
         {

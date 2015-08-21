@@ -40,6 +40,7 @@ using TvLibrary;
 using TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Filter;
 using TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url;
 using Gentle.Framework;
+using TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Sections;
 
 #endregion
 
@@ -53,10 +54,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
         private int urlColumnLength = 0;
 
         BackgroundWorker testWorker = null;
-        DataGridViewRow testPlaylistRow = null;
-        DataGridViewRow testDatabaseRow = null;
+        int testPlaylistIndex = -1;
+        int testDatabaseIndex = -1;
 
-        IList<TuningDetail> tuningDetails = null;
+        FilterUrlCollection playlistUrls = new FilterUrlCollection();
+        FilterUrlCollection databaseUrls = new FilterUrlCollection();
 
         #endregion
 
@@ -90,6 +92,8 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
             this.tabProtocols.TabPages.Add(tabPageRtmp);
             this.tabProtocols.TabPages.Add(tabPageRtsp);
             this.tabProtocols.TabPages.Add(tabPageUdpRtp);
+
+            this.tabProtocols.TabPages.Add(tabPageSettings);
 
             System.Net.NetworkInformation.NetworkInterface[] networkInterfaces = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
 
@@ -179,28 +183,147 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
             this.textBoxUdpRtpTotalReopenConnectionTimeout.Text = this.settings.UdpRtp.TotalReopenConnectionTimeout.ToString();
             this.textBoxUdpRtpReceiveDataCheckInterval.Text = this.settings.UdpRtp.ReceiveDataCheckInterval.ToString();
 
+            this.checkBoxStreamAnalysis.Checked = this.settings.StreamAnalysis;
+            this.textBoxStreamAnalysisTimeout.Text = this.settings.StreamAnalysisTimeout.ToString();
+
             this.tabProtocols_SelectedIndexChanged(this, new EventArgs());
 
             try
             {
-                this.tuningDetails = this.GetTuningDetails();
-
-                foreach (var tuningDetail in this.tuningDetails)
+                foreach (var tuningDetail in this.GetTuningDetails())
                 {
-                    this.dataGridViewDatabase.Rows.Add(new Object[] { tuningDetail.Name, UrlFactory.CreateUrl(tuningDetail.Url), (String)Settings.SupportedProtocols[new Uri(tuningDetail.Url).Scheme.ToUpperInvariant()], tuningDetail.TransportId, tuningDetail.ServiceId, tuningDetail.PmtPid });
+                    this.databaseUrls.Add(new FilterUrl()
+                    {
+                        ChannelName = tuningDetail.Name,
+                        Url = UrlFactory.CreateUrl(tuningDetail.Url),
+                        PlaylistUrl = String.Empty,
+                        TransportStreamId = tuningDetail.TransportId,
+                        ProgramNumber = tuningDetail.ServiceId,
+                        ProgramMapPID = tuningDetail.PmtPid,
+                        Detail = tuningDetail
+                    });
                 }
+
+                this.ApplyDefaultUserSettings(this.settings, this.settings);
             }
             catch (Exception ex)
             {
                 Log.Error(String.Format("Error occurred while loading tuning details from database.\n{0}", ex.ToString()));
 
-                this.dataGridViewDatabase.Rows.Clear();
+                this.databaseUrls.Clear();
             }
+
+            this.UpdateGridViewDatabase();
+
+            this.propertyGridPlaylist_PropertyValueChanged(this, null);
+            this.propertyGridDatabase_PropertyValueChanged(this, null);
         }
 
         #endregion
 
         #region Methods
+
+        private void UpdateGridViewDatabase()
+        {
+            for (int i = 0; i < this.databaseUrls.Count; i++)
+			{
+                FilterUrl filterUrl = this.databaseUrls[i];
+
+                if (i < this.dataGridViewDatabase.Rows.Count)
+                {
+                    this.UpdateGridViewDatabase(i);
+                }
+                else
+                {
+                    this.dataGridViewDatabase.Rows.Add(new Object[] { filterUrl.ChannelName, filterUrl.Url, (String)Settings.SupportedProtocols[filterUrl.Url.Uri.Scheme.ToUpperInvariant()], filterUrl.TransportStreamId, filterUrl.ProgramNumber, filterUrl.ProgramMapPID });
+                }
+			}
+        }
+
+        private void UpdateGridViewDatabase(int row)
+        {
+            FilterUrl filterUrl = this.databaseUrls[row];
+            DataGridViewRow dataRow = this.dataGridViewDatabase.Rows[row];
+
+            dataRow.Cells[0].Value = filterUrl.ChannelName;
+            dataRow.Cells[1].Value = filterUrl.Url;
+            dataRow.Cells[2].Value = (String)Settings.SupportedProtocols[filterUrl.Url.Uri.Scheme.ToUpperInvariant()];
+            dataRow.Cells[3].Value = filterUrl.TransportStreamId;
+            dataRow.Cells[4].Value = filterUrl.ProgramNumber;
+            dataRow.Cells[5].Value = filterUrl.ProgramMapPID;
+
+            switch (filterUrl.State)
+            {
+                case FilterUrlState.NotTested:
+                    dataRow.Cells[6].Value = Properties.Resources.not_tested;
+                    dataRow.Cells[6].ToolTipText = String.Empty;
+                    break;
+                case FilterUrlState.Pending:
+                    dataRow.Cells[6].Value = Properties.Resources.pending;
+                    dataRow.Cells[6].ToolTipText = "Testing filter url ...";
+                    break;
+                case FilterUrlState.Failed:
+                    dataRow.Cells[6].Value = Properties.Resources.failed;
+                    dataRow.Cells[6].ToolTipText = filterUrl.Error;
+                    break;
+                case FilterUrlState.Correct:
+                    dataRow.Cells[6].Value = Properties.Resources.correct;
+                    dataRow.Cells[6].ToolTipText = String.Empty;
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        private void UpdateGridViewPlaylist()
+        {
+            for (int i = 0; i < this.playlistUrls.Count; i++)
+            {
+                FilterUrl filterUrl = this.playlistUrls[i];
+
+                if (i < this.dataGridViewPlaylist.Rows.Count)
+                {
+                    this.UpdateGridViewPlaylist(i);
+                }
+                else
+                {
+                    this.dataGridViewPlaylist.Rows.Add(new Object[] { filterUrl.ChannelName, filterUrl.PlaylistUrl, (String)Settings.SupportedProtocols[new Uri(filterUrl.PlaylistUrl).Scheme.ToUpperInvariant()], filterUrl.Url });
+                }
+            }
+        }
+
+        private void UpdateGridViewPlaylist(int row)
+        {
+            FilterUrl filterUrl = this.playlistUrls[row];
+            DataGridViewRow dataRow = this.dataGridViewPlaylist.Rows[row];
+
+            dataRow.Cells[0].Value = filterUrl.ChannelName;
+            dataRow.Cells[1].Value = filterUrl.PlaylistUrl;
+            dataRow.Cells[2].Value = (String)Settings.SupportedProtocols[new Uri(filterUrl.PlaylistUrl).Scheme.ToUpperInvariant()];
+            dataRow.Cells[3].Value = filterUrl.Url;
+
+            switch (filterUrl.State)
+            {
+                case FilterUrlState.NotTested:
+                    dataRow.Cells[4].Value = Properties.Resources.not_tested;
+                    dataRow.Cells[4].ToolTipText = String.Empty;
+                    break;
+                case FilterUrlState.Pending:
+                    dataRow.Cells[4].Value = Properties.Resources.pending;
+                    dataRow.Cells[4].ToolTipText = "Testing filter url ...";
+                    break;
+                case FilterUrlState.Failed:
+                    dataRow.Cells[4].Value = Properties.Resources.failed;
+                    dataRow.Cells[4].ToolTipText = filterUrl.Error;
+                    break;
+                case FilterUrlState.Correct:
+                    dataRow.Cells[4].Value = Properties.Resources.correct;
+                    dataRow.Cells[4].ToolTipText = String.Empty;
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
 
         public override void SaveSettings()
         {
@@ -405,11 +528,30 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
                 error = true;
             }
 
+            currentSettings.StreamAnalysis = this.checkBoxStreamAnalysis.Checked;
+
+            try
+            {
+                currentSettings.StreamAnalysisTimeout = int.Parse(this.textBoxStreamAnalysisTimeout.Text);
+                this.errorProvider.SetError(this.textBoxStreamAnalysisTimeout, "");
+            }
+            catch (Exception ex)
+            {
+                this.errorProvider.SetError(this.textBoxStreamAnalysisTimeout, ex.Message);
+                error = true;
+            }
+
             if (!error)
             {
                 this.ApplyDefaultUserSettings(this.settings, currentSettings);
-
                 this.settings = currentSettings;
+
+                this.UpdateGridViewDatabase();
+                this.UpdateGridViewPlaylist();
+
+                this.propertyGridPlaylist_PropertyValueChanged(this, null);
+                this.propertyGridDatabase_PropertyValueChanged(this, null);
+
                 this.propertyGridPlaylist.Refresh();
                 this.propertyGridDatabase.Refresh();
             }
@@ -426,6 +568,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     this.dataGridViewPlaylist.Rows.Clear();
+                    this.playlistUrls.Clear();
 
                     PlayList playlist = new PlayList();
                     PlayListM3uIO playlistFile = (PlayListM3uIO)PlayListFactory.CreateIO(openFileDialog.FileName);
@@ -437,7 +580,12 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
                         {
                             String url = playlistItem.FileName.Substring(playlistItem.FileName.LastIndexOf('\\') + 1);
 
-                            this.dataGridViewPlaylist.Rows.Add(new Object[] { playlistItem.Description, url, (String)Settings.SupportedProtocols[new Uri(url).Scheme.ToUpperInvariant()], UrlFactory.CreateUrl(url) });
+                            this.playlistUrls.Add(new FilterUrl()
+                            {
+                                ChannelName = playlistItem.Description,
+                                PlaylistUrl = url,
+                                Url = UrlFactory.CreateUrl(url)
+                            });
                         }
                         catch (Exception ex)
                         {
@@ -445,9 +593,14 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
                         }
                     }
 
+                    this.ApplyDefaultUserSettings(this.settings, this.settings);
+                    this.UpdateGridViewPlaylist();
+
+                    this.propertyGridPlaylist_PropertyValueChanged(this, null);
+                    this.propertyGridDatabase_PropertyValueChanged(this, null);
+
                     if (this.dataGridViewPlaylist.RowCount != 0)
                     {
-                        this.ApplyDefaultUserSettings(this.settings, this.settings);
                         this.dataGridView_CellClick(this, new DataGridViewCellEventArgs(0, 0));
                     }
                 }
@@ -469,11 +622,9 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
                     PlayList playlist = new PlayList();
                     PlayListM3uIO playlistFile = new PlayListM3uIO();
 
-                    foreach (DataGridViewRow row in this.dataGridViewPlaylist.Rows)
+                    foreach (var filterUrl in this.playlistUrls)
                     {
-                        SimpleUrl simpleUrl = (SimpleUrl)row.Cells[3].Value;
-
-                        playlist.Add(new PlayListItem((String)row.Cells[0].Value, simpleUrl.ToString()));
+                        playlist.Add(new PlayListItem(filterUrl.ChannelName, filterUrl.Url.ToString()));
                     }
 
                     playlistFile.Save(playlist, saveFileDialog.FileName);
@@ -486,10 +637,17 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
             this.UpdateLengthOfUrlColumn(this.GetProviderTypeFromConfig());
 
             this.urlColumnLength = this.GetLengthOfUrlColumn(this.GetProviderTypeFromConfig());
+
+            IList<TuningDetail> tuningDetails = this.GetTuningDetails();
+            for (int i = 0; i < this.databaseUrls.Count; i++)
+            {
+                FilterUrl filterUrl = this.databaseUrls[i];
+
+                filterUrl.Detail = tuningDetails[i];
+            }
+
             this.propertyGridPlaylist_PropertyValueChanged(this, null);
             this.propertyGridDatabase_PropertyValueChanged(this, null);
-
-            this.tuningDetails = this.GetTuningDetails();
         }
 
         private void tabProtocols_SelectedIndexChanged(object sender, EventArgs e)
@@ -519,7 +677,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
 
         private void dataGridView_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            this.propertyGridPlaylist.SelectedObject = this.dataGridViewPlaylist.Rows[e.RowIndex].Cells[3].Value;
+            this.propertyGridPlaylist.SelectedObject = this.playlistUrls[e.RowIndex].Url;
         }
 
         private void dataGridView_SelectionChanged(object sender, EventArgs e)
@@ -527,11 +685,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
             Object[] objects = new Object[this.dataGridViewPlaylist.SelectedRows.Count];
 
             for (int i = 0; i < this.dataGridViewPlaylist.SelectedRows.Count; i++)
-			{
+            {
                 DataGridViewRow row = this.dataGridViewPlaylist.SelectedRows[i];
 
-                objects[i] = row.Cells[3].Value;
-			}
+                objects[i] = this.playlistUrls[row.Index].Url;
+            }
 
             this.propertyGridPlaylist.SelectedObjects = objects;
         }
@@ -546,15 +704,17 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
                 {
                     this.testWorker.Dispose();
                     this.testWorker = null;
-                    this.testPlaylistRow = null;
-                    this.testDatabaseRow = null;
+                    this.testPlaylistIndex = -1;
+                    this.testDatabaseIndex = -1;
                 }
 
                 if (this.testWorker == null)
                 {
-                    this.testPlaylistRow = this.dataGridViewPlaylist.Rows[e.RowIndex];
-                    this.testPlaylistRow.Cells[4].Value = Properties.Resources.pending;
-                    this.testPlaylistRow.Cells[4].ToolTipText = "Testing filter url ...";
+                    this.testPlaylistIndex = e.RowIndex;
+                    this.playlistUrls[this.testPlaylistIndex].State =  FilterUrlState.Pending;
+
+                    this.UpdateGridViewPlaylist(this.testPlaylistIndex);
+                    this.dataGridViewPlaylist.Refresh();
 
                     this.testWorker = new BackgroundWorker();
 
@@ -569,32 +729,47 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
         {
             if (e.IsError)
             {
-                if (this.testPlaylistRow != null)
+                if (this.testPlaylistIndex != (-1))
                 {
-                    this.testPlaylistRow.Cells[4].Value = Properties.Resources.failed;
-                    this.testPlaylistRow.Cells[4].ToolTipText = e.Exception.Message;
+                    this.playlistUrls[this.testPlaylistIndex].State = FilterUrlState.Failed;
+                    this.playlistUrls[this.testPlaylistIndex].Error = e.Exception.Message;
+
+                    this.UpdateGridViewPlaylist(this.testPlaylistIndex);
+                    this.dataGridViewPlaylist.Refresh();
                 }
 
-                if (this.testDatabaseRow != null)
+                if (this.testDatabaseIndex != (-1))
                 {
-                    this.testDatabaseRow.Cells[6].Value = Properties.Resources.failed;
-                    this.testDatabaseRow.Cells[6].ToolTipText = e.Exception.Message;
+                    this.databaseUrls[this.testDatabaseIndex].State = FilterUrlState.Failed;
+                    this.databaseUrls[this.testDatabaseIndex].Error = e.Exception.Message;
+
+                    this.UpdateGridViewDatabase(this.testDatabaseIndex);
+                    this.dataGridViewDatabase.Refresh();
                 }
             }
             else
             {
-                if (this.testPlaylistRow != null)
+                if (this.testPlaylistIndex != (-1))
                 {
-                    this.testPlaylistRow.Cells[4].Value = Properties.Resources.correct;
-                    this.testPlaylistRow.Cells[4].ToolTipText = String.Empty;
+                    this.playlistUrls[this.testPlaylistIndex].State = FilterUrlState.Correct;
+                    this.playlistUrls[this.testPlaylistIndex].Error = String.Empty;
+
+                    this.UpdateGridViewPlaylist(this.testPlaylistIndex);
+                    this.dataGridViewPlaylist.Refresh();
                 }
 
-                if (this.testDatabaseRow != null)
+                if (this.testDatabaseIndex != (-1))
                 {
-                    this.testDatabaseRow.Cells[6].Value = Properties.Resources.correct;
-                    this.testDatabaseRow.Cells[6].ToolTipText = String.Empty;
+                    this.databaseUrls[this.testDatabaseIndex].State = FilterUrlState.Correct;
+                    this.databaseUrls[this.testDatabaseIndex].Error = String.Empty;
+
+                    this.UpdateGridViewDatabase(this.testDatabaseIndex);
+                    this.dataGridViewDatabase.Refresh();
                 }
             }
+
+            this.testPlaylistIndex = -1;
+            this.testDatabaseIndex = -1;
         }
 
         void testWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -608,25 +783,43 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
                 // add the source filter
                 sourceFilter = FilterGraphTools.AddFilterFromClsid(graphBuilder, typeof(TvLibrary.Implementations.DVB.TvCardDVBIPBuiltIn.MPIPTVSource).GUID, "MediaPortal IPTV Source Filter");
 
+                if (sourceFilter == null)
+                {
+                    throw new InvalidOperationException("No MediaPortal IPTV source filter is loaded.");
+                }
+
                 IFileSourceFilter fileSource = sourceFilter as IFileSourceFilter;
                 IFilterStateEx filterStateEx = sourceFilter as IFilterStateEx;
 
-                int result = int.MinValue;
-                if (this.testPlaylistRow != null)
+                if (filterStateEx == null)
                 {
-                    result = fileSource.Load((String)this.testPlaylistRow.Cells[3].Value.ToString(), null);
+                    throw new InvalidOperationException("No MediaPortal IPTV filter and url source splitter is loaded.");
                 }
 
-                if (this.testDatabaseRow != null)
+                int result = int.MinValue;
+                FilterUrl filterUrl = null;
+
+                if (this.testPlaylistIndex != (-1))
                 {
-                    result = fileSource.Load((String)this.testDatabaseRow.Cells[1].Value.ToString(), null);
+                    filterUrl = this.playlistUrls[this.testPlaylistIndex];
                 }
+
+                if (this.testDatabaseIndex != (-1))
+                {
+                    filterUrl = this.databaseUrls[this.testDatabaseIndex];
+                }
+
+                filterUrl.Url.Mpeg2TsParser.Sections.Clear();
+
+                filterUrl.Url.Mpeg2TsParser.StreamAnalysis = this.settings.StreamAnalysis;
+                result = fileSource.Load(filterUrl.Url.ToString(), null);
+                filterUrl.Url.Mpeg2TsParser.StreamAnalysis = false;
 
                 if (result < 0)
                 {
                     throw new FilterException(FilterError.ErrorDescription(filterStateEx, result));
                 }
-
+                
                 result = sourceFilter.Run(0);
 
                 if (result < 0)
@@ -645,6 +838,82 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
                 if (!compatible)
                 {
                     throw new FilterException("The received stream is not IPTV compatible.");
+                }
+
+                if (this.settings.StreamAnalysis)
+                {
+                    DateTime start = DateTime.Now;
+                    DateTime stop = start.AddMilliseconds(this.settings.StreamAnalysisTimeout);
+
+                    while (DateTime.Now < stop)
+                    {
+                        System.Threading.Thread.Sleep(100);
+                    }
+                    
+                    uint iptvSectionCount = 0;
+                    result = filterStateEx.GetIptvSectionCount(out iptvSectionCount);
+
+                    if (result < 0)
+                    {
+                        throw new FilterException(FilterError.ErrorDescription(filterStateEx, result));
+                    }
+
+                    for (uint i = 0; i < iptvSectionCount; i++)
+                    {
+                        String sectionDataEncoded = null;
+
+                        result = filterStateEx.GetIptvSection(i, out sectionDataEncoded);
+
+                        if (result < 0)
+                        {
+                            throw new FilterException(FilterError.ErrorDescription(filterStateEx, result));
+                        }
+
+                        Byte[] sectionData = Convert.FromBase64String(sectionDataEncoded);
+
+                        Section section = SectionFactory.CreateSection(sectionData);
+
+                        if (section != null)
+                        {
+                            if (section is ProgramAssociationSection)
+                            {
+                                ProgramAssociationSection streamSection = section as ProgramAssociationSection;
+
+                                filterUrl.Url.Mpeg2TsParser.Sections.Add(new StreamSection(streamSection));
+                            }
+                            else if (section is TransportStreamProgramMapSection)
+                            {
+                                TransportStreamProgramMapSection streamSection = section as TransportStreamProgramMapSection;
+
+                                bool continueWithNextSection = false;
+                                for (int j = 0; ((!continueWithNextSection) && (j < filterUrl.Url.Mpeg2TsParser.Sections.Count)); j++)
+                                {
+                                    ProgramAssociationSection filterSection = filterUrl.Url.Mpeg2TsParser.Sections[j].Section as ProgramAssociationSection;
+
+                                    if (filterSection != null)
+                                    {
+                                        for (int k = 0; k < filterSection.Programs.Count; k++)
+                                        {
+                                            ProgramAssociationSectionProgram program = filterSection.Programs[k];
+
+                                            if (program.ProgramNumber == streamSection.ProgramNumber)
+                                            {
+                                                continueWithNextSection = true;
+
+                                                streamSection.ProgramMapPID = program.ProgramMapPID;
+                                                filterUrl.Url.Mpeg2TsParser.Sections[j].StreamSections.Add(new StreamSection(streamSection));
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                filterUrl.Url.Mpeg2TsParser.Sections.Add(new StreamSection(section));
+                            }
+                        }
+                    }
                 }
             }
             finally
@@ -778,82 +1047,76 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
 
         private void ApplyDefaultUserSettings(Settings previousSettings, Settings currentSettings)
         {
-            foreach (DataGridViewRow row in this.dataGridViewPlaylist.Rows)
+            foreach (var filterUrl in this.playlistUrls)
             {
-                SimpleUrl simpleUrl = (SimpleUrl)row.Cells[3].Value;
-
-                if (simpleUrl is AfhsManifestUrl)
+                if (filterUrl.Url is AfhsManifestUrl)
                 {
-                    simpleUrl.ApplyDefaultUserSettings(previousSettings.Http, currentSettings.Http);
+                    filterUrl.Url.ApplyDefaultUserSettings(previousSettings.Http, currentSettings.Http);
                 }
 
-                if (simpleUrl is HttpUrl)
+                if (filterUrl.Url is HttpUrl)
                 {
-                    simpleUrl.ApplyDefaultUserSettings(previousSettings.Http, currentSettings.Http);
+                    filterUrl.Url.ApplyDefaultUserSettings(previousSettings.Http, currentSettings.Http);
                 }
 
-                if (simpleUrl is RtmpUrl)
+                if (filterUrl.Url is RtmpUrl)
                 {
-                    simpleUrl.ApplyDefaultUserSettings(previousSettings.Rtmp, currentSettings.Rtmp);
+                    filterUrl.Url.ApplyDefaultUserSettings(previousSettings.Rtmp, currentSettings.Rtmp);
                 }
 
-                if (simpleUrl is RtspUrl)
+                if (filterUrl.Url is RtspUrl)
                 {
-                    simpleUrl.ApplyDefaultUserSettings(previousSettings.Rtsp, currentSettings.Rtsp);
+                    filterUrl.Url.ApplyDefaultUserSettings(previousSettings.Rtsp, currentSettings.Rtsp);
                 }
 
-                if (simpleUrl is UdpRtpUrl)
+                if (filterUrl.Url is UdpRtpUrl)
                 {
-                    simpleUrl.ApplyDefaultUserSettings(previousSettings.UdpRtp, currentSettings.UdpRtp);
+                    filterUrl.Url.ApplyDefaultUserSettings(previousSettings.UdpRtp, currentSettings.UdpRtp);
                 }
             }
 
-            foreach (DataGridViewRow row in this.dataGridViewDatabase.Rows)
+            foreach (var filterUrl in this.databaseUrls)
             {
-                SimpleUrl simpleUrl = (SimpleUrl)row.Cells[1].Value;
-
-                if (simpleUrl is AfhsManifestUrl)
+                if (filterUrl.Url is AfhsManifestUrl)
                 {
-                    simpleUrl.ApplyDefaultUserSettings(previousSettings.Http, currentSettings.Http);
+                    filterUrl.Url.ApplyDefaultUserSettings(previousSettings.Http, currentSettings.Http);
                 }
 
-                if (simpleUrl is HttpUrl)
+                if (filterUrl.Url is HttpUrl)
                 {
-                    simpleUrl.ApplyDefaultUserSettings(previousSettings.Http, currentSettings.Http);
+                    filterUrl.Url.ApplyDefaultUserSettings(previousSettings.Http, currentSettings.Http);
                 }
 
-                if (simpleUrl is RtmpUrl)
+                if (filterUrl.Url is RtmpUrl)
                 {
-                    simpleUrl.ApplyDefaultUserSettings(previousSettings.Rtmp, currentSettings.Rtmp);
+                    filterUrl.Url.ApplyDefaultUserSettings(previousSettings.Rtmp, currentSettings.Rtmp);
                 }
 
-                if (simpleUrl is RtspUrl)
+                if (filterUrl.Url is RtspUrl)
                 {
-                    simpleUrl.ApplyDefaultUserSettings(previousSettings.Rtsp, currentSettings.Rtsp);
+                    filterUrl.Url.ApplyDefaultUserSettings(previousSettings.Rtsp, currentSettings.Rtsp);
                 }
 
-                if (simpleUrl is UdpRtpUrl)
+                if (filterUrl.Url is UdpRtpUrl)
                 {
-                    simpleUrl.ApplyDefaultUserSettings(previousSettings.UdpRtp, currentSettings.UdpRtp);
+                    filterUrl.Url.ApplyDefaultUserSettings(previousSettings.UdpRtp, currentSettings.UdpRtp);
                 }
             }
-
-            this.propertyGridPlaylist_PropertyValueChanged(this, null);
-            this.propertyGridDatabase_PropertyValueChanged(this, null);
         }
 
         private void propertyGridPlaylist_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             bool urlLengthTooShort = false;
 
-            foreach (DataGridViewRow row in this.dataGridViewPlaylist.Rows)
+            foreach (var filterUrl in this.playlistUrls)
             {
-                SimpleUrl simpleUrl = (SimpleUrl)row.Cells[3].Value;
-
-                urlLengthTooShort |= (simpleUrl.ToString().Length > this.urlColumnLength);
+                urlLengthTooShort |= (filterUrl.Url.ToString().Length > this.urlColumnLength);
             }
 
             this.buttonUpdateDatabase.Visible = urlLengthTooShort;
+
+            this.UpdateGridViewPlaylist();
+            this.dataGridViewPlaylist.Refresh();
         }
 
         private IList<TuningDetail> GetTuningDetails()
@@ -874,7 +1137,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
             {
                 DataGridViewRow row = this.dataGridViewDatabase.SelectedRows[i];
 
-                objects[i] = row.Cells[1].Value;
+                objects[i] = this.databaseUrls[row.Index].Url;
             }
 
             this.propertyGridDatabase.SelectedObjects = objects;
@@ -882,7 +1145,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
 
         private void dataGridViewDatabase_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            this.propertyGridDatabase.SelectedObject = this.dataGridViewDatabase.Rows[e.RowIndex].Cells[1].Value;
+            this.propertyGridDatabase.SelectedObject = this.databaseUrls[e.RowIndex].Url;
         }
 
         private void dataGridViewDatabase_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -895,15 +1158,17 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
                 {
                     this.testWorker.Dispose();
                     this.testWorker = null;
-                    this.testPlaylistRow = null;
-                    this.testDatabaseRow = null;
+                    this.testPlaylistIndex = -1;
+                    this.testDatabaseIndex = -1;
                 }
 
                 if (this.testWorker == null)
                 {
-                    this.testDatabaseRow = this.dataGridViewDatabase.Rows[e.RowIndex];
-                    this.testDatabaseRow.Cells[6].Value = Properties.Resources.pending;
-                    this.testDatabaseRow.Cells[6].ToolTipText = "Testing filter url ...";
+                    this.testDatabaseIndex = e.RowIndex;
+                    this.databaseUrls[this.testDatabaseIndex].State = FilterUrlState.Pending;
+
+                    this.UpdateGridViewDatabase(this.testDatabaseIndex);
+                    this.dataGridViewDatabase.Refresh();
 
                     this.testWorker = new BackgroundWorker();
 
@@ -918,18 +1183,16 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
         {
             try
             {
-                for (int i = 0; i < this.dataGridViewDatabase.Rows.Count; i++)
+                for (int i = 0; i < this.databaseUrls.Count; i++)
                 {
-                    DataGridViewRow row = this.dataGridViewDatabase.Rows[i];
-                    TuningDetail detail = this.tuningDetails[i];
+                    FilterUrl filterUrl = this.databaseUrls[i];
 
-                    SimpleUrl simpleUrl = (SimpleUrl)row.Cells[1].Value;
-                    detail.Url = simpleUrl.ToString();
+                    filterUrl.Detail.Url = filterUrl.Url.ToString();
                 }
 
-                foreach (var tuningDetail in this.tuningDetails)
+                foreach (var filterUrl in this.databaseUrls)
                 {
-                    tuningDetail.Persist();
+                    filterUrl.Detail.Persist();
                 }
             }
             catch (Exception ex)
@@ -942,33 +1205,34 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
         {
             bool urlLengthTooShort = false;
 
-            foreach (DataGridViewRow row in this.dataGridViewDatabase.Rows)
+            foreach (var filterUrl in this.databaseUrls)
             {
-                SimpleUrl simpleUrl = (SimpleUrl)row.Cells[1].Value;
-
-                urlLengthTooShort |= (simpleUrl.ToString().Length > this.urlColumnLength);
+                urlLengthTooShort |= (filterUrl.Url.ToString().Length > this.urlColumnLength);
             }
 
             this.buttonUpdateDatabase.Visible = urlLengthTooShort;
-            if (urlLengthTooShort)
-            {
-                this.buttonStoreChanges.Enabled = false;
-            }
+            this.buttonStoreChanges.Enabled = !urlLengthTooShort;
+
+            this.UpdateGridViewDatabase();
+            this.dataGridViewDatabase.Refresh();
         }
 
         private void buttonSetMpeg2TSParser_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < this.dataGridViewDatabase.SelectedRows.Count; i++)
             {
-                DataGridViewRow row = this.dataGridViewDatabase.Rows[i];
-                TuningDetail detail = this.tuningDetails[i];
-                SimpleUrl simpleUrl = (SimpleUrl)row.Cells[1].Value;
+                int j = this.dataGridViewDatabase.SelectedRows[i].Index;
 
-                simpleUrl.Mpeg2TsParser.AlignToMpeg2TSPacket = true;
-                simpleUrl.Mpeg2TsParser.DetectDiscontinuity = true;
-                simpleUrl.Mpeg2TsParser.TransportStreamID = detail.TransportId;
-                simpleUrl.Mpeg2TsParser.ProgramNumber = detail.ServiceId;
-                simpleUrl.Mpeg2TsParser.ProgramMapPID = detail.PmtPid;
+                DataGridViewRow row = this.dataGridViewDatabase.Rows[j];
+                FilterUrl filterUrl = this.databaseUrls[j];
+
+                filterUrl.Url.Mpeg2TsParser.AlignToMpeg2TSPacket = true;
+                filterUrl.Url.Mpeg2TsParser.DetectDiscontinuity = true;
+                filterUrl.Url.Mpeg2TsParser.TransportStreamID = filterUrl.Detail.TransportId;
+                filterUrl.Url.Mpeg2TsParser.ProgramNumber = filterUrl.Detail.ServiceId;
+                filterUrl.Url.Mpeg2TsParser.ProgramMapPID = filterUrl.Detail.PmtPid;
+
+                this.UpdateGridViewDatabase(j);
             }
 
             this.propertyGridDatabase_PropertyValueChanged(this, null);

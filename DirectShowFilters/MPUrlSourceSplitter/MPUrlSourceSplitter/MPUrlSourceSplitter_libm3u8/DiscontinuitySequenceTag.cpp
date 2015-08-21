@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "DiscontinuitySequenceTag.h"
+#include "ErrorCodes.h"
 
 CDiscontinuitySequenceTag::CDiscontinuitySequenceTag(HRESULT *result)
   : CTag(result)
@@ -37,9 +38,6 @@ CDiscontinuitySequenceTag::~CDiscontinuitySequenceTag(void)
 /* set methods */
 
 /* other methods */
-
-
-
 
 bool CDiscontinuitySequenceTag::IsMediaPlaylistItem(unsigned int version)
 {
@@ -68,22 +66,22 @@ void CDiscontinuitySequenceTag::Clear(void)
   this->discontinuitySequenceNumber = DISCONTINUITY_SEQUENCE_NUMBER_NOT_SPECIFIED;
 }
 
-bool CDiscontinuitySequenceTag::ParseTag(unsigned int version)
+HRESULT CDiscontinuitySequenceTag::ParseTag(unsigned int version)
 {
-  bool result = __super::ParseTag(version);
-  result &= ((version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07));
+  HRESULT result = __super::ParseTag(version);
+  CHECK_CONDITION_HRESULT(result, (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07), result, E_M3U8_NOT_SUPPORTED_TAG);
 
   if (result)
   {
     // successful parsing of tag
     // compare it to our tag
-    result &= (wcscmp(this->tag, TAG_DISCONTINUITY_SEQUENCE) == 0);
+    CHECK_CONDITION_HRESULT(result, wcscmp(this->tag, TAG_DISCONTINUITY_SEQUENCE) == 0, result, E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE);
+    CHECK_POINTER_HRESULT(result, this->tagContent, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
 
-    if (result)
+    if (SUCCEEDED(result))
     {
       this->discontinuitySequenceNumber = CAttribute::GetDecimalInteger(this->tagContent);
-
-      result &= (this->discontinuitySequenceNumber != DISCONTINUITY_SEQUENCE_NUMBER_NOT_SPECIFIED);
+      CHECK_CONDITION_HRESULT(result, this->discontinuitySequenceNumber != DISCONTINUITY_SEQUENCE_NUMBER_NOT_SPECIFIED, result, E_M3U8_INCOMPLETE_PLAYLIST_TAG);
     }
   }
 

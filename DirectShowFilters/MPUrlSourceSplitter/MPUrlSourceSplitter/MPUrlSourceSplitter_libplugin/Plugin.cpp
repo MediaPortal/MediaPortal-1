@@ -61,7 +61,7 @@ bool CPlugin::IsIptv(void)
 
 void CPlugin::ClearSession(void)
 {
-  this->flags = PLUGIN_FLAG_NONE;
+  this->flags &= ~(PLUGIN_FLAG_SPLITTER | PLUGIN_FLAG_IPTV);
 }
 
 /* protected methods */

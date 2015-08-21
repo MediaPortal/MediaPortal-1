@@ -279,7 +279,7 @@ namespace MediaPortal.Configuration.Sections
       this.useInternalBDPlayer.Name = "useInternalBDPlayer";
       this.useInternalBDPlayer.Size = new System.Drawing.Size(180, 17);
       this.useInternalBDPlayer.TabIndex = 6;
-      this.useInternalBDPlayer.Text = "Use internal Blu-Ray menu player";
+      this.useInternalBDPlayer.Text = "Use internal Blu-ray menu player";
       this.useInternalBDPlayer.UseVisualStyleBackColor = true;
       // 
       // mpTabPage1

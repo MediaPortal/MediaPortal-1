@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter</RootNamespace>
     <AssemblyName>MediaPortalIptvFilterAndUrlSourceSplitter</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -58,6 +59,29 @@
     <Compile Include="..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="BufferHelper.cs" />
+    <Compile Include="FilterUrl.cs" />
+    <Compile Include="FilterUrlCollection.cs" />
+    <Compile Include="Sections\ConditionalAccessDescriptor.cs" />
+    <Compile Include="Sections\ConditionalAccessSection.cs" />
+    <Compile Include="Sections\Descriptor.cs" />
+    <Compile Include="Sections\DescriptorCollection.cs" />
+    <Compile Include="Sections\DescriptorFactory.cs" />
+    <Compile Include="Sections\InvalidDescriptorTagException.cs" />
+    <Compile Include="Sections\InvalidTableIdException.cs" />
+    <Compile Include="Sections\ProgramAssociationSection.cs" />
+    <Compile Include="Sections\ProgramAssociationSectionProgram.cs" />
+    <Compile Include="Sections\ProgramAssociationSectionProgramCollection.cs" />
+    <Compile Include="Sections\ProgramDefinition.cs" />
+    <Compile Include="Sections\ProgramDefinitionCollection.cs" />
+    <Compile Include="Sections\ProgramDefinitionFactory.cs" />
+    <Compile Include="Sections\Section.cs" />
+    <Compile Include="Sections\SectionFactory.cs" />
+    <Compile Include="Sections\TransportStreamProgramMapSection.cs" />
+    <Compile Include="Sections\UnknownDescriptor.cs" />
+    <Compile Include="Sections\UnknownSection.cs" />
+    <Compile Include="StreamSection.cs" />
+    <Compile Include="StreamSectionCollection.cs" />
     <Compile Include="Url\AfhsManifestUrl.cs" />
     <Compile Include="BackgroundWorker.cs" />
     <Compile Include="DoWorkEventArgs.cs" />
@@ -72,13 +96,27 @@
     <Compile Include="FinishedWorkEventArgs.cs" />
     <Compile Include="HttpProtocolSettings.cs" />
     <Compile Include="Url\CacheFolderEditor.cs" />
+    <Compile Include="Url\FilterProgramNumber.cs" />
+    <Compile Include="Url\FilterProgramNumberCollection.cs" />
+    <Compile Include="Url\FilterProgramNumberControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Url\FilterProgramNumberControl.Designer.cs">
+      <DependentUpon>FilterProgramNumberControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Url\HttpUrl.cs" />
     <Compile Include="Filter\IFilterState.cs" />
     <Compile Include="Filter\IFilterStateEx.cs" />
     <Compile Include="LogVerbosity.cs" />
     <Compile Include="Url\HttpVersionConverter.cs" />
     <Compile Include="Url\Mpeg2TsParser.cs" />
-    <Compile Include="Url\Mpeg2TsParserConverter.cs" />
+    <Compile Include="Url\Mpeg2TsParserEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Url\Mpeg2TsParserEditor.Designer.cs">
+      <DependentUpon>Mpeg2TsParserEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Url\Mpeg2TsParserPropertyGridEditor.cs" />
     <Compile Include="Url\NetworkInterfaceConverter.cs" />
     <Compile Include="Url\Parameter.cs" />
     <Compile Include="Url\ParameterCollection.cs" />
@@ -91,6 +129,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ProtocolSettings.cs" />
+    <Compile Include="Url\ProgramElement.cs" />
+    <Compile Include="Url\ProgramElementCollection.cs" />
     <Compile Include="Url\RtmpArbitraryData.cs" />
     <Compile Include="Url\RtmpArbitraryDataCollection.cs" />
     <Compile Include="Url\RtmpArbitraryDataCollectionEditor.cs" />
@@ -168,6 +208,12 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Url\FilterProgramNumberControl.resx">
+      <DependentUpon>FilterProgramNumberControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Url\Mpeg2TsParserEditor.resx">
+      <DependentUpon>Mpeg2TsParserEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Url\RtspConnectionPreference.resx">
       <DependentUpon>RtspConnectionPreference.cs</DependentUpon>

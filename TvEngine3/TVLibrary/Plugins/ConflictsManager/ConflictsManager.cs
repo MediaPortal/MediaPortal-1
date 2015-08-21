@@ -288,15 +288,16 @@ namespace TvEngine
           {
             // checks if any schedule assigned to this cards overlaps current parsed schedule
             bool free = true;
-            foreach (Schedule assignedShedule in cardSchedules[cardno[card.IdCard]])
+            foreach (Schedule assignedSchedule in cardSchedules[cardno[card.IdCard]])
             {
-              if (schedule.IsOverlapping(assignedShedule))
+              if (schedule.IsOverlapping(assignedSchedule))
               {
-                if (!(schedule.isSameTransponder(assignedShedule) && card.supportSubChannels))
+                bool _isSameTransponder = (cmLayer.isSameTransponder(schedule, assignedSchedule) && card.supportSubChannels);
+                if (!_isSameTransponder)
                 {
                   free = false;
                   //_overlap = true;
-                  lastOverlappingSchedule = assignedShedule;
+                  lastOverlappingSchedule = assignedSchedule;
                   lastBusyCard = card.IdCard;
                   break;
                 }

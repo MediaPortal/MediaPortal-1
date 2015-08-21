@@ -40,9 +40,32 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 
                         editorService.DropDownControl(preference);
 
-                        url.SameConnectionPreference = preference.SameConnectionPreference;
-                        url.UdpPreference = preference.UdpPreference;
-                        url.MulticastPreference = preference.MulticastPreference;
+                        int originalPreference = (int)value;
+
+                        if (url.SameConnectionPreference == originalPreference)
+                        {
+                            url.SameConnectionPreference = preference.SameConnectionPreference;
+                            url.UdpPreference = preference.UdpPreference;
+                            url.MulticastPreference = preference.MulticastPreference;
+
+                            value = url.SameConnectionPreference;
+                        }
+                        else if (url.UdpPreference == originalPreference)
+                        {
+                            url.SameConnectionPreference = preference.SameConnectionPreference;
+                            url.UdpPreference = preference.UdpPreference;
+                            url.MulticastPreference = preference.MulticastPreference;
+
+                            value = url.UdpPreference;
+                        }
+                        else if (url.MulticastPreference == originalPreference)
+                        {
+                            url.SameConnectionPreference = preference.SameConnectionPreference;
+                            url.UdpPreference = preference.UdpPreference;
+                            url.MulticastPreference = preference.MulticastPreference;
+
+                            value = url.MulticastPreference;
+                        }
                     }
                 }
             }

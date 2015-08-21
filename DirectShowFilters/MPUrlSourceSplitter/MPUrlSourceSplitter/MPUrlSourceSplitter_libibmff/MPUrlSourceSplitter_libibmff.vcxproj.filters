@@ -233,6 +233,9 @@
     <ClInclude Include="TrackRunBox.h">
       <Filter>Boxes\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PayloadBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -422,6 +425,9 @@
       <Filter>Collections\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TrackRunBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PayloadBox.cpp">
       <Filter>Boxes\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

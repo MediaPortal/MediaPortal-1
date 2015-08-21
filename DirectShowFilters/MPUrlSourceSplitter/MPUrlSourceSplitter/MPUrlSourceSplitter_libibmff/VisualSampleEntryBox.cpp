@@ -210,6 +210,9 @@ bool CVisualSampleEntryBox::ParseInternal(const unsigned char *buffer, uint32_t 
 
     if (SUCCEEDED(continueParsing))
     {
+      // skip sample entry box bytes
+      position += SAMPLE_ENTRY_BOX_DATA_SIZE;
+
       // skip 16 reserved and pre-defined bytes
       position += 16;
 

@@ -6,26 +6,21 @@
 <define>#header.label:2</define>
 <define>#useSelectedFanart:Yes</define>
 <controls>
-	
-    <import>common.window.music.xml</import>
-
-    <control>
+	<import>common.window.music.xml</import>
+  <control>
 		<id>0</id>
-        <type>image</type>
-        <posX>66</posX>
-        <posY>39</posY>
-        <width>60</width>
+    <type>image</type>
+    <posX>66</posX>
+    <posY>39</posY>
+    <width>60</width>
 		<height>56</height>
-        <texture>icon_music.png</texture>
-        <visible>control.isvisible(50)</visible>
-	    <animation effect="fade" time="250">WindowOpen</animation>
-	    <animation effect="fade" time="250">WindowClose</animation>
-    </control>
-
-    <import>common.time.xml</import>
-
+    <texture>icon_music.png</texture>
+    <visible>control.isvisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+	<import>common.time.xml</import>
 	<!--            :: LISTVIEW ::            -->
-	
 	<control>
 		<description>Poster shadow</description>
 		<type>image</type>
@@ -39,33 +34,6 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>	
-
-	<control>
-		<id>0</id>
-		<type>image</type>
-		<posX>121</posX>
-		<posY>362</posY>
-		<width>556</width>
-		<height>556</height>
-		<visible>[facadeview.list+!control.hasthumb(500)+!string.contains(#selecteditem, ..)]</visible>
-		<texture>defaultAudioBig.png</texture>
- 		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
-	</control>
-	
-	<control>
-		<id>0</id>
-		<type>image</type>
-		<posX>121</posX>
-		<posY>362</posY>
-		<width>556</width>
-		<height>556</height>
-		<texture>folderBackMusic.png</texture>
-		<visible>[facadeview.list+string.contains(#selecteditem, ..)]</visible>
-  	<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
-	</control>
-	
 	<control>
 		<description>Cover Art</description>
 		<type>image</type>
@@ -79,10 +47,8 @@
   	<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
-    
-<import>mymusic.hiddenmenu.xml</import>	
-<import>common.facade.music.xml</import>	
-<import>common.overlay.xml</import>
-	
+  <import>mymusic.hiddenmenu.xml</import>	
+	<import>common.facade.music.xml</import>	
+	<import>common.overlay.xml</import>
 </controls>
 </window>

@@ -230,6 +230,16 @@ bool CParserHoster::IsStreamIptvCompatible(void)
   return ((this->activeParser != NULL) && (this->activeParser->IsStreamIptvCompatible()));
 }
 
+unsigned int CParserHoster::GetIptvSectionCount(void)
+{
+  return (this->activeParser != NULL) ? this->activeParser->GetIptvSectionCount() : 0;
+}
+
+HRESULT CParserHoster::GetIptvSection(unsigned int index, wchar_t **section)
+{
+  return (this->activeParser != NULL) ? this->activeParser->GetIptvSection(index, section) : E_NO_ACTIVE_PARSER;
+}
+
 /* protected methods */
 
 CHosterPluginMetadata *CParserHoster::CreateHosterPluginMetadata(HRESULT *result, CLogger *logger, CParameterCollection *configuration, const wchar_t *hosterName, const wchar_t *pluginLibraryFileName)

@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "Item.h"
+#include "ErrorCodes.h"
 
 CItem::CItem(HRESULT *result)
   : CFlags()
@@ -94,16 +95,18 @@ unsigned int CItem::Parse(const wchar_t *buffer, unsigned int length, unsigned i
   return result;
 }
 
-bool CItem::ParseItem(CItem *item)
+HRESULT CItem::ParseItem(CItem *item)
 {
   this->Clear();
-  bool result = (item != NULL);
+  HRESULT result = (item != NULL) ? S_OK : E_POINTER;
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     this->flags = item->flags;
 
-    SET_STRING_AND_RESULT_WITH_NULL(this->itemContent, item->itemContent, result);
+    // this->itemContent cannot be NULL, there still must be something
+    CHECK_POINTER_HRESULT(result, item->itemContent, result, E_M3U8_NOT_VALID_ITEM_FOUND);
+    SET_STRING_HRESULT(this->itemContent, item->itemContent, result);
   }
 
   return result;

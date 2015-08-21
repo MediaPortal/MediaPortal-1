@@ -31,6 +31,7 @@ CProgramAssociationSection::CProgramAssociationSection(HRESULT *result)
   this->reservedVersionNumberCurrentNextIndicator = 0;
   this->sectionNumber = 0;
   this->lastSectionNumber = 0;
+  this->networkInformationTablePID = NETWORK_INFORMATION_TABLE_PID_UNDEFINED;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -102,7 +103,7 @@ bool CProgramAssociationSection::IsCurrentNextIndicator(void)
   return (((this->reservedVersionNumberCurrentNextIndicator >> PROGRAM_ASSOCIATION_SECTION_CURRENT_NEXT_INDICATOR_SHIFT) & PROGRAM_ASSOCIATION_SECTION_CURRENT_NEXT_INDICATOR_MASK) != 0);
 }
 
-HRESULT CProgramAssociationSection::Parse(CProgramSpecificInformationPacket *psiPacket, unsigned int startFromSectionPayload)
+HRESULT CProgramAssociationSection::Parse(CSectionPayload *sectionPayload)
 {
   this->transportStreamId = 0;
   this->reservedVersionNumberCurrentNextIndicator = 0;
@@ -110,9 +111,9 @@ HRESULT CProgramAssociationSection::Parse(CProgramSpecificInformationPacket *psi
   this->lastSectionNumber = 0;
   this->programs->Clear();
 
-  HRESULT result = __super::Parse(psiPacket, startFromSectionPayload);
+  HRESULT result = __super::Parse(sectionPayload);
 
-  // S_OK is successfull, S_FALSE if more PSI packets are needed to complete section, error code otherwise
+  // S_OK is successfull, S_FALSE if more section payloads are needed to complete section, error code otherwise
   if (result == S_OK)
   {
     CHECK_CONDITION_HRESULT(result, this->GetTableId() == PROGRAM_ASSOCIATION_SECTION_TABLE_ID, result, E_FAIL);
@@ -131,20 +132,27 @@ HRESULT CProgramAssociationSection::Parse(CProgramSpecificInformationPacket *psi
 
       for (unsigned int i = 0; (SUCCEEDED(result) && (i < programCount)); i++)
       {
-        CProgramAssociationSectionProgram *program = new CProgramAssociationSectionProgram(&result);
-        CHECK_POINTER_HRESULT(result, program, result, E_OUTOFMEMORY);
+        RBE16INC_DEFINE(this->payload, position, programNumber, uint16_t);
+        RBE16INC_DEFINE(this->payload, position, programMapPID, uint16_t);
 
-        if (SUCCEEDED(result))
+        if (programNumber == 0)
         {
-          RBE16INC_DEFINE(this->payload, position, programNumber, uint16_t);
-          RBE16INC_DEFINE(this->payload, position, programMapPID, uint16_t);
-
-          program->SetProgramNumber(programNumber);
-          program->SetProgramMapPID(programMapPID & PROGRAM_ASSOCIATION_SECTION_PROGRAM_MAP_PID_MASK);
+          this->networkInformationTablePID = programMapPID & PROGRAM_ASSOCIATION_SECTION_PROGRAM_MAP_PID_MASK;
         }
+        else
+        {
+          CProgramAssociationSectionProgram *program = new CProgramAssociationSectionProgram(&result);
+          CHECK_POINTER_HRESULT(result, program, result, E_OUTOFMEMORY);
 
-        CHECK_CONDITION_HRESULT(result, this->programs->Add(program), result, E_OUTOFMEMORY);
-        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(program));
+          if (SUCCEEDED(result))
+          {
+            program->SetProgramNumber(programNumber);
+            program->SetProgramMapPID(programMapPID & PROGRAM_ASSOCIATION_SECTION_PROGRAM_MAP_PID_MASK);
+          }
+
+          CHECK_CONDITION_HRESULT(result, this->programs->Add(program), result, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(program));
+        }
       }
     }
   }
@@ -160,6 +168,7 @@ void CProgramAssociationSection::Clear(void)
   this->reservedVersionNumberCurrentNextIndicator = 0;
   this->sectionNumber = 0;
   this->lastSectionNumber = 0;
+  this->networkInformationTablePID = NETWORK_INFORMATION_TABLE_PID_UNDEFINED;
   this->programs->Clear();
 }
 
@@ -190,6 +199,7 @@ bool CProgramAssociationSection::InternalClone(CSection *item)
       section->reservedVersionNumberCurrentNextIndicator = this->reservedVersionNumberCurrentNextIndicator;
       section->sectionNumber = this->sectionNumber;
       section->lastSectionNumber = this->lastSectionNumber;
+      section->networkInformationTablePID = this->networkInformationTablePID;
 
       result &= section->programs->Append(this->programs);
     }
@@ -202,7 +212,17 @@ unsigned int CProgramAssociationSection::GetSectionCalculatedSize(void)
 {
   unsigned int result = __super::GetSectionCalculatedSize();
 
-  CHECK_CONDITION_EXECUTE(result != 0, result += 5 + this->GetPrograms()->Count() * 4);
+  CHECK_CONDITION_EXECUTE(result != 0, );
+
+  if (result != 0)
+  {
+    result += 5 + this->GetPrograms()->Count() * 4;
+
+    if (this->networkInformationTablePID != NETWORK_INFORMATION_TABLE_PID_UNDEFINED)
+    {
+      result += 4;
+    }
+  }
 
   return result;
 }
@@ -218,6 +238,12 @@ unsigned int CProgramAssociationSection::GetSectionInternal(void)
     WBE8INC(this->payload, position, this->sectionNumber);
     WBE8INC(this->payload, position, this->lastSectionNumber);
 
+    if (this->networkInformationTablePID != NETWORK_INFORMATION_TABLE_PID_UNDEFINED)
+    {
+      WBE16INC(this->payload, position, 0x0000);
+      WBE16INC(this->payload, position, (this->networkInformationTablePID | (~PROGRAM_ASSOCIATION_SECTION_PROGRAM_MAP_PID_MASK)));
+    }
+
     for (unsigned int i = 0; i < this->GetPrograms()->Count(); i++)
     {
       CProgramAssociationSectionProgram *program = this->GetPrograms()->GetItem(i);
@@ -228,4 +254,9 @@ unsigned int CProgramAssociationSection::GetSectionInternal(void)
   }
 
   return position;
+}
+
+bool CProgramAssociationSection::CheckTableId(void)
+{
+  return (this->GetTableId() == PROGRAM_ASSOCIATION_SECTION_TABLE_ID);
 }

@@ -23,7 +23,7 @@
 #ifndef __PROGRAM_ASSOCIATION_PARSER_DEFINED
 #define __PROGRAM_ASSOCIATION_PARSER_DEFINED
 
-#include "Parser.h"
+#include "SectionPayloadParser.h"
 #include "ProgramAssociationSection.h"
 
 #define PROGRAM_ASSOCIATION_PARSER_FLAG_NONE                          PARSER_FLAG_NONE
@@ -32,9 +32,9 @@
 
 #define PROGRAM_ASSOCIATION_PARSER_FLAG_LAST                          (PARSER_FLAG_LAST + 1)
 
-#define PROGRAM_ASSOCIATION_PARSER_PSI_PACKET_PID                    0x0000
+#define PROGRAM_ASSOCIATION_PARSER_PSI_PACKET_PID                     0x0000
 
-class CProgramAssociationParser : public CParser
+class CProgramAssociationParser : public CSectionPayloadParser
 {
 public:
   CProgramAssociationParser(HRESULT *result);
@@ -64,8 +64,8 @@ public:
   // @return : true if section is found, false otherwise
   bool IsSectionFound(void);
 
-  // parses input MPEG2 TS packet
-  // @param packet : the MPEG2 TS packet to parse
+  // parses section payload for section
+  // @param sectionPayload : the section payload to parse
   // @return :
   //  S_OK                                                        : complete program association section
   //  S_FALSE                                                     : incomplete program association section
@@ -74,7 +74,7 @@ public:
   //  E_MPEG2TS_INCOMPLETE_SECTION                                : section is incomplete
   //  E_MPEG2TS_SECTION_INVALID_CRC32                             : invalid section CRC32 (corrupted section)
   //  other error code                                            : another error
-  virtual HRESULT Parse(CTsPacket *packet);
+  virtual HRESULT Parse(CSectionPayload *sectionPayload);
 
   // clears instance to its default state
   virtual void Clear(void);

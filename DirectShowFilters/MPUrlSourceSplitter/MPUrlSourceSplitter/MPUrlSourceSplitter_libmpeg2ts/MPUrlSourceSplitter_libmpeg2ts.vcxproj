@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -20,12 +20,14 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -76,8 +78,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ConditionalAccessDescriptor.h" />
+    <ClInclude Include="ConditionalAccessParser.h" />
+    <ClInclude Include="ConditionalAccessSection.h" />
     <ClInclude Include="Crc32.h" />
+    <ClInclude Include="Descriptor.h" />
+    <ClInclude Include="DescriptorCollection.h" />
+    <ClInclude Include="DescriptorFactory.h" />
     <ClInclude Include="DiscontinuityParser.h" />
+    <ClInclude Include="PacketParser.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="PidCounter.h" />
     <ClInclude Include="PidCounterCollection.h" />
@@ -89,8 +98,10 @@
     <ClInclude Include="ProgramDefinitionCollection.h" />
     <ClInclude Include="ProgramSpecificInformationPacket.h" />
     <ClInclude Include="Section.h" />
+    <ClInclude Include="SectionCollection.h" />
     <ClInclude Include="SectionPayload.h" />
     <ClInclude Include="SectionPayloadCollection.h" />
+    <ClInclude Include="SectionPayloadParser.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TransportStreamProgramMapParser.h" />
@@ -100,8 +111,15 @@
     <ClInclude Include="TsPacketConstants.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ConditionalAccessDescriptor.cpp" />
+    <ClCompile Include="ConditionalAccessParser.cpp" />
+    <ClCompile Include="ConditionalAccessSection.cpp" />
     <ClCompile Include="Crc32.cpp" />
+    <ClCompile Include="Descriptor.cpp" />
+    <ClCompile Include="DescriptorCollection.cpp" />
+    <ClCompile Include="DescriptorFactory.cpp" />
     <ClCompile Include="DiscontinuityParser.cpp" />
+    <ClCompile Include="PacketParser.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="PidCounter.cpp" />
     <ClCompile Include="PidCounterCollection.cpp" />
@@ -113,8 +131,10 @@
     <ClCompile Include="ProgramDefinitionCollection.cpp" />
     <ClCompile Include="ProgramSpecificInformationPacket.cpp" />
     <ClCompile Include="Section.cpp" />
+    <ClCompile Include="SectionCollection.cpp" />
     <ClCompile Include="SectionPayload.cpp" />
     <ClCompile Include="SectionPayloadCollection.cpp" />
+    <ClCompile Include="SectionPayloadParser.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

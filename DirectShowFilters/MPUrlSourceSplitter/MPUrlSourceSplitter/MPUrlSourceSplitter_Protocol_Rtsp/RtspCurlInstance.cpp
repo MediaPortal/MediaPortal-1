@@ -1499,24 +1499,6 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
         {
           CHECK_CONDITION_HRESULT(receiveError, this->rtspDownloadResponse->GetReceivedData()->AddToBufferWithResize(buffer, readData, this->rtspDownloadResponse->GetReceivedData()->GetBufferSize() * 2) == readData, receiveError, E_OUTOFMEMORY);
           CHECK_CONDITION_EXECUTE(FAILED(receiveError), this->rtspDownloadResponse->SetResultError(receiveError));
-
-          CRtspDumpBox *dumpBox = NULL;
-          CHECK_CONDITION_NOT_NULL_EXECUTE(this->dumpFile->GetDumpFile(), dumpBox = (CRtspDumpBox *)this->CreateDumpBox());
-
-          if (dumpBox != NULL)
-          {
-            dumpBox->SetTimeWithLocalTime();
-            dumpBox->SetPayload(buffer, (unsigned int)readData);
-
-            CRtspMainBox *mainBox = new CRtspMainBox(&receiveError);
-            CHECK_POINTER_HRESULT(receiveError, mainBox, receiveError, E_OUTOFMEMORY);
-
-            CHECK_CONDITION_HRESULT(receiveError, dumpBox->GetBoxes()->Add(mainBox), receiveError, E_OUTOFMEMORY);
-
-            CHECK_CONDITION_EXECUTE(FAILED(receiveError), FREE_MEM_CLASS(mainBox));
-          }
-
-          CHECK_CONDITION_EXECUTE((dumpBox != NULL) && (!this->dumpFile->AddDumpBox(dumpBox)), FREE_MEM_CLASS(dumpBox));
         }
 
         bool possibleInterleavedPacket = false;
@@ -1825,28 +1807,20 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                       CHECK_CONDITION_HRESULT(result, pendingIncomingDataLength == receivedLength, result, E_NOT_VALID_STATE);
                       CHECK_POINTER_HRESULT(result, sender, result, E_OUTOFMEMORY);
 
-                      CRtspDumpBox *dumpBox = NULL;
-                      CHECK_CONDITION_NOT_NULL_EXECUTE(this->dumpFile->GetDumpFile(), dumpBox = (CRtspDumpBox *)this->CreateDumpBox());
-
-                      if (dumpBox != NULL)
+                      if (this->IsDumpInputData())
                       {
-                        dumpBox->SetTimeWithLocalTime();
-                        dumpBox->SetPayload(buffer + 4, receivedLength);
+                        CRtspDumpBox *dumpBox = NULL;
+                        CHECK_CONDITION_NOT_NULL_EXECUTE(this->dumpFile->GetDumpFile(), dumpBox = (CRtspDumpBox *)this->CreateDumpBox(i));
 
-                        CRtspTrackBox *trackBox = new CRtspTrackBox(&result);
-                        CHECK_POINTER_HRESULT(result, trackBox, result, E_OUTOFMEMORY);
-
-                        if (SUCCEEDED(result))
+                        if (dumpBox != NULL)
                         {
-                          trackBox->SetTrackId(i);
-
-                          CHECK_CONDITION_HRESULT(result, dumpBox->GetBoxes()->Add(trackBox), result, E_OUTOFMEMORY);
+                          dumpBox->SetInputData(true);
+                          dumpBox->SetTimeWithLocalTime();
+                          dumpBox->SetPayload(buffer + 4, receivedLength);
                         }
 
-                        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(trackBox));
+                        CHECK_CONDITION_EXECUTE((dumpBox != NULL) && (!this->dumpFile->AddDumpBox(dumpBox)), FREE_MEM_CLASS(dumpBox));
                       }
-
-                      CHECK_CONDITION_EXECUTE((dumpBox != NULL) && (!this->dumpFile->AddDumpBox(dumpBox)), FREE_MEM_CLASS(dumpBox));
 
                       // for created server it can't be interleaved transport
                       // create interleaved packet, parse it and process base RTP packet collection
@@ -1870,38 +1844,12 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                         {
                           // error while processing received packet, dump it for further analysis
 
-                          // every byte is in HEX encoding plus space
-                          // every 32 bytes is new line
-                          // add one character for null terminating character
-                          unsigned int dumpPacketLength = interleavedPacketLength * 3 + ((interleavedPacketLength / 32) + 1) * 2 + 1;
-                          ALLOC_MEM_DEFINE_SET(dumpPacket, wchar_t, dumpPacketLength, 0);
-                          
-                          if (dumpPacket != NULL)
-                          {
-                            unsigned int outputPosition = 0;
-                            for (unsigned int i = 0; i < interleavedPacketLength; i++)
-                            {
-                              dumpPacket[outputPosition++] = get_charW(buffer[i] >> 4);
-                              dumpPacket[outputPosition++] = get_charW(buffer[i] & 0x0F);
-                              dumpPacket[outputPosition++] = L' ';
-                              
-                              if ((i % 32) == 0x1F)
-                              {
-                                dumpPacket[outputPosition++] = L'\r';
-                                dumpPacket[outputPosition++] = L'\n';
-                              }
-                            }
-                          }
-
-                          this->logger->Log(LOGGER_ERROR, L"%s: %s: error while processing packet, track url: '%s', IP: %s, server IP: %s, length: %u\n%s",
+                          this->logger->LogBinary(LOGGER_ERROR, buffer, interleavedPacketLength, L"%s: %s: error while processing packet, track url: '%s', IP: %s, server IP: %s, length: %u",
                             protocolName, METHOD_CURL_WORKER_NAME,
                             track->GetTrackUrl(),
                             udpContext->GetIpAddress()->GetAddressString(),
                             sender->GetAddressString(),
-                            interleavedPacketLength,
-                            dumpPacket);
-
-                          FREE_MEM(dumpPacket);
+                            interleavedPacketLength);
                         }
                       }
 
@@ -2104,9 +2052,9 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                     CUdpSocketContext *udpContext = NULL;
 
                     // get control UDP socket context with set last sender IP address
-                    for (unsigned int i = 0; i < udpControlServer->GetServers()->Count(); i++)
+                    for (unsigned int j = 0; j < udpControlServer->GetServers()->Count(); j++)
                     {
-                      CUdpSocketContext *server = (CUdpSocketContext *)udpControlServer->GetServers()->GetItem(i);
+                      CUdpSocketContext *server = (CUdpSocketContext *)udpControlServer->GetServers()->GetItem(j);
 
                       if (server->GetLastSenderIpAddress() != NULL)
                       {
@@ -2131,9 +2079,9 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                       {
                         CUdpSocketContext *udpDataServerContext = NULL;
 
-                        for (unsigned int i = 0; i < udpDataServer->GetServers()->Count(); i++)
+                        for (unsigned int j = 0; i < udpDataServer->GetServers()->Count(); j++)
                         {
-                          CUdpSocketContext *server = (CUdpSocketContext *)udpDataServer->GetServers()->GetItem(i);
+                          CUdpSocketContext *server = (CUdpSocketContext *)udpDataServer->GetServers()->GetItem(j);
 
                           if (server->GetLastSenderIpAddress() != NULL)
                           {
@@ -2158,9 +2106,9 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                             ipAddress->SetPort(udpControlServer->GetServers()->GetItem(0)->GetIpAddress()->GetPort());
 
                             // get control UDP socket context with same IP address and port
-                            for (unsigned int i = 0; i < udpControlServer->GetServers()->Count(); i++)
+                            for (unsigned int j = 0; j < udpControlServer->GetServers()->Count(); j++)
                             {
-                              CUdpSocketContext *server = (CUdpSocketContext *)udpControlServer->GetServers()->GetItem(i);
+                              CUdpSocketContext *server = (CUdpSocketContext *)udpControlServer->GetServers()->GetItem(j);
 
                               if (server->GetIpAddress()->GetAddressLength() == ipAddress->GetAddressLength())
                               {
@@ -2209,6 +2157,22 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
 
                       unsigned int sentLength = 0;
                       result = udpContext->Send((const char *)(reportBuffer + 4), receiverReportSize + sourceDescriptionSize, &sentLength);
+
+                      if (SUCCEEDED(result) && this->IsDumpOutputData())
+                      {
+                        CRtspDumpBox *dumpBox = NULL;
+                        CHECK_CONDITION_NOT_NULL_EXECUTE(this->dumpFile->GetDumpFile(), dumpBox = (CRtspDumpBox *)this->CreateDumpBox(i));
+
+                        if (dumpBox != NULL)
+                        {
+                          dumpBox->SetOutputData(true);
+                          dumpBox->SetTimeWithLocalTime();
+                          dumpBox->SetPayload(reportBuffer + 4, receiverReportSize + sourceDescriptionSize);
+                        }
+
+                        CHECK_CONDITION_EXECUTE((dumpBox != NULL) && (!this->dumpFile->AddDumpBox(dumpBox)), FREE_MEM_CLASS(dumpBox));
+                      }
+
                       CHECK_CONDITION_HRESULT(result, sentLength == (receiverReportSize + sourceDescriptionSize), result, E_RTSP_SENT_DATA_LENGTH_NOT_SAME_AS_RTCP_PACKET_LENGTH);
 
                       CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending RTCP packets: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, result));
@@ -2476,6 +2440,40 @@ CDumpBox *CRtspCurlInstance::CreateDumpBox(void)
   HRESULT result = S_OK;
   CRtspDumpBox *box = new CRtspDumpBox(&result);
   CHECK_POINTER_HRESULT(result, box, result, E_OUTOFMEMORY);
+
+  if (box != NULL)
+  {
+    CRtspMainBox *mainBox = new CRtspMainBox(&result);
+    CHECK_POINTER_HRESULT(result, mainBox, result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_HRESULT(result, box->GetBoxes()->Add(mainBox), result, E_OUTOFMEMORY);
+    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(mainBox));
+  }
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(box));
+  return box;
+}
+
+CDumpBox *CRtspCurlInstance::CreateDumpBox(unsigned int trackId)
+{
+  HRESULT result = S_OK;
+  CRtspDumpBox *box = new CRtspDumpBox(&result);
+  CHECK_POINTER_HRESULT(result, box, result, E_OUTOFMEMORY);
+
+  if (box != NULL)
+  {
+    CRtspTrackBox *trackBox = new CRtspTrackBox(&result);
+    CHECK_POINTER_HRESULT(result, trackBox, result, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(result))
+    {
+      trackBox->SetTrackId(trackId);
+
+      CHECK_CONDITION_HRESULT(result, box->GetBoxes()->Add(trackBox), result, E_OUTOFMEMORY);
+    }
+
+    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(trackBox));
+  }
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(box));
   return box;

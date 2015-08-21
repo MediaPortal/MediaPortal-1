@@ -20,7 +20,17 @@
 
 #include "StdAfx.h"
 
+#pragma warning(push)
+// disable warning: 'INT8_MIN' : macro redefinition
+// warning is caused by stdint.h and intsafe.h, which both define same macro
+#pragma warning(disable:4005)
+
 #include "ProtocolPlugin.h"
+#include "Parameters.h"
+
+#include <Shlwapi.h>
+
+#pragma warning(pop)
 
 CProtocolPlugin::CProtocolPlugin(HRESULT *result, CLogger *logger, CParameterCollection *configuration)
   : CPlugin(result, logger, configuration)
@@ -49,9 +59,29 @@ CProtocolPlugin::~CProtocolPlugin(void)
   FREE_MEM_CLASS(this->logger);
 }
 
-// IProtocol interface implementation
+// CPlugin
 
-// ISimpleProtocol interface implementation
+HRESULT CProtocolPlugin::Initialize(CPluginConfiguration *configuration)
+{
+  HRESULT result = ((this->configuration != NULL) && (this->logger != NULL)) ? S_OK : E_NOT_VALID_STATE;
+  CHECK_POINTER_HRESULT(result, configuration, result, E_INVALIDARG);
+
+  if (SUCCEEDED(result))
+  {
+    this->configuration->Clear();
+
+    CHECK_CONDITION_HRESULT(result, this->configuration->Append(configuration->GetConfiguration()), result, E_OUTOFMEMORY);
+
+    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, PARAMETER_NAME_LIVE_STREAM_DEFAULT) ? PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_SPECIFIED : PROTOCOL_PLUGIN_FLAG_NONE;
+    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_SPLITTER, true, PARAMETER_NAME_SPLITTER_DEFAULT) ? PLUGIN_FLAG_SPLITTER : PROTOCOL_PLUGIN_FLAG_NONE;
+    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_IPTV, true, PARAMETER_NAME_IPTV_DEFAULT) ? PLUGIN_FLAG_IPTV : PROTOCOL_PLUGIN_FLAG_NONE;
+
+    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA, true, PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA_DEFAULT) ? PROTOCOL_PLUGIN_FLAG_DUMP_INPUT_DATA : PROTOCOL_PLUGIN_FLAG_NONE;
+    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_DUMP_PROTOCOL_OUTPUT_DATA, true, PARAMETER_NAME_DUMP_PROTOCOL_OUTPUT_DATA_DEFAULT) ? PROTOCOL_PLUGIN_FLAG_DUMP_OUTPUT_DATA : PROTOCOL_PLUGIN_FLAG_NONE;
+  }
+
+  return result;
+}
 
 void CProtocolPlugin::ClearSession(void)
 {
@@ -61,6 +91,10 @@ void CProtocolPlugin::ClearSession(void)
   this->reportedStreamPosition = 0;
   this->pauseSeekStopMode = PAUSE_SEEK_STOP_MODE_NONE;
 }
+
+// IProtocol interface implementation
+
+// ISimpleProtocol interface implementation
 
 void CProtocolPlugin::ReportStreamTime(uint64_t streamTime, uint64_t streamPosition)
 {
@@ -121,4 +155,75 @@ bool CProtocolPlugin::IsConnectionLostCannotReopen(void)
   return this->IsSetFlags(PROTOCOL_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN);
 }
 
+bool CProtocolPlugin::IsDumpInputData(void)
+{
+  return this->IsSetFlags(PROTOCOL_PLUGIN_FLAG_DUMP_INPUT_DATA);
+}
+
+bool CProtocolPlugin::IsDumpOutputData(void)
+{
+  return this->IsSetFlags(PROTOCOL_PLUGIN_FLAG_DUMP_OUTPUT_DATA);
+}
+
 /* protected methods */
+
+wchar_t *CProtocolPlugin::GetCacheFile(const wchar_t *extra)
+{
+  wchar_t *result = NULL;
+  const wchar_t *folder = this->configuration->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
+
+  if (folder != NULL)
+  {
+    wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
+
+    if (guid != NULL)
+    {
+      if (IsNullOrEmpty(extra))
+      {
+        result = FormatString(L"%s%s_%s.temp", folder, this->GetStoreFileNamePart(), guid);
+      }
+      else
+      {
+        result = FormatString(L"%s%s_%s_%s.temp", folder, this->GetStoreFileNamePart(), guid, extra);
+      }
+    }
+
+    FREE_MEM(guid);
+  }
+
+  return result;
+}
+
+wchar_t *CProtocolPlugin::GetDumpFile(const wchar_t *extra)
+{
+  wchar_t *result = NULL;
+  wchar_t *folder = Duplicate(this->configuration->GetValue(PARAMETER_NAME_LOG_FILE_NAME, true, NULL));
+
+  if (folder != NULL)
+  {
+    PathRemoveFileSpec(folder);
+
+    wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
+    if (guid != NULL)
+    {
+      if (IsNullOrEmpty(extra))
+      {
+        result = FormatString(L"%s\\%s_%s.dump", folder, this->GetStoreFileNamePart(), guid);
+      }
+      else
+      {
+        result = FormatString(L"%s\\%s_%s_%s.dump", folder, this->GetStoreFileNamePart(), guid, extra);
+      }
+    }
+    FREE_MEM(guid);
+  }
+
+  FREE_MEM(folder);
+
+  return result;
+}
+
+wchar_t *CProtocolPlugin::GetDumpFile(void)
+{
+  return this->GetDumpFile(NULL);
+}

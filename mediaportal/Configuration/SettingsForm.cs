@@ -95,7 +95,8 @@ namespace MediaPortal.Configuration
     private const string _windowName = "MediaPortal - Configuration";
     private int hintShowCount = 0;
     private SectionSettings _previousSection = null;
-    private RemoteDirectInput dinputRemote;
+    // Disable DirectX Input (not compatible with NET4 and later)
+    //private RemoteDirectInput dinputRemote;
     private RemoteSerialUIR serialuir;
 
     private static ConfigSplashScreen splashScreen = new ConfigSplashScreen();
@@ -203,9 +204,6 @@ namespace MediaPortal.Configuration
       AddTabPictures();
       AddTabRemote();
       AddTabFilters();
-      //Mantis 3772 - Weather.com API is not free any more
-      //temporarily disable plugin
-      //AddTabWeather();
       AddTabPlugins();
       AddTabThirdPartyChecks();
 
@@ -248,19 +246,6 @@ namespace MediaPortal.Configuration
       {
         splashScreen.SetInformation("Finished plugin loading...");
       }
-    }
-
-    private void AddTabWeather()
-    {
-      //add weather section
-      if (splashScreen != null)
-      {
-        splashScreen.SetInformation("Adding weather section...");
-      }
-
-      Log.Info("add weather section");
-      Weather weather = new Weather();
-      AddSection(new ConfigPage(null, weather, false));
     }
 
     private void AddTabFilters()
@@ -400,9 +385,10 @@ namespace MediaPortal.Configuration
       SectionSettings remote = new Remote();
       AddSection(new ConfigPage(null, remote, false));
 
-      Log.Info("add DirectInput section");
-      RemoteDirectInput dinputConf = new RemoteDirectInput();
-      AddSection(new ConfigPage(remote, dinputConf, true));
+      // Disable DirectX Input (not compatible with NET4 and later)
+      //Log.Info("add DirectInput section");
+      //RemoteDirectInput dinputConf = new RemoteDirectInput();
+      //AddSection(new ConfigPage(remote, dinputConf, true));
       RemoteUSBUIRT usbuirtConf = new RemoteUSBUIRT();
       AddSection(new ConfigPage(remote, usbuirtConf, true));
       serialuir = new RemoteSerialUIR();
@@ -437,6 +423,9 @@ namespace MediaPortal.Configuration
         AddSection(new ConfigPage(tvradio, new TVPostProcessing(), true));
         Log.Info("  add tv teletext section");
         AddSection(new ConfigPage(tvradio, new TVTeletext(), true));
+        Log.Info("  add tv advanced options section");
+        AddSection(new ConfigPage(tvradio, new TVAdvancedOptions(), true));
+
         if (ShowDebugOptions)
         {
           Log.Info("  add tv debug options section");
@@ -797,12 +786,13 @@ namespace MediaPortal.Configuration
       {
         // Ignore
       }
-      if (null != dinputRemote)
-      {
-        // make sure the listener thread gets killed cleanly!
-        dinputRemote.Dispose();
-        dinputRemote = null;
-      }
+      // Disable DirectX Input (not compatible with NET4 and later)
+      //if (null != dinputRemote)
+      //{
+      //  // make sure the listener thread gets killed cleanly!
+      //  dinputRemote.Dispose();
+      //  dinputRemote = null;
+      //}
     }
 
     private void SettingsForm_Load(object sender, EventArgs e)
@@ -1019,28 +1009,8 @@ namespace MediaPortal.Configuration
           return false;
         }
 
-        bool audioScrobblerOn = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
-        if (audioScrobblerOn)
-        {
-          // Does Audioscrobbler have a user but no password (due to DB upgrades, restores, etc)
-          string asuser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
-          if (!string.IsNullOrEmpty(asuser))
-          {
-            Music.Database.MusicDatabase mdb = Music.Database.MusicDatabase.Instance;
-            string AsPass = mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(asuser)), "");
-            if (string.IsNullOrEmpty(AsPass))
-            {
-              MessageBox.Show("No password specified for current Audioscrobbler user", "MediaPortal Settings",
-                              MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-              return false;
-            }
-          }
-        }
-
-        // Check hostname for tv server if tv or radio is used
-        bool tvPluginEnabled = xmlreader.GetValueAsBool("plugins", "TV", false);
-        bool radioPluginEnabled = xmlreader.GetValueAsBool("plugins", "Radio", false);
-        if (UseTvServer && (tvPluginEnabled || radioPluginEnabled))
+        // Check hostname for tv server (empty hostname is invalid)
+        if (UseTvServer)
         {
           string hostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
           if (string.IsNullOrEmpty(hostName))
@@ -1068,7 +1038,6 @@ namespace MediaPortal.Configuration
 
           }
         }
-
       }
       return true;
     }

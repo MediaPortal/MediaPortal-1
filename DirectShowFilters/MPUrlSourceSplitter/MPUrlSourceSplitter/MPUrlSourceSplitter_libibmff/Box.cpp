@@ -251,7 +251,7 @@ wchar_t *CBox::GetParsedHumanReadable(const wchar_t *indent)
     }
 
     result = FormatString(
-      L"%sFlags: 0x%16u\n" \
+      L"%sFlags: 0x%08X\n" \
       L"%sType: '%s'\n" \
       L"%sSize: %llu\n" \
       L"%sExtended header: %s\n" \
@@ -284,11 +284,6 @@ bool CBox::IsType(const wchar_t *type)
 
 bool CBox::ProcessAdditionalBoxes(const uint8_t *buffer, uint32_t length, uint32_t position)
 {
-  if (this->boxes != NULL)
-  {
-    this->boxes->Clear();
-  }
-
   HRESULT continueParsing = ((this->boxes != NULL) && (this->GetSize() <= (uint64_t)length)) ? S_OK : E_INVALIDARG;
 
   if (SUCCEEDED(continueParsing))

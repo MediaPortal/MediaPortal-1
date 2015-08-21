@@ -140,7 +140,8 @@ private:
 	HANDLE							 m_hFile;
 	CCriticalSection     m_section;
   int                  m_iPmtPid;
-  int                  m_pcrPid;
+  int                  m_iOriginalPcrPid;
+  int                  m_iFakePcrPid;
 	int									 m_iServiceId;
 	vector<PidInfo2>		 m_vecPids;
 //	bool								 m_bSeenAudioStart;

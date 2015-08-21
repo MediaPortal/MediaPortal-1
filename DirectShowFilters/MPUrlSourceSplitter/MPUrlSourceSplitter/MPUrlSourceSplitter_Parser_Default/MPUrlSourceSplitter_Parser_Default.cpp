@@ -132,7 +132,7 @@ void CMPUrlSourceSplitter_Parser_Default::ClearSession(void)
 
 /* protected methods */
 
-wchar_t *CMPUrlSourceSplitter_Parser_Default::GetStoreFile(const wchar_t *extension)
+const wchar_t *CMPUrlSourceSplitter_Parser_Default::GetStoreFileNamePart(void)
 {
-  return NULL;
+  return PARSER_STORE_FILE_NAME_PART;
 }

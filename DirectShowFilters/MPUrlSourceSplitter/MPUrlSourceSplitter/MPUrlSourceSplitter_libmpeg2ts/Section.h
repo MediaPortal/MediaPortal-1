@@ -24,8 +24,7 @@
 #define __SECTION_DEFINED
 
 #include "Flags.h"
-#include "ProgramSpecificInformationPacket.h"
-#include "TsPacketCollection.h"
+#include "SectionPayload.h"
 
 #define SECTION_FLAG_NONE                                             FLAGS_NONE
 
@@ -36,6 +35,7 @@
 
 #define SECTION_FLAG_LAST                                             (FLAGS_LAST + 4)
 
+#define SECTION_TABLE_ID_SIZE                                         1
 #define SECTION_HEADER_SIZE                                           3
 #define SECTION_CRC32_SIZE                                            4
 
@@ -55,6 +55,8 @@
 #define SECTION_HEADER_SECTION_LENGTH_SHIFT                           0
 
 #define SECTION_MAX_SIZE                                              0x00001000
+
+#define SECTION_CRC32_UNDEFINED                                       0xFFFFFFFF
 
 class CSection : public CFlags
 {
@@ -84,6 +86,10 @@ public:
   // @return : section data (with header and CRC32) or NULL if error
   virtual const uint8_t *GetSection(void);
 
+  // gets section CRC32
+  // @return : section CRC32 or SECTION_CRC32_UNDEFINED if CRC32 is not known
+  virtual unsigned int GetCrc32(void);
+
   /* set methods */
 
   // sets section table ID
@@ -112,11 +118,10 @@ public:
   // @return : true if set, false otherwise
   virtual bool IsPrivateIndicator(void);
 
-  // parses specified PSI packet
-  // @param psiPacket : the PSI packet to parse
-  // @param startFromSectionPayload : the section payload index to start parsing
-  // @return : S_OK if successfull, S_FALSE if more PSI packets are needed to complete section, error code otherwise
-  virtual HRESULT Parse(CProgramSpecificInformationPacket *psiPacket, unsigned int startFromSectionPayload);
+  // parses specified section payload
+  // @param sectionPayload : the section payload to parse
+  // @return : S_OK if successfull, S_FALSE if more section payloads are needed to complete section, error code otherwise
+  virtual HRESULT Parse(CSectionPayload *sectionPayload);
 
   // clears current instance to its default state
   virtual void Clear(void);
@@ -127,6 +132,16 @@ public:
 
   // resets section size
   virtual void ResetSize(void);
+
+  /* static methods */
+
+  // gets section table ID
+  // @return : section table ID or UINT_MAX if not found (not enough data)
+  static unsigned int GetTableId(const unsigned char *buffer, uint32_t length);
+
+  // gets section size with header and CRC32
+  // @return : section size with header and CRC32 or UINT_MAX if not enough data
+  static unsigned int GetSectionSize(const unsigned char *buffer, uint32_t length);
 
 protected:
   // header structure:
@@ -163,6 +178,10 @@ protected:
   // calculates section CRC32
   // @return : number of bytes written into buffer, zero if not successful
   virtual unsigned int CalculateSectionCrc32(void);
+
+  // checks table ID against actual table ID
+  // @return : true if table ID is valid, false otherwise
+  virtual bool CheckTableId(void) = 0;
 };
 
 #endif

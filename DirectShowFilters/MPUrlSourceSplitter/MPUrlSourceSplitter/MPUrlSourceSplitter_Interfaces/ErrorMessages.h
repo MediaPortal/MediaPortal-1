@@ -117,12 +117,16 @@ ErrorMessage ERROR_MESSAGES[] = {
   { E_M3U8_NOT_VALID_PLAYLIST_ITEM_FOUND, L"Not valid M3U8 playlist item found." },
   { E_M3U8_NOT_VALID_TAG_FOUND, L"Not valid M3U8 tag found." },
   { E_M3U8_NOT_VALID_COMMENT_TAG_FOUND, L"Not valid M3U8 comment tag found." },
+  { E_M3U8_INCOMPLETE_TAG, L"Incomplete M3U8 tag found." },
+  { E_M3U8_INCOMPLETE_PLAYLIST_TAG, L"Playlist tag is not complete." },
+  { E_M3U8_MISSING_REQUIRED_ATTRIBUTE, L"Attribute for playlist tag is missing." },
   { E_M3U8_NOT_PLAYLIST, L"Not M3U8 playlist." },
   { E_M3U8_NOT_SUPPORTED_PLAYLIST_VERSION, L"Not supported playlist version." },
   { E_M3U8_NOT_VALID_PLAYLIST, L"Not valid M3U8 playlist." },
   { E_M3U8_NOT_SUPPORTED_PLAYLIST_ITEM, L"Playlist item is not support in specified playlist version." },
   { E_M3U8_NOT_SUPPORTED_TAG, L"Tag is not support in specified playlist version." },
   { E_M3U8_NO_PLAYLIST_ITEM_FOR_TAG, L"Missing playlist item to apply tag." },
+  { E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE, L"Tag is not of specified type." },
 
   // specific protocol error codes
 
@@ -230,6 +234,7 @@ ErrorMessage ERROR_MESSAGES[] = {
   // M3U8 protocol error codes
 
   { E_M3U8_CANNOT_GET_STREAM_FRAGMENTS_FROM_MEDIA_PLAYLIST, L"Cannot get stream fragments from media playlist." },
+  { E_M3U8_NO_STREAM_FRAGMENT_TO_DOWNLOAD, L"No stream fragment to download." },
 
   // last item
   { 0, NULL }

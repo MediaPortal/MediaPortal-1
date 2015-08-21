@@ -106,6 +106,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MediaPortalIptvFilterAndUrl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortalIptvFilterAndUrlSourceSplitter", "Plugins\MediaPortalIptvFilterAndUrlSourceSplitter\MediaPortalIptvFilterAndUrlSourceSplitter.csproj", "{3E3AB099-0DA5-48DF-AE12-E11FD8259875}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{14292A71-261B-4BAA-BB55-18002A0DC224}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86

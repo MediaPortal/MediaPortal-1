@@ -314,6 +314,24 @@
           <Items />
         </Files>
       </GroupItem>
+      <GroupItem Name="MSVCPP2013">
+        <ParentGroup />
+        <DisplayName>Microsoft Visual C++ 2013 Redistributable</DisplayName>
+        <DefaulChecked>false</DefaulChecked>
+        <Description>Microsoft Visual C++ 2013 Redistributable</Description>
+        <Files>
+          <Items />
+        </Files>
+      </GroupItem>
+      <GroupItem Name="TvServerStarted">
+        <ParentGroup />
+        <DisplayName>TV server started</DisplayName>
+        <DefaulChecked>false</DefaulChecked>
+        <Description>TV server started</Description>
+        <Files>
+          <Items />
+        </Files>
+      </GroupItem>
     </Items>
   </Groups>
   <Sections>
@@ -358,6 +376,7 @@ using MpeCore;
 using System;
 using System.ServiceProcess;
 using System.Windows.Forms;
+using System.IO;
 
 public class Script
 {
@@ -404,8 +423,13 @@ public class Script
     {
         try
         {
+            // detect Microsoft Visual C++ 2013 Redistributable
+            String msvcpp2013dll = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "msvcp120.dll");
+            bool msvcpp2013installed = File.Exists(msvcpp2013dll);
+
             // detect TvService
             bool tvServiceInstalled = (CheckTvServiceState() != TvServiceState.NotInstalled);
+            bool tvServiceStarted = (CheckTvServiceState() == TvServiceState.Running);
 
             for (int i = 0; i &lt; packageClass.Groups.Items.Count; i++)
             {
@@ -430,9 +454,15 @@ public class Script
 
                 if (installedPackage.GeneralInfo.Id == "b3e6e01a-4fa3-4cf0-8d2a-b0b8c1eba78b")
                 {
-                   packageClass.Groups["MPUrlSourceSplitterConflict"].DefaulChecked = true;
-                   packageClass.Groups["MPUrlSourceSplitterConflict"].Checked = true;
+                    packageClass.Groups["MPUrlSourceSplitterConflict"].DefaulChecked = true;
+                    packageClass.Groups["MPUrlSourceSplitterConflict"].Checked = true;
                 }
+            }
+
+            if (!msvcpp2013installed)
+            {
+                packageClass.Groups["MSVCPP2013"].DefaulChecked = true;
+                packageClass.Groups["MSVCPP2013"].Checked = true;
             }
         }
         catch (Exception ex)
@@ -446,8 +476,6 @@ public class Script
         return;
     }
 }
-
-
 </Value>
                     <ValueType>Script</ValueType>
                     <Description />
@@ -457,6 +485,7 @@ public class Script
 
 using MpeCore.Classes;
 using MpeCore;
+using System;
 
 public class Script
 {
@@ -465,6 +494,7 @@ public class Script
         return;
     }
 }
+
 </Value>
                     <ValueType>Script</ValueType>
                     <Description />
@@ -513,6 +543,40 @@ Click Next to uninstall previous version of MediaPortal Url Source Splitter or C
         <PanelName>Welcome Screen</PanelName>
         <WizardButtonsEnum>NextCancel</WizardButtonsEnum>
       </SectionItem>
+      <SectionItem Guid="3ae1ae9b-7a3b-4c63-9e2b-ecf4c9e99ee6" Name="Welcome Screen" ConditionGroup="MSVCPP2013">
+        <Params>
+          <Items>
+            <SectionParam Name="Header text">
+              <Value>Microsoft Visual C++ 2013 Redistributable not found</Value>
+              <ValueType>String</ValueType>
+              <Description />
+            </SectionParam>
+            <SectionParam Name="Description">
+              <Value>This will install Microsft Visual C++ 2013 Redistributable on your computer.
+It is recommended that you close all other applications before continuing.
+Click Next to continue or Cancel to exit Setup.</Value>
+              <ValueType>String</ValueType>
+              <Description />
+            </SectionParam>
+            <SectionParam Name="Left part image">
+              <Value />
+              <ValueType>File</ValueType>
+              <Description />
+            </SectionParam>
+            <SectionParam Name="Header image">
+              <Value />
+              <ValueType>File</ValueType>
+              <Description>Image in upper right part</Description>
+            </SectionParam>
+          </Items>
+        </Params>
+        <Actions>
+          <Items />
+        </Actions>
+        <IncludedGroups />
+        <PanelName>Welcome Screen</PanelName>
+        <WizardButtonsEnum>BackNextCancel</WizardButtonsEnum>
+      </SectionItem>
       <SectionItem Guid="6445c464-28f3-4cb4-b705-c0f72ec32793" Name="Install Section" ConditionGroup="Never">
         <Params>
           <Items>
@@ -548,9 +612,113 @@ using System.Windows.Forms;
 using System.IO;
 using System.Threading;
 using System.Diagnostics;
+using System.ServiceProcess;
 
 public class Script
 {
+    public enum TvServiceState
+    {
+        NotInstalled,
+        StartPending,
+        Running,
+        StopPending,
+        Stopped
+    }
+
+    public static TvServiceState CheckTvServiceState()
+    {
+        using (ServiceController sc = new ServiceController("TvService"))
+        {
+            try
+            {
+                switch (sc.Status)
+                {
+                    case ServiceControllerStatus.Running:
+                        return TvServiceState.Running;
+                    case ServiceControllerStatus.StartPending:
+                        return TvServiceState.StartPending;
+                    case ServiceControllerStatus.StopPending:
+                        return TvServiceState.StopPending;
+                    case ServiceControllerStatus.Stopped:
+                        return TvServiceState.Stopped;
+                    default:
+                        throw new Exception(String.Format("Unknown TvService state: {0}", sc.Status));
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                // no TvService
+                return TvServiceState.NotInstalled;
+            }
+        }
+
+        throw new NotImplementedException();
+    }
+
+    public static void StopTvService()
+    {
+        using (ServiceController sc = new ServiceController("TvService"))
+        {
+            sc.Stop();
+        }
+
+        Process[] processes = Process.GetProcessesByName("TvService");
+        bool exited = false;
+
+        while (!exited)
+        {
+            exited = true;
+
+            foreach (Process process in processes)
+            {
+                exited &amp;= process.HasExited;
+            }
+
+            Thread.Sleep(100);
+        }
+
+        foreach (Process process in processes)
+        {
+            process.Dispose();
+        }
+    }
+
+    public static void StartTvService()
+    {
+        using (ServiceController sc = new ServiceController("TvService"))
+        {
+            sc.Start();
+        }
+    }
+
+    public static void RegisterFilter(String filterPath)
+    {
+        String processPath = Path.Combine(MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
+
+        using (Process process = new Process())
+        {
+            process.StartInfo.FileName = processPath;
+            process.StartInfo.Arguments = "/s \"" + filterPath + " \"";
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+
+            process.Start();
+
+            while (!process.HasExited)
+            {
+                Thread.Sleep(1);
+            }
+
+            if (process.ExitCode != 0)
+            {
+                throw new Exception(String.Format("Registration of filter failed with error code: {0}", process.ExitCode));
+            }
+        }
+    }
+
     public static void UnregisterFilter(String filterPath)
     {
         String processPath = Path.Combine(MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
@@ -583,6 +751,41 @@ public class Script
     {
         try
         {
+            // detect TvService
+            bool tvServiceInstalled = (CheckTvServiceState() != TvServiceState.NotInstalled);
+            bool tvServiceStarted = false;
+
+            if (tvServiceInstalled)
+            {
+                // check TvService state
+
+                while (true)
+                {
+                    TvServiceState state = CheckTvServiceState();
+
+                    if ((state == TvServiceState.Running) || (state == TvServiceState.Stopped))
+                    {
+                        tvServiceStarted = (state == TvServiceState.Running);
+                        break;
+                    }
+
+                    Thread.Sleep(100);
+                }
+            }
+
+            if (tvServiceStarted)
+            {
+                // stop TvService
+
+                StopTvService();
+            }
+
+            if (tvServiceStarted)
+            {
+                packageClass.Groups["TvServerStarted"].DefaulChecked = true;
+                packageClass.Groups["TvServerStarted"].Checked = true;
+            }
+
             for (int i = 0; i &lt; MpeInstaller.InstalledExtensions.Items.Count; i++)
             {
                 PackageClass installedPackage = MpeInstaller.InstalledExtensions.Items[i];
@@ -606,10 +809,7 @@ public class Script
 
         return;
     }
-}
-
-
-</Value>
+}</Value>
                     <ValueType>Script</ValueType>
                     <Description />
                   </SectionParam>
@@ -618,14 +818,172 @@ public class Script
 
 using MpeCore.Classes;
 using MpeCore;
+using System;
+using System.Windows.Forms;
+using System.IO;
+using System.Threading;
+using System.Diagnostics;
+using System.ServiceProcess;
 
 public class Script
 {
+    public enum TvServiceState
+    {
+        NotInstalled,
+        StartPending,
+        Running,
+        StopPending,
+        Stopped
+    }
+
+    public static TvServiceState CheckTvServiceState()
+    {
+        using (ServiceController sc = new ServiceController("TvService"))
+        {
+            try
+            {
+                switch (sc.Status)
+                {
+                    case ServiceControllerStatus.Running:
+                        return TvServiceState.Running;
+                    case ServiceControllerStatus.StartPending:
+                        return TvServiceState.StartPending;
+                    case ServiceControllerStatus.StopPending:
+                        return TvServiceState.StopPending;
+                    case ServiceControllerStatus.Stopped:
+                        return TvServiceState.Stopped;
+                    default:
+                        throw new Exception(String.Format("Unknown TvService state: {0}", sc.Status));
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                // no TvService
+                return TvServiceState.NotInstalled;
+            }
+        }
+
+        throw new NotImplementedException();
+    }
+
+    public static void StopTvService()
+    {
+        using (ServiceController sc = new ServiceController("TvService"))
+        {
+            sc.Stop();
+        }
+
+        Process[] processes = Process.GetProcessesByName("TvService");
+        bool exited = false;
+
+        while (!exited)
+        {
+            exited = true;
+
+            foreach (Process process in processes)
+            {
+                exited &amp;= process.HasExited;
+            }
+
+            Thread.Sleep(100);
+        }
+
+        foreach (Process process in processes)
+        {
+            process.Dispose();
+        }
+    }
+
+    public static void StartTvService()
+    {
+        using (ServiceController sc = new ServiceController("TvService"))
+        {
+            sc.Start();
+        }
+    }
+
+    public static void RegisterFilter(String filterPath)
+    {
+        String processPath = Path.Combine(MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
+
+        using (Process process = new Process())
+        {
+            process.StartInfo.FileName = processPath;
+            process.StartInfo.Arguments = "/s \"" + filterPath + " \"";
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+
+            process.Start();
+
+            while (!process.HasExited)
+            {
+                Thread.Sleep(1);
+            }
+
+            if (process.ExitCode != 0)
+            {
+                throw new Exception(String.Format("Registration of filter failed with error code: {0}", process.ExitCode));
+            }
+        }
+    }
+
+    public static void UnregisterFilter(String filterPath)
+    {
+        String processPath = Path.Combine(MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
+
+        using (Process process = new Process())
+        {
+            process.StartInfo.FileName = processPath;
+            process.StartInfo.Arguments = "/u /s \"" + filterPath + " \"";
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+
+            process.Start();
+
+            while (!process.HasExited)
+            {
+                Thread.Sleep(1);
+            }
+
+            if (process.ExitCode != 0)
+            {
+                throw new Exception(String.Format("Unregistration of filter failed with error code: {0}", process.ExitCode));
+            }
+        }
+    }
+
     public static void Main(PackageClass packageClass, UnInstallItem item)
     {
+        try
+        {
+            bool tvServiceStarted = packageClass.Groups["TvServerStarted"].Checked;
+
+            if (tvServiceStarted)
+            {
+                // start TvService
+
+                StartTvService();
+            }
+        }
+        catch (Exception ex)
+        {
+            if (!packageClass.Silent)
+            {
+                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         return;
     }
 }
+
+
 </Value>
                     <ValueType>Script</ValueType>
                     <Description />
@@ -654,9 +1012,285 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading;
 using System.ServiceProcess;
+using System.Net;
+using System.ComponentModel;
+using System.Drawing;
+using System.Xml;
+
+public class HTTPDownload : Form
+{
+    private WebClient client;
+    private string _target;
+
+    public HTTPDownload()
+    {
+        InitializeComponent();
+        Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+    }
+
+    public DialogResult ShowDialog(string url, string targetFile, string userAgentOs)
+    {
+        _target = targetFile;
+        DownloadFile(url, targetFile, userAgentOs);
+        return ShowDialog();
+    }
+
+    private void DownloadFile(string url, string targetFile, string userAgentOs)
+    {
+        labelURL.Text = url;
+        labelTarget.Text = Path.GetFileName(targetFile);
+        client = new WebClient();
+
+        client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        client.Headers.Add("user-agent", userAgentOs);
+        client.DownloadProgressChanged += client_DownloadProgressChanged;
+        client.DownloadFileCompleted += client_DownloadFileCompleted;
+        client.DownloadFileAsync(new Uri(url), targetFile);
+    }
+
+    private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+    {
+        if (e.Error is WebException)
+        {
+            //Utils.ErrorDlg(Localizer.GetBestTranslation("HTTPDownload_errDownloadFailed"));
+            try
+            {
+                File.Delete(_target);
+            }
+            catch { }
+            DialogResult = DialogResult.Abort;
+        }
+        else
+            DialogResult = DialogResult.OK;
+    }
+
+    private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+    {
+        progressBar.Value = e.ProgressPercentage;
+    }
+
+    private void buttonCancel_Click(object sender, EventArgs e)
+    {
+        client.CancelAsync();
+        //Utils.ErrorDlg(Localizer.GetBestTranslation("HTTPDownload_msgCanceledByUser"));
+        try
+        {
+            File.Delete(_target);
+        }
+        catch { }
+        DialogResult = DialogResult.Cancel;
+    }
+
+    private void HTTPDownload_Load(object sender, EventArgs e) { }
+
+    /* designer */
+
+    /// &lt;summary&gt;
+    /// Required designer variable.
+    /// &lt;/summary&gt;
+    private System.ComponentModel.IContainer components = null;
+
+    /// &lt;summary&gt;
+    /// Clean up any resources being used.
+    /// &lt;/summary&gt;
+    /// &lt;param name="disposing"&gt;true if managed resources should be disposed; otherwise, false.&lt;/param&gt;
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing &amp;&amp; (components != null))
+        {
+            components.Dispose();
+        }
+        base.Dispose(disposing);
+    }
+
+    #region Windows Form Designer generated code
+
+    /// &lt;summary&gt;
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// &lt;/summary&gt;
+    private void InitializeComponent()
+    {
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HTTPDownload));
+        this.labelSourceURL = new System.Windows.Forms.Label();
+        this.labelTargetFile = new System.Windows.Forms.Label();
+        this.labelURL = new System.Windows.Forms.Label();
+        this.labelTarget = new System.Windows.Forms.Label();
+        this.progressBar = new System.Windows.Forms.ProgressBar();
+        this.buttonCancel = new System.Windows.Forms.Button();
+        this.SuspendLayout();
+        // 
+        // labelSourceURL
+        // 
+        this.labelSourceURL.AutoSize = true;
+        this.labelSourceURL.Font = new System.Drawing.Font("Verdana", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.labelSourceURL.Location = new System.Drawing.Point(15, 13);
+        this.labelSourceURL.Name = "labelSourceURL";
+        this.labelSourceURL.Size = new System.Drawing.Size(102, 13);
+        this.labelSourceURL.TabIndex = 0;
+        this.labelSourceURL.Text = "Download URL:";
+        // 
+        // labelTargetFile
+        // 
+        this.labelTargetFile.AutoSize = true;
+        this.labelTargetFile.Font = new System.Drawing.Font("Verdana", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.labelTargetFile.Location = new System.Drawing.Point(15, 57);
+        this.labelTargetFile.Name = "labelTargetFile";
+        this.labelTargetFile.Size = new System.Drawing.Size(54, 13);
+        this.labelTargetFile.TabIndex = 1;
+        this.labelTargetFile.Text = "Target:";
+        // 
+        // labelURL
+        // 
+        this.labelURL.AutoSize = true;
+        this.labelURL.Location = new System.Drawing.Point(15, 35);
+        this.labelURL.Name = "labelURL";
+        this.labelURL.Size = new System.Drawing.Size(41, 13);
+        this.labelURL.TabIndex = 2;
+        this.labelURL.Text = "label3";
+        // 
+        // labelTarget
+        // 
+        this.labelTarget.AutoSize = true;
+        this.labelTarget.Location = new System.Drawing.Point(15, 80);
+        this.labelTarget.Name = "labelTarget";
+        this.labelTarget.Size = new System.Drawing.Size(41, 13);
+        this.labelTarget.TabIndex = 3;
+        this.labelTarget.Text = "label3";
+        // 
+        // progressBar
+        // 
+        this.progressBar.Location = new System.Drawing.Point(19, 110);
+        this.progressBar.Name = "progressBar";
+        this.progressBar.Size = new System.Drawing.Size(530, 23);
+        this.progressBar.TabIndex = 4;
+        // 
+        // buttonCancel
+        // 
+        this.buttonCancel.Cursor = System.Windows.Forms.Cursors.Hand;
+        this.buttonCancel.Location = new System.Drawing.Point(238, 146);
+        this.buttonCancel.Name = "buttonCancel";
+        this.buttonCancel.Size = new System.Drawing.Size(114, 23);
+        this.buttonCancel.TabIndex = 5;
+        this.buttonCancel.Text = "Cancel";
+        this.buttonCancel.UseVisualStyleBackColor = true;
+        this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
+        // 
+        // HTTPDownload
+        // 
+        this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+        this.ClientSize = new System.Drawing.Size(576, 196);
+        this.ControlBox = false;
+        this.Controls.Add(this.buttonCancel);
+        this.Controls.Add(this.progressBar);
+        this.Controls.Add(this.labelTarget);
+        this.Controls.Add(this.labelURL);
+        this.Controls.Add(this.labelTargetFile);
+        this.Controls.Add(this.labelSourceURL);
+        this.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+        this.MaximizeBox = false;
+        this.MinimizeBox = false;
+        this.Name = "HTTPDownload";
+        this.ShowInTaskbar = false;
+        this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+        this.Text = "Downloading file...";
+        this.Load += new System.EventHandler(this.HTTPDownload_Load);
+        this.ResumeLayout(false);
+        this.PerformLayout();
+
+    }
+
+    #endregion
+
+    private System.Windows.Forms.Label labelSourceURL;
+    private System.Windows.Forms.Label labelTargetFile;
+    private System.Windows.Forms.Label labelURL;
+    private System.Windows.Forms.Label labelTarget;
+    private System.Windows.Forms.ProgressBar progressBar;
+    private System.Windows.Forms.Button buttonCancel;
+}
 
 public class Script
 {
+    public static DialogResult DownloadFile(string FileName, string prg)
+    {
+        DialogResult result;
+
+        if (GetDownloadString(prg, "TYPE") == "Manual")
+        {
+            //ManualDownload dlg = new ManualDownload();
+            //result = dlg.ShowDialog(GetDownloadString(prg, "URL"), Path.GetFileName(FileName),
+            //                        Application.StartupPath + "\\deploy");
+            throw new NotImplementedException();
+        }
+        else
+        {
+            using (HTTPDownload dlg = new HTTPDownload())
+            {
+                result = dlg.ShowDialog(GetDownloadString(prg, "URL"), FileName, "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36");
+            }
+        }
+        return result;
+    }
+
+    public static DialogResult RetryDownloadFile(string FileName, string prg)
+    {
+        DialogResult result = DialogResult.Cancel;
+        FileInfo FileInfo = new FileInfo(FileName);
+
+        for (int i = 0; i &lt; 5; i++)
+        {
+            if (File.Exists(FileName))
+            {
+                FileInfo.Refresh();
+                if (FileInfo.Length &gt; 10000)
+                {
+                    break;
+                }
+                result = DownloadFile(FileName, prg);
+            }
+            else
+                result = DownloadFile(FileName, prg);
+            if (result == DialogResult.Cancel) break;
+        }
+        return result;
+    }
+
+    public static string GetDownloadString(string session_id, string node_id)
+    {
+        XmlDocument doc = new XmlDocument();
+        using (HTTPDownload dlg = new HTTPDownload())
+        {
+            String appLocationsFile = Path.GetTempFileName();
+            String appLocationsUrl = "http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml";
+
+            //HTTP update of the xml file with the application download URLs
+            if (dlg.ShowDialog(appLocationsUrl, appLocationsFile, "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36") == DialogResult.OK)
+            {
+                try
+                {
+                    doc.Load(appLocationsFile);
+                    XmlNode node = doc.SelectSingleNode("/Applications/" + session_id + "/" + node_id);
+                    return node.InnerText;
+                }
+                finally
+                {
+                    try
+                    {
+                        File.Delete(appLocationsFile);
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+        }
+
+        return String.Empty;
+    }
+
     public enum TvServiceState
     {
         NotInstalled,
@@ -701,6 +1335,26 @@ public class Script
         using (ServiceController sc = new ServiceController("TvService"))
         {
             sc.Stop();
+        }
+
+        Process[] processes = Process.GetProcessesByName("TvService");
+        bool exited = false;
+
+        while (!exited)
+        {
+            exited = true;
+
+            foreach (Process process in processes)
+            {
+                exited &amp;= process.HasExited;
+            }
+
+            Thread.Sleep(100);
+        }
+
+        foreach (Process process in processes)
+        {
+            process.Dispose();
         }
     }
 
@@ -773,48 +1427,66 @@ public class Script
         try
         {
             // detect TvService
-            bool tvServiceInstalled = false;
-            bool tvServiceStarted = false;
+            bool tvServiceInstalled = (CheckTvServiceState() != TvServiceState.NotInstalled);
+            bool tvServiceStarted = packageClass.Groups["TvServerStarted"].Checked;
 
-            tvServiceInstalled = (CheckTvServiceState() != TvServiceState.NotInstalled);
+            bool msvcpp2013installed = !packageClass.Groups["MSVCPP2013"].Checked;
 
-            if (tvServiceInstalled)
+            if (!msvcpp2013installed)
             {
-                // check TvService state
+                String msvcpp2013file = GetDownloadString("VCRedist2013", "FILE");
 
-                while (true)
+                if (!String.IsNullOrEmpty(msvcpp2013file))
                 {
-                    TvServiceState state = CheckTvServiceState();
+                    String msvcpp2013installer = Path.Combine(Path.GetTempPath(), msvcpp2013file);
 
-                    if ((state == TvServiceState.Running) || (state == TvServiceState.Stopped))
+                    if (File.Exists(msvcpp2013installer))
                     {
-                        tvServiceStarted = (state == TvServiceState.Running);
-                        break;
+                        File.Delete(msvcpp2013installer);
                     }
 
-                    Thread.Sleep(100);
+                    if (RetryDownloadFile(msvcpp2013installer, "VCRedist2013") == DialogResult.OK)
+                    {
+                        Process setup = Process.Start(msvcpp2013installer, "/install /quiet");
+                        if (setup != null)
+                        {
+                            setup.WaitForExit();
+
+                            // Return codes:
+                            //  0               = success, no reboot required
+                            //  3010            = success, reboot required
+                            //  any other value = failure
+
+                            if (setup.ExitCode == 3010)
+                            {
+                                if (!packageClass.Silent)
+                                {
+                                    MessageBox.Show("Microsoft Visual C++ 2013 Redistributable installed, but reboot is required.\nRun MediaPortal IPTV filter and url source splitter installer after reboot again.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                }
+
+                                return;
+                            }
+
+                            if (setup.ExitCode == 0)
+                            {
+                                msvcpp2013installed = true;
+                            }
+                        }
+
+                        try
+                        {
+                            File.Delete(msvcpp2013installer);
+                        }
+                        catch
+                        {
+                        }
+                    }
                 }
             }
 
-            if (tvServiceStarted)
+            if (!msvcpp2013installed)
             {
-                // stop TvService
-
-                StopTvService();
-
-                // check TvService state
-
-                while (true)
-                {
-                    TvServiceState state = CheckTvServiceState();
-
-                    if (state == TvServiceState.Stopped)
-                    {
-                        break;
-                    }
-
-                    Thread.Sleep(100);
-                }
+                throw new InvalidOperationException("Microsoft Visual C++ 2013 Redistributable is required component and it is not installed.");
             }
 
             // register filter
@@ -825,20 +1497,6 @@ public class Script
                 // start TvService
 
                 StartTvService();
-
-                // check TvService state
-
-                while (true)
-                {
-                    TvServiceState state = CheckTvServiceState();
-
-                    if ((state == TvServiceState.Running) || (state == TvServiceState.Stopped))
-                    {
-                        break;
-                    }
-
-                    Thread.Sleep(100);
-                }
             }
         }
         catch (Exception ex)
@@ -852,6 +1510,11 @@ public class Script
         return;
     }
 }
+
+
+
+
+
 </Value>
                     <ValueType>Script</ValueType>
                     <Description />
@@ -914,6 +1577,26 @@ public class Script
         using (ServiceController sc = new ServiceController("TvService"))
         {
             sc.Stop();
+        }
+
+        Process[] processes = Process.GetProcessesByName("TvService");
+        bool exited = false;
+
+        while (!exited)
+        {
+            exited = true;
+
+            foreach (Process process in processes)
+            {
+                exited &amp;= process.HasExited;
+            }
+
+            Thread.Sleep(100);
+        }
+
+        foreach (Process process in processes)
+        {
+            process.Dispose();
         }
     }
 
@@ -986,10 +1669,8 @@ public class Script
         try
         {
             // detect TvService
-            bool tvServiceInstalled = false;
+            bool tvServiceInstalled = (CheckTvServiceState() != TvServiceState.NotInstalled);
             bool tvServiceStarted = false;
-
-            tvServiceInstalled = (CheckTvServiceState() != TvServiceState.NotInstalled);
 
             if (tvServiceInstalled)
             {
@@ -1014,48 +1695,20 @@ public class Script
                 // stop TvService
 
                 StopTvService();
-
-                // check TvService state
-
-                while (true)
-                {
-                    TvServiceState state = CheckTvServiceState();
-
-                    if (state == TvServiceState.Stopped)
-                    {
-                        break;
-                    }
-
-                    Thread.Sleep(100);
-                }
-            }
-
-            // unregister filter
-            UnregisterFilter(Path.Combine(MpeInstaller.TransformInRealPath(tvServiceInstalled ? "%TvServerBase%" : "%Base%"), "MPUrlSourceSplitter\\MPUrlSourceSplitter.ax"));
-            if (tvServiceInstalled)
-            {
-                RegisterFilter(Path.Combine(MpeInstaller.TransformInRealPath("%TvServerBase%"), "MPIPTVSource.ax"));
             }
 
             if (tvServiceStarted)
             {
-                // start TvService
+                packageClass.Groups["TvServerStarted"].DefaulChecked = true;
+                packageClass.Groups["TvServerStarted"].Checked = true;
+            }
 
-                StartTvService();
+            // unregister filter
+            UnregisterFilter(Path.Combine(MpeInstaller.TransformInRealPath(tvServiceInstalled ? "%TvServerBase%" : "%Base%"), "MPUrlSourceSplitter\\MPUrlSourceSplitter.ax"));
 
-                // check TvService state
-
-                while (true)
-                {
-                    TvServiceState state = CheckTvServiceState();
-
-                    if ((state == TvServiceState.Running) || (state == TvServiceState.Stopped))
-                    {
-                        break;
-                    }
-
-                    Thread.Sleep(100);
-                }
+            if (tvServiceInstalled)
+            {
+                RegisterFilter(Path.Combine(MpeInstaller.TransformInRealPath("%TvServerBase%"), "MPIPTVSource.ax"));
             }
         }
         catch (Exception ex)
@@ -1069,6 +1722,8 @@ public class Script
         return;
     }
 }
+
+
 
 </Value>
                     <ValueType>Script</ValueType>
@@ -1154,8 +1809,8 @@ public class Script
     <Version>
       <Major>2</Major>
       <Minor>1</Minor>
-      <Build>6</Build>
-      <Revision>5489</Revision>
+      <Build>15</Build>
+      <Revision>5684</Revision>
     </Version>
     <ExtensionDescription>The MediaPortal IPTV filter and url source splitter is a directshow source filter that enables direct playback for many protocols and filetypes used in online video sources in the internet.
 
@@ -1167,9 +1822,8 @@ Supported protocols:
 - Adobe HTTP Dynamic Streaming (HDS, F4M manifest)
 - Microsoft Smooth Streaming
 - Apple HTTP live streaming (M3U8 playlists)</ExtensionDescription>
-    <VersionDescription>- fixed crash when filter is not correctly created
-- fixed incompatibility with TV service (causing crash)
-- implemented checking of IPTV compatibility of received stream</VersionDescription>
+    <VersionDescription>- changed parsing MPEG2 TS stream sections
+- updated TV server plugin</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=327&amp;cf_id=24</OnlineLocation>
     <ReleaseDate>2014-11-05T20:21:47</ReleaseDate>
@@ -1353,7 +2007,7 @@ Supported protocols:
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>MPUrlSourceSplitter.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{bc8f8611-d54f-477e-958f-d303a2a1b453}-MPUrlSourceSplitter.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{ba64cead-83f8-4867-9384-5fee35a428c5}-MPUrlSourceSplitter.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>

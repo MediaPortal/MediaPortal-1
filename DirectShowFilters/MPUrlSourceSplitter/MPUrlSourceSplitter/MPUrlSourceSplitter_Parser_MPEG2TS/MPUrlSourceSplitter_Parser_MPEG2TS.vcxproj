@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -20,12 +20,14 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -164,26 +166,39 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ConditionalAccessParserContext.h" />
+    <ClInclude Include="ConditionalAccessSectionMutiplexer.h" />
+    <ClInclude Include="FilterProgramNumber.h" />
+    <ClInclude Include="FilterProgramNumberCollection.h" />
     <ClInclude Include="IndexedMpeg2tsStreamFragment.h" />
     <ClInclude Include="IndexedMpeg2tsStreamFragmentCollection.h" />
-    <ClInclude Include="Mpeg2TsDumpBox.h" />
+    <ClInclude Include="Mpeg2tsDumpBox.h" />
+    <ClInclude Include="ProgramAssociationSectionMultiplexer.h" />
+    <ClInclude Include="SectionMultiplexer.h" />
+    <ClInclude Include="SectionMultiplexerCollection.h" />
     <ClInclude Include="Mpeg2tsStreamFragment.h" />
     <ClInclude Include="Mpeg2tsStreamFragmentCollection.h" />
+    <ClInclude Include="Mpeg2tsStreamFragmentContext.h" />
+    <ClInclude Include="Mpeg2tsStreamFragmentContextCollection.h" />
     <ClInclude Include="MPUrlSourceSplitter_Parser_MPEG2TS.h" />
     <ClInclude Include="MPUrlSourceSplitter_Parser_MPEG2TS_Parameters.h" />
-    <ClInclude Include="ProgramAssociationSectionContext.h" />
-    <ClInclude Include="ProgramAssociationSectionPacketContext.h" />
-    <ClInclude Include="ProgramAssociationSectionPacketContextCollection.h" />
-    <ClInclude Include="SectionContext.h" />
+    <ClInclude Include="ParserContext.h" />
+    <ClInclude Include="ProgramAssociationParserContext.h" />
+    <ClInclude Include="ProgramElement.h" />
+    <ClInclude Include="ProgramElementCollection.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="TransportStreamProgramMapSectionContext.h" />
-    <ClInclude Include="TransportStreamProgramMapSectionPacketContext.h" />
-    <ClInclude Include="TransportStreamProgramMapSectionPacketContextCollection.h" />
+    <ClInclude Include="TransportStreamProgramMapParserContext.h" />
+    <ClInclude Include="TransportStreamProgramMapParserContextCollection.h" />
+    <ClInclude Include="TransportStreamProgramMapParserKnownSectionContext.h" />
+    <ClInclude Include="TransportStreamProgramMapParserKnownSectionContextCollection.h" />
+    <ClInclude Include="TransportStreamProgramMapSectionMultiplexer.h" />
     <ClInclude Include="TsPacketContext.h" />
     <ClInclude Include="TsPacketContextCollection.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ConditionalAccessParserContext.cpp" />
+    <ClCompile Include="ConditionalAccessSectionMutiplexer.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -192,23 +207,32 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="FilterProgramNumber.cpp" />
+    <ClCompile Include="FilterProgramNumberCollection.cpp" />
     <ClCompile Include="IndexedMpeg2tsStreamFragment.cpp" />
     <ClCompile Include="IndexedMpeg2tsStreamFragmentCollection.cpp" />
-    <ClCompile Include="Mpeg2TsDumpBox.cpp" />
+    <ClCompile Include="Mpeg2tsDumpBox.cpp" />
+    <ClCompile Include="ProgramAssociationSectionMultiplexer.cpp" />
+    <ClCompile Include="SectionMultiplexer.cpp" />
+    <ClCompile Include="SectionMultiplexerCollection.cpp" />
     <ClCompile Include="Mpeg2tsStreamFragment.cpp" />
     <ClCompile Include="Mpeg2tsStreamFragmentCollection.cpp" />
+    <ClCompile Include="Mpeg2tsStreamFragmentContext.cpp" />
+    <ClCompile Include="Mpeg2tsStreamFragmentContextCollection.cpp" />
     <ClCompile Include="MPUrlSourceSplitter_Parser_MPEG2TS.cpp" />
-    <ClCompile Include="ProgramAssociationSectionContext.cpp" />
-    <ClCompile Include="ProgramAssociationSectionPacketContext.cpp" />
-    <ClCompile Include="ProgramAssociationSectionPacketContextCollection.cpp" />
-    <ClCompile Include="SectionContext.cpp" />
+    <ClCompile Include="ParserContext.cpp" />
+    <ClCompile Include="ProgramAssociationParserContext.cpp" />
+    <ClCompile Include="ProgramElement.cpp" />
+    <ClCompile Include="ProgramElementCollection.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TransportStreamProgramMapSectionContext.cpp" />
-    <ClCompile Include="TransportStreamProgramMapSectionPacketContext.cpp" />
-    <ClCompile Include="TransportStreamProgramMapSectionPacketContextCollection.cpp" />
+    <ClCompile Include="TransportStreamProgramMapParserContext.cpp" />
+    <ClCompile Include="TransportStreamProgramMapParserContextCollection.cpp" />
+    <ClCompile Include="TransportStreamProgramMapParserKnownSectionContext.cpp" />
+    <ClCompile Include="TransportStreamProgramMapParserKnownSectionContextCollection.cpp" />
+    <ClCompile Include="TransportStreamProgramMapSectionMultiplexer.cpp" />
     <ClCompile Include="TsPacketContext.cpp" />
     <ClCompile Include="TsPacketContextCollection.cpp" />
   </ItemGroup>

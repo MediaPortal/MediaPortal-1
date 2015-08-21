@@ -4,6 +4,8 @@ Attention:
 
 - Sonique Visualisations can be placed anywhere in this folder or in sub folders. We would recommend using the Sonique folder for that
 
+- BASS BOX Plugins MUST be placed into the <mediaportal install dir>\BBPlugin subfolder, otherwise the Textures will not be found.
+
 - Winamp Visualisations MUST be placed in the <mediaportal install dir>\Plugins subfolder.
   This is the folder, which contains all the MediaPortal plugins as well.
   

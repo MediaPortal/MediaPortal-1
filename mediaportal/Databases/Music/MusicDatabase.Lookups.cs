@@ -42,7 +42,6 @@ namespace MediaPortal.Music.Database
       {
         return false;
       }
-
       aSong.Id = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.idTrack");
       aSong.FileName = DatabaseUtility.Get(aResult, aRow, "tracks.strPath");
       aSong.Artist = DatabaseUtility.Get(aResult, aRow, "tracks.strArtist").Trim(trimChars);
@@ -101,6 +100,24 @@ namespace MediaPortal.Music.Database
         Open();
       }
       return 0;
+    }
+
+    public string GetLastFMUser()
+    {
+      strSQL = @"select strUsername from lastfmusers";
+      var results = DirectExecute(strSQL);
+      if (results.Rows.Count == 0) return string.Empty;
+      var row = results.Rows[0];
+      return row.fields[0];
+    }
+
+    public string GetLastFMSK()
+    {
+      strSQL = @"select strSK from lastfmusers";
+      var results = DirectExecute(strSQL);
+      if (results.Rows.Count == 0) return string.Empty;
+      var row = results.Rows[0];
+      return row.fields[0];
     }
 
     public int GetTotalSongs()
@@ -193,9 +210,39 @@ namespace MediaPortal.Music.Database
       return false;
     }
 
-    public void GetSongsByFilter(string aSQL, out List<Song> aSongs, string filter)
+
+    public void GetSongsBySQL(string aSQL, out List<Song> aSongs)
     {
-      Log.Debug("MusicDatabase: GetSongsByFilter - SQL: {0}, Filter: {1}", aSQL, filter);
+      aSongs = new List<Song>();
+      try
+      {
+        SQLiteResultSet results = DirectExecute(aSQL);
+        Song song = null;
+
+        for (int i = 0; i < results.Rows.Count; i++)
+        {
+          song = new Song();
+          SQLiteResultSet.Row fields = results.Rows[i];
+          int columnIndex = 0;
+          AssignAllSongFieldsFromResultSet(ref song, results, i);
+          aSongs.Add(song);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public void GetSongsByFilter(string aSQL, out List<Song> aSongs, string aFilter)
+    {
+      GetSongsByFilter(aSQL, out aSongs, aFilter, string.Empty, false);
+    }
+
+    public void GetSongsByFilter(string aSQL, out List<Song> aSongs, string aFilter, string aSearchField, bool aGrouping)
+    {
+      Log.Debug("MusicDatabase: GetSongsByFilter - SQL: {0}, Filter: {1}", aSQL, aFilter);
       aSongs = new List<Song>();
       //if (string.IsNullOrEmpty(filter))
       //  return;
@@ -209,36 +256,53 @@ namespace MediaPortal.Music.Database
           song = new Song();
           SQLiteResultSet.Row fields = results.Rows[i];
           int columnIndex = 0;
-          if (filter == "artist")
+          if (aFilter == "artist")
           {
             columnIndex = (int)results.ColumnIndices["strArtist"];
             song.Artist = fields.fields[columnIndex].Trim(trimChars);
           }
-          if (filter == "albumartist")
+          else if (aFilter == "albumartist")
           {
             columnIndex = (int)results.ColumnIndices["strAlbumArtist"];
             song.AlbumArtist = fields.fields[columnIndex].Trim(trimChars);
           }
-          if (filter == "album")
+          else if (aFilter == "album")
           {
             AssignAllSongFieldsFromResultSet(ref song, results, i);
           }
-          if (filter == "genre")
+          else if (aFilter == "genre")
           {
             AssignAllSongFieldsFromResultSet(ref song, results, i);
             columnIndex = (int)results.ColumnIndices["strGenre"];
             song.Genre = fields.fields[columnIndex].Trim(trimChars);
           }
-          if (filter == "composer")
+          else if (aFilter == "composer")
           {
             AssignAllSongFieldsFromResultSet(ref song, results, i);
             columnIndex = (int)results.ColumnIndices["strComposer"];
             song.Composer = fields.fields[columnIndex].Trim(trimChars);
           }
-          if (filter == "tracks")
+          else if (aFilter == "tracks")
           {
             AssignAllSongFieldsFromResultSet(ref song, results, i);
           }
+
+          // Now set the fields when we had grouping
+          if (aGrouping && aSearchField != string.Empty)
+          {
+            if (aSearchField.ToLower() == "rating")
+            {
+              song.Rating = Convert.ToInt32(fields.fields[0].Trim(trimChars));
+            }
+            else if (aSearchField.ToLower() == "year")
+            {
+              song.Year = Convert.ToInt32(fields.fields[0].Trim(trimChars));
+            }
+
+            // When we have grouping active, the second field contains the number of items found which shall be put into duration
+            song.Duration = Convert.ToInt16(fields.fields[1]);
+          }
+
           aSongs.Add(song);
         }
       }

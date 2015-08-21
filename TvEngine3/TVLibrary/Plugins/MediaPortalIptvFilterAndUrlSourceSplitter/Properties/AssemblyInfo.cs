@@ -28,6 +28,6 @@ using MediaPortal.Common.Utils;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: CompatibleVersion("Own")]
+[assembly: CompatibleVersion("1.7.1.0")]
 [assembly: UsesSubsystem("TVE")]
 

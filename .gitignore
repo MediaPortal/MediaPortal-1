@@ -11,3 +11,5 @@ Thumbs.db
 *.bak
 /mediaportal/Setup/uninstall.nsh
 Packages
+*.DotSettings
+/Build/NuGet.exe

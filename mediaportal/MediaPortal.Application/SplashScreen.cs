@@ -345,8 +345,8 @@ namespace MediaPortal
            (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
              | System.Windows.Forms.AnchorStyles.Right)));
         this._informationLabel.BackColor = System.Drawing.Color.Transparent;
-        this._informationLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold,
-                                                             System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this._informationLabel.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold,
+                                                             System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
         this._informationLabel.ForeColor = System.Drawing.Color.White;
         this._informationLabel.Location = new System.Drawing.Point(11, 138);
         this._informationLabel.Name = "_informationLabel";

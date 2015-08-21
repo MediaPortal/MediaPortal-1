@@ -56,6 +56,7 @@
 #include "TrackFragmentHeaderBox.h"
 #include "UuidBox.h"
 #include "TrackRunBox.h"
+#include "PayloadBox.h"
 
 CBoxFactory::CBoxFactory(HRESULT *result)
 {
@@ -115,12 +116,21 @@ CBox *CBoxFactory::CreateBox(const uint8_t *buffer, uint32_t length)
       CREATE_SPECIFIC_BOX(box, TRACK_RUN_BOX_TYPE, CTrackRunBox, buffer, length, continueParsing, result);
     }
 
+    // if in result is not instance of some box, create special payload box
+    // current box is no longer needed
+
+    FREE_MEM_CLASS(box);
+
     if (SUCCEEDED(continueParsing) && (result == NULL))
     {
-      result = box;
-    }
+      CPayloadBox *payloadBox = new CPayloadBox(&continueParsing);
+      CHECK_POINTER_HRESULT(continueParsing, payloadBox, continueParsing, E_OUTOFMEMORY);
 
-    CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(box));
+      CHECK_CONDITION_HRESULT(continueParsing, payloadBox->Parse(buffer, length), continueParsing, E_FAIL);
+      CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(payloadBox));
+
+      result = payloadBox;
+    }
   }
 
   return result;

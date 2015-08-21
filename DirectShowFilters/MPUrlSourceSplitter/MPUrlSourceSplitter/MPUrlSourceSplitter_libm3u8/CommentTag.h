@@ -57,8 +57,8 @@ protected:
 
   // parses current tag
   // @param : the playlist version
-  // @return : true if successful, false otherwise
-  virtual bool ParseTag(unsigned int version);
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT ParseTag(unsigned int version);
 
   // creates item
   // @return : item or NULL if error

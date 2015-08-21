@@ -142,7 +142,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     /// <returns>Version of installed MPE</returns>
     protected Version GetInstalledMpeVersion()
     {
-      if (File.Exists(InstalledMpesPath))
+      if (!File.Exists(InstalledMpesPath))
       {
         return null;
       }

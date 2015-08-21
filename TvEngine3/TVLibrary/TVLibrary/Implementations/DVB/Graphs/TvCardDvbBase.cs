@@ -970,6 +970,7 @@ namespace TvLibrary.Implementations.DVB
         }
         Log.Log.WriteFile("dvb:StopGraph");
         int hr = ((IMediaControl)_graphBuilder).Stop();
+        Log.Log.WriteFile("debug: IMediaControl stopped! hr = 0x{0:x} :)", hr);
         if (hr < 0 || hr > 1)
         {
           Log.Log.Error("dvb:StopGraph returns:0x{0:X}", hr);

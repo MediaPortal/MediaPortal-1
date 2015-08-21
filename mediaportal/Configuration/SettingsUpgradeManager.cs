@@ -72,6 +72,7 @@ namespace MediaPortal.Configuration
       RemoveEntry(settings, "plugins", "ISDN Caller-ID");
       RemoveEntry(settings, "plugins", "YAC Caller-ID");
       RemoveEntry(settings, "plugins", "MAME Devices");
+      RemoveEntry(settings, "plugins", "Audioscrobbler");
       RemoveEntry(settings, "plugins", "Last.fm Radio");
       RemoveEntry(settings, "home", "Burner");
       RemoveEntry(settings, "home", "VideoEditor");
@@ -93,6 +94,22 @@ namespace MediaPortal.Configuration
       RemoveEntry(settings, "audioplayer", "asiodevice");
       RemoveEntry(settings, "audioplayer", "mixing");
       RemoveEntry(settings, "screenselector", "usescreenselector");
+      RemoveEntry(settings, "audioscrobbler", "user");
+      RemoveEntry(settings, "audioscrobbler", "usesimilarrandom");
+      RemoveEntry(settings, "audioscrobbler", "EnableNowPlaying");
+      RemoveEntry(settings, "audioscrobbler", "showtrayicon");
+      RemoveEntry(settings, "audioscrobbler", "showballontips");
+      RemoveEntry(settings, "audioscrobbler", "submitradiotracks");
+      RemoveEntry(settings, "audioscrobbler", "directskip");
+      RemoveEntry(settings, "audioscrobbler", "listentrycount");
+      RemoveEntry(settings, "audioscrobbler", "streamplayertype");
+      RemoveEntry(settings, "audioscrobbler", "oneclickstart");
+      RemoveEntry(settings, "audioscrobbler", "usesmskeyboard");
+      RemoveEntry(settings, "musicmisc", "fetchlastfmcovers");
+      RemoveEntry(settings, "musicmisc", "fetchlastfmtopalbums");
+      RemoveEntry(settings, "musicmisc", "lookupSimilarTracks");
+      RemoveEntry(settings, "musicmisc", "switchArtistOnLastFMSubmit");
+      RemoveEntry(settings, "musicfiles", "autoshuffle");
 
       // Moved entries
       MoveEntry(settings, "general", "gui", "mousesupport");
@@ -111,11 +128,6 @@ namespace MediaPortal.Configuration
       UpdateEntryDefaultValue(settings, "skin", "name", "Blue3wide", "DefaultWide");
       UpdateEntryDefaultValue(settings, "skin", "name", "Blue4", "Default");
       UpdateEntryDefaultValue(settings, "skin", "name", "Blue4wide", "DefaultWide");
-
-      //Mantis 3772 - Weather.com API is not free any more
-      //temporarily disable plugin
-      UpdateEntryDefaultValue(settings, "pluginswindows", "MediaPortal.GUI.Weather.GUIWindowWeather", "yes", "no");
-      UpdateEntryDefaultValue(settings, "plugins", "weather", "yes", "no");
 
       ApplyDeploySettingUpgrade(settings);
 

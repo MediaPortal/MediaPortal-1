@@ -73,18 +73,31 @@
     </control>
     <control>
       <description>Progress Bar</description>
-      <type>progress</type>
+      <type>tvprogress</type>
       <id>105</id>
       <posX>177</posX>
       <posY>538</posY>
       <width>546</width>
-      <offset>0</offset>
       <height>17</height>
-      <innerheight>17</innerheight>
+      <toptexture>osd_progress_indicator.png</toptexture>
+      <TextureOffsetY>23</TextureOffsetY>
+      <bottomtexture>-</bottomtexture>
+      <texturetick>-</texturetick>
       <lefttexture>osd_progress_left.png</lefttexture>
-      <midtexture>osd_progress_mid.png</midtexture>
-      <righttexture>osd_progress_right.png</righttexture>
+      <midtexture>-</midtexture>
+      <righttexture>-</righttexture>
+      <logotexture>-</logotexture>
+      <fillbackgroundtexture>-</fillbackgroundtexture>
+      <fillbgxoff>-3</fillbgxoff>
+      <fillbgyoff>0</fillbgyoff>
+      <filltexture1>osd_progress_mid.png</filltexture1>
+      <filltexture2>osd_progress_mid.png</filltexture2>
+      <filltexture3>osd_progress_mid_orange.png</filltexture3>
+      <markertexture>osd_progress_mid_orange.png</markertexture>
+      <fillheight>17</fillheight>
       <label>#percentage</label>
+      <labelmarkerstarts>#jumppoints</labelmarkerstarts>
+      <labelmarkerends>#chapters</labelmarkerends>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>

@@ -27,6 +27,7 @@ using TvLibrary.Interfaces;
 using TvEngine.Events;
 using TvLibrary.Log;
 using TvLibrary.Channels;
+using MediaPortal.Common.Utils;
 
 #endregion
 

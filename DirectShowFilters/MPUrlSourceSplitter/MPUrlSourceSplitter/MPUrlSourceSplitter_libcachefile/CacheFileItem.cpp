@@ -76,7 +76,6 @@ void CCacheFileItem::SetCacheFilePosition(int64_t position, unsigned int cacheFi
   {
     this->length = this->GetBuffer()->GetBufferOccupiedSpace();
     this->buffer->DeleteBuffer();
-    //this->loadedToMemoryTime = CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET;
 
     this->SetLoadedToMemoryTime(CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET, UINT_MAX);
   }

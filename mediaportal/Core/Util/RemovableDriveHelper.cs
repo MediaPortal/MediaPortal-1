@@ -136,6 +136,78 @@ namespace MediaPortal.Util
       _examineCDTime = ExamineCDTime;
     }
 
+    // http://support.microsoft.com/kb/165721
+    public static bool EjectMedia(string path, out String message)
+    {
+      bool driveReady = false;
+      bool ejectSuccesfull = false;
+      message = string.Empty;
+      string sPhysicalDrive = @"\\.\" + path.Substring(0, 1) + ":";
+
+      // Open drive (prepare for eject)
+      IntPtr handle = CreateFile(sPhysicalDrive, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
+        IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
+
+      if (handle.ToInt32() == INVALID_HANDLE_VALUE)
+      {
+        message = "Media eject failed. Drive not ready or in use!";
+        return false;
+      }
+
+      while (true)
+      {
+        // Lock Volume (retry 10 times - 5 seconds)
+        for (int i = 0; i < 10; i++)
+        {
+          int nout = 0;
+          driveReady = DeviceIoControl(handle, FSCTL_LOCK_VOLUME, null, 0, null, 0, out nout, IntPtr.Zero);
+
+          if (driveReady)
+          {
+            break;
+          }
+          Thread.Sleep(500);
+        }
+
+        if (!driveReady)
+        {
+          message = "Media eject failed. Drive not ready or in use!";
+          break;
+        }
+
+        // Volume dismount
+        int xout = 0;
+        driveReady = DeviceIoControl(handle, FSCTL_DISMOUNT_VOLUME, null, 0, null, 0, out xout, IntPtr.Zero);
+
+        if (!driveReady)
+        {
+          message = "Media eject failed. Drive not ready or in use!";
+          break;
+        }
+
+        // Prevent Removal Of Volume
+        byte[] flag = new byte[1];
+        flag[0] = 0; // 0 = false
+        int yout = 0;
+        driveReady = DeviceIoControl(handle, IOCTL_STORAGE_MEDIA_REMOVAL, flag, 1, null, 0, out yout, IntPtr.Zero);
+
+        if (!driveReady)
+        {
+          message = "Media eject failed. Drive not ready or in use!";
+          break;
+        }
+
+        // Eject Media
+        driveReady = DeviceIoControl(handle, IOCTL_STORAGE_EJECT_MEDIA, null, 0, null, 0, out xout, IntPtr.Zero);
+        break;
+      }
+
+      // Close Handle
+      driveReady = CloseHandle(handle);
+      ejectSuccesfull = driveReady;
+      return ejectSuccesfull;
+    }
+
     #endregion
 
     #region private methods
@@ -414,6 +486,16 @@ namespace MediaPortal.Util
     private const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
     private const int DBT_DEVTYPE_VOLUME = 2;
 
+    // For eject media from drive
+    private const int GENERIC_READ = unchecked((int)0x80000000);
+    private const int GENERIC_WRITE = unchecked((int)0x40000000);
+    private const int FILE_SHARE_READ = unchecked((int)0x00000001);
+    private const int FILE_SHARE_WRITE = unchecked((int)0x00000002);
+    private const int FSCTL_LOCK_VOLUME = unchecked((int)0x00090018);
+    private const int FSCTL_DISMOUNT_VOLUME = unchecked((int)0x00090020);
+    private const int IOCTL_STORAGE_EJECT_MEDIA = unchecked((int)0x002D4808);
+    private const int IOCTL_STORAGE_MEDIA_REMOVAL = unchecked((int)0x002D4804);
+
     // For event filtering
     private static DateTime _mountTime = new DateTime();    
     private static DateTime _examineCDTime = new DateTime();
@@ -515,6 +597,18 @@ namespace MediaPortal.Util
       IntPtr lpOutBuffer,
       int nOutBufferSize,
       out int lpBytesReturned,
+      IntPtr lpOverlapped);
+
+    
+    [DllImport("kernel32.dll", ExactSpelling = true, SetLastError = true)]
+    private static extern bool DeviceIoControl(
+      IntPtr hDevice, 
+      int dwIoControlCode, 
+      byte[] lpInBuffer,
+      int nInBufferSize, 
+      byte[] lpOutBuffer, 
+      int nOutBufferSize, 
+      out int lpBytesReturned, 
       IntPtr lpOverlapped);
 
     #endregion

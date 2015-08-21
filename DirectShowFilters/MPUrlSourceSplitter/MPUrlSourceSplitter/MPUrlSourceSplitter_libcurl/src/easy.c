@@ -1144,6 +1144,9 @@ CURLcode curl_easy_recv(CURL *curl, void *buffer, size_t buflen, size_t *n)
   if(ret != CURLE_OK)
     return ret;
 
+  if (data->set.verbose)
+    Curl_debug(data, CURLINFO_DATA_IN, (char *)buffer, (size_t)n1, c);
+
   *n = (size_t)n1;
 
   return CURLE_OK;
@@ -1171,6 +1174,9 @@ CURLcode curl_easy_send(CURL *curl, const void *buffer, size_t buflen,
 
   if(n1 == -1)
     return CURLE_SEND_ERROR;
+
+  if (data->set.verbose)
+    Curl_debug(data, CURLINFO_DATA_OUT, (char *)buffer, (size_t)n1, c);
 
   /* detect EAGAIN */
   if((CURLE_OK == ret) && (0 == n1))

@@ -106,7 +106,6 @@ namespace TvLibrary.Implementations.Dri
       _controlPoint = controlPoint;
       _name = descriptor.FriendlyName;
       _devicePath = descriptor.DeviceUDN;   // unique device name is as good as a device path for a unique identifier
-      _eventSignalLock = new ManualResetEvent(false);
       _isCetonDevice = _name.Contains("Ceton");
 
       GetPreloadBitAndCardId();
@@ -524,6 +523,7 @@ namespace TvLibrary.Implementations.Dri
       catch (Exception ex)
       {
         Log.Log.Error("DRI CC: failed to read device info\r\n{0}", ex);
+        throw;
       }
     }
 
@@ -600,6 +600,10 @@ namespace TvLibrary.Implementations.Dri
         _conditionalAccess = new ConditionalAccess(null, null, null, this);
 
         _graphState = GraphState.Created;
+        if (_eventSignalLock == null)
+        {
+          _eventSignalLock = new ManualResetEvent(false);
+        }
       }
       catch (Exception)
       {

@@ -46,6 +46,8 @@
 
 #define PROGRAM_ASSOCIATION_SECTION_PROGRAM_MAP_PID_MASK              0x1FFF
 
+#define NETWORK_INFORMATION_TABLE_PID_UNDEFINED                       0xFFFF
+
 class CProgramAssociationSection : public CSection
 {
 public:
@@ -98,11 +100,10 @@ public:
   // @return : true if current next indicator is set, false otherwise
   bool IsCurrentNextIndicator(void);
 
-  // parses specified PSI packet
-  // @param psiPacket : the PSI packet to parse
-  // @param startFromSectionPayload : the section payload index to start parsing
-  // @return : S_OK if successfull, S_FALSE if more PSI packets are needed to complete section, error code otherwise
-  virtual HRESULT Parse(CProgramSpecificInformationPacket *psiPacket, unsigned int startFromSectionPayload);
+  // parses specified section payload
+  // @param sectionPayload : the section payload to parse
+  // @return : S_OK if successfull, S_FALSE if more section payloads are needed to complete section, error code otherwise
+  virtual HRESULT Parse(CSectionPayload *sectionPayload);
 
   // clears current instance to its default state
   virtual void Clear(void);
@@ -134,6 +135,7 @@ protected:
   uint8_t reservedVersionNumberCurrentNextIndicator;
   uint8_t sectionNumber;
   uint8_t lastSectionNumber;
+  uint16_t networkInformationTablePID;
 
   // holds programs
   CProgramAssociationSectionProgramCollection *programs;
@@ -157,6 +159,10 @@ protected:
   // gets whole section into payload
   // @return : number of bytes written into buffer, zero if not successful
   virtual unsigned int GetSectionInternal(void);
+
+  // checks table ID against actual table ID
+  // @return : true if table ID is valid, false otherwise
+  virtual bool CheckTableId(void);
 };
 
 #endif

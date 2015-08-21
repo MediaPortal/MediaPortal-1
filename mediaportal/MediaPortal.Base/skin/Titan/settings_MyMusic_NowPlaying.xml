@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<id>1013</id>
-	<defaultcontrol>2</defaultcontrol>
+	<defaultcontrol>4</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
 	<define>#header.label:897</define>		
 	<rememberLastFocusedControl>no</rememberLastFocusedControl>
@@ -43,38 +43,18 @@
 		<posX>655</posX>
 		<posY>386</posY>
 		<dimColor>ffffffff</dimColor>
-    <layout>StackLayout(7, Vertical, true)</layout>
-	  <animation effect="fade" time="150">WindowOpen</animation>
-	  <animation effect="fade" time="150">WindowClose</animation>
+        <layout>StackLayout(7, Vertical, true)</layout>
+	    <animation effect="fade" time="150">WindowOpen</animation>
+	    <animation effect="fade" time="150">WindowClose</animation>
+		
 		<control Style="SettingsCheckButtonLarge">
-      <description>Disable internet lookup for coverart</description>
-      <type>checkbutton</type>
-      <id>2</id>
-      <label>300176</label>
-      <onup>6</onup>
-    </control>
+          <description>Disable interent lookups for track suggestions</description>
+          <type>checkbutton</type>
+          <id>4</id>
+          <label>300178</label>    
+        </control>
 	
-		<control Style="SettingsCheckButtonLarge">
-      <description>Disable Interent lookups for best albums tracks</description>
-      <type>checkbutton</type>
-      <id>3</id>
-      <label>300177</label>    
     </control>
-	
-		<control Style="SettingsCheckButtonLarge">
-      <description>Disable interent lookups for track suggestions</description>
-      <type>checkbutton</type>
-      <id>4</id>
-      <label>300178</label>    
-    </control>
-	
-		<control Style="SettingsCheckButtonLarge">
-      <description>Switch artists</description>
-      <type>checkbutton</type>
-      <id>5</id>
-      <label>300179</label>   
-    </control>
-</control>
 
   <control>
       <description>VuMeter label</description>
@@ -96,7 +76,7 @@
     <label>#vumeter</label>
 		<posX>655</posX>
 		<posY>756</posY>
-    <ondown>2</ondown>
+    <ondown>4</ondown>
  	  <animation effect="fade" time="150">WindowOpen</animation>
 	  <animation effect="fade" time="150">WindowClose</animation>
   </control>

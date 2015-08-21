@@ -97,7 +97,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("pictures", "autoShuffle", autoShuffleCheckBox.Checked);
         xmlwriter.SetValueAsBool("pictures", "autoRepeat", repeatSlideshowCheckBox.Checked);
         xmlwriter.SetValueAsBool("pictures", "useExif", checkBoxUseExif.Checked);
-        xmlwriter.SetValueAsBool("pictures", "usePicasa", checkBoxUseExif.Checked);
+        xmlwriter.SetValueAsBool("pictures", "usePicasa", checkBoxUsePicasa.Checked);
         xmlwriter.SetValueAsBool("pictures", "useDayGrouping", checkBoxGroupDays.Checked);
         xmlwriter.SetValueAsBool("pictures", "enableVideoPlayback", checkBoxEnableVideo.Checked);
         xmlwriter.SetValueAsBool("pictures", "playVideosInSlideshows", checkBoxPlayVideosInSlideshow.Checked);

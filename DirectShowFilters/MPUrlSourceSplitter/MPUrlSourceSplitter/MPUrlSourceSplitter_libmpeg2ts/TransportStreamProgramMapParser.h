@@ -23,7 +23,7 @@
 #ifndef __TRANSPORT_STREAM_PROGRAM_MAP_PARSER_DEFINED
 #define __TRANSPORT_STREAM_PROGRAM_MAP_PARSER_DEFINED
 
-#include "Parser.h"
+#include "SectionPayloadParser.h"
 #include "TransportStreamProgramMapSection.h"
 #include "ProgramAssociationSection.h"
 
@@ -35,10 +35,10 @@
 
 #define TRANSPORT_STREAM_PROGRAM_MAP_PARSER_PID_NOT_DEFINED           0xFFFF
 
-class CTransportStreamProgramMapParser : CParser
+class CTransportStreamProgramMapParser : public CSectionPayloadParser
 {
 public:
-  CTransportStreamProgramMapParser(HRESULT *result);
+  CTransportStreamProgramMapParser(HRESULT *result, uint16_t pid);
   virtual ~CTransportStreamProgramMapParser(void);
 
   /* get methods */
@@ -49,8 +49,8 @@ public:
 
   // gets program association section parse result
   // @return :
-  //  S_OK                                                        : complete program association section
-  //  S_FALSE                                                     : incomplete program association section
+  //  S_OK                                                        : complete transport stream program map section
+  //  S_FALSE                                                     : incomplete transport stream program map section
   //  E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION  : section is empty and PSI packet with section data
   //  E_MPEG2TS_INCOMPLETE_SECTION                                : section is incomplete
   //  E_MPEG2TS_SECTION_INVALID_CRC32                             : invalid section CRC32 (corrupted section)
@@ -63,27 +63,23 @@ public:
 
   /* set methods */
 
-  // sets transport stream program map section PSI packet PID
-  // @param : the transport stream program map section PSI packet PID to set
-  void SetTransportStreamProgramMapSectionPID(uint16_t pid);
-
   /* other methods */
 
   // tests if transport stream program map section is found
   // @return : true if section is found, false otherwise
   bool IsSectionFound(void);
 
-  // parses input MPEG2 TS packet
-  // @param packet : the MPEG2 TS packet to parse
+  // parses section payload for section
+  // @param sectionPayload : the section payload to parse
   // @return :
-  //  S_OK                                                        : complete program association section
-  //  S_FALSE                                                     : incomplete program association section
+  //  S_OK                                                        : complete transport stream program map section
+  //  S_FALSE                                                     : incomplete transport stream program map section
   //  E_FAIL                                                      : not PSI packet or PSI packet PID not transport stream program map section PID
   //  E_MPEG2TS_EMPTY_SECTION_AND_PSI_PACKET_WITHOUT_NEW_SECTION  : section is empty and PSI packet with section data
   //  E_MPEG2TS_INCOMPLETE_SECTION                                : section is incomplete
   //  E_MPEG2TS_SECTION_INVALID_CRC32                             : invalid section CRC32 (corrupted section)
   //  other error code                                            : another error
-  virtual HRESULT Parse(CTsPacket *packet);
+  virtual HRESULT Parse(CSectionPayload *sectionPayload);
 
   // clears instance to its default state
   virtual void Clear(void);

@@ -39,34 +39,67 @@
     <ClInclude Include="IndexedMpeg2tsStreamFragmentCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SectionContext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TsPacketContext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ProgramAssociationSectionContext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ProgramAssociationSectionPacketContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TsPacketContextCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProgramAssociationSectionPacketContextCollection.h">
+    <ClInclude Include="ParserContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TransportStreamProgramMapSectionContext.h">
+    <ClInclude Include="ProgramAssociationParserContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TransportStreamProgramMapSectionPacketContext.h">
+    <ClInclude Include="TransportStreamProgramMapParserContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TransportStreamProgramMapSectionPacketContextCollection.h">
+    <ClInclude Include="TransportStreamProgramMapParserContextCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Mpeg2TsDumpBox.h">
+    <ClInclude Include="ProgramElement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramElementCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConditionalAccessParserContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TransportStreamProgramMapParserKnownSectionContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TransportStreamProgramMapParserKnownSectionContextCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mpeg2tsStreamFragmentContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mpeg2tsStreamFragmentContextCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mpeg2tsDumpBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SectionMultiplexer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SectionMultiplexerCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramAssociationSectionMultiplexer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConditionalAccessSectionMutiplexer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TransportStreamProgramMapSectionMultiplexer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FilterProgramNumber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FilterProgramNumberCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -92,34 +125,67 @@
     <ClCompile Include="IndexedMpeg2tsStreamFragmentCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SectionContext.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TsPacketContext.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ProgramAssociationSectionContext.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ProgramAssociationSectionPacketContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TsPacketContextCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProgramAssociationSectionPacketContextCollection.cpp">
+    <ClCompile Include="ParserContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TransportStreamProgramMapSectionContext.cpp">
+    <ClCompile Include="ProgramAssociationParserContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TransportStreamProgramMapSectionPacketContext.cpp">
+    <ClCompile Include="TransportStreamProgramMapParserContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TransportStreamProgramMapSectionPacketContextCollection.cpp">
+    <ClCompile Include="TransportStreamProgramMapParserContextCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Mpeg2TsDumpBox.cpp">
+    <ClCompile Include="ProgramElement.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramElementCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConditionalAccessParserContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TransportStreamProgramMapParserKnownSectionContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TransportStreamProgramMapParserKnownSectionContextCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mpeg2tsStreamFragmentContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mpeg2tsStreamFragmentContextCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mpeg2tsDumpBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SectionMultiplexer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SectionMultiplexerCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramAssociationSectionMultiplexer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConditionalAccessSectionMutiplexer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TransportStreamProgramMapSectionMultiplexer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FilterProgramNumber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FilterProgramNumberCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

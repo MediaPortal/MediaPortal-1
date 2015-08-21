@@ -27,12 +27,20 @@
 #include "SectionPayloadCollection.h"
 #include "TsPacketCollection.h"
 
+#define PROGRAM_SPECIFIC_INFORMATION_PACKET_FLAG_NONE                       TS_PACKET_FLAG_NONE
+
+#define PROGRAM_SPECIFIC_INFORMATION_PACKET_FLAG_WRITTEN_POINTER_FIELD      (1 << (TS_PACKET_FLAG_LAST + 0))
+
+#define PROGRAM_SPECIFIC_INFORMATION_PACKET_FLAG_LAST                       (TS_PACKET_FLAG_LAST + 1)
+
+
 class CSection;
 
 class CProgramSpecificInformationPacket : public CTsPacket
 {
 public:
-  CProgramSpecificInformationPacket(HRESULT *result, uint16_t pid);
+  CProgramSpecificInformationPacket(HRESULT *result, uint16_t pid, uint8_t tableId);
+  CProgramSpecificInformationPacket(HRESULT *result, uint16_t pid, uint8_t tableId, bool reference);
   virtual ~CProgramSpecificInformationPacket(void);
 
   /* get methods */
@@ -40,6 +48,10 @@ public:
   // gets section payloads
   // @return : section payloads
   CSectionPayloadCollection *GetSectionPayloads(void);
+
+  // gets table ID of section
+  // @return : table ID of section
+  uint8_t GetTableId(void);
 
   /* set methods */
 
@@ -54,16 +66,21 @@ public:
   // parses section data into PSI packet
   // @param sectionData : the section data to parse
   // @param sectionDataSize : the section data size
-  // @return : number of data processed from buffer, 0 means error
-  virtual unsigned int ParseSectionData(const uint8_t *sectionData, unsigned int sectionDataSize);
+  // @param sectionStart : specifies if section starts
+  // @param fillStuffingBytes : specifies if stuffing bytes have to be written
+  // @param processedDataSize : the reference to variable holding processed section data size
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT ParseSectionData(const uint8_t *sectionData, unsigned int sectionDataSize, bool sectionStart, bool fillStuffingBytes, unsigned int *processedDataSize);
 
-  /* static methods */
-
-  static CTsPacketCollection *SplitSectionInProgramSpecificInformationPackets(CSection *section, unsigned int packetPID, unsigned int continuityCounter);
+  // tests if PROGRAM_SPECIFIC_INFORMATION_PACKET_FLAG_WRITTEN_POINTER_FIELD flag is set
+  // @return : true if flag is set, false otherwise
+  bool IsWrittenPointerField(void);
 
 protected:
   // holds MPEG2 TS packet PID, which is specified for program specific information packet (e.g. 0x0000 for PAT, 0x0001 for CAT, etc.)
   uint16_t pid;
+  // the section table ID to split content of PSI packet into section payloads
+  uint8_t tableId;
   // holds section payloads
   CSectionPayloadCollection *sectionPayloads;
 

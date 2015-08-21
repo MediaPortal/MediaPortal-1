@@ -19,160 +19,152 @@
 #endregion
 
 using System;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
-using MediaPortal.Hooks;
 using MediaPortal.Profile;
+using Win32;
 using Action = MediaPortal.GUI.Library.Action;
+using Mapping = MediaPortal.InputDevices.InputHandler.Mapping;
 
 namespace MediaPortal.InputDevices
 {
-  public class HidListener
+  public class HidListener : IInputDevice
   {
-    private bool controlEnabled = false;
-    private bool controlEnabledGlobally = false;
-    private bool logVerbose = false; // Verbose logging
-    private InputHandler _inputHandler;
-    private KeyboardHook _keyboardHook;
+    private bool _controlEnabled;
 
-    public HidListener() {}
+    /// <summary>
+    ///   HID Handler is responsible for:
+    ///   * Loading and parsing Generic HID XML configuration.
+    ///   * Registering for raw input as per configuration.
+    ///   * Handling HID raw input as per configuration.
+    /// </summary>
+    private HidHandler _hidHandler;
 
+    /// <summary>
+    /// Tells whether verbose logs are enabled.
+    /// </summary>
+    static public bool Verbose{get; private set;}
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="hwnd"></param>
     public void Init(IntPtr hwnd)
     {
+      //Load from XML configuration
       Init();
+
+      //Once our configuration is loaded register raw input devices as needed
+      if (_hidHandler != null && _hidHandler.IsLoaded)
+      {
+        _hidHandler.Register(hwnd);
+      }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     private void Init()
     {
       using (Settings xmlreader = new MPSettings())
       {
-        controlEnabled = xmlreader.GetValueAsBool("remote", "HID", false);
-        controlEnabledGlobally = xmlreader.GetValueAsBool("remote", "HIDGlobal", false);
-        logVerbose = xmlreader.GetValueAsBool("remote", "HIDVerboseLog", false);
+        _controlEnabled = xmlreader.GetValueAsBool("remote", "HidEnabled", false);
+        Verbose = xmlreader.GetValueAsBool("remote", "HidVerbose", false);
       }
 
-      if (controlEnabled)
+      if (_controlEnabled)
       {
-        _inputHandler = new InputHandler("General HID");
-        if (!_inputHandler.IsLoaded)
-        {
-          controlEnabled = false;
-          Log.Info("HID: Error loading default mapping file - please reinstall MediaPortal");
-        }
-      }
-
-      if (controlEnabledGlobally)
-      {
-        _keyboardHook = new KeyboardHook();
-        _keyboardHook.KeyDown += new KeyEventHandler(OnKeyDown);
-        _keyboardHook.IsEnabled = true;
+        _hidHandler = new HidHandler("Generic-HID");
       }
     }
 
+    /// <summary>
+    /// Required for IInputDevice Interface
+    /// </summary>
     public void DeInit()
     {
-      if (_keyboardHook != null && _keyboardHook.IsEnabled)
-      {
-        _keyboardHook.IsEnabled = false;
-      }
     }
 
-    [DllImport("user32.dll")]
-    private static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, uint lParam);
-
-    private void OnKeyDown(object sender, KeyEventArgs e)
+    /// <summary>
+    /// Get the first mapping for this message
+    /// </summary>
+    /// <param name="msg"></param>
+    /// <returns></returns>
+    public Mapping GetMapping(Message msg)
     {
-      if (GUIGraphicsContext.form != null && GUIGraphicsContext.form.Focused == false)
+      if (msg.Msg == Win32.Const.WM_INPUT)
       {
-        AppCommands appCommand = KeyCodeToAppCommand(e.KeyCode);
+        //Just ask our handler to process
+        var actions = _hidHandler.ProcessInput(msg, false);
 
-        if (appCommand != AppCommands.None)
+        if (actions != null && actions.Count > 0)
         {
-          int device = 0;
-          int keys = (((int)appCommand & ~0xF000) | (device & 0xF000));
-          int lParam = (((keys) << 16) | (((int)e.KeyCode)));
-
-          // since the normal process involves geting polled via WndProc we have to get a tiny bit dirty 
-          // and send a message back to the main form in order to get the key press handled without 
-          // duplicating action mapping code from the main app
-          SendMessage(GUIGraphicsContext.form.Handle, 0x0319, (uint)GUIGraphicsContext.form.Handle, (uint)lParam);
+          var action = actions[0];
+          return new Mapping(action.Layer, action.Condition, action.ConProperty, action.Command, action.CmdProperty, action.CmdKeyChar, action.CmdKeyCode, action.Sound, action.Focus);
         }
       }
+      return null;
     }
 
-    private AppCommands KeyCodeToAppCommand(Keys keyCode)
+    /// <summary>
+    ///   Handle WM_INPUT messages.
+    /// </summary>
+    /// <param name="msg"></param>
+    /// <param name="action"></param>
+    /// <param name="key"></param>
+    /// <param name="keyCode"></param>
+    /// <returns></returns>
+    public bool WndProcInput(ref Message msg, out Action action, out char key, out Keys keyCode)
     {
-      switch (keyCode)
-      {
-        case Keys.MediaNextTrack:
-          return AppCommands.MediaNextTrack;
-        case Keys.MediaPlayPause:
-          return AppCommands.MediaPlayPause;
-        case Keys.MediaPreviousTrack:
-          return AppCommands.MediaPreviousTrack;
-        case Keys.MediaStop:
-          return AppCommands.MediaStop;
-        case Keys.VolumeDown:
-          return AppCommands.VolumeDown;
-        case Keys.VolumeMute:
-          return AppCommands.VolumeMute;
-        case Keys.VolumeUp:
-          return AppCommands.VolumeUp;
-      }
+      action = null;
+      key = (char) 0;
+      keyCode = Keys.A;
 
-      return AppCommands.None;
+      //Just ask our handler to process
+      _hidHandler.ProcessInput(msg);
+
+      return false;
     }
 
+    /// <summary>
+    /// </summary>
+    /// <param name="msg"></param>
+    /// <param name="action"></param>
+    /// <param name="key"></param>
+    /// <param name="keyCode"></param>
+    /// <returns></returns>
     public bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)
     {
       action = null;
-      key = (char)0;
+      key = (char) 0;
       keyCode = Keys.A;
 
-      if (controlEnabled)
+      if (!_controlEnabled)
       {
-        // we are only interested in WM_APPCOMMAND
-        if (msg.Msg != 0x0319)
-        {
-          return false;
-        }
-
-        AppCommands appCommand = (AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000);
-
-        // find out which request the MCE remote handled last
-        if ((appCommand == InputDevices.LastHidRequest) && (appCommand != AppCommands.VolumeDown) &&
-            (appCommand != AppCommands.VolumeUp))
-        {
-          if (Enum.IsDefined(typeof (AppCommands), InputDevices.LastHidRequest))
-          {
-            // possible that it is the same request mapped to an app command?
-            if (Environment.TickCount - InputDevices.LastHidRequestTick < 500)
-            {
-              return true;
-            }
-          }
-        }
-
-        InputDevices.LastHidRequest = appCommand;
-
-        if (logVerbose)
-        {
-          Log.Info("HID: Command: {0} - {1}", ((msg.LParam.ToInt32() >> 16) & ~0xF000),
-                   InputDevices.LastHidRequest.ToString());
-        }
-
-        if (!_inputHandler.MapAction((msg.LParam.ToInt32() >> 16) & ~0xF000))
-        {
-          return false;
-        }
-
-        msg.Result = new IntPtr(1);
-
-        return true;
+        return false;
       }
-      return false;
+      //We are only interested in WM_INPUT
+      switch (msg.Msg)
+      {
+        case Const.WM_INPUT:
+          return WndProcInput(ref msg, out action, out key, out keyCode);
+
+        default:
+          return false;
+      }
+    }
+
+    /// <summary>
+    /// Utility function for logging.
+    /// </summary>
+    /// <param name="format"></param>
+    /// <param name="arg"></param>
+    static public void LogInfo(string format, params object[] arg)
+    {
+      if (Verbose)
+      {
+        Log.Info(format, arg);
+      }
     }
   }
 }
