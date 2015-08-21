@@ -174,12 +174,7 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ByteParser.h" />
-    <ClInclude Include="ContainerDemuxer.h" />
-    <ClInclude Include="DefaultDemuxer.h" />
     <ClInclude Include="Demuxer.h" />
-    <ClInclude Include="MPUrlSourceSplitterOutputM2tsMuxerPin.h" />
-    <ClInclude Include="PacketDemuxer.h" />
-    <ClInclude Include="StandardDemuxer.h" />
     <ClInclude Include="DemuxerAudioHelper.h" />
     <ClInclude Include="DemuxerCollection.h" />
     <ClInclude Include="DemuxerUtils.h" />
@@ -210,12 +205,7 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ByteParser.cpp" />
-    <ClCompile Include="ContainerDemuxer.cpp" />
-    <ClCompile Include="DefaultDemuxer.cpp" />
     <ClCompile Include="Demuxer.cpp" />
-    <ClCompile Include="MPUrlSourceSplitterOutputM2tsMuxerPin.cpp" />
-    <ClCompile Include="PacketDemuxer.cpp" />
-    <ClCompile Include="StandardDemuxer.cpp" />
     <ClCompile Include="DemuxerAudioHelper.cpp" />
     <ClCompile Include="DemuxerCollection.cpp" />
     <ClCompile Include="DemuxerUtils.cpp" />

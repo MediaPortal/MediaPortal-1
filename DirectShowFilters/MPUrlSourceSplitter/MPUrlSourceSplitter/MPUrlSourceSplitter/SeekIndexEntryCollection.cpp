@@ -111,5 +111,5 @@ HRESULT CSeekIndexEntryCollection::FindSeekIndexEntry(int64_t timestamp, bool ba
 
 CSeekIndexEntry *CSeekIndexEntryCollection::Clone(CSeekIndexEntry *item)
 {
-  return item->Clone();
+  return NULL;
 }

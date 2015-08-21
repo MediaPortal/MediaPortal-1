@@ -78,6 +78,9 @@
     <ClInclude Include="StreamCollection.h">
       <Filter>Demuxers\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Demuxer.h">
+      <Filter>Demuxers\Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="DemuxerCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -106,24 +109,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OutputPinMetadataBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StandardDemuxer.h">
-      <Filter>Demuxers\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Demuxer.h">
-      <Filter>Demuxers\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DefaultDemuxer.h">
-      <Filter>Demuxers\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ContainerDemuxer.h">
-      <Filter>Demuxers\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PacketDemuxer.h">
-      <Filter>Demuxers\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MPUrlSourceSplitterOutputM2tsMuxerPin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -182,6 +167,9 @@
     <ClCompile Include="StreamCollection.cpp">
       <Filter>Demuxers\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Demuxer.cpp">
+      <Filter>Demuxers\Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="DemuxerCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -207,24 +195,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OutputPinMetadataBox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StandardDemuxer.cpp">
-      <Filter>Demuxers\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DefaultDemuxer.cpp">
-      <Filter>Demuxers\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Demuxer.cpp">
-      <Filter>Demuxers\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ContainerDemuxer.cpp">
-      <Filter>Demuxers\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PacketDemuxer.cpp">
-      <Filter>Demuxers\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MPUrlSourceSplitterOutputM2tsMuxerPin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

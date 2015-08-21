@@ -52,10 +52,6 @@ public:
 
   /* other methods */
 
-  // deeply clones current instance
-  // @return : deep clone of current instance or NULL if error
-  CStreamInfo *Clone(void);
-
 protected:
 
   // holds media types for stream

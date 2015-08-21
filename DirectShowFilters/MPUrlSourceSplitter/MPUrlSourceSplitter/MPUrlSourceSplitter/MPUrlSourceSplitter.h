@@ -69,7 +69,6 @@ const GUID GUID_MP_URL_SOURCE_SPLITTER    = { 0x59ED045A, 0xA938, 0x4A09, 0xA8, 
 #define MP_URL_SOURCE_SPLITTER_FLAG_CORRECTED_TIMESTAMP               (1 << (FLAGS_LAST + 11))
 #define MP_URL_SOURCE_SPLITTER_FLAG_ALL_PINS_END_OF_STREAM            (1 << (FLAGS_LAST + 12))
 #define MP_URL_SOURCE_SPLITTER_FLAG_STREAM_OPENED                     (1 << (FLAGS_LAST + 13))
-#define MP_URL_SOURCE_SPLITTER_FLAG_MUXING                            (1 << (FLAGS_LAST + 14))
 
 class CMPUrlSourceSplitter 
   : public CBaseFilter

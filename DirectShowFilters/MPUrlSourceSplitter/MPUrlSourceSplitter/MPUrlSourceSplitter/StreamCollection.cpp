@@ -33,5 +33,5 @@ CStreamCollection::~CStreamCollection(void)
 
 CStream *CStreamCollection::Clone(CStream *item)
 {
-  return item->Clone();
+  return NULL;
 }

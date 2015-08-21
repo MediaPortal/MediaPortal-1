@@ -63,14 +63,6 @@ public:
   // @return : seek index entry collection
   CSeekIndexEntryCollection *GetSeekIndexEntries(void);
 
-  // gets AV format context
-  // @return : AV format context
-  AVFormatContext *GetAVFormatContext(void);
-
-  // gets AV stream
-  // @return : AV stream
-  AVStream *GetAVStream(void);
-
   /* set methods */
 
   // sets stream PID in demuxer
@@ -98,19 +90,15 @@ public:
 
   // creates stream info
   // @return : S_OK if successful, error code otherwise
-  HRESULT CreateStreamInfo(AVFormatContext *formatContext, AVStream *stream, const wchar_t *containerFormat);
+  HRESULT CreateStreamInfo(void);
 
-  // deeply clones current instance
-  // @return : deep clone of current instance or NULL if error
-  CStream *Clone(void);
+  // creates stream info
+  // @return : S_OK if successful, error code otherwise
+  HRESULT CreateStreamInfo(AVFormatContext *formatContext, AVStream *stream, const wchar_t *containerFormat);
 
 protected:
   // holds stream info
   CStreamInfo *streamInfo;
-
-  // holds format context and stream - only reference !!!
-  AVFormatContext *formatContext;
-  AVStream *stream;
 
   unsigned int pid;
 
