@@ -25,9 +25,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
       IQueryable<AnalogTunerSettings> includeRelations =
         query.
-          Include(s => s.SoftwareEncoderVideo);
-          // TODO this causes an exception at GenericRepository.AttachEntityIfChangeTrackingDisabled().objectSet.Attach() if IdSoftwareEncoderVideo == IdSoftwareEncoderAudio
-          //Include(s => s.SoftwareEncoderAudio);
+          Include(s => s.VideoEncoder).
+          Include(s => s.AudioEncoder);
       return includeRelations;
     }
   }

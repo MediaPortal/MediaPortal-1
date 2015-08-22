@@ -24,7 +24,7 @@ using System.Runtime.InteropServices.ComTypes;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Common.Types.Enum;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
@@ -87,6 +87,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     private IRegisterServiceProvider _registerServiceProvider = null;
     private BroadcastEventService _broadcastEventService = null;
     private int _broadcastEventRegistrationCookie = -1;
+
+    // TsWriter configuration.
+    private int _tsWriterInputDumpMask = 0;
+    private bool _tsWriterDisableCrcChecking = false;
 
     #endregion
 
@@ -226,6 +230,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       this.LogDebug("DirectShow base: add TS writer/analyser filter");
       _filterTsWriter = ComHelper.LoadComObjectFromFile("TsWriter.ax", typeof(MediaPortalTsWriter).GUID, typeof(IBaseFilter).GUID, true) as IBaseFilter;
       FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterTsWriter, "MediaPortal TS Analyser", upstreamFilter);
+      ApplyTsWriterConfig();
+    }
+
+    private void ApplyTsWriterConfig()
+    {
+      ITsWriter tsWriter = _filterTsWriter as ITsWriter;
+      if (tsWriter != null)
+      {
+        tsWriter.DumpInput((_tsWriterInputDumpMask & 1) != 0, (_tsWriterInputDumpMask & 2) != 0);
+        tsWriter.CheckSectionCrcs(!_tsWriterDisableCrcChecking);
+      }
     }
 
     #region events
@@ -420,20 +435,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// <summary>
     /// Reload the tuner's configuration.
     /// </summary>
-    public override void ReloadConfiguration()
+    /// <param name="configuration">The tuner's configuration.</param>
+    public override void ReloadConfiguration(Tuner configuration)
     {
-      base.ReloadConfiguration();
-
       this.LogDebug("DirectShow base: reload configuration");
-      // TODO apply these settings to TsWriter here
-      if (SettingsManagement.GetValue("tsWriterDisableCrcCheck", false))
-      {
-        this.LogDebug("DirectShow base: disable TsWriter CRC checking");
-      }
-      if (SettingsManagement.GetValue("tsWriterDumpInputs", false))
-      {
-        this.LogDebug("DirectShow base: enable TsWriter input dumping");
-      }
+      _tsWriterInputDumpMask = configuration.TsWriterInputDumpMask;
+      _tsWriterDisableCrcChecking = configuration.DisableTsWriterCrcChecking;
+
+      this.LogDebug("  TsWriter input dump mask = 0x{0:x}", _tsWriterInputDumpMask);
+      this.LogDebug("  TsWriter CRC check?      = {0}", !_tsWriterDisableCrcChecking);
+
+      ApplyTsWriterConfig();
     }
 
     #endregion

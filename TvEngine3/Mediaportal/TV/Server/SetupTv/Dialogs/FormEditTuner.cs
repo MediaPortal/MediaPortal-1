@@ -50,6 +50,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
     }
 
+    private const string ENCODER_NAME_AUTOMATIC = "Automatic";
+
     private Tuner _tuner;
     private IList<MPCheckBox> _supportedBroadcastStandardCheckBoxes = null;
     private AnalogTunerSettings _analogSettings = null;
@@ -182,13 +184,15 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       {
         comboBoxPidFilterMode.Items.AddRange(typeof(PidFilterMode).GetDescriptions());
         comboBoxPidFilterMode.SelectedItem = ((PidFilterMode)_tuner.PidFilterMode).GetDescription();
+
+        checkBoxTsMuxerDumpInputs.Enabled = false;
       }
 
       checkBoxUseCustomTuning.Checked = _tuner.UseCustomTuning;
 
-      checkBoxTsWriterDumpInputs.Checked = _tuner.DumpTsWriterInputs != 0;
-      checkBoxTsMuxerDumpInputs.Checked = _tuner.DumpTsMuxerInputs != 0;
+      checkBoxTsWriterDumpInputs.Checked = _tuner.TsWriterInputDumpMask != 0;
       checkBoxTsWriterDisableCrcCheck.Checked = _tuner.DisableTsWriterCrcChecking;
+      checkBoxTsMuxerDumpInputs.Checked = _tuner.TsMuxerInputDumpMask != 0;
 
       // conditional access tab
       checkBoxUseConditionalAccess.Checked = _tuner.UseConditionalAccess;
@@ -212,21 +216,25 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
 
       _analogSettings = ServiceAgents.Instance.TunerServiceAgent.GetAnalogTunerSettings(_tuner.IdTuner);
-      if (_analogSettings == null || _analogSettings.SupportedVideoStandards == 0 || _analogSettings.SupportedFrameSizes == 0 || _analogSettings.SupportedFrameRates == 0)
+      if (_analogSettings == null)
       {
-        // Tuner not previously loaded.
-        ServiceAgents.Instance.ControllerServiceAgent.SupportsQualityControl(_tuner.IdTuner);
-        _analogSettings = ServiceAgents.Instance.TunerServiceAgent.GetAnalogTunerSettings(_tuner.IdTuner);
+        // This should not happen!
+        this.LogWarn("tuner: failed to load analog settings");
+        tabPageAnalog.Dispose();
+        tabPageExternalInput.Dispose();
+        return;
       }
       DebugAnalogTunerSettings(_analogSettings);
 
       comboBoxSoftwareEncoderAudio.BeginUpdate();
       try
       {
-        foreach (SoftwareEncoder encoder in ServiceAgents.Instance.TunerServiceAgent.ListAvailableSoftwareEncodersAudio())
+        comboBoxSoftwareEncoderAudio.Items.Add(new AudioEncoder { Name = ENCODER_NAME_AUTOMATIC });
+        comboBoxSoftwareEncoderAudio.SelectedIndex = 0;
+        foreach (AudioEncoder encoder in ServiceAgents.Instance.TunerServiceAgent.ListAvailableSoftwareEncodersAudio())
         {
           comboBoxSoftwareEncoderAudio.Items.Add(encoder);
-          if (encoder.IdSoftwareEncoder == _analogSettings.IdSoftwareEncoderAudio)
+          if (encoder.IdAudioEncoder == _analogSettings.IdAudioEncoder)
           {
             comboBoxSoftwareEncoderAudio.SelectedItem = encoder;
           }
@@ -291,10 +299,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       comboBoxSoftwareEncoderVideo.BeginUpdate();
       try
       {
-        foreach (SoftwareEncoder encoder in ServiceAgents.Instance.TunerServiceAgent.ListAvailableSoftwareEncodersVideo())
+        comboBoxSoftwareEncoderVideo.Items.Add(new VideoEncoder { Name = ENCODER_NAME_AUTOMATIC });
+        comboBoxSoftwareEncoderVideo.SelectedIndex = 0;
+        foreach (VideoEncoder encoder in ServiceAgents.Instance.TunerServiceAgent.ListAvailableSoftwareEncodersVideo())
         {
           comboBoxSoftwareEncoderVideo.Items.Add(encoder);
-          if (encoder.IdSoftwareEncoder == _analogSettings.IdSoftwareEncoderVideo)
+          if (encoder.IdVideoEncoder == _analogSettings.IdVideoEncoder)
           {
             comboBoxSoftwareEncoderVideo.SelectedItem = encoder;
           }
@@ -362,9 +372,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       _tuner.UseCustomTuning = checkBoxUseCustomTuning.Checked;
 
-      _tuner.DumpTsWriterInputs = checkBoxTsWriterDumpInputs.Checked ? 3 : 0;   // 3 = flags; bit 0 = TS input, bit 1 = OOB SI
-      _tuner.DumpTsMuxerInputs = checkBoxTsMuxerDumpInputs.Checked ? -1 : 0;
+      _tuner.TsWriterInputDumpMask = checkBoxTsWriterDumpInputs.Checked ? 3 : 0;    // bit 0 = TS input, bit 1 = OOB SI
       _tuner.DisableTsWriterCrcChecking = checkBoxTsWriterDisableCrcCheck.Checked;
+      if (checkBoxTsMuxerDumpInputs.Enabled)
+      {
+        _tuner.TsMuxerInputDumpMask = checkBoxTsMuxerDumpInputs.Checked ? -1 : 0;   // -1 = 0xffffffff = all inputs
+      }
 
       // conditional access tab
       _tuner.UseConditionalAccess = checkBoxUseConditionalAccess.Checked;
@@ -421,9 +434,25 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       if (comboBoxSoftwareEncoderVideo.Enabled)
       {
-        _analogSettings.IdSoftwareEncoderVideo = ((SoftwareEncoder)comboBoxSoftwareEncoderVideo.SelectedItem).IdSoftwareEncoder;
+        VideoEncoder videoEncoder = (VideoEncoder)comboBoxSoftwareEncoderVideo.SelectedItem;
+        if (string.Equals(videoEncoder.Name, ENCODER_NAME_AUTOMATIC))
+        {
+          _analogSettings.IdVideoEncoder = null;
+        }
+        else
+        {
+          _analogSettings.IdVideoEncoder = videoEncoder.IdVideoEncoder;
+        }
       }
-      _analogSettings.IdSoftwareEncoderAudio = ((SoftwareEncoder)comboBoxSoftwareEncoderAudio.SelectedItem).IdSoftwareEncoder;
+      AudioEncoder audioEncoder = (AudioEncoder)comboBoxSoftwareEncoderAudio.SelectedItem;
+      if (string.Equals(audioEncoder.Name, ENCODER_NAME_AUTOMATIC))
+      {
+        _analogSettings.IdAudioEncoder = null;
+      }
+      else
+      {
+        _analogSettings.IdAudioEncoder = audioEncoder.IdAudioEncoder;
+      }
 
       if (groupBoxEncoderBitRate.Enabled)
       {
@@ -461,9 +490,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.LogDebug("  video standard   = {0} ({1})", (AnalogVideoStandard)settings.VideoStandard, (AnalogVideoStandard)settings.SupportedVideoStandards);
       this.LogDebug("  frame size       = {0} ({1})", (FrameSize)settings.FrameSize, (FrameSize)settings.SupportedFrameSizes);
       this.LogDebug("  frame rate       = {0} ({1})", (FrameRate)settings.FrameRate, (FrameRate)settings.SupportedFrameRates);
-      this.LogDebug("  software encoders...");
-      this.LogDebug("    video ID       = {0}", settings.IdSoftwareEncoderVideo);
-      this.LogDebug("    audio ID       = {0}", settings.IdSoftwareEncoderAudio);
+      this.LogDebug("  encoders...");
+      this.LogDebug("    video ID       = {0}", settings.IdVideoEncoder ?? 0);
+      this.LogDebug("    audio ID       = {0}", settings.IdAudioEncoder ?? 0);
       this.LogDebug("  encoder timeshifting...");
       this.LogDebug("    mode           = {0}", (EncoderBitRateMode)settings.EncoderBitRateModeTimeShifting);
       this.LogDebug("    bit rate       = {0} %", settings.EncoderBitRateTimeShifting);

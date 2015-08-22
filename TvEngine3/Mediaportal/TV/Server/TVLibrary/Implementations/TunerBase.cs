@@ -793,50 +793,54 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     #endregion
 
+    #region configuration
+
     /// <summary>
     /// Reload the tuner's configuration.
     /// </summary>
-    public virtual void ReloadConfiguration()
+    public void ReloadConfiguration()
     {
       this.LogDebug("tuner base: reload configuration");
+
+      Tuner config = null;
       if (ExternalId != null)
       {
-        Tuner t = TunerManagement.GetTunerByExternalId(ExternalId, TunerIncludeRelationEnum.None);
-        if (t != null)
+        config = TunerManagement.GetTunerByExternalId(ExternalId, TunerIncludeRelationEnum.AnalogTunerSettings | TunerIncludeRelationEnum.TunerProperties);
+        if (config != null)
         {
-          this.LogDebug("  ID                  = {0}", t.IdTuner);
-          this.LogDebug("  name                = {0}", t.Name);
-          this.LogDebug("  external ID         = {0}", t.ExternalId);
-          this.LogDebug("  standards           = {0}", (BroadcastStandard)t.SupportedBroadcastStandards);
-          this.LogDebug("  tuner group ID      = {0}", t.IdTunerGroup == null ? "[null]" : t.IdTunerGroup.ToString());
-          this.LogDebug("  enabled?            = {0}", t.IsEnabled);
-          this.LogDebug("  priority            = {0}", t.Priority);
-          this.LogDebug("  EPG grabbing?       = {0}", t.UseForEpgGrabbing);
-          this.LogDebug("  preload?            = {0}", t.Preload);
-          this.LogDebug("  conditional access? = {0}", t.UseConditionalAccess);
-          this.LogDebug("    providers         = {0}", t.ConditionalAccessProviders);
-          this.LogDebug("    CAM type          = {0}", (CamType)t.CamType);
-          this.LogDebug("    decrypt limit     = {0}", t.DecryptLimit);
-          this.LogDebug("    MCD mode          = {0}", (MultiChannelDecryptMode)t.MultiChannelDecryptMode);
-          this.LogDebug("  idle mode           = {0}", (TunerIdleMode)t.IdleMode);
-          this.LogDebug("  PID filter mode     = {0}", (PidFilterMode)t.PidFilterMode);
-          this.LogDebug("  custom tuning?      = {0}", t.UseCustomTuning);
+          this.LogDebug("  ID                  = {0}", config.IdTuner);
+          this.LogDebug("  name                = {0}", config.Name);
+          this.LogDebug("  external ID         = {0}", config.ExternalId);
+          this.LogDebug("  standards           = {0}", (BroadcastStandard)config.SupportedBroadcastStandards);
+          this.LogDebug("  tuner group ID      = {0}", config.IdTunerGroup == null ? "[null]" : config.IdTunerGroup.ToString());
+          this.LogDebug("  enabled?            = {0}", config.IsEnabled);
+          this.LogDebug("  priority            = {0}", config.Priority);
+          this.LogDebug("  EPG grabbing?       = {0}", config.UseForEpgGrabbing);
+          this.LogDebug("  preload?            = {0}", config.Preload);
+          this.LogDebug("  conditional access? = {0}", config.UseConditionalAccess);
+          this.LogDebug("    providers         = {0}", config.ConditionalAccessProviders);
+          this.LogDebug("    CAM type          = {0}", (CamType)config.CamType);
+          this.LogDebug("    decrypt limit     = {0}", config.DecryptLimit);
+          this.LogDebug("    MCD mode          = {0}", (MultiChannelDecryptMode)config.MultiChannelDecryptMode);
+          this.LogDebug("  idle mode           = {0}", (TunerIdleMode)config.IdleMode);
+          this.LogDebug("  PID filter mode     = {0}", (PidFilterMode)config.PidFilterMode);
+          this.LogDebug("  custom tuning?      = {0}", config.UseCustomTuning);
 
-          _tunerId = t.IdTuner;
-          _name = t.Name;
-          _isEnabled = t.IsEnabled;
-          _idleMode = (TunerIdleMode)t.IdleMode;
-          _pidFilterMode = (PidFilterMode)t.PidFilterMode;
-          _useCustomTuning = t.UseCustomTuning;
+          _tunerId = config.IdTuner;
+          _name = config.Name;
+          _isEnabled = config.IsEnabled;
+          _idleMode = (TunerIdleMode)config.IdleMode;
+          _pidFilterMode = (PidFilterMode)config.PidFilterMode;
+          _useCustomTuning = config.UseCustomTuning;
 
-          BroadcastStandard configuredStandards = (BroadcastStandard)t.SupportedBroadcastStandards;
+          BroadcastStandard configuredStandards = (BroadcastStandard)config.SupportedBroadcastStandards;
           BroadcastStandard impossibleStandards = configuredStandards & ~PossibleBroadcastStandards;
           if (impossibleStandards != BroadcastStandard.Unknown)
           {
             this.LogWarn("tuner base: configuration attempts to enable support for broadcast standard(s) not supported by code, impossible standards = [{0}]", impossibleStandards);
             configuredStandards &= PossibleBroadcastStandards;
-            t.SupportedBroadcastStandards = (int)configuredStandards;
-            TunerManagement.SaveTuner(t);
+            config.SupportedBroadcastStandards = (int)configuredStandards;
+            TunerManagement.SaveTuner(config);
           }
           if (configuredStandards != SupportedBroadcastStandards)
           {
@@ -846,15 +850,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             _supportedBroadcastStandards = configuredStandards;
           }
 
-          if (_useForEpgGrabbing && !t.UseForEpgGrabbing && InternalEpgGrabberInterface != null && InternalEpgGrabberInterface.IsGrabbing)
+          if (_useForEpgGrabbing && !config.UseForEpgGrabbing && InternalEpgGrabberInterface != null && InternalEpgGrabberInterface.IsGrabbing)
           {
             this.LogDebug("tuner base: EPG grabbing disabled, cancelling grab");
             InternalEpgGrabberInterface.AbortGrabbing();
           }
-          _useForEpgGrabbing = t.UseForEpgGrabbing;
+          _useForEpgGrabbing = config.UseForEpgGrabbing;
 
           // Conditional access...
-          if (!_useConditionalAccessInterface && t.UseConditionalAccess && _state != TunerState.NotLoaded && _caProviders.Count == 0)
+          if (!_useConditionalAccessInterface && config.UseConditionalAccess && _state != TunerState.NotLoaded && _caProviders.Count == 0)
           {
             this.LogDebug("tuner base: conditional access enabled, opening provider(s)");
             _isConditionalAccessTableRequired = false;
@@ -876,16 +880,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
               }
             }
           }
-          _useConditionalAccessInterface = t.UseConditionalAccess;
-          foreach (string provider in t.ConditionalAccessProviders.Split(','))
+          _useConditionalAccessInterface = config.UseConditionalAccess;
+          foreach (string provider in config.ConditionalAccessProviders.Split(','))
           {
             _conditionalAccessProviders.Add(provider.Trim());
           }
-          _camType = (CamType)t.CamType;
-          _decryptLimit = t.DecryptLimit;
-          _multiChannelDecryptMode = (MultiChannelDecryptMode)t.MultiChannelDecryptMode;
+          _camType = (CamType)config.CamType;
+          _decryptLimit = config.DecryptLimit;
+          _multiChannelDecryptMode = (MultiChannelDecryptMode)config.MultiChannelDecryptMode;
 
-          if (_state == TunerState.NotLoaded && t.Preload)
+          if (_state == TunerState.NotLoaded && config.Preload)
           {
             Load();
           }
@@ -907,7 +911,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         _diseqcController.ReloadConfiguration();
       }
+
+      ReloadConfiguration(config);
     }
+
+    /// <summary>
+    /// Reload the tuner's configuration.
+    /// </summary>
+    /// <param name="configuration">The tuner's configuration.</param>
+    public abstract void ReloadConfiguration(TVDatabase.Entities.Tuner configuration);
+
+    #endregion
 
     /// <summary>
     /// Get a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.

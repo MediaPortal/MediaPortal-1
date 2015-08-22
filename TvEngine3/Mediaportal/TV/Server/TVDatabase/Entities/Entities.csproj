@@ -70,6 +70,12 @@
       <SubType>
       </SubType>
     </Compile>
+    <Compile Include="AudioEncoder.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
+    <Compile Include="AudioEncoderPartial.cs" />
     <Compile Include="CanceledSchedule.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
@@ -103,7 +109,7 @@
       <SubType>
       </SubType>
     </Compile>
-    <Compile Include="SoftwareEncoderPartial.cs" />
+    <Compile Include="VideoEncoderPartial.cs" />
     <Compile Include="TuningDetailPartial.cs" />
     <Compile Include="SatellitePartial.cs" />
     <Compile Include="Enums\ScheduleIncludeRelationEnum.cs" />
@@ -226,11 +232,6 @@
       <SubType>
       </SubType>
     </Compile>
-    <Compile Include="SoftwareEncoder.cs">
-      <DependentUpon>Model.tt</DependentUpon>
-      <SubType>
-      </SubType>
-    </Compile>
     <Compile Include="Tuner.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
@@ -258,6 +259,11 @@
       </SubType>
     </Compile>
     <Compile Include="Version.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
+    <Compile Include="VideoEncoder.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
       </SubType>

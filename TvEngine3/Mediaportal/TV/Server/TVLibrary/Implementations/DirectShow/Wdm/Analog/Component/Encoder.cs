@@ -21,7 +21,6 @@
 using System;
 using System.Collections.Generic;
 using DirectShowLib;
-using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
@@ -150,10 +149,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// </summary>
     private IBaseFilter _filterVbiSplitter = null;
 
+    #region settings
+
+    /// <summary>
+    /// The preferred software video encoder.
+    /// </summary>
+    private VideoEncoder _encoderVideo = null;
+
+    /// <summary>
+    /// The preferred software audio encoder.
+    /// </summary>
+    private AudioEncoder _encoderAudio = null;
+
     /// <summary>
     /// A binary mask specifying which (if any) TsMuxer inputs to dump.
     /// </summary>
     private int _tsMuxerInputDumpMask = 0;
+
+    #endregion
 
     #endregion
 
@@ -209,57 +222,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
 
     #endregion
 
-    #region configure
+    #region configuration
 
     /// <summary>
     /// Reload the component's configuration.
     /// </summary>
-    /// <param name="newSettings">The tuner's settings.</param>
-    public void ReloadConfiguration(AnalogTunerSettings newSettings)
+    /// <param name="configuration">The tuner's configuration.</param>
+    public void ReloadConfiguration(TVDatabase.Entities.Tuner configuration)
     {
       this.LogDebug("WDM analog encoder: reload configuration");
 
-      // TsMuxer debugging.
-      // TODO make this a per-tuner setting
-      int mask = 0;
-      if (SettingsManagement.GetValue("tsMuxerDumpInputs", false))
-      {
-        this.LogDebug("WDM analog encoder: enable TsMuxer input dumping");
-        unchecked
-        {
-          mask = (int)0xffffffff;
-        }
-      }
-      if (mask != _tsMuxerInputDumpMask)
-      {
-        ITsMultiplexer multiplexer = _filterTsMultiplexer as ITsMultiplexer;
-        if (multiplexer != null)
-        {
-          multiplexer.DumpInput(mask);
-        }
-        _tsMuxerInputDumpMask = mask;
-      }
+      _encoderVideo = configuration.AnalogTunerSettings.VideoEncoder;
+      _encoderAudio = configuration.AnalogTunerSettings.AudioEncoder;
+      _tsMuxerInputDumpMask = configuration.TsWriterInputDumpMask;
 
-      // Set encoder defaults.
-      if (newSettings.IdSoftwareEncoderVideo < 1 || newSettings.IdSoftwareEncoderAudio < 1)
-      {
-        IList<SoftwareEncoder> softwareEncoders = SoftwareEncoderManagement.ListAllSofwareEncodersVideo();
-        foreach (SoftwareEncoder encoder in softwareEncoders)
-        {
-          if (string.IsNullOrEmpty(encoder.ClassId))    // automatic
-          {
-            if (newSettings.IdSoftwareEncoderVideo < 1)
-            {
-              newSettings.IdSoftwareEncoderVideo = encoder.IdSoftwareEncoder;
-            }
-            if (newSettings.IdSoftwareEncoderAudio < 1)
-            {
-              newSettings.IdSoftwareEncoderAudio = encoder.IdSoftwareEncoder;
-            }
-            break;
-          }
-        }
-      }
+      this.LogDebug("  software video encoder  = {0}", _encoderVideo == null ? "[auto]" : string.Format("{0} ({1})", _encoderVideo.Name, _encoderVideo.ClassId));
+      this.LogDebug("  software audio encoder  = {0}", _encoderAudio == null ? "[auto]" : string.Format("{0} ({1})", _encoderAudio.Name, _encoderAudio.ClassId));
+      this.LogDebug("  TsMuxer input dump mask = 0x{0:x}", _tsMuxerInputDumpMask);
+
+      ApplyTsMuxerConfig();
     }
 
     #endregion
@@ -286,8 +267,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <param name="graph">The tuner's DirectShow graph.</param>
     /// <param name="productInstanceId">A common identifier shared by the tuner's components.</param>
     /// <param name="capture">The capture component.</param>
-    /// <param name="settings">The tuner's settings.</param>
-    public virtual void PerformLoading(IFilterGraph2 graph, string productInstanceId, Capture capture, AnalogTunerSettings settings)
+    public void PerformLoading(IFilterGraph2 graph, string productInstanceId, Capture capture)
     {
       this.LogDebug("WDM analog encoder: perform loading");
       IList<IPin> pinsToConnect = new List<IPin>();
@@ -400,7 +380,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           if (capture.VideoFilter != null)
           {
             this.LogDebug("WDM analog encoder: connect capture video output");
-            AddAndConnectEncoder(graph, true, videoPin, isVideoPinCapture, productInstanceId, settings, out _filterEncoderVideo, out _deviceEncoderVideo, out isCyberLinkEncoder);
+            AddAndConnectEncoder(graph, true, videoPin, isVideoPinCapture, productInstanceId, out _filterEncoderVideo, out _deviceEncoderVideo, out isCyberLinkEncoder);
             if (_filterEncoderVideo != null)
             {
               if (_deviceEncoderVideo == null)
@@ -429,7 +409,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           if (_filterEncoderAudio == null && capture.AudioFilter != null)
           {
             this.LogDebug("WDM analog encoder: connect capture audio output");
-            AddAndConnectEncoder(graph, false, audioPin, isAudioPinCapture, productInstanceId, settings, out _filterEncoderAudio, out _deviceEncoderAudio, out isCyberLinkEncoder);
+            AddAndConnectEncoder(graph, false, audioPin, isAudioPinCapture, productInstanceId, out _filterEncoderAudio, out _deviceEncoderAudio, out isCyberLinkEncoder);
             if (_filterEncoderAudio != null && capture.VideoFilter == capture.AudioFilter && _deviceEncoderVideo == null)
             {
               // If we have a shared video and audio capture, software video
@@ -442,7 +422,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
                 capture.SetAudioCapture(_filterEncoderAudio, _deviceEncoderAudio);
                 _filterEncoderAudio = null;
                 _deviceEncoderAudio = null;
-                AddAndConnectEncoder(graph, false, audioPin, isAudioPinCapture, productInstanceId, settings, out _filterEncoderAudio, out _deviceEncoderAudio, out isCyberLinkEncoder);
+                AddAndConnectEncoder(graph, false, audioPin, isAudioPinCapture, productInstanceId, out _filterEncoderAudio, out _deviceEncoderAudio, out isCyberLinkEncoder);
               }
             }
           }
@@ -761,7 +741,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       }
     }
 
-    private void AddAndConnectEncoder(IFilterGraph2 graph, bool isVideo, IPin pin, bool isCapturePin, string productInstanceId, AnalogTunerSettings settings, out IBaseFilter filter, out DsDevice device, out bool isCyberLink)
+    private void AddAndConnectEncoder(IFilterGraph2 graph, bool isVideo, IPin pin, bool isCapturePin, string productInstanceId, out IBaseFilter filter, out DsDevice device, out bool isCyberLink)
     {
       filter = null;
       device = null;
@@ -781,59 +761,69 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       {
         this.LogDebug("WDM analog encoder:   software encoder required");
 
-        IList<SoftwareEncoder> softwareEncoders;
+        System.Collections.IEnumerable softwareEncoders;
         bool isPreferredEncoder = false;
         if (isVideo)
         {
-          if (settings.SoftwareEncoderVideo == null || string.IsNullOrEmpty(settings.SoftwareEncoderVideo.ClassId))
+          if (_encoderVideo == null)
           {
             softwareEncoders = SoftwareEncoderManagement.ListAllSofwareEncodersVideo();
           }
           else
           {
-            softwareEncoders = new List<SoftwareEncoder> { settings.SoftwareEncoderVideo };
+            softwareEncoders = new List<VideoEncoder> { _encoderVideo };
             isPreferredEncoder = true;
           }
         }
         else
         {
-          if (settings.SoftwareEncoderAudio == null || string.IsNullOrEmpty(settings.SoftwareEncoderAudio.ClassId))
+          if (_encoderAudio == null)
           {
             softwareEncoders = SoftwareEncoderManagement.ListAllSofwareEncodersAudio();
           }
           else
           {
-            softwareEncoders = new List<SoftwareEncoder> { settings.SoftwareEncoderAudio };
+            softwareEncoders = new List<AudioEncoder> { _encoderAudio };
             isPreferredEncoder = true;
           }
         }
 
-        foreach (SoftwareEncoder encoder in softwareEncoders)
+        string name;
+        string classId;
+        foreach (var encoder in softwareEncoders)
         {
-          if (!string.IsNullOrEmpty(encoder.ClassId))
+          name = encoder.ToString();
+          if (isVideo)
           {
-            bool success = false;
-            try
+            VideoEncoder videoEncoder = encoder as VideoEncoder;
+            classId = videoEncoder.ClassId;
+          }
+          else
+          {
+            AudioEncoder audioEncoder = encoder as AudioEncoder;
+            classId = audioEncoder.ClassId;
+          }
+          bool success = false;
+          try
+          {
+            this.LogDebug("WDM analog encoder:     try {0}, CLSID = {1}", name, classId);
+            filter = FilterGraphTools.AddFilterFromRegisteredClsid(graph, new Guid(classId), string.Format("{0} {1}", name, isVideo ? "Video" : "Audio"));
+            if (FilterGraphTools.ConnectFilterWithPin(graph, pin, PinDirection.Output, filter))
             {
-              this.LogDebug("WDM analog encoder:     try {0}, CLSID = {1}", encoder.Name, encoder.ClassId);
-              filter = FilterGraphTools.AddFilterFromRegisteredClsid(graph, new Guid(encoder.ClassId), string.Format("{0} {1}", encoder.Name, (SoftwareEncoderType)encoder.Type));
-              if (FilterGraphTools.ConnectFilterWithPin(graph, pin, PinDirection.Output, filter))
-              {
-                success = true;
-                isCyberLink = encoder.Name.ToLowerInvariant().Contains("cyberlink");
-                return;
-              }
+              success = true;
+              isCyberLink = name.ToLowerInvariant().Contains("cyberlink");
+              return;
             }
-            catch
+          }
+          catch
+          {
+          }
+          finally
+          {
+            if (!success && filter != null)
             {
-            }
-            finally
-            {
-              if (!success && filter != null)
-              {
-                graph.RemoveFilter(filter);
-                Release.ComObject("WDM analog encoder software encoder candidate", ref filter);
-              }
+              graph.RemoveFilter(filter);
+              Release.ComObject("WDM analog encoder software encoder candidate", ref filter);
             }
           }
         }
@@ -1021,9 +1011,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         }
       }
 
-      ITsMultiplexer multiplexer = _filterTsMultiplexer as ITsMultiplexer;
-      multiplexer.DumpInput(_tsMuxerInputDumpMask);
+      ApplyTsMuxerConfig();
       return true;
+    }
+
+    private void ApplyTsMuxerConfig()
+    {
+      ITsMultiplexer tsMuxer = _filterTsMultiplexer as ITsMultiplexer;
+      if (tsMuxer != null)
+      {
+        tsMuxer.DumpInput(_tsMuxerInputDumpMask);
+      }
     }
 
     #endregion

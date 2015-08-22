@@ -20,7 +20,7 @@
 
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
-  public partial class SoftwareEncoder
+  public partial class VideoEncoder
   {
     public override string ToString()
     {

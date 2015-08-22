@@ -22,17 +22,14 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
-using Mediaportal.TV.Server.Common.Types.Country;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils;
-using MediaPortal.Common.Utils.ExtensionMethods;
 using TveAnalogVideoStandard = Mediaportal.TV.Server.Common.Types.Enum.AnalogVideoStandard;
 using TveMediaType = Mediaportal.TV.Server.Common.Types.Enum.MediaType;
 using WdmAnalogVideoStandard = DirectShowLib.AnalogVideoStandard;
@@ -107,16 +104,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// </summary>
     private IAMStreamConfig _interfaceStreamConfiguration = null;
 
-    /// <summary>
-    /// The current analog video settings and their limits.
-    /// </summary>
-    private AnalogTunerSettings _currentVideoSettings = new AnalogTunerSettings();
+    // Current setting values.
+    private TveAnalogVideoStandard _currentVideoStandard = TveAnalogVideoStandard.None;
+    private FrameSize _currentFrameSize = FrameSize.Automatic;
+    private FrameRate _currentFrameRate = FrameRate.Automatic;
+
+    // Supported values for settings.
+    private TveAnalogVideoStandard _supportedVideoStandards = TveAnalogVideoStandard.None;
+    private FrameSize _supportedFrameSizes = FrameSize.Automatic;
+    private FrameRate _supportedFrameRates = FrameRate.Automatic;
 
     /// <summary>
     /// A map containing the supported video processing amplifier and camera
     /// control properties, their current and default values, and their limits.
     /// </summary>
     private Dictionary<VideoOrCameraProperty, TunerProperty> _currentVideoOrCameraPropertySettings = new Dictionary<VideoOrCameraProperty, TunerProperty>();
+
+    /// <summary>
+    /// Configuration cache.
+    /// </summary>
+    private TVDatabase.Entities.Tuner _configuration = null;
 
     #endregion
 
@@ -141,6 +148,61 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       get
       {
         return _filterAudio;
+      }
+    }
+
+    /// <summary>
+    /// Get the the capture device's current video standard.
+    /// </summary>
+    public TveAnalogVideoStandard CurrentVideoStandard
+    {
+      get
+      {
+        return _currentVideoStandard;
+      }
+    }
+
+    /// <summary>
+    /// Get the video standards supported by the capture device.
+    /// </summary>
+    public TveAnalogVideoStandard SupportedVideoStandards
+    {
+      get
+      {
+        return _supportedVideoStandards;
+      }
+    }
+
+    /// <summary>
+    /// Get the video frame sizes supported by the capture device.
+    /// </summary>
+    public FrameSize SupportedFrameSizes
+    {
+      get
+      {
+        return _supportedFrameSizes;
+      }
+    }
+
+    /// <summary>
+    /// Get the video frame rates supported by the capture device.
+    /// </summary>
+    public FrameRate SupportedFrameRates
+    {
+      get
+      {
+        return _supportedFrameRates;
+      }
+    }
+
+    /// <summary>
+    /// Get the properties supported by the capture device.
+    /// </summary>
+    public IEnumerable<TunerProperty> SupportedProperties
+    {
+      get
+      {
+        return _currentVideoOrCameraPropertySettings.Values;
       }
     }
 
@@ -172,8 +234,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <param name="graph">The tuner's DirectShow graph.</param>
     /// <param name="productInstanceId">A common identifier shared by the tuner's components.</param>
     /// <param name="crossbar">The crossbar component.</param>
-    /// <param name="settings">The tuner's settings.</param>
-    public void PerformLoading(IFilterGraph2 graph, string productInstanceId, Crossbar crossbar, AnalogTunerSettings settings)
+    public void PerformLoading(IFilterGraph2 graph, string productInstanceId, Crossbar crossbar)
     {
       if (_deviceMain != null)
       {
@@ -381,6 +442,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       {
         this.LogWarn("WDM analog capture: failed to find stream configuration interface");
       }
+
+      // For some hardware, configuration has to be set before the encoder is connected.
+      ReloadConfiguration(_configuration);
     }
 
     #region check capabilities
@@ -405,25 +469,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       int hr = analogVideoDecoder.get_AvailableTVFormats(out videoStandard);
       if (hr != (int)NativeMethods.HResult.S_OK)
       {
-        _currentVideoSettings.SupportedVideoStandards = (int)TveAnalogVideoStandard.None;
+        _supportedVideoStandards = TveAnalogVideoStandard.None;
         this.LogWarn("WDM analog capture: failed to get supported video standards, hr = 0x{0:x}", hr);
       }
       else
       {
         this.LogDebug("WDM analog capture: supported video standards = {0}", videoStandard);
-        _currentVideoSettings.SupportedVideoStandards = (int)GetTveVideoStandards(videoStandard);
+        _supportedVideoStandards = GetTveVideoStandards(videoStandard);
       }
 
       hr = analogVideoDecoder.get_TVFormat(out videoStandard);
       if (hr != (int)NativeMethods.HResult.S_OK)
       {
-        _currentVideoSettings.VideoStandard = (int)TveAnalogVideoStandard.None;
+        _currentVideoStandard = TveAnalogVideoStandard.None;
         this.LogWarn("WDM analog capture: failed to get current video standard, hr = 0x{0:x}", hr);
       }
       else
       {
         this.LogDebug("WDM analog capture: current video standard = {0}", videoStandard);
-        _currentVideoSettings.VideoStandard = (int)GetTveVideoStandards(videoStandard);
+        _currentVideoStandard = GetTveVideoStandards(videoStandard);
       }
     }
 
@@ -462,9 +526,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
             GetTveFrameDetails(format, out frameSize, out frameRate);
             if (frameSize != FrameSize.Automatic || frameRate != FrameRate.Automatic)
             {
-              this.LogDebug("WDM analog capture: frame size = {0}, frame rate = {1}", frameSize, frameRate);
-              _currentVideoSettings.SupportedFrameSizes |= (int)frameSize;
-              _currentVideoSettings.SupportedFrameRates |= (int)frameRate;
+              this.LogDebug("WDM analog capture:   frame size = {0}, frame rate = {1}", frameSize, frameRate);
+              _supportedFrameSizes |= frameSize;
+              _supportedFrameRates |= frameRate;
             }
           }
           finally
@@ -484,8 +548,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       {
         GetTveFrameDetails(format, out frameSize, out frameRate);
         this.LogDebug("WDM analog capture: current stream configuration, frame size = {0}, frame rate = {1}, format = {2}", frameSize, frameRate, format.formatType);
-        _currentVideoSettings.FrameSize = (int)frameSize;
-        _currentVideoSettings.FrameRate = (int)frameRate;
+        _currentFrameSize = frameSize;
+        _currentFrameRate = frameRate;
       }
       finally
       {
@@ -533,16 +597,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       VideoProcAmpFlags flagsSupported = VideoProcAmpFlags.None;
       VideoProcAmpFlags flagsValue = VideoProcAmpFlags.None;
       int hr = (int)NativeMethods.HResult.S_OK;
+      this.LogDebug("WDM analog capture: video processing amplifier properties...");
       foreach (VideoProcAmpProperty property in System.Enum.GetValues(typeof(VideoProcAmpProperty)))
       {
         hr = videoProcAmp.GetRange(property, out valueMinimum, out valueMaximum, out steppingDelta, out valueDefault, out flagsSupported);
         if (hr != (int)NativeMethods.HResult.S_OK)
         {
-          this.LogDebug("WDM analog capture: video processing amplifier property {0} is not supported by the hardware", property);
+          this.LogDebug("WDM analog capture:   {0} is not supported by the hardware", property);
           continue;
         }
 
-        this.LogDebug("WDM analog capture: video processing amplifier property {0} is supported, min = {1}, max = {2}, step = {3}, default = {4}, flags = {5}", property, valueMinimum, valueMaximum, steppingDelta, valueDefault, flagsSupported);
+        this.LogDebug("WDM analog capture:   {0} is supported, min = {1}, max = {2}, step = {3}, default = {4}, flags = {5}", property, valueMinimum, valueMaximum, steppingDelta, valueDefault, flagsSupported);
         VideoOrCameraProperty? mpProperty = GetTveVideoOrCameraProperty(property);
         if (!mpProperty.HasValue)
         {
@@ -566,7 +631,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         }
         else
         {
-          this.LogDebug("WDM analog capture: current property value = {0}, flag = {1}", value, flagsValue);
+          this.LogDebug("WDM analog capture:     current value = {0}, flag = {1}", value, flagsValue);
         }
 
         _currentVideoOrCameraPropertySettings.Add(mpProperty.Value, new TunerProperty
@@ -608,16 +673,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       CameraControlFlags flagsSupported = CameraControlFlags.None;
       CameraControlFlags flagsValue = CameraControlFlags.None;
       int hr = (int)NativeMethods.HResult.S_OK;
+      this.LogDebug("WDM analog capture: camera control properties...");
       foreach (CameraControlProperty property in System.Enum.GetValues(typeof(CameraControlProperty)))
       {
         hr = cameraControl.GetRange(property, out valueMinimum, out valueMaximum, out steppingDelta, out valueDefault, out flagsSupported);
         if (hr != (int)NativeMethods.HResult.S_OK)
         {
-          this.LogDebug("WDM analog capture: camera control property {0} is not supported by the hardware", property);
+          this.LogDebug("WDM analog capture:   {0} is not supported by the hardware", property);
           continue;
         }
 
-        this.LogDebug("WDM analog capture: camera control property {0} is supported, min = {1}, max = {2}, step = {3}, default = {4}, flags = {5}", property, valueMinimum, valueMaximum, steppingDelta, valueDefault, flagsSupported);
+        this.LogDebug("WDM analog capture:   {0} is supported, min = {1}, max = {2}, step = {3}, default = {4}, flags = {5}", property, valueMinimum, valueMaximum, steppingDelta, valueDefault, flagsSupported);
         VideoOrCameraProperty? mpProperty = GetMpVideoOrCameraProperty(property);
         if (!mpProperty.HasValue)
         {
@@ -641,7 +707,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         }
         else
         {
-          this.LogDebug("WDM analog capture: current property value = {0}, flag = {1}", value, flagsValue);
+          this.LogDebug("WDM analog capture:     current value = {0}, flag = {1}", value, flagsValue);
         }
 
         _currentVideoOrCameraPropertySettings.Add(mpProperty.Value, new TunerProperty
@@ -660,174 +726,45 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
 
     #endregion
 
-    #region configure
+    #region configuration
 
     /// <summary>
     /// Reload the component's configuration.
     /// </summary>
-    /// <param name="newSettings">The tuner's settings.</param>
-    public void ReloadConfiguration(AnalogTunerSettings newSettings)
+    /// <param name="configuration">The tuner's configuration.</param>
+    public void ReloadConfiguration(TVDatabase.Entities.Tuner configuration)
     {
-      if (_filterVideo == null)
+      if (_configuration == null || _filterVideo == null)
       {
+        // Not loaded yet or video not supported.
+        _configuration = configuration;
         return;
       }
+
       this.LogDebug("WDM analog capture: reload configuration");
 
-      if (newSettings.VideoStandard != _currentVideoSettings.VideoStandard)
+      if (configuration.AnalogTunerSettings.VideoStandard != (int)_currentVideoStandard)
       {
-        ConfigureAnalogVideoDecoder((TveAnalogVideoStandard)newSettings.VideoStandard);
+        ConfigureAnalogVideoDecoder((TveAnalogVideoStandard)configuration.AnalogTunerSettings.VideoStandard);
       }
 
-      if (newSettings.FrameSize != _currentVideoSettings.FrameSize || newSettings.FrameRate != _currentVideoSettings.FrameRate)
+      if (configuration.AnalogTunerSettings.FrameSize != (int)_currentFrameSize ||
+        configuration.AnalogTunerSettings.FrameRate != (int)_currentFrameRate)
       {
-        ConfigureStream((FrameSize)newSettings.FrameSize, (FrameRate)newSettings.FrameRate);
+        ConfigureStream((FrameSize)configuration.AnalogTunerSettings.FrameSize, (FrameRate)configuration.AnalogTunerSettings.FrameRate);
       }
 
-      ICollection<TunerProperty> newProperties = TunerPropertyManagement.ListAllTunerPropertiesByTuner(newSettings.IdAnalogTunerSettings);
-      if (newProperties != null && newProperties.Count > 0)
+      if (configuration.TunerProperties != null && configuration.TunerProperties.Count > 0)
       {
-        ConfigureVideoProcessingAmplifier(newProperties);
-        ConfigureCameraControl(newProperties);
+        ConfigureVideoProcessingAmplifier(configuration.TunerProperties);
+        ConfigureCameraControl(configuration.TunerProperties);
       }
     }
 
-    public void OnGraphCompleted(AnalogTunerSettings newSettings)
+    public void OnGraphCompleted()
     {
-      // If the device doesn't support video or we already have video capabilities...
-      if (_filterVideo == null || newSettings.SupportedVideoStandards != 0 || newSettings.SupportedFrameSizes != 0 || newSettings.SupportedFrameRates != 0)
-      {
-        ReloadConfiguration(newSettings);
-        return;
-      }
-
-      this.LogDebug("WDM analog capture: first load, setting defaults");
-      TveAnalogVideoStandard currentVideoStandard = (TveAnalogVideoStandard)_currentVideoSettings.VideoStandard;
-      string countryName = System.Globalization.RegionInfo.CurrentRegion.EnglishName;
-      Country country = CountryCollection.Instance.GetCountryByName(countryName);
-      if (country == null)
-      {
-        this.LogWarn("WDM analog capture: failed to get details for country {0}, using defaults for current standard {1}", countryName ?? "[null]", currentVideoStandard);
-        newSettings.VideoStandard = _currentVideoSettings.VideoStandard;
-      }
-      else if (!((TveAnalogVideoStandard)_currentVideoSettings.SupportedVideoStandards).HasFlag(country.VideoStandard))
-      {
-        this.LogWarn("WDM analog capture: recognised country {0} but standard {1} not supported, using defaults for current standard {2}", countryName, country.VideoStandard, currentVideoStandard);
-        newSettings.VideoStandard = _currentVideoSettings.VideoStandard;
-      }
-      else
-      {
-        this.LogDebug("WDM analog capture: recognised country {0}, using {1} defaults", countryName, country.VideoStandard);
-        newSettings.VideoStandard = (int)country.VideoStandard;
-        currentVideoStandard = country.VideoStandard;
-      }
-      newSettings.SupportedVideoStandards = _currentVideoSettings.SupportedVideoStandards;
-
-      bool isNtscStandard = (
-        currentVideoStandard == TveAnalogVideoStandard.NtscM ||
-        currentVideoStandard == TveAnalogVideoStandard.NtscMj ||
-        currentVideoStandard == TveAnalogVideoStandard.Ntsc433 ||
-        currentVideoStandard == TveAnalogVideoStandard.PalM
-      );
-      FrameSize supportedFrameSizes = (FrameSize)_currentVideoSettings.SupportedFrameSizes;
-      FrameRate supportedFrameRates = (FrameRate)_currentVideoSettings.SupportedFrameRates;
-      if (supportedFrameSizes.HasFlag(FrameSize.Fs1920_1080) || supportedFrameSizes.HasFlag(FrameSize.Fs1280_720))
-      {
-        // Probably a capture device. Prefer high resolution.
-        if (supportedFrameSizes.HasFlag(FrameSize.Fs1920_1080))
-        {
-          newSettings.FrameSize = (int)FrameSize.Fs1920_1080;
-        }
-        else
-        {
-          newSettings.FrameSize = (int)FrameSize.Fs1280_720;
-        }
-        if (isNtscStandard)
-        {
-          if (supportedFrameRates.HasFlag(FrameRate.Fr60))
-          {
-            newSettings.FrameRate = (int)FrameRate.Fr60;
-          }
-          else if (supportedFrameRates.HasFlag(FrameRate.Fr59_94))
-          {
-            newSettings.FrameRate = (int)FrameRate.Fr59_94;
-          }
-          else if (supportedFrameRates.HasFlag(FrameRate.Fr30))
-          {
-            newSettings.FrameRate = (int)FrameRate.Fr30;
-          }
-          else if (supportedFrameRates.HasFlag(FrameRate.Fr29_97))
-          {
-            newSettings.FrameRate = (int)FrameRate.Fr29_97;
-          }
-          else
-          {
-            newSettings.FrameRate = GetMaxFlagValue(_currentVideoSettings.SupportedFrameRates);
-          }
-        }
-        else
-        {
-          if (supportedFrameRates.HasFlag(FrameRate.Fr50))
-          {
-            newSettings.FrameRate = (int)FrameRate.Fr50;
-          }
-          else if (supportedFrameRates.HasFlag(FrameRate.Fr25))
-          {
-            newSettings.FrameRate = (int)FrameRate.Fr25;
-          }
-          else
-          {
-            newSettings.FrameRate = GetMaxFlagValue(_currentVideoSettings.SupportedFrameRates);
-          }
-        }
-      }
-      else
-      {
-        if (isNtscStandard && supportedFrameSizes.HasFlag(FrameSize.Fs720_480))
-        {
-          newSettings.FrameSize = (int)FrameSize.Fs720_480;
-          if (supportedFrameRates.HasFlag(FrameRate.Fr29_97))
-          {
-            newSettings.FrameRate = (int)FrameRate.Fr29_97;
-          }
-          else
-          {
-            newSettings.FrameRate = GetMaxFlagValue(_currentVideoSettings.SupportedFrameRates);
-          }
-        }
-        else if (!isNtscStandard && supportedFrameSizes.HasFlag(FrameSize.Fs720_576))
-        {
-          newSettings.FrameSize = (int)FrameSize.Fs720_576;
-          if (supportedFrameRates.HasFlag(FrameRate.Fr25))
-          {
-            newSettings.FrameRate = (int)FrameRate.Fr25;
-          }
-          else
-          {
-            newSettings.FrameRate = GetMaxFlagValue(_currentVideoSettings.SupportedFrameRates);
-          }
-        }
-        else
-        {
-          newSettings.FrameSize = GetMaxFlagValue(_currentVideoSettings.SupportedFrameSizes);
-          newSettings.FrameRate = GetMaxFlagValue(_currentVideoSettings.SupportedFrameRates);
-        }
-      }
-      this.LogDebug("WDM analog capture: frame size = {0}, frame rate = {1}", (FrameSize)newSettings.FrameSize, (FrameRate)newSettings.FrameRate);
-      newSettings.SupportedFrameSizes = _currentVideoSettings.SupportedFrameSizes;
-      newSettings.SupportedFrameRates = _currentVideoSettings.SupportedFrameRates;
-      newSettings = AnalogTunerSettingsManagement.SaveAnalogTunerSettings(newSettings);
-
-      if (_currentVideoOrCameraPropertySettings.Count > 0)
-      {
-        foreach (TunerProperty p in _currentVideoOrCameraPropertySettings.Values)
-        {
-          p.IdTuner = newSettings.IdAnalogTunerSettings;
-        }
-        TunerPropertyManagement.SaveTunerProperties(_currentVideoOrCameraPropertySettings.Values);
-      }
-
-      ReloadConfiguration(newSettings);
+      // For some hardware, configuration has to be set after the encoder is connected.
+      ReloadConfiguration(_configuration);
     }
 
     /// <summary>
@@ -848,7 +785,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         return;
       }
 
-      if (!((TveAnalogVideoStandard)_currentVideoSettings.SupportedVideoStandards).HasFlag(videoStandard))
+      if (!_supportedVideoStandards.HasFlag(videoStandard))
       {
         this.LogWarn("WDM analog capture: requested video standard {0} is not supported", videoStandard);
         return;
@@ -862,7 +799,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       }
       else
       {
-        _currentVideoSettings.VideoStandard = (int)videoStandard;
+        _currentVideoStandard = videoStandard;
       }
     }
 
@@ -878,12 +815,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         return;
       }
 
-      if (!((FrameSize)_currentVideoSettings.SupportedFrameSizes).HasFlag(frameSize))
+      if (!_supportedFrameSizes.HasFlag(frameSize))
       {
         this.LogWarn("WDM analog capture: requested frame size {0} is not supported", frameSize);
         return;
       }
-      if (!((FrameRate)_currentVideoSettings.SupportedFrameRates).HasFlag(frameRate))
+      if (!_supportedFrameRates.HasFlag(frameRate))
       {
         this.LogWarn("WDM analog capture: requested frame rate {0} is not supported", frameRate);
         return;
@@ -986,8 +923,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           Marshal.StructureToPtr(formatStruct, format.formatPtr, false);
           hr = _interfaceStreamConfiguration.SetFormat(format);
           TvExceptionDirectShowError.Throw(hr, "Failed to set stream configuration format information, frame size = {0}, frame rate = {1}, format type = {2}.", frameSize, frameRate, format.formatType);
-          _currentVideoSettings.FrameSize = (int)frameSize;
-          _currentVideoSettings.FrameRate = (int)frameRate;
+          _currentFrameSize = frameSize;
+          _currentFrameRate = frameRate;
         }
       }
       catch (Exception ex)
@@ -1278,7 +1215,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     {
       this.LogDebug("WDM analog capture: perform unloading");
 
-      _currentVideoSettings = new AnalogTunerSettings();
+      _currentVideoStandard = TveAnalogVideoStandard.None;
+      _supportedVideoStandards = TveAnalogVideoStandard.None;
+      _currentFrameSize = FrameSize.Automatic;
+      _supportedFrameSizes = FrameSize.Automatic;
+      _currentFrameRate = FrameRate.Automatic;
+      _supportedFrameRates = FrameRate.Automatic;
       _currentVideoOrCameraPropertySettings.Clear();
 
       // The stream interface is found on an output pin, so we must release the
@@ -1329,21 +1271,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     }
 
     #region parameter translation
-
-    private static int GetMaxFlagValue(int flags)
-    {
-      if (flags < 2)
-      {
-        return flags;
-      }
-      int value = 1;
-      while (flags > 1)
-      {
-        flags >>= 1;
-        value <<= 1;
-      }
-      return value;
-    }
 
     private static WdmAnalogVideoStandard GetWdmVideoStandard(TveAnalogVideoStandard videoStandard)
     {

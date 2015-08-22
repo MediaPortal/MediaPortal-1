@@ -54,7 +54,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <summary>
     /// Reload the tuner's configuration.
     /// </summary>
-    void ReloadConfiguration();
+    /// <param name="configuration">The tuner's configuration.</param>
+    void ReloadConfiguration(TVDatabase.Entities.Tuner configuration);
 
     #endregion
 

@@ -27,14 +27,10 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -655,22 +651,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <summary>
     /// Reload the tuner's configuration.
     /// </summary>
-    public override void ReloadConfiguration()
+    /// <param name="configuration">The tuner's configuration.</param>
+    public override void ReloadConfiguration(Tuner configuration)
     {
-      base.ReloadConfiguration();
+      base.ReloadConfiguration(configuration);
 
       this.LogDebug("BDA base: reload configuration");
-      Tuner tuner = TunerManagement.GetTuner(TunerId, TunerIncludeRelationEnum.None);
-      this.LogDebug("  network provider = {0}", (BdaNetworkProvider)tuner.BdaNetworkProvider);
+      this.LogDebug("  network provider = {0}", (BdaNetworkProvider)configuration.BdaNetworkProvider);
 
       bool save = false;
       _networkProviderClsid = NetworkProviderClsid; // specific network provider
-      if (tuner.BdaNetworkProvider == (int)BdaNetworkProvider.MediaPortal)
+      if (configuration.BdaNetworkProvider == (int)BdaNetworkProvider.MediaPortal)
       {
         if (!File.Exists(PathManager.BuildAssemblyRelativePath("NetworkProvider.ax")))
         {
           this.LogWarn("BDA base: MediaPortal network provider is not available, try Microsoft generic network provider");
-          tuner.BdaNetworkProvider = (int)BdaNetworkProvider.Generic;
+          configuration.BdaNetworkProvider = (int)BdaNetworkProvider.Generic;
           save = true;
         }
         else
@@ -678,12 +674,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           _networkProviderClsid = typeof(MediaPortalNetworkProvider).GUID;
         }
       }
-      if (tuner.BdaNetworkProvider == (int)BdaNetworkProvider.Generic)
+      if (configuration.BdaNetworkProvider == (int)BdaNetworkProvider.Generic)
       {
         if (!FilterGraphTools.IsThisComObjectInstalled(typeof(NetworkProvider).GUID))
         {
           this.LogWarn("BDA base: Microsoft generic network provider is not available, try Microsoft specific network provider");
-          tuner.BdaNetworkProvider = (int)BdaNetworkProvider.Specific;
+          configuration.BdaNetworkProvider = (int)BdaNetworkProvider.Specific;
           save = true;
         }
         else
@@ -693,7 +689,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
       if (save)
       {
-        TunerManagement.SaveTuner(tuner);
+        TunerManagement.SaveTuner(configuration);
       }
     }
 

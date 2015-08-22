@@ -1,6 +1,7 @@
 ﻿
 using System.Collections.Generic;
 using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
@@ -109,10 +110,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     /// <summary>
     /// Reload the tuner's configuration.
     /// </summary>
-    public override void ReloadConfiguration()
+    /// <param name="configuration">The tuner's configuration.</param>
+    public override void ReloadConfiguration(Tuner configuration)
     {
-      base.ReloadConfiguration();
-      _dvbcTuner.ReloadConfiguration();
+      _dvbcTuner.ReloadConfiguration(configuration);
     }
 
     #endregion

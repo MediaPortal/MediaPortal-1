@@ -34,7 +34,6 @@ DROP TABLE IF EXISTS "Satellites";
 DROP TABLE IF EXISTS "Schedules";
 DROP TABLE IF EXISTS "ScheduleRulesTemplates";
 DROP TABLE IF EXISTS "Settings";
-DROP TABLE IF EXISTS "SoftwareEncoders";
 DROP TABLE IF EXISTS "TuningDetails";
 DROP TABLE IF EXISTS "Versions";
 DROP TABLE IF EXISTS "LnbTypes";
@@ -42,6 +41,8 @@ DROP TABLE IF EXISTS "RecordingCredits";
 DROP TABLE IF EXISTS "GuideCategories";
 DROP TABLE IF EXISTS "TunerProperties";
 DROP TABLE IF EXISTS "AnalogTunerSettings";
+DROP TABLE IF EXISTS "VideoEncoders";
+DROP TABLE IF EXISTS "AudioEncoders";
 
 -- ------------------------------------------------------------------------------
 -- Creating all tables
@@ -89,8 +90,8 @@ CREATE TABLE "Tuners"  (
     "PidFilterMode" int NOT NULL,
     "UseCustomTuning" bit NOT NULL,
     "IdTunerGroup" int NULL,
-    "DumpTsWriterInputs" int NOT NULL,
-    "DumpTsMuxerInputs" int NOT NULL,
+    "TsWriterInputDumpMask" int NOT NULL,
+    "TsMuxerInputDumpMask" int NOT NULL,
     "DisableTsWriterCrcChecking" bit NOT NULL,
     CONSTRAINT "FK_TunerGroupTuner" FOREIGN KEY ("IdTunerGroup")
     REFERENCES "TunerGroups" ("IdTunerGroup")
@@ -517,21 +518,6 @@ CREATE TRIGGER "Settings_autoincrement" AFTER INSERT ON "Settings"
     UPDATE Settings SET IdSetting = Id WHERE Id = NEW.Id; 
   END;
 
--- Table "SoftwareEncoders"
-CREATE TABLE "SoftwareEncoders"  ( 
-    "Id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    "IdSoftwareEncoder" int UNIQUE,
-    "Priority" int NOT NULL,
-    "Name" varchar(200) NOT NULL COLLATE NOCASE,
-    "Type" int NOT NULL,
-    "ClassId" varchar(50) NOT NULL COLLATE NOCASE
-);
-
-CREATE TRIGGER "SoftwareEncoders_autoincrement" AFTER INSERT ON "SoftwareEncoders"
-  FOR EACH ROW BEGIN
-    UPDATE SoftwareEncoders SET IdSoftwareEncoder = Id WHERE Id = NEW.Id; 
-  END;
-
 -- Table "TuningDetails"
 CREATE TABLE "TuningDetails"  ( 
     "Id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -683,8 +669,8 @@ CREATE TABLE "AnalogTunerSettings"(
     "SupportedFrameSizes" int NOT NULL,
     "FrameRate" int NOT NULL,
     "SupportedFrameRates" int NOT NULL,
-    "IdSoftwareEncoderVideo" int NOT NULL,
-    "IdSoftwareEncoderAudio" int NOT NULL,
+    "IdVideoEncoder" int NULL,
+    "IdAudioEncoder" int NULL,
     "EncoderBitRateModeTimeShifting" int NOT NULL,
     "EncoderBitRateTimeShifting" int NOT NULL,
     "EncoderBitRatePeakTimeShifting" int NOT NULL,
@@ -699,19 +685,49 @@ CREATE TABLE "AnalogTunerSettings"(
     "ExternalTunerProgramArguments" varchar(200) NOT NULL COLLATE NOCASE,
     "SupportedVideoSources" int NOT NULL,
     "SupportedAudioSources" int NOT NULL,
-    CONSTRAINT "FK_AnalogTunerSettingsSoftwareEncoderVideo" FOREIGN KEY ("IdSoftwareEncoderVideo")
-    REFERENCES "SoftwareEncoders" ("IdSoftwareEncoder"),
-    CONSTRAINT "FK_AnalogTunerSettingsSoftwareEncoderAudio" FOREIGN KEY ("IdSoftwareEncoderAudio")
-    REFERENCES "SoftwareEncoders" ("IdSoftwareEncoder"),
+    CONSTRAINT "FK_AnalogTunerSettingsVideoEncoder" FOREIGN KEY ("IdVideoEncoder")
+    REFERENCES "VideoEncoders" ("IdVideoEncoder"),
+    CONSTRAINT "FK_AnalogTunerSettingsAudioEncoder" FOREIGN KEY ("IdAudioEncoder")
+    REFERENCES "AudioEncoders" ("IdAudioEncoder"),
     CONSTRAINT "FK_TunerAnalogTunerSettings" FOREIGN KEY ("IdAnalogTunerSettings")
     REFERENCES "Tuners" ("IdTuner") ON DELETE CASCADE
 );
 
-CREATE INDEX Idx_AnalogTunerSettings_1 ON  "AnalogTunerSettings" (IdSoftwareEncoderVideo);
-CREATE INDEX Idx_AnalogTunerSettings_2 ON  "AnalogTunerSettings" (IdSoftwareEncoderAudio);
+CREATE INDEX Idx_AnalogTunerSettings_1 ON  "AnalogTunerSettings" (IdVideoEncoder);
+CREATE INDEX Idx_AnalogTunerSettings_2 ON  "AnalogTunerSettings" (IdAudioEncoder);
 
 /* mm1352000: IdAnalogTunerSettings is a foreign key to Tuner.IdTuner, so no trigger required.
 CREATE TRIGGER "AnalogTunerSettings_autoincrement" AFTER INSERT ON "AnalogTunerSettings"
   FOR EACH ROW BEGIN
     UPDATE AnalogTunerSettings SET IdAnalogTunerSettings = Id WHERE Id = NEW.Id; 
   END;*/
+
+-- Table "VideoEncoders"
+CREATE TABLE "VideoEncoders"  ( 
+    "Id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    "IdVideoEncoder" int UNIQUE,
+    "Priority" int NOT NULL,
+    "Name" varchar(200) NOT NULL COLLATE NOCASE,
+    "IsCombined" bit NOT NULL,
+    "ClassId" varchar(50) NOT NULL COLLATE NOCASE
+);
+
+CREATE TRIGGER "VideoEncoders_autoincrement" AFTER INSERT ON "VideoEncoders"
+  FOR EACH ROW BEGIN
+    UPDATE VideoEncoders SET IdVideoEncoder = Id WHERE Id = NEW.Id; 
+  END;
+
+-- Table "AudioEncoders"
+CREATE TABLE "AudioEncoders"  ( 
+    "Id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    "IdAudioEncoder" int UNIQUE,
+    "Priority" int NOT NULL,
+    "Name" varchar(200) NOT NULL COLLATE NOCASE,
+    "ClassId" varchar(50) NOT NULL COLLATE NOCASE
+);
+
+CREATE TRIGGER "AudioEncoders_autoincrement" AFTER INSERT ON "AudioEncoders"
+  FOR EACH ROW BEGIN
+    UPDATE AudioEncoders SET IdAudioEncoder = Id WHERE Id = NEW.Id; 
+  END;
+

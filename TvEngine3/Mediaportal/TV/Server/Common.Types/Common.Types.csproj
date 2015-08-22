@@ -68,7 +68,6 @@
     <Compile Include="Enum\CamType.cs" />
     <Compile Include="Enum\ContentAdvisory.cs" />
     <Compile Include="Enum\RecordingThumbnailQuality.cs" />
-    <Compile Include="Enum\SoftwareEncoderType.cs" />
     <Compile Include="Enum\FrameSize.cs" />
     <Compile Include="Enum\FrameRate.cs" />
     <Compile Include="Enum\VideoOrCameraPropertyFlag.cs" />

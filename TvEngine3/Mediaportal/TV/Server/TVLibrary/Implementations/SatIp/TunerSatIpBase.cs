@@ -26,6 +26,7 @@ using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
@@ -623,10 +624,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <summary>
     /// Reload the tuner's configuration.
     /// </summary>
-    public override void ReloadConfiguration()
+    /// <param name="configuration">The tuner's configuration.</param>
+    public override void ReloadConfiguration(Tuner configuration)
     {
-      base.ReloadConfiguration();
-      _streamTuner.ReloadConfiguration();
+      ITuner tuner = _streamTuner as ITuner;
+      if (tuner != null)
+      {
+        tuner.ReloadConfiguration();
+      }
+      else
+      {
+        _streamTuner.ReloadConfiguration(configuration);
+      }
     }
 
     #endregion

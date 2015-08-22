@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,13 +18,13 @@
 
 #endregion
 
-namespace Mediaportal.TV.Server.Common.Types.Enum
+namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
-  public enum SoftwareEncoderType
+  public partial class AudioEncoder
   {
-    Automatic = 0,    // Try installed and compatible encoders in priority order.
-    Video,
-    Audio,
-    Combined
+    public override string ToString()
+    {
+      return Name;
+    }
   }
 }

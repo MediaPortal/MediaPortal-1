@@ -126,12 +126,12 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 
     #region software encoders
 
-    public IList<SoftwareEncoder> ListAvailableSoftwareEncodersVideo()
+    public IList<VideoEncoder> ListAvailableSoftwareEncodersVideo()
     {
       return _channel.ListAvailableSoftwareEncodersVideo();
     }
 
-    public IList<SoftwareEncoder> ListAvailableSoftwareEncodersAudio()
+    public IList<AudioEncoder> ListAvailableSoftwareEncodersAudio()
     {
       return _channel.ListAvailableSoftwareEncodersAudio();
     }

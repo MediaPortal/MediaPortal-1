@@ -356,34 +356,34 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private Nullable<int> _idTunerGroup;
     
         [DataMember]
-        public int DumpTsWriterInputs
+        public int TsWriterInputDumpMask
         {
-            get { return _dumpTsWriterInputs; }
+            get { return _tsWriterInputDumpMask; }
             set
             {
-                if (_dumpTsWriterInputs != value)
+                if (_tsWriterInputDumpMask != value)
                 {
-                    _dumpTsWriterInputs = value;
-                    OnPropertyChanged("DumpTsWriterInputs");
+                    _tsWriterInputDumpMask = value;
+                    OnPropertyChanged("TsWriterInputDumpMask");
                 }
             }
         }
-        private int _dumpTsWriterInputs;
+        private int _tsWriterInputDumpMask;
     
         [DataMember]
-        public int DumpTsMuxerInputs
+        public int TsMuxerInputDumpMask
         {
-            get { return _dumpTsMuxerInputs; }
+            get { return _tsMuxerInputDumpMask; }
             set
             {
-                if (_dumpTsMuxerInputs != value)
+                if (_tsMuxerInputDumpMask != value)
                 {
-                    _dumpTsMuxerInputs = value;
-                    OnPropertyChanged("DumpTsMuxerInputs");
+                    _tsMuxerInputDumpMask = value;
+                    OnPropertyChanged("TsMuxerInputDumpMask");
                 }
             }
         }
-        private int _dumpTsMuxerInputs;
+        private int _tsMuxerInputDumpMask;
     
         [DataMember]
         public bool DisableTsWriterCrcChecking

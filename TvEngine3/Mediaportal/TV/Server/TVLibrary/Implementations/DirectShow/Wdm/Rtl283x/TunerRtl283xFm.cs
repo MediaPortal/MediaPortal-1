@@ -286,8 +286,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     private bool _mainTunerDeviceInUse = false;
     private TsWriterWrapper _staTsWriter = null;
 
-    private AnalogTunerSettings _settings = null;
-
     // STA graph thread variables.
     private object _graphThreadLock = new object();
     private Thread _graphThread = null;
@@ -535,27 +533,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// <summary>
     /// Reload the tuner's configuration.
     /// </summary>
-    public override void ReloadConfiguration()
+    /// <param name="configuration">The tuner's configuration.</param>
+    public override void ReloadConfiguration(TVDatabase.Entities.Tuner configuration)
     {
-      base.ReloadConfiguration();
+      base.ReloadConfiguration(configuration);
 
-      bool isFirstLoad = false;
-      _settings = AnalogTunerSettingsManagement.GetAnalogTunerSettings(TunerId);
-      if (_settings == null)
+      if (configuration.AnalogTunerSettings == null)
       {
-        isFirstLoad = true;
-        _settings = new TVDatabase.Entities.AnalogTunerSettings();
-        _settings.IdAnalogTunerSettings = TunerId;
-        _settings.ExternalTunerProgram = string.Empty;
-        _settings.ExternalTunerProgramArguments = string.Empty;
+        AnalogTunerSettings settings = new TVDatabase.Entities.AnalogTunerSettings();
+        settings.IdAnalogTunerSettings = TunerId;
+        settings.IdVideoEncoder = null;
+        settings.IdAudioEncoder = null;
+        settings.ExternalTunerProgram = string.Empty;
+        settings.ExternalTunerProgramArguments = string.Empty;
+        settings.SupportedVideoSources = (int)CaptureSourceVideo.None;
+        settings.SupportedAudioSources = (int)CaptureSourceAudio.Tuner;
+        configuration.AnalogTunerSettings = AnalogTunerSettingsManagement.SaveAnalogTunerSettings(settings);
       }
       if (_encoder != null)
       {
-        _encoder.ReloadConfiguration(_settings);
-      }
-      if (isFirstLoad)
-      {
-        _settings = AnalogTunerSettingsManagement.SaveAnalogTunerSettings(_settings);
+        _encoder.ReloadConfiguration(configuration);
       }
     }
 
@@ -663,7 +660,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
       Capture capture = new Capture();
       capture.SetAudioCapture(_filterSource, null);
-      _encoder.PerformLoading(_graph, null, capture, _settings);
+      _encoder.PerformLoading(_graph, null, capture);
 
       // Check for and load extensions, adding any additional filters to the graph.
       IBaseFilter lastFilter = _encoder.TsMultiplexerFilter;

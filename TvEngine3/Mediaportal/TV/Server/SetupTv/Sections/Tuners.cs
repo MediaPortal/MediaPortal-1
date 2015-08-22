@@ -223,9 +223,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.LogDebug("  BDA network provider = {0}", (BdaNetworkProvider)tuner.BdaNetworkProvider);
       this.LogDebug("  PID filter mode      = {0}", (PidFilterMode)tuner.PidFilterMode);
       this.LogDebug("  custom tuning?       = {0}", tuner.UseCustomTuning);
-      this.LogDebug("  dump TsWriter inputs = {0}", tuner.DumpTsWriterInputs);
+      this.LogDebug("  TsWriter dump mask   = 0x{0:x}", tuner.TsWriterInputDumpMask);
       this.LogDebug("  TsWriter CRC check?  = {0}", !tuner.DisableTsWriterCrcChecking);
-      this.LogDebug("  dump TsMuxer inputs  = {0}", tuner.DumpTsMuxerInputs);
+      this.LogDebug("  TsMuxer dump mask    = 0x{0:x}", tuner.TsMuxerInputDumpMask);
     }
 
     private void listViewTuners_ItemChecked(object sender, ItemCheckedEventArgs e)

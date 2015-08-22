@@ -79,10 +79,10 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     #region software encoders
 
     [OperationContract]
-    IList<SoftwareEncoder> ListAvailableSoftwareEncodersVideo();
+    IList<VideoEncoder> ListAvailableSoftwareEncodersVideo();
 
     [OperationContract]
-    IList<SoftwareEncoder> ListAvailableSoftwareEncodersAudio();
+    IList<AudioEncoder> ListAvailableSoftwareEncodersAudio();
 
     #endregion
 

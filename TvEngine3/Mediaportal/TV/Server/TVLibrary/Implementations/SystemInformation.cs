@@ -62,13 +62,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       return availableBdaNetworkProviders;
     }
 
-    public static IList<SoftwareEncoder> ListAvailableSoftwareEncodersVideo()
+    public static IList<VideoEncoder> ListAvailableSoftwareEncodersVideo()
     {
-      IList<SoftwareEncoder> compatibleEncoders = SoftwareEncoderManagement.ListAllSofwareEncodersVideo();
-      IList<SoftwareEncoder> availableEncoders = new List<SoftwareEncoder>(compatibleEncoders.Count);
-      foreach (SoftwareEncoder encoder in compatibleEncoders)
+      IList<VideoEncoder> compatibleEncoders = SoftwareEncoderManagement.ListAllSofwareEncodersVideo();
+      IList<VideoEncoder> availableEncoders = new List<VideoEncoder>(compatibleEncoders.Count);
+      foreach (VideoEncoder encoder in compatibleEncoders)
       {
-        if (string.IsNullOrEmpty(encoder.ClassId) || FilterGraphTools.IsThisComObjectInstalled(new Guid(encoder.ClassId)))
+        if (FilterGraphTools.IsThisComObjectInstalled(new Guid(encoder.ClassId)))
         {
           availableEncoders.Add(encoder);
         }
@@ -76,13 +76,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       return availableEncoders;
     }
 
-    public static IList<SoftwareEncoder> ListAvailableSoftwareEncodersAudio()
+    public static IList<AudioEncoder> ListAvailableSoftwareEncodersAudio()
     {
-      IList<SoftwareEncoder> compatibleEncoders = SoftwareEncoderManagement.ListAllSofwareEncodersAudio();
-      IList<SoftwareEncoder> availableEncoders = new List<SoftwareEncoder>(compatibleEncoders.Count);
-      foreach (SoftwareEncoder encoder in compatibleEncoders)
+      IList<AudioEncoder> compatibleEncoders = SoftwareEncoderManagement.ListAllSofwareEncodersAudio();
+      IList<AudioEncoder> availableEncoders = new List<AudioEncoder>(compatibleEncoders.Count);
+      foreach (AudioEncoder encoder in compatibleEncoders)
       {
-        if (string.IsNullOrEmpty(encoder.ClassId) || FilterGraphTools.IsThisComObjectInstalled(new Guid(encoder.ClassId)))
+        if (FilterGraphTools.IsThisComObjectInstalled(new Guid(encoder.ClassId)))
         {
           availableEncoders.Add(encoder);
         }

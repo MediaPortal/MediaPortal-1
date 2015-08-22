@@ -25,6 +25,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service;
@@ -662,14 +663,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// <summary>
     /// Reload the tuner's configuration.
     /// </summary>
-    public override void ReloadConfiguration()
+    /// <param name="configuration">The tuner's configuration.</param>
+    public override void ReloadConfiguration(Tuner configuration)
     {
-      base.ReloadConfiguration();
-
       // Use the PMT time out as a limit on the program number query time.
       _programNumberTimeOut = SettingsManagement.GetValue("timeOutProgramMapTable", 5000);
 
-      _streamTuner.ReloadConfiguration();
+      ITuner tuner = _streamTuner as ITuner;
+      if (tuner != null)
+      {
+        tuner.ReloadConfiguration();
+      }
+      else
+      {
+        _streamTuner.ReloadConfiguration(configuration);
+      }
     }
 
     #endregion

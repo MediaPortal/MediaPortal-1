@@ -32,9 +32,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
           Include(t => t.DiseqcMotors).
           Include(t => t.TunerProperties).
           Include(t => t.AnalogTunerSettings).
-          Include(t => t.AnalogTunerSettings.SoftwareEncoderVideo);
-          // TODO this causes an exception at GenericRepository.AttachEntityIfChangeTrackingDisabled().objectSet.Attach() if IdSoftwareEncoderVideo == IdSoftwareEncoderAudio
-          //Include(t => t.AnalogTunerSettings.SoftwareEncoderAudio);
+          Include(t => t.AnalogTunerSettings.VideoEncoder).
+          Include(t => t.AnalogTunerSettings.AudioEncoder);
       ;
       return includeRelations;
     }
@@ -71,9 +70,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       if (analogTunerSettings)
       {
         query = query.Include(t => t.AnalogTunerSettings).
-                      Include(t => t.AnalogTunerSettings.SoftwareEncoderVideo);
-                      // TODO this causes an exception at GenericRepository.AttachEntityIfChangeTrackingDisabled().objectSet.Attach() if IdSoftwareEncoderVideo == IdSoftwareEncoderAudio
-                      //Include(t => t.AnalogTunerSettings.SoftwareEncoderAudio);
+                      Include(t => t.AnalogTunerSettings.VideoEncoder).
+                      Include(t => t.AnalogTunerSettings.AudioEncoder);
       }
       return query;
     }

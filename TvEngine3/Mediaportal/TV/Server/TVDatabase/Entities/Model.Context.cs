@@ -203,12 +203,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         }
         private ObjectSet<Setting> _settings;
     
-        public ObjectSet<SoftwareEncoder> SoftwareEncoders
-        {
-            get { return _softwareEncoders  ?? (_softwareEncoders = CreateObjectSet<SoftwareEncoder>("SoftwareEncoders")); }
-        }
-        private ObjectSet<SoftwareEncoder> _softwareEncoders;
-    
         public ObjectSet<TuningDetail> TuningDetails
         {
             get { return _tuningDetails  ?? (_tuningDetails = CreateObjectSet<TuningDetail>("TuningDetails")); }
@@ -250,6 +244,18 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             get { return _analogTunerSettings  ?? (_analogTunerSettings = CreateObjectSet<AnalogTunerSettings>("AnalogTunerSettings")); }
         }
         private ObjectSet<AnalogTunerSettings> _analogTunerSettings;
+    
+        public ObjectSet<VideoEncoder> VideoEncoders
+        {
+          get { return _videoEncoders ?? (_videoEncoders = CreateObjectSet<VideoEncoder>("VideoEncoders")); }
+        }
+        private ObjectSet<VideoEncoder> _videoEncoders;
+    
+        public ObjectSet<AudioEncoder> AudioEncoders
+        {
+          get { return _audioEncoders ?? (_audioEncoders = CreateObjectSet<AudioEncoder>("AudioEncoders")); }
+        }
+        private ObjectSet<AudioEncoder> _audioEncoders;
 
         #endregion
     }

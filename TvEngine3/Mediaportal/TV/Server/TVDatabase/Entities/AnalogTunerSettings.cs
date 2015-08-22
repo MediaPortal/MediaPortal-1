@@ -18,8 +18,9 @@ using System.Runtime.Serialization;
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
     [DataContract(IsReference = true)]
-    [KnownType(typeof(SoftwareEncoder))]
     [KnownType(typeof(Tuner))]
+    [KnownType(typeof(VideoEncoder))]
+    [KnownType(typeof(AudioEncoder))]
     public partial class AnalogTunerSettings: IObjectWithChangeTracker, INotifyPropertyChanged
     {
         #region Primitive Properties
@@ -141,50 +142,50 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _supportedFrameRates;
     
         [DataMember]
-        public int IdSoftwareEncoderVideo
+        public Nullable<int> IdVideoEncoder
         {
-            get { return _idSoftwareEncoderVideo; }
+            get { return _idVideoEncoder; }
             set
             {
-                if (_idSoftwareEncoderVideo != value)
+                if (_idVideoEncoder != value)
                 {
-                    ChangeTracker.RecordOriginalValue("IdSoftwareEncoderVideo", _idSoftwareEncoderVideo);
+                    ChangeTracker.RecordOriginalValue("IdVideoEncoder", _idVideoEncoder);
                     if (!IsDeserializing)
                     {
-                        if (SoftwareEncoderVideo != null && SoftwareEncoderVideo.IdSoftwareEncoder != value)
+                        if (VideoEncoder != null && VideoEncoder.IdVideoEncoder != value)
                         {
-                            SoftwareEncoderVideo = null;
+                            VideoEncoder = null;
                         }
                     }
-                    _idSoftwareEncoderVideo = value;
-                    OnPropertyChanged("IdSoftwareEncoderVideo");
+                    _idVideoEncoder = value;
+                    OnPropertyChanged("IdVideoEncoder");
                 }
             }
         }
-        private int _idSoftwareEncoderVideo;
+        private Nullable<int> _idVideoEncoder;
     
         [DataMember]
-        public int IdSoftwareEncoderAudio
+        public Nullable<int> IdAudioEncoder
         {
-            get { return _idSoftwareEncoderAudio; }
+            get { return _idAudioEncoder; }
             set
             {
-                if (_idSoftwareEncoderAudio != value)
+                if (_idAudioEncoder != value)
                 {
-                    ChangeTracker.RecordOriginalValue("IdSoftwareEncoderAudio", _idSoftwareEncoderAudio);
+                    ChangeTracker.RecordOriginalValue("IdAudioEncoder", _idAudioEncoder);
                     if (!IsDeserializing)
                     {
-                        if (SoftwareEncoderAudio != null && SoftwareEncoderAudio.IdSoftwareEncoder != value)
+                        if (AudioEncoder != null && AudioEncoder.IdAudioEncoder != value)
                         {
-                            SoftwareEncoderAudio = null;
+                            AudioEncoder = null;
                         }
                     }
-                    _idSoftwareEncoderAudio = value;
-                    OnPropertyChanged("IdSoftwareEncoderAudio");
+                    _idAudioEncoder = value;
+                    OnPropertyChanged("IdAudioEncoder");
                 }
             }
         }
-        private int _idSoftwareEncoderAudio;
+        private Nullable<int> _idAudioEncoder;
     
         [DataMember]
         public int EncoderBitRateModeTimeShifting
@@ -400,40 +401,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Navigation Properties
     
         [DataMember]
-        public SoftwareEncoder SoftwareEncoderVideo
-        {
-            get { return _softwareEncoderVideo; }
-            set
-            {
-                if (!ReferenceEquals(_softwareEncoderVideo, value))
-                {
-                    var previousValue = _softwareEncoderVideo;
-                    _softwareEncoderVideo = value;
-                    FixupSoftwareEncoderVideo(previousValue);
-                    OnNavigationPropertyChanged("SoftwareEncoderVideo");
-                }
-            }
-        }
-        private SoftwareEncoder _softwareEncoderVideo;
-    
-        [DataMember]
-        public SoftwareEncoder SoftwareEncoderAudio
-        {
-            get { return _softwareEncoderAudio; }
-            set
-            {
-                if (!ReferenceEquals(_softwareEncoderAudio, value))
-                {
-                    var previousValue = _softwareEncoderAudio;
-                    _softwareEncoderAudio = value;
-                    FixupSoftwareEncoderAudio(previousValue);
-                    OnNavigationPropertyChanged("SoftwareEncoderAudio");
-                }
-            }
-        }
-        private SoftwareEncoder _softwareEncoderAudio;
-    
-        [DataMember]
         public Tuner Tuner
         {
             get { return _tuner; }
@@ -458,6 +425,40 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private Tuner _tuner;
+    
+        [DataMember]
+        public VideoEncoder VideoEncoder
+        {
+            get { return _videoEncoder; }
+            set
+            {
+                if (!ReferenceEquals(_videoEncoder, value))
+                {
+                    var previousValue = _videoEncoder;
+                    _videoEncoder = value;
+                    FixupVideoEncoder(previousValue);
+                    OnNavigationPropertyChanged("VideoEncoder");
+                }
+            }
+        }
+        private VideoEncoder _videoEncoder;
+    
+        [DataMember]
+        public AudioEncoder AudioEncoder
+        {
+            get { return _audioEncoder; }
+            set
+            {
+                if (!ReferenceEquals(_audioEncoder, value))
+                {
+                    var previousValue = _audioEncoder;
+                    _audioEncoder = value;
+                    FixupAudioEncoder(previousValue);
+                    OnNavigationPropertyChanged("AudioEncoder");
+                }
+            }
+        }
+        private AudioEncoder _audioEncoder;
 
         #endregion
         #region ChangeTracking
@@ -547,91 +548,13 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
         protected virtual void ClearNavigationProperties()
         {
-            SoftwareEncoderVideo = null;
-            SoftwareEncoderAudio = null;
             Tuner = null;
+            VideoEncoder = null;
+            AudioEncoder = null;
         }
 
         #endregion
         #region Association Fixup
-    
-        private void FixupSoftwareEncoderVideo(SoftwareEncoder previousValue)
-        {
-            if (IsDeserializing)
-            {
-                return;
-            }
-    
-            if (previousValue != null && previousValue.AnalogTunerSettingsVideo.Contains(this))
-            {
-                previousValue.AnalogTunerSettingsVideo.Remove(this);
-            }
-    
-            if (SoftwareEncoderVideo != null)
-            {
-                if (!SoftwareEncoderVideo.AnalogTunerSettingsVideo.Contains(this))
-                {
-                    SoftwareEncoderVideo.AnalogTunerSettingsVideo.Add(this);
-                }
-    
-                IdSoftwareEncoderVideo = SoftwareEncoderVideo.IdSoftwareEncoder;
-            }
-            if (ChangeTracker.ChangeTrackingEnabled)
-            {
-                if (ChangeTracker.OriginalValues.ContainsKey("SoftwareEncoderVideo")
-                    && (ChangeTracker.OriginalValues["SoftwareEncoderVideo"] == SoftwareEncoderVideo))
-                {
-                    ChangeTracker.OriginalValues.Remove("SoftwareEncoderVideo");
-                }
-                else
-                {
-                    ChangeTracker.RecordOriginalValue("SoftwareEncoderVideo", previousValue);
-                }
-                if (SoftwareEncoderVideo != null && !SoftwareEncoderVideo.ChangeTracker.ChangeTrackingEnabled)
-                {
-                    SoftwareEncoderVideo.StartTracking();
-                }
-            }
-        }
-    
-        private void FixupSoftwareEncoderAudio(SoftwareEncoder previousValue)
-        {
-            if (IsDeserializing)
-            {
-                return;
-            }
-    
-            if (previousValue != null && previousValue.AnalogTunerSettingsAudio.Contains(this))
-            {
-                previousValue.AnalogTunerSettingsAudio.Remove(this);
-            }
-    
-            if (SoftwareEncoderAudio != null)
-            {
-                if (!SoftwareEncoderAudio.AnalogTunerSettingsAudio.Contains(this))
-                {
-                    SoftwareEncoderAudio.AnalogTunerSettingsAudio.Add(this);
-                }
-    
-                IdSoftwareEncoderAudio = SoftwareEncoderAudio.IdSoftwareEncoder;
-            }
-            if (ChangeTracker.ChangeTrackingEnabled)
-            {
-                if (ChangeTracker.OriginalValues.ContainsKey("SoftwareEncoderAudio")
-                    && (ChangeTracker.OriginalValues["SoftwareEncoderAudio"] == SoftwareEncoderAudio))
-                {
-                    ChangeTracker.OriginalValues.Remove("SoftwareEncoderAudio");
-                }
-                else
-                {
-                    ChangeTracker.RecordOriginalValue("SoftwareEncoderAudio", previousValue);
-                }
-                if (SoftwareEncoderAudio != null && !SoftwareEncoderAudio.ChangeTracker.ChangeTrackingEnabled)
-                {
-                    SoftwareEncoderAudio.StartTracking();
-                }
-            }
-        }
     
         private void FixupTuner(Tuner previousValue)
         {
@@ -665,6 +588,94 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (Tuner != null && !Tuner.ChangeTracker.ChangeTrackingEnabled)
                 {
                     Tuner.StartTracking();
+                }
+            }
+        }
+    
+        private void FixupVideoEncoder(VideoEncoder previousValue, bool skipKeys = false)
+        {
+            if (IsDeserializing)
+            {
+                return;
+            }
+    
+            if (previousValue != null && previousValue.AnalogTunerSettings.Contains(this))
+            {
+                previousValue.AnalogTunerSettings.Remove(this);
+            }
+    
+            if (VideoEncoder != null)
+            {
+                if (!VideoEncoder.AnalogTunerSettings.Contains(this))
+                {
+                    VideoEncoder.AnalogTunerSettings.Add(this);
+                }
+    
+                IdVideoEncoder = VideoEncoder.IdVideoEncoder;
+            }
+            else if (!skipKeys)
+            {
+                IdVideoEncoder = null;
+            }
+    
+            if (ChangeTracker.ChangeTrackingEnabled)
+            {
+                if (ChangeTracker.OriginalValues.ContainsKey("VideoEncoder")
+                    && (ChangeTracker.OriginalValues["VideoEncoder"] == VideoEncoder))
+                {
+                    ChangeTracker.OriginalValues.Remove("VideoEncoder");
+                }
+                else
+                {
+                    ChangeTracker.RecordOriginalValue("VideoEncoder", previousValue);
+                }
+                if (VideoEncoder != null && !VideoEncoder.ChangeTracker.ChangeTrackingEnabled)
+                {
+                    VideoEncoder.StartTracking();
+                }
+            }
+        }
+    
+        private void FixupAudioEncoder(AudioEncoder previousValue, bool skipKeys = false)
+        {
+            if (IsDeserializing)
+            {
+                return;
+            }
+    
+            if (previousValue != null && previousValue.AnalogTunerSettings.Contains(this))
+            {
+                previousValue.AnalogTunerSettings.Remove(this);
+            }
+    
+            if (AudioEncoder != null)
+            {
+                if (!AudioEncoder.AnalogTunerSettings.Contains(this))
+                {
+                    AudioEncoder.AnalogTunerSettings.Add(this);
+                }
+    
+                IdAudioEncoder = AudioEncoder.IdAudioEncoder;
+            }
+            else if (!skipKeys)
+            {
+                IdAudioEncoder = null;
+            }
+    
+            if (ChangeTracker.ChangeTrackingEnabled)
+            {
+                if (ChangeTracker.OriginalValues.ContainsKey("AudioEncoder")
+                    && (ChangeTracker.OriginalValues["AudioEncoder"] == AudioEncoder))
+                {
+                    ChangeTracker.OriginalValues.Remove("AudioEncoder");
+                }
+                else
+                {
+                    ChangeTracker.RecordOriginalValue("AudioEncoder", previousValue);
+                }
+                if (AudioEncoder != null && !AudioEncoder.ChangeTracker.ChangeTrackingEnabled)
+                {
+                    AudioEncoder.StartTracking();
                 }
             }
         }

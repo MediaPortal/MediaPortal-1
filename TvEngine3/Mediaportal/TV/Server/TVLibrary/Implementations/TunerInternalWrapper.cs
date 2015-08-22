@@ -19,6 +19,7 @@
 #endregion
 
 using System.Collections.Generic;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
@@ -67,9 +68,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Reload the tuner's configuration.
     /// </summary>
-    public void ReloadConfiguration()
+    /// <param name="configuration">The tuner's configuration.</param>
+    public void ReloadConfiguration(Tuner configuration)
     {
-      _tuner.ReloadConfiguration();
+      _tuner.ReloadConfiguration(configuration);
     }
 
     #endregion

@@ -113,12 +113,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 
     #region software encoders
 
-    public IList<SoftwareEncoder> ListAvailableSoftwareEncodersVideo()
+    public IList<VideoEncoder> ListAvailableSoftwareEncodersVideo()
     {
       return SystemInformation.ListAvailableSoftwareEncodersVideo();
     }
 
-    public IList<SoftwareEncoder> ListAvailableSoftwareEncodersAudio()
+    public IList<AudioEncoder> ListAvailableSoftwareEncodersAudio()
     {
       return SystemInformation.ListAvailableSoftwareEncodersAudio();
     }

@@ -34,6 +34,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using MediaPortal.Common.Utils.ExtensionMethods;
+using AnalogVideoStandard = Mediaportal.TV.Server.Common.Types.Enum.AnalogVideoStandard;
 using MediaType = Mediaportal.TV.Server.Common.Types.Enum.MediaType;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
@@ -46,16 +47,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
   {
     #region variables
 
-    private Mediaportal.TV.Server.TVDatabase.Entities.AnalogTunerSettings _settings = null;
-
     private Tuner _tuner = null;
     private Crossbar _crossbar = null;
     private Capture _capture = null;
     private Encoder _encoder = null;
 
-    private IChannel _externalTunerChannel = null;
-    private string _externalTunerCommand = string.Empty;
-    private string _externalTunerCommandArguments = string.Empty;
+    // Current setting values.
+    private CaptureSourceVideo _externalInputSourceVideo;
+    private CaptureSourceAudio _externalInputSourceAudio;
+    private int _externalInputCountryId;
+    private short _externalInputPhysicalChannelNumber;
+    private string _externalTunerProgram = string.Empty;
+    private string _externalTunerProgramArguments = string.Empty;
 
     #endregion
 
@@ -167,18 +170,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       return channels;
     }
 
-    private void DebugSettings()
-    {
-      this.LogDebug("  external input...");
-      this.LogDebug("    video source   = {0} ({1})", (CaptureSourceVideo)_settings.ExternalInputSourceVideo, (CaptureSourceVideo)_settings.SupportedVideoSources);
-      this.LogDebug("    audio source   = {0} ({1})", (CaptureSourceAudio)_settings.ExternalInputSourceAudio, (CaptureSourceAudio)_settings.SupportedAudioSources);
-      this.LogDebug("    country        = {0}", _settings.ExternalInputCountryId);
-      this.LogDebug("    phys. channel  = {0}", _settings.ExternalInputPhysicalChannelNumber);
-      this.LogDebug("  external tuner...");
-      this.LogDebug("    program        = {0}", _settings.ExternalTunerProgram ?? string.Empty);
-      this.LogDebug("    program args   = {0}", _settings.ExternalTunerProgramArguments ?? string.Empty);
-    }
-
     #region ITunerInternal members
 
     #region configuration
@@ -186,53 +177,289 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     /// <summary>
     /// Reload the tuner's configuration.
     /// </summary>
-    public override void ReloadConfiguration()
+    /// <param name="configuration">The tuner's configuration.</param>
+    public override void ReloadConfiguration(TVDatabase.Entities.Tuner configuration)
     {
-      base.ReloadConfiguration();
+      base.ReloadConfiguration(configuration);
 
       this.LogDebug("WDM analog: reload configuration");
 
-      bool isFirstLoad = false;
-      _settings = AnalogTunerSettingsManagement.GetAnalogTunerSettings(TunerId);
-      if (_settings == null)
+      if (configuration.AnalogTunerSettings == null)
       {
-        isFirstLoad = true;
-        _settings = new TVDatabase.Entities.AnalogTunerSettings();
-        _settings.IdAnalogTunerSettings = TunerId;
-        _settings.ExternalTunerProgram = string.Empty;
-        _settings.ExternalTunerProgramArguments = string.Empty;
-
-        Country country = CountryCollection.Instance.GetCountryByName(RegionInfo.CurrentRegion.EnglishName);
-        if (country == null)
+        TVDatabase.Entities.AnalogTunerSettings settings;
+        IEnumerable<TVDatabase.Entities.TunerProperty> properties;
+        GetDefaultConfiguration(out settings, out properties);
+        configuration.AnalogTunerSettings = settings;
+        if (properties != null)
         {
-          country = CountryCollection.Instance.GetCountryByIsoCode("US");
+          foreach (var p in properties)
+          {
+            configuration.TunerProperties.Add(p);
+          }
         }
-        _settings.ExternalInputCountryId = country.Id;
-        _settings.ExternalInputPhysicalChannelNumber = 7;
+      }
 
-        // We'll fill in these details after loading.
-        _settings.ExternalInputSourceVideo = (int)CaptureSourceVideo.None;
-        _settings.ExternalInputSourceAudio = (int)CaptureSourceAudio.None;
-        _settings.SupportedVideoSources = (int)CaptureSourceVideo.None;
-        _settings.SupportedAudioSources = (int)CaptureSourceAudio.None;
-      }
-      else
-      {
-        DebugSettings();
-      }
+      _externalInputSourceVideo = (CaptureSourceVideo)configuration.AnalogTunerSettings.ExternalInputSourceVideo;
+      _externalInputSourceAudio = (CaptureSourceAudio)configuration.AnalogTunerSettings.ExternalInputSourceAudio;
+      _externalInputCountryId = configuration.AnalogTunerSettings.ExternalInputCountryId;
+      _externalInputPhysicalChannelNumber = (short)configuration.AnalogTunerSettings.ExternalInputPhysicalChannelNumber;
+      _externalTunerProgram = configuration.AnalogTunerSettings.ExternalTunerProgram;
+      _externalTunerProgramArguments = configuration.AnalogTunerSettings.ExternalTunerProgramArguments;
+
+      this.LogDebug("  external input...");
+      this.LogDebug("    video source  = {0} ({1})", _externalInputSourceVideo, (CaptureSourceVideo)configuration.AnalogTunerSettings.SupportedVideoSources);
+      this.LogDebug("    audio source  = {0} ({1})", _externalInputSourceAudio, (CaptureSourceAudio)configuration.AnalogTunerSettings.SupportedAudioSources);
+      this.LogDebug("    country       = {0}", _externalInputCountryId);
+      this.LogDebug("    phys. channel = {0}", _externalInputPhysicalChannelNumber);
+      this.LogDebug("  external tuner...");
+      this.LogDebug("    program       = {0}", _externalTunerProgram);
+      this.LogDebug("    program args  = {0}", _externalTunerProgramArguments);
 
       if (_capture != null)
       {
-        _capture.ReloadConfiguration(_settings);
+        _capture.ReloadConfiguration(configuration);
       }
       if (_encoder != null)
       {
-        _encoder.ReloadConfiguration(_settings);
+        _encoder.ReloadConfiguration(configuration);
       }
-      if (isFirstLoad)
+    }
+
+    /// <summary>
+    /// Get sensible default configuration based on country and hardware capabilities.
+    /// </summary>
+    private void GetDefaultConfiguration(out TVDatabase.Entities.AnalogTunerSettings settings, out IEnumerable<TVDatabase.Entities.TunerProperty> properties)
+    {
+      this.LogDebug("WDM analog: first detection, get default configuration");
+      settings = new TVDatabase.Entities.AnalogTunerSettings();
+      properties = null;
+
+      settings.IdAnalogTunerSettings = TunerId;
+      settings.IdVideoEncoder = null;
+      settings.IdAudioEncoder = null;
+      settings.ExternalTunerProgram = string.Empty;
+      settings.ExternalTunerProgramArguments = string.Empty;
+
+      string countryName = RegionInfo.CurrentRegion.EnglishName;
+      Country country = CountryCollection.Instance.GetCountryByName(countryName);
+      if (country == null)
       {
-        _settings = AnalogTunerSettingsManagement.SaveAnalogTunerSettings(_settings);
+        settings.ExternalInputCountryId = CountryCollection.Instance.GetCountryByIsoCode("US").Id;
       }
+      else
+      {
+        settings.ExternalInputCountryId = country.Id;
+      }
+      settings.ExternalInputPhysicalChannelNumber = 7;
+
+      // Minimal loading, enough to build configuration.
+      try
+      {
+        InitialiseGraph();
+        if (_crossbar != null)
+        {
+          _crossbar.PerformLoading(_graph);
+        }
+        _capture.PerformLoading(_graph, ProductInstanceId, _crossbar);
+        _encoder.PerformLoading(_graph, ProductInstanceId, _capture);
+      }
+      catch (TvExceptionNeedSoftwareEncoder)
+      {
+      }
+      catch (Exception ex)
+      {
+        this.LogWarn(ex, "WDM analog: minimal loading failed, defaults may be inaccurate");
+      }
+
+      try
+      {
+        if (_crossbar != null)
+        {
+          CaptureSourceVideo videoSources = _crossbar.SupportedVideoSources;
+          foreach (CaptureSourceVideo videoSource in System.Enum.GetValues(typeof(CaptureSourceVideo)))
+          {
+            if (videoSource != CaptureSourceVideo.None && videoSources.HasFlag(videoSource))
+            {
+              settings.ExternalInputSourceVideo = (int)videoSource;
+            }
+          }
+          settings.SupportedVideoSources = (int)videoSources;
+
+          CaptureSourceAudio audioSources = _crossbar.SupportedAudioSources;
+          foreach (CaptureSourceAudio audioSource in System.Enum.GetValues(typeof(CaptureSourceAudio)))
+          {
+            if (audioSource != CaptureSourceAudio.None && audioSources.HasFlag(audioSource))
+            {
+              settings.ExternalInputSourceAudio = (int)audioSource;
+            }
+          }
+          settings.SupportedAudioSources = (int)audioSources;
+        }
+        else
+        {
+          if (_capture.VideoFilter != null)
+          {
+            settings.ExternalInputSourceVideo = (int)CaptureSourceVideo.TunerDefault;
+            settings.SupportedVideoSources = (int)CaptureSourceVideo.TunerDefault;
+          }
+          if (_capture.AudioFilter != null)
+          {
+            settings.ExternalInputSourceAudio = (int)CaptureSourceAudio.TunerDefault;
+            settings.SupportedAudioSources = (int)CaptureSourceAudio.TunerDefault;
+          }
+        }
+
+        if (_capture.VideoFilter != null)
+        {
+          if (country == null)
+          {
+            this.LogWarn("WDM analog capture: failed to get details for country {0}, using defaults for current standard {1}", countryName ?? "[null]", _capture.CurrentVideoStandard);
+            settings.VideoStandard = (int)_capture.CurrentVideoStandard;
+          }
+          else if (!_capture.SupportedVideoStandards.HasFlag(country.VideoStandard))
+          {
+            this.LogWarn("WDM analog capture: recognised country {0} but standard {1} not supported, using defaults for current standard {2}", countryName, country.VideoStandard, _capture.CurrentVideoStandard);
+            settings.VideoStandard = (int)_capture.CurrentVideoStandard;
+          }
+          else
+          {
+            this.LogDebug("WDM analog capture: recognised country {0}, using {1} defaults", countryName, country.VideoStandard);
+            settings.VideoStandard = (int)country.VideoStandard;
+          }
+          settings.SupportedVideoStandards = (int)_capture.SupportedVideoStandards;
+
+          bool isNtscStandard = (
+            settings.VideoStandard == (int)AnalogVideoStandard.NtscM ||
+            settings.VideoStandard == (int)AnalogVideoStandard.NtscMj ||
+            settings.VideoStandard == (int)AnalogVideoStandard.Ntsc433 ||
+            settings.VideoStandard == (int)AnalogVideoStandard.PalM
+          );
+          if (_capture.SupportedFrameSizes.HasFlag(FrameSize.Fs1920_1080) || _capture.SupportedFrameSizes.HasFlag(FrameSize.Fs1280_720))
+          {
+            // Probably a capture device. Prefer high resolution.
+            if (_capture.SupportedFrameSizes.HasFlag(FrameSize.Fs1920_1080))
+            {
+              settings.FrameSize = (int)FrameSize.Fs1920_1080;
+            }
+            else
+            {
+              settings.FrameSize = (int)FrameSize.Fs1280_720;
+            }
+            if (isNtscStandard)
+            {
+              if (_capture.SupportedFrameRates.HasFlag(FrameRate.Fr60))
+              {
+                settings.FrameRate = (int)FrameRate.Fr60;
+              }
+              else if (_capture.SupportedFrameRates.HasFlag(FrameRate.Fr59_94))
+              {
+                settings.FrameRate = (int)FrameRate.Fr59_94;
+              }
+              else if (_capture.SupportedFrameRates.HasFlag(FrameRate.Fr30))
+              {
+                settings.FrameRate = (int)FrameRate.Fr30;
+              }
+              else if (_capture.SupportedFrameRates.HasFlag(FrameRate.Fr29_97))
+              {
+                settings.FrameRate = (int)FrameRate.Fr29_97;
+              }
+              else
+              {
+                settings.FrameRate = GetMaxFlagValue((int)_capture.SupportedFrameRates);
+              }
+            }
+            else
+            {
+              if (_capture.SupportedFrameRates.HasFlag(FrameRate.Fr50))
+              {
+                settings.FrameRate = (int)FrameRate.Fr50;
+              }
+              else if (_capture.SupportedFrameRates.HasFlag(FrameRate.Fr25))
+              {
+                settings.FrameRate = (int)FrameRate.Fr25;
+              }
+              else
+              {
+                settings.FrameRate = GetMaxFlagValue((int)_capture.SupportedFrameRates);
+              }
+            }
+          }
+          else
+          {
+            if (isNtscStandard && _capture.SupportedFrameSizes.HasFlag(FrameSize.Fs720_480))
+            {
+              settings.FrameSize = (int)FrameSize.Fs720_480;
+              if (_capture.SupportedFrameRates.HasFlag(FrameRate.Fr29_97))
+              {
+                settings.FrameRate = (int)FrameRate.Fr29_97;
+              }
+              else
+              {
+                settings.FrameRate = GetMaxFlagValue((int)_capture.SupportedFrameRates);
+              }
+            }
+            else if (!isNtscStandard && _capture.SupportedFrameSizes.HasFlag(FrameSize.Fs720_576))
+            {
+              settings.FrameSize = (int)FrameSize.Fs720_576;
+              if (_capture.SupportedFrameRates.HasFlag(FrameRate.Fr25))
+              {
+                settings.FrameRate = (int)FrameRate.Fr25;
+              }
+              else
+              {
+                settings.FrameRate = GetMaxFlagValue((int)_capture.SupportedFrameRates);
+              }
+            }
+            else
+            {
+              settings.FrameSize = GetMaxFlagValue((int)_capture.SupportedFrameSizes);
+              settings.FrameRate = GetMaxFlagValue((int)_capture.SupportedFrameRates);
+            }
+          }
+          this.LogDebug("WDM analog capture: frame size = {0}, frame rate = {1}", (FrameSize)settings.FrameSize, (FrameRate)settings.FrameRate);
+          settings.SupportedFrameSizes = (int)_capture.SupportedFrameSizes;
+          settings.SupportedFrameRates = (int)_capture.SupportedFrameRates;
+
+          var tempProperties = new List<TVDatabase.Entities.TunerProperty>();
+          foreach (var p in _capture.SupportedProperties)
+          {
+            p.IdTuner = TunerId;
+            tempProperties.Add(p);
+          }
+          properties = tempProperties;
+        }
+      }
+      finally
+      {
+        if (_crossbar != null)
+        {
+          _crossbar.PerformUnloading(_graph);
+        }
+        _capture.PerformUnloading(_graph);
+        _encoder.PerformUnloading(_graph);
+        CleanUpGraph(false);
+      }
+
+      settings = AnalogTunerSettingsManagement.SaveAnalogTunerSettings(settings);
+      if (properties != null)
+      {
+        properties = TunerPropertyManagement.SaveTunerProperties(properties);
+      }
+    }
+
+    private static int GetMaxFlagValue(int flags)
+    {
+      if (flags < 2)
+      {
+        return flags;
+      }
+      int value = 1;
+      while (flags > 1)
+      {
+        flags >>= 1;
+        value <<= 1;
+      }
+      return value;
     }
 
     #endregion
@@ -258,8 +485,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         }
       }
 
-      _capture.PerformLoading(_graph, ProductInstanceId, _crossbar, _settings);
-      _encoder.PerformLoading(_graph, ProductInstanceId, _capture, _settings);
+      _capture.PerformLoading(_graph, ProductInstanceId, _crossbar);
+      _encoder.PerformLoading(_graph, ProductInstanceId, _capture);
 
       // Check for and load extensions, adding any additional filters to the graph.
       IList<ITunerExtension> extensions;
@@ -276,55 +503,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       AddAndConnectTsWriterIntoGraph(lastFilter);
       CompleteGraph();
 
-      // Update supported video and audio sources after first load.
-      if (
-        (SupportedBroadcastStandards.HasFlag(BroadcastStandard.AnalogTelevision) || SupportedBroadcastStandards.HasFlag(BroadcastStandard.ExternalInput)) &&
-        _settings.SupportedVideoSources == (int)CaptureSourceVideo.None &&
-        _settings.SupportedAudioSources == (int)CaptureSourceAudio.None
-      )
-      {
-        this.LogDebug("WDM analog: first load, setting defaults");
-        if (_crossbar != null)
-        {
-          CaptureSourceVideo videoSources = _crossbar.SupportedVideoSources;
-          foreach (CaptureSourceVideo videoSource in System.Enum.GetValues(typeof(CaptureSourceVideo)))
-          {
-            if (videoSource != CaptureSourceVideo.None)
-            {
-              _settings.ExternalInputSourceVideo = (int)videoSource;
-            }
-          }
-          _settings.SupportedVideoSources = (int)videoSources;
-
-          CaptureSourceAudio audioSources = _crossbar.SupportedAudioSources;
-          foreach (CaptureSourceAudio audioSource in System.Enum.GetValues(typeof(CaptureSourceAudio)))
-          {
-            if (audioSource != CaptureSourceAudio.None)
-            {
-              _settings.ExternalInputSourceAudio = (int)audioSource;
-            }
-          }
-          _settings.SupportedAudioSources = (int)audioSources;
-        }
-        else
-        {
-          if (_capture.VideoFilter != null)
-          {
-            _settings.ExternalInputSourceVideo = (int)CaptureSourceVideo.TunerDefault;
-            _settings.SupportedVideoSources = (int)CaptureSourceVideo.TunerDefault;
-          }
-          if (_capture.AudioFilter != null)
-          {
-            _settings.ExternalInputSourceAudio = (int)CaptureSourceAudio.TunerDefault;
-            _settings.SupportedAudioSources = (int)CaptureSourceAudio.TunerDefault;
-          }
-        }
-
-        _settings = AnalogTunerSettingsManagement.SaveAnalogTunerSettings(_settings);
-        DebugSettings();
-      }
-
-      _capture.OnGraphCompleted(_settings);
+      _capture.OnGraphCompleted();
 
       _epgGrabber = null;   // Teletext scraping and RDS grabbing currently not supported.
 
@@ -389,9 +568,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         if (captureChannel.VideoSource == CaptureSourceVideo.TunerDefault)
         {
           useExternalTuner = true;
-          if (_settings.ExternalInputSourceVideo != (int)CaptureSourceVideo.Tuner)
+          if (_externalInputSourceVideo != CaptureSourceVideo.Tuner)
           {
-            captureChannel.VideoSource = (CaptureSourceVideo)_settings.ExternalInputSourceVideo;
+            captureChannel.VideoSource = _externalInputSourceVideo;
             captureChannel.MediaType = MediaType.Television;
             if (captureChannel.VideoSource == CaptureSourceVideo.None)
             {
@@ -409,8 +588,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
             externalAnalogTvChannel.IsHighDefinition = channel.IsHighDefinition;
             externalAnalogTvChannel.IsThreeDimensional = channel.IsThreeDimensional;
             externalAnalogTvChannel.TunerSource = AnalogTunerSource.Cable;
-            externalAnalogTvChannel.Country = CountryCollection.Instance.GetCountryById(_settings.ExternalInputCountryId);
-            externalAnalogTvChannel.PhysicalChannelNumber = (short)_settings.ExternalInputPhysicalChannelNumber;
+            externalAnalogTvChannel.Country = CountryCollection.Instance.GetCountryById(_externalInputCountryId);
+            externalAnalogTvChannel.PhysicalChannelNumber = _externalInputPhysicalChannelNumber;
             tuneChannel = externalAnalogTvChannel;
           }
         }
@@ -418,24 +597,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         if (captureChannel.AudioSource == CaptureSourceAudio.TunerDefault)
         {
           useExternalTuner = true;
-          captureChannel.AudioSource = (CaptureSourceAudio)_settings.ExternalInputSourceAudio;
+          captureChannel.AudioSource = _externalInputSourceAudio;
         }
       }
 
       // External tuner?
-      if (useExternalTuner && !string.IsNullOrEmpty(_settings.ExternalTunerProgram))
+      if (useExternalTuner && !string.IsNullOrEmpty(_externalTunerProgram))
       {
         this.LogDebug("WDM analog: using external tuner");
-        tuneChannel = _externalTunerChannel;
-        _externalTunerChannel.LogicalChannelNumber = channel.LogicalChannelNumber;
         ProcessStartInfo startInfo = new ProcessStartInfo();
         startInfo.CreateNoWindow = true;
         startInfo.ErrorDialog = false;
         startInfo.LoadUserProfile = false;
         startInfo.UseShellExecute = true;
         startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-        startInfo.FileName = _externalTunerCommand;
-        startInfo.Arguments = _externalTunerCommandArguments.Replace("%channel number%", channel.LogicalChannelNumber.ToString());
+        startInfo.FileName = _externalTunerProgram;
+        startInfo.Arguments = _externalTunerProgramArguments.Replace("%channel number%", channel.LogicalChannelNumber.ToString());
         try
         {
           Process p = Process.Start(startInfo);

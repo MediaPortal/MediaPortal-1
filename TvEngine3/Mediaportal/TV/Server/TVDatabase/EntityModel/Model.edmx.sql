@@ -5,7 +5,7 @@
 -- -----------------------------------------------------------
 -- Entity Designer DDL Script for MySQL Server 4.1 and higher
 -- -----------------------------------------------------------
--- Date Created: 07/29/2015 13:55:58
+-- Date Created: 08/21/2015 12:14:54
 -- Generated from EDMX file: F:\sdev\Code\MediaPortal\MediaPortal-1_TVE35\TvEngine3\Mediaportal\TV\Server\TVDatabase\EntityModel\Model.edmx
 -- Target version: 2.0.0.0
 -- --------------------------------------------------
@@ -45,9 +45,9 @@
 --    ALTER TABLE `ProgramCategories` DROP CONSTRAINT `FK_GuideCategoryProgramCategory`;
 --    ALTER TABLE `Tuners` DROP CONSTRAINT `FK_TunerTunerGroup`;
 --    ALTER TABLE `TunerProperties` DROP CONSTRAINT `FK_TunerTunerProperty`;
---    ALTER TABLE `AnalogTunerSettings` DROP CONSTRAINT `FK_AnalogTunerSettingsSoftwareEncoderVideo`;
---    ALTER TABLE `AnalogTunerSettings` DROP CONSTRAINT `FK_AnalogTunerSettingsSoftwareEncoderAudio`;
 --    ALTER TABLE `AnalogTunerSettings` DROP CONSTRAINT `FK_TunerAnalogTunerSettings`;
+--    ALTER TABLE `AnalogTunerSettings` DROP CONSTRAINT `FK_VideoEncoderAnalogTunerSettings`;
+--    ALTER TABLE `AnalogTunerSettings` DROP CONSTRAINT `FK_AudioEncoderAnalogTunerSettings`;
 
 -- --------------------------------------------------
 -- Dropping existing tables
@@ -74,7 +74,6 @@ SET foreign_key_checks = 0;
     DROP TABLE IF EXISTS `Schedules`;
     DROP TABLE IF EXISTS `ScheduleRulesTemplates`;
     DROP TABLE IF EXISTS `Settings`;
-    DROP TABLE IF EXISTS `SoftwareEncoders`;
     DROP TABLE IF EXISTS `TuningDetails`;
     DROP TABLE IF EXISTS `Versions`;
     DROP TABLE IF EXISTS `LnbTypes`;
@@ -82,6 +81,8 @@ SET foreign_key_checks = 0;
     DROP TABLE IF EXISTS `GuideCategories`;
     DROP TABLE IF EXISTS `TunerProperties`;
     DROP TABLE IF EXISTS `AnalogTunerSettings`;
+    DROP TABLE IF EXISTS `VideoEncoders`;
+    DROP TABLE IF EXISTS `AudioEncoders`;
 SET foreign_key_checks = 1;
 
 -- --------------------------------------------------
@@ -104,26 +105,26 @@ CREATE TABLE `Tuners`(
 	`ExternalId` varchar (200) NOT NULL, 
 	`Name` varchar (200) NOT NULL, 
 	`Priority` int NOT NULL, 
-	`IsEnabled` bit NOT NULL, 
-	`UseForEpgGrabbing` bit NOT NULL, 
+	`IsEnabled` bool NOT NULL, 
+	`UseForEpgGrabbing` bool NOT NULL, 
 	`RecordingFolder` varchar (300) NOT NULL, 
 	`TimeshiftingFolder` varchar (300) NOT NULL, 
 	`SupportedBroadcastStandards` int NOT NULL, 
-	`UseConditionalAccess` bit NOT NULL, 
+	`UseConditionalAccess` bool NOT NULL, 
 	`CamType` int NOT NULL, 
 	`DecryptLimit` int NOT NULL, 
 	`MultiChannelDecryptMode` int NOT NULL, 
 	`ConditionalAccessProviders` varchar (1000) NOT NULL, 
-	`Preload` bit NOT NULL, 
+	`Preload` bool NOT NULL, 
 	`BdaNetworkProvider` int NOT NULL, 
 	`IdleMode` int NOT NULL, 
-	`AlwaysSendDiseqcCommands` bit NOT NULL, 
+	`AlwaysSendDiseqcCommands` bool NOT NULL, 
 	`PidFilterMode` int NOT NULL, 
-	`UseCustomTuning` bit NOT NULL, 
+	`UseCustomTuning` bool NOT NULL, 
 	`IdTunerGroup` int, 
-	`DumpTsWriterInputs` int NOT NULL, 
-	`DumpTsMuxerInputs` int NOT NULL, 
-	`DisableTsWriterCrcChecking` bit NOT NULL);
+	`TsWriterInputDumpMask` int NOT NULL, 
+	`TsMuxerInputDumpMask` int NOT NULL, 
+	`DisableTsWriterCrcChecking` bool NOT NULL);
 
 ALTER TABLE `Tuners` ADD PRIMARY KEY (IdTuner);
 
@@ -144,7 +145,7 @@ CREATE TABLE `Channels`(
 	`TimesWatched` int NOT NULL, 
 	`TotalTimeWatched` datetime, 
 	`LastGrabTime` datetime, 
-	`VisibleInGuide` bit NOT NULL, 
+	`VisibleInGuide` bool NOT NULL, 
 	`ExternalId` varchar (200), 
 	`Name` varchar (200) NOT NULL, 
 	`MediaType` int NOT NULL, 
@@ -229,7 +230,7 @@ CREATE TABLE `Histories`(
 	`EndTime` datetime NOT NULL, 
 	`Title` varchar (1000) NOT NULL, 
 	`Description` varchar (1000) NOT NULL, 
-	`Recorded` bit NOT NULL, 
+	`Recorded` bool NOT NULL, 
 	`Watched` int NOT NULL, 
 	`IdProgramCategory` int);
 
@@ -260,16 +261,16 @@ CREATE TABLE `Programs`(
 	`EpisodeId` varchar (200), 
 	`EpisodeNumber` int, 
 	`EpisodePartNumber` int, 
-	`IsPreviouslyShown` bit, 
+	`IsPreviouslyShown` bool, 
 	`OriginalAirDate` datetime, 
 	`IdProgramCategory` int, 
 	`Classification` varchar (200), 
 	`Advisories` int NOT NULL, 
-	`IsHighDefinition` bit, 
-	`IsThreeDimensional` bit, 
+	`IsHighDefinition` bool, 
+	`IsThreeDimensional` bool, 
 	`AudioLanguages` varchar (50), 
 	`SubtitlesLanguages` varchar (50), 
-	`IsLive` bit, 
+	`IsLive` bool, 
 	`ProductionYear` int, 
 	`ProductionCountry` varchar (200), 
 	`StarRating` decimal( 10, 2 ) , 
@@ -322,7 +323,7 @@ CREATE TABLE `Recordings`(
 	`SeriesNum` varchar (200) NOT NULL, 
 	`EpisodeNum` varchar (200) NOT NULL, 
 	`EpisodePart` longtext NOT NULL, 
-	`IsRecording` bit NOT NULL, 
+	`IsRecording` bool NOT NULL, 
 	`IdSchedule` int, 
 	`MediaType` int NOT NULL, 
 	`IdProgramCategory` int);
@@ -376,7 +377,7 @@ CREATE TABLE `Schedules`(
 	`PreRecordInterval` int, 
 	`PostRecordInterval` int, 
 	`Canceled` datetime NOT NULL, 
-	`Series` bit NOT NULL, 
+	`Series` bool NOT NULL, 
 	`IdParentSchedule` int);
 
 ALTER TABLE `Schedules` ADD PRIMARY KEY (IdSchedule);
@@ -388,9 +389,9 @@ CREATE TABLE `ScheduleRulesTemplates`(
 	`IdScheduleRulesTemplate` int NOT NULL AUTO_INCREMENT UNIQUE, 
 	`Name` varchar (50) NOT NULL, 
 	`Rules` longtext NOT NULL, 
-	`Enabled` bit NOT NULL, 
+	`Enabled` bool NOT NULL, 
 	`Usages` int NOT NULL, 
-	`Editable` bit NOT NULL);
+	`Editable` bool NOT NULL);
 
 ALTER TABLE `ScheduleRulesTemplates` ADD PRIMARY KEY (IdScheduleRulesTemplate);
 
@@ -407,18 +408,6 @@ ALTER TABLE `Settings` ADD PRIMARY KEY (IdSetting);
 
 
 
-CREATE TABLE `SoftwareEncoders`(
-	`IdSoftwareEncoder` int NOT NULL AUTO_INCREMENT UNIQUE, 
-	`Priority` int NOT NULL, 
-	`Name` varchar (200) NOT NULL, 
-	`Type` int NOT NULL, 
-	`ClassId` varchar (50) NOT NULL);
-
-ALTER TABLE `SoftwareEncoders` ADD PRIMARY KEY (IdSoftwareEncoder);
-
-
-
-
 CREATE TABLE `TuningDetails`(
 	`IdTuning` int NOT NULL AUTO_INCREMENT UNIQUE, 
 	`IdChannel` int NOT NULL, 
@@ -428,9 +417,9 @@ CREATE TABLE `TuningDetails`(
 	`Name` varchar (200) NOT NULL, 
 	`Provider` varchar (200) NOT NULL, 
 	`LogicalChannelNumber` varchar (10) NOT NULL, 
-	`IsEncrypted` bit NOT NULL, 
-	`IsHighDefinition` bit NOT NULL, 
-	`IsThreeDimensional` bit NOT NULL, 
+	`IsEncrypted` bool NOT NULL, 
+	`IsHighDefinition` bool NOT NULL, 
+	`IsThreeDimensional` bool NOT NULL, 
 	`OriginalNetworkId` int NOT NULL, 
 	`TransportStreamId` int NOT NULL, 
 	`ServiceId` int NOT NULL, 
@@ -458,7 +447,7 @@ CREATE TABLE `TuningDetails`(
 	`StreamId` int NOT NULL, 
 	`Url` varchar (200) NOT NULL, 
 	`AudioSource` int NOT NULL, 
-	`IsVcrSignal` bit NOT NULL, 
+	`IsVcrSignal` bool NOT NULL, 
 	`IdLnbType` int);
 
 ALTER TABLE `TuningDetails` ADD PRIMARY KEY (IdTuning);
@@ -481,7 +470,7 @@ CREATE TABLE `LnbTypes`(
 	`LowBandFrequency` int NOT NULL, 
 	`HighBandFrequency` int NOT NULL, 
 	`SwitchFrequency` int NOT NULL, 
-	`IsBandStacked` bit NOT NULL);
+	`IsBandStacked` bool NOT NULL);
 
 ALTER TABLE `LnbTypes` ADD PRIMARY KEY (IdLnbType);
 
@@ -502,8 +491,8 @@ ALTER TABLE `RecordingCredits` ADD PRIMARY KEY (IdRecordingCredit);
 CREATE TABLE `GuideCategories`(
 	`IdGuideCategory` int NOT NULL AUTO_INCREMENT UNIQUE, 
 	`Name` varchar (1000) NOT NULL, 
-	`IsMovie` bit NOT NULL, 
-	`IsEnabled` bit NOT NULL);
+	`IsMovie` bool NOT NULL, 
+	`IsEnabled` bool NOT NULL);
 
 ALTER TABLE `GuideCategories` ADD PRIMARY KEY (IdGuideCategory);
 
@@ -535,8 +524,8 @@ CREATE TABLE `AnalogTunerSettings`(
 	`SupportedFrameSizes` int NOT NULL, 
 	`FrameRate` int NOT NULL, 
 	`SupportedFrameRates` int NOT NULL, 
-	`IdSoftwareEncoderVideo` int NOT NULL, 
-	`IdSoftwareEncoderAudio` int NOT NULL, 
+	`IdVideoEncoder` int, 
+	`IdAudioEncoder` int, 
 	`EncoderBitRateModeTimeShifting` int NOT NULL, 
 	`EncoderBitRateTimeShifting` int NOT NULL, 
 	`EncoderBitRatePeakTimeShifting` int NOT NULL, 
@@ -553,6 +542,29 @@ CREATE TABLE `AnalogTunerSettings`(
 	`SupportedAudioSources` int NOT NULL);
 
 ALTER TABLE `AnalogTunerSettings` ADD PRIMARY KEY (IdAnalogTunerSettings);
+
+
+
+
+CREATE TABLE `VideoEncoders`(
+	`IdVideoEncoder` int NOT NULL AUTO_INCREMENT UNIQUE, 
+	`Priority` int NOT NULL, 
+	`Name` varchar (200) NOT NULL, 
+	`IsCombined` bool NOT NULL, 
+	`ClassId` varchar (50) NOT NULL);
+
+ALTER TABLE `VideoEncoders` ADD PRIMARY KEY (IdVideoEncoder);
+
+
+
+
+CREATE TABLE `AudioEncoders`(
+	`IdAudioEncoder` int NOT NULL AUTO_INCREMENT UNIQUE, 
+	`Priority` int NOT NULL, 
+	`Name` varchar (200) NOT NULL, 
+	`ClassId` varchar (50) NOT NULL);
+
+ALTER TABLE `AudioEncoders` ADD PRIMARY KEY (IdAudioEncoder);
 
 
 
@@ -998,36 +1010,6 @@ CREATE INDEX `IX_FK_TunerTunerProperty`
     ON `TunerProperties`
     (`IdTuner`);
 
--- Creating foreign key on `IdSoftwareEncoderVideo` in table 'AnalogTunerSettings'
-
-ALTER TABLE `AnalogTunerSettings`
-ADD CONSTRAINT `FK_AnalogTunerSettingsSoftwareEncoderVideo`
-    FOREIGN KEY (`IdSoftwareEncoderVideo`)
-    REFERENCES `SoftwareEncoders`
-        (`IdSoftwareEncoder`)
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- Creating non-clustered index for FOREIGN KEY 'FK_AnalogTunerSettingsSoftwareEncoderVideo'
-
-CREATE INDEX `IX_FK_AnalogTunerSettingsSoftwareEncoderVideo` 
-    ON `AnalogTunerSettings`
-    (`IdSoftwareEncoderVideo`);
-
--- Creating foreign key on `IdSoftwareEncoderAudio` in table 'AnalogTunerSettings'
-
-ALTER TABLE `AnalogTunerSettings`
-ADD CONSTRAINT `FK_AnalogTunerSettingsSoftwareEncoderAudio`
-    FOREIGN KEY (`IdSoftwareEncoderAudio`)
-    REFERENCES `SoftwareEncoders`
-        (`IdSoftwareEncoder`)
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- Creating non-clustered index for FOREIGN KEY 'FK_AnalogTunerSettingsSoftwareEncoderAudio'
-
-CREATE INDEX `IX_FK_AnalogTunerSettingsSoftwareEncoderAudio` 
-    ON `AnalogTunerSettings`
-    (`IdSoftwareEncoderAudio`);
-
 -- Creating foreign key on `IdAnalogTunerSettings` in table 'AnalogTunerSettings'
 
 ALTER TABLE `AnalogTunerSettings`
@@ -1036,6 +1018,36 @@ ADD CONSTRAINT `FK_TunerAnalogTunerSettings`
     REFERENCES `Tuners`
         (`IdTuner`)
     ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- Creating foreign key on `IdVideoEncoder` in table 'AnalogTunerSettings'
+
+ALTER TABLE `AnalogTunerSettings`
+ADD CONSTRAINT `FK_VideoEncoderAnalogTunerSettings`
+    FOREIGN KEY (`IdVideoEncoder`)
+    REFERENCES `VideoEncoders`
+        (`IdVideoEncoder`)
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_VideoEncoderAnalogTunerSettings'
+
+CREATE INDEX `IX_FK_VideoEncoderAnalogTunerSettings` 
+    ON `AnalogTunerSettings`
+    (`IdVideoEncoder`);
+
+-- Creating foreign key on `IdAudioEncoder` in table 'AnalogTunerSettings'
+
+ALTER TABLE `AnalogTunerSettings`
+ADD CONSTRAINT `FK_AudioEncoderAnalogTunerSettings`
+    FOREIGN KEY (`IdAudioEncoder`)
+    REFERENCES `AudioEncoders`
+        (`IdAudioEncoder`)
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_AudioEncoderAnalogTunerSettings'
+
+CREATE INDEX `IX_FK_AudioEncoderAnalogTunerSettings` 
+    ON `AnalogTunerSettings`
+    (`IdAudioEncoder`);
 
 -- --------------------------------------------------
 -- Script has ended

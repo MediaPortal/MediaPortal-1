@@ -27,7 +27,6 @@
     <EntitySet Name="Schedules" EntityType="TVDatabaseModel.Store.Schedules" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="ScheduleRulesTemplates" EntityType="TVDatabaseModel.Store.ScheduleRulesTemplates" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Settings" EntityType="TVDatabaseModel.Store.Settings" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="SoftwareEncoders" EntityType="TVDatabaseModel.Store.SoftwareEncoders" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="TuningDetails" EntityType="TVDatabaseModel.Store.TuningDetails" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Versions" EntityType="TVDatabaseModel.Store.Versions" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="LnbTypes" EntityType="TVDatabaseModel.Store.LnbTypes" store:Type="Tables" Schema="dbo" />
@@ -35,6 +34,8 @@
     <EntitySet Name="GuideCategories" EntityType="TVDatabaseModel.Store.GuideCategories" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="TunerProperties" EntityType="TVDatabaseModel.Store.TunerProperties" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="AnalogTunerSettings" EntityType="TVDatabaseModel.Store.AnalogTunerSettings" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="VideoEncoders" EntityType="TVDatabaseModel.Store.VideoEncoders" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="AudioEncoders" EntityType="TVDatabaseModel.Store.AudioEncoders" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="GroupMapChannelGroup" Association="TVDatabaseModel.Store.GroupMapChannelGroup">
       <End Role="ChannelGroup" EntitySet="ChannelGroups" />
       <End Role="GroupMap" EntitySet="GroupMaps" />
@@ -151,16 +152,16 @@
       <End Role="Tuner" EntitySet="Tuners" />
       <End Role="TunerProperty" EntitySet="TunerProperties" />
     </AssociationSet>
-    <AssociationSet Name="AnalogTunerSettingsSoftwareEncoderVideo" Association="TVDatabaseModel.Store.AnalogTunerSettingsSoftwareEncoderVideo">
-      <End Role="AnalogTunerSettings" EntitySet="AnalogTunerSettings" />
-      <End Role="SoftwareEncoder" EntitySet="SoftwareEncoders" />
-    </AssociationSet>
-    <AssociationSet Name="AnalogTunerSettingsSoftwareEncoderAudio" Association="TVDatabaseModel.Store.AnalogTunerSettingsSoftwareEncoderAudio">
-      <End Role="AnalogTunerSettings" EntitySet="AnalogTunerSettings" />
-      <End Role="SoftwareEncoder" EntitySet="SoftwareEncoders" />
-    </AssociationSet>
     <AssociationSet Name="TunerAnalogTunerSettings" Association="TVDatabaseModel.Store.TunerAnalogTunerSettings">
       <End Role="Tuner" EntitySet="Tuners" />
+      <End Role="AnalogTunerSettings" EntitySet="AnalogTunerSettings" />
+    </AssociationSet>
+    <AssociationSet Name="VideoEncoderAnalogTunerSettings" Association="TVDatabaseModel.Store.VideoEncoderAnalogTunerSettings">
+      <End Role="VideoEncoder" EntitySet="VideoEncoders" />
+      <End Role="AnalogTunerSettings" EntitySet="AnalogTunerSettings" />
+    </AssociationSet>
+    <AssociationSet Name="AudioEncoderAnalogTunerSettings" Association="TVDatabaseModel.Store.AudioEncoderAnalogTunerSettings">
+      <End Role="AudioEncoder" EntitySet="AudioEncoders" />
       <End Role="AnalogTunerSettings" EntitySet="AnalogTunerSettings" />
     </AssociationSet>
   </EntityContainer>
@@ -198,8 +199,8 @@
     <Property Name="PidFilterMode" Type="int" Nullable="false" />
     <Property Name="UseCustomTuning" Type="bit" Nullable="false" />
     <Property Name="IdTunerGroup" Type="int" Nullable="true" />
-    <Property Name="DumpTsWriterInputs" Type="int" Nullable="false" />
-    <Property Name="DumpTsMuxerInputs" Type="int" Nullable="false" />
+    <Property Name="TsWriterInputDumpMask" Type="int" Nullable="false" />
+    <Property Name="TsMuxerInputDumpMask" Type="int" Nullable="false" />
     <Property Name="DisableTsWriterCrcChecking" Type="bit" Nullable="false" />
   </EntityType>
   <EntityType Name="TunerGroups">
@@ -441,16 +442,6 @@
     <Property Name="Tag" Type="varchar" Nullable="false" MaxLength="200" />
     <Property Name="Value" Type="varchar" Nullable="false" MaxLength="4096" />
   </EntityType>
-  <EntityType Name="SoftwareEncoders">
-    <Key>
-      <PropertyRef Name="IdSoftwareEncoder" />
-    </Key>
-    <Property Name="IdSoftwareEncoder" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Priority" Type="int" Nullable="false" />
-    <Property Name="Name" Type="varchar" Nullable="false" MaxLength="200" />
-    <Property Name="Type" Type="int" Nullable="false" />
-    <Property Name="ClassId" Type="varchar" Nullable="false" MaxLength="50" />
-  </EntityType>
   <EntityType Name="TuningDetails">
     <Key>
       <PropertyRef Name="IdTuning" />
@@ -558,8 +549,8 @@
     <Property Name="SupportedFrameSizes" Type="int" Nullable="false" />
     <Property Name="FrameRate" Type="int" Nullable="false" />
     <Property Name="SupportedFrameRates" Type="int" Nullable="false" />
-    <Property Name="IdSoftwareEncoderVideo" Type="int" Nullable="false" />
-    <Property Name="IdSoftwareEncoderAudio" Type="int" Nullable="false" />
+    <Property Name="IdVideoEncoder" Type="int" Nullable="true" />
+    <Property Name="IdAudioEncoder" Type="int" Nullable="true" />
     <Property Name="EncoderBitRateModeTimeShifting" Type="int" Nullable="false" />
     <Property Name="EncoderBitRateTimeShifting" Type="int" Nullable="false" />
     <Property Name="EncoderBitRatePeakTimeShifting" Type="int" Nullable="false" />
@@ -574,6 +565,25 @@
     <Property Name="ExternalTunerProgramArguments" Type="varchar" Nullable="false" MaxLength="200" />
     <Property Name="SupportedVideoSources" Type="int" Nullable="false" />
     <Property Name="SupportedAudioSources" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="VideoEncoders">
+    <Key>
+      <PropertyRef Name="IdVideoEncoder" />
+    </Key>
+    <Property Name="IdVideoEncoder" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Priority" Type="int" Nullable="false" />
+    <Property Name="Name" Type="varchar" Nullable="false" MaxLength="200" />
+    <Property Name="IsCombined" Type="bit" Nullable="false" />
+    <Property Name="ClassId" Type="varchar" Nullable="false" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="AudioEncoders">
+    <Key>
+      <PropertyRef Name="IdAudioEncoder" />
+    </Key>
+    <Property Name="IdAudioEncoder" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Priority" Type="int" Nullable="false" />
+    <Property Name="Name" Type="varchar" Nullable="false" MaxLength="200" />
+    <Property Name="ClassId" Type="varchar" Nullable="false" MaxLength="50" />
   </EntityType>
   <Association Name="GroupMapChannelGroup">
     <End Role="ChannelGroup" Type="TVDatabaseModel.Store.ChannelGroups" Multiplicity="1">
@@ -957,30 +967,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="AnalogTunerSettingsSoftwareEncoderVideo">
-    <End Role="AnalogTunerSettings" Type="TVDatabaseModel.Store.AnalogTunerSettings" Multiplicity="*" />
-    <End Role="SoftwareEncoder" Type="TVDatabaseModel.Store.SoftwareEncoders" Multiplicity="1" />
-    <ReferentialConstraint>
-      <Principal Role="SoftwareEncoder">
-        <PropertyRef Name="IdSoftwareEncoder" />
-      </Principal>
-      <Dependent Role="AnalogTunerSettings">
-        <PropertyRef Name="IdSoftwareEncoderVideo" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="AnalogTunerSettingsSoftwareEncoderAudio">
-    <End Role="AnalogTunerSettings" Type="TVDatabaseModel.Store.AnalogTunerSettings" Multiplicity="*" />
-    <End Role="SoftwareEncoder" Type="TVDatabaseModel.Store.SoftwareEncoders" Multiplicity="1" />
-    <ReferentialConstraint>
-      <Principal Role="SoftwareEncoder">
-        <PropertyRef Name="IdSoftwareEncoder" />
-      </Principal>
-      <Dependent Role="AnalogTunerSettings">
-        <PropertyRef Name="IdSoftwareEncoderAudio" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="TunerAnalogTunerSettings">
     <End Role="Tuner" Type="TVDatabaseModel.Store.Tuners" Multiplicity="1">
       <OnDelete Action="Cascade" />
@@ -992,6 +978,30 @@
       </Principal>
       <Dependent Role="AnalogTunerSettings">
         <PropertyRef Name="IdAnalogTunerSettings" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="VideoEncoderAnalogTunerSettings">
+    <End Role="VideoEncoder" Type="TVDatabaseModel.Store.VideoEncoders" Multiplicity="0..1" />
+    <End Role="AnalogTunerSettings" Type="TVDatabaseModel.Store.AnalogTunerSettings" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="VideoEncoder">
+        <PropertyRef Name="IdVideoEncoder" />
+      </Principal>
+      <Dependent Role="AnalogTunerSettings">
+        <PropertyRef Name="IdVideoEncoder" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="AudioEncoderAnalogTunerSettings">
+    <End Role="AudioEncoder" Type="TVDatabaseModel.Store.AudioEncoders" Multiplicity="0..1" />
+    <End Role="AnalogTunerSettings" Type="TVDatabaseModel.Store.AnalogTunerSettings" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AudioEncoder">
+        <PropertyRef Name="IdAudioEncoder" />
+      </Principal>
+      <Dependent Role="AnalogTunerSettings">
+        <PropertyRef Name="IdAudioEncoder" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1021,7 +1031,6 @@
           <EntitySet Name="Schedules" EntityType="TVDatabaseModel.Schedule" />
           <EntitySet Name="ScheduleRulesTemplates" EntityType="TVDatabaseModel.ScheduleRulesTemplate" />
           <EntitySet Name="Settings" EntityType="TVDatabaseModel.Setting" />
-          <EntitySet Name="SoftwareEncoders" EntityType="TVDatabaseModel.SoftwareEncoder" />
           <EntitySet Name="TuningDetails" EntityType="TVDatabaseModel.TuningDetail" />
           <EntitySet Name="Versions" EntityType="TVDatabaseModel.Version" />
           <EntitySet Name="LnbTypes" EntityType="TVDatabaseModel.LnbType" />
@@ -1145,16 +1154,18 @@
             <End Role="TunerProperty" EntitySet="TunerProperties" />
           </AssociationSet>
           <EntitySet Name="AnalogTunerSettings" EntityType="TVDatabaseModel.AnalogTunerSettings" />
-          <AssociationSet Name="AnalogTunerSettingsSoftwareEncoderVideo" Association="TVDatabaseModel.AnalogTunerSettingsSoftwareEncoderVideo">
-            <End Role="AnalogTunerSettings" EntitySet="AnalogTunerSettings" />
-            <End Role="SoftwareEncoder" EntitySet="SoftwareEncoders" />
-          </AssociationSet>
-          <AssociationSet Name="AnalogTunerSettingsSoftwareEncoderAudio" Association="TVDatabaseModel.AnalogTunerSettingsSoftwareEncoderAudio">
-            <End Role="AnalogTunerSettings" EntitySet="AnalogTunerSettings" />
-            <End Role="SoftwareEncoder" EntitySet="SoftwareEncoders" />
-          </AssociationSet>
           <AssociationSet Name="TunerAnalogTunerSettings" Association="TVDatabaseModel.TunerAnalogTunerSettings">
             <End Role="Tuner" EntitySet="Tuners" />
+            <End Role="AnalogTunerSettings" EntitySet="AnalogTunerSettings" />
+          </AssociationSet>
+          <EntitySet Name="VideoEncoders" EntityType="TVDatabaseModel.VideoEncoder" />
+          <AssociationSet Name="VideoEncoderAnalogTunerSettings" Association="TVDatabaseModel.VideoEncoderAnalogTunerSettings">
+            <End Role="VideoEncoder" EntitySet="VideoEncoders" />
+            <End Role="AnalogTunerSettings" EntitySet="AnalogTunerSettings" />
+          </AssociationSet>
+          <EntitySet Name="AudioEncoders" EntityType="TVDatabaseModel.AudioEncoder" />
+          <AssociationSet Name="AudioEncoderAnalogTunerSettings" Association="TVDatabaseModel.AudioEncoderAnalogTunerSettings">
+            <End Role="AudioEncoder" EntitySet="AudioEncoders" />
             <End Role="AnalogTunerSettings" EntitySet="AnalogTunerSettings" />
           </AssociationSet>
         </EntityContainer>
@@ -1199,8 +1210,8 @@
           <NavigationProperty Name="AnalogTunerSettings" Relationship="TVDatabaseModel.TunerAnalogTunerSettings" FromRole="Tuner" ToRole="AnalogTunerSettings" />
           <NavigationProperty Name="DiseqcMotors" Relationship="TVDatabaseModel.DiseqcMotorTuner" FromRole="Tuner" ToRole="DiseqcMotor" />
           <NavigationProperty Name="Conflicts" Relationship="TVDatabaseModel.TunerConflict" FromRole="Tuner" ToRole="Conflict" />
-          <Property Type="Int32" Name="DumpTsWriterInputs" Nullable="false" />
-          <Property Type="Int32" Name="DumpTsMuxerInputs" Nullable="false" />
+          <Property Type="Int32" Name="TsWriterInputDumpMask" Nullable="false" />
+          <Property Type="Int32" Name="TsMuxerInputDumpMask" Nullable="false" />
           <Property Type="Boolean" Name="DisableTsWriterCrcChecking" Nullable="false" />
         </EntityType>
         <EntityType Name="TunerGroup">
@@ -1487,18 +1498,6 @@
           <Property Name="IdSetting" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Tag" Type="String" Nullable="false" MaxLength="200" Unicode="false" FixedLength="false" />
           <Property Name="Value" Type="String" Nullable="false" MaxLength="4096" Unicode="false" FixedLength="false" />
-        </EntityType>
-        <EntityType Name="SoftwareEncoder">
-          <Key>
-            <PropertyRef Name="IdSoftwareEncoder" />
-          </Key>
-          <Property Name="IdSoftwareEncoder" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Priority" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" Unicode="false" FixedLength="false" />
-          <Property Name="Type" Type="Int32" Nullable="false" />
-          <Property Name="ClassId" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
-          <NavigationProperty Name="AnalogTunerSettingsVideo" Relationship="TVDatabaseModel.AnalogTunerSettingsSoftwareEncoderVideo" FromRole="SoftwareEncoder" ToRole="AnalogTunerSettings" />
-          <NavigationProperty Name="AnalogTunerSettingsAudio" Relationship="TVDatabaseModel.AnalogTunerSettingsSoftwareEncoderAudio" FromRole="SoftwareEncoder" ToRole="AnalogTunerSettings" />
         </EntityType>
         <EntityType Name="TuningDetail">
           <Key>
@@ -1995,10 +1994,8 @@
           <Property Type="Int32" Name="SupportedFrameSizes" Nullable="false" />
           <Property Type="Int32" Name="FrameRate" Nullable="false" />
           <Property Type="Int32" Name="SupportedFrameRates" Nullable="false" />
-          <NavigationProperty Name="SoftwareEncoderVideo" Relationship="TVDatabaseModel.AnalogTunerSettingsSoftwareEncoderVideo" FromRole="AnalogTunerSettings" ToRole="SoftwareEncoder" />
-          <Property Type="Int32" Name="IdSoftwareEncoderVideo" Nullable="false" />
-          <NavigationProperty Name="SoftwareEncoderAudio" Relationship="TVDatabaseModel.AnalogTunerSettingsSoftwareEncoderAudio" FromRole="AnalogTunerSettings" ToRole="SoftwareEncoder" />
-          <Property Type="Int32" Name="IdSoftwareEncoderAudio" Nullable="false" />
+          <Property Type="Int32" Name="IdVideoEncoder" Nullable="true" />
+          <Property Type="Int32" Name="IdAudioEncoder" Nullable="true" />
           <Property Type="Int32" Name="EncoderBitRateModeTimeShifting" Nullable="false" />
           <Property Type="Int32" Name="EncoderBitRateTimeShifting" Nullable="false" />
           <Property Type="Int32" Name="EncoderBitRatePeakTimeShifting" Nullable="false" />
@@ -2014,31 +2011,9 @@
           <Property Type="String" Name="ExternalTunerProgramArguments" Nullable="false" MaxLength="200" />
           <Property Type="Int32" Name="SupportedVideoSources" Nullable="false" />
           <Property Type="Int32" Name="SupportedAudioSources" Nullable="false" />
+          <NavigationProperty Name="VideoEncoder" Relationship="TVDatabaseModel.VideoEncoderAnalogTunerSettings" FromRole="AnalogTunerSettings" ToRole="VideoEncoder" />
+          <NavigationProperty Name="AudioEncoder" Relationship="TVDatabaseModel.AudioEncoderAnalogTunerSettings" FromRole="AnalogTunerSettings" ToRole="AudioEncoder" />
         </EntityType>
-        <Association Name="AnalogTunerSettingsSoftwareEncoderVideo">
-          <End Type="TVDatabaseModel.AnalogTunerSettings" Role="AnalogTunerSettings" Multiplicity="*" />
-          <End Type="TVDatabaseModel.SoftwareEncoder" Role="SoftwareEncoder" Multiplicity="1" />
-          <ReferentialConstraint>
-            <Principal Role="SoftwareEncoder">
-              <PropertyRef Name="IdSoftwareEncoder" />
-            </Principal>
-            <Dependent Role="AnalogTunerSettings">
-              <PropertyRef Name="IdSoftwareEncoderVideo" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="AnalogTunerSettingsSoftwareEncoderAudio">
-          <End Type="TVDatabaseModel.AnalogTunerSettings" Role="AnalogTunerSettings" Multiplicity="*" />
-          <End Type="TVDatabaseModel.SoftwareEncoder" Role="SoftwareEncoder" Multiplicity="1" />
-          <ReferentialConstraint>
-            <Principal Role="SoftwareEncoder">
-              <PropertyRef Name="IdSoftwareEncoder" />
-            </Principal>
-            <Dependent Role="AnalogTunerSettings">
-              <PropertyRef Name="IdSoftwareEncoderAudio" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="TunerAnalogTunerSettings">
           <End Type="TVDatabaseModel.Tuner" Role="Tuner" Multiplicity="1" >
             <OnDelete Action="Cascade" />
@@ -2050,6 +2025,52 @@
             </Principal>
             <Dependent Role="AnalogTunerSettings">
               <PropertyRef Name="IdAnalogTunerSettings" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="VideoEncoder">
+          <Key>
+            <PropertyRef Name="IdVideoEncoder" />
+          </Key>
+          <Property Type="Int32" Name="IdVideoEncoder" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Priority" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="IsCombined" Nullable="false" />
+          <Property Type="String" Name="ClassId" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="AnalogTunerSettings" Relationship="TVDatabaseModel.VideoEncoderAnalogTunerSettings" FromRole="VideoEncoder" ToRole="AnalogTunerSettings" />
+        </EntityType>
+        <Association Name="VideoEncoderAnalogTunerSettings">
+          <End Type="TVDatabaseModel.VideoEncoder" Role="VideoEncoder" Multiplicity="0..1" />
+          <End Type="TVDatabaseModel.AnalogTunerSettings" Role="AnalogTunerSettings" Multiplicity="*">
+          </End>
+          <ReferentialConstraint>
+            <Principal Role="VideoEncoder">
+              <PropertyRef Name="IdVideoEncoder" />
+            </Principal>
+            <Dependent Role="AnalogTunerSettings">
+              <PropertyRef Name="IdVideoEncoder" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="AudioEncoder">
+          <Key>
+            <PropertyRef Name="IdAudioEncoder" />
+          </Key>
+          <Property Name="IdAudioEncoder" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Priority" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" Unicode="false" FixedLength="false" />
+          <Property Name="ClassId" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="AnalogTunerSettings" Relationship="TVDatabaseModel.AudioEncoderAnalogTunerSettings" FromRole="AudioEncoder" ToRole="AnalogTunerSettings" />
+        </EntityType>
+        <Association Name="AudioEncoderAnalogTunerSettings">
+          <End Type="TVDatabaseModel.AudioEncoder" Role="AudioEncoder" Multiplicity="0..1" />
+          <End Type="TVDatabaseModel.AnalogTunerSettings" Role="AnalogTunerSettings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AudioEncoder">
+              <PropertyRef Name="IdAudioEncoder" />
+            </Principal>
+            <Dependent Role="AnalogTunerSettings">
+              <PropertyRef Name="IdAudioEncoder" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2093,8 +2114,8 @@
           <ScalarProperty Name="PidFilterMode" ColumnName="PidFilterMode" />
           <ScalarProperty Name="UseCustomTuning" ColumnName="UseCustomTuning" />
           <ScalarProperty Name="IdTunerGroup" ColumnName="IdTunerGroup" />
-          <ScalarProperty Name="DumpTsWriterInputs" ColumnName="DumpTsWriterInputs" />
-          <ScalarProperty Name="DumpTsMuxerInputs" ColumnName="DumpTsMuxerInputs" />
+          <ScalarProperty Name="TsWriterInputDumpMask" ColumnName="TsWriterInputDumpMask" />
+          <ScalarProperty Name="TsMuxerInputDumpMask" ColumnName="TsMuxerInputDumpMask" />
           <ScalarProperty Name="DisableTsWriterCrcChecking" ColumnName="DisableTsWriterCrcChecking" />
         </MappingFragment>
       </EntityTypeMapping>
@@ -2357,17 +2378,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="SoftwareEncoders">
-      <EntityTypeMapping TypeName="IsTypeOf(TVDatabaseModel.SoftwareEncoder)">
-        <MappingFragment StoreEntitySet="SoftwareEncoders">
-          <ScalarProperty Name="IdSoftwareEncoder" ColumnName="IdSoftwareEncoder" />
-          <ScalarProperty Name="Priority" ColumnName="Priority" />
-          <ScalarProperty Name="Name" ColumnName="Name" />
-          <ScalarProperty Name="Type" ColumnName="Type" />
-          <ScalarProperty Name="ClassId" ColumnName="ClassId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="TuningDetails">
       <EntityTypeMapping TypeName="IsTypeOf(TVDatabaseModel.TuningDetail)">
         <MappingFragment StoreEntitySet="TuningDetails">
@@ -2480,8 +2490,8 @@
           <ScalarProperty Name="SupportedFrameSizes" ColumnName="SupportedFrameSizes" />
           <ScalarProperty Name="FrameRate" ColumnName="FrameRate" />
           <ScalarProperty Name="SupportedFrameRates" ColumnName="SupportedFrameRates" />
-          <ScalarProperty Name="IdSoftwareEncoderVideo" ColumnName="IdSoftwareEncoderVideo" />
-          <ScalarProperty Name="IdSoftwareEncoderAudio" ColumnName="IdSoftwareEncoderAudio" />
+          <ScalarProperty Name="IdVideoEncoder" ColumnName="IdVideoEncoder" />
+          <ScalarProperty Name="IdAudioEncoder" ColumnName="IdAudioEncoder" />
           <ScalarProperty Name="EncoderBitRateModeTimeShifting" ColumnName="EncoderBitRateModeTimeShifting" />
           <ScalarProperty Name="EncoderBitRateTimeShifting" ColumnName="EncoderBitRateTimeShifting" />
           <ScalarProperty Name="EncoderBitRatePeakTimeShifting" ColumnName="EncoderBitRatePeakTimeShifting" />
@@ -2496,6 +2506,27 @@
           <ScalarProperty Name="ExternalTunerProgramArguments" ColumnName="ExternalTunerProgramArguments" />
           <ScalarProperty Name="SupportedVideoSources" ColumnName="SupportedVideoSources" />
           <ScalarProperty Name="SupportedAudioSources" ColumnName="SupportedAudioSources" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="VideoEncoders">
+      <EntityTypeMapping TypeName="IsTypeOf(TVDatabaseModel.VideoEncoder)">
+        <MappingFragment StoreEntitySet="VideoEncoders">
+          <ScalarProperty Name="IdVideoEncoder" ColumnName="IdVideoEncoder" />
+          <ScalarProperty Name="Priority" ColumnName="Priority" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="IsCombined" ColumnName="IsCombined" />
+          <ScalarProperty Name="ClassId" ColumnName="ClassId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="AudioEncoders">
+      <EntityTypeMapping TypeName="IsTypeOf(TVDatabaseModel.AudioEncoder)">
+        <MappingFragment StoreEntitySet="AudioEncoders">
+          <ScalarProperty Name="IdAudioEncoder" ColumnName="IdAudioEncoder" />
+          <ScalarProperty Name="Priority" ColumnName="Priority" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="ClassId" ColumnName="ClassId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -2525,33 +2556,32 @@
         <EntityTypeShape EntityType="TVDatabaseModel.Tuner" Width="2.125" PointX="2.75" PointY="0.5" Height="5.8653369140625" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.TunerGroup" Width="1.5" PointX="0.5" PointY="3.625" Height="1.4279589843749996" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Channel" Width="1.75" PointX="4.875" PointY="9.125" Height="4.0575162760416656" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.ChannelGroup" Width="1.625" PointX="9.5" PointY="11.125" Height="1.7566536458333317" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.ChannelGroup" Width="1.625" PointX="9.5" PointY="7" Height="1.7566536458333317" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.ChannelLinkageMap" Width="1.875" PointX="2.375" PointY="10.125" Height="1.9210009765624996" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.ChannelMap" Width="1.5" PointX="2.875" PointY="7.125" Height="1.7566536458333326" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Conflict" Width="1.5" PointX="0.625" PointY="6.875" Height="2.578390299479171" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.DiseqcMotor" Width="1.5" PointX="5.375" PointY="6.875" Height="1.9210009765624996" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.GroupMap" Width="1.5" PointX="7.375" PointY="10.25" Height="1.9210009765625" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.GroupMap" Width="1.5" PointX="7.375" PointY="9" Height="1.9210009765625" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.History" Width="1.5" PointX="5" PointY="14.25" Height="2.7427376302083335" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.PendingDeletion" Width="1.625" PointX="15.5" PointY="3.75" Height="1.2636116536458353" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Program" Width="1.625" PointX="7.375" PointY="12.625" Height="6.1940315755208353" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.ProgramCategory" Width="1.75" PointX="5" PointY="17.625" Height="2.0853483072916656" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.ProgramCredit" Width="1.5" PointX="9.5" PointY="15.75" Height="1.7566536458333317" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.ProgramCredit" Width="1.5" PointX="9.625" PointY="17.375" Height="1.7566536458333317" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Recording" Width="1.625" PointX="2.75" PointY="13.75" Height="4.7149055989583317" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.RuleBasedSchedule" Width="1.875" PointX="13.375" PointY="2.625" Height="2.7427376302083335" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Satellite" Width="1.5" PointX="7.5" PointY="6.875" Height="1.5923063151041665" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Schedule" Width="1.5" PointX="0.5" PointY="10.375" Height="4.8792529296875014" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.ScheduleRulesTemplate" Width="2.125" PointX="13.125" PointY="0.5" Height="1.9210009765624996" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Setting" Width="1.25" PointX="15.5" PointY="0.625" Height="1.4279589843750031" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.SoftwareEncoder" Width="1.875" PointX="8.75" PointY="0.5" Height="2.0853483072916665" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.TuningDetail" Width="1.875" PointX="9.375" PointY="2.875" Height="7.8375048828124978" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.TuningDetail" Width="1.875" PointX="9.5" PointY="9.375" Height="7.8375048828124978" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Version" Width="1.5" PointX="15.5" PointY="2.25" Height="1.2636116536458353" IsExpanded="true" />
         <AssociationConnector Association="TVDatabaseModel.GroupMapChannelGroup">
-          <ConnectorPoint PointX="9.5" PointY="11.64800048828125" />
-          <ConnectorPoint PointX="8.875" PointY="11.64800048828125" />
+          <ConnectorPoint PointX="9.5" PointY="8.7566536458333317" />
+          <ConnectorPoint PointX="8.875" PointY="9" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.GroupMapChannel">
-          <ConnectorPoint PointX="6.625" PointY="11.21050048828125" />
-          <ConnectorPoint PointX="7.375" PointY="11.21050048828125" />
+          <ConnectorPoint PointX="6.625" PointY="10.02300048828125" />
+          <ConnectorPoint PointX="7.375" PointY="10.02300048828125" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.DiseqcMotorTuner">
           <ConnectorPoint PointX="4.875" PointY="6.3653369140625" />
@@ -2588,16 +2618,16 @@
           <ConnectorPoint PointX="6.75" PointY="18.222015787760419" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ProgramProgramCredit">
-          <ConnectorPoint PointX="9" PointY="16.628326822916666" />
-          <ConnectorPoint PointX="9.5" PointY="16.628326822916666" />
+          <ConnectorPoint PointX="9" PointY="18.253326822916666" />
+          <ConnectorPoint PointX="9.625" PointY="18.253326822916666" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelHistory">
           <ConnectorPoint PointX="5.75" PointY="13.182516276041666" />
           <ConnectorPoint PointX="5.75" PointY="14.25" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelTuningDetail" ManuallyRouted="false">
-          <ConnectorPoint PointX="6.625" PointY="9.65625" />
-          <ConnectorPoint PointX="9.375" PointY="9.65625" />
+          <ConnectorPoint PointX="6.625" PointY="11.77300048828125" />
+          <ConnectorPoint PointX="9.5" PointY="11.77300048828125" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.DiseqcMotorSatellite">
           <ConnectorPoint PointX="7.5" PointY="7.6711531575520837" />
@@ -2648,10 +2678,10 @@
           <ConnectorPoint PointX="5.75" PointY="17.625" />
           <ConnectorPoint PointX="5.75" PointY="16.992737630208332" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="TVDatabaseModel.LnbType" Width="1.5" PointX="12" PointY="7.125" Height="2.0853483072916656" />
+        <EntityTypeShape EntityType="TVDatabaseModel.LnbType" Width="1.5" PointX="12" PointY="10.625" Height="2.0853483072916656" />
         <AssociationConnector Association="TVDatabaseModel.LnbTypeTuningDetail">
-          <ConnectorPoint PointX="12" PointY="8.1676741536458337" />
-          <ConnectorPoint PointX="11.25" PointY="8.1676741536458337" />
+          <ConnectorPoint PointX="12" PointY="11.667674153645834" />
+          <ConnectorPoint PointX="11.375" PointY="11.667674153645834" />
         </AssociationConnector>
         <EntityTypeShape EntityType="TVDatabaseModel.GuideCategory" Width="1.75" PointX="5" PointY="20.25" Height="1.7566536458333335" />
         <AssociationConnector Association="TVDatabaseModel.GuideCategoryProgramCategory">
@@ -2667,18 +2697,20 @@
           <ConnectorPoint PointX="2.75" PointY="1.7400870768229169" />
           <ConnectorPoint PointX="2.25" PointY="1.7400870768229169" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="TVDatabaseModel.AnalogTunerSettings" Width="2.5" PointX="5.5" PointY="0.5" Height="5.2079475911458326" />
-        <AssociationConnector Association="TVDatabaseModel.AnalogTunerSettingsSoftwareEncoderVideo">
-          <ConnectorPoint PointX="8" PointY="1.9303784624735516" />
-          <ConnectorPoint PointX="8.75" PointY="1.9303784624735516" />
-        </AssociationConnector>
-        <AssociationConnector Association="TVDatabaseModel.AnalogTunerSettingsSoftwareEncoderAudio">
-          <ConnectorPoint PointX="8" PointY="1.1526892312367758" />
-          <ConnectorPoint PointX="8.75" PointY="1.1526892312367758" />
-        </AssociationConnector>
+        <EntityTypeShape EntityType="TVDatabaseModel.AnalogTunerSettings" Width="2.5" PointX="5.5" PointY="0.5" Height="4.8792529296875" />
         <AssociationConnector Association="TVDatabaseModel.TunerAnalogTunerSettings">
-          <ConnectorPoint PointX="4.875" PointY="2.554827427408854" />
-          <ConnectorPoint PointX="5.5" PointY="2.554827427408854" />
+          <ConnectorPoint PointX="4.875" PointY="2.93962646484375" />
+          <ConnectorPoint PointX="5.5" PointY="2.93962646484375" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="TVDatabaseModel.VideoEncoder" Width="1.625" PointX="8.875" PointY="0.5" Height="1.9210009765625" />
+        <AssociationConnector Association="TVDatabaseModel.VideoEncoderAnalogTunerSettings">
+          <ConnectorPoint PointX="8.875" PointY="1.46050048828125" />
+          <ConnectorPoint PointX="8" PointY="1.46050048828125" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="TVDatabaseModel.AudioEncoder" Width="1.625" PointX="8.875" PointY="2.625" Height="1.7566536458333335" />
+        <AssociationConnector Association="TVDatabaseModel.AudioEncoderAnalogTunerSettings">
+          <ConnectorPoint PointX="8.875" PointY="3.5033268229166667" />
+          <ConnectorPoint PointX="8" PointY="3.5033268229166667" />
         </AssociationConnector>
       </Diagram>
     </Diagrams>
