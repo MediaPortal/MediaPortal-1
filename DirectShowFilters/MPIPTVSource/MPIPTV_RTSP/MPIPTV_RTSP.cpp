@@ -59,6 +59,7 @@ CMPIPTV_RTSP::CMPIPTV_RTSP()
   this->rtspClient = NULL;
   this->rtspResponseEvent = NULL;
   this->rtspSession = NULL;
+  this->isRtspSessionSetup = false;
   this->rtspSchedulerThreadHandle = NULL;
   this->rtspSchedulerThreadId = 0;
   this->rtspThreadShouldExit = 0;
@@ -254,6 +255,7 @@ int CMPIPTV_RTSP::ParseUrl(const TCHAR *url, const CParameterCollection *paramet
 int CMPIPTV_RTSP::OpenConnection(void)
 {
   this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
+  this->isRtspSessionSetup = false;
 
   // LIVE555 works with char, not with TCHAR
   char *tempRtspUrl = ConvertToMultiByte(this->rtspUrl);
@@ -416,6 +418,7 @@ int CMPIPTV_RTSP::OpenConnection(void)
     return STATUS_ERROR;
   }
 
+  this->isRtspSessionSetup = true;
   if (SendRtspCommand(METHOD_OPEN_CONNECTION_NAME, _T("PLAY")) != STATUS_OK)
   {
     CloseConnection();
@@ -598,6 +601,7 @@ unsigned int CMPIPTV_RTSP::GetOpenConnectionMaximumAttempts(void)
 
 int CMPIPTV_RTSP::SendRtspCommand(const TCHAR *method, const TCHAR *command, MediaSubsession *subsession)
 {
+  this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: send %s command"), PROTOCOL_IMPLEMENTATION_NAME, method, command);
   ResetEvent(this->rtspResponseEvent);
   if (_tcscmp(command, _T("OPTIONS")) == 0)
   {
@@ -646,7 +650,7 @@ int CMPIPTV_RTSP::SendRtspCommand(const TCHAR *method, const TCHAR *command, Med
 #else
   TCHAR *convertedRtspResponse = ConvertToUnicodeA(&this->rtspResponseResultString[0]);
 #endif
-  this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: %s command succeeded, response = %s"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, command, (convertedRtspResponse == NULL) ? _T("unable to get message") : convertedRtspResponse);
+  this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: %s command succeeded, response = %s"), PROTOCOL_IMPLEMENTATION_NAME, method, command, (convertedRtspResponse == NULL) ? _T("unable to get message") : convertedRtspResponse);
   FREE_MEM(convertedRtspResponse);
   return STATUS_OK;
 }
@@ -726,9 +730,10 @@ bool CMPIPTV_RTSP::TeardownMediaSession(bool forceTeardown)
   this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_TEARDOWN_MEDIA_SESSION_NAME);
   bool result = true;
 
-  if (this->rtspClient != NULL && this->rtspSession != NULL)
+  if (this->rtspClient != NULL && this->rtspSession != NULL && this->isRtspSessionSetup)
   {
     result = SendRtspCommand(METHOD_TEARDOWN_MEDIA_SESSION_NAME, _T("TEARDOWN")) == STATUS_OK;
+    this->isRtspSessionSetup = !result;
   }
 
   if (forceTeardown || result)
