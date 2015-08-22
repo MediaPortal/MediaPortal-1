@@ -350,11 +350,12 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
 
         // Load the guide channels from the server. The structure is:
         //    file name -> ID -> [display names]
-        // Arrange the channels into 3 collections used for partial matching,
+        // Arrange the channels into 4 collections used for partial matching,
         // fast ID lookups, and display.
         IDictionary<string, IDictionary<string, IList<string>>> guideChannels = ServiceAgents.Instance.PluginService<IXmlTvImportService>().GetGuideChannelDetails();
         HashSet<string> guideChannelIds = new HashSet<string>();
         IDictionary<string, string> matchingDictionary = new Dictionary<string, string>(200);
+        IDictionary<string, string> mc2xmlMatchingDictionary = new Dictionary<string, string>(200);
         IList<ComboBoxGuideChannel> guideChannelsForComboBox = new List<ComboBoxGuideChannel>(200);
         IDictionary<string, ComboBoxGuideChannel> comboBoxValueLookup = new Dictionary<string, ComboBoxGuideChannel>(200);
         ComboBoxGuideChannel gc = new ComboBoxGuideChannel(string.Empty, string.Empty);
@@ -370,6 +371,30 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
             {
               this.LogWarn("XMLTV import config: found multiple channels with ID {0}, won't be able to distinguish which data to use", id);
             }
+
+            int majorChannelNumber;
+            int minorChannelNumber;
+            string internalIdentifier;
+            string organisation;
+            if (Mc2XmlId.GetComponents(channel.Key, out majorChannelNumber, out minorChannelNumber, out internalIdentifier, out organisation))
+            {
+              // We use channel number matching with mc2xml. We must use/match
+              // the format that TVE uses.
+              string mpChannelNumber = majorChannelNumber.ToString();
+              if (minorChannelNumber > 0)
+              {
+                mpChannelNumber = string.Format("{0}.{1}", majorChannelNumber, minorChannelNumber);
+              }
+              if (!mc2xmlMatchingDictionary.ContainsKey(mpChannelNumber))
+              {
+                mc2xmlMatchingDictionary.Add(mpChannelNumber, id);
+              }
+              else
+              {
+                this.LogWarn("XMLTV import config: found multiple channels with channel number {0}, might match to wrong channel", mpChannelNumber);
+              }
+            }
+
             foreach (string displayName in channel.Value)
             {
               if (!matchingDictionary.ContainsKey(displayName))
@@ -458,8 +483,36 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
 
           if (matchType == MatchType.None || matchType == MatchType.Broken)
           {
+            // mc2xml channel number matching...
+            if (mc2xmlMatchingDictionary.Count > 0)
+            {
+              // Check the tuning detail channel number. It's less likely to
+              // have been customised. This also enables us to only match
+              // channels with ATSC and/or SCTE tuning details. We don't know
+              // if it makes sense to support this matching technique for other
+              // sources.
+              var channelTuningDetails = ServiceAgents.Instance.ChannelServiceAgent.ListAllTuningDetailsByChannel(channel.IdChannel);
+              if (channelTuningDetails != null)
+              {
+                foreach (TuningDetail tuningDetail in channelTuningDetails)
+                {
+                  if (tuningDetail.BroadcastStandard == (int)BroadcastStandard.Atsc || tuningDetail.BroadcastStandard == (int)BroadcastStandard.Scte)
+                  {
+                    if (mc2xmlMatchingDictionary.TryGetValue(tuningDetail.LogicalChannelNumber, out bestMatchId))
+                    {
+                      matchType = MatchType.Exact;
+                      break;
+                    }
+                  }
+                }
+              }
+            }
+
             // Exact matching...
-            if (matchingDictionary.TryGetValue(channel.Name, out bestMatchId))
+            if (
+              (matchType == MatchType.None || matchType == MatchType.Broken) &&
+              matchingDictionary.TryGetValue(channel.Name, out bestMatchId)
+            )
             {
               if (matchType == MatchType.Broken)
               {

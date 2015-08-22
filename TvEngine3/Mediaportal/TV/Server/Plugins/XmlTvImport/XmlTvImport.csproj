@@ -81,6 +81,7 @@
     <Compile Include="..\..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Mc2XmlId.cs" />
     <Compile Include="XmlTvImportId.cs" />
     <Compile Include="ImportStats.cs" />
     <Compile Include="XmlTvImportSetting.cs" />

@@ -37,7 +37,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 {
   internal class Importer
   {
-    private static readonly Regex REGEX_MC2XML_ID_FORMAT = new Regex(@"^I\d+\.([^\.]+)\.microsoft.com$");
     private static readonly Regex REGEX_COMMON_SEASON_EPISODE_FORMAT = new Regex(@"^S(\d+)E(\d+)$");
 
     private bool _isImportRunning = false;
@@ -122,15 +121,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
               {
                 if (!dbChannel.ExternalId.Equals(id))
                 {
-                  // Check for recoverable mc2xml Microsoft legacy guide data channel ID changes:
-                  // http://forums.gbpvr.com/showthread.php?55741-Changing-Channel-Mapping-Ids-Causing-Blank-Guide
-                  // I81.28458625.microsoft.com => I82.28458625.microsoft.com
-                  Match m1 = REGEX_MC2XML_ID_FORMAT.Match(xmlTvChannelId1);
-                  if (!m1.Success)
-                  {
-                    continue;
-                  }
-
                   string tempFileName;
                   string xmlTvChannelId2;
                   XmlTvImportId.GetQualifiedIdComponents(dbChannel.ExternalId, out tempFileName, out xmlTvChannelId2);
@@ -139,8 +129,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                     continue;
                   }
 
-                  Match m2 = REGEX_MC2XML_ID_FORMAT.Match(xmlTvChannelId2);
-                  if (m2.Success && string.Equals(m1.Groups[1].Captures[0].Value, m2.Groups[1].Captures[0].Value))
+                  if (Mc2XmlId.IsMatch(xmlTvChannelId1, xmlTvChannelId2))
                   {
                     this.LogDebug("XMLTV import: fixing mc2xml mapping, original ID = {0}, new ID = {1}", dbChannel.ExternalId, id);
                     dbChannel.ExternalId = id;
