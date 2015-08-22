@@ -2121,8 +2121,8 @@ void CTsReaderFilter::ThreadProc()
                 
         if ((cntA > AUD_BUF_SIZE_LOG_LIM) || (cntV > VID_BUF_SIZE_LOG_LIM) || m_bEnableBufferLogging)
         {
-          LogDebug("Buffers : A/V = %d/%d, RTSP = %d, A last: %03.3f, V Last: %03.3f, Comp: %.3f s, AudMean: %.3f s, AudDelta: %.3f s, SPPM: %d", 
-          cntA, cntV, rtspBuffSize, 
+          LogDebug("Buffers : A/V = %d/%d, RTSP = %d, MaxReadLat: %d ms, A last: %03.3f, V Last: %03.3f, Comp: %.3f s, AudMean: %.3f s, AudDelta: %.3f s, SPPM: %d", 
+          cntA, cntV, rtspBuffSize, m_demultiplexer.GetMaxFileReadLatency(),
           (float)lastAudio.Millisecs()/1000.0f, (float)lastVideo.Millisecs()/1000.0f, 
           (float)Compensation.m_time/10000000, (float)GetAudioPin()->GetAudToPresMeanDelta(), 
           (float)GetAudioPin()->GetAudioPresToRefDiff(), playSpeedAdjustInPPM);

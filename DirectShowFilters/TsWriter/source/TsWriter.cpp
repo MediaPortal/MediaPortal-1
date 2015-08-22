@@ -590,7 +590,7 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *pHr)
   LogDebug("  Logging format: [Date Time] [InstanceID] [ThreadID] Message....  ");
   LogDebug("===================================================================");
   LogDebug("---------------------- v%d.%d.%d.%d --------------------------------", TSWRITER_MAJOR_VERSION,TSWRITER_MID_VERSION,TSWRITER_VERSION,TSWRITER_POINT_VERSION);
-  LogDebug("-- Threaded timeshift file writing and FILE_FLAG_RANDOM_ACCESS mods --");
+  LogDebug("-- Threaded timeshift file writing --");
   LogDebug("-- Timeshift file parking and no timeshift chunk reserve mods --");
   LogDebug(" ");  
 

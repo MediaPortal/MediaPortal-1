@@ -158,7 +158,8 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_lastAudHeader = 0;
   m_audHeaderCount = 0;
   m_hadPESfail = 0;
-  
+  m_fileReadLatency = 0;
+  m_maxFileReadLatency = 0;
   
   LogDebug(" ");
   LogDebug("=================== New filter instance =========================================");
@@ -747,6 +748,8 @@ void CDeMultiplexer::Flush(bool clearAVready)
   FlushSubtitle();
   m_bFlushDelegated = false;
   m_bReadAheadFromFile = false;  
+  m_fileReadLatency = 0;
+  m_maxFileReadLatency = 0;
   
   if (clearAVready)
   {
@@ -1197,7 +1200,13 @@ int CDeMultiplexer::ReadFromFile(ULONG lDataLength)
       return -1;
     }      
     //Read raw data from the buffer
+    DWORD readFileTime = GET_TIME_NOW();
     m_reader->Read(m_pFileReadBuffer, lDataLength, (DWORD*)&dwReadBytes);
+    m_fileReadLatency = GET_TIME_NOW() - readFileTime;    
+    if (m_fileReadLatency > m_maxFileReadLatency)
+    {
+      m_maxFileReadLatency = m_fileReadLatency;
+    }
     if (dwReadBytes < lDataLength)
     {
       m_bAudioAtEof = true;
@@ -1229,8 +1238,14 @@ int CDeMultiplexer::ReadFromFile(ULONG lDataLength)
   {
     //playing a local file or using UNC path
     //read raw data from the file
+    DWORD readFileTime = GET_TIME_NOW();
     __int64 filePointer = m_reader->GetFilePointer(); //store current pointer for re-reads if required for errors
     HRESULT readResult = m_reader->Read(m_pFileReadBuffer, lDataLength, (DWORD*)&dwReadBytes);
+    m_fileReadLatency = GET_TIME_NOW() - readFileTime;    
+    if (m_fileReadLatency > m_maxFileReadLatency)
+    {
+      m_maxFileReadLatency = m_fileReadLatency;
+    }
 
     //check data integrity
     if (m_filter.m_bEnableBufferLogging && (SUCCEEDED(readResult)) && (dwReadBytes > 0))
@@ -1241,33 +1256,6 @@ int CDeMultiplexer::ReadFromFile(ULONG lDataLength)
         LogDebug("demux:ReadFromFile() syncErrors: %d, bufferSize: %d, filePointer: %d", syncErrors, dwReadBytes, filePointer);
       }
     }
-
-    //    //check data integrity and re-read a few times if errors...
-    //    for (int syncLoops=0; syncLoops < 3; syncLoops++)
-    //    {
-    //      int syncErrors = 0;
-    //      if ((SUCCEEDED(readResult)) && (dwReadBytes > 0))
-    //      {
-    //        syncErrors = OnRawDataCheck(m_pFileReadBuffer,(int)dwReadBytes);
-    //      }
-    //      
-    //      if (syncErrors != 0)
-    //      {
-    //        LogDebug("demux:ReadFromFile() syncErrors: %d, bufferSize: %d, filePointer: %d", syncErrors, dwReadBytes, filePointer);
-    //        if (!m_filter.IsTimeShifting())
-    //        {
-    //          break;
-    //        }
-    //        //wait a while and re-read the data block from disk
-    //        Sleep(50);
-    //        m_reader->SetFilePointer(filePointer, FILE_BEGIN);
-    //        readResult = m_reader->ReadWithRefresh(m_pFileReadBuffer, lDataLength, (DWORD*)&dwReadBytes);
-    //      }
-    //      else
-    //      {
-    //        break; //good data or bad readResult/no data
-    //      }       
-    //    }
 
     if (SUCCEEDED(readResult))
     {
@@ -1537,7 +1525,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
               if (Delta < -2.0)
               {
                 //Large negative delta - flush the world...
-                LogDebug("Demux : Audio to render too late= %03.3f Sec, flushing", Delta) ;
+                LogDebug("Demux : Audio to render too late= %03.3f Sec, FileReadLatency: %d ms, flushing", Delta, m_fileReadLatency) ;
                 m_MinAudioDelta+=1.0;
                 m_MinVideoDelta+=1.0;                
                 //Flushing is delegated to CDeMultiplexer::ThreadProc()
@@ -1545,7 +1533,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
               }
               else if (Delta < 0.1)
               {
-                LogDebug("Demux : Audio to render too late= %03.3f Sec", Delta) ;
+                LogDebug("Demux : Audio to render too late= %03.3f Sec, FileReadLatency: %d ms", Delta, m_fileReadLatency) ;
                 //  m_filter.m_bRenderingClockTooFast=true;
                 _InterlockedIncrement(&m_AVDataLowCount);   
                 m_MinAudioDelta+=1.0;
@@ -2661,7 +2649,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
                 if (Delta < -2.0)
                 {
                   //Large negative delta - flush the world...
-                  LogDebug("Demux : Video to render too late= %03.3f Sec, flushing", Delta) ;
+                  LogDebug("Demux : Video to render too late= %03.3f Sec, FileReadLatency: %d ms, flushing", Delta, m_fileReadLatency) ;
                   m_MinAudioDelta+=1.0;
                   m_MinVideoDelta+=1.0;                
                   //Flushing is delegated to CDeMultiplexer::ThreadProc()
@@ -2669,7 +2657,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
                 }
                 else if (Delta < 0.2)
                 {
-                  LogDebug("Demux : Video to render too late= %03.3f Sec", Delta) ;
+                  LogDebug("Demux : Video to render too late= %03.3f Sec, FileReadLatency: %d ms", Delta, m_fileReadLatency) ;
                   //  m_filter.m_bRenderingClockTooFast=true;
                   _InterlockedIncrement(&m_AVDataLowCount);   
                   m_MinAudioDelta+=1.0;
@@ -3105,8 +3093,8 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
                   m_MinVideoDelta=Delta;
                   if (Delta < -2.0)
                   {
-                    //Large negative delta - flush the world...
-                    LogDebug("Demux : Video to render too late= %03.3f Sec, flushing", Delta) ;
+                    //Large negative delta - flush the world... 
+                    LogDebug("Demux : Video to render too late= %03.3f Sec, FileReadLatency: %d ms, flushing", Delta, m_fileReadLatency) ;
                     m_MinAudioDelta+=1.0;
                     m_MinVideoDelta+=1.0;                
                     //Flushing is delegated to CDeMultiplexer::ThreadProc()
@@ -3114,7 +3102,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
                   }
                   else if (Delta < 0.2)
                   {
-                    LogDebug("Demux : Video to render too late= %03.3f Sec", Delta) ;
+                    LogDebug("Demux : Video to render too late= %03.3f Sec, FileReadLatency: %d ms", Delta, m_fileReadLatency) ;
                     //  m_filter.m_bRenderingClockTooFast=true;
                     _InterlockedIncrement(&m_AVDataLowCount);   
                     m_MinAudioDelta+=1.0;
@@ -3863,6 +3851,14 @@ void CDeMultiplexer::PrefetchData()
 {
   m_bReadAheadFromFile = true;
   WakeThread();        
+}
+
+DWORD CDeMultiplexer::GetMaxFileReadLatency()
+{
+  CAutoLock lock (&m_sectionRead); 
+  DWORD maxFileReadLat = m_maxFileReadLatency;
+  m_maxFileReadLatency = 0; 
+  return maxFileReadLat;
 }
 
 //======================================================================
