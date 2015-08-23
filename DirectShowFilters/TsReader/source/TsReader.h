@@ -92,6 +92,8 @@
 //Make compatible with MP1.11 and later versions if defined
 #define BITRATE_REPORT
 
+#define MAX_REG_LENGTH 256
+
 using namespace std;
 
 //Macro for replacing timeGetTime()
@@ -333,6 +335,8 @@ private:
   void    BufferingPause(bool longPause, long extraSleep);
   void    ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
   void    WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
+  void    ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
+  void    WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
   LONG    ReadOnlyRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
      
   CAudioPin*	    m_pAudioPin;

@@ -71,11 +71,67 @@ BOOL m_bLoggerRunning = false;
 HANDLE m_hLogger = NULL;
 CAMEvent m_EndLoggingEvent;
 
+
+LONG LogWriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
+{  
+  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, _tcslen(data) * sizeof(TCHAR));
+  
+  return result;
+}
+
+LONG LogReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
+{
+  DWORD dwSize = MAX_PATH * sizeof(TCHAR);
+  DWORD dwType = REG_SZ;
+  LONG result = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)data, &dwSize);
+  
+  if (result != ERROR_SUCCESS)
+  {
+    if (result == ERROR_FILE_NOT_FOUND)
+    {
+      //create default value
+      result = LogWriteRegistryKeyString(hKey, lpSubKey, data);
+    }
+  }
+  
+  return result;
+}
+
 void LogPath(TCHAR* dest, TCHAR* name)
 {
-  TCHAR folder[MAX_PATH];
-  SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  _stprintf(dest, _T("%s\\Team Mediaportal\\MediaPortal\\log\\TsReader.%s"), folder, name);
+  CAutoLock lock(&m_logFileLock); 
+  HKEY hKey;
+  //Try to read logging folder path from registry
+  LONG result = RegCreateKeyEx(HKEY_CURRENT_USER, _T("Software\\Team MediaPortal\\Client Common"), 0, NULL, 
+                                    REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL);                                   
+  if (result == ERROR_SUCCESS)
+  {
+    //Get default log folder path
+    TCHAR folder[MAX_PATH];
+    SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+    TCHAR logFolder[MAX_PATH];
+    _stprintf(logFolder, _T("%s\\Team Mediaportal\\MediaPortal\\log"), folder);
+
+    //Read log folder path from registry (or write default path into registry if key doesn't exist)
+    LPCTSTR logFolderC = logFolder;    
+    LPCTSTR logFolderPath = _T("LogFolderPath");
+    result = LogReadRegistryKeyString(hKey, logFolderPath, logFolderC);
+    
+    if (result == ERROR_SUCCESS)
+    {
+      //Get full log file path
+      _stprintf(dest, _T("%s\\TsReader.%s"), logFolderC, name);
+    }
+  }
+    
+  if (result != ERROR_SUCCESS)
+  {
+    //Fall back to default log folder path
+    TCHAR folder[MAX_PATH];
+    SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+    //Get full log file path
+    _stprintf(dest, _T("%s\\Team Mediaportal\\MediaPortal\\log\\TsReader.%s"), folder, name);
+  }
 }
 
 
@@ -2596,6 +2652,40 @@ LONG CTsReaderFilter::ReadOnlyRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWO
   LONG error = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)&data, &dwSize);
   return error;
 }
+
+void CTsReaderFilter::ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
+{
+  USES_CONVERSION;
+
+  DWORD dwSize = MAX_REG_LENGTH;
+  DWORD dwType = REG_SZ;
+  LONG error = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)data, &dwSize);
+  
+  if (error != ERROR_SUCCESS)
+  {
+    if (error == ERROR_FILE_NOT_FOUND)
+    {
+      LogDebug("   create default value for %s", T2A(lpSubKey));
+      WriteRegistryKeyString(hKey, lpSubKey, data);
+    }
+    else if (error == ERROR_MORE_DATA)
+      LogDebug("   too much data, corrupted registry setting(?):  %s", T2A(lpSubKey));
+    else
+      LogDebug("   error: %d subkey: %s", error, T2A(lpSubKey));
+  }
+}
+
+void CTsReaderFilter::WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
+{  
+  USES_CONVERSION;
+
+  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, _tcslen(data) * sizeof(TCHAR));
+  if (result == ERROR_SUCCESS) 
+    LogDebug("Success writing to Registry: %s", T2A(lpSubKey));
+  else 
+    LogDebug("Error writing to Registry - subkey: %s error: %d", T2A(lpSubKey), result);
+}
+
 
 void CTsReaderFilter::SetErrorAbort()
 {
