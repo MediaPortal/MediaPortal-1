@@ -99,6 +99,7 @@ protected:
   int rtspResponseResultCode;
   char rtspResponseResultString[RTSP_MAX_RESPONSE_BYTE_COUNT];
   MediaSession *rtspSession;
+  bool isRtspSessionSetup;
   unsigned int rtspRtpClientPortRangeStart;
   unsigned int rtspRtpClientPortRangeEnd;
   Groupsock *rtspUdpGroupsock;
@@ -131,7 +132,7 @@ protected:
 
   // tear down media session
   // @param forceTeardown : if true than session and client will be deleted in any case
-  // @result : true if succesful, false otherwise
+  // @result : true if successful, false otherwise
   bool TeardownMediaSession(bool forceTeardown);
 
 };
