@@ -152,6 +152,8 @@ public:
 
   void DelegatedFlush(bool forceNow, bool waitForFlush);
   void PrefetchData();
+  
+  DWORD GetMaxFileReadLatency();
 
   bool m_DisableDiscontinuitiesFiltering;
   DWORD m_LastDataFromRtsp;
@@ -333,5 +335,8 @@ private:
   DWORD m_lastAudHeader;
   int m_audHeaderCount;
   int m_hadPESfail;
+  
+  DWORD m_fileReadLatency;
+  DWORD m_maxFileReadLatency;
     
 };
