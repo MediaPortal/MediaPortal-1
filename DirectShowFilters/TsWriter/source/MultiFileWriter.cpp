@@ -195,7 +195,8 @@ HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 								 (DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE),           // Share access
 								 NULL,                              // Security
 								 (DWORD) CREATE_ALWAYS,             // Open flags
-								 (DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS),     // More flags
+								 // (DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS),     // More flags
+								 (DWORD) FILE_ATTRIBUTE_NORMAL,     // More flags
 								 NULL);                             // Template
 
 	if (m_hTSBufferFile == INVALID_HANDLE_VALUE)
