@@ -436,7 +436,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       if (streamConfig != null)
       {
         this.LogDebug("WDM analog capture: found stream configuration interface");
-        CheckCapabilitiesStream();
+
+        // It seems that available stream capabilities depend on the selected
+        // video standard. Therefore we cycle through all supported video
+        // standards to build the full set of stream capabilities.
+        foreach (TveAnalogVideoStandard standard in System.Enum.GetValues(typeof(TveAnalogVideoStandard)))
+        {
+          if (standard != TveAnalogVideoStandard.None && _supportedVideoStandards.HasFlag(standard))
+          {
+            ConfigureAnalogVideoDecoder(standard);
+            CheckCapabilitiesStream();
+          }
+        }
       }
       else if (_filterVideo != null)
       {
@@ -510,6 +521,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       }
       this.LogDebug("WDM analog capture: supported stream configuration capability count = {0}", countCapabilities);
 
+      int outputWidthMinimum = 100000;
+      int outputWidthMaximum = 0;
+      int outputHeightMinimum = 100000;
+      int outputHeightMaximum = 0;
       AMMediaType format;
       FrameSize frameSize;
       FrameRate frameRate;
@@ -530,10 +545,55 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
               _supportedFrameSizes |= frameSize;
               _supportedFrameRates |= frameRate;
             }
+
+            VideoStreamConfigCaps configCaps = (VideoStreamConfigCaps)Marshal.PtrToStructure(configBuffer, typeof(VideoStreamConfigCaps));
+            if (configCaps.MinOutputSize.Width < outputWidthMinimum)
+            {
+              outputWidthMinimum = configCaps.MinOutputSize.Width;
+            }
+            if (configCaps.MinOutputSize.Height < outputHeightMinimum)
+            {
+              outputHeightMinimum = configCaps.MinOutputSize.Height;
+            }
+            if (configCaps.MaxOutputSize.Width > outputWidthMaximum)
+            {
+              outputWidthMaximum = configCaps.MaxOutputSize.Width;
+            }
+            if (configCaps.MaxOutputSize.Height > outputHeightMaximum)
+            {
+              outputHeightMaximum = configCaps.MaxOutputSize.Height;
+            }
           }
           finally
           {
             Release.AmMediaType(ref format);
+          }
+        }
+
+        if (
+          outputWidthMinimum < outputWidthMaximum &&
+          outputHeightMinimum < outputHeightMaximum &&
+          outputWidthMinimum > 0 &&
+          outputHeightMinimum > 0
+        )
+        {
+          this.LogDebug("WDM analog capture: include frame sizes between {0}x{1} and {2}x{3}", outputWidthMinimum, outputHeightMinimum, outputWidthMaximum, outputHeightMaximum);
+          foreach (FrameSize frameSize1 in System.Enum.GetValues(typeof(FrameSize)))
+          {
+            int frameWidth = GetTveFrameWidth(frameSize1);
+            int frameHeight = GetTveFrameHeight(frameSize1);
+            if (
+              frameWidth > 0 &&
+              frameWidth >= outputWidthMinimum &&
+              frameWidth <= outputWidthMaximum &&
+              frameHeight > 0 &&
+              frameHeight >= outputHeightMinimum &&
+              frameHeight <= outputHeightMaximum
+            )
+            {
+              this.LogDebug("WDM analog capture:   frame size = {0}", frameSize1);
+              _supportedFrameSizes |= frameSize1;
+            }
           }
         }
       }
@@ -1673,6 +1733,69 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         tveFlags |= VideoOrCameraPropertyFlag.Manual;
       }
       return tveFlags;
+    }
+
+    private static int GetTveFrameWidth(FrameSize frameSize)
+    {
+      switch (frameSize)
+      {
+        case FrameSize.Fs320_240:
+          return 320;
+        case FrameSize.Fs352_240:
+        case FrameSize.Fs352_288:
+          return 352;
+        case FrameSize.Fs384_288:
+          return 384;
+        case FrameSize.Fs480_360:
+          return 480;
+        case FrameSize.Fs640_360:
+        case FrameSize.Fs640_480:
+          return 640;
+        case FrameSize.Fs704_480:
+        case FrameSize.Fs704_576:
+          return 704;
+        case FrameSize.Fs720_480:
+        case FrameSize.Fs720_576:
+          return 720;
+        case FrameSize.Fs768_480:
+        case FrameSize.Fs768_576:
+          return 768;
+        case FrameSize.Fs1280_720:
+          return 1280;
+        case FrameSize.Fs1920_1080:
+          return 1920;
+      }
+      return -1;
+    }
+
+    private static int GetTveFrameHeight(FrameSize frameSize)
+    {
+      switch (frameSize)
+      {
+        case FrameSize.Fs320_240:
+        case FrameSize.Fs352_240:
+          return 240;
+        case FrameSize.Fs352_288:
+        case FrameSize.Fs384_288:
+          return 288;
+        case FrameSize.Fs480_360:
+        case FrameSize.Fs640_360:
+          return 360;
+        case FrameSize.Fs640_480:
+        case FrameSize.Fs704_480:
+        case FrameSize.Fs720_480:
+        case FrameSize.Fs768_480:
+          return 480;
+        case FrameSize.Fs704_576:
+        case FrameSize.Fs720_576:
+        case FrameSize.Fs768_576:
+          return 576;
+        case FrameSize.Fs1280_720:
+          return 720;
+        case FrameSize.Fs1920_1080:
+          return 1080;
+      }
+      return -1;
     }
 
     private static void GetTveFrameDetails(AMMediaType format, out FrameSize frameSize, out FrameRate frameRate)
