@@ -43,7 +43,7 @@ class MultiFileReader : public FileReader
 {
 public:
 
-	MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec* pFilterLock);
+	MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec* pFilterLock, BOOL useRandomAccess, BOOL extraLogging);
 	virtual ~MultiFileReader();
 
 	virtual HRESULT GetFileName(LPOLESTR *lpszFileName);
@@ -92,6 +92,7 @@ protected:
 	BOOL     m_bDebugOutput;
 	BOOL     m_bUseFileNext;
 	BOOL     m_bIsStopping;
+	BOOL     m_bExtraLogging;
 
   byte*    m_pFileReadNextBuffer;
   byte*    m_pInfoFileBuffer1;

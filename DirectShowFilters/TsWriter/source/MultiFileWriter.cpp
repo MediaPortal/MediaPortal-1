@@ -195,8 +195,8 @@ HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 								 (DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE),           // Share access
 								 NULL,                              // Security
 								 (DWORD) CREATE_ALWAYS,             // Open flags
-								 // (DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS),     // More flags
-								 (DWORD) FILE_ATTRIBUTE_NORMAL,     // More flags
+								 (DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS),     // More flags
+								 //(DWORD) FILE_ATTRIBUTE_NORMAL,     // More flags
 								 NULL);                             // Template
 
 	if (m_hTSBufferFile == INVALID_HANDLE_VALUE)
@@ -351,8 +351,8 @@ HRESULT MultiFileWriter::PrepareTSFile()
 
 	//LogDebug("PrepareTSFile()");
 	
-	// Make sure the old file is parked (delayed closure, to work around some SMB caching problems - file will be closed next time PrepareTSFile() is called)
-	m_pCurrentTSFile->ParkFile();
+	// Make sure the old file is closed
+	m_pCurrentTSFile->CloseFile();
 
 	__int64 llDiskSpaceAvailable = 0;
 	if (SUCCEEDED(GetAvailableDiskSpace(&llDiskSpaceAvailable)) && (__int64)llDiskSpaceAvailable < (__int64)(m_maxTSFileSize*2))

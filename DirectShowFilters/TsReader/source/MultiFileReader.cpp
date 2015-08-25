@@ -39,10 +39,10 @@
 #define NEXT_READ_SIZE	8192
 #define NEXT_READ_ROLLOVER (NEXT_READ_SIZE*64)
 
-#define INFO_BUFF_SIZE (131072)
+#define INFO_BUFF_SIZE (65536)
 
 extern void LogDebug(const char *fmt, ...) ;
-MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec* pFilterLock):
+MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec* pFilterLock, BOOL useRandomAccess, BOOL extraLogging):
 	m_TSBufferFile(),
 	m_TSFile(),
 	m_TSFileGetLength(),
@@ -69,16 +69,17 @@ MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec
   m_currPosnFileNext = 0;
   m_bUseFileNext = useFileNext;
   m_bIsStopping = false;
+  m_bExtraLogging = extraLogging;
   
   m_TSBufferFile.SetDummyWrites(useDummyWrites);
   m_TSFile.SetDummyWrites(useDummyWrites);
   m_TSFileNext.SetDummyWrites(FALSE);
   m_TSFileGetLength.SetDummyWrites(FALSE);
 
-  m_TSBufferFile.SetRandomAccess(FALSE);
-  m_TSFile.SetRandomAccess(FALSE);
-  m_TSFileNext.SetRandomAccess(FALSE);
-  m_TSFileGetLength.SetRandomAccess(FALSE);
+  m_TSBufferFile.SetRandomAccess(useRandomAccess);
+  m_TSFile.SetRandomAccess(useRandomAccess);
+  m_TSFileNext.SetRandomAccess(useRandomAccess);
+  m_TSFileGetLength.SetRandomAccess(useRandomAccess);
 
   m_pFileReadNextBuffer = NULL;
   m_pInfoFileBuffer1 = NULL;
@@ -88,7 +89,7 @@ MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec
   m_pInfoFileBuffer1 = new byte[INFO_BUFF_SIZE];
   m_pInfoFileBuffer2 = new byte[INFO_BUFF_SIZE];
   
-  LogDebug("MultiFileReader::ctor, useFileNext = %d, useDummyWrites %d, pFilterLock %d", m_bUseFileNext, useDummyWrites, (pFilterLock != NULL));
+  LogDebug("MultiFileReader::ctor, useFileNext = %d, useDummyWrites %d, pFilterLock %d, useRandomAccess %d", m_bUseFileNext, useDummyWrites, (pFilterLock != NULL), useRandomAccess);
 }
 
 MultiFileReader::~MultiFileReader()
@@ -521,7 +522,6 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
    	  if (Loop < 9) //An error on the first loop iteration is quasi-normal, so don't log it
    	  {
     	  LogDebug("MultiFileReader has error 0x%x in Loop %d. Try to clear SMB Cache.", Error, 10-Loop);  	  
-        //LogDebug("MultiFileReader m_filesAdded : %d, m_filesRemoved : %d, m_startPosition : %I64d, m_endPosition : %I64d, currentPosition = %I64d", m_filesAdded, m_filesRemoved, m_startPosition, m_endPosition, currentPosition) ;
   	  }
   	  // try to clear local / remote SMB file cache. This should happen when we close the filehandle
       m_TSBufferFile.CloseFile();
@@ -537,23 +537,12 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   	filesRemoved2 = -2;
     Loop-- ;
 
-	  fileLength = m_TSBufferFile.GetFileSize();
-
-    // Min file length is Header ( __int64 + long + long ) + filelist ( > 0 ) + Footer ( long + long ) 
-    if (fileLength <= (sizeof(__int64) + sizeof(long) + sizeof(long) + sizeof(wchar_t) + sizeof(long) + sizeof(long)))
-		  return S_FALSE;
-
-    if (fileLength%2) //Must be an even number of bytes in length
-		  return S_FALSE;
-		
-		if (fileLength > INFO_BUFF_SIZE)
-      return E_FAIL ;
-  
+    //Read the 'header' of the file to work out if anything has changed.
   	int readLength = sizeof(currentPosition) + sizeof(filesAdded) + sizeof(filesRemoved);
     
   	m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
   	result = m_TSBufferFile.Read(m_pInfoFileBuffer1, readLength, &bytesRead);
-
+		
     if (!SUCCEEDED(result) || bytesRead != readLength) 
 		  Error |= 0x02;
 
@@ -583,11 +572,21 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
       continue;
     } 
 
-    // If no files added or removed, break the loop !
+    // If no files added or removed, break out of the loop (we don't need to read the rest of the file)
     if ((m_filesAdded == filesAdded) && (m_filesRemoved == filesRemoved)) 
 			break ;
 
     //Now read the full file for processing and comparison
+	  fileLength = m_TSBufferFile.GetFileSize();
+	  
+    // Min file length is Header ( __int64 + long + long ) + filelist ( > 0 ) + Footer ( long + long ) 
+    if (fileLength <= (sizeof(__int64) + sizeof(long) + sizeof(long) + sizeof(wchar_t) + sizeof(long) + sizeof(long)))
+		  return S_FALSE;
+    if (fileLength%2) //Must be a multiple of 2 bytes in length
+		  return S_FALSE;
+		if (fileLength > INFO_BUFF_SIZE)
+      return E_FAIL ;
+      
   	m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
   	result=m_TSBufferFile.Read(m_pInfoFileBuffer1, (ULONG)fileLength, &bytesRead);
   	
@@ -710,7 +709,7 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   		  Error |= 0x200;
   	  }  	   
   
-  		// Go through files
+  		// Go through existing file list and new filename list
   		std::vector<MultiFileReaderFile *>::iterator itFiles = m_tsFiles.begin();
   		std::vector<LPWSTR>::iterator itFilenames = filenames.begin();
   
@@ -723,7 +722,6 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   
   			if (itFilenames < filenames.end())
   			{
-  				// TODO: Check that the filenames match. ( Ambass : With buffer integrity check, probably no need to do this !)
   				itFilenames++;
   			}
   			else
@@ -733,6 +731,7 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   			}
   		}
   		  
+  		//Add any new files to the m_tsFiles list i.e. itFilenames > itFiles
   		while ((itFilenames < filenames.end()) && !Error)
   		{
   			LPWSTR pFilename = *itFilenames;
@@ -744,9 +743,19 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
     	  itFilenames++;
   			fileID++;
   			file->filePositionId = fileID;
-  
-        //Don't 'double check' the length of the latest file (which is constantly increasing)
-  			result = GetFileLength(pFilename, file->length, (itFilenames < filenames.end()));
+    
+        if (itFilenames == filenames.end()) //Latest file
+        {
+          //The 'currentPosition' value is the length of the latest file
+          file->length = currentPosition;
+          result = S_OK;
+        }
+        else
+        {
+          //'double check' the length of any older, closed files that have been added
+  			  result = GetFileLength(pFilename, file->length, true);
+        }
+        
   		  if (!SUCCEEDED(result)) 
   		  {
 		      Error |= 0x100;
@@ -768,7 +777,7 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   		  Error |= 0x800;
   	  }
   	      
-  		if (!Error)
+  		if (!Error && m_bExtraLogging)
   		{
         LogDebug("MultiFileReader m_filesAdded : %d, m_filesRemoved : %d, file->startPosition : %I64d, currentPosition = %I64d, LatestFileID = %d", m_filesAdded, m_filesRemoved, file->startPosition, currentPosition, fileID) ;
   	  }
@@ -821,6 +830,21 @@ HRESULT MultiFileReader::GetFileLength(LPWSTR pFilename, __int64 &length, bool d
   long Error=0;
   long Loop=10 ;  
   __int64 origLength = length;
+  bool useTSFile = false;
+  
+  //Optimisation - find out if the file is the current m_TSFile (and hence already open)
+  if (!m_TSFile.IsFileInvalid())
+  {
+    LPWSTR tempFileName;
+    m_TSFile.GetFileName(&tempFileName);
+    
+    if (!wcscmp(tempFileName, pFilename))
+    {
+      //The filenames match
+      useTSFile = true;
+    	//LogDebug("MultiFileReader::GetFileLength() - open data file is %ws",tempFileName);
+    }
+  }
   	
   do
   {
@@ -842,22 +866,37 @@ HRESULT MultiFileReader::GetFileLength(LPWSTR pFilename, __int64 &length, bool d
     Error=0;
     Loop-- ;
 
-  	m_TSFileGetLength.SetFileName(pFilename);
-  	hr = m_TSFileGetLength.OpenFile();
-  	if (!SUCCEEDED(hr))
-  	{
-  	  Error |= 0x2;
-  	}
-  	length = m_TSFileGetLength.GetFileSize();
-  	if (doubleCheck)
-  	{
-    	Sleep(10);
-    	if (length != m_TSFileGetLength.GetFileSize())
+    if (useTSFile)
+    {
+    	length = m_TSFile.GetFileSize();
+    	if (doubleCheck)
     	{
-    	  Error |= 0x4;
-    	}
+      	Sleep(10);
+      	if (length != m_TSFile.GetFileSize())
+      	{
+      	  Error |= 0x4;
+      	}
+      }
     }
-    m_TSFileGetLength.CloseFile();
+    else
+    {
+    	m_TSFileGetLength.SetFileName(pFilename);
+    	hr = m_TSFileGetLength.OpenFile();
+    	if (!SUCCEEDED(hr))
+    	{
+    	  Error |= 0x2;
+    	}
+    	length = m_TSFileGetLength.GetFileSize();
+    	if (doubleCheck)
+    	{
+      	Sleep(10);
+      	if (length != m_TSFileGetLength.GetFileSize())
+      	{
+      	  Error |= 0x4;
+      	}
+      }
+      m_TSFileGetLength.CloseFile();
+    }
 
   } while ( Error && Loop ) ; // If Error is set, try again...until Loop reaches 0.
   

@@ -210,14 +210,6 @@ void LogPath(TCHAR* dest, TCHAR* name)
 }
 
 
-//void LogPath(TCHAR* dest, TCHAR* name)
-//{
-//  TCHAR folder[MAX_PATH];
-//  SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-//  _stprintf(dest, _T("%s\\Team Mediaportal\\MediaPortal\\log\\%s.%s"), folder, m_RenderPrefix, name);
-//}
-
-
 void LogRotate()
 {   
   CAutoLock lock(&m_logFileLock);

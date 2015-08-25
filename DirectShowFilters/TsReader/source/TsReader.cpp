@@ -1320,8 +1320,9 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
       //local timeshift buffer file file
       m_bTimeShifting = true;
       m_bLiveTv = true;
-      m_fileReader = new MultiFileReader(false, m_isUNCfile, NULL); //enable SMB2 'file exists' workarounds for UNC, and non-shared locking
-      m_fileDuration = new MultiFileReader(false, m_isUNCfile, NULL); //enable SMB2 'file exists' workaround for UNC, and non-shared locking
+      //MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec* pFilterLock, BOOL useRandomAccess, BOOL extraLogging):
+      m_fileReader   = new MultiFileReader(FALSE, m_isUNCfile, NULL, TRUE, m_bEnableBufferLogging);
+      m_fileDuration = new MultiFileReader(FALSE, m_isUNCfile, NULL, TRUE, m_bEnableBufferLogging);
     }    
 
     //open file

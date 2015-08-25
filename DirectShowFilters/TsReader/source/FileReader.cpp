@@ -102,7 +102,7 @@ HRESULT FileReader::OpenFile()
   HANDLE hFileUnbuff = INVALID_HANDLE_VALUE;
   
   //Can be used to open files in random-access mode to workaround SMB caching problems
-  DWORD accessModeFlags = (m_bUseRandomAccess ? FILE_FLAG_RANDOM_ACCESS : 0);     
+  DWORD accessModeFlags = (m_bUseRandomAccess ? FILE_FLAG_RANDOM_ACCESS : FILE_FLAG_SEQUENTIAL_SCAN);     
   
 	// Is the file already opened
 	if (m_hFile != INVALID_HANDLE_VALUE) 
@@ -388,7 +388,7 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 
 	if (*dwReadBytes < (ULONG)lDataLength)
   {
-    LogDebug("FileReader::Read() read to less bytes");
+    LogDebug("FileReader::Read() read to less bytes from %ws", m_pFileName);
 		return S_FALSE;
   }
 	return S_OK;
@@ -432,7 +432,7 @@ void FileReader::SetDummyWrites(BOOL useDummyWrites)
 {
   CAutoLockFR rLock (&m_accessLock);
 	m_bUseDummyWrites = useDummyWrites;
-	LogDebug("FileReader::SetDummyWrites, useDummyWrites = %d", useDummyWrites);
+	//LogDebug("FileReader::SetDummyWrites, useDummyWrites = %d", useDummyWrites);
 }
 
 //Enable 'random access' mode when opening files
@@ -440,7 +440,7 @@ void FileReader::SetRandomAccess(BOOL useRandomAccess)
 {
   CAutoLockFR rLock (&m_accessLock);
 	m_bUseRandomAccess = useRandomAccess;
-	LogDebug("FileReader::SetRandomAccess, useRandomAccess = %d", useRandomAccess);
+	//LogDebug("FileReader::SetRandomAccess, useRandomAccess = %d", useRandomAccess);
 }
 
 //for MultiFileReader() compatibility only
