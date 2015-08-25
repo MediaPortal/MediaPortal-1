@@ -30,6 +30,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   internal interface IObserver
   {
     /// <summary>
+    /// This function is invoked when an initial or updated program association table is received.
+    /// </summary>
+    /// <param name="transportStreamId">The transport stream's identifier.</param>
+    /// <param name="networkPid">The PID which delivers the transport stream's network information.</param>
+    /// <param name="programCount">The number of programs in the transport stream.</param>
+    [PreserveSig]
+    void OnProgramAssociationTable(ushort transportStreamId, ushort networkPid, ushort programCount);
+
+    /// <summary>
     /// This function is invoked when an initial or updated conditional access table is received.
     /// </summary>
     /// <param name="cat">The new conditional access table. The callee must not change this array.</param>

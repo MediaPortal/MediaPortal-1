@@ -850,6 +850,19 @@ void CTsWriter::OnTableSeen(unsigned char tableId)
 
 void CTsWriter::OnTableComplete(unsigned char tableId)
 {
+  if (tableId == 0 && m_observer != NULL)
+  {
+    unsigned short transportStreamId;
+    unsigned short networkPid;
+    unsigned short programCount;
+    m_grabberSiMpeg->GetTransportStreamDetail(&transportStreamId,
+                                              &networkPid,
+                                              &programCount);
+    m_observer->OnProgramAssociationTable(transportStreamId,
+                                          networkPid,
+                                          programCount);
+    return;
+  }
   if (tableId != 0xc7)
   {
     return;
@@ -1304,6 +1317,8 @@ void CTsWriter::OnPatTsidChanged(unsigned short oldTransportStreamId,
 
 void CTsWriter::OnPatNetworkPidChanged(unsigned short oldNetworkPid, unsigned short newNetworkPid)
 {
+  m_grabberSiDvb->SetPids(0, newNetworkPid, 0);
+
   if (m_observer == NULL)
   {
     return;
@@ -1314,8 +1329,6 @@ void CTsWriter::OnPatNetworkPidChanged(unsigned short oldNetworkPid, unsigned sh
     m_observer->OnPidsNotRequired(&oldNetworkPid, 1, (unsigned long)Si);
   }
   m_observer->OnPidsRequired(&newNetworkPid, 1, (unsigned long)Si);
-
-  m_grabberSiDvb->SetPids(0, newNetworkPid, 0);
 }
 
 void CTsWriter::OnPmtReceived(unsigned short programNumber,

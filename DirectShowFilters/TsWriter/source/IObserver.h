@@ -24,6 +24,9 @@
 
 DECLARE_INTERFACE_(IObserver, IUnknown)
 {
+  STDMETHOD_(void, OnProgramAssociationTable)(THIS_ unsigned short transportStreamId,
+                                              unsigned short networkPid,
+                                              unsigned short programCount)PURE;
   STDMETHOD_(void, OnConditionalAccessTable)(THIS_ const unsigned char* cat,
                                               unsigned short catBufferSize)PURE;
   STDMETHOD_(void, OnProgramDetail)(THIS_ unsigned short programNumber,

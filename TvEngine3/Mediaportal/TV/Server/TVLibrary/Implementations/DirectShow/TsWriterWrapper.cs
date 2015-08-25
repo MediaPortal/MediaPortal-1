@@ -1095,6 +1095,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
     #region IObserver members
 
+    public void OnProgramAssociationTable(ushort transportStreamId, ushort networkPid, ushort programCount)
+    {
+      CallBackJob job = new CallBackJob();
+      job.TargetType = typeof(IObserver);
+      job.MethodName = "OnProgramAssociationTable";
+      job.TargetInstance = _observer;
+      job.Parameters = new object[3] { transportStreamId, networkPid, programCount };
+      StartCallBackThread(job);
+    }
+
     public void OnConditionalAccessTable(byte[] cat, ushort catBufferSize)
     {
       CallBackJob job = new CallBackJob();
