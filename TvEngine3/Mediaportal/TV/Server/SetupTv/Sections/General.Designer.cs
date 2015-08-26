@@ -36,19 +36,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTunerDetectionDelay = new System.Windows.Forms.NumericUpDown();
       this.labelServicePriority = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.comboBoxServicePriority = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.groupBoxScanTuneTimeOuts = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.numericUpDownTimeOutScan = new System.Windows.Forms.NumericUpDown();
-      this.labelTimeOutScanUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.labelTimeOutScan = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownTimeOutProgramMapTable = new System.Windows.Forms.NumericUpDown();
-      this.labelTimeOutProgramMapTableUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.labelTimeOutProgramMapTable = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownTimeOutConditionalAccessTable = new System.Windows.Forms.NumericUpDown();
-      this.labelTimeOutConditionalAccessTableUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.labelTimeOutConditionalAccessTable = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownTimeOutSignal = new System.Windows.Forms.NumericUpDown();
-      this.labelTimeOutSignalUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.labelTimeOutSignal = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.numericUpDownTimeLimitScan = new System.Windows.Forms.NumericUpDown();
+      this.labelTimeLimitScanUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelTimeLimitScan = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.checkBoxScanAutomaticChannelGroupsBroadcastStandards = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.checkBoxScanAutomaticChannelGroupsChannelProviders = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.groupBoxScanning = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
@@ -56,18 +46,21 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxScanChannelMovementDetection = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.checkBoxScanAutomaticChannelGroupsSatellites = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.labelScanAutomaticChannelGroups = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.numericUpDownTimeLimitSignal = new System.Windows.Forms.NumericUpDown();
+      this.labelTimeLimitSignalUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelTimeLimitSignal = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxGeneral.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerDetectionDelay)).BeginInit();
-      this.groupBoxScanTuneTimeOuts.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeOutScan)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeOutProgramMapTable)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeOutConditionalAccessTable)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeOutSignal)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeLimitScan)).BeginInit();
       this.groupBoxScanning.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeLimitSignal)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBoxGeneral
       // 
+      this.groupBoxGeneral.Controls.Add(this.numericUpDownTimeLimitSignal);
+      this.groupBoxGeneral.Controls.Add(this.labelTimeLimitSignalUnit);
+      this.groupBoxGeneral.Controls.Add(this.labelTimeLimitSignal);
       this.groupBoxGeneral.Controls.Add(this.labelTunerDetectionDelayUnit);
       this.groupBoxGeneral.Controls.Add(this.labelTunerDetectionDelay);
       this.groupBoxGeneral.Controls.Add(this.numericUpDownTunerDetectionDelay);
@@ -76,7 +69,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGeneral.Location = new System.Drawing.Point(3, 3);
       this.groupBoxGeneral.Name = "groupBoxGeneral";
-      this.groupBoxGeneral.Size = new System.Drawing.Size(257, 76);
+      this.groupBoxGeneral.Size = new System.Drawing.Size(263, 105);
       this.groupBoxGeneral.TabIndex = 0;
       this.groupBoxGeneral.TabStop = false;
       this.groupBoxGeneral.Text = "General";
@@ -84,7 +77,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // labelTunerDetectionDelayUnit
       // 
       this.labelTunerDetectionDelayUnit.AutoSize = true;
-      this.labelTunerDetectionDelayUnit.Location = new System.Drawing.Point(191, 48);
+      this.labelTunerDetectionDelayUnit.Location = new System.Drawing.Point(197, 48);
       this.labelTunerDetectionDelayUnit.Name = "labelTunerDetectionDelayUnit";
       this.labelTunerDetectionDelayUnit.Size = new System.Drawing.Size(20, 13);
       this.labelTunerDetectionDelayUnit.TabIndex = 4;
@@ -106,7 +99,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             0,
             0,
             0});
-      this.numericUpDownTunerDetectionDelay.Location = new System.Drawing.Point(125, 46);
+      this.numericUpDownTunerDetectionDelay.Location = new System.Drawing.Point(131, 46);
       this.numericUpDownTunerDetectionDelay.Maximum = new decimal(new int[] {
             300000,
             0,
@@ -130,222 +123,62 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.comboBoxServicePriority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxServicePriority.FormattingEnabled = true;
-      this.comboBoxServicePriority.Location = new System.Drawing.Point(125, 19);
+      this.comboBoxServicePriority.Location = new System.Drawing.Point(131, 19);
       this.comboBoxServicePriority.Name = "comboBoxServicePriority";
       this.comboBoxServicePriority.Size = new System.Drawing.Size(120, 21);
       this.comboBoxServicePriority.TabIndex = 1;
       // 
-      // groupBoxScanTuneTimeOuts
+      // numericUpDownTimeLimitScan
       // 
-      this.groupBoxScanTuneTimeOuts.Controls.Add(this.numericUpDownTimeOutScan);
-      this.groupBoxScanTuneTimeOuts.Controls.Add(this.labelTimeOutScanUnit);
-      this.groupBoxScanTuneTimeOuts.Controls.Add(this.labelTimeOutScan);
-      this.groupBoxScanTuneTimeOuts.Controls.Add(this.numericUpDownTimeOutProgramMapTable);
-      this.groupBoxScanTuneTimeOuts.Controls.Add(this.labelTimeOutProgramMapTableUnit);
-      this.groupBoxScanTuneTimeOuts.Controls.Add(this.labelTimeOutProgramMapTable);
-      this.groupBoxScanTuneTimeOuts.Controls.Add(this.numericUpDownTimeOutConditionalAccessTable);
-      this.groupBoxScanTuneTimeOuts.Controls.Add(this.labelTimeOutConditionalAccessTableUnit);
-      this.groupBoxScanTuneTimeOuts.Controls.Add(this.labelTimeOutConditionalAccessTable);
-      this.groupBoxScanTuneTimeOuts.Controls.Add(this.numericUpDownTimeOutSignal);
-      this.groupBoxScanTuneTimeOuts.Controls.Add(this.labelTimeOutSignalUnit);
-      this.groupBoxScanTuneTimeOuts.Controls.Add(this.labelTimeOutSignal);
-      this.groupBoxScanTuneTimeOuts.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxScanTuneTimeOuts.Location = new System.Drawing.Point(3, 85);
-      this.groupBoxScanTuneTimeOuts.Name = "groupBoxScanTuneTimeOuts";
-      this.groupBoxScanTuneTimeOuts.Size = new System.Drawing.Size(146, 157);
-      this.groupBoxScanTuneTimeOuts.TabIndex = 1;
-      this.groupBoxScanTuneTimeOuts.TabStop = false;
-      this.groupBoxScanTuneTimeOuts.Text = "Scan/tune time-outs";
-      // 
-      // numericUpDownTimeOutScan
-      // 
-      this.numericUpDownTimeOutScan.Increment = new decimal(new int[] {
+      this.numericUpDownTimeLimitScan.Increment = new decimal(new int[] {
             100,
             0,
             0,
             0});
-      this.numericUpDownTimeOutScan.Location = new System.Drawing.Point(51, 97);
-      this.numericUpDownTimeOutScan.Maximum = new decimal(new int[] {
+      this.numericUpDownTimeLimitScan.Location = new System.Drawing.Point(65, 134);
+      this.numericUpDownTimeLimitScan.Maximum = new decimal(new int[] {
             300000,
             0,
             0,
             0});
-      this.numericUpDownTimeOutScan.Minimum = new decimal(new int[] {
+      this.numericUpDownTimeLimitScan.Minimum = new decimal(new int[] {
             100,
             0,
             0,
             0});
-      this.numericUpDownTimeOutScan.Name = "numericUpDownTimeOutScan";
-      this.numericUpDownTimeOutScan.Size = new System.Drawing.Size(60, 20);
-      this.numericUpDownTimeOutScan.TabIndex = 10;
-      this.numericUpDownTimeOutScan.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownTimeOutScan.Value = new decimal(new int[] {
+      this.numericUpDownTimeLimitScan.Name = "numericUpDownTimeLimitScan";
+      this.numericUpDownTimeLimitScan.Size = new System.Drawing.Size(60, 20);
+      this.numericUpDownTimeLimitScan.TabIndex = 6;
+      this.numericUpDownTimeLimitScan.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownTimeLimitScan.Value = new decimal(new int[] {
             20000,
             0,
             0,
             0});
       // 
-      // labelTimeOutScanUnit
+      // labelTimeLimitScanUnit
       // 
-      this.labelTimeOutScanUnit.AutoSize = true;
-      this.labelTimeOutScanUnit.Location = new System.Drawing.Point(117, 99);
-      this.labelTimeOutScanUnit.Name = "labelTimeOutScanUnit";
-      this.labelTimeOutScanUnit.Size = new System.Drawing.Size(20, 13);
-      this.labelTimeOutScanUnit.TabIndex = 11;
-      this.labelTimeOutScanUnit.Text = "ms";
+      this.labelTimeLimitScanUnit.AutoSize = true;
+      this.labelTimeLimitScanUnit.Location = new System.Drawing.Point(131, 136);
+      this.labelTimeLimitScanUnit.Name = "labelTimeLimitScanUnit";
+      this.labelTimeLimitScanUnit.Size = new System.Drawing.Size(20, 13);
+      this.labelTimeLimitScanUnit.TabIndex = 7;
+      this.labelTimeLimitScanUnit.Text = "ms";
       // 
-      // labelTimeOutScan
+      // labelTimeLimitScan
       // 
-      this.labelTimeOutScan.AutoSize = true;
-      this.labelTimeOutScan.Location = new System.Drawing.Point(6, 99);
-      this.labelTimeOutScan.Name = "labelTimeOutScan";
-      this.labelTimeOutScan.Size = new System.Drawing.Size(35, 13);
-      this.labelTimeOutScan.TabIndex = 9;
-      this.labelTimeOutScan.Text = "Scan:";
-      // 
-      // numericUpDownTimeOutProgramMapTable
-      // 
-      this.numericUpDownTimeOutProgramMapTable.Increment = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-      this.numericUpDownTimeOutProgramMapTable.Location = new System.Drawing.Point(51, 71);
-      this.numericUpDownTimeOutProgramMapTable.Maximum = new decimal(new int[] {
-            30000,
-            0,
-            0,
-            0});
-      this.numericUpDownTimeOutProgramMapTable.Minimum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-      this.numericUpDownTimeOutProgramMapTable.Name = "numericUpDownTimeOutProgramMapTable";
-      this.numericUpDownTimeOutProgramMapTable.Size = new System.Drawing.Size(60, 20);
-      this.numericUpDownTimeOutProgramMapTable.TabIndex = 7;
-      this.numericUpDownTimeOutProgramMapTable.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownTimeOutProgramMapTable.Value = new decimal(new int[] {
-            5000,
-            0,
-            0,
-            0});
-      // 
-      // labelTimeOutProgramMapTableUnit
-      // 
-      this.labelTimeOutProgramMapTableUnit.AutoSize = true;
-      this.labelTimeOutProgramMapTableUnit.Location = new System.Drawing.Point(117, 73);
-      this.labelTimeOutProgramMapTableUnit.Name = "labelTimeOutProgramMapTableUnit";
-      this.labelTimeOutProgramMapTableUnit.Size = new System.Drawing.Size(20, 13);
-      this.labelTimeOutProgramMapTableUnit.TabIndex = 8;
-      this.labelTimeOutProgramMapTableUnit.Text = "ms";
-      // 
-      // labelTimeOutProgramMapTable
-      // 
-      this.labelTimeOutProgramMapTable.AutoSize = true;
-      this.labelTimeOutProgramMapTable.Location = new System.Drawing.Point(6, 73);
-      this.labelTimeOutProgramMapTable.Name = "labelTimeOutProgramMapTable";
-      this.labelTimeOutProgramMapTable.Size = new System.Drawing.Size(33, 13);
-      this.labelTimeOutProgramMapTable.TabIndex = 6;
-      this.labelTimeOutProgramMapTable.Text = "PMT:";
-      // 
-      // numericUpDownTimeOutConditionalAccessTable
-      // 
-      this.numericUpDownTimeOutConditionalAccessTable.Increment = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-      this.numericUpDownTimeOutConditionalAccessTable.Location = new System.Drawing.Point(51, 45);
-      this.numericUpDownTimeOutConditionalAccessTable.Maximum = new decimal(new int[] {
-            30000,
-            0,
-            0,
-            0});
-      this.numericUpDownTimeOutConditionalAccessTable.Minimum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-      this.numericUpDownTimeOutConditionalAccessTable.Name = "numericUpDownTimeOutConditionalAccessTable";
-      this.numericUpDownTimeOutConditionalAccessTable.Size = new System.Drawing.Size(60, 20);
-      this.numericUpDownTimeOutConditionalAccessTable.TabIndex = 4;
-      this.numericUpDownTimeOutConditionalAccessTable.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownTimeOutConditionalAccessTable.Value = new decimal(new int[] {
-            5000,
-            0,
-            0,
-            0});
-      // 
-      // labelTimeOutConditionalAccessTableUnit
-      // 
-      this.labelTimeOutConditionalAccessTableUnit.AutoSize = true;
-      this.labelTimeOutConditionalAccessTableUnit.Location = new System.Drawing.Point(117, 47);
-      this.labelTimeOutConditionalAccessTableUnit.Name = "labelTimeOutConditionalAccessTableUnit";
-      this.labelTimeOutConditionalAccessTableUnit.Size = new System.Drawing.Size(20, 13);
-      this.labelTimeOutConditionalAccessTableUnit.TabIndex = 5;
-      this.labelTimeOutConditionalAccessTableUnit.Text = "ms";
-      // 
-      // labelTimeOutConditionalAccessTable
-      // 
-      this.labelTimeOutConditionalAccessTable.AutoSize = true;
-      this.labelTimeOutConditionalAccessTable.Location = new System.Drawing.Point(6, 47);
-      this.labelTimeOutConditionalAccessTable.Name = "labelTimeOutConditionalAccessTable";
-      this.labelTimeOutConditionalAccessTable.Size = new System.Drawing.Size(31, 13);
-      this.labelTimeOutConditionalAccessTable.TabIndex = 3;
-      this.labelTimeOutConditionalAccessTable.Text = "CAT:";
-      // 
-      // numericUpDownTimeOutSignal
-      // 
-      this.numericUpDownTimeOutSignal.Increment = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-      this.numericUpDownTimeOutSignal.Location = new System.Drawing.Point(51, 19);
-      this.numericUpDownTimeOutSignal.Maximum = new decimal(new int[] {
-            30000,
-            0,
-            0,
-            0});
-      this.numericUpDownTimeOutSignal.Minimum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-      this.numericUpDownTimeOutSignal.Name = "numericUpDownTimeOutSignal";
-      this.numericUpDownTimeOutSignal.Size = new System.Drawing.Size(60, 20);
-      this.numericUpDownTimeOutSignal.TabIndex = 1;
-      this.numericUpDownTimeOutSignal.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownTimeOutSignal.Value = new decimal(new int[] {
-            2500,
-            0,
-            0,
-            0});
-      // 
-      // labelTimeOutSignalUnit
-      // 
-      this.labelTimeOutSignalUnit.AutoSize = true;
-      this.labelTimeOutSignalUnit.Location = new System.Drawing.Point(117, 21);
-      this.labelTimeOutSignalUnit.Name = "labelTimeOutSignalUnit";
-      this.labelTimeOutSignalUnit.Size = new System.Drawing.Size(20, 13);
-      this.labelTimeOutSignalUnit.TabIndex = 2;
-      this.labelTimeOutSignalUnit.Text = "ms";
-      // 
-      // labelTimeOutSignal
-      // 
-      this.labelTimeOutSignal.AutoSize = true;
-      this.labelTimeOutSignal.Location = new System.Drawing.Point(6, 21);
-      this.labelTimeOutSignal.Name = "labelTimeOutSignal";
-      this.labelTimeOutSignal.Size = new System.Drawing.Size(39, 13);
-      this.labelTimeOutSignal.TabIndex = 0;
-      this.labelTimeOutSignal.Text = "Signal:";
+      this.labelTimeLimitScan.AutoSize = true;
+      this.labelTimeLimitScan.Location = new System.Drawing.Point(6, 136);
+      this.labelTimeLimitScan.Name = "labelTimeLimitScan";
+      this.labelTimeLimitScan.Size = new System.Drawing.Size(53, 13);
+      this.labelTimeLimitScan.TabIndex = 5;
+      this.labelTimeLimitScan.Text = "Time limit:";
       // 
       // checkBoxScanAutomaticChannelGroupsBroadcastStandards
       // 
       this.checkBoxScanAutomaticChannelGroupsBroadcastStandards.AutoSize = true;
       this.checkBoxScanAutomaticChannelGroupsBroadcastStandards.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxScanAutomaticChannelGroupsBroadcastStandards.Location = new System.Drawing.Point(22, 78);
+      this.checkBoxScanAutomaticChannelGroupsBroadcastStandards.Location = new System.Drawing.Point(22, 84);
       this.checkBoxScanAutomaticChannelGroupsBroadcastStandards.Name = "checkBoxScanAutomaticChannelGroupsBroadcastStandards";
       this.checkBoxScanAutomaticChannelGroupsBroadcastStandards.Size = new System.Drawing.Size(142, 17);
       this.checkBoxScanAutomaticChannelGroupsBroadcastStandards.TabIndex = 3;
@@ -356,7 +189,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.checkBoxScanAutomaticChannelGroupsChannelProviders.AutoSize = true;
       this.checkBoxScanAutomaticChannelGroupsChannelProviders.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxScanAutomaticChannelGroupsChannelProviders.Location = new System.Drawing.Point(22, 55);
+      this.checkBoxScanAutomaticChannelGroupsChannelProviders.Location = new System.Drawing.Point(22, 61);
       this.checkBoxScanAutomaticChannelGroupsChannelProviders.Name = "checkBoxScanAutomaticChannelGroupsChannelProviders";
       this.checkBoxScanAutomaticChannelGroupsChannelProviders.Size = new System.Drawing.Size(130, 17);
       this.checkBoxScanAutomaticChannelGroupsChannelProviders.TabIndex = 2;
@@ -365,26 +198,29 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // groupBoxScanning
       // 
+      this.groupBoxScanning.Controls.Add(this.numericUpDownTimeLimitScan);
+      this.groupBoxScanning.Controls.Add(this.labelTimeLimitScanUnit);
       this.groupBoxScanning.Controls.Add(this.buttonUpdateTuningDetails);
+      this.groupBoxScanning.Controls.Add(this.labelTimeLimitScan);
       this.groupBoxScanning.Controls.Add(this.checkBoxScanChannelMovementDetection);
       this.groupBoxScanning.Controls.Add(this.checkBoxScanAutomaticChannelGroupsSatellites);
       this.groupBoxScanning.Controls.Add(this.labelScanAutomaticChannelGroups);
       this.groupBoxScanning.Controls.Add(this.checkBoxScanAutomaticChannelGroupsBroadcastStandards);
       this.groupBoxScanning.Controls.Add(this.checkBoxScanAutomaticChannelGroupsChannelProviders);
       this.groupBoxScanning.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxScanning.Location = new System.Drawing.Point(155, 85);
+      this.groupBoxScanning.Location = new System.Drawing.Point(3, 114);
       this.groupBoxScanning.Name = "groupBoxScanning";
-      this.groupBoxScanning.Size = new System.Drawing.Size(220, 157);
-      this.groupBoxScanning.TabIndex = 2;
+      this.groupBoxScanning.Size = new System.Drawing.Size(220, 204);
+      this.groupBoxScanning.TabIndex = 1;
       this.groupBoxScanning.TabStop = false;
       this.groupBoxScanning.Text = "Scanning";
       // 
       // buttonUpdateTuningDetails
       // 
-      this.buttonUpdateTuningDetails.Location = new System.Drawing.Point(9, 124);
+      this.buttonUpdateTuningDetails.Location = new System.Drawing.Point(9, 165);
       this.buttonUpdateTuningDetails.Name = "buttonUpdateTuningDetails";
       this.buttonUpdateTuningDetails.Size = new System.Drawing.Size(120, 23);
-      this.buttonUpdateTuningDetails.TabIndex = 5;
+      this.buttonUpdateTuningDetails.TabIndex = 8;
       this.buttonUpdateTuningDetails.Text = "Update tuning details";
       this.buttonUpdateTuningDetails.UseVisualStyleBackColor = true;
       this.buttonUpdateTuningDetails.Click += new System.EventHandler(this.buttonUpdateTuningDetails_Click);
@@ -404,7 +240,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.checkBoxScanAutomaticChannelGroupsSatellites.AutoSize = true;
       this.checkBoxScanAutomaticChannelGroupsSatellites.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxScanAutomaticChannelGroupsSatellites.Location = new System.Drawing.Point(22, 101);
+      this.checkBoxScanAutomaticChannelGroupsSatellites.Location = new System.Drawing.Point(22, 107);
       this.checkBoxScanAutomaticChannelGroupsSatellites.Name = "checkBoxScanAutomaticChannelGroupsSatellites";
       this.checkBoxScanAutomaticChannelGroupsSatellites.Size = new System.Drawing.Size(86, 17);
       this.checkBoxScanAutomaticChannelGroupsSatellites.TabIndex = 4;
@@ -414,11 +250,57 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // labelScanAutomaticChannelGroups
       // 
       this.labelScanAutomaticChannelGroups.AutoSize = true;
-      this.labelScanAutomaticChannelGroups.Location = new System.Drawing.Point(6, 39);
+      this.labelScanAutomaticChannelGroups.Location = new System.Drawing.Point(6, 45);
       this.labelScanAutomaticChannelGroups.Name = "labelScanAutomaticChannelGroups";
       this.labelScanAutomaticChannelGroups.Size = new System.Drawing.Size(202, 13);
       this.labelScanAutomaticChannelGroups.TabIndex = 1;
       this.labelScanAutomaticChannelGroups.Text = "Automatically create channel groups for...";
+      // 
+      // numericUpDownTimeLimitSignal
+      // 
+      this.numericUpDownTimeLimitSignal.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+      this.numericUpDownTimeLimitSignal.Location = new System.Drawing.Point(131, 72);
+      this.numericUpDownTimeLimitSignal.Maximum = new decimal(new int[] {
+            30000,
+            0,
+            0,
+            0});
+      this.numericUpDownTimeLimitSignal.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+      this.numericUpDownTimeLimitSignal.Name = "numericUpDownTimeLimitSignal";
+      this.numericUpDownTimeLimitSignal.Size = new System.Drawing.Size(60, 20);
+      this.numericUpDownTimeLimitSignal.TabIndex = 6;
+      this.numericUpDownTimeLimitSignal.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownTimeLimitSignal.Value = new decimal(new int[] {
+            2500,
+            0,
+            0,
+            0});
+      // 
+      // labelTimeLimitSignalUnit
+      // 
+      this.labelTimeLimitSignalUnit.AutoSize = true;
+      this.labelTimeLimitSignalUnit.Location = new System.Drawing.Point(197, 74);
+      this.labelTimeLimitSignalUnit.Name = "labelTimeLimitSignalUnit";
+      this.labelTimeLimitSignalUnit.Size = new System.Drawing.Size(20, 13);
+      this.labelTimeLimitSignalUnit.TabIndex = 7;
+      this.labelTimeLimitSignalUnit.Text = "ms";
+      // 
+      // labelTimeLimitSignal
+      // 
+      this.labelTimeLimitSignal.AutoSize = true;
+      this.labelTimeLimitSignal.Location = new System.Drawing.Point(6, 74);
+      this.labelTimeLimitSignal.Name = "labelTimeLimitSignal";
+      this.labelTimeLimitSignal.Size = new System.Drawing.Size(119, 13);
+      this.labelTimeLimitSignal.TabIndex = 5;
+      this.labelTimeLimitSignal.Text = "Wait-for-signal time limit:";
       // 
       // General
       // 
@@ -427,20 +309,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.BackColor = System.Drawing.Color.Transparent;
       this.Controls.Add(this.groupBoxScanning);
       this.Controls.Add(this.groupBoxGeneral);
-      this.Controls.Add(this.groupBoxScanTuneTimeOuts);
       this.Name = "General";
       this.Size = new System.Drawing.Size(480, 420);
       this.groupBoxGeneral.ResumeLayout(false);
       this.groupBoxGeneral.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerDetectionDelay)).EndInit();
-      this.groupBoxScanTuneTimeOuts.ResumeLayout(false);
-      this.groupBoxScanTuneTimeOuts.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeOutScan)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeOutProgramMapTable)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeOutConditionalAccessTable)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeOutSignal)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeLimitScan)).EndInit();
       this.groupBoxScanning.ResumeLayout(false);
       this.groupBoxScanning.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeLimitSignal)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -450,21 +327,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPComboBox comboBoxServicePriority;
     private MPLabel labelServicePriority;
     private MPGroupBox groupBoxGeneral;
-    private MPGroupBox groupBoxScanTuneTimeOuts;
-    private System.Windows.Forms.NumericUpDown numericUpDownTimeOutScan;
-    private MPLabel labelTimeOutScanUnit;
-    private MPLabel labelTimeOutScan;
-    private System.Windows.Forms.NumericUpDown numericUpDownTimeOutProgramMapTable;
-    private MPLabel labelTimeOutProgramMapTableUnit;
-    private MPLabel labelTimeOutProgramMapTable;
-    private System.Windows.Forms.NumericUpDown numericUpDownTimeOutConditionalAccessTable;
-    private MPLabel labelTimeOutConditionalAccessTableUnit;
-    private MPLabel labelTimeOutConditionalAccessTable;
+    private System.Windows.Forms.NumericUpDown numericUpDownTimeLimitScan;
+    private MPLabel labelTimeLimitScanUnit;
+    private MPLabel labelTimeLimitScan;
     private MPCheckBox checkBoxScanAutomaticChannelGroupsBroadcastStandards;
     private MPCheckBox checkBoxScanAutomaticChannelGroupsChannelProviders;
-    private System.Windows.Forms.NumericUpDown numericUpDownTimeOutSignal;
-    private MPLabel labelTimeOutSignalUnit;
-    private MPLabel labelTimeOutSignal;
     private MPLabel labelTunerDetectionDelayUnit;
     private MPLabel labelTunerDetectionDelay;
     private System.Windows.Forms.NumericUpDown numericUpDownTunerDetectionDelay;
@@ -473,5 +340,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPCheckBox checkBoxScanAutomaticChannelGroupsSatellites;
     private MPLabel labelScanAutomaticChannelGroups;
     private MPButton buttonUpdateTuningDetails;
+    private System.Windows.Forms.NumericUpDown numericUpDownTimeLimitSignal;
+    private MPLabel labelTimeLimitSignalUnit;
+    private MPLabel labelTimeLimitSignal;
   }
 }

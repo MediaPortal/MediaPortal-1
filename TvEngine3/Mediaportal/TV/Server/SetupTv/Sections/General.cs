@@ -98,10 +98,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       comboBoxServicePriority.SelectedItem = ((ServicePriority)ServiceAgents.Instance.SettingServiceAgent.GetValue("servicePriority", (int)ServicePriority.Normal)).GetDescription();
       numericUpDownTunerDetectionDelay.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerDetectionDelay", 0);
 
-      numericUpDownTimeOutSignal.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeOutSignal", 2500);
-      numericUpDownTimeOutConditionalAccessTable.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeOutConditionalAccessTable", 5000);
-      numericUpDownTimeOutProgramMapTable.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeOutProgramMapTable", 5000);
-      numericUpDownTimeOutScan.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeOutScan", 20000);
+      numericUpDownTimeLimitSignal.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeOutSignal", 2500);
+      numericUpDownTimeLimitScan.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeOutScan", 20000);
 
       checkBoxScanChannelMovementDetection.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("channelMovementDetectionEnabled", false);
       checkBoxScanAutomaticChannelGroupsChannelProviders.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateProviderChannelGroups", false);
@@ -121,10 +119,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("servicePriority", servicePriority);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerDetectionDelay", (int)numericUpDownTunerDetectionDelay.Value);
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeOutSignal", (int)numericUpDownTimeOutSignal.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeOutConditionalAccessTable", (int)numericUpDownTimeOutConditionalAccessTable.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeOutProgramMapTable", (int)numericUpDownTimeOutProgramMapTable.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeOutScan", (int)numericUpDownTimeOutScan.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeOutSignal", (int)numericUpDownTimeLimitSignal.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeOutScan", (int)numericUpDownTimeLimitScan.Value);
 
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("channelMovementDetectionEnabled", checkBoxScanChannelMovementDetection.Checked);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanAutoCreateProviderChannelGroups", checkBoxScanAutomaticChannelGroupsChannelProviders.Checked);
@@ -141,16 +137,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.LogDebug("general: settings...");
       this.LogDebug("  service priority      = {0}", comboBoxServicePriority.SelectedItem);
       this.LogDebug("  tuner detection delay = {0} ms", numericUpDownTunerDetectionDelay.Value);
-      this.LogDebug("  time-outs...");
-      this.LogDebug("    signal              = {0} ms", numericUpDownTimeOutSignal.Value);
-      this.LogDebug("    CAT                 = {0} ms", numericUpDownTimeOutConditionalAccessTable.Value);
-      this.LogDebug("    PMT                 = {0} ms", numericUpDownTimeOutProgramMapTable.Value);
-      this.LogDebug("    scan                = {0} ms", numericUpDownTimeOutScan.Value);
+      this.LogDebug("  signal time limit     = {0} ms", numericUpDownTimeLimitSignal.Value);
       this.LogDebug("  channel movement?     = {0}", checkBoxScanChannelMovementDetection.Checked);
       this.LogDebug("  automatic channel groups...");
       this.LogDebug("    providers           = {0}", checkBoxScanAutomaticChannelGroupsChannelProviders.Checked);
       this.LogDebug("    broadcast standards = {0}", checkBoxScanAutomaticChannelGroupsBroadcastStandards.Checked);
       this.LogDebug("    satellites          = {0}", checkBoxScanAutomaticChannelGroupsSatellites.Checked);
+      this.LogDebug("  scan time limit       = {0} ms", numericUpDownTimeLimitScan.Value);
     }
 
     private void buttonUpdateTuningDetails_Click(object sender, EventArgs e)
