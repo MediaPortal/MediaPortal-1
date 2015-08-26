@@ -26,27 +26,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum
   public enum CaPmtListManagementAction : byte
   {
     /// <summary>
-    /// An item that is neither the first or last in a list of at least three services.
+    /// A program that is neither the first or last in a list of at least three programs.
     /// </summary>
     More = 0,
     /// <summary>
-    /// First item in a list of at least two services.
+    /// First program in a list of at least two programs.
     /// </summary>
     First = 1,
     /// <summary>
-    /// Last item in a list of at least two services.
+    /// Last program in a list of at least two programs.
     /// </summary>
     Last = 2,
     /// <summary>
-    /// The single item in a list.
+    /// The single program in a list.
     /// </summary>
     Only = 3,
     /// <summary>
-    /// Add the item to the list.
+    /// Add the program to the list.
     /// </summary>
     Add = 4,
     /// <summary>
-    /// Update an item in the list.
+    /// Update a program in the list.
     /// </summary>
     Update = 5
   }
