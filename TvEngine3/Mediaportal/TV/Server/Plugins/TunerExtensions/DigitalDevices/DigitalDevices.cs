@@ -1361,15 +1361,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// <summary>
     /// Send a command to to the conditional access interface.
     /// </summary>
-    /// <param name="channel">The channel information associated with the program which the command relates to.</param>
     /// <param name="listAction">It is assumed that the interface may be able to decrypt one or more programs
     ///   simultaneously. This parameter gives the interface an indication of the number of programs that it
     ///   will be expected to manage.</param>
     /// <param name="command">The type of command.</param>
-    /// <param name="pmt">The program map table for the program.</param>
-    /// <param name="cat">The conditional access table for the program.</param>
+    /// <param name="pmt">The program's map table.</param>
+    /// <param name="cat">The conditional access table for the program's transport stream.</param>
+    /// <param name="programProvider">The program's provider.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    bool IConditionalAccessProvider.SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, TableProgramMap pmt, TableConditionalAccess cat)
+    bool IConditionalAccessProvider.SendCommand(CaPmtListManagementAction listAction, CaPmtCommand command, TableProgramMap pmt, TableConditionalAccess cat, string programProvider)
     {
       this.LogDebug("Digital Devices: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -1424,7 +1424,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         _ciSlotsWithChangedServices = new HashSet<string>();
       }
 
-      this.LogDebug("Digital Devices: program number = {0}, provider = {1}", pmt.ProgramNumber, channel.Provider);
+      this.LogDebug("Digital Devices: program number = {0}, provider = {1}", pmt.ProgramNumber, programProvider ?? string.Empty);
       int hr = (int)NativeMethods.HResult.S_OK;
       lock (_sharedCiContextsLock)
       {
@@ -1443,7 +1443,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
             sharedContext.MtdPrograms.Clear();
             continue;
           }
-          if (!string.IsNullOrEmpty(channel.Provider) && sharedContext.Providers.Count > 0 && !sharedContext.Providers.Contains(channel.Provider))
+          if (!string.IsNullOrEmpty(programProvider) && sharedContext.Providers.Count > 0 && !sharedContext.Providers.Contains(programProvider))
           {
             this.LogDebug("    provider not supported");
             continue;

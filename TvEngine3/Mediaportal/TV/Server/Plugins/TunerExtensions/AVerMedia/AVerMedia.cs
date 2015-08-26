@@ -24,7 +24,6 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using DirectShowLib;
 using Mediaportal.TV.Server.Common.Types.Enum;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts;
@@ -684,15 +683,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     /// <summary>
     /// Send a command to to the conditional access interface.
     /// </summary>
-    /// <param name="channel">The channel information associated with the program which the command relates to.</param>
     /// <param name="listAction">It is assumed that the interface may be able to decrypt one or more programs
     ///   simultaneously. This parameter gives the interface an indication of the number of programs that it
     ///   will be expected to manage.</param>
     /// <param name="command">The type of command.</param>
-    /// <param name="pmt">The program map table for the program.</param>
-    /// <param name="cat">The conditional access table for the program.</param>
+    /// <param name="pmt">The program's map table.</param>
+    /// <param name="cat">The conditional access table for the program's transport stream.</param>
+    /// <param name="programProvider">The program's provider.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    bool IConditionalAccessProvider.SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, TableProgramMap pmt, TableConditionalAccess cat)
+    bool IConditionalAccessProvider.SendCommand(CaPmtListManagementAction listAction, CaPmtCommand command, TableProgramMap pmt, TableConditionalAccess cat, string programProvider)
     {
       this.LogDebug("AVerMedia: send conditional access command, list action = {0}, command = {1}", listAction, command);
 

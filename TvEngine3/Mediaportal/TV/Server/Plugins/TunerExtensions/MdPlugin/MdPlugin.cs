@@ -28,8 +28,6 @@ using System.Xml;
 using DirectShowLib;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts;
@@ -201,13 +199,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
 
     private class PendingChannel
     {
-      public ChannelMpeg2Base Channel;
       public TableProgramMap Pmt;
       public TableConditionalAccess Cat;
 
-      public PendingChannel(ChannelMpeg2Base channel, TableProgramMap pmt, TableConditionalAccess cat)
+      public PendingChannel(TableProgramMap pmt, TableConditionalAccess cat)
       {
-        Channel = channel;
         Pmt = pmt;
         Cat = cat;
       }
@@ -1475,15 +1471,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     /// <summary>
     /// Send a command to to the conditional access interface.
     /// </summary>
-    /// <param name="channel">The channel information associated with the program which the command relates to.</param>
     /// <param name="listAction">It is assumed that the interface may be able to decrypt one or more programs
     ///   simultaneously. This parameter gives the interface an indication of the number of programs that it
     ///   will be expected to manage.</param>
     /// <param name="command">The type of command.</param>
-    /// <param name="pmt">The program map table for the program.</param>
-    /// <param name="cat">The conditional access table for the program.</param>
+    /// <param name="pmt">The program's map table.</param>
+    /// <param name="cat">The conditional access table for the program's transport stream.</param>
+    /// <param name="programProvider">The program's provider.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    bool IConditionalAccessProvider.SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, TableProgramMap pmt, TableConditionalAccess cat)
+    bool IConditionalAccessProvider.SendCommand(CaPmtListManagementAction listAction, CaPmtCommand command, TableProgramMap pmt, TableConditionalAccess cat, string programProvider)
     {
       this.LogDebug("MD plugin: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -1510,17 +1506,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
           return true;
         }
       }
-      ChannelMpeg2Base mpeg2Channel = channel as ChannelMpeg2Base;
-      if (mpeg2Channel == null)
-      {
-        this.LogDebug("MD plugin: channel is not an MPEG 2 transport stream program");
-        return true;
-      }
 
-      string lowerProvider = channel.Provider == null ? string.Empty : channel.Provider.ToLowerInvariant();
+      string lowerProvider = programProvider == null ? string.Empty : programProvider.ToLowerInvariant();
       if (_providers.Count != 0 && !_providers.Contains(lowerProvider))
       {
-        this.LogWarn("MD plugin: plugin not configured to decrypt programs for provider \"{0}\"", channel.Provider ?? "[null]");
+        this.LogWarn("MD plugin: plugin not configured to decrypt programs for provider \"{0}\"", programProvider ?? "[null]");
         return false;
       }
 
@@ -1592,7 +1582,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
               }
               return false;
             }
-            slot.PendingChannel = new PendingChannel(mpeg2Channel, pmt, cat);
+            slot.PendingChannel = new PendingChannel(pmt, cat);
 
             // No need to continue looping - this is the optimal situation
             // where we reuse the existing slot.
@@ -1627,7 +1617,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
 
       if (listAction == CaPmtListManagementAction.First || listAction == CaPmtListManagementAction.More)
       {
-        _pendingNewChannels.Add(new PendingChannel(mpeg2Channel, pmt, cat));
+        _pendingNewChannels.Add(new PendingChannel(pmt, cat));
         this.LogDebug("MD plugin: result = success");
         return true;
       }

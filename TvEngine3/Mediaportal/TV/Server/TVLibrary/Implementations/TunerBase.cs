@@ -2209,12 +2209,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             digitalService = distinctServices[i] as SubChannelMpeg2Ts;
             if (digitalService == null)
             {
-              success &= caProvider.SendCommand(distinctServices[i].CurrentChannel, action, command, null, null);
+              success &= caProvider.SendCommand(action, command, null, null, distinctServices[i].CurrentChannel.Provider);
             }
             else
             {
               // TODO need to PatchPmtForCam() sometime before now, and in such a way that the patched PMT is not propagated to TsWriter etc.
-              success &= caProvider.SendCommand(distinctServices[i].CurrentChannel, action, command, digitalService.ProgramMapTable, digitalService.ConditionalAccessTable);
+              success &= caProvider.SendCommand(action, command, digitalService.ProgramMapTable, digitalService.ConditionalAccessTable, distinctServices[i].CurrentChannel.Provider);
             }
           }
 
