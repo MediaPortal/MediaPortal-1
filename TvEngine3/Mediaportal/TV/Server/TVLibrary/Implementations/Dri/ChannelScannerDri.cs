@@ -66,7 +66,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     private RequestFdcTablesDelegate _requestFdcTables = null;
     private IChannelScannerHelper _scanHelper = null;
     private bool _isScanning = false;
-    private int _scanTimeOut = 20000;   // unit = milliseconds
+    private int _scanTimeLimit = 20000;   // unit = milliseconds
 
     private volatile ScanStage _scanStage = ScanStage.NotScanning;
     private ManualResetEvent _event = null;
@@ -451,7 +451,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     public void ReloadConfiguration()
     {
       this.LogDebug("DRI scan: reload configuration");
-      _scanTimeOut = SettingsManagement.GetValue("timeOutScan", 20000);
+      _scanTimeLimit = SettingsManagement.GetValue("timeLimitScan", 20000);
     }
 
     /// <summary>
@@ -525,7 +525,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         _parserNit.OnModulationMode += OnModulationMode;
         _parserNit.OnTableComplete += OnTableComplete;
         _event.Reset();
-        int availableTimeMilliseconds = _scanTimeOut;
+        int availableTimeMilliseconds = _scanTimeLimit;
         bool completedStage = false;
         while (!_cancelScan && availableTimeMilliseconds > 0)
         {

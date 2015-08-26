@@ -45,7 +45,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     #region variables
 
     private bool _isScanning = false;
-    private int _scanTimeOut = 20000;   // unit = milliseconds
+    private int _scanTimeLimit = 20000;   // unit = milliseconds
     private IChannelScannerHelper _scanHelper = null;
     private ITsChannelScan _analyser = null;
     protected ITuner _tuner = null;
@@ -119,7 +119,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     public void ReloadConfiguration()
     {
       this.LogDebug("scan: reload configuration");
-      _scanTimeOut = SettingsManagement.GetValue("timeOutScan", 20000);
+      _scanTimeLimit = SettingsManagement.GetValue("timeLimitScan", 20000);
     }
 
     /// <summary>
@@ -193,7 +193,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
           // Start scanning, then wait for TsWriter to tell us that scanning is complete.
           _analyser.ScanStream(format);
-          _event.WaitOne(_scanTimeOut, true);
+          _event.WaitOne(_scanTimeLimit, true);
 
           int found = 0;
           int serviceCount;
@@ -395,7 +395,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
           _analyser.ScanNetwork();
 
           // Start scanning, then wait for TsWriter to tell us that scanning is complete.
-          _event.WaitOne(_scanTimeOut, true); //TODO: timeout SDT should be "max scan time"
+          _event.WaitOne(_scanTimeLimit, true); //TODO: timeout SDT should be "max scan time"
 
           //TODO: add min scan time
 

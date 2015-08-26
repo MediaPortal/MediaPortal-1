@@ -356,9 +356,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private IQuality _encoderController = null;
 
     /// <summary>
-    /// The maximum length of time to wait for signal detection after tuning.
+    /// The maximum length of time to wait for signal lock/detection after tuning.
     /// </summary>
-    private int _timeOutWaitForSignal = 2500;   // unit = milliseconds
+    private int _timeLimitSignalLock = 2500;    // unit = milliseconds
 
     #endregion
 
@@ -896,7 +896,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
       }
 
-      _timeOutWaitForSignal = SettingsManagement.GetValue("timeOutSignal", 2500);
+      _timeLimitSignalLock = SettingsManagement.GetValue("timeLimitSignalLock", 2500);
 
       foreach (ISubChannelInternal subChannel in _mapSubChannels.Values)
       {
@@ -1615,7 +1615,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       DateTime timeStart = DateTime.Now;
       TimeSpan ts = timeStart - timeStart;
       bool isLocked;
-      while (ts.TotalMilliseconds < _timeOutWaitForSignal)
+      while (ts.TotalMilliseconds < _timeLimitSignalLock)
       {
         ThrowExceptionIfTuneCancelled();
         GetSignalStatus(out isLocked, out _isSignalPresent, out _signalStrength, out _signalQuality, true);

@@ -98,8 +98,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       comboBoxServicePriority.SelectedItem = ((ServicePriority)ServiceAgents.Instance.SettingServiceAgent.GetValue("servicePriority", (int)ServicePriority.Normal)).GetDescription();
       numericUpDownTunerDetectionDelay.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerDetectionDelay", 0);
 
-      numericUpDownTimeLimitSignal.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeOutSignal", 2500);
-      numericUpDownTimeLimitScan.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeOutScan", 20000);
+      numericUpDownTimeLimitSignal.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitSignalLock", 2500);
+      numericUpDownTimeLimitScan.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitScan", 20000);
 
       checkBoxScanChannelMovementDetection.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("channelMovementDetectionEnabled", false);
       checkBoxScanAutomaticChannelGroupsChannelProviders.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateProviderChannelGroups", false);
@@ -119,8 +119,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("servicePriority", servicePriority);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerDetectionDelay", (int)numericUpDownTunerDetectionDelay.Value);
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeOutSignal", (int)numericUpDownTimeLimitSignal.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeOutScan", (int)numericUpDownTimeLimitScan.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitSignalLock", (int)numericUpDownTimeLimitSignal.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitScan", (int)numericUpDownTimeLimitScan.Value);
 
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("channelMovementDetectionEnabled", checkBoxScanChannelMovementDetection.Checked);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanAutoCreateProviderChannelGroups", checkBoxScanAutomaticChannelGroupsChannelProviders.Checked);
