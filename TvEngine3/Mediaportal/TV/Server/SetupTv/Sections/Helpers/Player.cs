@@ -22,6 +22,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using DirectShowLib;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -32,8 +33,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
   internal class Player
   {
     private static readonly Guid CLSID_TS_READER = new Guid(0xb9559486, 0xe1bb, 0x45d3, 0xa2, 0xa2, 0x9a, 0x7a, 0xfe, 0x49, 0xb2, 0x3f);
-    private static readonly Guid CLSID_LAV_VIDEO = new Guid(0xee30215d, 0x164f, 0x4a92, 0xa4, 0xeb, 0x9d, 0x4c, 0x13, 0x39, 0x0f, 0x9f);
-    private static readonly Guid CLSID_LAV_AUDIO = new Guid(0xe8e73b6b, 0x4cb3, 0x44a4, 0xbe, 0x99, 0x4f, 0x7b, 0xcb, 0x96, 0xe4, 0x91);
 
     private IFilterGraph2 _graph = null;
     private DsROTEntry _rotEntry = null;  // ROT = running object table
@@ -72,11 +71,20 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
         TvExceptionDirectShowError.Throw(hr, "Failed to load file \"{0}\" with TS reader.", fileName);
 
         // add the preferred decoders if they're installed
-        this.LogDebug("player: add preferred decoders (LAV)");
+        this.LogDebug("player: add preferred decoders");
         try
         {
-          _decoderVideo = AddFilterFromRegisteredClsid(_graph, CLSID_LAV_VIDEO, "LAV Video Decoder");
-          _decoderAudio = AddFilterFromRegisteredClsid(_graph, CLSID_LAV_AUDIO, "LAV Audio Decoder");
+          Codec c = Codec.Deserialise(ServiceAgents.Instance.SettingServiceAgent.GetValue("previewCodecVideo", Codec.DEFAULT_VIDEO.Serialise()));
+          if (c != null && c.ClassId != Guid.Empty)
+          {
+            _decoderVideo = AddFilterFromRegisteredClsid(_graph, c.ClassId, c.Name);
+          }
+
+          c = Codec.Deserialise(ServiceAgents.Instance.SettingServiceAgent.GetValue("previewCodecAudio", Codec.DEFAULT_AUDIO.Serialise()));
+          if (c != null && c.ClassId != Guid.Empty)
+          {
+            _decoderAudio = AddFilterFromRegisteredClsid(_graph, c.ClassId, c.Name);
+          }
         }
         catch
         {

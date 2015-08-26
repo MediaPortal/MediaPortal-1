@@ -19,17 +19,22 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Runtime.InteropServices.ComTypes;
+using System.Windows.Forms;
+using DirectShowLib;
 using Ionic.Zip;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupTV.Sections.Helpers;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using MediaPortal.Common.Utils.ExtensionMethods;
-using System.Windows.Forms;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
@@ -71,6 +76,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
+    #region constants
+
+    private static readonly Guid MEDIA_SUB_TYPE_AVC = new Guid(0x31435641, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+    private static readonly Guid MEDIA_SUB_TYPE_LATM_AAC = new Guid(0x00001ff, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+    private static readonly Guid MEDIA_SUB_TYPE_DOLBY_DIGITAL = new Guid(0xe06d802c, 0xdb46, 0x11cf, 0xb4, 0xd1, 0x00, 0x80, 0x5f, 0x6c, 0xbb, 0xea);
+    private static readonly Guid MEDIA_SUB_TYPE_DOLBY_DIGITAL_PLUS = new Guid(0xa7fb87af, 0x2d02, 0x42fb, 0xa4, 0xd4, 0x05, 0xcd, 0x93, 0x84, 0x3b, 0xdd);
+
+    #endregion
+
     private FileDownloader _downloader = null;
     private string _fileNameTuningDetails = null;
 
@@ -93,18 +107,43 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (comboBoxServicePriority.Items.Count == 0)
       {
         comboBoxServicePriority.Items.AddRange(typeof(ServicePriority).GetDescriptions());
+
+        comboBoxPreviewCodecVideo.Items.Add(new Codec("Automatic", Guid.Empty));
+        comboBoxPreviewCodecVideo.Items.AddRange(GetCodecs(MediaType.Video, new Guid[3] { MediaSubType.Mpeg2Video, MEDIA_SUB_TYPE_AVC, MediaSubType.H264 }));
+
+        comboBoxPreviewCodecAudio.Items.Add(new Codec("Automatic", Guid.Empty));
+        comboBoxPreviewCodecAudio.Items.AddRange(GetCodecs(MediaType.Audio, new Guid[4] { MediaSubType.Mpeg2Audio, MEDIA_SUB_TYPE_LATM_AAC, MEDIA_SUB_TYPE_DOLBY_DIGITAL, MEDIA_SUB_TYPE_DOLBY_DIGITAL_PLUS }));
       }
 
       comboBoxServicePriority.SelectedItem = ((ServicePriority)ServiceAgents.Instance.SettingServiceAgent.GetValue("servicePriority", (int)ServicePriority.Normal)).GetDescription();
       numericUpDownTunerDetectionDelay.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerDetectionDelay", 0);
-
       numericUpDownTimeLimitSignal.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitSignalLock", 2500);
-      numericUpDownTimeLimitScan.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitScan", 20000);
 
       checkBoxScanChannelMovementDetection.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("channelMovementDetectionEnabled", false);
       checkBoxScanAutomaticChannelGroupsChannelProviders.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateProviderChannelGroups", false);
       checkBoxScanAutomaticChannelGroupsBroadcastStandards.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateBroadcastStandardChannelGroups", false);
       checkBoxScanAutomaticChannelGroupsSatellites.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateSatelliteChannelGroups", false);
+      numericUpDownTimeLimitScan.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitScan", 20000);
+
+      Codec codecVideo = Codec.Deserialise(ServiceAgents.Instance.SettingServiceAgent.GetValue("previewCodecVideo", Codec.DEFAULT_VIDEO.Serialise()));
+      if (codecVideo == null)
+      {
+        comboBoxPreviewCodecVideo.SelectedIndex = 0;
+      }
+      else
+      {
+        comboBoxPreviewCodecVideo.SelectedItem = codecVideo;
+      }
+
+      Codec codecAudio = Codec.Deserialise(ServiceAgents.Instance.SettingServiceAgent.GetValue("previewCodecAudio", Codec.DEFAULT_AUDIO.Serialise()));
+      if (codecAudio == null)
+      {
+        comboBoxPreviewCodecAudio.SelectedIndex = 0;
+      }
+      else
+      {
+        comboBoxPreviewCodecAudio.SelectedItem = codecAudio;
+      }
 
       DebugSettings();
 
@@ -118,14 +157,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       int servicePriority = Convert.ToInt32(typeof(ServicePriority).GetEnumFromDescription((string)comboBoxServicePriority.SelectedItem));
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("servicePriority", servicePriority);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerDetectionDelay", (int)numericUpDownTunerDetectionDelay.Value);
-
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitSignalLock", (int)numericUpDownTimeLimitSignal.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitScan", (int)numericUpDownTimeLimitScan.Value);
 
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("channelMovementDetectionEnabled", checkBoxScanChannelMovementDetection.Checked);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanAutoCreateProviderChannelGroups", checkBoxScanAutomaticChannelGroupsChannelProviders.Checked);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanAutoCreateBroadcastStandardChannelGroups", checkBoxScanAutomaticChannelGroupsBroadcastStandards.Checked);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanAutoCreateSatelliteChannelGroups", checkBoxScanAutomaticChannelGroupsSatellites.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitScan", (int)numericUpDownTimeLimitScan.Value);
+
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("previewCodecVideo", ((Codec)comboBoxPreviewCodecVideo.SelectedItem).Serialise());
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("previewCodecAudio", ((Codec)comboBoxPreviewCodecAudio.SelectedItem).Serialise());
 
       DebugSettings();
 
@@ -144,6 +185,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.LogDebug("    broadcast standards = {0}", checkBoxScanAutomaticChannelGroupsBroadcastStandards.Checked);
       this.LogDebug("    satellites          = {0}", checkBoxScanAutomaticChannelGroupsSatellites.Checked);
       this.LogDebug("  scan time limit       = {0} ms", numericUpDownTimeLimitScan.Value);
+      this.LogDebug("  preview codecs...");
+      Codec c = (Codec)comboBoxPreviewCodecVideo.SelectedItem;
+      this.LogDebug("    video               = {0} ({1})", c.Name, c.ClassId);
+      c = (Codec)comboBoxPreviewCodecAudio.SelectedItem;
+      this.LogDebug("    audio               = {0} ({1})", c.Name, c.ClassId);
     }
 
     private void buttonUpdateTuningDetails_Click(object sender, EventArgs e)
@@ -241,6 +287,92 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       _downloader = null;
       buttonUpdateTuningDetails.Text = "Update tuning details";
+    }
+
+    private static Codec[] GetCodecs(Guid mediaType, Guid[] mediaSubTypes)
+    {
+      List<Codec> codecs = new List<Codec>();
+      Guid[] types = new Guid[mediaSubTypes.Length * 2];
+      for (int i = 0; i < mediaSubTypes.Length; i++)
+      {
+        types[i * 2] = mediaType;
+        types[(i * 2) + 1] = mediaSubTypes[i];
+      }
+
+      IFilterMapper2 mapper = null;
+      try
+      {
+        mapper = (IFilterMapper2)new FilterMapper2();
+        if (mapper == null)
+        {
+          return codecs.ToArray();
+        }
+
+        IEnumMoniker enumMoniker = null;
+        int hr = mapper.EnumMatchingFilters(
+          out enumMoniker,
+          0,                // flags - must be 0
+          true,             // exact match
+          (Merit)0x080001,  // merit - match MediaPortal
+          true,             // input needed
+          mediaSubTypes.Length,
+          types,
+          null,             // input pin medium
+          null,             // input pin category
+          false,            // render
+          true,             // output needed
+          0,                // output pin media type count
+          new Guid[0],      // output pin media types
+          null,             // output pin medium
+          null);            // output pin category
+
+        TvExceptionDirectShowError.Throw(hr, "Failed to enumerate filters.");
+        try
+        {
+          while (true)
+          {
+            IMoniker[] monikers = new IMoniker[1];
+            hr = enumMoniker.Next(1, monikers, IntPtr.Zero);
+            if (hr != (int)NativeMethods.HResult.S_OK)
+            {
+              break;
+            }
+
+            if (monikers[0] == null)
+            {
+              continue;
+            }
+            using (DsDevice d = new DsDevice(monikers[0]))
+            {
+              string name = d.Name;
+              if (!string.IsNullOrEmpty(name))
+              {
+                string lowerName = name.ToLowerInvariant();
+                if (!lowerName.Contains("encoder") && !lowerName.Contains("muxer"))
+                {
+                  codecs.Add(new Codec(name, d.ClassID));
+                }
+              }
+              d.Dispose();
+            }
+          }
+        }
+        finally
+        {
+          Release.ComObject("moniker enumerator", ref enumMoniker);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error(ex, "general: failed to get codec list, media type = {0}", mediaType);
+      }
+      finally
+      {
+        Release.ComObject("filter mapper", ref mapper);
+      }
+
+      codecs.Sort();
+      return codecs.ToArray();
     }
   }
 }

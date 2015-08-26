@@ -49,11 +49,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTimeLimitSignal = new System.Windows.Forms.NumericUpDown();
       this.labelTimeLimitSignalUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelTimeLimitSignal = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBoxPreviewCodecs = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.labelPreviewCodecVideo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.comboBoxPreviewCodecVideo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.comboBoxPreviewCodecAudio = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.labelPreviewCodecAudio = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxGeneral.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerDetectionDelay)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeLimitScan)).BeginInit();
       this.groupBoxScanning.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeLimitSignal)).BeginInit();
+      this.groupBoxPreviewCodecs.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBoxGeneral
@@ -210,7 +216,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxScanning.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxScanning.Location = new System.Drawing.Point(3, 114);
       this.groupBoxScanning.Name = "groupBoxScanning";
-      this.groupBoxScanning.Size = new System.Drawing.Size(220, 204);
+      this.groupBoxScanning.Size = new System.Drawing.Size(263, 204);
       this.groupBoxScanning.TabIndex = 1;
       this.groupBoxScanning.TabStop = false;
       this.groupBoxScanning.Text = "Scanning";
@@ -302,11 +308,62 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelTimeLimitSignal.TabIndex = 5;
       this.labelTimeLimitSignal.Text = "Wait-for-signal time limit:";
       // 
+      // groupBoxPreviewCodecs
+      // 
+      this.groupBoxPreviewCodecs.Controls.Add(this.comboBoxPreviewCodecAudio);
+      this.groupBoxPreviewCodecs.Controls.Add(this.labelPreviewCodecAudio);
+      this.groupBoxPreviewCodecs.Controls.Add(this.comboBoxPreviewCodecVideo);
+      this.groupBoxPreviewCodecs.Controls.Add(this.labelPreviewCodecVideo);
+      this.groupBoxPreviewCodecs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxPreviewCodecs.Location = new System.Drawing.Point(3, 324);
+      this.groupBoxPreviewCodecs.Name = "groupBoxPreviewCodecs";
+      this.groupBoxPreviewCodecs.Size = new System.Drawing.Size(263, 78);
+      this.groupBoxPreviewCodecs.TabIndex = 2;
+      this.groupBoxPreviewCodecs.TabStop = false;
+      this.groupBoxPreviewCodecs.Text = "Preview Codecs";
+      // 
+      // labelPreviewCodecVideo
+      // 
+      this.labelPreviewCodecVideo.AutoSize = true;
+      this.labelPreviewCodecVideo.Location = new System.Drawing.Point(6, 21);
+      this.labelPreviewCodecVideo.Name = "labelPreviewCodecVideo";
+      this.labelPreviewCodecVideo.Size = new System.Drawing.Size(37, 13);
+      this.labelPreviewCodecVideo.TabIndex = 0;
+      this.labelPreviewCodecVideo.Text = "Video:";
+      // 
+      // comboBoxPreviewCodecVideo
+      // 
+      this.comboBoxPreviewCodecVideo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxPreviewCodecVideo.FormattingEnabled = true;
+      this.comboBoxPreviewCodecVideo.Location = new System.Drawing.Point(49, 19);
+      this.comboBoxPreviewCodecVideo.Name = "comboBoxPreviewCodecVideo";
+      this.comboBoxPreviewCodecVideo.Size = new System.Drawing.Size(202, 21);
+      this.comboBoxPreviewCodecVideo.TabIndex = 1;
+      // 
+      // comboBoxPreviewCodecAudio
+      // 
+      this.comboBoxPreviewCodecAudio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxPreviewCodecAudio.FormattingEnabled = true;
+      this.comboBoxPreviewCodecAudio.Location = new System.Drawing.Point(49, 46);
+      this.comboBoxPreviewCodecAudio.Name = "comboBoxPreviewCodecAudio";
+      this.comboBoxPreviewCodecAudio.Size = new System.Drawing.Size(202, 21);
+      this.comboBoxPreviewCodecAudio.TabIndex = 3;
+      // 
+      // labelPreviewCodecAudio
+      // 
+      this.labelPreviewCodecAudio.AutoSize = true;
+      this.labelPreviewCodecAudio.Location = new System.Drawing.Point(6, 48);
+      this.labelPreviewCodecAudio.Name = "labelPreviewCodecAudio";
+      this.labelPreviewCodecAudio.Size = new System.Drawing.Size(37, 13);
+      this.labelPreviewCodecAudio.TabIndex = 2;
+      this.labelPreviewCodecAudio.Text = "Audio:";
+      // 
       // General
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.BackColor = System.Drawing.Color.Transparent;
+      this.Controls.Add(this.groupBoxPreviewCodecs);
       this.Controls.Add(this.groupBoxScanning);
       this.Controls.Add(this.groupBoxGeneral);
       this.Name = "General";
@@ -318,6 +375,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxScanning.ResumeLayout(false);
       this.groupBoxScanning.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeLimitSignal)).EndInit();
+      this.groupBoxPreviewCodecs.ResumeLayout(false);
+      this.groupBoxPreviewCodecs.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -343,5 +402,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private System.Windows.Forms.NumericUpDown numericUpDownTimeLimitSignal;
     private MPLabel labelTimeLimitSignalUnit;
     private MPLabel labelTimeLimitSignal;
+    private MPGroupBox groupBoxPreviewCodecs;
+    private MPComboBox comboBoxPreviewCodecAudio;
+    private MPLabel labelPreviewCodecAudio;
+    private MPComboBox comboBoxPreviewCodecVideo;
+    private MPLabel labelPreviewCodecVideo;
   }
 }

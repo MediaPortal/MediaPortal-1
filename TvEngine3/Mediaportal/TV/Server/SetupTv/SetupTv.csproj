@@ -178,6 +178,7 @@
     <Compile Include="HelpSystem.cs" />
     <Compile Include="InputBox.cs" />
     <Compile Include="Sections\Helpers\ChannelScanHelper.cs" />
+    <Compile Include="Sections\Helpers\Codec.cs" />
     <Compile Include="Sections\Helpers\Enum\ScanType.cs" />
     <Compile Include="Sections\UserPriorities.cs">
       <SubType>UserControl</SubType>
