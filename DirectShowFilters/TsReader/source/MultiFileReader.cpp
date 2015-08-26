@@ -501,7 +501,8 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 		return S_FALSE;
   }
 
-	ULONG bytesRead;
+	ULONG bytesRead = 0;
+	ULONG bytesRead2 = 0;
 	MultiFileReaderFile *file;
 
   HRESULT result;
@@ -576,31 +577,37 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
     if ((m_filesAdded == filesAdded) && (m_filesRemoved == filesRemoved)) 
 			break ;
 
-    //Now read the full file for processing and comparison
-	  fileLength = m_TSBufferFile.GetFileSize();
-	  
-    // Min file length is Header ( __int64 + long + long ) + filelist ( > 0 ) + Footer ( long + long ) 
-    if (fileLength <= (sizeof(__int64) + sizeof(long) + sizeof(long) + sizeof(wchar_t) + sizeof(long) + sizeof(long)))
-		  return S_FALSE;
-    if (fileLength%2) //Must be a multiple of 2 bytes in length
-		  return S_FALSE;
-		if (fileLength > INFO_BUFF_SIZE)
-      return E_FAIL ;
-      
+    //Now read the full file for processing and comparison.
+    //The maximum length is INFO_BUFF_SIZE bytes, but normally
+    //'bytesRead' will be much less than that - it should be the actual file length.
+	        
   	m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
-  	result=m_TSBufferFile.Read(m_pInfoFileBuffer1, (ULONG)fileLength, &bytesRead);
-  	
-    if (!SUCCEEDED(result) || bytesRead != fileLength) 
+  	result=m_TSBufferFile.Read(m_pInfoFileBuffer1, INFO_BUFF_SIZE, &bytesRead);  	
+    if (!SUCCEEDED(result) || (bytesRead == 0))
+    {
       Error |= 0x20 ;
-      
-    Sleep(1);
-	  
+      continue;
+    }
+      	  
 	  //read it again to a different buffer  
   	m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
-  	result = m_TSBufferFile.Read(m_pInfoFileBuffer2, (ULONG)fileLength, &bytesRead);
+  	result = m_TSBufferFile.Read(m_pInfoFileBuffer2, INFO_BUFF_SIZE, &bytesRead2);
+    if (!SUCCEEDED(result) || (bytesRead2 != bytesRead) || (bytesRead2 == 0))
+    {
+      Error |= 0x40 ;
+      continue;
+    }
+      
+    fileLength = (__int64)bytesRead2;
 
-    if (!SUCCEEDED(result) || bytesRead != fileLength) 
-		  Error |= 0x40;
+		if (fileLength > INFO_BUFF_SIZE)
+      return E_FAIL ;
+
+    // Min file length is Header ( __int64 + long + long ) + filelist ( > 0 ) + Footer ( long + long ) 
+    if (fileLength <= (sizeof(__int64) + sizeof(long) + sizeof(long) + sizeof(wchar_t) + sizeof(long) + sizeof(long)))
+		  Error |= 0x1000;
+    if (fileLength%2) //Must be a multiple of 2 bytes in length
+		  Error |= 0x2000;
 
     //Compare the two buffers (except the 'currentPosition' values), and compare the filesAdded/filesRemoved values 
     //at the beginning and end of the second buffer for integrity checking
