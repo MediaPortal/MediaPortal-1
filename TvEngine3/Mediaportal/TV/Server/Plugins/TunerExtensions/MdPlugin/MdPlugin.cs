@@ -134,9 +134,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       private ushort Padding1;
 
       public uint Frequency;    // unit = kHz
-      public byte PType;
-      public byte Voltage;      // polarisation ???
-      public byte Afc;
+      public byte Polarisation;
+      public byte Voltage;
+      public byte Afc;          // automatic frequency control
       public byte Diseqc;
       public ushort SymbolRate; // unit = ks/s
       public ushort Qam;        // modulation ???
@@ -195,7 +195,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     private class DecryptSlot
     {
       public IBaseFilter Filter;
-      public IChannel CurrentChannel;
+      public ushort ProgramNumber;
       public PendingChannel PendingChannel;
     }
 
@@ -242,53 +242,46 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     /// Send a decrypt command.
     /// </summary>
     /// <param name="slotFilter">The slot to use.</param>
-    /// <param name="mpeg2Channel">The program to decrypt.</param>
     /// <param name="pmt">The program's PMT.</param>
     /// <param name="cat">The program's CAT.</param>
     /// <returns><c>true</c> if the decrypt command is sent successfully, otherwise <c>false</c></returns>
-    private bool DecryptProgram(IBaseFilter slotFilter, ChannelMpeg2Base mpeg2Channel, TableProgramMap pmt, TableConditionalAccess cat)
+    private bool DecryptProgram(IBaseFilter slotFilter, TableProgramMap pmt, TableConditionalAccess cat)
     {
       Program82 programToDecrypt;
       PidsToDecrypt pidsToDecrypt;
       RegisterVideoAndAudioPids(pmt, out programToDecrypt, out pidsToDecrypt);
 
       // Set the fields that we are able to set.
-      if (mpeg2Channel.Name != null)
-      {
-        programToDecrypt.Name = mpeg2Channel.Name;
-      }
-      if (mpeg2Channel.Provider != null)
-      {
-        programToDecrypt.Provider = mpeg2Channel.Provider;
-      }
-      programToDecrypt.TransportStreamId = (ushort)mpeg2Channel.TransportStreamId;
-      programToDecrypt.PmtPid = (ushort)mpeg2Channel.PmtPid;
+      programToDecrypt.Name = string.Empty;
+      programToDecrypt.Provider = string.Empty;
 
       // We don't know what the actual service type is in this
       // context, but we can at least indicate whether this is
       // a TV or radio service.
-      // TODO: Sebastiii removed this, why?
-      //programToDecrypt.ServiceType = (byte)(mpeg2Channel.IsTv ? DvbServiceType.DigitalTelevision : DvbServiceType.DigitalRadio); //TODO look if needed
-      programToDecrypt.ServiceType = (byte)ServiceType.DigitalTelevision;
+      if (programToDecrypt.VideoPid != 0)
+      {
+        programToDecrypt.ServiceType = (byte)ServiceType.DigitalTelevision;
+      }
+      else
+      {
+        programToDecrypt.ServiceType = (byte)ServiceType.DigitalRadio;
+      }
 
-      this.LogDebug("MD plugin: TSID = {0}, service ID = {1}, PMT PID = {2}, PCR PID = {3}, service type = {4}, " +
-                        "video PID = {5}, audio PID = {6}, AC3 PID = {7}, teletext PID = {8}",
-          programToDecrypt.TransportStreamId, programToDecrypt.ServiceId, programToDecrypt.PmtPid, programToDecrypt.PcrPid,
-          programToDecrypt.ServiceType, programToDecrypt.VideoPid, programToDecrypt.AudioPid, programToDecrypt.Ac3AudioPid, programToDecrypt.TeletextPid
-      );
+      this.LogDebug("MD plugin: service ID = {0}, PCR PID = {1}, service type = {2}, video PID = {3}, audio PID = {4}, AC3 PID = {5}, teletext PID = {6}",
+                    programToDecrypt.ServiceId, programToDecrypt.PcrPid, programToDecrypt.ServiceType,
+                    programToDecrypt.VideoPid, programToDecrypt.AudioPid, programToDecrypt.Ac3AudioPid,
+                    programToDecrypt.TeletextPid);
 
       programToDecrypt.CaSystemCount = RegisterEcmAndEmmPids(pmt, cat, ref programToDecrypt);
       SetPreferredCaSystemIndex(ref programToDecrypt);
 
       this.LogDebug("MD plugin: ECM PID = {0}, CA system count = {1}, CA index = {2}",
-                    programToDecrypt.EcmPid, programToDecrypt.CaSystemCount, programToDecrypt.CaId
-      );
+                    programToDecrypt.EcmPid, programToDecrypt.CaSystemCount, programToDecrypt.CaId);
       for (byte i = 0; i < programToDecrypt.CaSystemCount; i++)
       {
         CaSystem82 caSystem = programToDecrypt.CaSystems[i];
         this.LogDebug("MD plugin: #{0} CA type = 0x{1:x4}, ECM PID = {2}, EMM PID = {3}, provider = 0x{4:x4}",
-                      i + 1, caSystem.CaType, caSystem.EcmPid, caSystem.EmmPid, caSystem.ProviderId
-        );
+                      i + 1, caSystem.CaType, caSystem.EcmPid, caSystem.EmmPid, caSystem.ProviderId);
       }
 
       // Instruct the MD filter to decrypt the program.
@@ -338,12 +331,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
 
       foreach (PmtElementaryStream es in pmt.ElementaryStreams)
       {
+        bool isVideoStream = StreamTypeHelper.IsVideoStream(es.LogicalStreamType);
+
         // When using a plugin with extended support, we can just
         // specify the PIDs that need to be decrypted.
         if (pidsToDecrypt.PidCount < MAX_PID_COUNT)
         {
-          // TODO: restrict to video, audio, sub-title and teletext PIDs???
-          pidsToDecrypt.Pids[pidsToDecrypt.PidCount++] = es.Pid;
+          if (
+            isVideoStream ||
+            StreamTypeHelper.IsAudioStream(es.LogicalStreamType) ||
+            es.LogicalStreamType == LogicalStreamType.Subtitles ||
+            es.LogicalStreamType == LogicalStreamType.Teletext
+          )
+          {
+            pidsToDecrypt.Pids[pidsToDecrypt.PidCount++] = es.Pid;
+          }
         }
         else
         {
@@ -354,7 +356,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
         // Otherwise, we have to fill the specific PID fields in the
         // Program82 structure as best as we can. We'll keep the first
         // of each type of PID.
-        if (programToDecrypt.VideoPid == 0 && StreamTypeHelper.IsVideoStream(es.LogicalStreamType))
+        if (programToDecrypt.VideoPid == 0 && isVideoStream)
         {
           programToDecrypt.VideoPid = es.Pid;
         }
@@ -1169,7 +1171,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       {
         DecryptSlot slot = new DecryptSlot();
         slot.Filter = (IBaseFilter)new MDAPIFilter();
-        slot.CurrentChannel = null;
+        slot.ProgramNumber = 0;
         slot.PendingChannel = null;
 
         // Add the filter to the graph.
@@ -1281,9 +1283,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       {
         foreach (DecryptSlot slot in _slots)
         {
-          if (slot.CurrentChannel != null)
+          if (slot.ProgramNumber != 0)
           {
-            slot.CurrentChannel = null;
+            slot.ProgramNumber = 0;
             IChangeChannel_Clear clear = slot.Filter as IChangeChannel_Clear;
             if (clear != null)
             {
@@ -1546,14 +1548,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       // glitches.
       foreach (DecryptSlot slot in _slots)
       {
-        ChannelMpeg2Base currentProgram = slot.CurrentChannel as ChannelMpeg2Base;
-        if (currentProgram == null)
+        if (slot.ProgramNumber == 0)
         {
-          if (listAction == CaPmtListManagementAction.Update)
+          if (listAction == CaPmtListManagementAction.Add)
           {
-            this.LogDebug("MD plugin: found free slot to decrypt program \"{0}\"", currentProgram.Name);
-            slot.CurrentChannel = channel;
-            if (DecryptProgram(slot.Filter, mpeg2Channel, pmt, cat))
+            this.LogDebug("MD plugin: found free slot to decrypt program {0}", pmt.ProgramNumber);
+            slot.ProgramNumber = pmt.ProgramNumber;
+            if (DecryptProgram(slot.Filter, pmt, cat))
             {
               this.LogDebug("MD plugin: result = success");
               return true;
@@ -1561,13 +1562,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
             return false;
           }
         }
-        else if (currentProgram.ProgramNumber == mpeg2Channel.ProgramNumber)
+        else if (slot.ProgramNumber == pmt.ProgramNumber)
         {
           // "Not selected" means stop decrypting the program.
           if (command == CaPmtCommand.NotSelected)
           {
-            this.LogDebug("MD plugin: found existing slot decrypting program \"{0}\", freeing", currentProgram.Name);
-            slot.CurrentChannel = null;
+            this.LogDebug("MD plugin: found existing slot decrypting program {0}, freeing", slot.ProgramNumber);
+            slot.ProgramNumber = 0;
             IChangeChannel_Clear clear = slot.Filter as IChangeChannel_Clear;
             if (clear != null)
             {
@@ -1583,8 +1584,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
           {
             if (listAction == CaPmtListManagementAction.Update)
             {
-              this.LogDebug("MD plugin: found existing slot decrypting program \"{0}\", updating", currentProgram.Name);
-              if (DecryptProgram(slot.Filter, mpeg2Channel, pmt, cat))
+              this.LogDebug("MD plugin: found existing slot decrypting program {0}, updating", slot.ProgramNumber);
+              if (DecryptProgram(slot.Filter, pmt, cat))
               {
                 this.LogDebug("MD plugin: result = success");
                 return true;
@@ -1610,17 +1611,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
 
       if (command == CaPmtCommand.NotSelected)
       {
-        this.LogError("MD plugin: failed to send conditional access unselect command, not currently decrypting program \"{0}\"", channel.Name);
+        this.LogError("MD plugin: failed to send conditional access unselect command, not currently decrypting program {0}", pmt.ProgramNumber);
         return true;
       }
       else if (listAction == CaPmtListManagementAction.Add)
       {
-        this.LogError("MD plugin: failed to send conditional access add command, no free slots to decrypt program \"{0}\"", channel.Name);
+        this.LogError("MD plugin: failed to send conditional access add command, no free slots to decrypt program {0}", pmt.ProgramNumber);
         return false;
       }
       else if (listAction == CaPmtListManagementAction.Update)
       {
-        this.LogError("MD plugin: failed to send conditional access update command, not currently decrypting program \"{0}\"", channel.Name);
+        this.LogError("MD plugin: failed to send conditional access update command, not currently decrypting program {0}", pmt.ProgramNumber);
         return false;
       }
 
@@ -1646,18 +1647,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
           if (_pendingNewChannels.Count > 0)
           {
             PendingChannel pendingChannel = _pendingNewChannels[0];
-            this.LogDebug("MD plugin: found free slot to decrypt program \"{0}\"", pendingChannel.Channel.Name);
-            if (!DecryptProgram(slot.Filter, pendingChannel.Channel, pendingChannel.Pmt, pendingChannel.Cat))
+            this.LogDebug("MD plugin: found free slot to decrypt program {0}", pendingChannel.Pmt.ProgramNumber);
+            if (!DecryptProgram(slot.Filter, pendingChannel.Pmt, pendingChannel.Cat))
             {
               return false;
             }
-            slot.CurrentChannel = pendingChannel.Channel;
+            slot.ProgramNumber = pendingChannel.Pmt.ProgramNumber;
             _pendingNewChannels.RemoveAt(0);
           }
-          else if (slot.CurrentChannel != null)
+          else if (slot.ProgramNumber != 0)
           {
-            this.LogDebug("MD plugin: freeing unrequired slot decrypting program \"{0}\"", slot.CurrentChannel.Name);
-            slot.CurrentChannel = null;
+            this.LogDebug("MD plugin: freeing unrequired slot decrypting program {0}", slot.ProgramNumber);
+            slot.ProgramNumber = 0;
             IChangeChannel_Clear clear = slot.Filter as IChangeChannel_Clear;
             if (clear != null)
             {
@@ -1665,7 +1666,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
             }
           }
         }
-        else if (updateAll && !DecryptProgram(slot.Filter, slot.PendingChannel.Channel, slot.PendingChannel.Pmt, slot.PendingChannel.Cat))
+        else if (updateAll && !DecryptProgram(slot.Filter, slot.PendingChannel.Pmt, slot.PendingChannel.Cat))
         {
           return false;
         }
