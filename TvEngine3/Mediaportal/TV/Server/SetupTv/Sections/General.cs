@@ -117,13 +117,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       comboBoxServicePriority.SelectedItem = ((ServicePriority)ServiceAgents.Instance.SettingServiceAgent.GetValue("servicePriority", (int)ServicePriority.Normal)).GetDescription();
       numericUpDownTunerDetectionDelay.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerDetectionDelay", 0);
-      numericUpDownTimeLimitSignal.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitSignalLock", 2500);
-
-      checkBoxScanChannelMovementDetection.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("channelMovementDetectionEnabled", false);
-      checkBoxScanAutomaticChannelGroupsChannelProviders.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateProviderChannelGroups", false);
-      checkBoxScanAutomaticChannelGroupsBroadcastStandards.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateBroadcastStandardChannelGroups", false);
-      checkBoxScanAutomaticChannelGroupsSatellites.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateSatelliteChannelGroups", false);
-      numericUpDownTimeLimitScan.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitScan", 20000);
 
       Codec codecVideo = Codec.Deserialise(ServiceAgents.Instance.SettingServiceAgent.GetValue("previewCodecVideo", Codec.DEFAULT_VIDEO.Serialise()));
       if (codecVideo == null)
@@ -145,6 +138,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         comboBoxPreviewCodecAudio.SelectedItem = codecAudio;
       }
 
+      checkBoxScanChannelMovementDetection.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("channelMovementDetectionEnabled", false);
+      checkBoxScanAutomaticChannelGroupsChannelProviders.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateProviderChannelGroups", false);
+      checkBoxScanAutomaticChannelGroupsBroadcastStandards.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateBroadcastStandardChannelGroups", false);
+      checkBoxScanAutomaticChannelGroupsSatellites.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateSatelliteChannelGroups", false);
+      numericUpDownTimeLimitScan.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitScan", 20000);
+
+      numericUpDownTimeLimitSignalLock.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitSignalLock", 2500);
+      numericUpDownTimeLimitReceiveStream.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitReceiveStream", 15000);
+
       DebugSettings();
 
       base.OnSectionActivated();
@@ -157,7 +159,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       int servicePriority = Convert.ToInt32(typeof(ServicePriority).GetEnumFromDescription((string)comboBoxServicePriority.SelectedItem));
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("servicePriority", servicePriority);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerDetectionDelay", (int)numericUpDownTunerDetectionDelay.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitSignalLock", (int)numericUpDownTimeLimitSignal.Value);
+
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("previewCodecVideo", ((Codec)comboBoxPreviewCodecVideo.SelectedItem).Serialise());
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("previewCodecAudio", ((Codec)comboBoxPreviewCodecAudio.SelectedItem).Serialise());
 
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("channelMovementDetectionEnabled", checkBoxScanChannelMovementDetection.Checked);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanAutoCreateProviderChannelGroups", checkBoxScanAutomaticChannelGroupsChannelProviders.Checked);
@@ -165,8 +169,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanAutoCreateSatelliteChannelGroups", checkBoxScanAutomaticChannelGroupsSatellites.Checked);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitScan", (int)numericUpDownTimeLimitScan.Value);
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("previewCodecVideo", ((Codec)comboBoxPreviewCodecVideo.SelectedItem).Serialise());
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("previewCodecAudio", ((Codec)comboBoxPreviewCodecAudio.SelectedItem).Serialise());
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitSignalLock", (int)numericUpDownTimeLimitSignalLock.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitReceiveStream", (int)numericUpDownTimeLimitReceiveStream.Value);
 
       DebugSettings();
 
@@ -178,18 +182,20 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.LogDebug("general: settings...");
       this.LogDebug("  service priority      = {0}", comboBoxServicePriority.SelectedItem);
       this.LogDebug("  tuner detection delay = {0} ms", numericUpDownTunerDetectionDelay.Value);
-      this.LogDebug("  signal time limit     = {0} ms", numericUpDownTimeLimitSignal.Value);
-      this.LogDebug("  channel movement?     = {0}", checkBoxScanChannelMovementDetection.Checked);
-      this.LogDebug("  automatic channel groups...");
-      this.LogDebug("    providers           = {0}", checkBoxScanAutomaticChannelGroupsChannelProviders.Checked);
-      this.LogDebug("    broadcast standards = {0}", checkBoxScanAutomaticChannelGroupsBroadcastStandards.Checked);
-      this.LogDebug("    satellites          = {0}", checkBoxScanAutomaticChannelGroupsSatellites.Checked);
-      this.LogDebug("  scan time limit       = {0} ms", numericUpDownTimeLimitScan.Value);
       this.LogDebug("  preview codecs...");
       Codec c = (Codec)comboBoxPreviewCodecVideo.SelectedItem;
       this.LogDebug("    video               = {0} ({1})", c.Name, c.ClassId);
       c = (Codec)comboBoxPreviewCodecAudio.SelectedItem;
       this.LogDebug("    audio               = {0} ({1})", c.Name, c.ClassId);
+      this.LogDebug("  channel movement?     = {0}", checkBoxScanChannelMovementDetection.Checked);
+      this.LogDebug("  automatic channel groups...");
+      this.LogDebug("    providers           = {0}", checkBoxScanAutomaticChannelGroupsChannelProviders.Checked);
+      this.LogDebug("    broadcast standards = {0}", checkBoxScanAutomaticChannelGroupsBroadcastStandards.Checked);
+      this.LogDebug("    satellites          = {0}", checkBoxScanAutomaticChannelGroupsSatellites.Checked);
+      this.LogDebug("  time limits...");
+      this.LogDebug("    scan                = {0} ms", numericUpDownTimeLimitScan.Value);
+      this.LogDebug("    signal lock         = {0} ms", numericUpDownTimeLimitSignalLock.Value);
+      this.LogDebug("    receive stream      = {0} ms", numericUpDownTimeLimitReceiveStream.Value);
     }
 
     private void buttonUpdateTuningDetails_Click(object sender, EventArgs e)

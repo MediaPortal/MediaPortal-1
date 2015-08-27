@@ -16,7 +16,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
   {
     protected ITvCardHandler _cardHandler;
     private TimeShiftingEpgGrabber _timeShiftingEpgGrabber = null;
-    private int _waitForVideoOrAudio = 15;
+    private int _waitForVideoOrAudio = 15000;   // unit = ms
     protected readonly ManualResetEvent _eventAudio = new ManualResetEvent(false); // gets signaled when audio PID is seen
     protected readonly ManualResetEvent _eventVideo = new ManualResetEvent(false); // gets signaled when video PID is seen
     protected bool _cancelled;
@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     public virtual void ReloadConfiguration()
     {
-      _waitForVideoOrAudio = SettingsManagement.GetValue("timeshiftWaitForTimeshifting", 15);
+      _waitForVideoOrAudio = SettingsManagement.GetValue("timeLimitReceiveStream", 15000);
     }
 
     protected abstract void AudioVideoEventHandler(PidType pidType);
@@ -136,8 +136,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         return false;
       }
 
-      int waitForEvent = _waitForVideoOrAudio * 1000; // in ms           
-
       DateTime timeStart = DateTime.Now;
 
       if (_cardHandler.Card.CurrentTuningDetail == null)
@@ -150,7 +148,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         this.LogDebug("card: WaitForFile - waiting _eventAudio");
         // wait for audio PID to be seen
-        if (_eventAudio.WaitOne(waitForEvent, true))
+        if (_eventAudio.WaitOne(_waitForVideoOrAudio, true))
         {
           if (IsTuneCancelled())
           {
@@ -177,13 +175,13 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         this.LogDebug("card: WaitForFile - waiting _eventAudio & _eventVideo");
         // block until video & audio PIDs are seen or the timeout is reached
-        if (_eventAudio.WaitOne(waitForEvent, true))
+        if (_eventAudio.WaitOne(_waitForVideoOrAudio, true))
         {
           if (IsTuneCancelled())
           {
             return false;
           }
-          if (_eventVideo.WaitOne(waitForEvent, true))
+          if (_eventVideo.WaitOne(_waitForVideoOrAudio, true))
           {
             if (IsTuneCancelled())
             {

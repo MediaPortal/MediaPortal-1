@@ -46,12 +46,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.label48 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.numericUpDownMaxFreeCardsToTry = new System.Windows.Forms.NumericUpDown();
       this.label47 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownWaitTimeshifting = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownMaxFileSize = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownMaxFiles = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownMinFiles = new System.Windows.Forms.NumericUpDown();
-      this.label26 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.label32 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.label34 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.label35 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.label36 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -145,7 +142,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox10.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericParkedStreamTimeout)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFreeCardsToTry)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWaitTimeshifting)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFileSize)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFiles)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinFiles)).BeginInit();
@@ -211,10 +207,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.grpBoxTimeshiftingInfo.Controls.Add(this.lblTimeHD);
       this.grpBoxTimeshiftingInfo.Controls.Add(this.lblOverhead);
       this.grpBoxTimeshiftingInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.grpBoxTimeshiftingInfo.Location = new System.Drawing.Point(6, 196);
+      this.grpBoxTimeshiftingInfo.Location = new System.Drawing.Point(6, 172);
       this.grpBoxTimeshiftingInfo.Name = "grpBoxTimeshiftingInfo";
       this.grpBoxTimeshiftingInfo.Size = new System.Drawing.Size(304, 105);
-      this.grpBoxTimeshiftingInfo.TabIndex = 20;
+      this.grpBoxTimeshiftingInfo.TabIndex = 1;
       this.grpBoxTimeshiftingInfo.TabStop = false;
       this.grpBoxTimeshiftingInfo.Text = "Timeshifting Info";
       // 
@@ -225,7 +221,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.lblMinFileSizeNeeded.Location = new System.Drawing.Point(6, 16);
       this.lblMinFileSizeNeeded.Name = "lblMinFileSizeNeeded";
       this.lblMinFileSizeNeeded.Size = new System.Drawing.Size(64, 13);
-      this.lblMinFileSizeNeeded.TabIndex = 18;
+      this.lblMinFileSizeNeeded.TabIndex = 0;
       this.lblMinFileSizeNeeded.Text = "Filesize calc";
       // 
       // lblFileSizeNeeded
@@ -234,7 +230,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.lblFileSizeNeeded.Location = new System.Drawing.Point(6, 31);
       this.lblFileSizeNeeded.Name = "lblFileSizeNeeded";
       this.lblFileSizeNeeded.Size = new System.Drawing.Size(80, 13);
-      this.lblFileSizeNeeded.TabIndex = 19;
+      this.lblFileSizeNeeded.TabIndex = 1;
       this.lblFileSizeNeeded.Text = "Filesize needed";
       // 
       // lblTimeSD
@@ -243,7 +239,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.lblTimeSD.Location = new System.Drawing.Point(6, 89);
       this.lblTimeSD.Name = "lblTimeSD";
       this.lblTimeSD.Size = new System.Drawing.Size(48, 13);
-      this.lblTimeSD.TabIndex = 19;
+      this.lblTimeSD.TabIndex = 4;
       this.lblTimeSD.Text = "Time SD";
       // 
       // lblTimeHD
@@ -252,7 +248,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.lblTimeHD.Location = new System.Drawing.Point(6, 75);
       this.lblTimeHD.Name = "lblTimeHD";
       this.lblTimeHD.Size = new System.Drawing.Size(49, 13);
-      this.lblTimeHD.TabIndex = 19;
+      this.lblTimeHD.TabIndex = 3;
       this.lblTimeHD.Text = "Time HD";
       // 
       // lblOverhead
@@ -261,7 +257,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.lblOverhead.Location = new System.Drawing.Point(6, 44);
       this.lblOverhead.Name = "lblOverhead";
       this.lblOverhead.Size = new System.Drawing.Size(54, 13);
-      this.lblOverhead.TabIndex = 19;
+      this.lblOverhead.TabIndex = 2;
       this.lblOverhead.Text = "Overhead";
       // 
       // groupBox10
@@ -272,12 +268,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox10.Controls.Add(this.label48);
       this.groupBox10.Controls.Add(this.numericUpDownMaxFreeCardsToTry);
       this.groupBox10.Controls.Add(this.label47);
-      this.groupBox10.Controls.Add(this.numericUpDownWaitTimeshifting);
       this.groupBox10.Controls.Add(this.numericUpDownMaxFileSize);
       this.groupBox10.Controls.Add(this.numericUpDownMaxFiles);
       this.groupBox10.Controls.Add(this.numericUpDownMinFiles);
-      this.groupBox10.Controls.Add(this.label26);
-      this.groupBox10.Controls.Add(this.label32);
       this.groupBox10.Controls.Add(this.label34);
       this.groupBox10.Controls.Add(this.label35);
       this.groupBox10.Controls.Add(this.label36);
@@ -287,85 +280,62 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox10.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox10.Location = new System.Drawing.Point(6, 6);
       this.groupBox10.Name = "groupBox10";
-      this.groupBox10.Size = new System.Drawing.Size(304, 184);
-      this.groupBox10.TabIndex = 17;
+      this.groupBox10.Size = new System.Drawing.Size(304, 156);
+      this.groupBox10.TabIndex = 0;
       this.groupBox10.TabStop = false;
       this.groupBox10.Text = "Timeshifting";
       // 
       // label49
       // 
       this.label49.AutoSize = true;
-      this.label49.Location = new System.Drawing.Point(246, 152);
+      this.label49.Location = new System.Drawing.Point(246, 125);
       this.label49.Name = "label49";
       this.label49.Size = new System.Drawing.Size(23, 13);
-      this.label49.TabIndex = 40;
+      this.label49.TabIndex = 14;
       this.label49.Text = "min";
       // 
       // numericParkedStreamTimeout
       // 
-      this.numericParkedStreamTimeout.Location = new System.Drawing.Point(153, 149);
+      this.numericParkedStreamTimeout.Location = new System.Drawing.Point(153, 123);
       this.numericParkedStreamTimeout.Name = "numericParkedStreamTimeout";
       this.numericParkedStreamTimeout.Size = new System.Drawing.Size(87, 20);
-      this.numericParkedStreamTimeout.TabIndex = 39;
+      this.numericParkedStreamTimeout.TabIndex = 13;
       this.numericParkedStreamTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // label50
       // 
       this.label50.AutoSize = true;
-      this.label50.Location = new System.Drawing.Point(6, 151);
+      this.label50.Location = new System.Drawing.Point(6, 125);
       this.label50.Name = "label50";
       this.label50.Size = new System.Drawing.Size(112, 13);
-      this.label50.TabIndex = 38;
+      this.label50.TabIndex = 12;
       this.label50.Text = "Parked stream timeout";
       // 
       // label48
       // 
       this.label48.AutoSize = true;
-      this.label48.Location = new System.Drawing.Point(246, 126);
+      this.label48.Location = new System.Drawing.Point(246, 100);
       this.label48.Name = "label48";
       this.label48.Size = new System.Drawing.Size(29, 13);
-      this.label48.TabIndex = 37;
+      this.label48.TabIndex = 11;
       this.label48.Text = "0=all";
       // 
       // numericUpDownMaxFreeCardsToTry
       // 
-      this.numericUpDownMaxFreeCardsToTry.Location = new System.Drawing.Point(153, 123);
+      this.numericUpDownMaxFreeCardsToTry.Location = new System.Drawing.Point(153, 97);
       this.numericUpDownMaxFreeCardsToTry.Name = "numericUpDownMaxFreeCardsToTry";
       this.numericUpDownMaxFreeCardsToTry.Size = new System.Drawing.Size(87, 20);
-      this.numericUpDownMaxFreeCardsToTry.TabIndex = 36;
+      this.numericUpDownMaxFreeCardsToTry.TabIndex = 10;
       this.numericUpDownMaxFreeCardsToTry.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // label47
       // 
       this.label47.AutoSize = true;
-      this.label47.Location = new System.Drawing.Point(6, 125);
+      this.label47.Location = new System.Drawing.Point(6, 99);
       this.label47.Name = "label47";
       this.label47.Size = new System.Drawing.Size(127, 13);
-      this.label47.TabIndex = 35;
+      this.label47.TabIndex = 9;
       this.label47.Text = "Maximum free cards to try";
-      // 
-      // numericUpDownWaitTimeshifting
-      // 
-      this.numericUpDownWaitTimeshifting.Location = new System.Drawing.Point(153, 97);
-      this.numericUpDownWaitTimeshifting.Maximum = new decimal(new int[] {
-            120,
-            0,
-            0,
-            0});
-      this.numericUpDownWaitTimeshifting.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-      this.numericUpDownWaitTimeshifting.Name = "numericUpDownWaitTimeshifting";
-      this.numericUpDownWaitTimeshifting.Size = new System.Drawing.Size(87, 20);
-      this.numericUpDownWaitTimeshifting.TabIndex = 34;
-      this.numericUpDownWaitTimeshifting.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownWaitTimeshifting.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
       // 
       // numericUpDownMaxFileSize
       // 
@@ -382,7 +352,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             0});
       this.numericUpDownMaxFileSize.Name = "numericUpDownMaxFileSize";
       this.numericUpDownMaxFileSize.Size = new System.Drawing.Size(87, 20);
-      this.numericUpDownMaxFileSize.TabIndex = 32;
+      this.numericUpDownMaxFileSize.TabIndex = 7;
       this.numericUpDownMaxFileSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownMaxFileSize.Value = new decimal(new int[] {
             256,
@@ -401,7 +371,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             0});
       this.numericUpDownMaxFiles.Name = "numericUpDownMaxFiles";
       this.numericUpDownMaxFiles.Size = new System.Drawing.Size(87, 20);
-      this.numericUpDownMaxFiles.TabIndex = 31;
+      this.numericUpDownMaxFiles.TabIndex = 4;
       this.numericUpDownMaxFiles.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownMaxFiles.Value = new decimal(new int[] {
             20,
@@ -419,7 +389,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             0});
       this.numericUpDownMinFiles.Name = "numericUpDownMinFiles";
       this.numericUpDownMinFiles.Size = new System.Drawing.Size(87, 20);
-      this.numericUpDownMinFiles.TabIndex = 30;
+      this.numericUpDownMinFiles.TabIndex = 1;
       this.numericUpDownMinFiles.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownMinFiles.Value = new decimal(new int[] {
             6,
@@ -428,31 +398,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             0});
       this.numericUpDownMinFiles.ValueChanged += new System.EventHandler(this.numericUpDownMinFiles_ValueChanged);
       // 
-      // label26
-      // 
-      this.label26.AutoSize = true;
-      this.label26.Location = new System.Drawing.Point(246, 99);
-      this.label26.Name = "label26";
-      this.label26.Size = new System.Drawing.Size(24, 13);
-      this.label26.TabIndex = 29;
-      this.label26.Text = "sec";
-      // 
-      // label32
-      // 
-      this.label32.AutoSize = true;
-      this.label32.Location = new System.Drawing.Point(6, 99);
-      this.label32.Name = "label32";
-      this.label32.Size = new System.Drawing.Size(115, 13);
-      this.label32.TabIndex = 26;
-      this.label32.Text = "Wait for timeshifting file";
-      // 
       // label34
       // 
       this.label34.AutoSize = true;
       this.label34.Location = new System.Drawing.Point(246, 73);
       this.label34.Name = "label34";
       this.label34.Size = new System.Drawing.Size(55, 13);
-      this.label34.TabIndex = 23;
+      this.label34.TabIndex = 8;
       this.label34.Text = "MByte/file";
       // 
       // label35
@@ -461,7 +413,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.label35.Location = new System.Drawing.Point(246, 47);
       this.label35.Name = "label35";
       this.label35.Size = new System.Drawing.Size(25, 13);
-      this.label35.TabIndex = 22;
+      this.label35.TabIndex = 5;
       this.label35.Text = "files";
       // 
       // label36
@@ -470,7 +422,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.label36.Location = new System.Drawing.Point(6, 73);
       this.label36.Name = "label36";
       this.label36.Size = new System.Drawing.Size(41, 13);
-      this.label36.TabIndex = 17;
+      this.label36.TabIndex = 6;
       this.label36.Text = "Filesize";
       // 
       // label37
@@ -479,7 +431,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.label37.Location = new System.Drawing.Point(246, 21);
       this.label37.Name = "label37";
       this.label37.Size = new System.Drawing.Size(25, 13);
-      this.label37.TabIndex = 21;
+      this.label37.TabIndex = 2;
       this.label37.Text = "files";
       // 
       // label39
@@ -488,7 +440,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.label39.Location = new System.Drawing.Point(6, 47);
       this.label39.Name = "label39";
       this.label39.Size = new System.Drawing.Size(51, 13);
-      this.label39.TabIndex = 16;
+      this.label39.TabIndex = 3;
       this.label39.Text = "Maximum";
       // 
       // label46
@@ -497,7 +449,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.label46.Location = new System.Drawing.Point(6, 21);
       this.label46.Name = "label46";
       this.label46.Size = new System.Drawing.Size(48, 13);
-      this.label46.TabIndex = 15;
+      this.label46.TabIndex = 0;
       this.label46.Text = "Minimum";
       // 
       // tpTimeshifingFolders
@@ -1500,7 +1452,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox10.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericParkedStreamTimeout)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFreeCardsToTry)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWaitTimeshifting)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFileSize)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFiles)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinFiles)).EndInit();
@@ -1631,12 +1582,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPLabel label25;
     private System.Windows.Forms.TabPage tpTimeshifing;
     private MPGroupBox groupBox10;
-    private System.Windows.Forms.NumericUpDown numericUpDownWaitTimeshifting;
     private System.Windows.Forms.NumericUpDown numericUpDownMaxFileSize;
     private System.Windows.Forms.NumericUpDown numericUpDownMaxFiles;
     private System.Windows.Forms.NumericUpDown numericUpDownMinFiles;
-    private MPLabel label26;
-    private MPLabel label32;
     private MPLabel label34;
     private MPLabel label35;
     private MPLabel label36;
