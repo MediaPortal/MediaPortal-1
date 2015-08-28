@@ -339,8 +339,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             item.SubItems.Add(prg.EndTime.ToString("HH:mm:ss", mmddFormat));
             item.SubItems.Add(prg.Description);
 
-            item.SubItems.Add(prg.SeasonNumber.HasValue ? prg.SeasonNumber.ToString() : string.Empty);
-            item.SubItems.Add(prg.EpisodeNumber.HasValue ? prg.EpisodeNumber.ToString() : string.Empty);
+            item.SubItems.Add(prg.SeasonNumber.ToString());
+            item.SubItems.Add(prg.EpisodeNumber.ToString());
             if (prg.ProgramCategory != null)
             {
               item.SubItems.Add(prg.ProgramCategory.Category); 
@@ -349,7 +349,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             item.SubItems.Add(prg.Classification ?? string.Empty);
             item.SubItems.Add(prg.StarRating.HasValue ? string.Format("{0}/{1}", prg.StarRating, prg.StarRatingMaximum) : string.Empty);
             item.SubItems.Add(prg.EpisodeName ?? string.Empty);
-            item.SubItems.Add(prg.EpisodePartNumber.HasValue ? prg.EpisodePartNumber.ToString() : string.Empty);
+            item.SubItems.Add(prg.EpisodePartNumber.ToString());
             item.SubItems.Add("state");
 
             listView2.Items.Add(item);

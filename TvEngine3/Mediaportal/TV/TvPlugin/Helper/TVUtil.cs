@@ -144,9 +144,9 @@ namespace Mediaportal.TV.TvPlugin.Helper
     {
       StringBuilder strBuilder = new StringBuilder();
       TitleDisplay(strBuilder, prog.Title, prog.EpisodeName,
-                    prog.SeasonNumber.HasValue ? prog.SeasonNumber.ToString() : string.Empty,
-                    prog.EpisodeNumber.HasValue ? prog.EpisodeNumber.ToString() : string.Empty,
-                    prog.EpisodePartNumber.HasValue ? prog.EpisodePartNumber.ToString() : string.Empty);
+                    prog.SeasonNumber.ToString(),
+                    prog.EpisodeNumber.ToString(),
+                    prog.EpisodePartNumber.ToString());
       return strBuilder.ToString();
     }
 

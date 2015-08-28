@@ -92,9 +92,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         int nextIdProgram = nextPrg.IdProgram;
         string nextTitle = nextPrg.Title;
         string nextEpisodeName = nextPrg.EpisodeName ?? string.Empty;
-        string nextSeasonNumber = nextPrg.SeasonNumber.HasValue ? nextPrg.SeasonNumber.ToString() : string.Empty;
-        string nextEpisodeNumber = nextPrg.EpisodeNumber.HasValue ? nextPrg.EpisodeNumber.ToString() : string.Empty;
-        string nextEpisodePartNumber = nextPrg.EpisodePartNumber.HasValue ? nextPrg.EpisodePartNumber.ToString() : string.Empty;
+        string nextSeasonNumber = nextPrg.SeasonNumber.ToString();
+        string nextEpisodeNumber = nextPrg.EpisodeNumber.ToString();
+        string nextEpisodePartNumber = nextPrg.EpisodePartNumber.ToString();
 
         if (nowAndNext == null)
         {
@@ -143,7 +143,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         string nowEpisodeName = nowPrg.EpisodeName ?? string.Empty;
         string nowSeasonNumber = nowPrg.SeasonNumber.ToString();
         string nowEpisodeNumber = nowPrg.EpisodeNumber.ToString();
-        string nowEpisodePartNumber = nowPrg.EpisodePartNumber.HasValue ? nowPrg.EpisodePartNumber.ToString() : string.Empty;
+        string nowEpisodePartNumber = nowPrg.EpisodePartNumber.ToString();
 
         var nowAndNext = new NowAndNext(idChannel, nowStart, nowEnd, nowTitle, nextTitle, nowIdProgram,
                                         nextIdProgram, nowEpisodeName, nextEpisodeName, nowSeasonNumber,
