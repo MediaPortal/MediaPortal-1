@@ -417,8 +417,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         return new List<RegPinMedium>(0);
       }
 
-      IntPtr ksMultiple = IntPtr.Zero;
-      int hr = ksPin.KsQueryMediums(out ksMultiple);
+      IntPtr ksMultiplePtr = IntPtr.Zero;
+      int hr = ksPin.KsQueryMediums(out ksMultiplePtr);
       // Can return 1 (S_FALSE) for non-error scenarios.
       if (hr < (int)HResult.S_OK)
       {
@@ -426,11 +426,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       }
       try
       {
-        int mediumCount = Marshal.ReadInt32(ksMultiple, sizeof(int));
-        List<RegPinMedium> mediums = new List<RegPinMedium>(mediumCount);
-        IntPtr mediumPtr = IntPtr.Add(ksMultiple, 8);
+        KSMultipleItem ksMultipleItem = (KSMultipleItem)Marshal.PtrToStructure(ksMultiplePtr, typeof(KSMultipleItem));
+        List<RegPinMedium> mediums = new List<RegPinMedium>(ksMultipleItem.Count);
+        IntPtr mediumPtr = IntPtr.Add(ksMultiplePtr, Marshal.SizeOf(typeof(KSMultipleItem)));
         int regPinMediumSize = Marshal.SizeOf(typeof(RegPinMedium));
-        for (int i = 0; i < mediumCount; i++)
+        for (int i = 0; i < ksMultipleItem.Count; i++)
         {
           RegPinMedium m = (RegPinMedium)Marshal.PtrToStructure(mediumPtr, typeof(RegPinMedium));
           // Exclude invalid and non-meaningful mediums.
@@ -444,7 +444,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       }
       finally
       {
-        Marshal.FreeCoTaskMem(ksMultiple);
+        Marshal.FreeCoTaskMem(ksMultiplePtr);
       }
     }
 

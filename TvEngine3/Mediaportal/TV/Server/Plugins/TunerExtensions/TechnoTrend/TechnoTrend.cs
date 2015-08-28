@@ -1152,36 +1152,30 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
 
       try
       {
-        // Request the raw medium data. We receive a pointer to a KSMULTIPLE_ITEM.
-        IntPtr raw;
-        int hr = pin.KsQueryMediums(out raw);
+        // Request the KS medium data. The TechnoTrend device identifier is the
+        // ID in the first medium.
+        IntPtr ksMultiplePtr;
+        int hr = pin.KsQueryMediums(out ksMultiplePtr);
+        if (hr != (int)NativeMethods.HResult.S_OK || ksMultiplePtr == IntPtr.Zero)
+        {
+          return deviceId;
+        }
         try
         {
-          if (hr != (int)NativeMethods.HResult.S_OK || raw == IntPtr.Zero)
+          KSMultipleItem ksMultipleItem = (KSMultipleItem)Marshal.PtrToStructure(ksMultiplePtr, typeof(KSMultipleItem));
+          if (ksMultipleItem.Count == 0)
           {
             return deviceId;
           }
 
-          // Read the number of mediums.
-          int countMediums = Marshal.ReadInt32(raw, 4);
-          if (countMediums == 0)
-          {
-            return deviceId;
-          }
-
-          // Calculate the address of the first medium.
-          IntPtr addr = IntPtr.Add(raw, 8);
-          // Marshal the data into an RPM structure.
-          RegPinMedium rpm = (RegPinMedium)Marshal.PtrToStructure(addr, typeof(RegPinMedium));
-          return rpm.dw1;
+          // The first medium starts at the end of the KS multiple item.
+          IntPtr mediumPtr = IntPtr.Add(ksMultiplePtr, Marshal.SizeOf(typeof(KSMultipleItem)));
+          RegPinMedium medium = (RegPinMedium)Marshal.PtrToStructure(mediumPtr, typeof(RegPinMedium));
+          return medium.dw1;
         }
         finally
         {
-          if (raw != IntPtr.Zero)
-          {
-            Marshal.FreeCoTaskMem(raw);
-            raw = IntPtr.Zero;
-          }
+          Marshal.FreeCoTaskMem(ksMultiplePtr);
         }
       }
       finally
