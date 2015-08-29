@@ -30,7 +30,7 @@ namespace MediaPortal.Playlists
     public static IPlayListIO CreateIO(string fileName)
     {
       string extension = GetLowerCaseExtension(fileName);
-      if (extension == ".m3u")
+      if (extension == ".m3u" || extension == ".m3u8")
       {
         return new PlayListM3uIO();
       }
@@ -58,7 +58,7 @@ namespace MediaPortal.Playlists
     public static bool IsPlayList(string fileName)
     {
       string extension = GetLowerCaseExtension(fileName);
-      if (extension == ".m3u")
+      if (extension == ".m3u" || extension == ".m3u8")
       {
         return true;
       }

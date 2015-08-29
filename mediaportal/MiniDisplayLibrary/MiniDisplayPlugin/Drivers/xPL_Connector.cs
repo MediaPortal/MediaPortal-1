@@ -30,7 +30,6 @@ using System.Xml;
 using System.Xml.Serialization;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
-using MediaPortal.Hardware;
 using MediaPortal.InputDevices;
 using MediaPortal.Player;
 using MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL;
@@ -57,7 +56,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private SystemStatus MPStatus = new SystemStatus();
     private SystemStatus MPStatus_old = new SystemStatus();
     private readonly string mVendorID = "mportal";
-    private InputHandler rHandler;
     private DateTime SettingsLastModTime;
 
     private void AdvancedSettings_OnSettingsChanged()
@@ -241,26 +239,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                       return;
                     }
                   }
-                  foreach (string str10 in Enum.GetNames(typeof (RemoteButton)))
-                  {
-                    if (str10.ToLowerInvariant().Equals(str9.ToLowerInvariant()) || str9.ToLowerInvariant().Equals("remote_" + str10.ToLowerInvariant()))
-                    {
-                      if (this.DoDebug)
-                      {
-                        Log.Info(
-                          "xPL_Connector.Listener_XplMessageReceived(): Received remote.basic remote key name \"{0}\"",
-                          new object[] {str9});
-                      }
-                      this.XPL_Send_Remote_Confirm_Message(e);
-                      if (!this.rHandler.MapAction((int)Enum.Parse(typeof (RemoteButton), str10)) && this.DoDebug)
-                      {
-                        Log.Info(
-                          "xPL_Connector.Listener_XplMessageReceived(): COULD NOT FIRE REMOTE ACTION (isLoaded = {0})",
-                          new object[] {this.rHandler.IsLoaded});
-                      }
-                      break;
-                    }
-                  }
+
                   int result = 0;
                   int.TryParse(str9, out result);
                   if (result != 0)
@@ -609,16 +588,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this._Trows = _lines;
       this._Tcols = _cols;
       this._IsConnected = false;
-      Log.Info("xPL_Connector.Setup(): Loading MCE Remote mapping file");
-      this.rHandler = new InputHandler("Microsoft MCE");
-      if (this.rHandler.IsLoaded)
-      {
-        Log.Info("xPL_Connector.Setup(): MCE Remote mapping file loaded!");
-      }
-      else
-      {
-        Log.Info("xPL_Connector.Setup(): ERROR Could not Load MCE Remote mapping file");
-      }
       Log.Info("xPL_Connector.Setup(): completed");
     }
 

@@ -344,6 +344,9 @@ namespace MediaPortal.GUI.Video
             m_delayIntervalAudio = PostProcessingEngine.GetInstance().AudioDelayInterval;
             if (m_delayIntervalAudio > 0)
               m_audioDelay = PostProcessingEngine.GetInstance().AudioDelay / m_delayIntervalAudio;
+
+            g_Player.UpdateMediaInfoProperties();
+            GUIPropertyManager.SetProperty("#TV.View.HasTeletext", "False");
             return true;
           }
 

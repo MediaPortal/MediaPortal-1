@@ -71,6 +71,7 @@
     <Compile Include="Music\MusicState.cs" />
     <Compile Include="Music\MusicViewHandler.cs" />
     <Compile Include="Pictures\GUIPictureSlideShow.cs" />
+    <Compile Include="RemovableDrivesHandler.cs" />
     <Compile Include="Video\GUIVideoFullscreen.cs" />
     <Compile Include="Video\GUIVideoOSD.cs" />
     <Compile Include="Video\GUIVideoOverlay.cs" />

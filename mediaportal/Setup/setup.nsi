@@ -477,6 +477,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\ExternalPlayers\bin\${BUILD_TYPE}\ExternalPlayers.dll"
   SetOutPath "$MPdir.Plugins\process"
   File "${git_MP}\ProcessPlugins\bin\${BUILD_TYPE}\ProcessPlugins.dll"
+  File "${git_MP}\ProcessPlugins\MiniDisplay\bin\${BUILD_TYPE}\MiniDisplayPlugin.dll"
   SetOutPath "$MPdir.Plugins\subtitle"
   File "${git_MP}\SubtitlePlugins\bin\${BUILD_TYPE}\SubtitlePlugins.dll"
   SetOutPath "$MPdir.Plugins\Windows"
@@ -532,13 +533,24 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\bass.opus.2.4.1.3\bassopus.dll"
   File "${git_ROOT}\Packages\bass.wma.2.4.4\basswma.dll"
   File "${git_ROOT}\Packages\bass.wv.2.4.4\basswv.dll"
+  File "${git_ROOT}\Packages\bass.dsd.0.0.1\bassdsd.dll"
+  ; taglib-sharp
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\MediaPortal.TagLib.2.0.3.8\lib\taglib-sharp.dll"
+  ; SharpLibHid
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\SharpLibHid.1.1.0\lib\net20\SharpLibHid.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"
   File "${git_MP}\Docs\MediaPortal License.rtf"
   ; libbluray
   SetOutPath "$MPdir.Base"
-  File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
+  !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+    File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32d\libbluray.dll"
+  !else
+    File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
+  !endif
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
@@ -555,6 +567,7 @@ Section "MediaPortal core files (required)" SecCore
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPAudioswitcher\bin\${BUILD_TYPE}\MPAudioSwitcher.ax"  "$MPdir.Base\MPAudioSwitcher.ax"  "$MPdir.Base"
   ; used for digital tv
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsReader\bin\${BUILD_TYPE}\TsReader.ax"                "$MPdir.Base\TsReader.ax"         "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\Core-CC-Parser\CCCP\${BUILD_TYPE}\cccp.ax"             "$MPdir.Base\cccp.ax"             "$MPdir.Base"
   WriteRegStr HKCR "Media Type\Extensions\.ts"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
   WriteRegStr HKCR "Media Type\Extensions\.tp"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
   WriteRegStr HKCR "Media Type\Extensions\.tsbuffer"  "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
@@ -601,6 +614,7 @@ SectionEnd
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MPAudioSwitcher.ax"
   ; used for digital tv
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\TsReader.ax"
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\cccp.ax"
   ; used for Blu-ray
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\BDReader.ax"
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\DVBSub3.ax"
@@ -688,6 +702,7 @@ SectionEnd
   Delete "$MPdir.Plugins\ExternalPlayers\ExternalPlayers.dll"
   RMDir "$MPdir.Plugins\ExternalPlayers"
   Delete "$MPdir.Plugins\process\ProcessPlugins.dll"
+  Delete "$MPdir.Plugins\process\MiniDisplayPlugin.dll"
   RMDir "$MPdir.Plugins\process"
   Delete "$MPdir.Plugins\subtitle\SubtitlePlugins.dll"
   RMDir "$MPdir.Plugins\subtitle"
@@ -819,7 +834,6 @@ Section -Post
   ; removing old externaldisplay files - requested by chemelli
   ${LOG_TEXT} "INFO" "Removing obsolete (External/Mini/Cybr)Display files"
   Delete "$MPdir.Plugins\process\ExternalDisplayPlugin.dll"
-  Delete "$MPdir.Plugins\process\MiniDisplayPlugin.dll"
   Delete "$MPdir.Plugins\process\CybrDisplayPlugin.dll"
   Delete "$MPdir.Plugins\windows\CybrDisplayPlugin.dll"
 

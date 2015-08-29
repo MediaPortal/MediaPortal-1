@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+	<controls>
+	
+    <control>
+      <description>Video resolution</description>
+      <type>image</type>
+      <id>0</id>
+			<posX>476</posX>
+			<posY>958</posY>
+    	<width>99</width>
+    	<height>65</height>
+      <texture>Logos\resolution\#Play.Current.VideoResolution.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>black</colordiffuse>
+    </control>
+		<control>
+    	<description>Video codec</description>
+      <type>image</type>
+      <id>0</id>
+			<posX>576</posX>
+			<posY>958</posY>
+    	<width>99</width>
+    	<height>65</height>
+      <texture>Logos\video\#Play.Current.VideoCodec.Texture.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>black</colordiffuse>
+    </control>
+    <control>
+      <description>AspectRatio</description>
+      <type>image</type>
+      <id>0</id>
+			<posX>676</posX>
+			<posY>958</posY>
+    	<width>99</width>
+    	<height>65</height>
+      <texture>Logos\aspectratio\#Play.Current.AspectRatio.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>black</colordiffuse>
+    </control>
+<control>
+        <description>Subtitles</description>
+        <type>image</type>
+        <id>0</id>
+			<posX>786</posX>
+			<posY>968</posY>
+    	<width>49</width>
+    	<height>45</height>
+        <visible>string.equals(#Play.Current.HasSubtitles, True)</visible>
+        <texture>logos\subtitles.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>black</colordiffuse>
+      </control>
+      <control>
+        <description>NoSubtitles</description>
+        <type>image</type>
+        <id>0</id>
+			<posX>786</posX>
+			<posY>968</posY>
+    	<width>49</width>
+    	<height>45</height>
+        <visible>!string.equals(#Play.Current.HasSubtitles, True)</visible>
+        <texture>logos\nosubtitles.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>black</colordiffuse>
+      </control>
+
+    <control>
+      <description>Audio codec</description>
+      <type>image</type>
+      <id>0</id>
+			<posX>856</posX>
+			<posY>958</posY>
+    	<width>99</width>
+    	<height>65</height>
+      <texture>Logos\audio\#Play.Current.AudioCodec.Texture.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>black</colordiffuse>
+    </control>
+<control>
+        <description>Teletext</description>
+        <type>image</type>
+        <id>0</id>
+			<posX>986</posX>
+			<posY>968</posY>
+    	<width>62</width>
+    	<height>45</height>
+        <visible>string.equals(#TV.View.HasTeletext, True)</visible>
+        <texture>logos\Teletext.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>black</colordiffuse>
+      </control>
+      <control>
+        <description>NoTeletext</description>
+        <type>image</type>
+        <id>0</id>
+			<posX>986</posX>
+			<posY>968</posY>
+    	<width>62</width>
+    	<height>45</height>
+        <visible>!string.equals(#TV.View.HasTeletext, True)</visible>
+        <texture>logos\noTeletext.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>black</colordiffuse>
+      </control>
+    <control>
+      <description>Audio channels</description>
+      <type>image</type>
+      <id>0</id>
+			<posX>1036</posX>
+			<posY>958</posY>
+    	<width>99</width>
+    	<height>65</height>
+      <texture>Logos\audio\#Play.Current.AudioChannels.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>black</colordiffuse>
+    </control>
+      <control>
+        <description>FTA</description>
+        <type>image</type>
+        <id>0</id>
+		<posX>1070</posX>
+		<posY>965</posY>
+        <width>99</width>
+        <height>65</height>
+        <visible>string.equals(#TV.TuningDetails.FreeToAir,TRUE)</visible>
+        <texture>logos\fta.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+		<colordiffuse>black</colordiffuse>
+      </control>
+      <control>
+	    <posX>1070</posX>
+		<posY>965</posY>
+        <description>No FTA</description>
+        <type>image</type>
+        <id>0</id>
+       <width>99</width>
+        <height>65</height>
+        <visible>string.equals(#TV.TuningDetails.FreeToAir,FALSE)</visible>
+        <texture>logos\nofta.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+		<colordiffuse>black</colordiffuse>
+      </control>
+      <control>
+        <description>Bitrate</description>
+        <type>image</type>
+        <id>0</id>
+		<posX>1190</posX>
+		<posY>965</posY>
+        <width>99</width>
+        <height>65</height>
+        <texture>logos\satellite.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+		<colordiffuse>black</colordiffuse>
+      </control>
+    <control>
+      <description>Bitrate</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1250</posX>
+      <posY>958</posY>
+      <label>#Play.Current.TSBitRate</label>
+	  <width>99</width>
+      <height>65</height>
+      <align>center</align>
+      <font>font12</font>
+      <textcolor>black</textcolor>
+    </control>
+    <control>
+      <description>Bitrate</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1330</posX>
+      <posY>958</posY>
+      <label>Mbit/s</label>
+      <align>center</align>
+      <font>font11</font>
+	  <width>99</width>
+      <height>65</height>
+      <textcolor>black</textcolor>
+    </control>	  
+
+	</controls>
+</window>

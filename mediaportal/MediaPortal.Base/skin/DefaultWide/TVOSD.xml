@@ -310,5 +310,6 @@
       <ondown>31</ondown>
       <visible>no</visible>
     </control>
+    <import>tvOSD.mediainfo.xml</import>
   </controls>
 </window>

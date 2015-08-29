@@ -130,6 +130,9 @@ namespace MediaPortal.GUI.Library
     private static float _currentFPS;
     private static long _lasttime;
     private static bool _blankScreen;
+    private static int _deviceAudioConnected = 0;
+    private static VolumeHandler _initVolumeHandler;
+    private static int _deviceVideoConnected = 0;
     private static bool _idleTimePowerSaving;
     private static bool _turnOffMonitor;
     private static bool _vmr9Allowed = true;
@@ -140,6 +143,7 @@ namespace MediaPortal.GUI.Library
     private static readonly bool IsDX9EXused = OSInfo.OSInfo.VistaOrLater();
     private static bool _allowRememberLastFocusedItem = true;
     private static bool _fullHD3DFormat = false;
+    private static bool _tabWithBlackBars = false;
 
     // Stacks for matrix transformations.
     private static readonly Stack<Matrix> ProjectionMatrixStack = new Stack<Matrix>();
@@ -188,6 +192,9 @@ namespace MediaPortal.GUI.Library
     {
       Render3DMode = eRender3DMode.None;
       Switch3DSides = false;
+      Convert2Dto3DSkewFactor = 0;
+      LastFrames = new List<Texture>();
+      LastFramesIndex = 0;
     }
 
     /// <summary>
@@ -223,6 +230,67 @@ namespace MediaPortal.GUI.Library
               MaxFPS = xmlReader.GetValueAsInt("screen", "GuiRenderFps", 60);
             }
           }
+        }
+      }
+    }
+
+
+    public static object InitVolumeHandlerLock = new Object();
+
+    /// <summary>
+    /// Set/get init volume handler
+    /// </summary>
+    public static VolumeHandler VolumeHandler
+    {
+      get { return _initVolumeHandler; }
+      set
+      {
+        lock (InitVolumeHandlerLock)
+        {
+          _initVolumeHandler = value;
+        }
+        Log.Debug("GraphicContext: init volume handler");
+      }
+    }
+
+    /// <summary>
+    /// Set/get audio device connected or removed
+    /// </summary>
+    public static int DeviceAudioConnected
+    {
+      get { return _deviceAudioConnected; }
+      set
+      {
+        if (value > _deviceAudioConnected)
+        {
+          _deviceAudioConnected = value;
+          Log.Debug("GraphicContext: device audio connected - Count {0}", _deviceAudioConnected);
+        }
+        else if (value < _deviceAudioConnected)
+        {
+          _deviceAudioConnected = value < 0 ? 0 : value;
+          Log.Debug("GraphicContext: device audio removed - Count {0}", _deviceAudioConnected);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Set/get video device connected or removed
+    /// </summary>
+    public static int DeviceVideoConnected
+    {
+      get { return _deviceVideoConnected; }
+      set
+      {
+        if (value > _deviceVideoConnected)
+        {
+          _deviceVideoConnected = value;
+          Log.Debug("GraphicContext: device video connected - Count {0}", _deviceVideoConnected);
+        }
+        else if (value < _deviceVideoConnected)
+        {
+          _deviceVideoConnected = value < 0 ? 0 : value;
+          Log.Debug("GraphicContext: device video removed - Count {0}", _deviceVideoConnected);
         }
       }
     }
@@ -272,7 +340,7 @@ namespace MediaPortal.GUI.Library
 
     public static object RenderModeSwitch = new Object();
 
-    public enum eRender3DMode { None, SideBySide, TopAndBottom, SideBySideTo2D, TopAndBottomTo2D };
+    public enum eRender3DMode { None, SideBySide, TopAndBottom, SideBySideTo2D, TopAndBottomTo2D, SideBySideFrom2D };
 
     static eRender3DMode _render3DMode;
 
@@ -288,6 +356,10 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public static List<Texture> LastFrames { get; set; }
+    public static int LastFramesIndex;
+    public static int Convert2Dto3DSkewFactor { get; set; }
+
     public enum eRender3DModeHalf { None, SBSLeft, SBSRight, TABTop, TABBottom };
 
     public static eRender3DModeHalf Render3DModeHalf { get; set; }
@@ -297,6 +369,8 @@ namespace MediaPortal.GUI.Library
     public static bool Render3DSubtitle { get; set; }
 
     public static int Render3DSubtitleDistance { get; set; }
+
+    public static bool StretchSubtitles { get; set; }
 
     public enum eFullHD3DFormat { None, SBS, TAB };
 
@@ -758,6 +832,12 @@ namespace MediaPortal.GUI.Library
       set { _fullHD3DFormat = value; }
     }
 
+    public static bool IsTabWithBlackBars
+    {
+      get { return _tabWithBlackBars; }
+      set { _tabWithBlackBars = value; }
+    }
+
     /// <summary>
     /// Get/set current skin folder path
     /// </summary>
@@ -816,7 +896,14 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public static string GetThemedSkinFile(string filename)
     {
-      return File.Exists(Theme + filename) ? Theme + filename : Skin + filename;
+      if (File.Exists(filename)) // sometimes filename is full path, don't know why
+      {
+        return filename;
+      }
+      else
+      {
+        return File.Exists(Theme + filename) ? Theme + filename : Skin + filename;
+      }
     }
 
     /// <summary>
@@ -914,6 +1001,9 @@ namespace MediaPortal.GUI.Library
     /// Get/Set application state (starting,running,stopping)
     /// </summary>
     public static State CurrentState { get; set; }
+
+    // addendum to indicate that the system is powering off and not just rebooting
+    public static bool StoppingToPowerOff { get; set; }
 
     /// <summary>
     /// Get pointer to the applications form (needed by overlay windows)

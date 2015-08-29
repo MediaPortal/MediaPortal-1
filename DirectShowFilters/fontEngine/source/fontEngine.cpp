@@ -304,6 +304,11 @@ void FontEngineSetClipDisable()
 //*******************************************************************************************************************
 void FontEngineRemoveTexture(int textureNo)
 {
+  if (!m_pDevice)
+  {
+    return;
+  }
+
   if (textureNo < 0 || textureNo>=MAX_TEXTURES) return;
 
   // Important to set it to NULL otherwise the textures, etc. will not be freed on release

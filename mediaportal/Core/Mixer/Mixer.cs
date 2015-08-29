@@ -174,58 +174,77 @@ namespace MediaPortal.Mixer
     private MixerNativeMethods.MixerControlDetails GetControl(MixerComponentType componentType,
                                                               MixerControlType controlType)
     {
-      MixerNativeMethods.MixerLine mixerLine = new MixerNativeMethods.MixerLine(componentType);
-
-      if (MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) != MixerError.None)
+      try
       {
-        throw new InvalidOperationException("Mixer.GetControl.1");
-      }
+        MixerNativeMethods.MixerLine mixerLine = new MixerNativeMethods.MixerLine(componentType);
 
-      using (
-        MixerNativeMethods.MixerLineControls mixerLineControls =
-          new MixerNativeMethods.MixerLineControls(mixerLine.LineId, controlType))
-      {
-        if (MixerNativeMethods.mixerGetLineControlsA(_handle, mixerLineControls, MixerLineControlFlags.OneByType) !=
+        if (MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) !=
             MixerError.None)
         {
-          throw new InvalidOperationException("Mixer.GetControl.2");
+          throw new InvalidOperationException("Mixer.GetControl.1");
         }
 
-        MixerNativeMethods.MixerControl mixerControl =
-          (MixerNativeMethods.MixerControl)
-          Marshal.PtrToStructure(mixerLineControls.Data, typeof (MixerNativeMethods.MixerControl));
+        using (
+          MixerNativeMethods.MixerLineControls mixerLineControls =
+            new MixerNativeMethods.MixerLineControls(mixerLine.LineId, controlType))
+        {
+          if (MixerNativeMethods.mixerGetLineControlsA(_handle, mixerLineControls, MixerLineControlFlags.OneByType) !=
+              MixerError.None)
+          {
+            throw new InvalidOperationException("Mixer.GetControl.2");
+          }
 
-        return new MixerNativeMethods.MixerControlDetails(mixerControl.ControlId);
+          MixerNativeMethods.MixerControl mixerControl =
+            (MixerNativeMethods.MixerControl)
+              Marshal.PtrToStructure(mixerLineControls.Data, typeof (MixerNativeMethods.MixerControl));
+
+          return new MixerNativeMethods.MixerControlDetails(mixerControl.ControlId);
+        }
       }
+      catch (Exception)
+      {
+        // Catch exception when audio device is disconnected
+      }
+      return null;
     }
 
     private object GetValue(MixerComponentType componentType, MixerControlType controlType)
     {
-      MixerNativeMethods.MixerLine mixerLine = new MixerNativeMethods.MixerLine(componentType);
-
-      if (MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) != MixerError.None)
+      try
       {
-        throw new InvalidOperationException("Mixer.OpenControl.1");
-      }
+        MixerNativeMethods.MixerLine mixerLine = new MixerNativeMethods.MixerLine(componentType);
 
-      using (
-        MixerNativeMethods.MixerLineControls mixerLineControls =
-          new MixerNativeMethods.MixerLineControls(mixerLine.LineId, controlType))
-      {
-        MixerNativeMethods.mixerGetLineControlsA(_handle, mixerLineControls, MixerLineControlFlags.OneByType);
-        MixerNativeMethods.MixerControl mixerControl =
-          (MixerNativeMethods.MixerControl)
-          Marshal.PtrToStructure(mixerLineControls.Data, typeof (MixerNativeMethods.MixerControl));
+        if (MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) !=
+            MixerError.None)
+        {
+          throw new InvalidOperationException("Mixer.OpenControl.1");
+        }
 
         using (
-          MixerNativeMethods.MixerControlDetails mixerControlDetails =
-            new MixerNativeMethods.MixerControlDetails(mixerControl.ControlId))
+          MixerNativeMethods.MixerLineControls mixerLineControls =
+            new MixerNativeMethods.MixerLineControls(mixerLine.LineId, controlType))
         {
-          MixerNativeMethods.mixerGetControlDetailsA(_handle, mixerControlDetails, 0);
+          MixerNativeMethods.mixerGetLineControlsA(_handle, mixerLineControls, MixerLineControlFlags.OneByType);
+          MixerNativeMethods.MixerControl mixerControl =
+            (MixerNativeMethods.MixerControl)
+              Marshal.PtrToStructure(mixerLineControls.Data, typeof(MixerNativeMethods.MixerControl));
 
-          return Marshal.ReadInt32(mixerControlDetails.Data);
+          using (
+            MixerNativeMethods.MixerControlDetails mixerControlDetails =
+              new MixerNativeMethods.MixerControlDetails(mixerControl.ControlId))
+          {
+            MixerNativeMethods.mixerGetControlDetailsA(_handle, mixerControlDetails, 0);
+
+            return Marshal.ReadInt32(mixerControlDetails.Data);
+          }
         }
       }
+      catch (Exception)
+      {
+        // Catch exception when audio device is disconnected
+      }
+      // Set Volume to 30000 when audio recover
+      return 30000;
     }
 
     private void SetValue(MixerComponentType componentType, MixerControlType controlType, bool controlValue)

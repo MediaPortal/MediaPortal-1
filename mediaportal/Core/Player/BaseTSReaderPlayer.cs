@@ -48,6 +48,9 @@ namespace MediaPortal.Player
     [PreserveSig]
     int OnVideoFormatChanged(int streamType, int width, int height, int aspectRatioX, int aspectRatioY, int bitrate,
                              int isInterlaced);
+
+    [PreserveSig]
+    int OnBitRateChanged(int bitrate);
   }
 
   [ComVisible(true), ComImport,
@@ -1567,6 +1570,13 @@ namespace MediaPortal.Player
       _videoFormat.bitrate = bitrate;
       _videoFormat.isInterlaced = (isInterlaced == 1);
       Log.Info("TsReaderPlayer: OnVideoFormatChanged - {0}", _videoFormat.ToString());
+      return 0;
+    }
+
+    public int OnBitRateChanged(int bitrate)
+    {
+      _videoFormat.bitrate = bitrate;
+      //Log.Debug("TsReaderPlayer:OnBitRateChanged - {0} b/s", bitrate);
       return 0;
     }
 

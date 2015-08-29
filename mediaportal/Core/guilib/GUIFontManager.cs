@@ -652,7 +652,14 @@ namespace MediaPortal.GUI.Library
         }
         foreach (GUIFont font in ListFonts)
         {
-          font.InitializeDeviceObjects();
+          try
+          {
+            font.InitializeDeviceObjects();
+          }
+          catch (Exception ex)
+          {
+            Log.Error("GUIFontManager InitializeDeviceObjects() exception {0}", ex);
+          }
         }
       }
     }

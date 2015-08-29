@@ -66,6 +66,7 @@ xcopy %1\Dialogs\bin\%2\Dialogs.* plugins\Windows\ /Y /D
 
 REM ProcessPlugins
 xcopy %1\ProcessPlugins\bin\%2\ProcessPlugins.* plugins\process\ /Y /D
+xcopy %1\ProcessPlugins\MiniDisplay\bin\%2\MiniDisplayPlugin.* plugins\process\ /Y /D
 xcopy %1\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\%2\MusicShareWatcherHelper.* . /Y /D
 xcopy %1\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\%2\MusicShareWatcher.exe . /Y /D
 
@@ -162,6 +163,7 @@ xcopy %1\..\Packages\bass.aac.2.4.4.4\bass_aac.dll "MusicPlayer\plugins\audio de
 xcopy %1\..\Packages\bass.ac3.2.4.0.3\bass_ac3.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 xcopy %1\..\Packages\bass.alac.2.4.3\bass_alac.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 xcopy %1\..\Packages\bass.ape.2.4.1\bass_ape.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\..\Packages\bass.dsd.0.0.1\bassdsd.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 xcopy %1\..\Packages\bass.mpc.2.4.1.1\bass_mpc.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 xcopy %1\..\Packages\bass.ofr.2.4.0.2\bass_ofr.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 xcopy %1\..\Packages\bass.spx.2.4.2\bass_spx.dll "MusicPlayer\plugins\audio decoders\" /Y /D
@@ -176,3 +178,9 @@ xcopy %1\..\Packages\bass.wv.2.4.4\basswv.dll "MusicPlayer\plugins\audio decoder
 REM iMON Display 
 xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll . /Y /D
 xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll . /Y /D
+
+REM taglib-sharp
+xcopy %1\..\Packages\MediaPortal.TagLib.2.0.3.8\lib\taglib-sharp.dll ./Y /D
+
+REM SharpLibHid
+xcopy %1\..\Packages\SharpLibHid.1.1.0\lib\net20\SharpLibHid.dll . /Y /D

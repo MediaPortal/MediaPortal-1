@@ -219,6 +219,7 @@ namespace MediaPortal.GUI.Pictures
           Filter(ref itemlist);
         }
         List<string> pictureList = new List<string>();
+
         foreach (GUIListItem subitem in itemlist)
         {
           if (!subitem.IsFolder)
@@ -230,6 +231,36 @@ namespace MediaPortal.GUI.Pictures
               {
                 break;
               }
+            }
+          }
+        }
+
+        // No picture in the folder. Try to find in the subfolders.
+        Log.Debug("CreateFolderThumb: No picture in the {0}", path);
+        if (pictureList.Count == 0)
+        {
+          foreach (GUIListItem subitem in itemlist)
+          {
+            if (subitem.IsFolder && subitem.Path.Length > path.Length)
+            {
+              List<GUIListItem> subFolderList = vDir.GetDirectoryUnProtectedExt(subitem.Path, true);
+              if (!recreateAll)
+              {
+                Filter(ref subFolderList);
+              }
+              foreach (GUIListItem subFolderItem in subFolderList)
+              {
+                if (!subFolderItem.IsFolder && !subFolderItem.IsRemote && Util.Utils.IsPicture(subFolderItem.Path))
+                {
+                  pictureList.Add(subFolderItem.Path);
+                  Log.Debug("CreateFolderThumb: Add file to folder.jpg {0}", subFolderItem.Path);
+                  break;
+                }
+              }
+            }
+            if (pictureList.Count >= 4)
+            {
+              break;
             }
           }
         }
@@ -545,6 +576,8 @@ namespace MediaPortal.GUI.Pictures
           _virtualDirectory.AddExtension(ext);
       }
       GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_OnNewMessage);
+
+      RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
     }
 
     public override void OnAction(Action action)
@@ -947,6 +980,7 @@ namespace MediaPortal.GUI.Pictures
               _virtualDirectory.AddRemovableDrive(message.Label, message.Label2);
             }
           }
+          RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
           LoadDirectory(currentFolder);
           break;
 
@@ -1028,86 +1062,99 @@ namespace MediaPortal.GUI.Pictures
       selectedListItem = item;
       int itemNo = GetSelectedItemNo();
       selectedItemIndex = itemNo;
-
-      if (item == null)
-      {
-        return;
-      }
-      if (item.IsFolder && item.Label == "..")
-      {
-        return;
-      }
-
-      GUIControl cntl = GetControl(facadeLayout.GetID);
-      if (cntl == null)
-      {
-        return; // Control not found
-      }
-
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+
       if (dlg == null)
       {
         return;
       }
+
       dlg.Reset();
       dlg.SetHeading(498); // menu
-      if (!item.IsFolder)
+
+      if (item == null)
       {
-        dlg.AddLocalizedString(735); //rotate
-        dlg.AddLocalizedString(783); //rotate 180
-        dlg.AddLocalizedString(784); //rotate 270 
-        dlg.AddLocalizedString(923); //show
-        dlg.AddLocalizedString(108); //start slideshow
-        dlg.AddLocalizedString(940); //properties
+        dlg.AddLocalizedString(868); // Force reset virtual directory if user want to refresh offline share
+      }
+      else if (item.IsFolder && item.Label == ".." && _virtualDirectory.IsShareOfflineDetected())
+      {
+        dlg.AddLocalizedString(868); // Force reset virtual directory if user want to refresh offline share
+      }
+      else if (item.IsFolder && item.Label == "..")
+      {
+        return;
       }
       else
       {
-        if (_refreshThumbnailsThread != null && _refreshThumbnailsThread.IsAlive)
+        GUIControl cntl = GetControl(facadeLayout.GetID);
+        if (cntl == null)
         {
-          dlg.AddLocalizedString(190000); //Abort thumbnail creation thread
+          return; // Control not found
+        }
+
+        if (!item.IsFolder)
+        {
+          dlg.AddLocalizedString(735); //rotate
+          dlg.AddLocalizedString(783); //rotate 180
+          dlg.AddLocalizedString(784); //rotate 270 
+          dlg.AddLocalizedString(923); //show
+          dlg.AddLocalizedString(108); //start slideshow
+          dlg.AddLocalizedString(940); //properties
         }
         else
         {
-          dlg.AddLocalizedString(200047); //Recreate thumbnails (incl. subfolders)
-          dlg.AddLocalizedString(190001); //Create missing thumbnails (incl. subfolders)
-        }
-        dlg.AddLocalizedString(200048); //Regenerate Thumbnails
-      }
-
-      string iPincodeCorrect;
-      
-      if (!_virtualDirectory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && isFileMenuEnabled)
-      {
-        dlg.AddLocalizedString(500); // FileMenu      
-      }
-
-      #region Eject/Load
-
-      // CD/DVD/BD
-      if (Util.Utils.getDriveType(item.Path) == 5)
-      {
-        if (item.Path != null)
-        {
-          var driveInfo = new DriveInfo(Path.GetPathRoot(item.Path));
-
-          // There is no easy way in NET to detect open tray so we will check
-          // if media is inside (load will be visible also in case that tray is closed but
-          // media is not loaded)
-          if (!driveInfo.IsReady)
+          if (_refreshThumbnailsThread != null && _refreshThumbnailsThread.IsAlive)
           {
-            dlg.AddLocalizedString(607); //Load  
+            dlg.AddLocalizedString(190000); //Abort thumbnail creation thread
           }
-
-          dlg.AddLocalizedString(654); //Eject  
+          else
+          {
+            dlg.AddLocalizedString(200047); //Recreate thumbnails (incl. subfolders)
+            dlg.AddLocalizedString(190001); //Create missing thumbnails (incl. subfolders)
+          }
+          dlg.AddLocalizedString(200048); //Regenerate Thumbnails
         }
-      }
 
-      if (Util.Utils.IsRemovable(item.Path) || Util.Utils.IsUsbHdd(item.Path))
-      {
-        dlg.AddLocalizedString(831);
-      }
+        string iPincodeCorrect;
 
-      #endregion
+        if (!_virtualDirectory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && isFileMenuEnabled)
+        {
+          dlg.AddLocalizedString(500); // FileMenu      
+        }
+
+        #region Eject/Load
+
+        // CD/DVD/BD
+        if (Util.Utils.getDriveType(item.Path) == 5)
+        {
+          if (item.Path != null)
+          {
+            var driveInfo = new DriveInfo(Path.GetPathRoot(item.Path));
+
+            // There is no easy way in NET to detect open tray so we will check
+            // if media is inside (load will be visible also in case that tray is closed but
+            // media is not loaded)
+            if (!driveInfo.IsReady)
+            {
+              dlg.AddLocalizedString(607); //Load  
+            }
+
+            dlg.AddLocalizedString(654); //Eject  
+          }
+        }
+
+        if (Util.Utils.IsRemovable(item.Path) || Util.Utils.IsUsbHdd(item.Path))
+        {
+          dlg.AddLocalizedString(831);
+        }
+
+        if (_virtualDirectory.IsShareOfflineDetected())
+        {
+          dlg.AddLocalizedString(868); // Force reset virtual directory if user want to refresh offline share
+        }
+
+        #endregion
+      }
 
       if (_protectedShares.Count > 0)
       {
@@ -1265,6 +1312,21 @@ namespace MediaPortal.GUI.Pictures
             }
           }
           LoadDirectory(string.Empty);
+          break;
+
+        case 868: // Reset V.directory
+          {
+            ResetShares();
+
+            if (_virtualDirectory.DefaultShare != null && _virtualDirectory.DefaultShare.Path != string.Empty)
+            {
+              LoadDirectory(_virtualDirectory.DefaultShare.Path);
+            }
+            else
+            {
+              LoadDirectory(string.Empty);
+            }
+          }
           break;
       }
     }
@@ -2516,39 +2578,56 @@ namespace MediaPortal.GUI.Pictures
 
     private bool WakeUpSrv(string newFolderName)
     {
+      bool wakeOnLanEnabled;
       if (!Util.Utils.IsUNCNetwork(newFolderName))
       {
-        return true;
+        // Check if letter drive is a network drive
+        string detectedFolderName = Util.Utils.FindUNCPaths(newFolderName);
+        if (Util.Utils.IsUNCNetwork(detectedFolderName))
+        {
+          wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
+          newFolderName = detectedFolderName;
+        }
+        else
+        {
+          return true;
+        }
+      }
+      else
+      {
+        wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
       }
 
       string serverName = string.Empty;
-      bool wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
 
       if (wakeOnLanEnabled)
       {
         serverName = Util.Utils.GetServerNameFromUNCPath(newFolderName);
-      }
 
-      DateTime now = DateTime.Now;
-      TimeSpan ts = now - _prevWolTime;
+        DateTime now = DateTime.Now;
+        TimeSpan ts = now - _prevWolTime;
 
-      if (serverName == _prevServerName && _wolResendTime * 60 > ts.TotalSeconds)
-      {
-        return true;
-      }
+        if (serverName == _prevServerName && _wolResendTime*60 > ts.TotalSeconds)
+        {
+          return true;
+        }
 
-      _prevWolTime = DateTime.Now;
-      _prevServerName = serverName;
+        _prevWolTime = DateTime.Now;
+        _prevServerName = serverName;
 
-      try
-      {
-        Log.Debug("WakeUpSrv: FolderName = {0}, ShareName = {1}, WOL enabled = {2}", newFolderName, _virtualDirectory.GetShare(newFolderName).Name, wakeOnLanEnabled);
-      }
-      catch { };
+        try
+        {
+          Log.Debug("WakeUpSrv: FolderName = {0}, ShareName = {1}, WOL enabled = {2}", newFolderName,
+                    _virtualDirectory.GetShare(newFolderName).Name, wakeOnLanEnabled);
+        }
+        catch
+        {
+        }
 
-      if (!string.IsNullOrEmpty(serverName))
-      {
-        return WakeupUtils.HandleWakeUpServer(serverName, _wolTimeout);
+        if (!string.IsNullOrEmpty(serverName))
+        {
+          return WakeupUtils.HandleWakeUpServer(serverName, _wolTimeout);
+        }
       }
       return true;
     }
@@ -2599,6 +2678,12 @@ namespace MediaPortal.GUI.Pictures
       if (disp == Display.Files)
       {
         itemlist = _virtualDirectory.GetDirectoryExt(currentFolder);
+
+        if (currentFolder == string.Empty)
+        {
+          RemovableDrivesHandler.FilterDrives(ref itemlist);
+        }
+
         Filter(ref itemlist);
         MissingThumbCacher ThumbWorker = new MissingThumbCacher(currentFolder, _autocreateLargeThumbs, false, true);
         // int itemIndex = 0;

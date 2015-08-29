@@ -167,7 +167,7 @@ namespace MediaPortal.Util
     public static string AudioExtensionsDefault =
         ".asx,.dts," +
         // Playlists
-        ".m3u,.pls,.b4s,.wpl,.cue," +
+        ".m3u,.m3u8,.pls,.b4s,.wpl,.cue," +
         // Bass Standard
         ".mod,.mo3,.s3m,.xm,.it,.mtm,.umx,.mdz,.s3z,.itz,.xmz," +
         ".mp3,.ogg,.wav,.mp2,.mp1,.aiff,.m2a,.mpa,.m1a,.swa,.aif,.mp3pro," +
@@ -177,10 +177,10 @@ namespace MediaPortal.Util
         ".aac,.mp4,.m4a,.m4b,.m4p," +
         // BassAc3
         ".ac3," +
-        // BassAlac
-        //".m4a,.aac,.mp4," +
         // BassApe
         ".ape,.apl," +
+        // BassDSD
+        ".dsf," +
         // BassFlac
         ".flac," +
         // BassMidi
@@ -358,12 +358,16 @@ namespace MediaPortal.Util
 
     public static string GetServerNameFromUNCPath(string sFilePath)
     {
-      Uri uri = new Uri(sFilePath);
-      
-      if (!uri.IsUnc)
-        return string.Empty;
+      if (!string.IsNullOrEmpty(sFilePath))
+      {
+        Uri uri = new Uri(sFilePath);
 
-      return uri.Host;
+        if (!uri.IsUnc)
+          return string.Empty;
+
+        return uri.Host;
+      }
+      return sFilePath;
     }
 
     public static long GetDiskSize(string drive)
@@ -549,6 +553,7 @@ namespace MediaPortal.Util
     private static bool IsPlayListExtension(string extensionFile)
     {
       if (extensionFile == ".m3u") return true;
+      if (extensionFile == ".m3u8") return true;
       if (extensionFile == ".pls") return true;
       if (extensionFile == ".b4s") return true;
       if (extensionFile == ".wpl") return true;
@@ -597,7 +602,18 @@ namespace MediaPortal.Util
     public static bool CheckServerStatus(string folderName)
     {
       if (!Util.Utils.IsUNCNetwork(folderName))
-        return true;
+      {
+        // Check if letter drive is a network drive
+        string detectedFolderName = FindUNCPaths(folderName);
+        if (Util.Utils.IsUNCNetwork(detectedFolderName))
+        {
+          folderName = detectedFolderName;
+        }
+        else
+        {
+          return true;
+        }
+      }
       
       string serverName = string.Empty;
       
@@ -1495,6 +1511,67 @@ namespace MediaPortal.Util
       return false;
     }
 
+    public static string FindUNCPaths(string strDrive)
+    {
+      DriveInfo[] dis = DriveInfo.GetDrives();
+      foreach (DriveInfo di in dis)
+      {
+        if (di.DriveType == DriveType.Network && strDrive.ToLowerInvariant().StartsWith(di.Name.ToLowerInvariant()) &&
+            !string.IsNullOrEmpty(strDrive))
+        {
+          DirectoryInfo dir = di.RootDirectory;
+          string UNCPathResult = FindNetworkPath(strDrive);
+          if (IsUNCNetwork(UNCPathResult))
+          {
+            return UNCPathResult;
+          }
+          return GetUNCPath(dir.FullName.Substring(0, 2));
+        }
+      }
+      return strDrive;
+    }
+
+    public static string FindNetworkPath(string path)
+    {
+      if (string.IsNullOrEmpty(path)) return path;
+      string pathRoot = Path.GetPathRoot(path);
+      if (string.IsNullOrEmpty(pathRoot)) return path;
+      ProcessStartInfo pinfo = new ProcessStartInfo("net", "use");
+      pinfo.CreateNoWindow = true;
+      pinfo.RedirectStandardOutput = true;
+      pinfo.UseShellExecute = false;
+      string output;
+      using (Process p = Process.Start(pinfo))
+      {
+        output = p.StandardOutput.ReadToEnd();
+      }
+      //if we have a folder like D:\ then remove the \
+      if (pathRoot.EndsWith(@"\"))
+      {
+        pathRoot = pathRoot.Substring(0, pathRoot.Length - 1);
+      }
+      string line = output;
+      if (line.Contains(pathRoot))
+      {
+        try
+        {
+          string UNCPath = line;
+          string UNCPathSubstring = UNCPath.Substring(UNCPath.LastIndexOf(pathRoot));
+          int Pos1 = UNCPathSubstring.IndexOf(pathRoot) + pathRoot.Length;
+          int Pos2 = UNCPathSubstring.IndexOf("Microsoft Windows Network");
+          string result = UNCPathSubstring.Substring(Pos1, Pos2 - Pos1);
+          result = result.TrimStart();
+          result = Path.GetFullPath(result);
+          return result;
+        }
+        catch (Exception)
+        {
+          return path;
+        }
+      }
+      return path;
+    }
+
     public static bool IsPersistentNetwork(string strPath)
     {
       //IsNetwork doesn't work correctly, when the drive is disconnected (for whatever reason)
@@ -1689,7 +1766,8 @@ namespace MediaPortal.Util
     public static bool IsISOImage(string fileName)
     {
       string extension = Path.GetExtension(fileName).ToLowerInvariant();
-      if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts"))
+      // check for "http" to prevent exception
+      if (string.IsNullOrEmpty(fileName) || fileName.StartsWith("http://") || !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts")) 
         return false;
 
       string vDrive = DaemonTools.GetVirtualDrive();

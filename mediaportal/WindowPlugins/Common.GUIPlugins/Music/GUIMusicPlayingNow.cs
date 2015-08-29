@@ -39,7 +39,6 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
-using MediaPortal.Visualization;
 using MediaPortal.LastFM;
 using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
@@ -251,8 +250,6 @@ namespace MediaPortal.GUI.Music
       Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackStarted for {0}", filename);
 
       ImagePathContainer.Clear();
-      ClearVisualizationImages();
-
       CurrentTrackFileName = filename;
       GetTrackTags();
 
@@ -282,10 +279,14 @@ namespace MediaPortal.GUI.Music
       UpdateImagePathContainer();
       UpdateTrackInfo();
 
-      if (GUIWindowManager.ActiveWindow == GetID)
+      // Do last.fm updates
+      if (g_Player.IsMusic && _lookupSimilarTracks && g_Player.CurrentPosition >= 10.0 && lstSimilarTracks.Count == 0)
       {
-        SetVisualizationWindow();
+        Log.Debug("GUIMusicPlayingNow: Do Last.FM lookup for similar trracks");
+        UpdateSimilarTracks(CurrentTrackFileName);
       }
+
+
     }
 
     #endregion
@@ -470,7 +471,6 @@ namespace MediaPortal.GUI.Music
       {
         OnPlayBackStarted(g_Player.MediaType.Music, g_Player.CurrentFile);
 
-        SetVisualizationWindow();
         _isStopped = false;
       }
       else
@@ -478,8 +478,6 @@ namespace MediaPortal.GUI.Music
         CurrentTrackTag = null;
         NextTrackTag = null;
         UpdateTrackInfo();
-        ClearVisualizationImages();
-        // notify user what he's lost here?
       }
     }
 
@@ -500,9 +498,6 @@ namespace MediaPortal.GUI.Music
 
       GC.Collect();
       ControlsInitialized = false;
-
-      // Make sure we clear any images we added so we revert back the coverart image
-      ClearVisualizationImages();
 
       BassMusicPlayer.Player.InternetStreamSongChanged -= OnInternetStreamSongChanged;
 
@@ -537,11 +532,6 @@ namespace MediaPortal.GUI.Music
 
       dlg.DoModal(GetID);
 
-      // The ImgCoverArt visibility gets restored when a context menu is popped up.
-      // So we need to reset the visualization window visibility is restored after
-      // the context menu is dismissed
-      SetVisualizationWindow();
-
       if (dlg.SelectedId == -1)
       {
         return;
@@ -567,11 +557,6 @@ namespace MediaPortal.GUI.Music
                 CurrentThumbFileName = strLarge;
               }
               AddImageToImagePathContainer(CurrentThumbFileName);
-
-              if (_usingBassEngine)
-              {
-                BassMusicPlayer.Player.VisualizationWindow.CoverArtImagePath = CurrentThumbFileName;
-              }
 
               UpdateImagePathContainer();
             }
@@ -801,7 +786,10 @@ namespace MediaPortal.GUI.Music
       {
         try
         {
-          ImgCoverArt.SetFileName(GUIGraphicsContext.GetThemedSkinFile(@"\media\missing_coverart.png"));
+          if (!g_Player.ExternalController) // UPnPRenderer sets the image through a property
+          {
+            ImgCoverArt.SetFileName(GUIGraphicsContext.GetThemedSkinFile(@"\media\missing_coverart.png"));
+          }
         }
         catch (Exception ex)
         {
@@ -831,34 +819,6 @@ namespace MediaPortal.GUI.Music
         {
           Log.Debug("GUIMusicPlayingNow: Found placeholder - not inserting image {0}", ImagePath);
           return false;
-        }
-
-        // Check if we should let the visualization window handle image flipping
-        if (_usingBassEngine && _showVisualization)
-        {
-          VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
-
-          if (vizWindow != null)
-          {
-            if (Util.Utils.FileExistsInCache(ImagePath))
-            {
-              try
-              {
-                Log.Debug("GUIMusicPlayingNow: adding image to visualization - {0}", ImagePath);
-                vizWindow.AddImage(ImagePath);
-                return true;
-              }
-              catch (Exception ex)
-              {
-                Log.Error("GUIMusicPlayingNow: error adding image ({0}) - {1}", ImagePath, ex.Message);
-              }
-            }
-            else
-            {
-              Log.Warn("GUIMusicPlayingNow: could not use image - {0}", ImagePath);
-              return false;
-            }
-          }
         }
 
         bool success = false;
@@ -896,8 +856,7 @@ namespace MediaPortal.GUI.Music
 
     private void FlipPictures()
     {
-      // Check if we should let the visualization window handle image flipping
-      if (_usingBassEngine && _showVisualization)
+      if (g_Player.currentFileName == string.Empty)
       {
         return;
       }
@@ -1133,50 +1092,6 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    private void SetVisualizationWindow()
-    {
-      if (!ControlsInitialized || !_showVisualization || !_usingBassEngine)
-      {
-        return;
-      }
-
-      VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
-
-      if (vizWindow != null)
-      {
-        vizWindow.Visible = false;
-
-        int width = ImgCoverArt.RenderWidth;
-        int height = ImgCoverArt.RenderHeight;
-
-        Size vizSize = new Size(width, height);
-        float vizX = (float)ImgCoverArt.Location.X;
-        float vizY = (float)ImgCoverArt.Location.Y;
-        GUIGraphicsContext.Correct(ref vizX, ref vizY);
-        Point vizLoc = new Point((int)vizX, (int)vizY);
-        vizWindow.Size = vizSize;
-        vizWindow.Location = vizLoc;
-        vizWindow.Visible = true;
-
-        GUIGraphicsContext.VideoWindow = new Rectangle(vizLoc, vizSize);
-      }
-    }
-
-    private void ClearVisualizationImages()
-    {
-      if (!_usingBassEngine || !_showVisualization)
-      {
-        return;
-      }
-
-      VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
-
-      if (vizWindow != null)
-      {
-        vizWindow.ClearImages();
-      }
-    }
-
     #endregion
 
     #region last.fm integration
@@ -1199,8 +1114,6 @@ namespace MediaPortal.GUI.Music
     {
       if (!_lookupSimilarTracks) return;
 
-      lstSimilarTracks.Clear();
-
       var worker = new BackgroundWorker();
       worker.DoWork += (obj, e) => UpdateSimilarTrackWorker(filename, CurrentTrackTag);
       worker.RunWorkerAsync();      
@@ -1210,9 +1123,12 @@ namespace MediaPortal.GUI.Music
     {
       if (tag == null) return;
 
+      lstSimilarTracks.Clear();
+
       List<LastFMSimilarTrack> tracks;
       try
       {
+        Log.Debug("GUIMusicPlayingNow: Calling Last.FM to get similar Tracks");
         tracks = LastFMLibrary.GetSimilarTracks(tag.Title, tag.Artist);
       }
       catch (Exception ex)
@@ -1221,6 +1137,8 @@ namespace MediaPortal.GUI.Music
         Log.Error(ex);
         return;
       }
+
+      Log.Debug("GUIMusicPlayingNow: Number of similar tracks returned from Last.FM: {0}", tracks.Count);
 
       var dbTracks = GetSimilarTracksInDatabase(tracks);
 
@@ -1242,6 +1160,7 @@ namespace MediaPortal.GUI.Music
                        };
           item.AlbumInfoTag = song;
           item.MusicTag = t;
+
           GUIMusicBaseWindow.SetTrackLabels(ref item, MusicSort.SortMethod.Album);
           dbTracks.RemoveAt(trackNo); // remove song after adding to playlist to prevent the same sone being added twice
 
@@ -1250,6 +1169,7 @@ namespace MediaPortal.GUI.Music
           lstSimilarTracks.Add(item);
         }
       }
+      Log.Debug("GUIMusicPlayingNow: Tracks returned after matching Last.FM results with database tracks: {0}", lstSimilarTracks.Count);
     }
 
     /// <summary>
@@ -1264,7 +1184,7 @@ namespace MediaPortal.GUI.Music
       var dbTrackListing = new List<Song>();
 
       //identify which are available in users collection (ie. we can use they for auto DJ mode)
-      foreach (var strSql in tracks.Select(track => String.Format("select * from tracks where strartist like '%| {0} |%' and strTitle = '{1}'",
+      foreach (var strSql in tracks.Select(track => String.Format("select * from tracks where strartist like '%| {0} |%' and strTitle like '{1}'",
                                                                   DatabaseUtility.RemoveInvalidChars(track.ArtistName),
                                                                   DatabaseUtility.RemoveInvalidChars(track.TrackTitle))))
       {

@@ -1340,6 +1340,8 @@
     <String id="2147">Ej tillräckligt med utrymme på DVD:n</String>
     <String id="2148">Vill du ändra den i alla undermappar?</String>
     <String id="2149">Fråga</String>
+    <String id="2160">Uppdatera MediaInfo i vald mapp</String>
+    <String id="2161">Avbryt uppdatering av MediaInfo</String>
     <String id="2200" prefix="Min">Utforskare</String>
     <String id="2201">Välj källa</String>
     <String id="2202">Välj mål</String>
@@ -2031,6 +2033,10 @@
     <String id="109005">MiniDisplay - Inställningar - Tangentbord</String>
     <String id="109006">MiniDisplay - Inställningar - Fjärrkontroll</String>
     <String id="102019">TV-påminnelse</String>
+    <String id="190000">Avbryt skapande av miniatyrbilder</String>
+    <String id="190001">Skapa saknade miniatyrbilder (inkl. undermappar)</String>
+    <String id="190010">Din {0}-databas är korrupt</String>
+    <String id="190011">Mapp</String>
     <String id="200000">Var god ange vilken EPG grabber du använder. Om ditt land inte</String>
     <String id="200001">finns med i listan måste du tillföra EPG:n manuellt</String>
     <String id="200002">Nu kan du mappa EPG-kanalerna till dina TV-kanaler</String>

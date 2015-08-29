@@ -43,7 +43,8 @@ namespace Common.GUIPlugins
         macAddress = xmlreader.GetValueAsString("macAddress", hostName, null);
       }
 
-      if (wakeOnLanManager.Ping(hostName, 100) && !string.IsNullOrEmpty(macAddress))
+      // Test is server is online
+      if (wakeOnLanManager.Ping(hostName, 100))
       {
         Log.Debug("WakeUpServer: The {0} server already started and mac address is learnt!", hostName);
         return true;
@@ -101,29 +102,30 @@ namespace Common.GUIPlugins
         }
       }
 
-      Log.Debug("WakeUpServer: WOL - Use stored MAC address: {0}", macAddress);
-
-      try
+      if (macAddress != null)
       {
-        hwAddress = wakeOnLanManager.GetHwAddrBytes(macAddress);
+        Log.Debug("WakeUpServer: WOL - Use stored MAC address: {0}", macAddress);
 
-        // Finally, start up the server
-        Log.Info("WakeUpServer: WOL - Start the {0} server", hostName);
+        try
+        {
+          hwAddress = wakeOnLanManager.GetHwAddrBytes(macAddress);
 
-        if (WakeupSystem(hwAddress, hostName, wolTimeout))
-        {
-          Log.Info("WakeUpServer: WOL - The {0} server started successfully!", hostName);
-          return true;
-        }
-        else
-        {
+          // Finally, start up the server
+          Log.Info("WakeUpServer: WOL - Start the {0} server", hostName);
+
+          if (WakeupSystem(hwAddress, hostName, wolTimeout))
+          {
+            Log.Info("WakeUpServer: WOL - The {0} server started successfully!", hostName);
+            return true;
+          }
           Log.Error("WakeUpServer: WOL - Failed to start the {0} server", hostName);
         }
+        catch (Exception ex)
+        {
+          Log.Error("WakeUpServer: WOL - Failed to start the server - {0}", ex.Message);
+        }
       }
-      catch (Exception ex)
-      {
-        Log.Error("WakeUpServer: WOL - Failed to start the server - {0}", ex.Message);
-      }
+      Log.Error("WakeUpServer: WOL - Failed to start the {0} server", hostName);
       return false;
     }
 

@@ -1059,7 +1059,7 @@ namespace MediaPortal.GUI.Music
     /// If we have received a Music File, we will try to get the cover art based on the settings of the config
     /// 
     /// Cover Art embedded in Tag:
-    /// 1. Get embedded Tag fromn the Track (stored in a temp file, which will get deleted upon exit of MP)
+    /// 1. Get embedded Tag from the Track (stored in a temp file, which will get deleted upon exit of MP)
     /// 2. Search the Thumbs folder for a file in the form "Artist-Album"
     /// 3. return folder.jpg
     /// 4. Return empty string
@@ -1067,7 +1067,7 @@ namespace MediaPortal.GUI.Music
     /// folder.jpg:
     /// 1. return folder.jpg
     /// 2. Search the Thumbs folder for a file in the form "Artist-Album"
-    /// 3. Get embedded Tag frmn the Track (stored in a temp file, which will get deleted upon exit of MP)
+    /// 3. Get embedded Tag from the Track (stored in a temp file, which will get deleted upon exit of MP)
     /// 4. Return empty string
     /// </summary>
     /// <param name="isfolder">Are we on a folder?</param>
@@ -1338,6 +1338,7 @@ namespace MediaPortal.GUI.Music
     {
       VirtualDirectory _virtualDirectory = new VirtualDirectory();
       _virtualDirectory.AddExtension(".m3u");
+      _virtualDirectory.AddExtension(".m3u8");
       _virtualDirectory.AddExtension(".pls");
       _virtualDirectory.AddExtension(".b4s");
       _virtualDirectory.AddExtension(".wpl");
@@ -2312,6 +2313,8 @@ namespace MediaPortal.GUI.Music
       playlistPlayer.CurrentPlaylistType = GetPlayListType();
       int iStartFrom = 0; // where should we start in playlist
       int resumeAt = 0;
+      bool playlistPresent = false;
+      int playlistcount = 0;
 
       // clear the playlist if required
       if (clearPlaylist)
@@ -2329,27 +2332,13 @@ namespace MediaPortal.GUI.Music
         if (PlayListFactory.IsPlayList(pItem.FileName))
         {
           pl.Remove(pItem.FileName, false);
-          if (pl.Count > 0)
-          {
-            // Playlist already filled, just add song
-            LoadPlayList(pItem.FileName, false, false, false, false);
-          }
-          else
-          {
-            LoadPlayList(pItem.FileName, false, false, false, true);
-          }
+          playlistPresent = true;
+          playlistcount++;
         }
         else
         {
           // actually add items to the playlist
-          if (pItem != pItems[pItems.Count - 1])
-          {
-            pl.Add(pItem, false);
-          }
-          else
-          {
-            pl.Add(pItem, true);
-          }
+          pl.Add(pItem, pItem == pItems[pItems.Count - 1]);
         }
       }
 
@@ -2396,8 +2385,17 @@ namespace MediaPortal.GUI.Music
           // we are adding multiple tracks to playlist so need to ensure
           // playback starts on selected item
           int iSelectedItem = facadeLayout.SelectedListItemIndex;
-          int numberOfFolders = facadeLayout.Count - pl.Count;
-          iSelectedItem = iSelectedItem - numberOfFolders;
+          int numberOfFolders;
+          if (playlistPresent)
+          {
+            numberOfFolders = facadeLayout.Count - pItems.Count;
+            iSelectedItem = iSelectedItem - numberOfFolders - playlistcount;
+          }
+          else
+          {
+            numberOfFolders = facadeLayout.Count - pl.Count;
+            iSelectedItem = iSelectedItem - numberOfFolders;
+          }
           if (iSelectedItem > 0)
           {
             // playback was not started from first track

@@ -25,7 +25,11 @@
 #
 #**********************************************************************************************************#
 
-!define ALToolPath "%WINDOWS_SDK%\Bin"
+!ifdef x64Environment
+!define ALToolPath "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools"
+!else
+!define ALToolPath "C:\Program Files\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools"
+!endif
 
 # The following commands needs to be defined by the parent script (the one, which includes this file).
 ;!define BUILD_MediaPortal
@@ -61,7 +65,11 @@
 
 !ifdef BUILD_MediaPortal
 !insertmacro PrepareBuildReport DirectShowFilters
-!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" ${logger} /target:rebuild /property:Configuration=Release ${git_DirectShowFilters}\Filters.sln' = 0
+!ifdef x64Environment
+!system '"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBUILD.exe" ${logger} /target:rebuild /property:Configuration=Release "${git_DirectShowFilters}\Filters.sln"' = 0
+!else
+!system '"C:\Program Files\MSBuild\12.0\Bin\MSBUILD.exe" ${logger} /target:rebuild /property:Configuration=Release "${git_DirectShowFilters}\Filters.sln"' = 0
+!endif
 !insertmacro FinalizeBuildReport
 !insertmacro PrepareBuildReport MediaPortal
 !system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_MP}\MediaPortal.sln"' = 0

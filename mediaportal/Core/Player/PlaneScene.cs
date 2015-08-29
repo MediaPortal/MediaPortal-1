@@ -242,6 +242,15 @@ namespace MediaPortal.Player
 
       grabber.Clean();
       SubtitleRenderer.GetInstance().Clear();
+
+      if (GUIGraphicsContext.LastFrames != null)
+      {
+        foreach (Texture texture in GUIGraphicsContext.LastFrames)
+        {
+          texture.Dispose();
+        }
+        GUIGraphicsContext.LastFrames.Clear();
+      }
     }
 
     /// <summary>
@@ -502,9 +511,9 @@ namespace MediaPortal.Player
       {
         try
         {
-          // Alert the frame grabber that it has a chance to grab a frame
+          // Alert the frame grabber that it has a chance to grab a video frame
           // if it likes (method returns immediately otherwise
-          grabber.OnFrame(width, height, arWidth, arHeight, pSurface);
+          grabber.OnFrame(width, height, arWidth, arHeight, pSurface, FrameGrabber.FrameSource.Video);
 
           _textureAddress = pTexture;
 
@@ -547,36 +556,129 @@ namespace MediaPortal.Player
     }
 
     public static void RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf renderModeHalf, float timePassed,
-                                       Surface backbuffer, Surface surface, Rectangle targetRect)
+      Surface backbuffer, Surface surface, Rectangle targetRect)
     {
-      GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
-
-      GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-
-      GUIGraphicsContext.DX9Device.BeginScene();
-      GUIGraphicsContext.SetScalingResolution(0, 0, false);
-
-      GUIGraphicsContext.Render3DModeHalf = renderModeHalf;
-
-      try
+      if (GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.SideBySideFrom2D ||
+          GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideFrom2D &&
+          renderModeHalf == GUIGraphicsContext.eRender3DModeHalf.SBSLeft)
       {
-        if (!GUIGraphicsContext.BlankScreen)
+        GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
+
+        GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+
+        GUIGraphicsContext.DX9Device.BeginScene();
+        GUIGraphicsContext.SetScalingResolution(0, 0, false);
+
+        GUIGraphicsContext.Render3DModeHalf = renderModeHalf;
+
+        try
         {
-          // Render GUI + Video surface
-          GUIGraphicsContext.RenderGUI.RenderFrame(timePassed);
-          GUIFontManager.Present();
+          if (!GUIGraphicsContext.BlankScreen)
+          {
+            // Render GUI + Video surface
+            GUIGraphicsContext.RenderGUI.RenderFrame(timePassed);
+            GUIFontManager.Present();
+          }
+        }
+        finally
+        {
+          GUIGraphicsContext.DX9Device.EndScene();
+        }
+
+        GUIGraphicsContext.DX9Device.SetRenderTarget(0, backbuffer);
+      }
+
+      if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideFrom2D)
+      {
+        // render left image for 2D to 3D conversion
+
+        if (renderModeHalf == GUIGraphicsContext.eRender3DModeHalf.SBSLeft)
+        {
+          GUIGraphicsContext.DX9Device.StretchRectangle(surface,
+            new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
+            backbuffer,
+            targetRect,
+            TextureFilter.Point);
+
+          // if texture for last frame does not exist, then create it
+
+          if (GUIGraphicsContext.LastFrames.Count == 0)
+          {
+            for (int i = 0; i < 2; i++)
+            {
+              Texture texture = new Texture(GUIGraphicsContext.DX9Device,
+                backbuffer.Description.Width,
+                backbuffer.Description.Height, 0, Usage.RenderTarget,
+                backbuffer.Description.Format, Pool.Default);
+
+              GUIGraphicsContext.LastFrames.Add(texture);
+            }
+          }
+
+          // store current image, it will be used as right image for next frame
+
+          Surface surfaceLastFrame = GUIGraphicsContext.LastFrames[GUIGraphicsContext.LastFramesIndex].GetSurfaceLevel(0);
+
+          GUIGraphicsContext.DX9Device.StretchRectangle(surface,
+            new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
+            surfaceLastFrame,
+            new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
+            TextureFilter.Point);
+          surfaceLastFrame.Dispose();
+        }
+        else
+          // render right image of the last frame for 2D to 3D conversion, the difference between 2 frames generates a 3D effect only for moving objects...
+        {
+          int lastIndex = GUIGraphicsContext.LastFramesIndex - 1;
+
+          if (lastIndex < 0)
+            lastIndex = GUIGraphicsContext.LastFrames.Count + lastIndex;
+
+          if (GUIGraphicsContext.LastFrames.Count > 0)
+          {
+            Surface surfaceLastFrame = GUIGraphicsContext.LastFrames[lastIndex].GetSurfaceLevel(0);
+
+            if (surfaceLastFrame != null)
+            {
+              // generate additional 3D effect for not moving objects by stretching the right image...
+
+              double xSkewPerLine =
+                (double) (GUIGraphicsContext.Convert2Dto3DSkewFactor/1000f*backbuffer.Description.Width)/
+                (backbuffer.Description.Height - 1);
+              int horzOffset = (int) (xSkewPerLine*backbuffer.Description.Height);
+
+              for (int y = 0; y < backbuffer.Description.Height; y++)
+              {
+                /*int horzDelta = (int)(xSkewPerLine * (backbuffer.Description.Height - y));
+
+                GUIGraphicsContext.DX9Device.StretchRectangle(surfaceLastFrame,
+                              new Rectangle(horzDelta, y, backbuffer.Description.Width - horzDelta * 2, 1),
+                              backbuffer,
+                              new Rectangle(targetRect.X, y, targetRect.Width, 1),
+                              TextureFilter.Point);*/
+
+                int horzDelta = (int) (xSkewPerLine*y);
+
+                GUIGraphicsContext.DX9Device.StretchRectangle(surfaceLastFrame,
+                  new Rectangle(horzDelta, y, backbuffer.Description.Width - horzOffset*2 + horzDelta, 1),
+                  backbuffer,
+                  new Rectangle(targetRect.X, y, targetRect.Width, 1),
+                  TextureFilter.Point);
+              }
+
+              surfaceLastFrame.Dispose();
+            }
+          }
         }
       }
-      finally
+      else // render normal 3D movie
       {
-        GUIGraphicsContext.DX9Device.EndScene();
+        GUIGraphicsContext.DX9Device.StretchRectangle(surface,
+          new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
+          backbuffer,
+          targetRect,
+          TextureFilter.Point);
       }
-
-      GUIGraphicsContext.DX9Device.SetRenderTarget(0, backbuffer);
-      GUIGraphicsContext.DX9Device.StretchRectangle(surface,
-                                                    new Rectangle(0, 0, backbuffer.Description.Width,
-                                                                  backbuffer.Description.Height), backbuffer, targetRect,
-                                                    TextureFilter.Point);
     }
 
     private void InternalPresentImage(int width, int height, int arWidth, int arHeight, bool isRepaint)
@@ -648,16 +750,16 @@ namespace MediaPortal.Player
           else
           {
             // fade in
-            int iStep = 0xff / iMaxSteps;
+            int iStep = 0xff/iMaxSteps;
             if (_fadingIn)
             {
-              _diffuseColor = iStep * _fadeFrameCounter;
+              _diffuseColor = iStep*_fadeFrameCounter;
               _diffuseColor <<= 24;
               _diffuseColor |= 0xffffff;
             }
             else
             {
-              _diffuseColor = (iMaxSteps - iStep) * _fadeFrameCounter;
+              _diffuseColor = (iMaxSteps - iStep)*_fadeFrameCounter;
               _diffuseColor <<= 24;
               _diffuseColor |= 0xffffff;
             }
@@ -691,52 +793,110 @@ namespace MediaPortal.Player
           // in case of GUIGraphicsContext.BlankScreen == true always use old method
           // for painting blank screen
 
-          if (GUIGraphicsContext.BlankScreen || GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.None ||
+          if (GUIGraphicsContext.BlankScreen ||
+              GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.None ||
               GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D ||
-              GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
+              GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D ||
+              GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideFrom2D)
           {
-            // old output path or force 3D material to 2D by blitting only left/top halp
-
-            GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.None;
-
-            if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
-              GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.SBSLeft;
-
-            if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
-              GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.TABTop;
-
-            GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-            GUIGraphicsContext.DX9Device.BeginScene();
-
-            try
+            if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideFrom2D)
+              // convert 2D to 3D
             {
-              if (!GUIGraphicsContext.BlankScreen)
+              Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
+
+              // create texture/surface for preparation for 3D output 
+
+              Texture auto3DTexture = new Texture(GUIGraphicsContext.DX9Device,
+                backbuffer.Description.Width,
+                backbuffer.Description.Height, 0, Usage.RenderTarget,
+                backbuffer.Description.Format, Pool.Default);
+
+              Surface auto3DSurface = auto3DTexture.GetSurfaceLevel(0);
+
+              // left half
+
+              RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.SBSLeft,
+                timePassed, backbuffer, auto3DSurface,
+                new Rectangle(0, 0, backbuffer.Description.Width/2, backbuffer.Description.Height));
+
+              // right half
+
+              RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.SBSRight,
+                timePassed, backbuffer, auto3DSurface,
+                new Rectangle(backbuffer.Description.Width/2, 0, backbuffer.Description.Width/2,
+                  backbuffer.Description.Height));
+
+              if (!GUIGraphicsContext.Render3DSubtitle)
               {
-                // Render GUI + Video surface
-                GUIGraphicsContext.RenderGUI.RenderFrame(timePassed);
-                GUIFontManager.Present();
+                SubtitleRenderer.GetInstance().Render();
+                SubEngine.GetInstance().Render(_subsRect, _destinationRect);
               }
-            }
-            finally
-            {
-              GUIGraphicsContext.DX9Device.EndScene();
-            }
 
-            GUIGraphicsContext.DX9Device.Present();
+              GUIGraphicsContext.DX9Device.Present();
+              backbuffer.Dispose();
+
+              auto3DSurface.Dispose();
+              auto3DTexture.Dispose();
+
+              GUIGraphicsContext.LastFramesIndex++;
+
+              if (GUIGraphicsContext.LastFramesIndex > GUIGraphicsContext.LastFrames.Count - 1)
+                GUIGraphicsContext.LastFramesIndex = 0;
+            }
+            else // normal 2D output
+            {
+              // old output path or force 3D material to 2D by blitting only left/top halp
+
+              // Alert the frame grabber that it has a chance to grab a GUI frame
+              // if it likes (method returns immediately otherwise
+              grabber.OnFrameGUI();
+
+              GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.None;
+
+              if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
+                GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.SBSLeft;
+
+              if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
+                GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.TABTop;
+
+              GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+              GUIGraphicsContext.DX9Device.BeginScene();
+
+              try
+              {
+                if (!GUIGraphicsContext.BlankScreen)
+                {
+                  // Render GUI + Video surface
+                  GUIGraphicsContext.RenderGUI.RenderFrame(timePassed);
+                  GUIFontManager.Present();
+                }
+              }
+              finally
+              {
+                GUIGraphicsContext.DX9Device.EndScene();
+              }
+
+              GUIGraphicsContext.DX9Device.Present();
+            }
           }
           else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide ||
                    GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
           {
+
             // 3D output either SBS or TAB
 
             Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
 
-            // create texture/surface for preparation for 3D output if they don't exist
+            // Alert the frame grabber that it has a chance to grab a GUI frame
+            // if it likes (method returns immediately otherwise
+            grabber.OnFrameGUI(backbuffer);
+
+            // create texture/surface for preparation for 3D output
 
             Texture auto3DTexture = new Texture(GUIGraphicsContext.DX9Device,
-                                                             backbuffer.Description.Width,
-                                                             backbuffer.Description.Height, 0, Usage.RenderTarget,
-                                                             backbuffer.Description.Format, Pool.Default);
+              backbuffer.Description.Width,
+              backbuffer.Description.Height, 0, Usage.RenderTarget,
+              backbuffer.Description.Format, Pool.Default);
 
             Surface auto3DSurface = auto3DTexture.GetSurfaceLevel(0);
 
@@ -744,27 +904,41 @@ namespace MediaPortal.Player
             {
               // left half (or right if switched)
 
-              RenderFor3DMode(GUIGraphicsContext.Switch3DSides ? GUIGraphicsContext.eRender3DModeHalf.SBSRight : GUIGraphicsContext.eRender3DModeHalf.SBSLeft, 
-                              timePassed, backbuffer, auto3DSurface,
-                              new Rectangle(0, 0, backbuffer.Description.Width/2, backbuffer.Description.Height));
+              RenderFor3DMode(
+                GUIGraphicsContext.Switch3DSides
+                  ? GUIGraphicsContext.eRender3DModeHalf.SBSRight
+                  : GUIGraphicsContext.eRender3DModeHalf.SBSLeft,
+                timePassed, backbuffer, auto3DSurface,
+                new Rectangle(0, 0, backbuffer.Description.Width/2, backbuffer.Description.Height));
 
-              // right half (or right if switched)
+              // right half (or left if switched)
 
-              RenderFor3DMode(GUIGraphicsContext.Switch3DSides ? GUIGraphicsContext.eRender3DModeHalf.SBSLeft : GUIGraphicsContext.eRender3DModeHalf.SBSRight, 
-                              timePassed, backbuffer, auto3DSurface,
-                              new Rectangle(backbuffer.Description.Width / 2, 0, backbuffer.Description.Width / 2, backbuffer.Description.Height));
+              RenderFor3DMode(
+                GUIGraphicsContext.Switch3DSides
+                  ? GUIGraphicsContext.eRender3DModeHalf.SBSLeft
+                  : GUIGraphicsContext.eRender3DModeHalf.SBSRight,
+                timePassed, backbuffer, auto3DSurface,
+                new Rectangle(backbuffer.Description.Width/2, 0, backbuffer.Description.Width/2,
+                  backbuffer.Description.Height));
             }
             else
             {
               // upper half (or lower if switched)
-              RenderFor3DMode(GUIGraphicsContext.Switch3DSides ? GUIGraphicsContext.eRender3DModeHalf.TABBottom : GUIGraphicsContext.eRender3DModeHalf.TABTop, 
-                              timePassed, backbuffer, auto3DSurface,
-                              new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height/2));
+              RenderFor3DMode(
+                GUIGraphicsContext.Switch3DSides
+                  ? GUIGraphicsContext.eRender3DModeHalf.TABBottom
+                  : GUIGraphicsContext.eRender3DModeHalf.TABTop,
+                timePassed, backbuffer, auto3DSurface,
+                new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height/2));
 
               // lower half (or upper if switched)
-              RenderFor3DMode(GUIGraphicsContext.Switch3DSides ? GUIGraphicsContext.eRender3DModeHalf.TABTop : GUIGraphicsContext.eRender3DModeHalf.TABBottom, 
-                              timePassed, backbuffer, auto3DSurface,
-                              new Rectangle(0, backbuffer.Description.Height/2, backbuffer.Description.Width, backbuffer.Description.Height/2));
+              RenderFor3DMode(
+                GUIGraphicsContext.Switch3DSides
+                  ? GUIGraphicsContext.eRender3DModeHalf.TABTop
+                  : GUIGraphicsContext.eRender3DModeHalf.TABBottom,
+                timePassed, backbuffer, auto3DSurface,
+                new Rectangle(0, backbuffer.Description.Height/2, backbuffer.Description.Width,
+                  backbuffer.Description.Height/2));
             }
 
             // for a 3D movie with subtitles generated by a 3D subtitle tool, we render the subtitle here instead of in RenderLayer()
@@ -803,7 +977,7 @@ namespace MediaPortal.Player
       {
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
         Log.Error("Planescene({0},{1},{2},{3},{4},{5},{6}):Unhandled exception in:",
-                  width, height, arWidth, arHeight, _textureAddress, isRepaint, _debugStep);
+          width, height, arWidth, arHeight, _textureAddress, isRepaint, _debugStep);
         Log.Error(ex);
       }
       finally
@@ -812,7 +986,6 @@ namespace MediaPortal.Player
         GUIGraphicsContext.InVmr9Render = false;
       }
     }
-
 
     private void DrawTextureSegment(VertexBuffer vertexBuffer, float srcX, float srcY, float srcWidth, float srcHeight,
                                     float dstX, float dstY, float dstWidth, float dstHeight, long lColorDiffuse)
@@ -1034,7 +1207,8 @@ namespace MediaPortal.Player
               {
                 case GUIGraphicsContext.eRender3DModeHalf.SBSLeft:
 
-                  if (!GUIGraphicsContext.IsFullHD3DFormat)
+                  if (!GUIGraphicsContext.IsFullHD3DFormat && 
+                      GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.SideBySideFrom2D)
                   {
                     _sourceRect.X = originalSource.X / 2;
                     _sourceRect.Width = originalSource.Width / 2;
@@ -1060,6 +1234,15 @@ namespace MediaPortal.Player
                   {
                     _sourceRect.Y = originalSource.Y;
                     _sourceRect.Height = originalSource.Height / 2;
+
+                    // ViewModeSwitcher crop correction
+
+                    if (GUIGraphicsContext.IsTabWithBlackBars)
+                    {
+                      _sourceRect.Height -= _cropSettings.Top;
+                      _sourceRect.X += _cropSettings.Left;
+                      _sourceRect.Width -= (_cropSettings.Left + _cropSettings.Right);
+                    }
                   }
                   break;
 
@@ -1073,6 +1256,16 @@ namespace MediaPortal.Player
                   {
                     _sourceRect.Y = _geometry.ImageHeight / 2 + originalSource.Y * 2;
                     _sourceRect.Height = originalSource.Height / 2;
+
+                    // ViewModeSwitcher crop correction
+
+                    if (GUIGraphicsContext.IsTabWithBlackBars)
+                    {
+                      _sourceRect.Y -= _cropSettings.Top;
+                      _sourceRect.Height -= _cropSettings.Bottom;
+                      _sourceRect.X += _cropSettings.Left;
+                      _sourceRect.Width -= (_cropSettings.Left + _cropSettings.Right);
+                    }
                   }
                   break;
               }
@@ -1168,7 +1361,19 @@ namespace MediaPortal.Player
 
         if (GUIGraphicsContext.Render3DSubtitle)
         {
-          SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+            if (!GUIGraphicsContext.StretchSubtitles)
+                SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+            else
+            {
+                Rectangle dstRect = _destinationRect;
+
+                if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide || GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
+                    dstRect.Width *= 2;
+                else
+                    dstRect.Height *= 2;
+                
+                SubEngine.GetInstance().Render(_subsRect, dstRect);
+            }
         }
       }
       else if (((GUIGraphicsContext.Render3DModeHalf == GUIGraphicsContext.eRender3DModeHalf.SBSRight ||
@@ -1184,6 +1389,14 @@ namespace MediaPortal.Player
         {
           Rectangle subRect = _subsRect;
           Rectangle dstRect = _destinationRect;
+
+          if (GUIGraphicsContext.StretchSubtitles)
+          {
+              if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide || GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
+                dstRect.Width *= 2;
+              else
+                dstRect.Height *= 2;
+          }
 
           subRect.X += GUIGraphicsContext.Render3DSubtitleDistance;
           dstRect.X += GUIGraphicsContext.Render3DSubtitleDistance;
