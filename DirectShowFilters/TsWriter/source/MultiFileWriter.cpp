@@ -32,6 +32,9 @@
 using namespace std;
 
 
+#define RESERVED_DISK_SPACE 104857600   // 100 MB = 1024 x 1024 x 100
+
+
 extern void LogDebug(const wchar_t* fmt, ...);
 
 MultiFileWriter::MultiFileWriter()
@@ -78,10 +81,10 @@ HRESULT MultiFileWriter::OpenFile(const wchar_t* fileName)
   unsigned long long availableDiskSpace = 0;
   if (
     SUCCEEDED(GetAvailableDiskSpace(fileName, availableDiskSpace)) &&
-    availableDiskSpace < m_dataFileSizeMaximum * 2
+    availableDiskSpace < ((m_dataFileSizeMaximum * 2) + RESERVED_DISK_SPACE)
   )
   {
-    LogDebug(L"multi file writer: failed to open file, available disk space = %llu, maximum data file size = %llu, name = %s",
+    LogDebug(L"multi file writer: failed to open file, available disk space = %llu bytes, maximum data file size = %llu bytes, name = %s",
               availableDiskSpace, m_dataFileSizeMaximum,
               fileName == NULL ? L"" : fileName);
     return E_FAIL;
@@ -234,7 +237,7 @@ void MultiFileWriter::GetCurrentFilePosition(unsigned long& currentFileId,
 
 void MultiFileWriter::SetConfiguration(MultiFileWriterParams& parameters)
 {
-  LogDebug(L"multi file writer: set configuration, maximum file size = %llu (%llu), reservation chunk size = %llu (%llu), file count minimum = %lu (%lu), file count maximum = %lu (%lu), name = %s",
+  LogDebug(L"multi file writer: set configuration, maximum file size = %llu (%llu) bytes, reservation chunk size = %llu (%llu) bytes, file count minimum = %lu (%lu), file count maximum = %lu (%lu), name = %s",
             parameters.MaximumFileSize, m_dataFileSizeMaximum,
             parameters.ReservationChunkSize, m_dataFileReservationChunkSize,
             parameters.FileCountMinimum, m_dataFileCountMinimum,
@@ -257,12 +260,12 @@ HRESULT MultiFileWriter::OpenDataFile(bool disableLogging)
   unsigned long long availableDiskSpace = 0;
   if (
     SUCCEEDED(GetAvailableDiskSpace(m_registerFileName, availableDiskSpace)) &&
-    availableDiskSpace < m_dataFileSizeMaximum * 2
+    availableDiskSpace < (m_dataFileSizeMaximum + RESERVED_DISK_SPACE)
   )
   {
     if (!disableLogging)
     {
-      LogDebug(L"multi file writer: not enough available disk space to create new data file, available disk space = %llu, maximum data file size = %llu, name = %s",
+      LogDebug(L"multi file writer: not enough available disk space to create new data file, available disk space = %llu bytes, maximum data file size = %llu bytes, name = %s",
                 availableDiskSpace, m_dataFileSizeMaximum, m_registerFileName);
     }
     return ReuseDataFile(disableLogging);
@@ -537,7 +540,7 @@ HRESULT MultiFileWriter::GetAvailableDiskSpace(const wchar_t* path,
     return hr;
   }
 
-  LogDebug(L"multi file writer: disk space, free = %llu, total = %llu bytes",
+  LogDebug(L"multi file writer: disk space, free = %llu bytes, total = %llu bytes",
             diskSpaceAvailable.QuadPart, diskSpaceTotal.QuadPart);
   availableDiskSpace = diskSpaceAvailable.QuadPart;
   return S_OK;
