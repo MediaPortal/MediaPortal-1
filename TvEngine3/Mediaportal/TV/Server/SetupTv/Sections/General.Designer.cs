@@ -31,14 +31,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void InitializeComponent()
     {
       this.groupBoxGeneral = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.numericUpDownTimeLimitSignalLock = new System.Windows.Forms.NumericUpDown();
-      this.labelTimeLimitSignalLockUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.labelTimeLimitSignalLock = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelTunerDetectionDelayUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelTunerDetectionDelay = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.numericUpDownTunerDetectionDelay = new System.Windows.Forms.NumericUpDown();
       this.labelServicePriority = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.comboBoxServicePriority = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.numericUpDownTimeLimitSignalLock = new System.Windows.Forms.NumericUpDown();
+      this.labelTimeLimitSignalLockUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelTimeLimitSignalLock = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.numericUpDownTimeLimitScan = new System.Windows.Forms.NumericUpDown();
       this.labelTimeLimitScanUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelTimeLimitScan = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -59,8 +59,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelTimeLimitReceiveStream = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxTimeLimits = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.groupBoxGeneral.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeLimitSignalLock)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerDetectionDelay)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeLimitSignalLock)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeLimitScan)).BeginInit();
       this.groupBoxScanning.SuspendLayout();
       this.groupBoxPreviewCodecs.SuspendLayout();
@@ -83,56 +83,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxGeneral.TabStop = false;
       this.groupBoxGeneral.Text = "General";
       // 
-      // numericUpDownTimeLimitSignalLock
-      // 
-      this.numericUpDownTimeLimitSignalLock.Increment = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-      this.numericUpDownTimeLimitSignalLock.Location = new System.Drawing.Point(93, 19);
-      this.numericUpDownTimeLimitSignalLock.Maximum = new decimal(new int[] {
-            60000,
-            0,
-            0,
-            0});
-      this.numericUpDownTimeLimitSignalLock.Minimum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-      this.numericUpDownTimeLimitSignalLock.Name = "numericUpDownTimeLimitSignalLock";
-      this.numericUpDownTimeLimitSignalLock.Size = new System.Drawing.Size(60, 20);
-      this.numericUpDownTimeLimitSignalLock.TabIndex = 1;
-      this.numericUpDownTimeLimitSignalLock.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownTimeLimitSignalLock.Value = new decimal(new int[] {
-            2500,
-            0,
-            0,
-            0});
-      // 
-      // labelTimeLimitSignalLockUnit
-      // 
-      this.labelTimeLimitSignalLockUnit.AutoSize = true;
-      this.labelTimeLimitSignalLockUnit.Location = new System.Drawing.Point(155, 21);
-      this.labelTimeLimitSignalLockUnit.Name = "labelTimeLimitSignalLockUnit";
-      this.labelTimeLimitSignalLockUnit.Size = new System.Drawing.Size(20, 13);
-      this.labelTimeLimitSignalLockUnit.TabIndex = 2;
-      this.labelTimeLimitSignalLockUnit.Text = "ms";
-      // 
-      // labelTimeLimitSignalLock
-      // 
-      this.labelTimeLimitSignalLock.AutoSize = true;
-      this.labelTimeLimitSignalLock.Location = new System.Drawing.Point(6, 21);
-      this.labelTimeLimitSignalLock.Name = "labelTimeLimitSignalLock";
-      this.labelTimeLimitSignalLock.Size = new System.Drawing.Size(77, 13);
-      this.labelTimeLimitSignalLock.TabIndex = 0;
-      this.labelTimeLimitSignalLock.Text = "Wait for signal:";
-      // 
       // labelTunerDetectionDelayUnit
       // 
       this.labelTunerDetectionDelayUnit.AutoSize = true;
-      this.labelTunerDetectionDelayUnit.Location = new System.Drawing.Point(191, 48);
+      this.labelTunerDetectionDelayUnit.Location = new System.Drawing.Point(187, 48);
       this.labelTunerDetectionDelayUnit.Name = "labelTunerDetectionDelayUnit";
       this.labelTunerDetectionDelayUnit.Size = new System.Drawing.Size(20, 13);
       this.labelTunerDetectionDelayUnit.TabIndex = 4;
@@ -182,6 +136,52 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.comboBoxServicePriority.Name = "comboBoxServicePriority";
       this.comboBoxServicePriority.Size = new System.Drawing.Size(120, 21);
       this.comboBoxServicePriority.TabIndex = 1;
+      // 
+      // numericUpDownTimeLimitSignalLock
+      // 
+      this.numericUpDownTimeLimitSignalLock.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+      this.numericUpDownTimeLimitSignalLock.Location = new System.Drawing.Point(93, 19);
+      this.numericUpDownTimeLimitSignalLock.Maximum = new decimal(new int[] {
+            60000,
+            0,
+            0,
+            0});
+      this.numericUpDownTimeLimitSignalLock.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+      this.numericUpDownTimeLimitSignalLock.Name = "numericUpDownTimeLimitSignalLock";
+      this.numericUpDownTimeLimitSignalLock.Size = new System.Drawing.Size(60, 20);
+      this.numericUpDownTimeLimitSignalLock.TabIndex = 1;
+      this.numericUpDownTimeLimitSignalLock.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownTimeLimitSignalLock.Value = new decimal(new int[] {
+            2500,
+            0,
+            0,
+            0});
+      // 
+      // labelTimeLimitSignalLockUnit
+      // 
+      this.labelTimeLimitSignalLockUnit.AutoSize = true;
+      this.labelTimeLimitSignalLockUnit.Location = new System.Drawing.Point(155, 21);
+      this.labelTimeLimitSignalLockUnit.Name = "labelTimeLimitSignalLockUnit";
+      this.labelTimeLimitSignalLockUnit.Size = new System.Drawing.Size(20, 13);
+      this.labelTimeLimitSignalLockUnit.TabIndex = 2;
+      this.labelTimeLimitSignalLockUnit.Text = "ms";
+      // 
+      // labelTimeLimitSignalLock
+      // 
+      this.labelTimeLimitSignalLock.AutoSize = true;
+      this.labelTimeLimitSignalLock.Location = new System.Drawing.Point(6, 21);
+      this.labelTimeLimitSignalLock.Name = "labelTimeLimitSignalLock";
+      this.labelTimeLimitSignalLock.Size = new System.Drawing.Size(77, 13);
+      this.labelTimeLimitSignalLock.TabIndex = 0;
+      this.labelTimeLimitSignalLock.Text = "Wait for signal:";
       // 
       // numericUpDownTimeLimitScan
       // 
@@ -384,7 +384,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTimeLimitReceiveStream.TabIndex = 4;
       this.numericUpDownTimeLimitReceiveStream.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownTimeLimitReceiveStream.Value = new decimal(new int[] {
-            15000,
+            7500,
             0,
             0,
             0});
@@ -436,8 +436,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.Size = new System.Drawing.Size(480, 420);
       this.groupBoxGeneral.ResumeLayout(false);
       this.groupBoxGeneral.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeLimitSignalLock)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerDetectionDelay)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeLimitSignalLock)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeLimitScan)).EndInit();
       this.groupBoxScanning.ResumeLayout(false);
       this.groupBoxScanning.PerformLayout();

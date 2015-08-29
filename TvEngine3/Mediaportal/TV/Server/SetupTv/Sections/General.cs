@@ -145,7 +145,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       numericUpDownTimeLimitScan.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitScan", 20000);
 
       numericUpDownTimeLimitSignalLock.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitSignalLock", 2500);
-      numericUpDownTimeLimitReceiveStream.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitReceiveStream", 15000);
+      numericUpDownTimeLimitReceiveStream.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitReceiveStream", 7500);
 
       DebugSettings();
 
