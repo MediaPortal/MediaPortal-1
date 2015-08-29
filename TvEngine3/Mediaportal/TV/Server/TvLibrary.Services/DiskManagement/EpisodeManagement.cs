@@ -29,9 +29,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 {
   public class EpisodeManagement
   {
-
-
-    public List<Recording> GetEpisodes(string title, IList<Recording> recordings)
+    private static List<Recording> GetEpisodes(string title, IList<Recording> recordings)
     {
       List<Recording> episodes = new List<Recording>();
       foreach (Recording recording in recordings)
@@ -44,7 +42,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       return episodes;
     }
 
-    public Recording GetOldestEpisode(List<Recording> episodes)
+    private static Recording GetOldestEpisode(List<Recording> episodes)
     {
       Recording oldestEpisode = null;
       DateTime oldestDateTime = DateTime.MaxValue;
@@ -66,24 +64,19 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       this.LogDebug("diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
                 program.Title, (ScheduleRecordingType)recording.ScheduleType, recording.MaxAirings);
 
-      CheckEpsiodesForRecording(recording, program);
-    }
-
-    private void CheckEpsiodesForRecording(Schedule schedule, Program program)
-    {
-
-      if (!ScheduleManagement.DoesScheduleUseEpisodeManagement(schedule))
+      if (!ScheduleManagement.DoesScheduleUseEpisodeManagement(recording))
       {
         return;
       }
 
-      //check how many episodes we got
+      // Delete the oldest episode if we've exceeded the number of episodes
+      // that the schedule says to keep.
       while (true)
       {
         IList<Recording> recordings = TVDatabase.TVBusinessLayer.RecordingManagement.ListAllRecordingsByMediaType(MediaType.Television);
 
         List<Recording> episodes = GetEpisodes(program.Title, recordings);
-        if (episodes.Count <= schedule.MaxAirings)
+        if (episodes.Count <= recording.MaxAirings)
           return;
 
         Recording oldestEpisode = GetOldestEpisode(episodes);
