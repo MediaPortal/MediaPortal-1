@@ -27,7 +27,7 @@
 #include "MultiFileWriter.h"
 #include <cstddef>      // NULL
 #include <cstring>      // memcpy()
-#include <Windows.h>    // CloseHandle(), CreateFileW(), GetDiskFreeSpaceEx(), MAX_PATH
+#include <Windows.h>    // CloseHandle(), CreateFileW(), GetDiskFreeSpaceEx(), GetVolumePathName(), MAX_PATH
 
 using namespace std;
 
@@ -512,37 +512,35 @@ HRESULT MultiFileWriter::GetAvailableDiskSpace(const wchar_t* path,
     return E_INVALIDARG;
   }
 
-  if (path[1] != L':')
+  wchar_t volumePathName[MAX_PATH + 1];
+  BOOL result = GetVolumePathNameW(path, volumePathName, MAX_PATH);
+  if (result == FALSE)
   {
-    // TODO support shares
-    LogDebug(L"multi file writer: unable to get available disk space for share");
-    return E_FAIL;
+    DWORD errorCode = GetLastError();
+    HRESULT hr = HRESULT_FROM_WIN32(errorCode);
+    LogDebug(L"multi file writer: failed to get volume path name for checking available disk space, error = %lu, hr = 0x%x",
+              errorCode, hr);
+    return hr;
   }
-
-  wchar_t drive[4];
-  drive[0] = path[0];
-  drive[1] = L':';
-  drive[2] = L'\\';
-  drive[3] = NULL;
 
   ULARGE_INTEGER diskSpaceAvailable;
   diskSpaceAvailable.QuadPart = 0;
   ULARGE_INTEGER diskSpaceTotal;
   diskSpaceTotal.QuadPart = 0;
-  BOOL result = GetDiskFreeSpaceExW(&drive[0], &diskSpaceAvailable, &diskSpaceTotal, NULL);
-  if (result == TRUE)
+  result = GetDiskFreeSpaceExW(&volumePathName[0], &diskSpaceAvailable, &diskSpaceTotal, NULL);
+  if (result == FALSE)
   {
-    LogDebug(L"multi file writer: disk space, free = %llu, total = %llu bytes",
-              diskSpaceAvailable.QuadPart, diskSpaceTotal.QuadPart);
-    availableDiskSpace = diskSpaceAvailable.QuadPart;
-    return S_OK;
+    DWORD errorCode = GetLastError();
+    HRESULT hr = HRESULT_FROM_WIN32(errorCode);
+    LogDebug(L"multi file writer: failed to get available disk space, error = %lu, hr = 0x%x",
+              errorCode, hr);
+    return hr;
   }
 
-  DWORD errorCode = GetLastError();
-  HRESULT hr = HRESULT_FROM_WIN32(errorCode);
-  LogDebug(L"multi file writer: failed to get available disk space, error = %lu, hr = 0x%x",
-            errorCode, hr);
-  return hr;
+  LogDebug(L"multi file writer: disk space, free = %llu, total = %llu bytes",
+            diskSpaceAvailable.QuadPart, diskSpaceTotal.QuadPart);
+  availableDiskSpace = diskSpaceAvailable.QuadPart;
+  return S_OK;
 }
 
 bool MultiFileWriter::IsFileInUse(wchar_t* fileName)
