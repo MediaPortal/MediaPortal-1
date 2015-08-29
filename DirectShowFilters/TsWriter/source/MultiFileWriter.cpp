@@ -329,7 +329,7 @@ HRESULT MultiFileWriter::CreateDataFile(bool disableLogging)
 
   m_dataFileNames.push_back(fileName);
   m_dataFileCountUsed++;
-  m_dataFileIdCurrent = m_dataFileIdNext;
+  m_dataFileIdCurrent = m_dataFileIdNext - 1;
   LogDebug(L"multi file writer: created data file, file count = %llu, name = %s",
             (unsigned long long)m_dataFileNames.size(), fileName);
   return S_OK;
