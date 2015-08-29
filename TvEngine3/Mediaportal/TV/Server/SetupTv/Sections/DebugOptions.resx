@@ -117,13 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="labelTsWriterDumpInputsWarning.Text" xml:space="preserve">
-    <value>When enabled, the full, raw stream(s) from all digital tuners will be written to file(s) in the log folder. This might be useful for testing and/or debugging stream format problems. Take care: enabling this option will quickly use up disk space!</value>
-  </data>
-  <data name="labelTsMuxerDumpInputsWarning.Text" xml:space="preserve">
-    <value>When enabled, the full, raw stream(s) from all analog tuners and capture devices will be written to file(s) in the log folder. This might be useful for testing and/or debugging stream format problems. Take care: enabling this option may quickly use up disk space!</value>
-  </data>
-  <data name="labelTsWriterDisableCrcCheckWarning.Text" xml:space="preserve">
-    <value>When enabled, TsWriter's stream corruption detection will be relaxed. This may improve compatibility with broadcasters/providers which fail to broadcast CRC codes. The trade-off is that TsWriter will be more likely to cause TV Server to crash when the input stream contains corruption.</value>
-  </data>
 </root>

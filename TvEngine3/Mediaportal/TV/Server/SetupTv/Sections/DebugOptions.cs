@@ -19,7 +19,6 @@
 #endregion
 
 using Mediaportal.TV.Server.SetupControls;
-using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
@@ -27,10 +26,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
   public partial class DebugOptions : SectionSettings
   {
     public DebugOptions()
-      : this("Debug Options") {}
-
-    public DebugOptions(string name)
-      : base(name)
+      : base("Debug Options")
     {
       InitializeComponent();
     }
@@ -38,18 +34,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     public override void OnSectionActivated()
     {
       this.LogDebug("debug options: activating");
-      checkBoxTsWriterDumpInputs.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tsWriterDumpInputs", false);
-      checkBoxTsMuxerDumpInputs.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tsMuxerDumpInputs", false);
-      checkBoxTsWriterDisableCrcCheck.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tsWriterDisableCrcCheck", true);
       base.OnSectionActivated();
     }
 
     public override void OnSectionDeActivated()
     {
       this.LogDebug("debug options: deactivating");
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tsWriterDumpInputs", checkBoxTsWriterDumpInputs.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tsMuxerDumpInputs", checkBoxTsMuxerDumpInputs.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tsWriterDisableCrcCheck", checkBoxTsWriterDisableCrcCheck.Checked);
       base.OnSectionDeActivated();
     }
   }

@@ -100,12 +100,12 @@ namespace Mediaportal.TV.Server.SetupTV
           }
         }
 
+        //AddSection(new ImportExport());
+        AddSection(new ThirdPartyChecks());
         if (showAdvancedSettings)
         {
           AddSection(new DebugOptions());
         }
-        //AddSection(new ImportExport());
-        AddSection(new ThirdPartyChecks());
 
         sectionTree.SelectedNode = sectionTree.Nodes[0];
 
