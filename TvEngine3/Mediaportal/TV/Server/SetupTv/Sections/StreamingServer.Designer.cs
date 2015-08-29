@@ -37,16 +37,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxClients = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.listViewClients = new System.Windows.Forms.ListView();
       this.columnHeaderStreamId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderClientSessionId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeaderClientIpAddress = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderClientConnectedSince = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeaderStreamDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderClientConnectedSince = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderClientIsActive = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeaderStreamUrl = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.buttonKick = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.groupBoxSettings = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.labelStatusValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelStatus = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.columnHeaderClientSessionId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderClientIsActive = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPort)).BeginInit();
       this.groupBoxClients.SuspendLayout();
       this.groupBoxSettings.SuspendLayout();
@@ -144,24 +144,33 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.columnHeaderStreamId.Text = "Stream";
       this.columnHeaderStreamId.Width = 50;
       // 
+      // columnHeaderClientSessionId
+      // 
+      this.columnHeaderClientSessionId.Text = "Session";
+      // 
       // columnHeaderClientIpAddress
       // 
       this.columnHeaderClientIpAddress.Text = "IP Address";
       this.columnHeaderClientIpAddress.Width = 100;
-      // 
-      // columnHeaderClientConnectedSince
-      // 
-      this.columnHeaderClientConnectedSince.Text = "Connected Since";
-      this.columnHeaderClientConnectedSince.Width = 120;
       // 
       // columnHeaderStreamDescription
       // 
       this.columnHeaderStreamDescription.Text = "Description";
       this.columnHeaderStreamDescription.Width = 120;
       // 
+      // columnHeaderClientConnectedSince
+      // 
+      this.columnHeaderClientConnectedSince.Text = "Connected Since";
+      this.columnHeaderClientConnectedSince.Width = 120;
+      // 
+      // columnHeaderClientIsActive
+      // 
+      this.columnHeaderClientIsActive.Text = "Active?";
+      this.columnHeaderClientIsActive.Width = 50;
+      // 
       // columnHeaderStreamUrl
       // 
-      this.columnHeaderStreamUrl.DisplayIndex = 5;
+      this.columnHeaderStreamUrl.Text = "URL";
       this.columnHeaderStreamUrl.Width = 100;
       // 
       // buttonKick
@@ -209,16 +218,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelStatus.Size = new System.Drawing.Size(40, 13);
       this.labelStatus.TabIndex = 4;
       this.labelStatus.Text = "Status:";
-      // 
-      // columnHeaderClientSessionId
-      // 
-      this.columnHeaderClientSessionId.Text = "Session";
-      // 
-      // columnHeaderClientIsActive
-      // 
-      this.columnHeaderClientIsActive.DisplayIndex = 6;
-      this.columnHeaderClientIsActive.Text = "Active?";
-      this.columnHeaderClientIsActive.Width = 50;
       // 
       // StreamingServer
       // 
