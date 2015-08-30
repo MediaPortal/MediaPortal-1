@@ -128,7 +128,7 @@ public:
   
 protected:
   
-	HRESULT GetFileSize(__int64 *pStartPosition, __int64 *pLength);
+	// HRESULT GetFileSize(__int64 *pStartPosition, __int64 *pLength);
 	HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod);
   
   CString randomStrGen(int length); 

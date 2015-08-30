@@ -68,6 +68,7 @@ protected:
 	HRESULT RefreshTSBufferFile();
 	HRESULT GetFileLength(LPWSTR pFilename, __int64 &length, bool doubleCheck);
 	HRESULT ReadNoLock(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, bool refreshFile);
+__int64 FindFileLength(LPWSTR pFilename);
 
 //	SharedMemory* m_pSharedMemory;
 	FileReader m_TSBufferFile;

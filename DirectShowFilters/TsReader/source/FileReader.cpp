@@ -303,26 +303,6 @@ BOOL FileReader::IsFileInvalid()
 	return (m_hFile == INVALID_HANDLE_VALUE);
 }
 
-HRESULT FileReader::GetFileSize(__int64 *pStartPosition, __int64 *pLength)
-{
-	*pStartPosition = 0;
-		
-	DWORD dwSizeLow;
-	DWORD dwSizeHigh;
-
-	dwSizeLow = ::GetFileSize(m_hFile, &dwSizeHigh);
-	if ((dwSizeLow == 0xFFFFFFFF) && (GetLastError() != NO_ERROR ))
-	{
-		return E_FAIL;
-	}
-
-	LARGE_INTEGER li;
-	li.LowPart = dwSizeLow;
-	li.HighPart = dwSizeHigh;
-	
-	*pLength = li.QuadPart;
-	return S_OK;
-}
 
 DWORD FileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod)
 {
@@ -409,10 +389,23 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __
 __int64 FileReader::GetFileSize()
 {
   CAutoLockFR rLock (&m_accessLock);
-  __int64 pStartPosition =0;
-  __int64 pLength=0;
-  GetFileSize(&pStartPosition, &pLength);
-  return pLength;
+  
+  BY_HANDLE_FILE_INFORMATION fileinfo;
+		
+  //fill the structure with info regarding the file
+  if (GetFileInformationByHandle(m_hFile, &fileinfo))
+  {	  
+    //Extract the file size info
+  	LARGE_INTEGER li;
+  	li.LowPart  = fileinfo.nFileSizeLow;
+  	li.HighPart = fileinfo.nFileSizeHigh;
+  	
+	  return li.QuadPart;
+  }
+  
+  HRESULT lastErr = HRESULT_FROM_WIN32(GetLastError());	  
+	LogDebug("FileReader::GetFileSize() failed. Error 0x%x, %ws, filename = %ws", lastErr, HresultToCString(lastErr), m_pFileName);    
+  return -1;
 }
 
 CString FileReader::randomStrGen(int length) 

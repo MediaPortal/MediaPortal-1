@@ -160,6 +160,8 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_hadPESfail = 0;
   m_fileReadLatency = 0;
   m_maxFileReadLatency = 0;
+  m_fileReadLatSum = 0;
+  m_fileReadLatCount = 0;
   
   LogDebug(" ");
   LogDebug("=================== New filter instance =========================================");
@@ -750,6 +752,8 @@ void CDeMultiplexer::Flush(bool clearAVready)
   m_bReadAheadFromFile = false;  
   m_fileReadLatency = 0;
   m_maxFileReadLatency = 0;
+  m_fileReadLatSum = 0;
+  m_fileReadLatCount = 0;
   
   if (clearAVready)
   {
@@ -917,14 +921,14 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
     cntV = GetVideoBufferPts(firstVideo, lastVideo);
     
     // Goal is to start with at least 500mS audio and 400mS video ahead. ( LiveTv and RTSP as TsReader cannot go ahead by itself)
-    if (lastAudio.Millisecs() - firstAudio.Millisecs() < (310 + m_filter.m_regInitialBuffDelay)) return false ;       // Not enough audio to start.
+    if (lastAudio.Millisecs() - firstAudio.Millisecs() < (MIN_AUD_BUFF_TIME + m_filter.m_regInitialBuffDelay)) return false ;       // Not enough audio to start.
 
     int vidSampDuration = PF_LOOP_DELAY_MAX;
     if (m_filter.GetVideoPin()->IsConnected())
     {
       if (!m_bFrame0Found) return NULL ;
         
-      if (lastVideo.Millisecs() - firstVideo.Millisecs() < (210 + m_filter.m_regInitialBuffDelay)) return false ;   // Not enough video to start.
+      if (lastVideo.Millisecs() - firstVideo.Millisecs() < (MIN_VID_BUFF_TIME + m_filter.m_regInitialBuffDelay)) return false ;   // Not enough video to start.
       
       if (!m_filter.m_EnableSlowMotionOnZapping)
       {
@@ -933,14 +937,14 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
            
       //Set video prefetch threshold
       double fvidSampleDuration = ((double)(lastVideo.Millisecs() - firstVideo.Millisecs())/(double)cntV);
-      m_initialVideoSamples = (int)(((double)(210 + m_filter.m_regInitialBuffDelay))/fvidSampleDuration);    
+      m_initialVideoSamples = (int)(((double)(MIN_VID_BUFF_TIME + m_filter.m_regInitialBuffDelay))/fvidSampleDuration);    
       m_initialVideoSamples = max(12, m_initialVideoSamples);
       vidSampDuration = max(PF_LOOP_DELAY_MIN,(int)fvidSampleDuration);
     }
 
     //Set audio prefetch threshold
     double faudSampleDuration = ((double)(lastAudio.Millisecs() - firstAudio.Millisecs())/(double)cntA);
-    m_initialAudioSamples = (int)(((double)(310 + m_filter.m_regInitialBuffDelay))/faudSampleDuration);
+    m_initialAudioSamples = (int)(((double)(MIN_AUD_BUFF_TIME + m_filter.m_regInitialBuffDelay))/faudSampleDuration);
     m_initialAudioSamples = max(3, m_initialAudioSamples);
     m_prefetchLoopDelay = (DWORD)(min(PF_LOOP_DELAY_MAX, min(vidSampDuration,(max(PF_LOOP_DELAY_MIN,(int)faudSampleDuration)))));
     m_dfAudSampleDuration = faudSampleDuration/1000.0;
@@ -954,25 +958,26 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
               
     if (m_filter.GetVideoPin()->IsConnected())
     {
-      if (firstAudio.Millisecs() < firstVideo.Millisecs())
+      if (firstAudio < firstVideo)
       {
-        CRefTime targFirstAudio = ((firstVideo - firstAudio) > (500*10000)) ? (firstVideo - (500*10000)) : firstAudio; //Limit to 500ms difference
-          
-        if (targFirstAudio > (lastAudio-(100*10000))) //Make sure there is an audio sample available at the start
+        //Make sure there is a minimum amount of audio available at the start
+        CRefTime targFirstAudio = lastAudio - (REFERENCE_TIME)(max((double)(m_filter.m_regInitialBuffDelay + MIN_AUD_BUFF_TIME), faudSampleDuration*1.5) * 10000);
+        if (targFirstAudio < firstAudio)
         {
-          targFirstAudio = lastAudio-(100*10000);
+          //Use the timestamp of the earliest audio sample we have
+          targFirstAudio = firstAudio;
         }
         
-        BestCompensation = targFirstAudio - m_filter.m_RandomCompensation - rtStartTime ;
+        BestCompensation = (targFirstAudio - rtStartTime) - m_filter.m_RandomCompensation ;
         AddVideoCompensation = firstVideo - targFirstAudio;
         AddVideoCompensation = (AddVideoCompensation > (5000*10000)) ? (5000*10000) : AddVideoCompensation; //Limit to 5.0 seconds
-        LogDebug("Compensation : ( Rnd : %d mS ) Audio pts ahead Video pts . Add %03.3f sec of extra video comp to start now !...",(DWORD)m_filter.m_RandomCompensation/10000,(float)AddVideoCompensation.Millisecs()/1000.0f) ;       
+        LogDebug("Compensation : ( AudBackBuff : %03.3f ) Audio pts < Video pts . Add %03.3f sec of extra video comp to start now !...", (float)(lastAudio.Millisecs()-targFirstAudio.Millisecs())/1000.0f,(float)AddVideoCompensation.Millisecs()/1000.0f) ;       
       }
       else
       {
-        BestCompensation = firstAudio-rtStartTime ;
+        BestCompensation = (firstAudio-rtStartTime) - m_filter.m_RandomCompensation  ;
         AddVideoCompensation = 0 ;
-        LogDebug("Compensation : Audio pts behind Video Pts ( Recover skipping Video ) ....") ;
+        LogDebug("Compensation : Audio pts > Video Pts ( Recover skipping Video ) ....") ;
       }
       m_filter.m_RandomCompensation += 500000 ;   // Stupid feature required to have FFRW working with DVXA ( at least ATI.. ) to avoid frozen picture. ( it just moves the sample time a bit !! )
       m_filter.m_RandomCompensation = m_filter.m_RandomCompensation % 1000000 ;
@@ -1202,7 +1207,9 @@ int CDeMultiplexer::ReadFromFile(ULONG lDataLength)
     //Read raw data from the buffer
     DWORD readFileTime = GET_TIME_NOW();
     m_reader->Read(m_pFileReadBuffer, lDataLength, (DWORD*)&dwReadBytes);
-    m_fileReadLatency = GET_TIME_NOW() - readFileTime;    
+    m_fileReadLatency = GET_TIME_NOW() - readFileTime; 
+    m_fileReadLatSum += m_fileReadLatency;
+    m_fileReadLatCount++;  
     if (m_fileReadLatency > m_maxFileReadLatency)
     {
       m_maxFileReadLatency = m_fileReadLatency;
@@ -1242,6 +1249,8 @@ int CDeMultiplexer::ReadFromFile(ULONG lDataLength)
     __int64 filePointer = m_reader->GetFilePointer(); //store current pointer for re-reads if required for errors
     HRESULT readResult = m_reader->Read(m_pFileReadBuffer, lDataLength, (DWORD*)&dwReadBytes);
     m_fileReadLatency = GET_TIME_NOW() - readFileTime;    
+    m_fileReadLatSum += m_fileReadLatency;
+    m_fileReadLatCount++;  
     if (m_fileReadLatency > m_maxFileReadLatency)
     {
       m_maxFileReadLatency = m_fileReadLatency;
@@ -3856,9 +3865,22 @@ void CDeMultiplexer::PrefetchData()
 DWORD CDeMultiplexer::GetMaxFileReadLatency()
 {
   CAutoLock lock (&m_sectionRead); 
-  DWORD maxFileReadLat = m_maxFileReadLatency;
-  m_maxFileReadLatency = 0; 
+  DWORD maxFileReadLat = m_maxFileReadLatency;  
+  m_maxFileReadLatency = 0;   
   return maxFileReadLat;
+}
+
+float CDeMultiplexer::GetAveFileReadLatency()
+{
+  CAutoLock lock (&m_sectionRead); 
+  float aveFileReadLat = 0;  
+  if (m_fileReadLatCount > 0)
+  {
+    aveFileReadLat = (float)m_fileReadLatSum/m_fileReadLatCount;
+  }
+  m_fileReadLatSum = 0; 
+  m_fileReadLatCount = 0;   
+  return aveFileReadLat;
 }
 
 //======================================================================
@@ -3878,6 +3900,21 @@ void CDeMultiplexer::ThreadProc()
   int sizeRead = 0;
   bool retryRead = false;
   DWORD pfLoopDelay = PF_LOOP_DELAY_MIN;
+  HANDLE hAvrt;
+  DWORD dwTaskIndex = 0;
+
+  // Tell Vista Multimedia Class Scheduler (MMCS) we are doing threaded playback
+  if (m_pAvSetMmThreadCharacteristicsW) 
+  {
+    hAvrt = m_pAvSetMmThreadCharacteristicsW(L"Playback", &dwTaskIndex);
+  }
+  if (m_pAvSetMmThreadPriority) 
+  {
+    if (m_pAvSetMmThreadPriority(hAvrt, AVRT_PRIORITY_NORMAL))
+    {
+      LogDebug("CDeMultiplexer::ThreadProc - AvSetMmThreadPriority = %d", AVRT_PRIORITY_NORMAL);
+    }
+  }
 
   ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_NORMAL);
   do
@@ -3936,9 +3973,15 @@ void CDeMultiplexer::ThreadProc()
       }
     }
     
-    pfLoopDelay = retryRead ? (m_filter.IsRTSP() ? 2 : PF_LOOP_DELAY_MIN) : m_prefetchLoopDelay;              
+    pfLoopDelay = retryRead ? (m_filter.IsRTSP() ? 2 : (m_prefetchLoopDelay/2)) : m_prefetchLoopDelay;              
   }
   while (!ThreadIsStopping(pfLoopDelay)) ;
+  
+  if (m_pAvRevertMmThreadCharacteristics) 
+  {
+    m_pAvRevertMmThreadCharacteristics(hAvrt);
+  }
+
   LogDebug("CDeMultiplexer::ThreadProc stopped()");
 }
 

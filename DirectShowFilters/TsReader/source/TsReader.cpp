@@ -19,7 +19,6 @@
  *
  */
 
-#pragma warning(disable:4996)
 #pragma warning(disable:4995)
 #include "StdAfx.h"
 
@@ -110,7 +109,7 @@ void LogPath(TCHAR* dest, TCHAR* name)
     TCHAR folder[MAX_PATH];
     SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
     TCHAR logFolder[MAX_PATH];
-    _stprintf(logFolder, _T("%s\\Team Mediaportal\\MediaPortal\\log"), folder);
+    _stprintf_s(logFolder, MAX_PATH, _T("%s\\Team Mediaportal\\MediaPortal\\log"), folder);
 
     //Read log folder path from registry (or write default path into registry if key doesn't exist)
     LPCTSTR logFolderC = logFolder;    
@@ -120,7 +119,7 @@ void LogPath(TCHAR* dest, TCHAR* name)
     if (result == ERROR_SUCCESS)
     {
       //Get full log file path
-      _stprintf(dest, _T("%s\\TsReader.%s"), logFolderC, name);
+      _stprintf_s(dest, MAX_PATH, _T("%s\\TsReader.%s"), logFolderC, name);
     }
   }
     
@@ -130,7 +129,7 @@ void LogPath(TCHAR* dest, TCHAR* name)
     TCHAR folder[MAX_PATH];
     SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
     //Get full log file path
-    _stprintf(dest, _T("%s\\Team Mediaportal\\MediaPortal\\log\\TsReader.%s"), folder, name);
+    _stprintf_s(dest, MAX_PATH, _T("%s\\Team Mediaportal\\MediaPortal\\log\\TsReader.%s"), folder, name);
   }
 }
 
@@ -1248,7 +1247,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     pcrEnd.IsValid=true ;
     m_duration.Set(pcrstart, pcrEnd, pcrMax);    //Load()
   }
-  else if ((length > 7) && (strnicmp(url, "rtsp://",7) == 0))
+  else if ((length > 7) && (_strnicmp(url, "rtsp://",7) == 0))
   {
     //rtsp:// stream
     //open stream
@@ -1302,7 +1301,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   }
   else
   {
-    if ((length > 2) && (strnicmp(url, "\\\\",2) == 0))
+    if ((length > 2) && (_strnicmp(url, "\\\\",2) == 0))
     {
       m_isUNCfile = true;
     }
@@ -1787,7 +1786,7 @@ void CTsReaderFilter::ThreadProc()
   pcrEndLast.Reset();
   pcrMaxLast.Reset();
 
-  ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_BELOW_NORMAL);
+  ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_NORMAL);
   do
   {
     //if demuxer reached the end of the file, we can skip the loop
@@ -2178,8 +2177,8 @@ void CTsReaderFilter::ThreadProc()
                 
         if ((cntA > AUD_BUF_SIZE_LOG_LIM) || (cntV > VID_BUF_SIZE_LOG_LIM) || m_bEnableBufferLogging)
         {
-          LogDebug("Buffers : A/V = %d/%d, RTSP = %d, MaxReadLat: %d ms, A last: %03.3f, V Last: %03.3f, Comp: %.3f s, AudMean: %.3f s, AudDelta: %.3f s, SPPM: %d", 
-          cntA, cntV, rtspBuffSize, m_demultiplexer.GetMaxFileReadLatency(),
+          LogDebug("Buffers : A/V = %d/%d, RTSP = %d, MaxReadLat: %d ms, AveReadLat: %03.3f ms, A last: %03.3f, V Last: %03.3f, Comp: %.3f s, AudMean: %.3f s, AudDelta: %.3f s, SPPM: %d", 
+          cntA, cntV, rtspBuffSize, m_demultiplexer.GetMaxFileReadLatency(), m_demultiplexer.GetAveFileReadLatency(),
           (float)lastAudio.Millisecs()/1000.0f, (float)lastVideo.Millisecs()/1000.0f, 
           (float)Compensation.m_time/10000000, (float)GetAudioPin()->GetAudToPresMeanDelta(), 
           (float)GetAudioPin()->GetAudioPresToRefDiff(), playSpeedAdjustInPPM);
@@ -2208,7 +2207,7 @@ HRESULT CTsReaderFilter::AddGraphToRot(IUnknown *pUnkGraph)
   if (FAILED(GetRunningObjectTable(0, &pROT)))
       return E_FAIL;
 
-  swprintf(wsz, L"FilterGraph %08x pid %08x\0", (DWORD_PTR) pUnkGraph, GetCurrentProcessId());
+  swprintf_s(wsz, 128, L"FilterGraph %08x pid %08x\0", (DWORD_PTR) pUnkGraph, GetCurrentProcessId());
   hr = CreateItemMoniker(L"!", wsz, &pMoniker);
   if (SUCCEEDED(hr))
   {

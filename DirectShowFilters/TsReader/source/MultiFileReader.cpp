@@ -45,7 +45,6 @@ extern void LogDebug(const char *fmt, ...) ;
 MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec* pFilterLock, BOOL useRandomAccess, BOOL extraLogging):
 	m_TSBufferFile(),
 	m_TSFile(),
-	m_TSFileGetLength(),
 	m_TSFileNext()
 {
   if (pFilterLock != NULL)
@@ -74,12 +73,10 @@ MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec
   m_TSBufferFile.SetDummyWrites(useDummyWrites);
   m_TSFile.SetDummyWrites(useDummyWrites);
   m_TSFileNext.SetDummyWrites(FALSE);
-  m_TSFileGetLength.SetDummyWrites(FALSE);
 
   m_TSBufferFile.SetRandomAccess(useRandomAccess);
   m_TSFile.SetRandomAccess(useRandomAccess);
   m_TSFileNext.SetRandomAccess(useRandomAccess);
-  m_TSFileGetLength.SetRandomAccess(useRandomAccess);
 
   m_pFileReadNextBuffer = NULL;
   m_pInfoFileBuffer1 = NULL;
@@ -839,7 +836,8 @@ HRESULT MultiFileReader::GetFileLength(LPWSTR pFilename, __int64 &length, bool d
   __int64 origLength = length;
   bool useTSFile = false;
   
-  //Optimisation - find out if the file is the current m_TSFile (and hence already open)
+  //Optimisation - find out if the file is the current m_TSFile (and hence already open).
+  //If not, we use a 'FindFirstFile()' based method to avoid having to open and close the file
   if (!m_TSFile.IsFileInvalid())
   {
     LPWSTR tempFileName;
@@ -876,6 +874,10 @@ HRESULT MultiFileReader::GetFileLength(LPWSTR pFilename, __int64 &length, bool d
     if (useTSFile)
     {
     	length = m_TSFile.GetFileSize();
+    	if (length < 0)
+    	{
+    	  Error |= 0x2;
+    	}
     	if (doubleCheck)
     	{
       	Sleep(10);
@@ -886,32 +888,23 @@ HRESULT MultiFileReader::GetFileLength(LPWSTR pFilename, __int64 &length, bool d
       }
     }
     else
-    {
-    	m_TSFileGetLength.SetFileName(pFilename);
-    	hr = m_TSFileGetLength.OpenFile();
-    	if (!SUCCEEDED(hr))
+    {      
+    	length = FindFileLength(pFilename);
+    	if (length < 0)
     	{
     	  Error |= 0x2;
     	}
-    	length = m_TSFileGetLength.GetFileSize();
     	if (doubleCheck)
     	{
       	Sleep(10);
-      	if (length != m_TSFileGetLength.GetFileSize())
+      	if (length != FindFileLength(pFilename))
       	{
       	  Error |= 0x4;
       	}
       }
-      m_TSFileGetLength.CloseFile();
     }
-
   } while ( Error && Loop ) ; // If Error is set, try again...until Loop reaches 0.
-  
-  if (length <= 0)
-  {
-    LogDebug("MultiFileReader::GetFileLength(), file is %d length, iterations %d", length, 10-Loop) ;
-  }
- 
+   
   if (Loop < 2)
   {
     LogDebug("MultiFileReader::GetFileLength() has waited %d times for stable length.", 10-Loop) ;
@@ -947,6 +940,24 @@ void MultiFileReader::SetStopping(BOOL isStopping)
 	
 	m_TSBufferFile.SetStopping(isStopping);
 	m_TSFile.SetStopping(isStopping);
-	m_TSFileGetLength.SetStopping(isStopping);
 	m_TSFileNext.SetStopping(isStopping);	
+}
+
+__int64 MultiFileReader::FindFileLength(LPWSTR pFilename)
+{  
+  WIN32_FIND_DATA fileinfo;
+  HANDLE hFind = FindFirstFile(pFilename, &fileinfo);  
+  if (hFind == INVALID_HANDLE_VALUE)
+  {
+    HRESULT lastErr = HRESULT_FROM_WIN32(GetLastError());	  
+  	LogDebug("MultiFileReader::FindFileLength() failed. Error 0x%x, filename = %ws", lastErr, pFilename);    
+    return -1;
+  }
+  FindClose(hFind);
+
+  //Extract the file size info
+	LARGE_INTEGER li;
+	li.LowPart  = fileinfo.nFileSizeLow;
+	li.HighPart = fileinfo.nFileSizeHigh;
+  return li.QuadPart;  
 }
