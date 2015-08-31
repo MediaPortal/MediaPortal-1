@@ -48,8 +48,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.listViewPlugins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderEnabled,
             this.columnHeaderName,
-            this.columnHeaderAuthor,
-            this.columnHeaderVersion});
+            this.columnHeaderVersion,
+            this.columnHeaderAuthor});
       listViewGroup1.Header = "Available Plugins";
       listViewGroup1.Name = "listViewGroupAvailable";
       listViewGroup2.Header = "Incompatible Plugins";

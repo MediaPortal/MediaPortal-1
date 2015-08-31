@@ -66,8 +66,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           ListViewItem item = listViewPlugins.Items.Add(string.Empty);
           item.Group = listGroup;
           item.SubItems.Add(plugin.Name);
-          item.SubItems.Add(plugin.Author);
           item.SubItems.Add(plugin.Version);
+          item.SubItems.Add(plugin.Author);
           item.Tag = plugin;
           item.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue(GetPluginEnabledSettingName(plugin), false);
         }
@@ -84,8 +84,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           ListViewItem item = listViewPlugins.Items.Add(string.Empty);
           item.Group = listGroup;
           item.SubItems.Add(plugin.Name);
-          item.SubItems.Add("Unknown");
           item.SubItems.Add(version);
+          item.SubItems.Add("Unknown");
           item.Checked = false;
         }
 
