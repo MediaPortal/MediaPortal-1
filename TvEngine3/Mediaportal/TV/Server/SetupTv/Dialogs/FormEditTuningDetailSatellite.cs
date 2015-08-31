@@ -98,7 +98,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       else
       {
         comboBoxBroadcastStandard.SelectedItem = BroadcastStandard.DvbS2.GetDescription();
-        comboBoxSatellite.SelectedIndex = 0;
+        if (comboBoxSatellite.Items.Count > 0)
+        {
+          comboBoxSatellite.SelectedIndex = 0;
+        }
         numericTextBoxFrequency.Value = 11097000;
         comboBoxPolarisation.SelectedItem = Polarisation.Automatic.GetDescription();
         comboBoxModulation.SelectedItem = ModulationSchemePsk.Automatic.GetDescription();
