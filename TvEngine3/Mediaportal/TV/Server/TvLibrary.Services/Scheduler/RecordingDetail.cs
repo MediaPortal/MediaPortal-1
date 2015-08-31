@@ -223,26 +223,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       }
 
       string[] tagNames = {
-                            "%channel%",
-                            "%title%",
-                            "%name%",
-                            "%series%",
-                            "%episode%",
-                            "%part%",
+                            "%program_title%",
+                            "%episode_name%",
+                            "%series_number%",
+                            "%episode_number%",
+                            "%episode_part%",
+                            "%channel_name%",
+                            "%genre%",
                             "%date%",
                             "%start%",
                             "%end%",
-                            "%genre%",
-                            "%startday%",
-                            "%startmonth%",
-                            "%startyear%",
-                            "%starthh%",
-                            "%startmm%",
-                            "%endday%",
-                            "%endmonth%",
-                            "%endyear%",
-                            "%endhh%",
-                            "%endmm%"
+                            "%start_year%",
+                            "%start_month%",
+                            "%start_day%",
+                            "%start_hour%",
+                            "%start_minute%",
+                            "%end_year%",
+                            "%end_month%",
+                            "%end_day%",
+                            "%end_hour%",
+                            "%end_minute%"
                           };
 
       // Limit length of title and episode name to try to ensure the file name
@@ -265,24 +265,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
         programCategory = Program.Entity.ProgramCategory.Category.Trim();
       }
       string[] tagValues = {
-                             channelName,
                              programTitle,
                              programEpisodeName,
                              Program.Entity.SeasonNumber.ToString(),
                              Program.Entity.EpisodeNumber.ToString(),
                              Program.Entity.EpisodePartNumber.ToString(),
+                             channelName,
+                             programCategory,
                              Program.Entity.StartTime.ToString("yyyy-MM-dd"),
                              Program.Entity.StartTime.ToShortTimeString(),
                              Program.Entity.EndTime.ToShortTimeString(),
-                             programCategory,
-                             Program.Entity.StartTime.ToString("dd"),
-                             Program.Entity.StartTime.ToString("MM"),
                              Program.Entity.StartTime.ToString("yyyy"),
+                             Program.Entity.StartTime.ToString("MM"),
+                             Program.Entity.StartTime.ToString("dd"),
                              Program.Entity.StartTime.ToString("HH"),
                              Program.Entity.StartTime.ToString("mm"),
-                             Program.Entity.EndTime.ToString("dd"),
-                             Program.Entity.EndTime.ToString("MM"),
                              Program.Entity.EndTime.ToString("yyyy"),
+                             Program.Entity.EndTime.ToString("MM"),
+                             Program.Entity.EndTime.ToString("dd"),
                              Program.Entity.EndTime.ToString("HH"),
                              Program.Entity.EndTime.ToString("mm")
                            };

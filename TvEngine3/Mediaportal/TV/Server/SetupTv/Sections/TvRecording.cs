@@ -111,26 +111,26 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return string.Empty;
       }
 
-      strInput = ReplaceTag(strInput, "%channel%", example[recType].Channel, "unknown");
-      strInput = ReplaceTag(strInput, "%title%", example[recType].Title, "unknown");
-      strInput = ReplaceTag(strInput, "%name%", example[recType].Episode, "unknown");
-      strInput = ReplaceTag(strInput, "%series%", example[recType].SeriesNum, "unknown");
-      strInput = ReplaceTag(strInput, "%episode%", example[recType].EpisodeNum, "unknown");
-      strInput = ReplaceTag(strInput, "%part%", example[recType].EpisodePart, "unknown");
-      strInput = ReplaceTag(strInput, "%date%", example[recType].StartDate.ToShortDateString(), "unknown");
+      strInput = ReplaceTag(strInput, "%program_title%", example[recType].Title, "unknown");
+      strInput = ReplaceTag(strInput, "%episode_name%", example[recType].Episode, "unknown");
+      strInput = ReplaceTag(strInput, "%series_number%", example[recType].SeriesNum, "unknown");
+      strInput = ReplaceTag(strInput, "%episode_number%", example[recType].EpisodeNum, "unknown");
+      strInput = ReplaceTag(strInput, "%episode_part%", example[recType].EpisodePart, "unknown");
+      strInput = ReplaceTag(strInput, "%channel_name%", example[recType].Channel, "unknown");
+      strInput = ReplaceTag(strInput, "%genre%", example[recType].Genre, "unknown");
+      strInput = ReplaceTag(strInput, "%date%", example[recType].StartDate.ToString("yyyy-MM-dd"), "unknown");
       strInput = ReplaceTag(strInput, "%start%", example[recType].StartDate.ToShortTimeString(), "unknown");
       strInput = ReplaceTag(strInput, "%end%", example[recType].EndDate.ToShortTimeString(), "unknown");
-      strInput = ReplaceTag(strInput, "%genre%", example[recType].Genre, "unknown");
-      strInput = ReplaceTag(strInput, "%startday%", example[recType].StartDate.ToString("dd"), "unknown");
-      strInput = ReplaceTag(strInput, "%startmonth%", example[recType].StartDate.ToString("MM"), "unknown");
-      strInput = ReplaceTag(strInput, "%startyear%", example[recType].StartDate.ToString("yyyy"), "unknown");
-      strInput = ReplaceTag(strInput, "%starthh%", example[recType].StartDate.ToString("HH"), "unknown");
-      strInput = ReplaceTag(strInput, "%startmm%", example[recType].StartDate.ToString("mm"), "unknown");
-      strInput = ReplaceTag(strInput, "%endday%", example[recType].EndDate.ToString("dd"), "unknown");
-      strInput = ReplaceTag(strInput, "%endmonth%", example[recType].EndDate.ToString("MM"), "unknown");
-      strInput = ReplaceTag(strInput, "%endyear%", example[recType].EndDate.ToString("yyyy"), "unknown");
-      strInput = ReplaceTag(strInput, "%endhh%", example[recType].EndDate.ToString("HH"), "unknown");
-      strInput = ReplaceTag(strInput, "%endmm%", example[recType].EndDate.ToString("mm"), "unknown");
+      strInput = ReplaceTag(strInput, "%start_year%", example[recType].StartDate.ToString("yyyy"), "unknown");
+      strInput = ReplaceTag(strInput, "%start_month%", example[recType].StartDate.ToString("MM"), "unknown");
+      strInput = ReplaceTag(strInput, "%start_day%", example[recType].StartDate.ToString("dd"), "unknown");
+      strInput = ReplaceTag(strInput, "%start_hour%", example[recType].StartDate.ToString("HH"), "unknown");
+      strInput = ReplaceTag(strInput, "%start_minute%", example[recType].StartDate.ToString("mm"), "unknown");
+      strInput = ReplaceTag(strInput, "%end_year%", example[recType].EndDate.ToString("yyyy"), "unknown");
+      strInput = ReplaceTag(strInput, "%end_month%", example[recType].EndDate.ToString("MM"), "unknown");
+      strInput = ReplaceTag(strInput, "%end_day%", example[recType].EndDate.ToString("dd"), "unknown");
+      strInput = ReplaceTag(strInput, "%end_hour%", example[recType].EndDate.ToString("HH"), "unknown");
+      strInput = ReplaceTag(strInput, "%end_minute%", example[recType].EndDate.ToString("mm"), "unknown");
 
       int index = strInput.LastIndexOf('\\');
       switch (index)
@@ -206,17 +206,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       // Movies formats
       _formatString[0] = new string[4];
-      _formatString[0][0] = @"%title% - %channel% - %date%";
-      _formatString[0][1] = @"%title% - %channel% - %date% - %start%";
-      _formatString[0][2] = @"%title%\%title% - %channel% - %date% - %start%";
+      _formatString[0][0] = @"%program_title% - %channel_name% - %date%";
+      _formatString[0][1] = @"%program_title% - %channel_name% - %date% - %start%";
+      _formatString[0][2] = @"%program_title%\%program_title% - %channel_name% - %date% - %start%";
       _formatString[0][3] = @"[User custom value]"; // Must be the last one in the array list
 
       // Series formats
       _formatString[1] = new string[5];
-      _formatString[1][0] = @"%channel%\%title%\%title% - %date%[ - S%series%][ - E%episode%][ - %name%]";
-      _formatString[1][1] = @"%channel%\%title% (%starthh%%startmm% - %endhh%%endmm% %date%)\%title%";
-      _formatString[1][2] = @"%title%\%title% - S%series%E%episode% - %name%";
-      _formatString[1][3] = @"%title% - %channel%\%title% - %date% - %start%";
+      _formatString[1][0] = @"%channel_name%\%program_title%\%program_title% - %date%[ - S%series_number%][ - E%episode_number%][ - %episode_name%]";
+      _formatString[1][1] = @"%channel_name%\%program_title% (%start_hour%%start_minute% - %end_hour%%end_minute% %date%)\%program_title%";
+      _formatString[1][2] = @"%program_title%\%program_title% - S%series_number%E%episode_number% - %episode_name%";
+      _formatString[1][3] = @"%program_title% - %channel_name%\%program_title% - %date% - %start%";
       _formatString[1][4] = @"[User custom value]"; // Must be the last one in the array list
 
       _formatIndex[0]= ServiceAgents.Instance.SettingServiceAgent.GetValue("moviesformatindex", 0);

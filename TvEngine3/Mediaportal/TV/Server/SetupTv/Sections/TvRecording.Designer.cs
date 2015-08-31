@@ -56,8 +56,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.textBoxCustomFormat = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.comboBoxFormat = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.groupBox3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpLabel2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.mpLabel3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.mpLabel4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.textBoxSample = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
@@ -109,6 +107,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.lblRecFolders = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.cbRecPaths = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabel2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.tabControl1.SuspendLayout();
       this.tpSettings.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -447,59 +447,36 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox3.Controls.Add(this.mpLabel1);
       this.groupBox3.Controls.Add(this.mpLabel2);
+      this.groupBox3.Controls.Add(this.mpLabel1);
       this.groupBox3.Controls.Add(this.mpLabel3);
       this.groupBox3.Controls.Add(this.mpLabel4);
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox3.Location = new System.Drawing.Point(29, 183);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(390, 165);
+      this.groupBox3.Size = new System.Drawing.Size(390, 93);
       this.groupBox3.TabIndex = 7;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Available tags";
       // 
-      // mpLabel1
-      // 
-      this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(284, 22);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(66, 130);
-      this.mpLabel1.TabIndex = 19;
-      this.mpLabel1.Text = "start day\r\nstart month\r\nstart year\r\nstart hours\r\nstart minutes\r\nend day\r\nend mont" +
-          "h\r\nend year\r\nend hours\r\nend minutes";
-      // 
-      // mpLabel2
-      // 
-      this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(94, 22);
-      this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(82, 130);
-      this.mpLabel2.TabIndex = 17;
-      this.mpLabel2.Text = "channel name\r\ntitle\r\nepisode name\r\ngenre\r\nseries number\r\nepisode number\r\nepisode " +
-          "part\r\ndate\r\nstart time\r\nend time";
-      // 
       // mpLabel3
       // 
       this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(20, 22);
+      this.mpLabel3.Location = new System.Drawing.Point(6, 16);
       this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(70, 130);
+      this.mpLabel3.Size = new System.Drawing.Size(101, 65);
       this.mpLabel3.TabIndex = 16;
-      this.mpLabel3.Text = "%channel% =\r\n%title% =\r\n%name% =\r\n%genre% =\r\n%series% =\r\n%episode% =\r\n%part% =\r\n%" +
-          "date% =\r\n%start% =\r\n%end% =\r\n";
-      this.mpLabel3.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.mpLabel3.Text = "%program_title%\r\n%episode_name%\r\n%series_number%\r\n%episode_number%\r\n%episode_part" +
+          "%";
       // 
       // mpLabel4
       // 
       this.mpLabel4.AutoSize = true;
-      this.mpLabel4.Location = new System.Drawing.Point(196, 22);
+      this.mpLabel4.Location = new System.Drawing.Point(215, 16);
       this.mpLabel4.Name = "mpLabel4";
-      this.mpLabel4.Size = new System.Drawing.Size(81, 130);
+      this.mpLabel4.Size = new System.Drawing.Size(80, 65);
       this.mpLabel4.TabIndex = 18;
-      this.mpLabel4.Text = "%startday% =\r\n%startmonth% =\r\n%startyear% =\r\n%starthh% =\r\n%startmm% =\r\n%endday% =" +
-          "\r\n%endmonth% =\r\n%endyear% =\r\n%endhh% =\r\n%endmm% =\r\n";
-      this.mpLabel4.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.mpLabel4.Text = "%start_year%\r\n%start_month%\r\n%start_day%\r\n%start_hour%\r\n%start_minute%";
       // 
       // textBoxSample
       // 
@@ -1077,6 +1054,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
       // 
+      // mpLabel1
+      // 
+      this.mpLabel1.AutoSize = true;
+      this.mpLabel1.Location = new System.Drawing.Point(301, 16);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(78, 65);
+      this.mpLabel1.TabIndex = 19;
+      this.mpLabel1.Text = "%end_year%\r\n%end_month%\r\n%end_day%\r\n%end_hour%\r\n%end_minute%";
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.AutoSize = true;
+      this.mpLabel2.Location = new System.Drawing.Point(116, 16);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(93, 65);
+      this.mpLabel2.TabIndex = 20;
+      this.mpLabel2.Text = "%channel_name%\r\n%genre%\r\n%date%\r\n%start%\r\n%end%";
+      // 
       // TvRecording
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1140,8 +1135,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPLabel label5;
     private MPComboBox comboBoxMovies;
     private System.Windows.Forms.TabPage tpThumbnails;
-    private MPLabel mpLabel1;
-    private MPLabel mpLabel2;
     private MPLabel mpLabel3;
     private MPLabel mpLabel4;
     private System.Windows.Forms.TabPage tpRecording;
@@ -1203,5 +1196,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPComboBox comboBoxThumbnailerQualitySpeed;
     private MPLabel labelThumbnailerQualitySpeed;
     private MPButton buttonThumbnailerDeleteExisting;
+    private MPLabel mpLabel1;
+    private MPLabel mpLabel2;
   }
 }
