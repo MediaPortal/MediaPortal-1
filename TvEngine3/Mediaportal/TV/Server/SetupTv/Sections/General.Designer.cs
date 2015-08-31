@@ -330,6 +330,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.comboBoxPreviewCodecAudio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxPreviewCodecAudio.FormattingEnabled = true;
       this.comboBoxPreviewCodecAudio.Location = new System.Drawing.Point(49, 46);
+      this.comboBoxPreviewCodecAudio.MaxDropDownItems = 20;
       this.comboBoxPreviewCodecAudio.Name = "comboBoxPreviewCodecAudio";
       this.comboBoxPreviewCodecAudio.Size = new System.Drawing.Size(353, 21);
       this.comboBoxPreviewCodecAudio.TabIndex = 3;
@@ -348,6 +349,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.comboBoxPreviewCodecVideo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxPreviewCodecVideo.FormattingEnabled = true;
       this.comboBoxPreviewCodecVideo.Location = new System.Drawing.Point(49, 19);
+      this.comboBoxPreviewCodecVideo.MaxDropDownItems = 20;
       this.comboBoxPreviewCodecVideo.Name = "comboBoxPreviewCodecVideo";
       this.comboBoxPreviewCodecVideo.Size = new System.Drawing.Size(353, 21);
       this.comboBoxPreviewCodecVideo.TabIndex = 1;

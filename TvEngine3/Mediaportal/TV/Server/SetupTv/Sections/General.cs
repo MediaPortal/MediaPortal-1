@@ -119,23 +119,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       numericUpDownTunerDetectionDelay.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerDetectionDelay", 0);
 
       Codec codecVideo = Codec.Deserialise(ServiceAgents.Instance.SettingServiceAgent.GetValue("previewCodecVideo", Codec.DEFAULT_VIDEO.Serialise()));
-      if (codecVideo == null)
-      {
-        comboBoxPreviewCodecVideo.SelectedIndex = 0;
-      }
-      else
+      if (codecVideo != null)
       {
         comboBoxPreviewCodecVideo.SelectedItem = codecVideo;
       }
+      if (comboBoxPreviewCodecVideo.SelectedItem == null)
+      {
+        comboBoxPreviewCodecVideo.SelectedIndex = 0;
+      }
 
       Codec codecAudio = Codec.Deserialise(ServiceAgents.Instance.SettingServiceAgent.GetValue("previewCodecAudio", Codec.DEFAULT_AUDIO.Serialise()));
-      if (codecAudio == null)
-      {
-        comboBoxPreviewCodecAudio.SelectedIndex = 0;
-      }
-      else
+      if (codecAudio != null)
       {
         comboBoxPreviewCodecAudio.SelectedItem = codecAudio;
+      }
+      if (comboBoxPreviewCodecAudio.SelectedItem == null)
+      {
+        comboBoxPreviewCodecAudio.SelectedIndex = 0;
       }
 
       checkBoxScanChannelMovementDetection.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("channelMovementDetectionEnabled", false);
@@ -307,6 +307,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         types[(i * 2) + 1] = mediaSubTypes[i];
       }
 
+      HashSet<Guid> seenClsids = new HashSet<Guid>();
       IFilterMapper2 mapper = null;
       try
       {
@@ -356,9 +357,34 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               if (!string.IsNullOrEmpty(name))
               {
                 string lowerName = name.ToLowerInvariant();
-                if (!lowerName.Contains("encoder") && !lowerName.Contains("muxer"))
+                if (
+                  !lowerName.Contains("adjust") &&
+                  !lowerName.Contains("encoder") &&
+                  !lowerName.Contains("multiplexer") &&
+                  !lowerName.Contains("muxer") &&
+                  !lowerName.Contains("splicer") &&
+                  !lowerName.Contains("transformer")
+                )
                 {
-                  codecs.Add(new Codec(name, d.ClassID));
+                  Guid clsid = Guid.Empty;
+                  object o = d.GetPropBagValue("CLSID");  // Note: CLSID property bag value is different to ClassId property
+                  if (o != null)
+                  {
+                    try
+                    {
+                      clsid = new Guid(o.ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                      Log.Warn(ex, "general: failed to get CLSID for codec, name = {0}", name);
+                      clsid = Guid.Empty;
+                    }
+                  }
+                  if (clsid != Guid.Empty && !seenClsids.Contains(clsid))
+                  {
+                    codecs.Add(new Codec(name, clsid));
+                    seenClsids.Add(clsid);
+                  }
                 }
               }
               d.Dispose();
