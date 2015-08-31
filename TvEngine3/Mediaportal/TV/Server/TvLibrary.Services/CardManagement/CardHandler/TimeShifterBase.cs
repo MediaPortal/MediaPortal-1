@@ -53,6 +53,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       this.LogDebug("  receive stream time limit = {0} ms", _waitForVideoOrAudio);
 
       _folder = SettingsManagement.GetValue(_folderSettingName, string.Empty);
+      string originalFolder = _folder;
       bool useDefault = true;
       if (!string.IsNullOrEmpty(_folder))
       {
@@ -91,6 +92,10 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
             }
           }
         }
+      }
+      if (!string.Equals(originalFolder, _folder))
+      {
+        SettingsManagement.SaveValue(_folderSettingName, _folder);
       }
       this.LogDebug("  folder                    = {0}", _folder);
     }

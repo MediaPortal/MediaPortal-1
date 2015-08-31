@@ -77,36 +77,35 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
       string currentFolder = _folder;
       base.ReloadConfiguration();
-      if (string.Equals(currentFolder, _folder) || !Directory.Exists(_folder))
+      if (!string.Equals(currentFolder, _folder) && Directory.Exists(_folder))
       {
-        return;
-      }
-
-      // Remove any old timeshift buffer files.
-      try
-      {
-        Regex r = new Regex(@"^live\d+-\d+\.ts\.tsbuffer");
-        string[] files = Directory.GetFiles(_folder);
-        foreach (string file in files)
+        // Remove any old timeshift buffer files.
+        try
         {
-          try
+          Regex r = new Regex(@"^live\d+-\d+\.ts\.tsbuffer");
+          string[] files = Directory.GetFiles(_folder);
+          foreach (string file in files)
           {
-            // TODO Ideally we should avoid making assumptions about the format
-            // of the buffer file names, because they're not in our control.
-            if (r.Match(Path.GetFileName(file)).Success)
+            try
             {
-              File.Delete(file);
+              // TODO Ideally we should avoid making assumptions about the
+              // format of the buffer file names, because they're not in our
+              // control.
+              if (r.Match(Path.GetFileName(file)).Success)
+              {
+                File.Delete(file);
+              }
+            }
+            catch (Exception ex)
+            {
+              this.LogWarn(ex, "time-shifter: failed to delete old file, file = {0}", file);
             }
           }
-          catch (Exception ex)
-          {
-            this.LogWarn(ex, "time-shifter: failed to delete old file, file = {0}", file);
-          }
         }
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "time-shifter: failed to delete old files");
+        catch (Exception ex)
+        {
+          this.LogError(ex, "time-shifter: failed to delete old files");
+        }
       }
 
       _fileSize = (ulong)SettingsManagement.GetValue("timeShiftBufferFileSize", 256) * 1000 * 1000;

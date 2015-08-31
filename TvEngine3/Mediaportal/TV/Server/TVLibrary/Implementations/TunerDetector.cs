@@ -1011,7 +1011,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         _firstDetectionTuners.Add(tuner.ExternalId);
         tunerDbSettings = new Tuner
         {
-          TimeshiftingFolder = string.Empty,
           RecordingFolder = string.Empty,
           ExternalId = tuner.ExternalId,
           Name = tuner.Name,

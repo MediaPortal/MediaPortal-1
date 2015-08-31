@@ -140,11 +140,21 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void numericUpDownBufferFileCount_ValueChanged(object sender, EventArgs e)
     {
+      if (numericUpDownBufferFileCountMaximum.Value < numericUpDownBufferFileCount.Value)
+      {
+        numericUpDownBufferFileCountMaximum.Value = numericUpDownBufferFileCount.Value;
+        return;
+      }
       UpdateBufferTimeEstimates();
     }
 
     private void numericUpDownBufferFileCountMaximum_ValueChanged(object sender, EventArgs e)
     {
+      if (numericUpDownBufferFileCountMaximum.Value < numericUpDownBufferFileCount.Value)
+      {
+        numericUpDownBufferFileCount.Value = numericUpDownBufferFileCountMaximum.Value;
+        return;
+      }
       UpdateBufferTimeEstimates();
     }
 
@@ -152,12 +162,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       labelBufferFileCountDescription.Text = string.Format("=> {0} GB (approx. {1} minutes SD or {2} minutes HD)",
                                               Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCount.Value / 1000, 2),
-                                              Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCount.Value / 375000, 1),   // SD = ~3 Mb/s
-                                              Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCount.Value / 1250000, 1)); // HD = ~10 Mb/s
+                                              Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCount.Value * 8 / (3 * 60), 1),     // SD = ~3 Mb/s
+                                              Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCount.Value * 8 / (10 * 60), 1));   // HD = ~10 Mb/s
       labelBufferFileCountMaximumDescription.Text = string.Format("=> {0} GB (approx. {1} minutes SD or {2} minutes HD)",
                                                       Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCountMaximum.Value / 1000, 2),
-                                                      Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCountMaximum.Value / 375000, 1),    // SD = ~3 Mb/s
-                                                      Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCountMaximum.Value / 1250000, 1));  // HD = ~10 Mb/s
+                                                      Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCountMaximum.Value * 8 / (3 * 60), 1),    // SD = ~3 Mb/s
+                                                      Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCountMaximum.Value * 8 / (10 * 60), 1));  // HD = ~10 Mb/s
     }
   }
 }
