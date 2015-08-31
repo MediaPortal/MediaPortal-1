@@ -76,7 +76,6 @@ CREATE TABLE "Tuners"  (
     "IsEnabled" bit NOT NULL,
     "UseForEpgGrabbing" bit NOT NULL,
     "RecordingFolder" varchar(300) NOT NULL COLLATE NOCASE,
-    "TimeshiftingFolder" varchar(300) NOT NULL COLLATE NOCASE,
     "SupportedBroadcastStandards" int NOT NULL,
     "UseConditionalAccess" bit NOT NULL,
     "CamType" int NOT NULL,

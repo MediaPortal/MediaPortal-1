@@ -138,21 +138,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _recordingFolder;
     
         [DataMember]
-        public string TimeshiftingFolder
-        {
-            get { return _timeshiftingFolder; }
-            set
-            {
-                if (_timeshiftingFolder != value)
-                {
-                    _timeshiftingFolder = value;
-                    OnPropertyChanged("TimeshiftingFolder");
-                }
-            }
-        }
-        private string _timeshiftingFolder;
-    
-        [DataMember]
         public int SupportedBroadcastStandards
         {
             get { return _supportedBroadcastStandards; }

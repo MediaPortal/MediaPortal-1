@@ -23,24 +23,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     [DataMember]
     int Id { get; }
 
-    ///<summary>
-    /// Gets/Set the recording format
-    ///</summary>
-    [DataMember]
-    int RecordingFormat { get; set; }
-
-    /// <summary>
-    /// gets/sets the recording folder for the card
-    /// </summary>
-    [DataMember]
-    string RecordingFolder { get; set; }
-
-    /// <summary>
-    /// gets/sets the timeshifting folder for the card
-    /// </summary>
-    [DataMember]
-    string TimeshiftFolder { get; set; }
-
     /// <summary>
     /// Gets the type of card (analog,dvbc,dvbs,dvbt,atsc)
     /// </summary>
@@ -61,8 +43,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     /// <returns>filename of the recording or null when not recording</returns>
     [DataMember]
     string RecordingFileName { get; }
-
-    
 
     /// <summary>
     /// returns which schedule is currently being recorded
@@ -99,13 +79,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     /// <returns>true when card is scanning otherwise false</returns>
     [DataMember]
     bool IsScanning { get; set; }
-
-    /// <summary>
-    /// Returns whether the current channel is scrambled or not.
-    /// </summary>
-    /// <returns>yes if channel is scrambled and CI/CAM cannot decode it, otherwise false</returns>
-    [DataMember]
-    bool IsScrambled { get; }
 
     /// <summary>
     /// Returns if card is currently timeshifting or not

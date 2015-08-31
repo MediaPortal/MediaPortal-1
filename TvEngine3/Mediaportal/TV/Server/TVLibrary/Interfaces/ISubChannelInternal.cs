@@ -35,10 +35,5 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     void OnGraphRunning();
     void OnAfterTune();
     void Decompose();
-
-    /// <summary>
-    /// Reload the sub-channel's configuration.
-    /// </summary>
-    void ReloadConfiguration();
   }
 }

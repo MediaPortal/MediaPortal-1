@@ -74,7 +74,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     #region variables
 
-
     /// <summary>
     /// Instance of the current channel
     /// </summary>
@@ -110,21 +109,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     protected volatile bool _cancelTune;
 
-    /// <summary>
-    /// The minimum number of buffer files to use for time shifting.
-    /// </summary>
-    protected int _timeShiftFileCountMinimum = 6;
-
-    /// <summary>
-    /// The maximum number of buffer files to use for time shifting.
-    /// </summary>
-    protected int _timeShiftFileCountMaximum = 20;
-
-    /// <summary>
-    /// The size in bytes of each time shift buffer file.
-    /// </summary>
-    protected uint _timeShiftFileSize = 256 * 1024 * 1024;    // bytes
-
     #endregion
 
     #region constructor
@@ -140,7 +124,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _recordingFileName = string.Empty;
       _dateRecordingStarted = DateTime.MinValue;
       _dateTimeShiftStarted = DateTime.MinValue;
-      ReloadConfiguration();
     }
 
     #endregion
@@ -224,12 +207,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     /// <param name="fileName">filename used for the timeshiftbuffer</param>
     /// <returns></returns>
-    public bool StartTimeShifting(string fileName)
+    public bool StartTimeShifting(string fileName, int fileCount, int fileCountMaximum, ulong fileSize)
     {
       this.LogDebug("sub-channel base: {0} start timeshifting to {1}", _subChannelId, fileName);
       try
       {
-        OnStartTimeShifting(fileName);
+        OnStartTimeShifting(fileName, fileCount, fileCountMaximum, fileSize);
         _timeshiftFileName = fileName;
         _dateTimeShiftStarted = DateTime.Now;
       }
@@ -298,9 +281,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    public void TimeShiftGetCurrentFilePosition(ref long position, ref long bufferId)
+    public void TimeShiftGetCurrentFilePosition(out long position, out long bufferId)
     {
-      OnGetTimeShiftFilePosition(ref position, ref bufferId);
+      OnGetTimeShiftFilePosition(out position, out bufferId);
     }
 
     /// <summary>
@@ -380,7 +363,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// A derrived class should start here the timeshifting on the tv card. It will be called from StartTimeshifting()
     /// </summary>
-    protected abstract void OnStartTimeShifting(string fileName);
+    protected abstract void OnStartTimeShifting(string fileName, int fileCount, int fileCountMaximum, ulong fileSize);
 
     /// <summary>
     /// A derrived class should stop here the timeshifting on the tv card. It will be called from StopTimeshifting()
@@ -402,7 +385,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    protected abstract void OnGetTimeShiftFilePosition(ref long position, ref long bufferId);
+    protected abstract void OnGetTimeShiftFilePosition(out long position, out long bufferId);
 
     #endregion
 
@@ -415,18 +398,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     public abstract bool IsReceivingAudioVideo { get; }
 
     #endregion
-
-    /// <summary>
-    /// Reload the sub-channel's configuration.
-    /// </summary>
-    public virtual void ReloadConfiguration()
-    {
-      this.LogDebug("sub-channel base: reload configuration");
-      _timeShiftFileCountMinimum = SettingsManagement.GetValue("timeshiftMinFiles", 6);
-      _timeShiftFileCountMaximum = SettingsManagement.GetValue("timeshiftMaxFiles", 20);
-      _timeShiftFileSize = (uint)SettingsManagement.GetValue("timeshiftMaxFileSize", 256);
-      _timeShiftFileSize *= (1024 * 1024);  // convert MB to bytes
-    }
 
     /// <summary>
     /// Fetch stream quality information from TsWriter.

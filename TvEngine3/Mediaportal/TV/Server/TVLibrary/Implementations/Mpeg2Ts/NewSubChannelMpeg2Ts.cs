@@ -73,16 +73,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
     /// </summary>
     private int _tsFilterHandle = -1;
 
-    /// <summary>
-    /// The maximum time to wait for the program map table.
-    /// </summary>
-    private int _timeOutProgramMapTable = 5000;         // unit = milliseconds
-
-    /// <summary>
-    /// The maximum time to wait for the conditional access table.
-    /// </summary>
-    private int _timeOutConditionalAccessTable = 5000;  // unit = milliseconds
-
     private TableProgramMap _pmt;
     private TableConditionalAccess _cat;
     private ISet<ushort> _pids = new HashSet<ushort>();
@@ -348,7 +338,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
         _eventPmt.Reset();
         DateTime dtStartWait = DateTime.Now;
         ThrowExceptionIfTuneCancelled();
-        pmtFound = _eventPmt.WaitOne(_timeOutProgramMapTable, true);
+        pmtFound = _eventPmt.WaitOne(5000, true);
         ThrowExceptionIfTuneCancelled();
         waitedTime = DateTime.Now - dtStartWait;
         if (!pmtFound)
@@ -389,7 +379,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
       _eventCat.Reset();
       DateTime dtNow = DateTime.Now;
       ThrowExceptionIfTuneCancelled();
-      bool found = _eventCat.WaitOne(_timeOutConditionalAccessTable, true);
+      bool found = _eventCat.WaitOne(5000, true);
       ThrowExceptionIfTuneCancelled();
       TimeSpan ts = DateTime.Now - dtNow;
       if (!found)
@@ -864,17 +854,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
 
     #endregion
 
-    #endregion
-
-    /// <summary>
-    /// Reload the sub-channel's configuration.
-    /// </summary>
-    public override void ReloadConfiguration()
-    {
-      this.LogDebug("MPEG 2 sub-channel: reload configuration");
-      _timeOutConditionalAccessTable = SettingsManagement.GetValue("timeOutConditionalAccessTable", 5000);
-      _timeOutProgramMapTable = SettingsManagement.GetValue("timeOutProgramMapTable", 5000);
-      base.ReloadConfiguration();
-    }*/
+    #endregion*/
   }
 }

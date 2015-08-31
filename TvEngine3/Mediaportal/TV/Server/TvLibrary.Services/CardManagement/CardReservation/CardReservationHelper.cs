@@ -384,7 +384,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
     public static ICardTuneReservationTicket RequestCardReservation(IUser user, CardDetail cardDetail, ICardReservation cardResImpl, int idChannel)
     {
       ICardTuneReservationTicket ticket = null;      
-      int idCard = cardDetail.Card.IdTuner;
+      int idCard = cardDetail.Id;
       IUser userCopy = user.Clone() as User;
       if (userCopy != null)
       {
@@ -405,7 +405,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
       foreach (CardDetail cardDetail in availCardsForReservation)
       {
         ICardTuneReservationTicket ticket = null;
-        int idCard = cardDetail.Card.IdTuner;
+        int idCard = cardDetail.Id;
         bool cardAlreadyHasTicket = cardIds.Contains(idCard);
         if (!cardAlreadyHasTicket)
         {

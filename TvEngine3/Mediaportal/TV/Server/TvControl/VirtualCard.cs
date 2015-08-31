@@ -51,25 +51,10 @@ namespace Mediaportal.TV.Server.TVControl
     private int _nrOfOtherUsersTimeshiftingOnCard = 0;
 
     [DataMember]
-    private string _recordingFolder;
-
-    [DataMember]
-    private string _timeShiftFolder;
-
-    [DataMember]
-    private int _recordingFormat;
-
-    [DataMember]
     private IUser _user;
 
     [DataMember]
-    private const int CommandTimeOut = 3000;
-
-    [DataMember]
     private bool _isTimeshifting;
-
-    [DataMember]
-    private bool _isScrambled;
 
     [DataMember]
     private bool _isScanning;
@@ -93,9 +78,6 @@ namespace Mediaportal.TV.Server.TVControl
     private BroadcastStandard _supportedBroadcastStandards = BroadcastStandard.Unknown;
 
     [DataMember]
-    private BroadcastStandard _possibleBroadcastStandards = BroadcastStandard.Unknown;
-
-    [DataMember]
     private string _timeShiftFileName;
 
     [DataMember]
@@ -115,28 +97,9 @@ namespace Mediaportal.TV.Server.TVControl
     /// Initializes a new instance of the <see cref="VirtualCard"/> class.
     /// </summary>
     /// <param name="user">The user.</param>
-    /// <param name="recordingFormat">The recording format.</param>
-    public VirtualCard(User user, int recordingFormat)
-    {      
-      _user = user;
-
-      InitStaticProperties();
-
-      _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings",
-                                       Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-      _recordingFormat = recordingFormat;
-
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="VirtualCard"/> class.
-    /// </summary>
-    /// <param name="user">The user.</param>
     public VirtualCard(IUser user)
     {
       _user = user;
-      _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings",
-                                       Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
 
       InitStaticProperties();
     }
@@ -150,7 +113,6 @@ namespace Mediaportal.TV.Server.TVControl
       if (!string.IsNullOrWhiteSpace(userName))
       {
         _isTimeshifting = controllerService.IsTimeShifting(userName);
-        _isScrambled = controllerService.IsScrambled(userName);
         _rtspUrl = controllerService.GetStreamingUrl(userName);
         _recordingFileName = controllerService.RecordingFileName(userName);
         _idChannel = controllerService.CurrentDbChannel(userName);
@@ -181,7 +143,6 @@ namespace Mediaportal.TV.Server.TVControl
         _isGrabbingEpg = controllerService.IsGrabbingEpg(cardId);
         _name = controllerService.CardName(cardId);
         _supportedBroadcastStandards = controllerService.SupportedBroadcastStandards(cardId);
-        _possibleBroadcastStandards = controllerService.PossibleBroadcastStandards(cardId);
       }
     }
 
@@ -213,51 +174,6 @@ namespace Mediaportal.TV.Server.TVControl
       get { return _user.CardId; }
     }
 
-    ///<summary>
-    /// Gets/Set the recording format
-    ///</summary>
-    public int RecordingFormat
-    {
-      get { return _recordingFormat; }
-      set { _recordingFormat = value; }
-    }
-
-    /// <summary>
-    /// gets/sets the recording folder for the card
-    /// </summary>    
-    public string RecordingFolder
-    {
-      get { return _recordingFolder; }
-      set
-      {
-        _recordingFolder = value;
-        if (_recordingFolder == String.Empty)
-        {
-          _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings",
-                                           Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-        }
-      }
-    }
-
-    /// <summary>
-    /// gets/sets the timeshifting folder for the card
-    /// </summary>    
-    public string TimeshiftFolder
-    {
-      get
-      {
-        return _timeShiftFolder;
-      }
-      set
-      {
-        _timeShiftFolder = value;
-        if (_timeShiftFolder == String.Empty)
-        {
-          _timeShiftFolder = Path.Combine(PathManager.GetDataPath, "timeshiftbuffer");
-        }
-      }
-    }
-
     /// <summary>
     /// Get the broadcast standards supported by the tuner.
     /// </summary>
@@ -266,48 +182,7 @@ namespace Mediaportal.TV.Server.TVControl
       get
       {
         return _supportedBroadcastStandards;
-        /*try
-        {
-          if (User.CardId < 0)
-          {
-            return CardType.Analog;
-          }
-          RemoteControl.HostName = _server;
-          return GlobalServiceProvider.Get<IControllerService>().Type(User.CardId);
-        }
-        catch (Exception)
-        {
-          //HandleFailure();
-        }
-        return CardType.Analog;*/
       }
-      set { _supportedBroadcastStandards = value; }
-    }
-
-    /// <summary>
-    /// Get the broadcast standards supported by the tuner code/class/type implementation.
-    /// </summary>
-    public BroadcastStandard PossibleBroadcastStandards
-    {
-      get
-      {
-        return _possibleBroadcastStandards;
-        /*try
-        {
-          if (User.CardId < 0)
-          {
-            return CardType.Analog;
-          }
-          RemoteControl.HostName = _server;
-          return GlobalServiceProvider.Get<IControllerService>().Type(User.CardId);
-        }
-        catch (Exception)
-        {
-          //HandleFailure();
-        }
-        return CardType.Analog;*/
-      }
-      set { _possibleBroadcastStandards = value; }
     }
 
     /// <summary>
@@ -362,7 +237,6 @@ namespace Mediaportal.TV.Server.TVControl
         }
         return "";*/
       }
-      set { _recordingFileName = value; }
     }
 
     /// <summary>
@@ -392,7 +266,6 @@ namespace Mediaportal.TV.Server.TVControl
         }
         return "";*/
       }
-      set { _rtspUrl = value; }
     }
 
     /// <summary>
@@ -474,35 +347,6 @@ namespace Mediaportal.TV.Server.TVControl
       }
       set { _isScanning = value; }
     }
-
-    /// <summary>
-    /// Returns whether the current channel is scrambled or not.
-    /// </summary>
-    /// <returns>yes if channel is scrambled and CI/CAM cannot decode it, otherwise false</returns>    
-    public bool IsScrambled
-    {
-      get
-      {
-        return _isScrambled;
-        /*try
-        {
-          if (User.CardId < 0)
-          {
-            return false;
-          }
-          RemoteControl.HostName = _server;
-          return GlobalServiceProvider.Get<IControllerService>().IsScrambled(_user.Name);
-        }
-        catch (Exception)
-        {
-          //HandleFailure();
-        }
-        return false;*/
-      }
-      set { _isScrambled = value; }
-    }
-
-
 
     /// <summary>
     /// Returns if card is currently timeshifting or not
@@ -729,7 +573,6 @@ namespace Mediaportal.TV.Server.TVControl
         }
         _isTimeshifting = false;
         _timeShiftFileName = null;
-        _isScrambled = false;
         _rtspUrl = null;
         _name = null;
         _supportedBroadcastStandards = BroadcastStandard.AnalogTelevision;
@@ -819,7 +662,6 @@ namespace Mediaportal.TV.Server.TVControl
       }
       return false;
     }
-
 
     /// <summary>
     /// Indicates, if the card supports quality control
@@ -1121,7 +963,5 @@ namespace Mediaportal.TV.Server.TVControl
     #endregion    
 
     #endregion
-
-   
   }
 }

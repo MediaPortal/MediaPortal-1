@@ -174,6 +174,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       DebugSettings();
 
+      // TODO trigger server-side config reloading for service priority and time limits
+
       base.OnSectionDeActivated();
     }
 

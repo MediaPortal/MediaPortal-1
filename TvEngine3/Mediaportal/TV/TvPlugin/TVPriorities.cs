@@ -223,8 +223,7 @@ namespace Mediaportal.TV.TvPlugin
           strLogo = "defaultVideoBig.png";
         }
         
-        IVirtualCard card;
-        if (ServiceAgents.Instance.ControllerServiceAgent.IsRecordingSchedule(rec.Entity.IdSchedule, out card))
+        if (ServiceAgents.Instance.ControllerServiceAgent.IsRecordingSchedule(rec.Entity.IdSchedule))
         {
           if (rec.Entity.ScheduleType != (int)ScheduleRecordingType.Once)
           {
@@ -281,9 +280,8 @@ namespace Mediaportal.TV.TvPlugin
         dlg.AddLocalizedString(982); //Delete series recording
         dlg.AddLocalizedString(888); //Episodes management
       }
-      IVirtualCard card;
       
-      if (ServiceAgents.Instance.ControllerServiceAgent.IsRecordingSchedule(rec.IdSchedule, out card))
+      if (ServiceAgents.Instance.ControllerServiceAgent.IsRecordingSchedule(rec.IdSchedule))
       {
         dlg.AddLocalizedString(979); //Play recording from beginning
         dlg.AddLocalizedString(980); //Play recording from live point
@@ -317,7 +315,7 @@ namespace Mediaportal.TV.TvPlugin
 
         case 981: //Delete this recording only
           {
-            if (ServiceAgents.Instance.ControllerServiceAgent.IsRecordingSchedule(rec.IdSchedule, out card))
+            if (ServiceAgents.Instance.ControllerServiceAgent.IsRecordingSchedule(rec.IdSchedule))
             {
               GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
               if (null != dlgYesNo)
@@ -351,7 +349,7 @@ namespace Mediaportal.TV.TvPlugin
 
         case 618: // delete entire recording
           {
-            if (ServiceAgents.Instance.ControllerServiceAgent.IsRecordingSchedule(rec.IdSchedule, out card))
+            if (ServiceAgents.Instance.ControllerServiceAgent.IsRecordingSchedule(rec.IdSchedule))
             {
               GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
               if (null != dlgYesNo)

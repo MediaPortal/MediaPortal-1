@@ -29,35 +29,17 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
   /// </summary>
   internal class CleanTimeshiftFilesThread
   {
-
-    /// <summary>
-    /// The folder
-    /// </summary>
-    private readonly string _folder;
-
     /// <summary>
     /// Name of the file
     /// </summary>
     private readonly string _fileName;
 
     /// <summary>
-    /// Sleep intervall
-    /// </summary>
-    private const int _sleepIntervall = 5000;
-
-    /// <summary>
-    /// Number of retries
-    /// </summary>
-    private const int _numOfRetries = 5;
-
-    /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="folder">The folder.</param>
     /// <param name="fileName">Name of the file.</param>
-    public CleanTimeshiftFilesThread(string folder, string fileName)
+    public CleanTimeshiftFilesThread(string fileName)
     {
-      _folder = folder;
       _fileName = fileName;
     }
 
@@ -67,40 +49,29 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// </summary>
     public void CleanTimeshiftFiles()
     {
-      for (int i = 0; i < _numOfRetries; i++)
+      for (int i = 0; i < 5; i++)
       {
-        if (CleanTimeShiftFiles())
+        try
         {
+          this.LogDebug(@"card: delete timeshift files {0}", _fileName);
+          foreach (string fileName in Directory.GetFiles(Path.GetDirectoryName(_fileName)))
+          {
+            // TODO Ideally we should avoid making assumptions about the format
+            // of the buffer file names, because they're not in our control.
+            if (fileName.StartsWith(_fileName))
+            {
+              this.LogDebug("card:   trying to delete {0}", fileName);
+              File.Delete(fileName);
+              this.LogDebug("card:   deleted file {0}", fileName);
+            }
+          }
           return;
         }
-        Thread.Sleep(_sleepIntervall);
-      }
-    }
-
-    /// <summary>
-    /// deletes time shifting files left in the specified folder.
-    /// </summary>
-    private bool CleanTimeShiftFiles()
-    {
-      try
-      {
-        this.LogDebug(@"card: delete timeshift files {0}\{1}", _folder, _fileName);
-        string[] files = Directory.GetFiles(_folder);
-        for (int i = 0; i < files.Length; ++i)
+        catch
         {
-          if (files[i].IndexOf(_fileName) >= 0)
-          {
-            this.LogDebug("card:   trying to delete {0}", files[i]);
-            File.Delete(files[i]);
-            this.LogDebug("card:   deleted file {0}", files[i]);
-          }
         }
+        Thread.Sleep(5000);
       }
-      catch
-      {
-        return false;
-      }
-      return true;
     }
   }
 }

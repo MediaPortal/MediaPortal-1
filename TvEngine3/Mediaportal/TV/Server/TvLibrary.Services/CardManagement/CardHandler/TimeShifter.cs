@@ -20,8 +20,10 @@
 
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.ChannelLinkage;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
@@ -41,40 +43,79 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     private bool _tuneInProgress;
 
     /// <summary>
+    /// The minimum number of buffer files to use for time shifting.
+    /// </summary>
+    protected int _fileCount = 6;
+
+    /// <summary>
+    /// The maximum number of buffer files to use for time shifting.
+    /// </summary>
+    protected int _fileCountMaximum = 20;
+
+    /// <summary>
+    /// The size in bytes of each time shift buffer file.
+    /// </summary>
+    protected ulong _fileSize = 256000000;    // 256 MB
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="TimeShifter"/> class.
     /// </summary>
     /// <param name="cardHandler">The card handler.</param>
     public TimeShifter(ITvCardHandler cardHandler)
-      : base(cardHandler)
+      : base(cardHandler, "timeShiftBufferFolder")
     {
-      string timeshiftingFolder = cardHandler.DataBaseCard.TimeshiftingFolder;
-
-      bool hasFolder = TVDatabase.TVBusinessLayer.Common.IsFolderValid(timeshiftingFolder);
-      if (!hasFolder)
-      {
-        timeshiftingFolder = SetDefaultTimeshiftingFolder(cardHandler);
-      }
-
-      if (!Directory.Exists(timeshiftingFolder))
-      {
-        try
-        {
-          Directory.CreateDirectory(timeshiftingFolder);
-        }
-        catch (Exception)
-        {
-          timeshiftingFolder = SetDefaultTimeshiftingFolder(cardHandler);
-          Directory.CreateDirectory(timeshiftingFolder); //if it fails, then nothing works reliably.s
-        }
-      }
-
       _linkageGrabber = new ChannelLinkageGrabber(cardHandler.Card);
-
       _timeAudioEvent = DateTime.MinValue;
       _timeVideoEvent = DateTime.MinValue;
     }
 
     #region ITimeShifter Members
+
+    public override void ReloadConfiguration()
+    {
+      this.LogDebug("time-shifter: reload configuration");
+
+      string currentFolder = _folder;
+      base.ReloadConfiguration();
+      if (string.Equals(currentFolder, _folder) || !Directory.Exists(_folder))
+      {
+        return;
+      }
+
+      // Remove any old timeshift buffer files.
+      try
+      {
+        Regex r = new Regex(@"^live\d+-\d+\.ts\.tsbuffer");
+        string[] files = Directory.GetFiles(_folder);
+        foreach (string file in files)
+        {
+          try
+          {
+            // TODO Ideally we should avoid making assumptions about the format
+            // of the buffer file names, because they're not in our control.
+            if (r.Match(Path.GetFileName(file)).Success)
+            {
+              File.Delete(file);
+            }
+          }
+          catch (Exception ex)
+          {
+            this.LogWarn(ex, "time-shifter: failed to delete old file, file = {0}", file);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "time-shifter: failed to delete old files");
+      }
+
+      _fileSize = (ulong)SettingsManagement.GetValue("timeShiftBufferFileSize", 256) * 1000 * 1000;
+      _fileCount = SettingsManagement.GetValue("timeShiftBufferFileCount", 6);
+      _fileCountMaximum = SettingsManagement.GetValue("timeShiftBufferFileCountMaximum", 20);
+      this.LogDebug("  buffer file size          = {0} bytes", _fileSize);
+      this.LogDebug("  buffer file count         = {0}", _fileCount);
+      this.LogDebug("  buffer file count max     = {0}", _fileCountMaximum);
+    }
 
     /// <summary>
     /// Gets the name of the time shift file.
@@ -92,7 +133,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         ITvLibrarySubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
         if (subchannel == null)
           return null;
-        return subchannel.TimeShiftFileName + ".tsbuffer";
+        return subchannel.TimeShiftFileName;
       }
       catch (Exception ex)
       {
@@ -107,8 +148,10 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// <param name="userName"> </param>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    public bool GetCurrentFilePosition(string userName, ref long position, ref long bufferId)
+    public bool GetCurrentFilePosition(string userName, out long position, out long bufferId)
     {
+      position = 0;
+      bufferId = 0;
       try
       {
         if (_cardHandler.Card.IsEnabled == false)
@@ -119,7 +162,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         ITvLibrarySubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
         if (subchannel == null)
           return false;
-        subchannel.TimeShiftGetCurrentFilePosition(ref position, ref bufferId);
+        subchannel.TimeShiftGetCurrentFilePosition(out position, out bufferId);
         return (position != -1);
       }
       catch (Exception ex)
@@ -196,13 +239,13 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// </summary>
     /// <param name="user">User</param>
     /// <param name="fileName">Name of the timeshiftfile.</param>
-    /// <param name="subChannelId1"> </param>
     /// <param name="subChannelId"> </param>
     /// <param name="idChannel"> </param>
     /// <returns>TvResult indicating whether method succeeded</returns>
-    public TvResult Start(ref IUser user, ref string fileName, int subChannelId, int idChannel)
+    public TvResult Start(ref IUser user, out string fileName, int subChannelId, int idChannel)
     {
       TvResult result = TvResult.UnknownError;
+      fileName = string.Empty;
       try
       {
 #if DEBUG
@@ -220,8 +263,15 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         _eventTimeshift.Reset();
         if (_cardHandler.Card.IsEnabled)
         {
+          var subChannelByChannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel);
+          fileName = Path.Combine(_folder, string.Format("live{0}-{1}.ts.tsbuffer", user.CardId, subChannelByChannelId));
+          if (!IsTimeShifting(user))
+          {
+            CleanTimeShiftFiles(_folder, fileName);
+          }
+
           // Let's verify if hard disk drive has enough free space before we start time shifting. The function automatically handles both local and UNC paths
-          if (!IsTimeShifting(user) && !HasFreeDiskSpace(fileName))
+          if (!IsTimeShifting(user) && Utils.GetFreeDiskSpace(fileName) < 2 * _fileSize)
           {
             result = TvResult.NoFreeDiskSpace;
           }
@@ -235,7 +285,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
             if (subchannel != null)
             {
               _subchannel = subchannel;
-              this.LogDebug("card: CAM enabled : {0}", _cardHandler.Card.IsConditionalAccessSupported);
               AttachAudioVideoEventHandler(subchannel);
               if (subchannel.IsTimeShifting)
               {
@@ -243,10 +292,8 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
               }
               else
               {
-                bool tsStarted = subchannel.StartTimeShifting(fileName);
-                if (tsStarted)
+                if (subchannel.StartTimeShifting(fileName, _fileCount, _fileCountMaximum, _fileSize))
                 {
-                  fileName += ".tsbuffer";
                   result = GetTvResultFromTimeshiftingSubchannel(ref user);
                 }
                 else
@@ -278,6 +325,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         if (result != TvResult.Succeeded)
         {
           Stop(ref user, idChannel);
+          fileName = string.Empty;
         }
       }
       return result;
@@ -348,16 +396,110 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       _timeVideoEvent = DateTime.MinValue;
 
       _tuneInProgress = false;
-    }    
+    }
+
+    public void CopyBuffer(string userName, long position1, long bufferId1, long position2, long bufferId2, string destination)
+    {
+      this.LogInfo("time-shifter: copy buffer, user = {0}, start = {1}.{2}, end = {3}.{4}, destination = {5}", userName, bufferId1, position1, bufferId2, position2, destination);
+      try
+      {
+        ITvLibrarySubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
+        if (subchannel == null || string.IsNullOrEmpty(subchannel.TimeShiftFileName))
+        {
+          return;
+        }
+
+        string baseFileName = subchannel.TimeShiftFileName;
+        this.LogDebug("time-shifter: time-shift file name = {0}", baseFileName);
+
+        // We assume it is okay to merge the files. In theory this might not be
+        // a valid assumption. However, for now we only support MPEG 2 TS, and
+        // the buffer files should be aligned to TS packet boundaries.
+        // Therefore the assumption should hold.
+        using (var writer = new FileStream(destination, FileMode.CreateNew, FileAccess.Write))
+        {
+          long id = bufferId1;
+          const int BUFFER_SIZE = 940;   // multiple of TS packet size (188)
+          byte[] buffer = new byte[BUFFER_SIZE];
+          while (true)
+          {
+            // TODO Ideally we should avoid making assumptions about the format
+            // of the buffer file names, because they're not in our control.
+            string source = baseFileName + id.ToString() + ".ts";
+            if (!File.Exists(source))
+            {
+              if (bufferId1 <= bufferId2 || id <= bufferId2)
+              {
+                break;
+              }
+              id = 1;
+              source = baseFileName + "1.ts";
+              if (!File.Exists(source))
+              {
+                break;
+              }
+            }
+
+            this.LogDebug("  copy {0}", source);
+            using (var reader = new FileStream(source, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+              long sourcePosition = 0;
+              if (id == bufferId1)
+              {
+                sourcePosition = position1;
+              }
+              sourcePosition = reader.Seek(sourcePosition, SeekOrigin.Begin);
+
+              do
+              {
+                int readSize = BUFFER_SIZE;
+                if (id == bufferId2)
+                {
+                  readSize = (int)Math.Min(position2 - sourcePosition, (long)BUFFER_SIZE);
+                  if (readSize == 0)
+                  {
+                    break;
+                  }
+                }
+                int bytesRead = reader.Read(buffer, 0, readSize);
+                if (bytesRead == 0)
+                {
+                  break;
+                }
+
+                sourcePosition += bytesRead;
+                writer.Write(buffer, 0, bytesRead);
+              }
+              while (true);
+              reader.Close();
+              reader.Dispose();
+            }
+
+            if (id == bufferId2)
+            {
+              break;
+            }
+
+            id++;
+          }
+
+          writer.Flush();
+          writer.Close();
+          writer.Dispose();
+        }
+        this.LogInfo("time-shifter: copy complete");
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "time-shifter: failed to copy buffer");
+      }
+    }
 
     #endregion
 
-    private static string SetDefaultTimeshiftingFolder(ITvCardHandler cardHandler)
+    protected override string GetDefaultFolder()
     {
-      string timeshiftingFolder = TVDatabase.TVBusinessLayer.Common.GetDefaultTimeshiftingFolder();
-      cardHandler.DataBaseCard.TimeshiftingFolder = timeshiftingFolder;
-      TVDatabase.TVBusinessLayer.TunerManagement.SaveTuner(cardHandler.DataBaseCard);
-      return timeshiftingFolder;
+      return Path.Combine(PathManager.GetDataPath, "Time-shift Buffer");
     }
 
     protected override void AudioVideoEventHandler(PidType pidType)
@@ -429,25 +571,45 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
     }
 
-    private static bool HasFreeDiskSpace(string fileName)
-    {
-      ulong freeDiskSpace = Utils.GetFreeDiskSpace(fileName);
-
-
-      Int32 maximumFileSize = SettingsManagement.GetValue("timeshiftMaxFileSize", 256);
-        // in MB
-      ulong diskSpaceNeeded = Convert.ToUInt64(maximumFileSize);
-      diskSpaceNeeded *= 1000000*2; // Convert to bytes; 2 times of timeshiftMaxFileSize
-      bool hasFreeDiskSpace = freeDiskSpace > diskSpaceNeeded;
-      return hasFreeDiskSpace;
-    }
-
     private void ResetLinkageScanner()
     {
       IChannelLinkageScanner scanner = _cardHandler.Card.ChannelLinkageScanningInterface;
       if (scanner != null)
       {
         scanner.Reset();
+      }
+    }
+
+    /// <summary>
+    /// deletes time shifting files left in the specified folder.
+    /// </summary>
+    /// <param name="folder">The folder.</param>
+    /// <param name="fileName">Name of the file.</param>
+    private static void CleanTimeShiftFiles(string folder, string fileName)
+    {
+      try
+      {
+        Log.Debug(@"time-shifter: delete timeshift files {0}\{1}", folder, fileName);
+        string[] files = Directory.GetFiles(folder);
+        foreach (string f in files)
+        {
+          if (f.StartsWith(fileName))
+          {
+            try
+            {
+              Log.Debug("time-shifter:   delete {0}", f);
+              File.Delete(f);
+            }
+            catch (Exception e)
+            {
+              Log.Debug("time-shifter: Error \"{0}\" on delete in CleanTimeshiftFiles", e.Message);
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error(ex);
       }
     }
   }

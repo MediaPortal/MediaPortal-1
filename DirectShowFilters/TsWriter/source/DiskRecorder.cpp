@@ -142,7 +142,7 @@ CDiskRecorder::CDiskRecorder(RecorderMode mode)
   m_fileTimeShifting = NULL;
   m_timeShiftingParameters.FileCountMinimum = 6;
   m_timeShiftingParameters.FileCountMaximum = 20;
-  m_timeShiftingParameters.MaximumFileSize = 268435424;   // ~256 MB, divisible by TS_PACKET_LEN so that buffer files start and end on packet boundaries
+  m_timeShiftingParameters.MaximumFileSize = 255999976;   // ~256 MB, divisible by TS_PACKET_LEN so that buffer files start and end on packet boundaries
   m_timeShiftingParameters.ReservationChunkSize = m_timeShiftingParameters.MaximumFileSize;
 
   m_pmtParser.Reset();
@@ -305,15 +305,7 @@ HRESULT CDiskRecorder::SetFileName(wchar_t* fileName)
       return E_INVALIDARG;
     }
 
-    if (m_recorderMode == TimeShift)
-    {
-      m_fileName.str(wstring());
-      m_fileName << fileName << L".tsbuffer";
-    }
-    else
-    {
-      m_fileName.str(fileName);
-    }
+    m_fileName.str(fileName);
     return S_OK;
   }
   catch (...)
@@ -486,7 +478,7 @@ HRESULT CDiskRecorder::SetTimeShiftingParameters(unsigned long fileCountMinimum,
     hr = E_INVALIDARG;
   }
 
-  if (maximumFileSize > 50000000) // ~50 MB
+  if (maximumFileSize > 50000000) // 50 MB
   {
     // Ensure buffer files always start and finish on a TS packet boundary.
     long long fileSizeAdjustment = maximumFileSize % TS_PACKET_LEN;

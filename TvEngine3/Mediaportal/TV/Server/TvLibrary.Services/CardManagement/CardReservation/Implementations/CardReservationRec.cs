@@ -19,7 +19,6 @@
 #endregion
 
 using System;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Scheduler;
 using Mediaportal.TV.Server.TVLibrary.Services;
@@ -31,25 +30,17 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
 {
   public class CardReservationRec : CardReservationBase
   {
-    private CardDetail _cardInfo;
     private RecordingDetail _recDetail;
-
-    public CardDetail CardInfo
-    {
-      get { return _cardInfo; }
-      set { _cardInfo = value; }
-    }
 
     public RecordingDetail RecDetail
     {
-      get { return _recDetail; }
       set { _recDetail = value; }
     }  
     
     protected override bool OnStartTune(ITvCardHandler tvcard, IUser user, int idChannel)
     {
-      _recDetail.MakeFileName(_cardInfo.Card.RecordingFolder);
-      _recDetail.CardInfo = _cardInfo;
+      _recDetail.MakeFileName();
+      _recDetail.CardId = tvcard.DataBaseCard.IdTuner;
       this.LogDebug("Scheduler : record to {0}", _recDetail.FileName);
       string fileName = _recDetail.FileName;
       bool startRecordingOnDisc = (TvResult.Succeeded == ServiceManager.Instance.InternalControllerService.StartRecording(user.Name, user.CardId, out user, ref fileName));
@@ -58,10 +49,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
       {
         _recDetail.FileName = fileName;
         _recDetail.RecordingStartDateTime = DateTime.Now;
-      }
-      if (!startRecordingOnDisc && ServiceManager.Instance.InternalControllerService.AllCardsIdle)
-      {
-        ServiceManager.Instance.InternalControllerService.EpgGrabberEnabled = true;
       }
 
       return startRecordingOnDisc;

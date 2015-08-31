@@ -2436,7 +2436,7 @@ namespace Mediaportal.TV.TvPlugin
 
         try
         {
-          TvTimeShiftPositionWatcher.SetNewChannel(channel.IdChannel);
+          TvTimeShiftPositionWatcher.Instance.SetNewChannel(channel);
         }
         catch
         {
@@ -3379,7 +3379,7 @@ namespace Mediaportal.TV.TvPlugin
         }
         try
         {
-          TvTimeShiftPositionWatcher.SetNewChannel(channel.IdChannel);
+          TvTimeShiftPositionWatcher.Instance.SetNewChannel(channel);
         }
         catch
         {

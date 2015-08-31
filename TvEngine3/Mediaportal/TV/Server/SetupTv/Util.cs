@@ -20,233 +20,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Microsoft.Win32;
 
 namespace Mediaportal.TV.Server.SetupTV
 {
   public class Utils
   {
-    [DllImport("kernel32.dll")]
-    private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out UInt64 lpFreeBytesAvailable,
-                                                  out UInt64 lpTotalNumberOfBytes, out UInt64 lpTotalNumberOfFreeBytes);
-
-    [DllImport("Kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern bool GetVolumeInformation(
-      string RootPathName,
-      StringBuilder VolumeNameBuffer,
-      int VolumeNameSize,
-      out uint VolumeSerialNumber,
-      out uint MaximumComponentLength,
-      out uint FileSystemFlags,
-      StringBuilder FileSystemNameBuffer,
-      int nFileSystemNameSize);
-
-    [DllImport("kernel32.dll")]
-    public static extern long GetDriveType(string driveLetter);
-
-
     // singleton. Dont allow any instance of this class
     private Utils() {}
-
-    public static int getDriveType(string drive)
-    {
-      if (drive == null)
-        return 2;
-      long driveType = GetDriveType(drive);
-      if ((driveType & 5) == 5)
-        return 5; //cd
-      if ((driveType & 3) == 3)
-        return 3; //fixed
-      if ((driveType & 2) == 2)
-        return 2; //removable
-      if ((driveType & 4) == 4)
-        return 4; //remote disk
-      if ((driveType & 6) == 6)
-        return 6; //ram disk
-      return 0;
-    }
-
-    public static string GetSize(long dwFileSize)
-    {
-      if (dwFileSize < 0)
-        return "0";
-      string szTemp;
-      // file < 1 kbyte?
-      if (dwFileSize < 1024)
-      {
-        //  substract the integer part of the float value
-        float fRemainder = (dwFileSize / 1024.0f) - (dwFileSize / 1024.0f);
-        float fToAdd = 0.0f;
-        if (fRemainder < 0.01f)
-          fToAdd = 0.1f;
-        szTemp = String.Format("{0:f} KB", (dwFileSize / 1024.0f) + fToAdd);
-        return szTemp;
-      }
-      const long iOneMeg = 1024 * 1024;
-
-      // file < 1 megabyte?
-      if (dwFileSize < iOneMeg)
-      {
-        szTemp = String.Format("{0:f} KB", dwFileSize / 1024.0f);
-        return szTemp;
-      }
-
-      // file < 1 GByte?
-      long iOneGigabyte = iOneMeg;
-      iOneGigabyte *= 1000;
-      if (dwFileSize < iOneGigabyte)
-      {
-        szTemp = String.Format("{0:f} MB", dwFileSize / ((float)iOneMeg));
-        return szTemp;
-      }
-      //file > 1 GByte
-      int iGigs = 0;
-      while (dwFileSize >= iOneGigabyte)
-      {
-        dwFileSize -= iOneGigabyte;
-        iGigs++;
-      }
-      float fMegs = dwFileSize / ((float)iOneMeg);
-      fMegs /= 1000.0f;
-      fMegs += iGigs;
-      szTemp = String.Format("{0:f} GB", fMegs);
-      return szTemp;
-    }
-
-    public static string MakeFileName(string strText)
-    {
-      if (string.IsNullOrEmpty(strText))
-      {
-        return string.Empty;
-      }
-      foreach (char c in Path.GetInvalidFileNameChars())
-      {
-        strText = strText.Replace(c, '_');
-      }
-      return strText;
-    }
-
-    public static string MakeDirectoryPath(string strText)
-    {
-      if (string.IsNullOrEmpty(strText))
-      {
-        return string.Empty;
-      }
-      foreach (char c in Path.GetInvalidPathChars())
-      {
-        strText = strText.Replace(c, '_');
-      }
-      return strText;
-    }
-
-    public static string ReplaceTag(string line, string tag, string value, string empty)
-    {
-      if (line == null)
-        return String.Empty;
-      if (line.Length == 0)
-        return String.Empty;
-      if (tag == null)
-        return line;
-      if (tag.Length == 0)
-        return line;
-
-      Regex r = new Regex(String.Format(@"\[[^%]*{0}[^\]]*[\]]", tag));
-      if (value == empty)
-      {
-        Match match = r.Match(line);
-        if (match != null && match.Length > 0)
-        {
-          line = line.Remove(match.Index, match.Length);
-        }
-      }
-      else
-      {
-        Match match = r.Match(line);
-        if (match != null && match.Length > 0)
-        {
-          line = line.Remove(match.Index, match.Length);
-          string m = match.Value.Substring(1, match.Value.Length - 2);
-          line = line.Insert(match.Index, m);
-        }
-      }
-      return line.Replace(tag, value);
-    }
-
-    public static ulong GetDiskSpace(string drive)
-    {
-      if (drive.StartsWith(@"\"))
-      {
-        return GetShareSpace(drive);
-      }
-      ulong freeBytesAvailable = 0;
-      ulong totalNumberOfBytes = 0;
-      ulong totalNumberOfFreeBytes = 0;
-
-      GetDiskFreeSpaceEx(
-        drive[0] + @":\",
-        out freeBytesAvailable,
-        out totalNumberOfBytes,
-        out totalNumberOfFreeBytes);
-      return totalNumberOfBytes;
-    }
-
-    public static ulong GetFreeDiskSpace(string drive)
-    {
-      if (drive.StartsWith(@"\"))
-      {
-        return GetFreeShareSpace(drive);
-      }
-      ulong freeBytesAvailable;
-      ulong totalNumberOfBytes;
-      ulong totalNumberOfFreeBytes;
-
-      GetDiskFreeSpaceEx(
-        drive[0] + @":\",
-        out freeBytesAvailable,
-        out totalNumberOfBytes,
-        out totalNumberOfFreeBytes);
-      return freeBytesAvailable;
-    }
-
-    public static ulong GetFreeShareSpace(string UNCPath)
-    {
-      ulong freeBytesAvailable = 0;
-      ulong totalNumberOfBytes = 0;
-      ulong totalNumberOfFreeBytes = 0;
-
-      GetDiskFreeSpaceEx(
-        System.IO.Path.GetPathRoot(UNCPath),
-        out freeBytesAvailable,
-        out totalNumberOfBytes,
-        out totalNumberOfFreeBytes);
-      return freeBytesAvailable;
-    }
-
-    public static ulong GetShareSpace(string UNCPath)
-    {
-      ulong freeBytesAvailable = 0;
-      ulong totalNumberOfBytes = 0;
-      ulong totalNumberOfFreeBytes = 0;
-
-      GetDiskFreeSpaceEx(
-        System.IO.Path.GetPathRoot(UNCPath),
-        out freeBytesAvailable,
-        out totalNumberOfBytes,
-        out totalNumberOfFreeBytes);
-      return totalNumberOfBytes;
-    }
 
     public static void UpdateCardStatus(MPListView mpListView1)
     {
@@ -284,7 +71,7 @@ namespace Mediaportal.TV.Server.SetupTV
             item.SubItems.Add("");//7 owner
           }
           else
-          {            
+          {
             item = mpListView1.Items[i];
           }
 
@@ -318,12 +105,12 @@ namespace Mediaportal.TV.Server.SetupTV
             {
               nrOfusers = 1;
               cardIds.Add(card.CardId.GetValueOrDefault(), nrOfusers);
-            }            
-          } */         
+            }
+          } */
 
           if (card.SubChannelsCountOk)
           {
-            ColorLine(Color.White, item);               
+            ColorLine(Color.White, item);
           }
           else
           {

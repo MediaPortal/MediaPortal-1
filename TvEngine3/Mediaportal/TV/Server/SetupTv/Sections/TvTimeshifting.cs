@@ -18,204 +18,146 @@
 
 #endregion
 
-#region Usings
-
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-
-#endregion
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class TvTimeshifting : SectionSettings
   {
-    #region TunerInfo class
-
-    public class TunerInfo
-    {
-      public Tuner _tuner;
-
-      public TunerInfo(Tuner tuner)
-      {
-        _tuner = tuner;
-      }
-
-      public Tuner Tuner
-      {
-        get
-        {
-          return _tuner;
-        }
-      }
-
-      public override string ToString()
-      {
-        return _tuner.Name;
-      }
-    }
-
-    #endregion
-
-    #region Vars
-
-    private bool _needRestart;
-
-    #endregion
+    private string _bufferLocation;
+    private int _bufferFileSize;
+    private int _bufferFileCount;
+    private int _bufferFileCountMaximum;
+    private int _tunerLimit;
+    private int _parkTimeLimit;
 
     public TvTimeshifting(ServerConfigurationChangedEventHandler handler)
-      : base("Timeshifting", handler)
+      : base("Time-shifting", handler)
     {
       InitializeComponent();
     }
 
-    #region GUI-Events
-
-    private void comboBoxCards_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      TunerInfo info = (TunerInfo)comboBoxCards.SelectedItem;
-      textBoxTimeShiftFolder.Text = info.Tuner.TimeshiftingFolder;
-
-      if (String.IsNullOrEmpty(textBoxTimeShiftFolder.Text))
-      {
-        textBoxTimeShiftFolder.Text = TVDatabase.TVBusinessLayer.Common.GetDefaultTimeshiftingFolder();
-        if (!Directory.Exists(textBoxTimeShiftFolder.Text))
-        {
-          Directory.CreateDirectory(textBoxTimeShiftFolder.Text);
-        }
-        _needRestart = true;
-      }
-    }
-
     public override void OnSectionActivated()
     {
-      _needRestart = false;
-      comboBoxCards.Items.Clear();
-      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
-      foreach (Tuner tuner in tuners)
-      {
-        comboBoxCards.Items.Add(new TunerInfo(tuner));
-      }
+      this.LogDebug("time-shifting: activating");
 
-      if (comboBoxCards.Items.Count > 0)
-      {
-        comboBoxCards.SelectedIndex = 0;
-      }
+      _bufferLocation = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeShiftBufferFolder", string.Empty);
+      _bufferFileSize = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeShiftBufferFileSize", 256);
+      _bufferFileCount = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeShiftBufferFileCount", 6);
+      _bufferFileCountMaximum = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeShiftBufferFileCountMaximum", 20);
+      textBoxBufferLocation.Text = _bufferLocation;
+      numericUpDownBufferFileSize.Value = _bufferFileSize;
+      numericUpDownBufferFileCount.Value = _bufferFileCount;
+      numericUpDownBufferFileCountMaximum.Value = _bufferFileCountMaximum;
+      UpdateBufferTimeEstimates();
+      this.LogDebug("  buffer...");
+      this.LogDebug("    folder         = {0}", textBoxBufferLocation.Text);
+      this.LogDebug("    file size      = {0} MB", numericUpDownBufferFileSize.Value);
+      this.LogDebug("    file count     = {0}", numericUpDownBufferFileCount.Value);
+      this.LogDebug("    max file count = {0}", numericUpDownBufferFileCountMaximum.Value);
 
-      TimeshiftSpaceAdditionalInfo();
-
-      numericUpDownMinFiles.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftMinFiles", 6), 3, 100);
-      numericUpDownMaxFiles.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftMaxFiles", 20), 3, 100);
-      numericUpDownMaxFileSize.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftMaxFileSize", 256), 20, 1024);
-      numericUpDownMaxFreeCardsToTry.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftMaxFreeCardsToTry", 0), 0, 100);
-      numericParkedStreamTimeout.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("parkedStreamTimeout", 5), 1, 300);
+      _tunerLimit = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeShiftTunerLimit", 3);
+      _parkTimeLimit = ServiceAgents.Instance.SettingServiceAgent.GetValue("parkedStreamTimeout", 10);
+      numericUpDownTunerLimit.Value = _tunerLimit;
+      numericUpDownParkTimeLimit.Value = _parkTimeLimit;
+      this.LogDebug("  tuner limit      = {0}", numericUpDownTunerLimit.Value);
+      this.LogDebug("  park time limit  = {0} m", numericUpDownParkTimeLimit.Value);
 
       base.OnSectionActivated();
     }
 
     public override void OnSectionDeActivated()
     {
-      base.OnSectionDeActivated();
+      this.LogDebug("time-shifting: deactivating");
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftMinFiles", (int)numericUpDownMinFiles.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftMaxFiles", (int)numericUpDownMaxFiles.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftMaxFileSize", (int)numericUpDownMaxFileSize.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftMaxFreeCardsToTry", (int)numericUpDownMaxFreeCardsToTry.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("parkedStreamTimeout", (int)numericParkedStreamTimeout.Value);
-
-      if (_needRestart)
+      bool needReload = false;
+      if (!string.Equals(_bufferLocation, textBoxBufferLocation.Text))
       {
-        OnServerConfigurationChanged(this, true, false, null);
+        this.LogInfo("time-shifting: buffer location changed from {0} to {1}", _bufferLocation, textBoxBufferLocation.Text);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeShiftBufferFolder", textBoxBufferLocation.Text);
+        needReload = true;
       }
+      if (_bufferFileSize != numericUpDownBufferFileSize.Value)
+      {
+        this.LogInfo("time-shifting: buffer file size changed from {0} to {1} MB", _bufferFileSize, numericUpDownBufferFileSize.Value);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeShiftBufferFileSize", (int)numericUpDownBufferFileSize.Value);
+        needReload = true;
+      }
+      if (_bufferFileCount != numericUpDownBufferFileCount.Value)
+      {
+        this.LogInfo("time-shifting: buffer file count changed from {0} to {1}", _bufferFileCount, numericUpDownBufferFileCount.Value);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeShiftBufferFileCount", (int)numericUpDownBufferFileCount.Value);
+        needReload = true;
+      }
+      if (_bufferFileCountMaximum != numericUpDownBufferFileCountMaximum.Value)
+      {
+        this.LogInfo("time-shifting: buffer maximum file count changed from {0} to {1}", _bufferFileCountMaximum, numericUpDownBufferFileCountMaximum.Value);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeShiftBufferFileCountMaximum", (int)numericUpDownBufferFileCountMaximum.Value);
+        needReload = true;
+      }
+
+      if (_tunerLimit != numericUpDownTunerLimit.Value)
+      {
+        this.LogInfo("time-shifting: tuner limit changed from {0} to {1}", _tunerLimit, numericUpDownTunerLimit.Value);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeShiftTunerLimit", (int)numericUpDownTunerLimit.Value);
+        needReload = true;
+      }
+      if (_parkTimeLimit != numericUpDownParkTimeLimit.Value)
+      {
+        this.LogInfo("time-shifting: park time limit changed from {0} to {1} minutes", _parkTimeLimit, numericUpDownParkTimeLimit.Value);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("parkedStreamTimeout", (int)numericUpDownParkTimeLimit.Value);
+        needReload = true;
+      }
+
+      if (needReload)
+      {
+        OnServerConfigurationChanged(this, false, true, null);
+      }
+
+      base.OnSectionDeActivated();
     }
 
-    // Browse TimeShift folder
-    private void buttonTimeShiftBrowse_Click(object sender, EventArgs e)
+    private void buttonBufferLocationBrowse_Click(object sender, EventArgs e)
     {
       FolderBrowserDialog dlg = new FolderBrowserDialog();
-      dlg.SelectedPath = textBoxTimeShiftFolder.Text;
-      dlg.Description = "Specify timeshift folder";
+      dlg.SelectedPath = textBoxBufferLocation.Text;
+      dlg.Description = "Select a folder for the time-shift buffer.";
       dlg.ShowNewFolderButton = true;
-      if (dlg.ShowDialog(this) == DialogResult.OK)
+      if (dlg.ShowDialog() == DialogResult.OK)
       {
-        textBoxTimeShiftFolder.Text = dlg.SelectedPath;
+        textBoxBufferLocation.Text = dlg.SelectedPath;
       }
     }
 
-    // When TimeShift folder has been changed
-    private void textBoxTimeShiftFolder_TextChanged(object sender, EventArgs e)
+    private void numericUpDownBufferFileSize_ValueChanged(object sender, EventArgs e)
     {
-      TunerInfo info = (TunerInfo)comboBoxCards.SelectedItem;
-      if (info.Tuner.TimeshiftingFolder != textBoxTimeShiftFolder.Text)
-      {
-        info.Tuner.TimeshiftingFolder = textBoxTimeShiftFolder.Text;
-        ServiceAgents.Instance.TunerServiceAgent.SaveTuner(info.Tuner);
-        _needRestart = true;
-      }
+      UpdateBufferTimeEstimates();
     }
 
-    // Click on Same timeshift folder for all cards
-    private void buttonSameTimeshiftFolder_Click(object sender, EventArgs e)
+    private void numericUpDownBufferFileCount_ValueChanged(object sender, EventArgs e)
     {
-      // Change timeshiftFolder for all cards
-      for (int iIndex = 0; iIndex < comboBoxCards.Items.Count; iIndex++)
-      {
-        TunerInfo info = (TunerInfo)comboBoxCards.Items[iIndex];
-        if (info.Tuner.TimeshiftingFolder != textBoxTimeShiftFolder.Text)
-        {
-          info.Tuner.TimeshiftingFolder = textBoxTimeShiftFolder.Text;
-          ServiceAgents.Instance.TunerServiceAgent.SaveTuner(info.Tuner);
-          if (!_needRestart)
-          {
-            _needRestart = true;
-          }
-        }
-      }
+      UpdateBufferTimeEstimates();
     }
 
-    private static decimal ValueSanityCheck(decimal Value, int Min, int Max)
+    private void numericUpDownBufferFileCountMaximum_ValueChanged(object sender, EventArgs e)
     {
-      if (Value < Min)
-        return Min;
-      if (Value > Max)
-        return Max;
-      return Value;
+      UpdateBufferTimeEstimates();
     }
 
-    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e) {}
-
-    #endregion
-
-    private void numericUpDownMaxFileSize_ValueChanged(object sender, EventArgs e)
+    private void UpdateBufferTimeEstimates()
     {
-      TimeshiftSpaceAdditionalInfo();
-    }
-
-    private void numericUpDownMinFiles_ValueChanged(object sender, EventArgs e)
-    {
-      TimeshiftSpaceAdditionalInfo();
-    }
-
-    private void TimeshiftSpaceAdditionalInfo()
-    {
-      lblMinFileSizeNeeded.Text = "Minimum drive space needed           : " +
-                                  (3 * numericUpDownMaxFileSize.Value).ToString().PadLeft(8) + " MByte";
-      lblFileSizeNeeded.Text = "Drive space needed                         : " +
-                               ((numericUpDownMinFiles.Value * numericUpDownMaxFileSize.Value) +
-                                numericUpDownMaxFileSize.Value).ToString().PadLeft(7) + " MByte";
-      lblOverhead.Text = "Drive space overhead needed         : " + numericUpDownMaxFileSize.Value.ToString().PadLeft(8) +
-                         " MByte";
-      lblTimeSD.Text = "Maximum timeshifting for SD content: approx. " +
-                       ((float)(numericUpDownMinFiles.Value * numericUpDownMaxFileSize.Value) / 100f * 2.75f) +
-                       " Minutes";
-      lblTimeHD.Text = "Maximum timeshifting for HD content: approx. " +
-                       ((float)(numericUpDownMinFiles.Value * numericUpDownMaxFileSize.Value) / 100f * 1.00f) +
-                       " Minutes";
+      labelBufferFileCountDescription.Text = string.Format("=> {0} GB (approx. {1} minutes SD or {2} minutes HD)",
+                                              Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCount.Value / 1000, 2),
+                                              Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCount.Value / 375000, 1),   // SD = ~3 Mb/s
+                                              Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCount.Value / 1250000, 1)); // HD = ~10 Mb/s
+      labelBufferFileCountMaximumDescription.Text = string.Format("=> {0} GB (approx. {1} minutes SD or {2} minutes HD)",
+                                                      Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCountMaximum.Value / 1000, 2),
+                                                      Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCountMaximum.Value / 375000, 1),    // SD = ~3 Mb/s
+                                                      Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCountMaximum.Value / 1250000, 1));  // HD = ~10 Mb/s
     }
   }
 }

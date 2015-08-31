@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
@@ -21,14 +22,18 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     protected readonly ManualResetEvent _eventVideo = new ManualResetEvent(false); // gets signaled when video PID is seen
     protected bool _cancelled;
     protected readonly ManualResetEvent _eventTimeshift = new ManualResetEvent(true);
-    protected ISubChannel _subchannel; // the active sub channel to record        
+    protected ISubChannel _subchannel; // the active sub channel to record
 
-    protected TimeShifterBase(ITvCardHandler cardHandler)
+    private readonly string _folderSettingName;
+    protected string _folder = string.Empty;
+
+    protected TimeShifterBase(ITvCardHandler cardHandler, string folderSettingName)
     {
       _cardHandler = cardHandler;
       _eventAudio.Reset();
       _eventVideo.Reset();
 
+      _folderSettingName = folderSettingName;
       ReloadConfiguration();
 
       if (_cardHandler != null)
@@ -44,8 +49,53 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     public virtual void ReloadConfiguration()
     {
-      _waitForVideoOrAudio = SettingsManagement.GetValue("timeLimitReceiveStream", 15000);
+      _waitForVideoOrAudio = SettingsManagement.GetValue("timeLimitReceiveStream", 7500);
+      this.LogDebug("  receive stream time limit = {0} ms", _waitForVideoOrAudio);
+
+      _folder = SettingsManagement.GetValue(_folderSettingName, string.Empty);
+      bool useDefault = true;
+      if (!string.IsNullOrEmpty(_folder))
+      {
+        try
+        {
+          _folder = Path.GetFullPath(_folder);
+          useDefault = false;
+        }
+        catch
+        {
+        }
+      }
+      if (useDefault)
+      {
+        _folder = GetDefaultFolder();
+      }
+      if (!Directory.Exists(_folder))
+      {
+        try
+        {
+          Directory.CreateDirectory(_folder);
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "card: failed to create {0} time-shifting or recording folder, folder = {1}", useDefault ? "default" : "configured", _folder);
+          if (!useDefault)
+          {
+            _folder = GetDefaultFolder();
+            try
+            {
+              Directory.CreateDirectory(_folder);
+            }
+            catch (Exception ex2)
+            {
+              this.LogError(ex2, "card: failed to create default time-shifting or recording folder, folder = {0}", _folder);
+            }
+          }
+        }
+      }
+      this.LogDebug("  folder                    = {0}", _folder);
     }
+
+    protected abstract string GetDefaultFolder();
 
     protected abstract void AudioVideoEventHandler(PidType pidType);
 

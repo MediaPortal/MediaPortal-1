@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -34,10 +35,10 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
   /// </summary>
   public class DiskManagement
   {
- 
+    [DllImport("kernel32.dll")]
+    private static extern long GetDriveType(string driveLetter);
     
     private readonly System.Timers.Timer _timer;
-    
 
     public DiskManagement()
     {
@@ -64,8 +65,8 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
             {
               drives.Add(card.RecordingFolder);
             }
-          } 
-          else if (Utils.getDriveType(driveLetter) == 3)
+          }
+          else if (GetDriveType(driveLetter) == 3)  // fixed drives only
           {
             if (!drives.Contains(driveLetter))
             {

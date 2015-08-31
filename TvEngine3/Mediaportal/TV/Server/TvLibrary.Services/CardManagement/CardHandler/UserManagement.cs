@@ -97,7 +97,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         return;
       }
 
-      IList<int> subchannelsId = new List<int>();
+      IList<int> subChannelIds = new List<int>();
 
       lock (_usersLock)
       {
@@ -111,24 +111,26 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
             this.LogDebug("usermanagement.RemoveUser: {0}, subch: {1}, card: {2}", user.Name, subchannel.Id, _cardHandler.Card.TunerId);
             if (!ContainsUsersForSubchannel(subchannel.Id))
             {
-              subchannelsId.Add(subchannel.Id);
+              subChannelIds.Add(subchannel.Id);
             }
             break;
           }
         }
       }
 
-      foreach (int subchannelId in subchannelsId)
+      foreach (int subchannelId in subChannelIds)
       {
         //only remove subchannel if it exists.
         ITvLibrarySubChannel subChannel = _cardHandler.Card.GetSubChannel(subchannelId);
         if (subChannel != null)
         {
           //_cardHandler.ParkedUserManagement.CancelAllParkedChannelsForUser(user.Name);//once
-          int usedSubChannel = subchannelId;
+
           // Before we remove the subchannel we have to stop it
+          string timeShiftFileName = null;
           if (subChannel.IsTimeShifting)
           {
+            timeShiftFileName = subChannel.TimeShiftFileName;
             subChannel.StopTimeShifting();
           }
           else if (subChannel.IsRecording)
@@ -136,12 +138,14 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
             subChannel.StopRecording();
           }
           _cardHandler.Card.FreeSubChannel(subchannelId);
-          var cleanTimeshiftFilesThread =
-            new CleanTimeshiftFilesThread(_cardHandler.DataBaseCard.TimeshiftingFolder,
-                                          String.Format("live{0}-{1}.ts", _cardHandler.Card.TunerId,
-                                                        usedSubChannel));
-          var cleanupThread = new Thread(cleanTimeshiftFilesThread.CleanTimeshiftFiles) { IsBackground = true, Name = "TS_File_Cleanup", Priority = ThreadPriority.Lowest };
-          cleanupThread.Start();
+
+          // TODO poor code structure; this should be handled in the time-shifter class
+          if (!string.IsNullOrEmpty(timeShiftFileName))
+          {
+            var cleanTimeshiftFilesThread = new CleanTimeshiftFilesThread(timeShiftFileName);
+            var cleanupThread = new Thread(cleanTimeshiftFilesThread.CleanTimeshiftFiles) { IsBackground = true, Name = "TS_File_Cleanup", Priority = ThreadPriority.Lowest };
+            cleanupThread.Start();
+          }
         }
       }
     }

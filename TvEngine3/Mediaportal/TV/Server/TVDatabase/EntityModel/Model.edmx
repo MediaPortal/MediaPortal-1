@@ -185,7 +185,6 @@
     <Property Name="IsEnabled" Type="bit" Nullable="false" />
     <Property Name="UseForEpgGrabbing" Type="bit" Nullable="false" />
     <Property Name="RecordingFolder" Type="varchar" Nullable="false" MaxLength="300" />
-    <Property Name="TimeshiftingFolder" Type="varchar" Nullable="false" MaxLength="300" />
     <Property Name="SupportedBroadcastStandards" Type="int" Nullable="false" />
     <Property Name="UseConditionalAccess" Type="bit" Nullable="false" />
     <Property Name="CamType" Type="int" Nullable="false" />
@@ -1190,7 +1189,6 @@
           <Property Type="Boolean" Name="IsEnabled" Nullable="false" />
           <Property Type="Boolean" Name="UseForEpgGrabbing" Nullable="false" />
           <Property Type="String" Name="RecordingFolder" Nullable="false" MaxLength="300" Unicode="false" FixedLength="false" />
-          <Property Type="String" Name="TimeshiftingFolder" Nullable="false" MaxLength="300" Unicode="false" FixedLength="false" />
           <Property Type="Int32" Name="SupportedBroadcastStandards" Nullable="false" />
           <Property Type="Boolean" Name="UseConditionalAccess" Nullable="false" />
           <Property Type="Int32" Name="CamType" Nullable="false" />
@@ -2100,7 +2098,6 @@
           <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
           <ScalarProperty Name="UseForEpgGrabbing" ColumnName="UseForEpgGrabbing" />
           <ScalarProperty Name="RecordingFolder" ColumnName="RecordingFolder" />
-          <ScalarProperty Name="TimeshiftingFolder" ColumnName="TimeshiftingFolder" />
           <ScalarProperty Name="SupportedBroadcastStandards" ColumnName="SupportedBroadcastStandards" />
           <ScalarProperty Name="UseConditionalAccess" ColumnName="UseConditionalAccess" />
           <ScalarProperty Name="CamType" ColumnName="CamType" />

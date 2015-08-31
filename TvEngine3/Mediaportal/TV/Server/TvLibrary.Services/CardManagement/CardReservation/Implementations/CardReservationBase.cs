@@ -20,18 +20,14 @@
 
 #region usings
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation;
 using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Ticket;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVLibrary.Services;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.CardReservation;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
@@ -41,15 +37,11 @@ using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
 namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Implementations
 {
-  #region public enums
-
-  #endregion
-
   public abstract class CardReservationBase : ICardReservation
   {
     #region events & delegates
 
-    public delegate TvResult StartCardTuneDelegate(ref IUser user, ref string fileName, int idChannel);
+    public delegate TvResult StartCardTuneDelegate(ref IUser user, out string fileName, int idChannel);
     public event StartCardTuneDelegate OnStartCardTune;
    
     protected abstract bool OnStartTune(ITvCardHandler tvcard, IUser user, int idChannel);
@@ -58,36 +50,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
 
     #region public members
     
-    /// <summary>
-    /// deletes time shifting files left in the specified folder.
-    /// </summary>
-    /// <param name="folder">The folder.</param>
-    /// <param name="fileName">Name of the file.</param>
-    private static void CleanTimeShiftFiles(string folder, string fileName)
-    {
-      try
-      {
-        Log.Debug(@"Controller: delete timeshift files {0}\{1}", folder, fileName);
-        string[] files = Directory.GetFiles(folder);
-        foreach (string t in files.Where(t => t.IndexOf(fileName) >= 0)) 
-        {
-          try
-          {
-            Log.Debug("Controller:   delete {0}", t);
-            File.Delete(t);
-          }
-          catch (Exception e)
-          {
-            Log.Debug("Controller: Error \"{0}\" on delete in CleanTimeshiftFiles", e.Message);
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error(ex);
-      }
-    }
-
     public TvResult Tune(ITvCardHandler tvcard, ref IUser user, IChannel channel, int idChannel, ICardTuneReservationTicket ticket)
     {
       TvResult tvResult = TvResult.AllCardsBusy;
@@ -140,17 +102,8 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
           {
             if (OnStartCardTune != null)
             {
-              var subChannelByChannelId = tvcard.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.IdChannel);
-              if (!ServiceManager.Instance.InternalControllerService.IsTimeShifting(user.Name))
-              {
-                CleanTimeShiftFiles(tvcard.DataBaseCard.TimeshiftingFolder,
-                                    String.Format("live{0}-{1}.ts", user.CardId, subChannelByChannelId));
-              }
-
-              string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", tvcard.DataBaseCard.TimeshiftingFolder,
-                                                       user.CardId,
-                                                       subChannelByChannelId);
-              tvResult = OnStartCardTune(ref user, ref timeshiftFileName, dbChannel.IdChannel);
+              string timeshiftFileName;
+              tvResult = OnStartCardTune(ref user, out timeshiftFileName, dbChannel.IdChannel);
             }
           }
 
@@ -167,8 +120,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
       }
       return tvResult;
     }
-
-
 
     public ICardTuneReservationTicket RequestCardTuneReservation(ITvCardHandler tvcard, IChannel tuningDetail, IUser user, int idChannel)
     {

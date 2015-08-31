@@ -898,11 +898,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       _timeLimitSignalLock = SettingsManagement.GetValue("timeLimitSignalLock", 2500);
 
-      foreach (ISubChannelInternal subChannel in _mapSubChannels.Values)
-      {
-        subChannel.ReloadConfiguration();
-      }
-
       if (InternalEpgGrabberInterface != null)
       {
         InternalEpgGrabberInterface.ReloadConfiguration();

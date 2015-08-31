@@ -252,15 +252,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     }
 
     /// <summary>
-    /// Checks if the schedule specified is currently being recorded and ifso
-    /// returns on which card
+    /// Checks if the schedule specified is currently being recorded.
     /// </summary>
     /// <param name="idSchedule">id of the Schedule</param>
-    /// <param name="card">returns card is recording the channel</param>
     /// <returns>true if a card is recording the schedule, otherwise false</returns>
-    public bool IsRecordingSchedule(int idSchedule, out IVirtualCard card)
+    public bool IsRecordingSchedule(int idSchedule)
     {
-      return Service.IsRecordingSchedule(idSchedule, out card);
+      return Service.IsRecordingSchedule(idSchedule);
     }
 
     /// <summary>
@@ -625,9 +623,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// <param name="userName"> </param>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    public bool TimeShiftGetCurrentFilePosition(string userName, ref long position, ref long bufferId)
+    public bool TimeShiftGetCurrentFilePosition(string userName, out long position, out long bufferId)
     {
-      return Service.TimeShiftGetCurrentFilePosition(userName, ref position, ref bufferId);
+      return Service.TimeShiftGetCurrentFilePosition(userName, out position, out bufferId);
     }
 
     /// <summary>
@@ -643,17 +641,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="userName"></param>
     /// <param name="position1"></param>
-    /// <param name="bufferFile1"></param>
+    /// <param name="bufferId1"></param>
     /// <param name="position2"></param>
-    /// <param name="bufferFile2"></param>
-    /// <param name="recordingFile"></param>
-    public void CopyTimeShiftFile(long position1, string bufferFile1, long position2, string bufferFile2, string recordingFile)
+    /// <param name="bufferId2"></param>
+    /// <param name="destination"></param>
+    public void CopyTimeShiftBuffer(string userName, long position1, long bufferId1, long position2, long bufferId2, string destination)
     {
-      Service.CopyTimeShiftFile(position1, bufferFile1, position2, bufferFile2, recordingFile);
+      Service.CopyTimeShiftBuffer(userName, position1, bufferId1, position2, bufferId2, destination);
     }
-
-  
 
     /// <summary>
     /// Stops the card.

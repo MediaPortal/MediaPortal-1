@@ -99,7 +99,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     /// </summary>
     /// <param name="fileName">filename used for the timeshiftbuffer</param>
     /// <returns>true if succeeded else false</returns>
-    bool StartTimeShifting(string fileName);
+    bool StartTimeShifting(string fileName, int fileCount, int fileCountMaximum, ulong fileSize);
 
     /// <summary>
     /// Stops timeshifting
@@ -125,7 +125,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     /// </summary>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    void TimeShiftGetCurrentFilePosition(ref long position, ref long bufferId);
+    void TimeShiftGetCurrentFilePosition(out long position, out long bufferId);
 
     /// <summary>
     /// Cancel the current tuning process.

@@ -91,7 +91,6 @@
     <Compile Include="TunerGroupManagement.cs" />
     <Compile Include="TunerManagement.cs" />
     <Compile Include="CanceledScheduleManagement.cs" />
-    <Compile Include="Common.cs" />
     <Compile Include="ConflictManagement.cs" />
     <Compile Include="Entities\Cache\EntityCache.cs" />
     <Compile Include="Entities\Cache\EntityCacheHelper.cs" />

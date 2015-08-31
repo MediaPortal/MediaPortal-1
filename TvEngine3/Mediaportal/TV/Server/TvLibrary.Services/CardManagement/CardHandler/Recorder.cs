@@ -29,6 +29,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using Microsoft.Win32;
 using ISubChannel = Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.ISubChannel;
 
 namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
@@ -40,37 +41,45 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// </summary>
     /// <param name="cardHandler">The card handler.</param>
     public Recorder(ITvCardHandler cardHandler)
-      : base(cardHandler)
+      : base(cardHandler, "recordingFolder")
     {
-      string recordingFolder = cardHandler.DataBaseCard.RecordingFolder;
-
-      bool hasFolder = TVDatabase.TVBusinessLayer.Common.IsFolderValid(recordingFolder);
-
-      if (!hasFolder)
-      {
-        recordingFolder = SetDefaultRecordingFolder(cardHandler);
-      }
-
-      if (!Directory.Exists(recordingFolder))
-      {
-        try
-        {
-          Directory.CreateDirectory(recordingFolder);
-        }
-        catch (Exception)
-        {
-          recordingFolder = SetDefaultRecordingFolder(cardHandler);
-          Directory.CreateDirectory(recordingFolder); //if it fails, then nothing works reliably.
-        }
-      }
     }
 
-    private static string SetDefaultRecordingFolder(ITvCardHandler cardHandler)
+    public override void ReloadConfiguration()
     {
-      string recordingFolder = TVDatabase.TVBusinessLayer.Common.GetDefaultRecordingFolder();
-      cardHandler.DataBaseCard.RecordingFolder = recordingFolder;
-      TVDatabase.TVBusinessLayer.TunerManagement.SaveTuner(cardHandler.DataBaseCard);
-      return recordingFolder;
+      this.LogDebug("recorder: reload configuration");
+      base.ReloadConfiguration();
+    }
+
+    protected override string GetDefaultFolder()
+    {
+      string wmcRecordingFolder = null;
+      try
+      {
+        using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\MediaCenter\Service\Recording"))
+        {
+          if (key != null)
+          {
+            wmcRecordingFolder = key.GetValue("RecordPath").ToString();
+            key.Close();
+            key.Dispose();
+          }
+        }
+      }
+      catch
+      {
+      }
+
+      if (!string.IsNullOrEmpty(wmcRecordingFolder))
+      {
+        return wmcRecordingFolder;
+      }
+
+      if (Environment.OSVersion.Version.Major >= 6) // Vista or later
+      {
+        return Path.Combine(Environment.GetEnvironmentVariable("PUBLIC"), "Recorded TV");
+      }
+      return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Shared Documents\\Recorded TV");
     }
 
     protected override void AudioVideoEventHandler(PidType pidType)
@@ -122,12 +131,35 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           {
             _subchannel = subchannel;
 
-            fileName = fileName.Replace("\r\n", " ");
-            fileName = Path.ChangeExtension(fileName, ".ts");
-
-            bool useErrorDetection = true;
-            if (useErrorDetection)
+            // Ensure valid and unique file names are used.
+            fileName = SanitiseFileName(fileName);
+            fileName = Path.Combine(_folder, fileName);
+            string directory = Path.GetDirectoryName(fileName);
+            bool directoryExists = Directory.Exists(directory);
+            if (!directoryExists)
             {
+              try
+              {
+                Directory.CreateDirectory(directory);
+                directoryExists = true;
+              }
+              catch (Exception ex)
+              {
+                this.LogError(ex, "recorder: failed to create recording folder, folder = {1}", directory);
+                result = TvResult.NoFreeDiskSpace;
+              }
+            }
+
+            if (directoryExists)
+            {
+              string baseFileName = fileName;
+              int i = 1;
+              while (File.Exists(fileName + ".ts"))
+              {
+                fileName = string.Format("{0}_{1}", baseFileName, i++);
+              }
+              fileName = fileName + ".ts";
+
               // fix mantis 0002807: A/V detection for recordings is not working correctly 
               // reset the events ONLY before attaching the observer, at a later position it can already miss the a/v callback.
               if (IsTuneCancelled())
@@ -139,16 +171,14 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
               _eventAudio.Reset();
               this.LogDebug("Recorder.start add audioVideoEventHandler");
               AttachAudioVideoEventHandler(subchannel);
-            }
 
-            this.LogDebug("card: StartRecording {0} {1}", _cardHandler.Card.TunerId, fileName);
-            bool recStarted = subchannel.StartRecording(fileName);
-            if (recStarted)
-            {
-              fileName = subchannel.RecordingFileName;
-              _cardHandler.UserManagement.SetOwnerSubChannel(timeshiftingSubChannel, user.Name);              
-              if (useErrorDetection)
+              this.LogDebug("card: StartRecording {0} {1}", _cardHandler.Card.TunerId, fileName);
+              bool recStarted = subchannel.StartRecording(fileName);
+              if (recStarted)
               {
+                fileName = subchannel.RecordingFileName;
+                _cardHandler.UserManagement.SetOwnerSubChannel(timeshiftingSubChannel, user.Name);
+
                 bool isScrambled;
                 if (WaitForFile(ref user, out isScrambled))
                 {
@@ -189,23 +219,76 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       return result;
     }
 
+    private static string SanitiseFileName(string fileName)
+    {
+      if (string.IsNullOrEmpty(fileName))
+      {
+        Log.Warn("recorder: recording file name is not set");
+        return "Unknown";
+      }
+
+      fileName = fileName.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+      string[] originalParts = fileName.Split(Path.DirectorySeparatorChar);
+      List<string> parts = new List<string>(originalParts.Length);
+      for (int i = 0; i < originalParts.Length; i++)
+      {
+        string part = originalParts[i];
+        foreach (char c in Path.GetInvalidFileNameChars())
+        {
+          part = part.Replace(c, '_');
+        }
+
+        while (true)
+        {
+          string temp = part;
+
+          // Remove trailing dots, and trim.
+          if (part[part.Length - 1] == '.')
+          {
+            part = part.Substring(0, part.Length - 1);
+          }
+          part = part.Trim();
+
+          if (string.Equals(temp, part))
+          {
+            break;
+          }
+        }
+
+        if (!string.IsNullOrEmpty(part))
+        {
+          parts.Add(part);
+        }
+      }
+
+      return Path.Combine(parts.ToArray());
+    }
+
     private void HandleFailedRecording(ref IUser user, string fileName)
     {
       this.LogDebug("card: Recording failed! {0} {1}", _cardHandler.Card.TunerId, fileName);
-      string cardRecordingFolderName = _cardHandler.DataBaseCard.RecordingFolder;
       Stop(ref user);
       _cardHandler.UserManagement.RemoveUser(user, _cardHandler.UserManagement.GetTimeshiftingChannelId(user.Name));
 
-      string recordingfolderName = System.IO.Path.GetDirectoryName(fileName);
-      if (recordingfolderName == cardRecordingFolderName)
+      try
       {
-        Utils.FileDelete(fileName);
+        File.Delete(fileName);
+
+        // Delete the containing folder if it's empty and not the base
+        // recording folder.
+        string folderName = Path.GetDirectoryName(fileName);
+        if (string.Equals(folderName, _folder))
+        {
+          return;
+        }
+
+        DirectoryInfo info = new DirectoryInfo(folderName);
+        if (info != null && info.GetFiles().Length == 0 && info.GetDirectories().Length == 0)
+        {
+          Directory.Delete(folderName);
+        }
       }
-      else
-      {
-        // delete 0-byte file in case of error
-        Utils.DeleteFileAndEmptyDirectory(fileName);
-      }
+      catch { }
     }
 
     /// <summary>

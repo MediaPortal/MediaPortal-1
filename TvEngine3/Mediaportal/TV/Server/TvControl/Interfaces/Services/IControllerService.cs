@@ -229,14 +229,12 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     bool DeleteWatchedRecordings(string currentTitle);
 
     /// <summary>
-    /// Checks if the schedule specified is currently being recorded and ifso
-    /// returns on which card
+    /// Checks if the schedule specified is currently being recorded.
     /// </summary>
     /// <param name="idSchedule">id of the Schedule</param>
-    /// <param name="card">returns card is recording the channel</param>
     /// <returns>true if a card is recording the schedule, otherwise false</returns>
     [OperationContract]
-    bool IsRecordingSchedule(int idSchedule, out IVirtualCard card);
+    bool IsRecordingSchedule(int idSchedule);
 
     /// <summary>
     /// Determines whether the specified channel name is recording.
@@ -537,7 +535,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
     [OperationContract]
-    bool TimeShiftGetCurrentFilePosition(string userName, ref long position, ref long bufferId);
+    bool TimeShiftGetCurrentFilePosition(string userName, out long position, out long bufferId);
 
     /// <summary>
     /// Returns if the card is currently timeshifting or not
@@ -550,17 +548,14 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="userName"></param>
     /// <param name="position1"></param>
-    /// <param name="bufferFile1"></param>
+    /// <param name="bufferId1"></param>
     /// <param name="position2"></param>
-    /// <param name="bufferFile2"></param>
-    /// <param name="recordingFile"></param>
+    /// <param name="bufferId2"></param>
+    /// <param name="destination"></param>
     [OperationContract]
-    void CopyTimeShiftFile(Int64 position1, string bufferFile1, Int64 position2, string bufferFile2,
-                           string recordingFile);
-
-
-
+    void CopyTimeShiftBuffer(string userName, long position1, long bufferId1, long position2, long bufferId2, string destination);
 
     /// <summary>
     /// Stops the card.

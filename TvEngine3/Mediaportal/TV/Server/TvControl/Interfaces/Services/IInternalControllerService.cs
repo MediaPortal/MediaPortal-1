@@ -53,7 +53,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     event TvServerEventHandler OnTvServerEvent;
     IDictionary<int, ChannelState> GetAllChannelStatesForIdleUserCached();
     IDictionary<int, ITvCardHandler> CardCollection { get; }
-    bool AllCardsIdle { get; }
 
     /// <summary>
     /// returns if the card is enabled or disabled
@@ -105,7 +104,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <param name="channelId">The imported channel's identifier.</param>
     void OnImportEpgPrograms(int channelId);
 
-    TvResult StartTimeShifting(ref IUser user, ref string timeshiftFileName, int idChannel);
+    TvResult StartTimeShifting(ref IUser user, out string timeshiftFileName, int idChannel);
 
     /// <summary>
     /// Stops the grabbing epg.

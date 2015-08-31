@@ -18,7 +18,7 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// <param name="userName"> </param>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    bool GetCurrentFilePosition(string userName, ref long position, ref long bufferId);
+    bool GetCurrentFilePosition(string userName, out long position, out long bufferId);
 
     /// <summary>
     /// Gets a value indicating whether this card is recording.
@@ -48,7 +48,7 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// <param name="subChannelId"> </param>
     /// <param name="idChannel"> </param>
     /// <returns>TvResult indicating whether method succeeded</returns>
-    TvResult Start(ref IUser user, ref string fileName, int subChannelId, int idChannel);
+    TvResult Start(ref IUser user, out string fileName, int subChannelId, int idChannel);
 
     /// <summary>
     /// Stops the time shifting.
@@ -68,5 +68,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     void OnBeforeTune();
     void OnAfterTune();
     void ReloadConfiguration();
+    void CopyBuffer(string userName, long position1, long bufferId1, long position2, long bufferId2, string destinationFolder);
   }
 }

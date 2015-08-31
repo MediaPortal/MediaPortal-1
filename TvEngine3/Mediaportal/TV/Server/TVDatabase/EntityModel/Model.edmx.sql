@@ -108,7 +108,6 @@ CREATE TABLE `Tuners`(
 	`IsEnabled` bool NOT NULL, 
 	`UseForEpgGrabbing` bool NOT NULL, 
 	`RecordingFolder` varchar (300) NOT NULL, 
-	`TimeshiftingFolder` varchar (300) NOT NULL, 
 	`SupportedBroadcastStandards` int NOT NULL, 
 	`UseConditionalAccess` bool NOT NULL, 
 	`CamType` int NOT NULL, 

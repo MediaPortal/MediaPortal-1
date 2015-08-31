@@ -23,6 +23,8 @@ using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Drawing;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.Common.Types.Enum;
@@ -42,6 +44,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class TvRecording : SectionSettings
   {
+    [DllImport("kernel32.dll")]
+    private static extern long GetDriveType(string driveLetter);
+
+    [DllImport("kernel32.dll")]
+    private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out UInt64 lpFreeBytesAvailable,
+                                                  out UInt64 lpTotalNumberOfBytes, out UInt64 lpTotalNumberOfFreeBytes);
+
     #region constants
 
     private const int MIN_DISK_QUOTA_MB = 500;
@@ -102,26 +111,26 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return string.Empty;
       }
 
-      strInput = Utils.ReplaceTag(strInput, "%channel%", example[recType].Channel, "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%title%", example[recType].Title, "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%name%", example[recType].Episode, "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%series%", example[recType].SeriesNum, "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%episode%", example[recType].EpisodeNum, "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%part%", example[recType].EpisodePart, "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%date%", example[recType].StartDate.ToShortDateString(), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%start%", example[recType].StartDate.ToShortTimeString(), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%end%", example[recType].EndDate.ToShortTimeString(), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%genre%", example[recType].Genre, "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%startday%", example[recType].StartDate.ToString("dd"), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%startmonth%", example[recType].StartDate.ToString("MM"), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%startyear%", example[recType].StartDate.ToString("yyyy"), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%starthh%", example[recType].StartDate.ToString("HH"), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%startmm%", example[recType].StartDate.ToString("mm"), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%endday%", example[recType].EndDate.ToString("dd"), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%endmonth%", example[recType].EndDate.ToString("MM"), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%endyear%", example[recType].EndDate.ToString("yyyy"), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%endhh%", example[recType].EndDate.ToString("HH"), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%endmm%", example[recType].EndDate.ToString("mm"), "unknown");
+      strInput = ReplaceTag(strInput, "%channel%", example[recType].Channel, "unknown");
+      strInput = ReplaceTag(strInput, "%title%", example[recType].Title, "unknown");
+      strInput = ReplaceTag(strInput, "%name%", example[recType].Episode, "unknown");
+      strInput = ReplaceTag(strInput, "%series%", example[recType].SeriesNum, "unknown");
+      strInput = ReplaceTag(strInput, "%episode%", example[recType].EpisodeNum, "unknown");
+      strInput = ReplaceTag(strInput, "%part%", example[recType].EpisodePart, "unknown");
+      strInput = ReplaceTag(strInput, "%date%", example[recType].StartDate.ToShortDateString(), "unknown");
+      strInput = ReplaceTag(strInput, "%start%", example[recType].StartDate.ToShortTimeString(), "unknown");
+      strInput = ReplaceTag(strInput, "%end%", example[recType].EndDate.ToShortTimeString(), "unknown");
+      strInput = ReplaceTag(strInput, "%genre%", example[recType].Genre, "unknown");
+      strInput = ReplaceTag(strInput, "%startday%", example[recType].StartDate.ToString("dd"), "unknown");
+      strInput = ReplaceTag(strInput, "%startmonth%", example[recType].StartDate.ToString("MM"), "unknown");
+      strInput = ReplaceTag(strInput, "%startyear%", example[recType].StartDate.ToString("yyyy"), "unknown");
+      strInput = ReplaceTag(strInput, "%starthh%", example[recType].StartDate.ToString("HH"), "unknown");
+      strInput = ReplaceTag(strInput, "%startmm%", example[recType].StartDate.ToString("mm"), "unknown");
+      strInput = ReplaceTag(strInput, "%endday%", example[recType].EndDate.ToString("dd"), "unknown");
+      strInput = ReplaceTag(strInput, "%endmonth%", example[recType].EndDate.ToString("MM"), "unknown");
+      strInput = ReplaceTag(strInput, "%endyear%", example[recType].EndDate.ToString("yyyy"), "unknown");
+      strInput = ReplaceTag(strInput, "%endhh%", example[recType].EndDate.ToString("HH"), "unknown");
+      strInput = ReplaceTag(strInput, "%endmm%", example[recType].EndDate.ToString("mm"), "unknown");
 
       int index = strInput.LastIndexOf('\\');
       switch (index)
@@ -140,8 +149,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           break;
       }
 
-      strDirectory = Utils.MakeDirectoryPath(strDirectory);
-      strName = Utils.MakeFileName(strName);
+      strDirectory = MakeDirectoryPath(strDirectory);
+      strName = MakeFileName(strName);
 
       if (strName == string.Empty)
         strName = strDefaultName;
@@ -335,16 +344,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       Tuner tuner = (Tuner)comboBoxCards.SelectedItem;
       textBoxFolder.Text = tuner.RecordingFolder;
-      if (String.IsNullOrEmpty(textBoxFolder.Text))
-      {
-        var recPath = TVDatabase.TVBusinessLayer.Common.GetDefaultRecordingFolder();
-        if (!Directory.Exists(recPath))
-        {
-          Directory.CreateDirectory(recPath);
-        }
-        textBoxFolder.Text = recPath;
-        _needRestart = true;
-      }
     }   
 
     // Browse Recording folder
@@ -422,12 +421,32 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         settingName = "freediskspace" + drive[0];
       }
-      ulong freeSpace = Utils.GetFreeDiskSpace(drive);
-      ulong totalSpace = Utils.GetDiskSpace(drive);
 
-      labelFreeDiskspace.Text = Utils.GetSize((long)freeSpace);
-      labelTotalDiskSpace.Text = Utils.GetSize((long)totalSpace);
-      if (labelTotalDiskSpace.Text == "0")
+      ulong freeBytesAvailable = 0;
+      ulong totalNumberOfBytes = 0;
+      ulong totalNumberOfFreeBytes = 0;
+      try
+      {
+        bool result = GetDiskFreeSpaceEx(
+          Path.GetPathRoot(drive),
+          out freeBytesAvailable,
+          out totalNumberOfBytes,
+          out totalNumberOfFreeBytes);
+        if (!result)
+        {
+          Log.Warn("utils: failed to determine disk size, error code = {0}, disk = {1}", Marshal.GetLastWin32Error(), drive);
+          freeBytesAvailable = 0;
+          totalNumberOfBytes = 0;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Warn(ex, "utils: failed to determine disk size, disk = {0}", drive);
+      }
+
+      labelFreeDiskspace.Text = GetSize((long)freeBytesAvailable);
+      labelTotalDiskSpace.Text = GetSize((long)totalNumberOfBytes);
+      if (totalNumberOfBytes == 0)
         labelTotalDiskSpace.Text = "Not available - WMI service not available";
       if (save)
       {
@@ -506,7 +525,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               comboBoxDrive.Items.Add(tuner.RecordingFolder);
             }
           }
-          else if (Utils.getDriveType(driveLetter) == 3)
+          else if (GetDriveType(driveLetter) == 3)
           {
             if (!comboBoxDrive.Items.Contains(driveLetter))
             {
@@ -1088,5 +1107,111 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     }
 
     #endregion
+
+    private static string GetSize(long dwFileSize)
+    {
+      if (dwFileSize < 0)
+        return "0";
+      string szTemp;
+      // file < 1 kbyte?
+      if (dwFileSize < 1024)
+      {
+        //  substract the integer part of the float value
+        float fRemainder = (dwFileSize / 1024.0f) - (dwFileSize / 1024.0f);
+        float fToAdd = 0.0f;
+        if (fRemainder < 0.01f)
+          fToAdd = 0.1f;
+        szTemp = String.Format("{0:f} KB", (dwFileSize / 1024.0f) + fToAdd);
+        return szTemp;
+      }
+      const long iOneMeg = 1024 * 1024;
+
+      // file < 1 megabyte?
+      if (dwFileSize < iOneMeg)
+      {
+        szTemp = String.Format("{0:f} KB", dwFileSize / 1024.0f);
+        return szTemp;
+      }
+
+      // file < 1 GByte?
+      long iOneGigabyte = iOneMeg;
+      iOneGigabyte *= 1000;
+      if (dwFileSize < iOneGigabyte)
+      {
+        szTemp = String.Format("{0:f} MB", dwFileSize / ((float)iOneMeg));
+        return szTemp;
+      }
+      //file > 1 GByte
+      int iGigs = 0;
+      while (dwFileSize >= iOneGigabyte)
+      {
+        dwFileSize -= iOneGigabyte;
+        iGigs++;
+      }
+      float fMegs = dwFileSize / ((float)iOneMeg);
+      fMegs /= 1000.0f;
+      fMegs += iGigs;
+      szTemp = String.Format("{0:f} GB", fMegs);
+      return szTemp;
+    }
+
+    private static string MakeFileName(string strText)
+    {
+      if (string.IsNullOrEmpty(strText))
+      {
+        return string.Empty;
+      }
+      foreach (char c in Path.GetInvalidFileNameChars())
+      {
+        strText = strText.Replace(c, '_');
+      }
+      return strText;
+    }
+
+    private static string MakeDirectoryPath(string strText)
+    {
+      if (string.IsNullOrEmpty(strText))
+      {
+        return string.Empty;
+      }
+      foreach (char c in Path.GetInvalidPathChars())
+      {
+        strText = strText.Replace(c, '_');
+      }
+      return strText;
+    }
+
+    private static string ReplaceTag(string line, string tag, string value, string empty)
+    {
+      if (line == null)
+        return String.Empty;
+      if (line.Length == 0)
+        return String.Empty;
+      if (tag == null)
+        return line;
+      if (tag.Length == 0)
+        return line;
+
+      Regex r = new Regex(String.Format(@"\[[^%]*{0}[^\]]*[\]]", tag));
+      if (value == empty)
+      {
+        Match match = r.Match(line);
+        if (match != null && match.Length > 0)
+        {
+          line = line.Remove(match.Index, match.Length);
+        }
+      }
+      else
+      {
+        Match match = r.Match(line);
+        if (match != null && match.Length > 0)
+        {
+          line = line.Remove(match.Index, match.Length);
+          string m = match.Value.Substring(1, match.Value.Length - 2);
+          line = line.Insert(match.Index, m);
+        }
+      }
+      return line.Replace(tag, value);
+    }
   }
 }

@@ -32,7 +32,7 @@
 using namespace std;
 
 
-#define RESERVED_DISK_SPACE 104857600   // 100 MB = 1024 x 1024 x 100
+#define RESERVED_DISK_SPACE 100000000   // 100 MB
 
 
 extern void LogDebug(const wchar_t* fmt, ...);
@@ -46,7 +46,7 @@ MultiFileWriter::MultiFileWriter()
   ResetDataFileProperties();
 
   // Default configuration.
-  m_dataFileSizeMaximum = 268435456;   // 256 MB
+  m_dataFileSizeMaximum = 256000000;   // 256 MB
   m_dataFileReservationChunkSize = m_dataFileSizeMaximum;
   m_dataFileCountMinimum = 6;
   m_dataFileCountMaximum = 20;

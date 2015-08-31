@@ -52,12 +52,12 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 
     private void LogNumberOfOtherUsersFound(CardDetail cardDetail)
     {
-      if (LogEnabled && cardDetail.Card.IdTuner > 0)
+      if (LogEnabled && cardDetail.Id > 0)
       {
         if (ServiceManager.Instance.InternalControllerService != null)
         {
-          var card = ServiceManager.Instance.InternalControllerService.CardCollection[cardDetail.Card.IdTuner];
-          this.LogInfo("Controller:    card:{0} type:{1} users: {2}", cardDetail.Card.IdTuner, card.Card.SupportedBroadcastStandards, cardDetail.NumberOfOtherUsers);              
+          var card = ServiceManager.Instance.InternalControllerService.CardCollection[cardDetail.Id];
+          this.LogInfo("Controller:    card:{0} type:{1} users: {2}", cardDetail.Id, card.Card.SupportedBroadcastStandards, cardDetail.NumberOfOtherUsers);              
         }
       }
     }
@@ -68,7 +68,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 
       foreach (CardDetail cardDetail in cardsAvailable)
       {
-        ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(cardDetail.Card.IdTuner);
+        ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(cardDetail.Id);
         if (ticket != null)
         {
           cardDetail.SameTransponder = ticket.IsSameTransponder;
@@ -77,7 +77,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
           IDictionary<int, ITvCardHandler> cards = ServiceManager.Instance.InternalControllerService.CardCollection;
           IChannel tuningDetail = cardDetail.TuningDetail;
           bool checkTransponder = CheckTransponder(user, 
-                                                   cards[cardDetail.Card.IdTuner],
+                                                   cards[cardDetail.Id],
                                                    tuningDetail);
           if (checkTransponder)
             cardetails.Add(cardDetail);

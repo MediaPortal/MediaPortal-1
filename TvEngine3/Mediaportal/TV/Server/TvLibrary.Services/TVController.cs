@@ -464,7 +464,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
 
         //enumerate all tv cards in this pc...
-        _maxFreeCardsToTry = SettingsManagement.GetValue("timeshiftMaxFreeCardsToTry", 0);
+        _maxFreeCardsToTry = SettingsManagement.GetValue("timeShiftTunerLimit", 3);
 
         this.LogInfo("Controller: start tuner detector");
         _cards = new Dictionary<int, ITvCardHandler>();
@@ -1055,8 +1055,10 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// <param name="userName"> </param>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    public bool TimeShiftGetCurrentFilePosition(string userName, ref long position, ref long bufferId)
+    public bool TimeShiftGetCurrentFilePosition(string userName, out long position, out long bufferId)
     {
+      position = 0;
+      bufferId = 0;
       bool timeShiftGetCurrentFilePosition = false;
       try
       {
@@ -1065,7 +1067,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           IUser userCopy = GetUserFromContext(userName, TvUsage.Timeshifting);
           if (userCopy != null)
           {
-            timeShiftGetCurrentFilePosition = _cards[userCopy.CardId].TimeShifter.GetCurrentFilePosition(userName, ref position, ref bufferId);  
+            timeShiftGetCurrentFilePosition = _cards[userCopy.CardId].TimeShifter.GetCurrentFilePosition(userName, out position, out bufferId);  
           }
         }
       }
@@ -1100,28 +1102,6 @@ namespace Mediaportal.TV.Server.TVLibrary
         HandleControllerException(e);
       }
       return isTimeShifting;
-    }
-
-    /// <summary>
-    /// This function checks whether something should be recorded at the given time.
-    /// </summary>
-    /// <param name="time">the time to check for recordings.</param>
-    /// <returns>true if any recording due to time</returns>
-    public bool IsTimeToRecord(DateTime time)
-    {
-      return _scheduler.IsTimeToRecord(time);
-    }
-
-    /// <summary>
-    /// This function checks if a spedific schedule should be recorded at the given time.
-    /// </summary>
-    /// <param name="time">the time to check for recordings.</param>
-    /// <param name="scheduleId">the time id of the recording.</param>
-    /// <returns>true if any recording due to time</returns>
-    public bool IsTimeToRecord(DateTime time, int scheduleId)
-    {
-      Schedule schedule = ScheduleManagement.GetSchedule(scheduleId);
-      return _scheduler.IsTimeToRecord(schedule, time);
     }
 
     /// <summary>
@@ -1375,19 +1355,24 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// <summary>
     /// Copies the time shift buffer files to the currently started recording 
     /// </summary>
+    /// <param name="userName">the name of the user</param>
     /// <param name="position1">start offset in first ts buffer file </param>
-    /// <param name="bufferFile1">ts buffer file to start with</param>
+    /// <param name="bufferId1">ts buffer file to start with</param>
     /// <param name="position2">end offset in last ts buffer file</param>
-    /// <param name="bufferFile2">ts buffer file to stop at</param>
-    /// <param name="recordingFile">filename of the recording</param>
-    public void CopyTimeShiftFile(Int64 position1, string bufferFile1, Int64 position2, string bufferFile2,
-                                  string recordingFile)
+    /// <param name="bufferId2">ts buffer file to stop at</param>
+    /// <param name="destination">the destination file name (including fully qualified path)</param>
+    public void CopyTimeShiftBuffer(string userName, long position1, long bufferId1, long position2, long bufferId2, string destination)
     {
       try
       {
-        TsCopier copier = new TsCopier(position1, bufferFile1, position2, bufferFile2, recordingFile);
-        Thread worker = new Thread(new ThreadStart(copier.DoCopy));
-        worker.Start();
+        IUser userCopy = GetUserFromContext(userName, TvUsage.Timeshifting);
+        if (userCopy != null)
+        {
+          ThreadPool.QueueUserWorkItem(delegate
+          {
+            _cards[userCopy.CardId].TimeShifter.CopyBuffer(userName, position1, bufferId1, position2, bufferId2, destination);
+          });
+        }
       }
       catch (Exception e)
       {
@@ -1670,8 +1655,9 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    public TvResult StartTimeShifting(ref IUser user, ref string fileName, int idChannel)
+    public TvResult StartTimeShifting(ref IUser user, out string fileName, int idChannel)
     {
+      fileName = string.Empty;
       TvResult result = TvResult.UnknownError;
       if (ValidateTvControllerParams(user))
       {
@@ -1694,7 +1680,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             this.LogError(ex, "Exception in checking");
           }
           int subChannelId = tvCardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name);
-          result = tvCardHandler.TimeShifter.Start(ref user, ref fileName, subChannelId, idChannel);
+          result = tvCardHandler.TimeShifter.Start(ref user, out fileName, subChannelId, idChannel);
           if (result == TvResult.Succeeded)
           {
             if (!isTimeShifting)
@@ -2856,7 +2842,6 @@ namespace Mediaportal.TV.Server.TVLibrary
         var newCardId = cardInfo.Id;
         int priority = userBefore.Priority.HasValue ? userBefore.Priority.Value : UserFactory.GetDefaultPriority(userBefore.Name);
         IUser userNow = UserFactory.CreateCustomUser(userBefore.Name, priority, newCardId, userBefore.UserType);
-        SetupTimeShiftingFolders(cardInfo);
         ITvCardHandler tvcard = _cards[newCardId];
         try
         {
@@ -3293,31 +3278,6 @@ namespace Mediaportal.TV.Server.TVLibrary
       return maxCards;
     }
 
-    private void SetupTimeShiftingFolders(CardDetail cardInfo)
-    {
-      //setup folders
-      if (cardInfo.Card.RecordingFolder == String.Empty)
-      {
-        cardInfo.Card.RecordingFolder = Path.Combine(PathManager.GetDataPath, "recordings");
-        if (!Directory.Exists(cardInfo.Card.RecordingFolder))
-        {
-          this.LogDebug("Controller: creating recording folder {0} for card {0}", cardInfo.Card.RecordingFolder,
-                    cardInfo.Card.Name);
-          Directory.CreateDirectory(cardInfo.Card.RecordingFolder);
-        }
-      }
-      if (cardInfo.Card.TimeshiftingFolder == String.Empty)
-      {
-        cardInfo.Card.TimeshiftingFolder = Path.Combine(PathManager.GetDataPath, "timeshiftbuffer");
-        if (!Directory.Exists(cardInfo.Card.TimeshiftingFolder))
-        {
-          this.LogDebug("Controller: creating timeshifting folder {0} for card {0}", cardInfo.Card.TimeshiftingFolder,
-                    cardInfo.Card.Name);
-          Directory.CreateDirectory(cardInfo.Card.TimeshiftingFolder);
-        }
-      }
-    }
-
     // userPriority mainly used for setupTV stress test, as it has the ability to customize user priorities during testing
     public TvResult StartTimeShifting(string userName, int userPriority, int idChannel, out IVirtualCard card, out IUser user)
     {
@@ -3422,19 +3382,17 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// returns on which card
     /// </summary>
     /// <param name="idSchedule">id of the Schedule</param>
-    /// <param name="card">returns the card which is recording the channel</param>
     /// <returns>true if a card is recording the schedule, otherwise false</returns>
-    public bool IsRecordingSchedule(int idSchedule, out IVirtualCard card)
+    public bool IsRecordingSchedule(int idSchedule)
     {
-      card = null;
       try
       {
-        if (!_scheduler.IsRecordingSchedule(idSchedule, out card))
+        if (!_scheduler.IsRecordingSchedule(idSchedule))
         {
           this.LogInfo("IsRecordingSchedule: scheduler is not recording schedule");
           return false;
         }
-        this.LogInfo("IsRecordingSchedule: scheduler is recording schedule on cardid:{0}", card.Id);
+        this.LogInfo("IsRecordingSchedule: scheduler is recording schedule");
 
         return true;
       }
@@ -3578,25 +3536,6 @@ namespace Mediaportal.TV.Server.TVLibrary
       catch (Exception e)
       {
         HandleControllerException(e);
-      }
-    }
-
-    /// <summary>
-    /// Gets a value indicating whether all cards are idle.
-    /// </summary>
-    /// <value><c>true</c> if [all cards idle]; otherwise, <c>false</c>.</value>
-    public bool AllCardsIdle
-    {
-      get
-      {
-        Dictionary<int, ITvCardHandler>.Enumerator enumer = _cards.GetEnumerator();
-        while (enumer.MoveNext())
-        {
-          int cardId = enumer.Current.Key;
-          if (_cards[cardId].IsIdle == false)
-            return false;
-        }
-        return true;
       }
     }
 
@@ -4133,32 +4072,8 @@ namespace Mediaportal.TV.Server.TVLibrary
           return;
         }
 
-        try
-        {
-          tuner.ReloadConfiguration();
-          if (!string.Equals(dbSettings.TimeshiftingFolder, handler.DataBaseCard.TimeshiftingFolder))
-          {
-            this.LogInfo("Controller: timeshifting folder for tuner {0} changed from \"{1}\" to \"{2}\"", tunerId, handler.DataBaseCard.TimeshiftingFolder, dbSettings.TimeshiftingFolder);
-            if (!Directory.Exists(dbSettings.TimeshiftingFolder))
-            {
-              this.LogInfo("Controller: creating timeshifting folder");
-              Directory.CreateDirectory(dbSettings.TimeshiftingFolder);
-            }
-          }
-          if (!string.Equals(dbSettings.RecordingFolder, handler.DataBaseCard.RecordingFolder))
-          {
-            this.LogInfo("Controller: recording folder for tuner {0} changed from \"{1}\" to \"{2}\"", tunerId, handler.DataBaseCard.RecordingFolder, dbSettings.RecordingFolder);
-            if (!Directory.Exists(dbSettings.RecordingFolder))
-            {
-              this.LogInfo("Controller: creating recording folder");
-              Directory.CreateDirectory(dbSettings.RecordingFolder);
-            }
-          }
-        }
-        finally
-        {
-          handler.DataBaseCard = dbSettings;
-        }
+        tuner.ReloadConfiguration();
+        handler.DataBaseCard = dbSettings;
       }
     }
 
@@ -4451,9 +4366,9 @@ namespace Mediaportal.TV.Server.TVLibrary
       return result;
     }
 
-    TvResult CardResTsOnStartCardTune(ref IUser user, ref string fileName, int idChannel)
+    TvResult CardResTsOnStartCardTune(ref IUser user, out string fileName, int idChannel)
     {
-      return StartTimeShifting(ref user, ref fileName, idChannel);
+      return StartTimeShifting(ref user, out fileName, idChannel);
     }
 
     private void Tuner_OnBeforeTuneEvent(ITvCardHandler cardHandler)
@@ -4497,12 +4412,8 @@ namespace Mediaportal.TV.Server.TVLibrary
       if (ValidateTvControllerParams(user))
       {
         RefreshUserFromSpecificContext(ref user);
-        card = new VirtualCard(user)
-        {
-          RecordingFolder = _cards[user.CardId].DataBaseCard.RecordingFolder,
-          TimeshiftFolder = _cards[user.CardId].DataBaseCard.TimeshiftingFolder
-        }; 
-      }      
+        card = new VirtualCard(user);
+      }
       return card;
     }
 
@@ -4527,7 +4438,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 
         // check whether the scheduler would like to record something now, but there is no card recording
         // this can happen if a recording is due, but the scheduler has not yet picked up recording (latency)
-        if (_scheduler != null && _scheduler.IsTimeToRecord(DateTime.Now))
+        if (_scheduler != null && _scheduler.IsTimeToRecord())
         {          
           return false;
         }
@@ -5236,74 +5147,6 @@ namespace Mediaportal.TV.Server.TVLibrary
       this.LogDebug("Controller: creating handler");
       handler = new TvCardHandler(dbSettings, tuner);
       _cards[tuner.TunerId] = handler;
-
-      // Remove any old timeshift buffer files or create the timeshifting folder.
-      try
-      {
-        string timeShiftingFolder = dbSettings.TimeshiftingFolder;
-        if (string.IsNullOrEmpty(timeShiftingFolder))
-        {
-          timeShiftingFolder = Path.Combine(PathManager.GetDataPath, "timeshiftbuffer");
-        }
-
-        if (!Directory.Exists(timeShiftingFolder))
-        {
-          this.LogInfo("Controller: creating timeshifting folder \"{0}\"", timeShiftingFolder);
-          Directory.CreateDirectory(timeShiftingFolder);
-        }
-        else
-        {
-          this.LogInfo("Controller: current timeshifting folder is \"{0}\"", timeShiftingFolder);
-          string[] files = Directory.GetFiles(timeShiftingFolder);
-          foreach (string file in files)
-          {
-            try
-            {
-              FileInfo fInfo = new FileInfo(file);
-              if (
-                (fInfo.Extension.ToUpperInvariant().IndexOf(".TSBUFFER") == 0) ||
-                (
-                  (fInfo.Extension.ToUpperInvariant().IndexOf(".TS") == 0) &&
-                  (fInfo.Name.ToUpperInvariant().IndexOf("TSBUFFER") > 0)
-                )
-              )
-              {
-                File.Delete(fInfo.FullName);
-              }
-            }
-            catch (IOException)
-            {
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "Controller: failed to create timeshifting folder or clean up old buffer files");
-      }
-
-      try
-      {
-        string recordingFolder = dbSettings.RecordingFolder;
-        if (string.IsNullOrEmpty(recordingFolder))
-        {
-          recordingFolder = Path.Combine(PathManager.GetDataPath, "recordings");
-        }
-
-        if (!Directory.Exists(recordingFolder))
-        {
-          this.LogInfo("Controller: creating recording folder \"{0}\"", recordingFolder);
-          Directory.CreateDirectory(recordingFolder);
-        }
-        else
-        {
-          this.LogInfo("Controller: current recording folder is \"{0}\"", recordingFolder);
-        }
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "Controller: failed to create recording folder");
-      }
     }
 
     /// <summary>
@@ -5351,7 +5194,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           _scheduler.ReloadConfiguration();
         }
 
-        _maxFreeCardsToTry = SettingsManagement.GetValue("timeshiftMaxFreeCardsToTry", 0);
+        _maxFreeCardsToTry = SettingsManagement.GetValue("timeShiftTunerLimit", 3);
 
         if (_pluginStateChangeHandler != null)
         {

@@ -71,16 +71,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
     /// </summary>
     private int _subChannelIndex = -1;
 
-    /// <summary>
-    /// The maximum time to wait for the program map table.
-    /// </summary>
-    private int _timeOutProgramMapTable = 5000;         // unit = milliseconds
-
-    /// <summary>
-    /// The maximum time to wait for the conditional access table.
-    /// </summary>
-    private int _timeOutConditionalAccessTable = 5000;  // unit = milliseconds
-
     private TableProgramMap _pmt = null;
     private TableConditionalAccess _cat = null;
     private ISet<ushort> _pids = null;
@@ -120,8 +110,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
       _tsFilterInterface = tsWriter;
       _tsFilterInterface.AddChannel(out _subChannelIndex);
       this.LogDebug("MPEG 2 sub-channel: new sub-channel {0} index {1}", _subChannelId, _subChannelIndex);
-
-      ReloadConfiguration();
     }
 
     /// <summary>
@@ -305,7 +293,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
         _eventPmt.Reset();
         DateTime dtStartWait = DateTime.Now;
         ThrowExceptionIfTuneCancelled();
-        pmtFound = _eventPmt.WaitOne(_timeOutProgramMapTable, true);
+        pmtFound = _eventPmt.WaitOne(5000, true);
         ThrowExceptionIfTuneCancelled();
         waitLength = DateTime.Now - dtStartWait;
         if (!pmtFound)
@@ -433,7 +421,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
     /// sets the filename used for timeshifting
     /// </summary>
     /// <param name="fileName">timeshifting filename</param>
-    protected override void OnStartTimeShifting(string fileName)
+    protected override void OnStartTimeShifting(string fileName, int fileCount, int fileCountMaximum, ulong fileSize)
     {
       this.LogDebug("subch:{0} StartTimeShift:{1}", _subChannelId, fileName);
       lock (_lockTsfi)
@@ -445,7 +433,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
         }
 
         _tsFilterInterface.SetVideoAudioObserver(_subChannelIndex, this);
-        _tsFilterInterface.TimeShiftSetParams(_subChannelIndex, _timeShiftFileCountMinimum, _timeShiftFileCountMaximum, _timeShiftFileSize);
+        _tsFilterInterface.TimeShiftSetParams(_subChannelIndex, fileCount, fileCountMaximum, (uint)fileSize);
         _tsFilterInterface.TimeShiftSetTimeShiftingFileNameW(_subChannelIndex, fileName);
 
         this.LogDebug("subch:{0} SetTimeShiftFileName fill in pids", _subChannelId);
@@ -486,8 +474,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
     /// </summary>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    protected override void OnGetTimeShiftFilePosition(ref long position, ref long bufferId)
+    protected override void OnGetTimeShiftFilePosition(out long position, out long bufferId)
     {
+      position = 0;
+      bufferId = 0;
       lock (_lockTsfi)
       {
         if (_tsFilterInterface != null)
@@ -835,7 +825,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
           _tsFilterInterface.CaSetCallBack(_subChannelIndex, this);
           _tsFilterInterface.CaReset(_subChannelIndex);
         }
-        bool found = _eventCat.WaitOne(_timeOutConditionalAccessTable, true);
+        bool found = _eventCat.WaitOne(5000, true);
         ThrowExceptionIfTuneCancelled();
         TimeSpan ts = DateTime.Now - dtNow;
         if (!found)
@@ -997,16 +987,5 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
     #endregion
 
     #endregion
-
-    /// <summary>
-    /// Reload the sub-channel's configuration.
-    /// </summary>
-    public override void ReloadConfiguration()
-    {
-      this.LogDebug("MPEG 2 sub-channel: reload configuration");
-      _timeOutConditionalAccessTable = SettingsManagement.GetValue("timeOutConditionalAccessTable", 5000);
-      _timeOutProgramMapTable = SettingsManagement.GetValue("timeOutProgramMapTable", 5000);
-      base.ReloadConfiguration();
-    }
   }
 }

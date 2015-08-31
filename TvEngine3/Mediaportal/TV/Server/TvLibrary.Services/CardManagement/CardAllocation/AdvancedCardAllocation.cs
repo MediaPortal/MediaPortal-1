@@ -119,7 +119,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         List<CardDetail> cardDetails = GetAvailableCardsForChannel(cards, dbChannel, user, out cardsUnAvailable);
         foreach (CardDetail cardDetail in cardDetails)
         {
-          ITvCardHandler tvCardHandler = cards[cardDetail.Card.IdTuner];
+          ITvCardHandler tvCardHandler = cards[cardDetail.Id];
           bool checkTransponder = CheckTransponder(user, tvCardHandler, cardDetail.TuningDetail);
           if (checkTransponder)
           {
@@ -263,7 +263,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
               this.LogInfo("Controller:    card:{0} type:{1} can tune to channel", cardId, cardHandler.Card.SupportedBroadcastStandards);
             }
             int nrOfOtherUsers = NumberOfOtherUsersOnCurrentCard(cardHandler, user);
-            var cardInfo = new CardDetail(cardId, cardHandler.DataBaseCard, tuningDetail, tuningDetailPriority, isSameTransponder,
+            var cardInfo = new CardDetail(cardId, cardHandler.DataBaseCard.Priority, tuningDetail, tuningDetailPriority, isSameTransponder,
                                                  nrOfOtherUsers);
             cardsAvailable.Add(cardInfo);
           }

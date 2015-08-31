@@ -128,7 +128,6 @@
     <Compile Include="Services\ServiceManager.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\TvControllerService.cs" />
-    <Compile Include="TsCopier.cs" />
     <Compile Include="TvCardContext.cs" />
     <Compile Include="TVController.cs" />
     <Compile Include="TvServiceThread.cs" />

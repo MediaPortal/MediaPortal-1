@@ -21,7 +21,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 
 namespace Mediaportal.TV.Server.TVLibrary.Scheduler
@@ -50,9 +49,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
   public class CardDetail : IComparable<CardDetail>
   {
     private readonly int _cardId;
-    private readonly Tuner _card;
     private readonly int _cardPriority;
-    private readonly IChannel _detail;
+    private readonly IChannel _tuningDetail;
     private readonly int _tuningDetailPriority;
     private bool _sameTransponder;
     private int _numberOfOtherUsers;
@@ -61,17 +59,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     /// ctor
     /// </summary>
     /// <param name="id">card id</param>
-    /// <param name="card">card dataaccess object</param>
-    /// <param name="detail">tuning detail</param>
-    /// <param name="tuningDetailPriority">the priority for the database tuning detail record (higher is more important)</param>
+    /// <param name="cardPriority">card priority (lower is preferred)</param>
+    /// <param name="tuningDetail">tuning detail</param>
+    /// <param name="tuningDetailPriority">the priority for the tuning detail (lower is preferred)</param>
     /// <param name="sameTransponder">indicates whether it is the same transponder</param>
     /// <param name="numberOfOtherUsers"></param>
-    public CardDetail(int id, Tuner card, IChannel detail, int tuningDetailPriority, bool sameTransponder, int numberOfOtherUsers)
+    public CardDetail(int id, int cardPriority, IChannel tuningDetail, int tuningDetailPriority, bool sameTransponder, int numberOfOtherUsers)
     {
       _cardId = id;
-      _card = card;
-      _cardPriority = _card.Priority;
-      _detail = detail;
+      _cardPriority = cardPriority;
+      _tuningDetail = tuningDetail;
       _tuningDetailPriority = tuningDetailPriority;
       _sameTransponder = sameTransponder;
       _numberOfOtherUsers = numberOfOtherUsers;
@@ -86,20 +83,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     }
 
     /// <summary>
-    /// gets/sets the priority
+    /// gets the card's priority
     /// </summary>
-    /// <value>The priority.</value>
     public int CardPriority
     {
       get { return _cardPriority; }
-    }
-
-    /// <summary>
-    /// gets the card
-    /// </summary>
-    public Tuner Card
-    {
-      get { return _card; }
     }
 
     /// <summary>
@@ -107,15 +95,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     /// </summary>
     public IChannel TuningDetail
     {
-      get { return _detail; }
-    }
-
-    /// <summary>
-    /// gets the tuning detail priority
-    /// </summary>
-    public int TuningDetailPriority
-    {
-      get { return _tuningDetailPriority; }
+      get { return _tuningDetail; }
     }
 
     /// <summary>
@@ -154,9 +134,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     /// </remarks>
     public int CompareTo(CardDetail other)
     {
-      if (TuningDetailPriority != other.TuningDetailPriority)
+      if (_tuningDetailPriority != other._tuningDetailPriority)
       {
-        return TuningDetailPriority - other.TuningDetailPriority;
+        return _tuningDetailPriority - other._tuningDetailPriority;
       }
 
       if (SameTransponder != other.SameTransponder)
@@ -173,7 +153,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
         return other.NumberOfOtherUsers - NumberOfOtherUsers;
       }
 
-      return CardPriority - other.CardPriority;
+      return _cardPriority - other._cardPriority;
     }
 
     #endregion

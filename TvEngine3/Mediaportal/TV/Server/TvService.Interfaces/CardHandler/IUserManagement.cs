@@ -128,13 +128,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     void OnStopUser(IUser user);
     void OnZap(IUser user, int idChannel);
 
-    /// <summary>
-    ///   Gets the user.
-    /// </summary>
-    /// <param name = "subChannelId">The sub channel idChannel.</param>
-    /// <param name = "user">The user.</param>
-    ISubChannel GetSubChannel(string userName, int subChannelId);
-
     ISubChannel GetSubChannelByChannelId(string userName, int idChannel);
     void SetOwnerSubChannel(int subChannelId, string userName);    
     int NumberOfOtherUsers(string name);

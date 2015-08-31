@@ -357,7 +357,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         card = GetCardTimeShiftingChannel(id);
         if (card != null)
         {
-          string fileName = String.Format(@"{0}\{1}.mpg", card.RecordingFolder, Utils.MakeFileName(channel));
+          foreach (var c in System.IO.Path.GetInvalidFileNameChars())
+          {
+            channel = channel.Replace(c, '_');
+          }
+          string fileName = string.Format("Test - {0}", channel);
           card.StartRecording(ref fileName);
           mpButtonTimeShift.Enabled = false;
         }
@@ -557,7 +561,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               var vcard = new VirtualCard(user1);
               if (vcard.IsTimeShifting)
               {
-                vcard.RecordingFolder = tuner.RecordingFolder;
                 return vcard;
               }
             } 
@@ -591,7 +594,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               var vcard = new VirtualCard(user);
               if (vcard.IsRecording)
               {
-                vcard.RecordingFolder = tuner.RecordingFolder;
                 return vcard;
               }
             } 

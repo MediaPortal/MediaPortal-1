@@ -180,7 +180,6 @@
     <Property Name="IsEnabled" Type="bit" Nullable="false" />
     <Property Name="UseForEpgGrabbing" Type="bit" Nullable="false" />
     <Property Name="RecordingFolder" Type="nvarchar" Nullable="false" MaxLength="300" />
-    <Property Name="TimeshiftingFolder" Type="nvarchar" Nullable="false" MaxLength="300" />
     <Property Name="SupportedBroadcastStandards" Type="int" Nullable="false" />
     <Property Name="UseConditionalAccess" Type="bit" Nullable="false" />
     <Property Name="CamType" Type="int" Nullable="false" />

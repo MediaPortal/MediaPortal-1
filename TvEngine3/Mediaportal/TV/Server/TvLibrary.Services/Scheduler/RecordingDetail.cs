@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Text.RegularExpressions;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
@@ -35,17 +36,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
   /// </summary>
   public class RecordingDetail
   {
-
-
     #region variables
-    
     
     private readonly ScheduleBLL _schedule;
     private readonly Channel _channel;
     private string _fileName;
     private readonly DateTime _endTime;
     private readonly ProgramBLL _program;
-    private CardDetail _cardInfo;
+    private int _cardId;
     private DateTime _dateTimeRecordingStarted;
     private Recording _recording;
     private readonly bool _isSerie;
@@ -61,10 +59,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     /// <param name="schedule">Schedule of this recording</param>
     /// <param name="channel">Channel on which the recording is done</param>
     /// <param name="endTime">Date/Time the recording should start without pre-record interval</param>
-    /// <param name="endTime">Date/Time the recording should stop with post record interval</param>
     /// <param name="isSerie">Is serie recording</param>
-    /// 
-    /// 
     public RecordingDetail(Schedule schedule, Channel channel, DateTime endTime, bool isSerie)
     {
       _user = UserFactory.CreateSchedulerUser(schedule.IdSchedule);
@@ -75,7 +70,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       _isSerie = isSerie;
 
       DateTime startTime = DateTime.MinValue;
-
       if (isSerie)
       {
         DateTime now = DateTime.Now.AddMinutes(schedule.PreRecordInterval ?? SettingsManagement.GetValue("preRecordInterval", 7));
@@ -111,12 +105,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     }
 
     /// <summary>
-    /// get/sets the CardInfo for this recording
+    /// get the ID of the tuner that is performing the recording
     /// </summary>
-    public CardDetail CardInfo
+    public int CardId
     {
-      get { return _cardInfo; }
-      set { _cardInfo = value; }
+      get { return _cardId; }
+      set { _cardId = value; }
     }
 
     /// <summary>
@@ -146,7 +140,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     }
 
     /// <summary>
-    /// Gets the filename of the recording
+    /// Gets or sets the filename of the recording
     /// </summary>
     public string FileName
     {
@@ -207,38 +201,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
 
     #endregion
 
-    #region private members
-
     /// <summary>
     /// Create the filename for the recording 
     /// </summary>
-    /// <param name="recordingPath"></param>
-    public void MakeFileName(string recordingPath)
+    public void MakeFileName()
     {
-
-      string setting;
+      string format;
       if (!IsSerie)
       {
-        this.LogDebug("Scheduler: MakeFileName() using \"moviesformat\" (_isSerie={0})", _isSerie);
-        setting = SettingsManagement.GetValue("moviesformat", "%title%");
+        this.LogDebug("RecordingDetail: using movie naming format");
+        format = SettingsManagement.GetValue("moviesformat", "%title%");
       }
       else
       {
-        this.LogDebug("Scheduler: MakeFileName() using \"seriesformat\" (_isSerie={0})", _isSerie);
-        setting = SettingsManagement.GetValue("seriesformat", "%title%");
+        this.LogDebug("RecordingDetail: using series naming format");
+        format = SettingsManagement.GetValue("seriesformat", "%title%");
       }
-
-      string strInput = "title%";
-      if (!string.IsNullOrEmpty(setting))
+      if (string.IsNullOrEmpty(format))
       {
-        strInput = setting;
+        format = "%title%";
       }
-      string subDirectory = string.Empty;
-      string fullPath = recordingPath;
-      string fileName;
-      const string recEngineExt = ".ts";
 
-      string[] TagNames = {
+      string[] tagNames = {
                             "%channel%",
                             "%title%",
                             "%name%",
@@ -260,19 +244,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
                             "%endhh%",
                             "%endmm%"
                           };
-      var programCategory = "";
-      if (Program.Entity.ProgramCategory != null)
+
+      // Limit length of title and episode name to try to ensure the file name
+      // length is kept within limits (eg. MAX_PATH).
+      string programTitle = Program.Entity.Title;
+      if (programTitle.Length > 80)
       {
-        programCategory = Program.Entity.ProgramCategory.Category.Trim();  
+        programTitle = programTitle.Substring(0, 77) + "...";
+      }
+      string programEpisodeName = Program.Entity.EpisodeName ?? string.Empty;
+      if (programEpisodeName.Length > 80)
+      {
+        programEpisodeName = programEpisodeName.Substring(0, 77) + "...";
       }
 
-      string[] TagValues = {
-                             _schedule.Entity.Channel.Name.Trim(),
-                             Program.Entity.Title,
-                             Program.Entity.EpisodeName ?? string.Empty,
-                             Program.Entity.SeasonNumber.HasValue ? Program.Entity.SeasonNumber.ToString() : string.Empty,
-                             Program.Entity.EpisodeNumber.HasValue ? Program.Entity.EpisodeNumber.ToString() : string.Empty,
-                             Program.Entity.EpisodePartNumber.HasValue ? Program.Entity.EpisodePartNumber.ToString() : string.Empty,
+      string channelName = _schedule.Entity.Channel.Name.Trim();
+      string programCategory = string.Empty;
+      if (Program.Entity.ProgramCategory != null)
+      {
+        programCategory = Program.Entity.ProgramCategory.Category.Trim();
+      }
+      string[] tagValues = {
+                             channelName,
+                             programTitle,
+                             programEpisodeName,
+                             Program.Entity.SeasonNumber.ToString(),
+                             Program.Entity.EpisodeNumber.ToString(),
+                             Program.Entity.EpisodePartNumber.ToString(),
                              Program.Entity.StartTime.ToString("yyyy-MM-dd"),
                              Program.Entity.StartTime.ToShortTimeString(),
                              Program.Entity.EndTime.ToShortTimeString(),
@@ -289,75 +287,57 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
                              Program.Entity.EndTime.ToString("mm")
                            };
 
-      for (int i = 0; i < TagNames.Length; i++)
+      for (int i = 0; i < tagNames.Length; i++)
       {
-        strInput = Utils.ReplaceTag(strInput, TagNames[i], Utils.MakeFileName(TagValues[i]), "unknown");
-        if (!strInput.Contains("%"))
+        format = ReplaceTag(format, tagNames[i], tagValues[i]);
+        if (!format.Contains("%"))
         {
           break;
         }
       }
 
-      int index = strInput.LastIndexOf('\\');
-      if (index != -1)
+      format = format.Trim();
+      if (string.IsNullOrEmpty(format))
       {
-        subDirectory = strInput.Substring(0, index).Trim();
-        fileName = strInput.Substring(index + 1).Trim();
+        format = string.Format("{0}_{1}_{2}", channelName, programTitle, Program.Entity.StartTime.ToString("yyyy-MM-dd_HHmm"));
       }
-      else
-        fileName = strInput.Trim();
 
-
-      if (subDirectory != string.Empty)
-      {
-        subDirectory = Utils.RemoveTrailingSlash(subDirectory);
-        subDirectory = Utils.MakeDirectoryPath(subDirectory);
-
-        /* Replace any trailing dots in path name; Bugfix for Mantis 1881 */
-        subDirectory = new Regex(@"\.*$").Replace(subDirectory, "");
-        /* Replace any trailing spaces in path name; Bugfix for Mantis 2933*/
-        subDirectory = new Regex(@"\s+\\\s*|\\\s+").Replace(subDirectory, "\\");
-
-        fullPath = recordingPath + "\\" + subDirectory.Trim();
-        if (!System.IO.Directory.Exists(fullPath))
-          System.IO.Directory.CreateDirectory(fullPath);
-      }
-      if (fileName == string.Empty)
-      {
-        DateTime dt = Program.Entity.StartTime;
-        fileName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}",
-                                 _schedule.Entity.Channel.Name, Program.Entity.Title,
-                                 dt.Year, dt.Month, dt.Day,
-                                 dt.Hour,
-                                 dt.Minute,
-                                 DateTime.Now.Minute, DateTime.Now.Second);
-      }
-      fileName = Utils.MakeFileName(fileName);
-      if (DoesFileExist(fullPath + "\\" + fileName))
-      {
-        int i = 1;
-        while (DoesFileExist(fullPath + "\\" + fileName + "_" + i))
-          ++i;
-        fileName += "_" + i;
-      }
-      _fileName = fullPath + "\\" + fileName + recEngineExt;
+      _fileName = format;
     }
 
-    /// <summary>
-    /// checks if a recording with the specified filename exists
-    /// either as .mpg or as .ts
-    /// </summary>
-    /// <param name="fileName">full path and filename expect the extension.</param>
-    /// <returns>true if file exists, otherwise false</returns>
-    private static bool DoesFileExist(string fileName)
+    private static string ReplaceTag(string line, string tag, string value)
     {
-      if (System.IO.File.Exists(fileName + ".mpg"))
-        return true;
-      if (System.IO.File.Exists(fileName + ".ts"))
-        return true;
-      return false;
-    }
+      value = value.Replace(Path.DirectorySeparatorChar, '_').Replace(Path.AltDirectorySeparatorChar, '_');
 
-    #endregion
+      // This regex checks for optional sections of the form [*%tag%*].
+      // Nesting (eg. "Hello [%tag1% [%tag2% ]]world!") is not supported.
+      string regexPattern = string.Format(@"\[[^%]*{0}[^\]]*[\]]", tag.Replace("%", "\\%"));
+      Regex r;
+      try
+      {
+        r = new Regex(regexPattern);
+      }
+      catch (Exception ex)
+      {
+        Log.Error(ex, "RecordingDetail: recording file name tag replacement regex failed, regex = {0}", regexPattern);
+        return line;
+      }
+
+      Match match = r.Match(line);
+      if (match.Success)  // means there are one or more optional sections
+      {
+        // Remove the entire optional section. If the tag has a value, reinsert
+        // the section without the square braces.
+        line = line.Remove(match.Index, match.Length);
+        if (!string.IsNullOrEmpty(value))
+        {
+          string m = match.Value.Substring(1, match.Value.Length - 2);
+          line = line.Insert(match.Index, m);
+        }
+      }
+
+      // Replace tags.
+      return line.Replace(tag, value);
+    }
   }
 }

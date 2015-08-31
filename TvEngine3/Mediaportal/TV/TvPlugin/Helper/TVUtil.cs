@@ -27,7 +27,6 @@ using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
-using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.TvPlugin.Recorded;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -816,8 +815,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       }
       else
       {
-        IVirtualCard vCard;
-        isRec = ServiceAgents.Instance.ControllerServiceAgent.IsRecordingSchedule(idSchedule, out vCard);
+        isRec = ServiceAgents.Instance.ControllerServiceAgent.IsRecordingSchedule(idSchedule);
       }
 
       if (isRec)
