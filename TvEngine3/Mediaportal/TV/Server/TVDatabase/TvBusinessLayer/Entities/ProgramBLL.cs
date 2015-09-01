@@ -18,27 +18,91 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
       get { return _entity; }
     }
 
+    private void SetFlag(ProgramState flag, bool isSet)
+    {
+      ProgramState newState = (ProgramState)_entity.State;
+      if (!isSet && newState.HasFlag(flag))
+      {
+        newState ^= flag;
+        _entity.State = (int)newState;
+      }
+      else if (isSet && !newState.HasFlag(flag))
+      {
+        newState |= flag;
+        _entity.State = (int)newState;
+      }
+    }
+
     /// <summary>
     /// Property relating to database column notify
     /// </summary>
     public bool Notify
     {
-      get { return ((_entity.State & (int)ProgramState.Notify) == (int)ProgramState.Notify); }
-      set
-      {
-        ProgramState newState = (ProgramState)_entity.State;
-        if (!value && (_entity.State & (int)ProgramState.Notify) == (int)ProgramState.Notify)
-        // remove the notify bit flag if present
-        {
-          newState ^= ProgramState.Notify;
-        }
-        if (value) //add the notify bit flag
-        {
-          newState |= ProgramState.Notify;
-        }
-        
-        _entity.State = (int)newState;
-      }
+      get { return ((ProgramState)_entity.State).HasFlag(ProgramState.Notify); }
+      set { SetFlag(ProgramState.Notify, value); }
+    }
+
+    /// <summary>
+    /// Property relating to database column IsRecordingOnce
+    /// </summary>
+    public bool IsRecordingOnce
+    {
+      get { return ((ProgramState)_entity.State).HasFlag(ProgramState.RecordOnce); }
+      set { SetFlag(ProgramState.RecordOnce, value); }
+    }
+
+    /// <summary>
+    /// Property relating to database column IsRecordingSeriesPending
+    /// </summary>
+    public bool IsRecordingSeriesPending
+    {
+      get { return ((ProgramState)_entity.State).HasFlag(ProgramState.RecordSeriesPending); }
+      set { SetFlag(ProgramState.RecordSeriesPending, value); }
+    }
+
+    /// <summary>
+    /// Property relating to database column IsRecordingSeriesPending
+    /// </summary>
+    public bool IsPartialRecordingSeriesPending
+    {
+      get { return ((ProgramState)_entity.State).HasFlag(ProgramState.PartialRecordSeriesPending); }
+      set { SetFlag(ProgramState.PartialRecordSeriesPending, value); }
+    }
+
+    /// <summary>
+    /// Property relating to database column IsRecordingOncePending
+    /// </summary>
+    public bool IsRecordingOncePending
+    {
+      get { return ((ProgramState)_entity.State).HasFlag(ProgramState.RecordOncePending); }
+      set { SetFlag(ProgramState.RecordOncePending, value); }
+    }
+
+    /// <summary>
+    /// Property relating to database column IsRecordingManual
+    /// </summary>
+    public bool IsRecordingManual
+    {
+      get { return ((ProgramState)_entity.State).HasFlag(ProgramState.RecordManual); }
+      set { SetFlag(ProgramState.RecordManual, value); }
+    }
+
+    /// <summary>
+    /// Property relating to database column isRecording
+    /// </summary>
+    public bool IsRecordingSeries
+    {
+      get { return ((ProgramState)_entity.State).HasFlag(ProgramState.RecordSeries); }
+      set { SetFlag(ProgramState.RecordSeries, value); }
+    }
+
+    /// <summary>
+    /// Property relating to database column conflict
+    /// </summary>
+    public bool HasConflict
+    {
+      get { return ((ProgramState)_entity.State).HasFlag(ProgramState.Conflict); }
+      set { SetFlag(ProgramState.Conflict, value); }
     }
 
     /// <summary>
@@ -49,172 +113,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
       get { return (IsRecordingSeries || IsRecordingManual || IsRecordingOnce); }
     }
 
-    /// <summary>
-    /// Property relating to database column IsRecordingOnce
-    /// </summary>
-    public bool IsRecordingOnce
-    {
-      get { return ((_entity.State & (int)ProgramState.RecordOnce) == (int)ProgramState.RecordOnce); }
-      set
-      {
-        ProgramState newState = (ProgramState)_entity.State;
-        if (!value && (_entity.State & (int)ProgramState.RecordOnce) == (int)ProgramState.RecordOnce)
-        // remove the Record bit flag if present                        
-        {
-          newState ^= ProgramState.RecordOnce;
-        }
-        if (value) //add the Record bit flag
-        {
-          newState |= ProgramState.RecordOnce;
-        }
-
-        _entity.State = (int)newState;
-      }
-    }
-
-
-    /// <summary>
-    /// Property relating to database column IsRecordingSeriesPending
-    /// </summary>
-    public bool IsRecordingSeriesPending
-    {
-      get { return ((_entity.State & (int)ProgramState.RecordSeriesPending) == (int)ProgramState.RecordSeriesPending); }
-      set
-      {
-        ProgramState newState = (ProgramState)_entity.State;
-        if (!value && (_entity.State & (int)ProgramState.RecordSeriesPending) == (int)ProgramState.RecordSeriesPending)
-        // remove the Record bit flag if present                
-        {
-          newState ^= ProgramState.RecordSeriesPending;
-        }
-        if (value) //add the Record bit flag
-        {
-          newState |= ProgramState.RecordSeriesPending;
-        }
-
-        _entity.State = (int)newState;
-      }
-    }
-
-    /// <summary>
-    /// Property relating to database column IsRecordingSeriesPending
-    /// </summary>
-    public bool IsPartialRecordingSeriesPending
-    {
-      get { return (_entity != null && (_entity.State & (int)ProgramState.PartialRecordSeriesPending) == (int)ProgramState.PartialRecordSeriesPending); }
-      set
-      {
-        ProgramState newState = (ProgramState)_entity.State;
-        if (value) //add the Record bit flag
-        {
-          newState |= ProgramState.PartialRecordSeriesPending;
-        }
-        else
-        {
-          newState &= ~ProgramState.PartialRecordSeriesPending;
-        }
-        _entity.State = (int)newState;
-      }
-    }
-
-    /// <summary>
-    /// Property relating to database column IsRecordingOncePending
-    /// </summary>
-    public bool IsRecordingOncePending
-    {
-      get { return ((_entity.State & (int)ProgramState.RecordOncePending) == (int)ProgramState.RecordOncePending); }
-      set
-      {
-        ProgramState newState = (ProgramState)_entity.State;
-        if (!value && (_entity.State & (int)ProgramState.RecordOncePending) == (int)ProgramState.RecordOncePending)
-        // remove the Record bit flag if present        
-        {
-          newState ^= ProgramState.RecordOncePending;
-        }
-        if (value) //add the Record bit flag
-        {
-          newState |= ProgramState.RecordOncePending;
-        }
-
-        _entity.State = (int)newState;
-      }
-    }
-
-    /// <summary>
-    /// Property relating to database column IsRecordingManual
-    /// </summary>
-    public bool IsRecordingManual
-    {
-      get { return ((_entity.State & (int)ProgramState.RecordManual) == (int)ProgramState.RecordManual); }
-      set
-      {
-        ProgramState newState = (ProgramState)_entity.State;
-        if (!value && (_entity.State & (int)ProgramState.RecordManual) == (int)ProgramState.RecordManual)
-        // remove the Record bit flag if present
-        {
-          newState ^= ProgramState.RecordManual;
-        }
-        if (value) //add the Record bit flag
-        {
-          newState |= ProgramState.RecordManual;
-        }
-
-        _entity.State = (int)newState;
-      }
-    }
-
     public void ClearRecordPendingState()
     {
       _entity.State &=
         ~(int)
          (ProgramState.RecordOncePending | ProgramState.RecordSeriesPending | ProgramState.PartialRecordSeriesPending);
-    }
-
-
-    /// <summary>
-    /// Property relating to database column isRecording
-    /// </summary>
-    public bool IsRecordingSeries
-    {
-      get { return ((_entity.State & (int)ProgramState.RecordSeries) == (int)ProgramState.RecordSeries); }
-      set
-      {
-        ProgramState newState = (ProgramState)_entity.State;
-        if (!value && (_entity.State & (int)ProgramState.RecordSeries) == (int)ProgramState.RecordSeries)
-        // remove the RecordSeries bit flag if present
-        {
-          newState ^= ProgramState.RecordSeries;
-        }
-        if (value) //add the RecordSeries bit flag
-        {
-          newState |= ProgramState.RecordSeries;
-        }
-        
-        _entity.State = (int)newState;
-      }
-    }
-
-    /// <summary>
-    /// Property relating to database column conflict
-    /// </summary>
-    public bool HasConflict
-    {
-      get { return ((_entity.State & (int)ProgramState.Conflict) == (int)ProgramState.Conflict); }
-      set
-      {
-        ProgramState newState = (ProgramState)_entity.State;
-        if (!value && (_entity.State & (int)ProgramState.Conflict) == (int)ProgramState.Conflict)
-        // remove the Conflict bit flag if present
-        {
-          newState ^= ProgramState.Conflict;
-        }
-        if (value) //add the Conflict bit flag
-        {
-          newState |= ProgramState.Conflict;
-        }
-
-        _entity.State = (int)newState;
-      }
     }
 
     /// <summary>
@@ -224,8 +127,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     /// <returns>true if program ended prior to tCurTime</returns>
     public bool EndedBefore(DateTime tCurTime)
     {
-      bool bEndedBefore = _entity.EndTime <= tCurTime;
-      return bEndedBefore;
+      return _entity.EndTime <= tCurTime;
     }
 
     /// <summary>
@@ -247,8 +149,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     /// <returns>true if program is running at tCurTime</returns>
     public bool IsRunningAt(DateTime tCurTime)
     {
-      bool bRunningAt = tCurTime >= _entity.StartTime && tCurTime <= _entity.EndTime;
-      return bRunningAt;
+      return tCurTime >= _entity.StartTime && tCurTime <= _entity.EndTime;
     }
   }
 }
