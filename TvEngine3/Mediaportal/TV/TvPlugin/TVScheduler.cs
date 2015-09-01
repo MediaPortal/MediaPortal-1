@@ -815,7 +815,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           if (selectedItem.Entity != null)
           {
-            selectedItem.Entity = null;
+            selectedItem = new ScheduleBLL(null);
           }
           LoadDirectory();
           return;

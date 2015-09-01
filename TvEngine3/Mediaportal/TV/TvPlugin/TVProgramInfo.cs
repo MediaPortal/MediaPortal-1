@@ -567,7 +567,7 @@ namespace Mediaportal.TV.TvPlugin
           Schedule recSchedule = null;
           isRecPrg = (episode.IsRecording || episode.IsRecordingOncePending || episode.IsRecordingSeriesPending || 
                       episode.IsPartialRecordingSeriesPending) && IsRecordingProgram(episode.Entity, out recSchedule, true);
-          recordingSchedule.Entity = recSchedule;
+          recordingSchedule = new ScheduleBLL(recSchedule);
         }
         if (isRecPrg)
         {
@@ -872,14 +872,12 @@ namespace Mediaportal.TV.TvPlugin
 
     private void OnSetQuality()
     {
-      ScheduleBLL rec = new ScheduleBLL(currentSchedule);
-
       Schedule recSchedule = null;
       if (currentSchedule == null && !IsRecordingProgram(CurrentProgram, out recSchedule, false))
       {
         return;
       }
-      rec.Entity = recSchedule;
+      ScheduleBLL rec = new ScheduleBLL(recSchedule);
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
@@ -1163,8 +1161,8 @@ namespace Mediaportal.TV.TvPlugin
       var schedule = new ScheduleBLL(scheduleOut);
       if (isRecordingProgram) // check if schedule is already existing
       {
-        Log.Debug("TVProgramInfo.CreateProgram - series schedule found ID={0}, Type={1}", schedule.Entity.IdSchedule,
-                  schedule.Entity.ScheduleType);
+        Log.Debug("TVProgramInfo.CreateProgram - series schedule found ID={0}, Type={1}", scheduleOut.IdSchedule,
+                  scheduleOut.ScheduleType);
         Log.Debug("                            - schedule= {0}", schedule.ToString());
         //schedule = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(schedule.id_Schedule); // get the correct informations
         if (schedule.IsSerieIsCanceled(schedule.GetSchedStartTimeForProg(program), program.IdChannel))
@@ -1172,7 +1170,7 @@ namespace Mediaportal.TV.TvPlugin
           //lets delete the cancelled schedule.
 
           saveSchedule = schedule.Entity;
-          schedule.Entity = ScheduleFactory.CreateSchedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
+          schedule = new ScheduleBLL(ScheduleFactory.CreateSchedule(program.IdChannel, program.Title, program.StartTime, program.EndTime));
 
           schedule.Entity.PreRecordInterval = saveSchedule.PreRecordInterval;
           schedule.Entity.PostRecordInterval = saveSchedule.PostRecordInterval;
@@ -1183,7 +1181,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         Log.Debug("TVProgramInfo.CreateProgram - no series schedule");
         // no series schedule => create it
-        schedule.Entity = ScheduleFactory.CreateSchedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
+        schedule = new ScheduleBLL(ScheduleFactory.CreateSchedule(program.IdChannel, program.Title, program.StartTime, program.EndTime));
         schedule.Entity.ScheduleType = scheduleType;
       }
 
