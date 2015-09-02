@@ -1,23 +1,11 @@
 using System;
 using System.ServiceModel;
-using Mediaportal.TV.Server.TVDatabase.Entities;
 
 namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 {
   [ServiceContract(Namespace = "http://www.team-mediaportal.com")]
   public interface ISettingService
   {
-    [OperationContract]
-    Setting GetSetting(string tagName);
-
-    [Obsolete("Obsolete method, please use a type-safe version of GetValue.")]
-    [OperationContract]
-    Setting GetSettingWithDefaultValue(string tagName, string defaultValue);
-
-    [Obsolete("Obsolete method, please use a type-safe version of SaveValue.")]
-    [OperationContract]
-    void SaveSetting(string tagName, string defaultValue);
-
     [OperationContract(Name = "SaveValueInt")]
     void SaveValue(string tagName, int defaultValue);
 

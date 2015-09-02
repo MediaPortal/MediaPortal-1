@@ -11,75 +11,39 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
   public static class SettingsManagement
   {
-    public static Setting GetSetting(string tagName)
-    {
-      Setting setting = EntityCacheHelper.Instance.SettingCache.GetOrUpdateFromCache(tagName,
-                  delegate
-                    {
-                      using (ISettingRepository settingsRepository = new SettingRepository())
-                      {
-                        return settingsRepository.GetSetting(tagName);
-                      }
-                    }
-        );
-      return setting;
-    }
-
-    public static void SaveSetting(string tagName, string value)
-    {            
-      using (ISettingRepository settingsRepository = new SettingRepository(true))
-      {
-        Setting setting = settingsRepository.SaveSetting(tagName, value);
-        EntityCacheHelper.Instance.SettingCache.AddOrUpdateCache(tagName, setting);
-      }      
-    }
-
     public static void SaveValue(string tagName, int defaultValue)
     {
-      SaveSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
+      SaveValue(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
     }
     
     public static void SaveValue(string tagName, double defaultValue)
     {
-      SaveSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
+      SaveValue(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
     }
     
     public static void SaveValue(string tagName, bool defaultValue)
     {
-      SaveSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture).ToLowerInvariant());
+      SaveValue(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
     }
     
     public static void SaveValue(string tagName, string defaultValue)
     {
-      SaveSetting(tagName, defaultValue);
+      using (ISettingRepository settingsRepository = new SettingRepository(true))
+      {
+        Setting setting = settingsRepository.SaveSetting(tagName, defaultValue);
+        EntityCacheHelper.Instance.SettingCache.AddOrUpdateCache(tagName, setting);
+      }
     }
     
     public static void SaveValue(string tagName, DateTime defaultValue)
     {
-      SaveSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
-    }
-    
-    public static Setting GetSetting(string tagName, string defaultValue)
-    {
-      Setting setting = EntityCacheHelper.Instance.SettingCache.GetFromCache(tagName);
-
-      if (setting == null)
-      {
-        using (ISettingRepository settingsRepository = new SettingRepository(true))
-        {
-          setting = settingsRepository.GetOrSaveSetting(tagName, defaultValue);
-          EntityCacheHelper.Instance.SettingCache.AddOrUpdateCache(tagName, setting);
-        } 
-      }
-      return setting;
+      SaveValue(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
     }
 
     public static int GetValue(string tagName, int defaultValue)
     {
-      Setting setting = GetSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
       int number;
-      bool parsed = int.TryParse(setting.Value, out number);
-      if (!parsed)
+      if (!int.TryParse(GetValue(tagName, defaultValue.ToString(CultureInfo.InvariantCulture)), out number))
       {
         number = defaultValue;
       }
@@ -88,10 +52,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static double GetValue(string tagName, double defaultValue)
     {
-      Setting setting = GetSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
       double number;      
-      bool parsed = double.TryParse(setting.Value, out number);
-      if (!parsed)
+      if (!double.TryParse(GetValue(tagName, defaultValue.ToString(CultureInfo.InvariantCulture)), out number))
       {
         number = defaultValue;
       }
@@ -100,20 +62,31 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static bool GetValue(string tagName, bool defaultValue)
     {
-      Setting setting = GetSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture).ToLowerInvariant());
-      return setting.Value == "true";
+      return GetValue(tagName, defaultValue.ToString(CultureInfo.InvariantCulture)) == true.ToString(CultureInfo.InvariantCulture);
     }
 
     public static string GetValue(string tagName, string defaultValue)
     {
-      Setting setting = GetSetting(tagName, defaultValue);
+      Setting setting = EntityCacheHelper.Instance.SettingCache.GetFromCache(tagName);
+      if (setting == null)
+      {
+        using (ISettingRepository settingsRepository = new SettingRepository(true))
+        {
+          setting = settingsRepository.GetOrSaveSetting(tagName, defaultValue);
+          EntityCacheHelper.Instance.SettingCache.AddOrUpdateCache(tagName, setting);
+        }
+      }
       return setting.Value;
     }
 
     public static DateTime GetValue(string tagName, DateTime defaultValue)
     {
-      Setting setting = GetSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
-      return string.IsNullOrEmpty(setting.Value) ? DateTime.MinValue : DateTime.Parse(setting.Value, CultureInfo.InvariantCulture);
+      DateTime dateTime;
+      if (!DateTime.TryParse(GetValue(tagName, defaultValue.ToString(CultureInfo.InvariantCulture)), CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
+      {
+        dateTime = defaultValue;
+      }
+      return dateTime;
     }
 
     public static IList<Setting> ListAllSettings()
