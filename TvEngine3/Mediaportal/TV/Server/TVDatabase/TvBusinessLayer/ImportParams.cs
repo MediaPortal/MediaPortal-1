@@ -7,7 +7,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
   {
     public ProgramList ProgramList;
     public EpgDeleteBeforeImportOption ProgamsToDelete;
-    public string ConnectString;
     public ThreadPriority Priority;
     public int SleepTime;
   }

@@ -68,7 +68,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
   /// </summary>
   public class WeekEndTool
   {
-
     private static bool _startDayLoaded = false;
     private static DayOfWeek _firstWorkingDay = DayOfWeek.Monday;
 
@@ -194,44 +193,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     public static DayOfWeek SecondWeekendDay
     {
       get { return GetDayByIndex(6); }
-    }
-
-    /// <summary>
-    /// Returns a comma separated list of the weekend days as 
-    /// numbers suitable for use in SQL queries
-    /// </summary>
-    /// <value>the weekend days list</value>
-    public static string SqlWeekendDays
-    {
-      get
-      {
-        int firstWeekend = (int)FirstWeekendDay + 1;
-        int secondWeekend = (int)SecondWeekendDay + 1;
-        return "" + firstWeekend + "," + secondWeekend;
-      }
-    }
-
-    /// <summary>
-    /// Returns a comma separated list of the working days as 
-    /// numbers suitable for use in SQL queries
-    /// </summary>
-    /// <value>the working days list</value>
-    public static string SqlWorkingDays
-    {
-      get
-      {
-        string result = "";
-        for (int i = 0; i < 5; i++)
-        {
-          int sqlDayNumber = (int)GetDayByIndex(i) + 1;
-          if (i != 0)
-          {
-            result += ",";
-          }
-          result += sqlDayNumber;
-        }
-        return result;
-      }
     }
 
     #endregion
