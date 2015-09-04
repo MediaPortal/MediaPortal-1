@@ -57,6 +57,12 @@ namespace MediaPortal.Video.Database.SqlServer
       public string CNT { get; set; }
     }
 
+    class FilesForMovie
+    {
+      public string strFilename { get; set; }
+      public string strPath { get; set; }
+    }
+
     #region ctor
 
     public VideoDatabaseADO()
@@ -639,10 +645,16 @@ namespace MediaPortal.Video.Database.SqlServer
           return;
         }
 
-        var query = (from sql in _connection.paths
+        /*var query = (from sql in _connection.paths
                      join sql2 in _connection.files on sql.idPath equals sql2.idPath
                      where sql2.idMovie == lMovieId
-                     select new { sql.strPath, sql2.strFilename }).ToList();
+                     select new { sql.strPath, sql2.strFilename }).ToList();*/
+
+        string strSQL = String.Format(
+         "SELECT strFilename,strPath FROM path,files WHERE path.idPath=files.idPath AND files.idmovie={0} ORDER BY strFilename ASC",
+         lMovieId);
+
+        var query = _connection.ExecuteStoreQuery<FilesForMovie>(strSQL).ToList();
 
         if (query.Count == 0)
         {
@@ -2920,16 +2932,20 @@ namespace MediaPortal.Video.Database.SqlServer
 
       try
       {
-        var query = (from sql in _connection.durations
+        /*var query = (from sql in _connection.durations
                      where sql.idFile == iFileId
-                     select sql).FirstOrDefault();
+                     select sql).FirstOrDefault();*/
+
+        string sql = string.Format("SELECT duration FROM duration WHERE idFile={0}", iFileId);
+
+        var query = _connection.ExecuteStoreQuery<int>(sql).FirstOrDefault();
 
         if (query == null)
         {
           return 0;
         }
 
-        return (int)query.duration1;
+        return (int)query;
       }
       catch (ThreadAbortException)
       {
@@ -6823,15 +6839,23 @@ namespace MediaPortal.Video.Database.SqlServer
       {
         int idMovie = (int)movieinfo[iRow].idMovie;
 
-        var movie = (from sql in _connection.movies
+        /*var movie = (from sql in _connection.movies
                      where sql.idMovie == idMovie
-                     select sql).FirstOrDefault();
+                     select sql).FirstOrDefault();*/
+
+        string strSQL = String.Format("SELECT * FROM movie WHERE idMovie={0}", idMovie);
+
+        var movie = _connection.ExecuteStoreQuery<Databases.movie>(strSQL).FirstOrDefault();
 
         int idPath = (int)movie.idPath;
 
-        var path = (from sql in _connection.paths
+        /*var path = (from sql in _connection.paths
                     where sql.idPath == idPath
-                    select sql).FirstOrDefault();
+                    select sql).FirstOrDefault();*/
+
+        strSQL = String.Format("SELECT * FROM path WHERE idPath={0}", idPath);
+
+        var path = _connection.ExecuteStoreQuery<Databases.path>(strSQL).FirstOrDefault();
 
         double rating;
         Double.TryParse(movieinfo[iRow].fRating, out rating);
@@ -6910,13 +6934,18 @@ namespace MediaPortal.Video.Database.SqlServer
 
         if (string.IsNullOrEmpty(details.Path) && details.ID > 0)
         {
-          int detailsID = details.ID;
+          /*int detailsID = details.ID;
           var query = (from sql in _connection.movies
                        join s1 in _connection.paths on sql.idPath equals s1.idPath
                        where sql.idMovie == detailsID
-                       select new { s1 }).FirstOrDefault();
+                       select new { s1 }).FirstOrDefault();*/
 
-          details.Path = query.s1.strPath;
+          strSQL = String.Format(
+           "SELECT path.strPath FROM movie,path WHERE path.idpath=movie.idpath AND movie.idMovie = {0}", details.ID);
+
+          var query = _connection.ExecuteStoreQuery<string>(strSQL).FirstOrDefault();
+
+          details.Path = query;
         }
 
         if (details.ID > 0)
