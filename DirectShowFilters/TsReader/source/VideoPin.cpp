@@ -510,7 +510,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           cRefTime -= m_pTsReaderFilter->m_ClockOnStart.m_time;
           
           // 'fast start' timestamp modification, during first (AddVideoComp + 1 sec) of play
-          double fsAdjLimit = (double)m_pTsReaderFilter->AddVideoComp.m_time + (double)FS_ADDON_LIM; //vid comp + 1 second
+          double fsAdjLimit = (1.0 * (double)m_pTsReaderFilter->AddVideoComp.m_time) + (double)FS_ADDON_LIM; //(1 * vid comp) + 1 second
           if (m_pTsReaderFilter->m_EnableSlowMotionOnZapping && ((double)cRefTime.m_time < fsAdjLimit) )
           {
             //float startCref = (float)cRefTime.m_time/(1000*10000); //used in LogDebug below only
