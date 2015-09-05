@@ -1535,7 +1535,7 @@ namespace MediaPortal.Util
           }
           else
           {
-            if ((Util.Utils.IsUNCNetwork(item.Path) || Util.Utils.IsUNCNetwork(Util.Utils.FindUNCPaths(item.Path))) &&
+            if ((Util.Utils.IsUNCNetwork(item.Path) || Util.Utils.IsUNCNetwork(Util.Utils.FindUNCPaths(item.Path))) && !pathOnline &&
                 Util.Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile("\\Media\\defaultNetworkOffline.png")))
             {
               item.IconImage = "defaultNetworkOffline.png";
