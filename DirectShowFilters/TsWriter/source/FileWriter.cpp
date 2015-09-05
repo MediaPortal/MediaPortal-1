@@ -151,7 +151,8 @@ HRESULT FileWriter::OpenFile()
   						 (DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE),          // Share access
   						 NULL,                             // Security
   						 (DWORD) OPEN_ALWAYS,              // Open flags
-  						 (DWORD) FILE_ATTRIBUTE_NORMAL,    // More flags
+  						 //(DWORD) FILE_ATTRIBUTE_NORMAL,    // More flags
+							 (DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS),     // More flags
   						 NULL);                            // Template
   }
 
@@ -197,14 +198,17 @@ HRESULT FileWriter::CloseFile()
      		SetEndOfFile(m_hFile);
    	  }
    	}
-  
-    // LogDebug(L"FileWriter: CloseFile(), file %s: currentPosition %I64d, m_maxFileSize: %I64d, m_chunkReserveFileSize: %I64d, m_bChunkReserve: %d", m_pFileName, currentPosition, m_maxFileSize, m_chunkReserveFileSize, m_bChunkReserve);			  
-  
+    
   	if (!CloseHandle(m_hFile))
   	{
   	  LogDebug(L"FileWriter: CloseFile(), CloseHandle(m_hFile) failed, m_hFile 0x%x", m_hFile);
   	}
   	m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
+  	
+  	if (m_pFileName)
+  	{
+      LogDebug(L"FileWriter: CloseFile() : %s", m_pFileName);			  
+    }
 	}
 
 	return S_OK;

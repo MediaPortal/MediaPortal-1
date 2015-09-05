@@ -86,9 +86,15 @@ bool CTsFileSeek::Seek(CRefTime refTime)
   if (seekTimeStamp < 0) seekTimeStamp=0;
   //if (seekTimeStamp > fileDuration) seekTimeStamp=fileDuration;
 
+  __int64 fileSize=m_reader->GetFileSize();
+  if (fileSize < 0)
+  {
+    return true; //Error
+  }
+
   //make a guess where should start looking in the file
   double percent=seekTimeStamp/fileDuration;
-  __int64 filePos=(__int64)(m_reader->GetFileSize()*percent);
+  __int64 filePos=(__int64)((double)fileSize * percent);
 
   filePos/=188;
   filePos*=188;
@@ -98,7 +104,7 @@ bool CTsFileSeek::Seek(CRefTime refTime)
   m_seekPid=m_duration.GetPid();
   LogDebug("FileSeek: seek to %f filepos:%x pid:%x", seekTimeStamp,(DWORD)filePos, m_seekPid);
   
-  __int64 binaryMax=m_reader->GetFileSize();
+  __int64 binaryMax=fileSize;
   __int64 binaryMin=0;
   __int64 lastFilePos=0;
   int seekingIteration=0;
@@ -117,7 +123,8 @@ bool CTsFileSeek::Seek(CRefTime refTime)
       m_reader->SetFilePointer(0,FILE_BEGIN);
       return false;
     }
-    if (filePos+SEEK_READ_SIZE > m_reader->GetFileSize())
+    
+    if (filePos+SEEK_READ_SIZE > fileSize)
     {
       //no need to seek when we want to seek to end of file
       //simply set the pointer at the end of the file

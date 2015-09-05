@@ -40,16 +40,18 @@
 #define INIT_SHOWBUFFERAUDIO 3
 
 //Buffer control and start-of-play timing control constants
-#define FS_TIM_LIM (2000*10000) //2 seconds in hns units
-#define FS_ADDON_LIM (1000*10000) //1 second in hns units (must not be zero)
-#define INITIAL_BUFF_DELAY 0      // ms units
-#define AUDIO_DELAY (0*10000)     //hns units - audio timestamp offset (delays audio relative to video)
-#define SLOW_PLAY_PPM 0     //hns units - slow play in PPM 
-#define AV_READY_DELAY 200     // ms units - delay before asserting VFW_S_CANT_CUE
-#define PRESENT_DELAY (200*10000) // hns units - timestamp compensation offset
-#define AUDIO_READY_POINT (0.2f + ((float)PRESENT_DELAY/10000000.0f))    // in seconds
-#define AUDIO_STALL_POINT 1.5f     // in seconds
-#define VIDEO_STALL_POINT 2.5f     // in seconds
+#define FS_TIM_LIM (2000*10000)   /* 2 seconds in hns units                                              */
+#define FS_ADDON_LIM (1000*10000) /* 1 second in hns units (must not be zero)                            */
+#define INITIAL_BUFF_DELAY 0      /* ms units                                                            */
+#define AUDIO_DELAY (0*10000)     /* hns units - audio timestamp offset (delays audio relative to video) */
+#define SLOW_PLAY_PPM 0           /* hns units - slow play in PPM                                        */
+#define AV_READY_DELAY 200        /* ms units - delay before asserting VFW_S_CANT_CUE                    */
+#define PRESENT_DELAY (200*10000) /* hns units - timestamp compensation offset                           */
+#define AUDIO_READY_POINT (0.2f + ((float)PRESENT_DELAY/10000000.0f))  /* in seconds                     */
+#define AUDIO_STALL_POINT 1.5f    /* in seconds                                                          */
+#define VIDEO_STALL_POINT 2.5f    /* in seconds                                                          */
+#define MIN_AUD_BUFF_TIME 410     /* ms units                                                            */
+#define MIN_VID_BUFF_TIME 310     /* ms units                                                            */
 
 //Playback speed adjust limit (in PPM)
 #define SPEED_ADJ_LIMIT 4000
@@ -69,7 +71,7 @@
 //File read prefetch 'looping retry' timeout limit (in ms)
 #define MAX_PREFETCH_LOOP_TIME 500
 #define PF_LOOP_DELAY_MIN 10
-#define PF_LOOP_DELAY_MAX 120
+#define PF_LOOP_DELAY_MAX 50
 
 //Timeout for RTSP 'no data available' end-of-file detection (in ms)
 #define RTSP_EOF_TIMEOUT 2000

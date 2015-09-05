@@ -196,6 +196,7 @@
     <ClCompile Include="source\PmtParser.cpp" />
     <ClCompile Include="source\RTSPClient.cpp" />
     <ClCompile Include="source\SubtitlePin.cpp" />
+    <ClCompile Include="source\TsAVRT.cpp" />
     <ClCompile Include="source\TsDuration.cpp" />
     <ClCompile Include="source\TsFileSeek.cpp" />
     <ClCompile Include="source\TsReader.cpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="source\StdAfx.h" />
     <ClInclude Include="source\SubtitlePin.h" />
     <ClInclude Include="source\TeletextServiceInfo.h" />
+    <ClInclude Include="source\TsAVRT.h" />
     <ClInclude Include="source\TsDuration.h" />
     <ClInclude Include="source\TsFileSeek.h" />
     <ClInclude Include="source\TsReader.h" />

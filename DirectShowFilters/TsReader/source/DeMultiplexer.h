@@ -41,6 +41,7 @@
 #include "MpegPesParser.h"
 #include "FrameHeaderParser.h"
 #include "CcParseH264.h"
+#include "TsAVRT.h"
 
 using namespace std;
 class CTsReaderFilter;
@@ -60,7 +61,7 @@ public:
 	void SetData(const void* ptr, DWORD len) {SetCount(len); memcpy(GetData(), ptr, len);}
 };
 
-class CDeMultiplexer : public CPacketSync, public IPatParserCallback, public TSThread
+class CDeMultiplexer : public CPacketSync, public IPatParserCallback, public TSThread, public TsAVRT
 {
 public:
   CDeMultiplexer( CTsDuration& duration,CTsReaderFilter& filter);
@@ -154,6 +155,7 @@ public:
   void PrefetchData();
   
   DWORD GetMaxFileReadLatency();
+  float GetAveFileReadLatency();
 
   bool m_DisableDiscontinuitiesFiltering;
   DWORD m_LastDataFromRtsp;
@@ -338,5 +340,7 @@ private:
   
   DWORD m_fileReadLatency;
   DWORD m_maxFileReadLatency;
+  DWORD m_fileReadLatSum;
+  DWORD m_fileReadLatCount;
     
 };
