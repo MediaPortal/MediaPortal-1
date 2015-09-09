@@ -46,8 +46,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
 {
   /// <summary>
   /// A class for handling conditional access, DiSEqC, PID filtering and remote
-  /// controls for Twinhan tuners, including clones from TerraTec, TechniSat
-  /// and Digital Rise.
+  /// controls for Twinhan tuners, including clones from TerraTec, TechniSat,
+  /// Digital Rise and Elgato.
   /// </summary>
   public class Twinhan : BaseTunerExtension, IConditionalAccessMenuActions, IConditionalAccessProvider, ICustomTuner, IDiseqcDevice, IDisposable, IMpeg2PidFilter, IPowerDevice, IRemoteControlListener
   {
@@ -294,11 +294,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       public string Answer = string.Empty;
       public int Type = 0;
 
-      public void WriteToBuffer(IntPtr buffer, bool isTerraTecFormat)
+      public void WriteToBuffer(IntPtr buffer, bool isExtendedFormat)
       {
-        if (isTerraTecFormat)
+        if (isExtendedFormat)
         {
-          TerraTecMmiData mmiData = new TerraTecMmiData();
+          ExtendedMmiData mmiData = new ExtendedMmiData();
           mmiData.AnswerLength = AnswerLength;
           mmiData.ChoiceIndex = ChoiceIndex;
           mmiData.Answer = Answer;
@@ -316,20 +316,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         }
       }
 
-      public void ReadFromBuffer(IntPtr buffer, bool isTerraTecFormat)
+      public void ReadFromBuffer(IntPtr buffer, bool isExtendedFormat)
       {
-        if (isTerraTecFormat)
+        if (isExtendedFormat)
         {
-          TerraTecMmiData mmiData = (TerraTecMmiData)Marshal.PtrToStructure(buffer, typeof(TerraTecMmiData));
+          ExtendedMmiData mmiData = (ExtendedMmiData)Marshal.PtrToStructure(buffer, typeof(ExtendedMmiData));
           Title = DvbTextConverter.Convert(mmiData.Title);
           SubTitle = DvbTextConverter.Convert(mmiData.SubTitle);
           Footer = DvbTextConverter.Convert(mmiData.Footer);
           EntryCount = mmiData.EntryCount;
-          if (EntryCount > TERRATEC_MAX_CAM_MENU_ENTRIES)
+          if (EntryCount > EXTENDED_MAX_CAM_MENU_ENTRIES)
           {
-            EntryCount = TERRATEC_MAX_CAM_MENU_ENTRIES;
+            EntryCount = EXTENDED_MAX_CAM_MENU_ENTRIES;
           }
-          foreach (TerraTecMmiMenuEntry entry in mmiData.Entries)
+          foreach (ExtendedMmiMenuEntry entry in mmiData.Entries)
           {
             Entries.Add(DvbTextConverter.Convert(entry.Text));
           }
@@ -407,7 +407,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct TerraTecMmiMenuEntry
+    private struct ExtendedMmiMenuEntry
     {
       #pragma warning disable 0649
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
@@ -416,7 +416,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    private struct TerraTecMmiData
+    private struct ExtendedMmiData
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
       public byte[] Title;
@@ -424,8 +424,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       public byte[] SubTitle;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
       public byte[] Footer;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = TERRATEC_MAX_CAM_MENU_ENTRIES)]
-      public TerraTecMmiMenuEntry[] Entries;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = EXTENDED_MAX_CAM_MENU_ENTRIES)]
+      public ExtendedMmiMenuEntry[] Entries;
       public int EntryCount;
 
       [MarshalAs(UnmanagedType.Bool)]
@@ -530,19 +530,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
 
     private const int MMI_HANDLER_THREAD_WAIT_TIME = 500;             // unit = ms
 
-    // TerraTec have entended the length and number of possible CAM menu
-    // entries in the MMI data struct returned by their drivers.
+    // Elgato and TerraTec have entended the length and number of possible CAM
+    // menu entries in their drivers' MMI data struct.
     private const int DEFAULT_MMI_DATA_SIZE = 1684;
     private const int DEFAULT_MAX_CAM_MENU_ENTRIES = 9;
 
-    private const int TERRATEC_MMI_DATA_SIZE = 33944;
-    private const int TERRATEC_MAX_CAM_MENU_ENTRIES = 255;
+    private const int EXTENDED_MMI_DATA_SIZE = 33944;
+    private const int EXTENDED_MAX_CAM_MENU_ENTRIES = 255;
 
     #endregion
 
     #region variables
 
     private bool _isTwinhan = false;
+    private bool _isElgatoDriver = false;
     private bool _isTerraTecDriver = false;
     private bool _isCaInterfaceOpen = false;
     #pragma warning disable 0414
@@ -578,7 +579,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     private BroadcastStandard _tunerSupportedBroadcastStandards = BroadcastStandard.Unknown;
     private string _tunerProductInstanceId = string.Empty;
     private string _tunerExternalId = string.Empty;
-    private string _tunerFilterName = string.Empty;
 
     private TwinhanCiSupport _ciApiVersion = TwinhanCiSupport.Unsupported;
     private int _mmiDataSize = DEFAULT_MMI_DATA_SIZE;
@@ -1075,7 +1075,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       int hr;
       lock (_mmiLock)
       {
-        mmi.WriteToBuffer(_mmiBuffer, _isTerraTecDriver);
+        mmi.WriteToBuffer(_mmiBuffer, _mmiDataSize == EXTENDED_MMI_DATA_SIZE);
         //Dump.DumpBinary(_mmiBuffer, _mmiDataSize);
         int returnedByteCount;
         hr = _ioControl.Get(IoControlCode.CiAnswer, _mmiBuffer, _mmiDataSize, out returnedByteCount);
@@ -1112,7 +1112,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         {
           this.LogDebug("Twinhan: result = success");
           //Dump.DumpBinary(_mmiBuffer, returnedByteCount);
-          mmi.ReadFromBuffer(_mmiBuffer, _isTerraTecDriver);
+          mmi.ReadFromBuffer(_mmiBuffer, _mmiDataSize == EXTENDED_MMI_DATA_SIZE);
           return true;
         }
       }
@@ -1178,22 +1178,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return false;
       }
 
-      FilterInfo tunerFilterInfo;
-      hr = tunerFilter.QueryFilterInfo(out tunerFilterInfo);
-      _tunerFilterName = tunerFilterInfo.achName;
-      Release.FilterInfo(ref tunerFilterInfo);
-
-      if (hr != (int)NativeMethods.HResult.S_OK || _tunerFilterName == null)
-      {
-        this.LogError("Twinhan: failed to get the tuner filter name, hr = 0x{0:x}", hr);
-        _tunerFilterName = string.Empty;
-      }
-      // Elgato EyeTV tuners expose the Twinhan property set but don't seem to
-      // work properly when it is used.
+      // Elgato EyeTV Sat Free tuners expose the Twinhan property set but don't
+      // seem to work properly when it is used.
       // http://forum.team-mediaportal.com/threads/tbs-5990-q-box-s2-hdtv-kein-signal.126540/
-      else if (_tunerFilterName.ToLowerInvariant().Contains("eyetv"))
+      // On the other hand, Elgato EyeTV Sat [with CI] tuners also expose the
+      // property set and *do* seem to work properly.
+      // http://forum.team-mediaportal.com/threads/after-restart-tv-stops-playing-after-first-attempt.132016/
+      if (tunerExternalId.ToLowerInvariant().Contains("usb#vid_0fd9&pid_003b#"))
       {
-        this.LogDebug("Twinhan: detected Elgato driver, not supported");
+        this.LogDebug("Twinhan: detected Elgato EyeTV Sat Free, not supported");
         Release.ComObject("Twinhan property set", ref _propertySet);
         return false;
       }
@@ -1208,10 +1201,27 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       }
       _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
 
-      if (_tunerFilterName.ToLowerInvariant().Contains("terratec") || _tunerFilterName.ToLowerInvariant().Contains("cinergy"))
+      FilterInfo tunerFilterInfo;
+      hr = tunerFilter.QueryFilterInfo(out tunerFilterInfo);
+      string tunerFilterName = tunerFilterInfo.achName;
+      Release.FilterInfo(ref tunerFilterInfo);
+      if (hr != (int)NativeMethods.HResult.S_OK || tunerFilterName == null)
       {
-        this.LogDebug("Twinhan: this tuner is using a TerraTec driver");
-        _isTerraTecDriver = true;
+        this.LogError("Twinhan: failed to get the tuner filter name, hr = 0x{0:x}", hr);
+      }
+      else
+      {
+        tunerFilterName = tunerFilterName.ToLowerInvariant();
+        if (tunerFilterName.Contains("eyetv"))    // EyeTV Sat - USB VID = 0FD9, PID = 0025/002A/0036
+        {
+          this.LogDebug("Twinhan: this tuner has an Elgato driver");
+          _isElgatoDriver = true;
+        }
+        else if (tunerFilterName.Contains("terratec") || tunerFilterName.Contains("cinergy"))
+        {
+          this.LogDebug("Twinhan: this tuner has a TerraTec driver");
+          _isTerraTecDriver = true;
+        }
       }
 
       ReadDeviceInfo();
@@ -1682,9 +1692,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return false;
       }
 
-      if (_isTerraTecDriver)
+      if (_isElgatoDriver || _isTerraTecDriver)
       {
-        _mmiDataSize = TERRATEC_MMI_DATA_SIZE;
+        _mmiDataSize = EXTENDED_MMI_DATA_SIZE;
       }
       else
       {
