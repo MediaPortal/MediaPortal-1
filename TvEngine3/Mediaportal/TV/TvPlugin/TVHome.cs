@@ -926,12 +926,6 @@ namespace Mediaportal.TV.TvPlugin
       return _recordingpath;
     }
 
-    public static string TimeshiftingPath()
-    {
-      LoadSettings();
-      return _timeshiftingpath;
-    }
-
     public static bool DoingChannelChange()
     {
       return _doingChannelChange;
@@ -1737,18 +1731,14 @@ namespace Mediaportal.TV.TvPlugin
       result = (
 
                  prev == (int)Window.WINDOW_TV_CROP_SETTINGS ||
-                 prev == (int)Window.WINDOW_SETTINGS_SORT_CHANNELS ||
-                 prev == (int)Window.WINDOW_SETTINGS_TV_EPG ||
                  prev == (int)Window.WINDOW_TVFULLSCREEN ||
                  prev == (int)Window.WINDOW_TVGUIDE ||
                  prev == (int)Window.WINDOW_MINI_GUIDE ||
                  prev == (int)Window.WINDOW_TV_SEARCH ||
                  prev == (int)Window.WINDOW_TV_SEARCHTYPE ||
-                 prev == (int)Window.WINDOW_TV_SCHEDULER_PRIORITIES ||
                  prev == (int)Window.WINDOW_TV_PROGRAM_INFO ||
                  prev == (int)Window.WINDOW_RECORDEDTV ||
                  prev == (int)Window.WINDOW_TV_RECORDED_INFO ||
-                 prev == (int)Window.WINDOW_SETTINGS_RECORDINGS ||
                  prev == (int)Window.WINDOW_SCHEDULER ||
                  prev == (int)Window.WINDOW_SEARCHTV ||
                  prev == (int)Window.WINDOW_TV_TUNING_DETAILS ||
@@ -1801,7 +1791,7 @@ namespace Mediaportal.TV.TvPlugin
           {
             TVNotifyYesNoDialog tvNotifyDlg = (TVNotifyYesNoDialog)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TVNOTIFYYESNO);
 
-            TVProgramDescription notify = message.Object as TVProgramDescription;
+            Program notify = message.Object as Program;
             if (tvNotifyDlg == null || notify == null)
             {
               return;
@@ -2628,8 +2618,8 @@ namespace Mediaportal.TV.TvPlugin
       {
         GUIPropertyManager.SetProperty("#TV.View.title", rec.Title);
         GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(rec));
-        GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.EpisodeName);
-        GUIPropertyManager.SetProperty("#TV.View.episode", rec.EpisodeNum);
+        GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.EpisodeName ?? string.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.episode", rec.EpisodeNumber.ToString());
       }
       else
       {
@@ -3598,14 +3588,35 @@ namespace Mediaportal.TV.TvPlugin
       benchClock.Reset();
       benchClock.Start();
 
-      timeshiftFileName = TVUtil.GetFileNameForTimeshifting();
-      bool useRTSP = UseRTSP();
-
-      Log.Info("tvhome:startplay:{0} - using rtsp mode:{1}", timeshiftFileName, useRTSP);
-
-      if (!useRTSP)
+      bool tsFileExists = true;
+      if (UseRTSP())
       {
-        bool tsFileExists = false;
+        timeshiftFileName = TVHome.Card.RTSPUrl;
+      }
+      else if (File.Exists(TVHome.Card.TimeShiftFileName))
+      {
+        timeshiftFileName = TVHome.Card.TimeShiftFileName;
+      }
+      else
+      {
+        // fileName does not exist b/c it points to the local folder on the tvserver, which is ofcourse invalid on the tv client.
+        tsFileExists = false;
+        LoadSettings();
+        if (_timeshiftingpath.Length > 0)
+        {
+          //use user defined timeshifting folder as either UNC or network drive
+          timeshiftFileName = Path.Combine(_timeshiftingpath, Path.GetFileName(TVHome.Card.TimeShiftFileName));
+        }
+        else // use automatic UNC path
+        {
+          timeshiftFileName = @"\\" + Path.Combine(ServiceAgents.Instance.Hostname, TVHome.Card.TimeShiftFileName.Replace(":", ""));
+        }
+      }
+
+      Log.Info("tvhome:startplay:{0}", timeshiftFileName);
+
+      if (!tsFileExists)
+      {
         int timeout = 0;
         while (!tsFileExists && timeout < 50)
         {

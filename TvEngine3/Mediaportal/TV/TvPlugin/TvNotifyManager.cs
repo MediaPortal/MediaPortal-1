@@ -31,7 +31,6 @@ using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.TvPlugin.Helper;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Log = Mediaportal.TV.Server.TVLibrary.Interfaces.Logging.Log;
@@ -226,20 +225,11 @@ namespace Mediaportal.TV.TvPlugin
                      program.Entity.StartTime);
             program.Notify = false;
             ServiceAgents.Instance.ProgramServiceAgent.SaveProgram(program.Entity);
-            var tvProg = new TVProgramDescription
-                           {
-                             Channel = program.Entity.Channel,
-                             Title = program.Entity.Title,
-                             Description = program.Entity.Description,
-                             Genre = TVUtil.GetCategory(program.Entity.ProgramCategory),
-                             StartTime = program.Entity.StartTime,
-                             EndTime = program.Entity.EndTime
-                           };
 
             _notifiesList.Remove(program);
             this.LogInfo("send notify");
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM, 0, 0, 0, 0, 0, null);
-            msg.Object = tvProg;
+            msg.Object = program;
             GUIGraphicsContext.SendMessage(msg);
             msg = null;
             this.LogInfo("send notify done");
