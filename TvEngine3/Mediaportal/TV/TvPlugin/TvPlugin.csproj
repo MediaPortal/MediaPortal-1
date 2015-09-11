@@ -145,7 +145,6 @@
     <Compile Include="TVScheduler.cs" />
     <Compile Include="Search\TVSearch.cs" />
     <Compile Include="Teletext\TvTeletext.cs" />
-    <Compile Include="TvRecordingSettings.cs" />
     <Compile Include="TvSetup.cs" />
     <Compile Include="TvTimeShiftPositionWatcher.cs" />
     <Compile Include="TVTuningDetails.cs" />
