@@ -1529,6 +1529,7 @@
   <section name="pluginsdlls">
     <entry name="ExternalPlayers.dll">no</entry>
     <entry name="ProcessPlugins.dll">no</entry>
+    <entry name="MiniDisplayPlugin.dll">no</entry>
     <entry name="ECP2Plugin.dll">yes</entry>
   </section>
   <section name="pluginswindows">

@@ -227,17 +227,6 @@
     </Compile>
     <Compile Include="Remotes\Hid\HidUsageAction.cs" />
     <Compile Include="Remotes\IrTrans\IrTRans.cs" />
-    <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\Device.cs" />
-    <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\DeviceCollection.cs" />
-    <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\DeviceEventHandler.cs" />
-    <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\DeviceWatcher.cs" />
-    <Compile Include="Remotes\MCE2005Remote\MCE2005Remote.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\Remote.cs" />
-    <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\RemoteButton.cs" />
-    <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\RemoteEventArgs.cs" />
-    <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\RemoteEventHandler.cs" />
     <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTPlugin.cs" />
     <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTAPI.cs" />
     <None Include="ControlDevices\Devices\USBUIRT\USBUIRTControlCode.cs" />

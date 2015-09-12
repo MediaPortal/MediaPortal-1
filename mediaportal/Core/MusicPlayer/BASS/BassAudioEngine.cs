@@ -523,7 +523,13 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         return;
       }
+
       MusicStream musicStream = (MusicStream)sender;
+
+      // we want gapless playback for external controller (aka UPnP Controller)
+      // therefore we use the same mechanism
+      if (g_Player.ExternalController && action == MusicStream.StreamAction.InternetStreamChanged)
+        action = MusicStream.StreamAction.Crossfading;
 
       switch (action)
       {
@@ -531,7 +537,9 @@ namespace MediaPortal.MusicPlayer.BASS
           break;
 
         case MusicStream.StreamAction.Crossfading:
+
           string nextSong = Playlists.PlayListPlayer.SingletonPlayer.GetNextSong();
+
           if (nextSong != string.Empty)
           {
             g_Player.OnChanged(nextSong);
@@ -550,6 +558,7 @@ namespace MediaPortal.MusicPlayer.BASS
           break;
 
         case MusicStream.StreamAction.InternetStreamChanged:
+
           _tagInfo = musicStream.StreamTags;
           if (InternetStreamSongChanged != null)
           {
@@ -1662,7 +1671,7 @@ namespace MediaPortal.MusicPlayer.BASS
         {
           // The connection of a Webstream may have timed out, during Pause.
           // The only way to resolve this is to Stop the Stream and restart it
-          if (stream.Filetype.FileMainType == FileMainType.WebStream)
+          if (stream.Filetype.FileMainType == FileMainType.WebStream && !g_Player.ForcePauseWebStream) // in case of UPnP Renderer we want support pause
           {
             _state = PlayState.Ended;
             var filePath = stream.FilePath;
