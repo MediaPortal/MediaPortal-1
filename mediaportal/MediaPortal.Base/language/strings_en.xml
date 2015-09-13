@@ -1369,6 +1369,8 @@
     <String id="2223">Rubbish Bin</String>
     <String id="2224">Folder exists!</String>
     <String id="2225">Folder created</String>
+    <String id="2498">Hide watched movies</String>
+    <String id="2499">Unhide watched movies</String>
     <String id="2500">No search term entered!</String>
     <String id="2501">Please enter a valid search term!</String>
     <String id="2502">Select your local Wikipedia:</String>
