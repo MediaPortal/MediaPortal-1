@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TvDatabase;
 using TvLibrary.Log;
 
@@ -71,29 +72,26 @@ namespace TvService
         return;
 
       //check how many episodes we got
-      while (true)
+      IList<Recording> recordings = Recording.ListAll()
+        .Where(r => String.Compare(program.Title, r.Title, StringComparison.OrdinalIgnoreCase) == 0)
+        .OrderBy(r => r.StartTime).ToList();
+
+      for (int i = 0; i < recordings.Count - schedule.MaxAirings; i++)
       {
-        IList<Recording> recordings = Recording.ListAll();
+        Recording oldestEpisode = recordings[i];
 
-        List<Recording> episodes = GetEpisodes(program.Title, recordings);
-        if (episodes.Count <= schedule.MaxAirings)
-          return;
-
-        Recording oldestEpisode = GetOldestEpisode(episodes);
-        if (oldestEpisode == null)
-          return;
-        Log.Write("diskmanagement:   Delete episode {0} {1} {2} {3}",
-                  oldestEpisode.ReferencedChannel(),
-                  oldestEpisode.Title,
-                  oldestEpisode.StartTime.ToLongDateString(),
-                  oldestEpisode.StartTime.ToLongTimeString());
-
-        // Delete the file from disk and the recording entry from the database.        
+        // Delete the file from disk and the recording entry from the database.
         bool result = RecordingFileHandler.DeleteRecordingOnDisk(oldestEpisode.FileName);
         if (result)
         {
           oldestEpisode.Delete();
         }
+        Log.Write("diskmanagement:   Delete episode {0} {1} {2} {3} {4}",
+          oldestEpisode.ReferencedChannel(),
+          oldestEpisode.Title,
+          oldestEpisode.StartTime.ToLongDateString(),
+          oldestEpisode.StartTime.ToLongTimeString(),
+          result ? "succeeded" : "failed!");
       }
     }
 
