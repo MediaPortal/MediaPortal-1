@@ -130,9 +130,9 @@ namespace MediaPortal.GUI.Library
     private static float _currentFPS;
     private static long _lasttime;
     private static bool _blankScreen;
-    private static bool _deviceAudioConnected;
+    private static int _deviceAudioConnected = 0;
     private static VolumeHandler _initVolumeHandler;
-    private static bool _deviceVideoConnected;
+    private static int _deviceVideoConnected = 0;
     private static bool _idleTimePowerSaving;
     private static bool _turnOffMonitor;
     private static bool _vmr9Allowed = true;
@@ -192,6 +192,9 @@ namespace MediaPortal.GUI.Library
     {
       Render3DMode = eRender3DMode.None;
       Switch3DSides = false;
+      Convert2Dto3DSkewFactor = 0;
+      LastFrames = new List<Texture>();
+      LastFramesIndex = 0;
     }
 
     /// <summary>
@@ -253,20 +256,20 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Set/get audio device connected or removed
     /// </summary>
-    public static bool DeviceAudioConnected
+    public static int DeviceAudioConnected
     {
       get { return _deviceAudioConnected; }
       set
       {
-        if (value == false)
+        if (value > _deviceAudioConnected)
         {
-          _deviceAudioConnected = false;
-          Log.Debug("GraphicContext: device audio removed");
+          _deviceAudioConnected = value;
+          Log.Debug("GraphicContext: device audio connected - Count {0}", _deviceAudioConnected);
         }
-        else
+        else if (value < _deviceAudioConnected)
         {
-          _deviceAudioConnected = true;
-          Log.Debug("GraphicContext: device audio connected");
+          _deviceAudioConnected = value < 0 ? 0 : value;
+          Log.Debug("GraphicContext: device audio removed - Count {0}", _deviceAudioConnected);
         }
       }
     }
@@ -274,20 +277,20 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Set/get video device connected or removed
     /// </summary>
-    public static bool DeviceVideoConnected
+    public static int DeviceVideoConnected
     {
       get { return _deviceVideoConnected; }
       set
       {
-        if (value == false)
+        if (value > _deviceVideoConnected)
         {
-          _deviceVideoConnected = false;
-          Log.Debug("GraphicContext: device video removed");
+          _deviceVideoConnected = value;
+          Log.Debug("GraphicContext: device video connected - Count {0}", _deviceVideoConnected);
         }
-        else
+        else if (value < _deviceVideoConnected)
         {
-          _deviceVideoConnected = true;
-          Log.Debug("GraphicContext: device video connected");
+          _deviceVideoConnected = value < 0 ? 0 : value;
+          Log.Debug("GraphicContext: device video removed - Count {0}", _deviceVideoConnected);
         }
       }
     }
@@ -337,7 +340,7 @@ namespace MediaPortal.GUI.Library
 
     public static object RenderModeSwitch = new Object();
 
-    public enum eRender3DMode { None, SideBySide, TopAndBottom, SideBySideTo2D, TopAndBottomTo2D };
+    public enum eRender3DMode { None, SideBySide, TopAndBottom, SideBySideTo2D, TopAndBottomTo2D, SideBySideFrom2D };
 
     static eRender3DMode _render3DMode;
 
@@ -352,6 +355,10 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
+    public static List<Texture> LastFrames { get; set; }
+    public static int LastFramesIndex;
+    public static int Convert2Dto3DSkewFactor { get; set; }
 
     public enum eRender3DModeHalf { None, SBSLeft, SBSRight, TABTop, TABBottom };
 
@@ -889,7 +896,14 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public static string GetThemedSkinFile(string filename)
     {
-      return File.Exists(Theme + filename) ? Theme + filename : Skin + filename;
+      if (File.Exists(filename)) // sometimes filename is full path, don't know why
+      {
+        return filename;
+      }
+      else
+      {
+        return File.Exists(Theme + filename) ? Theme + filename : Skin + filename;
+      }
     }
 
     /// <summary>

@@ -454,6 +454,7 @@
     <Compile Include="Ripper\Win32Functions.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Threading\TaskExtrasExtensions.cs" />
     <Compile Include="System.Windows\DependencyPropertyAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -580,6 +581,7 @@
     <Compile Include="Util\StopWatch.cs" />
     <Compile Include="Util\ThumbExtractor.cs" />
     <Compile Include="Util\TMDBCoversSearch.cs" />
+    <Compile Include="Util\UNCTools.cs" />
     <Compile Include="Util\UnhandledExceptionLogger.cs" />
     <Compile Include="UserInterfaceControls\MPTabPage.cs">
       <SubType>Component</SubType>

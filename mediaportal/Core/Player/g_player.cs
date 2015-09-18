@@ -159,7 +159,7 @@ namespace MediaPortal.Player
       _factory = new PlayerFactory();
     }
 
-    static g_Player() {}
+    static g_Player() { }
 
     public static IPlayer Player
     {
@@ -206,6 +206,18 @@ namespace MediaPortal.Player
     {
       get { return _currentMediaInfoFilePlaying; }
       set { _currentMediaInfoFilePlaying = value; }
+    }
+
+    public static bool ExternalController
+    {
+      get;
+      set;
+    }
+
+    public static bool ForcePauseWebStream
+    {
+      get;
+      set;
     }
 
     #endregion
@@ -706,6 +718,7 @@ namespace MediaPortal.Player
     public static void UpdateMediaInfoProperties()
     {
       int currAudio = g_Player.CurrentAudioStream;
+
       if (currAudio < 0)
       {
         return;

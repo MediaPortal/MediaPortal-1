@@ -288,6 +288,13 @@ namespace MediaPortal.Configuration.Sections
     {
       try
       {
+#if DEBUG
+        foreach (string myResourceName in type.Assembly.GetManifestResourceNames())
+        {
+          Debug.Write(myResourceName);
+        }
+#endif
+
         return Image.FromStream(type.Assembly.GetManifestResourceStream(resourceName));
       }
       catch (ArgumentException aex)
