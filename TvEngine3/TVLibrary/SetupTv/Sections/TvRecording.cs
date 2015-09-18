@@ -236,7 +236,7 @@ namespace SetupTv.Sections
 
       LoadComboBoxDrive();
 
-      checkBoxTVThumbs.Checked = (layer.GetSetting("TVThumbnailsEnabled", "yes").Value == "yes");
+      checkBoxTVThumbs.Checked = (layer.GetSetting("TVThumbnailsEnabled", "no").Value == "yes");
       checkBoxShareThumb.Checked = (layer.GetSetting("TVThumbnailsLeaveShareThumb", "no").Value == "yes");
       numericUpDownThumbColumns.Value = Convert.ToInt32(layer.GetSetting("TVThumbnailsColumns", "1").Value);
       numericUpDownThumbRows.Value = Convert.ToInt32(layer.GetSetting("TVThumbnailsRows", "1").Value);
@@ -312,7 +312,7 @@ namespace SetupTv.Sections
 
       UpdateDriveInfo(true);
 
-      setting = layer.GetSetting("TVThumbnailsEnabled", "yes");
+      setting = layer.GetSetting("TVThumbnailsEnabled", "no");
       if (setting.Value != (checkBoxTVThumbs.Checked ? "yes" : "no"))
         _needRestart = checkBoxTVThumbs.Checked;
       setting.Value = checkBoxTVThumbs.Checked ? "yes" : "no";

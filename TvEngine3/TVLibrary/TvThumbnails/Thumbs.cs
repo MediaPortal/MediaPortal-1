@@ -87,7 +87,7 @@ namespace TvThumbnails
       {
         TvBusinessLayer layer = new TvBusinessLayer();
 
-        _enableThumbCreation = (layer.GetSetting("TVThumbnailsEnabled", "yes").Value == "yes");
+        _enableThumbCreation = (layer.GetSetting("TVThumbnailsEnabled", "no").Value == "yes");
         Log.Debug("Thumbs.LoadSettings: Enable Thumbs: {0}", _enableThumbCreation);
 
         _leaveShareThumb = (layer.GetSetting("TVThumbnailsLeaveShareThumb", "no").Value == "yes");
