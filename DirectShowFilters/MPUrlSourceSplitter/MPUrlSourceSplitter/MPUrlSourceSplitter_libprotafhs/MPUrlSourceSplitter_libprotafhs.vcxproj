@@ -11,23 +11,23 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{AF3EE606-1A25-4D42-B6F8-A1834610FCEB}</ProjectGuid>
+    <ProjectGuid>{FF9CFFA4-BBB7-4463-AB0D-CA5CC4ECD43B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>MPUrlSourceSplitter_libafhs</RootNamespace>
+    <RootNamespace>MPUrlSourceSplitter_libprotafhs</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v120_xp</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -100,12 +100,12 @@
     <ClCompile Include="AfhsDecryptionHoster.cpp" />
     <ClCompile Include="AfhsDecryptionHosterPluginMetadata.cpp" />
     <ClCompile Include="AfhsDecryptionPlugin.cpp" />
+    <ClCompile Include="AfhsDecryptionPluginConfiguration.cpp" />
     <ClCompile Include="AfhsDownloadRequest.cpp" />
     <ClCompile Include="AfhsDownloadResponse.cpp" />
     <ClCompile Include="AfhsDumpBox.cpp" />
     <ClCompile Include="AfhsSegmentFragment.cpp" />
     <ClCompile Include="AfhsSegmentFragmentCollection.cpp" />
-    <ClCompile Include="AfhsDecryptionPluginConfiguration.cpp" />
     <ClCompile Include="IndexedAfhsSegmentFragment.cpp" />
     <ClCompile Include="IndexedAfhsSegmentFragmentCollection.cpp" />
     <ClCompile Include="stdafx.cpp">

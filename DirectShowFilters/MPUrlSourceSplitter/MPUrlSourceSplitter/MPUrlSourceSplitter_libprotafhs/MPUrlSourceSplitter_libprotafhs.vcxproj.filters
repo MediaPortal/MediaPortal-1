@@ -7,7 +7,7 @@
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
@@ -21,19 +21,10 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AfhsCurlInstance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="AfhsDecryptionContext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AfhsSegmentFragment.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AfhsSegmentFragmentCollection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AfhsDecryptionPlugin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AfhsDecryptionPluginConfiguration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AfhsDecryptionHoster.h">
@@ -42,7 +33,10 @@
     <ClInclude Include="AfhsDecryptionHosterPluginMetadata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AfhsCurlInstance.h">
+    <ClInclude Include="AfhsDecryptionPlugin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AfhsDecryptionPluginConfiguration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AfhsDownloadRequest.h">
@@ -51,13 +45,19 @@
     <ClInclude Include="AfhsDownloadResponse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AfhsDumpBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AfhsSegmentFragment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AfhsSegmentFragmentCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="IndexedAfhsSegmentFragment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IndexedAfhsSegmentFragmentCollection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AfhsDumpBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -65,19 +65,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AfhsCurlInstance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="AfhsDecryptionContext.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AfhsSegmentFragment.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AfhsSegmentFragmentCollection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AfhsDecryptionPlugin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AfhsDecryptionPluginConfiguration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AfhsDecryptionHoster.cpp">
@@ -86,7 +77,10 @@
     <ClCompile Include="AfhsDecryptionHosterPluginMetadata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AfhsCurlInstance.cpp">
+    <ClCompile Include="AfhsDecryptionPlugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AfhsDecryptionPluginConfiguration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AfhsDownloadRequest.cpp">
@@ -95,13 +89,19 @@
     <ClCompile Include="AfhsDownloadResponse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AfhsDumpBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AfhsSegmentFragment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AfhsSegmentFragmentCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="IndexedAfhsSegmentFragment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IndexedAfhsSegmentFragmentCollection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AfhsDumpBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
