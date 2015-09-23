@@ -76,6 +76,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     private int _screennumber; // 0 is the primary screen
+    private string _screenName;
 
     private readonly string[][] _sectionEntries = new[]
     {
@@ -137,7 +138,9 @@ namespace MediaPortal.Configuration.Sections
         {
           if (screen.DeviceName.Equals(adapter.Information.DeviceName.Trim()))
           {
-            cbScreen.Items.Add(string.Format("{0} ({1}x{2}) on {3}", monitorname, adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Information.Description));
+            cbScreen.Items.Add(string.Format("{0} ({1}x{2}) on {3} deviceName : {4}", monitorname,
+              adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Information.Description,
+              adapter.Information.DeviceName));
           }
         }
       }
@@ -152,12 +155,29 @@ namespace MediaPortal.Configuration.Sections
         }
 
         _screennumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
+        _screenName = xmlreader.GetValueAsString("screenselector", "screenname", "");
 
+        
         while (cbScreen.Items.Count <= _screennumber)
         {
           cbScreen.Items.Add("screen nr :" + cbScreen.Items.Count + " (currently unavailable)");
         }
-        cbScreen.SelectedIndex = _screennumber;
+
+        for (int index = 0; index < cbScreen.Items.Count; index++)
+        {
+          string screenName = cbScreen.Items[index].ToString().ToLowerInvariant();
+          if (screenName.Equals(_screenName))
+          {
+            cbScreen.SelectedIndex = index;
+            _screennumber = index;
+          }
+        }
+
+        // Check if screen are present and if not force to use primary screen
+        if (cbScreen.SelectedIndex == -1)
+        {
+          cbScreen.SelectedIndex = 0;
+        }
 
         nudDelay.Value = xmlreader.GetValueAsInt("general", "delay", 0);
         mpCheckBoxMpStartup.Checked = xmlreader.GetValueAsBool("general", "delay startup", false);
@@ -173,6 +193,7 @@ namespace MediaPortal.Configuration.Sections
       using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("screenselector", "screennumber", cbScreen.SelectedIndex);
+        xmlwriter.SetValue("screenselector", "screenname", cbScreen.Items[cbScreen.SelectedIndex].ToString().ToLowerInvariant());
 
         for (int index = 0; index < _sectionEntries.Length; index++)
         {
