@@ -20,6 +20,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.Common.Types.Country;
 using Mediaportal.TV.Server.Common.Types.Enum;
@@ -39,6 +41,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
   public partial class CardAnalog : SectionSettings
   {
     private const string SCAN_MODE_CAPTURE = "External Inputs";
+    private const string SCAN_MODE_EXTERNAL_TUNER = "External Tuner";   // set top box (STB) connected to configured capture input
     private const string SCAN_MODE_FM_RADIO = "FM Radio";
     private const string SCAN_MODE_TV_CABLE = "Cable TV";
     private const string SCAN_MODE_TV_TERRESTRIAL = "Terrestrial TV";
@@ -74,6 +77,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         if (tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.ExternalInput))
         {
           comboBoxScanMode.Items.Add(SCAN_MODE_CAPTURE);
+          comboBoxScanMode.Items.Add(SCAN_MODE_EXTERNAL_TUNER);
         }
         if (tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.FmRadio))
         {
@@ -81,6 +85,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         if (tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.AnalogTelevision))
         {
+          if (!tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.ExternalInput))
+          {
+            comboBoxScanMode.Items.Add(SCAN_MODE_EXTERNAL_TUNER);     // Support input via RF/coax.
+          }
           comboBoxScanMode.Items.Add(SCAN_MODE_TV_CABLE);
           comboBoxScanMode.Items.Add(SCAN_MODE_TV_TERRESTRIAL);
         }
@@ -137,6 +145,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             BroadcastStandard = BroadcastStandard.ExternalInput
           }
         };
+      }
+      else if (string.Equals(scanMode, SCAN_MODE_EXTERNAL_TUNER))
+      {
+        ImportExternalTunerChannelList();
+        return;
       }
       else
       {
@@ -212,9 +225,139 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void comboBoxScanMode_SelectedIndexChanged(object sender, EventArgs e)
     {
-      bool countryHidden = string.Equals((string)comboBoxScanMode.SelectedItem, SCAN_MODE_FM_RADIO) || string.Equals((string)comboBoxScanMode.SelectedItem, SCAN_MODE_CAPTURE);
-      labelCountry.Visible = !countryHidden;
-      comboBoxCountry.Visible = !countryHidden;
+      bool countryVisible = string.Equals((string)comboBoxScanMode.SelectedItem, SCAN_MODE_TV_CABLE) || string.Equals((string)comboBoxScanMode.SelectedItem, SCAN_MODE_TV_TERRESTRIAL);
+      labelCountry.Visible = countryVisible;
+      comboBoxCountry.Visible = countryVisible;
+      if (string.Equals((string)comboBoxScanMode.SelectedItem, SCAN_MODE_EXTERNAL_TUNER))
+      {
+        buttonScan.Text = "Import channels";
+      }
+      else
+      {
+        buttonScan.Text = "Scan for channels";
+      }
+    }
+
+    private void ImportExternalTunerChannelList()
+    {
+      if (openFileDialogExternalTunerChannelList.ShowDialog() != DialogResult.OK)
+      {
+        return;
+      }
+
+      string fileName = openFileDialogExternalTunerChannelList.FileName;
+      this.LogInfo("analog: import external tuner channel list, file name = {0}", fileName);
+      try
+      {
+        List<IChannel> newChannels = new List<IChannel>();
+        List<IChannel> updatedChannels = new List<IChannel>();
+
+        string line;
+        using (StreamReader file = new StreamReader(fileName))
+        {
+          while ((line = file.ReadLine()) != null)
+          {
+            Match m = Regex.Match(line, @"^\s*(\d+)\s*,\s*([^\s].*?)\s*$");
+            if (!m.Success)
+            {
+              continue;
+            }
+
+            ChannelCapture channel = new ChannelCapture();
+            channel.Name = m.Groups[2].Captures[0].Value;
+            channel.MediaType = MediaType.Television;
+            channel.LogicalChannelNumber = m.Groups[1].Captures[0].Value;
+            channel.Provider = "External Tuner";
+            channel.VideoSource = CaptureSourceVideo.TunerDefault;
+            channel.AudioSource = CaptureSourceAudio.TunerDefault;
+            channel.IsEncrypted = false;
+            channel.IsHighDefinition = false;
+            channel.IsThreeDimensional = false;
+            channel.IsVcrSignal = false;
+
+            IList<DbTuningDetail> possibleTuningDetails = OnGetDbExistingTuningDetailCandidates(null, null, channel, false);
+            DbTuningDetail dbTuningDetail = null;
+            if (possibleTuningDetails != null)
+            {
+              if (possibleTuningDetails.Count == 1)
+              {
+                dbTuningDetail = possibleTuningDetails[0];
+              }
+              else
+              {
+                foreach (TuningDetail td in possibleTuningDetails)
+                {
+                  if (string.Equals(td.LogicalChannelNumber, channel.LogicalChannelNumber))
+                  {
+                    dbTuningDetail = td;
+                    break;
+                  }
+                }
+              }
+            }
+
+            if (dbTuningDetail == null)
+            {
+              ChannelScanHelper.AddChannel(channel);
+              newChannels.Add(channel);
+            }
+            else
+            {
+              ChannelScanHelper.UpdateChannel(channel, dbTuningDetail);
+              updatedChannels.Add(channel);
+            }
+          }
+
+          file.Close();
+        }
+
+        this.LogInfo("analog: import summary...");
+        listViewProgress.BeginUpdate();
+        try
+        {
+          listViewProgress.Items.Add("import summary...");
+          if (newChannels.Count == 0 && updatedChannels.Count == 0)
+          {
+            listViewProgress.Items.Add("  no channels found");
+            this.LogInfo("  no channels found");
+          }
+          else
+          {
+            line = string.Format("  updated, count = {0}", updatedChannels.Count);
+            this.LogInfo(line);
+            listViewProgress.Items.Add(line);
+            foreach (IChannel c in updatedChannels)
+            {
+              this.LogDebug("    {0}", c);
+              listViewProgress.Items.Add(new ListViewItem(string.Format("    {0}", c.Name)));
+            }
+            line = string.Format("  new, count = {0}", newChannels.Count);
+            this.LogInfo(line);
+            ListViewItem lastItem = listViewProgress.Items.Add(line);
+            foreach (IChannel c in newChannels)
+            {
+              this.LogDebug("    {0}", c);
+              lastItem = listViewProgress.Items.Add(new ListViewItem(string.Format("    {0}", c.Name)));
+            }
+            lastItem.EnsureVisible();
+          }
+        }
+        finally
+        {
+          listViewProgress.EndUpdate();
+        }
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "analog: unexpected import exception");
+        listViewProgress.Invoke((MethodInvoker)delegate
+        {
+          ListViewItem item = listViewProgress.Items.Add(new ListViewItem("Unexpected error. Please create a report in our forum."));
+          item.ForeColor = System.Drawing.Color.Red;
+          item.EnsureVisible();
+        });
+        MessageBox.Show("Encountered unexpected error. Please create a report in our forum.", SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
     }
   }
 }

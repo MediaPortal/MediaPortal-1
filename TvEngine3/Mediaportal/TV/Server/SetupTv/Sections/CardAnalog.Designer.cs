@@ -44,6 +44,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.columnHeaderStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.labelSignalQuality = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelSignalStrength = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.openFileDialogExternalTunerChannelList = new System.Windows.Forms.OpenFileDialog();
       this.mpTabControl1.SuspendLayout();
       this.tabPageScan.SuspendLayout();
       this.SuspendLayout();
@@ -200,6 +201,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelSignalStrength.TabIndex = 5;
       this.labelSignalStrength.Text = "Signal strength:";
       // 
+      // openFileDialogExternalTunerChannelList
+      // 
+      this.openFileDialogExternalTunerChannelList.Filter = "Channel List Files (*.txt)|*.txt|All Files|*.*";
+      this.openFileDialogExternalTunerChannelList.Title = "Select a channel list.";
+      // 
       // CardAnalog
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -231,5 +237,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPLabel labelSignalStrength;
     private MPLabel labelCountry;
     private MPComboBox comboBoxCountry;
+    private System.Windows.Forms.OpenFileDialog openFileDialogExternalTunerChannelList;
   }
 }

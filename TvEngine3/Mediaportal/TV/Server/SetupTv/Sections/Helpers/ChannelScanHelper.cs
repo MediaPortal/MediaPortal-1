@@ -26,7 +26,6 @@ using System.Windows.Forms;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -170,8 +169,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       IDictionary<MediaType, Counter> overallCounters = new Dictionary<MediaType, Counter>(2);
       IDictionary<MediaType, IDictionary<string, int>> channelGroupsByMediaType = new Dictionary<MediaType, IDictionary<string, int>>(2);
       IList<GroupMap> newChannelGroupMappings = new List<GroupMap>(tuningDetails.Count * 10);
-      IUser user = new User();
-      user.CardId = _tunerId;
 
       bool useChannelMovementDetection = ServiceAgents.Instance.SettingServiceAgent.GetValue("channelMovementDetectionEnabled", false);
       bool createChannelGroupsChannelProviders = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateProviderChannelGroups", false);
@@ -179,8 +176,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
       try
       {
-        ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
-        TvResult result = ServiceAgents.Instance.ControllerServiceAgent.Scan(user.Name, user.CardId, out user, tuningDetails[0].GetTuningChannel(), -1);
+        TvResult result = ServiceAgents.Instance.ControllerServiceAgent.Scan(string.Format("scanner_{0}", _tunerId), _tunerId, tuningDetails[0].GetTuningChannel());
         if (result == TvResult.SWEncoderMissing)
         {
           this.LogError("channel scan: failed to scan, missing software encoder");
@@ -280,9 +276,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
           }
 
           IDictionary<MediaType, Counter> transmitterCounters = new Dictionary<MediaType, Counter>(2);
-          for (int c = 0; c < channels.Length; c++)
+          foreach (IChannel channel in channels)
           {
-            IChannel channel = channels[c];
             IList<DbTuningDetail> possibleTuningDetails = tuningDetailLookupDelegate(tuningDetail, tuneChannel, channel, useChannelMovementDetection);
             DbTuningDetail dbTuningDetail = null;
             if (possibleTuningDetails != null)
@@ -319,14 +314,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
             }
             if (dbTuningDetail == null)
             {
-              dbChannel = new Channel();
-              dbChannel.Name = channel.Name;
-              dbChannel.ChannelNumber = channel.LogicalChannelNumber;
-              dbChannel.MediaType = (int)channel.MediaType;
-              dbChannel.VisibleInGuide = true;
-              dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-              dbChannel.AcceptChanges();
-              ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
+              dbChannel = AddChannel(channel);
               overallCounter.New.Add(channel);
               transmitterCounter.New.Add(channel);
 
@@ -354,55 +342,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
             }
             else
             {
-              dbChannel = dbTuningDetail.Channel;
-              if (dbChannel != null)
-              {
-                // Update channel name if...
-                bool channelUpdated = false;
-                if (
-                  // ...scan found a valid name, and...
-                  !channel.Name.StartsWith("Unknown ") &&
-                  (
-                    // ...the current channel name is invalid, or...
-                    dbChannel.Name.StartsWith("Unknown ") ||
-                    // ...the current [valid] channel name has not been customised by the user.
-                    (
-                      string.Equals(dbChannel.Name, dbTuningDetail.Name) &&
-                      !string.Equals(channel.Name, dbTuningDetail.Name)
-                    )
-                  )
-                )
-                {
-                  dbChannel.Name = channel.Name;
-                  channelUpdated = true;
-                }
-
-                // Update channel LCN if...
-                if (
-                  // ...scan found a valid LCN, and...
-                  !string.Equals(channel.LogicalChannelNumber, "10000") &&
-                  (
-                    // ...the current channel LCN is invalid, or...
-                    string.Equals(dbChannel.ChannelNumber, "10000") ||
-                    // ...the current [valid] channel LCN has not been customised by the user.
-                    (
-                      string.Equals(dbChannel.ChannelNumber, dbTuningDetail.LogicalChannelNumber) &&
-                      !string.Equals(channel.LogicalChannelNumber, dbTuningDetail.LogicalChannelNumber)
-                    )
-                  )
-                )
-                {
-                  dbChannel.ChannelNumber = channel.LogicalChannelNumber;
-                  channelUpdated = true;
-                }
-
-                if (channelUpdated)
-                {
-                  ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-                }
-              }
-
-              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbTuningDetail.IdChannel, dbTuningDetail.IdTuning, channel);
+              UpdateChannel(channel, dbTuningDetail);
               overallCounter.Updated.Add(channel);
               transmitterCounter.Updated.Add(channel);
             }
@@ -495,11 +435,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
           }
         });
 
-        if (user != null)
-        {
-          ServiceAgents.Instance.ControllerServiceAgent.StopCard(user.CardId);
-        }
-        ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
+        ServiceAgents.Instance.ControllerServiceAgent.StopCard(_tunerId);
         _signalStatusUpdateTimer.Stop();
         scanCompletedDelegate();
       }
@@ -508,15 +444,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
     private void DoNitScan(FileTuningDetail tuningDetail, MPListView listViewStatus, ProgressBar barProgress, NitScanFoundTransmittersDelegate foundTransmittersDelegate, GetDbExistingTuningDetailCandidatesDelegate tuningDetailLookupDelegate, NewChannelDelegate newChannelDelegate, ScanCompletedDelegate scanCompletedDelegate)
     {
       IDictionary<MediaType, Counter> overallCounters = new Dictionary<MediaType, Counter>(2);
-      IUser user = new User();
-      user.CardId = _tunerId;
       FileTuningDetail[] tuningDetails = null;
 
       try
       {
-        ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
         IChannel tuneChannel = tuningDetail.GetTuningChannel();
-        TvResult result = ServiceAgents.Instance.ControllerServiceAgent.Scan(user.Name, user.CardId, out user, tuneChannel, -1);
+        TvResult result = ServiceAgents.Instance.ControllerServiceAgent.Scan(string.Format("NIT_scanner_{0}", _tunerId), _tunerId, tuneChannel);
         if (result == TvResult.GraphBuildingFailed)
         {
           this.LogError("channel scan: failed to scan, tuner loading failed");
@@ -609,8 +542,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       {
         if (tuningDetails == null)
         {
-          ServiceAgents.Instance.ControllerServiceAgent.StopCard(user.CardId);
-          ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
+          ServiceAgents.Instance.ControllerServiceAgent.StopCard(_tunerId);
           _signalStatusUpdateTimer.Stop();
           scanCompletedDelegate();
         }
@@ -636,6 +568,72 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
         IdGroup = channelGroupId,
         IdChannel = channelId
       };
+    }
+
+    public static Channel AddChannel(IChannel channel)
+    {
+      Channel dbChannel = new Channel();
+      dbChannel.Name = channel.Name;
+      dbChannel.ChannelNumber = channel.LogicalChannelNumber;
+      dbChannel.MediaType = (int)channel.MediaType;
+      dbChannel.VisibleInGuide = true;
+      dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
+      dbChannel.AcceptChanges();
+      ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
+      return dbChannel;
+    }
+
+    public static void UpdateChannel(IChannel channel, DbTuningDetail dbTuningDetail)
+    {
+      Channel dbChannel = dbTuningDetail.Channel;
+      if (dbChannel != null)
+      {
+        // Update channel name if...
+        bool channelUpdated = false;
+        if (
+          // ...scan found a valid name, and...
+          !channel.Name.StartsWith("Unknown ") &&
+          (
+          // ...the current channel name is invalid, or...
+            dbChannel.Name.StartsWith("Unknown ") ||
+          // ...the current [valid] channel name has not been customised by the user.
+            (
+              string.Equals(dbChannel.Name, dbTuningDetail.Name) &&
+              !string.Equals(channel.Name, dbTuningDetail.Name)
+            )
+          )
+        )
+        {
+          dbChannel.Name = channel.Name;
+          channelUpdated = true;
+        }
+
+        // Update channel LCN if...
+        if (
+          // ...scan found a valid LCN, and...
+          !string.Equals(channel.LogicalChannelNumber, "10000") &&
+          (
+          // ...the current channel LCN is invalid, or...
+            string.Equals(dbChannel.ChannelNumber, "10000") ||
+          // ...the current [valid] channel LCN has not been customised by the user.
+            (
+              string.Equals(dbChannel.ChannelNumber, dbTuningDetail.LogicalChannelNumber) &&
+              !string.Equals(channel.LogicalChannelNumber, dbTuningDetail.LogicalChannelNumber)
+            )
+          )
+        )
+        {
+          dbChannel.ChannelNumber = channel.LogicalChannelNumber;
+          channelUpdated = true;
+        }
+
+        if (channelUpdated)
+        {
+          ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
+        }
+      }
+
+      ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbTuningDetail.IdChannel, dbTuningDetail.IdTuning, channel);
     }
   }
 }
