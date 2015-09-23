@@ -67,6 +67,7 @@ namespace MediaPortal.GUI.Settings
 
     private int _iStartUpDelay;
     private int _screennumber; // 0 is the default screen for MP
+    private string _screenName;
     private readonly ArrayList _screenCollection = new ArrayList();
 
     public GUISettingsGeneralResume()
@@ -90,6 +91,7 @@ namespace MediaPortal.GUI.Settings
         _cmShowlastactivemodule.Selected = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
         _cmStopOnAudioRemoval.Selected = xmlreader.GetValueAsBool("general", "stoponaudioremoval", false);
         _screennumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
+        _screenName = xmlreader.GetValueAsString("screenselector", "screenname", "");
 
         // Delay startup
         _iStartUpDelay = xmlreader.GetValueAsInt("general", "delay", 0);
@@ -260,9 +262,27 @@ namespace MediaPortal.GUI.Settings
         return;
       }
 
+      for (int index = 0; index < _screenCollection.Count; index++)
+      {
+        string screenName = _screenCollection[index].ToString().ToLowerInvariant();
+        if (screenName.Equals(_screenName))
+        {
+          dlg.SelectedLabel = index;
+          _screennumber = index;
+          break;
+        }
+      }
+
+      // Check if screen are present and if not force to use primary screen
+      if (dlg.SelectedLabel == -1)
+      {
+        dlg.SelectedLabel = 0;
+      }
+
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValue("screenselector", "screennumber", dlg.SelectedLabel);
+        xmlwriter.SetValue("screenselector", "screenname", _screenCollection[dlg.SelectedLabel].ToString().ToLowerInvariant());
         SettingsChanged(true);
       }
     }
@@ -312,9 +332,9 @@ namespace MediaPortal.GUI.Settings
         {
           if (screen.DeviceName.Equals(adapter.Information.DeviceName.Trim()))
           {
-            _screenCollection.Add(string.Format("{0} ({1}x{2}) on {3}",
+            _screenCollection.Add(string.Format("{0} ({1}x{2}) on {3} deviceName : {4}",
                                              monitorname, adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height,
-                                             adapter.Information.Description));
+                                             adapter.Information.Description, adapter.Information.DeviceName));
           }
         }
       }
