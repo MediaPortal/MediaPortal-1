@@ -169,28 +169,29 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         "Example: provider == \"Freesat\" & !name : \"BBC\" (find all Freesat channels that don't have \"BBC\" in their name)"
       );
 
-
       // debug
-      ThreadPool.QueueUserWorkItem(delegate(object context)
-      {
-        try
+      ThreadPool.QueueUserWorkItem(
+        delegate
         {
-          this.LogDebug("channels: channels...");
-          foreach (Channel channel in allChannels)
+          try
           {
-            this.LogDebug("  ID = {0, -4}, name = {1, -30}, number = {2, -5}, tuning detail count = {3}, group count = {4}", channel.IdChannel, channel.Name, channel.ChannelNumber, channel.TuningDetails.Count, channel.GroupMaps.Count);
+            this.LogDebug("channels: channels...");
+            foreach (Channel channel in allChannels)
+            {
+              this.LogDebug("  ID = {0, -4}, name = {1, -30}, number = {2, -5}, tuning detail count = {3}, group count = {4}", channel.IdChannel, channel.Name, channel.ChannelNumber, channel.TuningDetails.Count, channel.GroupMaps.Count);
+            }
+            this.LogDebug("channels: groups...");
+            foreach (ChannelGroup group in allGroups)
+            {
+              List<GroupMap> mappings = _channelsInGroupMappingCache[group.IdGroup];
+              this.LogDebug("  ID = {0, -3}, name = {1, -30}, channel count = {2, -4}, channels = [{3}]", group.IdGroup, group.GroupName, mappings.Count, string.Join(", ", from mapping in mappings select mapping.IdChannel));
+            }
           }
-          this.LogDebug("channels: groups...");
-          foreach (ChannelGroup group in allGroups)
+          catch
           {
-            List<GroupMap> mappings = _channelsInGroupMappingCache[group.IdGroup];
-            this.LogDebug("  ID = {0, -3}, name = {1, -30}, channel count = {2, -4}, channels = [{3}]", group.IdGroup, group.GroupName, mappings.Count, string.Join(", ", from mapping in mappings select mapping.IdChannel));
           }
         }
-        catch
-        {
-        }
-      });
+      );
 
       base.OnSectionActivated();
     }
