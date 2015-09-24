@@ -178,7 +178,7 @@ HRESULT MultiFileWriter::Write(unsigned char* data, unsigned long dataLength, bo
   HRESULT hr;
   if (m_fileData->IsFileInvalid())
   {
-    return OpenDataFile(disableLogging);
+    hr = OpenDataFile(disableLogging);
     if (FAILED(hr))
     {
       return hr;
