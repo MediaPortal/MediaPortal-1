@@ -20,8 +20,10 @@
 
 using System;
 using System.ComponentModel;
+using System.Data;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
@@ -76,7 +78,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     private int _screennumber; // 0 is the primary screen
-    private string _screenName;
+    private string _screenDeviceId = "";
 
     private readonly string[][] _sectionEntries = new[]
     {
@@ -118,29 +120,45 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
+      int indexAdapter = 0;
+      DataTable dtblDataSource = new DataTable();
+      dtblDataSource.Columns.Add("DisplayMember");
+      dtblDataSource.Columns.Add("ValueMember");
+      dtblDataSource.Columns.Add("AdditionalInfo");
+      cbScreen.DataSource.SafeDispose();
       cbScreen.Items.Clear();
+      cbScreen.DataSource = dtblDataSource;
+      cbScreen.DisplayMember = "DisplayMember";
+      cbScreen.ValueMember = "ValueMember";
+
       foreach (Screen screen in Screen.AllScreens)
       {
         const int dwf = 0;
         var info = new DISPLAY_DEVICE();
         string monitorname = null;
+        string deviceId = null;
         info.cb = Marshal.SizeOf(info);
         if (EnumDisplayDevices(screen.DeviceName, 0, info, dwf))
         {
           monitorname = info.DeviceString;
+          deviceId = info.DeviceID;
         }
         if (monitorname == null)
         {
           monitorname = "";
+        }
+        if (deviceId == null)
+        {
+          deviceId = "";
         }
 
         foreach (AdapterInformation adapter in Manager.Adapters)
         {
           if (screen.DeviceName.Equals(adapter.Information.DeviceName.Trim()))
           {
-            cbScreen.Items.Add(string.Format("{0} ({1}x{2}) on {3} deviceName : {4}", monitorname,
-              adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Information.Description,
-              adapter.Information.DeviceName));
+            dtblDataSource.Rows.Add(string.Format("{0} ({1}x{2}) on {3}", monitorname,
+                adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Information.Description), indexAdapter, deviceId);
+            indexAdapter++;
           }
         }
       }
@@ -155,7 +173,7 @@ namespace MediaPortal.Configuration.Sections
         }
 
         _screennumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
-        _screenName = xmlreader.GetValueAsString("screenselector", "screenname", "");
+        _screenDeviceId = xmlreader.GetValueAsString("screenselector", "screendeviceid", "");
 
         
         while (cbScreen.Items.Count <= _screennumber)
@@ -165,11 +183,16 @@ namespace MediaPortal.Configuration.Sections
 
         for (int index = 0; index < cbScreen.Items.Count; index++)
         {
-          string screenName = cbScreen.Items[index].ToString().ToLowerInvariant();
-          if (screenName.Equals(_screenName))
+          //Get additional info for selected item
+          var dataRowView = cbScreen.Items[index] as DataRowView;
+          if (dataRowView != null)
           {
-            cbScreen.SelectedIndex = index;
-            _screennumber = index;
+            string screenDeviceId = dataRowView["AdditionalInfo"].ToString();
+            if (screenDeviceId.Equals(_screenDeviceId))
+            {
+              cbScreen.SelectedIndex = index;
+              _screennumber = index;
+            }
           }
         }
 
@@ -193,7 +216,11 @@ namespace MediaPortal.Configuration.Sections
       using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("screenselector", "screennumber", cbScreen.SelectedIndex);
-        xmlwriter.SetValue("screenselector", "screenname", cbScreen.Items[cbScreen.SelectedIndex].ToString().ToLowerInvariant());
+        var dataRowView = cbScreen.Items[cbScreen.SelectedIndex] as DataRowView;
+        if (dataRowView != null)
+        {
+          xmlwriter.SetValue("screenselector", "screendeviceid", dataRowView["AdditionalInfo"].ToString());
+        }
 
         for (int index = 0; index < _sectionEntries.Length; index++)
         {
