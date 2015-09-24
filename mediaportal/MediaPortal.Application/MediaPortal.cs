@@ -1113,7 +1113,7 @@ public class MediaPortalApp : D3D, IRender
     _restartOptions        = RestartOptions.Reboot;
 
     int screenNumber;
-    string screenName;
+    string screenDeviceId;
     using (Settings xmlreader = new MPSettings())
     {
       _suspendGracePeriodSec      = xmlreader.GetValueAsInt("general", "suspendgraceperiod", 5);
@@ -1126,7 +1126,7 @@ public class MediaPortalApp : D3D, IRender
       screenNumber                = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
       _stopOnLostAudioRenderer    = xmlreader.GetValueAsBool("general", "stoponaudioremoval", true);
       _delayOnResume              = xmlreader.GetValueAsBool("general", "delay resume", false) ? xmlreader.GetValueAsInt("general", "delay", 0) : 0;
-      screenName = xmlreader.GetValueAsString("screenselector", "screenname", "");
+      screenDeviceId = xmlreader.GetValueAsString("screenselector", "screendeviceid", "");
     }
 
     if (ScreenNumberOverride >= 0)
@@ -1143,23 +1143,25 @@ public class MediaPortalApp : D3D, IRender
       const int dwf = 0;
       var info = new DISPLAY_DEVICE();
       string monitorname = null;
+      string deviceId = null;
       info.cb = Marshal.SizeOf(info);
       if (EnumDisplayDevices(screen.DeviceName, 0, info, dwf))
       {
         monitorname = info.DeviceString;
+        deviceId = info.DeviceID;
       }
       if (monitorname == null)
       {
         monitorname = "";
       }
+      if (deviceId == null)
+      {
+        deviceId = "";
+      }
 
       foreach (AdapterInformation adapter in Manager.Adapters)
       {
-        string detectedScreen = string.Format("{0} ({1}x{2}) on {3} deviceName : {4}", monitorname,
-          adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Information.Description,
-          adapter.Information.DeviceName);
-
-        if (detectedScreen.ToLowerInvariant().Equals(screenName))
+        if (deviceId.Equals(screenDeviceId))
         {
           GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
           break;
