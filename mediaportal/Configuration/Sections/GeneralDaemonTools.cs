@@ -93,6 +93,24 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
+      if (OSInfo.OSInfo.Win8OrLater())
+      {
+        comboDriveType.Items.AddRange(new object[] {
+            "dt",
+            "scsi",
+            "ide",
+            "vcd",
+            "native"});
+      }
+      else
+      {
+        comboDriveType.Items.AddRange(new object[] {
+            "dt",
+            "scsi",
+            "ide",
+            "vcd"});
+      }
+      
       using (Settings xmlreader = new MPSettings())
       {
         checkBoxDaemonTools.Checked = xmlreader.GetValueAsBool("daemon", "enabled", false);
@@ -182,6 +200,8 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.comboDriveType = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.resetButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxExtensions = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -195,8 +215,6 @@ namespace MediaPortal.Configuration.Sections
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxDaemonTools = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxAskBeforePlaying = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.comboDriveType = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -227,6 +245,26 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Settings";
       // 
+      // comboDriveType
+      // 
+      this.comboDriveType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboDriveType.BorderColor = System.Drawing.Color.Empty;
+      this.comboDriveType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboDriveType.Location = new System.Drawing.Point(168, 118);
+      this.comboDriveType.Name = "comboDriveType";
+      this.comboDriveType.Size = new System.Drawing.Size(288, 21);
+      this.comboDriveType.TabIndex = 14;
+      // 
+      // mpLabel3
+      // 
+      this.mpLabel3.AutoSize = true;
+      this.mpLabel3.Location = new System.Drawing.Point(16, 121);
+      this.mpLabel3.Name = "mpLabel3";
+      this.mpLabel3.Size = new System.Drawing.Size(62, 13);
+      this.mpLabel3.TabIndex = 13;
+      this.mpLabel3.Text = "Drive Type:";
+      // 
       // resetButton
       // 
       this.resetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -243,9 +281,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel2.AutoSize = true;
       this.mpLabel2.Location = new System.Drawing.Point(16, 206);
       this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(264, 13);
+      this.mpLabel2.Size = new System.Drawing.Size(367, 13);
       this.mpLabel2.TabIndex = 11;
-      this.mpLabel2.Text = "Supported tools: Virtual CloneDrive and Daemon Tools";
+      this.mpLabel2.Text = "Supported tools: Windows native ISO, Virtual CloneDrive and Daemon Tools";
       // 
       // textBoxExtensions
       // 
@@ -364,32 +402,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxAskBeforePlaying.TabIndex = 8;
       this.checkBoxAskBeforePlaying.Text = "Ask before playing image files";
       this.checkBoxAskBeforePlaying.UseVisualStyleBackColor = true;
-      // 
-      // comboDriveType
-      // 
-      this.comboDriveType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboDriveType.BorderColor = System.Drawing.Color.Empty;
-      this.comboDriveType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboDriveType.Items.AddRange(new object[] {
-            "dt",
-            "scsi",
-            "ide",
-            DaemonTools.VirtualCloneDrive
-       });
-      this.comboDriveType.Location = new System.Drawing.Point(168, 118);
-      this.comboDriveType.Name = "comboDriveType";
-      this.comboDriveType.Size = new System.Drawing.Size(288, 21);
-      this.comboDriveType.TabIndex = 14;
-      // 
-      // mpLabel3
-      // 
-      this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(16, 121);
-      this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(62, 13);
-      this.mpLabel3.TabIndex = 13;
-      this.mpLabel3.Text = "Drive Type:";
       // 
       // GeneralDaemonTools
       // 
