@@ -71,12 +71,20 @@ namespace MediaPortal.Util
           _Enabled = false;
         }
 
-        string[] extensions =
-          xmlreader.GetValueAsString("daemon", "extensions", Utils.ImageExtensionsDefault).Split(',');
-        _supportedExtensions = new HashSet<string>();
-        // Can't use an AddRange, as we need to trim the blanks  
-        foreach (string ext in extensions)
-          _supportedExtensions.Add(ext.Trim());
+        if (_DriveType == "native")
+        {
+          _supportedExtensions = new HashSet<string>();
+          _supportedExtensions.Add(".iso");
+        }
+        else
+        {
+          string[] extensions =
+            xmlreader.GetValueAsString("daemon", "extensions", Utils.ImageExtensionsDefault).Split(',');
+          _supportedExtensions = new HashSet<string>();
+          // Can't use an AddRange, as we need to trim the blanks  
+          foreach (string ext in extensions)
+            _supportedExtensions.Add(ext.Trim());
+        }
       }
     }
 
@@ -279,8 +287,8 @@ namespace MediaPortal.Util
     /// </returns>
     public static bool IsImageFile(string extension)
     {
-      if (extension == null) return false;
-      if (extension == string.Empty) return false;
+      if (string.IsNullOrEmpty(extension)) return false;
+      
       return _supportedExtensions.Contains(extension.ToLowerInvariant());
       //extension = extension.ToLowerInvariant();
       //foreach (string ext in _supportedExtensions)

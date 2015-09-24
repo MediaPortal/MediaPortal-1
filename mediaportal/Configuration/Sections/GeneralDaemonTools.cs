@@ -122,6 +122,7 @@ namespace MediaPortal.Configuration.Sections
         checkBoxAskBeforePlaying.Checked = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
       }
       checkBoxDaemonTools_CheckedChanged(null, null);
+      comboDriveType_SelectionChangeCommitted(null, null);
 
       if (textBoxDaemonTools.Text.Length == 0)
       {
@@ -255,6 +256,7 @@ namespace MediaPortal.Configuration.Sections
       this.comboDriveType.Name = "comboDriveType";
       this.comboDriveType.Size = new System.Drawing.Size(288, 21);
       this.comboDriveType.TabIndex = 14;
+      this.comboDriveType.SelectionChangeCommitted += new System.EventHandler(this.comboDriveType_SelectionChangeCommitted);
       // 
       // mpLabel3
       // 
@@ -467,6 +469,26 @@ namespace MediaPortal.Configuration.Sections
           == DialogResult.No) return;
 
       textBoxExtensions.Text = Util.Utils.ImageExtensionsDefault;
+    }
+
+    private void comboDriveType_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      if (comboDriveType.SelectedItem.ToString() == "native")
+      {
+        textBoxDaemonTools.Enabled = false;
+        comboBoxDrive.Enabled = false;
+        buttonSelectFolder.Enabled = false;
+        comboDriveNo.Enabled = false;
+        textBoxExtensions.Enabled = false;
+      }
+      else
+      {
+        textBoxDaemonTools.Enabled = true;
+        comboBoxDrive.Enabled = true;
+        buttonSelectFolder.Enabled = true;
+        comboDriveNo.Enabled = true;
+        textBoxExtensions.Enabled = true;
+      }
     }
   }
 }
