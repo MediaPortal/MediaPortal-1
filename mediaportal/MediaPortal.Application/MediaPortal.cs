@@ -1161,7 +1161,15 @@ public class MediaPortalApp : D3D, IRender
 
       foreach (AdapterInformation adapter in Manager.Adapters)
       {
-        if (deviceId.Equals(screenDeviceId))
+        if (!string.IsNullOrEmpty(deviceId))
+        {
+          if (deviceId.Equals(screenDeviceId))
+          {
+            GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
+            break;
+          }
+        }
+        else
         {
           GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
           break;

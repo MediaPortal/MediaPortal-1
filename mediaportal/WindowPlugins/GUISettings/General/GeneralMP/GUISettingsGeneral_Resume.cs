@@ -21,11 +21,14 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using Microsoft.DirectX.Direct3D;
+using Microsoft.Win32;
 using Action = MediaPortal.GUI.Library.Action;
 
 // ReSharper disable CheckNamespace
@@ -78,6 +81,118 @@ namespace MediaPortal.GUI.Settings
     public override bool Init()
     {
       return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_General_Resume.xml"));
+    }
+
+    /// <summary>
+    /// The Constructor to create a new instances of the DisplayDetails class...
+    /// </summary>
+    public class DisplayDetails
+    {
+      public string PnPID { get; set; }
+
+      public string SerialNumber { get; set; }
+
+      public string Model { get; set; }
+
+      public string MonitorID { get; set; }
+
+      public string DriverID { get; set; }
+
+      /// <summary>
+      /// The Constructor to create a new instances of the DisplayDetails class...
+      /// </summary>
+      public DisplayDetails(string sPnPID, string sSerialNumber, string sModel, string sMonitorID, string sDriverID)
+      {
+        PnPID = sPnPID;
+        SerialNumber = sSerialNumber;
+        Model = sModel;
+        MonitorID = sMonitorID;
+        DriverID = sDriverID;
+      }
+
+      /// <summary>
+      /// This Function returns all Monitor Details
+      /// </summary>
+      /// <returns></returns>
+      static public IEnumerable<DisplayDetails> GetMonitorDetails()
+      {
+        //Open the Display Reg-Key
+        RegistryKey Display = Registry.LocalMachine;
+        Boolean bFailed = false;
+        try
+        {
+          Display = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Enum\DISPLAY");
+        }
+        catch
+        {
+          bFailed = true;
+        }
+
+        if (!bFailed & (Display != null))
+        {
+
+          //Get all MonitorIDss
+          foreach (string sMonitorID in Display.GetSubKeyNames())
+          {
+            RegistryKey MonitorID = Display.OpenSubKey(sMonitorID);
+
+            if (MonitorID != null)
+            {
+              //Get all Plug&Play ID's
+              foreach (string sPNPID in MonitorID.GetSubKeyNames())
+              {
+                RegistryKey PnPID = MonitorID.OpenSubKey(sPNPID);
+                if (PnPID != null)
+                {
+                  string[] sSubkeys = PnPID.GetSubKeyNames();
+
+                  //Check if Monitor is active
+                  if (sSubkeys.Contains("Device Parameters"))
+                  {
+                    string DriverID = PnPID.GetValue("Driver", null) as string;
+                    RegistryKey DevParam = PnPID.OpenSubKey("Device Parameters");
+                    string sSerial = "";
+                    string sModel = "";
+
+                    //Define Search Keys
+                    string sSerFind = new string(new char[] { (char)00, (char)00, (char)00, (char)0xff });
+                    string sModFind = new string(new char[] { (char)00, (char)00, (char)00, (char)0xfc });
+
+                    //Get the EDID code
+                    byte[] bObj = DevParam.GetValue("EDID", null) as byte[];
+                    if (bObj != null)
+                    {
+                      //Get the 4 Vesa descriptor blocks
+                      string[] sDescriptor = new string[4];
+                      sDescriptor[0] = Encoding.Default.GetString(bObj, 0x36, 18);
+                      sDescriptor[1] = Encoding.Default.GetString(bObj, 0x48, 18);
+                      sDescriptor[2] = Encoding.Default.GetString(bObj, 0x5A, 18);
+                      sDescriptor[3] = Encoding.Default.GetString(bObj, 0x6C, 18);
+
+                      //Search the Keys
+                      foreach (string sDesc in sDescriptor)
+                      {
+                        if (sDesc.Contains(sSerFind))
+                        {
+                          sSerial = sDesc.Substring(4).Replace("\0", "").Trim();
+                        }
+                        if (sDesc.Contains(sModFind))
+                        {
+                          sModel = sDesc.Substring(4).Replace("\0", "").Trim();
+                        }
+                      }
+                    }
+                    if (!string.IsNullOrEmpty(sPNPID + sSerFind + sModel + sMonitorID + DriverID))
+                    {
+                      yield return new DisplayDetails(sPNPID, sSerial, sModel, sMonitorID, DriverID);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
 
     #region Serialisation
@@ -330,12 +445,30 @@ namespace MediaPortal.GUI.Settings
 
         foreach (AdapterInformation adapter in Manager.Adapters)
         {
+          bool detectedId = false;
           if (screen.DeviceName.Equals(adapter.Information.DeviceName.Trim()))
           {
-            _screenCollection.Add(
-              new KeyValuePair<string, string>((
-                string.Format("{0} ({1}x{2}) on {3}", monitorname, adapter.CurrentDisplayMode.Width,
-                  adapter.CurrentDisplayMode.Height, adapter.Information.Description)), deviceId));
+            foreach (var display in DisplayDetails.GetMonitorDetails())
+            {
+              // double check to add display with name from extracted EDID
+              if (("MONITOR" + "\\" + display.MonitorID + "\\" + display.DriverID).Equals(info.DeviceID))
+              {
+                _screenCollection.Add(
+                  new KeyValuePair<string, string>((
+                    string.Format("{0} ({1}x{2}) on {3}", display.Model, adapter.CurrentDisplayMode.Width,
+                      adapter.CurrentDisplayMode.Height, adapter.Information.Description)), deviceId));
+                detectedId = true;
+                break;
+              }
+            }
+            if (!detectedId)
+            {
+              _screenCollection.Add(
+                new KeyValuePair<string, string>((
+                  string.Format("{0} ({1}x{2}) on {3}", monitorname, adapter.CurrentDisplayMode.Width,
+                    adapter.CurrentDisplayMode.Height, adapter.Information.Description)), deviceId));
+              break;
+            }
           }
         }
       }
