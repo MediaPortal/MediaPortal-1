@@ -135,7 +135,7 @@ namespace MediaPortal.GUI.Music
     private DirectoryHistory _dirHistory = new DirectoryHistory();
     private GUIListItem _selectedListItem = null;
     private static VirtualDirectory _virtualDirectory;
-
+    private MusicFolderWatcherHelper _musicFolderWatcher;
     private int _selectedAlbum = -1;
     private int _selectedItem = -1;
     private string _discId = string.Empty;
@@ -434,6 +434,11 @@ namespace MediaPortal.GUI.Music
 
       SaveFolderSettings(currentFolder);
 
+      if (_musicFolderWatcher != null)
+      {
+        _musicFolderWatcher.ChangeMonitoring(false);
+      }
+
       base.OnPageDestroy(newWindowId);
     }
 
@@ -494,12 +499,37 @@ namespace MediaPortal.GUI.Music
     {
       DateTime dtStart = DateTime.Now;
 
+      if (strNewDirectory == null)
+      {
+        Log.Warn("GUIMusic::LoadDirectory called with invalid argument. newFolderName is null!");
+        return;
+      }
+
+      if (facadeLayout == null)
+      {
+        return;
+      }
+
       if (!WakeUpSrv(strNewDirectory))
       {
         return;
       }
 
       GUIWaitCursor.Show();
+
+      GUIPropertyManager.SetProperty("#MusicFolderChanged", "false");
+
+      if (_musicFolderWatcher != null)
+      {
+        _musicFolderWatcher.ChangeMonitoring(false);
+      }
+
+      if (!string.IsNullOrEmpty(strNewDirectory))
+      {
+        _musicFolderWatcher = new MusicFolderWatcherHelper(strNewDirectory);
+        _musicFolderWatcher.SetMonitoring(true);
+        _musicFolderWatcher.StartMonitor();
+      }
 
       ThreadPool.QueueUserWorkItem(delegate
                                    {
@@ -845,7 +875,10 @@ namespace MediaPortal.GUI.Music
         }
 
         #endregion
+
       }
+
+      dlg.AddLocalizedString(1299); // Refresh current directory
 
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1)
@@ -1061,6 +1094,16 @@ namespace MediaPortal.GUI.Music
             else
             {
               LoadDirectory(string.Empty);
+            }
+          }
+          break;
+
+        case 1299: // Refresh current directory
+          {
+            if (facadeLayout.ListLayout.ListItems.Count > 0 && !string.IsNullOrEmpty(currentFolder))
+            {
+              facadeLayout.SelectedListItemIndex = 0;
+              LoadDirectory(currentFolder);
             }
           }
           break;
