@@ -175,12 +175,10 @@ namespace MediaPortal.Configuration.Sections
         _screennumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
         _screenDeviceId = xmlreader.GetValueAsString("screenselector", "screendeviceid", "");
 
-        
-        //while (cbScreen.Items.Count <= _screennumber)
-        //{
-        //  cbScreen.DataSource.SafeDispose();
-        //  cbScreen.Items.Add("screen nr :" + cbScreen.Items.Count + " (currently unavailable)");
-        //}
+        while (cbScreen.Items.Count <= _screennumber)
+        {
+          dtblDataSource.Rows.Add("screen nr :" + cbScreen.Items.Count + " (currently unavailable)");
+        }
 
         for (int index = 0; index < cbScreen.Items.Count; index++)
         {
