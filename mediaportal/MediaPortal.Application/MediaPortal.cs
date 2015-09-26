@@ -1570,8 +1570,11 @@ public class MediaPortalApp : D3D, IRender
 
         // handle device changes
         case WM_DEVICECHANGE:
-          OnDeviceChange(ref msg);
-          PluginManager.WndProc(ref msg);
+          if (!_keepstartfullscreen)
+          {
+            OnDeviceChange(ref msg);
+            PluginManager.WndProc(ref msg);
+          }
           break;
 
         case WM_QUERYENDSESSION:
