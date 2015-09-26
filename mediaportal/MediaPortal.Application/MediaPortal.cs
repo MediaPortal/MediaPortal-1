@@ -204,6 +204,26 @@ public class MediaPortalApp : D3D, IRender
   // Framegrabber instance
   private FrameGrabber grabber = FrameGrabber.GetInstance();
 
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+  // ReSharper disable InconsistentNaming
+  public class DISPLAY_DEVICE
+  // ReSharper restore InconsistentNaming
+  {
+    public int cb = 0;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+    public string DeviceName = new String(' ', 32);
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+    public string DeviceString = new String(' ', 128);
+    public int StateFlags = 0;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+    public string DeviceID = new String(' ', 128);
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+    public string DeviceKey = new String(' ', 128);
+  }
+
+  [DllImport("user32.dll")]
+  public static extern bool EnumDisplayDevices(string lpDevice, int iDevNum, [In, Out] DISPLAY_DEVICE lpDisplayDevice, int dwFlags);
+
   #endregion
 
   #region enumns
@@ -1093,6 +1113,7 @@ public class MediaPortalApp : D3D, IRender
     _restartOptions        = RestartOptions.Reboot;
 
     int screenNumber;
+    string screenDeviceId;
     using (Settings xmlreader = new MPSettings())
     {
       _suspendGracePeriodSec      = xmlreader.GetValueAsInt("general", "suspendgraceperiod", 5);
@@ -1105,6 +1126,7 @@ public class MediaPortalApp : D3D, IRender
       screenNumber                = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
       _stopOnLostAudioRenderer    = xmlreader.GetValueAsBool("general", "stoponaudioremoval", true);
       _delayOnResume              = xmlreader.GetValueAsBool("general", "delay resume", false) ? xmlreader.GetValueAsInt("general", "delay", 0) : 0;
+      screenDeviceId = xmlreader.GetValueAsString("screenselector", "screendeviceid", "");
     }
 
     if (ScreenNumberOverride >= 0)
@@ -1116,7 +1138,44 @@ public class MediaPortalApp : D3D, IRender
       screenNumber = 0;
     }
 
-    GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
+    foreach (Screen screen in Screen.AllScreens)
+    {
+      const int dwf = 0;
+      var info = new DISPLAY_DEVICE();
+      string monitorname = null;
+      string deviceId = null;
+      info.cb = Marshal.SizeOf(info);
+      if (EnumDisplayDevices(screen.DeviceName, 0, info, dwf))
+      {
+        monitorname = info.DeviceString;
+        deviceId = info.DeviceID;
+      }
+      if (monitorname == null)
+      {
+        monitorname = "";
+      }
+      if (deviceId == null)
+      {
+        deviceId = "";
+      }
+
+      foreach (AdapterInformation adapter in Manager.Adapters)
+      {
+        if (!string.IsNullOrEmpty(deviceId))
+        {
+          if (deviceId.Equals(screenDeviceId))
+          {
+            GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
+            break;
+          }
+        }
+        else
+        {
+          GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
+          break;
+        }
+      }
+    }
 
     Log.Info("Main: MP is using screen: {0} (Position: {1},{2} Dimensions: {3}x{4})",
              GetCleanDisplayName(GUIGraphicsContext.currentScreen),
