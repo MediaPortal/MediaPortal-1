@@ -238,6 +238,15 @@ ErrorMessage ERROR_MESSAGES[] = {
   { E_M3U8_NO_DECRYPTOR_LOADED, L"No decryptor loaded." },
   { E_M3U8_DECRYPTION_METHOD_NOT_SUPPORTED, L"Decryption method is not supported." },
 
+  // M3U8 protocol AES128 decryption error codes
+
+  { E_M3U8_AES128_DECRYPTION_FAILED_TO_INITIALIZE, L"Failed to initialize AES-128 decryption method." },
+  { E_M3U8_AES128_DECRYPTION_FAILED_TO_DECRYPT_DATA, L"Failed to decrypt data." },
+  { E_M3U8_AES128_DECRYPTION_FAILED_TO_FINALIZE_DECRYPTION, L"Failed to finalize decryption." },
+  { E_M3U8_AES128_DECRYPTION_DECRYPTED_DATA_LOWER_THAN_ZERO, L"Decrypted data length is lower than zero." },
+  { E_M3U8_AES128_DECRYPTION_DECRYPTED_DATA_GREATER_THAN_ENCRYPTED_DATA, L"Decrypted data length is greater then encrypted data length." },
+  { E_M3U8_AES128_DECRYPTION_INVALID_KEY_LENGTH, L"Invalid decryption key length." },
+
   // last item
   { 0, NULL }
 };

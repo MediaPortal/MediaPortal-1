@@ -26,7 +26,6 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 #include "Plugin.h"
 #include "M3u8DecryptionContext.h"
 
-//#define METHOD_GET_DECRYPTION_RESULT_NAME                             L"GetDecryptionResult()"
 #define METHOD_DECRYPT_STREAM_FRAGMENTS_NAME                          L"DecryptStreamFragments()"
 
 #define M3U8_DECRYPTION_PLUGIN_FLAG_NONE                              PLUGIN_FLAG_NONE
@@ -51,9 +50,6 @@ public:
   /* set methods */
 
   /* other methods */
-
-  // clears current session
-  virtual void ClearSession(void);
 
   // decrypts encrypted stream fragments
   // @param decryptionContext : M3U8 decryption context

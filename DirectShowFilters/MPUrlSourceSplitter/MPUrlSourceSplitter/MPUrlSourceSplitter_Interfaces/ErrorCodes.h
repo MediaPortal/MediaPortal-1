@@ -242,4 +242,13 @@ FORCEINLINE bool IS_M3U8_ERROR(HRESULT error) { return (IS_M3U8_PARSE_ERROR(erro
 #define E_M3U8_NO_DECRYPTOR_LOADED                                              -212
 #define E_M3U8_DECRYPTION_METHOD_NOT_SUPPORTED                                  -213
 
+// M3U8 protocol AES128 decryption error codes
+
+#define E_M3U8_AES128_DECRYPTION_FAILED_TO_INITIALIZE                           -214
+#define E_M3U8_AES128_DECRYPTION_FAILED_TO_DECRYPT_DATA                         -215
+#define E_M3U8_AES128_DECRYPTION_FAILED_TO_FINALIZE_DECRYPTION                  -216
+#define E_M3U8_AES128_DECRYPTION_DECRYPTED_DATA_LOWER_THAN_ZERO                 -217
+#define E_M3U8_AES128_DECRYPTION_DECRYPTED_DATA_GREATER_THAN_ENCRYPTED_DATA     -218
+#define E_M3U8_AES128_DECRYPTION_INVALID_KEY_LENGTH                             -219
+
 #endif

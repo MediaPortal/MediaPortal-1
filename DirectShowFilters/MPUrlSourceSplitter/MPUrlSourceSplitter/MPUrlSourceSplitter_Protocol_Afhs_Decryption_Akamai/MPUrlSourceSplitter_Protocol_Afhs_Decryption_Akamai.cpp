@@ -414,7 +414,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai::DecryptSegmentFrag
                             if (finishTime != UINT_MAX)
                             {
                               unsigned int currentTime = GetTickCount();
-                              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: finish time specified, current time: %u, finish time: %u, diff: %u (ms)", DECRYPTION_IMPLEMENTATION_NAME, METHOD_GET_DECRYPTION_RESULT_NAME, currentTime, finishTime, finishTime - currentTime);
+                              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: finish time specified, current time: %u, finish time: %u, diff: %u (ms)", DECRYPTION_IMPLEMENTATION_NAME, METHOD_DECRYPT_SEGMENT_FRAGMENTS_NAME, currentTime, finishTime, finishTime - currentTime);
                               decryptionContext->GetConfiguration()->Remove(PARAMETER_NAME_FINISH_TIME, true);
                             }
                           }
@@ -463,7 +463,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai::DecryptSegmentFrag
                             else
                             {
                               decryptionContext->GetCurlInstance()->SetConnectionState(InitializeFailed);
-                              this->logger->Log(LOGGER_WARNING, L"%s: %s: cannot lock CURL instance, owner: 0x%p, lock count: %u", DECRYPTION_IMPLEMENTATION_NAME, METHOD_GET_DECRYPTION_RESULT_NAME, decryptionContext->GetCurlInstance()->GetOwner(), decryptionContext->GetCurlInstance()->GetOwnerLockCount());
+                              this->logger->Log(LOGGER_WARNING, L"%s: %s: cannot lock CURL instance, owner: 0x%p, lock count: %u", DECRYPTION_IMPLEMENTATION_NAME, METHOD_DECRYPT_SEGMENT_FRAGMENTS_NAME, decryptionContext->GetCurlInstance()->GetOwner(), decryptionContext->GetCurlInstance()->GetOwnerLockCount());
                             }
                           }
                         }

@@ -86,6 +86,7 @@ HRESULT CAfhsDecryptionPlugin::GetDecryptionResult(CAfhsDecryptionContext *decry
 
 void CAfhsDecryptionPlugin::ClearSession(void)
 {
-  this->flags = AFHS_DECRYPTION_PLUGIN_FLAG_NONE;
+  __super::ClearSession();
+
   this->decryptionResult = DECRYPTION_RESULT_PENDING;
 }

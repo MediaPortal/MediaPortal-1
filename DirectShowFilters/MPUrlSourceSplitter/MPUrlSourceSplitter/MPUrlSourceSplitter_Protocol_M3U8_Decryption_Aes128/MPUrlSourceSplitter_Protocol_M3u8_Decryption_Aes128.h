@@ -20,8 +20,8 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef __MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_DECRYPTION_NONE_DEFINED
-#define __MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_DECRYPTION_NONE_DEFINED
+#ifndef __MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_DECRYPTION_AES128_DEFINED
+#define __MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_DECRYPTION_AES128_DEFINED
 
 #include "Logger.h"
 #include "M3u8DecryptionPlugin.h"
@@ -29,18 +29,23 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 #include "M3u8StreamFragmentCollection.h"
 #include "M3u8DecryptionHoster.h"
 
-#define M3U8_PROTOCOL_DECRYPTION_NAME                                                     L"M3U8_DECRYPTION_NONE"
+#define M3U8_PROTOCOL_DECRYPTION_NAME                                                     L"M3U8_DECRYPTION_AES128"
 
-#define MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_DECRYPTION_NONE_FLAG_NONE                    M3U8_DECRYPTION_PLUGIN_FLAG_NONE
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_DECRYPTION_AES128_FLAG_NONE                  M3U8_DECRYPTION_PLUGIN_FLAG_NONE
 
-#define MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_DECRYPTION_NONE_FLAG_LAST                    (M3U8_DECRYPTION_PLUGIN_FLAG_LAST + 0)
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_DECRYPTION_AES128_FLAG_KEY_REQUEST_PENDING   (1 << (M3U8_DECRYPTION_PLUGIN_FLAG_LAST + 0))
 
-class CMPUrlSourceSplitter_Protocol_M3u8_Decryption_None : public CM3u8DecryptionPlugin
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_DECRYPTION_AES128_FLAG_LAST                  (M3U8_DECRYPTION_PLUGIN_FLAG_LAST + 1)
+
+// 128-bit is 16 bytes
+#define AES128_KEY_LENGTH                                                                 16
+
+class CMPUrlSourceSplitter_Protocol_M3u8_Decryption_Aes128 : public CM3u8DecryptionPlugin
 {
 public:
   // constructor
-  CMPUrlSourceSplitter_Protocol_M3u8_Decryption_None(HRESULT *result, CLogger *logger, CParameterCollection *configuration);
-  virtual ~CMPUrlSourceSplitter_Protocol_M3u8_Decryption_None(void);
+  CMPUrlSourceSplitter_Protocol_M3u8_Decryption_Aes128(HRESULT *result, CLogger *logger, CParameterCollection *configuration);
+  virtual ~CMPUrlSourceSplitter_Protocol_M3u8_Decryption_Aes128(void);
 
   // CPlugin implementation
 
@@ -58,6 +63,9 @@ public:
   // @return : S_OK if successfull, error code otherwise
   virtual HRESULT Initialize(CPluginConfiguration *configuration);
 
+  // clears current session
+  virtual void ClearSession(void);
+
   // CM3u8DecryptionPlugin implementation
 
   // decrypts encrypted stream fragments
@@ -66,6 +74,10 @@ public:
   virtual HRESULT DecryptStreamFragments(CM3u8DecryptionContext *decryptionContext);
 
 protected:
+  // holds last decryption key
+  uint8_t *decryptionKey;
+  // holds last decryption key URI
+  wchar_t *decryptionKeyUri;
 
   /* methods */
 };

@@ -78,8 +78,3 @@ HRESULT CM3u8DecryptionPlugin::Initialize(CPluginConfiguration *configuration)
 /* set methods */
 
 /* other methods */
-
-void CM3u8DecryptionPlugin::ClearSession(void)
-{
-  this->flags = M3U8_DECRYPTION_PLUGIN_FLAG_NONE;
-}
