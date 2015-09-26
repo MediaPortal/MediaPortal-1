@@ -301,7 +301,16 @@ namespace MediaPortal.Configuration.Sections
               // double check to add display with name from extracted EDID
               if (("MONITOR" + "\\" + display.MonitorID + "\\" + display.DriverID).Equals(info.DeviceID))
               {
-                dtblDataSource.Rows.Add(string.Format("{0} ({1}x{2}) on {3}", display.Model,
+                if (!string.IsNullOrEmpty(display.Model))
+                {
+                  dtblDataSource.Rows.Add(string.Format("{0} ({1}x{2}) on {3}", display.Model,
+                    adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Information.Description),
+                    indexAdapter, info.DeviceID);
+                  indexAdapter++;
+                  detectedId = true;
+                  break;
+                }
+                dtblDataSource.Rows.Add(string.Format("{0} ({1}x{2}) on {3}", monitorname,
                   adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Information.Description),
                   indexAdapter, info.DeviceID);
                 indexAdapter++;
