@@ -25,6 +25,7 @@
 
 #include "StreamFragmentCollection.h"
 #include "M3u8StreamFragment.h"
+#include "IndexedM3u8StreamFragmentCollection.h"
 
 class CM3u8StreamFragmentCollection : public CStreamFragmentCollection
 {
@@ -39,11 +40,66 @@ public:
   // @return : the reference to item or NULL if not find
   virtual CM3u8StreamFragment *GetItem(unsigned int index);
 
+  // gets collection of indexed stream fragments which are encrypted
+  // @param collection : the collection to fill in indexed stream fragment
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT GetEncryptedStreamFragments(CIndexedM3u8StreamFragmentCollection *collection);
+
+  // gets collection of indexed stream fragments which are decrypted
+  // @param collection : the collection to fill in indexed stream fragment
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT GetDecryptedStreamFragments(CIndexedM3u8StreamFragmentCollection *collection);
+
   /* set methods */
 
   /* other methods */
 
+  /* other methods */
+
+  // tests if in collection are some ecnrypted stream fragments
+  // @return : true if in collection are some encrypted stream fragments, false otherwise
+  bool HasEncryptedStreamFragments(void);
+
+  // tests if in collection are some decrypted stream fragments
+  // @return : true if in collection are some decrypted stream fragments, false otherwise
+  bool HasDecryptedStreamFragments(void);
+
+  /* index methods */
+
+  // insert item with specified item index to indexes
+  // @param itemIndex : the item index in collection to insert into indexes
+  // @return : true if successful, false otherwise
+  virtual bool InsertIndexes(unsigned int itemIndex);
+
+  // removes items from indexes
+  // @param startIndex : the start index of items to remove from indexes
+  // @param count : the count of items to remove from indexes
+  virtual void RemoveIndexes(unsigned int startIndex, unsigned int count);
+
+  // updates indexes by using specified item
+  // @param itemIndex : index of item to update indexes
+  // @param count : the count of items to updates indexes
+  // @retur : true if successful, false otherwise
+  virtual bool UpdateIndexes(unsigned int itemIndex, unsigned int count);
+
+  // ensures that in internal buffer of indexes is enough space
+  // each index must check against its count of items and add addingCount
+  // if in internal buffer of indexes is not enough space, method tries to allocate enough space in index
+  // @param addingCount : the count of added index items
+  // @return : true if in internal buffer of indexes is enough space, false otherwise
+  virtual bool EnsureEnoughSpaceIndexes(unsigned int addingCount);
+
+  // clears all indexes to default state
+  virtual void ClearIndexes(void);
+
 protected:
+
+  // we need to maintain several indexes
+  // first index : item->IsEncrypted()
+  // second index : item->IsDecrypted()
+
+  CIndexCollection *indexEncrypted;
+  CIndexCollection *indexDecrypted;
 
   /* methods */
 };

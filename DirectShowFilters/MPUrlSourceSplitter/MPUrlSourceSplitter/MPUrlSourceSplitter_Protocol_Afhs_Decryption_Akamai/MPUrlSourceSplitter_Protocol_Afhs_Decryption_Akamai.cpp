@@ -145,7 +145,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai::GetDecryptionResul
     this->decryptionResult = DECRYPTION_RESULT_NOT_KNOWN;
 
     CIndexedAfhsSegmentFragmentCollection *indexedEncryptedSegmentFragments = new CIndexedAfhsSegmentFragmentCollection(&this->decryptionResult);
-    CHECK_CONDITION_EXECUTE(SUCCEEDED(this->decryptionResult), this->decryptionResult = decryptionContext->GetSegmentsFragments()->GetEncryptedStreamFragments(indexedEncryptedSegmentFragments));
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(this->decryptionResult), this->decryptionResult = decryptionContext->GetSegmentsFragments()->GetEncryptedSegmentFragments(indexedEncryptedSegmentFragments));
 
     CHECK_CONDITION_EXECUTE(SUCCEEDED(this->decryptionResult), this->decryptionResult = DECRYPTION_RESULT_NOT_KNOWN);
     CHECK_CONDITION_HRESULT(this->decryptionResult, indexedEncryptedSegmentFragments->Count() != 0, this->decryptionResult, E_AFHS_AKAMAI_DECRYPTOR_INVALID_COUNT_OF_ENCRYPTED_SEGMENT_FRAGMENTS);
@@ -344,7 +344,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai::DecryptSegmentFrag
     if (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_AKAMAI_FLAG_KEY_REQUEST_PENDING))
     {
       CIndexedAfhsSegmentFragmentCollection *indexedEncryptedSegmentFragments = new CIndexedAfhsSegmentFragmentCollection(&result);
-      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = decryptionContext->GetSegmentsFragments()->GetEncryptedStreamFragments(indexedEncryptedSegmentFragments));
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = decryptionContext->GetSegmentsFragments()->GetEncryptedSegmentFragments(indexedEncryptedSegmentFragments));
 
       for (unsigned int i = 0; (SUCCEEDED(result) && (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DECRYPTION_AKAMAI_FLAG_KEY_REQUEST_PENDING)) && (i < indexedEncryptedSegmentFragments->Count())); i++)
       {

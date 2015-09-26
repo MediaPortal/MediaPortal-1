@@ -91,11 +91,27 @@ CM3u8FragmentEncryption *CM3u8StreamFragment::GetFragmentEncryption(void)
 
 /* set methods */
 
-//void CM3u8StreamFragment::SetEncrypted(bool ecnrypted)
-//{
-//  this->flags &= ~M3U8_STREAM_FRAGMENT_FLAG_ENCRYPTED;
-//  this->flags |= ecnrypted ? M3U8_STREAM_FRAGMENT_FLAG_ENCRYPTED : M3U8_STREAM_FRAGMENT_FLAG_NONE;
-//}
+void CM3u8StreamFragment::SetEncrypted(bool encrypted, unsigned int streamFragmentItemIndex)
+{
+  this->flags &= ~M3U8_STREAM_FRAGMENT_FLAG_ENCRYPTED;
+  this->flags |= encrypted ? M3U8_STREAM_FRAGMENT_FLAG_ENCRYPTED : M3U8_STREAM_FRAGMENT_FLAG_NONE;
+
+  if ((this->owner != NULL) && (streamFragmentItemIndex != UINT_MAX))
+  {
+    this->owner->UpdateIndexes(streamFragmentItemIndex);
+  }
+}
+
+void CM3u8StreamFragment::SetDecrypted(bool decrypted, unsigned int streamFragmentItemIndex)
+{
+  this->flags &= ~M3U8_STREAM_FRAGMENT_FLAG_DECRYPTED;
+  this->flags |= decrypted ? M3U8_STREAM_FRAGMENT_FLAG_DECRYPTED : M3U8_STREAM_FRAGMENT_FLAG_NONE;
+
+  if ((this->owner != NULL) && (streamFragmentItemIndex != UINT_MAX))
+  {
+    this->owner->UpdateIndexes(streamFragmentItemIndex);
+  }
+}
 
 void CM3u8StreamFragment::SetEndOfStream(bool endOfStream)
 {
@@ -115,10 +131,15 @@ void CM3u8StreamFragment::SetByteRangeLength(unsigned int length)
 
 /* other methods */
 
-//bool CM3u8StreamFragment::IsEncrypted(void)
-//{
-//  return this->IsSetFlags(M3U8_STREAM_FRAGMENT_FLAG_ENCRYPTED);
-//}
+bool CM3u8StreamFragment::IsEncrypted(void)
+{
+  return this->IsSetFlags(M3U8_STREAM_FRAGMENT_FLAG_ENCRYPTED);
+}
+
+bool CM3u8StreamFragment::IsDecrypted(void)
+{
+  return this->IsSetFlags(M3U8_STREAM_FRAGMENT_FLAG_DECRYPTED);
+}
 
 bool CM3u8StreamFragment::IsEndOfStream(void)
 {

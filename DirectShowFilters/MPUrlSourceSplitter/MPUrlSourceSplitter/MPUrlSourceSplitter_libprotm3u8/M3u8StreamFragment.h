@@ -29,7 +29,8 @@
 #define M3U8_STREAM_FRAGMENT_FLAG_NONE                                STREAM_FRAGMENT_FLAG_NONE
 
 #define M3U8_STREAM_FRAGMENT_FLAG_ENCRYPTED                           (1 << (STREAM_FRAGMENT_FLAG_LAST + 0))
-#define M3U8_STREAM_FRAGMENT_FLAG_END_OF_STREAM                       (1 << (STREAM_FRAGMENT_FLAG_LAST + 1))
+#define M3U8_STREAM_FRAGMENT_FLAG_DECRYPTED                           (1 << (STREAM_FRAGMENT_FLAG_LAST + 1))
+#define M3U8_STREAM_FRAGMENT_FLAG_END_OF_STREAM                       (1 << (STREAM_FRAGMENT_FLAG_LAST + 2))
 
 #define M3U8_STREAM_FRAGMENT_FLAG_LAST                                (STREAM_FRAGMENT_LAST + 2)
 
@@ -75,8 +76,14 @@ public:
   /* set methods */
 
   // sets if fragment is encrypted
-  // @param encrypted : true if after fragment is discontinuity, false otherwise
-  //void SetEncrypted(bool ecnrypted);
+  // @param encrypted : true if after fragment is encrypted, false otherwise
+  // @param streamFragmentItemIndex : the index of stream fragment (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
+  void SetEncrypted(bool encrypted, unsigned int streamFragmentItemIndex);
+
+  // sets if fragment is decrypted
+  // @param decrypted : true if after fragment is decrypted, false otherwise
+  // @param streamFragmentItemIndex : the index of stream fragment (used for updating indexes), UINT_MAX for ignoring update (but indexes MUST be updated later)
+  void SetDecrypted(bool decrypted, unsigned int streamFragmentItemIndex);
 
   // sets if fragment is end of stream
   // @param endOfStream : true if after fragment is end of stream, false otherwise
@@ -94,7 +101,11 @@ public:
 
   // tests if fragment is encrypted
   // @return : true if encrypted, false otherwise
-  //bool IsEncrypted(void);
+  bool IsEncrypted(void);
+
+  // tests if fragment is decrypted
+  // @return : true if decrypted, false otherwise
+  bool IsDecrypted(void);
 
   // tests if fragment is end of stream
   // @return : true if end of stream, false otherwise

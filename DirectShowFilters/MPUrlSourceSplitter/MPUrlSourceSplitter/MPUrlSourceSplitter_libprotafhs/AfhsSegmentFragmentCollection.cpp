@@ -78,7 +78,7 @@ const wchar_t *CAfhsSegmentFragmentCollection::GetSegmentFragmentUrlExtraParamet
   return this->segmentFragmentUrlExtraParameters;
 }
 
-HRESULT CAfhsSegmentFragmentCollection::GetEncryptedStreamFragments(CIndexedAfhsSegmentFragmentCollection *collection)
+HRESULT CAfhsSegmentFragmentCollection::GetEncryptedSegmentFragments(CIndexedAfhsSegmentFragmentCollection *collection)
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, collection);
@@ -99,7 +99,7 @@ HRESULT CAfhsSegmentFragmentCollection::GetEncryptedStreamFragments(CIndexedAfhs
   return result;
 }
 
-HRESULT CAfhsSegmentFragmentCollection::GetDecryptedStreamFragments(CIndexedAfhsSegmentFragmentCollection *collection)
+HRESULT CAfhsSegmentFragmentCollection::GetDecryptedSegmentFragments(CIndexedAfhsSegmentFragmentCollection *collection)
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, collection);

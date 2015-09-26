@@ -165,7 +165,7 @@ public:
   virtual HRESULT Initialize(CPluginConfiguration *configuration);
 
 protected:
-  // hodls decryption hoster
+  // holds decryption hoster
   CAfhsDecryptionHoster *decryptionHoster;
 
   // mutex for locking access to file, buffer, ...

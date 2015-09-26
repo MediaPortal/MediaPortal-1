@@ -29,6 +29,7 @@
 #include "CacheFile.h"
 #include "M3u8StreamFragmentCollection.h"
 #include "MediaPlaylist.h"
+#include "M3u8DecryptionHoster.h"
 
 #define PROTOCOL_NAME                                                         L"M3U8"
 
@@ -154,6 +155,9 @@ public:
   virtual HRESULT Initialize(CPluginConfiguration *configuration);
 
 protected:
+  // holds decryption hoster
+  CM3u8DecryptionHoster *decryptionHoster;
+
   // mutex for locking access to file, buffer, ...
   HANDLE lockMutex;
   // mutex for locking access to internal buffer of CURL instance

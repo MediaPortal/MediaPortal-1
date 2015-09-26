@@ -56,12 +56,12 @@ public:
   // gets collection of indexed segment fragments which are encrypted
   // @param collection : the collection to fill in indexed segment fragment
   // @return : S_OK if successful, error code otherwise
-  virtual HRESULT GetEncryptedStreamFragments(CIndexedAfhsSegmentFragmentCollection *collection);
+  virtual HRESULT GetEncryptedSegmentFragments(CIndexedAfhsSegmentFragmentCollection *collection);
 
   // gets collection of indexed segment fragments which are decrypted
   // @param collection : the collection to fill in indexed segment fragment
   // @return : S_OK if successful, error code otherwise
-  virtual HRESULT GetDecryptedStreamFragments(CIndexedAfhsSegmentFragmentCollection *collection);
+  virtual HRESULT GetDecryptedSegmentFragments(CIndexedAfhsSegmentFragmentCollection *collection);
 
   /* set methods */
 

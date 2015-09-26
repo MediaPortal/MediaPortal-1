@@ -316,7 +316,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
       // some segment fragments are decrypted
 
       CIndexedAfhsSegmentFragmentCollection *indexedDecryptedSegmentFragments = new CIndexedAfhsSegmentFragmentCollection(&result);
-      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->segmentFragments->GetDecryptedStreamFragments(indexedDecryptedSegmentFragments));
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->segmentFragments->GetDecryptedSegmentFragments(indexedDecryptedSegmentFragments));
 
       for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedDecryptedSegmentFragments->Count())); i++)
       {

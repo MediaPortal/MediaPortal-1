@@ -30,6 +30,7 @@
 #pragma warning(pop)
 
 CAfhsDecryptionContext::CAfhsDecryptionContext(HRESULT *result)
+  : CFlags()
 {
   this->curlInstance = NULL;
   this->segmentFragments = NULL;
@@ -119,82 +120,3 @@ void CAfhsDecryptionContext::SetConfiguration(CParameterCollection *configuratio
 }
 
 /* other methods */
-
-
-
-///* get methods */
-//
-//// gets segments and fragments collection
-//CSegmentFragmentCollection *CAfhsDecryptionContext::GetSegmentsFragments(void)
-//{
-//  return this->segmentsFragments;
-//}
-//
-//unsigned int CAfhsDecryptionContext::GetSegmentFragmentDownloading(void)
-//{
-//  return this->segmentFragmentDownloading;
-//}
-//
-//unsigned int CAfhsDecryptionContext::GetSegmentFragmentProcessing(void)
-//{
-//  return this->segmentFragmentProcessing;
-//}
-//
-//unsigned int CAfhsDecryptionContext::GetSegmentFragmentToDownload(void)
-//{
-//  return this->segmentFragmentToDownload;
-//}
-//
-//const wchar_t *CAfhsDecryptionContext::GetManifestUrl(void)
-//{
-//  return this->manifestUrl;
-//}
-//
-//const wchar_t *CAfhsDecryptionContext::GetManifestContent(void)
-//{
-//  return this->manifestContent;
-//}
-//
-//bool CAfhsDecryptionContext::GetForceDownload(void)
-//{
-//  return this->forceDownload;
-//}
-//
-///* set methods */
-//
-//void CAfhsDecryptionContext::SetSegmentsFragments(CSegmentFragmentCollection *segmentsFragments)
-//{
-//  this->segmentsFragments = segmentsFragments;
-//}
-//
-//void CAfhsDecryptionContext::SetSegmentFragmentDownloading(unsigned int segmentFragmentDownloading)
-//{
-//  this->segmentFragmentDownloading = segmentFragmentDownloading;
-//}
-//
-//void CAfhsDecryptionContext::SetSegmentFragmentProcessing(unsigned int segmentFragmentProcessing)
-//{
-//  this->segmentFragmentProcessing = segmentFragmentProcessing;
-//}
-//
-//void CAfhsDecryptionContext::SetSegmentFragmentToDownload(unsigned int segmentFragmentToDownload)
-//{
-//  this->segmentFragmentToDownload = segmentFragmentToDownload;
-//}
-//
-//void CAfhsDecryptionContext::SetManifestUrl(const wchar_t *manifestUrl)
-//{
-//  this->manifestUrl = manifestUrl;
-//}
-//
-//void CAfhsDecryptionContext::SetManifestContent(const wchar_t *manifestContent)
-//{
-//  this->manifestContent = manifestContent;
-//}
-//
-//void CAfhsDecryptionContext::SetForceDownload(bool forceDownload)
-//{
-//  this->forceDownload = forceDownload;
-//}
-//
-///* other methods */

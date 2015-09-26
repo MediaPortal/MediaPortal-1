@@ -78,7 +78,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="IndexedM3u8StreamFragment.h" />
+    <ClInclude Include="IndexedM3u8StreamFragmentCollection.h" />
     <ClInclude Include="M3u8CurlInstance.h" />
+    <ClInclude Include="M3u8DecryptionContext.h" />
+    <ClInclude Include="M3u8DecryptionHoster.h" />
+    <ClInclude Include="M3u8DecryptionHosterPluginMetadata.h" />
+    <ClInclude Include="M3u8DecryptionPlugin.h" />
+    <ClInclude Include="M3u8DecryptionPluginConfiguration.h" />
     <ClInclude Include="M3u8DownloadRequest.h" />
     <ClInclude Include="M3u8DownloadResponse.h" />
     <ClInclude Include="M3u8DumpBox.h" />
@@ -88,7 +95,14 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="IndexedM3u8StreamFragment.cpp" />
+    <ClCompile Include="IndexedM3u8StreamFragmentCollection.cpp" />
     <ClCompile Include="M3u8CurlInstance.cpp" />
+    <ClCompile Include="M3u8DecryptionContext.cpp" />
+    <ClCompile Include="M3u8DecryptionHoster.cpp" />
+    <ClCompile Include="M3u8DecryptionHosterPluginMetadata.cpp" />
+    <ClCompile Include="M3u8DecryptionPlugin.cpp" />
+    <ClCompile Include="M3u8DecryptionPluginConfiguration.cpp" />
     <ClCompile Include="M3u8DownloadRequest.cpp" />
     <ClCompile Include="M3u8DownloadResponse.cpp" />
     <ClCompile Include="M3u8DumpBox.cpp" />

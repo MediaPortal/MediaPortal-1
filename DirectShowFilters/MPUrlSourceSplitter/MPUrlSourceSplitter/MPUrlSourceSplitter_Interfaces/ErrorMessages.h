@@ -235,6 +235,8 @@ ErrorMessage ERROR_MESSAGES[] = {
 
   { E_M3U8_CANNOT_GET_STREAM_FRAGMENTS_FROM_MEDIA_PLAYLIST, L"Cannot get stream fragments from media playlist." },
   { E_M3U8_NO_STREAM_FRAGMENT_TO_DOWNLOAD, L"No stream fragment to download." },
+  { E_M3U8_NO_DECRYPTOR_LOADED, L"No decryptor loaded." },
+  { E_M3U8_DECRYPTION_METHOD_NOT_SUPPORTED, L"Decryption method is not supported." },
 
   // last item
   { 0, NULL }
