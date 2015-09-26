@@ -131,7 +131,7 @@ namespace MediaPortal.GUI.Video
     private static PlayListPlayer _playlistPlayer;
     private static PlayListType _currentPlaylistType;
     private static int _currentPlaylistIndex = -1;
-
+    private VideoFolderWatcherHelper _videoFolderWatcher;
     private MapSettings _mapSettings = new MapSettings();
     private DirectoryHistory _history = new DirectoryHistory();
     private string _virtualStartDirectory = string.Empty;
@@ -544,6 +544,11 @@ namespace MediaPortal.GUI.Video
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValueAsBool("moviedatabase", "usesorttitle", _useSortTitle);
+      }
+
+      if (_videoFolderWatcher != null)
+      {
+        _videoFolderWatcher.ChangeMonitoring(false);
       }
 
       if (_setThumbs != null && _setThumbs.IsAlive)
@@ -1453,12 +1458,14 @@ namespace MediaPortal.GUI.Video
           _mapSettings.Stack = true;
           LoadDirectory(_currentFolder);
           UpdateButtonStates();
+          SaveFolderSettings(_currentFolder);
           break;
 
         case 347: //Unstack
           _mapSettings.Stack = false;
           LoadDirectory(_currentFolder);
           UpdateButtonStates();
+          SaveFolderSettings(_currentFolder);
           break;
 
         case 102: //Scan
@@ -3014,6 +3021,19 @@ namespace MediaPortal.GUI.Video
       }
 
       GUIWaitCursor.Show();
+      GUIPropertyManager.SetProperty("#VideoFolderChanged", "false");
+
+      if (_videoFolderWatcher != null)
+      {
+        _videoFolderWatcher.ChangeMonitoring(false);
+      }
+
+      if (!string.IsNullOrEmpty(newFolderName))
+      {
+        _videoFolderWatcher = new VideoFolderWatcherHelper(newFolderName);
+        _videoFolderWatcher.SetMonitoring(true);
+        _videoFolderWatcher.StartMonitor();
+      }
 
       if (newFolderName != _currentFolder && _mapSettings != null)
       {
@@ -3063,7 +3083,16 @@ namespace MediaPortal.GUI.Video
           int timesWatched = 0;
           int movieId = VideoDatabase.GetMovieId(file);
           bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
-          item.Duration = VideoDatabase.GetMovieDuration(movieId);
+
+          if (_mapSettings != null && _mapSettings.Stack)
+          {
+            item.Duration = VideoDatabase.GetMovieDuration(movieId);
+          }
+          else
+          {
+            int fileID = VideoDatabase.GetFileId(item.Path);
+            item.Duration = VideoDatabase.GetVideoDuration(fileID);
+          }
 
           // set label 1 & 2
           SetLabel(item);
@@ -3218,14 +3247,19 @@ namespace MediaPortal.GUI.Video
 
               if (!string.IsNullOrEmpty(newFolderName) || Util.Utils.CheckServerStatus(item.Path))
               {
-                isMovieFolder = IsMovieFolder(item.Path);
+                if (item.IsFolder)
+                {
+                  isMovieFolder = IsMovieFolder(item.Path);
+                }
+                else
+                {
+                  isMovieFolder = false;
+                }
 
                 if (VirtualDirectory.IsValidExtension(item.Path, Util.Utils.VideoExtensions, false) || isMovieFolder)
                 {
                   item.Label = pair.Key;
                 }
-
-                SetLabel(item);
               }
 
               // Check db for watched status for played movie or changed status in movie info window
@@ -3248,6 +3282,7 @@ namespace MediaPortal.GUI.Video
                 int timesWatched = 0;
                 int movieId = VideoDatabase.GetMovieId(file);
                 bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
+
                 item.Duration = VideoDatabase.GetMovieDuration(movieId);
 
                 if (_markWatchedFiles)
@@ -3282,6 +3317,7 @@ namespace MediaPortal.GUI.Video
                 }
               }
 
+              SetLabel(item);
               item.OnItemSelected += item_OnItemSelected;
 
               if (item.IsFolder || !item.IsFolder && !_hideWatchedFiles && item.IsPlayed || !item.IsFolder && !item.IsPlayed)
@@ -3296,11 +3332,18 @@ namespace MediaPortal.GUI.Video
         {
           foreach (GUIListItem item in itemlist)
           {
-            SetLabel(item);
-
             // Check db for watched status for played movie or changed status in movie info window
             string file = item.Path;
-            bool isMovieFolder = IsMovieFolder(item.Path);
+            bool isMovieFolder;
+
+            if (item.IsFolder)
+            {
+              isMovieFolder = IsMovieFolder(item.Path);
+            }
+            else
+            {
+              isMovieFolder = false;
+            }
 
             if (!item.IsFolder || isMovieFolder)
             {
@@ -3320,6 +3363,9 @@ namespace MediaPortal.GUI.Video
               int timesWatched = 0;
               int movieId = VideoDatabase.GetMovieId(file);
               bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
+
+              int fileID = VideoDatabase.GetFileId(item.Path);
+              item.Duration = VideoDatabase.GetVideoDuration(fileID);
 
               if (_markWatchedFiles)
               {
@@ -3351,6 +3397,7 @@ namespace MediaPortal.GUI.Video
               }
             }
 
+            SetLabel(item);
             item.OnItemSelected += item_OnItemSelected;
 
             if (item.IsFolder || !item.IsFolder && !_hideWatchedFiles && item.IsPlayed || !item.IsFolder && !item.IsPlayed)
@@ -3495,6 +3542,10 @@ namespace MediaPortal.GUI.Video
         catch (ThreadAbortException)
         {
           Log.Debug("GetMediaInfoThread: ThreadAbortException");
+        }
+        catch (Exception ex) 
+        {
+          Log.Error("GetMediaInfoThread: {0}", ex.Message);
         }
         Thread.Sleep(100);
       }
@@ -4298,9 +4349,6 @@ namespace MediaPortal.GUI.Video
 
       if (CurrentSortMethod == VideoSort.SortMethod.Name_With_Duration && !item.IsFolder && item.Label != "..")
       {
-        int newMovieId = VideoDatabase.GetMovieId(item.Path);
-        item.Duration = VideoDatabase.GetMovieDuration(newMovieId);
-
         if (item.Duration > 0)
         {
           item.Label2 = Util.Utils.SecondsToShortHMSString(item.Duration);
