@@ -473,7 +473,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void comboDriveType_SelectionChangeCommitted(object sender, EventArgs e)
     {
-      if (comboDriveType.SelectedItem.ToString() == "native")
+      if (comboDriveType.SelectedItem != null && (comboDriveType.SelectedItem.ToString() == "native"))
       {
         textBoxDaemonTools.Enabled = false;
         comboBoxDrive.Enabled = false;
@@ -481,13 +481,14 @@ namespace MediaPortal.Configuration.Sections
         comboDriveNo.Enabled = false;
         textBoxExtensions.Enabled = false;
       }
-      else
+      else if (checkBoxDaemonTools.Checked)
       {
         textBoxDaemonTools.Enabled = true;
         comboBoxDrive.Enabled = true;
         buttonSelectFolder.Enabled = true;
         comboDriveNo.Enabled = true;
         textBoxExtensions.Enabled = true;
+        comboDriveType.Enabled = true;
       }
     }
   }

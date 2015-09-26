@@ -21,8 +21,10 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Management.Automation;
+using System.Runtime.CompilerServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
 using MediaPortal.Player;
@@ -112,6 +114,7 @@ namespace MediaPortal.Util
       return false;
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public static bool Mount(string IsoFile, out string VirtualDrive)
     {
       if (g_Player.Playing)
@@ -128,7 +131,7 @@ namespace MediaPortal.Util
       if (!_Enabled) return false;
       if (!_DriveType.Equals("native") && !System.IO.File.Exists(_Path)) return false;
       DateTime startTime = DateTime.Now;
-      
+
       UnMount();
 
       IsoFile = Utils.RemoveTrailingSlash(IsoFile);
@@ -141,7 +144,10 @@ namespace MediaPortal.Util
         using (var ps = PowerShell.Create())
         {
           Log.Debug("Mount-DiskImage {0}", IsoFile);
-          ps.AddCommand("Mount-DiskImage").AddParameter("ImagePath", IsoFile).AddParameter("PassThru").AddCommand("Get-Volume");
+          ps.AddCommand("Mount-DiskImage")
+            .AddParameter("ImagePath", IsoFile)
+            .AddParameter("PassThru")
+            .AddCommand("Get-Volume");
           string DriveLetter;
           foreach (PSObject result in ps.Invoke())
           {
@@ -159,17 +165,18 @@ namespace MediaPortal.Util
           timeout += 100;
         }
       }
-      else 
+      else
       {
         if (!_DriveType.Equals(VirtualCloneDrive))
         {
           strParams = String.Format("-mount {0}, {1},\"{2}\"", _DriveType, _DriveNo, IsoFile);
-        } else
+        }
+        else
         {
           strParams = String.Format("-mount {0},\"{1}\"", _DriveNo, IsoFile);
         }
         Process p = Utils.StartProcess(_Path, strParams, true, true);
-        
+
         drive = new System.IO.DriveInfo(_Drive);
 
         while ((!p.HasExited || !drive.IsReady || !System.IO.Directory.Exists(_Drive + @"\")) && (timeout < 10000))
@@ -197,14 +204,14 @@ namespace MediaPortal.Util
           }
           if (timeout >= 60000)
           {
-            Log.Error("Mounting failed after {0}s (second timeout). Check your settings.", (int)(timeout / 1000));
+            Log.Error("Mounting failed after {0}s (second timeout). Check your settings.", (int) (timeout/1000));
             UnMount();
             return false;
           }
         }
         else
         {
-          Log.Error("Mounting failed after {0}s (first timeout). Check your settings.", (int)(timeout / 1000));
+          Log.Error("Mounting failed after {0}s (first timeout). Check your settings.", (int) (timeout/1000));
           UnMount();
           return false;
         }
