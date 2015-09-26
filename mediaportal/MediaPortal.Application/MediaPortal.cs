@@ -3231,6 +3231,7 @@ public class MediaPortalApp : D3D, IRender
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
 
     g_Player.Stop();
+    DaemonTools.UnMount();
     InputDevices.Stop();
     AutoPlay.StopListening();
     PluginManager.Stop();
@@ -3241,7 +3242,7 @@ public class MediaPortalApp : D3D, IRender
     GUILocalizeStrings.Dispose();
     TexturePacker.Cleanup();
     VolumeHandler.Dispose();
-
+    
     GUIFontManager.SetDeviceNull();
 
     if (_isWinScreenSaverInUse)

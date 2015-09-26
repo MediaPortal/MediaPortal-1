@@ -22,6 +22,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
+using System.Management.Automation;
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
 using MediaPortal.Player;
@@ -63,12 +64,27 @@ namespace MediaPortal.Util
          * pdi (Instant CD/DVD)
          * b5t (BlindWrite 5)
          */
-        string[] extensions =
-          xmlreader.GetValueAsString("daemon", "extensions", Utils.ImageExtensionsDefault).Split(',');
-        _supportedExtensions = new HashSet<string>();
-        // Can't use an AddRange, as we need to trim the blanks  
-        foreach (string ext in extensions)
-          _supportedExtensions.Add(ext.Trim());
+
+        if (!OSInfo.OSInfo.Win8OrLater() && _DriveType == "native")
+        {
+          Log.Error("Native ISO is not supported on Vista or Windows 7");
+          _Enabled = false;
+        }
+
+        if (_DriveType == "native")
+        {
+          _supportedExtensions = new HashSet<string>();
+          _supportedExtensions.Add(".iso");
+        }
+        else
+        {
+          string[] extensions =
+            xmlreader.GetValueAsString("daemon", "extensions", Utils.ImageExtensionsDefault).Split(',');
+          _supportedExtensions = new HashSet<string>();
+          // Can't use an AddRange, as we need to trim the blanks  
+          foreach (string ext in extensions)
+            _supportedExtensions.Add(ext.Trim());
+        }
       }
     }
 
@@ -110,27 +126,59 @@ namespace MediaPortal.Util
       if (IsoFile == null) return false;
       if (IsoFile == string.Empty) return false;
       if (!_Enabled) return false;
-      if (!System.IO.File.Exists(_Path)) return false;
+      if (!_DriveType.Equals("native") && !System.IO.File.Exists(_Path)) return false;
       DateTime startTime = DateTime.Now;
-      System.IO.DriveInfo drive = new System.IO.DriveInfo(_Drive);
+      
       UnMount();
 
       IsoFile = Utils.RemoveTrailingSlash(IsoFile);
       string strParams;
-      if (!_DriveType.Equals(VirtualCloneDrive))
-      {
-        strParams = String.Format("-mount {0}, {1},\"{2}\"", _DriveType, _DriveNo, IsoFile);
-      } else
-      {
-        strParams = String.Format("-mount {0},\"{1}\"", _DriveNo, IsoFile);
-      }
-      Process p = Utils.StartProcess(_Path, strParams, true, true);
+      System.IO.DriveInfo drive;
       int timeout = 0;
-      while ((!p.HasExited || !drive.IsReady || !System.IO.Directory.Exists(_Drive + @"\")) && (timeout < 10000))
+
+      if (_DriveType.Equals("native"))
       {
-        System.Threading.Thread.Sleep(100);
-        timeout += 100;
+        using (var ps = PowerShell.Create())
+        {
+          Log.Debug("Mount-DiskImage {0}", IsoFile);
+          ps.AddCommand("Mount-DiskImage").AddParameter("ImagePath", IsoFile).AddParameter("PassThru").AddCommand("Get-Volume");
+          string DriveLetter;
+          foreach (PSObject result in ps.Invoke())
+          {
+            DriveLetter = result.Members["DriveLetter"].Value.ToString();
+            _Drive = String.Format("{0}:", DriveLetter);
+            Log.Debug("Mount-DiskImage DriveLetter {0}", _Drive);
+          }
+        }
+
+        drive = new System.IO.DriveInfo(_Drive);
+
+        while ((!drive.IsReady || !System.IO.Directory.Exists(_Drive + @"\")) && (timeout < 10000))
+        {
+          System.Threading.Thread.Sleep(100);
+          timeout += 100;
+        }
       }
+      else 
+      {
+        if (!_DriveType.Equals(VirtualCloneDrive))
+        {
+          strParams = String.Format("-mount {0}, {1},\"{2}\"", _DriveType, _DriveNo, IsoFile);
+        } else
+        {
+          strParams = String.Format("-mount {0},\"{1}\"", _DriveNo, IsoFile);
+        }
+        Process p = Utils.StartProcess(_Path, strParams, true, true);
+        
+        drive = new System.IO.DriveInfo(_Drive);
+
+        while ((!p.HasExited || !drive.IsReady || !System.IO.Directory.Exists(_Drive + @"\")) && (timeout < 10000))
+        {
+          System.Threading.Thread.Sleep(100);
+          timeout += 100;
+        }
+      }
+
       if (timeout >= 10000)
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
@@ -142,7 +190,7 @@ namespace MediaPortal.Util
         GUIWindowManager.SendMessage(msg);
         if (msg.Param1 == 1)
         {
-          while ((!p.HasExited || !drive.IsReady || !System.IO.Directory.Exists(_Drive + @"\")) && (timeout < 60000))
+          while ((!drive.IsReady || !System.IO.Directory.Exists(_Drive + @"\")) && (timeout < 60000))
           {
             System.Threading.Thread.Sleep(100);
             timeout += 100;
@@ -171,24 +219,49 @@ namespace MediaPortal.Util
     public static void UnMount()
     {
       if (!_Enabled) return;
-      if (!System.IO.File.Exists(_Path)) return;
+      if (!_DriveType.Equals("native") && !System.IO.File.Exists(_Path)) return;
       if (!System.IO.Directory.Exists(_Drive + @"\")) return;
-
-      string strParams;
-      if (!_DriveType.Equals(VirtualCloneDrive))
-      {
-        strParams = String.Format("-unmount {0},{1}", _DriveType, _DriveNo);
-      }
-      else
-      {
-        strParams = String.Format("-unmount {0}", _DriveNo);
-      }
-      Process p = Utils.StartProcess(_Path, strParams, true, true);
       int timeout = 0;
-      while (!p.HasExited && (timeout < 10000))
+      string strParams;
+
+      if (!string.IsNullOrEmpty(_MountedIsoFile))
       {
-        System.Threading.Thread.Sleep(100);
-        timeout += 100;
+        if (_DriveType.Equals("native"))
+        {
+          using (var ps = PowerShell.Create())
+          {
+            Log.Debug("Dismount-DiskImage {0}", _MountedIsoFile);
+            ps.AddCommand("Dismount-DiskImage").AddParameter("ImagePath", _MountedIsoFile).Invoke();
+
+            while (System.IO.Directory.Exists(_Drive + @"\") && (timeout < 10000))
+            {
+              System.Threading.Thread.Sleep(100);
+              timeout += 100;
+            }
+          }
+        }
+        else
+        {
+          if (!_DriveType.Equals(VirtualCloneDrive))
+          {
+            strParams = String.Format("-unmount {0},{1}", _DriveType, _DriveNo);
+          }
+          else
+          {
+            strParams = String.Format("-unmount {0}", _DriveNo);
+          }
+          Process p = Utils.StartProcess(_Path, strParams, true, true);
+
+          while (!p.HasExited && (timeout < 10000))
+          {
+            System.Threading.Thread.Sleep(100);
+            timeout += 100;
+          }
+        }
+      }
+      if (timeout >= 10000)
+      {
+        Log.Error("Dismount failed after {0}s (second timeout). Check your settings.", (int)(timeout / 1000));
       }
       _MountedIsoFile = string.Empty;
     }
@@ -197,6 +270,11 @@ namespace MediaPortal.Util
     {
       if (_MountedIsoFile != string.Empty) return _Drive;
       return string.Empty;
+    }
+
+    public static string GetLastVirtualDrive()
+    {
+      return _Drive;
     }
 
     /// <summary>
@@ -209,8 +287,8 @@ namespace MediaPortal.Util
     /// </returns>
     public static bool IsImageFile(string extension)
     {
-      if (extension == null) return false;
-      if (extension == string.Empty) return false;
+      if (string.IsNullOrEmpty(extension)) return false;
+      
       return _supportedExtensions.Contains(extension.ToLowerInvariant());
       //extension = extension.ToLowerInvariant();
       //foreach (string ext in _supportedExtensions)
