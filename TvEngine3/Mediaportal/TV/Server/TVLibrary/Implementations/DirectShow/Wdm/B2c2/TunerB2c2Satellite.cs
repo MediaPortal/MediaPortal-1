@@ -81,6 +81,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     #region tuning
 
     /// <summary>
+    /// Get the broadcast standards supported by the tuner code/class/type implementation.
+    /// </summary>
+    public override BroadcastStandard PossibleBroadcastStandards
+    {
+      get
+      {
+        return BroadcastStandard.DvbDsng | BroadcastStandard.DvbS | BroadcastStandard.DvbS2;
+      }
+    }
+
+    /// <summary>
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
@@ -153,17 +164,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         TvExceptionDirectShowError.Throw(_interfaceTuner.SetLnbFrequency(lnbLof / 1000), "Failed to set LNB LOF frequency.");
 
         base.PerformTuning(channel);
-      }
-    }
-
-    /// <summary>
-    /// Get the broadcast standards supported by the tuner code/class/type implementation.
-    /// </summary>
-    public override BroadcastStandard PossibleBroadcastStandards
-    {
-      get
-      {
-        return BroadcastStandard.DvbDsng | BroadcastStandard.DvbS | BroadcastStandard.DvbS2;
       }
     }
 

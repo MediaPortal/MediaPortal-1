@@ -817,7 +817,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <summary>
     /// The loading priority for the extension.
     /// </summary>
-    public byte Priority
+    byte ITunerExtension.Priority
     {
       get
       {

@@ -171,9 +171,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private string _name = string.Empty;
 
     /// <summary>
-    /// The broadcast standards supported by the tuner hardware.
+    /// The broadcast standards supported by the tuner.
     /// </summary>
     private BroadcastStandard _supportedBroadcastStandards = BroadcastStandard.Unknown;
+
+    /// <summary>
+    /// The broadcast standards supported by the tuner code/class/type implementation.
+    /// </summary>
+    private readonly BroadcastStandard _possibleBroadcastStandards = BroadcastStandard.Unknown;
 
     #endregion
 
@@ -207,7 +212,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     #endregion
 
     private bool _isEnabled = true;
-
+    private int _priority = 1;
     private bool _useForEpgGrabbing = false;
 
     /// <summary>
@@ -331,14 +336,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private TunerState _state = TunerState.NotLoaded;
 
     /// <summary>
-    /// Does the tuner support receiving more than one service simultaneously?
+    /// Does the tuner support receiving all services from a transmitter simultaneously?
     /// </summary>
     /// <remarks>
     /// This may seem obvious and unnecessary, especially for modern tuners.
     /// However even today there are tuners that cannot receive more than one
     /// service simultaneously. CableCARD tuners are a good example.
     /// </remarks>
-    protected bool _supportsSubChannels = true;
+    protected bool _areSubChannelsSupported = true;
 
     /// <summary>
     /// The tuner group that this tuner is a member of, if any.
@@ -379,6 +384,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _tunerInstanceId = tunerInstanceId;
       _productInstanceId = productInstanceId;
       _supportedBroadcastStandards = supportedBroadcastStandards;
+      _possibleBroadcastStandards = supportedBroadcastStandards;
     }
 
     ~TunerBase()
@@ -500,7 +506,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       get
       {
-        return _supportedBroadcastStandards;
+        return _possibleBroadcastStandards;
+      }
+    }
+
+    /// <summary>
+    /// Does the tuner support receiving all services from a transmitter simultaneously?
+    /// </summary>
+    public bool AreSubChannelsSupported
+    {
+      get
+      {
+        return _areSubChannelsSupported;
       }
     }
 
@@ -583,51 +600,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
     }
 
-    /// <summary>
-    /// Get a count of the number of services that the tuner is currently decrypting.
-    /// </summary>
-    /// <value>The number of services currently being decrypted.</value>
-    public int NumberOfChannelsDecrypting
-    {
-      get
-      {
-        // If not decrypting any channels or the limit is diabled then return zero.
-        if (_mapSubChannels == null || _mapSubChannels.Count == 0 || _decryptLimit == 0)
-        {
-          return 0;
-        }
-
-        HashSet<long> decryptedServices = new HashSet<long>();
-        Dictionary<int, ISubChannelInternal>.Enumerator en = _mapSubChannels.GetEnumerator();
-        while (en.MoveNext())
-        {
-          IChannel service = en.Current.Value.CurrentChannel;
-          if (service.IsEncrypted)
-          {
-            ChannelMpeg2Base mpeg2Service = service as ChannelMpeg2Base;
-            if (mpeg2Service != null)
-            {
-              decryptedServices.Add(mpeg2Service.ProgramNumber);
-            }
-            else
-            {
-              ChannelAnalogTv analogTvService = service as ChannelAnalogTv;
-              if (analogTvService != null)
-              {
-                decryptedServices.Add(analogTvService.Frequency);
-              }
-              else
-              {
-                throw new TvException("tuner base: service type not recognised, unable to count number of services being decrypted\r\n" + service.ToString());
-              }
-            }
-          }
-        }
-
-        return decryptedServices.Count;
-      }
-    }
-
     #endregion
 
     /// <summary>
@@ -653,7 +625,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       get
       {
-        return _currentTuningDetail;
+        if (_mapSubChannels.Count > 0)
+        {
+          return _currentTuningDetail;
+        }
+        return null;
       }
     }
 
@@ -665,6 +641,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       get
       {
         return _isEnabled;
+      }
+    }
+
+    /// <summary>
+    /// Get the tuner's priority.
+    /// </summary>
+    public int Priority
+    {
+      get
+      {
+        return _priority;
       }
     }
 
@@ -829,6 +816,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           _tunerId = config.IdTuner;
           _name = config.Name;
           _isEnabled = config.IsEnabled;
+          _priority = config.Priority;
           _idleMode = (TunerIdleMode)config.IdleMode;
           _pidFilterMode = (PidFilterMode)config.PidFilterMode;
           _useCustomTuning = config.UseCustomTuning;
@@ -1343,20 +1331,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     public virtual bool CanTune(IChannel channel)
     {
       if (
-        (channel is ChannelAnalogTv && _supportedBroadcastStandards.HasFlag(BroadcastStandard.AnalogTelevision)) ||
-        (channel is ChannelAtsc && _supportedBroadcastStandards.HasFlag(BroadcastStandard.Atsc)) ||
-        (channel is ChannelCapture && _supportedBroadcastStandards.HasFlag(BroadcastStandard.ExternalInput)) ||
-        (channel is ChannelDigiCipher2 && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DigiCipher2)) ||
-        (channel is ChannelDvbC && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbC)) ||
-        (channel is ChannelDvbC2 && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbC2)) ||
-        (channel is ChannelDvbS && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbS)) ||
-        (channel is ChannelDvbS2 && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbS2)) ||
-        (channel is ChannelDvbT && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbT)) ||
-        (channel is ChannelDvbT2 && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbT2)) ||
-        (channel is ChannelFmRadio && _supportedBroadcastStandards.HasFlag(BroadcastStandard.FmRadio)) ||
-        (channel is ChannelSatelliteTurboFec && _supportedBroadcastStandards.HasFlag(BroadcastStandard.SatelliteTurboFec)) ||
-        (channel is ChannelScte && _supportedBroadcastStandards.HasFlag(BroadcastStandard.Scte)) ||
-        (channel is ChannelStream && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbIp))
+        _isEnabled &&
+        (
+          (channel is ChannelAnalogTv && _supportedBroadcastStandards.HasFlag(BroadcastStandard.AnalogTelevision)) ||
+          (channel is ChannelAtsc && _supportedBroadcastStandards.HasFlag(BroadcastStandard.Atsc)) ||
+          (channel is ChannelCapture && _supportedBroadcastStandards.HasFlag(BroadcastStandard.ExternalInput)) ||
+          (channel is ChannelDigiCipher2 && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DigiCipher2)) ||
+          (channel is ChannelDvbC && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbC)) ||
+          (channel is ChannelDvbC2 && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbC2)) ||
+          (channel is ChannelDvbS && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbS)) ||
+          (channel is ChannelDvbS2 && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbS2)) ||
+          (channel is ChannelDvbT && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbT)) ||
+          (channel is ChannelDvbT2 && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbT2)) ||
+          (channel is ChannelFmRadio && _supportedBroadcastStandards.HasFlag(BroadcastStandard.FmRadio)) ||
+          (channel is ChannelSatelliteTurboFec && _supportedBroadcastStandards.HasFlag(BroadcastStandard.SatelliteTurboFec)) ||
+          (channel is ChannelScte && _supportedBroadcastStandards.HasFlag(BroadcastStandard.Scte)) ||
+          (channel is ChannelStream && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbIp))
+        )
       )
       {
         return true;
@@ -1372,6 +1363,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns>the sub-channel associated with the tuned channel</returns>
     public virtual ISubChannel Tune(int subChannelId, IChannel channel)
     {
+      if (!IsEnabled)
+      {
+        return null;
+      }
       this.LogDebug("tuner base: tune channel, {0}", channel);
       _cancelTune = false;
       ISubChannelInternal subChannel = null;
@@ -1385,7 +1380,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
         // Some tuners (for example: CableCARD tuners) are only able to
         // deliver one service... full stop.
-        else if (!_supportsSubChannels && _mapSubChannels.Count > 0)
+        else if (!_areSubChannelsSupported && _mapSubChannels.Count > 0)
         {
           if (_mapSubChannels.TryGetValue(subChannelId, out subChannel))
           {
@@ -1829,6 +1824,67 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
         return channels;
       }
+    }
+
+    /// <summary>
+    /// Get the set of sub-channel identifiers for each channel the tuner is currently decrypting.
+    /// </summary>
+    /// <param name="newChannel">A channel that is currently being tuned.</param>
+    /// <returns>a collection of sub-channel ID collections</returns>
+    public ICollection<IList<int>> GetDecryptedSubChannelDetails(IChannel newChannel = null)
+    {
+      IDictionary<int, IList<int>> decryptedChannels = new Dictionary<int, IList<int>>();
+      if (_mapSubChannels != null || _mapSubChannels.Count == 0)
+      {
+        return decryptedChannels.Values;
+      }
+
+      List<KeyValuePair<int, IChannel>> channels = new List<KeyValuePair<int, IChannel>>(_mapSubChannels.Count + 1);
+      foreach (ISubChannelInternal subChannel in _mapSubChannels.Values)
+      {
+        if (subChannel.CurrentChannel != null && subChannel.CurrentChannel.IsEncrypted)
+        {
+          channels.Add(new KeyValuePair<int, IChannel>(subChannel.SubChannelId, subChannel.CurrentChannel));
+        }
+      }
+      if (newChannel != null && newChannel.IsEncrypted)
+      {
+        channels.Add(new KeyValuePair<int, IChannel>(-1, newChannel));
+      }
+
+      foreach (var channel in channels)
+      {
+        int key;
+        ChannelMpeg2Base mpeg2Service = channel.Value as ChannelMpeg2Base;
+        if (mpeg2Service != null)
+        {
+          key = mpeg2Service.ProgramNumber;
+        }
+        else
+        {
+          ChannelAnalogTv analogTvChannel = channel.Value as ChannelAnalogTv;
+          if (analogTvChannel != null)
+          {
+            key = analogTvChannel.Frequency;
+          }
+          else
+          {
+            throw new TvException("tuner base: channel type not recognised, unable to aggregate decrypted sub-channel details{0}{1}", Environment.NewLine, channel.Value);
+          }
+        }
+
+        IList<int> subChannelsForChannel;
+        if (!decryptedChannels.TryGetValue(key, out subChannelsForChannel))
+        {
+          decryptedChannels[key] = new List<int>(5) { channel.Key };
+        }
+        else
+        {
+          subChannelsForChannel.Add(channel.Key);
+        }
+      }
+
+      return decryptedChannels.Values;
     }
 
     #endregion

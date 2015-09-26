@@ -90,7 +90,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
             if (supportedBroadcastStandards == BroadcastStandard.Unknown)
             {
-              this.LogWarn("DRI detector: tuner {0} does not support any supported modulation schemes for tuner", uuid);
+              this.LogWarn("DRI detector: tuner {0} does not support any supported modulation schemes", uuid);
               break;
             }
 

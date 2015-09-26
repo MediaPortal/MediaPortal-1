@@ -325,6 +325,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     }
 
     /// <summary>
+    /// Get the broadcast standards supported by the tuner code/class/type implementation.
+    /// </summary>
+    public override BroadcastStandard PossibleBroadcastStandards
+    {
+      get
+      {
+        return BroadcastStandard.Atsc | BroadcastStandard.Scte;
+      }
+    }
+
+    /// <summary>
     /// Check if the tuner can tune to a specific channel.
     /// </summary>
     /// <param name="channel">The channel to check.</param>
@@ -343,17 +354,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         return false;
       }
       return true;
-    }
-
-    /// <summary>
-    /// Get the broadcast standards supported by the tuner code/class/type implementation.
-    /// </summary>
-    public override BroadcastStandard PossibleBroadcastStandards
-    {
-      get
-      {
-        return BroadcastStandard.Atsc | BroadcastStandard.Scte;
-      }
     }
 
     #region tuning parameter translation

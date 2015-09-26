@@ -463,7 +463,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <summary>
     /// The loading priority for the extension.
     /// </summary>
-    public byte Priority
+    byte ITunerExtension.Priority
     {
       get
       {

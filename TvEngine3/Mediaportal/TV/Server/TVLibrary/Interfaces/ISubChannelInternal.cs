@@ -28,7 +28,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <summary>
     /// returns the IChannel to which the card is currently tuned
     /// </summary>
-    IChannel CurrentChannel { get; set; }
+    new IChannel CurrentChannel { get; set; }
 
     event OnAfterTuneDelegate AfterTuneEvent;
     void OnBeforeTune();

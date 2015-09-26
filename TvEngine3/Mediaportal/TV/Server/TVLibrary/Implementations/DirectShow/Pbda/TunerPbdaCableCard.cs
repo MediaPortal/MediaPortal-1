@@ -72,7 +72,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       // The DRIT SHALL output the selected program content as a single program
       // MPEG-TS in RTP packets according to [RTSP] and [RTP].
       // - OpenCable DRI I04 specification, 10 September 2010
-      _supportsSubChannels = false;
+      _areSubChannelsSupported = false;
     }
 
     #endregion
@@ -115,6 +115,41 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     #region tuning
 
     /// <summary>
+    /// Get the broadcast standards supported by the tuner code/class/type implementation.
+    /// </summary>
+    public override BroadcastStandard PossibleBroadcastStandards
+    {
+      get
+      {
+        return BroadcastStandard.Scte;
+      }
+    }
+
+    /// <summary>
+    /// Check if the tuner can tune to a specific channel.
+    /// </summary>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
+    public override bool CanTune(IChannel channel)
+    {
+      // Tuning without a CableCARD (ATSC or clear QAM) is currently not supported.
+      ChannelScte scteChannel = channel as ChannelScte;
+      short virtualChannelNumber;
+      if (
+        scteChannel == null ||
+        !SupportedBroadcastStandards.HasFlag(BroadcastStandard.Scte) ||
+        (
+          (_channelScanner == null || !_channelScanner.IsScanning) &&
+          !short.TryParse(scteChannel.LogicalChannelNumber, out virtualChannelNumber)
+        )
+      )
+      {
+        return false;
+      }
+      return true;
+    }
+
+    /// <summary>
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
@@ -153,30 +188,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
         hr = _caInterface.TuneByChannel(virtualChannelNumber);
         TvExceptionDirectShowError.Throw(hr, "Failed to tune channel.");
       }
-    }
-
-    /// <summary>
-    /// Check if the tuner can tune to a specific channel.
-    /// </summary>
-    /// <param name="channel">The channel to check.</param>
-    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
-    public override bool CanTune(IChannel channel)
-    {
-      // Tuning without a CableCARD (ATSC or clear QAM) is currently not supported.
-      ChannelScte scteChannel = channel as ChannelScte;
-      short virtualChannelNumber;
-      if (
-        scteChannel == null ||
-        !SupportedBroadcastStandards.HasFlag(BroadcastStandard.Scte) ||
-        (
-          (_channelScanner == null || !_channelScanner.IsScanning) &&
-          !short.TryParse(scteChannel.LogicalChannelNumber, out virtualChannelNumber)
-        )
-      )
-      {
-        return false;
-      }
-      return true;
     }
 
     #endregion

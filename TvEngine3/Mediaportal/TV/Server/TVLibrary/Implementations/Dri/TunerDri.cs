@@ -169,7 +169,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       // The DRIT SHALL output the selected program content as a single program
       // MPEG-TS in RTP packets according to [RTSP] and [RTP].
       // - OpenCable DRI I04 specification, 10 September 2010
-      _supportsSubChannels = false;
+      _areSubChannelsSupported = false;
     }
 
     ~TunerDri()
