@@ -39,6 +39,10 @@ public:
 
   /* get methods */
 
+  // gets URI
+  // @return : URI or NULL if not specified
+  const wchar_t *GetUri(void);
+
   /* set methods */
 
   /* other methods */

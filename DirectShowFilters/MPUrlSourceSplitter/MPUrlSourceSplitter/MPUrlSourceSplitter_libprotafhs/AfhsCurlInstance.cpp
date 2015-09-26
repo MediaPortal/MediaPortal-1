@@ -33,10 +33,6 @@
 CAfhsCurlInstance::CAfhsCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
   : CHttpCurlInstance(result, logger, mutex, protocolName, instanceName)
 {
-  this->owner = NULL;
-  this->ownerLockCount = 0;
-  this->connectionState = None;
-
   this->afhsDownloadRequest = dynamic_cast<CAfhsDownloadRequest *>(this->downloadRequest);
   this->afhsDownloadResponse = dynamic_cast<CAfhsDownloadResponse *>(this->downloadResponse);
 }
@@ -59,27 +55,7 @@ CAfhsDownloadResponse *CAfhsCurlInstance::GetAfhsDownloadResponse(void)
   return this->afhsDownloadResponse;
 }
 
-void *CAfhsCurlInstance::GetOwner(void)
-{
-  return this->owner;
-}
-
-unsigned int CAfhsCurlInstance::GetOwnerLockCount(void)
-{
-  return this->ownerLockCount;
-}
-
-ProtocolConnectionState CAfhsCurlInstance::GetConnectionState(void)
-{
-  return this->connectionState;
-}
-
 /* set methods */
-
-void CAfhsCurlInstance::SetConnectionState(ProtocolConnectionState connectionState)
-{
-  this->connectionState = connectionState;
-}
 
 /* other methods */
 
@@ -97,62 +73,9 @@ HRESULT CAfhsCurlInstance::Initialize(CDownloadRequest *downloadRequest)
   return result;
 }
 
-HRESULT CAfhsCurlInstance::LockCurlInstance(void *owner)
-{
-  HRESULT result = E_FAIL;
-
-  if ((this->ownerLockCount == 0) || (this->owner == owner))
-  {
-    result = (this->ownerLockCount == 0) ? S_OK : S_FALSE;
-    this->ownerLockCount++;
-  }
-
-  // remember owner
-  if (this->ownerLockCount > 0)
-  {
-    this->owner = owner;
-  }
-
-  return result;
-}
-
-HRESULT CAfhsCurlInstance::UnlockCurlInstance(void *owner)
-{
-  HRESULT result = E_FAIL;
-
-  if ((this->ownerLockCount > 0) && (this->owner == owner))
-  {
-    result = (this->ownerLockCount == 1) ? S_OK : S_FALSE;
-    this->ownerLockCount--;
-  }
-
-  // reset owner if finally unlocked
-  if (this->ownerLockCount == 0)
-  {
-    // finally unlocked
-    this->owner = NULL;
-  }
-
-  return result;
-}
-
-bool CAfhsCurlInstance::IsLockedCurlInstance(void)
-{
-  return (this->ownerLockCount != 0);
-}
-
-bool CAfhsCurlInstance::IsLockedCurlInstanceByOwner(void *owner)
-{
-  return (this->owner == owner);
-}
-
 void CAfhsCurlInstance::ClearSession(void)
 {
   __super::ClearSession();
-
-  this->owner = NULL;
-  this->ownerLockCount = 0;
-  this->connectionState = None;
 
   this->afhsDownloadRequest = NULL;
   this->afhsDownloadResponse = NULL;

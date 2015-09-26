@@ -23,7 +23,7 @@
 #include "M3u8StreamFragment.h"
 #include "FastSearchItemCollection.h"
 
-CM3u8StreamFragment::CM3u8StreamFragment(HRESULT *result, const wchar_t *uri, unsigned int fragment, int64_t fragmentTimestamp, unsigned int duration)
+CM3u8StreamFragment::CM3u8StreamFragment(HRESULT *result, const wchar_t *uri, unsigned int fragment, int64_t fragmentTimestamp, unsigned int duration, unsigned int byteRangeOffset, unsigned int byteRangeLength, CM3u8FragmentEncryption *encryption)
   : CStreamFragment(result)
 {
   this->uri = NULL;
@@ -32,18 +32,24 @@ CM3u8StreamFragment::CM3u8StreamFragment(HRESULT *result, const wchar_t *uri, un
   this->duration = duration;
   this->byteRangeOffset = UINT_MAX;
   this->byteRangeLength = UINT_MAX;
+  this->encryption = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
+    CHECK_POINTER_DEFAULT_HRESULT(*result, encryption);
+
     this->uri = Duplicate(uri);
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(*result), this->encryption = encryption->Clone());
 
     CHECK_POINTER_HRESULT(*result, this->uri, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->encryption, *result, E_OUTOFMEMORY);
   }
 }
 
 CM3u8StreamFragment::~CM3u8StreamFragment(void)
 {
   FREE_MEM(this->uri);
+  FREE_MEM_CLASS(this->encryption);
 }
 
 /* get methods */
@@ -78,13 +84,18 @@ unsigned int CM3u8StreamFragment::GetByteRangeLength(void)
   return this->byteRangeLength;
 }
 
+CM3u8FragmentEncryption *CM3u8StreamFragment::GetFragmentEncryption(void)
+{
+  return this->encryption;
+}
+
 /* set methods */
 
-void CM3u8StreamFragment::SetEncrypted(bool ecnrypted)
-{
-  this->flags &= ~M3U8_STREAM_FRAGMENT_FLAG_ENCRYPTED;
-  this->flags |= ecnrypted ? M3U8_STREAM_FRAGMENT_FLAG_ENCRYPTED : M3U8_STREAM_FRAGMENT_FLAG_NONE;
-}
+//void CM3u8StreamFragment::SetEncrypted(bool ecnrypted)
+//{
+//  this->flags &= ~M3U8_STREAM_FRAGMENT_FLAG_ENCRYPTED;
+//  this->flags |= ecnrypted ? M3U8_STREAM_FRAGMENT_FLAG_ENCRYPTED : M3U8_STREAM_FRAGMENT_FLAG_NONE;
+//}
 
 void CM3u8StreamFragment::SetEndOfStream(bool endOfStream)
 {
@@ -104,10 +115,10 @@ void CM3u8StreamFragment::SetByteRangeLength(unsigned int length)
 
 /* other methods */
 
-bool CM3u8StreamFragment::IsEncrypted(void)
-{
-  return this->IsSetFlags(M3U8_STREAM_FRAGMENT_FLAG_ENCRYPTED);
-}
+//bool CM3u8StreamFragment::IsEncrypted(void)
+//{
+//  return this->IsSetFlags(M3U8_STREAM_FRAGMENT_FLAG_ENCRYPTED);
+//}
 
 bool CM3u8StreamFragment::IsEndOfStream(void)
 {
@@ -119,7 +130,7 @@ bool CM3u8StreamFragment::IsEndOfStream(void)
 CFastSearchItem *CM3u8StreamFragment::CreateItem(void)
 {
   HRESULT result = S_OK;
-  CM3u8StreamFragment *fragment = new CM3u8StreamFragment(&result, this->uri, this->fragment, this->fragmentTimestamp, this->duration);
+  CM3u8StreamFragment *fragment = new CM3u8StreamFragment(&result, this->uri, this->fragment, this->fragmentTimestamp, this->duration, this->byteRangeOffset, this->byteRangeLength, this->encryption);
   CHECK_POINTER_HRESULT(result, fragment, result, E_OUTOFMEMORY);
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(fragment));
@@ -134,12 +145,6 @@ bool CM3u8StreamFragment::InternalClone(CFastSearchItem *item)
   {
     CM3u8StreamFragment *fragment = dynamic_cast<CM3u8StreamFragment *>(item);
     result &= (fragment != NULL);
-
-    if (result)
-    {
-      fragment->byteRangeOffset = this->byteRangeOffset;
-      fragment->byteRangeLength = this->byteRangeLength;
-    }
   }
 
   return result;

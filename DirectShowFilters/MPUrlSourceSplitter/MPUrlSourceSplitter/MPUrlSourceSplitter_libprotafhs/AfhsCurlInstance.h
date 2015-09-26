@@ -44,23 +44,7 @@ public:
   // @return : AFHS download response
   CAfhsDownloadResponse *GetAfhsDownloadResponse(void);
 
-  // gets owner of AFHS CURL instance
-  // @return : reference to owner of AFHS CURL instance (if locked), NULL otherwise
-  void *GetOwner(void);
-
-  // gets owner lock count of AFHS CURL instance
-  // @return : owner lock count of AFHS CURL instance, zero if not locked
-  unsigned int GetOwnerLockCount(void);
-
-  // gets AFHS CURL instance connection state
-  // @return : connection state
-  ProtocolConnectionState GetConnectionState(void);
-
   /* set methods */
-
-  // sets AFHS CURL instance connection state
-  // @param connectionState : the connection state to set
-  void SetConnectionState(ProtocolConnectionState connectionState);
 
   /* other methods */
 
@@ -68,27 +52,6 @@ public:
   // @param downloadRequest : download request
   // @return : true if successful, false otherwise
   virtual HRESULT Initialize(CDownloadRequest *downloadRequest);
-
-  // lock AFHS CURL instance for specific owner
-  // only owner can unlock instance for other use
-  // @param owner : the requested owner to lock instance
-  // @return : S_OK if locked, S_FALSE if already locked by same owner, E_FAIL if locked by another owner
-  HRESULT LockCurlInstance(void *owner);
-
-  // unlocks AFHS CURL instance for specific owner
-  // only owner can unlock instance for other use
-  // @param owner : the requested owner to unlock instance
-  // @return : S_OK if unlocked, S_FALSE if still locked by same owner, E_FAIL if locked by another owner or instance not locked
-  HRESULT UnlockCurlInstance(void *owner);
-
-  // tests if AFHS CURL instance is locked
-  // @return : true if instance is locked, false otherwise
-  bool IsLockedCurlInstance(void);
-
-  // tests if AFHS CURL instance is locked by specified owner
-  // @param owner : the owner to test lock
-  // @return : true if instance is locked by owner, false otherwise
-  bool IsLockedCurlInstanceByOwner(void *owner);
 
   // clears session
   virtual void ClearSession(void);
@@ -101,14 +64,6 @@ protected:
 
   // holds AFHS download response
   CAfhsDownloadResponse *afhsDownloadResponse;
-
-  // holds owner of AFHS CURL instance (if locked)
-  void *owner;
-  // holds owner lock count (zero if not locked, more than zero if locked)
-  unsigned int ownerLockCount;
-
-  // holds connection state
-  ProtocolConnectionState connectionState;
 
   /* methods */
 

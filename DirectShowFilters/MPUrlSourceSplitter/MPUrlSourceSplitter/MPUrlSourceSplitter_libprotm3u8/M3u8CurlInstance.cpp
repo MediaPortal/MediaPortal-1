@@ -33,10 +33,6 @@
 CM3u8CurlInstance::CM3u8CurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
   : CHttpCurlInstance(result, logger, mutex, protocolName, instanceName)
 {
-  this->owner = NULL;
-  this->ownerLockCount = 0;
-  this->connectionState = None;
-
   this->m3u8DownloadRequest = dynamic_cast<CM3u8DownloadRequest *>(this->downloadRequest);
   this->m3u8DownloadResponse = dynamic_cast<CM3u8DownloadResponse *>(this->downloadResponse);
 }
@@ -59,27 +55,7 @@ CM3u8DownloadResponse *CM3u8CurlInstance::GetM3u8DownloadResponse(void)
   return this->m3u8DownloadResponse;
 }
 
-void *CM3u8CurlInstance::GetOwner(void)
-{
-  return this->owner;
-}
-
-unsigned int CM3u8CurlInstance::GetOwnerLockCount(void)
-{
-  return this->ownerLockCount;
-}
-
-ProtocolConnectionState CM3u8CurlInstance::GetConnectionState(void)
-{
-  return this->connectionState;
-}
-
 /* set methods */
-
-void CM3u8CurlInstance::SetConnectionState(ProtocolConnectionState connectionState)
-{
-  this->connectionState = connectionState;
-}
 
 /* other methods */
 
@@ -103,59 +79,6 @@ void CM3u8CurlInstance::ClearSession(void)
 
   this->m3u8DownloadRequest = NULL;
   this->m3u8DownloadResponse = NULL;
-
-  this->owner = NULL;
-  this->ownerLockCount = 0;
-  this->connectionState = None;
-}
-
-HRESULT CM3u8CurlInstance::LockCurlInstance(void *owner)
-{
-  HRESULT result = E_FAIL;
-
-  if ((this->ownerLockCount == 0) || (this->owner == owner))
-  {
-    result = (this->ownerLockCount == 0) ? S_OK : S_FALSE;
-    this->ownerLockCount++;
-  }
-
-  // remember owner
-  if (this->ownerLockCount > 0)
-  {
-    this->owner = owner;
-  }
-
-  return result;
-}
-
-HRESULT CM3u8CurlInstance::UnlockCurlInstance(void *owner)
-{
-  HRESULT result = E_FAIL;
-
-  if ((this->ownerLockCount > 0) && (this->owner == owner))
-  {
-    result = (this->ownerLockCount == 1) ? S_OK : S_FALSE;
-    this->ownerLockCount--;
-  }
-
-  // reset owner if finally unlocked
-  if (this->ownerLockCount == 0)
-  {
-    // finally unlocked
-    this->owner = NULL;
-  }
-
-  return result;
-}
-
-bool CM3u8CurlInstance::IsLockedCurlInstance(void)
-{
-  return (this->ownerLockCount != 0);
-}
-
-bool CM3u8CurlInstance::IsLockedCurlInstanceByOwner(void *owner)
-{
-  return (this->owner == owner);
 }
 
 /* protected methods */

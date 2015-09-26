@@ -7,7 +7,7 @@
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
@@ -21,10 +21,22 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MPUrlSourceSplitter_Protocol_M3u8_Parameters.h">
+    <ClInclude Include="M3u8CurlInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MPUrlSourceSplitter_Protocol_M3u8.h">
+    <ClInclude Include="M3u8DownloadRequest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="M3u8DownloadResponse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="M3u8DumpBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="M3u8StreamFragment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="M3u8StreamFragmentCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -32,16 +44,23 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dllmain.cpp">
+    <ClCompile Include="M3u8CurlInstance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MPUrlSourceSplitter_Protocol_M3u8.cpp">
+    <ClCompile Include="M3u8DownloadRequest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="mpurlsourcesplitter_protocol_M3u8.def">
+    <ClCompile Include="M3u8DownloadResponse.cpp">
       <Filter>Source Files</Filter>
-    </None>
+    </ClCompile>
+    <ClCompile Include="M3u8DumpBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="M3u8StreamFragment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="M3u8StreamFragmentCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

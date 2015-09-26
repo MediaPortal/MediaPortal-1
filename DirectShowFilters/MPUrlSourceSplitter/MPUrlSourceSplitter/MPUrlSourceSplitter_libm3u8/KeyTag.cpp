@@ -119,7 +119,7 @@ HRESULT CKeyTag::ParseTag(unsigned int version)
         CMethodAttribute *method = dynamic_cast<CMethodAttribute *>(this->GetAttributes()->GetAttribute(METHOD_ATTRIBUTE_NAME, true));
         CHECK_POINTER_HRESULT(result, method, result, E_M3U8_MISSING_REQUIRED_ATTRIBUTE);
 
-        if (result && ((version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07)))
+        if (result && ((version == PLAYLIST_VERSION_01) || (version == PLAYLIST_VERSION_02) || (version == PLAYLIST_VERSION_03) || (version == PLAYLIST_VERSION_04) || (version == PLAYLIST_VERSION_05) || (version == PLAYLIST_VERSION_06) || (version == PLAYLIST_VERSION_07)))
         {
           // if METHOD is not NONE, the URI is mandatory
 

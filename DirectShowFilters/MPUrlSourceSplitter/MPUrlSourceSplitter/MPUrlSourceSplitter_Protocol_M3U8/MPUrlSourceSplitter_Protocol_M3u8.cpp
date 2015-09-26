@@ -312,12 +312,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
                   CHECK_POINTER_HRESULT(result, parsedStreamFragments, result, E_M3U8_CANNOT_GET_STREAM_FRAGMENTS_FROM_MEDIA_PLAYLIST);
 
                   CHECK_CONDITION_HRESULT(result, this->streamFragments->Append(parsedStreamFragments), result, E_OUTOFMEMORY);
-                  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->streamFragments->Count())); i++)
+                  /*for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->streamFragments->Count())); i++)
                   {
                     CM3u8StreamFragment *fragment = this->streamFragments->GetItem(i);
 
                     CHECK_CONDITION_HRESULT(result, !fragment->IsEncrypted(), result, E_DRM_PROTECTED);
-                  }
+                  }*/
 
                   // check last stream fragment for end of stream flag
                   CM3u8StreamFragment *fragment = this->streamFragments->GetItem(this->streamFragments->Count() - 1);
@@ -660,7 +660,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
                       CM3u8StreamFragment *fragment = parsedStreamFragments->GetItem(i);
 
                       CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->logger->Log(LOGGER_VERBOSE, L"%s: %s: added new stream fragment, fragment %u, timestamp: %lld, duration: %u (ms)", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, fragment->GetFragment(), fragment->GetFragmentTimestamp(), fragment->GetDuration()));
-                      CHECK_CONDITION_HRESULT(result, !fragment->IsEncrypted(), result, E_DRM_PROTECTED);
+                      //CHECK_CONDITION_HRESULT(result, !fragment->IsEncrypted(), result, E_DRM_PROTECTED);
                     }
 
                     FREE_MEM_CLASS(parsedStreamFragments);
@@ -1593,17 +1593,14 @@ CM3u8StreamFragmentCollection *CMPUrlSourceSplitter_Protocol_M3u8::GetStreamFrag
 
           if (SUCCEEDED(result))
           {
-            CM3u8StreamFragment *fragment = new CM3u8StreamFragment(&result, uri, frag->GetSequenceNumber(), timestamp, frag->GetDuration());
+            CM3u8StreamFragment *fragment = new CM3u8StreamFragment(&result, uri, frag->GetSequenceNumber(), timestamp, frag->GetDuration(), (frag->GetOffset() != OFFSET_NOT_SPECIFED) ? frag->GetOffset() : UINT_MAX, (frag->GetLength() != LENGTH_NOT_SPECIFIED) ? frag->GetLength() : UINT_MAX, frag->GetFragmentEncryption());
             CHECK_POINTER_HRESULT(result, fragment, result, E_OUTOFMEMORY);
 
             if (SUCCEEDED(result))
             {
               fragment->SetDiscontinuity(frag->IsDiscontinuity(), UINT_MAX);
-              fragment->SetEncrypted(frag->IsEncrypted());
+              //fragment->SetEncrypted(frag->IsEncrypted());
               fragment->SetEndOfStream(frag->IsEndOfStream());
-
-              fragment->SetByteRangeOffset((frag->GetOffset() != OFFSET_NOT_SPECIFED) ? frag->GetOffset() : UINT_MAX);
-              fragment->SetByteRangeLength((frag->GetLength() != LENGTH_NOT_SPECIFIED) ? frag->GetLength() : UINT_MAX);
             }
 
             CHECK_CONDITION_HRESULT(result, streamFragments->Add(fragment), result, E_OUTOFMEMORY);

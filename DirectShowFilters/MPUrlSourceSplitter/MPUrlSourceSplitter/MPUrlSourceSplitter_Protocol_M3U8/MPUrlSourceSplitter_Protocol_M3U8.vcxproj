@@ -55,13 +55,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_PROTOCOL_M3U8_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libsocket;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libdumpfile;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libm3u8;..\MPUrlSourceSplitter_libzlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libsocket;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libdumpfile;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libm3u8;..\MPUrlSourceSplitter_libzlib;..\MPUrlSourceSplitter_libprotm3u8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)d\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libsocket.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libplugin.lib;MPUrlSourceSplitter_libdumpfile.lib;MPUrlSourceSplitter_libibmff.lib;MPUrlSourceSplitter_libm3u8.lib;MPUrlSourceSplitter_libzlib.lib;Iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libsocket.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libplugin.lib;MPUrlSourceSplitter_libdumpfile.lib;MPUrlSourceSplitter_libibmff.lib;MPUrlSourceSplitter_libm3u8.lib;MPUrlSourceSplitter_libzlib.lib;MPUrlSourceSplitter_libprotm3u8.lib;Iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>mpurlsourcesplitter_protocol_M3u8.def</ModuleDefinitionFile>
     </Link>
     <PreBuildEvent>
@@ -113,7 +113,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_PROTOCOL_M3U8_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libsocket;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libdumpfile;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libm3u8;..\MPUrlSourceSplitter_libzlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libsocket;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libdumpfile;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libm3u8;..\MPUrlSourceSplitter_libzlib;..\MPUrlSourceSplitter_libprotm3u8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -121,7 +121,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libsocket.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libplugin.lib;MPUrlSourceSplitter_libdumpfile.lib;MPUrlSourceSplitter_libibmff.lib;MPUrlSourceSplitter_libm3u8.lib;MPUrlSourceSplitter_libzlib.lib;Iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libsocket.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libplugin.lib;MPUrlSourceSplitter_libdumpfile.lib;MPUrlSourceSplitter_libibmff.lib;MPUrlSourceSplitter_libm3u8.lib;MPUrlSourceSplitter_libzlib.lib;MPUrlSourceSplitter_libprotm3u8.lib;Iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>mpurlsourcesplitter_protocol_M3u8.def</ModuleDefinitionFile>
     </Link>
     <PreBuildEvent>
@@ -166,12 +166,6 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="M3u8CurlInstance.h" />
-    <ClInclude Include="M3u8DownloadRequest.h" />
-    <ClInclude Include="M3u8DownloadResponse.h" />
-    <ClInclude Include="M3u8DumpBox.h" />
-    <ClInclude Include="M3u8StreamFragment.h" />
-    <ClInclude Include="M3u8StreamFragmentCollection.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_M3u8.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_M3u8_Parameters.h" />
     <ClInclude Include="stdafx.h" />
@@ -186,12 +180,6 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="M3u8CurlInstance.cpp" />
-    <ClCompile Include="M3u8DownloadRequest.cpp" />
-    <ClCompile Include="M3u8DownloadResponse.cpp" />
-    <ClCompile Include="M3u8DumpBox.cpp" />
-    <ClCompile Include="M3u8StreamFragment.cpp" />
-    <ClCompile Include="M3u8StreamFragmentCollection.cpp" />
     <ClCompile Include="MPUrlSourceSplitter_Protocol_M3u8.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

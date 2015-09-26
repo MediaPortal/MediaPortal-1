@@ -52,6 +52,9 @@ CCurlInstance::CCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, con
   this->downloadRequest = NULL;
   this->downloadResponse = NULL;
   this->dumpFile = NULL;
+  this->owner = NULL;
+  this->ownerLockCount = 0;
+  this->connectionState = None;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -139,6 +142,21 @@ const wchar_t *CCurlInstance::GetDumpFile(void)
   return this->dumpFile->GetDumpFile();
 }
 
+void *CCurlInstance::GetOwner(void)
+{
+  return this->owner;
+}
+
+unsigned int CCurlInstance::GetOwnerLockCount(void)
+{
+  return this->ownerLockCount;
+}
+
+ProtocolConnectionState CCurlInstance::GetConnectionState(void)
+{
+  return this->connectionState;
+}
+
 /* set methods */
 
 bool CCurlInstance::SetDumpFile(const wchar_t *dumpFile)
@@ -156,6 +174,11 @@ void CCurlInstance::SetDumpOutputData(bool dumpOutputData)
 {
   this->flags &= ~CURL_INSTANCE_FLAG_DUMP_OUTPUT_DATA;
   this->flags |= (dumpOutputData) ? CURL_INSTANCE_FLAG_DUMP_OUTPUT_DATA : CURL_INSTANCE_FLAG_NONE;
+}
+
+void CCurlInstance::SetConnectionState(ProtocolConnectionState connectionState)
+{
+  this->connectionState = connectionState;
 }
 
 /* other methods */
@@ -330,6 +353,55 @@ HRESULT CCurlInstance::StopReceivingData(void)
   return this->DestroyCurlWorker();
 }
 
+HRESULT CCurlInstance::LockCurlInstance(void *owner)
+{
+  HRESULT result = E_FAIL;
+
+  if ((this->ownerLockCount == 0) || (this->owner == owner))
+  {
+    result = (this->ownerLockCount == 0) ? S_OK : S_FALSE;
+    this->ownerLockCount++;
+  }
+
+  // remember owner
+  if (this->ownerLockCount > 0)
+  {
+    this->owner = owner;
+  }
+
+  return result;
+}
+
+HRESULT CCurlInstance::UnlockCurlInstance(void *owner)
+{
+  HRESULT result = E_FAIL;
+
+  if ((this->ownerLockCount > 0) && (this->owner == owner))
+  {
+    result = (this->ownerLockCount == 1) ? S_OK : S_FALSE;
+    this->ownerLockCount--;
+  }
+
+  // reset owner if finally unlocked
+  if (this->ownerLockCount == 0)
+  {
+    // finally unlocked
+    this->owner = NULL;
+  }
+
+  return result;
+}
+
+bool CCurlInstance::IsLockedCurlInstance(void)
+{
+  return (this->ownerLockCount != 0);
+}
+
+bool CCurlInstance::IsLockedCurlInstanceByOwner(void *owner)
+{
+  return (this->owner == owner);
+}
+
 HRESULT CCurlInstance::SetString(CURL *curl, CURLoption option, const wchar_t *string)
 {
   char *multiByteString = ConvertToMultiByteW(string);
@@ -500,6 +572,10 @@ void CCurlInstance::ClearSession(void)
   this->curlWorkerShouldExit = false;
   this->lastReceiveTime = 0;
   this->flags = CURL_INSTANCE_FLAG_NONE;
+
+  this->owner = NULL;
+  this->ownerLockCount = 0;
+  this->connectionState = None;
 }
 
 /* protected methods */

@@ -44,6 +44,10 @@ public:
 
   /* get methods */
 
+  // gets initialization vector
+  // @return : initialization vector or NULL if not specified
+  const uint8_t *GetInitializationVector(void);
+
   /* set methods */
 
   /* other methods */

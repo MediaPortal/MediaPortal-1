@@ -24,6 +24,7 @@
 #define __M3U8_SEGMENT_FRAGMENT_DEFINED
 
 #include "StreamFragment.h"
+#include "M3u8FragmentEncryption.h"
 
 #define M3U8_STREAM_FRAGMENT_FLAG_NONE                                STREAM_FRAGMENT_FLAG_NONE
 
@@ -36,7 +37,7 @@ class CM3u8StreamFragment : public CStreamFragment
 {
 public:
   // initializes a new instance of CM3u8StreamFragment class
-  CM3u8StreamFragment(HRESULT *result, const wchar_t *uri, unsigned int fragment, int64_t fragmentTimestamp, unsigned int duration);
+  CM3u8StreamFragment(HRESULT *result, const wchar_t *uri, unsigned int fragment, int64_t fragmentTimestamp, unsigned int duration, unsigned int byteRangeOffset, unsigned int byteRangeLength, CM3u8FragmentEncryption *encryption);
 
   // destructor
   ~CM3u8StreamFragment(void);
@@ -67,11 +68,15 @@ public:
   // @return : length or UINT_MAX if not specified
   unsigned int GetByteRangeLength(void);
 
+  // gets fragment encryption
+  // @return : fragment encryption
+  CM3u8FragmentEncryption *GetFragmentEncryption(void);
+
   /* set methods */
 
   // sets if fragment is encrypted
   // @param encrypted : true if after fragment is discontinuity, false otherwise
-  void SetEncrypted(bool ecnrypted);
+  //void SetEncrypted(bool ecnrypted);
 
   // sets if fragment is end of stream
   // @param endOfStream : true if after fragment is end of stream, false otherwise
@@ -89,7 +94,7 @@ public:
 
   // tests if fragment is encrypted
   // @return : true if encrypted, false otherwise
-  bool IsEncrypted(void);
+  //bool IsEncrypted(void);
 
   // tests if fragment is end of stream
   // @return : true if end of stream, false otherwise
@@ -108,6 +113,8 @@ private:
   unsigned int byteRangeOffset;
   // holds length of range request
   unsigned int byteRangeLength;
+  // holds fragment encryption
+  CM3u8FragmentEncryption *encryption;
 
   /* methods */
 

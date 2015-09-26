@@ -11,23 +11,23 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{6FDCED1D-DC72-477F-951C-7400E6CC9F5F}</ProjectGuid>
+    <ProjectGuid>{6DA3E14F-42FB-4BF5-B265-3FFBD809E3A0}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>MPUrlSourceSplitter_libf4m</RootNamespace>
+    <RootNamespace>MPUrlSourceSplitter_libprotm3u8</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v120_xp</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -44,8 +44,8 @@
     <IntDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IntDir>$(SolutionDir)bin_$(PlatformName)d\$(ProjectName)\</IntDir>
     <OutDir>$(SolutionDir)bin_$(PlatformName)d\lib\</OutDir>
+    <IntDir>$(SolutionDir)bin_$(PlatformName)d\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -53,7 +53,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libtinyxml2;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libsocket;..\MPUrlSourceSplitter_libdumpfile;..\MPUrlSourceSplitter_libibmff;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libdumpfile;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libm3u8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -68,7 +68,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libtinyxml2;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libsocket;..\MPUrlSourceSplitter_libdumpfile;..\MPUrlSourceSplitter_libibmff;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libdumpfile;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libm3u8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -78,27 +78,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="F4MBaseUrl.h" />
-    <ClInclude Include="F4MBootstrapInfo.h" />
-    <ClInclude Include="F4MBootstrapInfoCollection.h" />
-    <ClInclude Include="F4MDeliveryType.h" />
-    <ClInclude Include="F4MDuration.h" />
-    <ClInclude Include="F4MManifest.h" />
-    <ClInclude Include="F4MMedia.h" />
-    <ClInclude Include="F4MMediaCollection.h" />
-    <ClInclude Include="F4M_Elements.h" />
+    <ClInclude Include="M3u8CurlInstance.h" />
+    <ClInclude Include="M3u8DownloadRequest.h" />
+    <ClInclude Include="M3u8DownloadResponse.h" />
+    <ClInclude Include="M3u8DumpBox.h" />
+    <ClInclude Include="M3u8StreamFragment.h" />
+    <ClInclude Include="M3u8StreamFragmentCollection.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="F4MBaseUrl.cpp" />
-    <ClCompile Include="F4MBootstrapInfo.cpp" />
-    <ClCompile Include="F4MBootstrapInfoCollection.cpp" />
-    <ClCompile Include="F4MDeliveryType.cpp" />
-    <ClCompile Include="F4MDuration.cpp" />
-    <ClCompile Include="F4MManifest.cpp" />
-    <ClCompile Include="F4MMedia.cpp" />
-    <ClCompile Include="F4MMediaCollection.cpp" />
+    <ClCompile Include="M3u8CurlInstance.cpp" />
+    <ClCompile Include="M3u8DownloadRequest.cpp" />
+    <ClCompile Include="M3u8DownloadResponse.cpp" />
+    <ClCompile Include="M3u8DumpBox.cpp" />
+    <ClCompile Include="M3u8StreamFragment.cpp" />
+    <ClCompile Include="M3u8StreamFragmentCollection.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

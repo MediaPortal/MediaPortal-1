@@ -294,6 +294,9 @@
     <ClInclude Include="MediaPlaylistV07.h">
       <Filter>Playlists\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="M3u8FragmentEncryption.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -538,6 +541,9 @@
     </ClCompile>
     <ClCompile Include="MediaPlaylistV07.cpp">
       <Filter>Playlists\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="M3u8FragmentEncryption.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

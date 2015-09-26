@@ -44,23 +44,7 @@ public:
   // @return : M3U8 download response
   CM3u8DownloadResponse *GetM3u8DownloadResponse(void);
 
-  // gets owner of M3U8 CURL instance
-  // @return : reference to owner of M3U8 CURL instance (if locked), NULL otherwise
-  void *GetOwner(void);
-
-  // gets owner lock count of M3U8 CURL instance
-  // @return : owner lock count of M3U8 CURL instance, zero if not locked
-  unsigned int GetOwnerLockCount(void);
-
-  // gets M3U8 CURL instance connection state
-  // @return : connection state
-  ProtocolConnectionState GetConnectionState(void);
-
   /* set methods */
-
-  // sets M3U8 CURL instance connection state
-  // @param connectionState : the connection state to set
-  void SetConnectionState(ProtocolConnectionState connectionState);
 
   /* other methods */
 
@@ -72,27 +56,6 @@ public:
   // clears session
   virtual void ClearSession(void);
 
-  // lock M3U8 CURL instance for specific owner
-  // only owner can unlock instance for other use
-  // @param owner : the requested owner to lock instance
-  // @return : S_OK if locked, S_FALSE if already locked by same owner, E_FAIL if locked by another owner
-  HRESULT LockCurlInstance(void *owner);
-
-  // unlocks M3U8 CURL instance for specific owner
-  // only owner can unlock instance for other use
-  // @param owner : the requested owner to unlock instance
-  // @return : S_OK if unlocked, S_FALSE if still locked by same owner, E_FAIL if locked by another owner or instance not locked
-  HRESULT UnlockCurlInstance(void *owner);
-
-  // tests if M3U8 CURL instance is locked
-  // @return : true if instance is locked, false otherwise
-  bool IsLockedCurlInstance(void);
-
-  // tests if M3U8 CURL instance is locked by specified owner
-  // @param owner : the owner to test lock
-  // @return : true if instance is locked by owner, false otherwise
-  bool IsLockedCurlInstanceByOwner(void *owner);
-
 protected:
   // holds M3U8 download request
   // never created and never destroyed
@@ -101,14 +64,6 @@ protected:
 
   // holds M3U8 download response
   CM3u8DownloadResponse *m3u8DownloadResponse;
-
-  // holds owner of M3U8 CURL instance (if locked)
-  void *owner;
-  // holds owner lock count (zero if not locked, more than zero if locked)
-  unsigned int ownerLockCount;
-
-  // holds connection state
-  ProtocolConnectionState connectionState;
 
   /* methods */
 
