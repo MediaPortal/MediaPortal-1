@@ -31,17 +31,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void InitializeComponent()
     {
       this.mpTabControl1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
-      this.tabPageScan = new System.Windows.Forms.TabPage();
+      this.tabPageScan = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.labelCountry = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.comboBoxCountry = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.labelScanMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.comboBoxScanMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.progressBarSignalStrength = new System.Windows.Forms.ProgressBar();
-      this.progressBarProgress = new System.Windows.Forms.ProgressBar();
-      this.progressBarSignalQuality = new System.Windows.Forms.ProgressBar();
+      this.progressBarSignalStrength = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
+      this.progressBarProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
+      this.progressBarSignalQuality = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
       this.buttonScan = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.listViewProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeaderStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderStatus = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
       this.labelSignalQuality = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelSignalStrength = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.openFileDialogExternalTunerChannelList = new System.Windows.Forms.OpenFileDialog();
@@ -224,15 +224,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     #endregion
 
     private MPTabControl mpTabControl1;
-    private System.Windows.Forms.TabPage tabPageScan;
+    private MPTabPage tabPageScan;
     private MPLabel labelScanMode;
     private MPComboBox comboBoxScanMode;
-    private System.Windows.Forms.ProgressBar progressBarSignalStrength;
-    private System.Windows.Forms.ProgressBar progressBarProgress;
-    private System.Windows.Forms.ProgressBar progressBarSignalQuality;
+    private MPProgressBar progressBarSignalStrength;
+    private MPProgressBar progressBarProgress;
+    private MPProgressBar progressBarSignalQuality;
     private MPButton buttonScan;
     private MPListView listViewProgress;
-    private System.Windows.Forms.ColumnHeader columnHeaderStatus;
+    private MPColumnHeader columnHeaderStatus;
     private MPLabel labelSignalQuality;
     private MPLabel labelSignalStrength;
     private MPLabel labelCountry;

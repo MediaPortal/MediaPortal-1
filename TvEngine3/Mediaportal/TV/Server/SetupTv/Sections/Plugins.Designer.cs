@@ -32,11 +32,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Available Plugins", System.Windows.Forms.HorizontalAlignment.Left);
       System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Incompatible Plugins", System.Windows.Forms.HorizontalAlignment.Left);
-      this.listViewPlugins = new System.Windows.Forms.ListView();
-      this.columnHeaderEnabled = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderAuthor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.listViewPlugins = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
+      this.columnHeaderEnabled = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderAuthor = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderVersion = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
       this.SuspendLayout();
       // 
       // listViewPlugins
@@ -99,11 +99,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     #endregion
 
-    private System.Windows.Forms.ListView listViewPlugins;
-    private System.Windows.Forms.ColumnHeader columnHeaderEnabled;
-    private System.Windows.Forms.ColumnHeader columnHeaderName;
-    private System.Windows.Forms.ColumnHeader columnHeaderAuthor;
-    private System.Windows.Forms.ColumnHeader columnHeaderVersion;
-
+    private MPListView listViewPlugins;
+    private MPColumnHeader columnHeaderEnabled;
+    private MPColumnHeader columnHeaderName;
+    private MPColumnHeader columnHeaderAuthor;
+    private MPColumnHeader columnHeaderVersion;
   }
 }

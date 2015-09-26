@@ -33,18 +33,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChannelMapping));
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.pictureBoxTuner = new System.Windows.Forms.PictureBox();
+      this.pictureBoxTuner = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPPictureBox();
       this.buttonUnmap = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.buttonMapAll = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.labelMapped = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.listViewMapped = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
       this.labelNotMapped = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.listViewNotMapped = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
       this.labelTuner = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.comboBoxTuner = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+      this.tableLayoutPanel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTableLayoutPanel();
       this.buttonUnmapAll = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.buttonMap = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTuner)).BeginInit();
@@ -269,18 +269,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     #endregion
 
     private System.Windows.Forms.ImageList imageList1;
-    private System.Windows.Forms.PictureBox pictureBoxTuner;
+    private MPPictureBox pictureBoxTuner;
     private MPButton buttonUnmap;
     private MPButton buttonMapAll;
     private MPLabel labelMapped;
     private MPListView listViewMapped;
-    private System.Windows.Forms.ColumnHeader columnHeader2;
+    private MPColumnHeader columnHeader2;
     private MPLabel labelNotMapped;
     private MPListView listViewNotMapped;
-    private System.Windows.Forms.ColumnHeader columnHeader4;
+    private MPColumnHeader columnHeader4;
     private MPLabel labelTuner;
     private MPComboBox comboBoxTuner;
-    private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
+    private MPTableLayoutPanel tableLayoutPanel;
     private MPButton buttonMap;
     private MPButton buttonUnmapAll;
   }

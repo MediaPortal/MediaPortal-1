@@ -29,15 +29,15 @@ namespace Mediaportal.TV.Server.SetupTV
     /// </summary>
     protected void InitializeComponent()
     {
-      this.sectionTree = new System.Windows.Forms.TreeView();
+      this.sectionTree = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTreeView();
       this.closeButton = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.headerLabel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGradientLabel();
-      this.holderPanel = new System.Windows.Forms.Panel();
+      this.holderPanel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPPanel();
       this.beveledLine1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPBeveledLine();
-      this.linkLabelDonate = new System.Windows.Forms.LinkLabel();
-      this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-      this.helpToolStripSplitButton = new System.Windows.Forms.ToolStripButton();
-      this.configToolStripSplitButton = new System.Windows.Forms.ToolStripButton();
+      this.linkLabelDonate = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLinkLabel();
+      this.toolStrip1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPToolStrip();
+      this.helpToolStripSplitButton = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPToolStripButton();
+      this.configToolStripSplitButton = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPToolStripButton();
       this.toolStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -176,12 +176,12 @@ namespace Mediaportal.TV.Server.SetupTV
 
     private MPButton closeButton;
     private MPBeveledLine beveledLine1;
-    protected System.Windows.Forms.TreeView sectionTree;
-    protected System.Windows.Forms.Panel holderPanel;
+    protected MPTreeView sectionTree;
+    protected MPPanel holderPanel;
     private MPGradientLabel headerLabel;
-    private System.Windows.Forms.LinkLabel linkLabelDonate;
-    protected System.Windows.Forms.ToolStrip toolStrip1;
-    protected System.Windows.Forms.ToolStripButton helpToolStripSplitButton;
-    protected System.Windows.Forms.ToolStripButton configToolStripSplitButton;
+    private MPLinkLabel linkLabelDonate;
+    protected MPToolStrip toolStrip1;
+    protected MPToolStripButton helpToolStripSplitButton;
+    protected MPToolStripButton configToolStripSplitButton;
   }
 }

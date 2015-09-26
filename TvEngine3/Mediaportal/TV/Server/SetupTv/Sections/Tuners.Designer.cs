@@ -33,7 +33,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Tuners));
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.tabPageTunerGroups = new System.Windows.Forms.TabPage();
+      this.tabPageTunerGroups = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.groupBoxTunerInGroup = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.buttonTunerInGroupAdd = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.buttonTunerInGroupRemove = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
@@ -41,24 +41,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonGroupRename = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.buttonGroupAdd = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.buttonGroupDelete = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.treeViewTunerGroups = new System.Windows.Forms.TreeView();
-      this.tabPageTuners = new System.Windows.Forms.TabPage();
+      this.treeViewTunerGroups = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTreeView();
+      this.tabPageTuners = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.labelTunerPriority = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.buttonTunerPriorityDown = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.buttonTunerPriorityUp = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.numericUpDownStreamTunerCount = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownStreamTunerCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.buttonTunerEdit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.buttonTunerDelete = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.labelStreamTunerCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.listViewTuners = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeaderEnabled = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderConditionalAccess = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderGrabEpg = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderExternalId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.tabControl = new System.Windows.Forms.TabControl();
+      this.columnHeaderEnabled = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderType = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderConditionalAccess = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderGrabEpg = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderExternalId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.tabControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
       this.tabPageTunerGroups.SuspendLayout();
       this.groupBoxTunerInGroup.SuspendLayout();
       this.groupBoxGroup.SuspendLayout();
@@ -370,27 +370,28 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.ResumeLayout(false);
 
     }
+
     #endregion
 
     private System.Windows.Forms.ImageList imageList1;
-    private System.Windows.Forms.TabPage tabPageTunerGroups;
-    private System.Windows.Forms.TreeView treeViewTunerGroups;
-    private System.Windows.Forms.TabPage tabPageTuners;
-    private System.Windows.Forms.NumericUpDown numericUpDownStreamTunerCount;
+    private MPTabPage tabPageTunerGroups;
+    private MPTreeView treeViewTunerGroups;
+    private MPTabPage tabPageTuners;
+    private MPNumericUpDown numericUpDownStreamTunerCount;
     private MPLabel labelStreamTunerCount;
     private MPButton buttonTunerDelete;
     private MPListView listViewTuners;
-    private System.Windows.Forms.ColumnHeader columnHeaderEnabled;
-    private System.Windows.Forms.ColumnHeader columnHeaderType;
-    private System.Windows.Forms.ColumnHeader columnHeaderConditionalAccess;
-    private System.Windows.Forms.ColumnHeader columnHeaderId;
-    private System.Windows.Forms.ColumnHeader columnHeaderName;
-    private System.Windows.Forms.ColumnHeader columnHeaderGrabEpg;
-    private System.Windows.Forms.ColumnHeader columnHeaderExternalId;
+    private MPColumnHeader columnHeaderEnabled;
+    private MPColumnHeader columnHeaderType;
+    private MPColumnHeader columnHeaderConditionalAccess;
+    private MPColumnHeader columnHeaderId;
+    private MPColumnHeader columnHeaderName;
+    private MPColumnHeader columnHeaderGrabEpg;
+    private MPColumnHeader columnHeaderExternalId;
     private MPButton buttonTunerEdit;
     private MPButton buttonTunerPriorityUp;
     private MPButton buttonTunerPriorityDown;
-    private System.Windows.Forms.TabControl tabControl;
+    private MPTabControl tabControl;
     private MPGroupBox groupBoxTunerInGroup;
     private MPButton buttonTunerInGroupAdd;
     private MPButton buttonTunerInGroupRemove;

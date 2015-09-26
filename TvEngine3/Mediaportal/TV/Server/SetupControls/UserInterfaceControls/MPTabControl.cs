@@ -209,11 +209,6 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
       Refresh();
     }
 
-    protected override void OnMouseUp(MouseEventArgs e)
-    {
-      base.OnMouseUp(e);
-    }
-
     /// <summary>
     /// Finds the TabPage whose tab is contains the given point.
     /// </summary>
@@ -233,22 +228,6 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
       }
 
       return tp;
-    }
-
-    /// <summary>
-    /// Loops over all the TabPages to find the index of the given TabPage.
-    /// </summary>
-    /// <param name="page">The TabPage we want the index for.</param>
-    /// <returns>The index of the given TabPage(-1 if it isn't found.)</returns>
-    private int FindIndex(TabPage page)
-    {
-      for (int i = 0; i < TabPages.Count; i++)
-      {
-        if (TabPages[i] == page)
-          return i;
-      }
-
-      return -1;
     }
   }
 }

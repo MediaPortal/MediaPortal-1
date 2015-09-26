@@ -35,7 +35,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelMcsStatusValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelMcsStatus = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxBdaHotFix = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.linkLabelBdaHotFix = new System.Windows.Forms.LinkLabel();
+      this.linkLabelBdaHotFix = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLinkLabel();
       this.labelBdaHotFixStatusValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelBdaHotFixStatus = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxMcs.SuspendLayout();
@@ -157,6 +157,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPLabel labelMcsStatusValue;
     private MPLabel labelBdaHotFixStatusValue;
     private MPButton buttonMcs;
-    private System.Windows.Forms.LinkLabel linkLabelBdaHotFix;
+    private MPLinkLabel linkLabelBdaHotFix;
   }
 }

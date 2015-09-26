@@ -30,19 +30,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.numericUpDownPort = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownPort = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelPort = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.comboBoxInterface = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.labelInterface = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxClients = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.listViewClients = new System.Windows.Forms.ListView();
-      this.columnHeaderStreamId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderClientSessionId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderClientIpAddress = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderStreamDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderClientConnectedSince = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderClientIsActive = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderStreamUrl = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.listViewClients = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
+      this.columnHeaderStreamId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderClientSessionId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderClientIpAddress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderStreamDescription = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderClientConnectedSince = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderClientIsActive = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderStreamUrl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
       this.buttonKick = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.groupBoxSettings = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.labelStatusValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -238,22 +238,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     #endregion
 
-    private System.Windows.Forms.NumericUpDown numericUpDownPort;
+    private MPNumericUpDown numericUpDownPort;
     private MPLabel labelPort;
     private MPComboBox comboBoxInterface;
     private MPLabel labelInterface;
     private MPGroupBox groupBoxClients;
-    private System.Windows.Forms.ListView listViewClients;
-    private System.Windows.Forms.ColumnHeader columnHeaderStreamId;
-    private System.Windows.Forms.ColumnHeader columnHeaderClientIpAddress;
-    private System.Windows.Forms.ColumnHeader columnHeaderClientConnectedSince;
-    private System.Windows.Forms.ColumnHeader columnHeaderStreamDescription;
+    private MPListView listViewClients;
+    private MPColumnHeader columnHeaderStreamId;
+    private MPColumnHeader columnHeaderClientIpAddress;
+    private MPColumnHeader columnHeaderClientConnectedSince;
+    private MPColumnHeader columnHeaderStreamDescription;
     private MPButton buttonKick;
     private MPGroupBox groupBoxSettings;
     private MPLabel labelStatusValue;
     private MPLabel labelStatus;
-    private System.Windows.Forms.ColumnHeader columnHeaderStreamUrl;
-    private System.Windows.Forms.ColumnHeader columnHeaderClientSessionId;
-    private System.Windows.Forms.ColumnHeader columnHeaderClientIsActive;
+    private MPColumnHeader columnHeaderStreamUrl;
+    private MPColumnHeader columnHeaderClientSessionId;
+    private MPColumnHeader columnHeaderClientIsActive;
   }
 }

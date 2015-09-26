@@ -34,16 +34,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
       System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
       this.groupBoxSystemUsers = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.numericUpDownScheduler = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownScheduler = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelScheduler = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelEpgGrabber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownEpgGrabber = new System.Windows.Forms.NumericUpDown();
-      this.numericUpDownOtherDefault = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownEpgGrabber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.numericUpDownOtherDefault = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelOtherDefault = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxOtherUsers = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.dataGridViewUserPriorities = new System.Windows.Forms.DataGridView();
-      this.dataGridViewColumnUser = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.dataGridViewColumnPriority = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.dataGridViewUserPriorities = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridView();
+      this.dataGridViewColumnUser = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
+      this.dataGridViewColumnPriority = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       this.groupBoxSystemUsers.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScheduler)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgGrabber)).BeginInit();
@@ -238,15 +238,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     #endregion
 
     private MPGroupBox groupBoxOtherUsers;
-    private System.Windows.Forms.DataGridView dataGridViewUserPriorities;
+    private MPDataGridView dataGridViewUserPriorities;
     private MPGroupBox groupBoxSystemUsers;
-    private System.Windows.Forms.NumericUpDown numericUpDownOtherDefault;
+    private MPNumericUpDown numericUpDownOtherDefault;
     private MPLabel labelOtherDefault;
-    private System.Windows.Forms.NumericUpDown numericUpDownScheduler;
+    private MPNumericUpDown numericUpDownScheduler;
     private MPLabel labelScheduler;
-    private System.Windows.Forms.NumericUpDown numericUpDownEpgGrabber;
+    private MPNumericUpDown numericUpDownEpgGrabber;
     private MPLabel labelEpgGrabber;
-    private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewColumnUser;
-    private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewColumnPriority;
+    private MPDataGridViewTextBoxColumn dataGridViewColumnUser;
+    private MPDataGridViewTextBoxColumn dataGridViewColumnPriority;
   }
 }

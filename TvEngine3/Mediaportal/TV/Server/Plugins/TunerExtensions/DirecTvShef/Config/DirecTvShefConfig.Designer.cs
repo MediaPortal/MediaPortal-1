@@ -49,13 +49,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DirecTvShefConfig));
-      this.dataGridViewConfig = new System.Windows.Forms.DataGridView();
-      this.dataGridViewColumnTunerId = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.dataGridViewColumnTunerName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.dataGridViewColumnSetTopBoxIpAddress = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.dataGridViewColumnPowerControl = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+      this.dataGridViewConfig = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridView();
+      this.dataGridViewColumnTunerId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
+      this.dataGridViewColumnTunerName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
+      this.dataGridViewColumnSetTopBoxIpAddress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
+      this.dataGridViewColumnPowerControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewCheckBoxColumn();
       this.buttonTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
+      this.pictureBoxLogo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPPictureBox();
       this.labelDescription = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridViewConfig)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
@@ -159,13 +159,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
 
     #endregion
 
-    private System.Windows.Forms.DataGridView dataGridViewConfig;
+    private SetupControls.UserInterfaceControls.MPDataGridView dataGridViewConfig;
     private SetupControls.UserInterfaceControls.MPButton buttonTest;
-    private System.Windows.Forms.PictureBox pictureBoxLogo;
+    private SetupControls.UserInterfaceControls.MPPictureBox pictureBoxLogo;
     private SetupControls.UserInterfaceControls.MPLabel labelDescription;
-    private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewColumnTunerId;
-    private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewColumnTunerName;
-    private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewColumnSetTopBoxIpAddress;
-    private System.Windows.Forms.DataGridViewCheckBoxColumn dataGridViewColumnPowerControl;
+    private SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn dataGridViewColumnTunerId;
+    private SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn dataGridViewColumnTunerName;
+    private SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn dataGridViewColumnSetTopBoxIpAddress;
+    private SetupControls.UserInterfaceControls.MPDataGridViewCheckBoxColumn dataGridViewColumnPowerControl;
   }
 }

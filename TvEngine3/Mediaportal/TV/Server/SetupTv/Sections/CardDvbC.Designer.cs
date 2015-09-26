@@ -30,8 +30,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.tabControl = new System.Windows.Forms.TabControl();
-      this.tabPageScan = new System.Windows.Forms.TabPage();
+      this.tabControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
+      this.tabPageScan = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.checkBoxUseAdvancedOptions = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.groupBoxAdvancedOptions = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.labelScanType = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -45,13 +45,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericTextBoxSymbolRate = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericTextBox();
       this.labelSymbolRate = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.progressBarProgress = new System.Windows.Forms.ProgressBar();
+      this.progressBarProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
       this.labelSignalStrength = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelSignalQuality = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.progressBarSignalStrength = new System.Windows.Forms.ProgressBar();
-      this.progressBarSignalQuality = new System.Windows.Forms.ProgressBar();
+      this.progressBarSignalStrength = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
+      this.progressBarSignalQuality = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
       this.listViewProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeaderStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderStatus = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
       this.buttonScan = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.labelRegionProvider = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelCountry = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -387,8 +387,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     #endregion
 
-    private System.Windows.Forms.TabControl tabControl;
-    private System.Windows.Forms.TabPage tabPageScan;
+    private MPTabControl tabControl;
+    private MPTabPage tabPageScan;
     private MPLabel labelFrequencyUnit;
     private MPNumericTextBox numericTextBoxSymbolRate;
     private MPLabel labelSymbolRate;
@@ -397,12 +397,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPNumericTextBox numericTextBoxFrequency;
     private MPLabel labelFrequency;
     private MPListView listViewProgress;
-    private System.Windows.Forms.ColumnHeader columnHeaderStatus;
-    private System.Windows.Forms.ProgressBar progressBarSignalQuality;
-    private System.Windows.Forms.ProgressBar progressBarSignalStrength;
+    private MPColumnHeader columnHeaderStatus;
+    private MPProgressBar progressBarSignalQuality;
+    private MPProgressBar progressBarSignalStrength;
     private MPLabel labelSignalQuality;
     private MPLabel labelSignalStrength;
-    private System.Windows.Forms.ProgressBar progressBarProgress;
+    private MPProgressBar progressBarProgress;
     private MPButton buttonScan;
     private MPLabel labelCountry;
     private MPComboBox comboBoxCountry;
@@ -414,6 +414,5 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPLabel labelSymbolRateUnit;
     private MPLabel labelScanType;
     private MPComboBox comboBoxScanType;
-
   }
 }

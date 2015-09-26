@@ -34,17 +34,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelTunerLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelParkTimeLimitUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelParkTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownTunerLimit = new System.Windows.Forms.NumericUpDown();
-      this.numericUpDownParkTimeLimit = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownTunerLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.numericUpDownParkTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelBufferFileCountDescription = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxBuffer = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.labelBufferFileCountMaximumDescription = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelBufferLocation = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.buttonBufferLocationBrowse = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.textBoxBufferLocation = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
-      this.numericUpDownBufferFileSize = new System.Windows.Forms.NumericUpDown();
-      this.numericUpDownBufferFileCountMaximum = new System.Windows.Forms.NumericUpDown();
-      this.numericUpDownBufferFileCount = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownBufferFileSize = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.numericUpDownBufferFileCountMaximum = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.numericUpDownBufferFileCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelBufferFileSizeUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelBufferFileCountMaximum = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelBufferFileCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -146,9 +146,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelBufferFileCountDescription.AutoSize = true;
       this.labelBufferFileCountDescription.Location = new System.Drawing.Point(177, 73);
       this.labelBufferFileCountDescription.Name = "labelBufferFileCountDescription";
-      this.labelBufferFileCountDescription.Size = new System.Drawing.Size(275, 13);
+      this.labelBufferFileCountDescription.Size = new System.Drawing.Size(255, 13);
       this.labelBufferFileCountDescription.TabIndex = 8;
-      this.labelBufferFileCountDescription.Text = "=> X.XX GB (approx. Y.Y minutes SD or Z.Z minutes HD)";
+      this.labelBufferFileCountDescription.Text = "=> X.XX GB (approx. Y minutes SD or Z minutes HD)";
       // 
       // groupBoxBuffer
       // 
@@ -179,9 +179,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelBufferFileCountMaximumDescription.AutoSize = true;
       this.labelBufferFileCountMaximumDescription.Location = new System.Drawing.Point(177, 99);
       this.labelBufferFileCountMaximumDescription.Name = "labelBufferFileCountMaximumDescription";
-      this.labelBufferFileCountMaximumDescription.Size = new System.Drawing.Size(275, 13);
+      this.labelBufferFileCountMaximumDescription.Size = new System.Drawing.Size(255, 13);
       this.labelBufferFileCountMaximumDescription.TabIndex = 11;
-      this.labelBufferFileCountMaximumDescription.Text = "=> X.XX GB (approx. Y.Y minutes SD or Z.Z minutes HD)";
+      this.labelBufferFileCountMaximumDescription.Text = "=> X.XX GB (approx. Y minutes SD or Z minutes HD)";
       // 
       // labelBufferLocation
       // 
@@ -345,19 +345,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     #endregion
 
     private MPGroupBox groupBoxBuffer;
-    private System.Windows.Forms.NumericUpDown numericUpDownBufferFileSize;
-    private System.Windows.Forms.NumericUpDown numericUpDownBufferFileCountMaximum;
-    private System.Windows.Forms.NumericUpDown numericUpDownBufferFileCount;
+    private MPNumericUpDown numericUpDownBufferFileSize;
+    private MPNumericUpDown numericUpDownBufferFileCountMaximum;
+    private MPNumericUpDown numericUpDownBufferFileCount;
     private MPLabel labelBufferFileSizeUnit;
     private MPLabel labelBufferFileSize;
     private MPLabel labelBufferFileCountMaximum;
     private MPLabel labelBufferFileCount;
     private MPGroupBox groupBoxOther;
     private MPLabel labelBufferFileCountDescription;
-    private System.Windows.Forms.NumericUpDown numericUpDownTunerLimit;
+    private MPNumericUpDown numericUpDownTunerLimit;
     private MPLabel labelTunerLimit;
     private MPLabel labelParkTimeLimitUnit;
-    private System.Windows.Forms.NumericUpDown numericUpDownParkTimeLimit;
+    private MPNumericUpDown numericUpDownParkTimeLimit;
     private MPLabel labelParkTimeLimit;
     private MPButton buttonBufferLocationBrowse;
     private MPTextBox textBoxBufferLocation;

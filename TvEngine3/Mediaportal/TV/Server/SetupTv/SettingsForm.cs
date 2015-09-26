@@ -26,7 +26,6 @@ using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupTV.Sections;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -36,8 +35,30 @@ using PluginsSection = Mediaportal.TV.Server.SetupTV.Sections.Plugins;
 
 namespace Mediaportal.TV.Server.SetupTV
 {
-  public partial class SettingsForm : MPForm
+  public partial class SettingsForm : Form
   {
+    private class SectionTreeNode : TreeNode
+    {
+      public SectionSettings Section
+      {
+        get { return _section; }
+      }
+
+      private readonly SectionSettings _section;
+
+      public SectionTreeNode(SectionSettings section)
+      {
+        _section = section;
+        Name = section.Text;
+        Text = section.Text;
+      }
+
+      public override string ToString()
+      {
+        return _section.ToString();
+      }
+    }
+
     private SectionSettings _currentSection = null;
     private static IDictionary<string, SectionTreeNode> _sections = new Dictionary<string, SectionTreeNode>(100);
     private readonly PluginLoaderSetupTv _pluginLoader = new PluginLoaderSetupTv();
@@ -78,9 +99,7 @@ namespace Mediaportal.TV.Server.SetupTV
         AddSection(new TvSchedules());
         AddSection(new StreamingServer(OnServerConfigurationChanged));
         AddSection(new UserPriorities(OnServerConfigurationChanged));
-
         AddSection(new TestService());
-        AddSection(new TestChannels());
 
         _pluginLoader.Load();
         _sectionPlugins = new PluginsSection(OnPluginEnabledOrDisabled, _pluginLoader);
@@ -104,6 +123,7 @@ namespace Mediaportal.TV.Server.SetupTV
         AddSection(new ThirdPartyChecks());
         if (showAdvancedSettings)
         {
+          AddSection(new TestChannels());
           AddSection(new DebugOptions());
         }
 
@@ -210,7 +230,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
     }
 
-    public void RemoveAllChildSections(SectionTreeNode parentTreeNode)
+    private void RemoveAllChildSections(SectionTreeNode parentTreeNode)
     {
       if (parentTreeNode != null)
       {
@@ -318,49 +338,14 @@ namespace Mediaportal.TV.Server.SetupTV
       process.Start();
     }
 
-    public void OnServerConfigurationChanged(object sender, bool restartController, bool reloadConfigController, ICollection<int> reloadConfigTuners)
+    public void OnServerConfigurationChanged(object sender, bool reloadConfigController, ICollection<int> reloadConfigTuners)
     {
-      if (restartController)
-      {
-        bool isUserTimeShifting;
-        bool isAnyUserTimeShifting;
-        bool isAnyUserRecording;
-        bool isAnyTunerTimeShiftingOrRecording = ServiceAgents.Instance.ControllerServiceAgent.IsAnyCardRecordingOrTimeshifting(
-                                                  new User().Name, out isUserTimeShifting, out isAnyUserTimeShifting, out isAnyUserRecording);
-        if (!isAnyTunerTimeShiftingOrRecording && !isAnyUserTimeShifting && !isAnyUserRecording && !isUserTimeShifting)
-        {
-          this.LogInfo("settings form: restarting controller");
-          NotifyForm dlgNotify = new NotifyForm("Restarting TV service...", "This can take some time." + Environment.NewLine + Environment.NewLine + "Please be patient...");
-          try
-          {
-            dlgNotify.Show();
-            dlgNotify.WaitForDisplay();
-
-            ServiceAgents.Instance.ControllerServiceAgent.Restart();
-
-            // remove all cards, add current ones back later
-            RemoveAllChildSections(_sections[_sectionTuners.Text]);
-
-            // re-add cards to tree
-            AddServerTuners(true);
-          }
-          finally
-          {
-            dlgNotify.Close();
-            dlgNotify.Dispose();
-          }
-        }
-        else
-        {
-          MessageBox.Show("TV Server is currently timeshifting and/or recording. Please restart the TV service manually to apply your changes.", SectionSettings.MESSAGE_CAPTION);
-        }
-      }
-      else if (reloadConfigController)
+      if (reloadConfigController)
       {
         this.LogInfo("settings form: reloading controller configuration");
         ServiceAgents.Instance.ControllerServiceAgent.ReloadControllerConfiguration();
       }
-      else if (reloadConfigTuners != null && reloadConfigTuners.Count > 0)
+      if (reloadConfigTuners != null && reloadConfigTuners.Count > 0)
       {
         this.LogInfo("settings form: reloading configuration for tuners {0}", string.Join(", ", reloadConfigTuners));
         ServiceAgents.Instance.ControllerServiceAgent.ReloadTunerConfiguration(reloadConfigTuners);
@@ -386,7 +371,7 @@ namespace Mediaportal.TV.Server.SetupTV
           }
         }
       }
-      OnServerConfigurationChanged(sender, false, true, null);
+      OnServerConfigurationChanged(sender, true, null);
     }
   }
 }

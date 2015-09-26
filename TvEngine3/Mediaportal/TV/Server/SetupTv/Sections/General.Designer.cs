@@ -33,13 +33,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxGeneral = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.labelTunerDetectionDelayUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelTunerDetectionDelay = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownTunerDetectionDelay = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownTunerDetectionDelay = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelServicePriority = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.comboBoxServicePriority = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.numericUpDownTimeLimitSignalLock = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownTimeLimitSignalLock = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelTimeLimitSignalLockUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelTimeLimitSignalLock = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownTimeLimitScan = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownTimeLimitScan = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelTimeLimitScanUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelTimeLimitScan = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.checkBoxScanAutomaticChannelGroupsBroadcastStandards = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
@@ -54,7 +54,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelPreviewCodecAudio = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.comboBoxPreviewCodecVideo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.labelPreviewCodecVideo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownTimeLimitReceiveStream = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownTimeLimitReceiveStream = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelTimeLimitReceiveStreamUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelTimeLimitReceiveStream = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxTimeLimits = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
@@ -192,7 +192,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             0});
       this.numericUpDownTimeLimitScan.Location = new System.Drawing.Point(65, 134);
       this.numericUpDownTimeLimitScan.Maximum = new decimal(new int[] {
-            300000,
+            600000,
             0,
             0,
             0});
@@ -372,7 +372,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             0});
       this.numericUpDownTimeLimitReceiveStream.Location = new System.Drawing.Point(93, 45);
       this.numericUpDownTimeLimitReceiveStream.Maximum = new decimal(new int[] {
-            60000,
+            600000,
             0,
             0,
             0});
@@ -457,20 +457,20 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPComboBox comboBoxServicePriority;
     private MPLabel labelServicePriority;
     private MPGroupBox groupBoxGeneral;
-    private System.Windows.Forms.NumericUpDown numericUpDownTimeLimitScan;
+    private MPNumericUpDown numericUpDownTimeLimitScan;
     private MPLabel labelTimeLimitScanUnit;
     private MPLabel labelTimeLimitScan;
     private MPCheckBox checkBoxScanAutomaticChannelGroupsBroadcastStandards;
     private MPCheckBox checkBoxScanAutomaticChannelGroupsChannelProviders;
     private MPLabel labelTunerDetectionDelayUnit;
     private MPLabel labelTunerDetectionDelay;
-    private System.Windows.Forms.NumericUpDown numericUpDownTunerDetectionDelay;
+    private MPNumericUpDown numericUpDownTunerDetectionDelay;
     private MPGroupBox groupBoxScanning;
     private MPCheckBox checkBoxScanChannelMovementDetection;
     private MPCheckBox checkBoxScanAutomaticChannelGroupsSatellites;
     private MPLabel labelScanAutomaticChannelGroups;
     private MPButton buttonUpdateTuningDetails;
-    private System.Windows.Forms.NumericUpDown numericUpDownTimeLimitSignalLock;
+    private MPNumericUpDown numericUpDownTimeLimitSignalLock;
     private MPLabel labelTimeLimitSignalLockUnit;
     private MPLabel labelTimeLimitSignalLock;
     private MPGroupBox groupBoxPreviewCodecs;
@@ -478,7 +478,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPLabel labelPreviewCodecAudio;
     private MPComboBox comboBoxPreviewCodecVideo;
     private MPLabel labelPreviewCodecVideo;
-    private System.Windows.Forms.NumericUpDown numericUpDownTimeLimitReceiveStream;
+    private MPNumericUpDown numericUpDownTimeLimitReceiveStream;
     private MPLabel labelTimeLimitReceiveStreamUnit;
     private MPLabel labelTimeLimitReceiveStream;
     private MPGroupBox groupBoxTimeLimits;

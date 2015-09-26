@@ -39,13 +39,13 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.bChannelID = new MPButton();
       this.l_cID = new MPLabel();
       this.tbChannelName = new MPTextBox();
-      this.bOk = new System.Windows.Forms.Button();
-      this.bCancel = new System.Windows.Forms.Button();
-      this.gbMergeTime = new System.Windows.Forms.GroupBox();
-      this.tbEnd = new System.Windows.Forms.MaskedTextBox();
-      this.label1 = new System.Windows.Forms.Label();
-      this.tbStart = new System.Windows.Forms.MaskedTextBox();
-      this.lStart = new System.Windows.Forms.Label();
+      this.bOk = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.bCancel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.gbMergeTime = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.tbEnd = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPMaskedTextBox();
+      this.label1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.tbStart = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPMaskedTextBox();
+      this.lStart = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.gbGrabber.SuspendLayout();
       this.gbMergeTime.SuspendLayout();
       this.SuspendLayout();
@@ -238,12 +238,12 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
     private MPButton bChannelID;
     private MPLabel l_cID;
     private MPTextBox tbChannelName;
-    private System.Windows.Forms.Button bOk;
-    private System.Windows.Forms.Button bCancel;
-    private System.Windows.Forms.GroupBox gbMergeTime;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label lStart;
-    private System.Windows.Forms.MaskedTextBox tbEnd;
-    private System.Windows.Forms.MaskedTextBox tbStart;
+    private MPButton bOk;
+    private MPButton bCancel;
+    private MPGroupBox gbMergeTime;
+    private MPLabel label1;
+    private MPLabel lStart;
+    private MPMaskedTextBox tbEnd;
+    private MPMaskedTextBox tbStart;
   }
 }

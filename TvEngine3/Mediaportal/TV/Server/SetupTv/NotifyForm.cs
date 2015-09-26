@@ -23,25 +23,13 @@ using System.Windows.Forms;
 
 namespace Mediaportal.TV.Server.SetupTV
 {
-  public partial class NotifyForm : SetupControls.MPForm
+  public partial class NotifyForm : Form
   {
     public NotifyForm(string caption, string message)
     {
       InitializeComponent();
-      Init(caption, message);
-    }
-
-    private void Init(string caption, string message)
-    {
       Text = caption;
       label1.Text = message;
-    }
-
-    public void SetMessage(string message)
-    {
-      label1.Text = message;
-      label1.Invalidate();
-      label1.Refresh();
     }
 
     public void WaitForDisplay()

@@ -30,8 +30,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.tabControl = new System.Windows.Forms.TabControl();
-      this.tabPageScan = new System.Windows.Forms.TabPage();
+      this.tabControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
+      this.tabPageScan = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.checkBoxUseAdvancedOptions = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.groupBoxAdvancedOptions = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.numericTextBoxPlpId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericTextBox();
@@ -47,13 +47,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericTextBoxBandwidth = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericTextBox();
       this.labelBandwidth = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.progressBarProgress = new System.Windows.Forms.ProgressBar();
+      this.progressBarProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
       this.labelSignalStrength = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelSignalQuality = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.progressBarSignalStrength = new System.Windows.Forms.ProgressBar();
-      this.progressBarSignalQuality = new System.Windows.Forms.ProgressBar();
+      this.progressBarSignalStrength = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
+      this.progressBarSignalQuality = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
       this.listViewProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
       this.buttonScan = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.labelRegionProvider = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelCountry = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -414,8 +414,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     #endregion
 
-    private System.Windows.Forms.TabControl tabControl;
-    private System.Windows.Forms.TabPage tabPageScan;
+    private MPTabControl tabControl;
+    private MPTabPage tabPageScan;
     private MPCheckBox checkBoxUseAdvancedOptions;
     private MPGroupBox groupBoxAdvancedOptions;
     private MPLabel labelBandwidthUnit;
@@ -427,13 +427,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPNumericTextBox numericTextBoxBandwidth;
     private MPLabel labelBandwidth;
     private MPGroupBox groupBoxProgress;
-    private System.Windows.Forms.ProgressBar progressBarProgress;
+    private MPProgressBar progressBarProgress;
     private MPLabel labelSignalStrength;
     private MPLabel labelSignalQuality;
-    private System.Windows.Forms.ProgressBar progressBarSignalStrength;
-    private System.Windows.Forms.ProgressBar progressBarSignalQuality;
+    private MPProgressBar progressBarSignalStrength;
+    private MPProgressBar progressBarSignalQuality;
     private MPListView listViewProgress;
-    private System.Windows.Forms.ColumnHeader columnHeader1;
+    private MPColumnHeader columnHeader1;
     private MPButton buttonScan;
     private MPLabel labelRegionProvider;
     private MPLabel labelCountry;
@@ -443,6 +443,5 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPComboBox comboBoxScanType;
     private MPNumericTextBox numericTextBoxPlpId;
     private MPLabel labelPlpId;
-
   }
 }

@@ -73,7 +73,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
   {
     private TreeNode tGrabbers;
     private EventHandler handler;
-    private TreeView treeView1;
+    private MPTreeView treeView1;
     private MPGroupBox gbSelection;
     private MPButton bSelect;
     private MPButton bClose;
@@ -139,7 +139,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
     /// </summary>
     private void InitializeComponent()
     {
-      this.treeView1 = new System.Windows.Forms.TreeView();
+      this.treeView1 = new MPTreeView();
       this.gbSelection = new MPGroupBox();
       this.bClose = new MPButton();
       this.bSelect = new MPButton();

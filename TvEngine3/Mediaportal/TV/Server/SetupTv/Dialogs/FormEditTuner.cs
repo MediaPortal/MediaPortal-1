@@ -540,14 +540,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         if (!ServiceAgents.Instance.ControllerServiceAgent.CiMenuSupported(_tuner.IdTuner))
         {
           MessageBox.Show("This tuner doesn't support CA menu access, or the CAM is not present, compatible or ready yet." + Environment.NewLine + "(CAM inititialisation may require up to 30 seconds.)", SectionSettings.MESSAGE_CAPTION);
+          return;
         }
-        else
+
+        ServiceAgents.Instance.ControllerServiceAgent.SetCiMenuHandler(_tuner.IdTuner);
+        if (!ServiceAgents.Instance.ControllerServiceAgent.EnterCiMenu(_tuner.IdTuner))
         {
-          ServiceAgents.Instance.ControllerServiceAgent.SetCiMenuHandler(_tuner.IdTuner, null);
-          if (!ServiceAgents.Instance.ControllerServiceAgent.EnterCiMenu(_tuner.IdTuner))
-          {
-            throw new Exception("Server returned error result.");
-          }
+          throw new Exception("Server returned error result.");
         }
       }
       catch (Exception ex)
@@ -711,27 +710,26 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         buttonCaMenuOkaySelect.Enabled = false;
         labelCaMenuEnquiry.Visible = false;
         textBoxCaMenuAnswer.Visible = false;
+        return;
       }
-      else
-      {
-        buttonCaMenuOpen.Enabled = false;
-        buttonCaMenuBackClose.Enabled = _caMenuState == CiMenuState.Ready || _caMenuState == CiMenuState.Request || _caMenuState == CiMenuState.NoChoices;
-        buttonCaMenuOkaySelect.Enabled = _caMenuState == CiMenuState.Ready || _caMenuState == CiMenuState.Request;
-        labelCaMenuEnquiry.Visible = _caMenuState == CiMenuState.Request;
-        textBoxCaMenuAnswer.Visible = _caMenuState == CiMenuState.Request;
 
-        this.LogDebug("tuner: CA menu...");
-        this.LogDebug("  state       = {0}", _caMenuState);
-        this.LogDebug("  title       = {0}", labelCaMenuTitle.Text);
-        this.LogDebug("  sub-title   = {0}", labelCaMenuSubTitle.Text);
-        this.LogDebug("  footer      = {0}", labelCaMenuFooter.Text);
-        this.LogDebug("  enquiry     = {0}", labelCaMenuEnquiry.Text);
-        this.LogDebug("  ans. length = {0}", textBoxCaMenuAnswer.MaxLength);
-        this.LogDebug("  entries...");
-        foreach (string entry in listBoxCaMenuChoices.Items)
-        {
-          this.LogDebug("    {0}", entry);
-        }
+      buttonCaMenuOpen.Enabled = false;
+      buttonCaMenuBackClose.Enabled = _caMenuState == CiMenuState.Ready || _caMenuState == CiMenuState.Request || _caMenuState == CiMenuState.NoChoices;
+      buttonCaMenuOkaySelect.Enabled = _caMenuState == CiMenuState.Ready || _caMenuState == CiMenuState.Request;
+      labelCaMenuEnquiry.Visible = _caMenuState == CiMenuState.Request;
+      textBoxCaMenuAnswer.Visible = _caMenuState == CiMenuState.Request;
+
+      this.LogDebug("tuner: CA menu...");
+      this.LogDebug("  state       = {0}", _caMenuState);
+      this.LogDebug("  title       = {0}", labelCaMenuTitle.Text);
+      this.LogDebug("  sub-title   = {0}", labelCaMenuSubTitle.Text);
+      this.LogDebug("  footer      = {0}", labelCaMenuFooter.Text);
+      this.LogDebug("  enquiry     = {0}", labelCaMenuEnquiry.Text);
+      this.LogDebug("  ans. length = {0}", textBoxCaMenuAnswer.MaxLength);
+      this.LogDebug("  entries...");
+      foreach (string entry in listBoxCaMenuChoices.Items)
+      {
+        this.LogDebug("    {0}", entry);
       }
     }
 

@@ -31,15 +31,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void InitializeComponent()
     {
       this.tabControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
-      this.tabPageScan = new System.Windows.Forms.TabPage();
+      this.tabPageScan = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.labelService = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.comboBoxService = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.progressBarSignalStrength = new System.Windows.Forms.ProgressBar();
-      this.progressBarProgress = new System.Windows.Forms.ProgressBar();
-      this.progressBarSignalQuality = new System.Windows.Forms.ProgressBar();
+      this.progressBarSignalStrength = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
+      this.progressBarProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
+      this.progressBarSignalQuality = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
       this.buttonScan = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.listViewProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeaderStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderStatus = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
       this.labelSignalQuality = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelSignalStrength = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.tabControl.SuspendLayout();
@@ -193,18 +193,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     #endregion
 
     private MPTabControl tabControl;
-    private System.Windows.Forms.TabPage tabPageScan;
+    private MPTabPage tabPageScan;
     private MPLabel labelService;
     private MPComboBox comboBoxService;
-    private System.Windows.Forms.ProgressBar progressBarSignalStrength;
-    private System.Windows.Forms.ProgressBar progressBarProgress;
-    private System.Windows.Forms.ProgressBar progressBarSignalQuality;
+    private MPProgressBar progressBarSignalStrength;
+    private MPProgressBar progressBarProgress;
+    private MPProgressBar progressBarSignalQuality;
     private MPButton buttonScan;
     private MPListView listViewProgress;
-    private System.Windows.Forms.ColumnHeader columnHeaderStatus;
+    private MPColumnHeader columnHeaderStatus;
     private MPLabel labelSignalQuality;
     private MPLabel labelSignalStrength;
-
-
   }
 }

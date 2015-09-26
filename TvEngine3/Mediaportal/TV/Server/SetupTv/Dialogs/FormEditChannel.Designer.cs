@@ -38,12 +38,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.buttonCancel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.listViewTuningDetails = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeaderId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderNumber = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderProvider = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderBroadcastStandard = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeaderDetails = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderNumber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderProvider = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderBroadcastStandard = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderDetails = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.groupBoxTuningDetails = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.labelPriority = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -57,7 +57,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelIdValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelExternalId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.textBoxExternalId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
-      this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+      this.tableLayoutPanel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTableLayoutPanel();
       this.textBoxNumber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.groupBoxTuningDetails.SuspendLayout();
       this.tableLayoutPanel.SuspendLayout();
@@ -407,18 +407,18 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPCheckBox checkBoxVisibleInGuide;
     private MPButton buttonCancel;
     private MPListView listViewTuningDetails;
-    private System.Windows.Forms.ColumnHeader columnHeaderId;
-    private System.Windows.Forms.ColumnHeader columnHeaderName;
-    private System.Windows.Forms.ColumnHeader columnHeaderProvider;
-    private System.Windows.Forms.ColumnHeader columnHeaderBroadcastStandard;
+    private MPColumnHeader columnHeaderId;
+    private MPColumnHeader columnHeaderName;
+    private MPColumnHeader columnHeaderProvider;
+    private MPColumnHeader columnHeaderBroadcastStandard;
     private System.Windows.Forms.ImageList imageList1;
-    private System.Windows.Forms.ColumnHeader columnHeaderDetails;
+    private MPColumnHeader columnHeaderDetails;
     private MPGroupBox groupBoxTuningDetails;
     private MPButton buttonTuningDetailDelete;
     private MPButton buttonTuningDetailEdit;
     private MPButton buttonTuningDetailAdd;
     private MPLabel labelNumber;
-    private System.Windows.Forms.ColumnHeader columnHeaderNumber;
+    private MPColumnHeader columnHeaderNumber;
     private MPLabel labelId;
     private MPLabel labelIdValue;
     private MPLabel labelExternalId;
@@ -426,8 +426,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPButton buttonTuningDetailPriorityUp;
     private MPButton buttonTuningDetailPriorityDown;
     private MPLabel labelPriority;
-    private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
+    private MPTableLayoutPanel tableLayoutPanel;
     private MPTextBox textBoxNumber;
-
   }
 }

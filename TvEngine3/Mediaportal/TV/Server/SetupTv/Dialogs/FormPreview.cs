@@ -33,7 +33,7 @@ using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
-  public partial class FormPreview : MPForm
+  public partial class FormPreview : Form
   {
     private IVirtualCard _tuner = null;
     private Player _player = null;
@@ -55,7 +55,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       Text = "Preview " + channel.Name;
       
       IUser user;
-      TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting("TV Server Configuration preview", channel.IdChannel, out _tuner, out user);
+      TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(string.Format("{0} - TV Server Configuration preview", System.Net.Dns.GetHostName()), channel.IdChannel, out _tuner, out user);
       if (result != TvResult.Succeeded)
       {
         MessageBox.Show("Preview result: " + result.GetDescription() + ".", SectionSettings.MESSAGE_CAPTION);

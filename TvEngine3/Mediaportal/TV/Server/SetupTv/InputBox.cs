@@ -30,8 +30,8 @@ namespace Mediaportal.TV.Server.SetupTV
     // Create a new instance of the form.
     private static Form frmInputDialog;
     private static Label lblPrompt;
-    private static Button btnOK;
-    private static Button btnCancel;
+    private static MPButton btnOK;
+    private static MPButton btnCancel;
     private static TextBox txtInput;
 
     #endregion
@@ -52,7 +52,7 @@ namespace Mediaportal.TV.Server.SetupTV
     private static void InitializeComponent()
     {
       // Create a new instance of the form.
-      frmInputDialog = new MPForm();
+      frmInputDialog = new Form();
       lblPrompt = new MPLabel();
       btnOK = new MPButton();
       btnCancel = new MPButton();

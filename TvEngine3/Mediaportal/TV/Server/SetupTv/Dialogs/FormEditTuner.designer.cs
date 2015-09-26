@@ -1,4 +1,5 @@
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   partial class FormEditTuner
@@ -32,7 +33,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonSave = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.buttonCancel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.tabControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
-      this.tabPageGeneral = new System.Windows.Forms.TabPage();
+      this.tabPageGeneral = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.groupBoxDebug = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.labelDebugDoNotEnable = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.checkBoxTsMuxerDumpInputs = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
@@ -53,12 +54,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxUseForEpgGrabbing = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.textBoxTunerName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.checkBoxPreload = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.tabPageConditionalAccess = new System.Windows.Forms.TabPage();
+      this.tabPageConditionalAccess = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.groupBoxCaMenu = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.textBoxCaMenuAnswer = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.buttonCaMenuOkaySelect = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.labelCaMenuFooter = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.listBoxCaMenuChoices = new System.Windows.Forms.ListBox();
+      this.listBoxCaMenuChoices = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListBox();
       this.buttonCaMenuBackClose = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.labelCaMenuEnquiry = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.buttonCaMenuOpen = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
@@ -74,23 +75,23 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxUseConditionalAccess = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.labelDecryptLimit1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelDecryptLimit2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownDecryptLimit = new System.Windows.Forms.NumericUpDown();
-      this.tabPageAnalog = new System.Windows.Forms.TabPage();
+      this.numericUpDownDecryptLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.tabPageAnalog = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.groupBoxEncoderBitRate = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.labelEncoderBitRateSettingsRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownEncoderBitRateValuePeakRecording = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownEncoderBitRateValuePeakRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelEncoderBitRateValuePeakUnitRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelEncoderBitRateValuePeakRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownEncoderBitRateValueRecording = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownEncoderBitRateValueRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelEncoderBitRateValueUnitRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.comboBoxEncoderBitRateModeRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.labelEncoderBitRateModeRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelEncoderRecordingBitRateValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelEncoderBitRateSettingsTimeShifting = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownEncoderBitRateValuePeakTimeShifting = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownEncoderBitRateValuePeakTimeShifting = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelEncoderBitRateValuePeakUnitTimeShifting = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelEncoderBitRateValuePeakTimeShifting = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownEncoderBitRateValueTimeShifting = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownEncoderBitRateValueTimeShifting = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelEncoderBitRateValueUnitTimeShifting = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.comboBoxEncoderBitRateModeTimeShifting = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.labelEncoderBitRateModeTimeShifting = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -113,10 +114,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelVideoOrCameraPropertyValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelVideoOrCameraProperty = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.comboBoxVideoOrCameraProperty = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.scrollBarVideoOrCameraPropertyValue = new System.Windows.Forms.HScrollBar();
+      this.scrollBarVideoOrCameraPropertyValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPHScrollBar();
       this.labelVideoOrCameraPropertyValueDisplay = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.buttonRestoreDefault = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.tabPageExternalInput = new System.Windows.Forms.TabPage();
+      this.tabPageExternalInput = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.groupBoxExternalTuner = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.textBoxExternalTunerProgram = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.labelExternalTunerProgram = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -131,7 +132,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelExternalInputSourceAudio = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelExternalInputSourceVideo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.comboBoxExternalInputSourceVideo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.numericUpDownExternalInputPhysicalChannelNumber = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownExternalInputPhysicalChannelNumber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.openFileDialogExternalTunerProgram = new System.Windows.Forms.OpenFileDialog();
       this.tabControl.SuspendLayout();
       this.tabPageGeneral.SuspendLayout();
@@ -1400,8 +1401,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPButton buttonSave;
     private MPButton buttonCancel;
     private MPTabControl tabControl;
-    private System.Windows.Forms.TabPage tabPageGeneral;
-    private System.Windows.Forms.TabPage tabPageConditionalAccess;
+    private MPTabPage tabPageGeneral;
+    private MPTabPage tabPageConditionalAccess;
     private MPGroupBox groupBoxAdvanced;
     private MPCheckBox checkBoxUseCustomTuning;
     private MPLabel labelBdaNetworkProvider;
@@ -1424,11 +1425,11 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPCheckBox checkBoxUseConditionalAccess;
     private MPLabel labelDecryptLimit1;
     private MPLabel labelDecryptLimit2;
-    private System.Windows.Forms.NumericUpDown numericUpDownDecryptLimit;
+    private MPNumericUpDown numericUpDownDecryptLimit;
     private MPGroupBox groupBoxCaMenu;
     private MPTextBox textBoxCaMenuAnswer;
     private MPLabel labelCaMenuFooter;
-    private System.Windows.Forms.ListBox listBoxCaMenuChoices;
+    private MPListBox listBoxCaMenuChoices;
     private MPLabel labelCaMenuEnquiry;
     private MPLabel labelCaMenuTitle;
     private MPLabel labelCaMenuSubTitle;
@@ -1440,9 +1441,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPCheckBox checkBoxTsWriterDumpInputs;
     private MPGroupBox groupBoxDebug;
     private MPLabel labelDebugDoNotEnable;
-    private System.Windows.Forms.TabPage tabPageAnalog;
+    private MPTabPage tabPageAnalog;
     private MPGroupBox groupBoxVideoAndCameraProperties;
-    private System.Windows.Forms.HScrollBar scrollBarVideoOrCameraPropertyValue;
+    private MPHScrollBar scrollBarVideoOrCameraPropertyValue;
     private MPLabel labelVideoOrCameraPropertyValueDisplay;
     private MPButton buttonRestoreDefault;
     private MPComboBox comboBoxFrameSize;
@@ -1467,24 +1468,24 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPLabel labelEncoderBitRateModeTimeShifting;
     private MPComboBox comboBoxEncoderBitRateModeTimeShifting;
     private MPLabel labelEncoderBitRateSettingsRecording;
-    private System.Windows.Forms.NumericUpDown numericUpDownEncoderBitRateValuePeakRecording;
+    private MPNumericUpDown numericUpDownEncoderBitRateValuePeakRecording;
     private MPLabel labelEncoderBitRateValuePeakUnitRecording;
     private MPLabel labelEncoderBitRateValuePeakRecording;
-    private System.Windows.Forms.NumericUpDown numericUpDownEncoderBitRateValueRecording;
+    private MPNumericUpDown numericUpDownEncoderBitRateValueRecording;
     private MPLabel labelEncoderBitRateValueUnitRecording;
     private MPComboBox comboBoxEncoderBitRateModeRecording;
     private MPLabel labelEncoderBitRateModeRecording;
     private MPLabel labelEncoderRecordingBitRateValue;
     private MPLabel labelEncoderBitRateSettingsTimeShifting;
-    private System.Windows.Forms.NumericUpDown numericUpDownEncoderBitRateValuePeakTimeShifting;
+    private MPNumericUpDown numericUpDownEncoderBitRateValuePeakTimeShifting;
     private MPLabel labelEncoderBitRateValuePeakUnitTimeShifting;
     private MPLabel labelEncoderBitRateValuePeakTimeShifting;
-    private System.Windows.Forms.NumericUpDown numericUpDownEncoderBitRateValueTimeShifting;
+    private MPNumericUpDown numericUpDownEncoderBitRateValueTimeShifting;
     private MPLabel labelEncoderBitRateValueUnitTimeShifting;
     private MPLabel labelEncoderBitRateValueTimeShifting;
     private MPCheckBox checkBoxAlwaysSendDiseqcCommands;
     private MPCheckBox checkBoxVideoOrCameraPropertyValue;
-    private System.Windows.Forms.TabPage tabPageExternalInput;
+    private MPTabPage tabPageExternalInput;
     private MPGroupBox groupBoxExternalInput;
     private MPLabel labelExternalInputPhysicalChannelNumber;
     private MPLabel labelExternalInputCountry;
@@ -1494,7 +1495,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPLabel labelExternalInputSourceVideo;
     private MPComboBox comboBoxExternalInputSourceVideo;
     private MPTextBox textBoxExternalTunerProgram;
-    private System.Windows.Forms.NumericUpDown numericUpDownExternalInputPhysicalChannelNumber;
+    private MPNumericUpDown numericUpDownExternalInputPhysicalChannelNumber;
     private MPLabel labelExternalTunerProgram;
     private MPButton buttonExternalTunerProgramBrowse;
     private MPLabel labelExternalTunerProgramArguments;

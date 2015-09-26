@@ -34,7 +34,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonOkay = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.buttonCancel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.listViewItems = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeaderItem = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderItem = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
       this.buttonOrderDown = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.buttonOrderUp = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.buttonOrderByName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
@@ -185,7 +185,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPButton buttonOkay;
     private MPButton buttonCancel;
     private MPListView listViewItems;
-    private System.Windows.Forms.ColumnHeader columnHeaderItem;
+    private MPColumnHeader columnHeaderItem;
     private MPButton buttonOrderDown;
     private MPButton buttonOrderUp;
     private MPButton buttonOrderByName;

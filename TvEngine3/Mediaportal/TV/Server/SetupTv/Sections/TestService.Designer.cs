@@ -32,8 +32,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestService));
-      this.progressBarQuality = new System.Windows.Forms.ProgressBar();
-      this.progressBarLevel = new System.Windows.Forms.ProgressBar();
+      this.progressBarQuality = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
+      this.progressBarLevel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
       this.label2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.label1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.mpLabel3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -54,15 +54,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpButtonRec = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
       this.mpListView1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.User = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.cardName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.subchannels = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.owner = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeader2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeader3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeader4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeader5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.User = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.cardName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.subchannels = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.owner = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
       this.buttonRestart = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.mpComboBoxChannels = new Mediaportal.TV.Server.SetupControls.ComboBoxEx();
@@ -551,8 +551,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     #endregion
 
-    private System.Windows.Forms.ProgressBar progressBarQuality;
-    private System.Windows.Forms.ProgressBar progressBarLevel;
+    private MPProgressBar progressBarQuality;
+    private MPProgressBar progressBarLevel;
     private MPLabel label2;
     private MPLabel label1;
     private MPLabel mpLabel3;
@@ -566,14 +566,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPButton mpButtonRec;
     private System.Windows.Forms.Timer timer1;
     private MPListView mpListView1;
-    private System.Windows.Forms.ColumnHeader columnHeader1;
-    private System.Windows.Forms.ColumnHeader columnHeader2;
-    private System.Windows.Forms.ColumnHeader columnHeader3;
-    private System.Windows.Forms.ColumnHeader columnHeader4;
+    private MPColumnHeader columnHeader1;
+    private MPColumnHeader columnHeader2;
+    private MPColumnHeader columnHeader3;
+    private MPColumnHeader columnHeader4;
     private MPButton buttonRestart;
-    private System.Windows.Forms.ColumnHeader columnHeader5;
-    private System.Windows.Forms.ColumnHeader User;
-    private System.Windows.Forms.ColumnHeader cardName;
+    private MPColumnHeader columnHeader5;
+    private MPColumnHeader User;
+    private MPColumnHeader cardName;
     private System.Windows.Forms.ImageList imageList1;
     private MPLabel mpLabelRecording;
     private MPLabel mpLabelTimeShift;
@@ -585,11 +585,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPNumericTextBox txtDisc;
     private MPNumericTextBox txtBytes;
     private MPLabel label3;
-    private System.Windows.Forms.ColumnHeader subchannels;
+    private MPColumnHeader subchannels;
     private MPButton mpButtonPark;
     private MPTextBox txtUsername;
     private MPLabel label27;
-    private System.Windows.Forms.ColumnHeader owner;
+    private MPColumnHeader owner;
     private MPCheckBox mpCheckBoxAdvMode;
     private MPButton mpButtonUnPark;
     private MPButton mpButtonAdvStartTimeshift;

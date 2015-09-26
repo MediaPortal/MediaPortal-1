@@ -49,14 +49,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster.Config
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HauppaugeBlasterConfig));
-      this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
+      this.pictureBoxLogo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPPictureBox();
       this.labelDescription = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelInstallState = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.buttonBlastCfg = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.comboBoxTunerSelectionPort1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.labelTunerSelectionPort1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.pictureBoxTunerSelectionPort1 = new System.Windows.Forms.PictureBox();
-      this.pictureBoxTunerSelectionPort2 = new System.Windows.Forms.PictureBox();
+      this.pictureBoxTunerSelectionPort1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPPictureBox();
+      this.pictureBoxTunerSelectionPort2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPPictureBox();
       this.comboBoxTunerSelectionPort2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.labelTunerSelectionPort2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
@@ -191,14 +191,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster.Config
 
     #endregion
 
-    private System.Windows.Forms.PictureBox pictureBoxLogo;
+    private SetupControls.UserInterfaceControls.MPPictureBox pictureBoxLogo;
     private SetupControls.UserInterfaceControls.MPLabel labelDescription;
     private SetupControls.UserInterfaceControls.MPLabel labelInstallState;
     private SetupControls.UserInterfaceControls.MPButton buttonBlastCfg;
     private SetupControls.UserInterfaceControls.MPComboBox comboBoxTunerSelectionPort1;
     private SetupControls.UserInterfaceControls.MPLabel labelTunerSelectionPort1;
-    private System.Windows.Forms.PictureBox pictureBoxTunerSelectionPort1;
-    private System.Windows.Forms.PictureBox pictureBoxTunerSelectionPort2;
+    private SetupControls.UserInterfaceControls.MPPictureBox pictureBoxTunerSelectionPort1;
+    private SetupControls.UserInterfaceControls.MPPictureBox pictureBoxTunerSelectionPort2;
     private SetupControls.UserInterfaceControls.MPComboBox comboBoxTunerSelectionPort2;
     private SetupControls.UserInterfaceControls.MPLabel labelTunerSelectionPort2;
   }

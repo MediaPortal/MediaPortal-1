@@ -27,11 +27,6 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
   {
     public MPRadioButton()
     {
-      Init();
-    }
-
-    private void Init()
-    {
       FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       AutoSize = true;
       UseVisualStyleBackColor = true;

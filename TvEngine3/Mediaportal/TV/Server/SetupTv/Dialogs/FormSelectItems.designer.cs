@@ -33,7 +33,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelItems = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.buttonOkay = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.buttonCancel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.listBoxItems = new System.Windows.Forms.ListBox();
+      this.listBoxItems = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListBox();
       this.SuspendLayout();
       // 
       // labelItems
@@ -107,6 +107,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPLabel labelItems;
     private MPButton buttonOkay;
     private MPButton buttonCancel;
-    private System.Windows.Forms.ListBox listBoxItems;
+    private MPListBox listBoxItems;
   }
 }

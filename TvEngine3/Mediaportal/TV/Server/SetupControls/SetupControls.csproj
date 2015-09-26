@@ -71,30 +71,18 @@
     <Compile Include="ComboBoxEx .cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="MPForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MPForm.Designer.cs">
-      <DependentUpon>MPForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SectionTreeNode.cs" />
     <Compile Include="SectionSettings.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SectionSettings.Designer.cs">
       <DependentUpon>SectionSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="UserInterfaceControls\DataGridBooleanNoNull.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UserInterfaceControls\ImageTextComparer.cs" />
-    <Compile Include="UserInterfaceControls\ListViewItemComparer.cs" />
     <Compile Include="UserInterfaceControls\MPBeveledLine.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -104,10 +92,7 @@
     <Compile Include="UserInterfaceControls\MPCheckBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UserInterfaceControls\MPComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UserInterfaceControls\MPContextMenuStrip.cs">
+    <Compile Include="UserInterfaceControls\MPDefaultComponents.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UserInterfaceControls\MPGradientLabel.cs">
@@ -116,13 +101,9 @@
     <Compile Include="UserInterfaceControls\MPGroupBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UserInterfaceControls\MPLabel.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="UserInterfaceControls\MPListView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UserInterfaceControls\MPListViewSortOnColumn.cs" />
     <Compile Include="UserInterfaceControls\MPListViewStringColumnSorter.cs" />
     <Compile Include="UserInterfaceControls\MPNumericTextBox.cs">
       <SubType>Component</SubType>
@@ -139,23 +120,12 @@
     <Compile Include="UserInterfaceControls\MPTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UserInterfaceControls\MPToolTip.cs">
-      <SubType>Component</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="MPForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>MPForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UserInterfaceControls\DataGridBooleanNoNull.resx">
-      <DependentUpon>DataGridBooleanNoNull.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UserInterfaceControls\MPBeveledLine.resx">
       <DependentUpon>MPBeveledLine.cs</DependentUpon>
@@ -163,14 +133,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UserInterfaceControls\MPGradientLabel.resx">
       <DependentUpon>MPGradientLabel.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UserInterfaceControls\MPGroupBox.resx">
-      <DependentUpon>MPGroupBox.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UserInterfaceControls\MPNumericTextBox.resx">
-      <DependentUpon>MPNumericTextBox.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

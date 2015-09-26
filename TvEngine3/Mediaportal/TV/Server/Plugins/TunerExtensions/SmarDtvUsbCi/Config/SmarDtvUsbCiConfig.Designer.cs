@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi.Config
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SmarDtvUsbCiConfig));
-      this.pictureBoxTuner = new System.Windows.Forms.PictureBox();
+      this.pictureBoxTuner = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPPictureBox();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTuner)).BeginInit();
       this.SuspendLayout();
       // 
@@ -77,6 +77,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi.Config
 
     #endregion
 
-    private System.Windows.Forms.PictureBox pictureBoxTuner;
+    private SetupControls.UserInterfaceControls.MPPictureBox pictureBoxTuner;
   }
 }

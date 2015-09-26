@@ -30,8 +30,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void InitializeComponent()
     {
       this.buttonScan = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.tabControl = new System.Windows.Forms.TabControl();
-      this.tabPageScan = new System.Windows.Forms.TabPage();
+      this.tabControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
+      this.tabPageScan = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.groupBoxAdvancedOptions = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.numericTextBoxInputStreamId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericTextBox();
       this.labelInputStreamId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -56,13 +56,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelPolarisation = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.comboBoxPolarisation = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.groupBoxProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.progressBarProgress = new System.Windows.Forms.ProgressBar();
+      this.progressBarProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
       this.labelSignalStrength = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelSignalQuality = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.progressBarSignalStrength = new System.Windows.Forms.ProgressBar();
-      this.progressBarSignalQuality = new System.Windows.Forms.ProgressBar();
+      this.progressBarSignalStrength = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
+      this.progressBarSignalQuality = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
       this.listViewProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeaderStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeaderStatus = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
       this.comboBoxSatellite = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.comboBoxDiseqc = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.comboBoxLnbType = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
@@ -551,8 +551,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     #endregion
 
     private MPButton buttonScan;
-    private System.Windows.Forms.TabControl tabControl;
-    private System.Windows.Forms.TabPage tabPageScan; 
+    private MPTabControl tabControl;
+    private MPTabPage tabPageScan; 
     private MPComboBox comboBoxPolarisation;
     private MPLabel labelPolarisation;
     private MPGroupBox groupBoxAdvancedOptions;
@@ -570,13 +570,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPLabel labelFecCodeRate;
     private MPComboBox comboBoxFecCodeRate;
     private MPGroupBox groupBoxProgress;
-    private System.Windows.Forms.ProgressBar progressBarProgress;
+    private MPProgressBar progressBarProgress;
     private MPLabel labelSignalStrength;
     private MPLabel labelSignalQuality;
-    private System.Windows.Forms.ProgressBar progressBarSignalStrength;
-    private System.Windows.Forms.ProgressBar progressBarSignalQuality;
+    private MPProgressBar progressBarSignalStrength;
+    private MPProgressBar progressBarSignalQuality;
     private MPListView listViewProgress;
-    private System.Windows.Forms.ColumnHeader columnHeaderStatus;
+    private MPColumnHeader columnHeaderStatus;
     private MPLabel labelFrequency;
     private MPLabel labelFrequencyUnit;
     private MPNumericTextBox numericTextBoxFrequency;
