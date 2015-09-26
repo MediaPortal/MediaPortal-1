@@ -257,9 +257,9 @@
     <Reference Include="System.Management">
       <Name>System.Management</Name>
     </Reference>
-    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\WindowsPowerShell\3.0\System.Management.Automation.dll</HintPath>
+    <Reference Include="System.Management.Automation">
+      <HintPath>..\..\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime.Serialization.Formatters.Soap">
       <Name>System.Runtime.Serialization.Formatters.Soap</Name>
@@ -1652,7 +1652,9 @@
   <ItemGroup>
     <Content Include="UserInterfaceControls\Resources\mp.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
