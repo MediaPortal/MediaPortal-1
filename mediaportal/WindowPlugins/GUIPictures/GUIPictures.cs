@@ -420,7 +420,7 @@ namespace MediaPortal.GUI.Pictures
     [SkinControl(7)] protected GUIButtonControl btnSlideShowRecursive = null;
 
     private const int MAX_PICS_PER_DATE = 1000;
-
+    private PicturesFolderWatcherHelper _pictureFolderWatcher;
     public static HashSet<string> thumbCreationPaths = new HashSet<string>();
     private int selectedItemIndex = -1;
     private GUIListItem selectedListItem = null;
@@ -896,6 +896,12 @@ namespace MediaPortal.GUI.Pictures
       selectedItemIndex = GetSelectedItemNo();
       SaveSettings();
       SaveFolderSettings(currentFolder);
+
+      if (_pictureFolderWatcher != null)
+      {
+        _pictureFolderWatcher.ChangeMonitoring(false);
+      }
+
       // set back videosharepreview value
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
@@ -1168,6 +1174,8 @@ namespace MediaPortal.GUI.Pictures
         }
       }
 
+      dlg.AddLocalizedString(1299); // Refresh current directory
+
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1)
       {
@@ -1325,6 +1333,16 @@ namespace MediaPortal.GUI.Pictures
             else
             {
               LoadDirectory(string.Empty);
+            }
+          }
+          break;
+
+        case 1299: // Refresh current directory
+          {
+            if (facadeLayout.ListLayout.ListItems.Count > 0 && !string.IsNullOrEmpty(currentFolder))
+            {
+              facadeLayout.SelectedListItemIndex = 0;
+              LoadDirectory(currentFolder);
             }
           }
           break;
@@ -2639,6 +2657,17 @@ namespace MediaPortal.GUI.Pictures
 
     protected override void LoadDirectory(string strNewDirectory)
     {
+      if (strNewDirectory == null)
+      {
+        Log.Warn("GUIPictures::LoadDirectory called with invalid argument. newFolderName is null!");
+        return;
+      }
+
+      if (facadeLayout == null)
+      {
+        return;
+      }
+      
       List<GUIListItem> itemlist;
       string objectCount = string.Empty;
 
@@ -2648,6 +2677,20 @@ namespace MediaPortal.GUI.Pictures
       }
 
       GUIWaitCursor.Show();
+
+      GUIPropertyManager.SetProperty("#PicturesFolderChanged", "false");
+
+      if (_pictureFolderWatcher != null)
+      {
+        _pictureFolderWatcher.ChangeMonitoring(false);
+      }
+
+      if (!string.IsNullOrEmpty(strNewDirectory))
+      {
+        _pictureFolderWatcher = new PicturesFolderWatcherHelper(strNewDirectory);
+        _pictureFolderWatcher.SetMonitoring(true);
+        _pictureFolderWatcher.StartMonitor();
+      }
 
       if (!returnFromSlideshow)
       {
