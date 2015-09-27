@@ -19,7 +19,9 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
@@ -58,18 +60,7 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
-      try
-      {
-        System.IO.DriveInfo[] drives = System.IO.DriveInfo.GetDrives();
-        foreach (System.IO.DriveInfo drive in drives)
-        {
-          if (drive.DriveType == System.IO.DriveType.CDRom)
-          {
-            this.comboBoxDrive.Items.Add(String.Format("{0}", drive.RootDirectory)[0] + ":");
-          }
-        }
-      }
-      catch (Exception) {}
+      comboBoxDriveCheck();
     }
 
 
@@ -116,10 +107,12 @@ namespace MediaPortal.Configuration.Sections
         checkBoxDaemonTools.Checked = xmlreader.GetValueAsBool("daemon", "enabled", false);
         textBoxDaemonTools.Text = xmlreader.GetValueAsString("daemon", "path", "");
         textBoxExtensions.Text = xmlreader.GetValueAsString("daemon", "extensions", Util.Utils.ImageExtensionsDefault);
-        comboBoxDrive.SelectedItem = xmlreader.GetValueAsString("daemon", "drive", "E:");
         comboDriveNo.SelectedItem = xmlreader.GetValueAsInt("daemon", "driveNo", 0).ToString();
         comboDriveType.SelectedItem = xmlreader.GetValueAsString("daemon", "driveType", "");
         checkBoxAskBeforePlaying.Checked = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
+        // Need to detect letter to fill the correct letter.
+        comboBoxDriveCheck();
+        comboBoxDrive.SelectedItem = xmlreader.GetValueAsString("daemon", "drive", "E:");
       }
       checkBoxDaemonTools_CheckedChanged(null, null);
       comboDriveType_SelectionChangeCommitted(null, null);
@@ -156,7 +149,7 @@ namespace MediaPortal.Configuration.Sections
           {
             if (skName.ToLowerInvariant().Contains(Search.ToLowerInvariant()))
             {
-              SoftwarePath = rk.GetValue(skName).ToString().Replace("\"", "");              
+              SoftwarePath = rk.GetValue(skName).ToString().Replace("\"", "");
 
               //Old versions of DaemonTools and VirtualCloneDrive
               SoftwarePath = SoftwarePath.Substring(0, SoftwarePath.LastIndexOf(@"\")) + @"\daemon.exe";
@@ -441,14 +434,27 @@ namespace MediaPortal.Configuration.Sections
 
     private void checkBoxDaemonTools_CheckedChanged(object sender, EventArgs e)
     {
+      comboBoxDriveCheck();
       if (checkBoxDaemonTools.Checked)
       {
-        textBoxDaemonTools.Enabled = true;
-        comboBoxDrive.Enabled = true;
-        buttonSelectFolder.Enabled = true;
-        comboDriveNo.Enabled = true;
-        checkBoxAskBeforePlaying.Enabled = true;
-        comboDriveType.Enabled = true;
+        if (comboDriveType.SelectedItem != null && (comboDriveType.SelectedItem.ToString() == "native"))
+        {
+          textBoxDaemonTools.Enabled = false;
+          comboBoxDrive.Enabled = true;
+          buttonSelectFolder.Enabled = false;
+          comboDriveNo.Enabled = false;
+          textBoxExtensions.Enabled = false;
+          comboDriveType.Enabled = true;
+        }
+        else
+        {
+          textBoxDaemonTools.Enabled = true;
+          comboBoxDrive.Enabled = true;
+          buttonSelectFolder.Enabled = true;
+          comboDriveNo.Enabled = true;
+          checkBoxAskBeforePlaying.Enabled = true;
+          comboDriveType.Enabled = true;
+        }
       }
       else
       {
@@ -473,10 +479,11 @@ namespace MediaPortal.Configuration.Sections
 
     private void comboDriveType_SelectionChangeCommitted(object sender, EventArgs e)
     {
+      comboBoxDriveCheck();
       if (comboDriveType.SelectedItem != null && (comboDriveType.SelectedItem.ToString() == "native"))
       {
         textBoxDaemonTools.Enabled = false;
-        comboBoxDrive.Enabled = false;
+        comboBoxDrive.Enabled = true;
         buttonSelectFolder.Enabled = false;
         comboDriveNo.Enabled = false;
         textBoxExtensions.Enabled = false;
@@ -489,6 +496,63 @@ namespace MediaPortal.Configuration.Sections
         comboDriveNo.Enabled = true;
         textBoxExtensions.Enabled = true;
         comboDriveType.Enabled = true;
+      }
+    }
+
+    private void comboBoxDriveCheck()
+    {
+      try
+      {
+        // Clear all item to do a proper filled
+        this.comboBoxDrive.Items.Clear();
+        System.IO.DriveInfo[] drives = System.IO.DriveInfo.GetDrives();
+        foreach (System.IO.DriveInfo drive in drives)
+        {
+          if (drive.DriveType == System.IO.DriveType.CDRom)
+          {
+            if (comboDriveType.SelectedItem != null && (comboDriveType.SelectedItem.ToString() != "native"))
+            {
+              if (!this.comboBoxDrive.Items.Contains(String.Format("{0}", drive.RootDirectory)[0] + ":"))
+              {
+                this.comboBoxDrive.Items.Add(String.Format("{0}", drive.RootDirectory)[0] + ":");
+              }
+            }
+            else
+            {
+              // native (remove all fixed CDROM drive
+              this.comboBoxDrive.Items.Remove(String.Format("{0}", drive.RootDirectory)[0] + ":");
+            }
+          }
+        }
+        if (comboDriveType.SelectedItem != null && (comboDriveType.SelectedItem.ToString() == "native"))
+        {
+          ArrayList driveLetters = new ArrayList(26); // Allocate space for alphabet
+          for (int i = 65; i < 91; i++) // increment from ASCII values for A-Z
+          {
+            driveLetters.Add(Convert.ToChar(i)); // Add uppercase letters to possible drive letters
+          }
+
+          foreach (string drive in Directory.GetLogicalDrives())
+          {
+            driveLetters.Remove(drive[0]); // removed used drive letters from possible drive letters
+          }
+
+          foreach (char drive in driveLetters)
+          {
+            if (!this.comboBoxDrive.Items.Contains(drive))
+            {
+              this.comboBoxDrive.Items.Add(drive + ":"); // add unused drive letters to the combo box
+            }
+          }
+        }
+        using (Settings xmlreader = new MPSettings())
+        {
+          // Need to detect letter to fill the correct letter.
+          comboBoxDrive.SelectedItem = xmlreader.GetValueAsString("daemon", "drive", "E:");
+        }
+      }
+      catch (Exception)
+      {
       }
     }
   }
