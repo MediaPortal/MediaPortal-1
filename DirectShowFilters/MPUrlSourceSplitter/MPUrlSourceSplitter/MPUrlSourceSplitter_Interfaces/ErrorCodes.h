@@ -124,18 +124,18 @@ FORCEINLINE bool IS_MPEG2TS_ERROR(HRESULT error) { return ((error >= E_MPEG2TS_C
 #define E_M3U8_INCOMPLETE_TAG                                                   -85
 #define E_M3U8_INCOMPLETE_PLAYLIST_TAG                                          -86
 #define E_M3U8_MISSING_REQUIRED_ATTRIBUTE                                       -87
+#define E_M3U8_NO_PLAYLIST_ITEM_FOR_TAG                                         -88
 
-FORCEINLINE bool IS_M3U8_PARSE_ERROR(HRESULT error) { return ((error >= E_M3U8_MISSING_REQUIRED_ATTRIBUTE) && (error <= E_M3U8_NOT_VALID_ITEM_FOUND)); }
+FORCEINLINE bool IS_M3U8_PARSE_ERROR(HRESULT error) { return ((error >= E_M3U8_NO_PLAYLIST_ITEM_FOR_TAG) && (error <= E_M3U8_NOT_VALID_ITEM_FOUND)); }
 
-#define E_M3U8_NOT_PLAYLIST                                                     -88
-#define E_M3U8_NOT_SUPPORTED_PLAYLIST_VERSION                                   -89
-#define E_M3U8_NOT_VALID_PLAYLIST                                               -90
-#define E_M3U8_NOT_SUPPORTED_PLAYLIST_ITEM                                      -91
-#define E_M3U8_NOT_SUPPORTED_TAG                                                -92
-#define E_M3U8_NO_PLAYLIST_ITEM_FOR_TAG                                         -93
+#define E_M3U8_NOT_PLAYLIST                                                     -89
+#define E_M3U8_NOT_SUPPORTED_PLAYLIST_VERSION                                   -90
+#define E_M3U8_NOT_VALID_PLAYLIST                                               -91
+#define E_M3U8_NOT_SUPPORTED_PLAYLIST_ITEM                                      -92
+#define E_M3U8_NOT_SUPPORTED_TAG                                                -93
 #define E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE                                     -94
 
-FORCEINLINE bool IS_M3U8_PLAYLIST_ERROR(HRESULT error) { return ((error >= E_M3U8_MISSING_REQUIRED_ATTRIBUTE) && (error <= E_M3U8_NOT_PLAYLIST)); }
+FORCEINLINE bool IS_M3U8_PLAYLIST_ERROR(HRESULT error) { return ((error >= E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE) && (error <= E_M3U8_NOT_PLAYLIST)); }
 
 FORCEINLINE bool IS_M3U8_ERROR(HRESULT error) { return (IS_M3U8_PARSE_ERROR(error) || IS_M3U8_PLAYLIST_ERROR(error)); }
 
