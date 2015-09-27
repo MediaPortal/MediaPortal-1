@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Runtime.CompilerServices;
 using MediaPortal.GUI.Library;
@@ -141,18 +142,42 @@ namespace MediaPortal.Util
 
       if (_DriveType.Equals("native"))
       {
+        if (!string.IsNullOrEmpty(IsoFile))
+        {
+          if (_DriveType.Equals("native"))
+          {
+            using (var ps = PowerShell.Create())
+            {
+              Log.Debug("Dismount-DiskImage {0}", IsoFile);
+              ps.AddCommand("Dismount-DiskImage").AddParameter("ImagePath", IsoFile).Invoke();
+
+              while (System.IO.Directory.Exists(_Drive + @"\") && (timeout < 10000))
+              {
+                System.Threading.Thread.Sleep(100);
+                timeout += 100;
+              }
+            }
+          }
+        }
+
         using (var ps = PowerShell.Create())
         {
+          // Set mounted ISO file to be able to unmount it if something failed to load.
+          _MountedIsoFile = IsoFile;
           Log.Debug("Mount-DiskImage {0}", IsoFile);
-          ps.AddCommand("Mount-DiskImage")
-            .AddParameter("ImagePath", IsoFile)
-            .AddParameter("PassThru")
-            .AddCommand("Get-Volume");
-          string DriveLetter;
-          foreach (PSObject result in ps.Invoke())
+          ps.AddCommand("Mount-DiskImage").AddParameter("ImagePath", IsoFile).AddParameter("PassThru");
+          var psResult = ps.Invoke();
+          Log.Debug("Mount-DiskImage Result {0}", psResult.Count);
+        }
+
+        using (var ps = PowerShell.Create())
+        {
+          ps.AddCommand("Get-DiskImage").AddParameter("ImagePath", IsoFile).AddCommand("Get-Volume");
+          var psResult = ps.Invoke();
+          Log.Debug("Mount-get drive letter Result {0}", psResult.Count);
+          foreach (var driveLetter in psResult.Select(result => result.Members["DriveLetter"].Value.ToString()))
           {
-            DriveLetter = result.Members["DriveLetter"].Value.ToString();
-            _Drive = String.Format("{0}:", DriveLetter);
+            _Drive = String.Format("{0}:", driveLetter);
             Log.Debug("Mount-DiskImage DriveLetter {0}", _Drive);
           }
         }
@@ -227,7 +252,7 @@ namespace MediaPortal.Util
     {
       if (!_Enabled) return;
       if (!_DriveType.Equals("native") && !System.IO.File.Exists(_Path)) return;
-      if (!System.IO.Directory.Exists(_Drive + @"\")) return;
+      if (!System.IO.Directory.Exists(_Drive + @"\") && !_DriveType.Equals("native")) return;
       int timeout = 0;
       string strParams;
 
