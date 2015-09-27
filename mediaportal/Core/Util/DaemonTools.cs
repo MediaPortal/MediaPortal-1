@@ -141,20 +141,34 @@ namespace MediaPortal.Util
 
       if (_DriveType.Equals("native"))
       {
+        if (!string.IsNullOrEmpty(IsoFile))
+        {
+          if (_DriveType.Equals("native"))
+          {
+            using (var ps = PowerShell.Create())
+            {
+              Log.Debug("Dismount-DiskImage {0}", IsoFile);
+              ps.AddCommand("Dismount-DiskImage").AddParameter("ImagePath", IsoFile).Invoke();
+
+              while (System.IO.Directory.Exists(_Drive + @"\") && (timeout < 10000))
+              {
+                System.Threading.Thread.Sleep(100);
+                timeout += 100;
+              }
+            }
+          }
+        }
         using (var ps = PowerShell.Create())
         {
+          // Set mounted ISO file to be able to unmount it if something failed to load.
+          _MountedIsoFile = IsoFile;
           Log.Debug("Mount-DiskImage {0}", IsoFile);
           ps.AddCommand("Mount-DiskImage")
             .AddParameter("ImagePath", IsoFile)
             .AddParameter("PassThru")
-            .AddCommand("Get-Volume");
-          string DriveLetter;
-          foreach (PSObject result in ps.Invoke())
-          {
-            DriveLetter = result.Members["DriveLetter"].Value.ToString();
-            _Drive = String.Format("{0}:", DriveLetter);
-            Log.Debug("Mount-DiskImage DriveLetter {0}", _Drive);
-          }
+            .AddCommand("Set-Volume").AddParameter("DriveLetter", _Drive.Remove(_Drive.Length - 1));
+          ps.Invoke();
+          Log.Debug("Mount-DiskImage DriveLetter {0}", _Drive);
         }
 
         drive = new System.IO.DriveInfo(_Drive);
@@ -227,7 +241,7 @@ namespace MediaPortal.Util
     {
       if (!_Enabled) return;
       if (!_DriveType.Equals("native") && !System.IO.File.Exists(_Path)) return;
-      if (!System.IO.Directory.Exists(_Drive + @"\")) return;
+      if (!System.IO.Directory.Exists(_Drive + @"\") && !_DriveType.Equals("native")) return;
       int timeout = 0;
       string strParams;
 
