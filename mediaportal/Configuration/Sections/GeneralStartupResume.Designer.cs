@@ -66,7 +66,7 @@
       this.groupBoxDelays.Controls.Add(this.label2);
       this.groupBoxDelays.Controls.Add(this.nudDelay);
       this.groupBoxDelays.Controls.Add(this.label1);
-      this.groupBoxDelays.Location = new System.Drawing.Point(10, 298);
+      this.groupBoxDelays.Location = new System.Drawing.Point(10, 318);
       this.groupBoxDelays.Name = "groupBoxDelays";
       this.groupBoxDelays.Size = new System.Drawing.Size(445, 61);
       this.groupBoxDelays.TabIndex = 11;
@@ -123,7 +123,7 @@
       // groupBox1
       // 
       this.groupBox1.Controls.Add(this.cbWaitForTvService);
-      this.groupBox1.Location = new System.Drawing.Point(10, 248);
+      this.groupBox1.Location = new System.Drawing.Point(10, 268);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(445, 44);
       this.groupBox1.TabIndex = 10;
@@ -145,7 +145,7 @@
       // lbScreen
       // 
       this.lbScreen.AutoSize = true;
-      this.lbScreen.Location = new System.Drawing.Point(5, 215);
+      this.lbScreen.Location = new System.Drawing.Point(5, 235);
       this.lbScreen.Name = "lbScreen";
       this.lbScreen.Size = new System.Drawing.Size(67, 13);
       this.lbScreen.TabIndex = 5;
@@ -159,7 +159,7 @@
       this.cbScreen.BorderColor = System.Drawing.Color.Empty;
       this.cbScreen.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbScreen.FormattingEnabled = true;
-      this.cbScreen.Location = new System.Drawing.Point(84, 212);
+      this.cbScreen.Location = new System.Drawing.Point(84, 232);
       this.cbScreen.MinimumSize = new System.Drawing.Size(100, 0);
       this.cbScreen.Name = "cbScreen";
       this.cbScreen.Size = new System.Drawing.Size(371, 21);
@@ -187,7 +187,7 @@
             "No autostart MediaPortal on Remote Desktop"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 19);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(450, 184);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(449, 199);
       this.settingsCheckedListBox.TabIndex = 0;
       this.settingsCheckedListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.settingsCheckedListBox_ItemCheck);
       this.settingsCheckedListBox.SelectedIndexChanged += new System.EventHandler(this.settingsCheckedListBox_SelectedIndexChanged);
