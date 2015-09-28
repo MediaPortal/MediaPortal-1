@@ -64,10 +64,6 @@ public:
 
   // CPlugin
 
-  // get plugin instance ID
-  // @return : GUID, which represents instance identifier or GUID_NULL if error
-  virtual GUID GetInstanceId(void);
-
   // initialize plugin implementation with configuration parameters
   // @param configuration : the reference to additional configuration parameters (created by plugin's hoster class)
   // @return : S_OK if successfull, error code otherwise
@@ -246,10 +242,6 @@ public:
   virtual bool IsDumpOutputData(void);
 
 protected:
-  // holds logger instance
-  CLogger *logger;
-  // holds configuration
-  CParameterCollection *configuration;
   // holds protocol hoster - only reference, do not cleanup !
   CProtocolHoster *protocolHoster;
   // holds parser result

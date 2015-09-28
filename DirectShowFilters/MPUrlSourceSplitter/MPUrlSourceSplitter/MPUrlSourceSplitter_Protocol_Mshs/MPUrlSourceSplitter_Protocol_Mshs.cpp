@@ -1480,22 +1480,12 @@ const wchar_t *CMPUrlSourceSplitter_Protocol_Mshs::GetName(void)
   return PROTOCOL_NAME;
 }
 
-GUID CMPUrlSourceSplitter_Protocol_Mshs::GetInstanceId(void)
-{
-  return this->logger->GetLoggerInstanceId();
-}
-
 HRESULT CMPUrlSourceSplitter_Protocol_Mshs::Initialize(CPluginConfiguration *configuration)
 {
   HRESULT result = __super::Initialize(configuration);
   CProtocolPluginConfiguration *protocolConfiguration = (CProtocolPluginConfiguration *)configuration;
   CHECK_POINTER_HRESULT(result, protocolConfiguration, result, E_INVALIDARG);
   CHECK_POINTER_HRESULT(result, this->lockMutex, result, E_NOT_VALID_STATE);
-
-  if (SUCCEEDED(result))
-  {
-    this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-  }
 
   if (SUCCEEDED(result))
   {
@@ -1532,6 +1522,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::Initialize(CPluginConfiguration *con
 }
 
 /* protected methods */
+
+const wchar_t *CMPUrlSourceSplitter_Protocol_Mshs::GetModuleName(void)
+{
+  return PROTOCOL_IMPLEMENTATION_NAME;
+}
 
 const wchar_t *CMPUrlSourceSplitter_Protocol_Mshs::GetStoreFileNamePart(void)
 {

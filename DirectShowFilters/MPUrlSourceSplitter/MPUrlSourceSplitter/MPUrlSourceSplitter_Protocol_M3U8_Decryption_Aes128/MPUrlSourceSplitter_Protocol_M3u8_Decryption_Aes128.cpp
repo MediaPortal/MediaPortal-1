@@ -102,33 +102,6 @@ const wchar_t *CMPUrlSourceSplitter_Protocol_M3u8_Decryption_Aes128::GetName(voi
   return M3U8_PROTOCOL_DECRYPTION_NAME;
 }
 
-GUID CMPUrlSourceSplitter_Protocol_M3u8_Decryption_Aes128::GetInstanceId(void)
-{
-  return this->logger->GetLoggerInstanceId();
-}
-
-HRESULT CMPUrlSourceSplitter_Protocol_M3u8_Decryption_Aes128::Initialize(CPluginConfiguration *configuration)
-{
-  CM3u8DecryptionPluginConfiguration *decryptionConfiguration = (CM3u8DecryptionPluginConfiguration *)configuration;
-
-  HRESULT result = S_OK;
-  CHECK_POINTER_HRESULT(result, decryptionConfiguration, result, E_INVALIDARG);
-
-  if (SUCCEEDED(result))
-  {
-    this->configuration->Clear();
-
-    CHECK_CONDITION_HRESULT(result, this->configuration->Append(decryptionConfiguration->GetConfiguration()), result, E_OUTOFMEMORY);
-
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_SPLITTER, true, PARAMETER_NAME_SPLITTER_DEFAULT) ? PLUGIN_FLAG_SPLITTER : M3U8_DECRYPTION_PLUGIN_FLAG_NONE;
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_IPTV, true, PARAMETER_NAME_IPTV_DEFAULT) ? PLUGIN_FLAG_IPTV : M3U8_DECRYPTION_PLUGIN_FLAG_NONE;
-
-    this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, DECRYPTION_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-  }
-
-  return result;
-}
-
 void CMPUrlSourceSplitter_Protocol_M3u8_Decryption_Aes128::ClearSession(void)
 {
   __super::ClearSession();
@@ -168,14 +141,22 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8_Decryption_Aes128::DecryptStreamFragm
         {
           // error occured while receiving key
           // it's bad, we're done
-
-          result = decryptionContext->GetCurlInstance()->GetM3u8DownloadResponse()->GetResultError();
+          // unlock CURL instance, setting connection state to ProtocolConnectionState::None and return
+          // filter will think that connection is not opened
+          // filter stops trying to open connection after maximum connection reopen time
         }
 
         // we must unlock CURL instance, because we don't use it more
         decryptionContext->GetCurlInstance()->UnlockCurlInstance(this);
         decryptionContext->GetCurlInstance()->SetConnectionState(None);
         this->flags &= ~MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_DECRYPTION_AES128_FLAG_KEY_REQUEST_PENDING;
+
+        if (FAILED(decryptionContext->GetCurlInstance()->GetM3u8DownloadResponse()->GetResultError()))
+        {
+          // failed to get decryption key
+          // filter tries to reopen connection after some time
+          return result;
+        }
       }
     }
 
@@ -220,15 +201,15 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8_Decryption_Aes128::DecryptStreamFragm
                 }
 
                 request->SetFinishTime(finishTime);
-                request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_M3U8_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? M3U8_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : M3U8_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER));
-                request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
+                request->SetReceivedDataTimeout(decryptionContext->GetConfiguration()->GetValueUnsignedInt(PARAMETER_NAME_M3U8_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? M3U8_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : M3U8_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER));
+                request->SetNetworkInterfaceName(decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
 
                 CHECK_CONDITION_HRESULT(result, request->SetUrl(currentEncryptedFragment->GetFragmentEncryption()->GetEncryptionKeyUri()), result, E_OUTOFMEMORY);
-                CHECK_CONDITION_HRESULT(result, request->SetCookie(this->configuration->GetValue(PARAMETER_NAME_M3U8_COOKIE, true, NULL)), result, E_OUTOFMEMORY);
-                request->SetHttpVersion(this->configuration->GetValueLong(PARAMETER_NAME_M3U8_VERSION, true, HTTP_VERSION_DEFAULT));
-                request->SetIgnoreContentLength((this->configuration->GetValueLong(PARAMETER_NAME_M3U8_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-                CHECK_CONDITION_HRESULT(result, request->SetReferer(this->configuration->GetValue(PARAMETER_NAME_M3U8_REFERER, true, NULL)), result, E_OUTOFMEMORY);
-                CHECK_CONDITION_HRESULT(result, request->SetUserAgent(this->configuration->GetValue(PARAMETER_NAME_M3U8_USER_AGENT, true, NULL)), result, E_OUTOFMEMORY);
+                CHECK_CONDITION_HRESULT(result, request->SetCookie(decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_M3U8_COOKIE, true, NULL)), result, E_OUTOFMEMORY);
+                request->SetHttpVersion(decryptionContext->GetConfiguration()->GetValueLong(PARAMETER_NAME_M3U8_VERSION, true, HTTP_VERSION_DEFAULT));
+                request->SetIgnoreContentLength((decryptionContext->GetConfiguration()->GetValueLong(PARAMETER_NAME_M3U8_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+                CHECK_CONDITION_HRESULT(result, request->SetReferer(decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_M3U8_REFERER, true, NULL)), result, E_OUTOFMEMORY);
+                CHECK_CONDITION_HRESULT(result, request->SetUserAgent(decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_M3U8_USER_AGENT, true, NULL)), result, E_OUTOFMEMORY);
 
                 if (SUCCEEDED(result))
                 {
@@ -374,4 +355,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8_Decryption_Aes128::DecryptStreamFragm
   }
 
   return result;
+}
+
+/* protected methods */
+
+const wchar_t *CMPUrlSourceSplitter_Protocol_M3u8_Decryption_Aes128::GetModuleName(void)
+{
+  return DECRYPTION_IMPLEMENTATION_NAME;
 }

@@ -1581,11 +1581,6 @@ const wchar_t *CMPUrlSourceSplitter_Protocol_Afhs::GetName(void)
   return PROTOCOL_NAME;
 }
 
-GUID CMPUrlSourceSplitter_Protocol_Afhs::GetInstanceId(void)
-{
-  return this->logger->GetLoggerInstanceId();
-}
-
 HRESULT CMPUrlSourceSplitter_Protocol_Afhs::Initialize(CPluginConfiguration *configuration)
 {
   HRESULT result = __super::Initialize(configuration);
@@ -1593,10 +1588,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::Initialize(CPluginConfiguration *con
   CHECK_POINTER_HRESULT(result, protocolConfiguration, result, E_INVALIDARG);
   CHECK_POINTER_HRESULT(result, this->lockMutex, result, E_NOT_VALID_STATE);
 
-  if (SUCCEEDED(result))
-  {
-    this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-  }
+  CHECK_HRESULT_EXECUTE(result, this->decryptionHoster->InitializePlugins(protocolConfiguration->GetConfiguration()));
 
   if (SUCCEEDED(result))
   {
@@ -1633,6 +1625,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::Initialize(CPluginConfiguration *con
 }
 
 /* protected methods */
+
+const wchar_t *CMPUrlSourceSplitter_Protocol_Afhs::GetModuleName(void)
+{
+  return PROTOCOL_IMPLEMENTATION_NAME;
+}
 
 const wchar_t *CMPUrlSourceSplitter_Protocol_Afhs::GetStoreFileNamePart(void)
 {

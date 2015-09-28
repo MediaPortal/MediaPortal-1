@@ -407,24 +407,6 @@ const wchar_t *CMPUrlSourceSplitter_Parser_Mpeg2TS::GetName(void)
   return PARSER_NAME;
 }
 
-HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::Initialize(CPluginConfiguration *configuration)
-{
-  HRESULT result = __super::Initialize(configuration);
-
-  if (SUCCEEDED(result))
-  {
-    CParserPluginConfiguration *parserConfiguration = (CParserPluginConfiguration *)configuration;
-    CHECK_POINTER_HRESULT(result, parserConfiguration, result, E_INVALIDARG);
-  }
-
-  if (SUCCEEDED(result))
-  {
-    this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, PARSER_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-  }
-
-  return result;
-}
-
 // ISeeking interface
 
 void CMPUrlSourceSplitter_Parser_Mpeg2TS::SetPauseSeekStopMode(unsigned int pauseSeekStopMode)
@@ -730,6 +712,11 @@ void CMPUrlSourceSplitter_Parser_Mpeg2TS::ClearSession(void)
 // IProtocol interface
 
 /* protected methods */
+
+const wchar_t *CMPUrlSourceSplitter_Parser_Mpeg2TS::GetModuleName(void)
+{
+  return PARSER_IMPLEMENTATION_NAME;
+}
 
 const wchar_t *CMPUrlSourceSplitter_Parser_Mpeg2TS::GetStoreFileNamePart(void)
 {

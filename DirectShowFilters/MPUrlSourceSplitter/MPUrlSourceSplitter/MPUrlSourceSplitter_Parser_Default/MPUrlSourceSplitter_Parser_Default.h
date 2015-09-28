@@ -55,11 +55,6 @@ public:
   // @return : reference to null-terminated string
   virtual const wchar_t *GetName(void);
 
-  // initialize plugin implementation with configuration parameters
-  // @param configuration : the reference to additional configuration parameters (created by plugin's hoster class)
-  // @return : S_OK if successfull, error code otherwise
-  virtual HRESULT Initialize(CPluginConfiguration *configuration);
-
   // ISeeking interface
 
   // IDemuxerOwner interface
@@ -74,6 +69,10 @@ public:
 protected:
 
   /* methods */
+
+  // get module name for Initialize() method
+  // @return : module name
+  virtual const wchar_t *GetModuleName(void);
 
   // gets store file name part
   // @return : store file name part or NULL if error

@@ -49,15 +49,6 @@ public:
   // @return : reference to null-terminated string
   virtual const wchar_t *GetName(void);
 
-  // get plugin instance ID
-  // @return : GUID, which represents instance identifier or GUID_NULL if error
-  virtual GUID GetInstanceId(void);
-
-  // initialize plugin implementation with configuration parameters
-  // @param configuration : the reference to additional configuration parameters (created by plugin's hoster class)
-  // @return : S_OK if successfull, error code otherwise
-  virtual HRESULT Initialize(CPluginConfiguration *configuration);
-
   // CAfhsDecryptionPlugin implementation
 
   // gets decryption result about current stream
@@ -77,6 +68,10 @@ public:
 protected:
 
   /* methods */
+
+  // get module name for Initialize() method
+  // @return : module name
+  virtual const wchar_t *GetModuleName(void);
 };
 
 #endif

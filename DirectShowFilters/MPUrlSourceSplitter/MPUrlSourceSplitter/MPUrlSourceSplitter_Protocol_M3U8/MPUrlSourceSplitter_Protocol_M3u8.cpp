@@ -26,10 +26,10 @@
 #pragma warning(disable:4005)
 
 #include "MPUrlSourceSplitter_Protocol_M3u8.h"
+#include "MPUrlSourceSplitter_Protocol_M3u8_Parameters.h"
 #include "Utilities.h"
 #include "LockMutex.h"
 #include "VersionInfo.h"
-#include "MPUrlSourceSplitter_Protocol_M3u8_Parameters.h"
 #include "Parameters.h"
 #include "ProtocolPluginConfiguration.h"
 #include "ErrorCodes.h"
@@ -39,6 +39,7 @@
 #include "compress_zlib.h"
 #include "base64.h"
 #include "formatUrl.h"
+#include "M3u8DecryptionPluginConfiguration.h"
 
 #include <WinInet.h>
 #include <stdio.h>
@@ -1522,11 +1523,6 @@ const wchar_t *CMPUrlSourceSplitter_Protocol_M3u8::GetName(void)
   return PROTOCOL_NAME;
 }
 
-GUID CMPUrlSourceSplitter_Protocol_M3u8::GetInstanceId(void)
-{
-  return this->logger->GetLoggerInstanceId();
-}
-
 HRESULT CMPUrlSourceSplitter_Protocol_M3u8::Initialize(CPluginConfiguration *configuration)
 {
   HRESULT result = __super::Initialize(configuration);
@@ -1534,10 +1530,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::Initialize(CPluginConfiguration *con
   CHECK_POINTER_HRESULT(result, protocolConfiguration, result, E_INVALIDARG);
   CHECK_POINTER_HRESULT(result, this->lockMutex, result, E_NOT_VALID_STATE);
 
-  if (SUCCEEDED(result))
-  {
-    this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-  }
+  CHECK_HRESULT_EXECUTE(result, this->decryptionHoster->InitializePlugins(protocolConfiguration->GetConfiguration()));
 
   if (SUCCEEDED(result))
   {
@@ -1574,6 +1567,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::Initialize(CPluginConfiguration *con
 }
 
 /* protected methods */
+
+const wchar_t *CMPUrlSourceSplitter_Protocol_M3u8::GetModuleName(void)
+{
+  return PROTOCOL_IMPLEMENTATION_NAME;
+}
 
 const wchar_t *CMPUrlSourceSplitter_Protocol_M3u8::GetStoreFileNamePart(void)
 {

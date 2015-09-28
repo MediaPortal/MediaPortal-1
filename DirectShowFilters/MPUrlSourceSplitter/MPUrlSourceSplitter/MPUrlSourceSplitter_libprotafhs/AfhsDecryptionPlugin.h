@@ -74,10 +74,6 @@ public:
   virtual HRESULT DecryptSegmentFragments(CAfhsDecryptionContext *decryptionContext) = 0;
 
 protected:
-  // holds logger instance
-  CLogger *logger;
-  // holds configuration
-  CParameterCollection *configuration;
   // holds decryption result
   HRESULT decryptionResult;
 

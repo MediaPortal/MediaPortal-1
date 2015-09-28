@@ -33,41 +33,27 @@
 CAfhsDecryptionPlugin::CAfhsDecryptionPlugin(HRESULT *result, CLogger *logger, CParameterCollection *configuration)
   : CPlugin(result, logger, configuration)
 {
-  this->logger = NULL;
-  this->configuration = NULL;
   this->decryptionResult = DECRYPTION_RESULT_PENDING;
 
-  if ((result != NULL) && (SUCCEEDED(*result)))
+  /*if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->logger = new CLogger(result, logger);
-    this->configuration = new CParameterCollection(result);
-
-    CHECK_POINTER_HRESULT(*result, this->logger, *result, E_OUTOFMEMORY);
-    CHECK_POINTER_HRESULT(*result, this->configuration, *result, E_OUTOFMEMORY);
-
-    CHECK_CONDITION_HRESULT(*result, this->configuration->Append(configuration), *result, E_OUTOFMEMORY);
-  }
+  }*/
 }
 
 CAfhsDecryptionPlugin::~CAfhsDecryptionPlugin(void)
 {
-  FREE_MEM_CLASS(this->configuration);
-  FREE_MEM_CLASS(this->logger);
 }
 
 // CPlugin
 
 HRESULT CAfhsDecryptionPlugin::Initialize(CPluginConfiguration *configuration)
 {
-  CAfhsDecryptionPluginConfiguration *decryptionConfiguration = dynamic_cast<CAfhsDecryptionPluginConfiguration *>(configuration);
-  HRESULT result = ((this->configuration != NULL) && (this->logger != NULL)) ? S_OK : E_NOT_VALID_STATE;
-  CHECK_POINTER_HRESULT(result, decryptionConfiguration, result, E_INVALIDARG);
+  HRESULT result = __super::Initialize(configuration);
 
   if (SUCCEEDED(result))
   {
-    this->configuration->Clear();
-
-    CHECK_CONDITION_HRESULT(result, this->configuration->Append(decryptionConfiguration->GetConfiguration()), result, E_OUTOFMEMORY);
+    CAfhsDecryptionPluginConfiguration *decryptionConfiguration = dynamic_cast<CAfhsDecryptionPluginConfiguration *>(configuration);
+    CHECK_POINTER_HRESULT(result, decryptionConfiguration, result, E_INVALIDARG);
   }
 
   return result;

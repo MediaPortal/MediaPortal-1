@@ -90,33 +90,6 @@ const wchar_t *CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Default::GetName(vo
   return AFHS_PROTOCOL_DECRYPTION_NAME;
 }
 
-GUID CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Default::GetInstanceId(void)
-{
-  return this->logger->GetLoggerInstanceId();
-}
-
-HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Default::Initialize(CPluginConfiguration *configuration)
-{
-  CAfhsDecryptionPluginConfiguration *decryptionConfiguration = (CAfhsDecryptionPluginConfiguration *)configuration;
-
-  HRESULT result = S_OK;
-  CHECK_POINTER_HRESULT(result, decryptionConfiguration, result, E_INVALIDARG);
-
-  if (SUCCEEDED(result))
-  {
-    this->configuration->Clear();
-
-    CHECK_CONDITION_HRESULT(result, this->configuration->Append(decryptionConfiguration->GetConfiguration()), result, E_OUTOFMEMORY);
-
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_SPLITTER, true, PARAMETER_NAME_SPLITTER_DEFAULT) ? PLUGIN_FLAG_SPLITTER : AFHS_DECRYPTION_PLUGIN_FLAG_NONE;
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_IPTV, true, PARAMETER_NAME_IPTV_DEFAULT) ? PLUGIN_FLAG_IPTV : AFHS_DECRYPTION_PLUGIN_FLAG_NONE;
-
-    this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, DECRYPTION_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-  }
-
-  return result;
-}
-
 // CAfhsDecryptionPlugin implementation
 
 HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Default::GetDecryptionResult(CAfhsDecryptionContext *decryptionContext)
@@ -235,4 +208,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Default::DecryptSegmentFra
   }
 
   return result;
+}
+
+/* protected methods */
+
+const wchar_t *CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Default::GetModuleName(void)
+{
+  return DECRYPTION_IMPLEMENTATION_NAME;
 }

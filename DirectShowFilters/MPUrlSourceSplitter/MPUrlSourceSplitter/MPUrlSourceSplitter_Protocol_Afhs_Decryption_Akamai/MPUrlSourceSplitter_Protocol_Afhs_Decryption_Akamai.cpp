@@ -108,33 +108,6 @@ const wchar_t *CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai::GetName(voi
   return AFHS_PROTOCOL_DECRYPTION_NAME;
 }
 
-GUID CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai::GetInstanceId(void)
-{
-  return this->logger->GetLoggerInstanceId();
-}
-
-HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai::Initialize(CPluginConfiguration *configuration)
-{
-  CAfhsDecryptionPluginConfiguration *decryptionConfiguration = (CAfhsDecryptionPluginConfiguration *)configuration;
-
-  HRESULT result = S_OK;
-  CHECK_POINTER_HRESULT(result, decryptionConfiguration, result, E_INVALIDARG);
-
-  if (SUCCEEDED(result))
-  {
-    this->configuration->Clear();
-
-    CHECK_CONDITION_HRESULT(result, this->configuration->Append(decryptionConfiguration->GetConfiguration()), result, E_OUTOFMEMORY);
-
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_SPLITTER, true, PARAMETER_NAME_SPLITTER_DEFAULT) ? PLUGIN_FLAG_SPLITTER : AFHS_DECRYPTION_PLUGIN_FLAG_NONE;
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_IPTV, true, PARAMETER_NAME_IPTV_DEFAULT) ? PLUGIN_FLAG_IPTV : AFHS_DECRYPTION_PLUGIN_FLAG_NONE;
-
-    this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, DECRYPTION_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-  }
-
-  return result;
-}
-
 // CAfhsDecryptionPlugin implementation
 
 HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai::GetDecryptionResult(CAfhsDecryptionContext *decryptionContext)
@@ -272,7 +245,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai::DecryptSegmentFrag
     AkamaiDecryptorState state = this->akamaiFlashInstance->GetState();
     if (state == AkamaiDecryptorState_NotInitialized)
     {
-      this->akamaiFlashInstance->SetDecryptionModuleUrl(this->configuration->GetValue(PARAMETER_NAME_PROTOCOL_AFHS_DECRYPTION_AKAMAI_MODULE_URL, true, PARAMETER_NAME_PROTOCOL_AFHS_DECRYPTION_AKAMAI_MODULE_URL_DEFAULT));
+      this->akamaiFlashInstance->SetDecryptionModuleUrl(decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_PROTOCOL_AFHS_DECRYPTION_AKAMAI_MODULE_URL, true, PARAMETER_NAME_PROTOCOL_AFHS_DECRYPTION_AKAMAI_MODULE_URL_DEFAULT));
     }
     else if (state == AkamaiDecryptorState_Pending)
     {
@@ -420,15 +393,15 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai::DecryptSegmentFrag
                           }
 
                           request->SetFinishTime(finishTime);
-                          request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_AFHS_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? AFHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : AFHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER));
-                          request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
+                          request->SetReceivedDataTimeout(decryptionContext->GetConfiguration()->GetValueUnsignedInt(PARAMETER_NAME_AFHS_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? AFHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : AFHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER));
+                          request->SetNetworkInterfaceName(decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
 
                           CHECK_CONDITION_HRESULT(result, request->SetUrl(keyUrl), result, E_OUTOFMEMORY);
-                          CHECK_CONDITION_HRESULT(result, request->SetCookie(this->configuration->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL)), result, E_OUTOFMEMORY);
-                          request->SetHttpVersion(this->configuration->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
-                          request->SetIgnoreContentLength((this->configuration->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-                          CHECK_CONDITION_HRESULT(result, request->SetReferer(this->configuration->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL)), result, E_OUTOFMEMORY);
-                          CHECK_CONDITION_HRESULT(result, request->SetUserAgent(this->configuration->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL)), result, E_OUTOFMEMORY);
+                          CHECK_CONDITION_HRESULT(result, request->SetCookie(decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL)), result, E_OUTOFMEMORY);
+                          request->SetHttpVersion(decryptionContext->GetConfiguration()->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
+                          request->SetIgnoreContentLength((decryptionContext->GetConfiguration()->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+                          CHECK_CONDITION_HRESULT(result, request->SetReferer(decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL)), result, E_OUTOFMEMORY);
+                          CHECK_CONDITION_HRESULT(result, request->SetUserAgent(decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL)), result, E_OUTOFMEMORY);
 
                           if (SUCCEEDED(result))
                           {
@@ -711,6 +684,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai::DecryptSegmentFrag
 }
 
 /* protected methods */
+
+const wchar_t *CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai::GetModuleName(void)
+{
+  return DECRYPTION_IMPLEMENTATION_NAME;
+}
 
 CLinearBuffer *CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai::GetResource(const wchar_t *name, const wchar_t *type)
 {

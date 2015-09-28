@@ -88,33 +88,6 @@ const wchar_t *CMPUrlSourceSplitter_Protocol_M3u8_Decryption_None::GetName(void)
   return M3U8_PROTOCOL_DECRYPTION_NAME;
 }
 
-GUID CMPUrlSourceSplitter_Protocol_M3u8_Decryption_None::GetInstanceId(void)
-{
-  return this->logger->GetLoggerInstanceId();
-}
-
-HRESULT CMPUrlSourceSplitter_Protocol_M3u8_Decryption_None::Initialize(CPluginConfiguration *configuration)
-{
-  CM3u8DecryptionPluginConfiguration *decryptionConfiguration = (CM3u8DecryptionPluginConfiguration *)configuration;
-
-  HRESULT result = S_OK;
-  CHECK_POINTER_HRESULT(result, decryptionConfiguration, result, E_INVALIDARG);
-
-  if (SUCCEEDED(result))
-  {
-    this->configuration->Clear();
-
-    CHECK_CONDITION_HRESULT(result, this->configuration->Append(decryptionConfiguration->GetConfiguration()), result, E_OUTOFMEMORY);
-
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_SPLITTER, true, PARAMETER_NAME_SPLITTER_DEFAULT) ? PLUGIN_FLAG_SPLITTER : M3U8_DECRYPTION_PLUGIN_FLAG_NONE;
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_IPTV, true, PARAMETER_NAME_IPTV_DEFAULT) ? PLUGIN_FLAG_IPTV : M3U8_DECRYPTION_PLUGIN_FLAG_NONE;
-
-    this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, DECRYPTION_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-  }
-
-  return result;
-}
-
 // CM3u8DecryptionPlugin implementation
 
 HRESULT CMPUrlSourceSplitter_Protocol_M3u8_Decryption_None::DecryptStreamFragments(CM3u8DecryptionContext *decryptionContext)
@@ -158,4 +131,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8_Decryption_None::DecryptStreamFragmen
   }
 
   return result;
+}
+
+/* protected methods */
+
+const wchar_t *CMPUrlSourceSplitter_Protocol_M3u8_Decryption_None::GetModuleName(void)
+{
+  return DECRYPTION_IMPLEMENTATION_NAME;
 }

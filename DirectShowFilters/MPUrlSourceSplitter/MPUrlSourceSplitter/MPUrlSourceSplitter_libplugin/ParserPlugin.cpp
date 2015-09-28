@@ -36,8 +36,6 @@
 CParserPlugin::CParserPlugin(HRESULT *result, CLogger *logger, CParameterCollection *configuration)
   : CPlugin(result, logger, configuration)
 {
-  this->logger = NULL;
-  this->configuration = NULL;
   this->protocolHoster = NULL;
   this->parserResult = PARSER_RESULT_PENDING;
   this->connectionParameters = NULL;
@@ -47,13 +45,9 @@ CParserPlugin::CParserPlugin(HRESULT *result, CLogger *logger, CParameterCollect
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->logger = new CLogger(result, logger);
-    this->configuration = new CParameterCollection(result);
     this->connectionParameters = new CParameterCollection(result);
     this->dumpFile = new CDumpFile(result);
 
-    CHECK_POINTER_HRESULT(*result, this->logger, *result, E_OUTOFMEMORY);
-    CHECK_POINTER_HRESULT(*result, this->configuration, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->connectionParameters, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->dumpFile, *result, E_OUTOFMEMORY);
 
@@ -64,33 +58,24 @@ CParserPlugin::CParserPlugin(HRESULT *result, CLogger *logger, CParameterCollect
 CParserPlugin::~CParserPlugin(void)
 {
   FREE_MEM_CLASS(this->connectionParameters);
-  FREE_MEM_CLASS(this->configuration);
-  FREE_MEM_CLASS(this->logger);
   FREE_MEM_CLASS(this->dumpFile);
 }
 
 // CPlugin
 
-GUID CParserPlugin::GetInstanceId(void)
-{
-  return this->logger->GetLoggerInstanceId();
-}
-
 HRESULT CParserPlugin::Initialize(CPluginConfiguration *configuration)
 {
-  CParserPluginConfiguration *parserConfiguration = dynamic_cast<CParserPluginConfiguration *>(configuration);
-  HRESULT result = ((this->configuration != NULL) && (this->logger != NULL)) ? S_OK : E_NOT_VALID_STATE;
-  CHECK_POINTER_HRESULT(result, parserConfiguration, result, E_INVALIDARG);
+  HRESULT result = __super::Initialize(configuration);
 
   if (SUCCEEDED(result))
   {
-    this->protocolHoster = parserConfiguration->GetProtocolHoster();
-    this->configuration->Clear();
+    CParserPluginConfiguration *parserConfiguration = dynamic_cast<CParserPluginConfiguration *>(configuration);
+    CHECK_POINTER_HRESULT(result, parserConfiguration, result, E_INVALIDARG);
 
-    CHECK_CONDITION_HRESULT(result, this->configuration->Append(parserConfiguration->GetConfiguration()), result, E_OUTOFMEMORY);
-
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_SPLITTER, true, PARAMETER_NAME_SPLITTER_DEFAULT) ? PLUGIN_FLAG_SPLITTER : PROTOCOL_PLUGIN_FLAG_NONE;
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_IPTV, true, PARAMETER_NAME_IPTV_DEFAULT) ? PLUGIN_FLAG_IPTV : PROTOCOL_PLUGIN_FLAG_NONE;
+    if (SUCCEEDED(result))
+    {
+      this->protocolHoster = parserConfiguration->GetProtocolHoster();
+    }
   }
 
   return result;

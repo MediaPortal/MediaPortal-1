@@ -34,40 +34,25 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 CM3u8DecryptionPlugin::CM3u8DecryptionPlugin(HRESULT *result, CLogger *logger, CParameterCollection *configuration)
   : CPlugin(result, logger, configuration)
 {
-  this->logger = NULL;
-  this->configuration = NULL;
-
-  if ((result != NULL) && (SUCCEEDED(*result)))
+  /*if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->logger = new CLogger(result, logger);
-    this->configuration = new CParameterCollection(result);
-
-    CHECK_POINTER_HRESULT(*result, this->logger, *result, E_OUTOFMEMORY);
-    CHECK_POINTER_HRESULT(*result, this->configuration, *result, E_OUTOFMEMORY);
-
-    CHECK_CONDITION_HRESULT(*result, this->configuration->Append(configuration), *result, E_OUTOFMEMORY);
-  }
+  }*/
 }
 
 CM3u8DecryptionPlugin::~CM3u8DecryptionPlugin()
 {
-  FREE_MEM_CLASS(this->configuration);
-  FREE_MEM_CLASS(this->logger);
 }
 
 // CPlugin
 
 HRESULT CM3u8DecryptionPlugin::Initialize(CPluginConfiguration *configuration)
 {
-  CM3u8DecryptionPluginConfiguration *decryptionConfiguration = dynamic_cast<CM3u8DecryptionPluginConfiguration *>(configuration);
-  HRESULT result = ((this->configuration != NULL) && (this->logger != NULL)) ? S_OK : E_NOT_VALID_STATE;
-  CHECK_POINTER_HRESULT(result, decryptionConfiguration, result, E_INVALIDARG);
+  HRESULT result = __super::Initialize(configuration);
 
   if (SUCCEEDED(result))
   {
-    this->configuration->Clear();
-
-    CHECK_CONDITION_HRESULT(result, this->configuration->Append(decryptionConfiguration->GetConfiguration()), result, E_OUTOFMEMORY);
+    CM3u8DecryptionPluginConfiguration *decryptionConfiguration = dynamic_cast<CM3u8DecryptionPluginConfiguration *>(configuration);
+    CHECK_POINTER_HRESULT(result, decryptionConfiguration, result, E_INVALIDARG);
   }
 
   return result;

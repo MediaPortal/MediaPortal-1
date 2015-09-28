@@ -57,10 +57,6 @@ public:
   virtual HRESULT DecryptStreamFragments(CM3u8DecryptionContext *decryptionContext) = 0;
 
 protected:
-  // holds logger instance
-  CLogger *logger;
-  // holds configuration
-  CParameterCollection *configuration;
 
   /* methods */
 };

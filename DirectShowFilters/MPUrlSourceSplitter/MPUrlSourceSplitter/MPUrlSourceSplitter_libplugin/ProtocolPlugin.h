@@ -126,10 +126,7 @@ public:
   virtual bool IsDumpOutputData(void);
 
 protected:
-  // holds logger instance
-  CLogger *logger;
-  // holds configuration
-  CParameterCollection *configuration;
+
   // holds reported stream time and position
   uint64_t reportedStreamTime;
   uint64_t reportedStreamPosition;

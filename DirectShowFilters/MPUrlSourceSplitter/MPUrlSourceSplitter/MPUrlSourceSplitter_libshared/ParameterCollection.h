@@ -114,9 +114,9 @@ public:
   // log all parameters to log file
   // @param logger : the logger
   // @param loggerLevel : the logger level of messages
-  // @param protocolName : name of protocol calling LogCollection()
+  // @param moduleName : name of module calling LogCollection()
   // @param functionName : name of function calling LogCollection()
-  virtual void LogCollection(CLogger *logger, unsigned int loggerLevel, const wchar_t *protocolName, const wchar_t *functionName);
+  virtual void LogCollection(CLogger *logger, unsigned int loggerLevel, const wchar_t *moduleName, const wchar_t *functionName);
 
   // copies parameter in collection
   // @param parameterName : the name of parameter to copy
