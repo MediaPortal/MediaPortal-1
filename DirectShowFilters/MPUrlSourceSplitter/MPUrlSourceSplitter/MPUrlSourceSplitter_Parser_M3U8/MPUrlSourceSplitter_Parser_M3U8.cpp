@@ -130,7 +130,7 @@ HRESULT CMPUrlSourceSplitter_Parser_M3U8::GetParserResult(void)
           {
             request->SetStart(0);
             request->SetLength(requestLength);
-            request->SetAnyNonZeroDataLength(true);
+            request->SetAnyDataLength(true);
 
             package->SetRequest(request);
           }
@@ -150,7 +150,7 @@ HRESULT CMPUrlSourceSplitter_Parser_M3U8::GetParserResult(void)
               this->parserResult = PARSER_RESULT_NOT_KNOWN;
             }
 
-            if (response != NULL)
+            if ((this->parserResult == PARSER_RESULT_PENDING) && (response != NULL) && (response->GetBuffer()->GetBufferOccupiedSpace() > 0))
             {
               receivedSameLength = (response->GetBuffer()->GetBufferOccupiedSpace() == this->lastReceivedLength);
               if (!receivedSameLength)
@@ -356,6 +356,11 @@ HRESULT CMPUrlSourceSplitter_Parser_M3U8::GetParserResult(void)
               }
 
               this->lastReceivedLength = response->GetBuffer()->GetBufferOccupiedSpace();
+            }
+            else
+            {
+              // no data received
+              break;
             }
           }
         }

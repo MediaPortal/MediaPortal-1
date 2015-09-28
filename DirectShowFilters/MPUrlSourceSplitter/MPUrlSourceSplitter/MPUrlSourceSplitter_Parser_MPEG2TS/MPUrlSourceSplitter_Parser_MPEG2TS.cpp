@@ -235,7 +235,7 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::GetParserResult(void)
                   this->parserResult = IS_MPEG2TS_ERROR(package->GetError()) ? package->GetError() : PARSER_RESULT_NOT_KNOWN;
                 }
 
-                if ((this->parserResult == PARSER_RESULT_PENDING) && (response != NULL))
+                if ((this->parserResult == PARSER_RESULT_PENDING) && (response != NULL) && (response->GetBuffer()->GetBufferOccupiedSpace() > 0))
                 {
                   receivedSameLength = (response->GetBuffer()->GetBufferOccupiedSpace() == this->lastReceivedLength);
                   if (!receivedSameLength)
@@ -270,6 +270,11 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::GetParserResult(void)
                   }
 
                   this->lastReceivedLength = response->GetBuffer()->GetBufferOccupiedSpace();
+                }
+                else
+                {
+                  // no data received
+                  break;
                 }
               }
             }
