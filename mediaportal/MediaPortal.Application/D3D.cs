@@ -2184,7 +2184,7 @@ namespace MediaPortal
         _firstLoadedScreen = true;
         Screen screenfocus = Screen.FromControl(this);
         this.WindowState = FormWindowState.Minimized;
-        this.Show();
+        //this.Show();
         this.WindowState = FormWindowState.Normal;
         _firstLoadedScreen = false;
         // Restore previous saved screen
