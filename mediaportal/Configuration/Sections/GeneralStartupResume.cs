@@ -446,7 +446,11 @@ namespace MediaPortal.Configuration.Sections
 
     private void settingsCheckedListBox_SelectedIndexChanged(object sender, EventArgs e)
     {
-
+      if (settingsCheckedListBox.GetItemChecked(1))
+      {
+        // if we use keepstartfullscreen, we need to force to use MP as fullscreen
+        settingsCheckedListBox.SetItemChecked(0, true);
+      }
     }
 
     private void lbScreen_Click(object sender, EventArgs e)
