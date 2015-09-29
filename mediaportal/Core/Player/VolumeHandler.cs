@@ -42,7 +42,7 @@ namespace MediaPortal.Player
 
     public VolumeHandler(int[] volumeTable)
     {
-      if (GUIGraphicsContext.DeviceAudioConnected)
+      if (GUIGraphicsContext.DeviceAudioConnected > 0)
       {
         bool isDigital;
 
@@ -93,7 +93,7 @@ namespace MediaPortal.Player
 
     private static VolumeHandler CreateInstance()
     {
-      if (GUIGraphicsContext.DeviceAudioConnected)
+      if (GUIGraphicsContext.DeviceAudioConnected > 0)
       {
         using (Settings reader = new MPSettings())
         {

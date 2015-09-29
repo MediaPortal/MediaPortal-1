@@ -757,7 +757,7 @@
     <String id="865">Number of minutes until sleep:</String>
     <String id="866">Fade-out Volume</String>
     <String id="867">Shut down computer</String>
-    <String id="868">Reset</String>
+    <String id="868">Reset or refresh detected offline share(s)</String>
     <String id="869">New alarm</String>
     <String id="870">Recurring</String>
     <String id="871">Wake up computer for this alarm</String>

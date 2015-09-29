@@ -30,7 +30,7 @@ using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
-  [PluginIcons("MiniDisplayPlugin.lcd.gif", "MiniDisplayPlugin.lcd_deactivated.gif")]
+
   public class SetupForm : MPConfigForm
   {
     private MPButton btnAdvanced;

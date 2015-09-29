@@ -719,11 +719,25 @@ namespace MediaPortal.Configuration
     {
       String macAddress;
       byte[] hwAddress;
+      string hostName = "";
 
       WakeOnLanManager wakeOnLanManager = new WakeOnLanManager();
 
       IPAddress ipAddress = null;
-      string hostName = Util.Utils.GetServerNameFromUNCPath(folderTextBox.Text);
+      string detectedFolderName = "";
+      if (!Util.Utils.IsUNCNetwork(folderTextBox.Text))
+      {
+        // Check if letter drive is a network drive
+        detectedFolderName = Util.Utils.FindUNCPaths(folderTextBox.Text);
+      }
+      if (Util.Utils.IsUNCNetwork(detectedFolderName))
+      {
+        hostName = Util.Utils.GetServerNameFromUNCPath(detectedFolderName);
+      }
+      else if (Util.Utils.IsUNCNetwork(folderTextBox.Text))
+      {
+        hostName = Util.Utils.GetServerNameFromUNCPath(folderTextBox.Text);
+      }
 
       if (string.IsNullOrEmpty(hostName))
       {
@@ -797,7 +811,13 @@ namespace MediaPortal.Configuration
 
     private void folderTextBox_TextChanged(object sender, EventArgs e)
     {
-      if (Util.Utils.IsUNCNetwork(folderTextBox.Text))
+      string detectedFolderName = "";
+      if (!Util.Utils.IsUNCNetwork(folderTextBox.Text))
+      {
+        // Check if letter drive is a network drive
+        detectedFolderName = Util.Utils.FindUNCPaths(folderTextBox.Text);
+      }
+      if (Util.Utils.IsUNCNetwork(detectedFolderName) || Util.Utils.IsUNCNetwork(folderTextBox.Text))
       {
         cbEnableWakeOnLan.Enabled = true;
       }

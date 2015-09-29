@@ -945,7 +945,7 @@ namespace DShowNET.Helper
                       VolumeHandler.Dispose();
                       GUIGraphicsContext.VolumeHandler = VolumeHandler.Instance;
                     }
-                    if (GUIGraphicsContext.VolumeHandler != null && GUIGraphicsContext.VolumeHandler.Volume != 19660500 && GUIGraphicsContext.DeviceAudioConnected)
+                    if (GUIGraphicsContext.VolumeHandler != null && GUIGraphicsContext.VolumeHandler.Volume != 19660500 && GUIGraphicsContext.DeviceAudioConnected > 0)
                     {
                       Log.Debug("DirectShowUtil: volume handler value {0}", GUIGraphicsContext.VolumeHandler.Volume);
                       Log.Debug("DirectShowUtil: build the graph for PIN : {0}", pinName);
