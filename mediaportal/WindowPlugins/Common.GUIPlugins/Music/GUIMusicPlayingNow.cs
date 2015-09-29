@@ -209,7 +209,7 @@ namespace MediaPortal.GUI.Music
       {
         return;
       }
-
+      ImagePathContainer.Clear();
       if (GUIWindowManager.ActiveWindow == GetID && !_isStopped)
       {
         _isStopped = true;
@@ -886,11 +886,6 @@ namespace MediaPortal.GUI.Music
 
     private void FlipPictures()
     {
-      if (g_Player.currentFileName == string.Empty)
-      {
-        return;
-      }
-
       if (ImgCoverArt != null)
       {
         if (ImagePathContainer.Count > 1)
