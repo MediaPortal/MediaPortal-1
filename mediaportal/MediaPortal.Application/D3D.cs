@@ -1136,7 +1136,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.SkinSize.Width + border.Width <= GUIGraphicsContext.currentScreen.WorkingArea.Width &&
           GUIGraphicsContext.SkinSize.Height + border.Height <= GUIGraphicsContext.currentScreen.WorkingArea.Height)
       {
-        clientArea = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+        clientArea = new Size(GUIGraphicsContext.SkinSize.Width + border.Width, GUIGraphicsContext.SkinSize.Height + border.Height);
       }
       else
       {
