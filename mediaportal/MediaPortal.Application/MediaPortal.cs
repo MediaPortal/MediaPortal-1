@@ -134,6 +134,11 @@ public class MediaPortalApp : D3D, IRender
   private bool                  _delayedResume;
   private readonly Object       _delayedResumeLock = new Object();
   private bool                  _keepstartfullscreen;
+  private int                   _locationX;
+  private int                   _locationY;
+  private bool                  _firstRestoreScreen = true;
+  private int                   _backupSizeWidth;
+  private int                   _backupSizeHeight;
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND            = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
@@ -2491,6 +2496,18 @@ public class MediaPortalApp : D3D, IRender
               x + border.Width, y + border.Height, x + border.Width, height + border.Height, x, height);
             ClientSize = new Size(x, height);
           }
+          // Restore last MP windows
+          if (_firstRestoreScreen)
+          {
+            _firstRestoreScreen = false;
+            if ((_backupSizeWidth != 0) && (_backupSizeHeight != 0))
+            {
+              Location = new Point(_locationX, _locationY);
+              ClientSize = new Size(_backupSizeWidth, _backupSizeHeight);
+              Log.Debug("Main: Restore MP location {0}x{1} and previous client size of {2}x{3}", _locationX, _locationY,
+                _backupSizeWidth, _backupSizeHeight);
+            }
+          }
         }
         else
         {
@@ -3308,6 +3325,10 @@ public class MediaPortalApp : D3D, IRender
       _useLongDateFormat = xmlreader.GetValueAsBool("home", "LongTimeFormat", false);
       _startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
       _useOnlyOneHome = xmlreader.GetValueAsBool("gui", "useonlyonehome", false);
+      _locationX = xmlreader.GetValueAsInt("gui", "lastlocationx", 0);
+      _locationY = xmlreader.GetValueAsInt("gui", "lastlocationy", 0);
+      _backupSizeWidth = xmlreader.GetValueAsInt("gui", "backupsizewidth", 0);
+      _backupSizeHeight = xmlreader.GetValueAsInt("gui", "backupsizeheight", 0);
     }
 
     Log.Info("Startup: Starting Window Manager");
