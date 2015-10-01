@@ -61,7 +61,7 @@ CItem *CItemFactory::CreateItem(HRESULT *result, unsigned int version, const wch
         CHECK_CONDITION_HRESULT(*result, *position != 0, *result, E_M3U8_NOT_VALID_ITEM_FOUND);
       }
 
-      if (SUCCEEDED(*result))
+      if (SUCCEEDED(*result) && (!temp->IsEmptyLine()))
       {
         // it is M3U8 item, it can be playlist item, tag or comment
 

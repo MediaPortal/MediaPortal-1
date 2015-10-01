@@ -60,6 +60,11 @@ bool CItem::IsComment(void)
   return this->IsSetFlags(ITEM_FLAG_COMMENT);
 }
 
+bool CItem::IsEmptyLine(void)
+{
+  return this->IsSetFlags(ITEM_FLAG_EMPTY_LINE);
+}
+
 bool CItem::IsMediaPlaylistItem(unsigned int version)
 {
   return false;
@@ -89,7 +94,10 @@ unsigned int CItem::Parse(const wchar_t *buffer, unsigned int length, unsigned i
     unsigned int lineSize = (endOfLine.position == (-1)) ? length : endOfLine.position;
 
     this->itemContent = Substring(buffer, 0, lineSize);
-    result = (this->itemContent != NULL) ? (lineSize + endOfLine.size) : 0;
+
+    CHECK_CONDITION_EXECUTE(endOfLine.position == 0, this->flags |= ITEM_FLAG_EMPTY_LINE);
+
+    result = (this->IsSetFlags(ITEM_FLAG_EMPTY_LINE) || (this->itemContent != NULL)) ? (lineSize + endOfLine.size) : 0;
   }
 
   return result;

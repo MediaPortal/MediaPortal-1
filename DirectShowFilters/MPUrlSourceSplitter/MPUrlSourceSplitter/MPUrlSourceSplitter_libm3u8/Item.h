@@ -30,8 +30,9 @@
 #define ITEM_FLAG_PLAYLIST_ITEM                                       (1 << (FLAGS_LAST + 0))
 #define ITEM_FLAG_TAG                                                 (1 << (FLAGS_LAST + 1))
 #define ITEM_FLAG_COMMENT                                             (1 << (FLAGS_LAST + 2))
+#define ITEM_FLAG_EMPTY_LINE                                          (1 << (FLAGS_LAST + 3))
 
-#define ITEM_FLAG_LAST                                                (FLAGS_LAST + 3)
+#define ITEM_FLAG_LAST                                                (FLAGS_LAST + 4)
 
 class CItem : public CFlags
 {
@@ -60,6 +61,10 @@ public:
   // tests if item is comment
   // @return : true if item is comment, false otherwise
   bool IsComment(void);
+
+  // tests if item is empty line
+  // @return : true if item is empty line, false otherwise
+  bool IsEmptyLine(void);
 
   // tests if item can be part of media playlist
   // @param : the playlist version
