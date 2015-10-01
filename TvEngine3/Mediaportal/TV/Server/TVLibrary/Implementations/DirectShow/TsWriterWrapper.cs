@@ -163,6 +163,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       return hr;
     }
 
+    public void GetPidState(ushort pid, out EncryptionState state)
+    {
+      state = EncryptionState.NotSet;
+      object[] parameters = new object[2] { pid, state };
+      _delegateTsWriter("GetPidState", ref parameters);
+      state = (EncryptionState)parameters[1];
+    }
+
     public void DeleteChannel(int handle)
     {
       object[] parameters = new object[1] { handle };

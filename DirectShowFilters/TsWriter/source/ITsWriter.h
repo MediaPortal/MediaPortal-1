@@ -40,6 +40,7 @@ DECLARE_INTERFACE_(ITsWriter, IUnknown)
   STDMETHOD_(void, Stop)(THIS)PURE;
 
   STDMETHOD(AddChannel)(THIS_ IChannelObserver* observer, long* handle)PURE;
+  STDMETHOD_(void, GetPidState)(THIS_ unsigned short pid, unsigned long* state)PURE;
   STDMETHOD_(void, DeleteChannel)(THIS_ long handle)PURE;
   STDMETHOD_(void, DeleteAllChannels)(THIS)PURE;
 

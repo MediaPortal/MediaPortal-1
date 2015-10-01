@@ -80,6 +80,7 @@ class CTsWriter
     STDMETHODIMP_(void) Stop();
 
     STDMETHODIMP AddChannel(IChannelObserver* observer, long* handle);
+    STDMETHODIMP_(void) GetPidState(unsigned short pid, unsigned long* state);
     STDMETHODIMP_(void) DeleteChannel(long handle);
     STDMETHODIMP_(void) DeleteAllChannels();
 

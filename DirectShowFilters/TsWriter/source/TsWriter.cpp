@@ -25,6 +25,7 @@
 #include <sstream>
 #include <stdio.h>    // _wfopen(), fclose()
 #include <Windows.h>  // MAX_PATH
+#include "EncryptionState.h"
 #include "Version.h"
 
 
@@ -521,6 +522,12 @@ STDMETHODIMP CTsWriter::AddChannel(IChannelObserver* observer, long* handle)
   m_channels.push_back(channel);
   *handle = channel->Id;
   return S_OK;
+}
+
+STDMETHODIMP_(void) CTsWriter::GetPidState(unsigned short pid, unsigned long* state)
+{
+  EncryptionState tempState = m_encryptionAnalyser.GetPidState(pid);
+  *state = (unsigned long)tempState;
 }
 
 STDMETHODIMP_(void) CTsWriter::DeleteChannel(long handle)

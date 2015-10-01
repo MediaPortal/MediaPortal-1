@@ -104,6 +104,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     int AddChannel(IChannelObserver observer, out int handle);
 
     /// <summary>
+    /// Get the state of a PID.
+    /// </summary>
+    /// <param name="pid">The PID.</param>
+    /// <param name="state">The PID's state.</param>
+    [PreserveSig]
+    void GetPidState(ushort pid, out EncryptionState state);
+
+    /// <summary>
     /// Delete a channel.
     /// </summary>
     /// <param name="handle">The channel's handle.</param>
