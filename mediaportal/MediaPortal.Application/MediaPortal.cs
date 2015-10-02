@@ -134,6 +134,8 @@ public class MediaPortalApp : D3D, IRender
   private bool                  _delayedResume;
   private readonly Object       _delayedResumeLock = new Object();
   private bool                  _keepstartfullscreen;
+  private bool                  _usePrimaryScreen;
+  private string                _screenDisplayName;
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND            = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
@@ -1126,53 +1128,69 @@ public class MediaPortalApp : D3D, IRender
       screenNumber                = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
       _stopOnLostAudioRenderer    = xmlreader.GetValueAsBool("general", "stoponaudioremoval", true);
       _delayOnResume              = xmlreader.GetValueAsBool("general", "delay resume", false) ? xmlreader.GetValueAsInt("general", "delay", 0) : 0;
-      screenDeviceId = xmlreader.GetValueAsString("screenselector", "screendeviceid", "");
+      screenDeviceId              = xmlreader.GetValueAsString("screenselector", "screendeviceid", "");
+      _usePrimaryScreen           = xmlreader.GetValueAsBool("general", "useprimaryscreen", false);
+      _screenDisplayName          = xmlreader.GetValueAsString("screenselector", "screendisplayname", "");
     }
 
     if (ScreenNumberOverride >= 0)
     {
       screenNumber = ScreenNumberOverride;
+      if (screenNumber < 0 || screenNumber >= Screen.AllScreens.Length)
+      {
+        screenNumber = 0;
+      }
+      GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
     }
-    if (screenNumber < 0 || screenNumber >= Screen.AllScreens.Length)
+    else
     {
-      screenNumber = 0;
-    }
-
-    foreach (Screen screen in Screen.AllScreens)
-    {
-      const int dwf = 0;
-      var info = new DISPLAY_DEVICE();
-      string monitorname = null;
-      string deviceId = null;
-      info.cb = Marshal.SizeOf(info);
-      if (EnumDisplayDevices(screen.DeviceName, 0, info, dwf))
+      foreach (Screen screen in Screen.AllScreens)
       {
-        monitorname = info.DeviceString;
-        deviceId = info.DeviceID;
-      }
-      if (monitorname == null)
-      {
-        monitorname = "";
-      }
-      if (deviceId == null)
-      {
-        deviceId = "";
-      }
-
-      foreach (AdapterInformation adapter in Manager.Adapters)
-      {
-        if (!string.IsNullOrEmpty(deviceId))
+        const int dwf = 0;
+        var info = new DISPLAY_DEVICE();
+        string monitorname = null;
+        string deviceId = null;
+        info.cb = Marshal.SizeOf(info);
+        if (EnumDisplayDevices(screen.DeviceName, 0, info, dwf))
         {
-          if (deviceId.Equals(screenDeviceId))
+          monitorname = info.DeviceString;
+          deviceId = info.DeviceID;
+        }
+        if (monitorname == null)
+        {
+          monitorname = "";
+        }
+        if (deviceId == null)
+        {
+          deviceId = "";
+        }
+
+        if (_usePrimaryScreen)
+        {
+          if (screen.Primary)
           {
-            GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
+            GUIGraphicsContext.currentScreen = screen;
             break;
           }
         }
         else
         {
-          GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
-          break;
+          if (!string.IsNullOrEmpty(deviceId))
+          {
+            if (deviceId.Equals(screenDeviceId))
+            {
+              GUIGraphicsContext.currentScreen = screen;
+              break;
+            }
+          }
+          else
+          {
+            if (screen.DeviceName.Equals(_screenDisplayName))
+            {
+              GUIGraphicsContext.currentScreen = screen;
+              break;
+            }
+          }
         }
       }
     }

@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -71,7 +72,7 @@ namespace MediaPortal.GUI.Settings
     private int _iStartUpDelay;
     private int _screennumber; // 0 is the default screen for MP
     private string _screendeviceid = "";
-    private readonly List<KeyValuePair<string, string>> _screenCollection = new List<KeyValuePair<string, string>>();
+    private readonly List<Tuple<string, string, string>> _screenCollection = new List<Tuple<string, string, string>>();
 
     public GUISettingsGeneralResume()
     {
@@ -227,7 +228,7 @@ namespace MediaPortal.GUI.Settings
         _cmDelayResume.Selected = xmlreader.GetValueAsBool("general", "delay resume", false);
 
         GetScreens();
-        GUIPropertyManager.SetProperty("#defScreen", _screenCollection[_screennumber].Key);
+        GUIPropertyManager.SetProperty("#defScreen", _screenCollection[_screennumber].Item1);
       }
     }
 
@@ -362,9 +363,9 @@ namespace MediaPortal.GUI.Settings
       dlg.Reset();
       dlg.SetHeading(496); // Options
 
-      foreach (KeyValuePair<string, string> screen in _screenCollection)
+      foreach (Tuple<string, string, string> screen in _screenCollection)
       {
-        dlg.Add(screen.Key);
+        dlg.Add(screen.Item1);
       }
 
       if (_screennumber < _screenCollection.Count)
@@ -389,11 +390,12 @@ namespace MediaPortal.GUI.Settings
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValue("screenselector", "screennumber", dlg.SelectedLabel);
-        xmlwriter.SetValue("screenselector", "screendeviceid", _screenCollection[dlg.SelectedLabel].Value);
+        xmlwriter.SetValue("screenselector", "screendeviceid", _screenCollection[dlg.SelectedLabel].Item2);
+        xmlwriter.SetValue("screenselector", "screendisplayname", _screenCollection[dlg.SelectedLabel].Item3);
         SettingsChanged(true);
       }
 
-      GUIPropertyManager.SetProperty("#defScreen", _screenCollection[dlg.SelectedLabel].Key);
+      GUIPropertyManager.SetProperty("#defScreen", _screenCollection[dlg.SelectedLabel].Item1);
     }
 
     private void GetNumberFromKeyboard(ref string strLine)
@@ -454,9 +456,9 @@ namespace MediaPortal.GUI.Settings
               if (("MONITOR" + "\\" + display.MonitorID + "\\" + display.DriverID).Equals(info.DeviceID))
               {
                 _screenCollection.Add(
-                  new KeyValuePair<string, string>((
+                  new Tuple<string, string, string>((
                     string.Format("{0} ({1}x{2}) on {3}", display.Model, adapter.CurrentDisplayMode.Width,
-                      adapter.CurrentDisplayMode.Height, adapter.Information.Description)), deviceId));
+                      adapter.CurrentDisplayMode.Height, adapter.Information.Description)), deviceId, adapter.Information.DeviceName.Trim()));
                 detectedId = true;
                 break;
               }
@@ -464,9 +466,9 @@ namespace MediaPortal.GUI.Settings
             if (!detectedId)
             {
               _screenCollection.Add(
-                new KeyValuePair<string, string>((
+                new Tuple<string, string, string>((
                   string.Format("{0} ({1}x{2}) on {3}", monitorname, adapter.CurrentDisplayMode.Width,
-                    adapter.CurrentDisplayMode.Height, adapter.Information.Description)), deviceId));
+                    adapter.CurrentDisplayMode.Height, adapter.Information.Description)), deviceId, adapter.Information.DeviceName.Trim()));
               break;
             }
           }
