@@ -106,6 +106,7 @@ namespace MediaPortal.Configuration.Sections
 
     private int _screennumber; // 0 is the primary screen
     private string _screenDeviceId = "";
+    private bool _usePrimaryScreen;
 
     private readonly string[][] _sectionEntries = new[]
     {
@@ -134,7 +135,9 @@ namespace MediaPortal.Configuration.Sections
                                             // 11 Stop playback on removal of an audio renderer
                                             new[] {"general", "stoponaudioremoval", "true"},
                                             // 12 No AutoStart on RemoteDesktop
-                                            new[] {"general", "noautostartonrdp", "false"}
+                                            new[] {"general", "noautostartonrdp", "false"},
+                                            // 13 Always use Primary screen
+                                            new[] {"general", "useprimaryscreen", "false"}
                                           };
 
     /// <summary> 
@@ -264,6 +267,7 @@ namespace MediaPortal.Configuration.Sections
       dtblDataSource.Columns.Add("DisplayMember");
       dtblDataSource.Columns.Add("ValueMember");
       dtblDataSource.Columns.Add("AdditionalInfo");
+      dtblDataSource.Columns.Add("MonitorDisplayName");
       cbScreen.DataSource.SafeDispose();
       cbScreen.Items.Clear();
       cbScreen.DataSource = dtblDataSource;
@@ -303,16 +307,16 @@ namespace MediaPortal.Configuration.Sections
               {
                 if (!string.IsNullOrEmpty(display.Model))
                 {
-                  dtblDataSource.Rows.Add(string.Format("{0} ({1}x{2}) on {3}", display.Model,
-                    adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Information.Description),
-                    indexAdapter, info.DeviceID);
+                  dtblDataSource.Rows.Add(string.Format("{0} ({1}x{2}) on {3} - Screen Primary : {4}", display.Model,
+                    adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Information.Description, screen.Primary ? "Yes" : "No"),
+                    indexAdapter, info.DeviceID, adapter.Information.DeviceName.Trim());
                   indexAdapter++;
                   detectedId = true;
                   break;
                 }
-                dtblDataSource.Rows.Add(string.Format("{0} ({1}x{2}) on {3}", monitorname,
-                  adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Information.Description),
-                  indexAdapter, info.DeviceID);
+                dtblDataSource.Rows.Add(string.Format("{0} ({1}x{2}) on {3} - Screen Primary : {4}", monitorname,
+                  adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Information.Description, screen.Primary ? "Yes" : "No"),
+                  indexAdapter, info.DeviceID, adapter.Information.DeviceName.Trim());
                 indexAdapter++;
                 detectedId = true;
                 break;
@@ -320,9 +324,9 @@ namespace MediaPortal.Configuration.Sections
             }
             if (!detectedId)
             {
-              dtblDataSource.Rows.Add(string.Format("{0} ({1}x{2}) on {3}", monitorname,
-                adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Information.Description),
-                indexAdapter, deviceId);
+              dtblDataSource.Rows.Add(string.Format("{0} ({1}x{2}) on {3} - Screen Primary : {4}", monitorname,
+                adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Information.Description, screen.Primary ? "Yes" : "No"),
+                indexAdapter, deviceId, adapter.Information.DeviceName.Trim());
               indexAdapter++;
               break;
             }
@@ -341,6 +345,7 @@ namespace MediaPortal.Configuration.Sections
 
         _screennumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
         _screenDeviceId = xmlreader.GetValueAsString("screenselector", "screendeviceid", "");
+        _usePrimaryScreen = xmlreader.GetValueAsBool("general", "useprimaryscreen", false);
 
         while (cbScreen.Items.Count <= _screennumber)
         {
@@ -368,6 +373,11 @@ namespace MediaPortal.Configuration.Sections
           cbScreen.SelectedIndex = 0;
         }
 
+        if (_usePrimaryScreen)
+        {
+          cbScreen.Enabled = false;
+        }
+
         nudDelay.Value = xmlreader.GetValueAsInt("general", "delay", 0);
         mpCheckBoxMpStartup.Checked = xmlreader.GetValueAsBool("general", "delay startup", false);
         mpCheckBoxMpResume.Checked = xmlreader.GetValueAsBool("general", "delay resume", false);
@@ -386,6 +396,7 @@ namespace MediaPortal.Configuration.Sections
         if (dataRowView != null)
         {
           xmlwriter.SetValue("screenselector", "screendeviceid", dataRowView["AdditionalInfo"].ToString());
+          xmlwriter.SetValue("screenselector", "screendisplayname", dataRowView["MonitorDisplayName"].ToString());
         }
 
         for (int index = 0; index < _sectionEntries.Length; index++)
@@ -398,6 +409,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("general", "delay startup", mpCheckBoxMpStartup.Checked);
         xmlwriter.SetValueAsBool("general", "delay resume", mpCheckBoxMpResume.Checked);
         xmlwriter.SetValueAsBool("general", "wait for tvserver", cbWaitForTvService.Checked);
+        xmlwriter.SetValueAsBool("general", "useprimaryscreen", _usePrimaryScreen);
       }
 
       try
@@ -446,11 +458,27 @@ namespace MediaPortal.Configuration.Sections
 
     private void settingsCheckedListBox_SelectedIndexChanged(object sender, EventArgs e)
     {
+      settingsCheckedListBox.SelectedIndexChanged -= settingsCheckedListBox_SelectedIndexChanged;
+      settingsCheckedListBox.SelectionMode = SelectionMode.None;
       if (settingsCheckedListBox.GetItemChecked(1))
       {
         // if we use keepstartfullscreen, we need to force to use MP as fullscreen
         settingsCheckedListBox.SetItemChecked(0, true);
       }
+      if (settingsCheckedListBox.GetItemChecked(13))
+      {
+        cbScreen.Enabled = false;
+        _usePrimaryScreen = true;
+        Log.Debug("General: item changed checked {0} {1}", cbScreen.Enabled.ToString(), _usePrimaryScreen);
+      }
+      else
+      {
+        cbScreen.Enabled = true;
+        _usePrimaryScreen = false;
+        Log.Debug("General: item changed no checked {0} {1}", cbScreen.Enabled.ToString(), _usePrimaryScreen);
+      }
+      settingsCheckedListBox.SelectedIndexChanged += settingsCheckedListBox_SelectedIndexChanged;
+      settingsCheckedListBox.SelectionMode = SelectionMode.One;
     }
 
     private void lbScreen_Click(object sender, EventArgs e)
