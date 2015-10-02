@@ -40,7 +40,6 @@ namespace MediaPortal.GUI.Settings
   /// Summary description for Class1.
   /// </summary>
   public sealed class GUISettingsGeneralResume : GUIInternalWindow
-
   {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     // ReSharper disable InconsistentNaming
