@@ -135,7 +135,7 @@
       this.cbWaitForTvService.AutoSize = true;
       this.cbWaitForTvService.Enabled = false;
       this.cbWaitForTvService.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbWaitForTvService.Location = new System.Drawing.Point(11, 31);
+      this.cbWaitForTvService.Location = new System.Drawing.Point(11, 21);
       this.cbWaitForTvService.Name = "cbWaitForTvService";
       this.cbWaitForTvService.Size = new System.Drawing.Size(174, 17);
       this.cbWaitForTvService.TabIndex = 4;
