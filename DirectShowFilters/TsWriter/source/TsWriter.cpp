@@ -272,10 +272,13 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
   }
 
   m_nextChannelId = 0;
+  m_openTvEpgServiceId = 0;
+  m_isOpenTvEpgServiceRunning = false;
+  m_openTvEpgPmtPid = 0;
+  m_freesatPmtPid = 0;
+  m_isFreesatTransportStream = false;
   m_isRunning = false;
   m_checkSectionCrcs = true;
-  m_isFreesatTransportStream = false;
-  m_openTvEpgServiceId = 0;
   m_observer = NULL;
   LogDebug(L"writer: completed");
 }
@@ -493,6 +496,8 @@ STDMETHODIMP_(void) CTsWriter::Stop()
   m_grabberSiScte->Reset(enableCrcCheck);
 
   m_openTvEpgServiceId = 0;
+  m_isOpenTvEpgServiceRunning = false;
+  m_openTvEpgPmtPid = 0;
   m_openTvEpgPidsEvent.clear();
   m_openTvEpgPidsDescription.clear();
 
@@ -500,7 +505,9 @@ STDMETHODIMP_(void) CTsWriter::Stop()
   m_atscEpgPidsEtt.clear();
   m_scteEpgPids.clear();
 
+  m_freesatPmtPid = 0;
   m_isFreesatTransportStream = false;
+
   m_encryptionAnalyser.Reset();
 }
 
@@ -1131,56 +1138,29 @@ void CTsWriter::OnSdtRunningStatus(unsigned short serviceId, unsigned char runni
 {
   // Don't bother notifying unless the service is not running. If the service
   // is running PMT should be received shortly.
-  if ((runningStatus == 1 || runningStatus == 5) && m_observer != NULL)
+  bool isRunning = true;
+  if (runningStatus == 1 || runningStatus == 5)
   {
-    m_observer->OnProgramDetail(serviceId, 0, false, NULL, 0);
-  }
-}
-
-void CTsWriter::OnOpenTvEpgService(unsigned short serviceId, unsigned short originalNetworkId)
-{
-  if (m_openTvEpgServiceId == serviceId || (serviceId != 0 && m_openTvEpgServiceId != 0))
-  {
-    // Duplicate nofication is odd. We don't ever expect to see 2 OpenTV EPG
-    // services in the same transport stream.
-    return;
-  }
-
-  if (serviceId == 0)
-  {
-    LogDebug(L"writer: OpenTV EPG service removed");
-    m_openTvEpgServiceId = 0;
-    if (m_openTvEpgPidsEvent.size() > 0)
+    if (m_observer != NULL)
     {
-      m_grabberEpgOpenTv->RemoveEventDecoders(m_openTvEpgPidsEvent);
-      m_openTvEpgPidsEvent.clear();
+      m_observer->OnProgramDetail(serviceId, 0, false, NULL, 0);
     }
-    if (m_openTvEpgPidsDescription.size() > 0)
+
+    if (!m_openTvEpgServiceId == serviceId)
     {
-      m_grabberEpgOpenTv->RemoveDescriptionDecoders(m_openTvEpgPidsDescription);
-      m_openTvEpgPidsDescription.clear();
+      return;
     }
+    isRunning = false;
+  }
+
+  if (m_isOpenTvEpgServiceRunning == isRunning)
+  {
     return;
   }
 
-  m_grabberEpgOpenTv->SetOriginalNetworkId(originalNetworkId);
-  bool isOpenTvEpgService = false;
-  if (!m_grabberSiMpeg->GetOpenTvEpgPids(serviceId,
-                                          isOpenTvEpgService,
-                                          m_openTvEpgPidsEvent,
-                                          m_openTvEpgPidsDescription))
+  LogDebug(L"writer: OpenTV EPG service running status changed, is running = %d", isRunning);
+  if (isRunning)
   {
-    LogDebug(L"writer: OpenTV EPG service candidate identified, service ID = %hu, ONID = %hu",
-              serviceId, originalNetworkId);
-    m_openTvEpgServiceId = serviceId;
-    return;
-  }
-
-  if (isOpenTvEpgService)
-  {
-    LogDebug(L"writer: OpenTV EPG service identified, service ID = %hu, ONID = %hu",
-              serviceId, originalNetworkId);
-    m_openTvEpgServiceId = serviceId;
     if (m_openTvEpgPidsEvent.size() > 0)
     {
       m_grabberEpgOpenTv->AddEventDecoders(m_openTvEpgPidsEvent);
@@ -1188,6 +1168,75 @@ void CTsWriter::OnOpenTvEpgService(unsigned short serviceId, unsigned short orig
     if (m_openTvEpgPidsDescription.size() > 0)
     {
       m_grabberEpgOpenTv->AddDescriptionDecoders(m_openTvEpgPidsDescription);
+    }
+  }
+  else
+  {
+    if (m_openTvEpgPidsEvent.size() > 0)
+    {
+      m_grabberEpgOpenTv->RemoveEventDecoders(m_openTvEpgPidsEvent);
+    }
+    if (m_openTvEpgPidsDescription.size() > 0)
+    {
+      m_grabberEpgOpenTv->RemoveDescriptionDecoders(m_openTvEpgPidsDescription);
+    }
+  }
+  m_isOpenTvEpgServiceRunning = isRunning;
+}
+
+void CTsWriter::OnOpenTvEpgService(unsigned short serviceId, unsigned short originalNetworkId)
+{
+  if (m_openTvEpgServiceId == serviceId)
+  {
+    // Duplicate nofication is odd. We don't ever expect to see 2 OpenTV EPG
+    // services in the same transport stream.
+    return;
+  }
+
+  m_grabberEpgOpenTv->SetOriginalNetworkId(originalNetworkId);
+
+  // If we've received PMT for this service then we can immediately determine
+  // whether it's a valid OpenTV EPG service. Otherwise it becomes a candidate
+  // and we wait for PMT.
+  unsigned short pmtPid;
+  bool isOpenTvEpgService = false;
+  if (!m_grabberSiMpeg->GetOpenTvEpgPids(serviceId,
+                                          pmtPid,
+                                          isOpenTvEpgService,
+                                          m_openTvEpgPidsEvent,
+                                          m_openTvEpgPidsDescription))
+  {
+    LogDebug(L"writer: OpenTV EPG service candidate identified, service ID = %hu, ONID = %hu, PMT PID = %hu",
+              serviceId, originalNetworkId, pmtPid);
+    m_openTvEpgServiceId = serviceId;
+    if (pmtPid != 0 && m_openTvEpgPmtPid != pmtPid)
+    {
+      m_openTvEpgPmtPid = pmtPid;
+      m_grabberEpgOpenTv->SetPmtPid(pmtPid);
+    }
+    return;
+  }
+
+  if (isOpenTvEpgService)
+  {
+    LogDebug(L"writer: OpenTV EPG service identified, service ID = %hu, ONID = %hu, PMT PID = %hu",
+              serviceId, originalNetworkId, pmtPid);
+    m_openTvEpgServiceId = serviceId;
+    if (m_openTvEpgPmtPid != pmtPid)
+    {
+      m_openTvEpgPmtPid = pmtPid;
+      m_grabberEpgOpenTv->SetPmtPid(pmtPid);
+    }
+    if (m_isOpenTvEpgServiceRunning)
+    {
+      if (m_openTvEpgPidsEvent.size() > 0)
+      {
+        m_grabberEpgOpenTv->AddEventDecoders(m_openTvEpgPidsEvent);
+      }
+      if (m_openTvEpgPidsDescription.size() > 0)
+      {
+        m_grabberEpgOpenTv->AddDescriptionDecoders(m_openTvEpgPidsDescription);
+      }
     }
   }
 }
@@ -1298,6 +1347,20 @@ void CTsWriter::OnPatProgramReceived(unsigned short programNumber, unsigned shor
   {
     m_observer->OnProgramDetail(programNumber, pmtPid, true, NULL, 0);
   }
+
+  if (m_openTvEpgServiceId == programNumber)
+  {
+    if (m_openTvEpgPmtPid == 0)
+    {
+      m_openTvEpgPmtPid = pmtPid;
+      m_grabberEpgOpenTv->SetPmtPid(pmtPid);
+    }
+  }
+  else if (m_freesatPmtPid == 0 && !m_isFreesatTransportStream)
+  {
+    m_freesatPmtPid = pmtPid;
+    m_grabberEpgDvb->SetFreesatPmtPid(pmtPid);
+  }
 }
 
 void CTsWriter::OnPatProgramChanged(unsigned short programNumber, unsigned short pmtPid)
@@ -1306,6 +1369,11 @@ void CTsWriter::OnPatProgramChanged(unsigned short programNumber, unsigned short
   {
     m_observer->OnProgramDetail(programNumber, pmtPid, true, NULL, 0);
   }
+
+  if (m_openTvEpgServiceId == programNumber)
+  {
+    LogDebug(L"writer: OpenTV EPG service PMT PID changed, unsupported");
+  }
 }
 
 void CTsWriter::OnPatProgramRemoved(unsigned short programNumber, unsigned short pmtPid)
@@ -1313,6 +1381,19 @@ void CTsWriter::OnPatProgramRemoved(unsigned short programNumber, unsigned short
   if (m_observer != NULL)
   {
     m_observer->OnProgramDetail(programNumber, pmtPid, false, NULL, 0);
+  }
+
+  LogDebug(L"writer: OpenTV EPG service removed");
+  m_isOpenTvEpgServiceRunning = false;
+  if (m_openTvEpgPidsEvent.size() > 0)
+  {
+    m_grabberEpgOpenTv->RemoveEventDecoders(m_openTvEpgPidsEvent);
+    m_openTvEpgPidsEvent.clear();
+  }
+  if (m_openTvEpgPidsDescription.size() > 0)
+  {
+    m_grabberEpgOpenTv->RemoveDescriptionDecoders(m_openTvEpgPidsDescription);
+    m_openTvEpgPidsDescription.clear();
   }
 }
 
@@ -1348,6 +1429,12 @@ void CTsWriter::OnPmtReceived(unsigned short programNumber,
     m_observer->OnProgramDetail(programNumber, pid, true, table, tableSize);
   }
 
+  // Since we've received PMT, we now know whether this is a Freesat transport
+  // stream or not. Therefore we no longer need the Freesat PMT PID.
+  m_grabberEpgDvb->SetFreesatPmtPid(0);
+
+  // If this is the PMT for the OpenTV EPG service candidate, we can determine
+  // whether the service is really an EPG service or not.
   if (programNumber != m_openTvEpgServiceId)
   {
     return;
@@ -1355,24 +1442,38 @@ void CTsWriter::OnPmtReceived(unsigned short programNumber,
 
   bool isOpenTvEpgService = false;
   if (!m_grabberSiMpeg->GetOpenTvEpgPids(programNumber,
+                                          pid,
                                           isOpenTvEpgService,
                                           m_openTvEpgPidsEvent,
                                           m_openTvEpgPidsDescription) || !isOpenTvEpgService)
   {
     LogDebug(L"writer: OpenTV EPG service candidate not valid");
     m_openTvEpgServiceId = 0;
+    if (m_openTvEpgPmtPid != 0)
+    {
+      m_openTvEpgPmtPid = 0;
+      m_grabberEpgOpenTv->SetPmtPid(0);
+    }
     return;
   }
 
-  LogDebug(L"writer: OpenTV EPG service identified, service ID = %hu",
-            programNumber);
-  if (m_openTvEpgPidsEvent.size() > 0)
+  LogDebug(L"writer: OpenTV EPG service identified, service ID = %hu, PMT PID = %hu",
+            programNumber, pid);
+  if (m_openTvEpgPmtPid == 0)
   {
-    m_grabberEpgOpenTv->AddEventDecoders(m_openTvEpgPidsEvent);
+    m_openTvEpgPmtPid = pid;
+    m_grabberEpgOpenTv->SetPmtPid(pid);
   }
-  if (m_openTvEpgPidsDescription.size() > 0)
+  if (m_isOpenTvEpgServiceRunning)
   {
-    m_grabberEpgOpenTv->AddDescriptionDecoders(m_openTvEpgPidsDescription);
+    if (m_openTvEpgPidsEvent.size() > 0)
+    {
+      m_grabberEpgOpenTv->AddEventDecoders(m_openTvEpgPidsEvent);
+    }
+    if (m_openTvEpgPidsDescription.size() > 0)
+    {
+      m_grabberEpgOpenTv->AddDescriptionDecoders(m_openTvEpgPidsDescription);
+    }
   }
 }
 
@@ -1390,7 +1491,7 @@ void CTsWriter::OnPmtChanged(unsigned short programNumber,
   {
     // We can't get the new PIDs from here because this call-back is invoked
     // before the grabber's new section data is saved.
-    LogDebug(L"writer: OpenTV EPG service changed, unsupported");
+    LogDebug(L"writer: OpenTV EPG service PMT changed, unsupported");
   }
 }
 
@@ -1407,7 +1508,7 @@ void CTsWriter::OnPmtRemoved(unsigned short programNumber, unsigned short pid)
   }
 
   LogDebug(L"writer: OpenTV EPG service removed");
-  m_openTvEpgServiceId = 0;
+  m_isOpenTvEpgServiceRunning = false;
   if (m_openTvEpgPidsEvent.size() > 0)
   {
     m_grabberEpgOpenTv->RemoveEventDecoders(m_openTvEpgPidsEvent);

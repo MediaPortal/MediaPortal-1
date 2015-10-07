@@ -257,6 +257,8 @@ class CTsWriter
     CCritSec m_channelLock;
 
     unsigned short m_openTvEpgServiceId;
+    bool m_isOpenTvEpgServiceRunning;
+    unsigned short m_openTvEpgPmtPid;
     vector<unsigned short> m_openTvEpgPidsEvent;
     vector<unsigned short> m_openTvEpgPidsDescription;
 
@@ -264,9 +266,11 @@ class CTsWriter
     vector<unsigned short> m_atscEpgPidsEtt;
     vector<unsigned short> m_scteEpgPids;
 
+    unsigned short m_freesatPmtPid;
+    bool m_isFreesatTransportStream;
+
     bool m_isRunning;
     bool m_checkSectionCrcs;
-    bool m_isFreesatTransportStream;
     CEncryptionAnalyser m_encryptionAnalyser;
     IObserver* m_observer;
 };

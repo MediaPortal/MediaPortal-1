@@ -320,16 +320,18 @@ bool CGrabberSiMpeg::GetFreesatPids(bool& isFreesatSiPresent,
 }
 
 bool CGrabberSiMpeg::GetOpenTvEpgPids(unsigned short programNumber,
+                                      unsigned short& pmtPid,
                                       bool& isOpenTvEpgProgram,
                                       vector<unsigned short>& pidsEvent,
                                       vector<unsigned short>& pidsDescription)
 {
   CEnterCriticalSection lock(m_section);
   map<unsigned short, CGrabberPmt*>::const_iterator it = m_pmtGrabbers.find(programNumber);
-  if (it == m_pmtGrabbers.end() || it->second == NULL || it->second->IsReady())
+  if (it == m_pmtGrabbers.end() || it->second == NULL)
   {
     return false;
   }
+  it->second->GetFilter(pmtPid, programNumber);
   return it->second->GetOpenTvEpgPids(isOpenTvEpgProgram, pidsEvent, pidsDescription);
 }
 

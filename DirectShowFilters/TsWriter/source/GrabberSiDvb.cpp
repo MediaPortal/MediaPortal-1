@@ -968,11 +968,11 @@ void CGrabberSiDvb::OnSdtReceived(unsigned char tableId,
     CEnterCriticalSection lock(m_section);
     if (m_callBackSiDvb != NULL)
     {
-      m_callBackSiDvb->OnSdtRunningStatus(serviceId, runningStatus);
       if (serviceType == 0x83)
       {
         m_callBackSiDvb->OnOpenTvEpgService(serviceId, originalNetworkId);
       }
+      m_callBackSiDvb->OnSdtRunningStatus(serviceId, runningStatus);
     }
   }
 }
@@ -1069,10 +1069,6 @@ void CGrabberSiDvb::OnSdtRemoved(unsigned char tableId,
     if (m_callBackSiDvb != NULL)
     {
       m_callBackSiDvb->OnSdtRunningStatus(serviceId, 1);   // not running
-      if (serviceType == 0x83)
-      {
-        m_callBackSiDvb->OnOpenTvEpgService(0, originalNetworkId);
-      }
     }
   }
 }

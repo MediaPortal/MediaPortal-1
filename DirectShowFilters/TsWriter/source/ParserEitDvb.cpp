@@ -77,6 +77,7 @@ CParserEitDvb::CParserEitDvb(ICallBackPidConsumer* callBack,
   m_freesatPidEitPf = 0;
   m_freesatPidEitSchedule = 0;
   m_freesatPidNit = 0;
+  m_freesatPidPmt = 0;
   m_freesatPidSdt = 0;
   m_isSeen = false;
   m_isReady = false;
@@ -147,6 +148,24 @@ STDMETHODIMP CParserEitDvb::NonDelegatingQueryInterface(REFIID iid, void** ppv)
   return CUnknown::NonDelegatingQueryInterface(iid, ppv);
 }
 
+void CParserEitDvb::SetFreesatPmtPid(unsigned short pid)
+{
+  LogDebug(L"EIT DVB: set Freesat PMT PID, PID = %hu", pid);
+  CEnterCriticalSection lock(m_section);
+  if (m_grabFreesat && m_callBackPidConsumer != NULL)
+  {
+    if (m_freesatPidPmt != 0)
+    {
+      m_callBackPidConsumer->OnPidsNotRequired(&m_freesatPidPmt, 1, Epg);
+    }
+    if (pid != 0)
+    {
+      m_callBackPidConsumer->OnPidsRequired(&pid, 1, Epg);
+    }
+  }
+  m_freesatPidPmt = pid;
+}
+
 void CParserEitDvb::SetFreesatPids(unsigned short pidBat,
                                     unsigned short pidEitPf,
                                     unsigned short pidEitSchedule,
@@ -202,7 +221,7 @@ void CParserEitDvb::SetFreesatPids(unsigned short pidBat,
     pids[pidCount++] = pidSdt;
   }
 
-  if (m_grabFreesat && m_callBackPidConsumer != NULL)
+  if (m_grabFreesat && m_callBackPidConsumer != NULL && pidCount > 0)
   {
     m_callBackPidConsumer->OnPidsRequired(pids, pidCount, Epg);
   }
@@ -384,6 +403,10 @@ STDMETHODIMP_(void) CParserEitDvb::SetProtocols(bool grabDvbEit,
       {
         pidsAdd.push_back(m_freesatPidNit);
       }
+      if (m_freesatPidPmt != 0)
+      {
+        pidsAdd.push_back(m_freesatPidPmt);
+      }
       if (m_freesatPidSdt != 0)
       {
         pidsAdd.push_back(m_freesatPidSdt);
@@ -408,6 +431,10 @@ STDMETHODIMP_(void) CParserEitDvb::SetProtocols(bool grabDvbEit,
       if (m_freesatPidNit != 0)
       {
         pidsRemove.push_back(m_freesatPidNit);
+      }
+      if (m_freesatPidPmt != 0)
+      {
+        pidsRemove.push_back(m_freesatPidPmt);
       }
       if (m_freesatPidSdt != 0)
       {

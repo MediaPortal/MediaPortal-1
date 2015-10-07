@@ -80,6 +80,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
 
     STDMETHODIMP NonDelegatingQueryInterface(REFIID iid, void** ppv);
 
+    void SetFreesatPmtPid(unsigned short pid);
     void SetFreesatPids(unsigned short pidBat,
                         unsigned short pidEitPf,
                         unsigned short pidEitSchedule,
@@ -682,6 +683,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
     unsigned short m_freesatPidEitPf;
     unsigned short m_freesatPidEitSchedule;
     unsigned short m_freesatPidNit;
+    unsigned short m_freesatPidPmt;
     unsigned short m_freesatPidSdt;
     bool m_isSeen;
     bool m_isReady;

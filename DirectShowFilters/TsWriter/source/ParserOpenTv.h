@@ -85,6 +85,7 @@ class CParserOpenTv
     STDMETHODIMP NonDelegatingQueryInterface(REFIID iid, void** ppv);
 
     void SetOriginalNetworkId(unsigned short originalNetworkId);
+    void SetPmtPid(unsigned short pid);
     void AddEventDecoders(const vector<unsigned short>& pids);
     void RemoveEventDecoders(const vector<unsigned short>& pids);
     void AddDescriptionDecoders(const vector<unsigned short>& pids);
@@ -280,6 +281,8 @@ class CParserOpenTv
     void OnNewSection(int pid, int tableId, CSection& section);
 
     bool AddOrResetDecoder(unsigned short pid, bool enableCrcCheck);
+    void CleanUpSections(vector<unsigned short>& keepPids);
+    void SwitchToPhase(bool descriptionPhase);
 
     static bool DecodeEventRecord(unsigned char* sectionData,
                                   unsigned short& pointer,
@@ -324,6 +327,7 @@ class CParserOpenTv
     clock_t m_completeTime;
     ICallBackGrabber* m_callBackGrabber;
     ICallBackPidConsumer* m_callBackPidConsumer;
+    unsigned short m_pidPmt;
     vector<unsigned short> m_pidsEvent;
     vector<unsigned short> m_pidsDescription;
     map<unsigned short, CSectionDecoder*> m_decoders;

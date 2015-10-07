@@ -51,6 +51,7 @@ CParserOpenTv::CParserOpenTv(ICallBackPidConsumer* callBack, LPUNKNOWN unk, HRES
 
   m_callBackGrabber = NULL;
   m_callBackPidConsumer = callBack;
+  m_pidPmt = 0;
   m_enableCrcCheck = true;
 }
 
@@ -124,15 +125,63 @@ void CParserOpenTv::SetOriginalNetworkId(unsigned short originalNetworkId)
     m_seenSections.clear();
     m_unseenSections.clear();
     m_isReady = false;
+  }
+  SwitchToPhase(false);
+}
 
-    if (m_isGrabbing && m_callBackPidConsumer != NULL && m_isDescriptionPhase)
+void CParserOpenTv::SetPmtPid(unsigned short pid)
+{
+  LogDebug(L"OpenTV: set PMT PID, PID = %hu", pid);
+  CEnterCriticalSection lock(m_section);
+  if (pid == m_pidPmt)
+  {
+    return;
+  }
+
+  if (m_isGrabbing && m_callBackPidConsumer != NULL)
+  {
+    vector<unsigned short> pids;
+    vector<unsigned short>::const_iterator it;
+    vector<unsigned short>::const_iterator itEnd;
+    if (m_isDescriptionPhase)
     {
-      m_callBackPidConsumer->OnPidsNotRequired(&m_pidsDescription[0],
-                                                m_pidsDescription.size(),
-                                                Epg);
-      m_callBackPidConsumer->OnPidsRequired(&m_pidsEvent[0], m_pidsEvent.size(), Epg);
+      it = m_pidsDescription.begin();
+      itEnd = m_pidsDescription.end();
+    }
+    else
+    {
+      it = m_pidsEvent.begin();
+      itEnd = m_pidsEvent.end();
+    }
+
+    if (m_pidPmt != 0)
+    {
+      pids.push_back(m_pidPmt);
+    }
+    for ( ; it != itEnd; it++)
+    {
+      pids.push_back(*it);
+    }
+
+    if (pids.size() > 0)
+    {
+      m_callBackPidConsumer->OnPidsNotRequired(&pids[0], pids.size(), Epg);
+    }
+    if (pid != 0)
+    {
+      m_callBackPidConsumer->OnPidsRequired(&pid, 1, Epg);
     }
   }
+
+  bool isGrabbing = m_isGrabbing;
+  bool isItalianText = m_isItalianText;
+  bool useAlternativeProgramCategoryHandling = m_useAlternativeProgramCategoryHandling;
+  Reset(m_enableCrcCheck);
+  m_isGrabbing = isGrabbing;
+  m_isItalianText = isItalianText;
+  m_useAlternativeProgramCategoryHandling = useAlternativeProgramCategoryHandling;
+
+  m_pidPmt = pid;
 }
 
 void CParserOpenTv::AddEventDecoders(const vector<unsigned short>& pids)
@@ -153,9 +202,16 @@ void CParserOpenTv::AddEventDecoders(const vector<unsigned short>& pids)
   {
     LogDebug(L"OpenTV: add event decoders...");
     CUtils::DebugVector(newPids, L"PIDs", false);
-    if (m_isGrabbing && !m_isDescriptionPhase && m_callBackPidConsumer != NULL)
+    if (m_isGrabbing)
     {
-      m_callBackPidConsumer->OnPidsRequired(&newPids[0], newPids.size(), Epg);
+      if (m_isDescriptionPhase)
+      {
+        SwitchToPhase(false);
+      }
+      else
+      {
+        m_callBackPidConsumer->OnPidsRequired(&newPids[0], newPids.size(), Epg);
+      }
     }
   }
 }
@@ -186,13 +242,22 @@ void CParserOpenTv::RemoveEventDecoders(const vector<unsigned short>& pids)
       m_decoders.erase(decoderIt);
     }
   }
+
   if (oldPids.size() > 0)
   {
     LogDebug(L"OpenTV: remove event decoders...");
     CUtils::DebugVector(oldPids, L"PIDs", false);
+
+    m_recordsEvent.RemoveAllRecords();
+    CleanUpSections(m_pidsDescription);
+
     if (m_isGrabbing && !m_isDescriptionPhase && m_callBackPidConsumer != NULL)
     {
       m_callBackPidConsumer->OnPidsNotRequired(&oldPids[0], oldPids.size(), Epg);
+    }
+    else
+    {
+      SwitchToPhase(false);
     }
   }
 }
@@ -250,10 +315,13 @@ void CParserOpenTv::RemoveDescriptionDecoders(const vector<unsigned short>& pids
       m_decoders.erase(decoderIt);
     }
   }
+
   if (oldPids.size() > 0)
   {
     LogDebug(L"OpenTV: remove description decoders...");
     CUtils::DebugVector(oldPids, L"PIDs", false);
+    m_recordsDescription.RemoveAllRecords();
+    CleanUpSections(m_pidsEvent);
     if (m_isGrabbing && m_isDescriptionPhase && m_callBackPidConsumer != NULL)
     {
       m_callBackPidConsumer->OnPidsNotRequired(&oldPids[0], oldPids.size(), Epg);
@@ -270,9 +338,22 @@ STDMETHODIMP_(void) CParserOpenTv::Start()
     m_isGrabbing = true;
     m_isDescriptionPhase = false;
 
-    if (m_callBackPidConsumer != NULL && m_pidsEvent.size() > 0)
+    if (m_callBackPidConsumer != NULL)
     {
-      m_callBackPidConsumer->OnPidsRequired(&m_pidsEvent[0], m_pidsEvent.size(), Epg);
+      vector<unsigned short> pids;
+      if (m_pidPmt != 0)
+      {
+        pids.push_back(m_pidPmt);
+      }
+      vector<unsigned short>::const_iterator it = m_pidsEvent.begin();
+      for ( ; it != m_pidsEvent.end(); it++)
+      {
+        pids.push_back(*it);
+      }
+      if (pids.size() > 0)
+      {
+        m_callBackPidConsumer->OnPidsRequired(&pids[0], pids.size(), Epg);
+      }
     }
   }
 }
@@ -297,15 +378,32 @@ STDMETHODIMP_(void) CParserOpenTv::Stop()
 
     if (m_callBackPidConsumer != NULL)
     {
+      vector<unsigned short> pids;
+      vector<unsigned short>::const_iterator it;
+      vector<unsigned short>::const_iterator itEnd;
       if (m_isDescriptionPhase)
       {
-        m_callBackPidConsumer->OnPidsNotRequired(&m_pidsDescription[0],
-                                                  m_pidsDescription.size(),
-                                                  Epg);
+        it = m_pidsDescription.begin();
+        itEnd = m_pidsDescription.end();
       }
-      else if (m_pidsEvent.size() > 0)
+      else
       {
-        m_callBackPidConsumer->OnPidsNotRequired(&m_pidsEvent[0], m_pidsEvent.size(), Epg);
+        it = m_pidsEvent.begin();
+        itEnd = m_pidsEvent.end();
+      }
+
+      if (m_pidPmt != 0)
+      {
+        pids.push_back(m_pidPmt);
+      }
+      for ( ; it != itEnd; it++)
+      {
+        pids.push_back(*it);
+      }
+
+      if (pids.size() > 0)
+      {
+        m_callBackPidConsumer->OnPidsNotRequired(&pids[0], pids.size(), Epg);
       }
     }
   }
@@ -332,10 +430,12 @@ void CParserOpenTv::Reset(bool enableCrcCheck)
 
   m_seenSections.clear();
   m_unseenSections.clear();
+  m_pidPmt = 0;
   m_pidsEvent.clear();
   m_pidsDescription.clear();
   m_isGrabbing = false;
   m_isItalianText = false;
+  m_useAlternativeProgramCategoryHandling = false;
   m_isDescriptionPhase = false;
   m_isReady = false;
   m_enableCrcCheck = enableCrcCheck;
@@ -576,19 +676,13 @@ void CParserOpenTv::OnNewSection(int pid, int tableId, CSection& section)
       // Assume repetition every 60 seconds.
       if (CTimeUtils::ElapsedMillis(m_completeTime) >= 30000)
       {
-        if (!m_isDescriptionPhase && m_pidsDescription.size() > 0)
+        if (!m_isDescriptionPhase)
         {
-          LogDebug(L"OpenTV: switch to description phase");
-          m_isDescriptionPhase = true;
-          m_completeTime = clock();
-          if (m_callBackPidConsumer != NULL)
+          SwitchToPhase(true);
+          if (m_isDescriptionPhase)
           {
-            m_callBackPidConsumer->OnPidsNotRequired(&m_pidsEvent[0], m_pidsEvent.size(), Epg);
-            m_callBackPidConsumer->OnPidsRequired(&m_pidsDescription[0],
-                                                  m_pidsDescription.size(),
-                                                  Epg);
+            return;
           }
-          return;
         }
 
         m_recordsEvent.RemoveExpiredRecords(NULL);
@@ -604,17 +698,7 @@ void CParserOpenTv::OnNewSection(int pid, int tableId, CSection& section)
         {
           m_callBackGrabber->OnTableComplete(PID_OPENTV_CALL_BACK, TABLE_ID_OPENTV_CALL_BACK);
         }
-        if (m_isDescriptionPhase)
-        {
-          m_isDescriptionPhase = false;   // monitor event changes (start time, title more important)
-          if (m_callBackPidConsumer != NULL)
-          {
-            m_callBackPidConsumer->OnPidsNotRequired(&m_pidsDescription[0],
-                                                      m_pidsDescription.size(),
-                                                      Epg);
-            m_callBackPidConsumer->OnPidsRequired(&m_pidsEvent[0], m_pidsEvent.size(), Epg);
-          }
-        }
+        SwitchToPhase(false);   // monitor event changes (start time, title more important)
       }
       return;
     }
@@ -815,6 +899,76 @@ bool CParserOpenTv::AddOrResetDecoder(unsigned short pid, bool enableCrcCheck)
   decoder->Reset();
   decoder->EnableCrcCheck(enableCrcCheck);
   return true;
+}
+
+void CParserOpenTv::CleanUpSections(vector<unsigned short>& keepPids)
+{
+  vector<unsigned long long>::iterator sectionIt = m_unseenSections.begin();
+  while (sectionIt != m_unseenSections.end())
+  {
+    unsigned short sectionPid = (unsigned short)((*sectionIt) >> 40);
+    vector<unsigned short>::iterator pidIt = find(keepPids.begin(), keepPids.end(), sectionPid);
+    if (pidIt == m_pidsEvent.end())
+    {
+      sectionIt = m_unseenSections.erase(sectionIt);
+      continue;
+    }
+    sectionIt++;
+  }
+  sectionIt = m_seenSections.begin();
+  while (sectionIt != m_seenSections.end())
+  {
+    unsigned short sectionPid = (unsigned short)((*sectionIt) >> 40);
+    vector<unsigned short>::iterator pidIt = find(keepPids.begin(), keepPids.end(), sectionPid);
+    if (pidIt == m_pidsEvent.end())
+    {
+      sectionIt = m_seenSections.erase(sectionIt);
+      continue;
+    }
+    sectionIt++;
+  }
+}
+
+void CParserOpenTv::SwitchToPhase(bool descriptionPhase)
+{
+  if (m_isGrabbing)
+  {
+    if (descriptionPhase && !m_isDescriptionPhase && m_pidsDescription.size() > 0)
+    {
+      LogDebug(L"OpenTV: switch to description phase");
+      m_isDescriptionPhase = true;
+      m_completeTime = clock();
+      if (m_callBackPidConsumer != NULL)
+      {
+        if (m_pidsEvent.size() > 0)
+        {
+          m_callBackPidConsumer->OnPidsNotRequired(&m_pidsEvent[0], m_pidsEvent.size(), Epg);
+        }
+        m_callBackPidConsumer->OnPidsRequired(&m_pidsDescription[0],
+                                              m_pidsDescription.size(),
+                                              Epg);
+      }
+    }
+    else if (!descriptionPhase && m_isDescriptionPhase)
+    {
+      LogDebug(L"OpenTV: switch back to event phase");
+      m_isDescriptionPhase = false;
+      m_completeTime = clock();
+      if (m_callBackPidConsumer != NULL)
+      {
+        if (m_pidsDescription.size() > 0)
+        {
+          m_callBackPidConsumer->OnPidsNotRequired(&m_pidsDescription[0],
+                                                    m_pidsDescription.size(),
+                                                    Epg);
+        }
+        if (m_pidsEvent.size() > 0)
+        {
+          m_callBackPidConsumer->OnPidsRequired(&m_pidsEvent[0], m_pidsEvent.size(), Epg);
+        }
+      }
+    }
+  }
 }
 
 bool CParserOpenTv::DecodeEventRecord(unsigned char* sectionData,
