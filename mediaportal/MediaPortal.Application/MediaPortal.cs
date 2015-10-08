@@ -4049,6 +4049,11 @@ public class MediaPortalApp : D3D, IRender
           Utils.EjectCDROM();
           break;
 
+        // Display Render statistic
+        case Action.ActionType.ACTION_SHOW_STAT:
+          _showStats = !_showStats;
+          break;
+
         // shutdown pc
         case Action.ActionType.ACTION_SHUTDOWN:
           Log.Info("Main: Shutdown dialog");
