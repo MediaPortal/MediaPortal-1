@@ -40,10 +40,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc
     void Reset();
 
     /// <summary>
-    /// Send the required switch and positioner command(s) to tune a given channel.
+    /// Tune to a specific channel.
     /// </summary>
-    /// <param name="channel">The channel to tune.</param>
-    void SwitchToChannel(IChannelSatellite channel);
+    /// <summary>
+    /// In practise tuning means sending the required switch and positioner
+    /// command(s) to enable receiving the channel.
+    /// </summary>
+    /// <param name="channel">The channel to tune to.</param>
+    void Tune(IChannelSatellite channel);
+
+    /// <summary>
+    /// Cancel the current tuning process.
+    /// </summary>
+    void CancelTune();
 
     #region positioner (motor) control
 
@@ -74,8 +83,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc
     /// Drive a positioner device in a given direction for a specified period of time.
     /// </summary>
     /// <param name="direction">The direction to move in.</param>
-    /// <param name="steps">The number of position steps to move.</param>
-    void DriveMotor(DiseqcDirection direction, byte steps);
+    /// <param name="stepCount">The number of position steps to move.</param>
+    void DriveMotor(DiseqcDirection direction, byte stepCount);
 
     /// <summary>
     /// Store the current position of a positioner device for later use.

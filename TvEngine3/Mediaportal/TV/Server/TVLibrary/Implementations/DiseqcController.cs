@@ -24,6 +24,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc.Enum;
@@ -56,6 +57,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private int _tunerId = -1;
     private IDiseqcDevice _device = null;
     private IChannelSatellite _previousChannel = null;
+    private volatile bool _cancelTune = false;
 
     /// <summary>
     /// Enable or disable always sending DiSEqC commands.
@@ -90,10 +92,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _device = device;
       if (device == null)
       {
-        throw new ArgumentException("DiSEqC device is null");
+        throw new ArgumentException("DiSEqC device is null.");
       }
       ReloadConfiguration();
     }
+
+    #region IDiseqcController members
 
     /// <summary>
     /// Reload the controller's configuration.
@@ -134,14 +138,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     /// <summary>
-    /// Send the required switch and positioner command(s) to tune a given channel.
+    /// Tune to a specific channel.
     /// </summary>
-    /// <param name="channel">The channel to tune.</param>
-    public void SwitchToChannel(IChannelSatellite channel)
+    /// <param name="channel">The channel to tune to.</param>
+    public void Tune(IChannelSatellite channel)
     {
       // If the channel is not set, this is a request for the controller to
       // forget the previously tuned channel. This will force commands to be
-      // sent on the next call to SwitchToChannel().
+      // sent on the next call to Tune().
       if (channel == null)
       {
         _previousChannel = null;
@@ -150,7 +154,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       // There is a well defined order in which commands may be sent:
       // "raw" DiSEqC commands -> DiSEqC 1.0 (committed) -> tone burst (simple DiSEqC) -> 22 kHz tone on/off
-      this.LogDebug("DiSEqC: switch to channel");
+      this.LogDebug("DiSEqC: tune");
+      _cancelTune = false;
 
       int lnbLof;
       int lnbLofSwitch;
@@ -230,7 +235,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           command[2] = (byte)DiseqcCommand.WriteN1;
           command[3] |= (byte)(portNumber - 1);
         }
+
+        ThrowExceptionIfTuneCancelled();
         _device.SendCommand(command);
+        ThrowExceptionIfTuneCancelled();
       }
 
       // Positioner movement.
@@ -259,9 +267,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           // Assume the positioner is connected to the switch port that we just
           // selected. Give the positioner microcontroller time to power up.
           System.Threading.Thread.Sleep(100);
+          ThrowExceptionIfTuneCancelled();
         }
+
         this.LogDebug("DiSEqC: positioner command(s)");
         GoToStoredPosition((byte)channel.DiseqcPositionerSatelliteIndex);
+        ThrowExceptionIfTuneCancelled();
       }
 
       // Tone burst and final state.
@@ -296,65 +307,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     /// <summary>
-    /// Get the switch port number (or LNB number) for a given DiSEqC switch command.
+    /// Cancel the current tuning process.
     /// </summary>
-    /// <param name="command">The DiSEqC switch command.</param>
-    /// <returns>the switch port number associated with the command</returns>
-    private static int GetPortNumber(DiseqcPort command)
+    public void CancelTune()
     {
-      switch (command)
-      {
-        case DiseqcPort.None:
-          return 0;
-        // DiSEqC 1.0 simple
-        case DiseqcPort.SimpleA:
-          return 1;
-        case DiseqcPort.SimpleB:
-          return 2;
-        // DiSEqC 1.0
-        case DiseqcPort.PortA:
-          return 1;
-        case DiseqcPort.PortB:
-          return 2;
-        case DiseqcPort.PortC:
-          return 3;
-        case DiseqcPort.PortD:
-          return 4;
-        // DiSEqC 1.1
-        case DiseqcPort.Port1:
-          return 1;
-        case DiseqcPort.Port2:
-          return 2;
-        case DiseqcPort.Port3:
-          return 3;
-        case DiseqcPort.Port4:
-          return 4;
-        case DiseqcPort.Port5:
-          return 5;
-        case DiseqcPort.Port6:
-          return 6;
-        case DiseqcPort.Port7:
-          return 7;
-        case DiseqcPort.Port8:
-          return 8;
-        case DiseqcPort.Port9:
-          return 9;
-        case DiseqcPort.Port10:
-          return 10;
-        case DiseqcPort.Port11:
-          return 11;
-        case DiseqcPort.Port12:
-          return 12;
-        case DiseqcPort.Port13:
-          return 13;
-        case DiseqcPort.Port14:
-          return 14;
-        case DiseqcPort.Port15:
-          return 15;
-        case DiseqcPort.Port16:
-          return 16;
-      }
-      return 0;
+      this.LogDebug("DiSEqC: cancel tune");
+      _cancelTune = true;
     }
 
     #region positioner (motor) control
@@ -431,13 +389,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Drive a positioner device in a given direction.
     /// </summary>
     /// <param name="direction">The direction to move in.</param>
-    /// <param name="steps">The number of position steps to move.</param>
-    public void DriveMotor(DiseqcDirection direction, byte steps)
+    /// <param name="stepCount">The number of position steps to move.</param>
+    public void DriveMotor(DiseqcDirection direction, byte stepCount)
     {
-      this.LogDebug("DiSEqC: drive motor {0} for {1} steps", direction, steps);
-      if (steps == 0 || steps > 128)
+      this.LogDebug("DiSEqC: drive motor, direction = {0}, step count = {1}", direction, stepCount);
+      if (stepCount == 0 || stepCount > 128)
       {
-        // Prevent timeout-based movement (not supported).
+        // Prevent time-out-based movement (not supported).
         return;
       }
 
@@ -448,27 +406,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
         cmd[2] = (byte)DiseqcCommand.DriveWest;
-        _currentStepsAzimuth -= steps;
+        _currentStepsAzimuth -= stepCount;
       }
       else if (direction == DiseqcDirection.East)
       {
         cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
         cmd[2] = (byte)DiseqcCommand.DriveEast;
-        _currentStepsAzimuth += steps;
+        _currentStepsAzimuth += stepCount;
       }
       else if (direction == DiseqcDirection.Up)
       {
         cmd[1] = (byte)DiseqcAddress.ElevationPositioner;
         cmd[2] = (byte)DiseqcCommand.DriveWest;
-        _currentStepsElevation -= steps;
+        _currentStepsElevation -= stepCount;
       }
       else if (direction == DiseqcDirection.Down)
       {
         cmd[1] = (byte)DiseqcAddress.ElevationPositioner;
         cmd[2] = (byte)DiseqcCommand.DriveEast;
-        _currentStepsElevation += steps;
+        _currentStepsElevation += stepCount;
       }
-      cmd[3] = (byte)(0x100 - steps);
+      cmd[3] = (byte)(0x100 - stepCount);
       _device.SendCommand(cmd);
     }
 
@@ -478,10 +436,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="position">The identifier to use for the position.</param>
     public void StorePosition(byte position)
     {
-      this.LogDebug("DiSEqC: store current position as position {0}", position);
+      this.LogDebug("DiSEqC: store current position, position = {0}", position);
       if (position <= 0)
       {
-        throw new ArgumentException("DiSEqC: position cannot be less than or equal to zero");
+        throw new ArgumentException("DiSEqC position cannot be less than or equal to zero.");
       }
 
       byte[] cmd = new byte[4];
@@ -525,10 +483,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="position">The position to drive to.</param>
     public void GoToStoredPosition(byte position)
     {
-      this.LogDebug("DiSEqC: go to stored position {0}", position);
+      this.LogDebug("DiSEqC: go to stored position, position = {0}", position);
       if (position <= 0)
       {
-        throw new ArgumentException("DiSEqC: position cannot be less than or equal to zero");
+        throw new ArgumentException("DiSEqC position cannot be less than or equal to zero.");
       }
 
       byte[] cmd = new byte[4];
@@ -551,7 +509,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="longitude">The longiude to drive to. Range -180 (180W) to 180 (180E).</param>
     public void GoToAngularPosition(double longitude)
     {
-      this.LogDebug("DiSEqC: go to angular position {0}", longitude);
+      this.LogDebug("DiSEqC: go to angular position, longitude = {0}", longitude);
 
       double angle;
       if (!CalculateUsalsAngle(longitude, out angle))
@@ -585,6 +543,89 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     /// <summary>
+    /// Get the current position of a positioner device.
+    /// </summary>
+    /// <param name="position">The stored position identifier corresponding with the current base position.</param>
+    /// <param name="longitude">The longitude corresponding with the current base position.</param>
+    /// <param name="stepsAzimuth">The number of steps taken from the base position on the azmutal axis.</param>
+    /// <param name="stepsElevation">The number of steps taken from the base position on the vertical (elevation) axis.</param>
+    public void GetPosition(out int position, out double longitude, out int stepsAzimuth, out int stepsElevation)
+    {
+      position = _currentPosition;
+      longitude = _currentLongitude;
+      stepsAzimuth = _currentStepsAzimuth;
+      stepsElevation = _currentStepsElevation;
+    }
+
+    #endregion
+
+    #endregion
+
+    #region static helpers
+
+    /// <summary>
+    /// Get the switch port number (or LNB number) for a given DiSEqC switch command.
+    /// </summary>
+    /// <param name="command">The DiSEqC switch command.</param>
+    /// <returns>the switch port number associated with the command</returns>
+    private static int GetPortNumber(DiseqcPort command)
+    {
+      switch (command)
+      {
+        case DiseqcPort.None:
+          return 0;
+        // DiSEqC 1.0 simple
+        case DiseqcPort.SimpleA:
+          return 1;
+        case DiseqcPort.SimpleB:
+          return 2;
+        // DiSEqC 1.0
+        case DiseqcPort.PortA:
+          return 1;
+        case DiseqcPort.PortB:
+          return 2;
+        case DiseqcPort.PortC:
+          return 3;
+        case DiseqcPort.PortD:
+          return 4;
+        // DiSEqC 1.1
+        case DiseqcPort.Port1:
+          return 1;
+        case DiseqcPort.Port2:
+          return 2;
+        case DiseqcPort.Port3:
+          return 3;
+        case DiseqcPort.Port4:
+          return 4;
+        case DiseqcPort.Port5:
+          return 5;
+        case DiseqcPort.Port6:
+          return 6;
+        case DiseqcPort.Port7:
+          return 7;
+        case DiseqcPort.Port8:
+          return 8;
+        case DiseqcPort.Port9:
+          return 9;
+        case DiseqcPort.Port10:
+          return 10;
+        case DiseqcPort.Port11:
+          return 11;
+        case DiseqcPort.Port12:
+          return 12;
+        case DiseqcPort.Port13:
+          return 13;
+        case DiseqcPort.Port14:
+          return 14;
+        case DiseqcPort.Port15:
+          return 15;
+        case DiseqcPort.Port16:
+          return 16;
+      }
+      return 0;
+    }
+
+    /// <summary>
     /// Convert Degrees to Radians.
     /// </summary>
     private static double Radians(double number)
@@ -599,6 +640,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       return number * 180 / Math.PI;
     }
+
+    #endregion
 
     /// <summary>
     /// Calculate the USALS angle for a satellite at a particular longitude.
@@ -692,20 +735,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     /// <summary>
-    /// Get the current position of a positioner device.
+    /// Check if the current tuning process has been cancelled and throw an exception if it has.
     /// </summary>
-    /// <param name="position">The stored position identifier corresponding with the current base position.</param>
-    /// <param name="longitude">The longitude corresponding with the current base position.</param>
-    /// <param name="stepsAzimuth">The number of steps taken from the base position on the azmutal axis.</param>
-    /// <param name="stepsElevation">The number of steps taken from the base position on the vertical (elevation) axis.</param>
-    public void GetPosition(out int position, out double longitude, out int stepsAzimuth, out int stepsElevation)
+    private void ThrowExceptionIfTuneCancelled()
     {
-      position = _currentPosition;
-      longitude = _currentLongitude;
-      stepsAzimuth = _currentStepsAzimuth;
-      stepsElevation = _currentStepsElevation;
+      if (_cancelTune)
+      {
+        throw new TvExceptionTuneCancelled();
+      }
     }
-
-    #endregion
   }
 }
