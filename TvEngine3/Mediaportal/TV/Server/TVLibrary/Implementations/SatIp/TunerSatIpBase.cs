@@ -211,6 +211,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       else
       {
         parameters += "&pids=0";
+        _pidFilterPidsToRemove.Clear();
+        _pidFilterPidsToRemove.Add(0);
       }
 
       if (!string.IsNullOrEmpty(_satIpStreamId))
@@ -909,9 +911,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     #region IMpeg2PidFilter members
 
     /// <summary>
-    /// Should the filter be enabled for the current multiplex.
+    /// Should the filter be enabled for a given transmitter.
     /// </summary>
-    /// <param name="tuningDetail">The current multiplex/transponder tuning parameters.</param>
+    /// <param name="tuningDetail">The current transmitter tuning parameters.</param>
     /// <returns><c>true</c> if the filter should be enabled, otherwise <c>false</c></returns>
     bool IMpeg2PidFilter.ShouldEnable(IChannel tuningDetail)
     {
@@ -954,24 +956,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// Configure the filter to allow one or more streams to pass through the filter.
     /// </summary>
     /// <param name="pids">A collection of stream identifiers.</param>
-    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
-    bool IMpeg2PidFilter.AllowStreams(ICollection<ushort> pids)
+    void IMpeg2PidFilter.AllowStreams(ICollection<ushort> pids)
     {
       _pidFilterPidsToAdd.UnionWith(pids);
       _pidFilterPidsToRemove.ExceptWith(pids);
-      return true;
     }
 
     /// <summary>
     /// Configure the filter to stop one or more streams from passing through the filter.
     /// </summary>
     /// <param name="pids">A collection of stream identifiers.</param>
-    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
-    bool IMpeg2PidFilter.BlockStreams(ICollection<ushort> pids)
+    void IMpeg2PidFilter.BlockStreams(ICollection<ushort> pids)
     {
       _pidFilterPidsToAdd.ExceptWith(pids);
       _pidFilterPidsToRemove.UnionWith(pids);
-      return true;
     }
 
     /// <summary>

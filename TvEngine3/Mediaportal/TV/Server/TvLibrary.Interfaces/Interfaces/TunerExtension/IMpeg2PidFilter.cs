@@ -32,9 +32,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
   public interface IMpeg2PidFilter : ITunerExtension
   {
     /// <summary>
-    /// Should the filter be enabled for the current multiplex.
+    /// Should the filter be enabled for a given transmitter.
     /// </summary>
-    /// <param name="tuningDetail">The current multiplex/transponder tuning parameters.</param>
+    /// <param name="tuningDetail">The current transmitter tuning parameters.</param>
     /// <returns><c>true</c> if the filter should be enabled, otherwise <c>false</c></returns>
     bool ShouldEnable(IChannel tuningDetail);
 
@@ -59,15 +59,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     /// Configure the filter to allow one or more streams to pass through the filter.
     /// </summary>
     /// <param name="pids">A collection of stream identifiers.</param>
-    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
-    bool AllowStreams(ICollection<ushort> pids);
+    void AllowStreams(ICollection<ushort> pids);
 
     /// <summary>
     /// Configure the filter to stop one or more streams from passing through the filter.
     /// </summary>
     /// <param name="pids">A collection of stream identifiers.</param>
-    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
-    bool BlockStreams(ICollection<ushort> pids);
+    void BlockStreams(ICollection<ushort> pids);
 
     /// <summary>
     /// Apply the current filter configuration.

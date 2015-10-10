@@ -382,14 +382,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
       ReadTunerInfo();
       ReadPidFilterInfo();
-      if (_pidFilterPids.Contains((int)B2c2PidFilterMode.AllExcludingNull) || _pidFilterPids.Contains((int)B2c2PidFilterMode.AllIncludingNull))
+      if (_pidFilterPids.Count == 1 && _pidFilterPids.Contains((int)B2c2PidFilterMode.AllExcludingNull))
       {
-        _isPidFilterDisabled = false;   // make sure the next call actually disables the filter
-        (this as IMpeg2PidFilter).Disable();
+        _isPidFilterDisabled = true;
       }
       else
       {
-        _isPidFilterDisabled = true;
+        _isPidFilterDisabled = false;   // make sure the next call actually disables the filter
+        (this as IMpeg2PidFilter).Disable();
       }
       return extensions;
     }
@@ -555,9 +555,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     #region IMpeg2PidFilter members
 
     /// <summary>
-    /// Should the filter be enabled for the current multiplex.
+    /// Should the filter be enabled for a given transmitter.
     /// </summary>
-    /// <param name="tuningDetail">The current multiplex/transponder tuning parameters.</param>
+    /// <param name="tuningDetail">The current transmitter tuning parameters.</param>
     /// <returns><c>true</c> if the filter should be enabled, otherwise <c>false</c></returns>
     bool IMpeg2PidFilter.ShouldEnable(IChannel tuningDetail)
     {
@@ -701,7 +701,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
       // Rough approximation: enable PID filtering when bit rate is over 40 Mb/s.
       bool enableFilter = (bitRate >= 40000);
-      this.LogDebug("B2C2 base: multiplex bit rate = {0} kb/s, need PID filter = {1}", bitRate, enableFilter);
+      this.LogDebug("B2C2 base: transport stream bit rate = {0} kb/s, need PID filter = {1}", bitRate, enableFilter);
       return enableFilter;
     }
 
@@ -778,24 +778,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// Configure the filter to allow one or more streams to pass through the filter.
     /// </summary>
     /// <param name="pids">A collection of stream identifiers.</param>
-    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
-    bool IMpeg2PidFilter.AllowStreams(ICollection<ushort> pids)
+    void IMpeg2PidFilter.AllowStreams(ICollection<ushort> pids)
     {
       _pidFilterPidsToAdd.UnionWith(pids);
       _pidFilterPidsToRemove.ExceptWith(pids);
-      return true;
     }
 
     /// <summary>
     /// Configure the filter to stop one or more streams from passing through the filter.
     /// </summary>
     /// <param name="pids">A collection of stream identifiers.</param>
-    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
-    bool IMpeg2PidFilter.BlockStreams(ICollection<ushort> pids)
+    void IMpeg2PidFilter.BlockStreams(ICollection<ushort> pids)
     {
       _pidFilterPidsToAdd.ExceptWith(pids);
       _pidFilterPidsToRemove.UnionWith(pids);
-      return true;
     }
 
     /// <summary>

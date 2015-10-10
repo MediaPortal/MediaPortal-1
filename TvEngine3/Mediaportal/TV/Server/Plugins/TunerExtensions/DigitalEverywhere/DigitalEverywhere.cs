@@ -1438,9 +1438,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     #region IMpeg2PidFilter members
 
     /// <summary>
-    /// Should the filter be enabled for the current multiplex.
+    /// Should the filter be enabled for a given transmitter.
     /// </summary>
-    /// <param name="tuningDetail">The current multiplex/transponder tuning parameters.</param>
+    /// <param name="tuningDetail">The current transmitter tuning parameters.</param>
     /// <returns><c>true</c> if the filter should be enabled, otherwise <c>false</c></returns>
     bool IMpeg2PidFilter.ShouldEnable(IChannel tuningDetail)
     {
@@ -1590,7 +1590,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
 
       // Rough approximation: enable PID filtering when bit rate is over 60 Mb/s.
       bool enableFilter = (bitRate >= 60000);
-      this.LogDebug("Digital Everywhere: multiplex bit rate = {0} kb/s, need PID filter = {1}", bitRate, enableFilter);
+      this.LogDebug("Digital Everywhere: transport stream bit rate = {0} kb/s, need PID filter = {1}", bitRate, enableFilter);
       return enableFilter;
     }
 
@@ -1634,22 +1634,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     /// Configure the filter to allow one or more streams to pass through the filter.
     /// </summary>
     /// <param name="pids">A collection of stream identifiers.</param>
-    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
-    bool IMpeg2PidFilter.AllowStreams(ICollection<ushort> pids)
+    void IMpeg2PidFilter.AllowStreams(ICollection<ushort> pids)
     {
       _pidFilterPids.UnionWith(pids);
-      return true;
     }
 
     /// <summary>
     /// Configure the filter to stop one or more streams from passing through the filter.
     /// </summary>
     /// <param name="pids">A collection of stream identifiers.</param>
-    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
-    bool IMpeg2PidFilter.BlockStreams(ICollection<ushort> pids)
+    void IMpeg2PidFilter.BlockStreams(ICollection<ushort> pids)
     {
       _pidFilterPids.ExceptWith(pids);
-      return true;
     }
 
     /// <summary>
