@@ -391,9 +391,24 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Empia
       ChannelDvbC dvbcChannel = channel as ChannelDvbC;
       if (dvbcChannel != null)
       {
-        // Required by at least PCTV Systems 291/292e "tripleStick", with
-        // driver from January 2014 (@device:pnp:\\?\usb#vid_2013&pid_025f).
-        // Refer to http://forum.team-mediaportal.com/threads/pctv-292e-dvb-c-problem.128117/
+        // Required by:
+        // - PCTV Systems 292e tripleStick
+        //    @device:pnp:\\?\usb#vid_2013&pid_025f
+        //    driver dated 2014-01-15
+        //    http://forum.team-mediaportal.com/threads/pctv-292e-dvb-c-problem.128117/
+        // - Hauppauge WinTV-dualHD
+        //    @device:pnp:\\?\usb#vid_2040&pid_0265
+        //    [release driver]
+        //    http://forum.team-mediaportal.com/threads/hauppauge-wintv-dualhd-neuer-usb-stick-findet-keine-sender.132363/
+        //
+        // ...and maybe also:
+        // - PCTV Systems
+        //    290e (vid_2013&pid_024f)
+        //    291e (vid_2013&pid_025b)
+        //    "WinTV-soloHDPCTV2" (vid_2013&pid_0264)
+        //    "WinTV-dualHD2" (vid_2013&pid_0265)
+        // - Hauppauge
+        //    WinTV-soloHD (vid_2040&pid_0264)
         dvbcChannel.SymbolRate *= 1000;
         this.LogDebug("  symbol rate = {0} s/s", dvbcChannel.SymbolRate);
       }
