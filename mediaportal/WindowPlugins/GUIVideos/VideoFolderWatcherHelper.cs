@@ -94,7 +94,10 @@ namespace MediaPortal.GUI.Video
         {
           watcher.EnableRaisingEvents = true;
         }
-        _Timer.Start();
+        if (_Timer != null)
+        {
+          _Timer.Start();
+        }
       }
       else
       {
@@ -103,7 +106,10 @@ namespace MediaPortal.GUI.Video
         {
           watcher.EnableRaisingEvents = false;
         }
-        _Timer.Stop();
+        if (_Timer != null)
+        {
+          _Timer.Stop();
+        }
         _Events.Clear();
         Log.Debug("VideoFolderWatcher Monitoring of disabled for {0}", _currentFolder);
       }

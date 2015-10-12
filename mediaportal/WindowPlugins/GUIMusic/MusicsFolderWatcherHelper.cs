@@ -51,6 +51,9 @@ namespace MediaPortal.GUI.Music
 
     public MusicFolderWatcherHelper(string directory)
     {
+      if (!Directory.Exists(directory))
+        return;
+
       _currentFolder = directory;
       Log.Debug("MusicFolderWatcher Monitoring of enabled for {0}", _currentFolder);
     }
@@ -91,7 +94,10 @@ namespace MediaPortal.GUI.Music
         {
           watcher.EnableRaisingEvents = true;
         }
-        _Timer.Start();
+        if (_Timer != null)
+        {
+          _Timer.Start();
+        }
       }
       else
       {
@@ -100,7 +106,10 @@ namespace MediaPortal.GUI.Music
         {
           watcher.EnableRaisingEvents = false;
         }
-        _Timer.Stop();
+        if (_Timer != null)
+        {
+          _Timer.Stop();
+        }
         _Events.Clear();
         Log.Debug("MusicFolderWatcher Monitoring of disabled for {0}", _currentFolder);
       }

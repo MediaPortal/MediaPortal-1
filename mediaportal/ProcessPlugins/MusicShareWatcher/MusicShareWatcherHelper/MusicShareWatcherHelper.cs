@@ -100,7 +100,10 @@ namespace MediaPortal.MusicShareWatcher
         {
           watcher.EnableRaisingEvents = true;
         }
-        m_Timer.Start();
+        if (m_Timer != null)
+        {
+          m_Timer.Start();
+        }
         Log.Info(LogType.MusicShareWatcher, "Monitoring of shares enabled");
       }
       else
@@ -110,7 +113,10 @@ namespace MediaPortal.MusicShareWatcher
         {
           watcher.EnableRaisingEvents = false;
         }
-        m_Timer.Stop();
+        if (m_Timer != null)
+        {
+          m_Timer.Stop();
+        }
         m_Events.Clear();
         Log.Info(LogType.MusicShareWatcher, "Monitoring of shares disabled");
       }
