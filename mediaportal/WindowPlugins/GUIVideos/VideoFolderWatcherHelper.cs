@@ -51,6 +51,9 @@ namespace MediaPortal.GUI.Video
 
     public VideoFolderWatcherHelper(string directory)
     {
+      if (!Directory.Exists(directory))
+        return;
+
       _currentFolder = directory;
       Log.Debug("VideoFolderWatcher Monitoring of enabled for {0}", _currentFolder);
     }
