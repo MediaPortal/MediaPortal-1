@@ -131,7 +131,7 @@ namespace MediaPortal.GUI.Video
     private static PlayListPlayer _playlistPlayer;
     private static PlayListType _currentPlaylistType;
     private static int _currentPlaylistIndex = -1;
-
+    private VideoFolderWatcherHelper _videoFolderWatcher;
     private MapSettings _mapSettings = new MapSettings();
     private DirectoryHistory _history = new DirectoryHistory();
     private string _virtualStartDirectory = string.Empty;
@@ -543,6 +543,11 @@ namespace MediaPortal.GUI.Video
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValueAsBool("moviedatabase", "usesorttitle", _useSortTitle);
+      }
+
+      if (_videoFolderWatcher != null)
+      {
+        _videoFolderWatcher.ChangeMonitoring(false);
       }
 
       if (_setThumbs != null && _setThumbs.IsAlive)
@@ -2993,6 +2998,19 @@ namespace MediaPortal.GUI.Video
       }
 
       GUIWaitCursor.Show();
+      GUIPropertyManager.SetProperty("#VideoFolderChanged", "false");
+
+      if (_videoFolderWatcher != null)
+      {
+        _videoFolderWatcher.ChangeMonitoring(false);
+      }
+
+      if (!string.IsNullOrEmpty(newFolderName))
+      {
+        _videoFolderWatcher = new VideoFolderWatcherHelper(newFolderName);
+        _videoFolderWatcher.SetMonitoring(true);
+        _videoFolderWatcher.StartMonitor();
+      }
 
       if (newFolderName != _currentFolder && _mapSettings != null)
       {
@@ -3463,6 +3481,10 @@ namespace MediaPortal.GUI.Video
         catch (ThreadAbortException)
         {
           Log.Debug("GetMediaInfoThread: ThreadAbortException");
+        }
+        catch (Exception ex) 
+        {
+          Log.Error("GetMediaInfoThread: {0}", ex.Message);
         }
         Thread.Sleep(100);
       }
