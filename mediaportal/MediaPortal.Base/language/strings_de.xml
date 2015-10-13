@@ -1835,28 +1835,28 @@
     <String id="100004">Einstellungen</String>
     <String id="100005" prefix="Meine ">Musik</String>
     <String id="100006" prefix="Meine ">Filme</String>
-    <String id="100008">Einstellungen-&gt;Allgemein</String>
-    <String id="100009">Einstellungen-&gt;Bildschirm</String>
-    <String id="100010">Einstellungen-&gt;Bildschirm-&gt;UI Kalibierung</String>
-    <String id="100011">Einstellungen-&gt;Bildschirm-&gt;Kalibrierung</String>
-    <String id="100012">Einstellungen-&gt;Diashow</String>
-    <String id="100013">Einstellungen-&gt;Bildschirm-&gt;Filter</String>
-    <String id="100014">Einstellungen-&gt;Musik</String>
-    <String id="100015">Einstellungen-&gt;Bildschirm-&gt;Untertitel</String>
-    <String id="100016">Einstellungen-&gt;Bildschirm-&gt;Bildschirmschoner</String>
-    <String id="100017">Einstellungen-&gt;Wetter</String>
-    <String id="100020">Einstellungen-&gt;Skripte</String>
+    <String id="100008">Einstellungen - Allgemein</String>
+    <String id="100009">GUI - Bildschirm</String>
+    <String id="100010">Bildschirm - Kalibierung</String>
+    <String id="100011">Bildschirm - Kalibrierung</String>
+    <String id="100012">Einstellungen - Bilder</String>
+    <String id="100013">Bildschirm - Filter</String>
+    <String id="100014">Einstellungen - Musik</String>
+    <String id="100015">Bildschirm - Untertitel</String>
+    <String id="100016">Bildschirm - Bildschirmschoner</String>
+    <String id="100017">Einstellungen - Wetter</String>
+    <String id="100020">Einstellungen - Skripte</String>
     <String id="100021" prefix="Meine ">Filme/Genre</String>
     <String id="100022" prefix="Meine ">Filme/Schauspieler</String>
     <String id="100023" prefix="Meine ">Filme/Jahr</String>
-    <String id="100024">Einstellungen-&gt;Programme</String>
+    <String id="100024">Einstellungen - Programme</String>
     <String id="100025" prefix="Meine ">Filme/Titel</String>
-    <String id="100026">Einstellungen-&gt;Allgemein-&gt;Speicher</String>
-    <String id="100027">Einstellungen-&gt;Allgemein-&gt;Autostart</String>
+    <String id="100026">Allgemein - Speicher</String>
+    <String id="100027">Allgemein - Autostart</String>
     <String id="100028" prefix="Meine ">Filme/Wiedergabeliste</String>
-    <String id="100029">Einstellungen-&gt;Allgemein-&gt;LCD</String>
+    <String id="100029">Allgemein - LCD</String>
     <String id="100030" prefix="Mein ">Radio</String>
-    <String id="100031">Einstellungen-&gt;Bildschirm-&gt;Textlauf-Geschwindigkeit</String>
+    <String id="100031">GUI - Textlauf-Geschwindigkeit</String>
     <String id="100034">Sonstiges</String>
     <String id="100035">Startbildschirm</String>
     <String id="100100">Ja/Nein Dialog</String>
@@ -1913,16 +1913,16 @@
     <String id="100635" prefix="Mein ">Assistent/EPG</String>
     <String id="100636" prefix="Mein ">Assistent/Allgemein</String>
     <String id="100699" prefix="Mein ">Assistent/Fertig</String>
-    <String id="100700" prefix="Meine ">TV-Einstellungen</String>
-    <String id="100701" prefix="Meine ">TV-Aufnahme-Einstellungen</String>
+    <String id="100700" prefix="Meine ">Einstellungen TV</String>
+    <String id="100701" prefix="Meine ">Einstellungen TV-Aufnahme</String>
     <String id="100702" prefix="Mein ">TV-Kanäle sortieren</String>
-    <String id="100703" prefix="Meine ">Video-Einstellungen</String>
-    <String id="100704" prefix="Meine ">DVD-Einstellungen</String>
-    <String id="100705" prefix="Meine ">Oberflächen-Einstellungen</String>
-    <String id="100706" prefix="Meine ">EPG-Einstellungen</String>
+    <String id="100703" prefix="Meine ">Einstellungen - Video</String>
+    <String id="100704" prefix="Meine ">Einstellungen - DVD</String>
+    <String id="100705" prefix="Meine ">Skin</String>
+    <String id="100706" prefix="Meine ">Einstellungen EPG</String>
     <String id="100707" prefix="Meine ">EPG-Kanal-Zuordnung</String>
-    <String id="100708" prefix="Meine ">Skip-Stufen-Einstellungen</String>
-    <String id="100709" prefix="Meine ">TV-Server-Einstellungen</String>
+    <String id="100708" prefix="Meine ">GUI - Skip-Stufen</String>
+    <String id="100709" prefix="Meine ">Einstellungen TV-Server</String>
     <String id="100746">TV Suchtyp</String>
     <String id="100747">TV Suche</String>
     <String id="100748" prefix="Mein ">Programm-Info</String>
@@ -1942,10 +1942,10 @@
     <String id="101002">Standard Bildschirm-Tastatur</String>
     <String id="101003">Web Bildschirm-Tastatur</String>
     <String id="101004">SMS Bildschirm-Tastatur</String>
-    <String id="101005">GUI - Vorschaubilder</String>
-    <String id="101006">GUI - OSD</String>
+    <String id="101005">Vorschaubilder</String>
+    <String id="101006">GUI - On-Screen-Display</String>
     <String id="101007">Volumen</String>
-    <String id="101008">Allgemein - Dynamische Wiederholrate</String>
+    <String id="101008">Allgemein - Dynamische Wiederholfrequenz</String>
     <String id="101010">Videos - Datenbank</String>
     <String id="101011">Musik - Datenbank</String>
     <String id="101012">Bilder - Datenbank</String>
@@ -1953,14 +1953,14 @@
     <String id="101014">Playliste</String>
     <String id="101015">Bilder - Diaschau</String>
     <String id="101016">Allgemein</String>
-    <String id="101017">Allgemein - Resume</String>
-    <String id="101018">Allgemein - MediaPortal</String>
-    <String id="101019">Allgemein - Startup</String>
-    <String id="101020">Allgemein - Bildschirmschoner</String>
+    <String id="101017">Allgemein - Wiederaufnahme</String>
+    <String id="101018">Allgemein - Grundeinstellungen MediaPortal</String>
+    <String id="101019">Allgemein - Start</String>
+    <String id="101020">GUI - Bildschirmschoner</String>
     <String id="101021">GUI</String>
     <String id="101022">GUI - Allgemein</String>
     <String id="101023">Videos - Anderes</String>
-    <String id="101024">Blu-ray</String>
+    <String id="101024">Einstellungen - Blu-ray</String>
     <String id="102000">Auswahldialog</String>
     <String id="102001" prefix="Meine ">Musik/Info</String>
     <String id="102002">Dialog Ok</String>
@@ -1991,7 +1991,7 @@
     <String id="103006" prefix="Mein ">TV/MSN OSD</String>
     <String id="103007" prefix="Mein ">TV/Zap OSD</String>
     <String id="103009" prefix="Meine ">TV/Kanal-Liste</String>
-    <String id="103011" prefix="Meine ">TV/Bereichs-Einstellungen</String>
+    <String id="103011" prefix="Meine ">Einstellungen TV/Bereich</String>
     <String id="103012">TV-Empfangs-Daten</String>
     <String id="104711" prefix="Meine ">Wikipedia</String>
     <String id="106666">Power Scheduler wartet</String>
@@ -2162,7 +2162,7 @@
     <String id="300057">Versuchen Sie eine manuelle Suche.</String>
     <String id="300058">Pfad</String>
     <String id="300059">PIN</String>
-    <String id="300060">Grabber-Einstellungen</String>
+    <String id="300060">Einstellungen Grabber</String>
     <String id="300061">Starte Generierung Vorschaubilder und DB-Einträge</String>
     <String id="300062">Scan der Bilder-DB beendet.</String>
     <String id="300063">Hinzufügen</String>
@@ -2265,7 +2265,7 @@
     <String id="300165">Datenbank bei Änderungen automatisch aktualisieren</String>
     <String id="300166">Präfix umstellen (The Who -&gt; Who, The)</String>
     <String id="300167">Titel in einem Ordner als Album behandeln</String>
-    <String id="300168">Zur Erstellung von Vorschaubildern verwenden:</String>
+    <String id="300168">Vorschaubildern erstellen aus:</String>
     <String id="300169">folder.jpg (empfohlen)</String>
     <String id="300170">*.png, *jpg (Front-Cover bevorzugt)</String>
     <String id="300171">Cover in ID3-Tags</String>
@@ -2284,7 +2284,7 @@
     <String id="300184">Einstellungen für Rotation</String>
     <String id="300185">EXIF-Daten für Rotation verwenden</String>
     <String id="300186">Picasa.ini für Rotation verwenden</String>
-    <String id="300187">Einstellungen Diashow</String>
+    <String id="300187">Einstellungen sososososDiashow</String>
     <String id="300188">Einstellungen Anzeige</String>
     <String id="300189">Nach Tagen gruppieren</String>
     <String id="300190">Wiedergabe von Videos aktivieren</String>
