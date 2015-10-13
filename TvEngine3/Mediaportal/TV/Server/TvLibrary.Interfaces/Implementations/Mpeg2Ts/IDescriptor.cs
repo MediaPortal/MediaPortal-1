@@ -44,7 +44,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     ReadOnlyCollection<byte> Data { get; }
 
     /// <summary>
-    /// Retrieve a read-only copy of the original data that was decoded to create a descriptor instance.
+    /// Retrieve a read-only copy of the original data that was decoded to
+    /// create a descriptor instance.
     /// </summary>
     /// <remarks>
     /// The copy includes tag and length bytes.

@@ -26,8 +26,8 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
 {
   /// <summary>
-  /// A base class that implements the <see cref="IDescriptor"/> interface, modelling the basic descriptor
-  /// structure defined in ISO/IEC 13818-1.
+  /// A base class that implements the <see cref="IDescriptor"/> interface,
+  /// modelling the basic descriptor structure defined in ISO/IEC 13818-1.
   /// </summary>
   public class Descriptor : IDescriptor
   {
@@ -56,9 +56,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     #region constructor
 
     /// <summary>
-    /// Constructor. Protected to ensure instances can only be created by derived classes or by calling
-    /// Decode(). This should ensure the safety of the parameters, which is why we don't check them.
+    /// Constructor.
     /// </summary>
+    /// <remarks>
+    /// Protected to ensure instances can only be created by derived classes or
+    /// by calling Decode(). This should ensure the safety of the parameters,
+    /// which is why we don't check them.
+    /// </remarks>
     /// <param name="tag">The descriptor's tag.</param>
     /// <param name="length">The descriptor data length.</param>
     /// <param name="data">The descriptor data.</param>
@@ -66,21 +70,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     {
       _tag = tag;
       _length = length;
-      // Make a copy of the data array so that changes in the caller's array don't affect our data.
+      // Make a copy of the data array so that changes in the caller's array
+      // don't affect our data.
       _data = new byte[data.Length];
       Buffer.BlockCopy(data, 0, _data, 0, data.Length);
     }
 
     /// <summary>
-    /// Copy-constructor. Protected to ensure instances can only be created by derived classes or by calling
-    /// Decode(). This should ensure the safety of the parameters, which is why we don't check them.
+    /// Copy-constructor.
     /// </summary>
+    /// <remarks>
+    /// Protected to ensure instances can only be created by derived classes or
+    /// by calling Decode(). This should ensure the safety of the parameters,
+    /// which is why we don't check them.
+    /// </remarks>
     /// <param name="descriptor">The descriptor to copy.</param>
     protected Descriptor(IDescriptor descriptor)
     {
       _tag = descriptor.Tag;
       _length = descriptor.Length;
-      // Make a copy of the data array so that changes in the original descriptor data don't affect our data.
+      // Make a copy of the data array so that changes in the original
+      // descriptor data don't affect our data.
       _data = new byte[descriptor.Data.Count];
       descriptor.Data.CopyTo(_data, 0);
     }
@@ -132,7 +142,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     /// <returns>an IDescriptor instance</returns>
     public static IDescriptor Decode(byte[] data, int offset)
     {
-      // Parse the base descriptor fields. Return null if they're not valid for any reason.
+      // Parse the base descriptor fields. Return null if they're not valid for
+      // any reason.
       if (offset + 1 >= data.Length)
       {
         return null;
@@ -144,13 +155,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
         return null;
       }
 
-      // If we get to here, the descriptor data seems to be valid. Instantiate a descriptor.
+      // If we get to here, the descriptor data seems to be valid. Instantiate
+      // a descriptor.
       byte[] descData = new byte[length];
       Buffer.BlockCopy(data, offset + 2, descData, 0, length);
       Descriptor d = new Descriptor(tag, length, descData);
 
-      // Make a copy of the entire descriptor so that changes made by the caller on the original array have
-      // no effect on our reference/copy.
+      // Make a copy of the entire descriptor so that changes made by the
+      // caller on the original array have no effect on our reference/copy.
       d._rawData = new byte[2 + d._length];
       Buffer.BlockCopy(data, offset, d._rawData, 0, 2 + length);
 
@@ -158,7 +170,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// Retrieve a read-only copy of the original data that was decoded to create this Descriptor instance.
+    /// Retrieve a read-only copy of the original data that was decoded to
+    /// create this Descriptor instance.
     /// </summary>
     /// <returns>a copy of the raw descriptor data</returns>
     public ReadOnlyCollection<byte> GetRawData()

@@ -30,7 +30,8 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
 {
   /// <summary>
-  /// A class that models the transport stream program map table section defined in ISO/IEC 13818-1.
+  /// A class that models the transport stream program map table section
+  /// defined in ISO/IEC 13818-1.
   /// </summary>
   public class TableProgramMap
   {
@@ -65,9 +66,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
 
     #endregion
 
-    // This class has a specific purpose - decoding and translating between various PMT formats. Although it
-    // may be tempting, we want to prevent it being used for holding various other info. Therefore the only
-    // way you can get an instance is by calling Decode() with a valid PMT section.
+    // This class has a specific purpose - decoding and translating between
+    // various PMT formats. Although it may be tempting, we want to prevent it
+    // being used for holding various other info. Therefore the only way you can
+    // get an instance is by calling Decode() with a valid PMT section.
     private TableProgramMap()
     {
     }
@@ -75,8 +77,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     #region properties
 
     /// <summary>
-    /// The program map table ID. Expected to be 0x02.
+    /// The program map table identifier.
     /// </summary>
+    /// <remarks>
+    /// Expected to be <c>0x02</c>.
+    /// </remarks>
     public byte TableId
     {
       get
@@ -86,8 +91,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// The program map section syntax indicator. Expected to be <c>true</c>.
+    /// The program map section syntax indicator.
     /// </summary>
+    /// <remarks>
+    /// Expected to be <c>true</c>.
+    /// </remarks>
     public bool SectionSyntaxIndicator
     {
       get
@@ -97,9 +105,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// The length of the program map section, including the CRC but not the table ID, section syntax
-    /// indicator or section length bytes.
+    /// The length of the program map section.
     /// </summary>
+    /// <remarks>
+    /// Includes the CRC but not the table ID, section syntax indicator or
+    /// section length bytes.
+    /// </remarks>
     public ushort SectionLength
     {
       get
@@ -109,7 +120,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// The program number (service ID) of the service that the program map describes.
+    /// The program number of the program that the program map describes.
     /// </summary>
     public ushort ProgramNumber
     {
@@ -131,8 +142,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// When <c>true</c>, indicates that the program map describes the service's current state. Otherwise,
-    /// indicates that the program map describes the next service state.
+    /// When <c>true</c>, indicates that the program map describes the
+    /// program's current state. Otherwise, indicates that the program map
+    /// describes the next program state.
     /// </summary>
     public bool CurrentNextIndicator
     {
@@ -143,8 +155,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// The index corresponding with this section of the program map. Expected to be zero.
+    /// The index corresponding with this section of the program map.
     /// </summary>
+    /// <remarks>Expected to be <c>0</c>.</remarks>
     public byte SectionNumber
     {
       get
@@ -154,8 +167,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// The total number of sections (minus one) that comprise the complete program map. Expected to be zero.
+    /// The total number of sections (minus one) that comprise the complete
+    /// program map.
     /// </summary>
+    /// <remarks>Expected to be <c>0</c>.</remarks>
     public byte LastSectionNumber
     {
       get
@@ -165,7 +180,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// The PID containing the program clock reference data for the service described by the program map.
+    /// The PID containing the program clock reference data for the program
+    /// described by the program map.
     /// </summary>
     public ushort PcrPid
     {
@@ -187,9 +203,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// The descriptors for the service described by the program map. Conditional access descriptors are not
-    /// included.
+    /// The descriptors for the program described by the program map.
     /// </summary>
+    /// <remarks>
+    /// Conditional access descriptors are not included.
+    /// </remarks>
     public ReadOnlyCollection<IDescriptor> ProgramDescriptors
     {
       get
@@ -199,7 +217,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// The conditional access descriptors for the service described by the program map.
+    /// The conditional access descriptors for the program described by the
+    /// program map.
     /// </summary>
     public ReadOnlyCollection<IDescriptor> ProgramCaDescriptors
     {
@@ -221,7 +240,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// Cyclic redundancy check bytes for confirming the integrity of the program map section data.
+    /// Cyclic redundancy check bytes for confirming the integrity of the
+    /// program map section data.
     /// </summary>
     public ReadOnlyCollection<byte> Crc
     {
@@ -477,8 +497,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
         pmt._crc = new byte[4];
         Buffer.BlockCopy(data, offset, pmt._crc, 0, 4);
 
-        // Make a copy of the PMT so that changes made by the caller on the original array have no effect on
-        // our reference/copy.
+        // Make a copy of the PMT so that changes made by the caller on the
+        // original array have no effect on our reference/copy.
         pmt._rawPmt = new byte[data.Length];
         Buffer.BlockCopy(data, 0, pmt._rawPmt, 0, data.Length);
 
@@ -494,41 +514,44 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// Patch the PMT to make it compatible with a specific CAM type.
+    /// Patch the program map table to make it compatible with a specific type
+    /// of conditional access module.
     /// </summary>
-    /// <param name="camType">The target CAM type.</param>
-    public void PatchPmtForCam(CamType camType)
+    /// <param name="camType">The target conditional access module type.</param>
+    /// <returns>the patched program map table</returns>
+    public TableProgramMap PatchForCam(CamType camType)
     {
       if (_camType == camType)
       {
-        return;
+        return this;
       }
 
-      this.LogDebug("PMT: patch for CAM type {0}", camType);
       if (_camType != CamType.Default)
       {
         throw new TvException("Not possible to patch PMT that is already patched.");
       }
 
+      TableProgramMap pmt = Decode(_rawPmt);
       if (camType == CamType.Astoncrypt2)
       {
         // For Astoncrypt 2 CAMs, we patch the stream type on AC3 streams.
-        // Move to the first ES stream type.
-        int offset = 12 + _programInfoLength;
+        int offset = 12 + _programInfoLength;   // move to the first ES stream type
         foreach (PmtElementaryStream es in _elementaryStreams)
         {
           if (es.StreamType == StreamType.Mpeg2Part1PrivateData && es.LogicalStreamType == LogicalStreamType.AudioAc3)
           {
             es.StreamType = StreamType.Ac3Audio;
-            _rawPmt[offset] = (byte)StreamType.Ac3Audio;
+            pmt._rawPmt[offset] = (byte)StreamType.Ac3Audio;
           }
           offset += 5 + es.EsInfoLength;
         }
       }
+      return pmt;
     }
 
     /// <summary>
-    /// Retrieve a read-only copy of the original program map section data that was decoded to create this Pmt instance.
+    /// Retrieve a read-only copy of the original program map section data that
+    /// was decoded to create this Pmt instance.
     /// </summary>
     /// <returns>a copy of the raw program map section data</returns>
     public ReadOnlyCollection<byte> GetRawPmt()
@@ -537,11 +560,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// Generate a conditional access program map command suitable for passing to an EN 50221 compliant
-    /// conditional access module.
+    /// Generate a conditional access program map command suitable for passing
+    /// to an EN 50221 compliant conditional access module.
     /// </summary>
-    /// <param name="listAction">The context of the command (in terms of other services that the conditional
-    ///   access module will need to deal with.</param>
+    /// <param name="listAction">The context of the command (in terms of other programs that the conditional access module will need to deal with.</param>
     /// <param name="command">The type of conditional access command.</param>
     /// <returns></returns>
     public byte[] GetCaPmt(CaPmtListManagementAction listAction, CaPmtCommand command)

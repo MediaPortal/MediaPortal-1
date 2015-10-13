@@ -27,7 +27,8 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
 {
   /// <summary>
-  /// A class that models the transport stream conditional access table section defined in ISO/IEC 13818-1.
+  /// A class that models the transport stream conditional access table section
+  /// defined in ISO/IEC 13818-1.
   /// </summary>
   public class TableConditionalAccess
   {
@@ -57,9 +58,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
 
     #endregion
 
-    // This class has a specific purpose - decoding CAT data. Although it may be tempting, we want to
-    // prevent it being used for holding various other info. Therefore the only way you can get an instance
-    // is by calling Decode() with a valid CAT section.
+    // This class has a specific purpose - decoding CAT data. Although it may
+    // be tempting, we want to prevent it being used for holding various other
+    // info. Therefore the only way you can get an instance is by calling
+    // Decode() with a valid CAT section.
     private TableConditionalAccess()
     {
     }
@@ -67,8 +69,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     #region properties
 
     /// <summary>
-    /// The conditional access table ID. Expected to be 0x01.
+    /// The conditional access table identifier.
     /// </summary>
+    /// <remarks>
+    /// Expected to be <c>0x01</c>.
+    /// </remarks>
     public byte TableId
     {
       get
@@ -78,8 +83,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// The conditional access section syntax indicator. Expected to be <c>true</c>.
+    /// The conditional access section syntax indicator.
     /// </summary>
+    /// <remarks>
+    /// Expected to be <c>true</c>.
+    /// </remarks>
     public bool SectionSyntaxIndicator
     {
       get
@@ -89,9 +97,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// The length of the conditional access section, including the CRC but not the table ID, section syntax
-    /// indicator or section length bytes.
+    /// The length of the conditional access section.
     /// </summary>
+    /// <remarks>
+    /// Includes the CRC but not the table ID, section syntax indicator or
+    /// section length bytes.
+    /// </remarks>
     public ushort SectionLength
     {
       get
@@ -112,8 +123,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// When <c>true</c>, indicates that the condtional access table information is current. Otherwise,
-    /// indicates that the information will apply in the future.
+    /// When <c>true</c>, indicates that the condtional access table
+    /// information is current. Otherwise, indicates that the information will
+    /// apply in the future.
     /// </summary>
     public bool CurrentNextIndicator
     {
@@ -124,7 +136,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// The index corresponding with this section of the conditional access table.
+    /// The index corresponding with this section of the conditional access
+    /// table.
     /// </summary>
     public byte SectionNumber
     {
@@ -135,7 +148,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// The total number of sections (minus one) that comprise the complete conditional access table.
+    /// The total number of sections (minus one) that comprise the complete
+    /// conditional access table.
     /// </summary>
     public byte LastSectionNumber
     {
@@ -146,9 +160,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// The descriptors for the service described by the conditional access table. Conditional access
-    /// descriptors are not included.
+    /// The descriptors for the transport stream described by the conditional
+    /// access table.
     /// </summary>
+    /// <remarks>
+    /// Conditional access descriptors are not included.
+    /// </remarks>
     public ReadOnlyCollection<IDescriptor> Descriptors
     {
       get
@@ -158,7 +175,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// The conditional access descriptors for the service described by the conditional access table.
+    /// The conditional access descriptors for the transport stream described
+    /// by the conditional access table.
     /// </summary>
     public ReadOnlyCollection<IDescriptor> CaDescriptors
     {
@@ -169,7 +187,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// Cyclic redundancy check bytes for confirming the integrity of the conditional access section data.
+    /// Cyclic redundancy check bytes for confirming the integrity of the
+    /// conditional access section data.
     /// </summary>
     public ReadOnlyCollection<byte> Crc
     {
@@ -260,8 +279,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
         cat._crc = new byte[4];
         Buffer.BlockCopy(data, offset, cat._crc, 0, 4);
 
-        // Make a copy of the CAT so that changes made by the caller on the original array have no effect on
-        // our reference/copy.
+        // Make a copy of the CAT so that changes made by the caller on the
+        // original array have no effect on our reference/copy.
         cat._rawCat = new byte[data.Length];
         Buffer.BlockCopy(data, 0, cat._rawCat, 0, data.Length);
 
@@ -277,7 +296,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// Retrieve a read-only copy of the original conditional access section data that was decoded to create this Cat instance.
+    /// Retrieve a read-only copy of the original conditional access section
+    /// data that was decoded to create this Cat instance.
     /// </summary>
     /// <returns>a copy of the raw conditional access section data</returns>
     public ReadOnlyCollection<byte> GetRawCat()

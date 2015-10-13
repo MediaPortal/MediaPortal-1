@@ -25,7 +25,8 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
 {
   /// <summary>
-  /// A class capable of holding elementary stream information for one stream in a program map.
+  /// A class capable of holding elementary stream information for one stream
+  /// in a program map.
   /// </summary>
   public class PmtElementaryStream
   {
@@ -44,7 +45,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     #region properties
 
     /// <summary>
-    /// The elementary stream type.
+    /// The elementary stream's type.
     /// </summary>
     public StreamType StreamType
     {
@@ -89,8 +90,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// The elementary stream's descriptors. Conditional access descriptors are not included.
+    /// The elementary stream's descriptors.
     /// </summary>
+    /// <remarks>
+    /// Conditional access descriptors are not included.
+    /// </remarks>
     public List<IDescriptor> Descriptors
     {
       get
@@ -119,10 +123,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     }
 
     /// <summary>
-    /// The logical type or category of the elementary stream. This property can be used to quickly and
-    /// precisely determine the stream type when the stream type would normally be indicated using one
-    /// or more descriptors.
+    /// The logical type or category of the elementary stream. 
     /// </summary>
+    /// <remarks>
+    /// This property can be used to quickly and precisely determine the stream
+    /// type when the stream type would normally be indicated using one or more
+    /// descriptors.
+    /// </remarks>
     public LogicalStreamType LogicalStreamType
     {
       get
