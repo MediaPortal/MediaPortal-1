@@ -435,10 +435,10 @@ namespace MediaPortal.Player
         {
           CurrentSubtitleStream = i;
           Log.Info("VideoPlayerVMR7: CultureInfo Selected active subtitle track language: {0} ({1})", ci.EnglishName, i);
+          EnableSubtitle = true;
           break;
         }
       }
-      EnableSubtitle = true;
     }
 
     protected void SelectAudioLanguage()
