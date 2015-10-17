@@ -4194,7 +4194,48 @@ public class MediaPortalApp : D3D, IRender
               PlaylistPlayer.PlayPrevious();
             }
             break;
+          case Action.ActionType.ACTION_STEP_BACK_PREVIOUS_JUMP:
+            if (g_Player.IsDVD || g_Player.HasChapters)
+            {
+              action = new Action(Action.ActionType.ACTION_STEP_BACK_PREVIOUS_JUMP, 0, 0);
+              g_Player.OnAction(action);
+              break;
+            }
+            break;
+          //disable commercial skip
+          case Action.ActionType.ACTION_TOGGLE_AUTO_COMMERCIAL_SKIP:
+            if (g_Player.AutoCommercialSkip)
+            {
+              Log.Debug("Disabling commercial skip");
+              activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
+              activeWindow = (GUIWindow.Window)Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
+              GUIDialogOK dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+              if (dlgOK != null)
+              {
+                dlgOK.SetHeading("Commercial Skip" /* or Message */);
+                dlgOK.SetLine(1, "Auto commercial skip disabled");
+                dlgOK.SetLine(2, "");
+                dlgOK.DoModal((int)activeWindow);
+              }
 
+              g_Player.AutoCommercialSkip = false;
+            }
+            else
+            {
+              Log.Debug("Enabling commercial skip");
+              activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
+              activeWindow = (GUIWindow.Window)Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
+              GUIDialogOK dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+              if (dlgOK != null)
+              {
+                dlgOK.SetHeading("Commercial Skip" /* or Message */);
+                dlgOK.SetLine(1, "Auto commercial skip enabled");
+                dlgOK.SetLine(2, "");
+                dlgOK.DoModal((int)activeWindow);
+              }
+              g_Player.AutoCommercialSkip = true;
+            }
+            break;
           // play next item from playlist;
           // DVD: goto next chapter
           case Action.ActionType.ACTION_NEXT_CHAPTER:

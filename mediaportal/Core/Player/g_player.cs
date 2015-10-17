@@ -38,6 +38,10 @@ using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
 using Action = MediaPortal.GUI.Library.Action;
 using MediaPortal.Player.Subtitles;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Xml;
+using System.Threading;
 
 namespace MediaPortal.Player
 {
@@ -97,7 +101,9 @@ namespace MediaPortal.Player
     private static bool _picturePlaylist = false;
     private static bool _forceplay = false;
     private static bool _isExtTS = false;
-
+    private static FileSystemWatcher _commercialFileWatcher = null;
+    private static string _commercialPath = "";
+    private static double _skipFrom = 0;  //used to track where the last commercial skip came from.  Allows for skip back in the case of an erroneous jump
     private static string _currentDescription = "";
     //actual program metadata - usefull for tv - avoids extra DB Lookups. 
 
@@ -555,6 +561,12 @@ namespace MediaPortal.Player
           PlayBackStopped(_currentMedia, (int)CurrentPosition,
                           (!String.IsNullOrEmpty(currentFileName) ? currentFileName : CurrentFile));
           currentFileName = String.Empty;
+          if (_commercialFileWatcher != null)
+          {
+            _commercialFileWatcher.EnableRaisingEvents = false;
+            _commercialFileWatcher.Created -= new FileSystemEventHandler(commercialFileWatcher_Changed);
+            _commercialFileWatcher.Changed -= new FileSystemEventHandler(commercialFileWatcher_Changed);
+          }
           _mediaInfo = null;
         }
       }
@@ -953,6 +965,9 @@ namespace MediaPortal.Player
             case Action.ActionType.ACTION_PREV_CHAPTER:
               JumpToPrevChapter();
               return true;
+            case Action.ActionType.ACTION_STEP_BACK_PREVIOUS_JUMP:
+              StepBackPrevJump();
+              return true;
           }
         }
         return _player.OnAction(action);
@@ -1023,7 +1038,17 @@ namespace MediaPortal.Player
         return true;
       }
     }
-
+    public static bool AutoCommercialSkip
+    {
+      get
+      {
+        return _autoComSkip;
+      }
+      set
+      {
+        _autoComSkip = value;
+      }
+    }
     public static bool IsTV
     {
       get
@@ -2627,16 +2652,34 @@ namespace MediaPortal.Player
             StepNow();
           }
         }
-        else if (_autoComSkip && JumpPoints != null && _player.Speed == 1)
+        //give xml or edl priority
+        else if (_autoComSkip && JumpPoints != null && Chapters != null && _player.Speed == 1)
         {
+          //Log.Debug("g_Player.Process() - Current JumpPointListLength - {0}", JumpPointsList.Count);
+          //Log.Debug("g_Player.Process() - Checking for jump from xml or edl list");
           double currentPos = _player.CurrentPosition;
-          foreach (double jumpFrom in JumpPoints)
+          for (int i = 0; i < JumpPoints.Length; i++)
           {
-            if (jumpFrom != 0 && currentPos <= jumpFrom + 1.0 && currentPos >= jumpFrom - 0.1)
+            if (JumpPoints[i] < currentPos && Chapters[i] > currentPos)
             {
-              Log.Debug("g_Player.Process() - Current Position: {0}, JumpPoint: {1}", currentPos, jumpFrom);
-
-              JumpToNextChapter();
+              Log.Debug("g_Player.Process() - Current Position: {0}, JumpPoint: {1}", currentPos, Chapters[i]);
+              //-5 is the span for recorded tv
+              _skipFrom = currentPos - 5;
+              Log.Debug("g_Player.Process() - Skip from {0}:{1}:{2}", (int)(_skipFrom / 3600d), (int)((_skipFrom % 3600d) / 60d), (int)(_skipFrom % 60d));
+              TimeSpan time = TimeSpan.FromSeconds(Chapters[i]);
+              if (time.TotalSeconds > _player.Duration && _player.CurrentPosition > 0)
+              {
+                Log.Debug("Cannot Skip Past End of Show, duration {0}, skip time {1}", time.TotalSeconds, _player.Duration);
+              }
+              else if (time.TotalSeconds < 0)
+              {
+                Log.Debug("Cannot Skip Past the Beginning of the show, skip time {0}", time.TotalSeconds);
+              }
+              else
+              {
+                Log.Debug("g_Player.Process() Jumping xml or edl commercial segment");
+                SeekAbsolute(time.TotalSeconds);
+              }
               break;
             }
           }
@@ -3376,20 +3419,92 @@ namespace MediaPortal.Player
 
     private static bool LoadChapters(string videoFile)
     {
-      _chapters = null;
-      _jumpPoints = null;
-
-      string chapterFile = Path.ChangeExtension(videoFile, ".txt");
-      if (!File.Exists(chapterFile) || IsFileUsedbyAnotherProcess(chapterFile))
+      try
       {
-        return false;
+        Log.Debug("g_player.LoadChapters for {0}", videoFile);
+        if (_loadAutoComSkipSetting)
+        {
+          using (Settings xmlreader = new MPSettings())
+          {
+            _autoComSkip = xmlreader.GetValueAsBool("comskip", "automaticskip", false);
+          }
+
+          Log.Debug("g_Player.LoadChapters() - Automatic ComSkip mode is {0}", _autoComSkip ? "on." : "off.");
+
+          _loadAutoComSkipSetting = false;
+        }
+        _chapters = null;
+        _jumpPoints = null;
+
+        string chapterFile = Path.ChangeExtension(videoFile, ".txt");
+        string chapterFileXml = Path.ChangeExtension(videoFile, ".xml");
+        string chapterFileEdl = Path.ChangeExtension(videoFile, ".edl");
+        //remove || IsFileUsedbyAnotherProcess(chapterFile) we don't care if it's still in use
+        if (!File.Exists(chapterFile) & !File.Exists(chapterFileXml) & !File.Exists(chapterFileEdl))
+        {
+          Log.Debug("g_player.LoadChapters not found for {0}, {1}, {2}, will start watching for .xml file to be created", chapterFile, chapterFileXml, chapterFileEdl);
+          _commercialFileWatcher = new FileSystemWatcher(Path.GetDirectoryName(videoFile) + @"\", "*.xml");
+          _commercialFileWatcher.NotifyFilter = NotifyFilters.LastWrite;// | NotifyFilters.FileName | NotifyFilters.Size;//
+          _commercialFileWatcher.Created += new FileSystemEventHandler(commercialFileWatcher_Changed);
+          _commercialFileWatcher.Changed += new FileSystemEventHandler(commercialFileWatcher_Changed);
+          _commercialFileWatcher.EnableRaisingEvents = true;
+          return false;
+        }
+
+        if (File.Exists(chapterFileXml))
+        {
+          Log.Debug("g_Player.LoadChapters() - XML Chapter file found for video \"{0}\"", videoFile);
+          _commercialPath = chapterFileXml;
+          List<double[]> jumpPointsList = ReadXmlCommercials(chapterFileXml);
+          _jumpPoints = new double[jumpPointsList.Count];
+          _chapters = new double[jumpPointsList.Count];
+          for (int i = 0; i < jumpPointsList.Count; i++)
+          {
+            _jumpPoints[i] = jumpPointsList[i][0];
+            _chapters[i] = jumpPointsList[i][1];
+          }
+          _commercialFileWatcher = new FileSystemWatcher(Path.GetDirectoryName(videoFile) + @"\", "*.xml");
+          _commercialFileWatcher.NotifyFilter = NotifyFilters.LastWrite;// | NotifyFilters.FileName | NotifyFilters.Size;//
+          _commercialFileWatcher.Created += new FileSystemEventHandler(commercialFileWatcher_Changed);
+          _commercialFileWatcher.Changed += new FileSystemEventHandler(commercialFileWatcher_Changed);
+          _commercialFileWatcher.EnableRaisingEvents = true;
+          Log.Debug("g_Player.LoadChapters() - Xml watching enabled for {0}", Path.GetDirectoryName(videoFile));
+
+          return true;
+        }
+        else if (File.Exists(chapterFileEdl))
+        {
+          Log.Debug("g_Player.LoadChapters() - EDL Chapter file found for video \"{0}\"", videoFile);
+          _commercialPath = chapterFileEdl;
+          List<double[]> jumpPointsList = ReadEdlCommercials(chapterFileEdl);
+          _jumpPoints = new double[jumpPointsList.Count];
+          _chapters = new double[jumpPointsList.Count];
+          for (int i = 0; i < jumpPointsList.Count; i++)
+          {
+            _jumpPoints[i] = jumpPointsList[i][0];
+            _chapters[i] = jumpPointsList[i][1];
+          }
+          _commercialFileWatcher = new FileSystemWatcher(Path.GetDirectoryName(videoFile) + @"\", "*.edl");
+          _commercialFileWatcher.NotifyFilter = NotifyFilters.LastWrite;// | NotifyFilters.FileName | NotifyFilters.Size;//
+          _commercialFileWatcher.Created += new FileSystemEventHandler(commercialFileWatcher_Changed);
+          _commercialFileWatcher.Changed += new FileSystemEventHandler(commercialFileWatcher_Changed);
+          _commercialFileWatcher.EnableRaisingEvents = true;
+          Log.Debug("g_Player.LoadChapters() - edl watching enabled for {0}", Path.GetDirectoryName(videoFile));
+          return true;
+        }
+        else
+        {
+          Log.Debug("g_Player.LoadChapters() - Text chapter file found for video \"{0}\"", videoFile);
+          using (TextReader chapters = new StreamReader(chapterFile))
+          {
+            return LoadChapters(chapters);
+          }
+        }
       }
-
-      Log.Debug("g_Player.LoadChapters() - Chapter file found for video \"{0}\"", videoFile);
-
-      using (TextReader chapters = new StreamReader(chapterFile))
+      catch (Exception ex)
       {
-        return LoadChapters(chapters);
+        Log.Error("g_Player.LoadChapters() - {0}", ex.ToString());
+        return false;
       }
     }
 
@@ -3489,7 +3604,26 @@ namespace MediaPortal.Player
 
       return -1; // no skip
     }
-
+    public static bool StepBackPrevJump()
+    {
+      if (!Playing)
+      {
+        return false;
+      }
+      if (_skipFrom != 0)
+      {
+        Log.Debug("g_Player.StepBackPrevJump() - Current Position: {0}, Previous Chapter: {1}", _player.CurrentPosition,
+                _skipFrom);
+        SeekAbsolute(_skipFrom);
+        _skipFrom = 0;
+        return true;
+      }
+      else
+      {
+        Log.Debug("g_Player.StepBackPrevJump() - Skip from was 0 so doing nothing");
+      }
+      return false;
+    }
     private static double PreviousChapterTime(double currentPos)
     {
       if (Chapters != null)
@@ -3776,7 +3910,121 @@ namespace MediaPortal.Player
     #endregion
 
     #region private members
+    private static void commercialFileWatcher_Changed(object sender, FileSystemEventArgs e)
+    {
+      try
+      {
+        Log.Debug("g_player.xmlWatcher_Changed - XmlFileChanged: {0} MediaXmlPath: {1}", e.FullPath, _commercialPath);
 
+        if (e.FullPath.ToLower() == _commercialPath.ToLower())
+        {
+          //we need to sleep we will get an IO error
+          Thread.Sleep(1000);
+          if (Path.GetExtension(e.FullPath) == ".xml")
+          {
+            Log.Debug("g_player.commercialFileWatcher_Changed - Load new XML file: {0}", e.FullPath);
+            List<double[]> jumpPointsList = ReadXmlCommercials(e.FullPath);
+            Array.Resize<double>(ref _jumpPoints, jumpPointsList.Count);
+            Array.Resize<double>(ref _chapters, jumpPointsList.Count);
+            for (int i = 0; i < jumpPointsList.Count; i++)
+            {
+              _jumpPoints[i] = jumpPointsList[i][0];
+              _chapters[i] = jumpPointsList[i][1];
+            }
+          }
+          else if (Path.GetExtension(e.FullPath) == ".edl")
+          {
+            Log.Debug("g_player.commercialFileWatcher_Changed - Load new edl file: {0}", e.FullPath);
+            List<double[]> jumpPointsList = ReadEdlCommercials(e.FullPath);
+            Array.Resize<double>(ref _jumpPoints, jumpPointsList.Count);
+            Array.Resize<double>(ref _chapters, jumpPointsList.Count);
+            for (int i = 0; i < jumpPointsList.Count; i++)
+            {
+              _jumpPoints[i] = jumpPointsList[i][0];
+              _chapters[i] = jumpPointsList[i][1];
+            }
+          }
+          else if (Path.GetExtension(e.FullPath) == ".txt")
+          {
+            Log.Debug("g_player.commercialFileWatcher_Changed - Load new txt file: {0}", e.FullPath);
+            using (TextReader chapters = new StreamReader(e.FullPath))
+            {
+              LoadChapters(chapters);
+            }
+
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("g_player.commercialFileWatcher_Changed - Error {0}", ex.ToString());
+      }
+    }
+
+    private static List<double[]> ReadXmlCommercials(string commFile)
+    {
+      List<double[]> arCommercials = new List<double[]>();
+      try
+      {
+        if (File.Exists(commFile))
+        {
+          XmlDocument xComm = new XmlDocument();
+          //make sure we open the file read only
+          //FileStream xmlFile = new FileStream(commFile, FileMode.Open, FileAccess.Read, FileShare.Read);
+          xComm.Load(commFile);
+          foreach (XmlNode n in xComm.SelectNodes("/root/commercial"))
+          {
+            double[] commercial = new double[2];
+            commercial[0] = XmlConvert.ToDouble(n.Attributes["start"].Value);
+            commercial[1] = XmlConvert.ToDouble(n.Attributes["end"].Value);
+            arCommercials.Add(commercial);
+          }
+        }
+
+        Log.Debug("Commercial list loaded with a length of: {0}", arCommercials.Count);
+        return arCommercials;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("g_player.ReadXmlCommercials() - Error {0}", ex.ToString());
+        return arCommercials;
+      }
+    }
+
+    private static List<double[]> ReadEdlCommercials(string commFile)
+    {
+      List<double[]> arCommercials = new List<double[]>();
+      try
+      {
+        if (File.Exists(commFile))
+        {
+          using (StreamReader sr = File.OpenText(commFile))
+          {
+            string line = sr.ReadLine();
+            while (!string.IsNullOrEmpty(line))
+            {
+              double[] commercial = new double[2];
+              Match cMatch = Regex.Match(line, @"^(?<start>\d+\.\d+)\t(?<end>\d+\.\d+)\t", RegexOptions.Compiled);
+              if (cMatch.Success)
+              {
+                commercial[0] = XmlConvert.ToDouble(cMatch.Groups["start"].Value);
+                commercial[1] = XmlConvert.ToDouble(cMatch.Groups["end"].Value);
+                if (commercial[0] < commercial[1])
+                  arCommercials.Add(commercial);
+              }
+              line = sr.ReadLine();
+            }
+          }
+        }
+        Log.Debug("Commercial list loaded with a length of: {0}", arCommercials.Count);
+        return arCommercials;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("g_player.ReadEdlCommercials() - Error {0}", ex.ToString());
+        return arCommercials;
+      }
+    }
     #endregion
   }
 }
