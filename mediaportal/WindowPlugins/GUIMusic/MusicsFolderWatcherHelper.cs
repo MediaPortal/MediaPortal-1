@@ -44,6 +44,7 @@ namespace MediaPortal.GUI.Music
     private ArrayList _Events = null;
     private Timer _Timer = null;
     private int _TimerInterval = 3000; // milliseconds
+    private ArrayList _notReadyFiles = new ArrayList(); // locked (not available files will be placed here until unlock)
 
     #endregion
 
@@ -53,7 +54,7 @@ namespace MediaPortal.GUI.Music
     {
       if (!Directory.Exists(directory))
         return;
-
+      
       _currentFolder = directory;
       Log.Debug("MusicFolderWatcher Monitoring of enabled for {0}", _currentFolder);
     }
@@ -184,8 +185,33 @@ namespace MediaPortal.GUI.Music
     {
       if (Util.Utils.IsAudio(e.FullPath))
       {
-        Log.Debug("MusicFolderWatcher Add File Fired: {0}", e.FullPath);
-        _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.Create, e.FullPath));
+        // Is file been locked before?
+        if (_notReadyFiles.Contains(e.FullPath))
+        {
+          // Exit beacuse it will be processed by changed event
+          return;
+        }
+
+        FileInfo fi = new FileInfo(e.FullPath);
+        if (fi.Exists)
+        {
+          try
+          {
+            Stream s = null;
+            s = fi.OpenRead();
+            s.Close();
+          }
+          catch (IOException)
+          {
+            // File is locked (not copied yet), add it to blacklisted array
+            _notReadyFiles.Add(e.FullPath);
+            // The file is not closed yet. Ignore the event, it will be processed by the Change event
+            Log.Info("MusicFolderWatcher: File not ready yet: {0}", e.FullPath);
+            return;
+          }
+          Log.Debug("MusicFolderWatcher Add File Fired: {0}", e.FullPath);
+          _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.Create, e.FullPath));
+        }
       }
     }
 
@@ -197,6 +223,24 @@ namespace MediaPortal.GUI.Music
       // Was it on a file? Ignore change events on directories
       if (fi.Exists && Util.Utils.IsAudio(e.FullPath))
       {
+        // Check if file is available
+        try
+        {
+          Stream s = null;
+          s = fi.OpenRead();
+          s.Close();
+        }
+        catch (IOException)
+        {
+          return; // file is not ready yet
+        }
+
+        // Check if file was blacklisted and remove it from that list
+        if (_notReadyFiles.Contains(e.FullPath))
+        {
+          _notReadyFiles.Remove(e.FullPath);
+        }
+
         Log.Debug("MusicFolderWatcher Change File Fired: {0}", e.FullPath);
         _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.Change, e.FullPath));
       }
