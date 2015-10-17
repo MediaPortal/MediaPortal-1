@@ -87,7 +87,7 @@ namespace MediaPortal.GUI.Library
     {
       base.FinalizeConstruction();
       _font = GUIFontManager.GetFont(_fontName);
-      if (_property.IndexOf("#") >= 0)
+      if (_property.IndexOf("#", StringComparison.Ordinal) >= 0)
       {
         _containsProperty = true;
       }
