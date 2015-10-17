@@ -47,6 +47,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     bool Open();
 
     /// <summary>
+    /// Determine if the conditional access interface is open.
+    /// </summary>
+    /// <value><c>true</c> if the conditional access interface is open, otherwise <c>false</c></value>
+    bool IsOpen
+    {
+      get;
+    }
+
+    /// <summary>
     /// Close the conditional access interface.
     /// </summary>
     /// <remarks>
@@ -84,8 +93,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     /// the MPEG 2 conditional access table in order to successfully decrypt
     /// programs.
     /// </summary>
-    /// <returns><c>true</c> if access to the MPEG 2 conditional access table is required in order to successfully decrypt programs, otherwise <c>false</c></returns>
-    bool IsConditionalAccessTableRequiredForDecryption();
+    /// <value><c>true</c> if access to the MPEG 2 conditional access table is required in order to successfully decrypt programs, otherwise <c>false</c></value>
+    bool IsConditionalAccessTableRequiredForDecryption
+    {
+      get;
+    }
 
     /// <summary>
     /// Send a command to to the conditional access interface.
@@ -94,7 +106,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     /// This function can be used to [for example]:
     /// - request that a program be decrypted
     /// - determine whether a program can be decrypted
-    /// - indicate that a program need not be decrypted
+    /// - indicate that a program does not need to be decrypted
     /// </remarks>
     /// <param name="listAction">It is assumed that the interface may be able to decrypt one or more programs
     ///   simultaneously. This parameter gives the interface an indication of the number of programs that it

@@ -568,6 +568,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     }
 
     /// <summary>
+    /// Determine if the conditional access interface is open.
+    /// </summary>
+    /// <value><c>true</c> if the conditional access interface is open, otherwise <c>false</c></value>
+    bool IConditionalAccessProvider.IsOpen
+    {
+      get
+      {
+        return _isCaInterfaceOpen;
+      }
+    }
+
+    /// <summary>
     /// Close the conditional access interface.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
@@ -674,10 +686,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     /// the MPEG 2 conditional access table in order to successfully decrypt
     /// programs.
     /// </summary>
-    /// <returns><c>true</c> if access to the MPEG 2 conditional access table is required in order to successfully decrypt programs, otherwise <c>false</c></returns>
-    bool IConditionalAccessProvider.IsConditionalAccessTableRequiredForDecryption()
+    /// <value><c>true</c> if access to the MPEG 2 conditional access table is required in order to successfully decrypt programs, otherwise <c>false</c></value>
+    bool IConditionalAccessProvider.IsConditionalAccessTableRequiredForDecryption
     {
-      return false;
+      get
+      {
+        return false;
+      }
     }
 
     /// <summary>
