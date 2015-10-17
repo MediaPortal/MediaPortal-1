@@ -87,7 +87,7 @@ namespace MediaPortal.GUI.Library
       _properties["#music.duration"] = string.Empty;
       _properties["#music.comment"] = string.Empty;
       _properties["#music.genre"] = string.Empty;
-      _properties["music.year"] = string.Empty;
+      _properties["#music.year"] = string.Empty;
       _properties["#music.albumartist"] = string.Empty;
       _properties["#music.bitrate"] = string.Empty;
       _properties["#music.composer"] = string.Empty;
