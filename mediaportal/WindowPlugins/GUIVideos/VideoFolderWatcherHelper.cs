@@ -44,6 +44,7 @@ namespace MediaPortal.GUI.Video
     private ArrayList _Events = null;
     private Timer _Timer = null;
     private int _TimerInterval = 3000; // milliseconds
+    private ArrayList _notReadyFiles = new ArrayList(); // locked (not available files will be placed here until unlock)
 
     #endregion
 
@@ -184,8 +185,34 @@ namespace MediaPortal.GUI.Video
     {
       if (Util.Utils.IsVideo(e.FullPath))
       {
-        Log.Debug("VideoFolderWatcher Add File Fired: {0}", e.FullPath);
-        _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.Create, e.FullPath));
+        // Is file been locked before?
+        if (_notReadyFiles.Contains(e.FullPath))
+        {
+          // Exit beacuse it will be processed by changed event
+          return;
+        }
+
+        FileInfo fi = new FileInfo(e.FullPath);
+        if (fi.Exists)
+        {
+          try
+          {
+            Stream s = null;
+            s = fi.OpenRead();
+            s.Close();
+          }
+          catch (IOException)
+          {
+            // File is locked (not copied yet), add it to blacklisted array
+            _notReadyFiles.Add(e.FullPath);
+            // The file is not closed yet. Ignore the event, it will be processed by the Change event
+            Log.Info("VideoFolderWatcher: File not ready yet: {0}", e.FullPath);
+            return;
+          }
+
+          Log.Debug("VideoFolderWatcher Add File Fired: {0}", e.FullPath);
+          _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.Create, e.FullPath));
+        }
       }
     }
 
@@ -197,6 +224,24 @@ namespace MediaPortal.GUI.Video
       // Was it on a file? Ignore change events on directories
       if (fi.Exists && Util.Utils.IsVideo(e.FullPath))
       {
+        // Check if file is available
+        try
+        {
+          Stream s = null;
+          s = fi.OpenRead();
+          s.Close();
+        }
+        catch (IOException)
+        {
+          return; // file is not ready yet
+        }
+
+        // Check if file was blacklisted and remove it from that list
+        if (_notReadyFiles.Contains(e.FullPath))
+        {
+          _notReadyFiles.Remove(e.FullPath);
+        }
+        
         Log.Debug("VideoFolderWatcher Change File Fired: {0}", e.FullPath);
         _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.Change, e.FullPath));
       }

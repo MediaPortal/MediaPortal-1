@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Language name="Ukrainian" characters="1250">
+<Language name="Ukrainian" characters="1111">
   <Section name="unmapped">
     <String id="0" prefix="Мої ">Програми</String>
     <String id="1" prefix="Мої ">Фото</String>
@@ -2369,5 +2369,31 @@
     <String id="300230">Зупинити при відключенні відтворювача аудіо</String>
     <String id="300231">Зменшити частоту кадрів при втраті фокусу</String>
   	<String id="300232">Оновлювати тільки новіші за {0}</String>
+  <String id="350001">Натисніть Info/F9 для налаштування...</String>
+  <String id="350002">Фільми</String>
+  <String id="350003">Грати диск</String>
+  <String id="350004">Trakt</String>
+  <String id="350005">TvWishList</String>
+  <String id="350006">OnlineVideos</String>
+  <String id="350007">Extensions</String>
+  <String id="350008">SubCentral</String>
+  <String id="350009">IMDb+</String>
+  <String id="350010">LogoManager</String>
+  <String id="350011">Новини</String>
+  <String id="350012">Bing Images</String>
+  <String id="350013">MyLyrics</String>
+  <String id="350014">BrowseTheWeb</String>
+  <String id="350015">AirPlayer</String>
+  <String id="350016">Rockstar</String>
+  <String id="350017">ShowTimes</String>
+  <String id="350018">NoPlugin</String>
+  <String id="350019">Налаштування міток...</String>
+  <String id="350020">Натисніть Info/F9 для списку плагінів...</String>
+  <String id="350021">Погода</String>
+  <String id="350022">MusicInfo Handler</String>
+  <String id="350023">Налаштування</String>
+  <String id="350024">Телепрограма</String>
+  <String id="350025">Red Bull TV</String>
+  <String id="350026">YouTube</String>
   </Section>
 </Language>
