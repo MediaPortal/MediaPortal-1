@@ -861,7 +861,8 @@ namespace MediaPortal.GUI.Library
         if (xmlNodeList != null)
           foreach (XmlNode node in xmlNodeList)
           {
-            string[] tokens = node.InnerText.Split(':');
+            // Split only fisrt ':' otherwise full path can like (C:\) will be split too
+            string[] tokens = node.InnerText.Split(new[] { ':' }, 2);
 
             if (tokens.Length < 2)
             {
