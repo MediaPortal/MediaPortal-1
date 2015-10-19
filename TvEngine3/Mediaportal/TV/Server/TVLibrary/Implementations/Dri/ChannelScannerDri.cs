@@ -66,7 +66,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     private RequestFdcTablesDelegate _requestFdcTables = null;
     private IChannelScannerHelper _scanHelper = null;
     private bool _isScanning = false;
-    private int _scanTimeLimit = 20000;   // unit = milliseconds
+    private int _scanTimeLimit = 20000;   // unit = milli-seconds
 
     private volatile ScanStage _scanStage = ScanStage.NotScanning;
     private ManualResetEvent _event = null;

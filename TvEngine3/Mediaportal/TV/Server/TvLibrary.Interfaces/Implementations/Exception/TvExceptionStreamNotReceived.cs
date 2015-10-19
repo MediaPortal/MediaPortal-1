@@ -25,18 +25,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception
 {
   /// <summary>
   /// Exception thrown by the TV library when physical tuning succeeds but the
-  /// service is determined to be not running.
+  /// service's video and/or audio streams are not received.
   /// </summary>
   [Serializable]
-  public class TvExceptionServiceNotRunning : TvException
+  public class TvExceptionStreamNotReceived : TvException
   {
     /// <summary>
-    /// Initialise a new instance of the <see cref="TvExceptionServiceNotRunning"/> class.
+    /// Initialise a new instance of the <see cref="TvExceptionStreamNotReceived"/> class.
     /// </summary>
     /// <param name="service">The tuning and service details for the service.</param>
-    public TvExceptionServiceNotRunning(IChannel service)
-      : base("The service is currently not running.{0}{1}", Environment.NewLine, service)
+    /// <param name="isVideoReceived"><c>True</c> if the service's video is being received.</param>
+    /// <param name="isAudioReceived"><c>True</c> if the service's audio is being received.</param>
+    public TvExceptionStreamNotReceived(IChannel service, bool isVideoReceived, bool isAudioReceived)
+      : base("The service's {0} not being received.{1}{2}", GetStreamDescription(isVideoReceived, isAudioReceived), Environment.NewLine, service)
     {
+    }
+
+    private static string GetStreamDescription(bool isVideoReceived, bool isAudioReceived)
+    {
+      if (!isVideoReceived && !isAudioReceived)
+      {
+        return "video and audio streams are";
+      }
+      if (!isVideoReceived)
+      {
+        return "video stream is";
+      }
+      return "audio stream is";
     }
   }
 }

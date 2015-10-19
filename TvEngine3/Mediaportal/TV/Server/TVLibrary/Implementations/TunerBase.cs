@@ -20,16 +20,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
@@ -40,7 +39,8 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension.Enum;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
   /// <summary>
-  /// A base class for all tuners, independent of tuner implementation and stream format.
+  /// A base class for all <see cref="ITuner"/> implementations, independent of
+  /// tuner interface and stream format.
   /// </summary>
   internal abstract class TunerBase : ITunerInternal, ITuner, IDisposable
   {
@@ -71,7 +71,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Fire the new sub-channel observer event.
     /// </summary>
-    /// <param name="subChannelId">The ID of the new sub-channel.</param>
+    /// <param name="subChannelId">The new sub-channel's identifier.</param>
     private void FireNewSubChannelEvent(int subChannelId)
     {
       if (_newSubChannelEventDelegate != null)
@@ -80,52 +80,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
     }
 
-    /// <summary>
-    /// After tune delegate, fired after tuning is complete.
-    /// </summary>
-    private OnAfterTuneDelegate _afterTuneEventDelegate;
-
-    /// <summary>
-    /// Set the tuner's after tune event handler.
-    /// </summary>
-    /// <value>the delegate</value>
-    public event OnAfterTuneDelegate OnAfterTuneEvent
-    {
-      add
-      {
-        _afterTuneEventDelegate = null;
-        _afterTuneEventDelegate += value;
-      }
-      remove
-      {
-        _afterTuneEventDelegate = null;
-      }
-    }
-
-    /// <summary>
-    /// Fire the after tune observer event.
-    /// </summary>
-    private void FireAfterTuneEvent()
-    {
-      if (_afterTuneEventDelegate != null)
-      {
-        _afterTuneEventDelegate();
-      }
-    }
-
     #endregion
 
     #region variables
-
-    /// <summary>
-    /// Dictionary of sub-channels.
-    /// </summary>
-    private Dictionary<int, ISubChannelInternal> _mapSubChannels = new Dictionary<int, ISubChannelInternal>();
-
-    /// <summary>
-    /// The ID to use for the next new sub-channel.
-    /// </summary>
-    private int _nextSubChannelId = 0;
 
     /// <summary>
     /// Context reference
@@ -230,21 +187,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     #region conditional access
 
     /// <summary>
-    /// A list containing the conditional access provider extensions supported
-    /// by this tuner. The list is ordered by descending extension priority.
-    /// </summary>
-    private List<IConditionalAccessProvider> _caProviders = new List<IConditionalAccessProvider>();
-
-    /// <summary>
     /// Enable or disable the use of conditional access interface(s).
     /// </summary>
     private bool _useConditionalAccessInterface = true;
 
-    private ICollection<string> _conditionalAccessProviders = new List<string>(20);
+    /// <summary>
+    /// Have we attempted to open the conditional access interface(s)?
+    /// </summary>
+    private bool _areConditionalAccessInterfacesOpened = false;
+
+    /// <summary>
+    /// The tuner's conditional access interface(s) can decrypt channels from
+    /// all of these providers.
+    /// </summary>
+    /// <remarks>
+    /// If this collection is empty it is assumed that all channels can be
+    /// decrypted.
+    /// </remarks>
+    private IList<string> _conditionalAccessProviders = new List<string>(20);
 
     /// <summary>
     /// The type of conditional access module available to the conditional
-    /// access interface.
+    /// access interface(s).
     /// </summary>
     /// <remarks>
     /// Certain conditional access modules require specific handling to ensure
@@ -253,57 +217,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private CamType _camType = CamType.Default;
 
     /// <summary>
-    /// The method that should be used to communicate the set of channels that
-    /// the tuner's conditional access interface needs to manage.
+    /// The number of channels that the conditional access interface(s) can
+    /// decrypt simultaneously.
     /// </summary>
-    /// <remarks>
-    /// Multi-channel decrypt is *not* the same as Digital Devices'
-    /// multi-transponder decrypt (MTD). MCD is implmented using standard CA
-    /// PMT commands; MTD is implemented in the Digital Devices drivers.
-    /// Disabled = Always send Only. In most cases this will result in only one
-    ///         channel being decrypted. If other methods are not working
-    ///         reliably then this one should at least allow decrypting one
-    ///         channel reliably.
-    /// List = Explicit management using Only, First, More and Last. This is
-    ///         the most widely supported set of commands, however they are not
-    ///         suitable for some interfaces (such as the Digital Devices
-    ///         interface).
-    /// Changes = Use Add, Update and Remove to pass changes to the interface.
-    ///         The full channel list is never passed. Most interfaces don't
-    ///         support these commands.
-    /// </remarks>
-    private MultiChannelDecryptMode _multiChannelDecryptMode = MultiChannelDecryptMode.List;
-
-    /// <summary>
-    /// The number of channels that the tuner is capable of or permitted to
-    /// decrypt simultaneously. Zero means there is no limit.
-    /// </summary>
-    private int _decryptLimit = 0;
-
-    /// <summary>
-    /// Enable or disable waiting for the conditional interface to be ready
-    /// before sending commands.
-    /// </summary>
-    private bool _waitUntilCaInterfaceReady = true;
-
-    /// <summary>
-    /// The number of times to re-attempt decrypting the current service set
-    /// when one or more services are not able to be decrypted for whatever
-    /// reason.
-    /// </summary>
-    /// <remarks>
-    /// Each available CA interface will be tried in order of priority. If
-    /// decrypting is not started successfully, all interfaces are retried
-    /// until each interface has been tried _decryptFailureRetryCount + 1
-    /// times, or until decrypting is successful.
-    /// </remarks>
-    private int _decryptFailureRetryCount = 2;
-
-    /// <summary>
-    /// Is the MPEG 2 conditional access table required in order for any or all
-    /// of the conditional access providers to decrypt programs.
-    /// </summary>
-    private bool _isConditionalAccessTableRequired = false;
+    private int _decryptLimit = 1;
 
     #endregion
 
@@ -325,8 +242,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private bool _useCustomTuning = false;
 
     /// <summary>
-    /// A flag used by the TV service as a signal to abort the tuning process
-    /// before it is completed.
+    /// Should the current tuning process be aborted immediately?
     /// </summary>
     private volatile bool _cancelTune = false;
 
@@ -334,16 +250,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// The current state of the tuner.
     /// </summary>
     private TunerState _state = TunerState.NotLoaded;
-
-    /// <summary>
-    /// Does the tuner support receiving all services from a transmitter simultaneously?
-    /// </summary>
-    /// <remarks>
-    /// This may seem obvious and unnecessary, especially for modern tuners.
-    /// However even today there are tuners that cannot receive more than one
-    /// service simultaneously. CableCARD tuners are a good example.
-    /// </remarks>
-    protected bool _areSubChannelsSupported = true;
 
     /// <summary>
     /// The tuner group that this tuner is a member of, if any.
@@ -363,14 +269,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// The maximum length of time to wait for signal lock/detection after tuning.
     /// </summary>
-    private int _timeLimitSignalLock = 2500;    // unit = milliseconds
+    private int _timeLimitSignalLock = 2500;    // unit = milli-seconds
 
     #endregion
 
     #region constructor & finaliser
 
     /// <summary>
-    /// Base constructor.
+    /// Initialise a new instance of the <see cref="TunerBase"/> class.
     /// </summary>
     /// <param name="name">The tuner's name.</param>
     /// <param name="externalId">The tuner's unique external identifier.</param>
@@ -408,7 +314,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Release and dispose all resources.
     /// </summary>
-    /// <param name="isDisposing"><c>True</c> if the tuner is being disposed.</param>
+    /// <param name="isDisposing"><c>True</c> if the instance is being disposed.</param>
     protected virtual void Dispose(bool isDisposing)
     {
       Unload(!isDisposing);
@@ -510,17 +416,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
     }
 
-    /// <summary>
-    /// Does the tuner support receiving all services from a transmitter simultaneously?
-    /// </summary>
-    public bool AreSubChannelsSupported
-    {
-      get
-      {
-        return _areSubChannelsSupported;
-      }
-    }
-
     #region conditional access properties
 
     /// <summary>
@@ -531,7 +426,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       get
       {
-        return _conditionalAccessProviders;
+        return new ReadOnlyCollection<string>(_conditionalAccessProviders);
       }
     }
 
@@ -593,6 +488,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           IConditionalAccessMenuActions caMenuInterface = extension as IConditionalAccessMenuActions;
           if (caMenuInterface != null)
           {
+            IConditionalAccessProvider caProviderInterface = extension as IConditionalAccessProvider;
+            if (caProviderInterface != null && !caProviderInterface.IsOpen)
+            {
+              continue;
+            }
             return caMenuInterface;
           }
         }
@@ -625,7 +525,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       get
       {
-        if (_mapSubChannels.Count > 0)
+        if (SubChannelManager != null && SubChannelManager.SubChannelCount > 0)
         {
           return _currentTuningDetail;
         }
@@ -668,6 +568,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     #region interfaces
+
+    /// <summary>
+    /// Get the tuner's sub-channel manager.
+    /// </summary>
+    public abstract ISubChannelManager SubChannelManager
+    {
+      get;
+    }
 
     /// <summary>
     /// Get the tuner's channel linkage scanning interface.
@@ -818,7 +726,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           _isEnabled = config.IsEnabled;
           _priority = config.Priority;
           _idleMode = (TunerIdleMode)config.IdleMode;
-          _pidFilterMode = (PidFilterMode)config.PidFilterMode;
           _useCustomTuning = config.UseCustomTuning;
 
           BroadcastStandard configuredStandards = (BroadcastStandard)config.SupportedBroadcastStandards;
@@ -846,36 +753,37 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           _useForEpgGrabbing = config.UseForEpgGrabbing;
 
           // Conditional access...
-          if (!_useConditionalAccessInterface && config.UseConditionalAccess && _state != TunerState.NotLoaded && _caProviders.Count == 0)
+          if (
+            !_useConditionalAccessInterface &&
+            config.UseConditionalAccess &&
+            _state != TunerState.NotLoaded &&
+            _state != TunerState.Loading &&
+            !_areConditionalAccessInterfacesOpened
+          )
           {
             this.LogDebug("tuner base: conditional access enabled, opening provider(s)");
-            _isConditionalAccessTableRequired = false;
             foreach (ITunerExtension extension in _extensions)
             {
               IConditionalAccessProvider caProvider = extension as IConditionalAccessProvider;
               if (caProvider != null)
               {
                 this.LogDebug("tuner base: found conditional access provider \"{0}\"", extension.Name);
-                if (caProvider.Open())
-                {
-                  _caProviders.Add(caProvider);
-                  _isConditionalAccessTableRequired |= caProvider.IsConditionalAccessTableRequiredForDecryption();
-                }
-                else
+                if (!caProvider.Open())
                 {
                   this.LogDebug("tuner base: provider will not be used");
                 }
               }
             }
+            _areConditionalAccessInterfacesOpened = true;
           }
           _useConditionalAccessInterface = config.UseConditionalAccess;
+          _conditionalAccessProviders.Clear();
           foreach (string provider in config.ConditionalAccessProviders.Split(','))
           {
             _conditionalAccessProviders.Add(provider.Trim());
           }
           _camType = (CamType)config.CamType;
           _decryptLimit = config.DecryptLimit;
-          _multiChannelDecryptMode = (MultiChannelDecryptMode)config.MultiChannelDecryptMode;
 
           if (_state == TunerState.NotLoaded && config.Preload)
           {
@@ -1005,6 +913,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {
           PerformTunerAction(actualAction);
         }
+
+        SubChannelManager.SetExtensions(_extensions);
       }
       catch (TvExceptionNeedSoftwareEncoder)
       {
@@ -1037,7 +947,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       this.LogDebug("tuner base: open tuner extensions");
 
-      _isConditionalAccessTableRequired = false;
       foreach (ITunerExtension extension in _extensions)
       {
         if (_useConditionalAccessInterface)
@@ -1046,12 +955,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           if (caProvider != null)
           {
             this.LogDebug("tuner base: found conditional access provider \"{0}\"", extension.Name);
-            if (caProvider.Open())
-            {
-              _caProviders.Add(caProvider);
-              _isConditionalAccessTableRequired |= caProvider.IsConditionalAccessTableRequiredForDecryption();
-            }
-            else
+            if (!caProvider.Open())
             {
               this.LogDebug("tuner base: provider will not be used");
             }
@@ -1085,6 +989,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           }
         }
       }
+
+      _areConditionalAccessInterfacesOpened = _useConditionalAccessInterface;
     }
 
     /// <summary>
@@ -1094,9 +1000,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private void Unload(bool isFinalising = false)
     {
       this.LogDebug("tuner base: unload tuner");
-      if (!isFinalising)
+      if (!isFinalising && SubChannelManager != null)
       {
-        FreeAllSubChannels();
+        SubChannelManager.Decompose();
       }
       try
       {
@@ -1110,22 +1016,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       // Dispose extensions.
       if (!isFinalising)
       {
-        if (_extensions != null)
+        foreach (ITunerExtension extension in _extensions)
         {
-          foreach (ITunerExtension extension in _extensions)
+          // Avoid recursive loop for ITuner implementations that also implement ITunerExtension.
+          if (!(extension is ITuner))
           {
-            // Avoid recursive loop for ITVCard implementations that also implement ITunerExtension.
-            if (!(extension is ITuner))
+            IDisposable d = extension as IDisposable;
+            if (d != null)
             {
-              IDisposable d = extension as IDisposable;
-              if (d != null)
-              {
-                d.Dispose();
-              }
+              d.Dispose();
             }
           }
         }
-        _caProviders.Clear();
         _extensions.Clear();
       }
 
@@ -1163,7 +1065,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <remarks>
     /// The actual result of this function depends on tuner configuration.
     /// </remarks>
-    public void Stop()
+    private void Stop()
     {
       this.LogDebug("tuner base: stop, idle mode = {0}", _idleMode);
       TunerAction action = TunerAction.Stop;
@@ -1177,7 +1079,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {
           InternalChannelScanningInterface.AbortScanning();
         }
-        FreeAllSubChannels();
 
         switch (_idleMode)
         {
@@ -1238,7 +1139,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           _currentTuningDetail = null;
           if (_diseqcController != null)
           {
-            _diseqcController.SwitchToChannel(null);
+            _diseqcController.Tune(null);
           }
         }
       }
@@ -1358,7 +1259,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Tune to a specific channel.
     /// </summary>
-    /// <param name="subChannelId">The ID of the sub-channel associated with the channel that is being tuned.</param>
+    /// <param name="subChannelId">The identifier of the sub-channel associated with the channel that is being tuned.</param>
     /// <param name="channel">The channel to tune to.</param>
     /// <returns>the sub-channel associated with the tuned channel</returns>
     public virtual ISubChannel Tune(int subChannelId, IChannel channel)
@@ -1369,7 +1270,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       this.LogDebug("tuner base: tune channel, {0}", channel);
       _cancelTune = false;
-      ISubChannelInternal subChannel = null;
       try
       {
         // The tuner must be loaded before a channel can be tuned.
@@ -1378,70 +1278,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           Load();
           ThrowExceptionIfTuneCancelled();
         }
-        // Some tuners (for example: CableCARD tuners) are only able to
-        // deliver one service... full stop.
-        else if (!_areSubChannelsSupported && _mapSubChannels.Count > 0)
-        {
-          if (_mapSubChannels.TryGetValue(subChannelId, out subChannel))
-          {
-            // Existing sub-channel.
-            if (_mapSubChannels.Count != 1)
-            {
-              // If this is not the only sub-channel then by definition this
-              // must be an attempt to tune a new service. Not allowed.
-              throw new TvException("Tuner is not able to receive more than one service.");
-            }
-          }
-          else
-          {
-            // New sub-channel.
-            Dictionary<int, ISubChannelInternal>.ValueCollection.Enumerator en = _mapSubChannels.Values.GetEnumerator();
-            en.MoveNext();
-            if (en.Current.CurrentChannel != channel)
-            {
-              // The tuner is currently streaming a different service.
-              throw new TvException("Tuner is not able to receive more than one service.");
-            }
-          }
-        }
-
-        // Get a sub-channel for the service.
-        string description;
-        if (subChannel == null && !_mapSubChannels.TryGetValue(subChannelId, out subChannel))
-        {
-          description = "creating new sub-channel";
-          subChannelId = _nextSubChannelId++;
-          subChannel = CreateNewSubChannel(subChannelId);
-          _mapSubChannels[subChannelId] = subChannel;
-          FireNewSubChannelEvent(subChannelId);
-        }
-        else
-        {
-          description = "using existing sub-channel";
-          // If reusing a sub-channel and our multi-channel decrypt mode is
-          // "changes", tell the extension to stop decrypting the previous
-          // service before we lose access to the PMT and CAT.
-          if (_multiChannelDecryptMode == MultiChannelDecryptMode.Changes)
-          {
-            UpdateDecryptList(subChannelId, CaPmtListManagementAction.Last);
-          }
-        }
-        this.LogInfo("tuner base: {0}, ID = {1}, count = {2}", description, subChannelId, _mapSubChannels.Count);
-        subChannel.CurrentChannel = channel;
-        SubChannelMpeg2Ts mpeg2TsSubChannel = subChannel as SubChannelMpeg2Ts;
-        if (mpeg2TsSubChannel != null)
-        {
-          mpeg2TsSubChannel.IsConditionalAccessTableRequired = _isConditionalAccessTableRequired;
-        }
-
-        // Sub-channel OnBeforeTune().
-        subChannel.OnBeforeTune();
 
         // Do we need to tune?
-        bool tuned = false;
         if (_currentTuningDetail == null || _currentTuningDetail.IsDifferentTransmitter(channel))
         {
-          tuned = true;
+          SubChannelManager.OnBeforeTune();
+
           // Stop the EPG grabber. We're going to move to a different channel.
           // Any EPG data that has been grabbed but not stored is thrown away.
           if (InternalEpgGrabberInterface != null && InternalEpgGrabberInterface.IsGrabbing)
@@ -1489,17 +1331,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           if (action != TunerAction.Default)
           {
             PerformTunerAction(action);
+            ThrowExceptionIfTuneCancelled();
           }
 
           // Send DiSEqC commands (if necessary) before actually tuning in case the driver applies the commands
           // during the tuning process.
           if (_diseqcController != null)
           {
-            _diseqcController.SwitchToChannel(channel as IChannelSatellite);
+            _diseqcController.Tune(channel as IChannelSatellite);
+            ThrowExceptionIfTuneCancelled();
           }
 
           // Apply tuning parameters.
-          ThrowExceptionIfTuneCancelled();
           _isSignalLocked = false;
           if (_useCustomTuning)
           {
@@ -1533,13 +1376,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           }
         }
 
-        // Sub-channel OnAfterTune().
-        subChannel.OnAfterTune();
-
         _currentTuningDetail = channel;
 
         // Start the tuner.
-        ThrowExceptionIfTuneCancelled();
         PerformTunerAction(TunerAction.Start);
         ThrowExceptionIfTuneCancelled();
 
@@ -1552,24 +1391,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         LockInOnSignal();
         this.LogDebug("tuner base: signal, locked = {0}, present = {1}, strength = {2} %, quality = {3} %", _isSignalLocked, _isSignalPresent, _signalStrength, _signalQuality);
 
-        subChannel.AfterTuneEvent -= FireAfterTuneEvent;
-        subChannel.AfterTuneEvent += FireAfterTuneEvent;
-
-        // Ensure that data/streams which are required to detect the service will pass through the
-        // tuner's PID filter.
-        ConfigurePidFilter(tuned);
-        ThrowExceptionIfTuneCancelled();
-
-        subChannel.OnGraphRunning();
-
-        // At this point we should know which data/streams form the service(s) that are being
-        // accessed. We need to ensure those streams will pass through the tuner's PID filter.
-        ThrowExceptionIfTuneCancelled();
-        ConfigurePidFilter();
-        ThrowExceptionIfTuneCancelled();
-
-        // If the service is encrypted, start decrypting it.
-        UpdateDecryptList(subChannelId, CaPmtListManagementAction.Add);
+        bool isNewSubChannel;
+        ISubChannel subChannel = SubChannelManager.Tune(subChannelId, channel, out isNewSubChannel);
+        if (isNewSubChannel)
+        {
+          FireNewSubChannelEvent(subChannel.SubChannelId);
+        }
+        return subChannel;
       }
       catch (Exception ex)
       {
@@ -1582,18 +1410,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         // that may be that tuning failed. We always want to force a retune on the next tune request in
         // this situation.
         _currentTuningDetail = null;
-        if (subChannel != null)
-        {
-          FreeSubChannel(subChannelId);
-        }
         throw;
       }
-      finally
-      {
-        _cancelTune = false;
-      }
-
-      return subChannel;
     }
 
     /// <summary>
@@ -1625,20 +1443,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Cancel the current tuning process.
     /// </summary>
-    /// <param name="subChannelId">The ID of the sub-channel associated with the channel that is being cancelled.</param>
+    /// <param name="subChannelId">The identifier of the sub-channel associated with the tuning process that is being cancelled.</param>
     public void CancelTune(int subChannelId)
     {
-      this.LogDebug("tuner base: sub-channel {0} cancel tune", subChannelId);
+      this.LogDebug("tuner base: cancel tune, sub-channel ID = {0}", subChannelId);
       _cancelTune = true;
-      ISubChannelInternal subChannel;
-      if (_mapSubChannels.TryGetValue(subChannelId, out subChannel))
+      if (_diseqcController != null)
       {
-        subChannel.CancelTune();
+        _diseqcController.CancelTune();
+      }
+      if (SubChannelManager != null)
+      {
+        SubChannelManager.CancelTune(subChannelId);
       }
     }
 
     /// <summary>
-    /// Check if the current tuning process has been cancelled and throw an exception if it has.
+    /// Check if the current tuning process has been cancelled and throw an
+    /// exception if it has.
     /// </summary>
     private void ThrowExceptionIfTuneCancelled()
     {
@@ -1720,562 +1542,98 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     #region sub-channel management
 
     /// <summary>
-    /// Allocate a new sub-channel instance.
+    /// Can the tuner receive all sub-channels from the current transmitter simultaneously?
     /// </summary>
-    /// <param name="id">The identifier for the sub-channel.</param>
-    /// <returns>the new sub-channel instance</returns>
-    public abstract ISubChannelInternal CreateNewSubChannel(int id);
+    public bool CanReceiveAllTransmitterSubChannels
+    {
+      get
+      {
+        if (SubChannelManager == null)
+        {
+          return true;
+        }
+        return SubChannelManager.CanReceiveAllTransmitterSubChannels;
+      }
+    }
 
     /// <summary>
     /// Free a sub-channel.
     /// </summary>
-    /// <param name="id">The sub-channel identifier.</param>
+    /// <param name="id">The sub-channel's identifier.</param>
     public void FreeSubChannel(int id)
     {
-      this.LogDebug("tuner base: free sub-channel, ID = {0}, count = {1}", id, _mapSubChannels.Count);
-      ISubChannelInternal subChannel;
-      if (_mapSubChannels.TryGetValue(id, out subChannel))
+      if (SubChannelManager != null)
       {
-        if (subChannel.IsTimeShifting)
-        {
-          this.LogError("tuner base: asked to free sub-channel that is still timeshifting!");
-          return;
-        }
-        if (subChannel.IsRecording)
-        {
-          this.LogError("tuner base: asked to free sub-channel that is still recording!");
-          return;
-        }
-
         try
         {
-          UpdateDecryptList(id, CaPmtListManagementAction.Last);
-          subChannel.Decompose();
+          SubChannelManager.FreeSubChannel(id);
+          if (SubChannelManager.SubChannelCount == 0)
+          {
+            this.LogDebug("tuner base: no sub-channels present, stopping tuner");
+            Stop();
+          }
         }
-        finally
+        catch (Exception ex)
         {
-          _mapSubChannels.Remove(id);
+          this.LogError(ex);
         }
-        // PID filters are configured according to the PIDs that need to be passed, so reconfigure the PID
-        // filter *after* we removed the sub-channel (otherwise PIDs for the sub-channel that we're freeing
-        // won't be removed).
-        ConfigurePidFilter();
-      }
-      else
-      {
-        this.LogWarn("tuner base: sub-channel not found!");
-      }
-      if (_mapSubChannels.Count == 0)
-      {
-        this.LogDebug("tuner base: no sub-channels present, stopping tuner");
-        _nextSubChannelId = 0;
-        Stop();
-      }
-      else
-      {
-        this.LogDebug("tuner base: sub-channels still present, leave tuner running");
       }
     }
 
     /// <summary>
-    /// Free all sub-channels.
+    /// Get a sub-channel.
     /// </summary>
-    private void FreeAllSubChannels()
-    {
-      this.LogInfo("tuner base: free all sub-channels, count = {0}", _mapSubChannels.Count);
-      Dictionary<int, ISubChannelInternal>.Enumerator en = _mapSubChannels.GetEnumerator();
-      while (en.MoveNext())
-      {
-        en.Current.Value.Decompose();
-      }
-      _mapSubChannels.Clear();
-      _nextSubChannelId = 0;
-    }
-
-    /// <summary>
-    /// Get a specific sub-channel.
-    /// </summary>
-    /// <param name="id">The ID of the sub-channel.</param>
-    /// <returns></returns>
+    /// <param name="id">The sub-channel's identifier.</param>
+    /// <returns>the sub-channel if it exists, otherwise <c>null</c></returns>
     public ISubChannel GetSubChannel(int id)
     {
-      ISubChannelInternal subChannel = null;
-      if (_mapSubChannels != null)
+      if (SubChannelManager == null)
       {
-        _mapSubChannels.TryGetValue(id, out subChannel);
+        return null;
       }
-      return subChannel;
+      return SubChannelManager.GetSubChannel(id);
     }
 
     /// <summary>
-    /// Get the tuner's sub-channels.
+    /// Get the count of sub-channels.
     /// </summary>
-    /// <value>An array containing the sub-channels.</value>
-    public ISubChannel[] SubChannels
+    public int SubChannelCount
     {
       get
       {
-        int count = 0;
-        ISubChannel[] channels = new ISubChannel[_mapSubChannels.Count];
-        Dictionary<int, ISubChannelInternal>.Enumerator en = _mapSubChannels.GetEnumerator();
-        while (en.MoveNext())
+        if (SubChannelManager == null)
         {
-          channels[count++] = en.Current.Value;
+          return 0;
         }
-        return channels;
+        return SubChannelManager.SubChannelCount;
       }
     }
 
     /// <summary>
     /// Get the set of sub-channel identifiers for each channel the tuner is currently decrypting.
     /// </summary>
-    /// <param name="newChannel">A channel that is currently being tuned.</param>
-    /// <returns>a collection of sub-channel ID collections</returns>
-    public ICollection<IList<int>> GetDecryptedSubChannelDetails(IChannel newChannel = null)
+    /// <returns>a collection of sub-channel identifier lists</returns>
+    public ICollection<IList<int>> GetDecryptedSubChannelDetails()
     {
-      IDictionary<int, IList<int>> decryptedChannels = new Dictionary<int, IList<int>>();
-      if (_mapSubChannels != null || _mapSubChannels.Count == 0)
+      if (SubChannelManager == null)
       {
-        return decryptedChannels.Values;
+        return new List<IList<int>>(0);
       }
-
-      List<KeyValuePair<int, IChannel>> channels = new List<KeyValuePair<int, IChannel>>(_mapSubChannels.Count + 1);
-      foreach (ISubChannelInternal subChannel in _mapSubChannels.Values)
-      {
-        if (subChannel.CurrentChannel != null && subChannel.CurrentChannel.IsEncrypted)
-        {
-          channels.Add(new KeyValuePair<int, IChannel>(subChannel.SubChannelId, subChannel.CurrentChannel));
-        }
-      }
-      if (newChannel != null && newChannel.IsEncrypted)
-      {
-        channels.Add(new KeyValuePair<int, IChannel>(-1, newChannel));
-      }
-
-      foreach (var channel in channels)
-      {
-        int key;
-        ChannelMpeg2Base mpeg2Service = channel.Value as ChannelMpeg2Base;
-        if (mpeg2Service != null)
-        {
-          key = mpeg2Service.ProgramNumber;
-        }
-        else
-        {
-          ChannelAnalogTv analogTvChannel = channel.Value as ChannelAnalogTv;
-          if (analogTvChannel != null)
-          {
-            key = analogTvChannel.Frequency;
-          }
-          else
-          {
-            throw new TvException("tuner base: channel type not recognised, unable to aggregate decrypted sub-channel details{0}{1}", Environment.NewLine, channel.Value);
-          }
-        }
-
-        IList<int> subChannelsForChannel;
-        if (!decryptedChannels.TryGetValue(key, out subChannelsForChannel))
-        {
-          decryptedChannels[key] = new List<int>(5) { channel.Key };
-        }
-        else
-        {
-          subChannelsForChannel.Add(channel.Key);
-        }
-      }
-
-      return decryptedChannels.Values;
-    }
-
-    #endregion
-
-    #region move me to sub-channel manager
-
-    /// <summary>
-    /// The mode to use for controlling tuner PID filter(s).
-    /// </summary>
-    /// <remarks>
-    /// This setting can be used to enable or disable the tuner's PID filter even when the tuning context
-    /// (for example, DVB-S vs. DVB-S2) would usually result in different behaviour. Note that it is usually
-    /// not ideal to have to manually enable or disable a PID filter as it can affect tuning reliability.
-    /// </remarks>
-    private PidFilterMode _pidFilterMode = PidFilterMode.Automatic;
-    private HashSet<ushort> _previousPids = new HashSet<ushort>();
-
-    /// <summary>
-    /// Configure the tuner's PID filter(s) to enable receiving the PIDs for each of the current sub-channels.
-    /// </summary>
-    private void ConfigurePidFilter(bool isTune = false)
-    {
-      this.LogDebug("Mpeg2TunerController: configure PID filter, mode = {0}", _pidFilterMode);
-
-      if (_mapSubChannels == null || _mapSubChannels.Count == 0)
-      {
-        this.LogDebug("Mpeg2TunerController: no sub-channels");
-        return;
-      }
-
-      HashSet<ushort> pidSet = null;
-      HashSet<ushort> pidsOverflow = new HashSet<ushort>();
-      HashSet<ushort> pidsToAdd = null;
-      HashSet<ushort> pidsToRemove = null;
-      foreach (ITunerExtension e in _extensions)
-      {
-        IMpeg2PidFilter filter = e as IMpeg2PidFilter;
-        if (filter == null)
-        {
-          continue;
-        }
-
-        this.LogDebug("Mpeg2TunerController: found PID filter controller interface \"{0}\"", filter.Name);
-
-        if (_pidFilterMode == PidFilterMode.Disabled || (_pidFilterMode == PidFilterMode.Automatic && !filter.ShouldEnable(_currentTuningDetail)))
-        {
-          filter.Disable();
-          _previousPids.Clear();
-          return;
-        }
-
-        if (isTune)
-        {
-          _previousPids.Clear();
-        }
-        this.LogDebug("Mpeg2TunerController: current, count = {0}, PIDs = {1}", _previousPids.Count, string.Join(", ", _previousPids));
-        pidSet = new HashSet<ushort>();
-        foreach (ISubChannel subChannel in _mapSubChannels.Values)
-        {
-          SubChannelMpeg2Ts dvbChannel = subChannel as SubChannelMpeg2Ts;
-          if (dvbChannel != null && dvbChannel.Pids != null)
-          {
-            // Build a distinct super-set of PIDs used by the sub-channels.
-            pidSet.UnionWith(dvbChannel.Pids);
-          }
-        }
-        this.LogDebug("Mpeg2TunerController: required, count = {0}, PIDs = {1}", pidSet.Count, string.Join(", ", pidSet));
-
-        bool tooManyPids = (filter.MaximumPidCount > 0 && pidSet.Count > filter.MaximumPidCount);
-        if (tooManyPids && _pidFilterMode == PidFilterMode.Automatic)
-        {
-          this.LogDebug("Mpeg2TunerController: PID count exceeds filter limit {0}, disabling filter", filter.MaximumPidCount);
-          filter.Disable();
-          _previousPids.Clear();
-          return;
-        }
-
-        pidsToAdd = new HashSet<ushort>(pidSet);
-        pidsToAdd.ExceptWith(_previousPids);
-        pidsToRemove = new HashSet<ushort>(_previousPids);
-        pidsToRemove.ExceptWith(pidSet);
-        if (pidsToAdd.Count == 0 && pidsToRemove.Count == 0)
-        {
-          this.LogDebug("Mpeg2TunerController: nothing to do");
-          return;
-        }
-
-        if (pidsToRemove.Count > 0)
-        {
-          this.LogDebug("Mpeg2TunerController: remove, count = {0}, PIDs = {1}", pidsToRemove.Count, string.Join(", ", pidsToRemove));
-          filter.AllowStreams(pidsToRemove);
-          _previousPids.ExceptWith(pidsToRemove);
-          if (pidsToAdd.Count == 0)
-          {
-            filter.ApplyConfiguration();
-            return;
-          }
-        }
-
-        if (tooManyPids)
-        {
-          HashSet<ushort> pidsAdded = new HashSet<ushort>();
-          foreach (ushort pid in pidsToAdd)
-          {
-            if (_previousPids.Count >= filter.MaximumPidCount)
-            {
-              break;
-            }
-            pidsAdded.Add(pid);
-          }
-          this.LogDebug("Mpeg2TunerController: add, count = {0}, PIDs = {1}", pidsAdded.Count, string.Join(", ", pidsAdded));
-          filter.AllowStreams(pidsAdded);
-          _previousPids.UnionWith(pidsAdded);
-          pidsToAdd.ExceptWith(pidsAdded);
-          this.LogDebug("Mpeg2TunerController: overflow, count = {0}, PIDs = {1}", pidsToAdd.Count, string.Join(", ", pidsToAdd));
-        }
-        else
-        {
-          this.LogDebug("Mpeg2TunerController: add, count = {0}, PIDs = {1}", pidsToAdd.Count, string.Join(", ", pidsToAdd));
-          filter.AllowStreams(pidsToAdd);
-          _previousPids.UnionWith(pidsToAdd);
-        }
-        filter.ApplyConfiguration();
-        return;
-      }
+      return SubChannelManager.GetDecryptedSubChannelDetails();
     }
 
     /// <summary>
-    /// Update the list of services being decrypted by the device's conditional access interfaces(s).
+    /// Determine whether a sub-channel is being decrypted.
     /// </summary>
-    /// <remarks>
-    /// The strategy here is usually to only send commands to the CAM when we need an *additional* service
-    /// to be decrypted. The *only* exception is when we have to stop decrypting services in "changes" mode.
-    /// We don't send "not selected" commands for "list" or "only" mode because this can disrupt the other
-    /// services that still need to be decrypted. We also don't send "keep decrypting" commands (alternative
-    /// to "not selected") because that will almost certainly cause glitches in streams.
-    /// </remarks>
-    /// <param name="subChannelId">The ID of the sub-channel causing this update.</param>
-    /// <param name="updateAction"><c>Add</c> if the sub-channel is being tuned, <c>update</c> if the PMT for the
-    ///   sub-channel has changed, or <c>last</c> if the sub-channel is being disposed.</param>
-    private void UpdateDecryptList(int subChannelId, CaPmtListManagementAction updateAction)
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the sub-channel is being decrypted, otherwise <c>false</c></returns>
+    public bool IsDecrypting(IChannel channel)
     {
-      if (!_useConditionalAccessInterface)
+      if (SubChannelManager == null || SubChannelManager.SubChannelCount == 0)
       {
-        this.LogWarn("Mpeg2TunerController: CA disabled");
-        return;
+        return false;
       }
-      if (_caProviders.Count == 0)
-      {
-        this.LogWarn("Mpeg2TunerController: no CA providers identified");
-        return;
-      }
-      this.LogDebug("Mpeg2TunerController: sub-channel {0} update decrypt list, mode = {1}, update action = {2}", subChannelId, _multiChannelDecryptMode, updateAction);
-
-      if (_mapSubChannels == null || _mapSubChannels.Count == 0 || !_mapSubChannels.ContainsKey(subChannelId))
-      {
-        this.LogDebug("Mpeg2TunerController: sub-channel not found");
-        return;
-      }
-      if (!_mapSubChannels[subChannelId].CurrentChannel.IsEncrypted)
-      {
-        this.LogDebug("Mpeg2TunerController: service is not encrypted");
-        return;
-      }
-      if (updateAction == CaPmtListManagementAction.Last && _multiChannelDecryptMode != MultiChannelDecryptMode.Changes)
-      {
-        this.LogDebug("Mpeg2TunerController: \"not selected\" command acknowledged, no action required");
-        return;
-      }
-
-      // First build a distinct list of the services that we need to handle.
-      this.LogDebug("Mpeg2TunerController: assembling service list");
-      List<ISubChannel> distinctServices = new List<ISubChannel>();
-      Dictionary<int, ISubChannelInternal>.ValueCollection.Enumerator en = _mapSubChannels.Values.GetEnumerator();
-      ChannelMpeg2Base updatedMpeg2Service = _mapSubChannels[subChannelId].CurrentChannel as ChannelMpeg2Base;
-      ChannelAnalogTv updatedAnalogTvService = _mapSubChannels[subChannelId].CurrentChannel as ChannelAnalogTv;
-      ChannelFmRadio updatedFmRadioService = _mapSubChannels[subChannelId].CurrentChannel as ChannelFmRadio;
-      while (en.MoveNext())
-      {
-        IChannel service = en.Current.CurrentChannel;
-        // We don't care about FTA services here.
-        if (!service.IsEncrypted)
-        {
-          continue;
-        }
-
-        // Keep an eye out - if there is another sub-channel accessing the same service as the sub-channel that
-        // is being updated then we always do *nothing* unless this is specifically an update request. In any other
-        // situation, if we were to stop decrypting the service it would be wrong; if we were to start decrypting
-        // the service it would be unnecessary and possibly cause stream interruptions.
-        if (en.Current.SubChannelId != subChannelId && updateAction != CaPmtListManagementAction.Update)
-        {
-          if (updatedMpeg2Service != null)
-          {
-            ChannelMpeg2Base mpeg2Service = service as ChannelMpeg2Base;
-            if (mpeg2Service != null && mpeg2Service.ProgramNumber == updatedMpeg2Service.ProgramNumber)
-            {
-              this.LogDebug("Mpeg2TunerController: the service for this sub-channel is a duplicate, no action required");
-              return;
-            }
-          }
-          else if (updatedAnalogTvService != null)
-          {
-            ChannelAnalogTv analogTvService = service as ChannelAnalogTv;
-            if (analogTvService != null && analogTvService.PhysicalChannelNumber == updatedAnalogTvService.PhysicalChannelNumber)
-            {
-              this.LogDebug("Mpeg2TunerController: the service for this sub-channel is a duplicate, no action required");
-              return;
-            }
-          }
-          else if (updatedFmRadioService != null)
-          {
-            ChannelFmRadio fmRadioService = service as ChannelFmRadio;
-            if (fmRadioService != null && fmRadioService.Frequency == updatedFmRadioService.Frequency)
-            {
-              this.LogDebug("Mpeg2TunerController: the service for this sub-channel is a duplicate, no action required");
-              return;
-            }
-          }
-          else
-          {
-            throw new TvException("Mpeg2TunerController: service type not recognised, unable to assemble decrypt service list\r\n" + service.ToString());
-          }
-        }
-
-        if (_multiChannelDecryptMode == MultiChannelDecryptMode.List)
-        {
-          // Check for "list" mode: have we already go this service in our distinct list? If so, don't add it
-          // again...
-          bool exists = false;
-          foreach (ISubChannel serviceToDecrypt in distinctServices)
-          {
-            ChannelMpeg2Base mpeg2Service = service as ChannelMpeg2Base;
-            if (mpeg2Service != null)
-            {
-              if (mpeg2Service.ProgramNumber == ((ChannelMpeg2Base)serviceToDecrypt.CurrentChannel).ProgramNumber)
-              {
-                exists = true;
-                break;
-              }
-            }
-            else
-            {
-              ChannelAnalogTv analogTvService = service as ChannelAnalogTv;
-              if (analogTvService != null)
-              {
-                if (analogTvService.PhysicalChannelNumber == ((ChannelAnalogTv)serviceToDecrypt.CurrentChannel).PhysicalChannelNumber)
-                {
-                  exists = true;
-                  break;
-                }
-              }
-              else
-              {
-                ChannelFmRadio fmRadioService = service as ChannelFmRadio;
-                if (fmRadioService != null)
-                {
-                  if (fmRadioService.Frequency == ((ChannelFmRadio)serviceToDecrypt.CurrentChannel).Frequency)
-                  {
-                    exists = true;
-                    break;
-                  }
-                }
-                else
-                {
-                  throw new TvException("Mpeg2TunerController: service type not recognised, unable to assemble decrypt service list\r\n" + service.ToString());
-                }
-              }
-            }
-          }
-          if (!exists)
-          {
-            distinctServices.Add(en.Current);
-          }
-        }
-        else if (en.Current.SubChannelId == subChannelId)
-        {
-          // For "changes" and "only" modes: we only send one command and that relates to the service being updated.
-          distinctServices.Add(en.Current);
-        }
-      }
-
-      if (distinctServices.Count == 0)
-      {
-        this.LogDebug("Mpeg2TunerController: no services to update");
-        return;
-      }
-
-      // Send the service list or changes to the CA providers.
-      for (int attempt = 1; attempt <= _decryptFailureRetryCount + 1; attempt++)
-      {
-        ThrowExceptionIfTuneCancelled();
-        if (attempt > 1)
-        {
-          this.LogDebug("Mpeg2TunerController: attempt {0}...", attempt);
-        }
-
-        foreach (IConditionalAccessProvider caProvider in _caProviders)
-        {
-          this.LogDebug("Mpeg2TunerController: CA provider {0}...", caProvider.Name);
-
-          if (_waitUntilCaInterfaceReady && !caProvider.IsReady())
-          {
-            this.LogDebug("Mpeg2TunerController: provider is not ready, waiting for up to 15 seconds", caProvider.Name);
-            DateTime startWait = DateTime.Now;
-            TimeSpan waitTime = new TimeSpan(0);
-            while (waitTime.TotalMilliseconds < 15000)
-            {
-              ThrowExceptionIfTuneCancelled();
-              System.Threading.Thread.Sleep(200);
-              waitTime = DateTime.Now - startWait;
-              if (caProvider.IsReady())
-              {
-                this.LogDebug("Mpeg2TunerController: provider ready after {0} ms", waitTime.TotalMilliseconds);
-                break;
-              }
-            }
-          }
-
-          // Ready or not, we send commands now.
-          this.LogDebug("Mpeg2TunerController: sending command(s)");
-          bool success = true;
-          SubChannelMpeg2Ts digitalService;
-          // The default action is "more" - this will be changed below if necessary.
-          CaPmtListManagementAction action = CaPmtListManagementAction.More;
-
-          // The command is "start/continue descrambling" unless we're removing services.
-          CaPmtCommand command = CaPmtCommand.OkDescrambling;
-          if (updateAction == CaPmtListManagementAction.Last)
-          {
-            command = CaPmtCommand.NotSelected;
-          }
-          for (int i = 0; i < distinctServices.Count; i++)
-          {
-            ThrowExceptionIfTuneCancelled();
-            if (i == 0)
-            {
-              if (distinctServices.Count == 1)
-              {
-                if (_multiChannelDecryptMode == MultiChannelDecryptMode.Changes)
-                {
-                  // Remove a service...
-                  if (updateAction == CaPmtListManagementAction.Last)
-                  {
-                    action = CaPmtListManagementAction.Only;
-                  }
-                  // Add or update a service...
-                  else
-                  {
-                    action = updateAction;
-                  }
-                }
-                else
-                {
-                  action = CaPmtListManagementAction.Only;
-                }
-              }
-              else
-              {
-                action = CaPmtListManagementAction.First;
-              }
-            }
-            else if (i == distinctServices.Count - 1)
-            {
-              action = CaPmtListManagementAction.Last;
-            }
-            else
-            {
-              action = CaPmtListManagementAction.More;
-            }
-
-            this.LogDebug("  command = {0}, action = {1}, service = {2}", command, action, distinctServices[i].CurrentChannel.Name);
-            digitalService = distinctServices[i] as SubChannelMpeg2Ts;
-            if (digitalService == null)
-            {
-              success &= caProvider.SendCommand(action, command, null, null, distinctServices[i].CurrentChannel.Provider);
-            }
-            else
-            {
-              // TODO need to PatchPmtForCam() sometime before now, and in such a way that the patched PMT is not propagated to TsWriter etc.
-              success &= caProvider.SendCommand(action, command, digitalService.ProgramMapTable, digitalService.ConditionalAccessTable, distinctServices[i].CurrentChannel.Provider);
-            }
-          }
-
-          // Are we done?
-          if (success)
-          {
-            return;
-          }
-        }
-      }
+      return SubChannelManager.IsDecrypting(channel);
     }
 
     #endregion

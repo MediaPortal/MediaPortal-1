@@ -34,20 +34,20 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 
-namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 {
   /// <summary>
-  /// A base implementation of <see cref="IChannelScanner"/> for MPEG 2
+  /// An implementation of <see cref="IChannelScanner"/> for DVB-compliant
   /// transport streams.
   /// </summary>
-  internal class ChannelScannerDirectShowBase : IChannelScannerInternal, IChannelScanCallBack
+  internal class ChannelScannerDvb : IChannelScannerInternal, ICallBackGrabber
   {
     #region variables
 
     private bool _isScanning = false;
     private int _scanTimeLimit = 20000;   // unit = milli-seconds
     private IChannelScannerHelper _scanHelper = null;
-    private ITsChannelScan _analyser = null;
+    private IGrabberSiDvb _analyser = null;
     protected ITuner _tuner = null;
     private ManualResetEvent _event = null;
     private volatile bool _cancelScan = false;
@@ -62,25 +62,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// <param name="tuner">The tuner associated with this scanner.</param>
     /// <param name="helper">The helper to use for channel logic.</param>
     /// <param name="analyser">The stream analyser instance to use for scanning.</param>
-    public ChannelScannerDirectShowBase(ITuner tuner, IChannelScannerHelper helper, ITsChannelScan analyser)
+    public ChannelScannerDvb(ITuner tuner, IChannelScannerHelper helper, IGrabberSiDvb analyser)
     {
       _tuner = tuner;
       _scanHelper = helper;
       _analyser = analyser;
-    }
-
-    #endregion
-
-    #region IChannelScanCallBack member
-
-    /// <summary>
-    /// Called by TsWriter when all available service and/or network information has been received.
-    /// </summary>
-    /// <returns>an HRESULT indicating whether the notification was successfully handled</returns>
-    public int OnScannerDone()
-    {
-      _event.Set();
-      return 0; // success
     }
 
     #endregion
@@ -179,17 +165,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         {
           _event = new ManualResetEvent(false);
           _analyser.SetCallBack(this);
-
-          // Determine the broadcast standard that the stream conforms to.
-          ServiceInformationFormat format = ServiceInformationFormat.Dvb; // default
-          if (channel is ChannelAtsc)
-          {
-            format = ServiceInformationFormat.Atsc;
-          }
-          else if (channel is ChannelScte)
-          {
-            format = ServiceInformationFormat.Scte;
-          }
 
           // Start scanning, then wait for TsWriter to tell us that scanning is complete.
           _analyser.ScanStream(format);

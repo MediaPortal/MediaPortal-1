@@ -25,18 +25,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception
 {
   /// <summary>
   /// Exception thrown by the TV library when physical tuning succeeds but the
-  /// service is determined to be not running.
+  /// service's video and/or audio is encrypted.
   /// </summary>
   [Serializable]
-  public class TvExceptionServiceNotRunning : TvException
+  public class TvExceptionServiceEncrypted : TvException
   {
     /// <summary>
-    /// Initialise a new instance of the <see cref="TvExceptionServiceNotRunning"/> class.
+    /// Initialise a new instance of the <see cref="TvExceptionServiceEncrypted"/> class.
     /// </summary>
     /// <param name="service">The tuning and service details for the service.</param>
-    public TvExceptionServiceNotRunning(IChannel service)
-      : base("The service is currently not running.{0}{1}", Environment.NewLine, service)
+    public TvExceptionServiceEncrypted(IChannel service, bool isVideoEncrypted, bool isAudioEncrypted)
+      : base("The service's {0} encrypted.{1}{2}", GetStreamDescription(isVideoEncrypted, isAudioEncrypted), Environment.NewLine, service)
     {
+    }
+
+    private static string GetStreamDescription(bool isVideoEncrypted, bool isAudioEncrypted)
+    {
+      if (isVideoEncrypted && isAudioEncrypted)
+      {
+        return "video and audio streams are";
+      }
+      if (isVideoEncrypted)
+      {
+        return "video stream is";
+      }
+      return "audio stream is";
     }
   }
 }

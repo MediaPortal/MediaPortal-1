@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -18,25 +18,30 @@
 
 #endregion
 
-using System;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
 {
-  /// <summary>
-  /// Exception thrown by the TV library when physical tuning succeeds but the
-  /// service is determined to be not running.
-  /// </summary>
-  [Serializable]
-  public class TvExceptionServiceNotRunning : TvException
+  internal class SubChannelManagerAnalog : SubChannelManagerDvb
   {
     /// <summary>
-    /// Initialise a new instance of the <see cref="TvExceptionServiceNotRunning"/> class.
+    /// Initialise a new instance of the <see cref="SubChannelManagerAnalog"/> class.
     /// </summary>
-    /// <param name="service">The tuning and service details for the service.</param>
-    public TvExceptionServiceNotRunning(IChannel service)
-      : base("The service is currently not running.{0}{1}", Environment.NewLine, service)
+    /// <param name="tsWriter">The TS writer instance used to perform/implement time-shifting and recording.</param>
+    public SubChannelManagerAnalog(ITsWriter tsWriter)
+      : base(tsWriter, true)
     {
+    }
+
+    protected override int GetTuningProgramNumber(IChannel channel)
+    {
+      if (channel != null && !string.IsNullOrEmpty(channel.Name))
+      {
+        return 1;   // TsMuxer's fixed/static program number
+      }
+      return -1;    // scanning
     }
   }
 }

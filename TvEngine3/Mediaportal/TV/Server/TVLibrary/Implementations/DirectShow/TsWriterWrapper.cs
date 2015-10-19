@@ -24,7 +24,6 @@ using System.Threading;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 {
@@ -60,8 +59,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         }
 
         CallBackJob job = new CallBackJob();
-        job.TargetType = typeof(IEncryptionStateChangeCallBack);
-        job.MethodName = "OnEncryptionStateChange";
+        job.TargetType = typeof(IChannelObserver);
+        job.MethodName = "OnSeen";
         job.TargetInstance = Observer;
         job.Parameters = new object[2] { pid, pidType };
 

@@ -29,8 +29,7 @@ using UPnP.Infrastructure.CP.Description;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 {
   /// <summary>
-  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which
-  /// handles SAT>IP DVB-C tuners.
+  /// An implementation of <see cref="ITuner"/> for SAT>IP DVB-C tuners.
   /// </summary>
   internal class TunerSatIpCable : TunerSatIpBase
   {

@@ -26,6 +26,7 @@ using DirectShowLib;
 using Mediaportal.TV.Server.Common.Types.Country;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Analog;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
@@ -40,8 +41,8 @@ using MediaType = Mediaportal.TV.Server.Common.Types.Enum.MediaType;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
 {
   /// <summary>
-  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles analog tuners
-  /// and capture devices with WDM/DirectShow drivers.
+  /// An implementation of <see cref="ITuner"/> for analog tuners and capture
+  /// devices with WDM/DirectShow drivers.
   /// </summary>
   internal class TunerAnalog : TunerDirectShowBase
   {
@@ -83,12 +84,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         {
           _tuner = new Tuner();
         }
-        _crossbar = new Crossbar(_deviceMain);
+        _crossbar = new Crossbar(device);
         _capture = new Capture();
       }
       else
       {
-        _capture = new Capture(_deviceMain);
+        _capture = new Capture(device);
       }
       _encoder = new Encoder();
     }
@@ -258,10 +259,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         InitialiseGraph();
         if (_crossbar != null)
         {
-          _crossbar.PerformLoading(_graph);
+          _crossbar.PerformLoading(Graph);
         }
-        _capture.PerformLoading(_graph, ProductInstanceId, _crossbar);
-        _encoder.PerformLoading(_graph, ProductInstanceId, _capture);
+        _capture.PerformLoading(Graph, ProductInstanceId, _crossbar);
+        _encoder.PerformLoading(Graph, ProductInstanceId, _capture);
       }
       catch (TvExceptionNeedSoftwareEncoder)
       {
@@ -433,10 +434,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       {
         if (_crossbar != null)
         {
-          _crossbar.PerformUnloading(_graph);
+          _crossbar.PerformUnloading(Graph);
         }
-        _capture.PerformUnloading(_graph);
-        _encoder.PerformUnloading(_graph);
+        _capture.PerformUnloading(Graph);
+        _encoder.PerformUnloading(Graph);
         CleanUpGraph(false);
       }
 
@@ -478,15 +479,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
 
       if (_crossbar != null)
       {
-        _crossbar.PerformLoading(_graph);
+        _crossbar.PerformLoading(Graph);
         if (_tuner != null)
         {
-          _tuner.PerformLoading(_graph, ProductInstanceId, _crossbar);
+          _tuner.PerformLoading(Graph, ProductInstanceId, _crossbar);
         }
       }
 
-      _capture.PerformLoading(_graph, ProductInstanceId, _crossbar);
-      _encoder.PerformLoading(_graph, ProductInstanceId, _capture);
+      _capture.PerformLoading(Graph, ProductInstanceId, _crossbar);
+      _encoder.PerformLoading(Graph, ProductInstanceId, _capture);
 
       // Check for and load extensions, adding any additional filters to the graph.
       IList<ITunerExtension> extensions;
@@ -507,7 +508,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
 
       _epgGrabber = null;   // Teletext scraping and RDS grabbing currently not supported.
 
-      _channelScanner = new ChannelScannerDirectShowAnalog(this, _filterTsWriter as ITsChannelScan);
+      _subChannelManager = new SubChannelManagerAnalog(TsWriter as ITsWriter);
+      _channelScanner = new ChannelScannerDirectShowAnalog(this, TsWriter as ITsChannelScan);
       return extensions;
     }
 
@@ -523,19 +525,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       {
         if (_tuner != null)
         {
-          _tuner.PerformUnloading(_graph);
+          _tuner.PerformUnloading(Graph);
         }
         if (_crossbar != null)
         {
-          _crossbar.PerformUnloading(_graph);
+          _crossbar.PerformUnloading(Graph);
         }
         if (_capture != null)
         {
-          _capture.PerformUnloading(_graph);
+          _capture.PerformUnloading(Graph);
         }
         if (_encoder != null)
         {
-          _encoder.PerformUnloading(_graph);
+          _encoder.PerformUnloading(Graph);
         }
       }
 

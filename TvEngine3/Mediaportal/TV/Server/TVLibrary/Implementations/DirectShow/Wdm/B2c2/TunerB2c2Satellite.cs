@@ -38,8 +38,8 @@ using MpPolarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 {
   /// <summary>
-  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for
-  /// TechniSat satellite tuners with B2C2 chipsets and WDM drivers.
+  /// An implementation of <see cref="ITuner"/> for TechniSat satellite tuners
+  /// with B2C2 chipsets and WDM drivers.
   /// </summary>
   internal class TunerB2c2Satellite : TunerB2c2Base, IDiseqcDevice, IPowerDevice
   {

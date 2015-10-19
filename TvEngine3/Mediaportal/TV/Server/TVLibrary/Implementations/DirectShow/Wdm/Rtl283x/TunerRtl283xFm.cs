@@ -26,11 +26,10 @@ using DirectShowLib;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Analog;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
@@ -43,8 +42,8 @@ using Encoder = Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.A
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 {
   /// <summary>
-  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles the proprietary
-  /// FM radio mode for tuners based on Realtek's RTL283x series of chipsets.
+  /// An implementation of <see cref="ITuner"/> for the proprietary FM radio mode supported by
+  /// tuners based on Realtek's RTL283x series of chipsets.
   /// </summary>
   /// <remarks>
   /// The tuner filter runs in a single threaded COM apartment. That means we can't directly
@@ -52,8 +51,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
   /// with the graph or tuner must be funnelled through a thread which runs in a STA.
   /// Call backs are trickier. If you try to interact with the graph or tuner in any way in that
   /// context it will result in deadlock, because the STA message queue doesn't get pumped until
-  /// after the call back completes. You must allow the call back to complete before attempting
-  /// any interation.
+  /// after the call back completes. You must allow the call back to complete before attempting any
+  /// interaction.
   /// In short, this code is complex. Please take care and make sure you understand what you're
   /// doing before you make changes.
   /// </remarks>
@@ -518,7 +517,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
     private object InternalInvokeTsWriterMethod(Type type, string methodName, ref object[] parameters)
     {
-      return type.GetMethod(methodName).Invoke(_filterTsWriter, parameters);
+      return type.GetMethod(methodName).Invoke(TsWriter, parameters);
     }
 
     #endregion
@@ -633,7 +632,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         // how it was before.
         try
         {
-          _filterSource = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, SOURCE_FILTER_CLSID, "RTL283x FM Source");
+          _filterSource = FilterGraphTools.AddFilterFromRegisteredClsid(Graph, SOURCE_FILTER_CLSID, "RTL283x FM Source");
         }
         finally
         {
@@ -660,7 +659,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
       Capture capture = new Capture();
       capture.SetAudioCapture(_filterSource, null);
-      _encoder.PerformLoading(_graph, null, capture);
+      _encoder.PerformLoading(Graph, null, capture);
 
       // Check for and load extensions, adding any additional filters to the graph.
       IBaseFilter lastFilter = _encoder.TsMultiplexerFilter;
@@ -673,7 +672,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
       _epgGrabber = null;   // RDS grabbing currently not supported.
 
-      _channelScanner = new ChannelScannerDirectShowAnalog(this, null);//TODO _staTsWriter);
+      _subChannelManager = new SubChannelManagerAnalog(_staTsWriter);
+      _channelScanner = new ChannelScannerDirectShowAnalog(this, _staTsWriter);
       return extensions;
     }
 
@@ -741,15 +741,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
         if (_filterSource != null)
         {
-          if (_graph != null)
+          if (Graph != null)
           {
-            _graph.RemoveFilter(_filterSource);
+            Graph.RemoveFilter(_filterSource);
           }
           Release.ComObject("RTL283x FM source filter", ref _filterSource);
         }
         _fmSource = null;
 
-        _encoder.PerformUnloading(_graph);
+        _encoder.PerformUnloading(Graph);
 
         // Only remove the main tuner device from use when we registered it.
         if (_mainTunerDeviceInUse)
@@ -802,16 +802,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         throw new TvException("Failed to set frequency.");
       }
       _encoder.PerformTuning(fmRadioChannel);
-    }
-
-    /// <summary>
-    /// Allocate a new sub-channel instance.
-    /// </summary>
-    /// <param name="id">The identifier for the sub-channel.</param>
-    /// <returns>the new sub-channel instance</returns>
-    public override ISubChannelInternal CreateNewSubChannel(int id)
-    {
-      return new SubChannelMpeg2Ts(id, null);//TODO _staTsWriter);
     }
 
     #endregion

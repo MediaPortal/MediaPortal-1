@@ -28,7 +28,6 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
@@ -41,8 +40,8 @@ using MediaPortal.Common.Utils;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 {
   /// <summary>
-  /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for tuners implemented
-  /// using a DirectShow graph.
+  /// A base implementation of <see cref="ITuner"/> for tuners that are
+  /// supported using a DirectShow graph.
   /// </summary>
   internal abstract class TunerDirectShowBase : TunerBase, IBroadcastEvent, IBroadcastEventEx
   {
@@ -51,7 +50,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// <summary>
     /// The DirectShow filter graph.
     /// </summary>
-    protected IFilterGraph2 _graph = null;
+    private IFilterGraph2 _graph = null;
 
     /// <summary>
     /// The running object table entry for the graph.
@@ -66,12 +65,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// <summary>
     /// The main tuner component filter.
     /// </summary>
-    protected IBaseFilter _filterMain = null;
+    private IBaseFilter _filterMain = null;
 
     /// <summary>
     /// The MediaPortal TS writer/analyser filter.
     /// </summary>
-    protected IBaseFilter _filterTsWriter = null;
+    private IBaseFilter _filterTsWriter = null;
+
+    /// <summary>
+    /// The tuner's sub-channel manager.
+    /// </summary>
+    protected ISubChannelManager _subChannelManager = null;
 
     /// <summary>
     /// The tuner's channel scanning interface.
@@ -112,6 +116,43 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     ~TunerDirectShowBase()
     {
       Dispose(false);
+    }
+
+    #endregion
+
+    #region properties
+
+    /// <summary>
+    /// Get the tuner's DirectShow filter graph.
+    /// </summary>
+    protected IFilterGraph2 Graph
+    {
+      get
+      {
+        return _graph;
+      }
+    }
+
+    /// <summary>
+    /// Get the main tuner component's DirectShow filter.
+    /// </summary>
+    protected IBaseFilter MainFilter
+    {
+      get
+      {
+        return _filterMain;
+      }
+    }
+
+    /// <summary>
+    /// Get the tuner's TS writer/analyser filter instance.
+    /// </summary>
+    protected IBaseFilter TsWriter
+    {
+      get
+      {
+        return _filterTsWriter;
+      }
     }
 
     #endregion
@@ -193,6 +234,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       catch
       {
       }
+      _subChannelManager = new SubChannelManagerDvb(_filterTsWriter as ITsWriter, true);
       _channelScanner = new ChannelScannerDirectShowBase(this, new ChannelScannerHelperDvb(), _filterTsWriter as ITsChannelScan);
       _epgGrabber = new EpgGrabberDvb(_filterTsWriter as IGrabberEpgDvb, _filterTsWriter as IGrabberEpgMhw, _filterTsWriter as IGrabberEpgOpenTv);
 
@@ -421,6 +463,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         }
         Release.ComObject("DirectShow tuner graph", ref _graph);
       }
+
+      _subChannelManager = null;
       _channelScanner = null;
       _epgGrabber = null;
       Release.ComObject("TS writer/analyser filter", ref _filterTsWriter);
@@ -502,21 +546,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
     #endregion
 
-    #region tuning
+    #region interfaces
 
     /// <summary>
-    /// Allocate a new sub-channel instance.
+    /// Get the tuner's sub-channel manager.
     /// </summary>
-    /// <param name="id">The identifier for the sub-channel.</param>
-    /// <returns>the new sub-channel instance</returns>
-    public override ISubChannelInternal CreateNewSubChannel(int id)
+    public override ISubChannelManager SubChannelManager
     {
-      return new SubChannelMpeg2Ts(id, _filterTsWriter as ITsFilter);
+      get
+      {
+        return _subChannelManager;
+      }
     }
-
-    #endregion
-
-    #region interfaces
 
     /// <summary>
     /// Get the tuner's channel linkage scanning interface.

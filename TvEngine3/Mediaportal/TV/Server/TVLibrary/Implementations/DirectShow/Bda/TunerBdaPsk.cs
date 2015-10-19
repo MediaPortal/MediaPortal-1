@@ -34,8 +34,8 @@ using MpPolarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 {
   /// <summary>
-  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which
-  /// handles satellite tuners with BDA drivers.
+  /// An implementation of <see cref="ITuner"/> for satellite tuners with BDA
+  /// drivers.
   /// </summary>
   internal class TunerBdaPsk : TunerBdaBase
   {

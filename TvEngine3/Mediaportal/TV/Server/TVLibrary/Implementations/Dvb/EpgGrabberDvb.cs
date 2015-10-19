@@ -990,10 +990,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           {
             epgChannels = CollectEitData();
           }
-          else
-          {
-            epgChannels = new Dictionary<IChannel, IList<EpgProgram>>(0);
-          }
         }
         catch (Exception ex)
         {

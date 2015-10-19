@@ -26,7 +26,6 @@ using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
@@ -49,6 +48,10 @@ using UPnP.Infrastructure.CP.DeviceTree;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 {
+  /// <summary>
+  /// An implementation of <see cref="ITuner"/> for tuners which implement the
+  /// CableLabs/OpenCable Digital Receiver Interface.
+  /// </summary>
   internal class TunerDri : TunerBase, IConditionalAccessMenuActions
   {
     #region constants
@@ -111,7 +114,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     private readonly bool _isCetonDevice = false;
     private bool _canPause = false;
     private ICollection<TunerModulation> _supportedModulationSchemes = null;
-    private int _programNumberTimeOut = 2500;   // unit = milliseconds
 
     /// <summary>
     /// Internal stream tuner, used to receive the RTP stream. This allows us
@@ -119,6 +121,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// DRI implementation.
     /// </summary>
     private ITunerInternal _streamTuner = null;
+
+    /// <summary>
+    /// The tuner's sub-channel manager.
+    /// </summary>
+    private ISubChannelManager _subChannelManager = null;
 
     /// <summary>
     /// The tuner's channel scanning interface.
@@ -163,13 +170,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
       _localIpAddress = descriptor.RootDescriptor.SSDPRootEntry.PreferredLink.Endpoint.EndPointIPAddress;
       _serverIpAddress = new Uri(descriptor.RootDescriptor.SSDPRootEntry.PreferredLink.DescriptionLocation).Host;
-
-      // CableCARD tuners are limited to one channel per tuner, even for
-      // non-encrypted channels:
-      // The DRIT SHALL output the selected program content as a single program
-      // MPEG-TS in RTP packets according to [RTSP] and [RTP].
-      // - OpenCable DRI I04 specification, 10 September 2010
-      _areSubChannelsSupported = false;
     }
 
     ~TunerDri()
@@ -284,39 +284,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           else
           {
             throw new TvException("Not able to tune using CableCARD without either channel number or source ID.");
-          }
-        }
-
-        // When switched digital video (SDV) is active - ie. the tuner uses a
-        // tuning adaptor/resolver to ask the cable system which frequency
-        // and program number to tune - we have to ask the tuner what the
-        // correct program number is.
-        // Note that SiliconDust and Hauppauge tuners actually deliver a TS
-        // with a single program. For them it would be enough to set the
-        // program number to 0. However Ceton tuners deliver the PAT and PMT
-        // for all the programs in the full transport stream, only excluding
-        // extra video and audio streams. Therefore we have to do this...
-        ChannelMpeg2Base mpeg2Channel = channel as ChannelMpeg2Base;
-        if (_isCetonDevice || mpeg2Channel.ProgramNumber == 0)
-        {
-          DateTime start = DateTime.Now;
-          while ((DateTime.Now - start).TotalMilliseconds < _programNumberTimeOut)
-          {
-            try
-            {
-              mpeg2Channel.ProgramNumber = (int)_serviceMux.QueryStateVariable("ProgramNumber");
-              if (mpeg2Channel.ProgramNumber != 0)
-              {
-                this.LogDebug("DRI CableCARD: actual program number is {0}", mpeg2Channel.ProgramNumber);
-                break;
-              }
-              System.Threading.Thread.Sleep(20);
-            }
-            catch (Exception ex)
-            {
-              this.LogError(ex, "DRI CableCARD: failed to get actual program number");
-              break;
-            }
           }
         }
       }
@@ -666,9 +633,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// <param name="configuration">The tuner's configuration.</param>
     public override void ReloadConfiguration(Tuner configuration)
     {
-      // Use the PMT time out as a limit on the program number query time.
-      _programNumberTimeOut = SettingsManagement.GetValue("timeOutProgramMapTable", 5000);
-
       ITuner tuner = _streamTuner as ITuner;
       if (tuner != null)
       {
@@ -739,6 +703,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         extensions.Add(e);
       }
 
+      _subChannelManager = new SubChannelManagerDri(_isCetonDevice, _serviceMux, _streamTuner.SubChannelManager);
       _channelScanner = new ChannelScannerDri(this, _serverIpAddress, _serviceFdc.RequestTables);
       return extensions;
     }
@@ -804,6 +769,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         return;
       }
 
+      _subChannelManager = null;
       _channelScanner = null;
       if (_serviceTuner != null)
       {
@@ -931,14 +897,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
             // ...and we must have a valid source ID and/or virtual channel number.
             (
               scteChannel.SourceId > 0 ||
-              (
-                uint.TryParse(channel.LogicalChannelNumber, out virtualChannelNumber) &&
-                (
-                  virtualChannelNumber > 0 ||
-                  // Special case: scanning using the CableCARD.
-                  (InternalChannelScanningInterface != null && InternalChannelScanningInterface.IsScanning)
-                )
-              )
+              (uint.TryParse(channel.LogicalChannelNumber, out virtualChannelNumber) && virtualChannelNumber > 0) ||
+              scteChannel.Frequency == -1   // special case: CableCARD scanning
             )
           )
         )
@@ -1024,16 +984,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
       _currentTuningDetail = channel;
       _isSignalLocked = isSignalLocked;
-    }
-
-    /// <summary>
-    /// Allocate a new sub-channel instance.
-    /// </summary>
-    /// <param name="id">The identifier for the sub-channel.</param>
-    /// <returns>the new sub-channel instance</returns>
-    public override ISubChannelInternal CreateNewSubChannel(int id)
-    {
-      return _streamTuner.CreateNewSubChannel(id);
     }
 
     #endregion
@@ -1165,6 +1115,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     #endregion
 
     #region interfaces
+
+    /// <summary>
+    /// Get the tuner's sub-channel manager.
+    /// </summary>
+    public override ISubChannelManager SubChannelManager
+    {
+      get
+      {
+        return _subChannelManager;
+      }
+    }
 
     /// <summary>
     /// Get the tuner's channel scanning interface.

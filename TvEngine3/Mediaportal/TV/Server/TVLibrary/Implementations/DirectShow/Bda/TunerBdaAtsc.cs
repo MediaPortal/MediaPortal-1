@@ -24,6 +24,7 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
@@ -36,9 +37,8 @@ using MediaPortal.Common.Utils;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 {
   /// <summary>
-  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which
-  /// handles ATSC terrestrial and SCTE (OpenCable, clear QAM) cable tuners
-  /// with BDA drivers.
+  /// An implementation of <see cref="ITuner"/> for ATSC terrestrial and SCTE
+  /// (OpenCable, clear QAM) cable tuners with BDA drivers.
   /// </summary>
   internal class TunerBdaAtsc : TunerBdaBase
   {
@@ -154,7 +154,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     {
       IList<ITunerExtension> extensions = base.PerformLoading();
 
-      _epgGrabber = new EpgGrabberAtsc(_filterTsWriter as IGrabberEpgAtsc, _filterTsWriter as IGrabberEpgScte);
+      _subChannelManager = new SubChannelManagerMpeg2Ts(TsWriter as ITsWriter);
+      _epgGrabber = new EpgGrabberAtsc(TsWriter as IGrabberEpgAtsc, TsWriter as IGrabberEpgScte);
 
       if (_channelScanner != null)
       {

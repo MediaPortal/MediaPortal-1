@@ -23,8 +23,7 @@ using System;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception
 {
   /// <summary>
-  /// Exception thrown by the TV library when it is not possible to load a
-  /// tuner.
+  /// Exception thrown by the TV library when it fails to load a tuner.
   /// </summary>
   [Serializable]
   public class TvExceptionTunerLoadFailed : TvException
@@ -36,7 +35,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception
     /// <param name="context">Optional context.</param>
     /// <param name="contextcontextArgs">Optional context arguments.</param>
     public TvExceptionTunerLoadFailed(int tunerId, string context, params object[] contextArgs)
-      : base(string.Format("Failed to load tuner {0}. {1}", tunerId, context), contextArgs)
+      : base("Failed to load tuner {0}. {1}", tunerId, string.Format(context, contextArgs))
     {
     }
 
@@ -46,7 +45,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception
     /// <param name="tunerId">The tuner's identifier.</param>
     /// <param name="innerException">The inner exception, if any.</param>
     public TvExceptionTunerLoadFailed(int tunerId, System.Exception innerException)
-      : base(innerException, string.Format("Failed to load tuner {0}.", tunerId))
+      : base(innerException, "Failed to load tuner {0}.", tunerId)
     {
     }
 
@@ -58,7 +57,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception
     /// <param name="context">Optional context.</param>
     /// <param name="contextArgs">Optional context arguments.</param>
     public TvExceptionTunerLoadFailed(int tunerId, System.Exception innerException, string context, params object[] contextArgs)
-      : base(innerException, string.Format("Failed to load tuner {0}. {1}", tunerId, context), contextArgs)
+      : base(innerException, "Failed to load tuner {0}. {1}", tunerId, string.Format(context, contextArgs))
     {
     }
   }

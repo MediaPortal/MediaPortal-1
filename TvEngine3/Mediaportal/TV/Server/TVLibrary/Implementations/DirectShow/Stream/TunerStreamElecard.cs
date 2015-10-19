@@ -23,8 +23,8 @@ using System;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
 {
   /// <summary>
-  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which supports the Elecard
-  /// IPTV source filter.
+  /// An implementation of <see cref="ITuner"/> for receiving DVB-compliant
+  /// streams with the Elecard IPTV source filter.
   /// </summary>
   internal class TunerStreamElecard : TunerStream
   {

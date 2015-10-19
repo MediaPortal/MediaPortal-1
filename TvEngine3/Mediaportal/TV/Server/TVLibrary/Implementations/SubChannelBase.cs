@@ -24,298 +24,358 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
   /// <summary>
-  /// Base class for a sub-channel of a tv card
+  /// Base class for a tuner sub-channel.
   /// </summary>
   internal abstract class SubChannelBase : ISubChannelInternal
   {
-    #region events
-
-    /// <summary>
-    /// Audio/video observer event.
-    /// </summary>
-    public event AudioVideoObserverEvent AudioVideoEvent;
-
-    /// <summary>
-    /// Handles the audio/video observer event.
-    /// </summary>
-    /// <param name="pidType">Type of the pid</param>
-    protected void OnAudioVideoEvent(PidType pidType)
-    {
-      if (AudioVideoEvent != null)
-      {
-        AudioVideoEvent(pidType);
-      }
-    }
-
-    /// <summary>
-    /// After tune observer event.
-    /// </summary>
-    public event OnAfterTuneDelegate AfterTuneEvent;
-
-    /// <summary>
-    /// Handles the after tune observer event.
-    /// </summary>
-    protected void OnAfterTuneEvent()
-    {
-      if (AfterTuneEvent != null)
-      {
-        AfterTuneEvent();
-      }
-    }
-
-    #endregion
-
-
     #region variables
 
     /// <summary>
-    /// Instance of the current channel
-    /// </summary>
-    protected IChannel _currentChannel;
-
-    /// <summary>
-    /// Name of the timeshift file
-    /// </summary>
-    protected string _timeshiftFileName;
-
-    /// <summary>
-    /// Name of the recording file
-    /// </summary>
-    protected string _recordingFileName;
-
-    /// <summary>
-    /// Date and time when timeshifting started
-    /// </summary>
-    protected DateTime _dateTimeShiftStarted;
-
-    /// <summary>
-    /// Date  and time when recording started
-    /// </summary>
-    protected DateTime _dateRecordingStarted;
-
-    /// <summary>
-    /// This sub-channel's unique identifier.
+    /// The sub-channel's unique identifier.
     /// </summary>
     protected int _subChannelId;
 
     /// <summary>
-    /// A flag used by the TV service as a signal to abort the tuning process before it is completed.
+    /// The time-shift buffer register file name.
     /// </summary>
-    protected volatile bool _cancelTune;
+    private string _timeShiftFileName = string.Empty;
+
+    /// <summary>
+    /// The date/time when time-shifting was started.
+    /// </summary>
+    private DateTime _timeShiftStartTime = DateTime.MinValue;
+
+    /// <summary>
+    /// The recording file name.
+    /// </summary>
+    private string _recordFileName = string.Empty;
+
+    /// <summary>
+    /// The date/time when recording was started.
+    /// </summary>
+    private DateTime _recordStartTime = DateTime.MinValue;
+
+    /// <summary>
+    /// The channel which the sub-channel is tuned to.
+    /// </summary>
+    private IChannel _currentChannel = null;
+
+    /// <summary>
+    /// Should the current tuning process be aborted immediately?
+    /// </summary>
+    private volatile bool _cancelTune = false;
 
     #endregion
 
     #region constructor
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SubChannelBase"/> class.
+    /// Initialise a new instance of the <see cref="SubChannelBase"/> class.
     /// </summary>
+    /// <param name="subChannelId">The sub-channel's identifier.</param>
     protected SubChannelBase(int subChannelId)
     {
-      _cancelTune = false;
       _subChannelId = subChannelId;
-      _timeshiftFileName = string.Empty;
-      _recordingFileName = string.Empty;
-      _dateRecordingStarted = DateTime.MinValue;
-      _dateTimeShiftStarted = DateTime.MinValue;
+      _timeShiftFileName = string.Empty;
+      _timeShiftStartTime = DateTime.MinValue;
+      _recordFileName = string.Empty;
+      _recordStartTime = DateTime.MinValue;
     }
 
     #endregion
+
+    #region ISubChannel members
 
     #region properties
 
     /// <summary>
-    /// Gets the sub-channel id.
+    /// Get the sub-channel's identifier.
     /// </summary>
-    /// <value>The sub-channel id.</value>
     public int SubChannelId
     {
-      get { return _subChannelId; }
+      get
+      {
+        return _subChannelId;
+      }
     }
 
     /// <summary>
-    /// gets the current filename used for timeshifting
+    /// Get the time-shift buffer register file name.
     /// </summary>
     public string TimeShiftFileName
     {
-      get { return _timeshiftFileName; }
+      get
+      {
+        return _timeShiftFileName;
+      }
     }
 
     /// <summary>
-    /// returns the date/time when timeshifting has been started for the card specified
+    /// Get the date/time when time-shifting was started.
     /// </summary>
-    /// <returns>DateTime containg the date/time when timeshifting was started</returns>
-    public DateTime StartOfTimeShift
+    public DateTime TimeShiftStartTime
     {
-      get { return _dateTimeShiftStarted; }
+      get
+      {
+        return _timeShiftStartTime;
+      }
     }
 
     /// <summary>
-    /// returns the date/time when recording has been started for the card specified
-    /// </summary>
-    /// <returns>DateTime containg the date/time when recording was started</returns>
-    public DateTime RecordingStarted
-    {
-      get { return _dateRecordingStarted; }
-    }
-
-    /// <summary>
-    /// gets the current filename used for recording
-    /// </summary>
-    public string RecordingFileName
-    {
-      get { return _recordingFileName; }
-    }
-
-    /// <summary>
-    /// returns true if card is currently recording
-    /// </summary>
-    public bool IsRecording
-    {
-      get { return (_recordingFileName.Length > 0); }
-    }
-
-    /// <summary>
-    /// returns true if card is currently timeshifting
+    /// Is the sub-channel currently time-shifting?
     /// </summary>
     public bool IsTimeShifting
     {
-      get { return (_timeshiftFileName.Length > 0); }
+      get
+      {
+        return !string.IsNullOrEmpty(_timeShiftFileName);
+      }
     }
 
     /// <summary>
-    /// returns the IChannel to which the card is currently tuned
+    /// Get the recording file name.
+    /// </summary>
+    public string RecordFileName
+    {
+      get
+      {
+        return _recordFileName;
+      }
+    }
+
+    /// <summary>
+    /// Get the date/time when recording was started.
+    /// </summary>
+    public DateTime RecordStartTime
+    {
+      get
+      {
+        return _recordStartTime;
+      }
+    }
+
+    /// <summary>
+    /// Is the sub-channel currently recording?
+    /// </summary>
+    public bool IsRecording
+    {
+      get
+      {
+        return !string.IsNullOrEmpty(_recordFileName);
+      }
+    }
+
+    /// <summary>
+    /// Get or set the channel which the sub-channel is tuned to.
     /// </summary>
     public IChannel CurrentChannel
     {
-      get { return _currentChannel; }
-      set { _currentChannel = value; }
+      get
+      {
+        return _currentChannel;
+      }
+      set
+      {
+        _currentChannel = value;
+      }
     }
 
     #endregion
 
-    #region timeshifting and recording
+    #region time-shifting and recording
 
     /// <summary>
-    /// Starts timeshifting. Note card has to be tuned first
+    /// Start time-shifting.
     /// </summary>
-    /// <param name="fileName">filename used for the timeshiftbuffer</param>
-    /// <returns></returns>
-    public bool StartTimeShifting(string fileName, int fileCount, int fileCountMaximum, ulong fileSize)
+    /// <param name="fileName">The name to use for the time-shift buffer register file.</param>
+    /// <param name="fileCount">The number of buffer files to use during normal time-shifting.</param>
+    /// <param name="fileCountMaximum">The maximum number of buffer files to use when time-shifting is paused.</param>
+    /// <param name="fileSize">The size of each buffer file.</param>
+    /// <param name="isEncrypted"><c>True</c> if time-shifting failed to start because the video and/or audio streams are encrypted.</param>
+    /// <returns><c>true</c> if time-shifting was started successfully, otherwise <c>false</c></returns>
+    public bool StartTimeShifting(string fileName, uint fileCount, uint fileCountMaximum, ulong fileSize, out bool isEncrypted)
     {
-      this.LogDebug("sub-channel base: {0} start timeshifting to {1}", _subChannelId, fileName);
+      this.LogDebug("sub-channel base: start time-shifting, ID = {0}, file name = {1}", _subChannelId, fileName);
+      isEncrypted = false;
+      _cancelTune = false;
       try
       {
+        if (IsTimeShifting)
+        {
+          this.LogError("sub-channel base: already time-shifting, ID = {0}, file name = {1}", _subChannelId, _timeShiftFileName);
+          return false;
+        }
         OnStartTimeShifting(fileName, fileCount, fileCountMaximum, fileSize);
-        _timeshiftFileName = fileName;
-        _dateTimeShiftStarted = DateTime.Now;
+        _timeShiftFileName = fileName;
+        _timeShiftStartTime = DateTime.Now;
+        return true;
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "sub-channel base: failed to start timeshifting");
+        this.LogError(ex, "sub-channel base: failed to start time-shifting, ID = {0}, file name = {1}", _subChannelId, fileName);
+        if (ex is TvExceptionServiceEncrypted)
+        {
+          isEncrypted = true;
+        }
         StopTimeShifting();
         return false;
       }
-
-      return true;
     }
 
     /// <summary>
-    /// Stops timeshifting
+    /// Get the current time-shift position.
     /// </summary>
-    /// <returns></returns>
-    public bool StopTimeShifting()
+    /// <param name="bufferId">The identifier of the current buffer file.</param>
+    /// <param name="position">The position within the current buffer file.</param>
+    /// <returns><c>true</c> if the position was retrieved successfully, otherwise <c>false</c></returns>
+    public bool GetCurrentTimeShiftPosition(out uint bufferId, out ulong position)
     {
-      this.LogDebug("sub-channel base: {0} stop timeshifting", _subChannelId);
-      OnStopTimeShifting();
-      _timeshiftFileName = string.Empty;
-      _dateTimeShiftStarted = DateTime.MinValue;
-      return true;
-    }
-
-    /// <summary>
-    /// Starts recording
-    /// </summary>
-    /// <param name="fileName">filename to which to recording should be saved</param>
-    /// <returns></returns>
-    public bool StartRecording(string fileName)
-    {
-      this.LogDebug("sub-channel base: {0} start recording to {1}", _subChannelId, fileName);
+      bufferId = 0;
+      position = 0;
       try
       {
-        OnStartRecording(fileName);
-        _recordingFileName = fileName;
-        _dateRecordingStarted = DateTime.Now;
+        if (!IsTimeShifting)
+        {
+          this.LogWarn("sub-channel base: not time-shifting, ID = {0}", _subChannelId);
+          return false;
+        }
+        OnGetCurrentTimeShiftPosition(out bufferId, out position);
+        return true;
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "sub-channel base: failed to start recording");
+        this.LogError(ex, "sub-channel base: failed to get the current time-shift position, ID = {0}", _subChannelId);
+        return false;
+      }
+    }
+
+    /// <summary>
+    /// Stop time-shifting.
+    /// </summary>
+    /// <returns><c>true</c> if time-shifting was stopped successfully, otherwise <c>false</c></returns>
+    public bool StopTimeShifting()
+    {
+      this.LogDebug("sub-channel base: stop time-shifting, ID = {0}", _subChannelId);
+      try
+      {
+        if (!IsTimeShifting)
+        {
+          this.LogWarn("sub-channel base: not time-shifting, ID = {0}", _subChannelId);
+        }
+        OnStopTimeShifting();
+        _timeShiftFileName = string.Empty;
+        _timeShiftStartTime = DateTime.MinValue;
+        return true;
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "sub-channel base: failed to stop time-shifting, ID = {0}", _subChannelId);
+        return false;
+      }
+    }
+
+    /// <summary>
+    /// Start recording.
+    /// </summary>
+    /// <param name="fileName">The name to use for the recording file.</param>
+    /// <param name="isEncrypted"><c>True</c> if recording failed to start because the video and/or audio streams are encrypted.</param>
+    /// <returns><c>true</c> if recording was started successfully, otherwise <c>false</c></returns>
+    public bool StartRecording(string fileName, out bool isEncrypted)
+    {
+      this.LogDebug("sub-channel base: start recording, ID = {0}, file name = {1}", _subChannelId, fileName);
+      isEncrypted = false;
+      _cancelTune = false;
+      try
+      {
+        if (IsRecording)
+        {
+          this.LogError("sub-channel base: already recording, ID = {0}, file name = {1}", _subChannelId, _recordFileName);
+          return false;
+        }
+        OnStartRecording(fileName);
+        _recordFileName = fileName;
+        _recordStartTime = DateTime.Now;
+        return true;
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "sub-channel base: failed to start recording, ID = {0}, file name = {1}", _subChannelId, fileName);
+        if (ex is TvExceptionServiceEncrypted)
+        {
+          isEncrypted = true;
+        }
         StopRecording();
         return false;
       }
-
-      return true;
     }
 
     /// <summary>
-    /// Stop recording
+    /// Stop recording.
     /// </summary>
-    /// <returns></returns>
+    /// <returns><c>true</c> if recording was stopped successfully, otherwise <c>false</c></returns>
     public bool StopRecording()
     {
-      this.LogDebug("sub-channel base: {0} stop recording", _subChannelId);
-      OnStopRecording();
-      _recordingFileName = string.Empty;
-      _dateRecordingStarted = DateTime.MinValue;
-      return true;
+      this.LogDebug("sub-channel base: stop recording, ID = {0}", _subChannelId);
+      try
+      {
+        if (!IsRecording)
+        {
+          this.LogWarn("sub-channel base: not recording, ID = {0}", _subChannelId);
+        }
+        OnStopRecording();
+        _recordFileName = string.Empty;
+        _recordStartTime = DateTime.MinValue;
+        return true;
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "sub-channel base: failed to stop recording, ID = {0}", _subChannelId);
+        return false;
+      }
     }
 
+    #endregion
+
     /// <summary>
-    /// Returns the position in the current timeshift file and the id of the current timeshift file
+    /// Get the stream state.
     /// </summary>
-    /// <param name="position">The position in the current timeshift buffer file</param>
-    /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    public void TimeShiftGetCurrentFilePosition(out long position, out long bufferId)
-    {
-      OnGetTimeShiftFilePosition(out position, out bufferId);
-    }
+    /// <param name="isReceivingVideo"><c>True</c> if video is being received.</param>
+    /// <param name="isEncryptedVideo"><c>True</c> if the received video is currently encrypted.</param>
+    /// <param name="isReceivingAudio"><c>True</c> if audio is being received.</param>
+    /// <param name="isEncryptedAudio"><c>True</c> if the received audio is currently encrypted.</param>
+    public abstract void GetStreamState(out bool isReceivingVideo, out bool isEncryptedVideo, out bool isReceivingAudio, out bool isEncryptedAudio);
+
+    /// <summary>
+    /// Get information about the stream's quality.
+    /// </summary>
+    /// <param name="countBytes">The number of bytes processed.</param>    
+    /// <param name="countDiscontinuities">The number of discontinuities encountered.</param>
+    /// <param name="countDroppedBytes">The number of bytes dropped.</param>
+    public abstract void GetStreamQuality(out ulong countBytes, out ulong countDiscontinuities, out ulong countDroppedBytes);
+
+    #endregion
+
+    #region ISubChannelInternal members
 
     /// <summary>
     /// Cancel the current tuning process.
     /// </summary>
-    public virtual void CancelTune()
+    public void CancelTune()
     {
-      this.LogDebug("sub-channel base: {0} cancel tune", _subChannelId);
+      this.LogDebug("sub-channel base: cancel tune, ID = {0}", _subChannelId);
       _cancelTune = true;
     }
 
     /// <summary>
-    /// Check if the current tuning process has been cancelled and throw an exception if it has.
-    /// </summary>
-    protected void ThrowExceptionIfTuneCancelled()
-    {
-      if (_cancelTune)
-      {
-        throw new TvExceptionTuneCancelled();
-      }
-    }
-
-    #endregion
-
-    #region public helper
-
-    /// <summary>
-    /// Decomposes the sub-channel
+    /// Decompose the sub-channel.
     /// </summary>
     public void Decompose()
     {
-      this.LogDebug("sub-channel base: {0} decompose", _subChannelId);
+      this.LogDebug("sub-channel base: decompose, ID = {0}", _subChannelId);
 
       if (IsRecording)
       {
@@ -331,79 +391,78 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     #endregion
 
-    #region public abstract methods
+    #region protected members
+
+    #region abstract members
 
     /// <summary>
-    /// Should be called before tuning to a new channel
-    /// resets the state
+    /// Implementation of starting time-shifting.
     /// </summary>
-    public abstract void OnBeforeTune();
+    /// <param name="fileName">The name to use for the time-shift buffer register file.</param>
+    /// <param name="fileCount">The number of buffer files to use during normal time-shifting.</param>
+    /// <param name="fileCountMaximum">The maximum number of buffer files to use when time-shifting is paused.</param>
+    /// <param name="fileSize">The size of each buffer file.</param>
+    protected abstract void OnStartTimeShifting(string fileName, uint fileCount, uint fileCountMaximum, ulong fileSize);
 
     /// <summary>
-    /// Should be called when the graph is tuned to the new channel
-    /// resets the state
+    /// Implementation of getting the current time-shift position.
     /// </summary>
-    public abstract void OnAfterTune();
+    /// <param name="bufferId">The identifier of the current buffer file.</param>
+    /// <param name="position">The position within the current buffer file.</param>
+    protected abstract void OnGetCurrentTimeShiftPosition(out uint bufferId, out ulong position);
 
     /// <summary>
-    /// Should be called when the graph has been started
-    /// sets up the pmt grabber to grab the pmt of the channel
-    /// </summary>
-    public abstract void OnGraphRunning();
-
-    #endregion
-
-    #region protected abstract methods
-
-    /// <summary>
-    /// A derrived class should do it's specific cleanup here. It will be called from called from Decompose()
-    /// </summary>
-    protected abstract void OnDecompose();
-
-    /// <summary>
-    /// A derrived class should start here the timeshifting on the tv card. It will be called from StartTimeshifting()
-    /// </summary>
-    protected abstract void OnStartTimeShifting(string fileName, int fileCount, int fileCountMaximum, ulong fileSize);
-
-    /// <summary>
-    /// A derrived class should stop here the timeshifting on the tv card. It will be called from StopTimeshifting()
+    /// Implementation of stopping time-shifting.
     /// </summary>
     protected abstract void OnStopTimeShifting();
 
     /// <summary>
-    /// A derrived class should start here the recording on the tv card. It will be called from StartRecording()
+    /// Implementation of starting recording.
     /// </summary>
+    /// <param name="fileName">The name to use for the recording file.</param>
     protected abstract void OnStartRecording(string fileName);
 
     /// <summary>
-    /// A derrived class should stop here the recording on the tv card. It will be called from StopRecording()
+    /// Implementation of stopping recording.
     /// </summary>
     protected abstract void OnStopRecording();
 
     /// <summary>
-    /// Returns the position in the current timeshift file and the id of the current timeshift file
+    /// Implementation of tune cancellation.
     /// </summary>
-    /// <param name="position">The position in the current timeshift buffer file</param>
-    /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    protected abstract void OnGetTimeShiftFilePosition(out long position, out long bufferId);
-
-    #endregion
-
-    #region abstract ITvSubChannel members
+    protected abstract void OnCancelTune();
 
     /// <summary>
-    /// Returns true when unscrambled audio/video is received otherwise false
+    /// Implementation of decomposition.
     /// </summary>
-    /// <returns>true of false</returns>
-    public abstract bool IsReceivingAudioVideo { get; }
+    protected abstract void OnDecompose();
 
     #endregion
 
     /// <summary>
-    /// Fetch stream quality information from TsWriter.
-    /// </summary>   
-    /// <param name="totalBytes">The number of packets processed.</param>    
-    /// <param name="discontinuityCounter">The number of stream discontinuities.</param>
-    public abstract void GetStreamQualityCounters(out int totalBytes, out int discontinuityCounter);
+    /// Get the maximum time to wait for the video and/or audio streams to
+    /// start being received.
+    /// </summary>
+    protected int TimeLimitReceiveVideoAudio
+    {
+      get
+      {
+        return SettingsManagement.GetValue("timeLimitReceiveVideoAudio", 5000);
+      }
+    }
+
+    /// <summary>
+    /// Check if the current tuning process has been cancelled and throw an
+    /// exception if it has.
+    /// </summary>
+    protected void ThrowExceptionIfTuneCancelled()
+    {
+      if (_cancelTune)
+      {
+        throw new TvExceptionTuneCancelled();
+      }
+    }
+
+    #endregion
   }
 }

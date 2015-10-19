@@ -735,7 +735,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     /// <summary>
-    /// Check if the current tuning process has been cancelled and throw an exception if it has.
+    /// Check if the current tuning process has been cancelled and throw an
+    /// exception if it has.
     /// </summary>
     private void ThrowExceptionIfTuneCancelled()
     {

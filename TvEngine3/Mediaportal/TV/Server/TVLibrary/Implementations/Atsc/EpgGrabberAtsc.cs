@@ -28,7 +28,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
   /// An implementation of <see cref="IEpgGrabber"/> for electronic programme
   /// guide data formats used by ATSC broadcasters.
   /// </summary>
-  internal class EpgGrabberAtsc : IEpgGrabber, IEpgCallBack
+  internal class EpgGrabberAtsc : IEpgGrabber
   {
     #region constants
 

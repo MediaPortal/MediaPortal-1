@@ -20,127 +20,116 @@
 
 using System;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
 {
-  #region event delegates
-
   /// <summary>
-  /// Delegate for the audio/video observer event.
-  /// </summary>
-  /// <param name="pidType">The type of stream that has been observed.</param>
-  public delegate void AudioVideoObserverEvent(PidType pidType);
-
-  #endregion
-
-  /// <summary>
-  /// Sub-Channel interface in TsWriter
+  /// The library sub-channel interface.
   /// </summary>
   public interface ISubChannel
   {
     #region properties
 
     /// <summary>
-    /// Gets the sub-channel id.
+    /// Get the sub-channel's identifier.
     /// </summary>
-    /// <value>The sub-channel id.</value>
     int SubChannelId { get; }
 
     /// <summary>
-    /// gets the current filename used for timeshifting
+    /// Get the time-shift buffer register file name.
     /// </summary>
     string TimeShiftFileName { get; }
 
     /// <summary>
-    /// returns the date/time when timeshifting has been started for the card specified
+    /// Get the date/time when time-shifting was started.
     /// </summary>
-    /// <returns>DateTime containg the date/time when timeshifting was started</returns>
-    DateTime StartOfTimeShift { get; }
+    DateTime TimeShiftStartTime { get; }
 
     /// <summary>
-    /// returns the date/time when recording has been started for the card specified
-    /// </summary>
-    /// <returns>DateTime containg the date/time when recording was started</returns>
-    DateTime RecordingStarted { get; }
-
-    /// <summary>
-    /// Returns true when unscrambled audio/video is received otherwise false
-    /// </summary>
-    /// <returns>true of false</returns>
-    bool IsReceivingAudioVideo { get; }
-
-    /// <summary>
-    /// gets the current filename used for recording
-    /// </summary>
-    string RecordingFileName { get; }
-
-    /// <summary>
-    /// returns true if card is currently recording
-    /// </summary>
-    bool IsRecording { get; }
-
-    /// <summary>
-    /// returns true if card is currently timeshifting
+    /// Is the sub-channel currently time-shifting?
     /// </summary>
     bool IsTimeShifting { get; }
 
     /// <summary>
-    /// returns the IChannel to which the card is currently tuned
+    /// Get the recording file name.
+    /// </summary>
+    string RecordFileName { get; }
+
+    /// <summary>
+    /// Get the date/time when recording was started.
+    /// </summary>
+    DateTime RecordStartTime { get; }
+
+    /// <summary>
+    /// Is the sub-channel currently recording?
+    /// </summary>
+    bool IsRecording { get; }
+
+    /// <summary>
+    /// Get the channel which the sub-channel is tuned to.
     /// </summary>
     IChannel CurrentChannel { get; }
 
     #endregion
 
-    #region timeshifting and recording
+    #region time-shifting and recording
 
     /// <summary>
-    /// Starts timeshifting. Note card has to be tuned first
+    /// Start time-shifting.
     /// </summary>
-    /// <param name="fileName">filename used for the timeshiftbuffer</param>
-    /// <returns>true if succeeded else false</returns>
-    bool StartTimeShifting(string fileName, int fileCount, int fileCountMaximum, ulong fileSize);
+    /// <param name="fileName">The name to use for the time-shift buffer register file.</param>
+    /// <param name="fileCount">The number of buffer files to use during normal time-shifting.</param>
+    /// <param name="fileCountMaximum">The maximum number of buffer files to use when time-shifting is paused.</param>
+    /// <param name="fileSize">The size of each buffer file.</param>
+    /// <param name="isEncrypted"><c>True</c> if time-shifting failed to start because the video and/or audio streams are encrypted.</param>
+    /// <returns><c>true</c> if time-shifting was started successfully, otherwise <c>false</c></returns>
+    bool StartTimeShifting(string fileName, uint fileCount, uint fileCountMaximum, ulong fileSize, out bool isEncrypted);
 
     /// <summary>
-    /// Stops timeshifting
+    /// Get the current time-shift position.
     /// </summary>
-    /// <returns>true if succeeded else false</returns>
+    /// <param name="bufferId">The identifier of the current buffer file.</param>
+    /// <param name="position">The position within the current buffer file.</param>
+    /// <returns><c>true</c> if the position was retrieved successfully, otherwise <c>false</c></returns>
+    bool GetCurrentTimeShiftPosition(out uint bufferId, out ulong position);
+
+    /// <summary>
+    /// Stop time-shifting.
+    /// </summary>
+    /// <returns><c>true</c> if time-shifting was stopped successfully, otherwise <c>false</c></returns>
     bool StopTimeShifting();
 
     /// <summary>
-    /// Starts recording
+    /// Start recording.
     /// </summary>
-    /// <param name="fileName">filename to which to recording should be saved</param>
-    /// <returns>true if succeeded else false</returns>
-    bool StartRecording(string fileName);
+    /// <param name="fileName">The name to use for the recording file.</param>
+    /// <param name="isEncrypted"><c>True</c> if recording failed to start because the video and/or audio streams are encrypted.</param>
+    /// <returns><c>true</c> if recording was started successfully, otherwise <c>false</c></returns>
+    bool StartRecording(string fileName, out bool isEncrypted);
 
     /// <summary>
-    /// Stop recording
+    /// Stop recording.
     /// </summary>
-    /// <returns>true if succeeded else false</returns>
+    /// <returns><c>true</c> if recording was stopped successfully, otherwise <c>false</c></returns>
     bool StopRecording();
-
-    /// <summary>
-    /// Returns the position in the current timeshift file and the id of the current timeshift file
-    /// </summary>
-    /// <param name="position">The position in the current timeshift buffer file</param>
-    /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    void TimeShiftGetCurrentFilePosition(out long position, out long bufferId);
-
-    /// <summary>
-    /// Cancel the current tuning process.
-    /// </summary>
-    void CancelTune();
 
     #endregion
 
-    event AudioVideoObserverEvent AudioVideoEvent;
+    /// <summary>
+    /// Get the stream state.
+    /// </summary>
+    /// <param name="isReceivingVideo"><c>True</c> if video is being received.</param>
+    /// <param name="isEncryptedVideo"><c>True</c> if the received video is currently encrypted.</param>
+    /// <param name="isReceivingAudio"><c>True</c> if audio is being received.</param>
+    /// <param name="isEncryptedAudio"><c>True</c> if the received audio is currently encrypted.</param>
+    void GetStreamState(out bool isReceivingVideo, out bool isEncryptedVideo, out bool isReceivingAudio, out bool isEncryptedAudio);
 
     /// <summary>
-    /// Fetch stream quality information from TsWriter.
-    /// </summary>   
-    /// <param name="totalBytes">The number of packets processed.</param>    
-    /// <param name="discontinuityCounter">The number of stream discontinuities.</param>
-    void GetStreamQualityCounters(out int totalBytes, out int discontinuityCounter);
+    /// Get information about the stream's quality.
+    /// </summary>
+    /// <param name="countBytes">The number of bytes processed.</param>    
+    /// <param name="countDiscontinuities">The number of discontinuities encountered.</param>
+    /// <param name="countDroppedBytes">The number of bytes dropped.</param>
+    void GetStreamQuality(out ulong countBytes, out ulong countDiscontinuities, out ulong countDroppedBytes);
   }
 }

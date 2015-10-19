@@ -24,7 +24,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception
 {
   /// <summary>
   /// Exception thrown by the TV library when it is not possible to load an
-  /// analog tuner or capture device for lack of compatible software encoders.
+  /// analog tuner or capture device because compatible software encoders are
+  /// not available.
   /// </summary>
   [Serializable]
   public class TvExceptionNeedSoftwareEncoder : TvException
@@ -35,7 +36,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception
     /// <param name="needVideoEncoder"><c>True</c> if the system is missing a compatible video encoder; <c>false</c> if the system is missing a compatible audio encoder.</param>
     /// <param name="isCompatibilityIssue"><c>True</c> if the preferred encoder(s) were not able to be used; <c>false</c> if the system does not have any encoders installed.</param>
     public TvExceptionNeedSoftwareEncoder(bool needVideoEncoder, bool isCompatibilityIssue)
-      : base(string.Format("Software {0} encoder required. {1}", needVideoEncoder ? "video" : "audio", isCompatibilityIssue ? "Current preferred encoder(s) are not compatible with the tuner." : "There are no compatible encoders installed."))
+      : base("Software {0} encoder required. {1}", needVideoEncoder ? "video" : "audio", isCompatibilityIssue ? "Current preferred encoder(s) are not compatible with the tuner." : "There are no compatible encoders installed.")
     {
     }
   }

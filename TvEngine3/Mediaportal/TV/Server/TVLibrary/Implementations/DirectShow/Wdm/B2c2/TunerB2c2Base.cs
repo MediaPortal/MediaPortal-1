@@ -41,8 +41,8 @@ using B2c2PidFilterMode = Mediaportal.TV.Server.TVLibrary.Implementations.Direct
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 {
   /// <summary>
-  /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for TechniSat tuners
-  /// with B2C2 chipsets and WDM drivers.
+  /// A base implementation of <see cref="ITuner"/> for TechniSat tuners with
+  /// B2C2 chipsets and WDM drivers.
   /// </summary>
   internal abstract class TunerB2c2Base : TunerDirectShowBase, IMpeg2PidFilter, IRemoteControlListener
   {
@@ -356,7 +356,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       InitialiseGraph();
 
       // Create, add and initialise the B2C2 source filter.
-      _filterB2c2Adapter = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, Constants.B2C2_ADAPTER_CLSID, "B2C2 Source");
+      _filterB2c2Adapter = FilterGraphTools.AddFilterFromRegisteredClsid(Graph, Constants.B2C2_ADAPTER_CLSID, "B2C2 Source");
       _interfaceData = _filterB2c2Adapter as IMpeg2DataCtrl6;
       _interfaceTuner = _filterB2c2Adapter as IMpeg2TunerCtrl4;
       if (_interfaceTuner == null || _interfaceData == null)
@@ -370,7 +370,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       // Extensions can't handle this automatically, so we add an extra infinite tee in between the
       // source filter and any extension filters.
       _filterInfiniteTee = (IBaseFilter)new InfTee();
-      FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterInfiniteTee, "Infinite Tee", _filterB2c2Adapter, 2, 0);
+      FilterGraphTools.AddAndConnectFilterIntoGraph(Graph, _filterInfiniteTee, "Infinite Tee", _filterB2c2Adapter, 2, 0);
 
       // Load and open extensions.
       IBaseFilter lastFilter = _filterInfiniteTee;
@@ -407,10 +407,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         _interfaceData = null;
         _interfaceTuner = null;
 
-        if (_graph != null)
+        if (Graph != null)
         {
-          _graph.RemoveFilter(_filterInfiniteTee);
-          _graph.RemoveFilter(_filterB2c2Adapter);
+          Graph.RemoveFilter(_filterInfiniteTee);
+          Graph.RemoveFilter(_filterB2c2Adapter);
         }
         Release.ComObject("B2C2 infinite tee", ref _filterInfiniteTee);
         Release.ComObject("B2C2 source filter", ref _filterB2c2Adapter);

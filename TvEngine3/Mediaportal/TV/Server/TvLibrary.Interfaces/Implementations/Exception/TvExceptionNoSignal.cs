@@ -24,8 +24,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception
 {
   /// <summary>
-  /// Exception thrown by the TV library when a tuner fails to lock in on
-  /// signal.
+  /// Exception thrown by the TV library when physical tuning fails.
   /// </summary>
   [Serializable]
   public class TvExceptionNoSignal : TvException
@@ -34,9 +33,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception
     /// Initialise a new instance of the <see cref="TvExceptionNoSignal"/> class.
     /// </summary>
     /// <param name="tunerId">The tuner's identifier.</param>
-    /// <param name="channel">The tuning details for the transmitter that could not be locked.</param>
-    public TvExceptionNoSignal(int tunerId, IChannel channel)
-      : base(string.Format("Tuner {0} failed to lock on signal.{1}{2}", tunerId, Environment.NewLine, channel))
+    /// <param name="tuningDetail">The tuning details for the transmitter that could not be locked.</param>
+    public TvExceptionNoSignal(int tunerId, IChannel tuningDetail)
+      : base("Tuner {0} failed to lock on signal.{1}{2}", tunerId, Environment.NewLine, tuningDetail)
     {
     }
 
@@ -44,11 +43,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception
     /// Initialise a new instance of the <see cref="TvExceptionNoSignal"/> class.
     /// </summary>
     /// <param name="tunerId">The tuner's identifier.</param>
-    /// <param name="channel">The tuning details for the transmitter that could not be locked.</param>
+    /// <param name="tuningDetail">The tuning details for the transmitter that could not be locked.</param>
     /// <param name="context">Optional context.</param>
     /// <param name="contextArgs">Optional context arguments.</param>
-    public TvExceptionNoSignal(int tunerId, IChannel channel, string context, params object[] contextArgs)
-      : base(string.Format("Tuner {0} failed to lock on signal. {1}{2}{3}", tunerId, context, Environment.NewLine, channel), contextArgs)
+    public TvExceptionNoSignal(int tunerId, IChannel tuningDetail, string context, params object[] contextArgs)
+      : base("Tuner {0} failed to lock on signal. {1}{2}{3}", tunerId, string.Format(context, contextArgs), Environment.NewLine, tuningDetail)
     {
     }
   }

@@ -18,257 +18,173 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using System.Threading;
 using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
-using System;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
 {
-  internal class SubChannelManagerMpeg2Ts
+  internal class SubChannelManagerMpeg2Ts : SubChannelManagerBase, IObserver
   {
-    /// <summary>
-    /// The number of times to re-attempt decrypting the current service set
-    /// when one or more services are not able to be decrypted for whatever
-    /// reason.
-    /// </summary>
-    /// <remarks>
-    /// Each available CA interface will be tried in order of priority. If
-    /// decrypting is not started successfully, all interfaces are retried
-    /// until each interface has been tried _decryptFailureRetryCount + 1
-    /// times, or until decrypting is successful.
-    /// </remarks>
-    private int _decryptFailureRetryCount = 2;
+    #region enums & classes
 
-    /// <summary>
-    /// Is the conditional access table required in order for any or all of the
-    /// conditional access providers to decrypt programs.
-    /// </summary>
-    private bool _isConditionalAccessTableRequired = false;
+    private enum DecryptUpdateAction
+    {
+      Add,
+      Update,
+      Remove
+    }
 
-    /// <summary>
-    /// Enable or disable waiting for the conditional interface to be ready
-    /// before sending commands.
-    /// </summary>
-    private bool _waitUntilCaInterfaceReady = true;
+    private class PidFilter
+    {
+      public IMpeg2PidFilter Filter = null;
+      public bool IsEnabled = true;
+      public HashSet<ushort> Pids = new HashSet<ushort>();
+    }
+
+    private class ProgramInformation
+    {
+      public int ProgramNumber = 0;
+      public ushort PmtPid = 0;
+      public bool? IsRunning = null;
+      public TableProgramMap Pmt = null;
+      public HashSet<ushort> Pids = new HashSet<ushort>();
+      public bool HasVideo = false;
+      public bool HasAudio = false;
+      public HashSet<int> SubChannelIds = new HashSet<int>();
+      public string Provider = string.Empty;
+      public bool? IsEncryptedConfig = null;
+      public bool IsEncryptedPids = false;
+
+      public bool IsEncrypted
+      {
+        get
+        {
+          return IsEncryptedConfig.GetValueOrDefault(false) || IsEncryptedPids;
+        }
+      }
+    }
+
+    #endregion
+
+    #region constants
+
+    private const int PROGRAM_NUMBER_SI = int.MaxValue;
+    private const int PROGRAM_NUMBER_EPG = int.MaxValue - 1;
+
+    public const ushort PID_PAT = 0;
+    private const ushort PID_CAT = 1;
+
+    #endregion
+
+    #region variables
+
+    #region conditional access
 
     /// <summary>
     /// Enable or disable the use of conditional access interface(s).
     /// </summary>
     private bool _useConditionalAccessInterface = true;
 
-    // TODO load value of _useConditionalAccessInterface and _pidFilterMode
-
-
-
-    private int _nextSubChannelId = 0;
+    /// <summary>
+    /// A list containing the available conditional access providers, ordered
+    /// by descending priority.
+    /// </summary>
     private IList<IConditionalAccessProvider> _caProviders = new List<IConditionalAccessProvider>();
-    private IList<IMpeg2PidFilter> _pidFilters = new List<IMpeg2PidFilter>();
-    private ITsFilter _tsFilter = null;
-    private bool _supportsSubChannels = true;
-    private Dictionary<int, ISubChannelInternal> _subChannels = new Dictionary<int, ISubChannelInternal>();
+
+    /// <summary>
+    /// Is the conditional access table required in order for any or all of the
+    /// conditional access providers to decrypt programs?
+    /// </summary>
+    private bool _isConditionalAccessTableRequired = false;
+
+    /// <summary>
+    /// The method that should be used to communicate the set of channels that
+    /// the conditional access providers must manage.
+    /// </summary>
+    /// <remarks>
+    /// Multi-channel decrypt is *not* the same as Digital Devices'
+    /// multi-transponder decrypt (MTD). MCD is implmented using standard CA
+    /// PMT commands; MTD is implemented in the Digital Devices drivers.
+    /// Disabled = Always send Only. In most cases this will result in only one
+    ///             channel being decrypted. If other methods are not working
+    ///             reliably then this one should at least allow decrypting one
+    ///             channel reliably.
+    /// List = Send Only, First, More and Last. This is the most widely
+    ///         supported set of commands.
+    /// Changes = Send Add, Update and Remove. Some interfaces (CAMs) don't
+    ///           support these commands.
+    /// </remarks>
     private MultiChannelDecryptMode _multiChannelDecryptMode = MultiChannelDecryptMode.List;
 
-    public SubChannelManagerMpeg2Ts(ICollection<ITunerExtension> extensions, ITsFilter tsFilter, bool supportsSubChannels = true)
-    {
-      _isConditionalAccessTableRequired = false;
-      foreach (ITunerExtension extension in extensions)
-      {
-        IConditionalAccessProvider caProvider = extension as IConditionalAccessProvider;
-        if (caProvider != null)
-        {
-          _caProviders.Add(caProvider);
-          _isConditionalAccessTableRequired |= caProvider.IsConditionalAccessTableRequiredForDecryption();
-        }
-        IMpeg2PidFilter pidFilter = extension as IMpeg2PidFilter;
-        if (pidFilter != null)
-        {
-          _pidFilters.Add(pidFilter);
-        }
-      }
-      _tsFilter = tsFilter;
-      _supportsSubChannels = supportsSubChannels;
-    }
+    /// <summary>
+    /// The type of conditional access module available to the conditional
+    /// access providers.
+    /// </summary>
+    /// <remarks>
+    /// Certain conditional access modules require specific handling to ensure
+    /// compatibility.
+    /// </remarks>
+    private CamType _camType = CamType.Default;
 
     /// <summary>
-    /// Allocate a new sub-channel, or retrieve an existing sub-channel.
+    /// The number of times to re-attempt decrypting the current program set
+    /// when one or more programs are not able to be decrypted for whatever
+    /// reason.
     /// </summary>
-    /// <param name="id">The identifier for the sub-channel.</param>
-    /// <param name="channel">The channel to associate with the sub-channel.</param>
-    /// <returns>the sub-channel</returns>
-    public ISubChannel CreateNewOrGetExistingSubChannel(int id, IChannel channel)
-    {
-      // Some tuners (for example: CableCARD tuners) are only able to
-      // deliver one program... full stop.
-      ISubChannelInternal subChannel = null;
-      if (!_supportsSubChannels && _subChannels.Count > 0)
-      {
-        if (_subChannels.TryGetValue(id, out subChannel))
-        {
-          // Existing sub-channel.
-          if (_subChannels.Count != 1)
-          {
-            // If this is not the only sub-channel then by definition this
-            // must be an attempt to tune a new program. Not allowed.
-            throw new TvException("Tuner is not able to receive more than one program.");
-          }
-        }
-        else
-        {
-          // New sub-channel.
-          Dictionary<int, ISubChannelInternal>.ValueCollection.Enumerator en = _subChannels.Values.GetEnumerator();
-          en.MoveNext();
-          if (en.Current.CurrentChannel != channel)
-          {
-            // The tuner is currently streaming a different program.
-            throw new TvException("Tuner is not able to receive more than one program.");
-          }
-        }
-      }
-
-      // Get a sub-channel for the program.
-      string description;
-      if (subChannel == null && !_subChannels.TryGetValue(id, out subChannel))
-      {
-        description = "creating new sub-channel";
-        id = _nextSubChannelId++;
-        //subChannel = new NewSubChannelMpeg2Ts(this, id, _tsFilter, _isConditionalAccessTableRequired);
-        _subChannels[id] = subChannel;
-        // TODO FireNewSubChannelEvent(id);
-      }
-      else
-      {
-        description = "using existing sub-channel";
-
-        // If reusing a sub-channel and our multi-channel decrypt mode is
-        // "changes", tell the CA provider extensions to stop decrypting the
-        // previous program before we lose access to the PMT and CAT.
-        ushort programNumber;
-        if (_subChannelProgramNumbers.TryGetValue(id, out programNumber))
-        {
-          PmtInfo pmtInfo = _pmt[programNumber];
-          if (pmtInfo.SubChannelIds.Remove(id) && pmtInfo.SubChannelIds.Count == 0)
-          {
-            if (subChannel.CurrentChannel.IsEncrypted && _multiChannelDecryptMode == MultiChannelDecryptMode.Changes)
-            {
-              foreach (IConditionalAccessProvider caProvider in _caProviders)
-              {
-                if (caProvider.SendCommand(subChannel.CurrentChannel, CaPmtListManagementAction.Only, CaPmtCommand.NotSelected, pmtInfo.Pmt, _cat))
-                {
-                  break;
-                }
-              }
-            }
-            _pmt.Remove(programNumber);
-            _encryptedProgramNumbers.Remove(programNumber);
-          }
-          _subChannelProgramNumbers.Remove(id);
-        }
-
-        if (subChannel.CurrentChannel.IsDifferentTransmitter(channel))
-        {
-          _cat = null;
-        }
-      }
-
-      this.LogInfo("sub-channel manager base: {0}, ID = {1}, count = {2}", description, id, _subChannels.Count);
-      subChannel.CurrentChannel = channel;
-      return subChannel;
-    }
-
-    #region x
+    /// <remarks>
+    /// Each conditional access provider will be tried in priority order. If
+    /// decrypting is not started successfully, all providers are retried until
+    /// each provider has been tried _decryptFailureRetryCount + 1 times, or
+    /// until decrypting is successful.
+    /// </remarks>
+    private int _decryptFailureRetryCount = 2;
 
     /// <summary>
-    /// Free a sub-channel.
+    /// Enable or disable waiting for the conditional providers to be ready
+    /// before sending commands.
     /// </summary>
-    /// <param name="id">The sub-channel identifier.</param>
-    public void FreeSubChannel(int id)
-    {
-      this.LogDebug("tuner base: free sub-channel, ID = {0}, count = {1}", id, _subChannels.Count);
-      ISubChannelInternal subChannel;
-      if (_subChannels.TryGetValue(id, out subChannel))
-      {
-        if (subChannel.IsTimeShifting)
-        {
-          this.LogError("tuner base: asked to free sub-channel that is still timeshifting!");
-          return;
-        }
-        if (subChannel.IsRecording)
-        {
-          this.LogError("tuner base: asked to free sub-channel that is still recording!");
-          return;
-        }
-
-        subChannel.Decompose();
-        _subChannels.Remove(id);
-      }
-      else
-      {
-        this.LogWarn("tuner base: sub-channel not found!");
-      }
-    }
-
-    /// <summary>
-    /// Free all sub-channels.
-    /// </summary>
-    public void FreeAllSubChannels()
-    {
-      this.LogInfo("tuner base: free all sub-channels, count = {0}", _subChannels.Count);
-      Dictionary<int, ISubChannelInternal>.Enumerator en = _subChannels.GetEnumerator();
-      while (en.MoveNext())
-      {
-        en.Current.Value.Decompose();
-      }
-      _subChannels.Clear();
-      _nextSubChannelId = 0;
-    }
-
-    /// <summary>
-    /// Get a specific sub-channel.
-    /// </summary>
-    /// <param name="id">The ID of the sub-channel.</param>
-    /// <returns></returns>
-    public ISubChannel GetSubChannel(int id)
-    {
-      ISubChannelInternal subChannel = null;
-      if (_subChannels != null)
-      {
-        _subChannels.TryGetValue(id, out subChannel);
-      }
-      return subChannel;
-    }
-
-    /// <summary>
-    /// Get the tuner's sub-channels.
-    /// </summary>
-    /// <value>An array containing the sub-channels.</value>
-    public ISubChannel[] SubChannels
-    {
-      get
-      {
-        int i = 0;
-        ISubChannel[] subChannels = new ISubChannel[_subChannels.Count];
-        Dictionary<int, ISubChannelInternal>.Enumerator en = _subChannels.GetEnumerator();
-        while (en.MoveNext())
-        {
-          subChannels[i++] = en.Current.Value;
-        }
-        return subChannels;
-      }
-    }
+    private bool _waitUntilCaInterfaceReady = true;
 
     #endregion
 
-    #region pids
+    #region PID handling
+
+    /// <summary>
+    /// A dictionary containing the PIDs that are currently required, and the
+    /// program numbers of the programs for which they are needed.
+    /// </summary>
+    private IDictionary<ushort, HashSet<int>> _pids = new Dictionary<ushort, HashSet<int>>(50);             // PID => [program numbers]
+
+    /// <summary>
+    /// The PIDs in the current transport stream which are encrypted.
+    /// </summary>
+    private HashSet<ushort> _encryptedPids = new HashSet<ushort>();
+
+    /// <summary>
+    /// The PIDs which are required to receive any program.
+    /// </summary>
+    private HashSet<ushort> _alwaysRequiredPids = new HashSet<ushort> { PID_PAT };
+
+    /// <summary>
+    /// A dictionary containing all the PIDs that carry program map tables, and
+    /// the program numbers of their associated programs.
+    /// </summary>
+    private IDictionary<ushort, HashSet<ushort>> _pmtPids = new Dictionary<ushort, HashSet<ushort>>(20);    // PMT PID => [program numbers]
+
+    #region PID filtering
 
     /// <summary>
     /// The mode to use for controlling tuner PID filter(s).
@@ -282,346 +198,237 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
     /// </remarks>
     private PidFilterMode _pidFilterMode = PidFilterMode.Automatic;
 
-    private IDictionary<ushort, HashSet<int>> _pids = new Dictionary<ushort, HashSet<int>>();               // PID -> sub-channel IDs
-    private IDictionary<int, HashSet<ushort>> _subChannelPids = new Dictionary<int, HashSet<ushort>>();     // sub-channel ID -> PIDs
-    private IDictionary<IMpeg2PidFilter, PidFilterMode> _pidFilterStates = new Dictionary<IMpeg2PidFilter, PidFilterMode>();
-
-    private void UpdatePidsForSubChannel(int subChannelId, HashSet<ushort> pids)
-    {
-      lock (_pids)
-      {
-        this.LogDebug("MPEG 2 manager: current PIDs, count = {0}, PID(s) = [{1}]", _pids.Keys.Count, string.Join(", ", _pids.Keys));
-
-        HashSet<ushort> subChannelPidsNew = new HashSet<ushort>(pids);
-        HashSet<ushort> subChannelPidsOld;
-        if (!_subChannelPids.TryGetValue(subChannelId, out subChannelPidsOld))
-        {
-          subChannelPidsOld = new HashSet<ushort>();
-        }
-        else
-        {
-          subChannelPidsNew.ExceptWith(subChannelPidsOld);
-          subChannelPidsOld.ExceptWith(pids);
-        }
-        _subChannelPids[subChannelId] = pids;
-
-        HashSet<int> subChannelIds;
-        HashSet<ushort> pidsNew = new HashSet<ushort>();
-        HashSet<ushort> pidsOld = new HashSet<ushort>();
-        foreach (ushort pid in subChannelPidsNew)
-        {
-          if (_pids.TryGetValue(pid, out subChannelIds))
-          {
-            subChannelIds.Add(subChannelId);
-          }
-          else
-          {
-            pidsNew.Add(pid);
-            _pids[pid] = new HashSet<int>() { subChannelId };
-          }
-        }
-
-        foreach (ushort pid in subChannelPidsOld)
-        {
-          if (_pids.TryGetValue(pid, out subChannelIds) && subChannelIds.Remove(subChannelId) && subChannelIds.Count == 0)
-          {
-            pidsOld.Add(pid);
-            _pids.Remove(pid);
-          }
-        }
-
-        if (pidsNew.Count == 0 && pidsOld.Count == 0)
-        {
-          this.LogDebug("MPEG 2 manager: no PID filter change required");
-          return;
-        }
-
-        this.LogDebug("MPEG 2 manager: add PIDs, count = {0}, PID(s) = [{1}]", pidsNew.Count, string.Join(", ", pidsNew));
-        this.LogDebug("MPEG 2 manager: remove PIDs, count = {0}, PID(s) = [{1}]", pidsOld.Count, string.Join(", ", pidsOld));
-
-        if (_pidFilterMode == PidFilterMode.Disabled)
-        {
-          this.LogDebug("MPEG 2 manager: PID filtering disabled");
-          foreach (IMpeg2PidFilter pidFilter in _pidFilters)
-          {
-            PidFilterMode state;
-            if (!_pidFilterStates.TryGetValue(pidFilter, out state) || state == PidFilterMode.Enabled)
-            {
-              pidFilter.Disable();
-              _pidFilterStates[pidFilter] = PidFilterMode.Disabled;
-            }
-          }
-          return;
-        }
-
-        var en = _subChannels.Values.GetEnumerator();
-        en.MoveNext();
-        IChannel tuningDetail = en.Current.CurrentChannel;
-        foreach (IMpeg2PidFilter pidFilter in _pidFilters)
-        {
-          PidFilterMode state;
-          bool tooManyPids = (pidFilter.MaximumPidCount > 0 && _pids.Count > pidFilter.MaximumPidCount);
-          if (_pidFilterMode == PidFilterMode.Automatic && (!pidFilter.ShouldEnable(tuningDetail) || tooManyPids))
-          {
-            if (!_pidFilterStates.TryGetValue(pidFilter, out state) || state == PidFilterMode.Enabled)
-            {
-              if (tooManyPids)
-              {
-                this.LogDebug("MPEG 2 manager: disable {0} filter, PID count exceeds limit {1}", pidFilter.Name, pidFilter.MaximumPidCount);
-              }
-              else
-              {
-                this.LogDebug("MPEG 2 manager: disable {0} filter, unrequired", pidFilter.Name);
-              }
-              pidFilter.Disable();
-              _pidFilterStates[pidFilter] = PidFilterMode.Disabled;
-            }
-            continue;
-          }
-
-          if (tooManyPids)
-          {
-            this.LogWarn("MPEG 2 manager: PID count exceeds {0} filter limit {1}", pidFilter.Name, pidFilter.MaximumPidCount);
-          }
-          if (!_pidFilterStates.TryGetValue(pidFilter, out state) || state == PidFilterMode.Disabled)
-          {
-            this.LogDebug("MPEG 2 manager: enable {0} filter", pidFilter.Name);
-            pidFilter.AllowStreams(_pids.Keys);
-            pidFilter.ApplyConfiguration();
-            _pidFilterStates[pidFilter] = PidFilterMode.Enabled;
-          }
-          else
-          {
-            pidFilter.BlockStreams(pidsOld);
-            pidFilter.AllowStreams(pidsNew);
-            pidFilter.ApplyConfiguration();
-          }
-        }
-      }
-    }
+    /// <summary>
+    /// A list containing the tuner's PID filter interfaces.
+    /// </summary>
+    private IList<PidFilter> _pidFilters = new List<PidFilter>(3);
 
     #endregion
 
-    #region decrypt
+    #endregion
+
+    // Used to synchronise access to _programs, _cat, _pids etc.
+    private object _lock = new object();
+
+    private ITsWriter _tsWriter = null;
+    private bool _isTsWriterStopped = true;
+
+    private IChannel _currentTuningDetail = null;
+    private bool _isPatComplete = false;
+    private IDictionary<int, ProgramInformation> _programs = new Dictionary<int, ProgramInformation>(20);   // program number => information
+    private TableConditionalAccess _cat = null;
+    private ManualResetEvent _programWaitEvent = new ManualResetEvent(false);
+
+    #endregion
 
     /// <summary>
-    /// Update the list of services being decrypted by the device's conditional access interfaces(s).
+    /// Initialise a new instance of the <see cref="SubChannelManagerMpeg2Ts"/> class.
+    /// </summary>
+    /// <param name="tsWriter">The TS writer instance used to perform/implement time-shifting and recording.</param>
+    /// <param name="canReceiveAllTransmitterSubChannels"><c>True</c> if the tuner can simultaneously receive all sub-channels from the tuned transmitter.</param>
+    public SubChannelManagerMpeg2Ts(ITsWriter tsWriter, bool canReceiveAllTransmitterSubChannels = true)
+      : base(canReceiveAllTransmitterSubChannels)
+    {
+      _tsWriter = tsWriter;
+      _tsWriter.SetObserver(this);
+    }
+
+    #region private members
+
+    /// <summary>
+    /// Register a sub-channel to receive a program.
+    /// </summary>
+    /// <param name="subChannelId">The sub-channel's identifier.</param>
+    /// <param name="programNumber">The program's number.</param>
+    /// <param name="programProvider">The program's provider.</param>
+    /// <param name="isProgramEncrypted"><c>True</c> if the program is expected to be encrypted.</param>
+    /// <returns><c>true</c> if a decryption command needs to be sent in order to receive the program, otherwise <c>false</c></returns>
+    private bool AddSubChannel(int subChannelId, int programNumber, string programProvider, bool isProgramEncrypted)
+    {
+      ProgramInformation program;
+      if (programNumber <= 0)
+      {
+        // Scanning, single program transport stream with unknown program
+        // number, or multi-program transport stream where the caller will
+        // select the target program later.
+        lock (_lock)
+        {
+          program = _programs[PROGRAM_NUMBER_SI];
+          if (program.SubChannelIds.Add(subChannelId) && program.SubChannelIds.Count == 1)
+          {
+            UpdateTsPids(PROGRAM_NUMBER_SI, new HashSet<ushort>(), program.Pids);
+          }
+          return false;
+        }
+      }
+
+      bool sendDecryptCommand = false;
+      lock (_lock)
+      {
+        if (!_programs.TryGetValue(programNumber, out program))
+        {
+          program = new ProgramInformation();
+          program.IsEncryptedConfig = isProgramEncrypted;
+          program.Pids.UnionWith(_alwaysRequiredPids);
+          if (_isConditionalAccessTableRequired)
+          {
+            program.Pids.Add(PID_CAT);
+          }
+          program.ProgramNumber = programNumber;
+          program.Provider = programProvider;
+          program.SubChannelIds.Add(subChannelId);
+          _programs[programNumber] = program;
+          UpdateTsPids(programNumber, new HashSet<ushort>(), program.Pids);
+        }
+        else if (program.SubChannelIds.Add(subChannelId))
+        {
+          if (program.SubChannelIds.Count == 1)
+          {
+            program.Provider = programProvider;
+            UpdateTsPids(programNumber, new HashSet<ushort>(), program.Pids);
+          }
+          if (
+            program.Pmt != null &&
+            (!_isConditionalAccessTableRequired || _cat != null) &&
+            (
+              program.SubChannelIds.Count == 1 ||
+              (isProgramEncrypted && !program.IsEncrypted)
+            )
+          )
+          {
+            sendDecryptCommand = true;
+          }
+          program.IsEncryptedConfig |= isProgramEncrypted;
+        }
+      }
+      return sendDecryptCommand;
+    }
+
+    /// <summary>
+    /// Update the list of programs that the conditional access providers are
+    /// decrypting.
     /// </summary>
     /// <remarks>
-    /// The strategy here is usually to only send commands to the CAM when we need an *additional* service
-    /// to be decrypted. The *only* exception is when we have to stop decrypting services in "changes" mode.
-    /// We don't send "not selected" commands for "list" or "only" mode because this can disrupt the other
-    /// services that still need to be decrypted. We also don't send "keep decrypting" commands (alternative
-    /// to "not selected") because that will almost certainly cause glitches in streams.
+    /// The strategy here is usually to only send commands to the CA providers
+    /// when we need an *additional* program to be decrypted. The *only*
+    /// exception is when we have to stop decrypting programs in "changes"
+    /// mode. We don't send "not selected" commands for "list" or "only" mode
+    /// because this can disrupt the other programs that still need to be
+    /// decrypted. We also don't send "keep decrypting" commands (alternative
+    /// to "not selected") because that will almost certainly cause glitches in
+    /// streams.
     /// </remarks>
-    /// <param name="subChannelId">The ID of the sub-channel causing this update.</param>
-    /// <param name="updateAction"><c>Add</c> if the sub-channel is being tuned, <c>update</c> if the PMT for the
-    ///   sub-channel has changed, or <c>last</c> if the sub-channel is being disposed.</param>
-    private void UpdateDecryptList(int subChannelId, CaPmtListManagementAction updateAction)
+    /// <param name="program">The program triggering the update.</param>
+    /// <param name="updateAction"><c>Add</c> if the program is being tuned.
+    ///   <c>Update</c> if the PMT for the program has changed.
+    ///   <c>Remove</c> if the program no longer needs to be decrypted.</param>
+    private void UpdateDecryptList(ProgramInformation program, DecryptUpdateAction updateAction)
     {
       if (!_useConditionalAccessInterface)
       {
-        this.LogWarn("Mpeg2TunerController: CA disabled");
+        this.LogWarn("MPEG 2: CA disabled");
         return;
       }
       if (_caProviders.Count == 0)
       {
-        this.LogWarn("Mpeg2TunerController: no CA providers identified");
+        this.LogWarn("MPEG 2: no CA providers available");
         return;
       }
-      this.LogDebug("Mpeg2TunerController: sub-channel {0} update decrypt list, mode = {1}, update action = {2}", subChannelId, _multiChannelDecryptMode, updateAction);
+      this.LogDebug("MPEG 2: update decrypt list, program number = {0}, mode = {1}, update action = {2}", program.ProgramNumber, _multiChannelDecryptMode, updateAction);
 
-      if (!_subChannels[subChannelId].CurrentChannel.IsEncrypted)
+      if (updateAction == DecryptUpdateAction.Remove && _multiChannelDecryptMode != MultiChannelDecryptMode.Changes)
       {
-        this.LogDebug("Mpeg2TunerController: service is not encrypted");
-        return;
-      }
-      if (updateAction == CaPmtListManagementAction.Last && _multiChannelDecryptMode != MultiChannelDecryptMode.Changes)
-      {
-        this.LogDebug("Mpeg2TunerController: \"not selected\" command acknowledged, no action required");
+        this.LogDebug("MPEG 2: \"not selected\" command acknowledged, no action required");
         return;
       }
 
-      // First build a distinct list of the services that we need to handle.
-      this.LogDebug("Mpeg2TunerController: assembling service list");
-      List<ISubChannel> distinctServices = new List<ISubChannel>();
-      Dictionary<int, ISubChannelInternal>.ValueCollection.Enumerator en = _subChannels.Values.GetEnumerator();
-      ChannelMpeg2Base updatedMpeg2Service = _subChannels[subChannelId].CurrentChannel as ChannelMpeg2Base;
-      ChannelAnalogTv updatedAnalogTvService = _subChannels[subChannelId].CurrentChannel as ChannelAnalogTv;
-      ChannelFmRadio updatedFmRadioService = _subChannels[subChannelId].CurrentChannel as ChannelFmRadio;
-      while (en.MoveNext())
+      IList<ProgramInformation> programs = new List<ProgramInformation>(_programs.Count);
+      IDictionary<int, TableProgramMap> patchedPmts = new Dictionary<int, TableProgramMap>(_programs.Count);
+      if (_multiChannelDecryptMode == MultiChannelDecryptMode.List)
       {
-        IChannel service = en.Current.CurrentChannel;
-        // We don't care about FTA services here.
-        if (!service.IsEncrypted)
+        foreach (var p in _programs.Values)
         {
-          continue;
-        }
-
-        // Keep an eye out - if there is another sub-channel accessing the same service as the sub-channel that
-        // is being updated then we always do *nothing* unless this is specifically an update request. In any other
-        // situation, if we were to stop decrypting the service it would be wrong; if we were to start decrypting
-        // the service it would be unnecessary and possibly cause stream interruptions.
-        if (en.Current.SubChannelId != subChannelId && updateAction != CaPmtListManagementAction.Update)
-        {
-          if (updatedMpeg2Service != null)
+          if (p.SubChannelIds.Count > 0 && p.IsEncrypted)
           {
-            ChannelMpeg2Base mpeg2Service = service as ChannelMpeg2Base;
-            if (mpeg2Service != null && mpeg2Service.ProgramNumber == updatedMpeg2Service.ProgramNumber)
-            {
-              this.LogDebug("Mpeg2TunerController: the service for this sub-channel is a duplicate, no action required");
-              return;
-            }
-          }
-          else if (updatedAnalogTvService != null)
-          {
-            ChannelAnalogTv analogTvService = service as ChannelAnalogTv;
-            if (analogTvService != null && analogTvService.PhysicalChannelNumber == updatedAnalogTvService.PhysicalChannelNumber)
-            {
-              this.LogDebug("Mpeg2TunerController: the service for this sub-channel is a duplicate, no action required");
-              return;
-            }
-          }
-          else if (updatedFmRadioService != null)
-          {
-            ChannelFmRadio fmRadioService = service as ChannelFmRadio;
-            if (fmRadioService != null && fmRadioService.Frequency == updatedFmRadioService.Frequency)
-            {
-              this.LogDebug("Mpeg2TunerController: the service for this sub-channel is a duplicate, no action required");
-              return;
-            }
-          }
-          else
-          {
-            throw new TvException("Mpeg2TunerController: service type not recognised, unable to assemble decrypt service list\r\n" + service.ToString());
+            programs.Add(p);
+            patchedPmts.Add(p.ProgramNumber, p.Pmt.PatchForCam(_camType));
           }
         }
-
-        if (_multiChannelDecryptMode == MultiChannelDecryptMode.List)
-        {
-          // Check for "list" mode: have we already go this service in our distinct list? If so, don't add it
-          // again...
-          bool exists = false;
-          foreach (ISubChannel serviceToDecrypt in distinctServices)
-          {
-            ChannelMpeg2Base mpeg2Service = service as ChannelMpeg2Base;
-            if (mpeg2Service != null)
-            {
-              if (mpeg2Service.ProgramNumber == ((ChannelMpeg2Base)serviceToDecrypt.CurrentChannel).ProgramNumber)
-              {
-                exists = true;
-                break;
-              }
-            }
-            else
-            {
-              ChannelAnalogTv analogTvService = service as ChannelAnalogTv;
-              if (analogTvService != null)
-              {
-                if (analogTvService.PhysicalChannelNumber == ((ChannelAnalogTv)serviceToDecrypt.CurrentChannel).PhysicalChannelNumber)
-                {
-                  exists = true;
-                  break;
-                }
-              }
-              else
-              {
-                ChannelFmRadio fmRadioService = service as ChannelFmRadio;
-                if (fmRadioService != null)
-                {
-                  if (fmRadioService.Frequency == ((ChannelFmRadio)serviceToDecrypt.CurrentChannel).Frequency)
-                  {
-                    exists = true;
-                    break;
-                  }
-                }
-                else
-                {
-                  throw new TvException("Mpeg2TunerController: service type not recognised, unable to assemble decrypt service list\r\n" + service.ToString());
-                }
-              }
-            }
-          }
-          if (!exists)
-          {
-            distinctServices.Add(en.Current);
-          }
-        }
-        else if (en.Current.SubChannelId == subChannelId)
-        {
-          // For "changes" and "only" modes: we only send one command and that relates to the service being updated.
-          distinctServices.Add(en.Current);
-        }
+        this.LogDebug("MPEG 2: list mode, program count = {0}", programs.Count);
+      }
+      else
+      {
+        programs.Add(program);
       }
 
-      if (distinctServices.Count == 0)
-      {
-        this.LogDebug("Mpeg2TunerController: no services to update");
-        return;
-      }
-
-      // Send the service list or changes to the CA providers.
+      // Send the program list or changes to the CA providers.
       for (int attempt = 1; attempt <= _decryptFailureRetryCount + 1; attempt++)
       {
-        // TODO ThrowExceptionIfTuneCancelled();
         if (attempt > 1)
         {
-          this.LogDebug("Mpeg2TunerController: attempt {0}...", attempt);
+          this.LogDebug("MPEG 2: attempt #{0}...", attempt);
         }
 
         foreach (IConditionalAccessProvider caProvider in _caProviders)
         {
-          this.LogDebug("Mpeg2TunerController: CA provider {0}...", caProvider.Name);
+          if (!caProvider.IsOpen)
+          {
+            continue;
+          }
+          if (_caProviders.Count > 1)
+          {
+            this.LogDebug("MPEG 2: CA provider, name = {0}...", caProvider.Name);
+          }
 
           if (_waitUntilCaInterfaceReady && !caProvider.IsReady())
           {
-            this.LogDebug("Mpeg2TunerController: provider is not ready, waiting for up to 15 seconds", caProvider.Name);
+            this.LogDebug("MPEG 2: provider is not ready, waiting for up to 15 seconds", caProvider.Name);
             DateTime startWait = DateTime.Now;
             TimeSpan waitTime = new TimeSpan(0);
             while (waitTime.TotalMilliseconds < 15000)
             {
-              // TODO ThrowExceptionIfTuneCancelled();
+              ThrowExceptionIfTuneCancelled();
               System.Threading.Thread.Sleep(200);
               waitTime = DateTime.Now - startWait;
               if (caProvider.IsReady())
               {
-                this.LogDebug("Mpeg2TunerController: provider ready after {0} ms", waitTime.TotalMilliseconds);
+                this.LogDebug("MPEG 2: provider ready after {0} ms", waitTime.TotalMilliseconds);
                 break;
               }
             }
           }
 
           // Ready or not, we send commands now.
-          this.LogDebug("Mpeg2TunerController: sending command(s)");
           bool success = true;
-          SubChannelMpeg2Ts digitalService;
+
           // The default action is "more" - this will be changed below if necessary.
           CaPmtListManagementAction action = CaPmtListManagementAction.More;
 
-          // The command is "start/continue descrambling" unless we're removing services.
+          // The command is "start/continue descrambling" unless we're removing programs.
           CaPmtCommand command = CaPmtCommand.OkDescrambling;
-          if (updateAction == CaPmtListManagementAction.Last)
+          if (updateAction == DecryptUpdateAction.Remove)
           {
             command = CaPmtCommand.NotSelected;
           }
-          for (int i = 0; i < distinctServices.Count; i++)
+          for (int i = 0; i < programs.Count; i++)
           {
-            // TODO ThrowExceptionIfTuneCancelled();
             if (i == 0)
             {
-              if (distinctServices.Count == 1)
+              if (programs.Count == 1)
               {
                 if (_multiChannelDecryptMode == MultiChannelDecryptMode.Changes)
                 {
-                  // Remove a service...
-                  if (updateAction == CaPmtListManagementAction.Last)
+                  if (updateAction == DecryptUpdateAction.Remove)
                   {
                     action = CaPmtListManagementAction.Only;
                   }
-                  // Add or update a service...
+                  else if (updateAction == DecryptUpdateAction.Add)
+                  {
+                    action = CaPmtListManagementAction.Add;
+                  }
                   else
                   {
-                    action = updateAction;
+                    action = CaPmtListManagementAction.Update;
                   }
                 }
                 else
@@ -634,7 +441,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
                 action = CaPmtListManagementAction.First;
               }
             }
-            else if (i == distinctServices.Count - 1)
+            else if (i == programs.Count - 1)
             {
               action = CaPmtListManagementAction.Last;
             }
@@ -643,20 +450,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
               action = CaPmtListManagementAction.More;
             }
 
-            this.LogDebug("  command = {0}, action = {1}, service = {2}", command, action, distinctServices[i].CurrentChannel.Name);
-            digitalService = distinctServices[i] as SubChannelMpeg2Ts;
-            if (digitalService == null)
-            {
-              success &= caProvider.SendCommand(distinctServices[i].CurrentChannel, action, command, null, null);
-            }
-            else
-            {
-              // TODO need to PatchPmtForCam() sometime before now, and in such a way that the patched PMT is not propagated to TsWriter etc.
-              success &= caProvider.SendCommand(distinctServices[i].CurrentChannel, action, command, digitalService.ProgramMapTable, digitalService.ConditionalAccessTable);
-            }
+            ProgramInformation p = programs[i];
+            this.LogDebug("  command = {0}, action = {1}, program = {2}", command, action, p.ProgramNumber);
+            success &= caProvider.SendCommand(action, command, patchedPmts[p.ProgramNumber], _cat, p.Provider);
           }
 
           // Are we done?
+          ThrowExceptionIfTuneCancelled();
           if (success)
           {
             return;
@@ -665,107 +465,1063 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
       }
     }
 
-    #endregion
+    #region PID handling
 
-    private struct PmtInfo
+    /// <summary>
+    /// Update the program map table PID for a program.
+    /// </summary>
+    /// <remarks>
+    /// Changes are propagated to the PMT PIDs and SI program, and also to the
+    /// PID filters if the call reflects a PAT change during scanning.
+    /// </remarks>
+    /// <param name="program"></param>
+    /// <param name="newPmtPid"></param>
+    private void UpdateProgramPmtPid(ProgramInformation program, ushort newPmtPid)
     {
-      public TableProgramMap Pmt;
-      public HashSet<int> SubChannelIds;
-    }
-
-    #region constants
-
-    private const ushort PID_PAT = 0;
-    private const ushort PID_CAT = 1;
-
-    #endregion
-
-    private TableConditionalAccess _cat = null;
-    private IDictionary<ushort, PmtInfo> _pmt = new Dictionary<ushort, PmtInfo>();
-    private IDictionary<int, ushort> _subChannelProgramNumbers = new Dictionary<int, ushort>();
-    private HashSet<ushort> _encryptedProgramNumbers = new HashSet<ushort>();
-
-    public void OnAfterTune(ISubChannel subChannel)
-    {
-      if (_pidFilters.Count == 0)
+      if (program.PmtPid == newPmtPid || newPmtPid == 0)
       {
         return;
       }
 
-      HashSet<ushort> pids = new HashSet<ushort>();
-      pids.Add(PID_PAT);         // PAT - for program lookup
+      // Careful. A single PID can carry PMT for multiple programs.
+      HashSet<ushort> pidsToRemove = new HashSet<ushort>();
+      HashSet<ushort> pidsToAdd = new HashSet<ushort>();
+      HashSet<ushort> programNumbers;
+      ushort programNumber = (ushort)program.ProgramNumber;
+      if (program.PmtPid != 0)
+      {
+        programNumbers = _pmtPids[program.PmtPid];
+        if (programNumbers.Remove(programNumber) && programNumbers.Count == 0)
+        {
+          _pmtPids.Remove(program.PmtPid);
+          _programs[PROGRAM_NUMBER_SI].Pids.Remove(program.PmtPid);
+          pidsToRemove.Add(program.PmtPid);
+        }
+      }
 
-      // Include the CAT PID when the program needs to be decrypted.
-      if (_isConditionalAccessTableRequired && subChannel.CurrentChannel.IsEncrypted)
+      if (_pmtPids.TryGetValue(newPmtPid, out programNumbers))
+      {
+        programNumbers.Add(programNumber);
+      }
+      else
+      {
+        _encryptedPids.Remove(newPmtPid);
+        _pmtPids[newPmtPid] = new HashSet<ushort> { programNumber };
+        _programs[PROGRAM_NUMBER_SI].Pids.Add(newPmtPid);
+        pidsToAdd.Add(newPmtPid);
+      }
+
+      // Update the PID filters if this is a PAT change and we're scanning.
+      if (
+        _isPatComplete &&
+        (pidsToRemove.Count != 0 || pidsToAdd.Count != 0) &&
+        _programs[PROGRAM_NUMBER_SI].SubChannelIds.Count > 0
+      )
+      {
+        UpdateTsPids(PROGRAM_NUMBER_SI, pidsToRemove, pidsToAdd);
+      }
+
+      program.PmtPid = newPmtPid;
+    }
+
+    /// <summary>
+    /// Set the PIDs (and auxiliary program information) from the PMT for a
+    /// given program.
+    /// </summary>
+    /// <remarks>
+    /// Changes are propagated to the transport stream PIDs and PID filters.
+    /// </remarks>
+    /// <param name="program">The program.</param>
+    private void SetProgramPids(ProgramInformation program)
+    {
+      HashSet<ushort> pids = new HashSet<ushort>(_alwaysRequiredPids);
+      if (_isConditionalAccessTableRequired)
       {
         pids.Add(PID_CAT);
       }
-
-      ChannelMpeg2Base mpeg2Channel = subChannel.CurrentChannel as ChannelMpeg2Base;
-      if (mpeg2Channel != null)
+      if (program.PmtPid > 0)
       {
-        // Include the PMT PID if we know it. We don't know what the PMT PID is
-        // when scanning.
-        if (mpeg2Channel.PmtPid > 0)
+        pids.Add(program.PmtPid);
+      }
+      if (program.Pmt != null)
+      {
+        pids.Add(program.Pmt.PcrPid);
+        foreach (var es in program.Pmt.ElementaryStreams)
         {
-          pids.Add((ushort)mpeg2Channel.PmtPid);
+          bool isVideoStream = StreamTypeHelper.IsVideoStream(es.LogicalStreamType);
+          if (isVideoStream)
+          {
+            program.HasVideo = true;
+          }
+          bool isAudioStream = StreamTypeHelper.IsAudioStream(es.LogicalStreamType);
+          if (isAudioStream)
+          {
+            program.HasAudio = true;
+          }
+          if (isVideoStream || isAudioStream || es.LogicalStreamType == LogicalStreamType.Subtitles || es.LogicalStreamType == LogicalStreamType.Teletext)
+          {
+            pids.Add(es.Pid);
+            if (!program.IsEncryptedPids && _encryptedPids.Contains(es.Pid))
+            {
+              if (program.SubChannelIds.Count > 0 && !program.IsEncryptedConfig.Value)
+              {
+                this.LogWarn("MPEG 2: encryption override, program number = {0}, PID = {1}", program.ProgramNumber, es.Pid);
+              }
+              program.IsEncryptedPids = true;
+            }
+          }
         }
+      }
 
-        if (mpeg2Channel is ChannelAtsc || mpeg2Channel is ChannelScte)
+      this.LogDebug("MPEG 2: set program PIDs, program number = {0}, PIDs = [{1}]", program.ProgramNumber, string.Join(", ", pids));
+      HashSet<ushort> programPidsToAdd = new HashSet<ushort>(pids);
+      programPidsToAdd.ExceptWith(program.Pids);
+      HashSet<ushort> programPidsToRemove = new HashSet<ushort>(program.Pids);
+      programPidsToRemove.ExceptWith(pids);
+      program.Pids = new HashSet<ushort>(pids);
+      if (program.SubChannelIds.Count > 0)
+      {
+        UpdateTsPids(program.ProgramNumber, programPidsToRemove, programPidsToAdd);
+      }
+    }
+
+    /// <summary>
+    /// Update the transport stream PIDs to reflect program PID changes.
+    /// </summary>
+    /// <remarks>
+    /// Changes are propagated to the PID filters.
+    /// </remarks>
+    /// <param name="programNumber">The program number of the program that changed.</param>
+    /// <param name="programPidsToRemove">The PIDs that are no longer required to receive the program.</param>
+    /// <param name="programPidsToAdd">The new PIDs that are required to receive the program.</param>
+    private void UpdateTsPids(int programNumber, HashSet<ushort> programPidsToRemove, HashSet<ushort> programPidsToAdd)
+    {
+      HashSet<ushort> pidsToRemove = new HashSet<ushort>();
+      foreach (ushort pid in programPidsToRemove)
+      {
+        HashSet<int> programNumbersForPid;
+        if (_pids.TryGetValue(pid, out programNumbersForPid))
         {
-          pids.Add(0x1ffb);  // ATSC VCT - for terrestrial service info
-          pids.Add(0x1ffc);  // SCTE VCT - for cable service info
+          if (programNumbersForPid.Remove(programNumber) && programNumbersForPid.Count == 0)
+          {
+            pidsToRemove.Add(pid);
+            _pids.Remove(pid);
+          }
+        }
+      }
+
+      HashSet<ushort> pidsToAdd = new HashSet<ushort>();
+      foreach (ushort pid in programPidsToAdd)
+      {
+        HashSet<int> currentProgramNumbers;
+        if (_pids.TryGetValue(pid, out currentProgramNumbers))
+        {
+          currentProgramNumbers.Add(programNumber);
         }
         else
         {
-          pids.Add(0x10);    // DVB NIT - for network info
-          pids.Add(0x11);    // DVB SDT, BAT - for service info
+          pidsToAdd.Add(pid);
+          _pids.Add(pid, new HashSet<int> { programNumber });
         }
       }
-      UpdatePidsForSubChannel(subChannel.SubChannelId, pids);
-    }
 
-    public TableProgramMap GetPmtForProgram(ushort programNumber)
-    {
-      PmtInfo pmtInfo;
-      if (_pmt.TryGetValue(programNumber, out pmtInfo))
+      if (pidsToRemove.Count > 0 || pidsToAdd.Count > 0)
       {
-        return pmtInfo.Pmt;
-      }
-      return null;
-    }
-
-    public void OnPmtReceived(int subChannelId, TableProgramMap pmt)
-    {
-      if (!_subChannels[subChannelId].CurrentChannel.IsEncrypted)
-      {
-        return;
-      }
-
-      // TODO make sure you allow the dynamic FreeSat EIT PIDs through PID filters.
-      TableProgramMap currentPmt;
-      if (_pmt.ContainsKey(pmt.ProgramNumber))
-      {
-      }
-      if (_isConditionalAccessTableRequired)
-      {
-        return;
+        this.LogDebug("MPEG 2: PID changes, program number = {0}, remove = [{1}], add = [{2}]",
+                      programNumber, string.Join(", ", pidsToRemove), string.Join(", ", pidsToAdd));
+        UpdatePidFilters(pidsToRemove, pidsToAdd);
       }
     }
 
-    public void OnPmtChanged(int subChannelId, TableProgramMap pmt)
+    /// <summary>
+    /// Update the PID filters to reflect transport stream PID changes.
+    /// </summary>
+    /// <param name="pidsToRemove">The PIDs that are no longer required to receive the current programs.</param>
+    /// <param name="pidsToAdd">The new PIDs that are required to receive the current programs.</param>
+    private void UpdatePidFilters(HashSet<ushort> pidsToRemove, HashSet<ushort> pidsToAdd)
     {
-      if (pmt == null)
+      foreach (var filter in _pidFilters)
       {
-        if (_multiChannelDecryptMode == MultiChannelDecryptMode.List)
+        int maxPidCount = filter.Filter.MaximumPidCount;
+        bool shouldEnableFilter = filter.Filter.ShouldEnable(_currentTuningDetail);
+        if (
+          _pidFilterMode == PidFilterMode.Disabled ||
+          (
+            _pidFilterMode == PidFilterMode.Automatic &&
+            (
+              !shouldEnableFilter ||
+              (maxPidCount > 0 && _pids.Count > maxPidCount)
+            )
+          )
+        )
         {
-          return;
+          if (filter.IsEnabled)
+          {
+            this.LogDebug("MPEG 2: disable PID filter, name = {0}, mode = {1}, should enable = {2}, PID count = {3} / {4}",
+                          filter.Filter.Name, _pidFilterMode, shouldEnableFilter, _pids.Count, maxPidCount);
+            if (filter.Filter.Disable())
+            {
+              filter.Pids.Clear();
+            }
+          }
+          continue;
+        }
+
+        bool isFilterCapacitySufficient = maxPidCount < 0 || _pids.Count < maxPidCount;
+        HashSet<ushort> pidsToAddToFilter = new HashSet<ushort>();
+        if (!filter.IsEnabled || filter.Pids.Count == 0)
+        {
+          if (isFilterCapacitySufficient)
+          {
+            pidsToAddToFilter = new HashSet<ushort>(_pids.Keys);
+          }
+          else
+          {
+            foreach (ushort pid in _pids.Keys)
+            {
+              pidsToAddToFilter.Add(pid);
+              if (pidsToAddToFilter.Count == maxPidCount)
+              {
+                break;
+              }
+            }
+          }
+
+          ThrowExceptionIfTuneCancelled();
+          this.LogDebug("MPEG 2: enable PID filter, name = {0}, mode = {1}, PID count = {2} / {3}, PIDs = [{4}]",
+                        filter.Filter.Name, _pidFilterMode, _pids.Count, maxPidCount, string.Join(", ", pidsToAddToFilter));
+          filter.IsEnabled = true;
+          filter.Filter.AllowStreams(pidsToAddToFilter);
+          if (filter.Filter.ApplyConfiguration())
+          {
+            filter.Pids.UnionWith(pidsToAddToFilter);
+          }
+          ThrowExceptionIfTuneCancelled();
+          continue;
+        }
+
+        HashSet<ushort> originalFilterPids = new HashSet<ushort>(filter.Pids);
+        HashSet<ushort> pidsToRemoveFromFilter = new HashSet<ushort>();
+        if (pidsToRemove.Count > 0)
+        {
+          if (isFilterCapacitySufficient)
+          {
+            pidsToRemoveFromFilter = pidsToRemove;
+          }
+          else
+          {
+            foreach (ushort pid in pidsToRemove)
+            {
+              if (filter.Pids.Contains(pid))
+              {
+                pidsToRemoveFromFilter.Add(pid);
+              }
+            }
+          }
+
+          if (pidsToRemoveFromFilter.Count > 0)
+          {
+            filter.Filter.BlockStreams(pidsToRemoveFromFilter);
+            filter.Pids.ExceptWith(pidsToRemoveFromFilter);
+          }
+        }
+
+        if (pidsToAdd.Count > 0)
+        {
+          if (isFilterCapacitySufficient)
+          {
+            pidsToAddToFilter = pidsToAdd;
+          }
+          else
+          {
+            foreach (ushort pid in _pids.Keys)
+            {
+              if (filter.Pids.Count + pidsToAddToFilter.Count >= maxPidCount)
+              {
+                break;
+              }
+              if (!filter.Pids.Contains(pid))
+              {
+                pidsToAddToFilter.Add(pid);
+              }
+            }
+          }
+
+          if (pidsToAddToFilter.Count > 0)
+          {
+            filter.Filter.AllowStreams(pidsToAddToFilter);
+            filter.Pids.UnionWith(pidsToAddToFilter);
+          }
+        }
+
+        if (pidsToRemoveFromFilter.Count > 0 || pidsToAddToFilter.Count > 0)
+        {
+          ThrowExceptionIfTuneCancelled();
+          this.LogDebug("MPEG 2: modify PID filter, name = {0}, mode = {1}, PID count = {2} / {3}, remove = [{4}], add = [{5}]",
+                        filter.Filter.Name, _pidFilterMode, shouldEnableFilter, _pids.Count, maxPidCount,
+                        string.Join(", ", pidsToRemoveFromFilter), string.Join(", ", pidsToAddToFilter));
+          if (!filter.Filter.ApplyConfiguration())
+          {
+            filter.Pids = originalFilterPids;
+          }
+          ThrowExceptionIfTuneCancelled();
         }
       }
     }
 
-    public void OnCatReceived(int subChannelId, TableConditionalAccess cat)
+    #endregion
+
+    #endregion
+
+    protected virtual int GetTuningProgramNumber(IChannel channel)
     {
+      ChannelMpeg2Base mpeg2Channel = channel as ChannelMpeg2Base;
+      if (mpeg2Channel != null)
+      {
+        return mpeg2Channel.ProgramNumber;
+      }
+      return 0;
     }
+
+    public HashSet<ushort> AlwaysRequiredPids
+    {
+      set
+      {
+        _alwaysRequiredPids = value;
+      }
+    }
+
+    #region sub-channel manager base implementations/overrides
+
+    /// <summary>
+    /// Tune a sub-channel.
+    /// </summary>
+    /// <param name="id">The sub-channel's identifier.</param>
+    /// <param name="channel">The channel to tune to.</param>
+    /// <param name="timeLimitReceiveStreamInfo">The maximum time in milli-seconds to wait for required implementation-dependent stream information during tuning.</param>
+    /// <returns>the sub-channel</returns>
+    protected override ISubChannelInternal OnTune(int id, IChannel channel, int timeLimitReceiveStreamInfo)
+    {
+      DateTime tuneStartTime = DateTime.Now;
+
+      // If switching to a different program within the same transport stream,
+      // remove the previous program PIDs and tell the CA provider extensions
+      // to stop decrypting if necessary.
+      SubChannelMpeg2Ts subChannel = GetSubChannel(id) as SubChannelMpeg2Ts;
+      if (!_isTsWriterStopped && subChannel != null)
+      {
+        OnFreeSubChannel(id);
+      }
+
+      lock (_lock)
+      {
+        if (_isTsWriterStopped)
+        {
+          if (_tsWriter == null)
+          {
+            throw new TvException("TsWriter is null.");
+          }
+          _tsWriter.Start();
+          _isTsWriterStopped = false;
+        }
+      }
+
+      int programNumber = GetTuningProgramNumber(channel);
+      bool sendDecryptCommand = AddSubChannel(id, programNumber, channel.Provider, channel.IsEncrypted);
+
+      // Wait for PAT and PMT.
+      ProgramInformation program = null;
+      while (true)
+      {
+        ThrowExceptionIfTuneCancelled();
+        if (!_programWaitEvent.WaitOne(timeLimitReceiveStreamInfo - (int)((DateTime.Now - tuneStartTime).TotalMilliseconds)))
+        {
+          if (_isPatComplete)
+          {
+            this.LogError("MPEG 2: program not running (PMT not received), ID = {0}, program number = {1}", id, programNumber);
+            throw new TvExceptionServiceNotRunning(channel);
+          }
+
+          // PAT not received - extremely unusual!
+          this.LogError("MPEG 2: tuner not streaming (PAT not received), ID = {0}", id);
+          throw new TvException("The tuner is not delivering any stream.");
+        }
+        ThrowExceptionIfTuneCancelled();
+
+        if (!_isPatComplete)
+        {
+          continue;
+        }
+
+        if (programNumber < 0)
+        {
+          // Scanning - we only wait for the PAT to confirm we're receiving a stream.
+          break;
+        }
+
+        if (programNumber == 0)
+        {
+          // Unknown program number. We assume the transport stream only
+          // contains one program, or the caller wants us to select any running
+          // program. Can we identify a running program yet?
+          bool foundRunningProgram = false;
+          lock (_lock)
+          {
+            foreach (ProgramInformation p in _programs.Values)
+            {
+              if (
+                p.ProgramNumber != PROGRAM_NUMBER_SI &&
+                p.ProgramNumber != PROGRAM_NUMBER_EPG &&
+                p.IsRunning.GetValueOrDefault(false)
+              )
+              {
+                foundRunningProgram = true;
+                if (p.Pmt != null && (p.HasVideo || p.HasAudio))
+                {
+                  this.LogDebug("MPEG 2: select program, ID = {0}, program number = {1}", id, p.ProgramNumber);
+                  programNumber = p.ProgramNumber;
+                  OnFreeSubChannel(id);
+                  sendDecryptCommand = AddSubChannel(id, programNumber, channel.Provider, channel.IsEncrypted);
+                  break;
+                }
+              }
+            }
+          }
+          if (!foundRunningProgram)
+          {
+            this.LogError("MPEG 2: no running programs available for selection, ID = {0}", id);
+            throw new TvExceptionServiceNotRunning(channel);
+          }
+          if (programNumber == 0)
+          {
+            continue;   // still waiting for PMT
+          }
+        }
+
+        lock (_lock)
+        {
+          program = _programs[programNumber];
+          if (program.IsRunning.GetValueOrDefault(false))
+          {
+            if (program.IsRunning.HasValue)
+            {
+              this.LogError("MPEG 2: program not running (SDT), ID = {0}, program number = {1}", id, programNumber);
+              throw new TvExceptionServiceNotRunning(channel);
+            }
+            else
+            {
+              this.LogError("MPEG 2: program not found in the PAT (not running, moved...???), ID = {0}, program number = {1}", id, programNumber);
+              throw new TvExceptionServiceNotFound(channel);
+            }
+          }
+          if (program.Pmt == null)
+          {
+            continue;
+          }
+
+          if (!program.HasVideo && !program.HasAudio)
+          {
+            this.LogError("MPEG 2: program has no video or audio streams, ID = {0}, program number = {1}", id, programNumber);
+            throw new TvExceptionStreamNotReceived(channel, false, false);
+          }
+
+          if (sendDecryptCommand && program.IsEncrypted)
+          {
+            if (!program.IsEncryptedConfig.Value)
+            {
+              this.LogWarn("MPEG 2: encryption override, program number = {0}", program.ProgramNumber);
+            }
+            UpdateDecryptList(program, DecryptUpdateAction.Add);
+          }
+          break;
+        }
+      }
+
+      // Tuning has been successful!
+      if (subChannel == null)
+      {
+        subChannel = new SubChannelMpeg2Ts(id, _tsWriter);
+      }
+      subChannel.CurrentChannel = channel;
+      if (programNumber < 0)
+      {
+        return subChannel;
+      }
+
+      // Set the sub-channel's PMT and wait for video and/or audio if already
+      // time-shifting or recording.
+      subChannel.OnPmtUpdate(program.Pmt, false, program.HasVideo, program.HasAudio);
+      return subChannel;
+    }
+
+    /// <summary>
+    /// Free a sub-channel.
+    /// </summary>
+    /// <param name="id">The sub-channel's identifier.</param>
+    protected override void OnFreeSubChannel(int id)
+    {
+      lock (_lock)
+      {
+        foreach (ProgramInformation program in _programs.Values)
+        {
+          if (program.SubChannelIds.Remove(id) && program.SubChannelIds.Count == 0)
+          {
+            UpdateTsPids(program.ProgramNumber, program.Pids, new HashSet<ushort>());
+            if (program.IsEncrypted)
+            {
+              UpdateDecryptList(program, DecryptUpdateAction.Remove);
+            }
+            return;
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// Decompose the sub-channel manager.
+    /// </summary>
+    protected override void OnDecompose()
+    {
+      lock (_lock)
+      {
+        if (_tsWriter != null)
+        {
+          _tsWriter.SetObserver(null);
+          _tsWriter = null;
+        }
+        if (_programWaitEvent != null)
+        {
+          _programWaitEvent.Set();
+          _programWaitEvent.Close();
+          _programWaitEvent.Dispose();
+          _programWaitEvent = null;
+        }
+        _caProviders.Clear();
+        _pidFilters.Clear();
+      }
+    }
+
+    #endregion
+
+    #region ISubChannelManager members
+
+    /// <summary>
+    /// Reload the manager's configuration.
+    /// </summary>
+    /// <param name="configuration">The tuner's configuration.</param>
+    public override void ReloadConfiguration(Tuner configuration)
+    {
+      _pidFilterMode = (PidFilterMode)configuration.PidFilterMode;
+      _useConditionalAccessInterface = configuration.UseConditionalAccess;
+      _multiChannelDecryptMode = (MultiChannelDecryptMode)configuration.MultiChannelDecryptMode;
+      _camType = (CamType)configuration.CamType;
+    }
+
+    /// <summary>
+    /// Set the manager's extensions.
+    /// </summary>
+    /// <param name="extensions">A list of the tuner's extensions, in priority order.</param>
+    public override void SetExtensions(IList<ITunerExtension> extensions)
+    {
+      lock (_lock)
+      {
+        _isConditionalAccessTableRequired = false;
+        _caProviders.Clear();
+        _pidFilters.Clear();
+        if (extensions != null)
+        {
+          foreach (ITunerExtension extension in extensions)
+          {
+            IConditionalAccessProvider caProvider = extension as IConditionalAccessProvider;
+            if (caProvider != null)
+            {
+              _caProviders.Add(caProvider);
+              _isConditionalAccessTableRequired |= caProvider.IsConditionalAccessTableRequiredForDecryption;
+            }
+
+            IMpeg2PidFilter pidFilter = extension as IMpeg2PidFilter;
+            if (pidFilter != null)
+            {
+              _pidFilters.Add(new PidFilter { Filter = pidFilter });
+            }
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// This function should be called before the tuner is tuned to a new
+    /// transmitter.
+    /// </summary>
+    public override void OnBeforeTune()
+    {
+      this.LogDebug("MPEG 2: on before tune");
+      base.OnBeforeTune();
+
+      lock (_lock)
+      {
+        if (_tsWriter == null)
+        {
+          throw new TvException("TsWriter is null.");
+        }
+        _tsWriter.Stop();
+        _isTsWriterStopped = true;
+      }
+
+      _isPatComplete = false;
+      _pmtPids.Clear();
+      _encryptedPids.Clear();
+
+      // If necessary, tell the CA provider extensions to stop decrypting the
+      // previous program.
+      foreach (ProgramInformation program in _programs.Values)
+      {
+        if (program.SubChannelIds.Count > 0 && program.IsEncrypted)
+        {
+          UpdateDecryptList(program, DecryptUpdateAction.Remove);
+          break;  // There can only be one active program when tuning.
+        }
+      }
+      _programs.Clear();
+      _programs[PROGRAM_NUMBER_SI] = new ProgramInformation { ProgramNumber = PROGRAM_NUMBER_SI, IsEncryptedConfig = false, IsRunning = true, Pids = new HashSet<ushort>(_alwaysRequiredPids) };
+      _programs[PROGRAM_NUMBER_EPG] = new ProgramInformation { ProgramNumber = PROGRAM_NUMBER_EPG, IsEncryptedConfig = false, IsRunning = true, Pids = new HashSet<ushort>(_alwaysRequiredPids) };
+
+      // PID filter state after tuning is indeterminate. To be safe, explicitly
+      // remove all old PIDs and trigger re-adding PIDs after tuning.
+      if (_pids.Count > 0)
+      {
+        foreach (var filter in _pidFilters)
+        {
+          if (filter.IsEnabled)
+          {
+            filter.Filter.BlockStreams(filter.Pids);
+            filter.Pids.Clear();
+            // Don't apply the change here. Assume that will be handled after
+            // tuning.
+          }
+        }
+      }
+      _pids.Clear();
+    }
+
+    /// <summary>
+    /// Get the set of sub-channel identifiers for each channel the tuner is currently decrypting.
+    /// </summary>
+    /// <returns>a collection of sub-channel identifier lists</returns>
+    public override ICollection<IList<int>> GetDecryptedSubChannelDetails()
+    {
+      IList<IList<int>> decryptedPrograms = new List<IList<int>>(_programs.Count);
+      lock (_lock)
+      {
+        foreach (ProgramInformation program in _programs.Values)
+        {
+          if (program.SubChannelIds.Count > 0 && program.IsEncrypted)
+          {
+            decryptedPrograms.Add(new List<int>(program.SubChannelIds));
+          }
+        }
+      }
+      return decryptedPrograms;
+    }
+
+    /// <summary>
+    /// Determine whether a sub-channel is being decrypted.
+    /// </summary>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the sub-channel is being decrypted, otherwise <c>false</c></returns>
+    public override bool IsDecrypting(IChannel channel)
+    {
+      // If tuned, we could actually check the real-time encryption status for
+      // the program. However, we don't expect this function to be called for
+      // channels which are configured as not encrypted, so there's no point.
+      if (channel == null || !channel.IsEncrypted)
+      {
+        return false;
+      }
+
+      ChannelMpeg2Base mpeg2Channel = channel as ChannelMpeg2Base;
+      int programNumber = 0;    // assume single program TS
+      if (mpeg2Channel != null)
+      {
+        if (mpeg2Channel.ProgramNumber < 0)
+        {
+          return false;   // scanning
+        }
+        programNumber = mpeg2Channel.ProgramNumber;
+      }
+
+      if (programNumber != 0)
+      {
+        lock (_lock)
+        {
+          foreach (ProgramInformation program in _programs.Values)
+          {
+            if (program.ProgramNumber == programNumber)
+            {
+              programNumber = program.ProgramNumber;
+              return program.SubChannelIds.Count > 0 || !program.IsEncryptedPids;
+            }
+          }
+        }
+        return false;
+      }
+
+      // Single program TS or program number not known. Match on the full
+      // channel details in case the TS contains multiple programs.
+      lock (_lock)
+      {
+        foreach (ProgramInformation program in _programs.Values)
+        {
+          if (_programs.Count == 1)
+          {
+            return program.SubChannelIds.Count > 0;
+          }
+          foreach (int subChannelId in program.SubChannelIds)
+          {
+            var subChannel = GetSubChannel(subChannelId);
+            if (subChannel.CurrentChannel == channel)
+            {
+              return true;
+            }
+          }
+        }
+      }
+      return false;
+    }
+
+    #endregion
+
+    #region IObserver members
+
+    /// <summary>
+    /// This function is invoked when an initial or updated program association table is received.
+    /// </summary>
+    /// <param name="transportStreamId">The transport stream's identifier.</param>
+    /// <param name="networkPid">The PID which delivers the transport stream's network information.</param>
+    /// <param name="programCount">The number of programs in the transport stream.</param>
+    public void OnProgramAssociationTable(ushort transportStreamId, ushort networkPid, ushort programCount)
+    {
+      ThreadPool.QueueUserWorkItem(delegate
+      {
+        lock (_lock)
+        {
+          if (_isPatComplete)
+          {
+            // PAT changes are handled by OnProgramDetail().
+            this.LogDebug("MPEG 2: PAT changed");
+            return;
+          }
+
+          // Only add PMT PIDs to the PID filters on PAT completion. This has
+          // the effect of replacing a burst of PID filter changes during PAT
+          // processing with a single change.
+          this.LogDebug("MPEG 2: PAT received");
+          _isPatComplete = true;
+          if (_programs[PROGRAM_NUMBER_SI].SubChannelIds.Count > 0)
+          {
+            UpdateTsPids(PROGRAM_NUMBER_SI, new HashSet<ushort>(), new HashSet<ushort>(_pmtPids.Keys));
+          }
+        }
+
+        _programWaitEvent.Set();
+      });
+    }
+
+    /// <summary>
+    /// This function is invoked when an initial or updated conditional access table is received.
+    /// </summary>
+    /// <param name="cat">The new conditional access table. The callee must not change this array.</param>
+    /// <param name="catBufferSize">The size of the <paramref name="cat">conditional access table</paramref>.</param>
+    public void OnConditionalAccessTable(byte[] cat, ushort catBufferSize)
+    {
+      if (cat == null || cat.Length == 0)
+      {
+        return;
+      }
+
+      ThreadPool.QueueUserWorkItem(delegate
+      {
+        lock (_lock)
+        {
+          DecryptUpdateAction decryptUpdateAction;
+          if (_cat == null)
+          {
+            this.LogDebug("MPEG 2: CAT received");
+            decryptUpdateAction = DecryptUpdateAction.Add;
+          }
+          else
+          {
+            this.LogDebug("MPEG 2: CAT changed");
+            decryptUpdateAction = DecryptUpdateAction.Update;
+          }
+          _cat = TableConditionalAccess.Decode(cat);
+
+          if (!_isConditionalAccessTableRequired)
+          {
+            return;
+          }
+
+          IList<ProgramInformation> programsToDecrypt = new List<ProgramInformation>(_programs.Count);
+          foreach (var program in _programs.Values)
+          {
+            if (program.ProgramNumber == PROGRAM_NUMBER_SI || program.ProgramNumber == PROGRAM_NUMBER_EPG)
+            {
+              continue;
+            }
+
+            if (
+              program.SubChannelIds.Count > 0 &&
+              program.Pmt != null &&
+              program.IsEncrypted
+            )
+            {
+              programsToDecrypt.Add(program);
+            }
+          }
+
+          foreach (var program in programsToDecrypt)
+          {
+            UpdateDecryptList(program, decryptUpdateAction);
+            if (_multiChannelDecryptMode == MultiChannelDecryptMode.List)
+            {
+              break;
+            }
+          }
+        }
+
+        _programWaitEvent.Set();
+      });
+    }
+
+    /// <summary>
+    /// This function is invoked when an initial or updated program details are received.
+    /// </summary>
+    /// <param name="programNumber">The program's identifier.</param>
+    /// <param name="pmtPid">The PID which delivers the program's map table sections.</param>
+    /// <param name="isRunning">An indication of whether the program is running.</param>
+    /// <param name="pmt">The program's map table. The callee must not change this array.</param>
+    /// <param name="pmtBufferSize">The size of the <paramref name="pmt">program map table</paramref>.</param>
+    public void OnProgramDetail(ushort programNumber, ushort pmtPid, bool isRunning, byte[] pmt, ushort pmtBufferSize)
+    {
+      ThreadPool.QueueUserWorkItem(delegate
+      {
+        lock (_lock)
+        {
+          ProgramInformation program;
+          if (!_programs.TryGetValue(programNumber, out program))
+          {
+            program = new ProgramInformation();
+            program.ProgramNumber = programNumber;
+            _programs[programNumber] = program;
+          }
+
+          // Update PMT and SI PID collections.
+          UpdateProgramPmtPid(program, pmtPid);
+
+          // Update program information.
+          program.IsRunning = isRunning;
+          DecryptUpdateAction decryptUpdateAction = DecryptUpdateAction.Add;
+          if (pmt != null && pmt.Length > 0)
+          {
+            if (program.Pmt == null)
+            {
+              this.LogDebug("MPEG 2: PMT received, program number = {0}", program.ProgramNumber);
+            }
+            else
+            {
+              this.LogDebug("MPEG 2: PMT changed, program number = {0}", program.ProgramNumber);
+              decryptUpdateAction = DecryptUpdateAction.Update;
+            }
+            program.Pmt = TableProgramMap.Decode(pmt);
+            program.IsEncryptedPids = false;
+          }
+
+          // Update program PIDs.
+          SetProgramPids(program);
+
+          // Send a decrypt command if required.
+          if (
+            program.SubChannelIds.Count > 0 &&
+            program.Pmt != null &&
+            (!_isConditionalAccessTableRequired || _cat != null) &&
+            program.IsEncrypted
+          )
+          {
+            UpdateDecryptList(program, decryptUpdateAction);
+          }
+
+          if (program.Pmt != null)
+          {
+            // TODO Could we do this in a thread or parallelise the calls for each sub-channel?
+            foreach (int subChannelId in program.SubChannelIds)
+            {
+              SubChannelMpeg2Ts subChannel = GetSubChannel(subChannelId) as SubChannelMpeg2Ts;
+              if (subChannel != null)
+              {
+                try
+                {
+                  subChannel.OnPmtUpdate(program.Pmt, decryptUpdateAction == DecryptUpdateAction.Update, program.HasVideo, program.HasAudio);
+                }
+                catch
+                {
+                  // Video/audio encrypted or not received - we can't really do anything about that from here.
+                }
+              }
+            }
+          }
+        }
+
+        _programWaitEvent.Set();
+      });
+    }
+
+    /// <summary>
+    /// This function is invoked when an elementary stream is detected as encrypted.
+    /// </summary>
+    /// <param name="pid">The elementary stream's PID.</param>
+    /// <param name="state">The elementary stream's encryption state.</param>
+    public void OnPidEncryptionStateChange(ushort pid, EncryptionState state)
+    {
+      ThreadPool.QueueUserWorkItem(delegate
+      {
+        lock (_lock)
+        {
+          if (
+            state != EncryptionState.Encrypted ||
+            pid == PID_PAT ||
+            pid == PID_CAT ||
+            _programs[PROGRAM_NUMBER_SI].Pids.Contains(pid) ||
+            _programs[PROGRAM_NUMBER_EPG].Pids.Contains(pid) ||
+            _pmtPids.ContainsKey(pid)
+          )
+          {
+            // False positive.
+            return;
+          }
+
+          _encryptedPids.Add(pid);
+          if (_isConditionalAccessTableRequired && _cat == null)
+          {
+            return;
+          }
+
+          // Send a decrypt command for the related channel(s) if they're
+          // marked as not encrypted and we've been asked to time-shift or
+          // record them.
+          IList<ProgramInformation> programsToDecrypt = new List<ProgramInformation>(_programs.Count);
+          foreach (var program in _programs.Values)
+          {
+            if (program.Pmt == null || program.IsEncryptedPids || !program.Pids.Contains(pid))
+            {
+              continue;
+            }
+
+            program.IsEncryptedPids = true;
+
+            if (program.SubChannelIds.Count > 0 && !program.IsEncryptedConfig.Value)
+            {
+              this.LogWarn("MPEG 2: encryption override, program number = {0}, PID = {1}", program.ProgramNumber, pid);
+              programsToDecrypt.Add(program);
+            }
+          }
+
+          foreach (var program in programsToDecrypt)
+          {
+            UpdateDecryptList(program, DecryptUpdateAction.Add);
+            if (_multiChannelDecryptMode == MultiChannelDecryptMode.List)
+            {
+              break;
+            }
+          }
+        }
+      });
+    }
+
+    /// <summary>
+    /// This function is invoked when access to one or more PIDs is required.
+    /// </summary>
+    /// <param name="pids">The PIDs that are required.</param>
+    /// <param name="pidCount">The number of PIDs in <paramref name="pids">the PID array</paramref>.</param>
+    /// <param name="usage">The reason that access is required.</param>
+    public void OnPidsRequired(ushort[] pids, byte pidCount, PidUsage usage)
+    {
+      if (pids == null || pids.Length == 0)
+      {
+        return;
+      }
+
+      ThreadPool.QueueUserWorkItem(delegate
+      {
+        this.LogDebug("MPEG 2: PIDs required, usage = {0}, PIDs = [{1}]", usage, string.Join(", ", pids));
+        lock (_lock)
+        {
+          ProgramInformation program;
+          if (usage == PidUsage.Si)
+          {
+            program = _programs[PROGRAM_NUMBER_SI];
+          }
+          else if (usage == PidUsage.Epg)
+          {
+            program = _programs[PROGRAM_NUMBER_EPG];
+          }
+          else
+          {
+            this.LogWarn("MPEG 2: unrecognised PID usage, usage = {0}, PIDs = [{1}]", usage, string.Join(", ", pids));
+            return;
+          }
+
+          _encryptedPids.ExceptWith(pids);  // SI and EPG are assumed to never be encrypted
+          program.Pids.UnionWith(pids);
+          if (program.SubChannelIds.Count > 0)
+          {
+            UpdateTsPids(program.ProgramNumber, new HashSet<ushort>(), new HashSet<ushort>(pids));
+          }
+        }
+      });
+    }
+
+    /// <summary>
+    /// This function is invoked when access to one or more PIDs is no longer required.
+    /// </summary>
+    /// <param name="pids">The PIDs that are not required.</param>
+    /// <param name="pidCount">The number of PIDs in <paramref name="pids">the PID array</paramref>.</param>
+    /// <param name="usage">The reason that access was previously required.</param>
+    public void OnPidsNotRequired(ushort[] pids, byte pidCount, PidUsage usage)
+    {
+      if (pids == null || pids.Length == 0)
+      {
+        return;
+      }
+
+      ThreadPool.QueueUserWorkItem(delegate
+      {
+        this.LogDebug("MPEG 2: PIDs not required, usage = {0}, PIDs = [{1}]", usage, string.Join(", ", pids));
+        lock (_lock)
+        {
+          ProgramInformation program;
+          if (usage == PidUsage.Si)
+          {
+            program = _programs[PROGRAM_NUMBER_SI];
+          }
+          else if (usage == PidUsage.Epg)
+          {
+            program = _programs[PROGRAM_NUMBER_EPG];
+          }
+          else
+          {
+            this.LogWarn("MPEG 2: unrecognised PID usage, usage = {0}, PIDs = [{1}]", usage, string.Join(", ", pids));
+            return;
+          }
+
+          program.Pids.ExceptWith(pids);
+          if (program.SubChannelIds.Count > 0)
+          {
+            UpdateTsPids(program.ProgramNumber, new HashSet<ushort>(pids), new HashSet<ushort>());
+          }
+        }
+      });
+    }
+
+    #endregion
   }
 }

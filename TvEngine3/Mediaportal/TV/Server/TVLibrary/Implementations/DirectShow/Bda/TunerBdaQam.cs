@@ -32,8 +32,8 @@ using MediaPortal.Common.Utils;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 {
   /// <summary>
-  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which
-  /// handles DVB-C and ISDB-C tuners with BDA drivers.
+  /// An implementation of <see cref="ITuner"/> for DVB-C and ISDB-C tuners
+  /// with BDA drivers.
   /// </summary>
   internal class TunerBdaQam : TunerBdaBase
   {

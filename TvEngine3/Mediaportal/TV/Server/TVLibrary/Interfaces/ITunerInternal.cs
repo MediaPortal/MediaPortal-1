@@ -97,13 +97,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <param name="channel">The channel to tune to.</param>
     void PerformTuning(IChannel channel);
 
-    /// <summary>
-    /// Allocate a new sub-channel instance.
-    /// </summary>
-    /// <param name="id">The identifier for the sub-channel.</param>
-    /// <returns>the new sub-channel instance</returns>
-    ISubChannelInternal CreateNewSubChannel(int id);
-
     #endregion
 
     #region signal
@@ -125,6 +118,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     #endregion
 
     #region interfaces
+
+    /// <summary>
+    /// Get the tuner's sub-channel manager.
+    /// </summary>
+    ISubChannelManager SubChannelManager
+    {
+      get;
+    }
 
     /// <summary>
     /// Get the tuner's channel linkage scanning interface.

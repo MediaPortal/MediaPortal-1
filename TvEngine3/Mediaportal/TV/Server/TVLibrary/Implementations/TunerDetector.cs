@@ -493,7 +493,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Release and dispose all resources.
     /// </summary>
-    /// <param name="isDisposing"><c>True</c> if the detector is being disposed.</param>
+    /// <param name="isDisposing"><c>True</c> if the instance is being disposed.</param>
     private void Dispose(bool isDisposing)
     {
       if (!isDisposing)
@@ -1011,7 +1011,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         _firstDetectionTuners.Add(tuner.ExternalId);
         tunerDbSettings = new Tuner
         {
-          RecordingFolder = string.Empty,
           ExternalId = tuner.ExternalId,
           Name = tuner.Name,
           IsEnabled = true,

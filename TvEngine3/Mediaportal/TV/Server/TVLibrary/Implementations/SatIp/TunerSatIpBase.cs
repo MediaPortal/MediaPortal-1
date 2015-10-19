@@ -46,7 +46,7 @@ using RtspClient = Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp.RtspClie
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 {
   /// <summary>
-  /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for SAT>IP tuners.
+  /// A base implementation of <see cref="ITuner"/> for SAT>IP tuners.
   /// </summary>
   internal abstract class TunerSatIpBase : TunerBase, IMpeg2PidFilter
   {
@@ -741,20 +741,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 
     #endregion
 
-    #region tuning
-
-    /// <summary>
-    /// Allocate a new sub-channel instance.
-    /// </summary>
-    /// <param name="id">The identifier for the sub-channel.</param>
-    /// <returns>the new sub-channel instance</returns>
-    public override ISubChannelInternal CreateNewSubChannel(int id)
-    {
-      return _streamTuner.CreateNewSubChannel(id);
-    }
-
-    #endregion
-
     #region signal
 
     /// <summary>
@@ -776,6 +762,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     #endregion
 
     #region interfaces
+
+    /// <summary>
+    /// Get the tuner's sub-channel manager.
+    /// </summary>
+    public override ISubChannelManager SubChannelManager
+    {
+      get
+      {
+        return _streamTuner.SubChannelManager;
+      }
+    }
 
     /// <summary>
     /// Get the tuner's channel linkage scanning interface.

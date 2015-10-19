@@ -39,15 +39,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension.Enum
     Default,
     /// <summary>
     /// Start the tuner.
+    /// </summary>
+    /// <remarks>
     /// For a tuner that exposes a DirectShow/BDA filter interface, run the
     /// graph.
-    /// </summary>
+    /// </remarks>
     Start,
     /// <summary>
     /// Pause the tuner.
+    /// </summary>
+    /// <remarks>
     /// For a tuner that exposes a DirectShow/BDA filter interface, pause the
     /// graph.
-    /// </summary>
+    /// </remarks>
     Pause,
     /// <summary>
     /// Stop the tuner.
@@ -57,21 +61,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension.Enum
     Stop,
     /// <summary>
     /// Retart the tuner.
+    /// </summary>
+    /// <remarks>
     /// For a tuner that exposes a DirectShow/BDA filter interface, stop then
     /// run the graph.
-    /// </summary>
+    /// </remarks>
     Restart,
     /// <summary>
     /// Reset the tuner.
+    /// </summary>
+    /// <remarks>
     /// For a tuner that exposes a DirectShow/BDA filter interface, rebuild the
     /// graph.
-    /// </summary>
+    /// </remarks>
     Reset,
     /// <summary>
     /// Unload the tuner.
+    /// </summary>
+    /// <remarks>
     /// For a tuner that exposes a DirectShow/BDA filter interface, dismantle
     /// and dispose the graph.
-    /// </summary>
+    /// </remarks>
     Unload
   }
 }

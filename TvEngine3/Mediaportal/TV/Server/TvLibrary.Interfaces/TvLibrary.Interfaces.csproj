@@ -93,7 +93,6 @@
     <Compile Include="ChannelLinkage\LinkedChannel.cs" />
     <Compile Include="ChannelLinkage\PortalChannel.cs" />
     <Compile Include="CiMenu\CiMenu.cs" />
-    <Compile Include="CiMenu\CiMenuEventCallbackSink.cs" />
     <Compile Include="CiMenu\CiMenuEntry.cs" />
     <Compile Include="CiMenu\CiMenuState.cs" />
     <Compile Include="Implementations\Atsc\Enum\ServiceType.cs" />
@@ -115,6 +114,8 @@
     <Compile Include="Implementations\Dvb\Enum\MmiApplicationType.cs" />
     <Compile Include="Implementations\Dvb\Enum\MmiResponseType.cs" />
     <Compile Include="Implementations\Dvb\Enum\MmiCloseType.cs" />
+    <Compile Include="Implementations\Exception\TvExceptionStreamNotReceived.cs" />
+    <Compile Include="Implementations\Exception\TvExceptionServiceEncrypted.cs" />
     <Compile Include="Implementations\Exception\TvExceptionDirectShowError.cs" />
     <Compile Include="Implementations\Exception\TvExceptionNeedSoftwareEncoder.cs" />
     <Compile Include="Implementations\Exception\TvExceptionTuneCancelled.cs" />
@@ -170,7 +171,6 @@
     <Compile Include="Interfaces\TunerExtension\IConditionalAccessMenuCallBack.cs" />
     <Compile Include="Interfaces\Tuner\Enum\EncoderBitRateMode.cs" />
     <Compile Include="Interfaces\Tuner\Enum\QualityType.cs" />
-    <Compile Include="Interfaces\Tuner\Enum\PidType.cs" />
     <Compile Include="Interfaces\Tuner\IEpgGrabber.cs" />
     <Compile Include="Interfaces\Tuner\ITunerDetectionEventListener.cs" />
     <Compile Include="Interfaces\Tuner\ITunerGroup.cs" />

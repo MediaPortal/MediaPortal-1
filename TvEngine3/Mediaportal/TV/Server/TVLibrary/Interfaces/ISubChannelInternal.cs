@@ -26,14 +26,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   internal interface ISubChannelInternal : ISubChannel
   {
     /// <summary>
-    /// returns the IChannel to which the card is currently tuned
+    /// Get or set the channel which the sub-channel is tuned to.
     /// </summary>
     new IChannel CurrentChannel { get; set; }
 
-    event OnAfterTuneDelegate AfterTuneEvent;
-    void OnBeforeTune();
-    void OnGraphRunning();
-    void OnAfterTune();
+    /// <summary>
+    /// Cancel the current tuning process.
+    /// </summary>
+    void CancelTune();
+
+    /// <summary>
+    /// Decompose the sub-channel.
+    /// </summary>
     void Decompose();
   }
 }

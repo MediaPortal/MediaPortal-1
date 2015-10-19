@@ -26,7 +26,7 @@ using System.Text;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception
 {
   /// <summary>
-  /// Exception thrown by the TV library when a DirectShow error occurs.
+  /// Exception thrown by the TV library when a DirectShow error is encountered.
   /// </summary>
   [Serializable]
   public class TvExceptionDirectShowError : TvException
@@ -64,11 +64,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception
       string errorDetail = string.Format("HRESULT = 0x{0:x8}", hresult);
       if (AMGetErrorText(hresult, buffer, MAX_ERROR_TEXT_LEN) > 0)
       {
-        throw new TvExceptionDirectShowError(hresult, string.Format("{0} {1}, description = {2}.", string.Format(message, args), errorDetail, buffer.ToString()));
+        throw new TvExceptionDirectShowError(hresult, "{0} {1}, description = {2}.", string.Format(message, args), errorDetail, buffer.ToString());
       }
       else
       {
-        throw new TvExceptionDirectShowError(hresult, string.Format("{0} {1}.", string.Format(message, args), errorDetail));
+        throw new TvExceptionDirectShowError(hresult, "{0} {1}.", string.Format(message, args), errorDetail);
       }
     }
   }

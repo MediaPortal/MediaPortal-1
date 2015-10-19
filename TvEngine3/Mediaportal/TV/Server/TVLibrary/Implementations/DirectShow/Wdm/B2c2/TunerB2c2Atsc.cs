@@ -23,6 +23,8 @@ using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
@@ -32,8 +34,8 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 {
   /// <summary>
-  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for
-  /// TechniSat ATSC tuners with B2C2 chipsets and WDM drivers.
+  /// An implementation of <see cref="ITuner"/> for TechniSat ATSC tuners with
+  /// B2C2 chipsets and WDM drivers.
   /// </summary>
   internal class TunerB2c2Atsc : TunerB2c2Base
   {
@@ -164,7 +166,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     {
       IList<ITunerExtension> extensions = base.PerformLoading();
 
-      _epgGrabber = null;   // ATSC/SCTE EPG grabbing currently not supported.
+      _subChannelManager = new SubChannelManagerMpeg2Ts(TsWriter as ITsWriter, true);
+      _epgGrabber = new EpgGrabberAtsc(TsWriter as IGrabberEpgAtsc, TsWriter as IGrabberEpgScte);
 
       if (_channelScanner != null)
       {

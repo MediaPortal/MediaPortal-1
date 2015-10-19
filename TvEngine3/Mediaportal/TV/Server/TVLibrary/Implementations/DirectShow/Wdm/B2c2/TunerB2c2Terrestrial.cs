@@ -29,7 +29,8 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 {
   /// <summary>
-  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for TechniSat terrestrial tuners with B2C2 chipsets and WDM drivers.
+  /// An implementation of <see cref="ITuner"/> for TechniSat terrestrial
+  /// tuners with B2C2 chipsets and WDM drivers.
   /// </summary>
   internal class TunerB2c2Terrestrial : TunerB2c2Base
   {

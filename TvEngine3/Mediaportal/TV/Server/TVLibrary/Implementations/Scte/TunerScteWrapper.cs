@@ -1,9 +1,29 @@
-﻿
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
 using System.Collections.Generic;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
@@ -70,6 +90,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     private ITunerInternal _dvbcTuner = null;
 
     /// <summary>
+    /// The tuner's sub-channel manager.
+    /// </summary>
+    private ISubChannelManager _subChannelManager = null;
+
+    /// <summary>
     /// The tuner's channel scanning interface.
     /// </summary>
     private IChannelScannerInternal _channelScanner = null;
@@ -128,6 +153,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     {
       IList<ITunerExtension> extensions = _dvbcTuner.PerformLoading();
 
+      _subChannelManager = _dvbcTuner.SubChannelManager;
+      SubChannelManagerMpeg2Ts subChannelManagerMpeg2Ts = _subChannelManager as SubChannelManagerMpeg2Ts;
+      if (subChannelManagerMpeg2Ts != null)
+      {
+        subChannelManagerMpeg2Ts.AlwaysRequiredPids = new HashSet<ushort> { SubChannelManagerMpeg2Ts.PID_PAT };
+      }
+
       _channelScanner = _dvbcTuner.InternalChannelScanningInterface;
       if (_channelScanner != null)
       {
@@ -158,6 +190,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     {
       if (!isFinalising)
       {
+        _subChannelManager = null;
         _channelScanner = null;
         _dvbcTuner.PerformUnloading();
       }
@@ -219,16 +252,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
       _dvbcTuner.PerformTuning(dvbcChannel);
     }
 
-    /// <summary>
-    /// Allocate a new sub-channel instance.
-    /// </summary>
-    /// <param name="id">The identifier for the sub-channel.</param>
-    /// <returns>the new sub-channel instance</returns>
-    public override ISubChannelInternal CreateNewSubChannel(int id)
-    {
-      return _dvbcTuner.CreateNewSubChannel(id);
-    }
-
     #endregion
 
     #region signal
@@ -249,6 +272,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     #endregion
 
     #region interfaces
+
+    /// <summary>
+    /// Get the tuner's sub-channel manager.
+    /// </summary>
+    public override ISubChannelManager SubChannelManager
+    {
+      get
+      {
+        return _subChannelManager;
+      }
+    }
 
     /// <summary>
     /// Get the tuner's channel scanning interface.

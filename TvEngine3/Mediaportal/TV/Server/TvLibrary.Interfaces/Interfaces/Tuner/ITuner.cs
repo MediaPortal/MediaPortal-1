@@ -32,18 +32,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
   /// <summary>
   /// Delegate for the new sub-channel event.
   /// </summary>
-  /// <param name="subChannelId">The ID of the new sub-channel.</param>
+  /// <param name="subChannelId">The new sub-channel's identifier.</param>
   public delegate void OnNewSubChannelDelegate(int subChannelId);
-
-  /// <summary>
-  /// Delegate for the after tune event.
-  /// </summary>
-  public delegate void OnAfterTuneDelegate();
 
   #endregion
 
   /// <summary>
-  /// interface for a tv card
+  /// Primary tuner control interface.
   /// </summary>
   public interface ITuner : IDisposable
   {
@@ -53,11 +48,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     /// Set the tuner's new sub-channel event handler.
     /// </summary>
     event OnNewSubChannelDelegate OnNewSubChannelEvent;
-
-    /// <summary>
-    /// Set the tuner's after tune event handler.
-    /// </summary>
-    event OnAfterTuneDelegate OnAfterTuneEvent;
 
     #endregion
 
@@ -129,6 +119,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     }
 
     /// <summary>
+    /// Get the tuner's priority.
+    /// </summary>
+    /// <remarks>
+    /// Value 1 is highest priority.
+    /// </remarks>
+    int Priority
+    {
+      get;
+    }
+
+    /// <summary>
     /// Get the set of conditional access providers that the tuner's
     /// conditional access interface is able to decrypt.
     /// </summary>
@@ -138,19 +139,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     }
 
     /// <summary>
-    /// Get the type of conditional access module available to the tuner's
-    /// conditional access interface.
-    /// </summary>
-    CamType CamType
-    {
-      get;
-    }
-
-    /// <summary>
-    /// Get the broadcast standards supported by the tuner hardware.
+    /// Get the broadcast standards supported by the tuner.
     /// </summary>
     /// <remarks>
-    /// This property is configurable.
+    /// This property is configurable. Wherever possible, it is initialised to reflect hardware capabilities.
     /// </remarks>
     BroadcastStandard SupportedBroadcastStandards
     {
@@ -161,7 +153,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     /// Get the broadcast standards supported by the tuner code/class/type implementation.
     /// </summary>
     /// <remarks>
-    /// This property is based on detected limitations and hard code capabilities.
+    /// This property is based on code capabilities. It is further constrained by detected hardware capabilities when detection is known to be accurate.
     /// </remarks>
     BroadcastStandard PossibleBroadcastStandards
     {
@@ -176,12 +168,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     {
       get;
     }
-
-    /// <summary>
-    /// Get a count of the number of services that the tuner is currently decrypting.
-    /// </summary>
-    /// <value>The number of services currently being decrypted.</value>
-    int NumberOfChannelsDecrypting { get; }
 
     /// <summary>
     /// Get the tuner's conditional access interface decrypt limit.
@@ -305,7 +291,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     /// <summary>
     /// Tune to a specific channel.
     /// </summary>
-    /// <param name="subChannelId">The ID of the sub-channel associated with the channel that is being tuned.</param>
+    /// <param name="subChannelId">The identifier of the sub-channel associated with the channel that is being tuned.</param>
     /// <param name="channel">The channel to tune to.</param>
     /// <returns>the sub-channel associated with the tuned channel</returns>
     ISubChannel Tune(int subChannelId, IChannel channel);
@@ -313,7 +299,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     /// <summary>
     /// Cancel the current tuning process.
     /// </summary>
-    /// <param name="subChannelId">The ID of the sub-channel associated with the channel that is being cancelled.</param>
+    /// <param name="subChannelId">The identifier of the sub-channel associated with the tuning process that is being cancelled.</param>
     void CancelTune(int subChannelId);
 
     #endregion
@@ -321,23 +307,47 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     #region sub-channels
 
     /// <summary>
-    /// Gets the sub-channel.
+    /// Can the tuner receive all sub-channels from the current transmitter simultaneously?
     /// </summary>
-    /// <param name="id">The id.</param>
-    /// <returns></returns>
+    bool CanReceiveAllTransmitterSubChannels
+    {
+      get;
+    }
+
+    /// <summary>
+    /// Get a sub-channel.
+    /// </summary>
+    /// <param name="id">The sub-channel's identifier.</param>
+    /// <returns>the sub-channel if it exists, otherwise <c>null</c></returns>
     ISubChannel GetSubChannel(int id);
 
     /// <summary>
-    /// Frees the sub-channel.
+    /// Free a sub-channel.
     /// </summary>
-    /// <param name="id">The id.</param>
+    /// <param name="id">The sub-channel's identifier.</param>
     void FreeSubChannel(int id);
 
     /// <summary>
-    /// Gets the sub-channels.
+    /// Get the count of sub-channels.
     /// </summary>
-    /// <value>The sub-channels.</value>
-    ISubChannel[] SubChannels { get; }
+    int SubChannelCount
+    {
+      get;
+    }
+
+    /// <summary>
+    /// Get the set of sub-channel identifiers for each channel the tuner is
+    /// currently decrypting.
+    /// </summary>
+    /// <returns>a collection of sub-channel identifier lists</returns>
+    ICollection<IList<int>> GetDecryptedSubChannelDetails();
+
+    /// <summary>
+    /// Determine whether a sub-channel is being decrypted.
+    /// </summary>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the sub-channel is being decrypted, otherwise <c>false</c></returns>
+    bool IsDecrypting(IChannel channel);
 
     #endregion
 
@@ -345,15 +355,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     /// Reload the tuner's configuration.
     /// </summary>
     void ReloadConfiguration();
-
-    /// <summary>
-    /// Stop the tuner.
-    /// </summary>
-    /// <remarks>
-    /// The actual result of this function depends on tuner configuration.
-    /// </remarks>
-    [Obsolete("This function should not be used. Instead use FreeSubChannel() to free each remaining sub-channel. The tuner will be stopped after the last sub-channel is freed... but that is implementation detail which you should not have to care about.")]
-    void Stop();
 
     /// <summary>
     /// Get the tuner's signal status information.

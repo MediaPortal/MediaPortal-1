@@ -25,6 +25,8 @@ using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
@@ -36,8 +38,8 @@ using MediaPortal.Common.Utils;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
 {
   /// <summary>
-  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which
-  /// handles North American CableCARD tuners with PBDA drivers.
+  /// An implementation of <see cref="ITuner"/> for North American CableCARD
+  /// tuners with PBDA drivers.
   /// </summary>
   internal class TunerPbdaCableCard : TunerBdaAtsc, IConditionalAccessMenuActions
   {
@@ -66,13 +68,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       : base(device, BroadcastStandard.Scte)
     {
       _caMenuHandler = new CableCardMmiHandler(EnterMenu, CloseDialog);
-
-      // CableCARD tuners are limited to one channel per tuner, even for
-      // non-encrypted channels:
-      // The DRIT SHALL output the selected program content as a single program
-      // MPEG-TS in RTP packets according to [RTSP] and [RTP].
-      // - OpenCable DRI I04 specification, 10 September 2010
-      _areSubChannelsSupported = false;
     }
 
     #endregion
@@ -92,13 +87,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
 
       // Connect the tuner filter OOB info into TsWriter.
       this.LogDebug("PBDA CableCARD: connect out-of-band stream");
-      FilterGraphTools.ConnectFilters(_graph, _filterMain, 1, _filterTsWriter, 1);
+      FilterGraphTools.ConnectFilters(Graph, MainFilter, 1, TsWriter, 1);
 
-      _caInterface = _filterMain as IBDA_ConditionalAccess;
+      _caInterface = MainFilter as IBDA_ConditionalAccess;
       if (_caInterface == null)
       {
         throw new TvException("Failed to find BDA conditional access interface on tuner filter.");
       }
+
+      // CableCARD tuners are limited to one channel per tuner, even for
+      // non-encrypted channels:
+      // The DRIT SHALL output the selected program content as a single program
+      // MPEG-TS in RTP packets according to [RTSP] and [RTP].
+      // - OpenCable DRI I04 specification, 10 September 2010
+      _subChannelManager = new SubChannelManagerMpeg2Ts(TsWriter as ITsWriter, false);
 
       // The EPG grabber currently supports ATSC and SCTE EPG formats, but in
       // practise it seems cable providers do not broadcast EPG with standard
@@ -139,8 +141,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
         scteChannel == null ||
         !SupportedBroadcastStandards.HasFlag(BroadcastStandard.Scte) ||
         (
-          (_channelScanner == null || !_channelScanner.IsScanning) &&
-          !short.TryParse(scteChannel.LogicalChannelNumber, out virtualChannelNumber)
+          (!short.TryParse(scteChannel.LogicalChannelNumber, out virtualChannelNumber) || virtualChannelNumber <= 0) &&
+          scteChannel.Frequency != -1   // special case: CableCARD scanning
         )
       )
       {
@@ -184,7 +186,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       {
         // Note: SDV not explicitly supported. We can't request the program
         // number from the tuner like we can when interacting directly with the
-        // DRI interface. Therefore tuning SDV channels might fail.
+        // DRI interface. Therefore tuning SDV channels will fail if the
+        // channel program number is not correct.
         hr = _caInterface.TuneByChannel(virtualChannelNumber);
         TvExceptionDirectShowError.Throw(hr, "Failed to tune channel.");
       }

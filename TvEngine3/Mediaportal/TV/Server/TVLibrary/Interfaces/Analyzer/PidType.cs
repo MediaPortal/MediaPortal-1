@@ -18,10 +18,10 @@
 
 #endregion
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
   /// <summary>
-  /// Observable stream types.
+  /// Observable PID types.
   /// </summary>
   public enum PidType
   {

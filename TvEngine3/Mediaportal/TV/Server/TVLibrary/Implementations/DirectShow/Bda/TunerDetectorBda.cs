@@ -89,7 +89,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <summary>
     /// Release and dispose all resources.
     /// </summary>
-    /// <param name="isDisposing"><c>True</c> if the detector is being disposed.</param>
+    /// <param name="isDisposing"><c>True</c> if the instance is being disposed.</param>
     private void Dispose(bool isDisposing)
     {
       if (isDisposing)

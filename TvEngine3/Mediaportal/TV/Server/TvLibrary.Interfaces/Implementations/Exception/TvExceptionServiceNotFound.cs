@@ -24,18 +24,24 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception
 {
   /// <summary>
-  /// Exception thrown by the TV library when physical tuning is successful but
-  /// the target service is not found in the broadcast stream.
+  /// Exception thrown by the TV library when physical tuning succeeds but the
+  /// service is not found.
   /// </summary>
+  /// <remarks>
+  /// This exception may be thrown when:
+  /// 1. The service is not running.
+  /// 2. The service has been moved to a different transmitter.
+  /// 3. The tuner has somehow tuned to the wrong transmitter.
+  /// </remarks>
   [Serializable]
   public class TvExceptionServiceNotFound : TvException
   {
     /// <summary>
     /// Initialise a new instance of the <see cref="TvExceptionServiceNotFound"/> class.
     /// </summary>
-    /// <param name="channel">The tuning and details for the service that was not found.</param>
+    /// <param name="channel">The tuning and service details for the service.</param>
     public TvExceptionServiceNotFound(IChannel service)
-      : base("Failed to find service after successful tuning.{0}{1}", Environment.NewLine, service)
+      : base("The service is not found. It may be not running or have moved to a different transmitter.{0}{1}", Environment.NewLine, service)
     {
     }
   }

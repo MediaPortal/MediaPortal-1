@@ -42,8 +42,8 @@ using MediaPortal.Common.Utils;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 {
   /// <summary>
-  /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for
-  /// tuners with BDA drivers.
+  /// A base implementation of <see cref="ITuner"/> for tuners with BDA
+  /// drivers.
   /// </summary>
   internal abstract class TunerBdaBase : TunerDirectShowBase, IESEvents
   {
@@ -226,13 +226,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       this.LogDebug("BDA base: using {0}", filterName);
       if (_networkProviderClsid == typeof(MediaPortalNetworkProvider).GUID)
       {
-        _filterNetworkProvider = FilterGraphTools.AddFilterFromFile(_graph, "NetworkProvider.ax", _networkProviderClsid, filterName);
+        _filterNetworkProvider = FilterGraphTools.AddFilterFromFile(Graph, "NetworkProvider.ax", _networkProviderClsid, filterName);
         IDvbNetworkProvider internalNpInterface = _filterNetworkProvider as IDvbNetworkProvider;
         internalNpInterface.ConfigureLogging(MediaPortalNetworkProvider.GetFileName(ExternalId), MediaPortalNetworkProvider.GetHash(ExternalId), LogLevelOption.Debug);
       }
       else
       {
-        _filterNetworkProvider = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, _networkProviderClsid, filterName);
+        _filterNetworkProvider = FilterGraphTools.AddFilterFromRegisteredClsid(Graph, _networkProviderClsid, filterName);
       }
     }
 
@@ -330,7 +330,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     {
       this.LogDebug("BDA base: add capture filter");
 
-      IPin tunerOutputPin = DsFindPin.ByDirection(_filterMain, PinDirection.Output, 0);
+      IPin tunerOutputPin = DsFindPin.ByDirection(MainFilter, PinDirection.Output, 0);
       try
       {
         ICollection<RegPinMedium> mediums = FilterGraphTools.GetPinMediums(tunerOutputPin);
@@ -339,7 +339,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           this.LogDebug("BDA base: capture filter not required");
           return;
         }
-        if (!FilterGraphTools.AddAndConnectHardwareFilterByCategoryAndMedium(_graph, tunerOutputPin, FilterCategory.BDAReceiverComponentsCategory, out _filterCapture, out _deviceCapture, ProductInstanceId))
+        if (!FilterGraphTools.AddAndConnectHardwareFilterByCategoryAndMedium(Graph, tunerOutputPin, FilterCategory.BDAReceiverComponentsCategory, out _filterCapture, out _deviceCapture, ProductInstanceId))
         {
           this.LogWarn("BDA base: failed to add and connect capture filter, assuming extension required to complete graph");
           return;
@@ -414,8 +414,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         return;
       }
 
-      _filterPbdaPt = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, PBDA_PT_FILTER_CLSID, "PBDA PT Filter");
-      FilterGraphTools.ConnectFilters(_graph, lastFilter, 0, _filterPbdaPt, 0);
+      _filterPbdaPt = FilterGraphTools.AddFilterFromRegisteredClsid(Graph, PBDA_PT_FILTER_CLSID, "PBDA PT Filter");
+      FilterGraphTools.ConnectFilters(Graph, lastFilter, 0, _filterPbdaPt, 0);
       lastFilter = _filterPbdaPt;
     }
 
@@ -435,8 +435,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           {
             continue;
           }
-          _filterTransportInformation = FilterGraphTools.AddFilterFromDevice(_graph, device);
-          FilterGraphTools.ConnectFilters(_graph, _filterMpeg2Demultiplexer, 0, _filterTransportInformation, 0);
+          _filterTransportInformation = FilterGraphTools.AddFilterFromDevice(Graph, device);
+          FilterGraphTools.ConnectFilters(Graph, _filterMpeg2Demultiplexer, 0, _filterTransportInformation, 0);
           return;
         }
       }
@@ -463,7 +463,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     {
       this.LogDebug("BDA base: get tuner signal statistics interfaces");
 
-      IBDA_Topology topology = _filterMain as IBDA_Topology;
+      IBDA_Topology topology = MainFilter as IBDA_Topology;
       if (topology == null)
       {
         throw new TvException("Failed to find BDA topology interface on main filter.");
@@ -512,7 +512,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     {
       this.LogDebug("BDA base: register for events");
 
-      DirectShowLib.IServiceProvider serviceProvider = _graph as DirectShowLib.IServiceProvider;
+      DirectShowLib.IServiceProvider serviceProvider = Graph as DirectShowLib.IServiceProvider;
       if (serviceProvider == null)
       {
         this.LogWarn("BDA base: failed to register for events, graph is not a service provider");
@@ -734,14 +734,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
 
       AddMainComponentFilterToGraph();
-      FilterGraphTools.ConnectFilters(_graph, _filterNetworkProvider, 0, _filterMain, 0);
+      FilterGraphTools.ConnectFilters(Graph, _filterNetworkProvider, 0, MainFilter, 0);
 
-      IBaseFilter lastFilter = _filterMain;
+      IBaseFilter lastFilter = MainFilter;
       AddAndConnectCaptureFilterIntoGraph(ref lastFilter);
       AddAndConnectPbdaPtFilterIntoGraph(ref lastFilter);
 
       // Check for and load extensions, adding any additional filters to the graph.
-      IList<ITunerExtension> extensions = LoadExtensions(_filterMain, ref lastFilter);
+      IList<ITunerExtension> extensions = LoadExtensions(MainFilter, ref lastFilter);
 
       // If using a Microsoft network provider and configured to do so, add an
       // infinite tee, MPEG 2 demultiplexer and transport information filter in
@@ -750,10 +750,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       {
         this.LogDebug("BDA base: add compatibility filters");
         _filterInfiniteTee = (IBaseFilter)new InfTee();
-        FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterInfiniteTee, "Infinite Tee", lastFilter);
+        FilterGraphTools.AddAndConnectFilterIntoGraph(Graph, _filterInfiniteTee, "Infinite Tee", lastFilter);
         AddAndConnectTsWriterIntoGraph(_filterInfiniteTee);
         _filterMpeg2Demultiplexer = (IBaseFilter)new MPEG2Demultiplexer();
-        FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterMpeg2Demultiplexer, "MPEG 2 Demultiplexer", _filterInfiniteTee, 1);
+        FilterGraphTools.AddAndConnectFilterIntoGraph(Graph, _filterMpeg2Demultiplexer, "MPEG 2 Demultiplexer", _filterInfiniteTee, 1);
         AddAndConnectTransportInformationFilterIntoGraph();
       }
       else
@@ -792,12 +792,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
       UnregisterForEvents();
 
-      if (_graph != null)
+      if (Graph != null)
       {
-        _graph.RemoveFilter(_filterNetworkProvider);
-        _graph.RemoveFilter(_filterInfiniteTee);
-        _graph.RemoveFilter(_filterMpeg2Demultiplexer);
-        _graph.RemoveFilter(_filterTransportInformation);
+        Graph.RemoveFilter(_filterNetworkProvider);
+        Graph.RemoveFilter(_filterInfiniteTee);
+        Graph.RemoveFilter(_filterMpeg2Demultiplexer);
+        Graph.RemoveFilter(_filterTransportInformation);
       }
       Release.ComObject("base BDA tuner network provider", ref _filterNetworkProvider);
       Release.ComObject("base BDA tuner infinite tee", ref _filterInfiniteTee);
@@ -807,18 +807,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
       if (_filterPbdaPt != null)
       {
-        if (_graph != null)
+        if (Graph != null)
         {
-          _graph.RemoveFilter(_filterPbdaPt);
+          Graph.RemoveFilter(_filterPbdaPt);
         }
         Release.ComObject("base BDA tuner PBDA PT filter", ref _filterPbdaPt);
       }
 
       if (_filterCapture != null)
       {
-        if (_graph != null)
+        if (Graph != null)
         {
-          _graph.RemoveFilter(_filterCapture);
+          Graph.RemoveFilter(_filterCapture);
         }
         Release.ComObject("base BDA tuner capture filter", ref _filterCapture);
 

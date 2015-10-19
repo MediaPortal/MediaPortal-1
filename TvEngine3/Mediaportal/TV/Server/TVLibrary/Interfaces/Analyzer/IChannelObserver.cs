@@ -19,7 +19,6 @@
 #endregion
 
 using System.Runtime.InteropServices;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {

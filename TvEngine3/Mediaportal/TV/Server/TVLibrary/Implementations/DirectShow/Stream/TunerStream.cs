@@ -34,8 +34,8 @@ using MediaType = DirectShowLib.MediaType;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
 {
   /// <summary>
-  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which supports the MediaPortal
-  /// stream source filter.
+  /// An implementation of <see cref="ITuner"/> for receiving DVB-compliant
+  /// streams with the MediaPortal stream source filter.
   /// </summary>
   internal class TunerStream : TunerDirectShowBase
   {
@@ -117,9 +117,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     {
       if (_sourceFilterClsid == CLSID)
       {
-        return FilterGraphTools.AddFilterFromFile(_graph, "MPIPTVSource.ax", CLSID, Name);
+        return FilterGraphTools.AddFilterFromFile(Graph, "MPIPTVSource.ax", CLSID, Name);
       }
-      return FilterGraphTools.AddFilterFromRegisteredClsid(_graph, _sourceFilterClsid, Name);
+      return FilterGraphTools.AddFilterFromRegisteredClsid(Graph, _sourceFilterClsid, Name);
     }
 
     #region ITunerInternal members
@@ -169,9 +169,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
 
       if (!isFinalising)
       {
-        if (_graph != null)
+        if (Graph != null)
         {
-          _graph.RemoveFilter(_filterStreamSource);
+          Graph.RemoveFilter(_filterStreamSource);
         }
         Release.ComObject("DirectShow stream source filter", ref _filterStreamSource);
         Release.AmMediaType(ref _sourceMediaType);
@@ -212,11 +212,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
           TvExceptionDirectShowError.Throw(pinOutput.ConnectedTo(out pinDownstream), "Failed to get stream source filter downstream pin.");
           try
           {
-            _graph.RemoveFilter(_filterStreamSource);
+            Graph.RemoveFilter(_filterStreamSource);
             _filterStreamSource = AddSourceFilter();
             Release.ComObject("DirectShow stream source output pin", ref pinOutput);
             pinOutput = DsFindPin.ByDirection(_filterStreamSource, PinDirection.Output, 0);
-            TvExceptionDirectShowError.Throw(_graph.ConnectDirect(pinOutput, pinDownstream, null), "Failed to connect new stream source filter.");
+            TvExceptionDirectShowError.Throw(Graph.ConnectDirect(pinOutput, pinDownstream, null), "Failed to connect new stream source filter.");
           }
           finally
           {
