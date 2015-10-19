@@ -4262,6 +4262,7 @@ void CParserNitDvb::SelectPreferredLogicalChannelNumber(unsigned short groupId,
     else if (
       groupId == preferredLogicalChannelNumberGroupId &&
       lcnIt->first == 0xffff &&
+      !isLogicalChannelNumberFromPreferredRegion &&
       (!isLogicalChannelNumberFromPreferredGroup || lcnIt->second < logicalChannelNumber)
     )
     {
