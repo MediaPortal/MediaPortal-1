@@ -61,7 +61,7 @@ namespace Mediaportal.TV.Server.Common.Types.Country
     }
 
     /// <summary>
-    /// Get/set the identifier that MediaPortal associates with the country.
+    /// Get or set the identifier that MediaPortal associates with the country.
     /// </summary>
     public int Id
     {
@@ -76,7 +76,7 @@ namespace Mediaportal.TV.Server.Common.Types.Country
     }
 
     /// <summary>
-    /// Get/set the country's ITU E.123/164 code.
+    /// Get the country's ITU E.123/164 code.
     /// </summary>
     public int ItuCode
     {
@@ -87,7 +87,7 @@ namespace Mediaportal.TV.Server.Common.Types.Country
     }
 
     /// <summary>
-    /// Get/set the country's name.
+    /// Get the country's name.
     /// </summary>
     public string Name
     {
@@ -98,7 +98,7 @@ namespace Mediaportal.TV.Server.Common.Types.Country
     }
 
     /// <summary>
-    /// Get/set the country's ISO code.
+    /// Get the country's ISO code.
     /// </summary>
     public string IsoCode
     {
@@ -109,17 +109,13 @@ namespace Mediaportal.TV.Server.Common.Types.Country
     }
 
     /// <summary>
-    /// Get/set the video standard used for analog television broadcast in the country.
+    /// Get the video standard used for analog television broadcasting in the country.
     /// </summary>
     public AnalogVideoStandard VideoStandard
     {
       get
       {
         return _analogVideoStandard;
-      }
-      set
-      {
-        _analogVideoStandard = value;
       }
     }
   }
