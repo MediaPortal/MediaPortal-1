@@ -1082,6 +1082,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
     template<class T> static void CleanUpNames(map<T, map<unsigned long, char*>*>& names);
     template<class T> static void CleanUpGroupIds(map<unsigned short, vector<T>*>& groupIds);
     static void CleanUpMapOfMaps(map<unsigned short, map<unsigned short, unsigned short>*>& mapOfMaps);
+
     template<class T> static void AggregateSet(const vector<T>& values, map<T, bool>& set);
     template<class T> static bool GetSetValues(const map<T, bool>& set,
                                                 T* keys,
@@ -1135,6 +1136,12 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
                           map<unsigned long, unsigned long>& cellFrequencies,
                           vector<unsigned long>& frequencies);
     void AddTransmitter(CRecordNitTransmitter* record);
+
+    void AddLogicalChannelNumber(unsigned short serviceId,
+                                  unsigned short regionId,
+                                  unsigned short logicalChannelNumber,
+                                  const wchar_t* lcnType,
+                                  map<unsigned short, map<unsigned short, unsigned short>*>& logicalChannelNumbers) const;
 
     bool DecodeExtensionDescriptors(unsigned char* sectionData,
                                     unsigned short& pointer,

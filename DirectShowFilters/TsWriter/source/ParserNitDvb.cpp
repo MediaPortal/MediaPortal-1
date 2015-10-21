@@ -1864,6 +1864,51 @@ void CParserNitDvb::AddTransmitter(CRecordNitTransmitter* record)
   m_recordsTransmitter.AddOrUpdateRecord((IRecord**)&clone, m_callBack);
 }
 
+void CParserNitDvb::AddLogicalChannelNumber(unsigned short serviceId,
+                                            unsigned short regionId,
+                                            unsigned short logicalChannelNumber,
+                                            const wchar_t* lcnType,
+                                            map<unsigned short, map<unsigned short, unsigned short>*>& logicalChannelNumbers) const
+{
+  map<unsigned short, unsigned short>* serviceLcns = NULL;
+  map<unsigned short, map<unsigned short, unsigned short>*>::iterator it = logicalChannelNumbers.find(serviceId);
+  if (it == logicalChannelNumbers.end())
+  {
+    serviceLcns = new map<unsigned short, unsigned short>();
+    if (serviceLcns == NULL)
+    {
+      LogDebug(L"%s: failed to allocate map for service %hu's logical channel numbers",
+                m_name, serviceId);
+      return;
+    }
+    logicalChannelNumbers[serviceId] = serviceLcns;
+    (*serviceLcns)[regionId] = logicalChannelNumber;
+    return;
+  }
+
+  unsigned short currentLcn = (*serviceLcns)[regionId];
+  if (currentLcn == 0)
+  {
+    (*serviceLcns)[regionId] = logicalChannelNumber;
+  }
+  else if (logicalChannelNumber != 0 && currentLcn != logicalChannelNumber)
+  {
+    if (logicalChannelNumber < currentLcn)
+    {
+      (*serviceLcns)[regionId] = logicalChannelNumber;
+      unsigned short temp = currentLcn;
+      currentLcn = logicalChannelNumber;
+      logicalChannelNumber = temp;
+    }
+    if (serviceId != 49000 && wcscmp(lcnType, L"OpenTV") != 0)  // avoid spurious logging from unusual Sky UK channel "(sub b +1000)"
+    {
+      LogDebug(L"%s: %s logical channel number conflict, service ID = %hu, region ID = %hu, LCN = %hu, alternative LCN = %hu",
+                m_name, lcnType, serviceId, regionId, currentLcn,
+                logicalChannelNumber);
+    }
+  }
+}
+
 bool CParserNitDvb::DecodeExtensionDescriptors(unsigned char* sectionData,
                                                 unsigned short& pointer,
                                                 unsigned short endOfExtensionDescriptors,
@@ -3435,41 +3480,11 @@ bool CParserNitDvb::DecodeAlternativeLogicalChannelNumberDescriptor(unsigned cha
       //          m_name, serviceId, logicalChannelNumber);
 
       visibleInGuideFlags[serviceId] = true;
-
-      map<unsigned short, unsigned short>* serviceLcns = NULL;
-      map<unsigned short, map<unsigned short, unsigned short>*>::iterator it = logicalChannelNumbers.find(serviceId);
-      if (it == logicalChannelNumbers.end())
-      {
-        serviceLcns = new map<unsigned short, unsigned short>();
-        if (serviceLcns == NULL)
-        {
-          LogDebug(L"%s: failed to allocate map for service %hu's logical channel numbers",
-                    m_name, serviceId);
-          continue;
-        }
-        logicalChannelNumbers[serviceId] = serviceLcns;
-        (*serviceLcns)[REGION_ID_DEFAULT] = logicalChannelNumber;
-      }
-      else
-      {
-        unsigned short currentLcn = (*serviceLcns)[REGION_ID_DEFAULT];
-        if (currentLcn != 0 && logicalChannelNumber != 0 && currentLcn != logicalChannelNumber)
-        {
-          if (logicalChannelNumber < currentLcn)
-          {
-            (*serviceLcns)[REGION_ID_DEFAULT] = logicalChannelNumber;
-            unsigned short temp = currentLcn;
-            currentLcn = logicalChannelNumber;
-            logicalChannelNumber = temp;
-          }
-          LogDebug(L"%s: alternative logical channel number conflict, service ID = %hu, LCN = %hu, alternative LCN = %hu",
-                    m_name, serviceId, currentLcn, logicalChannelNumber);
-        }
-        else
-        {
-          (*serviceLcns)[REGION_ID_DEFAULT] = logicalChannelNumber;
-        }
-      }
+      AddLogicalChannelNumber(serviceId,
+                              REGION_ID_DEFAULT,
+                              logicalChannelNumber,
+                              L"alternative",
+                              logicalChannelNumbers);
     }
     return true;
   }
@@ -3533,40 +3548,11 @@ bool CParserNitDvb::DecodeLogicalChannelNumberDescriptor(unsigned char* data,
         visibleInGuideFlags[serviceId] |= visibleServiceFlag;
       }
 
-      map<unsigned short, unsigned short>* serviceLcns = NULL;
-      map<unsigned short, map<unsigned short, unsigned short>*>::iterator it = logicalChannelNumbers.find(serviceId);
-      if (it == logicalChannelNumbers.end())
-      {
-        serviceLcns = new map<unsigned short, unsigned short>();
-        if (serviceLcns == NULL)
-        {
-          LogDebug(L"%s: failed to allocate map for service %hu's logical channel numbers",
-                    m_name, serviceId);
-          continue;
-        }
-        logicalChannelNumbers[serviceId] = serviceLcns;
-        (*serviceLcns)[REGION_ID_DEFAULT] = logicalChannelNumber;
-      }
-      else
-      {
-        unsigned short currentLcn = (*serviceLcns)[REGION_ID_DEFAULT];
-        if (currentLcn != 0 && logicalChannelNumber != 0 && currentLcn != logicalChannelNumber)
-        {
-          if (logicalChannelNumber < currentLcn)
-          {
-            (*serviceLcns)[REGION_ID_DEFAULT] = logicalChannelNumber;
-            unsigned short temp = currentLcn;
-            currentLcn = logicalChannelNumber;
-            logicalChannelNumber = temp;
-          }
-          LogDebug(L"%s: logical channel number conflict, service ID = %hu, LCN = %hu, alternative LCN = %hu",
-                    m_name, serviceId, currentLcn, logicalChannelNumber);
-        }
-        else
-        {
-          (*serviceLcns)[REGION_ID_DEFAULT] = logicalChannelNumber;
-        }
-      }
+      AddLogicalChannelNumber(serviceId,
+                              REGION_ID_DEFAULT,
+                              logicalChannelNumber,
+                              L"de-facto",
+                              logicalChannelNumbers);
     }
     return true;
   }
@@ -3676,40 +3662,11 @@ bool CParserNitDvb::DecodeNorDigLogicalChannelDescriptorVersion2(unsigned char* 
           visibleInGuideFlags[serviceId] |= visibleServiceFlag;
         }
 
-        map<unsigned short, unsigned short>* serviceLcns = NULL;
-        map<unsigned short, map<unsigned short, unsigned short>*>::iterator it = logicalChannelNumbers.find(serviceId);
-        if (it == logicalChannelNumbers.end())
-        {
-          serviceLcns = new map<unsigned short, unsigned short>();
-          if (serviceLcns == NULL)
-          {
-            LogDebug(L"%s: failed to allocate map for service %hu's logical channel numbers",
-                      m_name, serviceId);
-            continue;
-          }
-          logicalChannelNumbers[serviceId] = serviceLcns;
-          (*serviceLcns)[REGION_ID_DEFAULT] = logicalChannelNumber;
-        }
-        else
-        {
-          unsigned short currentLcn = (*serviceLcns)[REGION_ID_DEFAULT];
-          if (currentLcn != 0 && logicalChannelNumber != 0 && currentLcn != logicalChannelNumber)
-          {
-            if (logicalChannelNumber < currentLcn)
-            {
-              (*serviceLcns)[REGION_ID_DEFAULT] = logicalChannelNumber;
-              unsigned short temp = currentLcn;
-              currentLcn = logicalChannelNumber;
-              logicalChannelNumber = temp;
-            }
-            LogDebug(L"%s: NorDig logical channel number conflict, service ID = %hu, LCN = %hu, alternative LCN = %hu",
-                      m_name, serviceId, currentLcn, logicalChannelNumber);
-          }
-          else
-          {
-            (*serviceLcns)[REGION_ID_DEFAULT] = logicalChannelNumber;
-          }
-        }
+        AddLogicalChannelNumber(serviceId,
+                                REGION_ID_DEFAULT,
+                                logicalChannelNumber,
+                                L"NorDig",
+                                logicalChannelNumbers);
 
         vector<unsigned char>* listIds = channelListIds[serviceId];
         if (listIds == NULL)
@@ -3785,43 +3742,11 @@ bool CParserNitDvb::DecodeOpenTvChannelDescriptor(unsigned char* data,
 
       channelIds[serviceId] = channelId;
 
-      map<unsigned short, unsigned short>* serviceLcns = NULL;
-      map<unsigned short, map<unsigned short, unsigned short>*>::iterator it = logicalChannelNumbers.find(serviceId);
-      if (it == logicalChannelNumbers.end())
-      {
-        serviceLcns = new map<unsigned short, unsigned short>();
-        if (serviceLcns == NULL)
-        {
-          LogDebug(L"%s: failed to allocate map for service %hu's logical channel numbers",
-                    m_name, serviceId);
-          continue;
-        }
-        logicalChannelNumbers[serviceId] = serviceLcns;
-        (*serviceLcns)[regionId] = logicalChannelNumber;
-      }
-      else
-      {
-        unsigned short currentLcn = (*serviceLcns)[REGION_ID_DEFAULT];
-        if (currentLcn != 0 && logicalChannelNumber != 0 && currentLcn != logicalChannelNumber)
-        {
-          if (logicalChannelNumber < currentLcn)
-          {
-            (*serviceLcns)[regionId] = logicalChannelNumber;
-            unsigned short temp = currentLcn;
-            currentLcn = logicalChannelNumber;
-            logicalChannelNumber = temp;
-          }
-          if (serviceId != 49000) // avoid spurious logging from unusual Sky UK channel "(sub b +1000)"
-          {
-            LogDebug(L"%s: OpenTV logical channel number conflict, service ID = %hu, LCN = %hu, alternative LCN = %hu",
-                      m_name, serviceId, currentLcn, logicalChannelNumber);
-          }
-        }
-        else
-        {
-          (*serviceLcns)[regionId] = logicalChannelNumber;
-        }
-      }
+      AddLogicalChannelNumber(serviceId,
+                              regionId,
+                              logicalChannelNumber,
+                              L"OpenTV",
+                              logicalChannelNumbers);
 
       vector<unsigned short>* channelRegionIds = regionIds[serviceId];
       if (channelRegionIds == NULL)
@@ -3925,46 +3850,17 @@ bool CParserNitDvb::DecodeFreesatChannelDescriptor(unsigned char* data,
           regionId == 0 ||      // "no region"
           regionId == 0x64 ||   // "bogus region"
           (flags & 4) == 0      // "invisible channel number"
-        ) {
+        )
+        {
           continue;
         }
 
         visibleInGuideFlags[serviceId] = true;
-
-        map<unsigned short, unsigned short>* serviceLcns = NULL;
-        map<unsigned short, map<unsigned short, unsigned short>*>::iterator it = logicalChannelNumbers.find(serviceId);
-        if (it == logicalChannelNumbers.end())
-        {
-          serviceLcns = new map<unsigned short, unsigned short>();
-          if (serviceLcns == NULL)
-          {
-            LogDebug(L"%s: failed to allocate map for service %hu's logical channel numbers",
-                      m_name, serviceId);
-            continue;
-          }
-          logicalChannelNumbers[serviceId] = serviceLcns;
-          (*serviceLcns)[regionId] = logicalChannelNumber;
-        }
-        else
-        {
-          unsigned short currentLcn = (*serviceLcns)[REGION_ID_DEFAULT];
-          if (currentLcn != 0 && logicalChannelNumber != 0 && currentLcn != logicalChannelNumber)
-          {
-            if (logicalChannelNumber < currentLcn)
-            {
-              (*serviceLcns)[regionId] = logicalChannelNumber;
-              unsigned short temp = currentLcn;
-              currentLcn = logicalChannelNumber;
-              logicalChannelNumber = temp;
-            }
-            LogDebug(L"%s: Freesat logical channel number conflict, service ID = %hu, LCN = %hu, alternative LCN = %hu",
-                      m_name, serviceId, currentLcn, logicalChannelNumber);
-          }
-          else
-          {
-            (*serviceLcns)[regionId] = logicalChannelNumber;
-          }
-        }
+        AddLogicalChannelNumber(serviceId,
+                                regionId,
+                                logicalChannelNumber,
+                                L"Freesat",
+                                logicalChannelNumbers);
 
         vector<unsigned short>* channelRegionIds = regionIds[serviceId];
         if (channelRegionIds == NULL)
