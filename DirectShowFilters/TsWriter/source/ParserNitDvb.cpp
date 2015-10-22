@@ -3307,13 +3307,7 @@ bool CParserNitDvb::DecodeFrequencyListDescriptor(unsigned char* data,
         frequency = DecodeTerrestrialFrequency(&data[pointer]);
       }
       //LogDebug(L"  %lu kHz", frequency);
-
-      vector<unsigned long>::const_iterator it = find(frequencies.begin(), frequencies.end(), frequency);
-      if (it == frequencies.end())
-      {
-        frequencies.push_back(frequency);
-      }
-
+      frequencies.push_back(frequency);
       pointer += 4;
     }
     return true;
@@ -3524,6 +3518,7 @@ bool CParserNitDvb::DecodeLogicalChannelNumberDescriptor(unsigned char* data,
   // the LCN.
   //
   // Private data specifiers (http://www.dvbservices.com/identifiers/private_data_spec_id?page=1):
+  // - Italy, Portugal DTT (EACEM - IEC/CENELEC 62 216 standard) = 0x28
   // - NorDig = 0x29
   // - Freeview NZ = 0x37
   // - Freeview UK = 0x233a
