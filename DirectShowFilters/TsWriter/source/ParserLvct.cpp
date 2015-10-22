@@ -771,7 +771,13 @@ bool CParserLvct::DecodeParameterizedServiceDescriptor(unsigned char* data,
     unsigned char applicationTag = data[0];
     //LogDebug(L"LVCT: parameterized service descriptor, application tag = %hhu",
     //          applicationTag);
-    isThreeDimensional = applicationTag == 1; // A/104 section 5.2
+    isThreeDimensional = applicationTag == 1; // A/104 part 1 section 5.2
+
+    // For application tag 1:
+    //unsigned char channelType = data[1] & 0x1f;
+    // 0 = frame compatible side by side
+    // 1 = frame compatible top and bottom
+    // 3/4/5/6 = service compatible
     return true;
   }
   catch (...)
@@ -833,7 +839,7 @@ bool CParserLvct::DecodeServiceLocationDescriptor(unsigned char* data,
           streamType == STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXH   // technically this could be multi-view, rather than 3D; can't tell without an MVC extension descriptor
         )
         {
-          isThreeDimensional = true;
+          isThreeDimensional = true;  // service compatible plano-stereoscopic
         }
         if (
           iso639LanguageCode != 0 &&
@@ -923,7 +929,7 @@ bool CParserLvct::DecodeComponentListDescriptor(unsigned char* data,
           streamType == STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXH   // technically this could be multi-view, rather than 3D; can't tell without an MVC extension descriptor
         )
         {
-          isThreeDimensional = true;
+          isThreeDimensional = true;  // service compatible
         }
       }
       else if (CPidTable::IsAudioStream(streamType))

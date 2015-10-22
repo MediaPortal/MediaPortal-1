@@ -611,7 +611,7 @@ void CGrabberPmt::CheckDescriptorsPidVideo(unsigned char* descriptors,
   {
     unsigned char tag = descriptors[offset++];
     unsigned char length = descriptors[offset++];
-    if (tag == DESCRIPTOR_VIDEO)    // ISO/IEC 13818 part 1
+    if (tag == DESCRIPTOR_VIDEO_STREAM)   // ISO/IEC 13818 part 1
     {
       if (length >= 2 && offset + 1 < descriptorsLength && (descriptors[offset] & 0x04) == 0)
       {
@@ -637,6 +637,10 @@ void CGrabberPmt::CheckDescriptorsPidVideo(unsigned char* descriptors,
       {
         // frame_packing_SEI_not_present_flag
         isThreeDimensionalVideo |= ((descriptors[offset + 3] & 0x20) == 0);   // frame compatible
+        // Technically the stream could be non-3D if the frame packing
+        // arrangement (FPA) supplemental enhancement information (SEI) message
+        // frame_packing_arrangement_cancel_flag is set. We have no access to
+        // that information.
       }
     }
     else if (tag == DESCRIPTOR_MVC_EXTENSION)   // ISO/IEC 13818 part 1
@@ -669,6 +673,18 @@ void CGrabberPmt::CheckDescriptorsPidVideo(unsigned char* descriptors,
     else if (tag == DESCRIPTOR_STEREOSCOPIC_VIDEO_INFO)   // ISO/IEC 13818 part 1
     {
       isThreeDimensionalVideo = true;   // service compatible
+    }
+    else if (tag == DESCRIPTOR_HEVC_VIDEO)    // ISO/IEC 13818 part 1
+    {
+      if (length >= 6 && offset + 5 < descriptorsLength)
+      {
+        // non_packed_constraint_flag
+        isThreeDimensionalVideo |= ((descriptors[offset + 5] & 0x20) == 0);   // frame compatible
+        // Technically the stream could be non-3D if the frame packing
+        // arrangement (FPA) supplemental enhancement information (SEI) message
+        // frame_packing_arrangement_cancel_flag is set. We have no access to
+        // that information.
+      }
     }
     else if (tag == DESCRIPTOR_ATSC_CAPTION_SERVICE)  // ATSC A/65 section 6.9.2
     {

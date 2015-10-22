@@ -27,7 +27,7 @@
 #define STREAM_TYPE_VIDEO_MPEG2_DCII                0x80  // DigiCipher II video (compatible with MPEG 2 part 2), used for some US cable and satellite streams
 #define STREAM_TYPE_SUBTITLES_SCTE                  0x82  // SCTE standard stream type defined in SCTE 27
 
-#define DESCRIPTOR_VIDEO                            0x02
+#define DESCRIPTOR_VIDEO_STREAM                     0x02
 #define DESCRIPTOR_REGISTRATION                     0x05
 #define DESCRIPTOR_CONDITIONAL_ACCESS               0x09
 #define DESCRIPTOR_ISO_639_LANG                     0x0a
@@ -36,6 +36,7 @@
 #define DESCRIPTOR_MPEG2_STEREOSCOPIC_VIDEO_FORMAT  0x34
 #define DESCRIPTOR_STEREOSCOPIC_PROGRAM_INFO        0x35
 #define DESCRIPTOR_STEREOSCOPIC_VIDEO_INFO          0x36
+#define DESCRIPTOR_HEVC_VIDEO                       0x38
 
 #define DESCRIPTOR_DVB_VBI_DATA                     0x45
 #define DESCRIPTOR_DVB_VBI_TELETEXT                 0x46

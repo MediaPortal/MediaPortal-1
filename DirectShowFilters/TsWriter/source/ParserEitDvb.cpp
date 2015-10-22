@@ -3078,22 +3078,23 @@ bool CParserEitDvb::DecodeComponentDescriptor(unsigned char* data,
     isStandardDefinition = false;
     isThreeDimensional = false;
 
+    unsigned char streamContentExt = data[0] >> 4;
     unsigned char streamContent = data[0] & 0x0f;
     unsigned char componentType = data[1];
     unsigned char componentTag = data[2];
     unsigned long iso639LanguageCode = data[3] | (data[4] << 8) | (data[5] << 16);
     // (component description not read)
-    //LogDebug(L"EIT DVB: component descriptor, stream content = %hhu, component type = %hhu, component tag = %hhu, language = %S",
-    //          streamContent, componentType, componentTag,
+    //LogDebug(L"EIT DVB: component descriptor, stream content = %hhu, stream content extension = %hhu, component type = %hhu, component tag = %hhu, language = %S",
+    //          streamContent, streamContentExt, componentType, componentTag,
     //          (char*)&iso639LanguageCode);
 
-    if (streamContent == 1 || streamContent == 5)
+    if (streamContent == 1 || streamContent == 5 || (streamContent == 9 && streamContentExt == 0))
     {
-      if (componentType >= 1 && componentType <= 8)
+      if (streamContent != 9 && componentType >= 1 && componentType <= 8)
       {
         isStandardDefinition = true;
       }
-      else if (componentType >= 0x09 && componentType <= 0x10)
+      else if (streamContent == 9 || (componentType >= 0x09 && componentType <= 0x10))
       {
         isHighDefinition = true;
       }
@@ -3102,6 +3103,7 @@ bool CParserEitDvb::DecodeComponentDescriptor(unsigned char* data,
         if (componentType >= 0x80 && componentType <= 0x83)
         {
           // frame compatible plano-stereoscopic
+          // 0x80/0x82 = side by side; 0x81/0x83 = top and bottom
           isHighDefinition = true;
           isThreeDimensional = true;
         }
@@ -3112,7 +3114,13 @@ bool CParserEitDvb::DecodeComponentDescriptor(unsigned char* data,
         }
       }
     }
-    else if (streamContent == 2 || streamContent == 4 || streamContent == 6 || streamContent == 7)
+    else if (
+      streamContent == 2 ||
+      streamContent == 4 ||
+      (streamContent == 6 && componentType != 0xa0) ||
+      streamContent == 7 ||
+      (streamContent == 9 && streamContentExt == 1)
+    )
     {
       isAudio = true;
       language = iso639LanguageCode;
@@ -3128,6 +3136,11 @@ bool CParserEitDvb::DecodeComponentDescriptor(unsigned char* data,
     {
       isSubtitles = true;
       language = iso639LanguageCode;
+    }
+    else if (streamContent == 0xb && streamContentExt == 0xf && componentType == 3)
+    {
+      // frame compatible plano-stereoscopic top and bottom
+      isThreeDimensional = true;
     }
     return true;
   }

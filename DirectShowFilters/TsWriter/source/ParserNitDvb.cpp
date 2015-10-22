@@ -2269,8 +2269,14 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(unsigned char* sectionData,
         }
       }
       else if (
-        tag == 0x83 ||      // NorDig [default] logical channel number descriptor [PDS ID = 0x29, 0x37, 0x3200 - 0x320f]
-        (tag == 0x88 && privateDataSpecifier == 0x28)         // HD simulcast logical channel number descriptor
+        tag == 0x83 ||      // NorDig logical channel number descriptor - used too widely and loosely to apply PDS/PDI filtering
+        (
+          tag == 0x88 &&    // HD simulcast logical channel number descriptor
+          (
+            privateDataSpecifier == 0x28 ||   // IEC/CENELEC 62 216 standard
+            privateDataSpecifier == 0x233a    // Freeview UK
+          )
+        )
       )
       {
         result = DecodeLogicalChannelNumberDescriptor(&sectionData[pointer],
@@ -3519,8 +3525,9 @@ bool CParserNitDvb::DecodeLogicalChannelNumberDescriptor(unsigned char* data,
   //
   // Private data specifiers (http://www.dvbservices.com/identifiers/private_data_spec_id?page=1):
   // - NorDig = 0x29
-  // - Yousee = 0x31
   // - Freeview NZ = 0x37
+  // - Freeview UK = 0x233a
+  // - Freeview AU = 0x3200 - 0x320f
   if (dataLength == 0 || dataLength % 4 != 0)
   {
     LogDebug(L"%s: invalid logical channel number descriptor, length = %hhu",
