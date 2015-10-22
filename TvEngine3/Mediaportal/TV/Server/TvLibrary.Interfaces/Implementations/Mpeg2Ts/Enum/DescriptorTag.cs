@@ -67,7 +67,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// <summary>
     /// MPEG ISO 639 language descriptor
     /// </summary>
-    Iso639Language,
+    Iso639Language,   // 10
     /// <summary>
     /// MPEG system clock descriptor
     /// </summary>
@@ -80,6 +80,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// MPEG copyright descriptor
     /// </summary>
     Copyright,
+    /// <summary>
+    /// MPEG maximum bitrate descriptor
+    /// </summary>
+    MaximumBitRateDescriptor,
     /// <summary>
     /// MPEG private data descriptor
     /// </summary>
@@ -95,7 +99,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// <summary>
     /// MPEG IBP descriptor
     /// </summary>
-    Ibp,
+    Ibp,              // 18
 
     // 19 - 26 defined in ISO/IEC 13818-6
 
@@ -114,7 +118,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// <summary>
     /// MPEG SL descriptor
     /// </summary>
-    Sl,
+    Sl,               // 30
     /// <summary>
     /// MPEG FMC descriptor
     /// </summary>
@@ -154,7 +158,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// <summary>
     /// MPEG AVC video descriptor
     /// </summary>
-    AvcVideo,
+    AvcVideo,         // 40
     /// <summary>
     /// MPEG IPMP descriptor
     /// </summary>
@@ -194,7 +198,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// <summary>
     /// MPEG J2K video descriptor
     /// </summary>
-    J2kVideo,
+    J2kVideo,         // 50
     /// <summary>
     /// MPEG MVC operation point descriptor
     /// </summary>
@@ -211,8 +215,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// MPEG stereoscopic video info descriptor
     /// </summary>
     StereoscopicVideoInfo,
+    /// <summary>
+    /// MPEG transport profile descriptor
+    /// </summary>
+    TransportProfile,
+    /// <summary>
+    /// HEVC video descriptor
+    /// </summary>
+    HevcVideo,        // 56
 
-    // 55 - 63 ITU-T Rec. H.222.0 | ISO/IEC 13818-1 reserved
+    // 57 - 62 ITU-T Rec. H.222.0 | ISO/IEC 13818-1 reserved
+
+    /// <summary>
+    /// MPEG extension descriptor
+    /// </summary>
+    MpegExtension = 63,
 
     #endregion
 
@@ -285,7 +302,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// <summary>
     /// DVB component descriptor
     /// </summary>
-    Component,
+    Component,        // 0x50
     /// <summary>
     /// DVB mosaic descriptor
     /// </summary>
@@ -349,7 +366,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// <summary>
     /// DVB service move descriptor
     /// </summary>
-    ServiceMove,
+    ServiceMove,      // 0x60
     /// <summary>
     /// DVB short smoothing buffer descriptor
     /// </summary>
@@ -411,9 +428,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// </summary>
     ApplicationSignalling,
     /// <summary>
-    /// DVB adaption field data descriptor
+    /// DVB adaptation field data descriptor
     /// </summary>
-    AdaptionFieldData,
+    AdaptationFieldData,  // 0x70
     /// <summary>
     /// DVB service identifier descriptor
     /// </summary>
@@ -473,7 +490,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// <summary>
     /// DVB extension descriptor
     /// </summary>
-    Extension,
+    DvbExtension,     // 0x7f
 
     #endregion
 
@@ -488,11 +505,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// <summary>
     /// ATSC Advanced Common Application Platform location descriptor
     /// </summary>
-    AcapXApplicationLocation = 0x61,
+    AcapXApplicationLocation,
     /// <summary>
     /// ATSC Advanced Common Application Platform boundary descriptor
     /// </summary>
-    AcapXApplicationBoundary = 0x62,
+    AcapXApplicationBoundary,
 
     #endregion
 
@@ -503,43 +520,43 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// <summary>
     /// ATSC AC3 audio descriptor
     /// </summary>
-    Ac3Audio = 0x81,
+    Ac3Audio,
     /// <summary>
     /// SCTE frame rate descriptor
     /// </summary>
-    FrameRate = 0x82,
+    FrameRate,
     /// <summary>
     /// SCTE extended video descriptor
     /// </summary>
-    ExtendedVideo = 0x83,
+    ExtendedVideo,
     /// <summary>
     /// SCTE component name descriptor
     /// </summary>
-    ScteComponentName = 0x84,
+    ScteComponentName,
     /// <summary>
     /// ATSC program identifier descriptor
     /// </summary>
-    ProgramIdentifier = 0x85,
+    ProgramIdentifier,
     /// <summary>
     /// ATSC caption service descriptor
     /// </summary>
-    CaptionService = 0x86,
+    CaptionService,
     /// <summary>
     /// ATSC content advisory descriptor
     /// </summary>
-    ContentAdvisory = 0x87,
+    ContentAdvisory,
     /// <summary>
     /// ATSC conditional access descriptor
     /// </summary>
-    AtscConditionalAccess = 0x88,
+    AtscConditionalAccess,
     /// <summary>
     /// ATSC descriptor descriptor
     /// </summary>
-    Descriptor = 0x89,
+    Descriptor,
     /// <summary>
     /// SCTE cue identifier descriptor
     /// </summary>
-    CueIdentifier = 0x8a,
+    CueIdentifier,    // 0x8a
 
     // 0x8b reserved
 
@@ -562,38 +579,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// <summary>
     /// SCTE frequency spec descriptor
     /// </summary>
-    FrequencySpec = 0x90,
+    FrequencySpec,    // 0x90
     /// <summary>
     /// SCTE modulation params descriptor
     /// </summary>
-    ModulationParams = 0x91,
+    ModulationParams,
     /// <summary>
     /// SCTE transport stream ID descriptor
     /// </summary>
-    TransportStreamId = 0x92,
+    TransportStreamId,
 
     #region SCTE 65, ATSC A/65
 
     /// <summary>
     /// SCTE revision detection descriptor
     /// </summary>
-    RevisionDetection = 0x93,
+    RevisionDetection,  // 0x93
     /// <summary>
     /// SCTE two part channel number descriptor
     /// </summary>
-    TwoPartChannelNumber = 0x94,
+    TwoPartChannelNumber,
     /// <summary>
     /// SCTE channel properties descriptor
     /// </summary>
-    ChannelProperties = 0x95,
+    ChannelProperties,
     /// <summary>
     /// SCTE daylight savings time descriptor
     /// </summary>
-    DaylightSavingsTime = 0x96,
+    DaylightSavingsTime,
     /// <summary>
     /// SCTE adaption field data descriptor
     /// </summary>
-    ScteAdaptionFieldData = 0x97,
+    ScteAdaptionFieldData,  // 0x97
 
     // 0x98 - 0x9f reserved
 
@@ -604,15 +621,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// <summary>
     /// ATSC service location descriptor
     /// </summary>
-    ServiceLocation = 0xa1,
+    ServiceLocation,
     /// <summary>
     /// ATSC time shifted service descriptor
     /// </summary>
-    AtscTimeShiftedService = 0xa2,
+    AtscTimeShiftedService,
     /// <summary>
     /// ATSC component name descriptor
     /// </summary>
-    AtscComponentName = 0xa3,
+    AtscComponentName,
 
     #endregion
 
@@ -621,19 +638,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// <summary>
     /// ATSC data service descriptor
     /// </summary>
-    DataService = 0xa4,
+    DataService,      // 0xa4
     /// <summary>
     /// ATSC PID count descriptor
     /// </summary>
-    PidCount = 0xa5,
+    PidCount,
     /// <summary>
     /// ATSC download descriptor
     /// </summary>
-    Download = 0xa6,
+    Download,
     /// <summary>
     /// ATSC multiprotocol encapsulation descriptor
     /// </summary>
-    MultiprotocolEncapsulation = 0xa7,
+    MultiprotocolEncapsulation,
 
     #endregion
 
@@ -642,119 +659,119 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// <summary>
     /// ATSC Directed Channel Change departing request descriptor
     /// </summary>
-    DccDepartingRequest = 0xa8,
+    DccDepartingRequest,  // 0xa8
     /// <summary>
     /// ATSC Directed Channel Change arriving request descriptor
     /// </summary>
-    DccArrivingRequest = 0xa9,
+    DccArrivingRequest,
     /// <summary>
     /// ATSC redistribution control descriptor
     /// </summary>
-    Rc = 0xaa,
+    Rc,
     /// <summary>
     /// ATSC genre descriptor
     /// </summary>
-    Genre = 0xab,
+    Genre,
 
     #endregion
 
     /// <summary>
     /// SCTE MAC address list descriptor
     /// </summary>
-    MacAddressList = 0xac,
+    MacAddressList,   // 0xac
     /// <summary>
     /// ATSC private information descriptor
     /// </summary>
-    PrivateInformation = 0xad,
+    PrivateInformation,
 
     #region ATSC A/94
 
     /// <summary>
     /// ATSC compatibility wrapper descriptor
     /// </summary>
-    CompatibilityWrapper = 0xae,
+    CompatibilityWrapper, // 0xae
     /// <summary>
     /// ATSC broadcaster policy descriptor
     /// </summary>
-    BroadcasterPolicy = 0xaf,
+    BroadcasterPolicy,
     /// <summary>
     /// ATSC service name descriptor
     /// </summary>
-    ServiceName = 0xb0,
+    ServiceName,
     /// <summary>
     /// ATSC URI descriptor
     /// </summary>
-    Uri = 0xb1,
+    Uri,
 
     #endregion
 
     /// <summary>
     /// ATSC enhanced signalling descriptor
     /// </summary>
-    EnhancedSignalling = 0xb2,
+    EnhancedSignalling, // 0xb2
     /// <summary>
     /// ATSC string mapping descriptor
     /// </summary>
-    StringMapping = 0xb3,
+    StringMapping,
     /// <summary>
     /// ATSC module link descriptor
     /// </summary>
-    ModuleLink = 0xb4,
+    ModuleLink,
     /// <summary>
     /// ATSC CRC32 descriptor
     /// </summary>
-    Crc32 = 0xb5,
+    Crc32,
     /// <summary>
     /// ATSC content identifier descriptor
     /// </summary>
-    AtscContentIdentifier = 0xb6,
+    AtscContentIdentifier,
     /// <summary>
     /// ATSC module info descriptor
     /// </summary>
-    ModuleInfo = 0xb7,
+    ModuleInfo,
     /// <summary>
     /// ATSC group link descriptor
     /// </summary>
-    GroupLink = 0xb8,
+    GroupLink,
     /// <summary>
     /// ATSC timestamp descriptor
     /// </summary>
-    AtscTimeStamp = 0xb9,
+    AtscTimeStamp,
     /// <summary>
     /// ATSC schedule descriptor
     /// </summary>
-    Schedule = 0xba,
+    Schedule,
     /// <summary>
     /// ATSC component list descriptor
     /// </summary>
-    ComponentList = 0xbb,
+    ComponentList,    // 0xbb
 
     #region ATSC M/H A/153 part 3
 
     /// <summary>
     /// ATSC M/H component descriptor
     /// </summary>
-    AtscMhComponent = 0xbc,
+    AtscMhComponent,  // 0xbc
     /// <summary>
     /// ATSC M/H rights issuer descriptor
     /// </summary>
-    RightsIssuer = 0xbd,
+    RightsIssuer,
     /// <summary>
     /// ATSC M/H current program descriptor
     /// </summary>
-    CurrentProgram = 0xbe,
+    CurrentProgram,
     /// <summary>
     /// ATSC M/H original service identification descriptor
     /// </summary>
-    OriginalServiceIdentification = 0xbf,
+    OriginalServiceIdentification,
     /// <summary>
     /// ATSC M/H protection descriptor
     /// </summary>
-    Protection = 0xc0,
+    Protection,       // 0xc0
     /// <summary>
     /// ATSC M/H SG bootstrap descriptor
     /// </summary>
-    MhSgBootstrap = 0xc1,
+    MhSgBootstrap,
 
     #endregion
 
@@ -763,58 +780,58 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// <summary>
     /// ATSC service ID descriptor
     /// </summary>
-    ServiceId = 0xc2,
+    ServiceId,        // 0xc2
     /// <summary>
     /// ATSC protocol version descriptor
     /// </summary>
-    ProtocolVersion = 0xc3,
+    ProtocolVersion,
     /// <summary>
     /// ATSC Non Real Time service descriptor
     /// </summary>
-    NrtService = 0xc4,
+    NrtService,
     /// <summary>
     /// ATSC capabilities descriptor
     /// </summary>
-    Capabilities = 0xc5,
+    Capabilities,
     /// <summary>
     /// ATSC icon descriptor
     /// </summary>
-    Icon = 0xc6,
+    Icon,
     /// <summary>
     /// ATSC receiver targeting descriptor
     /// </summary>
-    ReceiverTargeting = 0xc7,
+    ReceiverTargeting,
     /// <summary>
     /// ATSC time slot descriptor
     /// </summary>
-    TimeSlot = 0xc8,
+    TimeSlot,
     /// <summary>
     /// ATSC internet location descriptor
     /// </summary>
-    InternetLocation = 0xc9,
+    InternetLocation,
     /// <summary>
     /// ATSC associated service descriptor
     /// </summary>
-    AssociatedService = 0xca,
+    AssociatedService,
     /// <summary>
     /// ATSC eye identification descriptor
     /// </summary>
-    EyeIdentification = 0xcb,
+    EyeIdentification,  // 0xcb
 
     #endregion
 
     /// <summary>
     /// ATSC enhanced AC-3 descriptor
     /// </summary>
-    Eac3 = 0xcc,
+    Eac3,             // 0xcc
     /// <summary>
     /// ATSC 2D 3D corresponding content descriptor
     /// </summary>
-    CorrespondingContent = 0xcd,
+    CorrespondingContent,
     /// <summary>
     /// ATSC multimedia EPG linkage descriptor
     /// </summary>
-    MultimediaEpgLinkage = 0xce,
+    MultimediaEpgLinkage, // 0xce
 
     // 0xe0 - 0xe9 CableLabs
 
@@ -825,11 +842,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// <summary>
     /// ATSC IC3D event info descriptor
     /// </summary>
-    Ic3dEventInfo = 0xeb,
+    Ic3dEventInfo,
     /// <summary>
     /// ATSC MDTV hybrid stereoscopic service descriptor
     /// </summary>
-    MdtvHybridStereoscopicService = 0xec
+    MdtvHybridStereoscopicService
 
     #endregion
   }

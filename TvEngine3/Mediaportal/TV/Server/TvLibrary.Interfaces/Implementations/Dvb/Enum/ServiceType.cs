@@ -34,31 +34,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum
     /// <summary>
     /// digital radio sound service
     /// </summary>
-    DigitalRadio = 0x02,
+    DigitalRadio,
     /// <summary>
     /// teletext service
     /// </summary>
-    Teletext = 0x03,
+    Teletext,
     /// <summary>
     /// near video on demand reference service
     /// </summary>
-    NvodReference = 0x04,
+    NvodReference,
     /// <summary>
     /// near video on demand time-shifted service
     /// </summary>
-    NvodTimeShifted = 0x05,
+    NvodTimeShifted,
     /// <summary>
     /// mosaic service
     /// </summary>
-    Mosaic = 0x06,
+    Mosaic,
     /// <summary>
     /// frequency modulated radio service
     /// </summary>
-    FmRadio = 0x07,
+    FmRadio,
     /// <summary>
     /// DVB system renewability messages service
     /// </summary>
-    DvbSrm = 0x08,
+    DvbSrm,           // 0x08
 
     // (0x09 reserved)
 
@@ -69,11 +69,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum
     /// <summary>
     /// advanced codec mosaic service
     /// </summary>
-    AdvancedCodecMosaic = 0x0b,
+    AdvancedCodecMosaic,
     /// <summary>
     /// data broadcast service
     /// </summary>
-    DataBroadcast = 0x0c,
+    DataBroadcast,    // 0x0c
 
     // (0x0d reserved for common interface use)
 
@@ -85,15 +85,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum
     /// <summary>
     /// return channel via satellite forward link signalling
     /// </summary>
-    RcsFls = 0x0f,
+    RcsFls,
     /// <summary>
     /// DVB multimedia home platform service
     /// </summary>
-    DvbMhp = 0x10,
+    DvbMhp,           // 0x10
     /// <summary>
     /// MPEG 2 high definition digital television service
     /// </summary>
-    Mpeg2HdDigitalTelevision = 0x11,
+    Mpeg2HdDigitalTelevision,
 
     // (0x12 to 0x15 reserved)
 
@@ -104,37 +104,41 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum
     /// <summary>
     /// advanced codec standard definition near video on demand time-shifted service
     /// </summary>
-    AdvancedCodecSdNvodTimeShifted = 0x17,
+    AdvancedCodecSdNvodTimeShifted,
     /// <summary>
     /// advanced codec standard definition near video on demand reference service
     /// </summary>
-    AdvancedCodecSdNvodReference = 0x18,
+    AdvancedCodecSdNvodReference,
     /// <summary>
     /// advanced codec high definition digital television
     /// </summary>
-    AdvancedCodecHdDigitalTelevision = 0x19,
+    AdvancedCodecHdDigitalTelevision,
     /// <summary>
     /// advanced codec high definition near video on demand time-shifted service
     /// </summary>
-    AdvancedCodecHdNvodTimeShifted = 0x1a,
+    AdvancedCodecHdNvodTimeShifted,
     /// <summary>
     /// advanced codec high definition near video on demand reference service
     /// </summary>
-    AdvancedCodecHdNvodReference = 0x1b,
+    AdvancedCodecHdNvodReference,
     /// <summary>
     /// advanced codec frame compatible plano-stereoscopic high definition digital television service
     /// </summary>
-    AdvancedCodecFrameCompatiblePlanoStereoscopicHdDigitalTelevision = 0x1c,
+    AdvancedCodecFrameCompatiblePlanoStereoscopicHdDigitalTelevision,
     /// <summary>
     /// advanced codec frame compatible plano-stereoscopic high definition near video on demand time-shifted service
     /// </summary>
-    AdvancedCodecFrameCompatiblePlanoStereoscopicHdNvodTimeShifted = 0x1d,
+    AdvancedCodecFrameCompatiblePlanoStereoscopicHdNvodTimeShifted,
     /// <summary>
     /// advanced codec frame compatible plano-stereoscopic high definition near video on demand reference service
     /// </summary>
-    AdvancedCodecFrameCompatiblePlanoStereoscopicHdNvodReference = 0x1e,
+    AdvancedCodecFrameCompatiblePlanoStereoscopicHdNvodReference,
+    /// <summary>
+    /// HEVC digital television service
+    /// </summary>
+    HevcDigitalTelevision,  // 0x1f
 
-    // (0x1c to 0x7f reserved)
+    // (0x20 to 0x7f reserved)
     // (0x80 to 0xfe user defined)
 
     /// <summary>
