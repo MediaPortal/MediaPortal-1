@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8"-->
+<window>
+  <id>58963</id>
+  <defaultcontrol>67</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <skin>
+    <width>2880</width>
+    <height>1620</height>
+  </skin>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+    <control>
+      <description>picture 1</description>
+      <type>image</type>
+      <id>67</id>
+    </control>
+    <control>
+      <description>picture 1 date</description>
+      <type>label</type>
+      <id>671</id>
+      <align>center</align>
+      <valign>middle</valign>
+      <label>#plot</label>
+    </control>
+    <control>
+      <description>picture 2</description>
+      <type>image</type>
+      <id>68</id>
+    </control>
+    <control>
+      <description>picture 2 date</description>
+      <type>label</type>
+      <id>681</id>
+      <align>center</align>
+      <valign>middle</valign>
+      <label>#plot</label>
+    </control>
+    <control>
+      <description>picture 3</description>
+      <type>image</type>
+      <id>69</id>
+    </control>
+    <control>
+      <description>picture 3 date</description>
+      <type>label</type>
+      <id>691</id>
+      <align>center</align>
+      <valign>middle</valign>
+      <label>#plot</label>
+    </control>
+    <control>
+      <description>picture 4</description>
+      <type>image</type>
+      <id>70</id>
+    </control>
+    <control>
+      <description>picture 4 date</description>
+      <type>label</type>
+      <id>701</id>
+      <align>center</align>
+      <valign>middle</valign>
+      <label>#plot</label>
+    </control>
+    <control>
+      <description>picture 5</description>
+      <type>image</type>
+      <id>71</id>
+    </control>
+    <control>
+      <description>picture 5 date</description>
+      <type>label</type>
+      <id>711</id>
+      <align>center</align>
+      <valign>middle</valign>
+      <label>#plot</label>
+    </control>
+    <control>
+      <description>picture 6</description>
+      <type>image</type>
+      <id>72</id>
+    </control>
+    <control>
+      <description>picture 6 date</description>
+      <type>label</type>
+      <id>721</id>
+      <align>center</align>
+      <valign>middle</valign>
+      <label>#plot</label>
+    </control>
+    <control>
+      <description>picture 7</description>
+      <type>image</type>
+      <id>73</id>
+    </control>
+    <control>
+      <description>picture 7 date</description>
+      <type>label</type>
+      <id>731</id>
+      <align>center</align>
+      <valign>middle</valign>
+      <label>#plot</label>
+    </control>
+    <control>
+      <description>picture 8</description>
+      <type>image</type>
+      <id>74</id>
+    </control>
+    <control>
+      <description>picture 8 date</description>
+      <type>label</type>
+      <id>741</id>
+      <align>center</align>
+      <valign>middle</valign>
+      <label>#plot</label>
+    </control>
+    <!--<control>
+      <description>text label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>250</posX>
+      <posY>70</posY>
+      <label>Some text</label>
+      <font>font16</font>
+      <align>right</align>
+      <textcolor>ffffffff</textcolor>
+    </control>
+
+    <control>
+      <description>Try Me</description>
+      <type>button</type>
+      <id>2</id>
+      <posX>60</posX>
+      <posY>97</posY>
+      <label>Try Me</label>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <onup>2</onup>
+      <ondown>3</ondown>
+    </control>
+    <control>
+      <description>Or Me</description>
+      <type>button</type>
+      <id>3</id>
+      <posX>60</posX>
+      <posY>131</posY>
+      <label>Or Me</label>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <onup>2</onup>
+      <ondown>2</ondown>
+    </control>-->
+  </controls>
+</window>

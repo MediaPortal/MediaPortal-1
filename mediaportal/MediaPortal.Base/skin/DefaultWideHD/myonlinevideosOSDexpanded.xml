@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <controls>
+    <!--#################   THIS IS THE EXPANDING OSD BACKGROUND     ##################-->
+    <control>
+      <description>background top</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>469</posY>
+      <width>1935</width>
+      <height>750</height>
+      <texture>blue.png</texture>
+      <visible>Control.HasFocus(1237)</visible>
+      <colordiffuse>eeffffff</colordiffuse>
+      <!--animation effect="slide" start="0,-500" end="0,0" time="50" reversible="false">visible</animation-->
+    </control>
+    <!--###################     HERE ARE THE DISPLAYED OSD DATA    ###################################-->
+    <control>
+      <description>Current Time Info</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>105</posX>
+      <posY>555</posY>
+      <label>#currentplaytime</label>
+      <align>left</align>
+      <font>font14</font>
+      <textcolor>ffffffff</textcolor>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>285</posX>
+      <posY>564</posY>
+      <width>892</width>
+      <height>40</height>
+      <texture>osd_progress_background.png</texture>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>TV Progress Bar</description>
+      <type>tvprogress</type>
+      <id>1</id>
+      <posX>288</posX>
+      <posY>570</posY>
+      <width>877</width>
+      <height>30</height>
+      <toptexture>osd_progress_indicator.png</toptexture>
+      <TextureOffsetY>33</TextureOffsetY>
+      <bottomtexture>-</bottomtexture>
+      <texturetick>-</texturetick>
+      <lefttexture>-</lefttexture>
+      <midtexture>-</midtexture>
+      <righttexture>-</righttexture>
+      <logotexture>-</logotexture>
+      <fillbackgroundtexture>-</fillbackgroundtexture>
+      <fillbgxoff>0</fillbgxoff>
+      <fillbgyoff>0</fillbgyoff>
+      <filltexture1>osd_progress_mid.png</filltexture1>
+      <filltexture2>osd_progress_mid_red.png</filltexture2>
+      <filltexture3>osd_progress_mid_orange.png</filltexture3>
+      <fillheight>30</fillheight>
+      <label>#percentage</label>
+      <!-- #TV.Record.percent1 -->
+      <label1>#percentage</label1>
+      <!-- #TV.Record.percent2 -->
+      <label2>#TV.Record.percent3</label2>
+      <font>font13</font>
+      <textcolor>FF000000</textcolor>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Current Time Info</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1215</posX>
+      <posY>555</posY>
+      <label>#currentremaining</label>
+      <align>left</align>
+      <font>font14</font>
+      <textcolor>ffffffff</textcolor>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>horizontal divider</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>105</posX>
+      <posY>630</posY>
+      <height>1</height>
+      <width>1755</width>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Plot</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>105</posX>
+      <posY>652</posY>
+      <width>1425</width>
+      <height>300</height>
+      <align>left</align>
+      <label>#Play.Current.Plot</label>
+      <seperator>⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅	⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅	⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅</seperator>
+      <font>font11</font>
+      <textcolor>white</textcolor>
+      <visible>control.hasfocus(1237)</visible>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+    </control>
+    <control>
+      <description>Movie Name</description>
+      <id>1</id>
+      <type>fadelabel</type>
+      <width>1155</width>
+      <height>45</height>
+      <posX>105</posX>
+      <posY>486</posY>
+      <align>left</align>
+      <label>#Play.Current.Title</label>
+      <font>font14</font>
+      <textcolor>ivory</textcolor>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Movie thumb</description>
+      <type>image</type>
+      <id>102</id>
+      <posX>1620</posX>
+      <posY>652</posY>
+      <texture>#Play.Current.Thumb</texture>
+      <height>360</height>
+      <width>240</width>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>vertical divider</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1410</posX>
+      <posY>487</posY>
+      <height>120</height>
+      <width>1</width>
+      <texture>slider_vertical.png</texture>
+      <colordiffuse>90ffffff</colordiffuse>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Time Info</description>
+      <type>label</type>
+      <id>110</id>
+      <posX>1875</posX>
+      <posY>486</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font14</font>
+      <textcolor>ivory</textcolor>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>site Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1432</posX>
+      <posY>487</posY>
+      <height>120</height>
+      <width>120</width>
+      <texture>#Play.Current.OnlineVideos.SiteIcon</texture>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+  </controls>
+</window>

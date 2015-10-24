@@ -1,0 +1,220 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<!--
+Contains Music and Video Overlay
+not visible in filmstripview, but visible in details view
+-->
+<window>
+  <controls>
+    <!--                                    :: DUMMY / BACKGROUND ::                                    -->
+    <control>
+      <description>dummy (visible when music is playing)</description>
+      <type>label</type>
+      <id>3337</id>
+      <posX>3000</posX>
+      <label>#Play.Current.Album</label>
+      <visible>player.hasmedia+control.hastext(3337)</visible>
+    </control>
+    <control>
+      <description>dummy (visible when there is a next track)</description>
+      <type>label</type>
+      <id>3338</id>
+      <posX>2700</posX>
+      <label>#Play.Next.Title</label>
+      <visible>player.hasmedia+control.hastext(3338)</visible>
+    </control>
+    <control>
+      <description>dialog bg</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>90</posY>
+      <width>768</width>
+      <height>228</height>
+      <texture>dialogprogressbg.png</texture>
+      <visible>player.hasmedia+[!facadeview.filmstrip|!control.isvisible(50)]</visible>
+    </control>
+    <!--                                    :: MUSIC OVERLAY ::                                    -->
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>27</posX>
+      <posY>117</posY>
+      <width>171</width>
+      <height>171</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <zoom>no</zoom>
+      <texture>#Play.Current.Thumb</texture>
+      <visible>player.hasmedia+[!facadeview.filmstrip|!control.isvisible(50)]+control.isvisible(3337)</visible>
+    </control>
+    <control>
+      <description>artist info label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <width>510</width>
+      <height>60</height>
+      <posX>214</posX>
+      <posY>120</posY>
+      <label>#Play.Current.Artist</label>
+      <textcolor>FFFFFFFF</textcolor>
+      <font>font12</font>
+      <visible>player.hasmedia+[!facadeview.filmstrip|!control.isvisible(50)]+control.isvisible(3337)</visible>
+    </control>
+    <control>
+      <description>title info label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <width>510</width>
+      <height>60</height>
+      <posX>214</posX>
+      <posY>156</posY>
+      <label>#Play.Current.Title</label>
+      <textcolor>FFFFFFFF</textcolor>
+      <font>font10</font>
+      <visible>player.hasmedia+[!facadeview.filmstrip|!control.isvisible(50)]+control.isvisible(3337)</visible>
+    </control>
+    <control>
+      <description>album info label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <width>510</width>
+      <height>60</height>
+      <posX>214</posX>
+      <posY>184</posY>
+      <label>#Play.Current.Album</label>
+      <textcolor>FFFFFFFF</textcolor>
+      <font>font10</font>
+      <visible>player.hasmedia+[!facadeview.filmstrip|!control.isvisible(50)]+control.isvisible(3337)</visible>
+    </control>
+    <control>
+      <description>play time / duration label</description>
+      <type>label</type>
+      <id>0</id>
+      <width>510</width>
+      <height>60</height>
+      <posX>214</posX>
+      <posY>211</posY>
+      <label>#currentplaytime / #duration</label>
+      <textcolor>FFFFFFFF</textcolor>
+      <font>font10</font>
+      <visible>player.hasmedia+[!facadeview.filmstrip|!control.isvisible(50)]+control.isvisible(3337)</visible>
+    </control>
+    <control>
+      <description>next song label</description>
+      <type>label</type>
+      <id>0</id>
+      <width>63</width>
+      <height>60</height>
+      <posX>214</posX>
+      <posY>250</posY>
+      <label>Next:</label>
+      <textcolor>FF025984</textcolor>
+      <font>font10</font>
+      <visible>player.hasmedia+[!facadeview.filmstrip|!control.isvisible(50)]+control.isvisible(3337)+control.isvisible(3338)</visible>
+    </control>
+    <control>
+      <description>next song info label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>274</posX>
+      <posY>250</posY>
+      <width>450</width>
+      <height>60</height>
+      <label>#Play.Next.Title by #Play.Next.Artist</label>
+      <textcolor>FF999999</textcolor>
+      <font>font10</font>
+      <visible>player.hasmedia+[!facadeview.filmstrip|!control.isvisible(50)]+control.isvisible(3337)+control.isvisible(3338)</visible>
+    </control>
+    <!--                                    :: VIDEO OVERLAY ::                                    -->
+    <control>
+      <description>video preview window BACKGROUND</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>27</posX>
+      <posY>117</posY>
+      <width>304</width>
+      <height>171</height>
+      <texture>-</texture>
+      <visible>player.hasmedia+[!facadeview.filmstrip|!control.isvisible(50)]+!control.isvisible(3337)</visible>
+    </control>
+    <control>
+      <description>video preview window</description>
+      <type>videowindow</type>
+      <id>0</id>
+      <posX>27</posX>
+      <posY>117</posY>
+      <width>304</width>
+      <height>171</height>
+      <action>18</action>
+      <textureFocus>-</textureFocus>
+      <visible>player.hasmedia+[!facadeview.filmstrip|!control.isvisible(50)]+!control.isvisible(3337)</visible>
+    </control>
+    <control>
+      <description>artist info label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <width>375</width>
+      <height>60</height>
+      <posX>349</posX>
+      <posY>120</posY>
+      <label>#Play.Current.Title</label>
+      <textcolor>FFFFFFFF</textcolor>
+      <font>font10</font>
+      <visible>player.hasmedia+[!facadeview.filmstrip|!control.isvisible(50)]+!control.isvisible(3337)</visible>
+    </control>
+    <control>
+      <description>title info label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <width>510</width>
+      <height>60</height>
+      <posX>349</posX>
+      <posY>147</posY>
+      <label>#Play.Current.Year</label>
+      <textcolor>FFFFFFFF</textcolor>
+      <font>font10</font>
+      <visible>player.hasmedia+[!facadeview.filmstrip|!control.isvisible(50)]+!control.isvisible(3337)</visible>
+    </control>
+    <control>
+      <description>album info label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <width>510</width>
+      <height>60</height>
+      <posX>349</posX>
+      <posY>186</posY>
+      <label>#Play.Current.Genre</label>
+      <textcolor>FFFFFFFF</textcolor>
+      <font>font10</font>
+      <visible>player.hasmedia+[!facadeview.filmstrip|!control.isvisible(50)]+!control.isvisible(3337)</visible>
+    </control>
+    <control>
+      <description>album info label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <width>510</width>
+      <height>60</height>
+      <posX>349</posX>
+      <posY>216</posY>
+      <label>#Play.Current.Director</label>
+      <textcolor>FFFFFFFF</textcolor>
+      <font>font10</font>
+      <visible>player.hasmedia+[!facadeview.filmstrip|!control.isvisible(50)]+!control.isvisible(3337)</visible>
+    </control>
+    <control>
+      <description>play time / duration label</description>
+      <type>label</type>
+      <id>0</id>
+      <width>510</width>
+      <height>60</height>
+      <posX>349</posX>
+      <posY>246</posY>
+      <label>#currentplaytime / #duration</label>
+      <textcolor>FFFFFFFF</textcolor>
+      <font>font10</font>
+      <visible>player.hasmedia+[!facadeview.filmstrip|!control.isvisible(50)]+!control.isvisible(3337)</visible>
+    </control>
+  </controls>
+</window>

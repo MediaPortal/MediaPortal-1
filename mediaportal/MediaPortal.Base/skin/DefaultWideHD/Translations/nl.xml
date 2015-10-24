@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Skin translation file -->
+<!-- Dutch (nl) -->
+<strings>
+  <string Field="WorldNewsTicker">Activeren WorldNews ticker</string>
+  <string Field="AnalogClockOSD">Analoge klok in OSDs</string>
+  <string Field="MusicNowPlayingFanart">Fanart voor actuele titels in BasicHome</string>
+  <string Field="MusicFanart">Toevallige muziek fanart in BasicHome</string>
+  <string Field="VideoFanart">Toevallige video fanart in BasicHome</string>
+  <string Field="TVGuideRows">Aantal lijnen in de TV-gids</string>
+  <string Field="TVSeriesRows">Lijnen in TVSeries Wide Banners</string>
+  <string Field="DescriptionTopbar">Beschrijving van topbar knoppen:</string>
+  <string Field="BackPrevious">Terug naar vorige venster</string>
+  <string Field="BackBasicHome">Terug naar BasicHome</string>
+  <string Field="LiveTV">LiveTV/video op de achtergrond</string>
+  <string Field="PlayControls">Audio/video afspelen controles</string>
+  <string Field="SkinInfo">Dit scherm</string>
+  <string Field="CloseExit">Sluit/Exit MP</string>
+  <string Field="ShutdownOptions">Opties voor uitschakeling</string>
+  <string Field="InfoButton">In lijst: Druk op rechts (afstandsbediening/toetsenbord) of hover met de muis toont uitgebreide informatie</string>
+  <string Field="SupportedPlugins">Ondersteund plugins (in alfabetische volgorde):</string>
+  <string Field="PluginsMP">... en natuurlijk alle standaard plugins van MediaPortal 1.7.x en nieuwere versies</string>
+  <string Field="MPVersion">DefaultWide HD 1.5 is ontworpen voor MP 1.7.x en nieuwere versies.</string>
+  <string Field="Enjoy">Geniet van MediaPortal met DefaultWide HD 1.5!</string>
+  <string Field="Background">Achtergrond</string>
+  <string Field="Games">Spele</string>
+  <string Field="NewEpisodes">Recent toegevoegde afleveringen</string>
+  <string Field="NewRecordings">Recent toegevoegde tv-opnamen</string>
+  <string Field="NewVideos">Recent toegevoegde videos</string>
+  <string Field="NewYouTubeVideos">Recent toegevoegde YouTube-video's</string>
+  <string Field="NewFilms">Recent toegevoegde films</string>
+  <string Field="LastPlayed">Laatst gespeelde muziek</string>
+  <string Field="NewPictures">Recent toegevoegde foto's</string>
+  <string Field="NowRecording">Actieve opnames</string>
+  <string Field="FullView">Informatie altijd zichtbaar</string>
+  <string Field="ShowDVDArt">DVD kunst</string>
+  <string Field="NoClock">Deactiveren Klok en Plugin Iconen</string>
+  <string Field="FastAccess">Snelle Toegang Menu in topbar</string>
+  <string Field="Timer">#(L(603))</string>
+  <string Field="Update">DefaultWide HD 1.6 beschikbaar!</string>
+  <string Field="BasicHomeEditorModernUI">LET OP: Met dit thema mag niet plugins plaatsen van tv, video of muziek in internet of Games, anders kun je de navigatie problemen tegenkomen in zowel Internet of Games! catavolt :-D</string>
+  <string Field="BasicHomeEditorHorizonUp">LET OP: Met dit thema moet je plugins ingesteld alleen binnen hun categorie (bv TVSeries alleen in videos), anders zult u tegenkomen scherm kwesties over de laatste toegevoegde media!  catavolt :-D</string>
+  <string Field="BasicHomeEditorNoPlugin">LET OP: Zorg ervoor dat elke eerste post van elke categorie bevat een plugin ingeschakeld, anders wordt de navigatie in de categorieen zal falen! catavolt :-D</string>
+  <string Field="tvstreaminfo">TV OSD kanaal info altijd zichtbaar</string>
+</strings>

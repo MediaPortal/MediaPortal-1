@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1656544651</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.label:</define>
+  <define>#header.hover:hover_Clickfinder ProgramGuide.png</define>
+  <controls>
+    <!-- Background & StreamedMP Layout -->
+    <control>
+      <id>1</id>
+      <description>Background Image</description>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>BH TV.jpg</texture>
+    </control>
+    <control>
+      <id>45</id>
+      <description>Background FanArt Image</description>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1799</width>
+      <height>1012</height>
+      <visible>no</visible>
+    </control>
+    <control>
+      <description>Overlay Image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1799</width>
+      <height>1012</height>
+      <texture>black.png</texture>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
+    <control>
+      <id>1</id>
+      <description>Overlay Image</description>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1799</width>
+      <height>1012</height>
+      <texture>ClickfinderPG_overlay.png</texture>
+    </control>
+    <control>
+      <description>Date Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1748</posX>
+      <posY>14</posY>
+      <label>#date | #time</label>
+      <align>right</align>
+      <font>font12</font>
+      <textcolor>ffa9d0f7</textcolor>
+    </control>
+    <control>
+      <description>label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>112</posX>
+      <posY>112</posY>
+      <label>#ClickfinderPG.Translation.LastUpdate</label>
+      <font>font10</font>
+      <textcolor>FFdddddd</textcolor>
+    </control>
+    <control>
+      <description>TvMovie++ LastUpdate</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>112</posX>
+      <posY>84</posY>
+      <label>#SettingLastUpdate</label>
+      <font>font10</font>
+      <textcolor>FFdddddd</textcolor>
+    </control>
+    <control>
+      <description>automatically turn on tv</description>
+      <type>checkbutton</type>
+      <id>5</id>
+      <posX>253</posX>
+      <posY>506</posY>
+      <label>Import TvSeries</label>
+      <onleft>11</onleft>
+      <onright>11</onright>
+      <onup>23</onup>
+      <ondown>28</ondown>
+      <textureCheckmark>check-box.png</textureCheckmark>
+      <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
+      <markWidth>22</markWidth>
+      <markHeight>22</markHeight>
+      <markXOff>20</markXOff>
+      <markalign>right</markalign>
+      <markvalign>middle</markvalign>
+      <height>47</height>
+      <width>1398</width>
+      <font>menu</font>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>1</shadowDistance>
+      <shadowColor>ff202020</shadowColor>
+      <textcolor>FFFFFFFF</textcolor>
+      <textalign>left</textalign>
+      <textvalign>middle</textvalign>
+      <textXOff>14</textXOff>
+      <textureFocus border="1" position="insideimage" colorKey="66FFFFFF">list-focus.png</textureFocus>
+      <textureNoFocus>list-nofocus.png</textureNoFocus>
+    </control>
+    <!-- ActionGroup -->
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>10</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>42</buttonY>
+      <buttonwidth>60</buttonwidth>
+      <buttonheight>492</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>386</width>
+      <height>1265</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>black.png</texture>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
+      <control>
+        <type>image</type>
+        <posX>36</posX>
+        <posY>109</posY>
+        <width>515</width>
+        <height>831</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!control.hasfocus(10)|!control.hasfocus(30)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>button group</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <posX>99</posX>
+        <posY>170</posY>
+        <layout>Stacklayout</layout>
+        <visible>!control.hasfocus(10)|!control.hasfocus(30)</visible>
+        <control>
+          <description>Now</description>
+          <type>button</type>
+          <id>2</id>
+          <label>#ClickfinderPG.Translation.Now</label>
+          <textalign>center</textalign>
+          <onup>6</onup>
+          <ondown>3</ondown>
+          <onright>10</onright>
+        </control>
+        <control>
+          <description>20:15</description>
+          <type>button</type>
+          <id>3</id>
+          <label>#ClickfinderPG.Translation.PrimeTime</label>
+          <textalign>center</textalign>
+          <onup>2</onup>
+          <ondown>4</ondown>
+          <onright>10</onright>
+        </control>
+        <control>
+          <description>22:00 Movies</description>
+          <type>button</type>
+          <id>4</id>
+          <label>#ClickfinderPG.Translation.LateTime</label>
+          <textalign>center</textalign>
+          <onup>3</onup>
+          <ondown>5</ondown>
+          <onright>10</onright>
+        </control>
+        <control>
+          <description>Highlights</description>
+          <type>button</type>
+          <id>5</id>
+          <label>#ClickfinderPG.Translation.Highlights</label>
+          <textalign>center</textalign>
+          <onup>4</onup>
+          <ondown>6</ondown>
+          <onright>10</onright>
+        </control>
+        <control>
+          <description>Preview</description>
+          <type>button</type>
+          <id>6</id>
+          <label>#ClickfinderPG.Translation.Preview</label>
+          <textalign>center</textalign>
+          <onup>5</onup>
+          <ondown>2</ondown>
+          <onright>10</onright>
+        </control>
+      </control>
+    </control>
+  </controls>
+</window>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8"-->
+<window>
+  <id>757278</id>
+  <defaultcontrol>300</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <disabletopbar>no</disabletopbar>
+  <define>#header.label:LogoManager</define>
+  <define>#curentmodule:LogoManager</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH TV.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>background top overlay</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>405</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ccffffff</colordiffuse>
+    </control>
+    <control>
+      <description>background selecteditem</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>97</posY>
+      <width>2025</width>
+      <height>90</height>
+      <texture>general_overlay_selecteditem.png</texture>
+      <colordiffuse>bbffffff</colordiffuse>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>Country</description>
+      <id>0</id>
+      <type>label</type>
+      <label>LogoManager | Country: #LogoManager.Country | #LogoManager.percentChannels | #LogoManager.percentGroups</label>
+      <posX>45</posX>
+      <posY>48</posY>
+      <font>font11</font>
+    </control>
+    <control>
+    <description>Channel Progress Bar</description>
+    <type>progress</type>
+    <id>310</id>
+      <posX>774</posX>
+      <posY>180</posY>
+      <width>677</width>
+      <height>15</height>
+      <label>wtf</label>
+      <texturebg>osd_progress_background.png</texturebg>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <midtexture>osd_progress_mid.png</midtexture>
+      <righttexture>osd_progress_right.png</righttexture>
+    </control>
+    <control>
+      <description>Group Progress Bar</description>
+      <type>progress</type>
+      <id>320</id>
+      <posX>774</posX>
+      <posY>210</posY>
+      <width>677</width>
+      <height>15</height>
+      <label>asap</label>
+      <texturebg>osd_progress_background.png</texturebg>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <midtexture>osd_progress_mid.png</midtexture>
+      <righttexture>osd_progress_right.png</righttexture>
+    </control>
+    <control>
+      <description>Channels List</description>
+      <type>listcontrol</type>
+      <id>270</id>
+      <posX>430</posX>
+      <posY>375</posY>
+      <width>1100</width>
+      <height>600</height>
+      <textureHeight>70</textureHeight>
+      <textYOff>10</textYOff>
+      <textXOff>25</textXOff>
+      <textXOff2>1500</textXOff2>
+      <textXOff3>25</textXOff3>
+      <PinIconXOff>15</PinIconXOff>
+      <PinIconYOff>4</PinIconYOff>
+      <PinIconHeight>60</PinIconHeight>
+      <PinIconWidth>60</PinIconWidth>
+      <IconXOff>1020</IconXOff>
+      <itemHeight>60</itemHeight>
+      <itemWidth>60</itemWidth>
+      <scrollbarHeight>400</scrollbarHeight>
+      <scrollbarbg>bar_vert.png</scrollbarbg>
+      <scrollbartop>mouse_left_horizontal.png</scrollbartop>
+      <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
+      <scrollbarXOff>25</scrollbarXOff>
+      <scrollbarYOff>0</scrollbarYOff>
+      <showScrollbar>yes</showScrollbar>
+      <scrollbarwidth>20</scrollbarwidth>
+      <onright>290</onright>
+      <onleft>260</onleft>
+    </control>
+    <control>
+      <description>Pack</description>
+      <posX>75</posX>
+      <posY>270</posY>
+      <width>420</width>
+      <type>button</type>
+      <id>260</id>
+      <label>Package: #LogoManager.Package</label>
+      <onright>300</onright>
+      <onleft>290</onleft>
+      <onup>270</onup>
+      <ondown>270</ondown>
+    </control>
+    <control>
+      <description>Channel Group</description>
+      <posX>525</posX>
+      <posY>270</posY>
+      <width>420</width>
+      <type>button</type>
+      <id>300</id>
+      <label>Channel Group: #LogoManager.Group</label>
+      <onright>280</onright>
+      <onleft>260</onleft>
+      <onup>270</onup>
+      <ondown>270</ondown>
+    </control>
+    <control>
+      <description>Design</description>
+      <posX>975</posX>
+      <posY>270</posY>
+      <width>420</width>
+      <type>button</type>
+      <id>280</id>
+      <label>Design: #LogoManager.Design</label>
+      <onright>290</onright>
+      <onleft>300</onleft>
+      <onup>270</onup>
+      <ondown>270</ondown>
+    </control>
+    <control>
+      <description>Grab</description>
+      <posX>1425</posX>
+      <posY>270</posY>
+      <width>420</width>
+      <type>button</type>
+      <id>290</id>
+      <label>#LogoManager.State</label>
+      <onright>260</onright>
+      <onleft>280</onleft>
+      <onup>270</onup>
+      <ondown>270</ondown>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+  </controls>
+</window>
+<!--Checksum:5e07f09b7dd8095e1d56dd227d3fd170-->
