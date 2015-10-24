@@ -154,7 +154,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinFunction("string.rtrim")]
     public static string RightTrimString(string text)
     {
-      return text.TrimEnd();
+      return text != null ? text.TrimEnd() : "";
     }
 
     [XMLSkinFunction("string.rtrim")]
