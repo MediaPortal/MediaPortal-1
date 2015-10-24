@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8"-->
+<window>
+  <controls>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-130</buttonY>
+      <buttonwidth>159</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>852</width>
+      <height>1350</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>1</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>39</posX>
+        <posY>37</posY>
+        <width>550</width>
+        <height>975</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <description>button group</description>
+          <type>group</type>
+          <posX>75</posX>
+          <posY>105</posY>
+          <width>465</width>
+          <layout>StackLayout</layout>
+          <layout>StackLayout(0, Vertical, true)</layout>
+          <visible>!Control.HasFocus(50)</visible>
+          <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+          <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+          <control>
+            <description>Switch View</description>
+            <type>button</type>
+            <id>2</id>
+            <label>Switch View</label>
+            <onleft>50</onleft>
+            <onright>50</onright>
+            <onup>99999</onup>
+            <ondown>10</ondown>
+            <width>465</width>
+          </control>
+          <control>
+            <description>Filters</description>
+            <type>button</type>
+            <id>10</id>
+            <label>Filters</label>
+            <onleft>50</onleft>
+            <onright>50</onright>
+            <onup>2</onup>
+            <ondown>3</ondown>
+            <width>465</width>
+          </control>
+          <control>
+            <description>Change Layout</description>
+            <type>button</type>
+            <id>3</id>
+            <label>Change Layout</label>
+            <onleft>50</onleft>
+            <onright>50</onright>
+            <onup>10</onup>
+            <ondown>20</ondown>
+            <width>465</width>
+          </control>
+          <control>
+            <description>Current Playlist</description>
+            <type>button</type>
+            <id>20</id>
+            <label>4555</label>
+            <action>33</action>
+            <onleft>50</onleft>
+            <onright>50</onright>
+            <ondown>9</ondown>
+            <onup>3</onup>
+            <width>465</width>
+          </control>
+          <control>
+            <description>My Playlists</description>
+            <type>button</type>
+            <id>9</id>
+            <label>983</label>
+            <onleft>50</onleft>
+            <onright>50</onright>
+            <ondown>4</ondown>
+            <onup>20</onup>
+            <width>465</width>
+          </control>
+          <control>
+            <description>Options</description>
+            <type>button</type>
+            <id>4</id>
+            <label>496</label>
+            <onleft>50</onleft>
+            <onright>50</onright>
+            <onup>9</onup>
+            <ondown>5</ondown>
+            <width>465</width>
+          </control>
+          <control>
+            <description>Run Import</description>
+            <type>button</type>
+            <id>5</id>
+            <label>Run Import</label>
+            <onleft>50</onleft>
+            <onright>50</onright>
+            <onup>4</onup>
+            <ondown>66610</ondown>
+            <width>465</width>
+          </control>
+          <control>
+            <description>MovingPictures</description>
+            <id>66610</id>
+            <type>button</type>
+            <label>Moving Pictures</label>
+            <hyperlink>96742</hyperlink>
+            <onleft>50</onleft>
+            <onup>5</onup>
+            <ondown>66612</ondown>
+            <width>465</width>
+            <visible>plugin.isenabled(Moving Pictures)</visible>
+          </control>
+          <control>
+            <description>SubCentral</description>
+            <type>button</type>
+            <id>66612</id>
+            <label>287</label>
+            <hyperlink>84623</hyperlink>
+            <onup>66610</onup>
+            <ondown>99991</ondown>
+            <onleft>50</onleft>
+            <width>465</width>
+            <visible>plugin.isenabled(SubCentral)+control.isvisible(1239)</visible>
+          </control>
+          <control>
+            <description>Trakt</description>
+            <type>button</type>
+            <id>99991</id>
+            <label>Trakt</label>
+            <hyperlink>87258</hyperlink>
+            <onup>66612</onup>
+            <ondown>80</ondown>
+            <onleft>50</onleft>
+            <width>465</width>
+            <visible>plugin.isenabled(Trakt)</visible>
+          </control>
+          <control>
+            <description>Clickfinder ProgramGuide: Episode Preview</description>
+            <type>button</type>
+            <id>80</id>
+            <hyperlink>1656544657</hyperlink>
+            <hyperlinkParameter>idSeries: #TVSeries.Series.ID</hyperlinkParameter>
+            <label>#ClickfinderPG.Translation.allNewEpisodes</label>
+            <onup>99991</onup>
+            <ondown>99999</ondown>
+            <onleft>50</onleft>
+            <visible>plugin.isenabled(Clickfinder ProgramGuide)</visible>
+          </control>
+          <control>
+            <description>MPEIUPDATE:5e2777c3_966c_407f_b5a9_e51205b70b3e</description>
+            <type>button</type>
+            <id>99999</id>
+            <label>#MPEI.Translation.UpdateAvailable.Label</label>
+            <onup>80</onup>
+            <ondown>2</ondown>
+            <onleft>50</onleft>
+            <width>465</width>
+            <visible>string.equals(#mpei.5e2777c3_966c_407f_b5a9_e51205b70b3e.haveupdate,true)+control.isvisible(1237)</visible>
+          </control>
+        </control>
+        <control>
+          <id>0</id>
+          <description>Last Online Update Label</description>
+          <label>#TVSeries.Translation.LastOnlineUpdate.Label</label>
+          <type>label</type>
+          <font>font10</font>
+          <posX>106</posX>
+          <posY>922</posY>
+          <textcolor>ffffffff</textcolor>
+        </control>
+        <control>
+          <id>0</id>
+          <description>Last Online Update Value</description>
+          <label>#TVSeries.LastOnlineUpdate</label>
+          <type>label</type>
+          <font>font10</font>
+          <posX>106</posX>
+          <posY>960</posY>
+        </control>
+      </control>
+    </control>
+  </controls>
+</window>

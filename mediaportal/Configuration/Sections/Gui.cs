@@ -178,16 +178,11 @@ namespace MediaPortal.Configuration.Sections
         }
 
         // Load skin settings.
-        string currentSkin = xmlreader.GetValueAsString("skin", "name", "NoSkin");
+        string currentSkin = xmlreader.GetValueAsString("skin", "name", "Titan");
 
         float screenHeight = GUIGraphicsContext.currentScreen.Bounds.Height;
         float screenWidth = GUIGraphicsContext.currentScreen.Bounds.Width;
         float screenRatio = (screenWidth / screenHeight);
-        if (currentSkin == "NoSkin")
-        {
-          //Change default skin based on screen aspect ratio
-          currentSkin = screenRatio > 1.5 ? "Titan" : "Default";
-        }
 
         //
         // Make sure the skin actually exists before setting it as the current skin
@@ -224,7 +219,7 @@ namespace MediaPortal.Configuration.Sections
         }
 
         // Save skin settings.
-        string prevSkin = xmlwriter.GetValueAsString("skin", "name", "DefaultWide");
+        string prevSkin = xmlwriter.GetValueAsString("skin", "name", "Titan");
         string selectedSkin = prevSkin;
         try
         {

@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>5671</id>
+  <defaultcontrol>5</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <import>common.settings.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>697</posX>
+      <posY>180</posY>
+      <height>375</height>
+      <width>525</width>
+      <texture>backslide.png</texture>
+      <colordiffuse>aaffffff</colordiffuse>
+    </control>
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <posX>750</posX>
+      <posY>240</posY>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <control>
+        <description>Filter</description>
+        <type>button</type>
+        <id>5</id>
+        <label>230</label>
+        <onup>11</onup>
+        <hyperlink>5672</hyperlink>
+      </control>
+      <control>
+        <description>Favoriten</description>
+        <type>button</type>
+        <id>6</id>
+        <label>359</label>
+        <hyperlink>5673</hyperlink>
+      </control>
+      <!--       <control>
+        <description>Sender</description>
+        <type>button</type>
+        <id>7</id>
+        <label>666</label>
+        <hyperlink>5674</hyperlink>
+      </control>
+	  <control>
+        <description>Back to Home</description>
+        <type>button</type>
+        <id>11</id>
+        <label>712</label>
+		<ondown>5</ondown>
+        <hyperlink>5670</hyperlink>
+      </control> -->
+    </control>
+  </controls>
+</window>

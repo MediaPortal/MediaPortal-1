@@ -124,10 +124,12 @@ namespace MediaPortal.Configuration
       MoveEntry(settings, "general", "gui", "useonlyonehome");
 
       //  blue3/wide and blue4/blue4wide are now default/wide
-      UpdateEntryDefaultValue(settings, "skin", "name", "Blue3", "Default");
-      UpdateEntryDefaultValue(settings, "skin", "name", "Blue3wide", "DefaultWide");
-      UpdateEntryDefaultValue(settings, "skin", "name", "Blue4", "Default");
-      UpdateEntryDefaultValue(settings, "skin", "name", "Blue4wide", "DefaultWide");
+      UpdateEntryDefaultValue(settings, "skin", "name", "Blue3", "Titan");
+      UpdateEntryDefaultValue(settings, "skin", "name", "Blue3wide", "Titan");
+      UpdateEntryDefaultValue(settings, "skin", "name", "Blue4", "Titan");
+      UpdateEntryDefaultValue(settings, "skin", "name", "Blue4wide", "Titan");
+      UpdateEntryDefaultValue(settings, "skin", "name", "Default", "Titan");
+      UpdateEntryDefaultValue(settings, "skin", "name", "DefaultWide", "Titan");
 
       ApplyDeploySettingUpgrade(settings);
 
