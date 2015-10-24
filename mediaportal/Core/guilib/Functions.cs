@@ -154,7 +154,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinFunction("string.rtrim")]
     public static string RightTrimString(string text)
     {
-      return text.TrimEnd();
+      return text != null ? text.TrimEnd() : "";
     }
 
     [XMLSkinFunction("string.rtrim")]
@@ -182,7 +182,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinFunction("cint")]
     public static int ConvertToInt(object value)
     {
-      return Convert.ToInt32(value);
+      return (string) value != "" ? Convert.ToInt32(value) : 0;
     }
 
     [XMLSkinFunction("cflt")]
