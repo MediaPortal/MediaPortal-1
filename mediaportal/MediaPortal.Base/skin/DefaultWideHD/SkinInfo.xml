@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>7982</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:DefaultWide HD</define>
+  <define>#header.hover:catavolt.png</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>blue.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <type>button</type>
+      <description>Back</description>
+      <id>2</id>
+      <posX>773</posX>
+      <posY>942</posY>
+      <action>10</action>
+      <label>712</label>
+      <textalign>center</textalign>
+      <textYOff>2</textYOff>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>Header</description>
+      <type>fadelabel</type>
+      <posX>45</posX>
+      <posY>15</posY>
+      <width>1525</width>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+      <label>DefaultWide HD 1.5 by catavolt</label>
+    </control>
+    <control>
+      <description>desc txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>70</posX>
+      <posY>210</posY>
+      <label>#SkinTranslation.Translations.DescriptionTopbar.Label</label>
+      <textcolor>ff6FAFE1</textcolor>
+      <font>Label</font>
+    </control>
+    <control>
+      <description>ScreenBack button</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>181</posX>
+      <posY>267</posY>
+      <width>58</width>
+      <height>58</height>
+      <texture>tb_back.png</texture>
+    </control>
+    <control>
+      <description>button description</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>251</posX>
+      <posY>274</posY>
+      <textcolor>ivory</textcolor>
+      <label>#SkinTranslation.Translations.BackPrevious.Label</label>
+    </control>
+    <control>
+      <description>Home button</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>773</posX>
+      <posY>267</posY>
+      <width>58</width>
+      <height>58</height>
+      <texture>tb_home.png</texture>
+    </control>
+    <control>
+      <description>button description</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>843</posX>
+      <posY>274</posY>
+      <textcolor>ivory</textcolor>
+      <label>#SkinTranslation.Translations.BackBasicHome.Label</label>
+    </control>
+    <control>
+      <description>Home button</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1294</posX>
+      <posY>267</posY>
+      <width>58</width>
+      <height>58</height>
+      <texture>tb_full_screen.png</texture>
+    </control>
+    <control>
+      <description>button description</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1365</posX>
+      <posY>274</posY>
+      <textcolor>ivory</textcolor>
+      <label>#SkinTranslation.Translations.LiveTV.Label</label>
+    </control>
+    <control>
+      <description>skipback button</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>181</posX>
+      <posY>337</posY>
+      <width>58</width>
+      <height>58</height>
+      <texture>tb_skipback.png</texture>
+    </control>
+    <control>
+      <description>rewind button</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>251</posX>
+      <posY>337</posY>
+      <width>58</width>
+      <height>58</height>
+      <texture>tb_rew.png</texture>
+    </control>
+    <control>
+      <description>play button</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>321</posX>
+      <posY>337</posY>
+      <width>58</width>
+      <height>58</height>
+      <texture>tb_play.png</texture>
+    </control>
+    <control>
+      <description>stop button</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>391</posX>
+      <posY>337</posY>
+      <width>58</width>
+      <height>58</height>
+      <texture>tb_stop.png</texture>
+    </control>
+    <control>
+      <description>fast forward button</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>462</posX>
+      <posY>337</posY>
+      <width>58</width>
+      <height>58</height>
+      <texture>tb_fastforward.png</texture>
+    </control>
+    <control>
+      <description>next button</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>532</posX>
+      <posY>337</posY>
+      <width>58</width>
+      <height>58</height>
+      <texture>tb_skipforward.png</texture>
+    </control>
+    <control>
+      <description>desc value line 3</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>603</posX>
+      <posY>344</posY>
+      <textcolor>ivory</textcolor>
+      <label>#SkinTranslation.Translations.PlayControls.Label</label>
+    </control>
+    <control>
+      <description>Info button</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1294</posX>
+      <posY>337</posY>
+      <width>58</width>
+      <height>58</height>
+      <texture>tb_info.png</texture>
+    </control>
+    <control>
+      <description>button description</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1365</posX>
+      <posY>344</posY>
+      <textcolor>ivory</textcolor>
+      <label>#SkinTranslation.Translations.SkinInfo.Label</label>
+    </control>
+    <control>
+      <description>Close MP</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>181</posX>
+      <posY>407</posY>
+      <width>58</width>
+      <height>58</height>
+      <texture>tb_exit.png</texture>
+    </control>
+    <control>
+      <description>button description</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>251</posX>
+      <posY>414</posY>
+      <textcolor>ivory</textcolor>
+      <label>#SkinTranslation.Translations.CloseExit.Label</label>
+    </control>
+    <control>
+      <description>Shutdown PC button</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>773</posX>
+      <posY>407</posY>
+      <width>58</width>
+      <height>58</height>
+      <texture>tb_shutdown.png</texture>
+    </control>
+    <control>
+      <description>button description</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>843</posX>
+      <posY>414</posY>
+      <textcolor>ivory</textcolor>
+      <label>#SkinTranslation.Translations.ShutdownOptions.Label</label>
+    </control>
+    <!--control>
+    <description>HTPC InfoC button</description>
+    <type>image</type>
+    <id>1</id>
+    <posX>1194</posX>
+    <posY>407</posY>
+    <width>58</width>
+    <height>58</height>
+    <texture>tb_pcinfo.png</texture>
+  </control>
+  <control>
+    <description>button description</description>
+    <type>label</type>
+    <id>1</id>
+    <posX>1265</posX>
+    <posY>414</posY>
+    <textcolor>ivory</textcolor>
+    <label>HTPC Info</label>
+  </control-->
+  <!--control>
+    <description>Info Button</description>
+    <type>image</type>
+    <id>1</id>
+    <posX>181</posX>
+    <posY>476</posY>
+    <width>58</width>
+    <height>58</height>
+    <texture>Infoimage.png</texture>
+  </control>
+  <control>
+    <description>button description</description>
+    <type>label</type>
+    <id>1</id>
+    <posX>251</posX>
+    <posY>480</posY>
+    <textcolor>ivory</textcolor>
+    <label>#SkinTranslation.Translations.InfoButton.Label</label>
+  </control-->
+  <control>
+    <description>plug txt</description>
+    <type>label</type>
+    <id>1</id>
+    <posX>70</posX>
+    <posY>583</posY>
+    <label>#SkinTranslation.Translations.SupportedPlugins.Label</label>
+    <textcolor>ff6FAFE1</textcolor>
+    <font>Label</font>
+  </control>
+  <control>
+    <description>plug txt</description>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>112</posX>
+    <posY>632</posY>
+    <width>1686</width>
+    <label>APOD :: ARGUS TV :: Bing Image :: Browse The Web :: Burner :: Clickfinder PG :: Daily Comics :: DriveFreeSpace :: Earth TV :: Emulators 2 :: Explorer :: Extensions (MPEI GUI) :: Fanart Handler :: File Explorer :: Films :: Fritz!Box Manager :: Games Pack for MP (Chess, Connect 4, Frustration, Hexxagon, Mastermind, Minesweeper, Pipes, Simon Says, Sudoku, Tetris, Yahtzee) :: Global Search :: Google Calendar :: HTPC-Info :: IMDb+ :: Info Service :: Intelligent Frame Correction :: Latest Media Handler :: Last.FM :: Lyrics :: LogoManager :: MailTip :: Media Slayer :: MediaTip :: Moving Pictures :: MP Photo Slideshow :: MP Steam :: MP-TVSeries :: mpNZB :: MusicInfoHandler :: mvCentral :: OnlineVideos :: Power Control :: Rockstar :: RSS :: ScoreCenter :: Shoutcast :: Showtimes :: Skin Info :: Skype for MP :: Sleep Control :: Stocks + Indices :: Subcentral :: Trailers :: Trakt :: TuneIn :: TV WishList :: Webbrowser :: Webradio :: Wikipedia :: Windows Update Control :: World Clock :: Worldmap :: World News :: World Weather :: World Places :: World Weather Lite :: YouTube.FM :: yrWeather </label>
+    <textcolor>ivory</textcolor>
+    <font>Menutitle</font>
+  </control>
+  <control>
+    <description>Endtext</description>
+    <type>label</type>
+    <id>1</id>
+    <posX>0</posX>
+    <posY>720</posY>
+    <width>1920</width>
+    <align>center</align>
+    <textcolor>ff6FAFE1</textcolor>
+    <label>#SkinTranslation.Translations.PluginsMP.Label</label>
+  </control>
+  <control>
+    <description>desc value line 3</description>
+    <type>label</type>
+    <id>1</id>
+    <posX>0</posX>
+    <posY>790</posY>
+    <width>1920</width>
+    <align>center</align>
+    <textcolor>ff6FAFE1</textcolor>
+    <label>#SkinTranslation.Translations.MPVersion.Label</label>
+  </control>
+  <control>
+    <description>Endtext</description>
+    <type>label</type>
+    <id>1</id>
+    <posX>0</posX>
+    <posY>860</posY>
+    <width>1920</width>
+    <textcolor>ff6FAFE1</textcolor>
+    <label>#SkinTranslation.Translations.Enjoy.Label</label>
+    <font>Menutitle</font>
+    <align>center</align>
+  </control>
+</controls>
+</window>

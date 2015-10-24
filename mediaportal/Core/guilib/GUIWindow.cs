@@ -518,6 +518,7 @@ namespace MediaPortal.GUI.Library
       //string strReferenceFile = _windowXmlFileName.Substring(0, iPos);
       _windowXmlFileName = GUIGraphicsContext.GetThemedSkinFile(_windowXmlFileName.Substring(_windowXmlFileName.LastIndexOf("\\")));
       string strReferenceFile = GUIGraphicsContext.GetThemedSkinFile(@"\references.xml");
+
       GUIControlFactory.LoadReferences(strReferenceFile);
 
       try

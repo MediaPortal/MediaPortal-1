@@ -226,7 +226,7 @@ namespace MediaPortal.Configuration
       }
 
       Log.Info("settingsform constructor done");
-      GUIGraphicsContext.Skin = Config.GetFile(Config.Dir.Skin, "Default", string.Empty);
+      GUIGraphicsContext.Skin = Config.GetFile(Config.Dir.Skin, "Titan", string.Empty);
       Log.Info("SKIN : " + GUIGraphicsContext.Skin);
     }
 
