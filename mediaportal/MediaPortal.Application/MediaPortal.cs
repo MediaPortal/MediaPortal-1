@@ -1199,7 +1199,7 @@ public class MediaPortalApp : D3D, IRender
       }
       if (!foundScreen)
       {
-        GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
+        GUIGraphicsContext.currentScreen = screenNumber >= Screen.AllScreens.Length ? Screen.AllScreens[0] : Screen.AllScreens[screenNumber];
       }
     }
 
