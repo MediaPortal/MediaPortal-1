@@ -175,7 +175,7 @@ namespace MediaPortal
           }
           if (CurrentDisplay == null)
           {
-            CurrentDisplay = Screen.AllScreens[screenNumber];
+            CurrentDisplay = screenNumber >= Screen.AllScreens.Length ? Screen.AllScreens[0] : Screen.AllScreens[screenNumber];
           }
         }
 
