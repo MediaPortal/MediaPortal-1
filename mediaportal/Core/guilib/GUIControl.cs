@@ -417,50 +417,53 @@ namespace MediaPortal.GUI.Library
 
       foreach (GUIControl control in FlattenHierarchy(GUIWindowManager.GetWindow(WindowId).Children))
       {
-        if (control.GetID == GetID)
+        if (control != null && control.GetID == GetID)
         {
           continue;
         }
 
-        if (control.CanFocus() == false)
+        if (control != null && control.CanFocus() == false)
         {
           continue;
         }
 
-        double bearing = CalcBearing(new Drawing.Point(currentX, currentY),
-                                     new Drawing.Point(control.XPosition, control.YPosition));
-
-        if (direction == Direction.Left && (bearing < 215 || bearing > 325))
+        if (control != null)
         {
-          continue;
+          double bearing = CalcBearing(new Drawing.Point(currentX, currentY),
+            new Drawing.Point(control.XPosition, control.YPosition));
+
+          if (direction == Direction.Left && (bearing < 215 || bearing > 325))
+          {
+            continue;
+          }
+
+          if (direction == Direction.Right && (bearing < -145 || bearing > -35))
+          {
+            continue;
+          }
+
+          if (direction == Direction.Up && (bearing < -45 || bearing > 45))
+          {
+            continue;
+          }
+
+          if (direction == Direction.Down && !(bearing <= -135 || bearing >= 135))
+          {
+            continue;
+          }
+
+          double distance = CalcDistance(new Drawing.Point(currentX, currentY),
+            new Drawing.Point(control.XPosition, control.YPosition));
+
+          if (!(distance <= distanceMin && bearing <= bearingMin))
+          {
+            continue;
+          }
+
+          bearingMin = bearing;
+          distanceMin = distance;
         }
-
-        if (direction == Direction.Right && (bearing < -145 || bearing > -35))
-        {
-          continue;
-        }
-
-        if (direction == Direction.Up && (bearing < -45 || bearing > 45))
-        {
-          continue;
-        }
-
-        if (direction == Direction.Down && !(bearing <= -135 || bearing >= 135))
-        {
-          continue;
-        }
-
-        double distance = CalcDistance(new Drawing.Point(currentX, currentY),
-                                       new Drawing.Point(control.XPosition, control.YPosition));
-
-        if (!(distance <= distanceMin && bearing <= bearingMin))
-        {
-          continue;
-        }
-
-        bearingMin = bearing;
-        distanceMin = distance;
-        nearestIndex = control.GetID;
+        if (control != null) nearestIndex = control.GetID;
       }
 
       return nearestIndex == -1 ? GetID : nearestIndex;
