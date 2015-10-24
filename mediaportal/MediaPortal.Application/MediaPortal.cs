@@ -1144,6 +1144,7 @@ public class MediaPortalApp : D3D, IRender
     }
     else
     {
+      bool foundScreen = false;
       foreach (Screen screen in Screen.AllScreens)
       {
         const int dwf = 0;
@@ -1170,6 +1171,7 @@ public class MediaPortalApp : D3D, IRender
           if (screen.Primary)
           {
             GUIGraphicsContext.currentScreen = screen;
+            foundScreen = true;
             break;
           }
         }
@@ -1180,6 +1182,7 @@ public class MediaPortalApp : D3D, IRender
             if (deviceId.Equals(screenDeviceId))
             {
               GUIGraphicsContext.currentScreen = screen;
+              foundScreen = true;
               break;
             }
           }
@@ -1188,10 +1191,15 @@ public class MediaPortalApp : D3D, IRender
             if (screen.DeviceName.Equals(_screenDisplayName))
             {
               GUIGraphicsContext.currentScreen = screen;
+              foundScreen = true;
               break;
             }
           }
         }
+      }
+      if (!foundScreen)
+      {
+        GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
       }
     }
 

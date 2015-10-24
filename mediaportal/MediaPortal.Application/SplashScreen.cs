@@ -124,7 +124,6 @@ namespace MediaPortal
         }
         else
         {
-
           foreach (Screen screen in Screen.AllScreens)
           {
             const int dwf = 0;
@@ -173,6 +172,10 @@ namespace MediaPortal
                 }
               }
             }
+          }
+          if (CurrentDisplay == null)
+          {
+            CurrentDisplay = Screen.AllScreens[screenNumber];
           }
         }
 
