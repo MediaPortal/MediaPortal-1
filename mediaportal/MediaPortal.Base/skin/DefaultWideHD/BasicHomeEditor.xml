@@ -28,10 +28,11 @@
         <label>BasicHome Editor</label>
         <selected>#(skin.hassetting('#skin.basichome.editor'))</selected>
         <onclick>#(skin.togglesetting('#skin.basichome.editor'))</onclick>
+        <onfocus>#(skin.setstring('#hedit.main.pos','0'))</onfocus>
         <onup>17</onup>
-        <onleft>15</onleft>
-        <onright>15</onright>
-        <ondown>770101</ondown>
+        <onleft>10000</onleft>
+        <onright>10000</onright>
+        <ondown>#(iif(eq(#skin.basichome.editor,'True'),'770101','10'))</ondown>
         <animation effect="fade" start="0" end="100" time="500">WindowOpen</animation>
         <animation effect="fade" start="100" end="0" time="500">WindowClose</animation>
       </control>
@@ -134,7 +135,7 @@
       <type>group</type>
       <posX>200</posX>
       <posY>310</posY>
-      <dimColor>FFA0A0A0</dimColor>
+      <dimColor>50A0A0A0</dimColor>
       <layout>StackLayout(0, Vertical, true)</layout>
       <visible>skin.hassetting(#skin.basichome.editor)</visible>
       <control Style="BasicHomeEditorButton">
@@ -476,7 +477,7 @@
 
     <control>
       <type>label</type>
-      <posX>800</posX>
+      <posX>780</posX>
       <posY>250</posY>
       <label>Sub Menu Buttons</label>
       <textcolor>ff6FAFE1</textcolor>
@@ -646,7 +647,7 @@
     
     <control>
       <type>label</type>
-      <posX>1430</posX>
+      <posX>1280</posX>
       <posY>250</posY>
       <label>BasicHome Layout</label>
       <textcolor>ff6FAFE1</textcolor>
@@ -657,11 +658,10 @@
         <control Style="SettingsButton">
           <type>menubutton</type>
           <id>555</id>
-          <posX>1300</posX>
+          <posX>1250</posX>
           <posY>310</posY>
-          <width>350</width>
-          <textalign>center</textalign>
-          <textvalign>middle</textvalign>
+          <width>450</width>
+          <align>left</align>
           <mode>dialoglist</mode>
           <dialogTitle>BasicHome Layout</dialogTitle>
           <dialogShowNumbers>no</dialogShowNumbers>
@@ -677,6 +677,8 @@
         </subitems>
         <onleft>771101</onleft>
         <onright>555</onright>
+        <onup>555</onup>
+        <ondown>555</ondown>
         <visible>skin.hassetting(#skin.basichome.editor)</visible>
       </control>
     </control>
