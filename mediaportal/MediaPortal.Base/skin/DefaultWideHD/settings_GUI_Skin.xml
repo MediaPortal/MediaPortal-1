@@ -166,7 +166,7 @@
         <posX>700</posX>
         <posY>260</posY>
         <width>1000</width>
-        <label>#currentmodule   ( -> BasicHome Editor)</label>
+        <label>#currentmodule</label>
         <textcolor>white</textcolor>
         <font>Label</font>
       </control>
@@ -183,9 +183,9 @@
           <id>10</id>
           <width>550</width>
           <label>166</label>
-          <onup>17</onup>
+          <onup>10000</onup>
           <ondown>15</ondown>
-          <onright>10000</onright>
+          <onright>10</onright>
           <onleft>9991</onleft>
         </control>
         <control>
