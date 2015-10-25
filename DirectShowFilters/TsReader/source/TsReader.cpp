@@ -1277,6 +1277,11 @@ bool CTsReaderFilter::Seek(CRefTime& seekTime)
     LogDebug("CTsReaderFilter::  Seek->start client from %f/ %f",startTime,milli);
     //clear the buffers
 //    m_demultiplexer.Flush(false);
+
+    // The RTSP server seems to ignore PLAY commands if the stream is already
+    // playing, so we need to be PAUSE'd here.
+    PauseRtspStreaming();
+
     m_buffer.Clear();
     m_buffer.Run(true);
     //start rtsp stream from the seek-time
