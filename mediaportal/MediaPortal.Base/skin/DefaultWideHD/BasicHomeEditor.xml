@@ -122,11 +122,13 @@
 
     <control>
       <type>label</type>
-      <posX>200</posX>
-      <posY>250</posY>
-      <label>BasicHome Main Buttons</label>
-      <textcolor>ff6FAFE1</textcolor>
-      <font>Menutitle</font>
+      <posX>190</posX>
+      <posY>280</posY>
+      <width>430</width>
+      <align>center</align>
+      <label>BasicHome #(L(974))</label>
+      <font>Label</font>
+      <textcolor>white</textcolor>
       <visible>skin.hassetting(#skin.basichome.editor)</visible>
     </control>
 
@@ -477,18 +479,20 @@
 
     <control>
       <type>label</type>
-      <posX>780</posX>
-      <posY>250</posY>
-      <label>Sub Menu Buttons</label>
-      <textcolor>ff6FAFE1</textcolor>
-      <font>Menutitle</font>
+      <posX>740</posX>
+      <posY>280</posY>
+      <width>430</width>
+      <align>center</align>
+      <label>#(L(924)) - #(string.format('#{0}',string.ltrim(#hedit.main,'#0123456789')))</label>
+      <textcolor>white</textcolor>
+      <font>Label</font>
       <visible>skin.hassetting(#skin.basichome.editor)</visible>
     </control>
 
     <control>
       <description>buttons</description>
       <type>group</type>
-      <posX>750</posX>
+      <posX>740</posX>
       <posY>310</posY>
       <dimColor>FFA0A0A0</dimColor>
       <layout>StackLayout(0, Vertical, true)</layout>
@@ -496,6 +500,9 @@
       <control>
         <type>button</type>
         <id>771101</id>
+        <width>430</width>
+        <textalign>center</textalign>
+        <textvalign>middle</textvalign>
         <textureFocus>#(iif(eq(string.ltrim(#hedit.sub.1,'#0123456789.'),string.ltrim(#hedit.sub.1,'#')),'button_focus.png','button_focus.png'))</textureFocus>
         <label>#(string.format('{0}',#hedit.sub.1))</label>
         <onfocus>
@@ -517,6 +524,9 @@
       <control>
         <type>button</type>
         <id>771102</id>
+        <width>430</width>
+        <textalign>center</textalign>
+        <textvalign>middle</textvalign>
         <textureFocus>#(iif(eq(string.ltrim(#hedit.sub.2,'#0123456789.'),string.ltrim(#hedit.sub.2,'#')),'button_focus.png','button_focus.png'))</textureFocus>
         <label>#(string.format('{0}',#hedit.sub.2))</label>
         <onfocus>
@@ -538,6 +548,9 @@
       <control>
         <type>button</type>
         <id>771103</id>
+        <width>430</width>
+        <textalign>center</textalign>
+        <textvalign>middle</textvalign>
         <textureFocus>#(iif(eq(string.ltrim(#hedit.sub.3,'#0123456789.'),string.ltrim(#hedit.sub.3,'#')),'button_focus.png','button_focus.png'))</textureFocus>
         <label>#(string.format('{0}',#hedit.sub.3))</label>
         <onfocus>
@@ -559,6 +572,9 @@
       <control>
         <type>button</type>
         <id>771104</id>
+        <width>430</width>
+        <textalign>center</textalign>
+        <textvalign>middle</textvalign>
         <textureFocus>#(iif(eq(string.ltrim(#hedit.sub.4,'#0123456789.'),string.ltrim(#hedit.sub.4,'#')),'button_focus.png','button_focus.png'))</textureFocus>
         <label>#(string.format('{0}',#hedit.sub.4))</label>
         <onfocus>
@@ -580,6 +596,9 @@
       <control>
         <type>button</type>
         <id>771105</id>
+        <width>430</width>
+        <textalign>center</textalign>
+        <textvalign>middle</textvalign>
         <textureFocus>#(iif(eq(string.ltrim(#hedit.sub.5,'#0123456789.'),string.ltrim(#hedit.sub.5,'#')),'button_focus.png','button_focus.png'))</textureFocus>
         <label>#(string.format('{0}',#hedit.sub.5))</label>
         <onfocus>
@@ -601,6 +620,9 @@
       <control>
         <type>button</type>
         <id>771106</id>
+        <width>430</width>
+        <textalign>center</textalign>
+        <textvalign>middle</textvalign>
         <textureFocus>#(iif(eq(string.ltrim(#hedit.sub.6,'#0123456789.'),string.ltrim(#hedit.sub.6,'#')),'button_focus.png','button_focus.png'))</textureFocus>
         <label>#(string.format('{0}',#hedit.sub.6))</label>
         <onfocus>
@@ -622,6 +644,9 @@
       <control>
         <type>button</type>
         <id>771107</id>
+        <width>430</width>
+        <textalign>center</textalign>
+        <textvalign>middle</textvalign>
         <textureFocus>#(iif(eq(string.ltrim(#hedit.sub.7,'#0123456789.'),string.ltrim(#hedit.sub.7,'#')),'button_focus.png','button_focus.png'))</textureFocus>
         <label>#(string.format('{0}',#hedit.sub.7))</label>
         <onfocus>
@@ -647,11 +672,11 @@
     
     <control>
       <type>label</type>
-      <posX>1280</posX>
-      <posY>250</posY>
-      <label>BasicHome Layout</label>
-      <textcolor>ff6FAFE1</textcolor>
-      <font>Menutitle</font>
+      <posX>1450</posX>
+      <posY>260</posY>
+      <label>Layout</label>
+      <textcolor>white</textcolor>
+      <font>Label</font>
       <visible>skin.hassetting(#skin.basichome.editor)</visible>
     </control>
     
@@ -660,8 +685,9 @@
           <id>555</id>
           <posX>1250</posX>
           <posY>310</posY>
-          <width>450</width>
-          <align>left</align>
+          <width>500</width>
+          <textalign>center</textalign>
+          <textvalign>middle</textvalign>
           <mode>dialoglist</mode>
           <dialogTitle>BasicHome Layout</dialogTitle>
           <dialogShowNumbers>no</dialogShowNumbers>
