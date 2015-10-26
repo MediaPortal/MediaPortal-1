@@ -182,19 +182,22 @@ namespace MediaPortal.GUI.Library
     [XMLSkinFunction("cint")]
     public static int ConvertToInt(object value)
     {
-      return !ReferenceEquals(value, "") ? Convert.ToInt32(value) : 0;
+      int result;
+      return int.TryParse((string)value, out result) ? result : 0;
     }
 
     [XMLSkinFunction("cflt")]
     public static float ConvertToFloat(object value)
     {
-      return Convert.ToSingle(value);
+      float result;
+      return float.TryParse((string)value, out result) ? result : 0;
     }
 
     [XMLSkinFunction("cdate")]
     public static DateTime ConvertToDate(object value)
     {
-      return Convert.ToDateTime(value);
+      DateTime result;
+      return DateTime.TryParse((string)value, out result) ? result : DateTime.MinValue;
     }
 
     #endregion
