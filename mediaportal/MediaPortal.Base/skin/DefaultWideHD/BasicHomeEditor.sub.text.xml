@@ -58,7 +58,7 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <textureFocus>-</textureFocus>
         <textureNoFocus>-</textureNoFocus>
         <onfocus>
-          #(skin.setfocus(cint(#currentmoduleid),cint(#hedit.sub.return)))
+          #(skin.setfocus(cint(#currentmoduleid),cint(#hedit.main.return)))
         </onfocus>
         <visible>!control.isvisible(920900)</visible>
       </control>
