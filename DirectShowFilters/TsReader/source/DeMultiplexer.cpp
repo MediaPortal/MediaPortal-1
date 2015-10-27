@@ -3900,23 +3900,14 @@ void CDeMultiplexer::ThreadProc()
   int sizeRead = 0;
   bool retryRead = false;
   DWORD pfLoopDelay = PF_LOOP_DELAY_MIN;
-  HANDLE hAvrt;
-  DWORD dwTaskIndex = 0;
 
-  // Tell Vista Multimedia Class Scheduler (MMCS) we are doing threaded playback
-  if (m_pAvSetMmThreadCharacteristicsW) 
-  {
-    hAvrt = m_pAvSetMmThreadCharacteristicsW(L"Playback", &dwTaskIndex);
-  }
-  if (m_pAvSetMmThreadPriority) 
-  {
-    if (m_pAvSetMmThreadPriority(hAvrt, AVRT_PRIORITY_NORMAL))
-    {
-      LogDebug("CDeMultiplexer::ThreadProc - AvSetMmThreadPriority = %d", AVRT_PRIORITY_NORMAL);
-    }
-  }
-
+  //Set basic thread priority
   ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_NORMAL);
+  
+  //Tell the Multimedia Class Scheduler (MMCS) we are doing playback
+  DWORD dwTaskIndex = 0;
+  HANDLE hAvrt = SetMMCSThreadPlayback(&dwTaskIndex, AVRT_PRIORITY_NORMAL);
+    
   do
   {
 
@@ -3976,11 +3967,9 @@ void CDeMultiplexer::ThreadProc()
     pfLoopDelay = retryRead ? (m_filter.IsRTSP() ? 2 : (m_prefetchLoopDelay/2)) : m_prefetchLoopDelay;              
   }
   while (!ThreadIsStopping(pfLoopDelay)) ;
-  
-  if (m_pAvRevertMmThreadCharacteristics) 
-  {
-    m_pAvRevertMmThreadCharacteristics(hAvrt);
-  }
+
+  //Revert MMCS
+  RevertMMCSThread(hAvrt); 
 
   LogDebug("CDeMultiplexer::ThreadProc stopped()");
 }

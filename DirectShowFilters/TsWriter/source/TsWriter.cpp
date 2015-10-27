@@ -589,10 +589,11 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *pHr)
   LogDebug("================ New TsWriter filter instance =====================");
   LogDebug("  Logging format: [Date Time] [InstanceID] [ThreadID] Message....  ");
   LogDebug("===================================================================");
-  LogDebug("---------------------- v%d.%d.%d.%d --------------------------------", TSWRITER_MAJOR_VERSION,TSWRITER_MID_VERSION,TSWRITER_VERSION,TSWRITER_POINT_VERSION);
-  LogDebug("-- Threaded timeshift file writing --");
-  LogDebug("-- Timeshift file parking and no timeshift chunk reserve mods --");
-  LogDebug(" ");  
+  LogDebug("---------------------- v%d.%d.%d.%d -------------------------------", TSWRITER_MAJOR_VERSION,TSWRITER_MID_VERSION,TSWRITER_VERSION,TSWRITER_POINT_VERSION);
+  LogDebug("-- Threaded timeshift file writing                               --");
+  LogDebug("-- Random access mode for timeshift files                        --");
+  LogDebug("-- Variable size (no chunk reserve) for timeshift files          --");
+  LogDebug("-------------------------------------------------------------------");  
 
   // Set timer resolution to 1 ms (if possible)
   TIMECAPS tc; 

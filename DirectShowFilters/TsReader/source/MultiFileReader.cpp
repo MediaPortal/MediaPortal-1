@@ -189,6 +189,23 @@ HRESULT MultiFileReader::CloseFile()
 	return hr;
 }
 
+//Used by duration measuring code to avoid leaving data files open
+void MultiFileReader::CloseBufferFiles()
+{
+  CAutoLock rLock (m_pAccessLock);    
+	if (!m_TSFile.IsFileInvalid())
+	{
+		m_TSFile.CloseFile();
+    m_TSFileId = -1;
+	}
+	if(!m_TSFileNext.IsFileInvalid())
+  {
+  	m_TSFileNext.CloseFile();
+    m_TSFileIdNext = -1;
+  }
+}
+
+
 BOOL MultiFileReader::IsFileInvalid()
 {
   CAutoLock rLock (m_pAccessLock);    

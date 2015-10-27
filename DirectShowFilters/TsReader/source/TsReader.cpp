@@ -1340,7 +1340,8 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
 
     //get file duration
     m_duration.SetFileReader(m_fileDuration);
-    m_duration.UpdateDuration(true);
+    m_duration.UpdateDuration(true, false);
+    m_duration.CloseBufferFiles();
     m_bRecording = true; //Force duration thread to update
 
     float milli = m_duration.Duration().Millisecs();
@@ -1781,12 +1782,13 @@ void CTsReaderFilter::ThreadProc()
   
   REFERENCE_TIME  playSpeedAdjustInPPM = 0;
   
+  DWORD fileReadLatency = 0;
   
   pcrStartLast.Reset();
   pcrEndLast.Reset();
   pcrMaxLast.Reset();
 
-  ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_NORMAL);
+  ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_BELOW_NORMAL);
   do
   {
     //if demuxer reached the end of the file, we can skip the loop
@@ -1910,7 +1912,7 @@ void CTsReaderFilter::ThreadProc()
                 {
                   //Re-adjust the audio pin m_fAFTMeanRef value
                   m_lastPauseRun = timeNow;
-                  LogDebug("CTsReaderFilter:: DurationThread : Audio to render late= %03.3f", (float)presToRef) ;
+                  LogDebug("CTsReaderFilter:: DurationThread : Audio to render late= %03.3f, adjusting audio pin m_fAFTMeanRef", (float)presToRef) ;
                 }
                 //We have lost a substantial amount of buffered data,
                 //so we may need to pause playback to recover quickly
@@ -1933,7 +1935,7 @@ void CTsReaderFilter::ThreadProc()
                 //We have gained a substantial amount of buffered data,
                 //so re-adjust the audio pin m_fAFTMeanRef value
                 m_lastPauseRun = timeNow;
-                LogDebug("CTsReaderFilter:: DurationThread : Audio to render early= %03.3f", (float)presToRef) ;
+                LogDebug("CTsReaderFilter:: DurationThread : Audio to render early= %03.3f, adjusting audio pin m_fAFTMeanRef", (float)presToRef) ;
               }
             }
             else  //We are within the +/-20ms 'dead band' so don't adjust
@@ -1987,9 +1989,12 @@ void CTsReaderFilter::ThreadProc()
             m_updateThreadDuration.SetFileReader(m_fileDuration);
             m_updateThreadDuration.SetVideoPid(m_duration.GetPid());
             { //Context for CAutoLock
-              CAutoLock lock (&m_DurationThreadLock);
-              m_updateThreadDuration.UpdateDuration(false);
-            }
+              CAutoLock lock (&m_DurationThreadLock);              
+              DWORD readFileTime = GET_TIME_NOW();              
+              m_updateThreadDuration.UpdateDuration(false, true);
+              m_updateThreadDuration.CloseBufferFiles();              
+              fileReadLatency = GET_TIME_NOW() - readFileTime;    
+             }
             m_bRecording = false;
             //LogDebug("CTsReaderFilter:: UpdThread duration = %.3f s", (float)m_updateThreadDuration.Duration().Millisecs()/1000.0f);
                              
@@ -2177,8 +2182,9 @@ void CTsReaderFilter::ThreadProc()
                 
         if ((cntA > AUD_BUF_SIZE_LOG_LIM) || (cntV > VID_BUF_SIZE_LOG_LIM) || m_bEnableBufferLogging)
         {
-          LogDebug("Buffers : A/V = %d/%d, RTSP = %d, MaxReadLat: %d ms, AveReadLat: %03.3f ms, A last: %03.3f, V Last: %03.3f, Comp: %.3f s, AudMean: %.3f s, AudDelta: %.3f s, SPPM: %d", 
-          cntA, cntV, rtspBuffSize, m_demultiplexer.GetMaxFileReadLatency(), m_demultiplexer.GetAveFileReadLatency(),
+          LogDebug("Buffers : A/V = %d/%d, RTSP = %d, MaxReadLat: %d ms, AveReadLat: %03.3f ms, DurReadLat: %d ms, A last: %03.3f, V Last: %03.3f, Comp: %.3f s, AudMean: %.3f s, AudDelta: %.3f s, SPPM: %d", 
+          cntA, cntV, rtspBuffSize, 
+          m_demultiplexer.GetMaxFileReadLatency(), m_demultiplexer.GetAveFileReadLatency(), fileReadLatency,
           (float)lastAudio.Millisecs()/1000.0f, (float)lastVideo.Millisecs()/1000.0f, 
           (float)Compensation.m_time/10000000, (float)GetAudioPin()->GetAudToPresMeanDelta(), 
           (float)GetAudioPin()->GetAudioPresToRefDiff(), playSpeedAdjustInPPM);

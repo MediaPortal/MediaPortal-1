@@ -224,7 +224,7 @@ HRESULT FileReader::OpenFile()
             Sleep(50);   		  
           	::CloseHandle(hFileUnbuff); //File is deleted on CloseHandle since FILE_FLAG_DELETE_ON_CLOSE was used
           	hFileUnbuff = INVALID_HANDLE_VALUE; // Invalidate the file
-    	      LogDebug("FileReader::OpenFile(), dummy file write %d bytes to %ws", bytesWritten, tempFileName);
+    	      LogDebug("FileReader::OpenFile(), dummy file WRITE_THROUGH write %d bytes to %ws", bytesWritten, tempFileName);
       		}
       	}
       }
@@ -244,7 +244,7 @@ HRESULT FileReader::OpenFile()
       	::CloseHandle(hFileUnbuff);
       	hFileUnbuff = INVALID_HANDLE_VALUE; // Invalidate the file
   		}
-  	  LogDebug("FileReader::OpenFile() unbuff, %d tries to open %ws", 15-Tmo, pFileName);  	  
+  	  //LogDebug("FileReader::OpenFile() unbuff, %d tries to open %ws", 15-Tmo, pFileName);  	  
     }
 
 		Sleep(min((20*(15-Tmo)),250)) ; //wait longer between retries as loop iterations increase
@@ -438,6 +438,11 @@ void FileReader::SetRandomAccess(BOOL useRandomAccess)
 
 //for MultiFileReader() compatibility only
 void FileReader::SetFileNext(BOOL useFileNext)
+{
+}
+
+//for MultiFileReader() compatibility only
+void FileReader::CloseBufferFiles()
 {
 }
 
