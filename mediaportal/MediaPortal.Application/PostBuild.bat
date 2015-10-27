@@ -66,6 +66,7 @@ xcopy %1\Dialogs\bin\%2\Dialogs.* plugins\Windows\ /Y /D
 
 REM ProcessPlugins
 xcopy %1\ProcessPlugins\bin\%2\ProcessPlugins.* plugins\process\ /Y /D
+xcopy %1\ProcessPlugins\MiniDisplay\bin\%2\MiniDisplayPlugin.* plugins\process\ /Y /D
 xcopy %1\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\%2\MusicShareWatcherHelper.* . /Y /D
 xcopy %1\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\%2\MusicShareWatcher.exe . /Y /D
 
@@ -181,3 +182,5 @@ xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll .
 REM taglib-sharp
 xcopy %1\..\Packages\MediaPortal.TagLib.2.0.3.8\lib\taglib-sharp.dll ./Y /D
 
+REM SharpLibHid
+xcopy %1\..\Packages\SharpLibHid.1.1.0\lib\net20\SharpLibHid.dll . /Y /D

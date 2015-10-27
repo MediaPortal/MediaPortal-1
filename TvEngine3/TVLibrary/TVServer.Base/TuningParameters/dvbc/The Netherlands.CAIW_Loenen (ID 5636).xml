@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBCTuning>
-  <!--Created on 2014-12-14 14:22-->
+  <!--Created on 2015-05-09 12:19-->
   <DVBCTuning>
     <!--Transponder ID 101-->
     <!--TV: [1] NPO 1 [2] NPO 2 [3] NPO 3-->
@@ -61,7 +61,7 @@
     <!--Transponder ID 108-->
     <!--TV: [13] Showroom [25] MTV NL [38] ARD Das Erste [39] ZDF [49] Family7-->
     <!--Radio: [838] NDR Kultur [841] Deutsche Welle-->
-    <Frequency>706000</Frequency>
+    <Frequency>450000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
@@ -84,14 +84,14 @@
   <DVBCTuning>
     <!--Transponder ID 111-->
     <!--TV: [117] BBC Entertainment [141] WDR [142] Antena 3 [322] FOX Sports Eredivisie 5 [327] STV [328] Haberturk-->
-    <!--Radio: [901] XLnt Opera [902] XLnt Operette [903] XLnt Classical [905] XLnt Crooners [906] XLnt Chill Out [907] XLnt Lounge [908] XLnt France [910] XLnt Relipop [911] XLnt Salsa [912] XLnt Italia [913] XLnt Reggae [914] XLnt Turk [916] XLnt Motown [917] XLnt Classic Jazz [918] XLnt Jazz [919] XLnt Blues [920] XLnt Filmmuziek [921] XLnt Party-->
+    <!--Radio: [901] Stingray Opera [902] Stingray Operette [903] Stingray Classical [905] Stingray Cocktail Lounge [906] Stingray Chill Lounge [907] Stingray Lounge [908] Stingray France [910] Stingray Relipop [911] Stingray Salsa [912] Stingray Italia [913] Stingray Reggae [914] Stingray Turk [916] Stingray Motown [917] Stingray Jazz Classics [918] Stingray Jazz [919] Stingray Blues [920] Stingray Filmmuziek [921] Stingray All Day Party NL-->
     <Frequency>674000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
     <!--Transponder ID 112-->
-    <!--TV: [311] Sport1 Select [312] Sport1 Voetbal [313] Sport1 Golf [314] Sport1 Tennis [315] Sport1 Extra 1 [316] Sport1 Extra 2-->
+    <!--TV: [311] Sport1 Select [312] Sport1 Voetbal [313] Sport1 Golf [314] Sport1 Racing [315] Sport1 Extra 1 [316] Sport1 Extra 2-->
     <!--Radio: -->
     <Frequency>738000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
@@ -100,7 +100,7 @@
   <DVBCTuning>
     <!--Transponder ID 113-->
     <!--TV: [102] Fashion TV [104] CBS Reality [109] Extreme Sports [135] Motors TV [325] Euro D [329] CNN Turk [523] FOXlife HD-->
-    <!--Radio: [922] XLnt Espana [923] XLnt Rock 'n Roll [924] XLnt Hip Hop [925] XLnt R&B [926] XLnt Trance [927] XLnt Dance [928] XLnt Jack FM [929] XLnt Classic Rock [930] XLnt Hard Rock [931] XLnt Alternative Rock [932] XLnt Rock [934] XLnt New Age [935] XLnt Love Songs-->
+    <!--Radio: [922] Stingray Espana [923] Stingray Rock N Roll [924] Stingray Hip Hop [925] Stingray Classic RnB & Soul [926] Stingray Trance [927] Stingray Dance [928] Stingray Drive [929] Stingray Classic Rock [930] Stingray Hard Rock [931] Stingray Indie Classics [932] Stingray Rock Anthems [934] Stingray The Spa [935] Stingray Love Songs-->
     <Frequency>786000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
@@ -109,7 +109,7 @@
     <!--Transponder ID 114-->
     <!--TV: [118] NPO Doc [236] 2M [251] Hustler TV [252] Brazzers TV [350] X-MO [501] NPO 1 HD-->
     <!--Radio: -->
-    <Frequency>770000</Frequency>
+    <Frequency>306000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
@@ -197,7 +197,7 @@
     <!--Transponder ID 125-->
     <!--TV: [306] Film1 Premiere HD [310] Sport1 Select HD [319] FOX Sports International 2-->
     <!--Radio: -->
-    <Frequency>222000</Frequency>
+    <Frequency>314000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
@@ -212,7 +212,7 @@
   <DVBCTuning>
     <!--Transponder ID 127-->
     <!--TV: [24] 24Kitchen [50] Al Jazeera English [116] Food Network Channel [336] Planet Turk [513] NGC HD-->
-    <!--Radio: [904] XLnt Country [909] XLnt Arabian Nights [915] XLnt NL Luisterlied [933] XLnt Dance Classics [950] XLnt Nederpop Gold [951] XLnt Nederpop [952] XLnt Piratenhits [953] XLnt Comedy [954] XLnt Kiddo FM [955] XLnt Kleuterliedjes [956] XLnt Oldies [957] XLnt Today's Pop [958] XLnt Easy Listening [959] XLnt Hits [960] XLnt Seasons [961] XLnt Nostalgie [962] XLnt Schlager [963] XLnt Musical [964] XLnt Skihut-->
+    <!--Radio: [904] Stingray Country [909] Stingray Arabic [915] Stingray NL Luisterlied [933] Stingray Dance Classics [950] Stingray Nederpop Gold [951] Stingray Nederpop [952] Stingray Piratenhits [953] Stingray Comedy [954] Stingray Kiddo FM [955] Stingray Kleuterliedjes [956] Stingray Oldies [957] Stingray Today's Pop [958] Stingray Easy Listening [959] Stingray Hits [960] Stingray Seasons [961] Stingray Nostalgie [962] Stingray Schlager [963] Stingray Musical [964] Stingray Skihut-->
     <Frequency>746000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
@@ -261,7 +261,7 @@
     <!--Transponder ID 133-->
     <!--TV: [48] NPO Humor TV [101] NPO 101 [502] NPO 2 HD [503] NPO 3 HD-->
     <!--Radio: -->
-    <Frequency>850000</Frequency>
+    <Frequency>354000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
@@ -285,7 +285,7 @@
     <!--Transponder ID 136-->
     <!--TV: [16] NGC [20] Eurosport [507] RTL7 HD [510] RTL8 HD-->
     <!--Radio: -->
-    <Frequency>826000</Frequency>
+    <Frequency>362000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
@@ -293,7 +293,7 @@
     <!--Transponder ID 137-->
     <!--TV: [78] TV Oost [79] TV Noord [530] HBO HD [531] Food Network Channel HD-->
     <!--Radio: [860] Radio Noord [861] Radio Oost-->
-    <Frequency>330000</Frequency>
+    <Frequency>322000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
@@ -301,7 +301,7 @@
     <!--Transponder ID 138-->
     <!--TV: [19] Ketnet [506] SBS6 HD [508] Veronica/DisneyXD HD-->
     <!--Radio: -->
-    <Frequency>338000</Frequency>
+    <Frequency>330000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
@@ -309,7 +309,7 @@
     <!--Transponder ID 139-->
     <!--TV: [113] Animal Planet HD [143] Mediaset Italia [254] Meiden van Holland Hard [511] FOX HD-->
     <!--Radio: -->
-    <Frequency>346000</Frequency>
+    <Frequency>338000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
@@ -317,7 +317,7 @@
     <!--Transponder ID 140-->
     <!--TV: [527] ZDF HD [528] Arte HD-->
     <!--Radio: -->
-    <Frequency>354000</Frequency>
+    <Frequency>346000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
@@ -325,7 +325,7 @@
     <!--Transponder ID 141-->
     <!--TV: [331] HBO [332] HBO2 [333] HBO3 [519] 24Kitchen HD-->
     <!--Radio: -->
-    <Frequency>362000</Frequency>
+    <Frequency>370000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
@@ -333,7 +333,7 @@
     <!--Transponder ID 142-->
     <!--TV: [0] Penthouse HD1 [0] Penthouse HD2-->
     <!--Radio: -->
-    <Frequency>370000</Frequency>
+    <Frequency>378000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
@@ -341,15 +341,15 @@
     <!--Transponder ID 143-->
     <!--TV: [12] TV Stichtse Vecht [410] BBC One HD-->
     <!--Radio: [878] Radio Stichtse Vecht-->
-    <Frequency>378000</Frequency>
+    <Frequency>386000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
     <!--Transponder ID 144-->
-    <!--TV: [0] STAR Plus [0] STAR Gold [0] Star Jalsha [0] STAR One-->
+    <!--TV: [0] STAR Plus [0] STAR Gold [0] Star Jalsha [0] STAR One [58] SBS9 [539] SBS9 HD-->
     <!--Radio: -->
-    <Frequency>386000</Frequency>
+    <Frequency>850000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>

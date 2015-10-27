@@ -655,6 +655,10 @@ namespace MediaPortal.GUI.Video
           FolderSetting folderSetting = new FolderSetting();
           folderSetting.UpdateFolders(-1, CurrentSortAsc, (int)CurrentLayout);
           break;
+
+        case GUIMessage.MessageType.GUI_MSG_REFRESH_MEDIAINFO:
+          SelectCurrentItem();
+          break;
       }
       return base.OnMessage(message);
     }
@@ -1198,6 +1202,10 @@ namespace MediaPortal.GUI.Video
       {
         dlg.AddLocalizedString(868); // Reset virtual directory
       }
+      else if (item.IsRemote || (item.IsFolder) && (item.Label == "..") && _virtualDirectory.IsShareOfflineDetected())
+      {
+        dlg.AddLocalizedString(868); // Force reset virtual directory if user want to refresh offline share
+      }
       else if (item.IsRemote || (item.IsFolder) && (item.Label == ".."))
       {
         return;
@@ -1357,6 +1365,11 @@ namespace MediaPortal.GUI.Video
         #endregion
 
         dlg.AddLocalizedString(1299); // Refresh current directory
+
+        if (_virtualDirectory.IsShareOfflineDetected())
+        {
+          dlg.AddLocalizedString(868); // Force reset virtual directory if user want to refresh offline share
+        }
       }
 
       dlg.AddLocalizedString(1262); // Update grabber scripts
@@ -2899,45 +2912,64 @@ namespace MediaPortal.GUI.Video
         mInfo.SetMediaInfoProperties(file, true);
         mInfo.SetDurationProperty(movieId);
         IMDBMovie.SetMovieData(item);
-        SelectCurrentItem();
+
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REFRESH_MEDIAINFO, 0, 0, 0, 0, 0, 0);
+        GUIWindowManager.SendMessage(msg);
       }
     }
 
     private static bool WakeUpSrv(string newFolderName)
     {
+      bool wakeOnLanEnabled;
       if (!Util.Utils.IsUNCNetwork(newFolderName))
       {
-        return true;
+        // Check if letter drive is a network drive
+        string detectedFolderName = Util.Utils.FindUNCPaths(newFolderName);
+        if (Util.Utils.IsUNCNetwork(detectedFolderName))
+        {
+          wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
+          newFolderName = detectedFolderName;
+        }
+        else
+        {
+          return true;
+        }
       }
-      
+      else
+      {
+        wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
+      }
+
       string serverName = string.Empty;
-      bool wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
 
       if (wakeOnLanEnabled)
       {
         serverName = Util.Utils.GetServerNameFromUNCPath(newFolderName);
-      }
 
-      DateTime now = DateTime.Now;
-      TimeSpan ts = now - _prevWolTime;
+        DateTime now = DateTime.Now;
+        TimeSpan ts = now - _prevWolTime;
 
-      if (serverName == _prevServerName && _wolResendTime * 60 > ts.TotalSeconds)
-      {
-        return true;
-      }
+        if (serverName == _prevServerName && _wolResendTime*60 > ts.TotalSeconds)
+        {
+          return true;
+        }
 
-      _prevWolTime = DateTime.Now;
-      _prevServerName = serverName;
+        _prevWolTime = DateTime.Now;
+        _prevServerName = serverName;
 
-      try
-      {
-        Log.Debug("WakeUpSrv: FolderName = {0}, ShareName = {1}, WOL enabled = {2}", newFolderName, _virtualDirectory.GetShare(newFolderName).Name, wakeOnLanEnabled);
-      }
-      catch { };
+        try
+        {
+          Log.Debug("WakeUpSrv: FolderName = {0}, ShareName = {1}, WOL enabled = {2}", newFolderName,
+                    _virtualDirectory.GetShare(newFolderName).Name, wakeOnLanEnabled);
+        }
+        catch
+        {
+        }
 
-      if (!string.IsNullOrEmpty(serverName))
-      {
-        return WakeupUtils.HandleWakeUpServer(serverName, _wolTimeout);
+        if (!string.IsNullOrEmpty(serverName))
+        {
+          return WakeupUtils.HandleWakeUpServer(serverName, _wolTimeout);
+        }
       }
       return true;
     }

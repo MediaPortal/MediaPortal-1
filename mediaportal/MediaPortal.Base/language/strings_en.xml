@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="English" characters="255">
   <Section name="unmapped">
-    <String id="0" prefix="My ">Programmes</String>
+    <String id="0" prefix="My ">Programs</String>
     <String id="1" prefix="My ">Pictures</String>
     <String id="2" prefix="My ">Music</String>
     <String id="3" prefix="My ">Videos</String>
@@ -757,7 +757,7 @@
     <String id="865">Number of minutes until sleep:</String>
     <String id="866">Fade-out Volume</String>
     <String id="867">Shut down computer</String>
-    <String id="868">Reset</String>
+    <String id="868">Reset or refresh detected offline share(s)</String>
     <String id="869">New alarm</String>
     <String id="870">Recurring</String>
     <String id="871">Wake up computer for this alarm</String>
@@ -2358,5 +2358,31 @@
     <String id="300230">Stop playback on removal of an audio renderer</String>
     <String id="300231">Reduce frame rate when not being in focus</String>
 	<String id="300232">Only update files after {0}</String>
+	<String id="350001">Press Info/F9 for quick settings...</String>
+	<String id="350002">Movies</String>
+	<String id="350003">PlayDisc</String>
+	<String id="350004">Trakt</String>
+	<String id="350005">TvWishList</String>
+	<String id="350006">OnlineVideos</String>
+	<String id="350007">Extensions</String>
+	<String id="350008">SubCentral</String>
+	<String id="350009">IMDb+</String>
+	<String id="350010">LogoManager</String>
+	<String id="350011">InfoService</String>
+	<String id="350012">Bing Images</String>
+	<String id="350013">MyLyrics</String>
+	<String id="350014">BrowseTheWeb</String>
+	<String id="350015">AirPlayer</String>
+	<String id="350016">Rockstar</String>
+	<String id="350017">ShowTimes</String>
+	<String id="350018">NoPlugin</String>
+	<String id="350019">Label settings...</String>
+	<String id="350020">Press Info/F9 for all supported plugins...</String>
+	<String id="350021">Weather</String>
+	<String id="350022">MusicInfo Handler</String>
+	<String id="350023">Settings</String>
+	<String id="350024">Guide</String>
+	<String id="350025">Red Bull TV</String>
+	<String id="350026">YouTube</String>
    </Section>
 </Language>

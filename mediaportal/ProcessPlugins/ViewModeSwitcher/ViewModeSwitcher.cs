@@ -679,6 +679,8 @@ namespace ProcessPlugins.ViewModeSwitcher
         frame = null;
         return;
       }
+
+      GUIGraphicsContext.IsTabWithBlackBars = analyzer.CheckFor3DTabBlackBar(frame);
       
       double Hsym = 1.0;
       double Vsym = 1.0;
