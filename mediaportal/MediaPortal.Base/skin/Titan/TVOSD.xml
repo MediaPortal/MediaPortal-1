@@ -278,13 +278,13 @@
 		<type>textboxscrollup</type>
 		<id>1</id>
     <posX>497</posX>
-    <posY>168</posY>
+    <posY>118</posY>
     <width>1120</width>
-    <height>500</height>
+    <height>400</height>
 		<visible>Control.HasFocus(998) + ![Control.IsVisible(501) | Control.IsVisible(801) | Control.IsVisible(750)]</visible>
     <seperator>----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</seperator>
 		<label>#TV.View.description</label>
-		<font>TitanLight16</font>
+		<font>TitanLight14</font>
 		<textcolor>ff393939</textcolor>
 	</control>
 
@@ -306,7 +306,7 @@
 			<type>image</type>
 			<id>0</id>
 			<posX>257</posX>
-			<posY>169</posY>
+			<posY>119</posY>
 			<width>187</width>
 			<height>127</height>
 			<texture>osd_logo_info.png</texture>
@@ -1011,6 +1011,93 @@
       <spinPosY>600</spinPosY>
       <visible>no</visible>
     </control>
+	
+	<!-- ***** Signal info *****-->
+ 
+    <control>
+        <description>Signal Level</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>260</posX>
+        <posY>615</posY>
+        <label>Signal Level :</label>
+        <visible>Control.HasFocus(998)</visible>
+		<textcolor>ff222222</textcolor>
+        <font>TitanLight12</font>
+    </control>
+ 
+    <control>
+        <description>Progress background</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>511</posX>
+        <posY>625</posY>
+        <width>1114</width>
+         <height>17</height>
+        <visible>Control.HasFocus(998)</visible>
+        <texture>osd_progress_bg.png</texture>
+    </control>
+ 
+    <control>
+        <description>Signal level progress bar</description>
+        <type>progress</type>
+        <id>0</id>
+        <posX>498</posX>
+        <posY>625</posY>
+        <width>1140</width>
+        <height>17</height>
+		<innerheight>17</innerheight>
+        <label>#TV.TuningDetails.SignalLevel</label>
+        <texturebg>-</texturebg>
+        <lefttexture>osd_progress_left.png</lefttexture>
+        <midtexture>osd_progress_mid.png</midtexture>
+        <righttexture>osd_progress_right.png</righttexture>
+        <visible>Control.HasFocus(998)</visible>
+    </control>
+ 
+    <control>
+        <description>Signal Quality</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>260</posX>
+        <posY>665</posY>
+        <label>Signal Quality :</label>
+        <visible>Control.HasFocus(998)</visible>
+	    <textcolor>ff222222</textcolor>
+        <font>TitanLight12</font>
+    </control>
+ 
+    <control>
+        <description>Progress background</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>511</posX>
+        <posY>675</posY>
+        <width>1114</width>
+        <height>17</height>
+        <texture>osd_progress_bg.png</texture>
+     <visible>Control.HasFocus(998)</visible>
+    </control>
+ 
+    <control>
+        <description>Signal level progress bar</description>
+        <type>progress</type>
+        <id>0</id>
+        <posX>498</posX>
+        <posY>675</posY>
+        <width>1140</width>
+        <height>17</height>
+		<innerheight>17</innerheight>
+        <label>#TV.TuningDetails.SignalQuality</label>
+        <texturebg>-</texturebg>
+        <lefttexture>osd_progress_left.png</lefttexture>
+        <midtexture>osd_progress_mid.png</midtexture>
+        <righttexture>osd_progress_right.png</righttexture>
+        <visible>Control.HasFocus(998)</visible>
+    </control>
+	
+	
+	
 <import>tvOSD.mediainfo.xml</import>
 </controls>
 </window>
