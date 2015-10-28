@@ -2209,6 +2209,17 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(unsigned char* sectionData,
         }
       }
       else if (
+        (tag == 0x82 && privateDataSpecifier == 0x31) ||      // Sagem logical channel number descriptor
+        (tag == 0x93 && privateDataSpecifier == 0x362275) ||  // Irdeto logical channel number descriptor (Austar Australia)
+        (tag == 0xe2 && privateDataSpecifier == 0x6001)       // News Data Com [NDC] logical channel number descriptor (Sky NZ)
+      )
+      {
+        result = DecodeAlternativeLogicalChannelNumberDescriptor(&sectionData[pointer],
+                                                                  length,
+                                                                  visibleInGuideFlags,
+                                                                  logicalChannelNumbers);
+      }
+      else if (
         tag == 0x83 ||      // NorDig logical channel number descriptor - used too widely and loosely to apply PDS/PDI filtering
         (
           tag == 0x88 &&    // HD simulcast logical channel number descriptor
@@ -2226,18 +2237,13 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(unsigned char* sectionData,
                                                       visibleInGuideFlags,
                                                       logicalChannelNumbers);
       }
-      else if (
-        (tag == 0x82 && privateDataSpecifier == 0x31) ||      // Sagem logical channel number descriptor
-        (tag == 0x93 && privateDataSpecifier == 0x362275) ||  // Irdeto logical channel number descriptor (Austar Australia)
-        (tag == 0xe2 && privateDataSpecifier == 0x6001)       // News Data Com [NDC] logical channel number descriptor (Sky NZ)
-      )
+      else if (tag == 0x86 && privateDataSpecifier == 0x233a) // service attribute descriptor (Freeview UK)
       {
-        result = DecodeAlternativeLogicalChannelNumberDescriptor(&sectionData[pointer],
-                                                                  length,
-                                                                  visibleInGuideFlags,
-                                                                  logicalChannelNumbers);
+        result = DecodeServiceAttributeDescriptor(&sectionData[pointer],
+                                                  length,
+                                                  visibleInGuideFlags);
       }
-      else if (tag == 0x87 && privateDataSpecifier == 0x29) // NorDig logical channel descriptor version 2
+      else if (tag == 0x87 && privateDataSpecifier == 0x29)   // NorDig logical channel descriptor version 2
       {
         result = DecodeNorDigLogicalChannelDescriptorVersion2(&sectionData[pointer],
                                                               length,
@@ -2246,7 +2252,7 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(unsigned char* sectionData,
                                                               logicalChannelNumbers,
                                                               visibleInGuideFlags);
       }
-      else if (tag == 0xb1 && privateDataSpecifier == 2)    // OpenTV channel descriptor
+      else if (tag == 0xb1 && privateDataSpecifier == 2)      // OpenTV channel descriptor
       {
         result = DecodeOpenTvChannelDescriptor(&sectionData[pointer],
                                                 length,
@@ -3493,7 +3499,9 @@ bool CParserNitDvb::DecodeLogicalChannelNumberDescriptor(unsigned char* data,
       // flag. The HD simulcast LCN descriptor does.
       if (tag != 0x83 || privateDataSpecifier != 0x233a)
       {
-        if (visibleInGuideFlags.find(serviceId) == visibleInGuideFlags.end())
+        // Assuming that the receiver is HD-capable, the visible in guide flag
+        // in the HD simulcast LCN descriptor overrides other visibility flags.
+        if (tag == 0x88 || visibleInGuideFlags.find(serviceId) == visibleInGuideFlags.end())
         {
           visibleInGuideFlags[serviceId] = visibleServiceFlag;
         }
@@ -3520,6 +3528,50 @@ bool CParserNitDvb::DecodeLogicalChannelNumberDescriptor(unsigned char* data,
   catch (...)
   {
     LogDebug(L"%s: unhandled exception in DecodeLogicalChannelNumberDescriptor()",
+              m_name);
+  }
+  return false;
+}
+
+bool CParserNitDvb::DecodeServiceAttributeDescriptor(unsigned char* data,
+                                                      unsigned char dataLength,
+                                                      map<unsigned short, bool>& visibleInGuideFlags) const
+{
+  if (dataLength == 0 || dataLength % 3 != 0)
+  {
+    LogDebug(L"%s: invalid service attribute descriptor, length = %hhu",
+              m_name, dataLength);
+    return false;
+  }
+  try
+  {
+    unsigned short pointer = 0;
+    while (pointer + 2 < dataLength)
+    {
+      unsigned short serviceId = (data[pointer] << 8) | data[pointer + 1];
+      bool numericSelectionFlag = (data[pointer + 2] & 0x2) != 0;
+      bool visibleServiceFlag = (data[pointer + 2] & 0x1) != 0;
+      pointer += 3;
+
+      //LogDebug(L"%s: service attribute descriptor, service ID = %hu, numeric selection flag = %d, visible service flag = %d",
+      //          m_name, serviceId, numericSelectionFlag, visibleServiceFlag);
+
+      // Assume we are HD-capable. Therefore the visible in guide flag in this
+      // descriptor is overriden by the one in the HD simulcast LCN descriptor.
+      if (visibleInGuideFlags.find(serviceId) == visibleInGuideFlags.end())
+      {
+        visibleInGuideFlags[serviceId] = visibleServiceFlag;
+      }
+      else
+      {
+        visibleInGuideFlags[serviceId] |= visibleServiceFlag;
+      }
+    }
+    return true;
+  }
+  catch (...)
+  {
+    LogDebug(L"%s: unhandled exception in DecodeServiceAttributeDescriptor()",
               m_name);
   }
   return false;

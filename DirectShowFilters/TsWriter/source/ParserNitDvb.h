@@ -1219,6 +1219,9 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
                                               unsigned long privateDataSpecifier,
                                               map<unsigned short, bool>& visibleInGuideFlags,
                                               map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers) const;
+    bool DecodeServiceAttributeDescriptor(unsigned char* data,
+                                          unsigned char dataLength,
+                                          map<unsigned short, bool>& visibleInGuideFlags) const;
     bool DecodeNorDigLogicalChannelDescriptorVersion2(unsigned char* data,
                                                       unsigned char dataLength,
                                                       map<unsigned char, char*>& channelListNames,
