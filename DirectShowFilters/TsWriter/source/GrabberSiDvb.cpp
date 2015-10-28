@@ -196,8 +196,6 @@ STDMETHODIMP_(unsigned short) CGrabberSiDvb::GetServiceCount()
 }
 
 STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
-                                              unsigned short preferredLogicalChannelNumberBouquetId,
-                                              unsigned short preferredLogicalChannelNumberRegionId,
                                               unsigned char* tableId,
                                               unsigned short* originalNetworkId,
                                               unsigned short* transportStreamId,
@@ -205,7 +203,8 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
                                               unsigned short* referenceServiceId,
                                               unsigned short* freesatChannelId,
                                               unsigned short* openTvChannelId,
-                                              unsigned short* logicalChannelNumber,
+                                              unsigned long long* logicalChannelNumbers,
+                                              unsigned short* logicalChannelNumberCount,
                                               unsigned char* dishSubChannelNumber,
                                               bool* eitScheduleFlag,
                                               bool* eitPresentFollowingFlag,
@@ -255,10 +254,12 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
                                               unsigned short* epgTransportStreamId,
                                               unsigned short* epgServiceId)
 {
+  unsigned short originalLogicalChannelNumberCount = *logicalChannelNumberCount;
   unsigned char originalAvailableInCountryCount = *availableInCountryCount;
   unsigned char originalUnavailableInCountryCount = *unavailableInCountryCount;
   unsigned char originalAvailableInCellCount = *availableInCellCount;
   unsigned char originalTargetRegionIdCount = *targetRegionIdCount;
+  unsigned short sdtLogicalChannelNumber;
   if (!m_parserSdt.GetService(index,
                               *tableId,
                               *originalNetworkId,
@@ -270,7 +271,7 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
                               *freeCaMode,
                               *serviceType,
                               *serviceNameCount,
-                              *logicalChannelNumber,
+                              sdtLogicalChannelNumber,
                               *dishSubChannelNumber,
                               *visibleInGuide,
                               *referenceServiceId,
@@ -308,7 +309,6 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
 
   // Supplement the information from the SDT with information from the BAT and
   // NIT.
-  unsigned short batLogicalChannelNumber = 0;
   bool batVisibleInGuide = true;
   unsigned char tempCount = 0;
   unsigned char batNitTargetRegionIdCount = originalTargetRegionIdCount;
@@ -332,11 +332,10 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
   if (m_parserBat.GetService(*originalNetworkId,
                               *transportStreamId,
                               *referenceServiceId == 0 ? *serviceId : *referenceServiceId,
-                              preferredLogicalChannelNumberBouquetId,
-                              preferredLogicalChannelNumberRegionId,
                               *freesatChannelId,              // BAT only
                               *openTvChannelId,               // BAT only
-                              batLogicalChannelNumber,        // SDT, BAT, NIT; prefer SDT, then BAT
+                              logicalChannelNumbers,          // SDT, BAT, NIT; combine
+                              *logicalChannelNumberCount,
                               batVisibleInGuide,              // SDT, BAT, NIT; prefer SDT, then BAT
                               bouquetIds,                     // BAT only
                               *bouquetIdCount,
@@ -352,24 +351,17 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
                               *freesatChannelCategoryIdCount,
                               NULL,                           // NIT only [NorDig channel list IDs]
                               tempCount,
-                              batAvailableInCountries,        // SDT, BAT
+                              batAvailableInCountries,        // SDT, BAT; assume scoped
                               batAvailableInCountryCount,
-                              batUnavailableInCountries,      // SDT, BAT
+                              batUnavailableInCountries,      // SDT, BAT; assume scoped
                               batUnavailableInCountryCount))
   {
-    // Most of the time we expect to get the LCN from BAT or NIT. Only a few
-    // providers put the LCN in the SDT. For those providers, the LCN is not
-    // available elsewhere.
-    if (*logicalChannelNumber == 0)
+    // Most of the time we expect to get the LCN and visible in guide flag
+    // together from BAT or NIT. Only a few providers put these details in the
+    // SDT. For those providers, the details are not available elsewhere.
+    if (*logicalChannelNumberCount != 0)
     {
-      *logicalChannelNumber = batLogicalChannelNumber;
       *visibleInGuide = batVisibleInGuide;
-    }
-    else if (batLogicalChannelNumber != 0 && *logicalChannelNumber != batLogicalChannelNumber)
-    {
-      LogDebug(L"SI DVB %d: unexpected logical channel number conflict, ONID = %hu, TSID = %hu, service ID = %hu, SDT LCN = %hu, BAT LCN = %hu",
-                m_parserBat.GetPid(), *originalNetworkId, *transportStreamId,
-                *serviceId, *logicalChannelNumber, batLogicalChannelNumber);
     }
 
     // Target region descriptors are "scoped" (refer to EN 300 468 section
@@ -419,7 +411,12 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
 
   unsigned short nitFreesatChannelId;
   unsigned short nitOpenTvChannelId;
-  unsigned short nitLogicalChannelNumber;
+  unsigned long long* nitLogicalChannelNumbers = logicalChannelNumbers;
+  if (logicalChannelNumbers != NULL && *logicalChannelNumberCount < originalLogicalChannelNumberCount)
+  {
+    nitLogicalChannelNumbers = &logicalChannelNumbers[*logicalChannelNumberCount];
+  }
+  unsigned short nitLogicalChannelNumberCount = originalLogicalChannelNumberCount - *logicalChannelNumberCount;
   bool nitVisibleInGuide;
   unsigned char nitAvailableInCellCount = originalAvailableInCellCount;
   unsigned long* nitAvailableInCells = new unsigned long[originalAvailableInCellCount];
@@ -436,7 +433,8 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
                               *referenceServiceId == 0 ? *serviceId : *referenceServiceId,
                               nitFreesatChannelId,
                               nitOpenTvChannelId,
-                              nitLogicalChannelNumber,
+                              nitLogicalChannelNumbers,
+                              nitLogicalChannelNumberCount,
                               nitVisibleInGuide,
                               networkIds,
                               *networkIdCount,
@@ -482,16 +480,9 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
                 *serviceId, *openTvChannelId, nitOpenTvChannelId);
     }
 
-    if (*logicalChannelNumber == 0)
+    if (nitLogicalChannelNumberCount > 0)
     {
-      *logicalChannelNumber = nitLogicalChannelNumber;
       *visibleInGuide = nitVisibleInGuide;
-    }
-    else if (nitLogicalChannelNumber != 0 && *logicalChannelNumber != nitLogicalChannelNumber)
-    {
-      LogDebug(L"SI DVB %d: unexpected logical channel number conflict, ONID = %hu, TSID = %hu, service ID = %hu, SDT/BAT LCN = %hu, NIT LCN = %hu",
-                m_parserNit.GetPid(), *originalNetworkId, *transportStreamId,
-                *serviceId, *logicalChannelNumber, nitLogicalChannelNumber);
     }
 
     // Add cell availability. Only add cells that aren't in either of the lists
@@ -560,6 +551,24 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
   {
     delete[] nitAvailableInCells;
   }
+
+  // Add any LCN from the SDT if the array has room for it.
+  if (sdtLogicalChannelNumber != 0)
+  {
+    if (logicalChannelNumbers == NULL || *logicalChannelNumberCount == originalLogicalChannelNumberCount)
+    {
+      LogDebug(L"SI DVB %d: insufficient logical channel number array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hu, actual size = %hu",
+                m_parserSdt.GetPid(), *originalNetworkId, *transportStreamId,
+                *serviceId, originalLogicalChannelNumberCount + 1,
+                originalLogicalChannelNumberCount);
+    }
+    else
+    {
+      logicalChannelNumbers[*logicalChannelNumberCount] = ((unsigned long long)*tableId << 56) | sdtLogicalChannelNumber;
+      (*logicalChannelNumberCount)++;
+    }
+  }
+
   return true;
 }
 

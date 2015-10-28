@@ -372,8 +372,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     }
 
     public bool GetService(ushort index,
-                            ushort preferredLogicalChannelNumberBouquetId,
-                            ushort preferredLogicalChannelNumberRegionId,
                             out byte tableId,
                             out ushort originalNetworkId,
                             out ushort transportStreamId,
@@ -381,7 +379,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
                             out ushort referenceServiceId,
                             out ushort freesatChannelId,
                             out ushort openTvChannelId,
-                            out ushort logicalChannelNumber,
+                            LogicalChannelNumber[] logicalChannelNumbers,
+                            ref ushort logicalChannelNumberCount,
                             out byte dishSubChannelNumber,
                             out bool eitScheduleFlag,
                             out bool eitPresentFollowingFlag,
@@ -437,7 +436,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       referenceServiceId = 0;
       freesatChannelId = 0;
       openTvChannelId = 0;
-      logicalChannelNumber = 0;
       dishSubChannelNumber = 0;
       eitScheduleFlag = false;
       eitPresentFollowingFlag = false;
@@ -459,11 +457,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       epgOriginalNetworkId = 0;
       epgTransportStreamId = 0;
       epgServiceId = 0;
-      object[] parameters = new object[58]
+      object[] parameters = new object[57]
       {
         index,
-        preferredLogicalChannelNumberBouquetId,
-        preferredLogicalChannelNumberRegionId,
         tableId,
         originalNetworkId,
         transportStreamId,
@@ -471,7 +467,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         referenceServiceId,
         freesatChannelId,
         openTvChannelId,
-        logicalChannelNumber,
+        logicalChannelNumbers,
+        logicalChannelNumberCount,
         dishSubChannelNumber,
         eitScheduleFlag,
         eitPresentFollowingFlag,
@@ -521,48 +518,48 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         epgServiceId
       };
       bool result = (bool)_delegateGrabberSiDvb("GetService", ref parameters);
-      tableId = (byte)parameters[3];
-      originalNetworkId = (ushort)parameters[4];
-      transportStreamId = (ushort)parameters[5];
-      serviceId = (ushort)parameters[6];
-      referenceServiceId = (ushort)parameters[7];
-      freesatChannelId = (ushort)parameters[8];
-      openTvChannelId = (ushort)parameters[9];
-      logicalChannelNumber = (ushort)parameters[10];
-      dishSubChannelNumber = (byte)parameters[11];
-      eitScheduleFlag = (bool)parameters[12];
-      eitPresentFollowingFlag = (bool)parameters[13];
-      runningStatus = (byte)parameters[14];
-      freeCaMode = (bool)parameters[15];
-      serviceType = (byte)parameters[16];
-      serviceNameCount = (byte)parameters[17];
-      visibleInGuide = (bool)parameters[18];
-      streamCountVideo = (ushort)parameters[19];
-      streamCountAudio = (ushort)parameters[20];
-      isHighDefinition = (bool)parameters[21];
-      isStandardDefinition = (bool)parameters[22];
-      isThreeDimensional = (bool)parameters[23];
-      audioLanguageCount = (byte)parameters[25];
-      subtitlesLanguageCount = (byte)parameters[27];
-      networkIdCount = (byte)parameters[29];
-      bouquetIdCount = (byte)parameters[31];
-      availableInCountryCount = (byte)parameters[33];
-      unavailableInCountryCount = (byte)parameters[35];
-      availableInCellCount = (byte)parameters[37];
-      unavailableInCellCount = (byte)parameters[39];
-      targetRegionIdCount = (byte)parameters[41];
-      freesatRegionIdCount = (byte)parameters[43];
-      openTvRegionIdCount = (byte)parameters[45];
-      freesatChannelCategoryIdCount = (byte)parameters[47];
-      virginMediaChannelCategoryId = (byte)parameters[48];
-      dishMarketId = (ushort)parameters[49];
-      norDigChannelListIdCount = (byte)parameters[51];
-      previousOriginalNetworkId = (ushort)parameters[52];
-      previousTransportStreamId = (ushort)parameters[53];
-      previousServiceId = (ushort)parameters[54];
-      epgOriginalNetworkId = (ushort)parameters[55];
-      epgTransportStreamId = (ushort)parameters[56];
-      epgServiceId = (ushort)parameters[57];
+      tableId = (byte)parameters[1];
+      originalNetworkId = (ushort)parameters[2];
+      transportStreamId = (ushort)parameters[3];
+      serviceId = (ushort)parameters[4];
+      referenceServiceId = (ushort)parameters[5];
+      freesatChannelId = (ushort)parameters[6];
+      openTvChannelId = (ushort)parameters[7];
+      logicalChannelNumberCount = (ushort)parameters[9];
+      dishSubChannelNumber = (byte)parameters[10];
+      eitScheduleFlag = (bool)parameters[11];
+      eitPresentFollowingFlag = (bool)parameters[12];
+      runningStatus = (byte)parameters[13];
+      freeCaMode = (bool)parameters[14];
+      serviceType = (byte)parameters[15];
+      serviceNameCount = (byte)parameters[16];
+      visibleInGuide = (bool)parameters[17];
+      streamCountVideo = (ushort)parameters[18];
+      streamCountAudio = (ushort)parameters[19];
+      isHighDefinition = (bool)parameters[20];
+      isStandardDefinition = (bool)parameters[21];
+      isThreeDimensional = (bool)parameters[22];
+      audioLanguageCount = (byte)parameters[24];
+      subtitlesLanguageCount = (byte)parameters[26];
+      networkIdCount = (byte)parameters[28];
+      bouquetIdCount = (byte)parameters[30];
+      availableInCountryCount = (byte)parameters[32];
+      unavailableInCountryCount = (byte)parameters[34];
+      availableInCellCount = (byte)parameters[36];
+      unavailableInCellCount = (byte)parameters[38];
+      targetRegionIdCount = (byte)parameters[40];
+      freesatRegionIdCount = (byte)parameters[42];
+      openTvRegionIdCount = (byte)parameters[44];
+      freesatChannelCategoryIdCount = (byte)parameters[46];
+      virginMediaChannelCategoryId = (byte)parameters[47];
+      dishMarketId = (ushort)parameters[48];
+      norDigChannelListIdCount = (byte)parameters[50];
+      previousOriginalNetworkId = (ushort)parameters[51];
+      previousTransportStreamId = (ushort)parameters[52];
+      previousServiceId = (ushort)parameters[53];
+      epgOriginalNetworkId = (ushort)parameters[54];
+      epgTransportStreamId = (ushort)parameters[55];
+      epgServiceId = (ushort)parameters[56];
       return result;
     }
 

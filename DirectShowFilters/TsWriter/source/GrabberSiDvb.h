@@ -69,8 +69,6 @@ class CGrabberSiDvb
 
     STDMETHODIMP_(unsigned short) GetServiceCount();
     STDMETHODIMP_(bool) GetService(unsigned short index,
-                                    unsigned short preferredLogicalChannelNumberBouquetId,
-                                    unsigned short preferredLogicalChannelNumberRegionId,
                                     unsigned char* tableId,
                                     unsigned short* originalNetworkId,
                                     unsigned short* transportStreamId,
@@ -78,7 +76,8 @@ class CGrabberSiDvb
                                     unsigned short* referenceServiceId,
                                     unsigned short* freesatChannelId,
                                     unsigned short* openTvChannelId,
-                                    unsigned short* logicalChannelNumber,
+                                    unsigned long long* logicalChannelNumbers,
+                                    unsigned short* logicalChannelNumberCount,
                                     unsigned char* dishSubChannelNumber,
                                     bool* eitScheduleFlag,
                                     bool* eitPresentFollowingFlag,

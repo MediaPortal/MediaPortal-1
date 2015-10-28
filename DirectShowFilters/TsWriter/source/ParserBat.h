@@ -36,34 +36,6 @@ class CParserBat : public CParserNitDvb
     bool IsSeen() const;
     bool IsReady() const;
 
-    bool GetService(unsigned short originalNetworkId,
-                    unsigned short transportStreamId,
-                    unsigned short serviceId,
-                    unsigned short preferredLogicalChannelNumberBouquetId,
-                    unsigned short preferredLogicalChannelNumberRegionId,
-                    unsigned short& freesatChannelId,
-                    unsigned short& openTvChannelId,
-                    unsigned short& logicalChannelNumber,
-                    bool& visibleInGuide,
-                    unsigned short* bouquetIds,
-                    unsigned char& bouquetIdCount,
-                    unsigned long* availableInCells,
-                    unsigned char& availableInCellCount,
-                    unsigned long long* targetRegionIds,
-                    unsigned char& targetRegionIdCount,
-                    unsigned short* freesatRegionIds,
-                    unsigned char& freesatRegionIdCount,
-                    unsigned short* openTvRegionIds,
-                    unsigned char& openTvRegionIdCount,
-                    unsigned short* freesatChannelCategoryIds,
-                    unsigned char& freesatChannelCategoryIdCount,
-                    unsigned char* norDigChannelListIds,
-                    unsigned char& norDigChannelListIdCount,
-                    unsigned long* availableInCountries,
-                    unsigned char& availableInCountryCount,
-                    unsigned long* unavailableInCountries,
-                    unsigned char& unavailableInCountryCount) const;
-
     unsigned char GetBouquetNameCount(unsigned short bouquetId) const;
     bool GetBouquetNameByIndex(unsigned short bouquetId,
                                 unsigned char index,

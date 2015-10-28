@@ -59,63 +59,6 @@ bool CParserBat::IsReady() const
   return IsReadyOther();
 }
 
-bool CParserBat::GetService(unsigned short originalNetworkId,
-                            unsigned short transportStreamId,
-                            unsigned short serviceId,
-                            unsigned short preferredLogicalChannelNumberBouquetId,
-                            unsigned short preferredLogicalChannelNumberRegionId,
-                            unsigned short& freesatChannelId,
-                            unsigned short& openTvChannelId,
-                            unsigned short& logicalChannelNumber,
-                            bool& visibleInGuide,
-                            unsigned short* bouquetIds,
-                            unsigned char& bouquetIdCount,
-                            unsigned long* availableInCells,
-                            unsigned char& availableInCellCount,
-                            unsigned long long* targetRegionIds,
-                            unsigned char& targetRegionIdCount,
-                            unsigned short* freesatRegionIds,
-                            unsigned char& freesatRegionIdCount,
-                            unsigned short* openTvRegionIds,
-                            unsigned char& openTvRegionIdCount,
-                            unsigned short* freesatChannelCategoryIds,
-                            unsigned char& freesatChannelCategoryIdCount,
-                            unsigned char* norDigChannelListIds,
-                            unsigned char& norDigChannelListIdCount,
-                            unsigned long* availableInCountries,
-                            unsigned char& availableInCountryCount,
-                            unsigned long* unavailableInCountries,
-                            unsigned char& unavailableInCountryCount) const
-{
-  return CParserNitDvb::GetService(originalNetworkId,
-                                    transportStreamId,
-                                    serviceId,
-                                    preferredLogicalChannelNumberBouquetId,
-                                    preferredLogicalChannelNumberRegionId,
-                                    freesatChannelId,
-                                    openTvChannelId,
-                                    logicalChannelNumber,
-                                    visibleInGuide,
-                                    bouquetIds,
-                                    bouquetIdCount,
-                                    availableInCells,
-                                    availableInCellCount,
-                                    targetRegionIds,
-                                    targetRegionIdCount,
-                                    freesatRegionIds,
-                                    freesatRegionIdCount,
-                                    openTvRegionIds,
-                                    openTvRegionIdCount,
-                                    freesatChannelCategoryIds,
-                                    freesatChannelCategoryIdCount,
-                                    norDigChannelListIds,
-                                    norDigChannelListIdCount,
-                                    availableInCountries,
-                                    availableInCountryCount,
-                                    unavailableInCountries,
-                                    unavailableInCountryCount);
-}
-
 unsigned char CParserBat::GetBouquetNameCount(unsigned short bouquetId) const
 {
   return GetNetworkNameCount(bouquetId);

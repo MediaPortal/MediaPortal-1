@@ -174,10 +174,10 @@ class CUtils
       return false;
     }
 
-    template<class T> static bool CopyVectorToArray(const vector<T>& source,
-                                                    T* destination,
-                                                    unsigned char& destinationSize,
-                                                    unsigned char& requiredSize)
+    template<class T1, class T2> static bool CopyVectorToArray(const vector<T1>& source,
+                                                                T1* destination,
+                                                                T2& destinationSize,
+                                                                T2& requiredSize)
     {
       requiredSize = source.size();
       if (source.size() == 0)

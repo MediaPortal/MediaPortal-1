@@ -61,10 +61,11 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
                     unsigned short serviceId,
                     unsigned short& freesatChannelId,
                     unsigned short& openTvChannelId,
-                    unsigned short& logicalChannelNumber,
+                    unsigned long long* logicalChannelNumbers,
+                    unsigned short& logicalChannelNumberCount,
                     bool& visibleInGuide,
-                    unsigned short* networkIds,
-                    unsigned char& networkIdCount,
+                    unsigned short* groupIds,
+                    unsigned char& groupIdCount,
                     unsigned long* availableInCells,
                     unsigned char& availableInCellCount,
                     unsigned long long* targetRegionIds,
@@ -165,34 +166,6 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
                         unsigned char& plpId) const;
 
   protected:
-    bool GetService(unsigned short originalNetworkId,
-                    unsigned short transportStreamId,
-                    unsigned short serviceId,
-                    unsigned short preferredLogicalChannelNumberGroupId,
-                    unsigned short preferredLogicalChannelNumberRegionId,
-                    unsigned short& freesatChannelId,
-                    unsigned short& openTvChannelId,
-                    unsigned short& logicalChannelNumber,
-                    bool& visibleInGuide,
-                    unsigned short* groupIds,
-                    unsigned char& groupIdCount,
-                    unsigned long* availableInCells,
-                    unsigned char& availableInCellCount,
-                    unsigned long long* targetRegionIds,
-                    unsigned char& targetRegionIdCount,
-                    unsigned short* freesatRegionIds,
-                    unsigned char& freesatRegionIdCount,
-                    unsigned short* openTvRegionIds,
-                    unsigned char& openTvRegionIdCount,
-                    unsigned short* freesatChannelCategoryIds,
-                    unsigned char& freesatChannelCategoryIdCount,
-                    unsigned char* norDigChannelListIds,
-                    unsigned char& norDigChannelListIdCount,
-                    unsigned long* availableInCountries,
-                    unsigned char& availableInCountryCount,
-                    unsigned long* unavailableInCountries,
-                    unsigned char& unavailableInCountryCount) const;
-
     void CleanUp();
 
     CCriticalSection m_section;
@@ -405,7 +378,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
         unsigned short FreesatChannelId;
         unsigned short OpenTvChannelId;
         bool VisibleInGuide;
-        map<unsigned short, unsigned short> LogicalChannelNumbers;  // region ID => LCN
+        map<unsigned long, unsigned short> LogicalChannelNumbers;  // is HD bit | region ID => LCN
         char* DefaultAuthority;
         vector<unsigned long> AvailableInCells;       // cell ID | cell ID extension
         vector<unsigned long long> TargetRegionIds;
@@ -1081,12 +1054,12 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
 
     template<class T> static void CleanUpNames(map<T, map<unsigned long, char*>*>& names);
     template<class T> static void CleanUpGroupIds(map<unsigned short, vector<T>*>& groupIds);
-    static void CleanUpMapOfMaps(map<unsigned short, map<unsigned short, unsigned short>*>& mapOfMaps);
+    static void CleanUpMapOfMaps(map<unsigned short, map<unsigned long, unsigned short>*>& mapOfMaps);
 
     template<class T> static void AggregateSet(const vector<T>& values, map<T, bool>& set);
-    template<class T> static bool GetSetValues(const map<T, bool>& set,
-                                                T* keys,
-                                                unsigned char& keyCount);
+    template<class T1, class T2> static bool GetSetValues(const map<T1, bool>& set,
+                                                          T1* keys,
+                                                          T2& keyCount);
 
     void AddGroupNames(unsigned char nameTypeId,
                         unsigned long long groupId,
@@ -1112,7 +1085,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
                       unsigned short originalNetworkId,
                       unsigned short transportStreamId,
                       vector<unsigned short>& serviceIds,
-                      map<unsigned short, map<unsigned short, unsigned short>*>& logicalChannelNumbers,
+                      map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers,
                       map<unsigned short, bool>& visibleInGuideFlags,
                       char* defaultAuthority,
                       map<unsigned short, unsigned short>& freesatChannelIds,
@@ -1138,10 +1111,10 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
     void AddTransmitter(CRecordNitTransmitter* record);
 
     void AddLogicalChannelNumber(unsigned short serviceId,
-                                  unsigned short regionId,
+                                  unsigned long regionId,
                                   unsigned short logicalChannelNumber,
                                   const wchar_t* lcnType,
-                                  map<unsigned short, map<unsigned short, unsigned short>*>& logicalChannelNumbers) const;
+                                  map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers) const;
 
     bool DecodeExtensionDescriptors(unsigned char* sectionData,
                                     unsigned short& pointer,
@@ -1163,7 +1136,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
                                           unsigned long groupPrivateDataSpecifier,
                                           const vector<unsigned short>& bouquetFreesatRegionIds,
                                           vector<unsigned short>& serviceIds,
-                                          map<unsigned short, map<unsigned short, unsigned short>*>& logicalChannelNumbers,
+                                          map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers,
                                           map<unsigned short, bool>& visibleInGuideFlags,
                                           map<unsigned short, vector<unsigned char>*>& norDigChannelListIds,
                                           map<unsigned char, char*>& norDigChannelListNames,
@@ -1239,28 +1212,30 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
     bool DecodeAlternativeLogicalChannelNumberDescriptor(unsigned char* data,
                                                           unsigned char dataLength,
                                                           map<unsigned short, bool>& visibleInGuideFlags,
-                                                          map<unsigned short, map<unsigned short, unsigned short>*>& logicalChannelNumbers) const;
+                                                          map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers) const;
     bool DecodeLogicalChannelNumberDescriptor(unsigned char* data,
                                               unsigned char dataLength,
+                                              unsigned char tag,
+                                              unsigned long privateDataSpecifier,
                                               map<unsigned short, bool>& visibleInGuideFlags,
-                                              map<unsigned short, map<unsigned short, unsigned short>*>& logicalChannelNumbers) const;
+                                              map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers) const;
     bool DecodeNorDigLogicalChannelDescriptorVersion2(unsigned char* data,
                                                       unsigned char dataLength,
                                                       map<unsigned char, char*>& channelListNames,
                                                       map<unsigned short, vector<unsigned char>*>& channelListIds,
-                                                      map<unsigned short, map<unsigned short, unsigned short>*>& logicalChannelNumbers,
+                                                      map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers,
                                                       map<unsigned short, bool>& visibleInGuideFlags) const;
     bool DecodeOpenTvChannelDescriptor(unsigned char* data,
                                         unsigned char dataLength,
                                         map<unsigned short, vector<unsigned short>*>& regionIds,
                                         map<unsigned short, unsigned short>& channelIds,
-                                        map<unsigned short, map<unsigned short, unsigned short>*>& logicalChannelNumbers) const;
+                                        map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers) const;
     bool DecodeFreesatChannelDescriptor(unsigned char* data,
                                         unsigned char dataLength,
                                         const vector<unsigned short> bouquetRegionIds,
                                         map<unsigned short, bool>& visibleInGuideFlags,
                                         map<unsigned short, unsigned short>& channelIds,
-                                        map<unsigned short, map<unsigned short, unsigned short>*>& logicalChannelNumbers,
+                                        map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers,
                                         map<unsigned short, vector<unsigned short>*>& regionIds) const;
     bool DecodeT2TerrestrialDeliverySystemDescriptor(unsigned char* data,
                                                       unsigned char dataLength,
@@ -1276,15 +1251,6 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
 
     static unsigned long GetLinkageKey(unsigned short originalNetworkId,
                                         unsigned short transportStreamId);
-
-    static void SelectPreferredLogicalChannelNumber(unsigned short groupId,
-                                                    const map<unsigned short, unsigned short>& logicalChannelNumberCandidates,
-                                                    unsigned short preferredLogicalChannelNumberGroupId,
-                                                    unsigned short preferredLogicalChannelNumberRegionId,
-                                                    unsigned short& logicalChannelNumber,
-                                                    bool& isLogicalChannelNumberFromPreferredGroup,
-                                                    bool& isLogicalChannelNumberFromPreferredRegion,
-                                                    vector<unsigned short>& alternativeLogicalChannelNumbers);
 
     vector<unsigned long long> m_seenSectionsActual;
     vector<unsigned long long> m_unseenSectionsActual;

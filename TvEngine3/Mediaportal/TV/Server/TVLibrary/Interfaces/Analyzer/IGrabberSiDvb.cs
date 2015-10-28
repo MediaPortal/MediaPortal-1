@@ -129,8 +129,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// Retrieve a DVB service's details from the grabber.
     /// </summary>
     /// <param name="index">The index of the service to retrieve. Should be in the range 0 to GetServiceCount() - 1.</param>
-    /// <param name="preferredLogicalChannelNumberBouquetId">The identifer of the bouquet which contains the service's preferred logical channel number.</param>
-    /// <param name="preferredLogicalChannelNumberRegionId">The identifier of the region which contains the service's preferred logical channel number.</param>
     /// <param name="tableId">The identifier of the table from which the service was received. Value is <c>0x42</c> for SDT-actual or <c>0x46</c> for SDT-other.</param>
     /// <param name="originalNetworkId">The identifier of the original network that the service is associated with.</param>
     /// <param name="transportStreamId">The identifier of the transport stream that the service is associated with.</param>
@@ -138,7 +136,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="referenceServiceId">The service identifier associated with the service's NVOD reference service, if any.</param>
     /// <param name="freesatChannelId">The service's Freesat identifier, if any. Should be unique among all Freesat services.</param>
     /// <param name="openTvChannelId">The service's OpenTV identifier, if any. Should be unique among all OpenTV services.</param>
-    /// <param name="logicalChannelNumber">The service's logical channel number, if any.</param>
+    /// <param name="logicalChannelNumbers">The service's logical channel numbers, if any. The caller must allocate this array.</param>
+    /// <param name="logicalChannelNumberCount">As an input, the size of the <paramref name="logicalChannelNumbers">logical channel numbers array</paramref>; as an output, the consumed array size.</param>
     /// <param name="dishSubChannelNumber">The service's Dish Network sub-channel number, if any.</param>
     /// <param name="eitScheduleFlag">An indication of whether full event information for the service is available from this transport stream.</param>
     /// <param name="eitPresentFollowingFlag">An indication of whether the present and following event information for the service is available from this transport stream.</param>
@@ -190,8 +189,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     [PreserveSig]
     [return: MarshalAs(UnmanagedType.I1)]
     bool GetService(ushort index,
-                    ushort preferredLogicalChannelNumberBouquetId,
-                    ushort preferredLogicalChannelNumberRegionId,
                     out byte tableId,
                     out ushort originalNetworkId,
                     out ushort transportStreamId,
@@ -199,7 +196,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                     out ushort referenceServiceId,
                     out ushort freesatChannelId,
                     out ushort openTvChannelId,
-                    out ushort logicalChannelNumber,
+                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 9)] LogicalChannelNumber[] logicalChannelNumbers,
+                    ref ushort logicalChannelNumberCount,
                     out byte dishSubChannelNumber,
                     [MarshalAs(UnmanagedType.I1)] out bool eitScheduleFlag,
                     [MarshalAs(UnmanagedType.I1)] out bool eitPresentFollowingFlag,
@@ -213,33 +211,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                     [MarshalAs(UnmanagedType.I1)] out bool isHighDefinition,
                     [MarshalAs(UnmanagedType.I1)] out bool isStandardDefinition,
                     [MarshalAs(UnmanagedType.I1)] out bool isThreeDimensional,
-                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 22)] Iso639Code[] audioLanguages,
+                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 24)] Iso639Code[] audioLanguages,
                     ref byte audioLanguageCount,
-                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 24)] Iso639Code[] subtitlesLanguages,
+                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 26)] Iso639Code[] subtitlesLanguages,
                     ref byte subtitlesLanguageCount,
-                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 26)] ushort[] networkIds,
+                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 28)] ushort[] networkIds,
                     ref byte networkIdCount,
-                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 28)] ushort[] bouquetIds,
+                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 30)] ushort[] bouquetIds,
                     ref byte bouquetIdCount,
-                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 30)] Iso639Code[] availableInCountries,
+                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 32)] Iso639Code[] availableInCountries,
                     ref byte availableInCountryCount,
-                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 32)] Iso639Code[] unavailableInCountries,
+                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 34)] Iso639Code[] unavailableInCountries,
                     ref byte unavailableInCountryCount,
-                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 34)] uint[] availableInCells,
+                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 36)] uint[] availableInCells,
                     ref byte availableInCellCount,
-                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 36)] uint[] unavailableInCells,
+                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 38)] uint[] unavailableInCells,
                     ref byte unavailableInCellCount,
-                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 38)] ulong[] targetRegionIds,
+                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 40)] ulong[] targetRegionIds,
                     ref byte targetRegionIdCount,
-                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 40)] ushort[] freesatRegionIds,
+                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 42)] ushort[] freesatRegionIds,
                     ref byte freesatRegionIdCount,
-                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 42)] ushort[] openTvRegionIds,
+                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 44)] ushort[] openTvRegionIds,
                     ref byte openTvRegionIdCount,
-                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 44)] ushort[] freesatChannelCategoryIds,
+                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 46)] ushort[] freesatChannelCategoryIds,
                     ref byte freesatChannelCategoryIdCount,
                     out byte virginMediaChannelCategoryId,
                     out ushort dishMarketId,
-                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 48)] byte[] norDigChannelListIds,
+                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 50)] byte[] norDigChannelListIds,
                     ref byte norDigChannelListIdCount,
                     out ushort previousOriginalNetworkId,
                     out ushort previousTransportStreamId,

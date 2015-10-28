@@ -249,6 +249,7 @@
     <Compile Include="Implementations\Upnp\Service\ServiceAvTransport.cs" />
     <Compile Include="Implementations\Upnp\Service\ServiceBase.cs" />
     <Compile Include="Implementations\Upnp\Service\ServiceConnectionManager.cs" />
+    <Compile Include="Interfaces\Analyzer\LogicalChannelNumber.cs" />
     <Compile Include="Interfaces\Analyzer\PidType.cs" />
     <Compile Include="Interfaces\Analyzer\PidUsage.cs" />
     <Compile Include="Interfaces\Analyzer\EncryptionState.cs" />

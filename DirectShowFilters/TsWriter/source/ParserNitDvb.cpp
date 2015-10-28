@@ -31,6 +31,7 @@
 #define LANG_UND 0x646e75
 
 #define REGION_ID_DEFAULT             0
+#define REGION_ID_DEFAULT_HD          0x10000
 
 #define ORIGINAL_NETWORK_ID_FREESAT   59
 
@@ -433,7 +434,7 @@ void CParserNitDvb::OnNewSection(CSection& section)
       }
 
       vector<unsigned short> serviceIds;
-      map<unsigned short, map<unsigned short, unsigned short>*> logicalChannelNumbers;  // service ID -> [region ID -> logical channel number]
+      map<unsigned short, map<unsigned long, unsigned short>*> logicalChannelNumbers;   // service ID -> [region ID -> logical channel number]
       map<unsigned short, bool> visibleInGuideFlags;                                    // service ID -> visible flag
       map<unsigned short, vector<unsigned char>*> norDigChannelListIds;                 // service ID -> [channel list ID]
       map<unsigned char, char*> norDigChannelListNames;                                 // channel list ID -> name
@@ -620,10 +621,11 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
                                 unsigned short serviceId,
                                 unsigned short& freesatChannelId,
                                 unsigned short& openTvChannelId,
-                                unsigned short& logicalChannelNumber,
+                                unsigned long long* logicalChannelNumbers,
+                                unsigned short& logicalChannelNumberCount,
                                 bool& visibleInGuide,
-                                unsigned short* networkIds,
-                                unsigned char& networkIdCount,
+                                unsigned short* groupIds,
+                                unsigned char& groupIdCount,
                                 unsigned long* availableInCells,
                                 unsigned char& availableInCellCount,
                                 unsigned long long* targetRegionIds,
@@ -641,33 +643,294 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
                                 unsigned long* unavailableInCountries,
                                 unsigned char& unavailableInCountryCount) const
 {
-  return GetService(originalNetworkId,
-                    transportStreamId,
-                    serviceId,
-                    0,
-                    0,
-                    freesatChannelId,
-                    openTvChannelId,
-                    logicalChannelNumber,
-                    visibleInGuide,
-                    networkIds,
-                    networkIdCount,
-                    availableInCells,
-                    availableInCellCount,
-                    targetRegionIds,
-                    targetRegionIdCount,
-                    freesatRegionIds,
-                    freesatRegionIdCount,
-                    openTvRegionIds,
-                    openTvRegionIdCount,
+  unsigned short originalServiceId = serviceId;
+  CEnterCriticalSection lock(m_section);
+  vector<CRecordNitService*> services;
+  while (true)
+  {
+    for (unsigned long i = 0; i < m_recordsService.GetRecordCount(); i++)
+    {
+      IRecord* record = NULL;
+      if (!m_recordsService.GetRecordByIndex(i, &record) || record == NULL)
+      {
+        LogDebug(L"%s: invalid service index, index = %lu, record count = %lu",
+                  m_name, i, m_recordsService.GetRecordCount());
+        continue;
+      }
+
+      CRecordNitService* recordService = dynamic_cast<CRecordNitService*>(record);
+      if (
+        recordService != NULL &&
+        recordService->OriginalNetworkId == originalNetworkId &&
+        recordService->TransportStreamId == transportStreamId &&
+        recordService->ServiceId == serviceId
+      )
+      {
+        services.push_back(recordService);
+      }
+    }
+
+    if (services.size() == 0)
+    {
+      if (serviceId == 0)
+      {
+        // Not an error.
+        return false;
+      }
+      serviceId = 0;
+      continue;
+    }
+    break;
+  }
+
+  if (services.size() == 1)
+  {
+    CRecordNitService* record = services[0];
+    freesatChannelId = record->FreesatChannelId;
+    openTvChannelId = record->OpenTvChannelId;
+
+    unsigned short requiredLcnCount;
+    vector<unsigned long long> tempLcns;
+    map<unsigned long, unsigned short>::const_iterator lcnIt = record->LogicalChannelNumbers.begin();
+    for ( ; lcnIt != record->LogicalChannelNumbers.end(); lcnIt++)
+    {
+      tempLcns.push_back(((unsigned long long)record->TableId << 56) | ((unsigned long long)record->TableIdExtension << 40) | ((unsigned long long)lcnIt->first << 16) | lcnIt->second);
+    }
+    if (!CUtils::CopyVectorToArray(tempLcns,
+                                    logicalChannelNumbers,
+                                    logicalChannelNumberCount,
+                                    requiredLcnCount))
+    {
+      LogDebug(L"%s: insufficient logical channel number array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hu, actual size = %hu",
+                m_name, originalNetworkId, transportStreamId, serviceId,
+                requiredLcnCount, logicalChannelNumberCount);
+    }
+
+    visibleInGuide = record->VisibleInGuide;
+
+    if (groupIds == NULL || groupIdCount == 0)
+    {
+      groupIdCount = 0;
+      LogDebug(L"%s: insufficient group ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = 1, actual size = 0",
+                m_name, originalNetworkId, transportStreamId, serviceId);
+    }
+    else
+    {
+      groupIds[0] = record->TableIdExtension;
+      groupIdCount = 1;
+    }
+
+    unsigned char requiredCount;
+    if (!CUtils::CopyVectorToArray(record->AvailableInCells,
+                                    availableInCells,
+                                    availableInCellCount,
+                                    requiredCount))
+    {
+      LogDebug(L"%s: insufficient available in cell array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
+                m_name, originalNetworkId, transportStreamId, serviceId,
+                requiredCount, availableInCellCount);
+    }
+    if (!CUtils::CopyVectorToArray(record->TargetRegionIds,
+                                    targetRegionIds,
+                                    targetRegionIdCount,
+                                    requiredCount))
+    {
+      LogDebug(L"%s: insufficient target region ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
+                m_name, originalNetworkId, transportStreamId, serviceId,
+                requiredCount, targetRegionIdCount);
+    }
+    if (!CUtils::CopyVectorToArray(record->FreesatRegionIds,
+                                    freesatRegionIds,
+                                    freesatRegionIdCount,
+                                    requiredCount))
+    {
+      LogDebug(L"%s: insufficient Freesat region ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
+                m_name, originalNetworkId, transportStreamId, serviceId,
+                requiredCount, freesatRegionIdCount);
+    }
+    if (!CUtils::CopyVectorToArray(record->OpenTvRegionIds,
+                                    openTvRegionIds,
+                                    openTvRegionIdCount,
+                                    requiredCount))
+    {
+      LogDebug(L"%s: insufficient OpenTV region ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
+                m_name, originalNetworkId, transportStreamId, serviceId,
+                requiredCount, openTvRegionIdCount);
+    }
+    if (!CUtils::CopyVectorToArray(record->FreesatChannelCategoryIds,
+                                    freesatChannelCategoryIds,
+                                    freesatChannelCategoryIdCount,
+                                    requiredCount))
+    {
+      LogDebug(L"%s: insufficient Freesat channel category ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
+                m_name, originalNetworkId, transportStreamId, serviceId,
+                requiredCount, freesatChannelCategoryIdCount);
+    }
+    if (!CUtils::CopyVectorToArray(record->NorDigChannelListIds,
+                                    norDigChannelListIds,
+                                    norDigChannelListIdCount,
+                                    requiredCount))
+    {
+      LogDebug(L"%s: insufficient NorDig channel list ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
+                m_name, originalNetworkId, transportStreamId, serviceId,
+                requiredCount, norDigChannelListIdCount);
+    }
+    if (!CUtils::CopyVectorToArray(record->AvailableInCountries,
+                                    availableInCountries,
+                                    availableInCountryCount,
+                                    requiredCount))
+    {
+      LogDebug(L"%s: insufficient available in country array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
+                m_name, originalNetworkId, transportStreamId, serviceId,
+                requiredCount, availableInCountryCount);
+    }
+    if (!CUtils::CopyVectorToArray(record->UnavailableInCountries,
+                                    unavailableInCountries,
+                                    unavailableInCountryCount,
+                                    requiredCount))
+    {
+      LogDebug(L"%s: insufficient unavailable in country array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
+                m_name, originalNetworkId, transportStreamId, serviceId,
+                requiredCount, unavailableInCountryCount);
+    }
+    return true;
+  }
+
+  // Combine the information for all network/bouquet service records. Build
+  // temporary maps to generate distinct results.
+  freesatChannelId = 0;
+  openTvChannelId = 0;
+  map<unsigned long long, bool> tempLcns;
+  visibleInGuide = false;
+  map<unsigned short, bool> tempGroupIds;
+  map<unsigned long, bool> tempAvailableInCells;
+  map<unsigned long long, bool> tempTargetRegionIds;
+  map<unsigned short, bool> tempFreesatRegionIds;
+  map<unsigned short, bool> tempOpenTvRegionIds;
+  map<unsigned short, bool> tempFreesatChannelCategoryIds;
+  map<unsigned char, bool> tempNorDigChannelListIds;
+  map<unsigned long, bool> tempAvailableInCountries;
+  map<unsigned long, bool> tempUnavailableInCountries;
+  vector<CRecordNitService*>::const_iterator it = services.begin();
+  for ( ; it != services.end(); it++)
+  {
+    CRecordNitService* record = *it;
+    if (record == NULL)
+    {
+      continue;
+    }
+
+    if (record->FreesatChannelId != 0)
+    {
+      if (freesatChannelId == 0)
+      {
+        freesatChannelId = record->FreesatChannelId;
+      }
+      else if (freesatChannelId != record->FreesatChannelId)
+      {
+        LogDebug(L"%s: Freesat channel ID conflict, ONID = %hu, TSID = %hu, service ID = %hu, Freesat CID = %hu, alternative Freesat CID = %hu",
+                  m_name, originalNetworkId, transportStreamId, serviceId,
+                  freesatChannelId, record->FreesatChannelId);
+      }
+    }
+
+    if (record->OpenTvChannelId != 0)
+    {
+      if (openTvChannelId == 0)
+      {
+        openTvChannelId = record->OpenTvChannelId;
+      }
+      else if (openTvChannelId != record->OpenTvChannelId)
+      {
+        LogDebug(L"%s: OpenTV channel ID conflict, ONID = %hu, TSID = %hu, service ID = %hu, OpenTV CID = %hu, alternative OpenTV CID = %hu",
+                  m_name, originalNetworkId, transportStreamId, serviceId,
+                  openTvChannelId, record->OpenTvChannelId);
+      }
+    }
+
+    map<unsigned long, unsigned short>::const_iterator lcnIt = record->LogicalChannelNumbers.begin();
+    for ( ; lcnIt != record->LogicalChannelNumbers.end(); lcnIt++)
+    {
+      tempLcns[((unsigned long long)record->TableId << 56) | ((unsigned long long)record->TableIdExtension << 40) | ((unsigned long long)lcnIt->first << 16) | lcnIt->second] = true;
+    }
+
+    visibleInGuide |= record->VisibleInGuide;
+
+    tempGroupIds[record->TableIdExtension] = true;
+    AggregateSet(record->AvailableInCells, tempAvailableInCells);
+    AggregateSet(record->TargetRegionIds, tempTargetRegionIds);
+    AggregateSet(record->FreesatRegionIds, tempFreesatRegionIds);
+    AggregateSet(record->OpenTvRegionIds, tempOpenTvRegionIds);
+    AggregateSet(record->FreesatChannelCategoryIds, tempFreesatChannelCategoryIds);
+    AggregateSet(record->NorDigChannelListIds, tempNorDigChannelListIds);
+    AggregateSet(record->AvailableInCountries, tempAvailableInCountries);
+    AggregateSet(record->UnavailableInCountries, tempUnavailableInCountries);
+  }
+
+  if (!GetSetValues(tempLcns, logicalChannelNumbers, logicalChannelNumberCount))
+  {
+    LogDebug(L"%s: insufficient logical channel number array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
+              m_name, originalNetworkId, transportStreamId, serviceId,
+              tempLcns.size(), groupIdCount);
+  }
+  if (!GetSetValues(tempGroupIds, groupIds, groupIdCount))
+  {
+    LogDebug(L"%s: insufficient group ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
+              m_name, originalNetworkId, transportStreamId, serviceId,
+              tempGroupIds.size(), groupIdCount);
+  }
+  if (!GetSetValues(tempAvailableInCells, availableInCells, availableInCellCount))
+  {
+    LogDebug(L"%s: insufficient available in cell array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
+              m_name, originalNetworkId, transportStreamId, serviceId,
+              tempAvailableInCells.size(), availableInCellCount);
+  }
+  if (!GetSetValues(tempTargetRegionIds, targetRegionIds, targetRegionIdCount))
+  {
+    LogDebug(L"%s: insufficient target region ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
+              m_name, originalNetworkId, transportStreamId, serviceId,
+              tempTargetRegionIds.size(), targetRegionIdCount);
+  }
+  if (!GetSetValues(tempFreesatRegionIds, freesatRegionIds, freesatRegionIdCount))
+  {
+    LogDebug(L"%s: insufficient Freesat region ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
+              m_name, originalNetworkId, transportStreamId, serviceId,
+              tempFreesatRegionIds.size(), freesatRegionIdCount);
+  }
+  if (!GetSetValues(tempOpenTvRegionIds, openTvRegionIds, openTvRegionIdCount))
+  {
+    LogDebug(L"%s: insufficient OpenTV region ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
+              m_name, originalNetworkId, transportStreamId, serviceId,
+              tempOpenTvRegionIds.size(), openTvRegionIdCount);
+  }
+  if (!GetSetValues(tempFreesatChannelCategoryIds,
                     freesatChannelCategoryIds,
-                    freesatChannelCategoryIdCount,
-                    norDigChannelListIds,
-                    norDigChannelListIdCount,
-                    availableInCountries,
-                    availableInCountryCount,
-                    unavailableInCountries,
-                    unavailableInCountryCount);
+                    freesatChannelCategoryIdCount))
+  {
+    LogDebug(L"%s: insufficient Freesat channel category ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
+              m_name, originalNetworkId, transportStreamId, serviceId,
+              tempFreesatChannelCategoryIds.size(),
+              freesatChannelCategoryIdCount);
+  }
+  if (!GetSetValues(tempNorDigChannelListIds, norDigChannelListIds, norDigChannelListIdCount))
+  {
+    LogDebug(L"%s: insufficient NorDig channel list ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
+              m_name, originalNetworkId, transportStreamId, serviceId,
+              tempNorDigChannelListIds.size(), norDigChannelListIdCount);
+  }
+  if (!GetSetValues(tempAvailableInCountries, availableInCountries, availableInCountryCount))
+  {
+    LogDebug(L"%s: insufficient available in country array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
+              m_name, originalNetworkId, transportStreamId, serviceId,
+              tempAvailableInCountries.size(), availableInCountryCount);
+  }
+  if (!GetSetValues(tempUnavailableInCountries, unavailableInCountries, unavailableInCountryCount))
+  {
+    LogDebug(L"%s: insufficient unavailable in country array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
+              m_name, originalNetworkId, transportStreamId, serviceId,
+              tempUnavailableInCountries.size(), unavailableInCountryCount);
+  }
+  return true;
 }
 
 unsigned char CParserNitDvb::GetNetworkNameCount(unsigned short networkId) const
@@ -1002,334 +1265,6 @@ bool CParserNitDvb::GetTransmitter(unsigned short index,
   return false;
 }
 
-bool CParserNitDvb::GetService(unsigned short originalNetworkId,
-                                unsigned short transportStreamId,
-                                unsigned short serviceId,
-                                unsigned short preferredLogicalChannelNumberGroupId,
-                                unsigned short preferredLogicalChannelNumberRegionId,
-                                unsigned short& freesatChannelId,
-                                unsigned short& openTvChannelId,
-                                unsigned short& logicalChannelNumber,
-                                bool& visibleInGuide,
-                                unsigned short* groupIds,
-                                unsigned char& groupIdCount,
-                                unsigned long* availableInCells,
-                                unsigned char& availableInCellCount,
-                                unsigned long long* targetRegionIds,
-                                unsigned char& targetRegionIdCount,
-                                unsigned short* freesatRegionIds,
-                                unsigned char& freesatRegionIdCount,
-                                unsigned short* openTvRegionIds,
-                                unsigned char& openTvRegionIdCount,
-                                unsigned short* freesatChannelCategoryIds,
-                                unsigned char& freesatChannelCategoryIdCount,
-                                unsigned char* norDigChannelListIds,
-                                unsigned char& norDigChannelListIdCount,
-                                unsigned long* availableInCountries,
-                                unsigned char& availableInCountryCount,
-                                unsigned long* unavailableInCountries,
-                                unsigned char& unavailableInCountryCount) const
-{
-  unsigned short originalServiceId = serviceId;
-  CEnterCriticalSection lock(m_section);
-  vector<CRecordNitService*> services;
-  while (true)
-  {
-    for (unsigned long i = 0; i < m_recordsService.GetRecordCount(); i++)
-    {
-      IRecord* record = NULL;
-      if (!m_recordsService.GetRecordByIndex(i, &record) || record == NULL)
-      {
-        LogDebug(L"%s: invalid service index, index = %lu, record count = %lu",
-                  m_name, i, m_recordsService.GetRecordCount());
-        continue;
-      }
-
-      CRecordNitService* recordService = dynamic_cast<CRecordNitService*>(record);
-      if (
-        recordService != NULL &&
-        recordService->OriginalNetworkId == originalNetworkId &&
-        recordService->TransportStreamId == transportStreamId &&
-        recordService->ServiceId == serviceId
-      )
-      {
-        services.push_back(recordService);
-      }
-    }
-
-    if (services.size() == 0)
-    {
-      if (serviceId == 0)
-      {
-        // Not an error.
-        return false;
-      }
-      serviceId = 0;
-      continue;
-    }
-    break;
-  }
-
-  logicalChannelNumber = 0;
-  bool isLcnFromPreferredGroup = false;
-  bool isLcnFromPreferredRegion = false;
-  vector<unsigned short> alternativeLcns;
-  if (services.size() == 1)
-  {
-    CRecordNitService* record = services[0];
-    freesatChannelId = record->FreesatChannelId;
-    openTvChannelId = record->OpenTvChannelId;
-
-    SelectPreferredLogicalChannelNumber(record->TableIdExtension,
-                                        record->LogicalChannelNumbers,
-                                        preferredLogicalChannelNumberGroupId,
-                                        preferredLogicalChannelNumberRegionId,
-                                        logicalChannelNumber,
-                                        isLcnFromPreferredGroup,
-                                        isLcnFromPreferredRegion,
-                                        alternativeLcns);
-    if (alternativeLcns.size() > 0)
-    {
-      LogDebug(L"%s: logical channel number conflict, ONID = %hu, TSID = %hu, service ID = %hu, LCN = %hu, alternative LCN count = %llu",
-                m_name, originalNetworkId, transportStreamId, serviceId,
-                logicalChannelNumber,
-                (unsigned long long)alternativeLcns.size());
-      CUtils::DebugVector(alternativeLcns, L"alternative LCN(s)", false);
-    }
-
-    visibleInGuide = record->VisibleInGuide;
-
-    if (groupIds == NULL || groupIdCount == 0)
-    {
-      groupIdCount = 0;
-      LogDebug(L"%s: insufficient group ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = 1, actual size = 0",
-                m_name, originalNetworkId, transportStreamId, serviceId);
-    }
-    else
-    {
-      groupIds[0] = record->TableIdExtension;
-      groupIdCount = 1;
-    }
-
-    unsigned char requiredCount = 0;
-    if (!CUtils::CopyVectorToArray(record->AvailableInCells,
-                                    availableInCells,
-                                    availableInCellCount,
-                                    requiredCount))
-    {
-      LogDebug(L"%s: insufficient available in cell array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
-                m_name, originalNetworkId, transportStreamId, serviceId,
-                requiredCount, availableInCellCount);
-    }
-    if (!CUtils::CopyVectorToArray(record->TargetRegionIds,
-                                    targetRegionIds,
-                                    targetRegionIdCount,
-                                    requiredCount))
-    {
-      LogDebug(L"%s: insufficient target region ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
-                m_name, originalNetworkId, transportStreamId, serviceId,
-                requiredCount, targetRegionIdCount);
-    }
-    if (!CUtils::CopyVectorToArray(record->FreesatRegionIds,
-                                    freesatRegionIds,
-                                    freesatRegionIdCount,
-                                    requiredCount))
-    {
-      LogDebug(L"%s: insufficient Freesat region ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
-                m_name, originalNetworkId, transportStreamId, serviceId,
-                requiredCount, freesatRegionIdCount);
-    }
-    if (!CUtils::CopyVectorToArray(record->OpenTvRegionIds,
-                                    openTvRegionIds,
-                                    openTvRegionIdCount,
-                                    requiredCount))
-    {
-      LogDebug(L"%s: insufficient OpenTV region ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
-                m_name, originalNetworkId, transportStreamId, serviceId,
-                requiredCount, openTvRegionIdCount);
-    }
-    if (!CUtils::CopyVectorToArray(record->FreesatChannelCategoryIds,
-                                    freesatChannelCategoryIds,
-                                    freesatChannelCategoryIdCount,
-                                    requiredCount))
-    {
-      LogDebug(L"%s: insufficient Freesat channel category ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
-                m_name, originalNetworkId, transportStreamId, serviceId,
-                requiredCount, freesatChannelCategoryIdCount);
-    }
-    if (!CUtils::CopyVectorToArray(record->NorDigChannelListIds,
-                                    norDigChannelListIds,
-                                    norDigChannelListIdCount,
-                                    requiredCount))
-    {
-      LogDebug(L"%s: insufficient NorDig channel list ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
-                m_name, originalNetworkId, transportStreamId, serviceId,
-                requiredCount, norDigChannelListIdCount);
-    }
-    if (!CUtils::CopyVectorToArray(record->AvailableInCountries,
-                                    availableInCountries,
-                                    availableInCountryCount,
-                                    requiredCount))
-    {
-      LogDebug(L"%s: insufficient available in country array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
-                m_name, originalNetworkId, transportStreamId, serviceId,
-                requiredCount, availableInCountryCount);
-    }
-    if (!CUtils::CopyVectorToArray(record->UnavailableInCountries,
-                                    unavailableInCountries,
-                                    unavailableInCountryCount,
-                                    requiredCount))
-    {
-      LogDebug(L"%s: insufficient unavailable in country array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
-                m_name, originalNetworkId, transportStreamId, serviceId,
-                requiredCount, unavailableInCountryCount);
-    }
-    return true;
-  }
-
-  // Combine the information for all network/bouquet service records. Build
-  // temporary maps to generate distinct results.
-  freesatChannelId = 0;
-  openTvChannelId = 0;
-  visibleInGuide = false;
-  map<unsigned short, bool> tempGroupIds;
-  map<unsigned long, bool> tempAvailableInCells;
-  map<unsigned long long, bool> tempTargetRegionIds;
-  map<unsigned short, bool> tempFreesatRegionIds;
-  map<unsigned short, bool> tempOpenTvRegionIds;
-  map<unsigned short, bool> tempFreesatChannelCategoryIds;
-  map<unsigned char, bool> tempNorDigChannelListIds;
-  map<unsigned long, bool> tempAvailableInCountries;
-  map<unsigned long, bool> tempUnavailableInCountries;
-  vector<CRecordNitService*>::const_iterator it = services.begin();
-  for ( ; it != services.end(); it++)
-  {
-    CRecordNitService* record = *it;
-    if (record == NULL)
-    {
-      continue;
-    }
-
-    if (record->FreesatChannelId != 0)
-    {
-      if (freesatChannelId == 0)
-      {
-        freesatChannelId = record->FreesatChannelId;
-      }
-      else if (freesatChannelId != record->FreesatChannelId)
-      {
-        LogDebug(L"%s: Freesat channel ID conflict, ONID = %hu, TSID = %hu, service ID = %hu, LCN = %hu, Freesat CID = %hu, alternative Freesat CID = %hu",
-                  m_name, originalNetworkId, transportStreamId, serviceId,
-                  logicalChannelNumber, freesatChannelId,
-                  record->FreesatChannelId);
-      }
-    }
-
-    if (record->OpenTvChannelId != 0)
-    {
-      if (openTvChannelId == 0)
-      {
-        openTvChannelId = record->OpenTvChannelId;
-      }
-      else if (openTvChannelId != record->OpenTvChannelId)
-      {
-        LogDebug(L"%s: OpenTV channel ID conflict, ONID = %hu, TSID = %hu, service ID = %hu, LCN = %hu, OpenTV CID = %hu, alternative OpenTV CID = %hu",
-                  m_name, originalNetworkId, transportStreamId, serviceId,
-                  logicalChannelNumber, openTvChannelId,
-                  record->OpenTvChannelId);
-      }
-    }
-
-    SelectPreferredLogicalChannelNumber(record->TableIdExtension,
-                                        record->LogicalChannelNumbers,
-                                        preferredLogicalChannelNumberGroupId,
-                                        preferredLogicalChannelNumberRegionId,
-                                        logicalChannelNumber,
-                                        isLcnFromPreferredGroup,
-                                        isLcnFromPreferredRegion,
-                                        alternativeLcns);
-    if (alternativeLcns.size() > 0)
-    {
-      LogDebug(L"%s: logical channel number conflict, ONID = %hu, TSID = %hu, service ID = %hu, LCN = %hu, alternative LCN count = %llu",
-                m_name, originalNetworkId, transportStreamId, serviceId,
-                logicalChannelNumber,
-                (unsigned long long)alternativeLcns.size());
-      CUtils::DebugVector(alternativeLcns, L"alternative LCN(s)", false);
-    }
-
-    visibleInGuide |= record->VisibleInGuide;
-
-    tempGroupIds[record->TableIdExtension] = true;
-    AggregateSet(record->AvailableInCells, tempAvailableInCells);
-    AggregateSet(record->TargetRegionIds, tempTargetRegionIds);
-    AggregateSet(record->FreesatRegionIds, tempFreesatRegionIds);
-    AggregateSet(record->OpenTvRegionIds, tempOpenTvRegionIds);
-    AggregateSet(record->FreesatChannelCategoryIds, tempFreesatChannelCategoryIds);
-    AggregateSet(record->NorDigChannelListIds, tempNorDigChannelListIds);
-    AggregateSet(record->AvailableInCountries, tempAvailableInCountries);
-    AggregateSet(record->UnavailableInCountries, tempUnavailableInCountries);
-  }
-
-  unsigned char requiredCount = 0;
-  if (!GetSetValues(tempGroupIds, groupIds, groupIdCount))
-  {
-    LogDebug(L"%s: insufficient group ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
-              m_name, originalNetworkId, transportStreamId, serviceId,
-              requiredCount, groupIdCount);
-  }
-  if (!GetSetValues(tempAvailableInCells, availableInCells, availableInCellCount))
-  {
-    LogDebug(L"%s: insufficient available in cell array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
-              m_name, originalNetworkId, transportStreamId, serviceId,
-              requiredCount, availableInCellCount);
-  }
-  if (!GetSetValues(tempTargetRegionIds, targetRegionIds, targetRegionIdCount))
-  {
-    LogDebug(L"%s: insufficient target region ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
-              m_name, originalNetworkId, transportStreamId, serviceId,
-              requiredCount, targetRegionIdCount);
-  }
-  if (!GetSetValues(tempFreesatRegionIds, freesatRegionIds, freesatRegionIdCount))
-  {
-    LogDebug(L"%s: insufficient Freesat region ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
-              m_name, originalNetworkId, transportStreamId, serviceId,
-              requiredCount, freesatRegionIdCount);
-  }
-  if (!GetSetValues(tempOpenTvRegionIds, openTvRegionIds, openTvRegionIdCount))
-  {
-    LogDebug(L"%s: insufficient OpenTV region ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
-              m_name, originalNetworkId, transportStreamId, serviceId,
-              requiredCount, openTvRegionIdCount);
-  }
-  if (!GetSetValues(tempFreesatChannelCategoryIds,
-                    freesatChannelCategoryIds,
-                    freesatChannelCategoryIdCount))
-  {
-    LogDebug(L"%s: insufficient Freesat channel category ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
-              m_name, originalNetworkId, transportStreamId, serviceId,
-              requiredCount, freesatChannelCategoryIdCount);
-  }
-  if (!GetSetValues(tempNorDigChannelListIds, norDigChannelListIds, norDigChannelListIdCount))
-  {
-    LogDebug(L"%s: insufficient NorDig channel list ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
-              m_name, originalNetworkId, transportStreamId, serviceId,
-              requiredCount, norDigChannelListIdCount);
-  }
-  if (!GetSetValues(tempAvailableInCountries, availableInCountries, availableInCountryCount))
-  {
-    LogDebug(L"%s: insufficient available in country array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
-              m_name, originalNetworkId, transportStreamId, serviceId,
-              requiredCount, availableInCountryCount);
-  }
-  if (!GetSetValues(tempUnavailableInCountries, unavailableInCountries, unavailableInCountryCount))
-  {
-    LogDebug(L"%s: insufficient unavailable in country array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
-              m_name, originalNetworkId, transportStreamId, serviceId,
-              requiredCount, unavailableInCountryCount);
-  }
-  return true;
-}
-
 void CParserNitDvb::CleanUp()
 {
   // Caller should have already acquired the lock.
@@ -1369,9 +1304,9 @@ template<class T> void CParserNitDvb::CleanUpGroupIds(map<unsigned short, vector
   groupIds.clear();
 }
 
-void CParserNitDvb::CleanUpMapOfMaps(map<unsigned short, map<unsigned short, unsigned short>*>& mapOfMaps)
+void CParserNitDvb::CleanUpMapOfMaps(map<unsigned short, map<unsigned long, unsigned short>*>& mapOfMaps)
 {
-  map<unsigned short, map<unsigned short, unsigned short>*>::iterator mapIt = mapOfMaps.begin();
+  map<unsigned short, map<unsigned long, unsigned short>*>::iterator mapIt = mapOfMaps.begin();
   for ( ; mapIt != mapOfMaps.end(); mapIt++)
   {
     if (mapIt->second != NULL)
@@ -1392,9 +1327,9 @@ template<class T> void CParserNitDvb::AggregateSet(const vector<T>& values, map<
   }
 }
 
-template<class T> bool CParserNitDvb::GetSetValues(const map<T, bool>& set,
-                                                    T* keys,
-                                                    unsigned char& keyCount)
+template<class T1, class T2> bool CParserNitDvb::GetSetValues(const map<T1, bool>& set,
+                                                              T1* keys,
+                                                              T2& keyCount)
 {
   unsigned char requiredCount = set.size();
   if (requiredCount == 0)
@@ -1411,7 +1346,7 @@ template<class T> bool CParserNitDvb::GetSetValues(const map<T, bool>& set,
   {
     keyCount = requiredCount;
   }
-  map<T, bool>::const_iterator it = set.begin();
+  map<T1, bool>::const_iterator it = set.begin();
   for (unsigned char i = 0; i < keyCount; i++, it++)
   {
     keys[i] = it->first;
@@ -1619,7 +1554,7 @@ void CParserNitDvb::AddServices(unsigned char tableId,
                                 unsigned short originalNetworkId,
                                 unsigned short transportStreamId,
                                 vector<unsigned short>& serviceIds,
-                                map<unsigned short, map<unsigned short, unsigned short>*>& logicalChannelNumbers,
+                                map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers,
                                 map<unsigned short, bool>& visibleInGuideFlags,
                                 char* defaultAuthority,
                                 map<unsigned short, unsigned short>& freesatChannelIds,
@@ -1648,7 +1583,7 @@ void CParserNitDvb::AddServices(unsigned char tableId,
   vector<unsigned short>::const_iterator serviceIdIt = serviceIds.begin();
   for ( ; serviceIdIt != serviceIds.end(); serviceIdIt++)
   {
-    map<unsigned short, unsigned short>* lcns = logicalChannelNumbers[*serviceIdIt];   // (Inserts a key with value NULL if not already present.)
+    map<unsigned long, unsigned short>* lcns = logicalChannelNumbers[*serviceIdIt];   // (Inserts a key with value NULL if not already present.)
   }
 
   // Get or create the table key.
@@ -1670,7 +1605,7 @@ void CParserNitDvb::AddServices(unsigned char tableId,
     }
   }
 
-  map<unsigned short, map<unsigned short, unsigned short>*>::const_iterator serviceIt = logicalChannelNumbers.begin();
+  map<unsigned short, map<unsigned long, unsigned short>*>::const_iterator serviceIt = logicalChannelNumbers.begin();
   for ( ; serviceIt != logicalChannelNumbers.end(); serviceIt++)
   {
     CRecordNitService* record = new CRecordNitService(m_name);
@@ -1704,7 +1639,7 @@ void CParserNitDvb::AddServices(unsigned char tableId,
 
     if (serviceIt->second != NULL)
     {
-      record->LogicalChannelNumbers = *(serviceIt->second);   // copy
+      record->LogicalChannelNumbers = *(serviceIt->second);   // copy contents
     }
 
     if (defaultAuthority != NULL)
@@ -1865,16 +1800,16 @@ void CParserNitDvb::AddTransmitter(CRecordNitTransmitter* record)
 }
 
 void CParserNitDvb::AddLogicalChannelNumber(unsigned short serviceId,
-                                            unsigned short regionId,
+                                            unsigned long regionId,
                                             unsigned short logicalChannelNumber,
                                             const wchar_t* lcnType,
-                                            map<unsigned short, map<unsigned short, unsigned short>*>& logicalChannelNumbers) const
+                                            map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers) const
 {
-  map<unsigned short, unsigned short>* serviceLcns = NULL;
-  map<unsigned short, map<unsigned short, unsigned short>*>::iterator it = logicalChannelNumbers.find(serviceId);
+  map<unsigned long, unsigned short>* serviceLcns = NULL;
+  map<unsigned short, map<unsigned long, unsigned short>*>::iterator it = logicalChannelNumbers.find(serviceId);
   if (it == logicalChannelNumbers.end())
   {
-    serviceLcns = new map<unsigned short, unsigned short>();
+    serviceLcns = new map<unsigned long, unsigned short>();
     if (serviceLcns == NULL)
     {
       LogDebug(L"%s: failed to allocate map for service %hu's logical channel numbers",
@@ -1887,11 +1822,16 @@ void CParserNitDvb::AddLogicalChannelNumber(unsigned short serviceId,
   }
 
   unsigned short currentLcn = (*serviceLcns)[regionId];
-  if (currentLcn == 0)
+  if (currentLcn == 0 || currentLcn == 0xfff || currentLcn == 0xffff)
   {
     (*serviceLcns)[regionId] = logicalChannelNumber;
   }
-  else if (logicalChannelNumber != 0 && currentLcn != logicalChannelNumber)
+  else if (
+    logicalChannelNumber != 0 &&
+    logicalChannelNumber != 0xfff &&
+    logicalChannelNumber != 0xffff &&
+    currentLcn != logicalChannelNumber
+  )
   {
     if (logicalChannelNumber < currentLcn)
     {
@@ -1902,7 +1842,7 @@ void CParserNitDvb::AddLogicalChannelNumber(unsigned short serviceId,
     }
     if (serviceId != 49000 && wcscmp(lcnType, L"OpenTV") != 0)  // avoid spurious logging from unusual Sky UK channel "(sub b +1000)"
     {
-      LogDebug(L"%s: %s logical channel number conflict, service ID = %hu, region ID = %hu, LCN = %hu, alternative LCN = %hu",
+      LogDebug(L"%s: %s logical channel number conflict, service ID = %hu, region ID = %lu, LCN = %hu, alternative LCN = %hu",
                 m_name, lcnType, serviceId, regionId, currentLcn,
                 logicalChannelNumber);
     }
@@ -2143,7 +2083,7 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(unsigned char* sectionData,
                                                       unsigned long groupPrivateDataSpecifier,
                                                       const vector<unsigned short>& bouquetFreesatRegionIds,
                                                       vector<unsigned short>& serviceIds,
-                                                      map<unsigned short, map<unsigned short, unsigned short>*>& logicalChannelNumbers,
+                                                      map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers,
                                                       map<unsigned short, bool>& visibleInGuideFlags,
                                                       map<unsigned short, vector<unsigned char>*>& norDigChannelListIds,
                                                       map<unsigned char, char*>& norDigChannelListNames,
@@ -2281,6 +2221,8 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(unsigned char* sectionData,
       {
         result = DecodeLogicalChannelNumberDescriptor(&sectionData[pointer],
                                                       length,
+                                                      tag,
+                                                      privateDataSpecifier,
                                                       visibleInGuideFlags,
                                                       logicalChannelNumbers);
       }
@@ -3448,7 +3390,7 @@ bool CParserNitDvb::DecodeS2SatelliteDeliverySystemDescriptor(unsigned char* dat
 bool CParserNitDvb::DecodeAlternativeLogicalChannelNumberDescriptor(unsigned char* data,
                                                                     unsigned char dataLength,
                                                                     map<unsigned short, bool>& visibleInGuideFlags,
-                                                                    map<unsigned short, map<unsigned short, unsigned short>*>& logicalChannelNumbers) const
+                                                                    map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers) const
 {
   // Found in Yousee Denmark specifications as the "channel descriptor" (Sagem
   // proprietary).
@@ -3498,24 +3440,21 @@ bool CParserNitDvb::DecodeAlternativeLogicalChannelNumberDescriptor(unsigned cha
 
 bool CParserNitDvb::DecodeLogicalChannelNumberDescriptor(unsigned char* data,
                                                           unsigned char dataLength,
+                                                          unsigned char tag,
+                                                          unsigned long privateDataSpecifier,
                                                           map<unsigned short, bool>& visibleInGuideFlags,
-                                                          map<unsigned short, map<unsigned short, unsigned short>*>& logicalChannelNumbers) const
+                                                          map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers) const
 {
   // De-facto standard logical channel number descriptor:
   // <loop>
   //   service ID - 2 bytes
   //   visible service flag - 1 bit
-  //   reserved - 1 bit
-  //   logical channel number - 14 bits
+  //   reserved - 5 bits
+  //   logical channel number - 10 bits
   // </loop>
   //
-  // The above format matches the NorDig logical channel descriptor (version
-  // 1). Various providers/broadcasters specify a similar/compatible format
-  // with a different number of reserved bits. For example, Freeview HD (DVB-T)
-  // in New Zealand reserves 5 bits instead of 1. We could handle all of the
-  // variations properly if we knew the private data specifiers for each
-  // provider... but we don't. So, for safety we do not use the top 4 bits of
-  // the LCN.
+  // Some variations do not define the visible service flag. Others define the
+  // logical channel number with more bits.
   //
   // Private data specifiers (http://www.dvbservices.com/identifiers/private_data_spec_id?page=1):
   // - Italy, Portugal DTT (EACEM - IEC/CENELEC 62 216 standard) = 0x28
@@ -3536,22 +3475,42 @@ bool CParserNitDvb::DecodeLogicalChannelNumberDescriptor(unsigned char* data,
     {
       unsigned short serviceId = (data[pointer] << 8) | data[pointer + 1];
       bool visibleServiceFlag = (data[pointer + 2] & 0x80) != 0;
+      unsigned char reserved = (data[pointer + 2] & 0x7c) >> 2;
       unsigned short logicalChannelNumber = ((data[pointer + 2] & 0x3) << 8) | data[pointer + 3];
       pointer += 4;
-      //LogDebug(L"%s: logical channel number descriptor, service ID = %hu, visible service flag = %d, LCN = %hu",
-      //          m_name, serviceId, visibleServiceFlag, logicalChannelNumber);
 
-      if (visibleInGuideFlags.find(serviceId) == visibleInGuideFlags.end())
+      // The NorDig LCN descriptor specifies 14 bits for the LCN.
+      if (tag == 0x83 && privateDataSpecifier == 0x29)
       {
-        visibleInGuideFlags[serviceId] = visibleServiceFlag;
+        logicalChannelNumber |= ((reserved & 0xf) << 10);
       }
-      else
+
+      //LogDebug(L"%s: logical channel number descriptor, tag = 0x%hhx, PDS = %lu, service ID = %hu, visible service flag = %d, reserved = %hhu, LCN = %hu",
+      //          m_name, tag, privateDataSpecifier, serviceId,
+      //          visibleServiceFlag, reserved, logicalChannelNumber);
+
+      // In the UK the standard LCN descriptor doesn't have the visible service
+      // flag. The HD simulcast LCN descriptor does.
+      if (tag != 0x83 || privateDataSpecifier != 0x233a)
       {
-        visibleInGuideFlags[serviceId] |= visibleServiceFlag;
+        if (visibleInGuideFlags.find(serviceId) == visibleInGuideFlags.end())
+        {
+          visibleInGuideFlags[serviceId] = visibleServiceFlag;
+        }
+        else
+        {
+          visibleInGuideFlags[serviceId] |= visibleServiceFlag;
+        }
+      }
+
+      unsigned long regionId = REGION_ID_DEFAULT;
+      if (tag == 0x88)
+      {
+        regionId = REGION_ID_DEFAULT_HD;
       }
 
       AddLogicalChannelNumber(serviceId,
-                              REGION_ID_DEFAULT,
+                              regionId,
                               logicalChannelNumber,
                               L"de-facto",
                               logicalChannelNumbers);
@@ -3570,7 +3529,7 @@ bool CParserNitDvb::DecodeNorDigLogicalChannelDescriptorVersion2(unsigned char* 
                                                                   unsigned char dataLength,
                                                                   map<unsigned char, char*>& channelListNames,
                                                                   map<unsigned short, vector<unsigned char>*>& channelListIds,
-                                                                  map<unsigned short, map<unsigned short, unsigned short>*>& logicalChannelNumbers,
+                                                                  map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers,
                                                                   map<unsigned short, bool>& visibleInGuideFlags) const
 {
   if (dataLength == 0)
@@ -3701,7 +3660,7 @@ bool CParserNitDvb::DecodeOpenTvChannelDescriptor(unsigned char* data,
                                                   unsigned char dataLength,
                                                   map<unsigned short, vector<unsigned short>*>& regionIds,
                                                   map<unsigned short, unsigned short>& channelIds,
-                                                  map<unsigned short, map<unsigned short, unsigned short>*>& logicalChannelNumbers) const
+                                                  map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers) const
 {
   // region ID - 2 bytes
   // <loop>
@@ -3780,7 +3739,7 @@ bool CParserNitDvb::DecodeFreesatChannelDescriptor(unsigned char* data,
                                                     const vector<unsigned short> bouquetRegionIds,
                                                     map<unsigned short, bool>& visibleInGuideFlags,
                                                     map<unsigned short, unsigned short>& channelIds,
-                                                    map<unsigned short, map<unsigned short, unsigned short>*>& logicalChannelNumbers,
+                                                    map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers,
                                                     map<unsigned short, vector<unsigned short>*>& regionIds) const
 {
   // <loop>
@@ -4123,80 +4082,4 @@ unsigned long CParserNitDvb::GetLinkageKey(unsigned short originalNetworkId,
                                             unsigned short transportStreamId)
 {
   return (originalNetworkId << 16) | transportStreamId;
-}
-
-void CParserNitDvb::SelectPreferredLogicalChannelNumber(unsigned short groupId,
-                                                        const map<unsigned short, unsigned short>& logicalChannelNumberCandidates,
-                                                        unsigned short preferredLogicalChannelNumberGroupId,
-                                                        unsigned short preferredLogicalChannelNumberRegionId,
-                                                        unsigned short& logicalChannelNumber,
-                                                        bool& isLogicalChannelNumberFromPreferredGroup,
-                                                        bool& isLogicalChannelNumberFromPreferredRegion,
-                                                        vector<unsigned short>& alternativeLogicalChannelNumbers)
-{
-  // Prefer (highest to lowest):
-  // 1. The lowest LCN from the preferred group and region.
-  // 2. The lowest LCN from the "all regions" region for the preferred group.
-  // 3. The lowest LCN.
-  map<unsigned short, unsigned short>::const_iterator lcnIt = logicalChannelNumberCandidates.begin();
-  for ( ; lcnIt != logicalChannelNumberCandidates.end(); lcnIt++)
-  {
-    if (lcnIt->second == 0 || lcnIt->second == 0xfff || lcnIt->second == 0xffff)
-    {
-      continue; // Invalid => ignore.
-    }
-
-    unsigned short currentLcn = logicalChannelNumber;
-    if (
-      groupId == preferredLogicalChannelNumberGroupId &&
-      lcnIt->first == preferredLogicalChannelNumberRegionId &&
-      (!isLogicalChannelNumberFromPreferredRegion || lcnIt->second < logicalChannelNumber)
-    )
-    {
-      logicalChannelNumber = lcnIt->second;
-      isLogicalChannelNumberFromPreferredGroup = true;
-      isLogicalChannelNumberFromPreferredRegion = true;
-    }
-    else if (
-      groupId == preferredLogicalChannelNumberGroupId &&
-      lcnIt->first == 0xffff &&
-      !isLogicalChannelNumberFromPreferredRegion &&
-      (!isLogicalChannelNumberFromPreferredGroup || lcnIt->second < logicalChannelNumber)
-    )
-    {
-      logicalChannelNumber = lcnIt->second;
-      isLogicalChannelNumberFromPreferredGroup = true;
-    }
-    else if (
-      logicalChannelNumber == 0 ||
-      (!isLogicalChannelNumberFromPreferredGroup && lcnIt->second < logicalChannelNumber)
-    )
-    {
-      logicalChannelNumber = lcnIt->second;
-    }
-
-    if (currentLcn != lcnIt->second)
-    {
-      unsigned short rejectLcn = lcnIt->second;
-      if (logicalChannelNumber == lcnIt->second)
-      {
-        rejectLcn = currentLcn;
-      }
-
-      vector<unsigned short>::iterator it = find(alternativeLogicalChannelNumbers.begin(),
-                                                  alternativeLogicalChannelNumbers.end(),
-                                                  rejectLcn);
-      if (it == alternativeLogicalChannelNumbers.end())
-      {
-        alternativeLogicalChannelNumbers.push_back(rejectLcn);
-      }
-      it = find(alternativeLogicalChannelNumbers.begin(),
-                alternativeLogicalChannelNumbers.end(),
-                logicalChannelNumber);
-      if (it != alternativeLogicalChannelNumbers.end())
-      {
-        alternativeLogicalChannelNumbers.erase(it);
-      }
-    }
-  }
 }
