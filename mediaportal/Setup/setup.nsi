@@ -508,6 +508,7 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\BASS.2.4.10\bass.dll"
   File "${git_ROOT}\Packages\BASS.NET.2.4.10.3\lib\net40\Bass.Net.dll"
+  File "${git_ROOT}\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll"
   ; Bass Addons
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\bass.asio.1.3.0.2\bassasio.dll"
@@ -670,6 +671,7 @@ SectionEnd
   Delete "$MPdir.Base\Dxerr9.dll"
   Delete "$MPdir.Base\mpcSubs.dll"
   Delete "$MPdir.Base\MiniDisplayLibrary.dll"
+  Delete "$MPdir.Base\System.Management.Automation.dll"
   ; iMON VFD/LCD
   Delete "$MPdir.Base\iMONDisplay.dll"
   Delete "$MPdir.Base\iMONDisplayWrapper.dll"
