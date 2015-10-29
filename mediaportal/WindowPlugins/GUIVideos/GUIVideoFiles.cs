@@ -150,6 +150,7 @@ namespace MediaPortal.GUI.Video
     private bool _scanSkipExisting;
     private bool _getActors = true;
     private bool _markWatchedFiles = true;
+    private bool _hideWatchedFiles = false;
     private ArrayList _conflictFiles = new ArrayList();
     private bool _switchRemovableDrives;
     // Stacked files duration - for watched status/also used in GUIVideoTitle
@@ -1379,6 +1380,14 @@ namespace MediaPortal.GUI.Video
       if (!item.IsFolder)
       {
         dlg.AddLocalizedString(1984); // Refresh thumb
+        if (!_hideWatchedFiles)
+        {
+          dlg.AddLocalizedString(2498); // Hide watched movies
+        }
+        else
+        {
+          dlg.AddLocalizedString(2499); // Unhide watched movies
+        }
       }
 
       if (item.IsFolder && item.Label != "..")
@@ -1682,6 +1691,18 @@ namespace MediaPortal.GUI.Video
             }
           }
 
+          break;
+        case 2498: // Hide watched movies
+          Log.Debug("GUIVideoFiles: Hide watched movies");
+          _hideWatchedFiles = true;
+          LoadDirectory(_currentFolder);
+          UpdateButtonStates();
+          break;
+        case 2499: // Unhide watched movies
+          Log.Debug("GUIVideoFiles: Unhide watched movies");
+          _hideWatchedFiles = false;
+          LoadDirectory(_currentFolder);
+          UpdateButtonStates();
           break;
         case 1995: // Create 4x4 folder.jpg
           Log.Debug("Create folder.jpg from context menu: {0}", item.Path);
@@ -3131,8 +3152,11 @@ namespace MediaPortal.GUI.Video
 
           //Do NOT add OnItemSelected event handler here, because its still there...
 
-          facadeLayout.Add(item);
-          currentItemIndex ++;
+          if (item.IsFolder || !item.IsFolder && !_hideWatchedFiles && item.IsPlayed || !item.IsFolder && !item.IsPlayed)
+          {
+            facadeLayout.Add(item);
+            currentItemIndex++;
+          }
         }
       } // End Cached items
       else
@@ -3277,7 +3301,11 @@ namespace MediaPortal.GUI.Video
 
               SetLabel(item);
               item.OnItemSelected += item_OnItemSelected;
-              facadeLayout.Add(item);
+
+              if (item.IsFolder || !item.IsFolder && !_hideWatchedFiles && item.IsPlayed || !item.IsFolder && !item.IsPlayed)
+              {
+                facadeLayout.Add(item);
+              }
             }
           }
           itemlist = facadeLayout.ListLayout.ListItems;
@@ -3353,7 +3381,11 @@ namespace MediaPortal.GUI.Video
 
             SetLabel(item);
             item.OnItemSelected += item_OnItemSelected;
-            facadeLayout.Add(item);
+
+            if (item.IsFolder || !item.IsFolder && !_hideWatchedFiles && item.IsPlayed || !item.IsFolder && !item.IsPlayed)
+            {
+              facadeLayout.Add(item);
+            }
           }
         }
       } // End non cache items
