@@ -2521,6 +2521,16 @@ namespace MediaPortal
     /// </summary>
     protected override void Dispose(bool disposing)
     {
+      // Store MP Windowed
+      using (var xmlWriter = new MPSettings())
+      {
+        var backupSize = ClientSize;
+        xmlWriter.SetValue("gui", "lastlocationx", Location.X);
+        xmlWriter.SetValue("gui", "lastlocationy", Location.Y);
+        xmlWriter.SetValue("gui", "backupsizewidth", backupSize.Width);
+        xmlWriter.SetValue("gui", "backupsizeheight", backupSize.Height);
+      }
+
       CleanupEnvironment();
 
       if (_notifyIcon != null)
