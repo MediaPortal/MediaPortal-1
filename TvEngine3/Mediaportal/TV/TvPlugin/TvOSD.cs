@@ -452,6 +452,9 @@ namespace Mediaportal.TV.TvPlugin
             GUIPropertyManager.SetProperty("#Play.Current.TSBitRate",
              ((float)MediaPortal.Player.g_Player.GetVideoFormat().bitrate / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture));
 
+            GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalLevel", TVHome.Card.SignalLevel.ToString());
+            GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalQuality", TVHome.Card.SignalQuality.ToString()); 
+
             GUIPropertyManager.SetProperty("#Play.Current.VideoFormat.RawResolution",
               videoFormat.width.ToString() + "x" + videoFormat.height.ToString());
 
@@ -1892,6 +1895,8 @@ namespace Mediaportal.TV.TvPlugin
       {
         GUIPropertyManager.SetProperty("#Play.Current.TSBitRate",
          ((float)MediaPortal.Player.g_Player.GetVideoFormat().bitrate / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture));
+        GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalLevel", TVHome.Card.SignalLevel.ToString());
+        GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalQuality", TVHome.Card.SignalQuality.ToString());
       }
 
       if (!g_Player.IsTVRecording)
