@@ -698,7 +698,19 @@ namespace Mediaportal.TV.TvPlugin.Radio
       GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", _currentChannel.Name);
       GUIPropertyManager.SetProperty("#Play.Current.Album", _currentChannel.Name);
       GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.Name);
-      
+
+      if ((TVHome.Navigator.Channel.CurrentProgram == null || TVHome.Navigator.Channel.NextProgram == null ||
+       string.IsNullOrEmpty(TVHome.Navigator.Channel.CurrentProgram.Title) || string.IsNullOrEmpty(TVHome.Navigator.Channel.NextProgram.Title)))
+      {
+        GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.Name); // No EPG
+        GUIPropertyManager.SetProperty("#Play.Next.Title", string.Empty);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#Play.Current.Title", TVHome.Navigator.Channel.CurrentProgram.Title);
+        GUIPropertyManager.SetProperty("#Play.Next.Title", TVHome.Navigator.Channel.NextProgram.Title);
+      }
+
       string strLogo = Utils.GetCoverArt(Thumbs.Radio, _currentChannel.Name);
       if (string.IsNullOrEmpty(strLogo))
       {
