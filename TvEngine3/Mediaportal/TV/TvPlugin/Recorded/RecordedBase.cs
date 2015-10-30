@@ -679,6 +679,29 @@ namespace Mediaportal.TV.TvPlugin.Recorded
 
     #endregion
 
+    protected bool GetUserPasswordString(ref string sString)
+    {
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+
+      if (null == keyboard)
+      {
+        return false;
+      }
+
+      keyboard.IsSearchKeyboard = true;
+      keyboard.Reset();
+      keyboard.Password = true;
+      keyboard.Text = sString;
+      keyboard.DoModal(GetID); // show it...
+
+      if (keyboard.IsConfirmed)
+      {
+        sString = keyboard.Text;
+      }
+
+      return keyboard.IsConfirmed;
+    }
+
     protected bool OnSelectedRecording(int iItem, MediaType tveMediaType, g_Player.MediaType mpMediaType, out GUIListItem pItem)
     {
       pItem = GetItem(iItem);
@@ -1156,6 +1179,22 @@ namespace Mediaportal.TV.TvPlugin.Recorded
 
     private void OnDeleteRecording(int iItem)
     {
+      string userCode = string.Empty;
+      string _fileMenuPinCode = string.Empty;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
+      {
+        _fileMenuPinCode = Utils.DecryptPassword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+      }
+
+      if (!string.IsNullOrEmpty(_fileMenuPinCode))
+      {
+        GetUserPasswordString(ref userCode);
+        if (userCode != _fileMenuPinCode)
+        {
+          return;
+        }
+      }
+      
       _selectedItem = GetSelectedItemNo();
       GUIListItem pItem = GetItem(iItem);
       if (pItem == null)
