@@ -139,6 +139,8 @@ public class MediaPortalApp : D3D, IRender
   private bool                  _firstRestoreScreen = true;
   private int                   _backupSizeWidth;
   private int                   _backupSizeHeight;
+  private bool                  _usePrimaryScreen;
+  private string                _screenDisplayName;
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND            = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
@@ -208,6 +210,26 @@ public class MediaPortalApp : D3D, IRender
 
   // Framegrabber instance
   private FrameGrabber grabber = FrameGrabber.GetInstance();
+
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+  // ReSharper disable InconsistentNaming
+  public class DISPLAY_DEVICE
+  // ReSharper restore InconsistentNaming
+  {
+    public int cb = 0;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+    public string DeviceName = new String(' ', 32);
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+    public string DeviceString = new String(' ', 128);
+    public int StateFlags = 0;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+    public string DeviceID = new String(' ', 128);
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+    public string DeviceKey = new String(' ', 128);
+  }
+
+  [DllImport("user32.dll")]
+  public static extern bool EnumDisplayDevices(string lpDevice, int iDevNum, [In, Out] DISPLAY_DEVICE lpDisplayDevice, int dwFlags);
 
   #endregion
 
@@ -1098,6 +1120,7 @@ public class MediaPortalApp : D3D, IRender
     _restartOptions        = RestartOptions.Reboot;
 
     int screenNumber;
+    string screenDeviceId;
     using (Settings xmlreader = new MPSettings())
     {
       _suspendGracePeriodSec      = xmlreader.GetValueAsInt("general", "suspendgraceperiod", 5);
@@ -1110,18 +1133,80 @@ public class MediaPortalApp : D3D, IRender
       screenNumber                = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
       _stopOnLostAudioRenderer    = xmlreader.GetValueAsBool("general", "stoponaudioremoval", true);
       _delayOnResume              = xmlreader.GetValueAsBool("general", "delay resume", false) ? xmlreader.GetValueAsInt("general", "delay", 0) : 0;
+      screenDeviceId              = xmlreader.GetValueAsString("screenselector", "screendeviceid", "");
+      _usePrimaryScreen           = xmlreader.GetValueAsBool("general", "useprimaryscreen", false);
+      _screenDisplayName          = xmlreader.GetValueAsString("screenselector", "screendisplayname", "");
     }
 
     if (ScreenNumberOverride >= 0)
     {
       screenNumber = ScreenNumberOverride;
+      if (screenNumber < 0 || screenNumber >= Screen.AllScreens.Length)
+      {
+        screenNumber = 0;
+      }
+      GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
     }
-    if (screenNumber < 0 || screenNumber >= Screen.AllScreens.Length)
+    else
     {
-      screenNumber = 0;
-    }
+      bool foundScreen = false;
+      foreach (Screen screen in Screen.AllScreens)
+      {
+        const int dwf = 0;
+        var info = new DISPLAY_DEVICE();
+        string monitorname = null;
+        string deviceId = null;
+        info.cb = Marshal.SizeOf(info);
+        if (EnumDisplayDevices(screen.DeviceName, 0, info, dwf))
+        {
+          monitorname = info.DeviceString;
+          deviceId = info.DeviceID;
+        }
+        if (monitorname == null)
+        {
+          monitorname = "";
+        }
+        if (deviceId == null)
+        {
+          deviceId = "";
+        }
 
-    GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
+        if (_usePrimaryScreen)
+        {
+          if (screen.Primary)
+          {
+            GUIGraphicsContext.currentScreen = screen;
+            foundScreen = true;
+            break;
+          }
+        }
+        else
+        {
+          if (!string.IsNullOrEmpty(deviceId))
+          {
+            if (deviceId.Equals(screenDeviceId))
+            {
+              GUIGraphicsContext.currentScreen = screen;
+              foundScreen = true;
+              break;
+            }
+          }
+          else
+          {
+            if (screen.DeviceName.Equals(_screenDisplayName))
+            {
+              GUIGraphicsContext.currentScreen = screen;
+              foundScreen = true;
+              break;
+            }
+          }
+        }
+      }
+      if (!foundScreen)
+      {
+        GUIGraphicsContext.currentScreen = screenNumber >= Screen.AllScreens.Length ? Screen.AllScreens[0] : Screen.AllScreens[screenNumber];
+      }
+    }
 
     Log.Info("Main: MP is using screen: {0} (Position: {1},{2} Dimensions: {3}x{4})",
              GetCleanDisplayName(GUIGraphicsContext.currentScreen),
@@ -1173,9 +1258,16 @@ public class MediaPortalApp : D3D, IRender
     CheckSkinVersion();
     using (Settings xmlreader = new MPSettings())
     {
-      var startFullscreen = !WindowedOverride && (FullscreenOverride || xmlreader.GetValueAsBool("general", "startfullscreen", false));
-      Windowed = !startFullscreen;
       _keepstartfullscreen = xmlreader.GetValueAsBool("general", "keepstartfullscreen", false);
+      var startFullscreen = !WindowedOverride && (FullscreenOverride || xmlreader.GetValueAsBool("general", "startfullscreen", false));
+      if (_keepstartfullscreen)
+      {
+        Windowed = !_keepstartfullscreen;
+      }
+      else
+      {
+        Windowed = !startFullscreen;
+      }
     }
 
     DoStartupJobs();
@@ -1515,8 +1607,11 @@ public class MediaPortalApp : D3D, IRender
 
         // handle device changes
         case WM_DEVICECHANGE:
-          OnDeviceChange(ref msg);
-          PluginManager.WndProc(ref msg);
+          if (!_keepstartfullscreen)
+          {
+            OnDeviceChange(ref msg);
+            PluginManager.WndProc(ref msg);
+          }
           break;
 
         case WM_QUERYENDSESSION:
@@ -3916,7 +4011,10 @@ public class MediaPortalApp : D3D, IRender
 
         // toggle between windowed and fullscreen mode
         case Action.ActionType.ACTION_TOGGLE_WINDOWED_FULLSCREEN:
-          ToggleFullscreen();
+          if (!_keepstartfullscreen)
+          {
+            ToggleFullscreen();
+          }
           return;
 
         // mute or unmute audio
