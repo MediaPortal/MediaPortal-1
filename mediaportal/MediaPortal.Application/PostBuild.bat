@@ -191,3 +191,7 @@ xcopy %1\..\Packages\SharpLibWin32.0.0.7\lib\net20\SharpLibWin32.dll . /Y /D
 
 REM System.Management.Automation
 xcopy %1\..\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll . /Y /D
+
+REM SharpLibDisplay
+xcopy %1\..\Packages\SharpLibDisplay.0.2.5\lib\net40\SharpLibDisplay.dll . /Y /D
+
