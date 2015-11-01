@@ -68,7 +68,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       _standbyHandlers.Add(new ActiveNetworkStandbyHandler());
       _standbyHandlers.Add(new ActiveSharesStandbyHandler());
       _standbyHandlers.Add(new PingStandbyHandler());
-
+      _standbyHandlers.Add(new ActivePortsHandler());
 
       // Add handlers for resuming from standby
       _wakeupHandlers = new List<IWakeupHandler>();
