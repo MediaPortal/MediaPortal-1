@@ -112,6 +112,7 @@ namespace MediaPortal.GUI.Music
     private MusicTag PreviousTrackTag = null;
     private MusicTag CurrentTrackTag = null;
     private MusicTag NextTrackTag = null;
+    private Timer ProgramChangeTimer = null;
     private GUIMusicBaseWindow _MusicWindow = null;
     private Timer ImageChangeTimer = null;
     private Timer VUMeterTimer = null;
@@ -404,6 +405,12 @@ namespace MediaPortal.GUI.Music
                 AddSongToPlaylist(ref song);
               }
             }
+          }
+          break;
+        case GUIMessage.MessageType.GUI_MSG_SEND_PROGRAM_INFO:
+          {
+            GUIPropertyManager.SetProperty("#Play.Current.Title", message.Label);
+            GUIPropertyManager.SetProperty("#Play.Next.Title", message.Label2);
           }
           break;
       }
