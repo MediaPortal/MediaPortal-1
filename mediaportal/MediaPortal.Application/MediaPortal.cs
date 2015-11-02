@@ -800,12 +800,12 @@ public class MediaPortalApp : D3D, IRender
         {
           using (Settings xmlreader = new MPSettings())
           {
-            skin = string.IsNullOrEmpty(SkinOverride) ? xmlreader.GetValueAsString("skin", "name", "Default") : SkinOverride;
+            skin = string.IsNullOrEmpty(SkinOverride) ? xmlreader.GetValueAsString("skin", "name", "Titan") : SkinOverride;
           }
         }
         catch (Exception)
         {
-           skin = "Default";
+          skin = "Titan";
         }
 
         Config.SkinName = skin;

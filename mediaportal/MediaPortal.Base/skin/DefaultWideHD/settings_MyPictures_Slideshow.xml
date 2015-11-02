@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>1015</id>
+  <defaultcontrol>6</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+    <import>common.settings.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <control>
+        <description>background</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>620</posX>
+        <posY>225</posY>
+        <width>1280</width>
+        <height>707</height>
+        <texture>backslide2.png</texture>
+      </control>
+      <control>
+        <description>Background</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>98</posX>
+        <posY>220</posY>
+        <width>480</width>
+        <height>710</height>
+        <texture>backslide.png</texture>
+      </control>
+      <control>
+        <type>label</type>
+        <id>1</id>
+        <posX>230</posX>
+        <posY>260</posY>
+        <width>480</width>
+        <label>924</label>
+        <textcolor>white</textcolor>
+        <font>Label</font>
+      </control>
+      <control>
+        <description>buttons</description>
+        <type>group</type>
+        <posX>118</posX>
+        <posY>305</posY>
+        <dimColor>ffffffff</dimColor>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <control>
+          <description>General Main setttings</description>
+          <type>button</type>
+          <id>9991</id>
+          <label>128</label>
+          <onup>17</onup>
+          <onright>6</onright>
+          <hyperlink>1016</hyperlink>
+        </control>
+        <control>
+          <description>General Skin settings</description>
+          <type>button</type>
+          <id>9992</id>
+          <label>101021</label>
+          <hyperlink>1021</hyperlink>
+          <onup>9991</onup>
+          <onright>6</onright>
+        </control>
+        <control>
+          <description>Screen</description>
+          <type>button</type>
+          <id>9993</id>
+          <label>6023</label>
+          <hyperlink>9</hyperlink>
+          <onup>9992</onup>
+          <onright>6</onright>
+        </control>
+        <control>
+          <description>TV</description>
+          <type>button</type>
+          <id>9994</id>
+          <label>605</label>
+          <hyperlink>700</hyperlink>
+          <onup>9993</onup>
+          <onright>6</onright>
+        </control>
+        <control>
+          <description>My Pictures</description>
+          <type>button</type>
+          <id>9995</id>
+          <label>1</label>
+          <hyperlink>12</hyperlink>
+          <onup>9994</onup>
+          <onright>6</onright>
+        </control>
+        <control>
+          <description>Movies</description>
+          <type>button</type>
+          <id>9996</id>
+          <label>3</label>
+          <hyperlink>703</hyperlink>
+          <onup>9995</onup>
+          <onright>6</onright>
+        </control>
+        <control>
+          <description>My DVD</description>
+          <type>button</type>
+          <id>9997</id>
+          <label>1027</label>
+          <hyperlink>704</hyperlink>
+          <onup>9996</onup>
+          <onright>6</onright>
+        </control>
+        <control>
+          <description>BluRay</description>
+          <type>button</type>
+          <id>9998</id>
+          <label>300217</label>
+          <hyperlink>1024</hyperlink>
+          <onup>9997</onup>
+          <onright>6</onright>
+        </control>
+        <control>
+          <description>My Music</description>
+          <type>button</type>
+          <id>9999</id>
+          <label>2</label>
+          <hyperlink>14</hyperlink>
+          <ondown>99910</ondown>
+          <onup>9998</onup>
+          <onright>6</onright>
+        </control>
+        <control>
+          <description>MiniDisplay</description>
+          <type>button</type>
+          <id>99910</id>
+          <label>9100</label>
+          <hyperlink>9000</hyperlink>
+          <ondown>9991</ondown>
+          <onup>9999</onup>
+          <onright>6</onright>
+          <visible>plugin.isenabled(MiniDisplay)</visible>
+        </control>
+      </control>
+      <control>
+        <type>label</type>
+        <id>1</id>
+        <posX>700</posX>
+        <posY>260</posY>
+        <width>1000</width>
+        <label>#currentmodule</label>
+        <textcolor>white</textcolor>
+        <font>Label</font>
+      </control>
+      <control>
+    <description>Slideshow transition label</description>
+    <type>label</type>
+    <id>1</id>
+		<posX>685</posX>
+		<posY>333</posY>
+		<width>600</width>			
+    <label>300183</label>
+		<font>Label</font>
+    <textcolor>ffffffff</textcolor>					
+  </control>
+
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>655</posX>
+		<posY>386</posY>
+		<dimColor>ffffffff</dimColor>
+    <layout>StackLayout(0, Vertical, true)</layout>
+		<control>
+      <description>Ken Buns transitions</description>
+      <type>checkbutton</type>
+      <id>6</id>
+      <onleft>9995</onleft>
+      <onright>2</onright>
+      <label>13008</label>
+      <onup>123</onup>
+      <width>470</width>
+    </control>
+		<control>
+      <description>X-fade transitions</description>
+      <type>checkbutton</type>
+      <id>5</id>
+      <onleft>9995</onleft>
+      <onright>3</onright>
+      <label>13010</label>
+      <width>470</width>
+    </control>
+		<control>
+      <description>Random transitions</description>
+      <type>checkbutton</type>
+      <id>7</id>
+      <onleft>9995</onleft>
+      <onright>4</onright>
+      <label>13009</label>
+      <width>470</width>
+    </control>
+  </control>
+    
+    <!--Rotation settings group-->
+
+  <control>
+    <description>Rotation settings</description>
+    <type>label</type>
+    <id>1</id>
+	  <posX>685</posX>
+	  <posY>646</posY>
+    <label>300184</label>
+		<font>Label</font>
+    <textcolor>ffffffff</textcolor>
+  </control>
+    
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>655</posX>
+		<posY>711</posY>
+		<dimColor>ffffffff</dimColor>
+    <layout>StackLayout(0, Vertical, true)</layout>
+    
+		<control>
+      <description>EXIF rotation</description>
+      <type>checkbutton</type>
+      <id>41</id>
+      <label>300185</label>
+      <onleft>9995</onleft>
+      <onright>43</onright>
+      <width>470</width>
+    </control>
+		<control>
+      <description>Picasa.ini rotation</description>
+      <type>checkbutton</type>
+      <id>42</id>
+      <label>300186</label>
+      <onleft>9995</onleft>
+      <onright>44</onright>
+      <ondown>2</ondown>
+      <width>470</width>
+    </control>
+  </control>
+    <!--Slideshow Settings group-->
+
+    <control>
+      <description>Slideshow settings</description>
+      <type>label</type>
+      <id>1</id>
+  		<posX>1180</posX>
+  		<posY>333</posY>
+  		<width>600</width>			
+      <label>300187</label>
+  		<font>Label</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <description>Speed label</description>
+      <type>label</type>
+      <id>100</id>
+      <posX>1195</posX>
+      <posY>386</posY>
+      <label>224</label>
+      <font>Label</font>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Speed select</description>
+      <type>spincontrol</type>
+      <id>2</id>
+      <posX>1620</posX>
+      <posY>393</posY>
+      <textcolor>ffffffff</textcolor>
+      <onleft>6</onleft>
+      <onright>6</onright>
+      <ondown>3</ondown>
+      <onup>42</onup>
+      <buddycontrolid>100</buddycontrolid>
+    </control>
+    <control>
+      <description>Transition time label</description>
+      <type>label</type>
+      <id>101</id>
+      <posX>1195</posX>
+      <posY>431</posY>
+      <label>225</label>
+      <font>Label</font>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Transition time select</description>
+      <type>spincontrol</type>
+      <id>3</id>
+      <posX>1620</posX>
+      <posY>438</posY>
+      <textcolor>ffffffff</textcolor>
+      <onleft>5</onleft>
+      <onright>5</onright>
+      <onup>2</onup>
+      <ondown>4</ondown>
+      <buddycontrolid>101</buddycontrolid>
+    </control>
+    <control>
+      <description>ken burns speed label</description>
+      <type>label</type>
+      <id>102</id>
+      <posX>1195</posX>
+      <posY>476</posY>
+      <label>13011</label>
+      <font>Label</font>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>ken burns speed select</description>
+      <type>spincontrol</type>
+      <id>4</id>
+      <posX>1620</posX>
+      <posY>483</posY>
+      <textcolor>ffffffff</textcolor>
+      <onleft>7</onleft>
+      <onright>7</onright>
+      <onup>3</onup>
+      <ondown>8</ondown>
+      <buddycontrolid>102</buddycontrolid>
+    </control>
+    
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+  	<posX>1180</posX>
+    <posY>530</posY>
+		<dimColor>ffffffff</dimColor>
+    <layout>StackLayout(0, Vertical, true)</layout>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+    
+		<control>
+      <description>Repeat/loop slideshows</description>
+      <type>checkbutton</type>
+      <id>8</id>
+      <onup>4</onup>
+      <ondown>9</ondown>
+      <label>6020</label>
+      <width>640</width>
+    </control>
+		<control>
+      <description>Auto shuffle slideshow</description>
+      <type>checkbutton</type>
+      <id>9</id>
+      <onup>8</onup>
+      <label>6021</label>
+      <width>640</width>
+    </control>
+ </control>
+    <!--View settings group-->
+    <!--Slideshow Settings group-->
+
+    <control>
+      <description>View settings</description>
+      <type>label</type>
+      <id>1</id>
+  		<posX>1180</posX>
+      <posY>670</posY>
+  		<width>600</width>			
+      <label>300188</label>
+  		<font>Label</font>
+      <textcolor>ffffffff</textcolor>
+  		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+  	<posX>1180</posX>
+    <posY>730</posY>
+		<dimColor>ffffffff</dimColor>
+    <layout>StackLayout(0, Vertical, true)</layout>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+    
+		<control>
+      <description>Group by day</description>
+      <type>checkbutton</type>
+      <id>43</id>
+      <label>300189</label>
+      <onup>9</onup>
+      <onleft>41</onleft>
+      <onright>41</onright>
+      <width>640</width>
+    </control>
+    
+		<control>
+      <description>Enable playing videos</description>
+      <type>checkbutton</type>
+      <id>44</id>
+      <label>300190</label>
+      <onleft>42</onleft>
+      <onright>42</onright>
+			<onup>43</onup>
+			<ondown>45</ondown>
+			<width>640</width>
+    </control>
+		<control>
+      <description>Play videos in slideshow</description>
+      <type>checkbutton</type>
+      <id>45</id>
+      <label>300191</label>
+      <onleft>42</onleft>
+      <onright>42</onright>
+      <ondown>6</ondown>
+      <onup>44</onup>
+      <width>640</width>
+    </control>
+  </control>
+  
+  </control>
+  </controls>
+</window>

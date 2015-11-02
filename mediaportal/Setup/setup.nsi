@@ -402,6 +402,10 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\thumbs\*"
 ### AUTO-GENERATED   UNINSTALLATION CODE   END ###
 
+  ; remve Default and DefautWide skins (were used before 1.13)
+  RMDir /r "$MPdir.Skin\Default"
+  RMDir /r "$MPdir.Skin\DefaultWide"
+
   ; create empty folders
   SetOutPath "$MPdir.Config"
   CreateDirectory "$MPdir.Config"
@@ -586,7 +590,9 @@ Section "MediaPortal core files (required)" SecCore
 
   ; used for Default and Titan Skin Font
   StrCpy $FONT_DIR $FONTS
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWide\MPDefaultFonts\MediaPortalDefault.ttf"
+
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Medium.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Light.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanSmall.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"

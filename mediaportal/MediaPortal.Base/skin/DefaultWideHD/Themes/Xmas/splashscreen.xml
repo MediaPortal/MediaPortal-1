@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <controls>
+    <control>
+      <description>splashscreen background</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>splashscreen.jpg</texture>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
+    <control>
+      <description>splashscreen text</description>
+      <type>label</type>
+      <id>2</id>
+      <textsize>10</textsize>
+      <textcolor>#ffcc00</textcolor>
+    </control>
+  </controls>
+</window>

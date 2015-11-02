@@ -1,0 +1,1102 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>7978</id>
+  <defaultcontrol>70</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.label:World Clock</define>
+  <define>#header.hover:hover_worldclock.png</define>
+  <controls>
+    <control>
+      <description>Default Background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>BH Worldmap.jpg</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <label>World Clock</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <!-- *** Main Clock *** -->
+    <control>
+      <description>Main Clock</description>
+      <type>image</type>
+      <id>100</id>
+      <posX>773</posX>
+      <posY>168</posY>
+      <width>351</width>
+      <height>351</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Main Digital Clock</description>
+      <type>image</type>
+      <id>110</id>
+      <posX>773</posX>
+      <posY>268</posY>
+      <width>380</width>
+      <height>160</height>
+      <texture>-</texture>
+    </control>
+    <control>
+			<description>Main Text Clock</description>
+			<type>image</type>
+			<id>120</id>
+			<posX>773</posX>
+      <posY>168</posY>
+      <width>351</width>
+      <height>351</height>
+			<texture>-</texture>
+		</control>
+    <control>
+      <description>Main Binary Clock</description>
+      <type>image</type>
+      <id>130</id>
+      <posX>773</posX>
+      <posY>168</posY>
+      <width>351</width>
+      <height>351</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Main Dice Clock</description>
+      <type>image</type>
+      <id>140</id>
+      <posX>773</posX>
+      <posY>168</posY>
+      <width>351</width>
+      <height>351</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Main Enigma Clock</description>
+      <type>image</type>
+      <id>150</id>
+      <posX>773</posX>
+      <posY>168</posY>
+      <width>351</width>
+      <height>351</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Main Tron Clock</description>
+      <type>image</type>
+      <id>160</id>
+      <posX>773</posX>
+      <posY>168</posY>
+      <width>351</width>
+      <height>351</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Main Clock indicator</description>
+      <type>image</type>
+      <id>60</id>
+      <posX>780</posX>
+      <posY>471</posY>
+      <width>42</width>
+      <height>42</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Main Clock button</description>
+      <type>button</type>
+      <id>50</id>
+      <posX>1089</posX>
+      <posY>478</posY>
+      <width>35</width>
+      <height>36</height>
+      <onleft>56</onleft>
+      <onright>51</onright>
+      <onup>76</onup>
+      <ondown>71</ondown>
+      <textureFocus>worldclock_focus.png</textureFocus>
+      <textureNoFocus>worldclock_nofocus.png</textureNoFocus>
+      <label>-</label>
+    </control>
+    <control>
+      <description>Main Clock Location</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>948</posX>
+      <posY>548</posY>
+      <align>center</align>
+      <label>#WorldClock.MainClockLocation</label>
+      <font>Menutitle</font>
+    </control>
+    <control>
+      <description>Main Clock Date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>948</posX>
+      <posY>583</posY>
+      <align>center</align>
+      <label>#WorldClock.MainClockDate</label>
+      <font>Label</font>
+    </control>
+    <control>
+			<description>Main Clock Coordinates</description>
+			<type>label</type>
+			<id>0</id>
+			<posX>948</posX>
+      <posY>618</posY>
+      <align>center</align>
+			<font>font10</font>
+			<label>#WorldClock.MainClockCoordinatesDegree</label>
+			<visible>!string.equals(#WorldClock.MainClockCoordinatesDegree, )</visible>
+		</control>
+		<control>
+			<description>Main Clock Timezone</description>
+			<type>label</type>
+			<id>0</id>
+			<posX>948</posX>
+      <posY>645</posY>
+      <align>center</align>
+			<font>font10</font>
+			<label>#WorldClock.MainClockTimezoneDescription</label>
+			<visible>!string.equals(#WorldClock.MainClockCoordinatesDegree, )</visible>
+		</control>
+    <control>
+      <description>Main Clock Sunrise Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>760</posX>
+      <posY>208</posY>
+      <align>right</align>
+      <font>font10</font>
+      <label>#WorldClock.TranslationSunrise: #WorldClock.MainClockSunriseTime</label>
+      <visible>!string.equals(#WorldClock.MainClockSunriseTime, )</visible>
+    </control>
+    <control>
+      <description>Main Clock Sunset Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>760</posX>
+      <posY>238</posY>
+      <align>right</align>
+      <font>font10</font>
+      <label>#WorldClock.TranslationSunset: #WorldClock.MainClockSunsetTime</label>
+      <visible>!string.equals(#WorldClock.MainClockSunsetTime, )</visible>
+    </control>
+    <control>
+      <description>Main Clock Sun Culmination</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>760</posX>
+      <posY>268</posY>
+      <align>right</align>
+      <font>font10</font>
+      <label>#WorldClock.TranslationSunCulmination: #WorldClock.MainClockSunCulminationTime</label>
+      <visible>!string.equals(#WorldClock.MainClockSunriseTime, )</visible>
+    </control>
+    <control>
+      <description>Main Clock Moon Phase</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>760</posX>
+      <posY>298</posY>
+      <align>right</align>
+      <font>font10</font>
+      <label>#WorldClock.TranslationMoonPhase: #WorldClock.MainClockMoonPhase</label>
+      <visible>!string.equals(#WorldClock.MainClockMoonPhase, )</visible>
+    </control>
+    <control>
+      <description>Main Clock Moonrise Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>760</posX>
+      <posY>328</posY>
+      <align>right</align>
+      <font>font10</font>
+      <label>#WorldClock.TranslationMoonrise: #WorldClock.MainClockMoonriseTime</label>
+      <visible>!string.equals(#WorldClock.MainClockMoonriseTime, )</visible>
+    </control>
+    <control>
+      <description>Main Clock Moonset Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>760</posX>
+      <posY>358</posY>
+      <align>right</align>
+      <font>font10</font>
+      <label>#WorldClock.TranslationMoonset: #WorldClock.MainClockMoonsetTime</label>
+      <visible>!string.equals(#WorldClock.MainClockMoonsetTime, )</visible>
+    </control>
+    <control>
+      <description>Main Clock Moon Culmination</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>760</posX>
+      <posY>388</posY>
+      <align>right</align>
+      <font>font10</font>
+      <label>#WorldClock.TranslationMoonCulmination: #WorldClock.MainClockMoonCulminationTime</label>
+      <visible>!string.equals(#WorldClock.MainClockMoonriseTime, )</visible>
+    </control>
+    <control>
+      <description>Main Clock Daylight Start Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>760</posX>
+      <posY>418</posY>
+      <align>right</align>
+      <font>font10</font>
+      <label>DST Start: #WorldClock.MainClockDaylightStartDateTime</label>
+      <visible>!string.equals(#WorldClock.MainClockDaylightStartDateTime, )</visible>
+    </control>
+    <control>
+      <description>Main Clock Daylight Start Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>760</posX>
+      <posY>448</posY>
+      <align>right</align>
+      <font>font10</font>
+      <label>DST End: #WorldClock.MainClockDaylightEndDateTime</label>
+      <visible>!string.equals(#WorldClock.MainClockDaylightEndDateTime, )</visible>
+    </control>
+    <!-- ************************************************************************************* -->
+    <!-- ********************************* Additional Clock 1 ******************************** -->
+    <!-- ************************************************************************************* -->
+    <control>
+      <description>Additional Analog Clock 1</description>
+      <type>image</type>
+      <id>101</id>
+      <posX>154</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Digital Clock 1</description>
+      <type>image</type>
+      <id>111</id>
+      <posX>124</posX>
+      <posY>763</posY>
+      <width>230</width>
+      <height>60</height>
+      <texture>-</texture>
+    </control>
+    <control>
+			<description>Additional Text Clock 1</description>
+			<type>image</type>
+			<id>121</id>
+			<posX>154</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+			<texture>-</texture>
+		</control>
+    <control>
+      <description>Additional Binary Clock 1</description>
+      <type>image</type>
+      <id>131</id>
+      <posX>154</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Dice Clock 1</description>
+      <type>image</type>
+      <id>141</id>
+      <posX>154</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Enigma Clock 1</description>
+      <type>image</type>
+      <id>151</id>
+      <posX>154</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Tron Clock 1</description>
+      <type>image</type>
+      <id>161</id>
+      <posX>154</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Clock 1 indicator</description>
+      <type>image</type>
+      <id>61</id>
+      <posX>154</posX>
+      <posY>843</posY>
+      <width>42</width>
+      <height>42</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Clock 1 button</description>
+      <type>button</type>
+      <id>51</id>
+      <posX>285</posX>
+      <posY>849</posY>
+      <width>35</width>
+      <height>36</height>
+      <onleft>50</onleft>
+      <onright>52</onright>
+      <onup>70</onup>
+      <ondown>72</ondown>
+      <textureFocus>worldclock_focus.png</textureFocus>
+      <textureNoFocus>worldclock_nofocus.png</textureNoFocus>
+    </control>
+    <control>
+      <description>Additional Clock 1 Location</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>234</posX>
+      <posY>914</posY>
+      <align>center</align>
+      <label>#WorldClock.AdditionalClock1Location</label>
+      <font>Label</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>string.equals(#WorldClock.AdditionalClock1Enabled,true)</visible>
+    </control>
+    <control>
+      <description>Additional Clock 1 Date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>234</posX>
+      <posY>942</posY>
+      <align>center</align>
+      <label>#WorldClock.AdditionalClock1Date</label>
+      <font>font10</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>string.equals(#WorldClock.AdditionalClock1Enabled,true)</visible>
+    </control>
+    <control>
+      <description>Additional Clock 1 Sunrise Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>234</posX>
+      <posY>972</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>#WorldClock.TranslationSunrise: #WorldClock.AdditionalClock1SunriseTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock1SunriseTime, )</visible>
+    </control>
+    <control>
+      <description>Additional Clock 1 Sunset Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>234</posX>
+      <posY>1002</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>#WorldClock.TranslationSunset: #WorldClock.AdditionalClock1SunsetTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock1SunsetTime, )</visible>
+    </control>
+    <control>
+      <description>Additional Clock 1 Daylight Start Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>234</posX>
+      <posY>1032</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>DST Start: #WorldClock.AdditionalClock1DaylightStartDateTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock1DaylightStartDateTime, )</visible>
+    </control>
+    <control>
+      <description>Additional Clock 1 Daylight Start Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>234</posX>
+      <posY>1062</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>DST End: #WorldClock.AdditionalClock1DaylightEndDateTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock1DaylightEndDateTime, )</visible>
+    </control>
+    <!-- ************************************************************************************* -->
+    <!-- ********************************* Additional Clock 2 ******************************** -->
+    <!-- ************************************************************************************* -->
+    <control>
+      <description>Additional Analog Clock 2</description>
+      <type>image</type>
+      <id>102</id>
+      <posX>520</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Digital Clock 2</description>
+      <type>image</type>
+      <id>112</id>
+      <posX>490</posX>
+      <posY>763</posY>
+      <width>230</width>
+      <height>60</height>
+      <texture>-</texture>
+    </control>
+    <control>
+			<description>Additional Text Clock 2</description>
+			<type>image</type>
+			<id>122</id>
+			<posX>520</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+		</control>
+    <control>
+      <description>Additional Binary Clock 2</description>
+      <type>image</type>
+      <id>132</id>
+      <posX>520</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Dice Clock 2</description>
+      <type>image</type>
+      <id>142</id>
+      <posX>520</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Enigma Clock 2</description>
+      <type>image</type>
+      <id>152</id>
+      <posX>520</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Tron Clock 2</description>
+      <type>image</type>
+      <id>162</id>
+      <posX>520</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Clock 2 indicator</description>
+      <type>image</type>
+      <id>62</id>
+      <posX>520</posX>
+      <posY>843</posY>
+      <width>42</width>
+      <height>42</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Clock 2 button</description>
+      <type>button</type>
+      <id>52</id>
+      <posX>652</posX>
+      <posY>849</posY>
+      <width>35</width>
+      <height>36</height>
+      <onleft>51</onleft>
+      <onright>53</onright>
+      <onup>71</onup>
+      <ondown>73</ondown>
+      <textureFocus>worldclock_focus.png</textureFocus>
+      <textureNoFocus>worldclock_nofocus.png</textureNoFocus>
+    </control>
+    <control>
+      <description>Additional Clock 2 Location</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>914</posY>
+      <align>center</align>
+      <label>#WorldClock.AdditionalClock2Location</label>
+      <font>Label</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>string.equals(#WorldClock.AdditionalClock2Enabled,true)</visible>
+    </control>
+    <control>
+      <description>Additional Clock 2 Date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>942</posY>
+      <align>center</align>
+      <label>#WorldClock.AdditionalClock2Date</label>
+      <font>font10</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>string.equals(#WorldClock.AdditionalClock2Enabled,true)</visible>
+    </control>
+    <control>
+      <description>Additional Clock 2 Sunrise Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>972</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>#WorldClock.TranslationSunrise: #WorldClock.AdditionalClock2SunriseTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock2SunriseTime, )</visible>
+    </control>
+    <control>
+      <description>Additional Clock 2 Sunset Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>1002</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>#WorldClock.TranslationSunset: #WorldClock.AdditionalClock2SunsetTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock2SunsetTime, )</visible>
+    </control>
+    <control>
+      <description>Additional Clock 2 Daylight Start Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>1032</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>DST Start: #WorldClock.AdditionalClock2DaylightStartDateTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock2DaylightStartDateTime, )</visible>
+    </control>
+    <control>
+      <description>Additional Clock 2 Daylight Start Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>1062</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>DST End: #WorldClock.AdditionalClock2DaylightEndDateTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock2DaylightEndDateTime, )</visible>
+    </control>
+    <!-- ************************************************************************************* -->
+    <!-- ********************************* Additional Clock 3 ******************************** -->
+    <!-- ************************************************************************************* -->
+    <control>
+      <description>Additional Analog Clock 3</description>
+      <type>image</type>
+      <id>103</id>
+      <posX>885</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Digital Clock 3</description>
+      <type>image</type>
+      <id>113</id>
+      <posX>855</posX>
+      <posY>763</posY>
+      <width>230</width>
+      <height>60</height>
+      <texture>-</texture>
+    </control>
+    <control>
+			<description>Additional Text Clock 3</description>
+			<type>image</type>
+			<id>123</id>
+			<posX>885</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+		</control>
+    <control>
+      <description>Additional Binary Clock 3</description>
+      <type>image</type>
+      <id>133</id>
+      <posX>885</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Dice Clock 3</description>
+      <type>image</type>
+      <id>143</id>
+      <posX>885</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Enigma Clock 3</description>
+      <type>image</type>
+      <id>153</id>
+      <posX>885</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Tron Clock 3</description>
+      <type>image</type>
+      <id>163</id>
+      <posX>885</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Clock 3 indicator</description>
+      <type>image</type>
+      <id>63</id>
+      <posX>885</posX>
+      <posY>843</posY>
+      <width>42</width>
+      <height>42</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Clock 3 button</description>
+      <type>button</type>
+      <id>53</id>
+      <posX>1017</posX>
+      <posY>849</posY>
+      <width>35</width>
+      <height>36</height>
+      <onleft>52</onleft>
+      <onright>54</onright>
+      <onup>72</onup>
+      <ondown>74</ondown>
+      <textureFocus>worldclock_focus.png</textureFocus>
+      <textureNoFocus>worldclock_nofocus.png</textureNoFocus>
+    </control>
+    <control>
+      <description>Additional Clock 3 Location</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>970</posX>
+      <posY>914</posY>
+      <align>center</align>
+      <label>#WorldClock.AdditionalClock3Location</label>
+      <font>Label</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>string.equals(#WorldClock.AdditionalClock3Enabled,true)</visible>
+    </control>
+    <control>
+      <description>Additional Clock 3 Date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>970</posX>
+      <posY>942</posY>
+      <align>center</align>
+      <label>#WorldClock.AdditionalClock3Date</label>
+      <font>font10</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>string.equals(#WorldClock.AdditionalClock3Enabled,true)</visible>
+    </control>
+    <control>
+      <description>Additional Clock 3 Sunrise Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>970</posX>
+      <posY>972</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>#WorldClock.TranslationSunrise: #WorldClock.AdditionalClock3SunriseTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock3SunriseTime, )</visible>
+    </control>
+    <control>
+      <description>Additional Clock 3 Sunset Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>970</posX>
+      <posY>1002</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>#WorldClock.TranslationSunset: #WorldClock.AdditionalClock3SunsetTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock3SunsetTime, )</visible>
+    </control>
+    <control>
+      <description>Additional Clock 3 Daylight Start Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>970</posX>
+      <posY>1032</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>DST Start: #WorldClock.AdditionalClock3DaylightStartDateTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock3DaylightStartDateTime, )</visible>
+    </control>
+    <control>
+      <description>Additional Clock 3 Daylight Start Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>970</posX>
+      <posY>1062</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>DST End: #WorldClock.AdditionalClock3DaylightEndDateTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock3DaylightEndDateTime, )</visible>
+    </control>
+    <!-- ************************************************************************************* -->
+    <!-- ********************************* Additional Clock 4 ******************************** -->
+    <!-- ************************************************************************************* -->
+    <control>
+      <description>Additional Analog Clock 4</description>
+      <type>image</type>
+      <id>104</id>
+      <posX>1250</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Digital Clock 4</description>
+      <type>image</type>
+      <id>114</id>
+      <posX>1220</posX>
+      <posY>763</posY>
+      <width>230</width>
+      <height>60</height>
+      <texture>-</texture>
+    </control>
+    <control>
+			<description>Additional Text Clock 4</description>
+			<type>image</type>
+			<id>124</id>
+			<posX>1250</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+		</control>
+    <control>
+      <description>Additional Binary Clock 4</description>
+      <type>image</type>
+      <id>134</id>
+      <posX>1250</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Dice Clock 4</description>
+      <type>image</type>
+      <id>144</id>
+      <posX>1250</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Enigma Clock 4</description>
+      <type>image</type>
+      <id>154</id>
+      <posX>1250</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Tron Clock 4</description>
+      <type>image</type>
+      <id>164</id>
+      <posX>1250</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Clock 4 indicator</description>
+      <type>image</type>
+      <id>64</id>
+      <posX>1250</posX>
+      <posY>843</posY>
+      <width>42</width>
+      <height>42</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Clock 4 button</description>
+      <type>button</type>
+      <id>54</id>
+      <posX>1383</posX>
+      <posY>849</posY>
+      <width>35</width>
+      <height>36</height>
+      <onleft>53</onleft>
+      <onright>55</onright>
+      <onup>73</onup>
+      <ondown>75</ondown>
+      <textureFocus>worldclock_focus.png</textureFocus>
+      <textureNoFocus>worldclock_nofocus.png</textureNoFocus>
+    </control>
+    <control>
+      <description>Additional Clock 4 Location</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1335</posX>
+      <posY>914</posY>
+      <align>center</align>
+      <label>#WorldClock.AdditionalClock4Location</label>
+      <font>Label</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>string.equals(#WorldClock.AdditionalClock4Enabled,true)</visible>
+    </control>
+    <control>
+      <description>Additional Clock 4 Date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1335</posX>
+      <posY>942</posY>
+      <align>center</align>
+      <label>#WorldClock.AdditionalClock4Date</label>
+      <font>font10</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>string.equals(#WorldClock.AdditionalClock4Enabled,true)</visible>
+    </control>
+    <control>
+      <description>Additional Clock 4 Sunrise Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1335</posX>
+      <posY>972</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>#WorldClock.TranslationSunrise: #WorldClock.AdditionalClock4SunriseTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock4SunriseTime, )</visible>
+    </control>
+    <control>
+      <description>Additional Clock 4 Sunset Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1335</posX>
+      <posY>1002</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>#WorldClock.TranslationSunset: #WorldClock.AdditionalClock4SunsetTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock4SunsetTime, )</visible>
+    </control>
+    <control>
+      <description>Additional Clock 4 Daylight Start Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1335</posX>
+      <posY>1032</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>DST Start: #WorldClock.AdditionalClock4DaylightStartDateTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock4DaylightStartDateTime, )</visible>
+    </control>
+    <control>
+      <description>Additional Clock 4 Daylight Start Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1335</posX>
+      <posY>1062</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>DST End: #WorldClock.AdditionalClock4DaylightEndDateTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock4DaylightEndDateTime, )</visible>
+    </control>
+    <!-- ************************************************************************************* -->
+    <!-- ********************************* Additional Clock 5 ******************************** -->
+    <!-- ************************************************************************************* -->
+    <control>
+      <description>Additional Analog Clock 5</description>
+      <type>image</type>
+      <id>105</id>
+      <posX>1616</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Digital Clock 5</description>
+      <type>image</type>
+      <id>115</id>
+      <posX>1586</posX>
+      <posY>763</posY>
+      <width>230</width>
+      <height>60</height>
+      <texture>-</texture>
+    </control>
+    <control>
+			<description>Additional Text Clock 5</description>
+			<type>image</type>
+			<id>125</id>
+			<posX>1616</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+		</control>
+    <control>
+      <description>Additional Binary Clock 5</description>
+      <type>image</type>
+      <id>135</id>
+      <posX>1616</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Dice Clock 5</description>
+      <type>image</type>
+      <id>145</id>
+      <posX>1616</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Enigma Clock 5</description>
+      <type>image</type>
+      <id>155</id>
+      <posX>1616</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Tron Clock 5</description>
+      <type>image</type>
+      <id>165</id>
+      <posX>1616</posX>
+      <posY>703</posY>
+      <width>168</width>
+      <height>168</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Clock 5 indicator</description>
+      <type>image</type>
+      <id>65</id>
+      <posX>1616</posX>
+      <posY>843</posY>
+      <width>42</width>
+      <height>42</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Additional Clock 5 button</description>
+      <type>button</type>
+      <id>55</id>
+      <posX>1748</posX>
+      <posY>849</posY>
+      <width>35</width>
+      <height>36</height>
+      <onleft>54</onleft>
+      <onright>56</onright>
+      <onup>74</onup>
+      <ondown>76</ondown>
+      <textureFocus>worldclock_focus.png</textureFocus>
+      <textureNoFocus>worldclock_nofocus.png</textureNoFocus>
+    </control>
+    <control>
+      <description>Additional Clock 5 Location</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1700</posX>
+      <posY>914</posY>
+      <align>center</align>
+      <label>#WorldClock.AdditionalClock5Location</label>
+      <font>Label</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>string.equals(#WorldClock.AdditionalClock5Enabled,true)</visible>
+    </control>
+    <control>
+      <description>Additional Clock 5 Date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1700</posX>
+      <posY>942</posY>
+      <align>center</align>
+      <label>#WorldClock.AdditionalClock5Date</label>
+      <font>font10</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>string.equals(#WorldClock.AdditionalClock5Enabled,true)</visible>
+    </control>
+    <control>
+      <description>Additional Clock 5 Sunrise Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1700</posX>
+      <posY>972</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>#WorldClock.TranslationSunrise: #WorldClock.AdditionalClock5SunriseTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock5SunriseTime, )</visible>
+    </control>
+    <control>
+      <description>Additional Clock 5 Sunset Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1700</posX>
+      <posY>1002</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>#WorldClock.TranslationSunset: #WorldClock.AdditionalClock5SunsetTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock5SunsetTime, )</visible>
+    </control>
+    <control>
+      <description>Additional Clock 5 Daylight Start Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1700</posX>
+      <posY>1032</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>DST Start: #WorldClock.AdditionalClock5DaylightStartDateTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock5DaylightStartDateTime, )</visible>
+    </control>
+    <control>
+      <description>Additional Clock 5 Daylight Start Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1700</posX>
+      <posY>1062</posY>
+      <align>center</align>
+      <font>font10</font>
+      <label>DST End: #WorldClock.AdditionalClock5DaylightEndDateTime</label>
+      <visible>!string.equals(#WorldClock.AdditionalClock5DaylightEndDateTime, )</visible>
+    </control>
+  </controls>
+</window>
