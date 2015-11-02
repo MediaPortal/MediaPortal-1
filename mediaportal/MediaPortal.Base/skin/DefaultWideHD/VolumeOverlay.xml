@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>3004</id>
+  <defaultcontrol>2</defaultcontrol>
+  <controls>
+    <control>
+      <id>501</id>
+      <type>image</type>
+      <posX>5</posX>
+      <posY>14</posY>
+      <width>381</width>
+      <height>80</height>
+      <texture>volumelevel.png</texture>
+      <visible>control.isVisible(503)+!control.isVisible(502)</visible>
+    </control>
+    <control>
+      <id>502</id>
+      <type>image</type>
+      <posX>7</posX>
+      <posY>7</posY>
+      <width>70</width>
+      <height>70</height>
+      <texture>volume.states.mute.png</texture>
+      <animation effect="fade" start="0" end="100" time="2000" condition="true" pulse="true">conditional</animation>
+    </control>
+    <control>
+      <id>503</id>
+      <type>volumebar</type>
+      <posX>89</posX>
+      <posY>37</posY>
+      <align>left</align>
+      <height>35</height>
+      <imageHeight>3</imageHeight>
+      <width>270</width>
+      <texture>volume.states.png</texture>
+    </control>
+  </controls>
+</window>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>87273</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#currentmodule:#Trakt.Translation.Plugins.Label</define>
+  <define>#selecteditem:#highlightedbutton</define>
+  <define>#defaultcontrol:2</define>
+  <define>#defaultcontrol.onleft:9997</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH Trakt.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
+    <import>Trakt.Common.Fanart.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <import>Trakt.Common.xml</import>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <posX>525</posX>
+      <posY>241</posY>
+      <width>465</width>
+      <height>568</height>
+      <layout>StackLayout</layout>
+      <control>
+        <description>MP-TVSeries</description>
+        <type>checkbutton</type>
+        <id>2</id>
+        <label>MP-TVSeries</label>
+        <width>465</width>
+        <onleft>#defaultcontrol.onleft</onleft>
+        <onup>7</onup>
+        <onright>8</onright>
+      </control>
+      <control>
+        <description>MovingPictures</description>
+        <type>checkbutton</type>
+        <id>3</id>
+        <width>465</width>
+        <label>Moving Pictures</label>
+        <onleft>#defaultcontrol.onleft</onleft>
+        <onright>9</onright>
+      </control>
+      <control>
+        <description>My Videos</description>
+        <type>checkbutton</type>
+        <id>4</id>
+        <width>465</width>
+        <label>My Videos</label>
+        <onleft>#defaultcontrol.onleft</onleft>
+        <onright>12</onright>
+      </control>
+      <control>
+        <description>My Films</description>
+        <type>checkbutton</type>
+        <id>5</id>
+        <width>465</width>
+        <label>My Films</label>
+        <onleft>#defaultcontrol.onleft</onleft>
+        <onright>10</onright>
+      </control>
+      <control>
+        <description>Online Videos</description>
+        <type>checkbutton</type>
+        <id>6</id>
+        <width>465</width>
+        <label>Online Videos</label>
+        <onleft>#defaultcontrol.onleft</onleft>
+        <onright>11</onright>
+      </control>
+      <control>
+        <description>My Anime</description>
+        <type>checkbutton</type>
+        <id>7</id>
+        <width>465</width>
+        <label>My Anime</label>
+        <onleft>#defaultcontrol.onleft</onleft>
+        <ondown>8</ondown>
+        <onright>13</onright>
+      </control>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <posX>1035</posX>
+      <posY>241</posY>
+      <width>465</width>
+      <height>568</height>
+      <layout>StackLayout</layout>
+      <control>
+        <description>My Recorded TV</description>
+        <type>checkbutton</type>
+        <id>8</id>
+        <width>465</width>
+        <label>My TV Recordings</label>
+        <onup>7</onup>
+        <onleft>#defaultcontrol.onleft</onleft>
+        <onleft>2</onleft>
+      </control>
+      <control>
+        <description>4TR Recorded TV</description>
+        <type>checkbutton</type>
+        <id>9</id>
+        <width>465</width>
+        <label>4TR TV Recordings</label>
+        <onleft>#defaultcontrol.onleft</onleft>
+        <onleft>3</onleft>
+      </control>
+      <control>
+        <description>Argus Recorded TV</description>
+        <type>checkbutton</type>
+        <id>12</id>
+        <width>465</width>
+        <label>Argus TV Recordings</label>
+        <onleft>#defaultcontrol.onleft</onleft>
+        <onleft>4</onleft>
+      </control>
+      <control>
+        <description>My Live TV</description>
+        <type>checkbutton</type>
+        <id>10</id>
+        <width>465</width>
+        <label>My Live TV</label>
+        <onleft>#defaultcontrol.onleft</onleft>
+        <onleft>5</onleft>
+      </control>
+      <control>
+        <description>4TR Live TV</description>
+        <type>checkbutton</type>
+        <id>11</id>
+        <width>465</width>
+        <label>4TR Live TV</label>
+        <onleft>#defaultcontrol.onleft</onleft>
+        <onleft>6</onleft>
+      </control>
+      <control>
+        <description>Argus Live TV</description>
+        <type>checkbutton</type>
+        <id>13</id>
+        <width>465</width>
+        <label>Argus Live TV</label>
+        <onleft>#defaultcontrol.onleft</onleft>
+        <ondown>8</ondown>
+        <onleft>7</onleft>
+      </control>
+    </control>
+  </controls>
+</window>

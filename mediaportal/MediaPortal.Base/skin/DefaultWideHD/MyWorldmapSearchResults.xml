@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>10237</id>
+  <defaultcontrol>5</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <disabletopbar>yes</disabletopbar>
+  <controls>
+    <control>
+      <type>image</type>
+      <id>25</id>
+      <posX>375</posX>
+      <posY>225</posY>
+      <width>1299</width>
+      <height>702</height>
+      <texture>osd_dialog_big.png</texture>
+    </control>
+    <control>
+      <type>label</type>
+      <id>24</id>
+      <posX>465</posX>
+      <posY>330</posY>
+      <label>Search results</label>
+      <font>font16</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <type>listcontrol</type>
+      <id>5</id>
+      <posX>487</posX>
+      <posY>390</posY>
+      <width>1050</width>
+      <height>450</height>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <textXOff>48</textXOff>
+      <textYOff>6</textYOff>
+      <textXOff2>975</textXOff2>
+      <textYOff2>6</textYOff2>
+      <spinPosX>1425</spinPosX>
+      <spinPosY>780</spinPosY>
+      <spinWidth>51</spinWidth>
+      <spinHeight>51</spinHeight>
+      <spinColor>ffffffff</spinColor>
+      <spinAlign>Right</spinAlign>
+      <textureUp>page_up_nofocus.png</textureUp>
+      <textureUpFocus>page_up_focus.png</textureUpFocus>
+      <textureDown>page_down_nofocus.png</textureDown>
+      <textureDownFocus>page_down_focus.png</textureDownFocus>
+      <textureHeight>60</textureHeight>
+      <suffix>|</suffix>
+    </control>
+  </controls>
+</window>

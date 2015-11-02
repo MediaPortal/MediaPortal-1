@@ -49,7 +49,7 @@ namespace MediaPortal.Configuration
     #region Variables
 
     private static Dictionary<Dir, string> directories;
-    private static string skinName = "DefaultWide";
+    private static string skinName = "Titan";
 
     #endregion
 
@@ -344,7 +344,7 @@ namespace MediaPortal.Configuration
       Set(Dir.Plugins, Path.Combine(baseDir, @"plugins\"));
       Set(Dir.Skin, Path.Combine(commonAppData, @"skin\"));
       Set(Dir.Thumbs, Path.Combine(commonAppData, @"thumbs\"));
-      Set(Dir.Weather, Path.Combine(commonAppData, @"skin\Default\Media\Weather\")); //will be 'fixed' and set to correct path as soon as available
+      Set(Dir.Weather, Path.Combine(commonAppData, @"skin\DefaultWide HD\Media\Weather\")); //will be 'fixed' and set to correct path as soon as available
     }
 
 

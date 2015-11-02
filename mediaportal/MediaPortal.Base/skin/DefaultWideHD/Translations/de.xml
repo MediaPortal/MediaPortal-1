@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Skin translation file -->
+<!-- German (de) -->
+<strings>
+  <string Field="WorldNewsTicker">WorldNews-Ticker aktivieren</string>
+  <string Field="AnalogClockOSD">Analoge Uhr in OSDs</string>
+  <string Field="MusicNowPlayingFanart">Fanart für aktuellen Titel in BasicHome</string>
+  <string Field="MusicFanart">Zufällige Musik-Fanart in BasicHome</string>
+  <string Field="VideoFanart">Zufällige Video-Fanart in BasicHome</string>
+  <string Field="TVGuideRows">Anzahl Zeilen im TV-EPG</string>
+  <string Field="TVSeriesRows">Zeilen in TVSeries Breite Banner</string>
+  <string Field="DescriptionTopbar">Beschreibung der Topbar-Elemente:</string>
+  <string Field="BackPrevious">Zurück zum vorherigen Fenster</string>
+  <string Field="BackBasicHome">Zurück zum BasicHome</string>
+  <string Field="LiveTV">LiveTV/Video im Hintergrund</string>
+  <string Field="PlayControls">Wiedergabe-Steuerung für Audio/Video</string>
+  <string Field="SkinInfo">Diese Anzeige</string>
+  <string Field="CloseExit">MP beenden/schließen</string>
+  <string Field="ShutdownOptions">Optionen zum Abschalten</string>
+  <string Field="InfoButton">In Listen: "Rechts" auf FB/Tastatur oder Markieren mit Maus zeigt erweiterte Informationen</string>
+  <string Field="SupportedPlugins">Unterstützte Erweiterungen (in alphabetischer Reihenfolge):</string>
+  <string Field="PluginsMP">... und natürlich alle Standard-Erweiterungen von MediaPortal 1.7.x (oder höher)</string>
+  <string Field="MPVersion">DefaultWide HD 1.5 wurde für MP 1.7.x (oder höher) entwickelt.</string>
+  <string Field="Enjoy">Viel Spaß mit MediaPortal und DefaultWide HD 1.5!</string>
+  <string Field="Background">Hintergrund</string>
+  <string Field="Games">Spiele</string>
+  <string Field="NewEpisodes">Neueste Folgen</string>
+  <string Field="NewRecordings">Neueste TV-Aufnahmen</string>
+  <string Field="NewVideos">Neueste Videos</string>
+  <string Field="NewYouTubeVideos">Neueste YouTube-Videos</string>
+  <string Field="NewFilms">Neueste Filme</string>
+  <string Field="LastPlayed">Zuletzt gespielt</string>
+  <string Field="NewPictures">Neueste Fotos</string>
+  <string Field="NowRecording">Laufende Aufnahmen</string>
+  <string Field="FullView">Infos immer sichtbar</string>
+  <string Field="ShowDVDArt">Zeige DVD-Art</string>
+  <string Field="NoClock">Uhr und Plugin-Icons ausblenden</string>
+  <string Field="FastAccess">Schnell-Zugriffs-Menü in Topbar</string>
+  <string Field="Timer">Aufnahme-Timer</string>
+  <string Field="Update">DefaultWide HD 1.6 verfügbar!</string>
+  <string Field="BasicHomeEditorModernUI">ACHTUNG: In diesem Thema sollten keine Plugins von TV, Video oder Musik in Internet oder Games plaziert werden, da dies zu Naviagationsproblemen in Internet oder Games führen kann! catavolt :-D</string>
+  <string Field="BasicHomeEditorHorizonUp">ACHTUNG: In diesem Thema sollten Plugins nur innerhalb ihrer Kategorie plaziert werden (z.B. TVSerien nur in Videos), da es sonst zu Überlappungen der Latest Media Info kommen kann!  catavolt :-D</string>
+  <string Field="BasicHomeEditorNoPlugin">ACHTUNG: Bitte stellen Sie sicher, dass jedes erste Element jeder Kategorie ein aktiviertes Plugin enthält, da ansonsten keine Navigation in den Kategorien möglich ist! catavolt :-D</string>
+  <string Field="tvstreaminfo">TV OSD Stream-Info immer sichtbar</string>
+</strings>

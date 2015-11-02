@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>7988</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>739</posX>
+      <posY>330</posY>
+      <width>750</width>
+      <height>450</height>
+      <texture>dialog_background.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>dialog Heading</description>
+      <type>fadelabel</type>
+      <id>2</id>
+      <posX>825</posX>
+      <posY>385</posY>
+      <label>934</label>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <!-- <control>
+            <description>Rating label</description>
+            <type>label</type>
+            <id>3</id>
+            <posX>707</posX>
+            <posY>360</posY>
+            <label>#myfilms.db.rating.label</label>
+            <font>font13</font>
+            <textcolor>ffffffff</textcolor>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
+        </control> -->
+    <control>
+      <description>Rating value</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>1050</posX>
+      <posY>480</posY>
+      <label>#myfilms.rating</label>
+      <font>font18</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>right button</description>
+      <type>button</type>
+      <id>10</id>
+      <posX>1290</posX>
+      <posY>555</posY>
+      <width>52</width>
+      <height>52</height>
+      <textureFocus>arrow_round_right_focus.png</textureFocus>
+      <textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
+      <label />
+      <onleft>11</onleft>
+      <onright>12</onright>
+      <onup>12</onup>
+      <ondown>12</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>left button</description>
+      <type>button</type>
+      <id>11</id>
+      <posX>885</posX>
+      <posY>555</posY>
+      <width>52</width>
+      <height>52</height>
+      <textureFocus>arrow_round_left_focus.png</textureFocus>
+      <textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
+      <label />
+      <onleft>12</onleft>
+      <onright>10</onright>
+      <onup>12</onup>
+      <ondown>12</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>OK button</description>
+      <type>button</type>
+      <id>12</id>
+      <posX>1342</posX>
+      <posY>385</posY>
+      <textYOff>13</textYOff>
+      <width>60</width>
+      <height>60</height>
+      <textureFocus>dialogue_ok_focus.png</textureFocus>
+      <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <onleft>11</onleft>
+      <onright>10</onright>
+      <onup>11</onup>
+      <ondown>10</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>imagelist</type>
+      <id>100</id>
+      <posX>945</posX>
+      <posY>567</posY>
+      <width>63</width>
+      <height>480</height>
+      <textureWidth>33</textureWidth>
+      <textureHeight>33</textureHeight>
+      <subitems>
+        <subitem>greystar.png</subitem>
+        <subitem>stargood.png</subitem>
+      </subitems>
+      <orientation>horizontal</orientation>
+      <percentage>#myfilms.rating</percentage>
+      <imagesToDraw>10</imagesToDraw>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+  </controls>
+</window>

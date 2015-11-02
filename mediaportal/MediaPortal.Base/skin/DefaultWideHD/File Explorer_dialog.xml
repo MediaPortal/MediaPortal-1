@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>557316</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>black.png</texture>
+      <colordiffuse>70ffffff</colordiffuse>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>420</posX>
+      <posY>364</posY>
+      <width>1030</width>
+      <height>420</height>
+      <texture>menu.png</texture>
+    </control>
+    <control>
+      <description>dialog Heading</description>
+      <type>label</type>
+      <id>2</id>
+      <posX>420</posX>
+      <posY>415</posY>
+      <width>1030</width>
+      <label>-</label>
+      <font>font14</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <align>center</align>
+    </control>
+    <control>
+      <description>dialog line 1</description>
+      <type>label</type>
+      <id>3</id>
+      <posX>489</posX>
+      <posY>471</posY>
+      <label>-</label>
+      <width>912</width>
+      <font>font13</font>
+      <textcolor>white</textcolor>
+    </control>
+    <control>
+      <description>dialog line 2</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>489</posX>
+      <posY>516</posY>
+      <label>-</label>
+      <width>912</width>
+      <font>font13</font>
+      <textcolor>white</textcolor>
+    </control>
+  </controls>
+</window>
