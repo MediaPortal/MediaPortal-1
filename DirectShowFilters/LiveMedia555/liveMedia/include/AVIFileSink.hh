@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // A sink that generates an AVI file from a composite media session
 // C++ header
 
@@ -58,12 +58,15 @@ private:
   static void onSourceClosure(void* clientData);
   void onSourceClosure1();
   static void onRTCPBye(void* clientData);
+  void addIndexRecord(class AVIIndexRecord* newIndexRecord);
   void completeOutputFile();
 
 private:
   friend class AVISubsessionIOState;
   MediaSession& fInputSession;
   FILE* fOutFid;
+  class AVIIndexRecord *fIndexRecordsHead, *fIndexRecordsTail;
+  unsigned fNumIndexRecords;
   unsigned fBufferSize;
   Boolean fPacketLossCompensate;
   Boolean fAreCurrentlyBeingPlayed;

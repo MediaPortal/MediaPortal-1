@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // Media Sources
 // Implementation
 
@@ -50,6 +50,9 @@ Boolean MediaSource::isMPEG4VideoStreamFramer() const {
   return False; // default implementation
 }
 Boolean MediaSource::isH264VideoStreamFramer() const {
+  return False; // default implementation
+}
+Boolean MediaSource::isH265VideoStreamFramer() const {
   return False; // default implementation
 }
 Boolean MediaSource::isDVVideoStreamFramer() const {

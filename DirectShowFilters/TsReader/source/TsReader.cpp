@@ -424,7 +424,6 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   }
   wcscpy(m_fileName,L"");
   m_dwGraphRegister = 0;
-  m_rtspClient.Initialize();
 
   //Read (and create if needed) debug registry settings
   HKEY key;
@@ -920,9 +919,8 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
     //stop pausing and continue streaming
     if (m_rtspClient.IsPaused())
     {
-      LogDebug(" CTsReaderFilter::Run()  -->is paused,continue rtsp");
+      LogDebug("  continue RTSP");
       m_rtspClient.Continue();
-      LogDebug(" CTsReaderFilter::Run()  --> rtsp running");
     }
   }
 
@@ -994,10 +992,10 @@ STDMETHODIMP CTsReaderFilter::Stop()
   //are we using rtsp?
   if (m_fileDuration == NULL)
   {
-    //yep then stop streaming
-    LogDebug("CTsReaderFilter::Stop()   -- stop rtsp");
+    //yep then pause streaming
+    LogDebug("CTsReaderFilter::Stop()   -- pause RTSP");
     m_buffer.Run(false);
-    m_rtspClient.Stop();
+    PauseRtspStreaming();
   }
   
   if (m_bStreamCompensated)
@@ -1077,7 +1075,7 @@ STDMETHODIMP CTsReaderFilter::Pause()
         if (!IsSeeking())
         {
           //not seeking, is rtsp streaming at the moment?
-          if (!m_rtspClient.IsRunning())
+          if (m_rtspClient.IsPaused())
           {
             //not streaming atm
             double startTime=m_seekTime.Millisecs();
@@ -1085,7 +1083,7 @@ STDMETHODIMP CTsReaderFilter::Pause()
     
             long Old_rtspDuration = m_rtspClient.Duration() ;
             //clear buffers
-            LogDebug("  -- Pause()  ->start rtsp from %f", startTime);
+            LogDebug("  start RTSP from %f", startTime);
             m_buffer.Clear();
             
             //Flushing is delegated
@@ -1095,7 +1093,6 @@ STDMETHODIMP CTsReaderFilter::Pause()
             m_buffer.Run(true);
             m_rtspClient.Play(startTime,0.0);
     //        m_tickCount = GET_TIME_NOW();
-            LogDebug("  -- Pause()  ->rtsp started");
     
             //update the duration of the stream
             CPcr pcrStart, pcrEnd, pcrMax ;
@@ -1124,18 +1121,7 @@ STDMETHODIMP CTsReaderFilter::Pause()
           else
           {
             //we are streaming at the moment.
-           
-            //query the current position, so it can resume on un-pause at this position
-            //can be required in multiseat with rtsp when changing audio streams 
-            IMediaSeeking * ptrMediaPos;
-            if (SUCCEEDED(GetFilterGraph()->QueryInterface(IID_IMediaSeeking, (void**)&ptrMediaPos)))
-            {
-              ptrMediaPos->GetCurrentPosition(&m_seekTime.m_time);
-              ptrMediaPos->Release();
-            }
-            //pause the streaming
-            LogDebug("  -- Pause()  ->pause rtsp at position: %f", (m_seekTime.Millisecs() / 1000.0f));
-            m_rtspClient.Pause();
+            PauseRtspStreaming();
           }
         }
         else //we are seeking
@@ -1233,8 +1219,9 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     }
     m_buffer.Run(false);
 
-    LogDebug("close rtsp:%s", url);
-    m_rtspClient.Stop();
+    // Pause. This will result in faster startup and channel change times,
+    // because we don't have to SETUP a whole new session with the server.
+    m_rtspClient.Pause();
 
     m_tickCount = GET_TIME_NOW()-m_rtspClient.Duration();   // Will be ready to update "virtual end Pcr" on recording in progress.
 
@@ -1282,9 +1269,9 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     }
     m_buffer.Run(false);
 
-    // stop streaming
-    LogDebug("close rtsp:%s", url);
-    m_rtspClient.Stop();
+    // Pause. This will result in faster startup and channel change times,
+    // because we don't have to SETUP a whole new session with the server.
+    m_rtspClient.Pause();
 
     m_tickCount = GET_TIME_NOW()-m_rtspClient.Duration();
 
@@ -1436,9 +1423,6 @@ bool CTsReaderFilter::Seek(CRefTime& seekTime)
   else
   {
     //yes, we're playing a RTSP stream
-    //stop the RTSP steam
-    LogDebug("CTsReaderFilter::  Seek->stop rtsp");
-    m_rtspClient.Stop();
     double startTime = m_seekTime.Millisecs();
     startTime /= 1000.0;
     double milli = m_duration.Duration().Millisecs();
@@ -1449,6 +1433,11 @@ bool CTsReaderFilter::Seek(CRefTime& seekTime)
     LogDebug("CTsReaderFilter::  Seek->start client from %f/ %f",startTime,milli);
     //clear the buffers
 //    m_demultiplexer.Flush(false);
+
+    // The RTSP server seems to ignore PLAY commands if the stream is already
+    // playing, so we need to be PAUSE'd here.
+    PauseRtspStreaming();
+
     m_buffer.Clear();
     m_buffer.Run(true);
     //start rtsp stream from the seek-time
@@ -2729,6 +2718,26 @@ void CTsReaderFilter::CheckForMPAR()
     m_bMPARinGraph = false;
     LogDebug("MPAR/Reclock not found");
   }
+}
+
+void CTsReaderFilter::PauseRtspStreaming()
+{
+  if (m_rtspClient.IsPaused())
+  {
+    return;
+  }
+
+  //query the current position, so it can resume on un-pause at this position
+  //can be required in multiseat with rtsp when changing audio streams 
+  IMediaSeeking * ptrMediaPos;
+  if (SUCCEEDED(GetFilterGraph()->QueryInterface(IID_IMediaSeeking, (void**)&ptrMediaPos)))
+  {
+    ptrMediaPos->GetCurrentPosition(&m_seekTime.m_time);
+    ptrMediaPos->Release();
+  }
+  //pause the streaming
+  LogDebug("  pause RTSP at %f", (m_seekTime.Millisecs() / 1000.0f));
+  m_rtspClient.Pause();
 }
 
 

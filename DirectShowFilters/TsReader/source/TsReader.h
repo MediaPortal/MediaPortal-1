@@ -258,6 +258,7 @@ public:
   void            OnVideoFormatChanged(int streamType,int width,int height,int aspectRatioX,int aspectRatioY,int bitrate,int isInterlaced);
   void            OnBitRateChanged(int bitrate);
   bool            IsStreaming();
+  void            PauseRtspStreaming();
 
   bool            IsSeeking();
   int             SeekingDone();

@@ -1,10 +1,10 @@
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <streams.h>
 #include "TsMPEG2TransportFileServerMediaSubsession.h"
+#ifndef _SIMPLE_RTP_SINK_HH
 #include "SimpleRTPSink.hh"
+#endif
 #include "TsStreamFileSource.h"
 #include "TsMPEG2TransportStreamFramer.h"
+#include "MultiFileReader.h"
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -53,7 +53,7 @@ RTPSink* TsMPEG2TransportFileServerMediaSubsession::createNewRTPSink(Groupsock* 
 		33, 90000, "video", "mp2t",
 		1, True, False /*no 'M' bit*/);
 }
-void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* inputSource, double seekNPT)
+void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* inputSource, double& seekNPT, double streamDuration, u_int64_t& numBytes)
 {  
 
 

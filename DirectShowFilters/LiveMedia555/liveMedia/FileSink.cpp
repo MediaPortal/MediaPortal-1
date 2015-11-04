@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // File sinks
 // Implementation
 
@@ -30,7 +30,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 FileSink::FileSink(UsageEnvironment& env, FILE* fid, unsigned bufferSize,
 		   char const* perFrameFileNamePrefix)
-  : MediaSink(env), fOutFid(fid), fBufferSize(bufferSize) {
+  : MediaSink(env), fOutFid(fid), fBufferSize(bufferSize), fSamePresentationTimeCounter(0) {
   fBuffer = new unsigned char[bufferSize];
   if (perFrameFileNamePrefix != NULL) {
     fPerFrameFileNamePrefix = strDup(perFrameFileNamePrefix);
@@ -39,6 +39,7 @@ FileSink::FileSink(UsageEnvironment& env, FILE* fid, unsigned bufferSize,
     fPerFrameFileNamePrefix = NULL;
     fPerFrameFileNameBuffer = NULL;
   }
+  fPrevPresentationTime.tv_sec = ~0; fPrevPresentationTime.tv_usec = 0;
 }
 
 FileSink::~FileSink() {
@@ -81,19 +82,29 @@ Boolean FileSink::continuePlaying() {
 }
 
 void FileSink::afterGettingFrame(void* clientData, unsigned frameSize,
-				 unsigned /*numTruncatedBytes*/,
+				 unsigned numTruncatedBytes,
 				 struct timeval presentationTime,
 				 unsigned /*durationInMicroseconds*/) {
   FileSink* sink = (FileSink*)clientData;
-  sink->afterGettingFrame1(frameSize, presentationTime);
+  sink->afterGettingFrame(frameSize, numTruncatedBytes, presentationTime);
 }
 
-void FileSink::addData(unsigned char* data, unsigned dataSize,
+void FileSink::addData(unsigned char const* data, unsigned dataSize,
 		       struct timeval presentationTime) {
-  if (fPerFrameFileNameBuffer != NULL) {
+  if (fPerFrameFileNameBuffer != NULL && fOutFid == NULL) {
     // Special case: Open a new file on-the-fly for this frame
-    sprintf(fPerFrameFileNameBuffer, "%s-%lu.%06lu", fPerFrameFileNamePrefix,
-	    presentationTime.tv_sec, presentationTime.tv_usec);
+    if (presentationTime.tv_usec == fPrevPresentationTime.tv_usec &&
+	presentationTime.tv_sec == fPrevPresentationTime.tv_sec) {
+      // The presentation time is unchanged from the previous frame, so we add a 'counter'
+      // suffix to the file name, to distinguish them:
+      sprintf(fPerFrameFileNameBuffer, "%s-%lu.%06lu-%u", fPerFrameFileNamePrefix,
+	      presentationTime.tv_sec, presentationTime.tv_usec, ++fSamePresentationTimeCounter);
+    } else {
+      sprintf(fPerFrameFileNameBuffer, "%s-%lu.%06lu", fPerFrameFileNamePrefix,
+	      presentationTime.tv_sec, presentationTime.tv_usec);
+      fPrevPresentationTime = presentationTime; // for next time
+      fSamePresentationTimeCounter = 0; // for next time
+    }
     fOutFid = OpenOutputFile(envir(), fPerFrameFileNameBuffer);
   }
 
@@ -113,16 +124,21 @@ void FileSink::addData(unsigned char* data, unsigned dataSize,
   }
 }
 
-void FileSink::afterGettingFrame1(unsigned frameSize,
-				  struct timeval presentationTime) {
+void FileSink::afterGettingFrame(unsigned frameSize,
+				 unsigned numTruncatedBytes,
+				 struct timeval presentationTime) {
+  if (numTruncatedBytes > 0) {
+    envir() << "FileSink::afterGettingFrame(): The input frame data was too large for our buffer size ("
+	    << fBufferSize << ").  "
+            << numTruncatedBytes << " bytes of trailing data was dropped!  Correct this by increasing the \"bufferSize\" parameter in the \"createNew()\" call to at least "
+            << fBufferSize + numTruncatedBytes << "\n";
+  }
   addData(fBuffer, frameSize, presentationTime);
 
   if (fOutFid == NULL || fflush(fOutFid) == EOF) {
-    // The output file has closed.  Handle this the same way as if the
-    // input source had closed:
-    onSourceClosure(this);
-
-    stopPlaying();
+    // The output file has closed.  Handle this the same way as if the input source had closed:
+    if (fSource != NULL) fSource->stopGettingFrames();
+    onSourceClosure();
     return;
   }
 

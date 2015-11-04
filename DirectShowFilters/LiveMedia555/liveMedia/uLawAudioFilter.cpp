@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // Filters for converting between raw PCM audio and uLaw
 // Implementation
 
@@ -71,23 +71,23 @@ void uLawFromPCMAudioSource
 #define BIAS 0x84   // the add-in bias for 16 bit samples
 #define CLIP 32635
 
-static unsigned char uLawFrom16BitLinear(short sample) {
-  static int exp_lut[256] = {0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,
-			     4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
-			     5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
-			     5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
-			     6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
-			     6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
-			     6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
-			     6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
-			     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-			     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-			     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-			     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-			     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-			     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-			     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-			     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7};
+static unsigned char uLawFrom16BitLinear(u_int16_t sample) {
+  static int const exp_lut[256] = {0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,
+				   4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+				   5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+				   5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+				   6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+				   6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+				   6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+				   6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+				   7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+				   7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+				   7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+				   7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+				   7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+				   7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+				   7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+				   7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7};
   unsigned char sign = (sample >> 8) & 0x80;
   if (sign != 0) sample = -sample; // get the magnitude
 
@@ -111,7 +111,7 @@ void uLawFromPCMAudioSource
   unsigned numSamples = frameSize/2;
   switch (fByteOrdering) {
     case 0: { // host order
-      short* inputSample = (short*)fInputBuffer;
+      u_int16_t* inputSample = (u_int16_t*)fInputBuffer;
       for (unsigned i = 0; i < numSamples; ++i) {
 	fTo[i] = uLawFrom16BitLinear(inputSample[i]);
       }
@@ -119,14 +119,14 @@ void uLawFromPCMAudioSource
     }
     case 1: { // little-endian order
       for (unsigned i = 0; i < numSamples; ++i) {
-	short const newValue = (fInputBuffer[2*i+1]<<8)|fInputBuffer[2*i];
+	u_int16_t const newValue = (fInputBuffer[2*i+1]<<8)|fInputBuffer[2*i];
 	fTo[i] = uLawFrom16BitLinear(newValue);
       }
       break;
     }
     case 2: { // network (i.e., big-endian) order
       for (unsigned i = 0; i < numSamples; ++i) {
-	short const newValue = (fInputBuffer[2*i]<<8)|fInputBuffer[2*i+i];
+	u_int16_t const newValue = (fInputBuffer[2*i]<<8)|fInputBuffer[2*i+i];
 	fTo[i] = uLawFrom16BitLinear(newValue);
       }
       break;
@@ -185,15 +185,15 @@ void PCMFromuLawAudioSource
 			     presentationTime, durationInMicroseconds);
 }
 
-static short linear16FromuLaw(unsigned char uLawByte) {
-  static int exp_lut[8] = {0,132,396,924,1980,4092,8316,16764};
+static u_int16_t linear16FromuLaw(unsigned char uLawByte) {
+  static int const exp_lut[8] = {0,132,396,924,1980,4092,8316,16764};
   uLawByte = ~uLawByte;
 
   Boolean sign = (uLawByte & 0x80) != 0;
   unsigned char exponent = (uLawByte>>4) & 0x07;
   unsigned char mantissa = uLawByte & 0x0F;
 
-  short result = exp_lut[exponent] + (mantissa << (exponent+3));
+  u_int16_t result = exp_lut[exponent] + (mantissa << (exponent+3));
   if (sign) result = -result;
   return result;
 }
@@ -205,7 +205,7 @@ void PCMFromuLawAudioSource
   // Translate uLaw samples (in the input buffer)
   // into 16-bit PCM samples (in the output buffer), in host order.
   unsigned numSamples = frameSize;
-  short* outputSample = (short*)fTo;
+  u_int16_t* outputSample = (u_int16_t*)fTo;
   for (unsigned i = 0; i < numSamples; ++i) {
     outputSample[i] = linear16FromuLaw(fInputBuffer[i]);
   }
@@ -259,7 +259,7 @@ void NetworkFromHostOrder16
   // Translate the 16-bit values that we have just read from host
   // to network order (in-place)
   unsigned numValues = frameSize/2;
-  short* value = (short*)fTo;
+  u_int16_t* value = (u_int16_t*)fTo;
   for (unsigned i = 0; i < numValues; ++i) {
     value[i] = htons(value[i]);
   }
@@ -313,7 +313,7 @@ void HostFromNetworkOrder16
   // Translate the 16-bit values that we have just read from network
   // to host order (in-place):
   unsigned numValues = frameSize/2;
-  short* value = (short*)fTo;
+  u_int16_t* value = (u_int16_t*)fTo;
   for (unsigned i = 0; i < numValues; ++i) {
     value[i] = ntohs(value[i]);
   }
@@ -363,15 +363,68 @@ void EndianSwap16::afterGettingFrame1(unsigned frameSize, unsigned numTruncatedB
 				      unsigned durationInMicroseconds) {
   // Swap the byte order of the 16-bit values that we have just read (in place):
   unsigned numValues = frameSize/2;
-  short* value = (short*)fTo;
+  u_int16_t* value = (u_int16_t*)fTo;
   for (unsigned i = 0; i < numValues; ++i) {
-    short const orig = value[i];
+    u_int16_t const orig = value[i];
     value[i] = ((orig&0xFF)<<8) | ((orig&0xFF00)>>8);
   }
 
   // Complete delivery to the client:
   fFrameSize = numValues*2;
-  fNumTruncatedBytes = numTruncatedBytes;
+  fNumTruncatedBytes = numTruncatedBytes + (frameSize - fFrameSize);
+  fPresentationTime = presentationTime;
+  fDurationInMicroseconds = durationInMicroseconds;
+  afterGetting(this);
+}
+
+
+////////// 24-bit values: little-endian <-> big-endian //////////
+
+EndianSwap24*
+EndianSwap24::createNew(UsageEnvironment& env, FramedSource* inputSource) {
+  return new EndianSwap24(env, inputSource);
+}
+
+EndianSwap24::EndianSwap24(UsageEnvironment& env,
+			 FramedSource* inputSource)
+  : FramedFilter(env, inputSource) {
+}
+
+EndianSwap24::~EndianSwap24() {
+}
+
+void EndianSwap24::doGetNextFrame() {
+  // Arrange to read data directly into the client's buffer:
+  fInputSource->getNextFrame(fTo, fMaxSize,
+			     afterGettingFrame, this,
+                             FramedSource::handleClosure, this);
+}
+
+void EndianSwap24::afterGettingFrame(void* clientData, unsigned frameSize,
+				     unsigned numTruncatedBytes,
+				     struct timeval presentationTime,
+				     unsigned durationInMicroseconds) {
+  EndianSwap24* source = (EndianSwap24*)clientData;
+  source->afterGettingFrame1(frameSize, numTruncatedBytes,
+			     presentationTime, durationInMicroseconds);
+}
+
+void EndianSwap24::afterGettingFrame1(unsigned frameSize, unsigned numTruncatedBytes,
+				      struct timeval presentationTime,
+				      unsigned durationInMicroseconds) {
+  // Swap the byte order of the 24-bit values that we have just read (in place):
+  unsigned const numValues = frameSize/3;
+  u_int8_t* p = fTo;
+  for (unsigned i = 0; i < numValues; ++i) {
+    u_int8_t tmp = p[0];
+    p[0] = p[2];
+    p[2] = tmp;
+    p += 3;
+  }
+
+  // Complete delivery to the client:
+  fFrameSize = numValues*3;
+  fNumTruncatedBytes = numTruncatedBytes + (frameSize - fFrameSize);
   fPresentationTime = presentationTime;
   fDurationInMicroseconds = durationInMicroseconds;
   afterGetting(this);

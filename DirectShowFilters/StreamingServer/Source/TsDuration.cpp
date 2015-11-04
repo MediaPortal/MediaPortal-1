@@ -18,14 +18,11 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-//#include <afx.h>
-//#include <afxwin.h>
-
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <streams.h>
 #include "TsDuration.h"
 #include "..\..\shared\AdaptionField.h"
+#include "..\..\shared\TsHeader.h"
+
+
 extern void LogDebug(const char *fmt, ...) ;
 
 CTsDuration::CTsDuration()

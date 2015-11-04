@@ -14,27 +14,47 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
-// Support for temporarily setting the locale (e.g., to POSIX) for (e.g.) parsing or printing
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
+// Support for temporarily setting the locale (e.g., to "C" or "POSIX") for (e.g.) parsing or printing
 // floating-point numbers in protocol headers, or calling toupper()/tolower() on human-input strings.
 // Implementation
 
 #include "Locale.hh"
 #include <strDup.hh>
 
-Locale::Locale(char const* newLocale, int category)
-  : fCategory(category) {
+Locale::Locale(char const* newLocale, LocaleCategory category) {
 #ifndef LOCALE_NOT_USED
-  fPrevLocale = strDup(setlocale(category, NULL));
-  setlocale(category, newLocale);
+#ifndef XLOCALE_NOT_USED
+  int categoryMask;
+  switch (category) {
+    case All: { categoryMask = LC_ALL_MASK; break; }
+    case Numeric: { categoryMask = LC_NUMERIC_MASK; break; }
+  }
+  fLocale = newlocale(categoryMask, newLocale, NULL);
+  fPrevLocale = uselocale(fLocale);
+#else
+  switch (category) {
+    case All: { fCategoryNum = LC_ALL; break; }
+    case Numeric: { fCategoryNum = LC_NUMERIC; break; }
+  }
+  fPrevLocale = strDup(setlocale(fCategoryNum, NULL));
+  setlocale(fCategoryNum, newLocale);
+#endif
 #endif
 }
 
 Locale::~Locale() {
 #ifndef LOCALE_NOT_USED
+#ifndef XLOCALE_NOT_USED
+  if (fLocale != (locale_t)0) {
+    uselocale(fPrevLocale);
+    freelocale(fLocale);
+  }
+#else
   if (fPrevLocale != NULL) {
-    setlocale(fCategory, fPrevLocale);
+    setlocale(fCategoryNum, fPrevLocale);
     delete[] fPrevLocale;
   }
+#endif
 #endif
 }
