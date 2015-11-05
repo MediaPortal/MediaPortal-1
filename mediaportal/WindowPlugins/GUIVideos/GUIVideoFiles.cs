@@ -616,10 +616,7 @@ namespace MediaPortal.GUI.Video
           break;
 
         case GUIMessage.MessageType.GUI_MSG_VIDEOFILE_RENAMED:
-          int i = _currentSelectedItem;
-          int oldItem = DeleteItem(message.Label2);
-          AddItem(message.Label, oldItem);
-          _currentSelectedItem = i;
+          ReplaceItem(message.Label2, message.Label);
           SelectCurrentItem();
           break;
 
@@ -633,10 +630,7 @@ namespace MediaPortal.GUI.Video
           break;
 
         case GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_RENAMED:
-          int i2 = _currentSelectedItem;
-          int oldItem2 = DeleteItem(message.Label2);
-          AddItem(message.Label, oldItem2);
-          _currentSelectedItem = i2;
+          ReplaceItem(message.Label2, message.Label);
           SelectCurrentItem();
           break;
 
@@ -3476,6 +3470,18 @@ namespace MediaPortal.GUI.Video
       GUIWaitCursor.Hide();
     }
 
+    private void ReplaceItem(string oldPath, string newPath)
+    {
+      for (int i = 0; i < facadeLayout.Count; i++)
+      {
+        if (facadeLayout[i].Path == oldPath)
+        {
+          AddItem(newPath, i);
+          break;
+        }
+      }
+    }
+
     private int DeleteItem(string path)
     {
       int oldItem = -1;
@@ -3610,7 +3616,7 @@ namespace MediaPortal.GUI.Video
         }
         else
         {
-          facadeLayout.Insert(index, item);
+          facadeLayout.Replace(index, item);
         }
 
         int totalItems = facadeLayout.Count;

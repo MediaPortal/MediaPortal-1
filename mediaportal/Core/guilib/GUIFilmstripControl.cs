@@ -2969,6 +2969,14 @@ namespace MediaPortal.GUI.Library
       return SelectedListItemIndex;
     }
 
+    public void Replace(int index, GUIListItem item)
+    {
+      if (item != null && index >= 0 && index < _listItems.Count)
+      {
+        _listItems[index] = item;
+      }
+    }
+
     public void Insert(int index, GUIListItem item)
     {
       if (item == null)

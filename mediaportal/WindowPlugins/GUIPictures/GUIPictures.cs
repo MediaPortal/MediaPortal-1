@@ -1055,10 +1055,7 @@ namespace MediaPortal.GUI.Pictures
         case GUIMessage.MessageType.GUI_MSG_PICTURESFILE_RENAMED:
           if (disp == Display.Files)
           {
-            int i = selectedItemIndex = facadeLayout.SelectedListItemIndex;
-            int oldItem = DeleteItem(message.Label2);
-            AddItem(message.Label, oldItem);
-            selectedItemIndex = i;
+            ReplaceItem(message.Label2, message.Label);
             SelectCurrentItem();
           }
           break;
@@ -1081,10 +1078,7 @@ namespace MediaPortal.GUI.Pictures
         case GUIMessage.MessageType.GUI_MSG_PICTURESDIRECTORY_RENAMED:
           if (disp == Display.Files)
           {
-            int i2 = selectedItemIndex = facadeLayout.SelectedListItemIndex;
-            int oldItem2 = DeleteItem(message.Label2);
-            AddItem(message.Label, oldItem2);
-            selectedItemIndex = i2;
+            ReplaceItem(message.Label2, message.Label);
             SelectCurrentItem();
           }
           break;
@@ -1401,6 +1395,18 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
+    private void ReplaceItem(string oldPath, string newPath)
+    {
+      for (int i = 0; i < facadeLayout.Count; i++)
+      {
+        if (facadeLayout[i].Path == oldPath)
+        {
+          AddItem(newPath, i);
+          break;
+        }
+      }
+    }
+
     private int DeleteItem(string path)
     {
       int oldItem = -1;
@@ -1512,7 +1518,7 @@ namespace MediaPortal.GUI.Pictures
         }
         else
         {
-          facadeLayout.Insert(index, item);
+          facadeLayout.Replace(index, item);
         }
 
         int totalItems = facadeLayout.Count;

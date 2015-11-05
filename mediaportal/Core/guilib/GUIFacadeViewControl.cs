@@ -1415,6 +1415,39 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public void Replace(int index, GUIListItem iItem)
+    {
+      if (iItem == null || index < 0)
+      {
+        return;
+      }
+
+      if (_layoutList != null)
+      {
+        _layoutList.Replace(index, iItem);
+      }
+      if (_layoutAlbum != null)
+      {
+        _layoutAlbum.Replace(index, iItem);
+      }
+      if (_layoutThumbnail != null)
+      {
+        _layoutThumbnail.Replace(index, iItem);
+      }
+      if (_layoutFilmStrip != null)
+      {
+        _layoutFilmStrip.Replace(index, iItem);
+      }
+      if (_layoutPlayList != null)
+      {
+        _layoutPlayList.Replace(index, iItem);
+      }
+      if (_layoutCoverFlow != null)
+      {
+        _layoutCoverFlow.Replace(index, iItem);
+      }
+    }
+
     public int RemoveItem(int iItem)
     {
       int selectedItemIndex = -1;

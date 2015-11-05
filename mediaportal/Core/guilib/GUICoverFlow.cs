@@ -2561,6 +2561,14 @@ namespace MediaPortal.GUI.Library
       AddCard(card, index);
     }
 
+    public void Replace(int index, GUIListItem item)
+    {
+      if (item != null && index >= 0 && index < _listItems.Count)
+      {
+        _listItems[index] = item;
+      }
+    }
+
     public void Clear()
     {
       _listItems.DisposeAndClear();
