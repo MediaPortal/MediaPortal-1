@@ -283,6 +283,18 @@ ShowUninstDetails show
   ${EndIf}
 !macroend
 
+!macro un.Fonts
+  ; used for Default and Titan Skin Font
+  StrCpy $FONT_DIR $FONTS
+  !insertmacro RemoveTTFFont "Lato-Medium.ttf"
+  !insertmacro RemoveTTFFont "Lato-Light.ttf"
+  !insertmacro RemoveTTFFont "TitanSmall.ttf"
+  !insertmacro RemoveTTFFont "Titan.ttf"
+  !insertmacro RemoveTTFFont "TitanLight.ttf"
+  !insertmacro RemoveTTFFont "TitanMedium.ttf"
+  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
+!macroend
+
 Function RunUninstaller
 
 !ifndef GIT_BUILD
@@ -587,6 +599,15 @@ Section "MediaPortal core files (required)" SecCore
   ${AndIf} ${AtLeastWinVista}
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPAudioRenderer\bin\${BUILD_TYPE}\mpaudiorenderer.ax"                "$MPdir.Base\mpaudiorenderer.ax"         "$MPdir.Base"
   ${EndIf}
+
+  ; delete font for proper reinstallation for Default and Titan Skin Font
+  !insertmacro un.Fonts
+  Delete "$FONT\TitanSmall.ttf"
+  Delete "$FONT\Titan.ttf"
+  Delete "$FONT\TitanLight.ttf"
+  Delete "$FONT\TitanMedium.ttf"
+  Delete "$FONT\Lato-Medium.ttf"
+  Delete "$FONT\Lato-Light.ttf"
 
   ; used for Default and Titan Skin Font
   StrCpy $FONT_DIR $FONTS
