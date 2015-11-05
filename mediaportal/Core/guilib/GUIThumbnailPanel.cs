@@ -2990,6 +2990,30 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public virtual int RemoveItem(int iItem)
+    {
+      if (iItem < 0 || iItem > _listItems.Count)
+      {
+        return -1;
+      }
+
+      try
+      {
+        Monitor.Enter(this);
+        _listItems.RemoveAt(iItem);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GUIThumbnailPanel.RemoveItem caused an exception: {0}", ex.Message);
+      }
+      finally
+      {
+        Monitor.Exit(this);
+      }
+      _refresh = true;
+      return SelectedListItemIndex;
+    }
+
     public void Clear()
     {
       _listItems.DisposeAndClear();

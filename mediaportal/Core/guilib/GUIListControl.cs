@@ -3778,35 +3778,26 @@ namespace MediaPortal.GUI.Library
 
     public virtual int RemoveItem(int iItem)
     {
-      int selectedItemIndex = -1;
-
-      if (iItem < 0 || iItem >= _listItems.Count)
+      if (iItem < 0 || iItem > _listItems.Count)
       {
         return -1;
       }
 
       try
       {
-        //Log.Info("Moving List Item {0} up. Old index:{1}, new index{2}", item1.Path, iItem, iPreviousItem);
         Monitor.Enter(this);
         _listItems.RemoveAt(iItem);
-        if (selectedItemIndex >= _listItems.Count)
-        {
-          selectedItemIndex = _listItems.Count - 1;
-        }
       }
       catch (Exception ex)
       {
-        Log.Info("GUIListControl.RemoveItem caused an exception: {0}", ex.Message);
-        selectedItemIndex = -1;
+        Log.Error("GUIListControl.RemoveItem caused an exception: {0}", ex.Message);
       }
-
       finally
       {
         Monitor.Exit(this);
       }
-
-      return selectedItemIndex;
+      _refresh = true;
+      return SelectedListItemIndex;
     }
 
     public override int DimColor

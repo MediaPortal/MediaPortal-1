@@ -1868,6 +1868,10 @@ namespace MediaPortal.GUI.Library
             _previousFocusedControlId = id;
           }
         }
+        catch (ThreadAbortException)
+        {
+          Log.Debug("OnMessage.ThreadAbortException exception.");
+        }
         catch (Exception ex)
         {
           Log.Error("OnMessage exception:{0}", ex.ToString());
