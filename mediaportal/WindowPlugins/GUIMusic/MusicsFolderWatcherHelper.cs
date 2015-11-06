@@ -271,7 +271,7 @@ namespace MediaPortal.GUI.Music
     // Event handler handling the Rename of a file
     private void OnRenamed(object source, RenamedEventArgs e)
     {
-      if (Util.Utils.IsAudio(e.FullPath))
+      if (Util.Utils.IsAudio(e.FullPath) || Util.Utils.IsAudio(e.OldFullPath))
       {
         Log.Debug("MusicFolderWatcher Rename File Fired: {0}", e.FullPath);
         _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.Rename, e.FullPath, e.OldFullPath));
