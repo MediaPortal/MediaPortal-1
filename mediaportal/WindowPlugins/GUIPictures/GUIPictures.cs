@@ -1397,13 +1397,26 @@ namespace MediaPortal.GUI.Pictures
 
     private void ReplaceItem(string oldPath, string newPath)
     {
-      for (int i = 0; i < facadeLayout.Count; i++)
+      if (Directory.Exists(newPath) || (Util.Utils.IsPicture(oldPath) && Util.Utils.IsPicture(newPath)))
       {
-        if (facadeLayout[i].Path == oldPath)
+        for (int i = 0; i < facadeLayout.Count; i++)
         {
-          AddItem(newPath, i);
-          break;
+          if (facadeLayout[i].Path == oldPath)
+          {
+            AddItem(newPath, i);
+            return;
+          }
         }
+      }
+
+      if (Util.Utils.IsPicture(newPath))
+      {
+        AddItem(newPath, -1);
+      }
+
+      if (Util.Utils.IsPicture(oldPath))
+      {
+        DeleteItem(oldPath);
       }
     }
 
@@ -2652,6 +2665,7 @@ namespace MediaPortal.GUI.Pictures
 
     protected override void SelectCurrentItem()
     {
+      selectedItemIndex = facadeLayout.SelectedListItemIndex;
       if (selectedItemIndex >= 0)
       {
         GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);

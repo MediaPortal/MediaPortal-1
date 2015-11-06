@@ -271,7 +271,7 @@ namespace MediaPortal.GUI.Video
     // Event handler handling the Rename of a file
     private void OnRenamed(object source, RenamedEventArgs e)
     {
-      if (Util.Utils.IsVideo(e.FullPath))
+      if (Util.Utils.IsVideo(e.FullPath) || Util.Utils.IsVideo(e.OldFullPath))
       {
         Log.Debug("VideoFolderWatcher Rename File Fired: {0}", e.FullPath);
         _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.Rename, e.FullPath, e.OldFullPath));
