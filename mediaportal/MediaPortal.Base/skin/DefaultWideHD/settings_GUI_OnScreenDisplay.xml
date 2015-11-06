@@ -171,6 +171,7 @@
       <posX>1125</posX>
       <posY>322</posY>
       <label>#displayTimeout</label>
+      <font>Label</font>
     </control>
     <!--Zap-->
     <control>
@@ -197,6 +198,7 @@
       <posX>1125</posX>
       <posY>472</posY>
       <label>#zapDelay</label>
+      <font>Label</font>
     </control>
     <control>
       <description>ZapTimeout button</description>
@@ -214,6 +216,7 @@
       <posX>1125</posX>
       <posY>540</posY>
       <label>#zapTimeout</label>
+      <font>Label</font>
     </control>
     </control>
   </controls>

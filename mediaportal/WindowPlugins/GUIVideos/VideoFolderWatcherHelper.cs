@@ -43,7 +43,7 @@ namespace MediaPortal.GUI.Video
     private object _EnterThread = new object(); // Only one timer event is processed at any given moment
     private ArrayList _Events = null;
     private Timer _Timer = null;
-    private int _TimerInterval = 3000; // milliseconds
+    private int _TimerInterval = 1000; // milliseconds
     private ArrayList _notReadyFiles = new ArrayList(); // locked (not available files will be placed here until unlock)
 
     #endregion
@@ -56,7 +56,6 @@ namespace MediaPortal.GUI.Video
         return;
 
       _currentFolder = directory;
-      Log.Debug("VideoFolderWatcher Monitoring of enabled for {0}", _currentFolder);
     }
 
     #endregion
@@ -112,7 +111,6 @@ namespace MediaPortal.GUI.Video
           _Timer.Stop();
         }
         _Events.Clear();
-        Log.Debug("VideoFolderWatcher Monitoring of disabled for {0}", _currentFolder);
       }
     }
 
@@ -209,9 +207,8 @@ namespace MediaPortal.GUI.Video
             Log.Info("VideoFolderWatcher: File not ready yet: {0}", e.FullPath);
             return;
           }
-
-          Log.Debug("VideoFolderWatcher Add File Fired: {0}", e.FullPath);
           _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.Create, e.FullPath));
+          Log.Debug("VideoFolderWatcher Add File Fired: {0}", e.FullPath);
         }
       }
     }
@@ -241,7 +238,7 @@ namespace MediaPortal.GUI.Video
         {
           _notReadyFiles.Remove(e.FullPath);
         }
-        
+
         Log.Debug("VideoFolderWatcher Change File Fired: {0}", e.FullPath);
         _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.Change, e.FullPath));
       }
@@ -262,7 +259,7 @@ namespace MediaPortal.GUI.Video
     {
       Log.Debug("VideoFolderWatcher Add Directory Fired: {0}", e.FullPath);
       _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.CreateDirectory, e.FullPath));
-    }    
+    }
 
     // Event handler handling the Delete of a directory
     private void OnDirectoryDeleted(object source, FileSystemEventArgs e)
@@ -282,26 +279,269 @@ namespace MediaPortal.GUI.Video
     }
 
     // Event handler handling the Rename of a directory
-    private void OnDirectoryRenamed(object source, FileSystemEventArgs e)
+    private void OnDirectoryRenamed(object source, RenamedEventArgs e)
     {
       Log.Debug("VideoFolderWatcher Rename Directory Fired: {0}", e.FullPath);
-      _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.RenameDirectory, e.FullPath));
+      _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.RenameDirectory, e.FullPath, e.OldFullPath));
     }
 
     #endregion EventHandlers
 
     #region Private Methods
 
-    private void ProcessEvents(object sender, ElapsedEventArgs e)
+    private void AddVideo(string strFilename)
     {
-      if (_Events.Count > 0)
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOFILE_CREATED, 0, 0, 0, 0, 0,
+                           null);
+      msg.Label = strFilename;
+      GUIWindowManager.SendMessage(msg);
+    }
+
+    private void DeleteVideo(string strFilename)
+    {
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOFILE_DELETED, 0, 0, 0, 0, 0,
+                           null);
+      msg.Label = strFilename;
+      GUIWindowManager.SendMessage(msg);
+    }
+
+    private void RenameVideo(string oldFilename, string newFilename)
+    {
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOFILE_RENAMED, 0, 0, 0, 0, 0,
+                           null);
+      msg.Label = newFilename;
+      msg.Label2 = oldFilename;
+      GUIWindowManager.SendMessage(msg);
+    }
+
+    private void AddVideoDirectory(string strPath)
+    {
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_CREATED, 0, 0, 0, 0, 0,
+                           null);
+      msg.Label = strPath;
+      GUIWindowManager.SendMessage(msg);
+    }
+
+    private void DeleteVideoDirectory(string strPath)
+    {
+      string dvdFolder = string.Empty;
+      string bdFolder = string.Empty;
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_DELETED, 0, 0, 0, 0, 0,
+                           null);
+      msg.Label = strPath;
+      GUIWindowManager.SendMessage(msg);
+      try
       {
-        Log.Debug("VideoFolderWatcher event count {0}", _Events.Count);
-        GUIPropertyManager.SetProperty("#VideoFolderChanged", "true");
-        _Events.Clear();
+        // Check if DVD/BD main folder is removed (strange case but can happen) and parent folder
+        // still exist
+        if (strPath.ToUpperInvariant().Contains(@"\VIDEO_TS"))
+        {
+          dvdFolder = strPath.Substring(0, strPath.ToUpperInvariant().IndexOf(@"\VIDEO_TS"));
+          //VideoDatabase.DeleteMoviesInFolder(dvdFolder);
+        }
+        else if (strPath.ToUpperInvariant().Contains(@"\BDMV"))
+        {
+          bdFolder = strPath.Substring(0, strPath.ToUpperInvariant().IndexOf(@"\BDMV"));
+          //VideoDatabase.DeleteMoviesInFolder(bdFolder);
+        }
+        else
+        {
+          // Update video database
+          //VideoDatabase.DeleteMoviesInFolder(strPath);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("VideoFolderWatcher: VideoDatabase update for directory {0}, error: {1}", strPath, ex.Message);
+        return;
       }
     }
 
-    #endregion
+    private void RenameVideoDirectory(string oldDirectory, string newDirectory)
+    {
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_RENAMED, 0, 0, 0, 0, 0,
+                           null);
+      msg.Label = newDirectory;
+      msg.Label2 = oldDirectory;
+      GUIWindowManager.SendMessage(msg);
+    }
+
+    private void ProcessEvents(object sender, ElapsedEventArgs e)
+    {
+      // Allow only one Timer event to be executed.
+      if (Monitor.TryEnter(_EnterThread))
+      {
+        // Only one thread at a time is processing the events                
+        try
+        {
+          // Lock the Collection, while processing the Events
+          lock (_Events.SyncRoot)
+          {
+            #region Affected directories
+
+            // Get parent directories where events occured so we can avoid multiple refreshes on
+            // the same directory
+            FolderWatcherEvent currentEvent = null;
+            ArrayList refreshDir = new ArrayList();
+
+            for (int i = 0; i < _Events.Count; i++)
+            {
+              currentEvent = _Events[i] as FolderWatcherEvent;
+
+              if (currentEvent != null)
+              {
+                string strPath = currentEvent.FileName;
+
+                if (!string.IsNullOrEmpty(strPath))
+                {
+                  // Case if change occured inside of DVD/BD folder
+                  if (strPath.ToUpperInvariant().Contains(@"\VIDEO_TS"))
+                  {
+                    strPath = strPath.Substring(0, strPath.ToUpperInvariant().IndexOf(@"\VIDEO_TS"));
+                  }
+                  else if (strPath.ToUpperInvariant().Contains(@"\BDMV"))
+                  {
+                    strPath = strPath.Substring(0, strPath.ToUpperInvariant().IndexOf(@"\BDMV"));
+                  }
+
+                  strPath = Path.GetDirectoryName(strPath);
+                  // Add only one copy of changed directory
+                  if (strPath != null && !refreshDir.Contains(strPath))
+                  {
+                    refreshDir.Add(strPath);
+                  }
+                }
+              }
+            }
+
+            #endregion
+            #region Process all events
+
+            // Process all events for videodatabase purpose (delete event only)
+            // Does not fire any GUIWindowsMessage
+            for (int i = 0; i < _Events.Count; i++)
+            {
+              currentEvent = _Events[i] as FolderWatcherEvent;
+              
+              if (currentEvent != null)
+              {
+                switch (currentEvent.Type)
+                {
+
+                  #region file events handlers
+
+                  // Create video
+                  case FolderWatcherEvent.EventType.Create:
+                  case FolderWatcherEvent.EventType.Change:
+                  {
+                    AddVideo(currentEvent.FileName);
+
+                    /*if (!_useOnlyNfoScraper)
+                    {
+                      foreach (string mScanShare in m_ScanShares)
+                      {
+                        if (currentEvent.FileName.Contains(mScanShare))
+                        {
+                          VideoDatabase.AddMovieQueueFile(currentEvent.FileName);
+                        }
+                      }
+                    }*/
+                    break;
+                  }
+
+                  // Delete video
+                  case FolderWatcherEvent.EventType.Delete:
+                    {
+                      /*if (!movieEventFired)
+                      {
+                        foreach (string mScanShare in m_ScanShares)
+                        {
+                          if (currentEvent.FileName.Contains(mScanShare))
+                          {
+                            movieEventFired = true;
+                          }
+                        }
+                      }*/
+                      DeleteVideo(currentEvent.FileName);
+                      break;
+                    }
+
+                  // Rename video
+                  case FolderWatcherEvent.EventType.Rename:
+                    {
+                      RenameVideo(currentEvent.OldFileName, currentEvent.FileName);
+                      break;
+                    }
+
+                    #endregion
+
+                  #region directory events handlers
+
+                  // Create directory
+                  case FolderWatcherEvent.EventType.CreateDirectory:
+                    {
+                      AddVideoDirectory(currentEvent.FileName);
+                      break;
+                    }
+
+                  // Delete directory
+                  case FolderWatcherEvent.EventType.DeleteDirectory:
+                    {
+                      /*foreach (string mScanShare in m_ScanShares)
+                      {
+                        if (!movieEventFired && currentEvent.FileName.Contains(mScanShare))
+                        {
+                          movieEventFired = true;
+                        }
+                      }*/
+
+                      DeleteVideoDirectory(currentEvent.FileName);
+                      break;
+                    }
+
+                  // Rename directory
+                  case FolderWatcherEvent.EventType.RenameDirectory:
+                    {
+                      /*foreach (string mScanShare in m_ScanShares)
+                      {
+                        if (!movieEventFired && currentEvent.FileName.Contains(mScanShare))
+                        {
+                          movieEventFired = true;
+                        }
+                      }*/
+
+                      RenameVideoDirectory(currentEvent.OldFileName, currentEvent.FileName);
+                      break;
+                    }
+
+                    #endregion
+
+                }
+
+                _Events.RemoveAt(i);
+                i--; // Don't skip next event
+              }
+            }
+
+            #endregion
+
+            /*// Send only one message for database views refresh (delete)
+            if (movieEventFired)
+            {
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEODATABASE_REFRESH, 0, 0, 0, 0, 0,
+                           null);
+              GUIWindowManager.SendMessage(msg);
+            }*/
+          }
+        }
+        finally
+        {
+          Monitor.Exit(_EnterThread);
+        }
+      }
+    }
+
+    #endregion Private Methods
+
   }
 }

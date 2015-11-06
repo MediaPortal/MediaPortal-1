@@ -218,6 +218,8 @@
       <ondown>99</ondown>
       <align>left</align>
       <buddycontrolid>100</buddycontrolid>
+      <font>Label</font>
+      <colordiffuse>lightskyblue</colordiffuse>
     </control>
     
     </control>

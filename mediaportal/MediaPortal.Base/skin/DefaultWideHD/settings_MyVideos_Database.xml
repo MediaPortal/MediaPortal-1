@@ -314,13 +314,14 @@
 			<type>spincontrol</type>
 			<id>6</id>
 			<posX>1080</posX>
-			<posY>635</posY>
+			<posY>640</posY>
 			<font>font11</font>
 	    <onleft>5</onleft>
 			<onright>10</onright>
 			<onup>12</onup>
 			<ondown>4</ondown>
       <buddycontrolid>5</buddycontrolid>
+      <font>Label</font>
     </control>
     	
 		<control>

@@ -1036,6 +1036,52 @@ namespace MediaPortal.GUI.Pictures
           FolderSetting folderSetting = new FolderSetting();
           folderSetting.UpdateFolders(-1, CurrentSortAsc, (int)currentLayout);
           break;
+
+        case GUIMessage.MessageType.GUI_MSG_PICTURESFILE_CREATED:
+          if (disp == Display.Files)
+          {
+            AddItem(message.Label, -1);
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_PICTURESFILE_DELETED:
+          if (disp == Display.Files)
+          {
+            DeleteItem(message.Label);
+            SelectCurrentItem();
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_PICTURESFILE_RENAMED:
+          if (disp == Display.Files)
+          {
+            ReplaceItem(message.Label2, message.Label);
+            SelectCurrentItem();
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_PICTURESDIRECTORY_CREATED:
+          if (disp == Display.Files)
+          {
+            AddItem(message.Label, -1);
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_PICTURESDIRECTORY_DELETED:
+          if (disp == Display.Files)
+          {
+            DeleteItem(message.Label);
+            SelectCurrentItem();
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_PICTURESDIRECTORY_RENAMED:
+          if (disp == Display.Files)
+          {
+            ReplaceItem(message.Label2, message.Label);
+            SelectCurrentItem();
+          }
+          break;
       }
       return base.OnMessage(message);
     }
@@ -1346,6 +1392,150 @@ namespace MediaPortal.GUI.Pictures
             }
           }
           break;
+      }
+    }
+
+    private void ReplaceItem(string oldPath, string newPath)
+    {
+      for (int i = 0; i < facadeLayout.Count; i++)
+      {
+        if (facadeLayout[i].Path == oldPath)
+        {
+          AddItem(newPath, i);
+          break;
+        }
+      }
+    }
+
+    private int DeleteItem(string path)
+    {
+      int oldItem = -1;
+      try
+      {
+        selectedItemIndex = facadeLayout.SelectedListItemIndex;
+        for (int i = 0; i < facadeLayout.Count; i++)
+        {
+          if (facadeLayout[i].Path == path)
+          {
+            facadeLayout.RemoveItem(i);
+            if (selectedItemIndex >= i)
+            {
+              selectedItemIndex--;
+            }
+            oldItem = i;
+            break;
+          }
+        }
+        int totalItems = facadeLayout.Count;
+
+        if (totalItems > 0)
+        {
+          GUIListItem rootItem = facadeLayout[0];
+          if (rootItem.Label == "..")
+          {
+            totalItems--;
+          }
+        }
+
+        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(totalItems));
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GUIMusicFiles.DeleteItem Exception: {0}", ex.Message);
+      }
+      return oldItem;
+    }
+
+    private void AddItem(string path, int index)
+    {
+      try
+      {
+        FileInformation fi = new FileInformation();
+        if (File.Exists(path))
+        {
+          FileInfo f = new FileInfo(path);
+          fi.CreationTime = File.GetCreationTime(path);
+          fi.Length = f.Length;
+        }
+        else
+        {
+          fi = new FileInformation();
+          fi.CreationTime = DateTime.Now;
+          fi.Length = 0;
+        }
+
+        GUIListItem item = new GUIListItem(Util.Utils.GetFilename(path), "", path, true, fi);
+        List<GUIListItem> itemlist = new List<GUIListItem>();
+        item.IsFolder = Directory.Exists(path);
+
+        if (!item.IsFolder && path.ToLower().Contains(@"folder.jpg"))
+        {
+          return;
+        }
+
+        if (!item.IsFolder)
+        {
+          SortMethod method = (SortMethod)mapSettings.SortBy;
+          bool sortAsc = mapSettings.SortAscending;
+
+          switch (method)
+          {
+            case SortMethod.Name:
+              item.Label2 = Util.Utils.GetSize(item.FileInfo.Length);
+              break;
+            case SortMethod.Modified:
+            case SortMethod.Created:
+              if (method == SortMethod.Modified)
+              {
+                item.Label2 = item.FileInfo.ModificationTime.ToShortDateString() + " " +
+                               item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+              }
+              else
+              {
+                item.Label2 = item.FileInfo.CreationTime.ToShortDateString() + " " +
+                               item.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+              }
+              break;
+            case SortMethod.Size:
+              item.Label2 = Util.Utils.GetSize(item.FileInfo.Length);
+              break;
+          }
+        }
+
+        MissingThumbCacher ThumbWorker = new MissingThumbCacher(currentFolder, _autocreateLargeThumbs, false, true);
+
+        item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+        item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+
+        if (item.IsFolder)
+        {
+          CountOfNonImageItems++; // necessary to select the right item later from the slideshow
+        }
+
+        if (index == -1)
+        {
+          facadeLayout.Add(item);
+        }
+        else
+        {
+          facadeLayout.Replace(index, item);
+        }
+
+        int totalItems = facadeLayout.Count;
+
+        if (totalItems > 0)
+        {
+          GUIListItem rootItem = facadeLayout[0];
+          if (rootItem.Label == "..")
+          {
+            totalItems--;
+          }
+        }
+        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(totalItems));
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GUIPicturesFiles.AddItem Exception: {0}", ex.Message);
       }
     }
 
@@ -2460,6 +2650,14 @@ namespace MediaPortal.GUI.Pictures
       LoadDirectory(currentFolder);
     }
 
+    protected override void SelectCurrentItem()
+    {
+      if (selectedItemIndex >= 0)
+      {
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
+      }
+    }
+
     protected override void OnShowSort()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -2677,8 +2875,6 @@ namespace MediaPortal.GUI.Pictures
       }
 
       GUIWaitCursor.Show();
-
-      GUIPropertyManager.SetProperty("#PicturesFolderChanged", "false");
 
       if (_pictureFolderWatcher != null)
       {

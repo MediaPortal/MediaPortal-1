@@ -213,6 +213,173 @@ namespace MediaPortal.GUI.Music
       }
     }
 
+    private void ReplaceItem(string oldPath, string newPath)
+    {
+      for (int i = 0; i < facadeLayout.Count; i++)
+      {
+        if (facadeLayout[i].Path == oldPath)
+        {
+          AddItem(newPath, i);
+          break;
+        }
+      }
+    }
+
+    private int DeleteItem(string path)
+    {
+      int oldItem = -1;
+      TimeSpan totalPlayingTime = new TimeSpan();
+      try
+      {
+        _selectedItem = facadeLayout.SelectedListItemIndex;
+        for (int i = 0; i < facadeLayout.Count; i++)
+        {
+          if (facadeLayout[i].Path == path)
+          {
+            facadeLayout.RemoveItem(i);
+            if (_selectedItem >= i)
+            {
+              _selectedItem--;
+            }
+            oldItem = i;
+            break;
+          }
+        }
+        int totalItems = facadeLayout.Count;
+
+        if (totalItems > 0)
+        {
+          GUIListItem rootItem = facadeLayout[0];
+          if (rootItem.Label == "..")
+          {
+            totalItems--;
+          }
+        }
+
+        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(totalItems));
+
+        for (int i = 0; i < facadeLayout.Count; i++)
+        {
+          MusicTag tag = (MusicTag)facadeLayout[i].MusicTag;
+          if (tag != null)
+          {
+            if (tag.Duration > 0)
+            {
+              totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
+            }
+          }
+        }
+
+        if (totalPlayingTime.TotalSeconds > 0)
+        {
+          GUIPropertyManager.SetProperty("#totalduration",
+                                         Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#totalduration", string.Empty);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GUIMusicFiles.DeleteItem Exception: {0}", ex.Message);
+      }
+      return oldItem;
+    }
+
+    private void AddItem(string path, int index)
+    {
+      try
+      {
+        FileInformation fi = new FileInformation();
+        if (File.Exists(path))
+        {
+          FileInfo f = new FileInfo(path);
+          fi.CreationTime = File.GetCreationTime(path);
+          fi.Length = f.Length;
+        }
+        else
+        {
+          fi = new FileInformation();
+          fi.CreationTime = DateTime.Now;
+          fi.Length = 0;
+        }
+        GUIListItem item = new GUIListItem(Util.Utils.GetFilename(path), "", path, true, fi);
+        List<GUIListItem> itemlist = new List<GUIListItem>();
+        item.IsFolder = Directory.Exists(path);
+
+        itemlist.Add(item);
+        GetTagInfo(ref itemlist);
+        item = itemlist[0];
+
+        Util.Utils.SetDefaultIcons(item);
+        Util.Utils.SetThumbnails(ref item);
+
+        if (!item.IsFolder)
+        {
+          // labels for folders are set by the virtual directory
+          GUIMusicBaseWindow.SetTrackLabels(ref item, CurrentSortMethod);
+        }
+        TimeSpan totalPlayingTime = new TimeSpan();
+
+        if (!string.IsNullOrEmpty(_currentPlaying) &&
+            item.Path.Equals(_currentPlaying, StringComparison.OrdinalIgnoreCase))
+        {
+          item.Selected = true;
+        }
+
+        item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+        item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+
+        if (index == -1)
+        {
+          facadeLayout.Add(item);
+        }
+        else
+        {
+          facadeLayout.Replace(index, item);
+        }
+
+        int totalItems = facadeLayout.Count;
+
+        if (totalItems > 0)
+        {
+          GUIListItem rootItem = facadeLayout[0];
+          if (rootItem.Label == "..")
+          {
+            totalItems--;
+          }
+        }
+        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(totalItems));
+
+        for (int i = 0; i < facadeLayout.Count; i++)
+        {
+          MusicTag tag = (MusicTag)facadeLayout[i].MusicTag;
+          if (tag != null)
+          {
+            if (tag.Duration > 0)
+            {
+              totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
+            }
+          }
+        }
+
+        if (totalPlayingTime.TotalSeconds > 0)
+        {
+          GUIPropertyManager.SetProperty("#totalduration",
+                                         Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#totalduration", string.Empty);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GUIMusicFiles.AddItem Exception: {0}", ex.Message);
+      }
+    }
+
     // Make sure we get all of the ACTION_PLAY events (OnAction only receives the ACTION_PLAY event when
     // the player is not playing)...
     private void GUIWindowManager_OnNewAction(Action action)
@@ -517,8 +684,6 @@ namespace MediaPortal.GUI.Music
 
       GUIWaitCursor.Show();
 
-      GUIPropertyManager.SetProperty("#MusicFolderChanged", "false");
-
       if (_musicFolderWatcher != null)
       {
         _musicFolderWatcher.ChangeMonitoring(false);
@@ -685,6 +850,34 @@ namespace MediaPortal.GUI.Music
 
         case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADED:
           facadeLayout.OnMessage(message);
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_MUSICFILE_CREATED:
+          AddItem(message.Label, -1);
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_MUSICFILE_DELETED:
+          DeleteItem(message.Label);
+          SelectCurrentItem();
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_MUSICFILE_RENAMED:
+          ReplaceItem(message.Label2, message.Label);
+          SelectCurrentItem();
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_MUSICDIRECTORY_CREATED:
+          AddItem(message.Label, -1);
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_MUSICDIRECTORY_DELETED:
+          DeleteItem(message.Label);
+          SelectCurrentItem();
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_MUSICDIRECTORY_RENAMED:
+          ReplaceItem(message.Label2, message.Label);
+          SelectCurrentItem();
           break;
 
         case GUIMessage.MessageType.GUI_MSG_SHOW_DIRECTORY:
@@ -1764,6 +1957,14 @@ namespace MediaPortal.GUI.Music
             pItem.Rating = tag.Rating;
           }
         }
+      }
+    }
+
+    protected override void SelectCurrentItem()
+    {
+      if (_selectedItem >= 0)
+      {
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _selectedItem);
       }
     }
 

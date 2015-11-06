@@ -38,6 +38,7 @@
           <textXOff2>825</textXOff2>
           <textYOff2>3</textYOff2>
           <font3>font12</font3>
+          <textureFocus>#(iif(eq(#MovingPictures.UserMovieSettings.watched,'0'),'button_focus_notwatched.png','button_focus.png'))</textureFocus>
           <spinCanFocus>no</spinCanFocus>
           <!-- group headers -->
           <textXOff3>0</textXOff3>

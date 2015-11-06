@@ -43,7 +43,7 @@ namespace MediaPortal.GUI.Pictures
     private object _EnterThread = new object(); // Only one timer event is processed at any given moment
     private ArrayList _Events = null;
     private Timer _Timer = null;
-    private int _TimerInterval = 3000; // milliseconds
+    private int _TimerInterval = 1000; // milliseconds
     private ArrayList _notReadyFiles = new ArrayList(); // locked (not available files will be placed here until unlock)
 
     #endregion
@@ -54,9 +54,8 @@ namespace MediaPortal.GUI.Pictures
     {
       if (!Directory.Exists(directory))
         return;
-      
+
       _currentFolder = directory;
-      Log.Debug("PicturesFolderWatcher Monitoring of enabled for {0}", _currentFolder);
     }
 
     #endregion
@@ -67,7 +66,7 @@ namespace MediaPortal.GUI.Pictures
     {
       if (bMonitoring)
       {
-        Thread WorkerThread = new Thread(WatchShares);
+        Thread WorkerThread = new Thread(WatchFolders);
         WorkerThread.IsBackground = true;
         WorkerThread.Name = "PicturesFolderWatcher";
         WorkerThread.Start();
@@ -112,11 +111,10 @@ namespace MediaPortal.GUI.Pictures
           _Timer.Stop();
         }
         _Events.Clear();
-        Log.Debug("PicturesFolderWatcher Monitoring of disabled for {0}", _currentFolder);
       }
     }
 
-    private void WatchShares()
+    private void WatchFolders()
     {
       // Release existing FSW Objects first
       foreach (DelayedFileSystemWatcher watcher in _Watchers)
@@ -209,9 +207,8 @@ namespace MediaPortal.GUI.Pictures
             Log.Info("PicturesFolderWatcher: File not ready yet: {0}", e.FullPath);
             return;
           }
-
-          Log.Debug("PicturesFolderWatcher Add File Fired: {0}", e.FullPath);
           _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.Create, e.FullPath));
+          Log.Debug("PicturesFolderWatcher Add File Fired: {0}", e.FullPath);
         }
       }
     }
@@ -262,7 +259,7 @@ namespace MediaPortal.GUI.Pictures
     {
       Log.Debug("PicturesFolderWatcher Add Directory Fired: {0}", e.FullPath);
       _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.CreateDirectory, e.FullPath));
-    }    
+    }
 
     // Event handler handling the Delete of a directory
     private void OnDirectoryDeleted(object source, FileSystemEventArgs e)
@@ -282,26 +279,189 @@ namespace MediaPortal.GUI.Pictures
     }
 
     // Event handler handling the Rename of a directory
-    private void OnDirectoryRenamed(object source, FileSystemEventArgs e)
+    private void OnDirectoryRenamed(object source, RenamedEventArgs e)
     {
       Log.Debug("PicturesFolderWatcher Rename Directory Fired: {0}", e.FullPath);
-      _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.RenameDirectory, e.FullPath));
+      _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.RenameDirectory, e.FullPath, e.OldFullPath));
     }
 
     #endregion EventHandlers
 
     #region Private Methods
 
+    private void AddPictures(string strFilename)
+    {
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PICTURESFILE_CREATED, 0, 0, 0, 0, 0,
+                           null);
+      msg.Label = strFilename;
+      GUIWindowManager.SendMessage(msg);
+    }
+
+    private void DeletePictures(string strFilename)
+    {
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PICTURESFILE_DELETED, 0, 0, 0, 0, 0,
+                           null);
+      msg.Label = strFilename;
+      GUIWindowManager.SendMessage(msg);
+    }
+
+    private void RenamePictures(string oldFilename, string newFilename)
+    {
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PICTURESFILE_RENAMED, 0, 0, 0, 0, 0,
+                           null);
+      msg.Label = newFilename;
+      msg.Label2 = oldFilename;
+      GUIWindowManager.SendMessage(msg);
+    }
+
+    private void AddPicturesDirectory(string strPath)
+    {
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PICTURESDIRECTORY_CREATED, 0, 0, 0, 0, 0,
+                           null);
+      msg.Label = strPath;
+      GUIWindowManager.SendMessage(msg);
+    }
+
+    private void DeletePicturesDirectory(string strPath)
+    {
+      string dvdFolder = string.Empty;
+      string bdFolder = string.Empty;
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PICTURESDIRECTORY_DELETED, 0, 0, 0, 0, 0,
+                           null);
+      msg.Label = strPath;
+      GUIWindowManager.SendMessage(msg);
+    }
+
+    private void RenamePicturesDirectory(string oldDirectory, string newDirectory)
+    {
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PICTURESDIRECTORY_RENAMED, 0, 0, 0, 0, 0,
+                           null);
+      msg.Label = newDirectory;
+      msg.Label2 = oldDirectory;
+      GUIWindowManager.SendMessage(msg);
+    }
+
     private void ProcessEvents(object sender, ElapsedEventArgs e)
     {
-      if (_Events.Count > 0)
+      // Allow only one Timer event to be executed.
+      if (Monitor.TryEnter(_EnterThread))
       {
-        Log.Debug("PicturesFolderWatcher event count {0}", _Events.Count);
-        GUIPropertyManager.SetProperty("#PicturesFolderChanged", "true");
-        _Events.Clear();
+        // Only one thread at a time is processing the events                
+        try
+        {
+          // Lock the Collection, while processing the Events
+          lock (_Events.SyncRoot)
+          {
+            #region Affected directories
+
+            // Get parent directories where events occured so we can avoid multiple refreshes on
+            // the same directory
+            FolderWatcherEvent currentEvent = null;
+            ArrayList refreshDir = new ArrayList();
+
+            for (int i = 0; i < _Events.Count; i++)
+            {
+              currentEvent = _Events[i] as FolderWatcherEvent;
+
+              if (currentEvent != null)
+              {
+                string strPath = currentEvent.FileName;
+
+                if (!string.IsNullOrEmpty(strPath))
+                {
+                  strPath = Path.GetDirectoryName(strPath);
+                  // Add only one copy of changed directory
+                  if (strPath != null && !refreshDir.Contains(strPath))
+                  {
+                    refreshDir.Add(strPath);
+                  }
+                }
+              }
+            }
+
+            #endregion
+            #region Process all events
+
+            // Process all events for Picturesdatabase purpose (delete event only)
+            // Does not fire any GUIWindowsMessage
+            for (int i = 0; i < _Events.Count; i++)
+            {
+              currentEvent = _Events[i] as FolderWatcherEvent;
+
+              if (currentEvent != null)
+              {
+                switch (currentEvent.Type)
+                {
+
+                  #region file events handlers
+
+                  // Create Pictures
+                  case FolderWatcherEvent.EventType.Create:
+                  case FolderWatcherEvent.EventType.Change:
+                    {
+                      AddPictures(currentEvent.FileName);
+                      break;
+                    }
+
+                  // Delete Pictures
+                  case FolderWatcherEvent.EventType.Delete:
+                    {
+                      DeletePictures(currentEvent.FileName);
+                      break;
+                    }
+
+                  // Rename Pictures
+                  case FolderWatcherEvent.EventType.Rename:
+                    {
+                      RenamePictures(currentEvent.OldFileName, currentEvent.FileName);
+                      break;
+                    }
+
+                  #endregion
+
+                  #region directory events handlers
+
+                  // Create directory
+                  case FolderWatcherEvent.EventType.CreateDirectory:
+                    {
+                      AddPicturesDirectory(currentEvent.FileName);
+                      break;
+                    }
+
+                  // Delete directory
+                  case FolderWatcherEvent.EventType.DeleteDirectory:
+                    {
+                      DeletePicturesDirectory(currentEvent.FileName);
+                      break;
+                    }
+
+                  // Rename directory
+                  case FolderWatcherEvent.EventType.RenameDirectory:
+                    {
+                      RenamePicturesDirectory(currentEvent.OldFileName, currentEvent.FileName);
+                      break;
+                    }
+
+                  #endregion
+
+                }
+
+                _Events.RemoveAt(i);
+                i--; // Don't skip next event
+              }
+            }
+
+            #endregion
+          }
+        }
+        finally
+        {
+          Monitor.Exit(_EnterThread);
+        }
       }
     }
 
-    #endregion
+    #endregion Private Methods
+
   }
 }

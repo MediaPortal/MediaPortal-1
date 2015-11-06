@@ -22,7 +22,7 @@
       <width>1170</width>
       <height>1012</height>
       <texture>context_background.png</texture>
-      <colordiffuse>aaffffff</colordiffuse>
+      <colordiffuse>ccffffff</colordiffuse>
       <visible>window.isvisible(602)|window.isvisible(2005)</visible>
     </control>
     <control>

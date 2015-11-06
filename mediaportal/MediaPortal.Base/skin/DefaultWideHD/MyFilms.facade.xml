@@ -18,6 +18,7 @@
           <id>50</id>
           <posX>120</posX>
           <width>825</width>
+          <textureFocus>#(iif(eq(#myfilms.user.watchedcount.value,'0'),'button_focus_notwatched.png','button_focus.png'))</textureFocus>
           <playedColor>ffffffff</playedColor>
           <playedColor2>ffffffff</playedColor2>
           <textcolor>ff6FAFE1</textcolor>
