@@ -120,9 +120,10 @@ public:
 	virtual bool HasMoreData(){return false;};
 	virtual int HasData(){return 0; } ;
 
-	//The two methods below are for MultiFileReader() compatibility
+	//The three methods below are for MultiFileReader() compatibility
 	virtual BOOL GetFileNext(){return false;};
 	virtual void SetFileNext(BOOL useFileNext);
+	virtual void CloseBufferFiles();
 	
 	virtual void SetStopping(BOOL isStopping);
   

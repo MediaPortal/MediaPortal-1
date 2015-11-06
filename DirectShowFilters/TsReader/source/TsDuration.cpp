@@ -95,12 +95,17 @@ void CTsDuration::StopUpdate(bool stopping)
   //LogDebug("TsDuration::StopUpdate(%d)", m_bStopping);
 }
 
+void CTsDuration::CloseBufferFiles()
+{
+  //Close any timeshift data files (to avoid 'locking' files that need to be deleted/re-used)
+  m_reader->CloseBufferFiles();
+}
 
 //*********************************************************
 // Determines the total duration of the file (or timeshifting files)
 // 
 // 
-void CTsDuration::UpdateDuration(bool logging)
+void CTsDuration::UpdateDuration(bool logging, bool background)
 {
   if (!m_pFileReadBuffer)
   {
@@ -130,7 +135,7 @@ void CTsDuration::UpdateDuration(bool logging)
       LogDebug("UpdateDuration - find pcr");
     }
     //find the first pcr in the file
-    while (!m_startPcr.IsValid)
+    while (1)
     {     
       if (m_bStopping) 
       {
@@ -170,20 +175,34 @@ void CTsDuration::UpdateDuration(bool logging)
         Reset() ; // Reset internal "PacketSync" buffer
       }     
       
-			Sleep(1) ;
+      if (m_startPcr.IsValid)
+      {  
+        break;   
+      }
+      
+      if (background)
+      {
+        Sleep(10) ;
+      }
     }
 
     if (logging)
     {
       LogDebug("UpdateDuration - found startPcr, iterations:%d offset:%d", searchLoopCnt-2, offset);
     }
+    
+    if (background)
+    {
+      Sleep(100) ;
+    }
+
     //find the last pcr in the file
     m_bSearchEnd=true;
     m_bSearchStart=false;
     searchLoopCnt = 2;
     offset=DUR_READ_SIZE;
   
-    while (!m_endPcr.IsValid)
+    while (1)
     {
       if (m_bStopping) 
       {
@@ -219,8 +238,18 @@ void CTsDuration::UpdateDuration(bool logging)
         return;
       }
       offset += ( (DUR_READ_SIZE*(searchLoopCnt/2)) - (188*16)); //step back a few packets less than a buffer so that buffers overlap
-			Sleep(1) ;
+      
+      if (m_endPcr.IsValid)
+      {  
+        break;   
+      }
+
+      if (background)
+      {
+        Sleep(10) ;
+      }
     }
+    
     if (logging)
     {
       LogDebug("UpdateDuration - found endPcr, iterations:%d offset:%d", searchLoopCnt-2, offset);
@@ -249,7 +278,7 @@ void CTsDuration::UpdateDuration(bool logging)
     if(Loop<3)  // 1 failed + 1 succeded is quasi-normal, more is a bit suspicious ( disk drive too slow or problem ? )
       LogDebug("Recovered wrong start PCR, seek to 'begin' on reused file ! ( Retried %d times )",4-Loop) ;
   }
-
+  
   //When the last pcr < first pcr then a pcr roll over occured
   //find where in the file this rollover happened
   //and fill maxPcr
