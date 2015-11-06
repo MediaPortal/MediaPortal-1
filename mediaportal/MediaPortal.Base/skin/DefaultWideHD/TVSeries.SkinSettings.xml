@@ -47,7 +47,7 @@
 		<series use="true" />		
 		<season use="true" />
 		<episode use="true" />
-		<!--<custom use="false"><![CDATA[skin\DefaultWide HD\Media\Logos\custom.png]]></custom>-->
+		<!--<custom use="false"><![CDATA[skin\DefaultWideHD\Media\Logos\custom.png]]></custom>-->
 	</videoosdimages>
 
 	<!-- Define the images loaded in properties during play -->
@@ -166,47 +166,47 @@
 <Enabled>1<Format>A_DTS<FormatAs>DTS]]>
 	</formatting>
 	<logos import="true">
-		<![CDATA[skin\DefaultWide HD\Media\Logos\Studios\<Series.Network>.png;-;;-;=;-;;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
-    skin\DefaultWide HD\Media\Logos\<Series.ContentRating>.png;-;;-;=;-;;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
-    skin\DefaultWide HD\Media\Logos\h264.png;-;<Episode.VideoFormat>;-;=;-;AVC;-;OR;-;<Episode.VideoCodec>;-;=;-;h264;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\DefaultWide HD\Media\Logos\MPEG VIDEO VERSION 2.png;-;<Episode.VideoFormat>;-;=;-;MPEG Video;-;AND;-;<Episode.VideoFormatProfile>;-;contains;-;Main;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\DefaultWide HD\Media\Logos\DivX.png;-;<Episode.VideoCodec>;-;contains;-;DIVX;-;OR;-;<Episode.VideoCodec>;-;contains;-;DX50;-;OR;-;<Episode.VideoCodec>;-;contains;-;DIV3;-;
-skin\DefaultWide HD\Media\Logos\xvid.png;-;<Episode.VideoCodec>;-;contains;-;XVID;-;OR;-;<Episode.VideoCodec>;-;contains;-;MPG4;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\wmv.png;-;<Episode.VideoCodec>;-;contains;-;WMV;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\realvideo.png;-;<Episode.VideoCodec>;-;contains;-;REAL;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\vc-1.png;-;<Episode.VideoCodec>;-;contains;-;VC-1;-;OR;-;<Episode.VideoFormat>;-;=;-;VC-1;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\vp6.png;-;<Episode.VideoCodec>;-;contains;-;VP6;-;OR;-;<Episode.VideoFormat>;-;=;-;VP6;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\sd.png;-;<Episode.videoHeight>;-;<;-;720;-;AND;-;<Episode.videoHeight>;-;>;-;0;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\hd.png;-;<Episode.videoHeight>;-;>;-;720;-;AND;-;<Episode.videoHeight>;-;<;-;1080;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\720p.png;-;<Episode.videoHeight>;-;=;-;720;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\1080p.png;-;<Episode.videoHeight>;-;=;-;1080;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\\fullscreen.png;-;<Episode.VideoAspectRatio>;-;<;-;1.7;-;AND;-;<Episode.VideoAspectRatio>;-;>;-;0;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\widescreen.png;-;<Episode.VideoAspectRatio>;-;>;-;1.7;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\aac.png;-;<Episode.AudioFormat>;-;=;-;AAC;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\DefaultWide HD\Media\Logos\MPEG AUDIO VERSION 1 LAYER 2.png;-;<Episode.AudioFormat>;-;=;-;MPEG Audio;-;AND;-;<Episode.AudioFormatProfile>;-;contains;-;Layer 2;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\DefaultWide HD\Media\Logos\AC3.png;-;<Episode.AudioCodec>;-;=;-;AC3;-;OR;-;<Episode.AudioCodec>;-;=;-;A_AC3;-;OR;-;<Episode.AudioFormat>;-;=;-;AC-3;-;
-skin\DefaultWide HD\Media\Logos\AC3+.png;-;<Episode.AudioCodec>;-;=;-;AC3+;-;OR;-;<Episode.AudioFormat>;-;=;-;E-AC-3;-;OR;-;<Episode.AudioFormat>;-;=;-;AC3+;-;
-skin\DefaultWide HD\Media\Logos\TrueHD.png;-;<Episode.AudioCodec>;-;=;-;TrueHD;-;OR;-;<Episode.AudioFormatProfile>;-;contains;-;TrueHD;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\DTSHD.png;-;<Episode.AudioCodec>;-;=;-;DTS-HD;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\DTS HRA.png;-;<Episode.AudioFormat>;-;=;-;DTS;-;AND;-;<Episode.AudioFormatProfile>;-;=;-;HRA;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\DTS MA.png;-;<Episode.AudioFormat>;-;=;-;DTS;-;AND;-;<Episode.AudioFormatProfile>;-;=;-;MA;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\DTS.png;-;<Episode.AudioCodec>;-;=;-;DTS;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\FLAC.png;-;<Episode.AudioCodec>;-;contains;-;FLAC;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\MP3.png;-;<Episode.AudioCodec>;-;contains;-;MPA1L3;-;OR;-;<Episode.AudioCodec>;-;contains;-;MPA2L3;-;AND;-;;-;=;-;;-;
+		<![CDATA[skin\DefaultWideHD\Media\Logos\Studios\<Series.Network>.png;-;;-;=;-;;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+    skin\DefaultWideHD\Media\Logos\<Series.ContentRating>.png;-;;-;=;-;;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+    skin\DefaultWideHD\Media\Logos\h264.png;-;<Episode.VideoFormat>;-;=;-;AVC;-;OR;-;<Episode.VideoCodec>;-;=;-;h264;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\DefaultWideHD\Media\Logos\MPEG VIDEO VERSION 2.png;-;<Episode.VideoFormat>;-;=;-;MPEG Video;-;AND;-;<Episode.VideoFormatProfile>;-;contains;-;Main;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\DefaultWideHD\Media\Logos\DivX.png;-;<Episode.VideoCodec>;-;contains;-;DIVX;-;OR;-;<Episode.VideoCodec>;-;contains;-;DX50;-;OR;-;<Episode.VideoCodec>;-;contains;-;DIV3;-;
+skin\DefaultWideHD\Media\Logos\xvid.png;-;<Episode.VideoCodec>;-;contains;-;XVID;-;OR;-;<Episode.VideoCodec>;-;contains;-;MPG4;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\wmv.png;-;<Episode.VideoCodec>;-;contains;-;WMV;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\realvideo.png;-;<Episode.VideoCodec>;-;contains;-;REAL;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\vc-1.png;-;<Episode.VideoCodec>;-;contains;-;VC-1;-;OR;-;<Episode.VideoFormat>;-;=;-;VC-1;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\vp6.png;-;<Episode.VideoCodec>;-;contains;-;VP6;-;OR;-;<Episode.VideoFormat>;-;=;-;VP6;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\sd.png;-;<Episode.videoHeight>;-;<;-;720;-;AND;-;<Episode.videoHeight>;-;>;-;0;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\hd.png;-;<Episode.videoHeight>;-;>;-;720;-;AND;-;<Episode.videoHeight>;-;<;-;1080;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\720p.png;-;<Episode.videoHeight>;-;=;-;720;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\1080p.png;-;<Episode.videoHeight>;-;=;-;1080;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\\fullscreen.png;-;<Episode.VideoAspectRatio>;-;<;-;1.7;-;AND;-;<Episode.VideoAspectRatio>;-;>;-;0;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\widescreen.png;-;<Episode.VideoAspectRatio>;-;>;-;1.7;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\aac.png;-;<Episode.AudioFormat>;-;=;-;AAC;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\DefaultWideHD\Media\Logos\MPEG AUDIO VERSION 1 LAYER 2.png;-;<Episode.AudioFormat>;-;=;-;MPEG Audio;-;AND;-;<Episode.AudioFormatProfile>;-;contains;-;Layer 2;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\DefaultWideHD\Media\Logos\AC3.png;-;<Episode.AudioCodec>;-;=;-;AC3;-;OR;-;<Episode.AudioCodec>;-;=;-;A_AC3;-;OR;-;<Episode.AudioFormat>;-;=;-;AC-3;-;
+skin\DefaultWideHD\Media\Logos\AC3+.png;-;<Episode.AudioCodec>;-;=;-;AC3+;-;OR;-;<Episode.AudioFormat>;-;=;-;E-AC-3;-;OR;-;<Episode.AudioFormat>;-;=;-;AC3+;-;
+skin\DefaultWideHD\Media\Logos\TrueHD.png;-;<Episode.AudioCodec>;-;=;-;TrueHD;-;OR;-;<Episode.AudioFormatProfile>;-;contains;-;TrueHD;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\DTSHD.png;-;<Episode.AudioCodec>;-;=;-;DTS-HD;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\DTS HRA.png;-;<Episode.AudioFormat>;-;=;-;DTS;-;AND;-;<Episode.AudioFormatProfile>;-;=;-;HRA;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\DTS MA.png;-;<Episode.AudioFormat>;-;=;-;DTS;-;AND;-;<Episode.AudioFormatProfile>;-;=;-;MA;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\DTS.png;-;<Episode.AudioCodec>;-;=;-;DTS;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\FLAC.png;-;<Episode.AudioCodec>;-;contains;-;FLAC;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\MP3.png;-;<Episode.AudioCodec>;-;contains;-;MPA1L3;-;OR;-;<Episode.AudioCodec>;-;contains;-;MPA2L3;-;AND;-;;-;=;-;;-;
 
-skin\DefaultWide HD\Media\Logos\MP2A.png;-;<Episode.AudioCodec>;-;contains;-;MPA1L2;-;OR;-;<Episode.AudioCodec>;-;contains;-;MPA2L2;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\wma.png;-;<Episode.AudioCodec>;-;contains;-;WMA;-;OR;-;<Episode.AudioFormat>;-;=;-;WMA;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\realaudio.png;-;<Episode.AudioCodec>;-;contains;-;REAL;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\mono.png;-;<Episode.AudioChannels>;-;=;-;1;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\stereo.png;-;<Episode.AudioChannels>;-;=;-;2;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\5.1.png;-;<Episode.AudioChannels>;-;=;-;6;-;OR;-;<Episode.AudioChannels>;-;=;-;5;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\7.1.png;-;<Episode.AudioChannels>;-;=;-;8;-;OR;-;<Episode.AudioChannels>;-;=;-;8 / 6;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\BLURAY.png;-;<Episode.EpisodeFilename>;-;contains;-;BLURAY;-;OR;-;<Episode.EpisodeFilename>;-;contains;-;BLU-RAY;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\DVD.png;-;<Episode.EpisodeFilename>;-;contains;-;DVD;-;AND;-;<Episode.EpisodeFilename>;-;!contains;-;HDDVD;-;AND;-;<Episode.EpisodeFilename>;-;!contains;-;HD-DVD;-;
-skin\DefaultWide HD\Media\Logos\HDDVD.png;-;<Episode.EpisodeFilename>;-;contains;-;HDDVD;-;OR;-;<Episode.EpisodeFilename>;-;contains;-;HD-DVD;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\SVCD.png;-;<Episode.EpisodeFilename>;-;contains;-;SVCD;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\subtitles.png;-;<Episode.AvailableSubtitles>;-;=;-;1;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
-skin\DefaultWide HD\Media\Logos\<Series.ViewTags>.png;-;;-;=;-;;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\MP2A.png;-;<Episode.AudioCodec>;-;contains;-;MPA1L2;-;OR;-;<Episode.AudioCodec>;-;contains;-;MPA2L2;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\wma.png;-;<Episode.AudioCodec>;-;contains;-;WMA;-;OR;-;<Episode.AudioFormat>;-;=;-;WMA;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\realaudio.png;-;<Episode.AudioCodec>;-;contains;-;REAL;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\mono.png;-;<Episode.AudioChannels>;-;=;-;1;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\stereo.png;-;<Episode.AudioChannels>;-;=;-;2;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\5.1.png;-;<Episode.AudioChannels>;-;=;-;6;-;OR;-;<Episode.AudioChannels>;-;=;-;5;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\7.1.png;-;<Episode.AudioChannels>;-;=;-;8;-;OR;-;<Episode.AudioChannels>;-;=;-;8 / 6;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\BLURAY.png;-;<Episode.EpisodeFilename>;-;contains;-;BLURAY;-;OR;-;<Episode.EpisodeFilename>;-;contains;-;BLU-RAY;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\DVD.png;-;<Episode.EpisodeFilename>;-;contains;-;DVD;-;AND;-;<Episode.EpisodeFilename>;-;!contains;-;HDDVD;-;AND;-;<Episode.EpisodeFilename>;-;!contains;-;HD-DVD;-;
+skin\DefaultWideHD\Media\Logos\HDDVD.png;-;<Episode.EpisodeFilename>;-;contains;-;HDDVD;-;OR;-;<Episode.EpisodeFilename>;-;contains;-;HD-DVD;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\SVCD.png;-;<Episode.EpisodeFilename>;-;contains;-;SVCD;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\subtitles.png;-;<Episode.AvailableSubtitles>;-;=;-;1;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+skin\DefaultWideHD\Media\Logos\<Series.ViewTags>.png;-;;-;=;-;;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
 ]]>
 	</logos>
 	<!-- Only used for Thumbnail view creation e.g. Filmstrip and WideBanners. Episode Thumbs are the exception -->

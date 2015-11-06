@@ -419,11 +419,12 @@
         <description>Thumb columns/rows for videos</description>
         <type>label</type>
         <id>1</id>
-        <posX>1272</posX>
+        <posX>1258</posX>
         <posY>740</posY>
         <width>500</width>
         <label>450</label>
         <font>Label</font>
+        <textcolor>ff6FAFE1</textcolor>
       </control>
       <control>
         <description>Columns spincontrol</description>
@@ -440,11 +441,12 @@
         <description>Rows label</description>
         <type>label</type>
         <id>1</id>
-        <posX>1272</posX>
+        <posX>1258</posX>
         <posY>795</posY>
         <width>500</width>
         <label>300160</label>
         <font>Label</font>
+        <textcolor>ff6FAFE1</textcolor>
       </control>
       <control>
         <description>Rows spincontrol</description>

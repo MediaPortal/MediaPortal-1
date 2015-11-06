@@ -9,27 +9,16 @@
       <description>Topbar BG</description>
       <type>image</type>
       <id>0</id>
-      <posX>505</posX>
+      <posX>534</posX>
       <posY>0</posY>
-      <width>930</width>
+      <width>872</width>
       <height>72</height>
       <texture>OSDBG2.png</texture>
     </control>
-    <!--control>
-      <description>Topbar BG</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>10</posX>
-      <posY>60</posY>
-      <width>1900</width>
-      <height>47</height>
-      <texture>osd-bar.png</texture>
-      <visible>skin.hassetting(#skin.fastaccess)</visible>
-    </control-->
     <control>
       <description>group element</description>
       <type>group</type>
-      <posX>530</posX>
+      <posX>559</posX>
       <posY>8</posY>
       <layout>StackLayout(5, Horizontal, true)</layout>
       <control>
@@ -205,22 +194,6 @@
         <label>-</label>
         <onleft>28</onleft>
         <onright>30</onright>
-        <onup>29</onup>
-        <ondown>2</ondown>
-        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
-      </control>
-      <control>
-        <description>info button</description>
-        <type>button</type>
-        <id>30</id>
-        <width>58</width>
-        <height>56</height>
-        <textureFocus>tb_info.png</textureFocus>
-        <textureNoFocus>tb_infoNF.png</textureNoFocus>
-        <hyperlink>7982</hyperlink>
-        <label>-</label>
-        <onleft>29</onleft>
-        <onright>31</onright>
         <onup>29</onup>
         <ondown>2</ondown>
         <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>

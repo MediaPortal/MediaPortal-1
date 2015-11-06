@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Language name="German" characters="255">
 	<Section name="unmapped">
 		<String id="0" prefix="Meine ">Anwendungen</String>
@@ -45,7 +45,7 @@
 		<String id="44">Dez</String>
 		<String id="50" prefix="Meine ">DVDs</String>
 		<String id="51">Disc abspielen</String>
-		<String id="59">Hinweis: Diese Einstellungen sind nicht verfügbar - kein TV lugin installiert.</String>
+		<String id="59">Hinweis: Diese Einstellungen sind nicht verfügbar - kein TV-Plugin installiert.</String>
 		<String id="60">Warte auf den Start des TV-Service...</String>
 		<String id="61">Warte {0} Sekunde(n) vor dem Start...</String>
 		<String id="62">Initialisiere DirectX...</String>
@@ -136,7 +136,7 @@
 		<String id="170">Album: </String>
 		<String id="171">Interpret: </String>
 		<String id="172">Veröffentlichung: </String>
-		<String id="173">Altersfreigabe: </String>
+		<String id="173">Bewertung: </String>
 		<String id="174">Kategorie: </String>
 		<String id="175">Einflüsse: </String>
 		<String id="176">Stile: </String>
@@ -768,7 +768,7 @@
 		<String id="878">Speicher</String>
 		<String id="879">Aufnahme-Überschneidung</String>
 		<String id="880">Aufnahmezeit: </String>
-		<String id="881">Aufnahme zum beenden auswählen: </String>
+		<String id="881">Aufnahme zum Beenden auswählen: </String>
 		<String id="882">Qualität</String>
 		<String id="883">Niedrig</String>
 		<String id="884">Mittel</String>
@@ -816,7 +816,7 @@
 		<String id="926">Zur Wiedergabeliste hinzufügen</String>
 		<String id="927">Warnung</String>
 		<String id="928">Suche Cover</String>
-		<String id="929">Menü schliessen</String>
+		<String id="929">Menü schließen</String>
 		<String id="930">Zu Favoriten hinzufügen</String>
 		<String id="931">Wertung</String>
 		<String id="932">Favoriten</String>
@@ -1060,7 +1060,7 @@
 		<String id="1289">Regisseure (Index)</String>
 		<String id="1290">Diesen Film aktualisieren</String>
 		<String id="1291">Automatische Aktualisierung aktiv.</String>
-		<String id="1292">Bitte warten Sie auf Abschluß dieser Aktion.</String>
+		<String id="1292">Bitte warten Sie auf Abschluss dieser Aktion.</String>
 		<String id="1293">Suche Film</String>
 		<String id="1294">Suche zurücksetzen</String>
 		<String id="1295">Suche Schauspieler</String>
@@ -1101,7 +1101,7 @@
 		<String id="1449">Aufnahme beenden</String>
 		<String id="1450">Aufnahme wirklich beenden?</String>
 		<String id="1451">Abspielen nicht möglich</String>
-		<String id="1498">Program/Kanal nicht gefunden</String>
+		<String id="1498">Programme/Kanal nicht gefunden</String>
 		<String id="1499">Kein Signal</String>
 		<String id="1500">Timeshift konnte nicht gestartet werden</String>
 		<String id="1501">Die Karte ist deaktiviert</String>
@@ -1427,10 +1427,10 @@
 		<String id="4509">Cover-Suche mit Fehlern abgeschlossen</String>
 		<String id="4510">{0} Cover aktualisiert</String>
 		<String id="4511">Cover-Suche beendet</String>
-		<String id="4512">Alle Cover sind aktuell</String>
+		<String id="4512">Alle Covers sind aktuell</String>
 		<String id="4513">Diverse</String>
 		<String id="4514">Cover-Suche</String>
-		<String id="4515">Cover-Such-Ergebnisse</String>
+		<String id="4515">Cover-Suchergebnisse</String>
 		<String id="4516">Kein Cover gefunden</String>
 		<String id="4517">Schließen</String>
 		<String id="4518">Album Name nicht gefunden\r\nVersuche: {0}</String>
@@ -1647,7 +1647,7 @@
 		<String id="13004">Importiere *.my file</String>
 		<String id="13005">Zuletzt importierte Datei: </String>
 		<String id="13006">Kleine Bilder</String>
-		<String id="13007">Grosse Bilder</String>
+		<String id="13007">Große Bilder</String>
 		<String id="13008">Ken-Burns-Effekt</String>
 		<String id="13009">Zufälliger Effekt</String>
 		<String id="13010">Überblenden</String>
@@ -1676,7 +1676,7 @@
 		<String id="14010">Lade Erweiterung herunter</String>
 		<String id="14011">Option wählen</String>
 		<String id="14012">Keine unterstützte MediaPortal Version! Benötigt wird Version {0}</String>
-		<String id="14013">Wollen Sie fortfahren ?</String>
+		<String id="14013">Wollen Sie fortfahren?</String>
 		<String id="14014">Aktualisiere Online Informationen</String>
 		<String id="14015">Aktualisierungen</String>
 		<String id="14016">Downloads</String>
@@ -1835,7 +1835,7 @@
 		<String id="100006" prefix="Meine ">Filme</String>
 		<String id="100008">Einstellungen - Allgemein</String>
 		<String id="100009">GUI - Bildschirm</String>
-		<String id="100010">Bildschirm - Kalibierung</String>
+		<String id="100010">Bildschirm - Kalibrierung</String>
 		<String id="100011">Bildschirm - Kalibrierung</String>
 		<String id="100012">Einstellungen - Bilder</String>
 		<String id="100013">Bildschirm - Filter</String>
@@ -1872,7 +1872,7 @@
 		<String id="100509" prefix="Meine ">Musik/Onlinesuche/Fortschritt</String>
 		<String id="100510" prefix="Mein ">Musik/Aktueller Titel</String>
 		<String id="100511" prefix="Meine">Musik/Visualisierung</String>
-		<String id="100512">Last.fm Love/Forbyd</String>
+		<String id="100512">Last.fm Love/Ban</String>
 		<String id="100600" prefix="Mein ">Fernsehen/TV-Programm</String>
 		<String id="100601" prefix="Mein ">Fernsehen/Timer</String>
 		<String id="100602" prefix="Mein ">Fernsehen/Vollbild</String>
@@ -2010,7 +2010,7 @@
 		<String id="200000">Bitte einen EPG-Grabber auswählen. Hinweis: Ist ihr Land nicht aufgeführt,</String>
 		<String id="200001">dann müssen sie den Programmführer manuell einrichten!</String>
 		<String id="200002">Sie können jetzt EPG-Kanäle ihren TV-Kanälen zuordnen</String>
-		<String id="200003">Wählen sie einen Kanal und drücken sie "Enter" um die Zurodnung zu ändern</String>
+		<String id="200003">Wählen sie einen Kanal und drücken sie "Enter" um die Zuordnung zu ändern</String>
 		<String id="200004">Manuell eingerichtete TVGuide.xml</String>
 		<String id="200005">Bitte geben sie die Fernbedienung an, die sie nutzen: </String>
 		<String id="200006">Drücken sie "Weiter" um die Einrichtung fortzusetzen: </String>
@@ -2018,14 +2018,14 @@
 		<String id="200008">Setup - Fernbedienung</String>
 		<String id="200009">Weiter&gt;</String>
 		<String id="200010">MediaPortal verwandelt ihren PC in ein fortschrittliches Multi-Media-Center.</String>
-		<String id="200011">Mit MediaPortal können sie Fernsehen oder ihre Lieblingsmusik geniessen</String>
+		<String id="200011">Mit MediaPortal können sie Fernsehen oder ihre Lieblingsmusik genießen</String>
 		<String id="200012">Videos oder DVD abspielen und vieles mehr.</String>
 		<String id="200013">Dieser Assistent wird ihnen helfen, MediaPortal schnell und einfach einzurichten.</String>
 		<String id="200014">Folgen sie dazu einfach den weiteren Schritten: </String>
 		<String id="200015">Klicken sie nun "Weiter" um zu beginnen.</String>
 		<String id="200017">Willkommen bei MediaPortal.</String>
 		<String id="200018">Herzlichen Glückwunsch - MediaPortal ist jetzt fertig eingerichtet!</String>
-		<String id="200019">Klicken sie auf "Fertig" um den Assistenten zu schliessen</String>
+		<String id="200019">Klicken sie auf "Fertig" um den Assistenten zu schließen</String>
 		<String id="200020">Fertig</String>
 		<String id="200021">TV-Konfiguration - EPG</String>
 		<String id="200022">MediaPortal hat folgende TV-Karten gefunden: </String>
@@ -2194,7 +2194,6 @@
 		<String id="300094">Neustart-Verzögerung in Sekunden</String>
 		<String id="300095">Bildschirm ausschalten (bei Dunkeltastung des Bildschirms)</String>
 		<String id="300100">Letztes aktives Modul nach Wake-Up anzeigen</String>
-		<String id="300101">MP-Startbildschirm mit Screen Selector auswählen</String>
 		<String id="300102">Startverzögerung</String>
 		<String id="300103">Bei Start von MediaPortal</String>
 		<String id="300104">Bei Wiederaufnahme von MediaPortal</String>

@@ -223,9 +223,10 @@
 		<description>timeout value label</description>
 		<id>1</id>
 		<label>#timeoutValue</label>
-		<font>font12</font>		
-		<posX>980</posX>
-		<posY>555</posY>			
+		<font>Label</font>		
+		<posX>1080</posX>
+		<posY>555</posY>	
+    <align>right</align>	
 	</control>
 			
 	<!--skip type-->
@@ -282,10 +283,11 @@
 		<type>label</type>
 		<description>Skip value label</description>
 		<id>1</id>
-		<posX>980</posX>
+		<posX>1080</posX>
 		<posY>805</posY>		
-		<font>font12</font>		
+		<font>Label</font>		
 		<label>#skipValue</label>	
+		<align>right</align>
 	</control>
 
 	<!--skip-->

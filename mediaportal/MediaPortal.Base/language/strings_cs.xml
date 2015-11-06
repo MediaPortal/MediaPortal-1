@@ -2,7 +2,7 @@
 <Language name="Czech" characters="512">
   <Section name="unmapped">
     <String id="0">Programy</String>
-    <String id="1" prefix="Mé ">Obrázky</String>
+    <String id="1" prefix="Mé ">Fotografie</String>
     <String id="2" prefix="Má ">Hudba</String>
     <String id="3" prefix="Má ">Videa</String>
     <String id="4">TV program</String>
@@ -208,7 +208,7 @@
     <String id="243">Automaticky spustit XBOX hry</String>
     <String id="244">Automaticky spustit videa</String>
     <String id="245">Automaticky spustit hudbu</String>
-    <String id="246">Automaticky spustit obrázky</String>
+    <String id="246">Automaticky spustit fotografie</String>
     <String id="247">Skripty</String>
     <String id="248">Jazyk</String>
     <String id="249">Hudba</String>
@@ -680,7 +680,7 @@
     <String id="746">Maximální</String>
     <String id="747">Minimální</String>
     <String id="748">Srážky</String>
-    <String id="750">V obraze</String>
+    <String id="750">Fotografie</String>
     <String id="751">Zobrazit všechny skladby tohoto interpreta</String>
     <String id="752">Není nastaveno žádné nahrávání</String>
     <String id="753">Nejsou instalovány žádné tunery</String>
@@ -1070,7 +1070,7 @@
     <String id="1297">Aktualizovat informace o vybraném herci</String>
     <String id="1298">Aktualizovat tapety pozadí</String>
     <String id="1299">Aktualizovat složku</String>
-    <String id="1300" prefix="Mé ">TV pořady</String>
+    <String id="1300" prefix="Mé ">Seriály</String>
     <String id="1301">Stahuji filmové herce a role</String>
     <String id="1302">Stahuji informace o hercích</String>
     <String id="1303">Zvolte herce</String>
@@ -1335,7 +1335,7 @@
     <String id="2140">Vytvoř MP3 DVD</String>
     <String id="2141">MPEG-2 -&gt; DivX</String>
     <String id="2142">MPEG-2 -&gt; MPEG-4</String>
-    <String id="2143">Domů</String>
+    <String id="2143">Hlavní panel</String>
     <String id="2144">Zahájit vypalování</String>
     <String id="2145">Importuj aktuální seznam stop</String>
     <String id="2146">Na cílovém CD není dostatek místa</String>
@@ -1377,15 +1377,15 @@
     <String id="2504">Pro hledaný výraz nebyl nalezen žádný článek...</String>
     <String id="2505">Odkazy na další články:</String>
     <String id="2506">K článku se nevztahují žádné odkazy.</String>
-    <String id="2507">Obrázky v tomto článku:</String>
-    <String id="2508">K článku se nevztahují žádné obrázky.</String>
+    <String id="2507">Fotografie v tomto článku:</String>
+    <String id="2508">K článku se nevztahují žádné fotografie.</String>
     <String id="2509">Tato stránka je pouze přesměrování.</String>
     <String id="2510">Zvolte cíl přesměrování ze seznamu odkazů.</String>
     <String id="2511">Odkazy</String>
     <String id="2512">Obrázek nelze zobrazit.</String>
     <String id="2513">Zkontrolujte prosím protokol událostí.</String>
     <String id="2514">Zpět do textu</String>
-    <String id="2515">Obrázky</String>
+    <String id="2515">Fotografie</String>
     <String id="2516" prefix="Má ">Wikipedie</String>
     <String id="2550">Opravdu chcete přerušit živé TV vysílání?</String>
     <String id="2551">(data z časového posunu budou ztracena)</String>
@@ -1852,9 +1852,9 @@
     <String id="40001">Čekám na přechod do pohotovostního režimu</String>
     <String id="40002">MediaPortal nereaguje, ale je stále aktivní.</String>
     <String id="40003">MediaPortal přejde do pohotovostního režimu po ukončení aktivních úkolů.</String>
-    <String id="100000">Domů</String>
+    <String id="100000">Hlavní panel</String>
     <String id="100001" prefix="Má ">TV</String>
-    <String id="100002" prefix="Mé ">Obrázky</String>
+    <String id="100002" prefix="Mé ">Fotografie</String>
     <String id="100003" prefix="Mé ">Soubory</String>
     <String id="100004">Možnosti</String>
     <String id="100005" prefix="Má ">Hudba</String>
@@ -1974,10 +1974,10 @@
     <String id="101008">Obecné - Dynamická obnova frekvence</String>
     <String id="101010">Videa - Databáze</String>
     <String id="101011">Hudba - Databáze</String>
-    <String id="101012">Obrázky - Databáze</String>
+    <String id="101012">Fotografie - Databáze</String>
     <String id="101013">Hudba - Právě hraje</String>
     <String id="101014">Seznam stop</String>
-    <String id="101015">Obrázky - Prezentace</String>
+    <String id="101015">Fotografie - Prezentace</String>
     <String id="101016">Obecné</String>
     <String id="101017">Hlavní - Po probuzení</String>
     <String id="101018">Hlavní - MediaPortal</String>
@@ -1994,7 +1994,7 @@
     <String id="102004">Skripty / Informace</String>
     <String id="102005">Video na celou obrazovku</String>
     <String id="102006">Audio vizualizace</String>
-    <String id="102007" prefix="Mé ">Obrázky / Prezentace</String>
+    <String id="102007" prefix="Mé ">Fotografie / Prezentace</String>
     <String id="102008">Dialog fronty souborů</String>
     <String id="102009">Dialog výběru</String>
     <String id="102010">Datum / čas</String>
@@ -2175,7 +2175,7 @@
     <String id="300041">Databáze byla úspěšně vyčištěna.</String>
     <String id="300042">Videa - Přípony souborů</String>
     <String id="300043">Hudba - Přípony souborů</String>
-    <String id="300044">Obrázky - Přípony souborů</String>
+    <String id="300044">Fotografie - Přípony souborů</String>
     <String id="300045">Hudba - Seznam stop</String>
     <String id="300046">Videa - Seznam stop</String>
     <String id="300047">Seznam stop hudby</String>
@@ -2183,7 +2183,7 @@
     <String id="300049">Procházení složek</String>
     <String id="300050">Videa - Složky</String>
     <String id="300051">Hudba - Složky</String>
-    <String id="300052">Obrázky - Složky</String>
+    <String id="300052">Fotografie - Složky</String>
     <String id="300053">Chyba v datech složky.</String>
     <String id="300054">Název nebo cesta nemohou být prázdné.</String>
     <String id="300055">Tato akce smaže všechny nastavené složky!</String>
@@ -2253,7 +2253,7 @@
     <String id="300125">Povolit zásobník existence souboru</String>
     <String id="300126">Povolit zvukové efekty šablony vzhledu</String>
     <String id="300127">Zobrazit zvláštní ovládací prky myši</String>
-    <String id="300128">Domovská obrazovka:</String>
+    <String id="300128">Hlavní panel:</String>
     <String id="300129">Zpoždění zobrazení</String>
     <String id="300130">On-screen displej</String>
     <String id="300131">Zpoždění</String>
@@ -2277,7 +2277,7 @@
     <String id="300149">Typ obrazovky:</String>
     <String id="300150">Vytvořit mezipaměť složky na vyžádání</String>
     <String id="300151">Smazat náhledy hudby</String>
-    <String id="300152">Obrázky</String>
+    <String id="300152">Fotografie</String>
     <String id="300153">Automaticky vytvářet pouze malé náhledy</String>
     <String id="300154">Vymazat mezipaměť obrázků</String>
     <String id="300155">Videa</String>
@@ -2306,7 +2306,7 @@
     <String id="300178">Zakázat vyhledání návrhů stop na Internetu</String>
     <String id="300179">Přepnout interprety během vyhledávání na Internetu</String>
     <String id="300180">VUMeter (pouze přehrávač BASS)</String>
-    <String id="300181">Prohledat složky s obrázky</String>
+    <String id="300181">Prohledat složky s fotografiemi</String>
     <String id="300182">Vymazat databázi</String>
     <String id="300183">Přechody prezentace</String>
     <String id="300184">Nastavení otáčení</String>
@@ -2358,5 +2358,31 @@
     <String id="300230">Zastavit přehrávání při odebrání zvukového rendereru</String>
     <String id="300231">Snížit obnovovací frekvenci při ztrátě fokusu</String>
     <String id="300232">Aktualizovat soubory po datu {0}</String>
+	<String id="350001">Press Info/F9 for quick settings...</String>
+	<String id="350002">Filmy</String>
+	<String id="350003">PlayDisc</String>
+	<String id="350004">Trakt</String>
+	<String id="350005">TvWishList</String>
+	<String id="350006">Online Videa</String>
+	<String id="350007">Extensions</String>
+	<String id="350008">SubCentral</String>
+	<String id="350009">IMDb+</String>
+	<String id="350010">LogoManager</String>
+	<String id="350011">InfoService</String>
+	<String id="350012">Fotografie Bing</String>
+	<String id="350013">MyLyrics</String>
+	<String id="350014">BrowseTheWeb</String>
+	<String id="350015">AirPlayer</String>
+	<String id="350016">Rockstar</String>
+	<String id="350017">ShowTimes</String>
+	<String id="350018">NoPlugin</String>
+	<String id="350019">Label settings...</String>
+	<String id="350020">Press Info/F9 for all supported plugins...</String>
+	<String id="350021">Počasí</String>
+	<String id="350022">MusicInfo Handler</String>
+	<String id="350023">Možnosti</String>
+	<String id="350024">Program</String>
+	<String id="350025">Red Bull TV</String>
+	<String id="350026">YouTube</String>
   </Section>
 </Language>

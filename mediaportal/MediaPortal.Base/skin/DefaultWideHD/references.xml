@@ -876,7 +876,7 @@
     <textureUpFocus>page_up_focus.png</textureUpFocus>
     <textureDownFocus>page_down_focus.png</textureDownFocus>
     <align>left</align>
-    <font>font13</font>
+    <font>Label</font>
     <reverse>yes</reverse>
     <textcolor>ivory</textcolor>
     <disabledcolor>40ffffff</disabledcolor>
@@ -891,14 +891,14 @@
     <posX>553</posX>
     <posY>310</posY>
     <label>167</label>
-    <font>font13</font>
+    <font>Label</font>
     <textcolor>ffffffff</textcolor>
     <disabledcolor>40ffffff</disabledcolor>
     <textureCheckmark>check-box.png</textureCheckmark>
     <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
     <MarkWidth>42</MarkWidth>
     <MarkHeight>42</MarkHeight>
-    <align>left</align>
+    <align>right</align>
     <shadow>no</shadow>
   </control>
   <control>

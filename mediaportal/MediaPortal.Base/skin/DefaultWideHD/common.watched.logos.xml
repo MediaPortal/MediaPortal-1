@@ -37,7 +37,7 @@
       <height>80</height>
       <texture>watched_#(string.format('{0:000}',mul(math.round(div(cint(#watchedpercent),5)),5))).png</texture>
       <keepaspectratio>yes</keepaspectratio>
-      <visible>facadeview.list</visible>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)</visible>
     </control>
   </controls>
 </window>

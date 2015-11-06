@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>87502</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>no</rememberLastFocusedControl>
+  <define>#currentmodule:#Trakt.Translation.Lists.Label</define>
+  <define>#selecteditem:#highlightedbutton</define>
+  <define>#defaultcontrol:2</define>
+  <define>#defaultcontrol.onleft:9993</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH Trakt.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
+    <import>Trakt.Common.Fanart.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <import>Trakt.Common.xml</import>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <posX>550</posX>
+      <posY>341</posY>
+      <width>373</width>
+      <height>379</height>
+      <layout>StackLayout(Vertical)</layout>
+      <control>
+        <description>Watchlist Movies</description>
+        <type>button</type>
+        <id>2</id>
+        <label>#Trakt.Translation.WatchListMovies.Label</label>
+        <hyperlink>87270</hyperlink>
+        <width>373</width>
+        <onleft>#defaultcontrol.onleft</onleft>
+        <onright>#defaultcontrol.onright</onright>
+        <onup>5</onup>
+      </control>
+      <control>
+        <type>button</type>
+        <description>Watchlist Shows</description>
+        <id>3</id>
+        <label>#Trakt.Translation.WatchListShows.Label</label>
+        <hyperlink>87268</hyperlink>
+        <width>373</width>
+        <onleft>#defaultcontrol.onleft</onleft>
+        <onright>#defaultcontrol.onright</onright>
+      </control>
+      <control>
+        <description>Watchlist Episodes</description>
+        <type>button</type>
+        <id>4</id>
+        <label>#Trakt.Translation.WatchListEpisodes.Label</label>
+        <hyperlink>87269</hyperlink>
+        <width>373</width>
+        <onleft>#defaultcontrol.onleft</onleft>
+        <onright>#defaultcontrol.onright</onright>
+      </control>
+      <control>
+        <description>Custom Lists</description>
+        <type>button</type>
+        <id>5</id>
+        <label>#Trakt.Translation.CustomLists.Label</label>
+        <hyperlink>87275</hyperlink>
+        <width>373</width>
+        <onleft>#defaultcontrol.onleft</onleft>
+        <onright>#defaultcontrol.onright</onright>
+        <ondown>2</ondown>
+      </control>
+    </control>
+  </controls>
+</window>

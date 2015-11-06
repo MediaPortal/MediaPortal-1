@@ -278,7 +278,7 @@
       <id>1</id>
       <posX>750</posX>
       <posY>754</posY>
-      <width>600</width>
+      <width>1200</width>
       <height>55</height>
       <font>Label</font>
       <label>#customScalevalues</label>

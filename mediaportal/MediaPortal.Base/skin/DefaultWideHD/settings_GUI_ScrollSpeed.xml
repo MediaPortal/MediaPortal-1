@@ -167,12 +167,13 @@
           <posY>305</posY>
           <label>1442</label>
           <font>Label</font>
+          <textcolor>ff6FAFE1</textcolor>
         </control>
         <control>
           <description>Horizontal Speed select</description>
           <type>spincontrol</type>
           <id>2</id>
-          <posX>1585</posX>
+          <posX>1480</posX>
           <posY>315</posY>
           <align>right</align>
           <onup>17</onup>
@@ -188,12 +189,13 @@
           <posY>360</posY>
           <label>1443</label>
           <font>Label</font>
+          <textcolor>ff6FAFE1</textcolor>
         </control>
         <control>
           <description>Vertical Speed select</description>
           <type>spincontrol</type>
           <id>4</id>
-          <posX>1585</posX>
+          <posX>1480</posX>
           <posY>370</posY>
           <align>right</align>
           <onup>2</onup>
@@ -201,7 +203,7 @@
           <onleft>9991</onleft>
           <onright>4</onright>
         </control>
-        <!--List loop delay-->&gt;
+        <!--List loop delay-->
         <control>
           <description>List loop delay label</description>
           <type>label</type>
@@ -210,12 +212,13 @@
           <posY>415</posY>
           <label>300136</label>
           <font>Label</font>
+          <textcolor>ff6FAFE1</textcolor>
         </control>
         <control>
           <description>List loop delay</description>
           <type>spincontrol</type>
           <id>5</id>
-          <posX>1585</posX>
+          <posX>1480</posX>
           <posY>425</posY>
           <align>right</align>
           <onup>2</onup>
@@ -231,13 +234,14 @@
           <posY>470</posY>
           <label>973</label>
           <font>Label</font>
+          <textcolor>ff6FAFE1</textcolor>
         </control>
         <control>
           <description>FPS select</description>
           <type>spincontrol</type>
           <id>3</id>
-          <posX>1585</posX>
-          <posY>490</posY>
+          <posX>1480</posX>
+          <posY>480</posY>
           <align>right</align>
           <onup>4</onup>
           <ondown>2</ondown>
@@ -248,16 +252,17 @@
           <description>currentFPS count</description>
           <type>label</type>
           <id>1</id>
-          <posX>1315</posX>
-          <posY>480</posY>
+          <posX>1000</posX>
+          <posY>470</posY>
           <label>#fps</label>
           <font>Label</font>
+          <textcolor>ff6FAFE1</textcolor>
         </control>
         <control>
           <description>Example label</description>
           <type>label</type>
           <id>1</id>
-          <posX>685</posX>
+          <posX>700</posX>
           <posY>530</posY>
           <width>1066</width>
           <label>675</label>
@@ -272,7 +277,7 @@
           <width>1100</width>
           <label>-</label>
           <font>Label</font>
-          <textcolor>FFB2D4F5</textcolor>
+          <textcolor>ff6FAFE1</textcolor>
           <font>Label</font>
         </control>
         <control>
@@ -280,12 +285,12 @@
           <type>textboxscrollup</type>
           <id>26</id>
           <posX>685</posX>
-          <posY>650</posY>
+          <posY>670</posY>
           <width>1100</width>
-          <height>247</height>
+          <height>220</height>
           <label>-</label>
           <font>Label</font>
-          <textcolor>FFB2D4F5</textcolor>
+          <textcolor>ff6FAFE1</textcolor>
         </control>
       </control>
     </control>

@@ -181,6 +181,7 @@
       <onright>2</onright>
       <label>13008</label>
       <onup>123</onup>
+      <width>470</width>
     </control>
 		<control>
       <description>X-fade transitions</description>
@@ -189,6 +190,7 @@
       <onleft>9995</onleft>
       <onright>3</onright>
       <label>13010</label>
+      <width>470</width>
     </control>
 		<control>
       <description>Random transitions</description>
@@ -197,6 +199,7 @@
       <onleft>9995</onleft>
       <onright>4</onright>
       <label>13009</label>
+      <width>470</width>
     </control>
   </control>
     
@@ -211,8 +214,6 @@
     <label>300184</label>
 		<font>Label</font>
     <textcolor>ffffffff</textcolor>
-		<animation effect="fade" time="150">WindowOpen</animation>
-		<animation effect="fade" time="150">WindowClose</animation>
   </control>
     
 	<control>
@@ -222,8 +223,6 @@
 		<posY>711</posY>
 		<dimColor>ffffffff</dimColor>
     <layout>StackLayout(0, Vertical, true)</layout>
-	  <animation effect="fade" time="150">WindowOpen</animation>
-	  <animation effect="fade" time="150">WindowClose</animation>
     
 		<control>
       <description>EXIF rotation</description>
@@ -232,6 +231,7 @@
       <label>300185</label>
       <onleft>9995</onleft>
       <onright>43</onright>
+      <width>470</width>
     </control>
 		<control>
       <description>Picasa.ini rotation</description>
@@ -241,6 +241,7 @@
       <onleft>9995</onleft>
       <onright>44</onright>
       <ondown>2</ondown>
+      <width>470</width>
     </control>
   </control>
     <!--Slideshow Settings group-->
@@ -255,8 +256,6 @@
       <label>300187</label>
   		<font>Label</font>
       <textcolor>ffffffff</textcolor>
-  		<animation effect="fade" time="150">WindowOpen</animation>
-  		<animation effect="fade" time="150">WindowClose</animation>
     </control>
     <control>
       <description>Speed label</description>
@@ -265,15 +264,14 @@
       <posX>1195</posX>
       <posY>386</posY>
       <label>224</label>
-      <font>font11</font>
-  		<animation effect="fade" time="150">WindowOpen</animation>
-  		<animation effect="fade" time="150">WindowClose</animation>
+      <font>Label</font>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Speed select</description>
       <type>spincontrol</type>
       <id>2</id>
-      <posX>1600</posX>
+      <posX>1620</posX>
       <posY>393</posY>
       <textcolor>ffffffff</textcolor>
       <onleft>6</onleft>
@@ -281,7 +279,6 @@
       <ondown>3</ondown>
       <onup>42</onup>
       <buddycontrolid>100</buddycontrolid>
-  		<font>font11</font>
     </control>
     <control>
       <description>Transition time label</description>
@@ -290,13 +287,14 @@
       <posX>1195</posX>
       <posY>431</posY>
       <label>225</label>
-      <font>font11</font>
+      <font>Label</font>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Transition time select</description>
       <type>spincontrol</type>
       <id>3</id>
-      <posX>1600</posX>
+      <posX>1620</posX>
       <posY>438</posY>
       <textcolor>ffffffff</textcolor>
       <onleft>5</onleft>
@@ -304,7 +302,6 @@
       <onup>2</onup>
       <ondown>4</ondown>
       <buddycontrolid>101</buddycontrolid>
-  		<font>font11</font>
     </control>
     <control>
       <description>ken burns speed label</description>
@@ -313,13 +310,14 @@
       <posX>1195</posX>
       <posY>476</posY>
       <label>13011</label>
-      <font>font11</font>
+      <font>Label</font>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>ken burns speed select</description>
       <type>spincontrol</type>
       <id>4</id>
-      <posX>1600</posX>
+      <posX>1620</posX>
       <posY>483</posY>
       <textcolor>ffffffff</textcolor>
       <onleft>7</onleft>
@@ -327,7 +325,6 @@
       <onup>3</onup>
       <ondown>8</ondown>
       <buddycontrolid>102</buddycontrolid>
-      <font>font11</font>
     </control>
     
 	<control>
@@ -347,6 +344,7 @@
       <onup>4</onup>
       <ondown>9</ondown>
       <label>6020</label>
+      <width>640</width>
     </control>
 		<control>
       <description>Auto shuffle slideshow</description>
@@ -354,6 +352,7 @@
       <id>9</id>
       <onup>8</onup>
       <label>6021</label>
+      <width>640</width>
     </control>
  </control>
     <!--View settings group-->
@@ -391,6 +390,7 @@
       <onup>9</onup>
       <onleft>41</onleft>
       <onright>41</onright>
+      <width>640</width>
     </control>
     
 		<control>
@@ -402,6 +402,7 @@
       <onright>42</onright>
 			<onup>43</onup>
 			<ondown>45</ondown>
+			<width>640</width>
     </control>
 		<control>
       <description>Play videos in slideshow</description>
@@ -412,6 +413,7 @@
       <onright>42</onright>
       <ondown>6</ondown>
       <onup>44</onup>
+      <width>640</width>
     </control>
   </control>
   

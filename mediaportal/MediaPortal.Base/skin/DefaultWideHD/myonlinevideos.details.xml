@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
@@ -71,7 +71,7 @@
       <font>font10</font>
       <label>#OnlineVideos.Translation.DateOfRelease.Label</label>
       <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
-      <textcolor>ffb2d4f5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <type>label</type>
@@ -93,7 +93,7 @@
       <font>font10</font>
       <label>#OnlineVideos.Translation.Genre.Label</label>
       <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
-      <textcolor>ffb2d4f5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <type>fadelabel</type>
@@ -115,7 +115,7 @@
       <label>173</label>
       <font>font10</font>
       <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
-      <textcolor>ffb2d4f5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <type>fadelabel</type>
@@ -137,7 +137,7 @@
       <font>font10</font>
       <label>#OnlineVideos.Translation.Directors.Label</label>
       <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
-      <textcolor>ffb2d4f5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <type>fadelabel</type>
@@ -160,7 +160,7 @@
       <font>font10</font>
       <label>#OnlineVideos.Translation.Actors.Label</label>
       <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
-      <textcolor>ffb2d4f5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <type>textboxscrollup</type>
@@ -197,7 +197,7 @@
       <height>157</height>
       <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
       <label>#OnlineVideos.Translation.PlotOutline.Label</label>
-      <textcolor>ffb2d4f5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <type>textboxscrollup</type>

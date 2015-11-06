@@ -30,7 +30,7 @@
         <posY>260</posY>
         <width>480</width>
         <label>#currentmodule</label>
-        <textcolor>lightskyblue</textcolor>
+        <textcolor>white</textcolor>
         <font>Label</font>
       </control>
       <control>
