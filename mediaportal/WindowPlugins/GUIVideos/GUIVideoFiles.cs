@@ -3472,13 +3472,26 @@ namespace MediaPortal.GUI.Video
 
     private void ReplaceItem(string oldPath, string newPath)
     {
-      for (int i = 0; i < facadeLayout.Count; i++)
+      if (Directory.Exists(newPath) || (Util.Utils.IsVideo(oldPath) && Util.Utils.IsVideo(newPath)))
       {
-        if (facadeLayout[i].Path == oldPath)
+        for (int i = 0; i < facadeLayout.Count; i++)
         {
-          AddItem(newPath, i);
-          break;
+          if (facadeLayout[i].Path == oldPath)
+          {
+            AddItem(newPath, i);
+            return;
+          }
         }
+      }
+
+      if (Util.Utils.IsVideo(newPath))
+      {
+        AddItem(newPath, -1);
+      }
+
+      if (Util.Utils.IsVideo(oldPath))
+      {
+        DeleteItem(oldPath);
       }
     }
 

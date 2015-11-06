@@ -271,7 +271,7 @@ namespace MediaPortal.GUI.Pictures
     // Event handler handling the Rename of a file
     private void OnRenamed(object source, RenamedEventArgs e)
     {
-      if (Util.Utils.IsPicture(e.FullPath))
+      if (Util.Utils.IsPicture(e.FullPath) || Util.Utils.IsPicture(e.OldFullPath))
       {
         Log.Debug("PicturesFolderWatcher Rename File Fired: {0}", e.FullPath);
         _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.Rename, e.FullPath, e.OldFullPath));

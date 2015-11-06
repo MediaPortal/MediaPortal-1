@@ -205,8 +205,8 @@ namespace MediaPortal.GUI.Music
             if (!xmlreader.GetValueAsBool("general", "showlastactivemodule", false))
             {
               currentFolder = string.Empty;
-      }
-    }
+            }
+          }
 
           Log.Debug("{0}:{1}", SerializeName, message.Message);
           break;
@@ -215,13 +215,26 @@ namespace MediaPortal.GUI.Music
 
     private void ReplaceItem(string oldPath, string newPath)
     {
-      for (int i = 0; i < facadeLayout.Count; i++)
+      if (Directory.Exists(newPath) || (Util.Utils.IsAudio(oldPath) && Util.Utils.IsAudio(newPath)))
       {
-        if (facadeLayout[i].Path == oldPath)
+        for (int i = 0; i < facadeLayout.Count; i++)
         {
-          AddItem(newPath, i);
-          break;
+          if (facadeLayout[i].Path == oldPath)
+          {
+            AddItem(newPath, i);
+            return;
+          }
         }
+      }
+
+      if (Util.Utils.IsAudio(newPath))
+      {
+        AddItem(newPath, -1);
+      }
+
+      if (Util.Utils.IsAudio(oldPath))
+      {
+        DeleteItem(oldPath);
       }
     }
 
